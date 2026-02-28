@@ -51,9 +51,23 @@ The surprising saturday & minigame world custom mods will be developed in this r
 All very unordered, potentially bad, some probably too hard / unfun, whatever - idea collection.
 
 - achievements who can get the most
+- vegan run. eating meat, throwing eggs, killing any mob or player kills you immediately from moral decay. Kill dragon via accidental death by unfortunate bed placement. Increase tick speed slightly, make leaves drop more apples, make nether chests have more blaze rods.
+- bloodlust challenge. you cant eat, killing things satisfyes your hunger.
+- zombie challenge - being in sun burns you
+- randomized mob challenge - everybody spawns in as a random mob, find each other
+- no block placing
+- half a heart with keepinv and respawn in range of death
+- run with insane shader
 - start in nether
 - first death to void wins
 - start in end islands
+- every chunk is random
+- skyblock
+- insanely limited world size
+- https://modrinth.com/datapack/chunklock
+- no inventory, only hotbar
+- being in rain or water damages you
+- insane mob ai mod
 - upside down end gen
 - sky islands world gen
 - cave world world gen

@@ -60,16 +60,28 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - run with insane shader
 - start in nether
 - first death to void wins
-- start in end islands
+- start in end islands (stone recipes work with end stone, you can craft wood from chorus)
 - every chunk is random
 - skyblock
+- https://modrinth.com/mod/hexlands
 - insanely limited world size
 - https://modrinth.com/datapack/chunklock
+- collect every type of flower
+- perma-night
+- a totally normal vanilla world (herobrine) -> https://modrinth.com/datapack/from-the-fog https://www.curseforge.com/minecraft/mc-mods/sever-side-horror
+- one block
+- summon herobrine
+- https://modrinth.com/mod/circumnavigate
+- the floor is lava - every block that is below the sun has a 1 in 6 chance not to turn to lava
 - no inventory, only hotbar
 - being in rain or water damages you
-- insane mob ai mod
+- insane mob ai mod, https://modrinth.com/mod/improved-mobs
 - upside down end gen
+- parcour civilization world gen
+- golden age minecraft recipes & world gen & nether
 - sky islands world gen
+- lucky block flat world - each block broken gives you a 1 in 100 chance to win the challenge
+- https://modrinth.com/mod/gwg
 - cave world world gen
 - superflat world gen
 - amplified world gen

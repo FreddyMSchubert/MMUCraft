@@ -22,11 +22,13 @@ Minecraft server setup
   - k8s cron to automatically switch out main for saturday server saturdays 
 - [Velocity](https://papermc.io/software/velocity/) Minecraft Server Proxy will connect players to currently active server pod
 - [RabbitMQ](https://www.rabbitmq.com/) will handle communication between k8s pods & ScoreKeeper (winners etc)
-- [nginx](https://nginx.org/) for a tiny web server that enables minigame world downloads
-- **ScoreKeeper** - Some centralized custom program that will
+- [nginx](https://nginx.org/) for a tiny web server that enables minigame world downloads & serves cosmetics website
+- **ScoreKeeper/website** - Some centralized custom program that will
+  - determines which mc account based on discord sign-in, then you can buy cosmetics with the in-game money.
   - handles scoring while surprising saturday is running
   - maintain inter-server player stats (will be called by main pod mod for permission checks)
   - delete nginx-served world backups after some time
+  - maintain which cosmetics are owned by whom
   - maybe even auto-update the server resource pack
   - anything else we need
 - This repo will host the dynamic enforced server side resource pack, allowing for cosmetics to be rewarded to surprising saturday winners
@@ -34,6 +36,15 @@ Minecraft server setup
 Setup will not be elastic and everything will be on one big VPS cause we don't have the budget for more.
 
 The surprising saturday & minigame world custom mods will be developed in this repo & then the surprising saturday docker image will be updated each week.
+
+## To do list / priority order
+
+- [ ] Get a basic docker image for vanilla server set up
+- [ ] Make k8s pull & run it and restart it when its down
+- [ ] Velocity container that forwards to the main server
+- [ ] Server auth & authenticating with discord (from minecraft generate a url that encodes username, on website you can sign in with discord & input mmu email and input a code from that email)
+- [ ] Setup rabbitmq that sends data between scorekeeper and main server mod. every day at 9, scorekeeper initiates border expansion.
+- [ ] On website, add shop tab. Create a few placeholder cosmetics. When bought, send rabbitmq message to mod to unlock that cosmetic for player / give player the item.
 
 ## Surprising Saturday Ideas
 
@@ -53,7 +64,7 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - lifesteal
 - hardcore
 - every half an hour another players pos is revealed in chat. person who kills them gets a point. most points wins
-- who can get the most of item x in their nether chest (e.g. watermelons)
+- who can get the most of item x in their ender chest (e.g. watermelons)
 - hide and seek. special retextured blocks that give a point when broken hidden around map. every 10 minutes you get your relative direction to the nearest one
 - hide and seek - start a game with command, players get a compass pointing to you when outside a certain distance to you. if they dont find you within a certain time you get a point, otherwise winner gets a point. need some way to regulate people going underground.
 - most unique effects applied at once
@@ -63,17 +74,98 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - most sniffers bread
 - speedrun, quickest x e.g. ender dragon death, wind charged 3 book
 - one hit wither with mace
-- longest time between deaths
+- longest online time between deaths, everyone can see each others positions, small world border
 - randomised block / mob loot tables
 - randomised crafting recipes
 - everyone shares a synced inventory trying to kill the dragon
 - every like 2 minutes your location is swapped with another player's
+- you can only break oak logs, stone, coal ore, iron ore, diamond ore, end stone, gravel, cactus; you can only place crafting table, furnace, obsidian, torch, oxidised copper stairs, TNT, oak boats, green beds. defeat dragon
 
 With some of these multiple players could get them at the same time, so we should in the ScoreKeeper just take record whenever theres a clear winner in the current result state, even if another player also wins a millisecond later, thus making winning together essentially randomize the winner.
 
 Might be nice to make some challenges have multiple winners to encourage collaboration.
 
+## Economy
+
+### Money gains
+
+- Money from winning challenges
+	- Depending on challenge you get different amounts, there may be participation, everybody that reaches goal may get money, whatever. We can make it up as we go.
+- Members get money after becoming members, everybody gets a tiny bit of money when joining initially
+- Bet money on minigame outcome e.g. battling
+	- people putting in money for themselves
+	- betting on someone else via website
+- Daily challenges - Every day theres an item you can deposit for some cash
+	- 7 golden hoes
+	- glow berries
+	- stack poisonous potatoes
+	- potions of slow falling / oozing / weaving / infestation
+	- copper horse armor
+	- brown dyed leather horse armor
+	- signed book
+	- grey harness
+	- enchanted wooden shovel (mending)
+	- danger pottery sherd, or general ones
+	- turtle scute & eggs
+	- brush with durability 1
+	- carrot on a stick with less than half durability
+	- copper nautilus armor
+	- bee nest with bees inside
+	- stack of end rods
+	- chiseled red sandstone
+	- minekart with furnace
+	- 31 red sandstone stairs
+	- blue eggs / brown eggs
+	- 2 cyan carpet
+	- sniffer flower
+	- 64 block of raw copper
+	- ominous banner
+	- waxed weathered chiseled copper
+	- cookies
+	- wither roses
+	- sharpness 2
+	- bucket of tadpole
+	- glow item frame
+	- shroom lights
+	- dripstone
+
+### Physical money
+
+Money items: 1 - 5 - 10 - 50 - 100 - 500 - 1000 - 5000 - 10000 - 50000 - 100000 - 500000 - 1000000
+
+Value of money roughly matching https://www.naughtynathan.co.uk/minecraft/prices.htm
+
+Do a code-based recipe that calculates the money together.
+
+For extraction, the recipe always turns
+- 5* to 5x1*
+- 1* to 2x5*
+
+`/withdraw` & `/deposit` commands - withdraw takes a specified amount of money and gives it to player as item, deposit puts current stack into bank
+
+## Website
+
+- Cosmetics Shop
+- View currently running duels, bet money on them
+- duel history
+- view countdown until next surprising saturday
+- display whos currently online
+- tutorial of important commands
+- overview of commitee members
+
+## Server interest over time
+
+Day 1 the server border is 3000x3000
+
+Every day on the server forever, its scheduled, the border increases by 300 blocks
+
+- Half of semester 1: unlock nether
+
+- First week of semester 2: unlock end
+
 ## Cosmetics Ideas
+
+hold back armor trims, sell them through shop instead, stop people from duplicating them
 
 - Pair of boots that shrink you and your jump
 - Pair of boots that expand you and your jump
@@ -94,14 +186,16 @@ Might be nice to make some challenges have multiple winners to encourage collabo
 - 4 leaf clover - increased fortune when held
 - longer invincibility frames
 - get speed effect after damage
-- zeus bolt - cooldown 2 hours - summons lightning at target pos
 - chance to light attackers on fire
-- when held, drags people underwater super quickly
 - double jump / triple jump
 - huge jump height
 - antidote vessel - decreases harmful effect duration
 - quiver - gives you infinity
 - swim in air while item held
+
+- zeus bolt - cooldown 2 hours - summons lightning at target pos
+- poseidons trident - when thrown, drags people underwater super quickly
+- hades grace - keep your items after death
 
 For more inspiration:
 - https://minecraft.wiki/w/Attribute#Armor_toughness

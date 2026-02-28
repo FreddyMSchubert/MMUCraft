@@ -72,3 +72,37 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 With some of these multiple players could get them at the same time, so we should in the ScoreKeeper just take record whenever theres a clear winner in the current result state, even if another player also wins a millisecond later, thus making winning together essentially randomize the winner.
 
 Might be nice to make some challenges have multiple winners to encourage collaboration.
+
+## Cosmetics Ideas
+
+- Pair of boots that shrink you and your jump
+- Pair of boots that expand you and your jump
+- Particle effects around player
+- Particle trail following player
+- Ability to put any item or block you want onto your head
+- Item that when held in offhand increases reach
+- Max health +x
+- youre always walking as if on ice
+- night vision hat
+- umbrella - slow falling when held
+- everlasting beef / eternal steak
+- snorkle - more water breathing
+- villager hat - reduced trade cost
+- more looting armor
+- more mount speed hat
+- anglers hat - more luck of the sea
+- 4 leaf clover - increased fortune when held
+- longer invincibility frames
+- get speed effect after damage
+- zeus bolt - cooldown 2 hours - summons lightning at target pos
+- chance to light attackers on fire
+- when held, drags people underwater super quickly
+- double jump / triple jump
+- huge jump height
+- antidote vessel - decreases harmful effect duration
+- quiver - gives you infinity
+- swim in air while item held
+
+For more inspiration:
+- https://minecraft.wiki/w/Attribute#Armor_toughness
+- https://minecraft.wiki/w/Enchanting

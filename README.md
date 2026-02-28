@@ -16,11 +16,11 @@ Making custom minecraft content isn't that hard with a fabric mod, so by adding 
 ## How
 
 Minecraft server setup
-- [Docker compose](https://www.docker.com/) spins up the following setup:
-- [Velocity](https://papermc.io/software/velocity/) Minecraft Server Proxy will connect players to currently active server pod
-- [K8s](https://kubernetes.io/) will maintain the currently running server (main or surprising saturday) and dynamically spin up one-off minigame worlds
+- [K8s](https://kubernetes.io/) will maintain all the following pods:
+- **Server pods**: the currently running server (main or surprising saturday) and dynamically spin up one-off minigame worlds
   - each pod will use a fabric server docker image with the mods already built in, built with pipelines from this repo
   - k8s cron to automatically switch out main for saturday server saturdays 
+- [Velocity](https://papermc.io/software/velocity/) Minecraft Server Proxy will connect players to currently active server pod
 - [RabbitMQ](https://www.rabbitmq.com/) will handle communication between k8s pods & ScoreKeeper (winners etc)
 - [nginx](https://nginx.org/) for a tiny web server that enables minigame world downloads
 - **ScoreKeeper** - Some centralized custom program that will

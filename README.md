@@ -44,6 +44,10 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - first death to void wins
 - start in end islands
 - upside down end gen
+- sky islands world gen
+- cave world world gen
+- superflat world gen
+- amplified world gen
 - you can only breathe when touching water or snow (even in cauldron), defeat ender dragon
 - the purge. played on copy of survival server, but anything done is reset at midnight. kill the most to win
 - lifesteal

@@ -68,7 +68,7 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - https://modrinth.com/datapack/chunklock
 - collect every type of flower
 - perma-night
-- a totally normal vanilla world (herobrine) -> https://modrinth.com/datapack/from-the-fog https://www.curseforge.com/minecraft/mc-mods/sever-side-horror
+- a totally normal vanilla world (herobrine) -> https://modrinth.com/datapack/from-the-fog https://www.curseforge.com/minecraft/mc-mods/sever-side-horror https://www.curseforge.com/minecraft/texture-packs/true-darkness
 - one block
 - summon herobrine
 - https://modrinth.com/mod/circumnavigate

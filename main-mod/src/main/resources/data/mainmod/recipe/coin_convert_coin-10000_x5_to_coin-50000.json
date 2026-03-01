@@ -1,0 +1,7 @@
+{
+  "type": "mainmod:coin_convert",
+  "from": "coin-10000",
+  "from_count": 5,
+  "to": "coin-50000",
+  "to_count": 1
+}

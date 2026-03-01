@@ -1,0 +1,104 @@
+{
+	"model": {
+		"type": "minecraft:select",
+		"property": "minecraft:custom_model_data",
+		"index": 0,
+		"cases": [
+			{
+				"when": "coin-1",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_1"
+				}
+			},
+			{
+				"when": "coin-5",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_5"
+				}
+			},
+			{
+				"when": "coin-10",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_10"
+				}
+			},
+			{
+				"when": "coin-50",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_50"
+				}
+			},
+			{
+				"when": "coin-100",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_100"
+				}
+			},
+			{
+				"when": "coin-500",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_500"
+				}
+			},
+			{
+				"when": "coin-1000",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_1000"
+				}
+			},
+			{
+				"when": "coin-5000",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_5000"
+				}
+			},
+			{
+				"when": "coin-10000",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_10000"
+				}
+			},
+			{
+				"when": "coin-50000",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_50000"
+				}
+			},
+			{
+				"when": "coin-100000",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_100000"
+				}
+			},
+			{
+				"when": "coin-500000",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_500000"
+				}
+			},
+			{
+				"when": "coin-1000000",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/coin_1000000"
+				}
+			}
+		],
+		"fallback": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/command_block"
+		}
+	}
+}

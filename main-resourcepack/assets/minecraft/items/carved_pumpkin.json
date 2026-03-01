@@ -1,0 +1,61 @@
+{
+	"model": {
+		"type": "minecraft:select",
+		"property": "minecraft:custom_model_data",
+		"cases": [
+			{
+				"when": "cosmetic-hat-villager-armorer",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/armorer_hat"
+				}
+			},
+			{
+				"when": "cosmetic-hat-villager-butcher",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/butcher_hat"
+				}
+			},
+			{
+				"when": "cosmetic-hat-villager-farmer",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/farmer_hat"
+				}
+			},
+			{
+				"when": "cosmetic-hat-villager-fisherman",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/fisherman_hat"
+				}
+			},
+			{
+				"when": "cosmetic-hat-villager-fletcher",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/fletcher_hat"
+				}
+			},
+			{
+				"when": "cosmetic-hat-villager-librarian",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/librarian_hat"
+				}
+			},
+			{
+				"when": "cosmetic-hat-villager-shepherd",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/shepherd_hat"
+				}
+			}
+		],
+		"fallback": {
+			"type": "minecraft:model",
+			"model": "minecraft:block/carved_pumpkin"
+		}
+	}
+}

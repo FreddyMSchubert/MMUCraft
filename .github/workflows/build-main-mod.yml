@@ -1,8 +1,8 @@
-name: build-man-mod
+name: build-main-mod
 on: [pull_request, push]
 
 jobs:
-  build-man-mod:
+  build-main-mod:
     defaults:
       run:
         shell: bash

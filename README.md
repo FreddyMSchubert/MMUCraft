@@ -193,6 +193,10 @@ Every day on the server forever, its scheduled, the border increases by 300 bloc
 
 hold back armor trims, sell them through shop instead, stop people from duplicating them
 
+we could also make a blueprint item that you need to find in the world which will unlock the cosmetic in the shop
+
+we could also do sale vouchers where you have a 20% discount on the item you buy while you have it in the inventory or something
+
 - Pair of boots that shrink you and your jump
 - Pair of boots that expand you and your jump
 - Particle effects around player

@@ -1,0 +1,37 @@
+{
+  "layers": {
+    "horse_body": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__open_heart"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__open_heart"
+      }
+    ],
+    "humanoid": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__open_heart"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__open_heart"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__open_heart"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__open_heart"
+      }
+    ]
+  }
+}

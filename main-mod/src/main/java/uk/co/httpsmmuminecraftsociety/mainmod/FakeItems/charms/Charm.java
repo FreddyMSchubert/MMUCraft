@@ -16,4 +16,6 @@ public interface Charm
     // called every tick when the charm is equipped, useful for ticking charm effects
     // return true from subscribeToOnTick for this to be anbled
     public ItemStack onTick(ItemStack stack, ServerPlayer player, ServerLevel level);
+
+    public ItemStack onEquipmentSlotChange(ServerPlayer player, ItemStack stack, int from, int to);
 }

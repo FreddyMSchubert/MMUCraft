@@ -106,6 +106,9 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - everyone shares a synced inventory trying to kill the dragon
 - every like 2 minutes your location is swapped with another player's
 - you can only break oak logs, stone, coal ore, iron ore, diamond ore, end stone, gravel, cactus; you can only place crafting table, furnace, obsidian, torch, oxidised copper stairs, TNT, oak boats, green beds. defeat dragon
+- monster hunter alphabet challenge - kill mobs in alphabetical order
+- fetchr / bingo full or only one line - maybe as gamemode
+- stack of block sin alphabetical order - add something for X + U + V, also kelp block, enable mob drop heads for z Zombie
 
 With some of these multiple players could get them at the same time, so we should in the ScoreKeeper just take record whenever theres a clear winner in the current result state, even if another player also wins a millisecond later, thus making winning together essentially randomize the winner.
 

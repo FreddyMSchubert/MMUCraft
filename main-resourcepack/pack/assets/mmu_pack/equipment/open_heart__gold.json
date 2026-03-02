@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "mmu_pack:gold__open_heart"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "mmu_pack:gold__open_heart"
+      }
+    ]
+  }
+}

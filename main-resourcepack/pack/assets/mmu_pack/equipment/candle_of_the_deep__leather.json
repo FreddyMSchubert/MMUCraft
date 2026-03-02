@@ -1,0 +1,37 @@
+{
+  "layers": {
+    "horse_body": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__candle_of_the_deep"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__candle_of_the_deep"
+      }
+    ],
+    "humanoid": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__candle_of_the_deep"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__candle_of_the_deep"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__candle_of_the_deep"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__candle_of_the_deep"
+      }
+    ]
+  }
+}

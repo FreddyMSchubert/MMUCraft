@@ -1,0 +1,1 @@
+python3 .\create_charm_armors.py --in . --out ../pack --namespace mmu_pack --overwrite

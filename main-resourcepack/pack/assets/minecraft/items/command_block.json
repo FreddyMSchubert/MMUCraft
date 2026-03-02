@@ -94,6 +94,20 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/coin_1000000"
 				}
+			},
+			{
+				"when": "cosmetic-charm-open-heart",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_open_heart"
+				}
+			},
+			{
+				"when": "cosmetic-charm-candle-of-the-deep",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_candle_of_the_deep"
+				}
 			}
 		],
 		"fallback": {

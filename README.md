@@ -222,6 +222,8 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - antidote vessel - decreases harmful effect duration
 - quiver - gives you infinity
 - swim in air while item held
+- ender chest / crafting table opening charm
+- spring-loaded shoes - set your jump height while sprinting above 1, allowing you to run up blocks. better than autojump cause autojump slows you down.
 
 - zeus bolt - cooldown 2 hours - summons lightning at target pos
 - poseidons trident - when thrown, drags people underwater super quickly
@@ -230,3 +232,4 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 For more inspiration:
 - https://minecraft.wiki/w/Attribute#Armor_toughness
 - https://minecraft.wiki/w/Enchanting
+- https://minecraft.wiki/w/Effect

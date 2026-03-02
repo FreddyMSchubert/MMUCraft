@@ -6,14 +6,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 
 import java.util.List;
+import java.util.UUID;
 
 public class Utils
 {
-    public static ItemStack createCustomModelDataItemStack(Item item, String customModelData)
+    public static UUID UUIDfromString(String s)
     {
-        ItemStack stack = new ItemStack(item);
-        stack.set(DataComponents.CUSTOM_MODEL_DATA,
-                new CustomModelData(List.of(), List.of(), List.of(customModelData), List.of()));
-        return stack;
+        return UUID.nameUUIDFromBytes(s.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 }

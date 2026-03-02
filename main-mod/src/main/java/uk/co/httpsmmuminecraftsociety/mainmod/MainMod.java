@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemsCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.CandleOfTheDeepCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.RunningShoesCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.OpenHeartCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 
@@ -35,28 +36,32 @@ public class MainMod implements ModInitializer {
         MainModRecipes.register();
     }
 
-    private static void tickItemStackIfIsCharm(ItemStack stack, ServerPlayer player, ServerLevel level) {
-        if (!stack.has(DataComponents.CUSTOM_DATA)) return;
+    private static ItemStack tickItemStackIfIsCharm(ItemStack stack, ServerPlayer player, ServerLevel level) {
+        if (!stack.has(DataComponents.CUSTOM_DATA)) return stack;
         CustomData cd = stack.get(DataComponents.CUSTOM_DATA);
-        if (cd.isEmpty()) return;
+        if (cd.isEmpty()) return stack;
         CompoundTag tag = cd.copyTag();
-        if (!tag.getBooleanOr("charm-ontickcallback", false)) return;
+        if (!tag.getBooleanOr(Utils.TAG_TICK, false)) return stack;
 
-        if (!stack.has(DataComponents.CUSTOM_MODEL_DATA)) return;
+        if (!stack.has(DataComponents.CUSTOM_MODEL_DATA)) return stack;
         CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(), List.of()));
-        if (cmd.strings().isEmpty() || cmd.strings().getFirst().isEmpty()) return;
+        if (cmd.strings().isEmpty() || cmd.strings().getFirst().isEmpty()) return stack;
         switch (cmd.strings().getFirst()) {
-            case "cosmetic-charm-candle-of-the-deep":
-                new CandleOfTheDeepCharm().onTick(stack, player, level);
+            case CandleOfTheDeepCharm.CANDLE_OF_THE_DEEP_CHARM_ID:
+                stack = new CandleOfTheDeepCharm().onTick(stack, player, level);
                 break;
-            case "open_heart_charm_health_boost":
-                new OpenHeartCharm().onTick(stack, player, level);
+            case OpenHeartCharm.OPEN_HEART_CHARM_ID:
+                stack = new OpenHeartCharm().onTick(stack, player, level);
+                break;
+            case RunningShoesCharm.FROST_WALKER_CHARM_ID:
+                stack = new RunningShoesCharm().onTick(stack, player, level);
                 break;
         }
+        return stack;
     }
     private static void onPlayerTick(ServerLevel server) {
         for (ServerPlayer player : server.players())
             for (EquipmentSlot slot : EquipmentSlot.values())
-                tickItemStackIfIsCharm(player.getItemBySlot(slot), player, server);
+                player.setItemSlot(slot, tickItemStackIfIsCharm(player.getItemBySlot(slot), player, server));
     }
 }

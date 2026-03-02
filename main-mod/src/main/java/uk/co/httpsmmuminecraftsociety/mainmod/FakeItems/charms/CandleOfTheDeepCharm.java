@@ -11,19 +11,24 @@ import net.minecraft.world.item.component.CustomData;
 
 public class CandleOfTheDeepCharm implements Charm
 {
+    public static final String CANDLE_OF_THE_DEEP_CHARM_ID = "cosmetic-charm-candle-of-the-deep";
+
     @Override
     public String id()
     {
-        return "cosmetic-charm-candle-of-the-deep";
+        return CANDLE_OF_THE_DEEP_CHARM_ID;
     }
 
     @Override
     public ItemStack onCreation(ItemStack stack)
     {
-        CompoundTag tag = new CompoundTag();
-        tag.putBoolean("charm-ontickcallback", true);
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return stack;
+    }
+
+    @Override
+    public boolean subcribeToOnTick()
+    {
+        return true;
     }
 
     @Override

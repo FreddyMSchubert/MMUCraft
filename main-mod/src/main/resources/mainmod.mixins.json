@@ -3,7 +3,7 @@
 	"package": "uk.co.httpsmmuminecraftsociety.mainmod.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+      "ExampleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

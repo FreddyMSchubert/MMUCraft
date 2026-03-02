@@ -1,26 +1,26 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.Equippable;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.CandleOfTheDeepCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.RunningShoesCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.OpenHeartCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,6 +50,7 @@ public final class FakeItems {
             createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-librarian","Librarian Hat",  "", Rarity.COMMON, 1),
             createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-shepherd","Shepherd Hat",  "", Rarity.COMMON, 1),
             createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Open Heart Charm", "Blessed be the pacemakers", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.CHEST).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "open_heart__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new OpenHeartCharm()),
+            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Running Shoes", "Been there, run that.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "running_shoes__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new RunningShoesCharm()),
             createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Candle of the Deep Charm", "Light on your feet.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.LEGS).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "candle_of_the_deep__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new CandleOfTheDeepCharm())
     );
     private static final Map<String, FakeItemDef> BY_ID =
@@ -61,9 +62,6 @@ public final class FakeItems {
         return d;
     }
 
-    public static ItemStack createStack(String id) {
-        return createStack(id, 1);
-    }
     public static ItemStack createStack(String id, int amount) {
         FakeItemDef d = def(id);
         ItemStack stack = new ItemStack(d.baseItem, amount);
@@ -104,6 +102,14 @@ public final class FakeItems {
 
         if (d.charm().isPresent()) {
             stack = d.charm().get().onCreation(stack);
+
+            if (d.charm().get().subcribeToOnTick())
+            {
+                CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+                CompoundTag tag = cd.copyTag();
+                tag.putBoolean(Utils.TAG_TICK, true);
+                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+            }
         }
 
         return stack;

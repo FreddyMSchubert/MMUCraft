@@ -13,10 +13,12 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 public class OpenHeartCharm implements Charm
 {
+    public static final String OPEN_HEART_CHARM_ID = "cosmetic-charm-open-heart";
+
     @Override
     public String id()
     {
-        return "cosmetic-charm-open-heart";
+        return OPEN_HEART_CHARM_ID;
     }
 
     @Override
@@ -33,6 +35,12 @@ public class OpenHeartCharm implements Charm
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attrs);
 
         return stack;
+    }
+
+    @Override
+    public boolean subcribeToOnTick()
+    {
+        return false;
     }
 
     @Override

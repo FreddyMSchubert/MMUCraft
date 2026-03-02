@@ -15,10 +15,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.Equippable;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.CandleOfTheDeepCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.RunningShoesCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.OpenHeartCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
@@ -51,7 +48,10 @@ public final class FakeItems {
             createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-shepherd","Shepherd Hat",  "", Rarity.COMMON, 1),
             createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Open Heart Charm", "Blessed be the pacemakers", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.CHEST).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "open_heart__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new OpenHeartCharm()),
             createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Running Shoes", "Been there, run that.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "running_shoes__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new RunningShoesCharm()),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Candle of the Deep Charm", "Light on your feet.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.LEGS).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "candle_of_the_deep__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new CandleOfTheDeepCharm())
+            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Candle of the Deep Charm", "Light on your feet.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.LEGS).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "candle_of_the_deep__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new CandleOfTheDeepCharm()),
+            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Hiking Boots Charm", "Ever heard of a shortcut?", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(0)),
+            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Golden Hiking Boots Charm", "That's one pretty big step for man.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "golden_hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(1)),
+            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Diamond Hiking Boots Charm", "You don't ever-rest do you...", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "diamond_hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(2))
     );
     private static final Map<String, FakeItemDef> BY_ID =
             ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItemDef::id, d -> d));

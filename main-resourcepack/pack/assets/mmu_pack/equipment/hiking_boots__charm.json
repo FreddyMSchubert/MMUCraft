@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "mmu_pack:hiking_boots"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "mmu_pack:hiking_boots"
+      }
+    ]
+  }
+}

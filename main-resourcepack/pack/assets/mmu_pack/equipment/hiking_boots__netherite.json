@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "mmu_pack:netherite__hiking_boots"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "mmu_pack:netherite__hiking_boots"
+      }
+    ]
+  }
+}

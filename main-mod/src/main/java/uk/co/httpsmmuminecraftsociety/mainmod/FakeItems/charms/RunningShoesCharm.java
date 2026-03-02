@@ -15,12 +15,12 @@ import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 public final class RunningShoesCharm implements Charm {
     public static final String FROST_WALKER_CHARM_ID = "cosmetic-charm-running-shoes";
 
-    public static final int CHARGE_GAIN_PER_TICK = 3;
-    public static final int CHARGE_DRAIN_PER_TICK = 12;
+    public static final int CHARGE_GAIN_PER_TICK = 1;
+    public static final int CHARGE_DRAIN_PER_TICK = 25;
 
-    public static final int MAX_CHARGE = 268;
+    public static final int MAX_CHARGE = 123;
 
-    private static final String TAG_CHARGE = "fw_charge";
+    private static final String TAG_CHARGE = "rb_charge";
 
     private static final Identifier SPEED_ID = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "frost_walker_speed_id");
 

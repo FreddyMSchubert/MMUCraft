@@ -1,0 +1,37 @@
+{
+  "layers": {
+    "horse_body": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__hiking_boots"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__hiking_boots"
+      }
+    ],
+    "humanoid": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__hiking_boots"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__hiking_boots"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "dyeable": {
+          "color_when_undyed": -6265536
+        },
+        "texture": "mmu_pack:leather__hiking_boots"
+      },
+      {
+        "texture": "mmu_pack:leather_overlay__hiking_boots"
+      }
+    ]
+  }
+}

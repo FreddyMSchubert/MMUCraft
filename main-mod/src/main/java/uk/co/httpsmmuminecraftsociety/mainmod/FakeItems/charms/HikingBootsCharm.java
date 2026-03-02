@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +45,7 @@ public class HikingBootsCharm implements Charm
     @Override
     public boolean subcribeToOnTick()
     {
-        return true;
+        return false;
     }
 
     public static float getStepHeightForLevel(int level) {
@@ -60,11 +61,29 @@ public class HikingBootsCharm implements Charm
     @Override
     public ItemStack onTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
-        CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-        CompoundTag tag = cd.copyTag();
-        int itemLevel = tag.getIntOr(TAG_LEVEL, 0);
-        Utils.applyModifier(player, Attributes.STEP_HEIGHT, STEP_ID, getStepHeightForLevel(itemLevel), AttributeModifier.Operation.ADD_VALUE);
+        return null;
+    }
 
-        return stack;
+    @Override
+    public ItemStack onEquipmentSlotChange(ServerPlayer player, ItemStack stack, int from, int to)
+    {
+        // check if its in a relevant slot. if not, remove
+        boolean shouldApplyEffect = false;
+        for (EquipmentSlot slot : EquipmentSlot.values())
+        {
+            if (player.getItemBySlot(slot) == stack){
+                shouldApplyEffect = true;
+                break;
+            }
+        }
+
+        if (shouldApplyEffect) {
+            int itemLevel = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getIntOr(TAG_LEVEL, 0);
+            Utils.applyModifier(player, Attributes.STEP_HEIGHT, STEP_ID, getStepHeightForLevel(itemLevel), AttributeModifier.Operation.ADD_VALUE);
+        } else {
+            Utils.removeModifier(player, Attributes.STEP_HEIGHT, STEP_ID);
+        }
+
+        return null;
     }
 }

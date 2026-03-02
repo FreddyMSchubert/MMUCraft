@@ -69,4 +69,10 @@ public final class RunningShoesCharm implements Charm {
 
         return stack;
     }
+
+    @Override
+    public ItemStack onEquipmentSlotChange(ServerPlayer player, ItemStack stack, int from, int to)
+    {
+        return null;
+    }
 }

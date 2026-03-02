@@ -48,4 +48,10 @@ public class OpenHeartCharm implements Charm
     {
         return null;
     }
+
+    @Override
+    public ItemStack onEquipmentSlotChange(ServerPlayer player, ItemStack stack, int from, int to)
+    {
+        return null;
+    }
 }

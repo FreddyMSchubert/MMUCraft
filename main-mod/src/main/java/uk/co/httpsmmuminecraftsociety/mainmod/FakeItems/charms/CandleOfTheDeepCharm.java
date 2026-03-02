@@ -1,13 +1,10 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms;
 
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 
 public class CandleOfTheDeepCharm implements Charm
 {
@@ -46,5 +43,11 @@ public class CandleOfTheDeepCharm implements Charm
         );
         player.addEffect(inst);
         return stack;
+    }
+
+    @Override
+    public ItemStack onEquipmentSlotChange(ServerPlayer player, ItemStack stack, int from, int to)
+    {
+        return null;
     }
 }

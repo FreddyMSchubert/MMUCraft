@@ -44,8 +44,14 @@ public class OpenHeartCharm implements Charm
     }
 
     @Override
-    public ItemStack onTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
         return null;
+    }
+
+    @Override
+    public void tick(ServerPlayer player, ServerLevel level)
+    {
+        return;
     }
 }

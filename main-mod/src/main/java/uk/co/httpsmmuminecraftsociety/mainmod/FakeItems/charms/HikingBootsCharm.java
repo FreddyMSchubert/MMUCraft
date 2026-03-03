@@ -5,10 +5,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
@@ -34,17 +36,24 @@ public class HikingBootsCharm implements Charm
     @Override
     public ItemStack onCreation(ItemStack stack)
     {
-        CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-        CompoundTag tag = cd.copyTag();
-        tag.putInt(TAG_LEVEL, level);
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        AttributeModifier mod = new AttributeModifier(
+                Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "hiking_boots_step_height"),
+                getStepHeightForLevel(this.level),
+                AttributeModifier.Operation.ADD_VALUE
+        );
+
+        ItemAttributeModifiers attrs = ItemAttributeModifiers.builder()
+                .add(Attributes.STEP_HEIGHT, mod, EquipmentSlotGroup.FEET)
+                .build();
+
+        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attrs);
         return stack;
     }
 
     @Override
     public boolean subcribeToOnTick()
     {
-        return true;
+        return false;
     }
 
     public static float getStepHeightForLevel(int level) {
@@ -58,13 +67,14 @@ public class HikingBootsCharm implements Charm
     }
 
     @Override
-    public ItemStack onTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
-        CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-        CompoundTag tag = cd.copyTag();
-        int itemLevel = tag.getIntOr(TAG_LEVEL, 0);
-        Utils.applyModifier(player, Attributes.STEP_HEIGHT, STEP_ID, getStepHeightForLevel(itemLevel), AttributeModifier.Operation.ADD_VALUE);
-
         return stack;
+    }
+
+    @Override
+    public void tick(ServerPlayer player, ServerLevel level)
+    {
+        return;
     }
 }

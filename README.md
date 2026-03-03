@@ -88,6 +88,7 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - you can only breathe when touching water or snow (even in cauldron), defeat ender dragon
 - the purge. played on copy of survival server, but anything done is reset at midnight. kill the most to win
 - lifesteal
+- catch as many unique fish as possible
 - hardcore
 - every half an hour another players pos is revealed in chat. person who kills them gets a point. most points wins
 - who can get the most of item x in their ender chest (e.g. watermelons)
@@ -236,3 +237,28 @@ For more inspiration:
 - https://minecraft.wiki/w/Attribute#Armor_toughness
 - https://minecraft.wiki/w/Enchanting
 - https://minecraft.wiki/w/Effect
+
+## Fishing Changes
+
+More Fish, more junk, more treasure
+Different Fish Loottables for Warm, Cold, Temperate, End
+
+Advancements
+- Catch all
+- Catch a common / uncommon / rare / epic / legendary / mythical
+- Every non-common fish can have an advancement
+
+Cool stuff to fish up
+- Trident Prongue -> craft a trident with it (trident prongue, trident hilt dropped by elder guardian)
+- Kranken tentacle / beak (damages) / eye
+- Megalodon tooth
+- Unrecognizable megalodon victim remains
+- Loch Ness Monster Remains - oak log
+- Driftwood
+- Half-broken sword (called murder weapon)
+- ancient battle axe
+- message in a bottle
+
+### Potentially
+
+Completion Book with all fish

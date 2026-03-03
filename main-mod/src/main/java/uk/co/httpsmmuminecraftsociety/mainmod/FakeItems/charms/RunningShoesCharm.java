@@ -62,7 +62,10 @@ public final class RunningShoesCharm implements Charm {
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
         if (charge > 0) {
-            Utils.applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID, charge / 100.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            // account for no overlap with leprechaun boots charm, which also modifies movement speed
+            double normalBaseSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue();
+            double intendedSpeed = normalBaseSpeed + (charge / 100.0 * normalBaseSpeed);
+            Utils.applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID, intendedSpeed - player.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), AttributeModifier.Operation.ADD_VALUE);
         }
 
         return stack;

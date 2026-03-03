@@ -262,3 +262,47 @@ Cool stuff to fish up
 ### Potentially
 
 Completion Book with all fish
+
+## Progression Changes
+
+### Enchanting
+
+villagers dont drop enchanted books anymore. instead, get them from structures at increased reliable chances.
+you can put enchanted books on lecterns, and the corresponding librarian will offer that trade at high price but reset anvil cost, but will add a random curse to it. This can be removed with the cursebreaker tome.
+
+- looting -> Nether Fortress
+- sharpness -> Trial Chamber
+- fortune -> Crafted with coal block, copper block, emerald block, gold block, iron block, lapis block, diamond block, quartz block, redstone block
+- mending -> ancient city
+- protection -> end city
+- unbreaking -> woodland mansion
+- power -> bastions
+- efficiency -> stronghold
+- aqua affinity -> ocean monument (dropped by guardians)
+- respiration -> shipwrecks
+- depth strider -> ocean ruins
+- charm power (custom, more charms per armor) -> trail ruins
+- silk touch -> jungle temple
+- feather falling -> desert temple
+
+There are tomes (inspired by quarks mod), which can increase some enchantments even further than normal vanilla max.
+A sniffer drops a new item, a bulb of ancient magic. Craft it together with an enchanted book of the right type and the right mob drop to make the tome.
+tomes can be applied at anvils for 30 levels and no increased item xp cost.
+
+- cursebreaker -> ???
+- feather falling -> ???
+- thorns -> ???
+- sharpness -> breeze rod
+- smite -> ???
+- bane of arthropods -> fermented spider eye
+- Knockback -> ???
+- Fire Aspect -> fire charge
+- Looting -> Wither star
+- sweeping edge -> ???
+- efficiency -> ???
+- unbreaking -> totem of undying
+- fortune -> netherite ingot
+- power -> ???
+- punch -> ???
+- luck of the sea -> heart of the sea
+- lure -> ???

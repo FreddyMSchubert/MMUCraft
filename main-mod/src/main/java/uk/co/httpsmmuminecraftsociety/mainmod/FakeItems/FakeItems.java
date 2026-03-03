@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public final class FakeItems {
     private FakeItems() {}
 
+    public static List<FakeItemDef> ABILITY_ITEMS = new ArrayList<>();
     public static final List<FakeItemDef> ALL = List.of(
             createFakeItemDef(Items.COMMAND_BLOCK, "coin-1",      "1 Dabloon",    "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
             createFakeItemDef(Items.COMMAND_BLOCK, "coin-5",      "5 Dabloons",   "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
@@ -49,8 +50,8 @@ public final class FakeItems {
             createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Open Heart Charm", "Blessed be the pacemakers", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.CHEST).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "open_heart__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new OpenHeartCharm()),
             createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Running Shoes", "Been there, run that.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "running_shoes__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new RunningShoesCharm()),
             createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Candle of the Deep Charm", "Light on your feet.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.LEGS).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "candle_of_the_deep__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new CandleOfTheDeepCharm()),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Hiking Boots Charm", "Ever heard of a shortcut?", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(0)),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Golden Hiking Boots Charm", "That's one pretty big step for man.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "golden_hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(1)),
+            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Hiking Boots Charm", "That's one pretty big step for man.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(0)),
+            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Golden Hiking Boots Charm", "Ever heard of a shortcut?", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "golden_hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(1)),
             createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Diamond Hiking Boots Charm", "You don't ever-rest do you...", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "diamond_hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(2))
     );
     private static final Map<String, FakeItemDef> BY_ID =
@@ -86,7 +87,9 @@ public final class FakeItems {
         return new FakeItemDef(baseItem, id, Component.literal(title), List.of(Component.literal(loreLine)), rarity, maxStackSize, Optional.empty(), Optional.empty());
     }
     private static FakeItemDef createFakeEquippableItemDef(Item baseItem, String title, String loreLine, Rarity rarity, int maxStackSize, Equippable equippableSettings, Charm charm) {
-        return new FakeItemDef(baseItem, charm.id(), Component.literal(title), List.of(Component.literal(loreLine)), rarity, maxStackSize, Optional.of(equippableSettings), Optional.of(charm));
+        FakeItemDef def = new FakeItemDef(baseItem, charm.id(), Component.literal(title), List.of(Component.literal(loreLine)), rarity, maxStackSize, Optional.of(equippableSettings), Optional.of(charm));
+        ABILITY_ITEMS.add(def);
+        return def;
     }
 
 

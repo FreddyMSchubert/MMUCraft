@@ -15,5 +15,7 @@ public interface Charm
 
     // called every tick when the charm is equipped, useful for ticking charm effects
     // return true from subscribeToOnTick for this to be anbled
-    public ItemStack onTick(ItemStack stack, ServerPlayer player, ServerLevel level);
+    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level);
+
+    public void tick(ServerPlayer player, ServerLevel level);
 }

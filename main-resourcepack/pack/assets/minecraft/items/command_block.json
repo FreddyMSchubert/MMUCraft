@@ -108,6 +108,48 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/charm/cosmetic_charm_candle_of_the_deep"
 				}
+			},
+			{
+				"when": "cosmetic-charm-running-shoes",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_running_shoes"
+				}
+			},
+			{
+				"when": "cosmetic-charm-hiking-boots-0",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_hiking_boots"
+				}
+			},
+			{
+				"when": "cosmetic-charm-hiking-boots-1",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_golden_hiking_boots"
+				}
+			},
+			{
+				"when": "cosmetic-charm-hiking-boots-2",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_diamond_hiking_boots"
+				}
+			},
+			{
+				"when": "cosmetic-charm-giants-boots",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_giants_boots"
+				}
+			},
+			{
+				"when": "cosmetic-charm-leprechaun-boots",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_leprechaun_boots"
+				}
 			}
 		],
 		"fallback": {

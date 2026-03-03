@@ -37,7 +37,7 @@ public class HikingBootsCharm implements Charm
     public ItemStack onCreation(ItemStack stack)
     {
         AttributeModifier mod = new AttributeModifier(
-                Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "hiking_boots_step_height"),
+                STEP_ID,
                 getStepHeightForLevel(this.level),
                 AttributeModifier.Operation.ADD_VALUE
         );

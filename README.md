@@ -278,7 +278,7 @@ you can put enchanted books on lecterns, and the corresponding librarian will of
 - unbreaking -> woodland mansion
 - power -> bastions
 - efficiency -> stronghold
-- aqua affinity -> ocean monument (dropped by guardians)
+- aqua affinity -> ocean monument (dropped by elder guardians)
 - respiration -> shipwrecks
 - depth strider -> ocean ruins
 - charm power (custom, more charms per armor) -> trail ruins
@@ -286,23 +286,31 @@ you can put enchanted books on lecterns, and the corresponding librarian will of
 - feather falling -> desert temple
 
 There are tomes (inspired by quarks mod), which can increase some enchantments even further than normal vanilla max.
-A sniffer drops a new item, a bulb of ancient magic. Craft it together with an enchanted book of the right type and the right mob drop to make the tome.
+A sniffer drops a new item, a bulb of ancient magic. Craft it together with an enchanted book of the right type and the right mob drop to make the tome and 6 diamonds.
 tomes can be applied at anvils for 30 levels and no increased item xp cost.
 
-- cursebreaker -> ???
-- feather falling -> ???
-- thorns -> ???
-- sharpness -> breeze rod
-- smite -> ???
-- bane of arthropods -> fermented spider eye
-- Knockback -> ???
+- cursebreaker -> purification rune from archeology or fishing or chests or sometimes traded from max level librarians
+- feather falling -> parrot feather
+- thorns -> guardian gear dropped from normal guardians
+- sharpness -> ancient sword from fishing
+- smite -> wither star
+- bane of arthropods -> ender mite mousse
+- Knockback -> breeze rod
 - Fire Aspect -> fire charge
 - Looting -> Wither star
-- sweeping edge -> ???
-- efficiency -> ???
+- sweeping edge -> ancient blade from archaeology
+- efficiency -> silverfish shell dropped from silverfish
 - unbreaking -> totem of undying
 - fortune -> netherite ingot
-- power -> ???
-- punch -> ???
+- power -> piglin head
+- punch -> skeleton head
 - luck of the sea -> heart of the sea
-- lure -> ???
+- lure -> prismarine shard
+
+### Information
+
+Information on changes to the base game are all documented in a wiki page on the website. Initially almost all the paragraphs are obfuscated, you gotta get a lost page and use it which removes it and unlocks a random info paragraph. You can get lost pages from:
+- Loot
+- Archaeology
+- Fishing
+- Buy in shop

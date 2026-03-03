@@ -7,7 +7,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
 import java.util.List;
@@ -26,13 +25,19 @@ public class CharmsManager
         {
             if (def.charm().isEmpty()) continue;
             if (!cmd.strings().getFirst().startsWith(def.charm().get().id())) continue;
-            stack = def.charm().get().onTick(stack, player, level);
+            stack = def.charm().get().equippedTick(stack, player, level);
         }
 
         return stack;
     }
     public static void onPlayerTick(ServerLevel server) {
         for (ServerPlayer player : server.players()) {
+            // pretick even if unequipped
+            for (FakeItems.FakeItemDef def : FakeItems.ABILITY_ITEMS) {
+                def.charm().get().tick(player, server);
+            }
+
+            // tick actually present stuff
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 ItemStack current = player.getItemBySlot(slot);
                 if (current.isEmpty()) continue;
@@ -44,18 +49,6 @@ public class CharmsManager
                     player.setItemSlot(slot, updated);
                 }
             }
-        }
-    }
-
-    public static void onItemStackSlotChange(ServerPlayer player, ItemStack stack, int from, int to) {
-        if (!stack.has(DataComponents.CUSTOM_MODEL_DATA)) return;
-        CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(), List.of()));
-        if (cmd.strings().isEmpty() || cmd.strings().getFirst().isEmpty()) return;
-        for (FakeItems.FakeItemDef def : FakeItems.ALL)
-        {
-            if (def.charm().isEmpty()) continue;
-            if (!cmd.strings().getFirst().startsWith(def.charm().get().id())) continue;
-            stack = def.charm().get().onEquipmentSlotChange(player, stack, from, to);
         }
     }
 }

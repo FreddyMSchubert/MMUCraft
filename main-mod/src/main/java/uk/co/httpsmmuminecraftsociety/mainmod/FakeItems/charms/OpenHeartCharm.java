@@ -44,14 +44,14 @@ public class OpenHeartCharm implements Charm
     }
 
     @Override
-    public ItemStack onTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
         return null;
     }
 
     @Override
-    public ItemStack onEquipmentSlotChange(ServerPlayer player, ItemStack stack, int from, int to)
+    public void tick(ServerPlayer player, ServerLevel level)
     {
-        return null;
+        return;
     }
 }

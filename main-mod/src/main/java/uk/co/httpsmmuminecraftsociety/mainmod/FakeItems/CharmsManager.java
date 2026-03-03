@@ -7,6 +7,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
 import java.util.List;
@@ -21,11 +24,12 @@ public class CharmsManager
         if (!stack.has(DataComponents.CUSTOM_MODEL_DATA)) return stack;
         CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(), List.of()));
         if (cmd.strings().isEmpty() || cmd.strings().getFirst().isEmpty()) return stack;
-        for (FakeItems.FakeItemDef def : FakeItems.ALL)
+        for (FakeItem def : FakeItems.ALL)
         {
-            if (def.charm().isEmpty()) continue;
-            if (!cmd.strings().getFirst().startsWith(def.charm().get().id())) continue;
-            stack = def.charm().get().equippedTick(stack, player, level);
+            if (!(def instanceof CharmFakeItem charmFakeItem)) continue;
+            Charm charm = charmFakeItem.getCharm();
+            if (!cmd.strings().getFirst().startsWith(charm.id())) continue;
+            stack = charm.equippedTick(stack, player, level);
         }
 
         return stack;
@@ -33,8 +37,9 @@ public class CharmsManager
     public static void onPlayerTick(ServerLevel server) {
         for (ServerPlayer player : server.players()) {
             // pretick even if unequipped
-            for (FakeItems.FakeItemDef def : FakeItems.ABILITY_ITEMS) {
-                def.charm().get().tick(player, server);
+            for (FakeItem def : FakeItems.ALL) {
+                if (!(def instanceof CharmFakeItem charmFakeItem)) continue;
+                charmFakeItem.getCharm().tick(player, server);
             }
 
             // tick actually present stuff

@@ -1,23 +1,11 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems;
 
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.CustomModelData;
-import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.equipment.EquipmentAssets;
-import net.minecraft.world.item.equipment.Equippable;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.BasicFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CosmeticFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.EquippableCharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.*;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
-import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,98 +13,35 @@ import java.util.stream.Collectors;
 public final class FakeItems {
     private FakeItems() {}
 
-    public static List<FakeItemDef> ABILITY_ITEMS = new ArrayList<>();
-    public static final List<FakeItemDef> ALL = List.of(
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-1",      "1 Dabloon",    "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-5",      "5 Dabloons",   "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-10",     "10 Dabloons",  "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-50",     "50 Dabloons",  "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-100",    "100 Dabloons", "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-500",    "500 Dabloons", "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-1000",   "1k Dabloons",  "Official MMU Minecraft Society Mint Issue", Rarity.UNCOMMON, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-5000",   "5k Dabloons",  "Official MMU Minecraft Society Mint Issue", Rarity.UNCOMMON, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-10000",  "10k Dabloons", "Official MMU Minecraft Society Mint Issue", Rarity.RARE, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-50000",  "50k Dabloons", "Official MMU Minecraft Society Mint Issue", Rarity.RARE, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-100000", "100k Dabloons","Official MMU Minecraft Society Mint Issue", Rarity.EPIC, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-500000", "500k Dabloons","Official MMU Minecraft Society Mint Issue", Rarity.EPIC, 50),
-            createFakeItemDef(Items.COMMAND_BLOCK, "coin-1000000","1m Dabloons",  "With all the money in the world, you still can't buy yourself a soul.", Rarity.EPIC, 50),
-            createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-armorer","Armorer Goggles",  "", Rarity.COMMON, 1),
-            createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-butcher","Butcher Headband",  "", Rarity.COMMON, 1),
-            createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-farmer","Farmer Straw hat",  "", Rarity.COMMON, 1),
-            createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-fisherman","Fisherman Hat",  "", Rarity.COMMON, 1),
-            createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-fletcher","Fletcher Hat",  "", Rarity.COMMON, 1),
-            createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-librarian","Librarian Hat",  "", Rarity.COMMON, 1),
-            createFakeItemDef(Items.CARVED_PUMPKIN, "cosmetic-hat-villager-shepherd","Shepherd Hat",  "", Rarity.COMMON, 1),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Open Heart Charm", "Blessed be the pacemakers", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.CHEST).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "open_heart__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new OpenHeartCharm()),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Running Shoes", "Been there, run that.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "running_shoes__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new RunningShoesCharm()),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Candle of the Deep Charm", "Light on your feet.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.LEGS).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "candle_of_the_deep__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new CandleOfTheDeepCharm()),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Hiking Boots Charm", "That's one pretty big step for man.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(0)),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Golden Hiking Boots Charm", "Ever heard of a shortcut?", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "golden_hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(1)),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Diamond Hiking Boots Charm", "You don't ever-rest do you...", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "diamond_hiking_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new HikingBootsCharm(2)),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Giant's Boots Charm", "These boots are made for walkin'", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "giants_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new GiantsBootsCharm()),
-            createFakeEquippableItemDef(Items.COMMAND_BLOCK, "Leprechaun Boots Charm", "I'm feeling lucky.", Rarity.UNCOMMON, 1, Equippable.builder(EquipmentSlot.FEET).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, "leprechaun_boots__charm"))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build(), new LeprechaunBootsCharm())
+    public static final List<FakeItem> ALL = List.of(
+            new BasicFakeItem("coin-1",      "1 Dabloon",     Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"Might turn to a million and we all rich\""),
+            new BasicFakeItem("coin-5",      "5 Dabloons",    Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"I ain't no fortunate one, no\""),
+            new BasicFakeItem("coin-10",     "10 Dabloons",   Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"I want to buy you somethin' - But I don't have any money\""),
+            new BasicFakeItem("coin-50",     "50 Dabloons",   Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"We just wanna make the world dance\""),
+            new BasicFakeItem("coin-100",    "100 Dabloons",  Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"Mo money, mo problems.\""),
+            new BasicFakeItem("coin-500",    "500 Dabloons",  Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"It's a crime.\""),
+            new BasicFakeItem("coin-1000",   "1k Dabloons",   Rarity.UNCOMMON, 50,  "Official MMU Minecraft Society Mint Issue", "\"If I was a rich girl\""),
+            new BasicFakeItem("coin-5000",   "5k Dabloons",   Rarity.UNCOMMON, 50,  "Official MMU Minecraft Society Mint Issue", "\"Must be funny\""),
+            new BasicFakeItem("coin-10000",  "10k Dabloons",  Rarity.RARE,     50,  "Official MMU Minecraft Society Mint Issue", "\"that's money, honey\""),
+            new BasicFakeItem("coin-50000",  "50k Dabloons",  Rarity.RARE,     50,  "Official MMU Minecraft Society Mint Issue", "\"If you catch me at the border, I got visas in my name\""),
+            new BasicFakeItem("coin-100000", "100k Dabloons", Rarity.EPIC,     50,  "Official MMU Minecraft Society Mint Issue", "\"I want it, I got it, I want it, I got it (baby)\""),
+            new BasicFakeItem("coin-500000", "500k Dabloons", Rarity.EPIC,     50,  "Official MMU Minecraft Society Mint Issue", "\"'Cause we are living in a material world\""),
+            new BasicFakeItem("coin-1000000","1m Dabloons",   Rarity.EPIC,     50,  "Official MMU Minecraft Society Mint Issue", "\"Money is the anthem of success - So before we go out, what's your address?\""),
+            new CosmeticFakeItem("cosmetic-hat-villager-armorer",  "Armorer Goggles",   Rarity.COMMON),
+            new CosmeticFakeItem("cosmetic-hat-villager-butcher",  "Butcher Headband",  Rarity.COMMON),
+            new CosmeticFakeItem("cosmetic-hat-villager-farmer",   "Farmer Straw hat",  Rarity.COMMON),
+            new CosmeticFakeItem("cosmetic-hat-villager-fisherman","Fisherman Hat",     Rarity.COMMON),
+            new CosmeticFakeItem("cosmetic-hat-villager-fletcher", "Fletcher Hat",      Rarity.COMMON),
+            new CosmeticFakeItem("cosmetic-hat-villager-librarian","Librarian Hat",     Rarity.COMMON),
+            new CosmeticFakeItem("cosmetic-hat-villager-shepherd", "Shepherd Hat",      Rarity.COMMON),
+            new EquippableCharmFakeItem("Open Heart Charm",           Rarity.UNCOMMON, "open_heart__charm",           new OpenHeartCharm(),          "Blessed be the pacemakers",           "Grants the user extra life."),
+            new EquippableCharmFakeItem("Running Shoes",              Rarity.UNCOMMON, "running_shoes__charm",        new RunningShoesCharm(),       "Been there, run that.",               "Enhances the user's mobility."),
+            new EquippableCharmFakeItem("Candle of the Deep Charm",   Rarity.UNCOMMON, "candle_of_the_deep__charm",   new CandleOfTheDeepCharm(),    "Light on your feet.",                "Illuminates the area around the user."),
+            new EquippableCharmFakeItem("Hiking Boots Charm",         Rarity.UNCOMMON, "hiking_boots__charm",         new HikingBootsCharm(0),  "That's one pretty big step for man.", "Allows the user walk up one-block high obstacles without jumping."),
+            new EquippableCharmFakeItem("Golden Hiking Boots Charm",  Rarity.UNCOMMON, "golden_hiking_boots__charm",  new HikingBootsCharm(1),  "Ever heard of a shortcut?",           "Allows the user walk up fence-high obstacles without jumping."),
+            new EquippableCharmFakeItem("Diamond Hiking Boots Charm", Rarity.UNCOMMON, "diamond_hiking_boots__charm", new HikingBootsCharm(2),  "You don't ever-rest do you...",       "Allows the user walk up two-block high obstacles without jumping."),
+            new EquippableCharmFakeItem("Giant's Boots Charm",        Rarity.UNCOMMON, "giants_boots__charm",         new GiantsBootsCharm(),        "These boots are made for walkin'",     "Grants the user the lost power of the ancient giants."),
+            new EquippableCharmFakeItem("Leprechaun Boots Charm",     Rarity.UNCOMMON, "leprechaun_boots__charm",     new LeprechaunBootsCharm(),    "I'm feeling lucky.",                   "Irish people are weird dude.")
     );
-    private static final Map<String, FakeItemDef> BY_ID =
-            ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItemDef::id, d -> d));
-
-    public static FakeItemDef def(String id) {
-        FakeItemDef d = BY_ID.get(id);
-        if (d == null) throw new IllegalArgumentException("Unknown fake item id: " + id);
-        return d;
-    }
-
-    public static ItemStack createStack(String id, int amount) {
-        FakeItemDef d = def(id);
-        ItemStack stack = new ItemStack(d.baseItem, amount);
-
-        stack = applyComponents(stack, d);
-
-        return stack;
-    }
-
-    public record FakeItemDef(
-            Item baseItem,
-            String id,
-            Component title,
-            List<Component> lore,
-            Rarity rarity,
-            int maxStackSize,
-            Optional<Equippable> equippableSettings,
-            Optional<Charm> charm
-    ) {}
-
-    private static FakeItemDef createFakeItemDef(Item baseItem, String id, String title, String loreLine, Rarity rarity, int maxStackSize) {
-        return new FakeItemDef(baseItem, id, Component.literal(title), List.of(Component.literal(loreLine)), rarity, maxStackSize, Optional.empty(), Optional.empty());
-    }
-    private static FakeItemDef createFakeEquippableItemDef(Item baseItem, String title, String loreLine, Rarity rarity, int maxStackSize, Equippable equippableSettings, Charm charm) {
-        FakeItemDef def = new FakeItemDef(baseItem, charm.id(), Component.literal(title), List.of(Component.literal(loreLine)), rarity, maxStackSize, Optional.of(equippableSettings), Optional.of(charm));
-        ABILITY_ITEMS.add(def);
-        return def;
-    }
-
-
-    private static ItemStack applyComponents(ItemStack stack, FakeItemDef d) {
-        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(d.id()), List.of()));
-        stack.set(DataComponents.CUSTOM_NAME, d.title());
-        if (d.lore() != null && !d.lore().isEmpty() && !d.lore().stream().allMatch(Objects::isNull))
-            stack.set(DataComponents.LORE, new ItemLore(d.lore()));
-        stack.set(DataComponents.RARITY, d.rarity());
-        stack.set(DataComponents.MAX_STACK_SIZE, d.maxStackSize());
-        if (d.equippableSettings().isPresent())
-            stack.set(DataComponents.EQUIPPABLE, d.equippableSettings.get());
-
-        if (d.charm().isPresent()) {
-            stack = d.charm().get().onCreation(stack);
-
-            if (d.charm().get().subcribeToOnTick())
-            {
-                CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-                CompoundTag tag = cd.copyTag();
-                tag.putBoolean(Utils.TAG_TICK, true);
-                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-            }
-        }
-
-        return stack;
-    }
+    public static final Map<String, FakeItem> ID_MAP = ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItem::getModelId, d -> d));
 }

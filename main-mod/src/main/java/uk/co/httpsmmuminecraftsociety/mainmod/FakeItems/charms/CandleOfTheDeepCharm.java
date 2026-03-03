@@ -29,7 +29,7 @@ public class CandleOfTheDeepCharm implements Charm
     }
 
     @Override
-    public ItemStack onTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
         if (level.getGameTime() % 15 != 0) return stack;
 
@@ -46,8 +46,8 @@ public class CandleOfTheDeepCharm implements Charm
     }
 
     @Override
-    public ItemStack onEquipmentSlotChange(ServerPlayer player, ItemStack stack, int from, int to)
+    public void tick(ServerPlayer player, ServerLevel level)
     {
-        return null;
+        return;
     }
 }

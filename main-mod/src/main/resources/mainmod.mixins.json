@@ -3,8 +3,7 @@
 	"package": "uk.co.httpsmmuminecraftsociety.mainmod.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-      "ExampleMixin",
-      "ItemStackSlotSwitchDetection"
+      "ExampleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -40,9 +40,7 @@ public final class RunningShoesCharm implements Charm {
     }
 
     @Override
-    public ItemStack onTick(ItemStack stack, ServerPlayer player, ServerLevel level) {
-        Utils.removeModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID);
-
+    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level) {
         CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag tag = cd.copyTag();
 
@@ -71,8 +69,8 @@ public final class RunningShoesCharm implements Charm {
     }
 
     @Override
-    public ItemStack onEquipmentSlotChange(ServerPlayer player, ItemStack stack, int from, int to)
+    public void tick(ServerPlayer player, ServerLevel level)
     {
-        return null;
+        Utils.removeModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID);
     }
 }

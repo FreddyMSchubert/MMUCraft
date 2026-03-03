@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public final class FakeItems {
     private FakeItems() {}
 
+    public static List<FakeItemDef> ABILITY_ITEMS = new ArrayList<>();
     public static final List<FakeItemDef> ALL = List.of(
             createFakeItemDef(Items.COMMAND_BLOCK, "coin-1",      "1 Dabloon",    "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
             createFakeItemDef(Items.COMMAND_BLOCK, "coin-5",      "5 Dabloons",   "Official MMU Minecraft Society Mint Issue", Rarity.COMMON, 50),
@@ -86,7 +87,9 @@ public final class FakeItems {
         return new FakeItemDef(baseItem, id, Component.literal(title), List.of(Component.literal(loreLine)), rarity, maxStackSize, Optional.empty(), Optional.empty());
     }
     private static FakeItemDef createFakeEquippableItemDef(Item baseItem, String title, String loreLine, Rarity rarity, int maxStackSize, Equippable equippableSettings, Charm charm) {
-        return new FakeItemDef(baseItem, charm.id(), Component.literal(title), List.of(Component.literal(loreLine)), rarity, maxStackSize, Optional.of(equippableSettings), Optional.of(charm));
+        FakeItemDef def = new FakeItemDef(baseItem, charm.id(), Component.literal(title), List.of(Component.literal(loreLine)), rarity, maxStackSize, Optional.of(equippableSettings), Optional.of(charm));
+        ABILITY_ITEMS.add(def);
+        return def;
     }
 
 

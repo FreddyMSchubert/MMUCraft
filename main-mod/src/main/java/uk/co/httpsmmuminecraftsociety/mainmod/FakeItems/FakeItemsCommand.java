@@ -14,13 +14,14 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.item.ItemStack;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.FakeItem;
 
 public final class FakeItemsCommand {
     private FakeItemsCommand() {}
 
     private static final SuggestionProvider<CommandSourceStack> ID_SUGGESTIONS =
             (ctx, builder) -> SharedSuggestionProvider.suggest(
-                    FakeItems.ALL.stream().map(FakeItems.FakeItemDef::id),
+                    FakeItems.ALL.stream().map(FakeItem::getModelId),
                     builder
             );
 
@@ -53,11 +54,11 @@ public final class FakeItemsCommand {
     {
         ServerPlayer player = source.getPlayerOrException();
 
-        FakeItems.def(id);
+        FakeItem d = FakeItems.ID_MAP.get(id);
 
         int remaining = amount;
         while (remaining > 0) {
-            ItemStack stack = FakeItems.createStack(id, 1); // create with count 1 first
+            ItemStack stack = d.createItemStack();
             int max = stack.getMaxStackSize();
             int giveNow = Math.min(remaining, max);
 

@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItems;
 
 public final class CoinConvertRecipe implements CraftingRecipe
@@ -30,7 +31,7 @@ public final class CoinConvertRecipe implements CraftingRecipe
     }
 
     @Override
-    public boolean matches(CraftingInput input, Level level) {
+    public boolean matches(CraftingInput input, @NotNull Level level) {
         int found = 0;
 
         for (int i = 0; i < input.size(); i++) {
@@ -46,8 +47,10 @@ public final class CoinConvertRecipe implements CraftingRecipe
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        return FakeItems.createStack(toId, toCount);
+    public @NotNull ItemStack assemble(CraftingInput input, HolderLookup.@NotNull Provider registries) {
+        ItemStack stack =  FakeItems.ID_MAP.get(toId).createItemStack();
+        stack.setCount(toCount);
+        return stack;
     }
 
     @Override

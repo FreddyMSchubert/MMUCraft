@@ -5,8 +5,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 
-public class CandleOfTheDeepCharm implements Charm
+public class CandleOfTheDeepCharm implements Charm, EquippedTickCallbackCharm
 {
     public static final String CANDLE_OF_THE_DEEP_CHARM_ID = "cosmetic-charm-candle-of-the-deep";
 
@@ -17,15 +20,9 @@ public class CandleOfTheDeepCharm implements Charm
     }
 
     @Override
-    public ItemStack onCreation(ItemStack stack)
+    public @NotNull ItemStack onCreation(ItemStack stack)
     {
         return stack;
-    }
-
-    @Override
-    public boolean subcribeToOnTick()
-    {
-        return true;
     }
 
     @Override
@@ -43,11 +40,5 @@ public class CandleOfTheDeepCharm implements Charm
         );
         player.addEffect(inst);
         return stack;
-    }
-
-    @Override
-    public void tick(ServerPlayer player, ServerLevel level)
-    {
-        return;
     }
 }

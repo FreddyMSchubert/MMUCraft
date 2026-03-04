@@ -150,6 +150,20 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/charm/cosmetic_charm_leprechaun_boots"
 				}
+			},
+			{
+				"when": "cosmetic-charm-crafting-staff",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_crafting_staff"
+				}
+			},
+			{
+				"when": "cosmetic-charm-ender-chest-staff",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_ender_chest_staff"
+				}
 			}
 		],
 		"fallback": {

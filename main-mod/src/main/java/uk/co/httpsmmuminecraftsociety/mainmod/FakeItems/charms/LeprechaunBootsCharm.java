@@ -11,9 +11,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import org.jetbrains.annotations.NotNull;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
-public class LeprechaunBootsCharm implements Charm
+public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm
 {
     public static final Identifier SIZE_ID = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "giants_boots_size");
     public static final Identifier SPEED_ID = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "giants_boots_speed");
@@ -32,7 +35,7 @@ public class LeprechaunBootsCharm implements Charm
     }
 
     @Override
-    public ItemStack onCreation(ItemStack stack)
+    public @NotNull ItemStack onCreation(ItemStack stack)
     {
         AttributeModifier scale_mod = new AttributeModifier(
                 SIZE_ID,
@@ -97,12 +100,6 @@ public class LeprechaunBootsCharm implements Charm
     }
 
     @Override
-    public boolean subcribeToOnTick()
-    {
-        return true;
-    }
-
-    @Override
     public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
         if (level.getGameTime() % 15 != 0) return stack;
@@ -117,11 +114,5 @@ public class LeprechaunBootsCharm implements Charm
         );
         player.addEffect(inst);
         return stack;
-    }
-
-    @Override
-    public void tick(ServerPlayer player, ServerLevel level)
-    {
-
     }
 }

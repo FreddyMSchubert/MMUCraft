@@ -2,13 +2,13 @@ package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import org.jetbrains.annotations.NotNull;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 public class HikingBootsCharm implements Charm
@@ -29,7 +29,7 @@ public class HikingBootsCharm implements Charm
     }
 
     @Override
-    public ItemStack onCreation(ItemStack stack)
+    public @NotNull ItemStack onCreation(ItemStack stack)
     {
         AttributeModifier mod = new AttributeModifier(
                 STEP_ID,
@@ -45,12 +45,6 @@ public class HikingBootsCharm implements Charm
         return stack;
     }
 
-    @Override
-    public boolean subcribeToOnTick()
-    {
-        return false;
-    }
-
     public static float getStepHeightForLevel(int level) {
         return switch (level)
         {
@@ -59,16 +53,5 @@ public class HikingBootsCharm implements Charm
             case 2 -> 1.5f;
             default -> 105f;
         };
-    }
-
-    @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
-    {
-        return stack;
-    }
-
-    @Override
-    public void tick(ServerPlayer player, ServerLevel level)
-    {
     }
 }

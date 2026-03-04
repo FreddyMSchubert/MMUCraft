@@ -1,10 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems;
 
 import net.minecraft.world.item.Rarity;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.BasicFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CosmeticFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.EquippableCharmFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.*;
 
 import java.util.*;
@@ -34,6 +31,8 @@ public final class FakeItems {
             new CosmeticFakeItem("cosmetic-hat-villager-fletcher", "Fletcher Hat",      Rarity.COMMON),
             new CosmeticFakeItem("cosmetic-hat-villager-librarian","Librarian Hat",     Rarity.COMMON),
             new CosmeticFakeItem("cosmetic-hat-villager-shepherd", "Shepherd Hat",      Rarity.COMMON),
+            new CharmFakeItem("Staff of Crafting",          Rarity.COMMON, new CraftingStaffCharm(),   "Crafting on the go!"),
+            new CharmFakeItem("Staff of Soulbound Storage", Rarity.COMMON, new EnderChestStaffCharm(), "For all your soulbound item needs!"),
             new EquippableCharmFakeItem("Open Heart Charm",           Rarity.UNCOMMON, "open_heart__charm",           new OpenHeartCharm(),          "Blessed be the pacemakers",           "Grants the user extra life."),
             new EquippableCharmFakeItem("Running Shoes",              Rarity.UNCOMMON, "running_shoes__charm",        new RunningShoesCharm(),       "Been there, run that.",               "Enhances the user's mobility."),
             new EquippableCharmFakeItem("Candle of the Deep Charm",   Rarity.UNCOMMON, "candle_of_the_deep__charm",   new CandleOfTheDeepCharm(),    "Light on your feet.",                "Illuminates the area around the user."),

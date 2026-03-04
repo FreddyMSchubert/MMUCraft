@@ -2,13 +2,13 @@ package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import org.jetbrains.annotations.NotNull;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 public class GiantsBootsCharm implements Charm
@@ -27,7 +27,7 @@ public class GiantsBootsCharm implements Charm
     }
 
     @Override
-    public ItemStack onCreation(ItemStack stack)
+    public @NotNull ItemStack onCreation(ItemStack stack)
     {
         AttributeModifier scale_mod = new AttributeModifier(
                 SIZE_ID,
@@ -72,23 +72,5 @@ public class GiantsBootsCharm implements Charm
 
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attrs);
         return stack;
-    }
-
-    @Override
-    public boolean subcribeToOnTick()
-    {
-        return false;
-    }
-
-    @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
-    {
-        return null;
-    }
-
-    @Override
-    public void tick(ServerPlayer player, ServerLevel level)
-    {
-
     }
 }

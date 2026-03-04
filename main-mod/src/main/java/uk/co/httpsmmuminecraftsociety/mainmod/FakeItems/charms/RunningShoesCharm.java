@@ -9,10 +9,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import org.jetbrains.annotations.NotNull;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.TickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
-public final class RunningShoesCharm implements Charm {
+public final class RunningShoesCharm implements Charm, TickCallbackCharm, EquippedTickCallbackCharm
+{
     public static final String RUNNING_SHOES_CHARM_ID = "cosmetic-charm-running-shoes";
 
     public static final int CHARGE_GAIN_PER_TICK = 1;
@@ -30,13 +35,8 @@ public final class RunningShoesCharm implements Charm {
     }
 
     @Override
-    public ItemStack onCreation(ItemStack stack) {
+    public @NotNull ItemStack onCreation(ItemStack stack) {
         return stack;
-    }
-
-    @Override
-    public boolean subcribeToOnTick() {
-        return true;
     }
 
     @Override
@@ -72,7 +72,7 @@ public final class RunningShoesCharm implements Charm {
     }
 
     @Override
-    public void tick(ServerPlayer player, ServerLevel level)
+    public void onTick(ServerPlayer player, ServerLevel level)
     {
         Utils.removeModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID);
     }

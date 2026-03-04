@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Rarity;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.*;
@@ -33,14 +34,14 @@ public final class FakeItems {
             new CosmeticFakeItem("cosmetic-hat-villager-shepherd", "Shepherd Hat",      Rarity.COMMON),
             new CharmFakeItem("Staff of Crafting",          Rarity.COMMON, new CraftingStaffCharm(),   "Crafting on the go!"),
             new CharmFakeItem("Staff of Soulbound Storage", Rarity.COMMON, new EnderChestStaffCharm(), "For all your soulbound item needs!"),
-            new EquippableCharmFakeItem("Open Heart Charm",           Rarity.UNCOMMON, "open_heart__charm",           new OpenHeartCharm(),          "Blessed be the pacemakers",           "Grants the user extra life."),
-            new EquippableCharmFakeItem("Running Shoes",              Rarity.UNCOMMON, "running_shoes__charm",        new RunningShoesCharm(),       "Been there, run that.",               "Enhances the user's mobility."),
-            new EquippableCharmFakeItem("Candle of the Deep Charm",   Rarity.UNCOMMON, "candle_of_the_deep__charm",   new CandleOfTheDeepCharm(),    "Light on your feet.",                "Illuminates the area around the user."),
-            new EquippableCharmFakeItem("Hiking Boots Charm",         Rarity.UNCOMMON, "hiking_boots__charm",         new HikingBootsCharm(0),  "That's one pretty big step for man.", "Allows the user walk up one-block high obstacles without jumping."),
-            new EquippableCharmFakeItem("Golden Hiking Boots Charm",  Rarity.UNCOMMON, "golden_hiking_boots__charm",  new HikingBootsCharm(1),  "Ever heard of a shortcut?",           "Allows the user walk up fence-high obstacles without jumping."),
-            new EquippableCharmFakeItem("Diamond Hiking Boots Charm", Rarity.UNCOMMON, "diamond_hiking_boots__charm", new HikingBootsCharm(2),  "You don't ever-rest do you...",       "Allows the user walk up two-block high obstacles without jumping."),
-            new EquippableCharmFakeItem("Giant's Boots Charm",        Rarity.UNCOMMON, "giants_boots__charm",         new GiantsBootsCharm(),        "These boots are made for walkin'",     "Grants the user the lost power of the ancient giants."),
-            new EquippableCharmFakeItem("Leprechaun Boots Charm",     Rarity.UNCOMMON, "leprechaun_boots__charm",     new LeprechaunBootsCharm(),    "I'm feeling lucky.",                   "Irish people are weird dude.")
+            new EquippableCharmFakeItem("Open Heart Charm",           Rarity.UNCOMMON, "open_heart__charm",           EquipmentSlot.CHEST, new OpenHeartCharm(),          "Blessed be the pacemakers",           "Grants the user extra life."),
+            new EquippableCharmFakeItem("Running Shoes",              Rarity.UNCOMMON, "running_shoes__charm",        EquipmentSlot.FEET,  new RunningShoesCharm(),       "Been there, run that.",               "Enhances the user's mobility."),
+            new EquippableCharmFakeItem("Candle of the Deep Charm",   Rarity.UNCOMMON, "candle_of_the_deep__charm",   EquipmentSlot.LEGS,  new CandleOfTheDeepCharm(),    "Light on your feet.",                "Illuminates the area around the user."),
+            new EquippableCharmFakeItem("Hiking Boots Charm",         Rarity.UNCOMMON, "hiking_boots__charm",         EquipmentSlot.FEET,  new HikingBootsCharm(0),  "That's one pretty big step for man.", "Allows the user walk up one-block high obstacles without jumping."),
+            new EquippableCharmFakeItem("Golden Hiking Boots Charm",  Rarity.UNCOMMON, "golden_hiking_boots__charm",  EquipmentSlot.FEET,  new HikingBootsCharm(1),  "Ever heard of a shortcut?",           "Allows the user walk up fence-high obstacles without jumping."),
+            new EquippableCharmFakeItem("Diamond Hiking Boots Charm", Rarity.UNCOMMON, "diamond_hiking_boots__charm", EquipmentSlot.FEET,  new HikingBootsCharm(2),  "You don't ever-rest do you...",       "Allows the user walk up two-block high obstacles without jumping."),
+            new EquippableCharmFakeItem("Giant's Boots Charm",        Rarity.UNCOMMON, "giants_boots__charm",         EquipmentSlot.FEET,  new GiantsBootsCharm(),        "These boots are made for walkin'",     "Grants the user the lost power of the ancient giants."),
+            new EquippableCharmFakeItem("Leprechaun Boots Charm",     Rarity.UNCOMMON, "leprechaun_boots__charm",     EquipmentSlot.FEET,  new LeprechaunBootsCharm(),    "I'm feeling lucky.",                   "Irish people are weird dude.")
     );
     public static final Map<String, FakeItem> ID_MAP = ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItem::getModelId, d -> d));
 }

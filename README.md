@@ -314,3 +314,19 @@ Information on changes to the base game are all documented in a wiki page on the
 - Archaeology
 - Fishing
 - Buy in shop
+
+### Unlocking the end
+
+Crafting eyes of ender works with a different recipe now.
+
+To craft 16, make this shapeless recipe:
+
+blaze powder
+wind charge
+resin brick
+netherite ingot
+a sniffer drop
+skulk shard
+totem of undying
+wither star
+ender pearl

@@ -1,0 +1,20 @@
+{
+  "description": "Charm Boost",
+  "supported_items": "#mainmod:charm_combinable_armor_items",
+  "weight": 10,
+  "max_level": 2,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 9
+  },
+  "max_cost": {
+    "base": 65,
+    "per_level_above_first": 9
+  },
+  "anvil_cost": 8,
+  "slots": [
+    "feet",
+    "legs",
+    "chest"
+  ]
+}

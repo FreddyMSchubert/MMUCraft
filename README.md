@@ -223,6 +223,8 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - chance to light attackers on fire
 - double jump / triple jump
 - huge jump height
+- mermaid tail / mermaid scale leggings - faster in water, extra damage in lava
+- strider leg shales - damaged by water, faster in lava
 - antidote vessel - decreases harmful effect duration
 - quiver - gives you infinity
 - swim in air while item held
@@ -315,18 +317,18 @@ Information on changes to the base game are all documented in a wiki page on the
 - Fishing
 - Buy in shop
 
-### Unlocking the end
+### Eye of Ender Crafting Recipe
 
-Crafting eyes of ender works with a different recipe now.
+The eye of ender crafting recipe should be made significantly more difficult to encourage going through more of the games content. The crafting recipe for 16 eye of ender should therefore be:
 
-To craft 16, make this shapeless recipe:
+- blaze powder
+- heavy core
+- creaking heart
+- netherite ingot
+- torchflower
+- echo shard
+- totem of undying
+- wither star
+- ender pearl
 
-blaze powder
-wind charge
-resin brick
-netherite ingot
-a sniffer drop
-skulk shard
-totem of undying
-wither star
-ender pearl
+The ender dragon fight should also be buffed significantly with some datapack.

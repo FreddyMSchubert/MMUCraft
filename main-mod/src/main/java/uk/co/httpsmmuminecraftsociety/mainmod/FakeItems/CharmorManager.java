@@ -46,6 +46,18 @@ public class CharmorManager
 
         return Math.min(charmBoostLevel + 1, armorTypeCharmSlots);
     }
+    public static int calcUsedCharmSlotCount(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        int usedCount = 0;
+        for (int i = 0; i < 3; i++) {
+            if (tag.get(EQUIPPED_CHARM_BASE + i).asString().isPresent())
+                usedCount++;
+        }
+        return usedCount;
+    }
+    public static boolean canEquipMoreCharms(ItemStack stack) {
+        return calcUsedCharmSlotCount(stack) < calcCharmSlotCount(stack);
+    }
 
     public static ItemStack initArmorTooltipIfUninitialized(ItemStack stack) {
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return stack;
@@ -81,7 +93,7 @@ public class CharmorManager
             if (charmId.isEmpty()) {
                 literal += "Empty";
             } else {
-                FakeItem charm = FakeItems.ID_MAP.get(charmId);
+                FakeItem charm = FakeItems.MODEL_ID_MAP.get(charmId);
                 if (charm == null) literal += "Unknown Charm (ID: " + charmId + "). Please report this to a mod.";
                 literal += charm.getTitle().getString();
             }

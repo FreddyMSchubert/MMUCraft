@@ -20,12 +20,6 @@ public class EnderChestStaffCharm implements Charm, UseCallbackCharm
     }
 
     @Override
-    public @NotNull ItemStack onCreation(ItemStack stack)
-    {
-        return stack;
-    }
-
-    @Override
     public ItemStack onUse(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
         PlayerEnderChestContainer playerEnderChestContainer = player.getEnderChestInventory();

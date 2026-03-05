@@ -1,17 +1,17 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms;
+package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.baseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
-public class HikingBootsCharm implements Charm
+public class HikingBootsCharm implements Charm, baseItemChangeCallbackCharm
 {
     public static final String HIKING_BOOTS_CHARM_ID_BEGINNING = "cosmetic-charm-hiking-boots-";
     private static final Identifier STEP_ID = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "hiking_boots_step_id");
@@ -29,23 +29,20 @@ public class HikingBootsCharm implements Charm
     }
 
     @Override
-    public @NotNull ItemStack onCreation(ItemStack stack)
+    public @NotNull ItemStack enableEffectForItem(ItemStack stack)
     {
-        AttributeModifier mod = new AttributeModifier(
-                STEP_ID,
-                getStepHeightForLevel(this.level),
-                AttributeModifier.Operation.ADD_VALUE
-        );
-
-        ItemAttributeModifiers attrs = ItemAttributeModifiers.builder()
-                .add(Attributes.STEP_HEIGHT, mod, EquipmentSlotGroup.FEET)
-                .build();
-
-        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attrs);
+        stack = Utils.applyItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT, getStepHeightForLevel(this.level), AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         return stack;
     }
 
-    public static float getStepHeightForLevel(int level) {
+    @Override
+    public @NotNull ItemStack disableEffectForItem(ItemStack stack)
+    {
+        stack = Utils.removeItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT);
+        return stack;
+    }
+
+    private static float getStepHeightForLevel(int level) {
         return switch (level)
         {
             case 0 -> 0.5f;

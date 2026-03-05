@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms;
+package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -9,7 +9,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.TickCallbackCharm;
@@ -32,11 +31,6 @@ public final class RunningShoesCharm implements Charm, TickCallbackCharm, Equipp
     @Override
     public String id() {
         return RUNNING_SHOES_CHARM_ID;
-    }
-
-    @Override
-    public @NotNull ItemStack onCreation(ItemStack stack) {
-        return stack;
     }
 
     @Override
@@ -64,8 +58,8 @@ public final class RunningShoesCharm implements Charm, TickCallbackCharm, Equipp
         if (charge > 0) {
             // account for no overlap with leprechaun boots charm, which also modifies movement speed
             double normalBaseSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue();
-            double intendedSpeed = normalBaseSpeed + (charge / 100.0 * normalBaseSpeed);
-            Utils.applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID, intendedSpeed - player.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), AttributeModifier.Operation.ADD_VALUE);
+            double intendedSpeed = Math.max(normalBaseSpeed * 1.3 /*sprint speed*/, normalBaseSpeed + (charge / 100.0 * normalBaseSpeed));
+            Utils.applyPlayerModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID, intendedSpeed - player.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), AttributeModifier.Operation.ADD_VALUE);
         }
 
         return stack;
@@ -74,6 +68,6 @@ public final class RunningShoesCharm implements Charm, TickCallbackCharm, Equipp
     @Override
     public void onTick(ServerPlayer player, ServerLevel level)
     {
-        Utils.removeModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID);
+        Utils.removePlayerModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID);
     }
 }

@@ -9,7 +9,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 public final class MainModRecipes {
     private MainModRecipes() {}
 
-    public static final String MODID = "mainmod"; // <-- your real modid
+    public static final String MODID = "mainmod";
 
     public static final RecipeSerializer<CoinConvertRecipe> COIN_CONVERT_SERIALIZER = new CoinConvertRecipe.Serializer();
 

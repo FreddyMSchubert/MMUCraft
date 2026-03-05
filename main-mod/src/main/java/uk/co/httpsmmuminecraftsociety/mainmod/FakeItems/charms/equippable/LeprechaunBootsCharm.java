@@ -1,0 +1,73 @@
+package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable;
+
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.baseItemChangeCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
+
+public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, baseItemChangeCallbackCharm
+{
+    @Override
+    public String id()
+    {
+        return "cosmetic-charm-leprechaun-boots";
+    }
+
+    @Override
+    public @NotNull ItemStack enableEffectForItem(ItemStack stack)
+    {
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_size", Attributes.SCALE, 0.5, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_speed", Attributes.MOVEMENT_SPEED, -0.1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_interaction_block", Attributes.BLOCK_INTERACTION_RANGE, -4, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_interaction_entity", Attributes.ENTITY_INTERACTION_RANGE, -2.5, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_step", Attributes.STEP_HEIGHT, -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_jump", Attributes.JUMP_STRENGTH, -0.2, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_attack", Attributes.ATTACK_DAMAGE, -1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_health", Attributes.MAX_HEALTH, -19, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_luck", Attributes.LUCK, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+
+        return stack;
+    }
+
+    @Override
+    public @NotNull ItemStack disableEffectForItem(ItemStack stack)
+    {
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_size", Attributes.SCALE);
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_speed", Attributes.MOVEMENT_SPEED);
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_interaction_block", Attributes.BLOCK_INTERACTION_RANGE);
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_interaction_entity", Attributes.ENTITY_INTERACTION_RANGE);
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_step", Attributes.STEP_HEIGHT);
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_jump", Attributes.JUMP_STRENGTH);
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_attack", Attributes.ATTACK_DAMAGE);
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_health", Attributes.MAX_HEALTH);
+        stack = Utils.removeItemAttrModifier(stack, "leprechaun_boots_luck", Attributes.LUCK);
+
+        return stack;
+    }
+
+    @Override
+    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    {
+        if (level.getGameTime() % 15 != 0) return stack;
+
+        MobEffectInstance inst = new MobEffectInstance(
+                MobEffects.WEAKNESS,
+                220,
+                0,
+                false,
+                false,
+                false
+        );
+        player.addEffect(inst);
+        return stack;
+    }
+}

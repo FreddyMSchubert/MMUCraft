@@ -15,15 +15,20 @@ public class EquippableCharmFakeItem extends CharmFakeItem
 {
     private final Equippable equippableSettings;
 
-    public EquippableCharmFakeItem(String title, Rarity rarity, String equippable_asset_id, EquipmentSlot slot, Charm charm, String... tooltip)
+    public EquippableCharmFakeItem(int effectId, String title, Rarity rarity, String equippable_asset_id, EquipmentSlot slot, Charm charm, String... tooltip)
     {
-        super(title, rarity, charm, tooltip);
+        super(effectId, title, rarity, charm, tooltip);
 
-        this.equippableSettings = Equippable.builder(slot).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, equippable_asset_id))).setSwappable(true).setDispensable(true).setDamageOnHurt(false).build();
+        this.equippableSettings = createEquippableSettings(equippable_asset_id, slot);
     }
 
     public Equippable getEquippableSettings() {
         return equippableSettings;
+    }
+
+    public static Equippable createEquippableSettings(String assetId, EquipmentSlot slot)
+    {
+        return Equippable.builder(slot).setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, assetId))).setSwappable(false).setDispensable(false).setDamageOnHurt(false).build();
     }
 
     @Override

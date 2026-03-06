@@ -48,7 +48,7 @@ public final class CoinConvertRecipe implements CraftingRecipe
 
     @Override
     public @NotNull ItemStack assemble(CraftingInput input, HolderLookup.@NotNull Provider registries) {
-        ItemStack stack =  FakeItems.ID_MAP.get(toId).createItemStack();
+        ItemStack stack =  FakeItems.MODEL_ID_MAP.get(toId).createItemStack();
         stack.setCount(toCount);
         return stack;
     }

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemsCommand;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantmentEffects;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 
 public class MainMod implements ModInitializer {
@@ -24,5 +25,6 @@ public class MainMod implements ModInitializer {
 
         FakeItemsCommand.init();
         MainModRecipes.register();
+        ModEnchantmentEffects.registerModEnchantmentEffects();
     }
 }

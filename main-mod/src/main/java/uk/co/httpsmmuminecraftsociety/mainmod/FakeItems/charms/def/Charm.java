@@ -6,7 +6,4 @@ import org.jetbrains.annotations.NotNull;
 public interface Charm
 {
     String id();
-
-    // called when charm is instantiated, useful e.g. to add attribute modifiers to the itemstack
-    @NotNull ItemStack onCreation(ItemStack stack);
 }

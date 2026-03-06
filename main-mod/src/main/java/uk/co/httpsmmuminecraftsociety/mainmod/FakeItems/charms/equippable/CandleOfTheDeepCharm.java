@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms;
+package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,12 +17,6 @@ public class CandleOfTheDeepCharm implements Charm, EquippedTickCallbackCharm
     public String id()
     {
         return CANDLE_OF_THE_DEEP_CHARM_ID;
-    }
-
-    @Override
-    public @NotNull ItemStack onCreation(ItemStack stack)
-    {
-        return stack;
     }
 
     @Override

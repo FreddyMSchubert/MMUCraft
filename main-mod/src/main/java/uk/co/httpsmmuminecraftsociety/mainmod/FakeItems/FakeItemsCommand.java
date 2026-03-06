@@ -54,7 +54,7 @@ public final class FakeItemsCommand {
     {
         ServerPlayer player = source.getPlayerOrException();
 
-        FakeItem d = FakeItems.ID_MAP.get(id);
+        FakeItem d = FakeItems.MODEL_ID_MAP.get(id);
 
         int remaining = amount;
         while (remaining > 0) {

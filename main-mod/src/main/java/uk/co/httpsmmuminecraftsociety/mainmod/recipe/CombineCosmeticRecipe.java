@@ -1,0 +1,192 @@
+package uk.co.httpsmmuminecraftsociety.mainmod.recipe;
+
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.equipment.Equippable;
+import net.minecraft.world.level.Level;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.EquippableCharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.BaseItemChangeCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+
+import java.util.Arrays;
+import java.util.Optional;
+
+public class CombineCosmeticRecipe implements CraftingRecipe
+{
+    private final int trashVal; // dummy field because minecraft forces their recipes data driven. well data drive this important value.
+
+    public CombineCosmeticRecipe(int trashVal) {
+        this.trashVal = trashVal;
+    }
+
+    private record craftingInfo(boolean craftable, ItemStack armor, ItemStack charm) {}
+
+    private craftingInfo getCraftingInfo(CraftingInput input)
+    {
+        // must have 1x armor item with a free slot
+        ItemStack armor = null;
+        // and 1x charm
+        ItemStack charm = null;
+
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stack = input.getItem(i);
+
+            if (stack.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
+                if (armor != null || !CharmorManager.canEquipMoreCharms(stack)) continue;
+                armor = stack;
+                continue;
+            }
+
+            CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-charm-") && stack.getItem().equals(Items.COMMAND_BLOCK)) {
+                if (charm != null) continue;
+                charm = stack;
+                continue;
+            }
+        }
+
+        return new craftingInfo(armor != null && charm != null, armor, charm);
+    }
+
+    @Override
+    public boolean matches(CraftingInput input, Level level)
+    {
+        return getCraftingInfo(input).craftable;
+    }
+
+    private String getArmorMaterialType(ItemStack stack) {
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND)) return "diamond";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE)) return "netherite";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_IRON)) return "iron";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_GOLD)) return "gold";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_COPPER)) return "copper";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_LEATHER)) return "leather";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_CHAINMAIL)) return "chainmail";
+        return "";
+    }
+
+    @Override
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider)
+    {
+        craftingInfo cinfo = getCraftingInfo(input);
+        if (!cinfo.craftable) return ItemStack.EMPTY;
+
+        ItemStack resultStack = cinfo.armor.copy();
+
+        Optional<int[]> optArmorAbilities = cinfo.armor.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID);
+        Optional<int[]> charmAbilities = cinfo.charm.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID);
+
+        int[] armorAbilities;
+        int charmAbility;
+
+        armorAbilities = optArmorAbilities.orElseGet(() -> new int[0]);
+        if (charmAbilities.isEmpty()) {
+            MainMod.LOGGER.info("Charm had no abilities, this should never happen. Check the recipe input. Charm nbt: " + cinfo.charm.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
+            return ItemStack.EMPTY;
+        } else {
+            charmAbility = charmAbilities.get()[0];
+        }
+        if (Arrays.stream(armorAbilities).anyMatch(a -> a == charmAbility)) {
+            return ItemStack.EMPTY;
+        }
+
+        // update charm abilities
+        int[] newAbilities = new int[armorAbilities.length + 1];
+        System.arraycopy(armorAbilities, 0, newAbilities, 0, armorAbilities.length);
+        newAbilities[newAbilities.length - 1] = charmAbility;
+        CompoundTag newData = resultStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        newData.putIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID, newAbilities);
+        resultStack.set(DataComponents.CUSTOM_DATA, CustomData.of(newData));
+
+        // call enable effect callback
+        Charm charm = FakeItems.CHARM_EFFECT_ID_MAP.get(charmAbility).getCharm();
+        if (charm instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
+            baseItemChangeCallbackCharm.enableEffectForItem(resultStack);
+        }
+
+        // update tooltip
+        CharmorManager.updateArmorTooltip(resultStack);
+
+        // update armor rendering
+        CharmFakeItem renderedCharm = FakeItems.CHARM_EFFECT_ID_MAP.get(armorAbilities.length > 0 ? armorAbilities[0] : charmAbility);
+        if (renderedCharm instanceof EquippableCharmFakeItem equippableCharmFakeItem) {
+            String materialString = getArmorMaterialType(resultStack);
+
+            // remove __charm from end
+            String charmResourcePath = equippableCharmFakeItem.getEquippableSettings().assetId().get().identifier().getPath();
+            String withoutCharm = charmResourcePath.substring(0, charmResourcePath.indexOf("__charm"));
+            String newResourcePath = withoutCharm + "__" + materialString;
+            Equippable newEquippableSettings = EquippableCharmFakeItem.createEquippableSettings(newResourcePath, equippableCharmFakeItem.getEquippableSettings().slot());
+
+            resultStack.set(DataComponents.EQUIPPABLE, newEquippableSettings);
+        }
+
+        return resultStack;
+    }
+
+    @Override
+    public RecipeSerializer<? extends CraftingRecipe> getSerializer()
+    {
+        return MainModRecipes.COMBINE_CHARMOR_SERIALIZER;
+    }
+
+    @Override
+    public PlacementInfo placementInfo()
+    {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public CraftingBookCategory category()
+    {
+        return CraftingBookCategory.EQUIPMENT;
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory()
+    {
+        return RecipeBookCategories.CRAFTING_MISC;
+    }
+
+    public static final class Serializer implements RecipeSerializer<CombineCosmeticRecipe> {
+
+        public static final MapCodec<CombineCosmeticRecipe> CODEC =
+                RecordCodecBuilder.mapCodec(instance -> instance.group(
+                        ExtraCodecs.POSITIVE_INT.fieldOf("trashVal").forGetter(r -> r.trashVal)
+                ).apply(instance, CombineCosmeticRecipe::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, CombineCosmeticRecipe> STREAM_CODEC =
+                StreamCodec.composite(
+                        ByteBufCodecs.INT, r -> r.trashVal,
+                        CombineCosmeticRecipe::new
+                );
+
+        @Override
+        public MapCodec<CombineCosmeticRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, CombineCosmeticRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+    }
+}

@@ -240,6 +240,14 @@ For more inspiration:
 - https://minecraft.wiki/w/Enchanting
 - https://minecraft.wiki/w/Effect
 
+### cosmetics without functional effect
+
+heres some mods that are mit licensed and have cosmetics to reuse / get inspired by
+
+- https://modrinth.com/mod/give-me-hats
+- https://modrinth.com/mod/ears
+- https://www.curseforge.com/minecraft/mc-mods/ldshadowladys-disney-wish-rebrushed
+
 ## Fishing Changes
 
 More Fish, more junk, more treasure
@@ -264,6 +272,23 @@ Cool stuff to fish up
 ### Potentially
 
 Completion Book with all fish
+
+### Good mit-licensed mods to take some nice fish textures from
+
+- https://modrinth.com/mod/gone-fishing
+- https://modrinth.com/mod/fishingfrenzy
+- https://modrinth.com/mod/fishery
+- https://modrinth.com/mod/exlines-fishing
+- https://modrinth.com/datapack/fishingsim
+- https://modrinth.com/mod/fishing-101
+- https://modrinth.com/mod/fish-of-thieves
+
+### and to make fishing in other places work
+
+- https://modrinth.com/datapack/gm4-end-fishing
+- https://modrinth.com/datapack/lava-fishing
+
+hopefully with that i can figure it out
 
 ## Progression Changes
 

@@ -318,7 +318,7 @@ There are tomes (inspired by quarks mod), which can increase some enchantments e
 A sniffer drops a new item, a bulb of ancient magic. Craft it together with an enchanted book of the right type and the right mob drop to make the tome and 6 diamonds.
 tomes can be applied at anvils for 30 levels and no increased item xp cost.
 
-- cursebreaker -> purification rune from archeology or fishing or chests or sometimes traded from max level librarians
+- cursebreaker -> purification rune from archeology or fishing or chests or sometimes traded from max level librarians. specific to curse to be broken.
 - feather falling -> parrot feather
 - thorns -> guardian gear dropped from normal guardians
 - sharpness -> ancient sword from fishing
@@ -335,6 +335,16 @@ tomes can be applied at anvils for 30 levels and no increased item xp cost.
 - punch -> skeleton head
 - luck of the sea -> heart of the sea
 - lure -> prismarine shard
+
+### more curses
+
+- curse of fragility -> cant go above 50% durability
+- curse of sluggishness -> axe + sword + mace + trident + spear attack cooldown increase significantly
+- curse of the breeze -> reduces bow + crossbow accuracy (+ trident)
+- curse of misfortune -> anti-fortune
+- curse of floating -> you get pushed up out of water
+- curse of disorder -> your items randomly swap places sometimes
+- curse of draining -> items auto-drain durability to a certain point slowly
 
 ### Information
 

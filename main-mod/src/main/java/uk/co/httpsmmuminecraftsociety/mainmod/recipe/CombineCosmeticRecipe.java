@@ -4,30 +4,25 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmorManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.EquippableCharmFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItems;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.BaseItemChangeCallbackCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.List;
 
 public class CombineCosmeticRecipe implements CraftingRecipe
 {
@@ -37,109 +32,74 @@ public class CombineCosmeticRecipe implements CraftingRecipe
         this.trashVal = trashVal;
     }
 
-    private record craftingInfo(boolean craftable, ItemStack armor, ItemStack charm) {}
+    private record craftingInfo(boolean craftable, ItemStack armor, ItemStack cosmetic) {}
 
     private craftingInfo getCraftingInfo(CraftingInput input)
     {
         // must have 1x armor item with a free slot
         ItemStack armor = null;
-        // and 1x charm
-        ItemStack charm = null;
+        // and 1x cosmetic
+        ItemStack cosmetic = null;
 
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
 
             if (stack.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
-                if (armor != null || !CharmorManager.canEquipMoreCharms(stack)) continue;
+                if (armor != null || !stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY).strings().isEmpty()) continue;
                 armor = stack;
                 continue;
             }
 
             CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-charm-") && stack.getItem().equals(Items.COMMAND_BLOCK)) {
-                if (charm != null) continue;
-                charm = stack;
+            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-hat-") && stack.getItem().equals(Items.CARVED_PUMPKIN)) {
+                if (cosmetic != null) continue;
+                cosmetic = stack;
                 continue;
             }
         }
 
-        return new craftingInfo(armor != null && charm != null, armor, charm);
+        return new craftingInfo(armor != null && cosmetic != null, armor, cosmetic);
     }
 
     @Override
     public boolean matches(CraftingInput input, Level level)
     {
-        return getCraftingInfo(input).craftable;
-    }
-
-    private String getArmorMaterialType(ItemStack stack) {
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND)) return "diamond";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE)) return "netherite";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_IRON)) return "iron";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_GOLD)) return "gold";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_COPPER)) return "copper";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_LEATHER)) return "leather";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_CHAINMAIL)) return "chainmail";
-        return "";
+        return getCraftingInfo(input).craftable && input.ingredientCount() == 2;
     }
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider)
     {
         craftingInfo cinfo = getCraftingInfo(input);
-        if (!cinfo.craftable) return ItemStack.EMPTY;
 
-        ItemStack resultStack = cinfo.armor.copy();
-
-        Optional<int[]> optArmorAbilities = cinfo.armor.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID);
-        Optional<int[]> charmAbilities = cinfo.charm.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID);
-
-        int[] armorAbilities;
-        int charmAbility;
-
-        armorAbilities = optArmorAbilities.orElseGet(() -> new int[0]);
-        if (charmAbilities.isEmpty()) {
-            MainMod.LOGGER.info("Charm had no abilities, this should never happen. Check the recipe input. Charm nbt: " + cinfo.charm.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
+        CustomModelData armorCmd = cinfo.armor.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        if (!armorCmd.strings().isEmpty())
             return ItemStack.EMPTY;
-        } else {
-            charmAbility = charmAbilities.get()[0];
-        }
-        if (Arrays.stream(armorAbilities).anyMatch(a -> a == charmAbility)) {
-            return ItemStack.EMPTY;
-        }
 
-        // update charm abilities
-        int[] newAbilities = new int[armorAbilities.length + 1];
-        System.arraycopy(armorAbilities, 0, newAbilities, 0, armorAbilities.length);
-        newAbilities[newAbilities.length - 1] = charmAbility;
-        CompoundTag newData = resultStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        newData.putIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID, newAbilities);
-        resultStack.set(DataComponents.CUSTOM_DATA, CustomData.of(newData));
+        CustomModelData cosmeticCmd = cinfo.cosmetic.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        if (cosmeticCmd.strings().isEmpty() || cosmeticCmd.strings().getFirst().isEmpty()) return ItemStack.EMPTY;
+        String cosmeticPath = cosmeticCmd.strings().getFirst();
 
-        // call enable effect callback
-        Charm charm = FakeItems.CHARM_EFFECT_ID_MAP.get(charmAbility).getCharm();
-        if (charm instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
-            baseItemChangeCallbackCharm.enableEffectForItem(resultStack);
-        }
+        Equippable defaultEquippable = cinfo.armor.getItem().getDefaultInstance().get(DataComponents.EQUIPPABLE);
+        Equippable.Builder newEquippableBuilder = Equippable.builder(defaultEquippable.slot())
+                .setEquipSound(defaultEquippable.equipSound())
+                .setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, cosmeticPath)))
+                .setDispensable(defaultEquippable.dispensable())
+                .setSwappable(defaultEquippable.swappable())
+                .setDamageOnHurt(defaultEquippable.damageOnHurt())
+                .setEquipOnInteract(defaultEquippable.equipOnInteract())
+                .setCanBeSheared(defaultEquippable.canBeSheared())
+                .setShearingSound(defaultEquippable.shearingSound());
+        if (defaultEquippable.cameraOverlay().isPresent())
+            newEquippableBuilder.setCameraOverlay(defaultEquippable.cameraOverlay().get());
+        if (defaultEquippable.allowedEntities().isPresent())
+            newEquippableBuilder.setAllowedEntities(defaultEquippable.allowedEntities().get());
+        Equippable newEquippable = newEquippableBuilder.build();
 
-        // update tooltip
-        CharmorManager.updateArmorTooltip(resultStack);
+        ItemStack returnStack = cinfo.armor.copy();
+        returnStack.set(DataComponents.EQUIPPABLE, newEquippable);
 
-        // update armor rendering
-        CharmFakeItem renderedCharm = FakeItems.CHARM_EFFECT_ID_MAP.get(armorAbilities.length > 0 ? armorAbilities[0] : charmAbility);
-        if (renderedCharm instanceof EquippableCharmFakeItem equippableCharmFakeItem) {
-            String materialString = getArmorMaterialType(resultStack);
-
-            // remove __charm from end
-            String charmResourcePath = equippableCharmFakeItem.getEquippableSettings().assetId().get().identifier().getPath();
-            String withoutCharm = charmResourcePath.substring(0, charmResourcePath.indexOf("__charm"));
-            String newResourcePath = withoutCharm + "__" + materialString;
-            Equippable newEquippableSettings = EquippableCharmFakeItem.createEquippableSettings(newResourcePath, equippableCharmFakeItem.getEquippableSettings().slot());
-
-            resultStack.set(DataComponents.EQUIPPABLE, newEquippableSettings);
-        }
-
-        return resultStack;
+        return returnStack;
     }
 
     @Override

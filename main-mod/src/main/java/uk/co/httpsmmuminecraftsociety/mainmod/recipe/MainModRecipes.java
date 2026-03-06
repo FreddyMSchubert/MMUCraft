@@ -15,10 +15,12 @@ public final class MainModRecipes {
     public static final RecipeSerializer<CoinConvertRecipe> COIN_CONVERT_SERIALIZER = new CoinConvertRecipe.Serializer();
     public static final RecipeSerializer<CombineCharmorRecipe> COMBINE_CHARMOR_SERIALIZER = new CombineCharmorRecipe.Serializer();
     public static final RecipeSerializer<SeperateCharmorRecipe> SEPERATE_CHARMOR_SERIALIZER = new SeperateCharmorRecipe.Serializer();
+    public static final RecipeSerializer<CombineCosmeticRecipe> COMBINE_COSMETIC_SERIALIZER = new CombineCosmeticRecipe.Serializer();
 
     public static void register() {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MODID, "coin_convert"), COIN_CONVERT_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MODID, "combine_charmor"), COMBINE_CHARMOR_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MODID, "seperate_charmor"), SEPERATE_CHARMOR_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MODID, "combine_cosmetic"), COMBINE_COSMETIC_SERIALIZER);
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.baseItemChangeCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.BaseItemChangeCallbackCharm;
 
 public class CharmFakeItem extends FakeItem
 {
@@ -36,7 +36,7 @@ public class CharmFakeItem extends FakeItem
         ItemStack stack = super.createItemStack();
 
         // enable charm
-        if (charm instanceof baseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
+        if (charm instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
             stack = baseItemChangeCallbackCharm.enableEffectForItem(stack);
         }
 

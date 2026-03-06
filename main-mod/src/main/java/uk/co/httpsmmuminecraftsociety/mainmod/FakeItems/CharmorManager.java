@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
@@ -23,7 +23,6 @@ public class CharmorManager
 {
     // the following custom data compound tags are present in every armor, defining charms equipped
     public static final String TOOLTIP_INITIALLY_POPULATED_BOOL = "tooltip_initially_populated";
-    public static String EQUIPPED_CHARM_BASE = "equipped_charm_"; // max 3 charms, indexed 0-2, therefore: equipped_charm_0, equipped_charm_1, equipped_charm_2
 
     public static final ResourceKey<Enchantment> CHARM_BOOST_KEY = ResourceKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_boost"));
 
@@ -47,13 +46,10 @@ public class CharmorManager
         return Math.min(charmBoostLevel + 1, armorTypeCharmSlots);
     }
     public static int calcUsedCharmSlotCount(ItemStack stack) {
+        initArmorTooltipIfUninitialized(stack);
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        int usedCount = 0;
-        for (int i = 0; i < 3; i++) {
-            if (tag.get(EQUIPPED_CHARM_BASE + i).asString().isPresent())
-                usedCount++;
-        }
-        return usedCount;
+        int[] charmSlots = tag.getIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID).get();
+        return charmSlots.length;
     }
     public static boolean canEquipMoreCharms(ItemStack stack) {
         return calcUsedCharmSlotCount(stack) < calcCharmSlotCount(stack);
@@ -64,15 +60,10 @@ public class CharmorManager
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (tag.contains(TOOLTIP_INITIALLY_POPULATED_BOOL)) return stack;
 
-        for (int i = 0; i < 3; i++) {
-            tag.putString(EQUIPPED_CHARM_BASE + i, "");
-        }
+        tag.putIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID, new int[0]);
         tag.putBoolean(TOOLTIP_INITIALLY_POPULATED_BOOL, true);
 
-        CustomData updatedCmd = CustomData.of(tag);
-        stack.set(DataComponents.CUSTOM_DATA, updatedCmd);
-
-        MainMod.LOGGER.info("Populated tooltip for armor item " + stack.getHoverName().getString() + " (initialization)");
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
         return stack;
     }
@@ -81,21 +72,16 @@ public class CharmorManager
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return stack;
         stack = initArmorTooltipIfUninitialized(stack);
 
-        CustomData cmd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-        CompoundTag tag = cmd.copyTag();
-
         List<Component> tooltip = new ArrayList<>();
         tooltip.add(Component.literal("Charm Slots:"));
 
+        List<CharmFakeItem> charmFakeItems = CharmsManager.getAbilitiesFromItemStack(stack);
         for (int i = 0; i < calcCharmSlotCount(stack); i++) {
-            String charmId = tag.getStringOr(EQUIPPED_CHARM_BASE + i, "");
             String literal = "[Slot " + (i+1) + "]: ";
-            if (charmId.isEmpty()) {
-                literal += "Empty";
+            if (i >= charmFakeItems.size()) {
+                literal += "-";
             } else {
-                FakeItem charm = FakeItems.MODEL_ID_MAP.get(charmId);
-                if (charm == null) literal += "Unknown Charm (ID: " + charmId + "). Please report this to a mod.";
-                literal += charm.getTitle().getString();
+                literal += charmFakeItems.get(i).getTitle().getString();
             }
             tooltip.add(Component.literal(literal));
         }

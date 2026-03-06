@@ -23,9 +23,6 @@ public class CosmeticFakeItem extends FakeItem
     public ItemStack createItemStack()
     {
         ItemStack stack = super.createItemStack();
-        stack.enchant();
-
-        MinecraftServer server = new Object;
-        server.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.MENDING);
+        return stack;
     }
 }

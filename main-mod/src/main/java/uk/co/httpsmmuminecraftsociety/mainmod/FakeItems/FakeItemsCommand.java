@@ -3,62 +3,100 @@ package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.item.ItemStack;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.BasicFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CosmeticFakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.FakeItem;
+
+import java.util.function.Predicate;
 
 public final class FakeItemsCommand {
     private FakeItemsCommand() {}
 
-    private static final SuggestionProvider<CommandSourceStack> ID_SUGGESTIONS =
-            (ctx, builder) -> SharedSuggestionProvider.suggest(
-                    FakeItems.ALL.stream().map(FakeItem::getModelId),
-                    builder
-            );
+    private static SuggestionProvider<CommandSourceStack> suggestionsFor(Predicate<FakeItem> filter) {
+        return (ctx, builder) -> SharedSuggestionProvider.suggest(
+                FakeItems.ALL.stream()
+                        .filter(filter)
+                        .map(FakeItem::getModelId),
+                builder
+        );
+    }
+
+    private static final SuggestionProvider<CommandSourceStack> ALL_SUGGESTIONS =
+            suggestionsFor(item -> true);
+
+    private static final SuggestionProvider<CommandSourceStack> CHARM_SUGGESTIONS =
+            suggestionsFor(item -> item instanceof CharmFakeItem);
+
+    private static final SuggestionProvider<CommandSourceStack> HAT_SUGGESTIONS =
+            suggestionsFor(item -> item instanceof CosmeticFakeItem && item.getModelId().startsWith("cosmetic-hat-"));
+
+    private static final SuggestionProvider<CommandSourceStack> COIN_SUGGESTIONS =
+            suggestionsFor(item -> item instanceof BasicFakeItem && item.getModelId().startsWith("coin-"));
 
     public static void init() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            register(dispatcher);
-        });
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> register(dispatcher));
     }
 
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("fakeitems")
                         .requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
-
-                        .then(Commands.argument("id", StringArgumentType.word())
-                                .suggests(ID_SUGGESTIONS)
-                                .executes(ctx -> give(ctx.getSource(), StringArgumentType.getString(ctx, "id"), 1))
-                                .then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000))
-                                        .executes(ctx -> give(
-                                                ctx.getSource(),
-                                                StringArgumentType.getString(ctx, "id"),
-                                                IntegerArgumentType.getInteger(ctx, "amount")
-                                        ))
-                                )
-                        )
+                        .then(buildCategoryCommand("charm", CHARM_SUGGESTIONS, item -> item instanceof CharmFakeItem))
+                        .then(buildCategoryCommand("hat", HAT_SUGGESTIONS, item -> item instanceof CosmeticFakeItem && item.getModelId().startsWith("cosmetic-hat-")))
+                        .then(buildCategoryCommand("coin", COIN_SUGGESTIONS, item -> item instanceof BasicFakeItem && item.getModelId().startsWith("coin-")))
+                        .then(buildCategoryCommand("all", ALL_SUGGESTIONS, item -> true))
         );
     }
 
-    private static int give(CommandSourceStack source, String id, int amount) throws CommandSyntaxException
-    {
-        ServerPlayer player = source.getPlayerOrException();
+    private static LiteralArgumentBuilder<CommandSourceStack> buildCategoryCommand(
+            String name,
+            SuggestionProvider<CommandSourceStack> suggestions,
+            Predicate<FakeItem> filter
+    ) {
+        return Commands.literal(name)
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .suggests(suggestions)
+                        .executes(ctx -> give(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "id"),
+                                1,
+                                filter
+                        ))
+                        .then(Commands.argument("amount", IntegerArgumentType.integer(1, 1_000_000))
+                                .executes(ctx -> give(
+                                        ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "id"),
+                                        IntegerArgumentType.getInteger(ctx, "amount"),
+                                        filter
+                                ))
+                        )
+                );
+    }
 
-        FakeItem d = FakeItems.MODEL_ID_MAP.get(id);
+    private static int give(CommandSourceStack source, String id, int amount, Predicate<FakeItem> filter) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        FakeItem item = FakeItems.MODEL_ID_MAP.get(id);
+
+        if (item == null || !filter.test(item)) {
+            source.sendFailure(Component.literal("Unknown or invalid fake item id: " + id));
+            return 0;
+        }
 
         int remaining = amount;
         while (remaining > 0) {
-            ItemStack stack = d.createItemStack();
+            ItemStack stack = item.createItemStack();
             int max = stack.getMaxStackSize();
             int giveNow = Math.min(remaining, max);
 
@@ -71,6 +109,11 @@ public final class FakeItemsCommand {
 
             remaining -= giveNow;
         }
+
+        source.sendSuccess(
+                () -> Component.literal("Gave " + amount + "x " + item.getModelId()),
+                true
+        );
 
         return 1;
     }

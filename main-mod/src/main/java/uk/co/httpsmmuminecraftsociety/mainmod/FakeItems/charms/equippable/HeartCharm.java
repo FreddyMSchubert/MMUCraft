@@ -11,7 +11,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
 public class HeartCharm implements Charm, BaseItemChangeCallbackCharm
 {
-    public static final String OPEN_HEART_CHARM_ID_BEGINNING = "cosmetic-charm-open-heart";
+    public static final String OPEN_HEART_CHARM_ID_BEGINNING = "cosmetic-charm-heart-";
 
     private final int level;
 

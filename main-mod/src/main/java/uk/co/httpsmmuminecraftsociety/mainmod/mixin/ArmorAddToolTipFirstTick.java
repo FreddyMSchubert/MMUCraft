@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.cosmeticsSyncing.CosmeticsManager;
 
 @Mixin(ItemStack.class)
 public class ArmorAddToolTipFirstTick
@@ -20,5 +21,7 @@ public class ArmorAddToolTipFirstTick
         if (!tag.contains(CharmorManager.TOOLTIP_INITIALLY_POPULATED_BOOL)) {
             CharmorManager.updateArmorTooltip(stack);
         }
+        tag.putString(CosmeticsManager.COSMETIC_ASSET_ID, "mmu_pack:cosmetic-hat-villager-armorer");
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
 }

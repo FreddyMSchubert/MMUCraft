@@ -273,7 +273,7 @@ villagers dont drop enchanted books anymore. instead, get them from structures a
 you can put enchanted books on lecterns, and the corresponding librarian will offer that trade at high price but reset anvil cost, but will add a random curse to it. This can be removed with the cursebreaker tome.
 
 - looting -> Nether Fortress
-- sharpness -> Trial Chamber
+- sharpness, smite, bane of arthropods -> Trial Chamber
 - fortune -> Crafted with coal block, copper block, emerald block, gold block, iron block, lapis block, diamond block, quartz block, redstone block
 - mending -> ancient city
 - protection -> end city
@@ -286,6 +286,8 @@ you can put enchanted books on lecterns, and the corresponding librarian will of
 - charm power (custom, more charms per armor) -> trail ruins
 - silk touch -> jungle temple
 - feather falling -> desert temple
+- flame, fire aspect -> ruined portals
+- lure & luck of the sea -> obtained through fishing
 
 There are tomes (inspired by quarks mod), which can increase some enchantments even further than normal vanilla max.
 A sniffer drops a new item, a bulb of ancient magic. Craft it together with an enchanted book of the right type and the right mob drop to make the tome and 6 diamonds.

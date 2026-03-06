@@ -18,6 +18,13 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
     public static final TagKey<Item> SINGLE_CHARM_COMBINABLE_ARMOR_ITEMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "single_combinable_armor_items"));
     public static final TagKey<Item> DOUBLE_CHARM_COMBINABLE_ARMOR_ITEMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "double_combinable_armor_items"));
     public static final TagKey<Item> TRIPLE_CHARM_COMBINABLE_ARMOR_ITEMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "triple_combinable_armor_items"));
+    public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_LEATHER = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/leather"));
+    public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_COPPER = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/copper"));
+    public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_GOLD = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/gold"));
+    public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_CHAINMAIL = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/chainmail"));
+    public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_IRON = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/iron"));
+    public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/diamond"));
+    public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/netherite"));
 
     public ModItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture)
     {
@@ -75,6 +82,35 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
                 .add(Items.GOLDEN_BOOTS)
                 .add(Items.GOLDEN_LEGGINGS)
                 .add(Items.GOLDEN_CHESTPLATE)
+                .add(Items.NETHERITE_BOOTS)
+                .add(Items.NETHERITE_LEGGINGS)
+                .add(Items.NETHERITE_CHESTPLATE);
+
+        valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND)
+                .add(Items.DIAMOND_BOOTS)
+                .add(Items.DIAMOND_LEGGINGS)
+                .add(Items.DIAMOND_CHESTPLATE);
+        valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS_GOLD)
+                .add(Items.GOLDEN_BOOTS)
+                .add(Items.GOLDEN_LEGGINGS)
+                .add(Items.GOLDEN_CHESTPLATE);
+        valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS_IRON)
+                .add(Items.IRON_BOOTS)
+                .add(Items.IRON_LEGGINGS)
+                .add(Items.IRON_CHESTPLATE);
+        valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS_CHAINMAIL)
+                .add(Items.CHAINMAIL_BOOTS)
+                .add(Items.CHAINMAIL_LEGGINGS)
+                .add(Items.CHAINMAIL_CHESTPLATE);
+        valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS_COPPER)
+                .add(Items.COPPER_BOOTS)
+                .add(Items.COPPER_LEGGINGS)
+                .add(Items.COPPER_CHESTPLATE);
+        valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS_LEATHER)
+                .add(Items.LEATHER_BOOTS)
+                .add(Items.LEATHER_LEGGINGS)
+                .add(Items.LEATHER_CHESTPLATE);
+        valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE)
                 .add(Items.NETHERITE_BOOTS)
                 .add(Items.NETHERITE_LEGGINGS)
                 .add(Items.NETHERITE_CHESTPLATE);

@@ -26,21 +26,21 @@ public class CharmsManager
 {
     public static final String CHARM_ABILITES_COMPOUND_ID = "charm_abilities";
 
-    private static List<Charm> getAbilitiesFromItemStack(ItemStack stack) {
+    public static List<CharmFakeItem> getAbilitiesFromItemStack(ItemStack stack) {
         if (!stack.has(DataComponents.CUSTOM_DATA)) return List.of();
         CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         Optional<int[]> abilities = nbt.getIntArray(CHARM_ABILITES_COMPOUND_ID);
         if (abilities.isEmpty()) return List.of();
-        List<Charm> charms = new ArrayList<>();
+        List<CharmFakeItem> charms = new ArrayList<>();
         for (int ability : abilities.get())
-            charms.add(FakeItems.CHARM_EFFECT_ID_MAP.get(ability).getCharm());
+            charms.add(FakeItems.CHARM_EFFECT_ID_MAP.get(ability));
         return charms;
     }
 
     private static ItemStack triggerEquippedTickCallbacks(ItemStack stack, ServerPlayer player, ServerLevel level) {
-        List<Charm> charms = getAbilitiesFromItemStack(stack);
-        for (Charm charm : charms) {
-            if (!(charm instanceof EquippedTickCallbackCharm equippedCharm)) continue;
+        List<CharmFakeItem> charmFakeItems = getAbilitiesFromItemStack(stack);
+        for (CharmFakeItem cfi : charmFakeItems) {
+            if (!(cfi.getCharm() instanceof EquippedTickCallbackCharm equippedCharm)) continue;
             stack = equippedCharm.equippedTick(stack, player, level);
         }
         return stack;
@@ -70,10 +70,10 @@ public class CharmsManager
 
     public static InteractionResult onItemUse(Level level, Player player, InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
-        List<Charm> charms = getAbilitiesFromItemStack(stack);
+        List<CharmFakeItem> charmFakeItems = getAbilitiesFromItemStack(stack);
         boolean hasSucceeded = false;
-        for (Charm charm : charms) {
-            if (!(charm instanceof UseCallbackCharm useCharm)) continue;
+        for (CharmFakeItem cfi : charmFakeItems) {
+            if (!(cfi.getCharm() instanceof UseCallbackCharm useCharm)) continue;
             stack = useCharm.onUse(stack, (ServerPlayer) player, (ServerLevel) level);
             player.setItemInHand(interactionHand, stack);
             hasSucceeded = true;

@@ -10,11 +10,11 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.baseItemChangeCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
-public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, baseItemChangeCallbackCharm
+public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, BaseItemChangeCallbackCharm
 {
     @Override
     public String id()

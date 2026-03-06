@@ -6,10 +6,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.baseItemChangeCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
-public class OpenHeartCharm implements Charm, baseItemChangeCallbackCharm
+public class OpenHeartCharm implements Charm, BaseItemChangeCallbackCharm
 {
     public static final String OPEN_HEART_CHARM_ID = "cosmetic-charm-open-heart";
 

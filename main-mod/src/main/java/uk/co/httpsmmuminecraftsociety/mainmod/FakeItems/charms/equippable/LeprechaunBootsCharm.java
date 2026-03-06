@@ -25,8 +25,8 @@ public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, B
     @Override
     public @NotNull ItemStack enableEffectForItem(ItemStack stack)
     {
-        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_size", Attributes.SCALE, 0.5, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
-        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_speed", Attributes.MOVEMENT_SPEED, -0.1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_size", Attributes.SCALE, -0.5, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_speed", Attributes.MOVEMENT_SPEED, 0.1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_interaction_block", Attributes.BLOCK_INTERACTION_RANGE, -4, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_interaction_entity", Attributes.ENTITY_INTERACTION_RANGE, -2.5, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         stack = Utils.applyItemAttrModifier(stack, "leprechaun_boots_step", Attributes.STEP_HEIGHT, -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, EquipmentSlotGroup.FEET);

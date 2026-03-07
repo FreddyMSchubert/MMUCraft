@@ -7,18 +7,13 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.crafting.*;
-import net.minecraft.world.item.equipment.EquipmentAssets;
-import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
@@ -43,14 +38,16 @@ public class CombineCosmeticRecipe implements CraftingRecipe
 
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
+            CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
 
-            if (stack.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
-                if (armor != null || !stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY).strings().isEmpty()) continue;
+            MainMod.LOGGER.info("Checking if the armor item is in COSMETIC_COMB...: " + stack.getItem().getName());
+            if (stack.getItem().getDefaultInstance().is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
+                MainMod.LOGGER.info("cmd strings: " + cmd.strings());
+                if (armor != null || !cmd.strings().isEmpty()) continue;
                 armor = stack;
                 continue;
             }
 
-            CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
             if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-hat-") && stack.getItem().equals(Items.CARVED_PUMPKIN)) {
                 if (cosmetic != null) continue;
                 cosmetic = stack;
@@ -58,13 +55,16 @@ public class CombineCosmeticRecipe implements CraftingRecipe
             }
         }
 
+        MainMod.LOGGER.info("armor :" + armor + " cosmetic: " + cosmetic);
         return new craftingInfo(armor != null && cosmetic != null, armor, cosmetic);
     }
 
     @Override
     public boolean matches(CraftingInput input, Level level)
     {
-        return getCraftingInfo(input).craftable && input.ingredientCount() == 2;
+        craftingInfo cinfo = getCraftingInfo(input);
+        MainMod.LOGGER.info("Iscraftable: " + cinfo.craftable);
+        return cinfo.craftable && input.ingredientCount() == 2;
     }
 
     @Override
@@ -72,34 +72,10 @@ public class CombineCosmeticRecipe implements CraftingRecipe
     {
         craftingInfo cinfo = getCraftingInfo(input);
 
-        CustomModelData armorCmd = cinfo.armor.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-        if (!armorCmd.strings().isEmpty())
-            return ItemStack.EMPTY;
+        ItemStack pumpkin = CosmeticsManager.helmetToPumpkinReplica(cinfo.armor);
+        pumpkin.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(cinfo.cosmetic.get(DataComponents.CUSTOM_MODEL_DATA).getString(0)), List.of()));
 
-        CustomModelData cosmeticCmd = cinfo.cosmetic.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-        if (cosmeticCmd.strings().isEmpty() || cosmeticCmd.strings().getFirst().isEmpty()) return ItemStack.EMPTY;
-        String cosmeticPath = cosmeticCmd.strings().getFirst();
-
-        Equippable defaultEquippable = cinfo.armor.getItem().getDefaultInstance().get(DataComponents.EQUIPPABLE);
-        Equippable.Builder newEquippableBuilder = Equippable.builder(defaultEquippable.slot())
-                .setEquipSound(defaultEquippable.equipSound())
-                .setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, cosmeticPath)))
-                .setDispensable(defaultEquippable.dispensable())
-                .setSwappable(defaultEquippable.swappable())
-                .setDamageOnHurt(defaultEquippable.damageOnHurt())
-                .setEquipOnInteract(defaultEquippable.equipOnInteract())
-                .setCanBeSheared(defaultEquippable.canBeSheared())
-                .setShearingSound(defaultEquippable.shearingSound());
-        if (defaultEquippable.cameraOverlay().isPresent())
-            newEquippableBuilder.setCameraOverlay(defaultEquippable.cameraOverlay().get());
-        if (defaultEquippable.allowedEntities().isPresent())
-            newEquippableBuilder.setAllowedEntities(defaultEquippable.allowedEntities().get());
-        Equippable newEquippable = newEquippableBuilder.build();
-
-        ItemStack returnStack = cinfo.armor.copy();
-        returnStack.set(DataComponents.EQUIPPABLE, newEquippable);
-
-        return returnStack;
+        return pumpkin;
     }
 
     @Override

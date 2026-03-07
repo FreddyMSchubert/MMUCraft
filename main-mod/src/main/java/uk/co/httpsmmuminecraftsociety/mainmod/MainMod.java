@@ -4,13 +4,10 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
-import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemsCommand;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.cosmeticsSyncing.CosmeticHeadSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantmentEffects;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 
@@ -25,8 +22,7 @@ public class MainMod implements ModInitializer {
 
         ServerTickEvents.END_WORLD_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);
-        EntityTrackingEvents.START_TRACKING.register(CosmeticHeadSync::onStartTracking);
-        ServerPlayConnectionEvents.JOIN.register(CosmeticHeadSync::onJoin);
+
 
         FakeItemsCommand.init();
         MainModRecipes.register();

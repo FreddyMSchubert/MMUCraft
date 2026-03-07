@@ -4,8 +4,7 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
       "ArmorAddToolTipFirstTick",
-      "UpdateArmorTooltipAfterAnvilUse",
-      "SyncCosmeticHead"
+      "UpdateArmorTooltipAfterAnvilUse"
 	],
 	"injectors": {
 		"defaultRequire": 1

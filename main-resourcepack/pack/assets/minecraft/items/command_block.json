@@ -185,6 +185,27 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/charm/cosmetic_charm_ender_chest_staff"
 				}
+			},
+			{
+				"when": "cosmetic-charm-mermaid-scales",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_mermaid_scales"
+				}
+			},
+			{
+				"when": "cosmetic-charm-strider-shales",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_strider_shales"
+				}
+			},
+			{
+				"when": "cosmetic-charm-extendo-grip",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_extendo_grip"
+				}
 			}
 		],
 		"fallback": {

@@ -34,6 +34,12 @@ public final class FakeItems {
             new CosmeticFakeItem("cosmetic-hat-villager-fletcher", "Fletcher Hat",      Rarity.COMMON),
             new CosmeticFakeItem("cosmetic-hat-villager-librarian","Librarian Hat",     Rarity.COMMON),
             new CosmeticFakeItem("cosmetic-hat-villager-shepherd", "Shepherd Hat",      Rarity.COMMON),
+
+            // handheld - 2
+            // chest - 3
+            // leggings - 7
+            // boots - 4
+
             new CharmFakeItem(1, "Staff of Crafting",          Rarity.COMMON, new CraftingStaffCharm(),   "Crafting on the go!"),
             new CharmFakeItem(2, "Staff of Soulbound Storage", Rarity.COMMON, new EnderChestStaffCharm(), "For all your soulbound item needs!"),
             new EquippableCharmFakeItem(3,  "Heart on your Sleeve Charm", Rarity.UNCOMMON, "heart_sleeve__charm",         EquipmentSlot.CHEST, new HeartCharm(0),        "Sgt. Pepper's Lonely Hearts Club Charm",     "Grants the user extra life."),
@@ -53,7 +59,8 @@ public final class FakeItems {
             new EquippableCharmFakeItem(17, "Bunny Pajamas Charm",        Rarity.UNCOMMON, "bunny_pajamas__charm",        EquipmentSlot.LEGS,  new BunnyPajamasCharm(),       "Perfect for some Eggsercise and Hareobics.", "You'll jump like LeBron and take less fall damage. The bunnies might also get a bit snacky."),
             new EquippableCharmFakeItem(18, "Kitty Pajamas Charm",        Rarity.UNCOMMON, "kitty_pajamas__charm",        EquipmentSlot.LEGS,  new KittyPajamasCharm(),       "They look nice and purrple.",                "The wearer won't take fall damage and scare away creepers."),
             new EquippableCharmFakeItem(19, "Spider Pajamas Charm",       Rarity.UNCOMMON, "spider_pajamas__charm",       EquipmentSlot.LEGS,  new SpiderPajamasCharm(),      "Oohhhh how emo... /s",                       "Let's you climb up the sides of blocks."),
-            new EquippableCharmFakeItem(20, "Cave Spider Pajamas Charm",  Rarity.UNCOMMON, "cave_spider_pajamas__charm",  EquipmentSlot.LEGS,  new CaveSpiderPajamasCharm(),  "Poison not included.",                       "Let's you climb straight across the ceiling.")
+            new EquippableCharmFakeItem(20, "Cave Spider Pajamas Charm",  Rarity.UNCOMMON, "cave_spider_pajamas__charm",  EquipmentSlot.LEGS,  new CaveSpiderPajamasCharm(),  "Poison not included.",                       "Let's you climb straight across the ceiling."),
+            new EquippableCharmFakeItem(21, "Goop Hand Charm",            Rarity.UNCOMMON, "goop_hand__charm",            EquipmentSlot.CHEST, new GoopHandCharm(),           "Calums patented formula.",                   "Bounces the victims of your attacks further away")
     );
     public static final Map<String, FakeItem> MODEL_ID_MAP = ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItem::getModelId, d -> d));
     public static final Map<Integer, CharmFakeItem> CHARM_EFFECT_ID_MAP = ALL.stream().filter(CharmFakeItem.class::isInstance).map(CharmFakeItem.class::cast).collect(Collectors.toUnmodifiableMap(CharmFakeItem::getEffectId, Function.identity()));

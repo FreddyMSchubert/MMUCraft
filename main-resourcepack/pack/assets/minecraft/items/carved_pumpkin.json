@@ -7,49 +7,56 @@
 				"when": "cosmetic-hat-villager-armorer",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/armorer_hat"
+					"model": "mmu_pack:item/hat/villager/armorer_hat"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-butcher",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/butcher_hat"
+					"model": "mmu_pack:item/hat/villager/butcher_hat"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-farmer",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/farmer_hat"
+					"model": "mmu_pack:item/hat/villager/farmer_hat"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-fisherman",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/fisherman_hat"
+					"model": "mmu_pack:item/hat/villager/fisherman_hat"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-fletcher",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/fletcher_hat"
+					"model": "mmu_pack:item/hat/villager/fletcher_hat"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-librarian",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/librarian_hat"
+					"model": "mmu_pack:item/hat/villager/librarian_hat"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-shepherd",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/shepherd_hat"
+					"model": "mmu_pack:item/hat/villager/shepherd_hat"
+				}
+			},
+			{
+				"when": "cosmetic-hat-bowler",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/bowler_hat"
 				}
 			}
 		],

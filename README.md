@@ -241,9 +241,63 @@ For more inspiration:
 
 heres some mods that are mit licensed and have cosmetics to reuse / get inspired by
 
-- https://modrinth.com/mod/give-me-hats
-- https://modrinth.com/mod/ears
 - https://www.curseforge.com/minecraft/mc-mods/ldshadowladys-disney-wish-rebrushed
+
+these arent mit licensed but we can just get some inspiration
+
+- https://modrinth.com/resourcepack/many-hats
+- https://modrinth.com/mod/animal-hats-yeah
+- https://www.curseforge.com/minecraft/texture-packs/somies-variable-hats
+
+also manual ideas:
+
+- devil horns
+- kitty ears / bunny ears
+- amogus
+- traffic cone
+- alien head
+- top hat
+- book stack
+- goop head
+- viking helmet
+- sombrero
+- cowboy hat
+- animals (sitting on hat, or animal shaped hat)
+- duck hat
+- steampunk hat
+- tricorn thing oderzo made
+- propeller cap
+- party cone hat
+- santa hat
+- headphones
+- lever
+- beret
+- dragon head
+- armor / knights
+- different glasses / shades
+- antenna
+- skull
+- different pumpkin heads
+- mario / luigi hat
+- red clown nose
+- bull horns
+- mario-toad-like mushroom cap
+- fnaf stuff, springtrap mask
+- masks from majoras mask
+- beards
+- kings crown
+- upper half of a shulker fit on a head
+- antlers
+- unicorn horn
+- lying down cat / dog / fox / frog / bee
+- cute new chicken
+- lil octopusses
+- ghast hat so it looks your face is the ghasts face. fully engulfs your head but hole in front
+- rod from copper golems
+- flower on head
+- flower crown
+- bow
+- gas mask
 
 ## Fishing Changes
 

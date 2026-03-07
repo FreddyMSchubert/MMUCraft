@@ -14,7 +14,7 @@ public class KittyPajamaCharm implements Charm, BaseItemChangeCallbackCharm
     @Override
     public String id()
     {
-        return "cosmetic-charm-kitty-pajama";
+        return "cosmetic-charm-kitty-pajamas";
     }
 
     @Override

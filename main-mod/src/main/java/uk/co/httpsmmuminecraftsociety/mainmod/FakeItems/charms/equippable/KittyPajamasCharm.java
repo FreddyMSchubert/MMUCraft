@@ -9,7 +9,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.BaseItemChang
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
-public class KittyPajamaCharm implements Charm, BaseItemChangeCallbackCharm
+public class KittyPajamasCharm implements Charm, BaseItemChangeCallbackCharm
 {
     @Override
     public String id()

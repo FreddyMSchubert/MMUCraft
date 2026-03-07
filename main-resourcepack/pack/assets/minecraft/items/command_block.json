@@ -8,91 +8,91 @@
 				"when": "coin-1",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_1"
+					"model": "mmu_pack:item/coin/coin_1"
 				}
 			},
 			{
 				"when": "coin-5",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_5"
+					"model": "mmu_pack:item/coin/coin_5"
 				}
 			},
 			{
 				"when": "coin-10",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_10"
+					"model": "mmu_pack:item/coin/coin_10"
 				}
 			},
 			{
 				"when": "coin-50",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_50"
+					"model": "mmu_pack:item/coin/coin_50"
 				}
 			},
 			{
 				"when": "coin-100",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_100"
+					"model": "mmu_pack:item/coin/coin_100"
 				}
 			},
 			{
 				"when": "coin-500",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_500"
+					"model": "mmu_pack:item/coin/coin_500"
 				}
 			},
 			{
 				"when": "coin-1000",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_1000"
+					"model": "mmu_pack:item/coin/coin_1000"
 				}
 			},
 			{
 				"when": "coin-5000",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_5000"
+					"model": "mmu_pack:item/coin/coin_5000"
 				}
 			},
 			{
 				"when": "coin-10000",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_10000"
+					"model": "mmu_pack:item/coin/coin_10000"
 				}
 			},
 			{
 				"when": "coin-50000",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_50000"
+					"model": "mmu_pack:item/coin/coin_50000"
 				}
 			},
 			{
 				"when": "coin-100000",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_100000"
+					"model": "mmu_pack:item/coin/coin_100000"
 				}
 			},
 			{
 				"when": "coin-500000",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_500000"
+					"model": "mmu_pack:item/coin/coin_500000"
 				}
 			},
 			{
 				"when": "coin-1000000",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/coin_1000000"
+					"model": "mmu_pack:item/coin/coin_1000000"
 				}
 			},
 			{

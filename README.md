@@ -201,15 +201,14 @@ we could also make a blueprint item that you need to find in the world which wil
 
 we could also do sale vouchers where you have a 20% discount on the item you buy while you have it in the inventory or something
 
-- Pair of boots that shrink you and your jump
-- Pair of boots that expand you and your jump
 - Particle effects around player
 - Particle trail following player
 - Ability to put any item or block you want onto your head
 - Item that when held in offhand increases reach
-- Max health +x
+- chestplate slime fists - more knockback
+- cat shirt - no creeper aggro (if possible), lowered fall damage
+- bunny shirt - huge jump
 - youre always walking as if on ice
-- night vision hat
 - umbrella - slow falling when held
 - everlasting beef / eternal steak
 - snorkle - more water breathing
@@ -223,8 +222,6 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - chance to light attackers on fire
 - double jump / triple jump
 - huge jump height
-- mermaid tail / mermaid scale leggings - faster in water, extra damage in lava
-- strider leg shales - damaged by water, faster in lava
 - antidote vessel - decreases harmful effect duration
 - quiver - gives you infinity
 - swim in air while item held

@@ -206,6 +206,20 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/charm/cosmetic_charm_extendo_grip"
 				}
+			},
+			{
+				"when": "cosmetic-charm-bunny-pajamas",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_bunny_pajamas"
+				}
+			},
+			{
+				"when": "cosmetic-charm-kitty-pajamas",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_kitty_pajamas"
+				}
 			}
 		],
 		"fallback": {

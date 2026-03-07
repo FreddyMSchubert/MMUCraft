@@ -2,25 +2,32 @@ package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BunnyPajamaCharm implements Charm, BaseItemChangeCallbackCharm, EquippedTickCallbackCharm
 {
     @Override
     public String id()
     {
-        return "cosmetic-charm-bunny-pajama";
+        return "cosmetic-charm-bunny-pajamas";
     }
 
-    private static final int PER_TICK_CARROT_EAT_CHANCE = 6000;
+    private static final int PER_TICK_CARROT_EAT_CHANCE = 43;
 
     @Override
     public @NotNull ItemStack enableEffectForItem(ItemStack stack)
@@ -45,9 +52,48 @@ public class BunnyPajamaCharm implements Charm, BaseItemChangeCallbackCharm, Equ
     @Override
     public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
-        if (Math.floor(Math.random() * 6000) != 42) return stack;
+        if (level.random.nextInt(PER_TICK_CARROT_EAT_CHANCE) != 0) {
+            return stack;
+        }
 
-        // player.getInventory().for
+        if (!player.canEat(false)) {
+            return stack;
+        }
+
+        Inventory inventory = player.getInventory();
+        List<Integer> carrotSlots = new ArrayList<>();
+
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack invStack = inventory.getItem(i);
+            if (invStack.is(Items.CARROT) || invStack.is(Items.GOLDEN_CARROT)) {
+                carrotSlots.add(i);
+            }
+        }
+
+        if (carrotSlots.isEmpty()) {
+            return stack;
+        }
+
+        int slot = carrotSlots.get(level.random.nextInt(carrotSlots.size()));
+        ItemStack foodStack = inventory.getItem(slot);
+
+        if (foodStack.isEmpty()) {
+            return stack;
+        }
+
+        level.playSound(
+                null,
+                player.getX(), player.getY(), player.getZ(),
+                SoundEvents.GENERIC_EAT,
+                SoundSource.PLAYERS,
+                0.8F,
+                0.9F + level.random.nextFloat() * 0.2F
+        );
+
+        ItemStack result = foodStack.finishUsingItem(level, player);
+        if (result != foodStack) {
+            inventory.setItem(slot, result);
+        }
 
         return stack;
     }

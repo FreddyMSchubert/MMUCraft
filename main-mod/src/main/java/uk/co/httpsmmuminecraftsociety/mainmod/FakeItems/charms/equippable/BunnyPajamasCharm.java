@@ -19,7 +19,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BunnyPajamaCharm implements Charm, BaseItemChangeCallbackCharm, EquippedTickCallbackCharm
+public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, EquippedTickCallbackCharm
 {
     @Override
     public String id()

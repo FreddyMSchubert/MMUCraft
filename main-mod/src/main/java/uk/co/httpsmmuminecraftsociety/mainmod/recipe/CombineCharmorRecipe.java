@@ -70,7 +70,7 @@ public class CombineCharmorRecipe implements CraftingRecipe
     @Override
     public boolean matches(CraftingInput input, Level level)
     {
-        return getCraftingInfo(input).craftable;
+        return getCraftingInfo(input).craftable && input.ingredientCount() == 2;
     }
 
     private String getArmorMaterialType(ItemStack stack) {

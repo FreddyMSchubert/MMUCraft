@@ -42,9 +42,9 @@ public class HeartCharm implements Charm, BaseItemChangeCallbackCharm
     private static float getMaxHeartsForLevel(int level) {
         return switch (level)
         {
-            case 0 -> 2f;
-            case 1 -> 6f;
-            case 2 -> 10f;
+            case 0 -> 4f;
+            case 1 -> 8f;
+            case 2 -> 12f;
             case 3 -> 20f;
             default -> 2f;
         };

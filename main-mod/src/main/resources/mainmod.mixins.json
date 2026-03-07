@@ -3,7 +3,6 @@
 	"package": "uk.co.httpsmmuminecraftsociety.mainmod.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-      "ExampleMixin",
       "ArmorAddToolTipFirstTick",
       "UpdateArmorTooltipAfterAnvilUse"
 	],

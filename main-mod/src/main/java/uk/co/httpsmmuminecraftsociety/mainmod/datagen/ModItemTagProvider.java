@@ -26,6 +26,8 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
     public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/diamond"));
     public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items/netherite"));
 
+    public static final TagKey<Item> COSMETIC_COMBINABLE_ARMOR_ITEMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "cosmetic_combinable_armor_items"));
+
     public ModItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture)
     {
         super(output, registriesFuture);
@@ -114,5 +116,16 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
                 .add(Items.NETHERITE_BOOTS)
                 .add(Items.NETHERITE_LEGGINGS)
                 .add(Items.NETHERITE_CHESTPLATE);
+
+
+        valueLookupBuilder(COSMETIC_COMBINABLE_ARMOR_ITEMS)
+                .add(Items.DIAMOND_HELMET)
+                .add(Items.GOLDEN_HELMET)
+                .add(Items.TURTLE_HELMET)
+                .add(Items.IRON_HELMET)
+                .add(Items.CHAINMAIL_HELMET)
+                .add(Items.COPPER_HELMET)
+                .add(Items.LEATHER_HELMET)
+                .add(Items.NETHERITE_HELMET);
     }
 }

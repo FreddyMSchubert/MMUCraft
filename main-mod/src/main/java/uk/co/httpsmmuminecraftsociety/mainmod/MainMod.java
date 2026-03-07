@@ -23,6 +23,7 @@ public class MainMod implements ModInitializer {
         ServerTickEvents.END_WORLD_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);
 
+
         FakeItemsCommand.init();
         MainModRecipes.register();
         ModEnchantmentEffects.registerModEnchantmentEffects();

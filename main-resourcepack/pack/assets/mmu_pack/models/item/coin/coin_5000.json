@@ -1,6 +1,6 @@
 {
 	"parent": "minecraft:item/generated",
 	"textures": {
-		"layer0": "mmu_pack:item/coin_5000"
+		"layer0": "mmu_pack:item/coin/coin_5000"
 	}
 }

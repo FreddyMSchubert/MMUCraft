@@ -35,6 +35,7 @@ public final class FakeItems {
             new CosmeticFakeItem("cosmetic-hat-villager-librarian","Librarian Hat",     Rarity.COMMON),
             new CosmeticFakeItem("cosmetic-hat-villager-shepherd", "Shepherd Hat",      Rarity.COMMON),
             new CosmeticFakeItem("cosmetic-hat-bowler",            "Bowler Hat",        Rarity.COMMON),
+            new CosmeticFakeItem("cosmetic-hat-traffic-cone",      "Traffic Cone Hat",  Rarity.COMMON, "Staple of scottish culture."),
 
             // handheld - 2
             // chest - 3

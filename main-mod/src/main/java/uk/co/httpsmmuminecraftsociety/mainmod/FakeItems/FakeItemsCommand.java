@@ -24,6 +24,10 @@ import java.util.function.Predicate;
 public final class FakeItemsCommand {
     private FakeItemsCommand() {}
 
+    private static final String HAT_PREFIX = "cosmetic-hat-";
+    private static final String CHARM_PREFIX = "cosmetic-charm-";
+    private static final String COIN_PREFIX = "coin-";
+
     private static SuggestionProvider<CommandSourceStack> suggestionsFor(Predicate<FakeItem> filter) {
         return (ctx, builder) -> SharedSuggestionProvider.suggest(
                 FakeItems.ALL.stream()
@@ -33,17 +37,37 @@ public final class FakeItemsCommand {
         );
     }
 
+    private static SuggestionProvider<CommandSourceStack> suggestionsForStripped(Predicate<FakeItem> filter, String prefix) {
+        return (ctx, builder) -> SharedSuggestionProvider.suggest(
+                FakeItems.ALL.stream()
+                        .filter(filter)
+                        .map(FakeItem::getModelId)
+                        .filter(id -> id.startsWith(prefix))
+                        .map(id -> id.substring(prefix.length())),
+                builder
+        );
+    }
+
     private static final SuggestionProvider<CommandSourceStack> ALL_SUGGESTIONS =
             suggestionsFor(item -> true);
 
     private static final SuggestionProvider<CommandSourceStack> CHARM_SUGGESTIONS =
-            suggestionsFor(item -> item instanceof CharmFakeItem);
+            suggestionsForStripped(
+                    item -> item instanceof CharmFakeItem && item.getModelId().startsWith(CHARM_PREFIX),
+                    CHARM_PREFIX
+            );
 
     private static final SuggestionProvider<CommandSourceStack> HAT_SUGGESTIONS =
-            suggestionsFor(item -> item instanceof CosmeticFakeItem && item.getModelId().startsWith("cosmetic-hat-"));
+            suggestionsForStripped(
+                    item -> item instanceof CosmeticFakeItem && item.getModelId().startsWith(HAT_PREFIX),
+                    HAT_PREFIX
+            );
 
     private static final SuggestionProvider<CommandSourceStack> COIN_SUGGESTIONS =
-            suggestionsFor(item -> item instanceof BasicFakeItem && item.getModelId().startsWith("coin-"));
+            suggestionsForStripped(
+                    item -> item instanceof BasicFakeItem && item.getModelId().startsWith(COIN_PREFIX),
+                    COIN_PREFIX
+            );
 
     public static void init() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> register(dispatcher));
@@ -53,9 +77,24 @@ public final class FakeItemsCommand {
         dispatcher.register(
                 Commands.literal("fakeitems")
                         .requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
-                        .then(buildCategoryCommand("charm", CHARM_SUGGESTIONS, item -> item instanceof CharmFakeItem))
-                        .then(buildCategoryCommand("hat", HAT_SUGGESTIONS, item -> item instanceof CosmeticFakeItem && item.getModelId().startsWith("cosmetic-hat-")))
-                        .then(buildCategoryCommand("coin", COIN_SUGGESTIONS, item -> item instanceof BasicFakeItem && item.getModelId().startsWith("coin-")))
+                        .then(buildPrefixedCategoryCommand(
+                                "charm",
+                                CHARM_SUGGESTIONS,
+                                item -> item instanceof CharmFakeItem && item.getModelId().startsWith(CHARM_PREFIX),
+                                CHARM_PREFIX
+                        ))
+                        .then(buildPrefixedCategoryCommand(
+                                "hat",
+                                HAT_SUGGESTIONS,
+                                item -> item instanceof CosmeticFakeItem && item.getModelId().startsWith(HAT_PREFIX),
+                                HAT_PREFIX
+                        ))
+                        .then(buildPrefixedCategoryCommand(
+                                "coin",
+                                COIN_SUGGESTIONS,
+                                item -> item instanceof BasicFakeItem && item.getModelId().startsWith(COIN_PREFIX),
+                                COIN_PREFIX
+                        ))
                         .then(buildCategoryCommand("all", ALL_SUGGESTIONS, item -> true))
         );
     }
@@ -78,6 +117,32 @@ public final class FakeItemsCommand {
                                 .executes(ctx -> give(
                                         ctx.getSource(),
                                         StringArgumentType.getString(ctx, "id"),
+                                        IntegerArgumentType.getInteger(ctx, "amount"),
+                                        filter
+                                ))
+                        )
+                );
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> buildPrefixedCategoryCommand(
+            String name,
+            SuggestionProvider<CommandSourceStack> suggestions,
+            Predicate<FakeItem> filter,
+            String prefix
+    ) {
+        return Commands.literal(name)
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .suggests(suggestions)
+                        .executes(ctx -> give(
+                                ctx.getSource(),
+                                prefix + StringArgumentType.getString(ctx, "id"),
+                                1,
+                                filter
+                        ))
+                        .then(Commands.argument("amount", IntegerArgumentType.integer(1, 1_000_000))
+                                .executes(ctx -> give(
+                                        ctx.getSource(),
+                                        prefix + StringArgumentType.getString(ctx, "id"),
                                         IntegerArgumentType.getInteger(ctx, "amount"),
                                         filter
                                 ))

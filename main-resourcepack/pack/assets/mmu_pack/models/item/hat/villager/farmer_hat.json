@@ -5,7 +5,7 @@
 		64
 	],
 	"textures": {
-		"0": "mmu_pack:item/villager_entity/farmer"
+		"0": "mmu_pack:item/hat/villager/farmer"
 	},
 	"elements": [
 		{

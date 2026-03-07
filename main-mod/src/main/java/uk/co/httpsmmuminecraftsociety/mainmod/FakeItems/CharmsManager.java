@@ -73,6 +73,8 @@ public class CharmsManager
     public static InteractionResult onItemUse(Level level, Player player, InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
         List<CharmFakeItem> charmFakeItems = getAbilitiesFromItemStack(stack);
+        if (charmFakeItems.isEmpty()) return InteractionResult.PASS;
+
         boolean hasSucceeded = false;
         for (CharmFakeItem cfi : charmFakeItems) {
             if (!(cfi.getCharm() instanceof UseCallbackCharm useCharm)) continue;

@@ -9,13 +9,15 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.TickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.UseCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,13 @@ public class CharmsManager
             player.setItemInHand(interactionHand, stack);
             hasSucceeded = true;
         }
+
+        if (stack.getItem() != Items.CARVED_PUMPKIN && stack.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
+            ItemStack replacementPumpkin = CosmeticsManager.helmetToPumpkinReplica(stack);
+            replacementPumpkin.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of("cosmetic_hat_villager_librarian"), List.of()));
+            player.setItemInHand(interactionHand, replacementPumpkin);
+        }
+
         if (hasSucceeded) return InteractionResult.SUCCESS;
         else return InteractionResult.FAIL;
     }

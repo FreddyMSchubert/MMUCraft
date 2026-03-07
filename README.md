@@ -201,15 +201,14 @@ we could also make a blueprint item that you need to find in the world which wil
 
 we could also do sale vouchers where you have a 20% discount on the item you buy while you have it in the inventory or something
 
-- Pair of boots that shrink you and your jump
-- Pair of boots that expand you and your jump
 - Particle effects around player
 - Particle trail following player
 - Ability to put any item or block you want onto your head
 - Item that when held in offhand increases reach
-- Max health +x
+- chestplate slime fists - more knockback
+- cat shirt - no creeper aggro (if possible), lowered fall damage
+- bunny shirt - huge jump
 - youre always walking as if on ice
-- night vision hat
 - umbrella - slow falling when held
 - everlasting beef / eternal steak
 - snorkle - more water breathing
@@ -223,8 +222,6 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - chance to light attackers on fire
 - double jump / triple jump
 - huge jump height
-- mermaid tail / mermaid scale leggings - faster in water, extra damage in lava
-- strider leg shales - damaged by water, faster in lava
 - antidote vessel - decreases harmful effect duration
 - quiver - gives you infinity
 - swim in air while item held
@@ -239,6 +236,14 @@ For more inspiration:
 - https://minecraft.wiki/w/Attribute#Armor_toughness
 - https://minecraft.wiki/w/Enchanting
 - https://minecraft.wiki/w/Effect
+
+### cosmetics without functional effect
+
+heres some mods that are mit licensed and have cosmetics to reuse / get inspired by
+
+- https://modrinth.com/mod/give-me-hats
+- https://modrinth.com/mod/ears
+- https://www.curseforge.com/minecraft/mc-mods/ldshadowladys-disney-wish-rebrushed
 
 ## Fishing Changes
 
@@ -264,6 +269,23 @@ Cool stuff to fish up
 ### Potentially
 
 Completion Book with all fish
+
+### Good mit-licensed mods to take some nice fish textures from
+
+- https://modrinth.com/mod/gone-fishing
+- https://modrinth.com/mod/fishingfrenzy
+- https://modrinth.com/mod/fishery
+- https://modrinth.com/mod/exlines-fishing
+- https://modrinth.com/datapack/fishingsim
+- https://modrinth.com/mod/fishing-101
+- https://modrinth.com/mod/fish-of-thieves
+
+### and to make fishing in other places work
+
+- https://modrinth.com/datapack/gm4-end-fishing
+- https://modrinth.com/datapack/lava-fishing
+
+hopefully with that i can figure it out
 
 ## Progression Changes
 
@@ -293,7 +315,7 @@ There are tomes (inspired by quarks mod), which can increase some enchantments e
 A sniffer drops a new item, a bulb of ancient magic. Craft it together with an enchanted book of the right type and the right mob drop to make the tome and 6 diamonds.
 tomes can be applied at anvils for 30 levels and no increased item xp cost.
 
-- cursebreaker -> purification rune from archeology or fishing or chests or sometimes traded from max level librarians
+- cursebreaker -> purification rune from archeology or fishing or chests or sometimes traded from max level librarians. specific to curse to be broken.
 - feather falling -> parrot feather
 - thorns -> guardian gear dropped from normal guardians
 - sharpness -> ancient sword from fishing
@@ -310,6 +332,16 @@ tomes can be applied at anvils for 30 levels and no increased item xp cost.
 - punch -> skeleton head
 - luck of the sea -> heart of the sea
 - lure -> prismarine shard
+
+### more curses
+
+- curse of fragility -> cant go above 50% durability
+- curse of sluggishness -> axe + sword + mace + trident + spear attack cooldown increase significantly
+- curse of the breeze -> reduces bow + crossbow accuracy (+ trident)
+- curse of misfortune -> anti-fortune
+- curse of floating -> you get pushed up out of water
+- curse of disorder -> your items randomly swap places sometimes
+- curse of draining -> items auto-drain durability to a certain point slowly
 
 ### Information
 

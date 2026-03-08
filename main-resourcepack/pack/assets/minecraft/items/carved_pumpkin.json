@@ -72,6 +72,13 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/hat/book_stack"
 				}
+			},
+			{
+				"when": "cosmetic-hat-clown-nose",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/clown_nose"
+				}
 			}
 		],
 		"fallback": {

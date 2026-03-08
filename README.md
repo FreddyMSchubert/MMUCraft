@@ -239,10 +239,6 @@ For more inspiration:
 
 ### cosmetics without functional effect
 
-heres some mods that are mit licensed and have cosmetics to reuse / get inspired by
-
-- https://www.curseforge.com/minecraft/mc-mods/ldshadowladys-disney-wish-rebrushed
-
 these arent mit licensed but we can just get some inspiration
 
 - https://modrinth.com/resourcepack/many-hats
@@ -279,6 +275,7 @@ also manual ideas:
 - skull
 - different pumpkin heads
 - mario / luigi hat
+- night cap
 - red clown nose
 - bull horns
 - mario-toad-like mushroom cap

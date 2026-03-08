@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ItemLore;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
@@ -19,6 +20,7 @@ public final class CosmeticsManager {
     private CosmeticsManager() {}
 
     private static final String ORIGINAL_ITEM_ID = "original_item_id";
+    private static final String HELMET_DYED_COLOR_ID = "helmet_dyed_color";
 
     public static ItemStack helmetToPumpkinReplica(ItemStack helmet) {
         if (helmet.isEmpty() || !helmet.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
@@ -30,7 +32,6 @@ public final class CosmeticsManager {
         // store original item id
         CompoundTag nbt = new CompoundTag();
         nbt.putString(ORIGINAL_ITEM_ID, BuiltInRegistries.ITEM.getKey(helmet.getItem()).toString());
-        replica.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
 
         // component time
         replica.set(DataComponents.MAX_STACK_SIZE, 1);
@@ -43,8 +44,12 @@ public final class CosmeticsManager {
 
         replica.set(DataComponents.ITEM_NAME, helmet.getItemName());
         replica.set(DataComponents.CUSTOM_NAME, helmet.getCustomName());
-        replica.set(DataComponents.DYED_COLOR, helmet.get(DataComponents.DYED_COLOR));
 
+        if (helmet.has(DataComponents.DYED_COLOR)) {
+            nbt.putInt(HELMET_DYED_COLOR_ID, helmet.get(DataComponents.DYED_COLOR).rgb());
+        }
+
+        replica.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
         return replica;
     }
 
@@ -76,7 +81,10 @@ public final class CosmeticsManager {
 
         helmet.set(DataComponents.ITEM_NAME, replica.get(DataComponents.ITEM_NAME));
         helmet.set(DataComponents.CUSTOM_NAME, replica.get(DataComponents.CUSTOM_NAME));
-        helmet.set(DataComponents.DYED_COLOR, replica.get(DataComponents.DYED_COLOR));
+
+        if (nbt.contains(HELMET_DYED_COLOR_ID)) {
+            helmet.set(DataComponents.DYED_COLOR, new DyedItemColor(nbt.getInt(HELMET_DYED_COLOR_ID).get()));
+        }
 
         return helmet;
     }

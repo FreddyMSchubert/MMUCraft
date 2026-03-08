@@ -220,6 +220,27 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/charm/cosmetic_charm_kitty_pajamas"
 				}
+			},
+			{
+				"when": "cosmetic-charm-cave-spider-pajamas",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_cave_spider_pajamas"
+				}
+			},
+			{
+				"when": "cosmetic-charm-spider-pajamas",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_spider_pajamas"
+				}
+			},
+			{
+				"when": "cosmetic-charm-goop-hand",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_goop_hand"
+				}
 			}
 		],
 		"fallback": {

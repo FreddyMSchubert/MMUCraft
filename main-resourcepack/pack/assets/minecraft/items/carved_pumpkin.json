@@ -79,6 +79,40 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/hat/clown_nose"
 				}
+			},
+			{
+				"when": "cosmetic-hat-beret",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/beret"
+				}
+			},
+			{
+				"when": "cosmetic-hat-skull",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/skull"
+				}
+			},
+			{
+				"when": "cosmetic-hat-skull-mask",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/skull_mask"
+				}
+			},
+			{
+				"when": "cosmetic-hat-spartan-helmet",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/spartan_helmet",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": 16777215
+						}
+					]
+				}
 			}
 		],
 		"fallback": {

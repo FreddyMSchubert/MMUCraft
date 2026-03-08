@@ -274,6 +274,8 @@ also manual ideas:
 - antenna
 - skull
 - different pumpkin heads
+- minion eyes
+- green leprechaun hat thing
 - mario / luigi hat
 - night cap
 - red clown nose

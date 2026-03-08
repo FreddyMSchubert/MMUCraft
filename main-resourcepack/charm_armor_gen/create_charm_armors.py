@@ -15,6 +15,10 @@ Outputs (relative to --out):
 
 Rules:
 - For every base armor texture (material) and every charm overlay, create a combined texture.
+- Humanoid and leggings are treated independently:
+  - if only a humanoid texture exists, only humanoid output is written
+  - if only a leggings texture exists, only leggings output is written
+  - missing model slots are emitted as empty layer lists
 - Charm textures may be integer-upscaled versions of the base resolution
   (for example 128x64 instead of 64x32). In that case, the other texture
   is upscaled with nearest-neighbor before compositing.
@@ -22,10 +26,10 @@ Rules:
   - Keep the base leather texture copied unchanged for every charm variant,
 	except it may be upscaled to match the charm resolution.
   - Apply the charm overlay onto the leather *_overlay.png*.
-  - Equipment model JSON uses two layers (base + overlay).
+  - Equipment model JSON uses two layers (base + overlay) only for slots that exist.
 - For non-leather:
   - Bake the charm directly into the base texture (single layer).
-  - Equipment model JSON uses one layer.
+  - Equipment model JSON uses one layer only for slots that exist.
 
 Naming:
 - Output textures are named: <material>__<charm>.png
@@ -41,7 +45,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -50,8 +54,8 @@ from PIL import Image
 
 @dataclass(frozen=True)
 class TextureSet:
-	humanoid_layers: List[str]
-	leggings_layers: List[str]
+	humanoid_layers: List[str] = field(default_factory=list)
+	leggings_layers: List[str] = field(default_factory=list)
 
 
 def _slug(name: str) -> str:
@@ -188,18 +192,15 @@ def build_equipment_model_json(
 	leather_color_when_undyed: int = -6265536,
 ) -> dict:
 	if not is_leather:
-		return {
-			"layers": {
-				"humanoid": [{"texture": t} for t in humanoid_layers],
-				"humanoid_leggings": [{"texture": t} for t in leggings_layers],
-			}
-		}
+		layers = {}
 
-	if len(humanoid_layers) != 2 or len(leggings_layers) != 2:
-		raise ValueError("Leather models must provide exactly 2 layers: [base, overlay]")
+		if humanoid_layers:
+			layers["humanoid"] = [{"texture": t} for t in humanoid_layers]
 
-	base_h, overlay_h = humanoid_layers
-	base_l, overlay_l = leggings_layers
+		if leggings_layers:
+			layers["humanoid_leggings"] = [{"texture": t} for t in leggings_layers]
+
+		return {"layers": layers}
 
 	def dyeable_layer(tex: str) -> dict:
 		return {
@@ -210,22 +211,32 @@ def build_equipment_model_json(
 	def plain_layer(tex: str) -> dict:
 		return {"texture": tex}
 
-	return {
-		"layers": {
-			"horse_body": [
-				dyeable_layer(base_h),
-				plain_layer(overlay_h),
-			],
-			"humanoid": [
-				dyeable_layer(base_h),
-				plain_layer(overlay_h),
-			],
-			"humanoid_leggings": [
-				dyeable_layer(base_l),
-				plain_layer(overlay_l),
-			],
-		}
-	}
+	def leather_slot_layers(textures: List[str]) -> List[dict]:
+		if not textures:
+			return []
+		if len(textures) != 2:
+			raise ValueError(
+				"Leather models must provide exactly 2 layers for any populated slot: [base, overlay]"
+			)
+		base_tex, overlay_tex = textures
+		return [
+			dyeable_layer(base_tex),
+			plain_layer(overlay_tex),
+		]
+
+	humanoid_slot = leather_slot_layers(humanoid_layers)
+	leggings_slot = leather_slot_layers(leggings_layers)
+
+	layers = {}
+
+	if humanoid_slot:
+		layers["humanoid"] = humanoid_slot
+		layers["horse_body"] = list(humanoid_slot)
+
+	if leggings_slot:
+		layers["humanoid_leggings"] = leggings_slot
+
+	return {"layers": layers}
 
 
 def main() -> None:
@@ -254,10 +265,10 @@ def main() -> None:
 	charms_h = _list_pngs(charm_hum)
 	charms_l = _list_pngs(charm_leg)
 
-	if not base_hum or not base_leg:
-		raise SystemExit("Missing basic textures. Need basic/humanoid/*.png and basic/leggings/*.png")
-	if not charms_h or not charms_l:
-		raise SystemExit("Missing charm textures. Need charms/humanoid/*.png and charms/humanoid_leggings/*.png")
+	if not base_hum and not base_leg:
+		raise SystemExit("Missing basic textures. Need at least one of basic/humanoid/*.png or basic/leggings/*.png")
+	if not charms_h and not charms_l:
+		raise SystemExit("Missing charm textures. Need at least one of charms/humanoid/*.png or charms/humanoid_leggings/*.png")
 
 	out_tex_h = out / "assets" / ns / "textures" / "entity" / "equipment" / "humanoid"
 	out_tex_l = out / "assets" / ns / "textures" / "entity" / "equipment" / "humanoid_leggings"
@@ -284,135 +295,159 @@ def main() -> None:
 
 	models_to_write: Dict[Tuple[str, str], TextureSet] = {}
 
-	for charm_stem in charms_h.keys():
-		if charm_stem not in charms_l:
-			continue
-
+	# Standalone charm textures/models, independently by slot.
+	for charm_stem in sorted(set(charms_h.keys()) | set(charms_l.keys())):
 		ch = _slug(charm_stem)
+		humanoid_layers: List[str] = []
+		leggings_layers: List[str] = []
 
-		save_png(charm_imgs_h[charm_stem], out_tex_h / f"{ch}.png")
-		save_png(charm_imgs_l[charm_stem], out_tex_l / f"{ch}.png")
+		if charm_stem in charm_imgs_h:
+			save_png(charm_imgs_h[charm_stem], out_tex_h / f"{ch}.png")
+			humanoid_layers = [f"{ns}:{ch}"]
 
-		models_to_write[(ch, "charm")] = TextureSet(
-			humanoid_layers=[f"{ns}:{ch}"],
-			leggings_layers=[f"{ns}:{ch}"],
-		)
+		if charm_stem in charm_imgs_l:
+			save_png(charm_imgs_l[charm_stem], out_tex_l / f"{ch}.png")
+			leggings_layers = [f"{ns}:{ch}"]
 
-	for material_stem, material_path in base_hum.items():
+		if humanoid_layers or leggings_layers:
+			models_to_write[(ch, "charm")] = TextureSet(
+				humanoid_layers=humanoid_layers,
+				leggings_layers=leggings_layers,
+			)
+
+	material_stems = sorted(set(base_hum.keys()) | set(base_leg.keys()))
+	material_stems = [
+		stem for stem in material_stems
+		if stem not in {leather_h_overlay, leather_l_overlay}
+	]
+
+	# Preload leather components once.
+	leather_base_h_img = _load_png(base_hum[leather_h_base]) if leather_h_base and leather_h_base in base_hum else None
+	leather_base_l_img = _load_png(base_leg[leather_l_base]) if leather_l_base and leather_l_base in base_leg else None
+	leather_ov_h_img = _load_png(base_hum[leather_h_overlay]) if leather_h_overlay and leather_h_overlay in base_hum else None
+	leather_ov_l_img = _load_png(base_leg[leather_l_overlay]) if leather_l_overlay and leather_l_overlay in base_leg else None
+
+	for material_stem in material_stems:
 		mat = _slug(material_stem)
 
-		if leather_h_overlay and material_stem == leather_h_overlay:
-			continue
+		is_leather = (
+			(leather_h_base is not None and material_stem == leather_h_base)
+			or (leather_l_base is not None and material_stem == leather_l_base)
+			or ("leather" in material_stem and "overlay" not in material_stem)
+		)
 
-		if material_stem not in base_leg and not ("leather" in material_stem):
-			continue
+		base_img_h = _load_png(base_hum[material_stem]) if material_stem in base_hum else None
+		base_img_l = _load_png(base_leg[material_stem]) if material_stem in base_leg else None
 
-		base_img_h = _load_png(material_path)
-
-		leg_stem = material_stem if material_stem in base_leg else None
-		base_img_l = _load_png(base_leg[leg_stem]) if leg_stem else None
-
-		is_leather = ("leather" in material_stem) or (leather_h_base and material_stem == leather_h_base)
-
-		for charm_stem in charms_h.keys():
-			if charm_stem not in charms_l:
-				continue
-
+		for charm_stem in sorted(set(charms_h.keys()) | set(charms_l.keys())):
 			ch = _slug(charm_stem)
-			overlay_h = charm_imgs_h[charm_stem]
-			overlay_l = charm_imgs_l[charm_stem]
-
-			texid_h = f"{ns}:{mat}__{ch}"
-			texid_l = f"{ns}:{mat}__{ch}"
 
 			if not is_leather:
-				if base_img_l is None:
-					continue
+				humanoid_layers: List[str] = []
+				leggings_layers: List[str] = []
 
-				target_h = _common_pixel_art_size(base_img_h.size, overlay_h.size)
-				target_l = _common_pixel_art_size(base_img_l.size, overlay_l.size)
+				if base_img_h is not None and charm_stem in charm_imgs_h:
+					overlay_h = charm_imgs_h[charm_stem]
+					target_h = _common_pixel_art_size(base_img_h.size, overlay_h.size)
 
-				scaled_base_h = _upscale_to_size(base_img_h, target_h, label=f"{material_stem} humanoid base")
-				scaled_overlay_h = _upscale_to_size(overlay_h, target_h, label=f"{charm_stem} humanoid charm")
+					scaled_base_h = _upscale_to_size(base_img_h, target_h, label=f"{material_stem} humanoid base")
+					scaled_overlay_h = _upscale_to_size(overlay_h, target_h, label=f"{charm_stem} humanoid charm")
 
-				scaled_base_l = _upscale_to_size(base_img_l, target_l, label=f"{material_stem} leggings base")
-				scaled_overlay_l = _upscale_to_size(overlay_l, target_l, label=f"{charm_stem} leggings charm")
+					out_img_h = _alpha_composite(scaled_base_h, scaled_overlay_h)
+					save_png(out_img_h, out_tex_h / f"{mat}__{ch}.png")
+					humanoid_layers = [f"{ns}:{mat}__{ch}"]
 
-				out_img_h = _alpha_composite(scaled_base_h, scaled_overlay_h)
-				out_img_l = _alpha_composite(scaled_base_l, scaled_overlay_l)
+				if base_img_l is not None and charm_stem in charm_imgs_l:
+					overlay_l = charm_imgs_l[charm_stem]
+					target_l = _common_pixel_art_size(base_img_l.size, overlay_l.size)
 
-				save_png(out_img_h, out_tex_h / f"{mat}__{ch}.png")
-				save_png(out_img_l, out_tex_l / f"{mat}__{ch}.png")
+					scaled_base_l = _upscale_to_size(base_img_l, target_l, label=f"{material_stem} leggings base")
+					scaled_overlay_l = _upscale_to_size(overlay_l, target_l, label=f"{charm_stem} leggings charm")
 
-				models_to_write[(ch, mat)] = TextureSet(
-					humanoid_layers=[texid_h],
-					leggings_layers=[texid_l],
-				)
+					out_img_l = _alpha_composite(scaled_base_l, scaled_overlay_l)
+					save_png(out_img_l, out_tex_l / f"{mat}__{ch}.png")
+					leggings_layers = [f"{ns}:{mat}__{ch}"]
 
-			else:
-				if not leather_h_base or not leather_h_overlay or not leather_l_base or not leather_l_overlay:
-					raise SystemExit(
-						"Leather handling requested, but could not detect leather base+overlay files.\n"
-						"Make sure basic/humanoid has leather + leather_overlay (or similar),\n"
-						"and basic/leggings has leather + leather_overlay (or similar)."
+				if humanoid_layers or leggings_layers:
+					models_to_write[(ch, mat)] = TextureSet(
+						humanoid_layers=humanoid_layers,
+						leggings_layers=leggings_layers,
 					)
 
+			else:
 				leather_mat = "leather"
+				humanoid_layers: List[str] = []
+				leggings_layers: List[str] = []
 
-				leather_base_h = _load_png(base_hum[leather_h_base])
-				leather_base_l = _load_png(base_leg[leather_l_base])
-				leather_ov_h = _load_png(base_hum[leather_h_overlay])
-				leather_ov_l = _load_png(base_leg[leather_l_overlay])
+				if (
+					leather_base_h_img is not None
+					and leather_ov_h_img is not None
+					and charm_stem in charm_imgs_h
+				):
+					overlay_h = charm_imgs_h[charm_stem]
+					target_h = _common_pixel_art_size(
+						leather_base_h_img.size,
+						leather_ov_h_img.size,
+						overlay_h.size,
+					)
 
-				target_h = _common_pixel_art_size(
-					leather_base_h.size,
-					leather_ov_h.size,
-					overlay_h.size,
-				)
-				target_l = _common_pixel_art_size(
-					leather_base_l.size,
-					leather_ov_l.size,
-					overlay_l.size,
-				)
+					scaled_leather_base_h = _upscale_to_size(
+						leather_base_h_img, target_h, label="leather humanoid base"
+					)
+					scaled_leather_ov_h = _upscale_to_size(
+						leather_ov_h_img, target_h, label="leather humanoid overlay"
+					)
+					scaled_overlay_h = _upscale_to_size(
+						overlay_h, target_h, label=f"{charm_stem} humanoid charm"
+					)
 
-				scaled_leather_base_h = _upscale_to_size(
-					leather_base_h, target_h, label="leather humanoid base"
-				)
-				scaled_leather_base_l = _upscale_to_size(
-					leather_base_l, target_l, label="leather leggings base"
-				)
-				scaled_leather_ov_h = _upscale_to_size(
-					leather_ov_h, target_h, label="leather humanoid overlay"
-				)
-				scaled_leather_ov_l = _upscale_to_size(
-					leather_ov_l, target_l, label="leather leggings overlay"
-				)
-				scaled_overlay_h = _upscale_to_size(
-					overlay_h, target_h, label=f"{charm_stem} humanoid charm"
-				)
-				scaled_overlay_l = _upscale_to_size(
-					overlay_l, target_l, label=f"{charm_stem} leggings charm"
-				)
+					save_png(scaled_leather_base_h, out_tex_h / f"{leather_mat}__{ch}.png")
 
-				save_png(scaled_leather_base_h, out_tex_h / f"{leather_mat}__{ch}.png")
-				save_png(scaled_leather_base_l, out_tex_l / f"{leather_mat}__{ch}.png")
+					out_leather_ov_h = _alpha_composite(scaled_leather_ov_h, scaled_overlay_h)
+					save_png(out_leather_ov_h, out_tex_h / f"{leather_mat}_overlay__{ch}.png")
 
-				out_leather_ov_h = _alpha_composite(scaled_leather_ov_h, scaled_overlay_h)
-				out_leather_ov_l = _alpha_composite(scaled_leather_ov_l, scaled_overlay_l)
-
-				save_png(out_leather_ov_h, out_tex_h / f"{leather_mat}_overlay__{ch}.png")
-				save_png(out_leather_ov_l, out_tex_l / f"{leather_mat}_overlay__{ch}.png")
-
-				models_to_write[(ch, leather_mat)] = TextureSet(
-					humanoid_layers=[
+					humanoid_layers = [
 						f"{ns}:{leather_mat}__{ch}",
 						f"{ns}:{leather_mat}_overlay__{ch}",
-					],
-					leggings_layers=[
+					]
+
+				if (
+					leather_base_l_img is not None
+					and leather_ov_l_img is not None
+					and charm_stem in charm_imgs_l
+				):
+					overlay_l = charm_imgs_l[charm_stem]
+					target_l = _common_pixel_art_size(
+						leather_base_l_img.size,
+						leather_ov_l_img.size,
+						overlay_l.size,
+					)
+
+					scaled_leather_base_l = _upscale_to_size(
+						leather_base_l_img, target_l, label="leather leggings base"
+					)
+					scaled_leather_ov_l = _upscale_to_size(
+						leather_ov_l_img, target_l, label="leather leggings overlay"
+					)
+					scaled_overlay_l = _upscale_to_size(
+						overlay_l, target_l, label=f"{charm_stem} leggings charm"
+					)
+
+					save_png(scaled_leather_base_l, out_tex_l / f"{leather_mat}__{ch}.png")
+
+					out_leather_ov_l = _alpha_composite(scaled_leather_ov_l, scaled_overlay_l)
+					save_png(out_leather_ov_l, out_tex_l / f"{leather_mat}_overlay__{ch}.png")
+
+					leggings_layers = [
 						f"{ns}:{leather_mat}__{ch}",
 						f"{ns}:{leather_mat}_overlay__{ch}",
-					],
-				)
+					]
+
+				if humanoid_layers or leggings_layers:
+					models_to_write[(ch, leather_mat)] = TextureSet(
+						humanoid_layers=humanoid_layers,
+						leggings_layers=leggings_layers,
+					)
 
 	written = 0
 	for (ch, mat), texset in sorted(models_to_write.items()):
@@ -435,8 +470,11 @@ def main() -> None:
 		written += 1
 
 	print(f"Done. Wrote {written} equipment model JSON files into {out_models}")
-	first_key = next(iter(models_to_write.keys()))
-	print(f"Example asset_id to use: {ns}:{first_key[0]}__{first_key[1]}")
+	if models_to_write:
+		first_key = next(iter(models_to_write.keys()))
+		print(f"Example asset_id to use: {ns}:{first_key[0]}__{first_key[1]}")
+	else:
+		print("No models were generated.")
 
 
 if __name__ == "__main__":

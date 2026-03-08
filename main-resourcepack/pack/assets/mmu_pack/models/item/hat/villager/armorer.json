@@ -5,7 +5,8 @@
 		64
 	],
 	"textures": {
-		"0": "mmu_pack:item/hat/villager/armorer"
+		"0": "mmu_pack:item/hat/villager/armorer",
+		"particle": "mmu_pack:item/hat/villager/armorer"
 	},
 	"elements": [
 		{

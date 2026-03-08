@@ -5,7 +5,8 @@
 		64
 	],
 	"textures": {
-		"0": "mmu_pack:item/hat/villager/librarian"
+		"0": "mmu_pack:item/hat/villager/librarian",
+		"particle": "mmu_pack:item/hat/villager/librarian"
 	},
 	"elements": [
 		{

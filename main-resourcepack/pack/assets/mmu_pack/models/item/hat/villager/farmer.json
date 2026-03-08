@@ -5,7 +5,8 @@
 		64
 	],
 	"textures": {
-		"0": "mmu_pack:item/hat/villager/farmer"
+		"0": "mmu_pack:item/hat/villager/farmer",
+		"particle": "mmu_pack:item/hat/villager/farmer"
 	},
 	"elements": [
 		{

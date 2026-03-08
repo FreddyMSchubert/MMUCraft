@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.EquippableCharmFakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.TickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.UseCallbackCharm;
@@ -36,9 +37,10 @@ public class CharmsManager
         return charms;
     }
 
-    private static ItemStack triggerEquippedTickCallbacks(ItemStack stack, ServerPlayer player, ServerLevel level) {
+    private static ItemStack triggerEquippedTickCallbacks(ItemStack stack, ServerPlayer player, ServerLevel level, EquipmentSlot slot) {
         List<CharmFakeItem> charmFakeItems = getAbilitiesFromItemStack(stack);
         for (CharmFakeItem cfi : charmFakeItems) {
+            if (cfi instanceof EquippableCharmFakeItem ecfi && ecfi.getEquippableSettings().slot() != slot) continue;
             if (!(cfi.getCharm() instanceof EquippedTickCallbackCharm equippedCharm)) continue;
             stack = equippedCharm.equippedTick(stack, player, level);
         }
@@ -57,7 +59,7 @@ public class CharmsManager
                 ItemStack current = player.getItemBySlot(slot);
                 if (current.isEmpty()) continue;
 
-                ItemStack updated = triggerEquippedTickCallbacks(current, player, server);
+                ItemStack updated = triggerEquippedTickCallbacks(current, player, server, slot);
                 if (updated == null) updated = ItemStack.EMPTY;
 
                 if (updated != current && !ItemStack.isSameItemSameComponents(current, updated)) {

@@ -43,7 +43,7 @@ public final class CosmeticsManager {
 
         replica.set(DataComponents.ITEM_NAME, helmet.getItemName());
         replica.set(DataComponents.CUSTOM_NAME, helmet.getCustomName());
-        replica.set(DataComponents.DYED_COLOR, helmet.getComponents().get(DataComponents.DYED_COLOR));
+        replica.set(DataComponents.DYED_COLOR, helmet.get(DataComponents.DYED_COLOR));
 
         return replica;
     }

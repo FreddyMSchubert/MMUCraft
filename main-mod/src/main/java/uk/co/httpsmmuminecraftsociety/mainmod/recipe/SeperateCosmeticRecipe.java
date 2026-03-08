@@ -34,6 +34,8 @@ public class SeperateCosmeticRecipe implements CraftingRecipe
 
         if (!stack.getItem().equals(Items.CARVED_PUMPKIN)) return false;
 
+        if (stack.getOrDefault(DataComponents.MAX_DAMAGE, -42) == -42) return false;
+
         return !stack.get(DataComponents.CUSTOM_MODEL_DATA).strings().getFirst().isEmpty();
     }
 

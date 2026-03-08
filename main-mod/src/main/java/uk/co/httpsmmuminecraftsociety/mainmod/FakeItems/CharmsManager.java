@@ -70,14 +70,17 @@ public class CharmsManager
     public static InteractionResult onItemUse(Level level, Player player, InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
         List<CharmFakeItem> charmFakeItems = getAbilitiesFromItemStack(stack);
-        if (charmFakeItems.isEmpty()) return InteractionResult.PASS;
+        if (charmFakeItems.isEmpty()) return null;
 
+        ItemStack newStack = stack.copy();
         for (CharmFakeItem cfi : charmFakeItems) {
             if (!(cfi.getCharm() instanceof UseCallbackCharm useCharm)) continue;
-            stack = useCharm.onUse(stack, (ServerPlayer) player, (ServerLevel) level);
-            player.setItemInHand(interactionHand, stack);
+            newStack = useCharm.onUse(newStack, (ServerPlayer) player, (ServerLevel) level);
         }
 
-        return InteractionResult.PASS;
+        if (!ItemStack.matches(stack, newStack))
+            return InteractionResult.SUCCESS.heldItemTransformedTo(newStack);
+        else
+            return null;
     }
 }

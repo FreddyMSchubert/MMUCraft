@@ -1,5 +1,5 @@
 {
-	"parent": "mmu_pack:item/hat/villager/hat",
+	"parent": "mmu_pack:item/hat/villager/base",
 	"texture_size": [
 		64,
 		64

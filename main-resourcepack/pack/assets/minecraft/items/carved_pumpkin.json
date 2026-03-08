@@ -7,63 +7,70 @@
 				"when": "cosmetic-hat-villager-armorer",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/villager/armorer_hat"
+					"model": "mmu_pack:item/hat/villager/armorer"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-butcher",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/villager/butcher_hat"
+					"model": "mmu_pack:item/hat/villager/butcher"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-farmer",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/villager/farmer_hat"
+					"model": "mmu_pack:item/hat/villager/farmer"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-fisherman",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/villager/fisherman_hat"
+					"model": "mmu_pack:item/hat/villager/fisherman"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-fletcher",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/villager/fletcher_hat"
+					"model": "mmu_pack:item/hat/villager/fletcher"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-librarian",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/villager/librarian_hat"
+					"model": "mmu_pack:item/hat/villager/librarian"
 				}
 			},
 			{
 				"when": "cosmetic-hat-villager-shepherd",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/villager/shepherd_hat"
+					"model": "mmu_pack:item/hat/villager/shepherd"
 				}
 			},
 			{
 				"when": "cosmetic-hat-bowler",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/bowler_hat"
+					"model": "mmu_pack:item/hat/bowler"
 				}
 			},
 			{
 				"when": "cosmetic-hat-traffic-cone",
 				"model": {
 					"type": "minecraft:model",
-					"model": "mmu_pack:item/hat/traffic_cone_hat"
+					"model": "mmu_pack:item/hat/traffic_cone"
+				}
+			},
+			{
+				"when": "cosmetic-hat-book-stack",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/book_stack"
 				}
 			}
 		],

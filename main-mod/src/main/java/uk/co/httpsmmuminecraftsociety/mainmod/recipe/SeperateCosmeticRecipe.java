@@ -12,6 +12,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CosmeticsManager;
@@ -43,12 +44,20 @@ public class SeperateCosmeticRecipe implements CraftingRecipe
     public ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider)
     {
         ItemStack inputStack = recipeInput.items().getFirst();
-        String cosmeticModel = inputStack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY).getString(0);
 
-        if (cosmeticModel != null) {
-            return FakeItems.MODEL_ID_MAP.get(cosmeticModel).createItemStack();
+        String cosmeticModel = inputStack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY).getString(0);
+        if (cosmeticModel == null) {
+            return ItemStack.EMPTY;
         }
-        return ItemStack.EMPTY;
+
+        ItemStack cosmetic = FakeItems.MODEL_ID_MAP.get(cosmeticModel).createItemStack();
+
+        DyedItemColor dyedColor = inputStack.get(DataComponents.DYED_COLOR);
+        if (dyedColor != null) {
+            cosmetic.set(DataComponents.DYED_COLOR, dyedColor);
+        }
+
+        return cosmetic;
     }
 
     @Override

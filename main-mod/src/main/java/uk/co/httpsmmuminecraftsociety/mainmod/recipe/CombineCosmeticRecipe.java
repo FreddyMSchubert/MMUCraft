@@ -11,6 +11,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CosmeticsManager;
@@ -74,6 +75,10 @@ public class CombineCosmeticRecipe implements CraftingRecipe
 
         ItemStack pumpkin = CosmeticsManager.helmetToPumpkinReplica(cinfo.armor);
         pumpkin.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(cinfo.cosmetic.get(DataComponents.CUSTOM_MODEL_DATA).getString(0)), List.of()));
+        DyedItemColor cosmeticColor = cinfo.cosmetic.get(DataComponents.DYED_COLOR);
+        if (cosmeticColor != null) {
+            pumpkin.set(DataComponents.DYED_COLOR, cosmeticColor);
+        }
 
         return pumpkin;
     }

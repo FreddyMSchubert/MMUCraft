@@ -133,6 +133,19 @@
 						}
 					]
 				}
+			},
+			{
+				"when": "cosmetic-hat-devil-horns",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/devil_horns",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": 16777215
+						}
+					]
+				}
 			}
 		],
 		"fallback": {

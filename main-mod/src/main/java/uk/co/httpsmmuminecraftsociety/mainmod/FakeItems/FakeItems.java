@@ -48,6 +48,7 @@ public final class FakeItems {
             new DyeableCosmeticFakeItem("cosmetic-hat-spartan-helmet",    "Spartan Helmet",     Rarity.COMMON, Utils.rgbToMinecraftColor(0, 0, 255)),
             new CosmeticFakeItem       ("cosmetic-hat-bunny-ears",        "Bunny Ears",         Rarity.COMMON),
             new DyeableCosmeticFakeItem("cosmetic-hat-amogus-hat",        "Amogus Hat",         Rarity.COMMON, Utils.rgbToMinecraftColor(255, 0, 0)),
+            new DyeableCosmeticFakeItem("cosmetic-hat-devil-horns",       "Devil Horns",        Rarity.COMMON, Utils.rgbToMinecraftColor(255, 0, 0)),
 
             // handheld - 2
             // chest - 3

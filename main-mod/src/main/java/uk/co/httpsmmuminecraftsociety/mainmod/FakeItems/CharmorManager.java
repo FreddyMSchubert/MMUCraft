@@ -2,18 +2,15 @@ package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +21,13 @@ public class CharmorManager
     // the following custom data compound tags are present in every armor, defining charms equipped
     public static final String TOOLTIP_INITIALLY_POPULATED_BOOL = "tooltip_initially_populated";
 
-    public static final ResourceKey<Enchantment> CHARM_BOOST_KEY = ResourceKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_boost"));
-
     public static int calcCharmSlotCount(ItemStack stack) {
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return 0;
 
         int charmBoostLevel = 0;
         for (var entry : stack.getEnchantments().entrySet()) {
             Holder<Enchantment> holder = entry.getKey();
-            if (holder.unwrapKey().isPresent() && holder.unwrapKey().get().equals(CHARM_BOOST_KEY)) {
+            if (holder.unwrapKey().isPresent() && holder.unwrapKey().get().equals(ModEnchantments.CHARM_BOOST)) {
                 charmBoostLevel = entry.getIntValue();
                 break;
             }

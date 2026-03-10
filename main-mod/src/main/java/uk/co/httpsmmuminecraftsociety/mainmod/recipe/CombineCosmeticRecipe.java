@@ -15,7 +15,6 @@ import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CosmeticsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 import java.util.List;
@@ -41,9 +40,7 @@ public class CombineCosmeticRecipe implements CraftingRecipe
             ItemStack stack = input.getItem(i);
             CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
 
-            MainMod.LOGGER.info("Checking if the armor item is in COSMETIC_COMB...: " + stack.getItem().getName());
             if (stack.getItem().getDefaultInstance().is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
-                MainMod.LOGGER.info("cmd strings: " + cmd.strings());
                 if (armor != null || !cmd.strings().isEmpty()) continue;
                 armor = stack;
                 continue;
@@ -56,7 +53,6 @@ public class CombineCosmeticRecipe implements CraftingRecipe
             }
         }
 
-        MainMod.LOGGER.info("armor :" + armor + " cosmetic: " + cosmetic);
         return new craftingInfo(armor != null && cosmetic != null, armor, cosmetic);
     }
 
@@ -64,7 +60,6 @@ public class CombineCosmeticRecipe implements CraftingRecipe
     public boolean matches(CraftingInput input, Level level)
     {
         craftingInfo cinfo = getCraftingInfo(input);
-        MainMod.LOGGER.info("Iscraftable: " + cinfo.craftable);
         return cinfo.craftable && input.ingredientCount() == 2;
     }
 

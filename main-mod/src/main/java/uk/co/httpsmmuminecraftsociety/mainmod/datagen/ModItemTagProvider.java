@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -36,6 +37,9 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
     @Override
     protected void addTags(HolderLookup.Provider provider)
     {
+        valueLookupBuilder(ItemTags.DYEABLE)
+                .add(Items.CARVED_PUMPKIN);
+
         valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS)
                 .add(Items.LEATHER_BOOTS)
                 .add(Items.LEATHER_LEGGINGS)

@@ -96,6 +96,13 @@
 				}
 			},
 			{
+				"when": "soul",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/soul"
+				}
+			},
+			{
 				"when": "cosmetic-charm-heart-0",
 				"model": {
 					"type": "minecraft:model",

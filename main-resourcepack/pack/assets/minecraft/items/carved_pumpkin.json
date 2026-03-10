@@ -113,6 +113,26 @@
 						}
 					]
 				}
+			},
+			{
+				"when": "cosmetic-hat-bunny-ears",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/bunny_ears"
+				}
+			},
+			{
+				"when": "cosmetic-hat-amogus-hat",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/amogus",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": 16777215
+						}
+					]
+				}
 			}
 		],
 		"fallback": {

@@ -4,6 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -59,5 +60,9 @@ public class Utils
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
 
         return stack;
+    }
+
+    public static int rgbToMinecraftColor(int r, int g, int b) {
+        return ARGB.color(0, r, g, b);
     }
 }

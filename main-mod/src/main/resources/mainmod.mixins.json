@@ -5,7 +5,8 @@
 	"mixins": [
       "ArmorAddToolTipFirstTick",
       "UpdateArmorTooltipAfterAnvilUse",
-      "KittyPajamaScareCreeper"
+      "KittyPajamaScareCreeper",
+      "NoSoulboundItemDropping"
 	],
 	"injectors": {
 		"defaultRequire": 1

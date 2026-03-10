@@ -247,13 +247,25 @@ these arent mit licensed but we can just get some inspiration
 
 also manual ideas:
 
-- devil horns
-- kitty ears / bunny ears
-- amogus
-- traffic cone
+- kitty ears
+- poo hat (ice cream hat colorable to brown)
+- plunger hat
+- swiss cheese
+- beanie
+- pile of coins
+- variety of moustaches of enourmous and utterly outrages sizes
+- mohawk, tintable
+- different hair types
+- rainbow clown hair
+- banana peel
+- antenna
+- bike / motorbike helmet
+- pirate hat with skull
+- light bulb
+- candle
+- this meme, sad and happy version -> https://media.tenor.com/cI1t4CvrgogAAAAe/crying-under-mask-feels.png
 - alien head
 - top hat
-- book stack
 - goop head
 - viking helmet
 - sombrero
@@ -267,18 +279,15 @@ also manual ideas:
 - santa hat
 - headphones
 - lever
-- beret
 - dragon head
 - armor / knights
 - different glasses / shades
 - antenna
-- skull
 - different pumpkin heads
 - minion eyes
 - green leprechaun hat thing
 - mario / luigi hat
 - night cap
-- red clown nose
 - bull horns
 - mario-toad-like mushroom cap
 - fnaf stuff, springtrap mask

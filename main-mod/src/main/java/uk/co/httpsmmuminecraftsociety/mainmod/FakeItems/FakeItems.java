@@ -5,6 +5,7 @@ import net.minecraft.world.item.Rarity;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.*;
+import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -14,19 +15,22 @@ public final class FakeItems {
     private FakeItems() {}
 
     public static final List<FakeItem> ALL = List.of(
-            new BasicFakeItem("coin-1",      "1 Dabloon",     Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"Might turn to a million and we all rich\""),
-            new BasicFakeItem("coin-5",      "5 Dabloons",    Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"I ain't no fortunate one, no\""),
-            new BasicFakeItem("coin-10",     "10 Dabloons",   Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"I want to buy you somethin' - But I don't have any money\""),
-            new BasicFakeItem("coin-50",     "50 Dabloons",   Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"We just wanna make the world dance\""),
-            new BasicFakeItem("coin-100",    "100 Dabloons",  Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"Mo money, mo problems.\""),
-            new BasicFakeItem("coin-500",    "500 Dabloons",  Rarity.COMMON,   50,  "Official MMU Minecraft Society Mint Issue", "\"It's a crime.\""),
-            new BasicFakeItem("coin-1000",   "1k Dabloons",   Rarity.UNCOMMON, 50,  "Official MMU Minecraft Society Mint Issue", "\"If I was a rich girl\""),
-            new BasicFakeItem("coin-5000",   "5k Dabloons",   Rarity.UNCOMMON, 50,  "Official MMU Minecraft Society Mint Issue", "\"Must be funny\""),
-            new BasicFakeItem("coin-10000",  "10k Dabloons",  Rarity.RARE,     50,  "Official MMU Minecraft Society Mint Issue", "\"that's money, honey\""),
-            new BasicFakeItem("coin-50000",  "50k Dabloons",  Rarity.RARE,     50,  "Official MMU Minecraft Society Mint Issue", "\"If you catch me at the border, I got visas in my name\""),
-            new BasicFakeItem("coin-100000", "100k Dabloons", Rarity.EPIC,     50,  "Official MMU Minecraft Society Mint Issue", "\"I want it, I got it, I want it, I got it (baby)\""),
-            new BasicFakeItem("coin-500000", "500k Dabloons", Rarity.EPIC,     50,  "Official MMU Minecraft Society Mint Issue", "\"'Cause we are living in a material world\""),
-            new BasicFakeItem("coin-1000000","1m Dabloons",   Rarity.EPIC,     50,  "Official MMU Minecraft Society Mint Issue", "\"Money is the anthem of success - So before we go out, what's your address?\""),
+            new BasicFakeItem("coin-1",      "1 Dabloon",            Rarity.COMMON,   64,  "Official MMU Minecraft Society Mint Issue", "\"Might turn to a million and we all rich\""),
+            new BasicFakeItem("coin-5",      "5 Dabloons",           Rarity.COMMON,   64,  "Official MMU Minecraft Society Mint Issue", "\"I ain't no fortunate one, no\""),
+            new BasicFakeItem("coin-10",     "10 Dabloons",          Rarity.COMMON,   64,  "Official MMU Minecraft Society Mint Issue", "\"I want to buy you somethin' - But I don't have any money\""),
+            new BasicFakeItem("coin-50",     "50 Dabloons",          Rarity.COMMON,   64,  "Official MMU Minecraft Society Mint Issue", "\"We just wanna make the world dance\""),
+            new BasicFakeItem("coin-100",    "100 Dabloons",         Rarity.COMMON,   64,  "Official MMU Minecraft Society Mint Issue", "\"Mo money, mo problems.\""),
+            new BasicFakeItem("coin-500",    "500 Dabloons",         Rarity.COMMON,   64,  "Official MMU Minecraft Society Mint Issue", "\"It's a crime.\""),
+            new BasicFakeItem("coin-1000",   "1,000 Dabloons",       Rarity.UNCOMMON, 64,  "Official MMU Minecraft Society Mint Issue", "\"If I was a rich girl\""),
+            new BasicFakeItem("coin-5000",   "5,000 Dabloons",       Rarity.UNCOMMON, 64,  "Official MMU Minecraft Society Mint Issue", "\"Must be funny\""),
+            new BasicFakeItem("coin-10000",  "10,000 Dabloons",      Rarity.RARE,     64,  "Official MMU Minecraft Society Mint Issue", "\"that's money, honey\""),
+            new BasicFakeItem("coin-50000",  "50,000 Dabloons",      Rarity.RARE,     64,  "Official MMU Minecraft Society Mint Issue", "\"If you catch me at the border, I got visas in my name\""),
+            new BasicFakeItem("coin-100000", "100,000 Dabloons",     Rarity.EPIC,     64,  "Official MMU Minecraft Society Mint Issue", "\"I want it, I got it, I want it, I got it (baby)\""),
+            new BasicFakeItem("coin-500000", "500,000 Dabloons",     Rarity.EPIC,     64,  "Official MMU Minecraft Society Mint Issue", "\"'Cause we are living in a material world\""),
+            new BasicFakeItem("coin-1000000","1,000,000 Dabloons",   Rarity.EPIC,     64,  "Official MMU Minecraft Society Mint Issue", "\"Money is the anthem of success - So before we go out, what's your address?\""),
+
+            new BasicFakeItem("soul", "Soul", Rarity.COMMON, 16),
+
             new CosmeticFakeItem       ("cosmetic-hat-villager-armorer",  "Armorer Goggles",    Rarity.COMMON),
             new CosmeticFakeItem       ("cosmetic-hat-villager-butcher",  "Butcher Headband",   Rarity.COMMON),
             new CosmeticFakeItem       ("cosmetic-hat-villager-farmer",   "Farmer Straw hat",   Rarity.COMMON),
@@ -41,7 +45,9 @@ public final class FakeItems {
             new CosmeticFakeItem       ("cosmetic-hat-beret",             "Beret Hat",          Rarity.COMMON),
             new CosmeticFakeItem       ("cosmetic-hat-skull-mask",        "Skull Mask",         Rarity.COMMON),
             new CosmeticFakeItem       ("cosmetic-hat-skull",             "Skull Hat",          Rarity.COMMON),
-            new DyeableCosmeticFakeItem("cosmetic-hat-spartan-helmet",    "Spartan Helmet",     Rarity.COMMON, 16777215),
+            new DyeableCosmeticFakeItem("cosmetic-hat-spartan-helmet",    "Spartan Helmet",     Rarity.COMMON, Utils.rgbToMinecraftColor(0, 0, 255)),
+            new CosmeticFakeItem       ("cosmetic-hat-bunny-ears",        "Bunny Ears",         Rarity.COMMON),
+            new DyeableCosmeticFakeItem("cosmetic-hat-amogus-hat",        "Amogus Hat",         Rarity.COMMON, Utils.rgbToMinecraftColor(255, 0, 0)),
 
             // handheld - 2
             // chest - 3
@@ -68,7 +74,8 @@ public final class FakeItems {
             new EquippableCharmFakeItem(18, "Kitty Pajamas Charm",        Rarity.UNCOMMON, "kitty_pajamas__charm",        EquipmentSlot.LEGS,  new KittyPajamasCharm(),       "They look nice and purrple.",                "The wearer won't take fall damage and scare away creepers."),
             new EquippableCharmFakeItem(19, "Spider Pajamas Charm",       Rarity.UNCOMMON, "spider_pajamas__charm",       EquipmentSlot.LEGS,  new SpiderPajamasCharm(),      "Oohhhh how emo... /s",                       "Let's you climb up the sides of blocks."),
             new EquippableCharmFakeItem(20, "Cave Spider Pajamas Charm",  Rarity.UNCOMMON, "cave_spider_pajamas__charm",  EquipmentSlot.LEGS,  new CaveSpiderPajamasCharm(),  "Poison not included.",                       "Let's you climb straight across the ceiling."),
-            new EquippableCharmFakeItem(21, "Goop Hand Charm",            Rarity.UNCOMMON, "goop_hand__charm",            EquipmentSlot.CHEST, new GoopHandCharm(),           "Calums patented formula.",                   "Bounces the victims of your attacks further away")
+            new EquippableCharmFakeItem(21, "Goop Hand Charm",            Rarity.UNCOMMON, "goop_hand__charm",            EquipmentSlot.CHEST, new GoopHandCharm(),           "Calums patented formula.",                   "Bounces the victims of your attacks further away"),
+            new EquippableCharmFakeItem(22, "Cloud Boots Charm",          Rarity.UNCOMMON, "cloud_boots__charm",          EquipmentSlot.FEET,  new CloudBootsCharm(10),         "Calums patented formula.",                   "Bounces the victims of your attacks further away")
     );
     public static final Map<String, FakeItem> MODEL_ID_MAP = ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItem::getModelId, d -> d));
     public static final Map<Integer, CharmFakeItem> CHARM_EFFECT_ID_MAP = ALL.stream().filter(CharmFakeItem.class::isInstance).map(CharmFakeItem.class::cast).collect(Collectors.toUnmodifiableMap(CharmFakeItem::getEffectId, Function.identity()));

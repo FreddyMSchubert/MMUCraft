@@ -146,6 +146,52 @@
 						}
 					]
 				}
+			},
+			{
+				"when": "cosmetic-hat-ice-cream",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/ice_cream",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": -1
+						}
+					]
+				}
+			},
+			{
+				"when": "cosmetic-hat-plunger",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/plunger",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": -1
+						}
+					]
+				}
+			},
+			{
+				"when": "cosmetic-hat-cheese",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/cheese"
+				}
+			},
+			{
+				"when": "cosmetic-hat-beanie",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/beanie",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": -1
+						}
+					]
+				}
 			}
 		],
 		"fallback": {

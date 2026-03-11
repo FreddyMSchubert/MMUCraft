@@ -9,10 +9,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.EquippableCharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.ConsumableCallbacksCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.TickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.UseCallbackCharm;
@@ -37,6 +39,52 @@ public class CharmsManager
         return charms;
     }
 
+    private static void tickActiveUseCharms(ServerPlayer player, ServerLevel level) {
+        if (!player.isUsingItem()) {
+            return;
+        }
+
+        ItemStack activeStack = player.getActiveItem();
+        if (activeStack.isEmpty()) {
+            return;
+        }
+
+        List<CharmFakeItem> charmFakeItems = getAbilitiesFromItemStack(activeStack);
+        if (charmFakeItems.isEmpty()) {
+            return;
+        }
+
+        ConsumableCallbacksCharm activeCharm = null;
+        for (CharmFakeItem cfi : charmFakeItems) {
+            if (cfi.getCharm() instanceof ConsumableCallbacksCharm callbacksCharm) {
+                activeCharm = callbacksCharm;
+                break;
+            }
+        }
+        if (activeCharm == null) {
+            return;
+        }
+
+        Consumable consumable = activeStack.get(DataComponents.CONSUMABLE);
+        if (consumable == null) {
+            return;
+        }
+
+        int elapsedTicks = consumable.consumeTicks() - player.getUseItemRemainingTicks();
+
+        if (player.getUseItemRemainingTicks() <= 1) {
+            ItemStack result = activeCharm.onConsumeFinished(activeStack.copy(), player, level, elapsedTicks);
+            if (result == null) {
+                result = ItemStack.EMPTY;
+            }
+
+            player.setItemInHand(player.getUsedItemHand(), result);
+            player.stopUsingItem();
+            return;
+        }
+
+        activeCharm.onConsumeTick(activeStack, player, level, elapsedTicks);
+    }
     private static ItemStack triggerEquippedTickCallbacks(ItemStack stack, ServerPlayer player, ServerLevel level, EquipmentSlot slot) {
         List<CharmFakeItem> charmFakeItems = getAbilitiesFromItemStack(stack);
         for (CharmFakeItem cfi : charmFakeItems) {
@@ -66,6 +114,8 @@ public class CharmsManager
                     player.setItemSlot(slot, updated);
                 }
             }
+
+            tickActiveUseCharms(player, server);
         }
     }
 

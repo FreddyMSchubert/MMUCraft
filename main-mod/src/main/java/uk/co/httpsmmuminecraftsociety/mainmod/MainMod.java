@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class MainMod implements ModInitializer {
 
         ServerTickEvents.END_WORLD_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);
-        ItemEvents.USE_ON.register(CosmeticsManager::onUseOn);
+        UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
         LootTableEvents.MODIFY.register(LootTableModifiers::onModify);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);

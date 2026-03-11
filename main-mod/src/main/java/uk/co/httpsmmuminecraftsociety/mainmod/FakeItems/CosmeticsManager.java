@@ -18,13 +18,12 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.Nullable;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import net.minecraft.world.phys.BlockHitResult;
+import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 import java.util.List;
@@ -112,38 +111,29 @@ public final class CosmeticsManager {
         return !cmd.strings().isEmpty() && !cmd.strings().getFirst().isEmpty();
     }
 
-    public static @Nullable InteractionResult onUseOn(UseOnContext useOnContext)
+    public static InteractionResult onUseBlock(Player player, Level world, InteractionHand hand, BlockHitResult hitResult)
     {
-        MainMod.LOGGER.info("Use on even!");
-
-        Player player = useOnContext.getPlayer();
-        InteractionHand hand = useOnContext.getHand();
-        BlockPos pos = useOnContext.getClickedPos();
-        Level level = player.level();
-
         ItemStack stack = player.getItemInHand(hand);
 
-        if (!isPumpkinReplica(stack)) {
-            MainMod.LOGGER.info("Used item not a pujmpkin replica");
-            return null;
+        if (!CosmeticsManager.isPumpkinReplica(stack)) {
+            return InteractionResult.PASS;
         }
+        BlockPos pos = hitResult.getBlockPos();
+        BlockState state = world.getBlockState(pos);
 
-        BlockState state = player.level().getBlockState(pos);
-
-        // Allow washing the dye off in a water cauldron.
         if (state.is(Blocks.WATER_CAULDRON) && stack.has(DataComponents.DYED_COLOR)) {
-            MainMod.LOGGER.info("Doing some dyeing shenaningsaz");
             ItemStack washed = stack.copy();
+            washed.set(DataComponents.DYED_COLOR, new DyedItemColor(Utils.rgbToMinecraftColor(255, 255, 255)));
             washed.remove(DataComponents.DYED_COLOR);
             player.setItemInHand(hand, washed);
 
-            LayeredCauldronBlock.lowerFillLevel(state, level, pos);
-            level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 1.0F, 1.0F);
+            LayeredCauldronBlock.lowerFillLevel(state, world, pos);
+            world.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 1.0F, 1.0F);
 
             return InteractionResult.SUCCESS;
         }
 
-        // For every other block use, stop vanilla carved-pumpkin placement.
+        // Cancel pumpkin placement everywhere else
         return InteractionResult.FAIL;
     }
 }

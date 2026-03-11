@@ -192,6 +192,19 @@
 						}
 					]
 				}
+			},
+			{
+				"when": "cosmetic-hat-mohawk",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/mohawk",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": -1
+						}
+					]
+				}
 			}
 		],
 		"fallback": {

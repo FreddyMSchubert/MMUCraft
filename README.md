@@ -248,11 +248,8 @@ these arent mit licensed but we can just get some inspiration
 also manual ideas:
 
 - kitty ears
-- poo hat (ice cream hat colorable to brown)
-- plunger hat
-- swiss cheese
-- beanie
 - pile of coins
+- witch hat from vanilla
 - variety of moustaches of enourmous and utterly outrages sizes
 - mohawk, tintable
 - different hair types
@@ -295,6 +292,7 @@ also manual ideas:
 - beards
 - kings crown
 - upper half of a shulker fit on a head
+- turtle shell on head
 - antlers
 - unicorn horn
 - lying down cat / dog / fox / frog / bee

@@ -48,7 +48,7 @@ public class HikingBootsCharm implements Charm, BaseItemChangeCallbackCharm
             case 0 -> 0.5f;
             case 1 -> 1f;
             case 2 -> 1.5f;
-            default -> 105f;
+            default -> throw new IllegalStateException("Unexpected hiking boots level: " + level);
         };
     }
 }

@@ -11,56 +11,43 @@ import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
 
-public final class CloudBootsCharm implements Charm, EquippedTickCallbackCharm
+public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
 {
-    public static final String CLOUD_BOOTS_CHARM_ID = "cosmetic-charm-cloud-boots";
+    public static final String WINGED_SHOES_CHARM_ID_BEGINNING = "cosmetic-charm-winged-shoes-";
+    private final int level;
 
-    /**
-     * Number of EXTRA jumps after the normal ground jump.
-     *
-     * 1 = double jump
-     * 2 = triple jump
-     * 3 = quadruple jump
-     */
-    public static final int DEFAULT_EXTRA_JUMPS = 1;
+    public static final double EXTRA_JUMP_VELOCITY = 0.62D;
+    public static final double FORWARD_BOOST = 0.28D;
 
-    /**
-     * Roughly vanilla jump strength.
-     */
-    public static final double EXTRA_JUMP_VELOCITY = 0.42D;
-
-    /**
-     * How long a second jump press stays buffered.
-     * This is what makes the jump reliable instead of frame-perfect nonsense.
-     */
+    // How long a second jump press stays buffered.
     public static final int JUMP_BUFFER_TICKS = 5;
 
-    /**
-     * Prevents the initial takeoff jump from instantly being mistaken for a midair jump.
-     */
     public static final int MIN_AIR_TICKS_BEFORE_EXTRA_JUMP = 3;
 
-    private static final String TAG_USED_JUMPS = "cb_used_jumps";
-    private static final String TAG_RELEASED_SINCE_JUMP = "cb_released_since_jump";
-    private static final String TAG_JUMP_BUFFER = "cb_jump_buffer";
-    private static final String TAG_AIR_TICKS = "cb_air_ticks";
+    private static final String TAG_USED_JUMPS = "ws_used_jumps";
+    private static final String TAG_RELEASED_SINCE_JUMP = "ws_released_since_jump";
+    private static final String TAG_JUMP_BUFFER = "ws_jump_buffer";
+    private static final String TAG_AIR_TICKS = "ws_air_ticks";
 
-    private final int extraJumps;
-
-    public CloudBootsCharm()
+    public WingedShoesCharm(int level)
     {
-        this(DEFAULT_EXTRA_JUMPS);
-    }
-
-    public CloudBootsCharm(int extraJumps)
-    {
-        this.extraJumps = Math.max(0, extraJumps);
+        this.level = level;
     }
 
     @Override
     public String id()
     {
-        return CLOUD_BOOTS_CHARM_ID;
+        return WINGED_SHOES_CHARM_ID_BEGINNING + level;
+    }
+
+    private static int getExtraJumpsForLevel(int level) {
+        return switch (level)
+        {
+            case 0 -> 1;
+            case 1 -> 3;
+            case 2 -> 6;
+            default -> throw new IllegalStateException("Unexpected winged shoes level: " + level);
+        };
     }
 
     @Override
@@ -97,12 +84,22 @@ public final class CloudBootsCharm implements Charm, EquippedTickCallbackCharm
                 jumpBuffer--;
             }
 
-            if (jumpBuffer > 0 && usedJumps < extraJumps && airTicks >= MIN_AIR_TICKS_BEFORE_EXTRA_JUMP) {
+            if (jumpBuffer > 0 && usedJumps < getExtraJumpsForLevel(this.level) && airTicks >= MIN_AIR_TICKS_BEFORE_EXTRA_JUMP) {
                 Vec3 v = player.getDeltaMovement();
 
-                double newX = v.x;
+                // Get the direction the player is facing, flattened to horizontal.
+                Vec3 look = player.getLookAngle();
+                Vec3 horizontalLook = new Vec3(look.x, 0.0D, look.z);
+
+                if (horizontalLook.lengthSqr() > 1.0E-6D) {
+                    horizontalLook = horizontalLook.normalize();
+                } else {
+                    horizontalLook = Vec3.ZERO;
+                }
+
+                double newX = v.x + horizontalLook.x * FORWARD_BOOST;
                 double newY = Math.max(v.y, EXTRA_JUMP_VELOCITY);
-                double newZ = v.z;
+                double newZ = v.z + horizontalLook.z * FORWARD_BOOST;
 
                 player.setDeltaMovement(newX, newY, newZ);
                 player.setOnGround(false);

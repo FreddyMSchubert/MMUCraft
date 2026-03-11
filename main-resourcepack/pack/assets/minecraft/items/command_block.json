@@ -103,6 +103,13 @@
 				}
 			},
 			{
+				"when": "cosmetic-charm-potion-of-returning",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_potion_of_returning"
+				}
+			},
+			{
 				"when": "cosmetic-charm-heart-0",
 				"model": {
 					"type": "minecraft:model",
@@ -247,6 +254,27 @@
 				"model": {
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/charm/cosmetic_charm_goop_hand"
+				}
+			},
+			{
+				"when": "cosmetic-charm-winged-shoes-0",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_winged_shoes"
+				}
+			},
+			{
+				"when": "cosmetic-charm-winged-shoes-1",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_golden_winged_shoes"
+				}
+			},
+			{
+				"when": "cosmetic-charm-winged-shoes-2",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/cosmetic_charm_diamond_winged_shoes"
 				}
 			}
 		],

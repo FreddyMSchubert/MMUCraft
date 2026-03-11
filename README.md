@@ -251,7 +251,6 @@ also manual ideas:
 - pile of coins
 - witch hat from vanilla
 - variety of moustaches of enourmous and utterly outrages sizes
-- mohawk, tintable
 - different hair types
 - rainbow clown hair
 - banana peel

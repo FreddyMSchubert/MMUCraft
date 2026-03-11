@@ -6,7 +6,8 @@
       "ArmorAddToolTipFirstTick",
       "UpdateArmorTooltipAfterAnvilUse",
       "KittyPajamaScareCreeper",
-      "NoSoulboundItemDropping"
+      "NoSoulboundItemDropping",
+      "RespawnNearDeath"
 	],
 	"injectors": {
 		"defaultRequire": 1

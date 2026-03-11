@@ -205,6 +205,13 @@
 						}
 					]
 				}
+			},
+			{
+				"when": "cosmetic-hat-propeller-hat",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/propeller_hat"
+				}
 			}
 		],
 		"fallback": {

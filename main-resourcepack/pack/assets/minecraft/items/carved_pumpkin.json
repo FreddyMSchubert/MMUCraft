@@ -251,6 +251,20 @@
 						}
 					]
 				}
+			},
+			{
+				"when": "cosmetic-hat-helmet-retro",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/helmet/retro"
+				}
+			},
+			{
+				"when": "cosmetic-hat-helmet-patriotic",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/helmet/patriotic"
+				}
 			}
 		],
 		"fallback": {

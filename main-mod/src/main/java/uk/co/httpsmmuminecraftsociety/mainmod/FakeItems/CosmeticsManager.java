@@ -6,10 +6,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +37,7 @@ public final class CosmeticsManager {
 
     private static final String ORIGINAL_ITEM_ID = "original_item_id";
     private static final String HELMET_DYED_COLOR_ID = "helmet_dyed_color";
+    private static final String COLOR_CYCLING_BOOLEAN = "color_cycling_boolean";
 
     public static ItemStack helmetToPumpkinReplica(ItemStack helmet) {
         if (helmet.isEmpty() || !helmet.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {

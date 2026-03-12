@@ -31,7 +31,6 @@ public class MainMod implements ModInitializer {
         LootTableEvents.MODIFY.register(LootTableModifiers::onModify);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
 
-
         FakeItemsCommand.init();
         MainModRecipes.register();
     }

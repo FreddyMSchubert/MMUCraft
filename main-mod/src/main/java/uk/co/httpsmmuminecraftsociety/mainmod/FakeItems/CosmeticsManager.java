@@ -157,23 +157,20 @@ public final class CosmeticsManager {
 
     private static final float HUE_STEP = 0.003f;
     private static final int TICK_DELAY = 3;
-    public static void tickPlayerCosmetics(ServerLevel server)
-    {
-        for (ServerPlayer player : server.players())
-        {
-            if (player.tickCount % TICK_DELAY != 0) continue;
-            if (player.containerMenu != player.inventoryMenu) continue;
+    public static void tickPlayerCosmetics(ServerLevel server) {
+        if (server.getGameTime() % TICK_DELAY != 0) return;
+        for (ServerPlayer player : server.players()) {
             if (!player.containerMenu.getCarried().isEmpty()) continue;
+
+            boolean changed = false;
 
             for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                 ItemStack stack = player.getInventory().getItem(i);
-                CosmeticsManager.CosmeticsInfo cinfo = CosmeticsManager.determineCosmeticType(stack);
+                CosmeticsInfo cinfo = determineCosmeticType(stack);
                 if (!cinfo.isCosmetic() || !cinfo.isColorCycling()) continue;
 
                 DyedItemColor dyed = stack.get(DataComponents.DYED_COLOR);
                 if (dyed == null) continue;
-
-                ItemStack updated = stack.copy();
 
                 int currCol = dyed.rgb();
                 float[] hsv = Utils.rgbToHsv01(currCol);
@@ -181,10 +178,15 @@ public final class CosmeticsManager {
                 if (nextHue >= 1.0f) nextHue -= 1.0f;
                 int nextRgb = Mth.hsvToRgb(nextHue, hsv[1], hsv[2]);
 
-                updated.set(DataComponents.DYED_COLOR, new DyedItemColor(nextRgb));
-                player.getInventory().setItem(i, updated);
+                // mutate the same stack object
+                stack.set(DataComponents.DYED_COLOR, new DyedItemColor(nextRgb));
+                changed = true;
+            }
 
-                player.containerMenu.broadcastChanges();
+            if (changed) {
+                player.getInventory().setChanged();
+                player.inventoryMenu.incrementStateId();
+                player.inventoryMenu.broadcastChanges();
             }
         }
     }

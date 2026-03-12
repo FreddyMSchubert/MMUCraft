@@ -6,11 +6,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -153,41 +150,5 @@ public final class CosmeticsManager {
 
         // Cancel pumpkin placement everywhere else
         return InteractionResult.FAIL;
-    }
-
-    private static final float HUE_STEP = 0.003f;
-    private static final int TICK_DELAY = 3;
-    public static void tickPlayerCosmetics(ServerLevel server) {
-        if (server.getGameTime() % TICK_DELAY != 0) return;
-        for (ServerPlayer player : server.players()) {
-            if (!player.containerMenu.getCarried().isEmpty()) continue;
-
-            boolean changed = false;
-
-            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-                ItemStack stack = player.getInventory().getItem(i);
-                CosmeticsInfo cinfo = determineCosmeticType(stack);
-                if (!cinfo.isCosmetic() || !cinfo.isColorCycling()) continue;
-
-                DyedItemColor dyed = stack.get(DataComponents.DYED_COLOR);
-                if (dyed == null) continue;
-
-                int currCol = dyed.rgb();
-                float[] hsv = Utils.rgbToHsv01(currCol);
-                float nextHue = hsv[0] + HUE_STEP * TICK_DELAY;
-                if (nextHue >= 1.0f) nextHue -= 1.0f;
-                int nextRgb = Mth.hsvToRgb(nextHue, hsv[1], hsv[2]);
-
-                // mutate the same stack object
-                stack.set(DataComponents.DYED_COLOR, new DyedItemColor(nextRgb));
-                changed = true;
-            }
-
-            if (changed) {
-                player.getInventory().setChanged();
-                player.inventoryMenu.incrementStateId();
-                player.inventoryMenu.broadcastChanges();
-            }
-        }
     }
 }

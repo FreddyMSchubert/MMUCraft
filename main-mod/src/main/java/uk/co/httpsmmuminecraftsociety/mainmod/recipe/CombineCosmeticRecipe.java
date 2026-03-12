@@ -4,12 +4,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
@@ -73,6 +75,11 @@ public class CombineCosmeticRecipe implements CraftingRecipe
         DyedItemColor cosmeticColor = cinfo.cosmetic.get(DataComponents.DYED_COLOR);
         if (cosmeticColor != null) {
             pumpkin.set(DataComponents.DYED_COLOR, cosmeticColor);
+
+            CompoundTag newNbt = pumpkin.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            CompoundTag cosmeticNbt = cinfo.cosmetic.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            newNbt.putBoolean(CosmeticsManager.COLOR_CYCLING_BOOLEAN, cosmeticNbt.getBooleanOr(CosmeticsManager.COLOR_CYCLING_BOOLEAN, false));
+            pumpkin.set(DataComponents.CUSTOM_DATA, CustomData.of(newNbt));
         }
 
         return pumpkin;
@@ -81,7 +88,7 @@ public class CombineCosmeticRecipe implements CraftingRecipe
     @Override
     public RecipeSerializer<? extends CraftingRecipe> getSerializer()
     {
-        return MainModRecipes.COMBINE_CHARMOR_SERIALIZER;
+        return MainModRecipes.COMBINE_COSMETIC_SERIALIZER;
     }
 
     @Override

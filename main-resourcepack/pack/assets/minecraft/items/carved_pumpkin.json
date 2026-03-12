@@ -212,6 +212,45 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/hat/propeller_hat"
 				}
+			},
+			{
+				"when": "cosmetic-hat-moustache-fancy",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/moustache/fancy",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": -1
+						}
+					]
+				}
+			},
+			{
+				"when": "cosmetic-hat-moustache-bushy",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/moustache/bushy",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": -1
+						}
+					]
+				}
+			},
+			{
+				"when": "cosmetic-hat-moustache-square",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/moustache/square",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": -1
+						}
+					]
+				}
 			}
 		],
 		"fallback": {

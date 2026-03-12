@@ -30,7 +30,6 @@ public final class FakeItems {
             new BasicFakeItem("coin-1000000","1,000,000 Dabloons",   Rarity.EPIC,     64,  "Official MMU Minecraft Society Mint Issue", "\"Money is the anthem of success - So before we go out, what's your address?\""),
 
             new BasicFakeItem("soul", "Soul", Rarity.COMMON, 16),
-            new BasicFakeItem("jebbonator5k", "Jebbonator 5000", Rarity.COMMON, 16, "Highly modern color cyclification mechanism", "Please apply to a dyeable hat cosmetic."),
 
             new CosmeticFakeItem       ("cosmetic-hat-villager-armorer",  "Armorer Goggles",    Rarity.COMMON),
             new CosmeticFakeItem       ("cosmetic-hat-villager-butcher",  "Butcher Headband",   Rarity.COMMON),

@@ -25,7 +25,6 @@ public class MainMod implements ModInitializer {
 		LOGGER.info("Hello MMU!");
 
         ServerTickEvents.END_WORLD_TICK.register(CharmsManager::onPlayerTick);
-        ServerTickEvents.END_WORLD_TICK.register(CosmeticsManager::tickPlayerCosmetics);
         ItemEvents.USE.register(CharmsManager::onItemUse);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);

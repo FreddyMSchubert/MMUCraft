@@ -10,9 +10,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +37,28 @@ public final class CosmeticsManager {
 
     private static final String ORIGINAL_ITEM_ID = "original_item_id";
     private static final String HELMET_DYED_COLOR_ID = "helmet_dyed_color";
-    private static final String COLOR_CYCLING_BOOLEAN = "color_cycling_boolean";
+    public static final String COLOR_CYCLING_BOOLEAN = "color_cycling_boolean";
+
+    public record CosmeticsInfo(boolean isCosmetic, boolean isDyeable, boolean isHelmet, boolean isColorCycling) {}
+    public static CosmeticsInfo determineCosmeticType(ItemStack stack) {
+        if (stack.isEmpty() || !stack.is(Items.CARVED_PUMPKIN)) {
+            return new CosmeticsInfo(false, false, false, false);
+        }
+
+        boolean isDyeable = stack.has(DataComponents.DYED_COLOR);
+
+        CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        if (cmd.strings().isEmpty() || cmd.strings().getFirst().isEmpty()) {
+            return new CosmeticsInfo(false, isDyeable, false, false);
+        }
+
+        boolean isHelmet = (stack.getOrDefault(DataComponents.MAX_DAMAGE, -42) != -42);
+
+        CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        boolean isColorCycling = nbt.contains(COLOR_CYCLING_BOOLEAN) && nbt.getBooleanOr(COLOR_CYCLING_BOOLEAN, false);
+
+        return new CosmeticsInfo(true, isDyeable, isHelmet, isColorCycling);
+    }
 
     public static ItemStack helmetToPumpkinReplica(ItemStack helmet) {
         if (helmet.isEmpty() || !helmet.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
@@ -71,7 +92,8 @@ public final class CosmeticsManager {
     }
 
     public static ItemStack pumpkinReplicaToHelmet(ItemStack replica) {
-        if (replica.isEmpty()) {
+        CosmeticsInfo cinfo = determineCosmeticType(replica);
+        if (!cinfo.isCosmetic() || !cinfo.isHelmet()) {
             return ItemStack.EMPTY;
         }
 
@@ -106,20 +128,12 @@ public final class CosmeticsManager {
         return helmet;
     }
 
-    private static boolean isPumpkinReplica(ItemStack stack) {
-        if (stack.isEmpty() || !stack.is(Items.CARVED_PUMPKIN)) {
-            return false;
-        }
-
-        CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-        return !cmd.strings().isEmpty() && !cmd.strings().getFirst().isEmpty();
-    }
-
     public static InteractionResult onUseBlock(Player player, Level world, InteractionHand hand, BlockHitResult hitResult)
     {
         ItemStack stack = player.getItemInHand(hand);
+        CosmeticsInfo cinfo = determineCosmeticType(stack);
 
-        if (!CosmeticsManager.isPumpkinReplica(stack)) {
+        if (!cinfo.isCosmetic()) {
             return InteractionResult.PASS;
         }
         BlockPos pos = hitResult.getBlockPos();
@@ -139,5 +153,39 @@ public final class CosmeticsManager {
 
         // Cancel pumpkin placement everywhere else
         return InteractionResult.FAIL;
+    }
+
+    private static final float HUE_STEP = 0.003f;
+    private static final int TICK_DELAY = 3;
+    public static void tickPlayerCosmetics(ServerLevel server)
+    {
+        for (ServerPlayer player : server.players())
+        {
+            if (player.tickCount % TICK_DELAY != 0) continue;
+            if (player.containerMenu != player.inventoryMenu) continue;
+            if (!player.containerMenu.getCarried().isEmpty()) continue;
+
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                ItemStack stack = player.getInventory().getItem(i);
+                CosmeticsManager.CosmeticsInfo cinfo = CosmeticsManager.determineCosmeticType(stack);
+                if (!cinfo.isCosmetic() || !cinfo.isColorCycling()) continue;
+
+                DyedItemColor dyed = stack.get(DataComponents.DYED_COLOR);
+                if (dyed == null) continue;
+
+                ItemStack updated = stack.copy();
+
+                int currCol = dyed.rgb();
+                float[] hsv = Utils.rgbToHsv01(currCol);
+                float nextHue = hsv[0] + HUE_STEP * TICK_DELAY;
+                if (nextHue >= 1.0f) nextHue -= 1.0f;
+                int nextRgb = Mth.hsvToRgb(nextHue, hsv[1], hsv[2]);
+
+                updated.set(DataComponents.DYED_COLOR, new DyedItemColor(nextRgb));
+                player.getInventory().setItem(i, updated);
+
+                player.containerMenu.broadcastChanges();
+            }
+        }
     }
 }

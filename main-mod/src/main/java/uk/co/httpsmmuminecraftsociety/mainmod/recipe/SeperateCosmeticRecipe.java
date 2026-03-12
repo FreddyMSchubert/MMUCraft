@@ -5,12 +5,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
@@ -32,12 +33,8 @@ public class SeperateCosmeticRecipe implements CraftingRecipe
         if (recipeInput.ingredientCount() > 1) return false;
 
         ItemStack stack = recipeInput.items().getFirst();
-
-        if (!stack.getItem().equals(Items.CARVED_PUMPKIN)) return false;
-
-        if (stack.getOrDefault(DataComponents.MAX_DAMAGE, -42) == -42) return false;
-
-        return !stack.get(DataComponents.CUSTOM_MODEL_DATA).strings().getFirst().isEmpty();
+        CosmeticsManager.CosmeticsInfo cinfo = CosmeticsManager.determineCosmeticType(stack);
+        return cinfo.isCosmetic() && cinfo.isHelmet();
     }
 
     @Override
@@ -55,6 +52,12 @@ public class SeperateCosmeticRecipe implements CraftingRecipe
         DyedItemColor dyedColor = inputStack.get(DataComponents.DYED_COLOR);
         if (dyedColor != null) {
             cosmetic.set(DataComponents.DYED_COLOR, dyedColor);
+        }
+        CompoundTag nbt = inputStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (nbt.contains(CosmeticsManager.COLOR_CYCLING_BOOLEAN)) {
+            CompoundTag cosmeticNbt = cosmetic.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            cosmeticNbt.putBoolean(CosmeticsManager.COLOR_CYCLING_BOOLEAN, nbt.getBooleanOr(CosmeticsManager.COLOR_CYCLING_BOOLEAN, false));
+            cosmetic.set(DataComponents.CUSTOM_DATA, CustomData.of(cosmeticNbt));
         }
 
         return cosmetic;

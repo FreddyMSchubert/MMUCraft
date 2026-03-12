@@ -49,6 +49,8 @@ public final class FakeItems {
             new CosmeticFakeItem       ("cosmetic-hat-bunny-ears",        "Bunny Ears",         Rarity.COMMON),
             new CosmeticFakeItem       ("cosmetic-hat-cheese",            "Cheese Hat",         Rarity.COMMON),
             new CosmeticFakeItem       ("cosmetic-hat-propeller-hat",     "Propeller Hat",      Rarity.COMMON),
+            new CosmeticFakeItem       ("cosmetic-hat-helmet-retro",      "Retro Helmet",       Rarity.COMMON),
+            new CosmeticFakeItem       ("cosmetic-hat-helmet-patriotic",  "Patriotic Helmet",   Rarity.COMMON),
             new DyeableCosmeticFakeItem("cosmetic-hat-spartan-helmet",    "Spartan Helmet",     Rarity.COMMON, Utils.rgbToMinecraftColor(0, 0, 255)),
             new DyeableCosmeticFakeItem("cosmetic-hat-amogus-hat",        "Amogus Hat",         Rarity.COMMON, Utils.rgbToMinecraftColor(255, 0, 0)),
             new DyeableCosmeticFakeItem("cosmetic-hat-devil-horns",       "Devil Horns",        Rarity.COMMON, Utils.rgbToMinecraftColor(255, 0, 0)),

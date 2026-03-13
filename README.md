@@ -195,20 +195,10 @@ Every day on the server forever, its scheduled, the border increases by 300 bloc
 
 ## Cosmetics Ideas
 
-hold back armor trims, sell them through shop instead, stop people from duplicating them
-
 we could also make a blueprint item that you need to find in the world which will unlock the cosmetic in the shop
 
 we could also do sale vouchers where you have a 20% discount on the item you buy while you have it in the inventory or something
 
-- Particle effects around player
-- Particle trail following player
-- Ability to put any item or block you want onto your head
-- Item that when held in offhand increases reach
-- chestplate slime fists - more knockback
-- cat shirt - no creeper aggro (if possible), lowered fall damage
-- bunny shirt - huge jump
-- youre always walking as if on ice
 - umbrella - slow falling when held
 - everlasting beef / eternal steak
 - snorkle - more water breathing
@@ -250,7 +240,6 @@ also manual ideas:
 - kitty ears
 - pile of coins
 - witch hat from vanilla
-- variety of moustaches of enourmous and utterly outrages sizes
 - different hair types
 - rainbow clown hair
 - banana peel
@@ -270,7 +259,6 @@ also manual ideas:
 - duck hat
 - steampunk hat
 - tricorn thing oderzo made
-- propeller cap
 - party cone hat
 - santa hat
 - headphones
@@ -278,7 +266,6 @@ also manual ideas:
 - dragon head
 - armor / knights
 - different glasses / shades
-- antenna
 - different pumpkin heads
 - minion eyes
 - green leprechaun hat thing

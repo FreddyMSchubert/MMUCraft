@@ -265,6 +265,26 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/hat/helmet/patriotic"
 				}
+			},
+			{
+				"when": "cosmetic-hat-candle",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/candle",
+					"tints": [
+						{
+							"type": "minecraft:dye",
+							"default": -1
+						}
+					]
+				}
+			},
+			{
+				"when": "cosmetic-hat-copper-golem-antenna",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/copper_golem_antenna"
+				}
 			}
 		],
 		"fallback": {

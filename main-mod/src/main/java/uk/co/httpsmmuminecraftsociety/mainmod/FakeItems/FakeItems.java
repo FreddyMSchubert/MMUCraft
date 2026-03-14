@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems;
 
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.*;
@@ -29,7 +30,9 @@ public final class FakeItems {
             new BasicFakeItem("coin-500000", "500,000 Dabloons",     Rarity.EPIC,     64,  "Official MMU Minecraft Society Mint Issue", "\"'Cause we are living in a material world\""),
             new BasicFakeItem("coin-1000000","1,000,000 Dabloons",   Rarity.EPIC,     64,  "Official MMU Minecraft Society Mint Issue", "\"Money is the anthem of success - So before we go out, what's your address?\""),
 
-            new BasicFakeItem("soul", "Soul", Rarity.COMMON, 16),
+            new BasicFakeItem("soul",                     "Soul",                     Rarity.COMMON, 16),
+
+            new ConsumableFakeItem(1, "consumable-golden-nutritional-paste", "Golden Nutritional Paste", true, 0.1f, true, 10f, 10f, 32, List.of(), Items.BOWL.getDefaultInstance(), 1, "Yum!", "The best food in the game."),
 
             new CosmeticFakeItem       ("cosmetic-hat-villager-armorer",     "Armorer Goggles",      Rarity.COMMON),
             new CosmeticFakeItem       ("cosmetic-hat-villager-butcher",     "Butcher Headband",     Rarity.COMMON),
@@ -100,4 +103,5 @@ public final class FakeItems {
     );
     public static final Map<String, FakeItem> MODEL_ID_MAP = ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItem::getModelId, d -> d));
     public static final Map<Integer, CharmFakeItem> CHARM_EFFECT_ID_MAP = ALL.stream().filter(CharmFakeItem.class::isInstance).map(CharmFakeItem.class::cast).collect(Collectors.toUnmodifiableMap(CharmFakeItem::getEffectId, Function.identity()));
+    public static final Map<Integer, ConsumableFakeItem> CONSUMABLE_MODEL_ID_MAP = ALL.stream().filter(ConsumableFakeItem.class::isInstance).map(ConsumableFakeItem.class::cast).collect(Collectors.toUnmodifiableMap(ConsumableFakeItem::getConsumableId, Function.identity()));
 }

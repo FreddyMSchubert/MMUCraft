@@ -29,6 +29,11 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
 
     public static final TagKey<Item> COSMETIC_COMBINABLE_ARMOR_ITEMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "cosmetic_combinable_armor_items"));
 
+    public static final TagKey<Item> FISHES = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fishes"));
+    public static final TagKey<Item> MUSHROOMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "mushrooms"));
+    public static final TagKey<Item> FUNGI = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fungy"));
+    public static final TagKey<Item> FARM_ANIMAL_MEATS_RAW = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "farm_animal_meats_raw"));
+
     public ModItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture)
     {
         super(output, registriesFuture);
@@ -131,5 +136,24 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
                 .add(Items.COPPER_HELMET)
                 .add(Items.LEATHER_HELMET)
                 .add(Items.NETHERITE_HELMET);
+
+        valueLookupBuilder(FISHES)
+                .add(Items.SALMON)
+                .add(Items.COD)
+                .add(Items.TROPICAL_FISH)
+                .add(Items.PUFFERFISH);
+        valueLookupBuilder(MUSHROOMS)
+                .add(Items.BROWN_MUSHROOM)
+                .add(Items.RED_MUSHROOM);
+        valueLookupBuilder(FUNGI)
+                .add(Items.CRIMSON_FUNGUS)
+                .add(Items.WARPED_FUNGUS);
+        valueLookupBuilder(FARM_ANIMAL_MEATS_RAW)
+                .add(Items.MUTTON)
+                .add(Items.PORKCHOP)
+                .add(Items.BEEF)
+                .add(Items.RABBIT)
+                .add(Items.CHICKEN)
+                .add(Items.ROTTEN_FLESH);
     }
 }

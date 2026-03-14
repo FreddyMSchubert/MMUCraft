@@ -283,6 +283,13 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/charm/cosmetic_charm_umbrella_staff"
 				}
+			},
+			{
+				"when": "consumable-golden-nutritional-paste",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/consumable/consumable_golden_nutritional_paste"
+				}
 			}
 		],
 		"fallback": {

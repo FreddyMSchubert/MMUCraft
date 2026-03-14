@@ -14,6 +14,7 @@ public final class MainModRecipes {
     public static final RecipeSerializer<SeperateCharmorRecipe> SEPERATE_CHARMOR_SERIALIZER = new SeperateCharmorRecipe.Serializer();
     public static final RecipeSerializer<CombineCosmeticRecipe> COMBINE_COSMETIC_SERIALIZER = new CombineCosmeticRecipe.Serializer();
     public static final RecipeSerializer<SeperateCosmeticRecipe> SEPERATE_COSMETIC_SERIALIZER = new SeperateCosmeticRecipe.Serializer();
+    public static final RecipeSerializer<NutritionalPasteRecipe> NUTRITIONAL_PASTE_SERIALIZER = new NutritionalPasteRecipe.Serializer();
 
     public static void register() {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "coin_convert"), COIN_CONVERT_SERIALIZER);
@@ -21,5 +22,6 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_charmor"), SEPERATE_CHARMOR_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_cosmetic"), COMBINE_COSMETIC_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_cosmetic"), SEPERATE_COSMETIC_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "nutritional_paste"), NUTRITIONAL_PASTE_SERIALIZER);
     }
 }

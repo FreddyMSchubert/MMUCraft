@@ -115,6 +115,22 @@ With some of these multiple players could get them at the same time, so we shoul
 
 Might be nice to make some challenges have multiple winners to encourage collaboration.
 
+## Dueling
+
+Duel Types
+
+- Underwater
+- Lightning item to strike each other with lightning, small cooldown to react
+- Jousting with spears on horses
+- Mounted PVP
+- Deathrun
+- swamp arena
+- cliff arena, everyone has jump boost
+- elytra
+- mace, everyone jump boost
+- underground, mine to opponents
+- waves of mobs, who survives longest / kills most mobs
+
 ## Economy
 
 ### Money gains
@@ -230,6 +246,8 @@ these arent mit licensed but we can just get some inspiration
 
 also manual ideas:
 
+- villager nose
+- witch nose (with dyeable pimple)
 - kitty ears
 - pile of coins
 - witch hat from vanilla

@@ -185,7 +185,7 @@ For extraction, the recipe always turns
 
 ## Server interest over time
 
-Day 1 the server border is 3000x3000
+Day 1 the server border is 1000x1000
 
 Every day on the server forever, its scheduled, the border increases by 300 blocks
 
@@ -199,8 +199,6 @@ we could also make a blueprint item that you need to find in the world which wil
 
 we could also do sale vouchers where you have a 20% discount on the item you buy while you have it in the inventory or something
 
-- umbrella - slow falling when held
-- everlasting beef / eternal steak
 - snorkle - more water breathing
 - villager hat - reduced trade cost
 - more looting armor
@@ -210,13 +208,8 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - longer invincibility frames
 - get speed effect after damage
 - chance to light attackers on fire
-- double jump / triple jump
-- huge jump height
 - antidote vessel - decreases harmful effect duration
 - quiver - gives you infinity
-- swim in air while item held
-- ender chest / crafting table opening charm
-- spring-loaded shoes - set your jump height while sprinting above 1, allowing you to run up blocks. better than autojump cause autojump slows you down.
 
 - zeus bolt - cooldown 2 hours - summons lightning at target pos
 - poseidons trident - when thrown, drags people underwater super quickly

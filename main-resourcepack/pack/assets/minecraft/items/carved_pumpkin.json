@@ -285,6 +285,27 @@
 					"type": "minecraft:model",
 					"model": "mmu_pack:item/hat/copper_golem_antenna"
 				}
+			},
+			{
+				"when": "cosmetic-hat-chicken",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/chicken"
+				}
+			},
+			{
+				"when": "cosmetic-hat-salmon",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/salmon"
+				}
+			},
+			{
+				"when": "cosmetic-hat-cod",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/hat/cod"
+				}
 			}
 		],
 		"fallback": {

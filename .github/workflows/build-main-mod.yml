@@ -6,7 +6,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./main-mod
+        working-directory: ./minecraft/main/mod
     runs-on: ubuntu-24.04
     steps:
       - name: checkout repository

@@ -1,0 +1,8 @@
+node_modules
+.next
+.gradle
+build
+dist
+.DS_Store
+tilt_modules
+.env

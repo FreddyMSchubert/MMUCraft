@@ -2,6 +2,17 @@
 
 > _Toto, I've a feeling we're not in Kansas anymore._
 
+## Dev
+
+1. Make sure k3d & kubectl, Docker, tilt are installed.
+2. Duplicate .env.example files in each service & fill in actual values.
+3. To start local k3d instance: `k3d cluster create mc-dev --registry-create mc-dev-registry`. To clean up: `k3d cluster delete mc-dev`.
+4. Run `tilt up` to get started.
+
+Tilt will now restart the minecraft pod automatically whenever the mod is built.
+
+- To access the server console: `kubectl exec -n mc-stack-dev -it deploy/minecraft -- rcon-cli`
+
 ## The goal
 
 One main, largely vanilla survival server. Main server.
@@ -114,6 +125,10 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 With some of these multiple players could get them at the same time, so we should in the ScoreKeeper just take record whenever theres a clear winner in the current result state, even if another player also wins a millisecond later, thus making winning together essentially randomize the winner.
 
 Might be nice to make some challenges have multiple winners to encourage collaboration.
+
+also heres some youtubers to take inspo from:
+
+- https://www.youtube.com/@Suuuperbro0
 
 ## Dueling
 

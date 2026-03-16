@@ -1,0 +1,9 @@
+out/
+coverage/
+*.log
+*.tsbuildinfo
+.env*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

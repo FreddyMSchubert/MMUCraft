@@ -1,0 +1,6 @@
+{
+	"type": "charm",
+	"custom_model_data": "cosmetic-charm-giants-boots",
+	"isLeggings": false,
+	"equippable_asset_id": "giants_boots__charm"
+}

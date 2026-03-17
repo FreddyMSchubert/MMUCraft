@@ -1,0 +1,6 @@
+{
+	"type": "charm",
+	"custom_model_data": "cosmetic-charm-strider-shales",
+	"isLeggings": true,
+	"equippable_asset_id": "strider_shales__charm"
+}

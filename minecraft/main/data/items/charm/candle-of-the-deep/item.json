@@ -1,0 +1,6 @@
+{
+	"type": "charm",
+	"custom_model_data": "cosmetic-charm-candle-of-the-deep",
+	"isLeggings": true,
+	"equippable_asset_id": "candle_of_the_deep__charm"
+}

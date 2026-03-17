@@ -1,0 +1,6 @@
+{
+	"type": "charm",
+	"custom_model_data": "cosmetic-charm-kitty-pajamas",
+	"isLeggings": true,
+	"equippable_asset_id": "kitty_pajamas__charm"
+}

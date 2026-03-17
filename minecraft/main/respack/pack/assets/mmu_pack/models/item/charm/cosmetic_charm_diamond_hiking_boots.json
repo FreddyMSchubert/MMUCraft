@@ -1,6 +1,0 @@
-{
-	"parent": "minecraft:item/generated",
-	"textures": {
-		"layer0": "mmu_pack:item/charm/cosmetic_charm_diamond_hiking_boots"
-	}
-}

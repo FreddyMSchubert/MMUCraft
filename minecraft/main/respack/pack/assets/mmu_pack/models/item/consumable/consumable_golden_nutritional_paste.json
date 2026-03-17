@@ -1,6 +1,0 @@
-{
-	"parent": "minecraft:item/generated",
-	"textures": {
-		"layer0": "mmu_pack:item/consumable/consumable_golden_nutritional_paste"
-	}
-}

@@ -1,0 +1,6 @@
+{
+	"type": "charm",
+	"custom_model_data": "cosmetic-charm-winged-shoes-0",
+	"isLeggings": false,
+	"equippable_asset_id": "winged_shoes__charm"
+}

@@ -29,6 +29,8 @@ spec:
         - name: minecraft
           image: mcstack/minecraft-server
           imagePullPolicy: IfNotPresent
+          stdin: true
+          tty: true
           env:
             - name: EULA
               value: "TRUE"
@@ -38,18 +40,18 @@ spec:
               value: "1.21.11"
             - name: MODRINTH_PROJECTS
               value: fabric-api
-            - name: ONLINE_MODE
-              value: "FALSE"
             - name: MEMORY
               value: 2G
             - name: INIT_MEMORY
               value: 1G
-            - name: VIEW_DISTANCE
-              value: "8"
-            - name: SIMULATION_DISTANCE
-              value: "8"
-            - name: MOTD
-              value: "Tilt + k3d Fabric auth starter"
+            - name: OVERRIDE_SERVER_PROPERTIES
+              value: "false"
+            - name: SKIP_SERVER_PROPERTIES
+              value: "true"
+            - name: COPY_CONFIG_DEST
+              value: /data
+            - name: SYNC_SKIP_NEWER_IN_DESTINATION
+              value: "false"
             - name: AUTH_RABBITMQ_URL
               value: amqp://guest:guest@rabbitmq:5672
           ports:

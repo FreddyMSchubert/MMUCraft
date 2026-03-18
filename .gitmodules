@@ -1,0 +1,3 @@
+[submodule "minecraft/main/respack/ResourcePackMerger"]
+	path = minecraft/main/respack/ResourcePackMerger
+	url = https://github.com/mfnalex/ResourcePackMerger.git

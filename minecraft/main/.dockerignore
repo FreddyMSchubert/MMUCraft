@@ -1,0 +1,9 @@
+data/
+respack/
+mod/.gradle/
+mod/src/
+mod/gradle/
+mod/build/*
+!mod/build/libs/
+!mod/build/libs/*.jar
+mod/build/libs/*-sources.jar

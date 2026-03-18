@@ -11,7 +11,7 @@
 
 Tilt will now restart the minecraft pod automatically whenever the mod is built.
 
-- To access the server console: `kubectl exec -n mc-stack-dev -it deploy/minecraft -- rcon-cli`
+- To access the server console: `kubectl attach -n mc-stack-dev -it deploy/minecraft`
 
 ## The goal
 

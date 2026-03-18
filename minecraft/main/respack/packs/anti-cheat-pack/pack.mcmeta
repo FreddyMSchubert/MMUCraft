@@ -1,0 +1,7 @@
+{
+  "pack": {
+    "description": "Cheating is for sinners and won't be tolerated.",
+    "min_format": [75, 0],
+    "max_format": [2147483647, 0]
+  }
+}

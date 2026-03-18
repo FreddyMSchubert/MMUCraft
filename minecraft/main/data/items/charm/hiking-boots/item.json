@@ -1,5 +1,5 @@
 {
-	"type": "charm",
+	"modelType": "equippableCharm",
 	"custom_model_data": "cosmetic-charm-hiking-boots-0",
 	"isLeggings": false,
 	"equippable_asset_id": "hiking_boots__charm"

@@ -1,5 +1,5 @@
 {
-	"type": "hat",
+	"modelType": "hat",
 	"custom_model_data": "cosmetic-hat-villager-fisherman",
 	"isTinted": true
 }

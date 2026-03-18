@@ -1,5 +1,5 @@
 {
-	"type": "charm",
+	"modelType": "equippableCharm",
 	"custom_model_data": "cosmetic-charm-spider-pajamas",
 	"isLeggings": true,
 	"equippable_asset_id": "spider_pajamas__charm"

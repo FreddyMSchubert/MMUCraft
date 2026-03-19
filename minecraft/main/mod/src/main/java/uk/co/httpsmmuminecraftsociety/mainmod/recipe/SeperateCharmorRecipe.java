@@ -14,9 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmorManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 import java.util.List;

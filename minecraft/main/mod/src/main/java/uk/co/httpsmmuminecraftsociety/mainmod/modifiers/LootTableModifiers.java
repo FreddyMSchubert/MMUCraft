@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 import java.util.List;
 

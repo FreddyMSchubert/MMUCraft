@@ -1,0 +1,35 @@
+{
+    "title": null,
+    "rarity": null,
+    "maxStackSize": null,
+    "tooltips": null,
+    "looks": {
+        "modelType": "equippableCharm",
+        "custom_model_data": "cosmetic-charm-hiking-boots-0",
+        "isTinted": null,
+        "tintColor": null,
+        "equippable_asset_id": "hiking_boots__charm",
+        "isLeggings": false
+    },
+    "behaviour": {
+        "effectId": null,
+        "equipmentSlot": null,
+        "equippable": {
+            "equipmentSlot": null,
+            "swappable": null,
+            "dispensable": null,
+            "damageOnHurt": null
+        },
+        "consumable": {
+            "consumableId": null,
+            "isDrink": null,
+            "consumeSeconds": null,
+            "canAlwaysEat": null,
+            "hungerBars": null,
+            "saturationBars": null,
+            "directHearts": null,
+            "useRemainderItem": null,
+            "effects": null
+        }
+    }
+}

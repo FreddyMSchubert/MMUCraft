@@ -9,6 +9,9 @@ Set-StrictMode -Version Latest
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ModDir = Join-Path $ScriptDir 'mod'
 
+Write-Host '==> Validating and staging item data'
+python (Join-Path $ScriptDir 'build\stage_item_data.py') --root $ScriptDir
+
 Write-Host '==> Building Fabric mod'
 Push-Location $ModDir
 try {

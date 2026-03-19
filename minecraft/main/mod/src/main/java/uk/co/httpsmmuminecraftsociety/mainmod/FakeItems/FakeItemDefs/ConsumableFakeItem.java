@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs;
 
+import com.google.gson.JsonObject;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -36,6 +37,7 @@ public class ConsumableFakeItem extends FakeItem
             int consumableId,
             String model_id,
             String title,
+            Rarity rarity,
             boolean isDrink,
             float consumeSeconds,
             boolean canAlwaysEat,
@@ -47,7 +49,7 @@ public class ConsumableFakeItem extends FakeItem
             int maxStackSize,
             String... tooltip
     ) {
-        super(Items.COMMAND_BLOCK, model_id, title, Rarity.COMMON, maxStackSize, tooltip);
+        super(Items.COMMAND_BLOCK, model_id, title, rarity, maxStackSize, tooltip);
 
         this.consumableId = consumableId;
         this.isDrink = isDrink;
@@ -93,12 +95,10 @@ public class ConsumableFakeItem extends FakeItem
     {
         ItemStack stack = super.createItemStack();
 
-        // consumable id
         CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         nbt.putInt(CONSUMABLE_ID_NBT, this.consumableId);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
 
-        // consumable component
         Consumable.Builder consumableBuilder = Consumable.builder()
                 .consumeSeconds(consumeSeconds)
                 .animation(isDrink ? ItemUseAnimation.DRINK : ItemUseAnimation.EAT)
@@ -117,7 +117,6 @@ public class ConsumableFakeItem extends FakeItem
         }
         stack.set(DataComponents.CONSUMABLE, consumableBuilder.build());
 
-        // food component
         FoodProperties.Builder fpb = new FoodProperties.Builder()
                 .nutrition(FoodModifier.hungerBarsToNutrition(this.hungerBars))
                 .saturationModifier(FoodModifier.satBarsToSaturationModifier(this.saturationBars));
@@ -126,9 +125,40 @@ public class ConsumableFakeItem extends FakeItem
         }
         stack.set(DataComponents.FOOD, fpb.build());
 
-        // use remainder component
         stack.set(DataComponents.USE_REMAINDER, new UseRemainder(useRemainder));
 
         return stack;
+    }
+
+    public static ConsumableFakeItem fromJson(JsonObject root, String sourcePath) {
+        CommonFields common = parseCommon(root, sourcePath, 64);
+        JsonObject behaviour = getBehaviourObject(root);
+        JsonObject consumable = getConsumableObject(root);
+
+        int consumableId = requiredInt(consumable, behaviour, "consumableId", sourcePath);
+        boolean isDrink = optionalBoolean(consumable, behaviour, "isDrink", false);
+        float consumeSeconds = optionalFloat(consumable, behaviour, "consumeSeconds", 1.6f);
+        boolean canAlwaysEat = optionalBoolean(consumable, behaviour, "canAlwaysEat", false);
+        float hungerBars = optionalFloat(consumable, behaviour, "hungerBars", 0.0f);
+        float saturationBars = optionalFloat(consumable, behaviour, "saturationBars", 0.0f);
+        int directHearts = optionalInt(consumable, behaviour, "directHearts", 0);
+        String useRemainderItem = optionalString(consumable, behaviour, "useRemainderItem", "minecraft:air");
+
+        return new ConsumableFakeItem(
+                consumableId,
+                common.modelId(),
+                common.title(),
+                common.rarity(),
+                isDrink,
+                consumeSeconds,
+                canAlwaysEat,
+                hungerBars,
+                saturationBars,
+                directHearts,
+                parseMobEffects(consumable, behaviour, "effects", sourcePath),
+                resolveItemStack(useRemainderItem, sourcePath),
+                common.maxStackSize(),
+                common.tooltip()
+        );
     }
 }

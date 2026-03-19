@@ -1,0 +1,35 @@
+{
+    "title": null,
+    "rarity": null,
+    "maxStackSize": null,
+    "tooltips": null,
+    "looks": {
+        "modelType": "hat",
+        "custom_model_data": "cosmetic-hat-skull-mask",
+        "isTinted": false,
+        "tintColor": null,
+        "equippable_asset_id": null,
+        "isLeggings": null
+    },
+    "behaviour": {
+        "effectId": null,
+        "equipmentSlot": null,
+        "equippable": {
+            "equipmentSlot": null,
+            "swappable": null,
+            "dispensable": null,
+            "damageOnHurt": null
+        },
+        "consumable": {
+            "consumableId": null,
+            "isDrink": null,
+            "consumeSeconds": null,
+            "canAlwaysEat": null,
+            "hungerBars": null,
+            "saturationBars": null,
+            "directHearts": null,
+            "useRemainderItem": null,
+            "effects": null
+        }
+    }
+}

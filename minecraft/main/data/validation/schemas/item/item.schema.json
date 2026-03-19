@@ -1,0 +1,78 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "item.schema.json",
+	"title": "Composable fake item",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"title": {
+			"type": "string",
+			"minLength": 1
+		},
+		"id": {
+			"type": "string",
+			"minLength": 1
+		},
+		"modelType": {
+			"type": "string",
+			"minLength": 1
+		},
+		"rarity": {
+			"type": "string",
+			"enum": [
+				"common",
+				"uncommon",
+				"rare",
+				"epic"
+			]
+		},
+		"maxStackSize": {
+			"oneOf": [
+				{
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 99
+				}
+			]
+		},
+		"tooltips": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"charm": {
+			"$ref": "./components/charm.schema.json"
+		},
+		"consumable": {
+			"$ref": "./components/consumable.schema.json"
+		},
+		"dyeable": {
+			"$ref": "./components/dyeable.schema.json"
+		},
+		"equippableTorsoExtremities": {
+			"$ref": "./components/equippable-torso-extremities.schema.json"
+		},
+		"equippableHead": {
+			"$ref": "./components/equippable-head.schema.json"
+		}
+	},
+	"required": [
+		"title",
+		"id",
+		"modelType",
+		"rarity",
+		"maxStackSize",
+		"tooltips"
+	],
+	"allOf": [
+		{
+			"not": {
+				"required": [
+					"dyeable",
+					"equippableTorsoExtremities"
+				]
+			}
+		}
+	]
+}

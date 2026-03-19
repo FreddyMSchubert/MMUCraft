@@ -1,25 +1,25 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.itemdata;
 
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.CraftingStaffCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.EnderChestStaffCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.PotionOfReturningCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.UmbrellaCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.BunnyPajamasCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.CandleOfTheDeepCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.CaveSpiderPajamasCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.ExtendoGripCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.GiantsBootsCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.GoopHandCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.HeartCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.HikingBootsCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.KittyPajamasCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.LeprechaunBootsCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.MermaidScalesCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.RunningShoesCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.SpiderPajamasCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.StriderShalesCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.WingedShoesCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CraftingStaffCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.EnderChestStaffCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.PotionOfReturningCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.UmbrellaCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.BunnyPajamasCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.CandleOfTheDeepCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.CaveSpiderPajamasCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.ExtendoGripCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.GiantsBootsCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.GoopHandCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.HeartCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.HikingBootsCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.KittyPajamasCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.LeprechaunBootsCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.MermaidScalesCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.RunningShoesCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.SpiderPajamasCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.StriderShalesCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.WingedShoesCharm;
 
 import java.util.Map;
 

@@ -3,7 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.itemdata;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.FakeItem;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

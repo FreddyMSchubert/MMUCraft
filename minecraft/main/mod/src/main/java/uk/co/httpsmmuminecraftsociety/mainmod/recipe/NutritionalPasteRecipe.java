@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 public class NutritionalPasteRecipe implements CraftingRecipe

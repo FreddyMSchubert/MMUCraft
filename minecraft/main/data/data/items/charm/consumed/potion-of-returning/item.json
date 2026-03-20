@@ -1,0 +1,29 @@
+{
+	"title": "Potion of Returning",
+	"id": "charm-potion-returning",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Not for the faint of heart",
+		"May come with minor side effects",
+		"(Teleports you back to the protection & safety of the world spawn)"
+	],
+	"charm": {
+		"charmId": 25
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "potion_returning__charm"
+	},
+	"consumable": {
+		"isDrink": true,
+		"canAlwaysEat": true,
+		"consumeSeconds": 15,
+		"directHearts": 0,
+		"effects": [],
+		"hungerBars": 0,
+		"saturationBars": 0,
+		"useRemainderItem": "minecraft:bottle"
+	}
+}

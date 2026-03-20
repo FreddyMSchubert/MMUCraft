@@ -15,7 +15,12 @@
 		},
 		"modelType": {
 			"type": "string",
-			"minLength": 1
+			"enum": [
+				"basic",
+				"basic-3d",
+				"charm",
+				"cosmetic"
+			]
 		},
 		"rarity": {
 			"type": "string",
@@ -65,17 +70,78 @@
 		"maxStackSize",
 		"tooltips"
 	],
-	"if": {
-		"required": [
-			"equippableCosmetic"
-		]
-	},
-	"then": {
-		"properties": {
-			"id": {
-				"type": "string",
-				"pattern": "^cosmetic-"
+	"allOf": [
+		{
+			"if": {
+				"required": [
+					"equippableCosmetic"
+				]
+			},
+			"then": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"pattern": "^cosmetic-"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"required": [
+					"charm"
+				]
+			},
+			"then": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"pattern": "^charm-"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"modelType": {
+						"const": "charm"
+					}
+				},
+				"required": [
+					"modelType"
+				]
+			},
+			"then": {
+				"required": [
+					"equippableCharm"
+				]
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"modelType": {
+						"const": "cosmetic"
+					}
+				},
+				"required": [
+					"modelType"
+				]
+			},
+			"then": {
+				"required": [
+					"equippableCosmetic"
+				]
+			}
+		},
+		{
+			"not": {
+				"required": [
+					"equippableCharm",
+					"equippableCosmetic"
+				]
 			}
 		}
-	}
+	]
 }

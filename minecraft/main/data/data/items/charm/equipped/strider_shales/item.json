@@ -1,35 +1,18 @@
 {
-    "title": null,
-    "rarity": null,
-    "maxStackSize": null,
-    "tooltips": null,
-    "looks": {
-        "modelType": "equippableCharm",
-        "custom_model_data": "cosmetic-charm-strider-shales",
-        "isTinted": null,
-        "tintColor": null,
-        "equippable_asset_id": "strider_shales__charm",
-        "isLeggings": true
-    },
-    "behaviour": {
-        "effectId": null,
-        "equipmentSlot": null,
-        "equippable": {
-            "equipmentSlot": null,
-            "swappable": null,
-            "dispensable": null,
-            "damageOnHurt": null
-        },
-        "consumable": {
-            "consumableId": null,
-            "isDrink": null,
-            "consumeSeconds": null,
-            "canAlwaysEat": null,
-            "hungerBars": null,
-            "saturationBars": null,
-            "directHearts": null,
-            "useRemainderItem": null,
-            "effects": null
-        }
-    }
+	"title": "Strider Shales Charm",
+	"id": "charm-strider-shales",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Don't get cold feet.",
+		"(Fire Resistance)"
+	],
+	"charm": {
+		"charmId": 15
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "strider_shales__charm"
+	}
 }

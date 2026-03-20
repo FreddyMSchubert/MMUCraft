@@ -1,35 +1,18 @@
 {
-    "title": null,
-    "rarity": null,
-    "maxStackSize": null,
-    "tooltips": null,
-    "looks": {
-        "modelType": "equippableCharm",
-        "custom_model_data": "cosmetic-charm-running-shoes",
-        "isTinted": null,
-        "tintColor": null,
-        "equippable_asset_id": "running_shoes__charm",
-        "isLeggings": false
-    },
-    "behaviour": {
-        "effectId": null,
-        "equipmentSlot": null,
-        "equippable": {
-            "equipmentSlot": null,
-            "swappable": null,
-            "dispensable": null,
-            "damageOnHurt": null
-        },
-        "consumable": {
-            "consumableId": null,
-            "isDrink": null,
-            "consumeSeconds": null,
-            "canAlwaysEat": null,
-            "hungerBars": null,
-            "saturationBars": null,
-            "directHearts": null,
-            "useRemainderItem": null,
-            "effects": null
-        }
-    }
+	"title": "Running Shoes Charm",
+	"id": "charm-running-shoes",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Been there, run that.",
+		"(You will speed up more and more over time while sprinting.)"
+	],
+	"charm": {
+		"charmId": 7
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "running_shoes__charm"
+	}
 }

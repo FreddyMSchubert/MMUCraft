@@ -1,35 +1,18 @@
 {
-    "title": null,
-    "rarity": null,
-    "maxStackSize": null,
-    "tooltips": null,
-    "looks": {
-        "modelType": "equippableCharm",
-        "custom_model_data": "cosmetic-charm-spider-pajamas",
-        "isTinted": null,
-        "tintColor": null,
-        "equippable_asset_id": "spider_pajamas__charm",
-        "isLeggings": true
-    },
-    "behaviour": {
-        "effectId": null,
-        "equipmentSlot": null,
-        "equippable": {
-            "equipmentSlot": null,
-            "swappable": null,
-            "dispensable": null,
-            "damageOnHurt": null
-        },
-        "consumable": {
-            "consumableId": null,
-            "isDrink": null,
-            "consumeSeconds": null,
-            "canAlwaysEat": null,
-            "hungerBars": null,
-            "saturationBars": null,
-            "directHearts": null,
-            "useRemainderItem": null,
-            "effects": null
-        }
-    }
+	"title": "Spider Pajamas Charm",
+	"id": "charm-spider-pajamas",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Oohhhh how emo... /s",
+		"(Let's you climb any surface by walking into it)"
+	],
+	"charm": {
+		"charmId": 19
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "spider_pajamas__charm"
+	}
 }

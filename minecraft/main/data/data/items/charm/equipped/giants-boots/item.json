@@ -1,35 +1,19 @@
 {
-    "title": null,
-    "rarity": null,
-    "maxStackSize": null,
-    "tooltips": null,
-    "looks": {
-        "modelType": "equippableCharm",
-        "custom_model_data": "cosmetic-charm-giants-boots",
-        "isTinted": null,
-        "tintColor": null,
-        "equippable_asset_id": "giants_boots__charm",
-        "isLeggings": false
-    },
-    "behaviour": {
-        "effectId": null,
-        "equipmentSlot": null,
-        "equippable": {
-            "equipmentSlot": null,
-            "swappable": null,
-            "dispensable": null,
-            "damageOnHurt": null
-        },
-        "consumable": {
-            "consumableId": null,
-            "isDrink": null,
-            "consumeSeconds": null,
-            "canAlwaysEat": null,
-            "hungerBars": null,
-            "saturationBars": null,
-            "directHearts": null,
-            "useRemainderItem": null,
-            "effects": null
-        }
-    }
+	"title": "Giants Boots Charm",
+	"id": "charm-giants-boots",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"These boots are made for walkin'",
+		"Grants the user the lost power of the ancient giants.",
+		"(You'll figure it out.)"
+	],
+	"charm": {
+		"charmId": 12
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "giants_boots__charm"
+	}
 }

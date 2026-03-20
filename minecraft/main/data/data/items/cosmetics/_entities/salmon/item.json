@@ -1,7 +1,7 @@
 {
 	"title": "Salmon Hat",
 	"id": "cosmetic-salmon",
-	"modelType": "basic",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],

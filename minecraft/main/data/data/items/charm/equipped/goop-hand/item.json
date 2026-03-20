@@ -1,7 +1,7 @@
 {
 	"title": "Goop Hand Charm",
 	"id": "charm-goop-hand",
-	"modelType": "basic",
+	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [

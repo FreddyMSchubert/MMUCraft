@@ -1,7 +1,7 @@
 {
 	"title": "Sheperd Hat",
 	"id": "cosmetic-villager-sheperd",
-	"modelType": "basic",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],

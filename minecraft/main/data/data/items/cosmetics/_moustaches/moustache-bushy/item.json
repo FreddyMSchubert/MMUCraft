@@ -1,7 +1,7 @@
 {
 	"title": "Bushy Moustache",
 	"id": "cosmetic-mousetache-bushy",
-	"modelType": "basic",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],

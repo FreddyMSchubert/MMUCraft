@@ -101,3 +101,11 @@ declare const process: {
 };
 
 declare class Buffer {}
+
+
+declare const console: {
+  log(...args: unknown[]): void;
+  error(...args: unknown[]): void;
+};
+
+declare function structuredClone<T>(value: T): T;

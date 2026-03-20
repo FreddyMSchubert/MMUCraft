@@ -1,7 +1,7 @@
 {
 	"title": "Extendo Grip Charm",
 	"id": "charm-extendo-grip",
-	"modelType": "basic",
+	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [

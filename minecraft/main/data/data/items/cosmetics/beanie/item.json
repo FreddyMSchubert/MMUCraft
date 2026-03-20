@@ -1,7 +1,7 @@
 {
 	"title": "Beanie",
 	"id": "cosmetic-beanie",
-	"modelType": "basic",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],

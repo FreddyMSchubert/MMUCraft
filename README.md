@@ -398,57 +398,67 @@ hopefully with that i can figure it out
 
 ### Enchanting
 
-villagers dont drop enchanted books anymore. instead, get them from structures at increased reliable chances.
+villagers dont drop enchanted books anymore. instead, get them from structures at increased reliable chances but only ever at the lowest level.
 you can put enchanted books on lecterns, and the corresponding librarian will offer that trade at high price but reset anvil cost, but will add a random curse to it. This can be removed with the cursebreaker tome.
+repairing items in an anvil with another item does not remove the enchantments, just keeps the first items enchantments. you can repair normally with materials and also repair netherite stuff with diamonds. repairing does not increase xp cost.
+combining books has changed, now a sharpness 1 + a sharpness 2 book makes a sharpness 3 book.
 
-- looting -> Nether Fortress
-- sharpness, smite, bane of arthropods -> Trial Chamber
-- fortune -> Crafted with coal block, copper block, emerald block, gold block, iron block, lapis block, diamond block, quartz block, redstone block
-- mending -> ancient city
-- protection -> end city
-- unbreaking -> woodland mansion
-- power -> bastions
-- efficiency -> stronghold
-- aqua affinity -> ocean monument (dropped by elder guardians)
-- respiration -> shipwrecks
-- depth strider -> ocean ruins
-- charm power (custom, more charms per armor) -> trail ruins
-- silk touch -> jungle temple
-- feather falling -> desert temple
-- flame, fire aspect -> ruined portals
-- lure & luck of the sea -> obtained through fishing
+| Enchantment | Initial book obtaining | Item needed to trade instead of book |
+| - | - | - |
+| Looting | Nether Fortress | funny bone dropped by weather skeleton |
+| Bane of Arthropods | Trial Chamber normal | ender mite mousse |
+| Density | Trial Chamber normal | Anvil |
+| Smite | Trial Chamber normal | Wither Star |
+| Breach | Trial Chamber normal | Turtle Helmet |
+| Sharpness | Trial Chamber ominous | Ancient Sword from fishing |
+| Windburst | Trial Chamber ominous | breeze rod |
+| Fortune | Crafted with coal, copper, emerald, gold, iron, lapis, diamond, quartz, redstone blocks | netherite scraps |
+| Swift Sneak | Ancient City | Sculk Sensor |
+| Mending | Ancient City | ? |
+| Thorns | Dungeon | Guardian Gear dropped from normal guardians |
+| Knockback | Woodland Mansion | Slime Block |
+| Sweeping Edge | Woodland Mansion | Ancient Blade from Archaeology |
+| Unbreaking | End City | Totem of Undying |
+| Protection + Variants | End Ships | ? |
+| Power | Bastions | Piglin Brute Heads |
+| Soul Speed | Bastions | Souls |
+| Efficiency | Stronghold | TNT |
+| Aqua Affinity | Ocean Monument (dropped by guardians) | Sea Lanterns |
+| Punch | Jungle Temple | Skeleton Head |
+| Infinity | Jungle Temple | Pillager Head |
+| Quick Charge | Pillager Outposts | / |
+| Multishot | Pillager Outposts | / |
+| Piercing | Pillager Outposts | / |
+| Respiration | Shipwrecks | / |
+| Depth Strider | Ocean Ruins | Prismarine Shard |
+| Charm Boost | Trail Ruins | / |
+| Soulbound | Villages, Crafted with soul + book | / |
+| Silk Touch | Mineshaft | / |
+| Feather Falling | Desert Temple | Parrot Feather |
+| Fire Aspect | Overworld-side ruined portals | fire charge |
+| Flame | Nether-side ruined portals | magma cream |
+| Frost Walker | Igloos | Blue Ice |
+| Lure | Fishing | / |
+| Luck of the sea | Buried Treasure | secret of the sea (1-4 from shipwrecks) |
+| Riptide | Dropped by drowneds rarely | / |
+| Loyalty | Dropped by drowneds rarely | / |
+| Impaling | Dropped by zombie nautili rarely | / |
+| Channeling | Dropped by zombie nautili rarely | / |
 
-There are tomes (inspired by quarks mod), which can increase some enchantments even further than normal vanilla max.
-A sniffer drops a new item, a bulb of ancient magic. Craft it together with an enchanted book of the right type and the right mob drop to make the tome and 6 diamonds.
-tomes can be applied at anvils for 30 levels and no increased item xp cost.
-
-- cursebreaker -> purification rune from archeology or fishing or chests. specific to curse to be broken. 
-- feather falling -> parrot feather
-- thorns -> guardian gear dropped from normal guardians
-- sharpness -> ancient sword from fishing
-- smite -> wither star
-- bane of arthropods -> ender mite mousse
-- Knockback -> breeze rod
-- Fire Aspect -> fire charge
-- Looting -> Wither star
-- sweeping edge -> ancient blade from archaeology
-- efficiency -> silverfish shell dropped from silverfish
-- unbreaking -> totem of undying
-- fortune -> netherite ingot
-- power -> piglin head
-- punch -> skeleton head
-- luck of the sea -> heart of the sea
-- lure -> prismarine shard
-
-### more curses
+A sniffer drops a new item, a seed of ancient magic. this must be watered (dropped in water), lavad, slimed, and soul fired. (its fire resistant). at this point, if you eat the item, it will give you poison and turn into a bulb of ancient magic.
+Craft the bulb together with a purification rune (from fishing, archaeology or shop), 6 diamonds and a curse-specific item to make a cursebreaker for that curse. all cursebreakers are made from flowers.
+cursebreakers can be applied to books and armor with a curse of that type at anvils for 30 levels and no increased item xp cost.
 
 - curse of vanishing; closed eyeblossom to break
 - curse of binding; allium to break
 
+other good ideas
 - curse of fragility -> cant go above 50% durability; blue orchid / amethyst glass to break
 - curse of disorder -> your items randomly swap places sometimes; wildflowers to break
 - curse of draining -> items auto-drain durability to a certain point slowly; lily of the valley / bottle o encahnting to break
 - curse of conductivity -> increased chance for the wearer to get struck by lightning in rain or very high chance during thunderstorm when held or worn; lightning rod to break
+
+other mid ideas
 - curse of sluggishness -> axe + sword + mace + trident + spear attack cooldown increase significantly
 - curse of the breeze -> reduces bow + crossbow accuracy (+ trident)
 - curse of misfortune -> anti-fortune

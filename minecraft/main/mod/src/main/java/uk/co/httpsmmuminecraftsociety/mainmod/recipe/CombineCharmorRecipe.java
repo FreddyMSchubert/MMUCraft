@@ -57,7 +57,7 @@ public class CombineCharmorRecipe implements CraftingRecipe
             }
 
             CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-charm-") && stack.getItem().equals(Items.COMMAND_BLOCK)) {
+            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("charm-") && stack.getItem().equals(Items.COMMAND_BLOCK)) {
                 if (charm != null) continue;
                 charm = stack;
                 continue;

@@ -1,35 +1,19 @@
 {
-    "title": null,
-    "rarity": null,
-    "maxStackSize": null,
-    "tooltips": null,
-    "looks": {
-        "modelType": "equippableCharm",
-        "custom_model_data": "cosmetic-charm-bunny-pajamas",
-        "isTinted": null,
-        "tintColor": null,
-        "equippable_asset_id": "bunny_pajamas__charm",
-        "isLeggings": true
-    },
-    "behaviour": {
-        "effectId": null,
-        "equipmentSlot": null,
-        "equippable": {
-            "equipmentSlot": null,
-            "swappable": null,
-            "dispensable": null,
-            "damageOnHurt": null
-        },
-        "consumable": {
-            "consumableId": null,
-            "isDrink": null,
-            "consumeSeconds": null,
-            "canAlwaysEat": null,
-            "hungerBars": null,
-            "saturationBars": null,
-            "directHearts": null,
-            "useRemainderItem": null,
-            "effects": null
-        }
-    }
+	"title": "Bunny Pajamas Charm",
+	"id": "charm-bunny-pajamas",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Perfect for some Eggsercise and Hareobics.",
+		"The bunnies might also get a bit snacky. But don't worry, they'll share.",
+		"(Jump Boost, auto-eats carrots & golden carrots from your inventory)"
+	],
+	"charm": {
+		"charmId": 17
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "bunny_pajamas__charm"
+	}
 }

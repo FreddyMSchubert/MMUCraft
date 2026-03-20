@@ -1,35 +1,18 @@
 {
-    "title": null,
-    "rarity": null,
-    "maxStackSize": null,
-    "tooltips": null,
-    "looks": {
-        "modelType": "equippableCharm",
-        "custom_model_data": "cosmetic-charm-hiking-boots-2",
-        "isTinted": null,
-        "tintColor": null,
-        "equippable_asset_id": "diamond_hiking_boots__charm",
-        "isLeggings": false
-    },
-    "behaviour": {
-        "effectId": null,
-        "equipmentSlot": null,
-        "equippable": {
-            "equipmentSlot": null,
-            "swappable": null,
-            "dispensable": null,
-            "damageOnHurt": null
-        },
-        "consumable": {
-            "consumableId": null,
-            "isDrink": null,
-            "consumeSeconds": null,
-            "canAlwaysEat": null,
-            "hungerBars": null,
-            "saturationBars": null,
-            "directHearts": null,
-            "useRemainderItem": null,
-            "effects": null
-        }
-    }
+	"title": "Diamond Hiking Boots Charm",
+	"id": "charm-hiking-boots-diamond",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"You don't ever-rest do you...",
+		"(Increases step height by 1.5, allowing you to walk up two block high walls without jumping.)"
+	],
+	"charm": {
+		"charmId": 11
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "hiking_boots_diamond__charm"
+	}
 }

@@ -4,11 +4,11 @@
 	"type": "object",
 	"additionalProperties": false,
 	"properties": {
-		"effectId": {
+		"charmId": {
 			"type": "integer"
 		}
 	},
 	"required": [
-		"effectId"
+		"charmId"
 	]
 }

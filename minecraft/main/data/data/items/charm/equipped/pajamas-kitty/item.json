@@ -1,35 +1,18 @@
 {
-    "title": null,
-    "rarity": null,
-    "maxStackSize": null,
-    "tooltips": null,
-    "looks": {
-        "modelType": "equippableCharm",
-        "custom_model_data": "cosmetic-charm-kitty-pajamas",
-        "isTinted": null,
-        "tintColor": null,
-        "equippable_asset_id": "kitty_pajamas__charm",
-        "isLeggings": true
-    },
-    "behaviour": {
-        "effectId": null,
-        "equipmentSlot": null,
-        "equippable": {
-            "equipmentSlot": null,
-            "swappable": null,
-            "dispensable": null,
-            "damageOnHurt": null
-        },
-        "consumable": {
-            "consumableId": null,
-            "isDrink": null,
-            "consumeSeconds": null,
-            "canAlwaysEat": null,
-            "hungerBars": null,
-            "saturationBars": null,
-            "directHearts": null,
-            "useRemainderItem": null,
-            "effects": null
-        }
-    }
+	"title": "Kitty Pajamas Charm",
+	"id": "charm-kitty-pajamas",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"They look nice and purrple.",
+		"(No fall damage, scare away creepers)"
+	],
+	"charm": {
+		"charmId": 18
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "kitty_pajamas__charm"
+	}
 }

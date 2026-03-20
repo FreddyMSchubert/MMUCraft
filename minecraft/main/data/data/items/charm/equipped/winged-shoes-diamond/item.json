@@ -1,7 +1,7 @@
 {
 	"title": "Diamond Winged Shoes Charm",
 	"id": "charm-winged-shoes-diamond",
-	"modelType": "basic",
+	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [

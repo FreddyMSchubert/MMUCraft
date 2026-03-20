@@ -16,7 +16,7 @@ public record CharmItemFeature (
 {
     public static ItemFeature of(JsonObject json)
     {
-        int charmId = json.get("charm").getAsJsonObject().get("charmId").getAsInt();
+        int charmId = json.get("charmId").getAsInt();
         return new CharmItemFeature(CharmsManager.charmFromId(charmId), charmId);
     }
 

@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.world.item.ItemStack;
 
@@ -12,21 +13,34 @@ public sealed interface ItemFeature
 {
     void apply(ItemStack stack);
 
-    List<Function<JsonObject, ? extends ItemFeature>> PARSERS = List.of(
-            CharmItemFeature::of,
-            ConsumableItemFeature::of,
-            DyeableItemFeature::of,
-            EquippableCharmItemFeature::of,
-            EquippableCosmeticItemFeature::of
+    record ComponentParser(
+            String key,
+            Function<JsonObject, ? extends ItemFeature> parser
+    ) {}
+
+    List<ComponentParser> COMPONENT_PARSERS = List.of(
+            new ComponentParser("charm", CharmItemFeature::of),
+            new ComponentParser("consumable", ConsumableItemFeature::of),
+            new ComponentParser("dyeable", DyeableItemFeature::of),
+            new ComponentParser("equippableCharm", EquippableCharmItemFeature::of),
+            new ComponentParser("equippableCosmetic", EquippableCosmeticItemFeature::of)
     );
+
     static List<ItemFeature> of(JsonObject json) {
         List<ItemFeature> list = new ArrayList<>();
-        for (Function<JsonObject, ? extends ItemFeature> parser : PARSERS) {
-            ItemFeature feature = parser.apply(json);
+
+        for (ComponentParser componentParser : COMPONENT_PARSERS) {
+            JsonElement component = json.get(componentParser.key());
+            if (component == null || !component.isJsonObject()) {
+                continue;
+            }
+
+            ItemFeature feature = componentParser.parser().apply(component.getAsJsonObject());
             if (feature != null) {
                 list.add(feature);
             }
         }
+
         return List.copyOf(list);
-    };
+    }
 }

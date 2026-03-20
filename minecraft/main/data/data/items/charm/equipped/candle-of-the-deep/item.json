@@ -1,7 +1,7 @@
 {
 	"title": "Candle of the Deep Charm",
 	"id": "charm-candle-of-the-deep",
-	"modelType": "basic",
+	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
@@ -11,7 +11,7 @@
 		"(Night vision)"
 	],
 	"charm": {
-		"charmId": 26
+		"charmId": 8
 	},
 	"equippableCharm": {
 		"equipmentSlot": "legs",

@@ -1,7 +1,7 @@
 {
 	"title": "Skull Hat",
 	"id": "cosmetic-skull",
-	"modelType": "basic",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],

@@ -1,7 +1,7 @@
 {
 	"title": "Bunny Pajamas Charm",
 	"id": "charm-bunny-pajamas",
-	"modelType": "basic",
+	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [

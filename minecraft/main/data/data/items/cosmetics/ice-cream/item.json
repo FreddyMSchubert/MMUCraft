@@ -1,7 +1,7 @@
 {
 	"title": "Ice Cream Hat",
 	"id": "cosmetic-ice-cream",
-	"modelType": "basic",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],

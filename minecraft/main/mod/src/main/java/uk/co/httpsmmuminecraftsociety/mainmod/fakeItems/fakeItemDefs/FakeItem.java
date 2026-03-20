@@ -73,6 +73,9 @@ public record FakeItem(
         stack.set(DataComponents.RARITY, rarity);
         stack.set(DataComponents.MAX_STACK_SIZE, maxStackSize);
 
+        for (ItemFeature feature : features)
+            feature.apply(stack);
+
         return stack;
     }
 

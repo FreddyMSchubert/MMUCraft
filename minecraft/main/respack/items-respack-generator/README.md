@@ -1,13 +1,36 @@
 # MMU Resource Pack Generator
 
-Item schemas
+Generates the resource-pack side of the composable fake-item system.
+
+Each item lives in its own leaf directory and must contain an `item.json` that follows the
+new schema shape:
+
+```json
+{
+  "title": "Example item",
+  "id": "example-item",
+  "modelType": "basic",
+  "rarity": "common",
+  "maxStackSize": 64,
+  "tooltips": []
+}
+```
+
+The generator uses the item `id` as the selector value written into the generated
+`command_block` / `carved_pumpkin` item definitions.
+
+## Supported item layouts
 
 ### 1. Basic 2D item
 
 ```json
 {
-  "type": "basic",
-  "custom_model_data": "soul"
+  "title": "Soul",
+  "id": "soul",
+  "modelType": "basic",
+  "rarity": "rare",
+  "maxStackSize": 64,
+  "tooltips": []
 }
 ```
 
@@ -21,8 +44,12 @@ Required files:
 
 ```json
 {
-  "type": "basic-3d",
-  "custom_model_data": "astral-orb"
+  "title": "Astral Orb",
+  "id": "astral-orb",
+  "modelType": "basic-3d",
+  "rarity": "epic",
+  "maxStackSize": 1,
+  "tooltips": []
 }
 ```
 
@@ -33,13 +60,20 @@ Required files:
 - `model.png`
 - optional `model.png.mcmeta`
 
-### 3. Hat
+### 3. Cosmetic
 
 ```json
 {
-  "type": "hat",
-  "custom_model_data": "cosmetic-hat-beret",
-  "isTinted": false
+  "title": "Beret",
+  "id": "cosmetic-beret",
+  "modelType": "cosmetic",
+  "rarity": "common",
+  "maxStackSize": 1,
+  "tooltips": [],
+  "equippableCosmetic": {},
+  "dyeable": {
+    "tintColor": "#8A2BE2"
+  }
 }
 ```
 
@@ -49,15 +83,27 @@ Required files:
 - `model.json`
 - `model.png`
 - optional `model.png.mcmeta`
+
+Notes:
+
+- `equippableCosmetic` must be present for `modelType: "cosmetic"`.
+- If `dyeable.tintColor` is present, the generated `carved_pumpkin` selector entry is emitted
+  with a `minecraft:dye` tint and that hex colour becomes the default tint.
 
 ### 4. Charm
 
 ```json
 {
-  "type": "charm",
-  "custom_model_data": "cosmetic-charm-candle-of-the-deep",
-  "isLeggings": false,
-  "equippable_asset_id": "candle_of_the_deep__charm"
+  "title": "Candle of the Deep",
+  "id": "charm-candle-of-the-deep",
+  "modelType": "charm",
+  "rarity": "rare",
+  "maxStackSize": 1,
+  "tooltips": [],
+  "equippableCharm": {
+    "equipmentSlot": "chest",
+    "equippableAssetId": "candle_of_the_deep__charm"
+  }
 }
 ```
 
@@ -67,3 +113,9 @@ Required files:
 - `texture.png`
 - optional `texture.png.mcmeta`
 - `equippable.png`
+
+Notes:
+
+- `equippableCharm.equipmentSlot` decides whether generated equipment goes under
+  `humanoid` or `humanoid_leggings`.
+- `equippableCharm.equippableAssetId` must end with `__charm`.

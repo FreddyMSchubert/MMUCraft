@@ -1,7 +1,7 @@
 {
 	"title": "Spider Pajamas Charm",
 	"id": "charm-spider-pajamas",
-	"modelType": "basic",
+	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [

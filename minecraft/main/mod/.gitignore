@@ -1,5 +1,6 @@
 # ignore generated
-src/main/generated
+src/main/resources/data/mainmod/items/
+src/main/generated/
 
 # gradle
 

@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MOD_DIR="${SCRIPT_DIR}/mod"
 
 echo '==> Validating and staging item data'
-python "${SCRIPT_DIR}/build/stage_item_data.py" --root "${SCRIPT_DIR}"
+python "${SCRIPT_DIR}/stage_item_data.py" --root "${SCRIPT_DIR}"
 
 echo '==> Building Fabric mod'
 pushd "${MOD_DIR}" >/dev/null

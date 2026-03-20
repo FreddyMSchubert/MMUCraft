@@ -24,6 +24,6 @@
 		"effects": [],
 		"hungerBars": 0,
 		"saturationBars": 0,
-		"useRemainderItem": "minecraft:bottle"
+		"useRemainderItem": "minecraft:glass_bottle"
 	}
 }

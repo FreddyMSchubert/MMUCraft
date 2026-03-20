@@ -1,7 +1,7 @@
 {
 	"title": "Mohawk",
 	"id": "cosmetic-mohawk",
-	"modelType": "basic",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],

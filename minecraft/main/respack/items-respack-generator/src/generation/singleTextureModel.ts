@@ -1,4 +1,4 @@
-import type { Basic3dItemDefinition, HatItemDefinition } from '../types';
+import type { Basic3dItemDefinition, CosmeticItemDefinition } from '../types';
 import { readJsonFile } from '../utils/fs';
 
 function assertObjectRecord(value: unknown, label: string): asserts value is Record<string, unknown> {
@@ -8,7 +8,7 @@ function assertObjectRecord(value: unknown, label: string): asserts value is Rec
 }
 
 export async function buildGeneratedSingleTextureModel(
-  item: Pick<Basic3dItemDefinition | HatItemDefinition, 'modelJsonPath' | 'resourcePath'>,
+  item: Pick<Basic3dItemDefinition | CosmeticItemDefinition, 'modelJsonPath' | 'resourcePath'>,
   namespace: string,
 ): Promise<Record<string, unknown>> {
   const rawModel = await readJsonFile<unknown>(item.modelJsonPath);

@@ -41,7 +41,7 @@ public record ConsumableItemFeature(
         for (JsonElement element : json.get("effects").getAsJsonArray())
             effects.add(JsonUtils.parseMobEffect(element.getAsJsonObject()));
 
-        ItemStack useRemainder = JsonUtils.resolveItemStack(json.get("useRemainder").getAsString());
+        ItemStack useRemainder = JsonUtils.resolveItemStack(json.get("useRemainderItem").getAsString());
 
         return new ConsumableItemFeature(isDrink, consumeSeconds, canAlwaysEat, hungerBars, saturationBars, directHearts, effects, useRemainder);
     }

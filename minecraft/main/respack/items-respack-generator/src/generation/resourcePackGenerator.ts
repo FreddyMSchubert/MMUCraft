@@ -4,11 +4,11 @@ import type {
   Basic3dItemDefinition,
   BasicItemDefinition,
   CharmItemDefinition,
+  CosmeticItemDefinition,
   DiscoveredItem,
   EquipmentLayerType,
   GenerationSummary,
   GeneratorOptions,
-  HatItemDefinition,
   SelectorCase,
 } from '../types';
 import {
@@ -24,7 +24,7 @@ import {
   createCarvedPumpkinItemDefinition,
   createCommandBlockItemDefinition,
 } from './selectorDefinitions';
-import { buildGeneratedSingleTextureModel } from './hatModel';
+import { buildGeneratedSingleTextureModel } from './singleTextureModel';
 
 interface GenerationContext {
   readonly options: GeneratorOptions;
@@ -114,7 +114,7 @@ function createGeneratedItemModel(textureModelId: string): Record<string, unknow
 }
 
 function getCharmLayerType(item: CharmItemDefinition): EquipmentLayerType {
-  return item.isLeggings ? 'humanoid_leggings' : 'humanoid';
+  return item.equipmentSlot === 'legs' ? 'humanoid_leggings' : 'humanoid';
 }
 
 function createCharmEquipmentDefinition(
@@ -198,7 +198,7 @@ async function generateBasicItem(
   );
 
   return {
-    when: item.customModelData,
+    when: item.id,
     modelId,
   };
 }
@@ -227,13 +227,13 @@ async function generateBasic3dItem(
   );
 
   return {
-    when: item.customModelData,
+    when: item.id,
     modelId,
   };
 }
 
-async function generateHat(
-  item: HatItemDefinition,
+async function generateCosmetic(
+  item: CosmeticItemDefinition,
   context: GenerationContext,
 ): Promise<SelectorCase> {
   const { outputDir, namespace } = context.options;
@@ -256,9 +256,9 @@ async function generateHat(
   );
 
   return {
-    when: item.customModelData,
+    when: item.id,
     modelId,
-    isTinted: item.isTinted,
+    tintColor: item.tintColor,
   };
 }
 
@@ -379,7 +379,7 @@ async function generateCharm(
   await generateCharmEquipmentVariants(item, context);
 
   return {
-    when: item.customModelData,
+    when: item.id,
     modelId,
   };
 }
@@ -418,8 +418,8 @@ export async function generateResourcePack(
       case 'basic-3d':
         commandBlockCases.push(await generateBasic3dItem(item, context));
         break;
-      case 'hat':
-        carvedPumpkinCases.push(await generateHat(item, context));
+      case 'cosmetic':
+        carvedPumpkinCases.push(await generateCosmetic(item, context));
         break;
       case 'charm':
         commandBlockCases.push(await generateCharm(item, context));
@@ -445,7 +445,7 @@ export async function generateResourcePack(
     discoveredItems: items.length,
     basicItems: items.filter((item) => item.type === 'basic').length,
     basic3dItems: items.filter((item) => item.type === 'basic-3d').length,
-    hats: items.filter((item) => item.type === 'hat').length,
+    cosmetics: items.filter((item) => item.type === 'cosmetic').length,
     charms: items.filter((item) => item.type === 'charm').length,
     commandBlockCases: commandBlockCases.length,
     carvedPumpkinCases: carvedPumpkinCases.length,

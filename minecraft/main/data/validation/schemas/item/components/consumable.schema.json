@@ -4,9 +4,6 @@
 	"type": "object",
 	"additionalProperties": false,
 	"properties": {
-		"consumableId": {
-			"type": "integer"
-		},
 		"isDrink": {
 			"type": "boolean"
 		},
@@ -67,7 +64,6 @@
 		}
 	},
 	"required": [
-		"consumableId",
 		"isDrink",
 		"consumeSeconds",
 		"canAlwaysEat",

@@ -1,0 +1,9 @@
+{
+	"title": "Armorer Goggles",
+	"id": "cosmetic-villager-armorer",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

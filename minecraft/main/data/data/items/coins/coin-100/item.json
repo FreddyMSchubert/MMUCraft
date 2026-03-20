@@ -1,0 +1,11 @@
+{
+	"title": "100 Dabloons",
+	"id": "coin-100",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"Mo money, mo problems.\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

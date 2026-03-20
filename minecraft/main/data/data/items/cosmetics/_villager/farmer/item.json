@@ -1,0 +1,9 @@
+{
+	"title": "Farmer Straw hat",
+	"id": "cosmetic-villager-farmer",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

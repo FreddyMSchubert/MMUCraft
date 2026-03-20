@@ -1,35 +1,8 @@
 {
-    "title": null,
-    "rarity": null,
-    "maxStackSize": null,
-    "tooltips": null,
-    "looks": {
-        "modelType": "basic",
-        "custom_model_data": "soul",
-        "isTinted": null,
-        "tintColor": null,
-        "equippable_asset_id": null,
-        "isLeggings": null
-    },
-    "behaviour": {
-        "effectId": null,
-        "equipmentSlot": null,
-        "equippable": {
-            "equipmentSlot": null,
-            "swappable": null,
-            "dispensable": null,
-            "damageOnHurt": null
-        },
-        "consumable": {
-            "consumableId": null,
-            "isDrink": null,
-            "consumeSeconds": null,
-            "canAlwaysEat": null,
-            "hungerBars": null,
-            "saturationBars": null,
-            "directHearts": null,
-            "useRemainderItem": null,
-            "effects": null
-        }
-    }
+	"title": "Soul",
+	"id": "soul",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": []
 }

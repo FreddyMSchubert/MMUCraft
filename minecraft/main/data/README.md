@@ -13,7 +13,7 @@ new shape:
 	"id": "coin-1",
 	"modelType": "basic",
 	"rarity": "common",
-	"maxStackSize": "64",
+	"maxStackSize": 64,
 	"tooltips": [
 		"Might turn into a million and we all rich"
 	],
@@ -21,7 +21,6 @@ new shape:
 		"charmId": null
 	},
 	"consumable": {
-		"consumableId": null,
 		"isDrink": null,
 		"consumeSeconds": null,
 		"canAlwaysEat": null,
@@ -34,10 +33,10 @@ new shape:
 	"dyeable": {
 		"tintColor": null
 	},
-	"equippableTorsoExtremities": {
+	"equippableCharm": {
 		"equippableAssetId": null,
 		"equipmentSlot": null
 	},
-	"equippableHead": {}
+	"equippableCosmetic": {}
 }
 ```

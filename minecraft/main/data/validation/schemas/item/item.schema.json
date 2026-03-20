@@ -64,5 +64,18 @@
 		"rarity",
 		"maxStackSize",
 		"tooltips"
-	]
+	],
+	"if": {
+		"required": [
+			"equippableCosmetic"
+		]
+	},
+	"then": {
+		"properties": {
+			"id": {
+				"type": "string",
+				"pattern": "^cosmetic-"
+			}
+		}
+	}
 }

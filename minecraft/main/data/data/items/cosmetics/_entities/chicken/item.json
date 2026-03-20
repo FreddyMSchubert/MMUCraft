@@ -1,0 +1,9 @@
+{
+	"title": "Chicken Hat",
+	"id": "cosmetic-chicken",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

@@ -1,0 +1,11 @@
+{
+	"title": "100000 Dabloons",
+	"id": "coin-100000",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"I want it, I got it, I want it, I got it (baby)\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

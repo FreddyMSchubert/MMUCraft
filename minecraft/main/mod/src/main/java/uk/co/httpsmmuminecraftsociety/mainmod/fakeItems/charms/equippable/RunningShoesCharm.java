@@ -13,7 +13,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.TickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
-import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
 public final class RunningShoesCharm implements Charm, TickCallbackCharm, EquippedTickCallbackCharm
 {

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
-import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
 public class HikingBootsCharm implements Charm, BaseItemChangeCallbackCharm
 {

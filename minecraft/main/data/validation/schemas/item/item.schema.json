@@ -50,11 +50,11 @@
 		"dyeable": {
 			"$ref": "./components/dyeable.schema.json"
 		},
-		"equippableTorsoExtremities": {
-			"$ref": "./components/equippable-torso-extremities.schema.json"
+		"equippableCharm": {
+			"$ref": "./components/equippable-charm.schema.json"
 		},
-		"equippableHead": {
-			"$ref": "./components/equippable-head.schema.json"
+		"equippableCosmetic": {
+			"$ref": "./components/equippable-cosmetic.schema.json"
 		}
 	},
 	"required": [
@@ -64,15 +64,5 @@
 		"rarity",
 		"maxStackSize",
 		"tooltips"
-	],
-	"allOf": [
-		{
-			"not": {
-				"required": [
-					"dyeable",
-					"equippableTorsoExtremities"
-				]
-			}
-		}
 	]
 }

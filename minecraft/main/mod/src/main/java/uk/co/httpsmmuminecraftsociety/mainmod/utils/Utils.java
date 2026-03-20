@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod;
+package uk.co.httpsmmuminecraftsociety.mainmod.utils;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 public class Utils
 {
@@ -64,32 +65,5 @@ public class Utils
 
     public static int rgbToMinecraftColor(int r, int g, int b) {
         return ARGB.color(0, r, g, b);
-    }
-
-    public static float[] rgbToHsv01(int rgb) {
-        float r = ((rgb >> 16) & 0xFF) / 255.0f;
-        float g = ((rgb >>  8) & 0xFF) / 255.0f;
-        float b = ((rgb      ) & 0xFF) / 255.0f;
-
-        float max = Math.max(r, Math.max(g, b));
-        float min = Math.min(r, Math.min(g, b));
-        float delta = max - min;
-
-        float hue = 0.0f;
-        if (delta > 0.0f) {
-            if (max == r) {
-                hue = ((g - b) / delta) % 6.0f;
-            } else if (max == g) {
-                hue = ((b - r) / delta) + 2.0f;
-            } else {
-                hue = ((r - g) / delta) + 4.0f;
-            }
-            hue /= 6.0f;
-            if (hue < 0.0f) hue += 1.0f;
-        }
-
-        float saturation = max == 0.0f ? 0.0f : (delta / max);
-        float value = max;
-        return new float[] { hue, saturation, value };
     }
 }

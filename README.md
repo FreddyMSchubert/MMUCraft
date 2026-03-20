@@ -387,7 +387,7 @@ There are tomes (inspired by quarks mod), which can increase some enchantments e
 A sniffer drops a new item, a bulb of ancient magic. Craft it together with an enchanted book of the right type and the right mob drop to make the tome and 6 diamonds.
 tomes can be applied at anvils for 30 levels and no increased item xp cost.
 
-- cursebreaker -> purification rune from archeology or fishing or chests or sometimes traded from max level librarians. specific to curse to be broken.
+- cursebreaker -> purification rune from archeology or fishing or chests. specific to curse to be broken. 
 - feather falling -> parrot feather
 - thorns -> guardian gear dropped from normal guardians
 - sharpness -> ancient sword from fishing
@@ -407,13 +407,17 @@ tomes can be applied at anvils for 30 levels and no increased item xp cost.
 
 ### more curses
 
-- curse of fragility -> cant go above 50% durability
+- curse of vanishing; closed eyeblossom to break
+- curse of binding; allium to break
+
+- curse of fragility -> cant go above 50% durability; blue orchid / amethyst glass to break
+- curse of disorder -> your items randomly swap places sometimes; wildflowers to break
+- curse of draining -> items auto-drain durability to a certain point slowly; lily of the valley / bottle o encahnting to break
+- curse of conductivity -> increased chance for the wearer to get struck by lightning in rain or very high chance during thunderstorm when held or worn; lightning rod to break
 - curse of sluggishness -> axe + sword + mace + trident + spear attack cooldown increase significantly
 - curse of the breeze -> reduces bow + crossbow accuracy (+ trident)
 - curse of misfortune -> anti-fortune
 - curse of floating -> you get pushed up out of water
-- curse of disorder -> your items randomly swap places sometimes
-- curse of draining -> items auto-drain durability to a certain point slowly
 
 ### Information
 

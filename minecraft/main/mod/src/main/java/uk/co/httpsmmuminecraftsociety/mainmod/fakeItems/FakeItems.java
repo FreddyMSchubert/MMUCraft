@@ -1,7 +1,9 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems;
 
+import uk.co.httpsmmuminecraftsociety.mainmod.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
-import uk.co.httpsmmuminecraftsociety.mainmod.itemdata.ItemDataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
 import java.util.Map;
@@ -13,24 +15,21 @@ public final class FakeItems {
 
     public static List<FakeItem> ALL = List.of();
     public static Map<String, FakeItem> MODEL_ID_MAP = Map.of();
-    public static Map<Integer, CharmFakeItem> CHARM_EFFECT_ID_MAP = Map.of();
-    public static Map<Integer, ConsumableFakeItem> CONSUMABLE_MODEL_ID_MAP = Map.of();
+    public static Map<Integer, FakeItem> CHARM_EFFECT_ID_MAP = Map.of();
 
     static {
         reloadFromJson();
     }
 
     public static synchronized void reloadFromJson() {
-        ALL = List.copyOf(ItemDataLoader.loadAll());
-        MODEL_ID_MAP = ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItem::getModelId, Function.identity()));
+        ALL = List.copyOf(DataLoader.loadFakeItems());
+        MODEL_ID_MAP = ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItem::id, Function.identity()));
         CHARM_EFFECT_ID_MAP = ALL.stream()
-                .filter(CharmFakeItem.class::isInstance)
-                .map(CharmFakeItem.class::cast)
-                .collect(Collectors.toUnmodifiableMap(CharmFakeItem::getEffectId, Function.identity()));
-        CONSUMABLE_MODEL_ID_MAP = ALL.stream()
-                .filter(ConsumableFakeItem.class::isInstance)
-                .map(ConsumableFakeItem.class::cast)
-                .collect(Collectors.toUnmodifiableMap(ConsumableFakeItem::getConsumableId, Function.identity()));
+                .flatMap(item -> item.features().stream()
+                        .filter(CharmItemFeature.class::isInstance)
+                        .map(CharmItemFeature.class::cast)
+                        .map(feature -> Map.entry(feature.charmId(), item)))
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
         MainMod.LOGGER.info("Loaded {} fake items from JSON.", ALL.size());
     }

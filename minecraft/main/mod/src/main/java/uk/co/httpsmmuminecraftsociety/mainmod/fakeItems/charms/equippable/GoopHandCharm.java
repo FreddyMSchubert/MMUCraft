@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
 public class GoopHandCharm implements Charm, BaseItemChangeCallbackCharm
 {

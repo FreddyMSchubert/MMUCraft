@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 import java.util.List;

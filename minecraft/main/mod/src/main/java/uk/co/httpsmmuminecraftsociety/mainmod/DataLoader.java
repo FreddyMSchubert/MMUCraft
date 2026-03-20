@@ -1,8 +1,9 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.itemdata;
+package uk.co.httpsmmuminecraftsociety.mainmod;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,12 +22,13 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public final class ItemDataLoader {
+public final class DataLoader
+{
     private static final String RESOURCE_ROOT = "data/mainmod/items";
 
-    private ItemDataLoader() {}
+    private DataLoader() {}
 
-    public static List<FakeItem> loadAll() {
+    public static List<FakeItem> loadFakeItems() {
         try {
             List<ResourceEntry> resources = discoverJsonResources();
             List<FakeItem> result = new ArrayList<>();
@@ -43,7 +45,7 @@ public final class ItemDataLoader {
                 );
             }
 
-            result.sort(Comparator.comparing(FakeItem::getModelId));
+            result.sort(Comparator.comparing(FakeItem::id));
             return List.copyOf(result);
         } catch (Exception exc) {
             throw new IllegalStateException("Failed to load fake item JSON data.", exc);

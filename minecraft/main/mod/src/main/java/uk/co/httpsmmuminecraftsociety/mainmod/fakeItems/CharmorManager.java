@@ -10,6 +10,7 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,33 +50,32 @@ public class CharmorManager
         return calcUsedCharmSlotCount(stack) < calcCharmSlotCount(stack);
     }
 
-    public static ItemStack initArmorTooltipIfUninitialized(ItemStack stack) {
-        if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return stack;
+    public static void initArmorTooltipIfUninitialized(ItemStack stack) {
+        if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return;
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (tag.contains(TOOLTIP_INITIALLY_POPULATED_BOOL)) return stack;
+        if (tag.contains(TOOLTIP_INITIALLY_POPULATED_BOOL)) return;
 
         tag.putIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID, new int[0]);
         tag.putBoolean(TOOLTIP_INITIALLY_POPULATED_BOOL, true);
 
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
-        return stack;
     }
 
     public static ItemStack updateArmorTooltip(ItemStack stack) {
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return stack;
-        stack = initArmorTooltipIfUninitialized(stack);
+        initArmorTooltipIfUninitialized(stack);
 
         List<Component> tooltip = new ArrayList<>();
         tooltip.add(Component.literal("Charm Slots:"));
 
-        List<CharmFakeItem> charmFakeItems = CharmsManager.getAbilitiesFromItemStack(stack);
+        List<FakeItem> charmFakeItems = CharmsManager.getAbilitiesFromItemStack(stack);
         for (int i = 0; i < calcCharmSlotCount(stack); i++) {
             String literal = "[Slot " + (i+1) + "]: ";
             if (i >= charmFakeItems.size()) {
                 literal += "-";
             } else {
-                literal += charmFakeItems.get(i).getTitle().getString();
+                literal += charmFakeItems.get(i).title();
             }
             tooltip.add(Component.literal(literal));
         }

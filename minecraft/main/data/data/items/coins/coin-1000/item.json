@@ -1,0 +1,11 @@
+{
+	"title": "1000 Dabloons",
+	"id": "coin-1000",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"If I was a rich girl\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"title": "Devil Horns",
+	"id": "cosmetic-devil-horns",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#ff0000"
+	}
+}

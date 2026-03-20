@@ -17,12 +17,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.equippable.KittyPajamasCharm;
-
-import java.util.List;
-import java.util.Objects;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.KittyPajamasCharm;
 
 @Mixin(Creeper.class)
 public abstract class KittyPajamaScareCreeper extends Monster
@@ -42,10 +38,6 @@ public abstract class KittyPajamaScareCreeper extends Monster
     {
         if (!(livingEntity instanceof Player player)) return true;
         ItemStack stack = player.getItemBySlot(EquipmentSlot.LEGS);
-        List<CharmFakeItem> items = CharmsManager.getAbilitiesFromItemStack(stack);
-        for (CharmFakeItem item : items) {
-            if (Objects.equals(item.getCharm().id(), new KittyPajamasCharm().id())) return true;
-        }
-        return false;
+        return (CharmsManager.hasAbility(stack, KittyPajamasCharm.class));
     }
 }

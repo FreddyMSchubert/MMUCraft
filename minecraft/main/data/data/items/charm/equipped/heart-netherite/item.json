@@ -1,0 +1,18 @@
+{
+	"title": "Heart of Netherite Charm",
+	"id": "charm-heart-nethertie",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Pretty serious heartware.",
+		"(20 extra hearts)"
+	],
+	"charm": {
+		"charmId": 6
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "heart_netherite__charm"
+	}
+}

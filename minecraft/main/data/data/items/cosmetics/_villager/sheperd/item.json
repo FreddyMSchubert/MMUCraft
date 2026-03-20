@@ -1,0 +1,9 @@
+{
+	"title": "Sheperd Hat",
+	"id": "cosmetic-villager-sheperd",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

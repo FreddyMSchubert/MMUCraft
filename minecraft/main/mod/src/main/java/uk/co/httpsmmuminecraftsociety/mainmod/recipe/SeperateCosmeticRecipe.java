@@ -16,8 +16,8 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CosmeticsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 public class SeperateCosmeticRecipe implements CraftingRecipe
 {

@@ -13,7 +13,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 public final class CoinConvertRecipe implements CraftingRecipe
 {

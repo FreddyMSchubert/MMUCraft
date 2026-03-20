@@ -1,0 +1,11 @@
+{
+	"title": "10 Dabloons",
+	"id": "coin-10",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"I want to buy you somethin' - But I don't have any money\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

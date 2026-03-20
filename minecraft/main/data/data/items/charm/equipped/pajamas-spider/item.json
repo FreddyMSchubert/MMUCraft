@@ -1,0 +1,18 @@
+{
+	"title": "Spider Pajamas Charm",
+	"id": "charm-spider-pajamas",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Oohhhh how emo... /s",
+		"(Let's you climb any surface by walking into it)"
+	],
+	"charm": {
+		"charmId": 19
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "spider_pajamas__charm"
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"title": "Leprechaun boots Charm",
+	"id": "charm-leprechaun-boots",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"I'm feeling lucky.",
+		"Irish people are weird dude.",
+		"(You'll figure it out.)"
+	],
+	"charm": {
+		"charmId": 13
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "leprechaun_boots__charm"
+	}
+}

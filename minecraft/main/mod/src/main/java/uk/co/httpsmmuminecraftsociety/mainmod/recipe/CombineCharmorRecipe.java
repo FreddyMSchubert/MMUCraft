@@ -16,16 +16,16 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmorManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.EquippableCharmFakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItems;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.BaseItemChangeCallbackCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.charms.def.EquippedTickCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -57,7 +57,7 @@ public class CombineCharmorRecipe implements CraftingRecipe
             }
 
             CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-charm-") && stack.getItem().equals(Items.COMMAND_BLOCK)) {
+            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("charm-") && stack.getItem().equals(Items.COMMAND_BLOCK)) {
                 if (charm != null) continue;
                 charm = stack;
                 continue;
@@ -118,8 +118,9 @@ public class CombineCharmorRecipe implements CraftingRecipe
         resultStack.set(DataComponents.CUSTOM_DATA, CustomData.of(newData));
 
         // call enable effect callback
-        Charm charm = FakeItems.CHARM_EFFECT_ID_MAP.get(charmAbility).getCharm();
-        if (charm instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
+        FakeItem fakeItem = FakeItems.CHARM_EFFECT_ID_MAP.get(charmAbility);
+        CharmItemFeature cif = fakeItem.getFeature(CharmItemFeature.class);
+        if (cif.charm() instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
             baseItemChangeCallbackCharm.enableEffectForItem(resultStack);
         }
 
@@ -127,15 +128,16 @@ public class CombineCharmorRecipe implements CraftingRecipe
         CharmorManager.updateArmorTooltip(resultStack);
 
         // update armor rendering
-        CharmFakeItem renderedCharm = FakeItems.CHARM_EFFECT_ID_MAP.get(armorAbilities.length > 0 ? armorAbilities[0] : charmAbility);
-        if (renderedCharm instanceof EquippableCharmFakeItem equippableCharmFakeItem) {
+        FakeItem renderedCharm = FakeItems.CHARM_EFFECT_ID_MAP.get(armorAbilities.length > 0 ? armorAbilities[0] : charmAbility);
+        EquippableCharmItemFeature eqcif = renderedCharm.getFeature(EquippableCharmItemFeature.class);
+        if (eqcif != null) {
             String materialString = getArmorMaterialType(resultStack);
 
             // remove __charm from end
-            String charmResourcePath = equippableCharmFakeItem.getEquippableSettings().assetId().get().identifier().getPath();
+            String charmResourcePath = eqcif.equippable().assetId().get().identifier().getPath();
             String withoutCharm = charmResourcePath.substring(0, charmResourcePath.indexOf("__charm"));
             String newResourcePath = withoutCharm + "__" + materialString;
-            Equippable newEquippableSettings = EquippableCharmFakeItem.createEquippableSettings(newResourcePath, equippableCharmFakeItem.getEquippableSettings().slot());
+            Equippable newEquippableSettings = EquippableCharmItemFeature.createEquippableSettings(newResourcePath, eqcif.equippable().slot());
 
             resultStack.set(DataComponents.EQUIPPABLE, newEquippableSettings);
         }

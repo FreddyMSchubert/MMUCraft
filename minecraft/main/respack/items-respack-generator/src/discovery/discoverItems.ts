@@ -49,11 +49,11 @@ export async function discoverItems(sourceRoot: string): Promise<DiscoveredItem[
   );
 
   ensureUnique(items, (item) => item.relativeDirectory, 'Leaf item directories');
-  ensureUnique(items, (item) => item.customModelData, 'custom_model_data values');
+  ensureUnique(items, (item) => item.id, 'Item id values');
   ensureUnique(
     items.filter((item): item is Extract<DiscoveredItem, { type: 'charm' }> => item.type === 'charm'),
     (item) => item.equippableAssetId,
-    'Charm equippable_asset_id values',
+    'Charm equippableAssetId values',
   );
 
   return items.sort((left, right) => left.relativeDirectory.localeCompare(right.relativeDirectory));

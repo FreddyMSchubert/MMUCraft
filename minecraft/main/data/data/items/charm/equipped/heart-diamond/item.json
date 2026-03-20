@@ -1,0 +1,18 @@
+{
+	"title": "Heart of Diamond Charm",
+	"id": "charm-heart-diamond",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Slightly wet and pulsing.",
+		"(6 extra hearts)"
+	],
+	"charm": {
+		"charmId": 5
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "heart_diamond__charm"
+	}
+}

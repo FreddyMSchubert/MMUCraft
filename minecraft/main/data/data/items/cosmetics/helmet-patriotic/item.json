@@ -1,0 +1,9 @@
+{
+	"title": "Patriotic Helmet",
+	"id": "cosmetic-helmet-patriotic",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

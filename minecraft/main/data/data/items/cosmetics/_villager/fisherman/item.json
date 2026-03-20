@@ -1,0 +1,9 @@
+{
+	"title": "Fisherman Hat",
+	"id": "cosmetic-villager-fisherman",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

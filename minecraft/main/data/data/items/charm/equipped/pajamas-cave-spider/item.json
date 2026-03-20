@@ -1,0 +1,18 @@
+{
+	"title": "Cave Spider Pajamas Charm",
+	"id": "charm-cave-spider-pajamas",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Poison not included.",
+		"(Let's you hold space to climb accross the ceiling)"
+	],
+	"charm": {
+		"charmId": 20
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "cave_spider_pajamas__charm"
+	}
+}

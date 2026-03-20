@@ -1,0 +1,9 @@
+{
+	"title": "Beret",
+	"id": "cosmetic-beret",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

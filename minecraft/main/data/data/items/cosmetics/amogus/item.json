@@ -1,0 +1,12 @@
+{
+	"title": "Amogus Hat",
+	"id": "cosmetic-amogus",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#FF0000"
+	}
+}

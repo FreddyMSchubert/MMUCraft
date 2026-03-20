@@ -1,0 +1,12 @@
+{
+	"title": "Spartan Helmet",
+	"id": "cosmetic-spartan-helmet",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#0000ff"
+	}
+}

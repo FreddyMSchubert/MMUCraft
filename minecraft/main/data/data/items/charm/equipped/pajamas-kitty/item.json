@@ -1,0 +1,18 @@
+{
+	"title": "Kitty Pajamas Charm",
+	"id": "charm-kitty-pajamas",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"They look nice and purrple.",
+		"(No fall damage, scare away creepers)"
+	],
+	"charm": {
+		"charmId": 18
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "kitty_pajamas__charm"
+	}
+}

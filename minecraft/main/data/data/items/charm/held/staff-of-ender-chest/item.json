@@ -1,0 +1,13 @@
+{
+	"title": "Staff of Soulbound Storage",
+	"id": "charm-ender-chest-staff",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"For all your soulbound item needs!"
+	],
+	"charm": {
+		"charmId": 2
+	}
+}

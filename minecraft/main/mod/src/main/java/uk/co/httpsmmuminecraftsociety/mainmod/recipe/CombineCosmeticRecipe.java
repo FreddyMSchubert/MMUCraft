@@ -16,7 +16,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CosmeticsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public class CombineCosmeticRecipe implements CraftingRecipe
                 continue;
             }
 
-            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-hat-") && stack.getItem().equals(Items.CARVED_PUMPKIN)) {
+            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-") && stack.getItem().equals(Items.CARVED_PUMPKIN)) {
                 if (cosmetic != null) continue;
                 cosmetic = stack;
                 continue;

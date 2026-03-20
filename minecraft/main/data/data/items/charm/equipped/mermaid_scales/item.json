@@ -1,0 +1,18 @@
+{
+	"title": "Mermain Scales Charm",
+	"id": "charm-mermaid-scales",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Be your own little mermaid.",
+		"(Makes you swim faster in water)"
+	],
+	"charm": {
+		"charmId": 14
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "mermaid_scales__charm"
+	}
+}

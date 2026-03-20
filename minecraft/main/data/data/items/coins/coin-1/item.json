@@ -1,0 +1,11 @@
+{
+	"title": "1 Dabloon",
+	"id": "coin-1",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"Might turn to a million and we all rich\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

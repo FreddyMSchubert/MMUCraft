@@ -42,7 +42,7 @@ interface ParsedBaseItem {
 }
 
 interface ParsedDyeableComponent {
-  readonly tintColor: number;
+  readonly isDyeable: true;
 }
 
 interface ParsedEquippableCharmComponent {
@@ -165,7 +165,7 @@ function parseDyeableComponent(
   assertHexColour(value.tintColor, `${relativeDirectory} dyeable.tintColor`);
 
   return {
-    tintColor: Number.parseInt(value.tintColor.slice(1), 16),
+    isDyeable: true,
   };
 }
 
@@ -299,7 +299,7 @@ export async function parseItemDefinition(
         tooltips: baseItem.tooltips,
         resourcePath,
         baseName,
-        tintColor: dyeable?.tintColor,
+        isDyeable: dyeable?.isDyeable === true,
         modelJsonPath,
         modelTexturePngPath,
         modelTextureMcmetaPath: await maybeMcmetaFor(modelTexturePngPath),

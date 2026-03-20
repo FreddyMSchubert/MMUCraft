@@ -30,7 +30,7 @@ export interface Basic3dItemDefinition extends BaseDiscoveredItem {
 
 export interface CosmeticItemDefinition extends BaseDiscoveredItem {
   readonly type: 'cosmetic';
-  readonly tintColor?: number;
+  readonly isDyeable: boolean;
   readonly modelJsonPath: string;
   readonly modelTexturePngPath: string;
   readonly modelTextureMcmetaPath?: string;
@@ -73,7 +73,7 @@ export interface GeneratorOptions {
 export interface SelectorCase {
   readonly when: string;
   readonly modelId: string;
-  readonly tintColor?: number;
+  readonly isTinted?: boolean;
 }
 
 export interface GenerationSummary {

@@ -6,11 +6,11 @@ function createModelReference(selectorCase: SelectorCase): Record<string, unknow
     model: selectorCase.modelId,
   };
 
-  if (selectorCase.tintColor !== undefined) {
+  if (selectorCase.isTinted) {
     model.tints = [
       {
         type: 'minecraft:dye',
-        default: selectorCase.tintColor,
+        default: -1,
       },
     ];
   }

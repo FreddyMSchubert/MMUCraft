@@ -20,7 +20,7 @@ public class CraftingStaffCharm implements Charm, UseCallbackCharm
     @Override
     public ItemStack onUse(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
-        player.openMenu(new SimpleMenuProvider((id, inv, p) -> new CraftingMenu(id, inv), Component.literal("Crafting Staff")));
+        player.openMenu(new SimpleMenuProvider((id, inv, p) -> new CraftingMenu(id, inv), Component.literal(" Crafting ")));
         return stack;
     }
 }

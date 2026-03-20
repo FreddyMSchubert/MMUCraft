@@ -258,7 +258,7 @@ async function generateCosmetic(
   return {
     when: item.id,
     modelId,
-    tintColor: item.tintColor,
+    isTinted: item.isDyeable,
   };
 }
 

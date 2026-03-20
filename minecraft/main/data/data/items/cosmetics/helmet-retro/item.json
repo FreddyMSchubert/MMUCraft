@@ -1,0 +1,9 @@
+{
+	"title": "Retro Helmet",
+	"id": "cosmetic-helmet-retro",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

@@ -1,0 +1,9 @@
+{
+	"title": "Bunny Ears",
+	"id": "cosmetic-bunny-ears",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

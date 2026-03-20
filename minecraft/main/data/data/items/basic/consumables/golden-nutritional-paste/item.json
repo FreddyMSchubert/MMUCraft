@@ -1,0 +1,21 @@
+{
+	"title": "Golden Nutritional Paste",
+	"id": "golden-nutritional-paste",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Yum!",
+		"The best food in the game."
+	],
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 0.1,
+		"canAlwaysEat": true,
+		"hungerBars": 10,
+		"saturationBars": 10,
+		"directHearts": 32,
+		"useRemainderItem": "minecraft:bowl",
+		"effects": []
+	}
+}

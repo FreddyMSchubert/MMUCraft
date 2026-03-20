@@ -1,0 +1,19 @@
+{
+	"title": "Extendo Grip Charm",
+	"id": "charm-extendo-grip",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Saves you a round trip to turkey.",
+		"Stretches your arms in a very humane way.",
+		"(Increased Block Reach)"
+	],
+	"charm": {
+		"charmId": 16
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "extendo_grip__charm"
+	}
+}

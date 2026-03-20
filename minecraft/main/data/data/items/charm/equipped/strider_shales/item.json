@@ -1,0 +1,18 @@
+{
+	"title": "Strider Shales Charm",
+	"id": "charm-strider-shales",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Don't get cold feet.",
+		"(Fire Resistance)"
+	],
+	"charm": {
+		"charmId": 15
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "strider_shales__charm"
+	}
+}

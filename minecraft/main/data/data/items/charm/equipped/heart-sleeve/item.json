@@ -1,0 +1,18 @@
+{
+	"title": "Heart on your Sleeve Charm",
+	"id": "charm-heart-sleeve",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Sgt. Pepper's Lonely Hearts Club Charm",
+		"(2 extra hearts)"
+	],
+	"charm": {
+		"charmId": 3
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "heart_sleeve__charm"
+	}
+}

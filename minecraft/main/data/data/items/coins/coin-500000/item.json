@@ -1,0 +1,11 @@
+{
+	"title": "500000 Dabloons",
+	"id": "coin-500000",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"'Cause we are living in a material world\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

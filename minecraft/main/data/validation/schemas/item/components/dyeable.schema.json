@@ -1,0 +1,19 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "components/dyeable.schema.json",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"tintColor": {
+			"oneOf": [
+				{
+					"type": "string",
+					"pattern": "^#[0-9A-Fa-f]{6}$"
+				}
+			]
+		}
+	},
+	"required": [
+		"tintColor"
+	]
+}

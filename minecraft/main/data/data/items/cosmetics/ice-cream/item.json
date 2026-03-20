@@ -1,0 +1,12 @@
+{
+	"title": "Ice Cream Hat",
+	"id": "cosmetic-ice-cream",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#835432"
+	}
+}

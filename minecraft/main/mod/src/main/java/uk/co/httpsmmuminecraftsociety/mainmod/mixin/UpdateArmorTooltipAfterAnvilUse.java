@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 // anvil changes what tooltip charmor should display, this detects it

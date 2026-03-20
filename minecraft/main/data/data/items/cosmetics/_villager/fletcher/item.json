@@ -1,0 +1,9 @@
+{
+	"title": "Fletcher Hat",
+	"id": "cosmetic-villager-fletcher",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

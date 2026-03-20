@@ -1,0 +1,12 @@
+{
+	"title": "Bushy Moustache",
+	"id": "cosmetic-mousetache-bushy",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#835432"
+	}
+}

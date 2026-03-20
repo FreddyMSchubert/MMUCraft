@@ -1,0 +1,11 @@
+{
+	"title": "50000 Dabloons",
+	"id": "coin-50000",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"If you catch me at the border, I got visas in my name\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

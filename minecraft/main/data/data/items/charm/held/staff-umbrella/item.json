@@ -1,0 +1,15 @@
+{
+	"title": "Staff of Brolly",
+	"id": "charm-umbrella-staff",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Way better than that other game.",
+		"Here you can build, fight, AND craft.",
+		"\"I'm Marry Poppins, ya'll!\""
+	],
+	"charm": {
+		"charmId": 26
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"title": "Beanie",
+	"id": "cosmetic-beanie",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#a600ff"
+	}
+}

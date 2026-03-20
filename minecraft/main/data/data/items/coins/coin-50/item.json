@@ -1,0 +1,11 @@
+{
+	"title": "50 Dabloons",
+	"id": "coin-50",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"We just wanna make the world dance\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

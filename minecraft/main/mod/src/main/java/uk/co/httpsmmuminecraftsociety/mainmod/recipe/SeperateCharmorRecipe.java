@@ -14,10 +14,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmorManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.CharmsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.FakeItems.FakeItemDefs.CharmFakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class SeperateCharmorRecipe implements CraftingRecipe
     public ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider)
     {
         ItemStack inputStack = recipeInput.items().getFirst();
-        List<CharmFakeItem> charms = CharmsManager.getAbilitiesFromItemStack(inputStack);
+        List<FakeItem> charms = CharmsManager.getAbilitiesFromItemStack(inputStack);
         return charms.getLast().createItemStack();
     }
 

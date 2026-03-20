@@ -1,0 +1,18 @@
+{
+	"title": "Hiking Boots Charm",
+	"id": "charm-hiking-boots-normal",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"That's one pretty big step for man.",
+		"(Increases step height by 0.5, allowing you to walk up 1 block without jumping.)"
+	],
+	"charm": {
+		"charmId": 9
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "hiking_boots_normal__charm"
+	}
+}

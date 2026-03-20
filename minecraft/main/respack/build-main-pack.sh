@@ -7,7 +7,7 @@ REPO_ROOT="$(cd -- "$SCRIPT_DIR/../../.." && pwd)"
 GENERATOR_DIR="$SCRIPT_DIR/items-respack-generator"
 MERGER_DIR="$SCRIPT_DIR/ResourcePackMerger"
 PACKS_DIR="$SCRIPT_DIR/packs"
-ITEMS_DIR="$SCRIPT_DIR/../data/items"
+ITEMS_DIR="$SCRIPT_DIR/../data/data/items"
 
 GENERATED_DIR="$PACKS_DIR/generated"
 MERGED_DIR="$PACKS_DIR/main-pack"

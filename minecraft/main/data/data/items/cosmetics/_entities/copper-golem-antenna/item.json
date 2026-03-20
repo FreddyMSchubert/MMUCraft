@@ -1,0 +1,9 @@
+{
+	"title": "Copper Golem Antenna",
+	"id": "cosmetic-copper-golem-antenna",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

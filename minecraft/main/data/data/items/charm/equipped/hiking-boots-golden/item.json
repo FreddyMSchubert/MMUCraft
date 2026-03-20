@@ -1,0 +1,18 @@
+{
+	"title": "Golden Hiking Boots Charm",
+	"id": "charm-hiking-boots-golden",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Ever heard of a shortcut?",
+		"(Increases step height by 1, allowing you to walk up a fence without jumping.)"
+	],
+	"charm": {
+		"charmId": 10
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "hiking_boots_golden__charm"
+	}
+}

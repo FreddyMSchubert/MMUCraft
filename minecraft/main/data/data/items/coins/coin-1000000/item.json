@@ -1,0 +1,11 @@
+{
+	"title": "1000000 Dabloons",
+	"id": "coin-1000000",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"Money is the anthem of success - So before we go out, what's your address?\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

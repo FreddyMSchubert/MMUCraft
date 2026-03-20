@@ -1,0 +1,19 @@
+{
+	"title": "Giants Boots Charm",
+	"id": "charm-giants-boots",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"These boots are made for walkin'",
+		"Grants the user the lost power of the ancient giants.",
+		"(You'll figure it out.)"
+	],
+	"charm": {
+		"charmId": 12
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "giants_boots__charm"
+	}
+}

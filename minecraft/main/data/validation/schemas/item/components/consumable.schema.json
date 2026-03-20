@@ -1,0 +1,76 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "components/consumable.schema.json",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"isDrink": {
+			"type": "boolean"
+		},
+		"consumeSeconds": {
+			"type": "number"
+		},
+		"canAlwaysEat": {
+			"type": "boolean"
+		},
+		"hungerBars": {
+			"type": "number"
+		},
+		"saturationBars": {
+			"type": "number"
+		},
+		"directHearts": {
+			"type": "integer"
+		},
+		"useRemainderItem": {
+			"type": "string",
+			"minLength": 1
+		},
+		"effects": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"type": "string",
+						"minLength": 1
+					},
+					"durationTicks": {
+						"type": "integer"
+					},
+					"amplifier": {
+						"type": "integer"
+					},
+					"ambient": {
+						"type": "boolean"
+					},
+					"showParticles": {
+						"type": "boolean"
+					},
+					"showIcon": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"id",
+					"durationTicks",
+					"amplifier",
+					"ambient",
+					"showParticles",
+					"showIcon"
+				]
+			}
+		}
+	},
+	"required": [
+		"isDrink",
+		"consumeSeconds",
+		"canAlwaysEat",
+		"hungerBars",
+		"saturationBars",
+		"directHearts",
+		"useRemainderItem",
+		"effects"
+	]
+}

@@ -19,7 +19,7 @@ async function main(): Promise<void> {
   console.log(`  Items discovered: ${summary.discoveredItems}`);
   console.log(`  Basic items: ${summary.basicItems}`);
   console.log(`  Basic 3D items: ${summary.basic3dItems}`);
-  console.log(`  Hats: ${summary.hats}`);
+  console.log(`  Cosmetics: ${summary.cosmetics}`);
   console.log(`  Charms: ${summary.charms}`);
   console.log(`  Command block cases: ${summary.commandBlockCases}`);
   console.log(`  Carved pumpkin cases: ${summary.carvedPumpkinCases}`);

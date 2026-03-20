@@ -1,0 +1,20 @@
+{
+	"title": "Candle of the Deep Charm",
+	"id": "charm-candle-of-the-deep",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Way better than that other game.",
+		"Here you can build, fight, AND craft.",
+		"\"I'm Marry Poppins, ya'll!\"",
+		"(Night vision)"
+	],
+	"charm": {
+		"charmId": 8
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "candle_of_the_deep__charm"
+	}
+}

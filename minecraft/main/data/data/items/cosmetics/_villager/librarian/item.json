@@ -1,0 +1,9 @@
+{
+	"title": "Librarian Hat",
+	"id": "cosmetic-villager-librarian",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

@@ -1,0 +1,13 @@
+{
+	"title": "Staff of Crafting",
+	"id": "charm-crafting-staff",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Crafting on the go!"
+	],
+	"charm": {
+		"charmId": 1
+	}
+}

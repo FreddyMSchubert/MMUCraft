@@ -15,7 +15,7 @@ $RepoRoot = (Resolve-Path (Join-Path $ScriptDir '..\..\..')).Path
 $GeneratorDir = Join-Path $ScriptDir 'items-respack-generator'
 $MergerDir = Join-Path $ScriptDir 'ResourcePackMerger'
 $PacksDir = Join-Path $ScriptDir 'packs'
-$ItemsDir = (Resolve-Path (Join-Path $ScriptDir '..\data\items')).Path
+$ItemsDir = (Resolve-Path (Join-Path $ScriptDir '..\data\data\items')).Path
 
 $GeneratedDir = Join-Path $PacksDir 'generated'
 $MergedDir = Join-Path $PacksDir 'main-pack'

@@ -18,7 +18,7 @@ new shape:
 		"Might turn into a million and we all rich"
 	],
 	"charm": {
-		"effectId": null
+		"charmId": null
 	},
 	"consumable": {
 		"consumableId": null,
@@ -35,10 +35,8 @@ new shape:
 		"tintColor": null
 	},
 	"equippableTorsoExtremities": {
-		"equipmentSlot": null,
-		"swappable": null,
-		"dispensable": null,
-		"damageOnHurt": null
+		"equippableAssetId": null,
+		"equipmentSlot": null
 	},
 	"equippableHead": {}
 }

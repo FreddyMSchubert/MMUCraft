@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.function.Function;
 
 public sealed interface ItemFeature
-        permits CharmItemFeature, ConsumableFeature, DyeableFeature, EquippableFeature {
-
-    boolean isValid();
+        permits CharmItemFeature, ConsumableItemFeature, DyeableItemFeature, EquippableCharmItemFeature, EquippableCosmeticItemFeature
+{
     void apply(ItemStack stack);
 
     List<Function<JsonObject, ? extends ItemFeature>> PARSERS = List.of(
             CharmItemFeature::of,
-            ConsumableFeature::of,
-            DyeableFeature::of,
-            EquippableFeature::of
+            ConsumableItemFeature::of,
+            DyeableItemFeature::of,
+            EquippableCharmItemFeature::of,
+            EquippableCosmeticItemFeature::of
     );
     static List<ItemFeature> of(JsonObject json) {
         List<ItemFeature> list = new ArrayList<>();

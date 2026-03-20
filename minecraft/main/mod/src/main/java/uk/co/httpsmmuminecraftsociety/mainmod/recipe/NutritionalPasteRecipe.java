@@ -62,7 +62,7 @@ public class NutritionalPasteRecipe implements CraftingRecipe
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider)
     {
-        return FakeItems.CONSUMABLE_MODEL_ID_MAP.get(1).createItemStack();
+        return FakeItems.MODEL_ID_MAP.get("golden-nutritional-paste").createItemStack();
     }
 
     @Override

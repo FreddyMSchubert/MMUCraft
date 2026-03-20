@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickCallbackCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.Utils;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

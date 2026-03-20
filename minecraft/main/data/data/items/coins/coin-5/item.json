@@ -1,0 +1,11 @@
+{
+	"title": "5 Dabloons",
+	"id": "coin-5",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"I ain't no fortunate one, no\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

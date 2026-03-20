@@ -1,0 +1,11 @@
+{
+	"title": "500 Dabloons",
+	"id": "coin-500",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"\"It's a crime.\"",
+		"Official MMU Minecraft Society Mint Issue"
+	]
+}

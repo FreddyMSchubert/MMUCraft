@@ -48,7 +48,7 @@ public class CombineCosmeticRecipe implements CraftingRecipe
                 continue;
             }
 
-            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-hat-") && stack.getItem().equals(Items.CARVED_PUMPKIN)) {
+            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-") && stack.getItem().equals(Items.CARVED_PUMPKIN)) {
                 if (cosmetic != null) continue;
                 cosmetic = stack;
                 continue;

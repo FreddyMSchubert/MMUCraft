@@ -1,0 +1,9 @@
+{
+	"title": "Cod Hat",
+	"id": "cosmetic-cod",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

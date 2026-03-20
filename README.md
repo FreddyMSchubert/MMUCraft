@@ -241,6 +241,41 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - chance to light attackers on fire
 - antidote vessel - decreases harmful effect duration
 - quiver - gives you infinity
+- horse shoes - increase mounted step height
+- thick socks - walk over powdered snow
+- frost walker works in boats
+- veinminer, blocked to a max of a few blocks, increased per level
+- fall damage cant kill you only set to 1 hp
+- subnautica underwater ascend item
+- illness totem - slowly produce slimeballs
+- fire stone - get no fire damage but deal extra damage while on fire
+- light stone - higher attack above a certain light level
+- darkness stone - higher attack below a certain light level
+- rain stone - higher damage when wet
+- warmth stone - higher damage in warm areas (warm biomes, nether)
+- cold stone - higher damage in cold areas (cold biomes, end)
+- depth stone - higher damage when below y=0 or in nether
+- instead of dying, your levels can be exported into hp when you would die. e.g. 3 levels per half a heart
+- increased critical damage
+- more arrow damage / velocity
+- mending for hp
+- regenerate hp slowly when standing still and looking down
+- deepslate mining speed increase (to instamine with efficiency 5)
+- endstone mining speed increase
+- mace-like armor penetration for any weapon
+- higher boat speed
+- higher damage while under a negative effect
+- set max hp to 1, insane damage
+- stores xp when held, releases xp when right clicked. (up to a certain amount)
+- adrenaline - killing mobs boost speed + attack speed for a little bit
+- more damage the less hunger bars
+- backstab - more damage when hitting from behind
+- headshots more damage
+- wall jump
+- reducing fall speed & reset fall damage calculation while touching a wall
+- mined stuff gets smelted
+- slime boots - fall damage partially converts into upward bounce
+- damage taken gets stored - next hit deals more damage
 
 - zeus bolt - cooldown 2 hours - summons lightning at target pos
 - poseidons trident - when thrown, drags people underwater super quickly

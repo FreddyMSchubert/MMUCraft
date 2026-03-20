@@ -1,0 +1,9 @@
+{
+	"title": "Skull Mask",
+	"id": "cosmetic-skull-mask",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

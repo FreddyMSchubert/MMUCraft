@@ -1,0 +1,12 @@
+{
+	"title": "Square Moustache",
+	"id": "cosmetic-mousetache-square",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#835432"
+	}
+}

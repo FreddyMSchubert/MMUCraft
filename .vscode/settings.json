@@ -1,0 +1,10 @@
+{
+	"json.schemas": [
+		{
+			"fileMatch": [
+				"**/item.json"
+			],
+			"url": "./minecraft/main/data/validation/schemas/item/item.schema.json"
+		}
+	]
+}

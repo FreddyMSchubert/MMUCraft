@@ -1,0 +1,15 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    { "fakeitem": "coin-1" },
+    { "fakeitem": "coin-1" },
+    { "fakeitem": "coin-1" },
+    { "fakeitem": "coin-1" },
+    { "fakeitem": "coin-1" },
+    { "item": "minecraft:stick" }
+  ],
+  "result": {
+    "fakeitem": "coin-5",
+    "count": 1
+  }
+}

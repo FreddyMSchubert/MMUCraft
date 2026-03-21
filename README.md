@@ -12,6 +12,7 @@
 Tilt will now restart the minecraft pod automatically whenever the mod is built.
 
 - To access the server console: `kubectl attach -n mc-stack-dev -it deploy/minecraft`
+- To allow people to join server: `kubectl -n mc-stack-dev port-forward --address 0.0.0.0 svc/minecraft 25565:25565`
 
 ## The goal
 

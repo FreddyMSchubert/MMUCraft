@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Relative;
 import org.slf4j.Logger;
@@ -42,6 +43,13 @@ public final class AuthManager {
                     }
 
                     PlayerAuthState state = playerStates.computeIfAbsent(player.getUUID(), ignored -> new PlayerAuthState());
+
+                    if (isOperator(player)) {
+                        state.authenticated = true;
+                        player.sendSystemMessage(Component.literal("You are an operator and do not need to authenticate."));
+                        return 1;
+                    }
+
                     if (state.authenticated) {
                         player.sendSystemMessage(Component.literal("You are already authenticated."));
                         return 1;
@@ -67,6 +75,12 @@ public final class AuthManager {
     private void onJoin(net.minecraft.server.network.ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) {
         ServerPlayer player = handler.player;
         PlayerAuthState state = playerStates.computeIfAbsent(player.getUUID(), ignored -> new PlayerAuthState());
+
+        if (isOperator(player)) {
+            state.authenticated = true;
+            return;
+        }
+
         state.scheduleImmediateCheck();
         requestStatusCheck(player, state, false);
     }
@@ -76,6 +90,11 @@ public final class AuthManager {
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             PlayerAuthState state = playerStates.computeIfAbsent(player.getUUID(), ignored -> new PlayerAuthState());
+
+            if (isOperator(player)) {
+                state.authenticated = true;
+                continue;
+            }
 
             if (!state.authenticated && state.shouldCheckStatus(now)) {
                 requestStatusCheck(player, state, false);
@@ -90,6 +109,11 @@ public final class AuthManager {
     }
 
     private void requestStatusCheck(ServerPlayer player, PlayerAuthState state, boolean quiet) {
+        if (isOperator(player)) {
+            state.authenticated = true;
+            return;
+        }
+
         if (!state.tryBeginStatusRequest()) {
             return;
         }
@@ -103,6 +127,11 @@ public final class AuthManager {
             currentServer.execute(() -> {
                 PlayerAuthState currentState = playerStates.computeIfAbsent(player.getUUID(), ignored -> new PlayerAuthState());
                 currentState.finishStatusRequest();
+
+                if (isOperator(player)) {
+                    currentState.authenticated = true;
+                    return;
+                }
 
                 if (error != null) {
                     LOGGER.warn("Failed to check auth status for {}", player.getGameProfile().name(), error);
@@ -120,6 +149,12 @@ public final class AuthManager {
     }
 
     private void requestRegistration(ServerPlayer player, PlayerAuthState state) {
+        if (isOperator(player)) {
+            state.authenticated = true;
+            player.sendSystemMessage(Component.literal("You are an operator and do not need to authenticate."));
+            return;
+        }
+
         apiClient.startRegistration(player.getUUID(), player.getGameProfile().name(), (response, error) -> {
             MinecraftServer currentServer = this.server;
             if (currentServer == null) {
@@ -128,6 +163,11 @@ public final class AuthManager {
 
             currentServer.execute(() -> {
                 PlayerAuthState currentState = playerStates.computeIfAbsent(player.getUUID(), ignored -> new PlayerAuthState());
+
+                if (isOperator(player)) {
+                    currentState.authenticated = true;
+                    return;
+                }
 
                 if (error != null) {
                     LOGGER.warn("Failed to start auth registration for {}", player.getGameProfile().name(), error);
@@ -146,7 +186,6 @@ public final class AuthManager {
                     return;
                 }
 
-                currentState.lastLoginUrl = response.loginUrl();
                 sendClickableLoginMessage(player, response.loginUrl());
                 requestStatusCheck(player, currentState, true);
             });
@@ -154,6 +193,11 @@ public final class AuthManager {
     }
 
     private void enforceSpawnLock(ServerPlayer player, PlayerAuthState state) {
+        if (isOperator(player)) {
+            state.authenticated = true;
+            return;
+        }
+
         MinecraftServer currentServer = this.server;
         if (currentServer == null) {
             return;
@@ -194,17 +238,19 @@ public final class AuthManager {
         );
     }
 
+    private boolean isOperator(ServerPlayer player) {
+        return player.permissions().hasPermission(Permissions.COMMANDS_ADMIN);
+    }
+
     private static final class PlayerAuthState {
         private volatile boolean authenticated;
         private volatile boolean statusRequestInFlight;
         private volatile long nextStatusCheckAt;
-        private volatile String lastLoginUrl;
 
         private PlayerAuthState() {
             this.authenticated = false;
             this.statusRequestInFlight = false;
             this.nextStatusCheckAt = 0L;
-            this.lastLoginUrl = null;
         }
 
         private boolean shouldCheckStatus(long now) {

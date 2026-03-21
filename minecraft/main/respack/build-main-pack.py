@@ -1,7 +1,13 @@
-#!/usr/bin/env python3
 from pathlib import Path
-import json, os, shutil, subprocess, tempfile, urllib.request, zipfile
-import json, urllib.parse, urllib.request, http.cookiejar, shutil, zipfile
+import json
+import os
+import shutil
+import subprocess
+import tempfile
+import urllib.request
+import zipfile
+import urllib.parse
+import http.cookiejar
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
@@ -29,13 +35,21 @@ VT_OPENER = urllib.request.build_opener(
 	urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar())
 )
 
+
 def vt_request(url, data=None, headers=None):
-	req = urllib.request.Request(url, data=data, headers={**VT_HEADERS, **(headers or {})})
+	req = urllib.request.Request(
+		url,
+		data=data,
+		headers={**VT_HEADERS, **(headers or {})},
+	)
 	with VT_OPENER.open(req) as r:
 		return r.read(), r.headers
 
+
 def resolve_vt_share_code(code: str) -> dict:
-	body, _ = vt_request(f"{VT_BASE}/assets/server/sharecode.php?code={urllib.parse.quote(code)}")
+	body, _ = vt_request(
+		f"{VT_BASE}/assets/server/sharecode.php?code={urllib.parse.quote(code)}"
+	)
 	spec = json.loads(body.decode("utf-8"))
 	if spec.get("result") not in (None, "ok"):
 		raise RuntimeError(f"Vanilla Tweaks share code failed: {spec}")
@@ -43,13 +57,16 @@ def resolve_vt_share_code(code: str) -> dict:
 		raise RuntimeError(f"Share code {code} is not a resource pack share code")
 	return spec
 
-def build_vt_resourcepack_zip(code: str, zip_path):
+
+def build_vt_resourcepack_zip(code: str, zip_path: Path):
 	spec = resolve_vt_share_code(code)
 
-	payload = urllib.parse.urlencode({
-		"packs": json.dumps(spec["packs"], separators=(",", ":")),
-		"version": spec["version"],
-	}).encode("utf-8")
+	payload = urllib.parse.urlencode(
+		{
+			"packs": json.dumps(spec["packs"], separators=(",", ":")),
+			"version": spec["version"],
+		}
+	).encode("utf-8")
 
 	body, _ = vt_request(
 		f"{VT_BASE}/assets/server/zipresourcepacks.php",
@@ -69,15 +86,15 @@ def build_vt_resourcepack_zip(code: str, zip_path):
 		f.write(data)
 
 
-## GENERAL LOGIC
-
 def run(*cmd, cwd=None):
-	cmd = list(cmd)
+	cmd = [str(part) for part in cmd]
+
 	if os.name == "nt":
 		if cmd[0] == "npm":
 			cmd[0] = "npm.cmd"
 		elif cmd[0] == "mvn":
 			cmd[0] = "mvn.cmd"
+
 	subprocess.run(cmd, cwd=cwd, check=True)
 
 
@@ -92,27 +109,51 @@ def build_generated():
 	print("==> Generating resource pack from item definitions")
 	if not (GENERATOR / "node_modules").exists():
 		run("npm", "ci", cwd=GENERATOR)
+
 	rm(GENERATED)
+
 	run(
-		"npm", "run", "generate", "--",
-		"--source", str(ITEMS),
-		"--vanilla-armor", str(GENERATOR / "vanilla_armor_assets"),
-		"--output", str(GENERATED),
+		"npm",
+		"run",
+		"generate",
+		"--",
+		"--source",
+		str(ITEMS),
+		"--vanilla-armor",
+		str(GENERATOR / "vanilla_armor_assets"),
+		"--output",
+		str(GENERATED),
 		cwd=GENERATOR,
 	)
 
 
 def build_merger_jar():
 	print("==> Building ResourcePackMerger")
-	if os.name == "nt" and (MERGER / "mvnw.cmd").exists():
-		run(str(MERGER / "mvnw.cmd"), "-q", "-DskipTests", "package", cwd=MERGER)
-	elif (MERGER / "mvnw").exists():
-		run(str(MERGER / "mvnw"), "-q", "-DskipTests", "package", cwd=MERGER)
+
+	mvnw = MERGER / "mvnw"
+	mvnw_cmd = MERGER / "mvnw.cmd"
+
+	if os.name == "nt" and mvnw_cmd.exists():
+		run(str(mvnw_cmd), "-q", "-DskipTests", "package", cwd=MERGER)
+	elif mvnw.exists():
+		if os.access(mvnw, os.X_OK):
+			run(str(mvnw), "-q", "-DskipTests", "package", cwd=MERGER)
+		else:
+			run("sh", str(mvnw), "-q", "-DskipTests", "package", cwd=MERGER)
 	else:
-		run("mvn", "-q", "-DskipTests", "package", cwd=MERGER)
+		mvn = shutil.which("mvn")
+		if not mvn:
+			raise SystemExit(
+				"Could not build ResourcePackMerger: neither ./mvnw nor mvn is available."
+			)
+		run(mvn, "-q", "-DskipTests", "package", cwd=MERGER)
 
 	jars = sorted(
-		[p for p in (MERGER / "target").glob("*.jar") if not p.name.startswith("original-")],
+		[
+			p
+			for p in (MERGER / "target").glob("*.jar")
+			if not p.name.startswith("original-")
+		],
 		key=lambda p: p.stat().st_mtime,
 		reverse=True,
 	)
@@ -124,7 +165,8 @@ def build_merger_jar():
 def load_inputs(tmp: Path):
 	inputs = [GENERATED]
 
-	for i, entry in enumerate(json.loads(CONFIG.read_text(encoding="utf-8"))["packs"]):
+	config = json.loads(CONFIG.read_text(encoding="utf-8"))
+	for i, entry in enumerate(config["packs"]):
 		if entry.startswith("vt:"):
 			code = entry.removeprefix("vt:")
 			zip_path = tmp / f"vt-{i}.zip"
@@ -169,6 +211,8 @@ def main():
 
 	print("==> Creating zip archive")
 	shutil.make_archive(str(FINAL_ZIP.with_suffix("")), "zip", MERGED)
+
+	print("==> Publishing zip for the website")
 	shutil.copy2(FINAL_ZIP, WEB_ZIP)
 
 	print("Done:")
@@ -178,3 +222,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+	

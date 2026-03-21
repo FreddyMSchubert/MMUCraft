@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmsManager;
@@ -18,6 +19,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
+import uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven.FakeShapedCraftingRecipe;
+import uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven.FakeShapelessCraftingRecipe;
 
 public class MainMod implements ModInitializer {
 	public static final String MOD_ID = "mainmod";
@@ -28,6 +31,8 @@ public class MainMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Hello MMU!");
+
+        DataLoader.init();
 
         ServerTickEvents.END_WORLD_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);

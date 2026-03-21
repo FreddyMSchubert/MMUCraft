@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "AB",
+    " C"
+  ],
+  "key": {
+    "A": { "item": "minecraft:stick" },
+    "B": { "fakeitem": "soul" },
+    "C": { "tag": "minecraft:planks" }
+  },
+  "result": {
+    "fakeitem": "soul",
+    "count": 42
+  }
+}

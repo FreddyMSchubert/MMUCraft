@@ -15,18 +15,32 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import uk.co.httpsmmuminecraftsociety.mainmod.DataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
 
 public class LootTableModifiers {
     private static final Identifier PLAYER_ID = Identifier.fromNamespaceAndPath("minecraft", "entities/player");
 
-    public static void onModify(ResourceKey<LootTable> key, LootTable.Builder tableBuilder, LootTableSource source, HolderLookup.Provider registries)
-    {
-        // make players drop souls
+    public static void onModify(ResourceKey<LootTable> key, LootTable.Builder tableBuilder, LootTableSource source, HolderLookup.Provider registries) {
         if (PLAYER_ID.equals(key.identifier())) {
-            ItemStack soulItemStack = FakeItems.MODEL_ID_MAP.get("soul").createItemStack();
+            MainMod.LOGGER.info(
+                    "[fake-items] LootTableModifiers.onModify player table, reloadSeen={}, modelKeys={}",
+                    DataLoader.hasReloadSeen(),
+                    FakeItems.MODEL_ID_MAP.keySet().stream().sorted().toList()
+            );
+
+            FakeItem soul = FakeItems.MODEL_ID_MAP.get("soul");
+            if (soul == null) {
+                MainMod.LOGGER.error("[fake-items] soul missing during loot modify, skipping soul pool for now");
+                DataLoader.debugDumpState("LootTableModifiers.onModify(player)");
+                return;
+            }
+
+            ItemStack soulItemStack = soul.createItemStack();
 
             LootPoolSingletonContainer.Builder<?> soulLootItem =
                     LootItem.lootTableItem(Items.COMMAND_BLOCK);
@@ -41,10 +55,8 @@ public class LootTableModifiers {
 
             tableBuilder.withPool(poolBuilder);
         }
-
-        // remove all enchanted books from loottables
-
     }
+
     private static <T> void applyComponent(
             LootPoolSingletonContainer.Builder<?> builder,
             TypedDataComponent<T> component
@@ -55,8 +67,7 @@ public class LootTableModifiers {
         ));
     }
 
-    public static void onModifyDrops(Holder<LootTable> lootTableHolder, LootContext lootContext, List<ItemStack> itemStacks)
-    {
+    public static void onModifyDrops(Holder<LootTable> lootTableHolder, LootContext lootContext, List<ItemStack> itemStacks) {
         itemStacks.removeIf(stack -> stack.is(Items.ENCHANTED_BOOK));
     }
 }

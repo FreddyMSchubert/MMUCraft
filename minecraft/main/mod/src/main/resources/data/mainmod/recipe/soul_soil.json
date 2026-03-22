@@ -1,0 +1,18 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:dirt" },
+    { "item": "minecraft:dirt" },
+    { "fakeitem": "soul" }
+  ],
+  "result": {
+    "item": "minecraft:soul_soil",
+    "count": 8
+  }
+}

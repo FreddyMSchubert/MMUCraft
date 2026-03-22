@@ -17,10 +17,6 @@ public final class FakeItems {
     public static Map<String, FakeItem> MODEL_ID_MAP = Map.of();
     public static Map<Integer, FakeItem> CHARM_EFFECT_ID_MAP = Map.of();
 
-    static {
-        reloadFromJson();
-    }
-
     public static synchronized void reloadFromJson() {
         ALL = List.copyOf(DataLoader.loadFakeItems());
         MODEL_ID_MAP = ALL.stream().collect(Collectors.toUnmodifiableMap(FakeItem::id, Function.identity()));
@@ -31,6 +27,7 @@ public final class FakeItems {
                         .map(feature -> Map.entry(feature.charmId(), item)))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        MainMod.LOGGER.info("Loaded {} fake items from JSON.", ALL.size());
+        MainMod.LOGGER.info("[fake-items] Loaded {} fake items from JSON", ALL.size());
+        MainMod.LOGGER.info("[fake-items] MODEL_ID_MAP keys={}", MODEL_ID_MAP.keySet().stream().sorted().toList());
     }
 }

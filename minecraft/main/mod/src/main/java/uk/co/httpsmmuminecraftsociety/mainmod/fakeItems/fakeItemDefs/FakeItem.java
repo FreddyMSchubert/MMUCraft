@@ -1,6 +1,5 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;

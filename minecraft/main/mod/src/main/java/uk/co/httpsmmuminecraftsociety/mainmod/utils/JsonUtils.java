@@ -15,6 +15,8 @@ import net.minecraft.world.item.Rarity;
 public class JsonUtils
 {
     public static ItemStack resolveItemStack(String itemId) {
+        if (itemId.isEmpty()) return ItemStack.EMPTY;
+
         Identifier identifier = Identifier.tryParse(itemId);
         if (identifier == null) {
             throw new IllegalStateException("Invalid item identifier '" + itemId + "'");

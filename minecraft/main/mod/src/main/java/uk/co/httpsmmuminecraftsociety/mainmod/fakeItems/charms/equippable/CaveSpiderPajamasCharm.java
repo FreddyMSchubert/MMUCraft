@@ -14,12 +14,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 
 public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
 {
-    @Override
-    public String id()
-    {
-        return "cosmetic-charm-cave-spider-pajamas";
-    }
-
     private static final double CEILING_PROBE = 0.06D;
 
     private static final double WALK_SPEED = 0.28D;

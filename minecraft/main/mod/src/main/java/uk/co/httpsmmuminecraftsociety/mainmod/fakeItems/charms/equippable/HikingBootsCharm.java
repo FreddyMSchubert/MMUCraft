@@ -23,22 +23,16 @@ public class HikingBootsCharm implements Charm, BaseItemChangeCallbackCharm
     }
 
     @Override
-    public String id()
-    {
-        return HIKING_BOOTS_CHARM_ID_BEGINNING + level;
-    }
-
-    @Override
     public @NotNull ItemStack enableEffectForItem(ItemStack stack)
     {
-        stack = Utils.applyItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT, getStepHeightForLevel(this.level), AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
+        Utils.applyItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT, getStepHeightForLevel(this.level), AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         return stack;
     }
 
     @Override
     public @NotNull ItemStack disableEffectForItem(ItemStack stack)
     {
-        stack = Utils.removeItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT);
+        Utils.removeItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT);
         return stack;
     }
 

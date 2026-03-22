@@ -12,22 +12,16 @@ import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 public class GoopHandCharm implements Charm, BaseItemChangeCallbackCharm
 {
     @Override
-    public String id()
-    {
-        return "cosmetic-charm-goop-hand";
-    }
-
-    @Override
     public @NotNull ItemStack enableEffectForItem(ItemStack stack)
     {
-        stack = Utils.applyItemAttrModifier(stack, "goop_hand_knockback", Attributes.ATTACK_KNOCKBACK, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.CHEST);
+        Utils.applyItemAttrModifier(stack, "goop_hand_knockback", Attributes.ATTACK_KNOCKBACK, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.CHEST);
         return stack;
     }
 
     @Override
     public @NotNull ItemStack disableEffectForItem(ItemStack stack)
     {
-        stack = Utils.removeItemAttrModifier(stack, "goop_hand_knockback", Attributes.ATTACK_KNOCKBACK);
+        Utils.removeItemAttrModifier(stack, "goop_hand_knockback", Attributes.ATTACK_KNOCKBACK);
 
         return stack;
     }

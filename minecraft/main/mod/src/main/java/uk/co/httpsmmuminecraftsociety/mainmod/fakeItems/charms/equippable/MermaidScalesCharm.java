@@ -10,14 +10,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 
 public class MermaidScalesCharm implements Charm, EquippedTickCallbackCharm
 {
-    public static final String MERMAID_SCALES_CHARM_ID = "cosmetic-charm-mermaid-scales";
-
-    @Override
-    public String id()
-    {
-        return MERMAID_SCALES_CHARM_ID;
-    }
-
     @Override
     public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {

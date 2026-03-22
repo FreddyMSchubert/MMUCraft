@@ -21,20 +21,14 @@ import java.util.List;
 
 public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, EquippedTickCallbackCharm
 {
-    @Override
-    public String id()
-    {
-        return "cosmetic-charm-bunny-pajamas";
-    }
-
     private static final int PER_TICK_CARROT_EAT_CHANCE = 43;
 
     @Override
     public @NotNull ItemStack enableEffectForItem(ItemStack stack)
     {
-        stack = Utils.applyItemAttrModifier(stack, "bunny-pajama-jump-boost", Attributes.JUMP_STRENGTH, 0.6, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.LEGS);
-        stack = Utils.applyItemAttrModifier(stack, "bunny-pajama-safe-fall-distance", Attributes.SAFE_FALL_DISTANCE, 7, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.LEGS);
-        stack = Utils.applyItemAttrModifier(stack, "bunny-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER, -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, EquipmentSlotGroup.LEGS);
+        Utils.applyItemAttrModifier(stack, "bunny-pajama-jump-boost", Attributes.JUMP_STRENGTH, 0.6, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.LEGS);
+        Utils.applyItemAttrModifier(stack, "bunny-pajama-safe-fall-distance", Attributes.SAFE_FALL_DISTANCE, 7, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.LEGS);
+        Utils.applyItemAttrModifier(stack, "bunny-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER, -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, EquipmentSlotGroup.LEGS);
 
         return stack;
     }
@@ -42,9 +36,9 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
     @Override
     public @NotNull ItemStack disableEffectForItem(ItemStack stack)
     {
-        stack = Utils.removeItemAttrModifier(stack, "bunny-pajama-jump-boost", Attributes.JUMP_STRENGTH);
-        stack = Utils.removeItemAttrModifier(stack, "bunny-pajama-safe-fall-distance", Attributes.SAFE_FALL_DISTANCE);
-        stack = Utils.removeItemAttrModifier(stack, "bunny-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER);
+        Utils.removeItemAttrModifier(stack, "bunny-pajama-jump-boost", Attributes.JUMP_STRENGTH);
+        Utils.removeItemAttrModifier(stack, "bunny-pajama-safe-fall-distance", Attributes.SAFE_FALL_DISTANCE);
+        Utils.removeItemAttrModifier(stack, "bunny-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER);
 
         return stack;
     }

@@ -78,6 +78,7 @@ public record ConsumableItemFeature(
         stack.set(DataComponents.FOOD, fpb.build());
 
         // use remainder component
-        stack.set(DataComponents.USE_REMAINDER, new UseRemainder(useRemainder));
+        if (useRemainder != ItemStack.EMPTY)
+            stack.set(DataComponents.USE_REMAINDER, new UseRemainder(useRemainder));
     }
 }

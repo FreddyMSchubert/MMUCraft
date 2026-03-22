@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
+package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;

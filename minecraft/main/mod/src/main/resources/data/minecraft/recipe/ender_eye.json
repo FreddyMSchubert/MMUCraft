@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": "minecraft:ender_pearl",
+    "B": "minecraft:blaze_rod",
+    "Y": "minecraft:heavy_core",
+    "M": "minecraft:nether_star",
+    "O": "minecraft:totem_of_undying",
+    "X": "minecraft:creaking_heart",
+    "A": "minecraft:netherite_ingot",
+    "C": "minecraft:echo_shard",
+    "Z": "minecraft:conduit"
+  },
+  "pattern": [
+    "ABC",
+    "MNO",
+    "XYZ"
+  ],
+  "result": {
+    "count": 16,
+    "id": "minecraft:ender_eye"
+  }
+}

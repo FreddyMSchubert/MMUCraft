@@ -64,27 +64,6 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
         return reloadSeen;
     }
 
-    public static void debugDumpState(String where) {
-        MainMod.LOGGER.error("[fake-items] dump requested from {}", where);
-        MainMod.LOGGER.error("[fake-items] reloadSeen={}", reloadSeen);
-        MainMod.LOGGER.error("[fake-items] cached fakeItems.size={}", fakeItems.size());
-
-        MainMod.LOGGER.error("[fake-items] bootstrap resources ({})", lastBootstrapResources.size());
-        for (String s : lastBootstrapResources) {
-            MainMod.LOGGER.error("[fake-items] bootstrap {}", s);
-        }
-
-        MainMod.LOGGER.error("[fake-items] reload resources ({})", lastReloadResources.size());
-        for (String s : lastReloadResources) {
-            MainMod.LOGGER.error("[fake-items] reload {}", s);
-        }
-
-        MainMod.LOGGER.error("[fake-items] parsed item ids ({})", lastParsedItemIds.size());
-        for (String s : lastParsedItemIds) {
-            MainMod.LOGGER.error("[fake-items] item {}", s);
-        }
-    }
-
     @Override
     public Identifier getFabricId() {
         return Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_items");
@@ -92,21 +71,13 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
 
     @Override
     public void onResourceManagerReload(ResourceManager manager) {
-        MainMod.LOGGER.info("[fake-items] datapack reload listener start");
-
         fakeItems = loadFromResourceManager(manager);
         reloadSeen = true;
         FakeItems.reloadFromJson();
-
-        MainMod.LOGGER.info("[fake-items] datapack reload listener end");
-        MainMod.LOGGER.info("[fake-items] final MODEL_ID_MAP keys={}",
-                FakeItems.MODEL_ID_MAP.keySet().stream().sorted().toList());
     }
 
     private static void bootstrapFromModResources() {
         try {
-            MainMod.LOGGER.info("[fake-items] bootstrap load from mod resources start");
-
             ModContainer modContainer = FabricLoader.getInstance()
                     .getModContainer(MainMod.MOD_ID)
                     .orElseThrow(() -> new IllegalStateException("Could not find mod container for " + MainMod.MOD_ID));
@@ -116,7 +87,6 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
             for (String root : RESOURCE_ROOTS) {
                 var rootOpt = modContainer.findPath(root);
                 if (rootOpt.isEmpty()) {
-                    MainMod.LOGGER.info("[fake-items] bootstrap root missing {}", root);
                     continue;
                 }
 
@@ -134,14 +104,8 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
             entries.sort(Comparator.comparing(ResourceEntry::logicalPath));
             lastBootstrapResources = entries.stream().map(ResourceEntry::logicalPath).toList();
 
-            for (String s : lastBootstrapResources) {
-                MainMod.LOGGER.info("[fake-items] bootstrap discovered {}", s);
-            }
-
             List<FakeItem> loaded = parseEntries(entries);
             fakeItems = loaded;
-
-            MainMod.LOGGER.info("[fake-items] bootstrap loaded {} fake items", fakeItems.size());
         } catch (Exception e) {
             throw new IllegalStateException("Failed bootstrap fake item load from mod resources", e);
         }
@@ -160,18 +124,12 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
 
             lastReloadResources = ids.stream().map(Identifier::toString).toList();
 
-            MainMod.LOGGER.info("[fake-items] datapack reload discovered {} resources", ids.size());
-            for (Identifier id : ids) {
-                MainMod.LOGGER.info("[fake-items] reload discovered {}", id);
-            }
-
             List<ResourceEntry> entries = ids.stream()
                     .map(id -> new ResourceEntry(id.toString(), () -> resources.get(id).open()))
                     .toList();
 
             List<FakeItem> loaded = parseEntries(entries);
 
-            MainMod.LOGGER.info("[fake-items] datapack reload parsed {} fake items", loaded.size());
             return loaded;
         } catch (Exception e) {
             throw new IllegalStateException("Failed datapack fake item load", e);
@@ -194,8 +152,6 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
             validateFakeItemJson(root, entry.logicalPath());
 
             FakeItem item = FakeItem.fromJson(root, entry.logicalPath());
-
-            MainMod.LOGGER.info("[fake-items] parsed id={} from {}", item.id(), entry.logicalPath());
 
             if (!seenIds.add(item.id())) {
                 throw new IllegalStateException("Duplicate fake item id: " + item.id());

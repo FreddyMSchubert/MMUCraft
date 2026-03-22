@@ -1,0 +1,9 @@
+{
+	"title": "Royal Crown",
+	"id": "cosmetic-royal-crown",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

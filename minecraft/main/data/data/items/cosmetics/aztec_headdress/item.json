@@ -1,0 +1,11 @@
+{
+	"title": "Moctezuma's Headdress",
+	"id": "cosmetic-aztec-headdress",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"One of a kind"
+	],
+	"equippableCosmetic": {}
+}

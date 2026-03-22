@@ -1,0 +1,12 @@
+{
+	"title": "Techno Crown",
+	"id": "cosmetic-techno-crown",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Woah, is he some kind of king?",
+		"No, that's a legend."
+	],
+	"equippableCosmetic": {}
+}

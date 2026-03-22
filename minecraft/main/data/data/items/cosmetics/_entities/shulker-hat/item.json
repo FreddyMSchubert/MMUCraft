@@ -1,0 +1,12 @@
+{
+	"title": "Shulker Hat",
+	"id": "cosmetic-shulker",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#c276b8"
+	}
+}

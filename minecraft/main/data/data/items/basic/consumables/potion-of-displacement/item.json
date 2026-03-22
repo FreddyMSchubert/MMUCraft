@@ -1,0 +1,31 @@
+{
+	"title": "Potion of Displacement",
+	"id": "potion-of-displacement",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": [
+		"Let's go gambling!",
+		"Don't forget your potion of returning...",
+		"(Teleports you randomly)"
+	],
+	"consumable": {
+		"isDrink": true,
+		"canAlwaysEat": true,
+		"consumeSeconds": 15,
+		"directHearts": 0,
+		"effects": [
+			{
+				"id": "minecraft:resistance",
+				"durationTicks": 60,
+				"amplifier": 4,
+				"showIcon": false,
+				"showParticles": false,
+				"ambient": false
+			}
+		],
+		"hungerBars": 0,
+		"saturationBars": 0,
+		"useRemainderItem": "minecraft:glass_bottle"
+	}
+}

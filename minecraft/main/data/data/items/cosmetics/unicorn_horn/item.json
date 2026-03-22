@@ -1,0 +1,9 @@
+{
+	"title": "Unicorn Horn",
+	"id": "cosmetic-unicorn-horn",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

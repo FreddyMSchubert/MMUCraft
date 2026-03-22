@@ -12,10 +12,6 @@
 	"charm": {
 		"charmId": 25
 	},
-	"equippableCharm": {
-		"equipmentSlot": "legs",
-		"equippableAssetId": "potion_returning__charm"
-	},
 	"consumable": {
 		"isDrink": true,
 		"canAlwaysEat": true,

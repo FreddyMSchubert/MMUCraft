@@ -1,0 +1,9 @@
+{
+	"title": "Ornate Crown",
+	"id": "cosmetic-ornate-crown",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

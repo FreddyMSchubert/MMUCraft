@@ -1,0 +1,9 @@
+{
+	"title": "Leprichaun Hat",
+	"id": "cosmetic-leprichaun",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

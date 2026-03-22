@@ -129,7 +129,7 @@ public final class FakeItemsCommand {
             Predicate<FakeItem> filter
     ) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
-        FakeItem item = FakeItems.MODEL_ID_MAP.get(id);
+        FakeItem item = FakeItems.ID_MAP.get(id);
 
         if (item == null || !filter.test(item)) {
             source.sendFailure(Component.literal("Unknown or invalid fake item id: " + id));

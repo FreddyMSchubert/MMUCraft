@@ -2,14 +2,17 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
 import java.util.Set;
 
@@ -19,11 +22,6 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
     public String id()
     {
         return "cosmetic-charm-potion-of-returning";
-    }
-    @Override
-    public float getUseDurationTicks()
-    {
-        return DRINK_DURATION_TICKS;
     }
 
     public static final int DRINK_DURATION_TICKS = 15 * 20;
@@ -60,7 +58,16 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
     @Override
     public ItemStack onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks)
     {
+        String teleportPossibleTest = TeleportPotionUtils.checkTeleportable(player, level, 20, 16);
+        if (!teleportPossibleTest.isEmpty()) {
+            player.sendSystemMessage(Component.literal(teleportPossibleTest));
+            player.stopUsingItem();
+            return stack;
+        }
+
         BlockPos spawn = level.getRespawnData().globalPos().pos();
+
+        MainMod.LOGGER.info("Teleporting (Portion of Returning) player " + player.getName().getString() + " from (" + player.getX() + ", " + player.getY() + ", " + player.getZ() + ") to spawn (" + spawn.getX() + ", " + spawn.getY() + ", " + spawn.getZ() + ").");
 
         player.teleportTo(
                 level,

@@ -1,14 +1,19 @@
 {
 	"title": "Potion of Displacement",
-	"id": "potion-of-displacement",
+	"id": "charm-potion-displacement",
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 16,
 	"tooltips": [
 		"Let's go gambling!",
+		"Awww, dang it...",
 		"Don't forget your potion of returning...",
+		"The chance to spawn in lava is low, but never 0...",
 		"(Teleports you randomly)"
 	],
+	"charm": {
+		"charmId": 27
+	},
 	"consumable": {
 		"isDrink": true,
 		"canAlwaysEat": true,
@@ -17,7 +22,7 @@
 		"effects": [
 			{
 				"id": "minecraft:resistance",
-				"durationTicks": 60,
+				"durationTicks": 222,
 				"amplifier": 4,
 				"showIcon": false,
 				"showParticles": false,

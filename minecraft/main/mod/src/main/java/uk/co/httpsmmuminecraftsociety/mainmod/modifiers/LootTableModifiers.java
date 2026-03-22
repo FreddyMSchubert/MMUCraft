@@ -25,7 +25,7 @@ public class LootTableModifiers {
 
     public static void onModify(ResourceKey<LootTable> key, LootTable.Builder tableBuilder, LootTableSource source, HolderLookup.Provider registries) {
         if (PLAYER_ID.equals(key.identifier())) {
-            FakeItem soul = FakeItems.MODEL_ID_MAP.get("soul");
+            FakeItem soul = FakeItems.ID_MAP.get("soul");
             if (soul == null) {
                 return;
             }

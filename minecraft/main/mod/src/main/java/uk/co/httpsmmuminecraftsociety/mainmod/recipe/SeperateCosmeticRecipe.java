@@ -47,7 +47,7 @@ public class SeperateCosmeticRecipe implements CraftingRecipe
             return ItemStack.EMPTY;
         }
 
-        ItemStack cosmetic = FakeItems.MODEL_ID_MAP.get(cosmeticModel).createItemStack();
+        ItemStack cosmetic = FakeItems.ID_MAP.get(cosmeticModel).createItemStack();
 
         DyedItemColor dyedColor = inputStack.get(DataComponents.DYED_COLOR);
         if (dyedColor != null) {

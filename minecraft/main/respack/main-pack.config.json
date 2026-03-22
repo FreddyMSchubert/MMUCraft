@@ -1,6 +1,8 @@
 {
 	"packs": [
 		"packs/anti-cheat-pack/",
+		"packs/general-pack/",
+		"https://cdn.modrinth.com/data/L6A5jvYc/versions/nNKmk6vU/Anti_Xray_Lite_1.21.11.zip",
 		"https://cdn.modrinth.com/data/PCGR5Y1W/versions/pIz2m6be/%C2%A78%C2%A7lDarkmode%20%C2%A7f%C2%A7lColourful%20Containers%C2%A78.zip",
 		"https://cdn.modrinth.com/data/6udpuGCH/versions/scd0ojNG/EvenBetterEnchants_v3_1.21.5%2B.zip",
 		"https://cdn.modrinth.com/data/fkEvrT75/versions/r4ZIuXmn/Dani%27s%20Oxidizing%20Copper%20Tools.zip",
@@ -8,6 +10,7 @@
 		"https://cdn.modrinth.com/data/XsLCz9bM/versions/IeqDeS2Z/Almost%20Vanilla%20Potions.zip",
 		"https://cdn.modrinth.com/data/zVtAa1pJ/versions/EYf1Rgs4/Wisps%20Wonderful%20Wildflowers%20v1.0.0.zip",
 		"https://cdn.modrinth.com/data/d2srP5t3/versions/nhyEtMeW/AL%27s%20Creepers%20Revamped%202.0.zip",
+		"https://cdn.modrinth.com/data/hFoOkEdk/versions/l3RTAoaC/Fancy_Beds-v4.1.zip",
 		"vt:B334KM"
 	]
 }

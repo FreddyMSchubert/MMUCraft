@@ -18,7 +18,7 @@ final class FakeRecipeUtil {
     }
 
     static FakeItem requireFakeItem(String fakeItemId) {
-        FakeItem fakeItem = FakeItems.MODEL_ID_MAP.get(fakeItemId);
+        FakeItem fakeItem = FakeItems.ID_MAP.get(fakeItemId);
         if (fakeItem == null) {
             throw new IllegalArgumentException("Unknown fakeitem id: " + fakeItemId);
         }

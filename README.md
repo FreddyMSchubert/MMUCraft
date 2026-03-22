@@ -221,7 +221,8 @@ Day 1 the server border is 1000x1000
 
 Every day on the server forever, its scheduled, the border increases by 300 blocks
 
-- Half of semester 1: unlock nether
+- After Third of semester 1: unlock nether
+- After second third of semester 1: Remove world border restriction (potion of displacement still tps within old area), potion of far displacement costs more but teleports you outside of border as well. takes longer to drink.
 
 - First week of semester 2: unlock end
 
@@ -272,6 +273,7 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - more damage the less hunger bars
 - backstab - more damage when hitting from behind
 - headshots more damage
+- the deeper you are the faster you mine
 - wall jump
 - reducing fall speed & reset fall damage calculation while touching a wall
 - mined stuff gets smelted
@@ -472,19 +474,3 @@ Information on changes to the base game are all documented in a wiki page on the
 - Archaeology
 - Fishing
 - Buy in shop
-
-### Eye of Ender Crafting Recipe
-
-The eye of ender crafting recipe should be made significantly more difficult to encourage going through more of the games content. The crafting recipe for 16 eye of ender should therefore be:
-
-- blaze powder
-- heavy core
-- creaking heart
-- netherite ingot
-- torchflower
-- echo shard
-- totem of undying
-- wither star
-- ender pearl
-
-The ender dragon fight should also be buffed significantly with some datapack.

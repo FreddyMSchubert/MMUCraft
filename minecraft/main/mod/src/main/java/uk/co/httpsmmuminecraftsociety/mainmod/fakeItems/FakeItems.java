@@ -27,7 +27,6 @@ public final class FakeItems {
                         .map(feature -> Map.entry(feature.charmId(), item)))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        MainMod.LOGGER.info("[fake-items] Loaded {} fake items from JSON", ALL.size());
-        MainMod.LOGGER.info("[fake-items] MODEL_ID_MAP keys={}", ID_MAP.keySet().stream().sorted().toList());
+        MainMod.LOGGER.info("[FakeItems init] Loaded {} fake items from JSON: {}", ALL.size(), ID_MAP.keySet().stream().sorted().toList());
     }
 }

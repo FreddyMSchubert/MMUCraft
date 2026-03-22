@@ -10,14 +10,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 
 public class StriderShalesCharm implements Charm, EquippedTickCallbackCharm
 {
-    public static final String STRIDER_SHALES_CHARM_ID = "cosmetic-charm-strider-shales";
-
-    @Override
-    public String id()
-    {
-        return STRIDER_SHALES_CHARM_ID;
-    }
-
     @Override
     public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {

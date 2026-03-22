@@ -13,7 +13,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 
 public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
 {
-    public static final String WINGED_SHOES_CHARM_ID_BEGINNING = "cosmetic-charm-winged-shoes-";
     private final int level;
 
     public static final double EXTRA_JUMP_VELOCITY = 0.62D;
@@ -32,12 +31,6 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
     public WingedShoesCharm(int level)
     {
         this.level = level;
-    }
-
-    @Override
-    public String id()
-    {
-        return WINGED_SHOES_CHARM_ID_BEGINNING + level;
     }
 
     private static int getExtraJumpsForLevel(int level) {

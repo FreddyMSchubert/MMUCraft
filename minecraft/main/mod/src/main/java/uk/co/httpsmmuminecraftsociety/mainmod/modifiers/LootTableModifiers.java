@@ -14,39 +14,41 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
 
 public class LootTableModifiers {
-    private static final Identifier PLAYER_ID = Identifier.fromNamespaceAndPath("minecraft", "entities/player");
-
     public static void onModify(ResourceKey<LootTable> key, LootTable.Builder tableBuilder, LootTableSource source, HolderLookup.Provider registries) {
-        if (PLAYER_ID.equals(key.identifier())) {
-            FakeItem soul = FakeItems.ID_MAP.get("soul");
-            if (soul == null) {
-                return;
-            }
-
-            ItemStack soulItemStack = soul.createItemStack();
-
-            LootPoolSingletonContainer.Builder<?> soulLootItem =
-                    LootItem.lootTableItem(Items.COMMAND_BLOCK);
-
-            for (TypedDataComponent<?> component : soulItemStack.getComponents()) {
-                applyComponent(soulLootItem, component);
-            }
-
+        if (Identifier.fromNamespaceAndPath("minecraft", "entities/player").equals(key.identifier())) {
             LootPool.Builder poolBuilder = LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
-                    .add(soulLootItem);
+                    .add(createLootTableItem(FakeItems.ID_MAP.get("soul").createItemStack()));
+            tableBuilder.withPool(poolBuilder);
+        }
+
+        if (Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city").equals(key.identifier())) {
+            LootPool.Builder poolBuilder = LootPool.lootPool()
+                    .setRolls(ConstantValue.exactly(1))
+                    .when(LootItemRandomChanceCondition.randomChance(1.0F / 8.0F))
+                    .add(createLootTableItem(FakeItems.ID_MAP.get("charm-sculk-phial").createItemStack()));
 
             tableBuilder.withPool(poolBuilder);
         }
     }
 
+    private static LootPoolSingletonContainer.Builder<?> createLootTableItem(ItemStack stack) {
+        LootPoolSingletonContainer.Builder<?> builder =
+                LootItem.lootTableItem(stack.getItem());
+
+        for (TypedDataComponent<?> component : stack.getComponents()) {
+            applyComponent(builder, component);
+        }
+
+        return builder;
+    }
     private static <T> void applyComponent(
             LootPoolSingletonContainer.Builder<?> builder,
             TypedDataComponent<T> component

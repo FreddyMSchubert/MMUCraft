@@ -14,6 +14,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CraftingStaffCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.EnderChestStaffCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.SculkPhialCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfReturningCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.UmbrellaCharm;
@@ -54,7 +55,8 @@ public class CharmsManager
             Map.entry(24, new WingedShoesCharm(2)),
             Map.entry(25, new PotionOfReturningCharm()),
             Map.entry(26, new UmbrellaCharm()),
-            Map.entry(27, new PotionOfDisplacementCharm())
+            Map.entry(27, new PotionOfDisplacementCharm()),
+            Map.entry(28, new SculkPhialCharm())
     );
     public static Charm charmFromId(int charmId) {
         if (!CHARMS_REGISTRY.containsKey(charmId)) return null;

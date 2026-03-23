@@ -1,0 +1,11 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    { "fakeitem": "beer" },
+    { "tag": "mainmod:carpets" }
+  ],
+  "result": {
+    "fakeitem": "spoons_carpet",
+    "count": 1
+  }
+}

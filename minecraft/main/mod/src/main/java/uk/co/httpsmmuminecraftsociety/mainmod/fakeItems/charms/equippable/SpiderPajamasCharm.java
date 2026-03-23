@@ -10,11 +10,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 
 public class SpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
 {
-    @Override
-    public String id()
-    {
-        return "cosmetic-charm-spider-pajamas";
-    }
 
     @Override
     public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level) {

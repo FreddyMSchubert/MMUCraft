@@ -29,12 +29,6 @@ import java.util.Optional;
 public class CraftingStaffCharm implements Charm, UseCallbackCharm
 {
     @Override
-    public String id()
-    {
-        return "cosmetic-charm-crafting-staff";
-    }
-
-    @Override
     public ItemStack onUse(ItemStack stack, ServerPlayer player, ServerLevel level) {
         player.openMenu(new SimpleMenuProvider(
                 (id, inv, p) -> new PortableCraftingMenu(id, inv),

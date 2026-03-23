@@ -13,12 +13,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCh
 public class EnderChestStaffCharm implements Charm, UseCallbackCharm
 {
     @Override
-    public String id()
-    {
-        return "cosmetic-charm-ender-chest-staff";
-    }
-
-    @Override
     public ItemStack onUse(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
         PlayerEnderChestContainer playerEnderChestContainer = player.getEnderChestInventory();

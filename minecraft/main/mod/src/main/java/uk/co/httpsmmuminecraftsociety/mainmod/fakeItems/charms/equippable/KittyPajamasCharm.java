@@ -12,15 +12,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 public class KittyPajamasCharm implements Charm, BaseItemChangeCallbackCharm
 {
     @Override
-    public String id()
-    {
-        return "cosmetic-charm-kitty-pajamas";
-    }
-
-    @Override
     public @NotNull ItemStack enableEffectForItem(ItemStack stack)
     {
-        stack = Utils.applyItemAttrModifier(stack, "kitty-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER, -1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, EquipmentSlotGroup.LEGS);
+        Utils.applyItemAttrModifier(stack, "kitty-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER, -1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, EquipmentSlotGroup.LEGS);
 
         return stack;
     }
@@ -28,7 +22,7 @@ public class KittyPajamasCharm implements Charm, BaseItemChangeCallbackCharm
     @Override
     public @NotNull ItemStack disableEffectForItem(ItemStack stack)
     {
-        stack = Utils.removeItemAttrModifier(stack, "kitty-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER);
+        Utils.removeItemAttrModifier(stack, "kitty-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER);
 
         return stack;
     }

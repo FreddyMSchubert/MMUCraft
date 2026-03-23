@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -16,26 +17,29 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import oshi.util.tuples.Quintet;
+import oshi.util.tuples.Triplet;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LootTableModifiers {
+    private static final List<Quintet<Identifier, ItemStack, Float, Integer, Integer>> additions = List.of(
+        new Quintet<>(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), FakeItems.ID_MAP.get("soul").createItemStack(), 1.0F, 1, 1),
+        new Quintet<>(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), FakeItems.ID_MAP.get("charm-sculk-phial").createItemStack(), 1.0F / 8.0F, 1, 1),
+        new Quintet<>(Identifier.fromNamespaceAndPath("minecraft", "entities/bat"), Items.PHANTOM_MEMBRANE.getDefaultInstance(), 1.0F, 1, 1),
+        new Quintet<>(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), Items.PHANTOM_MEMBRANE.getDefaultInstance(), 1.0F, 0, 10)
+    );
+
     public static void onModify(ResourceKey<LootTable> key, LootTable.Builder tableBuilder, LootTableSource source, HolderLookup.Provider registries) {
-        if (Identifier.fromNamespaceAndPath("minecraft", "entities/player").equals(key.identifier())) {
-            LootPool.Builder poolBuilder = LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1))
-                    .add(createLootTableItem(FakeItems.ID_MAP.get("soul").createItemStack()));
-            tableBuilder.withPool(poolBuilder);
-        }
-
-        if (Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city").equals(key.identifier())) {
-            LootPool.Builder poolBuilder = LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1))
-                    .when(LootItemRandomChanceCondition.randomChance(1.0F / 8.0F))
-                    .add(createLootTableItem(FakeItems.ID_MAP.get("charm-sculk-phial").createItemStack()));
-
-            tableBuilder.withPool(poolBuilder);
+        for (Quintet<Identifier, ItemStack, Float, Integer, Integer> addition : additions) {
+            if (!addition.getA().equals(key.identifier())) continue;
+            tableBuilder.withPool(LootPool.lootPool()
+                    .setRolls(UniformGenerator.between(addition.getD(), addition.getE()))
+                    .when(LootItemRandomChanceCondition.randomChance(addition.getC()))
+                    .add(createLootTableItem(addition.getB())));
         }
     }
 

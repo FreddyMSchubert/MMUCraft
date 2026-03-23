@@ -34,6 +34,8 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
     public static final TagKey<Item> FUNGI = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fungi"));
     public static final TagKey<Item> FARM_ANIMAL_MEATS_RAW = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "farm_animal_meats_raw"));
 
+    public static final TagKey<Item> CARPETS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "carpets"));
+
     public ModItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture)
     {
         super(output, registriesFuture);
@@ -155,5 +157,23 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
                 .add(Items.RABBIT)
                 .add(Items.CHICKEN)
                 .add(Items.ROTTEN_FLESH);
+
+        valueLookupBuilder(CARPETS)
+                .add(Items.BLACK_CARPET)
+                .add(Items.CYAN_CARPET)
+                .add(Items.BLUE_CARPET)
+                .add(Items.GRAY_CARPET)
+                .add(Items.BROWN_CARPET)
+                .add(Items.GREEN_CARPET)
+                .add(Items.LIGHT_BLUE_CARPET)
+                .add(Items.LIGHT_GRAY_CARPET)
+                .add(Items.LIME_CARPET)
+                .add(Items.MAGENTA_CARPET)
+                .add(Items.ORANGE_CARPET)
+                .add(Items.PINK_CARPET)
+                .add(Items.PURPLE_CARPET)
+                .add(Items.RED_CARPET)
+                .add(Items.WHITE_CARPET)
+                .add(Items.YELLOW_CARPET);
     }
 }

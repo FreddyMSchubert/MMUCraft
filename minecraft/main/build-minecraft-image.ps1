@@ -15,8 +15,11 @@ python (Join-Path $ScriptDir 'stage_item_data.py') --root $ScriptDir
 Write-Host '==> Building Fabric mod'
 Push-Location $ModDir
 try {
-    & .\gradlew.bat runDatagen
-    & .\gradlew.bat build
+	& .\gradlew.bat runDatagen
+	if ($LASTEXITCODE -ne 0) { throw "runDatagen failed with exit code $LASTEXITCODE" }
+
+	& .\gradlew.bat build
+	if ($LASTEXITCODE -ne 0) { throw "build failed with exit code $LASTEXITCODE" }
 }
 finally {
     Pop-Location

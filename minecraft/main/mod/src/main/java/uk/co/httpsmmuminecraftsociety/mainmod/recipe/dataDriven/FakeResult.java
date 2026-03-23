@@ -3,8 +3,6 @@ package uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public sealed interface FakeResult permits FakeResult.ItemResult, FakeResult.FakeItemResult {
@@ -13,7 +11,7 @@ public sealed interface FakeResult permits FakeResult.ItemResult, FakeResult.Fak
             FakeItemResult.CODEC
     ).xmap(
             either -> either.map(
-                    item -> (FakeResult) item,
+                    item -> item,
                     fake -> (FakeResult) fake
             ),
             result -> {
@@ -26,15 +24,19 @@ public sealed interface FakeResult permits FakeResult.ItemResult, FakeResult.Fak
 
     ItemStack createStack();
 
-    record ItemResult(Item item, int count) implements FakeResult {
+    record ItemResult(ComponentAwareItem item, int count) implements FakeResult {
         public static final Codec<ItemResult> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(ItemResult::item),
+                ComponentAwareItem.CODEC.fieldOf("item").forGetter(ItemResult::item),
                 Codec.intRange(1, Integer.MAX_VALUE).fieldOf("count").forGetter(ItemResult::count)
         ).apply(instance, ItemResult::new));
 
+        public ItemResult {
+            item.createStack(count);
+        }
+
         @Override
         public ItemStack createStack() {
-            return new ItemStack(item, count);
+            return item.createStack(count);
         }
     }
 

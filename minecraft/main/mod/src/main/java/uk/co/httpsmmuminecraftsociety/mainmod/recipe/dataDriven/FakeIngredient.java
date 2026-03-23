@@ -3,7 +3,6 @@ package uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -15,9 +14,9 @@ public sealed interface FakeIngredient permits FakeIngredient.ItemIngredient, Fa
             Codec.xor(TagIngredient.CODEC, FakeItemIngredient.CODEC)
     ).xmap(
             either -> either.map(
-                    item -> (FakeIngredient) item,
+                    item -> item,
                     inner -> inner.map(
-                            tag -> (FakeIngredient) tag,
+                            tag -> tag,
                             fake -> (FakeIngredient) fake
                     )
             ),
@@ -36,19 +35,19 @@ public sealed interface FakeIngredient permits FakeIngredient.ItemIngredient, Fa
 
     int specificity();
 
-    record ItemIngredient(Item item) implements FakeIngredient {
+    record ItemIngredient(ComponentAwareItem item) implements FakeIngredient {
         public static final Codec<ItemIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(ItemIngredient::item)
+                ComponentAwareItem.CODEC.fieldOf("item").forGetter(ItemIngredient::item)
         ).apply(instance, ItemIngredient::new));
 
         @Override
         public boolean matches(ItemStack stack) {
-            return !stack.isEmpty() && stack.getItem() == item;
+            return item.matches(stack);
         }
 
         @Override
         public int specificity() {
-            return 2;
+            return 2 + item.specificityBonus();
         }
     }
 

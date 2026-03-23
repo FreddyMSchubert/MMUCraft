@@ -1,0 +1,43 @@
+{
+	"title": "Beer",
+	"id": "beer",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": [],
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 3,
+		"canAlwaysEat": true,
+		"hungerBars": 1,
+		"saturationBars": 0,
+		"directHearts": 0,
+		"useRemainderItem": "minecraft:glass_bottle",
+		"effects": [
+			{
+				"id": "minecraft:nausea",
+				"durationTicks": 400,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:strength",
+				"durationTicks": 300,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": false,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:slowness",
+				"durationTicks": 400,
+				"amplifier": 3,
+				"showIcon": false,
+				"showParticles": false,
+				"ambient": false
+			}
+		]
+	}
+}

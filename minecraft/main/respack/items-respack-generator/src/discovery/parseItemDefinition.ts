@@ -50,6 +50,17 @@ interface ParsedEquippableCharmComponent {
   readonly equippableAssetId: string;
 }
 
+export class RecoverableItemAssetError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'RecoverableItemAssetError';
+  }
+}
+
+export function isRecoverableItemAssetError(error: unknown): error is RecoverableItemAssetError {
+  return error instanceof RecoverableItemAssetError;
+}
+
 function assertObjectRecord(value: unknown, label: string): asserts value is Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new Error(`${label} must be a JSON object.`);
@@ -106,9 +117,15 @@ function assertHexColour(value: unknown, label: string): asserts value is string
   }
 }
 
-async function requireFile(filePath: string): Promise<void> {
+async function requireStrictFile(filePath: string): Promise<void> {
   if (!(await pathExists(filePath))) {
     throw new Error(`Required file is missing: ${filePath}`);
+  }
+}
+
+async function requireRecoverableFile(filePath: string): Promise<void> {
+  if (!(await pathExists(filePath))) {
+    throw new RecoverableItemAssetError(`Required file is missing: ${filePath}`);
   }
 }
 
@@ -218,7 +235,7 @@ export async function parseItemDefinition(
   assertValidResourcePath(relativeDirectory, 'Leaf item directory');
 
   const itemJsonPath = path.join(leafDirectory, 'item.json');
-  await requireFile(itemJsonPath);
+  await requireStrictFile(itemJsonPath);
 
   const rawJson = await readJsonFile<unknown>(itemJsonPath);
   assertObjectRecord(rawJson, `item.json in ${relativeDirectory}`);
@@ -234,7 +251,7 @@ export async function parseItemDefinition(
 
   switch (baseItem.modelType) {
     case 'basic': {
-      await requireFile(texturePngPath);
+      await requireRecoverableFile(texturePngPath);
       await assertAbsent(
         modelJsonPath,
         `${relativeDirectory} is modelType "basic" and must not include model.json. Use modelType "basic-3d" for custom item models.`,
@@ -260,9 +277,13 @@ export async function parseItemDefinition(
       };
       return item;
     }
+
     case 'basic-3d': {
-      if (!(await hasFile(modelJsonPath)) || !(await hasFile(modelTexturePngPath))) {
-        throw new Error(
+      const hasModelJson = await hasFile(modelJsonPath);
+      const hasModelPng = await hasFile(modelTexturePngPath);
+
+      if (!hasModelJson || !hasModelPng) {
+        throw new RecoverableItemAssetError(
           `${relativeDirectory} is modelType "basic-3d" and requires both model.json and model.png. Use modelType "basic" for flat texture items.`,
         );
       }
@@ -284,9 +305,13 @@ export async function parseItemDefinition(
       };
       return item;
     }
+
     case 'cosmetic': {
       assertEquippableCosmeticComponent(rawJson.equippableCosmetic, relativeDirectory);
-      await Promise.all([requireFile(modelJsonPath), requireFile(modelTexturePngPath)]);
+      await Promise.all([
+        requireRecoverableFile(modelJsonPath),
+        requireRecoverableFile(modelTexturePngPath),
+      ]);
 
       const item: CosmeticItemDefinition = {
         type: 'cosmetic',
@@ -306,10 +331,15 @@ export async function parseItemDefinition(
       };
       return item;
     }
+
     case 'charm': {
       const equippableCharm = parseEquippableCharmComponent(rawJson.equippableCharm, relativeDirectory);
       const equippablePngPath = path.join(leafDirectory, 'equippable.png');
-      await Promise.all([requireFile(texturePngPath), requireFile(equippablePngPath)]);
+
+      await Promise.all([
+        requireRecoverableFile(texturePngPath),
+        requireRecoverableFile(equippablePngPath),
+      ]);
 
       const item: CharmItemDefinition = {
         type: 'charm',
@@ -330,6 +360,7 @@ export async function parseItemDefinition(
       };
       return item;
     }
+
     default:
       throw new Error(`Unsupported modelType in ${itemJsonPath}: ${String(baseItem.modelType)}`);
   }

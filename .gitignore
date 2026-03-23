@@ -8,3 +8,4 @@ tilt_modules
 *.bak
 minecraft/minigames/
 minecraft/main/respack/items-respack-generator/output/
+minecraft/main/respack/ResourcePackMerger

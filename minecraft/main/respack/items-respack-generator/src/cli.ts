@@ -24,6 +24,7 @@ async function main(): Promise<void> {
   console.log(`  Command block cases: ${summary.commandBlockCases}`);
   console.log(`  Carved pumpkin cases: ${summary.carvedPumpkinCases}`);
   console.log(`  Files written: ${summary.generatedFiles}`);
+  console.log(`  Items skipped: ${summary.skippedItems}`);
 }
 
 main().catch((error: unknown) => {

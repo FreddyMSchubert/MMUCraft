@@ -1,0 +1,24 @@
+{
+	"title": "Potion of Insomnia",
+	"id": "charm-potion-insomnia",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"maybe try asmr i dunno",
+		"spawns a buncha phantoms"
+	],
+	"charm": {
+		"charmId": 29
+	},
+	"consumable": {
+		"isDrink": true,
+		"canAlwaysEat": true,
+		"consumeSeconds": 2,
+		"directHearts": 0,
+		"effects": [],
+		"hungerBars": 0,
+		"saturationBars": 0,
+		"useRemainderItem": "minecraft:glass_bottle"
+	}
+}

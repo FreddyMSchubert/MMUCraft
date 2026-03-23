@@ -1,0 +1,15 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "ingredients": [
+    { "fakeitem": "soul" },
+    { "item": "minecraft:book" },
+    { "item": "minecraft:lapis_block" },
+    { "item": "minecraft:amethyst_shard" },
+    { "item": "minecraft:soul_sand" },
+    { "item": "minecraft:soul_soil" }
+  ],
+  "result": {
+    "item": "minecraft:enchanted_book[minecraft:stored_enchantments={levels:{\"mainmod:soulbound\":1}}]",
+    "count": 1
+  }
+}

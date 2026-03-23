@@ -236,6 +236,7 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - villager hat - reduced trade cost
 - more looting armor
 - more mount speed hat
+- quicker happy ghast speed charm
 - anglers hat - more luck of the sea
 - 4 leaf clover - increased fortune when held
 - longer invincibility frames

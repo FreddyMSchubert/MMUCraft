@@ -1,0 +1,9 @@
+{
+	"title": "Flying Saucer",
+	"id": "cosmetic-ufo",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

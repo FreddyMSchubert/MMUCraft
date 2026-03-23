@@ -3,13 +3,13 @@
 	"id": "mainmod",
 	"version": "${version}",
 	"name": "Main Mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Main Mod driving the custom content for MMU Minecraft Society.",
 	"authors": [
 		"Frederick Schubert"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://mmuminecraftsociety.co.uk/",
+		"sources": "https://github.com/FreddyMSchubert/MMU_MCSoc_kubecraft"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/mainmod/icon.png",

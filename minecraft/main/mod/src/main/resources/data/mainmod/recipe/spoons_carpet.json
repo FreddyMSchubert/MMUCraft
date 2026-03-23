@@ -5,7 +5,7 @@
     { "tag": "mainmod:carpets" }
   ],
   "result": {
-    "fakeitem": "spoons_carpet",
+    "fakeitem": "spoons-carpet",
     "count": 1
   }
 }

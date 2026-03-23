@@ -1,1 +1,5 @@
 accessWidener v1 named
+
+accessible class net/minecraft/resources/RegistryOps$HolderLookupAdapter
+accessible field net/minecraft/resources/RegistryOps lookupProvider Lnet/minecraft/resources/RegistryOps$RegistryInfoLookup;
+accessible field net/minecraft/resources/RegistryOps$HolderLookupAdapter lookupProvider Lnet/minecraft/core/HolderLookup$Provider;

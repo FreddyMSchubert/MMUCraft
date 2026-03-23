@@ -123,7 +123,26 @@ def run(*cmd, cwd=None):
 		elif cmd[0] == "mvn":
 			cmd[0] = "mvn.cmd"
 
-	subprocess.run(cmd, cwd=cwd, check=True)
+	proc = subprocess.Popen(
+		cmd,
+		cwd=cwd,
+		stdout=subprocess.PIPE,
+		stderr=subprocess.STDOUT,
+		text=True,
+		bufsize=1,
+	)
+
+	try:
+		for line in proc.stdout:
+			if "Copying File " in line or "Copying Directory " in line:
+				continue
+			print(line, end="")
+	finally:
+		proc.stdout.close()
+
+	ret = proc.wait()
+	if ret != 0:
+		raise subprocess.CalledProcessError(ret, cmd)
 
 
 def rm(path: Path):

@@ -1,7 +1,5 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven;
 
-import com.google.gson.JsonParser;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
@@ -143,11 +141,7 @@ public final class FakeShapedCraftingRecipe extends AbstractFakeCraftingRecipe {
         ).apply(instance, FakeShapedCraftingRecipe::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, FakeShapedCraftingRecipe> STREAM_CODEC =
-                StreamCodec.composite(
-                        ByteBufCodecs.STRING_UTF8,
-                        Serializer::encodeToNetworkString,
-                        Serializer::decodeFromNetworkString
-                );
+                ByteBufCodecs.fromCodecWithRegistries(CODEC.codec());
 
         @Override
         public MapCodec<FakeShapedCraftingRecipe> codec() {
@@ -157,17 +151,6 @@ public final class FakeShapedCraftingRecipe extends AbstractFakeCraftingRecipe {
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, FakeShapedCraftingRecipe> streamCodec() {
             return STREAM_CODEC;
-        }
-
-        private static String encodeToNetworkString(FakeShapedCraftingRecipe recipe) {
-            return CODEC.codec().encodeStart(JsonOps.INSTANCE, recipe)
-                    .getOrThrow()
-                    .toString();
-        }
-
-        private static FakeShapedCraftingRecipe decodeFromNetworkString(String json) {
-            return CODEC.codec().parse(JsonOps.INSTANCE, JsonParser.parseString(json))
-                    .getOrThrow();
         }
     }
 }

@@ -73,6 +73,21 @@ function minecraftItemDefinitionPath(outputDir: string, itemId: string): string 
   return path.join(outputDir, 'assets', 'minecraft', 'items', `${itemId}.json`);
 }
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function logRecoverableGenerationSkip(item: DiscoveredItem, error: unknown): void {
+  console.error('');
+  console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+  console.error('SKIPPING ITEM DURING RESOURCE PACK GENERATION');
+  console.error(`Item: ${item.relativeDirectory}`);
+  console.error(`Type: ${item.type}`);
+  console.error(errorMessage(error));
+  console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+  console.error('');
+}
+
 async function copyOptionalMcmeta(
   sourceMcmetaPath: string | undefined,
   destinationMcmetaPath: string,
@@ -393,6 +408,8 @@ export async function generateResourcePack(
     generatedFiles: 0,
   };
 
+  let skippedItems = 0;
+
   await resetDirectory(options.outputDir);
 
   await writeJson(
@@ -411,19 +428,24 @@ export async function generateResourcePack(
   const carvedPumpkinCases: SelectorCase[] = [];
 
   for (const item of items) {
-    switch (item.type) {
-      case 'basic':
-        commandBlockCases.push(await generateBasicItem(item, context));
-        break;
-      case 'basic-3d':
-        commandBlockCases.push(await generateBasic3dItem(item, context));
-        break;
-      case 'cosmetic':
-        carvedPumpkinCases.push(await generateCosmetic(item, context));
-        break;
-      case 'charm':
-        commandBlockCases.push(await generateCharm(item, context));
-        break;
+    try {
+      switch (item.type) {
+        case 'basic':
+          commandBlockCases.push(await generateBasicItem(item, context));
+          break;
+        case 'basic-3d':
+          commandBlockCases.push(await generateBasic3dItem(item, context));
+          break;
+        case 'cosmetic':
+          carvedPumpkinCases.push(await generateCosmetic(item, context));
+          break;
+        case 'charm':
+          commandBlockCases.push(await generateCharm(item, context));
+          break;
+      }
+    } catch (error) {
+      skippedItems += 1;
+      logRecoverableGenerationSkip(item, error);
     }
   }
 
@@ -450,5 +472,6 @@ export async function generateResourcePack(
     commandBlockCases: commandBlockCases.length,
     carvedPumpkinCases: carvedPumpkinCases.length,
     generatedFiles: context.generatedFiles,
+    skippedItems,
   };
 }

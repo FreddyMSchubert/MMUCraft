@@ -1,7 +1,9 @@
-import path from 'path';
 import type { DiscoveredItem } from '../types';
 import { pathExists, listSubdirectories } from '../utils/fs';
-import { parseItemDefinition } from './parseItemDefinition';
+import {
+  isRecoverableItemAssetError,
+  parseItemDefinition,
+} from './parseItemDefinition';
 
 async function collectLeafDirectories(directory: string): Promise<string[]> {
   const subdirectories = await listSubdirectories(directory);
@@ -31,6 +33,20 @@ function ensureUnique<T>(
   }
 }
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function logRecoverableSkip(leafDirectory: string, error: unknown): void {
+  console.error('');
+  console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+  console.error('SKIPPING ITEM DUE TO RECOVERABLE ASSET ERROR');
+  console.error(`Leaf directory: ${leafDirectory}`);
+  console.error(errorMessage(error));
+  console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+  console.error('');
+}
+
 export async function discoverItems(sourceRoot: string): Promise<DiscoveredItem[]> {
   if (!(await pathExists(sourceRoot))) {
     throw new Error(`Source items directory does not exist: ${sourceRoot}`);
@@ -42,11 +58,20 @@ export async function discoverItems(sourceRoot: string): Promise<DiscoveredItem[
   }
 
   const leafDirectories = await collectLeafDirectories(sourceRoot);
-  const items = await Promise.all(
-    leafDirectories
-      .sort((left, right) => left.localeCompare(right))
-      .map((leafDirectory) => parseItemDefinition(sourceRoot, leafDirectory)),
-  );
+  const items: DiscoveredItem[] = [];
+
+  for (const leafDirectory of leafDirectories.sort((left, right) => left.localeCompare(right))) {
+    try {
+      items.push(await parseItemDefinition(sourceRoot, leafDirectory));
+    } catch (error) {
+      if (isRecoverableItemAssetError(error)) {
+        logRecoverableSkip(leafDirectory, error);
+        continue;
+      }
+
+      throw error;
+    }
+  }
 
   ensureUnique(items, (item) => item.relativeDirectory, 'Leaf item directories');
   ensureUnique(items, (item) => item.id, 'Item id values');

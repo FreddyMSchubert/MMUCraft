@@ -8,6 +8,8 @@ import urllib.request
 import zipfile
 import urllib.parse
 import http.cookiejar
+import hashlib
+import re
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
@@ -20,6 +22,8 @@ MERGED = PACKS / "main-pack"
 FINAL_ZIP = PACKS / "main-pack.zip"
 WEB_ZIP = ROOT / "services" / "web" / "public" / "packs" / "main.zip"
 CONFIG = HERE / "main-pack.config.json"
+SERVER_PROPERTIES_TEMPLATE = HERE.parent / "server.properties"
+GENERATED_SERVER_PROPERTIES = HERE.parent / "server.properties.generated"
 
 # Vanilla Tweaks Stuff
 
@@ -85,6 +89,30 @@ def build_vt_resourcepack_zip(code: str, zip_path: Path):
 	with open(zip_path, "wb") as f:
 		f.write(data)
 
+# Hashing Helpers
+
+def sha1_file(path: Path) -> str:
+	h = hashlib.sha1()
+	with path.open("rb") as f:
+		for chunk in iter(lambda: f.read(1024 * 1024), b""):
+			h.update(chunk)
+	return h.hexdigest()
+
+
+def set_property(text: str, key: str, value: str) -> str:
+	line = f"{key}={value}"
+	pattern = re.compile(rf"(?m)^{re.escape(key)}=.*$")
+	if pattern.search(text):
+		return pattern.sub(line, text, count=1)
+	return text.rstrip("\n") + "\n" + line + "\n"
+
+
+def write_server_properties(pack_sha1: str):
+	text = SERVER_PROPERTIES_TEMPLATE.read_text(encoding="utf-8")
+	text = set_property(text, "resource-pack-sha1", pack_sha1)
+	GENERATED_SERVER_PROPERTIES.write_text(text, encoding="utf-8", newline="\n")
+
+# General Stuff
 
 def run(*cmd, cwd=None):
 	cmd = [str(part) for part in cmd]
@@ -215,9 +243,14 @@ def main():
 	print("==> Publishing zip for the website")
 	shutil.copy2(FINAL_ZIP, WEB_ZIP)
 
+	pack_sha1 = sha1_file(FINAL_ZIP)
+	print(f"==> Computed resource-pack-sha1: {pack_sha1}")
+	write_server_properties(pack_sha1)
+
 	print("Done:")
 	print(" - canonical archive:", FINAL_ZIP)
 	print(" - served archive:   ", WEB_ZIP)
+	print(" - server settings:  ", GENERATED_SERVER_PROPERTIES)
 
 
 if __name__ == "__main__":

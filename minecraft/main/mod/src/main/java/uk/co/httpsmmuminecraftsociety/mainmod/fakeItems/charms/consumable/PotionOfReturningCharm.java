@@ -18,12 +18,6 @@ import java.util.Set;
 
 public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
 {
-    @Override
-    public String id()
-    {
-        return "cosmetic-charm-potion-of-returning";
-    }
-
     public static final int DRINK_DURATION_TICKS = 15 * 20;
     public static final int POST_DRINK_BAD_EFFECT_DURATION = 3 * 20;
     public static final int POST_DRINK_GOOD_EFFECT_DURATION = 15 * 20;

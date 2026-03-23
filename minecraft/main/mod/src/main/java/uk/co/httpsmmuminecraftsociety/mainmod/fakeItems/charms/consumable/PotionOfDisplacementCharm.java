@@ -22,12 +22,6 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     private static final int MAX_ATTEMPTS = 128;
 
     @Override
-    public String id()
-    {
-        return "cosmetic-charm-potion-of-displacement";
-    }
-
-    @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks) {
     }
 

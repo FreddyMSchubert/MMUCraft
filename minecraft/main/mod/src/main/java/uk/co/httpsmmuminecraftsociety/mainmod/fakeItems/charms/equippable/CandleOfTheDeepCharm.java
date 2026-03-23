@@ -10,14 +10,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 
 public class CandleOfTheDeepCharm implements Charm, EquippedTickCallbackCharm
 {
-    public static final String CANDLE_OF_THE_DEEP_CHARM_ID = "cosmetic-charm-candle-of-the-deep";
-
-    @Override
-    public String id()
-    {
-        return CANDLE_OF_THE_DEEP_CHARM_ID;
-    }
-
     @Override
     public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {

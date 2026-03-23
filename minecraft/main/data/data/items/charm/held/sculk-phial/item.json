@@ -1,0 +1,25 @@
+{
+	"title": "Sculk Phial",
+	"id": "charm-sculk-phial",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Used to store XP. (Currently stored: 0xp)",
+		"(Hold right click to siphon XP into the phial.,",
+		"Craft it with a glass bottle to reextract the xp.)"
+	],
+	"charm": {
+		"charmId": 28
+	},
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 999999999999999999.0,
+		"canAlwaysEat": true,
+		"hungerBars": 0.0,
+		"saturationBars": 0.0,
+		"directHearts": 0,
+		"effects": [],
+		"useRemainderItem": ""
+	}
+}

@@ -11,12 +11,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 public class UmbrellaCharm implements Charm, EquippedTickCallbackCharm
 {
     @Override
-    public String id()
-    {
-        return "cosmetic-charm-umbrella-staff";
-    }
-
-    @Override
     public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
         if (level.getGameTime() % 19 != 0) return stack;

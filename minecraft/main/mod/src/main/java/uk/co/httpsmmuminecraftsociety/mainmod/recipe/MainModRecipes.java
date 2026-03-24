@@ -18,6 +18,7 @@ public final class MainModRecipes {
     public static final RecipeSerializer<FakeShapedCraftingRecipe> FAKE_CRAFTING_SHAPED_SERIALIZER = new FakeShapedCraftingRecipe.Serializer();
     public static final RecipeSerializer<FakeShapelessCraftingRecipe> FAKE_CRAFTING_SHAPELESS_SERIALIZER = new FakeShapelessCraftingRecipe.Serializer();
     public static final RecipeSerializer<ExtractXPFromPhialRecipe> EXTRACT_XP_FROM_PHIAL_SERIALIZER = new ExtractXPFromPhialRecipe.Serializer();
+    public static final RecipeSerializer<WalletRecipe> WALLET_SERIALIZER = new WalletRecipe.Serializer();
 
     public static void register() {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_charmor"), COMBINE_CHARMOR_SERIALIZER);
@@ -27,5 +28,6 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shaped"), FAKE_CRAFTING_SHAPED_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shapeless"), FAKE_CRAFTING_SHAPELESS_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "extract_xp_from_phial"), EXTRACT_XP_FROM_PHIAL_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "wallet"), WALLET_SERIALIZER);
     }
 }

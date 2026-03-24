@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Mixin(ServerPlayer.class)
 public class RespawnNearDeath {
     private static final int MIN_DISTANCE = 64;
-    private static final int MAX_DISTANCE = 150;
+    private static final int MAX_DISTANCE = 256;
     private static final int MAX_SEARCHES = 16;
 
     @Inject(method = "die", at = @At("HEAD"))

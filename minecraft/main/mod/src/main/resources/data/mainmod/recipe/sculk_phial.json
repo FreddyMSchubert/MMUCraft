@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " S ",
+    "SBS",
+    " S "
+  ],
+  "key": {
+    "P": { "item": "minecraft:echo_shard" },
+    "B": { "item": "minecraft:experience_bottle" }
+  },
+  "result": {
+    "fakeitem": "charm-sculk-phial",
+    "count": 1
+  }
+}

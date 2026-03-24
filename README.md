@@ -248,6 +248,7 @@ we could also do sale vouchers where you have a 20% discount on the item you buy
 - thick socks - walk over powdered snow
 - frost walker works in boats
 - veinminer, blocked to a max of a few blocks, increased per level
+- respawn closer to death location after death
 - fall damage cant kill you only set to 1 hp
 - subnautica underwater ascend item
 - illness totem - slowly produce slimeballs
@@ -461,6 +462,7 @@ other good ideas
 - curse of disorder -> your items randomly swap places sometimes; wildflowers to break
 - curse of draining -> items auto-drain durability to a certain point slowly; lily of the valley / bottle o encahnting to break
 - curse of conductivity -> increased chance for the wearer to get struck by lightning in rain or very high chance during thunderstorm when held or worn; lightning rod to break
+- curse of sickness -> fills your inventory with unstackable slime balls over time. just annoying.
 
 other mid ideas
 - curse of sluggishness -> axe + sword + mace + trident + spear attack cooldown increase significantly

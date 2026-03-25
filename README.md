@@ -62,9 +62,23 @@ The surprising saturday & minigame world custom mods will be developed in this r
 
 All very unordered, potentially bad, some probably too hard / unfun, whatever - idea collection.
 
-- achievements who can get the most
+better
+
+- killing a mob turns you into it, kill all mobs (-> https://www.spigotmc.org/resources/morph.8846/)
+- stack of block sin alphabetical order - add something for X + U + V, also kelp block, enable mob drop heads for z Zombie, Budding Amethyst renamed to xeno-amethyst or smth
+- lucky block flat world - some lucky blocks give you a hint towards something mega obscure you have to do to win, like suffocating while standing in a cauldron. small world border to annoy each other.
+- most unique death messages (same message a second time doesnt count) - keepinv, instant respawn, respawn VERY CLOSE to death location
 - vegan run. eating meat, throwing eggs, killing any mob or player kills you immediately from moral decay. Kill dragon via accidental death by unfortunate bed placement. Increase tick speed slightly, make leaves drop more apples, make nether chests have more blaze rods.
-- bloodlust challenge. you cant eat, killing things satisfyes your hunger.
+- you can only break oak logs, stone, coal ore, iron ore, diamond ore, end stone, gravel, cactus; you can only place crafting table, furnace, obsidian, torch, oxidised copper stairs, TNT, oak boats, green beds. defeat dragon
+- bloodlust challenge. you cant eat, killing things satisfyes your hunger. killing players is an enchanted golden apple, played with small world border. longest time between deaths wins.
+- randomised block / mob / chest loot tables, goal: die to the void
+- who can get the most of item x in their ender chest (e.g. watermelons). griefing and theft is encouraged and recommended.
+- https://modrinth.com/datapack/chunklock, whoever gets the most gold wins.
+- one block (per person that joins)
+
+unserted / potentially worse
+
+- achievements who can get the most
 - zombie challenge - being in sun burns you
 - randomized mob challenge - everybody spawns in as a random mob, find each other
 - no block placing
@@ -77,11 +91,9 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - skyblock
 - https://modrinth.com/mod/hexlands
 - insanely limited world size
-- https://modrinth.com/datapack/chunklock
 - collect every type of flower
 - perma-night
 - a totally normal vanilla world (herobrine) -> https://modrinth.com/datapack/from-the-fog https://www.curseforge.com/minecraft/mc-mods/sever-side-horror https://www.curseforge.com/minecraft/texture-packs/true-darkness
-- one block
 - summon herobrine
 - https://modrinth.com/mod/circumnavigate
 - the floor is lava - every block that is below the sun has a 1 in 6 chance not to turn to lava
@@ -92,7 +104,6 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - parcour civilization world gen
 - golden age minecraft recipes & world gen & nether
 - sky islands world gen
-- lucky block flat world - each block broken gives you a 1 in 100 chance to win the challenge
 - https://modrinth.com/mod/gwg
 - cave world world gen
 - superflat world gen
@@ -103,25 +114,20 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 - catch as many unique fish as possible
 - hardcore
 - every half an hour another players pos is revealed in chat. person who kills them gets a point. most points wins
-- who can get the most of item x in their ender chest (e.g. watermelons)
 - hide and seek. special retextured blocks that give a point when broken hidden around map. every 10 minutes you get your relative direction to the nearest one
 - hide and seek - start a game with command, players get a compass pointing to you when outside a certain distance to you. if they dont find you within a certain time you get a point, otherwise winner gets a point. need some way to regulate people going underground.
 - most unique effects applied at once
 - most unique mobs killed (kill each mob once)
 - most wardens killed
-- most unique death messages (same message a second time doesnt count)
 - most sniffers bread
 - speedrun, quickest x e.g. ender dragon death, wind charged 3 book
 - one hit wither with mace
 - longest online time between deaths, everyone can see each others positions, small world border
-- randomised block / mob loot tables
 - randomised crafting recipes
 - everyone shares a synced inventory trying to kill the dragon
 - every like 2 minutes your location is swapped with another player's
-- you can only break oak logs, stone, coal ore, iron ore, diamond ore, end stone, gravel, cactus; you can only place crafting table, furnace, obsidian, torch, oxidised copper stairs, TNT, oak boats, green beds. defeat dragon
 - monster hunter alphabet challenge - kill mobs in alphabetical order
 - fetchr / bingo full or only one line - maybe as gamemode
-- stack of block sin alphabetical order - add something for X + U + V, also kelp block, enable mob drop heads for z Zombie
 
 With some of these multiple players could get them at the same time, so we should in the ScoreKeeper just take record whenever theres a clear winner in the current result state, even if another player also wins a millisecond later, thus making winning together essentially randomize the winner.
 

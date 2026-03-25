@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.UseRemainder;
@@ -79,6 +80,6 @@ public record ConsumableItemFeature(
 
         // use remainder component
         if (useRemainder != ItemStack.EMPTY)
-            stack.set(DataComponents.USE_REMAINDER, new UseRemainder(useRemainder));
+            stack.set(DataComponents.USE_REMAINDER, new UseRemainder(ItemStackTemplate.fromNonEmptyStack(useRemainder)));
     }
 }

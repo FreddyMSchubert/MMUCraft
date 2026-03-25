@@ -46,7 +46,7 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
     @Override
     public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
     {
-        if (level.random.nextInt(PER_TICK_CARROT_EAT_CHANCE) != 0) {
+        if (level.getRandom().nextInt(PER_TICK_CARROT_EAT_CHANCE) != 0) {
             return stack;
         }
 
@@ -68,7 +68,7 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
             return stack;
         }
 
-        int slot = carrotSlots.get(level.random.nextInt(carrotSlots.size()));
+        int slot = carrotSlots.get(level.getRandom().nextInt(carrotSlots.size()));
         ItemStack foodStack = inventory.getItem(slot);
 
         if (foodStack.isEmpty()) {
@@ -81,7 +81,7 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
                 SoundEvents.GENERIC_EAT,
                 SoundSource.PLAYERS,
                 0.8F,
-                0.9F + level.random.nextFloat() * 0.2F
+                0.9F + level.getRandom().nextFloat() * 0.2F
         );
 
         ItemStack result = foodStack.finishUsingItem(level, player);

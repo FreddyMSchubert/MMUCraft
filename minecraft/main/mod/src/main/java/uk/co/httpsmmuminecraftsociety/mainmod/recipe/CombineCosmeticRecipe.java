@@ -1,14 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.recipe;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
@@ -21,14 +14,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
 import java.util.List;
 
-public class CombineCosmeticRecipe implements CraftingRecipe
+public class CombineCosmeticRecipe extends CustomRecipe
 {
-    private final int trashVal; // dummy field because minecraft forces their recipes data driven. well data drive this important value.
-
-    public CombineCosmeticRecipe(int trashVal) {
-        this.trashVal = trashVal;
-    }
-
     private record craftingInfo(boolean craftable, ItemStack armor, ItemStack cosmetic) {}
 
     private craftingInfo getCraftingInfo(CraftingInput input)
@@ -66,7 +53,7 @@ public class CombineCosmeticRecipe implements CraftingRecipe
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider)
+    public ItemStack assemble(CraftingInput input)
     {
         craftingInfo cinfo = getCraftingInfo(input);
 
@@ -86,15 +73,15 @@ public class CombineCosmeticRecipe implements CraftingRecipe
     }
 
     @Override
-    public RecipeSerializer<? extends CraftingRecipe> getSerializer()
-    {
-        return MainModRecipes.COMBINE_COSMETIC_SERIALIZER;
-    }
-
-    @Override
     public PlacementInfo placementInfo()
     {
         return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeSerializer<? extends CustomRecipe> getSerializer()
+    {
+        return MainModRecipes.COMBINE_COSMETIC_SERIALIZER;
     }
 
     @Override
@@ -107,29 +94,5 @@ public class CombineCosmeticRecipe implements CraftingRecipe
     public RecipeBookCategory recipeBookCategory()
     {
         return RecipeBookCategories.CRAFTING_MISC;
-    }
-
-    public static final class Serializer implements RecipeSerializer<CombineCosmeticRecipe> {
-
-        public static final MapCodec<CombineCosmeticRecipe> CODEC =
-                RecordCodecBuilder.mapCodec(instance -> instance.group(
-                        ExtraCodecs.POSITIVE_INT.fieldOf("trashVal").forGetter(r -> r.trashVal)
-                ).apply(instance, CombineCosmeticRecipe::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, CombineCosmeticRecipe> STREAM_CODEC =
-                StreamCodec.composite(
-                        ByteBufCodecs.INT, r -> r.trashVal,
-                        CombineCosmeticRecipe::new
-                );
-
-        @Override
-        public MapCodec<CombineCosmeticRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, CombineCosmeticRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
     }
 }

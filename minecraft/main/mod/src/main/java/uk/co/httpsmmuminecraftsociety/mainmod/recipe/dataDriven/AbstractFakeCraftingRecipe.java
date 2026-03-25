@@ -2,14 +2,10 @@ package uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.PlacementInfo;
-import net.minecraft.world.item.crafting.RecipeBookCategories;
-import net.minecraft.world.item.crafting.RecipeBookCategory;
+import net.minecraft.world.item.crafting.*;
 
-public abstract class AbstractFakeCraftingRecipe implements CraftingRecipe {
+public abstract class AbstractFakeCraftingRecipe extends CustomRecipe
+{
     protected final FakeResult result;
 
     protected AbstractFakeCraftingRecipe(FakeResult result) {
@@ -17,8 +13,9 @@ public abstract class AbstractFakeCraftingRecipe implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider) {
-        return result.createStack();
+    public ItemStack assemble(CraftingInput input)
+    {
+        return null;
     }
 
     @Override

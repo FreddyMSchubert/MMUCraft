@@ -25,8 +25,8 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
         {
             Phantom phantom = new Phantom(EntityType.PHANTOM, level);
 
-            double offsetX = (level.random.nextDouble() - 0.5D) * 3.0D;
-            double offsetZ = (level.random.nextDouble() - 0.5D) * 3.0D;
+            double offsetX = (level.getRandom().nextDouble() - 0.5D) * 3.0D;
+            double offsetZ = (level.getRandom().nextDouble() - 0.5D) * 3.0D;
 
             phantom.setPos(
                     player.getX() + offsetX,

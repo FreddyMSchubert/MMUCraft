@@ -52,7 +52,7 @@ public record ComponentAwareItem(String raw, Holder<Item> item, DataComponentPat
 
     public ItemStack createStack(int count) {
         try {
-            return new ItemInput(item, components).createItemStack(count, false);
+            return new ItemInput(item, components).createItemStack(count);
         } catch (CommandSyntaxException e) {
             throw new IllegalStateException("Invalid item result '" + asStringForErrors() + "'", e);
         }
@@ -94,7 +94,7 @@ public record ComponentAwareItem(String raw, Holder<Item> item, DataComponentPat
     private static <T> DataResult<ComponentAwareItem> parse(DynamicOps<T> ops, String raw) {
         return extractRegistries(ops).flatMap(registries -> {
             try {
-                ItemParser.ItemResult parsed = new ItemParser(registries).parse(new StringReader(raw));
+                ItemInput parsed = new ItemParser(registries).parse(new StringReader(raw));
                 return DataResult.success(new ComponentAwareItem(raw, parsed.item(), parsed.components()));
             } catch (CommandSyntaxException e) {
                 return DataResult.error(() -> "Invalid item string '" + raw + "': " + e.getMessage());
@@ -107,8 +107,7 @@ public record ComponentAwareItem(String raw, Holder<Item> item, DataComponentPat
             return DataResult.success(input.raw);
         }
 
-        return extractRegistries(ops)
-                .map(registries -> new ItemInput(input.item, input.components).serialize(registries));
+        return DataResult.error(() -> "Cannot encode ComponentAwareItem without original raw item string");
     }
 
     private static <T> DataResult<HolderLookup.Provider> extractRegistries(DynamicOps<T> ops) {

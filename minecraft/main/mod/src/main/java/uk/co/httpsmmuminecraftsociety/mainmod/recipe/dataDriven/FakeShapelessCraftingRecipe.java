@@ -2,12 +2,9 @@ package uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
@@ -17,6 +14,12 @@ import java.util.Comparator;
 import java.util.List;
 
 public final class FakeShapelessCraftingRecipe extends AbstractFakeCraftingRecipe {
+    public static final MapCodec<FakeShapelessCraftingRecipe> CODEC =
+            RecordCodecBuilder.mapCodec(instance -> instance.group(
+                    CodecUtils.SHAPELESS_INGREDIENTS_CODEC.fieldOf("ingredients").forGetter(r -> r.ingredients),
+                    FakeResult.CODEC.fieldOf("result").forGetter(r -> r.result)
+            ).apply(instance, FakeShapelessCraftingRecipe::new));
+
     private final List<FakeIngredient> ingredients;
 
     public FakeShapelessCraftingRecipe(List<FakeIngredient> ingredients, FakeResult result) {
@@ -51,14 +54,9 @@ public final class FakeShapelessCraftingRecipe extends AbstractFakeCraftingRecip
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider)
+    public ItemStack assemble(CraftingInput input)
     {
         return result.createStack();
-    }
-
-    @Override
-    public RecipeSerializer<? extends FakeShapelessCraftingRecipe> getSerializer() {
-        return MainModRecipes.FAKE_CRAFTING_SHAPELESS_SERIALIZER;
     }
 
     private static boolean matchBacktracking(List<FakeIngredient> ingredients,
@@ -84,23 +82,9 @@ public final class FakeShapelessCraftingRecipe extends AbstractFakeCraftingRecip
         return false;
     }
 
-    public static final class Serializer implements RecipeSerializer<FakeShapelessCraftingRecipe> {
-        public static final MapCodec<FakeShapelessCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                CodecUtils.SHAPELESS_INGREDIENTS_CODEC.fieldOf("ingredients").forGetter(r -> r.ingredients),
-                FakeResult.CODEC.fieldOf("result").forGetter(r -> r.result)
-        ).apply(instance, FakeShapelessCraftingRecipe::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, FakeShapelessCraftingRecipe> STREAM_CODEC =
-                ByteBufCodecs.fromCodecWithRegistries(CODEC.codec());
-
-        @Override
-        public MapCodec<FakeShapelessCraftingRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, FakeShapelessCraftingRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
+    @Override
+    public RecipeSerializer<? extends CustomRecipe> getSerializer()
+    {
+        return MainModRecipes.FAKE_CRAFTING_SHAPELESS_SERIALIZER;
     }
 }

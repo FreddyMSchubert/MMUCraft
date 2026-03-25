@@ -3,10 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.utils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.BundleItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
@@ -55,16 +52,16 @@ public final class WalletUtils
         BundleContents contents = bundleStack.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY);
 
         long dabloons = 0;
-        for (ItemStack stack : contents.items()) {
+        for (ItemStackTemplate stack : contents.items()) {
             CoinDef coin = getCoinDef(stack);
             if (coin == null) {
                 MainMod.LOGGER.info("found a non-coin stack in the wallet. weird. returning.");
                 return;
             }
-            dabloons += (long) coin.value() * stack.getCount();
+            dabloons += (long) coin.value() * stack.count();
         }
 
-        List<ItemStack> newCoins = new ArrayList<>();
+        List<ItemStackTemplate> newCoins = new ArrayList<>();
         long remaining = dabloons;
 
         for (CoinDef coin : COINS_DESC) {
@@ -75,7 +72,7 @@ public final class WalletUtils
                 ItemStack coinStack = FakeItems.ID_MAP.get(coin.id()).createItemStack();
                 long take = Math.min(count, coinStack.getMaxStackSize());
                 coinStack.setCount((int)take);
-                newCoins.add(coinStack);
+                newCoins.add(ItemStackTemplate.fromNonEmptyStack(coinStack));
                 count -= take;
             }
 
@@ -99,12 +96,12 @@ public final class WalletUtils
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return tag.getBooleanOr(MARKER_NBT_ID, false);
     }
-    public static boolean isCoin(ItemStack stack)
+    public static boolean isCoin(ItemStackTemplate stack)
     {
         return getCoinDef(stack) != null;
     }
 
-    private static @Nullable CoinDef getCoinDef(ItemStack stack)
+    private static @Nullable CoinDef getCoinDef(ItemStackTemplate stack)
     {
         CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
         if (cmd.strings().isEmpty()) return null;

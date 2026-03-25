@@ -22,14 +22,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.SculkPhialCharm;
 
 import java.util.List;
 
-public class ExtractXPFromPhialRecipe implements CraftingRecipe
+public class ExtractXPFromPhialRecipe extends CustomRecipe
 {
-    private final int trashVal;
-
-    public ExtractXPFromPhialRecipe(int trashVal) {
-        this.trashVal = trashVal;
-    }
-
     @Override
     public boolean matches(CraftingInput inputs, Level level)
     {
@@ -62,9 +56,9 @@ public class ExtractXPFromPhialRecipe implements CraftingRecipe
     }
 
     @Override
-    public ItemStack assemble(CraftingInput inputs, HolderLookup.Provider provider)
+    public ItemStack assemble(CraftingInput input)
     {
-        ItemStack phial = findFilledPhial(inputs);
+        ItemStack phial = findFilledPhial(input);
         if (phial.isEmpty()) return ItemStack.EMPTY;
 
         int storedXp = getStoredXp(phial);
@@ -138,15 +132,15 @@ public class ExtractXPFromPhialRecipe implements CraftingRecipe
     }
 
     @Override
-    public RecipeSerializer<? extends CraftingRecipe> getSerializer()
-    {
-        return MainModRecipes.EXTRACT_XP_FROM_PHIAL_SERIALIZER;
-    }
-
-    @Override
     public PlacementInfo placementInfo()
     {
         return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeSerializer<? extends CustomRecipe> getSerializer()
+    {
+        return MainModRecipes.EXTRACT_XP_FROM_PHIAL_SERIALIZER;
     }
 
     @Override
@@ -159,29 +153,5 @@ public class ExtractXPFromPhialRecipe implements CraftingRecipe
     public RecipeBookCategory recipeBookCategory()
     {
         return RecipeBookCategories.CRAFTING_MISC;
-    }
-
-    public static final class Serializer implements RecipeSerializer<ExtractXPFromPhialRecipe> {
-
-        public static final MapCodec<ExtractXPFromPhialRecipe> CODEC =
-                RecordCodecBuilder.mapCodec(instance -> instance.group(
-                        ExtraCodecs.POSITIVE_INT.fieldOf("trashVal").forGetter(r -> r.trashVal)
-                ).apply(instance, ExtractXPFromPhialRecipe::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, ExtractXPFromPhialRecipe> STREAM_CODEC =
-                StreamCodec.composite(
-                        ByteBufCodecs.INT, r -> r.trashVal,
-                        ExtractXPFromPhialRecipe::new
-                );
-
-        @Override
-        public MapCodec<ExtractXPFromPhialRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, ExtractXPFromPhialRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
     }
 }

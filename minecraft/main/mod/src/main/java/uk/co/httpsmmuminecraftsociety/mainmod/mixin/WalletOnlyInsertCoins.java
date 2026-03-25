@@ -6,6 +6,7 @@ import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BundleItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,7 +40,7 @@ public abstract class WalletOnlyInsertCoins
             MainMod.LOGGER.info("overrideStackedOnOther HEAD: slotstack (the stack wallet was moved to) is empty");
             return;
         }
-        if (!WalletUtils.isCoin(slotStack)) {
+        if (!WalletUtils.isCoin(ItemStackTemplate.fromNonEmptyStack(slotStack))) {
             MainMod.LOGGER.info("overrideStackedOnOther HEAD: item wasnt a coin - returning false!");
             cir.setReturnValue(false);
         }
@@ -65,7 +66,7 @@ public abstract class WalletOnlyInsertCoins
             MainMod.LOGGER.info("overrideOtherStackedOnMe HEAD: carried stack is empty");
             return;
         }
-        if (!WalletUtils.isCoin(carriedStack)) {
+        if (!WalletUtils.isCoin(ItemStackTemplate.fromNonEmptyStack(carriedStack))) {
             MainMod.LOGGER.info("overrideOtherStackedOnMe HEAD: item wasnt a coin - returning false!");
             cir.setReturnValue(false);
         }

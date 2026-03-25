@@ -13,9 +13,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
 public class HikingBootsCharm implements Charm, BaseItemChangeCallbackCharm
 {
-    public static final String HIKING_BOOTS_CHARM_ID_BEGINNING = "cosmetic-charm-hiking-boots-";
-    private static final Identifier STEP_ID = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "hiking_boots_step_id");
-
     private final int level;
 
     public HikingBootsCharm(int level) {

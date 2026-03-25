@@ -1,15 +1,15 @@
 {
 	"required": true,
 	"package": "uk.co.httpsmmuminecraftsociety.mainmod.mixin",
-	"compatibilityLevel": "JAVA_21",
+	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-      "ArmorAddToolTipFirstTick",
-      "UpdateArmorTooltipAfterAnvilUse",
-      "KittyPajamaScareCreeper",
-      "NoSoulboundItemDropping",
-      "RespawnNearDeath",
-      "XPBottlesDropMoreXPFromPhials",
-      "WalletOnlyInsertCoins"
+		"ArmorAddToolTipFirstTick",
+		"UpdateArmorTooltipAfterAnvilUse",
+		"KittyPajamaScareCreeper",
+		"NoSoulboundItemDropping",
+		"RespawnNearDeath",
+		"XPBottlesDropMoreXPFromPhials",
+		"WalletOnlyInsertCoins"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -35,9 +35,26 @@ public class MainMod implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Hello MMU!");
 
+        FakeItemsCommand.init();
+        MainModRecipes.register();
+        AUTH_MANAGER.onInitialize();
+
+        ServerLifecycleEvents.SERVER_STARTED.register(this::registerContent);
+    }
+
+    private void registerContent(MinecraftServer server)
+    {
+        // gamerules
+        for (ServerLevel level : server.getAllLevels()) {
+            level.getGameRules().set(GameRules.MAX_MINECART_SPEED, 20, server);
+            level.getGameRules().set(GameRules.REDUCED_DEBUG_INFO, true, server);
+            level.getGameRules().set(GameRules.SPAWN_PHANTOMS, false, server);
+        }
+
+        // content
         DataLoader.init();
 
-        ServerTickEvents.END_WORLD_TICK.register(CharmsManager::onPlayerTick);
+        ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
@@ -45,19 +62,5 @@ public class MainMod implements ModInitializer {
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
         DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);
         ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
-        ServerLifecycleEvents.SERVER_STARTED.register(this::applyGameRules);
-
-        FakeItemsCommand.init();
-        MainModRecipes.register();
-        AUTH_MANAGER.onInitialize();
-    }
-
-    private void applyGameRules(MinecraftServer server)
-    {
-        for (ServerLevel level : server.getAllLevels()) {
-            // level.getGameRules().set(GameRules.MAX_MINECART_SPEED, 20, server);
-            level.getGameRules().set(GameRules.REDUCED_DEBUG_INFO, true, server);
-            level.getGameRules().set(GameRules.SPAWN_PHANTOMS, false, server);
-        }
     }
 }

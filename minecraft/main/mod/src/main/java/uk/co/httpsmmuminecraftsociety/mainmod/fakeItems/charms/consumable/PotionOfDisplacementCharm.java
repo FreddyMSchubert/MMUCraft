@@ -82,8 +82,8 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             return null;
         }
 
-        int x = Mth.nextInt(level.random, minX, maxX);
-        int z = Mth.nextInt(level.random, minZ, maxZ);
+        int x = Mth.nextInt(level.getRandom(), minX, maxX);
+        int z = Mth.nextInt(level.getRandom(), minZ, maxZ);
 
         return possibleSpawnPos(x, z, level);
     }

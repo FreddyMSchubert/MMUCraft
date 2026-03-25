@@ -30,14 +30,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import java.util.Arrays;
 import java.util.Optional;
 
-public class CombineCharmorRecipe implements CraftingRecipe
+public class CombineCharmorRecipe extends CustomRecipe
 {
-    private final int trashVal; // dummy field because minecraft forces their recipes data driven. well data drive this important value.
-
-    public CombineCharmorRecipe(int trashVal) {
-        this.trashVal = trashVal;
-    }
-
     private record craftingInfo(boolean craftable, ItemStack armor, ItemStack charm) {}
 
     private craftingInfo getCraftingInfo(CraftingInput input)
@@ -73,19 +67,8 @@ public class CombineCharmorRecipe implements CraftingRecipe
         return getCraftingInfo(input).craftable && input.ingredientCount() == 2;
     }
 
-    private String getArmorMaterialType(ItemStack stack) {
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND)) return "diamond";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE)) return "netherite";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_IRON)) return "iron";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_GOLD)) return "gold";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_COPPER)) return "copper";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_LEATHER)) return "leather";
-        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_CHAINMAIL)) return "chainmail";
-        return "";
-    }
-
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider)
+    public ItemStack assemble(CraftingInput input)
     {
         craftingInfo cinfo = getCraftingInfo(input);
         if (!cinfo.craftable) return ItemStack.EMPTY;
@@ -145,16 +128,28 @@ public class CombineCharmorRecipe implements CraftingRecipe
         return resultStack;
     }
 
-    @Override
-    public RecipeSerializer<? extends CraftingRecipe> getSerializer()
-    {
-        return MainModRecipes.COMBINE_CHARMOR_SERIALIZER;
+    private String getArmorMaterialType(ItemStack stack) {
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND)) return "diamond";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE)) return "netherite";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_IRON)) return "iron";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_GOLD)) return "gold";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_COPPER)) return "copper";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_LEATHER)) return "leather";
+        if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_CHAINMAIL)) return "chainmail";
+        return "";
     }
+
 
     @Override
     public PlacementInfo placementInfo()
     {
         return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeSerializer<? extends CustomRecipe> getSerializer()
+    {
+        return MainModRecipes.COMBINE_CHARMOR_SERIALIZER;
     }
 
     @Override
@@ -167,29 +162,5 @@ public class CombineCharmorRecipe implements CraftingRecipe
     public RecipeBookCategory recipeBookCategory()
     {
         return RecipeBookCategories.CRAFTING_MISC;
-    }
-
-    public static final class Serializer implements RecipeSerializer<CombineCharmorRecipe> {
-
-        public static final MapCodec<CombineCharmorRecipe> CODEC =
-                RecordCodecBuilder.mapCodec(instance -> instance.group(
-                        ExtraCodecs.POSITIVE_INT.fieldOf("trashVal").forGetter(r -> r.trashVal)
-                ).apply(instance, CombineCharmorRecipe::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, CombineCharmorRecipe> STREAM_CODEC =
-                StreamCodec.composite(
-                        ByteBufCodecs.INT, r -> r.trashVal,
-                        CombineCharmorRecipe::new
-                );
-
-        @Override
-        public MapCodec<CombineCharmorRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, CombineCharmorRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
     }
 }

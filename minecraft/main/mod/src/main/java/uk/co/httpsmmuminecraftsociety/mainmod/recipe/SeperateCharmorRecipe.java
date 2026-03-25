@@ -21,14 +21,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
 
-public class SeperateCharmorRecipe implements CraftingRecipe
+public class SeperateCharmorRecipe extends CustomRecipe
 {
-    private final int trashVal; // dummy field because minecraft forces their recipes data driven. well data drive this important value.
-
-    public SeperateCharmorRecipe(int trashVal) {
-        this.trashVal = trashVal;
-    }
-
     @Override
     public boolean matches(CraftingInput recipeInput, Level level)
     {
@@ -42,9 +36,9 @@ public class SeperateCharmorRecipe implements CraftingRecipe
     }
 
     @Override
-    public ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider)
+    public ItemStack assemble(CraftingInput input)
     {
-        ItemStack inputStack = recipeInput.items().getFirst();
+        ItemStack inputStack = input.items().getFirst();
         List<FakeItem> charms = CharmsManager.getAbilitiesFromItemStack(inputStack);
         return charms.getLast().createItemStack();
     }
@@ -79,15 +73,15 @@ public class SeperateCharmorRecipe implements CraftingRecipe
     }
 
     @Override
-    public RecipeSerializer<? extends CraftingRecipe> getSerializer()
-    {
-        return MainModRecipes.SEPERATE_CHARMOR_SERIALIZER;
-    }
-
-    @Override
     public PlacementInfo placementInfo()
     {
         return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeSerializer<? extends CustomRecipe> getSerializer()
+    {
+        return MainModRecipes.SEPERATE_CHARMOR_SERIALIZER;
     }
 
     @Override
@@ -100,29 +94,5 @@ public class SeperateCharmorRecipe implements CraftingRecipe
     public RecipeBookCategory recipeBookCategory()
     {
         return RecipeBookCategories.CRAFTING_MISC;
-    }
-
-    public static final class Serializer implements RecipeSerializer<SeperateCharmorRecipe> {
-
-        public static final MapCodec<SeperateCharmorRecipe> CODEC =
-                RecordCodecBuilder.mapCodec(instance -> instance.group(
-                        ExtraCodecs.POSITIVE_INT.fieldOf("trashVal").forGetter(r -> r.trashVal)
-                ).apply(instance, SeperateCharmorRecipe::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, SeperateCharmorRecipe> STREAM_CODEC =
-                StreamCodec.composite(
-                        ByteBufCodecs.INT, r -> r.trashVal,
-                        SeperateCharmorRecipe::new
-                );
-
-        @Override
-        public MapCodec<SeperateCharmorRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, SeperateCharmorRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
     }
 }

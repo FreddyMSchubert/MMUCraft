@@ -82,7 +82,7 @@ public class CraftingStaffCharm implements Charm, UseCallbackCharm
                 CraftingRecipe recipe = foundHolder.value();
 
                 if (resultContainer.setRecipeUsed(serverPlayer, foundHolder)) {
-                    ItemStack assembled = recipe.assemble(craftingInput, serverLevel.registryAccess());
+                    ItemStack assembled = recipe.assemble(craftingInput);
                     if (assembled.isItemEnabled(serverLevel.enabledFeatures())) {
                         result = assembled;
                     }

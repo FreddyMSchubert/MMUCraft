@@ -57,7 +57,7 @@ public class RespawnNearDeath {
         int x = offsetCoordinate(deathPos.getX());
         int z = offsetCoordinate(deathPos.getZ());
 
-        BlockPos found = PlayerSpawnFinder.getSpawnPosInChunk(level, new ChunkPos(new BlockPos(x, 0, z)));
+        BlockPos found = PlayerSpawnFinder.getSpawnPosInChunk(level, new ChunkPos(x, z));
         if (found == null) {
             return null;
         }

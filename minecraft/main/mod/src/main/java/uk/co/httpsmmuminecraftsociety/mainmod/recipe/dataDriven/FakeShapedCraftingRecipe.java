@@ -8,6 +8,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
@@ -19,6 +20,14 @@ import java.util.Map;
 import java.util.Set;
 
 public final class FakeShapedCraftingRecipe extends AbstractFakeCraftingRecipe {
+
+    public static final MapCodec<FakeShapedCraftingRecipe> CODEC =
+            RecordCodecBuilder.mapCodec(instance -> instance.group(
+                    CodecUtils.PATTERN_CODEC.fieldOf("pattern").forGetter(r -> r.pattern),
+                    CodecUtils.KEY_CODEC.fieldOf("key").forGetter(r -> r.key),
+                    FakeResult.CODEC.fieldOf("result").forGetter(r -> r.result)
+            ).apply(instance, FakeShapedCraftingRecipe::new));
+
     private final List<String> pattern;
     private final Map<String, FakeIngredient> key;
     private final int width;
@@ -96,14 +105,9 @@ public final class FakeShapedCraftingRecipe extends AbstractFakeCraftingRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider)
+    public ItemStack assemble(CraftingInput input)
     {
         return result.createStack();
-    }
-
-    @Override
-    public RecipeSerializer<? extends FakeShapedCraftingRecipe> getSerializer() {
-        return MainModRecipes.FAKE_CRAFTING_SHAPED_SERIALIZER;
     }
 
     private boolean matchesAt(CraftingInput input, int offX, int offY, boolean mirrored) {
@@ -133,24 +137,9 @@ public final class FakeShapedCraftingRecipe extends AbstractFakeCraftingRecipe {
         return cells.get(recipeX + localY * width);
     }
 
-    public static final class Serializer implements RecipeSerializer<FakeShapedCraftingRecipe> {
-        public static final MapCodec<FakeShapedCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                CodecUtils.PATTERN_CODEC.fieldOf("pattern").forGetter(r -> r.pattern),
-                CodecUtils.KEY_CODEC.fieldOf("key").forGetter(r -> r.key),
-                FakeResult.CODEC.fieldOf("result").forGetter(r -> r.result)
-        ).apply(instance, FakeShapedCraftingRecipe::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, FakeShapedCraftingRecipe> STREAM_CODEC =
-                ByteBufCodecs.fromCodecWithRegistries(CODEC.codec());
-
-        @Override
-        public MapCodec<FakeShapedCraftingRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, FakeShapedCraftingRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
+    @Override
+    public RecipeSerializer<? extends CustomRecipe> getSerializer()
+    {
+        return MainModRecipes.FAKE_CRAFTING_SHAPED_SERIALIZER;
     }
 }

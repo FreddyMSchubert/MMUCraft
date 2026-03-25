@@ -37,7 +37,7 @@ spec:
             - name: TYPE
               value: FABRIC
             - name: VERSION
-              value: "1.21.11"
+              value: "26.1"
             - name: MODRINTH_PROJECTS
               value: fabric-api
             - name: MEMORY

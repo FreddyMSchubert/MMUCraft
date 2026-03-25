@@ -1,7 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.datagen;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -13,7 +13,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 import java.util.concurrent.CompletableFuture;
 
-public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
+public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
 {
     public static final TagKey<Item> CHARM_COMBINABLE_ARMOR_ITEMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_combinable_armor_items"));
     public static final TagKey<Item> SINGLE_CHARM_COMBINABLE_ARMOR_ITEMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "single_combinable_armor_items"));
@@ -36,16 +36,20 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
 
     public static final TagKey<Item> CARPETS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "carpets"));
 
-    public ModItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture)
+    public ModItemTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture)
     {
-        super(output, registriesFuture);
+        super(output, registryLookupFuture);
     }
 
     @Override
     protected void addTags(HolderLookup.Provider provider)
     {
-        valueLookupBuilder(ItemTags.DYEABLE)
+        // Dyeability
+
+        valueLookupBuilder(ItemTags.CAULDRON_CAN_REMOVE_DYE)
                 .add(Items.CARVED_PUMPKIN);
+
+        // Charm Stuff
 
         valueLookupBuilder(CHARM_COMBINABLE_ARMOR_ITEMS)
                 .add(Items.LEATHER_BOOTS)
@@ -128,6 +132,7 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
                 .add(Items.NETHERITE_LEGGINGS)
                 .add(Items.NETHERITE_CHESTPLATE);
 
+        // Cosmetics Stuff
 
         valueLookupBuilder(COSMETIC_COMBINABLE_ARMOR_ITEMS)
                 .add(Items.DIAMOND_HELMET)
@@ -138,6 +143,8 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider
                 .add(Items.COPPER_HELMET)
                 .add(Items.LEATHER_HELMET)
                 .add(Items.NETHERITE_HELMET);
+
+        // Random tags that aren't in vanilla
 
         valueLookupBuilder(FISHES)
                 .add(Items.SALMON)

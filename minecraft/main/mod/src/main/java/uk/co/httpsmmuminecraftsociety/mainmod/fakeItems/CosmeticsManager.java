@@ -71,7 +71,7 @@ public final class CosmeticsManager {
         // component time
         replica.set(DataComponents.MAX_STACK_SIZE, 1);
         replica.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, false);
-        replica.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Cosmetic reskin of " + helmet.getItem().getName().getString() + "."))));
+        replica.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Cosmetic reskin of " + helmet.getItem().getName(helmet).getString() + "."))));
 
         replica.set(DataComponents.MAX_DAMAGE, helmet.getMaxDamage());
         replica.set(DataComponents.DAMAGE, helmet.getDamageValue());

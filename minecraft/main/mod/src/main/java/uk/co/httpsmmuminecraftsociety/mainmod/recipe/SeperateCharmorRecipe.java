@@ -1,15 +1,8 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.recipe;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.*;
@@ -17,6 +10,8 @@ import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
@@ -49,8 +44,14 @@ public class SeperateCharmorRecipe extends CustomRecipe
 
         int[] charmSlots = nbt.getIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID).get();
         if (charmSlots.length == 0) return stack;
+        int removedCharmId = charmSlots[charmSlots.length - 1];
         int[] newCharmSlots = new int[charmSlots.length - 1];
         System.arraycopy(charmSlots, 0, newCharmSlots, 0, newCharmSlots.length);
+
+        Charm removedCharm = CharmsManager.charmFromId(removedCharmId);
+        if (removedCharm instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
+            baseItemChangeCallbackCharm.disableEffectForItem(stack);
+        }
 
         nbt.putIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID, newCharmSlots);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));

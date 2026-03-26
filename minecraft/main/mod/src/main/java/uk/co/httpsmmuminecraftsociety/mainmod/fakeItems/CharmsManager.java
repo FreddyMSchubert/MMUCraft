@@ -12,13 +12,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CraftingStaffCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.EnderChestStaffCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.SculkPhialCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfInsomniaCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfReturningCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.UmbrellaCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
@@ -58,7 +55,8 @@ public class CharmsManager
             Map.entry(26, new UmbrellaCharm()),
             Map.entry(27, new PotionOfDisplacementCharm()),
             Map.entry(28, new SculkPhialCharm()),
-            Map.entry(29, new PotionOfInsomniaCharm())
+            Map.entry(29, new PotionOfInsomniaCharm()),
+            Map.entry(30, new WalletCharm())
     );
     public static Charm charmFromId(int charmId) {
         if (!CHARMS_REGISTRY.containsKey(charmId)) return null;
@@ -68,7 +66,7 @@ public class CharmsManager
     public static final String CHARM_ABILITES_COMPOUND_ID = "charm_abilities";
 
     public static List<FakeItem> getAbilitiesFromItemStack(ItemStack stack) {
-        if (!stack.has(DataComponents.CUSTOM_DATA)) return List.of();
+        if (stack.isEmpty() || !stack.has(DataComponents.CUSTOM_DATA)) return List.of();
 
         CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         Optional<int[]> abilities = nbt.getIntArray(CHARM_ABILITES_COMPOUND_ID);

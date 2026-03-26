@@ -1,0 +1,14 @@
+{
+	"title": "Wallet",
+	"id": "charm-wallet",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Stores & compresses dabloons.",
+		"Currently holds 0 dabloons."
+	],
+	"charm": {
+		"charmId": 30
+	}
+}

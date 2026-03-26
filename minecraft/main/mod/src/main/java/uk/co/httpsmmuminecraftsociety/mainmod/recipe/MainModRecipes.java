@@ -18,7 +18,8 @@ public final class MainModRecipes {
     public static final RecipeSerializer<CombineCosmeticRecipe> COMBINE_COSMETIC_SERIALIZER = unit(new CombineCosmeticRecipe());
     public static final RecipeSerializer<SeperateCosmeticRecipe> SEPERATE_COSMETIC_SERIALIZER = unit(new SeperateCosmeticRecipe());
     public static final RecipeSerializer<ExtractXPFromPhialRecipe> EXTRACT_XP_FROM_PHIAL_SERIALIZER = unit(new ExtractXPFromPhialRecipe());
-    public static final RecipeSerializer<WalletRecipe> WALLET_SERIALIZER = unit(new WalletRecipe());
+    public static final RecipeSerializer<WalletInsertRecipe> WALLET_INSERT_RECIPE = unit(new WalletInsertRecipe());
+    public static final RecipeSerializer<WalletExtractRecipe> WALLET_EXTRACT_RECIPE = unit(new WalletExtractRecipe());
     public static final RecipeSerializer<DyeingRecipe> DYEING_SERIALIZER = unit(new DyeingRecipe());
 
     public static final RecipeSerializer<FakeShapedCraftingRecipe> FAKE_CRAFTING_SHAPED_SERIALIZER = codecBacked(FakeShapedCraftingRecipe.CODEC);
@@ -29,11 +30,13 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_charmor"), SEPERATE_CHARMOR_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_cosmetic"), COMBINE_COSMETIC_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_cosmetic"), SEPERATE_COSMETIC_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "extract_xp_from_phial"), EXTRACT_XP_FROM_PHIAL_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "wallet_insert"), WALLET_INSERT_RECIPE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "wallet_extract"), WALLET_EXTRACT_RECIPE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "dyeing"), DYEING_SERIALIZER);
+
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shaped"), FAKE_CRAFTING_SHAPED_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shapeless"), FAKE_CRAFTING_SHAPELESS_SERIALIZER);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "extract_xp_from_phial"), EXTRACT_XP_FROM_PHIAL_SERIALIZER);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "wallet"), WALLET_SERIALIZER);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "dyeing"), DYEING_SERIALIZER);
     }
 
     private static <T extends Recipe<?>> RecipeSerializer<T> unit(T recipe) {

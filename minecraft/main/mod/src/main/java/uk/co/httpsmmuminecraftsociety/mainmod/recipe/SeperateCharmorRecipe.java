@@ -67,8 +67,8 @@ public class SeperateCharmorRecipe extends CustomRecipe
             if (!stack.isEmpty()) {
                 stack = removeLastCharmFromStack(stack);
                 stack = CharmorManager.updateArmorTooltip(stack);
+                list.set(i, stack);
             }
-            list.set(i, stack);
         }
         return list;
     }

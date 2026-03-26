@@ -1,0 +1,11 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:string" },
+    { "item": "minecraft:rabbit_hide" }
+  ],
+  "result": {
+    "fakeitem": "wallet",
+    "count": 1
+  }
+}

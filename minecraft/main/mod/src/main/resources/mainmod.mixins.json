@@ -8,7 +8,8 @@
 		"KittyPajamaScareCreeper",
 		"NoSoulboundItemDropping",
 		"RespawnNearDeath",
-		"XPBottlesDropMoreXPFromPhials"
+		"XPBottlesDropMoreXPFromPhials",
+        "InsertMultipleCoinsAtOnce"
 	],
 	"injectors": {
 		"defaultRequire": 1

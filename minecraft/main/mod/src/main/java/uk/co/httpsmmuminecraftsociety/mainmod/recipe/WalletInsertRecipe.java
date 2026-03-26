@@ -10,15 +10,15 @@ import java.util.List;
 
 public class WalletInsertRecipe extends CustomRecipe
 {
-    private record craftingInfo(boolean craftable, ItemStack wallet, List<ItemStack> coins) {}
+    public record craftingInfo(boolean craftable, ItemStack wallet, List<ItemStack> coins) {}
 
-    private craftingInfo getCraftingInfo(CraftingInput recipeInput) {
+    public craftingInfo getCraftingInfo(CraftingInput recipeInput) {
         ItemStack wallet = ItemStack.EMPTY;
         List<ItemStack> coins = new ArrayList<>();
 
         for (ItemStack stack : recipeInput.items()) {
             if (WalletCharm.isWallet(stack) != -1) {
-                if (wallet != ItemStack.EMPTY)
+                if (!wallet.isEmpty())
                     return new craftingInfo(false, null, null);
                 wallet = stack;
                 continue;
@@ -27,7 +27,6 @@ public class WalletInsertRecipe extends CustomRecipe
                 coins.add(stack);
                 continue;
             }
-            return new craftingInfo(false, null, null);
         }
 
         return new craftingInfo(wallet != ItemStack.EMPTY && !coins.isEmpty(), wallet, coins);

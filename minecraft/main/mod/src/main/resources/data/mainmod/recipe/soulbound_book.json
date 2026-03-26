@@ -1,5 +1,5 @@
 {
-  "type": "mainmod:fake_crafting_shaped",
+  "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
     { "fakeitem": "soul" },
     { "item": "minecraft:book" },
@@ -9,7 +9,7 @@
     { "item": "minecraft:soul_soil" }
   ],
   "result": {
-    "item": "minecraft:enchanted_book[minecraft:stored_enchantments={levels:{\"mainmod:soulbound\":1}}]",
+    "item": "minecraft:enchanted_book[minecraft:stored_enchantments={'mainmod:soulbound':1}]",
     "count": 1
   }
 }

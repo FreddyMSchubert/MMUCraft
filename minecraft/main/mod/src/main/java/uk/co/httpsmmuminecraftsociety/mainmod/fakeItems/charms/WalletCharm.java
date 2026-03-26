@@ -65,6 +65,7 @@ public class WalletCharm implements Charm
             if (def.value() > walletBalance) continue;
             int coinValue = def.value();
             int coinCount = walletBalance / def.value(); // purposeful int division round-down
+            if (coinCount > 64) coinCount = 64;
 
             setBalance(wallet, - coinCount * coinValue, true);
 

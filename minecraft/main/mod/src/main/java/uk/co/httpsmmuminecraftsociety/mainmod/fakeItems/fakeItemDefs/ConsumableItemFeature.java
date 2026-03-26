@@ -17,6 +17,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public record ConsumableItemFeature(
         boolean isDrink,
@@ -26,7 +27,7 @@ public record ConsumableItemFeature(
         float saturationBars,
         int directHearts,
         List<MobEffectInstance> effects,
-        ItemStack useRemainder
+        Optional<ItemStackTemplate> useRemainder
 ) implements ItemFeature
 {
     public static ConsumableItemFeature of(JsonObject json)
@@ -42,7 +43,7 @@ public record ConsumableItemFeature(
         for (JsonElement element : json.get("effects").getAsJsonArray())
             effects.add(JsonUtils.parseMobEffect(element.getAsJsonObject()));
 
-        ItemStack useRemainder = JsonUtils.resolveItemStack(json.get("useRemainderItem").getAsString());
+        Optional<ItemStackTemplate> useRemainder = JsonUtils.resolveItemStack(json.get("useRemainderItem").getAsString());
 
         return new ConsumableItemFeature(isDrink, consumeSeconds, canAlwaysEat, hungerBars, saturationBars, directHearts, effects, useRemainder);
     }
@@ -79,7 +80,7 @@ public record ConsumableItemFeature(
         stack.set(DataComponents.FOOD, fpb.build());
 
         // use remainder component
-        if (useRemainder != ItemStack.EMPTY)
-            stack.set(DataComponents.USE_REMAINDER, new UseRemainder(ItemStackTemplate.fromNonEmptyStack(useRemainder)));
+        if (useRemainder.isPresent())
+            stack.set(DataComponents.USE_REMAINDER, new UseRemainder(useRemainder.get()));
     }
 }

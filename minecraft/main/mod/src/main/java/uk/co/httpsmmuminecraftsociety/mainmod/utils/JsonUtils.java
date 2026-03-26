@@ -9,13 +9,15 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Rarity;
+
+import java.util.Optional;
 
 public class JsonUtils
 {
-    public static ItemStack resolveItemStack(String itemId) {
-        if (itemId.isEmpty()) return ItemStack.EMPTY;
+    public static Optional<ItemStackTemplate> resolveItemStack(String itemId) {
+        if (itemId.isEmpty()) return Optional.empty();
 
         Identifier identifier = Identifier.tryParse(itemId);
         if (identifier == null) {
@@ -24,7 +26,7 @@ public class JsonUtils
         if (!BuiltInRegistries.ITEM.containsKey(identifier)) {
             throw new IllegalStateException("Unknown item identifier '" + itemId + "'");
         }
-        return BuiltInRegistries.ITEM.getValue(identifier).getDefaultInstance();
+        return Optional.of(new ItemStackTemplate(BuiltInRegistries.ITEM.getValue(identifier)));
     }
 
     public static MobEffectInstance parseMobEffect(JsonObject json) {

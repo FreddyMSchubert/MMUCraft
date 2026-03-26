@@ -1,66 +1,68 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.modifiers;
 
-import net.fabricmc.fabric.api.loot.v3.LootTableSource;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
-import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import oshi.util.tuples.Quintet;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 import java.util.List;
 
 public class LootTableModifiers {
-    private static final List<Quintet<Identifier, ItemStack, Float, Integer, Integer>> additions = List.of(
-        new Quintet<>(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), FakeItems.ID_MAP.get("soul").createItemStack(), 1.0F, 1, 1),
-        new Quintet<>(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), FakeItems.ID_MAP.get("charm-sculk-phial").createItemStack(), 1.0F / 8.0F, 1, 1),
-        new Quintet<>(Identifier.fromNamespaceAndPath("minecraft", "entities/bat"), Items.PHANTOM_MEMBRANE.getDefaultInstance(), 1.0F, 1, 1),
-        new Quintet<>(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), Items.PHANTOM_MEMBRANE.getDefaultInstance(), 1.0F, 0, 10)
-    );
-
-    public static void onModify(ResourceKey<LootTable> key, LootTable.Builder tableBuilder, LootTableSource source, HolderLookup.Provider registries) {
-        for (Quintet<Identifier, ItemStack, Float, Integer, Integer> addition : additions) {
-            if (!addition.getA().equals(key.identifier())) continue;
-            tableBuilder.withPool(LootPool.lootPool()
-                    .setRolls(UniformGenerator.between(addition.getD(), addition.getE()))
-                    .when(LootItemRandomChanceCondition.randomChance(addition.getC()))
-                    .add(createLootTableItem(addition.getB())));
-        }
-    }
-
-    private static LootPoolSingletonContainer.Builder<?> createLootTableItem(ItemStack stack) {
-        LootPoolSingletonContainer.Builder<?> builder =
-                LootItem.lootTableItem(stack.getItem());
-
-        for (TypedDataComponent<?> component : stack.getComponents()) {
-            applyComponent(builder, component);
-        }
-
-        return builder;
-    }
-    private static <T> void applyComponent(
-            LootPoolSingletonContainer.Builder<?> builder,
-            TypedDataComponent<T> component
+    private record LootAddition(
+            Identifier tableId,
+            String fakeItemId,
+            Item vanillaItem,
+            float chance,
+            int minRolls,
+            int maxRolls
     ) {
-        builder.apply(SetComponentsFunction.setComponent(
-                component.type(),
-                component.value()
-        ));
+        public LootAddition {
+            boolean hasFake = fakeItemId != null;
+            boolean hasVanilla = vanillaItem != null;
+
+            if (hasFake == hasVanilla) {
+                throw new IllegalArgumentException(
+                        "Exactly one of fakeItemId or vanillaItem must be set"
+                );
+            }
+        }
     }
+    private static final List<LootAddition> additions = List.of(
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), "soul", null, 1.0F, 1, 1),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), "charm-sculk-phial", null, 1.0F / 8.0F, 1, 1),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/bat"), null, Items.PHANTOM_MEMBRANE, 1.0F, 1, 1),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), null, Items.PHANTOM_MEMBRANE, 1.0F, 0, 10)
+    );
 
     public static void onModifyDrops(Holder<LootTable> lootTableHolder, LootContext lootContext, List<ItemStack> itemStacks) {
         itemStacks.removeIf(stack -> stack.is(Items.ENCHANTED_BOOK));
         itemStacks.removeIf(stack -> stack.is(Items.DIAMOND) && lootTableHolder.unwrapKey().get().identifier().toString().contains("chest"));
+
+        Identifier tableId = lootTableHolder.unwrapKey().map(ResourceKey::identifier).orElse(null);
+        for (LootAddition addition : additions) {
+            if (!addition.tableId().equals(tableId)) continue;
+            if (lootContext.getRandom().nextFloat() >= addition.chance()) continue;
+
+            int rolls = Mth.nextInt(
+                    lootContext.getRandom(),
+                    addition.minRolls(),
+                    addition.maxRolls()
+            );
+
+            ItemStack stack = ItemStack.EMPTY;
+            if (addition.fakeItemId() != null)
+                stack = FakeItems.ID_MAP.get(addition.fakeItemId()).createItemStack();
+            else if (addition.vanillaItem() != null)
+                stack = addition.vanillaItem().getDefaultInstance();
+
+            stack.setCount(rolls);
+            itemStacks.add(stack);
+        }
     }
 }

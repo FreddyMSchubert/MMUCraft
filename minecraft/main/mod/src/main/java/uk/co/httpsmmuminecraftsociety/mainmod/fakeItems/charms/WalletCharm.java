@@ -3,6 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
@@ -52,7 +53,7 @@ public class WalletCharm implements Charm
         int coinVal = isCoin(coin);
         if (coinVal == 0) return;
 
-        walletBalance += coinVal;
+        walletBalance += coinVal * coin.count();
         setBalance(wallet, walletBalance, false);
     }
     // Tuple<RemovedCoinStacks, LighterWallet>
@@ -111,5 +112,51 @@ public class WalletCharm implements Charm
         if (cmd.strings().isEmpty()) return 0;
         CoinDef coin = COINS_BY_ID.get(cmd.strings().getFirst());
         return coin == null ? 0 : coin.value();
+    }
+
+    // multiple coin insertion utils
+
+    public static boolean isWalletInsertGrid(CraftingContainer input) {
+        boolean foundWallet = false;
+        boolean foundCoin = false;
+
+        for (int i = 0; i < input.getContainerSize(); i++) {
+            ItemStack stack = input.getItem(i);
+            if (stack.isEmpty()) continue;
+
+            if (WalletCharm.isWallet(stack) >= 0) {
+                if (foundWallet) return false;
+                foundWallet = true;
+                continue;
+            }
+
+            if (WalletCharm.isCoin(stack) > 0) {
+                foundCoin = true;
+                continue;
+            }
+
+            return false;
+        }
+
+        return foundWallet && foundCoin;
+    }
+    public static boolean clearRemainingCoinStacks(CraftingContainer input) {
+        boolean changed = false;
+
+        for (int i = 0; i < input.getContainerSize(); i++) {
+            ItemStack stack = input.getItem(i);
+            if (stack.isEmpty()) continue;
+
+            if (WalletCharm.isCoin(stack) > 0) {
+                input.setItem(i, ItemStack.EMPTY);
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            input.setChanged();
+        }
+
+        return changed;
     }
 }

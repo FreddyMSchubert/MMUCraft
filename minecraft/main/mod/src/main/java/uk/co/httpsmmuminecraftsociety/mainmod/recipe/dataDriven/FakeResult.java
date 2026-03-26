@@ -31,7 +31,9 @@ public sealed interface FakeResult permits FakeResult.ItemResult, FakeResult.Fak
         ).apply(instance, ItemResult::new));
 
         public ItemResult {
-            item.createStack(count);
+            if (item == null) {
+                throw new IllegalArgumentException("item must not be null");
+            }
         }
 
         @Override
@@ -47,7 +49,9 @@ public sealed interface FakeResult permits FakeResult.ItemResult, FakeResult.Fak
         ).apply(instance, FakeItemResult::new));
 
         public FakeItemResult {
-            FakeRecipeUtil.requireFakeItem(fakeitem);
+            if (fakeitem == null || fakeitem.isBlank()) {
+                throw new IllegalArgumentException("fakeitem must not be blank");
+            }
         }
 
         @Override

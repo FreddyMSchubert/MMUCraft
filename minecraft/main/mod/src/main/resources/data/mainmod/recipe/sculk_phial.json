@@ -6,7 +6,7 @@
     " S "
   ],
   "key": {
-    "P": { "item": "minecraft:echo_shard" },
+    "S": { "item": "minecraft:echo_shard" },
     "B": { "item": "minecraft:experience_bottle" }
   },
   "result": {

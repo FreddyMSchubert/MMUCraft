@@ -73,7 +73,9 @@ public sealed interface FakeIngredient permits FakeIngredient.ItemIngredient, Fa
         ).apply(instance, FakeItemIngredient::new));
 
         public FakeItemIngredient {
-            FakeRecipeUtil.requireFakeItem(fakeitem);
+            if (fakeitem == null || fakeitem.isBlank()) {
+                throw new IllegalArgumentException("fakeitem must not be blank");
+            }
         }
 
         @Override

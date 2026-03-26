@@ -35,32 +35,28 @@ public class MainMod implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Hello MMU!");
 
+        DataLoader.init();
+
         FakeItemsCommand.init();
         MainModRecipes.register();
         AUTH_MANAGER.onInitialize();
 
-        ServerLifecycleEvents.SERVER_STARTED.register(this::registerContent);
+        ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
+        ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
+        ItemEvents.USE.register(CharmsManager::onItemUse);
+        UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
+        ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
+        LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
+        DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);
+        ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
     }
 
-    private void registerContent(MinecraftServer server)
+    private void registerGamerules(MinecraftServer server)
     {
-        // gamerules
         for (ServerLevel level : server.getAllLevels()) {
             level.getGameRules().set(GameRules.MAX_MINECART_SPEED, 20, server);
             level.getGameRules().set(GameRules.REDUCED_DEBUG_INFO, true, server);
             level.getGameRules().set(GameRules.SPAWN_PHANTOMS, false, server);
         }
-
-        // content
-        DataLoader.init();
-
-        ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
-        ItemEvents.USE.register(CharmsManager::onItemUse);
-        UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
-        ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
-        LootTableEvents.MODIFY.register(LootTableModifiers::onModify);
-        LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
-        DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);
-        ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
     }
 }

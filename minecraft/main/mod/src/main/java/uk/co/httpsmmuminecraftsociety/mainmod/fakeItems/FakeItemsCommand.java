@@ -23,6 +23,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.ItemFeature;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.function.Predicate;
 
 public final class FakeItemsCommand {
@@ -109,13 +110,17 @@ public final class FakeItemsCommand {
     }
 
     private static SuggestionProvider<CommandSourceStack> suggestionsFor(Predicate<FakeItem> filter) {
-        return (ctx, builder) -> SharedSuggestionProvider.suggest(
-                FakeItems.ALL.stream()
-                        .filter(filter)
-                        .sorted(Comparator.comparing(FakeItem::id))
-                        .map(FakeItem::id),
-                builder
-        );
+        return (ctx, builder) -> {
+            String prefix = removablePrefix(filter);
+
+            return SharedSuggestionProvider.suggest(
+                    FakeItems.ALL.stream()
+                            .filter(filter)
+                            .map(item -> stripPrefix(item.id(), prefix))
+                            .sorted(Comparator.naturalOrder()),
+                    builder
+            );
+        };
     }
 
     private static boolean hasFeature(FakeItem item, Class<? extends ItemFeature> featureClass) {
@@ -124,15 +129,15 @@ public final class FakeItemsCommand {
 
     private static int give(
             CommandSourceStack source,
-            String id,
+            String selectedId,
             int amount,
             Predicate<FakeItem> filter
     ) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
-        FakeItem item = FakeItems.ID_MAP.get(id);
+        FakeItem item = resolveItem(selectedId, filter);
 
-        if (item == null || !filter.test(item)) {
-            source.sendFailure(Component.literal("Unknown or invalid fake item id: " + id));
+        if (item == null) {
+            source.sendFailure(Component.literal("Unknown or invalid fake item id: " + selectedId));
             return 0;
         }
 
@@ -158,5 +163,88 @@ public final class FakeItemsCommand {
         );
 
         return 1;
+    }
+
+    private static FakeItem resolveItem(String selectedId, Predicate<FakeItem> filter) {
+        FakeItem direct = FakeItems.ID_MAP.get(selectedId);
+        if (direct != null && filter.test(direct)) {
+            return direct;
+        }
+
+        String prefix = removablePrefix(filter);
+        if (!prefix.isEmpty()) {
+            FakeItem prefixed = FakeItems.ID_MAP.get(prefix + selectedId);
+            if (prefixed != null && filter.test(prefixed)) {
+                return prefixed;
+            }
+        }
+
+        return null;
+    }
+
+    private static String removablePrefix(Predicate<FakeItem> filter) {
+        List<String> ids = FakeItems.ALL.stream()
+                .filter(filter)
+                .map(FakeItem::id)
+                .sorted()
+                .toList();
+
+        if (ids.size() < 2) {
+            return "";
+        }
+
+        String prefix = ids.get(0);
+        for (int i = 1; i < ids.size(); i++) {
+            prefix = commonPrefix(prefix, ids.get(i));
+            if (prefix.isEmpty()) {
+                return "";
+            }
+        }
+
+        prefix = trimToSeparator(prefix);
+
+        if (prefix.isEmpty()) {
+            return "";
+        }
+
+        for (String id : ids) {
+            if (id.length() <= prefix.length()) {
+                return "";
+            }
+        }
+
+        return prefix;
+    }
+
+    private static String commonPrefix(String a, String b) {
+        int max = Math.min(a.length(), b.length());
+        int i = 0;
+        while (i < max && a.charAt(i) == b.charAt(i)) {
+            i++;
+        }
+        return a.substring(0, i);
+    }
+
+    private static String trimToSeparator(String prefix) {
+        int cut = Math.max(
+                Math.max(prefix.lastIndexOf('_'), prefix.lastIndexOf(':')),
+                Math.max(
+                        Math.max(prefix.lastIndexOf('/'), prefix.lastIndexOf('-')),
+                        prefix.lastIndexOf('.')
+                )
+        );
+
+        if (cut < 0) {
+            return "";
+        }
+
+        return prefix.substring(0, cut + 1);
+    }
+
+    private static String stripPrefix(String id, String prefix) {
+        if (!prefix.isEmpty() && id.startsWith(prefix)) {
+            return id.substring(prefix.length());
+        }
+        return id;
     }
 }

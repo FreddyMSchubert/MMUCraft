@@ -1,6 +1,10 @@
 {
   "description": "Soulbound",
   "supported_items": "#minecraft:enchantable/durability",
+  "exclusive_set": [
+    "minecraft:mending"
+  ],
+  "primary_items": "#minecraft:enchantable/durability",
   "weight": 2,
   "max_level": 1,
   "min_cost": {

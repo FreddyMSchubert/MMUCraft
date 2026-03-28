@@ -1,0 +1,6 @@
+{
+    "block.bamboo_wood_fence_gate.close": {
+        "replace": true,
+        "sounds": [{ "name": "mainmod:jukebox/dog" }]
+    }
+}

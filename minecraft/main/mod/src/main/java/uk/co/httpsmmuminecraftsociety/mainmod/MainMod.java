@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.gamerules.GameRules;
@@ -33,6 +34,8 @@ public class MainMod implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final AuthManager AUTH_MANAGER = new AuthManager();
 
+    private static volatile HolderLookup.Provider registries;
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Hello MMU!");
@@ -52,6 +55,15 @@ public class MainMod implements ModInitializer {
         DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);
         ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
+
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            registries = server.overworld().registryAccess();
+        });
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
+            if (success) {
+                registries = server.overworld().registryAccess();
+            }
+        });
     }
 
     private void registerGamerules(MinecraftServer server)
@@ -61,5 +73,15 @@ public class MainMod implements ModInitializer {
             level.getGameRules().set(GameRules.REDUCED_DEBUG_INFO, true, server);
             level.getGameRules().set(GameRules.SPAWN_PHANTOMS, false, server);
         }
+    }
+
+    public static HolderLookup.Provider getRegistries() {
+        HolderLookup.Provider value = registries;
+        if (value == null) {
+            throw new IllegalStateException(
+                    "Runtime registries are not available yet. " + "Tried to create a registry-backed fake item before the server was ready."
+            );
+        }
+        return value;
     }
 }

@@ -1,0 +1,11 @@
+{
+	"title": "Dog Disc",
+	"id": "disc-dog",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"disc": {
+		"songId": "mainmod_dog"
+	}
+}

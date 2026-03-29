@@ -4,10 +4,19 @@
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Crafting on the go!"
-	],
+	"tooltips": ["Crafting on the go!"],
 	"charm": {
-		"charmId": 1
+		"charmId": 1,
+		"minLevel": 1,
+		"maxLevel": 1,
+		"defaultLevel": 1,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Opens crafting table while used anywhere.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
 	}
 }

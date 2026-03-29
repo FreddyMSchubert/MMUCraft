@@ -25,7 +25,7 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
     public static final int LEVITATION_START_TICKS = DRINK_DURATION_TICKS / 100 * 75;
 
     @Override
-    public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks)
+    public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         int effectDuration = DRINK_DURATION_TICKS - elapsedTicks;
         effectDuration += POST_DRINK_BAD_EFFECT_DURATION;
@@ -50,13 +50,13 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
     }
 
     @Override
-    public ItemStack onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks)
+    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         String teleportPossibleTest = TeleportPotionUtils.checkTeleportable(player, level, 20, 16);
         if (!teleportPossibleTest.isEmpty()) {
             player.sendSystemMessage(Component.literal(teleportPossibleTest));
             player.stopUsingItem();
-            return stack;
+            return;
         }
 
         BlockPos spawn = level.getRespawnData().globalPos().pos();
@@ -86,8 +86,6 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
         applyEffectIfNotYetApplied(player, MobEffects.SATURATION, POST_DRINK_GOOD_EFFECT_DURATION, 0);
 
         stack.consume(1, player);
-
-        return stack;
     }
 
     private static void applyEffectIfNotYetApplied(ServerPlayer player, Holder<MobEffect> effect, int duration, int amplifier) {

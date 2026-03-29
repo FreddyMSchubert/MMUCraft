@@ -27,7 +27,7 @@ public final class RunningShoesCharm implements Charm, TickCallbackCharm, Equipp
     private static final Identifier SPEED_ID = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "running_shoes_speed_id");
 
     @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level) {
+    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
         CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag tag = cd.copyTag();
 
@@ -54,8 +54,6 @@ public final class RunningShoesCharm implements Charm, TickCallbackCharm, Equipp
             double intendedSpeed = Math.max(normalBaseSpeed * 1.3 /*sprint speed*/, normalBaseSpeed + (charge / 100.0 * normalBaseSpeed));
             Utils.applyPlayerModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID, intendedSpeed - player.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), AttributeModifier.Operation.ADD_VALUE);
         }
-
-        return stack;
     }
 
     @Override

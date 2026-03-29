@@ -62,7 +62,7 @@ public record FakeItem(
         }
     }
 
-    public ItemStack createItemStack() {
+    public ItemStack createItemStackAtLevel(int charmLevel) {
         ItemStack stack = new ItemStack(baseItem, 1);
 
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(id), List.of()));
@@ -72,10 +72,18 @@ public record FakeItem(
         stack.set(DataComponents.RARITY, rarity);
         stack.set(DataComponents.MAX_STACK_SIZE, maxStackSize);
 
-        for (ItemFeature feature : features)
-            feature.apply(stack);
+        for (ItemFeature feature : features) {
+            if (feature instanceof CharmItemFeature cif && charmLevel != -1) {
+                cif.apply(stack, charmLevel);
+            } else {
+                feature.apply(stack);
+            }
+        }
 
         return stack;
+    }
+    public ItemStack createItemStack() {
+        return createItemStackAtLevel(-1);
     }
 
     public <T extends ItemFeature> T getFeature(Class<T> featureType) {

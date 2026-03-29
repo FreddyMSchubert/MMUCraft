@@ -1,15 +1,60 @@
 {
 	"title": "Hiking Boots Charm",
-	"id": "charm-hiking-boots-normal",
+	"id": "charm-hiking-boots",
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"That's one pretty big step for man.",
-		"(Increases step height by 0.5, allowing you to walk up 1 block without jumping.)"
-	],
+	"tooltips": ["That's one pretty big step for man."],
 	"charm": {
-		"charmId": 9
+		"charmId": 9,
+		"minLevel": 0,
+		"maxLevel": 3,
+		"defaultLevel": 1,
+		"levels": [
+			{
+				"level": 0,
+				"abilityStatusCurrent": "Has no effect while equipped.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			},
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Increases step height by 0.5 while equipped, letting you walk up one-block ledges without jumping.",
+				"abilityStatusRelative": "Restores the basic hiking effect, giving you +0.5 step height while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:leather_boots",
+						"count": 1
+					},
+					{
+						"id": "minecraft:rabbit_hide",
+						"count": 4
+					}
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Increases step height by 1.0 while equipped, letting you walk up fence-height obstacles without jumping.",
+				"abilityStatusRelative": "Raises the charm to +1.0 step height while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:gold_block",
+						"count": 2
+					}
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Increases step height by 1.5 while equipped, letting you walk up two-block rises without jumping.",
+				"abilityStatusRelative": "Raises the charm to +1.5 step height while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:diamond_block",
+						"count": 2
+					}
+				]
+			}
+		]
 	},
 	"equippableCharm": {
 		"equipmentSlot": "feet",

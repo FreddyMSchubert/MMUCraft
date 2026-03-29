@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.WalletCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WalletCharm;
 
 @Mixin(ResultSlot.class)
 public class InsertMultipleCoinsAtOnce

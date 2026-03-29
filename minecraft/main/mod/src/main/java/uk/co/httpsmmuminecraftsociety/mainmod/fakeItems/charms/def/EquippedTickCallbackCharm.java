@@ -6,5 +6,5 @@ import net.minecraft.world.item.ItemStack;
 
 public interface EquippedTickCallbackCharm
 {
-    ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level);
+    void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel);
 }

@@ -1,0 +1,139 @@
+{
+	"title": "Heart of Gold Charm",
+	"id": "charm-heart",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Sgt. Pepper's Lonely Hearts Club Charm",
+		"The unified replacement for the old Heart on your Sleeve, Gold, Diamond, and Netherite heart charms."
+	],
+	"charm": {
+		"charmId": 3,
+		"minLevel": 0,
+		"maxLevel": 10,
+		"defaultLevel": 1,
+		"levels": [
+			{
+				"level": 0,
+				"abilityStatusCurrent": "Has no effect while equipped.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			},
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Gives you 1 extra heart while equipped.",
+				"abilityStatusRelative": "Raises the charm to 1 extra heart while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:redstone",
+						"count": 4
+					}
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Gives you 2 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 2 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:redstone",
+						"count": 8
+					}
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Gives you 3 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 3 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:gold_ingot",
+						"count": 4
+					}
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Gives you 4 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 4 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:gold_ingot",
+						"count": 8
+					}
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Gives you 5 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 5 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:golden_apple",
+						"count": 2
+					}
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Gives you 6 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 6 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:diamond",
+						"count": 4
+					}
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Gives you 7 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 7 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:diamond",
+						"count": 8
+					}
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Gives you 8 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 8 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:enchanted_golden_apple",
+						"count": 1
+					}
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Gives you 9 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 9 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:netherite_scrap",
+						"count": 2
+					}
+				]
+			},
+			{
+				"level": 10,
+				"abilityStatusCurrent": "Gives you 10 extra hearts while equipped.",
+				"abilityStatusRelative": "Raises the charm to 10 extra hearts while equipped.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:nether_star",
+						"count": 1
+					}
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "heart_sleeve__charm"
+	}
+}

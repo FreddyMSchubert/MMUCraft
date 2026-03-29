@@ -15,10 +15,10 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCal
 public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
 {
     @Override
-    public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks) {}
+    public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {}
 
     @Override
-    public ItemStack onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks)
+    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         // 4 normal phantoms
         for (int i = 0; i < 4; i++)
@@ -107,7 +107,5 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
         boss.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
 
         level.addFreshEntity(boss);
-
-        return stack;
     }
 }

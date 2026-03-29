@@ -11,11 +11,11 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 public class StriderShalesCharm implements Charm, EquippedTickCallbackCharm
 {
     @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
-        if (!player.isInLava()) return stack;
+        if (!player.isInLava()) return;
 
-        if (level.getGameTime() % 19 != 0) return stack;
+        if (level.getGameTime() % 19 != 0) return;
 
         MobEffectInstance inst = new MobEffectInstance(
                 MobEffects.FIRE_RESISTANCE,
@@ -26,6 +26,5 @@ public class StriderShalesCharm implements Charm, EquippedTickCallbackCharm
                 false
         );
         player.addEffect(inst);
-        return stack;
     }
 }

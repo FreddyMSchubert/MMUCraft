@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
+package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +23,7 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
     private static final int XP_SIPHONED_PER_TICK = 4;
 
     @Override
-    public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks)
+    public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         int playerXp = determinePlayerXP(player);
         if (playerXp <= 0) return;
@@ -46,9 +46,8 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
     }
 
     @Override
-    public ItemStack onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks)
+    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
-        return stack;
     }
 
     private static double xpToLevels(int totalXp) {
@@ -73,7 +72,7 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
         String levelsText = String.format(Locale.ROOT, "%.2f", levelsStored);
 
         Component firstLine = Component.literal(
-                "Used to store XP. (Currently stored: " + xpStored + " xp / " + levelsText + " levels)"
+                "Currently stored: " + xpStored + " xp / " + levelsText + " levels."
         );
 
         if (lines.isEmpty()) {

@@ -11,9 +11,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 public class MermaidScalesCharm implements Charm, EquippedTickCallbackCharm
 {
     @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
-        if (level.getGameTime() % 19 != 0) return stack;
+        if (level.getGameTime() % 19 != 0) return;
 
         MobEffectInstance inst = new MobEffectInstance(
                 MobEffects.DOLPHINS_GRACE,
@@ -24,6 +24,5 @@ public class MermaidScalesCharm implements Charm, EquippedTickCallbackCharm
                 false
         );
         player.addEffect(inst);
-        return stack;
     }
 }

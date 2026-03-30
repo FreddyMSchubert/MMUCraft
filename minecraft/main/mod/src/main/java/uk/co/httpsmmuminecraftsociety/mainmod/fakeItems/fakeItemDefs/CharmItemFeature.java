@@ -20,11 +20,11 @@ public record CharmItemFeature(
         int charmId,
         int minLevel,
         int maxLevel,
-        int defaultLevel,
+        String baseTitle,
         Map<Integer, CharmLevelDefinition> levelDefinitions
 ) implements ItemFeature
 {
-    public static ItemFeature of(JsonObject json)
+    public static ItemFeature of(JsonObject rootJson, JsonObject json)
     {
         int charmId = json.get("charmId").getAsInt();
         Charm charm = CharmsManager.charmFromId(charmId);
@@ -32,15 +32,16 @@ public record CharmItemFeature(
             throw new IllegalStateException("Unknown charmId: " + charmId);
         }
 
+        String baseTitle = rootJson.get("title").getAsString();
+
         int minLevel = json.get("minLevel").getAsInt();
         int maxLevel = json.get("maxLevel").getAsInt();
-        int defaultLevel = json.get("defaultLevel").getAsInt();
 
-        if (minLevel > maxLevel) {
-            throw new IllegalStateException("minLevel cannot be greater than maxLevel for charmId " + charmId);
+        if (minLevel < 0) {
+            throw new IllegalStateException("minLevel cannot be negative for charmId " + charmId);
         }
-        if (defaultLevel < minLevel || defaultLevel > maxLevel) {
-            throw new IllegalStateException("defaultLevel must be within minLevel..maxLevel for charmId " + charmId);
+        if (maxLevel < minLevel) {
+            throw new IllegalStateException("maxLevel cannot be less than minLevel for charmId " + charmId);
         }
 
         if (!json.has("levels") || !json.get("levels").isJsonArray()) {
@@ -54,13 +55,27 @@ public record CharmItemFeature(
             }
 
             CharmLevelDefinition def = CharmLevelDefinition.of(element.getAsJsonObject(), "charmId " + charmId);
+
+            if (def.level() == 0) {
+                throw new IllegalStateException(
+                        "Level 0 must not be defined in JSON for charmId " + charmId
+                                + "; it is implicit and always means a broken charm"
+                );
+            }
+            if (def.level() < minLevel || def.level() > maxLevel) {
+                throw new IllegalStateException(
+                        "Charm level " + def.level() + " is outside the valid range "
+                                + minLevel + ".." + maxLevel + " for charmId " + charmId
+                );
+            }
+
             CharmLevelDefinition previous = levelDefinitions.putIfAbsent(def.level(), def);
             if (previous != null) {
                 throw new IllegalStateException("Duplicate charm level " + def.level() + " for charmId " + charmId);
             }
         }
 
-        for (int level = minLevel; level <= maxLevel; level++) {
+        for (int level = Math.max(1, minLevel); level <= maxLevel; level++) {
             if (!levelDefinitions.containsKey(level)) {
                 throw new IllegalStateException("Missing charm level definition for level " + level + " on charmId " + charmId);
             }
@@ -71,7 +86,7 @@ public record CharmItemFeature(
                 charmId,
                 minLevel,
                 maxLevel,
-                defaultLevel,
+                baseTitle,
                 Map.copyOf(levelDefinitions)
         );
     }
@@ -79,7 +94,7 @@ public record CharmItemFeature(
     @Override
     public void apply(ItemStack stack)
     {
-        apply(stack, defaultLevel);
+        apply(stack, minLevel);
     }
 
     public void apply(ItemStack stack, int startingLevel)
@@ -100,7 +115,7 @@ public record CharmItemFeature(
 
         int oldLevel = CharmStackData.getSingleStoredCharm(stack)
                 .map(StoredCharmData::level)
-                .orElse(defaultLevel);
+                .orElse(minLevel);
 
         if (oldLevel > 0 && charm instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
             baseItemChangeCallbackCharm.disableEffectForItem(stack, oldLevel);
@@ -122,8 +137,8 @@ public record CharmItemFeature(
     {
         validateLevel(level);
 
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(getDisplayTitle(stack, level)));
-        stack.set(DataComponents.LORE, new ItemLore(buildTooltip(stack, level)));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(getDisplayTitle(level)));
+        stack.set(DataComponents.LORE, new ItemLore(buildTooltip(level)));
     }
 
     private void validateLevel(int level) {
@@ -135,24 +150,41 @@ public record CharmItemFeature(
         }
     }
 
-    public String getDisplayTitle(ItemStack stack, int level) {
-        String charmName = stack.getOrDefault(DataComponents.CUSTOM_NAME, "Charm").toString();
-        return level == 0
-                ? "Broken " + charmName
-                : "Level " + level + " " + charmName;
+    public String getDisplayTitle(int level) {
+        validateLevel(level);
+
+        if (minLevel == maxLevel) {
+            return baseTitle;
+        }
+
+        if (level == 0) {
+            return "Broken " + baseTitle;
+        }
+
+        return baseTitle + " " + toRoman(level);
     }
-    public List<Component> buildTooltip(ItemStack stack, int level) {
+
+    public List<Component> buildTooltip(int level) {
+        validateLevel(level);
+
         CharmLevelDefinition current = getLevelDefinition(level);
-        CharmLevelDefinition next = level < maxLevel ? getLevelDefinition(level + 1) : null;
+        CharmLevelDefinition next = hasNextLevel(level) ? getLevelDefinition(level + 1) : null;
 
         List<Component> lines = new ArrayList<>();
-        lines.addAll(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
-        lines.add(Component.literal(""));
+
+        FakeItem defaultFakeItem = FakeItems.CHARM_ID_MAP.get(charmId);
+        if (defaultFakeItem != null && defaultFakeItem.tooltip() != null && !defaultFakeItem.tooltip().isEmpty()) {
+            lines.addAll(defaultFakeItem.tooltip());
+            lines.add(Component.literal(""));
+        }
 
         lines.add(Component.literal("Current: " + current.abilityStatusCurrent()));
 
         if (next != null) {
-            lines.add(Component.literal(""));
+            if (!next.abilityStatusRelative().isBlank() || !next.upgradeIngredients().isEmpty()) {
+                lines.add(Component.literal(""));
+            }
+
             if (!next.abilityStatusRelative().isBlank()) {
                 lines.add(Component.literal("Next: " + next.abilityStatusRelative()));
             }
@@ -163,19 +195,29 @@ public record CharmItemFeature(
 
         return List.copyOf(lines);
     }
+
     public CharmLevelDefinition getLevelDefinition(int level) {
+        if (level == 0) {
+            if (minLevel > 0) {
+                throw new IllegalStateException("Level 0 is illegal for charmId " + charmId + " because minLevel is " + minLevel);
+            }
+            return CharmLevelDefinition.BROKEN_LEVEL;
+        }
+
         CharmLevelDefinition def = levelDefinitions.get(level);
         if (def == null) {
             throw new IllegalStateException("No level definition " + level + " for charmId " + charmId);
         }
         return def;
     }
+
     private static String formatUpgradeIngredients(List<CharmUpgradeDefinition> ingredients) {
         return ingredients.stream()
                 .map(CharmItemFeature::formatIngredient)
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("");
     }
+
     private static String formatIngredient(CharmUpgradeDefinition ingredient) {
         String displayName;
 
@@ -189,5 +231,26 @@ public record CharmItemFeature(
         }
 
         return ingredient.count() + "x " + displayName;
+    }
+
+    private static String toRoman(int value) {
+        if (value <= 0) {
+            throw new IllegalStateException("Roman numeral conversion requires a positive value, got " + value);
+        }
+
+        int[] values =    {1000, 900, 500, 400, 100,  90,  50,  40,  10,   9,   5,   4,   1};
+        String[] numerals = {"M", "CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
+
+        StringBuilder out = new StringBuilder();
+        int remaining = value;
+
+        for (int i = 0; i < values.length; i++) {
+            while (remaining >= values[i]) {
+                out.append(numerals[i]);
+                remaining -= values[i];
+            }
+        }
+
+        return out.toString();
     }
 }

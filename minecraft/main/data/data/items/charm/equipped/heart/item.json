@@ -5,21 +5,13 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Sgt. Pepper's Lonely Hearts Club Charm",
-		"The unified replacement for the old Heart on your Sleeve, Gold, Diamond, and Netherite heart charms."
+		"Blessed be the pacemakers"
 	],
 	"charm": {
 		"charmId": 3,
 		"minLevel": 0,
 		"maxLevel": 10,
-		"defaultLevel": 1,
 		"levels": [
-			{
-				"level": 0,
-				"abilityStatusCurrent": "Has no effect while equipped.",
-				"abilityStatusRelative": "",
-				"upgradeIngredients": []
-			},
 			{
 				"level": 1,
 				"abilityStatusCurrent": "Gives you 1 extra heart while equipped.",

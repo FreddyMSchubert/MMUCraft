@@ -140,7 +140,7 @@ public class CharmorManager
             return fakeItem.title();
         }
 
-        return charmFeature.getDisplayTitle(fakeItem.createItemStackAtLevel(storedCharm.level()), storedCharm.level());
+        return charmFeature.getDisplayTitle(storedCharm.level());
     }
 
     private static String getArmorMaterialType(ItemStack stack) {

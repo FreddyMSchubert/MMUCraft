@@ -65,7 +65,7 @@ public class UpgradeCharmRecipe extends CustomRecipe
                 return invalid();
             }
 
-            offeredCounts.merge(ingredientKey, stack.getCount(), Integer::sum);
+            offeredCounts.merge(ingredientKey, 1, Integer::sum);
         }
 
         if (charmStack == null || charmFakeItem == null || charmFeature == null) {

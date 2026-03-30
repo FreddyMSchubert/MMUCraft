@@ -12,7 +12,7 @@
 		"charmId": 12,
 		"minLevel": 1,
 		"maxLevel": 1,
-		"defaultLevel": 1,
+		
 		"levels": [
 			{
 				"level": 1,

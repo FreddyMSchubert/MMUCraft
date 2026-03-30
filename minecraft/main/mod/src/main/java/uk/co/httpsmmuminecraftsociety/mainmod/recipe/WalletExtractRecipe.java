@@ -4,7 +4,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.WalletCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WalletCharm;
 
 public class WalletExtractRecipe extends CustomRecipe
 {

@@ -6,6 +6,6 @@ import net.minecraft.world.item.ItemStack;
 
 public interface ConsumableCallbacksCharm
 {
-    void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks);
-    ItemStack onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks);
+    void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel);
+    void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel);
 }

@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
+package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;

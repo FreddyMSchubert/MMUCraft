@@ -10,7 +10,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickCallbackCharm;
@@ -24,34 +23,30 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
     private static final int PER_TICK_CARROT_EAT_CHANCE = 43;
 
     @Override
-    public @NotNull ItemStack enableEffectForItem(ItemStack stack)
+    public void enableEffectForItem(ItemStack stack, int charmLevel)
     {
         Utils.applyItemAttrModifier(stack, "bunny-pajama-jump-boost", Attributes.JUMP_STRENGTH, 0.6, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.LEGS);
         Utils.applyItemAttrModifier(stack, "bunny-pajama-safe-fall-distance", Attributes.SAFE_FALL_DISTANCE, 7, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.LEGS);
         Utils.applyItemAttrModifier(stack, "bunny-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER, -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, EquipmentSlotGroup.LEGS);
-
-        return stack;
     }
 
     @Override
-    public @NotNull ItemStack disableEffectForItem(ItemStack stack)
+    public void disableEffectForItem(ItemStack stack, int charmLevel)
     {
         Utils.removeItemAttrModifier(stack, "bunny-pajama-jump-boost", Attributes.JUMP_STRENGTH);
         Utils.removeItemAttrModifier(stack, "bunny-pajama-safe-fall-distance", Attributes.SAFE_FALL_DISTANCE);
         Utils.removeItemAttrModifier(stack, "bunny-pajama-fall-damage", Attributes.FALL_DAMAGE_MULTIPLIER);
-
-        return stack;
     }
 
     @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
         if (level.getRandom().nextInt(PER_TICK_CARROT_EAT_CHANCE) != 0) {
-            return stack;
+            return;
         }
 
         if (!player.canEat(false)) {
-            return stack;
+            return;
         }
 
         Inventory inventory = player.getInventory();
@@ -65,14 +60,14 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
         }
 
         if (carrotSlots.isEmpty()) {
-            return stack;
+            return;
         }
 
         int slot = carrotSlots.get(level.getRandom().nextInt(carrotSlots.size()));
         ItemStack foodStack = inventory.getItem(slot);
 
         if (foodStack.isEmpty()) {
-            return stack;
+            return;
         }
 
         level.playSound(
@@ -88,7 +83,5 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
         if (result != foodStack) {
             inventory.setItem(slot, result);
         }
-
-        return stack;
     }
 }

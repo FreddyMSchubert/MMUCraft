@@ -9,4 +9,4 @@ tilt_modules
 minecraft/minigames/
 minecraft/main/respack/items-respack-generator/output/
 minecraft/main/respack/ResourcePackMerger
-minecraft/main/respack/packs/general-pack/assets/mainmod/sounds
+minecraft/main/respack/packs/general-pack/assets/mainmod/sounds/*.ogg

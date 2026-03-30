@@ -13,8 +13,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 
 public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
 {
-    private final int level;
-
     public static final double EXTRA_JUMP_VELOCITY = 0.62D;
     public static final double FORWARD_BOOST = 0.28D;
 
@@ -28,23 +26,12 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
     private static final String TAG_JUMP_BUFFER = "ws_jump_buffer";
     private static final String TAG_AIR_TICKS = "ws_air_ticks";
 
-    public WingedShoesCharm(int level)
-    {
-        this.level = level;
-    }
-
     private static int getExtraJumpsForLevel(int level) {
-        return switch (level)
-        {
-            case 0 -> 1;
-            case 1 -> 3;
-            case 2 -> 6;
-            default -> throw new IllegalStateException("Unexpected winged shoes level: " + level);
-        };
+        return (level * 2) - 1; // level 1 = 1 jump; 2 jumps added per level
     }
 
     @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
         CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag tag = cd.copyTag();
@@ -77,7 +64,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
                 jumpBuffer--;
             }
 
-            if (jumpBuffer > 0 && usedJumps < getExtraJumpsForLevel(this.level) && airTicks >= MIN_AIR_TICKS_BEFORE_EXTRA_JUMP) {
+            if (jumpBuffer > 0 && usedJumps < getExtraJumpsForLevel(charmLevel) && airTicks >= MIN_AIR_TICKS_BEFORE_EXTRA_JUMP) {
                 Vec3 v = player.getDeltaMovement();
 
                 // Get the direction the player is facing, flattened to horizontal.
@@ -113,7 +100,5 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
         tag.putInt(TAG_JUMP_BUFFER, jumpBuffer);
         tag.putInt(TAG_AIR_TICKS, airTicks);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-
-        return stack;
     }
 }

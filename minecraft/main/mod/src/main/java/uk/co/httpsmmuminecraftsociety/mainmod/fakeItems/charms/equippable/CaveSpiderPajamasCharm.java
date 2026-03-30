@@ -23,14 +23,14 @@ public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
     private static final double BRAKE = 0.55D;
 
     @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
         Input input = player.getLastClientInput();
-        if (!input.jump()) return stack;
+        if (!input.jump()) return;
 
         boolean hasCeiling =
                 !level.noBlockCollision(player, player.getBoundingBox().move(0.0D, CEILING_PROBE, 0.0D));
-        if (!hasCeiling) return stack;
+        if (!hasCeiling) return;
 
         player.addEffect(new MobEffectInstance(
                 MobEffects.LEVITATION,
@@ -84,7 +84,5 @@ public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
 
         player.hurtMarked = true;
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
-
-        return stack;
     }
 }

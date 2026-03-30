@@ -8,7 +8,6 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickCallbackCharm;
@@ -17,7 +16,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, BaseItemChangeCallbackCharm
 {
     @Override
-    public @NotNull ItemStack enableEffectForItem(ItemStack stack)
+    public void enableEffectForItem(ItemStack stack, int charmLevel)
     {
         Utils.applyItemAttrModifier(stack, "leprechaun_boots_size", Attributes.SCALE, -0.5, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         Utils.applyItemAttrModifier(stack, "leprechaun_boots_speed", Attributes.MOVEMENT_SPEED, 0.1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
@@ -28,12 +27,10 @@ public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, B
         Utils.applyItemAttrModifier(stack, "leprechaun_boots_attack", Attributes.ATTACK_DAMAGE, -1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         Utils.applyItemAttrModifier(stack, "leprechaun_boots_health", Attributes.MAX_HEALTH, -19, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         Utils.applyItemAttrModifier(stack, "leprechaun_boots_luck", Attributes.LUCK, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
-
-        return stack;
     }
 
     @Override
-    public @NotNull ItemStack disableEffectForItem(ItemStack stack)
+    public void disableEffectForItem(ItemStack stack, int charmLevel)
     {
         Utils.removeItemAttrModifier(stack, "leprechaun_boots_size", Attributes.SCALE);
         Utils.removeItemAttrModifier(stack, "leprechaun_boots_speed", Attributes.MOVEMENT_SPEED);
@@ -44,14 +41,12 @@ public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, B
         Utils.removeItemAttrModifier(stack, "leprechaun_boots_attack", Attributes.ATTACK_DAMAGE);
         Utils.removeItemAttrModifier(stack, "leprechaun_boots_health", Attributes.MAX_HEALTH);
         Utils.removeItemAttrModifier(stack, "leprechaun_boots_luck", Attributes.LUCK);
-
-        return stack;
     }
 
     @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level)
+    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
-        if (level.getGameTime() % 15 != 0) return stack;
+        if (level.getGameTime() % 15 != 0) return;
 
         MobEffectInstance inst = new MobEffectInstance(
                 MobEffects.WEAKNESS,
@@ -62,6 +57,5 @@ public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, B
                 false
         );
         player.addEffect(inst);
-        return stack;
     }
 }

@@ -1,19 +1,19 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.recipe;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmorManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SeperateCharmorRecipe extends CustomRecipe
@@ -21,55 +21,74 @@ public class SeperateCharmorRecipe extends CustomRecipe
     @Override
     public boolean matches(CraftingInput recipeInput, Level level)
     {
-        if (recipeInput.ingredientCount() > 1) return false;
+        if (recipeInput.ingredientCount() > 1) {
+            return false;
+        }
 
         ItemStack stack = recipeInput.items().getFirst();
 
-        if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return false;
+        if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) {
+            return false;
+        }
 
-        return CharmorManager.calcUsedCharmSlotCount(stack) > 0;
+        return !CharmStackData.getStoredCharms(stack).isEmpty();
     }
 
     @Override
     public ItemStack assemble(CraftingInput input)
     {
         ItemStack inputStack = input.items().getFirst();
-        List<FakeItem> charms = CharmsManager.getAbilitiesFromItemStack(inputStack);
-        return charms.getLast().createItemStack();
+        List<StoredCharmData> charms = CharmStackData.getStoredCharms(inputStack);
+        if (charms.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        StoredCharmData removedCharm = charms.getLast();
+        FakeItem fakeItem = FakeItems.CHARM_ID_MAP.get(removedCharm.charmId());
+        if (fakeItem == null) {
+            return ItemStack.EMPTY;
+        }
+
+        return fakeItem.createItemStackAtLevel(removedCharm.level());
     }
 
     private static ItemStack removeLastCharmFromStack(ItemStack stack) {
-        CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (!nbt.contains(CharmsManager.CHARM_ABILITES_COMPOUND_ID)) return stack;
-
-        int[] charmSlots = nbt.getIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID).get();
-        if (charmSlots.length == 0) return stack;
-        int removedCharmId = charmSlots[charmSlots.length - 1];
-        int[] newCharmSlots = new int[charmSlots.length - 1];
-        System.arraycopy(charmSlots, 0, newCharmSlots, 0, newCharmSlots.length);
-
-        Charm removedCharm = CharmsManager.charmFromId(removedCharmId);
-        if (removedCharm instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
-            baseItemChangeCallbackCharm.disableEffectForItem(stack);
+        List<StoredCharmData> charms = new ArrayList<>(CharmStackData.getStoredCharms(stack));
+        if (charms.isEmpty()) {
+            return stack;
         }
 
-        nbt.putIntArray(CharmsManager.CHARM_ABILITES_COMPOUND_ID, newCharmSlots);
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
+        StoredCharmData removedCharm = charms.removeLast();
+
+        FakeItem removedCharmItem = FakeItems.CHARM_ID_MAP.get(removedCharm.charmId());
+        CharmItemFeature removedFeature = removedCharmItem != null
+                ? removedCharmItem.getFeature(CharmItemFeature.class)
+                : null;
+
+        if (removedFeature != null
+                && removedCharm.level() > 0
+                && removedFeature.charm() instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
+            baseItemChangeCallbackCharm.disableEffectForItem(stack, removedCharm.level());
+        }
+
+        CharmStackData.setStoredCharms(stack, charms);
+        CharmorManager.updateArmorTooltip(stack);
 
         return stack;
     }
+
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInput craftingInput)
     {
-        NonNullList<ItemStack> list = NonNullList.withSize(craftingInput.ingredientCount(), ItemStack.EMPTY);
-        for (int i = 0; i < craftingInput.ingredientCount(); i++) {
-            ItemStack stack = craftingInput.items().get(i).copy();
+        NonNullList<ItemStack> list = NonNullList.withSize(craftingInput.size(), ItemStack.EMPTY);
+
+        for (int i = 0; i < craftingInput.size(); i++) {
+            ItemStack stack = craftingInput.getItem(i).copy();
             if (!stack.isEmpty()) {
-                stack = removeLastCharmFromStack(stack);
-                stack = CharmorManager.updateArmorTooltip(stack);
-                list.set(i, stack);
+                list.set(i, removeLastCharmFromStack(stack));
             }
         }
+
         return list;
     }
 

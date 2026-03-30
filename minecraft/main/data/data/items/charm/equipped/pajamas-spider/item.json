@@ -4,12 +4,20 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Oohhhh how emo... /s",
-		"(Let's you climb any surface by walking into it)"
-	],
+	"tooltips": ["Oohhhh how emo... /s"],
 	"charm": {
-		"charmId": 19
+		"charmId": 19,
+		"minLevel": 1,
+		"maxLevel": 1,
+		
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Lets you climb walls by walking into them while equipped.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
 	},
 	"equippableCharm": {
 		"equipmentSlot": "legs",

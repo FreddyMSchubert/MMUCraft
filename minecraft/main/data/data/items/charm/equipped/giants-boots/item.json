@@ -6,11 +6,21 @@
 	"maxStackSize": 1,
 	"tooltips": [
 		"These boots are made for walkin'",
-		"Grants the user the lost power of the ancient giants.",
-		"(You'll figure it out.)"
+		"Grants the user the lost power of the ancient giants."
 	],
 	"charm": {
-		"charmId": 12
+		"charmId": 12,
+		"minLevel": 1,
+		"maxLevel": 1,
+		
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Grants the power of the ancient giants while equipped.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
 	},
 	"equippableCharm": {
 		"equipmentSlot": "feet",

@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.SculkPhialCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.SculkPhialCharm;
 
 @Mixin(ThrownExperienceBottle.class)
 public abstract class XPBottlesDropMoreXPFromPhials

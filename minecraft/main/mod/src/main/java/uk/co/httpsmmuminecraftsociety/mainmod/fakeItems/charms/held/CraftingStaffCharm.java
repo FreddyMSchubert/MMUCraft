@@ -1,8 +1,9 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
+package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.inventory.AbstractCraftingMenu;
 import net.minecraft.world.item.ItemStack;
@@ -29,12 +30,12 @@ import java.util.Optional;
 public class CraftingStaffCharm implements Charm, UseCallbackCharm
 {
     @Override
-    public ItemStack onUse(ItemStack stack, ServerPlayer player, ServerLevel level) {
+    public InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
         player.openMenu(new SimpleMenuProvider(
                 (id, inv, p) -> new PortableCraftingMenu(id, inv),
                 Component.literal(" Crafting ")
         ));
-        return stack;
+        return InteractionResult.SUCCESS;
     }
 
     private static class PortableCraftingMenu extends AbstractCraftingMenu

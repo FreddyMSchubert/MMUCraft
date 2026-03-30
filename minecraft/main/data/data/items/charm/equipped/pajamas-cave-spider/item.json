@@ -4,12 +4,20 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Poison not included.",
-		"(Let's you hold space to climb accross the ceiling)"
-	],
+	"tooltips": ["Poison not included."],
 	"charm": {
-		"charmId": 20
+		"charmId": 20,
+		"minLevel": 1,
+		"maxLevel": 1,
+		
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Lets you hold jump to move across ceilings while equipped.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
 	},
 	"equippableCharm": {
 		"equipmentSlot": "legs",

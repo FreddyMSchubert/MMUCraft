@@ -24,6 +24,8 @@ WEB_ZIP = ROOT / "services" / "web" / "public" / "packs" / "main.zip"
 CONFIG = HERE / "main-pack.config.json"
 SERVER_PROPERTIES_TEMPLATE = HERE.parent / "server.properties"
 GENERATED_SERVER_PROPERTIES = HERE.parent / "server.properties.generated"
+PROJECT_SOUNDS = ROOT / "assets" / "sounds"
+GENERAL_PACK_MAINMOD_SOUNDS = PACKS / "general-pack" / "assets" / "mainmod" / "sounds"
 
 # Vanilla Tweaks Stuff
 
@@ -239,9 +241,29 @@ def load_inputs(tmp: Path):
 
 	return inputs
 
+def sync_project_sounds_into_general_pack():
+	print("==> Syncing project sounds into general-pack")
+
+	if not PROJECT_SOUNDS.exists():
+			print(" - no project sounds folder found at", PROJECT_SOUNDS)
+			return
+
+	rm(GENERAL_PACK_MAINMOD_SOUNDS)
+	GENERAL_PACK_MAINMOD_SOUNDS.mkdir(parents=True, exist_ok=True)
+
+	for src in PROJECT_SOUNDS.rglob("*"):
+			if src.is_dir():
+					continue
+
+			rel = src.relative_to(PROJECT_SOUNDS)
+			dst = GENERAL_PACK_MAINMOD_SOUNDS / rel
+			dst.parent.mkdir(parents=True, exist_ok=True)
+			shutil.copy2(src, dst)
+
 
 def main():
 	build_generated()
+	sync_project_sounds_into_general_pack()
 	jar = build_merger_jar()
 
 	rm(MERGED)

@@ -1,0 +1,15 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "components/disc.schema.json",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"songId": {
+			"type": "string",
+			"minLength": 1
+		}
+	},
+	"required": [
+		"songId"
+	]
+}

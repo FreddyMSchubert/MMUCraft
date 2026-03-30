@@ -60,6 +60,9 @@
 		},
 		"equippableCosmetic": {
 			"$ref": "./components/equippable-cosmetic.schema.json"
+		},
+		"disc": {
+			"$ref": "./components/disc.schema.json"
 		}
 	},
 	"required": [

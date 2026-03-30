@@ -1,0 +1,6 @@
+{
+  "comparator_output": 6,
+  "description": { "text": "C418 - Death" },
+  "length_in_seconds": 45.0,
+  "sound_event": "minecraft:block.bamboo_wood_fence_gate.open"
+}

@@ -1,3 +1,6 @@
 [submodule "minecraft/main/respack/ResourcePackMerger"]
 	path = minecraft/main/respack/ResourcePackMerger
 	url = https://github.com/mfnalex/ResourcePackMerger.git
+[submodule "assets"]
+	path = assets
+	url = ../MMU_MCSoc_kubecraft_assets.git

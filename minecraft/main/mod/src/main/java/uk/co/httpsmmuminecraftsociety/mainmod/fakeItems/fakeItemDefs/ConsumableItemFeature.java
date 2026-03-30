@@ -6,6 +6,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.ItemUseAnimation;
@@ -43,7 +44,8 @@ public record ConsumableItemFeature(
         for (JsonElement element : json.get("effects").getAsJsonArray())
             effects.add(JsonUtils.parseMobEffect(element.getAsJsonObject()));
 
-        Optional<ItemStackTemplate> useRemainder = JsonUtils.resolveItemStack(json.get("useRemainderItem").getAsString());
+        Optional<Item> useRemainderItem = JsonUtils.resolveItem(json.get("useRemainderItem").getAsString());
+        Optional<ItemStackTemplate> useRemainder = useRemainderItem.map(ItemStackTemplate::new);
 
         return new ConsumableItemFeature(isDrink, consumeSeconds, canAlwaysEat, hungerBars, saturationBars, directHearts, effects, useRemainder);
     }

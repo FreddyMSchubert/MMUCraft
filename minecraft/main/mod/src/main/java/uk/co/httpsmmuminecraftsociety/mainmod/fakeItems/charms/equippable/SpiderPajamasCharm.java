@@ -12,8 +12,8 @@ public class SpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
 {
 
     @Override
-    public ItemStack equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level) {
-        if (!player.horizontalCollision) return stack;
+    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
+        if (!player.horizontalCollision) return;
 
         Vec3 v = player.getDeltaMovement();
 
@@ -33,6 +33,5 @@ public class SpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
 
         player.fallDistance = 0.0F;
-        return stack;
     }
 }

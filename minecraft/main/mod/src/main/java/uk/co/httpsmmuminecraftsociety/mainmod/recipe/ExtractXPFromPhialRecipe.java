@@ -1,24 +1,17 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.recipe;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CharmsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.SculkPhialCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.SculkPhialCharm;
 
 import java.util.List;
 
@@ -113,17 +106,7 @@ public class ExtractXPFromPhialRecipe extends CustomRecipe
     }
 
     private static boolean isSculkPhial(ItemStack stack) {
-        if (stack.isEmpty()) return false;
-
-        List<FakeItem> abilities = CharmsManager.getAbilitiesFromItemStack(stack);
-        for (FakeItem fitem : abilities) {
-            CharmItemFeature cif = fitem.getFeature(CharmItemFeature.class);
-            if (cif != null && cif.charm() instanceof SculkPhialCharm) {
-                return true;
-            }
-        }
-
-        return false;
+        return CharmsManager.hasAbility(stack, SculkPhialCharm.class);
     }
 
     private static int getStoredXp(ItemStack stack) {

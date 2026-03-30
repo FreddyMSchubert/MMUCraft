@@ -1,44 +1,33 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
 public class HikingBootsCharm implements Charm, BaseItemChangeCallbackCharm
 {
-    private final int level;
-
-    public HikingBootsCharm(int level) {
-        this.level = level;
-    }
-
     @Override
-    public @NotNull ItemStack enableEffectForItem(ItemStack stack)
+    public void enableEffectForItem(ItemStack stack, int charmLevel)
     {
-        Utils.applyItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT, getStepHeightForLevel(this.level), AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
-        return stack;
+        Utils.applyItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT, getStepHeightForLevel(charmLevel), AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
     }
 
     @Override
-    public @NotNull ItemStack disableEffectForItem(ItemStack stack)
+    public void disableEffectForItem(ItemStack stack, int charmLevel)
     {
         Utils.removeItemAttrModifier(stack, "hiking_boots_step", Attributes.STEP_HEIGHT);
-        return stack;
     }
 
     private static float getStepHeightForLevel(int level) {
         return switch (level)
         {
-            case 0 -> 0.5f;
-            case 1 -> 1f;
-            case 2 -> 1.5f;
+            case 1 -> 0.5f;
+            case 2 -> 1f;
+            case 3 -> 1.5f;
             default -> throw new IllegalStateException("Unexpected hiking boots level: " + level);
         };
     }

@@ -6,11 +6,21 @@
 	"maxStackSize": 1,
 	"tooltips": [
 		"Perfect for some Eggsercise and Hareobics.",
-		"The bunnies might also get a bit snacky. But don't worry, they'll share.",
-		"(Jump Boost, auto-eats carrots & golden carrots from your inventory)"
+		"The bunnies might also get a bit snacky. But don't worry, they'll share."
 	],
 	"charm": {
-		"charmId": 17
+		"charmId": 17,
+		"minLevel": 1,
+		"maxLevel": 1,
+		
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Gives jump boost and auto-eats carrots and golden carrots from your inventory while equipped.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
 	},
 	"equippableCharm": {
 		"equipmentSlot": "legs",

@@ -5,16 +5,25 @@
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Used to store XP. (Currently stored: 0xp)",
-		"(Hold right click to siphon XP into the phial.,",
-		"Craft it with a glass bottle to reextract the xp.)"
+		"Currently stored: 0xp / 0 levels."
 	],
 	"charm": {
-		"charmId": 28
+		"charmId": 28,
+		"minLevel": 1,
+		"maxLevel": 1,
+		
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Stores XP while right-clicked and can be emptied into a glass bottle by crafting.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
 	},
 	"consumable": {
 		"isDrink": true,
-		"consumeSeconds": 999999999999999999.0,
+		"consumeSeconds": 1e18,
 		"canAlwaysEat": true,
 		"hungerBars": 0.0,
 		"saturationBars": 0.0,

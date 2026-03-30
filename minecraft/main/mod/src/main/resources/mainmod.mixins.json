@@ -9,7 +9,8 @@
 		"NoSoulboundItemDropping",
 		"RespawnNearDeath",
 		"XPBottlesDropMoreXPFromPhials",
-        "InsertMultipleCoinsAtOnce"
+        "InsertMultipleCoinsAtOnce",
+        "SoundEventRedirect"
 	],
 	"injectors": {
 		"defaultRequire": 1

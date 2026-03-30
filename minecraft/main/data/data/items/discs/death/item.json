@@ -1,0 +1,11 @@
+{
+	"title": "Music Disc",
+	"id": "disc-death",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"disc": {
+		"songId": "mainmod:death"
+	}
+}

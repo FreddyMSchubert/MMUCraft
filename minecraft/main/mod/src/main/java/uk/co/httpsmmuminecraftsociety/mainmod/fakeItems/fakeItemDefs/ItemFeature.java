@@ -9,7 +9,12 @@ import java.util.List;
 import java.util.function.Function;
 
 public sealed interface ItemFeature
-        permits CharmItemFeature, ConsumableItemFeature, DyeableItemFeature, EquippableCharmItemFeature, EquippableCosmeticItemFeature
+        permits CharmItemFeature,
+        ConsumableItemFeature,
+        DyeableItemFeature,
+        EquippableCharmItemFeature,
+        EquippableCosmeticItemFeature,
+        DiscItemFeature
 {
     void apply(ItemStack stack);
 
@@ -23,7 +28,8 @@ public sealed interface ItemFeature
             new ComponentParser("consumable", ConsumableItemFeature::of),
             new ComponentParser("dyeable", DyeableItemFeature::of),
             new ComponentParser("equippableCharm", EquippableCharmItemFeature::of),
-            new ComponentParser("equippableCosmetic", EquippableCosmeticItemFeature::of)
+            new ComponentParser("equippableCosmetic", EquippableCosmeticItemFeature::of),
+            new ComponentParser("disc", DiscItemFeature::of)
     );
 
     static List<ItemFeature> of(JsonObject json) {

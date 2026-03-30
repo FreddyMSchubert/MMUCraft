@@ -27,6 +27,7 @@ const ROOT_ALLOWED_KEYS = [
   'dyeable',
   'equippableCharm',
   'equippableCosmetic',
+  "disc"
 ] as const;
 
 const RARITIES: readonly ItemRarity[] = ['common', 'uncommon', 'rare', 'epic'] as const;

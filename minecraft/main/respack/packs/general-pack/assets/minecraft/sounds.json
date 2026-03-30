@@ -1,0 +1,86 @@
+{
+  "block.bamboo_wood_fence_gate.close": {
+    "replace": true,
+    "sounds": [
+      {
+        "name": "mainmod:discs/dog",
+        "stream": true
+      }
+    ]
+  },
+  "block.bamboo_wood_fence_gate.open": {
+    "replace": true,
+    "sounds": [
+      {
+        "name": "mainmod:discs/death",
+        "stream": true
+      }
+    ]
+  },
+  "block.bamboo_wood_pressure_plate.click_off": {
+    "replace": true,
+    "sounds": [
+      {
+        "name": "mainmod:discs/droopy_likes_ricochet",
+        "stream": true
+      }
+    ]
+  },
+  "block.bamboo_wood_pressure_plate.click_on": {
+    "replace": true,
+    "sounds": [
+      {
+        "name": "mainmod:discs/droopy_likes_your_face",
+        "stream": true
+      }
+    ]
+  },
+  "music.game": {
+	"sounds": [
+		{
+			"name": "mainmod:beginning",
+			"stream": true
+		},
+		{
+			"name": "mainmod:chris",
+			"stream": true
+		},
+		{
+			"name": "mainmod:door",
+			"stream": true
+		},
+		{
+			"name": "mainmod:eleven",
+			"stream": true
+		},
+		{
+			"name": "mainmod:equinoxe",
+			"stream": true
+		},
+		{
+			"name": "mainmod:excuse",
+			"stream": true
+		},
+		{
+			"name": "mainmod:flake",
+			"stream": true
+		},
+		{
+			"name": "mainmod:intro",
+			"stream": true
+		},
+		{
+			"name": "mainmod:ki",
+			"stream": true
+		},
+		{
+			"name": "mainmod:kyoto",
+			"stream": true
+		},
+		{
+			"name": "mainmod:moog_city",
+			"stream": true
+		}
+	]
+  }
+}

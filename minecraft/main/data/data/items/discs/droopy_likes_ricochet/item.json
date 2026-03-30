@@ -1,0 +1,11 @@
+{
+	"title": "Music Disc",
+	"id": "disc-droopy-likes-ricochet",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"disc": {
+		"songId": "mainmod:droopy_likes_ricochet"
+	}
+}

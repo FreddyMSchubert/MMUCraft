@@ -12,6 +12,13 @@ public record CharmLevelDefinition(
         String abilityStatusRelative,
         List<CharmUpgradeDefinition> upgradeIngredients
 ) {
+    public static final CharmLevelDefinition BROKEN_LEVEL = new CharmLevelDefinition(
+            0,
+            "Has no effect while equipped.",
+            "",
+            List.of()
+    );
+
     public static CharmLevelDefinition of(JsonObject json, String filePath) {
         if (!json.has("level")) {
             throw new IllegalStateException(filePath + ": charm level entry missing required field 'level'");

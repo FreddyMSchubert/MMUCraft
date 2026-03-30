@@ -37,12 +37,11 @@
 		"charmId": { "type": "integer" },
 		"minLevel": { "type": "integer", "minimum": 0 },
 		"maxLevel": { "type": "integer", "minimum": 0 },
-		"defaultLevel": { "type": "integer", "minimum": 0 },
 		"levels": {
 			"type": "array",
 			"minItems": 1,
 			"items": { "$ref": "#/$defs/charmLevel" }
 		}
 	},
-	"required": ["charmId", "minLevel", "maxLevel", "defaultLevel", "levels"]
+	"required": ["charmId", "minLevel", "maxLevel", "levels"]
 }

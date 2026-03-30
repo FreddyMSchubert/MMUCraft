@@ -5,21 +5,13 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Don't get cold feet.",
-		"The unified replacement for the old basic, golden, and diamond Winged Shoes charm files."
+		"Don't get cold feet."
 	],
 	"charm": {
 		"charmId": 22,
 		"minLevel": 0,
 		"maxLevel": 10,
-		"defaultLevel": 1,
 		"levels": [
-			{
-				"level": 0,
-				"abilityStatusCurrent": "Has no effect while equipped.",
-				"abilityStatusRelative": "",
-				"upgradeIngredients": []
-			},
 			{
 				"level": 1,
 				"abilityStatusCurrent": "Lets you jump in mid-air 1 time while equipped.",

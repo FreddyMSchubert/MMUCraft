@@ -6,36 +6,33 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
 
 public sealed interface ItemFeature
         permits CharmItemFeature, ConsumableItemFeature, DyeableItemFeature, EquippableCharmItemFeature, EquippableCosmeticItemFeature
 {
     void apply(ItemStack stack);
 
-    record ComponentParser(
-            String key,
-            Function<JsonObject, ? extends ItemFeature> parser
-    ) {}
-
-    List<ComponentParser> COMPONENT_PARSERS = List.of(
-            new ComponentParser("charm", CharmItemFeature::of),
-            new ComponentParser("consumable", ConsumableItemFeature::of),
-            new ComponentParser("dyeable", DyeableItemFeature::of),
-            new ComponentParser("equippableCharm", EquippableCharmItemFeature::of),
-            new ComponentParser("equippableCosmetic", EquippableCosmeticItemFeature::of)
-    );
-
-    static List<ItemFeature> of(JsonObject json) {
+    static List<ItemFeature> of(JsonObject rootJson) {
         List<ItemFeature> list = new ArrayList<>();
 
-        for (ComponentParser componentParser : COMPONENT_PARSERS) {
-            JsonElement component = json.get(componentParser.key());
-            if (component == null || !component.isJsonObject()) {
+        for (Map.Entry<String, JsonElement> entry : rootJson.entrySet()) {
+            JsonElement value = entry.getValue();
+            if (value == null || !value.isJsonObject()) {
                 continue;
             }
 
-            ItemFeature feature = componentParser.parser().apply(component.getAsJsonObject());
+            JsonObject componentJson = value.getAsJsonObject();
+
+            ItemFeature feature = switch (entry.getKey()) {
+                case "charm" -> CharmItemFeature.of(rootJson, componentJson);
+                case "consumable" -> ConsumableItemFeature.of(componentJson);
+                case "dyeable" -> DyeableItemFeature.of(componentJson);
+                case "equippableCharm" -> EquippableCharmItemFeature.of(componentJson);
+                case "equippableCosmetic" -> EquippableCosmeticItemFeature.of(componentJson);
+                default -> null;
+            };
+
             if (feature != null) {
                 list.add(feature);
             }

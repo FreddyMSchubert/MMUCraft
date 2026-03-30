@@ -20,11 +20,11 @@ public final class CharmStackData {
 
     public static List<StoredCharmData> getStoredCharms(ItemStack stack) {
         CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (!nbt.contains(CHARM_ABILITIES_TAG) || nbt.getList(CHARM_ABILITIES_TAG).isEmpty()) {
+        ListTag list = nbt.getListOrEmpty(CHARM_ABILITIES_TAG);
+        if (list.isEmpty()) {
             return List.of();
         }
 
-        ListTag list = nbt.getListOrEmpty(CHARM_ABILITIES_TAG);
         List<StoredCharmData> result = new ArrayList<>();
 
         for (int i = 0; i < list.size(); i++) {
@@ -40,7 +40,7 @@ public final class CharmStackData {
             ));
         }
 
-        return List.copyOf(result); // TODO: why not just return result here?
+        return List.copyOf(result);
     }
 
     public static Optional<StoredCharmData> getSingleStoredCharm(ItemStack stack) {

@@ -9,14 +9,7 @@
 		"charmId": 9,
 		"minLevel": 0,
 		"maxLevel": 3,
-		"defaultLevel": 1,
 		"levels": [
-			{
-				"level": 0,
-				"abilityStatusCurrent": "Has no effect while equipped.",
-				"abilityStatusRelative": "",
-				"upgradeIngredients": []
-			},
 			{
 				"level": 1,
 				"abilityStatusCurrent": "Increases step height by 0.5 while equipped, letting you walk up one-block ledges without jumping.",

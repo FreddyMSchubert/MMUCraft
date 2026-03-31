@@ -99,26 +99,6 @@ public class CharmsManager
         }
         return false;
     }
-    private static Map<Integer, Integer> getHighestActiveCharmLevels(ServerPlayer player) {
-        Map<Integer, Integer> highestLevels = new HashMap<>();
-
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            ItemStack stack = player.getItemBySlot(slot);
-            if (stack.isEmpty()) {
-                continue;
-            }
-
-            for (CharmInstance instance : getCharmInstances(stack)) {
-                if (instance.isBroken()) {
-                    continue;
-                }
-
-                highestLevels.merge(instance.charmId(), instance.level(), Math::max);
-            }
-        }
-
-        return highestLevels;
-    }
 
     private static void tickActiveUseCharms(ServerPlayer player, ServerLevel level) {
         if (!player.isUsingItem()) return;
@@ -144,7 +124,7 @@ public class CharmsManager
 
         if (player.getUseItemRemainingTicks() <= 1) {
             callbacksCharm.onConsumeFinished(
-                    activeStack.copy(),
+                    activeStack,
                     player,
                     level,
                     elapsedTicks,

@@ -9,8 +9,6 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.SculkPhialCharm;
 
 import java.util.List;
@@ -62,6 +60,8 @@ public class ExtractXPFromPhialRecipe extends CustomRecipe
         CompoundTag resultTag = result.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         resultTag.putInt(SculkPhialCharm.XP_STORED_ID, storedXp);
         result.set(DataComponents.CUSTOM_DATA, CustomData.of(resultTag));
+
+        SculkPhialCharm.updateStoredXpTooltip(result, storedXp);
 
         return result;
     }

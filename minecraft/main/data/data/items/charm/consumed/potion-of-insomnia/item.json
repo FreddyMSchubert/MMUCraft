@@ -4,7 +4,7 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["maybe try asmr i dunno", "spawns a buncha phantoms"],
+	"tooltips": ["maybe try asmr i dunno"],
 	"charm": {
 		"charmId": 29,
 		"minLevel": 1,

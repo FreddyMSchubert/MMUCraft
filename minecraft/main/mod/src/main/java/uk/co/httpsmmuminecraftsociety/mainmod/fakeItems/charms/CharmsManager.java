@@ -54,8 +54,6 @@ public class CharmsManager
         return CHARMS_REGISTRY.get(charmId);
     }
 
-    public static final String CHARM_ABILITES_COMPOUND_ID = "charm_abilities";
-
     public record CharmInstance(
             FakeItem fakeItem,
             CharmItemFeature feature,

@@ -5,8 +5,7 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Not for the faint of heart",
-		"May come with minor side effects"
+		"Not for the faint of heart"
 	],
 	"charm": {
 		"charmId": 25,

@@ -14,7 +14,7 @@ public record CharmLevelDefinition(
 ) {
     public static final CharmLevelDefinition BROKEN_LEVEL = new CharmLevelDefinition(
             0,
-            "Has no effect while equipped.",
+            "None - Please repair to use.",
             "",
             List.of()
     );

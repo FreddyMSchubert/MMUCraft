@@ -18,6 +18,7 @@ import {
 const ROOT_ALLOWED_KEYS = [
   'title',
   'id',
+  "baseItemOverride",
   'modelType',
   'rarity',
   'maxStackSize',

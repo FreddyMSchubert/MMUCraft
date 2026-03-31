@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -175,21 +176,16 @@ public record CharmItemFeature(
         FakeItem defaultFakeItem = FakeItems.CHARM_ID_MAP.get(charmId);
         if (defaultFakeItem != null && defaultFakeItem.tooltip() != null && !defaultFakeItem.tooltip().isEmpty()) {
             lines.addAll(defaultFakeItem.tooltip());
-            lines.add(Component.literal(""));
         }
 
-        lines.add(Component.literal("Current: " + current.abilityStatusCurrent()));
+        lines.add(toAbilityComponent("Ability: " + current.abilityStatusCurrent()));
 
         if (next != null) {
-            if (!next.abilityStatusRelative().isBlank() || !next.upgradeIngredients().isEmpty()) {
-                lines.add(Component.literal(""));
-            }
-
             if (!next.abilityStatusRelative().isBlank()) {
-                lines.add(Component.literal("Next: " + next.abilityStatusRelative()));
+                lines.add(toAbilityComponent("Next Level: " + next.abilityStatusRelative()));
             }
             if (!next.upgradeIngredients().isEmpty()) {
-                lines.add(Component.literal("Upgrade: " + formatUpgradeIngredients(next.upgradeIngredients())));
+                lines.add(toAbilityComponent("To Upgrade: " + formatUpgradeIngredients(next.upgradeIngredients())));
             }
         }
 
@@ -252,5 +248,8 @@ public record CharmItemFeature(
         }
 
         return out.toString();
+    }
+    private static Component toAbilityComponent(String in) {
+        return Component.literal(in).withStyle(ChatFormatting.RESET).withStyle(ChatFormatting.WHITE);
     }
 }

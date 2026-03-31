@@ -23,16 +23,6 @@ public record FakeItem(
         Item baseItem,
         List<ItemFeature> features
 ) {
-    public FakeItem {
-        if (baseItem == null) {
-            if (features.stream().anyMatch(EquippableCosmeticItemFeature.class::isInstance)) {
-                baseItem = Items.CARVED_PUMPKIN;
-            } else {
-                baseItem = Items.COMMAND_BLOCK;
-            }
-        }
-    }
-
     public static FakeItem fromJson(JsonObject json, String filePath) {
         try {
             String title = json.get("title").getAsString();
@@ -48,13 +38,19 @@ public record FakeItem(
                     .toList();
             List<ItemFeature> features = ItemFeature.of(json);
 
+            Item baseItem = Items.COMMAND_BLOCK;
+            if (features.stream().anyMatch(EquippableCosmeticItemFeature.class::isInstance))
+                baseItem = Items.CARVED_PUMPKIN;
+            if (json.has("baseItemOverride"))
+                baseItem = JsonUtils.resolveItem(json.get("baseItemOverride").getAsString()).get();
+
             return new FakeItem(
                     title,
                     id,
                     rarity,
                     maxStackSize,
                     tooltip,
-                    null,
+                    baseItem,
                     features);
         }
         catch (RuntimeException e) {

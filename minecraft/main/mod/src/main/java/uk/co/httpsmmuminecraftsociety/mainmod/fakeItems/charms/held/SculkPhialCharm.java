@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
@@ -43,6 +44,10 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
 
         updateStoredXpTooltip(stack, xpStored);
+
+        // store xp stored in cmd for rendering
+        CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of((float)xpStored), cmd.flags(), cmd.strings(), cmd.colors()));
     }
 
     @Override

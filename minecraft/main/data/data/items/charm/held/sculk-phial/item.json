@@ -23,7 +23,7 @@
 	},
 	"consumable": {
 		"isDrink": true,
-		"consumeSeconds": 1e18,
+		"consumeSeconds": 0.05,
 		"canAlwaysEat": true,
 		"hungerBars": 0.0,
 		"saturationBars": 0.0,

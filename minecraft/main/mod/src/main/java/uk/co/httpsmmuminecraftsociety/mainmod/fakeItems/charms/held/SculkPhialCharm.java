@@ -21,21 +21,33 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
     public static final String XP_STORED_ID = "sculk_phial_stored_xp";
 
     private static final int MAX_XP_STORABLE = 1395;
-    private static final int XP_SIPHONED_PER_TICK = 4;
 
     @Override
-    public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
-    {
-        int playerXp = determinePlayerXP(player);
-        if (playerXp <= 0) return;
+    public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {}
 
+    @Override
+    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
+    {
         CompoundTag nbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         int xpStored = nbt.getIntOr(XP_STORED_ID, 0);
-        if (xpStored > MAX_XP_STORABLE) return;
+
+        if (xpStored >= MAX_XP_STORABLE) return;
         int xpStorable = MAX_XP_STORABLE - xpStored;
 
-        int xpToSiphon = Math.min(Math.min(xpStorable, XP_SIPHONED_PER_TICK), playerXp);
-        if (xpToSiphon <= 0) return;
+        int intoLevel = (int) Math.floor(player.experienceProgress * player.getXpNeededForNextLevel());
+
+        int xpToSiphon = Math.min(xpStorable, intoLevel);
+
+        if (xpToSiphon <= 0) {
+            if (player.experienceLevel == 0) return;
+
+            int previousLevelCost =
+                    determinePlayerXPAtLevelStart(player.experienceLevel)
+                            - determinePlayerXPAtLevelStart(player.experienceLevel - 1);
+
+            xpToSiphon = Math.min(xpStorable, previousLevelCost);
+            if (xpToSiphon <= 0) return;
+        }
 
         player.giveExperiencePoints(-xpToSiphon);
         xpStored += xpToSiphon;
@@ -45,14 +57,11 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
 
         updateStoredXpTooltip(stack, xpStored);
 
-        // store xp stored in cmd for rendering
         CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-        stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of((float)xpStored), cmd.flags(), cmd.strings(), cmd.colors()));
-    }
-
-    @Override
-    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
-    {
+        stack.set(
+                DataComponents.CUSTOM_MODEL_DATA,
+                new CustomModelData(List.of((float) xpStored), cmd.flags(), cmd.strings(), cmd.colors())
+        );
     }
 
     private static double xpToLevels(int totalXp) {
@@ -68,7 +77,7 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
         return level + ((double) xpIntoLevel / xpForNextLevel);
     }
 
-    private static void updateStoredXpTooltip(ItemStack stack, int xpStored)
+    public static void updateStoredXpTooltip(ItemStack stack, int xpStored)
     {
         ItemLore existingLore = stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY);
         List<Component> lines = new ArrayList<>(existingLore.lines());
@@ -97,10 +106,5 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
             return (int)(2.5D * level * level - 40.5D * level + 360.0D);
         }
         return (int)(4.5D * level * level - 162.5D * level + 2220.0D);
-    }
-    private static int determinePlayerXP(ServerPlayer player) {
-        int intoLevel = (int)Math.floor(player.experienceProgress * player.getXpNeededForNextLevel());
-
-        return determinePlayerXPAtLevelStart(player.experienceLevel) + intoLevel;
     }
 }

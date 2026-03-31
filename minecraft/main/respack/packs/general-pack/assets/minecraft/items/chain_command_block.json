@@ -1,0 +1,174 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "cases": [
+      {
+        "when": "charm-sculk-phial",
+        "model": {
+          "type": "minecraft:range_dispatch",
+          "property": "minecraft:custom_model_data",
+          "index": 0,
+          "fallback": {
+            "type": "minecraft:model",
+            "model": "general-pack:item/sculk-phial/sculk-phial_0"
+          },
+          "entries": [
+            {
+              "threshold": 1,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_1"
+              }
+            },
+            {
+              "threshold": 71,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_2"
+              }
+            },
+            {
+              "threshold": 140,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_3"
+              }
+            },
+            {
+              "threshold": 210,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_4"
+              }
+            },
+            {
+              "threshold": 280,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_5"
+              }
+            },
+            {
+              "threshold": 349,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_6"
+              }
+            },
+            {
+              "threshold": 419,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_7"
+              }
+            },
+            {
+              "threshold": 489,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_8"
+              }
+            },
+            {
+              "threshold": 559,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_9"
+              }
+            },
+            {
+              "threshold": 628,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_10"
+              }
+            },
+            {
+              "threshold": 698,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_11"
+              }
+            },
+            {
+              "threshold": 768,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_12"
+              }
+            },
+            {
+              "threshold": 837,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_13"
+              }
+            },
+            {
+              "threshold": 907,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_14"
+              }
+            },
+            {
+              "threshold": 977,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_15"
+              }
+            },
+            {
+              "threshold": 1047,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_16"
+              }
+            },
+            {
+              "threshold": 1116,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_17"
+              }
+            },
+            {
+              "threshold": 1186,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_18"
+              }
+            },
+            {
+              "threshold": 1256,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_19"
+              }
+            },
+            {
+              "threshold": 1325,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_20"
+              }
+            },
+            {
+              "threshold": 1395,
+              "model": {
+                "type": "minecraft:model",
+                "model": "general-pack:item/sculk-phial/sculk-phial_21"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "general-pack:item/sculk-phial/sculk-phial"
+    }
+  }
+}

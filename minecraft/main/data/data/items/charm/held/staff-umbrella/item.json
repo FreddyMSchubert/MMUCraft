@@ -5,19 +5,16 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Way better than that other game.",
-		"Here you can build, fight, AND craft.",
 		"\"I'm Marry Poppins, ya'll!\""
 	],
 	"charm": {
 		"charmId": 26,
 		"minLevel": 1,
 		"maxLevel": 1,
-		
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Slows down your ascent while held.",
+				"abilityStatusCurrent": "Slows down your descent while held.",
 				"abilityStatusRelative": "",
 				"upgradeIngredients": []
 			}

@@ -6,9 +6,7 @@
 	"maxStackSize": 16,
 	"tooltips": [
 		"Let's go gambling!",
-		"Awww, dang it...",
-		"Don't forget your potion of returning...",
-		"The chance to spawn in lava is low, but never 0..."
+		"Awww, dang it..."
 	],
 	"charm": {
 		"charmId": 27,

@@ -11,11 +11,10 @@
 		"charmId": 30,
 		"minLevel": 1,
 		"maxLevel": 1,
-		
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Stores and compresses dabloons.",
+				"abilityStatusCurrent": "Stores and compresses dabloons by crafting.",
 				"abilityStatusRelative": "",
 				"upgradeIngredients": []
 			}

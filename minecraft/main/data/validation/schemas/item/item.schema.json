@@ -13,6 +13,10 @@
 			"type": "string",
 			"minLength": 1
 		},
+		"baseItemOverride": {
+			"type": "string",
+			"minLength": 1
+		},
 		"modelType": {
 			"type": "string",
 			"enum": [

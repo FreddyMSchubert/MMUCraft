@@ -1,0 +1,9 @@
+{
+	"title": "Woodpecker",
+	"id": "cosmetic-woodpecker",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

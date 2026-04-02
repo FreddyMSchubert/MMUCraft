@@ -319,7 +319,6 @@ also manual ideas:
 - bike / motorbike helmet
 - pirate hat with skull
 - light bulb
-- candle
 - this meme, sad and happy version -> https://media.tenor.com/cI1t4CvrgogAAAAe/crying-under-mask-feels.png
 - alien head
 - top hat
@@ -330,10 +329,9 @@ also manual ideas:
 - animals (sitting on hat, or animal shaped hat)
 - duck hat
 - steampunk hat
-- tricorn thing oderzo made
+- tricorn
 - party cone hat
 - santa hat
-- headphones
 - lever
 - dragon head
 - armor / knights
@@ -348,16 +346,12 @@ also manual ideas:
 - fnaf stuff, springtrap mask
 - masks from majoras mask
 - beards
-- kings crown
-- upper half of a shulker fit on a head
 - turtle shell on head
 - antlers
-- unicorn horn
 - lying down cat / dog / fox / frog / bee
 - cute new chicken
 - lil octopusses
 - ghast hat so it looks your face is the ghasts face. fully engulfs your head but hole in front
-- rod from copper golems
 - flower on head
 - flower crown
 - bow

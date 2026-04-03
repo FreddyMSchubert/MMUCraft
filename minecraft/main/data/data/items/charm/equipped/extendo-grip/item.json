@@ -4,21 +4,202 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Saves you a round trip to turkey.",
-		"Stretches your arms in a very humane way."
-	],
+	"tooltips": ["Saves you a round trip to turkey."],
 	"charm": {
 		"charmId": 16,
-		"minLevel": 1,
-		"maxLevel": 1,
-		
+		"minLevel": 0,
+		"maxLevel": 7,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Increases block reach while equipped.",
-				"abilityStatusRelative": "",
-				"upgradeIngredients": []
+				"abilityStatusCurrent": "Increases block reach by 1 block.",
+				"abilityStatusRelative": "Increases block reach by a full block width.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:lead",
+						"count": 2
+					},
+					{
+						"id": "minecraft:piston",
+						"count": 2
+					},
+					{
+						"id": "minecraft:fishing_rod",
+						"count": 1
+					}
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Increases block reach by 2 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:iron_chain",
+						"count": 1
+					},
+					{
+						"id": "minecraft:copper_chain",
+						"count": 1
+					},
+					{
+						"id": "minecraft:sticky_piston",
+						"count": 3
+					},
+					{
+						"id": "minecraft:scaffolding",
+						"count": 2
+					},
+					{
+						"id": "minecraft:diamond",
+						"count": 1
+					}
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Increases block reach by 3 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:slime_block",
+						"count": 3
+					},
+					{
+						"id": "minecraft:diamond_block",
+						"count": 1
+					},
+					{
+						"id": "minecraft:fire_charge",
+						"count": 2
+					},
+					{
+						"id": "minecraft:firework_rocket",
+						"count": 2
+					}
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Increases block reach by 4 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:vine",
+						"count": 1
+					},
+					{
+						"id": "minecraft:pale_hanging_moss",
+						"count": 2
+					},
+					{
+						"id": "minecraft:warped_roots",
+						"count": 2
+					},
+					{
+						"id": "minecraft:crimson_roots",
+						"count": 2
+					},
+					{
+						"id": "minecraft:diamond_block",
+						"count": 1
+					}
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Increases block reach by 5 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:weeping_vines",
+						"count": 2
+					},
+					{
+						"id": "minecraft:twisting_vines",
+						"count": 2
+					},
+					{
+						"id": "minecraft:netherite_scrap",
+						"count": 1
+					},
+					{
+						"id": "minecraft:popped_chorus_fruit",
+						"count": 1
+					},
+					{
+						"id": "minecraft:chorus_flower",
+						"count": 2
+					}
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Increases block reach by 6 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:dragon_head",
+						"count": 1
+					},
+					{
+						"id": "minecraft:netherite_ingot",
+						"count": 1
+					},
+					{
+						"id": "minecraft:sticky_piston",
+						"count": 3
+					}
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Increases block reach by 7 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:wither_star",
+						"count": 1
+					},
+					{
+						"id": "minecraft:netherite_ingot",
+						"count": 4
+					},
+					{
+						"id": "minecraft:firework_rocket",
+						"count": 3
+					}
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Increases block reach by 8 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:calibrated_sculk_sensor",
+						"count": 1
+					},
+					{
+						"id": "minecraft:netherite_block",
+						"count": 1
+					},
+					{
+						"id": "minecraft:hanging_roots",
+						"count": 6
+					}
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Increases block reach by 15 blocks.",
+				"abilityStatusRelative": "Increases block reach by 7 more blocks.",
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:netherite_block",
+						"count": 8
+					}
+				]
 			}
 		]
 	},

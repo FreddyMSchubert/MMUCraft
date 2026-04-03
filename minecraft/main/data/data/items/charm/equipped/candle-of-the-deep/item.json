@@ -5,20 +5,31 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Way better than that other game - Here you can build, fight, AND craft.",
-		"\"I'm Marry Poppins, ya'll!\""
+		"Light on your feet."
 	],
 	"charm": {
 		"charmId": 8,
-		"minLevel": 1,
+		"minLevel": 0,
 		"maxLevel": 1,
-		
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Gives you night vision while equipped.",
+				"abilityStatusCurrent": "Gives you permanent night vision.",
 				"abilityStatusRelative": "",
-				"upgradeIngredients": []
+				"upgradeIngredients": [
+					{
+						"id": "minecraft:torchflower",
+						"count": 1
+					},
+					{
+						"id": "minecraft:glow_berries",
+						"count": 6
+					},
+					{
+						"id": "minecraft:jack_o_lantern",
+						"count": 1
+					}
+				]
 			}
 		]
 	},

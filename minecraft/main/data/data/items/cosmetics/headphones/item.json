@@ -1,0 +1,9 @@
+{
+	"title": "Headphones",
+	"id": "cosmetic-headphones",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

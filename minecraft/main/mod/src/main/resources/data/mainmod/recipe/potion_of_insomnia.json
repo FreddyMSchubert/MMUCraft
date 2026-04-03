@@ -1,14 +1,14 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
-    { "item": "minecraft:crying_obsidian" },
-    { "item": "minecraft:crying_obsidian" },
-    { "item": "minecraft:crying_obsidian" },
-    { "item": "minecraft:potion[minecraft:potion_contents=water]" },
-    { "item": "minecraft:phantom_membrane" }
+    "minecraft:crying_obsidian",
+    "minecraft:crying_obsidian",
+    "minecraft:crying_obsidian",
+    "minecraft:potion[minecraft:potion_contents=water]",
+    "minecraft:phantom_membrane"
   ],
   "result": {
-    "fakeitem": "charm-potion-displacement",
+    "stack": "mainmod:charm-potion-displacement",
     "count": 1
   }
 }

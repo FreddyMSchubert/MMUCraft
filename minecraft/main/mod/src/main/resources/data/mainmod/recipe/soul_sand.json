@@ -1,18 +1,18 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
-    { "item": "minecraft:sand" },
-    { "item": "minecraft:sand" },
-    { "item": "minecraft:sand" },
-    { "item": "minecraft:sand" },
-    { "item": "minecraft:sand" },
-    { "item": "minecraft:sand" },
-    { "item": "minecraft:sand" },
-    { "item": "minecraft:sand" },
-    { "fakeitem": "soul" }
+    "minecraft:sand",
+    "minecraft:sand",
+    "minecraft:sand",
+    "minecraft:sand",
+    "minecraft:sand",
+    "minecraft:sand",
+    "minecraft:sand",
+    "minecraft:sand",
+    "mainmod:soul"
   ],
   "result": {
-    "item": "minecraft:soul_sand",
+    "stack": "minecraft:soul_sand",
     "count": 8
   }
 }

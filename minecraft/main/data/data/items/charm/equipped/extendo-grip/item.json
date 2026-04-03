@@ -8,7 +8,7 @@
 	"charm": {
 		"charmId": 16,
 		"minLevel": 0,
-		"maxLevel": 7,
+		"maxLevel": 9,
 		"levels": [
 			{
 				"level": 1,

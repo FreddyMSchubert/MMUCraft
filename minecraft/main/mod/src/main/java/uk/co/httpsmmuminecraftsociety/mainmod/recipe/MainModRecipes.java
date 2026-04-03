@@ -9,8 +9,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
-import uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven.FakeShapedCraftingRecipe;
-import uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven.FakeShapelessCraftingRecipe;
 
 public final class MainModRecipes {
     public static final RecipeSerializer<CombineCharmorRecipe> COMBINE_CHARMOR_SERIALIZER = unit(new CombineCharmorRecipe());

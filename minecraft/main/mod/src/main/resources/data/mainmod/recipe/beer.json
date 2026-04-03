@@ -1,11 +1,11 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
-    { "item": "minecraft:potion[minecraft:potion_contents=mundane]" },
-    { "item": "minecraft:wheat" }
+    "minecraft:potion[minecraft:potion_contents=mundane]",
+    "minecraft:wheat"
   ],
   "result": {
-    "fakeitem": "beer",
+    "stack": "mainmod:beer",
     "count": 1
   }
 }

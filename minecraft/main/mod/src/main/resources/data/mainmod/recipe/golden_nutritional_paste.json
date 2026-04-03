@@ -1,18 +1,18 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
-    { "item": "minecraft:cookie" },
-    { "item": "minecraft:beetroot" },
-    { "item": "minecraft:pumpkin" },
-    { "item": "minecraft:gold_nugget" },
-    { "item": "minecraft:bowl" },
-    { "tag": "mainmod:fishes" },
-    { "tag": "mainmod:mushrooms" },
-    { "tag": "mainmod:fungi" },
-    { "tag": "mainmod:farm_animal_meats_raw" }
+    "minecraft:cookie",
+    "minecraft:beetroot",
+    "minecraft:pumpkin",
+    "minecraft:gold_nugget",
+    "minecraft:bowl",
+    "#mainmod:fishes",
+    "#mainmod:mushrooms",
+    "#mainmod:fungi",
+    "#mainmod:farm_animal_meats_raw"
   ],
   "result": {
-    "fakeitem": "golden-nutritional-paste",
+    "stack": "mainmod:golden-nutritional-paste",
     "count": 1
   }
 }

@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.recipe.dataDriven;
+package uk.co.httpsmmuminecraftsociety.mainmod.recipe.util;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
@@ -9,12 +9,16 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import java.util.ArrayList;
 import java.util.List;
 
-final class FakeRecipeUtil {
+public final class FakeRecipeUtil {
     private FakeRecipeUtil() {}
 
-    static boolean isFakeItem(ItemStack stack, String fakeItemId) {
+    public static boolean isFakeItem(ItemStack stack, String fakeItemId) {
         CustomModelData cmd = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         return cmd != null && cmd.strings().contains(fakeItemId);
+    }
+
+    public static boolean isKnownFakeItem(String fakeItemId) {
+        return FakeItems.ID_MAP.containsKey(fakeItemId);
     }
 
     static FakeItem requireFakeItem(String fakeItemId) {
@@ -25,13 +29,13 @@ final class FakeRecipeUtil {
         return fakeItem;
     }
 
-    static ItemStack createFakeItemStack(String fakeItemId, int count) {
+    public static ItemStack createFakeItemStack(String fakeItemId, int count) {
         ItemStack stack = requireFakeItem(fakeItemId).createItemStack();
         stack.setCount(count);
         return stack;
     }
 
-    static List<String> trimPattern(List<String> rawPattern) {
+    public static List<String> trimPattern(List<String> rawPattern) {
         int top = 0;
         int bottom = rawPattern.size() - 1;
 

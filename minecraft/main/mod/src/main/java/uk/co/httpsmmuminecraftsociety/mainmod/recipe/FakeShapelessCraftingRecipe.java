@@ -12,7 +12,8 @@ import net.minecraft.world.item.crafting.RecipeBookCategories;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.utils.StackStringUtil;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.stackDefs.StackDef;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.stackDefs.StackDefs;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,12 +21,12 @@ import java.util.List;
 import java.util.function.Function;
 
 public final class FakeShapelessCraftingRecipe extends CustomRecipe {
-    private static final Codec<List<StackStringUtil.StackSpec>> INGREDIENTS_CODEC =
-            Codec.list(StackStringUtil.StackSpec.CODEC)
+    private static final Codec<List<StackDef>> INGREDIENTS_CODEC =
+            Codec.list(StackDefs.CODEC)
                     .comapFlatMap(FakeShapelessCraftingRecipe::validateIngredients, Function.identity());
 
     private static final Codec<ResultSpec> RESULT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            StackStringUtil.StackSpec.CODEC.fieldOf("stack").forGetter(ResultSpec::stack),
+            StackDefs.CODEC.fieldOf("stack").forGetter(ResultSpec::stack),
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("count", 1).forGetter(ResultSpec::count)
     ).apply(instance, ResultSpec::new));
 
@@ -35,10 +36,10 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
                     RESULT_CODEC.fieldOf("result").forGetter(r -> r.result)
             ).apply(instance, FakeShapelessCraftingRecipe::new));
 
-    private final List<StackStringUtil.StackSpec> ingredients;
+    private final List<StackDef> ingredients;
     private final ResultSpec result;
 
-    public FakeShapelessCraftingRecipe(List<StackStringUtil.StackSpec> ingredients,
+    public FakeShapelessCraftingRecipe(List<StackDef> ingredients,
                                        ResultSpec result) {
         if (!result.stack().canCreateStack()) {
             throw new IllegalArgumentException("shapeless recipe result cannot be a tag");
@@ -67,8 +68,8 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
             return false;
         }
 
-        List<StackStringUtil.StackSpec> sortedIngredients = ingredients.stream()
-                .sorted(Comparator.comparingInt(StackStringUtil.StackSpec::specificity).reversed())
+        List<StackDef> sortedIngredients = ingredients.stream()
+                .sorted(Comparator.comparingInt(StackDef::specificity).reversed())
                 .toList();
 
         return matchBacktracking(sortedIngredients, 0, presentStacks, new boolean[presentStacks.size()]);
@@ -96,7 +97,7 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
         return MainModRecipes.FAKE_CRAFTING_SHAPELESS_SERIALIZER;
     }
 
-    private static boolean matchBacktracking(List<StackStringUtil.StackSpec> ingredients,
+    private static boolean matchBacktracking(List<StackDef> ingredients,
                                              int ingredientIndex,
                                              List<ItemStack> stacks,
                                              boolean[] used) {
@@ -104,7 +105,7 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
             return true;
         }
 
-        StackStringUtil.StackSpec ingredient = ingredients.get(ingredientIndex);
+        StackDef ingredient = ingredients.get(ingredientIndex);
         for (int i = 0; i < stacks.size(); i++) {
             if (used[i]) {
                 continue;
@@ -123,7 +124,7 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
         return false;
     }
 
-    private static DataResult<List<StackStringUtil.StackSpec>> validateIngredients(List<StackStringUtil.StackSpec> ingredients) {
+    private static DataResult<List<StackDef>> validateIngredients(List<StackDef> ingredients) {
         if (ingredients.isEmpty()) {
             return DataResult.error(() -> "shapeless recipe must have at least 1 ingredient");
         }
@@ -134,7 +135,7 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
         return DataResult.success(List.copyOf(ingredients));
     }
 
-    public record ResultSpec(StackStringUtil.StackSpec stack, int count) {
+    public record ResultSpec(StackDef stack, int count) {
         public ResultSpec {
             if (stack == null) {
                 throw new IllegalArgumentException("result stack must not be null");

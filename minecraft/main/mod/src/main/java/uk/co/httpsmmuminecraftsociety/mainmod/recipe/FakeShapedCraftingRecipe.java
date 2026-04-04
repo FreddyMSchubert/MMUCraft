@@ -12,8 +12,9 @@ import net.minecraft.world.item.crafting.RecipeBookCategories;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.recipe.util.FakeRecipeUtil;
-import uk.co.httpsmmuminecraftsociety.mainmod.utils.StackStringUtil;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.stackDefs.StackDef;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.stackDefs.StackDefs;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.RecipeUtil;
 
 import java.util.HashSet;
 import java.util.List;
@@ -25,12 +26,12 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
     private static final Codec<List<String>> PATTERN_CODEC = Codec.list(Codec.STRING)
             .comapFlatMap(FakeShapedCraftingRecipe::validatePattern, Function.identity());
 
-    private static final Codec<Map<String, StackStringUtil.StackSpec>> KEY_CODEC =
-            Codec.unboundedMap(Codec.STRING, StackStringUtil.StackSpec.CODEC)
+    private static final Codec<Map<String, StackDef>> KEY_CODEC =
+            Codec.unboundedMap(Codec.STRING, StackDefs.CODEC)
                     .comapFlatMap(FakeShapedCraftingRecipe::validateKey, Function.identity());
 
     private static final Codec<ResultSpec> RESULT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            StackStringUtil.StackSpec.CODEC.fieldOf("stack").forGetter(ResultSpec::stack),
+            StackDefs.CODEC.fieldOf("stack").forGetter(ResultSpec::stack),
             Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("count", 1).forGetter(ResultSpec::count)
     ).apply(instance, ResultSpec::new));
 
@@ -42,21 +43,21 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
             ).apply(instance, FakeShapedCraftingRecipe::new));
 
     private final List<String> pattern;
-    private final Map<String, StackStringUtil.StackSpec> key;
+    private final Map<String, StackDef> key;
     private final ResultSpec result;
 
     private final int width;
     private final int height;
-    private final StackStringUtil.StackSpec[] cells;
+    private final StackDef[] cells;
 
     public FakeShapedCraftingRecipe(List<String> pattern,
-                                    Map<String, StackStringUtil.StackSpec> key,
+                                    Map<String, StackDef> key,
                                     ResultSpec result) {
         if (!result.stack().canCreateStack()) {
             throw new IllegalArgumentException("shaped recipe result cannot be a tag");
         }
 
-        List<String> trimmed = FakeRecipeUtil.trimPattern(pattern);
+        List<String> trimmed = RecipeUtil.trimPattern(pattern);
         if (trimmed.isEmpty()) {
             throw new IllegalArgumentException("pattern must contain at least one non-space symbol");
         }
@@ -76,7 +77,7 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
         }
 
         Set<String> usedSymbols = new HashSet<>();
-        StackStringUtil.StackSpec[] flat = new StackStringUtil.StackSpec[rowWidth * trimmed.size()];
+        StackDef[] flat = new StackDef[rowWidth * trimmed.size()];
         int index = 0;
 
         for (String row : trimmed) {
@@ -88,7 +89,7 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
                 }
 
                 String symbol = String.valueOf(c);
-                StackStringUtil.StackSpec ingredient = key.get(symbol);
+                StackDef ingredient = key.get(symbol);
                 if (ingredient == null) {
                     throw new IllegalArgumentException("pattern uses undefined key symbol '" + symbol + "'");
                 }
@@ -154,7 +155,7 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
     private boolean matchesAt(CraftingInput input, int offX, int offY, boolean mirrored) {
         for (int y = 0; y < input.height(); y++) {
             for (int x = 0; x < input.width(); x++) {
-                StackStringUtil.StackSpec expected = ingredientAtGridPosition(x, y, offX, offY, mirrored);
+                StackDef expected = ingredientAtGridPosition(x, y, offX, offY, mirrored);
                 ItemStack actual = input.getItem(x + y * input.width());
 
                 if (expected == null) {
@@ -170,11 +171,11 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
         return true;
     }
 
-    private StackStringUtil.StackSpec ingredientAtGridPosition(int gridX,
-                                                               int gridY,
-                                                               int offX,
-                                                               int offY,
-                                                               boolean mirrored) {
+    private StackDef ingredientAtGridPosition(int gridX,
+                                               int gridY,
+                                               int offX,
+                                               int offY,
+                                               boolean mirrored) {
         int localX = gridX - offX;
         int localY = gridY - offY;
 
@@ -212,7 +213,7 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
         return DataResult.success(List.copyOf(pattern));
     }
 
-    private static DataResult<Map<String, StackStringUtil.StackSpec>> validateKey(Map<String, StackStringUtil.StackSpec> key) {
+    private static DataResult<Map<String, StackDef>> validateKey(Map<String, StackDef> key) {
         for (String symbol : key.keySet()) {
             if (symbol.length() != 1) {
                 return DataResult.error(() -> "recipe key symbols must be exactly 1 character: '" + symbol + "'");
@@ -225,7 +226,7 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
         return DataResult.success(Map.copyOf(key));
     }
 
-    public record ResultSpec(StackStringUtil.StackSpec stack, int count) {
+    public record ResultSpec(StackDef stack, int count) {
         public ResultSpec {
             if (stack == null) {
                 throw new IllegalArgumentException("result stack must not be null");

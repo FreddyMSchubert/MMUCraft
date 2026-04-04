@@ -3,7 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
-import uk.co.httpsmmuminecraftsociety.mainmod.DataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
@@ -59,5 +59,28 @@ public final class FakeItems {
         }
 
         return byId;
+    }
+
+    public static boolean isSpecificFakeItem(ItemStack stack, String fakeItemId) {
+        CustomModelData cmd = stack.get(DataComponents.CUSTOM_MODEL_DATA);
+        return cmd != null && cmd.strings().contains(fakeItemId);
+    }
+
+    public static boolean isKnownFakeItem(String fakeItemId) {
+        return FakeItems.ID_MAP.containsKey(fakeItemId);
+    }
+
+    public static FakeItem requireFakeItem(String fakeItemId) {
+        FakeItem fakeItem = FakeItems.ID_MAP.get(fakeItemId);
+        if (fakeItem == null) {
+            throw new IllegalArgumentException("Unknown fakeitem id: " + fakeItemId);
+        }
+        return fakeItem;
+    }
+
+    public static ItemStack createFakeItemStack(String fakeItemId, int count) {
+        ItemStack stack = requireFakeItem(fakeItemId).createItemStack();
+        stack.setCount(count);
+        return stack;
     }
 }

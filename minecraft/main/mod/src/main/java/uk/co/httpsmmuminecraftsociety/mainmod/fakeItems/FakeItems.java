@@ -3,8 +3,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
-import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
@@ -33,6 +33,12 @@ public final class FakeItems {
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
         MainMod.LOGGER.info("[FakeItems init] Loaded {} fake items from JSON: {}", ALL.size(), ID_MAP.keySet().stream().sorted().toList());
+    }
+
+    public static void validate() {
+        for (FakeItem item : ALL) {
+            item.validate();
+        }
     }
 
     public static FakeItem getFakeItemFromStack(ItemStack stack) {

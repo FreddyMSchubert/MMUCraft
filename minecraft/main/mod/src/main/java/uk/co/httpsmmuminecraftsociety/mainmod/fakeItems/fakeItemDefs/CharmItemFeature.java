@@ -5,16 +5,17 @@ import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDef;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.TagStackDef;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public record CharmItemFeature(
         Charm charm,
@@ -92,6 +93,14 @@ public record CharmItemFeature(
         );
     }
 
+    public void validate() {
+        for (CharmLevelDefinition definition : levelDefinitions.values()) {
+            for (StackDef ingredient : definition.upgradeIngredients()) {
+                ingredient.createStack();
+            }
+        }
+    }
+
     @Override
     public void apply(ItemStack stack)
     {
@@ -130,6 +139,7 @@ public record CharmItemFeature(
 
         applyPresentation(stack, newLevel);
     }
+
     public boolean hasNextLevel(int level) {
         return level < maxLevel;
     }
@@ -207,26 +217,42 @@ public record CharmItemFeature(
         return def;
     }
 
-    private static String formatUpgradeIngredients(List<CharmUpgradeDefinition> ingredients) {
-        return ingredients.stream()
-                .map(CharmItemFeature::formatIngredient)
-                .reduce((a, b) -> a + ", " + b)
-                .orElse("");
-    }
+    private record CountedIngredient(StackDef ingredient, int count) {}
 
-    private static String formatIngredient(CharmUpgradeDefinition ingredient) {
-        String displayName;
+    private static String formatUpgradeIngredients(List<StackDef> ingredients) {
+        Map<String, CountedIngredient> grouped = new HashMap<>();
 
-        if (ingredient.isVanillaItemId()) {
-            Optional<Item> item = JsonUtils.resolveItem(ingredient.id());
-            if (item.isEmpty()) return "Empty";
-            displayName = new ItemStack(item.get()).getHoverName().getString();
-        } else {
-            FakeItem fakeItem = FakeItems.ID_MAP.get(ingredient.id());
-            displayName = fakeItem != null ? fakeItem.title() : ingredient.id();
+        for (StackDef ingredient : ingredients) {
+            grouped.merge(
+                    ingredient.raw(),
+                    new CountedIngredient(ingredient, 1),
+                    (left, right) -> new CountedIngredient(left.ingredient(), left.count() + 1)
+            );
         }
 
-        return ingredient.count() + "x " + displayName;
+        return grouped.values().stream()
+                .sorted(
+                        Comparator.<CountedIngredient>comparingInt(CountedIngredient::count).reversed()
+                                .thenComparing(
+                                        (CountedIngredient entry) -> entry.ingredient().specificity(),
+                                        Comparator.reverseOrder()
+                                )
+                                .thenComparing(entry -> entry.ingredient().raw())
+                )
+                .map(entry -> formatIngredient(entry.ingredient(), entry.count()))
+                .collect(Collectors.joining(", "));
+    }
+
+    private static String formatIngredient(StackDef ingredient, int count) {
+        String displayName = ingredient.getDisplayName();
+        if (ingredient instanceof TagStackDef) {
+            displayName = "Any " + displayName;
+        }
+
+        if (count > 1) {
+            return count + "x " + displayName;
+        }
+        return displayName;
     }
 
     private static String toRoman(int value) {
@@ -249,6 +275,7 @@ public record CharmItemFeature(
 
         return out.toString();
     }
+
     private static Component toAbilityComponent(String in) {
         return Component.literal(in).withStyle(ChatFormatting.RESET).withStyle(ChatFormatting.WHITE);
     }

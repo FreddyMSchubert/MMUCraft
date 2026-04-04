@@ -8,43 +8,113 @@
 	"charm": {
 		"charmId": 9,
 		"minLevel": 0,
-		"maxLevel": 3,
+		"maxLevel": 8,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Increases step height by 0.5 while equipped, letting you walk up one-block ledges without jumping.",
-				"abilityStatusRelative": "Restores the basic hiking effect, giving you +0.5 step height while equipped.",
+				"abilityStatusCurrent": "Increases step height to a full block",
+				"abilityStatusRelative": "Allows you to walk up blocks without jumping",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:leather_boots",
-						"count": 1
-					},
-					{
-						"id": "minecraft:rabbit_hide",
-						"count": 4
-					}
+					"minecraft:andesite_stairs"
 				]
 			},
 			{
 				"level": 2,
-				"abilityStatusCurrent": "Increases step height by 1.0 while equipped, letting you walk up fence-height obstacles without jumping.",
-				"abilityStatusRelative": "Raises the charm to +1.0 step height while equipped.",
+				"abilityStatusCurrent": "Allows you to walk over fences without jumping",
+				"abilityStatusRelative": "Increases step height to a fence-high block",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:gold_block",
-						"count": 2
-					}
+					"minecraft:rabbit_stew",
+					"minecraft:rabbit_hide",
+					"minecraft:rabbit_foot",
+					"minecraft:bamboo_fence",
+					"minecraft:cherry_fence",
+					"minecraft:mangrove_fence",
+					"minecraft:pale_oak_fence"
 				]
 			},
 			{
 				"level": 3,
-				"abilityStatusCurrent": "Increases step height by 1.5 while equipped, letting you walk up two-block rises without jumping.",
-				"abilityStatusRelative": "Raises the charm to +1.5 step height while equipped.",
+				"abilityStatusCurrent": "Allows you to walk over a 2-block wall without jumping",
+				"abilityStatusRelative": "Increases step height to 2 blocks.",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:diamond_block",
-						"count": 2
-					}
+					"minecraft:potion[minecraft:potion_contents=leaping]",
+					"minecraft:copper_block",
+					"minecraft:redstone_block",
+					"minecraft:lapis_block",
+					"minecraft:emerald_block",
+					"minecraft:amethyst_block",
+					"minecraft:gold_block",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Allows you to walk over a 3-block wall without jumping",
+				"abilityStatusRelative": "Increases step height to 3 blocks.",
+				"upgradeIngredients": [
+					"minecraft:potion[minecraft:potion_contents=leaping]",
+					"minecraft:splash_potion[minecraft:potion_contents=leaping]",
+					"minecraft:lingering_potion[minecraft:potion_contents=leaping]",
+					"minecraft:diamond_block",
+					"minecraft:netherite_ingot"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Allows you to walk over a 4-block wall without jumping",
+				"abilityStatusRelative": "Increases step height to 4 blocks.",
+				"upgradeIngredients": [
+					"minecraft:lingering_potion[minecraft:potion_contents=leaping]",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Allows you to walk over a 5-block wall without jumping",
+				"abilityStatusRelative": "Increases step height to 5 blocks.",
+				"upgradeIngredients": [
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:nether_star",
+					"minecraft:nether_star"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Allows you to walk over a 6-block wall without jumping",
+				"abilityStatusRelative": "Increases step height to 6 blocks.",
+				"upgradeIngredients": [
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:nether_star",
+					"minecraft:nether_star",
+					"minecraft:nether_star",
+					"minecraft:nether_star"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Allows you to walk over a 7-block wall without jumping",
+				"abilityStatusRelative": "Increases step height to 7 blocks.",
+				"upgradeIngredients": [
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block"
 				]
 			}
 		]

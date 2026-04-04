@@ -20,7 +20,11 @@
 				"abilityStatusRelative": { "type": "string" },
 				"upgradeIngredients": {
 					"type": "array",
-					"items": { "$ref": "#/$defs/charmUpgradeIngredient" }
+					"maxItems": 8,
+					"items": { 
+						"type": "string",
+						"pattern": "^(?:#?minecraft:|#?mainmod:)\\S.*$"
+					}
 				}
 			},
 			"required": [

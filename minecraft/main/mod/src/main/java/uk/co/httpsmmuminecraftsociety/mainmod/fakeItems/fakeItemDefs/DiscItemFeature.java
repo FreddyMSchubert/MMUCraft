@@ -3,7 +3,6 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -26,15 +25,23 @@ public record DiscItemFeature(
     @Override
     public void apply(ItemStack stack)
     {
+        stack.set(
+                net.minecraft.core.component.DataComponents.JUKEBOX_PLAYABLE,
+                new JukeboxPlayable(resolveSongHolder())
+        );
+    }
+
+    @Override
+    public void validate()
+    {
+        resolveSongHolder();
+    }
+
+    private Holder<JukeboxSong> resolveSongHolder() {
         HolderLookup.Provider registries = MainMod.getRegistries();
 
-        Holder<JukeboxSong> holder = registries
+        return registries
                 .lookupOrThrow(Registries.JUKEBOX_SONG)
                 .getOrThrow(songKey);
-
-        stack.set(
-                DataComponents.JUKEBOX_PLAYABLE,
-                new JukeboxPlayable(holder)
-        );
     }
 }

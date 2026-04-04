@@ -1,7 +1,9 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.recipe;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -65,7 +67,19 @@ public class CombineCharmorRecipe extends CustomRecipe
             storedCharm = stackCharm;
         }
 
-        return new CraftingInfo(armor != null && charm != null, armor, charm, charmFakeItem, storedCharm);
+        if (armor == null || charm == null || !isArmorCompatibleWithCharm(armor, charm)) {
+            return new CraftingInfo(false, armor, charm, charmFakeItem, storedCharm);
+        }
+
+        return new CraftingInfo(true, armor, charm, charmFakeItem, storedCharm);
+    }
+
+    private static boolean isArmorCompatibleWithCharm(ItemStack armor, ItemStack charm) {
+        Equippable armorEquippable = armor.getItem().components().get(DataComponents.EQUIPPABLE);
+        Equippable charmEquippable = charm.get(DataComponents.EQUIPPABLE);
+        if (armorEquippable == null || charmEquippable == null) return false;
+
+        return armorEquippable.slot() == charmEquippable.slot();
     }
 
     @Override

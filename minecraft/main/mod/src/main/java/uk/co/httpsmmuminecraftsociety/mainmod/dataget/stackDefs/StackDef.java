@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.dataRead.stackDefs;
+package uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs;
 
 import net.minecraft.world.item.ItemStack;
 
@@ -10,9 +10,13 @@ public sealed interface StackDef permits VanillaStackDef, FakeStackDef, TagStack
 
     ItemStack createStack();
 
-    int specificity();
+    String getDisplayName();
 
     default boolean canCreateStack() {
         return true;
+    }
+
+    default int specificity() {
+        return 0;
     }
 }

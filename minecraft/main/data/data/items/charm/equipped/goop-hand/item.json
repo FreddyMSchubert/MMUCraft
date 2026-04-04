@@ -15,18 +15,9 @@
 				"abilityStatusCurrent": "Slightly increases knockback while equipped.",
 				"abilityStatusRelative": "Increases knockback.",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:slime_ball",
-						"count": 1
-					},
-					{
-						"id": "minecraft:honeycomb",
-						"count": 1
-					},
-					{
-						"id": "minecraft:diamond",
-						"count": 1
-					}
+					"minecraft:slime_ball",
+					"minecraft:honeycomb",
+					"minecraft:diamond"
 				]
 			},
 			{
@@ -34,18 +25,9 @@
 				"abilityStatusCurrent": "Moderately increases knockback while equipped.",
 				"abilityStatusRelative": "Increases knockback more.",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:slime_block",
-						"count": 1
-					},
-					{
-						"id": "minecraft:sticky_piston",
-						"count": 1
-					},
-					{
-						"id": "minecraft:diamond_block",
-						"count": 1
-					}
+					"minecraft:slime_block",
+					"minecraft:sticky_piston",
+					"minecraft:diamond_block"
 				]
 			},
 			{
@@ -53,18 +35,14 @@
 				"abilityStatusCurrent": "Increases knockback while equipped.",
 				"abilityStatusRelative": "Increases knockback even more.",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:magma_cream",
-						"count": 1
-					},
-					{
-						"id": "minecraft:wind_charge",
-						"count": 4
-					},
-					{
-						"id": "minecraft:diamond_block",
-						"count": 3
-					}
+					"minecraft:magma_cream",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block"
 				]
 			},
 			{
@@ -72,22 +50,13 @@
 				"abilityStatusCurrent": "Greatly increases knockback while equipped.",
 				"abilityStatusRelative": "Increases knockback once more.",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:ghast_tear",
-						"count": 2
-					},
-					{
-						"id": "minecraft:crying_obsidian",
-						"count": 2
-					},
-					{
-						"id": "minecraft:echo_shard",
-						"count": 2
-					},
-					{
-						"id": "minecraft:netherite_ingot",
-						"count": 1
-					}
+					"minecraft:ghast_tear",
+					"minecraft:ghast_tear",
+					"minecraft:crying_obsidian",
+					"minecraft:crying_obsidian",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:netherite_ingot"
 				]
 			},
 			{
@@ -95,18 +64,13 @@
 				"abilityStatusCurrent": "Massively increases knockback while equipped.",
 				"abilityStatusRelative": "Increases knockback yet again.",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:netherite_block",
-						"count": 1
-					},
-					{
-						"id": "minecraft:end_crystal",
-						"count": 3
-					},
-					{
-						"id": "minecraft:dragon_breath",
-						"count": 3
-					}
+					"minecraft:netherite_block",
+					"minecraft:end_crystal",
+					"minecraft:end_crystal",
+					"minecraft:end_crystal",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath"
 				]
 			}
 		]

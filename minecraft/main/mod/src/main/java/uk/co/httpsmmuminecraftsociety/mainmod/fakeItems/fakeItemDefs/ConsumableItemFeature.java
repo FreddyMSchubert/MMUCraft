@@ -85,4 +85,10 @@ public record ConsumableItemFeature(
         if (useRemainder.isPresent())
             stack.set(DataComponents.USE_REMAINDER, new UseRemainder(useRemainder.get()));
     }
+
+    @Override
+    public void validate()
+    {
+
+    }
 }

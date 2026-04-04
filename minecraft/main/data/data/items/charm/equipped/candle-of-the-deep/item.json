@@ -17,18 +17,9 @@
 				"abilityStatusCurrent": "Gives you permanent night vision.",
 				"abilityStatusRelative": "",
 				"upgradeIngredients": [
-					{
-						"id": "minecraft:torchflower",
-						"count": 1
-					},
-					{
-						"id": "minecraft:glow_berries",
-						"count": 6
-					},
-					{
-						"id": "minecraft:jack_o_lantern",
-						"count": 1
-					}
+					"minecraft:torchflower",
+					"minecraft:glow_berries",
+					"minecraft:jack_o_lantern"
 				]
 			}
 		]

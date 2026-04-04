@@ -2,6 +2,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDef;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDefs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,7 @@ public record CharmLevelDefinition(
         int level,
         String abilityStatusCurrent,
         String abilityStatusRelative,
-        List<CharmUpgradeDefinition> upgradeIngredients
+        List<StackDef> upgradeIngredients
 ) {
     public static final CharmLevelDefinition BROKEN_LEVEL = new CharmLevelDefinition(
             0,
@@ -37,12 +39,18 @@ public record CharmLevelDefinition(
         String current = json.get("abilityStatusCurrent").getAsString();
         String relative = json.get("abilityStatusRelative").getAsString();
 
-        List<CharmUpgradeDefinition> ingredients = new ArrayList<>();
+        List<StackDef> ingredients = new ArrayList<>();
         for (JsonElement element : json.get("upgradeIngredients").getAsJsonArray()) {
-            if (!element.isJsonObject()) {
-                throw new IllegalStateException(filePath + ": charm level ingredient entry must be an object");
+            if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isString()) {
+                throw new IllegalStateException(filePath + ": charm level ingredient entry must be a string");
             }
-            ingredients.add(CharmUpgradeDefinition.of(element.getAsJsonObject(), filePath));
+
+            String raw = element.getAsString();
+            try {
+                ingredients.add(StackDefs.parse(raw));
+            } catch (RuntimeException e) {
+                throw new IllegalStateException(filePath + ": invalid upgrade ingredient '" + raw + "': " + e.getMessage(), e);
+            }
         }
 
         return new CharmLevelDefinition(level, current, relative, List.copyOf(ingredients));

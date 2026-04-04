@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.dataRead;
+package uk.co.httpsmmuminecraftsociety.mainmod.dataget;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

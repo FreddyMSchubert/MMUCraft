@@ -12,8 +12,8 @@ import net.minecraft.world.item.crafting.RecipeBookCategories;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.stackDefs.StackDef;
-import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.stackDefs.StackDefs;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDef;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDefs;
 
 import java.util.ArrayList;
 import java.util.Comparator;

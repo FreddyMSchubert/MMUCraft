@@ -17,7 +17,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.gamerules.GameRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.httpsmmuminecraftsociety.mainmod.dataRead.DataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
@@ -59,6 +60,7 @@ public class MainMod implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             registries = server.overworld().registryAccess();
+            FakeItems.validate();
         });
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
@@ -80,7 +82,7 @@ public class MainMod implements ModInitializer {
         HolderLookup.Provider value = registries;
         if (value == null) {
             throw new IllegalStateException(
-                    "Runtime registries are not available yet. " + "Tried to create a registry-backed fake item before the server was ready."
+                    "Runtime registries are not available yet. Tried to create a registry-backed fake item before the server was ready."
             );
         }
         return value;

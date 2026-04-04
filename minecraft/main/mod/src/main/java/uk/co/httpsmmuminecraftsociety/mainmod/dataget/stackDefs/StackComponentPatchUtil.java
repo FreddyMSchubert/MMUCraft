@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.dataRead.stackDefs;
+package uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs;
 
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;

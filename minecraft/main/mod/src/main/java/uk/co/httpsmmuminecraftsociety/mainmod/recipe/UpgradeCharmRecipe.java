@@ -1,42 +1,43 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.recipe;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDef;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmLevelDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmUpgradeDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class UpgradeCharmRecipe extends CustomRecipe
 {
+    private record OfferedStack(int slot, ItemStack stack) {}
+
     private record UpgradeInfo(
             boolean craftable,
+            int charmSlot,
             ItemStack charmStack,
-            FakeItem charmFakeItem,
             CharmItemFeature charmFeature,
-            int currentLevel,
             int targetLevel,
-            Map<String, Integer> requiredIngredientCounts
+            int[] consumeCounts
     ) {}
 
     private UpgradeInfo getUpgradeInfo(CraftingInput input)
     {
-        ItemStack charmStack = null;
-        FakeItem charmFakeItem = null;
+        int charmSlot = -1;
+        ItemStack charmStack = ItemStack.EMPTY;
         CharmItemFeature charmFeature = null;
         int currentLevel = -1;
 
-        Map<String, Integer> offeredCounts = new HashMap<>();
+        List<OfferedStack> offeredStacks = new ArrayList<>();
+        int totalOfferedUnits = 0;
 
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
@@ -47,86 +48,121 @@ public class UpgradeCharmRecipe extends CustomRecipe
             StoredCharmData storedCharm = CharmStackData.getSingleStoredCharm(stack).orElse(null);
             if (storedCharm != null) {
                 FakeItem fakeItem = FakeItems.CHARM_ID_MAP.get(storedCharm.charmId());
-                if (fakeItem != null && fakeItem.getFeature(CharmItemFeature.class) != null) {
-                    if (charmStack != null) {
-                        return invalid();
-                    }
+                if (fakeItem != null) {
+                    CharmItemFeature feature = fakeItem.getFeature(CharmItemFeature.class);
+                    if (feature != null) {
+                        if (charmSlot != -1) {
+                            return invalid(input.size());
+                        }
 
-                    charmStack = stack;
-                    charmFakeItem = fakeItem;
-                    charmFeature = fakeItem.getFeature(CharmItemFeature.class);
-                    currentLevel = storedCharm.level();
-                    continue;
+                        charmSlot = i;
+                        charmStack = stack;
+                        charmFeature = feature;
+                        currentLevel = storedCharm.level();
+                        continue;
+                    }
                 }
             }
 
-            String ingredientKey = getIngredientKey(stack);
-            if (ingredientKey == null) {
-                return invalid();
-            }
-
-            offeredCounts.merge(ingredientKey, 1, Integer::sum);
+            offeredStacks.add(new OfferedStack(i, stack));
+            totalOfferedUnits += stack.getCount();
         }
 
-        if (charmStack == null || charmFakeItem == null || charmFeature == null) {
-            return invalid();
+        if (charmSlot == -1 || charmFeature == null) {
+            return invalid(input.size());
         }
 
         if (!charmFeature.hasNextLevel(currentLevel)) {
-            return invalid();
+            return invalid(input.size());
         }
 
         int targetLevel = currentLevel + 1;
         CharmLevelDefinition targetLevelDef = charmFeature.getLevelDefinition(targetLevel);
+        List<StackDef> requiredIngredients = targetLevelDef.upgradeIngredients();
 
-        Map<String, Integer> requiredCounts = new HashMap<>();
-        for (CharmUpgradeDefinition ingredient : targetLevelDef.upgradeIngredients()) {
-            requiredCounts.merge(ingredient.id(), ingredient.count(), Integer::sum);
+        if (requiredIngredients.size() != totalOfferedUnits) {
+            return invalid(input.size());
         }
 
-        for (String offeredKey : offeredCounts.keySet()) {
-            if (!requiredCounts.containsKey(offeredKey)) {
-                return invalid();
-            }
+        List<StackDef> orderedRequired = requiredIngredients.stream()
+                .sorted(Comparator.comparingInt(StackDef::specificity).reversed())
+                .toList();
+
+        int[] remainingCounts = new int[input.size()];
+        int[] consumeCounts = new int[input.size()];
+        for (OfferedStack offered : offeredStacks) {
+            remainingCounts[offered.slot()] = offered.stack().getCount();
         }
 
-        for (Map.Entry<String, Integer> required : requiredCounts.entrySet()) {
-            if (offeredCounts.getOrDefault(required.getKey(), 0) < required.getValue()) {
-                return invalid();
-            }
+        if (!assignIngredients(orderedRequired, 0, offeredStacks, remainingCounts, consumeCounts)) {
+            return invalid(input.size());
         }
 
         return new UpgradeInfo(
                 true,
+                charmSlot,
                 charmStack,
-                charmFakeItem,
                 charmFeature,
-                currentLevel,
                 targetLevel,
-                requiredCounts
+                consumeCounts
         );
     }
 
-    private static UpgradeInfo invalid() {
-        return new UpgradeInfo(false, ItemStack.EMPTY, null, null, -1, -1, Map.of());
+    private static boolean assignIngredients(List<StackDef> requiredIngredients,
+                                             int ingredientIndex,
+                                             List<OfferedStack> offeredStacks,
+                                             int[] remainingCounts,
+                                             int[] consumeCounts) {
+        if (ingredientIndex >= requiredIngredients.size()) {
+            return true;
+        }
+
+        StackDef required = requiredIngredients.get(ingredientIndex);
+
+        for (OfferedStack offered : offeredStacks) {
+            int slot = offered.slot();
+
+            if (remainingCounts[slot] <= 0) {
+                continue;
+            }
+            if (!required.matches(offered.stack())) {
+                continue;
+            }
+
+            remainingCounts[slot]--;
+            consumeCounts[slot]++;
+
+            if (assignIngredients(requiredIngredients, ingredientIndex + 1, offeredStacks, remainingCounts, consumeCounts)) {
+                return true;
+            }
+
+            remainingCounts[slot]++;
+            consumeCounts[slot]--;
+        }
+
+        return false;
+    }
+
+    private static UpgradeInfo invalid(int inputSize) {
+        return new UpgradeInfo(false, -1, ItemStack.EMPTY, null, -1, new int[inputSize]);
     }
 
     @Override
     public boolean matches(CraftingInput input, Level level)
     {
-        return getUpgradeInfo(input).craftable;
+        return getUpgradeInfo(input).craftable();
     }
 
     @Override
     public ItemStack assemble(CraftingInput input)
     {
         UpgradeInfo info = getUpgradeInfo(input);
-        if (!info.craftable) {
+        if (!info.craftable()) {
             return ItemStack.EMPTY;
         }
 
-        ItemStack result = info.charmStack.copy();
-        info.charmFeature.setLevel(result, info.targetLevel);
+        ItemStack result = info.charmStack().copy();
+        info.charmFeature().setLevel(result, info.targetLevel());
         return result;
     }
 
@@ -136,11 +172,9 @@ public class UpgradeCharmRecipe extends CustomRecipe
         UpgradeInfo info = getUpgradeInfo(input);
         NonNullList<ItemStack> remaining = NonNullList.withSize(input.size(), ItemStack.EMPTY);
 
-        if (!info.craftable) {
+        if (!info.craftable()) {
             return remaining;
         }
-
-        Map<String, Integer> toConsume = new HashMap<>(info.requiredIngredientCounts);
 
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
@@ -148,28 +182,18 @@ public class UpgradeCharmRecipe extends CustomRecipe
                 continue;
             }
 
-            if (stack == info.charmStack) {
+            if (i == info.charmSlot()) {
                 remaining.set(i, ItemStack.EMPTY);
                 continue;
             }
 
-            String ingredientKey = getIngredientKey(stack);
-            if (ingredientKey == null) {
+            int consumed = info.consumeCounts()[i];
+            if (consumed <= 0) {
                 remaining.set(i, stack.copy());
                 continue;
             }
 
-            int stillNeeded = toConsume.getOrDefault(ingredientKey, 0);
-            if (stillNeeded <= 0) {
-                remaining.set(i, stack.copy());
-                continue;
-            }
-
-            int consumeCount = Math.min(stillNeeded, stack.getCount());
-            int leftover = stack.getCount() - consumeCount;
-
-            toConsume.put(ingredientKey, stillNeeded - consumeCount);
-
+            int leftover = stack.getCount() - consumed;
             if (leftover > 0) {
                 ItemStack copy = stack.copy();
                 copy.setCount(leftover);
@@ -180,16 +204,6 @@ public class UpgradeCharmRecipe extends CustomRecipe
         }
 
         return remaining;
-    }
-
-    private String getIngredientKey(ItemStack stack) {
-        FakeItem fakeItem = FakeItems.getFakeItemFromStack(stack);
-        if (fakeItem != null) {
-            return fakeItem.id();
-        }
-
-        Identifier itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        return itemId != null ? itemId.toString() : null;
     }
 
     @Override

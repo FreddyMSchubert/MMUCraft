@@ -15,16 +15,18 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.TickCallbackC
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
-public final class RunningShoesCharm implements Charm, TickCallbackCharm, EquippedTickCallbackCharm
+public final class RunningShoesCharm implements Charm, EquippedTickCallbackCharm, TickCallbackCharm
 {
     public static final int CHARGE_GAIN_PER_TICK = 1;
     public static final int CHARGE_DRAIN_PER_TICK = 25;
 
-    public static final int MAX_CHARGE = 123;
-
     private static final String TAG_CHARGE = "rb_charge";
 
     private static final Identifier SPEED_ID = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "running_shoes_speed_id");
+
+    private static int getMaxChargeForLevel(int level) {
+        return 80 + level * 20;
+    }
 
     @Override
     public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
@@ -40,10 +42,10 @@ public final class RunningShoesCharm implements Charm, TickCallbackCharm, Equipp
                         && !player.isJumping();
 
         if (charging) {
-            if (charge < MAX_CHARGE)
+            if (charge < getMaxChargeForLevel(charmLevel))
                 charge += CHARGE_GAIN_PER_TICK;
         } else if (charge > 0)
-            charge -= CHARGE_DRAIN_PER_TICK;
+            charge = Math.max(charge - CHARGE_DRAIN_PER_TICK, 0);
 
         tag.putInt(TAG_CHARGE, charge);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -51,7 +53,7 @@ public final class RunningShoesCharm implements Charm, TickCallbackCharm, Equipp
         if (charge > 0) {
             // account for no overlap with leprechaun boots charm, which also modifies movement speed
             double normalBaseSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue();
-            double intendedSpeed = Math.max(normalBaseSpeed * 1.3 /*sprint speed*/, normalBaseSpeed + (charge / 100.0 * normalBaseSpeed));
+            double intendedSpeed = Math.min(normalBaseSpeed + (charge / 100.0 * normalBaseSpeed), 0.3564 /* 20 bps limit */);
             Utils.applyPlayerModifier(player, Attributes.MOVEMENT_SPEED, SPEED_ID, intendedSpeed - player.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), AttributeModifier.Operation.ADD_VALUE);
         }
     }

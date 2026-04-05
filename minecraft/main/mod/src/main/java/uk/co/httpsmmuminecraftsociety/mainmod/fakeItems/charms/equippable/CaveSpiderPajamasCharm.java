@@ -16,9 +16,6 @@ public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
 {
     private static final double CEILING_PROBE = 0.06D;
 
-    private static final double WALK_SPEED = 0.28D;
-    private static final double SPRINT_SPEED = 0.42D;
-
     private static final double CONTROL = 0.35D;
     private static final double BRAKE = 0.55D;
 
@@ -61,7 +58,7 @@ public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
         if (wish.lengthSqr() > 1.0E-6D) {
             wish = wish.normalize();
 
-            double targetSpeed = sprinting ? SPRINT_SPEED : WALK_SPEED;
+            double targetSpeed = sprinting ? getSprintSpeedPerLevel(charmLevel) : getWalkSpeedPerLevel(charmLevel);
             double targetX = wish.x * targetSpeed;
             double targetZ = wish.z * targetSpeed;
 
@@ -84,5 +81,12 @@ public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
 
         player.hurtMarked = true;
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
+    }
+
+    public float getWalkSpeedPerLevel(int level) {
+        return level * 0.1f;
+    }
+    public float getSprintSpeedPerLevel(int level) {
+        return level * 0.15f;
     }
 }

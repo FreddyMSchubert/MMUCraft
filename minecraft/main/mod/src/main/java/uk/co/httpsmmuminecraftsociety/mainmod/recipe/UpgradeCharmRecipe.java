@@ -65,7 +65,7 @@ public class UpgradeCharmRecipe extends CustomRecipe
             }
 
             offeredStacks.add(new OfferedStack(i, stack));
-            totalOfferedUnits += stack.getCount();
+            totalOfferedUnits++;
         }
 
         if (charmSlot == -1 || charmFeature == null) {

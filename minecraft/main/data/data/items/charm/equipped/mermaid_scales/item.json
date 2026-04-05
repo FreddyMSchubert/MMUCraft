@@ -9,7 +9,6 @@
 		"charmId": 14,
 		"minLevel": 0,
 		"maxLevel": 1,
-		
 		"levels": [
 			{
 				"level": 1,
@@ -19,7 +18,8 @@
 					"minecraft:cod",
 					"minecraft:salmon",
 					"minecraft:pufferfish",
-					"minecraft:tropical_fish"
+					"minecraft:tropical_fish",
+					"minecraft:wet_sponge"
 				]
 			}
 		]

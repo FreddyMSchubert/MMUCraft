@@ -1,6 +1,5 @@
 This project includes assets licensed under the MIT License:
 
-Artifacts Mod – Umbrella Charm Held Item Model
 Copyright (c) 2019–2021
 https://github.com/ochotonida/artifacts
 

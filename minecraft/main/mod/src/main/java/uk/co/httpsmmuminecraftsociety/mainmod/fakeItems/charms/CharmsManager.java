@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,15 +11,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfInsomniaCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfReturningCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.*;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.deprecated.KittyPajamasCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.deprecated.MermaidScalesCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.deprecated.StriderShalesCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
@@ -37,11 +38,8 @@ public class CharmsManager
             Map.entry(9, new HikingBootsCharm()),
             Map.entry(12, new GiantsBootsCharm()),
             Map.entry(13, new LeprechaunBootsCharm()),
-            Map.entry(14, new MermaidScalesCharm()),
-            Map.entry(15, new StriderShalesCharm()),
             Map.entry(16, new ExtendoGripCharm()),
             Map.entry(17, new BunnyPajamasCharm()),
-            Map.entry(18, new KittyPajamasCharm()),
             Map.entry(19, new SpiderPajamasCharm()),
             Map.entry(20, new CaveSpiderPajamasCharm()),
             Map.entry(21, new GoopHandCharm()),
@@ -51,7 +49,8 @@ public class CharmsManager
             Map.entry(27, new PotionOfDisplacementCharm()),
             Map.entry(28, new SculkPhialCharm()),
             Map.entry(29, new PotionOfInsomniaCharm()),
-            Map.entry(30, new WalletCharm())
+            Map.entry(30, new WalletCharm()),
+            Map.entry(31, new VeinminerCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);
@@ -193,5 +192,27 @@ public class CharmsManager
             );
         }
         return null;
+    }
+
+    public static void onAfterBlockBreak(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity)
+    {
+        if (!(player instanceof ServerPlayer)) return;
+        if (!(level instanceof ServerLevel)) return;
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack stack = player.getItemBySlot(slot);
+            if (stack.isEmpty()) {
+                continue;
+            }
+
+            for (CharmInstance instance : getCharmInstances(stack))
+            {
+                if (instance.isBroken()) continue;
+                EquippableCharmItemFeature equippable = instance.fakeItem().getFeature(EquippableCharmItemFeature.class);
+                if (equippable != null && equippable.equippable().slot() != slot) continue;
+                if (instance.charm() instanceof AfterBlockBreakCallbackCharm afterBreakCharm) {
+                    afterBreakCharm.afterBlockBreak(stack, (ServerPlayer) player, (ServerLevel) level, blockPos, blockState, instance.level());
+                }
+            }
+        }
     }
 }

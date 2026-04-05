@@ -10,77 +10,115 @@
 	"charm": {
 		"charmId": 22,
 		"minLevel": 0,
-		"maxLevel": 5,
+		"maxLevel": 10,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Lets you jump in mid-air 1 time while equipped.",
-				"abilityStatusRelative": "Raises the charm to 1 mid-air jump while equipped.",
+				"abilityStatusCurrent": "Lets you jump in mid-air once.",
+				"abilityStatusRelative": "Lets you jump in mid-air once.",
 				"upgradeIngredients": [
-					"minecraft:feather",
-					"minecraft:feather",
-					"minecraft:feather",
-					"minecraft:phantom_membrane"
+					"minecraft:feather"
 				]
 			},
 			{
 				"level": 2,
-				"abilityStatusCurrent": "Lets you jump in mid-air 2 times while equipped.",
-				"abilityStatusRelative": "Raises the charm to 2 mid-air jumps while equipped.",
+				"abilityStatusCurrent": "Lets you jump in mid-air twice.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
 				"upgradeIngredients": [
 					"minecraft:feather",
 					"minecraft:feather",
 					"minecraft:feather",
-					"minecraft:feather",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane"
+					"minecraft:leather_boots"
 				]
 			},
 			{
 				"level": 3,
 				"abilityStatusCurrent": "Lets you jump in mid-air 3 times while equipped.",
-				"abilityStatusRelative": "Raises the charm to 3 mid-air jumps while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
 				"upgradeIngredients": [
 					"minecraft:feather",
 					"minecraft:feather",
 					"minecraft:feather",
-					"minecraft:feather",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane"
+					"minecraft:wind_charge"
 				]
 			},
 			{
 				"level": 4,
 				"abilityStatusCurrent": "Lets you jump in mid-air 4 times while equipped.",
-				"abilityStatusRelative": "Raises the charm to 4 mid-air jumps while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
 				"upgradeIngredients": [
 					"minecraft:feather",
 					"minecraft:feather",
 					"minecraft:feather",
-					"minecraft:feather",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane"
+					"minecraft:rabbit_hide",
+					"minecraft:rabbit_foot"
 				]
 			},
 			{
 				"level": 5,
 				"abilityStatusCurrent": "Lets you jump in mid-air 5 times while equipped.",
-				"abilityStatusRelative": "Raises the charm to 5 mid-air jumps while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"upgradeIngredients": [
+					"minecraft:phantom_membrane"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Lets you jump in mid-air 6 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"upgradeIngredients": [
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:diamond_boots"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Lets you jump in mid-air 7 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"upgradeIngredients": [
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:ghast_tear"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Lets you jump in mid-air 8 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"upgradeIngredients": [
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:firework_rocket"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Lets you jump in mid-air 9 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"upgradeIngredients": [
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:shulker_shell"
+				]
+			},
+			{
+				"level": 10,
+				"abilityStatusCurrent": "Lets you jump in mid-air 15 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air 6 more times.",
 				"upgradeIngredients": [
 					"minecraft:feather",
-					"minecraft:feather",
-					"minecraft:feather",
-					"minecraft:feather",
+					"minecraft:wind_charge",
+					"minecraft:rabbit_hide",
 					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane",
-					"minecraft:phantom_membrane"
+					"minecraft:ghast_tear",
+					"minecraft:firework_rocket",
+					"minecraft:shulker_shell",
+					"minecraft:diamond_block"
 				]
 			}
 		]

@@ -7,15 +7,119 @@
 	"tooltips": ["Been there, run that."],
 	"charm": {
 		"charmId": 7,
-		"minLevel": 1,
-		"maxLevel": 1,
-		
+		"minLevel": 0,
+		"maxLevel": 8,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Builds up movement speed the longer you keep sprinting while equipped.",
-				"abilityStatusRelative": "",
-				"upgradeIngredients": []
+				"abilityStatusCurrent": "Builds up a small speed boost while sprinting.",
+				"abilityStatusRelative": "Builds up speed while sprinting.",
+				"upgradeIngredients": [
+					"minecraft:sugar",
+					"minecraft:sugar",
+					"minecraft:sugar"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Builds up a mild speed boost while sprinting.",
+				"abilityStatusRelative": "Increases max speed boost while sprinting.",
+				"upgradeIngredients": [
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_foot",
+					"minecraft:honeycomb",
+					"minecraft:honeycomb",
+					"minecraft:emerald",
+					"minecraft:emerald",
+					"minecraft:sugar",
+					"minecraft:sugar"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Builds up a modest speed boost while sprinting.",
+				"abilityStatusRelative": "Increases max speed boost while sprinting.",
+				"upgradeIngredients": [
+					"minecraft:goat_horn",
+					"minecraft:honeycomb",
+					"minecraft:honeycomb",
+					"minecraft:honeycomb",
+					"minecraft:emerald_block",
+					"minecraft:emerald_block",
+					"minecraft:emerald_block"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Builds up a solid speed boost while sprinting.",
+				"abilityStatusRelative": "Increases max speed boost while sprinting.",
+				"upgradeIngredients": [
+					"minecraft:potion[minecraft:potion_contents=swiftness]",
+					"minecraft:spyglass",
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_foot",
+					"minecraft:diamond",
+					"minecraft:diamond",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Builds up a strong speed boost while sprinting.",
+				"abilityStatusRelative": "Increases max speed boost while sprinting.",
+				"upgradeIngredients": [
+					"minecraft:potion[minecraft:potion_contents=swiftness]",
+					"minecraft:splash_potion[minecraft:potion_contents=swiftness]",
+					"minecraft:spyglass",
+					"minecraft:diamond",
+					"minecraft:diamond",
+					"minecraft:diamond",
+					"minecraft:diamond",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Builds up a very strong speed boost while sprinting.",
+				"abilityStatusRelative": "Increases max speed boost while sprinting.",
+				"upgradeIngredients": [
+					"minecraft:netherite_upgrade_smithing_template",
+					"minecraft:gold_block",
+					"minecraft:gold_block",
+					"minecraft:gold_block",
+					"minecraft:netherite_scrap",
+					"minecraft:potion[minecraft:potion_contents=swiftness]",
+					"minecraft:splash_potion[minecraft:potion_contents=swiftness]"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Builds up an extreme speed boost while sprinting.",
+				"abilityStatusRelative": "Increases max speed boost while sprinting.",
+				"upgradeIngredients": [
+					"minecraft:netherite_upgrade_smithing_template",
+					"minecraft:gold_block",
+					"minecraft:gold_block",
+					"minecraft:gold_block",
+					"minecraft:netherite_ingot",
+					"minecraft:elytra",
+					"minecraft:lingering_potion[minecraft:potion_contents=swiftness]"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Builds up a ludicrous speed boost while sprinting.",
+				"abilityStatusRelative": "Increases max speed boost while sprinting.",
+				"upgradeIngredients": [
+					"minecraft:potion[minecraft:potion_contents=swiftness]",
+					"minecraft:splash_potion[minecraft:potion_contents=swiftness]",
+					"minecraft:lingering_potion[minecraft:potion_contents=swiftness]",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_head",
+					"minecraft:elytra",
+					"minecraft:nether_star",
+					"minecraft:netherite_block"
+				]
 			}
 		]
 	},

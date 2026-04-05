@@ -10,18 +10,16 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickC
 
 public class SpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
 {
-
     @Override
     public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
         if (!player.horizontalCollision) return;
 
         Vec3 v = player.getDeltaMovement();
 
-        double climbAccel = 0.08D;
         double maxClimbY = 0.22D;
 
         double newX = v.x * 0.96D;
-        double newY = Math.min(maxClimbY, Math.max(v.y, 0.0D) + climbAccel);
+        double newY = Math.min(maxClimbY, Math.max(v.y, 0.0D) + getClimbAccelByLevel(charmLevel));
         double newZ = v.z * 0.96D;
 
         player.setDeltaMovement(newX, newY, newZ);
@@ -33,5 +31,9 @@ public class SpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
 
         player.fallDistance = 0.0F;
+    }
+
+    private static float getClimbAccelByLevel(int level) {
+        return (level * 0.025f) + 0.025f;
     }
 }

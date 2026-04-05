@@ -7,15 +7,66 @@
 	"tooltips": ["Oohhhh how emo... /s"],
 	"charm": {
 		"charmId": 19,
-		"minLevel": 1,
-		"maxLevel": 1,
-		
+		"minLevel": 0,
+		"maxLevel": 5,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Lets you climb walls by walking into them while equipped.",
+				"abilityStatusCurrent": "Wall climb is slow.",
+				"abilityStatusRelative": "Walk into walls to climb them.",
+				"upgradeIngredients": [
+					"minecraft:black_wool",
+					"minecraft:spider_eye",
+					"minecraft:vine"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Wall climb is a bit faster.",
+				"abilityStatusRelative": "Wall climb gets faster.",
+				"upgradeIngredients": [
+					"minecraft:cobweb",
+					"minecraft:black_dye",
+					"minecraft:black_dye",
+					"minecraft:fermented_spider_eye",
+					"minecraft:honeycomb"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Wall climb is steady.",
+				"abilityStatusRelative": "Wall climb gets much faster.",
+				"upgradeIngredients": [
+					"minecraft:soul_soil",
+					"minecraft:blackstone",
+					"minecraft:weeping_vines",
+					"minecraft:phantom_membrane",
+					"minecraft:string"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Wall climb is quick.",
+				"abilityStatusRelative": "Wall climb gets very fast.",
+				"upgradeIngredients": [
+					"minecraft:crying_obsidian",
+					"minecraft:gilded_blackstone",
+					"minecraft:twisting_vines",
+					"minecraft:black_wool",
+					"minecraft:honey_block"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Wall climb is near walking speed.",
 				"abilityStatusRelative": "",
-				"upgradeIngredients": []
+				"upgradeIngredients": [
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:dragon_breath",
+					"minecraft:end_rod",
+					"minecraft:black_wool"
+				]
 			}
 		]
 	},

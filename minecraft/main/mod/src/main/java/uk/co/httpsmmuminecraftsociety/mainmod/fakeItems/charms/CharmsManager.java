@@ -16,6 +16,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.Potion
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfReturningCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.*;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.deprecated.KittyPajamasCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.deprecated.MermaidScalesCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.deprecated.StriderShalesCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;

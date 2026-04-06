@@ -40,6 +40,7 @@ public class CharmsManager
             Map.entry(13, new LeprechaunBootsCharm()),
             Map.entry(16, new ExtendoGripCharm()),
             Map.entry(17, new BunnyPajamasCharm()),
+            Map.entry(18, new KittyPajamasCharm()),
             Map.entry(19, new SpiderPajamasCharm()),
             Map.entry(20, new CaveSpiderPajamasCharm()),
             Map.entry(21, new GoopHandCharm()),
@@ -50,7 +51,8 @@ public class CharmsManager
             Map.entry(28, new SculkPhialCharm()),
             Map.entry(29, new PotionOfInsomniaCharm()),
             Map.entry(30, new WalletCharm()),
-            Map.entry(31, new VeinminerCharm())
+            Map.entry(31, new VeinminerCharm()),
+            Map.entry(32, new VitalityMendingCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);
@@ -100,6 +102,16 @@ public class CharmsManager
             if (ability.feature().charm().getClass() == charmClass) return true;
         }
         return false;
+    }
+    public static int getPlayerCharmLevel(ServerPlayer player, Class<? extends Charm> charmClass) {
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack stack = player.getItemBySlot(slot);
+            if (stack == ItemStack.EMPTY) continue;
+            for (CharmInstance ability : getCharmInstances(stack)) {
+                if (ability.feature().charm().getClass() == charmClass) return ability.level();
+            }
+        }
+        return 0;
     }
 
     private static void tickActiveUseCharms(ServerPlayer player, ServerLevel level) {

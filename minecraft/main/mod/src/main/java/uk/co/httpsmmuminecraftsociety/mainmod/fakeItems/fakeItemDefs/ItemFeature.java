@@ -18,6 +18,8 @@ public sealed interface ItemFeature
 {
     void apply(ItemStack stack);
 
+    void validate();
+
     static List<ItemFeature> of(JsonObject rootJson) {
         List<ItemFeature> list = new ArrayList<>();
 

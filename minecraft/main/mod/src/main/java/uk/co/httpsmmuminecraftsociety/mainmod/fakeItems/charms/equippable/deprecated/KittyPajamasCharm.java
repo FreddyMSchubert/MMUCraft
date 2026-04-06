@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
+package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.deprecated;
 
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;

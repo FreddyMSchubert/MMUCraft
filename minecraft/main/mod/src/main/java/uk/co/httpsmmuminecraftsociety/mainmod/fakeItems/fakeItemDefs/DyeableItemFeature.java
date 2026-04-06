@@ -24,4 +24,10 @@ public record DyeableItemFeature(
         stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dyeColor));
         stack.set(DataComponents.LORE, stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).withLineAdded(Component.literal("Dyeable")));
     }
+
+    @Override
+    public void validate()
+    {
+
+    }
 }

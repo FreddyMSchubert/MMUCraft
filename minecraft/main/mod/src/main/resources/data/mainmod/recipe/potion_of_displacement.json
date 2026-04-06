@@ -1,14 +1,14 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
-    { "item": "minecraft:amethyst_shard" },
-    { "item": "minecraft:amethyst_shard" },
-    { "item": "minecraft:amethyst_shard" },
-    { "item": "minecraft:potion[minecraft:potion_contents=water]" },
-    { "item": "minecraft:ender_pearl" }
+    "minecraft:amethyst_shard",
+    "minecraft:amethyst_shard",
+    "minecraft:amethyst_shard",
+    "minecraft:potion[minecraft:potion_contents=water]",
+    "minecraft:ender_pearl"
   ],
   "result": {
-    "fakeitem": "charm-potion-displacement",
+    "stack": "mainmod:charm-potion-displacement",
     "count": 1
   }
 }

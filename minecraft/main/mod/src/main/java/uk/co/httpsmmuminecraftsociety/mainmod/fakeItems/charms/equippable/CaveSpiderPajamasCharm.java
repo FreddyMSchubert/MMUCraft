@@ -1,36 +1,72 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.player.Input;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.TickCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
-public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm, TickCallbackCharm
 {
-    private static final double CEILING_PROBE = 0.06D;
+    private static final double CEILING_PROBE = 0.5D;
 
-    private static final double WALK_SPEED = 0.28D;
-    private static final double SPRINT_SPEED = 0.42D;
+    private static final float VANILLA_DEFAULT_PLAYER_GRAVITY = 0.08f;
 
-    private static final double CONTROL = 0.35D;
-    private static final double BRAKE = 0.55D;
+    private static final Identifier ANTI_GRAV_ATTRIBUTE_ID = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "cave_spider_pajamas_anti_grav_attribute");
+
+    private static final Map<UUID, Integer> PLAYER_USE_TICKS = new HashMap<>();
+
+    private static final double CEILING_PROBE_HEIGHT = 0.5D; // if within slab of a ceiling, apply effect
+    private static final double CEILING_EDGE_INSET = 0.08D;
+
+    private static boolean playerTouchingCeiling(ServerPlayer player)
+    {
+        return !player.level().noBlockCollision(player, player.getBoundingBox()
+                .deflate(CEILING_EDGE_INSET, 0.0D, CEILING_EDGE_INSET)
+                .setMinY(player.getBoundingBox().maxY)
+                .setMaxY(player.getBoundingBox().maxY + CEILING_PROBE_HEIGHT));
+    }
+
+    private static int getMaxHoldTicksPerLevel(int level)
+    {
+        if (level <= 0) return 0;
+        if (level >= 7) return Integer.MAX_VALUE;
+        return (int) Math.pow(2, level) * 20; // 1 -> 2, 2 -> 4, 3 -> 8, 4 -> 16, 5 -> 32, 6 -> 64
+    }
 
     @Override
     public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
-        Input input = player.getLastClientInput();
-        if (!input.jump()) return;
+        if (!playerTouchingCeiling(player))
+        {
+            PLAYER_USE_TICKS.remove(player.getUUID());
+            return;
+        }
+        if (!player.getLastClientInput().jump())
+        {
+            PLAYER_USE_TICKS.remove(player.getUUID());
+            return;
+        }
 
-        boolean hasCeiling =
-                !level.noBlockCollision(player, player.getBoundingBox().move(0.0D, CEILING_PROBE, 0.0D));
-        if (!hasCeiling) return;
+        int useTicks = PLAYER_USE_TICKS.getOrDefault(player.getUUID(), 0);
+        if (useTicks >= getMaxHoldTicksPerLevel(charmLevel))
+        {
+            PLAYER_USE_TICKS.remove(player.getUUID());
+            return;
+        }
+        PLAYER_USE_TICKS.put(player.getUUID(), useTicks + 1);
 
         player.addEffect(new MobEffectInstance(
                 MobEffects.LEVITATION,
@@ -41,48 +77,18 @@ public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
                 false
         ));
 
-        Vec3 v = player.getDeltaMovement();
+        Utils.applyPlayerModifier(
+                player,
+                Attributes.GRAVITY,
+                ANTI_GRAV_ATTRIBUTE_ID,
+                -VANILLA_DEFAULT_PLAYER_GRAVITY,
+                AttributeModifier.Operation.ADD_VALUE
+        );
+    }
 
-        float yawRad = player.getYRot() * ((float)Math.PI / 180F);
-        Vec3 forward = new Vec3(-Mth.sin(yawRad), 0.0D, Mth.cos(yawRad));
-        Vec3 left = new Vec3(forward.z, 0.0D, -forward.x);
-
-        Vec3 wish = Vec3.ZERO;
-        if (input.forward())  wish = wish.add(forward);
-        if (input.backward()) wish = wish.subtract(forward);
-        if (input.left())     wish = wish.add(left);
-        if (input.right())    wish = wish.subtract(left);
-
-        boolean sprinting = input.sprint();
-
-        double newX = v.x;
-        double newZ = v.z;
-
-        if (wish.lengthSqr() > 1.0E-6D) {
-            wish = wish.normalize();
-
-            double targetSpeed = sprinting ? SPRINT_SPEED : WALK_SPEED;
-            double targetX = wish.x * targetSpeed;
-            double targetZ = wish.z * targetSpeed;
-
-            newX += (targetX - newX) * CONTROL;
-            newZ += (targetZ - newZ) * CONTROL;
-        } else {
-            newX *= (1.0D - BRAKE);
-            newZ *= (1.0D - BRAKE);
-
-            if (Math.abs(newX) < 0.003D) newX = 0.0D;
-            if (Math.abs(newZ) < 0.003D) newZ = 0.0D;
-        }
-
-        double stickY = 0.08D;
-        double maxStickY = 0.10D;
-        double newY = Math.min(maxStickY, Math.max(v.y, 0.0D) + stickY);
-
-        player.setDeltaMovement(newX, newY, newZ);
-        player.resetFallDistance();
-
-        player.hurtMarked = true;
-        player.connection.send(new ClientboundSetEntityMotionPacket(player));
+    @Override
+    public void onTick(ServerPlayer player, ServerLevel level)
+    {
+        Utils.removePlayerModifier(player, Attributes.GRAVITY, ANTI_GRAV_ATTRIBUTE_ID);
     }
 }

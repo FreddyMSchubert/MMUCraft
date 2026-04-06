@@ -6,11 +6,11 @@
     " S "
   ],
   "key": {
-    "S": { "item": "minecraft:echo_shard" },
-    "B": { "item": "minecraft:experience_bottle" }
+    "S": "minecraft:echo_shard",
+    "B": "minecraft:experience_bottle"
   },
   "result": {
-    "fakeitem": "charm-sculk-phial",
+    "stack": "mainmod:charm-sculk-phial",
     "count": 1
   }
 }

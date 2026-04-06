@@ -56,11 +56,7 @@ public final class FakeItemsCommand {
                 Commands.literal("fakeitems")
                         .requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
                         .then(buildCategoryCommand("all", ALL_SUGGESTIONS, item -> true))
-                        .then(buildCategoryCommand(
-                                "charm",
-                                CHARM_SUGGESTIONS,
-                                item -> hasFeature(item, CharmItemFeature.class)
-                        ))
+                        .then(buildCharmCategoryCommand())
                         .then(buildCategoryCommand(
                                 "consumable",
                                 CONSUMABLE_SUGGESTIONS,
@@ -84,6 +80,40 @@ public final class FakeItemsCommand {
         );
     }
 
+    private static LiteralArgumentBuilder<CommandSourceStack> buildCharmCategoryCommand() {
+        Predicate<FakeItem> filter = item -> hasFeature(item, CharmItemFeature.class);
+
+        return Commands.literal("charm")
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .suggests(CHARM_SUGGESTIONS)
+                        .executes(ctx -> give(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "id"),
+                                1,
+                                null,
+                                filter
+                        ))
+                        .then(Commands.argument("amount", IntegerArgumentType.integer(1, 1_000_000))
+                                .executes(ctx -> give(
+                                        ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "id"),
+                                        IntegerArgumentType.getInteger(ctx, "amount"),
+                                        null,
+                                        filter
+                                ))
+                                .then(Commands.argument("level", IntegerArgumentType.integer(1))
+                                        .executes(ctx -> give(
+                                                ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "id"),
+                                                IntegerArgumentType.getInteger(ctx, "amount"),
+                                                IntegerArgumentType.getInteger(ctx, "level"),
+                                                filter
+                                        ))
+                                )
+                        )
+                );
+    }
+
     private static LiteralArgumentBuilder<CommandSourceStack> buildCategoryCommand(
             String name,
             SuggestionProvider<CommandSourceStack> suggestions,
@@ -96,6 +126,7 @@ public final class FakeItemsCommand {
                                 ctx.getSource(),
                                 StringArgumentType.getString(ctx, "id"),
                                 1,
+                                null,
                                 filter
                         ))
                         .then(Commands.argument("amount", IntegerArgumentType.integer(1, 1_000_000))
@@ -103,6 +134,7 @@ public final class FakeItemsCommand {
                                         ctx.getSource(),
                                         StringArgumentType.getString(ctx, "id"),
                                         IntegerArgumentType.getInteger(ctx, "amount"),
+                                        null,
                                         filter
                                 ))
                         )
@@ -131,6 +163,7 @@ public final class FakeItemsCommand {
             CommandSourceStack source,
             String selectedId,
             int amount,
+            Integer level,
             Predicate<FakeItem> filter
     ) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
@@ -141,9 +174,35 @@ public final class FakeItemsCommand {
             return 0;
         }
 
+        if (level != null && !item.id().startsWith("charm-")) {
+            source.sendFailure(Component.literal(
+                    "The level argument can only be used for fake items whose id starts with charm-"
+            ));
+            return 0;
+        }
+
+        CharmItemFeature charmFeature = item.getFeature(CharmItemFeature.class);
+
+        if (level != null) {
+            if (charmFeature == null) {
+                source.sendFailure(Component.literal(
+                        "Fake item " + item.id() + " is not a charm and cannot take a level."
+                ));
+                return 0;
+            }
+
+            if (level < charmFeature.minLevel() || level > charmFeature.maxLevel()) {
+                source.sendFailure(buildInvalidCharmLevelMessage(item, level, charmFeature));
+                return 0;
+            }
+        }
+
         int remaining = amount;
         while (remaining > 0) {
-            ItemStack stack = item.createItemStack();
+            ItemStack stack = (level != null)
+                    ? item.createItemStackAtLevel(level)
+                    : item.createItemStack();
+
             int max = stack.getMaxStackSize();
             int giveNow = Math.min(remaining, max);
 
@@ -157,12 +216,20 @@ public final class FakeItemsCommand {
             remaining -= giveNow;
         }
 
-        source.sendSuccess(
-                () -> Component.literal("Gave " + amount + "x " + item.id()),
-                true
-        );
+        Component message = level == null
+                ? Component.literal("Gave " + amount + "x " + item.id())
+                : Component.literal("Gave " + amount + "x " + item.id() + " at level " + level);
+
+        source.sendSuccess(() -> message, true);
 
         return 1;
+    }
+    private static Component buildInvalidCharmLevelMessage(FakeItem item, int level, CharmItemFeature feature) {
+        return Component.literal(
+                "Invalid level " + level + " for " + item.id()
+                        + ". Allowed command levels are "
+                        + Math.min(0, feature.minLevel()) + ".." + feature.maxLevel()
+        );
     }
 
     private static FakeItem resolveItem(String selectedId, Predicate<FakeItem> filter) {

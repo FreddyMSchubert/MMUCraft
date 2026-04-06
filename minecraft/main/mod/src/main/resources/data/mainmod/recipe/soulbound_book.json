@@ -1,15 +1,15 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
-    { "fakeitem": "soul" },
-    { "item": "minecraft:book" },
-    { "item": "minecraft:lapis_block" },
-    { "item": "minecraft:amethyst_shard" },
-    { "item": "minecraft:soul_sand" },
-    { "item": "minecraft:soul_soil" }
+    "mainmod:soul",
+    "minecraft:book",
+    "minecraft:lapis_block",
+    "minecraft:amethyst_shard",
+    "minecraft:soul_sand",
+    "minecraft:soul_soil"
   ],
   "result": {
-    "item": "minecraft:enchanted_book[minecraft:stored_enchantments={'mainmod:soulbound':1}]",
+    "stack": "minecraft:enchanted_book[minecraft:stored_enchantments={'mainmod:soulbound':1}]",
     "count": 1
   }
 }

@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
+package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.deprecated;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

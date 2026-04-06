@@ -1,10 +1,10 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
-    { "fakeitem": "coin-500" }
+    "mainmod:coin-500"
   ],
   "result": {
-    "fakeitem": "coin-100",
+    "stack": "mainmod:coin-100",
     "count": 5
   }
 }

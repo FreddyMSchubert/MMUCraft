@@ -4,21 +4,138 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Saves you a round trip to turkey.",
-		"Stretches your arms in a very humane way."
-	],
+	"tooltips": ["Saves you a round trip to turkey."],
 	"charm": {
 		"charmId": 16,
-		"minLevel": 1,
-		"maxLevel": 1,
-		
+		"minLevel": 0,
+		"maxLevel": 9,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Increases block reach while equipped.",
-				"abilityStatusRelative": "",
-				"upgradeIngredients": []
+				"abilityStatusCurrent": "Increases block reach by 1 block.",
+				"abilityStatusRelative": "Increases block reach by a full block width.",
+				"upgradeIngredients": [
+					"minecraft:lead",
+					"minecraft:lead",
+					"minecraft:piston",
+					"minecraft:fishing_rod"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Increases block reach by 2 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					"minecraft:iron_chain",
+					"minecraft:copper_chain",
+					"minecraft:sticky_piston",
+					"minecraft:sticky_piston",
+					"minecraft:sticky_piston",
+					"minecraft:scaffolding",
+					"minecraft:scaffolding",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Increases block reach by 3 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					"minecraft:slime_block",
+					"minecraft:slime_block",
+					"minecraft:slime_block",
+					"minecraft:diamond_block",
+					"minecraft:fire_charge",
+					"minecraft:fire_charge",
+					"minecraft:firework_rocket",
+					"minecraft:firework_rocket"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Increases block reach by 4 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					"minecraft:vine",
+					"minecraft:pale_hanging_moss",
+					"minecraft:pale_hanging_moss",
+					"minecraft:warped_roots",
+					"minecraft:warped_roots",
+					"minecraft:crimson_roots",
+					"minecraft:crimson_roots",
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Increases block reach by 5 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					"minecraft:weeping_vines",
+					"minecraft:weeping_vines",
+					"minecraft:twisting_vines",
+					"minecraft:twisting_vines",
+					"minecraft:netherite_scrap",
+					"minecraft:popped_chorus_fruit",
+					"minecraft:chorus_flower"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Increases block reach by 6 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					"minecraft:dragon_head",
+					"minecraft:netherite_ingot",
+					"minecraft:sticky_piston",
+					"minecraft:sticky_piston",
+					"minecraft:sticky_piston"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Increases block reach by 7 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					"minecraft:nether_star",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
+					"minecraft:firework_rocket",
+					"minecraft:firework_rocket",
+					"minecraft:firework_rocket"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Increases block reach by 8 blocks.",
+				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"upgradeIngredients": [
+					"minecraft:calibrated_sculk_sensor",
+					"minecraft:netherite_block",
+					"minecraft:hanging_roots",
+					"minecraft:hanging_roots",
+					"minecraft:hanging_roots",
+					"minecraft:hanging_roots",
+					"minecraft:hanging_roots",
+					"minecraft:hanging_roots"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Increases block reach by 15 blocks.",
+				"abilityStatusRelative": "Increases block reach by 7 more blocks.",
+				"upgradeIngredients": [
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block"
+				]
 			}
 		]
 	},

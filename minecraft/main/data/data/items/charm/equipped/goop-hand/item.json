@@ -7,15 +7,71 @@
 	"tooltips": ["Calums patented formula."],
 	"charm": {
 		"charmId": 21,
-		"minLevel": 1,
-		"maxLevel": 1,
-		
+		"minLevel": 0,
+		"maxLevel": 5,
 		"levels": [
 			{
 				"level": 1,
+				"abilityStatusCurrent": "Slightly increases knockback while equipped.",
+				"abilityStatusRelative": "Increases knockback.",
+				"upgradeIngredients": [
+					"minecraft:slime_ball",
+					"minecraft:honeycomb",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Moderately increases knockback while equipped.",
+				"abilityStatusRelative": "Increases knockback more.",
+				"upgradeIngredients": [
+					"minecraft:slime_block",
+					"minecraft:sticky_piston",
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 3,
 				"abilityStatusCurrent": "Increases knockback while equipped.",
-				"abilityStatusRelative": "",
-				"upgradeIngredients": []
+				"abilityStatusRelative": "Increases knockback even more.",
+				"upgradeIngredients": [
+					"minecraft:magma_cream",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Greatly increases knockback while equipped.",
+				"abilityStatusRelative": "Increases knockback once more.",
+				"upgradeIngredients": [
+					"minecraft:ghast_tear",
+					"minecraft:ghast_tear",
+					"minecraft:crying_obsidian",
+					"minecraft:crying_obsidian",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:netherite_ingot"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Massively increases knockback while equipped.",
+				"abilityStatusRelative": "Increases knockback yet again.",
+				"upgradeIngredients": [
+					"minecraft:netherite_block",
+					"minecraft:end_crystal",
+					"minecraft:end_crystal",
+					"minecraft:end_crystal",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath"
+				]
 			}
 		]
 	},

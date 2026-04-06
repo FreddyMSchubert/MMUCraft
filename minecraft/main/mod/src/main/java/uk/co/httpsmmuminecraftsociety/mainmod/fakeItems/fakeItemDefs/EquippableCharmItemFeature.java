@@ -43,4 +43,10 @@ public record EquippableCharmItemFeature(
     {
         stack.set(DataComponents.EQUIPPABLE, equippable);
     }
+
+    @Override
+    public void validate()
+    {
+
+    }
 }

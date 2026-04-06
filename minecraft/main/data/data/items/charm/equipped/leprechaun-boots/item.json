@@ -4,7 +4,7 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["I'm feeling lucky.", "Irish people are weird dude."],
+	"tooltips": ["I'm feeling lucky."],
 	"charm": {
 		"charmId": 13,
 		"minLevel": 1,
@@ -13,7 +13,7 @@
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Grants the luck of the leprechaun while equipped.",
+				"abilityStatusCurrent": "Grants the luck of the leprechaun while equipped. Nothing else don't worry bout it.",
 				"abilityStatusRelative": "",
 				"upgradeIngredients": []
 			}

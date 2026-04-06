@@ -27,7 +27,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
     private static final String TAG_AIR_TICKS = "ws_air_ticks";
 
     private static int getExtraJumpsForLevel(int level) {
-        return (level * 2) - 1; // level 1 = 1 jump; 2 jumps added per level
+        return level >= 10 ? level + 6 : level;
     }
 
     @Override

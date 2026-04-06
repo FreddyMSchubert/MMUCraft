@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
@@ -83,6 +84,11 @@ public class ExtractXPFromPhialRecipe extends CustomRecipe
                 CompoundTag tag = emptyPhial.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
                 tag.putInt(SculkPhialCharm.XP_STORED_ID, 0);
                 emptyPhial.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+
+                CustomModelData cmd = emptyPhial.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+                cmd.floats().clear();
+                cmd.floats().add((float)0);
+                emptyPhial.set(DataComponents.CUSTOM_MODEL_DATA, cmd);
 
                 remainders.set(i, emptyPhial);
                 break;

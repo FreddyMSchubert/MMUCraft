@@ -15,4 +15,10 @@ public record EquippableCosmeticItemFeature() implements ItemFeature
     {
 
     }
+
+    @Override
+    public void validate()
+    {
+
+    }
 }

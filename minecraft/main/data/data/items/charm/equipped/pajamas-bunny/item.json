@@ -6,19 +6,217 @@
 	"maxStackSize": 1,
 	"tooltips": [
 		"Perfect for some Eggsercise and Hareobics.",
-		"The bunnies might also get a bit snacky. But don't worry, they'll share."
+		"The bunnies might also get a bit snacky."
 	],
 	"charm": {
 		"charmId": 17,
-		"minLevel": 1,
-		"maxLevel": 1,
-		
+		"minLevel": 0,
+		"maxLevel": 15,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Gives jump boost and auto-eats carrots and golden carrots from your inventory while equipped.",
-				"abilityStatusRelative": "",
-				"upgradeIngredients": []
+				"abilityStatusCurrent": "Let's you jump two blocks high.",
+				"abilityStatusRelative": "Let's you jump a block higher than normal.",
+				"upgradeIngredients": [
+					"minecraft:feather",
+					"minecraft:feather",
+					"minecraft:feather",
+					"minecraft:hay_block"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Let's you jump three blocks high.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_hide",
+					"minecraft:iron_block"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Let's you jump four blocks high.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:scaffolding",
+					"minecraft:scaffolding",
+					"minecraft:scaffolding",
+					"minecraft:phantom_membrane",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Let's you jump four blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher & the bunnies now share the carrots they snack with you.",
+				"upgradeIngredients": [
+					"minecraft:carrot",
+					"minecraft:carrot",
+					"minecraft:golden_carrot",
+					"minecraft:golden_carrot",
+					"minecraft:goat_horn",
+					"minecraft:diamond",
+					"minecraft:diamond",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Let's you jump five blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:slime_block",
+					"minecraft:feather",
+					"minecraft:feather",
+					"minecraft:feather",
+					"minecraft:feather",
+					"minecraft:feather",
+					"minecraft:feather",
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Let's you jump six blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:fire_charge",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Let's you jump seven blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:potion[minecraft:potion_contents=strong_leaping]",
+					"minecraft:ghast_tear",
+					"minecraft:magma_cream",
+					"minecraft:golden_carrot",
+					"minecraft:golden_carrot",
+					"minecraft:golden_carrot"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Let's you jump eight blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:gilded_blackstone",
+					"minecraft:gilded_blackstone",
+					"minecraft:gilded_blackstone",
+					"minecraft:splash_potion[minecraft:potion_contents=strong_leaping]",
+					"minecraft:crying_obsidian",
+					"minecraft:crying_obsidian",
+					"minecraft:crying_obsidian",
+					"minecraft:netherite_scrap"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Let's you jump nine blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:potion[minecraft:potion_contents=strong_leaping]",
+					"minecraft:splash_potion[minecraft:potion_contents=strong_leaping]",
+					"minecraft:lingering_potion[minecraft:potion_contents=strong_leaping]",
+					"minecraft:netherite_scrap",
+					"minecraft:netherite_scrap",
+					"minecraft:netherite_scrap"
+				]
+			},
+			{
+				"level": 10,
+				"abilityStatusCurrent": "Let's you jump ten blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:chorus_flower",
+					"minecraft:chorus_flower",
+					"minecraft:chorus_plant",
+					"minecraft:chorus_plant",
+					"minecraft:netherite_ingot",
+					"minecraft:raw_gold_block",
+					"minecraft:raw_gold_block",
+					"minecraft:raw_gold_block"
+				]
+			},
+			{
+				"level": 11,
+				"abilityStatusCurrent": "Let's you jump eleven blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:potion[minecraft:potion_contents=slow_falling]",
+					"minecraft:splash_potion[minecraft:potion_contents=slow_falling]",
+					"minecraft:lingering_potion[minecraft:potion_contents=slow_falling]",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:elytra"
+				]
+			},
+			{
+				"level": 12,
+				"abilityStatusCurrent": "Let's you jump twelve blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:end_crystal",
+					"minecraft:dragon_breath",
+					"minecraft:shulker_shell",
+					"minecraft:end_rod",
+					"minecraft:netherite_scrap",
+					"minecraft:netherite_scrap",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 13,
+				"abilityStatusCurrent": "Let's you jump thirteen blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:elytra",
+					"minecraft:dragon_head",
+					"minecraft:popped_chorus_fruit",
+					"minecraft:shulker_shell",
+					"minecraft:netherite_scrap",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 14,
+				"abilityStatusCurrent": "Let's you jump fourteen blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:elytra",
+					"minecraft:end_crystal",
+					"minecraft:dragon_breath",
+					"minecraft:chorus_flower",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 15,
+				"abilityStatusCurrent": "Let's you jump fifteen blocks high & the bunnies auto-eat carrot foods.",
+				"abilityStatusRelative": "Let's you jump another block higher.",
+				"upgradeIngredients": [
+					"minecraft:elytra",
+					"minecraft:dragon_head",
+					"minecraft:end_crystal",
+					"minecraft:shulker_shell",
+					"minecraft:dragon_breath",
+					"minecraft:netherite_block",
+					"minecraft:diamond_block"
+				]
 			}
 		]
 	},

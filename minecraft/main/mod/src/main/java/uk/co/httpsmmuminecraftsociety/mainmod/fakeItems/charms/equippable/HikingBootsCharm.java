@@ -25,10 +25,9 @@ public class HikingBootsCharm implements Charm, BaseItemChangeCallbackCharm
     private static float getStepHeightForLevel(int level) {
         return switch (level)
         {
-            case 1 -> 0.5f;
-            case 2 -> 1f;
-            case 3 -> 1.5f;
-            default -> throw new IllegalStateException("Unexpected hiking boots level: " + level);
+            case 1 -> 0.5f; // one block
+            case 2 -> 1f; // fences
+            default -> level - 1.5f; // level 3 = 2 blocks, level 4 = 3 blocks, then 1 block per level
         };
     }
 }

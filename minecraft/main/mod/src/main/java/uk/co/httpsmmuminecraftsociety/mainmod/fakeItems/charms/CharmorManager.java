@@ -99,10 +99,7 @@ public class CharmorManager
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return;
 
         List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
-        if (storedCharms.isEmpty()) {
-            stack.remove(DataComponents.EQUIPPABLE);
-            return;
-        }
+        if (storedCharms.isEmpty()) return;
 
         StoredCharmData renderedCharm = storedCharms.getFirst();
         FakeItem renderedCharmItem = FakeItems.CHARM_ID_MAP.get(renderedCharm.charmId());

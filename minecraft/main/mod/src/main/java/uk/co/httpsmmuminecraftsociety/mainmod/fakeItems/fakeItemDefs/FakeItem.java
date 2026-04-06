@@ -82,6 +82,12 @@ public record FakeItem(
         return createItemStackAtLevel(-1);
     }
 
+    public void validate() {
+        for (ItemFeature feature : features) {
+            feature.validate();
+        }
+    }
+
     public <T extends ItemFeature> T getFeature(Class<T> featureType) {
         return features.stream()
                 .filter(featureType::isInstance)

@@ -1,0 +1,99 @@
+{
+	"title": "Veinminer Charm",
+	"id": "charm-veinminer",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["The MMU Students yearn for the mines."],
+	"charm": {
+		"charmId": 31,
+		"minLevel": 0,
+		"maxLevel": 10,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Veinminer capped at 1 extra mined block.",
+				"abilityStatusRelative": "Mines 1 extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:coal_block"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Veinminer capped at 2 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:copper_block"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Veinminer capped at 3 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:redstone_block"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Veinminer capped at 4 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:lapis_block"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Veinminer capped at 5 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:iron_block"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Veinminer capped at 6 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:gold_block"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Veinminer capped at 7 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:emerald_block"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Veinminer capped at 8 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:diamond_block"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Veinminer capped at 9 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:quartz_block"
+				]
+			},
+			{
+				"level": 10,
+				"abilityStatusCurrent": "Veinminer capped at 10 extra mined blocks.",
+				"abilityStatusRelative": "Mines another extra ore block for you. (Veinminer)",
+				"upgradeIngredients": [
+					"minecraft:netherite_block"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "veinminer__charm"
+	}
+}

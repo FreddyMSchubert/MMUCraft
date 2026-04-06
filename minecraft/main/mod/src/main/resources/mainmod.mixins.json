@@ -10,7 +10,8 @@
 		"RespawnNearDeath",
 		"XPBottlesDropMoreXPFromPhials",
         "InsertMultipleCoinsAtOnce",
-        "SoundEventRedirect"
+        "SoundEventRedirect",
+        "XPOrbMendVitality"
 	],
 	"injectors": {
 		"defaultRequire": 1

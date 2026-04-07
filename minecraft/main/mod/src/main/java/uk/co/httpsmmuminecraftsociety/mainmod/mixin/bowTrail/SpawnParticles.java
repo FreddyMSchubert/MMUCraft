@@ -18,9 +18,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.arrowTrails.WeightedTrai
 public abstract class SpawnParticles implements ArrowTrailAccess
 {
     @Unique
-    private static final int PARTICLES_EVERY_X_TICKS = 3;
-
-    @Unique
     private static final String MAINMOD_TRAIL_KEY = "mainmod_arrow_trail";
 
     @Unique
@@ -47,11 +44,6 @@ public abstract class SpawnParticles implements ArrowTrailAccess
             return;
         }
         if (this.mainmod$trailSpec.isEmpty()) {
-            return;
-        }
-
-        // optional small perf throttle, only on even ticks
-        if ((self.tickCount % PARTICLES_EVERY_X_TICKS) != 0) {
             return;
         }
 

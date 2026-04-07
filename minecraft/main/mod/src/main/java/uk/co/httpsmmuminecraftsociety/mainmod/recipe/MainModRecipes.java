@@ -20,6 +20,7 @@ public final class MainModRecipes {
     public static final RecipeSerializer<WalletExtractRecipe> WALLET_EXTRACT_RECIPE = unit(new WalletExtractRecipe());
     public static final RecipeSerializer<DyeingRecipe> DYEING_SERIALIZER = unit(new DyeingRecipe());
     public static final RecipeSerializer<UpgradeCharmRecipe> UPGRADE_CHARM_SERIALIZER = unit(new UpgradeCharmRecipe());
+    public static final RecipeSerializer<SetBowTrailRecipe> SET_BOW_TRAIL_SERIALIZER = unit(new SetBowTrailRecipe());
 
     public static final RecipeSerializer<FakeShapedCraftingRecipe> FAKE_CRAFTING_SHAPED_SERIALIZER = codecBacked(FakeShapedCraftingRecipe.CODEC);
     public static final RecipeSerializer<FakeShapelessCraftingRecipe> FAKE_CRAFTING_SHAPELESS_SERIALIZER = codecBacked(FakeShapelessCraftingRecipe.CODEC);
@@ -34,6 +35,7 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "wallet_insert"), WALLET_INSERT_RECIPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "wallet_extract"), WALLET_EXTRACT_RECIPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "dyeing"), DYEING_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "bow_trail"), SET_BOW_TRAIL_SERIALIZER);
 
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shaped"), FAKE_CRAFTING_SHAPED_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shapeless"), FAKE_CRAFTING_SHAPELESS_SERIALIZER);

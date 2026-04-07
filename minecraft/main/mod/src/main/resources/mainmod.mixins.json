@@ -11,7 +11,9 @@
 		"XPBottlesDropMoreXPFromPhials",
         "InsertMultipleCoinsAtOnce",
         "SoundEventRedirect",
-        "XPOrbMendVitality"
+        "XPOrbMendVitality",
+        "bowTrail.AttachDataToArrow",
+        "bowTrail.SpawnParticles"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -13,7 +13,8 @@
         "SoundEventRedirect",
         "XPOrbMendVitality",
         "bowTrail.AttachDataToArrow",
-        "bowTrail.SpawnParticles"
+        "bowTrail.SpawnParticles",
+        "WhitelistMsgModify"
 	],
 	"injectors": {
 		"defaultRequire": 1

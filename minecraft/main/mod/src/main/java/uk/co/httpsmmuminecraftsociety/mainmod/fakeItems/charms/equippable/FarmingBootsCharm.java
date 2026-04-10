@@ -26,16 +26,21 @@ public final class FarmingBootsCharm implements Charm, UseOnBlockCallbackCharm
         BlockState originState = level.getBlockState(originPos);
         ItemStack heldStack = player.getItemInHand(interactionHand);
         if (!(heldStack.getItem() instanceof HoeItem)) return InteractionResult.PASS;
-        if (!isHarvestableCrop(originState)) return null;
+        if (!isHarvestableCrop(originState)) return InteractionResult.PASS;
 
         boolean harvestedAny = false;
         for (BlockPos targetPos : getTargetPositions(originPos, charmLevel)) {
             if (harvestAndReplant(level, player, targetPos, originPos, heldStack)) {
                 harvestedAny = true;
+
+                heldStack.hurtAndBreak(1, player, interactionHand);
+                if (heldStack.isEmpty()) {
+                    break;
+                }
             }
         }
 
-        return harvestedAny ? InteractionResult.SUCCESS : null;
+        return harvestedAny ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 
     private static boolean isHarvestableCrop(BlockState state)

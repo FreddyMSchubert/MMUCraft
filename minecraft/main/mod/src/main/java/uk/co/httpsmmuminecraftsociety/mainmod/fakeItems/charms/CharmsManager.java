@@ -59,7 +59,8 @@ public class CharmsManager
             Map.entry(31, new VeinminerCharm()),
             Map.entry(32, new VitalityMendingCharm()),
             Map.entry(33, new InvisiCarrotCharm()),
-            Map.entry(34, new FarmingBootsCharm())
+            Map.entry(34, new FarmingBootsCharm()),
+            Map.entry(35, new SawBeltCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

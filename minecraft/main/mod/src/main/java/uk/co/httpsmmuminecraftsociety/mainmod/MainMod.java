@@ -55,6 +55,7 @@ public class MainMod implements ModInitializer {
         ItemEvents.USE.register(CharmsManager::onItemUse);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
+        UseBlockCallback.EVENT.register(CharmsManager::onUseBlock);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
         DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);

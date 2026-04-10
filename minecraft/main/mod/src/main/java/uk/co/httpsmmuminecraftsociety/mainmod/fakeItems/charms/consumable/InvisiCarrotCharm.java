@@ -10,9 +10,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseEntityCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseEntityCallbackCharm;
 
-public class InvisiCarrotCharm implements Charm, UseEntityCharm
+public class InvisiCarrotCharm implements Charm, UseEntityCallbackCharm
 {
     @Override
     public InteractionResult onUseEntity(ItemStack stack, Player player, Level level, InteractionHand interactionHand, Entity entity, @Nullable EntityHitResult entityHitResult, int charmLevel)

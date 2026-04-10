@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jspecify.annotations.Nullable;
 
-public interface UseEntityCharm extends Charm
+public interface UseEntityCallbackCharm extends Charm
 {
     InteractionResult onUseEntity(ItemStack stack, Player player, Level level, InteractionHand interactionHand, Entity entity, @Nullable EntityHitResult entityHitResult, int charmLevel);
 }

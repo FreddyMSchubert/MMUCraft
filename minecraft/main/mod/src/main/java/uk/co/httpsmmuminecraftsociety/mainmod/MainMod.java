@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
@@ -52,6 +53,7 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);
+        UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);

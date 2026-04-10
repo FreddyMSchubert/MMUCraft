@@ -1,9 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
 
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.net.SocketAddress;
-import java.net.URI;
 
 @Mixin(PlayerList.class)
 public class WhitelistMsgModify
@@ -21,8 +18,8 @@ public class WhitelistMsgModify
     @Unique
     private static Component customWhitelistMessage() {
         return Component.empty()
-                .append(Component.literal("⬆️ Don't worry, that is normal.\n\n"))
-                .append(Component.literal("Hi and welcome to the MMU Minecraft Society! :)\n")
+                .append(Component.literal("(Don't worry, that is normal.)\n\n"))
+                .append(Component.literal("Hi and welcome to the MMU Minecraft Society! ☺\n")
                         .withStyle(style -> style
                                 .withColor(0xFFD166)
                                 .withBold(true)))
@@ -37,7 +34,7 @@ public class WhitelistMsgModify
                 .append(Component.literal("To change this in under 60 seconds, please verify your MMU email here:\n")
                 .append(Component.literal("mmuminecraftsociety.co.uk\n\n")
                         .withStyle(style -> style
-                                .withColor(0x0073E6)
+                                .withColor(0xA6DEFF)
                                 .withUnderlined(true)
                                 .withHoverEvent(new HoverEvent.ShowText(
                                         Component.literal("ermmm my bad i don't think it's clickable please type the url")

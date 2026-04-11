@@ -10,7 +10,11 @@
 		"RespawnNearDeath",
 		"XPBottlesDropMoreXPFromPhials",
         "InsertMultipleCoinsAtOnce",
-        "SoundEventRedirect"
+        "SoundEventRedirect",
+        "XPOrbMendVitality",
+        "bowTrail.AttachDataToArrow",
+        "bowTrail.SpawnParticles",
+        "WhitelistMsgModify"
 	],
 	"injectors": {
 		"defaultRequire": 1

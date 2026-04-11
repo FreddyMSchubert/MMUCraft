@@ -1,0 +1,134 @@
+{
+	"title": "Farming Boots Charm",
+	"id": "charm-farming-boots",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["Stardew Valley is fine I guess."],
+	"charm": {
+		"charmId": 34,
+		"minLevel": 0,
+		"maxLevel": 9,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Hoe-harvests and replants the right-clicked ripe crop.",
+				"abilityStatusRelative": "Hoe-harvests and replants right-clicked ripe crops.",
+				"upgradeIngredients": [
+					"minecraft:wooden_hoe",
+					"minecraft:water_bucket",
+					"minecraft:wheat_seeds",
+					"minecraft:dirt"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Hoe-harvests and replants a small cross.",
+				"abilityStatusRelative": "Harvests more crops in one click in the shape of a small cross.",
+				"upgradeIngredients": [
+					"minecraft:stone_hoe",
+					"minecraft:carrot",
+					"minecraft:carrot",
+					"minecraft:potato",
+					"minecraft:potato"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Hoe-harvests and replants a 3x3 patch.",
+				"abilityStatusRelative": "Expands to a 3x3 patch.",
+				"upgradeIngredients": [
+					"minecraft:copper_hoe",
+					"minecraft:sugar_cane",
+					"minecraft:sugar_cane",
+					"minecraft:sugar_cane",
+					"minecraft:sugar_cane",
+					"minecraft:cake"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Hoe-harvests and replants a wider diamond.",
+				"abilityStatusRelative": "Expands to a wider diamond.",
+				"upgradeIngredients": [
+					"minecraft:iron_hoe",
+					"minecraft:cocoa_beans",
+					"minecraft:cocoa_beans",
+					"minecraft:cocoa_beans",
+					"minecraft:cookie",
+					"minecraft:cookie",
+					"minecraft:cookie",
+					"minecraft:jungle_log"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Hoe-harvests and replants a 5x5 patch.",
+				"abilityStatusRelative": "Expands to a 5x5 patch.",
+				"upgradeIngredients": [
+					"minecraft:golden_hoe",
+					"minecraft:melon",
+					"minecraft:pumpkin",
+					"minecraft:melon_seeds",
+					"minecraft:pumpkin_seeds",
+					"minecraft:glistering_melon_slice",
+					"minecraft:pumpkin_pie"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Hoe-harvests and replants a huge diamond.",
+				"abilityStatusRelative": "Expands to a huge diamond.",
+				"upgradeIngredients": [
+					"minecraft:diamond_hoe",
+					"minecraft:glow_berries",
+					"minecraft:glow_berries",
+					"minecraft:glow_berries",
+					"minecraft:sweet_berries",
+					"minecraft:sweet_berries",
+					"minecraft:sweet_berries"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Hoe-harvests and replants a 7x7 patch.",
+				"abilityStatusRelative": "Expands to a 7x7 patch.",
+				"upgradeIngredients": [
+					"minecraft:diamond_hoe",
+					"minecraft:diamond_hoe",
+					"minecraft:torchflower_seeds",
+					"minecraft:pitcher_pod",
+					"minecraft:sniffer_egg"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Hoe-harvests and replants a massive diamond.",
+				"abilityStatusRelative": "Expands to a massive diamond.",
+				"upgradeIngredients": [
+					"minecraft:netherite_hoe",
+					"minecraft:nether_wart",
+					"minecraft:nether_wart",
+					"minecraft:soul_sand",
+					"minecraft:soul_sand"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Hoe-harvests and replants a 9x9 field.",
+				"abilityStatusRelative": "Expands to a 9x9 field.",
+				"upgradeIngredients": [
+					"minecraft:netherite_hoe",
+					"minecraft:chorus_flower",
+					"minecraft:chorus_flower",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "farming_boots__charm"
+	}
+}

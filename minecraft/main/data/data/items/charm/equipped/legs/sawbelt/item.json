@@ -1,0 +1,131 @@
+{
+	"title": "Saw Belt Charm",
+	"id": "charm-saw-belt",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["Timber without the climb."],
+	"charm": {
+		"charmId": 35,
+		"minLevel": 0,
+		"maxLevel": 9,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Breaks up to 2 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Sneak with an axe to chop 2 extra logs.",
+				"upgradeIngredients": [
+					"minecraft:wooden_axe",
+					"minecraft:oak_log",
+					"minecraft:oak_log",
+					"minecraft:stick"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Breaks up to 4 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"upgradeIngredients": [
+					"minecraft:oak_log",
+					"minecraft:apple",
+					"minecraft:honeycomb",
+					"minecraft:honeycomb"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Breaks up to 8 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"upgradeIngredients": [
+					"minecraft:jungle_log",
+					"minecraft:cocoa_beans",
+					"minecraft:cocoa_beans",
+					"minecraft:vine"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Breaks up to 16 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"upgradeIngredients": [
+					"minecraft:mangrove_log",
+					"minecraft:mangrove_propagule",
+					"minecraft:mud",
+					"minecraft:hanging_roots"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Breaks up to 32 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"upgradeIngredients": [
+					"minecraft:cherry_log",
+					"minecraft:pink_petals",
+					"minecraft:bee_nest",
+					"minecraft:honeycomb"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Breaks up to 64 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"upgradeIngredients": [
+					"minecraft:pale_oak_log",
+					"minecraft:resin_clump",
+					"minecraft:resin_clump",
+					"minecraft:open_eyeblossom",
+					"minecraft:closed_eyeblossom",
+					"minecraft:creaking_heart"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Breaks up to 128 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"upgradeIngredients": [
+					"minecraft:crimson_stem",
+					"minecraft:warped_stem",
+					"minecraft:crimson_fungus",
+					"minecraft:warped_fungus",
+					"minecraft:shroomlight",
+					"minecraft:weeping_vines",
+					"minecraft:twisting_vines"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Breaks up to 256 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"upgradeIngredients": [
+					"minecraft:chorus_flower",
+					"minecraft:chorus_flower",
+					"minecraft:popped_chorus_fruit",
+					"minecraft:popped_chorus_fruit",
+					"minecraft:end_rod",
+					"minecraft:end_rod",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Breaks up to 512 extra logs while using axe and sneaking.",
+				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"upgradeIngredients": [
+					"minecraft:nether_star",
+					"minecraft:chorus_plant",
+					"minecraft:chorus_plant",
+					"minecraft:chorus_plant",
+					"minecraft:chorus_plant",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "saw_belt__charm"
+	}
+}

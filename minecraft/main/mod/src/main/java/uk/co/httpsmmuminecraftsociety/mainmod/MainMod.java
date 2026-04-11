@@ -29,6 +29,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
@@ -53,6 +54,7 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);
+        ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
         UseBlockCallback.EVENT.register(CharmsManager::onUseBlock);

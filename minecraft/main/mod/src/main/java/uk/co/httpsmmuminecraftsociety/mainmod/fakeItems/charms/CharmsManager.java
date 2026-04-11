@@ -4,8 +4,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -13,8 +15,11 @@ import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.InvisiCarrotCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfInsomniaCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfReturningCharm;
@@ -40,6 +45,7 @@ public class CharmsManager
             Map.entry(13, new LeprechaunBootsCharm()),
             Map.entry(16, new ExtendoGripCharm()),
             Map.entry(17, new BunnyPajamasCharm()),
+            Map.entry(18, new KittyPajamasCharm()),
             Map.entry(19, new SpiderPajamasCharm()),
             Map.entry(20, new CaveSpiderPajamasCharm()),
             Map.entry(21, new GoopHandCharm()),
@@ -50,7 +56,11 @@ public class CharmsManager
             Map.entry(28, new SculkPhialCharm()),
             Map.entry(29, new PotionOfInsomniaCharm()),
             Map.entry(30, new WalletCharm()),
-            Map.entry(31, new VeinminerCharm())
+            Map.entry(31, new VeinminerCharm()),
+            Map.entry(32, new VitalityMendingCharm()),
+            Map.entry(33, new InvisiCarrotCharm()),
+            Map.entry(34, new FarmingBootsCharm()),
+            Map.entry(35, new SawBeltCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);
@@ -82,6 +92,18 @@ public class CharmsManager
                 .filter(Objects::nonNull)
                 .toList();
     }
+    public static List<Tuple<ItemStack, CharmInstance>> getPlayerCharmInstances(ServerPlayer player) {
+        List<Tuple<ItemStack, CharmInstance>> charms = new ArrayList<>();
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack stack = player.getItemBySlot(slot);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            for (CharmInstance instance : getCharmInstances(stack))
+                charms.add(new Tuple<>(stack, instance));
+        }
+        return charms;
+    }
     private static CharmInstance resolveCharmInstance(StoredCharmData storedCharm) {
         FakeItem fakeItem = FakeItems.CHARM_ID_MAP.get(storedCharm.charmId());
         if (fakeItem == null) {
@@ -100,6 +122,12 @@ public class CharmsManager
             if (ability.feature().charm().getClass() == charmClass) return true;
         }
         return false;
+    }
+    public static int getPlayerCharmLevel(ServerPlayer player, Class<? extends Charm> charmClass) {
+        for (Tuple<ItemStack, CharmInstance> ability : getPlayerCharmInstances(player)) {
+            if (ability.getB().feature().charm().getClass() == charmClass) return ability.getB().level();
+        }
+        return 0;
     }
 
     private static void tickActiveUseCharms(ServerPlayer player, ServerLevel level) {
@@ -139,16 +167,6 @@ public class CharmsManager
 
         callbacksCharm.onConsumeTick(activeStack, player, level, elapsedTicks, activeCharm.level());
     }
-    private static void triggerEquippedTickCallbacks(ItemStack stack, ServerPlayer player, ServerLevel level, EquipmentSlot slot) {
-        for (CharmInstance instance : getCharmInstances(stack)) {
-            if (instance.isBroken()) continue;
-            EquippableCharmItemFeature equippable = instance.fakeItem().getFeature(EquippableCharmItemFeature.class);
-            if (equippable != null && equippable.equippable().slot() != slot) continue;
-            if (instance.charm() instanceof EquippedTickCallbackCharm equippedCharm) {
-                equippedCharm.equippedTick(stack, player, level, instance.level());
-            }
-        }
-    }
     public static void onPlayerTick(ServerLevel server) {
         for (ServerPlayer player : server.players()) {
             // uniquipped tick
@@ -162,18 +180,27 @@ public class CharmsManager
 
             // equipped tick
             for (EquipmentSlot slot : EquipmentSlot.values()) {
-                ItemStack current = player.getItemBySlot(slot);
-                if (current.isEmpty()) {
+                ItemStack stack = player.getItemBySlot(slot);
+                if (stack.isEmpty()) {
                     continue;
                 }
 
-                triggerEquippedTickCallbacks(current, player, server, slot);
+                for (CharmInstance instance : getCharmInstances(stack)) {
+                    if (instance.isBroken()) continue;
+                    EquippableCharmItemFeature equippable = instance.fakeItem().getFeature(EquippableCharmItemFeature.class);
+                    if (equippable != null && equippable.equippable().slot() != slot) continue;
+                    if (instance.charm() instanceof EquippedTickCallbackCharm equippedCharm) {
+                        equippedCharm.equippedTick(stack, player, server, instance.level());
+                    }
+                }
             }
 
             // actively used tick
             tickActiveUseCharms(player, server);
         }
     }
+
+    // redirect buncha callbacks into charms
 
     public static InteractionResult onItemUse(Level level, Player player, InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
@@ -214,5 +241,60 @@ public class CharmsManager
                 }
             }
         }
+    }
+    public static InteractionResult onUseEntity(Player player, Level level, InteractionHand interactionHand, Entity entity, @Nullable EntityHitResult entityHitResult)
+    {
+        ItemStack stack = player.getItemInHand(interactionHand);
+        List<CharmInstance> instances = getCharmInstances(stack);
+        if (instances.isEmpty()) return InteractionResult.PASS;
+
+        for (CharmInstance instance : instances) {
+            if (instance.isBroken()) continue;
+            if (!(instance.charm() instanceof UseEntityCallbackCharm useEntityCallbackCharm)) continue;
+
+            InteractionResult result =  useEntityCallbackCharm.onUseEntity(
+                    stack,
+                    player,
+                    level,
+                    interactionHand,
+                    entity,
+                    entityHitResult,
+                    instance.level()
+            );
+
+            if (result == null || result == InteractionResult.PASS) {
+                continue;
+            }
+
+            return result;
+        }
+
+        return InteractionResult.PASS;
+    }
+    public static InteractionResult onUseBlock(Player player, Level level, InteractionHand interactionHand, BlockHitResult blockHitResult)
+    {
+        if (!(player instanceof ServerPlayer)) return InteractionResult.PASS;
+        if (!(level instanceof ServerLevel)) return InteractionResult.PASS;
+        for (Tuple<ItemStack, CharmInstance> instance : getPlayerCharmInstances((ServerPlayer) player)) {
+            if (instance.getB().isBroken()) continue;
+            if (!(instance.getB().charm() instanceof UseOnBlockCallbackCharm useOnBlockCallbackCharm)) continue;
+
+            InteractionResult result =  useOnBlockCallbackCharm.onUseOnBlock(
+                    instance.getA(),
+                    (ServerPlayer) player,
+                    (ServerLevel) level,
+                    interactionHand,
+                    blockHitResult,
+                    instance.getB().level()
+            );
+
+            if (result == null || result == InteractionResult.PASS) {
+                continue;
+            }
+
+            return result;
+        }
+
+        return InteractionResult.PASS;
     }
 }

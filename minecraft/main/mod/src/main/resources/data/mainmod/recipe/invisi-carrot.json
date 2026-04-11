@@ -1,0 +1,18 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    "minecraft:potion[minecraft:potion_contents=invisibility]",
+    "minecraft:carrot",
+    "minecraft:carrot",
+    "minecraft:carrot",
+    "minecraft:carrot",
+    "minecraft:carrot",
+    "minecraft:carrot",
+    "minecraft:carrot",
+    "minecraft:carrot"
+  ],
+  "result": {
+    "stack": "mainmod:charm-invisi-carrot",
+    "count": 8
+  }
+}

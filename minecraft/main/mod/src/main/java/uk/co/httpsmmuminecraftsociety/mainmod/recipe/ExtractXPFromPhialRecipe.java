@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
@@ -58,11 +57,7 @@ public class ExtractXPFromPhialRecipe extends CustomRecipe
 
         ItemStack result = new ItemStack(Items.EXPERIENCE_BOTTLE, 1);
 
-        CompoundTag resultTag = result.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        resultTag.putInt(SculkPhialCharm.XP_STORED_ID, storedXp);
-        result.set(DataComponents.CUSTOM_DATA, CustomData.of(resultTag));
-
-        SculkPhialCharm.updateStoredXpTooltip(result, storedXp);
+        SculkPhialCharm.updateStoredXpVisuals(result, storedXp);
 
         return result;
     }
@@ -77,7 +72,7 @@ public class ExtractXPFromPhialRecipe extends CustomRecipe
             ItemStack stack = stacks.get(i);
             if (stack.isEmpty()) continue;
 
-            if (isSculkPhial(stack)) {
+            if (isFilledSculkPhial(stack)) {
                 ItemStack emptyPhial = stack.copy();
                 emptyPhial.setCount(1);
 
@@ -85,10 +80,7 @@ public class ExtractXPFromPhialRecipe extends CustomRecipe
                 tag.putInt(SculkPhialCharm.XP_STORED_ID, 0);
                 emptyPhial.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
-                CustomModelData cmd = emptyPhial.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-                cmd.floats().clear();
-                cmd.floats().add((float)0);
-                emptyPhial.set(DataComponents.CUSTOM_MODEL_DATA, cmd);
+                SculkPhialCharm.updateStoredXpVisuals(emptyPhial, 0);
 
                 remainders.set(i, emptyPhial);
                 break;

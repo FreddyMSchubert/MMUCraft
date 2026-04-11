@@ -1,5 +1,3 @@
 accessWidener v1 official
 
-accessible class net/minecraft/resources/RegistryOps$HolderLookupAdapter
-accessible field net/minecraft/resources/RegistryOps lookupProvider Lnet/minecraft/resources/RegistryOps$RegistryInfoLookup;
-accessible field net/minecraft/resources/RegistryOps$HolderLookupAdapter lookupProvider Lnet/minecraft/core/HolderLookup$Provider;
+accessible method net/minecraft/world/level/block/CropBlock getCloneItemStack (Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Lnet/minecraft/world/item/ItemStack;

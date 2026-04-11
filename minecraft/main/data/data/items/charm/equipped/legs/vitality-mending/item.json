@@ -1,0 +1,86 @@
+{
+	"title": "Vitality Mending Charm",
+	"id": "charm-vitality-mending",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"charm": {
+		"charmId": 32,
+		"minLevel": 0,
+		"maxLevel": 5,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "XP heals you. Costs 5 XP per hp.",
+				"abilityStatusRelative": "Collected XP heals you.",
+				"upgradeIngredients": [
+					"minecraft:lapis_lazuli",
+					"minecraft:lapis_lazuli",
+					"minecraft:lapis_lazuli",
+					"minecraft:lapis_lazuli",
+					"minecraft:lapis_lazuli",
+					"minecraft:lapis_lazuli",
+					"minecraft:lapis_lazuli",
+					"minecraft:lapis_lazuli"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "XP heals you. Costs 4 XP per hp.",
+				"abilityStatusRelative": "Improves healing to 4 XP per hp.",
+				"upgradeIngredients": [
+					"minecraft:enchanted_book[minecraft:stored_enchantments={\"minecraft:mending\":1}]",
+					"minecraft:experience_bottle",
+					"minecraft:experience_bottle",
+					"minecraft:experience_bottle",
+					"minecraft:glistering_melon_slice",
+					"minecraft:glistering_melon_slice",
+					"minecraft:glistering_melon_slice"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "XP heals you. Costs 3 XP per hp.",
+				"abilityStatusRelative": "Improves healing to 3 XP per hp.",
+				"upgradeIngredients": [
+					"minecraft:sculk",
+					"minecraft:sculk",
+					"minecraft:sculk",
+					"minecraft:sculk_catalyst",
+					"minecraft:sculk_sensor",
+					"minecraft:sculk_shrieker"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "XP heals you. Costs 2 XP per hp.",
+				"abilityStatusRelative": "Improves healing to 2 XP per hp.",
+				"upgradeIngredients": [
+					"minecraft:potion[minecraft:potion_contents=healing]",
+					"minecraft:ghast_tear",
+					"minecraft:diamond_block",
+					"minecraft:glowstone",
+					"minecraft:glowstone",
+					"minecraft:glowstone"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "XP heals you. Costs 1 XP per hp.",
+				"abilityStatusRelative": "Improves healing to 1 XP per hp.",
+				"upgradeIngredients": [
+					"minecraft:experience_bottle",
+					"minecraft:lingering_potion[minecraft:potion_contents=healing]",
+					"minecraft:lapis_block",
+					"minecraft:lapis_block",
+					"minecraft:lapis_block"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "vitality_mending__charm"
+	}
+}

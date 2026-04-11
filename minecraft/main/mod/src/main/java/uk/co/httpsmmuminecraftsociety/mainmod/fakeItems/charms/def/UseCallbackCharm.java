@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 
-public interface UseCallbackCharm
+public interface UseCallbackCharm extends Charm
 {
     InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel);
 }

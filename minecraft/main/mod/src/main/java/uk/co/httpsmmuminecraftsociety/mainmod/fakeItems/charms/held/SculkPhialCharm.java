@@ -55,13 +55,7 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
         nbt.putInt(XP_STORED_ID, xpStored);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
 
-        updateStoredXpTooltip(stack, xpStored);
-
-        CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-        stack.set(
-                DataComponents.CUSTOM_MODEL_DATA,
-                new CustomModelData(List.of((float) xpStored), cmd.flags(), cmd.strings(), cmd.colors())
-        );
+        updateStoredXpVisuals(stack, xpStored);
     }
 
     private static double xpToLevels(int totalXp) {
@@ -77,8 +71,14 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
         return level + ((double) xpIntoLevel / xpForNextLevel);
     }
 
-    public static void updateStoredXpTooltip(ItemStack stack, int xpStored)
+    public static void updateStoredXpVisuals(ItemStack stack, int xpStored)
     {
+        CustomModelData cmd = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        stack.set(
+                DataComponents.CUSTOM_MODEL_DATA,
+                new CustomModelData(List.of((float) xpStored), cmd.flags(), cmd.strings(), cmd.colors())
+        );
+
         ItemLore existingLore = stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY);
         List<Component> lines = new ArrayList<>(existingLore.lines());
 

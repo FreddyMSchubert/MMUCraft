@@ -24,7 +24,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
-import uk.co.httpsmmuminecraftsociety.mainmod.connection.AuthManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
@@ -37,7 +36,6 @@ public class MainMod implements ModInitializer {
 	public static final String MOD_ID = "mainmod";
 	public static final String RESOURCE_PACK_ID = "mmu_pack";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final AuthManager AUTH_MANAGER = new AuthManager();
 
     private static volatile HolderLookup.Provider registries;
 
@@ -49,7 +47,6 @@ public class MainMod implements ModInitializer {
 
         FakeItemsCommand.init();
         MainModRecipes.register();
-        AUTH_MANAGER.onInitialize();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);

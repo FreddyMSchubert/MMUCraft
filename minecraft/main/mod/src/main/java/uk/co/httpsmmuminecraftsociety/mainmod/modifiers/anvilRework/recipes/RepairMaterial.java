@@ -38,7 +38,6 @@ public final class RepairMaterial implements AnvilRecipe
     @Override
     public AnvilLogic.Outcome apply(ServerPlayer player, ItemStack left, ItemStack right, @Nullable String name)
     {
-        System.out.println("[ANVIL RECIPE] RepairMaterial apply hit");
         if (!left.isDamageableItem() || !left.isDamaged()) {
             return AnvilLogic.Outcome.EMPTY;
         }

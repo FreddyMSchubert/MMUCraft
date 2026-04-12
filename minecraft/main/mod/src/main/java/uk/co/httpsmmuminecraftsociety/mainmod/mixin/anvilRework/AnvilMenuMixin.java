@@ -35,7 +35,6 @@ public abstract class AnvilMenuMixin {
 
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
     private void mainmod$replaceCreateResult(CallbackInfo ci) {
-        System.out.println("[ANVIL MIXIN] createResult entered");
         ItemCombinerMenuAccessor combiner = (ItemCombinerMenuAccessor)this;
         Container inputSlots = combiner.mainmod$getInputSlots();
         ResultContainer resultSlots = combiner.mainmod$getResultSlots();
@@ -56,8 +55,6 @@ public abstract class AnvilMenuMixin {
         ItemStack right = inputSlots.getItem(1).copy();
 
         this.mainmod$lastOutcome = AnvilLogic.compute(serverPlayer, left, right, this.itemName);
-        System.out.println("[ANVIL MIXIN] outcome cost = " + this.mainmod$lastOutcome.xpLevelsConsumed()
-                + ", result empty = " + this.mainmod$lastOutcome.result().isEmpty());
         if (this.mainmod$lastOutcome == null) {
             this.mainmod$lastOutcome = AnvilLogic.Outcome.EMPTY;
         }
@@ -87,10 +84,6 @@ public abstract class AnvilMenuMixin {
                         && !result.isEmpty()
                         && (player.hasInfiniteMaterials() || player.experienceLevel >= this.cost.get());
 
-        System.out.println("[ANVIL MIXIN] mayPickup cost=" + this.cost.get()
-                + ", hasItem=" + hasItem
-                + ", resultEmpty=" + result.isEmpty());
-
         cir.setReturnValue(allow);
     }
 
@@ -115,14 +108,9 @@ public abstract class AnvilMenuMixin {
         ContainerLevelAccess access = combiner.mainmod$getAccess();
 
         int chargedCost = clampCost(this.mainmod$lastOutcome.xpLevelsConsumed());
-        System.out.println("[ANVIL MIXIN] onTake chargedCost=" + chargedCost
-                + ", levelBefore=" + player.experienceLevel);
-
         if (!player.hasInfiniteMaterials() && chargedCost > 0) {
             player.giveExperienceLevels(-chargedCost);
         }
-
-        System.out.println("[ANVIL MIXIN] onTake levelAfter=" + player.experienceLevel);
 
         inputSlots.setItem(0, this.mainmod$lastOutcome.leftRemainder().copy());
         inputSlots.setItem(1, this.mainmod$lastOutcome.rightRemainder().copy());

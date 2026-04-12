@@ -4,3 +4,6 @@
 [submodule "assets"]
 	path = assets
 	url = ../MMU_MCSoc_kubecraft_assets.git
+[submodule "services/web/public/assets/mc_respack"]
+	path = services/web/public/assets/mc_respack
+	url = https://github.com/PixiGeko/Minecraft-default-assets.git

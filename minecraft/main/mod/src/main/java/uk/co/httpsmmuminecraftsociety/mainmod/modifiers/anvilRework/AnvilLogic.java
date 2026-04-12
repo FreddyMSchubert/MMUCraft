@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,8 +47,11 @@ public final class AnvilLogic
         return recipe.apply(player, left, right, name);
     }
 
+    // anvil repairing via clicking with iron ingots / iron blocks
     public static @Nullable InteractionResult onUseItemOn(UseOnContext ctx) {
-        if (ctx.getItemInHand().getItem() != Items.IRON_BLOCK) return null;
+        if (!ctx.getPlayer().level().getBlockState(ctx.getClickedPos()).is(BlockTags.ANVIL)) return null;
+        if (ctx.getItemInHand().getItem() != Items.IRON_BLOCK &&
+                !(ctx.getItemInHand().getItem() == Items.IRON_INGOT && Math.random() < (1f / 9f))) return null;
 
         Level level = ctx.getLevel();
         BlockState state = level.getBlockState(ctx.getClickedPos());
@@ -62,6 +66,8 @@ public final class AnvilLogic
             if (ctx.getPlayer() == null || !ctx.getPlayer().hasInfiniteMaterials()) {
                 ctx.getItemInHand().shrink(1);
             }
+
+            return InteractionResult.SUCCESS_SERVER;
         }
 
         return InteractionResult.SUCCESS;

@@ -24,11 +24,11 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
-import uk.co.httpsmmuminecraftsociety.mainmod.connection.AuthManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
@@ -36,7 +36,6 @@ public class MainMod implements ModInitializer {
 	public static final String MOD_ID = "mainmod";
 	public static final String RESOURCE_PACK_ID = "mmu_pack";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final AuthManager AUTH_MANAGER = new AuthManager();
 
     private static volatile HolderLookup.Provider registries;
 
@@ -48,11 +47,11 @@ public class MainMod implements ModInitializer {
 
         FakeItemsCommand.init();
         MainModRecipes.register();
-        AUTH_MANAGER.onInitialize();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);
+        ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
         UseBlockCallback.EVENT.register(CharmsManager::onUseBlock);

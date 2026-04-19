@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY package.json ./
 COPY package-lock.json ./
-COPY .env ./
 RUN npm install
 
 COPY src ./src

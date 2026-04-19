@@ -14,7 +14,10 @@
         "XPOrbMendVitality",
         "bowTrail.AttachDataToArrow",
         "bowTrail.SpawnParticles",
-        "WhitelistMsgModify"
+        "WhitelistMsgModify",
+        "anvilRework.AnvilMenuMixin",
+        "anvilRework.AbstractContainerMenuInvoker",
+        "anvilRework.ItemCombinerMenuAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

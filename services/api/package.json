@@ -2,22 +2,25 @@
 	"name": "mcstack-api",
 	"version": "0.2.0",
 	"private": true,
-	"type": "module",
 	"scripts": {
-		"dev": "tsx watch src/server.ts",
+		"dev": "tsc-watch -p tsconfig.json --onSuccess \"node dist/main.js\"",
 		"build": "tsc -p tsconfig.json",
-		"start": "node dist/server.js"
+		"start": "node dist/main.js",
+		"prod": "npm run build && npm run start"
 	},
 	"dependencies": {
-		"@fastify/cookie": "^11.0.2",
-		"better-sqlite3": "^12.6.0",
-		"dotenv": "^17.3.1",
-		"fastify": "^5.8.2"
+		"@nestjs/common": "^11.1.18",
+		"@nestjs/core": "^11.1.18",
+		"@nestjs/platform-fastify": "^11.1.18",
+		"better-sqlite3": "^12.8.0",
+		"fastify": "^5.8.2",
+		"reflect-metadata": "^0.2.2",
+		"rxjs": "^7.8.2"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.13",
-		"@types/node": "^24.0.0",
-		"tsx": "^4.21.0",
+		"@types/node": "^24.12.2",
+		"tsc-watch": "^7.2.0",
 		"typescript": "^5.9.3"
 	}
 }

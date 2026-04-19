@@ -1,0 +1,9 @@
+{
+	"title": "Sombrero",
+	"id": "cosmetic-sombrero",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

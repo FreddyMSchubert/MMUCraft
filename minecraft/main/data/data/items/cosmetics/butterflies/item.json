@@ -1,0 +1,9 @@
+{
+	"title": "Butterflies",
+	"id": "cosmetic-butterflies",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

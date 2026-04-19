@@ -1,0 +1,9 @@
+{
+	"title": "Slime head",
+	"id": "cosmetic-slime-head",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

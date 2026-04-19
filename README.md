@@ -322,10 +322,7 @@ also manual ideas:
 - this meme, sad and happy version -> https://media.tenor.com/cI1t4CvrgogAAAAe/crying-under-mask-feels.png
 - alien head
 - top hat
-- goop head
 - viking helmet
-- sombrero
-- cowboy hat
 - animals (sitting on hat, or animal shaped hat)
 - duck hat
 - steampunk hat
@@ -338,7 +335,6 @@ also manual ideas:
 - different glasses / shades
 - different pumpkin heads
 - minion eyes
-- green leprechaun hat thing
 - mario / luigi hat
 - night cap
 - bull horns

@@ -1,0 +1,9 @@
+{
+	"title": "Companion Cube",
+	"id": "cosmetic-companion-cube",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

@@ -1,0 +1,9 @@
+{
+	"title": "Cowboy Hat",
+	"id": "cosmetic-cowboy-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

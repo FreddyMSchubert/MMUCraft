@@ -1,0 +1,9 @@
+{
+	"title": "Microwave",
+	"id": "cosmetic-microwave",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

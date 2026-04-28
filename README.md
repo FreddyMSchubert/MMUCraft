@@ -420,21 +420,21 @@ combining books has changed, now a sharpness 1 + a sharpness 2 book makes a shar
 | Knockback | Woodland Mansion | Slime Block |
 | Sweeping Edge | Woodland Mansion | Ancient Blade from Archaeology |
 | Unbreaking | End City | Totem of Undying |
-| Protection + Variants | End Ships | ? |
+| Protection + Variants | End Ships | Green Candles |
 | Power | Bastions | Piglin Brute Heads |
 | Soul Speed | Bastions | Souls |
 | Efficiency | Stronghold | TNT |
 | Aqua Affinity | Ocean Monument (dropped by guardians) | Sea Lanterns |
 | Punch | Jungle Temple | Skeleton Head |
 | Infinity | Jungle Temple | Pillager Head |
-| Quick Charge | Pillager Outposts | / |
+| Quick Charge | Pillager Outposts | Fireworks |
 | Multishot | Pillager Outposts | / |
 | Piercing | Pillager Outposts | / |
 | Respiration | Shipwrecks | / |
 | Depth Strider | Ocean Ruins | Prismarine Shard |
 | Charm Boost | Trail Ruins | / |
 | Soulbound | Villages, Crafted with soul + book | / |
-| Silk Touch | Mineshaft | / |
+| Silk Touch | Mineshaft | brain_coral_block |
 | Feather Falling | Desert Temple | Parrot Feather |
 | Fire Aspect | Overworld-side ruined portals | fire charge |
 | Flame | Nether-side ruined portals | magma cream |

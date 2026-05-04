@@ -134,3 +134,15 @@ fabricApi {
         client = true
     }
 }
+
+tasks.named("compileJava") {
+    dependsOn tasks.named("generateProto")
+}
+
+tasks.named("processResources") {
+    dependsOn tasks.named("runDatagen")
+}
+
+tasks.named("build") {
+    dependsOn tasks.named("runDatagen")
+}

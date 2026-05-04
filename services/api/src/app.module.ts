@@ -1,8 +1,13 @@
 import { Module } from '@nestjs/common'
+import { AuthController } from './auth/auth.controller'
+import { AuthService } from './auth/auth.service'
 import { DatabaseModule } from './database/database.module'
-import { JokesModule } from './jokes/jokes.module'
+import { GrpcModule } from './grpc/grpc.module'
+import { HealthController } from './health.controller'
 
 @Module({
-    imports: [DatabaseModule, JokesModule],
+	imports: [DatabaseModule, GrpcModule],
+	controllers: [AuthController, HealthController],
+	providers: [AuthService],
 })
-export class AppModule {}
+export class AppModule { }

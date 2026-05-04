@@ -7,7 +7,6 @@ default_registry(
 
 k8s_yaml([
     'k8s/00-namespace.yaml',
-    'k8s/10-rabbitmq.yaml',
     'k8s/20-api.yaml',
     'k8s/30-web.yaml',
     'k8s/40-minecraft.yaml',
@@ -15,22 +14,49 @@ k8s_yaml([
 
 docker_build(
     'mcstack/api',
-    'services/api',
+    '.',
     dockerfile='services/api/Dockerfile',
     live_update=[
         fall_back_on('services/api/package.json'),
+        fall_back_on('services/api/package-lock.json'),
+        fall_back_on('services/api/tsconfig.json'),
+        fall_back_on('proto/auth.proto'),
         sync('services/api/src', '/app/src'),
+        sync('proto', '/app/proto'),
     ],
-    ignore=['node_modules'],
+    ignore=[
+        '.git',
+        '.github',
+        '.vscode',
+        'assets',
+        'k8s',
+        'minecraft',
+        'services/web',
+        'third_party_licenses',
+        'README.md',
+        'Tiltfile',
+        'package-lock.json',
+        'services/api/node_modules',
+        'services/api/data',
+        'services/api/dist',
+    ],
 )
 
 docker_build(
     'mcstack/web',
     'services/web',
     dockerfile='services/web/Dockerfile',
+    target='dev',
     live_update=[
         fall_back_on('services/web/package.json'),
+        fall_back_on('services/web/package-lock.json'),
+        fall_back_on('services/web/next.config.ts'),
+        fall_back_on('services/web/tsconfig.json'),
+        fall_back_on('services/web/eslint.config.mjs'),
+        fall_back_on('services/web/.env'),
+        fall_back_on('services/web/.env.example'),
         sync('services/web/src', '/app/src'),
+        sync('services/web/public', '/app/public'),
     ],
     ignore=['node_modules', '.next'],
 )
@@ -42,16 +68,18 @@ custom_build(
     deps=[
         'minecraft/main/build-minecraft-image.sh',
         'minecraft/main/build-minecraft-image.ps1',
+        'minecraft/main/mod/src',
+        'minecraft/main/mod/build.gradle',
+        'proto/auth.proto',
     ],
 )
 
-k8s_resource(workload='rabbitmq', port_forwards=[5672, 15672])
-k8s_resource(workload='api', port_forwards=[8080], resource_deps=['rabbitmq'])
+k8s_resource(workload='api', port_forwards=[8080, 50051])
 k8s_resource(workload='web', port_forwards=[3000], resource_deps=['api'])
 k8s_resource(
     workload='minecraft',
-    port_forwards=[25565],
-    resource_deps=['rabbitmq', 'api'],
+    port_forwards=[25565, 50052],
+    resource_deps=['api'],
     trigger_mode=TRIGGER_MODE_MANUAL,
     auto_init=False,
 )

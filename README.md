@@ -4,6 +4,7 @@
 
 ## Dev
 
+0. Shallow submodule import: `git submodule update --init --recursive --depth 1`
 1. Make sure k3d & kubectl, Docker, tilt are installed.
 2. Duplicate .env.example files in each service & fill in actual values.
 3. To start local k3d instance: `k3d cluster create mc-dev --registry-create mc-dev-registry`. To clean up: `k3d cluster delete mc-dev`.

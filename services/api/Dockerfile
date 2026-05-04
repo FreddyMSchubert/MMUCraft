@@ -2,15 +2,18 @@ FROM node:24-bookworm-slim
 
 WORKDIR /app
 
-COPY package.json ./
-COPY package-lock.json ./
+COPY services/api/package.json ./
+COPY services/api/package-lock.json ./
 RUN npm install
 
-COPY src ./src
+COPY services/api/tsconfig.json ./
+COPY services/api/src ./src
+COPY proto ./proto
 
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
 EXPOSE 8080
+EXPOSE 50051
 
 CMD ["npm", "run", "dev"]

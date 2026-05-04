@@ -7,7 +7,13 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RepoRoot = Resolve-Path (Join-Path $ScriptDir '..\..')
 $ModDir = Join-Path $ScriptDir 'mod'
+$AuthProto = Join-Path $RepoRoot 'proto\auth.proto'
+
+if (-not (Test-Path $AuthProto)) {
+    throw "Missing shared protobuf contract: $AuthProto"
+}
 
 Write-Host '==> Validating and staging item data'
 python (Join-Path $ScriptDir 'stage_item_data.py') --root $ScriptDir
@@ -15,11 +21,14 @@ python (Join-Path $ScriptDir 'stage_item_data.py') --root $ScriptDir
 Write-Host '==> Building Fabric mod'
 Push-Location $ModDir
 try {
-	& .\gradlew.bat runDatagen
-	if ($LASTEXITCODE -ne 0) { throw "runDatagen failed with exit code $LASTEXITCODE" }
+    & .\gradlew.bat generateProto
+    if ($LASTEXITCODE -ne 0) { throw "generateProto failed with exit code $LASTEXITCODE" }
 
-	& .\gradlew.bat build
-	if ($LASTEXITCODE -ne 0) { throw "build failed with exit code $LASTEXITCODE" }
+    & .\gradlew.bat runDatagen
+    if ($LASTEXITCODE -ne 0) { throw "runDatagen failed with exit code $LASTEXITCODE" }
+
+    & .\gradlew.bat build
+    if ($LASTEXITCODE -ne 0) { throw "build failed with exit code $LASTEXITCODE" }
 }
 finally {
     Pop-Location
@@ -30,3 +39,4 @@ python (Join-Path $ScriptDir 'respack\build-main-pack.py')
 
 Write-Host "==> Building minecraft image: $ExpectedRef"
 & docker 'build' '-t' $ExpectedRef '-f' (Join-Path $ScriptDir 'Dockerfile') $ScriptDir
+if ($LASTEXITCODE -ne 0) { throw "docker build failed with exit code $LASTEXITCODE" }

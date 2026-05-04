@@ -52,10 +52,15 @@ spec:
               value: /data
             - name: SYNC_SKIP_NEWER_IN_DESTINATION
               value: "false"
-            - name: AUTH_RABBITMQ_URL
-              value: amqp://guest:guest@rabbitmq:5672
+            - name: MOD_GRPC_HOST
+              value: "0.0.0.0"
+            - name: MOD_GRPC_PORT
+              value: "50052"
+            - name: API_GRPC_TARGET
+              value: "api:50051"
           ports:
             - containerPort: 25565
+            - containerPort: 50052
           volumeMounts:
             - name: data
               mountPath: /data
@@ -73,5 +78,9 @@ spec:
   selector:
     app: minecraft
   ports:
-    - port: 25565
+    - name: minecraft
+      port: 25565
       targetPort: 25565
+    - name: grpc
+      port: 50052
+      targetPort: 50052

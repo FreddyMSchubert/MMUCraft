@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: api-data
+  namespace: mc-stack-dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,12 +34,26 @@ spec:
               value: "8080"
             - name: HOST
               value: "0.0.0.0"
-            - name: RABBITMQ_URL
-              value: amqp://guest:guest@rabbitmq:5672
+            - name: API_GRPC_HOST
+              value: "0.0.0.0"
+            - name: API_GRPC_PORT
+              value: "50051"
+            - name: MOD_GRPC_TARGET
+              value: "minecraft:50052"
             - name: PUBLIC_WEB_BASE_URL
-              value: http://127.0.0.1:3000
+              value: "http://127.0.0.1:3000"
+            - name: AUTH_CODE_SECRET
+              value: "dev-change-me"
+            - name: COOKIE_SECURE
+              value: "false"
+            - name: MANUAL_EMAIL_WHITELIST
+              value: ""
           ports:
             - containerPort: 8080
+            - containerPort: 50051
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
           readinessProbe:
             httpGet:
               path: /api/health
@@ -40,6 +66,10 @@ spec:
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: api-data
 ---
 apiVersion: v1
 kind: Service
@@ -50,5 +80,9 @@ spec:
   selector:
     app: api
   ports:
-    - port: 8080
+    - name: http
+      port: 8080
       targetPort: 8080
+    - name: grpc
+      port: 50051
+      targetPort: 50051

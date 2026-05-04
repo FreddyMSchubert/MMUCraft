@@ -1,2 +1,7 @@
 .idea/
 data/
+
+proto/
+dist/
+data/
+node_modules/

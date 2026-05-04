@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package mcstack.auth.v1;
+
+option java_multiple_files = true;
+option java_package = "uk.co.httpsmmuminecraftsociety.mainmod.grpc";
+option java_outer_classname = "AuthContractProto";
+
+message Empty {}
+
+message PingRequest {
+  string service = 1;
+}
+
+message PingResponse {
+  string service = 1;
+  int64 unix_ms = 2;
+}
+
+message UpsertPendingJoinRequest {
+  string minecraft_username = 1;
+  string code = 2;
+  int64 expires_at_unix_ms = 3;
+}
+
+message UpsertPendingJoinResponse {
+  bool accepted = 1;
+}
+
+message RemovePendingJoinRequest {
+  string minecraft_username = 1;
+}
+
+message WhitelistPlayerRequest {
+  string minecraft_username = 1;
+}
+
+message WhitelistPlayerResponse {
+  bool whitelisted = 1;
+}
+
+message LoginAttemptRequest {
+  string minecraft_username = 1;
+  string uuid = 2;
+  bool whitelisted = 3;
+  int64 unix_ms = 4;
+}
+
+message LoginAttemptResponse {
+  bool received = 1;
+}
+
+service ModControl {
+  rpc Ping(PingRequest) returns (PingResponse);
+  rpc UpsertPendingJoin(UpsertPendingJoinRequest) returns (UpsertPendingJoinResponse);
+  rpc RemovePendingJoin(RemovePendingJoinRequest) returns (Empty);
+  rpc WhitelistPlayer(WhitelistPlayerRequest) returns (WhitelistPlayerResponse);
+}
+
+service AuthEvents {
+  rpc Ping(PingRequest) returns (PingResponse);
+  rpc ReportLoginAttempt(LoginAttemptRequest) returns (LoginAttemptResponse);
+}

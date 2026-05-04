@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.gamerules.GameRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.httpsmmuminecraftsociety.mainmod.auth.AuthGrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
@@ -61,6 +62,10 @@ public class MainMod implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);
+
+        ServerLifecycleEvents.SERVER_STARTED.register(AuthGrpcBridge::start);
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> AuthGrpcBridge.stop());
+        ServerTickEvents.END_SERVER_TICK.register(server -> AuthGrpcBridge.onServerTick());
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             registries = server.overworld().registryAccess();

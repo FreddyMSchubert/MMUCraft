@@ -1,16 +1,31 @@
 FROM node:24.14.0-bookworm-slim AS base
 WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
 
 FROM base AS deps
-COPY package.json package-lock.json* .env ./
+COPY package.json package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm \
   if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-FROM base AS builder
+FROM base AS dev
+ENV NODE_ENV=development
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
+ENV WATCHPACK_POLLING=true
+ENV CHOKIDAR_USEPOLLING=true
 ENV NEXT_TELEMETRY_DISABLED=1
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json package-lock.json* tsconfig.json next-env.d.ts next.config.ts eslint.config.mjs .env* ./
+COPY public ./public
+COPY src ./src
+EXPOSE 3000
+CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0"]
+
+FROM base AS builder
+ENV NODE_ENV=production
 ENV BUILD_STANDALONE=true
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json* tsconfig.json next-env.d.ts next.config.ts eslint.config.mjs .env ./
+COPY package.json package-lock.json* tsconfig.json next-env.d.ts next.config.ts eslint.config.mjs .env* ./
 COPY public ./public
 COPY src ./src
 RUN npm run build

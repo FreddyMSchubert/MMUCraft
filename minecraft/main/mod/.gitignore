@@ -2,6 +2,9 @@
 src/main/resources/data/mainmod/items/
 src/main/generated/
 
+# proto
+src/main/proto/*
+
 # gradle
 
 .gradle/

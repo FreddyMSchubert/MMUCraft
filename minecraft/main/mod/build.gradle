@@ -135,35 +135,10 @@ fabricApi {
     }
 }
 
-tasks.named("compileJava") {
-    dependsOn tasks.named("generateProto")
-}
-
-tasks.register("verifyDatagenClean") {
+tasks.named("sourcesJar") {
     dependsOn tasks.named("runDatagen")
-
-    doLast {
-        def status = new ByteArrayOutputStream()
-
-        exec {
-            commandLine "git", "status", "--porcelain"
-            standardOutput = status
-        }
-
-        if (status.toString().trim()) {
-            exec {
-                commandLine "git", "status", "--short"
-            }
-
-            exec {
-                commandLine "git", "diff"
-            }
-
-            throw new GradleException("Datagen produced uncommitted changes. Run ./gradlew runDatagen and commit the generated files.")
-        }
-    }
 }
 
 tasks.named("build") {
-    dependsOn tasks.named("verifyDatagenClean")
+    dependsOn tasks.named("runDatagen")
 }

@@ -17,7 +17,8 @@
         "WhitelistMsgModify",
         "anvilRework.AnvilMenuMixin",
         "anvilRework.AbstractContainerMenuInvoker",
-        "anvilRework.ItemCombinerMenuAccessor"
+        "anvilRework.ItemCombinerMenuAccessor",
+        "FilterEnchantingTableEnchs"
 	],
 	"injectors": {
 		"defaultRequire": 1

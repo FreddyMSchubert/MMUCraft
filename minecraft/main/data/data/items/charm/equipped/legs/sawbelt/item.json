@@ -4,11 +4,13 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["Timber without the climb."],
+	"tooltips": [
+		"Timber without the climb."
+	],
 	"charm": {
 		"charmId": 35,
 		"minLevel": 0,
-		"maxLevel": 9,
+		"maxLevel": 8,
 		"levels": [
 			{
 				"level": 1,
@@ -62,7 +64,9 @@
 					"minecraft:cherry_log",
 					"minecraft:pink_petals",
 					"minecraft:bee_nest",
-					"minecraft:honeycomb"
+					"minecraft:honeycomb",
+					"minecraft:azalea",
+					"minecraft:diamond"
 				]
 			},
 			{
@@ -75,7 +79,8 @@
 					"minecraft:resin_clump",
 					"minecraft:open_eyeblossom",
 					"minecraft:closed_eyeblossom",
-					"minecraft:creaking_heart"
+					"minecraft:creaking_heart",
+					"minecraft:diamond_block"
 				]
 			},
 			{
@@ -89,7 +94,8 @@
 					"minecraft:warped_fungus",
 					"minecraft:shroomlight",
 					"minecraft:weeping_vines",
-					"minecraft:twisting_vines"
+					"minecraft:twisting_vines",
+					"minecraft:diamond_block"
 				]
 			},
 			{
@@ -99,26 +105,8 @@
 				"upgradeIngredients": [
 					"minecraft:chorus_flower",
 					"minecraft:chorus_flower",
-					"minecraft:popped_chorus_fruit",
-					"minecraft:popped_chorus_fruit",
-					"minecraft:end_rod",
-					"minecraft:end_rod",
 					"minecraft:shulker_shell",
-					"minecraft:shulker_shell"
-				]
-			},
-			{
-				"level": 9,
-				"abilityStatusCurrent": "Breaks up to 512 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"upgradeIngredients": [
-					"minecraft:nether_star",
-					"minecraft:chorus_plant",
-					"minecraft:chorus_plant",
-					"minecraft:chorus_plant",
-					"minecraft:chorus_plant",
-					"minecraft:diamond_block",
-					"minecraft:diamond_block",
+					"minecraft:shulker_shell",
 					"minecraft:diamond_block"
 				]
 			}

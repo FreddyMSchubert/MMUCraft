@@ -1,17 +1,25 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.modifiers;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentType;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentTypeManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 import java.util.List;
+import java.util.Map;
 
 public class LootTableModifiers {
     private record LootAddition(
@@ -63,6 +71,31 @@ public class LootTableModifiers {
 
             stack.setCount(rolls);
             itemStacks.add(stack);
+        }
+
+        for (Map.Entry<Identifier, List<EnchantmentType>> entry : EnchantmentTypeManager.byLoottable.entrySet()) {
+            if (!entry.getKey().equals(tableId)) continue;
+            for (EnchantmentType enchType : entry.getValue()) {
+                float chance;
+                switch (enchType.loottableRarity) {
+                    case Rarity.UNCOMMON -> chance = 0.5f;
+                    case Rarity.RARE -> chance = 0.25f;
+                    case Rarity.EPIC -> chance = 0.125f;
+                    default -> chance = 1.0f;
+                }
+                if (lootContext.getRandom().nextFloat() >= chance) continue;
+
+                ItemStack stack = Items.ENCHANTED_BOOK.getDefaultInstance();
+                Holder<Enchantment> enchantmentHolder = lootContext.getLevel()
+                        .registryAccess()
+                        .lookupOrThrow(Registries.ENCHANTMENT)
+                        .getOrThrow(enchType.enchantment);
+                ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+                enchantments.set(enchantmentHolder, 1);
+                stack.set(DataComponents.STORED_ENCHANTMENTS, enchantments.toImmutable());
+
+                itemStacks.add(stack);
+            }
         }
     }
 }

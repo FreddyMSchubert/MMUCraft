@@ -66,7 +66,7 @@ All very unordered, potentially bad, some probably too hard / unfun, whatever - 
 better
 
 - killing a mob turns you into it, kill all mobs (-> https://www.spigotmc.org/resources/morph.8846/)
-- stack of block sin alphabetical order - add something for X + U + V, also kelp block, enable mob drop heads for z Zombie, Budding Amethyst renamed to xeno-amethyst or smth
+- stack of blocks in alphabetical order - add something for X + U + V, also kelp block, enable mob drop heads for z Zombie, Budding Amethyst renamed to xeno-amethyst or smth
 - lucky block flat world - some lucky blocks give you a hint towards something mega obscure you have to do to win, like suffocating while standing in a cauldron. small world border to annoy each other.
 - most unique death messages (same message a second time doesnt count) - keepinv, instant respawn, respawn VERY CLOSE to death location
 - vegan run. eating meat, throwing eggs, killing any mob or player kills you immediately from moral decay. Kill dragon via accidental death by unfortunate bed placement. Increase tick speed slightly, make leaves drop more apples, make nether chests have more blaze rods.
@@ -416,7 +416,7 @@ combining books has changed, now a sharpness 1 + a sharpness 2 book makes a shar
 | Windburst | Trial Chamber ominous | breeze rod |
 | Fortune | Crafted with coal, copper, emerald, gold, iron, lapis, diamond, quartz, redstone blocks | netherite scraps |
 | Swift Sneak | Ancient City | Sculk Sensor |
-| Mending | Ancient City | ? |
+| Mending | Ancient City | Creeper Head |
 | Thorns | Dungeon | Guardian Gear dropped from normal guardians |
 | Knockback | Woodland Mansion | Slime Block |
 | Sweeping Edge | Woodland Mansion | Ancient Blade from Archaeology |
@@ -429,23 +429,23 @@ combining books has changed, now a sharpness 1 + a sharpness 2 book makes a shar
 | Punch | Jungle Temple | Skeleton Head |
 | Infinity | Jungle Temple | Pillager Head |
 | Quick Charge | Pillager Outposts | Fireworks |
-| Multishot | Pillager Outposts | / |
-| Piercing | Pillager Outposts | / |
-| Respiration | Shipwrecks | / |
+| Multishot | Pillager Outposts | Quiver |
+| Piercing | Pillager Outposts | Ocelot Claw |
+| Respiration | Shipwrecks | Turtle Helmet |
 | Depth Strider | Ocean Ruins | Prismarine Shard |
-| Charm Boost | Trail Ruins | / |
-| Soulbound | Villages, Crafted with soul + book | / |
+| Charm Boost | Trail Ruins | Raw Gold Block |
+| Soulbound | Villages, Crafted with soul + book | Soul |
 | Silk Touch | Mineshaft | brain_coral_block |
 | Feather Falling | Desert Temple | Parrot Feather |
 | Fire Aspect | Overworld-side ruined portals | fire charge |
 | Flame | Nether-side ruined portals | magma cream |
 | Frost Walker | Igloos | Blue Ice |
-| Lure | Fishing | / |
+| Lure | Fishing | Some sort of rare-ish fish |
 | Luck of the sea | Buried Treasure | secret of the sea (1-4 from shipwrecks) |
-| Riptide | Dropped by drowneds rarely | / |
-| Loyalty | Dropped by drowneds rarely | / |
-| Impaling | Dropped by zombie nautili rarely | / |
-| Channeling | Dropped by zombie nautili rarely | / |
+| Riptide | Dropped by drowneds rarely | Phantom Membrane |
+| Loyalty | Dropped by drowneds rarely | Dog Collar by killing a tamed dog |
+| Impaling | Dropped by zombie nautili rarely | Heart of the Sea |
+| Channeling | Dropped by zombie nautili rarely | Waxed Oxidized Lightning Rod |
 
 A sniffer drops a new item, a seed of ancient magic. this must be watered (dropped in water), lavad, slimed, and soul fired. (its fire resistant). at this point, if you eat the item, it will give you poison and turn into a bulb of ancient magic.
 Craft the bulb together with a purification rune (from fishing, archaeology or shop), 6 diamonds and a curse-specific item to make a cursebreaker for that curse. all cursebreakers are made from flowers.
@@ -474,3 +474,13 @@ Information on changes to the base game are all documented in a wiki page on the
 - Archaeology
 - Fishing
 - Buy in shop
+
+## Rewards Ideas
+
+- Submit an mp3, and then putting your head on a jokebox plays that sound
+- Bedrock Breaker Pickaxe
+- Amethyst Cluster Pickaxe
+- Submit image to put on hat
+- Convo with oderzo about new hat to add
+- Ability to put anything in any armor slot
+- Make chestplate an elytra

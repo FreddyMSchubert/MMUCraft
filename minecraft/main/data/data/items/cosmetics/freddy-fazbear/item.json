@@ -1,0 +1,11 @@
+{
+	"title": "Fazbear Head",
+	"id": "cosmetic-freddy-fazbear",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Ar ar ar ar"
+	],
+	"equippableCosmetic": {}
+}

@@ -8,13 +8,21 @@ export interface UserRow {
 	email: string
 	minecraft_username: string | null
 	whitelisted_at_unix_ms: number | null
+	rules_accepted_at_unix_ms: number | null
 	created_at_unix_ms: number
 }
 
+export enum SignupFlowStatus {
+	EMAIL_PENDING = 'EMAIL_PENDING',
+	MINECRAFT_USERNAME_PENDING = 'MINECRAFT_USERNAME_PENDING',
+	MINECRAFT_CODE_PENDING = 'MINECRAFT_CODE_PENDING',
+	RULES_PENDING = 'RULES_PENDING',
+	COMPLETE = 'COMPLETE',
+}
 export interface SignupFlowRow {
 	id: string
 	email: string
-	status: string
+	status: SignupFlowStatus
 	email_code_hash: string
 	email_code_expires_at_unix_ms: number
 	minecraft_username: string | null
@@ -51,6 +59,7 @@ export class DatabaseService implements OnModuleDestroy {
             email TEXT NOT NULL UNIQUE,
             minecraft_username TEXT UNIQUE,
             whitelisted_at_unix_ms INTEGER,
+            rules_accepted_at_unix_ms INTEGER,
             created_at_unix_ms INTEGER NOT NULL
           );
 

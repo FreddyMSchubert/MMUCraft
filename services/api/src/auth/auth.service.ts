@@ -1,6 +1,11 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
-import { DatabaseService, SignupFlowRow, UserRow } from '../database/database.service'
+import {
+	DatabaseService,
+	SignupFlowRow,
+	SignupFlowStatus,
+	UserRow,
+} from '../database/database.service'
 import { GrpcService } from '../grpc/grpc.service'
 import {
 	createMinecraftCode,
@@ -58,7 +63,7 @@ export class AuthService {
         `).run(
 			flowId,
 			email,
-			'EMAIL_PENDING',
+			SignupFlowStatus.EMAIL_PENDING,
 			hashSecret(code),
 			now + EMAIL_CODE_TTL_MS,
 			now,
@@ -75,7 +80,7 @@ export class AuthService {
 		const flow = this.getFlow(flowId)
 		const now = Date.now()
 
-		if (flow.status !== 'EMAIL_PENDING') {
+		if (flow.status !== SignupFlowStatus.EMAIL_PENDING) {
 			throw new BadRequestException('This signup flow is not waiting for email verification')
 		}
 
@@ -100,7 +105,7 @@ export class AuthService {
             UPDATE signup_flows
             SET status = ?, updated_at_unix_ms = ?
             WHERE id = ?
-        `).run('MINECRAFT_USERNAME_PENDING', now, flowId)
+        `).run(SignupFlowStatus.MINECRAFT_USERNAME_PENDING, now, flowId)
 
 		return { ok: true }
 	}
@@ -110,7 +115,7 @@ export class AuthService {
 		const username = usernameInput.trim()
 		const now = Date.now()
 
-		if (flow.status !== 'MINECRAFT_USERNAME_PENDING') {
+		if (flow.status !== SignupFlowStatus.MINECRAFT_USERNAME_PENDING) {
 			throw new BadRequestException('This signup flow is not waiting for a Minecraft username')
 		}
 
@@ -151,7 +156,7 @@ export class AuthService {
                 updated_at_unix_ms = ?
             WHERE id = ?
         `).run(
-			'MINECRAFT_CODE_PENDING',
+			SignupFlowStatus.MINECRAFT_CODE_PENDING,
 			username,
 			hashSecret(minecraftCode),
 			expiresAt,
@@ -172,7 +177,7 @@ export class AuthService {
 		const flow = this.getFlow(flowId)
 		const now = Date.now()
 
-		if (flow.status !== 'MINECRAFT_CODE_PENDING') {
+		if (flow.status !== SignupFlowStatus.MINECRAFT_CODE_PENDING) {
 			throw new BadRequestException('This signup flow is not waiting for a Minecraft join code')
 		}
 
@@ -188,23 +193,53 @@ export class AuthService {
 			throw new BadRequestException('Invalid Minecraft code')
 		}
 
-		await this.grpc.whitelistPlayer(flow.minecraft_username)
 		await this.grpc.removePendingJoin(flow.minecraft_username)
-
-		this.database.connection.prepare(`
-            UPDATE users
-            SET whitelisted_at_unix_ms = ?
-            WHERE email = ?
-        `).run(now, flow.email)
 
 		this.database.connection.prepare(`
             UPDATE signup_flows
             SET status = ?, updated_at_unix_ms = ?
             WHERE id = ?
-        `).run('COMPLETE', now, flowId)
+        `).run(SignupFlowStatus.RULES_PENDING, now, flowId)
+
+		return {
+			ok: true,
+			nextStep: SignupFlowStatus.RULES_PENDING,
+		}
+	}
+
+	async acceptRules(flowId: string) {
+		const flow = this.getFlow(flowId)
+		const now = Date.now()
+
+		if (flow.status !== SignupFlowStatus.RULES_PENDING) {
+			throw new BadRequestException('This signup flow is not waiting for rules acceptance')
+		}
+
+		if (!flow.minecraft_username) {
+			throw new BadRequestException('Minecraft username is not available for this signup flow')
+		}
 
 		const user = this.findUserByEmail(flow.email)
-		if (!user) throw new BadRequestException('User disappeared during signup completion')
+
+		if (!user) {
+			throw new BadRequestException('User record does not exist for this signup flow')
+		}
+
+		await this.grpc.whitelistPlayer(flow.minecraft_username)
+
+		this.database.connection.prepare(`
+			UPDATE users
+			SET
+				whitelisted_at_unix_ms = ?,
+				rules_accepted_at_unix_ms = ?
+			WHERE id = ?
+		`).run(now, now, user.id)
+
+		this.database.connection.prepare(`
+			UPDATE signup_flows
+			SET status = ?, updated_at_unix_ms = ?
+			WHERE id = ?
+		`).run(SignupFlowStatus.COMPLETE, now, flowId)
 
 		return this.createSession(user.id)
 	}
@@ -242,6 +277,7 @@ export class AuthService {
 			email: row.email,
 			minecraftUsername: row.minecraft_username,
 			whitelisted: row.whitelisted_at_unix_ms !== null,
+			rulesAccepted: row.rules_accepted_at_unix_ms !== null,
 		}
 	}
 

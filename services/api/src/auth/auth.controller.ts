@@ -25,11 +25,16 @@ export class AuthController {
 	}
 
 	@Post('verify-minecraft')
-	async verifyMinecraft(
-		@Body() body: { flowId?: string; code?: string },
+	async verifyMinecraft(@Body() body: { flowId?: string; code?: string }) {
+		return await this.auth.verifyMinecraftCode(body.flowId ?? '', body.code ?? '')
+	}
+
+	@Post('accept-rules')
+	async acceptRules(
+		@Body() body: { flowId?: string },
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		const session = await this.auth.verifyMinecraftCode(body.flowId ?? '', body.code ?? '')
+		const session = await this.auth.acceptRules(body.flowId ?? '')
 		this.setSessionCookie(response, session.token, session.maxAgeSeconds)
 
 		return { ok: true }

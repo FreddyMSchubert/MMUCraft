@@ -4,6 +4,8 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Can become a bit of a headache after a while..."
+	],
 	"equippableCosmetic": {}
 }

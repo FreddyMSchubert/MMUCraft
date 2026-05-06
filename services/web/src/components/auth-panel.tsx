@@ -7,6 +7,7 @@ type Step =
 	| 'email-code'
 	| 'minecraft-username'
 	| 'minecraft-code'
+	| 'rules'
 	| 'done'
 	| 'signin'
 
@@ -43,6 +44,7 @@ export function AuthPanel() {
 	const [minecraftUsername, setMinecraftUsername] = useState('')
 	const [minecraftCode, setMinecraftCode] = useState('')
 	const [devEmailCode, setDevEmailCode] = useState('')
+	const [rulesAccepted, setRulesAccepted] = useState(false)
 	const [error, setError] = useState('')
 	const [busy, setBusy] = useState(false)
 
@@ -93,6 +95,20 @@ export function AuthPanel() {
 
 		void run(async () => {
 			await postJson('/api/auth/verify-minecraft', { flowId, code: minecraftCode })
+			setStep('rules')
+		})
+	}
+
+	function submitRules(event: FormEvent) {
+		event.preventDefault()
+
+		if (!rulesAccepted) {
+			setError('You must accept the rules before joining')
+			return
+		}
+
+		void run(async () => {
+			await postJson('/api/auth/accept-rules', { flowId })
 			setStep('done')
 		})
 	}
@@ -181,7 +197,45 @@ export function AuthPanel() {
 						placeholder="Minecraft code"
 						autoCapitalize="characters"
 					/>
-					<button disabled={busy}>Finish signup</button>
+					<button disabled={busy}>Verify Minecraft code</button>
+				</form>
+			)}
+
+			{step === 'rules' && (
+				<form onSubmit={submitRules} className="authForm">
+					<h2>Accept the rules</h2>
+					<p>You must accept the server rules before your Minecraft username is whitelisted.</p>
+
+					<div className="authRules">
+						<p>By joining, you agree to the following rules:</p>
+						<ol>
+							<li>You do not talk about Fight Club.</li>
+							<li>YOU DO NOT. TALK. ABOUT FIGHT CLUB.</li>
+							<li>Fighter yells "stop," goes limp, taps out, the fight's over. </li>
+							<li>If this is your first time at Fight Club, you have to fight. </li>
+						</ol>
+						<p>Beyond that, you also agree to:</p>
+						<ul>
+							<li>All forms of hate and prejudice are prohibited.</li>
+							<li>Any NSFW content is prohibited.</li>
+							<li>Politics, Religion, and your mother should be discussed respectfully.</li>
+							<li>Criminal behaviour and criminal discussion is prohibited.</li>
+							<li>General toxicity is prohibited.</li>
+							<li>Exploting loopholes is prohibited.</li>
+						</ul>
+					</div>
+
+					<label>
+						<input
+							type="checkbox"
+							checked={rulesAccepted}
+							onChange={(event) => setRulesAccepted(event.target.checked)}
+						/>
+						{' '}
+						I accept the server rules.
+					</label>
+
+					<button disabled={busy || !rulesAccepted}>Accept rules and finish signup</button>
 				</form>
 			)}
 

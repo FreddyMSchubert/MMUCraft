@@ -30,7 +30,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
 
             phantom.setPos(
                     player.getX() + offsetX,
-                    player.level().getMaxY(),
+                    player.getY() + 5,
                     player.getZ() + offsetZ
             );
 
@@ -52,7 +52,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
         Phantom boss = new Phantom(EntityType.PHANTOM, level);
         boss.setPos(
                 player.getX(),
-                player.level().getMaxY(),
+                player.getY() + 5,
                 player.getZ()
         );
 

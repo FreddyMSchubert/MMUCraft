@@ -1,0 +1,9 @@
+{
+	"title": "Small Frog",
+	"id": "cosmetic-frog-small",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

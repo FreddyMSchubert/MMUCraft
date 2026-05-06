@@ -4,6 +4,8 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"You're a wanted cosmetic, Cowboy Hat"
+	],
 	"equippableCosmetic": {}
 }

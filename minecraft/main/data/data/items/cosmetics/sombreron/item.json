@@ -4,6 +4,8 @@
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Still too small..."
+	],
 	"equippableCosmetic": {}
 }

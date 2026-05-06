@@ -4,6 +4,8 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"As seen in 480 million BCE!"
+	],
 	"equippableCosmetic": {}
 }

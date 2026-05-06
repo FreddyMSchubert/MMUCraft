@@ -4,7 +4,9 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"When the impostor is sus"
+	],
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#FF0000"

@@ -4,6 +4,8 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"The cheapest item in our mexican collection"
+	],
 	"equippableCosmetic": {}
 }

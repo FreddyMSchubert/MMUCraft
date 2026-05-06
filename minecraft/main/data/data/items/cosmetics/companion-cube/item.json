@@ -4,6 +4,8 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"When you're dying I'll be still alive"
+	],
 	"equippableCosmetic": {}
 }

@@ -127,7 +127,8 @@ export function AuthPanel() {
 			{step === 'email' && (
 				<form onSubmit={submitEmail} className="authForm">
 					<h2>Join the server</h2>
-					<p>Use your MMU email to start signup.</p>
+					<p>Use your MMU email to start signup. (Must end in @stu.mmu.ac.uk or @mmu.ac.uk).</p>
+					<p>If you are not an MMU member and want to join the server, please have someone you know at MMU contact the administrators. We're happy to have you!</p>
 					<input
 						value={email}
 						onChange={(event) => setEmail(event.target.value)}

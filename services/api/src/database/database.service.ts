@@ -6,9 +6,9 @@ import Database from 'better-sqlite3'
 export interface UserRow {
 	id: number
 	email: string
-	minecraft_username: string | null
-	whitelisted_at_unix_ms: number | null
-	rules_accepted_at_unix_ms: number | null
+	minecraft_username: string
+	whitelisted_at_unix_ms: number
+	rules_accepted_at_unix_ms: number
 	created_at_unix_ms: number
 }
 
@@ -54,43 +54,46 @@ export class DatabaseService implements OnModuleDestroy {
 		this.db.pragma('foreign_keys = ON')
 
 		this.db.exec(`
-          CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL UNIQUE,
-            minecraft_username TEXT UNIQUE,
-            whitelisted_at_unix_ms INTEGER,
-            rules_accepted_at_unix_ms INTEGER,
-            created_at_unix_ms INTEGER NOT NULL
-          );
+			CREATE TABLE IF NOT EXISTS users (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				email TEXT NOT NULL UNIQUE,
+				minecraft_username TEXT NOT NULL UNIQUE,
+				whitelisted_at_unix_ms INTEGER NOT NULL,
+				rules_accepted_at_unix_ms INTEGER NOT NULL,
+				created_at_unix_ms INTEGER NOT NULL
+			);
 
-          CREATE TABLE IF NOT EXISTS signup_flows (
-            id TEXT PRIMARY KEY,
-            email TEXT NOT NULL,
-            status TEXT NOT NULL,
-            email_code_hash TEXT NOT NULL,
-            email_code_expires_at_unix_ms INTEGER NOT NULL,
-            minecraft_username TEXT,
-            minecraft_code_hash TEXT,
-            minecraft_code_expires_at_unix_ms INTEGER,
-            created_at_unix_ms INTEGER NOT NULL,
-            updated_at_unix_ms INTEGER NOT NULL
-          );
+			CREATE TABLE IF NOT EXISTS signup_flows (
+				id TEXT PRIMARY KEY,
+				email TEXT NOT NULL,
+				status TEXT NOT NULL,
+				email_code_hash TEXT NOT NULL,
+				email_code_expires_at_unix_ms INTEGER NOT NULL,
+				minecraft_username TEXT,
+				minecraft_code_hash TEXT,
+				minecraft_code_expires_at_unix_ms INTEGER,
+				created_at_unix_ms INTEGER NOT NULL,
+				updated_at_unix_ms INTEGER NOT NULL
+			);
 
-          CREATE INDEX IF NOT EXISTS signup_flows_email_idx
-            ON signup_flows(email);
+			CREATE INDEX IF NOT EXISTS signup_flows_email_idx
+				ON signup_flows(email);
 
-          CREATE TABLE IF NOT EXISTS sessions (
-            id TEXT PRIMARY KEY,
-            user_id INTEGER NOT NULL,
-            token_hash TEXT NOT NULL UNIQUE,
-            expires_at_unix_ms INTEGER NOT NULL,
-            created_at_unix_ms INTEGER NOT NULL,
-            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-          );
+			CREATE INDEX IF NOT EXISTS signup_flows_minecraft_username_idx
+				ON signup_flows(minecraft_username);
 
-          CREATE INDEX IF NOT EXISTS sessions_token_hash_idx
-            ON sessions(token_hash);
-        `)
+			CREATE TABLE IF NOT EXISTS sessions (
+				id TEXT PRIMARY KEY,
+				user_id INTEGER NOT NULL,
+				token_hash TEXT NOT NULL UNIQUE,
+				expires_at_unix_ms INTEGER NOT NULL,
+				created_at_unix_ms INTEGER NOT NULL,
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS sessions_token_hash_idx
+				ON sessions(token_hash);
+		`)
 	}
 
 	get connection(): Database.Database {

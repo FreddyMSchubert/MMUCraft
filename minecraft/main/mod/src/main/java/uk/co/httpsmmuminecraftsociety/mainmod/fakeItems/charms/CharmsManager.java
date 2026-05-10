@@ -26,6 +26,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.Potion
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.*;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.KnowledgeBookCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
@@ -60,7 +61,8 @@ public class CharmsManager
             Map.entry(32, new VitalityMendingCharm()),
             Map.entry(33, new InvisiCarrotCharm()),
             Map.entry(34, new FarmingBootsCharm()),
-            Map.entry(35, new SawBeltCharm())
+            Map.entry(35, new SawBeltCharm()),
+            Map.entry(36, new KnowledgeBookCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

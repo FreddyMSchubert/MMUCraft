@@ -23,6 +23,14 @@ const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 
+export interface AuthenticatedUser {
+	id: number
+	email: string
+	minecraftUsername: string
+	whitelisted: true
+	rulesAccepted: true
+}
+
 @Injectable()
 export class AuthService {
 	constructor(
@@ -279,7 +287,16 @@ export class AuthService {
 		return this.createSession(user.id)
 	}
 
-	getSession(rawCookieHeader: string | undefined) {
+	requireSession(rawCookieHeader: string | undefined): AuthenticatedUser {
+		const user = this.getSession(rawCookieHeader)
+
+		if (!user) {
+			throw new UnauthorizedException('Not signed in')
+		}
+
+		return user
+	}
+	getSession(rawCookieHeader: string | undefined): AuthenticatedUser | null {
 		const token = this.readCookie(rawCookieHeader, 'mcstack_session')
 		if (!token) return null
 

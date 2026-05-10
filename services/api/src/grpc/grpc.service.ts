@@ -2,13 +2,25 @@ import { join } from 'node:path'
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
+import { KnowledgeService } from '../knowledge/knowledge.service'
 
-interface ProtoRoot {
+interface AuthProtoRoot {
 	mcstack: {
 		auth: {
 			v1: {
 				ModControl: grpc.ServiceClientConstructor
 				AuthEvents: grpc.ServiceClientConstructor & {
+					service: grpc.ServiceDefinition
+				}
+			}
+		}
+	}
+}
+interface GameplayProtoRoot {
+	mcstack: {
+		gameplay: {
+			v1: {
+				GameplayEvents: grpc.ServiceClientConstructor & {
 					service: grpc.ServiceDefinition
 				}
 			}
@@ -26,18 +38,26 @@ export class GrpcService implements OnModuleInit, OnModuleDestroy {
 	private server: grpc.Server | null = null
 	private modControlClient: grpc.Client | null = null
 
-	async onModuleInit() {
-		const proto = this.loadProto()
+	constructor(private readonly knowledge: KnowledgeService) { }
 
-		this.modControlClient = new proto.mcstack.auth.v1.ModControl(
+	async onModuleInit() {
+		const authProto = this.loadAuthProto()
+		const gameplayProto = this.loadGameplayProto()
+
+		this.modControlClient = new authProto.mcstack.auth.v1.ModControl(
 			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
 			grpc.credentials.createInsecure(),
 		)
 
 		this.server = new grpc.Server()
-		this.server.addService(proto.mcstack.auth.v1.AuthEvents.service, {
+
+		this.server.addService(authProto.mcstack.auth.v1.AuthEvents.service, {
 			Ping: this.ping.bind(this),
 			ReportLoginAttempt: this.reportLoginAttempt.bind(this),
+		})
+
+		this.server.addService(gameplayProto.mcstack.gameplay.v1.GameplayEvents.service, {
+			UnlockNextKnowledge: this.unlockNextKnowledge.bind(this),
 		})
 
 		const host = process.env.API_GRPC_HOST ?? '0.0.0.0'
@@ -138,7 +158,7 @@ export class GrpcService implements OnModuleInit, OnModuleDestroy {
 		callback(null, { received: true })
 	}
 
-	private loadProto(): ProtoRoot {
+	private loadAuthProto(): AuthProtoRoot {
 		const protoPath = join(process.cwd(), 'proto', 'auth.proto')
 
 		const packageDefinition = protoLoader.loadSync(protoPath, {
@@ -149,6 +169,49 @@ export class GrpcService implements OnModuleInit, OnModuleDestroy {
 			oneofs: true,
 		})
 
-		return grpc.loadPackageDefinition(packageDefinition) as unknown as ProtoRoot
+		return grpc.loadPackageDefinition(packageDefinition) as unknown as AuthProtoRoot
+	}
+	private loadGameplayProto(): GameplayProtoRoot {
+		const protoPath = join(process.cwd(), 'proto', 'gameplay.proto')
+
+		const packageDefinition = protoLoader.loadSync(protoPath, {
+			keepCase: true,
+			longs: Number,
+			enums: String,
+			defaults: true,
+			oneofs: true,
+		})
+
+		return grpc.loadPackageDefinition(packageDefinition) as unknown as GameplayProtoRoot
+	}
+
+	private unlockNextKnowledge(
+		call: grpc.ServerUnaryCall<{
+			minecraft_username?: string
+			source_item_id?: string
+			unix_ms?: number
+		}, {
+			unlocked: boolean
+			all_unlocked: boolean
+			knowledge_id: string
+			priority: number
+			topic: string
+			message: string
+		}>,
+		callback: UnaryCallback<{
+			unlocked: boolean
+			all_unlocked: boolean
+			knowledge_id: string
+			priority: number
+			topic: string
+			message: string
+		}>,
+	) {
+		const result = this.knowledge.unlockNextForMinecraftUsername(
+			call.request.minecraft_username ?? '',
+			call.request.source_item_id ?? 'knowledge_book',
+		)
+
+		callback(null, result)
 	}
 }

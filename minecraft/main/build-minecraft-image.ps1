@@ -9,11 +9,6 @@ Set-StrictMode -Version Latest
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Resolve-Path (Join-Path $ScriptDir '..\..')
 $ModDir = Join-Path $ScriptDir 'mod'
-$AuthProto = Join-Path $RepoRoot 'proto\auth.proto'
-
-if (-not (Test-Path $AuthProto)) {
-    throw "Missing shared protobuf contract: $AuthProto"
-}
 
 Write-Host '==> Validating and staging item data'
 python (Join-Path $ScriptDir 'stage_item_data.py') --root $ScriptDir

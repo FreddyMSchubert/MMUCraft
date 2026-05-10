@@ -8,6 +8,7 @@ RUN npm install
 
 COPY services/api/tsconfig.json ./
 COPY services/api/src ./src
+COPY services/api/content ./content
 COPY proto ./proto
 
 ENV HOST=0.0.0.0

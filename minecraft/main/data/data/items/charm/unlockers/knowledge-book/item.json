@@ -1,0 +1,21 @@
+{
+	"title": "Knowledge Book",
+	"id": "charm-knowledge-book",
+	"modelType": "basic-3d",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"charm": {
+		"charmId": 36,
+		"minLevel": 1,
+		"maxLevel": 1,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Use to unlock more knowledge readable on the website.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
+	}
+}

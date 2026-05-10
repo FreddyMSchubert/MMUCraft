@@ -1,3 +1,7 @@
+/* ============================================================
+   Base
+   ============================================================ */
+
 html,
 body {
 	margin: 0;
@@ -11,34 +15,43 @@ body {
 	box-sizing: border-box;
 }
 
+button,
+input {
+	font: inherit;
+}
+
+button {
+	cursor: pointer;
+}
+
+button:disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+a {
+	color: inherit;
+}
+
 .page {
 	position: relative;
 	min-height: 100vh;
-	overflow: hidden;
-	display: grid;
-	place-items: center;
+	overflow-x: hidden;
 }
 
 .page::after {
 	content: "";
-	position: absolute;
+	position: fixed;
 	inset: 0;
+	z-index: 0;
 	background: rgba(0, 0, 0, 0.35);
 	pointer-events: none;
 }
 
-.title {
-	position: relative;
-	z-index: 1;
-	margin: 0;
-	padding: 24px;
-	text-align: center;
-	font-size: clamp(2rem, 6vw, 5rem);
-}
-
 .bg {
-	position: absolute;
+	position: fixed;
 	inset: 0;
+	z-index: 0;
 	display: grid;
 }
 
@@ -54,23 +67,54 @@ body {
 .content {
 	position: relative;
 	z-index: 1;
-	padding: 24px;
+	width: min(1100px, calc(100vw - 32px));
+	margin: 0 auto;
+	padding: 48px 0 72px;
 	text-align: center;
 }
 
-/* ----- Auth Styles ----- */
+.siteHeader {
+	margin-bottom: 24px;
+}
 
-.authCard {
+.title {
+	margin: 0;
+	padding: 24px;
+	text-align: center;
+	font-size: clamp(2rem, 6vw, 5rem);
+}
+
+
+/* ============================================================
+   Shared
+   ============================================================ */
+
+.authCard,
+.dashboard {
 	position: relative;
 	z-index: 1;
-	width: min(420px, calc(100vw - 32px));
-	margin: 20px auto 0;
-	padding: 20px;
 	border: 1px solid rgba(255, 255, 255, 0.18);
 	border-radius: 16px;
 	background: rgba(0, 0, 0, 0.72);
 	backdrop-filter: blur(8px);
 }
+
+.authCard {
+	width: min(420px, calc(100vw - 32px));
+	margin: 20px auto 0;
+	padding: 20px;
+}
+
+.dashboard {
+	width: 100%;
+	padding: 20px;
+	text-align: left;
+}
+
+
+/* ============================================================
+   Auth
+   ============================================================ */
 
 .authForm {
 	display: grid;
@@ -89,7 +133,6 @@ body {
 	border-radius: 10px;
 	background: rgba(255, 255, 255, 0.08);
 	color: #fff;
-	font: inherit;
 }
 
 .authForm button {
@@ -98,17 +141,195 @@ body {
 	border-radius: 10px;
 	background: #ffd166;
 	color: #111;
-	font: inherit;
 	font-weight: 700;
-	cursor: pointer;
 }
 
-.authForm button:disabled {
-	cursor: not-allowed;
-	opacity: 0.6;
+.authRules {
+	max-height: 280px;
+	overflow: auto;
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.06);
+	text-align: left;
 }
 
 .authError {
 	margin: 14px 0 0;
 	color: #ff9a9a;
+}
+
+
+/* ============================================================
+   Dashboard
+   ============================================================ */
+
+.dashboardTop {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: flex-start;
+	margin-bottom: 16px;
+}
+
+.dashboardTop h2,
+.dashboardTop p {
+	margin: 0 0 6px;
+}
+
+.dashboardTop button {
+	flex: 0 0 auto;
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+}
+
+.dashboardTabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.dashboardTabs button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+}
+
+.dashboardTabs button.active {
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.dashboardPanel {
+	min-height: 240px;
+}
+
+
+/* ============================================================
+   Knowledge
+   ============================================================ */
+
+.knowledgePage {
+	display: grid;
+	gap: 14px;
+}
+
+.knowledgeSection {
+	padding: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.06);
+}
+
+.knowledgeSection.locked {
+	opacity: 0.72;
+}
+
+.knowledgeMeta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 10px;
+}
+
+.knowledgeMeta span {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.12);
+	font-size: 0.85rem;
+}
+
+.knowledgeHtml {
+	line-height: 1.6;
+}
+
+.knowledgeHtml h2,
+.knowledgeHtml h3,
+.knowledgeHtml p,
+.knowledgeHtml ul,
+.knowledgeHtml ol,
+.knowledgeHtml blockquote,
+.knowledgeHtml figure {
+	margin-top: 0;
+}
+
+.knowledgeHtml h2,
+.knowledgeHtml h3 {
+	margin-bottom: 10px;
+}
+
+.knowledgeHtml p,
+.knowledgeHtml ul,
+.knowledgeHtml ol,
+.knowledgeHtml blockquote,
+.knowledgeHtml figure {
+	margin-bottom: 14px;
+}
+
+.knowledgeHtml ul,
+.knowledgeHtml ol {
+	padding-left: 24px;
+}
+
+.knowledgeHtml blockquote {
+	padding: 10px 14px;
+	border-left: 4px solid rgba(255, 209, 102, 0.8);
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.88);
+}
+
+.knowledgeHtml code {
+	padding: 2px 5px;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.knowledgeHtml figure {
+	display: grid;
+	gap: 8px;
+}
+
+.knowledgeHtml figcaption {
+	color: rgba(255, 255, 255, 0.76);
+	font-size: 0.92rem;
+}
+
+.knowledgeHtml img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 12px;
+}
+
+
+/* ============================================================
+   Responsiveness
+   ============================================================ */
+
+@media (max-width: 700px) {
+	.content {
+		width: min(100vw - 24px, 1100px);
+		padding: 28px 0 48px;
+	}
+
+	.title {
+		padding: 12px;
+	}
+
+	.dashboardTop {
+		display: grid;
+	}
+
+	.dashboardTop button {
+		width: 100%;
+	}
 }

@@ -40,6 +40,13 @@ export interface SessionRow {
 	created_at_unix_ms: number
 }
 
+export interface KnowledgeUnlockRow {
+	user_id: number
+	knowledge_id: string
+	unlocked_at_unix_ms: number
+	source: string
+}
+
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
 	private readonly db: Database.Database
@@ -93,6 +100,18 @@ export class DatabaseService implements OnModuleDestroy {
 
 			CREATE INDEX IF NOT EXISTS sessions_token_hash_idx
 				ON sessions(token_hash);
+
+			CREATE TABLE IF NOT EXISTS knowledge_unlocks (
+				user_id INTEGER NOT NULL,
+				knowledge_id TEXT NOT NULL,
+				unlocked_at_unix_ms INTEGER NOT NULL,
+				source TEXT NOT NULL,
+				PRIMARY KEY(user_id, knowledge_id),
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS knowledge_unlocks_user_id_idx
+				ON knowledge_unlocks(user_id);
 		`)
 	}
 

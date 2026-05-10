@@ -21,6 +21,7 @@ docker_build(
         fall_back_on('services/api/package-lock.json'),
         fall_back_on('services/api/tsconfig.json'),
         fall_back_on('proto/auth.proto'),
+		fall_back_on('proto/gameplay.proto'),
         sync('services/api/src', '/app/src'),
         sync('proto', '/app/proto'),
     ],
@@ -71,6 +72,7 @@ custom_build(
         'minecraft/main/mod/src',
         'minecraft/main/mod/build.gradle',
         'proto/auth.proto',
+        'proto/gameplay.proto',
     ],
 )
 

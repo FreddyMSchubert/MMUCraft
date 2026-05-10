@@ -36,7 +36,7 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
 	return data as T
 }
 
-export function AuthPanel() {
+export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	const [step, setStep] = useState<Step>('email')
 	const [email, setEmail] = useState('')
 	const [flowId, setFlowId] = useState('')
@@ -110,6 +110,7 @@ export function AuthPanel() {
 		void run(async () => {
 			await postJson('/api/auth/accept-rules', { flowId })
 			setStep('done')
+			onSignedIn?.()
 		})
 	}
 
@@ -119,6 +120,7 @@ export function AuthPanel() {
 		void run(async () => {
 			await postJson('/api/auth/signin', { email })
 			setStep('done')
+			onSignedIn?.()
 		})
 	}
 

@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.auth;
+package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -9,17 +9,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.UserWhiteListEntry;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.AuthEventsGrpc;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.Empty;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.LoginAttemptRequest;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.ModControlGrpc;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PingRequest;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PingResponse;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.RemovePendingJoinRequest;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.UpsertPendingJoinRequest;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.UpsertPendingJoinResponse;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.WhitelistPlayerRequest;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.WhitelistPlayerResponse;
 
 import java.io.IOException;
 import java.util.Locale;

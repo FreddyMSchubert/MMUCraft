@@ -6,7 +6,7 @@
 
 0. Shallow submodule import: `git submodule update --init --recursive --depth 1`
 1. Make sure k3d & kubectl, Docker, tilt are installed.
-2. Duplicate .env.example files in each service & fill in actual values.
+2. For local non-Kubernetes web runs, copy `services/web/.env.example` to `services/web/.env` and fill in actual values. API configuration is provided through environment variables or Kubernetes manifests.
 3. To start local k3d instance: `k3d cluster create mc-dev --registry-create mc-dev-registry`. To clean up: `k3d cluster delete mc-dev`.
 4. Run `tilt up` to get started.
 
@@ -37,7 +37,7 @@ Minecraft server setup
 - [RabbitMQ](https://www.rabbitmq.com/) will handle communication between k8s pods & ScoreKeeper (winners etc)
 - [nginx](https://nginx.org/) for a tiny web server that enables minigame world downloads & serves cosmetics website
 - **ScoreKeeper/website** - Some centralized custom program that will
-  - determines which mc account based on discord sign-in, then you can buy cosmetics with the in-game money.
+  - determine which Minecraft account is linked to a website account, then allow players to buy cosmetics with in-game money.
   - handles scoring while surprising saturday is running
   - maintain inter-server player stats (will be called by main pod mod for permission checks)
   - delete nginx-served world backups after some time
@@ -55,7 +55,7 @@ The surprising saturday & minigame world custom mods will be developed in this r
 - [ ] Get a basic docker image for vanilla server set up
 - [ ] Make k8s pull & run it and restart it when its down
 - [ ] Velocity container that forwards to the main server
-- [ ] Server auth & authenticating with discord (from minecraft generate a url that encodes username, on website you can sign in with discord & input mmu email and input a code from that email)
+- [ ] Server auth using MMU email verification and Minecraft join-code verification.
 - [ ] Setup rabbitmq that sends data between scorekeeper and main server mod. every day at 9, scorekeeper initiates border expansion.
 - [ ] On website, add shop tab. Create a few placeholder cosmetics. When bought, send rabbitmq message to mod to unlock that cosmetic for player / give player the item.
 

@@ -1,11 +1,9 @@
 import { Global, Module } from '@nestjs/common'
-import { KnowledgeModule } from '../knowledge/knowledge.module'
-import { GrpcService } from './grpc.service'
+import { GrpcServerService } from './grpc-server.service'
 
 @Global()
 @Module({
-	imports: [KnowledgeModule],
-	providers: [GrpcService],
-	exports: [GrpcService],
+	providers: [GrpcServerService],
+	exports: [GrpcServerService],
 })
 export class GrpcModule { }

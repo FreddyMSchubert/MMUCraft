@@ -1,5 +1,5 @@
 import { Controller, Get, Headers } from '@nestjs/common'
-import { AuthService } from '../auth/auth.service'
+import { AuthService } from '../../auth/auth.service'
 import { KnowledgeService } from './knowledge.service'
 
 @Controller('api/knowledge')

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { randomInt } from 'node:crypto'
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { DatabaseService, UserRow } from '../database/database.service'
+import { DatabaseService, UserRow } from '../../database/database.service'
 
 const DEFAULT_KNOWLEDGE_PATH = join(process.cwd(), 'content', 'knowledge.html')
 const OBSCURED_IMAGE_SRC = '/assets/knowledge/obscured.png'
@@ -42,6 +42,17 @@ interface KnowledgeUnlockResponse {
 	message: string
 }
 
+type KnowledgeResponseSection =
+	| PublicKnowledgeSection
+	| {
+		type: 'knowledge'
+		id: string
+		priority: number
+		topic: string
+		unlocked: boolean
+		html: string
+	}
+
 @Injectable()
 export class KnowledgeService {
 	private cached: CachedKnowledgeDocument | null = null
@@ -51,9 +62,11 @@ export class KnowledgeService {
 	getKnowledgeForUser(userId: number) {
 		const document = this.loadDocument()
 		const unlockedIds = this.getUnlockedIds(userId)
+		const lastUnlockedKnowledgeId = this.getLastUnlockedKnowledgeId(userId, document.unlockable)
 
 		return {
-			sections: document.sections.map((section) => {
+			lastUnlockedKnowledgeId,
+			sections: document.sections.map((section): KnowledgeResponseSection => {
 				if (section.type === 'public') {
 					return section
 				}
@@ -66,7 +79,7 @@ export class KnowledgeService {
 					priority: section.priority,
 					topic: section.topic,
 					unlocked,
-					html: unlocked ? section.html : this.obscureHtml(section.html),
+					html: unlocked ? section.html : this.obscureLockedHtml(section.html),
 				}
 			}),
 		}
@@ -116,12 +129,7 @@ export class KnowledgeService {
 					return 'all-unlocked' as const
 				}
 
-				const lowestPriority = Math.min(...remaining.map((section) => section.priority))
-				const candidates = remaining.filter((section) => section.priority === lowestPriority)
-				if (candidates.length === 0) {
-					return null
-				}
-				const chosen = candidates[randomInt(candidates.length)]!
+				const chosen = this.pickRandomLowestPrioritySection(remaining)
 
 				const result = this.database.connection.prepare(`
 					INSERT OR IGNORE INTO knowledge_unlocks (
@@ -175,6 +183,31 @@ export class KnowledgeService {
 				`).all(userId) as { knowledge_id: string }[]
 
 		return new Set(rows.map((row) => row.knowledge_id))
+	}
+
+	private pickRandomLowestPrioritySection(
+		sections: UnlockableKnowledgeSection[],
+	): UnlockableKnowledgeSection {
+		const lowestPriority = Math.min(...sections.map((section) => section.priority))
+		const candidates = sections.filter((section) => section.priority === lowestPriority)
+
+		return candidates[randomInt(candidates.length)]!
+	}
+
+	private getLastUnlockedKnowledgeId(
+		userId: number,
+		unlockable: UnlockableKnowledgeSection[],
+	): string | null {
+		const configuredIds = new Set(unlockable.map((section) => section.id))
+
+		const rows = this.database.connection.prepare(`
+			SELECT knowledge_id
+			FROM knowledge_unlocks
+			WHERE user_id = ?
+			ORDER BY unlocked_at_unix_ms DESC
+		`).all(userId) as { knowledge_id: string }[]
+
+		return rows.find((row) => configuredIds.has(row.knowledge_id))?.knowledge_id ?? null
 	}
 
 	private loadDocument(): KnowledgeDocument {
@@ -306,7 +339,7 @@ export class KnowledgeService {
 		return html.replace(/<script\b[\s\S]*?<\/script>/gi, '')
 	}
 
-	private obscureHtml(html: string): string {
+	private obscureLockedHtml(html: string): string {
 		return html
 			.split(/(<[^>]*>)/g)
 			.map((part) => {
@@ -314,7 +347,7 @@ export class KnowledgeService {
 					return this.obscureTag(part)
 				}
 
-				return this.obscureText(part)
+				return this.obscureTextNodes(part)
 			})
 			.join('')
 	}
@@ -334,10 +367,31 @@ export class KnowledgeService {
 		return tag.replace(/^<img\b/i, `<img src="${OBSCURED_IMAGE_SRC}"`)
 	}
 
-	private obscureText(text: string): string {
-		const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+	private obscureTextNodes(text: string): string {
+		return text.replace(/[^\s]+/g, (segment) => {
+			const value = this.escapeHtml(this.randomGlyphs(segment.length))
+			return `<span class="minecraftObfuscated" data-obfuscated-length="${segment.length}" style="--obfuscated-width: ${segment.length}ch">${value}</span>`
+		})
+	}
 
-		return text.replace(/[A-Za-z]/g, () => letters.charAt(randomInt(letters.length)))
+	private randomGlyphs(length: number): string {
+		const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
+		let result = ''
+
+		for (let index = 0; index < length; index++) {
+			result += letters.charAt(randomInt(letters.length))
+		}
+
+		return result
+	}
+
+	private escapeHtml(value: string): string {
+		return value
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#39;')
 	}
 
 	private noUnlock(message: string): KnowledgeUnlockResponse {

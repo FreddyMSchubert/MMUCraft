@@ -8,7 +8,7 @@ body {
 	min-height: 100%;
 	background: #000;
 	color: #fff;
-	font-family: sans-serif;
+	font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", Consolas, "Courier New", monospace;
 }
 
 * {
@@ -81,7 +81,7 @@ a {
 	margin: 0;
 	padding: 24px;
 	text-align: center;
-	font-size: clamp(2rem, 6vw, 5rem);
+	font-size: 4rem;
 }
 
 
@@ -219,95 +219,99 @@ a {
    ============================================================ */
 
 .knowledgePage {
-	display: grid;
-	gap: 14px;
+	position: relative;
+	line-height: 1.65;
 }
 
-.knowledgeSection {
-	padding: 16px;
-	border: 1px solid rgba(255, 255, 255, 0.14);
-	border-radius: 14px;
-	background: rgba(255, 255, 255, 0.06);
-}
-
-.knowledgeSection.locked {
-	opacity: 0.72;
-}
-
-.knowledgeMeta {
+.knowledgeActions {
+	position: sticky;
+	top: 0;
+	z-index: 2;
 	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	margin-bottom: 10px;
+	justify-content: flex-end;
+	margin-bottom: 16px;
+	padding: 8px 0;
+	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0));
 }
 
-.knowledgeMeta span {
-	display: inline-block;
-	padding: 4px 8px;
-	border-radius: 999px;
-	background: rgba(255, 255, 255, 0.12);
-	font-size: 0.85rem;
+.knowledgeActions button {
+	padding: 10px 14px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 6px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
 }
 
-.knowledgeHtml {
-	line-height: 1.6;
+.knowledgeUnlock {
+	scroll-margin-top: 84px;
 }
 
-.knowledgeHtml h2,
-.knowledgeHtml h3,
-.knowledgeHtml p,
-.knowledgeHtml ul,
-.knowledgeHtml ol,
-.knowledgeHtml blockquote,
-.knowledgeHtml figure {
+.knowledgePage h2,
+.knowledgePage h3,
+.knowledgePage p,
+.knowledgePage ul,
+.knowledgePage ol,
+.knowledgePage blockquote,
+.knowledgePage figure {
 	margin-top: 0;
 }
 
-.knowledgeHtml h2,
-.knowledgeHtml h3 {
+.knowledgePage h2,
+.knowledgePage h3 {
 	margin-bottom: 10px;
 }
 
-.knowledgeHtml p,
-.knowledgeHtml ul,
-.knowledgeHtml ol,
-.knowledgeHtml blockquote,
-.knowledgeHtml figure {
+.knowledgePage p,
+.knowledgePage ul,
+.knowledgePage ol,
+.knowledgePage blockquote,
+.knowledgePage figure {
 	margin-bottom: 14px;
 }
 
-.knowledgeHtml ul,
-.knowledgeHtml ol {
+.knowledgePage ul,
+.knowledgePage ol {
 	padding-left: 24px;
 }
 
-.knowledgeHtml blockquote {
+.knowledgePage blockquote {
 	padding: 10px 14px;
 	border-left: 4px solid rgba(255, 209, 102, 0.8);
 	background: rgba(255, 255, 255, 0.06);
 	color: rgba(255, 255, 255, 0.88);
 }
 
-.knowledgeHtml code {
+.knowledgePage code {
 	padding: 2px 5px;
 	border-radius: 6px;
 	background: rgba(255, 255, 255, 0.12);
 }
 
-.knowledgeHtml figure {
+.knowledgePage figure {
 	display: grid;
 	gap: 8px;
 }
 
-.knowledgeHtml figcaption {
+.knowledgePage figcaption {
 	color: rgba(255, 255, 255, 0.76);
 	font-size: 0.92rem;
 }
 
-.knowledgeHtml img {
+.knowledgePage img {
 	max-width: 100%;
 	height: auto;
-	border-radius: 12px;
+	border-radius: 6px;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+}
+
+.minecraftObfuscated {
+	display: inline-block;
+	min-width: var(--obfuscated-width, auto);
+	color: #88ff88;
+	text-shadow: 1px 1px 0 #163816;
+	white-space: pre;
 }
 
 
@@ -323,6 +327,7 @@ a {
 
 	.title {
 		padding: 12px;
+		font-size: 2.4rem;
 	}
 
 	.dashboardTop {
@@ -330,6 +335,14 @@ a {
 	}
 
 	.dashboardTop button {
+		width: 100%;
+	}
+
+	.knowledgeActions {
+		position: static;
+	}
+
+	.knowledgeActions button {
 		width: 100%;
 	}
 }

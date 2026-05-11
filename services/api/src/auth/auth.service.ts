@@ -6,7 +6,7 @@ import {
 	SignupFlowStatus,
 	UserRow,
 } from '../database/database.service'
-import { GrpcService } from '../grpc/grpc.service'
+import { AuthGrpcService } from './auth-grpc.service'
 import {
 	createMinecraftCode,
 	createNumericCode,
@@ -35,7 +35,7 @@ export interface AuthenticatedUser {
 export class AuthService {
 	constructor(
 		private readonly database: DatabaseService,
-		private readonly grpc: GrpcService,
+		private readonly grpc: AuthGrpcService,
 	) { }
 
 	async createSignup(emailInput: string) {

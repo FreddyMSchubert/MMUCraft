@@ -1,48 +1,46 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
-type KnowledgeSection =
-	| {
-		type: 'public'
-		html: string
-	}
-	| {
-		type: 'knowledge'
-		id: string
-		priority: number
-		topic: string
-		unlocked: boolean
-		html: string
-	}
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface KnowledgeResponse {
-	sections: KnowledgeSection[]
+	html: string
+	lastUnlockedElementId: string | null
 }
+
+const POLL_INTERVAL_MS = 8000
+const OBFUSCATION_INTERVAL_MS = 75
+const OBFUSCATION_GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵž `{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤÷≈°∙·√²■'
 
 export function KnowledgeTab() {
 	const [data, setData] = useState<KnowledgeResponse | null>(null)
 	const [error, setError] = useState('')
+	const articleRef = useRef<HTMLElement | null>(null)
+
+	const load = useCallback(async (options: { quiet?: boolean } = {}) => {
+		if (!options.quiet) {
+			setError('')
+		}
+
+		const response = await fetch('/api/knowledge', {
+			cache: 'no-store',
+		})
+
+		const body = await response.json().catch(() => null)
+
+		if (!response.ok) {
+			throw new Error(body?.message ?? 'Failed to load knowledge')
+		}
+
+		setData(body as KnowledgeResponse)
+	}, [])
 
 	useEffect(() => {
 		let cancelled = false
 
-		async function load() {
-			setError('')
-
+		async function loadInitial() {
 			try {
-				const response = await fetch('/api/knowledge', {
-					cache: 'no-store',
-				})
-
-				const body = await response.json().catch(() => null)
-
-				if (!response.ok) {
-					throw new Error(body?.message ?? 'Failed to load knowledge')
-				}
-
 				if (!cancelled) {
-					setData(body as KnowledgeResponse)
+					await load()
 				}
 			} catch (caught) {
 				if (!cancelled) {
@@ -51,12 +49,61 @@ export function KnowledgeTab() {
 			}
 		}
 
-		void load()
+		void loadInitial()
 
 		return () => {
 			cancelled = true
 		}
-	}, [])
+	}, [load])
+
+	useEffect(() => {
+		const interval = window.setInterval(() => {
+			if (document.visibilityState !== 'visible') return
+
+			void load({ quiet: true }).catch(() => undefined)
+		}, POLL_INTERVAL_MS)
+
+		function refreshWhenVisible() {
+			if (document.visibilityState === 'visible') {
+				void load({ quiet: true }).catch(() => undefined)
+			}
+		}
+
+		document.addEventListener('visibilitychange', refreshWhenVisible)
+
+		return () => {
+			window.clearInterval(interval)
+			document.removeEventListener('visibilitychange', refreshWhenVisible)
+		}
+	}, [load])
+
+	useEffect(() => {
+		const article = articleRef.current
+		if (!article) return
+		const root = article
+
+		function updateObfuscatedText() {
+			const elements = root.querySelectorAll<HTMLElement>('.minecraftObfuscated')
+
+			for (const element of elements) {
+				const length = Number(element.dataset.obfuscatedLength ?? element.textContent?.length ?? 0)
+				element.textContent = randomGlyphs(length)
+			}
+		}
+
+		updateObfuscatedText()
+		const interval = window.setInterval(updateObfuscatedText, OBFUSCATION_INTERVAL_MS)
+
+		return () => window.clearInterval(interval)
+	}, [data?.html])
+
+	function jumpToLastUnlock() {
+		if (!data?.lastUnlockedElementId) return
+
+		document
+			.getElementById(data.lastUnlockedElementId)
+			?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+	}
 
 	if (error) {
 		return <p className="authError">{error}</p>
@@ -67,29 +114,32 @@ export function KnowledgeTab() {
 	}
 
 	return (
-		<article className="knowledgePage">
-			{data.sections.map((section, index) => {
-				const locked = section.type === 'knowledge' && !section.unlocked
+		<>
+			<div className="knowledgeActions">
+				<button
+					type="button"
+					disabled={!data.lastUnlockedElementId}
+					onClick={jumpToLastUnlock}
+				>
+					Jump to last unlock
+				</button>
+			</div>
 
-				return (
-					<section
-						key={section.type === 'knowledge' ? section.id : `public-${index}`}
-						className={`knowledgeSection${locked ? ' locked' : ''}`}
-					>
-						{section.type === 'knowledge' && (
-							<div className="knowledgeMeta">
-								<span>{section.unlocked ? 'Unlocked' : 'Locked'}</span>
-								<span>Priority {section.priority}</span>
-							</div>
-						)}
-
-						<div
-							className="knowledgeHtml"
-							dangerouslySetInnerHTML={{ __html: section.html }}
-						/>
-					</section>
-				)
-			})}
-		</article>
+			<article
+				ref={articleRef}
+				className="knowledgePage"
+				dangerouslySetInnerHTML={{ __html: data.html }}
+			/>
+		</>
 	)
+}
+
+function randomGlyphs(length: number) {
+	let result = ''
+
+	for (let index = 0; index < length; index++) {
+		result += OBFUSCATION_GLYPHS[Math.floor(Math.random() * OBFUSCATION_GLYPHS.length)]
+	}
+
+	return result
 }

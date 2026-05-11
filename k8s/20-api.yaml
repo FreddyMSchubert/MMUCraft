@@ -40,8 +40,6 @@ spec:
               value: "50051"
             - name: MOD_GRPC_TARGET
               value: "minecraft:50052"
-            - name: PUBLIC_WEB_BASE_URL
-              value: "http://127.0.0.1:3000"
             - name: AUTH_CODE_SECRET
               value: "dev-change-me"
             - name: COOKIE_SECURE

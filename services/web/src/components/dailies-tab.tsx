@@ -11,6 +11,15 @@ interface DailyTask {
 	item?: string
 	count?: number
 	dabloonsPerItem?: number
+	advancement?: {
+		advancementId: string
+		title: string
+		tabTitle: string
+		iconItem: string
+		baseRewardDabloons: number
+		bonusRewardDabloons: number
+	} | null
+	unavailableMessage?: string
 }
 
 interface DailiesResponse {
@@ -67,7 +76,9 @@ export function DailiesTab() {
 
 		const path = task.id === 'item_submission'
 			? '/api/dailies/item-submission/claim'
-			: '/api/dailies/login-bonus/claim'
+			: task.id === 'advancement_bonus'
+				? '/api/dailies/advancement-bonus/claim'
+				: '/api/dailies/login-bonus/claim'
 
 		try {
 			const response = await fetch(path, {
@@ -117,15 +128,37 @@ export function DailiesTab() {
 							<h4>{task.title}</h4>
 							{task.id === 'item_submission' ? (
 								<p>
-									Submit {task.count}x {formatItemName(task.item ?? '')} for {task.rewardDabloons} dabloons.
+									Claim removes {task.count}x {formatItemName(task.item ?? '')} from your inventory for {task.rewardDabloons} dabloons.
 								</p>
+							) : task.id === 'advancement_bonus' ? (
+								task.advancement ? (
+									<div className="dailyAdvancement">
+										<img
+											alt=""
+											className="dailyIcon"
+											src={minecraftItemIconPath(task.advancement.iconItem)}
+											onError={(event) => {
+												event.currentTarget.style.display = 'none'
+											}}
+										/>
+										<div>
+											<p>{task.advancement.title}</p>
+											<p>Tab: {task.advancement.tabTitle}</p>
+											<p>
+												Finish it today, then claim {task.advancement.bonusRewardDabloons} bonus dabloons.
+											</p>
+										</div>
+									</div>
+								) : (
+									<p>{task.unavailableMessage ?? 'No daily advancement is available right now.'}</p>
+								)
 							) : (
-								<p>{task.rewardDabloons} dabloons</p>
+								<p>Click claim while online for {task.rewardDabloons} dabloons.</p>
 							)}
 						</div>
 						<button
 							type="button"
-							disabled={task.claimed || claimingTaskId === task.id}
+							disabled={task.claimed || claimingTaskId === task.id || (task.id === 'advancement_bonus' && !task.advancement)}
 							onClick={() => claimTask(task)}
 						>
 							{task.claimed ? 'Claimed' : claimingTaskId === task.id ? 'Claiming...' : 'Claim'}
@@ -143,4 +176,9 @@ export function DailiesTab() {
 
 function formatItemName(item: string) {
 	return item.replace(/^minecraft:/, '').replace(/_/g, ' ')
+}
+
+function minecraftItemIconPath(item: string) {
+	const itemName = item.replace(/^minecraft:/, '')
+	return `/assets/mc_respack/assets/minecraft/textures/item/${itemName}.png`
 }

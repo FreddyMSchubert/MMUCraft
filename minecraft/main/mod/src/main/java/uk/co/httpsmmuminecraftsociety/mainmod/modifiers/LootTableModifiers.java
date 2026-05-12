@@ -46,6 +46,7 @@ public class LootTableModifiers {
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), "charm-sculk-phial", null, 1.0F / 8.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/bat"), null, Items.PHANTOM_MEMBRANE, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), null, Items.PHANTOM_MEMBRANE, 1.0F, 0, 10),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), null, Items.DRAGON_EGG, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/phantom"), null, Items.PHANTOM_MEMBRANE, 1.0F, 1, 2)
     );
 

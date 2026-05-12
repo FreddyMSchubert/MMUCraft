@@ -54,6 +54,18 @@ export interface DailyClaimRow {
 	claimed_at_unix_ms: number
 }
 
+export interface DailyAdvancementTargetRow {
+	user_id: number
+	period_key: string
+	advancement_id: string
+	title: string
+	tab_title: string
+	icon_item: string
+	base_reward_dabloons: number
+	bonus_reward_dabloons: number
+	selected_at_unix_ms: number
+}
+
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
 	private readonly db: Database.Database
@@ -131,6 +143,23 @@ export class DatabaseService implements OnModuleDestroy {
 
 			CREATE INDEX IF NOT EXISTS daily_claims_user_id_idx
 				ON daily_claims(user_id);
+
+			CREATE TABLE IF NOT EXISTS daily_advancement_targets (
+				user_id INTEGER NOT NULL,
+				period_key TEXT NOT NULL,
+				advancement_id TEXT NOT NULL,
+				title TEXT NOT NULL,
+				tab_title TEXT NOT NULL,
+				icon_item TEXT NOT NULL,
+				base_reward_dabloons INTEGER NOT NULL,
+				bonus_reward_dabloons INTEGER NOT NULL,
+				selected_at_unix_ms INTEGER NOT NULL,
+				PRIMARY KEY(user_id, period_key),
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS daily_advancement_targets_user_id_idx
+				ON daily_advancement_targets(user_id);
 		`)
 	}
 

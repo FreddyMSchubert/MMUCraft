@@ -276,6 +276,19 @@ a {
 	min-width: 0;
 }
 
+.dailyAdvancement {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.dailyIcon {
+	width: 36px;
+	height: 36px;
+	image-rendering: pixelated;
+	flex: 0 0 auto;
+}
+
 .dailyTask button {
 	padding: 10px 14px;
 	border: 0;

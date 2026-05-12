@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
+package uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;

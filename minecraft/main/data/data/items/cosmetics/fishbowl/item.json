@@ -1,6 +1,6 @@
 {
-	"title": "Sniffer Hat",
-	"id": "cosmetic-sniffer",
+	"title": "Fishbowl",
+	"id": "cosmetic-fishbowl",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

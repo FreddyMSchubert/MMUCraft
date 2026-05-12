@@ -1,8 +1,8 @@
 {
-	"title": "Royal Crown",
-	"id": "cosmetic-crown-royal",
+	"title": "Sniffer Hood",
+	"id": "cosmetic-hood-sniffer",
 	"modelType": "cosmetic",
-	"rarity": "rare",
+	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"equippableCosmetic": {}

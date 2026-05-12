@@ -1,8 +1,8 @@
 {
-	"title": "Royal Crown",
-	"id": "cosmetic-crown-royal",
+	"title": "25-26 Committee Crown",
+	"id": "cosmetic-crown-2526",
 	"modelType": "cosmetic",
-	"rarity": "rare",
+	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"equippableCosmetic": {}

@@ -19,13 +19,20 @@ interface ApiKnowledgeResponse {
 }
 
 export async function proxyApiRequest(request: Request, path: string) {
+	const requestBody = METHODS_WITHOUT_BODY.has(request.method) ? undefined : await request.text()
+	const requestHeaders: HeadersInit = {
+		cookie: request.headers.get('cookie') ?? '',
+	}
+	const requestContentType = request.headers.get('content-type')
+
+	if (requestContentType && requestBody) {
+		requestHeaders['content-type'] = requestContentType
+	}
+
 	const upstream = await fetch(`${API_BASE_URL}${path}`, {
 		method: request.method,
-		headers: {
-			'content-type': request.headers.get('content-type') ?? 'application/json',
-			cookie: request.headers.get('cookie') ?? '',
-		},
-		body: METHODS_WITHOUT_BODY.has(request.method) ? undefined : await request.text(),
+		headers: requestHeaders,
+		body: requestBody,
 		cache: 'no-store',
 	})
 

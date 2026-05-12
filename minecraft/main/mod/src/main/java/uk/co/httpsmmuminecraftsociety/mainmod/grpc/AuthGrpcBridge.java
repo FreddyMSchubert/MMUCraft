@@ -6,9 +6,11 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.UserWhiteListEntry;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -41,6 +43,7 @@ public final class AuthGrpcBridge {
             grpcServer = ServerBuilder
                     .forPort(port)
                     .addService(new ModControlService())
+                    .addService(new GameplayControlService())
                     .build()
                     .start();
 
@@ -203,6 +206,66 @@ public final class AuthGrpcBridge {
             server.getPlayerList().getWhiteList().save();
 
             return server.getPlayerList().isWhiteListed(nameAndId);
+        }
+    }
+
+    private static final class GameplayControlService extends GameplayControlGrpc.GameplayControlImplBase {
+        @Override
+        public void grantDailyLoginBonus(
+                GrantDailyLoginBonusRequest request,
+                StreamObserver<GrantDailyLoginBonusResponse> responseObserver
+        ) {
+            CompletableFuture<GrantDailyLoginBonusResponse> result = new CompletableFuture<>();
+
+            mainThreadTasks.add(() -> {
+                try {
+                    result.complete(grantDailyLoginBonusOnMainThread(request));
+                } catch (Exception exception) {
+                    result.completeExceptionally(exception);
+                }
+            });
+
+            result.whenComplete((response, error) -> {
+                if (error != null) {
+                    responseObserver.onError(error);
+                    return;
+                }
+
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            });
+        }
+
+        private GrantDailyLoginBonusResponse grantDailyLoginBonusOnMainThread(GrantDailyLoginBonusRequest request) {
+            MinecraftServer server = minecraftServer;
+            if (server == null) {
+                throw new IllegalStateException("Minecraft server is not available");
+            }
+
+            String username = request.getMinecraftUsername();
+            ServerPlayer player = server.getPlayerList().getPlayerByName(username);
+            if (player == null || player.hasDisconnected()) {
+                return GrantDailyLoginBonusResponse.newBuilder()
+                        .setGranted(false)
+                        .setOnline(false)
+                        .setMessage("You have to be online on the server to receive the money.")
+                        .build();
+            }
+
+            int amount = Math.max(0, request.getAmount());
+            if (!MoneyHelper.GainMoney(player, amount)) {
+                return GrantDailyLoginBonusResponse.newBuilder()
+                        .setGranted(false)
+                        .setOnline(true)
+                        .setMessage("Could not grant the daily login bonus.")
+                        .build();
+            }
+
+            return GrantDailyLoginBonusResponse.newBuilder()
+                    .setGranted(true)
+                    .setOnline(true)
+                    .setMessage("You received " + amount + " dabloons.")
+                    .build();
         }
     }
 }

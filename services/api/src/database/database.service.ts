@@ -47,6 +47,13 @@ export interface KnowledgeUnlockRow {
 	source: string
 }
 
+export interface DailyClaimRow {
+	user_id: number
+	task_id: string
+	period_key: string
+	claimed_at_unix_ms: number
+}
+
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
 	private readonly db: Database.Database
@@ -112,6 +119,18 @@ export class DatabaseService implements OnModuleDestroy {
 
 			CREATE INDEX IF NOT EXISTS knowledge_unlocks_user_id_idx
 				ON knowledge_unlocks(user_id);
+
+			CREATE TABLE IF NOT EXISTS daily_claims (
+				user_id INTEGER NOT NULL,
+				task_id TEXT NOT NULL,
+				period_key TEXT NOT NULL,
+				claimed_at_unix_ms INTEGER NOT NULL,
+				PRIMARY KEY(user_id, task_id, period_key),
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS daily_claims_user_id_idx
+				ON daily_claims(user_id);
 		`)
 	}
 

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AuthPanel } from '@/components/auth-panel'
 import { BackgroundGrid } from '@/components/background-grid'
+import { DailiesTab } from '@/components/dailies-tab'
 import { KnowledgeTab } from '@/components/knowledge-tab'
 
 interface SessionUser {
@@ -13,7 +14,7 @@ interface SessionUser {
 	rulesAccepted: boolean
 }
 
-type TabId = 'knowledge'
+type TabId = 'dailies' | 'knowledge'
 
 async function fetchMe(): Promise<SessionUser | null> {
 	const response = await fetch('/api/auth/me', {
@@ -30,7 +31,7 @@ async function fetchMe(): Promise<SessionUser | null> {
 
 export function SiteShell({ images }: { images: string[] }) {
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
-	const [activeTab, setActiveTab] = useState<TabId>('knowledge')
+	const [activeTab, setActiveTab] = useState<TabId>('dailies')
 
 	const reloadUser = useCallback(async () => {
 		setUser(await fetchMe())
@@ -87,6 +88,13 @@ export function SiteShell({ images }: { images: string[] }) {
 						<nav className="dashboardTabs" aria-label="Dashboard sections">
 							<button
 								type="button"
+								className={activeTab === 'dailies' ? 'active' : ''}
+								onClick={() => setActiveTab('dailies')}
+							>
+								Dailies
+							</button>
+							<button
+								type="button"
 								className={activeTab === 'knowledge' ? 'active' : ''}
 								onClick={() => setActiveTab('knowledge')}
 							>
@@ -95,6 +103,7 @@ export function SiteShell({ images }: { images: string[] }) {
 						</nav>
 
 						<div className="dashboardPanel">
+							{activeTab === 'dailies' && <DailiesTab />}
 							{activeTab === 'knowledge' && <KnowledgeTab />}
 						</div>
 					</section>

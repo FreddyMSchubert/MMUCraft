@@ -213,6 +213,85 @@ a {
 	min-height: 240px;
 }
 
+/* ============================================================
+   Dailies
+   ============================================================ */
+
+.dailiesPanel {
+	display: grid;
+	gap: 16px;
+}
+
+.dailiesHeader h3,
+.dailiesHeader p,
+.dailyTask h4,
+.dailyTask p,
+.dailyMessage {
+	margin: 0;
+}
+
+.dailiesHeader h3 {
+	margin-bottom: 4px;
+	font-size: 1.25rem;
+}
+
+.dailiesHeader p,
+.dailyTask p {
+	color: rgba(255, 255, 255, 0.76);
+}
+
+.dailyTasks {
+	display: grid;
+	gap: 10px;
+}
+
+.dailyTask {
+	display: grid;
+	grid-template-columns: 56px 1fr auto;
+	gap: 14px;
+	align-items: center;
+	min-height: 76px;
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.dailyNumber {
+	display: grid;
+	place-items: center;
+	width: 48px;
+	aspect-ratio: 1;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	border-radius: 6px;
+	background: rgba(255, 209, 102, 0.14);
+	color: #ffd166;
+	font-size: 1.8rem;
+	font-weight: 700;
+}
+
+.dailyTaskBody {
+	min-width: 0;
+}
+
+.dailyTask button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 6px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.dailyTask button:disabled {
+	background: rgba(255, 255, 255, 0.18);
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.dailyMessage {
+	color: #88ff88;
+}
+
 
 /* ============================================================
    Knowledge
@@ -343,6 +422,15 @@ a {
 	}
 
 	.knowledgeActions button {
+		width: 100%;
+	}
+
+	.dailyTask {
+		grid-template-columns: 48px 1fr;
+	}
+
+	.dailyTask button {
+		grid-column: 1 / -1;
 		width: 100%;
 	}
 }

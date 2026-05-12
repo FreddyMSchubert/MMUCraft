@@ -10,6 +10,10 @@ service GameplayEvents {
   rpc UnlockNextKnowledge(UnlockNextKnowledgeRequest) returns (UnlockNextKnowledgeResponse);
 }
 
+service GameplayControl {
+  rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
+}
+
 message UnlockNextKnowledgeRequest {
   string minecraft_username = 1;
   string source_item_id = 2;
@@ -23,4 +27,17 @@ message UnlockNextKnowledgeResponse {
   int32 priority = 4;
   string topic = 5;
   string message = 6;
+}
+
+message GrantDailyLoginBonusRequest {
+  string minecraft_username = 1;
+  int32 amount = 2;
+  string period_key = 3;
+  int64 unix_ms = 4;
+}
+
+message GrantDailyLoginBonusResponse {
+  bool granted = 1;
+  bool online = 2;
+  string message = 3;
 }

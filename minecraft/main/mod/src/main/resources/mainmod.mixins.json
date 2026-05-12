@@ -11,6 +11,8 @@
 		"XPBottlesDropMoreXPFromPhials",
         "InsertMultipleCoinsAtOnce",
         "SoundEventRedirect",
+        "AdvancementMoneyTooltip",
+        "PlayerAdvancementMoney",
         "XPOrbMendVitality",
         "bowTrail.AttachDataToArrow",
         "bowTrail.SpawnParticles",

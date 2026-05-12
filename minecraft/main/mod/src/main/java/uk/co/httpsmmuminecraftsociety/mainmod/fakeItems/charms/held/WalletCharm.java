@@ -22,8 +22,8 @@ public class WalletCharm implements Charm
 {
     public static final String BALANCE_ID = "wallet_balance";
 
-    private record CoinDef(String id, int value) {}
-    private static final List<CoinDef> COINS = List.of(
+    public record CoinDef(String id, int value) {}
+    public static final List<CoinDef> COINS = List.of(
             new CoinDef("coin-1000000", 1_000_000),
             new CoinDef("coin-500000",   500_000),
             new CoinDef("coin-100000",   100_000),
@@ -41,7 +41,7 @@ public class WalletCharm implements Charm
     private static final Map<String, CoinDef> COINS_BY_ID = COINS.stream()
             .collect(Collectors.toUnmodifiableMap(CoinDef::id, c -> c));
 
-    private static void setBalance(ItemStack wallet, int balanceDiff, boolean diff) {
+    public static void setBalance(ItemStack wallet, int balanceDiff, boolean diff) {
         CompoundTag nbt = wallet.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         nbt.putInt(BALANCE_ID, (diff ? nbt.getIntOr(BALANCE_ID, 0) : 0) + balanceDiff);
         wallet.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));

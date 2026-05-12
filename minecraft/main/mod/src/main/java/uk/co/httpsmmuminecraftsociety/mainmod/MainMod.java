@@ -31,6 +31,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
@@ -48,6 +49,8 @@ public class MainMod implements ModInitializer {
         DataLoader.init();
 
         FakeItemsCommand.init();
+        MoneyCommand.init();
+        WebsiteCommand.init();
         MainModRecipes.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);

@@ -4,9 +4,7 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Currently holds 0 dabloons."
-	],
+	"tooltips": [],
 	"charm": {
 		"charmId": 30,
 		"minLevel": 1,

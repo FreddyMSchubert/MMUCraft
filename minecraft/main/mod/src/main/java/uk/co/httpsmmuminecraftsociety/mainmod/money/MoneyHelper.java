@@ -1,0 +1,123 @@
+package uk.co.httpsmmuminecraftsociety.mainmod.money;
+
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WalletCharm;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+public final class MoneyHelper {
+    private MoneyHelper() {}
+
+    public static int GetBalance(ServerPlayer player) {
+        if (player == null || player.hasDisconnected()) {
+            return 0;
+        }
+
+        int balance = 0;
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            int walletBalance = WalletCharm.isWallet(stack);
+            if (walletBalance >= 0) {
+                balance += walletBalance;
+                continue;
+            }
+
+            int coinValue = WalletCharm.isCoin(stack);
+            if (coinValue > 0) {
+                balance += coinValue * stack.getCount();
+            }
+        }
+
+        return balance;
+    }
+
+    public static boolean ReduceMoney(ServerPlayer player, int amount) {
+        if (player == null || player.hasDisconnected() || amount < 0) {
+            return false;
+        }
+
+        int balance = GetBalance(player);
+        if (balance < amount) {
+            return false;
+        }
+
+        replaceMoney(player, balance - amount);
+        return true;
+    }
+
+    public static boolean GainMoney(ServerPlayer player, int amount) {
+        if (player == null || player.hasDisconnected() || amount < 0) {
+            return false;
+        }
+
+        replaceMoney(player, GetBalance(player) + amount);
+        return true;
+    }
+
+    public static boolean SetMoney(ServerPlayer player, int amount) {
+        if (player == null || player.hasDisconnected() || amount < 0) {
+            return false;
+        }
+
+        replaceMoney(player, amount);
+        return true;
+    }
+
+    private static void replaceMoney(ServerPlayer player, int amount) {
+        Inventory inventory = player.getInventory();
+        List<ItemStack> wallets = collectWalletsAndClearCoins(inventory);
+
+        if (!wallets.isEmpty()) {
+            ItemStack firstWallet = wallets.getFirst();
+            WalletCharm.setBalance(firstWallet, amount, false);
+            for (int i = 1; i < wallets.size(); i++) {
+                WalletCharm.setBalance(wallets.get(i), 0, false);
+            }
+        } else {
+            addCoins(player, amount);
+        }
+
+        inventory.setChanged();
+        player.containerMenu.broadcastChanges();
+    }
+
+    private static List<ItemStack> collectWalletsAndClearCoins(Inventory inventory) {
+        List<ItemStack> wallets = new ArrayList<>();
+
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (WalletCharm.isWallet(stack) >= 0) {
+                wallets.add(stack);
+            } else if (WalletCharm.isCoin(stack) > 0) {
+                inventory.setItem(i, ItemStack.EMPTY);
+            }
+        }
+
+        return wallets;
+    }
+
+    private static void addCoins(ServerPlayer player, int amount) {
+        for (WalletCharm.CoinDef coin : WalletCharm.COINS.stream()
+                .sorted(Comparator.comparingInt(WalletCharm.CoinDef::value).reversed())
+                .toList()) {
+            int count = amount / coin.value();
+            amount %= coin.value();
+
+            while (count > 0) {
+                int stackSize = Math.min(count, 64);
+                ItemStack stack = FakeItems.createFakeItemStack(coin.id(), stackSize);
+                player.getInventory().add(stack);
+                if (!stack.isEmpty()) {
+                    player.drop(stack, false);
+                }
+                count -= stackSize;
+            }
+        }
+    }
+}

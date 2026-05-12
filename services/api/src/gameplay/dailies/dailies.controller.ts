@@ -26,4 +26,10 @@ export class DailiesController {
 		const user = this.auth.requireSession(cookieHeader)
 		return this.dailies.claimItemSubmission(user)
 	}
+
+	@Post('advancement-bonus/claim')
+	claimAdvancementBonus(@Headers('cookie') cookieHeader: string | undefined) {
+		const user = this.auth.requireSession(cookieHeader)
+		return this.dailies.claimAdvancementBonus(user)
+	}
 }

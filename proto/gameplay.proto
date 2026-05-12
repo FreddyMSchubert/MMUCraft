@@ -13,6 +13,8 @@ service GameplayEvents {
 service GameplayControl {
   rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
   rpc SubmitDailyItems(SubmitDailyItemsRequest) returns (SubmitDailyItemsResponse);
+  rpc PickDailyAdvancement(PickDailyAdvancementRequest) returns (PickDailyAdvancementResponse);
+  rpc ClaimDailyAdvancement(ClaimDailyAdvancementRequest) returns (ClaimDailyAdvancementResponse);
 }
 
 message UnlockNextKnowledgeRequest {
@@ -56,5 +58,38 @@ message SubmitDailyItemsResponse {
   bool submitted = 1;
   bool online = 2;
   int32 found_count = 3;
+  string message = 4;
+}
+
+message PickDailyAdvancementRequest {
+  string minecraft_username = 1;
+  string period_key = 2;
+  int64 unix_ms = 3;
+}
+
+message PickDailyAdvancementResponse {
+  bool selected = 1;
+  bool online = 2;
+  string advancement_id = 3;
+  string title = 4;
+  string tab_title = 5;
+  string icon_item = 6;
+  int32 base_reward_dabloons = 7;
+  int32 bonus_reward_dabloons = 8;
+  string message = 9;
+}
+
+message ClaimDailyAdvancementRequest {
+  string minecraft_username = 1;
+  string advancement_id = 2;
+  int32 bonus_reward_dabloons = 3;
+  string period_key = 4;
+  int64 unix_ms = 5;
+}
+
+message ClaimDailyAdvancementResponse {
+  bool claimed = 1;
+  bool online = 2;
+  bool completed = 3;
   string message = 4;
 }

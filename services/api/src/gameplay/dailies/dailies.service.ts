@@ -4,12 +4,13 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { AuthenticatedUser } from '../../auth/auth.service'
-import { DatabaseService, DailyClaimRow } from '../../database/database.service'
+import { DatabaseService, DailyAdvancementTargetRow, DailyClaimRow } from '../../database/database.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 
 const LOGIN_BONUS_TASK_ID = 'login_bonus'
 const LOGIN_BONUS_AMOUNT = 3
 const ITEM_SUBMISSION_TASK_ID = 'item_submission'
+const ADVANCEMENT_BONUS_TASK_ID = 'advancement_bonus'
 const RESET_HOUR = 4
 const RESET_TIME_ZONE = 'Europe/London'
 const DEFAULT_ITEM_SUBMISSIONS_PATH = join(process.cwd(), 'content', 'daily-item-submissions.json')
@@ -26,6 +27,15 @@ interface DailyItemTask {
 	count: number
 	rewardDabloons: number
 	dabloonsPerItem: number
+}
+
+interface DailyAdvancementTarget {
+	advancementId: string
+	title: string
+	tabTitle: string
+	iconItem: string
+	baseRewardDabloons: number
+	bonusRewardDabloons: number
 }
 
 interface GameplayProtoRoot {
@@ -47,9 +57,13 @@ export class DailiesService {
 		private readonly grpcServer: GrpcServerService,
 	) { }
 
-	getStatus(user: AuthenticatedUser) {
+	async getStatus(user: AuthenticatedUser) {
 		const periodKey = currentDailyPeriodKey()
 		const itemTask = this.pickItemTask(periodKey)
+		const advancementTask = await this.getOrPickAdvancementTarget(user, periodKey).catch((error) => ({
+			target: null,
+			message: error instanceof Error ? error.message : 'Daily advancement target is unavailable right now.',
+		}))
 
 		return {
 			resetHour: RESET_HOUR,
@@ -71,6 +85,15 @@ export class DailiesService {
 					item: itemTask.item,
 					count: itemTask.count,
 					dabloonsPerItem: itemTask.dabloonsPerItem,
+				},
+				{
+					id: ADVANCEMENT_BONUS_TASK_ID,
+					number: 3,
+					title: 'Advancement bonus',
+					rewardDabloons: advancementTask.target?.bonusRewardDabloons ?? 0,
+					claimed: this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey),
+					advancement: advancementTask.target,
+					unavailableMessage: advancementTask.target ? undefined : advancementTask.message,
 				},
 			],
 		}
@@ -167,6 +190,56 @@ export class DailiesService {
 		}
 	}
 
+	async claimAdvancementBonus(user: AuthenticatedUser) {
+		const periodKey = currentDailyPeriodKey()
+		const now = Date.now()
+		const picked = await this.getOrPickAdvancementTarget(user, periodKey)
+
+		if (!picked.target) {
+			throw new BadRequestException(picked.message || 'Daily advancement target is unavailable right now.')
+		}
+
+		const inserted = this.database.connection.prepare(`
+			INSERT OR IGNORE INTO daily_claims (
+				user_id,
+				task_id,
+				period_key,
+				claimed_at_unix_ms
+			)
+			VALUES (?, ?, ?, ?)
+		`).run(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey, now)
+
+		if (inserted.changes !== 1) {
+			return {
+				claimed: true,
+				granted: false,
+				message: 'You have already claimed this daily advancement bonus.',
+			}
+		}
+
+		try {
+			const result = await this.claimDailyAdvancement(user.minecraftUsername, periodKey, now, picked.target)
+
+			if (!result.claimed) {
+				this.deleteClaim(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey)
+				throw new BadRequestException(result.message || 'Complete the daily advancement in-game first.')
+			}
+
+			return {
+				claimed: true,
+				granted: true,
+				message: result.message || `You received ${picked.target.bonusRewardDabloons} bonus dabloons.`,
+			}
+		} catch (error) {
+			this.deleteClaim(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey)
+			if (error instanceof BadRequestException) {
+				throw error
+			}
+
+			throw new BadRequestException('You have to be online on the server to claim the daily advancement bonus.')
+		}
+	}
+
 	private hasClaimed(userId: number, taskId: string, periodKey: string) {
 		const row = this.database.connection.prepare(`
 			SELECT *
@@ -186,6 +259,78 @@ export class DailiesService {
 			  AND task_id = ?
 			  AND period_key = ?
 		`).run(userId, taskId, periodKey)
+	}
+
+	private async getOrPickAdvancementTarget(user: AuthenticatedUser, periodKey: string) {
+		const existing = this.getAdvancementTarget(user.id, periodKey)
+		if (existing) {
+			return {
+				target: existing,
+				message: '',
+			}
+		}
+
+		const now = Date.now()
+		const result = await this.pickDailyAdvancement(user.minecraftUsername, periodKey, now)
+
+		if (!result.selected) {
+			return {
+				target: null,
+				message: result.message || 'Daily advancement target is unavailable right now.',
+			}
+		}
+
+		this.database.connection.prepare(`
+			INSERT OR IGNORE INTO daily_advancement_targets (
+				user_id,
+				period_key,
+				advancement_id,
+				title,
+				tab_title,
+				icon_item,
+				base_reward_dabloons,
+				bonus_reward_dabloons,
+				selected_at_unix_ms
+			)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+		`).run(
+			user.id,
+			periodKey,
+			result.advancement_id,
+			result.title,
+			result.tab_title,
+			result.icon_item,
+			result.base_reward_dabloons,
+			result.bonus_reward_dabloons,
+			now,
+		)
+
+		return {
+			target: this.getAdvancementTarget(user.id, periodKey),
+			message: '',
+		}
+	}
+
+	private getAdvancementTarget(userId: number, periodKey: string): DailyAdvancementTarget | null {
+		const row = this.database.connection.prepare(`
+			SELECT *
+			FROM daily_advancement_targets
+			WHERE user_id = ?
+			  AND period_key = ?
+		`).get(userId, periodKey) as DailyAdvancementTargetRow | undefined
+
+		if (!row) {
+			return null
+		}
+
+		return {
+			advancementId: row.advancement_id,
+			title: row.title,
+			tabTitle: row.tab_title,
+			iconItem: row.icon_item,
+			baseRewardDabloons: row.base_reward_dabloons,
+			bonusRewardDabloons: row.bonus_reward_dabloons,
+		}
 	}
 
 	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number) {
@@ -235,6 +380,72 @@ export class DailiesService {
 				period_key: periodKey,
 				unix_ms: unixMs,
 			}, (error: grpc.ServiceError | null, response: { submitted: boolean; online: boolean; found_count: number; message: string }) => {
+				if (error) {
+					reject(error)
+					return
+				}
+
+				resolve(response)
+			})
+		})
+	}
+
+	private async pickDailyAdvancement(minecraftUsername: string, periodKey: string, unixMs: number) {
+		const client = this.getGameplayControlClient()
+		const method = (client as unknown as Record<string, unknown>).PickDailyAdvancement
+
+		if (typeof method !== 'function') {
+			throw new Error('Unknown GameplayControl method: PickDailyAdvancement')
+		}
+
+		type PickDailyAdvancementResponse = {
+			selected: boolean
+			online: boolean
+			advancement_id: string
+			title: string
+			tab_title: string
+			icon_item: string
+			base_reward_dabloons: number
+			bonus_reward_dabloons: number
+			message: string
+		}
+
+		return await new Promise<PickDailyAdvancementResponse>((resolve, reject) => {
+			method.call(client, {
+				minecraft_username: minecraftUsername,
+				period_key: periodKey,
+				unix_ms: unixMs,
+			}, (error: grpc.ServiceError | null, response: PickDailyAdvancementResponse) => {
+				if (error) {
+					reject(error)
+					return
+				}
+
+				resolve(response)
+			})
+		})
+	}
+	private async claimDailyAdvancement(
+		minecraftUsername: string,
+		periodKey: string,
+		unixMs: number,
+		target: DailyAdvancementTarget,
+	) {
+		const client = this.getGameplayControlClient()
+		const method = (client as unknown as Record<string, unknown>).ClaimDailyAdvancement
+
+		if (typeof method !== 'function') {
+			throw new Error('Unknown GameplayControl method: ClaimDailyAdvancement')
+		}
+
+		return await new Promise<{ claimed: boolean; online: boolean; completed: boolean; message: string }>((resolve, reject) => {
+			method.call(client, {
+				minecraft_username: minecraftUsername,
+				advancement_id: target.advancementId,
+				bonus_reward_dabloons: target.bonusRewardDabloons,
+				period_key: periodKey,
+				unix_ms: unixMs,
+			}, (error: grpc.ServiceError | null, response: { claimed: boolean; online: boolean; completed: boolean; message: string }) => {
 				if (error) {
 					reject(error)
 					return

@@ -1,3 +1,5 @@
 accessWidener v1 official
 
 accessible method net/minecraft/world/level/block/CropBlock getCloneItemStack (Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Lnet/minecraft/world/item/ItemStack;
+accessible field net/minecraft/server/PlayerAdvancements visible Ljava/util/Set;
+accessible field net/minecraft/server/PlayerAdvancements tree Lnet/minecraft/advancements/AdvancementTree;

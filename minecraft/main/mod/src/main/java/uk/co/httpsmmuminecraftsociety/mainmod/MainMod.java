@@ -19,14 +19,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.gamerules.GameRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.AuthGrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
@@ -67,11 +66,9 @@ public class MainMod implements ModInitializer {
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);
 
-        ServerLifecycleEvents.SERVER_STARTED.register(AuthGrpcBridge::start);
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> AuthGrpcBridge.stop());
-        ServerTickEvents.END_SERVER_TICK.register(server -> AuthGrpcBridge.onServerTick());
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> GameplayGrpcBridge.start());
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> GameplayGrpcBridge.stop());
+        ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> GrpcBridge.stop());
+        ServerTickEvents.END_SERVER_TICK.register(server -> GrpcBridge.onServerTick());
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             registries = server.overworld().registryAccess();

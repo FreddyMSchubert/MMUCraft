@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.AuthGrpcBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.AuthGrpcService;
 
 import java.net.SocketAddress;
 
@@ -63,11 +63,11 @@ public class WhitelistMsgModify {
         PlayerList playerList = (PlayerList) (Object) this;
         boolean whitelisted = playerList.isWhiteListed(nameAndId);
 
-        AuthGrpcBridge.recordLoginAttempt(nameAndId, whitelisted);
+        AuthGrpcService.recordLoginAttempt(nameAndId, whitelisted);
 
         if (whitelisted) return;
 
-        String code = AuthGrpcBridge.getPendingCodeFor(nameAndId.name());
+        String code = AuthGrpcService.getPendingCodeFor(nameAndId.name());
         cir.setReturnValue(customWhitelistMessage(nameAndId.name(), code));
     }
 }

@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
+package uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;

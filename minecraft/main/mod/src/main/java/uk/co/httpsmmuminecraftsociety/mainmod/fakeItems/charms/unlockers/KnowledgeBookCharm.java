@@ -6,7 +6,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 
 import java.util.Set;
 import java.util.UUID;
@@ -26,7 +26,7 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
 
         player.sendSystemMessage(Component.literal("Studying the knowledge book..."));
 
-        GameplayGrpcBridge.unlockNextKnowledge(
+        GameplayGrpcService.unlockNextKnowledge(
                 player.getGameProfile().name(),
                 "knowledge_book"
         ).whenComplete((response, error) -> player.level().getServer().execute(() -> {

@@ -20,6 +20,12 @@ jobs:
           distribution: 'microsoft'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
+      - name: stage item data
+        run: python3 ../stage_item_data.py --root ..
+      - name: generate proto sources
+        run: ./gradlew generateProto
+      - name: run datagen
+        run: ./gradlew runDatagen
       - name: build
         run: ./gradlew build
       - name: capture build artifacts

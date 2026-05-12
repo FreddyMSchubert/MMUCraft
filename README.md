@@ -484,3 +484,15 @@ Information on changes to the base game are all documented in a wiki page on the
 - Convo with oderzo about new hat to add
 - Ability to put anything in any armor slot
 - Make chestplate an elytra
+
+## Recommended mods list
+
+Not necessary but helpful
+
+- https://modrinth.com/mod/advancements-reloaded makes the advancements screen much more bearable
+- https://modrinth.com/mod/chat-heads for better chatting
+- https://modrinth.com/mod/resourcepackcached https://modrinth.com/mod/keep-the-resourcepack one of these two if either of them updates. makes joining less annoying
+- https://modrinth.com/mod/appleskin this so you can easily see all the changed food values
+- https://modrinth.com/mod/fancy-toasts this if they update cause advancements are important and these are cool and fancy
+
+theres even a modrinth server thing we could set up so you dont have to install everything yourself might be cool if its possible

@@ -115,7 +115,7 @@
 					"minecraft:diamond_block",
 					"minecraft:diamond_block",
 					"minecraft:diamond_block",
-					"minecraft:diamond_block"
+					"minecraft:netherite_scrap"
 				]
 			},
 			{
@@ -126,7 +126,7 @@
 					"minecraft:potion[minecraft:potion_contents=healing]",
 					"minecraft:splash_potion[minecraft:potion_contents=healing]",
 					"minecraft:lingering_potion[minecraft:potion_contents=healing]",
-					"minecraft:netherite_scrap"
+					"minecraft:netherite_ingot"
 				]
 			},
 			{
@@ -137,7 +137,7 @@
 					"minecraft:potion[minecraft:potion_contents=healing]",
 					"minecraft:splash_potion[minecraft:potion_contents=healing]",
 					"minecraft:lingering_potion[minecraft:potion_contents=healing]",
-					"minecraft:netherite_ingot",
+					"minecraft:netherite_block",
 					"minecraft:raw_gold_block",
 					"minecraft:diamond_block",
 					"minecraft:enchanted_golden_apple"

@@ -16,6 +16,7 @@ import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.ConsumableItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DiscItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DyeableItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCosmeticItemFeature;
@@ -38,8 +39,14 @@ public final class FakeItemsCommand {
     private static final SuggestionProvider<CommandSourceStack> CONSUMABLE_SUGGESTIONS =
             suggestionsFor(item -> hasFeature(item, ConsumableItemFeature.class));
 
+    private static final SuggestionProvider<CommandSourceStack> DISC_SUGGESTIONS =
+            suggestionsFor(item -> hasFeature(item, DiscItemFeature.class));
+
     private static final SuggestionProvider<CommandSourceStack> DYEABLE_SUGGESTIONS =
             suggestionsFor(item -> hasFeature(item, DyeableItemFeature.class));
+
+    private static final SuggestionProvider<CommandSourceStack> COIN_SUGGESTIONS =
+            suggestionsFor(item -> item.id().startsWith("coin-"));
 
     private static final SuggestionProvider<CommandSourceStack> EQUIPPABLE_CHARM_SUGGESTIONS =
             suggestionsFor(item -> hasFeature(item, EquippableCharmItemFeature.class));
@@ -63,9 +70,19 @@ public final class FakeItemsCommand {
                                 item -> hasFeature(item, ConsumableItemFeature.class)
                         ))
                         .then(buildCategoryCommand(
+                                "disc",
+                                DISC_SUGGESTIONS,
+                                item -> hasFeature(item, DiscItemFeature.class)
+                        ))
+                        .then(buildCategoryCommand(
                                 "dyeable",
                                 DYEABLE_SUGGESTIONS,
                                 item -> hasFeature(item, DyeableItemFeature.class)
+                        ))
+                        .then(buildCategoryCommand(
+                                "coin",
+                                COIN_SUGGESTIONS,
+                                item -> item.id().startsWith("coin-")
                         ))
                         .then(buildCategoryCommand(
                                 "equippable_charm",
@@ -74,6 +91,11 @@ public final class FakeItemsCommand {
                         ))
                         .then(buildCategoryCommand(
                                 "equippable_cosmetic",
+                                EQUIPPABLE_COSMETIC_SUGGESTIONS,
+                                item -> hasFeature(item, EquippableCosmeticItemFeature.class)
+                        ))
+                        .then(buildCategoryCommand(
+                                "cosmetic",
                                 EQUIPPABLE_COSMETIC_SUGGESTIONS,
                                 item -> hasFeature(item, EquippableCosmeticItemFeature.class)
                         ))

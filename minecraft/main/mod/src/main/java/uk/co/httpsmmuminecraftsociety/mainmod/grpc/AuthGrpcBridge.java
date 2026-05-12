@@ -5,10 +5,14 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.UserWhiteListEntry;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
@@ -236,6 +240,32 @@ public final class AuthGrpcBridge {
             });
         }
 
+        @Override
+        public void submitDailyItems(
+                SubmitDailyItemsRequest request,
+                StreamObserver<SubmitDailyItemsResponse> responseObserver
+        ) {
+            CompletableFuture<SubmitDailyItemsResponse> result = new CompletableFuture<>();
+
+            mainThreadTasks.add(() -> {
+                try {
+                    result.complete(submitDailyItemsOnMainThread(request));
+                } catch (Exception exception) {
+                    result.completeExceptionally(exception);
+                }
+            });
+
+            result.whenComplete((response, error) -> {
+                if (error != null) {
+                    responseObserver.onError(error);
+                    return;
+                }
+
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            });
+        }
+
         private GrantDailyLoginBonusResponse grantDailyLoginBonusOnMainThread(GrantDailyLoginBonusRequest request) {
             MinecraftServer server = minecraftServer;
             if (server == null) {
@@ -266,6 +296,88 @@ public final class AuthGrpcBridge {
                     .setOnline(true)
                     .setMessage("You received " + amount + " dabloons.")
                     .build();
+        }
+
+        private SubmitDailyItemsResponse submitDailyItemsOnMainThread(SubmitDailyItemsRequest request) {
+            MinecraftServer server = minecraftServer;
+            if (server == null) {
+                throw new IllegalStateException("Minecraft server is not available");
+            }
+
+            String username = request.getMinecraftUsername();
+            ServerPlayer player = server.getPlayerList().getPlayerByName(username);
+            if (player == null || player.hasDisconnected()) {
+                return SubmitDailyItemsResponse.newBuilder()
+                        .setSubmitted(false)
+                        .setOnline(false)
+                        .setFoundCount(0)
+                        .setMessage("You have to be online on the server to submit daily items.")
+                        .build();
+            }
+
+            Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(request.getItem()));
+            int requiredCount = Math.max(1, request.getCount());
+            int foundCount = countItem(player, item);
+
+            if (foundCount < requiredCount) {
+                return SubmitDailyItemsResponse.newBuilder()
+                        .setSubmitted(false)
+                        .setOnline(true)
+                        .setFoundCount(foundCount)
+                        .setMessage("You need " + requiredCount + "x " + request.getItem() + " in your inventory. You currently have " + foundCount + ".")
+                        .build();
+            }
+
+            removeItem(player, item, requiredCount);
+
+            int reward = Math.max(0, request.getRewardDabloons());
+            if (!MoneyHelper.GainMoney(player, reward)) {
+                return SubmitDailyItemsResponse.newBuilder()
+                        .setSubmitted(false)
+                        .setOnline(true)
+                        .setFoundCount(foundCount)
+                        .setMessage("Could not grant the daily item reward.")
+                        .build();
+            }
+
+            player.getInventory().setChanged();
+            player.containerMenu.broadcastChanges();
+
+            return SubmitDailyItemsResponse.newBuilder()
+                    .setSubmitted(true)
+                    .setOnline(true)
+                    .setFoundCount(foundCount)
+                    .setMessage("Submitted " + requiredCount + "x " + request.getItem() + " and received " + reward + " dabloons.")
+                    .build();
+        }
+
+        private int countItem(ServerPlayer player, Item item) {
+            int count = 0;
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                ItemStack stack = player.getInventory().getItem(i);
+                if (stack.is(item)) {
+                    count += stack.getCount();
+                }
+            }
+            return count;
+        }
+
+        private void removeItem(ServerPlayer player, Item item, int count) {
+            int remaining = count;
+            for (int i = 0; i < player.getInventory().getContainerSize() && remaining > 0; i++) {
+                ItemStack stack = player.getInventory().getItem(i);
+                if (!stack.is(item)) {
+                    continue;
+                }
+
+                int remove = Math.min(remaining, stack.getCount());
+                stack.shrink(remove);
+                remaining -= remove;
+
+                if (stack.isEmpty()) {
+                    player.getInventory().setItem(i, ItemStack.EMPTY);
+                }
+            }
         }
     }
 }

@@ -226,7 +226,8 @@ a {
 .dailiesHeader p,
 .dailyTask h4,
 .dailyTask p,
-.dailyMessage {
+.dailyMessage,
+.dailyFootnote {
 	margin: 0;
 }
 
@@ -236,7 +237,8 @@ a {
 }
 
 .dailiesHeader p,
-.dailyTask p {
+.dailyTask p,
+.dailyFootnote {
 	color: rgba(255, 255, 255, 0.76);
 }
 
@@ -290,6 +292,10 @@ a {
 
 .dailyMessage {
 	color: #88ff88;
+}
+
+.dailyFootnote {
+	padding-top: 4px;
 }
 
 

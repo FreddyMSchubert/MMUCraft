@@ -8,6 +8,9 @@ interface DailyTask {
 	title: string
 	rewardDabloons: number
 	claimed: boolean
+	item?: string
+	count?: number
+	dabloonsPerItem?: number
 }
 
 interface DailiesResponse {
@@ -57,13 +60,17 @@ export function DailiesTab() {
 		}
 	}, [load])
 
-	async function claimLoginBonus(taskId: string) {
+	async function claimTask(task: DailyTask) {
 		setError('')
 		setMessage('')
-		setClaimingTaskId(taskId)
+		setClaimingTaskId(task.id)
+
+		const path = task.id === 'item_submission'
+			? '/api/dailies/item-submission/claim'
+			: '/api/dailies/login-bonus/claim'
 
 		try {
-			const response = await fetch('/api/dailies/login-bonus/claim', {
+			const response = await fetch(path, {
 				method: 'POST',
 			})
 			const body = await response.json().catch(() => null)
@@ -96,6 +103,7 @@ export function DailiesTab() {
 			<div className="dailiesHeader">
 				<h3>Dailies</h3>
 				<p>Resets daily at {data.resetHour}:00 {data.resetTimeZone}.</p>
+				<p>You have to be online on the server to redeem dailies.</p>
 			</div>
 
 			{message && <p className="dailyMessage">{message}</p>}
@@ -107,18 +115,32 @@ export function DailiesTab() {
 						<div className="dailyNumber">{task.number}</div>
 						<div className="dailyTaskBody">
 							<h4>{task.title}</h4>
-							<p>{task.rewardDabloons} dabloons</p>
+							{task.id === 'item_submission' ? (
+								<p>
+									Submit {task.count}x {formatItemName(task.item ?? '')} for {task.rewardDabloons} dabloons.
+								</p>
+							) : (
+								<p>{task.rewardDabloons} dabloons</p>
+							)}
 						</div>
 						<button
 							type="button"
 							disabled={task.claimed || claimingTaskId === task.id}
-							onClick={() => claimLoginBonus(task.id)}
+							onClick={() => claimTask(task)}
 						>
 							{task.claimed ? 'Claimed' : claimingTaskId === task.id ? 'Claiming...' : 'Claim'}
 						</button>
 					</div>
 				))}
 			</div>
+
+			<p className="dailyFootnote">
+				You can always earn money, even if today&apos;s dailies are already done or too hard, by completing advancements.
+			</p>
 		</div>
 	)
+}
+
+function formatItemName(item: string) {
+	return item.replace(/^minecraft:/, '').replace(/_/g, ' ')
 }

@@ -225,7 +225,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                         .map(rootDisplay -> rootDisplay.getTitle().getString())
                         .orElse(root.holder().id().toString());
 
-        int baseReward = AdvancementMoney.moneyForExperience(selected.value().rewards().experience());
+        int baseReward = AdvancementMoney.moneyForExperience(display.getTitle().getString(), selected.value().rewards().experience());
 
         return PickDailyAdvancementResponse.newBuilder()
                 .setSelected(true)

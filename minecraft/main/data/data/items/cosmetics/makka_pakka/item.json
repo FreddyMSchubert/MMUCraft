@@ -1,0 +1,11 @@
+{
+	"title": "Makka Pakka Hat",
+	"id": "cosmetic-makka-pakka-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"It is said that it's used to store soap and sponge."
+	],
+	"equippableCosmetic": {}
+}

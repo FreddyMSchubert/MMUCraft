@@ -1,0 +1,11 @@
+{
+	"title": "Laa Laa Hat",
+	"id": "cosmetic-laa-laa-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Don't think about why the head is severed."
+	],
+	"equippableCosmetic": {}
+}

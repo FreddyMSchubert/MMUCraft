@@ -1,0 +1,11 @@
+{
+	"title": "Dipsy Hat",
+	"id": "cosmetic-dipsy-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Don't think about why the head is severed."
+	],
+	"equippableCosmetic": {}
+}

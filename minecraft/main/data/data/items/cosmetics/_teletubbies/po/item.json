@@ -1,0 +1,11 @@
+{
+	"title": "Po Hat",
+	"id": "cosmetic-po-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Don't think about why the head is severed."
+	],
+	"equippableCosmetic": {}
+}

@@ -72,7 +72,7 @@ public class JsonUtils
             case "common" -> Rarity.COMMON;
             case "uncommon" -> Rarity.UNCOMMON;
             case "rare" -> Rarity.RARE;
-            case "epic" -> Rarity.EPIC;
+            case "epic", "legendary", "mythical" -> Rarity.EPIC;
             default -> throw new IllegalArgumentException(
                     "Unknown rarity: " + value
             );

@@ -20,7 +20,10 @@
         "anvilRework.AnvilMenuMixin",
         "anvilRework.AbstractContainerMenuInvoker",
         "anvilRework.ItemCombinerMenuAccessor",
-        "FilterEnchantingTableEnchs"
+        "FilterEnchantingTableEnchs",
+        "fishing.AnimalCrossingFishingHookMixin",
+        "fishing.DisplayEntityAccessor",
+        "fishing.ItemDisplayEntityAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

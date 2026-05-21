@@ -32,7 +32,9 @@
 				"common",
 				"uncommon",
 				"rare",
-				"epic"
+				"epic",
+				"legendary",
+				"mythical"
 			]
 		},
 		"maxStackSize": {
@@ -67,6 +69,9 @@
 		},
 		"disc": {
 			"$ref": "./components/disc.schema.json"
+		},
+		"fish": {
+			"$ref": "./components/fish.schema.json"
 		}
 	},
 	"required": [
@@ -89,6 +94,21 @@
 					"id": {
 						"type": "string",
 						"pattern": "^cosmetic-"
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"required": [
+					"fish"
+				]
+			},
+			"then": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"pattern": "^fish-"
 					}
 				}
 			}

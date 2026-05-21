@@ -1,0 +1,18 @@
+{
+	"title": "Blobfish",
+	"id": "fish-blobfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"fish": {
+		"shape": "fish_shadow_weird",
+		"size": 0.5,
+		"secondsAwayFromBobber": 2,
+		"approachSeconds": 0.5,
+		"retreatSeconds": 2,
+		"retreatDistance": 1,
+		"averageCatchSeconds": 30,
+		"struggleSeconds": 5
+	}
+}

@@ -14,7 +14,8 @@ public sealed interface ItemFeature
         DyeableItemFeature,
         EquippableCharmItemFeature,
         EquippableCosmeticItemFeature,
-        DiscItemFeature
+        DiscItemFeature,
+        FishItemFeature
 {
     void apply(ItemStack stack);
 
@@ -38,6 +39,7 @@ public sealed interface ItemFeature
                 case "equippableCharm" -> EquippableCharmItemFeature.of(componentJson);
                 case "equippableCosmetic" -> EquippableCosmeticItemFeature.of(componentJson);
                 case "disc" -> DiscItemFeature.of(componentJson);
+                case "fish" -> FishItemFeature.of(rootJson, componentJson);
                 default -> null;
             };
 

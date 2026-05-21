@@ -1,5 +1,5 @@
 export type ItemType = 'basic' | 'basic-3d' | 'cosmetic' | 'charm';
-export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic';
+export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical';
 export type EquipmentSlot = 'chest' | 'legs' | 'feet';
 
 export interface BaseDiscoveredItem {

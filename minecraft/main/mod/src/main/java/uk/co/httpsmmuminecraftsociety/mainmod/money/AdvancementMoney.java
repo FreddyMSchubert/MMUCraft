@@ -12,7 +12,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ import java.util.Map;
 public final class AdvancementMoney {
     private static final String MOD_ID = "mainmod";
     private static final Identifier REWARD_RESOURCE =
-            Identifier.fromNamespaceAndPath(MOD_ID, "money/advancement_dabloons.json");
+            Identifier.fromNamespaceAndPath(MOD_ID, "money/advancement_dabloons.jsonc");
 
     private static Map<String, Integer> advancementRewards = Map.of();
 
@@ -50,8 +49,9 @@ public final class AdvancementMoney {
             Resource resource = resourceManager.getResource(REWARD_RESOURCE).orElse(null);
             if (resource == null) return Map.of();
 
-            try (InputStreamReader reader = new InputStreamReader(resource.open(), StandardCharsets.UTF_8)) {
-                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+            try (var inputStream = resource.open()) {
+                String jsonc = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                JsonObject json = JsonParser.parseString(stripJsonComments(jsonc)).getAsJsonObject();
 
                 Map<String, Integer> rewards = new HashMap<>();
                 for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
@@ -66,6 +66,57 @@ public final class AdvancementMoney {
         } catch (IOException | JsonParseException | IllegalStateException ignored) {
             return Map.of();
         }
+    }
+
+    private static String stripJsonComments(String jsonc) {
+        StringBuilder json = new StringBuilder(jsonc.length());
+        boolean inString = false;
+        boolean escaped = false;
+
+        for (int i = 0; i < jsonc.length(); i++) {
+            char current = jsonc.charAt(i);
+            char next = i + 1 < jsonc.length() ? jsonc.charAt(i + 1) : '\0';
+
+            if (inString) {
+                json.append(current);
+                if (escaped) {
+                    escaped = false;
+                } else if (current == '\\') {
+                    escaped = true;
+                } else if (current == '"') {
+                    inString = false;
+                }
+                continue;
+            }
+
+            if (current == '"') {
+                inString = true;
+                json.append(current);
+                continue;
+            }
+
+            if (current == '/' && next == '/') {
+                while (i < jsonc.length() && jsonc.charAt(i) != '\n') {
+                    i++;
+                }
+                if (i < jsonc.length()) json.append('\n');
+                continue;
+            }
+
+            if (current == '/' && next == '*') {
+                i += 2;
+                while (i + 1 < jsonc.length() && !(jsonc.charAt(i) == '*' && jsonc.charAt(i + 1) == '/')) {
+                    if (jsonc.charAt(i) == '\n') json.append('\n');
+                    i++;
+                }
+                i++;
+                continue;
+            }
+
+            json.append(current);
+        }
+
+        return json.toString();
     }
 
     public static Component appendMoneyReward(Identifier advancementId, DisplayInfo displayInfo, int experience) {

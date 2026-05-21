@@ -28,10 +28,11 @@ const ROOT_ALLOWED_KEYS = [
   'dyeable',
   'equippableCharm',
   'equippableCosmetic',
-  "disc"
+  "disc",
+  'fish',
 ] as const;
 
-const RARITIES: readonly ItemRarity[] = ['common', 'uncommon', 'rare', 'epic'] as const;
+const RARITIES: readonly ItemRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical'] as const;
 const EQUIPMENT_SLOTS: readonly EquipmentSlot[] = ['chest', 'legs', 'feet'] as const;
 
 interface ParsedBaseItem {

@@ -1,0 +1,66 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "components/fish.schema.json",
+	"$defs": {},
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"shape": {
+			"type": "string",
+			"enum": [
+				"fish_shadow_default",
+				"fish_shadow_default_alt",
+				"fish_shadow_default_alt_2",
+				"fish_shadow_small",
+				"fish_shadow_tiny",
+				"fish_shadow_large",
+				"fish_shadow_weird",
+				"fish_shadow_object",
+				"fish_shadow_snake",
+				"fish_shadow_squid",
+				"fish_shadow_shark"
+			]
+		},
+		"size": {
+			"type": "number",
+			"minimum": 0.1
+		},
+		"struggleSeconds": {
+			"type": "number",
+			"minimum": 0
+		},
+		"secondsAwayFromBobber": {
+			"type": "number",
+			"minimum": 0
+		},
+		"approachSeconds": {
+			"description": "Seconds for normal bounce approaches from the retreat distance back to the bobber. The first arrival approach uses a fixed speed instead.",
+			"type": "number",
+			"exclusiveMinimum": 0
+		},
+		"retreatSeconds": {
+			"type": "number",
+			"exclusiveMinimum": 0
+		},
+		"retreatDistance": {
+			"description": "Blocks the fish backs away after touching the bobber. This is added to the size-based contact distance.",
+			"type": "number",
+			"exclusiveMinimum": 0
+		},
+		"averageCatchSeconds": {
+			"description": "Target average seconds from the first bounce approach starting to the bite. This is converted into the gaussian mean bounce count using approachSeconds, retreatSeconds, and secondsAwayFromBobber.",
+			"type": "number",
+			"minimum": 0
+		}
+	},
+	"required": [
+		"shape",
+		"size",
+		"struggleSeconds",
+		"secondsAwayFromBobber",
+		"approachSeconds",
+		"retreatSeconds",
+		"retreatDistance",
+		"averageCatchSeconds"
+	]
+}

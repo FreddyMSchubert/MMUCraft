@@ -2,7 +2,6 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
@@ -90,10 +89,7 @@ public class PlayerAdvancementMoney {
         }
 
         AdvancementRewards rewards = advancementHolder.value().rewards();
-        String title = advancementHolder.value().display()
-                .map(displayInfo -> displayInfo.getTitle().getString())
-                .orElse(advancementHolder.id().toString());
-        int money = AdvancementMoney.moneyForExperience(title, rewards.experience());
+        int money = AdvancementMoney.moneyForAdvancement(advancementHolder.id(), rewards.experience());
         MoneyHelper.GainMoney(this.player, money);
 
         advancementHolder.value().display().ifPresent(displayInfo -> this.player.sendSystemMessage(

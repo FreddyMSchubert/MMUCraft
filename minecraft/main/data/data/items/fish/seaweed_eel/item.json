@@ -1,0 +1,18 @@
+{
+	"title": "Seaweed Eel",
+	"id": "fish-seaweed_eel",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"fish": {
+		"shape": "fish_shadow_snake",
+		"size": 1.5,
+		"secondsAwayFromBobber": 1,
+		"approachSeconds": 0.15,
+		"retreatSeconds": 0.2,
+		"retreatDistance": 1,
+		"averageCatchSeconds": 6.7,
+		"struggleSeconds": 3
+	}
+}

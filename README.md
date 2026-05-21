@@ -358,6 +358,20 @@ also manual ideas:
 
 More Fish, more junk, more treasure
 Different Fish Loottables for Warm, Cold, Temperate, End
+bunch of other variances based on moon cycle, height in world
+sometimes an enemy jumps out at you and attacks you
+animal crossing fishing minigame
+
+relevant items
+- lucky charm -> luck increase
+- potion of luck -> luck increase
+- 1, 2, 3, 4 leaf clover -> craft into 4 leaf clovers used for luck potions
+
+- higher chance of fish -> worms
+- higher chance of item -> item magnet
+- higher chance for less fish bounces, tiered -> barbed hook
+- basically lure -> flybait
+- relaxed fish catching timing window -> fish sleeping pill
 
 Advancements
 - Catch all
@@ -374,6 +388,12 @@ Cool stuff to fish up
 - Half-broken sword (called murder weapon)
 - ancient battle axe
 - message in a bottle
+
+fish - retreat stay in struggle
+
+smol fish - 1,3 0,9 0,5 2
+big fih - 1 0,25 0,3 2,6
+smol fih 2 - 1 0,2 0,5 2,1
 
 ### Potentially
 

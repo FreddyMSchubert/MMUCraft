@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -83,7 +84,8 @@ public class EnchantmentTypeManager
             new EnchantmentType(Enchantments.THORNS, false, List.of("simple_dungeon"), Rarity.COMMON),
 
             new EnchantmentType(Enchantments.VANISHING_CURSE, true, List.of(), Rarity.COMMON),
-            new EnchantmentType(Enchantments.BINDING_CURSE, true, List.of(), Rarity.COMMON)
+            new EnchantmentType(Enchantments.BINDING_CURSE, true, List.of(), Rarity.COMMON),
+            new EnchantmentType(ModEnchantments.FRAGILITY_CURSE, true, List.of(), Rarity.COMMON)
     );
 
     public static final Map<Identifier, List<EnchantmentType>> byLoottable = buildByLoottable();

@@ -1,0 +1,79 @@
+{
+	"title": "Scuba Tank Charm",
+	"id": "charm-scuba-tank",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["Take it slow down there."],
+	"charm": {
+		"charmId": 38,
+		"minLevel": 0,
+		"maxLevel": 5,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Reduces air consumption to 80% while stationary underwater.",
+				"abilityStatusRelative": "Reduces stationary underwater air consumption by 20%.",
+				"upgradeIngredients": [
+					"minecraft:copper_ingot",
+					"minecraft:copper_ingot",
+					"minecraft:glass_bottle"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Reduces air consumption to 60% while stationary underwater.",
+				"abilityStatusRelative": "Reduces stationary underwater air consumption by 20%.",
+				"upgradeIngredients": [
+					"minecraft:copper_block",
+					"minecraft:glass",
+					"minecraft:glass",
+					"minecraft:heart_of_the_sea"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Reduces air consumption to 40% while stationary underwater.",
+				"abilityStatusRelative": "Reduces stationary underwater air consumption by 20%.",
+				"upgradeIngredients": [
+					"minecraft:copper_block",
+					"minecraft:copper_block",
+					"minecraft:prismarine_crystals",
+					"minecraft:prismarine_crystals",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Reduces air consumption to 20% while stationary underwater.",
+				"abilityStatusRelative": "Reduces stationary underwater air consumption by 20%.",
+				"upgradeIngredients": [
+					"minecraft:conduit",
+					"minecraft:diamond_block",
+					"minecraft:prismarine_shard",
+					"minecraft:prismarine_shard",
+					"minecraft:prismarine_crystals",
+					"minecraft:prismarine_crystals"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Stops air consumption while stationary underwater.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": [
+					"minecraft:nether_star",
+					"minecraft:conduit",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:heart_of_the_sea",
+					"minecraft:prismarine_crystals",
+					"minecraft:prismarine_crystals"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "scuba_tank__charm"
+	}
+}

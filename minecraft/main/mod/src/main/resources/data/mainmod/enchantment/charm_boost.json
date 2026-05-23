@@ -2,7 +2,7 @@
   "description": "Charm Boost",
   "supported_items": "#mainmod:charm_combinable_armor_items",
   "weight": 10,
-  "max_level": 2,
+  "max_level": 1,
   "min_cost": {
     "base": 15,
     "per_level_above_first": 9

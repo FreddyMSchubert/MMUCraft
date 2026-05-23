@@ -1,0 +1,79 @@
+{
+	"title": "Iron Stomach Charm",
+	"id": "charm-endurance",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"For when the journey keeps chewing, but you don't."
+	],
+	"charm": {
+		"charmId": 39,
+		"minLevel": 0,
+		"maxLevel": 5,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 15%.",
+				"abilityStatusRelative": "Reduces movement and mining hunger drain by 15%.",
+				"upgradeIngredients": [
+					"minecraft:leather",
+					"minecraft:leather",
+					"minecraft:bread"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 30%.",
+				"abilityStatusRelative": "Reduces movement and mining hunger drain by 15% more.",
+				"upgradeIngredients": [
+					"minecraft:leather",
+					"minecraft:golden_carrot",
+					"minecraft:golden_carrot",
+					"minecraft:iron_ingot"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 45%.",
+				"abilityStatusRelative": "Reduces movement and mining hunger drain by 15% more.",
+				"upgradeIngredients": [
+					"minecraft:rabbit_stew",
+					"minecraft:cooked_beef",
+					"minecraft:cooked_beef",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 60%.",
+				"abilityStatusRelative": "Reduces movement and mining hunger drain by 15% more.",
+				"upgradeIngredients": [
+					"minecraft:golden_apple",
+					"minecraft:diamond_block",
+					"minecraft:golden_carrot",
+					"minecraft:golden_carrot",
+					"minecraft:cooked_beef"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 75%.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": [
+					"minecraft:enchanted_golden_apple",
+					"minecraft:netherite_ingot",
+					"minecraft:diamond_block",
+					"minecraft:golden_carrot",
+					"minecraft:golden_carrot",
+					"minecraft:cooked_beef",
+					"minecraft:cooked_beef"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "endurance__charm"
+	}
+}

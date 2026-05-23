@@ -23,6 +23,7 @@ docker_build(
         fall_back_on('proto/auth.proto'),
 		fall_back_on('proto/gameplay.proto'),
         sync('services/api/src', '/app/src'),
+        sync('services/web/public/knowledge', '/app/content/knowledge'),
         sync('proto', '/app/proto'),
     ],
     ignore=[
@@ -32,7 +33,6 @@ docker_build(
         'assets',
         'k8s',
         'minecraft',
-        'services/web',
         'third_party_licenses',
         'README.md',
         'Tiltfile',

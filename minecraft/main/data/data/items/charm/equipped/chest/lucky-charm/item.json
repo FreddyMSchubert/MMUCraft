@@ -1,0 +1,82 @@
+{
+	"title": "Lucky Charm",
+	"id": "charm-lucky-charm",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Luck favours the prepared."
+	],
+	"charm": {
+		"charmId": 37,
+		"minLevel": 0,
+		"maxLevel": 5,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Grants 1 fishing luck while equipped.",
+				"abilityStatusRelative": "Grants 1 fishing luck.",
+				"upgradeIngredients": [
+					"minecraft:gold_ingot",
+					"minecraft:gold_ingot",
+					"minecraft:rabbit_foot"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Grants 2 fishing luck while equipped.",
+				"abilityStatusRelative": "Grants 1 more fishing luck.",
+				"upgradeIngredients": [
+					"minecraft:gold_block",
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_foot",
+					"minecraft:diamond"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Grants 3 fishing luck while equipped.",
+				"abilityStatusRelative": "Grants 1 more fishing luck.",
+				"upgradeIngredients": [
+					"minecraft:gold_block",
+					"minecraft:gold_block",
+					"minecraft:diamond_block",
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_foot"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Grants 4 fishing luck while equipped.",
+				"abilityStatusRelative": "Grants 1 more fishing luck.",
+				"upgradeIngredients": [
+					"minecraft:emerald_block",
+					"minecraft:emerald_block",
+					"minecraft:diamond_block",
+					"minecraft:echo_shard",
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_foot"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Grants 5 fishing luck while equipped.",
+				"abilityStatusRelative": "Grants 1 more fishing luck.",
+				"upgradeIngredients": [
+					"minecraft:nether_star",
+					"minecraft:emerald_block",
+					"minecraft:emerald_block",
+					"minecraft:diamond_block",
+					"minecraft:diamond_block",
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_foot"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "lucky_charm__charm"
+	}
+}

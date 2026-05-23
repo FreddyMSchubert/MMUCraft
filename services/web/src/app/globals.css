@@ -326,33 +326,120 @@ a {
    Knowledge
    ============================================================ */
 
+.knowledgePda {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	min-height: 560px;
+	border: 1px solid rgba(123, 235, 255, 0.28);
+	background: rgba(2, 18, 24, 0.84);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.knowledgeSidebar {
+	border-right: 1px solid rgba(123, 235, 255, 0.22);
+	background: rgba(4, 28, 36, 0.78);
+}
+
+.knowledgeSidebarHeader {
+	padding: 12px;
+	border-bottom: 1px solid rgba(123, 235, 255, 0.2);
+	color: #7bebff;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.knowledgeTree {
+	max-height: 560px;
+	overflow: auto;
+	padding: 10px 0 12px;
+}
+
+.knowledgeTreeHeading {
+	padding-top: 12px;
+	padding-right: 12px;
+	padding-bottom: 6px;
+	color: rgba(123, 235, 255, 0.72);
+	font-size: 0.78rem;
+	font-weight: 700;
+	line-height: 1.25;
+	text-transform: uppercase;
+}
+
+.knowledgeTreePage {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	width: 100%;
+	min-height: 38px;
+	padding-top: 8px;
+	padding-right: 10px;
+	padding-bottom: 8px;
+	border: 0;
+	border-left: 3px solid transparent;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.82);
+	text-align: left;
+}
+
+.knowledgeTreePage:hover,
+.knowledgeTreePage.active {
+	border-left-color: #ffd166;
+	background: rgba(123, 235, 255, 0.12);
+	color: #fff;
+}
+
+.knowledgeTreePage span:first-child {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.knowledgeTreeNew {
+	display: inline-grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 18px;
+	aspect-ratio: 1;
+	border: 1px solid rgba(255, 209, 102, 0.55);
+	border-radius: 999px;
+	background: rgba(255, 209, 102, 0.14);
+	color: #ffd166;
+	font-size: 0.78rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.knowledgeReader {
+	min-width: 0;
+	padding: 18px 20px 24px;
+}
+
+.knowledgeReaderTop {
+	margin-bottom: 16px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(123, 235, 255, 0.18);
+}
+
+.knowledgeReaderTop p,
+.knowledgeReaderTop h3 {
+	margin: 0;
+}
+
+.knowledgeReaderTop p {
+	color: rgba(123, 235, 255, 0.7);
+	font-size: 0.82rem;
+	text-transform: uppercase;
+}
+
+.knowledgeReaderTop h3 {
+	margin-top: 4px;
+	color: #fff;
+	font-size: 1.35rem;
+}
+
 .knowledgePage {
 	position: relative;
 	line-height: 1.65;
-}
-
-.knowledgeActions {
-	position: sticky;
-	top: 0;
-	z-index: 2;
-	display: flex;
-	justify-content: flex-end;
-	margin-bottom: 16px;
-	padding: 8px 0;
-	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0));
-}
-
-.knowledgeActions button {
-	padding: 10px 14px;
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	border-radius: 6px;
-	background: #ffd166;
-	color: #111;
-	font-weight: 700;
-}
-
-.knowledgeUnlock {
-	scroll-margin-top: 84px;
 }
 
 .knowledgePage h2,
@@ -446,12 +533,17 @@ a {
 		width: 100%;
 	}
 
-	.knowledgeActions {
-		position: static;
+	.knowledgePda {
+		grid-template-columns: 1fr;
 	}
 
-	.knowledgeActions button {
-		width: 100%;
+	.knowledgeSidebar {
+		border-right: 0;
+		border-bottom: 1px solid rgba(123, 235, 255, 0.22);
+	}
+
+	.knowledgeTree {
+		max-height: 260px;
 	}
 
 	.dailyTask {

@@ -9,5 +9,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 public class ModEnchantments
 {
     public static final ResourceKey<Enchantment> CHARM_BOOST = ResourceKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charm_boost"));
+    public static final ResourceKey<Enchantment> FRAGILITY_CURSE = ResourceKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fragility_curse"));
     public static final ResourceKey<Enchantment> SOULBOUND = ResourceKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "soulbound"));
 }

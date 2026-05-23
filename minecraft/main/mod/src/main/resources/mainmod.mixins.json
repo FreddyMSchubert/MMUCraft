@@ -24,6 +24,7 @@
       "fishing.AnimalCrossingFishingHookMixin",
       "fishing.DisplayEntityAccessor",
       "fishing.ItemDisplayEntityAccessor",
+      "ScubaTankAirDrainSlowdown",
       "exhaustionCharm.ServerPlayerExhaustionMixin",
       "exhaustionCharm.BlockBreakExhaustionMixin"
 	],

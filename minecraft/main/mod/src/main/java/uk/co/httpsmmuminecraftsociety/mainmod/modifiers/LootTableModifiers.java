@@ -17,8 +17,8 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentType;
-import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentTypeManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettings;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 import java.util.List;
@@ -157,9 +157,9 @@ public class LootTableModifiers {
             itemStacks.add(stack);
         }
 
-        for (Map.Entry<Identifier, List<EnchantmentType>> entry : EnchantmentTypeManager.byLoottable.entrySet()) {
+        for (Map.Entry<Identifier, List<EnchantmentSettings>> entry : EnchantmentSettingsManager.byLoottable.entrySet()) {
             if (!entry.getKey().equals(tableId)) continue;
-            for (EnchantmentType enchType : entry.getValue()) {
+            for (EnchantmentSettings enchType : entry.getValue()) {
                 float chance;
                 switch (enchType.loottableRarity) {
                     case Rarity.UNCOMMON -> chance = 0.5f;

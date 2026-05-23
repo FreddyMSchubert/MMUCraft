@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentTypeManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -65,7 +65,7 @@ public abstract class FilterEnchantingTableEnchs
     private Stream<Holder<Enchantment>> mainmod$filterEnchantingTableEnchantments(
             Stream<Holder<Enchantment>> possibleEnchantments
     ) {
-        return possibleEnchantments.filter(EnchantmentTypeManager::isAllowedFromEnchantingTable);
+        return possibleEnchantments.filter(EnchantmentSettingsManager::isAllowedFromEnchantingTable);
     }
 
     @Inject(method = "slotsChanged", at = @At("TAIL"))

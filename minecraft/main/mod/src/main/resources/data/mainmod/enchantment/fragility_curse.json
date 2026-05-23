@@ -21,10 +21,7 @@
       {
         "effect": {
           "type": "minecraft:multiply",
-          "factor": {
-            "type": "minecraft:constant",
-            "value": 3.0
-          }
+          "factor": 3.0
         }
       }
     ]

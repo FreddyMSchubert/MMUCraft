@@ -19,6 +19,7 @@
       "bowTrail.AttachDataToArrow",
       "bowTrail.SpawnParticles",
       "WhitelistMsgModify",
+      "LibrarianEnchantedBookTradesMixin",
       "anvilRework.AnvilMenuMixin",
       "anvilRework.AbstractContainerMenuInvoker",
       "anvilRework.ItemCombinerMenuAccessor",

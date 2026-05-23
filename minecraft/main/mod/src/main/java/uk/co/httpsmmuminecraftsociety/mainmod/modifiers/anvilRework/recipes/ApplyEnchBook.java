@@ -5,6 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jspecify.annotations.Nullable;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilUtils;
 
@@ -30,6 +31,8 @@ public final class ApplyEnchBook implements AnvilRecipe
         if (!changed || result.isEmpty()) {
             return AnvilLogic.Outcome.EMPTY;
         }
+
+        CharmorManager.updateArmorTooltip(result);
 
         return new AnvilLogic.Outcome(
                 merge.cost(),

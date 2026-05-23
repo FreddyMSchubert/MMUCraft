@@ -20,6 +20,7 @@ import java.util.Set;
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm
 {
     private static final int MAX_ATTEMPTS = 128;
+    private static final int MAX_TELEPORT_RADIUS = 20_000;
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {
@@ -57,7 +58,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     {
         for (int i = 0; i < MAX_ATTEMPTS; i++)
         {
-            BlockPos pos = tryFindPosOnce(level);
+            BlockPos pos = tryFindPosOnce(level, fallback);
             if (pos != null)
             {
                 return pos;
@@ -67,14 +68,14 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         return fallback;
     }
 
-    private BlockPos tryFindPosOnce(Level level)
+    private BlockPos tryFindPosOnce(Level level, BlockPos origin)
     {
         WorldBorder border = level.getWorldBorder();
 
-        int minX = Mth.ceil(border.getMinX());
-        int maxX = Mth.floor(border.getMaxX() - 1.0D);
-        int minZ = Mth.ceil(border.getMinZ());
-        int maxZ = Mth.floor(border.getMaxZ() - 1.0D);
+        int minX = Math.max(Mth.ceil(border.getMinX()), radiusMin(origin.getX()));
+        int maxX = Math.min(Mth.floor(border.getMaxX() - 1.0D), radiusMax(origin.getX()));
+        int minZ = Math.max(Mth.ceil(border.getMinZ()), radiusMin(origin.getZ()));
+        int maxZ = Math.min(Mth.floor(border.getMaxZ() - 1.0D), radiusMax(origin.getZ()));
 
         if (minX > maxX || minZ > maxZ)
         {
@@ -85,6 +86,13 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         int z = Mth.nextInt(level.getRandom(), minZ, maxZ);
 
         return possibleSpawnPos(x, z, level);
+    }
+
+    private int radiusMin(int origin) {
+        return (int)Math.max(Integer.MIN_VALUE, (long)origin - MAX_TELEPORT_RADIUS);
+    }
+    private int radiusMax(int origin) {
+        return (int)Math.min(Integer.MAX_VALUE, (long)origin + MAX_TELEPORT_RADIUS);
     }
 
     private BlockPos possibleSpawnPos(int x, int z, Level level)

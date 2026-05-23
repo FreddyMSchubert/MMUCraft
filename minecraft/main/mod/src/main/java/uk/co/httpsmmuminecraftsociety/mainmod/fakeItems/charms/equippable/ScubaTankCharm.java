@@ -1,29 +1,36 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.player.Input;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickCallbackCharm;
 
-public class ScubaTankCharm implements Charm, EquippedTickCallbackCharm
+public class ScubaTankCharm implements Charm
 {
-    private static final double STATIONARY_HORIZONTAL_SPEED_SQUARED = 0.0001;
-
-    @Override
-    public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
+    public static int adjustAirSupplyAfterVanillaDecrease(ServerPlayer player, int currentAir, int vanillaAir)
     {
-        if (!player.isUnderWater()) return;
-        if (player.getDeltaMovement().horizontalDistanceSqr() > STATIONARY_HORIZONTAL_SPEED_SQUARED) return;
+        if (vanillaAir >= currentAir) return vanillaAir;
+        if (!player.isUnderWater()) return vanillaAir;
 
-        int airSupply = player.getAirSupply();
-        int maxAirSupply = player.getMaxAirSupply();
-        if (airSupply >= maxAirSupply) return;
+        boolean movementInputHeld = isMovementInputHeld(player.getLastClientInput());
+        if (movementInputHeld) return vanillaAir;
 
-        int refundTicksPerFive = Math.min(Math.max(charmLevel, 0), 5);
-        if (refundTicksPerFive <= 0) return;
-        if (level.getGameTime() % 5 >= refundTicksPerFive) return;
+        int charmLevel = Math.min(Math.max(CharmsManager.getPlayerCharmLevel(player, ScubaTankCharm.class), 0), 5);
+        if (charmLevel <= 0) return vanillaAir;
+        if (charmLevel >= 5) return currentAir;
 
-        player.setAirSupply(Math.min(airSupply + 1, maxAirSupply));
+        float saveChance = charmLevel * 0.2F;
+        return player.getRandom().nextFloat() < saveChance ? currentAir : vanillaAir;
+    }
+
+    private static boolean isMovementInputHeld(Input input)
+    {
+        return input.forward()
+                || input.backward()
+                || input.left()
+                || input.right()
+                || input.jump()
+                || input.shift()
+                || input.sprint();
     }
 }

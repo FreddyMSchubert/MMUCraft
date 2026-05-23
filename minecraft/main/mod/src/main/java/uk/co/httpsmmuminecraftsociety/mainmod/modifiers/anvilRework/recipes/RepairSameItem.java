@@ -3,6 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 
@@ -43,6 +44,8 @@ public final class RepairSameItem implements AnvilRecipe
         if (!changed || result.isEmpty()) {
             return AnvilLogic.Outcome.EMPTY;
         }
+
+        CharmorManager.updateArmorTooltip(result);
 
         return new AnvilLogic.Outcome(
                 merge.cost(),

@@ -504,6 +504,7 @@ Information on changes to the base game are all documented in a wiki page on the
 - Convo with oderzo about new hat to add
 - Ability to put anything in any armor slot
 - Make chestplate an elytra
+- custom dog skin of choice - should work for all mobs with variants i believe. so cats as well.
 
 ## Recommended mods list
 

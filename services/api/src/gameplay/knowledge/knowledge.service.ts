@@ -1,34 +1,47 @@
 import { Injectable } from '@nestjs/common'
 import { randomInt } from 'node:crypto'
-import { existsSync, readFileSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { basename, join, relative, sep } from 'node:path'
 import { DatabaseService, UserRow } from '../../database/database.service'
 
-const DEFAULT_KNOWLEDGE_PATH = join(process.cwd(), 'content', 'knowledge.html')
-const OBSCURED_IMAGE_SRC = '/assets/knowledge/obscured.png'
+const DEFAULT_KNOWLEDGE_ROOTS = [
+	join(process.cwd(), 'content', 'knowledge'),
+	join(process.cwd(), '..', 'web', 'public', 'knowledge'),
+]
 
-type PublicKnowledgeSection = {
-	type: 'public'
-	html: string
-}
-
-type UnlockableKnowledgeSection = {
-	type: 'knowledge'
+type KnowledgePageMetadata = {
 	id: string
-	priority: number
-	topic: string
-	html: string
+	unlockOrder: number | null
+	chatMessage: string
+	sidebarTitle: string
 }
 
-type ParsedKnowledgeSection = PublicKnowledgeSection | UnlockableKnowledgeSection
+type KnowledgePage = KnowledgePageMetadata & {
+	type: 'page'
+	path: string
+	folders: string[]
+	unlockedByDefault: boolean
+	unlocked?: boolean
+}
+
+type KnowledgeFolder = {
+	type: 'folder'
+	name: string
+	children: KnowledgeTreeEntry[]
+}
+
+type KnowledgeTreeEntry = KnowledgeFolder | KnowledgePage
 
 interface KnowledgeDocument {
-	sections: ParsedKnowledgeSection[]
-	unlockable: UnlockableKnowledgeSection[]
+	root: string
+	mtimeMs: number
+	pages: KnowledgePage[]
+	tree: KnowledgeTreeEntry[]
+	unlockable: KnowledgePage[]
 }
 
 interface CachedKnowledgeDocument {
-	path: string
+	root: string
 	mtimeMs: number
 	document: KnowledgeDocument
 }
@@ -41,17 +54,6 @@ interface KnowledgeUnlockResponse {
 	topic: string
 	message: string
 }
-
-type KnowledgeResponseSection =
-	| PublicKnowledgeSection
-	| {
-		type: 'knowledge'
-		id: string
-		priority: number
-		topic: string
-		unlocked: boolean
-		html: string
-	}
 
 @Injectable()
 export class KnowledgeService {
@@ -66,22 +68,8 @@ export class KnowledgeService {
 
 		return {
 			lastUnlockedKnowledgeId,
-			sections: document.sections.map((section): KnowledgeResponseSection => {
-				if (section.type === 'public') {
-					return section
-				}
-
-				const unlocked = unlockedIds.has(section.id)
-
-				return {
-					type: 'knowledge' as const,
-					id: section.id,
-					priority: section.priority,
-					topic: section.topic,
-					unlocked,
-					html: unlocked ? section.html : this.obscureLockedHtml(section.html),
-				}
-			}),
+			unlockedKnowledgeIds: [...unlockedIds].filter((id) => document.unlockable.some((page) => page.id === id)),
+			tree: this.applyUnlockState(document.tree, unlockedIds),
 		}
 	}
 
@@ -97,10 +85,10 @@ export class KnowledgeService {
 		}
 
 		const user = this.database.connection.prepare(`
-						SELECT *
-						FROM users
-						WHERE lower(minecraft_username) = lower(?)
-				`).get(minecraftUsername) as UserRow | undefined
+			SELECT *
+			FROM users
+			WHERE lower(minecraft_username) = lower(?)
+		`).get(minecraftUsername) as UserRow | undefined
 
 		if (!user) {
 			return this.noUnlock('No website account is linked to this Minecraft username yet.')
@@ -122,21 +110,20 @@ export class KnowledgeService {
 		for (let attempt = 0; attempt < 5; attempt++) {
 			const picked = this.database.connection.transaction(() => {
 				const unlockedIds = this.getUnlockedIds(user.id)
-
-				const remaining = document.unlockable.filter((section) => !unlockedIds.has(section.id))
+				const remaining = document.unlockable.filter((page) => !unlockedIds.has(page.id))
 
 				if (remaining.length === 0) {
 					return 'all-unlocked' as const
 				}
 
-				const chosen = this.pickRandomLowestPrioritySection(remaining)
+				const chosen = this.pickRandomLowestOrderPage(remaining)
 
 				const result = this.database.connection.prepare(`
 					INSERT OR IGNORE INTO knowledge_unlocks (
-							user_id,
-							knowledge_id,
-							unlocked_at_unix_ms,
-							source
+						user_id,
+						knowledge_id,
+						unlocked_at_unix_ms,
+						source
 					)
 					VALUES (?, ?, ?, ?)
 				`).run(
@@ -165,9 +152,9 @@ export class KnowledgeService {
 					unlocked: true,
 					all_unlocked: false,
 					knowledge_id: picked.id,
-					priority: picked.priority,
-					topic: picked.topic,
-					message: `You've unlocked new knowledge about ${picked.topic}. Visit the website to learn more.`,
+					priority: picked.unlockOrder ?? 0,
+					topic: picked.sidebarTitle,
+					message: picked.chatMessage,
 				}
 			}
 		}
@@ -175,30 +162,44 @@ export class KnowledgeService {
 		return this.noUnlock('Knowledge unlock was busy. Try again.')
 	}
 
+	private applyUnlockState(entries: KnowledgeTreeEntry[], unlockedIds: Set<string>): KnowledgeTreeEntry[] {
+		return entries.map((entry): KnowledgeTreeEntry => {
+			if (entry.type === 'folder') {
+				return {
+					...entry,
+					children: this.applyUnlockState(entry.children, unlockedIds),
+				}
+			}
+
+			return {
+				...entry,
+				unlocked: entry.unlockedByDefault || unlockedIds.has(entry.id),
+			}
+		})
+	}
+
 	private getUnlockedIds(userId: number): Set<string> {
 		const rows = this.database.connection.prepare(`
-						SELECT knowledge_id
-						FROM knowledge_unlocks
-						WHERE user_id = ?
-				`).all(userId) as { knowledge_id: string }[]
+			SELECT knowledge_id
+			FROM knowledge_unlocks
+			WHERE user_id = ?
+		`).all(userId) as { knowledge_id: string }[]
 
 		return new Set(rows.map((row) => row.knowledge_id))
 	}
 
-	private pickRandomLowestPrioritySection(
-		sections: UnlockableKnowledgeSection[],
-	): UnlockableKnowledgeSection {
-		const lowestPriority = Math.min(...sections.map((section) => section.priority))
-		const candidates = sections.filter((section) => section.priority === lowestPriority)
+	private pickRandomLowestOrderPage(pages: KnowledgePage[]): KnowledgePage {
+		const lowestOrder = Math.min(...pages.map((page) => page.unlockOrder ?? 0))
+		const candidates = pages.filter((page) => page.unlockOrder === lowestOrder)
 
 		return candidates[randomInt(candidates.length)]!
 	}
 
 	private getLastUnlockedKnowledgeId(
 		userId: number,
-		unlockable: UnlockableKnowledgeSection[],
+		unlockable: KnowledgePage[],
 	): string | null {
-		const configuredIds = new Set(unlockable.map((section) => section.id))
+		const configuredIds = new Set(unlockable.map((page) => page.id))
 
 		const rows = this.database.connection.prepare(`
 			SELECT knowledge_id
@@ -211,31 +212,28 @@ export class KnowledgeService {
 	}
 
 	private loadDocument(): KnowledgeDocument {
-		const path = process.env.KNOWLEDGE_HTML_PATH ?? DEFAULT_KNOWLEDGE_PATH
+		const root = process.env.KNOWLEDGE_ROOT ?? DEFAULT_KNOWLEDGE_ROOTS.find((candidate) => existsSync(candidate)) ?? DEFAULT_KNOWLEDGE_ROOTS[0]!
 
-		if (!existsSync(path)) {
+		if (!existsSync(root)) {
 			return {
-				sections: [
-					{
-						type: 'public',
-						html: '<p>No knowledge file exists yet.</p>',
-					},
-				],
+				root,
+				mtimeMs: 0,
+				pages: [],
+				tree: [],
 				unlockable: [],
 			}
 		}
 
-		const mtimeMs = statSync(path).mtimeMs
+		const mtimeMs = this.getTreeMtimeMs(root)
 
-		if (this.cached && this.cached.path === path && this.cached.mtimeMs === mtimeMs) {
+		if (this.cached && this.cached.root === root && this.cached.mtimeMs === mtimeMs) {
 			return this.cached.document
 		}
 
-		const source = readFileSync(path, 'utf8')
-		const document = this.parseKnowledgeHtml(source)
+		const document = this.parseKnowledgeRoot(root, mtimeMs)
 
 		this.cached = {
-			path,
+			root,
 			mtimeMs,
 			document,
 		}
@@ -243,155 +241,146 @@ export class KnowledgeService {
 		return document
 	}
 
-	private parseKnowledgeHtml(source: string): KnowledgeDocument {
-		const sections: ParsedKnowledgeSection[] = []
-		const publicBuffer: string[] = []
-
-		let current:
-			| {
-				id: string
-				priority: number
-				topic: string
-				lines: string[]
-			}
-			| null = null
-
-		const flushPublic = () => {
-			const html = this.stripDangerousHtml(publicBuffer.join('\n')).trim()
-
-			if (html) {
-				sections.push({
-					type: 'public',
-					html,
-				})
-			}
-
-			publicBuffer.length = 0
-		}
-
-		const lines = source.replace(/\r\n/g, '\n').split('\n')
-
-		for (const line of lines) {
-			const start = line.match(/^###\s+([A-Za-z0-9_-]+)\s+(-?\d+)\s+"([^"]+)"\s*$/)
-			const end = line.match(/^###\s*$/)
-
-			if (!current && start) {
-				flushPublic()
-
-				current = {
-					id: start[1]!,
-					priority: Number(start[2]),
-					topic: start[3]!,
-					lines: [],
-				}
-
-				continue
-			}
-
-			if (current && end) {
-				const html = this.stripDangerousHtml(current.lines.join('\n')).trim()
-
-				sections.push({
-					type: 'knowledge',
-					id: current.id,
-					priority: current.priority,
-					topic: current.topic,
-					html,
-				})
-
-				current = null
-				continue
-			}
-
-			if (current) {
-				current.lines.push(line)
-			} else {
-				publicBuffer.push(line)
-			}
-		}
-
-		if (current) {
-			throw new Error(`Unclosed knowledge section: ${current.id}`)
-		}
-
-		flushPublic()
-
-		const unlockable = sections.filter(
-			(section): section is UnlockableKnowledgeSection => section.type === 'knowledge',
-		)
+	private parseKnowledgeRoot(root: string, mtimeMs: number): KnowledgeDocument {
+		const tree = this.readDirectory(root, root)
+		const pages = this.flattenPages(tree)
+		const unlockable = pages.filter((page) => !page.unlockedByDefault)
 
 		const seen = new Set<string>()
-		for (const section of unlockable) {
-			if (seen.has(section.id)) {
-				throw new Error(`Duplicate knowledge id: ${section.id}`)
+		for (const page of pages) {
+			if (seen.has(page.id)) {
+				throw new Error(`Duplicate knowledge id: ${page.id}`)
 			}
 
-			seen.add(section.id)
+			seen.add(page.id)
 		}
 
 		return {
-			sections,
+			root,
+			mtimeMs,
+			pages,
+			tree,
 			unlockable,
 		}
 	}
 
-	private stripDangerousHtml(html: string): string {
-		return html.replace(/<script\b[\s\S]*?<\/script>/gi, '')
-	}
+	private readDirectory(root: string, directory: string): KnowledgeTreeEntry[] {
+		const children = readdirSync(directory, { withFileTypes: true })
+			.filter((entry) => !entry.name.startsWith('.'))
+			.sort((left, right) => left.name.localeCompare(right.name, 'en'))
 
-	private obscureLockedHtml(html: string): string {
-		return html
-			.split(/(<[^>]*>)/g)
-			.map((part) => {
-				if (part.startsWith('<')) {
-					return this.obscureTag(part)
-				}
+		const entries: KnowledgeTreeEntry[] = []
 
-				return this.obscureTextNodes(part)
+		for (const child of children) {
+			const childPath = join(directory, child.name)
+
+			if (child.isDirectory()) {
+				entries.push({
+					type: 'folder',
+					name: this.displayName(child.name),
+					children: this.readDirectory(root, childPath),
+				})
+				continue
+			}
+
+			if (!child.isFile() || !child.name.endsWith('.md')) {
+				continue
+			}
+
+			const source = readFileSync(childPath, 'utf8')
+			const metadata = this.parseMetadata(source, childPath)
+			const relativePath = relative(root, childPath).split(sep).join('/')
+			const folders = relative(root, directory)
+				.split(sep)
+				.filter((part) => part && part !== '.')
+				.map((part) => this.displayName(part))
+
+			entries.push({
+				type: 'page',
+				...metadata,
+				path: relativePath,
+				folders,
+				unlockedByDefault: metadata.unlockOrder === null,
 			})
-			.join('')
-	}
-
-	private obscureTag(tag: string): string {
-		if (!/^<img\b/i.test(tag)) {
-			return tag
 		}
 
-		if (/\ssrc\s*=/i.test(tag)) {
-			return tag.replace(
-				/\ssrc\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i,
-				` src="${OBSCURED_IMAGE_SRC}"`,
-			)
+		return entries
+	}
+
+	private parseMetadata(source: string, filePath: string): KnowledgePageMetadata {
+		const match = source.match(/^====\r?\n([\s\S]*?)\r?\n====/)
+
+		if (!match) {
+			throw new Error(`Knowledge markdown file is missing metadata block: ${filePath}`)
 		}
 
-		return tag.replace(/^<img\b/i, `<img src="${OBSCURED_IMAGE_SRC}"`)
-	}
-
-	private obscureTextNodes(text: string): string {
-		return text.replace(/[^\s]+/g, (segment) => {
-			const value = this.escapeHtml(this.randomGlyphs(segment.length))
-			return `<span class="minecraftObfuscated" data-obfuscated-length="${segment.length}" style="--obfuscated-width: ${segment.length}ch">${value}</span>`
-		})
-	}
-
-	private randomGlyphs(length: number): string {
-		const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
-		let result = ''
-
-		for (let index = 0; index < length; index++) {
-			result += letters.charAt(randomInt(letters.length))
+		const values = new Map<string, string>()
+		for (const line of match[1]!.replace(/\r\n/g, '\n').split('\n')) {
+			const parsed = line.match(/^([A-Za-z][A-Za-z0-9_-]*)\s*:\s*(.*)$/)
+			if (parsed) {
+				values.set(parsed[1]!, parsed[2]!.trim())
+			}
 		}
 
-		return result
+		const id = values.get('id')
+		const unlockOrderValue = values.get('unlockOrder')
+		const sidebarTitle = values.get('sidebarTitle')
+
+		if (!id) throw new Error(`Knowledge markdown file is missing id: ${filePath}`)
+		if (!unlockOrderValue) throw new Error(`Knowledge markdown file is missing unlockOrder: ${filePath}`)
+		if (!sidebarTitle) throw new Error(`Knowledge markdown file is missing sidebarTitle: ${filePath}`)
+
+		const unlockOrder = unlockOrderValue === 'public'
+			? null
+			: Number(unlockOrderValue)
+
+		if (unlockOrder !== null && !Number.isInteger(unlockOrder)) {
+			throw new Error(`Knowledge unlockOrder must be an integer or public: ${filePath}`)
+		}
+
+		return {
+			id,
+			unlockOrder,
+			chatMessage: values.get('chatMessage') || `You've unlocked new knowledge about ${sidebarTitle}. Visit the website to learn more.`,
+			sidebarTitle,
+		}
 	}
 
-	private escapeHtml(value: string): string {
-		return value
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;')
-			.replace(/'/g, '&#39;')
+	private flattenPages(entries: KnowledgeTreeEntry[]): KnowledgePage[] {
+		const pages: KnowledgePage[] = []
+
+		for (const entry of entries) {
+			if (entry.type === 'folder') {
+				pages.push(...this.flattenPages(entry.children))
+			} else {
+				pages.push(entry)
+			}
+		}
+
+		return pages
+	}
+
+	private getTreeMtimeMs(path: string): number {
+		const stats = statSync(path)
+		let mtimeMs = stats.mtimeMs
+
+		if (!stats.isDirectory()) {
+			return mtimeMs
+		}
+
+		for (const child of readdirSync(path, { withFileTypes: true })) {
+			if (child.name.startsWith('.')) continue
+			mtimeMs = Math.max(mtimeMs, this.getTreeMtimeMs(join(path, child.name)))
+		}
+
+		return mtimeMs
+	}
+
+	private displayName(name: string): string {
+		return basename(name)
+			.replace(/^\d+[-_]/, '')
+			.replace(/[-_]+/g, ' ')
+			.replace(/\b\w/g, (letter) => letter.toUpperCase())
 	}
 
 	private noUnlock(message: string): KnowledgeUnlockResponse {

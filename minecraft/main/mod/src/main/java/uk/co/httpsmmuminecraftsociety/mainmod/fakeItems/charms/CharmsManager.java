@@ -62,7 +62,10 @@ public class CharmsManager
             Map.entry(33, new InvisiCarrotCharm()),
             Map.entry(34, new FarmingBootsCharm()),
             Map.entry(35, new SawBeltCharm()),
-            Map.entry(36, new KnowledgeBookCharm())
+            Map.entry(36, new KnowledgeBookCharm()),
+            Map.entry(37, new LuckyCharm()),
+            Map.entry(38, new ScubaTankCharm()),
+            Map.entry(39, new EnduranceCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

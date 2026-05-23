@@ -27,11 +27,11 @@ public class CharmorManager
     public static int calcCharmSlotCount(ItemStack stack) {
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return 0;
 
-        int charmBoostLevel = 0;
+        boolean hasCharmBoost = false;
         for (var entry : stack.getEnchantments().entrySet()) {
             Holder<Enchantment> holder = entry.getKey();
             if (holder.unwrapKey().isPresent() && holder.unwrapKey().get().equals(ModEnchantments.CHARM_BOOST)) {
-                charmBoostLevel = entry.getIntValue();
+                hasCharmBoost = entry.getIntValue() > 0;
                 break;
             }
         }
@@ -45,7 +45,7 @@ public class CharmorManager
             armorTypeCharmSlots = 3;
         }
 
-        return Math.min(charmBoostLevel + 1, armorTypeCharmSlots);
+        return 1 + (hasCharmBoost ? armorTypeCharmSlots : 0);
     }
     public static boolean canEquipMoreCharms(ItemStack stack) {
         return getStoredArmorCharms(stack).size() < calcCharmSlotCount(stack);

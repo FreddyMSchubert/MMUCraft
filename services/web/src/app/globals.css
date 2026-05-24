@@ -329,6 +329,7 @@ a {
 .knowledgePda {
 	display: grid;
 	grid-template-columns: 280px minmax(0, 1fr);
+	align-items: stretch;
 	min-height: 560px;
 	border: 1px solid rgba(123, 235, 255, 0.28);
 	background: rgba(2, 18, 24, 0.84);
@@ -336,6 +337,9 @@ a {
 }
 
 .knowledgeSidebar {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
 	border-right: 1px solid rgba(123, 235, 255, 0.22);
 	background: rgba(4, 28, 36, 0.78);
 }
@@ -349,7 +353,7 @@ a {
 }
 
 .knowledgeTree {
-	max-height: 560px;
+	flex: 1 1 auto;
 	overflow: auto;
 	padding: 10px 0 12px;
 }
@@ -543,6 +547,7 @@ a {
 	}
 
 	.knowledgeTree {
+		flex: 0 1 auto;
 		max-height: 260px;
 	}
 

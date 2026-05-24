@@ -25,6 +25,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
@@ -72,11 +73,13 @@ public class MainMod implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             registries = server.overworld().registryAccess();
+            EnchantmentSettingsManager.validateLoottables(server.reloadableRegistries().lookup());
             FakeItems.validate();
         });
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
                 registries = server.overworld().registryAccess();
+                EnchantmentSettingsManager.validateLoottables(server.reloadableRegistries().lookup());
             }
         });
     }

@@ -467,6 +467,8 @@ combining books has changed, now a sharpness 1 + a sharpness 2 book makes a shar
 | Impaling | Dropped by zombie nautili rarely | Heart of the Sea |
 | Channeling | Dropped by zombie nautili rarely | Waxed Oxidized Lightning Rod |
 
+amethyst
+
 A sniffer drops a new item, a seed of ancient magic. this must be watered (dropped in water), lavad, slimed, and soul fired. (its fire resistant). at this point, if you eat the item, it will give you poison and turn into a bulb of ancient magic.
 Craft the bulb together with a purification rune (from fishing, archaeology or shop), 6 diamonds and a curse-specific item to make a cursebreaker for that curse. all cursebreakers are made from flowers.
 cursebreakers can be applied to books and armor with a curse of that type at anvils for 30 levels and no increased item xp cost.

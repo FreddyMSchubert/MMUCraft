@@ -25,11 +25,6 @@ public class EnchantmentSettingsManager
 {
     private static final List<String> trialChamberRewards = List.of("chests/trial_chambers/reward", "chests/trial_chambers/reward_common", "chests/trial_chambers/reward_ominous", "chests/trial_chambers/reward_ominous_common", "chests/trial_chambers/reward_ominous_rare", "chests/trial_chambers/reward_rare");
     private static final List<String> bastionRewards = List.of("chests/bastion_bridge", "chests/bastion_hoglin_stable", "chests/bastion_other", "chests/bastion_treasure");
-    public static final List<ResourceKey<Enchantment>> curses = List.of(
-        Enchantments.VANISHING_CURSE,
-        Enchantments.BINDING_CURSE,
-        ModEnchantments.CURSE_FRAGILITY
-    );
 
     public static final List<EnchantmentSettings> enchantmentSettings = List.of(
         // general enchantments

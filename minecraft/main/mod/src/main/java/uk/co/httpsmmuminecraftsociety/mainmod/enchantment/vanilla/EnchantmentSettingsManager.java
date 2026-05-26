@@ -28,7 +28,7 @@ public class EnchantmentSettingsManager
     public static final List<ResourceKey<Enchantment>> curses = List.of(
         Enchantments.VANISHING_CURSE,
         Enchantments.BINDING_CURSE,
-        ModEnchantments.FRAGILITY_CURSE
+        ModEnchantments.CURSE_FRAGILITY
     );
 
     public static final List<EnchantmentSettings> enchantmentSettings = List.of(
@@ -99,9 +99,26 @@ public class EnchantmentSettingsManager
         new EnchantmentSettings(Enchantments.QUICK_CHARGE).inLoottable("chests/pillager_outpost").dupedWithVanillaItem(Items.FIREWORK_STAR),
 
         // curses
-        new EnchantmentSettings(Enchantments.VANISHING_CURSE).maxEnchTableLvl(1).dupedWithVanillaItem(Items.CLOSED_EYEBLOSSOM),
-        new EnchantmentSettings(Enchantments.BINDING_CURSE).maxEnchTableLvl(1).dupedWithVanillaItem(Items.ALLIUM),
-        new EnchantmentSettings(ModEnchantments.FRAGILITY_CURSE).maxEnchTableLvl(1).dupedWithVanillaItem(Items.BLUE_ORCHID)
+        new EnchantmentSettings(Enchantments.VANISHING_CURSE).dupedWithVanillaItem(Items.CLOSED_EYEBLOSSOM),
+        new EnchantmentSettings(Enchantments.BINDING_CURSE).dupedWithVanillaItem(Items.ALLIUM),
+
+        new EnchantmentSettings(ModEnchantments.CURSE_WEAKNESS_FIRE).dupedWithVanillaItem(Items.RED_TULIP),
+        new EnchantmentSettings(ModEnchantments.CURSE_WEAKNESS_FALL).dupedWithVanillaItem(Items.PINK_TULIP),
+        new EnchantmentSettings(ModEnchantments.CURSE_WEAKNESS_PROJECTILE).dupedWithVanillaItem(Items.WHITE_TULIP),
+        new EnchantmentSettings(ModEnchantments.CURSE_WEAKNESS_BLAST).dupedWithVanillaItem(Items.ORANGE_TULIP),
+
+        new EnchantmentSettings(ModEnchantments.CURSE_FRAGILITY).dupedWithVanillaItem(Items.BLUE_ORCHID),
+        new EnchantmentSettings(ModEnchantments.CURSE_STORMCALLING).dupedWithVanillaItem(Items.LILAC),
+        new EnchantmentSettings(ModEnchantments.CURSE_NECROSIS).dupedWithVanillaItem(Items.LILY_OF_THE_VALLEY),
+        new EnchantmentSettings(ModEnchantments.CURSE_DECAY).dupedWithVanillaItem(Items.PEONY),
+        new EnchantmentSettings(ModEnchantments.CURSE_DROUGHT).dupedWithVanillaItem(Items.ROSE_BUSH),
+        new EnchantmentSettings(ModEnchantments.CURSE_IRREPERABILITY).dupedWithVanillaItem(Items.AZURE_BLUET),
+        new EnchantmentSettings(ModEnchantments.CURSE_OMEN).dupedWithVanillaItem(Items.OPEN_EYEBLOSSOM),
+        new EnchantmentSettings(ModEnchantments.CURSE_WASTEFULNESS).dupedWithVanillaItem(Items.CORNFLOWER),
+        new EnchantmentSettings(ModEnchantments.CURSE_WEARINESS).dupedWithVanillaItem(Items.GOLDEN_DANDELION),
+        new EnchantmentSettings(ModEnchantments.CURSE_DULLNESS).dupedWithVanillaItem(Items.SUNFLOWER)
+
+            // unused: oxeye daisy, poppy, wildflowers, cherry leaves
     );
 
     public static Map<Identifier, List<EnchantmentSettings>> byLoottable = buildByLoottable();

@@ -5,9 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.DataComponentExactPredicate;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
@@ -21,8 +19,8 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettings;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
-import java.util.List;
 import java.util.Optional;
 
 public final class LecternLibrarianTrades {
@@ -144,19 +142,10 @@ public final class LecternLibrarianTrades {
     private static void addRandomCurse(ItemStack book, ServerLevel level) {
         ItemEnchantments enchantments = book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(enchantments);
-        List<Holder.Reference<Enchantment>> curses = EnchantmentSettingsManager.curses.stream()
-                .map(curse -> level.registryAccess()
-                        .lookupOrThrow(Registries.ENCHANTMENT)
-                        .getOrThrow(curse))
-                .toList();
-
-        if (curses.isEmpty()) {
-            return;
-        }
-
-        RandomSource random = level.getRandom();
-        mutable.set(curses.get(random.nextInt(curses.size())), 1);
-        book.set(DataComponents.STORED_ENCHANTMENTS, mutable.toImmutable());
+        Utils.getRandomValidCurse(book, level).ifPresent(curse -> {
+            mutable.set(curse, 1);
+            book.set(DataComponents.STORED_ENCHANTMENTS, mutable.toImmutable());
+        });
     }
 
     private record TradeCosts(int emeraldCost, ItemStack dupeItem) {}

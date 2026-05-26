@@ -1,0 +1,35 @@
+{
+  "description": "Curse of Wastefulness",
+  "supported_items": [
+    "minecraft:bow",
+    "minecraft:crossbow"
+  ],
+  "primary_items": [
+    "minecraft:bow",
+    "minecraft:crossbow"
+  ],
+  "weight": 2,
+  "max_level": 1,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 0
+  },
+  "max_cost": {
+    "base": 35,
+    "per_level_above_first": 0
+  },
+  "anvil_cost": 5,
+  "slots": [
+    "mainhand"
+  ],
+  "effects": {
+    "minecraft:ammo_use": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": 2.0
+        }
+      }
+    ]
+  }
+}

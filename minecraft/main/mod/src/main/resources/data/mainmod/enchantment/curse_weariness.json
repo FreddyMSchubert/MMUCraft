@@ -1,0 +1,39 @@
+{
+  "description": "Curse of Weariness",
+  "supported_items": "#your_namespace:enchantable/held_tools",
+  "primary_items": "#your_namespace:enchantable/held_tools",
+  "slots": ["mainhand"],
+  "weight": 1,
+  "max_level": 1,
+  "min_cost": {
+    "base": 20,
+    "per_level_above_first": 0
+  },
+  "max_cost": {
+    "base": 45,
+    "per_level_above_first": 0
+  },
+  "anvil_cost": 6,
+  "effects": {
+    "minecraft:attributes": [
+      {
+        "id": "curse_of_weight_jump",
+        "attribute": "minecraft:generic.jump_strength",
+        "amount": {
+          "type": "minecraft:constant",
+          "value": -0.08
+        },
+        "operation": "add_multiplied_total"
+      },
+      {
+        "id": "curse_of_weight_speed",
+        "attribute": "minecraft:generic.movement_speed",
+        "amount": {
+          "type": "minecraft:constant",
+          "value": -0.03
+        },
+        "operation": "add_multiplied_total"
+      }
+    ]
+  }
+}

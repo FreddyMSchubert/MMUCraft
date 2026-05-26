@@ -1,6 +1,19 @@
 {
   "replace": false,
   "values": [
-    "mainmod:fragility_curse"
+    "mainmod:curse_decay",
+    "mainmod:curse_drought",
+    "mainmod:curse_dullness",
+    "mainmod:curse_fragility",
+    "mainmod:curse_irreperability",
+    "mainmod:curse_necrosis",
+    "mainmod:curse_omen",
+    "mainmod:curse_stormcalling",
+    "mainmod:curse_wastefulness",
+    "mainmod:curse_weakness_blast",
+    "mainmod:curse_weakness_fall",
+    "mainmod:curse_weakness_fire",
+    "mainmod:curse_weakness_projectile",
+    "mainmod:curse_weariness"
   ]
 }

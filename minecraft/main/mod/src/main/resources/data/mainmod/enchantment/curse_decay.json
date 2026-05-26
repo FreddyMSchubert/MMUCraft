@@ -1,13 +1,7 @@
 {
   "description": "Curse of Decay",
-  "supported_items": [
-    "#minecraft:enchantable/mining",
-    "#minecraft:enchantable/weapon"
-  ],
-  "primary_items": [
-    "#minecraft:enchantable/mining",
-    "#minecraft:enchantable/weapon"
-  ],
+  "supported_items": "#mainmod:enchantable/held_tools",
+  "primary_items": "#mainmod:enchantable/held_tools",
   "weight": 1,
   "max_level": 1,
   "min_cost": {
@@ -20,18 +14,14 @@
   },
   "anvil_cost": 8,
   "slots": [
-    "mainhand",
-    "offhand"
+    "mainhand"
   ],
   "effects": {
     "minecraft:tick": [
       {
         "effect": {
-          "type": "minecraft:damage_item",
-          "amount": {
-            "type": "minecraft:constant",
-            "value": 1.0
-          }
+          "type": "minecraft:change_item_damage",
+          "amount": 1.0
         },
         "requirements": {
           "condition": "minecraft:random_chance",

@@ -21,10 +21,7 @@
       {
         "effect": {
           "type": "minecraft:add",
-          "value": {
-            "type": "minecraft:constant",
-            "base": -2.0
-          }
+          "value": -2.0
         },
         "requirements": {
           "condition": "minecraft:damage_source_properties",

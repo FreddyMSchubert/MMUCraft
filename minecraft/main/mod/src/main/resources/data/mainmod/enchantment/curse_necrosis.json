@@ -20,11 +20,8 @@
     "minecraft:attributes": [
       {
         "id": "curse_of_necrosis",
-        "attribute": "minecraft:generic.max_health",
-        "amount": {
-          "type": "minecraft:constant",
-          "value": -2.0
-        },
+        "attribute": "minecraft:max_health",
+        "amount": -2.0,
         "operation": "add_value"
       }
     ]

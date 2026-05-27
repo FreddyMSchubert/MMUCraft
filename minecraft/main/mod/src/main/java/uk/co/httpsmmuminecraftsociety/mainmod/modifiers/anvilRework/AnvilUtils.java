@@ -9,6 +9,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jspecify.annotations.Nullable;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.EnchantmentLock;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,10 @@ public class AnvilUtils
     public record MergeInfo(int cost, boolean changed) {}
 
     public static MergeInfo mergeEnchantments(ItemStack result, ItemStack left, ItemStack right, boolean resultIsBook) {
+        if (!resultIsBook && EnchantmentLock.isLocked(left)) {
+            return new MergeInfo(0, false);
+        }
+
         ItemEnchantments base = resultIsBook
                 ? new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(ItemStack.EMPTY)).toImmutable()
                 : EnchantmentHelper.getEnchantmentsForCrafting(result);

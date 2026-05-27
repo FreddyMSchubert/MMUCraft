@@ -6,8 +6,10 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.EnchantmentLock;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 
 import java.util.List;
@@ -77,6 +81,14 @@ public abstract class FilterEnchantingTableEnchs
             return;
         }
 
+        if (EnchantmentLock.isLocked(inputStack)) {
+            boolean changed = clearEnchantingOptions();
+            if (changed) {
+                ((AbstractContainerMenu) (Object) this).broadcastChanges();
+            }
+            return;
+        }
+
         this.access.execute((level, blockPos) -> {
             RegistryAccess registryAccess = level.registryAccess();
             boolean changed = false;
@@ -108,5 +120,42 @@ public abstract class FilterEnchantingTableEnchs
                 ((AbstractContainerMenu) (Object) this).broadcastChanges();
             }
         });
+    }
+
+    @Inject(method = "clickMenuButton", at = @At("HEAD"), cancellable = true)
+    private void mainmod$blockLockedItemEnchanting(Player player, int option, CallbackInfoReturnable<Boolean> cir)
+    {
+        if (EnchantmentLock.isLocked(this.enchantSlots.getItem(0))) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(method = "clickMenuButton", at = @At("RETURN"))
+    private void mainmod$lockEnchantmentsAfterEnchanting(Player player, int option, CallbackInfoReturnable<Boolean> cir)
+    {
+        if (!cir.getReturnValue()) {
+            return;
+        }
+
+        ItemStack enchantedStack = this.enchantSlots.getItem(0);
+        if (!enchantedStack.isEmpty() && EnchantmentHelper.hasAnyEnchantments(enchantedStack)) {
+            EnchantmentLock.lock(enchantedStack);
+            this.enchantSlots.setChanged();
+        }
+    }
+
+    private boolean clearEnchantingOptions() {
+        boolean changed = false;
+
+        for (int option = 0; option < 3; option++) {
+            if (this.costs[option] != 0 || this.enchantClue[option] != -1 || this.levelClue[option] != -1) {
+                this.costs[option] = 0;
+                this.enchantClue[option] = -1;
+                this.levelClue[option] = -1;
+                changed = true;
+            }
+        }
+
+        return changed;
     }
 }

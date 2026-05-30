@@ -1,13 +1,9 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.utils;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -15,14 +11,11 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class Utils
 {
@@ -78,34 +71,11 @@ public class Utils
         return stack;
     }
 
-    // Curse selection
+    // Randomness
 
-    public static Optional<Holder<Enchantment>> getRandomValidCurse(ItemStack stack, ServerLevel level) {
-        return getRandomValidCurse(stack, level.registryAccess(), level.getRandom());
-    }
-
-    public static Optional<Holder<Enchantment>> getRandomValidCurse(ItemStack stack, HolderLookup.Provider registries, RandomSource random) {
-        return registries.lookupOrThrow(Registries.ENCHANTMENT)
-                .get(EnchantmentTags.CURSE)
-                .map(curseSet -> curseSet.stream()
-                        .filter(curse -> isValidCurse(stack, curse))
-                        .toList())
-                .filter(validCurses -> !validCurses.isEmpty())
-                .map(validCurses -> validCurses.get(random.nextInt(validCurses.size())));
-    }
-
-    private static boolean isValidCurse(ItemStack stack, Holder<Enchantment> curse) {
-        ItemEnchantments enchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
-
-        if (enchantments.getLevel(curse) > 0) {
-            return false;
-        }
-
-        if (!stack.is(Items.BOOK) && !stack.is(Items.ENCHANTED_BOOK) && !curse.value().isSupportedItem(stack)) {
-            return false;
-        }
-
-        return EnchantmentHelper.isEnchantmentCompatible(enchantments.keySet(), curse);
+    public static RandomSource randomFromString(String seed) {
+        UUID uuid = UUID.nameUUIDFromBytes(seed.getBytes(StandardCharsets.UTF_8));
+        return RandomSource.create(uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits());
     }
 
     // Color conversion

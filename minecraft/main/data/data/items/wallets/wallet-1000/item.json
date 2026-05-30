@@ -1,0 +1,9 @@
+{
+	"title": "Wallet",
+	"id": "wallet-1000",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+	]
+}

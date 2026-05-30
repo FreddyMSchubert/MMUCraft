@@ -1,0 +1,8 @@
+{
+	"title": "Three Leaf Clover",
+	"id": "3-leaf-clover",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": []
+}

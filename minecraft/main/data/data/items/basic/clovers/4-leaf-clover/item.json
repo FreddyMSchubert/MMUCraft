@@ -1,0 +1,8 @@
+{
+	"title": "Four Leaf Clover",
+	"id": "4-leaf-clover",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 16,
+	"tooltips": []
+}

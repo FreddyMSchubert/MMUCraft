@@ -1,0 +1,10 @@
+{
+	"title": "Trident Shaft",
+	"id": "trident-shaft",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": [
+		"The haft of a trident"
+	]
+}

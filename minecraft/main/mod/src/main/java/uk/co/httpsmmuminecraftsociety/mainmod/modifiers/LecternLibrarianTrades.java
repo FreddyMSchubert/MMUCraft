@@ -6,6 +6,8 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.DataComponentExactPredicate;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
@@ -19,8 +21,12 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettings;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.CurseUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 public final class LecternLibrarianTrades {
@@ -36,7 +42,7 @@ public final class LecternLibrarianTrades {
         offers.removeIf(LecternLibrarianTrades::isEnchantedBookOffer);
 
         getJobSiteEnchantedBook(villager, level)
-                .flatMap(book -> createCopyOffer(book, level))
+                .flatMap(book -> createCopyOffer(book, level, villager.getUUID().toString()))
                 .ifPresent(offer -> offers.add(0, offer));
     }
 
@@ -62,24 +68,30 @@ public final class LecternLibrarianTrades {
         return Optional.of(book.copyWithCount(1));
     }
 
-    private static Optional<MerchantOffer> createCopyOffer(ItemStack sourceBook, ServerLevel level) {
+    private static Optional<MerchantOffer> createCopyOffer(ItemStack sourceBook, ServerLevel level, String villagerSeed) {
         ItemEnchantments enchantments = sourceBook.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         if (enchantments.isEmpty()) {
             return Optional.empty();
         }
 
-        TradeCosts costs = calculateCosts(enchantments);
-        if (costs == null) {
-            return Optional.empty();
-        }
+        long nonCurseEnchantmentCount = enchantments.keySet().stream()
+                .filter(enchantment -> !enchantment.is(EnchantmentTags.CURSE))
+                .count();
+        boolean hasCurse = enchantments.keySet().stream()
+                .anyMatch(enchantment -> enchantment.is(EnchantmentTags.CURSE));
+
+        TradeCosts costs = calculateCosts(enchantments, nonCurseEnchantmentCount, villagerSeed + ":dupe_item");
 
         ItemStack result = sourceBook.copyWithCount(1);
-        if (enchantments.size() > 1)
-            addRandomCurse(result, level);
+        if (nonCurseEnchantmentCount > 1 && !hasCurse) {
+            addRandomCurse(result, level, villagerSeed + ":curse");
+        }
 
         return Optional.of(new MerchantOffer(
                 currencyCost(costs.emeraldCost()),
-                Optional.of(itemCost(costs.dupeItem())),
+                costs.dupeItem().isEmpty()
+                        ? Optional.empty()
+                        : Optional.of(itemCost(costs.dupeItem())),
                 result,
                 0,
                 999999,
@@ -88,31 +100,53 @@ public final class LecternLibrarianTrades {
         ));
     }
 
-    private static TradeCosts calculateCosts(ItemEnchantments enchantments) {
+    private static TradeCosts calculateCosts(ItemEnchantments enchantments, long nonCurseEnchantmentCount, String dupeItemSeed) {
         int emeraldCost = 0;
-        ItemStack dupeItem = ItemStack.EMPTY;
+        int totalEnchantmentLevels = 0;
+        List<DupeItemCandidate> dupeItemCandidates = new ArrayList<>();
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
             Holder<Enchantment> enchantment = entry.getKey();
             int level = entry.getIntValue();
 
             Optional<EnchantmentSettings> settings = EnchantmentSettingsManager.getSettingsForEnch(enchantment);
+            emeraldCost += enchantment.value().getAnvilCost() * level;
+            totalEnchantmentLevels += level;
+
             if (settings.isEmpty() || !settings.get().hasDupeItem()) {
-                return null;
+                continue;
             }
 
-            emeraldCost += enchantment.value().getAnvilCost() * level;
             ItemStack ingredient = settings.get().createDupeItemStack(level);
+            int matchingIndex = -1;
+            for (int i = 0; i < dupeItemCandidates.size(); i++) {
+                if (ItemStack.isSameItemSameComponents(dupeItemCandidates.get(i).stack(), ingredient)) {
+                    matchingIndex = i;
+                    break;
+                }
+            }
 
-            if (dupeItem.isEmpty()) {
-                dupeItem = ingredient;
-            } else if (ItemStack.isSameItemSameComponents(dupeItem, ingredient)) {
-                dupeItem.grow(ingredient.getCount());
+            if (matchingIndex == -1) {
+                dupeItemCandidates.add(new DupeItemCandidate(ingredient, level));
+            } else {
+                DupeItemCandidate candidate = dupeItemCandidates.get(matchingIndex);
+                candidate.stack().grow(ingredient.getCount());
+                dupeItemCandidates.set(matchingIndex, new DupeItemCandidate(candidate.stack(), candidate.enchantmentLevels() + level));
             }
         }
 
-        if (enchantments.size() > 1) {
+        if (nonCurseEnchantmentCount > 1) {
             emeraldCost *= 2;
+        }
+
+        ItemStack dupeItem = ItemStack.EMPTY;
+        if (!dupeItemCandidates.isEmpty()) {
+            dupeItemCandidates.sort(Comparator.comparing(candidate -> candidate.stack().typeHolder().getRegisteredName() + candidate.stack().getComponentsPatch()));
+            RandomSource random = Utils.randomFromString(dupeItemSeed);
+            DupeItemCandidate candidate = dupeItemCandidates.get(random.nextInt(dupeItemCandidates.size()));
+            dupeItem = candidate.stack().copy();
+            int count = candidate.stack().getCount() + totalEnchantmentLevels - candidate.enchantmentLevels();
+            dupeItem.setCount(Math.min(count, dupeItem.getMaxStackSize()));
         }
 
         return new TradeCosts(Math.max(1, emeraldCost), dupeItem);
@@ -139,14 +173,15 @@ public final class LecternLibrarianTrades {
         );
     }
 
-    private static void addRandomCurse(ItemStack book, ServerLevel level) {
+    private static void addRandomCurse(ItemStack book, ServerLevel level, String curseSeed) {
         ItemEnchantments enchantments = book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(enchantments);
-        Utils.getRandomValidCurse(book, level).ifPresent(curse -> {
+        CurseUtils.getRandomValidCurse(book, level, curseSeed).ifPresent(curse -> {
             mutable.set(curse, 1);
             book.set(DataComponents.STORED_ENCHANTMENTS, mutable.toImmutable());
         });
     }
 
     private record TradeCosts(int emeraldCost, ItemStack dupeItem) {}
+    private record DupeItemCandidate(ItemStack stack, int enchantmentLevels) {}
 }

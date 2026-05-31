@@ -168,25 +168,50 @@ function createCharmEquipmentDefinition(
   };
 }
 
-function vanillaArmorTexturePath(
-  vanillaArmorAssetsDir: string,
+function armorTexturePath(
+  options: GeneratorOptions,
   layerType: EquipmentLayerType,
   assetName: string,
 ): string {
-  return path.join(vanillaArmorAssetsDir, layerType, `${assetName}.png`);
+  if (assetName === 'enderite') {
+    return path.join(
+      path.dirname(options.vanillaArmorAssetsDir),
+      '..',
+      'packs',
+      'general-pack',
+      'assets',
+      options.namespace,
+      'textures',
+      'entity',
+      'equipment',
+      layerType,
+      'enderite.png',
+    );
+  }
+
+  return path.join(options.vanillaArmorAssetsDir, layerType, `${assetName}.png`);
 }
 
-async function requireVanillaArmorTexture(
-  vanillaArmorAssetsDir: string,
+async function requireArmorTexture(
+  options: GeneratorOptions,
   layerType: EquipmentLayerType,
   assetName: string,
 ): Promise<string> {
-  const texturePath = vanillaArmorTexturePath(vanillaArmorAssetsDir, layerType, assetName);
+  const texturePath = armorTexturePath(options, layerType, assetName);
   if (!(await pathExists(texturePath))) {
-    throw new Error(`Missing vanilla armor texture: ${texturePath}`);
+    throw new Error(`Missing armor texture: ${texturePath}`);
   }
 
   return texturePath;
+}
+
+async function findArmorTexture(
+  options: GeneratorOptions,
+  layerType: EquipmentLayerType,
+  assetName: string,
+): Promise<string | undefined> {
+  const texturePath = armorTexturePath(options, layerType, assetName);
+  return (await pathExists(texturePath)) ? texturePath : undefined;
 }
 
 async function generateBasicItem(
@@ -281,7 +306,7 @@ async function generateCharmEquipmentVariants(
   item: CharmItemDefinition,
   context: GenerationContext,
 ): Promise<void> {
-  const { outputDir, namespace, vanillaArmorAssetsDir } = context.options;
+  const { outputDir, namespace } = context.options;
   const layerType = getCharmLayerType(item);
 
   const charmAssetId = item.equippableAssetId;
@@ -306,13 +331,13 @@ async function generateCharmEquipmentVariants(
     await writeJson(equipmentJsonPath(outputDir, namespace, assetId), equipmentDefinition, context);
 
     if (material === 'leather') {
-      const leatherBasePath = await requireVanillaArmorTexture(
-        vanillaArmorAssetsDir,
+      const leatherBasePath = await requireArmorTexture(
+        context.options,
         layerType,
         'leather',
       );
-      const leatherOverlayPath = await requireVanillaArmorTexture(
-        vanillaArmorAssetsDir,
+      const leatherOverlayPath = await requireArmorTexture(
+        context.options,
         layerType,
         'leather_overlay',
       );
@@ -347,11 +372,13 @@ async function generateCharmEquipmentVariants(
       continue;
     }
 
-    const vanillaBasePath = await requireVanillaArmorTexture(
-      vanillaArmorAssetsDir,
-      layerType,
-      material,
-    );
+    const armorBasePath = material === 'enderite'
+      ? await findArmorTexture(context.options, layerType, material)
+      : await requireArmorTexture(context.options, layerType, material);
+    if (!armorBasePath) {
+      continue;
+    }
+
     const generatedTexturePath = equipmentTexturePngPath(
       outputDir,
       namespace,
@@ -361,7 +388,7 @@ async function generateCharmEquipmentVariants(
 
     await ensureDirectory(path.dirname(generatedTexturePath));
     await writeCompositedArmorTexture({
-      basePngPath: vanillaBasePath,
+      basePngPath: armorBasePath,
       overlayPngPath: item.equippablePngPath,
       destinationPngPath: generatedTexturePath,
     });

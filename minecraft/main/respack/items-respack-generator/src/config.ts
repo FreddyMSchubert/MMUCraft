@@ -23,6 +23,7 @@ export const CHARM_ARMOR_MATERIALS: readonly ArmorMaterial[] = [
   'gold',
   'diamond',
   'netherite',
+  'enderite',
   'copper',
 ] as const;
 

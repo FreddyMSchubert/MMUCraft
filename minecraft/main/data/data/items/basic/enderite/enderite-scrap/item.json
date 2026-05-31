@@ -1,0 +1,8 @@
+{
+	"title": "Enderite Scrap",
+	"id": "enderite-scrap",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": []
+}

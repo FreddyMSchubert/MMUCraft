@@ -60,6 +60,7 @@ export type ArmorMaterial =
 	| 'gold'
 	| 'diamond'
 	| 'netherite'
+	| 'enderite'
 	| 'copper';
 
 export interface GeneratorOptions {

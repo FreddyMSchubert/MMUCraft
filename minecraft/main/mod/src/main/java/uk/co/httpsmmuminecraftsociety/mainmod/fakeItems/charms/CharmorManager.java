@@ -10,6 +10,7 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.equipment.Equippable;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.enderite.EnderiteGearVisuals;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
@@ -23,6 +24,7 @@ import java.util.List;
 public class CharmorManager
 {
     public static final String TOOLTIP_INITIALLY_POPULATED_BOOL = "tooltip_initially_populated";
+    public static final String ENDERITE_MARKER_BOOL = "is_enderite";
 
     public static int calcCharmSlotCount(ItemStack stack) {
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return 0;
@@ -45,7 +47,12 @@ public class CharmorManager
             armorTypeCharmSlots = 3;
         }
 
-        return 1 + (hasCharmBoost ? armorTypeCharmSlots : 0);
+        int slotCount = 1 + (hasCharmBoost ? armorTypeCharmSlots : 0);
+        if (isEnderite(stack)) {
+            slotCount += 2;
+        }
+
+        return slotCount;
     }
     public static boolean canEquipMoreCharms(ItemStack stack) {
         return getStoredArmorCharms(stack).size() < calcCharmSlotCount(stack);
@@ -99,7 +106,13 @@ public class CharmorManager
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return;
 
         List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
-        if (storedCharms.isEmpty()) return;
+        if (isEnderite(stack)) {
+            EnderiteGearVisuals.apply(stack);
+        }
+
+        if (storedCharms.isEmpty()) {
+            return;
+        }
 
         StoredCharmData renderedCharm = storedCharms.getFirst();
         FakeItem renderedCharmItem = FakeItems.CHARM_ID_MAP.get(renderedCharm.charmId());
@@ -140,7 +153,13 @@ public class CharmorManager
         return charmFeature.getDisplayTitle(storedCharm.level());
     }
 
+    public static boolean isEnderite(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        return tag.getBoolean(ENDERITE_MARKER_BOOL).orElse(false);
+    }
+
     private static String getArmorMaterialType(ItemStack stack) {
+        if (isEnderite(stack)) return "enderite";
         if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND)) return "diamond";
         if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE)) return "netherite";
         if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_IRON)) return "iron";

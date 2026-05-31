@@ -21,6 +21,8 @@ public class EnchantmentSettings
     public ResourceKey<Enchantment> enchantment;
 
     public int maxEnchantingTableLevel = -1;
+    public int maxNormalGearLevel = -1;
+    public int maxEnderiteLevel = -1;
 
     public List<Identifier> foundInLoottables = new ArrayList<>();
     public Rarity loottableRarity = Rarity.COMMON;
@@ -35,8 +37,10 @@ public class EnchantmentSettings
         this.enchantment = enchantment;
     }
 
-    public EnchantmentSettings maxEnchTableLvl(int level) {
-        this.maxEnchantingTableLevel = level;
+    public EnchantmentSettings maxLevels(int maxEnchantingTableLevel, int maxNormalGearLevel, int maxEnderiteLevel) {
+        this.maxEnchantingTableLevel = maxEnchantingTableLevel;
+        this.maxNormalGearLevel = maxNormalGearLevel;
+        this.maxEnderiteLevel = maxEnderiteLevel;
         return this;
     }
 

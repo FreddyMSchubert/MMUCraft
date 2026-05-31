@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.EnchantmentLock;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -70,6 +71,39 @@ public abstract class FilterEnchantingTableEnchs
             Stream<Holder<Enchantment>> possibleEnchantments
     ) {
         return possibleEnchantments.filter(EnchantmentSettingsManager::isAllowedFromEnchantingTable);
+    }
+
+    @Inject(
+            method = "getEnchantmentList(Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/world/item/ItemStack;II)Ljava/util/List;",
+            at = @At("RETURN"),
+            cancellable = true
+    )
+    private void mainmod$capEnchantingTableLevels(
+            RegistryAccess registryAccess,
+            ItemStack stack,
+            int slot,
+            int level,
+            CallbackInfoReturnable<List<EnchantmentInstance>> cir
+    ) {
+        List<EnchantmentInstance> original = cir.getReturnValue();
+        if (original.isEmpty()) {
+            return;
+        }
+
+        List<EnchantmentInstance> capped = new ArrayList<>();
+        for (EnchantmentInstance instance : original) {
+            int maxLevel = EnchantmentSettingsManager.getMaxEnchantingTableLevel(instance.enchantment());
+            int cappedLevel = Math.min(instance.level(), maxLevel);
+            if (cappedLevel <= 0) {
+                continue;
+            }
+
+            capped.add(cappedLevel == instance.level()
+                    ? instance
+                    : new EnchantmentInstance(instance.enchantment(), cappedLevel));
+        }
+
+        cir.setReturnValue(capped);
     }
 
     @Inject(method = "slotsChanged", at = @At("TAIL"))

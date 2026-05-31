@@ -1,0 +1,8 @@
+{
+	"title": "Enderite Ingot",
+	"id": "enderite-ingot",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": []
+}

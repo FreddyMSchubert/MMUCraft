@@ -10,8 +10,11 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.EnchantmentLock;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class AnvilUtils
@@ -28,6 +31,7 @@ public class AnvilUtils
                 : EnchantmentHelper.getEnchantmentsForCrafting(result);
 
         ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(base);
+        boolean changed = normalizeEnchantmentLevels(result, mutable);
 
         ItemEnchantments leftEnchants = EnchantmentHelper.getEnchantmentsForCrafting(left);
         ItemEnchantments rightEnchants = EnchantmentHelper.getEnchantmentsForCrafting(right);
@@ -43,10 +47,11 @@ public class AnvilUtils
                 continue;
             }
 
-            mutable.set(ench, Math.min(level, ench.value().getMaxLevel()));
+            int cappedLevel = capAnvilLevel(ench, result, level);
+            if (cappedLevel > 0) {
+                mutable.set(ench, cappedLevel);
+            }
         }
-
-        boolean changed = false;
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : rightEnchants.entrySet()) {
             Holder<Enchantment> ench = entry.getKey();
@@ -64,9 +69,12 @@ public class AnvilUtils
                 }
             }
 
-            int newLevel = Math.min(value.getMaxLevel(), leftLevel + rightLevel);
+            int newLevel = capAnvilLevel(ench, result, leftLevel + rightLevel);
             if (newLevel > leftLevel) {
                 mutable.set(ench, newLevel);
+                changed = true;
+            } else if (leftLevel > 0 && newLevel <= 0) {
+                mutable.removeIf(existing -> existing.equals(ench));
                 changed = true;
             }
         }
@@ -80,6 +88,33 @@ public class AnvilUtils
 
         int cost = totalChangedEnchantCost(leftEnchants, rightEnchants, merged);
         return new MergeInfo(cost, changed);
+    }
+
+    private static int capAnvilLevel(Holder<Enchantment> enchantment, ItemStack stack, int level) {
+        return Math.min(level, EnchantmentSettingsManager.getMaxAnvilLevel(enchantment, stack));
+    }
+
+    private static boolean normalizeEnchantmentLevels(ItemStack stack, ItemEnchantments.Mutable mutable) {
+        boolean changed = false;
+        List<Holder<Enchantment>> enchantments = new ArrayList<>(mutable.keySet());
+
+        for (Holder<Enchantment> enchantment : enchantments) {
+            int currentLevel = mutable.getLevel(enchantment);
+            int cappedLevel = capAnvilLevel(enchantment, stack, currentLevel);
+
+            if (cappedLevel <= 0) {
+                mutable.removeIf(existing -> existing.equals(enchantment));
+                changed = true;
+                continue;
+            }
+
+            if (cappedLevel < currentLevel) {
+                mutable.set(enchantment, cappedLevel);
+                changed = true;
+            }
+        }
+
+        return changed;
     }
 
     private static int totalChangedEnchantCost(ItemEnchantments leftEnchants, ItemEnchantments rightEnchants, ItemEnchantments resultEnchants) {

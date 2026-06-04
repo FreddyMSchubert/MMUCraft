@@ -7,5 +7,11 @@
 	"tooltips": [
 		""
 	],
+	"shopPurchasable": {
+		"priceDabloons": 45,
+		"description": "A wardrobe cosmetic unlock for Fez.",
+		"unlockPriority": 3,
+		"unlockMessage": "Unlocked cosmetic: Fez."
+	},
 	"equippableCosmetic": {}
 }

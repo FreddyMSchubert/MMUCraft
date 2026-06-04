@@ -1,0 +1,11 @@
+{
+	"title": "Sombrerónn",
+	"id": "cosmetic-sombreronn",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Nevermind, this may be too big O.o"
+	],
+	"equippableCosmetic": {}
+}

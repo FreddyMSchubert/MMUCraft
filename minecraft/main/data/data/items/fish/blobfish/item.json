@@ -3,7 +3,7 @@
 	"id": "fish-blobfish",
 	"modelType": "basic",
 	"rarity": "uncommon",
-	"maxStackSize": 1,
+	"maxStackSize": 64,
 	"tooltips": [],
 	"fish": {
 		"shape": "fish_shadow_weird",

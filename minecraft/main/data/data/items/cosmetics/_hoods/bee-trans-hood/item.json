@@ -1,0 +1,9 @@
+{
+	"title": "Trans Bee hood",
+	"id": "cosmetic-hood-bee-trans",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

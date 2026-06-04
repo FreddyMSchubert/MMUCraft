@@ -6,7 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 190,
+		"priceDabloons": 1000000,
 		"description": "A wardrobe cosmetic unlock for Ornate Crown.",
 		"unlockPriority": 3,
 		"unlockMessage": "Unlocked cosmetic: Ornate Crown."

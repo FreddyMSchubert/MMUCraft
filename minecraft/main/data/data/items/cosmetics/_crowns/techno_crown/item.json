@@ -9,7 +9,7 @@
 		"No, that's a legend."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 115,
+		"priceDabloons": 10000,
 		"description": "Woah, is he some kind of king? No, that's a legend.",
 		"unlockPriority": 2,
 		"unlockMessage": "Unlocked cosmetic: Techno Crown."

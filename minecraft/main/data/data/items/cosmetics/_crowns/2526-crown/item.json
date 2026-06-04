@@ -5,11 +5,5 @@
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": [],
-	"shopPurchasable": {
-		"priceDabloons": 190,
-		"description": "A wardrobe cosmetic unlock for 25-26 Committee Crown.",
-		"unlockPriority": 3,
-		"unlockMessage": "Unlocked cosmetic: 25-26 Committee Crown."
-	},
 	"equippableCosmetic": {}
 }

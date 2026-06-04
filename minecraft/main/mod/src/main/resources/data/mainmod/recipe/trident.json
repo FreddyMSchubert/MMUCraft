@@ -10,7 +10,7 @@
     "P": "mainmod:trident-prong"
   },
   "result": {
-    "stack": "mainmod:beer",
+    "stack": "minecraft:trident",
     "count": 1
   }
 }

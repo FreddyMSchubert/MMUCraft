@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { MinecraftModelRenderer } from '@/lib/minecraft-model-renderer'
 
 type ShopItemType = 'charm' | 'cosmetic' | 'generic'
 type ShopOrder = 'random' | 'price-desc' | 'price-asc'
@@ -9,11 +10,22 @@ interface ShopItem {
 	id: string
 	title: string
 	type: ShopItemType
+	modelType: string
 	rarity: string
 	priceDabloons: number
 	description: string
+	unlockMessage: string | null
 	unlockPriority: number
 	iconUrl: string | null
+	renderMode: 'texture' | 'model'
+	modelUrl: string | null
+	textureUrl: string | null
+	animated: boolean
+	dyeable: boolean
+	animation: {
+		frameDelayMs: number
+		frames: number[] | null
+	} | null
 	owned: boolean
 	available: boolean
 }
@@ -59,6 +71,7 @@ export function ShopTab() {
 	const [order, setOrder] = useState<ShopOrder>('random')
 	const [randomSeed, setRandomSeed] = useState(() => Math.random().toString(36))
 	const [buyingItemId, setBuyingItemId] = useState<string | null>(null)
+	const [hoveredItemId, setHoveredItemId] = useState<string | null>(null)
 
 	const load = useCallback(async () => {
 		const response = await fetch('/api/shop', {
@@ -222,14 +235,15 @@ export function ShopTab() {
 						].filter(Boolean).join(' ')}
 						disabled={item.owned || !item.available || buyingItemId !== null}
 						onClick={() => void buy(item)}
+						onFocus={() => setHoveredItemId(item.id)}
+						onBlur={() => setHoveredItemId((current) => current === item.id ? null : current)}
+						onPointerEnter={() => setHoveredItemId(item.id)}
+						onPointerLeave={() => setHoveredItemId((current) => current === item.id ? null : current)}
 						aria-label={`Buy ${item.title}`}
 					>
 						<div className="shopImageFrame" aria-hidden="true">
-							{item.iconUrl ? (
-								<img src={item.iconUrl} alt="" className="shopItemIcon" />
-							) : (
-								<div className="shopItemEmpty" />
-							)}
+							<ShopPreview item={item} hovered={hoveredItemId === item.id} />
+							<ShopMetaIcons item={item} />
 						</div>
 
 						<div className="shopCardBody">
@@ -252,6 +266,122 @@ export function ShopTab() {
 
 			{visibleItems.length === 0 && (
 				<p className="shopEmptyState">No items match those filters.</p>
+			)}
+		</div>
+	)
+}
+
+function ShopPreview({ item, hovered }: { item: ShopItem; hovered: boolean }) {
+	if (item.renderMode === 'model' && item.modelUrl && item.textureUrl) {
+		return <ShopModelPreview item={item} hovered={hovered} />
+	}
+
+	if (item.iconUrl) {
+		return <img src={item.iconUrl} alt="" className="shopItemIcon" />
+	}
+
+	return <div className="shopItemEmpty" />
+}
+
+function ShopModelPreview({ item, hovered }: { item: ShopItem; hovered: boolean }) {
+	const hostRef = useRef<HTMLDivElement | null>(null)
+	const rendererRef = useRef<MinecraftModelRenderer | null>(null)
+	const hoveredRef = useRef(hovered)
+	const [visible, setVisible] = useState(false)
+	const [failed, setFailed] = useState(false)
+
+	useEffect(() => {
+		const host = hostRef.current
+		if (!host) return
+
+		const observer = new IntersectionObserver(([entry]) => {
+			setVisible(Boolean(entry?.isIntersecting && entry.intersectionRatio > 0))
+		}, {
+			threshold: 0,
+		})
+		observer.observe(host)
+
+		return () => observer.disconnect()
+	}, [])
+
+	useEffect(() => {
+		hoveredRef.current = hovered
+		rendererRef.current?.setAutoRotate(hovered)
+	}, [hovered])
+
+	useEffect(() => {
+		const host = hostRef.current
+		if (!host || !visible || !item.modelUrl || !item.textureUrl) {
+			rendererRef.current?.destroy()
+			rendererRef.current = null
+			return
+		}
+		const hostElement = host
+
+		let cancelled = false
+		setFailed(false)
+
+		async function loadPreview() {
+			try {
+				const response = await fetch(item.modelUrl!, { cache: 'force-cache' })
+				if (!response.ok) throw new Error('Model failed to load')
+				const model = await response.json()
+				if (cancelled || !hostElement.isConnected) return
+
+				rendererRef.current?.destroy()
+				const renderer = new MinecraftModelRenderer(hostElement, {
+					autoRotate: hoveredRef.current,
+					dyeable: item.dyeable,
+					frameDelayMs: item.animation?.frameDelayMs,
+					frameSequence: item.animation?.frames ?? null,
+					textureSource: item.textureUrl!,
+					view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d',
+				})
+				rendererRef.current = renderer
+				await renderer.loadModel(model)
+			} catch {
+				if (!cancelled) {
+					setFailed(true)
+				}
+			}
+		}
+
+		void loadPreview()
+
+		return () => {
+			cancelled = true
+			rendererRef.current?.destroy()
+			rendererRef.current = null
+		}
+	}, [
+		item.animation?.frameDelayMs,
+		item.animation?.frames,
+		item.dyeable,
+		item.modelUrl,
+		item.textureUrl,
+		item.type,
+		visible,
+	])
+
+	if (failed && item.iconUrl) {
+		return <img src={item.iconUrl} alt="" className="shopItemIcon" />
+	}
+
+	return <div ref={hostRef} className="shopModelHost" />
+}
+
+function ShopMetaIcons({ item }: { item: ShopItem }) {
+	if (!item.animated && !item.dyeable) {
+		return null
+	}
+
+	return (
+		<div className="shopMetaIcons">
+			{item.animated && (
+				<span className="shopMetaIcon shopMetaIcon-animated" title="Animated texture" aria-label="Animated texture" />
+			)}
+			{item.dyeable && (
+				<span className="shopMetaIcon shopMetaIcon-dyeable" title="Dyeable" aria-label="Dyeable" />
 			)}
 		</div>
 	)

@@ -10,7 +10,8 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Blessed be the pacemakers Grants you 1 extra heart while equipped.",
-		"unlockPriority": 0
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Heart of Gold Charm."
 	},
 	"charm": {
 		"charmId": 3,

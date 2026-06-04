@@ -8,7 +8,8 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A wardrobe cosmetic unlock for Slime head.",
-		"unlockPriority": 0
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked cosmetic: Slime head."
 	},
 	"equippableCosmetic": {}
 }

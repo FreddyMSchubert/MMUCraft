@@ -10,7 +10,8 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Light on your feet. Gives you permanent night vision.",
-		"unlockPriority": 0
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Candle of the Deep Charm."
 	},
 	"charm": {
 		"charmId": 8,

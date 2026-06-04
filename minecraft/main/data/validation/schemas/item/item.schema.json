@@ -64,6 +64,10 @@
 					"type": "string",
 					"minLength": 1
 				},
+				"unlockMessage": {
+					"type": "string",
+					"minLength": 1
+				},
 				"unlockPriority": {
 					"type": "integer",
 					"minimum": 0

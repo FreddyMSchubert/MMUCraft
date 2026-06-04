@@ -15,6 +15,8 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
@@ -37,7 +39,21 @@ public final class GameplayGrpcService extends GrpcHandler {
             String minecraftUsername,
             String sourceItemId
     ) {
-        return INSTANCE.unlockNextKnowledgeInternal(minecraftUsername, sourceItemId);
+        return INSTANCE.unlockNextInternal(minecraftUsername, sourceItemId, "knowledge");
+    }
+
+    public static CompletableFuture<UnlockNextKnowledgeResponse> unlockNext(
+            String minecraftUsername,
+            String sourceItemId,
+            String unlockType
+    ) {
+        return INSTANCE.unlockNextInternal(minecraftUsername, sourceItemId, unlockType);
+    }
+
+    public static CompletableFuture<GetUnlockAvailabilityResponse> getUnlockAvailability(
+            String minecraftUsername
+    ) {
+        return INSTANCE.getUnlockAvailabilityInternal(minecraftUsername);
     }
 
     @Override
@@ -55,9 +71,10 @@ public final class GameplayGrpcService extends GrpcHandler {
         gameplayEvents = null;
     }
 
-    private CompletableFuture<UnlockNextKnowledgeResponse> unlockNextKnowledgeInternal(
+    private CompletableFuture<UnlockNextKnowledgeResponse> unlockNextInternal(
             String minecraftUsername,
-            String sourceItemId
+            String sourceItemId,
+            String unlockType
     ) {
         GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
 
@@ -70,11 +87,42 @@ public final class GameplayGrpcService extends GrpcHandler {
         UnlockNextKnowledgeRequest request = UnlockNextKnowledgeRequest.newBuilder()
                 .setMinecraftUsername(minecraftUsername)
                 .setSourceItemId(sourceItemId)
+                .setUnlockType(unlockType)
                 .setUnixMs(System.currentTimeMillis())
                 .build();
 
         var rpc = client.unlockNextKnowledge(request);
         CompletableFuture<UnlockNextKnowledgeResponse> result = new CompletableFuture<>();
+
+        rpc.addListener(() -> {
+            try {
+                result.complete(rpc.get());
+            } catch (Exception exception) {
+                result.completeExceptionally(exception);
+            }
+        }, Runnable::run);
+
+        return result;
+    }
+
+    private CompletableFuture<GetUnlockAvailabilityResponse> getUnlockAvailabilityInternal(
+            String minecraftUsername
+    ) {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+
+        if (client == null) {
+            return CompletableFuture.failedFuture(
+                    new IllegalStateException("GameplayEvents gRPC client is not initialized")
+            );
+        }
+
+        GetUnlockAvailabilityRequest request = GetUnlockAvailabilityRequest.newBuilder()
+                .setMinecraftUsername(minecraftUsername)
+                .setUnixMs(System.currentTimeMillis())
+                .build();
+
+        var rpc = client.getUnlockAvailability(request);
+        CompletableFuture<GetUnlockAvailabilityResponse> result = new CompletableFuture<>();
 
         rpc.addListener(() -> {
             try {
@@ -298,6 +346,99 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
     }
 
+    private PurchaseShopItemResponse purchaseShopItemOnMainThread(PurchaseShopItemRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) {
+            throw new IllegalStateException("Minecraft server is not available");
+        }
+
+        String username = request.getMinecraftUsername();
+        ServerPlayer player = server.getPlayerList().getPlayerByName(username);
+        if (player == null || player.hasDisconnected()) {
+            return PurchaseShopItemResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(false)
+                    .setBalanceDabloons(0)
+                    .setMessage("You have to be online on the server to buy from the shop.")
+                    .build();
+        }
+
+        int price = Math.max(0, request.getPriceDabloons());
+        int balance = MoneyHelper.GetBalance(player);
+        if (balance < price) {
+            return PurchaseShopItemResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(true)
+                    .setBalanceDabloons(balance)
+                    .setMessage("You need " + price + " dabloons, but only have " + balance + ".")
+                    .build();
+        }
+
+        ItemStack grantStack = createShopGrantStack(request);
+        if (grantStack == null) {
+            return PurchaseShopItemResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(true)
+                    .setBalanceDabloons(balance)
+                    .setMessage("That shop item is not available on the server.")
+                    .build();
+        }
+
+        if (!MoneyHelper.ReduceMoney(player, price)) {
+            return PurchaseShopItemResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(true)
+                    .setBalanceDabloons(MoneyHelper.GetBalance(player))
+                    .setMessage("Could not take the dabloons for this purchase.")
+                    .build();
+        }
+
+        if (!grantStack.isEmpty()) {
+            player.getInventory().add(grantStack);
+            if (!grantStack.isEmpty()) {
+                player.drop(grantStack, false);
+            }
+            player.getInventory().setChanged();
+            player.containerMenu.broadcastChanges();
+        }
+
+        int remaining = MoneyHelper.GetBalance(player);
+        return PurchaseShopItemResponse.newBuilder()
+                .setPurchased(true)
+                .setOnline(true)
+                .setBalanceDabloons(remaining)
+                .setMessage("Purchased " + request.getItemId() + " for " + price + " dabloons.")
+                .build();
+    }
+
+    private ItemStack createShopGrantStack(PurchaseShopItemRequest request) {
+        String deliveryKind = request.getDeliveryKind();
+        String itemId = request.getItemId();
+
+        if ("unlock".equals(deliveryKind)) {
+            return ItemStack.EMPTY;
+        }
+
+        if ("fake_item".equals(deliveryKind)) {
+            if (!FakeItems.isKnownFakeItem(itemId)) {
+                return null;
+            }
+
+            return FakeItems.createFakeItemStack(itemId, 1);
+        }
+
+        if ("vanilla_item".equals(deliveryKind)) {
+            Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(itemId));
+            if (item == Items.AIR && !"minecraft:air".equals(itemId)) {
+                return null;
+            }
+
+            return new ItemStack(item, 1);
+        }
+
+        return null;
+    }
+
     private int countItem(ServerPlayer player, Item item) {
         int count = 0;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
@@ -365,6 +506,15 @@ public final class GameplayGrpcService extends GrpcHandler {
                 StreamObserver<ClaimDailyAdvancementResponse> responseObserver
         ) {
             callOnMainThread(() -> claimDailyAdvancementOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void purchaseShopItem(
+                PurchaseShopItemRequest request,
+                StreamObserver<PurchaseShopItemResponse> responseObserver
+        ) {
+            callOnMainThread(() -> purchaseShopItemOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

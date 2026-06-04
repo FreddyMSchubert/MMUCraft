@@ -8,11 +8,16 @@
 		"These boots are made for walkin'",
 		"Grants the user the lost power of the ancient giants."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "These boots are made for walkin' Grants the user the lost power of the ancient giants. Grants the power of the ancient giants while equipped.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Giants Boots Charm."
+	},
 	"charm": {
 		"charmId": 12,
 		"minLevel": 1,
 		"maxLevel": 1,
-		
 		"levels": [
 			{
 				"level": 1,

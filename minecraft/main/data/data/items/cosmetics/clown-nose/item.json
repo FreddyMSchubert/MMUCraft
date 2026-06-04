@@ -7,5 +7,11 @@
 	"tooltips": [
 		"Very serious headgear."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "Very serious headgear.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked cosmetic: Clown Nose."
+	},
 	"equippableCosmetic": {}
 }

@@ -1,0 +1,19 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "DTD",
+    "DED",
+    "BNB"
+  ],
+  "key": {
+    "T": "mainmod:enderite-upgrade-smithing-template",
+    "E": "minecraft:end_stone",
+    "N": "minecraft:netherite_ingot",
+    "B": "minecraft:diamond_block",
+    "D": "minecraft:diamond"
+  },
+  "result": {
+    "stack": "mainmod:enderite-upgrade-smithing-templat",
+    "count": 2
+  }
+}

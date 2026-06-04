@@ -91,7 +91,7 @@ public class AnvilUtils
     }
 
     private static int capAnvilLevel(Holder<Enchantment> enchantment, ItemStack stack, int level) {
-        return Math.min(level, EnchantmentSettingsManager.getMaxAnvilLevel(enchantment, stack));
+        return Math.min(level, EnchantmentSettingsManager.getMaxAnvilLevel(enchantment));
     }
 
     private static boolean normalizeEnchantmentLevels(ItemStack stack, ItemEnchantments.Mutable mutable) {

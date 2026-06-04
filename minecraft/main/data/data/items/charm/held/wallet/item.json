@@ -6,6 +6,11 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 25,
+		"description": "Stores and compresses dabloons by crafting coins into it.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 30,
 		"minLevel": 1,

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minecraft Model Renderer Demo</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="panel controls">
+        <div class="panel__section">
+          <h1>Minecraft model renderer</h1>
+          <p>
+            Loads Java-style Minecraft model JSON with explicit elements, tinting, texture-frame animation,
+            zero-thickness planes, display transforms, and modern multi-axis element rotations.
+          </p>
+        </div>
+
+        <div class="panel__section">
+          <label class="field">
+            <span>Model JSON</span>
+            <input id="model-file" type="file" accept="application/json,.json" />
+          </label>
+
+          <label class="field field--spaced">
+            <span>Single texture for the whole model</span>
+            <input id="texture-file" type="file" accept="image/png,image/webp,image/jpeg,image/gif,image/bmp" />
+          </label>
+
+          <div class="button-row">
+            <button id="reset-demo" type="button">Reset demo</button>
+            <button id="export-png" type="button">Export PNG</button>
+          </div>
+        </div>
+
+        <div class="panel__section">
+          <label class="field">
+            <span>Display transform</span>
+            <select id="display-mode">
+              <option value="gui" selected>gui</option>
+              <option value="ground">ground</option>
+              <option value="fixed">fixed</option>
+              <option value="head">head</option>
+              <option value="firstperson_righthand">firstperson_righthand</option>
+              <option value="firstperson_lefthand">firstperson_lefthand</option>
+              <option value="thirdperson_righthand">thirdperson_righthand</option>
+              <option value="thirdperson_lefthand">thirdperson_lefthand</option>
+              <option value="on_shelf">on_shelf</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Hue slider for tintindex 0</span>
+            <input id="tint-hue" type="range" min="0" max="360" value="0" />
+          </label>
+
+          <div class="tint-row">
+            <span id="tint-swatch" class="tint-swatch" aria-hidden="true"></span>
+            <span class="tint-label">Current tint:</span>
+            <code id="tint-readout">255, 0, 0</code>
+          </div>
+
+          <label class="field">
+            <span>Animated texture frame delay</span>
+            <input id="frame-delay" type="range" min="50" max="1000" step="50" value="50" />
+          </label>
+
+          <div class="meta-row">
+            <span class="tint-label">Current delay:</span>
+            <code id="frame-delay-readout">50 ms</code>
+          </div>
+
+          <label class="checkbox-row">
+            <input id="auto-rotate" type="checkbox" checked />
+            <span>Auto-rotate the model forever</span>
+          </label>
+        </div>
+
+        <div class="panel__section">
+          <h2>Texture input</h2>
+          <p id="upload-hint" class="helper-text"></p>
+        </div>
+
+        <div class="panel__section panel__section--status">
+          <strong>Status</strong>
+          <div id="status" class="status" data-error="false">Booting renderer...</div>
+        </div>
+      </aside>
+
+      <main class="panel viewer-panel">
+        <div id="viewer" class="viewer"></div>
+      </main>
+    </div>
+
+    <script>
+      window.addEventListener('error', (event) => {
+        const status = document.querySelector('#status');
+        if (!status) return;
+        const message = event?.error?.message || event?.message || 'Renderer boot failed.';
+        status.textContent = message;
+        status.dataset.error = 'true';
+      });
+    </script>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

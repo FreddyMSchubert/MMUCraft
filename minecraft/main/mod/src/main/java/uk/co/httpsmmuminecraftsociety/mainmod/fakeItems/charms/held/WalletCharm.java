@@ -43,8 +43,14 @@ public class WalletCharm implements Charm
 
     public static void setBalance(ItemStack wallet, int balanceDiff, boolean diff) {
         CompoundTag nbt = wallet.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        nbt.putInt(BALANCE_ID, (diff ? nbt.getIntOr(BALANCE_ID, 0) : 0) + balanceDiff);
+        int newAmount = (diff ? nbt.getIntOr(BALANCE_ID, 0) : 0) + balanceDiff;
+        nbt.putInt(BALANCE_ID, newAmount);
         wallet.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
+
+        CustomModelData cmd = wallet.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        cmd.floats().set(0, (float)newAmount);
+        wallet.set(DataComponents.CUSTOM_MODEL_DATA, cmd);
+
         updateTooltip(wallet);
     }
     public static void addCoinToWallet(ItemStack wallet, ItemStack coin) {

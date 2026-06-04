@@ -5,6 +5,12 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Candle.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked cosmetic: Candle."
+	},
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#d8d29d"

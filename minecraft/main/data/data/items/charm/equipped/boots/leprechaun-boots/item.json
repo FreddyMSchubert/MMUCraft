@@ -4,12 +4,19 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["I'm feeling lucky."],
+	"tooltips": [
+		"I'm feeling lucky."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "I'm feeling lucky. Grants the luck of the leprechaun while equipped. Nothing else don't worry bout it.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Leprechaun Boots Charm."
+	},
 	"charm": {
 		"charmId": 13,
 		"minLevel": 1,
 		"maxLevel": 1,
-		
 		"levels": [
 			{
 				"level": 1,

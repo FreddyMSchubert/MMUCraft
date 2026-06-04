@@ -7,5 +7,11 @@
 	"tooltips": [
 		"Don't get too hot-headed!"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "Don't get too hot-headed!",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked cosmetic: Fire."
+	},
 	"equippableCosmetic": {}
 }

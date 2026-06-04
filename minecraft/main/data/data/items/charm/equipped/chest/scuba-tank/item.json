@@ -4,7 +4,15 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["Take it slow down there."],
+	"tooltips": [
+		"Take it slow down there."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Take it slow down there. Reduces air consumption to 80% while stationary underwater.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Scuba Tank Charm."
+	},
 	"charm": {
 		"charmId": 38,
 		"minLevel": 0,

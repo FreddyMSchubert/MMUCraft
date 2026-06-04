@@ -4,7 +4,15 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["Been there, run that."],
+	"tooltips": [
+		"Been there, run that."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Been there, run that. Builds up a small speed boost while sprinting.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Running Shoes Charm."
+	},
 	"charm": {
 		"charmId": 7,
 		"minLevel": 0,

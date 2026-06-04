@@ -415,10 +415,6 @@ public final class GameplayGrpcService extends GrpcHandler {
         String deliveryKind = request.getDeliveryKind();
         String itemId = request.getItemId();
 
-        if ("unlock".equals(deliveryKind)) {
-            return ItemStack.EMPTY;
-        }
-
         if ("fake_item".equals(deliveryKind)) {
             if (!FakeItems.isKnownFakeItem(itemId)) {
                 return null;

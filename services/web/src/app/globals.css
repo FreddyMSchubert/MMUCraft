@@ -624,7 +624,6 @@ a {
 	border-color: #c9ced6;
 }
 
-.shopCard.owned,
 .shopCard.unavailable {
 	filter: saturate(0.82);
 }
@@ -803,7 +802,6 @@ a {
 	text-align: center;
 }
 
-.shopCard.owned .shopCardFoot,
 .shopCard.unavailable .shopCardFoot {
 	background: rgba(20, 23, 31, 0.12);
 	color: rgba(20, 23, 31, 0.72);

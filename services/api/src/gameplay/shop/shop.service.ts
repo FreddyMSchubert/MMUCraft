@@ -17,7 +17,7 @@ const DEFAULT_ITEM_ROOTS = [
 const VANILLA_ITEM_TEXTURE_PREFIX = '/assets/mc_respack/assets/minecraft/textures/item'
 
 type ShopItemType = 'charm' | 'cosmetic' | 'generic'
-type ShopDeliveryKind = 'unlock' | 'fake_item' | 'vanilla_item'
+type ShopDeliveryKind = 'fake_item' | 'vanilla_item'
 type BookUnlockType = 'knowledge' | 'charm' | 'cosmetic'
 
 interface ShopPurchasableDefinition {
@@ -92,6 +92,13 @@ interface ShopUnlockResponse {
 	message: string
 }
 
+interface PurchaseShopItemResponse {
+	purchased: boolean
+	online: boolean
+	balance_dabloons: number
+	message: string
+}
+
 interface GameplayProtoRoot {
 	mcstack: {
 		gameplay: {
@@ -117,10 +124,11 @@ export class ShopService {
 		const items = this.loadCatalog().items
 		const unlockedIds = this.getUnlockedItemIds(user.id)
 		const availability = this.getUnlockAvailabilityForUser(user.id)
+		const visibleItems = items.filter((item) => this.isVisibleInShop(item, unlockedIds))
 
 		return {
 			availability,
-			items: items.map((item) => ({
+			items: visibleItems.map((item) => ({
 				id: item.id,
 				title: item.title,
 				type: item.type,
@@ -137,9 +145,7 @@ export class ShopService {
 				animated: item.animated,
 				dyeable: item.dyeable,
 				animation: item.animation,
-				owned: item.type === 'charm' || item.type === 'cosmetic'
-					? unlockedIds.has(item.id)
-					: false,
+				unlocked: this.isUnlockedShopItem(item, unlockedIds),
 				available: this.isAvailableForPurchase(user.id, item, availability, unlockedIds),
 			})),
 		}
@@ -162,18 +168,21 @@ export class ShopService {
 			throw new BadRequestException(this.unavailablePurchaseMessage(item))
 		}
 
-		const purchase = await this.purchaseFromMod(user.minecraftUsername, item)
-		if (!purchase.purchased) {
-			throw new BadRequestException(purchase.message || 'Purchase failed.')
+		let purchase: PurchaseShopItemResponse
+		try {
+			purchase = await this.purchaseFromMod(user.minecraftUsername, item)
+		} catch {
+			throw new BadRequestException('You have to be online on the server to buy from the shop.')
 		}
 
-		if (item.deliveryKind === 'unlock') {
-			this.insertUnlock(user.id, item.id, item.type, 'shop')
+		if (!purchase.purchased) {
+			throw new BadRequestException(purchase.message || this.purchaseFailureMessage(purchase))
 		}
 
 		return {
 			purchased: true,
 			itemId: item.id,
+			online: purchase.online,
 			balanceDabloons: purchase.balance_dabloons,
 			message: purchase.message || `${item.title} purchased.`,
 		}
@@ -337,7 +346,7 @@ export class ShopService {
 		unlockedIds: Set<string>,
 	): boolean {
 		if (item.type === 'charm' || item.type === 'cosmetic') {
-			return !unlockedIds.has(item.id)
+			return unlockedIds.has(item.id)
 		}
 
 		if (item.bookUnlockType === 'knowledge') {
@@ -354,8 +363,11 @@ export class ShopService {
 	}
 
 	private unavailablePurchaseMessage(item: CatalogItem): string {
-		if (item.type === 'charm' || item.type === 'cosmetic') {
-			return 'You already own this unlock.'
+		if (item.type === 'charm') {
+			return 'Unlock this charm with a magic book before buying it.'
+		}
+		if (item.type === 'cosmetic') {
+			return 'Unlock this cosmetic with a fashion book before buying it.'
 		}
 
 		if (item.bookUnlockType === 'knowledge') {
@@ -381,6 +393,22 @@ export class ShopService {
 		return items.some((item) => !unlockedIds.has(item.id))
 	}
 
+	private isVisibleInShop(item: CatalogItem, unlockedIds: Set<string>): boolean {
+		if (item.type === 'charm' || item.type === 'cosmetic') {
+			return unlockedIds.has(item.id)
+		}
+
+		return true
+	}
+
+	private isUnlockedShopItem(item: CatalogItem, unlockedIds: Set<string>): boolean {
+		if (item.type === 'charm' || item.type === 'cosmetic') {
+			return unlockedIds.has(item.id)
+		}
+
+		return true
+	}
+
 	private getUnlockedItemIds(userId: number, type?: ShopItemType): Set<string> {
 		const rows = type
 			? this.database.connection.prepare(`
@@ -398,19 +426,6 @@ export class ShopService {
 		return new Set(rows.map((row) => row.item_id))
 	}
 
-	private insertUnlock(userId: number, itemId: string, unlockType: ShopItemType, source: string) {
-		this.database.connection.prepare(`
-			INSERT OR IGNORE INTO shop_unlocks (
-				user_id,
-				item_id,
-				unlock_type,
-				unlocked_at_unix_ms,
-				source
-			)
-			VALUES (?, ?, ?, ?, ?)
-		`).run(userId, itemId, unlockType, Date.now(), source)
-	}
-
 	private findUserByMinecraftUsername(minecraftUsername: string): UserRow | null {
 		return (this.database.connection.prepare(`
 			SELECT *
@@ -426,19 +441,12 @@ export class ShopService {
 		return candidates[randomInt(candidates.length)]!
 	}
 
-	private async purchaseFromMod(minecraftUsername: string, item: CatalogItem) {
+	private async purchaseFromMod(minecraftUsername: string, item: CatalogItem): Promise<PurchaseShopItemResponse> {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).PurchaseShopItem
 
 		if (typeof method !== 'function') {
 			throw new Error('Unknown GameplayControl method: PurchaseShopItem')
-		}
-
-		type PurchaseShopItemResponse = {
-			purchased: boolean
-			online: boolean
-			balance_dabloons: number
-			message: string
 		}
 
 		return await new Promise<PurchaseShopItemResponse>((resolve, reject) => {
@@ -576,10 +584,18 @@ export class ShopService {
 			animation,
 			textureFilePath,
 			modelFilePath: renderMode === 'model' ? modelFilePath : null,
-			deliveryKind: type === 'generic' ? 'fake_item' : 'unlock',
+			deliveryKind: 'fake_item',
 			deliveryItemId: id,
 			bookUnlockType: this.bookUnlockType(id),
 		}
+	}
+
+	private purchaseFailureMessage(purchase: PurchaseShopItemResponse): string {
+		if (!purchase.online) {
+			return 'You have to be online on the server to buy from the shop.'
+		}
+
+		return 'Purchase failed.'
 	}
 
 	private parseShopPurchasable(value: unknown): ShopPurchasableDefinition | null {

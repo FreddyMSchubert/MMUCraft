@@ -19,6 +19,9 @@ new schema shape:
 The generator uses the item `id` as the selector value written into the generated
 `command_block` / `carved_pumpkin` item definitions.
 
+Item definitions may include gameplay metadata such as `shopPurchasable`. The generator
+validates that known metadata shape, then ignores it because it is not resource-pack data.
+
 ## Supported item layouts
 
 ### 1. Basic 2D item

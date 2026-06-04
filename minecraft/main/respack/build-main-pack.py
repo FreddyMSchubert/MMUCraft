@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import tempfile
 import urllib.request
+import urllib.error
 import zipfile
 import urllib.parse
 import http.cookiejar
@@ -30,11 +31,17 @@ GENERAL_PACK_MAINMOD_SOUNDS = PACKS / "general-pack" / "assets" / "mainmod" / "s
 # Vanilla Tweaks Stuff
 
 VT_BASE = "https://vanillatweaks.net"
+VT_PICKER = f"{VT_BASE}/picker/resource-packs/"
 VT_HEADERS = {
-	"User-Agent": "Mozilla/5.0",
+	"User-Agent": (
+		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+		"AppleWebKit/537.36 (KHTML, like Gecko) "
+		"Chrome/125.0.0.0 Safari/537.36"
+	),
 	"Accept": "application/json, text/plain, */*",
+	"Accept-Language": "en-US,en;q=0.9",
 	"Origin": VT_BASE,
-	"Referer": f"{VT_BASE}/",
+	"Referer": VT_PICKER,
 }
 
 VT_OPENER = urllib.request.build_opener(
@@ -48,8 +55,15 @@ def vt_request(url, data=None, headers=None):
 		data=data,
 		headers={**VT_HEADERS, **(headers or {})},
 	)
-	with VT_OPENER.open(req) as r:
-		return r.read(), r.headers
+	try:
+		with VT_OPENER.open(req) as r:
+			return r.read(), r.headers
+	except urllib.error.HTTPError as e:
+		body = e.read().decode("utf-8", errors="replace").strip()
+		detail = f": {body[:300]}" if body else ""
+		raise RuntimeError(
+			f"Vanilla Tweaks request failed with HTTP {e.code} for {url}{detail}"
+		) from e
 
 
 def resolve_vt_share_code(code: str) -> dict:
@@ -87,7 +101,7 @@ def build_vt_resourcepack_zip(code: str, zip_path: Path):
 	if not link.startswith("/"):
 		link = "/" + link
 
-	data, _ = vt_request(f"{VT_BASE}{link}")
+	data, _ = vt_request(f"{VT_BASE}{link}", headers={"Accept": "application/zip, */*"})
 	with open(zip_path, "wb") as f:
 		f.write(data)
 

@@ -1,11 +1,11 @@
 {
-	"title": "Laa Laa Hat",
-	"id": "cosmetic-teletubbies-laa-laa",
+	"title": "Teletubbies Sun Hat",
+	"id": "cosmetic-teletubbies-sun",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Don't think about why the head is severed."
+		"Different kind of sun hat"
 	],
 	"equippableCosmetic": {}
 }

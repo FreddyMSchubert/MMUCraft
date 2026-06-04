@@ -1,11 +1,11 @@
 {
-	"title": "Laa Laa Hat",
-	"id": "cosmetic-teletubbies-laa-laa",
+	"title": "Fez",
+	"id": "cosmetic-traffic-cone",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Don't think about why the head is severed."
+		""
 	],
 	"equippableCosmetic": {}
 }

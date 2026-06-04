@@ -1,6 +1,7 @@
 {
 	"title": "Wallet",
 	"id": "charm-wallet",
+	"baseItemOverride": "minecraft:repeating_command_block",
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 1,

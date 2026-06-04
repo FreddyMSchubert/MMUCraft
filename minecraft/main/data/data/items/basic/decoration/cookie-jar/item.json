@@ -1,0 +1,8 @@
+{
+	"title": "Cookie Jar",
+	"id": "cookie-jar",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": []
+}

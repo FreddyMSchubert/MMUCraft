@@ -1,0 +1,9 @@
+{
+	"title": "Pride Bee hood",
+	"id": "cosmetic-hood-bee-pride",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"equippableCosmetic": {}
+}

@@ -30,4 +30,10 @@ export class ShopController {
 	getTexture(@Param('itemId') itemId: string) {
 		return new StreamableFile(createReadStream(this.shop.getTextureFilePath(itemId)))
 	}
+
+	@Get('model/:itemId')
+	@Header('Content-Type', 'application/json')
+	getModel(@Param('itemId') itemId: string) {
+		return new StreamableFile(createReadStream(this.shop.getModelFilePath(itemId)))
+	}
 }

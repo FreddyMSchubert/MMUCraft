@@ -23,6 +23,7 @@ type BookUnlockType = 'knowledge' | 'charm' | 'cosmetic'
 interface ShopPurchasableDefinition {
 	priceDabloons: number
 	description: string
+	unlockMessage: string | null
 	unlockPriority: number
 }
 
@@ -34,21 +35,36 @@ interface FakeItemDefinition {
 	rarity?: unknown
 	tooltips?: unknown
 	shopPurchasable?: unknown
+	dyeable?: unknown
 	charm?: unknown
 	equippableCharm?: unknown
 	equippableCosmetic?: unknown
+}
+
+interface TextureAnimationDefinition {
+	frameDelayMs: number
+	frames: number[] | null
 }
 
 interface CatalogItem {
 	id: string
 	title: string
 	type: ShopItemType
+	modelType: string
 	rarity: string
 	priceDabloons: number
 	description: string
+	unlockMessage: string | null
 	unlockPriority: number
 	iconUrl: string | null
+	renderMode: 'texture' | 'model'
+	modelUrl: string | null
+	textureUrl: string | null
+	animated: boolean
+	dyeable: boolean
+	animation: TextureAnimationDefinition | null
 	textureFilePath: string | null
+	modelFilePath: string | null
 	deliveryKind: ShopDeliveryKind
 	deliveryItemId: string
 	bookUnlockType: BookUnlockType | null
@@ -108,11 +124,19 @@ export class ShopService {
 				id: item.id,
 				title: item.title,
 				type: item.type,
+				modelType: item.modelType,
 				rarity: item.rarity,
 				priceDabloons: item.priceDabloons,
 				description: item.description,
+				unlockMessage: item.unlockMessage,
 				unlockPriority: item.unlockPriority,
 				iconUrl: item.iconUrl,
+				renderMode: item.renderMode,
+				modelUrl: item.modelUrl,
+				textureUrl: item.textureUrl,
+				animated: item.animated,
+				dyeable: item.dyeable,
+				animation: item.animation,
 				owned: item.type === 'charm' || item.type === 'cosmetic'
 					? unlockedIds.has(item.id)
 					: false,
@@ -240,7 +264,7 @@ export class ShopService {
 					unlocked_id: picked.id,
 					priority: picked.unlockPriority,
 					topic: picked.title,
-					message: `You've unlocked ${picked.title}. Visit the website shop to see it.`,
+					message: picked.unlockMessage ?? `You've unlocked ${picked.title}. Visit the website shop to see it.`,
 				}
 			}
 		}
@@ -294,6 +318,16 @@ export class ShopService {
 		}
 
 		return item.textureFilePath
+	}
+
+	getModelFilePath(itemIdInput: string): string {
+		const itemId = itemIdInput.trim()
+		const item = this.loadCatalog().items.find((candidate) => candidate.id === itemId)
+		if (!item?.modelFilePath) {
+			throw new NotFoundException('Shop item model not found.')
+		}
+
+		return item.modelFilePath
 	}
 
 	private isAvailableForPurchase(
@@ -489,6 +523,7 @@ export class ShopService {
 	private parseCatalogItem(json: FakeItemDefinition, directory: string, root: string): CatalogItem | null {
 		const id = typeof json.id === 'string' ? json.id : ''
 		const title = typeof json.title === 'string' ? json.title : ''
+		const modelType = typeof json.modelType === 'string' ? json.modelType : 'basic'
 		const rarity = typeof json.rarity === 'string' ? json.rarity : 'common'
 		const shop = this.parseShopPurchasable(json.shopPurchasable)
 
@@ -502,27 +537,45 @@ export class ShopService {
 				? 'cosmetic'
 				: 'generic'
 
-		const textureFilePath = type === 'cosmetic'
-			? null
-			: this.findTextureFilePath(id, directory, root)
+		const modelFilePath = this.findModelFilePath(directory)
+		const modelTextureFilePath = this.findModelTextureFilePath(directory)
+		const flatTextureFilePath = this.findFlatTextureFilePath(id, directory, root)
+		const canRenderModel = Boolean(
+			modelFilePath
+			&& modelTextureFilePath
+			&& (modelType === 'basic-3d' || type === 'cosmetic'),
+		)
+		const renderMode = canRenderModel ? 'model' : 'texture'
+		const textureFilePath = canRenderModel
+			? modelTextureFilePath
+			: flatTextureFilePath ?? modelTextureFilePath
 
 		const baseItemOverride = typeof json.baseItemOverride === 'string' ? json.baseItemOverride : null
-		const iconUrl = type === 'cosmetic'
-			? null
-			: textureFilePath
-				? `/api/shop/texture/${encodeURIComponent(id)}`
-				: this.vanillaItemIconUrl(baseItemOverride) ?? this.fallbackIconUrl(type)
+		const textureUrl = textureFilePath ? `/api/shop/texture/${encodeURIComponent(id)}` : null
+		const iconUrl = renderMode === 'model'
+			? textureUrl
+			: textureUrl ?? this.vanillaItemIconUrl(baseItemOverride) ?? this.fallbackIconUrl(type)
+		const animation = textureFilePath ? this.readAnimationDefinition(textureFilePath) : null
 
 		return {
 			id,
 			title,
 			type,
+			modelType,
 			rarity,
 			priceDabloons: shop.priceDabloons,
 			description: shop.description,
+			unlockMessage: shop.unlockMessage,
 			unlockPriority: shop.unlockPriority,
 			iconUrl,
+			renderMode,
+			modelUrl: renderMode === 'model' ? `/api/shop/model/${encodeURIComponent(id)}` : null,
+			textureUrl: textureUrl ?? this.vanillaItemIconUrl(baseItemOverride) ?? this.fallbackIconUrl(type),
+			animated: Boolean(animation),
+			dyeable: Boolean(json.dyeable && typeof json.dyeable === 'object'),
+			animation,
 			textureFilePath,
+			modelFilePath: renderMode === 'model' ? modelFilePath : null,
 			deliveryKind: type === 'generic' ? 'fake_item' : 'unlock',
 			deliveryItemId: id,
 			bookUnlockType: this.bookUnlockType(id),
@@ -537,11 +590,13 @@ export class ShopService {
 		const candidate = value as Partial<Record<keyof ShopPurchasableDefinition, unknown>>
 		const priceDabloons = candidate.priceDabloons
 		const description = candidate.description
+		const unlockMessage = candidate.unlockMessage
 		const unlockPriority = candidate.unlockPriority
 		if (
 			typeof priceDabloons !== 'number'
 			|| !Number.isInteger(priceDabloons)
 			|| typeof description !== 'string'
+			|| (unlockMessage !== undefined && typeof unlockMessage !== 'string')
 			|| typeof unlockPriority !== 'number'
 			|| !Number.isInteger(unlockPriority)
 		) {
@@ -551,6 +606,7 @@ export class ShopService {
 		return {
 			priceDabloons,
 			description,
+			unlockMessage: unlockMessage ?? null,
 			unlockPriority,
 		}
 	}
@@ -569,7 +625,7 @@ export class ShopService {
 		return files
 	}
 
-	private findTextureFilePath(itemId: string, itemDirectory: string, root: string): string | null {
+	private findFlatTextureFilePath(itemId: string, itemDirectory: string, root: string): string | null {
 		for (const fileName of ['texture.png', 'model.png']) {
 			const filePath = join(itemDirectory, fileName)
 			if (existsSync(filePath)) {
@@ -581,6 +637,73 @@ export class ShopService {
 			const emptyWalletTexture = join(root, 'wallets', 'wallet-0', 'texture.png')
 			if (existsSync(emptyWalletTexture)) {
 				return emptyWalletTexture
+			}
+		}
+
+		return null
+	}
+
+	private findModelTextureFilePath(itemDirectory: string): string | null {
+		for (const fileName of ['model.png', 'texture.png']) {
+			const filePath = join(itemDirectory, fileName)
+			if (existsSync(filePath)) {
+				return filePath
+			}
+		}
+
+		return null
+	}
+
+	private findModelFilePath(itemDirectory: string): string | null {
+		const filePath = join(itemDirectory, 'model.json')
+		return existsSync(filePath) ? filePath : null
+	}
+
+	private readAnimationDefinition(textureFilePath: string): TextureAnimationDefinition | null {
+		const metadataPath = this.findAnimationMetadataPath(textureFilePath)
+		if (!metadataPath) {
+			return null
+		}
+
+		try {
+			const parsed = JSON.parse(readFileSync(metadataPath, 'utf8')) as {
+				animation?: {
+					frametime?: unknown
+					frames?: unknown
+				}
+			}
+			const frameTimeTicks = typeof parsed.animation?.frametime === 'number'
+				? Math.max(1, parsed.animation.frametime)
+				: 1
+			const frames = Array.isArray(parsed.animation?.frames)
+				? parsed.animation.frames
+					.map((frame) => typeof frame === 'number'
+						? frame
+						: frame && typeof frame === 'object' && typeof (frame as { index?: unknown }).index === 'number'
+							? (frame as { index: number }).index
+							: null)
+					.filter((frame): frame is number => frame !== null && Number.isInteger(frame) && frame >= 0)
+				: null
+
+			return {
+				frameDelayMs: frameTimeTicks * 50,
+				frames: frames && frames.length > 0 ? frames : null,
+			}
+		} catch {
+			return null
+		}
+	}
+
+	private findAnimationMetadataPath(textureFilePath: string): string | null {
+		const directPath = `${textureFilePath}.mcmeta`
+		if (existsSync(directPath)) {
+			return directPath
+		}
+
+		const directory = dirname(textureFilePath)
+		for (const child of readdirSync(directory, { withFileTypes: true })) {
+			if (child.isFile() && child.name.endsWith('.mcmeta')) {
+				return join(directory, child.name)
 			}
 		}
 
@@ -624,12 +747,21 @@ export class ShopService {
 			id: itemId,
 			title: 'Silence Armor Trim',
 			type: 'generic',
+			modelType: 'basic',
 			rarity: 'epic',
 			priceDabloons: 180,
 			description: 'A vanilla armor trim smithing template for the Silence pattern.',
+			unlockMessage: null,
 			unlockPriority: 3,
 			iconUrl: this.vanillaItemIconUrl(itemId),
+			renderMode: 'texture',
+			modelUrl: null,
+			textureUrl: this.vanillaItemIconUrl(itemId),
+			animated: false,
+			dyeable: false,
+			animation: null,
 			textureFilePath: null,
+			modelFilePath: null,
 			deliveryKind: 'vanilla_item',
 			deliveryItemId: itemId,
 			bookUnlockType: null,

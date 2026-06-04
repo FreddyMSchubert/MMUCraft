@@ -10,7 +10,8 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Calums patented formula. Slightly increases knockback while equipped.",
-		"unlockPriority": 0
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Goop Hand Charm."
 	},
 	"charm": {
 		"charmId": 21,

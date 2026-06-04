@@ -11,7 +11,8 @@
 	"shopPurchasable": {
 		"priceDabloons": 115,
 		"description": "Woah, is he some kind of king? No, that's a legend.",
-		"unlockPriority": 2
+		"unlockPriority": 2,
+		"unlockMessage": "Unlocked cosmetic: Techno Crown."
 	},
 	"equippableCosmetic": {}
 }

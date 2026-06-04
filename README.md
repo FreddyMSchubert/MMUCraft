@@ -17,7 +17,7 @@ Tilt will now restart the minecraft pod automatically whenever the mod is built.
 
 ## The goal
 
-One main, largely vanilla survival server. Main server.
+One main, largely vanilla survival server. Main server..
 
 Every saturday between 4pm to 12pm GMT+0, automatically swapped out for a surprising saturday server, players get redirected. Surprising saturday server runs custom mods that mix things up.
 At midnight, everybody gets redirected back to main server, the winner gets announced in chat, and the winner receives a unique custom cosmetic (particle trail, new ability like wearing any item as hat, ...) via custom server-side mod.

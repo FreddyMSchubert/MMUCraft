@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " PP",
+    " SP",
+    "S  "
+  ],
+  "key": {
+    "S": "mainmod:trident-shaft",
+    "P": "mainmod:trident-prong"
+  },
+  "result": {
+    "stack": "mainmod:beer",
+    "count": 1
+  }
+}

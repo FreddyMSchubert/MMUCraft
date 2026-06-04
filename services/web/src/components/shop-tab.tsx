@@ -26,7 +26,7 @@ interface ShopItem {
 		frameDelayMs: number
 		frames: number[] | null
 	} | null
-	owned: boolean
+	unlocked: boolean
 	available: boolean
 }
 
@@ -129,7 +129,7 @@ export function ShopTab() {
 	}, [data?.items, order, randomSeed, rarityFilter, typeFilter])
 
 	async function buy(item: ShopItem) {
-		if (item.owned || !item.available || buyingItemId) {
+		if (!item.available || buyingItemId) {
 			return
 		}
 
@@ -230,10 +230,9 @@ export function ShopTab() {
 							'shopCard',
 							`shopCard-${item.type}`,
 							`rarity-${item.rarity}`,
-							item.owned ? 'owned' : '',
 							!item.available ? 'unavailable' : '',
 						].filter(Boolean).join(' ')}
-						disabled={item.owned || !item.available || buyingItemId !== null}
+						disabled={!item.available || buyingItemId !== null}
 						onClick={() => void buy(item)}
 						onFocus={() => setHoveredItemId(item.id)}
 						onBlur={() => setHoveredItemId((current) => current === item.id ? null : current)}
@@ -256,7 +255,7 @@ export function ShopTab() {
 						</div>
 
 						<div className="shopCardFoot">
-							<span>{item.owned ? 'Owned' : item.available ? buyingItemId === item.id ? 'Buying...' : 'Buy' : 'Unavailable'}</span>
+							<span>{item.available ? buyingItemId === item.id ? 'Buying...' : 'Buy' : 'Unavailable'}</span>
 						</div>
 
 						<p className="shopHoverDescription">{item.description}</p>

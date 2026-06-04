@@ -1,6 +1,9 @@
 name: build-main-mod
 on: [pull_request, push]
 
+permissions:
+  contents: read
+
 jobs:
   build-main-mod:
     defaults:
@@ -11,6 +14,11 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.RESOURCE_PACK_ASSETS_PAT }}
+      - name: checkout resource pack inputs
+        working-directory: .
+        run: git submodule update --init minecraft/main/respack/ResourcePackMerger assets
       - name: validate gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
       - name: setup jdk
@@ -18,6 +26,12 @@ jobs:
         with:
           java-version: '25'
           distribution: 'microsoft'
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: minecraft/main/respack/items-respack-generator/package-lock.json
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: stage item data
@@ -28,6 +42,9 @@ jobs:
         run: ./gradlew runDatagen
       - name: build
         run: ./gradlew build
+      - name: build merged resource pack
+        working-directory: .
+        run: python3 minecraft/main/respack/build-main-pack.py
       - name: capture build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -35,3 +52,8 @@ jobs:
           path: |
             minecraft/main/mod/build/libs/*.jar
             !minecraft/main/mod/build/libs/*-sources.jar
+      - name: capture resource pack artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Resource Pack
+          path: minecraft/main/respack/packs/main-pack.zip

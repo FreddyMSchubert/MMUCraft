@@ -7,6 +7,11 @@
 	"tooltips": [
 		"When the impostor is sus"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "When the impostor is sus",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#FF0000"

@@ -4,7 +4,14 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["They look nice and purrple."],
+	"tooltips": [
+		"They look nice and purrple."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "They look nice and purrple. Scares away creepers.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 18,
 		"minLevel": 0,

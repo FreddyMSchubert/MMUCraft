@@ -5,6 +5,11 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Plunger Hat.",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#ff0000"

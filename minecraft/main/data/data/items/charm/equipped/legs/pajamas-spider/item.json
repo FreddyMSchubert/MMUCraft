@@ -4,7 +4,14 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["Oohhhh how emo... /s"],
+	"tooltips": [
+		"Oohhhh how emo... /s"
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Oohhhh how emo... /s Wall climb is slow.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 19,
 		"minLevel": 0,

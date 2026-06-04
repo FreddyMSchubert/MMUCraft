@@ -7,5 +7,10 @@
 	"tooltips": [
 		"Staple of scottish culture."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "Staple of scottish culture.",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

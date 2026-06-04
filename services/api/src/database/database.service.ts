@@ -47,6 +47,14 @@ export interface KnowledgeUnlockRow {
 	source: string
 }
 
+export interface ShopUnlockRow {
+	user_id: number
+	item_id: string
+	unlock_type: string
+	unlocked_at_unix_ms: number
+	source: string
+}
+
 export interface DailyClaimRow {
 	user_id: number
 	task_id: string
@@ -131,6 +139,19 @@ export class DatabaseService implements OnModuleDestroy {
 
 			CREATE INDEX IF NOT EXISTS knowledge_unlocks_user_id_idx
 				ON knowledge_unlocks(user_id);
+
+			CREATE TABLE IF NOT EXISTS shop_unlocks (
+				user_id INTEGER NOT NULL,
+				item_id TEXT NOT NULL,
+				unlock_type TEXT NOT NULL,
+				unlocked_at_unix_ms INTEGER NOT NULL,
+				source TEXT NOT NULL,
+				PRIMARY KEY(user_id, item_id),
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS shop_unlocks_user_id_idx
+				ON shop_unlocks(user_id);
 
 			CREATE TABLE IF NOT EXISTS daily_claims (
 				user_id INTEGER NOT NULL,

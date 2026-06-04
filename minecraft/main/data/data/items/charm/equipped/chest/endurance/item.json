@@ -7,6 +7,11 @@
 	"tooltips": [
 		"For when the journey keeps chewing, but you don't."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "For when the journey keeps chewing, but you don't. Reduces movement and mining hunger drain by 15%.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 39,
 		"minLevel": 0,

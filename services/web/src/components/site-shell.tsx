@@ -5,6 +5,7 @@ import { AuthPanel } from '@/components/auth-panel'
 import { BackgroundGrid } from '@/components/background-grid'
 import { DailiesTab } from '@/components/dailies-tab'
 import { KnowledgeTab } from '@/components/knowledge-tab'
+import { ShopTab } from '@/components/shop-tab'
 
 interface SessionUser {
 	id: number
@@ -14,7 +15,7 @@ interface SessionUser {
 	rulesAccepted: boolean
 }
 
-type TabId = 'dailies' | 'knowledge'
+type TabId = 'dailies' | 'knowledge' | 'shop'
 
 async function fetchMe(): Promise<SessionUser | null> {
 	const response = await fetch('/api/auth/me', {
@@ -38,8 +39,21 @@ export function SiteShell({ images }: { images: string[] }) {
 	}, [])
 
 	useEffect(() => {
-		void reloadUser()
-	}, [reloadUser])
+		let cancelled = false
+
+		async function loadInitialUser() {
+			const nextUser = await fetchMe()
+			if (!cancelled) {
+				setUser(nextUser)
+			}
+		}
+
+		void loadInitialUser()
+
+		return () => {
+			cancelled = true
+		}
+	}, [])
 
 	async function signOut() {
 		await fetch('/api/auth/signout', {
@@ -100,11 +114,19 @@ export function SiteShell({ images }: { images: string[] }) {
 							>
 								Knowledge
 							</button>
+							<button
+								type="button"
+								className={activeTab === 'shop' ? 'active' : ''}
+								onClick={() => setActiveTab('shop')}
+							>
+								Shop
+							</button>
 						</nav>
 
 						<div className="dashboardPanel">
 							{activeTab === 'dailies' && <DailiesTab />}
 							{activeTab === 'knowledge' && <KnowledgeTab />}
+							{activeTab === 'shop' && <ShopTab />}
 						</div>
 					</section>
 				)}

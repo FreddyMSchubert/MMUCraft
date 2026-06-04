@@ -8,5 +8,10 @@
 		"Woah, is he some kind of king?",
 		"No, that's a legend."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 115,
+		"description": "Woah, is he some kind of king? No, that's a legend.",
+		"unlockPriority": 2
+	},
 	"equippableCosmetic": {}
 }

@@ -130,7 +130,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 				<form onSubmit={submitEmail} className="authForm">
 					<h2>Join the server</h2>
 					<p>Use your MMU email to start signup. (Must end in @stu.mmu.ac.uk or @mmu.ac.uk).</p>
-					<p>If you are not an MMU member and want to join the server, please have someone you know at MMU contact the administrators. We're happy to have you!</p>
+					<p>If you are not an MMU member and want to join the server, please have someone you know at MMU contact the administrators. We&apos;re happy to have you!</p>
 					<input
 						value={email}
 						onChange={(event) => setEmail(event.target.value)}
@@ -214,7 +214,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						<ol>
 							<li>You do not talk about Fight Club.</li>
 							<li>YOU DO NOT. TALK. ABOUT FIGHT CLUB.</li>
-							<li>Fighter yells "stop," goes limp, taps out, the fight's over. </li>
+							<li>Fighter yells &quot;stop,&quot; goes limp, taps out, the fight&apos;s over. </li>
 							<li>If this is your first time at Fight Club, you have to fight. </li>
 						</ol>
 						<p>Beyond that, you also agree to:</p>

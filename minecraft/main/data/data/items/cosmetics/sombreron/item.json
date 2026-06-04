@@ -7,5 +7,10 @@
 	"tooltips": [
 		"Still too small..."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 190,
+		"description": "Still too small...",
+		"unlockPriority": 3
+	},
 	"equippableCosmetic": {}
 }

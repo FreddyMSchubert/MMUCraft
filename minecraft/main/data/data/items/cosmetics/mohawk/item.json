@@ -5,6 +5,11 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Mohawk.",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#24ddba"

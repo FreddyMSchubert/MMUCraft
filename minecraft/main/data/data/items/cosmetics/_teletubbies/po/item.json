@@ -7,5 +7,10 @@
 	"tooltips": [
 		"Don't think about why the head is severed."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "Don't think about why the head is severed.",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

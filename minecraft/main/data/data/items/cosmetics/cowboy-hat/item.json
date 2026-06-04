@@ -7,5 +7,10 @@
 	"tooltips": [
 		"You're a wanted cosmetic, Cowboy Hat"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "You're a wanted cosmetic, Cowboy Hat",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

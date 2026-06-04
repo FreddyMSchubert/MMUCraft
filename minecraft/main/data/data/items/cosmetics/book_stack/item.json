@@ -7,5 +7,10 @@
 	"tooltips": [
 		"A stack of some nostalgic, iconic books."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A stack of some nostalgic, iconic books.",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

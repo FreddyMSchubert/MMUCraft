@@ -7,5 +7,10 @@
 	"tooltips": [
 		"2016 called, they want their skins back"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "2016 called, they want their skins back",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

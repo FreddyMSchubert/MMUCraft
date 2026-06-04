@@ -23,6 +23,7 @@ const ROOT_ALLOWED_KEYS = [
   'rarity',
   'maxStackSize',
   'tooltips',
+  'shopPurchasable',
   'charm',
   'consumable',
   'dyeable',
@@ -95,6 +96,16 @@ function assertIntegerInRange(
 ): asserts value is number {
   if (typeof value !== 'number' || !Number.isInteger(value) || value < minimum || value > maximum) {
     throw new Error(`${label} must be an integer between ${minimum} and ${maximum}.`);
+  }
+}
+
+function assertIntegerAtLeast(
+  value: unknown,
+  minimum: number,
+  label: string,
+): asserts value is number {
+  if (typeof value !== 'number' || !Number.isInteger(value) || value < minimum) {
+    throw new Error(`${label} must be an integer greater than or equal to ${minimum}.`);
   }
 }
 
@@ -172,6 +183,33 @@ function parseBaseItem(
   };
 }
 
+function assertShopPurchasableComponent(value: unknown, relativeDirectory: string): void {
+  if (value === undefined) {
+    return;
+  }
+
+  assertObjectRecord(value, `${relativeDirectory} shopPurchasable`);
+  assertAllowedKeys(
+    value,
+    ['priceDabloons', 'description', 'unlockMessage', 'unlockPriority'],
+    `${relativeDirectory} shopPurchasable`,
+  );
+  assertIntegerAtLeast(
+    value.priceDabloons,
+    1,
+    `${relativeDirectory} shopPurchasable.priceDabloons`,
+  );
+  assertString(value.description, `${relativeDirectory} shopPurchasable.description`);
+  if (value.unlockMessage !== undefined) {
+    assertString(value.unlockMessage, `${relativeDirectory} shopPurchasable.unlockMessage`);
+  }
+  assertIntegerAtLeast(
+    value.unlockPriority,
+    0,
+    `${relativeDirectory} shopPurchasable.unlockPriority`,
+  );
+}
+
 function parseDyeableComponent(
   value: unknown,
   relativeDirectory: string,
@@ -244,6 +282,7 @@ export async function parseItemDefinition(
   assertObjectRecord(rawJson, `item.json in ${relativeDirectory}`);
 
   const baseItem = parseBaseItem(rawJson, itemJsonPath, relativeDirectory);
+  assertShopPurchasableComponent(rawJson.shopPurchasable, relativeDirectory);
   const dyeable = parseDyeableComponent(rawJson.dyeable, relativeDirectory);
 
   const resourcePath = relativeDirectory;

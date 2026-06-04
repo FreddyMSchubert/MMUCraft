@@ -12,10 +12,42 @@ import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
 {
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {}
+
+    List<String> names = List.of(
+            "Diego",
+            "Esmeralda",
+            "Bartholomew",
+            "Freddy",
+            "oderzo",
+            "Mia",
+            "Hannah",
+            "Cahlum",
+            "Iman",
+            "Adam",
+            "Samuel",
+            "Josh",
+            "Ellie",
+            "Alex",
+            "Spencer",
+            "Tosb",
+            "Your mother the sleep demon",
+            "Dobbo",
+            "Necro",
+            "Abigail",
+            "Josh Wardle",
+            "Ultimate",
+            "KittyScan",
+            "Kaif",
+            "SirElixir",
+            "raz"
+    );
 
     @Override
     public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
@@ -58,7 +90,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
 
         boss.setTarget(player);
         boss.setPersistenceRequired();
-        boss.setCustomName(Component.literal("Boss Phantom (Diego)"));
+        boss.setCustomName(Component.literal("Boss Phantom (" + names.get((int)Math.floor(Math.random() * names.size()))));
         boss.setCustomNameVisible(true);
 
         // Health

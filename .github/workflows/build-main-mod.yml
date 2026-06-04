@@ -18,7 +18,21 @@ jobs:
           token: ${{ secrets.RESOURCE_PACK_ASSETS_PAT }}
       - name: checkout resource pack inputs
         working-directory: .
-        run: git submodule update --init minecraft/main/respack/ResourcePackMerger assets
+        env:
+          GH_TOKEN: ${{ secrets.RESOURCE_PACK_ASSETS_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "RESOURCE_PACK_ASSETS_PAT secret is not available. It is required to clone the private assets submodule." >&2
+            exit 1
+          fi
+
+          cleanup_auth() {
+            git config --global --unset-all url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf || true
+          }
+          trap cleanup_auth EXIT
+
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git submodule update --init minecraft/main/respack/ResourcePackMerger assets
       - name: validate gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
       - name: setup jdk

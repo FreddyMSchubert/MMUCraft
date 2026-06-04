@@ -27,7 +27,7 @@ export async function proxyApiRequest(request: Request, path: string) {
 	if (contentType) headers.set('content-type', contentType)
 	if (setCookie) headers.set('set-cookie', setCookie)
 
-	return new Response(await upstream.text(), {
+	return new Response(await upstream.arrayBuffer(), {
 		status: upstream.status,
 		headers,
 	})

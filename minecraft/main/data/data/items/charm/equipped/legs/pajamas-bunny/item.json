@@ -8,6 +8,12 @@
 		"Perfect for some Eggsercise and Hareobics.",
 		"The bunnies might also get a bit snacky."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Perfect for some Eggsercise and Hareobics. The bunnies might also get a bit snacky. Let's you jump two blocks high.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Bunny Pajamas Charm."
+	},
 	"charm": {
 		"charmId": 17,
 		"minLevel": 0,

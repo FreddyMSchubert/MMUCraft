@@ -10,7 +10,7 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 
-ITEMS_ROOT = Path("data/items")
+ITEMS_ROOT = Path("data/data/items")
 SCHEMA_ROOT = Path("data/validation/schemas/item")
 ROOT_SCHEMA = SCHEMA_ROOT / "item.schema.json"
 STAGED_ITEMS_ROOT = Path("mod/src/main/resources/data/mainmod/items")
@@ -95,9 +95,8 @@ def stage_items(staged_root: Path, item_jsons: list[tuple[Path, Path]]) -> None:
 	staged_root.mkdir(parents=True, exist_ok=True)
 
 	for source, relative_dir in item_jsons:
-		dest = staged_root / relative_dir / "item.json"
-		dest.parent.mkdir(parents=True, exist_ok=True)
-		shutil.copy2(source, dest)
+		dest = staged_root / relative_dir
+		shutil.copytree(source.parent, dest)
 
 
 def main() -> int:

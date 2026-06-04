@@ -5,7 +5,13 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Although I like to call it quetzalāpanecayōtl"
+		"Although I like to call it quetzalÄpanecayÅtl"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "Although I like to call it quetzalÄpanecayÅtl",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked cosmetic: Moctezuma's Headdress."
+	},
 	"equippableCosmetic": {}
 }

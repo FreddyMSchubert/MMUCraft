@@ -7,5 +7,11 @@
 	"tooltips": [
 		"When you're dying I'll be still alive"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "When you're dying I'll be still alive",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked cosmetic: Companion Cube."
+	},
 	"equippableCosmetic": {}
 }

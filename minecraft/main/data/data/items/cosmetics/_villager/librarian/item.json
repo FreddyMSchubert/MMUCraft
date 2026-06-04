@@ -5,5 +5,11 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Librarian Hat.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked cosmetic: Librarian Hat."
+	},
 	"equippableCosmetic": {}
 }

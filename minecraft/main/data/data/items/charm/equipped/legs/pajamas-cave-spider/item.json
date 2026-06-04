@@ -4,7 +4,15 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["Poison not included."],
+	"tooltips": [
+		"Poison not included."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Poison not included. Ceiling crawling for two seconds.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Cave Spider Pajamas Charm."
+	},
 	"charm": {
 		"charmId": 20,
 		"minLevel": 0,

@@ -73,6 +73,16 @@ export class KnowledgeService {
 		}
 	}
 
+	hasRemainingForUser(userId: number): boolean {
+		const document = this.loadDocument()
+		if (document.unlockable.length === 0) {
+			return false
+		}
+
+		const unlockedIds = this.getUnlockedIds(userId)
+		return document.unlockable.some((page) => !unlockedIds.has(page.id))
+	}
+
 	unlockNextForMinecraftUsername(
 		minecraftUsernameInput: string,
 		sourceInput: string,

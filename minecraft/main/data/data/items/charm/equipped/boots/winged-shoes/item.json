@@ -7,6 +7,12 @@
 	"tooltips": [
 		"Don't get cold feet."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Don't get cold feet. Lets you jump in mid-air once.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked charm: Winged Shoes Charm."
+	},
 	"charm": {
 		"charmId": 22,
 		"minLevel": 0,

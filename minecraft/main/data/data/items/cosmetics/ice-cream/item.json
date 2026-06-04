@@ -5,6 +5,12 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Ice Cream Hat.",
+		"unlockPriority": 0,
+		"unlockMessage": "Unlocked cosmetic: Ice Cream Hat."
+	},
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#835432"

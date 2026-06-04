@@ -8,6 +8,7 @@ option java_outer_classname = "GameplayProto";
 
 service GameplayEvents {
   rpc UnlockNextKnowledge(UnlockNextKnowledgeRequest) returns (UnlockNextKnowledgeResponse);
+  rpc GetUnlockAvailability(GetUnlockAvailabilityRequest) returns (GetUnlockAvailabilityResponse);
 }
 
 service GameplayControl {
@@ -15,12 +16,14 @@ service GameplayControl {
   rpc SubmitDailyItems(SubmitDailyItemsRequest) returns (SubmitDailyItemsResponse);
   rpc PickDailyAdvancement(PickDailyAdvancementRequest) returns (PickDailyAdvancementResponse);
   rpc ClaimDailyAdvancement(ClaimDailyAdvancementRequest) returns (ClaimDailyAdvancementResponse);
+  rpc PurchaseShopItem(PurchaseShopItemRequest) returns (PurchaseShopItemResponse);
 }
 
 message UnlockNextKnowledgeRequest {
   string minecraft_username = 1;
   string source_item_id = 2;
   int64 unix_ms = 3;
+  string unlock_type = 4;
 }
 
 message UnlockNextKnowledgeResponse {
@@ -30,6 +33,24 @@ message UnlockNextKnowledgeResponse {
   int32 priority = 4;
   string topic = 5;
   string message = 6;
+  string unlock_type = 7;
+  string unlocked_id = 8;
+  bool has_knowledge_to_unlock = 9;
+  bool has_charms_to_unlock = 10;
+  bool has_cosmetics_to_unlock = 11;
+}
+
+message GetUnlockAvailabilityRequest {
+  string minecraft_username = 1;
+  int64 unix_ms = 2;
+}
+
+message GetUnlockAvailabilityResponse {
+  bool account_linked = 1;
+  bool has_knowledge_to_unlock = 2;
+  bool has_charms_to_unlock = 3;
+  bool has_cosmetics_to_unlock = 4;
+  string message = 5;
 }
 
 message GrantDailyLoginBonusRequest {
@@ -91,5 +112,20 @@ message ClaimDailyAdvancementResponse {
   bool claimed = 1;
   bool online = 2;
   bool completed = 3;
+  string message = 4;
+}
+
+message PurchaseShopItemRequest {
+  string minecraft_username = 1;
+  string item_id = 2;
+  int32 price_dabloons = 3;
+  string delivery_kind = 4;
+  int64 unix_ms = 5;
+}
+
+message PurchaseShopItemResponse {
+  bool purchased = 1;
+  bool online = 2;
+  int32 balance_dabloons = 3;
   string message = 4;
 }

@@ -2,7 +2,7 @@
 	"title": "Fashion Book",
 	"id": "charm-fashion-book",
 	"baseItemOverride": "minecraft:book",
-	"modelType": "basic",
+	"modelType": "basic-3d",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],

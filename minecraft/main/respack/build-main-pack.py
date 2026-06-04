@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 import json
 import os
@@ -11,6 +12,7 @@ import urllib.parse
 import http.cookiejar
 import hashlib
 import re
+import uuid
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
@@ -27,6 +29,21 @@ SERVER_PROPERTIES_TEMPLATE = HERE.parent / "server.properties"
 GENERATED_SERVER_PROPERTIES = HERE.parent / "server.properties.generated"
 PROJECT_SOUNDS = ROOT / "assets" / "sounds"
 GENERAL_PACK_MAINMOD_SOUNDS = PACKS / "general-pack" / "assets" / "mainmod" / "sounds"
+CACHE = HERE / ".cache"
+PACK_INPUTS_FINGERPRINT = CACHE / "main-pack.inputs.sha256"
+PACK_SHA1_CACHE = CACHE / "main-pack.sha1"
+RESOURCE_PACK_ID_NAMESPACE = uuid.UUID("50b0ab3c-3a20-4d7f-ba6a-0a0720f7b50d")
+
+FINGERPRINT_EXCLUDED_DIR_NAMES = {
+	".git",
+	"dist",
+	"node_modules",
+	"target",
+	"__pycache__",
+}
+FINGERPRINT_EXCLUDED_PATHS = {
+	GENERAL_PACK_MAINMOD_SOUNDS,
+}
 
 # Vanilla Tweaks Stuff
 
@@ -115,6 +132,14 @@ def sha1_file(path: Path) -> str:
 	return h.hexdigest()
 
 
+def sha256_file(path: Path) -> str:
+	h = hashlib.sha256()
+	with path.open("rb") as f:
+		for chunk in iter(lambda: f.read(1024 * 1024), b""):
+			h.update(chunk)
+	return h.hexdigest()
+
+
 def set_property(text: str, key: str, value: str) -> str:
 	line = f"{key}={value}"
 	pattern = re.compile(rf"(?m)^{re.escape(key)}=.*$")
@@ -125,8 +150,147 @@ def set_property(text: str, key: str, value: str) -> str:
 
 def write_server_properties(pack_sha1: str):
 	text = SERVER_PROPERTIES_TEMPLATE.read_text(encoding="utf-8")
+	text = set_property(text, "resource-pack-id", str(uuid.uuid5(RESOURCE_PACK_ID_NAMESPACE, pack_sha1)))
 	text = set_property(text, "resource-pack-sha1", pack_sha1)
 	GENERATED_SERVER_PROPERTIES.write_text(text, encoding="utf-8", newline="\n")
+
+
+def write_pack_sha1_cache(pack_sha1: str):
+	CACHE.mkdir(parents=True, exist_ok=True)
+	PACK_SHA1_CACHE.write_text(pack_sha1 + "\n", encoding="utf-8", newline="\n")
+
+
+def path_key(path: Path) -> str:
+	resolved = path.resolve()
+	try:
+		return resolved.relative_to(ROOT).as_posix()
+	except ValueError:
+		return resolved.as_posix()
+
+
+def is_fingerprint_excluded(path: Path) -> bool:
+	resolved = path.resolve()
+	if resolved.name in FINGERPRINT_EXCLUDED_DIR_NAMES:
+		return True
+
+	for excluded in FINGERPRINT_EXCLUDED_PATHS:
+		excluded = excluded.resolve()
+		if resolved == excluded:
+			return True
+		try:
+			resolved.relative_to(excluded)
+			return True
+		except ValueError:
+			pass
+
+	return False
+
+
+def iter_fingerprint_files(path: Path):
+	if not path.exists():
+		return
+
+	if is_fingerprint_excluded(path):
+		return
+
+	if path.is_file():
+		yield path
+		return
+
+	for child in sorted(path.iterdir(), key=lambda p: p.name):
+		yield from iter_fingerprint_files(child)
+
+
+def add_fingerprint_path(h, path: Path):
+	h.update(b"path\0")
+	h.update(path_key(path).encode("utf-8"))
+	h.update(b"\0")
+
+	if not path.exists():
+		h.update(b"missing\0")
+		return
+
+	files = list(iter_fingerprint_files(path))
+	if path.is_dir() and not files:
+		h.update(b"empty-dir\0")
+
+	for file in files:
+		h.update(b"file\0")
+		h.update(path_key(file).encode("utf-8"))
+		h.update(b"\0")
+		h.update(sha256_file(file).encode("ascii"))
+		h.update(b"\0")
+
+
+def local_pack_paths(config: dict):
+	for entry in config["packs"]:
+		if entry.startswith(("vt:", "http://", "https://")):
+			continue
+		yield (HERE / entry).resolve()
+
+
+def pack_input_fingerprint() -> str:
+	config = json.loads(CONFIG.read_text(encoding="utf-8"))
+	h = hashlib.sha256()
+
+	for entry in config["packs"]:
+		if entry.startswith(("vt:", "http://", "https://")):
+			h.update(b"remote-pack\0")
+			h.update(entry.encode("utf-8"))
+			h.update(b"\0")
+
+	for path in [
+		HERE / "build-main-pack.py",
+		CONFIG,
+		ITEMS,
+		PROJECT_SOUNDS,
+		GENERATOR / "package.json",
+		GENERATOR / "package-lock.json",
+		GENERATOR / "tsconfig.json",
+		GENERATOR / "src",
+		GENERATOR / "vanilla_armor_assets",
+		MERGER / "pom.xml",
+		MERGER / "src",
+		*local_pack_paths(config),
+	]:
+		add_fingerprint_path(h, path)
+
+	return h.hexdigest()
+
+
+def cached_pack_fingerprint() -> str | None:
+	if not PACK_INPUTS_FINGERPRINT.exists():
+		return None
+	return PACK_INPUTS_FINGERPRINT.read_text(encoding="utf-8").strip()
+
+
+def write_pack_fingerprint(fingerprint: str):
+	CACHE.mkdir(parents=True, exist_ok=True)
+	PACK_INPUTS_FINGERPRINT.write_text(fingerprint + "\n", encoding="utf-8", newline="\n")
+
+
+def pack_outputs_are_reusable(fingerprint: str) -> bool:
+	return (
+		FINAL_ZIP.exists()
+		and cached_pack_fingerprint() == fingerprint
+	)
+
+
+def publish_pack_outputs(pack_sha1: str):
+	if not FINAL_ZIP.exists():
+		raise RuntimeError(f"Cannot publish missing resource pack archive: {FINAL_ZIP}")
+
+	WEB_ZIP.parent.mkdir(parents=True, exist_ok=True)
+
+	if WEB_ZIP.exists() and sha1_file(WEB_ZIP) == pack_sha1:
+		print("==> Website zip already matches resource pack SHA1")
+	else:
+		print("==> Publishing zip for the website")
+		shutil.copy2(FINAL_ZIP, WEB_ZIP)
+
+	print(f"==> Computed resource-pack-sha1: {pack_sha1}")
+	write_server_properties(pack_sha1)
+	write_pack_sha1_cache(pack_sha1)
 
 # General Stuff
 
@@ -262,20 +426,47 @@ def sync_project_sounds_into_general_pack():
 			print(" - no project sounds folder found at", PROJECT_SOUNDS)
 			return
 
-	rm(GENERAL_PACK_MAINMOD_SOUNDS)
 	GENERAL_PACK_MAINMOD_SOUNDS.mkdir(parents=True, exist_ok=True)
 
+	expected = set()
 	for src in PROJECT_SOUNDS.rglob("*"):
 			if src.is_dir():
 					continue
 
 			rel = src.relative_to(PROJECT_SOUNDS)
+			expected.add(rel)
 			dst = GENERAL_PACK_MAINMOD_SOUNDS / rel
 			dst.parent.mkdir(parents=True, exist_ok=True)
-			shutil.copy2(src, dst)
+			if not dst.exists() or sha1_file(src) != sha1_file(dst):
+					shutil.copy2(src, dst)
+
+	for dst in sorted((p for p in GENERAL_PACK_MAINMOD_SOUNDS.rglob("*") if p.is_file()), reverse=True):
+			rel = dst.relative_to(GENERAL_PACK_MAINMOD_SOUNDS)
+			if rel not in expected:
+					dst.unlink()
+
+	for directory in sorted((p for p in GENERAL_PACK_MAINMOD_SOUNDS.rglob("*") if p.is_dir()), reverse=True):
+			if not any(directory.iterdir()):
+					directory.rmdir()
 
 
 def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--force", action="store_true", help="Rebuild the resource pack even when inputs are unchanged.")
+	args = parser.parse_args()
+
+	fingerprint = pack_input_fingerprint()
+	if not args.force and pack_outputs_are_reusable(fingerprint):
+		print("==> Resource pack inputs unchanged; reusing existing archive")
+		pack_sha1 = sha1_file(FINAL_ZIP)
+		publish_pack_outputs(pack_sha1)
+		print("Done:")
+		print(" - canonical archive:", FINAL_ZIP)
+		print(" - served archive:   ", WEB_ZIP)
+		print(" - server settings:  ", GENERATED_SERVER_PROPERTIES)
+		print(" - pack input hash:  ", PACK_INPUTS_FINGERPRINT)
+		return
+
 	build_generated()
 	sync_project_sounds_into_general_pack()
 	jar = build_merger_jar()
@@ -295,17 +486,15 @@ def main():
 	print("==> Creating zip archive")
 	shutil.make_archive(str(FINAL_ZIP.with_suffix("")), "zip", MERGED)
 
-	print("==> Publishing zip for the website")
-	shutil.copy2(FINAL_ZIP, WEB_ZIP)
-
 	pack_sha1 = sha1_file(FINAL_ZIP)
-	print(f"==> Computed resource-pack-sha1: {pack_sha1}")
-	write_server_properties(pack_sha1)
+	publish_pack_outputs(pack_sha1)
+	write_pack_fingerprint(fingerprint)
 
 	print("Done:")
 	print(" - canonical archive:", FINAL_ZIP)
 	print(" - served archive:   ", WEB_ZIP)
 	print(" - server settings:  ", GENERATED_SERVER_PROPERTIES)
+	print(" - pack input hash:  ", PACK_INPUTS_FINGERPRINT)
 
 
 if __name__ == "__main__":

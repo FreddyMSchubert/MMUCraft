@@ -7,5 +7,10 @@
 	"tooltips": [
 		"It is said that it's used to store soap and sponge."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "It is said that it's used to store soap and sponge.",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

@@ -5,6 +5,11 @@
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 30,
+		"description": "Unlocks one random knowledge page for your linked account when used in-game.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 36,
 		"minLevel": 1,

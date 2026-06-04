@@ -7,6 +7,11 @@
 	"tooltips": [
 		"Blessed be the pacemakers"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Blessed be the pacemakers Grants you 1 extra heart while equipped.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 3,
 		"minLevel": 0,

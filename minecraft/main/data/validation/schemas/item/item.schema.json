@@ -52,6 +52,29 @@
 				"type": "string"
 			}
 		},
+		"shopPurchasable": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"priceDabloons": {
+					"type": "integer",
+					"minimum": 1
+				},
+				"description": {
+					"type": "string",
+					"minLength": 1
+				},
+				"unlockPriority": {
+					"type": "integer",
+					"minimum": 0
+				}
+			},
+			"required": [
+				"priceDabloons",
+				"description",
+				"unlockPriority"
+			]
+		},
 		"charm": {
 			"$ref": "./components/charm.schema.json"
 		},

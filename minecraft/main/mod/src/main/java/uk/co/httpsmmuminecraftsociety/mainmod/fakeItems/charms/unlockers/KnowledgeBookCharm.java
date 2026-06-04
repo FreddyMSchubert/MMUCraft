@@ -26,9 +26,10 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
 
         player.sendSystemMessage(Component.literal("Studying the knowledge book..."));
 
-        GameplayGrpcService.unlockNextKnowledge(
+        GameplayGrpcService.unlockNext(
                 player.getGameProfile().name(),
-                "knowledge_book"
+                "charm-knowledge-book",
+                "knowledge"
         ).whenComplete((response, error) -> player.level().getServer().execute(() -> {
             IN_FLIGHT.remove(playerId);
 

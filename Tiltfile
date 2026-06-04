@@ -24,6 +24,7 @@ docker_build(
 		fall_back_on('proto/gameplay.proto'),
         sync('services/api/src', '/app/src'),
         sync('services/web/public/knowledge', '/app/content/knowledge'),
+        sync('minecraft/main/data/data/items', '/app/content/items'),
         sync('proto', '/app/proto'),
     ],
     ignore=[
@@ -32,7 +33,8 @@ docker_build(
         '.vscode',
         'assets',
         'k8s',
-        'minecraft',
+        'minecraft/main/mod',
+        'minecraft/main/respack',
         'third_party_licenses',
         'README.md',
         'Tiltfile',

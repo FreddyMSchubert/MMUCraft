@@ -7,6 +7,11 @@
 	"tooltips": [
 		"Don't get cold feet."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Don't get cold feet. Lets you jump in mid-air once.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 22,
 		"minLevel": 0,

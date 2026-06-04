@@ -7,6 +7,11 @@
 	"tooltips": [
 		"Light on your feet."
 	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Light on your feet. Gives you permanent night vision.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 8,
 		"minLevel": 0,

@@ -7,5 +7,10 @@
 	"tooltips": [
 		"Ar ar ar ar"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "Ar ar ar ar",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

@@ -7,5 +7,10 @@
 	"tooltips": [
 		"The cheapest item in our mexican collection"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "The cheapest item in our mexican collection",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

@@ -27,6 +27,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.KnowledgeBookCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.ShopUnlockBookCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
@@ -65,7 +66,9 @@ public class CharmsManager
             Map.entry(36, new KnowledgeBookCharm()),
             Map.entry(37, new LuckyCharm()),
             Map.entry(38, new ScubaTankCharm()),
-            Map.entry(39, new EnduranceCharm())
+            Map.entry(39, new EnduranceCharm()),
+            Map.entry(40, ShopUnlockBookCharm.magicBook()),
+            Map.entry(41, ShopUnlockBookCharm.fashionBook())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

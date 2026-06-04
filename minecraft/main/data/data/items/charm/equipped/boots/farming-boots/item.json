@@ -4,7 +4,14 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["Stardew Valley is fine I guess."],
+	"tooltips": [
+		"Stardew Valley is fine I guess."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Stardew Valley is fine I guess. Hoe-harvests and replants the right-clicked ripe crop.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 34,
 		"minLevel": 0,

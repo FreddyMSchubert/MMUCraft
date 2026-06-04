@@ -7,5 +7,10 @@
 	"tooltips": [
 		"Although I like to call it quetzalāpanecayōtl"
 	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "Although I like to call it quetzalāpanecayōtl",
+		"unlockPriority": 0
+	},
 	"equippableCosmetic": {}
 }

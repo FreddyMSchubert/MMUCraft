@@ -4,7 +4,14 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["The MMU Students yearn for the mines."],
+	"tooltips": [
+		"The MMU Students yearn for the mines."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "The MMU Students yearn for the mines. Veinminer capped at 1 extra mined block.",
+		"unlockPriority": 0
+	},
 	"charm": {
 		"charmId": 31,
 		"minLevel": 0,

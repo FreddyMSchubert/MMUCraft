@@ -64,18 +64,40 @@ docker_build(
     ignore=['node_modules', '.next'],
 )
 
+minecraft_resource_pack_deps = [
+    'assets/sounds',
+    'minecraft/main/data/data/items',
+    'minecraft/main/server.properties',
+    'minecraft/main/respack/build-main-pack.py',
+    'minecraft/main/respack/main-pack.config.json',
+    'minecraft/main/respack/items-respack-generator/package.json',
+    'minecraft/main/respack/items-respack-generator/package-lock.json',
+    'minecraft/main/respack/items-respack-generator/tsconfig.json',
+    'minecraft/main/respack/items-respack-generator/src',
+    'minecraft/main/respack/items-respack-generator/vanilla_armor_assets',
+    'minecraft/main/respack/packs/anti-cheat-pack',
+    'minecraft/main/respack/packs/general-pack',
+    'minecraft/main/respack/ResourcePackMerger/pom.xml',
+    'minecraft/main/respack/ResourcePackMerger/src',
+]
+
 custom_build(
     'mcstack/minecraft-server',
     './minecraft/main/build-minecraft-image.sh "$EXPECTED_REF"',
     command_bat='powershell -NoProfile -ExecutionPolicy Bypass -File .\\minecraft\\main\\build-minecraft-image.ps1 %EXPECTED_REF%',
     deps=[
+        'minecraft/main/Dockerfile',
         'minecraft/main/build-minecraft-image.sh',
         'minecraft/main/build-minecraft-image.ps1',
+        'minecraft/main/stage_item_data.py',
         'minecraft/main/mod/src',
         'minecraft/main/mod/build.gradle',
+        'minecraft/main/mod/gradle.properties',
+        'minecraft/main/mod/settings.gradle',
+        'minecraft/main/mod/gradle',
         'proto/auth.proto',
         'proto/gameplay.proto',
-    ],
+    ] + minecraft_resource_pack_deps,
 )
 
 k8s_resource(workload='api', port_forwards=[8080, 50051])

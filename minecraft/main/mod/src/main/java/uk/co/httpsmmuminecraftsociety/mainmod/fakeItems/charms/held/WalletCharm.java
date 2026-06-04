@@ -48,8 +48,10 @@ public class WalletCharm implements Charm
         wallet.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
 
         CustomModelData cmd = wallet.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-        cmd.floats().set(0, (float)newAmount);
-        wallet.set(DataComponents.CUSTOM_MODEL_DATA, cmd);
+        wallet.set(
+                DataComponents.CUSTOM_MODEL_DATA,
+                new CustomModelData(List.of((float)newAmount), cmd.flags(), cmd.strings(), cmd.colors())
+        );
 
         updateTooltip(wallet);
     }

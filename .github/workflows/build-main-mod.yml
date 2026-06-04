@@ -62,7 +62,7 @@ jobs:
       - name: capture build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Artifacts
+          name: Mod
           path: |
             minecraft/main/mod/build/libs/*.jar
             !minecraft/main/mod/build/libs/*-sources.jar

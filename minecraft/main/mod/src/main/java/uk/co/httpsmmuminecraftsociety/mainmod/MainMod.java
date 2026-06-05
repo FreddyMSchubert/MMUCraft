@@ -20,6 +20,7 @@ import net.minecraft.world.level.gamerules.GameRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
@@ -60,6 +61,7 @@ public class MainMod implements ModInitializer {
         ItemEvents.USE.register(CharmsManager::onItemUse);
         ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
+        UseBlockCallback.EVENT.register(DynamicBeaconRange::onUseBlock);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
         UseBlockCallback.EVENT.register(CharmsManager::onUseBlock);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);

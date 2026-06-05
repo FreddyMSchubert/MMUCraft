@@ -7,6 +7,7 @@ import type {
   DiscoveredItem,
   EquipmentSlot,
   ItemRarity,
+  ShopPurchasableDefinition,
 } from '../types';
 import { pathExists, readJsonFile } from '../utils/fs';
 import {
@@ -183,15 +184,18 @@ function parseBaseItem(
   };
 }
 
-function assertShopPurchasableComponent(value: unknown, relativeDirectory: string): void {
+function parseShopPurchasableComponent(
+  value: unknown,
+  relativeDirectory: string,
+): ShopPurchasableDefinition | undefined {
   if (value === undefined) {
-    return;
+    return undefined;
   }
 
   assertObjectRecord(value, `${relativeDirectory} shopPurchasable`);
   assertAllowedKeys(
     value,
-    ['priceDabloons', 'description', 'unlockMessage', 'unlockPriority'],
+    ['priceDabloons', 'description', 'unlockMessage', 'unlockWeight'],
     `${relativeDirectory} shopPurchasable`,
   );
   assertIntegerAtLeast(
@@ -204,10 +208,17 @@ function assertShopPurchasableComponent(value: unknown, relativeDirectory: strin
     assertString(value.unlockMessage, `${relativeDirectory} shopPurchasable.unlockMessage`);
   }
   assertIntegerAtLeast(
-    value.unlockPriority,
-    0,
-    `${relativeDirectory} shopPurchasable.unlockPriority`,
+    value.unlockWeight,
+    1,
+    `${relativeDirectory} shopPurchasable.unlockWeight`,
   );
+
+  return {
+    priceDabloons: value.priceDabloons,
+    description: value.description,
+    unlockMessage: value.unlockMessage,
+    unlockWeight: value.unlockWeight,
+  };
 }
 
 function parseDyeableComponent(
@@ -282,7 +293,7 @@ export async function parseItemDefinition(
   assertObjectRecord(rawJson, `item.json in ${relativeDirectory}`);
 
   const baseItem = parseBaseItem(rawJson, itemJsonPath, relativeDirectory);
-  assertShopPurchasableComponent(rawJson.shopPurchasable, relativeDirectory);
+  const shopPurchasable = parseShopPurchasableComponent(rawJson.shopPurchasable, relativeDirectory);
   const dyeable = parseDyeableComponent(rawJson.dyeable, relativeDirectory);
 
   const resourcePath = relativeDirectory;
@@ -312,6 +323,7 @@ export async function parseItemDefinition(
         rarity: baseItem.rarity,
         maxStackSize: baseItem.maxStackSize,
         tooltips: baseItem.tooltips,
+        shopPurchasable,
         resourcePath,
         baseName,
         texturePngPath,
@@ -339,6 +351,7 @@ export async function parseItemDefinition(
         rarity: baseItem.rarity,
         maxStackSize: baseItem.maxStackSize,
         tooltips: baseItem.tooltips,
+        shopPurchasable,
         resourcePath,
         baseName,
         modelJsonPath,
@@ -364,6 +377,7 @@ export async function parseItemDefinition(
         rarity: baseItem.rarity,
         maxStackSize: baseItem.maxStackSize,
         tooltips: baseItem.tooltips,
+        shopPurchasable,
         resourcePath,
         baseName,
         isDyeable: dyeable?.isDyeable === true,
@@ -392,6 +406,7 @@ export async function parseItemDefinition(
         rarity: baseItem.rarity,
         maxStackSize: baseItem.maxStackSize,
         tooltips: baseItem.tooltips,
+        shopPurchasable,
         resourcePath,
         baseName,
         equipmentSlot: equippableCharm.equipmentSlot,

@@ -309,32 +309,34 @@ these arent mit licensed but we can just get some inspiration
 also manual ideas:
 
 - villager nose
+- kitty ears purrrrrrrr https://mccisland.fandom.com/wiki/Cat_Ears
+- duck hat
+- cute new chicken
+- bow ribbon
+- Egg Yolk https://mccisland.fandom.com/wiki/Egg_Yolk
+- Disguise https://mccisland.fandom.com/wiki/Disguise
+- Cardboard https://mccisland.fandom.com/wiki/Cardboard_Box
+
 - witch nose (with dyeable pimple)
-- kitty ears
 - pile of coins
 - witch hat from vanilla
 - different hair types
 - rainbow clown hair
 - banana peel
 - antenna
-- bike / motorbike helmet
-- pirate hat with skull
 - light bulb
 - this meme, sad and happy version -> https://media.tenor.com/cI1t4CvrgogAAAAe/crying-under-mask-feels.png
 - alien head
 - top hat
 - viking helmet
 - animals (sitting on hat, or animal shaped hat)
-- duck hat
 - steampunk hat
-- tricorn
 - party cone hat
 - santa hat
 - lever
-- dragon head
+- dragon skull head
 - armor / knights
 - different glasses / shades
-- different pumpkin heads
 - minion eyes
 - mario / luigi hat
 - night cap
@@ -342,17 +344,23 @@ also manual ideas:
 - mario-toad-like mushroom cap
 - fnaf stuff, springtrap mask
 - masks from majoras mask
-- beards
 - turtle shell on head
 - antlers
 - lying down cat / dog / fox / frog / bee
-- cute new chicken
 - lil octopusses
 - ghast hat so it looks your face is the ghasts face. fully engulfs your head but hole in front
 - flower on head
 - flower crown
-- bow
 - gas mask
+- Shark https://mccisland.fandom.com/wiki/Shark
+- Sensei Hat https://mccisland.fandom.com/wiki/Sensei
+- Safari Hat https://mccisland.fandom.com/wiki/Safari_Hat
+- Sleeping Allay https://sketchfab.com/3d-models/sleep-buddies-46e9c23a61ee4bbbb571653f59323394
+- Sprout
+- Banana Head https://mccisland.fandom.com/wiki/Banana_Head
+
+- Gravestone
+- Kettle
 
 ## Fishing Changes
 

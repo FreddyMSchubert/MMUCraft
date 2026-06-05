@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "Don't get too hot-headed!",
-		"unlockPriority": 0,
+		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Fire."
 	},
 	"equippableCosmetic": {}

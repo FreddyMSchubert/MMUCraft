@@ -20,6 +20,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettings;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 
 import java.util.List;
 import java.util.Map;
@@ -135,7 +136,10 @@ public class LootTableModifiers {
 
         Identifier tableId = lootTableHolder.unwrapKey().map(ResourceKey::identifier).orElse(null);
 
+        PickaxeHeaterCharm.heatMinedDrops(lootContext, itemStacks);
+
         addPlayerSpecificDrops(tableId, lootContext, itemStacks);
+        UnlockBookLoot.addBookDrop(tableId, lootContext, itemStacks);
 
         for (LootAddition addition : additions) {
             if (!addition.tableId().equals(tableId)) continue;

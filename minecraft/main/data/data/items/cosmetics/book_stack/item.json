@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A stack of some nostalgic, iconic books.",
-		"unlockPriority": 0,
+		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Book Stack."
 	},
 	"equippableCosmetic": {}

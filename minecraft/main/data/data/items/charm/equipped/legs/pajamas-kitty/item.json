@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "They look nice and purrple. Scares away creepers.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Kitty Pajamas Charm."
 	},
 	"charm": {

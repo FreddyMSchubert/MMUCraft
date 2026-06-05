@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "Can become a bit of a headache after a while...",
-		"unlockPriority": 0,
+		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Woodpecker."
 	},
 	"equippableCosmetic": {}

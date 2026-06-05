@@ -20,7 +20,8 @@ The generator uses the item `id` as the selector value written into the generate
 `command_block` / `carved_pumpkin` item definitions.
 
 Item definitions may include gameplay metadata such as `shopPurchasable`. The generator
-validates that known metadata shape, then ignores it because it is not resource-pack data.
+validates that known metadata shape and uses `shopPurchasable.unlockWeight` for the
+post-generation cosmetic weight report, but does not write it into resource-pack assets.
 
 ## Supported item layouts
 

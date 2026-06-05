@@ -30,7 +30,8 @@
       "fishing.ItemDisplayEntityAccessor",
       "ScubaTankAirDrainSlowdown",
       "exhaustionCharm.ServerPlayerExhaustionMixin",
-      "exhaustionCharm.BlockBreakExhaustionMixin"
+      "exhaustionCharm.BlockBreakExhaustionMixin",
+      "beacon.DynamicBeaconRangeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

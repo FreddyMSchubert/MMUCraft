@@ -22,6 +22,7 @@ export interface StatOption {
 
 interface PlayerProfile {
 	preferredName: string
+	pronouns: string
 	courseYear: string
 	discordUsername: string
 	base: {
@@ -88,9 +89,10 @@ export interface PlayerSummary {
 const PROFILE_OPTIONS: StatOption[] = [
 	{ key: 'profile.playerName', label: 'Player Name', group: 'profile' },
 	{ key: 'profile.preferredName', label: 'Preferred Name', group: 'profile' },
+	{ key: 'profile.pronouns', label: 'Pronouns', group: 'profile' },
 	{ key: 'profile.courseYear', label: 'Course / Year', group: 'profile' },
 	{ key: 'profile.discordUsername', label: 'Discord Username', group: 'profile' },
-	{ key: 'profile.base', label: 'Base Coordinates', group: 'profile' },
+	{ key: 'profile.base', label: 'Base Location', group: 'profile' },
 ]
 
 const MONEY_OPTIONS: StatOption[] = [
@@ -290,6 +292,7 @@ export class PlayersService {
 			INSERT INTO player_profiles (
 				user_id,
 				preferred_name,
+				pronouns,
 				course_year,
 				discord_username,
 				base_x,
@@ -298,9 +301,10 @@ export class PlayersService {
 				bio,
 				updated_at_unix_ms
 			)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 			ON CONFLICT(user_id) DO UPDATE SET
 				preferred_name = excluded.preferred_name,
+				pronouns = excluded.pronouns,
 				course_year = excluded.course_year,
 				discord_username = excluded.discord_username,
 				base_x = excluded.base_x,
@@ -311,6 +315,7 @@ export class PlayersService {
 		`).run(
 			user.id,
 			profile.preferredName,
+			profile.pronouns,
 			profile.courseYear,
 			profile.discordUsername,
 			profile.base.x,
@@ -469,6 +474,7 @@ export class PlayersService {
 		if (!row) {
 			return {
 				preferredName: '',
+				pronouns: '',
 				courseYear: '',
 				discordUsername: '',
 				base: { x: null, y: null, z: null },
@@ -479,6 +485,7 @@ export class PlayersService {
 
 		return {
 			preferredName: row.preferred_name,
+			pronouns: row.pronouns,
 			courseYear: row.course_year,
 			discordUsername: row.discord_username,
 			base: {
@@ -610,6 +617,7 @@ export class PlayersService {
 	private normalizeProfileInput(input: Record<string, unknown>): PlayerProfile {
 		return {
 			preferredName: sanitizeText(input.preferredName, 80),
+			pronouns: sanitizeText(input.pronouns, 80),
 			courseYear: sanitizeText(input.courseYear, 80),
 			discordUsername: sanitizeText(input.discordUsername, 80),
 			base: {

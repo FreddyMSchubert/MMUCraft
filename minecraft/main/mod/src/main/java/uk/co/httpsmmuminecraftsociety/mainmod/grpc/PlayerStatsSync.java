@@ -34,7 +34,7 @@ public final class PlayerStatsSync {
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-            syncNow(handler.player);
+            syncNow(handler.player, true);
             nextSyncTickByPlayer.remove(handler.player.getUUID());
         });
     }
@@ -70,7 +70,11 @@ public final class PlayerStatsSync {
     }
 
     private static void syncNow(ServerPlayer player) {
-        if (player == null || player.hasDisconnected()) {
+        syncNow(player, false);
+    }
+
+    private static void syncNow(ServerPlayer player, boolean allowDisconnectedPlayer) {
+        if (player == null || (!allowDisconnectedPlayer && player.hasDisconnected())) {
             return;
         }
 

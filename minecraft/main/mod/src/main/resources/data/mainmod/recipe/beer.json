@@ -1,7 +1,7 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
-    "minecraft:potion[minecraft:potion_contents=mundane]",
+    "minecraft:potion[minecraft:potion_contents=mundane]=Mundane Potion",
     "minecraft:wheat"
   ],
   "result": {

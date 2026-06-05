@@ -6,7 +6,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public record TagStackDef(String raw, TagKey<Item> tag) implements StackDef {
+public record TagStackDef(String raw, TagKey<Item> tag, String displayNameOverride) implements StackDef {
     public TagStackDef
     {
         if (raw == null || raw.isBlank()) {
@@ -15,19 +15,22 @@ public record TagStackDef(String raw, TagKey<Item> tag) implements StackDef {
         if (tag == null) {
             throw new IllegalArgumentException("tag must not be null");
         }
+        if (displayNameOverride == null) {
+            throw new IllegalArgumentException("displayNameOverride must not be null");
+        }
     }
 
-    public static TagStackDef parse(String raw) {
-        if (raw.indexOf('[') >= 0) {
+    public static TagStackDef parse(String raw, String stackDescription, String displayNameOverride) {
+        if (stackDescription.indexOf('[') >= 0) {
             throw new IllegalArgumentException("tag stack descriptions do not support component suffixes: '" + raw + "'");
         }
 
-        Identifier tagId = Identifier.tryParse(raw.substring(1));
+        Identifier tagId = Identifier.tryParse(stackDescription.substring(1));
         if (tagId == null) {
             throw new IllegalArgumentException("Invalid tag id in stack description: '" + raw + "'");
         }
 
-        return new TagStackDef(raw, TagKey.create(net.minecraft.core.registries.Registries.ITEM, tagId));
+        return new TagStackDef(raw, TagKey.create(net.minecraft.core.registries.Registries.ITEM, tagId), displayNameOverride);
     }
 
     @Override
@@ -48,6 +51,10 @@ public record TagStackDef(String raw, TagKey<Item> tag) implements StackDef {
     @Override
     public String getDisplayName()
     {
+        if (hasDisplayNameOverride()) {
+            return displayNameOverride;
+        }
+
         Identifier id = tag.location();
         String translationKey = "tag.item." + id.getNamespace() + "." + id.getPath().replace('/', '.');
         return Component.translatable(translationKey).getString();

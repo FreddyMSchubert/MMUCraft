@@ -62,7 +62,7 @@
 				"abilityStatusCurrent": "Builds up a solid speed boost while sprinting.",
 				"abilityStatusRelative": "Increases max speed boost while sprinting.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=swiftness]",
+					"minecraft:potion[minecraft:potion_contents=swiftness]=Potion of Swiftness",
 					"minecraft:spyglass",
 					"minecraft:rabbit_foot",
 					"minecraft:rabbit_foot",
@@ -76,8 +76,8 @@
 				"abilityStatusCurrent": "Builds up a strong speed boost while sprinting.",
 				"abilityStatusRelative": "Increases max speed boost while sprinting.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=swiftness]",
-					"minecraft:splash_potion[minecraft:potion_contents=swiftness]",
+					"minecraft:potion[minecraft:potion_contents=swiftness]=Potion of Swiftness",
+					"minecraft:splash_potion[minecraft:potion_contents=swiftness]=Splash Potion of Swiftness",
 					"minecraft:spyglass",
 					"minecraft:diamond",
 					"minecraft:diamond",
@@ -96,8 +96,8 @@
 					"minecraft:gold_block",
 					"minecraft:gold_block",
 					"minecraft:netherite_scrap",
-					"minecraft:potion[minecraft:potion_contents=swiftness]",
-					"minecraft:splash_potion[minecraft:potion_contents=swiftness]"
+					"minecraft:potion[minecraft:potion_contents=swiftness]=Potion of Swiftness",
+					"minecraft:splash_potion[minecraft:potion_contents=swiftness]=Splash Potion of Swiftness"
 				]
 			},
 			{
@@ -111,7 +111,7 @@
 					"minecraft:gold_block",
 					"minecraft:netherite_ingot",
 					"minecraft:elytra",
-					"minecraft:lingering_potion[minecraft:potion_contents=swiftness]"
+					"minecraft:lingering_potion[minecraft:potion_contents=swiftness]=Lingering Potion of Swiftness"
 				]
 			},
 			{
@@ -119,9 +119,9 @@
 				"abilityStatusCurrent": "Builds up a ludicrous speed boost while sprinting.",
 				"abilityStatusRelative": "Increases max speed boost while sprinting.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=swiftness]",
-					"minecraft:splash_potion[minecraft:potion_contents=swiftness]",
-					"minecraft:lingering_potion[minecraft:potion_contents=swiftness]",
+					"minecraft:potion[minecraft:potion_contents=swiftness]=Potion of Swiftness",
+					"minecraft:splash_potion[minecraft:potion_contents=swiftness]=Splash Potion of Swiftness",
+					"minecraft:lingering_potion[minecraft:potion_contents=swiftness]=Lingering Potion of Swiftness",
 					"minecraft:dragon_breath",
 					"minecraft:dragon_head",
 					"minecraft:elytra",

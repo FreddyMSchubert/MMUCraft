@@ -41,12 +41,15 @@ public final class StackDefs
             throw new IllegalArgumentException("stack description must not be blank");
         }
 
-        if (trimmed.startsWith("#")) {
-            return TagStackDef.parse(trimmed);
+        ParsedStackDescription parsed = splitDisplayNameOverride(trimmed);
+        String stackDescription = parsed.stackDescription();
+
+        if (stackDescription.startsWith("#")) {
+            return TagStackDef.parse(trimmed, stackDescription, parsed.displayNameOverride());
         }
 
-        String baseId = extractBaseId(trimmed);
-        String suffix = trimmed.substring(baseId.length());
+        String baseId = extractBaseId(stackDescription);
+        String suffix = stackDescription.substring(baseId.length());
 
         Identifier identifier = Identifier.tryParse(baseId);
         if (identifier == null) {
@@ -54,8 +57,8 @@ public final class StackDefs
         }
 
         return switch (identifier.getNamespace()) {
-            case VANILLA_NAMESPACE -> VanillaStackDef.parse(trimmed, baseId, suffix);
-            case FAKE_NAMESPACE -> FakeStackDef.parse(trimmed, identifier.getPath(), suffix);
+            case VANILLA_NAMESPACE -> VanillaStackDef.parse(trimmed, baseId, suffix, parsed.displayNameOverride());
+            case FAKE_NAMESPACE -> FakeStackDef.parse(trimmed, identifier.getPath(), suffix, parsed.displayNameOverride());
             default -> throw new IllegalArgumentException(
                     "Unsupported stack description namespace '" + identifier.getNamespace() + "' in '" + raw + "'. " +
                             "Use minecraft: for registered items, mainmod: for fake items, or #namespace:path for tags."
@@ -69,6 +72,38 @@ public final class StackDefs
 
     public static net.minecraft.world.item.ItemStack create(String description) {
         return parse(description).createStack();
+    }
+
+    private record ParsedStackDescription(String stackDescription, String displayNameOverride) {}
+
+    private static ParsedStackDescription splitDisplayNameOverride(String raw) {
+        int bracketDepth = 0;
+        for (int i = 0; i < raw.length(); i++) {
+            char c = raw.charAt(i);
+            if (c == '[') {
+                bracketDepth++;
+            } else if (c == ']') {
+                bracketDepth--;
+                if (bracketDepth < 0) {
+                    throw new IllegalArgumentException("Invalid stack description, unexpected ']': '" + raw + "'");
+                }
+            } else if (c == '=' && bracketDepth == 0) {
+                String stackDescription = raw.substring(0, i).trim();
+                String displayNameOverride = raw.substring(i + 1).trim();
+                if (stackDescription.isEmpty()) {
+                    throw new IllegalArgumentException("Invalid stack description, missing item before display name override: '" + raw + "'");
+                }
+                if (displayNameOverride.isEmpty()) {
+                    throw new IllegalArgumentException("Invalid stack description, display name override must not be blank: '" + raw + "'");
+                }
+                return new ParsedStackDescription(stackDescription, displayNameOverride);
+            }
+        }
+
+        if (bracketDepth != 0) {
+            throw new IllegalArgumentException("Invalid stack description, missing closing ']': '" + raw + "'");
+        }
+        return new ParsedStackDescription(raw, "");
     }
 
     private static String extractBaseId(String raw) {

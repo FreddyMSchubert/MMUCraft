@@ -12,6 +12,12 @@ public sealed interface StackDef permits VanillaStackDef, FakeStackDef, TagStack
 
     String getDisplayName();
 
+    String displayNameOverride();
+
+    default boolean hasDisplayNameOverride() {
+        return !displayNameOverride().isBlank();
+    }
+
     default boolean canCreateStack() {
         return true;
     }

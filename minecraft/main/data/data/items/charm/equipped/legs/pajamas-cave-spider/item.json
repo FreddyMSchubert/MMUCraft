@@ -70,7 +70,7 @@
 				"upgradeIngredients": [
 					"minecraft:fermented_spider_eye",
 					"minecraft:copper_block",
-					"minecraft:enchanted_book[minecraft:stored_enchantments={\"minecraft:silk_touch\":1}]"
+					"minecraft:enchanted_book[minecraft:stored_enchantments={\"minecraft:silk_touch\":1}]=Silk Touch Enchanted Book"
 				]
 			},
 			{

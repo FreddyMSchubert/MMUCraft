@@ -10,6 +10,13 @@ import {
 
 const STATS_VERSION = 1
 const MOJANG_PROFILE_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const PROFILE_TEXT_LIMITS = {
+	preferredName: 40,
+	pronouns: 32,
+	courseYear: 64,
+	discordUsername: 40,
+	bio: 280,
+} as const
 
 type MoneyDirection = 'earned'
 
@@ -97,7 +104,6 @@ const PROFILE_OPTIONS: StatOption[] = [
 
 const MONEY_OPTIONS: StatOption[] = [
 	{ key: 'money.earnedDabloons', label: 'Dabloons Earned', group: 'money' },
-	{ key: 'money.balanceDabloons', label: 'Current Dabloon Balance', group: 'money' },
 ]
 
 const SESSION_OPTIONS: StatOption[] = [
@@ -106,6 +112,7 @@ const SESSION_OPTIONS: StatOption[] = [
 
 const CUSTOM_MINECRAFT_STATS = ([
 	['minecraft:play_time', 'Play Time'],
+	['minecraft:total_world_time', 'Total World Time'],
 	['minecraft:time_since_death', 'Time Since Death'],
 	['minecraft:time_since_rest', 'Time Since Rest'],
 	['minecraft:sneak_time', 'Sneak Time'],
@@ -616,16 +623,16 @@ export class PlayersService {
 
 	private normalizeProfileInput(input: Record<string, unknown>): PlayerProfile {
 		return {
-			preferredName: sanitizeText(input.preferredName, 80),
-			pronouns: sanitizeText(input.pronouns, 80),
-			courseYear: sanitizeText(input.courseYear, 80),
-			discordUsername: sanitizeText(input.discordUsername, 80),
+			preferredName: sanitizeProfileText(input.preferredName, PROFILE_TEXT_LIMITS.preferredName, 'Preferred name'),
+			pronouns: sanitizeProfileText(input.pronouns, PROFILE_TEXT_LIMITS.pronouns, 'Pronouns'),
+			courseYear: sanitizeProfileText(input.courseYear, PROFILE_TEXT_LIMITS.courseYear, 'Course / Year'),
+			discordUsername: sanitizeProfileText(input.discordUsername, PROFILE_TEXT_LIMITS.discordUsername, 'Discord username'),
 			base: {
 				x: normalizeCoordinate(input.baseX, 'Base X'),
 				y: normalizeCoordinate(input.baseY, 'Base Y'),
 				z: normalizeCoordinate(input.baseZ, 'Base Z'),
 			},
-			bio: sanitizeText(input.bio, 500),
+			bio: sanitizeProfileText(input.bio, PROFILE_TEXT_LIMITS.bio, 'Bio'),
 			updatedAtUnixMs: Date.now(),
 		}
 	}
@@ -902,6 +909,19 @@ function sanitizeText(value: unknown, maxLength: number): string {
 	}
 
 	return value.trim().slice(0, maxLength)
+}
+
+function sanitizeProfileText(value: unknown, maxLength: number, label: string): string {
+	if (typeof value !== 'string') {
+		return ''
+	}
+
+	const trimmed = value.trim()
+	if (trimmed.length > maxLength) {
+		throw new BadRequestException(`${label} must be ${maxLength} characters or fewer.`)
+	}
+
+	return trimmed
 }
 
 function sanitizeToken(value: unknown, fallback: string): string {

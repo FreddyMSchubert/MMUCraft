@@ -79,6 +79,13 @@ const DEFAULT_COLUMN_KEYS = [
 	'minecraft.custom.minecraft:play_time',
 	'minecraft.custom.minecraft:deaths',
 ]
+const PROFILE_TEXT_LIMITS = {
+	preferredName: 40,
+	pronouns: 32,
+	courseYear: 64,
+	discordUsername: 40,
+	bio: 280,
+} as const
 
 type SortDirection = 'desc' | 'asc'
 
@@ -408,19 +415,19 @@ function PlayerProfileForm({
 			</p>
 			<label>
 				<span>Preferred name</span>
-				<input value={preferredName} onChange={(event) => setPreferredName(event.target.value)} maxLength={80} />
+				<input value={preferredName} onChange={(event) => setPreferredName(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.preferredName} />
 			</label>
 			<label>
 				<span>Pronouns</span>
-				<input value={pronouns} onChange={(event) => setPronouns(event.target.value)} maxLength={80} />
+				<input value={pronouns} onChange={(event) => setPronouns(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.pronouns} />
 			</label>
 			<label>
 				<span>Course / Year</span>
-				<input value={courseYear} onChange={(event) => setCourseYear(event.target.value)} maxLength={80} />
+				<input value={courseYear} onChange={(event) => setCourseYear(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.courseYear} />
 			</label>
 			<label>
 				<span>Discord username</span>
-				<input value={discordUsername} onChange={(event) => setDiscordUsername(event.target.value)} maxLength={80} />
+				<input value={discordUsername} onChange={(event) => setDiscordUsername(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.discordUsername} />
 			</label>
 			<div className="playerBaseInputs">
 				<span>Base location (XYZ)</span>
@@ -439,7 +446,7 @@ function PlayerProfileForm({
 			</div>
 			<label className="playerBioInput">
 				<span>Bio</span>
-				<textarea value={bio} onChange={(event) => setBio(event.target.value)} maxLength={500} rows={4} />
+				<textarea value={bio} onChange={(event) => setBio(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.bio} rows={4} />
 			</label>
 			<div className="playerProfileActions">
 				<button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
@@ -459,7 +466,6 @@ function PlayerStatsList({ player, statOptions }: { player: PlayerSummary; statO
 			<div className="playerStatsCore">
 				<StatLine label="Last Played" value={formatTimestamp(player.stats.minecraft.lastPlayedAtUnixMs)} />
 				<StatLine label="Dabloons Earned" value={formatNumber(player.stats.money.earnedDabloons)} />
-				<StatLine label="Current Balance" value={formatNullableNumber(player.stats.money.balanceDabloons)} />
 				<StatLine label="Last Sync" value={formatTimestamp(player.stats.minecraft.lastSyncedAtUnixMs)} />
 			</div>
 
@@ -538,7 +544,6 @@ function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.discordUsername') return player.profile.discordUsername || '-'
 	if (option.key === 'profile.base') return hasBase(player.profile) ? formatBase(player.profile.base) : '-'
 	if (option.key === 'money.earnedDabloons') return formatNumber(player.stats.money.earnedDabloons)
-	if (option.key === 'money.balanceDabloons') return formatNullableNumber(player.stats.money.balanceDabloons)
 	if (option.key === 'minecraft.lastPlayedAtUnixMs') return formatTimestamp(player.stats.minecraft.lastPlayedAtUnixMs)
 
 	const stat = player.stats.minecraft.stats[option.key]
@@ -563,7 +568,6 @@ function getSortValue(player: PlayerSummary, option: StatOption): number | strin
 	if (option.key === 'profile.discordUsername') return player.profile.discordUsername || null
 	if (option.key === 'profile.base') return hasBase(player.profile) ? formatBase(player.profile.base) : null
 	if (option.key === 'money.earnedDabloons') return player.stats.money.earnedDabloons
-	if (option.key === 'money.balanceDabloons') return player.stats.money.balanceDabloons
 	if (option.key === 'minecraft.lastPlayedAtUnixMs') return player.stats.minecraft.lastPlayedAtUnixMs
 
 	return player.stats.minecraft.stats[option.key]?.value ?? 0
@@ -623,10 +627,6 @@ function formatTimestamp(value: number | null) {
 	}).format(new Date(value))
 }
 
-function formatNullableNumber(value: number | null) {
-	return value === null ? '-' : formatNumber(value)
-}
-
 function formatNumber(value: number) {
 	return new Intl.NumberFormat().format(value)
 }
@@ -684,7 +684,7 @@ function minecraftOptionGroup(category?: string) {
 
 function groupMinecraftStats(stats: MinecraftStatValue[]) {
 	const visible = stats
-		.filter((stat) => stat.value > 0 || stat.category === 'custom')
+		.filter((stat) => stat.value > 0)
 		.sort((left, right) => {
 			const category = categoryRank(left.category) - categoryRank(right.category)
 			if (category !== 0) return category

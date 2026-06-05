@@ -5,6 +5,7 @@ import { AuthPanel } from '@/components/auth-panel'
 import { BackgroundGrid } from '@/components/background-grid'
 import { DailiesTab } from '@/components/dailies-tab'
 import { KnowledgeTab } from '@/components/knowledge-tab'
+import { PlayersTab } from '@/components/players-tab'
 import { ShopTab } from '@/components/shop-tab'
 
 interface SessionUser {
@@ -15,7 +16,7 @@ interface SessionUser {
 	rulesAccepted: boolean
 }
 
-type TabId = 'dailies' | 'knowledge' | 'shop'
+type TabId = 'dailies' | 'knowledge' | 'shop' | 'players'
 
 async function fetchMe(): Promise<SessionUser | null> {
 	const response = await fetch('/api/auth/me', {
@@ -121,12 +122,20 @@ export function SiteShell({ images }: { images: string[] }) {
 							>
 								Shop
 							</button>
+							<button
+								type="button"
+								className={activeTab === 'players' ? 'active' : ''}
+								onClick={() => setActiveTab('players')}
+							>
+								Players
+							</button>
 						</nav>
 
 						<div className="dashboardPanel">
 							{activeTab === 'dailies' && <DailiesTab />}
 							{activeTab === 'knowledge' && <KnowledgeTab />}
 							{activeTab === 'shop' && <ShopTab />}
+							{activeTab === 'players' && <PlayersTab />}
 						</div>
 					</section>
 				)}

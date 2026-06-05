@@ -16,7 +16,9 @@ body {
 }
 
 button,
-input {
+input,
+select,
+textarea {
 	font: inherit;
 }
 
@@ -843,6 +845,337 @@ a {
 
 
 /* ============================================================
+   Players
+   ============================================================ */
+
+.playersPanel {
+	display: grid;
+	gap: 16px;
+}
+
+.playersTop {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: center;
+}
+
+.playersTop h3,
+.playerProfileIdentity h4,
+.playerBio,
+.playerStatsPanel h5,
+.playerProfileEmpty {
+	margin: 0;
+}
+
+.playersTop h3 {
+	font-size: 1.25rem;
+}
+
+.playersTop button,
+.playerProfileTop button,
+.playerProfileActions button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 6px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.playersTableWrap {
+	overflow: auto;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.06);
+}
+
+.playersTable {
+	width: 100%;
+	min-width: 760px;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.playersTable th,
+.playersTable td {
+	padding: 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+	vertical-align: middle;
+	overflow-wrap: anywhere;
+}
+
+.playersTable th:first-child,
+.playersTable td:first-child {
+	width: 72px;
+	text-align: center;
+}
+
+.playersTable th {
+	background: rgba(255, 255, 255, 0.08);
+	color: rgba(255, 255, 255, 0.76);
+	font-size: 0.78rem;
+	text-align: left;
+	text-transform: uppercase;
+}
+
+.playersTable tbody tr {
+	cursor: pointer;
+	transition: background 140ms ease;
+}
+
+.playersTable tbody tr:hover,
+.playersTable tbody tr.active {
+	background: rgba(255, 209, 102, 0.14);
+}
+
+.playersTable tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.playerColumnSelect {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 30px;
+	gap: 6px;
+	align-items: center;
+	min-width: 0;
+}
+
+.playerColumnSelect select,
+.playerProfileForm input,
+.playerProfileForm textarea {
+	width: 100%;
+	min-width: 0;
+	padding: 8px 9px;
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.1);
+	color: #fff;
+}
+
+.playerColumnSelect select option,
+.playerColumnSelect select optgroup {
+	color: #111;
+}
+
+.playerColumnSelect button {
+	display: grid;
+	place-items: center;
+	width: 30px;
+	aspect-ratio: 1;
+	padding: 0;
+	border: 0;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.14);
+	color: #fff;
+	font-weight: 700;
+}
+
+.playerHead {
+	position: relative;
+	display: inline-grid;
+	place-items: center;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.1);
+	color: #ffd166;
+	font-weight: 800;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+}
+
+.playerHead-small {
+	width: 42px;
+	height: 42px;
+	font-size: 1rem;
+}
+
+.playerHead-large {
+	width: 82px;
+	height: 82px;
+	font-size: 1.8rem;
+}
+
+.playerHeadLayer {
+	position: absolute;
+	inset: 0;
+	background-repeat: no-repeat;
+	background-size: 800% 800%;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+}
+
+.playerHeadFace {
+	background-position: 14.2857% 14.2857%;
+}
+
+.playerHeadHat {
+	background-position: 71.4286% 14.2857%;
+}
+
+.playerHeadFallback {
+	text-transform: uppercase;
+}
+
+.playerProfilePanel {
+	display: grid;
+	gap: 16px;
+	padding: 14px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.07);
+}
+
+.playerProfileTop {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	gap: 14px;
+	align-items: start;
+}
+
+.playerProfileIdentity {
+	min-width: 0;
+}
+
+.playerProfileIdentity h4 {
+	font-size: 1.35rem;
+	overflow-wrap: anywhere;
+}
+
+.playerFacts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 8px 14px;
+	margin: 10px 0 0;
+}
+
+.playerFacts div {
+	min-width: 0;
+}
+
+.playerFacts dt {
+	color: rgba(255, 255, 255, 0.58);
+	font-size: 0.74rem;
+	text-transform: uppercase;
+}
+
+.playerFacts dd {
+	margin: 3px 0 0;
+	overflow-wrap: anywhere;
+}
+
+.playerBio,
+.playerProfileEmpty {
+	color: rgba(255, 255, 255, 0.76);
+	line-height: 1.55;
+}
+
+.playerProfileForm {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.playerProfileForm label {
+	display: grid;
+	gap: 5px;
+	color: rgba(255, 255, 255, 0.76);
+	font-size: 0.78rem;
+	text-transform: uppercase;
+}
+
+.playerBaseInputs {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.playerBioInput,
+.playerBaseInputs,
+.playerProfileActions {
+	grid-column: 1 / -1;
+}
+
+.playerProfileForm textarea {
+	min-height: 110px;
+	resize: vertical;
+	line-height: 1.45;
+}
+
+.playerProfileActions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.playerProfileActions button[type="button"] {
+	background: rgba(255, 255, 255, 0.14);
+	color: #fff;
+}
+
+.playerStatsPanel {
+	display: grid;
+	gap: 12px;
+}
+
+.playerStatsPanel h5 {
+	font-size: 1rem;
+}
+
+.playerStatsCore,
+.playerStatGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 8px;
+}
+
+.playerStatLine {
+	display: grid;
+	gap: 5px;
+	min-width: 0;
+	padding: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.playerStatLine span {
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.76rem;
+	text-transform: uppercase;
+}
+
+.playerStatLine strong {
+	overflow-wrap: anywhere;
+	color: #fff;
+	font-size: 0.98rem;
+}
+
+.playerStatGroups {
+	display: grid;
+	gap: 8px;
+}
+
+.playerStatGroups details {
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.playerStatGroups summary {
+	padding: 10px 12px;
+	cursor: pointer;
+	color: #ffd166;
+	font-weight: 700;
+}
+
+.playerStatGrid {
+	padding: 0 12px 12px;
+}
+
+
+/* ============================================================
    Responsiveness
    ============================================================ */
 
@@ -903,5 +1236,24 @@ a {
 
 	.shopGrid {
 		grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+	}
+
+	.playersTop,
+	.playerProfileTop {
+		grid-template-columns: 1fr;
+		display: grid;
+	}
+
+	.playersTop button,
+	.playerProfileTop button {
+		width: 100%;
+	}
+
+	.playerProfileForm {
+		grid-template-columns: 1fr;
+	}
+
+	.playerBaseInputs {
+		grid-template-columns: 1fr;
 	}
 }

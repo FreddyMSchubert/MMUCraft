@@ -56,6 +56,35 @@ public final class GameplayGrpcService extends GrpcHandler {
         return INSTANCE.getUnlockAvailabilityInternal(minecraftUsername);
     }
 
+    public static CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
+            ServerPlayer player,
+            List<MinecraftStatEntry> stats
+    ) {
+        return INSTANCE.syncPlayerStatsInternal(
+                player.getName().getString(),
+                MoneyHelper.GetBalance(player),
+                stats
+        );
+    }
+
+    public static CompletableFuture<RecordMoneyEventResponse> recordMoneyEvent(
+            String minecraftUsername,
+            int amountDabloons,
+            String direction,
+            String source,
+            String referenceId,
+            int balanceDabloons
+    ) {
+        return INSTANCE.recordMoneyEventInternal(
+                minecraftUsername,
+                amountDabloons,
+                direction,
+                source,
+                referenceId,
+                balanceDabloons
+        );
+    }
+
     @Override
     List<BindableService> serverServices() {
         return List.of(new GameplayControlEndpoint());
@@ -123,6 +152,80 @@ public final class GameplayGrpcService extends GrpcHandler {
 
         var rpc = client.getUnlockAvailability(request);
         CompletableFuture<GetUnlockAvailabilityResponse> result = new CompletableFuture<>();
+
+        rpc.addListener(() -> {
+            try {
+                result.complete(rpc.get());
+            } catch (Exception exception) {
+                result.completeExceptionally(exception);
+            }
+        }, Runnable::run);
+
+        return result;
+    }
+
+    private CompletableFuture<SyncPlayerStatsResponse> syncPlayerStatsInternal(
+            String minecraftUsername,
+            int balanceDabloons,
+            List<MinecraftStatEntry> stats
+    ) {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+
+        if (client == null) {
+            return CompletableFuture.failedFuture(
+                    new IllegalStateException("GameplayEvents gRPC client is not initialized")
+            );
+        }
+
+        SyncPlayerStatsRequest request = SyncPlayerStatsRequest.newBuilder()
+                .setMinecraftUsername(minecraftUsername)
+                .setUnixMs(System.currentTimeMillis())
+                .setBalanceDabloons(Math.max(0, balanceDabloons))
+                .addAllStats(stats)
+                .build();
+
+        var rpc = client.syncPlayerStats(request);
+        CompletableFuture<SyncPlayerStatsResponse> result = new CompletableFuture<>();
+
+        rpc.addListener(() -> {
+            try {
+                result.complete(rpc.get());
+            } catch (Exception exception) {
+                result.completeExceptionally(exception);
+            }
+        }, Runnable::run);
+
+        return result;
+    }
+
+    private CompletableFuture<RecordMoneyEventResponse> recordMoneyEventInternal(
+            String minecraftUsername,
+            int amountDabloons,
+            String direction,
+            String source,
+            String referenceId,
+            int balanceDabloons
+    ) {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+
+        if (client == null) {
+            return CompletableFuture.failedFuture(
+                    new IllegalStateException("GameplayEvents gRPC client is not initialized")
+            );
+        }
+
+        RecordMoneyEventRequest request = RecordMoneyEventRequest.newBuilder()
+                .setMinecraftUsername(minecraftUsername)
+                .setAmountDabloons(Math.max(0, amountDabloons))
+                .setDirection(direction)
+                .setSource(source)
+                .setReferenceId(referenceId)
+                .setUnixMs(System.currentTimeMillis())
+                .setBalanceDabloons(Math.max(0, balanceDabloons))
+                .build();
+
+        var rpc = client.recordMoneyEvent(request);
+        CompletableFuture<RecordMoneyEventResponse> result = new CompletableFuture<>();
 
         rpc.addListener(() -> {
             try {

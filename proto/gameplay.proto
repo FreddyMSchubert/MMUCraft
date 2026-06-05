@@ -9,6 +9,8 @@ option java_outer_classname = "GameplayProto";
 service GameplayEvents {
   rpc UnlockNextKnowledge(UnlockNextKnowledgeRequest) returns (UnlockNextKnowledgeResponse);
   rpc GetUnlockAvailability(GetUnlockAvailabilityRequest) returns (GetUnlockAvailabilityResponse);
+  rpc SyncPlayerStats(SyncPlayerStatsRequest) returns (SyncPlayerStatsResponse);
+  rpc RecordMoneyEvent(RecordMoneyEventRequest) returns (RecordMoneyEventResponse);
 }
 
 service GameplayControl {
@@ -51,6 +53,44 @@ message GetUnlockAvailabilityResponse {
   bool has_charms_to_unlock = 3;
   bool has_cosmetics_to_unlock = 4;
   string message = 5;
+}
+
+message MinecraftStatEntry {
+  string key = 1;
+  string category = 2;
+  string id = 3;
+  string label = 4;
+  int64 value = 5;
+}
+
+message SyncPlayerStatsRequest {
+  string minecraft_username = 1;
+  int64 unix_ms = 2;
+  int32 balance_dabloons = 3;
+  repeated MinecraftStatEntry stats = 4;
+}
+
+message SyncPlayerStatsResponse {
+  bool accepted = 1;
+  bool account_linked = 2;
+  string message = 3;
+}
+
+message RecordMoneyEventRequest {
+  string minecraft_username = 1;
+  int32 amount_dabloons = 2;
+  string direction = 3;
+  string source = 4;
+  string reference_id = 5;
+  int64 unix_ms = 6;
+  int32 balance_dabloons = 7;
+}
+
+message RecordMoneyEventResponse {
+  bool recorded = 1;
+  bool duplicate = 2;
+  bool account_linked = 3;
+  string message = 4;
 }
 
 message GrantDailyLoginBonusRequest {

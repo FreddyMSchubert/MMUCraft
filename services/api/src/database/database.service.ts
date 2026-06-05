@@ -12,6 +12,34 @@ export interface UserRow {
 	created_at_unix_ms: number
 }
 
+export interface PlayerProfileRow {
+	user_id: number
+	preferred_name: string
+	course_year: string
+	discord_username: string
+	base_x: number | null
+	base_y: number | null
+	base_z: number | null
+	bio: string
+	updated_at_unix_ms: number
+}
+
+export interface PlayerStatsRow {
+	user_id: number
+	stats_json: string
+	updated_at_unix_ms: number
+}
+
+export interface PlayerMoneyEventRow {
+	id: string
+	user_id: number
+	direction: string
+	source: string
+	amount_dabloons: number
+	balance_dabloons: number | null
+	created_at_unix_ms: number
+}
+
 export enum SignupFlowStatus {
 	EMAIL_PENDING = 'EMAIL_PENDING',
 	MINECRAFT_USERNAME_PENDING = 'MINECRAFT_USERNAME_PENDING',
@@ -127,6 +155,40 @@ export class DatabaseService implements OnModuleDestroy {
 
 			CREATE INDEX IF NOT EXISTS sessions_token_hash_idx
 				ON sessions(token_hash);
+
+			CREATE TABLE IF NOT EXISTS player_profiles (
+				user_id INTEGER PRIMARY KEY,
+				preferred_name TEXT NOT NULL DEFAULT '',
+				course_year TEXT NOT NULL DEFAULT '',
+				discord_username TEXT NOT NULL DEFAULT '',
+				base_x INTEGER,
+				base_y INTEGER,
+				base_z INTEGER,
+				bio TEXT NOT NULL DEFAULT '',
+				updated_at_unix_ms INTEGER NOT NULL,
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE TABLE IF NOT EXISTS player_stats (
+				user_id INTEGER PRIMARY KEY,
+				stats_json TEXT NOT NULL,
+				updated_at_unix_ms INTEGER NOT NULL,
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE TABLE IF NOT EXISTS player_money_events (
+				id TEXT PRIMARY KEY,
+				user_id INTEGER NOT NULL,
+				direction TEXT NOT NULL,
+				source TEXT NOT NULL,
+				amount_dabloons INTEGER NOT NULL,
+				balance_dabloons INTEGER,
+				created_at_unix_ms INTEGER NOT NULL,
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS player_money_events_user_id_idx
+				ON player_money_events(user_id);
 
 			CREATE TABLE IF NOT EXISTS knowledge_unlocks (
 				user_id INTEGER NOT NULL,

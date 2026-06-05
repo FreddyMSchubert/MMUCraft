@@ -10,6 +10,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
@@ -91,6 +93,19 @@ public class PlayerAdvancementMoney {
         AdvancementRewards rewards = advancementHolder.value().rewards();
         int money = AdvancementMoney.moneyForAdvancement(advancementHolder.id(), rewards.experience());
         MoneyHelper.GainMoney(this.player, money);
+        if (money > 0) {
+            GameplayGrpcService.recordMoneyEvent(
+                    this.player.getName().getString(),
+                    money,
+                    "earned",
+                    "advancement",
+                    advancementHolder.id().toString(),
+                    MoneyHelper.GetBalance(this.player)
+            ).exceptionally(error -> {
+                MainMod.LOGGER.debug("Failed to record advancement dabloons for {}", this.player.getName().getString(), error);
+                return null;
+            });
+        }
 
         advancementHolder.value().display().ifPresent(displayInfo -> this.player.sendSystemMessage(
                 Component.literal(randomCelebration() + ": You received " + money + " dabloons for completing ")

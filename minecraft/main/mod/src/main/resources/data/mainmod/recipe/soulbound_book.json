@@ -9,7 +9,7 @@
     "minecraft:soul_soil"
   ],
   "result": {
-    "stack": "minecraft:enchanted_book[minecraft:stored_enchantments={'mainmod:soulbound':1}]",
+    "stack": "minecraft:enchanted_book[minecraft:stored_enchantments={'mainmod:soulbound':1}]=Soulbound Enchanted Book",
     "count": 1
   }
 }

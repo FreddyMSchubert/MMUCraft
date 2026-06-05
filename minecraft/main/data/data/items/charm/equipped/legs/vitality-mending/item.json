@@ -36,7 +36,7 @@
 				"abilityStatusCurrent": "XP heals you. Costs 4 XP per hp.",
 				"abilityStatusRelative": "Improves healing to 4 XP per hp.",
 				"upgradeIngredients": [
-					"minecraft:enchanted_book[minecraft:stored_enchantments={\"minecraft:mending\":1}]",
+					"minecraft:enchanted_book[minecraft:stored_enchantments={\"minecraft:mending\":1}]=Mending Enchanted Book",
 					"minecraft:experience_bottle",
 					"minecraft:experience_bottle",
 					"minecraft:experience_bottle",
@@ -63,7 +63,7 @@
 				"abilityStatusCurrent": "XP heals you. Costs 2 XP per hp.",
 				"abilityStatusRelative": "Improves healing to 2 XP per hp.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=healing]",
+					"minecraft:potion[minecraft:potion_contents=healing]=Potion of Healing",
 					"minecraft:ghast_tear",
 					"minecraft:diamond_block",
 					"minecraft:glowstone",
@@ -77,7 +77,7 @@
 				"abilityStatusRelative": "Improves healing to 1 XP per hp.",
 				"upgradeIngredients": [
 					"minecraft:experience_bottle",
-					"minecraft:lingering_potion[minecraft:potion_contents=healing]",
+					"minecraft:lingering_potion[minecraft:potion_contents=healing]=Lingering Potion of Healing",
 					"minecraft:lapis_block",
 					"minecraft:lapis_block",
 					"minecraft:lapis_block"

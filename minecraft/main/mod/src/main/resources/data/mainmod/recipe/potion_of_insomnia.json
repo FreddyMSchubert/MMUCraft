@@ -4,7 +4,7 @@
     "minecraft:crying_obsidian",
     "minecraft:crying_obsidian",
     "minecraft:crying_obsidian",
-    "minecraft:potion[minecraft:potion_contents=water]",
+    "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
     "minecraft:phantom_membrane"
   ],
   "result": {

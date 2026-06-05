@@ -100,7 +100,7 @@
 				"abilityStatusCurrent": "Let's you jump seven blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=strong_leaping]",
+					"minecraft:potion[minecraft:potion_contents=strong_leaping]=Potion of Leaping II",
 					"minecraft:ghast_tear",
 					"minecraft:magma_cream",
 					"minecraft:golden_carrot",
@@ -116,7 +116,7 @@
 					"minecraft:gilded_blackstone",
 					"minecraft:gilded_blackstone",
 					"minecraft:gilded_blackstone",
-					"minecraft:splash_potion[minecraft:potion_contents=strong_leaping]",
+					"minecraft:splash_potion[minecraft:potion_contents=strong_leaping]=Splash Potion of Leaping II",
 					"minecraft:crying_obsidian",
 					"minecraft:crying_obsidian",
 					"minecraft:crying_obsidian",
@@ -128,9 +128,9 @@
 				"abilityStatusCurrent": "Let's you jump nine blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=strong_leaping]",
-					"minecraft:splash_potion[minecraft:potion_contents=strong_leaping]",
-					"minecraft:lingering_potion[minecraft:potion_contents=strong_leaping]",
+					"minecraft:potion[minecraft:potion_contents=strong_leaping]=Potion of Leaping II",
+					"minecraft:splash_potion[minecraft:potion_contents=strong_leaping]=Splash Potion of Leaping II",
+					"minecraft:lingering_potion[minecraft:potion_contents=strong_leaping]=Lingering Potion of Leaping II",
 					"minecraft:netherite_scrap",
 					"minecraft:netherite_scrap",
 					"minecraft:netherite_scrap"
@@ -156,9 +156,9 @@
 				"abilityStatusCurrent": "Let's you jump eleven blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=slow_falling]",
-					"minecraft:splash_potion[minecraft:potion_contents=slow_falling]",
-					"minecraft:lingering_potion[minecraft:potion_contents=slow_falling]",
+					"minecraft:potion[minecraft:potion_contents=slow_falling]=Potion of Slow Falling",
+					"minecraft:splash_potion[minecraft:potion_contents=slow_falling]=Splash Potion of Slow Falling",
+					"minecraft:lingering_potion[minecraft:potion_contents=slow_falling]=Lingering Potion of Slow Falling",
 					"minecraft:shulker_shell",
 					"minecraft:shulker_shell",
 					"minecraft:shulker_shell",

@@ -15,7 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import java.util.Map;
 import java.util.Optional;
 
-public record FakeStackDef(String raw, String fakeItemId, String suffix) implements StackDef
+public record FakeStackDef(String raw, String fakeItemId, String suffix, String displayNameOverride) implements StackDef
 {
     private static final String DUMMY_COMPONENT_PARSE_ITEM = "minecraft:stone";
 
@@ -30,10 +30,13 @@ public record FakeStackDef(String raw, String fakeItemId, String suffix) impleme
         if (suffix == null) {
             throw new IllegalArgumentException("suffix must not be null");
         }
+        if (displayNameOverride == null) {
+            throw new IllegalArgumentException("displayNameOverride must not be null");
+        }
     }
 
-    public static FakeStackDef parse(String raw, String fakeItemId, String suffix) {
-        return new FakeStackDef(raw, fakeItemId, suffix);
+    public static FakeStackDef parse(String raw, String fakeItemId, String suffix, String displayNameOverride) {
+        return new FakeStackDef(raw, fakeItemId, suffix, displayNameOverride);
     }
 
     @Override
@@ -71,6 +74,10 @@ public record FakeStackDef(String raw, String fakeItemId, String suffix) impleme
     @Override
     public String getDisplayName()
     {
+        if (hasDisplayNameOverride()) {
+            return displayNameOverride;
+        }
+
         FakeItem fakeItem = FakeItems.requireFakeItem(fakeItemId);
         return fakeItem.title();
     }

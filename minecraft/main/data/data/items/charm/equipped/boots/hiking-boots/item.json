@@ -45,7 +45,7 @@
 				"abilityStatusCurrent": "Allows you to walk over a 2-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 2 blocks.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=leaping]",
+					"minecraft:potion[minecraft:potion_contents=leaping]=Potion of Leaping",
 					"minecraft:copper_block",
 					"minecraft:redstone_block",
 					"minecraft:lapis_block",
@@ -60,9 +60,9 @@
 				"abilityStatusCurrent": "Allows you to walk over a 3-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 3 blocks.",
 				"upgradeIngredients": [
-					"minecraft:potion[minecraft:potion_contents=leaping]",
-					"minecraft:splash_potion[minecraft:potion_contents=leaping]",
-					"minecraft:lingering_potion[minecraft:potion_contents=leaping]",
+					"minecraft:potion[minecraft:potion_contents=leaping]=Potion of Leaping",
+					"minecraft:splash_potion[minecraft:potion_contents=leaping]=Splash Potion of Leaping",
+					"minecraft:lingering_potion[minecraft:potion_contents=leaping]=Lingering Potion of Leaping",
 					"minecraft:diamond_block",
 					"minecraft:netherite_ingot"
 				]
@@ -72,7 +72,7 @@
 				"abilityStatusCurrent": "Allows you to walk over a 4-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 4 blocks.",
 				"upgradeIngredients": [
-					"minecraft:lingering_potion[minecraft:potion_contents=leaping]",
+					"minecraft:lingering_potion[minecraft:potion_contents=leaping]=Lingering Potion of Leaping",
 					"minecraft:diamond_block",
 					"minecraft:diamond_block",
 					"minecraft:diamond_block",

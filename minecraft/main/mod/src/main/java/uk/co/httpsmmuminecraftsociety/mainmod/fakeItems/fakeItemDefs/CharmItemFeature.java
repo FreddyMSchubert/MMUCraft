@@ -245,7 +245,7 @@ public record CharmItemFeature(
 
     private static String formatIngredient(StackDef ingredient, int count) {
         String displayName = ingredient.getDisplayName();
-        if (ingredient instanceof TagStackDef) {
+        if (ingredient instanceof TagStackDef && !ingredient.hasDisplayNameOverride()) {
             displayName = "Any " + displayName;
         }
 

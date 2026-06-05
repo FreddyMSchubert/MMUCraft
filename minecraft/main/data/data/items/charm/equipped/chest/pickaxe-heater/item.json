@@ -1,0 +1,33 @@
+{
+	"title": "Pickaxe Heater Charm",
+	"id": "charm-pickaxe-heater",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Hot enough to skip the furnace."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Hot enough to skip the furnace. Mined block drops are converted into their furnace-smelted counterparts when using a pickaxe.",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm."
+	},
+	"charm": {
+		"charmId": 43,
+		"minLevel": 1,
+		"maxLevel": 1,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Mined block drops are converted into their furnace-smelted counterparts when using a pickaxe.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "pickaxe_heater__charm"
+	}
+}

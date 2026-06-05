@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Stardew Valley is fine I guess. Hoe-harvests and replants the right-clicked ripe crop.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Farming Boots Charm."
 	},
 	"charm": {

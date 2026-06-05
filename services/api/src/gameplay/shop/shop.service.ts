@@ -24,7 +24,7 @@ interface ShopPurchasableDefinition {
 	priceDabloons: number
 	description: string
 	unlockMessage: string | null
-	unlockPriority: number
+	unlockWeight: number
 }
 
 interface FakeItemDefinition {
@@ -55,7 +55,7 @@ interface CatalogItem {
 	priceDabloons: number
 	description: string
 	unlockMessage: string | null
-	unlockPriority: number
+	unlockWeight: number
 	iconUrl: string | null
 	renderMode: 'texture' | 'model'
 	modelUrl: string | null
@@ -137,7 +137,7 @@ export class ShopService {
 				priceDabloons: item.priceDabloons,
 				description: item.description,
 				unlockMessage: item.unlockMessage,
-				unlockPriority: item.unlockPriority,
+				unlockWeight: item.unlockWeight,
 				iconUrl: item.iconUrl,
 				renderMode: item.renderMode,
 				modelUrl: item.modelUrl,
@@ -232,7 +232,7 @@ export class ShopService {
 					return 'all-unlocked' as const
 				}
 
-				const chosen = this.pickRandomLowestPriorityItem(remaining)
+				const chosen = this.pickWeightedRandomItem(remaining)
 				const result = this.database.connection.prepare(`
 					INSERT OR IGNORE INTO shop_unlocks (
 						user_id,
@@ -271,7 +271,7 @@ export class ShopService {
 					all_unlocked: false,
 					knowledge_id: picked.id,
 					unlocked_id: picked.id,
-					priority: picked.unlockPriority,
+					priority: picked.unlockWeight,
 					topic: picked.title,
 					message: picked.unlockMessage ?? `You've unlocked ${picked.title}. Visit the website shop to see it.`,
 				}
@@ -434,11 +434,18 @@ export class ShopService {
 		`).get(minecraftUsername) as UserRow | undefined) ?? null
 	}
 
-	private pickRandomLowestPriorityItem(items: CatalogItem[]): CatalogItem {
-		const lowestPriority = Math.min(...items.map((item) => item.unlockPriority))
-		const candidates = items.filter((item) => item.unlockPriority === lowestPriority)
+	private pickWeightedRandomItem(items: CatalogItem[]): CatalogItem {
+		const totalWeight = items.reduce((total, item) => total + item.unlockWeight, 0)
+		let remainingWeight = randomInt(totalWeight)
 
-		return candidates[randomInt(candidates.length)]!
+		for (const item of items) {
+			remainingWeight -= item.unlockWeight
+			if (remainingWeight < 0) {
+				return item
+			}
+		}
+
+		return items[items.length - 1]!
 	}
 
 	private async purchaseFromMod(minecraftUsername: string, item: CatalogItem): Promise<PurchaseShopItemResponse> {
@@ -574,7 +581,7 @@ export class ShopService {
 			priceDabloons: shop.priceDabloons,
 			description: shop.description,
 			unlockMessage: shop.unlockMessage,
-			unlockPriority: shop.unlockPriority,
+			unlockWeight: shop.unlockWeight,
 			iconUrl,
 			renderMode,
 			modelUrl: renderMode === 'model' ? `/api/shop/model/${encodeURIComponent(id)}` : null,
@@ -607,14 +614,15 @@ export class ShopService {
 		const priceDabloons = candidate.priceDabloons
 		const description = candidate.description
 		const unlockMessage = candidate.unlockMessage
-		const unlockPriority = candidate.unlockPriority
+		const unlockWeight = candidate.unlockWeight
 		if (
 			typeof priceDabloons !== 'number'
 			|| !Number.isInteger(priceDabloons)
 			|| typeof description !== 'string'
 			|| (unlockMessage !== undefined && typeof unlockMessage !== 'string')
-			|| typeof unlockPriority !== 'number'
-			|| !Number.isInteger(unlockPriority)
+			|| typeof unlockWeight !== 'number'
+			|| !Number.isInteger(unlockWeight)
+			|| unlockWeight < 1
 		) {
 			return null
 		}
@@ -623,7 +631,7 @@ export class ShopService {
 			priceDabloons,
 			description,
 			unlockMessage: unlockMessage ?? null,
-			unlockPriority,
+			unlockWeight,
 		}
 	}
 
@@ -768,7 +776,7 @@ export class ShopService {
 			priceDabloons: 180,
 			description: 'A vanilla armor trim smithing template for the Silence pattern.',
 			unlockMessage: null,
-			unlockPriority: 3,
+			unlockWeight: 100,
 			iconUrl: this.vanillaItemIconUrl(itemId),
 			renderMode: 'texture',
 			modelUrl: null,

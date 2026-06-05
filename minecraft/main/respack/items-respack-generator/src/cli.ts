@@ -2,6 +2,10 @@ import { cliUsage, resolveOptionsFromCli } from './config';
 import { discoverItems } from './discovery/discoverItems';
 import { generateResourcePack } from './generation/resourcePackGenerator';
 
+function formatUnlockWeight(weight: number | null): string {
+  return weight === null ? 'none' : String(weight);
+}
+
 async function main(): Promise<void> {
   const rawArgs = process.argv.slice(2);
 
@@ -25,6 +29,10 @@ async function main(): Promise<void> {
   console.log(`  Carved pumpkin cases: ${summary.carvedPumpkinCases}`);
   console.log(`  Files written: ${summary.generatedFiles}`);
   console.log(`  Items skipped: ${summary.skippedItems}`);
+  console.log('  Cosmetic weight order:');
+  for (const cosmetic of summary.cosmeticWeightOrder) {
+    console.log(`    ${formatUnlockWeight(cosmetic.unlockWeight)}  ${cosmetic.id} - ${cosmetic.title}`);
+  }
 }
 
 main().catch((error: unknown) => {

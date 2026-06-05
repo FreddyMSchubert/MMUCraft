@@ -15,7 +15,7 @@ interface ShopItem {
 	priceDabloons: number
 	description: string
 	unlockMessage: string | null
-	unlockPriority: number
+	unlockWeight: number
 	iconUrl: string | null
 	renderMode: 'texture' | 'model'
 	modelUrl: string | null

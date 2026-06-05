@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A wardrobe cosmetic unlock for Microwave.",
-		"unlockPriority": 0,
+		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Microwave."
 	},
 	"equippableCosmetic": {}

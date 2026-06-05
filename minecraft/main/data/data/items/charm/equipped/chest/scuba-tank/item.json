@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Take it slow down there. Reduces air consumption to 80% while stationary underwater.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Scuba Tank Charm."
 	},
 	"charm": {

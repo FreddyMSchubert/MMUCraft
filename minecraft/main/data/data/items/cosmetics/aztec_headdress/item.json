@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "Although I like to call it quetzalÄpanecayÅtl",
-		"unlockPriority": 0,
+		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Moctezuma's Headdress."
 	},
 	"equippableCosmetic": {}

@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A wardrobe cosmetic unlock for Beanie.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Beanie."
 	},
 	"equippableCosmetic": {},

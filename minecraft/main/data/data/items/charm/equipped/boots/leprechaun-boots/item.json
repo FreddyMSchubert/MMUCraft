@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "I'm feeling lucky. Grants the luck of the leprechaun while equipped. Nothing else don't worry bout it.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Leprechaun Boots Charm."
 	},
 	"charm": {

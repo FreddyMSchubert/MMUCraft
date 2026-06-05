@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
 import { GrpcServerService } from '../grpc/grpc-server.service'
 import { UnaryCallback } from '../grpc/grpc.types'
+import { MinecraftStatInput, PlayersService } from '../players/players.service'
 import { KnowledgeService } from './knowledge/knowledge.service'
 import { ShopService } from './shop/shop.service'
 
@@ -23,6 +24,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly grpcServer: GrpcServerService,
 		private readonly knowledge: KnowledgeService,
 		private readonly shop: ShopService,
+		private readonly players: PlayersService,
 	) { }
 
 	onModuleInit() {
@@ -31,6 +33,8 @@ export class GameplayGrpcService implements OnModuleInit {
 		this.grpcServer.addService(gameplayProto.mcstack.gameplay.v1.GameplayEvents.service, {
 			UnlockNextKnowledge: this.unlockNextKnowledge.bind(this),
 			GetUnlockAvailability: this.getUnlockAvailability.bind(this),
+			SyncPlayerStats: this.syncPlayerStats.bind(this),
+			RecordMoneyEvent: this.recordMoneyEvent.bind(this),
 		})
 	}
 
@@ -114,6 +118,77 @@ export class GameplayGrpcService implements OnModuleInit {
 			has_charms_to_unlock: availability.charms,
 			has_cosmetics_to_unlock: availability.cosmetics,
 			message: availability.message,
+		})
+	}
+
+	private syncPlayerStats(
+		call: grpc.ServerUnaryCall<{
+			minecraft_username?: string
+			unix_ms?: number
+			balance_dabloons?: number
+			stats?: MinecraftStatInput[]
+		}, {
+			accepted: boolean
+			account_linked: boolean
+			message: string
+		}>,
+		callback: UnaryCallback<{
+			accepted: boolean
+			account_linked: boolean
+			message: string
+		}>,
+	) {
+		const result = this.players.syncMinecraftStats(
+			call.request.minecraft_username ?? '',
+			call.request.stats ?? [],
+			typeof call.request.balance_dabloons === 'number' ? call.request.balance_dabloons : null,
+			typeof call.request.unix_ms === 'number' ? call.request.unix_ms : null,
+		)
+
+		callback(null, {
+			accepted: result.accepted,
+			account_linked: result.accountLinked,
+			message: result.message,
+		})
+	}
+
+	private recordMoneyEvent(
+		call: grpc.ServerUnaryCall<{
+			minecraft_username?: string
+			amount_dabloons?: number
+			direction?: string
+			source?: string
+			reference_id?: string
+			unix_ms?: number
+			balance_dabloons?: number
+		}, {
+			recorded: boolean
+			duplicate: boolean
+			account_linked: boolean
+			message: string
+		}>,
+		callback: UnaryCallback<{
+			recorded: boolean
+			duplicate: boolean
+			account_linked: boolean
+			message: string
+		}>,
+	) {
+		const result = this.players.recordMoneyForMinecraftUsername(
+			call.request.minecraft_username ?? '',
+			call.request.direction ?? 'earned',
+			call.request.source ?? 'minecraft',
+			call.request.amount_dabloons ?? 0,
+			typeof call.request.balance_dabloons === 'number' ? call.request.balance_dabloons : null,
+			call.request.reference_id ?? '',
+			typeof call.request.unix_ms === 'number' ? call.request.unix_ms : null,
+		)
+
+		callback(null, {
+			recorded: result.recorded,
+			duplicate: result.duplicate,
+			account_linked: result.accountLinked,
+			message: result.message,
 		})
 	}
 

@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { AuthenticatedUser } from '../../auth/auth.service'
 import { DatabaseService, DailyAdvancementTargetRow, DailyClaimRow } from '../../database/database.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
+import { PlayersService } from '../../players/players.service'
 
 const LOGIN_BONUS_TASK_ID = 'login_bonus'
 const LOGIN_BONUS_AMOUNT = 3
@@ -55,6 +56,7 @@ export class DailiesService {
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly grpcServer: GrpcServerService,
+		private readonly players: PlayersService,
 	) { }
 
 	async getStatus(user: AuthenticatedUser) {
@@ -129,6 +131,16 @@ export class DailiesService {
 				throw new BadRequestException(result.message || 'You have to be online on the server to receive the money.')
 			}
 
+			this.players.recordMoneyForUser(
+				user.id,
+				'earned',
+				'daily_login_bonus',
+				LOGIN_BONUS_AMOUNT,
+				null,
+				`daily:${LOGIN_BONUS_TASK_ID}:${user.id}:${periodKey}`,
+				now,
+			)
+
 			return {
 				claimed: true,
 				granted: true,
@@ -174,6 +186,16 @@ export class DailiesService {
 				this.deleteClaim(user.id, ITEM_SUBMISSION_TASK_ID, periodKey)
 				throw new BadRequestException(result.message || 'You need the requested items in your inventory.')
 			}
+
+			this.players.recordMoneyForUser(
+				user.id,
+				'earned',
+				'daily_item_submission',
+				itemTask.rewardDabloons,
+				null,
+				`daily:${ITEM_SUBMISSION_TASK_ID}:${user.id}:${periodKey}`,
+				now,
+			)
 
 			return {
 				claimed: true,
@@ -224,6 +246,16 @@ export class DailiesService {
 				this.deleteClaim(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey)
 				throw new BadRequestException(result.message || 'Complete the daily advancement in-game first.')
 			}
+
+			this.players.recordMoneyForUser(
+				user.id,
+				'earned',
+				'daily_advancement_bonus',
+				picked.target.bonusRewardDabloons,
+				null,
+				`daily:${ADVANCEMENT_BONUS_TASK_ID}:${user.id}:${periodKey}`,
+				now,
+			)
 
 			return {
 				claimed: true,

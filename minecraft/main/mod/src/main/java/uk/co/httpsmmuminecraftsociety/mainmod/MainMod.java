@@ -27,6 +27,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
@@ -51,6 +52,7 @@ public class MainMod implements ModInitializer {
         FakeItemsCommand.init();
         MoneyCommand.init();
         WebsiteCommand.init();
+        PlayerStatsSync.init();
         MainModRecipes.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
@@ -69,7 +71,10 @@ public class MainMod implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> GrpcBridge.stop());
-        ServerTickEvents.END_SERVER_TICK.register(server -> GrpcBridge.onServerTick());
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            GrpcBridge.onServerTick();
+            PlayerStatsSync.onServerTick(server);
+        });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             registries = server.overworld().registryAccess();

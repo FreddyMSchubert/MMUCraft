@@ -36,6 +36,7 @@ interface FakeItemDefinition {
 	tooltips?: unknown
 	shopPurchasable?: unknown
 	dyeable?: unknown
+	decoBlock?: unknown
 	charm?: unknown
 	equippableCharm?: unknown
 	equippableCosmetic?: unknown

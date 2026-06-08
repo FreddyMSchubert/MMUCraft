@@ -88,6 +88,9 @@
 		"dyeable": {
 			"$ref": "./components/dyeable.schema.json"
 		},
+		"decoBlock": {
+			"$ref": "./components/deco-block.schema.json"
+		},
 		"equippableCharm": {
 			"$ref": "./components/equippable-charm.schema.json"
 		},

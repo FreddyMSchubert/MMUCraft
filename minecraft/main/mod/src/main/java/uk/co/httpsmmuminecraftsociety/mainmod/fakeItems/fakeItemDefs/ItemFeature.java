@@ -12,6 +12,7 @@ public sealed interface ItemFeature
         permits CharmItemFeature,
         ConsumableItemFeature,
         DyeableItemFeature,
+        DecoBlockItemFeature,
         EquippableCharmItemFeature,
         EquippableCosmeticItemFeature,
         DiscItemFeature,
@@ -36,6 +37,7 @@ public sealed interface ItemFeature
                 case "charm" -> CharmItemFeature.of(rootJson, componentJson);
                 case "consumable" -> ConsumableItemFeature.of(componentJson);
                 case "dyeable" -> DyeableItemFeature.of(componentJson);
+                case "decoBlock" -> DecoBlockItemFeature.of(componentJson);
                 case "equippableCharm" -> EquippableCharmItemFeature.of(componentJson);
                 case "equippableCosmetic" -> EquippableCosmeticItemFeature.of(componentJson);
                 case "disc" -> DiscItemFeature.of(componentJson);

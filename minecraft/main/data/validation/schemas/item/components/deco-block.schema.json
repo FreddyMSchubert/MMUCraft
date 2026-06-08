@@ -1,0 +1,45 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "components/deco-block.schema.json",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"ground": {
+			"type": "boolean"
+		},
+		"wall": {
+			"type": "boolean"
+		},
+		"ceiling": {
+			"type": "boolean"
+		}
+	},
+	"required": [
+		"ground",
+		"wall",
+		"ceiling"
+	],
+	"anyOf": [
+		{
+			"properties": {
+				"ground": {
+					"const": true
+				}
+			}
+		},
+		{
+			"properties": {
+				"wall": {
+					"const": true
+				}
+			}
+		},
+		{
+			"properties": {
+				"ceiling": {
+					"const": true
+				}
+			}
+		}
+	]
+}

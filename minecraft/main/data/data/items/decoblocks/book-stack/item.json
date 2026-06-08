@@ -7,6 +7,11 @@
 	"tooltips": [
 		"A stack of some nostalgic, iconic books."
 	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false
+	},
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A stack of some nostalgic, iconic books.",

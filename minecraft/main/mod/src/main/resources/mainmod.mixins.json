@@ -4,6 +4,8 @@
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
       "ArmorAddToolTipFirstTick",
+      "decoBlocks.NoDecoBlockFrameItemDrops",
+      "decoBlocks.RemoveEmptyDecoBlockFrames",
       "UpdateArmorTooltipAfterAnvilUse",
       "KittyPajamaScareCreeper",
       "NoSoulboundItemDropping",

@@ -28,6 +28,7 @@ const ROOT_ALLOWED_KEYS = [
   'charm',
   'consumable',
   'dyeable',
+  'decoBlock',
   'equippableCharm',
   'equippableCosmetic',
   "disc",

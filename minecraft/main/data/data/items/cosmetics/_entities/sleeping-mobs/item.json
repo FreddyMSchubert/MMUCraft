@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A wardrobe cosmetic unlock for a sleeping bee and allay.",
-		"unlockPriority": 50,
+		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Sleeping Mobs."
 	},
 	"equippableCosmetic": {}

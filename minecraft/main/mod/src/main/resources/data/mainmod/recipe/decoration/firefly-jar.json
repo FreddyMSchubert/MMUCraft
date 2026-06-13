@@ -1,0 +1,11 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    "minecraft:firefly_bush",
+    "minecraft:glass_bottle"
+  ],
+  "result": {
+    "stack": "mainmod:firefly-jar",
+    "count": 1
+  }
+}

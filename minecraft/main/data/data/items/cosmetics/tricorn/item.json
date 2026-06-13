@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A wardrobe cosmetic unlock for Tricorn.",
-		"unlockPriority": 50,
+		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Tricorn."
 	},
 	"equippableCosmetic": {}

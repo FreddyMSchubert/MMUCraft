@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A wardrobe cosmetic unlock for Sun Hat.",
-		"unlockPriority": 3,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Sun Hat."
 	},
 	"equippableCosmetic": {},

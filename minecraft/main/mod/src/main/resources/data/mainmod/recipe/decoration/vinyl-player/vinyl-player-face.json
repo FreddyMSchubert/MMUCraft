@@ -1,0 +1,17 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GDG",
+    "LLL"
+  ],
+  "key": {
+    "L": "#mainmod:stripped-logs",
+    "G": "minecraft:glass",
+    "D": "mainmod:disc-droopy-likes-your-face"
+  },
+  "result": {
+    "stack": "mainmod:vinyl-player",
+    "count": 1
+  }
+}

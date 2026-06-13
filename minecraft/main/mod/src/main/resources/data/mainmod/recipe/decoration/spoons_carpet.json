@@ -1,0 +1,11 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    "mainmod:beer",
+    "#mainmod:carpets"
+  ],
+  "result": {
+    "stack": "mainmod:spoons-carpet",
+    "count": 1
+  }
+}

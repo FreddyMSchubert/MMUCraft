@@ -1,0 +1,10 @@
+{
+	"title": "Grandiloquent Spoons Carpet",
+	"id": "spoons-carpet-grandiloquent",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"An unassailable monument of textile supremacy."
+	]
+}

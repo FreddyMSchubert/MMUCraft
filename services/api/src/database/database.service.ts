@@ -15,6 +15,7 @@ export interface UserRow {
 export interface PlayerProfileRow {
 	user_id: number
 	preferred_name: string
+	pronouns: string
 	course_year: string
 	discord_username: string
 	base_x: number | null
@@ -159,6 +160,7 @@ export class DatabaseService implements OnModuleDestroy {
 			CREATE TABLE IF NOT EXISTS player_profiles (
 				user_id INTEGER PRIMARY KEY,
 				preferred_name TEXT NOT NULL DEFAULT '',
+				pronouns TEXT NOT NULL DEFAULT '',
 				course_year TEXT NOT NULL DEFAULT '',
 				discord_username TEXT NOT NULL DEFAULT '',
 				base_x INTEGER,
@@ -244,6 +246,11 @@ export class DatabaseService implements OnModuleDestroy {
 			CREATE INDEX IF NOT EXISTS daily_advancement_targets_user_id_idx
 				ON daily_advancement_targets(user_id);
 		`)
+
+		const profileColumns = this.db.prepare('PRAGMA table_info(player_profiles)').all() as Array<{ name: string }>
+		if (!profileColumns.some((column) => column.name === 'pronouns')) {
+			this.db.exec("ALTER TABLE player_profiles ADD COLUMN pronouns TEXT NOT NULL DEFAULT ''")
+		}
 	}
 
 	get connection(): Database.Database {

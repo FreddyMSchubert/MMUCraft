@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 
 import java.util.Set;
 import java.util.UUID;
@@ -80,6 +81,7 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
                 return;
             }
 
+            UnlockBookLoot.updateAvailability(player, response);
             player.sendSystemMessage(Component.literal(response.getMessage()));
 
             if (response.getUnlocked() && !player.isCreative()) {

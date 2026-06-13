@@ -873,6 +873,7 @@ a {
 }
 
 .playersTop button,
+.playerProfileNav button,
 .playerProfileTop button,
 .playerProfileActions button {
 	padding: 10px 14px;
@@ -885,6 +886,7 @@ a {
 
 .playersTableWrap {
 	overflow: auto;
+	max-height: 356px;
 	border: 1px solid rgba(255, 255, 255, 0.16);
 	border-radius: 8px;
 	background: rgba(255, 255, 255, 0.06);
@@ -892,7 +894,7 @@ a {
 
 .playersTable {
 	width: 100%;
-	min-width: 760px;
+	min-width: 860px;
 	border-collapse: collapse;
 	table-layout: fixed;
 }
@@ -907,11 +909,14 @@ a {
 
 .playersTable th:first-child,
 .playersTable td:first-child {
-	width: 72px;
+	width: 104px;
 	text-align: center;
 }
 
 .playersTable th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
 	background: rgba(255, 255, 255, 0.08);
 	color: rgba(255, 255, 255, 0.76);
 	font-size: 0.78rem;
@@ -920,6 +925,7 @@ a {
 }
 
 .playersTable tbody tr {
+	height: 74px;
 	cursor: pointer;
 	transition: background 140ms ease;
 }
@@ -1018,6 +1024,25 @@ a {
 	text-transform: uppercase;
 }
 
+.playerCell {
+	display: grid;
+	justify-items: center;
+	gap: 5px;
+	min-width: 0;
+}
+
+.playerCellName {
+	max-width: 100%;
+	color: rgba(255, 255, 255, 0.84);
+	font-size: 0.68rem;
+	line-height: 1.15;
+	overflow-wrap: anywhere;
+}
+
+.playerCellPronouns {
+	color: rgba(255, 255, 255, 0.58);
+}
+
 .playerProfilePanel {
 	display: grid;
 	gap: 16px;
@@ -1025,6 +1050,16 @@ a {
 	border: 1px solid rgba(255, 255, 255, 0.16);
 	border-radius: 8px;
 	background: rgba(255, 255, 255, 0.07);
+}
+
+.playerProfileNav {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.playerProfileNav button {
+	background: rgba(255, 255, 255, 0.14);
+	color: #fff;
 }
 
 .playerProfileTop {
@@ -1077,6 +1112,13 @@ a {
 	gap: 12px;
 }
 
+.playerProfileHint {
+	grid-column: 1 / -1;
+	margin: 0;
+	color: rgba(255, 255, 255, 0.72);
+	line-height: 1.5;
+}
+
 .playerProfileForm label {
 	display: grid;
 	gap: 5px;
@@ -1089,6 +1131,13 @@ a {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 8px;
+}
+
+.playerBaseInputs > span {
+	grid-column: 1 / -1;
+	color: rgba(255, 255, 255, 0.76);
+	font-size: 0.78rem;
+	text-transform: uppercase;
 }
 
 .playerBioInput,
@@ -1245,6 +1294,7 @@ a {
 	}
 
 	.playersTop button,
+	.playerProfileNav button,
 	.playerProfileTop button {
 		width: 100%;
 	}

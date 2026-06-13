@@ -6,6 +6,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.ServerStatsCounter;
+import net.minecraft.stats.StatType;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EntityType;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
@@ -34,7 +35,7 @@ public final class PlayerStatsSync {
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-            syncNow(handler.player);
+            syncNow(handler.player, true);
             nextSyncTickByPlayer.remove(handler.player.getUUID());
         });
     }
@@ -70,7 +71,11 @@ public final class PlayerStatsSync {
     }
 
     private static void syncNow(ServerPlayer player) {
-        if (player == null || player.hasDisconnected()) {
+        syncNow(player, false);
+    }
+
+    private static void syncNow(ServerPlayer player, boolean allowDisconnectedPlayer) {
+        if (player == null || (!allowDisconnectedPlayer && player.hasDisconnected())) {
             return;
         }
 
@@ -84,16 +89,16 @@ public final class PlayerStatsSync {
     private static List<MinecraftStatEntry> collectStats(ServerPlayer player) {
         ServerStatsCounter stats = player.getStats();
         List<MinecraftStatEntry> entries = new ArrayList<>();
+        StatType<Identifier> customStats = Stats.CUSTOM;
 
-        for (Identifier statId : BuiltInRegistries.CUSTOM_STAT.keySet()) {
-            addStat(
-                    entries,
-                    "custom",
-                    statId,
-                    customLabel(statId),
-                    stats.getValue(Stats.CUSTOM, statId)
-            );
-        }
+        // CUSTOM_STAT is a Registry<Identifier>; StatType wants the registered values, not the registry keys.
+        BuiltInRegistries.CUSTOM_STAT.stream().forEach(statId -> addStat(
+                entries,
+                "custom",
+                statId,
+                customLabel(statId),
+                stats.getValue(customStats, statId)
+        ));
 
         for (Identifier entityId : BuiltInRegistries.ENTITY_TYPE.keySet()) {
             EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getValue(entityId);
@@ -135,6 +140,7 @@ public final class PlayerStatsSync {
     private static String customLabel(Identifier id) {
         return switch (id.toString()) {
             case "minecraft:play_time" -> "Play Time";
+            case "minecraft:total_world_time" -> "Total World Time";
             case "minecraft:time_since_death" -> "Time Since Death";
             case "minecraft:time_since_rest" -> "Time Since Rest";
             case "minecraft:sneak_time", "minecraft:crouch_time" -> "Crouch Time";

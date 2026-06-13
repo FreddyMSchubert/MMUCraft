@@ -13,6 +13,7 @@ interface StatOption {
 
 interface PlayerProfile {
 	preferredName: string
+	pronouns: string
 	courseYear: string
 	discordUsername: string
 	base: {
@@ -73,18 +74,30 @@ interface PlayersResponse {
 }
 
 const DEFAULT_COLUMN_KEYS = [
-	'profile.playerName',
+	'profile.preferredName',
 	'minecraft.lastPlayedAtUnixMs',
-	'money.earnedDabloons',
-	'money.balanceDabloons',
-	'minecraft.custom.minecraft:jump',
+	'minecraft.custom.minecraft:play_time',
+	'minecraft.custom.minecraft:deaths',
 ]
+const PROFILE_TEXT_LIMITS = {
+	preferredName: 40,
+	pronouns: 32,
+	courseYear: 64,
+	discordUsername: 40,
+	bio: 280,
+} as const
+
+type SortDirection = 'desc' | 'asc'
 
 export function PlayersTab() {
 	const [data, setData] = useState<PlayersResponse | null>(null)
 	const [error, setError] = useState('')
 	const [message, setMessage] = useState('')
 	const [columnKeys, setColumnKeys] = useState(DEFAULT_COLUMN_KEYS)
+	const [sort, setSort] = useState<{ key: string; direction: SortDirection }>({
+		key: 'minecraft.custom.minecraft:play_time',
+		direction: 'desc',
+	})
 	const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
 
 	const load = useCallback(async () => {
@@ -120,32 +133,35 @@ export function PlayersTab() {
 		}
 	}, [load])
 
+	const players = useMemo(() => data?.players ?? [], [data?.players])
+	const statOptions = useMemo(() => data?.statOptions ?? [], [data?.statOptions])
 	const selectedPlayer = useMemo(() => {
-		const players = data?.players ?? []
-		return players.find((player) => player.id === selectedPlayerId) ?? players[0] ?? null
-	}, [data?.players, selectedPlayerId])
+		return players.find((player) => player.id === selectedPlayerId) ?? null
+	}, [players, selectedPlayerId])
 
-	const statOptions = data?.statOptions ?? []
-	const selectedColumns = columnKeys
+	const selectedColumns = useMemo(() => columnKeys
+		.slice(0, 4)
 		.map((key) => statOptions.find((option) => option.key === key) ?? fallbackOption(key))
-		.filter((option): option is StatOption => Boolean(option))
+		.filter((option): option is StatOption => Boolean(option)), [columnKeys, statOptions])
+	const sortedPlayers = useMemo(() => {
+		const sortOption = statOptions.find((option) => option.key === sort.key) ?? fallbackOption(sort.key)
+		return [...players].sort((left, right) => comparePlayers(left, right, sortOption, sort.direction))
+	}, [players, sort, statOptions])
 
 	function updateColumn(index: number, key: string) {
+		const previousKey = columnKeys[index]
 		setColumnKeys((current) => current.map((value, currentIndex) => currentIndex === index ? key : value))
+		setSort((current) => current.key === previousKey ? { ...current, key } : current)
 	}
 
-	function addColumn() {
-		const used = new Set(columnKeys)
-		const next = statOptions.find((option) => !used.has(option.key))
-		if (next) {
-			setColumnKeys((current) => [...current, next.key])
-		}
-	}
+	function toggleSort(key: string) {
+		setSort((current) => {
+			if (current.key !== key) {
+				return { key, direction: 'desc' }
+			}
 
-	function removeColumn(index: number) {
-		setColumnKeys((current) => current.length <= 1
-			? current
-			: current.filter((_, currentIndex) => currentIndex !== index))
+			return { key, direction: current.direction === 'desc' ? 'asc' : 'desc' }
+		})
 	}
 
 	async function handleSaved() {
@@ -161,13 +177,26 @@ export function PlayersTab() {
 		return <p>Loading players...</p>
 	}
 
+	if (selectedPlayer) {
+		return (
+			<div className="playersPanel">
+				{message && <p className="dailyMessage">{message}</p>}
+				{error && <p className="authError">{error}</p>}
+				<PlayerProfilePanel
+					player={selectedPlayer}
+					statOptions={statOptions}
+					onBack={() => setSelectedPlayerId(null)}
+					onSaved={() => void handleSaved()}
+					onError={setError}
+				/>
+			</div>
+		)
+	}
+
 	return (
 		<div className="playersPanel">
 			<div className="playersTop">
 				<h3>Players</h3>
-				<button type="button" onClick={addColumn} disabled={columnKeys.length >= statOptions.length}>
-					Add column
-				</button>
 			</div>
 
 			{message && <p className="dailyMessage">{message}</p>}
@@ -177,7 +206,7 @@ export function PlayersTab() {
 				<table className="playersTable">
 					<thead>
 						<tr>
-							<th scope="col">Head</th>
+							<th scope="col">Player</th>
 							{selectedColumns.map((column, index) => (
 								<th scope="col" key={`${column.key}:${index}`}>
 									<div className="playerColumnSelect">
@@ -190,11 +219,10 @@ export function PlayersTab() {
 										</select>
 										<button
 											type="button"
-											aria-label="Remove column"
-											onClick={() => removeColumn(index)}
-											disabled={columnKeys.length <= 1}
+											aria-label={`Sort by ${column.label}`}
+											onClick={() => toggleSort(column.key)}
 										>
-											x
+											{sort.key === column.key ? (sort.direction === 'desc' ? 'v' : '^') : '-'}
 										</button>
 									</div>
 								</th>
@@ -202,14 +230,13 @@ export function PlayersTab() {
 						</tr>
 					</thead>
 					<tbody>
-						{data.players.map((player) => (
+						{sortedPlayers.map((player) => (
 							<tr
 								key={player.id}
-								className={player.id === selectedPlayer?.id ? 'active' : ''}
 								onClick={() => setSelectedPlayerId(player.id)}
 							>
 								<td>
-									<PlayerHead player={player} size="small" />
+									<PlayerCell player={player} />
 								</td>
 								{selectedColumns.map((column, index) => (
 									<td key={`${player.id}:${column.key}:${index}`}>
@@ -221,15 +248,6 @@ export function PlayersTab() {
 					</tbody>
 				</table>
 			</div>
-
-			{selectedPlayer && (
-				<PlayerProfilePanel
-					player={selectedPlayer}
-					statOptions={statOptions}
-					onSaved={() => void handleSaved()}
-					onError={setError}
-				/>
-			)}
 		</div>
 	)
 }
@@ -240,7 +258,7 @@ function StatOptionGroups({ options }: { options: StatOption[] }) {
 	return (
 		<>
 			{grouped.map((group) => (
-				<optgroup key={group.group} label={formatGroup(group.group)}>
+				<optgroup key={group.key} label={group.label}>
 					{group.options.map((option) => (
 						<option key={option.key} value={option.key}>{option.label}</option>
 					))}
@@ -253,11 +271,13 @@ function StatOptionGroups({ options }: { options: StatOption[] }) {
 function PlayerProfilePanel({
 	player,
 	statOptions,
+	onBack,
 	onSaved,
 	onError,
 }: {
 	player: PlayerSummary
 	statOptions: StatOption[]
+	onBack: () => void
 	onSaved: () => void
 	onError: (message: string) => void
 }) {
@@ -265,6 +285,9 @@ function PlayerProfilePanel({
 
 	return (
 		<section className="playerProfilePanel">
+			<div className="playerProfileNav">
+				<button type="button" onClick={onBack}>Back</button>
+			</div>
 			<div className="playerProfileTop">
 				<PlayerHead player={player} size="large" />
 				<div className="playerProfileIdentity">
@@ -300,10 +323,11 @@ function PlayerProfilePanel({
 function ProfileFacts({ player }: { player: PlayerSummary }) {
 	const profile = player.profile
 	const facts = [
-		profile.preferredName ? { label: 'Name', value: profile.preferredName } : null,
+		profile.preferredName ? { label: 'Preferred name', value: profile.preferredName } : null,
+		profile.pronouns ? { label: 'Pronouns', value: profile.pronouns } : null,
 		profile.courseYear ? { label: 'Course / Year', value: profile.courseYear } : null,
-		profile.discordUsername ? { label: 'Discord', value: profile.discordUsername } : null,
-		hasBase(profile) ? { label: 'Base', value: formatBase(profile.base) } : null,
+		profile.discordUsername ? { label: 'Discord username', value: profile.discordUsername } : null,
+		hasBase(profile) ? { label: 'Base location', value: formatBase(profile.base) } : null,
 	].filter((fact): fact is { label: string; value: string } => Boolean(fact))
 
 	if (facts.length === 0) {
@@ -334,6 +358,7 @@ function PlayerProfileForm({
 	onError: (message: string) => void
 }) {
 	const [preferredName, setPreferredName] = useState(player.profile.preferredName)
+	const [pronouns, setPronouns] = useState(player.profile.pronouns)
 	const [courseYear, setCourseYear] = useState(player.profile.courseYear)
 	const [discordUsername, setDiscordUsername] = useState(player.profile.discordUsername)
 	const [baseX, setBaseX] = useState(player.profile.base.x?.toString() ?? '')
@@ -354,6 +379,7 @@ function PlayerProfileForm({
 				},
 				body: JSON.stringify({
 					preferredName,
+					pronouns,
 					courseYear,
 					discordUsername,
 					baseX: baseX === '' ? null : Number(baseX),
@@ -384,19 +410,27 @@ function PlayerProfileForm({
 				void save()
 			}}
 		>
+			<p className="playerProfileHint">
+				All of this is optional, but it can help people know who you are, how to reach out, and how to find you.
+			</p>
 			<label>
-				<span>Name</span>
-				<input value={preferredName} onChange={(event) => setPreferredName(event.target.value)} maxLength={80} />
+				<span>Preferred name</span>
+				<input value={preferredName} onChange={(event) => setPreferredName(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.preferredName} />
+			</label>
+			<label>
+				<span>Pronouns</span>
+				<input value={pronouns} onChange={(event) => setPronouns(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.pronouns} />
 			</label>
 			<label>
 				<span>Course / Year</span>
-				<input value={courseYear} onChange={(event) => setCourseYear(event.target.value)} maxLength={80} />
+				<input value={courseYear} onChange={(event) => setCourseYear(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.courseYear} />
 			</label>
 			<label>
-				<span>Discord</span>
-				<input value={discordUsername} onChange={(event) => setDiscordUsername(event.target.value)} maxLength={80} />
+				<span>Discord username</span>
+				<input value={discordUsername} onChange={(event) => setDiscordUsername(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.discordUsername} />
 			</label>
 			<div className="playerBaseInputs">
+				<span>Base location (XYZ)</span>
 				<label>
 					<span>X</span>
 					<input type="number" value={baseX} onChange={(event) => setBaseX(event.target.value)} />
@@ -412,7 +446,7 @@ function PlayerProfileForm({
 			</div>
 			<label className="playerBioInput">
 				<span>Bio</span>
-				<textarea value={bio} onChange={(event) => setBio(event.target.value)} maxLength={500} rows={4} />
+				<textarea value={bio} onChange={(event) => setBio(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.bio} rows={4} />
 			</label>
 			<div className="playerProfileActions">
 				<button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
@@ -432,7 +466,6 @@ function PlayerStatsList({ player, statOptions }: { player: PlayerSummary; statO
 			<div className="playerStatsCore">
 				<StatLine label="Last Played" value={formatTimestamp(player.stats.minecraft.lastPlayedAtUnixMs)} />
 				<StatLine label="Dabloons Earned" value={formatNumber(player.stats.money.earnedDabloons)} />
-				<StatLine label="Current Balance" value={formatNullableNumber(player.stats.money.balanceDabloons)} />
 				<StatLine label="Last Sync" value={formatTimestamp(player.stats.minecraft.lastSyncedAtUnixMs)} />
 			</div>
 
@@ -469,6 +502,20 @@ function StatLine({ label, value }: { label: string; value: string }) {
 	)
 }
 
+function PlayerCell({ player }: { player: PlayerSummary }) {
+	return (
+		<div className="playerCell">
+			<PlayerHead player={player} size="small" />
+			<span className="playerCellName">
+				{player.minecraftUsername}
+				{player.profile.pronouns && (
+					<span className="playerCellPronouns"> ({player.profile.pronouns})</span>
+				)}
+			</span>
+		</div>
+	)
+}
+
 function PlayerHead({ player, size }: { player: PlayerSummary; size: 'small' | 'large' }) {
 	const skinUrl = player.stats.minecraftProfile?.skinUrl
 	const label = `${player.minecraftUsername} head`
@@ -492,15 +539,59 @@ function PlayerHead({ player, size }: { player: PlayerSummary; size: 'small' | '
 function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.playerName') return player.minecraftUsername
 	if (option.key === 'profile.preferredName') return player.profile.preferredName || '-'
+	if (option.key === 'profile.pronouns') return player.profile.pronouns || '-'
 	if (option.key === 'profile.courseYear') return player.profile.courseYear || '-'
 	if (option.key === 'profile.discordUsername') return player.profile.discordUsername || '-'
 	if (option.key === 'profile.base') return hasBase(player.profile) ? formatBase(player.profile.base) : '-'
 	if (option.key === 'money.earnedDabloons') return formatNumber(player.stats.money.earnedDabloons)
-	if (option.key === 'money.balanceDabloons') return formatNullableNumber(player.stats.money.balanceDabloons)
 	if (option.key === 'minecraft.lastPlayedAtUnixMs') return formatTimestamp(player.stats.minecraft.lastPlayedAtUnixMs)
 
 	const stat = player.stats.minecraft.stats[option.key]
 	return stat ? formatMinecraftStatValue(stat) : '0'
+}
+
+function comparePlayers(
+	left: PlayerSummary,
+	right: PlayerSummary,
+	option: StatOption,
+	direction: SortDirection,
+) {
+	const ordered = compareSortValues(getSortValue(left, option), getSortValue(right, option), direction)
+	return ordered || left.minecraftUsername.localeCompare(right.minecraftUsername, 'en')
+}
+
+function getSortValue(player: PlayerSummary, option: StatOption): number | string | null {
+	if (option.key === 'profile.playerName') return player.minecraftUsername
+	if (option.key === 'profile.preferredName') return player.profile.preferredName || player.minecraftUsername
+	if (option.key === 'profile.pronouns') return player.profile.pronouns || null
+	if (option.key === 'profile.courseYear') return player.profile.courseYear || null
+	if (option.key === 'profile.discordUsername') return player.profile.discordUsername || null
+	if (option.key === 'profile.base') return hasBase(player.profile) ? formatBase(player.profile.base) : null
+	if (option.key === 'money.earnedDabloons') return player.stats.money.earnedDabloons
+	if (option.key === 'minecraft.lastPlayedAtUnixMs') return player.stats.minecraft.lastPlayedAtUnixMs
+
+	return player.stats.minecraft.stats[option.key]?.value ?? 0
+}
+
+function compareSortValues(left: number | string | null, right: number | string | null, direction: SortDirection) {
+	const leftMissing = left === null || left === ''
+	const rightMissing = right === null || right === ''
+
+	if (leftMissing && rightMissing) return 0
+	if (leftMissing) return 1
+	if (rightMissing) return -1
+
+	let valueOrder: number
+	if (typeof left === 'number' && typeof right === 'number') {
+		valueOrder = left - right
+	} else {
+		valueOrder = String(left).localeCompare(String(right), 'en', {
+			numeric: true,
+			sensitivity: 'base',
+		})
+	}
+
+	return direction === 'desc' ? -valueOrder : valueOrder
 }
 
 function formatMinecraftStatValue(stat: MinecraftStatValue) {
@@ -536,10 +627,6 @@ function formatTimestamp(value: number | null) {
 	}).format(new Date(value))
 }
 
-function formatNullableNumber(value: number | null) {
-	return value === null ? '-' : formatNumber(value)
-}
-
 function formatNumber(value: number) {
 	return new Intl.NumberFormat().format(value)
 }
@@ -553,15 +640,51 @@ function hasBase(profile: PlayerProfile) {
 }
 
 function groupStatOptions(options: StatOption[]) {
-	return (['profile', 'money', 'minecraft'] as const).map((group) => ({
-		group,
-		options: options.filter((option) => option.group === group),
-	})).filter((group) => group.options.length > 0)
+	const groups = [
+		{
+			key: 'profile',
+			label: 'Profile',
+			options: options.filter((option) => option.group === 'profile'),
+		},
+		{
+			key: 'money',
+			label: 'Dabloons',
+			options: options.filter((option) => option.group === 'money'),
+		},
+		{
+			key: 'minecraft-general',
+			label: 'General',
+			options: options.filter((option) => option.group === 'minecraft' && minecraftOptionGroup(option.category) === 'general'),
+		},
+		{
+			key: 'minecraft-killed',
+			label: 'Killed mob',
+			options: options.filter((option) => option.group === 'minecraft' && minecraftOptionGroup(option.category) === 'killed'),
+		},
+		{
+			key: 'minecraft-killed-by',
+			label: 'Killed by mob',
+			options: options.filter((option) => option.group === 'minecraft' && minecraftOptionGroup(option.category) === 'killed_by'),
+		},
+	]
+
+	return groups
+		.map((group) => ({
+			...group,
+			options: [...group.options].sort((left, right) => left.label.localeCompare(right.label, 'en')),
+		}))
+		.filter((group) => group.options.length > 0)
+}
+
+function minecraftOptionGroup(category?: string) {
+	if (category === 'killed') return 'killed'
+	if (category === 'killed_by') return 'killed_by'
+	return 'general'
 }
 
 function groupMinecraftStats(stats: MinecraftStatValue[]) {
 	const visible = stats
-		.filter((stat) => stat.value > 0 || stat.category === 'custom')
+		.filter((stat) => stat.value > 0)
 		.sort((left, right) => {
 			const category = categoryRank(left.category) - categoryRank(right.category)
 			if (category !== 0) return category
@@ -590,18 +713,12 @@ function categoryRank(category: string) {
 
 function formatCategory(category: string) {
 	if (category === 'custom') return 'General'
-	if (category === 'killed') return 'Mobs Killed'
-	if (category === 'killed_by') return 'Killed By'
+	if (category === 'killed') return 'Killed mob'
+	if (category === 'killed_by') return 'Killed by mob'
 	return category
 		.split(/[_-]+/)
 		.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
 		.join(' ')
-}
-
-function formatGroup(group: StatGroup) {
-	if (group === 'profile') return 'Profile'
-	if (group === 'money') return 'Dabloons'
-	return 'Minecraft Stats'
 }
 
 function fallbackOption(key: string): StatOption {

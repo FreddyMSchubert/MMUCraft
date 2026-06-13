@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Timber without the climb. Breaks up to 2 extra logs while using axe and sneaking.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Saw Belt Charm."
 	},
 	"charm": {

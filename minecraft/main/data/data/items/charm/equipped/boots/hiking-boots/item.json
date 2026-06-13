@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "That's one pretty big step for man. Increases step height to a full block",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Hiking Boots Charm."
 	},
 	"charm": {

@@ -9,7 +9,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 25,
 		"description": "Stores and compresses dabloons by crafting coins into it.",
-		"unlockPriority": 0
+		"unlockWeight": 100
 	},
 	"charm": {
 		"charmId": 30,

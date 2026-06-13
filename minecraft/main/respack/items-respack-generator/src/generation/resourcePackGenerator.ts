@@ -5,6 +5,7 @@ import type {
   BasicItemDefinition,
   CharmItemDefinition,
   CosmeticItemDefinition,
+  CosmeticWeightEntry,
   DiscoveredItem,
   EquipmentLayerType,
   GenerationSummary,
@@ -86,6 +87,34 @@ function logRecoverableGenerationSkip(item: DiscoveredItem, error: unknown): voi
   console.error(errorMessage(error));
   console.error('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
   console.error('');
+}
+
+function cosmeticWeightValue(item: CosmeticWeightEntry): number {
+  return item.unlockWeight ?? Number.NEGATIVE_INFINITY;
+}
+
+function buildCosmeticWeightOrder(items: readonly DiscoveredItem[]): CosmeticWeightEntry[] {
+  return items
+    .filter((item): item is CosmeticItemDefinition => item.type === 'cosmetic')
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      relativeDirectory: item.relativeDirectory,
+      unlockWeight: item.shopPurchasable?.unlockWeight ?? null,
+    }))
+    .sort((left, right) => {
+      const weightCompare = cosmeticWeightValue(right) - cosmeticWeightValue(left);
+      if (weightCompare !== 0) {
+        return weightCompare;
+      }
+
+      const titleCompare = left.title.localeCompare(right.title);
+      if (titleCompare !== 0) {
+        return titleCompare;
+      }
+
+      return left.id.localeCompare(right.id);
+    });
 }
 
 async function copyOptionalMcmeta(
@@ -495,6 +524,7 @@ export async function generateResourcePack(
     basicItems: items.filter((item) => item.type === 'basic').length,
     basic3dItems: items.filter((item) => item.type === 'basic-3d').length,
     cosmetics: items.filter((item) => item.type === 'cosmetic').length,
+    cosmeticWeightOrder: buildCosmeticWeightOrder(items),
     charms: items.filter((item) => item.type === 'charm').length,
     commandBlockCases: commandBlockCases.length,
     carvedPumpkinCases: carvedPumpkinCases.length,

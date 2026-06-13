@@ -21,10 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
@@ -62,6 +64,7 @@ public class MainMod implements ModInitializer {
         ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
         UseBlockCallback.EVENT.register(DynamicBeaconRange::onUseBlock);
+        UseBlockCallback.EVENT.register(DecoBlocksManager::onUseBlock);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
         UseBlockCallback.EVENT.register(CharmsManager::onUseBlock);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
@@ -81,12 +84,14 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             registries = server.overworld().registryAccess();
             EnchantmentSettingsManager.validateLoottables(server.reloadableRegistries().lookup());
+            PickaxeHeaterCharm.rebuildSmeltedDropMap(server);
             FakeItems.validate();
         });
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
                 registries = server.overworld().registryAccess();
                 EnchantmentSettingsManager.validateLoottables(server.reloadableRegistries().lookup());
+                PickaxeHeaterCharm.rebuildSmeltedDropMap(server);
             }
         });
     }

@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 100000,
 		"description": "A wardrobe cosmetic unlock for Royal Crown.",
-		"unlockPriority": 2,
+		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Royal Crown."
 	},
 	"equippableCosmetic": {}

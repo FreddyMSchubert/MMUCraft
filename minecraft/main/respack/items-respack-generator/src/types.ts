@@ -11,8 +11,16 @@ export interface BaseDiscoveredItem {
 	readonly rarity: ItemRarity;
 	readonly maxStackSize: number;
 	readonly tooltips: readonly string[];
+	readonly shopPurchasable?: ShopPurchasableDefinition;
 	readonly resourcePath: string;
 	readonly baseName: string;
+}
+
+export interface ShopPurchasableDefinition {
+	readonly priceDabloons: number;
+	readonly description: string;
+	readonly unlockMessage?: string;
+	readonly unlockWeight: number;
 }
 
 export interface BasicItemDefinition extends BaseDiscoveredItem {
@@ -77,11 +85,19 @@ export interface SelectorCase {
 	readonly isTinted?: boolean;
 }
 
+export interface CosmeticWeightEntry {
+	readonly id: string;
+	readonly title: string;
+	readonly relativeDirectory: string;
+	readonly unlockWeight: number | null;
+}
+
 export interface GenerationSummary {
 	readonly discoveredItems: number;
 	readonly basicItems: number;
 	readonly basic3dItems: number;
 	readonly cosmetics: number;
+	readonly cosmeticWeightOrder: readonly CosmeticWeightEntry[];
 	readonly charms: number;
 	readonly commandBlockCases: number;
 	readonly carvedPumpkinCases: number;

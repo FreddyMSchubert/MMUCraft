@@ -33,7 +33,10 @@
       "ScubaTankAirDrainSlowdown",
       "exhaustionCharm.ServerPlayerExhaustionMixin",
       "exhaustionCharm.BlockBreakExhaustionMixin",
-      "beacon.DynamicBeaconRangeMixin"
+      "beacon.DynamicBeaconRangeMixin",
+      "serverSideBlocks.ServerSideBlockDropsMixin",
+      "serverSideBlocks.ServerSideBlockMiningMixin",
+      "serverSideBlocks.ServerSideBlockPlacementMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -1,0 +1,18 @@
+{
+	"title": "Big Mushroom",
+	"id": "cosmetic-mushroom-big",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Big Mushroom.",
+		"unlockPriority": 75,
+		"unlockMessage": "Unlocked cosmetic: Big Mushroom."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#e13b3b"
+	}
+}

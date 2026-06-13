@@ -1,0 +1,17 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GDG",
+    "LLL"
+  ],
+  "key": {
+    "L": "minecraft:stripped_oak_log",
+    "G": "minecraft:glass",
+    "D": "minecraft:music_disc_cat"
+  },
+  "result": {
+    "stack": "mainmod:vinyl-player",
+    "count": 1
+  }
+}

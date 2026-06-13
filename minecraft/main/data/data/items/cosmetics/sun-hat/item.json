@@ -1,0 +1,20 @@
+{
+	"title": "Sun Hat",
+	"id": "cosmetic-sun-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Traditional style sun hat"
+	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Sun Hat.",
+		"unlockPriority": 3,
+		"unlockMessage": "Unlocked cosmetic: Sun Hat."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#f1337f"
+	}
+}

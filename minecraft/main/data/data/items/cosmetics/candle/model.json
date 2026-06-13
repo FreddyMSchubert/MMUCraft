@@ -2,8 +2,8 @@
 	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"2": "mmu_pack:item/hat/candle",
-		"particle": "mmu_pack:item/hat/candle"
+		"2": "candle texture",
+		"particle": "block/candle texture"
 	},
 	"elements": [
 		{

@@ -68,15 +68,15 @@
 					"type": "string",
 					"minLength": 1
 				},
-				"unlockPriority": {
+				"unlockWeight": {
 					"type": "integer",
-					"minimum": 0
+					"minimum": 1
 				}
 			},
 			"required": [
 				"priceDabloons",
 				"description",
-				"unlockPriority"
+				"unlockWeight"
 			]
 		},
 		"charm": {
@@ -87,6 +87,9 @@
 		},
 		"dyeable": {
 			"$ref": "./components/dyeable.schema.json"
+		},
+		"decoBlock": {
+			"$ref": "./components/deco-block.schema.json"
 		},
 		"equippableCharm": {
 			"$ref": "./components/equippable-charm.schema.json"

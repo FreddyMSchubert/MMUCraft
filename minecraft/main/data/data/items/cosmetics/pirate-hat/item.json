@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A wardrobe cosmetic unlock for Pirate Hat.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Pirate Hat."
 	},
 	"equippableCosmetic": {}

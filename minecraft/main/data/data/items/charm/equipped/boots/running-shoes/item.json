@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Been there, run that. Builds up a small speed boost while sprinting.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Running Shoes Charm."
 	},
 	"charm": {

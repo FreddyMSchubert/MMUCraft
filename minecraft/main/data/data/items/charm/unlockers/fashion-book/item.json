@@ -9,7 +9,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 45,
 		"description": "Unlocks one random cosmetic for your linked account when used in-game.",
-		"unlockPriority": 0
+		"unlockWeight": 100
 	},
 	"charm": {
 		"charmId": 41,

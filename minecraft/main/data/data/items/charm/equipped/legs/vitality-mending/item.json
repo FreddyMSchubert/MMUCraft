@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "XP heals you. Costs 5 XP per hp.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Vitality Mending Charm."
 	},
 	"charm": {

@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "As seen in 480 million BCE!",
-		"unlockPriority": 0,
+		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Sea Scorpion."
 	},
 	"equippableCosmetic": {}

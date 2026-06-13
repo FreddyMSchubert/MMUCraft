@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs;
 
 import com.google.gson.JsonObject;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -11,6 +12,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,8 +65,9 @@ public record FakeItem(
 
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(id), List.of()));
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(title));
-        if (tooltip != null && !tooltip.isEmpty() && !tooltip.stream().allMatch(Objects::isNull))
-            stack.set(DataComponents.LORE, new ItemLore(tooltip));
+        List<Component> lore = buildLore();
+        if (!lore.isEmpty())
+            stack.set(DataComponents.LORE, new ItemLore(lore));
         stack.set(DataComponents.RARITY, rarity);
         stack.set(DataComponents.MAX_STACK_SIZE, maxStackSize);
 
@@ -86,6 +89,39 @@ public record FakeItem(
         for (ItemFeature feature : features) {
             feature.validate();
         }
+    }
+
+    private List<Component> buildLore() {
+        List<Component> lore = new ArrayList<>();
+        if (tooltip != null) {
+            lore.addAll(tooltip.stream()
+                    .filter(Objects::nonNull)
+                    .toList());
+        }
+
+        List<String> abilityLabels = abilityLabels();
+        if (!abilityLabels.isEmpty()) {
+            lore.add(Component.literal(String.join(", ", abilityLabels))
+                    .withStyle(ChatFormatting.GRAY));
+        }
+
+        return List.copyOf(lore);
+    }
+
+    private List<String> abilityLabels() {
+        List<String> labels = new ArrayList<>();
+
+        if (features.stream().anyMatch(EquippableCosmeticItemFeature.class::isInstance)) {
+            labels.add("Hat Cosmetic");
+        }
+        if (features.stream().anyMatch(DecoBlockItemFeature.class::isInstance)) {
+            labels.add("Placeable");
+        }
+        if (features.stream().anyMatch(EquippableCharmItemFeature.class::isInstance)) {
+            labels.add("Wearable Charm");
+        }
+
+        return labels;
     }
 
     public <T extends ItemFeature> T getFeature(Class<T> featureType) {

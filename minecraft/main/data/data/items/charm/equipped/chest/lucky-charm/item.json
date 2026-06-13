@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Luck favours the prepared. Grants 1 fishing luck while equipped.",
-		"unlockPriority": 0,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Lucky Charm."
 	},
 	"charm": {

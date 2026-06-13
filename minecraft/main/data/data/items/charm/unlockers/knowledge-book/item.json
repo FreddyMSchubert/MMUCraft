@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 30,
 		"description": "Unlocks one random knowledge page for your linked account when used in-game.",
-		"unlockPriority": 0
+		"unlockWeight": 100
 	},
 	"charm": {
 		"charmId": 36,

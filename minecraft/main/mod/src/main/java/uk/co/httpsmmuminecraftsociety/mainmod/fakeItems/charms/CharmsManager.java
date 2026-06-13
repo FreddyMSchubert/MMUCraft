@@ -69,7 +69,8 @@ public class CharmsManager
             Map.entry(39, new EnduranceCharm()),
             Map.entry(40, ShopUnlockBookCharm.magicBook()),
             Map.entry(41, ShopUnlockBookCharm.fashionBook()),
-            Map.entry(42, new JokeCharm())
+            Map.entry(42, new JokeCharm()),
+            Map.entry(43, new PickaxeHeaterCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

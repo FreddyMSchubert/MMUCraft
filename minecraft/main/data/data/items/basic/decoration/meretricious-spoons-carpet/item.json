@@ -1,0 +1,10 @@
+{
+	"title": "Meretricious Spoons Carpet",
+	"id": "spoons-carpet-meretricious",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"An irreplaceable heirloom of plutocratic indulgence."
+	]
+}

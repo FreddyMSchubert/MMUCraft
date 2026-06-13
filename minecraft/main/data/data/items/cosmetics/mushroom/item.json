@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "A wardrobe cosmetic unlock for Big Mushroom.",
-		"unlockPriority": 75,
+		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Big Mushroom."
 	},
 	"equippableCosmetic": {},

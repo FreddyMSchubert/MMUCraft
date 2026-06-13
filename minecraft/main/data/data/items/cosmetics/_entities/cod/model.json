@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "mmu_pack:item/hat/entities/cod",
-		"particle": "mmu_pack:item/hat/entities/cod"
+		"0": "cod",
+		"particle": "cod"
 	},
 	"elements": [
 		{
@@ -134,7 +134,8 @@
 		},
 		"fixed": {
 			"rotation": [0, -90, 0],
-			"translation": [2.5, -6.5, 0.75]
+			"translation": [5.25, -4, -0.25],
+			"scale": [2, 2, 2]
 		},
 		"on_shelf": {
 			"rotation": [0, 90, 0],
@@ -146,11 +147,13 @@
 		{
 			"name": "group",
 			"origin": [0, 2, 0],
+			"scope": 0,
 			"color": 0,
 			"children": [
 				{
 					"name": "body",
 					"origin": [0, 2, 0],
+					"scope": 0,
 					"color": 0,
 					"children": [
 						0,
@@ -158,6 +161,7 @@
 							"name": "right_fin",
 							"origin": [1, 1, 0],
 							"rotation": [0, 0, -45],
+							"scope": 0,
 							"color": 0,
 							"children": [1]
 						},
@@ -165,6 +169,7 @@
 							"name": "left_fin",
 							"origin": [-1, 1, 0],
 							"rotation": [0, 0, 45],
+							"scope": 0,
 							"color": 0,
 							"children": [2]
 						}
@@ -173,36 +178,42 @@
 				{
 					"name": "head",
 					"origin": [0, 2, 0],
+					"scope": 0,
 					"color": 0,
 					"children": [3]
 				},
 				{
 					"name": "nose",
 					"origin": [0, 2, -3],
+					"scope": 0,
 					"color": 0,
 					"children": [4]
 				},
 				{
 					"name": "fin_left",
 					"origin": [0, 0, 0],
+					"scope": 0,
 					"color": 0,
 					"children": []
 				},
 				{
 					"name": "fin_right",
 					"origin": [0, 0, 0],
+					"scope": 0,
 					"color": 0,
 					"children": []
 				},
 				{
 					"name": "fin_back",
 					"origin": [0, 4, 0],
+					"scope": 0,
 					"color": 0,
 					"children": [5]
 				},
 				{
 					"name": "tail",
 					"origin": [0, 2, 7],
+					"scope": 0,
 					"color": 0,
 					"children": [6]
 				}

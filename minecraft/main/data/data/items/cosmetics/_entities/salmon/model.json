@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "mmu_pack:item/hat/entities/salmon",
-		"particle": "mmu_pack:item/hat/entities/salmon"
+		"0": "salmon_large",
+		"particle": "salmon_large"
 	},
 	"elements": [
 		{
@@ -145,8 +145,9 @@
 			"scale": [1.2, 1.2, 1.2]
 		},
 		"fixed": {
-			"rotation": [0, 90, 0],
-			"translation": [0, -5, 0]
+			"rotation": [0, 88.5, 0],
+			"translation": [0, -5, -2.75],
+			"scale": [2, 2, 2]
 		},
 		"on_shelf": {
 			"rotation": [0, 95, 0]
@@ -156,29 +157,34 @@
 		{
 			"name": "group",
 			"origin": [0, 2.5, 8],
+			"scope": 0,
 			"color": 0,
 			"children": [
 				{
 					"name": "tail",
 					"origin": [0, 2.5, 8],
+					"scope": 0,
 					"color": 0,
 					"children": [0]
 				},
 				{
 					"name": "head",
 					"origin": [0, 2.5, -8],
+					"scope": 0,
 					"color": 0,
 					"children": [1]
 				},
 				{
 					"name": "body_front",
 					"origin": [0, 2.5, -8],
+					"scope": 0,
 					"color": 0,
 					"children": [2]
 				},
 				{
 					"name": "body_back",
 					"origin": [0, 2.5, 0],
+					"scope": 0,
 					"color": 0,
 					"children": [3]
 				},
@@ -186,6 +192,7 @@
 					"name": "fin_left",
 					"origin": [-1.5, 1, -8],
 					"rotation": [0, 0, 45],
+					"scope": 0,
 					"color": 0,
 					"children": [4]
 				},
@@ -193,18 +200,21 @@
 					"name": "fin_right",
 					"origin": [1.5, 1, -8],
 					"rotation": [0, 0, -45],
+					"scope": 0,
 					"color": 0,
 					"children": [5]
 				},
 				{
 					"name": "fin_back_1",
 					"origin": [0, 7, -3],
+					"scope": 0,
 					"color": 0,
 					"children": [6]
 				},
 				{
 					"name": "fin_back_2",
 					"origin": [0, 7, -1],
+					"scope": 0,
 					"color": 0,
 					"children": [7]
 				}

@@ -13,5 +13,8 @@
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Headphones."
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#FFFFFF"
+	}
 }

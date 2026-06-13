@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 32],
 	"textures": {
-		"0": "mmu_pack:item/hat/entities/chicken",
-		"particle": "mmu_pack:item/hat/entities/chicken"
+		"0": "chicken_baby",
+		"particle": "chicken_baby"
 	},
 	"elements": [
 		{
@@ -118,10 +118,11 @@
 			"scale": [1.58, 1.58, 1.58]
 		},
 		"fixed": {
-			"translation": [0, -3, 2.5]
+			"translation": [0, -2, 2.5],
+			"scale": [2, 2, 2]
 		},
 		"on_shelf": {
-			"rotation": [0, 180, 0],
+			"rotation": [0, -180, 0],
 			"translation": [0, 0, -2.75]
 		}
 	},
@@ -129,23 +130,27 @@
 		{
 			"name": "group",
 			"origin": [0, 9, -4],
+			"scope": 0,
 			"color": 0,
 			"children": [
 				{
 					"name": "head",
 					"origin": [0, 9, -4],
+					"scope": 0,
 					"color": 0,
 					"children": [0]
 				},
 				{
 					"name": "bill",
 					"origin": [0, 9, -4],
+					"scope": 0,
 					"color": 0,
 					"children": [1]
 				},
 				{
 					"name": "chin",
 					"origin": [0, 9, -4],
+					"scope": 0,
 					"color": 0,
 					"children": [2]
 				},
@@ -153,18 +158,21 @@
 					"name": "body",
 					"origin": [0, 8, 0],
 					"rotation": [-90, 0, 0],
+					"scope": 0,
 					"color": 0,
 					"children": [3]
 				},
 				{
 					"name": "left_wing",
 					"origin": [-4, 11, 0],
+					"scope": 0,
 					"color": 0,
 					"children": [4]
 				},
 				{
 					"name": "right_wing",
 					"origin": [4, 11, 0],
+					"scope": 0,
 					"color": 0,
 					"children": [5]
 				}

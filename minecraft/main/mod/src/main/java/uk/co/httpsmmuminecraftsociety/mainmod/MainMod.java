@@ -100,7 +100,7 @@ public class MainMod implements ModInitializer {
     {
         for (ServerLevel level : server.getAllLevels()) {
             level.getGameRules().set(GameRules.MAX_MINECART_SPEED, 20, server);
-            level.getGameRules().set(GameRules.REDUCED_DEBUG_INFO, true, server);
+            // level.getGameRules().set(GameRules.REDUCED_DEBUG_INFO, true, server);
             level.getGameRules().set(GameRules.SPAWN_PHANTOMS, false, server);
         }
     }

@@ -1,0 +1,17 @@
+{
+	"title": "Tricorn",
+	"id": "cosmetic-tricorn",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+
+	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Tricorn.",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Tricorn."
+	},
+	"equippableCosmetic": {}
+}

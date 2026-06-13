@@ -1,0 +1,15 @@
+{
+	"title": "Sleeping Mobs",
+	"id": "cosmetic-sleeping-mobs",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for a sleeping bee and allay.",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Sleeping Mobs."
+	},
+	"equippableCosmetic": {}
+}

@@ -2,8 +2,8 @@
 	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"2": "mmu_pack:item/hat/ice_cream",
-		"particle": "mmu_pack:item/hat/ice_cream"
+		"2": "ice cream texture",
+		"particle": "ice cream texture"
 	},
 	"elements": [
 		{
@@ -118,7 +118,8 @@
 			"translation": [2, 5.25, 0.75]
 		},
 		"ground": {
-			"translation": [0, 3.75, 0]
+			"translation": [0, 2.5, 0],
+			"scale": [0.4, 0.4, 0.4]
 		},
 		"gui": {
 			"rotation": [22.5, 45, 0],
@@ -127,13 +128,13 @@
 		},
 		"head": {
 			"rotation": [-2, 0, 0],
-			"translation": [0, 9.75, 0],
-			"scale": [1.8, 1.8, 1.8]
+			"translation": [0, 10.25, 0],
+			"scale": [2, 2, 2]
 		},
 		"fixed": {
-			"rotation": [0, 45, 0],
-			"translation": [0, 1, 0],
-			"scale": [1.5, 1.5, 1.5]
+			"rotation": [-90, 0, 0],
+			"translation": [0, 1, -5.75],
+			"scale": [3, 3, 3]
 		},
 		"on_shelf": {
 			"rotation": [0, 45, 0],
@@ -144,17 +145,20 @@
 		{
 			"name": "group",
 			"origin": [8, 8, 8],
+			"scope": 0,
 			"color": 0,
 			"children": [
 				{
 					"name": "group",
 					"origin": [8, 8, 8],
+					"scope": 0,
 					"color": 0,
 					"children": [0, 1, 2, 3, 4]
 				},
 				{
 					"name": "group",
 					"origin": [8, 8, 8],
+					"scope": 0,
 					"color": 0,
 					"children": [5, 6]
 				}

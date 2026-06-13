@@ -13,6 +13,7 @@ import http.cookiejar
 import hashlib
 import re
 import uuid
+import ssl
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
@@ -32,6 +33,7 @@ GENERAL_PACK_MAINMOD_SOUNDS = PACKS / "general-pack" / "assets" / "mainmod" / "s
 CACHE = HERE / ".cache"
 PACK_INPUTS_FINGERPRINT = CACHE / "main-pack.inputs.sha256"
 PACK_SHA1_CACHE = CACHE / "main-pack.sha1"
+REMOTE_PACK_CACHE = CACHE / "remote-packs"
 RESOURCE_PACK_ID_NAMESPACE = uuid.UUID("50b0ab3c-3a20-4d7f-ba6a-0a0720f7b50d")
 
 FINGERPRINT_EXCLUDED_DIR_NAMES = {
@@ -332,6 +334,46 @@ def rm(path: Path):
 		path.unlink()
 
 
+def remote_pack_cache_path(url: str) -> Path:
+	return REMOTE_PACK_CACHE / f"{hashlib.sha256(url.encode('utf-8')).hexdigest()}.zip"
+
+
+def is_ssl_cert_verification_error(error: urllib.error.URLError) -> bool:
+	reason = getattr(error, "reason", error)
+	while reason is not None:
+		if isinstance(reason, ssl.SSLCertVerificationError):
+			return True
+		reason = getattr(reason, "__cause__", None)
+	return False
+
+
+def download_remote_pack(url: str, zip_path: Path):
+	cache_path = remote_pack_cache_path(url)
+
+	def download(context=None):
+		with urllib.request.urlopen(url, context=context) as r, zip_path.open("wb") as f:
+			shutil.copyfileobj(r, f)
+
+	try:
+		download()
+	except urllib.error.HTTPError:
+		raise
+	except urllib.error.URLError as e:
+		if cache_path.exists():
+			print(f"==> Download failed; using cached remote pack: {cache_path}")
+			shutil.copy2(cache_path, zip_path)
+			return
+
+		if not is_ssl_cert_verification_error(e):
+			raise
+
+		print("WARNING: TLS certificate verification failed; retrying configured pack URL without verification")
+		download(ssl._create_unverified_context())
+
+	REMOTE_PACK_CACHE.mkdir(parents=True, exist_ok=True)
+	shutil.copy2(zip_path, cache_path)
+
+
 def build_generated():
 	print("==> Generating resource pack from item definitions")
 	if not (GENERATOR / "node_modules").exists():
@@ -408,8 +450,7 @@ def load_inputs(tmp: Path):
 			zip_path = tmp / f"pack-{i}.zip"
 			out_dir = tmp / f"pack-{i}"
 			print(f"==> Downloading {entry}")
-			with urllib.request.urlopen(entry) as r, zip_path.open("wb") as f:
-				shutil.copyfileobj(r, f)
+			download_remote_pack(entry, zip_path)
 			with zipfile.ZipFile(zip_path) as z:
 				z.extractall(out_dir)
 			inputs.append(out_dir)

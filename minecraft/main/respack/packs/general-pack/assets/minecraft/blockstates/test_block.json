@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "mode=accept": {
+      "model": "minecraft:block/alien_debris"
+    },
+    "mode=fail": {
+      "model": "minecraft:block/alien_debris"
+    },
+    "mode=log": {
+      "model": "minecraft:block/alien_debris"
+    },
+    "mode=start": {
+      "model": "minecraft:block/alien_debris"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+	"title": "Junoeqsue Spoons Carpet",
+	"id": "spoons-carpet-junoesque",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"A resplendent monument to excess, woven purely to humiliate lesser floor coverings."
+	]
+}

@@ -2,10 +2,11 @@
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
     "mainmod:beer",
+    "mainmod:beer",
     "#mainmod:carpets"
   ],
   "result": {
-    "stack": "mainmod:spoons-carpet",
+    "stack": "mainmod:spoons-carpet-meretricious",
     "count": 1
   }
 }

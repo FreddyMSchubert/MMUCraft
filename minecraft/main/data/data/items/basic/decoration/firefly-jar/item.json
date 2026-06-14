@@ -1,0 +1,10 @@
+{
+	"title": "Firefly Jar",
+	"id": "firefly-jar",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Personally, I like my fireflies trimmed"
+	]
+}

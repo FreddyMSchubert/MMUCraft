@@ -139,7 +139,7 @@ public class LootTableModifiers {
         PickaxeHeaterCharm.heatMinedDrops(lootContext, itemStacks);
 
         addPlayerSpecificDrops(tableId, lootContext, itemStacks);
-        UnlockBookLoot.addBookDrop(tableId, lootContext, itemStacks);
+        UnlockBookLoot.addBookDrops(tableId, lootContext, itemStacks);
 
         for (LootAddition addition : additions) {
             if (!addition.tableId().equals(tableId)) continue;

@@ -67,6 +67,7 @@ export class KnowledgeService {
 		const lastUnlockedKnowledgeId = this.getLastUnlockedKnowledgeId(userId, document.unlockable)
 
 		return {
+			contentVersion: document.mtimeMs,
 			lastUnlockedKnowledgeId,
 			unlockedKnowledgeIds: [...unlockedIds].filter((id) => document.unlockable.some((page) => page.id === id)),
 			tree: this.applyUnlockState(document.tree, unlockedIds),

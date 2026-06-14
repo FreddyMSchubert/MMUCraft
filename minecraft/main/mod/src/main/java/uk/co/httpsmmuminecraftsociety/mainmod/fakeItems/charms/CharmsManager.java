@@ -70,7 +70,13 @@ public class CharmsManager
             Map.entry(40, ShopUnlockBookCharm.magicBook()),
             Map.entry(41, ShopUnlockBookCharm.fashionBook()),
             Map.entry(42, new JokeCharm()),
-            Map.entry(43, new PickaxeHeaterCharm())
+            Map.entry(43, new PickaxeHeaterCharm()),
+            Map.entry(BackpackCharm.Tier.LEATHER.charmId(), new BackpackCharm(BackpackCharm.Tier.LEATHER.rows())),
+            Map.entry(BackpackCharm.Tier.INGOT.charmId(), new BackpackCharm(BackpackCharm.Tier.INGOT.rows())),
+            Map.entry(BackpackCharm.Tier.MAGIC.charmId(), new BackpackCharm(BackpackCharm.Tier.MAGIC.rows())),
+            Map.entry(BackpackCharm.Tier.BEJEWELED.charmId(), new BackpackCharm(BackpackCharm.Tier.BEJEWELED.rows())),
+            Map.entry(BackpackCharm.Tier.WITHERED.charmId(), new BackpackCharm(BackpackCharm.Tier.WITHERED.rows())),
+            Map.entry(BackpackCharm.Tier.ENDLESS.charmId(), new BackpackCharm(BackpackCharm.Tier.ENDLESS.rows()))
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

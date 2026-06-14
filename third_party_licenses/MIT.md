@@ -3,6 +3,9 @@ This project includes assets licensed under the MIT License:
 Copyright (c) 2019–2021
 https://github.com/ochotonida/artifacts
 
+Copyright (c) 2021 Draylar
+https://github.com/Draylar/inmis
+
 MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

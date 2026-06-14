@@ -20,6 +20,7 @@ public final class MainModRecipes {
     public static final RecipeSerializer<WalletExtractRecipe> WALLET_EXTRACT_RECIPE = unit(new WalletExtractRecipe());
     public static final RecipeSerializer<DyeingRecipe> DYEING_SERIALIZER = unit(new DyeingRecipe());
     public static final RecipeSerializer<UpgradeCharmRecipe> UPGRADE_CHARM_SERIALIZER = unit(new UpgradeCharmRecipe());
+    public static final RecipeSerializer<BackpackUpgradeRecipe> BACKPACK_UPGRADE_RECIPE = unit(new BackpackUpgradeRecipe());
     public static final RecipeSerializer<SetBowTrailRecipe> SET_BOW_TRAIL_SERIALIZER = unit(new SetBowTrailRecipe());
     public static final RecipeSerializer<EnderiteSmithingRecipe> ENDERITE_UPGRADE_SERIALIZER = unit(new EnderiteSmithingRecipe());
 
@@ -30,6 +31,7 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_charmor"), COMBINE_CHARMOR_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_charmor"), SEPERATE_CHARMOR_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "upgrade_charm"), UPGRADE_CHARM_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "backpack_upgrade"), BACKPACK_UPGRADE_RECIPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_cosmetic"), COMBINE_COSMETIC_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_cosmetic"), SEPERATE_COSMETIC_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "extract_xp_from_phial"), EXTRACT_XP_FROM_PHIAL_SERIALIZER);

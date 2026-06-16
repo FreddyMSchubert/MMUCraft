@@ -52,7 +52,7 @@ public class EnchantmentSettingsManager
         new EnchantmentSettings(Enchantments.WIND_BURST).maxLevels(2, 3, 3).inLoottable(trialChamberRewards).rarity(Rarity.COMMON).dupedWithVanillaItem(Items.BREEZE_ROD, 3),
 
         // trident enchantments
-        new EnchantmentSettings(Enchantments.CHANNELING).maxLevels(-1, 1, 1).inLoottable("chests/shipwreck_supply").dupedWithVanillaItem(Items.WAXED_OXIDIZED_LIGHTNING_ROD),
+        new EnchantmentSettings(Enchantments.CHANNELING).maxLevels(-1, 1, 1).inLoottable("chests/shipwreck_supply").dupedWithVanillaItem(Items.LIGHTNING_ROD.waxed().oxidized()),
         new EnchantmentSettings(Enchantments.IMPALING).maxLevels(3, 5, 5).inLoottable("chests/shipwreck_treasure").dupedWithVanillaItem(Items.NAUTILUS_SHELL),
         new EnchantmentSettings(Enchantments.LOYALTY).maxLevels(1, 3, 3).inLoottable("chests/shipwreck_treasure").rarity(Rarity.EPIC), // TODO: duped by dog collar from killing a tamed dog
         new EnchantmentSettings(Enchantments.RIPTIDE).maxLevels(1, 3, 3).inLoottable("chests/shipwreck_map").rarity(Rarity.EPIC).dupedWithVanillaItem(Items.PHANTOM_MEMBRANE, 3),

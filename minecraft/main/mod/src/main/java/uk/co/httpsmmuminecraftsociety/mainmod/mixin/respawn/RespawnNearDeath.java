@@ -74,7 +74,7 @@ public class RespawnNearDeath {
 
         ServerLevel overworld = this.server.overworld();
         LevelData.RespawnData respawnData = overworld.getRespawnData();
-        Vec3 spawnPos = player.adjustSpawnLocation(overworld, respawnData.pos()).getBottomCenter();
+        Vec3 spawnPos = Vec3.atBottomCenterOf(player.adjustSpawnLocation(overworld, respawnData.pos()));
 
         cir.setReturnValue(new TeleportTransition(
                 overworld,

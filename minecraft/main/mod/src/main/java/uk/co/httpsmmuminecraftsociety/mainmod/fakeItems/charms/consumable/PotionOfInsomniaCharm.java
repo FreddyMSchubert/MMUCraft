@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.item.ItemStack;
@@ -55,7 +55,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
         // 4 normal phantoms
         for (int i = 0; i < 4; i++)
         {
-            Phantom phantom = new Phantom(EntityType.PHANTOM, level);
+            Phantom phantom = new Phantom(EntityTypes.PHANTOM, level);
 
             double offsetX = (level.getRandom().nextDouble() - 0.5D) * 3.0D;
             double offsetZ = (level.getRandom().nextDouble() - 0.5D) * 3.0D;
@@ -81,7 +81,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
         }
 
         // Boss phantom
-        Phantom boss = new Phantom(EntityType.PHANTOM, level);
+        Phantom boss = new Phantom(EntityTypes.PHANTOM, level);
         boss.setPos(
                 player.getX(),
                 player.getY() + 5,

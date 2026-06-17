@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -24,26 +25,32 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider
     @Override
     protected void addTags(HolderLookup.Provider provider)
     {
-        valueLookupBuilder(VEIN_MINEABLE_BLOCKS)
-                .add(Blocks.COAL_ORE)
-                .add(Blocks.DEEPSLATE_COAL_ORE)
-                .add(Blocks.IRON_ORE)
-                .add(Blocks.DEEPSLATE_IRON_ORE)
-                .add(Blocks.COPPER_ORE)
-                .add(Blocks.DEEPSLATE_COPPER_ORE)
-                .add(Blocks.GOLD_ORE)
-                .add(Blocks.DEEPSLATE_GOLD_ORE)
-                .add(Blocks.REDSTONE_ORE)
-                .add(Blocks.DEEPSLATE_REDSTONE_ORE)
-                .add(Blocks.EMERALD_ORE)
-                .add(Blocks.DEEPSLATE_EMERALD_ORE)
-                .add(Blocks.LAPIS_ORE)
-                .add(Blocks.DEEPSLATE_LAPIS_ORE)
-                .add(Blocks.DIAMOND_ORE)
-                .add(Blocks.DEEPSLATE_DIAMOND_ORE)
-                .add(Blocks.NETHER_GOLD_ORE)
-                .add(Blocks.GILDED_BLACKSTONE)
-                .add(Blocks.NETHER_QUARTZ_ORE)
-                .add(Blocks.ANCIENT_DEBRIS);
+        builder(VEIN_MINEABLE_BLOCKS)
+                .add(key(Blocks.COAL_ORE))
+                .add(key(Blocks.DEEPSLATE_COAL_ORE))
+                .add(key(Blocks.IRON_ORE))
+                .add(key(Blocks.DEEPSLATE_IRON_ORE))
+                .add(key(Blocks.COPPER_ORE))
+                .add(key(Blocks.DEEPSLATE_COPPER_ORE))
+                .add(key(Blocks.GOLD_ORE))
+                .add(key(Blocks.DEEPSLATE_GOLD_ORE))
+                .add(key(Blocks.REDSTONE_ORE))
+                .add(key(Blocks.DEEPSLATE_REDSTONE_ORE))
+                .add(key(Blocks.EMERALD_ORE))
+                .add(key(Blocks.DEEPSLATE_EMERALD_ORE))
+                .add(key(Blocks.LAPIS_ORE))
+                .add(key(Blocks.DEEPSLATE_LAPIS_ORE))
+                .add(key(Blocks.DIAMOND_ORE))
+                .add(key(Blocks.DEEPSLATE_DIAMOND_ORE))
+                .add(key(Blocks.NETHER_GOLD_ORE))
+                .add(key(Blocks.GILDED_BLACKSTONE))
+                .add(key(Blocks.NETHER_QUARTZ_ORE))
+                .add(key(Blocks.ANCIENT_DEBRIS))
+                .add(key(Blocks.TEST_BLOCK));
+    }
+
+    private static ResourceKey<Block> key(Block block)
+    {
+        return block.builtInRegistryHolder().key();
     }
 }

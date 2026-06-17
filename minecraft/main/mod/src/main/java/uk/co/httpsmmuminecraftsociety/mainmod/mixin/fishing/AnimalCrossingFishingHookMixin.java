@@ -2,7 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Transformation;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,7 +16,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Display;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -176,7 +176,7 @@ public abstract class AnimalCrossingFishingHookMixin {
         this.mainmod$isInitialApproach = false;
         this.mainmod$phase = FishingPhase.ARRIVING;
 
-        Display.ItemDisplay display = new Display.ItemDisplay(EntityType.ITEM_DISPLAY, level);
+        Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         display.setNoGravity(true);
         display.setSilent(true);
         display.setInvulnerable(true);

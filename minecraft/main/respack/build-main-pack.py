@@ -8,8 +8,6 @@ import tempfile
 import urllib.request
 import urllib.error
 import zipfile
-import urllib.parse
-import http.cookiejar
 import hashlib
 import re
 import uuid
@@ -46,83 +44,6 @@ FINGERPRINT_EXCLUDED_DIR_NAMES = {
 FINGERPRINT_EXCLUDED_PATHS = {
 	GENERAL_PACK_MAINMOD_SOUNDS,
 }
-
-# Vanilla Tweaks Stuff
-
-VT_BASE = "https://vanillatweaks.net"
-VT_PICKER = f"{VT_BASE}/picker/resource-packs/"
-VT_HEADERS = {
-	"User-Agent": (
-		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-		"AppleWebKit/537.36 (KHTML, like Gecko) "
-		"Chrome/125.0.0.0 Safari/537.36"
-	),
-	"Accept": "application/json, text/plain, */*",
-	"Accept-Language": "en-US,en;q=0.9",
-	"Origin": VT_BASE,
-	"Referer": VT_PICKER,
-}
-
-VT_OPENER = urllib.request.build_opener(
-	urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar())
-)
-
-
-def vt_request(url, data=None, headers=None):
-	req = urllib.request.Request(
-		url,
-		data=data,
-		headers={**VT_HEADERS, **(headers or {})},
-	)
-	try:
-		with VT_OPENER.open(req) as r:
-			return r.read(), r.headers
-	except urllib.error.HTTPError as e:
-		body = e.read().decode("utf-8", errors="replace").strip()
-		detail = f": {body[:300]}" if body else ""
-		raise RuntimeError(
-			f"Vanilla Tweaks request failed with HTTP {e.code} for {url}{detail}"
-		) from e
-
-
-def resolve_vt_share_code(code: str) -> dict:
-	body, _ = vt_request(
-		f"{VT_BASE}/assets/server/sharecode.php?code={urllib.parse.quote(code)}"
-	)
-	spec = json.loads(body.decode("utf-8"))
-	if spec.get("result") not in (None, "ok"):
-		raise RuntimeError(f"Vanilla Tweaks share code failed: {spec}")
-	if spec.get("type") != "resourcepacks":
-		raise RuntimeError(f"Share code {code} is not a resource pack share code")
-	return spec
-
-
-def build_vt_resourcepack_zip(code: str, zip_path: Path):
-	spec = resolve_vt_share_code(code)
-
-	payload = urllib.parse.urlencode(
-		{
-			"packs": json.dumps(spec["packs"], separators=(",", ":")),
-			"version": spec["version"],
-		}
-	).encode("utf-8")
-
-	body, _ = vt_request(
-		f"{VT_BASE}/assets/server/zipresourcepacks.php",
-		data=payload,
-		headers={"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"},
-	)
-	result = json.loads(body.decode("utf-8"))
-	link = result.get("link")
-	if not link:
-		raise RuntimeError(f"Vanilla Tweaks zip generation failed: {result}")
-
-	if not link.startswith("/"):
-		link = "/" + link
-
-	data, _ = vt_request(f"{VT_BASE}{link}", headers={"Accept": "application/zip, */*"})
-	with open(zip_path, "wb") as f:
-		f.write(data)
 
 # Hashing Helpers
 
@@ -224,9 +145,13 @@ def add_fingerprint_path(h, path: Path):
 		h.update(b"\0")
 
 
+def is_remote_pack_entry(entry: str) -> bool:
+	return entry.startswith(("http://", "https://"))
+
+
 def local_pack_paths(config: dict):
 	for entry in config["packs"]:
-		if entry.startswith(("vt:", "http://", "https://")):
+		if is_remote_pack_entry(entry):
 			continue
 		yield (HERE / entry).resolve()
 
@@ -236,7 +161,7 @@ def pack_input_fingerprint() -> str:
 	h = hashlib.sha256()
 
 	for entry in config["packs"]:
-		if entry.startswith(("vt:", "http://", "https://")):
+		if is_remote_pack_entry(entry):
 			h.update(b"remote-pack\0")
 			h.update(entry.encode("utf-8"))
 			h.update(b"\0")
@@ -436,17 +361,7 @@ def load_inputs(tmp: Path):
 
 	config = json.loads(CONFIG.read_text(encoding="utf-8"))
 	for i, entry in enumerate(config["packs"]):
-		if entry.startswith("vt:"):
-			code = entry.removeprefix("vt:")
-			zip_path = tmp / f"vt-{i}.zip"
-			out_dir = tmp / f"vt-{i}"
-			print(f"==> Downloading Vanilla Tweaks share code {code}")
-			build_vt_resourcepack_zip(code, zip_path)
-			with zipfile.ZipFile(zip_path) as z:
-				z.extractall(out_dir)
-			inputs.append(out_dir)
-
-		elif entry.startswith(("http://", "https://")):
+		if is_remote_pack_entry(entry):
 			zip_path = tmp / f"pack-{i}.zip"
 			out_dir = tmp / f"pack-{i}"
 			print(f"==> Downloading {entry}")

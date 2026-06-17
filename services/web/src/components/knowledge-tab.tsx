@@ -23,6 +23,7 @@ interface KnowledgePage {
 }
 
 interface KnowledgeResponse {
+	contentVersion: number
 	lastUnlockedKnowledgeId: string | null
 	unlockedKnowledgeIds: string[]
 	tree: KnowledgeTreeEntry[]
@@ -43,6 +44,7 @@ export function KnowledgeTab() {
 	const pages = useMemo(() => flattenPages(visibleTree), [visibleTree])
 	const activePage = pages.find((page) => page.id === activePageId) ?? pages[0] ?? null
 	const activePagePath = activePage?.path ?? null
+	const contentVersion = data?.contentVersion ?? 0
 
 	const markPageViewed = useCallback((pageId: string) => {
 		setViewedPageIds((current) => {
@@ -146,7 +148,7 @@ export function KnowledgeTab() {
 				return
 			}
 
-			const response = await fetch(`/knowledge/${activePagePath}`, {
+			const response = await fetch(`/knowledge/${activePagePath}?v=${encodeURIComponent(contentVersion)}`, {
 				cache: 'force-cache',
 			})
 
@@ -169,7 +171,7 @@ export function KnowledgeTab() {
 		return () => {
 			cancelled = true
 		}
-	}, [activePagePath])
+	}, [activePagePath, contentVersion])
 
 	const renderedHtml = useMemo(() => {
 		const html = stripDangerousHtml(marked.parse(pageMarkdown, { async: false }) as string)

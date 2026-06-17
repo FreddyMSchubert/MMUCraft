@@ -24,9 +24,9 @@ public final class UnlockBookLoot {
     private static final long AVAILABILITY_TIMEOUT_MS = 750L;
 
     private static final List<BookDrop> BOOK_DROPS = List.of(
-            new BookDrop("charm-knowledge-book", 50, UnlockAvailabilityType.KNOWLEDGE),
-            new BookDrop("charm-fashion-book", 10, UnlockAvailabilityType.COSMETIC),
-            new BookDrop("charm-magic-book", 15, UnlockAvailabilityType.CHARM),
+            new BookDrop("charm-knowledge-book", 33, UnlockAvailabilityType.KNOWLEDGE),
+            new BookDrop("charm-fashion-book", 11, UnlockAvailabilityType.COSMETIC),
+            new BookDrop("charm-magic-book", 16, UnlockAvailabilityType.CHARM),
             new BookDrop("charm-joke-book", 3, UnlockAvailabilityType.ALWAYS)
     );
 
@@ -35,6 +35,21 @@ public final class UnlockBookLoot {
     private UnlockBookLoot() {
     }
 
+    public static void addBookDrops(Identifier tableId, LootContext lootContext, List<ItemStack> itemStacks) {
+        int bookDropCount = 1;
+
+        float currChance = 2;
+        while (true) {
+            if (Math.random() >= (1 / currChance))
+                break;
+            currChance++;
+            bookDropCount++;
+        }
+
+        for (int i = 0; i < bookDropCount; i++) {
+            addBookDrop(tableId, lootContext, itemStacks);
+        }
+    }
     public static void addBookDrop(Identifier tableId, LootContext lootContext, List<ItemStack> itemStacks) {
         if (!isEligibleLootTable(tableId)) {
             return;

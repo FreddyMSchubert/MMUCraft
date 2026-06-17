@@ -83,7 +83,7 @@ public class LootTableModifiers {
     private static final List<PlayerLootAddition> playerAdditions = List.of(
             new PlayerLootAddition(List.of("archiedobbo"), "disc-9am", null, 1.0F, 1, 1),
             new PlayerLootAddition(List.of("archiedobbo"), null, Items.MANGROVE_DOOR, 1.0F, 1, 1),
-            new PlayerLootAddition(List.of("oderzo"), null, Items.WAXED_WEATHERED_CUT_COPPER_STAIRS, 1, 1, 3),
+            new PlayerLootAddition(List.of("oderzo"), null, Items.CUT_COPPER_STAIRS.waxed().weathered(), 1, 1, 3),
             new PlayerLootAddition(List.of("CalRay2"), null, Items.SLIME_BALL, 0.5f, 1, 5),
             new PlayerLootAddition(List.of("CalRay2"), "beer", null, 0.5f, 1, 5),
             new PlayerLootAddition(List.of("miaalicexoxo"), null, Items.LILY_OF_THE_VALLEY, 1, 1, 1),
@@ -139,7 +139,7 @@ public class LootTableModifiers {
         PickaxeHeaterCharm.heatMinedDrops(lootContext, itemStacks);
 
         addPlayerSpecificDrops(tableId, lootContext, itemStacks);
-        UnlockBookLoot.addBookDrop(tableId, lootContext, itemStacks);
+        UnlockBookLoot.addBookDrops(tableId, lootContext, itemStacks);
 
         for (LootAddition addition : additions) {
             if (!addition.tableId().equals(tableId)) continue;

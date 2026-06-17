@@ -1,0 +1,24 @@
+{
+	"title": "Bejeweled Backpack",
+	"id": "charm-bejeweled-backpack",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Right click to open.",
+		"Holds 36 slots."
+	],
+	"charm": {
+		"charmId": 47,
+		"minLevel": 1,
+		"maxLevel": 1,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Opens a 36-slot backpack when used.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
+	}
+}

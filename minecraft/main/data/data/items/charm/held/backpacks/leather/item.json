@@ -1,0 +1,24 @@
+{
+	"title": "Leather Backpack",
+	"id": "charm-leather-backpack",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Right click to open.",
+		"Holds 9 slots."
+	],
+	"charm": {
+		"charmId": 44,
+		"minLevel": 1,
+		"maxLevel": 1,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Opens a 9-slot backpack when used.",
+				"abilityStatusRelative": "",
+				"upgradeIngredients": []
+			}
+		]
+	}
+}

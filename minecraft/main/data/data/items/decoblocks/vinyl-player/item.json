@@ -1,11 +1,12 @@
 {
-	"title": "Cookie Jar",
-	"id": "cookie-jar",
+	"title": "Vinyl Player",
+	"id": "vinyl-player",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
 	"tooltips": [
-		"Has been thoroughly cleaned since having the fireflies inside"
+		"You spin me right round, baby, right round",
+		"Like a disc, baby, right round, round, round"
 	],
 	"decoBlock": {
 		"ground": true,

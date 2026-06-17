@@ -1,8 +1,0 @@
-{
-	"title": "Vinyl Player",
-	"id": "vinyl-player",
-	"modelType": "basic-3d",
-	"rarity": "common",
-	"maxStackSize": 64,
-	"tooltips": []
-}

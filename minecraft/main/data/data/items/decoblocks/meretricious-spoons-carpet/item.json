@@ -6,5 +6,10 @@
 	"maxStackSize": 64,
 	"tooltips": [
 		"An irreplaceable heirloom of plutocratic indulgence."
-	]
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true
+	}
 }

@@ -6,5 +6,10 @@
 	"maxStackSize": 64,
 	"tooltips": [
 		"A resplendent monument to excess, woven purely to humiliate lesser floor coverings."
-	]
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true
+	}
 }

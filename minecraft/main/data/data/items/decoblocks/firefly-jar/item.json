@@ -4,7 +4,9 @@
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [],
+	"tooltips": [
+		"Personally, I like my fireflies trimmed"
+	],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,

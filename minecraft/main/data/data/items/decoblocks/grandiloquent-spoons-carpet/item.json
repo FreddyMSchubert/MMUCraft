@@ -6,5 +6,10 @@
 	"maxStackSize": 64,
 	"tooltips": [
 		"An unassailable monument of textile supremacy."
-	]
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true
+	}
 }

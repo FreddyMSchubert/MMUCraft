@@ -1,0 +1,15 @@
+{
+	"title": "Fruit Bowl",
+	"id": "fruit-bowl",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Comes with one free tomato"
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false
+	}
+}

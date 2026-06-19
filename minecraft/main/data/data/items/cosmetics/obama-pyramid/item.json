@@ -1,0 +1,18 @@
+{
+	"title": "Obamium Pyramid",
+	"id": "cosmetic-obamium-pyramid",
+	"modelType": "cosmetic",
+	"rarity": "legendary",
+	"maxStackSize": 1,
+	"tooltips": [
+		"As seen on TV!",
+		"Comes with 69± unique voicelines!"
+	],
+	"shopPurchasable": {
+		"priceDabloons": 500,
+		"description": "A wardrobe cosmetic unlock for Obamium Pyramid.",
+		"unlockWeight": 1,
+		"unlockMessage": "Unlocked relic: Obamium Pyramid."
+	},
+	"equippableCosmetic": {}
+}

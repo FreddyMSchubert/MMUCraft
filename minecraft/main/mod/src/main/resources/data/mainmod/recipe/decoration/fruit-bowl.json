@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    "minecraft:bowl",
+    "minecraft:apple",
+    "minecraft:melon_slice",
+    "minecraft:pumpkin",
+    "minecraft:glistering_melon_slice",
+    "minecraft:glow_berries",
+    "minecraft:sweet_berries"
+  ],
+  "result": {
+    "stack": "mainmod:fruit-bowl",
+    "count": 1
+  }
+}

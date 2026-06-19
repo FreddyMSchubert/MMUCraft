@@ -1,0 +1,15 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "NNN",
+    "N N",
+    "NNN"
+  ],
+  "key": {
+    "N": "minecraft:copper_nugget"
+  },
+  "result": {
+    "stack": "mainmod:kettle",
+    "count": 1
+  }
+}

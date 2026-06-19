@@ -1,0 +1,20 @@
+{
+	"title": "Cardboard Box",
+	"id": "cosmetic-cardboard-box",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Carboard Box.",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked cosmetic: Carboard Box."
+	},
+	"equippableCosmetic": {},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"title": "Wyrm Skull",
+	"id": "cosmetic-wyrm-skull",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		""
+	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "Part of a fossil found in the depths of the nether.",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Wyrm Skull."
+	},
+	"equippableCosmetic": {}
+}

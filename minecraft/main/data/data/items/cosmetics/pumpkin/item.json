@@ -1,0 +1,17 @@
+{
+	"title": "Pumpkin Hat",
+	"id": "cosmetic-pumpkin",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		""
+	],
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "A wardrobe cosmetic unlock for Pumpkin Hat.",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked cosmetic: Pumpkin Hat."
+	},
+	"equippableCosmetic": {}
+}

@@ -8,6 +8,9 @@ export function normalizeEmail(email: string): string {
 
 export function isAllowedEmail(email: string): boolean {
 	const normalized = normalizeEmail(email)
+	const parts = parseEmailParts(normalized)
+	if (!parts) return false
+
 	const manualWhitelist = (process.env.MANUAL_EMAIL_WHITELIST ?? '')
 		.split(',')
 		.map((value) => normalizeEmail(value))
@@ -15,8 +18,19 @@ export function isAllowedEmail(email: string): boolean {
 
 	if (manualWhitelist.includes(normalized)) return true
 
-	const [, domain = ''] = normalized.split('@')
-	return MMU_EMAIL_DOMAINS.includes(domain)
+	return MMU_EMAIL_DOMAINS.includes(parts.domain)
+}
+
+function parseEmailParts(email: string): { local: string; domain: string } | null {
+	const parts = email.split('@')
+	if (parts.length !== 2) return null
+
+	const [local, domain] = parts
+	if (!local || !domain) return null
+	if (!/^[^\s@]+$/.test(local)) return null
+	if (!/^[a-z0-9.-]+$/.test(domain)) return null
+
+	return { local, domain }
 }
 
 export function createNumericCode(length = 6): string {

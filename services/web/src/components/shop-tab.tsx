@@ -322,7 +322,7 @@ function ShopModelPreview({ item, hovered }: { item: ShopItem; hovered: boolean 
 
 		async function loadPreview() {
 			try {
-				const response = await fetch(item.modelUrl!, { cache: 'force-cache' })
+				const response = await fetch(item.modelUrl!, { cache: 'no-store' })
 				if (!response.ok) throw new Error('Model failed to load')
 				const model = await response.json()
 				if (cancelled || !hostElement.isConnected) return

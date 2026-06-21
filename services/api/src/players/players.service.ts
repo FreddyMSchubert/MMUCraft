@@ -86,7 +86,6 @@ export interface MinecraftStatInput {
 
 export interface PlayerSummary {
 	id: number
-	email: string
 	minecraftUsername: string
 	isCurrentUser: boolean
 	profile: PlayerProfile
@@ -463,7 +462,6 @@ export class PlayersService {
 
 		return {
 			id: user.id,
-			email: user.email,
 			minecraftUsername: user.minecraft_username,
 			isCurrentUser: user.id === currentUserId,
 			profile: this.getProfile(user.id),

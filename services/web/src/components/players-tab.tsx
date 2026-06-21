@@ -60,7 +60,6 @@ interface PlayerStats {
 
 interface PlayerSummary {
 	id: number
-	email: string
 	minecraftUsername: string
 	isCurrentUser: boolean
 	profile: PlayerProfile

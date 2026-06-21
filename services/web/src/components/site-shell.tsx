@@ -10,7 +10,6 @@ import { ShopTab } from '@/components/shop-tab'
 
 interface SessionUser {
 	id: number
-	email: string
 	minecraftUsername: string
 	whitelisted: boolean
 	rulesAccepted: boolean
@@ -103,17 +102,17 @@ export function SiteShell({ images }: { images: string[] }) {
 						<nav className="dashboardTabs" aria-label="Dashboard sections">
 							<button
 								type="button"
-								className={activeTab === 'dailies' ? 'active' : ''}
-								onClick={() => setActiveTab('dailies')}
-							>
-								Dailies
-							</button>
-							<button
-								type="button"
 								className={activeTab === 'knowledge' ? 'active' : ''}
 								onClick={() => setActiveTab('knowledge')}
 							>
 								Knowledge
+							</button>
+							<button
+								type="button"
+								className={activeTab === 'dailies' ? 'active' : ''}
+								onClick={() => setActiveTab('dailies')}
+							>
+								Dailies
 							</button>
 							<button
 								type="button"

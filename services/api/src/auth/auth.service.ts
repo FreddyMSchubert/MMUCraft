@@ -25,7 +25,6 @@ const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 
 export interface AuthenticatedUser {
 	id: number
-	email: string
 	minecraftUsername: string
 	whitelisted: true
 	rulesAccepted: true
@@ -315,7 +314,6 @@ export class AuthService {
 
 		return {
 			id: row.id,
-			email: row.email,
 			minecraftUsername: row.minecraft_username,
 			whitelisted: true,
 			rulesAccepted: true,

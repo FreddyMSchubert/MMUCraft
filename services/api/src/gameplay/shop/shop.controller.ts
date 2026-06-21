@@ -3,6 +3,8 @@ import { createReadStream } from 'node:fs'
 import { AuthService } from '../../auth/auth.service'
 import { ShopService } from './shop.service'
 
+const NO_STORE_CACHE_CONTROL = 'no-store, no-cache, must-revalidate, proxy-revalidate'
+
 @Controller('api/shop')
 export class ShopController {
 	constructor(
@@ -11,12 +13,18 @@ export class ShopController {
 	) { }
 
 	@Get()
+	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
+	@Header('Pragma', 'no-cache')
+	@Header('Expires', '0')
 	getShop(@Headers('cookie') cookieHeader: string | undefined) {
 		const user = this.auth.requireSession(cookieHeader)
 		return this.shop.getShopForUser(user)
 	}
 
 	@Post('purchase')
+	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
+	@Header('Pragma', 'no-cache')
+	@Header('Expires', '0')
 	purchase(
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Body() body: { itemId?: unknown },
@@ -27,12 +35,18 @@ export class ShopController {
 
 	@Get('texture/:itemId')
 	@Header('Content-Type', 'image/png')
+	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
+	@Header('Pragma', 'no-cache')
+	@Header('Expires', '0')
 	getTexture(@Param('itemId') itemId: string) {
 		return new StreamableFile(createReadStream(this.shop.getTextureFilePath(itemId)))
 	}
 
 	@Get('model/:itemId')
 	@Header('Content-Type', 'application/json')
+	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
+	@Header('Pragma', 'no-cache')
+	@Header('Expires', '0')
 	getModel(@Param('itemId') itemId: string) {
 		return new StreamableFile(createReadStream(this.shop.getModelFilePath(itemId)))
 	}

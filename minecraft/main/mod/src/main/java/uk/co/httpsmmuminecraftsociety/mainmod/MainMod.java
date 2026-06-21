@@ -61,6 +61,7 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ItemEvents.USE.register(CharmsManager::onItemUse);
+        ItemEvents.USE_ON.register(DecoBlocksManager::onUseItemOn);
         ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
         UseBlockCallback.EVENT.register(DynamicBeaconRange::onUseBlock);

@@ -76,7 +76,8 @@ public class CharmsManager
             Map.entry(BackpackCharm.Tier.MAGIC.charmId(), new BackpackCharm(BackpackCharm.Tier.MAGIC.rows())),
             Map.entry(BackpackCharm.Tier.BEJEWELED.charmId(), new BackpackCharm(BackpackCharm.Tier.BEJEWELED.rows())),
             Map.entry(BackpackCharm.Tier.WITHERED.charmId(), new BackpackCharm(BackpackCharm.Tier.WITHERED.rows())),
-            Map.entry(BackpackCharm.Tier.ENDLESS.charmId(), new BackpackCharm(BackpackCharm.Tier.ENDLESS.rows()))
+            Map.entry(BackpackCharm.Tier.ENDLESS.charmId(), new BackpackCharm(BackpackCharm.Tier.ENDLESS.rows())),
+            Map.entry(50, new KangarooBootsCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

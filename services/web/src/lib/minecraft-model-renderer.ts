@@ -398,12 +398,24 @@ function drawMissingTexture(ctx: CanvasRenderingContext2D, width: number, height
 }
 
 async function loadImageFromSource(url: string) {
+	const response = await fetch(url, { cache: 'no-store' })
+	if (!response.ok) {
+		throw new Error(`Could not load texture source: ${url}`)
+	}
+
+	const objectUrl = URL.createObjectURL(await response.blob())
 	return await new Promise<HTMLImageElement>((resolve, reject) => {
 		const image = new Image()
 		image.crossOrigin = 'anonymous'
-		image.onload = () => resolve(image)
-		image.onerror = () => reject(new Error(`Could not load texture source: ${url}`))
-		image.src = url
+		image.onload = () => {
+			URL.revokeObjectURL(objectUrl)
+			resolve(image)
+		}
+		image.onerror = () => {
+			URL.revokeObjectURL(objectUrl)
+			reject(new Error(`Could not load texture source: ${url}`))
+		}
+		image.src = objectUrl
 	})
 }
 

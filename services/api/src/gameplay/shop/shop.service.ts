@@ -15,6 +15,7 @@ const DEFAULT_ITEM_ROOTS = [
 ]
 
 const VANILLA_ITEM_TEXTURE_PREFIX = '/assets/mc_respack/assets/minecraft/textures/item'
+const SHOP_ASSET_REVISION = `${Date.now().toString(36)}-${randomInt(0x100000000).toString(36)}`
 
 type ShopItemType = 'charm' | 'cosmetic' | 'generic'
 type ShopDeliveryKind = 'fake_item' | 'vanilla_item'
@@ -567,7 +568,7 @@ export class ShopService {
 			: flatTextureFilePath ?? modelTextureFilePath
 
 		const baseItemOverride = typeof json.baseItemOverride === 'string' ? json.baseItemOverride : null
-		const textureUrl = textureFilePath ? `/api/shop/texture/${encodeURIComponent(id)}` : null
+		const textureUrl = textureFilePath ? this.shopAssetUrl('texture', id) : null
 		const iconUrl = renderMode === 'model'
 			? textureUrl
 			: textureUrl ?? this.vanillaItemIconUrl(baseItemOverride) ?? this.fallbackIconUrl(type)
@@ -585,7 +586,7 @@ export class ShopService {
 			unlockWeight: shop.unlockWeight,
 			iconUrl,
 			renderMode,
-			modelUrl: renderMode === 'model' ? `/api/shop/model/${encodeURIComponent(id)}` : null,
+			modelUrl: renderMode === 'model' ? this.shopAssetUrl('model', id) : null,
 			textureUrl: textureUrl ?? this.vanillaItemIconUrl(baseItemOverride) ?? this.fallbackIconUrl(type),
 			animated: Boolean(animation),
 			dyeable: Boolean(json.dyeable && typeof json.dyeable === 'object'),
@@ -733,6 +734,10 @@ export class ShopService {
 		}
 
 		return null
+	}
+
+	private shopAssetUrl(kind: 'model' | 'texture', itemId: string): string {
+		return `/api/shop/${kind}/${encodeURIComponent(itemId)}?v=${SHOP_ASSET_REVISION}`
 	}
 
 	private vanillaItemIconUrl(itemId: string | null): string | null {

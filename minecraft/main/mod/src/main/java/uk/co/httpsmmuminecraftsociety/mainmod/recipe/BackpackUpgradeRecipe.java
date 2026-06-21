@@ -32,13 +32,13 @@ public class BackpackUpgradeRecipe extends CustomRecipe {
         if (matchesLeatherBackpack(input)) {
             return new Match(BackpackCharm.Tier.LEATHER, ItemStack.EMPTY);
         }
-        if (matchesAlternatingUpgrade(input, BackpackCharm.Tier.LEATHER, Items.IRON_INGOT, Items.COPPER_INGOT)) {
+        if (matchesAlternatingUpgrade(input, BackpackCharm.Tier.LEATHER, Items.IRON_INGOT, Items.COPPER_BLOCK.weathering().unaffected())) {
             return new Match(BackpackCharm.Tier.INGOT, input.getItem(CENTER_SLOT));
         }
-        if (matchesAlternatingUpgrade(input, BackpackCharm.Tier.INGOT, Items.GOLD_INGOT, Items.LAPIS_LAZULI)) {
+        if (matchesAlternatingUpgrade(input, BackpackCharm.Tier.INGOT, Items.RAW_GOLD_BLOCK, Items.DEEPSLATE_LAPIS_ORE)) {
             return new Match(BackpackCharm.Tier.MAGIC, input.getItem(CENTER_SLOT));
         }
-        if (matchesAlternatingUpgrade(input, BackpackCharm.Tier.MAGIC, Items.DIAMOND, Items.EMERALD)) {
+        if (matchesAlternatingUpgrade(input, BackpackCharm.Tier.MAGIC, Items.DIAMOND, Items.EMERALD_BLOCK)) {
             return new Match(BackpackCharm.Tier.BEJEWELED, input.getItem(CENTER_SLOT));
         }
         if (matchesWitheredBackpack(input)) {

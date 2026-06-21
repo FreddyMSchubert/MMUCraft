@@ -11,9 +11,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BundleItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
@@ -108,6 +111,31 @@ public class BackpackCharm implements Charm, UseCallbackCharm {
         return bundleContents != null && bundleContents.itemCopyStream().anyMatch(BackpackCharm::containsBackpack);
     }
 
+    public static boolean containsItemDisallowedInBackpack(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return false;
+        }
+        if (isBackpack(stack) || isBundle(stack) || isShulkerBox(stack)) {
+            return true;
+        }
+
+        ItemContainerContents containerContents = stack.get(DataComponents.CONTAINER);
+        if (containerContents != null && containerContents.nonEmptyItemCopyStream().anyMatch(BackpackCharm::containsItemDisallowedInBackpack)) {
+            return true;
+        }
+
+        BundleContents bundleContents = stack.get(DataComponents.BUNDLE_CONTENTS);
+        return bundleContents != null && bundleContents.itemCopyStream().anyMatch(BackpackCharm::containsItemDisallowedInBackpack);
+    }
+
+    private static boolean isBundle(ItemStack stack) {
+        return stack.getItem() instanceof BundleItem;
+    }
+
+    private static boolean isShulkerBox(ItemStack stack) {
+        return stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock;
+    }
+
     public static boolean isTier(ItemStack stack, Tier tier) {
         return isBackpack(stack) && FakeItems.isSpecificFakeItem(stack, tier.fakeItemId());
     }
@@ -175,7 +203,7 @@ public class BackpackCharm implements Charm, UseCallbackCharm {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return !containsBackpack(stack);
+            return !containsItemDisallowedInBackpack(stack);
         }
     }
 

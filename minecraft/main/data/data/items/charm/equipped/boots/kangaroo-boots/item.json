@@ -1,0 +1,90 @@
+{
+	"title": "Sulfur Kangaroo Boots Charm",
+	"id": "charm-kangaroo-boots",
+	"modelType": "charm",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Boing."
+	],
+	"shopPurchasable": {
+		"priceDabloons": 90,
+		"description": "Boing. Increases bounciness while equipped.",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked charm: Kangaroo Boots Charm."
+	},
+	"charm": {
+		"charmId": 50,
+		"minLevel": 0,
+		"maxLevel": 5,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Adds a little bounciness while equipped.",
+				"abilityStatusRelative": "Increases bounciness while equipped.",
+				"upgradeIngredients": [
+					"minecraft:rabbit_foot",
+					"minecraft:sulfur",
+					"minecraft:leather_boots"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Adds springy bounciness while equipped.",
+				"abilityStatusRelative": "Increases bounciness more while equipped.",
+				"upgradeIngredients": [
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_hide",
+					"minecraft:slime_ball",
+					"minecraft:sulfur_slab",
+					"minecraft:wind_charge"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Adds lively bounciness while equipped.",
+				"abilityStatusRelative": "Increases bounciness more while equipped.",
+				"upgradeIngredients": [
+					"minecraft:slime_block",
+					"minecraft:honey_block",
+					"minecraft:cinnabar",
+					"minecraft:polished_sulfur",
+					"minecraft:wind_charge",
+					"minecraft:golden_boots"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Adds powerful bounciness while equipped.",
+				"abilityStatusRelative": "Increases bounciness more while equipped.",
+				"upgradeIngredients": [
+					"minecraft:slime_block",
+					"minecraft:sulfur_bricks",
+					"minecraft:potent_sulfur",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:diamond_boots"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Adds maximum bounciness while equipped.",
+				"abilityStatusRelative": "Increases bounciness more while equipped.",
+				"upgradeIngredients": [
+					"minecraft:sulfur_cube_bucket",
+					"minecraft:slime_block",
+					"minecraft:honey_block",
+					"minecraft:chiseled_sulfur",
+					"minecraft:polished_cinnabar",
+					"minecraft:wind_charge",
+					"minecraft:netherite_boots",
+					"minecraft:nether_star"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "kangaroo_boots__charm"
+	}
+}

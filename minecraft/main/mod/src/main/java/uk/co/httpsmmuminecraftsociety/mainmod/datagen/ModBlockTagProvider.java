@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider
 {
     public static final TagKey<Block> VEIN_MINEABLE_BLOCKS = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "vein_minable_blocks"));
+    public static final TagKey<Block> NON_RENAMEABLE_BLOCKS = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "non_renameable_blocks"));
 
     public ModBlockTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture)
     {

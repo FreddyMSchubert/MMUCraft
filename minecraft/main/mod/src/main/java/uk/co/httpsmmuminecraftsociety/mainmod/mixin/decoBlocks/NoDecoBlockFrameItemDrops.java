@@ -28,4 +28,20 @@ public class NoDecoBlockFrameItemDrops {
 
         return frame.spawnAtLocation(level, stack);
     }
+
+    @Redirect(
+            method = "dropItem(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Z)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/decoration/ItemFrame;spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;",
+                    ordinal = 1
+            )
+    )
+    private ItemEntity mainmod$restoreDecoBlockFrameItemDrop(ItemFrame frame, ServerLevel level, ItemStack stack) {
+        if (frame.entityTags().contains(DecoBlocksManager.DECO_BLOCK_FRAME_TAG)) {
+            DecoBlocksManager.restoreCustomNameFromFrame(stack);
+        }
+
+        return frame.spawnAtLocation(level, stack);
+    }
 }

@@ -253,7 +253,7 @@
 	"blazeandcave:bacap/nether_milestone": 75, // Nether Milestone: Complete every advancement in the Nether tab Longer collection, rare find, or difficult combat/setup; high payout.
 	"blazeandcave:bacap/potion_milestone": 45, // Potions Milestone: Complete every advancement in the Potions tab Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"blazeandcave:bacap/redstone_milestone": 45, // Redstone Milestone: Complete every advancement in the Redstone tab Meaningful expedition, stack collection, or multi-step setup; solid payout.
-	"blazeandcave:bacap/root": 2, // BlazeandCave's Advancements Pack: Loads of brand new advancements for your Minecraft world! Trivial tutorial/autocomplete action, so it only gets a token payout.
+	"blazeandcave:bacap/root": 0, // BlazeandCave's Advancements Pack: Loads of brand new advancements for your Minecraft world! Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"blazeandcave:bacap/statistics_milestone": 75, // Statistics Milestone: Complete every advancement in the Statistics tab Longer collection, rare find, or difficult combat/setup; high payout.
 	"blazeandcave:bacap/time_to_chop": 3, // Time to Chop!: Use planks and sticks to make an axe Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"blazeandcave:bacap/time_to_dig": 3, // Time to Dig!: Use planks and sticks to make a shovel Trivial tutorial/autocomplete action, so it only gets a token payout.
@@ -310,7 +310,7 @@
 	"blazeandcave:biomes/pushed_around": 11, // Pushed Around: Enter a bubble column Simple targeted action or common find; modest payout.
 	"blazeandcave:biomes/qinling": 30, // Qinling: Breed a rare brown panda Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:biomes/resinance": 11, // Resinance: Pick off a Resin Clump growing on the side of a Pale Oak tree Simple targeted action or common find; modest payout.
-	"blazeandcave:biomes/root": 8, // Biomes: All around the world! Common short action worth only a few active-effort units.
+	"blazeandcave:biomes/root": 0, // Biomes: All around the world! Common short action worth only a few active-effort units.
 	"blazeandcave:biomes/simba": 30, // Simba: Breed a baby ocelot Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:biomes/sleep_with_the_fishes": 45, // Sleep with the Fishes: Spend a day underwater Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"blazeandcave:biomes/smooth_operator": 11, // Smooth Operator: Slip and slide on some ice Simple targeted action or common find; modest payout.
@@ -416,7 +416,7 @@
 	"blazeandcave:building/raise_the_flag": 1, // Raise the flag!: Craft and place a banner Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"blazeandcave:building/rock_collection": 25, // Rock Collection: Collect all the types of rocks Minor setup, uncommon item, or small risk; low-mid payout.
 	"blazeandcave:building/rock_polish": 20, // Rock Polish: Craft every type of polished block Minor setup, uncommon item, or small risk; low-mid payout.
-	"blazeandcave:building/root": 5, // Building: Your only limit is your imagination... and resources Common short action worth only a few active-effort units.
+	"blazeandcave:building/root": 0, // Building: Your only limit is your imagination... and resources Common short action worth only a few active-effort units.
 	"blazeandcave:building/setting_up_the_mood": 1, // Setting up the mood: Place a candle and light it using Flint and Steel Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"blazeandcave:building/sharpening_station": 1, // Sharpening Station: Craft a grindstone using a stone slab, planks and sticks for repairing tools Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"blazeandcave:building/shelf_expression": 5, // Shelf Expression: Fill a Chiseled Bookshelf with books Common short action worth only a few active-effort units.
@@ -478,7 +478,7 @@
 	"blazeandcave:challenges/potion_master": 145, // Potion Master: Kill every mob in the game with splash potions Extreme grind/endgame challenge; heavily capped relative to real time.
 	"blazeandcave:challenges/riddle_me_this": 80, // Riddle Me This: The first is to smith a compass that vanishes Longer collection, rare find, or difficult combat/setup; high payout.
 	"blazeandcave:challenges/rise_of_the_skeletons": 30, // Rise of the Skeletons: Obtain a stack of Skeleton Skulls Focused setup, structure trip, or small collection; mid payout.
-	"blazeandcave:challenges/root": 45, // Super Challenges: Good luck completing... any of these ;) Meaningful expedition, stack collection, or multi-step setup; solid payout.
+	"blazeandcave:challenges/root": 0, // Super Challenges: Good luck completing... any of these ;) Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"blazeandcave:challenges/stack_all_the_blocks": 280, // Stack All the Blocks!: Obtain a stack of all the blocks! Pack-scale capstone; maximum-tier reward with strong economy compression.
 	"blazeandcave:challenges/stack_all_the_items": 260, // Stack All the Items!: Obtain a stack of all the items! Pack-scale capstone; maximum-tier reward with strong economy compression.
 	"blazeandcave:challenges/stockbroker": 130, // Stockbroker: Trade with every profession from every biome type Major grind or precision challenge; very high but still economy-capped.
@@ -535,7 +535,7 @@
 	"blazeandcave:enchanting/over_overkill": 55, // Over-Overkill: Deal sixteen hearts of damage in a single melee blow without using a Mace Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"blazeandcave:enchanting/overkill": 30, // Overkill: Deal eight hearts of damage in a single melee blow without using a Mace Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:enchanting/pick_like_silk": 20, // Pick Like Silk: Use a Silk Touch enchanted pickaxe to obtain diamond ore as a block Minor setup, uncommon item, or small risk; low-mid payout.
-	"blazeandcave:enchanting/root": 12, // Enchanting: Enchant items to give them magical abilities Simple targeted action or common find; modest payout.
+	"blazeandcave:enchanting/root": 0, // Enchanting: Enchant items to give them magical abilities Simple targeted action or common find; modest payout.
 	"blazeandcave:enchanting/scuba_gear": 35, // Scuba Gear: Obtain every water related enchantment Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:enchanting/shotbow": 15, // Shotbow: Shoot three arrows at once with a crossbow Simple targeted action or common find; modest payout.
 	"blazeandcave:enchanting/silent_but_deadly": 50, // Silent But Deadly: Sneak and sprint on sculk with Speed II while wearing Swift Sneak III leggings. Try saying that six times swiftly Meaningful expedition, stack collection, or multi-step setup; solid payout.
@@ -625,7 +625,7 @@
 	"blazeandcave:farming/olaf": 6, // Olaf: Do you want to build a snow golem? Common short action worth only a few active-effort units.
 	"blazeandcave:farming/one_course_meal": 6, // One-course meal: Use bone meal to grow a sapling into a tree Common short action worth only a few active-effort units.
 	"blazeandcave:farming/pumpa_kungen": 40, // Pumpa kungen!: Carve a stack of pumpkins Focused setup, structure trip, or small collection; mid payout.
-	"blazeandcave:farming/root": 5, // Farming: Hoe hoe hoe! Common short action worth only a few active-effort units.
+	"blazeandcave:farming/root": 0, // Farming: Hoe hoe hoe! Common short action worth only a few active-effort units.
 	"blazeandcave:farming/scientific_inaccuracy": 14, // Scientific Inaccuracy: Craft 9 melon slices back into a block that, when broken, will probably not give you all 9 slices back Simple targeted action or common find; modest payout.
 	"blazeandcave:farming/shrooms": 6, // Shrooms: Gather both types of mushroom Common short action worth only a few active-effort units.
 	"blazeandcave:farming/souperman": 6, // Souperman: Beetroot soup gives you souperpowers! Common short action worth only a few active-effort units.
@@ -737,7 +737,7 @@
 	"blazeandcave:mining/renewable_energy": 1, // Renewable Energy: Smelt wood trunks using charcoal to make more charcoal Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"blazeandcave:mining/rest_in_pickaxes": 40, // Rest in Pickaxes: Break your first diamond pickaxe Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:mining/rock_bottom": 25, // Rock Bottom: Dig down to the bottom of the world Minor setup, uncommon item, or small risk; low-mid payout.
-	"blazeandcave:mining/root": 6, // Mining: Dig deep down, mine up ore Common short action worth only a few active-effort units.
+	"blazeandcave:mining/root": 0, // Mining: Dig deep down, mine up ore Common short action worth only a few active-effort units.
 	"blazeandcave:mining/school_of_hard_knocks": 55, // School of Hard Knocks: Collect a stack of every oxidizing stage of Copper Doors and Trapdoors, including all of their waxed variants Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"blazeandcave:mining/seeing_red": 7, // Seeing Red: Mine some redstone from the deepest caves Common short action worth only a few active-effort units.
 	"blazeandcave:mining/shriek_forever_after": 7, // Shriek Forever After: Trigger a Sculk Shrieker in the Deep Dark. Might not want to do that too many more times… Common short action worth only a few active-effort units.
@@ -819,7 +819,7 @@
 	"blazeandcave:monsters/pupil_poppers": 50, // Pupil Poppers: Eat 1000 Spider Eyes Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"blazeandcave:monsters/ricochet_swoop": 11, // Ricochet Swoop: Deflect a Phantom's swoop with your shield Simple targeted action or common find; modest payout.
 	"blazeandcave:monsters/ride_or_dry": 55, // Ride or Dry: Kill a Husk, Parched and the Camel Husk they are riding with a single crossbow shot Meaningful expedition, stack collection, or multi-step setup; solid payout.
-	"blazeandcave:monsters/root": 8, // Monsters: Battle against the monsters of darkness Common short action worth only a few active-effort units.
+	"blazeandcave:monsters/root": 0, // Monsters: Battle against the monsters of darkness Common short action worth only a few active-effort units.
 	"blazeandcave:monsters/sands_the_skeleton": 9, // Sands the Skeleton: Kill a Parched. Be careful around weakness arrows! Simple targeted action or common find; modest payout.
 	"blazeandcave:monsters/skeleton_smiter": 45, // Skeleton Smiter: Collect a stack of bones Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"blazeandcave:monsters/slime_squisher": 45, // Slime Squisher: Collect a stack of slimeballs Meaningful expedition, stack collection, or multi-step setup; solid payout.
@@ -953,7 +953,7 @@
 	"blazeandcave:potion/nocturnal": 11, // Nocturnal: Brew and drink a night vision potion Simple targeted action or common find; modest payout.
 	"blazeandcave:potion/noxious_fumes": 11, // Noxious Fumes: Use dragon's breath to brew a lingering potion Simple targeted action or common find; modest payout.
 	"blazeandcave:potion/performance_enhancing_drugs": 11, // Performance-Enhancing Drugs: Brew a Speed Potion for cheating on athletics Simple targeted action or common find; modest payout.
-	"blazeandcave:potion/root": 12, // Potions: Brewing potions with helpful and hindering effects Simple targeted action or common find; modest payout.
+	"blazeandcave:potion/root": 0, // Potions: Brewing potions with helpful and hindering effects Simple targeted action or common find; modest payout.
 	"blazeandcave:potion/secret_of_the_ooze": 11, // Secret of the Ooze: Use a Slime Block to brew a Potion of Oozing Simple targeted action or common find; modest payout.
 	"blazeandcave:potion/stayin_frosty": 11, // Stayin' Frosty: Swim in lava while having the Fire Resistance effect Simple targeted action or common find; modest payout.
 	"blazeandcave:potion/stealth_takedown": 11, // Stealth Takedown: Dispatch a Creeper at melee range while you are invisible Simple targeted action or common find; modest payout.
@@ -994,7 +994,7 @@
 	"blazeandcave:redstone/quirky_quartz": 5, // Quirky Quartz: Mine Nether Quartz from the Nether Common short action worth only a few active-effort units.
 	"blazeandcave:redstone/railwayman": 35, // Railwayman: Craft a stack of all the different types of rails Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:redstone/repeating_repeater": 1, // Repeating Repeater: Craft a redstone repeater for delaying signals Trivial tutorial/autocomplete action, so it only gets a token payout.
-	"blazeandcave:redstone/root": 8, // Redstone: Cracking contraptions Common short action worth only a few active-effort units.
+	"blazeandcave:redstone/root": 0, // Redstone: Cracking contraptions Common short action worth only a few active-effort units.
 	"blazeandcave:redstone/sculker_box": 35, // Sculker Box: Hold a Shulker Box that is completely filled with Sculk Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:redstone/solar_power": 1, // Solar Power: Craft a daylight sensor Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"blazeandcave:redstone/space_dropper": 1, // Space Dropper: Craft a dropper for item transportation Trivial tutorial/autocomplete action, so it only gets a token payout.
@@ -1054,7 +1054,7 @@
 	"blazeandcave:statistics/passing_the_time": 25, // Passing the Time: Play for 100 days Minor setup, uncommon item, or small risk; low-mid payout.
 	"blazeandcave:statistics/pig_training": 9, // Pig Training: Ride 100m on a pig Simple targeted action or common find; modest payout.
 	"blazeandcave:statistics/pirate_captain": 25, // Pirate Captain: Sail 10km in a boat Minor setup, uncommon item, or small risk; low-mid payout.
-	"blazeandcave:statistics/root": 10, // Statistics: If your numbers go up, you're having more fun Simple targeted action or common find; modest payout.
+	"blazeandcave:statistics/root": 0, // Statistics: If your numbers go up, you're having more fun Simple targeted action or common find; modest payout.
 	"blazeandcave:statistics/sailor_of_the_seven_seas": 90, // Sailor of the Seven Seas: Sail 50km in a boat Longer collection, rare find, or difficult combat/setup; high payout.
 	"blazeandcave:statistics/scourge_of_the_west": 100, // Scourge of the West: Ride 50km on a horse Major grind or precision challenge; very high but still economy-capped.
 	"blazeandcave:statistics/shell_testing": 15, // Shell Testing: Ride 1km on a Nautilus Simple targeted action or common find; modest payout.
@@ -1186,7 +1186,7 @@
 	"blazeandcave:weaponry/pyrotechnic": 35, // Pyrotechnic: Craft a firework of every shape and additional effect Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:weaponry/revenge": 9, // Revenge!: Blow up a creeper with TNT Simple targeted action or common find; modest payout.
 	"blazeandcave:weaponry/rock_paper_shears": 5, // Rock, Paper, Shears!: Beat a zombie at rock, paper, shears Common short action worth only a few active-effort units.
-	"blazeandcave:weaponry/root": 7, // Weaponry: Weapons of choice for combat Common short action worth only a few active-effort units.
+	"blazeandcave:weaponry/root": 0, // Weaponry: Weapons of choice for combat Common short action worth only a few active-effort units.
 	"blazeandcave:weaponry/shield_luck": 9, // Shield Luck: Protect yourself from an enemy's attack with your shield Simple targeted action or common find; modest payout.
 	"blazeandcave:weaponry/shovel_knight": 40, // Shovel Knight: Hit mobs using every kind of shovel Focused setup, structure trip, or small collection; mid payout.
 	"blazeandcave:weaponry/sir_knight": 2, // Sir Knight: Use planks and iron to craft a shield Trivial tutorial/autocomplete action, so it only gets a token payout.
@@ -1229,7 +1229,7 @@
 	"minecraft:adventure/play_jukebox_in_meadows": 20, // The Sound of Music: Make the Meadows come alive with the sound of music from a jukebox Minor setup, uncommon item, or small risk; low-mid payout.
 	"minecraft:adventure/read_power_of_chiseled_bookshelf": 10, // The Power of Books: Read the power signal of a Chiseled Bookshelf using a comparator Simple targeted action or common find; modest payout.
 	"minecraft:adventure/revaulting": 25, // Revaulting: Unlock an Ominous Vault with an Ominous Trial Key Minor setup, uncommon item, or small risk; low-mid payout.
-	"minecraft:adventure/root": 15, // Adventure: Village, pillage and exploration Simple targeted action or common find; modest payout.
+	"minecraft:adventure/root": 0, // Adventure: Village, pillage and exploration Simple targeted action or common find; modest payout.
 	"minecraft:adventure/salvage_sherd": 15, // Respecting the Remnants: Using a Brush, carefully excavate a Pottery Sherd from a suspicious block Simple targeted action or common find; modest payout.
 	"minecraft:adventure/shoot_arrow": 6, // Take Aim: Shoot something with a bow and arrow Common short action worth only a few active-effort units.
 	"minecraft:adventure/sleep_in_bed": 4, // Sweet dreams: Sleep in a bed to change your respawn point Common short action worth only a few active-effort units.
@@ -1261,7 +1261,7 @@
 	"minecraft:end/kill_dragon": 45, // Free the End: Good luck Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"minecraft:end/levitate": 75, // Great View From Up Here: Levitate up a distance of 50 metres Longer collection, rare find, or difficult combat/setup; high payout.
 	"minecraft:end/respawn_dragon": 75, // The End... Again: Respawn the Ender Dragon Longer collection, rare find, or difficult combat/setup; high payout.
-	"minecraft:end/root": 30, // The End: Or the beginning? Focused setup, structure trip, or small collection; mid payout.
+	"minecraft:end/root": 0, // The End: Or the beginning? Focused setup, structure trip, or small collection; mid payout.
 	"minecraft:husbandry/allay_deliver_cake_to_note_block": 35, // Birthday Song: Have an Allay drop a cake at a note block Focused setup, structure trip, or small collection; mid payout.
 	"minecraft:husbandry/allay_deliver_item_to_player": 7, // You’ve Got a Friend in Me: Have an Allay deliver items to you Common short action worth only a few active-effort units.
 	"minecraft:husbandry/axolotl_in_a_bucket": 10, // The Cutest Predator: Catch an Axolotl in a Bucket Simple targeted action or common find; modest payout.
@@ -1284,7 +1284,7 @@
 	"minecraft:husbandry/remove_wolf_armor": 10, // Shear Brilliance: Remove Wolf Armor from a Wolf using Shears Simple targeted action or common find; modest payout.
 	"minecraft:husbandry/repair_wolf_armor": 10, // Good as New: Repair damaged Wolf Armor using Armadillo Scutes Simple targeted action or common find; modest payout.
 	"minecraft:husbandry/ride_a_boat_with_a_goat": 10, // Whatever Floats Your Goat!: Get in a Boat and float with a Goat Simple targeted action or common find; modest payout.
-	"minecraft:husbandry/root": 8, // Animals: The world is full of friends and food Common short action worth only a few active-effort units.
+	"minecraft:husbandry/root": 0, // Animals: The world is full of friends and food Common short action worth only a few active-effort units.
 	"minecraft:husbandry/safely_harvest_honey": 10, // Bee Our Guest: Use a bottle to collect Honey from a Beehive with a campfire beneath it so you don't aggravate the bees Simple targeted action or common find; modest payout.
 	"minecraft:husbandry/silk_touch_nest": 25, // Total Beelocation: Move a Bee Nest with 3 bees inside using Silk Touch Minor setup, uncommon item, or small risk; low-mid payout.
 	"minecraft:husbandry/tactical_fishing": 15, // Tactical Fishing: Catch a fish... without a fishing rod! Simple targeted action or common find; modest payout.
@@ -1314,7 +1314,7 @@
 	"minecraft:nether/return_to_sender": 20, // Return to Sender: Destroy a Ghast with its fireball Minor setup, uncommon item, or small risk; low-mid payout.
 	"minecraft:nether/ride_strider": 12, // This Boat Has Legs: Ride a Strider with a Warped Fungus on a Stick Simple targeted action or common find; modest payout.
 	"minecraft:nether/ride_strider_in_overworld_lava": 30, // Feels Like Home: Take a Strider for a loooong ride on a lava lake in the Overworld Focused setup, structure trip, or small collection; mid payout.
-	"minecraft:nether/root": 20, // Nether: Bring summer clothes Minor setup, uncommon item, or small risk; low-mid payout.
+	"minecraft:nether/root": 0, // Nether: Bring summer clothes Minor setup, uncommon item, or small risk; low-mid payout.
 	"minecraft:nether/summon_wither": 45, // Withering Heights: Summon the Wither Meaningful expedition, stack collection, or multi-step setup; solid payout.
 	"minecraft:nether/uneasy_alliance": 95, // Uneasy Alliance: Rescue a Ghast from the Nether, bring it safely home to the Overworld... and then kill it Major grind or precision challenge; very high but still economy-capped.
 	"minecraft:story/cure_zombie_villager": 25, // Zombie Doctor: Cure a zombie villager Minor setup, uncommon item, or small risk; low-mid payout.
@@ -1329,7 +1329,7 @@
 	"minecraft:story/mine_diamond": 7, // Diamonds!: Acquire diamonds Common short action worth only a few active-effort units.
 	"minecraft:story/mine_stone": 3, // Stone Age: Mine stone with your new pickaxe Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"minecraft:story/obtain_armor": 7, // Suit Up: Protect yourself with a piece of iron armor Common short action worth only a few active-effort units.
-	"minecraft:story/root": 2, // Benchmarking: Construct a crafting bench with four wooden planks Trivial tutorial/autocomplete action, so it only gets a token payout.
+	"minecraft:story/root": 0, // Benchmarking: Construct a crafting bench with four wooden planks Trivial tutorial/autocomplete action, so it only gets a token payout.
 	"minecraft:story/shiny_gear": 7, // Cover Me With Diamonds: Diamond armor saves lives Common short action worth only a few active-effort units.
 	"minecraft:story/smelt_iron": 7, // Acquire Hardware: Smelt an iron ingot Common short action worth only a few active-effort units.
 	"minecraft:story/upgrade_tools": 7 // Getting an Upgrade: Construct a better pickaxe Common short action worth only a few active-effort units.

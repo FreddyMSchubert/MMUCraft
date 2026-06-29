@@ -674,320 +674,320 @@
 	"blazeandcave:mining/death_pointer": 25, // Death Pointer: craft a Recovery Compass from Ancient City Echo Shards; dangerous loot source plus craft.
 	"blazeandcave:mining/deep_slate_nine": 0, // Deep Slate Nine: mine down to deepslate; normal mining progression, no reward.
 	"blazeandcave:mining/diam_oh_wait_no": 1, // DIAM- oh, wait, no.: find/mine lapis; common enchanting ore, token only.
-	"blazeandcave:mining/diamond_clad": 25, // Diamond Clad: craft/equip full diamond armor; meaningful gear investment.
-	"blazeandcave:mining/diamond_miner": 80, // Diamond Miner: mine a stack of diamonds; real targeted diamond grind.
+	"blazeandcave:mining/diamond_clad": 22, // Diamond Clad: craft/equip full diamond armor; meaningful gear investment.
+	"blazeandcave:mining/diamond_miner": 50, // Diamond Miner: mine a stack of diamonds; real targeted diamond grind.
 	"blazeandcave:mining/diamonds_to_you": 3, // Diamonds to you!: throw a diamond to another player or mob; tiny deliberate diamond interaction.
 	"blazeandcave:mining/dont_come_a_copper": 0, // Dont Come a Copper!: craft cut copper; normal copper block craft, no reward.
-	"blazeandcave:mining/dripstone_drop": 25, // Dripstone Drop: survive a 10-block fall onto pointed dripstone; deliberate damage/survival setup.
+	"blazeandcave:mining/dripstone_drop": 22, // Dripstone Drop: survive a 10-block fall onto pointed dripstone; deliberate damage/survival setup.
 	"blazeandcave:mining/dungeons_and_spawners": 8, // Dungeons and Spawners: open a dungeon chest; small underground structure find.
-	"blazeandcave:mining/echonomy": 80, // Echonomy: collect a stack of Echo Shards; Ancient City chest grind.
+	"blazeandcave:mining/echonomy": 76, // Echonomy: collect a stack of Echo Shards; Ancient City chest grind.
 	"blazeandcave:mining/eeuuwww": 0, // Eeuuwww!: get stuck in a cobweb; common mineshaft/cave accident, no reward.
-	"blazeandcave:mining/emerald_miner": 100, // Emerald Miner: mine a stack of emerald ore; rare mountain ore grind, especially if ore blocks are required.
-	"blazeandcave:mining/even_moar_tools": 20, // Even MOAR Tools: craft the full diamond tool set; diamond cost and includes niche tools.
-	"blazeandcave:mining/fallen_kingdom": 25, // Fallen Kingdom: find and enter an Ancient City; dangerous deep structure exploration.
-	"blazeandcave:mining/flint_miner": 20, // Flint Miner: collect a stack of flint; repetitive gravel/RNG grind.
+	"blazeandcave:mining/emerald_miner": 84, // Emerald Miner: mine a stack of emerald ore; rare mountain ore grind, especially if ore blocks are required.
+	"blazeandcave:mining/even_moar_tools": 16, // Even MOAR Tools: craft the full diamond tool set; diamond cost and includes niche tools.
+	"blazeandcave:mining/fallen_kingdom": 22, // Fallen Kingdom: find and enter an Ancient City; dangerous deep structure exploration.
+	"blazeandcave:mining/flint_miner": 18, // Flint Miner: collect a stack of flint; repetitive gravel/RNG grind.
 	"blazeandcave:mining/fossil_fuel": 0, // Fossil Fuel: mine coal; normal early ore, no reward.
-	"blazeandcave:mining/frigid_diversions": 25, // Frigid Diversions: loot an Ancient City ice-box chest; dangerous structure plus specific chest.
+	"blazeandcave:mining/frigid_diversions": 18, // Frigid Diversions: loot an Ancient City ice-box chest; dangerous structure plus specific chest.
 	"blazeandcave:mining/galileo_figaro": 0, // Galileo Figaro: zoom with a spyglass; normal item use, no reward.
 	"blazeandcave:mining/get_a_lode_of_this": 0, // Get a Lode Of This!: craft a lodestone from cheap custom recipe parts; utility craft, no reward.
 	"blazeandcave:mining/gi_geode": 5, // G.I. Geode: find an amethyst geode and mine a cluster; small cave structure find.
-	"blazeandcave:mining/gold_mine": 20, // Gold Mine!: find a surface mineshaft in a mesa/badlands; biome plus structure overlap.
-	"blazeandcave:mining/gold_miner": 25, // Gold Miner: mine a stack of raw gold; ore-stack target with more scarcity than iron/copper.
+	"blazeandcave:mining/gold_mine": 10, // Gold Mine!: find a surface mineshaft in a mesa/badlands; biome plus structure overlap.
+	"blazeandcave:mining/gold_miner": 42, // Gold Miner: mine a stack of raw gold; ore-stack target with more scarcity than iron/copper.
 	"blazeandcave:mining/gold_rush": 0, // Gold Rush: smelt one gold ingot; normal ore processing, no reward.
-	"blazeandcave:mining/good_for_your_bones": 1, // Good For Your Bones: mine calcite around a geode; tiny geode material pickup.
+	"blazeandcave:mining/good_for_your_bones": 0, // Good For Your Bones: mine calcite around a geode; tiny geode material pickup.
 	"blazeandcave:mining/grate_expectations": 0, // Grate Expectations: craft or obtain a copper grate; normal copper block craft, no reward.
-	"blazeandcave:mining/gratest_of_all_time": 70, // Gratest of All Time: collect stacks of all oxidized/waxed Copper Grates; copper-aging grind.
-	"blazeandcave:mining/green_lanterns": 70, // Green Lanterns: collect stacks of all oxidized/waxed Copper Lanterns; copper-aging grind.
+	"blazeandcave:mining/gratest_of_all_time": 67, // Gratest of All Time: collect stacks of all oxidized/waxed Copper Grates; copper-aging grind.
+	"blazeandcave:mining/green_lanterns": 67, // Green Lanterns: collect stacks of all oxidized/waxed Copper Lanterns; copper-aging grind.
 	"blazeandcave:mining/heart_of_darkness": 0, // Heart of Darkness: stand in complete darkness; ordinary cave condition, no reward.
 	"blazeandcave:mining/hot_topic": 0, // Hot Topic: craft a furnace; starter progression, no reward.
-	"blazeandcave:mining/i_yearned_for_the_mines": 45, // I yearned for the mines: spend five in-game days below y 32; long underground time commitment.
+	"blazeandcave:mining/i_yearned_for_the_mines": 42, // I yearned for the mines: spend five in-game days below y 32; long underground time commitment.
 	"blazeandcave:mining/iconic_merchandising_prop": 12, // Iconic Merchandising Prop: craft a high-calibre pickaxe; diamond-tier tool cost, modest reward.
 	"blazeandcave:mining/iggy": 1, // Iggy: obtain an azalea; tiny lush-cave/tree clue pickup.
 	"blazeandcave:mining/iron_man": 0, // Iron Man: wear full iron armor; normal survival progression, no reward.
-	"blazeandcave:mining/iron_miner": 20, // Iron Miner: mine a stack of raw iron; ordinary but deliberate ore-stack target.
-	"blazeandcave:mining/lapis_lazuli_miner": 25, // Lapis Lazuli Miner: gather enough lapis for a stack of blocks; enchanting ore stockpile.
-	"blazeandcave:mining/leaflet_drop": 1, // Leaflet Drop: fall through a Big Dripleaf; tiny lush-cave interaction.
+	"blazeandcave:mining/iron_miner": 29, // Iron Miner: mine a stack of raw iron; ordinary but deliberate ore-stack target.
+	"blazeandcave:mining/lapis_lazuli_miner": 29, // Lapis Lazuli Miner: gather enough lapis for a stack of blocks; enchanting ore stockpile.
+	"blazeandcave:mining/leaflet_drop": 3, // Leaflet Drop: fall through a Big Dripleaf; tiny lush-cave interaction.
 	"blazeandcave:mining/lichen_subscribe": 0, // Lichen Subscribe: shear glow lichen; common cave decoration pickup, no reward.
-	"blazeandcave:mining/life_sentence": 70, // Life Sentence: collect stacks of all oxidized/waxed Copper Bars; copper-aging grind.
+	"blazeandcave:mining/life_sentence": 50, // Life Sentence: collect stacks of all oxidized/waxed Copper Bars; copper-aging grind.
 	"blazeandcave:mining/living_like_kings": 0, // Living Like Kings: wear golden armor; common Nether/survival gear, no reward.
-	"blazeandcave:mining/lodes_of_applications": 30, // Lodes of Applications: make Lodestone Compasses in all three dimensions; cross-dimension setup.
-	"blazeandcave:mining/lucky_break": 25, // Lucky Break: survive a long fall on very low health; deliberate damage control and timing.
-	"blazeandcave:mining/lush_hour": 45, // Lush Hour: collect stacks of all lush-cave blocks; biome block checklist.
-	"blazeandcave:mining/master_coal_miner": 40, // Master Coal Miner: gather enough coal for a stack of coal blocks; larger ore-stockpile target.
+	"blazeandcave:mining/lodes_of_applications": 25, // Lodes of Applications: make Lodestone Compasses in all three dimensions; cross-dimension setup.
+	"blazeandcave:mining/lucky_break": 13, // Lucky Break: survive a long fall on very low health; deliberate damage control and timing.
+	"blazeandcave:mining/lush_hour": 50, // Lush Hour: collect stacks of all lush-cave blocks; biome block checklist.
+	"blazeandcave:mining/master_coal_miner": 35, // Master Coal Miner: gather enough coal for a stack of coal blocks; larger ore-stockpile target.
 	"blazeandcave:mining/master_copper_miner": 35, // Master Copper Miner: gather enough copper for a stack of copper blocks; bulk ore grind.
-	"blazeandcave:mining/master_diamond_miner": 160, // Master Diamond Miner: gather enough diamonds for a stack of diamond blocks; huge diamond grind, capped.
-	"blazeandcave:mining/master_gold_miner": 70, // Master Gold Miner: gather enough gold for a stack of gold blocks; substantial ore/resource grind.
-	"blazeandcave:mining/master_iron_miner": 50, // Master Iron Miner: gather enough iron for a stack of iron blocks; bulk mining or farm stockpile.
+	"blazeandcave:mining/master_diamond_miner": 142, // Master Diamond Miner: gather enough diamonds for a stack of diamond blocks; huge diamond grind, capped.
+	"blazeandcave:mining/master_gold_miner": 50, // Master Gold Miner: gather enough gold for a stack of gold blocks; substantial ore/resource grind.
+	"blazeandcave:mining/master_iron_miner": 35, // Master Iron Miner: gather enough iron for a stack of iron blocks; bulk mining or farm stockpile.
 	"blazeandcave:mining/meet_the_flintstones": 0, // Meet The Flintstones: dig one flint from gravel; common resource pickup, no reward.
-	"blazeandcave:mining/mineral_collection": 45, // Mineral Collection: craft every mineral block; broad ore/material checklist.
-	"blazeandcave:mining/mitosis": 1, // Mitosis: split a Sulfur Cube; tiny custom mob interaction.
-	"blazeandcave:mining/moar_broken_tools": 45, // MOAR Broken Tools: break every tool and weapon type; deliberate durability checklist.
+	"blazeandcave:mining/mineral_collection": 20, // Mineral Collection: craft every mineral block; broad ore/material checklist.
+	"blazeandcave:mining/mitosis": 3, // Mitosis: split a Sulfur Cube; tiny custom mob interaction.
+	"blazeandcave:mining/moar_broken_tools": 35, // MOAR Broken Tools: break every tool and weapon type; deliberate durability checklist.
 	"blazeandcave:mining/moar_tools": 0, // MOAR Tools: craft stone tools; starter progression, no reward.
-	"blazeandcave:mining/moss_maker": 0, // Moss Maker: bone-meal moss; normal lush block spreading, no reward.
-	"blazeandcave:mining/mr_bean": 70, // Mr. Bean: craft stacks of raw iron, copper, and gold blocks; large raw-ore stockpile.
+	"blazeandcave:mining/moss_maker": 5, // Moss Maker: bone-meal moss; normal lush block spreading, no reward.
+	"blazeandcave:mining/mr_bean": 29, // Mr. Bean: craft stacks of raw iron, copper, and gold blocks; large raw-ore stockpile.
 	"blazeandcave:mining/my_work_here_is_done": 0, // My work here is done: get caught in falling gravel; common mining accident, no reward.
 	"blazeandcave:mining/nananananananana": 0, // Nananananananana...: hit a bat underground; common cave accident, no reward.
 	"blazeandcave:mining/not_chicken_mcnuggets": 0, // Not Chicken McNuggets?: craft or find iron nuggets; common material byproduct, no reward.
-	"blazeandcave:mining/obsidian_miner": 30, // Obsidian Miner: mine a stack of obsidian; slow mining/resource grind.
-	"blazeandcave:mining/oresome": 120, // Oresome!: mine a stack of every ore block; Silk Touch and broad ore-location grind.
-	"blazeandcave:mining/particle_fan": 5, // Particle Fan: obtain a Spore Blossom; lush-cave item lookup.
-	"blazeandcave:mining/pixel_perfect": 15, // Pixel Perfect: spyglass a bat from 50 blocks; small but fiddly cave target.
-	"blazeandcave:mining/punching_bag": 1, // Punching Bag: feed a block to a Sulfur Cube; tiny custom mob interaction.
-	"blazeandcave:mining/redstone_miner": 25, // Redstone Miner: gather enough redstone for a stack of blocks; ore stockpile.
-	"blazeandcave:mining/renewable_energy": 0, // Renewable Energy: make charcoal from wood using charcoal; normal fuel loop, no reward.
-	"blazeandcave:mining/rest_in_pickaxes": 25, // Rest in Pickaxes: fully break a diamond pickaxe; deliberate durability/resource sink.
-	"blazeandcave:mining/rock_bottom": 15, // Rock Bottom: dig to the bottom of the world; deliberate depth target.
+	"blazeandcave:mining/obsidian_miner": 29, // Obsidian Miner: mine a stack of obsidian; slow mining/resource grind.
+	"blazeandcave:mining/oresome": 141, // Oresome!: mine a stack of every ore block; Silk Touch and broad ore-location grind.
+	"blazeandcave:mining/particle_fan": 0, // Particle Fan: obtain a Spore Blossom; lush-cave item lookup.
+	"blazeandcave:mining/pixel_perfect": 12, // Pixel Perfect: spyglass a bat from 50 blocks; small but fiddly cave target.
+	"blazeandcave:mining/punching_bag": 3, // Punching Bag: feed a block to a Sulfur Cube; tiny custom mob interaction.
+	"blazeandcave:mining/redstone_miner": 20, // Redstone Miner: gather enough redstone for a stack of blocks; ore stockpile.
+	"blazeandcave:mining/renewable_energy": 3, // Renewable Energy: make charcoal from wood using charcoal; normal fuel loop, no reward.
+	"blazeandcave:mining/rest_in_pickaxes": 18, // Rest in Pickaxes: fully break a diamond pickaxe; deliberate durability/resource sink.
+	"blazeandcave:mining/rock_bottom": 10, // Rock Bottom: dig to the bottom of the world; deliberate depth target.
 	"blazeandcave:mining/root": 0, // Mining: tab root only; no reward.
-	"blazeandcave:mining/school_of_hard_knocks": 70, // School of Hard Knocks: collect stacks of all oxidized/waxed Copper Doors and Trapdoors; copper-aging grind.
+	"blazeandcave:mining/school_of_hard_knocks": 67, // School of Hard Knocks: collect stacks of all oxidized/waxed Copper Doors and Trapdoors; copper-aging grind.
 	"blazeandcave:mining/seeing_red": 0, // Seeing Red: mine redstone once; normal deep ore pickup, no reward.
-	"blazeandcave:mining/shriek_forever_after": 5, // Shriek Forever After: trigger a Sculk Shrieker in the Deep Dark; risky but single action.
-	"blazeandcave:mining/sly_copper_the_copper_heist": 100, // Sly Copper: The Copper Heist: collect stacks of many oxidized/waxed copper block families; very large copper-aging grind.
+	"blazeandcave:mining/shriek_forever_after": 0, // Shriek Forever After: trigger a Sculk Shrieker in the Deep Dark; risky but single action.
+	"blazeandcave:mining/sly_copper_the_copper_heist": 25, // Sly Copper: The Copper Heist: collect stacks of many oxidized/waxed copper block families; very large copper-aging grind.
 	"blazeandcave:mining/smokin_hot": 0, // Smokin' Hot: craft a smoker; normal food utility craft, no reward.
-	"blazeandcave:mining/spelunker": 35, // Spelunker: discover every cave biome; cave exploration checklist.
+	"blazeandcave:mining/spelunker": 20, // Spelunker: discover every cave biome; cave exploration checklist.
 	"blazeandcave:mining/stabcraft": 0, // Stabcraft: craft/use a sword; normal combat progression, no reward.
-	"blazeandcave:mining/statue_of_limitations": 70, // Statue of Limitations: collect stacks of all oxidized/waxed Copper Golem Statues; copper aging plus statue crafting.
-	"blazeandcave:mining/steals_on_wheels": 5, // Steals on Wheels: loot a mineshaft minecart chest; small structure loot objective.
-	"blazeandcave:mining/stink_bomb": 1, // Stink Bomb: die to an explosive Sulfur Cube; intentional/custom mob death token.
+	"blazeandcave:mining/statue_of_limitations": 42, // Statue of Limitations: collect stacks of all oxidized/waxed Copper Golem Statues; copper aging plus statue crafting.
+	"blazeandcave:mining/steals_on_wheels": 0, // Steals on Wheels: loot a mineshaft minecart chest; small structure loot objective.
+	"blazeandcave:mining/stink_bomb": 10, // Stink Bomb: die to an explosive Sulfur Cube; intentional/custom mob death token.
 	"blazeandcave:mining/strike_a_light": 0, // Strike a Light: craft and use flint and steel; normal utility craft, no reward.
-	"blazeandcave:mining/such_a_poser": 10, // Such a poser: cycle a Copper Golem Statue through all poses; specific block interaction sequence.
-	"blazeandcave:mining/thats_the_point": 1, // That's the point!: pick up pointed dripstone; common cave block token.
-	"blazeandcave:mining/the_mistake": 25, // The Mistake!: put Mending on golden armor; intentionally wasteful valuable enchant use.
-	"blazeandcave:mining/the_statue_of_liberty": 15, // The Statue of Liberty: fully oxidize a Copper Golem statue and mine it; waiting/aging setup.
-	"blazeandcave:mining/the_way_to_spawn": 0, // The way to spawn: craft a compass; normal utility craft, no reward.
-	"blazeandcave:mining/this_dirt_is_dirtier": 1, // This Dirt is Dirtier: dig rooted dirt under an azalea; tiny lush-cave clue interaction.
-	"blazeandcave:mining/this_is_mine_now": 5, // This is Mine Now!: find an abandoned mineshaft; small underground structure exploration.
-	"blazeandcave:mining/total_copout": 1, // Total Copout: scrap a Copper Golem; tiny custom mob interaction.
-	"blazeandcave:mining/truly_an_all_purpose_tool": 1, // Truly an all-purpose tool: shear a block from a Sulfur Cube; tiny custom mob interaction.
-	"blazeandcave:mining/wax_treatment": 1, // Wax Treatment: wax a Copper Golem; tiny honeycomb/copper interaction.
+	"blazeandcave:mining/such_a_poser": 0, // Such a poser: cycle a Copper Golem Statue through all poses; specific block interaction sequence.
+	"blazeandcave:mining/thats_the_point": 0, // That's the point!: pick up pointed dripstone; common cave block token.
+	"blazeandcave:mining/the_mistake": 13, // The Mistake!: put Mending on golden armor; intentionally wasteful valuable enchant use.
+	"blazeandcave:mining/the_statue_of_liberty": 10, // The Statue of Liberty: fully oxidize a Copper Golem statue and mine it; waiting/aging setup.
+	"blazeandcave:mining/the_way_to_spawn": 5, // The way to spawn: craft a compass; normal utility craft, no reward.
+	"blazeandcave:mining/this_dirt_is_dirtier": 3, // This Dirt is Dirtier: dig rooted dirt under an azalea; tiny lush-cave clue interaction.
+	"blazeandcave:mining/this_is_mine_now": 3, // This is Mine Now!: find an abandoned mineshaft; small underground structure exploration.
+	"blazeandcave:mining/total_copout": 3, // Total Copout: scrap a Copper Golem; tiny custom mob interaction.
+	"blazeandcave:mining/truly_an_all_purpose_tool": 3, // Truly an all-purpose tool: shear a block from a Sulfur Cube; tiny custom mob interaction.
+	"blazeandcave:mining/wax_treatment": 5, // Wax Treatment: wax a Copper Golem; tiny honeycomb/copper interaction.
 	"blazeandcave:mining/weve_broken_our_last_shovel": 35, // We've broken our last shovel: break every shovel type; deliberate durability checklist.
-	"blazeandcave:mining/whats_the_time_mr_wolf": 0, // What's the time, Mr Wolf?: craft clocks; normal utility craft, no reward.
-	"blazeandcave:mining/where_are_all_your_clothes": 60, // Where are all your clothes?: break every armor piece type; costly durability checklist.
+	"blazeandcave:mining/whats_the_time_mr_wolf": 5, // What's the time, Mr Wolf?: craft clocks; normal utility craft, no reward.
+	"blazeandcave:mining/where_are_all_your_clothes": 63, // Where are all your clothes?: break every armor piece type; costly durability checklist.
 	"blazeandcave:mining/youll_never_take_me_alive_copper": 0, // Coppers and Robbers: smelt one copper ingot; normal ore processing, no reward.
-	"blazeandcave:monsters/a_watery_grave": 1, // A Watery Grave: kill a Drowned underwater; common hostile mob, token only.
-	"blazeandcave:monsters/absolute_cinema": 50, // Absolute Cinema: kill a Chicken Jockey inside a Woodland Mansion; rare mob plus rare structure context.
-	"blazeandcave:monsters/anti_air": 25, // Anti-Air: shoot a Phantom from 30 blocks away; ranged timing on a flying mob.
+	"blazeandcave:monsters/a_watery_grave": 0, // A Watery Grave: kill a Drowned underwater; common hostile mob, token only.
+	"blazeandcave:monsters/absolute_cinema": 42, // Absolute Cinema: kill a Chicken Jockey inside a Woodland Mansion; rare mob plus rare structure context.
+	"blazeandcave:monsters/anti_air": 20, // Anti-Air: shoot a Phantom from 30 blocks away; ranged timing on a flying mob.
 	"blazeandcave:monsters/aww_man": 0, // Aww man!: die to or encounter a Creeper in normal combat; too ordinary to reward.
-	"blazeandcave:monsters/baby_baby_baby_noo": 35, // Baby, baby, baby noo!!: kill every baby zombie-family variant; variant hunting across biomes/water.
-	"blazeandcave:monsters/basketblock_championship": 90, // Basketblock Championship: kill Endermen holding every holdable block; rare carried-block checklist.
-	"blazeandcave:monsters/because_im_aquaman": 15, // Because I'm Aquaman!: obtain a trident from a Drowned; drop RNG plus Drowned hunting.
-	"blazeandcave:monsters/blast_shield": 2, // Blast Shield: block a Creeper blast with a shield; small combat interaction.
+	"blazeandcave:monsters/baby_baby_baby_noo": 20, // Baby, baby, baby noo!!: kill every baby zombie-family variant; variant hunting across biomes/water.
+	"blazeandcave:monsters/basketblock_championship": 200, // Basketblock Championship: kill Endermen holding every holdable block; rare carried-block checklist.
+	"blazeandcave:monsters/because_im_aquaman": 42, // Because I'm Aquaman!: obtain a trident from a Drowned; drop RNG plus Drowned hunting.
+	"blazeandcave:monsters/blast_shield": 0, // Blast Shield: block a Creeper blast with a shield; small combat interaction.
 	"blazeandcave:monsters/blind_stare": 10, // Blind Stare: look at a Warden with a spyglass; Deep Dark danger, quick action.
-	"blazeandcave:monsters/bogged_down": 3, // Bogged Down: kill a Bogged; swamp/trial skeleton variant, modest combat.
-	"blazeandcave:monsters/bone_to_party": 80, // Bone-to-party: gather skeleton variants plus the Wither in one place; transport/spawn management, not a head-drop payout.
+	"blazeandcave:monsters/bogged_down": 0, // Bogged Down: kill a Bogged; swamp/trial skeleton variant, modest combat.
+	"blazeandcave:monsters/bone_to_party": 52, // Bone-to-party: gather skeleton variants plus the Wither in one place; transport/spawn management, not a head-drop payout.
 	"blazeandcave:monsters/boned": 0, // Boned: craft bonemeal from bones; common mob-drop processing, no reward.
-	"blazeandcave:monsters/camouflage": 12, // Camouflage: get the matching mob head from easy server drops, wear it, then kill that mob; deliberate but short setup.
-	"blazeandcave:monsters/captain_etho": 40, // Captain Etho: kill a Drowned holding both shell and trident; rare equipment spawn plus combat.
-	"blazeandcave:monsters/controlled_detonation": 2, // Controlled Detonation: ignite a Creeper with flint and steel; tiny deliberate combat stunt.
-	"blazeandcave:monsters/creeper_killer": 25, // Creeper Killer: collect a stack of gunpowder; sustained Creeper/farm grind.
-	"blazeandcave:monsters/creepy_heads": 8, // Creepy Heads: obtain a Creeper Head; server drops mean a few Creeper kills rather than charged-creeper setup.
-	"blazeandcave:monsters/custom_boss_fight": 80, // Custom Boss Fight!: gear a zombie in full diamond equipment and kill it; expensive staged fight.
+	"blazeandcave:monsters/camouflage": 13, // Camouflage: get the matching mob head from easy server drops, wear it, then kill that mob; deliberate but short setup.
+	"blazeandcave:monsters/captain_etho": 43, // Captain Etho: kill a Drowned holding both shell and trident; rare equipment spawn plus combat.
+	"blazeandcave:monsters/controlled_detonation": 3, // Controlled Detonation: ignite a Creeper with flint and steel; tiny deliberate combat stunt.
+	"blazeandcave:monsters/creeper_killer": 17, // Creeper Killer: collect a stack of gunpowder; sustained Creeper/farm grind.
+	"blazeandcave:monsters/creepy_heads": 5, // Creepy Heads: obtain a Creeper Head; server drops mean a few Creeper kills rather than charged-creeper setup.
+	"blazeandcave:monsters/custom_boss_fight": 42, // Custom Boss Fight!: gear a zombie in full diamond equipment and kill it; expensive staged fight.
 	"blazeandcave:monsters/dead_dont_die": 0, // Dead Don't Die: kill a zombie; ordinary hostile combat, no reward.
 	"blazeandcave:monsters/dead_really_dont_die": 30, // Dead Really Don't Die: give a zombie a Totem and kill it twice; consumes a valuable item in a staged fight.
-	"blazeandcave:monsters/desert_nomad": 1, // Desert Nomad: kill a Husk; common desert variant, token only.
-	"blazeandcave:monsters/dungeon_crawler": 45, // Dungeon Crawler: defeat all structure-specific mobs; broad combat checklist across structures.
+	"blazeandcave:monsters/desert_nomad": 0, // Desert Nomad: kill a Husk; common desert variant, token only.
+	"blazeandcave:monsters/dungeon_crawler": 42, // Dungeon Crawler: defeat all structure-specific mobs; broad combat checklist across structures.
 	"blazeandcave:monsters/ender_worm": 3, // Ender Worm: kill/prevent an Endermite; small pearl-spawn setup.
-	"blazeandcave:monsters/enderman_destroyer": 25, // Enderman Destroyer: collect a stack of ender pearls; sustained Enderman or bartering grind.
+	"blazeandcave:monsters/enderman_destroyer": 10, // Enderman Destroyer: collect a stack of ender pearls; sustained Enderman or bartering grind.
 	"blazeandcave:monsters/ew_ew_ew": 0, // Ew Ew Ew!: kill a spider; ordinary hostile combat, no reward.
-	"blazeandcave:monsters/family_reunion": 70, // Family Reunion: gather all zombie variants and baby forms together; large spawn/transport containment task.
-	"blazeandcave:monsters/freezing": 35, // Freezing: bring a Husk to a tundra and kill it; cross-biome hostile mob transport.
+	"blazeandcave:monsters/family_reunion": 50, // Family Reunion: gather all zombie variants and baby forms together; large spawn/transport containment task.
+	"blazeandcave:monsters/freezing": 36, // Freezing: bring a Husk to a tundra and kill it; cross-biome hostile mob transport.
 	"blazeandcave:monsters/frosty": 2, // Frosty: kill a Stray; common snowy skeleton variant.
-	"blazeandcave:monsters/gelatinous_cube": 1, // Gelatinous Cube: kill a Slime; common swamp/cave mob, token only.
+	"blazeandcave:monsters/gelatinous_cube": 0, // Gelatinous Cube: kill a Slime; common swamp/cave mob, token only.
 	"blazeandcave:monsters/grim_neigh": 10, // Grim Neigh: ride a Zombie Horse; uncommon mount access.
-	"blazeandcave:monsters/handsome_jack": 20, // Handsome Jack: kill a mob wearing a Jack o'Lantern on Halloween; date/event condition plus combat.
-	"blazeandcave:monsters/hell_hunter": 45, // Hell Hunter: kill every Nether mob type; Nether combat checklist.
-	"blazeandcave:monsters/house_of_freaks": 80, // House of Freaks: summon five Wardens close together; repeated shrieker spawning and containment danger.
-	"blazeandcave:monsters/impossible": 35, // Impossible...: kill an Enderman with an arrow; teleport behavior makes it a setup/precision trick.
-	"blazeandcave:monsters/iron_belly": 1, // Iron Belly: stop starvation with rotten flesh; tiny survival/food edge case.
+	"blazeandcave:monsters/handsome_jack": 22, // Handsome Jack: kill a mob wearing a Jack o'Lantern on Halloween; date/event condition plus combat.
+	"blazeandcave:monsters/hell_hunter": 20, // Hell Hunter: kill every Nether mob type; Nether combat checklist.
+	"blazeandcave:monsters/house_of_freaks": 25, // House of Freaks: summon five Wardens close together; repeated shrieker spawning and containment danger.
+	"blazeandcave:monsters/impossible": 20, // Impossible...: kill an Enderman with an arrow; teleport behavior makes it a setup/precision trick.
+	"blazeandcave:monsters/iron_belly": 15, // Iron Belly: stop starvation with rotten flesh; tiny survival/food edge case.
 	"blazeandcave:monsters/keep_your_distance": 0, // Keep Your Distance: kill a Creeper with arrows; normal safe combat, no reward.
-	"blazeandcave:monsters/lancelot": 50, // Lancelot: kill a Zombie Horseman with a Spear while riding a horse; rare target plus mounted weapon setup.
-	"blazeandcave:monsters/look_out": 1, // Look Out!: spyglass a Creeper from less than a block away; tiny risky gag.
-	"blazeandcave:monsters/maximum_resistance": 80, // Maximum Resistance: tank a Warden hit with maximum protection; high-end gear/effects plus Warden risk.
-	"blazeandcave:monsters/melting": 35, // Melting: bring a Stray to a desert and kill it; cross-biome hostile mob transport.
-	"blazeandcave:monsters/miracle_drink": 25, // Miracle Drink: cure poison at half a heart with milk or honey; controlled low-health timing.
-	"blazeandcave:monsters/mollusc_man": 20, // Mollusc Man: kill a Drowned holding a nautilus shell; equipment-spawn RNG.
-	"blazeandcave:monsters/night_runner": 45, // Night Runner: kill every Overworld night mob type; broad surface combat checklist.
-	"blazeandcave:monsters/not_afraid_of_heights": 90, // Not Afraid of Heights: move a Warden to world height; extreme hostile mob transport.
-	"blazeandcave:monsters/now_thats_a_lot_of_damage": 2, // Now that's a lot of damage: die to the Warden; Deep Dark danger but easy once found.
+	"blazeandcave:monsters/lancelot": 20, // Lancelot: kill a Zombie Horseman with a Spear while riding a horse; rare target plus mounted weapon setup.
+	"blazeandcave:monsters/look_out": 10, // Look Out!: spyglass a Creeper from less than a block away; tiny risky gag.
+	"blazeandcave:monsters/maximum_resistance": 42, // Maximum Resistance: tank a Warden hit with maximum protection; high-end gear/effects plus Warden risk.
+	"blazeandcave:monsters/melting": 25, // Melting: bring a Stray to a desert and kill it; cross-biome hostile mob transport.
+	"blazeandcave:monsters/miracle_drink": 15, // Miracle Drink: cure poison at half a heart with milk or honey; controlled low-health timing.
+	"blazeandcave:monsters/mollusc_man": 15, // Mollusc Man: kill a Drowned holding a nautilus shell; equipment-spawn RNG.
+	"blazeandcave:monsters/night_runner": 23, // Night Runner: kill every Overworld night mob type; broad surface combat checklist.
+	"blazeandcave:monsters/not_afraid_of_heights": 42, // Not Afraid of Heights: move a Warden to world height; extreme hostile mob transport.
+	"blazeandcave:monsters/now_thats_a_lot_of_damage": 5, // Now that's a lot of damage: die to the Warden; Deep Dark danger but easy once found.
 	"blazeandcave:monsters/oh_no_guys_im_oozing": 25, // Oh no guys I'm o o z i n g: collect enough slimeballs for a stack of slime blocks; slime farm/grind.
-	"blazeandcave:monsters/ooh_baby": 1, // Ooh, Baby!: kill a baby zombie; common variant token.
-	"blazeandcave:monsters/paleontologist": 20, // Paleontologist: craft or mine a stack of bone blocks; skeleton/bone stockpile.
-	"blazeandcave:monsters/phantom_slayer": 35, // Phantom Slayer: collect a stack of phantom membranes; insomnia-based flying mob grind.
-	"blazeandcave:monsters/plane_walker": 35, // Plane Walker: kill Endermen in all three dimensions; dimension checklist.
-	"blazeandcave:monsters/poison_dart": 3, // Poison Dart: shoot a mob with a poison tipped arrow; small brewing/projectile setup.
-	"blazeandcave:monsters/poisonous_ew": 1, // Poisonous Ew: kill a cave spider; common mineshaft mob token.
+	"blazeandcave:monsters/ooh_baby": 0, // Ooh, Baby!: kill a baby zombie; common variant token.
+	"blazeandcave:monsters/paleontologist": 13, // Paleontologist: craft or mine a stack of bone blocks; skeleton/bone stockpile.
+	"blazeandcave:monsters/phantom_slayer": 20, // Phantom Slayer: collect a stack of phantom membranes; insomnia-based flying mob grind.
+	"blazeandcave:monsters/plane_walker": 13, // Plane Walker: kill Endermen in all three dimensions; dimension checklist.
+	"blazeandcave:monsters/poison_dart": 5, // Poison Dart: shoot a mob with a poison tipped arrow; small brewing/projectile setup.
+	"blazeandcave:monsters/poisonous_ew": 0, // Poisonous Ew: kill a cave spider; common mineshaft mob token.
 	"blazeandcave:monsters/poultry_boy": 25, // Poultry Boy: kill a Chicken Jockey; rare spawn target.
 	"blazeandcave:monsters/pupil_poppers": 80, // Pupil Poppers: eat 1000 spider eyes; huge hostile-drop consumption grind.
-	"blazeandcave:monsters/ricochet_swoop": 2, // Ricochet Swoop: deflect a Phantom's swoop with a shield; small combat timing.
-	"blazeandcave:monsters/ride_or_dry": 60, // Ride or Dry: kill a Husk, Parched, and Camel Husk rider with one crossbow shot; rare mob setup and piercing shot.
+	"blazeandcave:monsters/ricochet_swoop": 3, // Ricochet Swoop: deflect a Phantom's swoop with a shield; small combat timing.
+	"blazeandcave:monsters/ride_or_dry": 27, // Ride or Dry: kill a Husk, Parched, and Camel Husk rider with one crossbow shot; rare mob setup and piercing shot.
 	"blazeandcave:monsters/root": 0, // Monsters: tab root only; no reward.
 	"blazeandcave:monsters/sands_the_skeleton": 2, // Sands the Skeleton: kill a Parched; desert skeleton variant combat.
-	"blazeandcave:monsters/skeleton_smiter": 20, // Skeleton Smiter: collect a stack of bones; modest skeleton/farm grind.
-	"blazeandcave:monsters/slime_squisher": 25, // Slime Squisher: collect a stack of slimeballs; slime chunk/swamp hunting or farm grind.
-	"blazeandcave:monsters/spider_skeleton": 25, // Spider-skeleton: encounter/kill a spider jockey; uncommon spawn target.
-	"blazeandcave:monsters/spider_smasher": 20, // Spider Smasher: collect a stack of string from spiders or cobwebs; modest mob/resource grind.
+	"blazeandcave:monsters/skeleton_smiter": 10, // Skeleton Smiter: collect a stack of bones; modest skeleton/farm grind.
+	"blazeandcave:monsters/slime_squisher": 12, // Slime Squisher: collect a stack of slimeballs; slime chunk/swamp hunting or farm grind.
+	"blazeandcave:monsters/spider_skeleton": 33, // Spider-skeleton: encounter/kill a spider jockey; uncommon spawn target.
+	"blazeandcave:monsters/spider_smasher": 10, // Spider Smasher: collect a stack of string from spiders or cobwebs; modest mob/resource grind.
 	"blazeandcave:monsters/spooky_skeleton": 0, // Spooky Skeleton: kill a skeleton; ordinary hostile combat, no reward.
-	"blazeandcave:monsters/spooky_skulls": 8, // Spooky Skulls: obtain a Skeleton Skull; server drops mean a few skeleton kills, not a charged-creeper project.
-	"blazeandcave:monsters/stealth_is_optional": 60, // Stealth is Optional: kill a Warden; dangerous Deep Dark boss-style fight.
-	"blazeandcave:monsters/still_talking": 8, // Still Talking!: obtain a Zombie Head; server drops mean a few zombie kills, so this is a small targeted payout.
-	"blazeandcave:monsters/taste_of_your_own_medicine": 35, // Taste of your own medicine: kill a witch with a splash potion; potion setup plus hostile target.
-	"blazeandcave:monsters/tele_morph": 5, // Tele-Morph: damage a mob by teleporting into it; pearl/teleport positioning trick.
-	"blazeandcave:monsters/termite_control": 1, // Termite Control: kill a silverfish; common stronghold/mountain token.
-	"blazeandcave:monsters/the_ender_of_ender": 1, // The ender of ender: kill an Enderman; common combat target, token only.
-	"blazeandcave:monsters/the_ghastly_eyes": 40, // The Ghastly Eyes: kill an invisible spider; potion/status setup plus hostile target.
+	"blazeandcave:monsters/spooky_skulls": 0, // Spooky Skulls: obtain a Skeleton Skull; server drops mean a few skeleton kills, not a charged-creeper project.
+	"blazeandcave:monsters/stealth_is_optional": 42, // Stealth is Optional: kill a Warden; dangerous Deep Dark boss-style fight.
+	"blazeandcave:monsters/still_talking": 0, // Still Talking!: obtain a Zombie Head; server drops mean a few zombie kills, so this is a small targeted payout.
+	"blazeandcave:monsters/taste_of_your_own_medicine": 22, // Taste of your own medicine: kill a witch with a splash potion; potion setup plus hostile target.
+	"blazeandcave:monsters/tele_morph": 7, // Tele-Morph: damage a mob by teleporting into it; pearl/teleport positioning trick.
+	"blazeandcave:monsters/termite_control": 0, // Termite Control: kill a silverfish; common stronghold/mountain token.
+	"blazeandcave:monsters/the_ender_of_ender": 0, // The ender of ender: kill an Enderman; common combat target, token only.
+	"blazeandcave:monsters/the_ghastly_eyes": 17, // The Ghastly Eyes: kill an invisible spider; potion/status setup plus hostile target.
 	"blazeandcave:monsters/the_phantom_menace": 0, // The Phantom Menace: get attacked by Phantoms; common insomnia consequence, no reward.
-	"blazeandcave:monsters/the_undead_cavalry": 20, // The Undead Cavalry: ride a Skeleton Horse; rare thunder-trap/mount access.
-	"blazeandcave:monsters/the_wicked_witch_of_the_west": 60, // The Wicked Witch of the West: convert/setup a Witch Chicken Jockey; rare mob chain and staging.
+	"blazeandcave:monsters/the_undead_cavalry": 15, // The Undead Cavalry: ride a Skeleton Horse; rare thunder-trap/mount access.
+	"blazeandcave:monsters/the_wicked_witch_of_the_west": 67, // The Wicked Witch of the West: convert/setup a Witch Chicken Jockey; rare mob chain and staging.
 	"blazeandcave:monsters/there_has_to_be_another_way": 0, // There has to be another way...: kill a zombie villager; common/undesirable kill, no reward.
 	"blazeandcave:monsters/trampoline": 5, // Trampoline: bounce on slime from 30 blocks up; small height/slime setup.
-	"blazeandcave:monsters/trick_or_treat": 20, // Trick or Treat!: kill a mob wearing a pumpkin; seasonal/equipment condition plus combat.
-	"blazeandcave:monsters/tridented_shield": 2, // Tridented Shield: block a Drowned trident; small ocean combat interaction.
-	"blazeandcave:monsters/unwanted_passenger": 35, // Unwanted Passenger: ride a Camel Husk while the Parched rider remains for 30 seconds; rare mob handling.
-	"blazeandcave:monsters/void_ender": 35, // Void Ender: kill every End mob type; End combat checklist.
-	"blazeandcave:monsters/warden_frostbite": 90, // Warden Frostbite: bring a Warden to snowy plains and kill it; extreme mob transport plus Warden fight.
-	"blazeandcave:monsters/well_handle_this": 35, // We'll handle this: lure a Phantom into the Nether and kill it; portal mob transport and timing.
+	"blazeandcave:monsters/trick_or_treat": 14, // Trick or Treat!: kill a mob wearing a pumpkin; seasonal/equipment condition plus combat.
+	"blazeandcave:monsters/tridented_shield": 3, // Tridented Shield: block a Drowned trident; small ocean combat interaction.
+	"blazeandcave:monsters/unwanted_passenger": 33, // Unwanted Passenger: ride a Camel Husk while the Parched rider remains for 30 seconds; rare mob handling.
+	"blazeandcave:monsters/void_ender": 12, // Void Ender: kill every End mob type; End combat checklist.
+	"blazeandcave:monsters/warden_frostbite": 85, // Warden Frostbite: bring a Warden to snowy plains and kill it; extreme mob transport plus Warden fight.
+	"blazeandcave:monsters/well_handle_this": 7, // We'll handle this: lure a Phantom into the Nether and kill it; portal mob transport and timing.
 	"blazeandcave:monsters/what_a_creep": 0, // What a creep!: kill a Creeper; ordinary hostile combat, no reward.
-	"blazeandcave:monsters/witch": 2, // Witch!: kill a Witch; uncommon hostile mob but simple combat.
-	"blazeandcave:monsters/zombie_slayer": 20, // Zombie Slayer: collect a stack of rotten flesh; modest zombie/farm grind.
-	"blazeandcave:nether/a_piglins_best_friend": 35, // A Piglin's Best Friend: give Piglins 500 gold ingots total; real gold cost/bartering grind.
-	"blazeandcave:nether/a_soul_for_a_soul": 0, // A Soul For A Soul: place a soul campfire; simple decorative utility craft, no reward.
-	"blazeandcave:nether/anchorman": 10, // Anchorman: craft and place a respawn anchor; Crying Obsidian and Glowstone setup, but not fully charged.
-	"blazeandcave:nether/ancient_restoration": 20, // Ancient Restoration: rebuild and relight a ruined portal; block repair plus portal setup.
-	"blazeandcave:nether/astrobrute": 60, // Astrobrute: send a Piglin Brute to the End and kill it before zombifying; Bastion mob transport under time pressure.
-	"blazeandcave:nether/basis_of_brewing": 5, // Basis of Brewing: harvest Nether Wart from a fortress; small fortress resource milestone.
-	"blazeandcave:nether/beacon_overlord": 80, // Beacon Overlord: receive every beacon effect at once; full beacon infrastructure and pyramid/effect planning.
-	"blazeandcave:nether/blaze_extinguisher": 35, // Blaze Extinguisher: collect a stack of blaze rods; repeated fortress/spawner combat.
+	"blazeandcave:monsters/witch": 0, // Witch!: kill a Witch; uncommon hostile mob but simple combat.
+	"blazeandcave:monsters/zombie_slayer": 3, // Zombie Slayer: collect a stack of rotten flesh; modest zombie/farm grind.
+	"blazeandcave:nether/a_piglins_best_friend": 42, // A Piglin's Best Friend: give Piglins 500 gold ingots total; real gold cost/bartering grind.
+	"blazeandcave:nether/a_soul_for_a_soul": 3, // A Soul For A Soul: place a soul campfire; simple decorative utility craft, no reward.
+	"blazeandcave:nether/anchorman": 12, // Anchorman: craft and place a respawn anchor; Crying Obsidian and Glowstone setup, but not fully charged.
+	"blazeandcave:nether/ancient_restoration": 12, // Ancient Restoration: rebuild and relight a ruined portal; block repair plus portal setup.
+	"blazeandcave:nether/astrobrute": 67, // Astrobrute: send a Piglin Brute to the End and kill it before zombifying; Bastion mob transport under time pressure.
+	"blazeandcave:nether/basis_of_brewing": 0, // Basis of Brewing: harvest Nether Wart from a fortress; small fortress resource milestone.
+	"blazeandcave:nether/beacon_overlord": 100, // Beacon Overlord: receive every beacon effect at once; full beacon infrastructure and pyramid/effect planning.
+	"blazeandcave:nether/blaze_extinguisher": 25, // Blaze Extinguisher: collect a stack of blaze rods; repeated fortress/spawner combat.
 	"blazeandcave:nether/bobbleheads": 3, // Bobbleheads: breed two Striders with warped fungus; small Nether animal setup.
 	"blazeandcave:nether/bring_down_the_beast": 25, // Bring Down The Beast: kill a Ghast with a sword; lure/position a flying mob into melee range.
 	"blazeandcave:nether/brute_force": 10, // Brute Force: kill a Piglin Brute in a Bastion; dangerous structure mob, single target.
 	"blazeandcave:nether/burnt_right_into_your_soul": 0, // Burnt Right Into Your Soul: step in soul fire; common Nether damage accident, no reward.
-	"blazeandcave:nether/collateral_damage": 40, // Collateral Damage: deflect a Ghast fireball into a Happy Ghast; mob positioning and projectile timing.
+	"blazeandcave:nether/collateral_damage": 67, // Collateral Damage: deflect a Ghast fireball into a Happy Ghast; mob positioning and projectile timing.
 	"blazeandcave:nether/cultural_misunderstandings": 1, // Cultural Misunderstandings: kill a Piglin; common Nether combat, token only.
 	"blazeandcave:nether/dark_ages": 0, // Dark Ages: mine Blackstone; common Nether block pickup, no reward.
-	"blazeandcave:nether/decaying_beauty": 20, // Decaying Beauty: collect Wither Roses from Wither damage; boss setup or controlled Wither farming.
+	"blazeandcave:nether/decaying_beauty": 25, // Decaying Beauty: collect Wither Roses from Wither damage; boss setup or controlled Wither farming.
 	"blazeandcave:nether/diamonds_are_not_forever": 20, // Diamonds Are Not Forever: craft a Netherite Ingot from scrap and gold; meaningful rare-resource craft.
 	"blazeandcave:nether/dont_blink": 0, // Don't Blink: climb weeping vines; common Nether movement, no reward.
-	"blazeandcave:nether/electrifying_alliance": 60, // Electrifying Alliance: smite a Ghast with Overworld lightning; Ghast transport plus storm/Channeling setup.
+	"blazeandcave:nether/electrifying_alliance": 69, // Electrifying Alliance: smite a Ghast with Overworld lightning; Ghast transport plus storm/Channeling setup.
 	"blazeandcave:nether/enders_chest": 0, // Ender's Chest: craft an ender chest; normal utility craft after blaze/obsidian access, no reward.
-	"blazeandcave:nether/et_tu_brute": 1, // Et tu, Brute?: die to a Piglin Brute; dangerous but can happen by mistake, token only.
+	"blazeandcave:nether/et_tu_brute": 0, // Et tu, Brute?: die to a Piglin Brute; dangerous but can happen by mistake, token only.
 	"blazeandcave:nether/fire_blast_shield": 10, // Fire Blast Shield: block a Ghast fireball explosion; deliberate shield timing.
-	"blazeandcave:nether/fool_me_twice": 90, // Fool Me Twice: craft/upgrade a netherite hoe and completely use it up; extremely deliberate wasteful durability grind, never accidental.
-	"blazeandcave:nether/from_whence_it_came": 3, // From Whence It Came!: find a ruined portal in the Nether; small exploration find.
-	"blazeandcave:nether/ghast_slayer": 50, // Ghast Slayer: collect a stack of ghast tears; repeated flying-mob kills and drop RNG.
-	"blazeandcave:nether/giant_floating_jellyfish": 3, // Giant Floating Jellyfish: shoot down one Ghast; common Nether ranged combat.
-	"blazeandcave:nether/giddy_up": 35, // Giddy Up!: punch a baby Hoglin ridden by a baby Piglin; rare baby rider setup.
-	"blazeandcave:nether/gilded_miner": 40, // Gilded Miner: mine a stack of Gilded Blackstone; Bastion block collection under Piglin risk.
-	"blazeandcave:nether/gilty": 5, // Gilty!: mine one Gilded Blackstone from a Bastion; small risky structure pickup.
-	"blazeandcave:nether/glows_in_the_dark": 2, // Glows in the Dark: shoot a mob with a spectral arrow; small Nether projectile use.
-	"blazeandcave:nether/glowstone_miner": 20, // Glowstone Miner: collect or craft a stack of glowstone blocks; Nether ceiling/resource grind.
-	"blazeandcave:nether/hell_botanist": 45, // Hell Botanist: gather stacks of every Nether plant; Nether biome/resource checklist.
-	"blazeandcave:nether/hells_bells": 1, // Hell's Bells: ring a bell in the Nether; tiny staged gag.
-	"blazeandcave:nether/high_temperature_fluid_monster": 2, // High Temperature Fluid Monster: kill a magma cube; common Nether mob token.
-	"blazeandcave:nether/holy_scrap": 8, // Holy Scrap!: smelt Ancient Debris into scrap; rare ore processing milestone.
-	"blazeandcave:nether/hot_air_balloon": 12, // Hot Air Balloon: craft a harness, equip a Happy Ghast, and ride it; custom mount setup.
-	"blazeandcave:nether/hot_reels": 2, // Hot Reels!: pull a Strider with a fishing rod; tiny Nether mob interaction.
-	"blazeandcave:nether/hot_spring": 2, // Hot Spring: sit in water in the Nether; small deliberate oddity.
-	"blazeandcave:nether/hung_drawn_and_bartered": 45, // Hung, Drawn and Bartered: barter for every Piglin barter item; gold cost plus loot table checklist.
+	"blazeandcave:nether/fool_me_twice": 67, // Fool Me Twice: craft/upgrade a netherite hoe and completely use it up; extremely deliberate wasteful durability grind, never accidental.
+	"blazeandcave:nether/from_whence_it_came": 5, // From Whence It Came!: find a ruined portal in the Nether; small exploration find.
+	"blazeandcave:nether/ghast_slayer": 42, // Ghast Slayer: collect a stack of ghast tears; repeated flying-mob kills and drop RNG.
+	"blazeandcave:nether/giant_floating_jellyfish": 0, // Giant Floating Jellyfish: shoot down one Ghast; common Nether ranged combat.
+	"blazeandcave:nether/giddy_up": 27, // Giddy Up!: punch a baby Hoglin ridden by a baby Piglin; rare baby rider setup.
+	"blazeandcave:nether/gilded_miner": 33, // Gilded Miner: mine a stack of Gilded Blackstone; Bastion block collection under Piglin risk.
+	"blazeandcave:nether/gilty": 0, // Gilty!: mine one Gilded Blackstone from a Bastion; small risky structure pickup.
+	"blazeandcave:nether/glows_in_the_dark": 5, // Glows in the Dark: shoot a mob with a spectral arrow; small Nether projectile use.
+	"blazeandcave:nether/glowstone_miner": 12, // Glowstone Miner: collect or craft a stack of glowstone blocks; Nether ceiling/resource grind.
+	"blazeandcave:nether/hell_botanist": 42, // Hell Botanist: gather stacks of every Nether plant; Nether biome/resource checklist.
+	"blazeandcave:nether/hells_bells": 12, // Hell's Bells: ring a bell in the Nether; tiny staged gag.
+	"blazeandcave:nether/high_temperature_fluid_monster": 0, // High Temperature Fluid Monster: kill a magma cube; common Nether mob token.
+	"blazeandcave:nether/holy_scrap": 5, // Holy Scrap!: smelt Ancient Debris into scrap; rare ore processing milestone.
+	"blazeandcave:nether/hot_air_balloon": 15, // Hot Air Balloon: craft a harness, equip a Happy Ghast, and ride it; custom mount setup.
+	"blazeandcave:nether/hot_reels": 7, // Hot Reels!: pull a Strider with a fishing rod; tiny Nether mob interaction.
+	"blazeandcave:nether/hot_spring": 10, // Hot Spring: sit in water in the Nether; small deliberate oddity.
+	"blazeandcave:nether/hung_drawn_and_bartered": 25, // Hung, Drawn and Bartered: barter for every Piglin barter item; gold cost plus loot table checklist.
 	"blazeandcave:nether/i_am_root": 0, // I am Root: pick up crimson or warped roots; common Nether plant pickup, no reward.
-	"blazeandcave:nether/im_in_lava_with_you": 20, // I'm in Lava With You: hit a mob while both are in lava; fire-resistance and risky positioning.
-	"blazeandcave:nether/inception": 45, // Inception: build a machine that breaks the Nether roof; technical setup and bedrock-breaking execution.
-	"blazeandcave:nether/instant_mining": 50, // Instant Mining: combine Efficiency V diamond/netherite pick with Haste II; beacon plus enchanted tool setup.
-	"blazeandcave:nether/jenga": 35, // Jenga: ride nested Strider/Strider/boat/minecart stack; deliberately awkward vehicle/mob stacking.
-	"blazeandcave:nether/lead_zeppelin": 8, // Lead Zeppelin: attach a boat to a Happy Ghast with a lead; custom mount plus staged lead setup.
-	"blazeandcave:nether/legend_of_hell_chicken_riders": 35, // Legend of Hell Chicken Riders: kill a chicken jockey in the Nether; rare mob plus dimension context.
-	"blazeandcave:nether/let_me_out": 60, // Let Me Out!: stay in the Nether for twenty in-game days; long residency/supply challenge.
-	"blazeandcave:nether/light_show": 1, // Light Show: place stained glass on a beacon beam; tiny cosmetic beacon action.
-	"blazeandcave:nether/limbo_walker": 25, // Limbo Walker: get above the Nether roof; ender pearl/ladder/bedrock-route setup.
-	"blazeandcave:nether/ludicrous_speed": 55, // Ludicrous Speed!: stack Speed II, Dolphin Grace, Depth Strider, Soul Speed, and sprinting; multi-effect movement setup.
-	"blazeandcave:nether/magma_cube_squisher": 25, // Magma Cube Squisher: collect a stack of magma cream; repeated magma cube kills or farm.
-	"blazeandcave:nether/master_netherite_miner": 180, // Master Netherite Miner: mine enough Ancient Debris for a stack of Netherite Ingots; huge debris grind, capped.
+	"blazeandcave:nether/im_in_lava_with_you": 15, // I'm in Lava With You: hit a mob while both are in lava; fire-resistance and risky positioning.
+	"blazeandcave:nether/inception": 27, // Inception: build a machine that breaks the Nether roof; technical setup and bedrock-breaking execution.
+	"blazeandcave:nether/instant_mining": 25, // Instant Mining: combine Efficiency V diamond/netherite pick with Haste II; beacon plus enchanted tool setup.
+	"blazeandcave:nether/jenga": 42, // Jenga: ride nested Strider/Strider/boat/minecart stack; deliberately awkward vehicle/mob stacking.
+	"blazeandcave:nether/lead_zeppelin": 7, // Lead Zeppelin: attach a boat to a Happy Ghast with a lead; custom mount plus staged lead setup.
+	"blazeandcave:nether/legend_of_hell_chicken_riders": 20, // Legend of Hell Chicken Riders: kill a chicken jockey in the Nether; rare mob plus dimension context.
+	"blazeandcave:nether/let_me_out": 66, // Let Me Out!: stay in the Nether for twenty in-game days; long residency/supply challenge.
+	"blazeandcave:nether/light_show": 5, // Light Show: place stained glass on a beacon beam; tiny cosmetic beacon action.
+	"blazeandcave:nether/limbo_walker": 10, // Limbo Walker: get above the Nether roof; ender pearl/ladder/bedrock-route setup.
+	"blazeandcave:nether/ludicrous_speed": 29, // Ludicrous Speed!: stack Speed II, Dolphin Grace, Depth Strider, Soul Speed, and sprinting; multi-effect movement setup.
+	"blazeandcave:nether/magma_cube_squisher": 15, // Magma Cube Squisher: collect a stack of magma cream; repeated magma cube kills or farm.
+	"blazeandcave:nether/master_netherite_miner": 400, // Master Netherite Miner: mine enough Ancient Debris for a stack of Netherite Ingots; huge debris grind, capped.
 	"blazeandcave:nether/midport_village": 12, // Midport Village: ride a Happy Ghast into a village; custom mount plus travel target.
-	"blazeandcave:nether/moar_upgraded_tools": 60, // MOAR Upgraded Tools: upgrade pickaxe, axe, shovel, and hoe to netherite; high material/template cost and includes the rarely-made hoe.
-	"blazeandcave:nether/nether_rock_collection": 25, // Nether Rock Collection: collect stacks of Netherrack, Basalt, Blackstone, and Magma; Nether block stockpile.
-	"blazeandcave:nether/netherite_mad_lad": 300, // Netherite Mad Lad: grind a stack of Netherite Blocks; absurd Ancient Debris capstone at reward ceiling.
-	"blazeandcave:nether/netherite_miner": 120, // Netherite Miner: mine a stack of Ancient Debris; long targeted rare-ore grind.
+	"blazeandcave:nether/moar_upgraded_tools": 33, // MOAR Upgraded Tools: upgrade pickaxe, axe, shovel, and hoe to netherite; high material/template cost and includes the rarely-made hoe.
+	"blazeandcave:nether/nether_rock_collection": 17, // Nether Rock Collection: collect stacks of Netherrack, Basalt, Blackstone, and Magma; Nether block stockpile.
+	"blazeandcave:nether/netherite_mad_lad": 3600, // Netherite Mad Lad: grind a stack of Netherite Blocks; absurd Ancient Debris capstone at reward ceiling.
+	"blazeandcave:nether/netherite_miner": 100, // Netherite Miner: mine a stack of Ancient Debris; long targeted rare-ore grind.
 	"blazeandcave:nether/nugget_in_a_biscuit": 0, // Nugget in a Biscuit: mine Nether Gold Ore; common Nether resource pickup, no reward.
-	"blazeandcave:nether/piglin_peril": 10, // Piglin Peril: obtain a Piglin Head; server drops reduce it to killing a few Piglins, with Nether travel/risk as the extra cost.
-	"blazeandcave:nether/pillow_fight": 25, // Pillow Fight: kill a Ghast while riding a Happy Ghast; custom mount plus flying combat.
-	"blazeandcave:nether/polar_opposites": 20, // Polar Opposites: start freezing in the Nether; powder snow or cold-effect setup in the wrong dimension.
+	"blazeandcave:nether/piglin_peril": 7, // Piglin Peril: obtain a Piglin Head; server drops reduce it to killing a few Piglins, with Nether travel/risk as the extra cost.
+	"blazeandcave:nether/pillow_fight": 22, // Pillow Fight: kill a Ghast while riding a Happy Ghast; custom mount plus flying combat.
+	"blazeandcave:nether/polar_opposites": 15, // Polar Opposites: start freezing in the Nether; powder snow or cold-effect setup in the wrong dimension.
 	"blazeandcave:nether/quicksand": 0, // Quicksand: sink/slow in soul sand or mud-like terrain; common movement condition, no reward.
 	"blazeandcave:nether/roadhog": 0, // Roadhog: kill a Hoglin for food; ordinary Nether hunting, no reward.
 	"blazeandcave:nether/seeing_stars": 0, // Seeing Stars: mine glowstone dust; common Nether resource pickup, no reward.
 	"blazeandcave:nether/snow_cone": 5, // Snow Cone?: feed snowballs to a Ghastling; small custom Nether mob interaction.
-	"blazeandcave:nether/soul_runnings": 35, // Soul Runnings!: step on soul sand with Netherite Boots and Soul Speed III; netherite gear plus rare enchant.
-	"blazeandcave:nether/spreading_corruption": 60, // Spreading Corruption: place one of every Nether block in the Overworld; broad Nether block collection and transport.
+	"blazeandcave:nether/soul_runnings": 33, // Soul Runnings!: step on soul sand with Netherite Boots and Soul Speed III; netherite gear plus rare enchant.
+	"blazeandcave:nether/spreading_corruption": 40, // Spreading Corruption: place one of every Nether block in the Overworld; broad Nether block collection and transport.
 	"blazeandcave:nether/stem_research": 0, // Stem Research: chop a huge Nether fungus stem; common Nether wood action, no reward.
 	"blazeandcave:nether/stepping_on_legos": 0, // Stepping on Legos: walk on magma blocks; common Nether damage/movement, no reward.
 	"blazeandcave:nether/the_descent": 5, // The Descent: dig to the Nether depths; small deliberate depth target.
 	"blazeandcave:nether/the_hunt_begins": 5, // The Hunt Begins: kill a Wither Skeleton; fortress combat target, modest reward.
-	"blazeandcave:nether/the_nethers_shield": 3, // The Nether's Shield: block Blaze fireballs; small fortress combat interaction.
-	"blazeandcave:nether/the_struggle_nether_ends": 65, // The Struggle Nether Ends: place one of every Nether block in the End; Nether collection plus End transport.
+	"blazeandcave:nether/the_nethers_shield": 0, // The Nether's Shield: block Blaze fireballs; small fortress combat interaction.
+	"blazeandcave:nether/the_struggle_nether_ends": 42, // The Struggle Nether Ends: place one of every Nether block in the End; Nether collection plus End transport.
 	"blazeandcave:nether/the_tribal_snouts": 0, // The Tribal Snouts: kill a Zombified Piglin; common Nether mob, no reward.
-	"blazeandcave:nether/this_ones_mine": 30, // This One's Mine!: kill a Zombified Piglin riding a Strider and take the mount; uncommon rider setup.
+	"blazeandcave:nether/this_ones_mine": 20, // This One's Mine!: kill a Zombified Piglin riding a Strider and take the mount; uncommon rider setup.
 	"blazeandcave:nether/time_to_fire_back": 25, // Time to Fire Back: craft a stack of fire charges; blaze powder/coal/gunpowder stockpile.
-	"blazeandcave:nether/time_to_upgrade": 35, // Time to Upgrade!: find a Netherite Upgrade template in a Bastion; dangerous structure loot.
+	"blazeandcave:nether/time_to_upgrade": 22, // Time to Upgrade!: find a Netherite Upgrade template in a Bastion; dangerous structure loot.
 	"blazeandcave:nether/twisted": 0, // Twisted: climb twisting vines; common Nether movement, no reward.
-	"blazeandcave:nether/we_got_a_live_one": 35, // We Got a Live One!: move a Piglin to the Overworld and prevent zombification; cross-dimension mob handling.
-	"blazeandcave:nether/welcome_to_warp_zone": 25, // Welcome to Warp Zone!: craft every warped wood item; full Nether wood-family checklist.
+	"blazeandcave:nether/we_got_a_live_one": 15, // We Got a Live One!: move a Piglin to the Overworld and prevent zombification; cross-dimension mob handling.
+	"blazeandcave:nether/welcome_to_warp_zone": 12, // Welcome to Warp Zone!: craft every warped wood item; full Nether wood-family checklist.
 	"blazeandcave:nether/what_a_fungi": 0, // What a Fungi!: pick up crimson or warped fungus; common Nether plant pickup, no reward.
-	"blazeandcave:nether/what_about_corruption_planks": 25, // What about Corruption Planks?: craft every crimson wood item; full Nether wood-family checklist.
+	"blazeandcave:nether/what_about_corruption_planks": 17, // What about Corruption Planks?: craft every crimson wood item; full Nether wood-family checklist.
 	"blazeandcave:nether/when_hoglins_breed": 2, // When Hoglins Breed: breed Hoglins with crimson fungi; small Nether animal setup.
-	"blazeandcave:nether/when_piglins_fly": 45, // When Piglins Fly: give a Piglin Elytra and kill it; consumes valuable Elytra in a staged kill.
+	"blazeandcave:nether/when_piglins_fly": 25, // When Piglins Fly: give a Piglin Elytra and kill it; consumes valuable Elytra in a staged kill.
 	"blazeandcave:nether/whole_hog": 0, // Whole Hog: get mauled by a Hoglin; common Nether mistake, no reward.
-	"blazeandcave:nether/wub_wub_wub": 35, // Wub wub wub!: loot Pigstep from a Bastion; dangerous structure loot with RNG.
-	"blazeandcave:nether/zork_chop": 25, // Zork Chop: transport a Hoglin to the Overworld, zombify it, then kill it; cross-dimension mob setup.
-	"blazeandcave:potion/a_furious_test_subject": 80, // A Furious Test Subject: have a mob attack while carrying every potion effect; effect stacking plus hostile timing.
-	"blazeandcave:potion/a_much_more_doable_challenge": 45, // A Much More Doable Challenge: receive every effect across a lifetime; broad but untimed effect checklist.
-	"blazeandcave:potion/a_weak_brew": 2, // A Weak Brew: brew Weakness; simple brewing recipe, small reward.
+	"blazeandcave:nether/wub_wub_wub": 15, // Wub wub wub!: loot Pigstep from a Bastion; dangerous structure loot with RNG.
+	"blazeandcave:nether/zork_chop": 30, // Zork Chop: transport a Hoglin to the Overworld, zombify it, then kill it; cross-dimension mob setup.
+	"blazeandcave:potion/a_furious_test_subject": 42, // A Furious Test Subject: have a mob attack while carrying every potion effect; effect stacking plus hostile timing.
+	"blazeandcave:potion/a_much_more_doable_challenge": 39, // A Much More Doable Challenge: receive every effect across a lifetime; broad but untimed effect checklist.
+	"blazeandcave:potion/a_weak_brew": 3, // A Weak Brew: brew Weakness; simple brewing recipe, small reward.
 	"blazeandcave:potion/death_by_magic": 5, // Death by Magic: kill a mob with a splash potion; small brewing/combat setup.
 	"blazeandcave:potion/failed_concoctions": 3, // Failed Concoctions: brew mundane and thick potions; tiny ingredient experimentation.
 	"blazeandcave:potion/final_shout": 15, // Final Shout: kill a mob carrying Wind Charged, Weaving, and Oozing; multiple effect setup on one target.
-	"blazeandcave:potion/furious_ammunition": 45, // Furious Ammunition: craft every tipped arrow type; brewing plus arrow/material checklist.
-	"blazeandcave:potion/gas": 10, // Gas!: kill a mob with a lingering potion; dragon-breath brewing plus combat.
-	"blazeandcave:potion/gas_bomb": 40, // Gas Bomb: ignite Creepers of every potion effect; repeated effect application plus Creeper handling.
+	"blazeandcave:potion/furious_ammunition": 42, // Furious Ammunition: craft every tipped arrow type; brewing plus arrow/material checklist.
+	"blazeandcave:potion/gas": 12, // Gas!: kill a mob with a lingering potion; dragon-breath brewing plus combat.
+	"blazeandcave:potion/gas_bomb": 66, // Gas Bomb: ignite Creepers of every potion effect; repeated effect application plus Creeper handling.
 	"blazeandcave:potion/hopping_mad": 0, // Hopping Mad: get Jump Boost from a beacon or potion; common effect use, no reward.
-	"blazeandcave:potion/hyper_healing": 2, // Hyper-Healing: brew and drink regeneration; simple brewing recipe.
-	"blazeandcave:potion/imbued_projectiles": 3, // Imbued Projectiles: craft tipped arrows using a lingering potion; small potion-to-arrow conversion.
-	"blazeandcave:potion/mad_scientist": 60, // Mad Scientist: cure a zombie villager of every profession; profession setup plus repeated cure costs.
-	"blazeandcave:potion/marine_marauder": 2, // Marine Marauder: swim with Water Breathing active; simple potion use.
-	"blazeandcave:potion/medic": 2, // Medic!: brew healing; simple brewing recipe.
-	"blazeandcave:potion/nocturnal": 2, // Nocturnal: brew and drink night vision; simple brewing recipe.
+	"blazeandcave:potion/hyper_healing": 3, // Hyper-Healing: brew and drink regeneration; simple brewing recipe.
+	"blazeandcave:potion/imbued_projectiles": 10, // Imbued Projectiles: craft tipped arrows using a lingering potion; small potion-to-arrow conversion.
+	"blazeandcave:potion/mad_scientist": 42, // Mad Scientist: cure a zombie villager of every profession; profession setup plus repeated cure costs.
+	"blazeandcave:potion/marine_marauder": 5, // Marine Marauder: swim with Water Breathing active; simple potion use.
+	"blazeandcave:potion/medic": 3, // Medic!: brew healing; simple brewing recipe.
+	"blazeandcave:potion/nocturnal": 3, // Nocturnal: brew and drink night vision; simple brewing recipe.
 	"blazeandcave:potion/noxious_fumes": 10, // Noxious Fumes: use dragon's breath to brew a lingering potion; End fight side-resource plus brewing.
-	"blazeandcave:potion/performance_enhancing_drugs": 2, // Performance-Enhancing Drugs: brew Speed; simple brewing recipe.
+	"blazeandcave:potion/performance_enhancing_drugs": 3, // Performance-Enhancing Drugs: brew Speed; simple brewing recipe.
 	"blazeandcave:potion/root": 0, // Potions: tab root only; no reward.
-	"blazeandcave:potion/secret_of_the_ooze": 2, // Secret of the Ooze: brew Oozing with a slime block; small special-recipe brew.
-	"blazeandcave:potion/stayin_frosty": 2, // Stayin' Frosty: swim in lava with Fire Resistance; common potion utility, tiny reward.
+	"blazeandcave:potion/secret_of_the_ooze": 3, // Secret of the Ooze: brew Oozing with a slime block; small special-recipe brew.
+	"blazeandcave:potion/stayin_frosty": 3, // Stayin' Frosty: swim in lava with Fire Resistance; common potion utility, tiny reward.
 	"blazeandcave:potion/stealth_takedown": 8, // Stealth Takedown: kill a Creeper in melee while invisible; potion plus close combat setup.
-	"blazeandcave:potion/string_shot": 3, // String Shot: shoot a mob with an Arrow of Weaving; small tipped-arrow use.
-	"blazeandcave:potion/super_strength": 2, // Super Strength: brew Strength; simple brewing recipe.
+	"blazeandcave:potion/string_shot": 5, // String Shot: shoot a mob with an Arrow of Weaving; small tipped-arrow use.
+	"blazeandcave:potion/super_strength": 3, // Super Strength: brew Strength; simple brewing recipe.
 	"blazeandcave:potion/tank": 20, // Tank: use Turtle Master to become heavily protected; scute/potion setup, short execution.
-	"blazeandcave:potion/the_invisible_player": 2, // The Invisible Player: brew and drink invisibility; simple brewing recipe.
-	"blazeandcave:potion/true_feather_falling": 2, // True Feather Falling: brew and drink Slow Falling; simple brewing recipe.
-	"blazeandcave:potion/water_balloon": 12, // Water Balloon: kill a mob with a splash water bottle; awkward low-damage combat trick.
+	"blazeandcave:potion/the_invisible_player": 3, // The Invisible Player: brew and drink invisibility; simple brewing recipe.
+	"blazeandcave:potion/true_feather_falling": 3, // True Feather Falling: brew and drink Slow Falling; simple brewing recipe.
+	"blazeandcave:potion/water_balloon": 15, // Water Balloon: kill a mob with a splash water bottle; awkward low-damage combat trick.
 	"blazeandcave:redstone/all_aboard": 0, // All Aboard!: craft and ride a minecart; normal rail utility, no reward.
 	"blazeandcave:redstone/bling_plate": 0, // Bling Plate: use a weighted pressure plate; simple redstone plate craft, no reward.
 	"blazeandcave:redstone/calibration_sensation": 0, // Calibration Sensation: craft a calibrated sculk sensor; normal component craft, no reward.
-	"blazeandcave:redstone/cataclyst": 70, // Cataclyst: kill a Wither near a Sculk Catalyst; boss setup plus sculk explosion staging.
+	"blazeandcave:redstone/cataclyst": 77, // Cataclyst: kill a Wither near a Sculk Catalyst; boss setup plus sculk explosion staging.
 	"blazeandcave:redstone/click": 0, // Click!: place and press a button; basic redstone interaction, no reward.
 	"blazeandcave:redstone/comparing_comparator": 0, // Comparing Comparator: craft a comparator; normal redstone component, no reward.
 	"blazeandcave:redstone/craftception": 0, // Craftception: craft a Crafter; normal redstone component craft, no reward.
 	"blazeandcave:redstone/dispense_with_this": 0, // Dispense With This: craft a dispenser; normal redstone component, no reward.
 	"blazeandcave:redstone/electric_rails": 0, // Electric Rails: craft/use powered rails; ordinary rail component, no reward.
-	"blazeandcave:redstone/engineer": 45, // Engineer: craft every redstone component type; broad component checklist.
-	"blazeandcave:redstone/factorio": 45, // Factorio: make a Crafter craft a Dispenser 64 times; automation setup plus repeated crafting.
+	"blazeandcave:redstone/engineer": 15, // Engineer: craft every redstone component type; broad component checklist.
+	"blazeandcave:redstone/factorio": 22, // Factorio: make a Crafter craft a Dispenser 64 times; automation setup plus repeated crafting.
 	"blazeandcave:redstone/fuel_engine": 0, // Fuel Engine: craft/use a furnace minecart; normal rail utility, no reward.
 	"blazeandcave:redstone/leveraging_synergy": 0, // Leveraging Synergy: flick a lever; basic redstone interaction, no reward.
-	"blazeandcave:redstone/master_engineer": 80, // Master Engineer: craft stacks of every redstone component; large redstone/resource stockpile.
+	"blazeandcave:redstone/master_engineer": 100, // Master Engineer: craft stacks of every redstone component; large redstone/resource stockpile.
 	"blazeandcave:redstone/metal_plate": 0, // Metal Plate: craft/use a metal pressure plate; simple component, no reward.
-	"blazeandcave:redstone/mobile_explosion": 1, // Mobile Explosion: put TNT in a minecart; tiny deliberate explosive cart craft.
-	"blazeandcave:redstone/monstrous_music": 20, // Monstrous Music: collect the needed mob heads from easy drops and place them over Note Blocks; modest collection plus setup.
-	"blazeandcave:redstone/monstrous_sacrifices": 90, // Monstrous Sacrifices: kill every hostile monster near a Sculk Catalyst; full hostile checklist plus catalyst staging.
+	"blazeandcave:redstone/mobile_explosion": 0, // Mobile Explosion: put TNT in a minecart; tiny deliberate explosive cart craft.
+	"blazeandcave:redstone/monstrous_music": 25, // Monstrous Music: collect the needed mob heads from easy drops and place them over Note Blocks; modest collection plus setup.
+	"blazeandcave:redstone/monstrous_sacrifices": 122, // Monstrous Sacrifices: kill every hostile monster near a Sculk Catalyst; full hostile checklist plus catalyst staging.
 	"blazeandcave:redstone/moving_moving_storage": 0, // Moving Moving Storage: put a hopper in a minecart; normal rail/storage utility, no reward.
 	"blazeandcave:redstone/moving_parts": 0, // Moving Parts: craft a piston; normal redstone component, no reward.
 	"blazeandcave:redstone/moving_storage": 0, // Moving Storage: put a chest in a minecart; normal storage rail utility, no reward.
 	"blazeandcave:redstone/mozart": 0, // Mozart: craft a note block; simple component craft, no reward.
-	"blazeandcave:redstone/noteworthy": 30, // Noteworthy: play every note-block instrument; block-under-note-block checklist.
+	"blazeandcave:redstone/noteworthy": 22, // Noteworthy: play every note-block instrument; block-under-note-block checklist.
 	"blazeandcave:redstone/observer_buddy": 0, // Observer Buddy: craft an observer; normal redstone component, no reward.
-	"blazeandcave:redstone/on_a_rail": 45, // On A Rail: travel 1 km by minecart in a straight line; rail material and route build.
+	"blazeandcave:redstone/on_a_rail": 30, // On A Rail: travel 1 km by minecart in a straight line; rail material and route build.
 	"blazeandcave:redstone/powerful_light": 0, // Powerful Light: craft/place a redstone torch; basic redstone component, no reward.
 	"blazeandcave:redstone/pressure_detector": 0, // Pressure Detector: craft a detector rail; normal rail component, no reward.
 	"blazeandcave:redstone/quartz_miner": 25, // Quartz Miner: gather enough quartz for a stack of blocks; Nether quartz stockpile.
@@ -1001,83 +1001,83 @@
 	"blazeandcave:redstone/space_hopper": 0, // Space Hopper: craft a hopper; normal storage component, no reward.
 	"blazeandcave:redstone/splatfest": 75, // Splatfest: launch at least 100 of each egg type at once nearby; huge egg stockpile plus dispenser/launch setup.
 	"blazeandcave:redstone/sticky_parts": 0, // Sticky Parts: craft a sticky piston; normal redstone component, no reward.
-	"blazeandcave:redstone/take_notes": 5, // Take Notes: tune a note block through every note; small deliberate interaction sequence.
+	"blazeandcave:redstone/take_notes": 3, // Take Notes: tune a note block through every note; small deliberate interaction sequence.
 	"blazeandcave:redstone/target_acquired": 0, // Target Acquired: place a target block; basic redstone/archery block, no reward.
 	"blazeandcave:redstone/target_practise": 35, // Target Practise: hit a target with every projectile type; projectile checklist and aiming setup.
-	"blazeandcave:redstone/the_block_of_eternal_screaming": 15, // The Block of Eternal Screaming: Silk Touch a Sculk Shrieker; Deep Dark plus enchant requirement.
-	"blazeandcave:redstone/the_incredible_sculk": 45, // The Incredible Sculk: collect stacks of all sculk blocks; Deep Dark block stockpile.
-	"blazeandcave:redstone/travelling_bard": 80, // Travelling Bard: play a note block in every biome; large biome travel checklist with carried setup.
+	"blazeandcave:redstone/the_block_of_eternal_screaming": 10, // The Block of Eternal Screaming: Silk Touch a Sculk Shrieker; Deep Dark plus enchant requirement.
+	"blazeandcave:redstone/the_incredible_sculk": 45, // The Incredible Sculk: collect stacks of all sculk blocks; Deep Dark block stockpile. TODO
+	"blazeandcave:redstone/travelling_bard": 250, // Travelling Bard: play a note block in every biome; large biome travel checklist with carried setup.
 	"blazeandcave:redstone/tripping_over": 0, // Tripping Over: trigger tripwire; basic redstone interaction, no reward.
 	"blazeandcave:redstone/troll_chest": 0, // Troll Chest: trigger a trapped chest; normal redstone/container interaction, no reward.
 	"blazeandcave:redstone/under_pressure": 0, // Under Pressure: step on a pressure plate; basic redstone interaction, no reward.
-	"blazeandcave:redstone/vibe_check": 8, // Vibe Check: obtain a sculk sensor with Silk Touch or Ancient City loot; small Deep Dark/enchant task.
+	"blazeandcave:redstone/vibe_check": 5, // Vibe Check: obtain a sculk sensor with Silk Touch or Ancient City loot; small Deep Dark/enchant task.
 	"blazeandcave:redstone/we_have_liftoff": 40, // We Have Liftoff!: build a TNT launcher that throws you 100 blocks up; redstone/explosive machine setup.
-	"blazeandcave:statistics/65_hours_of_walking": 220, // 65: walk 1000 km; enormous passive/active travel counter, capped below true time.
-	"blazeandcave:statistics/ancient_kung_fu_master": 35, // Ancient Kung Fu Master: sneak 10 km; deliberate slow movement counter.
-	"blazeandcave:statistics/big_blimp_enthusiast": 35, // Big Blimp Enthusiast: ride 10 km on a Happy Ghast; custom mount travel grind.
-	"blazeandcave:statistics/big_spender": 35, // Big Spender: trade with villagers 500 times; substantial trading loop.
-	"blazeandcave:statistics/black_belt_ninja": 8, // Black Belt Ninja: sneak 1 km; small deliberate movement counter.
-	"blazeandcave:statistics/bloodthirsty": 50, // Bloodthirsty: defeat 2500 mobs; sizeable combat/farm counter.
-	"blazeandcave:statistics/boing_boing": 15, // Boing, Boing: jump 10000 times; long but mostly passive movement counter.
-	"blazeandcave:statistics/captain_nemo": 25, // Captain Nemo: ride 5 km on a Nautilus; custom mount travel.
-	"blazeandcave:statistics/cupid": 45, // Cupid: breed 500 animals; farm-scale breeding grind.
-	"blazeandcave:statistics/elderly_enchanter": 45, // Elderly Enchanter: enchant 250 items; XP/material throughput grind.
-	"blazeandcave:statistics/food_glorious_food": 100, // Food, Glorious Food!: eat 5000 food items; huge consumption counter.
-	"blazeandcave:statistics/frequent_flyer": 140, // Frequent Flyer: fly 1000 km with Elytra; massive rocket/flight distance counter.
+	"blazeandcave:statistics/65_hours_of_walking": 97, // 65: walk 1000 km; enormous passive/active travel counter, capped below true time. TODO
+	"blazeandcave:statistics/ancient_kung_fu_master": 100, // Ancient Kung Fu Master: sneak 10 km; deliberate slow movement counter.
+	"blazeandcave:statistics/big_blimp_enthusiast": 70, // Big Blimp Enthusiast: ride 10 km on a Happy Ghast; custom mount travel grind.
+	"blazeandcave:statistics/big_spender": 42, // Big Spender: trade with villagers 500 times; substantial trading loop.
+	"blazeandcave:statistics/black_belt_ninja": 15, // Black Belt Ninja: sneak 1 km; small deliberate movement counter.
+	"blazeandcave:statistics/bloodthirsty": 42, // Bloodthirsty: defeat 2500 mobs; sizeable combat/farm counter.
+	"blazeandcave:statistics/boing_boing": 111, // Boing, Boing: jump 10000 times; long but mostly passive movement counter.
+	"blazeandcave:statistics/captain_nemo": 42, // Captain Nemo: ride 5 km on a Nautilus; custom mount travel.
+	"blazeandcave:statistics/cupid": 29, // Cupid: breed 500 animals; farm-scale breeding grind.
+	"blazeandcave:statistics/elderly_enchanter": 111, // Elderly Enchanter: enchant 250 items; XP/material throughput grind.
+	"blazeandcave:statistics/food_glorious_food": 97, // Food, Glorious Food!: eat 5000 food items; huge consumption counter.
+	"blazeandcave:statistics/frequent_flyer": 144, // Frequent Flyer: fly 1000 km with Elytra; massive rocket/flight distance counter.
 	"blazeandcave:statistics/giga_xp_grinder": 160, // Giga XP Grinder: reach level 1000; enormous XP grind even with farms.
-	"blazeandcave:statistics/global_railway_network": 60, // Global Railway Network: ride 50 km in minecarts; rail infrastructure or long loop.
-	"blazeandcave:statistics/happy_new_year": 80, // Happy New Year!: play for a full Minecraft year; long real-time server presence counter.
-	"blazeandcave:statistics/horse_training": 1, // Horse Training: ride 1 km on a horse; tiny mount-distance counter.
-	"blazeandcave:statistics/i_enjoy_long_walks_and_playing_minecraft": 90, // I enjoy long walks & playing MC: walk 250 km; major foot-travel counter.
-	"blazeandcave:statistics/i_heart_chests": 45, // I <3 Chests: open 500 loot chests; broad structure/loot counter.
-	"blazeandcave:statistics/i_like_trains": 15, // I Like Trains: ride 10 km in minecarts; modest rail-distance objective.
-	"blazeandcave:statistics/journeyman_enchanter": 15, // Journeyman Enchanter: enchant 50 items; moderate XP/item counter.
-	"blazeandcave:statistics/jumping_jacks": 80, // Jumping Jacks: jump 100000 times; huge movement counter, mostly passive but long.
-	"blazeandcave:statistics/kill_or_be_killed": 160, // Kill or be Killed: defeat 25000 mobs; enormous combat/farm counter.
-	"blazeandcave:statistics/laps_in_the_pool": 1, // Laps in the pool: swim 1 km; tiny movement counter.
-	"blazeandcave:statistics/level_up": 2, // Level Up: reach level 30; normal enchanting threshold, token only.
-	"blazeandcave:statistics/lightning_mcpig": 45, // Lightning McPig: ride 10 km on a pig; slow awkward mount-distance grind.
-	"blazeandcave:statistics/loot_em": 1, // Loot 'em!: open 10 loot chests; tiny structure-loot counter.
-	"blazeandcave:statistics/lord_helix": 60, // Lord Helix: ride 25 km on a Nautilus; long custom mount-distance grind.
-	"blazeandcave:statistics/luxury_cruise": 1, // Luxury Cruise: sail 1 km in a boat; tiny normal travel counter.
-	"blazeandcave:statistics/marathon": 25, // Marathon: sprint 42.195 km; deliberate long sprint counter.
-	"blazeandcave:statistics/minecart_rider": 1, // Minecart Rider: ride 1 km in a minecart; tiny rail counter.
-	"blazeandcave:statistics/mob_hunter": 5, // Mob Hunter: defeat 250 mobs; small combat counter.
-	"blazeandcave:statistics/more_for_me": 20, // More For Me: open 100 loot chests; moderate structure-loot counter.
-	"blazeandcave:statistics/natural_sprinter": 5, // Natural Sprinter: sprint 10 km; small movement counter.
-	"blazeandcave:statistics/novice_enchanter": 2, // Novice Enchanter: enchant 10 items; tiny enchanting counter.
+	"blazeandcave:statistics/global_railway_network": 42, // Global Railway Network: ride 50 km in minecarts; rail infrastructure or long loop.
+	"blazeandcave:statistics/happy_new_year": 142, // Happy New Year!: play for a full Minecraft year; long real-time server presence counter.
+	"blazeandcave:statistics/horse_training": 20, // Horse Training: ride 1 km on a horse; tiny mount-distance counter.
+	"blazeandcave:statistics/i_enjoy_long_walks_and_playing_minecraft": 33, // I enjoy long walks & playing MC: walk 250 km; major foot-travel counter.
+	"blazeandcave:statistics/i_heart_chests": 99, // I <3 Chests: open 500 loot chests; broad structure/loot counter.
+	"blazeandcave:statistics/i_like_trains": 10, // I Like Trains: ride 10 km in minecarts; modest rail-distance objective.
+	"blazeandcave:statistics/journeyman_enchanter": 25, // Journeyman Enchanter: enchant 50 items; moderate XP/item counter.
+	"blazeandcave:statistics/jumping_jacks": 420, // Jumping Jacks: jump 100000 times; huge movement counter, mostly passive but long.
+	"blazeandcave:statistics/kill_or_be_killed": 250, // Kill or be Killed: defeat 25000 mobs; enormous combat/farm counter.
+	"blazeandcave:statistics/laps_in_the_pool": 0, // Laps in the pool: swim 1 km; tiny movement counter.
+	"blazeandcave:statistics/level_up": 5, // Level Up: reach level 30; normal enchanting threshold, token only.
+	"blazeandcave:statistics/lightning_mcpig": 201, // Lightning McPig: ride 10 km on a pig; slow awkward mount-distance grind.
+	"blazeandcave:statistics/loot_em": 5, // Loot 'em!: open 10 loot chests; tiny structure-loot counter.
+	"blazeandcave:statistics/lord_helix": 100, // Lord Helix: ride 25 km on a Nautilus; long custom mount-distance grind.
+	"blazeandcave:statistics/luxury_cruise": 0, // Luxury Cruise: sail 1 km in a boat; tiny normal travel counter.
+	"blazeandcave:statistics/marathon": 42, // Marathon: sprint 42.195 km; deliberate long sprint counter.
+	"blazeandcave:statistics/minecart_rider": 5, // Minecart Rider: ride 1 km in a minecart; tiny rail counter.
+	"blazeandcave:statistics/mob_hunter": 33, // Mob Hunter: defeat 250 mobs; small combat counter.
+	"blazeandcave:statistics/more_for_me": 42, // More For Me: open 100 loot chests; moderate structure-loot counter.
+	"blazeandcave:statistics/natural_sprinter": 10, // Natural Sprinter: sprint 10 km; small movement counter.
+	"blazeandcave:statistics/novice_enchanter": 10, // Novice Enchanter: enchant 10 items; tiny enchanting counter.
 	"blazeandcave:statistics/olympic_athlete": 15, // Olympic Athlete: swim 10 km; modest swimming counter.
 	"blazeandcave:statistics/olympic_gold_medallist": 60, // Olympic Gold Medallist: swim 50 km; long swimming counter.
-	"blazeandcave:statistics/om_nom_nom": 1, // Om Nom Nom: eat 200 food items; tiny passive food counter.
-	"blazeandcave:statistics/out_for_a_stroll": 0, // Out for a stroll: walk 10 km; normal early exploration distance, no reward.
+	"blazeandcave:statistics/om_nom_nom": 3, // Om Nom Nom: eat 200 food items; tiny passive food counter.
+	"blazeandcave:statistics/out_for_a_stroll": 3, // Out for a stroll: walk 10 km; normal early exploration distance, no reward.
 	"blazeandcave:statistics/overlevelling": 25, // Overlevelling: reach level 100; deliberate XP stockpile.
-	"blazeandcave:statistics/passing_the_time": 20, // Passing the Time: play for 100 days; passive time counter with real duration.
-	"blazeandcave:statistics/pig_training": 1, // Pig Training: ride 100 m on a pig; tiny awkward mount counter.
-	"blazeandcave:statistics/pirate_captain": 10, // Pirate Captain: sail 10 km in a boat; modest normal travel counter.
+	"blazeandcave:statistics/passing_the_time": 36, // Passing the Time: play for 100 days; passive time counter with real duration.
+	"blazeandcave:statistics/pig_training": 15, // Pig Training: ride 100 m on a pig; tiny awkward mount counter.
+	"blazeandcave:statistics/pirate_captain": 3, // Pirate Captain: sail 10 km in a boat; modest normal travel counter.
 	"blazeandcave:statistics/root": 0, // Statistics: tab root only; no reward.
-	"blazeandcave:statistics/sailor_of_the_seven_seas": 50, // Sailor of the Seven Seas: sail 50 km in a boat; long boat-distance counter.
-	"blazeandcave:statistics/scourge_of_the_west": 60, // Scourge of the West: ride 50 km on a horse; long mount-distance counter.
+	"blazeandcave:statistics/sailor_of_the_seven_seas": 25, // Sailor of the Seven Seas: sail 50 km in a boat; long boat-distance counter.
+	"blazeandcave:statistics/scourge_of_the_west": 33, // Scourge of the West: ride 50 km on a horse; long mount-distance counter.
 	"blazeandcave:statistics/shell_testing": 5, // Shell Testing: ride 1 km on a Nautilus; small custom mount counter.
-	"blazeandcave:statistics/sheriff_firearm": 15, // Sheriff Firearm: ride 10 km on a horse; modest mount-distance counter.
-	"blazeandcave:statistics/sneaky_snitch": 0, // Sneaky Snitch: sneak 100 m; tiny normal crouch counter, no reward.
-	"blazeandcave:statistics/snout_500": 10, // Snout 500: ride 1 km on a pig; slow awkward mount counter.
-	"blazeandcave:statistics/spring_in_your_step": 1, // Spring in your step: jump 1000 times; tiny passive movement counter.
-	"blazeandcave:statistics/stonks": 80, // STONKS!: trade with villagers 2500 times; huge trading throughput grind.
+	"blazeandcave:statistics/sheriff_firearm": 5, // Sheriff Firearm: ride 10 km on a horse; modest mount-distance counter.
+	"blazeandcave:statistics/sneaky_snitch": 5, // Sneaky Snitch: sneak 100 m; tiny normal crouch counter, no reward.
+	"blazeandcave:statistics/snout_500": 66, // Snout 500: ride 1 km on a pig; slow awkward mount counter.
+	"blazeandcave:statistics/spring_in_your_step": 3, // Spring in your step: jump 1000 times; tiny passive movement counter.
+	"blazeandcave:statistics/stonks": 100, // STONKS!: trade with villagers 2500 times; huge trading throughput grind.
 	"blazeandcave:statistics/supersonic": 60, // Supersonic: fly 100 km with Elytra; long rocket/flight counter.
 	"blazeandcave:statistics/take_to_the_skies": 20, // Take to the Skies: fly 10 km with Elytra; modest post-End flight counter.
-	"blazeandcave:statistics/taking_it_in_stride": 1, // Taking It In Stride: ride 100 m on a Strider; tiny Nether mount counter.
-	"blazeandcave:statistics/test_flight": 1, // Test Flight: ride 100 m on a Happy Ghast; tiny custom mount counter.
-	"blazeandcave:statistics/the_first_night": 0, // The First Night: survive the first night; normal survival progression, no reward.
+	"blazeandcave:statistics/taking_it_in_stride": 5, // Taking It In Stride: ride 100 m on a Strider; tiny Nether mount counter.
+	"blazeandcave:statistics/test_flight": 5, // Test Flight: ride 100 m on a Happy Ghast; tiny custom mount counter.
+	"blazeandcave:statistics/the_first_night": 20, // The First Night: survive the first night; normal survival progression, no reward.
 	"blazeandcave:statistics/the_haggler": 10, // The Haggler: trade with villagers 100 times; small trading counter.
-	"blazeandcave:statistics/the_parrots_and_the_bats": 20, // The Parrots and the Bats: breed 100 animals; moderate farm breeding counter.
-	"blazeandcave:statistics/this_ride_is_lit_yo": 35, // This Ride Is Lit, Yo!: ride 10 km on a Strider; Nether mount-distance grind.
+	"blazeandcave:statistics/the_parrots_and_the_bats": 10, // The Parrots and the Bats: breed 100 animals; moderate farm breeding counter.
+	"blazeandcave:statistics/this_ride_is_lit_yo": 111, // This Ride Is Lit, Yo!: ride 10 km on a Strider; Nether mount-distance grind.
 	"blazeandcave:statistics/two_by_two": 120, // Two By Two: breed 2500 animals; huge farm-scale breeding grind.
-	"blazeandcave:statistics/who_needs_boats": 10, // Who Needs Boats?: ride 1 km on a Strider; small Nether mount-distance counter.
-	"blazeandcave:statistics/who_needs_cars": 35, // Who needs cars?: walk 50 km; long but ordinary foot-travel counter.
+	"blazeandcave:statistics/who_needs_boats": 33, // Who Needs Boats?: ride 1 km on a Strider; small Nether mount-distance counter.
+	"blazeandcave:statistics/who_needs_cars": 22, // Who needs cars?: walk 50 km; long but ordinary foot-travel counter.
 	"blazeandcave:statistics/who_needs_elytra": 15, // Who Needs Elytra?: ride 1 km on a Happy Ghast; custom mount-distance task.
 	"blazeandcave:statistics/xp_grinder": 80, // XP Grinder: reach level 300; large XP stockpile even with farms.
-	"blazeandcave:statistics/your_legs_must_be_tired": 90, // Your legs must be tired: sprint 250 km; major sprint-distance counter.
-	"blazeandcave:statistics/yum_yum_yummo": 50, // Yum Yum Yummo: eat 1000 food items; large consumption counter.
+	"blazeandcave:statistics/your_legs_must_be_tired": 125, // Your legs must be tired: sprint 250 km; major sprint-distance counter.
+	"blazeandcave:statistics/yum_yum_yummo": 25, // Yum Yum Yummo: eat 1000 food items; large consumption counter.
 	"blazeandcave:technical/a_wizards_breakfast": 0, // tracks chorus-fruit eating for A Wizard's Breakfast; internal counter, no payout.
 	"blazeandcave:technical/a_wizards_breakfast_fail": 0, // resets/fails A Wizard's Breakfast tracking; internal fail state, no payout.
 	"blazeandcave:technical/bacap_branch_end": 0, // marks BlazeandCave branch completion internally; not player-facing, no payout.
@@ -1152,121 +1152,121 @@
 	"blazeandcave:technical/vault_hunter_count": 0, // counts opened Trial Vaults for Vault Hunter; internal counter, no payout.
 	"blazeandcave:technical/whack_a_mole_count": 0, // counts airborne Armadillo hits for Whack-a-mole; internal counter, no payout.
 	"blazeandcave:technical/you_are_a_big_cheater": 0, // flags invalid/cheat-like completion path; anti-cheat helper, no payout.
-	"blazeandcave:weaponry/a_snowballs_chance_in_hell": 10, // A snowball's chance in hell: kill a Blaze with snowballs; Nether target plus low-damage weapon.
-	"blazeandcave:weaponry/arrow_of_ultimate_obliteration": 120, // Arrow of Ultimate Obliteration: hit a mob with a Spear charge while moving 70 b/s; extreme speed/setup execution.
-	"blazeandcave:weaponry/artillery": 25, // Artillery: load nine crossbows in the hotbar; material, ammo, and preparation checklist.
-	"blazeandcave:weaponry/axeman": 30, // Axeman: attack mobs with every axe type; tool/material checklist including expensive tiers.
-	"blazeandcave:weaponry/backfire": 25, // Backfire: kill a Blaze with a Blaze Rod while both are burning; Nether melee stunt with fire risk.
+	"blazeandcave:weaponry/a_snowballs_chance_in_hell": 7, // A snowball's chance in hell: kill a Blaze with snowballs; Nether target plus low-damage weapon.
+	"blazeandcave:weaponry/arrow_of_ultimate_obliteration": 122, // Arrow of Ultimate Obliteration: hit a mob with a Spear charge while moving 70 b/s; extreme speed/setup execution.
+	"blazeandcave:weaponry/artillery": 17, // Artillery: load nine crossbows in the hotbar; material, ammo, and preparation checklist.
+	"blazeandcave:weaponry/axeman": 33, // Axeman: attack mobs with every axe type; tool/material checklist including expensive tiers.
+	"blazeandcave:weaponry/backfire": 20, // Backfire: kill a Blaze with a Blaze Rod while both are burning; Nether melee stunt with fire risk.
 	"blazeandcave:weaponry/bombs_away": 0, // Bombs Away!: craft TNT; common explosive recipe, no reward.
 	"blazeandcave:weaponry/bow_spammer": 0, // Bow Spammer: spam arrows into a mob; ordinary combat behavior, no reward.
-	"blazeandcave:weaponry/britney_spears": 35, // Britney Spears: hit mobs with every Spear type; custom weapon material checklist.
-	"blazeandcave:weaponry/death_star": 20, // Death Star: kill a mob with a Nether Star; Wither trophy used as a weapon, deliberately odd.
-	"blazeandcave:weaponry/demolitions_expert": 90, // Demolitions Expert: blow up every hostile mob with TNT; full hostile checklist plus explosive setup.
-	"blazeandcave:weaponry/diemonds": 1, // Diemonds!: hit a mob with diamonds; tiny deliberate item gag.
-	"blazeandcave:weaponry/egging_dude": 1, // Egging, Dude!: hit something with eggs; tiny projectile gag.
-	"blazeandcave:weaponry/expelliarmus": 0, // Expelliarmus!: hit a mob with a stick; trivial combat gag, no reward.
-	"blazeandcave:weaponry/explosive_fire": 2, // Explosive Fire: load a crossbow with a firework; small weapon/ammo interaction.
-	"blazeandcave:weaponry/fireworks_display": 0, // Fireworks Display: craft fireworks; normal Elytra/ammo utility, no reward.
-	"blazeandcave:weaponry/flying_colors": 0, // Flying Colors: apply a banner to a shield; simple cosmetic craft, no reward.
-	"blazeandcave:weaponry/half_heart_life": 15, // Half Heart Life: stay at half a heart for a minute; controlled low-health risk.
-	"blazeandcave:weaponry/hit_and_run": 45, // Hit and Run: kill with a Spear charge from a high-speed minecart; rail speed plus weapon timing.
-	"blazeandcave:weaponry/impiled": 140, // Impiled: hit fifty mobs in one Spear charge; massive mob grouping and precision charge setup.
-	"blazeandcave:weaponry/indiana_jones": 1, // Indiana Jones: pull a monster with a fishing rod; tiny combat utility interaction.
-	"blazeandcave:weaponry/inspector_gadget": 1, // Inspector Gadget: kill a zombie while holding a spyglass; tiny staged combat gag.
-	"blazeandcave:weaponry/its_time_consuming": 3, // It's time consuming: kill something with a clock; weak item combat, but short.
+	"blazeandcave:weaponry/britney_spears": 30, // Britney Spears: hit mobs with every Spear type; custom weapon material checklist.
+	"blazeandcave:weaponry/death_star": 15, // Death Star: kill a mob with a Nether Star; Wither trophy used as a weapon, deliberately odd.
+	"blazeandcave:weaponry/demolitions_expert": 99, // Demolitions Expert: blow up every hostile mob with TNT; full hostile checklist plus explosive setup.
+	"blazeandcave:weaponry/diemonds": 5, // Diemonds!: hit a mob with diamonds; tiny deliberate item gag.
+	"blazeandcave:weaponry/egging_dude": 5, // Egging, Dude!: hit something with eggs; tiny projectile gag.
+	"blazeandcave:weaponry/expelliarmus": 3, // Expelliarmus!: hit a mob with a stick; trivial combat gag, no reward.
+	"blazeandcave:weaponry/explosive_fire": 3, // Explosive Fire: load a crossbow with a firework; small weapon/ammo interaction.
+	"blazeandcave:weaponry/fireworks_display": 5, // Fireworks Display: craft fireworks; normal Elytra/ammo utility, no reward.
+	"blazeandcave:weaponry/flying_colors": 7, // Flying Colors: apply a banner to a shield; simple cosmetic craft, no reward.
+	"blazeandcave:weaponry/half_heart_life": 10, // Half Heart Life: stay at half a heart for a minute; controlled low-health risk.
+	"blazeandcave:weaponry/hit_and_run": 35, // Hit and Run: kill with a Spear charge from a high-speed minecart; rail speed plus weapon timing.
+	"blazeandcave:weaponry/impiled": 142, // Impiled: hit fifty mobs in one Spear charge; massive mob grouping and precision charge setup.
+	"blazeandcave:weaponry/indiana_jones": 5, // Indiana Jones: pull a monster with a fishing rod; tiny combat utility interaction.
+	"blazeandcave:weaponry/inspector_gadget": 5, // Inspector Gadget: kill a zombie while holding a spyglass; tiny staged combat gag.
+	"blazeandcave:weaponry/its_time_consuming": 5, // It's time consuming: kill something with a clock; weak item combat, but short.
 	"blazeandcave:weaponry/king_of_the_sea": 25, // King of the Sea: kill a Drowned with a trident from 30 blocks; trident plus ranged target setup.
-	"blazeandcave:weaponry/loser": 0, // Loser!: die twice within ten seconds; confusing death loop, no reward.
-	"blazeandcave:weaponry/master_shieldsman": 90, // Master Shieldsman: block/deflect an attack from every hostile monster; full hostile checklist with shield timing.
-	"blazeandcave:weaponry/multiclassed": 45, // Multiclassed: hit a mob with every weapon type; broad weapon material/custom item checklist.
-	"blazeandcave:weaponry/my_eyes": 5, // My eyes!: kill a mob with a firework explosion; small explosive projectile setup.
+	"blazeandcave:weaponry/loser": 33, // Loser!: die twice within ten seconds; confusing death loop, no reward.
+	"blazeandcave:weaponry/master_shieldsman": 42, // Master Shieldsman: block/deflect an attack from every hostile monster; full hostile checklist with shield timing.
+	"blazeandcave:weaponry/multiclassed": 20, // Multiclassed: hit a mob with every weapon type; broad weapon material/custom item checklist.
+	"blazeandcave:weaponry/my_eyes": 7, // My eyes!: kill a mob with a firework explosion; small explosive projectile setup.
 	"blazeandcave:weaponry/nice_to_mace_you": 15, // Nice to Mace You!: craft a Mace and land a smash attack; Heavy Core/Breeze Rod path plus execution.
-	"blazeandcave:weaponry/pig_fishing_tournament": 1, // Pig Fishing Tournament: pull a pig with a fishing rod; tiny animal/item gag.
-	"blazeandcave:weaponry/point_blank": 0, // Point Blank: shoot a mob at point-blank range; ordinary combat behavior, no reward.
-	"blazeandcave:weaponry/poseidon_vs_hades": 60, // Poseidon vs. Hades: kill all Nether creature types with a trident; dimension mob checklist plus weapon choice.
-	"blazeandcave:weaponry/pyrotechnic": 30, // Pyrotechnic: craft every firework shape/effect; dye, charge, and material checklist.
-	"blazeandcave:weaponry/revenge": 5, // Revenge!: blow up a Creeper with TNT; small staged explosive kill.
-	"blazeandcave:weaponry/rock_paper_shears": 1, // Rock, Paper, Shears!: beat a zombie with shears/hand gag; tiny staged combat.
+	"blazeandcave:weaponry/pig_fishing_tournament": 10, // Pig Fishing Tournament: pull a pig with a fishing rod; tiny animal/item gag.
+	"blazeandcave:weaponry/point_blank": 3, // Point Blank: shoot a mob at point-blank range; ordinary combat behavior, no reward.
+	"blazeandcave:weaponry/poseidon_vs_hades": 44, // Poseidon vs. Hades: kill all Nether creature types with a trident; dimension mob checklist plus weapon choice.
+	"blazeandcave:weaponry/pyrotechnic": 33, // Pyrotechnic: craft every firework shape/effect; dye, charge, and material checklist.
+	"blazeandcave:weaponry/revenge": 7, // Revenge!: blow up a Creeper with TNT; small staged explosive kill.
+	"blazeandcave:weaponry/rock_paper_shears": 20, // Rock, Paper, Shears!: beat a zombie with shears/hand gag; tiny staged combat.
 	"blazeandcave:weaponry/root": 0, // Weaponry: tab root only; no reward.
 	"blazeandcave:weaponry/shield_luck": 0, // Shield Luck: block an enemy attack with a shield; normal combat habit, no reward.
-	"blazeandcave:weaponry/shovel_knight": 25, // Shovel Knight: hit mobs with every shovel type; tool/material checklist including expensive tiers.
+	"blazeandcave:weaponry/shovel_knight": 20, // Shovel Knight: hit mobs with every shovel type; tool/material checklist including expensive tiers.
 	"blazeandcave:weaponry/sir_knight": 0, // Sir Knight: craft a shield; normal early combat progression, no reward.
-	"blazeandcave:weaponry/slapfish": 1, // Slapfish: hit a mob with a fish; tiny item gag.
-	"blazeandcave:weaponry/snowball_fight": 10, // Snowball Fight: use snowballs in combat; low-damage projectile setup.
-	"blazeandcave:weaponry/spear_fishing": 2, // Spear Fishing: kill a fish with a Spear; small custom weapon interaction.
+	"blazeandcave:weaponry/slapfish": 3, // Slapfish: hit a mob with a fish; tiny item gag.
+	"blazeandcave:weaponry/snowball_fight": 5, // Snowball Fight: use snowballs in combat; low-damage projectile setup.
+	"blazeandcave:weaponry/spear_fishing": 10, // Spear Fishing: kill a fish with a Spear; small custom weapon interaction.
 	"blazeandcave:weaponry/spleaf": 25, // Spleaf: kill a mob with a shovel while both stand on Big Dripleaf; plant setup plus combat timing.
 	"blazeandcave:weaponry/that_is_so_fletch": 0, // That is so fletch!: craft a fletching table; normal workstation craft, no reward.
-	"blazeandcave:weaponry/the_aquatic_hunter": 60, // The Aquatic Hunter: kill every aquatic creature with a trident; aquatic mob checklist plus weapon choice.
-	"blazeandcave:weaponry/the_mighty_hunter": 60, // The Mighty Hunter: kill every land animal with a bow; broad animal checklist with chosen weapon.
+	"blazeandcave:weaponry/the_aquatic_hunter": 42, // The Aquatic Hunter: kill every aquatic creature with a trident; aquatic mob checklist plus weapon choice.
+	"blazeandcave:weaponry/the_mighty_hunter": 75, // The Mighty Hunter: kill every land animal with a bow; broad animal checklist with chosen weapon.
 	"blazeandcave:weaponry/there_it_goes": 50, // There it goes: kill a mob at world bottom from build limit with a projectile; extreme vertical shot setup.
-	"blazeandcave:weaponry/theres_yolk_on_my_head": 15, // There's yolk on my head: land an egg onto a zombie's head; positioning and projectile timing gag.
-	"blazeandcave:weaponry/time_to_hunt": 0, // Time to Hunt!: craft a Spear; basic custom weapon craft, no reward.
-	"blazeandcave:weaponry/toasted_marshmallow": 20, // Toasted Marshmallow: kill a Ghast with a Spear; flying Nether target plus custom weapon.
+	"blazeandcave:weaponry/theres_yolk_on_my_head": 8, // There's yolk on my head: land an egg onto a zombie's head; positioning and projectile timing gag.
+	"blazeandcave:weaponry/time_to_hunt": 3, // Time to Hunt!: craft a Spear; basic custom weapon craft, no reward.
+	"blazeandcave:weaponry/toasted_marshmallow": 15, // Toasted Marshmallow: kill a Ghast with a Spear; flying Nether target plus custom weapon.
 	"blazeandcave:weaponry/viking": 0, // Viking: attack a mob with an axe; ordinary combat/tool use, no reward.
-	"blazeandcave:weaponry/warden_extinction": 220, // Warden Extinction: deal 250 hearts in one Mace hit to one-shot a Warden; top-tier damage and boss setup.
-	"blazeandcave:weaponry/when_pigs_finally_fly": 30, // When Pigs Finally Fly: pull a pig upward from 25 blocks below; fishing-rod positioning stunt.
+	"blazeandcave:weaponry/warden_extinction": 222, // Warden Extinction: deal 250 hearts in one Mace hit to one-shot a Warden; top-tier damage and boss setup.
+	"blazeandcave:weaponry/when_pigs_finally_fly": 25, // When Pigs Finally Fly: pull a pig upward from 25 blocks below; fishing-rod positioning stunt.
 	"blazeandcave:weaponry/who_ya_gonna_call": 35, // Who ya gonna call?: kill a Ghast with a firework explosion; Nether flying target plus explosive projectile setup.
 	"blazeandcave:weaponry/x_bow": 0, // X-Bow: craft a crossbow; normal weapon progression, no reward.
-	"minecraft:adventure/adventuring_time": 120, // Adventuring Time: deliberately visit every Overworld surface biome, usually with elytra/Nether routing and biome tracking; long navigation grind, not accidental.
+	"minecraft:adventure/adventuring_time": 175, // Adventuring Time: deliberately visit every Overworld surface biome, usually with elytra/Nether routing and biome tracking; long navigation grind, not accidental.
 	"minecraft:adventure/arbalistic": 95, // Arbalistic: prepare a Piercing crossbow, line up five different mobs, and kill them with one shot; fiddly setup and execution, never accidental.
-	"minecraft:adventure/avoid_vibration": 10, // Sneak 100: enter Deep Dark/Ancient City territory and deliberately sneak past a vibration trigger; small but risky targeted task.
-	"minecraft:adventure/blowback": 45, // Blowback: find Trial Chambers, fight a Breeze, then time a deflected Wind Charge kill; combat trick after structure access.
-	"minecraft:adventure/brush_armadillo": 12, // Isn't It Scute?: find an armadillo biome, bring/craft a brush, and brush it; deliberate animal lookup, low accidental chance.
-	"minecraft:adventure/bullseye": 25, // Bullseye: craft a target block, set up a 30-block shot, and hit the exact center; small build plus precision.
+	"minecraft:adventure/avoid_vibration": 5, // Sneak 100: enter Deep Dark/Ancient City territory and deliberately sneak past a vibration trigger; small but risky targeted task.
+	"minecraft:adventure/blowback": 25, // Blowback: find Trial Chambers, fight a Breeze, then time a deflected Wind Charge kill; combat trick after structure access.
+	"minecraft:adventure/brush_armadillo": 5, // Isn't It Scute?: find an armadillo biome, bring/craft a brush, and brush it; deliberate animal lookup, low accidental chance.
+	"minecraft:adventure/bullseye": 20, // Bullseye: craft a target block, set up a 30-block shot, and hit the exact center; small build plus precision.
 	"minecraft:adventure/craft_decorated_pot_using_only_sherds": 25, // Careful Restoration: brush archaeology sites until four sherds are found, then craft the pot; targeted collection, not normal play.
-	"minecraft:adventure/crafters_crafting_crafters": 18, // Crafters Crafting Crafters: build a crafter setup that crafts another crafter while you stand nearby; deliberate redstone/crafting setup.
-	"minecraft:adventure/fall_from_world_height": 35, // Caves & Cliffs: climb or build to world height, drop to the bottom, and survive with water/slime/slow falling; deliberate survival stunt.
-	"minecraft:adventure/heart_transplanter": 15, // Heart Transplanter: find Pale Garden materials, collect a Creaking Heart, and place it between aligned Pale Oak logs; uncommon biome setup.
-	"minecraft:adventure/hero_of_the_village": 50, // Hero of the Village: obtain Bad Omen, start a raid, and finish all waves; meaningful combat session from raid-ready gear.
-	"minecraft:adventure/honey_block_slide": 8, // Sticky Situation: obtain honey blocks and intentionally slide down one; simple, but requires bee/honey setup and is unlikely by accident.
-	"minecraft:adventure/kill_a_mob": 0, // Monster Hunter: Kill any hostile monster Normal survival combat; no dabloon handout.
+	"minecraft:adventure/crafters_crafting_crafters": 13, // Crafters Crafting Crafters: build a crafter setup that crafts another crafter while you stand nearby; deliberate redstone/crafting setup.
+	"minecraft:adventure/fall_from_world_height": 22, // Caves & Cliffs: climb or build to world height, drop to the bottom, and survive with water/slime/slow falling; deliberate survival stunt.
+	"minecraft:adventure/heart_transplanter": 12, // Heart Transplanter: find Pale Garden materials, collect a Creaking Heart, and place it between aligned Pale Oak logs; uncommon biome setup.
+	"minecraft:adventure/hero_of_the_village": 35, // Hero of the Village: obtain Bad Omen, start a raid, and finish all waves; meaningful combat session from raid-ready gear.
+	"minecraft:adventure/honey_block_slide": 15, // Sticky Situation: obtain honey blocks and intentionally slide down one; simple, but requires bee/honey setup and is unlikely by accident.
+	"minecraft:adventure/kill_a_mob": 20, // Monster Hunter: Kill any hostile monster Normal survival combat; no dabloon handout.
 	"minecraft:adventure/kill_all_mobs": 150, // Monsters Hunted: track down and kill every hostile mob type; broad late-game checklist with awkward spawns and dimensions.
-	"minecraft:adventure/kill_mob_near_sculk_catalyst": 12, // It spreads!: obtain/find a Sculk Catalyst and kill a mob beside it; deliberate Deep Dark/sculk interaction.
+	"minecraft:adventure/kill_mob_near_sculk_catalyst": 15, // It spreads!: obtain/find a Sculk Catalyst and kill a mob beside it; deliberate Deep Dark/sculk interaction.
 	"minecraft:adventure/lighten_up": 3, // Lighten Up: find/craft a Copper Bulb and scrape it with an axe; tiny intentional copper action.
-	"minecraft:adventure/lightning_rod_with_villager_no_fire": 40, // Surge Protector: position a villager and lightning rod, then wait for storm or use Channeling without burning them; annoying weather/setup task.
-	"minecraft:adventure/minecraft_trials_edition": 25, // Minecraft: Trial(s) Edition: locate and enter a Trial Chamber; structure hunt with combat-ready expectations.
-	"minecraft:adventure/ol_betsy": 2, // Ol' Betsy: craft/load a crossbow and fire it; small deliberate step, but close to normal weapon use.
+	"minecraft:adventure/lightning_rod_with_villager_no_fire": 35, // Surge Protector: position a villager and lightning rod, then wait for storm or use Channeling without burning them; annoying weather/setup task.
+	"minecraft:adventure/minecraft_trials_edition": 10, // Minecraft: Trial(s) Edition: locate and enter a Trial Chamber; structure hunt with combat-ready expectations.
+	"minecraft:adventure/ol_betsy": 3, // Ol' Betsy: craft/load a crossbow and fire it; small deliberate step, but close to normal weapon use.
 	"minecraft:adventure/overoverkill": 70, // Meteor Strike: obtain a Mace/Heavy Core path and stack enough fall/smash damage for 50 hearts; late-game combat setup.
-	"minecraft:adventure/play_jukebox_in_meadows": 20, // The Sound of Music: obtain a music disc/jukebox and bring it to a Meadows biome; deliberate travel plus item setup.
-	"minecraft:adventure/read_power_of_chiseled_bookshelf": 8, // The Power of Books: craft bookshelf/comparator wiring and read the signal; small redstone setup, not accidental.
-	"minecraft:adventure/revaulting": 35, // Revaulting: get an Ominous Bottle, clear Ominous Trial spawners, earn a key, then open an Ominous Vault; real Trial Chamber objective.
+	"minecraft:adventure/play_jukebox_in_meadows": 5, // The Sound of Music: obtain a music disc/jukebox and bring it to a Meadows biome; deliberate travel plus item setup.
+	"minecraft:adventure/read_power_of_chiseled_bookshelf": 5, // The Power of Books: craft bookshelf/comparator wiring and read the signal; small redstone setup, not accidental.
+	"minecraft:adventure/revaulting": 30, // Revaulting: get an Ominous Bottle, clear Ominous Trial spawners, earn a key, then open an Ominous Vault; real Trial Chamber objective.
 	"minecraft:adventure/root": 0, // Adventure: tab root only; no reward.
 	"minecraft:adventure/salvage_sherd": 15, // Respecting the Remnants: locate suspicious sand/gravel and brush out a sherd; focused archaeology action.
 	"minecraft:adventure/shoot_arrow": 0, // Take Aim: shoot something with a bow; ordinary combat/tool use, so no surprise payout.
 	"minecraft:adventure/sleep_in_bed": 0, // Sweet dreams: sleep in a bed; normal survival utility, so no reward.
-	"minecraft:adventure/sniper_duel": 40, // Sniper Duel: keep a skeleton alive at 50+ blocks and land the kill shot; deliberate positioning and aim.
+	"minecraft:adventure/sniper_duel": 25, // Sniper Duel: keep a skeleton alive at 50+ blocks and land the kill shot; deliberate positioning and aim.
 	"minecraft:adventure/spear_many_mobs": 30, // Mob Kabob: gather five mobs and hit them in one Spear charge; mob setup plus timing.
-	"minecraft:adventure/spyglass_at_dragon": 15, // Is it a Plane?: bring a spyglass to the End and look at the dragon during the fight; intentional but easy once dragon-ready.
+	"minecraft:adventure/spyglass_at_dragon": 10, // Is it a Plane?: bring a spyglass to the End and look at the dragon during the fight; intentional but easy once dragon-ready.
 	"minecraft:adventure/spyglass_at_ghast": 10, // Is it a Balloon?: bring a spyglass into the Nether and sight a Ghast; small dimension/tracking task.
 	"minecraft:adventure/spyglass_at_parrot": 10, // Is it a Bird?: find a jungle parrot and use a spyglass; biome/mob lookup, low accidental chance.
 	"minecraft:adventure/summon_iron_golem": 15, // Hired Help: spend iron blocks plus carved pumpkin to create a golem; resource cost is real but setup is simple.
 	"minecraft:adventure/throw_trident": 3, // A Throwaway Joke: obtain a trident and throw it; deliberate item use but only a single action once acquired.
-	"minecraft:adventure/totem_of_undying": 35, // Postmortal: obtain a Totem from raid/mansion content and intentionally trigger it; consumes a valuable item.
+	"minecraft:adventure/totem_of_undying": 10, // Postmortal: obtain a Totem from raid/mansion content and intentionally trigger it; consumes a valuable item.
 	"minecraft:adventure/trade": 0, // What a Deal!: make any villager trade; normal economy interaction, so no reward.
-	"minecraft:adventure/trade_at_world_height": 45, // Star Trader: move/build a villager to build height and trade there; transport/building nuisance with low accidental chance.
+	"minecraft:adventure/trade_at_world_height": 30, // Star Trader: move/build a villager to build height and trade there; transport/building nuisance with low accidental chance.
 	"minecraft:adventure/trim_with_all_exclusive_armor_patterns": 100, // Smithing With Style: find every trim template across structures and apply each; long exploration checklist with diamond/material costs.
 	"minecraft:adventure/trim_with_any_armor_pattern": 15, // Crafting a New Look: find one smithing template, gather trim material, and apply it; deliberate cosmetic milestone.
 	"minecraft:adventure/two_birds_one_arrow": 50, // Two Birds, One Arrow: arrange two Phantoms and kill both with one Piercing arrow; rare mob timing plus shot setup.
 	"minecraft:adventure/under_lock_and_key": 15, // Under Lock and Key: clear Trial Chamber spawners for a key and open a Vault; small structure objective.
-	"minecraft:adventure/use_lodestone": 20, // Country Lode, Take Me Home: craft/place a Lodestone and bind a compass; netherite/resource cost makes it deliberate.
-	"minecraft:adventure/very_very_frightening": 45, // Very Very Frightening: strike a villager with lightning via storm/Channeling setup; weather, trident, and villager positioning.
+	"minecraft:adventure/use_lodestone": 5, // Country Lode, Take Me Home: craft/place a Lodestone and bind a compass; netherite/resource cost makes it deliberate.
+	"minecraft:adventure/very_very_frightening": 35, // Very Very Frightening: strike a villager with lightning via storm/Channeling setup; weather, trident, and villager positioning.
 	"minecraft:adventure/voluntary_exile": 5, // I've got a bad feeling about this: kill a raid captain; can happen during outpost combat, so only a small reward.
-	"minecraft:adventure/walk_on_powder_snow_with_leather_boots": 8, // Light as a Rabbit: find Powder Snow and wear leather boots over it; intentional biome/item interaction.
-	"minecraft:adventure/who_needs_rockets": 8, // Who Needs Rockets?: obtain a Wind Charge and launch yourself 8 blocks upward; small deliberate Trial Chambers item use.
-	"minecraft:adventure/whos_the_pillager_now": 15, // Who's the Pillager Now?: kill a Pillager with a crossbow; targeted role-reversal combat, mildly deliberate.
-	"minecraft:end/dragon_breath": 25, // You Need a Mint: reach the End fight, bring bottles, and collect breath from the dragon attack; intuitive combat-side objective.
-	"minecraft:end/dragon_egg": 50, // The Next Generation: defeat the dragon and safely collect the egg; one-time boss trophy with deliberate pickup.
-	"minecraft:end/elytra": 80, // Sky's the Limit: reach outer End, find an End City ship, and loot the Elytra; major post-dragon exploration reward.
+	"minecraft:adventure/walk_on_powder_snow_with_leather_boots": 12, // Light as a Rabbit: find Powder Snow and wear leather boots over it; intentional biome/item interaction.
+	"minecraft:adventure/who_needs_rockets": 15, // Who Needs Rockets?: obtain a Wind Charge and launch yourself 8 blocks upward; small deliberate Trial Chambers item use.
+	"minecraft:adventure/whos_the_pillager_now": 7, // Who's the Pillager Now?: kill a Pillager with a crossbow; targeted role-reversal combat, mildly deliberate.
+	"minecraft:end/dragon_breath": 15, // You Need a Mint: reach the End fight, bring bottles, and collect breath from the dragon attack; intuitive combat-side objective.
+	"minecraft:end/dragon_egg": 25, // The Next Generation: defeat the dragon and safely collect the egg; one-time boss trophy with deliberate pickup.
+	"minecraft:end/elytra": 30, // Sky's the Limit: reach outer End, find an End City ship, and loot the Elytra; major post-dragon exploration reward.
 	"minecraft:end/enter_end_gateway": 10, // Remote Getaway: use the End gateway after the dragon; natural follow-up, low effort once the fight is won.
-	"minecraft:end/find_end_city": 45, // The City at the End of the Game: bridge/fly across outer islands until an End City is found; meaningful End exploration.
-	"minecraft:end/kill_dragon": 50, // Free the End: gear up, locate stronghold, enter End, destroy crystals, and kill the dragon; core boss milestone.
-	"minecraft:end/levitate": 70, // Great View From Up Here: survive Shulker levitation for 50 blocks; requires End City access and controlled risk.
-	"minecraft:end/respawn_dragon": 60, // The End... Again: craft four end crystals and intentionally respawn the dragon; expensive repeat-boss setup.
+	"minecraft:end/find_end_city": 12, // The City at the End of the Game: bridge/fly across outer islands until an End City is found; meaningful End exploration.
+	"minecraft:end/kill_dragon": 100, // Free the End: gear up, locate stronghold, enter End, destroy crystals, and kill the dragon; core boss milestone.
+	"minecraft:end/levitate": 42, // Great View From Up Here: survive Shulker levitation for 50 blocks; requires End City access and controlled risk.
+	"minecraft:end/respawn_dragon": 42, // The End... Again: craft four end crystals and intentionally respawn the dragon; expensive repeat-boss setup.
 	"minecraft:end/root": 0, // The End: tab root only; no reward.
 	"minecraft:husbandry/allay_deliver_cake_to_note_block": 30, // Birthday Song: rescue/find an Allay, craft cake and note block, then set up delivery; deliberate multi-item Allay task.
 	"minecraft:husbandry/allay_deliver_item_to_player": 5, // You've Got a Friend in Me: find/rescue an Allay and let it return an item; small reward because the Allay is the real setup.
 	"minecraft:husbandry/axolotl_in_a_bucket": 10, // The Cutest Predator: find an Axolotl in lush/water caves and bucket it; targeted mob capture.
 	"minecraft:husbandry/balanced_diet": 130, // A Balanced Diet: gather and eat every edible item, including rare/awkward foods; long checklist best attempted with established storage.
-	"minecraft:husbandry/break_diamond_hoe": 80, // Serious Dedication: spend diamonds on a hoe and fully wear it down; intentionally wasteful durability grind.
+	"minecraft:husbandry/break_diamond_hoe": 50, // Serious Dedication: spend diamonds on a hoe and fully wear it down; intentionally wasteful durability grind.
 	"minecraft:husbandry/bred_all_animals": 125, // Overpopulation: locate, transport, and breed every breedable animal; broad biome/item checklist.
 	"minecraft:husbandry/breed_an_animal": 0, // Repopulation: breed any animal; ordinary farm progression, so no surprise payout.
 	"minecraft:husbandry/complete_catalogue": 85, // A Complete Catalogue: find villages/swamp huts for all cat variants and tame each; long animal-variant hunt.
@@ -1275,62 +1275,62 @@
 	"minecraft:husbandry/froglights": 35, // Incandescent!: bring frogs to Magma Cubes or route cubes to frogs for all three froglights; awkward biome/mob setup.
 	"minecraft:husbandry/kill_axolotl_target": 12, // The Healing Power of Friendship: bucket/find an Axolotl, engage a target, and let it assist; small combat setup.
 	"minecraft:husbandry/leash_all_frog_variants": 45, // When the Squad Hops into Town: collect all frog variants from different climates and leash each; travel plus animal handling.
-	"minecraft:husbandry/make_a_sign_glow": 2, // Glow and Behold: get a glow ink sac and apply it to a sign; tiny deliberate cosmetic action.
-	"minecraft:husbandry/obtain_netherite_hoe": 85, // Serious Dedication upgrade: craft a diamond hoe, spend Netherite Scrap/Ingot plus upgrade access, and make an item players rarely use by accident.
+	"minecraft:husbandry/make_a_sign_glow": 3, // Glow and Behold: get a glow ink sac and apply it to a sign; tiny deliberate cosmetic action.
+	"minecraft:husbandry/obtain_netherite_hoe": 63, // Serious Dedication upgrade: craft a diamond hoe, spend Netherite Scrap/Ingot plus upgrade access, and make an item players rarely use by accident.
 	"minecraft:husbandry/obtain_sniffer_egg": 20, // Life... uhh... finds a way: locate warm ocean ruins/suspicious sand and brush for a Sniffer Egg; archaeology hunt with RNG.
 	"minecraft:husbandry/place_dried_ghast_in_water": 15, // Stay Hydrated: obtain a Dried Ghast block and place it in water; deliberate Nether-related setup.
 	"minecraft:husbandry/plant_any_sniffer_seed": 6, // Planting the Past: obtain Sniffer seeds and plant one; small payoff after sniffer/archaeology progression.
-	"minecraft:husbandry/plant_seed": 0, // A Seedy Place: plant a seed; normal farming progression, so no reward.
+	"minecraft:husbandry/plant_seed": 3, // A Seedy Place: plant a seed; normal farming progression, so no reward.
 	"minecraft:husbandry/remove_wolf_armor": 1, // Shear Brilliance: armor a wolf and remove the armor with shears; tiny deliberate pet interaction.
 	"minecraft:husbandry/repair_wolf_armor": 5, // Good as New: gather Armadillo Scutes and repair damaged wolf armor; small animal/material setup.
-	"minecraft:husbandry/ride_a_boat_with_a_goat": 18, // Whatever Floats Your Goat!: find a mountain goat, craft/place a boat, and maneuver the goat into it; unlikely accidental and goats are uncommon.
+	"minecraft:husbandry/ride_a_boat_with_a_goat": 14, // Whatever Floats Your Goat!: find a mountain goat, craft/place a boat, and maneuver the goat into it; unlikely accidental and goats are uncommon.
 	"minecraft:husbandry/root": 0, // Animals: tab root only; no reward.
 	"minecraft:husbandry/safely_harvest_honey": 5, // Bee Our Guest: find or keep bees, place a campfire, and bottle honey safely; simple but intentional bee setup.
-	"minecraft:husbandry/silk_touch_nest": 25, // Total Beelocation: get Silk Touch, find a nest with three bees inside, and move it safely; tool enchant plus timing.
-	"minecraft:husbandry/tactical_fishing": 8, // Tactical Fishing: bucket-catch a fish instead of using a rod; targeted water-mob capture.
+	"minecraft:husbandry/silk_touch_nest": 19, // Total Beelocation: get Silk Touch, find a nest with three bees inside, and move it safely; tool enchant plus timing.
+	"minecraft:husbandry/tactical_fishing": 1, // Tactical Fishing: bucket-catch a fish instead of using a rod; targeted water-mob capture.
 	"minecraft:husbandry/tadpole_in_a_bucket": 10, // Bukkit bukkit: breed/find frogs, get tadpoles, and bucket one; animal lifecycle setup.
 	"minecraft:husbandry/tame_an_animal": 3, // Leader of the Pack: tame a wolf or other animal; common but still an intentional interaction.
-	"minecraft:husbandry/uh_oh": 8, // Uh Oh: have a Sulfur Cube absorb TNT; custom mob/block setup, not normal play.
+	"minecraft:husbandry/uh_oh": 10, // Uh Oh: have a Sulfur Cube absorb TNT; custom mob/block setup, not normal play.
 	"minecraft:husbandry/wax_off": 1, // Wax Off: wax copper first, then scrape it with an axe; tiny deliberate copper state change.
 	"minecraft:husbandry/wax_on": 1, // Wax On: gather honeycomb and wax copper; tiny deliberate copper state change.
 	"minecraft:husbandry/whole_pack": 90, // The Whole Pack: find and tame every wolf variant across biomes; long travel and pet-management checklist.
-	"minecraft:nether/all_effects": 275, // How Did We Get Here?: coordinate every status effect at once, including beacon, raid, food, potion, and mob effects; top-tier setup challenge.
-	"minecraft:nether/all_potions": 90, // A Furious Cocktail: brew and apply every potion effect together; potion checklist and timing, but far easier than all effects.
-	"minecraft:nether/brew_potion": 5, // Local Brewery: reach Nether materials, craft a stand, and brew a potion; basic but deliberate brewing unlock.
-	"minecraft:nether/charge_respawn_anchor": 25, // Not Quite 'Nine' Lives: gather Crying Obsidian and Glowstone, craft/place anchor, and fully charge it; Nether resource setup.
+	"minecraft:nether/all_effects": 333, // How Did We Get Here?: coordinate every status effect at once, including beacon, raid, food, potion, and mob effects; top-tier setup challenge.
+	"minecraft:nether/all_potions": 99, // A Furious Cocktail: brew and apply every potion effect together; potion checklist and timing, but far easier than all effects.
+	"minecraft:nether/brew_potion": 13, // Local Brewery: reach Nether materials, craft a stand, and brew a potion; basic but deliberate brewing unlock.
+	"minecraft:nether/charge_respawn_anchor": 12, // Not Quite 'Nine' Lives: gather Crying Obsidian and Glowstone, craft/place anchor, and fully charge it; Nether resource setup.
 	"minecraft:nether/create_beacon": 70, // Bring Home the Beacon: collect three wither skulls, kill the Wither, and place a beacon; major boss/resource milestone.
 	"minecraft:nether/create_full_beacon": 90, // Beaconator: build a full beacon pyramid with large mineral cost; expensive late-game resource sink.
 	"minecraft:nether/distract_piglin": 3, // Oh, Shiny!: throw gold to a Piglin; common Nether behavior, so only tiny deliberate payout.
-	"minecraft:nether/explore_nether": 45, // Hot Tourist Destination: visit every Nether biome; exploration route with danger, usually after Nether-ready gear.
-	"minecraft:nether/fast_travel": 75, // Subspace Bubble: build/use Nether travel for 7km Overworld distance; long measured travel objective.
-	"minecraft:nether/find_bastion": 35, // Those Were the Days: locate and enter a Bastion; dangerous structure hunt.
-	"minecraft:nether/find_fortress": 30, // A Terrible Fortress: locate and enter a Nether Fortress; required but still a meaningful Nether search.
-	"minecraft:nether/get_wither_skull": 12, // Spooky Scary Skeleton: kill a few Wither Skeletons for a skull/head; discounted for easy server drops, but fortress danger still matters.
-	"minecraft:nether/loot_bastion": 40, // War Pigs: enter a Bastion and loot a chest while managing Piglins/Brutes; risky structure objective.
-	"minecraft:nether/netherite_armor": 75, // A Knight to Nether Forget: upgrade a full diamond armor set with netherite materials/templates; expensive late-game gear goal.
-	"minecraft:nether/obtain_ancient_debris": 35, // Nether Say Die: mine Ancient Debris in lava-level Nether terrain; targeted rare-resource mining.
-	"minecraft:nether/obtain_blaze_rod": 8, // Into Fire: find a fortress and kill Blazes for rods; expected progression but not accidental.
-	"minecraft:nether/obtain_crying_obsidian": 8, // Who is Cutting Onions?: loot/barter/find Crying Obsidian; modest Nether resource hunt.
+	"minecraft:nether/explore_nether": 20, // Hot Tourist Destination: visit every Nether biome; exploration route with danger, usually after Nether-ready gear.
+	"minecraft:nether/fast_travel": 19, // Subspace Bubble: build/use Nether travel for 7km Overworld distance; long measured travel objective.
+	"minecraft:nether/find_bastion": 10, // Those Were the Days: locate and enter a Bastion; dangerous structure hunt.
+	"minecraft:nether/find_fortress": 10, // A Terrible Fortress: locate and enter a Nether Fortress; required but still a meaningful Nether search.
+	"minecraft:nether/get_wither_skull": 17, // Spooky Scary Skeleton: kill a few Wither Skeletons for a skull/head; discounted for easy server drops, but fortress danger still matters.
+	"minecraft:nether/loot_bastion": 10, // War Pigs: enter a Bastion and loot a chest while managing Piglins/Brutes; risky structure objective.
+	"minecraft:nether/netherite_armor": 68, // A Knight to Nether Forget: upgrade a full diamond armor set with netherite materials/templates; expensive late-game gear goal.
+	"minecraft:nether/obtain_ancient_debris": 33, // Nether Say Die: mine Ancient Debris in lava-level Nether terrain; targeted rare-resource mining.
+	"minecraft:nether/obtain_blaze_rod": 5, // Into Fire: find a fortress and kill Blazes for rods; expected progression but not accidental.
+	"minecraft:nether/obtain_crying_obsidian": 3, // Who is Cutting Onions?: loot/barter/find Crying Obsidian; modest Nether resource hunt.
 	"minecraft:nether/return_to_sender": 12, // Return to Sender: reflect a Ghast fireball back for the kill; simple but timing/risk based.
-	"minecraft:nether/ride_strider": 8, // This Boat Has Legs: saddle/control a Strider with warped fungus gear; deliberate Nether mobility setup.
-	"minecraft:nether/ride_strider_in_overworld_lava": 30, // Feels Like Home: transport a Strider to Overworld lava and ride it there; awkward mob transport.
+	"minecraft:nether/ride_strider": 10, // This Boat Has Legs: saddle/control a Strider with warped fungus gear; deliberate Nether mobility setup.
+	"minecraft:nether/ride_strider_in_overworld_lava": 33, // Feels Like Home: transport a Strider to Overworld lava and ride it there; awkward mob transport.
 	"minecraft:nether/root": 0, // Nether: tab root only; no reward.
-	"minecraft:nether/summon_wither": 35, // Withering Heights: gather skulls/soul sand and choose a safe arena to summon the Wither; skulls discounted, setup still deliberate.
-	"minecraft:nether/uneasy_alliance": 95, // Uneasy Alliance: move a Ghast through a portal to the Overworld and kill it there; very awkward transport/combat challenge.
-	"minecraft:story/cure_zombie_villager": 25, // Zombie Doctor: capture a zombie villager, brew/apply Weakness, spend a golden apple, and wait safely; deliberate villager setup.
+	"minecraft:nether/summon_wither": 13, // Withering Heights: gather skulls/soul sand and choose a safe arena to summon the Wither; skulls discounted, setup still deliberate.
+	"minecraft:nether/uneasy_alliance": 69, // Uneasy Alliance: move a Ghast through a portal to the Overworld and kill it there; very awkward transport/combat challenge.
+	"minecraft:story/cure_zombie_villager": 10, // Zombie Doctor: capture a zombie villager, brew/apply Weakness, spend a golden apple, and wait safely; deliberate villager setup.
 	"minecraft:story/deflect_arrow": 0, // Not Today, Thank You: block a skeleton arrow with a shield; ordinary early combat, so no surprise payout.
-	"minecraft:story/enchant_item": 20, // Enchanter: obtain diamonds/obsidian/book materials and craft/use an enchanting table; deliberate gear progression.
-	"minecraft:story/enter_the_end": 30, // The End?: locate stronghold, fill the portal, and enter; major progression gate.
-	"minecraft:story/enter_the_nether": 12, // We Need to Go Deeper: gather or cast obsidian, light a portal, and enter; intentional early-mid progression.
-	"minecraft:story/follow_ender_eye": 20, // Eye Spy: craft Eyes of Ender and start stronghold tracking; deliberate pre-End step.
-	"minecraft:story/form_obsidian": 3, // Ice Bucket Challenge: make/mine obsidian; common progression material, small reward only.
-	"minecraft:story/iron_tools": 0, // Isn't It Iron Pick: craft an iron pickaxe; normal progression, so no reward.
+	"minecraft:story/enchant_item": 12, // Enchanter: obtain diamonds/obsidian/book materials and craft/use an enchanting table; deliberate gear progression.
+	"minecraft:story/enter_the_end": 10, // The End?: locate stronghold, fill the portal, and enter; major progression gate.
+	"minecraft:story/enter_the_nether": 13, // We Need to Go Deeper: gather or cast obsidian, light a portal, and enter; intentional early-mid progression.
+	"minecraft:story/follow_ender_eye": 10, // Eye Spy: craft Eyes of Ender and start stronghold tracking; deliberate pre-End step.
+	"minecraft:story/form_obsidian": 5, // Ice Bucket Challenge: make/mine obsidian; common progression material, small reward only.
+	"minecraft:story/iron_tools": 5, // Isn't It Iron Pick: craft an iron pickaxe; normal progression, so no reward.
 	"minecraft:story/lava_bucket": 0, // Hot Stuff: pick up lava in a bucket; common utility action, so no reward.
-	"minecraft:story/mine_diamond": 15, // Diamonds!: find and mine diamonds; intuitive targeted resource milestone worth a small payout.
-	"minecraft:story/mine_stone": 0, // Stone Age: mine stone with a pickaxe; tutorial action, no reward.
-	"minecraft:story/obtain_armor": 0, // Suit Up: craft or equip iron armor; normal survival progression, so no reward.
+	"minecraft:story/mine_diamond": 18, // Diamonds!: find and mine diamonds; intuitive targeted resource milestone worth a small payout.
+	"minecraft:story/mine_stone": 25, // Stone Age: mine stone with a pickaxe; tutorial action, no reward.
+	"minecraft:story/obtain_armor": 5, // Suit Up: craft or equip iron armor; normal survival progression, so no reward.
 	"minecraft:story/root": 0, // Benchmarking: story tab root only; no reward.
-	"minecraft:story/shiny_gear": 20, // Cover Me With Diamonds: obtain diamond armor; deliberate gear investment beyond normal iron survival.
-	"minecraft:story/smelt_iron": 0, // Acquire Hardware: smelt an iron ingot; normal progression, so no reward.
+	"minecraft:story/shiny_gear": 15, // Cover Me With Diamonds: obtain diamond armor; deliberate gear investment beyond normal iron survival.
+	"minecraft:story/smelt_iron": 3, // Acquire Hardware: smelt an iron ingot; normal progression, so no reward.
 	"minecraft:story/upgrade_tools": 0 // Getting an Upgrade: craft a stone pickaxe; starter progression, so no reward.
 }

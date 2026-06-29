@@ -14,7 +14,7 @@ const ITEM_SUBMISSION_TASK_ID = 'item_submission'
 const ADVANCEMENT_BONUS_TASK_ID = 'advancement_bonus'
 const RESET_HOUR = 4
 const RESET_TIME_ZONE = 'Europe/London'
-const DEFAULT_ITEM_SUBMISSIONS_PATH = join(process.cwd(), 'content', 'daily-item-submissions.json')
+const DEFAULT_ITEM_SUBMISSIONS_PATH = join(process.cwd(), 'content', 'daily-item-submissions.jsonc')
 
 interface DailyItemConfig {
 	item: string
@@ -524,7 +524,7 @@ export class DailiesService {
 			throw new Error(`Daily item submissions file does not exist: ${path}`)
 		}
 
-		const parsed = JSON.parse(readFileSync(path, 'utf8')) as DailyItemConfig[]
+		const parsed = JSON.parse(stripJsonComments(readFileSync(path, 'utf8'))) as DailyItemConfig[]
 		const valid = parsed.filter((config) =>
 			typeof config.item === 'string'
 			&& config.item.includes(':')
@@ -533,7 +533,7 @@ export class DailiesService {
 			&& Number.isFinite(config.dabloons_per_item)
 			&& config.min >= 1
 			&& config.max >= config.min
-			&& config.dabloons_per_item > 0
+			&& config.dabloons_per_item >= 0
 		)
 
 		if (valid.length === 0) {
@@ -551,6 +551,57 @@ function deterministicInt(seed: string, maxExclusive: number) {
 
 	const hex = createHash('sha256').update(seed).digest('hex').slice(0, 12)
 	return Number.parseInt(hex, 16) % maxExclusive
+}
+
+function stripJsonComments(jsonc: string) {
+	let json = ''
+	let inString = false
+	let escaped = false
+
+	for (let index = 0; index < jsonc.length; index++) {
+		const current = jsonc.charAt(index)
+		const next = jsonc.charAt(index + 1)
+
+		if (inString) {
+			json += current
+			if (escaped) {
+				escaped = false
+			} else if (current === '\\') {
+				escaped = true
+			} else if (current === '"') {
+				inString = false
+			}
+			continue
+		}
+
+		if (current === '"') {
+			inString = true
+			json += current
+			continue
+		}
+
+		if (current === '/' && next === '/') {
+			while (index < jsonc.length && jsonc.charAt(index) !== '\n') {
+				index++
+			}
+			if (index < jsonc.length) json += '\n'
+			continue
+		}
+
+		if (current === '/' && next === '*') {
+			index += 2
+			while (index + 1 < jsonc.length && !(jsonc.charAt(index) === '*' && jsonc.charAt(index + 1) === '/')) {
+				if (jsonc.charAt(index) === '\n') json += '\n'
+				index++
+			}
+			index++
+			continue
+		}
+
+		json += current
+	}
+
+	return json
 }
 
 function currentDailyPeriodKey(now = new Date()) {

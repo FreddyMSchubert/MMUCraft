@@ -1,0 +1,2428 @@
+[
+	{
+		"item": "minecraft:acacia_door",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:acacia_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:acacia_sapling",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:activator_rail",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:allium",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:amethyst_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:amethyst_cluster",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:amethyst_shard",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:angler_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:anvil",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:apple",
+		"min": 3,
+		"max": 20,
+		"dabloons_per_item": 0.5
+	},
+	{
+		"item": "minecraft:archer_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:armadillo_scute",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:arms_up_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:axolotl_bucket",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:azalea",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:azalea_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:azure_bluet",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bamboo_mosaic_slab",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bee_nest",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:beehive",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:beetroot",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:beetroot_soup",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bell",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:big_dripleaf",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:birch_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:birch_pressure_plate",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:birch_sapling",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:black_banner",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:black_concrete_powder",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:black_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:black_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:blade_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:blue_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:blue_egg",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:blue_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:blue_ice",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:blue_orchid",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bolt_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bone_meal",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bookshelf",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bordure_indented_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bowl",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:brain_coral",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:brewer_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bricks",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:brown_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:brown_egg",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:brown_glazed_terracotta",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:brown_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:brush",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bubble_coral_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:burn_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:bush",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cactus_flower",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:calcite",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:calibrated_sculk_sensor",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:campfire",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:candle",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:carrot_on_a_stick",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cherry_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cherry_sapling",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cherry_stairs",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:chiseled_bookshelf",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:chiseled_cinnabar",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:chiseled_copper",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:chiseled_red_sandstone",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:chiseled_resin_bricks",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:chiseled_sulfur",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:chiseled_tuff_bricks",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:clay",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:clock",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:closed_eyeblossom",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:coal_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:coal_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:coarse_dirt",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:coast_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cobweb",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cocoa_beans",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:compass",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_bars",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_bulb",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_golem_statue",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_grate",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_hoe",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_lantern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_sword",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:copper_torch",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cornflower",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cracked_deepslate_bricks",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:crafter",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:creaking_heart",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:creeper_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:creeper_head",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:crying_obsidian",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cut_sandstone_slab",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cyan_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cyan_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:cyan_wool",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dandelion",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:danger_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dark_oak_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dark_oak_sapling",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dark_oak_trapdoor",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:daylight_detector",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dead_fire_coral",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:deepslate_coal_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:deepslate_copper_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:deepslate_diamond_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:deepslate_emerald_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:deepslate_gold_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:deepslate_iron_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:deepslate_lapis_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:deepslate_redstone_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:detector_rail",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:diamond_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:diamond_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:diorite_wall",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dirt",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dried_kelp",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dripstone_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:dune_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:egg",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:emerald_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:emerald_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:explorer_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:eye_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:field_masoned_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:fire_charge",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:firefly_bush",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:firework_rocket",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:flint",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:flow_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:flow_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:flow_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:flower_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:flowering_azalea_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:friend_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:furnace_minecart",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:gilded_blackstone",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:glistering_melon_slice",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:globe_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:glow_ink_sac",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:glow_item_frame",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:glow_lichen",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:glowstone",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:goat_horn",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:gold_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:gold_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:golden_dandelion",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:golden_shovel",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:golden_spear",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:grass_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:gray_concrete",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:gray_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:gray_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:green_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:green_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:grindstone",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:guster_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:guster_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:hanging_roots",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:heart_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:heartbreak_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:honey_bottle",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:honeycomb",
+		"min": 1,
+		"max": 8,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:horn_coral_fan",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:host_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:howl_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:ink_sac",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:iron_door",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:iron_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:iron_spear",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:jack_o_lantern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:jukebox",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:jungle_fence_gate",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:jungle_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:jungle_sapling",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:lapis_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:lapis_lazuli",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:lapis_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:leather",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:light_blue_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:light_blue_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:light_gray_carpet",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:light_gray_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:light_gray_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:light_weighted_pressure_plate",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:lilac",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:lily_of_the_valley",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:lime_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:lime_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:lime_terracotta",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:magenta_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:magenta_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:magma_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mangrove_chest_boat",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mangrove_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mangrove_propagule",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:map",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:melon_slice",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:milk_bucket",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:miner_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mojang_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mourner_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mud_brick_slab",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mud_brick_stairs",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mud_brick_wall",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mud_bricks",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:muddy_mangrove_roots",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mushroom_stem",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_11",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_13",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_5",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_blocks",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_cat",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_chirp",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_creator",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_creator_music_box",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_far",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_lava_chicken",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_mall",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_mellohi",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_otherside",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_precipice",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_relic",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_stal",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_strad",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_tears",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_wait",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:music_disc_ward",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:mycelium",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:nautilus_shell",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:oak_button",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:oak_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:oak_sapling",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:obsidian",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:ochre_froglight",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:ominous_bottle",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:ominous_trial_key",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:open_eyeblossom",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:orange_bundle",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:orange_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:orange_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:orange_stained_glass",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:orange_tulip",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:oxeye_daisy",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:packed_ice",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:packed_mud",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pale_hanging_moss",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pale_oak_fence",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pale_oak_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pale_oak_sapling",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:paper",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pearlescent_froglight",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:peony",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pink_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pink_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pink_petals",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pink_tulip",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pitcher_plant",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pitcher_pod",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:player_head",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:plenty_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:polished_granite_stairs",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:poppy",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:potent_sulfur",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:potion",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:powder_snow_bucket",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:prismarine",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:prismarine_crystals",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:prismarine_shard",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:prize_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pufferfish",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:pufferfish_bucket",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:purple_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:purple_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:rabbit",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:rabbit_foot",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:rabbit_hide",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:rabbit_stew",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:rail",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:raiser_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:raw_copper",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:raw_copper_block",
+		"min": 5,
+		"max": 30,
+		"dabloons_per_item": 0.8
+	},
+	{
+		"item": "minecraft:raw_gold",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:raw_gold_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:raw_iron",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:raw_iron_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:red_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:red_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:red_tulip",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:redstone_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:redstone_ore",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:resin_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:resin_brick",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:rose_bush",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:rotten_flesh",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sand",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:scrape_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sculk",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sculk_catalyst",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sculk_sensor",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sculk_shrieker",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sculk_vein",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sea_lantern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sea_pickle",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sentry_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:shaper_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sheaf_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:shelter_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:short_grass",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:silence_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:skull_banner_pattern",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:skull_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:slime_block",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:smooth_basalt",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sniffer_egg",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:snort_pottery_sherd",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:spectral_arrow",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:splash_potion",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sponge",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:spore_blossom",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:spruce_leaves",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:spruce_sapling",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:spruce_sign",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sticky_piston",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sunflower",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:suspicious_gravel",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:suspicious_sand",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:sweet_berries",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:tadpole_bucket",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:target",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:tide_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:tinted_glass",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:tnt_minecart",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:torchflower",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:torchflower_seeds",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:totem_of_undying",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:trapped_chest",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:trial_key",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:tropical_fish",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:tropical_fish_bucket",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:turtle_egg",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:turtle_helmet",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:verdant_froglight",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:vex_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:vine",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:ward_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:wayfinder_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:wet_sponge",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:white_bed",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:white_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:white_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:white_tulip",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:wild_armor_trim_smithing_template",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:wildflowers",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:wolf_armor",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:wooden_sword",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:writable_book",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:written_book",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:yellow_dye",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:yellow_harness",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:yellow_stained_glass_pane",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	},
+	{
+		"item": "minecraft:zombie_head",
+		"min": 1,
+		"max": 1,
+		"dabloons_per_item": 0
+	}
+
+	// Nether/End-required items kept here for reference, but commented out so the daily picker ignores them.
+	// ,{
+	// 	"item": "minecraft:ancient_debris",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:beacon",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:chiseled_nether_bricks",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:chorus_flower",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:chorus_fruit",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:chorus_plant",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:cracked_nether_bricks",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:crimson_fungus",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:crimson_roots",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:crimson_shelf",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:dragon_breath",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:end_rod",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:end_stone_bricks",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:ghast_tear",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:magma_cream",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:music_disc_pigstep",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:nether_brick",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:nether_gold_ore",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:nether_quartz_ore",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:nether_wart_block",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:netherite_block",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:netherite_horse_armor",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:piglin_banner_pattern",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:piglin_head",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:popped_chorus_fruit",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:quartz_block",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:red_shulker_box",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:rib_armor_trim_smithing_template",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:shroomlight",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:snout_armor_trim_smithing_template",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:soul_campfire",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:soul_lantern",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:spire_armor_trim_smithing_template",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:warped_fungus_on_a_stick",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:warped_hanging_sign",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:wither_rose",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+	// ,{
+	// 	"item": "minecraft:wither_skeleton_skull",
+	// 	"min": 1,
+	// 	"max": 1,
+	// 	"dabloons_per_item": 0
+	// }
+]

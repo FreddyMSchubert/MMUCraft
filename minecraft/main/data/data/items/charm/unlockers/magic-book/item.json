@@ -1,7 +1,6 @@
 {
 	"title": "Magic Book",
 	"id": "charm-magic-book",
-	"baseItemOverride": "minecraft:book",
 	"modelType": "basic-3d",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

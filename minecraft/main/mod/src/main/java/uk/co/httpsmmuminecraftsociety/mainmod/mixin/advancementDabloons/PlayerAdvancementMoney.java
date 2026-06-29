@@ -40,11 +40,27 @@ public class PlayerAdvancementMoney {
             "GG",
             "Number go up",
             "Monkey brain happy",
+            "Go buy yourself something nice",
+            "Don't spend it all in one go",
+            "Penny for your thoughts",
             "W in chat",
             "Stonks",
             "LGTM",
             "TLDR",
             "Profit",
+            "Cash Splash",
+            "Mint condition",
+            "Coin-grats",
+            "Pocket Change",
+            "Debit where debit is due",
+            "Crypto? No thanks. Dabloons? Real sh*t.",
+            "You're a dabloonatic",
+            "Latest in Block Chain news",
+            "And so the rich get richer",
+            "It's gonna start trickling down aaany minute now",
+            "I hereby cent-ence you to having a bit more money now",
+            "Makes cents",
+            "You're a coin-artist",
 
             "Need for spend",
             "Red Debt Redemption",
@@ -71,7 +87,9 @@ public class PlayerAdvancementMoney {
             "Gotta cash 'em all",
             "Winner winner dabloon dinner",
             "It's dangerous to go broke",
-            "All your coins are belong to us"
+            "All your coins are belong to us",
+
+            "I said something NICE, not EXPENSIVE"
     );
 
     @Shadow

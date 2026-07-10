@@ -62,6 +62,8 @@ interface PlayerSummary {
 	id: number
 	minecraftUsername: string
 	isCurrentUser: boolean
+	isMember: boolean
+	isCommittee: boolean
 	profile: PlayerProfile
 	stats: PlayerStats
 }
@@ -322,6 +324,8 @@ function PlayerProfilePanel({
 function ProfileFacts({ player }: { player: PlayerSummary }) {
 	const profile = player.profile
 	const facts = [
+		{ label: 'Society member', value: player.isMember ? 'Yes' : 'No' },
+		{ label: 'Committee', value: player.isCommittee ? 'Yes' : 'No' },
 		profile.preferredName ? { label: 'Preferred name', value: profile.preferredName } : null,
 		profile.pronouns ? { label: 'Pronouns', value: profile.pronouns } : null,
 		profile.courseYear ? { label: 'Course / Year', value: profile.courseYear } : null,
@@ -537,6 +541,8 @@ function PlayerHead({ player, size }: { player: PlayerSummary; size: 'small' | '
 
 function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.playerName') return player.minecraftUsername
+	if (option.key === 'profile.isMember') return player.isMember ? 'Yes' : 'No'
+	if (option.key === 'profile.isCommittee') return player.isCommittee ? 'Yes' : 'No'
 	if (option.key === 'profile.preferredName') return player.profile.preferredName || '-'
 	if (option.key === 'profile.pronouns') return player.profile.pronouns || '-'
 	if (option.key === 'profile.courseYear') return player.profile.courseYear || '-'
@@ -561,6 +567,8 @@ function comparePlayers(
 
 function getSortValue(player: PlayerSummary, option: StatOption): number | string | null {
 	if (option.key === 'profile.playerName') return player.minecraftUsername
+	if (option.key === 'profile.isMember') return player.isMember ? 1 : 0
+	if (option.key === 'profile.isCommittee') return player.isCommittee ? 1 : 0
 	if (option.key === 'profile.preferredName') return player.profile.preferredName || player.minecraftUsername
 	if (option.key === 'profile.pronouns') return player.profile.pronouns || null
 	if (option.key === 'profile.courseYear') return player.profile.courseYear || null

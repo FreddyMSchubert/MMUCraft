@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
 import {
 	DatabaseService,
@@ -22,10 +22,14 @@ const EMAIL_CODE_TTL_MS = 10 * 60 * 1000
 const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
+const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
 
 export interface AuthenticatedUser {
 	id: number
 	minecraftUsername: string
+	isMember: boolean
+	isCommittee: boolean
+	isSuperAdmin: boolean
 	whitelisted: true
 	rulesAccepted: true
 }
@@ -223,6 +227,7 @@ export class AuthService {
 		if (!flow.minecraft_username) {
 			throw new BadRequestException('Minecraft username is not available for this signup flow')
 		}
+		const minecraftUsername = flow.minecraft_username
 
 		if (this.findUserByEmail(flow.email)) {
 			throw new BadRequestException('An account with this email already exists')
@@ -238,7 +243,7 @@ export class AuthService {
 			throw new BadRequestException('An account with this Minecraft username already exists')
 		}
 
-		await this.grpc.whitelistPlayer(flow.minecraft_username)
+		await this.grpc.whitelistPlayer(minecraftUsername)
 
 		try {
 			const userId = this.database.connection.transaction(() => {
@@ -253,11 +258,19 @@ export class AuthService {
 					VALUES (?, ?, ?, ?, ?)
 				`).run(
 					flow.email,
-					flow.minecraft_username,
+					minecraftUsername,
 					now,
 					now,
 					now,
 				)
+
+				if (isSuperAdminUsername(minecraftUsername)) {
+					this.database.connection.prepare(`
+						UPDATE users
+						SET is_committee = 1
+						WHERE id = ?
+					`).run(Number(result.lastInsertRowid))
+				}
 
 				this.database.connection.prepare(`
 					UPDATE signup_flows
@@ -270,7 +283,7 @@ export class AuthService {
 
 			return this.createSession(userId)
 		} catch (error) {
-			await this.grpc.removePendingJoin(flow.minecraft_username).catch(() => undefined)
+			await this.grpc.removePendingJoin(minecraftUsername).catch(() => undefined)
 			throw error
 		}
 	}
@@ -295,6 +308,26 @@ export class AuthService {
 
 		return user
 	}
+
+	requireCommitteeSession(rawCookieHeader: string | undefined): AuthenticatedUser {
+		const user = this.requireSession(rawCookieHeader)
+
+		if (!user.isCommittee) {
+			throw new ForbiddenException('Committee access is required')
+		}
+
+		return user
+	}
+
+	requireSuperAdminSession(rawCookieHeader: string | undefined): AuthenticatedUser {
+		const user = this.requireSession(rawCookieHeader)
+
+		if (!user.isSuperAdmin) {
+			throw new ForbiddenException('Super-admin access is required')
+		}
+
+		return user
+	}
 	getSession(rawCookieHeader: string | undefined): AuthenticatedUser | null {
 		const token = this.readCookie(rawCookieHeader, 'mcstack_session')
 		if (!token) return null
@@ -312,9 +345,13 @@ export class AuthService {
 
 		if (!row) return null
 
+		const isSuperAdmin = isSuperAdminUsername(row.minecraft_username)
 		return {
 			id: row.id,
 			minecraftUsername: row.minecraft_username,
+			isMember: row.is_member === 1,
+			isCommittee: isSuperAdmin || row.is_committee === 1,
+			isSuperAdmin,
 			whitelisted: true,
 			rulesAccepted: true,
 		}
@@ -434,4 +471,8 @@ export class AuthService {
 
 		return decodeURIComponent(match.slice(name.length + 1))
 	}
+}
+
+function isSuperAdminUsername(minecraftUsername: string) {
+	return minecraftUsername.localeCompare(SUPER_ADMIN_MINECRAFT_USERNAME, 'en', { sensitivity: 'base' }) === 0
 }

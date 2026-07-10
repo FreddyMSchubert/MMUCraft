@@ -270,6 +270,40 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
     }
 
+    private GrantGiftCodeMoneyResponse grantGiftCodeMoneyOnMainThread(GrantGiftCodeMoneyRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) {
+            throw new IllegalStateException("Minecraft server is not available");
+        }
+
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        if (player == null || player.hasDisconnected()) {
+            return GrantGiftCodeMoneyResponse.newBuilder()
+                    .setGranted(false)
+                    .setOnline(false)
+                    .setMessage("You have to be online on the server to redeem a gift code.")
+                    .build();
+        }
+
+        int amount = Math.max(0, request.getAmountDabloons());
+        if (amount == 0 || !MoneyHelper.GainMoney(player, amount)) {
+            return GrantGiftCodeMoneyResponse.newBuilder()
+                    .setGranted(false)
+                    .setOnline(true)
+                    .setBalanceDabloons(MoneyHelper.GetBalance(player))
+                    .setMessage("Could not grant the gift code dabloons.")
+                    .build();
+        }
+
+        int balance = MoneyHelper.GetBalance(player);
+        return GrantGiftCodeMoneyResponse.newBuilder()
+                .setGranted(true)
+                .setOnline(true)
+                .setBalanceDabloons(balance)
+                .setMessage("Gift code redeemed for " + amount + " dabloons.")
+                .build();
+    }
+
     private SubmitDailyItemsResponse submitDailyItemsOnMainThread(SubmitDailyItemsRequest request) {
         MinecraftServer server = minecraftServer();
         if (server == null) {
@@ -578,6 +612,15 @@ public final class GameplayGrpcService extends GrpcHandler {
                 StreamObserver<GrantDailyLoginBonusResponse> responseObserver
         ) {
             callOnMainThread(() -> grantDailyLoginBonusOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void grantGiftCodeMoney(
+                GrantGiftCodeMoneyRequest request,
+                StreamObserver<GrantGiftCodeMoneyResponse> responseObserver
+        ) {
+            callOnMainThread(() -> grantGiftCodeMoneyOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

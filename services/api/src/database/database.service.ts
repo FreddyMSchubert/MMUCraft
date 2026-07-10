@@ -7,6 +7,8 @@ export interface UserRow {
 	id: number
 	email: string
 	minecraft_username: string
+	is_member: number
+	is_committee: number
 	whitelisted_at_unix_ms: number
 	rules_accepted_at_unix_ms: number
 	created_at_unix_ms: number
@@ -103,6 +105,17 @@ export interface DailyAdvancementTargetRow {
 	selected_at_unix_ms: number
 }
 
+export interface GiftCodeRow {
+	code: string
+	amount_dabloons: number
+	redemption_mode: string
+	expires_at_unix_ms: number | null
+	created_by_user_id: number
+	created_at_unix_ms: number
+	redeemed_by_user_id: number | null
+	redeemed_at_unix_ms: number | null
+}
+
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
 	private readonly db: Database.Database
@@ -121,6 +134,8 @@ export class DatabaseService implements OnModuleDestroy {
 				id INTEGER PRIMARY KEY AUTOINCREMENT,
 				email TEXT NOT NULL UNIQUE,
 				minecraft_username TEXT NOT NULL UNIQUE,
+				is_member INTEGER NOT NULL DEFAULT 0 CHECK (is_member IN (0, 1)),
+				is_committee INTEGER NOT NULL DEFAULT 0 CHECK (is_committee IN (0, 1)),
 				whitelisted_at_unix_ms INTEGER NOT NULL,
 				rules_accepted_at_unix_ms INTEGER NOT NULL,
 				created_at_unix_ms INTEGER NOT NULL
@@ -245,12 +260,67 @@ export class DatabaseService implements OnModuleDestroy {
 
 			CREATE INDEX IF NOT EXISTS daily_advancement_targets_user_id_idx
 				ON daily_advancement_targets(user_id);
+
+			CREATE TABLE IF NOT EXISTS gift_codes (
+				code TEXT PRIMARY KEY COLLATE NOCASE,
+				amount_dabloons INTEGER NOT NULL CHECK (amount_dabloons > 0),
+				redemption_mode TEXT NOT NULL DEFAULT 'single' CHECK (redemption_mode IN ('single', 'per_user')),
+				expires_at_unix_ms INTEGER,
+				created_by_user_id INTEGER NOT NULL,
+				created_at_unix_ms INTEGER NOT NULL,
+				redeemed_by_user_id INTEGER,
+				redeemed_at_unix_ms INTEGER,
+				FOREIGN KEY(created_by_user_id) REFERENCES users(id),
+				FOREIGN KEY(redeemed_by_user_id) REFERENCES users(id),
+				CHECK (
+					(redeemed_by_user_id IS NULL AND redeemed_at_unix_ms IS NULL)
+					OR (redeemed_by_user_id IS NOT NULL AND redeemed_at_unix_ms IS NOT NULL)
+				)
+			);
+		`)
+
+		const userColumns = this.db.prepare('PRAGMA table_info(users)').all() as Array<{ name: string }>
+		if (!userColumns.some((column) => column.name === 'is_member')) {
+			this.db.exec('ALTER TABLE users ADD COLUMN is_member INTEGER NOT NULL DEFAULT 0 CHECK (is_member IN (0, 1))')
+		}
+		if (!userColumns.some((column) => column.name === 'is_committee')) {
+			this.db.exec('ALTER TABLE users ADD COLUMN is_committee INTEGER NOT NULL DEFAULT 0 CHECK (is_committee IN (0, 1))')
+		}
+
+		const giftCodeColumns = this.db.prepare('PRAGMA table_info(gift_codes)').all() as Array<{ name: string }>
+		if (!giftCodeColumns.some((column) => column.name === 'redemption_mode')) {
+			this.db.exec("ALTER TABLE gift_codes ADD COLUMN redemption_mode TEXT NOT NULL DEFAULT 'single' CHECK (redemption_mode IN ('single', 'per_user'))")
+		}
+		if (!giftCodeColumns.some((column) => column.name === 'expires_at_unix_ms')) {
+			this.db.exec('ALTER TABLE gift_codes ADD COLUMN expires_at_unix_ms INTEGER')
+		}
+
+		this.db.exec(`
+			CREATE TABLE IF NOT EXISTS gift_code_redemptions (
+				code TEXT NOT NULL COLLATE NOCASE,
+				user_id INTEGER NOT NULL,
+				redeemed_at_unix_ms INTEGER NOT NULL,
+				PRIMARY KEY(code, user_id),
+				FOREIGN KEY(code) REFERENCES gift_codes(code) ON DELETE CASCADE,
+				FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS gift_code_redemptions_code_idx
+				ON gift_code_redemptions(code);
+
+			INSERT OR IGNORE INTO gift_code_redemptions (code, user_id, redeemed_at_unix_ms)
+			SELECT code, redeemed_by_user_id, redeemed_at_unix_ms
+			FROM gift_codes
+			WHERE redeemed_by_user_id IS NOT NULL
+			  AND redeemed_at_unix_ms IS NOT NULL;
 		`)
 
 		const profileColumns = this.db.prepare('PRAGMA table_info(player_profiles)').all() as Array<{ name: string }>
 		if (!profileColumns.some((column) => column.name === 'pronouns')) {
 			this.db.exec("ALTER TABLE player_profiles ADD COLUMN pronouns TEXT NOT NULL DEFAULT ''")
 		}
+
+		this.promoteSuperAdmin()
 	}
 
 	get connection(): Database.Database {
@@ -259,5 +329,13 @@ export class DatabaseService implements OnModuleDestroy {
 
 	onModuleDestroy() {
 		this.db.close()
+	}
+
+	private promoteSuperAdmin() {
+		this.db.prepare(`
+			UPDATE users
+			SET is_committee = 1
+			WHERE lower(minecraft_username) = lower('MerlinSpace')
+		`).run()
 	}
 }

@@ -88,12 +88,16 @@ export interface PlayerSummary {
 	id: number
 	minecraftUsername: string
 	isCurrentUser: boolean
+	isMember: boolean
+	isCommittee: boolean
 	profile: PlayerProfile
 	stats: PlayerStats
 }
 
 const PROFILE_OPTIONS: StatOption[] = [
 	{ key: 'profile.playerName', label: 'Player Name', group: 'profile' },
+	{ key: 'profile.isMember', label: 'Society Member', group: 'profile' },
+	{ key: 'profile.isCommittee', label: 'Committee', group: 'profile' },
 	{ key: 'profile.preferredName', label: 'Preferred Name', group: 'profile' },
 	{ key: 'profile.pronouns', label: 'Pronouns', group: 'profile' },
 	{ key: 'profile.courseYear', label: 'Course / Year', group: 'profile' },
@@ -464,6 +468,8 @@ export class PlayersService {
 			id: user.id,
 			minecraftUsername: user.minecraft_username,
 			isCurrentUser: user.id === currentUserId,
+			isMember: user.is_member === 1,
+			isCommittee: user.is_committee === 1,
 			profile: this.getProfile(user.id),
 			stats,
 		}

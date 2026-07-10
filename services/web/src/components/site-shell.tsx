@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { AuthPanel } from '@/components/auth-panel'
+import { AdminTab } from '@/components/admin-tab'
 import { BackgroundGrid } from '@/components/background-grid'
 import { DailiesTab } from '@/components/dailies-tab'
 import { KnowledgeTab } from '@/components/knowledge-tab'
+import { MiscTab } from '@/components/misc-tab'
 import { PlayersTab } from '@/components/players-tab'
 import { ShopTab } from '@/components/shop-tab'
 
@@ -13,9 +15,12 @@ interface SessionUser {
 	minecraftUsername: string
 	whitelisted: boolean
 	rulesAccepted: boolean
+	isMember: boolean
+	isCommittee: boolean
+	isSuperAdmin: boolean
 }
 
-type TabId = 'dailies' | 'knowledge' | 'shop' | 'players'
+type TabId = 'dailies' | 'knowledge' | 'shop' | 'players' | 'admin' | 'misc'
 
 async function fetchMe(): Promise<SessionUser | null> {
 	const response = await fetch('/api/auth/me', {
@@ -61,6 +66,7 @@ export function SiteShell({ images }: { images: string[] }) {
 		})
 
 		setUser(null)
+		setActiveTab('dailies')
 	}
 
 	return (
@@ -128,6 +134,22 @@ export function SiteShell({ images }: { images: string[] }) {
 							>
 								Players
 							</button>
+							{user.isCommittee && (
+								<button
+									type="button"
+									className={activeTab === 'admin' ? 'active' : ''}
+									onClick={() => setActiveTab('admin')}
+								>
+									Admin
+								</button>
+							)}
+							<button
+								type="button"
+								className={activeTab === 'misc' ? 'active' : ''}
+								onClick={() => setActiveTab('misc')}
+							>
+								Misc
+							</button>
 						</nav>
 
 						<div className="dashboardPanel">
@@ -135,6 +157,8 @@ export function SiteShell({ images }: { images: string[] }) {
 							{activeTab === 'knowledge' && <KnowledgeTab />}
 							{activeTab === 'shop' && <ShopTab />}
 							{activeTab === 'players' && <PlayersTab />}
+							{activeTab === 'admin' && user.isCommittee && <AdminTab isSuperAdmin={user.isSuperAdmin} />}
+							{activeTab === 'misc' && <MiscTab />}
 						</div>
 					</section>
 				)}

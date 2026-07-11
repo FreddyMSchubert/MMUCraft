@@ -3,6 +3,12 @@
 	"scripts": {
 		"dev": "tsc-watch -p tsconfig.json --onSuccess \"node dist/main.js\"",
 		"build": "tsc -p tsconfig.json",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:check": "drizzle-kit check",
+		"db:studio": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/studio-cluster.ps1",
+		"db:studio:pod": "drizzle-kit studio",
+		"test:http": "npm run build && node scripts/smoke-http.mjs",
 		"start": "node dist/main.js",
 		"prod": "npm run build && npm run start"
 	},
@@ -13,6 +19,7 @@
 		"@nestjs/core": "^11.1.18",
 		"@nestjs/platform-fastify": "^11.0.20",
 		"better-sqlite3": "^12.8.0",
+		"drizzle-orm": "^0.45.2",
 		"fastify": "^5.8.2",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.2"
@@ -20,6 +27,7 @@
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.13",
 		"@types/node": "^24.12.2",
+		"drizzle-kit": "^0.31.10",
 		"tsc-watch": "^7.2.0",
 		"typescript": "^5.9.3"
 	}

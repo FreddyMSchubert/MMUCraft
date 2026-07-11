@@ -3,8 +3,9 @@ import * as grpc from '@grpc/grpc-js'
 import { randomInt } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
+import { and, eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../../auth/auth.service'
-import { DatabaseService, UserRow } from '../../database/database.service'
+import { DatabaseService, shopUnlocks, UserRow, users } from '../../database/database.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { KnowledgeService } from '../knowledge/knowledge.service'
 
@@ -226,7 +227,7 @@ export class ShopService {
 		}
 
 		for (let attempt = 0; attempt < 5; attempt++) {
-			const picked = this.database.connection.transaction(() => {
+			const picked = this.database.connection.transaction((tx) => {
 				const unlockedIds = this.getUnlockedItemIds(user.id, unlockType)
 				const remaining = candidates.filter((item) => !unlockedIds.has(item.id))
 
@@ -235,25 +236,16 @@ export class ShopService {
 				}
 
 				const chosen = this.pickWeightedRandomItem(remaining)
-				const result = this.database.connection.prepare(`
-					INSERT OR IGNORE INTO shop_unlocks (
-						user_id,
-						item_id,
-						unlock_type,
-						unlocked_at_unix_ms,
-						source
-					)
-					VALUES (?, ?, ?, ?, ?)
-				`).run(
-					user.id,
-					chosen.id,
-					chosen.type,
-					Date.now(),
+				const result = tx.insert(shopUnlocks).values({
+					user_id: user.id,
+					item_id: chosen.id,
+					unlock_type: chosen.type,
+					unlocked_at_unix_ms: Date.now(),
 					source,
-				)
+				}).onConflictDoNothing().run()
 
 				return result.changes === 1 ? chosen : null
-			})()
+			})
 
 			if (picked === 'all-unlocked') {
 				return {
@@ -412,28 +404,19 @@ export class ShopService {
 	}
 
 	private getUnlockedItemIds(userId: number, type?: ShopItemType): Set<string> {
-		const rows = type
-			? this.database.connection.prepare(`
-				SELECT item_id
-				FROM shop_unlocks
-				WHERE user_id = ?
-				  AND unlock_type = ?
-			`).all(userId, type) as { item_id: string }[]
-			: this.database.connection.prepare(`
-				SELECT item_id
-				FROM shop_unlocks
-				WHERE user_id = ?
-			`).all(userId) as { item_id: string }[]
+		const rows = this.database.connection.select({ item_id: shopUnlocks.item_id })
+			.from(shopUnlocks)
+			.where(type
+				? and(eq(shopUnlocks.user_id, userId), eq(shopUnlocks.unlock_type, type))
+				: eq(shopUnlocks.user_id, userId))
+			.all()
 
 		return new Set(rows.map((row) => row.item_id))
 	}
 
 	private findUserByMinecraftUsername(minecraftUsername: string): UserRow | null {
-		return (this.database.connection.prepare(`
-			SELECT *
-			FROM users
-			WHERE lower(minecraft_username) = lower(?)
-		`).get(minecraftUsername) as UserRow | undefined) ?? null
+		return this.database.connection.select().from(users).all()
+			.find((user) => user.minecraft_username.localeCompare(minecraftUsername, 'en', { sensitivity: 'base' }) === 0) ?? null
 	}
 
 	private pickWeightedRandomItem(items: CatalogItem[]): CatalogItem {

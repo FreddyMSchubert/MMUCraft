@@ -1,7 +1,15 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
+import { and, count, desc, eq, getTableColumns, gt, isNull, notExists, or } from 'drizzle-orm'
 import { AuthenticatedUser } from '../auth/auth.service'
-import { DatabaseService, GiftCodeRow } from '../database/database.service'
+import {
+	DatabaseService,
+	GiftCodeRow,
+	giftCodeRedemptions,
+	giftCodes,
+	playerProfiles,
+	users,
+} from '../database/database.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
 import { PlayersService } from '../players/players.service'
 
@@ -30,31 +38,23 @@ export class GiftsService {
 	) { }
 
 	listAdminPlayers() {
-		const rows = this.database.connection.prepare(`
-			SELECT
-				users.id,
-				users.minecraft_username,
-				users.email,
-				users.is_member,
-				users.is_committee,
-				COALESCE(player_profiles.discord_username, '') AS discord_username
-			FROM users
-			LEFT JOIN player_profiles ON player_profiles.user_id = users.id
-			ORDER BY lower(users.minecraft_username)
-		`).all() as Array<{
-			id: number
-			minecraft_username: string
-			email: string
-			is_member: number
-			is_committee: number
-			discord_username: string
-		}>
+		const rows = this.database.connection.select({
+			id: users.id,
+			minecraft_username: users.minecraft_username,
+			email: users.email,
+			is_member: users.is_member,
+			is_committee: users.is_committee,
+			discord_username: playerProfiles.discord_username,
+		}).from(users)
+			.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
+			.all()
+			.sort((left, right) => left.minecraft_username.localeCompare(right.minecraft_username, 'en', { sensitivity: 'base' }))
 
 		return {
 			players: rows.map((row) => ({
 				id: row.id,
 				minecraftUsername: row.minecraft_username,
-				discordUsername: row.discord_username,
+				discordUsername: row.discord_username ?? '',
 				email: row.email,
 				isMember: row.is_member === 1,
 				isCommittee: isSuperAdminUsername(row.minecraft_username) || row.is_committee === 1,
@@ -71,11 +71,10 @@ export class GiftsService {
 			throw new BadRequestException('isMember must be a boolean')
 		}
 
-		const updated = this.database.connection.prepare(`
-			UPDATE users
-			SET is_member = ?
-			WHERE id = ?
-		`).run(isMember ? 1 : 0, userId)
+		const updated = this.database.connection.update(users)
+			.set({ is_member: isMember ? 1 : 0 })
+			.where(eq(users.id, userId))
+			.run()
 
 		if (updated.changes !== 1) {
 			throw new NotFoundException('Player not found')
@@ -93,11 +92,8 @@ export class GiftsService {
 			throw new BadRequestException('isCommittee must be a boolean')
 		}
 
-		const target = this.database.connection.prepare(`
-			SELECT minecraft_username
-			FROM users
-			WHERE id = ?
-		`).get(userId) as { minecraft_username: string } | undefined
+		const target = this.database.connection.select({ minecraft_username: users.minecraft_username })
+			.from(users).where(eq(users.id, userId)).get()
 		if (!target) {
 			throw new NotFoundException('Player not found')
 		}
@@ -105,11 +101,10 @@ export class GiftsService {
 			throw new BadRequestException('MerlinSpace is the permanent super-admin and cannot be removed from committee')
 		}
 
-		this.database.connection.prepare(`
-			UPDATE users
-			SET is_committee = ?
-			WHERE id = ?
-		`).run(isCommittee ? 1 : 0, userId)
+		this.database.connection.update(users)
+			.set({ is_committee: isCommittee ? 1 : 0 })
+			.where(eq(users.id, userId))
+			.run()
 
 		return { ok: true, userId, isCommittee }
 	}
@@ -128,19 +123,16 @@ export class GiftsService {
 		const expiresAtUnixMs = normalizeExpiry(expiresAtUnixMsInput, now)
 
 		try {
-			this.database.connection.prepare(`
-				INSERT INTO gift_codes (
-					code,
-					amount_dabloons,
-					redemption_mode,
-					expires_at_unix_ms,
-					created_by_user_id,
-					created_at_unix_ms,
-					redeemed_by_user_id,
-					redeemed_at_unix_ms
-				)
-				VALUES (?, ?, ?, ?, ?, ?, NULL, NULL)
-			`).run(code, amountDabloons, redemptionMode, expiresAtUnixMs, admin.id, now)
+			this.database.connection.insert(giftCodes).values({
+				code,
+				amount_dabloons: amountDabloons,
+				redemption_mode: redemptionMode,
+				expires_at_unix_ms: expiresAtUnixMs,
+				created_by_user_id: admin.id,
+				created_at_unix_ms: now,
+				redeemed_by_user_id: null,
+				redeemed_at_unix_ms: null,
+			}).run()
 		} catch (error) {
 			if (isSqliteConstraint(error)) {
 				throw new ConflictException('A gift code with that name already exists')
@@ -153,22 +145,22 @@ export class GiftsService {
 
 	listGiftCodes() {
 		const now = Date.now()
-		const rows = this.database.connection.prepare(`
-			SELECT gift_codes.*, COUNT(gift_code_redemptions.user_id) AS redemption_count
-			FROM gift_codes
-			LEFT JOIN gift_code_redemptions ON gift_code_redemptions.code = gift_codes.code
-			WHERE (gift_codes.expires_at_unix_ms IS NULL OR gift_codes.expires_at_unix_ms > ?)
-			  AND (
-				gift_codes.redemption_mode = 'per_user'
-				OR NOT EXISTS (
-					SELECT 1
-					FROM gift_code_redemptions AS existing_redemption
-					WHERE existing_redemption.code = gift_codes.code
-				)
-			  )
-			GROUP BY gift_codes.code
-			ORDER BY created_at_unix_ms DESC
-		`).all(now) as Array<GiftCodeRow & { redemption_count: number }>
+		const existingRedemption = this.database.connection.select({ code: giftCodeRedemptions.code })
+			.from(giftCodeRedemptions)
+			.where(eq(giftCodeRedemptions.code, giftCodes.code))
+
+		const rows = this.database.connection.select({
+			...getTableColumns(giftCodes),
+			redemption_count: count(giftCodeRedemptions.user_id),
+		}).from(giftCodes)
+			.leftJoin(giftCodeRedemptions, eq(giftCodeRedemptions.code, giftCodes.code))
+			.where(and(
+				or(isNull(giftCodes.expires_at_unix_ms), gt(giftCodes.expires_at_unix_ms, now)),
+				or(eq(giftCodes.redemption_mode, 'per_user'), notExists(existingRedemption)),
+			))
+			.groupBy(giftCodes.code)
+			.orderBy(desc(giftCodes.created_at_unix_ms))
+			.all()
 
 		return {
 			giftCodes: rows.map((row) => ({
@@ -184,11 +176,7 @@ export class GiftsService {
 
 	async redeem(user: AuthenticatedUser, codeInput: unknown) {
 		const code = normalizeGiftCode(codeInput)
-		const giftCode = this.database.connection.prepare(`
-			SELECT *
-			FROM gift_codes
-			WHERE code = ? COLLATE NOCASE
-		`).get(code) as GiftCodeRow | undefined
+		const giftCode = this.database.connection.select().from(giftCodes).where(eq(giftCodes.code, code)).get()
 
 		if (!giftCode) {
 			throw new BadRequestException('That gift code does not exist')
@@ -242,37 +230,35 @@ export class GiftsService {
 	}
 
 	private releaseReservation(code: string, userId: number, redeemedAtUnixMs: number) {
-		this.database.connection.prepare(`
-			DELETE FROM gift_code_redemptions
-			WHERE code = ? COLLATE NOCASE
-			  AND user_id = ?
-			  AND redeemed_at_unix_ms = ?
-		`).run(code, userId, redeemedAtUnixMs)
+		this.database.connection.delete(giftCodeRedemptions).where(and(
+			eq(giftCodeRedemptions.code, code),
+			eq(giftCodeRedemptions.user_id, userId),
+			eq(giftCodeRedemptions.redeemed_at_unix_ms, redeemedAtUnixMs),
+		)).run()
 	}
 
 	private reserveRedemption(giftCode: GiftCodeRow, userId: number, redeemedAtUnixMs: number) {
-		this.database.connection.transaction(() => {
+		this.database.connection.transaction((tx) => {
 			if (giftCode.redemption_mode === 'single') {
-				const existing = this.database.connection.prepare(`
-					SELECT 1
-					FROM gift_code_redemptions
-					WHERE code = ? COLLATE NOCASE
-					LIMIT 1
-				`).get(giftCode.code)
+				const existing = tx.select({ code: giftCodeRedemptions.code })
+					.from(giftCodeRedemptions)
+					.where(eq(giftCodeRedemptions.code, giftCode.code))
+					.get()
 				if (existing) {
 					throw new BadRequestException('That gift code has already been redeemed')
 				}
 			}
 
-			const inserted = this.database.connection.prepare(`
-				INSERT OR IGNORE INTO gift_code_redemptions (code, user_id, redeemed_at_unix_ms)
-				VALUES (?, ?, ?)
-			`).run(giftCode.code, userId, redeemedAtUnixMs)
+			const inserted = tx.insert(giftCodeRedemptions).values({
+				code: giftCode.code,
+				user_id: userId,
+				redeemed_at_unix_ms: redeemedAtUnixMs,
+			}).onConflictDoNothing().run()
 
 			if (inserted.changes !== 1) {
 				throw new BadRequestException('You have already redeemed that gift code')
 			}
-		})()
+		})
 	}
 
 	private async grantGiftCodeMoney(

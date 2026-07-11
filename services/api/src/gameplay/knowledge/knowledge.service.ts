@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { randomInt } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { basename, join, relative, sep } from 'node:path'
-import { DatabaseService, UserRow } from '../../database/database.service'
+import { desc, eq } from 'drizzle-orm'
+import { DatabaseService, knowledgeUnlocks, users } from '../../database/database.service'
 
 const DEFAULT_KNOWLEDGE_ROOTS = [
 	join(process.cwd(), 'content', 'knowledge'),
@@ -95,11 +96,8 @@ export class KnowledgeService {
 			return this.noUnlock('No Minecraft username was provided.')
 		}
 
-		const user = this.database.connection.prepare(`
-			SELECT *
-			FROM users
-			WHERE lower(minecraft_username) = lower(?)
-		`).get(minecraftUsername) as UserRow | undefined
+		const user = this.database.connection.select().from(users).all()
+			.find((candidate) => candidate.minecraft_username.localeCompare(minecraftUsername, 'en', { sensitivity: 'base' }) === 0)
 
 		if (!user) {
 			return this.noUnlock('No website account is linked to this Minecraft username yet.')
@@ -119,7 +117,7 @@ export class KnowledgeService {
 		}
 
 		for (let attempt = 0; attempt < 5; attempt++) {
-			const picked = this.database.connection.transaction(() => {
+			const picked = this.database.connection.transaction((tx) => {
 				const unlockedIds = this.getUnlockedIds(user.id)
 				const remaining = document.unlockable.filter((page) => !unlockedIds.has(page.id))
 
@@ -129,23 +127,15 @@ export class KnowledgeService {
 
 				const chosen = this.pickRandomLowestOrderPage(remaining)
 
-				const result = this.database.connection.prepare(`
-					INSERT OR IGNORE INTO knowledge_unlocks (
-						user_id,
-						knowledge_id,
-						unlocked_at_unix_ms,
-						source
-					)
-					VALUES (?, ?, ?, ?)
-				`).run(
-					user.id,
-					chosen.id,
-					Date.now(),
+				const result = tx.insert(knowledgeUnlocks).values({
+					user_id: user.id,
+					knowledge_id: chosen.id,
+					unlocked_at_unix_ms: Date.now(),
 					source,
-				)
+				}).onConflictDoNothing().run()
 
 				return result.changes === 1 ? chosen : null
-			})()
+			})
 
 			if (picked === 'all-unlocked') {
 				return {
@@ -190,11 +180,10 @@ export class KnowledgeService {
 	}
 
 	private getUnlockedIds(userId: number): Set<string> {
-		const rows = this.database.connection.prepare(`
-			SELECT knowledge_id
-			FROM knowledge_unlocks
-			WHERE user_id = ?
-		`).all(userId) as { knowledge_id: string }[]
+		const rows = this.database.connection.select({ knowledge_id: knowledgeUnlocks.knowledge_id })
+			.from(knowledgeUnlocks)
+			.where(eq(knowledgeUnlocks.user_id, userId))
+			.all()
 
 		return new Set(rows.map((row) => row.knowledge_id))
 	}
@@ -212,12 +201,11 @@ export class KnowledgeService {
 	): string | null {
 		const configuredIds = new Set(unlockable.map((page) => page.id))
 
-		const rows = this.database.connection.prepare(`
-			SELECT knowledge_id
-			FROM knowledge_unlocks
-			WHERE user_id = ?
-			ORDER BY unlocked_at_unix_ms DESC
-		`).all(userId) as { knowledge_id: string }[]
+		const rows = this.database.connection.select({ knowledge_id: knowledgeUnlocks.knowledge_id })
+			.from(knowledgeUnlocks)
+			.where(eq(knowledgeUnlocks.user_id, userId))
+			.orderBy(desc(knowledgeUnlocks.unlocked_at_unix_ms))
+			.all()
 
 		return rows.find((row) => configuredIds.has(row.knowledge_id))?.knowledge_id ?? null
 	}

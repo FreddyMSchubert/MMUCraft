@@ -7,7 +7,9 @@ COPY services/api/package-lock.json ./
 RUN npm install
 
 COPY services/api/tsconfig.json ./
+COPY services/api/drizzle.config.ts ./
 COPY services/api/src ./src
+COPY services/api/drizzle ./drizzle
 COPY services/api/content ./content
 COPY services/web/public/knowledge ./content/knowledge
 COPY minecraft/main/data/data/items ./content/items

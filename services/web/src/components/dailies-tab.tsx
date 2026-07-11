@@ -115,8 +115,8 @@ export function DailiesTab() {
 		<div className="dailiesPanel">
 			<div className="dailiesHeader">
 				<h3>Dailies</h3>
-				<p>Resets daily at {data.resetHour}:00 {data.resetTimeZone}.</p>
-				<p>You have to be online on the server to redeem dailies.</p>
+				<p>Resets daily at 4 am.</p>
+				<p>You have to be online on the server to claim dailies.</p>
 			</div>
 
 			{message && <p className="dailyMessage">{message}</p>}
@@ -127,10 +127,10 @@ export function DailiesTab() {
 					<div className="dailyTask" key={task.id}>
 						<div className="dailyNumber">{task.number}</div>
 						<div className="dailyTaskBody">
-							<h4>{task.title}</h4>
+							<h4>{task.title}{task.rewardDabloons > 0 ? (' - ' + task.rewardDabloons + ' Dabloons') : ''}</h4>
 							{task.id === 'item_submission' ? (
 								<p>
-									Claim removes {task.count}x {formatItemName(task.item ?? '')} from your inventory for {task.rewardDabloons} dabloons.
+									Click claim while holding {task.count}x {formatItemName(task.item ?? '')} in your inventory for {task.rewardDabloons} dabloons.
 								</p>
 							) : task.id === 'advancement_bonus' ? (
 								task.advancement ? (

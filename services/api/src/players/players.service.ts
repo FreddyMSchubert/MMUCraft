@@ -1,11 +1,16 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
+import { eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../auth/auth.service'
 import {
 	DatabaseService,
 	PlayerProfileRow,
 	PlayerStatsRow,
 	UserRow,
+	playerMoneyEvents,
+	playerProfiles,
+	playerStats,
+	users,
 } from '../database/database.service'
 
 const STATS_VERSION = 1
@@ -261,13 +266,10 @@ export class PlayersService {
 	constructor(private readonly database: DatabaseService) { }
 
 	async listPlayers(viewer: AuthenticatedUser) {
-		const users = this.database.connection.prepare(`
-			SELECT *
-			FROM users
-			ORDER BY lower(minecraft_username)
-		`).all() as UserRow[]
+		const userRows = this.database.connection.select().from(users).all()
+			.sort((left, right) => left.minecraft_username.localeCompare(right.minecraft_username, 'en', { sensitivity: 'base' }))
 
-		const players = await Promise.all(users.map((user) => this.serializePlayer(user, viewer.id, true)))
+		const players = await Promise.all(userRows.map((user) => this.serializePlayer(user, viewer.id, true)))
 
 		return {
 			currentUserId: viewer.id,
@@ -298,42 +300,21 @@ export class PlayersService {
 		const now = Date.now()
 		const profile = this.normalizeProfileInput(input)
 
-		this.database.connection.prepare(`
-			INSERT INTO player_profiles (
-				user_id,
-				preferred_name,
-				pronouns,
-				course_year,
-				discord_username,
-				base_x,
-				base_y,
-				base_z,
-				bio,
-				updated_at_unix_ms
-			)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-			ON CONFLICT(user_id) DO UPDATE SET
-				preferred_name = excluded.preferred_name,
-				pronouns = excluded.pronouns,
-				course_year = excluded.course_year,
-				discord_username = excluded.discord_username,
-				base_x = excluded.base_x,
-				base_y = excluded.base_y,
-				base_z = excluded.base_z,
-				bio = excluded.bio,
-				updated_at_unix_ms = excluded.updated_at_unix_ms
-		`).run(
-			user.id,
-			profile.preferredName,
-			profile.pronouns,
-			profile.courseYear,
-			profile.discordUsername,
-			profile.base.x,
-			profile.base.y,
-			profile.base.z,
-			profile.bio,
-			now,
-		)
+		const values = {
+			user_id: user.id,
+			preferred_name: profile.preferredName,
+			pronouns: profile.pronouns,
+			course_year: profile.courseYear,
+			discord_username: profile.discordUsername,
+			base_x: profile.base.x,
+			base_y: profile.base.y,
+			base_z: profile.base.z,
+			bio: profile.bio,
+			updated_at_unix_ms: now,
+		}
+		this.database.connection.insert(playerProfiles).values(values)
+			.onConflictDoUpdate({ target: playerProfiles.user_id, set: values })
+			.run()
 
 		return {
 			ok: true,
@@ -476,11 +457,8 @@ export class PlayersService {
 	}
 
 	private getProfile(userId: number): PlayerProfile {
-		const row = this.database.connection.prepare(`
-			SELECT *
-			FROM player_profiles
-			WHERE user_id = ?
-		`).get(userId) as PlayerProfileRow | undefined
+		const row = this.database.connection.select().from(playerProfiles)
+			.where(eq(playerProfiles.user_id, userId)).get()
 
 		if (!row) {
 			return {
@@ -510,11 +488,8 @@ export class PlayersService {
 	}
 
 	private getStats(userId: number): PlayerStats {
-		const row = this.database.connection.prepare(`
-			SELECT *
-			FROM player_stats
-			WHERE user_id = ?
-		`).get(userId) as PlayerStatsRow | undefined
+		const row = this.database.connection.select().from(playerStats)
+			.where(eq(playerStats.user_id, userId)).get()
 
 		if (!row) {
 			return defaultStats()
@@ -524,17 +499,14 @@ export class PlayersService {
 	}
 
 	private saveStats(userId: number, stats: PlayerStats, unixMs = Date.now()) {
-		this.database.connection.prepare(`
-			INSERT INTO player_stats (
-				user_id,
-				stats_json,
-				updated_at_unix_ms
-			)
-			VALUES (?, ?, ?)
-			ON CONFLICT(user_id) DO UPDATE SET
-				stats_json = excluded.stats_json,
-				updated_at_unix_ms = excluded.updated_at_unix_ms
-		`).run(userId, JSON.stringify(stats), unixMs)
+		const values = {
+			user_id: userId,
+			stats_json: JSON.stringify(stats),
+			updated_at_unix_ms: unixMs,
+		}
+		this.database.connection.insert(playerStats).values(values)
+			.onConflictDoUpdate({ target: playerStats.user_id, set: values })
+			.run()
 	}
 
 	private recordMoneyEvent(
@@ -554,27 +526,16 @@ export class PlayersService {
 		const eventId = sanitizeEventId(eventIdInput) ?? randomUUID()
 		const unixMs = normalizeUnixMs(unixMsInput)
 
-		return this.database.connection.transaction(() => {
-			const inserted = this.database.connection.prepare(`
-				INSERT OR IGNORE INTO player_money_events (
-					id,
-					user_id,
-					direction,
-					source,
-					amount_dabloons,
-					balance_dabloons,
-					created_at_unix_ms
-				)
-				VALUES (?, ?, ?, ?, ?, ?, ?)
-			`).run(
-				eventId,
-				userId,
+		return this.database.connection.transaction((tx) => {
+			const inserted = tx.insert(playerMoneyEvents).values({
+				id: eventId,
+				user_id: userId,
 				direction,
 				source,
-				amountDabloons,
-				balanceDabloons,
-				unixMs,
-			)
+				amount_dabloons: amountDabloons,
+				balance_dabloons: balanceDabloons,
+				created_at_unix_ms: unixMs,
+			}).onConflictDoNothing().run()
 
 			if (inserted.changes !== 1) {
 				return { recorded: false, duplicate: true }
@@ -597,7 +558,7 @@ export class PlayersService {
 			this.saveStats(userId, stats, unixMs)
 
 			return { recorded: true, duplicate: false }
-		})()
+		})
 	}
 
 	private getStatOptions(statsObjects: PlayerStats[]): StatOption[] {
@@ -662,11 +623,7 @@ export class PlayersService {
 	}
 
 	private findUserById(userId: number): UserRow | null {
-		return (this.database.connection.prepare(`
-			SELECT *
-			FROM users
-			WHERE id = ?
-		`).get(userId) as UserRow | undefined) ?? null
+		return this.database.connection.select().from(users).where(eq(users.id, userId)).get() ?? null
 	}
 
 	private findUserByMinecraftUsername(minecraftUsernameInput: string): UserRow | null {
@@ -675,11 +632,8 @@ export class PlayersService {
 			return null
 		}
 
-		return (this.database.connection.prepare(`
-			SELECT *
-			FROM users
-			WHERE lower(minecraft_username) = lower(?)
-		`).get(minecraftUsername) as UserRow | undefined) ?? null
+		return this.database.connection.select().from(users).all()
+			.find((user) => user.minecraft_username.localeCompare(minecraftUsername, 'en', { sensitivity: 'base' }) === 0) ?? null
 	}
 
 	private async ensureMojangProfile(user: UserRow, stats: PlayerStats): Promise<PlayerStats> {

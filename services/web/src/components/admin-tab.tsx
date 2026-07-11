@@ -195,14 +195,13 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 				<section className="adminSection">
 					<div className="adminSectionHeader">
 						<h3>Member list</h3>
-						<p>Private signup details are shown here only to help committee members verify society membership.</p>
+						<p>Don't share this screen with people as it contains sensitive info about our members</p>
 					</div>
 
 					<div className="adminWarnings adminWarnings-critical" role="alert">
 						<strong>Verify before changing anything.</strong>
 						<ul>
 							<li>Match the Minecraft, Discord and email identities.</li>
-							<li>Check the official membership or payment record; ask committee if unsure.</li>
 						</ul>
 					</div>
 

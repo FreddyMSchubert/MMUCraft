@@ -20,6 +20,8 @@ docker_build(
         fall_back_on('services/api/package.json'),
         fall_back_on('services/api/package-lock.json'),
         fall_back_on('services/api/tsconfig.json'),
+		fall_back_on('services/api/drizzle.config.ts'),
+		fall_back_on('services/api/drizzle'),
         fall_back_on('proto/auth.proto'),
 		fall_back_on('proto/gameplay.proto'),
         sync('services/api/src', '/app/src'),

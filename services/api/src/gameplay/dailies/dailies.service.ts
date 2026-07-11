@@ -3,8 +3,9 @@ import * as grpc from '@grpc/grpc-js'
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { and, eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../../auth/auth.service'
-import { DatabaseService, DailyAdvancementTargetRow, DailyClaimRow } from '../../database/database.service'
+import { DatabaseService, dailyAdvancementTargets, dailyClaims } from '../../database/database.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { PlayersService } from '../../players/players.service'
 
@@ -105,15 +106,7 @@ export class DailiesService {
 		const periodKey = currentDailyPeriodKey()
 		const now = Date.now()
 
-		const inserted = this.database.connection.prepare(`
-			INSERT OR IGNORE INTO daily_claims (
-				user_id,
-				task_id,
-				period_key,
-				claimed_at_unix_ms
-			)
-			VALUES (?, ?, ?, ?)
-		`).run(user.id, LOGIN_BONUS_TASK_ID, periodKey, now)
+		const inserted = this.insertClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey, now)
 
 		if (inserted.changes !== 1) {
 			return {
@@ -161,15 +154,7 @@ export class DailiesService {
 		const now = Date.now()
 		const itemTask = this.pickItemTask(periodKey)
 
-		const inserted = this.database.connection.prepare(`
-			INSERT OR IGNORE INTO daily_claims (
-				user_id,
-				task_id,
-				period_key,
-				claimed_at_unix_ms
-			)
-			VALUES (?, ?, ?, ?)
-		`).run(user.id, ITEM_SUBMISSION_TASK_ID, periodKey, now)
+		const inserted = this.insertClaim(user.id, ITEM_SUBMISSION_TASK_ID, periodKey, now)
 
 		if (inserted.changes !== 1) {
 			return {
@@ -221,15 +206,7 @@ export class DailiesService {
 			throw new BadRequestException(picked.message || 'Daily advancement target is unavailable right now.')
 		}
 
-		const inserted = this.database.connection.prepare(`
-			INSERT OR IGNORE INTO daily_claims (
-				user_id,
-				task_id,
-				period_key,
-				claimed_at_unix_ms
-			)
-			VALUES (?, ?, ?, ?)
-		`).run(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey, now)
+		const inserted = this.insertClaim(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey, now)
 
 		if (inserted.changes !== 1) {
 			return {
@@ -273,24 +250,32 @@ export class DailiesService {
 	}
 
 	private hasClaimed(userId: number, taskId: string, periodKey: string) {
-		const row = this.database.connection.prepare(`
-			SELECT *
-			FROM daily_claims
-			WHERE user_id = ?
-			  AND task_id = ?
-			  AND period_key = ?
-		`).get(userId, taskId, periodKey) as DailyClaimRow | undefined
+		const row = this.database.connection.select({ user_id: dailyClaims.user_id })
+			.from(dailyClaims)
+			.where(and(
+				eq(dailyClaims.user_id, userId),
+				eq(dailyClaims.task_id, taskId),
+				eq(dailyClaims.period_key, periodKey),
+			)).get()
 
 		return Boolean(row)
 	}
 
 	private deleteClaim(userId: number, taskId: string, periodKey: string) {
-		this.database.connection.prepare(`
-			DELETE FROM daily_claims
-			WHERE user_id = ?
-			  AND task_id = ?
-			  AND period_key = ?
-		`).run(userId, taskId, periodKey)
+		this.database.connection.delete(dailyClaims).where(and(
+			eq(dailyClaims.user_id, userId),
+			eq(dailyClaims.task_id, taskId),
+			eq(dailyClaims.period_key, periodKey),
+		)).run()
+	}
+
+	private insertClaim(userId: number, taskId: string, periodKey: string, claimedAtUnixMs: number) {
+		return this.database.connection.insert(dailyClaims).values({
+			user_id: userId,
+			task_id: taskId,
+			period_key: periodKey,
+			claimed_at_unix_ms: claimedAtUnixMs,
+		}).onConflictDoNothing().run()
 	}
 
 	private async getOrPickAdvancementTarget(user: AuthenticatedUser, periodKey: string) {
@@ -312,30 +297,17 @@ export class DailiesService {
 			}
 		}
 
-		this.database.connection.prepare(`
-			INSERT OR IGNORE INTO daily_advancement_targets (
-				user_id,
-				period_key,
-				advancement_id,
-				title,
-				tab_title,
-				icon_item,
-				base_reward_dabloons,
-				bonus_reward_dabloons,
-				selected_at_unix_ms
-			)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-		`).run(
-			user.id,
-			periodKey,
-			result.advancement_id,
-			result.title,
-			result.tab_title,
-			result.icon_item,
-			result.base_reward_dabloons,
-			result.bonus_reward_dabloons,
-			now,
-		)
+		this.database.connection.insert(dailyAdvancementTargets).values({
+			user_id: user.id,
+			period_key: periodKey,
+			advancement_id: result.advancement_id,
+			title: result.title,
+			tab_title: result.tab_title,
+			icon_item: result.icon_item,
+			base_reward_dabloons: result.base_reward_dabloons,
+			bonus_reward_dabloons: result.bonus_reward_dabloons,
+			selected_at_unix_ms: now,
+		}).onConflictDoNothing().run()
 
 		return {
 			target: this.getAdvancementTarget(user.id, periodKey),
@@ -344,12 +316,11 @@ export class DailiesService {
 	}
 
 	private getAdvancementTarget(userId: number, periodKey: string): DailyAdvancementTarget | null {
-		const row = this.database.connection.prepare(`
-			SELECT *
-			FROM daily_advancement_targets
-			WHERE user_id = ?
-			  AND period_key = ?
-		`).get(userId, periodKey) as DailyAdvancementTargetRow | undefined
+		const row = this.database.connection.select().from(dailyAdvancementTargets)
+			.where(and(
+				eq(dailyAdvancementTargets.user_id, userId),
+				eq(dailyAdvancementTargets.period_key, periodKey),
+			)).get()
 
 		if (!row) {
 			return null

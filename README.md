@@ -15,6 +15,14 @@ Tilt will now restart the minecraft pod automatically whenever the mod is built.
 - To access the server console: `kubectl attach -n mc-stack-dev -it deploy/minecraft`
 - To allow people to join server: `kubectl -n mc-stack-dev port-forward --address 0.0.0.0 svc/minecraft 25565:25565`
 
+### Database migrations
+
+The API database schema is defined in `services/api/src/database/schema.ts`. Change that file, then run `npm run db:generate` from `services/api` and commit the generated `drizzle` migration. Do not edit generated migration SQL by hand. Use `npm run db:check` to validate the migration history; migrations are applied automatically when the API starts.
+
+The first Drizzle-enabled startup adopts an existing pre-migration SQLite database automatically. It leaves the original database beside it with a `.pre-drizzle-<timestamp>` suffix as a rollback backup.
+
+With the development Kubernetes cluster running, run `npm run db:studio` from `services/api`. The command starts Studio inside the API pod, forwards its database proxy to port `4983`, and prints the Studio URL. Open `https://local.drizzle.studio` and leave the command running; press Ctrl+C when finished. Studio therefore reads the same `/app/data/app.sqlite` PVC database as the website and does not create a separate local database.
+
 ## The goal
 
 One main, largely vanilla survival server. Main server..

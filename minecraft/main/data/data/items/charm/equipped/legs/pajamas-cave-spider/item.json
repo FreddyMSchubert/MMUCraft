@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 90,
-		"description": "Poison not included. Ceiling crawling for two seconds.",
+		"description": "Ceiling crawling for two seconds.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Cave Spider Pajamas Charm."
 	},

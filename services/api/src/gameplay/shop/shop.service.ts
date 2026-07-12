@@ -17,6 +17,34 @@ const DEFAULT_ITEM_ROOTS = [
 
 const VANILLA_ITEM_TEXTURE_PREFIX = '/assets/mc_respack/assets/minecraft/textures/item'
 const SHOP_ASSET_REVISION = `${Date.now().toString(36)}-${randomInt(0x100000000).toString(36)}`
+const DAILY_DEAL_MESSAGES = [
+	"What a steal!",
+	"Limited time offer",
+	"While stocks last",
+	"Best seller",
+	"New arrival",
+	"Must-have",
+	"Amazing deal",
+	"Nothing beats a {item}",
+	"Today's treasure",
+	"A proper bargain",
+	"Blink and you'll miss it",
+	"Worth every dabloon",
+	"A deal this good is rare",
+	"The price is right",
+	"Too good to leave behind",
+	"Limited-time deal",
+	"Treat yo' self",
+	"Shut up and take my money!",
+	"Anything from the trolley, dears?",
+	"We'll take the lot.",
+	"Buy somethin', will ya!",
+	"I am never going to financially recover from this.",
+	"Let's go shopping!",
+	"Capitalism, baby!",
+	"It's our best-seller.",
+	"A fool and her money soon part."
+] as const
 
 type ShopItemType = 'charm' | 'cosmetic' | 'generic'
 type ShopDeliveryKind = 'fake_item' | 'vanilla_item'
@@ -44,6 +72,18 @@ interface FakeItemDefinition {
 	equippableCosmetic?: unknown
 }
 
+interface CharmLevelDefinition {
+	level: number
+	abilityStatusCurrent: string
+	upgradeIngredients: string[]
+}
+
+interface CharmDetailsDefinition {
+	minLevel: number
+	maxLevel: number
+	levels: CharmLevelDefinition[]
+}
+
 interface TextureAnimationDefinition {
 	frameDelayMs: number
 	frames: number[] | null
@@ -57,6 +97,7 @@ interface CatalogItem {
 	rarity: string
 	priceDabloons: number
 	description: string
+	tooltips: string[]
 	unlockMessage: string | null
 	unlockWeight: number
 	iconUrl: string | null
@@ -71,6 +112,7 @@ interface CatalogItem {
 	deliveryKind: ShopDeliveryKind
 	deliveryItemId: string
 	bookUnlockType: BookUnlockType | null
+	charmDetails: CharmDetailsDefinition | null
 }
 
 interface CachedShopCatalog {
@@ -127,30 +169,44 @@ export class ShopService {
 		const items = this.loadCatalog().items
 		const unlockedIds = this.getUnlockedItemIds(user.id)
 		const availability = this.getUnlockAvailabilityForUser(user.id)
+		const dailyDealIds = this.getDailyDealIds(items)
 		const visibleItems = items.filter((item) => this.isVisibleInShop(item, unlockedIds))
 
 		return {
 			availability,
-			items: visibleItems.map((item) => ({
-				id: item.id,
-				title: item.title,
-				type: item.type,
-				modelType: item.modelType,
-				rarity: item.rarity,
-				priceDabloons: item.priceDabloons,
-				description: item.description,
-				unlockMessage: item.unlockMessage,
-				unlockWeight: item.unlockWeight,
-				iconUrl: item.iconUrl,
-				renderMode: item.renderMode,
-				modelUrl: item.modelUrl,
-				textureUrl: item.textureUrl,
-				animated: item.animated,
-				dyeable: item.dyeable,
-				animation: item.animation,
-				unlocked: this.isUnlockedShopItem(item, unlockedIds),
-				available: this.isAvailableForPurchase(user.id, item, availability, unlockedIds),
-			})),
+			dealDate: this.getDailyDealDate(),
+			shoppingSunday: this.isShoppingSunday(),
+			items: visibleItems.map((item) => {
+				const isDailyDeal = dailyDealIds.has(item.id)
+				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+				return {
+					id: item.id,
+					title: item.title,
+					type: item.type,
+					modelType: item.modelType,
+					rarity: item.rarity,
+					priceDabloons: item.priceDabloons,
+					originalPriceDabloons: item.priceDabloons,
+					isDailyDeal,
+					discountPercent,
+					dealMessage: isDailyDeal ? this.getDailyDealMessage(item) : null,
+					discountedPriceDabloons: this.discountedPrice(item.priceDabloons, discountPercent),
+					description: item.description,
+					tooltips: item.tooltips,
+					unlockMessage: item.unlockMessage,
+					unlockWeight: item.unlockWeight,
+					iconUrl: item.iconUrl,
+					renderMode: item.renderMode,
+					modelUrl: item.modelUrl,
+					textureUrl: item.textureUrl,
+					animated: item.animated,
+					dyeable: item.dyeable,
+					animation: item.animation,
+					charmDetails: item.charmDetails,
+					unlocked: this.isUnlockedShopItem(item, unlockedIds),
+					available: this.isAvailableForPurchase(user.id, item, availability, unlockedIds),
+				}
+			}),
 		}
 	}
 
@@ -171,9 +227,14 @@ export class ShopService {
 			throw new BadRequestException(this.unavailablePurchaseMessage(item))
 		}
 
+		const catalogItems = this.loadCatalog().items
+		const isDailyDeal = this.getDailyDealIds(catalogItems).has(item.id)
+		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+		const purchasePrice = this.discountedPrice(item.priceDabloons, discountPercent)
+
 		let purchase: PurchaseShopItemResponse
 		try {
-			purchase = await this.purchaseFromMod(user.minecraftUsername, item)
+			purchase = await this.purchaseFromMod(user.minecraftUsername, item, purchasePrice)
 		} catch {
 			throw new BadRequestException('You have to be online on the server to buy from the shop.')
 		}
@@ -433,7 +494,7 @@ export class ShopService {
 		return items[items.length - 1]!
 	}
 
-	private async purchaseFromMod(minecraftUsername: string, item: CatalogItem): Promise<PurchaseShopItemResponse> {
+	private async purchaseFromMod(minecraftUsername: string, item: CatalogItem, priceDabloons: number): Promise<PurchaseShopItemResponse> {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).PurchaseShopItem
 
@@ -445,7 +506,7 @@ export class ShopService {
 			method.call(client, {
 				minecraft_username: minecraftUsername,
 				item_id: item.deliveryItemId,
-				price_dabloons: item.priceDabloons,
+				price_dabloons: priceDabloons,
 				delivery_kind: item.deliveryKind,
 				unix_ms: Date.now(),
 			}, (error: grpc.ServiceError | null, response: PurchaseShopItemResponse) => {
@@ -480,7 +541,7 @@ export class ShopService {
 			return {
 				root,
 				mtimeMs: 0,
-				items: [this.silenceArmorTrimCatalogItem()],
+				items: [],
 			}
 		}
 
@@ -489,10 +550,7 @@ export class ShopService {
 			return this.cached
 		}
 
-		const items = [
-			...this.readCatalogItems(root),
-			this.silenceArmorTrimCatalogItem(),
-		].sort((left, right) => {
+		const items = this.readCatalogItems(root).sort((left, right) => {
 			const typeCompare = left.type.localeCompare(right.type, 'en')
 			if (typeCompare !== 0) return typeCompare
 			return left.title.localeCompare(right.title, 'en')
@@ -557,6 +615,10 @@ export class ShopService {
 			: textureUrl ?? this.vanillaItemIconUrl(baseItemOverride) ?? this.fallbackIconUrl(type)
 		const animation = textureFilePath ? this.readAnimationDefinition(textureFilePath) : null
 
+		const tooltips = Array.isArray(json.tooltips)
+			? json.tooltips.filter((tooltip): tooltip is string => typeof tooltip === 'string' && tooltip.trim().length > 0)
+			: []
+
 		return {
 			id,
 			title,
@@ -565,6 +627,7 @@ export class ShopService {
 			rarity,
 			priceDabloons: shop.priceDabloons,
 			description: shop.description,
+			tooltips,
 			unlockMessage: shop.unlockMessage,
 			unlockWeight: shop.unlockWeight,
 			iconUrl,
@@ -579,7 +642,79 @@ export class ShopService {
 			deliveryKind: 'fake_item',
 			deliveryItemId: id,
 			bookUnlockType: this.bookUnlockType(id),
+			charmDetails: type === 'charm' ? this.parseCharmDetails(json.charm) : null,
 		}
+	}
+
+	private parseCharmDetails(value: unknown): CharmDetailsDefinition | null {
+		if (!value || typeof value !== 'object') return null
+		const candidate = value as { minLevel?: unknown; maxLevel?: unknown; levels?: unknown }
+		const minLevel = Number.isInteger(candidate.minLevel) ? Number(candidate.minLevel) : 0
+		const rawLevels = Array.isArray(candidate.levels) ? candidate.levels : []
+		const levels = rawLevels.flatMap((raw): CharmLevelDefinition[] => {
+			if (!raw || typeof raw !== 'object') return []
+			const level = raw as {
+				level?: unknown
+				abilityStatusCurrent?: unknown
+				upgradeIngredients?: unknown
+			}
+			if (!Number.isInteger(level.level)) return []
+			return [{
+				level: Number(level.level),
+				abilityStatusCurrent: typeof level.abilityStatusCurrent === 'string' ? level.abilityStatusCurrent : '',
+				upgradeIngredients: Array.isArray(level.upgradeIngredients)
+					? level.upgradeIngredients.filter((ingredient): ingredient is string => typeof ingredient === 'string')
+					: [],
+			}]
+		})
+		const maxLevel = Number.isInteger(candidate.maxLevel)
+			? Number(candidate.maxLevel)
+			: Math.max(minLevel, ...levels.map((level) => level.level))
+
+		return { minLevel, maxLevel, levels }
+	}
+
+	private getDailyDealDate(): string {
+		return new Date().toISOString().slice(0, 10)
+	}
+
+	private getDailyDealIds(items: CatalogItem[]): Set<string> {
+		const date = this.getDailyDealDate()
+		return new Set([...items]
+			.sort((left, right) => this.seededRank(`${date}:${left.id}`) - this.seededRank(`${date}:${right.id}`))
+			.slice(0, Math.min(this.isShoppingSunday() ? 10 : 5, items.length))
+			.map((item) => item.id))
+	}
+
+	private getDailyDiscountPercent(itemId: string): number {
+		const roll =
+			this.seededRank(`${this.getDailyDealDate()}:discount:${itemId}`) % 100
+
+		const divisor = this.isShoppingSunday() ? 2 : 4
+
+		return Math.max(5, Math.ceil(roll / divisor))
+	}
+
+	private isShoppingSunday(): boolean {
+		return new Date(`${this.getDailyDealDate()}T00:00:00Z`).getUTCDay() === 0
+	}
+
+	private getDailyDealMessage(item: CatalogItem): string {
+		const index = this.seededRank(`${this.getDailyDealDate()}:message:${item.id}`) % DAILY_DEAL_MESSAGES.length
+		return DAILY_DEAL_MESSAGES[index]!.replaceAll('{item}', item.title)
+	}
+
+	private discountedPrice(price: number, discountPercent: number): number {
+		return Math.max(1, Math.ceil(price * (1 - discountPercent / 100)))
+	}
+
+	private seededRank(value: string): number {
+		let hash = 2166136261
+		for (let index = 0; index < value.length; index++) {
+			hash ^= value.charCodeAt(index)
+			hash = Math.imul(hash, 16777619)
+		}
+		return hash >>> 0
 	}
 
 	private purchaseFailureMessage(purchase: PurchaseShopItemResponse): string {
@@ -751,34 +886,6 @@ export class ShopService {
 		if (normalized === 'charm' || normalized === 'charms') return 'charm'
 		if (normalized === 'cosmetic' || normalized === 'cosmetics') return 'cosmetic'
 		return null
-	}
-
-	private silenceArmorTrimCatalogItem(): CatalogItem {
-		const itemId = 'minecraft:silence_armor_trim_smithing_template'
-
-		return {
-			id: itemId,
-			title: 'Silence Armor Trim',
-			type: 'generic',
-			modelType: 'basic',
-			rarity: 'epic',
-			priceDabloons: 180,
-			description: 'A vanilla armor trim smithing template for the Silence pattern.',
-			unlockMessage: null,
-			unlockWeight: 100,
-			iconUrl: this.vanillaItemIconUrl(itemId),
-			renderMode: 'texture',
-			modelUrl: null,
-			textureUrl: this.vanillaItemIconUrl(itemId),
-			animated: false,
-			dyeable: false,
-			animation: null,
-			textureFilePath: null,
-			modelFilePath: null,
-			deliveryKind: 'vanilla_item',
-			deliveryItemId: itemId,
-			bookUnlockType: null,
-		}
 	}
 
 	private getTreeMtimeMs(path: string): number {

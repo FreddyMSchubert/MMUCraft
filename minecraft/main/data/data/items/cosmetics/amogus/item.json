@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "When the impostor is sus",
+		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Amogus Hat."
 	},

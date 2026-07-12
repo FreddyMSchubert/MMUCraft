@@ -13,6 +13,7 @@ export interface MinecraftModelRendererOptions {
 	background?: string | null
 	defaultTint?: RgbColor
 	dyeable?: boolean
+	enableDrag?: boolean
 	frameDelayMs?: number
 	frameSequence?: number[] | null
 	rotationSpeed?: number
@@ -102,6 +103,7 @@ const FACE_TINT_DEFAULT = -1
 const MODEL_UV_UNITS = 16
 const TICK_MS = 50
 const MISSING_TEXTURE_SIZE = 16
+const imageSourceCache = new Map<string, Promise<HTMLImageElement>>()
 
 function clamp(value: number, min: number, max: number) {
 	return Math.max(min, Math.min(max, value))
@@ -397,26 +399,31 @@ function drawMissingTexture(ctx: CanvasRenderingContext2D, width: number, height
 	}
 }
 
-async function loadImageFromSource(url: string) {
-	const response = await fetch(url, { cache: 'no-store' })
-	if (!response.ok) {
-		throw new Error(`Could not load texture source: ${url}`)
-	}
+function loadImageFromSource(url: string) {
+	const cached = imageSourceCache.get(url)
+	if (cached) return cached
 
-	const objectUrl = URL.createObjectURL(await response.blob())
-	return await new Promise<HTMLImageElement>((resolve, reject) => {
-		const image = new Image()
-		image.crossOrigin = 'anonymous'
-		image.onload = () => {
-			URL.revokeObjectURL(objectUrl)
-			resolve(image)
-		}
-		image.onerror = () => {
-			URL.revokeObjectURL(objectUrl)
-			reject(new Error(`Could not load texture source: ${url}`))
-		}
-		image.src = objectUrl
-	})
+	const loading = (async () => {
+		const response = await fetch(url, { cache: 'force-cache' })
+		if (!response.ok) throw new Error(`Could not load texture source: ${url}`)
+		const objectUrl = URL.createObjectURL(await response.blob())
+		return await new Promise<HTMLImageElement>((resolve, reject) => {
+			const image = new Image()
+			image.crossOrigin = 'anonymous'
+			image.onload = () => {
+				URL.revokeObjectURL(objectUrl)
+				resolve(image)
+			}
+			image.onerror = () => {
+				URL.revokeObjectURL(objectUrl)
+				reject(new Error(`Could not load texture source: ${url}`))
+			}
+			image.src = objectUrl
+		})
+	})()
+	imageSourceCache.set(url, loading)
+	void loading.catch(() => imageSourceCache.delete(url))
+	return loading
 }
 
 class ManagedTexture {
@@ -546,6 +553,10 @@ class TextureRegistry {
 		this.handle?.update(deltaMs, frameDelayMs)
 	}
 
+	isAnimated() {
+		return (this.handle?.frameCount ?? 1) > 1
+	}
+
 	dispose() {
 		this.handle?.dispose()
 		this.handle = null
@@ -572,13 +583,21 @@ export class MinecraftModelRenderer {
 	private rotationSpeed: number
 	private dyeable: boolean
 	private view: PreviewView
+	private enableDrag: boolean
+	private dragging = false
+	private pointerX = 0
+	private pointerY = 0
+	private contextLost = false
+	private readonly tintPhase = Math.random() * 360
 
 	constructor(private readonly container: HTMLElement, options: MinecraftModelRendererOptions) {
 		this.autoRotate = Boolean(options.autoRotate)
 		this.frameDelayMs = Math.max(TICK_MS, options.frameDelayMs ?? TICK_MS)
 		this.rotationSpeed = options.rotationSpeed ?? 0.85
 		this.dyeable = Boolean(options.dyeable)
+		this.enableDrag = Boolean(options.enableDrag)
 		this.view = options.view ?? 'basic3d'
+		if (this.view === 'cosmetic') this.spinRoot.rotation.y = Math.PI
 		this.textureRegistry = new TextureRegistry(options.textureSource, options.frameSequence ?? null)
 		this.tintPalette.set(0, parseColorValue(options.defaultTint, { r: 255, g: 0, b: 0 }))
 
@@ -590,6 +609,16 @@ export class MinecraftModelRenderer {
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 		this.renderer.outputColorSpace = THREE.SRGBColorSpace
 		this.renderer.domElement.classList.add('shopModelCanvas')
+		this.renderer.domElement.addEventListener('webglcontextlost', this.handleContextLost)
+		this.renderer.domElement.addEventListener('webglcontextrestored', this.handleContextRestored)
+		if (this.enableDrag) {
+			this.renderer.domElement.style.touchAction = 'none'
+			this.renderer.domElement.style.cursor = 'grab'
+			this.renderer.domElement.addEventListener('pointerdown', this.handlePointerDown)
+			this.renderer.domElement.addEventListener('pointermove', this.handlePointerMove)
+			this.renderer.domElement.addEventListener('pointerup', this.handlePointerUp)
+			this.renderer.domElement.addEventListener('pointercancel', this.handlePointerUp)
+		}
 		this.container.appendChild(this.renderer.domElement)
 
 		this.scene.add(new THREE.AmbientLight(0xffffff, 1.4))
@@ -610,15 +639,23 @@ export class MinecraftModelRenderer {
 		this.animate = this.animate.bind(this)
 		window.addEventListener('resize', this.handleResize)
 		this.handleResize()
-		this.animate()
 	}
 
 	destroy() {
+		if (this.destroyed) return
 		this.destroyed = true
+		this.contextLost = true
 		if (this.animationFrame !== null) {
 			cancelAnimationFrame(this.animationFrame)
+			this.animationFrame = null
 		}
 		window.removeEventListener('resize', this.handleResize)
+		this.renderer.domElement.removeEventListener('webglcontextlost', this.handleContextLost)
+		this.renderer.domElement.removeEventListener('webglcontextrestored', this.handleContextRestored)
+		this.renderer.domElement.removeEventListener('pointerdown', this.handlePointerDown)
+		this.renderer.domElement.removeEventListener('pointermove', this.handlePointerMove)
+		this.renderer.domElement.removeEventListener('pointerup', this.handlePointerUp)
+		this.renderer.domElement.removeEventListener('pointercancel', this.handlePointerUp)
 		this.disposeModel()
 		this.textureRegistry.dispose()
 		this.renderer.dispose()
@@ -627,6 +664,7 @@ export class MinecraftModelRenderer {
 
 	setAutoRotate(enabled: boolean) {
 		this.autoRotate = enabled
+		this.ensureAnimating()
 	}
 
 	async loadModel(model: MinecraftModel) {
@@ -645,11 +683,12 @@ export class MinecraftModelRenderer {
 		}
 
 		this.fitCameraToModel()
+		this.ensureAnimating()
 	}
 
 	applyDisplayTransform(mode = 'gui') {
 		this.currentDisplayMode = mode
-		const transform = this.currentResolvedModel?.display?.[mode] ?? {}
+		const transform = this.view === 'cosmetic' ? {} : this.currentResolvedModel?.display?.[mode] ?? {}
 		const rotation = normalizeVector3(transform.rotation, [0, 0, 0])
 		const translation = normalizeVector3(transform.translation, [0, 0, 0]).multiplyScalar(1 / 16)
 		const scale = normalizeVector3(transform.scale, [1, 1, 1])
@@ -665,22 +704,36 @@ export class MinecraftModelRenderer {
 		this.camera.aspect = width / height
 		this.camera.updateProjectionMatrix()
 		this.renderer.setSize(width, height, false)
+		this.ensureAnimating()
 	}
 
 	private animate() {
-		if (this.destroyed) return
+		if (this.destroyed || this.contextLost || !this.renderer.domElement.isConnected) return
 
 		const deltaMs = this.clock.getDelta() * 1000
 		if (this.autoRotate) {
 			this.spinRoot.rotation.y += (deltaMs / 1000) * this.rotationSpeed
 		}
 		if (this.dyeable) {
-			this.setTint(0, hsvToRgb((performance.now() / 24) % 360, 1, 1))
+			this.setTint(0, hsvToRgb(((performance.now() / 28) + this.tintPhase) % 360, 0.82, 1))
 		}
 
 		this.textureRegistry.update(deltaMs, this.frameDelayMs)
-		this.renderer.render(this.scene, this.camera)
-		this.animationFrame = requestAnimationFrame(this.animate)
+		try {
+			this.renderer.render(this.scene, this.camera)
+		} catch {
+			this.contextLost = true
+			return
+		}
+		this.animationFrame = this.autoRotate || this.dyeable || this.textureRegistry.isAnimated()
+			? requestAnimationFrame(this.animate)
+			: null
+	}
+
+	private ensureAnimating() {
+		if (this.destroyed || this.contextLost || this.animationFrame !== null || !this.renderer.domElement.isConnected) return
+		this.clock.start()
+		this.animate()
 	}
 
 	private disposeModel() {
@@ -704,8 +757,8 @@ export class MinecraftModelRenderer {
 		const center = box.getCenter(new THREE.Vector3())
 		const distance = Math.max(1.6, size * 0.9 + 1)
 		const offset = this.view === 'cosmetic'
-			? new THREE.Vector3(distance * 0.24, distance * 0.32, distance * 1.22)
-			: new THREE.Vector3(0, 0, distance * 1.38)
+			? new THREE.Vector3(0, distance * 0.28, distance * 1.12)
+			: new THREE.Vector3(0, 0, distance * 1.28)
 
 		this.camera.position.copy(center.clone().add(offset))
 		this.camera.lookAt(center)
@@ -725,9 +778,49 @@ export class MinecraftModelRenderer {
 			for (const material of materials) {
 				if (hasMaterialColor(material)) material.color.copy(nextColor)
 				if (hasMaterialEmissive(material)) material.emissive.copy(nextColor)
-				material.needsUpdate = true
 			}
 		}
+	}
+
+	private handlePointerDown = (event: PointerEvent) => {
+		if (!this.enableDrag) return
+		this.dragging = true
+		this.pointerX = event.clientX
+		this.pointerY = event.clientY
+		this.renderer.domElement.setPointerCapture(event.pointerId)
+		this.renderer.domElement.style.cursor = 'grabbing'
+	}
+
+	private handleContextLost = (event: Event) => {
+		event.preventDefault()
+		this.contextLost = true
+		if (this.animationFrame !== null) cancelAnimationFrame(this.animationFrame)
+		this.animationFrame = null
+	}
+
+	private handleContextRestored = () => {
+		if (this.destroyed) return
+		this.contextLost = false
+		this.clock.start()
+		this.animate()
+	}
+
+	private handlePointerMove = (event: PointerEvent) => {
+		if (!this.dragging) return
+		const deltaX = event.clientX - this.pointerX
+		const deltaY = event.clientY - this.pointerY
+		this.pointerX = event.clientX
+		this.pointerY = event.clientY
+		this.spinRoot.rotation.y += deltaX * 0.012
+		this.spinRoot.rotation.x = clamp(this.spinRoot.rotation.x + deltaY * 0.008, -0.75, 0.75)
+		this.ensureAnimating()
+	}
+
+	private handlePointerUp = (event: PointerEvent) => {
+		if (!this.dragging) return
+		this.dragging = false
+		if (this.renderer.domElement.hasPointerCapture(event.pointerId)) this.renderer.domElement.releasePointerCapture(event.pointerId)
+		this.renderer.domElement.style.cursor = 'grab'
 	}
 
 	private async buildElement(element: MinecraftElement, textures: Record<string, string>) {

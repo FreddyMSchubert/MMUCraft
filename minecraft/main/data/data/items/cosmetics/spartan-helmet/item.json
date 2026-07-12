@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "A wardrobe cosmetic unlock for Spartan Helmet.",
+		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Spartan Helmet."
 	},

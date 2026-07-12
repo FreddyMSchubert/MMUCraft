@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 90,
-		"description": "Boing. Increases bounciness while equipped.",
+		"description": "Adds a little bounciness while equipped.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Kangaroo Boots Charm."
 	},

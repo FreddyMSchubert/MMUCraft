@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 90,
-		"description": "The MMU Students yearn for the mines. Veinminer capped at 1 extra mined block.",
+		"description": "Veinminer capped at 1 extra mined block.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Veinminer Charm."
 	},

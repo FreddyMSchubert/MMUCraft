@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 90,
-		"description": "Saves you a round trip to turkey. Increases block reach by 1 block.",
+		"description": "Increases block reach by 1 block.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Extendo Grip Charm."
 	},

@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 75,
-		"description": "Unlocks one random equipped charm for your linked account when used in-game.",
+		"description": "Use to unlock a random equipped charm on the website.",
 		"unlockWeight": 100
 	},
 	"charm": {

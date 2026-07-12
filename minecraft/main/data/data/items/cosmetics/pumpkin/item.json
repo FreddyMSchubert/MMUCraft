@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "A wardrobe cosmetic unlock for Pumpkin Hat.",
+		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Pumpkin Hat."
 	},

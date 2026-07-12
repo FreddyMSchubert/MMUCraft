@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "A wardrobe cosmetic unlock for Trans Bee hood.",
+		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Trans Bee hood."
 	},

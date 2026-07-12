@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "A wardrobe cosmetic unlock for Leprechaun Hat.",
+		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Leprechaun Hat."
 	},

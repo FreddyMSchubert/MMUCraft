@@ -8,7 +8,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 25,
-		"description": "Stores and compresses dabloons by crafting coins into it.",
+		"description": "Stores and compresses dabloons by crafting.",
 		"unlockWeight": 100
 	},
 	"charm": {

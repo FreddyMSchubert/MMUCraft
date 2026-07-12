@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 90,
-		"description": "For when the journey keeps chewing, but you don't. Reduces movement and mining hunger drain by 15%.",
+		"description": "Reduces movement and mining hunger drain by 15%.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Iron Stomach Charm."
 	},

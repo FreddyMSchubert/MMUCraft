@@ -4,6 +4,7 @@ import { AuthService } from '../../auth/auth.service'
 import { ShopService } from './shop.service'
 
 const NO_STORE_CACHE_CONTROL = 'no-store, no-cache, must-revalidate, proxy-revalidate'
+const VERSIONED_ASSET_CACHE_CONTROL = 'public, max-age=31536000, immutable'
 
 @Controller('api/shop')
 export class ShopController {
@@ -35,18 +36,14 @@ export class ShopController {
 
 	@Get('texture/:itemId')
 	@Header('Content-Type', 'image/png')
-	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
-	@Header('Pragma', 'no-cache')
-	@Header('Expires', '0')
+	@Header('Cache-Control', VERSIONED_ASSET_CACHE_CONTROL)
 	getTexture(@Param('itemId') itemId: string) {
 		return new StreamableFile(createReadStream(this.shop.getTextureFilePath(itemId)))
 	}
 
 	@Get('model/:itemId')
 	@Header('Content-Type', 'application/json')
-	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
-	@Header('Pragma', 'no-cache')
-	@Header('Expires', '0')
+	@Header('Cache-Control', VERSIONED_ASSET_CACHE_CONTROL)
 	getModel(@Param('itemId') itemId: string) {
 		return new StreamableFile(createReadStream(this.shop.getModelFilePath(itemId)))
 	}

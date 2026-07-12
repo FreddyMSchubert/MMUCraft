@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 90,
-		"description": "Oohhhh how emo... /s Wall climb is slow.",
+		"description": "Wall climb is slow.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Spider Pajamas Charm."
 	},

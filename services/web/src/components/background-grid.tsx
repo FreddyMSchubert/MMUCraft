@@ -1,18 +1,24 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSiteSettings } from '@/lib/site-settings'
 
 const TARGET_TILE_SIZE = 96
+const REDUCED_BACKGROUND_IMAGE = 'https://images3.alphacoders.com/118/1184187.jpg'
 
 function pickRandom(items: string[]): string {
     return items[Math.floor(Math.random() * items.length)] ?? ''
 }
 
 export function BackgroundGrid({ images }: { images: string[] }) {
+	const { settings } = useSiteSettings()
     const [cols, setCols] = useState(1)
     const [tiles, setTiles] = useState<string[]>([])
 
-    useEffect(() => {
+	useEffect(() => {
+		if (settings.reduceBackgroundImageLoading) {
+			return
+		}
         const updateGrid = () => {
             const width = window.innerWidth
             const height = window.innerHeight
@@ -34,10 +40,10 @@ export function BackgroundGrid({ images }: { images: string[] }) {
         updateGrid()
         window.addEventListener('resize', updateGrid)
         return () => window.removeEventListener('resize', updateGrid)
-    }, [images])
+    }, [images, settings.reduceBackgroundImageLoading])
 
     useEffect(() => {
-        if (images.length === 0) return
+		if (images.length === 0 || settings.reduceBackgroundImageLoading) return
 
         const id = window.setInterval(() => {
             setTiles((current) => {
@@ -51,7 +57,11 @@ export function BackgroundGrid({ images }: { images: string[] }) {
         }, 100)
 
         return () => window.clearInterval(id)
-    }, [images])
+    }, [images, settings.reduceBackgroundImageLoading])
+
+	if (settings.reduceBackgroundImageLoading) {
+		return <div className="bg bgSingle" style={{ backgroundImage: `url(${REDUCED_BACKGROUND_IMAGE})` }} aria-hidden="true" />
+	}
 
     return (
         <div

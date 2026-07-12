@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 45,
-		"description": "Unlocks one random cosmetic for your linked account when used in-game.",
+		"description": "Use to unlock a random cosmetic on the website.",
 		"unlockWeight": 100
 	},
 	"charm": {

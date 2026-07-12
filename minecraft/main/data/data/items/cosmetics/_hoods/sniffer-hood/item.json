@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "A wardrobe cosmetic unlock for Sniffer Hood.",
+		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Sniffer Hood."
 	},

@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "It is said that it's used to store soap and sponge.",
+		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Makka Pakka Hat."
 	},

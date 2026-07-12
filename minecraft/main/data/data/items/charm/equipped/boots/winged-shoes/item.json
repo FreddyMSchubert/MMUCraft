@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 90,
-		"description": "Don't get cold feet. Lets you jump in mid-air once.",
+		"description": "Lets you jump in mid-air once.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Winged Shoes Charm."
 	},

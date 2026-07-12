@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "A wardrobe cosmetic unlock for Shulker Hat.",
+		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Shulker Hat."
 	},

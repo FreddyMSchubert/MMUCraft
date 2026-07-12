@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 15,
-		"description": "Tells you a very funny joke that'll have you laughing your socks off",
+		"description": "Use to read your joke.",
 		"unlockWeight": 100
 	},
 	"charm": {

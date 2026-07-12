@@ -15,6 +15,15 @@ interface ApiError {
 	message?: string | string[]
 }
 
+const SERVER_RULES = [
+	'👿 Hate and prejudice, NSFW content, criminal behaviour and discussion is prohibited',
+	'🗯️ Politics, religion, and your mother should be discussed respectfully.',
+	'☢️ General toxicity is prohibited.',
+	'💥 Griefing & exploiting loopholes is prohibited.',
+	'‼️ Instructions from committee members are to be followed.',
+	'🤡 Fun is to be had, this is an order.'
+] as const
+
 async function postJson<T>(url: string, body: unknown): Promise<T> {
 	const response = await fetch(url, {
 		method: 'POST',
@@ -44,9 +53,10 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	const [minecraftUsername, setMinecraftUsername] = useState('')
 	const [minecraftCode, setMinecraftCode] = useState('')
 	const [devEmailCode, setDevEmailCode] = useState('')
-	const [rulesAccepted, setRulesAccepted] = useState(false)
+	const [acceptedRules, setAcceptedRules] = useState<boolean[]>(() => SERVER_RULES.map(() => false))
 	const [error, setError] = useState('')
 	const [busy, setBusy] = useState(false)
+	const allRulesAccepted = acceptedRules.every(Boolean)
 
 	async function run(action: () => Promise<void>) {
 		setBusy(true)
@@ -102,8 +112,8 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	function submitRules(event: FormEvent) {
 		event.preventDefault()
 
-		if (!rulesAccepted) {
-			setError('You must accept the rules before joining')
+		if (!allRulesAccepted) {
+			setError('You must acknowledge every rule before joining')
 			return
 		}
 
@@ -112,6 +122,13 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			setStep('done')
 			onSignedIn?.()
 		})
+	}
+
+	function setRuleAccepted(index: number, accepted: boolean) {
+		setAcceptedRules((current) => current.map((value, ruleIndex) => (
+			ruleIndex === index ? accepted : value
+		)))
+		setError('')
 	}
 
 	function submitSignIn(event: FormEvent) {
@@ -210,35 +227,23 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 					<p>You must accept the server rules before your Minecraft username is whitelisted.</p>
 
 					<div className="authRules">
-						<p>By joining, you agree to the following rules:</p>
-						<ol>
-							<li>You do not talk about Fight Club.</li>
-							<li>YOU DO NOT. TALK. ABOUT FIGHT CLUB.</li>
-							<li>Fighter yells &quot;stop,&quot; goes limp, taps out, the fight&apos;s over. </li>
-							<li>If this is your first time at Fight Club, you have to fight. </li>
-						</ol>
-						<p>Beyond that, you also agree to:</p>
-						<ul>
-							<li>All forms of hate and prejudice are prohibited.</li>
-							<li>Any NSFW content is prohibited.</li>
-							<li>Politics, Religion, and your mother should be discussed respectfully.</li>
-							<li>Criminal behaviour and criminal discussion is prohibited.</li>
-							<li>General toxicity is prohibited.</li>
-							<li>Exploting loopholes is prohibited.</li>
-						</ul>
+						<p>Check every rule to confirm you have read and understood it:</p>
+						<div className="authRuleList">
+							{SERVER_RULES.map((rule, index) => (
+								<label className="authRule" key={rule}>
+									<input
+										type="checkbox"
+										checked={acceptedRules[index]}
+										onChange={(event) => setRuleAccepted(index, event.target.checked)}
+									/>
+									<span>{rule}</span>
+								</label>
+							))}
+						</div>
+						<p>If you think any of these rules are being broken or feel unwell/unsafe on the server in any way,<br/>please reach out to our Wellbeing Officer Mia or open up a ticket on our discord server.</p>
 					</div>
 
-					<label>
-						<input
-							type="checkbox"
-							checked={rulesAccepted}
-							onChange={(event) => setRulesAccepted(event.target.checked)}
-						/>
-						{' '}
-						I accept the server rules.
-					</label>
-
-					<button disabled={busy || !rulesAccepted}>Accept rules and finish signup</button>
+					<button disabled={busy || !allRulesAccepted}>Accept rules and finish signup</button>
 				</form>
 			)}
 

@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "Ar ar ar ar",
+		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Fazbear Head."
 	},

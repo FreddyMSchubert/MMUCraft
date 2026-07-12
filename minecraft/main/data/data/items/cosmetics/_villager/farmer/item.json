@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "A wardrobe cosmetic unlock for Farmer Straw hat.",
+		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Farmer Straw hat."
 	},

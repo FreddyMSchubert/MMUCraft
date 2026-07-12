@@ -1,7 +1,10 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
+import { MinecraftIdentityService, normalizeMinecraftUuid } from '../database/minecraft-identity.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
 import { UnaryCallback } from '../grpc/grpc.types'
+import { isValidMinecraftUsername } from './auth.util'
+import { signupFlows } from './signup-flow'
 
 interface AuthProtoRoot {
 	mcstack: {
@@ -21,7 +24,10 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 	private readonly logger = new Logger(AuthGrpcService.name)
 	private modControlClient: grpc.Client | null = null
 
-	constructor(private readonly grpcServer: GrpcServerService) { }
+	constructor(
+		private readonly grpcServer: GrpcServerService,
+		private readonly identities: MinecraftIdentityService,
+	) { }
 
 	onModuleInit() {
 		const authProto = this.grpcServer.loadProto<AuthProtoRoot>('auth.proto')
@@ -107,10 +113,42 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 		}, { received: boolean }>,
 		callback: UnaryCallback<{ received: boolean }>,
 	) {
+		const username = (call.request.minecraft_username ?? '').trim()
+		const uuid = normalizeMinecraftUuid(call.request.uuid ?? '')
+
+		if (!uuid || !isValidMinecraftUsername(username)) {
+			this.logger.warn('Ignored Minecraft login attempt with an invalid username or UUID')
+			callback(null, { received: false })
+			return
+		}
+
+		const existingUser = this.identities.resolveAndRefresh(uuid, username)
+		if (!existingUser) {
+			this.attachIdentityToPendingSignup(uuid, username)
+		}
+
 		this.logger.log(
-			`Minecraft login attempt: username=${call.request.minecraft_username ?? 'unknown'} whitelisted=${Boolean(call.request.whitelisted)}`,
+			`Minecraft login attempt: username=${username} uuid=${uuid} whitelisted=${Boolean(call.request.whitelisted)}`,
 		)
 
 		callback(null, { received: true })
+	}
+
+	private attachIdentityToPendingSignup(uuid: string, username: string) {
+		if (this.identities.findByUuid(uuid)) return
+
+		const flow = [...signupFlows.values()].find((candidate) => (
+			candidate.step === 'minecraft-code'
+			&& candidate.minecraftUsername?.toLowerCase() === username.toLowerCase()
+		))
+		if (!flow) return
+
+		const uuidInAnotherFlow = [...signupFlows.values()]
+			.some((candidate) => candidate !== flow && candidate.minecraftUuid === uuid)
+		if (uuidInAnotherFlow) return
+
+		flow.minecraftUuid = uuid
+		flow.minecraftUsername = username
+		flow.updatedAt = Date.now()
 	}
 }

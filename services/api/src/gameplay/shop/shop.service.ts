@@ -5,7 +5,8 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { and, eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../../auth/auth.service'
-import { DatabaseService, shopUnlocks, UserRow, users } from '../../database/database.service'
+import { DatabaseService, shopUnlocks } from '../../database/database.service'
+import { MinecraftIdentityService } from '../../database/minecraft-identity.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { KnowledgeService } from '../knowledge/knowledge.service'
 
@@ -161,6 +162,7 @@ export class ShopService {
 
 	constructor(
 		private readonly database: DatabaseService,
+		private readonly identities: MinecraftIdentityService,
 		private readonly grpcServer: GrpcServerService,
 		private readonly knowledge: KnowledgeService,
 	) { }
@@ -253,6 +255,7 @@ export class ShopService {
 	}
 
 	unlockNextForMinecraftUsername(
+		minecraftUuidInput: string,
 		minecraftUsernameInput: string,
 		unlockTypeInput: string,
 		sourceInput: string,
@@ -269,7 +272,7 @@ export class ShopService {
 			return this.noShopUnlock('No Minecraft username was provided.')
 		}
 
-		const user = this.findUserByMinecraftUsername(minecraftUsername)
+		const user = this.identities.resolveAndRefresh(minecraftUuidInput, minecraftUsername)
 		if (!user) {
 			return this.noShopUnlock('No website account is linked to this Minecraft username yet.')
 		}
@@ -336,7 +339,7 @@ export class ShopService {
 		return this.noShopUnlock('Unlock was busy. Try again.')
 	}
 
-	getUnlockAvailabilityForMinecraftUsername(minecraftUsernameInput: string) {
+	getUnlockAvailabilityForMinecraftUsername(minecraftUuidInput: string, minecraftUsernameInput: string) {
 		const minecraftUsername = minecraftUsernameInput.trim()
 		if (!minecraftUsername) {
 			return {
@@ -348,7 +351,7 @@ export class ShopService {
 			}
 		}
 
-		const user = this.findUserByMinecraftUsername(minecraftUsername)
+		const user = this.identities.resolveAndRefresh(minecraftUuidInput, minecraftUsername)
 		if (!user) {
 			return {
 				accountLinked: false,
@@ -473,11 +476,6 @@ export class ShopService {
 			.all()
 
 		return new Set(rows.map((row) => row.item_id))
-	}
-
-	private findUserByMinecraftUsername(minecraftUsername: string): UserRow | null {
-		return this.database.connection.select().from(users).all()
-			.find((user) => user.minecraft_username.localeCompare(minecraftUsername, 'en', { sensitivity: 'base' }) === 0) ?? null
 	}
 
 	private pickWeightedRandomItem(items: CatalogItem[]): CatalogItem {

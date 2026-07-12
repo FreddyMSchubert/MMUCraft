@@ -1,15 +1,13 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
-import { and, eq, gt, lt, ne } from 'drizzle-orm'
+import { and, eq, gt } from 'drizzle-orm'
 import {
 	DatabaseService,
-	SignupFlowRow,
-	SignupFlowStatus,
 	UserRow,
 	sessions,
-	signupFlows,
 	users,
 } from '../database/database.service'
+import { normalizeMinecraftUuid } from '../database/minecraft-identity.service'
 import { AuthGrpcService } from './auth-grpc.service'
 import {
 	createMinecraftCode,
@@ -21,6 +19,7 @@ import {
 	normalizeEmail,
 	safeSecretEquals,
 } from './auth.util'
+import { SignupFlow, signupFlows } from './signup-flow'
 
 const EMAIL_CODE_TTL_MS = 10 * 60 * 1000
 const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
@@ -64,18 +63,13 @@ export class AuthService {
 		const code = createNumericCode()
 		const flowId = randomUUID()
 
-		this.database.connection.insert(signupFlows).values({
-			id: flowId,
+		signupFlows.set(flowId, {
 			email,
-			status: SignupFlowStatus.EMAIL_PENDING,
-			email_code_hash: hashSecret(code),
-			email_code_expires_at_unix_ms: now + EMAIL_CODE_TTL_MS,
-			minecraft_username: null,
-			minecraft_code_hash: null,
-			minecraft_code_expires_at_unix_ms: null,
-			created_at_unix_ms: now,
-			updated_at_unix_ms: now,
-		}).run()
+			step: 'email',
+			emailCodeHash: hashSecret(code),
+			emailCodeExpiresAt: now + EMAIL_CODE_TTL_MS,
+			updatedAt: now,
+		})
 
 		return {
 			flowId,
@@ -87,15 +81,15 @@ export class AuthService {
 		const flow = this.getFlow(flowId)
 		const now = Date.now()
 
-		if (flow.status !== SignupFlowStatus.EMAIL_PENDING) {
+		if (flow.step !== 'email') {
 			throw new BadRequestException('This signup flow is not waiting for email verification')
 		}
 
-		if (flow.email_code_expires_at_unix_ms < now) {
+		if (flow.emailCodeExpiresAt < now) {
 			throw new BadRequestException('Email code expired')
 		}
 
-		if (!safeSecretEquals(code, flow.email_code_hash)) {
+		if (!safeSecretEquals(code, flow.emailCodeHash)) {
 			throw new BadRequestException('Invalid email code')
 		}
 
@@ -103,10 +97,8 @@ export class AuthService {
 			throw new BadRequestException('An account with this email already exists')
 		}
 
-		this.database.connection.update(signupFlows)
-			.set({ status: SignupFlowStatus.MINECRAFT_USERNAME_PENDING, updated_at_unix_ms: now })
-			.where(eq(signupFlows.id, flowId))
-			.run()
+		flow.step = 'minecraft-username'
+		flow.updatedAt = now
 
 		return { ok: true }
 	}
@@ -118,7 +110,7 @@ export class AuthService {
 		const username = usernameInput.trim()
 		const now = Date.now()
 
-		if (flow.status !== SignupFlowStatus.MINECRAFT_USERNAME_PENDING) {
+		if (flow.step !== 'minecraft-username') {
 			throw new BadRequestException('This signup flow is not waiting for a Minecraft username')
 		}
 
@@ -132,10 +124,10 @@ export class AuthService {
 			throw new BadRequestException('An account with this Minecraft username already exists')
 		}
 
-		const existingActiveFlow = this.database.connection.select().from(signupFlows)
-			.where(and(ne(signupFlows.id, flowId), ne(signupFlows.status, SignupFlowStatus.COMPLETE)))
-			.all()
-			.find((candidate) => candidate.minecraft_username?.localeCompare(username, 'en', { sensitivity: 'base' }) === 0)
+		const existingActiveFlow = [...signupFlows].find(([candidateId, candidate]) => (
+			candidateId !== flowId
+			&& candidate.minecraftUsername?.localeCompare(username, 'en', { sensitivity: 'base' }) === 0
+		))
 
 		if (existingActiveFlow) {
 			throw new BadRequestException('This Minecraft username is already being used in another signup flow')
@@ -144,13 +136,12 @@ export class AuthService {
 		const minecraftCode = createMinecraftCode()
 		const expiresAt = now + MINECRAFT_CODE_TTL_MS
 
-		this.database.connection.update(signupFlows).set({
-			status: SignupFlowStatus.MINECRAFT_CODE_PENDING,
-			minecraft_username: username,
-			minecraft_code_hash: hashSecret(minecraftCode),
-			minecraft_code_expires_at_unix_ms: expiresAt,
-			updated_at_unix_ms: now,
-		}).where(eq(signupFlows.id, flowId)).run()
+		flow.step = 'minecraft-code'
+		flow.minecraftUsername = username
+		flow.minecraftUuid = undefined
+		flow.minecraftCodeHash = hashSecret(minecraftCode)
+		flow.minecraftCodeExpiresAt = expiresAt
+		flow.updatedAt = now
 
 		await this.grpc.upsertPendingJoin({
 			minecraftUsername: username,
@@ -165,51 +156,64 @@ export class AuthService {
 		const flow = this.getFlow(flowId)
 		const now = Date.now()
 
-		if (flow.status !== SignupFlowStatus.MINECRAFT_CODE_PENDING) {
+		if (flow.step !== 'minecraft-code') {
 			throw new BadRequestException('This signup flow is not waiting for a Minecraft join code')
 		}
 
-		if (!flow.minecraft_username || !flow.minecraft_code_hash || !flow.minecraft_code_expires_at_unix_ms) {
+		if (!flow.minecraftUsername || !flow.minecraftCodeHash || !flow.minecraftCodeExpiresAt) {
 			throw new BadRequestException('Minecraft code is not available for this signup flow')
 		}
 
-		if (flow.minecraft_code_expires_at_unix_ms < now) {
+		if (flow.minecraftCodeExpiresAt < now) {
 			throw new BadRequestException('Minecraft code expired')
 		}
 
-		if (!safeSecretEquals(code.trim().toUpperCase(), flow.minecraft_code_hash)) {
+		if (!safeSecretEquals(code.trim().toUpperCase(), flow.minecraftCodeHash)) {
 			throw new BadRequestException('Invalid Minecraft code')
 		}
 
-		await this.grpc.removePendingJoin(flow.minecraft_username)
+		const minecraftUuid = normalizeMinecraftUuid(flow.minecraftUuid ?? '')
+		if (!minecraftUuid) {
+			throw new BadRequestException('Join the Minecraft server once before verifying this code')
+		}
+		if (this.findUserByMinecraftUuid(minecraftUuid)) {
+			throw new BadRequestException('This Minecraft account is already linked to a website account')
+		}
 
-		this.database.connection.update(signupFlows)
-			.set({ status: SignupFlowStatus.RULES_PENDING, updated_at_unix_ms: now })
-			.where(eq(signupFlows.id, flowId))
-			.run()
+		await this.grpc.removePendingJoin(flow.minecraftUsername)
+
+		flow.step = 'rules'
+		flow.updatedAt = now
 	}
 
 	async acceptRules(flowId: string) {
 		const flow = this.getFlow(flowId)
 		const now = Date.now()
 
-		if (flow.status !== SignupFlowStatus.RULES_PENDING) {
+		if (flow.step !== 'rules') {
 			throw new BadRequestException('This signup flow is not waiting for rules acceptance')
 		}
 
-		if (!flow.minecraft_username) {
+		if (!flow.minecraftUsername) {
 			throw new BadRequestException('Minecraft username is not available for this signup flow')
 		}
-		const minecraftUsername = flow.minecraft_username
+		const minecraftUsername = flow.minecraftUsername
+		const minecraftUuid = normalizeMinecraftUuid(flow.minecraftUuid ?? '')
+		if (!minecraftUuid) {
+			throw new BadRequestException('Minecraft identity is not available for this signup flow')
+		}
 
 		if (this.findUserByEmail(flow.email)) {
 			throw new BadRequestException('An account with this email already exists')
 		}
 
-		const existingMinecraftUser = this.findUserByMinecraftUsername(flow.minecraft_username)
+		const existingMinecraftUser = this.findUserByMinecraftUsername(flow.minecraftUsername)
 
 		if (existingMinecraftUser) {
 			throw new BadRequestException('An account with this Minecraft username already exists')
+		}
+		if (this.findUserByMinecraftUuid(minecraftUuid)) {
+			throw new BadRequestException('This Minecraft account is already linked to a website account')
 		}
 
 		await this.grpc.whitelistPlayer(minecraftUsername)
@@ -218,21 +222,19 @@ export class AuthService {
 			const userId = this.database.connection.transaction((tx) => {
 				const created = tx.insert(users).values({
 					email: flow.email,
+					minecraft_uuid: minecraftUuid,
 					minecraft_username: minecraftUsername,
 					is_committee: isSuperAdminUsername(minecraftUsername) ? 1 : 0,
+					is_super_admin: isSuperAdminUsername(minecraftUsername) ? 1 : 0,
 					whitelisted_at_unix_ms: now,
 					rules_accepted_at_unix_ms: now,
 					created_at_unix_ms: now,
 				}).returning({ id: users.id }).get()
 
-				tx.update(signupFlows)
-					.set({ status: SignupFlowStatus.COMPLETE, updated_at_unix_ms: now })
-					.where(eq(signupFlows.id, flowId))
-					.run()
-
 				return created.id
 			})
 
+			signupFlows.delete(flowId)
 			return this.createSession(userId)
 		} catch (error) {
 			await this.grpc.removePendingJoin(minecraftUsername).catch(() => undefined)
@@ -295,7 +297,7 @@ export class AuthService {
 
 		if (!row) return null
 
-		const isSuperAdmin = isSuperAdminUsername(row.minecraft_username)
+		const isSuperAdmin = row.is_super_admin === 1
 		return {
 			id: row.id,
 			minecraftUsername: row.minecraft_username,
@@ -314,8 +316,8 @@ export class AuthService {
 		this.database.connection.delete(sessions).where(eq(sessions.token_hash, hashSecret(token))).run()
 	}
 
-	private getFlow(flowId: string): SignupFlowRow {
-		const flow = this.database.connection.select().from(signupFlows).where(eq(signupFlows.id, flowId)).get()
+	private getFlow(flowId: string): SignupFlow {
+		const flow = signupFlows.get(flowId)
 
 		if (!flow) {
 			throw new BadRequestException('Signup flow not found')
@@ -333,38 +335,31 @@ export class AuthService {
 			.find((user) => user.minecraft_username.localeCompare(minecraftUsername, 'en', { sensitivity: 'base' }) === 0) ?? null
 	}
 
+	private findUserByMinecraftUuid(minecraftUuid: string): UserRow | null {
+		return this.database.connection.select().from(users)
+			.where(eq(users.minecraft_uuid, minecraftUuid)).get() ?? null
+	}
+
 	private async deleteIncompleteSignupFlowsForEmail(email: string) {
-		const flows = this.database.connection.select().from(signupFlows)
-			.where(and(eq(signupFlows.email, email), ne(signupFlows.status, SignupFlowStatus.COMPLETE)))
-			.all()
-
-		for (const flow of flows) {
-			if (flow.minecraft_username) {
-				await this.grpc.removePendingJoin(flow.minecraft_username).catch(() => undefined)
+		for (const [flowId, flow] of signupFlows) {
+			if (flow.email !== email) continue
+			if (flow.minecraftUsername) {
+				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
 			}
+			signupFlows.delete(flowId)
 		}
-
-		this.database.connection.delete(signupFlows)
-			.where(and(eq(signupFlows.email, email), ne(signupFlows.status, SignupFlowStatus.COMPLETE)))
-			.run()
 	}
 
 	private async cleanupStaleSignupFlows() {
 		const cutoff = Date.now() - SIGNUP_FLOW_IDLE_TTL_MS
 
-		const flows = this.database.connection.select().from(signupFlows)
-			.where(and(ne(signupFlows.status, SignupFlowStatus.COMPLETE), lt(signupFlows.updated_at_unix_ms, cutoff)))
-			.all()
-
-		for (const flow of flows) {
-			if (flow.minecraft_username) {
-				await this.grpc.removePendingJoin(flow.minecraft_username).catch(() => undefined)
+		for (const [flowId, flow] of signupFlows) {
+			if (flow.updatedAt >= cutoff) continue
+			if (flow.minecraftUsername) {
+				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
 			}
+			signupFlows.delete(flowId)
 		}
-
-		this.database.connection.delete(signupFlows)
-			.where(and(ne(signupFlows.status, SignupFlowStatus.COMPLETE), lt(signupFlows.updated_at_unix_ms, cutoff)))
-			.run()
 	}
 
 	private createSession(userId: number) {

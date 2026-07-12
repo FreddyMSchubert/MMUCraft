@@ -15,7 +15,6 @@ import {
 	schema,
 	sessions,
 	shopUnlocks,
-	signupFlows,
 	users,
 } from './schema'
 
@@ -135,7 +134,6 @@ function copyLegacyRows(
 
 		target.transaction((tx) => {
 			insertRows(tx, users, userRows)
-			insertRows(tx, signupFlows, readOptional(() => legacy.select().from(signupFlows).all()))
 			insertRows(tx, sessions, readOptional(() => legacy.select().from(sessions).all()))
 			insertRows(tx, playerProfiles, profileRows)
 			insertRows(tx, playerStats, readOptional(() => legacy.select().from(playerStats).all()))

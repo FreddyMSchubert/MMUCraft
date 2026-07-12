@@ -8,6 +8,27 @@
       "when": 1783710622597,
       "tag": "0000_lying_radioactive_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1783858382877,
+      "tag": "0001_loose_butterfly",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783858804082,
+      "tag": "0002_massive_shadow_king",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1783862473908,
+      "tag": "0003_bitter_abomination",
+      "breakpoints": true
     }
   ]
 }

@@ -3,6 +3,7 @@ import { existsSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { spawn } from 'node:child_process'
 import { setTimeout as delay } from 'node:timers/promises'
+import { createHash } from 'node:crypto'
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 import Database from 'better-sqlite3'
@@ -20,12 +21,14 @@ const pendingMinecraftCodes = new Map()
 let apiOutput = ''
 let apiProcess
 let modServer
+let apiAuthClient
 
 try {
 	removeTestDatabase()
 	modServer = await startFakeModServer()
 	apiProcess = startApi()
 	await waitForApi()
+	apiAuthClient = createApiAuthClient()
 
 	await request('health', 'GET', '/api/health', { expected: 200 })
 
@@ -120,6 +123,15 @@ try {
 		expected: 201,
 	})
 
+	await reportLoginAttempt('DrizzleRenamed', player.minecraftUuid, true)
+	const renamedMe = await request('auth renamed me', 'GET', '/api/auth/me', {
+		cookie: playerCookie,
+		expected: 200,
+	})
+	if (renamedMe.data.user.minecraftUsername !== 'DrizzleRenamed') {
+		throw new Error('Expected a server login with the same UUID to refresh the stored Minecraft username')
+	}
+
 	await request('auth signout', 'POST', '/api/auth/signout', { cookie: playerCookie, expected: 204 })
 
 	for (const result of results) {
@@ -135,6 +147,7 @@ try {
 } finally {
 	await stopApi()
 	modServer?.forceShutdown()
+	apiAuthClient?.close()
 	removeTestDatabase()
 }
 
@@ -154,6 +167,8 @@ async function completeSignup(email, minecraftUsername) {
 	})
 	const minecraftCode = pendingMinecraftCodes.get(minecraftUsername)
 	if (!minecraftCode) throw new Error(`Fake mod received no pending code for ${minecraftUsername}`)
+	const minecraftUuid = createHash('sha256').update(minecraftUsername).digest('hex').slice(0, 32)
+	await reportLoginAttempt(minecraftUsername, minecraftUuid, false)
 	await request('auth verify minecraft', 'POST', '/api/auth/verify-minecraft', {
 		body: { flowId, code: minecraftCode },
 		expected: 201,
@@ -162,7 +177,31 @@ async function completeSignup(email, minecraftUsername) {
 		body: { flowId },
 		expected: 201,
 	})
-	return { email, cookie: readCookie(accepted.response) }
+	return { email, cookie: readCookie(accepted.response), minecraftUuid }
+}
+
+function createApiAuthClient() {
+	const definition = protoLoader.loadSync(join(process.cwd(), '..', '..', 'proto', 'auth.proto'), loaderOptions())
+	const auth = grpc.loadPackageDefinition(definition)
+	return new auth.mcstack.auth.v1.AuthEvents(
+		`127.0.0.1:${API_GRPC_PORT}`,
+		grpc.credentials.createInsecure(),
+	)
+}
+
+async function reportLoginAttempt(minecraftUsername, uuid, whitelisted) {
+	await new Promise((resolve, reject) => {
+		apiAuthClient.ReportLoginAttempt({
+			minecraft_username: minecraftUsername,
+			uuid,
+			whitelisted,
+			unix_ms: Date.now(),
+		}, (error, response) => {
+			if (error) reject(error)
+			else if (!response?.received) reject(new Error('API rejected fake Minecraft login attempt'))
+			else resolve()
+		})
+	})
 }
 
 async function request(name, method, path, options = {}) {

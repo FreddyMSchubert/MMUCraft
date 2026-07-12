@@ -44,6 +44,7 @@ export class GiftsService {
 			email: users.email,
 			is_member: users.is_member,
 			is_committee: users.is_committee,
+			is_super_admin: users.is_super_admin,
 			discord_username: playerProfiles.discord_username,
 		}).from(users)
 			.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
@@ -57,7 +58,7 @@ export class GiftsService {
 				discordUsername: row.discord_username ?? '',
 				email: row.email,
 				isMember: row.is_member === 1,
-				isCommittee: isSuperAdminUsername(row.minecraft_username) || row.is_committee === 1,
+				isCommittee: row.is_super_admin === 1 || row.is_committee === 1,
 			})),
 		}
 	}
@@ -92,13 +93,13 @@ export class GiftsService {
 			throw new BadRequestException('isCommittee must be a boolean')
 		}
 
-		const target = this.database.connection.select({ minecraft_username: users.minecraft_username })
+		const target = this.database.connection.select({ is_super_admin: users.is_super_admin })
 			.from(users).where(eq(users.id, userId)).get()
 		if (!target) {
 			throw new NotFoundException('Player not found')
 		}
-		if (isSuperAdminUsername(target.minecraft_username) && !isCommittee) {
-			throw new BadRequestException('MerlinSpace is the permanent super-admin and cannot be removed from committee')
+		if (target.is_super_admin === 1 && !isCommittee) {
+			throw new BadRequestException('The permanent super-admin cannot be removed from committee')
 		}
 
 		this.database.connection.update(users)
@@ -348,8 +349,4 @@ function normalizeExpiry(value: unknown, now: number): number | null {
 
 function isSqliteConstraint(error: unknown) {
 	return error instanceof Error && 'code' in error && String((error as Error & { code?: unknown }).code).startsWith('SQLITE_CONSTRAINT')
-}
-
-function isSuperAdminUsername(minecraftUsername: string) {
-	return minecraftUsername.localeCompare('MerlinSpace', 'en', { sensitivity: 'base' }) === 0
 }

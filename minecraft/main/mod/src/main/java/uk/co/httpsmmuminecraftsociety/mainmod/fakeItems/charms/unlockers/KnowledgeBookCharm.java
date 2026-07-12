@@ -29,6 +29,7 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
 
         GameplayGrpcService.unlockNext(
                 player.getGameProfile().name(),
+                player.getUUID().toString(),
                 "charm-knowledge-book",
                 "knowledge"
         ).whenComplete((response, error) -> player.level().getServer().execute(() -> {

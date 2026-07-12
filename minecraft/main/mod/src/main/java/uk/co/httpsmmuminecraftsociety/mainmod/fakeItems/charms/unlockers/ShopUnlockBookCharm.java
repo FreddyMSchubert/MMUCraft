@@ -71,6 +71,7 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
 
         GameplayGrpcService.unlockNext(
                 player.getGameProfile().name(),
+                player.getUUID().toString(),
                 sourceItemId,
                 unlockType
         ).whenComplete((response, error) -> player.level().getServer().execute(() -> {

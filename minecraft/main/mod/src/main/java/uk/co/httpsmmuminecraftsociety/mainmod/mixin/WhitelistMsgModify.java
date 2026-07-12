@@ -61,7 +61,7 @@ public class WhitelistMsgModify {
             CallbackInfoReturnable<Component> cir
     ) {
         PlayerList playerList = (PlayerList) (Object) this;
-        boolean whitelisted = playerList.isWhiteListed(nameAndId);
+        boolean whitelisted = playerList.getWhiteList().isWhiteListed(nameAndId);
 
         AuthGrpcService.recordLoginAttempt(nameAndId, whitelisted);
 

@@ -91,7 +91,7 @@ public class WalletCharm implements Charm
 
         List<Component> lines = new ArrayList<>(wallet.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
         if (!lines.isEmpty()) {
-            lines.set(lines.size() - 1, Component.literal("Currently holds " + balance + (balance == 1 ? " dabloon." : " dabloons.")));
+            lines.set(lines.size() - 1, Component.literal("Balance: " + balance + (balance == 1 ? " dabloon." : " dabloons.")));
             wallet.set(DataComponents.LORE, new ItemLore(lines));
         }
     }

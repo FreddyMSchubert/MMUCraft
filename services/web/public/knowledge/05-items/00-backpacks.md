@@ -1,6 +1,6 @@
 ====
 id: backpacks
-unlockOrder: 5
+unlockOrder: public
 chatMessage: You've unlocked knowledge on backpacks, a powerful early game shulker alternative.
 sidebarTitle: Backpacks
 ====
@@ -13,26 +13,26 @@ Backpacks are crafted and come in 6 different levels, each with one more row of 
 
 The Leather Backpack has 1 row / 9 slots and is crafted like this:
 
-![Leather Backpack Crafting Recipe](/assets/knowledge/recipes/backpacks/leather.png)
+![Leather Backpack Crafting Recipe](/assets/knowledge/items/backpacks/leather.png)
 
 The Ingot Backpack has 2 rows / 18 slots and is crafted like this:
 
-![Ingot Backpack Crafting Recipe](/assets/knowledge/recipes/backpacks/ingot.png)
+![Ingot Backpack Crafting Recipe](/assets/knowledge/items/backpacks/ingot.png)
 
 The Magic Backpack (not actually magic in any way, sorry about that) has 3 rows / 27 slots and is crafted like this:
 
-![Magic Backpack Crafting Recipe](/assets/knowledge/recipes/backpacks/magic.png)
+![Magic Backpack Crafting Recipe](/assets/knowledge/items/backpacks/magic.png)
 
 The Bejeweled Backpack has 4 rows / 36 slots and is crafted like this:
 
-![Bejeweled Backpack Crafting Recipe](/assets/knowledge/recipes/backpacks/bejeweled.png)
+![Bejeweled Backpack Crafting Recipe](/assets/knowledge/items/backpacks/bejeweled.png)
 
 The Withered Backpack has 5 rows / 45 slots and is crafted like this:
 
-![Withered Backpack Crafting Recipe](/assets/knowledge/recipes/backpacks/withered.png)
+![Withered Backpack Crafting Recipe](/assets/knowledge/items/backpacks/withered.png)
 
 The Endless Backpack (not actually endless at all, sorry about that) has 6 rows / 54 slots and is crafted like this:
 
-![Endless Backpack Crafting Recipe](/assets/knowledge/recipes/backpacks/endless.png)
+![Endless Backpack Crafting Recipe](/assets/knowledge/items/backpacks/endless.png)
 
 (Don't worry - the ender dragon drops an egg every time she gets killed on this server.)

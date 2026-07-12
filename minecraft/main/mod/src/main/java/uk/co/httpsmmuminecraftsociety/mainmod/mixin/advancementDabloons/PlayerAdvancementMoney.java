@@ -114,6 +114,7 @@ public class PlayerAdvancementMoney {
         if (money > 0) {
             GameplayGrpcService.recordMoneyEvent(
                     this.player.getName().getString(),
+                    this.player.getUUID().toString(),
                     money,
                     "earned",
                     "advancement",
@@ -123,12 +124,12 @@ public class PlayerAdvancementMoney {
                 MainMod.LOGGER.debug("Failed to record advancement dabloons for {}", this.player.getName().getString(), error);
                 return null;
             });
-        }
 
-        advancementHolder.value().display().ifPresent(displayInfo -> this.player.sendSystemMessage(
-                Component.literal(randomCelebration() + ": You received " + money + " dabloons for completing ")
-                        .append(displayInfo.getTitle().getString() + ". :D")
-        ));
+            advancementHolder.value().display().ifPresent(displayInfo -> this.player.sendSystemMessage(
+                    Component.literal(randomCelebration() + ": You received " + money + " dabloons for completing ")
+                            .append(displayInfo.getTitle().getString() + ". :D")
+            ));
+        }
     }
 
     private String randomCelebration() {

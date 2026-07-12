@@ -37,23 +37,26 @@ public final class GameplayGrpcService extends GrpcHandler {
 
     public static CompletableFuture<UnlockNextKnowledgeResponse> unlockNextKnowledge(
             String minecraftUsername,
+            String minecraftUuid,
             String sourceItemId
     ) {
-        return INSTANCE.unlockNextInternal(minecraftUsername, sourceItemId, "knowledge");
+        return INSTANCE.unlockNextInternal(minecraftUsername, minecraftUuid, sourceItemId, "knowledge");
     }
 
     public static CompletableFuture<UnlockNextKnowledgeResponse> unlockNext(
             String minecraftUsername,
+            String minecraftUuid,
             String sourceItemId,
             String unlockType
     ) {
-        return INSTANCE.unlockNextInternal(minecraftUsername, sourceItemId, unlockType);
+        return INSTANCE.unlockNextInternal(minecraftUsername, minecraftUuid, sourceItemId, unlockType);
     }
 
     public static CompletableFuture<GetUnlockAvailabilityResponse> getUnlockAvailability(
-            String minecraftUsername
+            String minecraftUsername,
+            String minecraftUuid
     ) {
-        return INSTANCE.getUnlockAvailabilityInternal(minecraftUsername);
+        return INSTANCE.getUnlockAvailabilityInternal(minecraftUsername, minecraftUuid);
     }
 
     public static CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
@@ -62,6 +65,7 @@ public final class GameplayGrpcService extends GrpcHandler {
     ) {
         return INSTANCE.syncPlayerStatsInternal(
                 player.getName().getString(),
+                player.getUUID().toString(),
                 MoneyHelper.GetBalance(player),
                 stats
         );
@@ -69,6 +73,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
     public static CompletableFuture<RecordMoneyEventResponse> recordMoneyEvent(
             String minecraftUsername,
+            String minecraftUuid,
             int amountDabloons,
             String direction,
             String source,
@@ -77,6 +82,7 @@ public final class GameplayGrpcService extends GrpcHandler {
     ) {
         return INSTANCE.recordMoneyEventInternal(
                 minecraftUsername,
+                minecraftUuid,
                 amountDabloons,
                 direction,
                 source,
@@ -102,6 +108,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
     private CompletableFuture<UnlockNextKnowledgeResponse> unlockNextInternal(
             String minecraftUsername,
+            String minecraftUuid,
             String sourceItemId,
             String unlockType
     ) {
@@ -115,6 +122,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
         UnlockNextKnowledgeRequest request = UnlockNextKnowledgeRequest.newBuilder()
                 .setMinecraftUsername(minecraftUsername)
+                .setMinecraftUuid(minecraftUuid)
                 .setSourceItemId(sourceItemId)
                 .setUnlockType(unlockType)
                 .setUnixMs(System.currentTimeMillis())
@@ -135,7 +143,8 @@ public final class GameplayGrpcService extends GrpcHandler {
     }
 
     private CompletableFuture<GetUnlockAvailabilityResponse> getUnlockAvailabilityInternal(
-            String minecraftUsername
+            String minecraftUsername,
+            String minecraftUuid
     ) {
         GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
 
@@ -147,6 +156,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
         GetUnlockAvailabilityRequest request = GetUnlockAvailabilityRequest.newBuilder()
                 .setMinecraftUsername(minecraftUsername)
+                .setMinecraftUuid(minecraftUuid)
                 .setUnixMs(System.currentTimeMillis())
                 .build();
 
@@ -166,6 +176,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
     private CompletableFuture<SyncPlayerStatsResponse> syncPlayerStatsInternal(
             String minecraftUsername,
+            String minecraftUuid,
             int balanceDabloons,
             List<MinecraftStatEntry> stats
     ) {
@@ -179,6 +190,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
         SyncPlayerStatsRequest request = SyncPlayerStatsRequest.newBuilder()
                 .setMinecraftUsername(minecraftUsername)
+                .setMinecraftUuid(minecraftUuid)
                 .setUnixMs(System.currentTimeMillis())
                 .setBalanceDabloons(Math.max(0, balanceDabloons))
                 .addAllStats(stats)
@@ -200,6 +212,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
     private CompletableFuture<RecordMoneyEventResponse> recordMoneyEventInternal(
             String minecraftUsername,
+            String minecraftUuid,
             int amountDabloons,
             String direction,
             String source,
@@ -216,6 +229,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
         RecordMoneyEventRequest request = RecordMoneyEventRequest.newBuilder()
                 .setMinecraftUsername(minecraftUsername)
+                .setMinecraftUuid(minecraftUuid)
                 .setAmountDabloons(Math.max(0, amountDabloons))
                 .setDirection(direction)
                 .setSource(source)
@@ -411,6 +425,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                         .orElse(root.holder().id().toString());
 
         int baseReward = AdvancementMoney.moneyForAdvancement(selected.id(), selected.value().rewards().experience());
+        int bonusReward = Math.max(5, Math.min(42, baseReward));
 
         return PickDailyAdvancementResponse.newBuilder()
                 .setSelected(true)
@@ -420,7 +435,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .setTabTitle(tabTitle)
                 .setIconItem(BuiltInRegistries.ITEM.getKey(display.getIcon().item().value()).toString())
                 .setBaseRewardDabloons(baseReward)
-                .setBonusRewardDabloons(baseReward * 2)
+                .setBonusRewardDabloons(bonusReward)
                 .setMessage("Daily advancement target selected.")
                 .build();
     }

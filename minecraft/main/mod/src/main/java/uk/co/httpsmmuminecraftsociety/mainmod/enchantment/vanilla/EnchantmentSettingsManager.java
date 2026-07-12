@@ -88,9 +88,9 @@ public class EnchantmentSettingsManager
         new EnchantmentSettings(Enchantments.LURE).maxLevels(2, 3, 3).dupedWithVanillaItem(Items.PUFFERFISH, 3), // TODO: From fishing
 
         // crossbow enchantments
-        new EnchantmentSettings(Enchantments.MULTISHOT).maxLevels(1, 1, 1).inLoottable("chests/pillager_outpost").dupedWithVanillaItem(Items.TRIPWIRE_HOOK, 3),
-        new EnchantmentSettings(Enchantments.PIERCING).maxLevels(3, 4, 4).inLoottable("chests/pillager_outpost").dupedWithVanillaItem(Items.TIPPED_ARROW),
-        new EnchantmentSettings(Enchantments.QUICK_CHARGE).maxLevels(2, 3, 3).inLoottable("chests/pillager_outpost").dupedWithVanillaItem(Items.FIREWORK_STAR),
+        new EnchantmentSettings(Enchantments.MULTISHOT).maxLevels(1, 1, 1).inLoottable("chests/pillager_outpost").rarity(Rarity.UNCOMMON).dupedWithVanillaItem(Items.TRIPWIRE_HOOK, 3),
+        new EnchantmentSettings(Enchantments.PIERCING).maxLevels(3, 4, 4).inLoottable("chests/pillager_outpost").rarity(Rarity.UNCOMMON).dupedWithVanillaItem(Items.TIPPED_ARROW),
+        new EnchantmentSettings(Enchantments.QUICK_CHARGE).maxLevels(2, 3, 3).inLoottable("chests/pillager_outpost").rarity(Rarity.UNCOMMON).dupedWithVanillaItem(Items.FIREWORK_STAR),
 
         // curses
         // unused dupe items: oxeye daisy, poppy, wildflowers, cherry leaves

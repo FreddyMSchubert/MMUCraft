@@ -240,7 +240,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 								</label>
 							))}
 						</div>
-						<p>If you think any of these rules are being broken or feel unwell/unsafe on the server in any way,<br/>please reach out to our Wellbeing Officer Mia or open up a ticket on our discord server.</p>
+						<p>If you think any of these rules are being broken or feel unwell/unsafe on the server in any way,<br/>please reach out to our Wellbeing Officer Mia or <a href="https://discord.com/channels/1396896170751692931/1415746294659551384" target="_blank">open up a ticket</a> on our discord server.</p>
 					</div>
 
 					<button disabled={busy || !allRulesAccepted}>Accept rules and finish signup</button>

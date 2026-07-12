@@ -10,9 +10,14 @@ import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { PlayersService } from '../../players/players.service'
 
 const LOGIN_BONUS_TASK_ID = 'login_bonus'
-const LOGIN_BONUS_AMOUNT = 3
+const LOGIN_BONUS_REWARDS = [3, 5, 6, 7, 8, 10] as const
 const ITEM_SUBMISSION_TASK_ID = 'item_submission'
 const ADVANCEMENT_BONUS_TASK_ID = 'advancement_bonus'
+const DAILY_COMPLETION_TASK_ID = 'daily_completion'
+const DAILY_TASK_IDS = [LOGIN_BONUS_TASK_ID, ITEM_SUBMISSION_TASK_ID, ADVANCEMENT_BONUS_TASK_ID] as const
+const DAILY_COMPLETION_BASE_REWARD = 20
+const DAILY_COMPLETION_SUNDAY_BONUS = 10
+const DAILY_COMPLETION_MEMBER_BONUS = 12
 const RESET_HOUR = 4
 const RESET_TIME_ZONE = 'Europe/London'
 const DEFAULT_ITEM_SUBMISSIONS_PATH = join(process.cwd(), 'content', 'daily-item-submissions.jsonc')
@@ -62,7 +67,12 @@ export class DailiesService {
 
 	async getStatus(user: AuthenticatedUser) {
 		const periodKey = currentDailyPeriodKey()
+		const loginBonusClaimed = this.hasClaimed(user.id, LOGIN_BONUS_TASK_ID, periodKey)
+		const loginStreak = this.getLoginStreak(user.id, periodKey, user.isMember)
+		const loginReward = rewardForStreak(loginBonusClaimed ? loginStreak : loginStreak + 1)
 		const itemTask = this.pickItemTask(periodKey)
+		const completedTaskCount = this.completedDailyTaskCount(user.id, periodKey)
+		const completionReward = dailyCompletionReward(periodKey, user.isMember)
 		const advancementTask = await this.getOrPickAdvancementTarget(user, periodKey).catch((error) => ({
 			target: null,
 			message: error instanceof Error ? error.message : 'Daily advancement target is unavailable right now.',
@@ -71,13 +81,27 @@ export class DailiesService {
 		return {
 			resetHour: RESET_HOUR,
 			resetTimeZone: RESET_TIME_ZONE,
+			loginStreak,
+			nextLoginRewardDabloons: rewardForStreak(loginStreak + 1),
+			completion: {
+				completedTaskCount,
+				totalTaskCount: DAILY_TASK_IDS.length,
+				eligible: completedTaskCount === DAILY_TASK_IDS.length,
+				claimed: this.hasClaimed(user.id, DAILY_COMPLETION_TASK_ID, periodKey),
+				baseRewardDabloons: DAILY_COMPLETION_BASE_REWARD,
+				sundayBonusDabloons: DAILY_COMPLETION_SUNDAY_BONUS,
+				memberBonusDabloons: DAILY_COMPLETION_MEMBER_BONUS,
+				isSunday: completionReward.isSunday,
+				isMember: user.isMember,
+				rewardDabloons: completionReward.total,
+			},
 			tasks: [
 				{
 					id: LOGIN_BONUS_TASK_ID,
 					number: 1,
 					title: 'Login bonus',
-					rewardDabloons: LOGIN_BONUS_AMOUNT,
-					claimed: this.hasClaimed(user.id, LOGIN_BONUS_TASK_ID, periodKey),
+					rewardDabloons: loginReward,
+					claimed: loginBonusClaimed,
 				},
 				{
 					id: ITEM_SUBMISSION_TASK_ID,
@@ -105,6 +129,8 @@ export class DailiesService {
 	async claimLoginBonus(user: AuthenticatedUser) {
 		const periodKey = currentDailyPeriodKey()
 		const now = Date.now()
+		const loginStreak = this.getLoginStreak(user.id, periodKey, user.isMember)
+		const rewardDabloons = rewardForStreak(loginStreak + 1)
 
 		const inserted = this.insertClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey, now)
 
@@ -117,7 +143,7 @@ export class DailiesService {
 		}
 
 		try {
-			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now)
+			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons)
 
 			if (!result.granted) {
 				this.deleteClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey)
@@ -128,7 +154,7 @@ export class DailiesService {
 				user.id,
 				'earned',
 				'daily_login_bonus',
-				LOGIN_BONUS_AMOUNT,
+				rewardDabloons,
 				null,
 				`daily:${LOGIN_BONUS_TASK_ID}:${user.id}:${periodKey}`,
 				now,
@@ -137,7 +163,7 @@ export class DailiesService {
 			return {
 				claimed: true,
 				granted: true,
-				message: result.message || `You received ${LOGIN_BONUS_AMOUNT} dabloons.`,
+				message: result.message || `You received ${rewardDabloons} dabloons.`,
 			}
 		} catch (error) {
 			this.deleteClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey)
@@ -261,6 +287,76 @@ export class DailiesService {
 		return Boolean(row)
 	}
 
+	async claimDailyCompletion(user: AuthenticatedUser) {
+		const periodKey = currentDailyPeriodKey()
+		const now = Date.now()
+
+		if (this.completedDailyTaskCount(user.id, periodKey) !== DAILY_TASK_IDS.length) {
+			throw new BadRequestException('Complete all of today\'s daily quests before finishing your dailies.')
+		}
+
+		const rewardDabloons = dailyCompletionReward(periodKey, user.isMember).total
+		const inserted = this.insertClaim(user.id, DAILY_COMPLETION_TASK_ID, periodKey, now)
+
+		if (inserted.changes !== 1) {
+			return {
+				claimed: true,
+				granted: false,
+				message: 'You have already finished today\'s dailies.',
+			}
+		}
+
+		try {
+			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons)
+
+			if (!result.granted) {
+				this.deleteClaim(user.id, DAILY_COMPLETION_TASK_ID, periodKey)
+				throw new BadRequestException(result.message || 'You have to be online on the server to receive the money.')
+			}
+
+			this.players.recordMoneyForUser(
+				user.id,
+				'earned',
+				'daily_completion_bonus',
+				rewardDabloons,
+				null,
+				`daily:${DAILY_COMPLETION_TASK_ID}:${user.id}:${periodKey}`,
+				now,
+			)
+
+			return {
+				claimed: true,
+				granted: true,
+				message: `Dailies finished! You received ${rewardDabloons} dabloons.`,
+			}
+		} catch (error) {
+			this.deleteClaim(user.id, DAILY_COMPLETION_TASK_ID, periodKey)
+			if (error instanceof BadRequestException) {
+				throw error
+			}
+
+			throw new BadRequestException('You have to be online on the server to receive the money.')
+		}
+	}
+
+	private getLoginStreak(userId: number, periodKey: string, isMember: boolean) {
+		const claimedPeriodKeys = this.database.connection
+			.select({ period_key: dailyClaims.period_key })
+			.from(dailyClaims)
+			.where(and(
+				eq(dailyClaims.user_id, userId),
+				eq(dailyClaims.task_id, LOGIN_BONUS_TASK_ID),
+			))
+			.all()
+			.map((claim) => claim.period_key)
+
+		return calculateLoginStreak(claimedPeriodKeys, periodKey, isMember)
+	}
+
+	private completedDailyTaskCount(userId: number, periodKey: string) {
+		return DAILY_TASK_IDS.filter((taskId) => this.hasClaimed(userId, taskId, periodKey)).length
+	}
+
 	private deleteClaim(userId: number, taskId: string, periodKey: string) {
 		this.database.connection.delete(dailyClaims).where(and(
 			eq(dailyClaims.user_id, userId),
@@ -305,7 +401,7 @@ export class DailiesService {
 			tab_title: result.tab_title,
 			icon_item: result.icon_item,
 			base_reward_dabloons: result.base_reward_dabloons,
-			bonus_reward_dabloons: result.bonus_reward_dabloons,
+			bonus_reward_dabloons: dailyAdvancementBonus(result.base_reward_dabloons),
 			selected_at_unix_ms: now,
 		}).onConflictDoNothing().run()
 
@@ -332,11 +428,11 @@ export class DailiesService {
 			tabTitle: row.tab_title,
 			iconItem: row.icon_item,
 			baseRewardDabloons: row.base_reward_dabloons,
-			bonusRewardDabloons: row.bonus_reward_dabloons,
+			bonusRewardDabloons: dailyAdvancementBonus(row.base_reward_dabloons),
 		}
 	}
 
-	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number) {
+	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number, rewardDabloons: number) {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).GrantDailyLoginBonus
 
@@ -347,7 +443,7 @@ export class DailiesService {
 		return await new Promise<{ granted: boolean; online: boolean; message: string }>((resolve, reject) => {
 			method.call(client, {
 				minecraft_username: minecraftUsername,
-				amount: LOGIN_BONUS_AMOUNT,
+				amount: rewardDabloons,
 				period_key: periodKey,
 				unix_ms: unixMs,
 			}, (error: grpc.ServiceError | null, response: { granted: boolean; online: boolean; message: string }) => {
@@ -598,4 +694,65 @@ function currentDailyPeriodKey(now = new Date()) {
 	}
 
 	return londonDate.toISOString().slice(0, 10)
+}
+
+function calculateLoginStreak(claimedPeriodKeys: string[], currentPeriodKey: string, isMember: boolean) {
+	const sortedKeys = [...new Set(claimedPeriodKeys)]
+		.filter((key) => key <= currentPeriodKey)
+		.sort()
+	let streak = 0
+	let previousKey: string | null = null
+
+	for (const key of sortedKeys) {
+		if (previousKey === null) {
+			streak = 1
+		} else {
+			const missedDays = Math.max(0, daysBetweenPeriodKeys(previousKey, key) - 1)
+			streak = missedDays === 0
+				? streak + 1
+				: isMember
+					? halveStreak(streak, missedDays) + 1
+					: 1
+		}
+
+		previousKey = key
+	}
+
+	if (previousKey === null || previousKey === currentPeriodKey) {
+		return streak
+	}
+
+	const missedDaysBeforeToday = Math.max(0, daysBetweenPeriodKeys(previousKey, currentPeriodKey) - 1)
+	if (missedDaysBeforeToday === 0) {
+		return streak
+	}
+
+	return isMember ? halveStreak(streak, missedDaysBeforeToday) : 0
+}
+
+function halveStreak(streak: number, days: number) {
+	return Math.floor(streak / (2 ** days))
+}
+
+function daysBetweenPeriodKeys(from: string, to: string) {
+	return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000)
+}
+
+function rewardForStreak(streak: number) {
+	const rewardIndex = Math.min(Math.max(streak, 1), LOGIN_BONUS_REWARDS.length) - 1
+	return LOGIN_BONUS_REWARDS[rewardIndex]!
+}
+
+function dailyAdvancementBonus(baseRewardDabloons: number) {
+	return Math.max(5, Math.min(42, baseRewardDabloons))
+}
+
+function dailyCompletionReward(periodKey: string, isMember: boolean) {
+	const isSunday = new Date(`${periodKey}T00:00:00Z`).getUTCDay() === 0
+	return {
+		isSunday,
+		total: DAILY_COMPLETION_BASE_REWARD
+			+ (isSunday ? DAILY_COMPLETION_SUNDAY_BONUS : 0)
+			+ (isMember ? DAILY_COMPLETION_MEMBER_BONUS : 0),
+	}
 }

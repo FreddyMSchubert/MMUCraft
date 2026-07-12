@@ -41,6 +41,7 @@ message UnlockNextKnowledgeRequest {
   string source_item_id = 2;
   int64 unix_ms = 3;
   string unlock_type = 4;
+  string minecraft_uuid = 5;
 }
 
 message UnlockNextKnowledgeResponse {
@@ -60,6 +61,7 @@ message UnlockNextKnowledgeResponse {
 message GetUnlockAvailabilityRequest {
   string minecraft_username = 1;
   int64 unix_ms = 2;
+  string minecraft_uuid = 3;
 }
 
 message GetUnlockAvailabilityResponse {
@@ -83,6 +85,7 @@ message SyncPlayerStatsRequest {
   int64 unix_ms = 2;
   int32 balance_dabloons = 3;
   repeated MinecraftStatEntry stats = 4;
+  string minecraft_uuid = 5;
 }
 
 message SyncPlayerStatsResponse {
@@ -99,6 +102,7 @@ message RecordMoneyEventRequest {
   string reference_id = 5;
   int64 unix_ms = 6;
   int32 balance_dabloons = 7;
+  string minecraft_uuid = 8;
 }
 
 message RecordMoneyEventResponse {

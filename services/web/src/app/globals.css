@@ -275,6 +275,33 @@ a {
 	font-size: 1.25rem;
 }
 
+.dailiesHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.loginStreak {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.14);
+	color: #ffd166;
+}
+
+.loginStreak span {
+	font-weight: 700;
+}
+
+.loginStreak strong {
+	font-size: 1.4rem;
+	line-height: 1;
+}
+
 .dailiesHeader p,
 .dailyTask p,
 .dailyFootnote {
@@ -358,6 +385,66 @@ a {
 
 .dailyFootnote {
 	padding-top: 4px;
+}
+
+.dailiesFooter {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 20px;
+}
+
+.dailyCompletion {
+	width: min(100%, 360px);
+	margin-left: auto;
+	padding: 14px;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.1);
+}
+
+.dailyCompletion h4 {
+	margin: 0 0 12px;
+	font-size: 1.1rem;
+}
+
+.dailyCompletionCalculation {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 5px 16px;
+	margin-bottom: 12px;
+}
+
+.dailyCompletionCalculation strong {
+	text-align: right;
+}
+
+.dailyCompletionCalculation span:last-of-type,
+.dailyCompletionCalculation strong:last-child {
+	margin-top: 5px;
+	padding-top: 7px;
+	border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.dailyCompletionCalculation .notApplied {
+	color: rgba(255, 255, 255, 0.42);
+	text-decoration: line-through;
+}
+
+.dailyCompletion button {
+	width: 100%;
+	padding: 14px 18px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-size: 1.05rem;
+	font-weight: 800;
+}
+
+.dailyCompletion button:disabled {
+	background: rgba(255, 255, 255, 0.18);
+	color: rgba(255, 255, 255, 0.72);
 }
 
 
@@ -2432,6 +2519,25 @@ a {
 	.dailyTask button {
 		grid-column: 1 / -1;
 		width: 100%;
+	}
+
+	.dailiesHeader {
+		align-items: flex-start;
+	}
+
+	.loginStreak {
+		flex-direction: column;
+		gap: 2px;
+		text-align: center;
+	}
+
+	.dailiesFooter {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.dailyCompletion {
+		align-self: flex-end;
 	}
 
 	.shopTop {

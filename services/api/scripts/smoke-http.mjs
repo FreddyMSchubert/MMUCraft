@@ -99,6 +99,10 @@ try {
 		cookie: playerCookie,
 		expected: 201,
 	})
+	await request('dailies completion claim', 'POST', '/api/dailies/completion/claim', {
+		cookie: playerCookie,
+		expected: 201,
+	})
 
 	await request('admin players', 'GET', '/api/admin/players', { cookie: admin.cookie, expected: 200 })
 	await request('admin membership', 'PATCH', `/api/admin/players/${playerId}/membership`, {
@@ -137,7 +141,7 @@ try {
 	for (const result of results) {
 		console.log(`${String(result.status).padStart(3)} ${result.method.padEnd(5)} ${result.path} (${result.name})`)
 	}
-	console.log(`HTTP smoke passed: ${results.length} requests covering all 27 controller routes`)
+	console.log(`HTTP smoke passed: ${results.length} requests covering all 28 controller routes`)
 } catch (error) {
 	console.error(error)
 	if (apiOutput) {

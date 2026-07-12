@@ -36,31 +36,25 @@ public final class UnlockBookLoot {
     }
 
     public static void addBookDrops(Identifier tableId, LootContext lootContext, List<ItemStack> itemStacks) {
-        int bookDropCount = 1;
-
-        float currChance = 2;
-        while (true) {
-            if (Math.random() >= (1 / currChance))
-                break;
-            currChance++;
-            bookDropCount++;
-        }
-
-        for (int i = 0; i < bookDropCount; i++) {
-            addBookDrop(tableId, lootContext, itemStacks);
-        }
-    }
-    public static void addBookDrop(Identifier tableId, LootContext lootContext, List<ItemStack> itemStacks) {
         if (!isEligibleLootTable(tableId)) {
             return;
         }
-
         Entity entity = lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY);
         if (!(entity instanceof ServerPlayer player)) {
             return;
         }
-
         UnlockAvailability availability = getAvailability(player);
+
+        int maxBooks = 1;
+        if (availability.hasKnowledgeToUnlock()) maxBooks++;
+        if (availability.hasCosmeticsToUnlock()) maxBooks++;
+        if (availability.hasCharmsToUnlock()) maxBooks++;
+
+        for (int i = 0; i < Math.floor(Math.round(Math.random() * maxBooks)); i++) {
+            addBookDrop(lootContext, itemStacks, availability);
+        }
+    }
+    public static void addBookDrop(LootContext lootContext, List<ItemStack> itemStacks, UnlockAvailability availability) {
         int totalWeight = 0;
         for (BookDrop bookDrop : BOOK_DROPS) {
             if (bookDrop.isAvailable(availability)) {
@@ -110,7 +104,7 @@ public final class UnlockBookLoot {
 
         try {
             GetUnlockAvailabilityResponse response = GameplayGrpcService
-                    .getUnlockAvailability(player.getGameProfile().name())
+                    .getUnlockAvailability(player.getGameProfile().name(), player.getUUID().toString())
                     .get(AVAILABILITY_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             UnlockAvailability availability = UnlockAvailability.from(response);
             putAvailability(player, availability);

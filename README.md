@@ -535,3 +535,91 @@ Not necessary but helpful
 - https://modrinth.com/mod/fancy-toasts this if they update cause advancements are important and these are cool and fancy
 
 theres even a modrinth server thing we could set up so you dont have to install everything yourself might be cool if its possible
+
+## DAily quests ideas
+
+- Eat x of item y
+- Kill x of mob y
+- Breed x mob
+- Trade for x emeralds
+- Trade for x y (random pick from villager trades)
+- Brew a potion of x
+- Die to mob x
+- Step foot in structure x
+- Throw a splash potion at another player
+- Brush suspicious sand / gravel x times
+- Kill a player
+- Kill player x (random player currently online, must update when they leave)
+- Fish x times
+- Catch fish x
+- Earn x experience
+- Break x block
+- Trade with villager profession x
+- Ride x for a few meters
+- Take x damage
+- Deal x damage
+- Craft x item
+- Shear x sheep
+
+- Ignite a creeper
+- REflect ghast fireball
+- Use enderpearl
+- Barter with piglins
+- Ride a pig
+- Jump on a slime block
+- Defeat a raid
+- Defeat the ender dragon
+- Defeat the wither
+- Use a wind charge
+- Use a flint and steel / fire charge
+- Be set on fire
+- Light a TNT
+- rename an item
+- light a candle
+- waterlog a thing
+- use a potion of displacement
+- ride a minecart underwater
+- milk a cow
+- potion of summoning
+- mine a spawner
+- brush an armadillo
+- use a mace to kill something
+- throw snowballs / eggs at someone
+- use a totem of undying
+- look at a mob through a spyglass
+- die
+- play a goat horn
+- plant x crops
+- play a music disk
+- wax a copper thing
+- dewax a copper thing
+- revive a copper golem
+- make golem (copper iron snow)
+- ring a bell
+- stand on a dripleaf
+- get squished by an anvil
+- get struck by lightning
+- put a flower in a pot
+- hang a painting
+- put a book in a chiseled bookshelf
+- read a joke book
+- break infested stone
+- kick a sulfur cube
+- mine a budding amethyst
+- mine reinforced deepslate
+- receive x effect
+- get prickeld by a cactus or sweet berry bush
+- die for death reason x
+- trigger a sculk sensor three times, spawning a warden
+- play a note block with instrument x
+- turn concrete powder to concrete
+- apply x customizations to a banner
+- right click the fletching table, hoping it does something each time, yet it never does, fix bedrock mojang, x times
+- fall 100 blocks down
+- mine bedrock for 3 minutes (youll get there, keep holding!)
+- make eye contact with an enderman
+- anger a piglin
+- stare at a creaking and don't blink. Don't even blink. Blink and you're dead. They are fast, faster than you could believe. Don't turn your back, don't turn away, and DON'T BLINK.
+- make an item frame invisible / glowing
+- trade with a wandering trader
+- 

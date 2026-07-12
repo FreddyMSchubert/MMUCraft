@@ -27,6 +27,20 @@ interface DailyTask {
 interface DailiesResponse {
 	resetHour: number
 	resetTimeZone: string
+	loginStreak: number
+	nextLoginRewardDabloons: number
+	completion: {
+		completedTaskCount: number
+		totalTaskCount: number
+		eligible: boolean
+		claimed: boolean
+		baseRewardDabloons: number
+		sundayBonusDabloons: number
+		memberBonusDabloons: number
+		isSunday: boolean
+		isMember: boolean
+		rewardDabloons: number
+	}
 	tasks: DailyTask[]
 }
 
@@ -103,6 +117,30 @@ export function DailiesTab() {
 		}
 	}
 
+	async function finishDailies() {
+		setError('')
+		setMessage('')
+		setClaimingTaskId('daily_completion')
+
+		try {
+			const response = await fetch('/api/dailies/completion/claim', { method: 'POST' })
+			const body = await response.json().catch(() => null)
+
+			if (!response.ok) {
+				const text = body?.message ?? 'Failed to finish dailies.'
+				window.alert(text)
+				throw new Error(text)
+			}
+
+			setMessage(body?.message ?? 'Dailies finished!')
+			await load()
+		} catch (caught) {
+			setError(caught instanceof Error ? caught.message : 'Failed to finish dailies')
+		} finally {
+			setClaimingTaskId(null)
+		}
+	}
+
 	if (error && !data) {
 		return <p className="authError">{error}</p>
 	}
@@ -114,9 +152,15 @@ export function DailiesTab() {
 	return (
 		<div className="dailiesPanel">
 			<div className="dailiesHeader">
-				<h3>Dailies</h3>
-				<p>Resets daily at 4 am.</p>
-				<p>You have to be online on the server to claim dailies.</p>
+				<div>
+					<h3>Dailies</h3>
+					<p>Resets daily at 4 am.</p>
+					<p>You have to be online on the server to claim dailies.</p>
+				</div>
+				<div className="loginStreak" aria-label={`Login streak: ${data.loginStreak} days`}>
+					<span>Login Streak</span>
+					<strong>{data.loginStreak}</strong>
+				</div>
 			</div>
 
 			{message && <p className="dailyMessage">{message}</p>}
@@ -130,7 +174,9 @@ export function DailiesTab() {
 							<h4>{task.title}{task.rewardDabloons > 0 ? (' - ' + task.rewardDabloons + ' Dabloons') : ''}</h4>
 							{task.id === 'item_submission' ? (
 								<p>
-									Click claim while holding {task.count}x {formatItemName(task.item ?? '')} in your inventory for {task.rewardDabloons} dabloons.
+									{task.claimed
+										? <>Claimed: Submitted {task.count}x {formatItemName(task.item ?? '')} from your inventory for {task.rewardDabloons} dabloons.</>
+										: <>Click claim while holding {task.count}x {formatItemName(task.item ?? '')} in your inventory for {task.rewardDabloons} dabloons.</>}
 								</p>
 							) : task.id === 'advancement_bonus' ? (
 								task.advancement ? (
@@ -139,16 +185,18 @@ export function DailiesTab() {
 										<div>
 											<p>{task.advancement.title}</p>
 											<p>Tab: {task.advancement.tabTitle}</p>
-											<p>
-												Finish it today, then claim {task.advancement.bonusRewardDabloons} bonus dabloons.
-											</p>
+											<p>{task.claimed
+												? <>Claimed: Finished the advancement and earned {task.advancement.bonusRewardDabloons} bonus dabloons.</>
+												: <>Finish it today, then claim {task.advancement.bonusRewardDabloons} bonus dabloons in addition to the advancements reward.</>}</p>
 										</div>
 									</div>
 								) : (
 									<p>{task.unavailableMessage ?? 'No daily advancement is available right now.'}</p>
 								)
 							) : (
-								<p>Click claim while online for {task.rewardDabloons} dabloons.</p>
+								<p>{task.claimed
+									? <>Claimed: Login again tomorrow for {data.nextLoginRewardDabloons} dabloons.</>
+									: <>Click claim while online to extend your login streak and earn {task.rewardDabloons} dabloons.</>}</p>
 							)}
 						</div>
 						<button
@@ -162,9 +210,25 @@ export function DailiesTab() {
 				))}
 			</div>
 
-			<p className="dailyFootnote">
-				You can always earn money, even if today&apos;s dailies are already done or too hard, by completing advancements.
-			</p>
+			<div className="dailiesFooter">
+				<p className="dailyFootnote">
+					You can always earn money, even if today&apos;s dailies are already done or too hard, by completing advancements.
+				</p>
+				<section className="dailyCompletion" aria-labelledby="daily-completion-title">
+					<h4 id="daily-completion-title">Completed {data.completion.completedTaskCount}/{data.completion.totalTaskCount}</h4>
+					<div className="dailyCompletionCalculation" aria-label={`Completion reward: ${data.completion.rewardDabloons} dabloons`}>
+						<span>Base reward</span><strong>+{data.completion.baseRewardDabloons}</strong>
+						<span className={data.completion.isSunday ? '' : 'notApplied'}>Sunday bonus</span><strong className={data.completion.isSunday ? '' : 'notApplied'}>+{data.completion.sundayBonusDabloons}</strong>
+						<span className={data.completion.isMember ? '' : 'notApplied'}>Member bonus</span><strong className={data.completion.isMember ? '' : 'notApplied'}>+{data.completion.memberBonusDabloons}</strong>
+						<span>Total</span><strong>{data.completion.rewardDabloons} dabloons</strong>
+					</div>
+					{data.completion.eligible && (
+						<button type="button" disabled={data.completion.claimed || claimingTaskId === 'daily_completion'} onClick={() => void finishDailies()}>
+							{data.completion.claimed ? 'Dailies finished' : claimingTaskId === 'daily_completion' ? 'Finishing...' : 'Finish dailies'}
+						</button>
+					)}
+				</section>
+			</div>
 		</div>
 	)
 }

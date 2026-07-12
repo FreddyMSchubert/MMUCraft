@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { randomUUID } from 'node:crypto'
 import { eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../auth/auth.service'
+import { MinecraftIdentityService } from '../database/minecraft-identity.service'
 import {
 	DatabaseService,
 	PlayerProfileRow,
@@ -263,7 +264,10 @@ const KNOWN_MINECRAFT_OPTIONS: StatOption[] = [
 
 @Injectable()
 export class PlayersService {
-	constructor(private readonly database: DatabaseService) { }
+	constructor(
+		private readonly database: DatabaseService,
+		private readonly identities: MinecraftIdentityService,
+	) { }
 
 	async listPlayers(viewer: AuthenticatedUser) {
 		const userRows = this.database.connection.select().from(users).all()
@@ -323,12 +327,13 @@ export class PlayersService {
 	}
 
 	syncMinecraftStats(
+		minecraftUuidInput: string,
 		minecraftUsernameInput: string,
 		statsInput: MinecraftStatInput[],
 		balanceDabloonsInput: number | null,
 		unixMsInput: number | null,
 	) {
-		const user = this.findUserByMinecraftUsername(minecraftUsernameInput)
+		const user = this.identities.resolveAndRefresh(minecraftUuidInput, minecraftUsernameInput)
 		if (!user) {
 			return {
 				accepted: false,
@@ -400,6 +405,7 @@ export class PlayersService {
 	}
 
 	recordMoneyForMinecraftUsername(
+		minecraftUuidInput: string,
 		minecraftUsernameInput: string,
 		directionInput: string,
 		sourceInput: string,
@@ -408,7 +414,7 @@ export class PlayersService {
 		referenceIdInput: string,
 		unixMsInput: number | null,
 	) {
-		const user = this.findUserByMinecraftUsername(minecraftUsernameInput)
+		const user = this.identities.resolveAndRefresh(minecraftUuidInput, minecraftUsernameInput)
 		if (!user) {
 			return {
 				recorded: false,
@@ -626,25 +632,19 @@ export class PlayersService {
 		return this.database.connection.select().from(users).where(eq(users.id, userId)).get() ?? null
 	}
 
-	private findUserByMinecraftUsername(minecraftUsernameInput: string): UserRow | null {
-		const minecraftUsername = minecraftUsernameInput.trim()
-		if (!minecraftUsername) {
-			return null
-		}
-
-		return this.database.connection.select().from(users).all()
-			.find((user) => user.minecraft_username.localeCompare(minecraftUsername, 'en', { sensitivity: 'base' }) === 0) ?? null
-	}
-
 	private async ensureMojangProfile(user: UserRow, stats: PlayerStats): Promise<PlayerStats> {
 		const profile = stats.minecraftProfile
 		const now = Date.now()
+		if (profile) {
+			this.identities.resolveAndRefresh(profile.uuid, profile.name)
+		}
 		if (profile && now - profile.fetchedAtUnixMs < MOJANG_PROFILE_TTL_MS) {
 			return stats
 		}
 
 		try {
 			const nextProfile = await fetchMojangProfile(user.minecraft_username)
+			this.identities.resolveAndRefresh(nextProfile.uuid, nextProfile.name)
 			const nextStats = {
 				...stats,
 				minecraftProfile: nextProfile,

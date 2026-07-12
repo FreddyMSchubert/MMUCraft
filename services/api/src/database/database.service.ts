@@ -43,7 +43,7 @@ export class DatabaseService implements OnModuleDestroy {
 
 		if (superAdmin) {
 			this.connection.update(users)
-				.set({ is_committee: 1 })
+				.set({ is_committee: 1, is_super_admin: 1 })
 				.where(eq(users.id, superAdmin.id))
 				.run()
 		}

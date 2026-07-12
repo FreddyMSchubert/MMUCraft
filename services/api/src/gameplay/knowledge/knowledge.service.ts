@@ -3,7 +3,8 @@ import { randomInt } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { basename, join, relative, sep } from 'node:path'
 import { desc, eq } from 'drizzle-orm'
-import { DatabaseService, knowledgeUnlocks, users } from '../../database/database.service'
+import { DatabaseService, knowledgeUnlocks } from '../../database/database.service'
+import { MinecraftIdentityService } from '../../database/minecraft-identity.service'
 
 const DEFAULT_KNOWLEDGE_ROOTS = [
 	join(process.cwd(), 'content', 'knowledge'),
@@ -60,7 +61,10 @@ interface KnowledgeUnlockResponse {
 export class KnowledgeService {
 	private cached: CachedKnowledgeDocument | null = null
 
-	constructor(private readonly database: DatabaseService) { }
+	constructor(
+		private readonly database: DatabaseService,
+		private readonly identities: MinecraftIdentityService,
+	) { }
 
 	getKnowledgeForUser(userId: number) {
 		const document = this.loadDocument()
@@ -86,6 +90,7 @@ export class KnowledgeService {
 	}
 
 	unlockNextForMinecraftUsername(
+		minecraftUuidInput: string,
 		minecraftUsernameInput: string,
 		sourceInput: string,
 	): KnowledgeUnlockResponse {
@@ -96,8 +101,7 @@ export class KnowledgeService {
 			return this.noUnlock('No Minecraft username was provided.')
 		}
 
-		const user = this.database.connection.select().from(users).all()
-			.find((candidate) => candidate.minecraft_username.localeCompare(minecraftUsername, 'en', { sensitivity: 'base' }) === 0)
+		const user = this.identities.resolveAndRefresh(minecraftUuidInput, minecraftUsername)
 
 		if (!user) {
 			return this.noUnlock('No website account is linked to this Minecraft username yet.')

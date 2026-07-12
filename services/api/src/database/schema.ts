@@ -9,44 +9,24 @@ import {
 	uniqueIndex,
 } from 'drizzle-orm/sqlite-core'
 
-export enum SignupFlowStatus {
-	EMAIL_PENDING = 'EMAIL_PENDING',
-	MINECRAFT_USERNAME_PENDING = 'MINECRAFT_USERNAME_PENDING',
-	MINECRAFT_CODE_PENDING = 'MINECRAFT_CODE_PENDING',
-	RULES_PENDING = 'RULES_PENDING',
-	COMPLETE = 'COMPLETE',
-}
-
 export const users = sqliteTable('users', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	email: text('email').notNull(),
+	minecraft_uuid: text('minecraft_uuid'),
 	minecraft_username: text('minecraft_username').notNull(),
 	is_member: integer('is_member').notNull().default(0),
 	is_committee: integer('is_committee').notNull().default(0),
+	is_super_admin: integer('is_super_admin').notNull().default(0),
 	whitelisted_at_unix_ms: integer('whitelisted_at_unix_ms').notNull(),
 	rules_accepted_at_unix_ms: integer('rules_accepted_at_unix_ms').notNull(),
 	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 }, (table) => [
 	uniqueIndex('users_email_unique').on(table.email),
+	uniqueIndex('users_minecraft_uuid_unique').on(table.minecraft_uuid),
 	uniqueIndex('users_minecraft_username_unique').on(table.minecraft_username),
 	check('users_is_member_check', sql`${table.is_member} in (0, 1)`),
 	check('users_is_committee_check', sql`${table.is_committee} in (0, 1)`),
-])
-
-export const signupFlows = sqliteTable('signup_flows', {
-	id: text('id').primaryKey(),
-	email: text('email').notNull(),
-	status: text('status').$type<SignupFlowStatus>().notNull(),
-	email_code_hash: text('email_code_hash').notNull(),
-	email_code_expires_at_unix_ms: integer('email_code_expires_at_unix_ms').notNull(),
-	minecraft_username: text('minecraft_username'),
-	minecraft_code_hash: text('minecraft_code_hash'),
-	minecraft_code_expires_at_unix_ms: integer('minecraft_code_expires_at_unix_ms'),
-	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
-	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
-}, (table) => [
-	index('signup_flows_email_idx').on(table.email),
-	index('signup_flows_minecraft_username_idx').on(table.minecraft_username),
+	check('users_is_super_admin_check', sql`${table.is_super_admin} in (0, 1)`),
 ])
 
 export const sessions = sqliteTable('sessions', {
@@ -160,7 +140,6 @@ export const giftCodeRedemptions = sqliteTable('gift_code_redemptions', {
 ])
 
 export type UserRow = typeof users.$inferSelect
-export type SignupFlowRow = typeof signupFlows.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect
 export type PlayerStatsRow = typeof playerStats.$inferSelect
@@ -173,7 +152,6 @@ export type GiftCodeRow = typeof giftCodes.$inferSelect
 
 export const schema = {
 	users,
-	signupFlows,
 	sessions,
 	playerProfiles,
 	playerStats,

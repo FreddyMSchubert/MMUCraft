@@ -41,6 +41,7 @@ export class GameplayGrpcService implements OnModuleInit {
 	private unlockNextKnowledge(
 		call: grpc.ServerUnaryCall<{
 			minecraft_username?: string
+			minecraft_uuid?: string
 			source_item_id?: string
 			unix_ms?: number
 			unlock_type?: string
@@ -72,12 +73,13 @@ export class GameplayGrpcService implements OnModuleInit {
 		}>,
 	) {
 		const minecraftUsername = call.request.minecraft_username ?? ''
+		const minecraftUuid = call.request.minecraft_uuid ?? ''
 		const sourceItemId = call.request.source_item_id ?? 'knowledge_book'
 		const unlockType = this.resolveUnlockType(call.request.unlock_type ?? '', sourceItemId)
 		const result = unlockType === 'knowledge'
-			? this.knowledge.unlockNextForMinecraftUsername(minecraftUsername, sourceItemId)
-			: this.shop.unlockNextForMinecraftUsername(minecraftUsername, unlockType, sourceItemId)
-		const availability = this.shop.getUnlockAvailabilityForMinecraftUsername(minecraftUsername)
+			? this.knowledge.unlockNextForMinecraftUsername(minecraftUuid, minecraftUsername, sourceItemId)
+			: this.shop.unlockNextForMinecraftUsername(minecraftUuid, minecraftUsername, unlockType, sourceItemId)
+		const availability = this.shop.getUnlockAvailabilityForMinecraftUsername(minecraftUuid, minecraftUsername)
 
 		callback(null, {
 			...result,
@@ -94,6 +96,7 @@ export class GameplayGrpcService implements OnModuleInit {
 	private getUnlockAvailability(
 		call: grpc.ServerUnaryCall<{
 			minecraft_username?: string
+			minecraft_uuid?: string
 			unix_ms?: number
 		}, {
 			account_linked: boolean
@@ -110,7 +113,10 @@ export class GameplayGrpcService implements OnModuleInit {
 			message: string
 		}>,
 	) {
-		const availability = this.shop.getUnlockAvailabilityForMinecraftUsername(call.request.minecraft_username ?? '')
+		const availability = this.shop.getUnlockAvailabilityForMinecraftUsername(
+			call.request.minecraft_uuid ?? '',
+			call.request.minecraft_username ?? '',
+		)
 
 		callback(null, {
 			account_linked: availability.accountLinked,
@@ -124,6 +130,7 @@ export class GameplayGrpcService implements OnModuleInit {
 	private syncPlayerStats(
 		call: grpc.ServerUnaryCall<{
 			minecraft_username?: string
+			minecraft_uuid?: string
 			unix_ms?: number
 			balance_dabloons?: number
 			stats?: MinecraftStatInput[]
@@ -139,6 +146,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		}>,
 	) {
 		const result = this.players.syncMinecraftStats(
+			call.request.minecraft_uuid ?? '',
 			call.request.minecraft_username ?? '',
 			call.request.stats ?? [],
 			typeof call.request.balance_dabloons === 'number' ? call.request.balance_dabloons : null,
@@ -155,6 +163,7 @@ export class GameplayGrpcService implements OnModuleInit {
 	private recordMoneyEvent(
 		call: grpc.ServerUnaryCall<{
 			minecraft_username?: string
+			minecraft_uuid?: string
 			amount_dabloons?: number
 			direction?: string
 			source?: string
@@ -175,6 +184,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		}>,
 	) {
 		const result = this.players.recordMoneyForMinecraftUsername(
+			call.request.minecraft_uuid ?? '',
 			call.request.minecraft_username ?? '',
 			call.request.direction ?? 'earned',
 			call.request.source ?? 'minecraft',

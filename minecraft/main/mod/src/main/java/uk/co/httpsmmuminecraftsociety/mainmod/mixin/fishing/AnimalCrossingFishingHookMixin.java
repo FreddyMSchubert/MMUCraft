@@ -19,10 +19,12 @@ import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -35,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
 
 import java.util.List;
@@ -46,6 +49,7 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Shadow private int timeUntilLured;
     @Shadow private int timeUntilHooked;
     @Shadow private float fishAngle;
+    @Shadow @Final private int luck;
     @Shadow @Final private int lureSpeed;
 
     // Caps ping compensation so very high latency does not turn rare catches into long guaranteed windows.
@@ -56,7 +60,6 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique private static final int BOBBER_BOP_RECOVERY_TICKS = 7;
     @Unique private static final double BASE_FISH_DISPLAY_WIDTH_BLOCKS = 1.22D;
     @Unique private static final double BOBBER_TOUCH_PADDING_BLOCKS = 0.10D;
-    @Unique private static final double INITIAL_APPROACH_BLOCKS_PER_SECOND = 0.75D;
     @Unique private static final int WAIT_CENTER_TICKS_WITHOUT_LURE = 20 * 30;
     @Unique private static final int WAIT_CENTER_TICKS_WITH_LURE_3 = 20 * 5;
     @Unique private static final int WAIT_SPREAD_TICKS_WITHOUT_LURE = 20 * 5;
@@ -79,10 +82,17 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique private int mainmod$shadowAge;
     @Unique private int mainmod$arrivalTicks;
     @Unique private int mainmod$movementTicksRemaining;
-    @Unique private boolean mainmod$isInitialApproach;
     @Unique private int mainmod$bobberBopRecoveryTicks;
     @Unique private int mainmod$catchAnimationTicks;
     @Unique private ItemStack mainmod$catchingRod = ItemStack.EMPTY;
+    @Unique private double mainmod$itemChance = FishingModifiers.DEFAULT_ITEM_CHANCE;
+
+    @Inject(method = "<init>(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;II)V", at = @At("RETURN"))
+    private void mainmod$applyCastModifier(Player player, Level level, int luck, int lureSpeed, CallbackInfo ci) {
+        if (!level.isClientSide()) {
+            this.mainmod$itemChance = FishingModifiers.onCast(player);
+        }
+    }
 
     @Inject(method = "catchingFish", at = @At("HEAD"), cancellable = true)
     private void mainmod$runAnimalCrossingFishing(BlockPos bobberBlockPos, CallbackInfo ci) {
@@ -157,7 +167,7 @@ public abstract class AnimalCrossingFishingHookMixin {
 
     @Unique
     private void mainmod$spawnFish(ServerLevel level, FishingHook hook) {
-        Pair<ItemStack, FishingPersonality> fish = FishingCatches.random(hook);
+        Pair<ItemStack, FishingPersonality> fish = FishingCatches.random(hook, this.mainmod$itemChance, this.luck);
         this.mainmod$catchResult = fish.getFirst();
         this.mainmod$catchPersonality = fish.getSecond();
 
@@ -173,7 +183,6 @@ public abstract class AnimalCrossingFishingHookMixin {
         this.mainmod$shadowAge = 0;
         this.mainmod$arrivalTicks = ARRIVAL_TICKS;
         this.mainmod$movementTicksRemaining = 0;
-        this.mainmod$isInitialApproach = false;
         this.mainmod$phase = FishingPhase.ARRIVING;
 
         Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
@@ -278,7 +287,6 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique
     private void mainmod$beginApproach() {
         this.mainmod$phase = FishingPhase.APPROACHING;
-        this.mainmod$isInitialApproach = false;
         this.mainmod$targetDistance = mainmod$bobberContactDistance();
         this.mainmod$movementTicksRemaining = mainmod$personality().approachTicks();
     }
@@ -298,15 +306,14 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique
     private void mainmod$beginInitialApproach() {
         this.mainmod$phase = FishingPhase.APPROACHING;
-        this.mainmod$isInitialApproach = true;
         this.mainmod$targetDistance = mainmod$bobberContactDistance();
-        this.mainmod$movementTicksRemaining = 0;
+        double distance = Math.max(0.0D, this.mainmod$fishDistance - this.mainmod$targetDistance);
+        this.mainmod$movementTicksRemaining = mainmod$personality().initialApproachTicks(distance);
     }
 
     @Unique
     private void mainmod$beginRetreat() {
         this.mainmod$phase = FishingPhase.RETREATING;
-        this.mainmod$isInitialApproach = false;
         this.mainmod$targetDistance = mainmod$bobberContactDistance() + mainmod$personality().retreatDistance();
         this.mainmod$pauseTicks = 0;
         this.mainmod$movementTicksRemaining = mainmod$personality().retreatTicks();
@@ -319,10 +326,6 @@ public abstract class AnimalCrossingFishingHookMixin {
 
     @Unique
     private boolean mainmod$tickDistanceMovement() {
-        if (this.mainmod$isInitialApproach) {
-            return mainmod$tickInitialApproachMovement();
-        }
-
         if (this.mainmod$movementTicksRemaining <= 0) {
             this.mainmod$fishDistance = this.mainmod$targetDistance;
             return true;
@@ -332,26 +335,6 @@ public abstract class AnimalCrossingFishingHookMixin {
         this.mainmod$movementTicksRemaining--;
         if (this.mainmod$movementTicksRemaining <= 0) {
             this.mainmod$fishDistance = this.mainmod$targetDistance;
-            return true;
-        }
-        return false;
-    }
-
-    @Unique
-    private boolean mainmod$tickInitialApproachMovement() {
-        double remainingDistance = this.mainmod$fishDistance - this.mainmod$targetDistance;
-        if (remainingDistance <= 0.0D) {
-            this.mainmod$fishDistance = this.mainmod$targetDistance;
-            this.mainmod$isInitialApproach = false;
-            return true;
-        }
-
-        double step = INITIAL_APPROACH_BLOCKS_PER_SECOND / 20.0D;
-        this.mainmod$fishDistance = Math.max(this.mainmod$targetDistance, this.mainmod$fishDistance - step);
-
-        if (this.mainmod$fishDistance <= this.mainmod$targetDistance) {
-            this.mainmod$fishDistance = this.mainmod$targetDistance;
-            this.mainmod$isInitialApproach = false;
             return true;
         }
         return false;
@@ -463,6 +446,8 @@ public abstract class AnimalCrossingFishingHookMixin {
         if (hook.getPlayerOwner() instanceof ServerPlayer player) {
             ItemStack result = mainmod$catchResult();
             CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, this.mainmod$catchingRod, hook, List.of(result));
+            FishingCatches.catchMessage(result).ifPresent(player::sendOverlayMessage);
+            FishingCatches.trackCatch(player, result);
 
             ItemEntity itemEntity = new ItemEntity(level, hook.getX(), hook.getY(), hook.getZ(), result.copy());
             double dx = player.getX() - hook.getX();
@@ -672,7 +657,6 @@ public abstract class AnimalCrossingFishingHookMixin {
         }
         this.mainmod$catchResult = null;
         this.mainmod$catchPersonality = null;
-        this.mainmod$isInitialApproach = false;
         this.mainmod$bobberBopRecoveryTicks = 0;
     }
 

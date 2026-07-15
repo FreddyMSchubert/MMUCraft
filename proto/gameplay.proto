@@ -11,6 +11,7 @@ service GameplayEvents {
   rpc GetUnlockAvailability(GetUnlockAvailabilityRequest) returns (GetUnlockAvailabilityResponse);
   rpc SyncPlayerStats(SyncPlayerStatsRequest) returns (SyncPlayerStatsResponse);
   rpc RecordMoneyEvent(RecordMoneyEventRequest) returns (RecordMoneyEventResponse);
+  rpc RecordFishCatch(RecordFishCatchRequest) returns (RecordFishCatchResponse);
 }
 
 service GameplayControl {
@@ -110,6 +111,26 @@ message RecordMoneyEventResponse {
   bool duplicate = 2;
   bool account_linked = 3;
   string message = 4;
+}
+
+message RecordFishCatchRequest {
+  string minecraft_username = 1;
+  string minecraft_uuid = 2;
+  string fish_id = 3;
+  double length_cm = 4;
+  string rarity = 5;
+  int64 unix_ms = 6;
+}
+
+message RecordFishCatchResponse {
+  bool recorded = 1;
+  bool account_linked = 2;
+  bool first_catch = 3;
+  bool personal_size_record = 4;
+  bool server_size_record = 5;
+  bool server_smallest_record = 6;
+  string message = 7;
+  bool personal_smallest_record = 8;
 }
 
 message GrantDailyLoginBonusRequest {

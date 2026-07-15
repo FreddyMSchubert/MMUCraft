@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LootTableModifiers {
+    private static final Identifier SNIFFER_DIGGING = Identifier.fromNamespaceAndPath("minecraft", "gameplay/sniffer_digging");
     private record LootAddition(
             Identifier tableId,
             String fakeItemId,
@@ -141,6 +142,7 @@ public class LootTableModifiers {
 
         addPlayerSpecificDrops(tableId, lootContext, itemStacks);
         UnlockBookLoot.addBookDrops(tableId, lootContext, itemStacks);
+        addSnifferClover(tableId, lootContext, itemStacks);
 
         for (LootAddition addition : additions) {
             if (!addition.tableId().equals(tableId)) continue;
@@ -185,6 +187,20 @@ public class LootTableModifiers {
 
                 itemStacks.add(stack);
             }
+        }
+    }
+
+    private static void addSnifferClover(Identifier tableId, LootContext context, List<ItemStack> drops) {
+        if (!SNIFFER_DIGGING.equals(tableId)) return;
+
+        // This is additive: vanilla seeds keep their original odds instead of competing with clovers.
+        float roll = context.getRandom().nextFloat();
+        String cloverId = roll < 0.01F ? "4-leaf-clover"
+                : roll < 0.05F ? "3-leaf-clover"
+                : roll < 0.20F ? "2-leaf-clover"
+                : null;
+        if (cloverId != null) {
+            drops.add(FakeItems.createFakeItemStack(cloverId, 1));
         }
     }
 }

@@ -1,0 +1,9 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": ["GGG", "GMG", "GGG"],
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "M": "mainmod:item-magnet"
+  },
+  "result": {"stack": "mainmod:golden-item-magnet", "count": 1}
+}

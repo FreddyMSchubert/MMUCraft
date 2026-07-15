@@ -31,7 +31,8 @@ export async function proxyApiRequest(request: Request, path: string) {
 	headers.set('pragma', upstream.headers.get('pragma') ?? 'no-cache')
 	headers.set('expires', upstream.headers.get('expires') ?? '0')
 
-	return new Response(await upstream.arrayBuffer(), {
+	// Passing the body through keeps ordinary responses working and lets SSE stay live.
+	return new Response(upstream.body, {
 		status: upstream.status,
 		headers,
 	})

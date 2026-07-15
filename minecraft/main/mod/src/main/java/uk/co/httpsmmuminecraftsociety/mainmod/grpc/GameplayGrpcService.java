@@ -91,6 +91,21 @@ public final class GameplayGrpcService extends GrpcHandler {
         );
     }
 
+    public static CompletableFuture<RecordFishCatchResponse> recordFishCatch(
+            ServerPlayer player,
+            String fishId,
+            double lengthCm,
+            String rarity
+    ) {
+        return INSTANCE.recordFishCatchInternal(
+                player.getName().getString(),
+                player.getUUID().toString(),
+                fishId,
+                lengthCm,
+                rarity
+        );
+    }
+
     @Override
     List<BindableService> serverServices() {
         return List.of(new GameplayControlEndpoint());
@@ -249,6 +264,40 @@ public final class GameplayGrpcService extends GrpcHandler {
             }
         }, Runnable::run);
 
+        return result;
+    }
+
+    private CompletableFuture<RecordFishCatchResponse> recordFishCatchInternal(
+            String minecraftUsername,
+            String minecraftUuid,
+            String fishId,
+            double lengthCm,
+            String rarity
+    ) {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+        if (client == null) {
+            return CompletableFuture.failedFuture(
+                    new IllegalStateException("GameplayEvents gRPC client is not initialized")
+            );
+        }
+
+        RecordFishCatchRequest request = RecordFishCatchRequest.newBuilder()
+                .setMinecraftUsername(minecraftUsername)
+                .setMinecraftUuid(minecraftUuid)
+                .setFishId(fishId)
+                .setLengthCm(lengthCm)
+                .setRarity(rarity)
+                .setUnixMs(System.currentTimeMillis())
+                .build();
+        var rpc = client.recordFishCatch(request);
+        CompletableFuture<RecordFishCatchResponse> result = new CompletableFuture<>();
+        rpc.addListener(() -> {
+            try {
+                result.complete(rpc.get());
+            } catch (Exception exception) {
+                result.completeExceptionally(exception);
+            }
+        }, Runnable::run);
         return result;
     }
 

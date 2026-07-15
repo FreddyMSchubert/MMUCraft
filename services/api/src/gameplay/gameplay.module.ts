@@ -4,9 +4,10 @@ import { GameplayGrpcService } from './gameplay-grpc.service'
 import { DailiesModule } from './dailies/dailies.module'
 import { ShopModule } from './shop/shop.module'
 import { PlayersModule } from '../players/players.module'
+import { FishingModule } from '../fishing/fishing.module'
 
 @Module({
-	imports: [KnowledgeModule, DailiesModule, ShopModule, PlayersModule],
+	imports: [KnowledgeModule, DailiesModule, ShopModule, PlayersModule, FishingModule],
 	providers: [GameplayGrpcService],
 })
 export class GameplayModule { }

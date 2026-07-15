@@ -1,0 +1,12 @@
+{
+	"title": "Golden Worms",
+	"id": "golden-worms",
+	"baseItemOverride": "minecraft:glow_berries",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 16,
+	"tooltips": [
+		"Guarantees a fish from fishing",
+		"10 casts"
+	]
+}

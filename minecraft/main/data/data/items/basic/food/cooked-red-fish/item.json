@@ -1,0 +1,11 @@
+{
+	"title": "Cooked Red Fish",
+	"id": "cooked-red-fish",
+	"baseItemOverride": "minecraft:cooked_salmon",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Cooked rich fish meat"
+	]
+}

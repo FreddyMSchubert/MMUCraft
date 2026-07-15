@@ -2,17 +2,20 @@
 	"title": "Blobfish",
 	"id": "fish-blobfish",
 	"modelType": "basic",
-	"rarity": "uncommon",
+	"rarity": "rare",
 	"maxStackSize": 64,
 	"tooltips": [],
 	"fish": {
 		"shape": "fish_shadow_weird",
-		"size": 0.5,
-		"secondsAwayFromBobber": 2,
-		"approachSeconds": 0.5,
-		"retreatSeconds": 2,
-		"retreatDistance": 1,
-		"averageCatchSeconds": 30,
-		"struggleSeconds": 5
+		"tags": [],
+		"size": {
+			"averageLengthCm": 30
+		},
+		"catching": {
+			"secondsAwayFromBobber": 2,
+			"retreatSeconds": 2,
+			"averageCatchSeconds": 30
+		},
+		"furnaceResult": "white_meat"
 	}
 }

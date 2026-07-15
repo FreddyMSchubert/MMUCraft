@@ -1,0 +1,11 @@
+{
+	"title": "Cooked White Fish",
+	"id": "cooked-white-fish",
+	"baseItemOverride": "minecraft:cooked_cod",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Cooked light fish meat"
+	]
+}

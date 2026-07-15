@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../auth/auth.service'
 import { MinecraftIdentityService } from '../database/minecraft-identity.service'
+import { FishingService } from '../fishing/fishing.service'
 import {
 	DatabaseService,
 	PlayerProfileRow,
@@ -29,7 +30,7 @@ type MoneyDirection = 'earned'
 export interface StatOption {
 	key: string
 	label: string
-	group: 'profile' | 'money' | 'minecraft'
+	group: 'profile' | 'money' | 'fishing' | 'minecraft'
 	category?: string
 }
 
@@ -97,6 +98,7 @@ export interface PlayerSummary {
 	isMember: boolean
 	isCommittee: boolean
 	profile: PlayerProfile
+	fishing: Record<string, number>
 	stats: PlayerStats
 }
 
@@ -113,6 +115,15 @@ const PROFILE_OPTIONS: StatOption[] = [
 
 const MONEY_OPTIONS: StatOption[] = [
 	{ key: 'money.earnedDabloons', label: 'Dabloons Earned', group: 'money' },
+]
+
+const FISHING_OPTIONS: StatOption[] = [
+	{ key: 'fishing.total', label: 'Fish Species Caught', group: 'fishing' },
+	...['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical'].map((rarity) => ({
+		key: `fishing.${rarity}`,
+		label: `${rarity.charAt(0).toUpperCase()}${rarity.slice(1)} Fish Caught`,
+		group: 'fishing' as const,
+	})),
 ]
 
 const SESSION_OPTIONS: StatOption[] = [
@@ -267,6 +278,7 @@ export class PlayersService {
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
+		private readonly fishing: FishingService,
 	) { }
 
 	async listPlayers(viewer: AuthenticatedUser) {
@@ -458,6 +470,7 @@ export class PlayersService {
 			isMember: user.is_member === 1,
 			isCommittee: user.is_committee === 1,
 			profile: this.getProfile(user.id),
+			fishing: this.fishing.getCatchCounts(user.id),
 			stats,
 		}
 	}
@@ -570,7 +583,7 @@ export class PlayersService {
 	private getStatOptions(statsObjects: PlayerStats[]): StatOption[] {
 		const byKey = new Map<string, StatOption>()
 
-		for (const option of [...PROFILE_OPTIONS, ...MONEY_OPTIONS, ...SESSION_OPTIONS, ...KNOWN_MINECRAFT_OPTIONS]) {
+		for (const option of [...PROFILE_OPTIONS, ...MONEY_OPTIONS, ...FISHING_OPTIONS, ...SESSION_OPTIONS, ...KNOWN_MINECRAFT_OPTIONS]) {
 			byKey.set(option.key, option)
 		}
 
@@ -932,5 +945,6 @@ function humanizeResourcePath(value: string): string {
 function groupRank(group: StatOption['group']) {
 	if (group === 'profile') return 0
 	if (group === 'money') return 1
-	return 2
+	if (group === 'fishing') return 2
+	return 3
 }

@@ -8,7 +8,6 @@
 		"db:check": "drizzle-kit check",
 		"db:studio": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/studio-cluster.ps1",
 		"db:studio:pod": "drizzle-kit studio",
-		"test:http": "npm run build && node scripts/smoke-http.mjs",
 		"start": "node dist/main.js",
 		"prod": "npm run build && npm run start"
 	},

@@ -490,105 +490,105 @@
 	"blazeandcave:challenges/warlock": 75, // Warlock: obtain a stack of Beacons; repeated Wither kills and mineral bases, with skull drops discounted.
 	"blazeandcave:challenges/were_in_the_endgame_now": 69, // We're in the endgame now: build an End village and defend it from a raid; villager transport plus raid logistics in the End.
 	"blazeandcave:challenges/zombie_apocalypse": 29, // Zombie Apocalypse: collect a stack of Zombie Heads; easy drops make it a manageable but still deliberate kill grind.
-	"blazeandcave:enchanting/a_rather_pointy_fence_post": 12, // A rather pointy fence post: put Sharpness V on a wooden sword; intentionally wasteful enchant/anvil use.
-	"blazeandcave:enchanting/armor_for_the_masses": 30, // Armor for the masses: obtain every protection-related enchantment; several book/enchant rolls.
-	"blazeandcave:enchanting/bane_of_one_shotting_spiders": 8, // Bane of one-shotting spiders: obtain Bane of Arthropods V; one high-level but common unwanted enchant.
-	"blazeandcave:enchanting/baron_of_blacksmiths": 60, // Baron of Blacksmiths: get stacks of normal, chipped, and damaged anvils; very iron-heavy plus anvil-wear setup.
-	"blazeandcave:enchanting/boomerang": 8, // Boomerang: get Loyalty on a trident; trident access plus targeted enchant.
-	"blazeandcave:enchanting/bow_down_to_me": 8, // Bow down to me!: obtain Power V; common high-level bow enchant.
-	"blazeandcave:enchanting/classic_cartoon_comedy": 2, // Classic Cartoon Comedy: get squashed by an anvil; tiny staged damage/death gag.
-	"blazeandcave:enchanting/complete_enchanter": 150, // Complete Enchanter: obtain every enchantment at least once; broad book/villager/enchanting checklist.
-	"blazeandcave:enchanting/curses": 10, // Curses!: obtain both curse enchantments; loot/trading RNG but only two books/items.
-	"blazeandcave:enchanting/do_a_barrel_roll": 8, // Do A Barrel Roll!: use Riptide for a launch; trident plus enchant and water/rain condition.
+	"blazeandcave:enchanting/a_rather_pointy_fence_post": 35, // A rather pointy fence post: put Sharpness V on a wooden sword; intentionally wasteful enchant/anvil use.
+	"blazeandcave:enchanting/armor_for_the_masses": 69, // Armor for the masses: obtain every protection-related enchantment; several book/enchant rolls.
+	"blazeandcave:enchanting/bane_of_one_shotting_spiders": 25, // Bane of one-shotting spiders: obtain Bane of Arthropods V; one high-level but common unwanted enchant.
+	"blazeandcave:enchanting/baron_of_blacksmiths": 68, // Baron of Blacksmiths: get stacks of normal, chipped, and damaged anvils; very iron-heavy plus anvil-wear setup.
+	"blazeandcave:enchanting/boomerang": 14, // Boomerang: get Loyalty on a trident; trident access plus targeted enchant.
+	"blazeandcave:enchanting/bow_down_to_me": 21, // Bow down to me!: obtain Power V; common high-level bow enchant.
+	"blazeandcave:enchanting/classic_cartoon_comedy": 0, // Classic Cartoon Comedy: get squashed by an anvil; tiny staged damage/death gag.
+	"blazeandcave:enchanting/complete_enchanter": 89, // Complete Enchanter: obtain every enchantment at least once; broad book/villager/enchanting checklist.
+	"blazeandcave:enchanting/curses": 15, // Curses!: obtain both curse enchantments; loot/trading RNG but only two books/items.
+	"blazeandcave:enchanting/do_a_barrel_roll": 11, // Do A Barrel Roll!: use Riptide for a launch; trident plus enchant and water/rain condition.
 	"blazeandcave:enchanting/echidna": 12, // Echidna: obtain Thorns III on armor; specific high-level armor enchant.
-	"blazeandcave:enchanting/fiery": 25, // Fiery: obtain every fire-related enchantment; small enchantment family checklist.
-	"blazeandcave:enchanting/fortunate_son": 10, // Fortunate Son: obtain Fortune III; valuable specific tool enchant.
-	"blazeandcave:enchanting/god_of_thunder": 25, // God of Thunder: make a Loyalty III and Channeling trident named Mjolnir; trident, books, and anvil setup.
+	"blazeandcave:enchanting/fiery": 24, // Fiery: obtain every fire-related enchantment; small enchantment family checklist.
+	"blazeandcave:enchanting/fortunate_son": 36, // Fortunate Son: obtain Fortune III; valuable specific tool enchant.
+	"blazeandcave:enchanting/god_of_thunder": 22, // God of Thunder: make a Loyalty III and Channeling trident named Mjolnir; trident, books, and anvil setup.
 	"blazeandcave:enchanting/gotta_go_fast": 10, // Gotta Go Fast!: obtain Soul Speed from Bastion/bartering; Nether RNG enchant source.
-	"blazeandcave:enchanting/handmade_blinding": 8, // Handmade Blinding: wear a Curse of Binding carved pumpkin; cursed-book setup for a bad item.
+	"blazeandcave:enchanting/handmade_blinding": 0, // Handmade Blinding: wear a Curse of Binding carved pumpkin; cursed-book setup for a bad item.
 	"blazeandcave:enchanting/heavy_metal": 0, // Heavy Metal: craft an anvil; normal utility craft, no reward.
 	"blazeandcave:enchanting/ill_be_back": 0, // I'll be back: rename a bow Terminator; cheap anvil gag, no reward.
-	"blazeandcave:enchanting/knocking_your_socks_off": 10, // Knocking Your Socks Off: obtain Knockback and Punch; two knockback enchantments, modest book work.
-	"blazeandcave:enchanting/let_it_go": 15, // Let It Go!: use Frost Walker over deep ocean; specific boots plus biome/depth condition.
+	"blazeandcave:enchanting/knocking_your_socks_off": 21, // Knocking Your Socks Off: obtain Knockback and Punch; two knockback enchantments, modest book work.
+	"blazeandcave:enchanting/let_it_go": 14, // Let It Go!: use Frost Walker over deep ocean; specific boots plus biome/depth condition.
 	"blazeandcave:enchanting/librarian": 0, // Librarian: build bookshelves for an enchanting table; normal enchanting setup, no reward.
 	"blazeandcave:enchanting/like_a_cat": 5, // Like a Cat: obtain Feather Falling boots; common useful enchant, small reward.
-	"blazeandcave:enchanting/like_a_ninja": 30, // Like a Ninja: loot Swift Sneak from an Ancient City; dangerous structure-specific enchant.
-	"blazeandcave:enchanting/mace_windu": 30, // Mace Windu: obtain Wind Burst on a Mace; Trial loot/weapon setup with rare enchant.
+	"blazeandcave:enchanting/like_a_ninja": 31, // Like a Ninja: loot Swift Sneak from an Ancient City; dangerous structure-specific enchant.
+	"blazeandcave:enchanting/mace_windu": 35, // Mace Windu: obtain Wind Burst on a Mace; Trial loot/weapon setup with rare enchant.
 	"blazeandcave:enchanting/machine_bow": 10, // Machine Bow: make/fire a rapid crossbow setup; specific crossbow enchant use.
-	"blazeandcave:enchanting/magical_stockpile": 25, // Magical Stockpile: collect a stack of Bottles o Enchanting; trading/loot stockpile.
-	"blazeandcave:enchanting/master_arbalist": 45, // Master Arbalist: max every possible crossbow enchant on one crossbow; book/anvil combination work.
-	"blazeandcave:enchanting/master_armorer": 80, // Master Armorer: max-enchant a full armor set; many books, levels, and anvil operations.
-	"blazeandcave:enchanting/master_axeman": 45, // Master Axeman: max-enchant an axe; multiple tool/combat enchants on one item.
-	"blazeandcave:enchanting/master_digger": 40, // Master Digger: max-enchant a shovel; fewer enchants but still deliberate book/anvil work.
-	"blazeandcave:enchanting/master_enchanter": 220, // Master Enchanter: obtain every enchantment at max level; huge villager/book/enchanting grind.
-	"blazeandcave:enchanting/master_farmer": 60, // Master Farmer: create a hoe with every possible max-level enchantment; niche tool plus book/anvil work, very deliberate.
-	"blazeandcave:enchanting/master_fisher": 40, // Master Fisher: max-enchant a fishing rod; focused book/anvil setup.
+	"blazeandcave:enchanting/magical_stockpile": 32, // Magical Stockpile: collect a stack of Bottles o Enchanting; trading/loot stockpile.
+	"blazeandcave:enchanting/master_arbalist": 42, // Master Arbalist: max every possible crossbow enchant on one crossbow; book/anvil combination work.
+	"blazeandcave:enchanting/master_armorer": 64, // Master Armorer: max-enchant a full armor set; many books, levels, and anvil operations.
+	"blazeandcave:enchanting/master_axeman": 35, // Master Axeman: max-enchant an axe; multiple tool/combat enchants on one item.
+	"blazeandcave:enchanting/master_digger": 35, // Master Digger: max-enchant a shovel; fewer enchants but still deliberate book/anvil work.
+	"blazeandcave:enchanting/master_enchanter": 42, // Master Enchanter: obtain every enchantment at max level; huge villager/book/enchanting grind.
+	"blazeandcave:enchanting/master_farmer": 42, // Master Farmer: create a hoe with every possible max-level enchantment; niche tool plus book/anvil work, very deliberate.
+	"blazeandcave:enchanting/master_fisher": 38, // Master Fisher: max-enchant a fishing rod; focused book/anvil setup.
 	"blazeandcave:enchanting/master_jouster": 55, // Master Jouster: max-enchant a spear; custom weapon plus full enchant set.
-	"blazeandcave:enchanting/master_knight": 55, // Master Knight: max-enchant a sword; many useful combat enchants on one item.
-	"blazeandcave:enchanting/master_macerator": 55, // Master Macerator: max-enchant a mace; Trial weapon plus rare/specific enchants.
-	"blazeandcave:enchanting/master_miner": 45, // Master Miner: max-enchant a pickaxe; valuable tool enchants and anvil setup.
-	"blazeandcave:enchanting/master_sniper": 45, // Master Sniper: max-enchant a bow; full bow book set and anvil work.
-	"blazeandcave:enchanting/master_tridenteer": 55, // Master Tridenteer: max-enchant a trident; rare weapon plus mutually targeted enchant setup.
-	"blazeandcave:enchanting/needle_sharp": 10, // Needle Sharp: obtain Sharpness V; common high-level weapon enchant.
+	"blazeandcave:enchanting/master_knight": 29, // Master Knight: max-enchant a sword; many useful combat enchants on one item.
+	"blazeandcave:enchanting/master_macerator": 35, // Master Macerator: max-enchant a mace; Trial weapon plus rare/specific enchants.
+	"blazeandcave:enchanting/master_miner": 29, // Master Miner: max-enchant a pickaxe; valuable tool enchants and anvil setup.
+	"blazeandcave:enchanting/master_sniper": 35, // Master Sniper: max-enchant a bow; full bow book set and anvil work.
+	"blazeandcave:enchanting/master_tridenteer": 42, // Master Tridenteer: max-enchant a trident; rare weapon plus mutually targeted enchant setup.
+	"blazeandcave:enchanting/needle_sharp": 29, // Needle Sharp: obtain Sharpness V; common high-level weapon enchant.
 	"blazeandcave:enchanting/newtons_flaming_laser_sword": 20, // Newton's Flaming Laser Sword: make a diamond sword with Fire Aspect II; diamond gear plus specific enchant.
-	"blazeandcave:enchanting/oh_baby_a_triple": 40, // Oh baby a triple!: kill three mobs at once with Multishot from 30 blocks; mob grouping, range, and timing.
-	"blazeandcave:enchanting/over_overkill": 35, // Over-Overkill: deal sixteen hearts in one non-Mace melee hit; gear, strength/crit, and damage setup.
+	"blazeandcave:enchanting/oh_baby_a_triple": 14, // Oh baby a triple!: kill three mobs at once with Multishot from 30 blocks; mob grouping, range, and timing.
+	"blazeandcave:enchanting/over_overkill": 30, // Over-Overkill: deal sixteen hearts in one non-Mace melee hit; gear, strength/crit, and damage setup.
 	"blazeandcave:enchanting/overkill": 15, // Overkill: deal eight hearts in one non-Mace melee hit; modest weapon/crit setup.
-	"blazeandcave:enchanting/pick_like_silk": 15, // Pick Like Silk: use Silk Touch to mine diamond ore; specific enchant plus diamond find.
+	"blazeandcave:enchanting/pick_like_silk": 23, // Pick Like Silk: use Silk Touch to mine diamond ore; specific enchant plus diamond find.
 	"blazeandcave:enchanting/root": 0, // Enchanting: tab root only; no reward.
-	"blazeandcave:enchanting/scuba_gear": 25, // Scuba Gear: obtain every water-related enchantment; small enchantment family checklist.
-	"blazeandcave:enchanting/shotbow": 5, // Shotbow: fire Multishot from a crossbow; one specific crossbow enchant use.
-	"blazeandcave:enchanting/silent_but_deadly": 50, // Silent But Deadly: sprint/sneak on sculk with Speed II and Swift Sneak III; Ancient City loot plus potion/equipment setup.
-	"blazeandcave:enchanting/super_efficient": 10, // Super Efficient: obtain Efficiency V; common high-level tool enchant.
+	"blazeandcave:enchanting/scuba_gear": 19, // Scuba Gear: obtain every water-related enchantment; small enchantment family checklist.
+	"blazeandcave:enchanting/shotbow": 3, // Shotbow: fire Multishot from a crossbow; one specific crossbow enchant use.
+	"blazeandcave:enchanting/silent_but_deadly": 42, // Silent But Deadly: sprint/sneak on sculk with Speed II and Swift Sneak III; Ancient City loot plus potion/equipment setup.
+	"blazeandcave:enchanting/super_efficient": 15, // Super Efficient: obtain Efficiency V; common high-level tool enchant.
 	"blazeandcave:enchanting/this_name_sounds_cooler": 0, // This name sounds cooler: rename a diamond sword; cheap anvil cosmetic, no reward.
-	"blazeandcave:enchanting/to_infinity_and_beyond": 8, // To Infinity And Beyond!: obtain Infinity; common bow enchant, modest reward.
-	"blazeandcave:enchanting/unbreakable": 12, // Unbreakable: obtain Mending; valuable villager/loot enchant.
-	"blazeandcave:enchanting/undead_slayer": 8, // Undead Slayer: obtain Smite V; common high-level weapon enchant.
-	"blazeandcave:enchanting/whack_a_mole": 70, // Whack-a-mole: chain eight Armadillo hits with Wind Burst without landing; rare enchant plus precision movement challenge.
-	"blazeandcave:enchanting/zeus": 10, // Zeus: obtain Channeling on a trident; trident enchant with storm utility.
-	"blazeandcave:end/a_wizards_breakfast": 15, // A Wizard's Breakfast: eat a stack of chorus fruit in one go; End crop stockpile and deliberate consumption.
-	"blazeandcave:end/anti_gravity_generator": 50, // Anti-Gravity Generator: transport a Shulker to the Overworld and let it levitate you; awkward cross-dimension mob handling.
-	"blazeandcave:end/cow_jumped_over_the_moon": 40, // Cow Jumped Over The Moon: move a cow from Overworld to End and kill it there; portal mob transport plus End access.
+	"blazeandcave:enchanting/to_infinity_and_beyond": 5, // To Infinity And Beyond!: obtain Infinity; common bow enchant, modest reward.
+	"blazeandcave:enchanting/unbreakable": 17, // Unbreakable: obtain Mending; valuable villager/loot enchant.
+	"blazeandcave:enchanting/undead_slayer": 21, // Undead Slayer: obtain Smite V; common high-level weapon enchant.
+	"blazeandcave:enchanting/whack_a_mole": 42, // Whack-a-mole: chain eight Armadillo hits with Wind Burst without landing; rare enchant plus precision movement challenge.
+	"blazeandcave:enchanting/zeus": 18, // Zeus: obtain Channeling on a trident; trident enchant with storm utility.
+	"blazeandcave:end/a_wizards_breakfast": 16, // A Wizard's Breakfast: eat a stack of chorus fruit in one go; End crop stockpile and deliberate consumption.
+	"blazeandcave:end/anti_gravity_generator": 51, // Anti-Gravity Generator: transport a Shulker to the Overworld and let it levitate you; awkward cross-dimension mob handling.
+	"blazeandcave:end/cow_jumped_over_the_moon": 35, // Cow Jumped Over The Moon: move a cow from Overworld to End and kill it there; portal mob transport plus End access.
 	"blazeandcave:end/dimension_penetration": 80, // Dimension Penetration: get hit by an arrow that has traveled through every dimension; portal routing and projectile timing.
-	"blazeandcave:end/divers_dozen": 75, // Diver's Dozen: kill 12 mobs while airborne with Elytra without landing; sustained flight combat control.
-	"blazeandcave:end/dogfight": 45, // Dogfight: kill a Skeleton while both you and it have levitation; Shulker effect plus mob positioning.
-	"blazeandcave:end/dragon_shield": 10, // Dragon Shield: try to block the dragon's attack; intentional boss-fight interaction, low setup once fighting.
-	"blazeandcave:end/dragon_vs_dragon": 60, // Dragon vs Dragon: kill the Ender Dragon while wearing a dragon head; head is easy here, repeat boss fight is the work.
+	"blazeandcave:end/divers_dozen": 35, // Diver's Dozen: kill 12 mobs while airborne with Elytra without landing; sustained flight combat control.
+	"blazeandcave:end/dogfight": 42, // Dogfight: kill a Skeleton while both you and it have levitation; Shulker effect plus mob positioning.
+	"blazeandcave:end/dragon_shield": 9, // Dragon Shield: try to block the dragon's attack; intentional boss-fight interaction, low setup once fighting.
+	"blazeandcave:end/dragon_vs_dragon": 35, // Dragon vs Dragon: kill the Ender Dragon while wearing a dragon head; head is easy here, repeat boss fight is the work.
 	"blazeandcave:end/end_bricks": 2, // End Bricks!: craft end bricks from end stone; tiny End-material craft.
-	"blazeandcave:end/event_horizon": 25, // Event Horizon: survive void damage; deliberate End/void risk with escape or resistance planning.
+	"blazeandcave:end/event_horizon": 0, // Event Horizon: survive void damage; deliberate End/void risk with escape or resistance planning.
 	"blazeandcave:end/extrabiologist": 5, // Extrabiologist: plant chorus in the Overworld; simple cross-dimension plant transfer.
-	"blazeandcave:end/for_mother_clarence": 10, // For Mother, Clarence: kill a Shulker; normal End City combat target, modest reward.
-	"blazeandcave:end/getting_chorus": 8, // Getting Chorus: harvest a chorus tree; End island travel plus plant gathering.
-	"blazeandcave:end/good_luck_getting_this_one": 150, // Good Luck Getting This One: line up five awkward mobs in the End for one piercing arrow; brutal transport and shot setup.
-	"blazeandcave:end/im_coming_back_murph": 30, // I'm Coming Back, Murph!: travel far into the End; outer-island navigation and return planning.
+	"blazeandcave:end/for_mother_clarence": 0, // For Mother, Clarence: kill a Shulker; normal End City combat target, modest reward.
+	"blazeandcave:end/getting_chorus": 3, // Getting Chorus: harvest a chorus tree; End island travel plus plant gathering.
+	"blazeandcave:end/good_luck_getting_this_one": 121, // Good Luck Getting This One: line up five awkward mobs in the End for one piercing arrow; brutal transport and shot setup.
+	"blazeandcave:end/im_coming_back_murph": 35, // I'm Coming Back, Murph!: travel far into the End; outer-island navigation and return planning.
 	"blazeandcave:end/in_your_face_neil_armstrong": 12, // In Your Face, Neil Armstrong: grow potatoes in the End; crop/soil/water transport to End.
-	"blazeandcave:end/no_dont_let_me_leave_murph": 60, // No! Don't let me leave, Murph!: travel extremely far in the End; long navigation grind.
-	"blazeandcave:end/off_with_his_head": 25, // Off With His Head!: reach an End ship and claim a dragon head; not hard after Elytra, but it requires outer-End exploration.
+	"blazeandcave:end/no_dont_let_me_leave_murph": 142, // No! Don't let me leave, Murph!: travel extremely far in the End; long navigation grind.
+	"blazeandcave:end/off_with_his_head": 12, // Off With His Head!: reach an End ship and claim a dragon head; not hard after Elytra, but it requires outer-End exploration.
 	"blazeandcave:end/organizational_wizard": 0, // Organizational Wizard: rename a Shulker Box; cheap anvil organization, no reward.
-	"blazeandcave:end/portable_storage": 10, // Portable Storage: craft a shulker box from shells; normal End City reward craft, modest payout.
+	"blazeandcave:end/portable_storage": 5, // Portable Storage: craft a shulker box from shells; normal End City reward craft, modest payout.
 	"blazeandcave:end/purpurfect": 5, // Purpurfect!: craft or collect purpur blocks, slabs, pillars, and stairs; small End block-family set.
-	"blazeandcave:end/ring_of_the_end": 180, // Ring of the End: defeat the Ender Dragon 20 times; repeated crystal crafting and boss kills.
-	"blazeandcave:end/rocketman": 45, // Rocketman: fill inventory with full firework rocket stacks; gunpowder/paper production at scale.
+	"blazeandcave:end/ring_of_the_end": 101, // Ring of the End: defeat the Ender Dragon 20 times; repeated crystal crafting and boss kills.
+	"blazeandcave:end/rocketman": 41, // Rocketman: fill inventory with full firework rocket stacks; gunpowder/paper production at scale.
 	"blazeandcave:end/shouldnt_my_shield_levitate_too": 8, // Shouldn't my shield levitate too?: block a Shulker bullet; small End City combat interaction.
-	"blazeandcave:end/shulker_breaker": 75, // Shulker Breaker: collect a stack of shulker shells; repeated End City clearing or Shulker farming.
-	"blazeandcave:end/sky_high": 25, // Sky High: fly above world height; Elytra/rocket setup and vertical control.
+	"blazeandcave:end/shulker_breaker": 32, // Shulker Breaker: collect a stack of shulker shells; repeated End City clearing or Shulker farming.
+	"blazeandcave:end/sky_high": 29, // Sky High: fly above world height; Elytra/rocket setup and vertical control.
 	"blazeandcave:end/some_breakthrough": 25, // Some Breakthrough: fully exhaust an Elytra; deliberately wearing out a valuable late-game item.
-	"blazeandcave:end/somewhere_over_the_rainbow": 40, // Somewhere Over The Rainbow...: craft all 16 shulker box colors; shulker shells plus full dye set.
-	"blazeandcave:end/taking_the_scenic_route": 45, // Taking the Scenic Route: bridge from main island to outer End; long dangerous building route.
-	"blazeandcave:end/the_actual_end": 2, // The Actual End: die to an Enderman in the End; can happen by mistake, token only.
-	"blazeandcave:end/the_beginning": 40, // The Beginning: defeat or resolve the Wither milestone; Wither setup and boss combat.
-	"blazeandcave:end/the_point_of_no_return": 5, // The Point of No Return: fall into the void; mostly a deliberate death/stunt, so it stays small to avoid rewarding mistakes.
-	"blazeandcave:end/the_start_of_something": 5, // The Start of Something: craft an end crystal; ghast tear, glass, and eye setup.
-	"blazeandcave:end/the_void_frogs": 45, // The Void Frogs: lower a frog into the void with Slow Falling, then kill it; potion plus awkward End mob handling.
-	"blazeandcave:end/uh_houston_we_have_a_problem": 50, // Uh, Houston? We have a problem: fly/build to an extreme height; long vertical travel objective.
-	"blazeandcave:end/unending_hell": 30, // Unending Hell: route directly from the End to the Nether; portal/dimension setup beyond normal return.
-	"blazeandcave:end/unstoppable_force_vs_immovable_object": 10, // Unstoppable Force vs Immovable Object: hit a Shulker with a Wind Charge; Trial item plus End City target.
-	"blazeandcave:end/void_walker": 45, // Void Walker: explore every End biome; outer-island biome checklist.
-	"blazeandcave:end/what_for": 70, // What For?: craft 64 end crystals; large ghast tear, eye, and glass stockpile.
-	"blazeandcave:end/why_do_i_hear_boss_music": 35, // Why do I hear boss music?: play a music disc while fighting the Ender Dragon; boss fight plus disc/jukebox setup.
-	"blazeandcave:end/youre_doing_it_wrong": 25, // You're doing it wrong: kill a mob with a Mace while levitating upward; Shulker/levitation plus weapon timing.
+	"blazeandcave:end/somewhere_over_the_rainbow": 16, // Somewhere Over The Rainbow...: craft all 16 shulker box colors; shulker shells plus full dye set.
+	"blazeandcave:end/taking_the_scenic_route": 32, // Taking the Scenic Route: bridge from main island to outer End; long dangerous building route.
+	"blazeandcave:end/the_actual_end": 0, // The Actual End: die to an Enderman in the End; can happen by mistake, token only.
+	"blazeandcave:end/the_beginning": 10, // The Beginning: defeat or resolve the Wither milestone; Wither setup and boss combat.
+	"blazeandcave:end/the_point_of_no_return": 0, // The Point of No Return: fall into the void; mostly a deliberate death/stunt, so it stays small to avoid rewarding mistakes.
+	"blazeandcave:end/the_start_of_something": 10, // The Start of Something: craft an end crystal; ghast tear, glass, and eye setup.
+	"blazeandcave:end/the_void_frogs": 42, // The Void Frogs: lower a frog into the void with Slow Falling, then kill it; potion plus awkward End mob handling.
+	"blazeandcave:end/uh_houston_we_have_a_problem": 42, // Uh, Houston? We have a problem: fly/build to an extreme height; long vertical travel objective.
+	"blazeandcave:end/unending_hell": 35, // Unending Hell: route directly from the End to the Nether; portal/dimension setup beyond normal return.
+	"blazeandcave:end/unstoppable_force_vs_immovable_object": 15, // Unstoppable Force vs Immovable Object: hit a Shulker with a Wind Charge; Trial item plus End City target.
+	"blazeandcave:end/void_walker": 29, // Void Walker: explore every End biome; outer-island biome checklist.
+	"blazeandcave:end/what_for": 64, // What For?: craft 64 end crystals; large ghast tear, eye, and glass stockpile.
+	"blazeandcave:end/why_do_i_hear_boss_music": 21, // Why do I hear boss music?: play a music disc while fighting the Ender Dragon; boss fight plus disc/jukebox setup.
+	"blazeandcave:end/youre_doing_it_wrong": 35, // You're doing it wrong: kill a mob with a Mace while levitating upward; Shulker/levitation plus weapon timing.
 	"blazeandcave:farming/24_carrot_gold": 0, // 24 Carrot Gold: eat one golden carrot; normal high-tier food use, no reward.
-	"blazeandcave:farming/a_gluttonous_diet": 80, // A Gluttonous Diet: obtain a full stack of every food; large food-storage and crafting checklist.
+	"blazeandcave:farming/a_gluttonous_diet": 64, // A Gluttonous Diet: obtain a full stack of every food; large food-storage and crafting checklist.
 	"blazeandcave:farming/a_mangrove_grove": 10, // A Mangrove Grove: plant a mangrove propagule in a grove biome; biome-specific planting task.
 	"blazeandcave:farming/an_amazing_story": 0, // An amazing story!: finish or receive a written book; normal writing/social action, no reward.
 	"blazeandcave:farming/an_apple_a_day": 30, // An Apple a Day: eat an apple every day for 30 in-game days; timed habit challenge.
@@ -598,25 +598,25 @@
 	"blazeandcave:farming/berry_nice": 0, // Berry Nice!: pick and eat sweet berries; normal foraging, no reward.
 	"blazeandcave:farming/booshes": 0, // Booshes: collect bushes; common plant pickup, no reward.
 	"blazeandcave:farming/care_for_the_environment": 0, // Care For the Environment: plant a sapling; normal farming/forestry, no reward.
-	"blazeandcave:farming/castaway": 15, // Castaway: eat only dried kelp for three in-game days; timed food restriction.
-	"blazeandcave:farming/certified_spud_chomper": 40, // Certified Spud Chomper: eat 100 poisonous potatoes; awkward rare crop byproduct grind.
-	"blazeandcave:farming/combine_harvester": 45, // Combine Harvester: bone-meal every growable thing; broad plant checklist and item setup.
-	"blazeandcave:farming/come_to_the_countryside": 35, // Come to the countryside!: plant every farmland crop; crop-seed collection and field setup.
+	"blazeandcave:farming/castaway": 29, // Castaway: eat only dried kelp for three in-game days; timed food restriction.
+	"blazeandcave:farming/certified_spud_chomper": 42, // Certified Spud Chomper: eat 100 poisonous potatoes; awkward rare crop byproduct grind.
+	"blazeandcave:farming/combine_harvester": 42, // Combine Harvester: bone-meal every growable thing; broad plant checklist and item setup.
+	"blazeandcave:farming/come_to_the_countryside": 23, // Come to the countryside!: plant every farmland crop; crop-seed collection and field setup.
 	"blazeandcave:farming/die_potato": 0, // Die, Potato!: eat a potato; normal food use, no reward.
 	"blazeandcave:farming/disen_berry_berry_bad": 0, // Disen Berry Berry Bad!: get stuck in sweet berry bushes; common accident, no reward.
-	"blazeandcave:farming/ecologist": 35, // Ecologist: plant every sapling type; biome/tree collection checklist.
+	"blazeandcave:farming/ecologist": 24, // Ecologist: plant every sapling type; biome/tree collection checklist.
 	"blazeandcave:farming/foliage": 0, // Foliage: shear grass or ferns; normal decoration gathering, no reward.
 	"blazeandcave:farming/full_stomach": 0, // Full Stomach: fill hunger and saturation; normal eating outcome, no reward.
 	"blazeandcave:farming/hay_there": 20, // Hay there!: craft a stack of hay blocks; wheat-farm stockpile.
-	"blazeandcave:farming/hot_chocolate": 12, // Hot Chocolate: plant cocoa in the Nether; jungle crop plus cross-dimension planting.
+	"blazeandcave:farming/hot_chocolate": 17, // Hot Chocolate: plant cocoa in the Nether; jungle crop plus cross-dimension planting.
 	"blazeandcave:farming/im_gonna_be_sick": 35, // I'm gonna be sick!: consume every suspicious stew type; flower/effect stew checklist.
 	"blazeandcave:farming/its_a_cactus": 0, // It's a cactus!: break cactus; common desert plant pickup, no reward.
 	"blazeandcave:farming/its_full_of_ink": 0, // It's full of ink: kill squid for ink; ordinary dye material gathering, no reward.
 	"blazeandcave:farming/its_where_nutella_comes_from": 0, // It's where nutella comes from: pick cocoa beans; normal jungle crop pickup, no reward.
 	"blazeandcave:farming/kelp_me": 0, // Kelp me!: collect kelp; common ocean plant pickup, no reward.
-	"blazeandcave:farming/me_love_cookie": 10, // Me Love Cookie: bake and eat cookies; cocoa/wheat setup but small.
-	"blazeandcave:farming/meat_lovers": 45, // Meat Lovers: eat every meat type, cooked or not; animal/mob food checklist.
-	"blazeandcave:farming/mega_mushroom": 5, // Mega Mushroom: grow a giant mushroom and Silk Touch it; mushroom plus enchant/tool setup.
+	"blazeandcave:farming/me_love_cookie": 3, // Me Love Cookie: bake and eat cookies; cocoa/wheat setup but small.
+	"blazeandcave:farming/meat_lovers": 23, // Meat Lovers: eat every meat type, cooked or not; animal/mob food checklist.
+	"blazeandcave:farming/mega_mushroom": 2, // Mega Mushroom: grow a giant mushroom and Silk Touch it; mushroom plus enchant/tool setup.
 	"blazeandcave:farming/mushroom_mushroom": 0, // Mushroom, Mushroom!: eat mushroom stew; normal food craft, no reward.
 	"blazeandcave:farming/must_be_your_birthday": 35, // Must be your birthday: eat 100 cake slices; milk/egg/sugar/wheat production and repeated placement.
 	"blazeandcave:farming/natural_fertiliser": 0, // Natural Fertiliser: fill a composter once; normal farming utility, no reward.
@@ -624,7 +624,7 @@
 	"blazeandcave:farming/not_today": 0, // Not Today!: eat a poisonous potato; rare-ish but trivial and possibly accidental, no reward.
 	"blazeandcave:farming/olaf": 1, // Olaf: build a snow golem; tiny deliberate snow/pumpkin craft.
 	"blazeandcave:farming/one_course_meal": 0, // One-course meal: bone-meal a sapling into a tree; normal forestry action, no reward.
-	"blazeandcave:farming/pumpa_kungen": 25, // Pumpa kungen!: carve a stack of pumpkins; pumpkin stockpile plus repetitive carving.
+	"blazeandcave:farming/pumpa_kungen": 14, // Pumpa kungen!: carve a stack of pumpkins; pumpkin stockpile plus repetitive carving.
 	"blazeandcave:farming/root": 0, // Farming: tab root only; no reward.
 	"blazeandcave:farming/scientific_inaccuracy": 0, // Scientific Inaccuracy: craft melon slices back into a block; normal crop recipe, no reward.
 	"blazeandcave:farming/shrooms": 0, // Shrooms: gather both mushroom colors; common foraging, no reward.
@@ -640,30 +640,30 @@
 	"blazeandcave:farming/the_pie": 0, // The Pie: bake pumpkin pie; normal food craft, no reward.
 	"blazeandcave:farming/trimming_the_treetops": 0, // Trimming the Treetops: shear leaves; normal decoration/resource gathering, no reward.
 	"blazeandcave:farming/ultra_hardcore": 0, // Ultra Hardcore: craft and eat a golden apple; useful survival item, not a deliberate advancement hunt by itself.
-	"blazeandcave:farming/undersea_gardener": 25, // Undersea Gardener: craft a stack of dried kelp blocks; kelp farming and smelting stockpile.
+	"blazeandcave:farming/undersea_gardener": 16, // Undersea Gardener: craft a stack of dried kelp blocks; kelp farming and smelting stockpile.
 	"blazeandcave:farming/unmasked": 0, // Unmasked: shear a pumpkin from a snow golem; tiny cosmetic interaction, no reward.
-	"blazeandcave:farming/vegetarian": 45, // Vegetarian: eat every plant-based food; broad crop/forage checklist.
-	"blazeandcave:farming/whats_new_with_composting": 80, // What's new with composting?: compost every compostable item; very broad item checklist.
+	"blazeandcave:farming/vegetarian": 23, // Vegetarian: eat every plant-based food; broad crop/forage checklist.
+	"blazeandcave:farming/whats_new_with_composting": 67, // What's new with composting?: compost every compostable item; very broad item checklist.
 	"blazeandcave:farming/write_your_thoughts": 0, // Write your thoughts: craft a book and quill; simple utility craft, no reward.
-	"blazeandcave:farming/yay_deadbush": 2, // Yay! Deadbush!: collect a dead bush; tiny desert/shears pickup.
+	"blazeandcave:farming/yay_deadbush": 0, // Yay! Deadbush!: collect a dead bush; tiny desert/shears pickup.
 	"blazeandcave:farming/you_cant_take_the_sky_from_me": 2, // You can't take the sky from me: obtain a Firefly Bush; small plant lookup/pickup.
-	"blazeandcave:mining/9_to_5": 25, // 9 to 5: collect enough disc fragments for the music disc; Ancient City loot/checklist work.
+	"blazeandcave:mining/9_to_5": 29, // 9 to 5: collect enough disc fragments for the music disc; Ancient City loot/checklist work.
 	"blazeandcave:mining/a_shiny_treat": 0, // A Shiny Treat: eat glow berries; normal cave food pickup, no reward.
-	"blazeandcave:mining/all_the_balls": 45, // All the Balls!: make every Sulfur Cube archetype with different blocks; custom mob/block checklist.
-	"blazeandcave:mining/amethyst_miner": 45, // Amethyst Miner: mine stacks of amethyst blocks, clusters, and bud sizes; geode and growth-stage collection.
+	"blazeandcave:mining/all_the_balls": 42, // All the Balls!: make every Sulfur Cube archetype with different blocks; custom mob/block checklist.
+	"blazeandcave:mining/amethyst_miner": 35, // Amethyst Miner: mine stacks of amethyst blocks, clusters, and bud sizes; geode and growth-stage collection.
 	"blazeandcave:mining/aww_it_broke": 0, // Aww it broke!: break a first tool; normal early play, no reward.
 	"blazeandcave:mining/beep_bop": 5, // Beep Bop: build a Copper Golem; small copper/pumpkin-style construct setup.
 	"blazeandcave:mining/blackout": 0, // Blackout: craft/use tinted glass; simple amethyst/glass craft, no reward.
-	"blazeandcave:mining/blind_as_a_bat": 15, // Blind as a Bat: kill a bat while blind/dark; effect setup plus tiny moving target.
-	"blazeandcave:mining/bling_bling_gone": 15, // Bling Bling Gone: fully use up a golden pickaxe; deliberate wasteful durability task.
-	"blazeandcave:mining/bonfire_night": 80, // Bonfire Night: light every flammable block on fire; broad block checklist plus staging.
-	"blazeandcave:mining/bottom_to_top": 55, // Bottom to Top: place every cave block at world height; cave collection plus vertical transport/building.
-	"blazeandcave:mining/bouncy_beats": 60, // Bouncy Beats: find the Bounce disc in a mineshaft intersecting a Sulfur Cave; rare structure/biome overlap loot.
+	"blazeandcave:mining/blind_as_a_bat": 21, // Blind as a Bat: kill a bat while blind/dark; effect setup plus tiny moving target.
+	"blazeandcave:mining/bling_bling_gone": 13, // Bling Bling Gone: fully use up a golden pickaxe; deliberate wasteful durability task.
+	"blazeandcave:mining/bonfire_night": 74, // Bonfire Night: light every flammable block on fire; broad block checklist plus staging.
+	"blazeandcave:mining/bottom_to_top": 42, // Bottom to Top: place every cave block at world height; cave collection plus vertical transport/building.
+	"blazeandcave:mining/bouncy_beats": 82, // Bouncy Beats: find the Bounce disc in a mineshaft intersecting a Sulfur Cave; rare structure/biome overlap loot. END
 	"blazeandcave:mining/budget_channeling": 0, // Budget Channeling: craft a lightning rod; normal copper utility craft, no reward.
-	"blazeandcave:mining/bulldozer": 45, // Bulldozer: destroy 10,000 stone blocks; sustained mining grind.
+	"blazeandcave:mining/bulldozer": 69, // Bulldozer: destroy 10,000 stone blocks; sustained mining grind.
 	"blazeandcave:mining/called_shot": 15, // Called Shot: get struck by lightning while on a lightning rod; storm/Channeling timing and risk.
 	"blazeandcave:mining/chain_gang": 70, // Chain Gang: collect stacks of every oxidized and waxed Copper Chain state; large copper-aging inventory grind.
-	"blazeandcave:mining/chestful_of_cobblestone": 15, // Chestful of Cobblestone: mine 1728 cobblestone and store it; classic bulk mining task.  END 
+	"blazeandcave:mining/chestful_of_cobblestone": 15, // Chestful of Cobblestone: mine 1728 cobblestone and store it; classic bulk mining task.
 	"blazeandcave:mining/coal_miner": 15, // Coal Miner: mine a stack of coal; small ore-stack target.
 	"blazeandcave:mining/conductive_conglomerate": 70, // Conductive Conglomerate: collect stacks of all oxidized/waxed lightning rods; copper aging and waxing grind.
 	"blazeandcave:mining/copper_age": 0, // Copper Age: craft a copper pickaxe; normal early tool craft, no reward.

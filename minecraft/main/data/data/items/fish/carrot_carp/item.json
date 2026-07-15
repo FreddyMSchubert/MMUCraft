@@ -2,17 +2,15 @@
 	"title": "Carrot Carp",
 	"id": "fish-carrot_carp",
 	"modelType": "basic",
-	"rarity": "common",
+	"rarity": "epic",
 	"maxStackSize": 64,
 	"tooltips": [],
 	"fish": {
 		"shape": "fish_shadow_default",
-		"size": 1,
-		"secondsAwayFromBobber": 0.25,
-		"approachSeconds": 0.5,
-		"retreatSeconds": 1,
-		"retreatDistance": 1,
-		"averageCatchSeconds": 6.7,
-		"struggleSeconds": 2
+		"tags": [],
+		"size": {
+			"averageLengthCm": 45
+		},
+		"furnaceResult": "red_meat"
 	}
 }

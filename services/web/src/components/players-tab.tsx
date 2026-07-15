@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MiniFishCompendium } from '@/components/fishing-tab'
 
-type StatGroup = 'profile' | 'money' | 'minecraft'
+type StatGroup = 'profile' | 'money' | 'fishing' | 'minecraft'
 
 interface StatOption {
 	key: string
@@ -65,6 +66,7 @@ interface PlayerSummary {
 	isMember: boolean
 	isCommittee: boolean
 	profile: PlayerProfile
+	fishing: Record<string, number>
 	stats: PlayerStats
 }
 
@@ -317,6 +319,7 @@ function PlayerProfilePanel({
 			)}
 
 			<PlayerStatsList player={player} statOptions={statOptions} />
+			<MiniFishCompendium userId={player.id} />
 		</section>
 	)
 }
@@ -549,6 +552,7 @@ function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.discordUsername') return player.profile.discordUsername || '-'
 	if (option.key === 'profile.base') return hasBase(player.profile) ? formatBase(player.profile.base) : '-'
 	if (option.key === 'money.earnedDabloons') return formatNumber(player.stats.money.earnedDabloons)
+	if (option.key.startsWith('fishing.')) return formatNumber(player.fishing[option.key.slice(8)] ?? 0)
 	if (option.key === 'minecraft.lastPlayedAtUnixMs') return formatTimestamp(player.stats.minecraft.lastPlayedAtUnixMs)
 
 	const stat = player.stats.minecraft.stats[option.key]
@@ -575,6 +579,7 @@ function getSortValue(player: PlayerSummary, option: StatOption): number | strin
 	if (option.key === 'profile.discordUsername') return player.profile.discordUsername || null
 	if (option.key === 'profile.base') return hasBase(player.profile) ? formatBase(player.profile.base) : null
 	if (option.key === 'money.earnedDabloons') return player.stats.money.earnedDabloons
+	if (option.key.startsWith('fishing.')) return player.fishing[option.key.slice(8)] ?? 0
 	if (option.key === 'minecraft.lastPlayedAtUnixMs') return player.stats.minecraft.lastPlayedAtUnixMs
 
 	return player.stats.minecraft.stats[option.key]?.value ?? 0
@@ -659,6 +664,11 @@ function groupStatOptions(options: StatOption[]) {
 			options: options.filter((option) => option.group === 'money'),
 		},
 		{
+			key: 'fishing',
+			label: 'Fishing',
+			options: options.filter((option) => option.group === 'fishing'),
+		},
+		{
 			key: 'minecraft-general',
 			label: 'General',
 			options: options.filter((option) => option.group === 'minecraft' && minecraftOptionGroup(option.category) === 'general'),
@@ -732,6 +742,6 @@ function fallbackOption(key: string): StatOption {
 	return {
 		key,
 		label: key,
-		group: key.startsWith('money.') ? 'money' : key.startsWith('profile.') ? 'profile' : 'minecraft',
+		group: key.startsWith('money.') ? 'money' : key.startsWith('profile.') ? 'profile' : key.startsWith('fishing.') ? 'fishing' : 'minecraft',
 	}
 }

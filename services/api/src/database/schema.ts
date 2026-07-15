@@ -4,6 +4,7 @@ import {
 	index,
 	integer,
 	primaryKey,
+	real,
 	sqliteTable,
 	text,
 	uniqueIndex,
@@ -68,6 +69,20 @@ export const playerMoneyEvents = sqliteTable('player_money_events', {
 	balance_dabloons: integer('balance_dabloons'),
 	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 }, (table) => [index('player_money_events_user_id_idx').on(table.user_id)])
+
+export const fishCatches = sqliteTable('fish_catches', {
+	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	fish_id: text('fish_id').notNull(),
+	first_length_cm: real('first_length_cm').notNull(),
+	first_caught_at_unix_ms: integer('first_caught_at_unix_ms').notNull(),
+	smallest_length_cm: real('smallest_length_cm').notNull(),
+	smallest_caught_at_unix_ms: integer('smallest_caught_at_unix_ms').notNull(),
+	largest_length_cm: real('largest_length_cm').notNull(),
+	largest_caught_at_unix_ms: integer('largest_caught_at_unix_ms').notNull(),
+}, (table) => [
+	primaryKey({ columns: [table.user_id, table.fish_id] }),
+	index('fish_catches_fish_id_idx').on(table.fish_id),
+])
 
 export const knowledgeUnlocks = sqliteTable('knowledge_unlocks', {
 	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
@@ -144,6 +159,7 @@ export type SessionRow = typeof sessions.$inferSelect
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect
 export type PlayerStatsRow = typeof playerStats.$inferSelect
 export type PlayerMoneyEventRow = typeof playerMoneyEvents.$inferSelect
+export type FishCatchRow = typeof fishCatches.$inferSelect
 export type KnowledgeUnlockRow = typeof knowledgeUnlocks.$inferSelect
 export type ShopUnlockRow = typeof shopUnlocks.$inferSelect
 export type DailyClaimRow = typeof dailyClaims.$inferSelect
@@ -156,6 +172,7 @@ export const schema = {
 	playerProfiles,
 	playerStats,
 	playerMoneyEvents,
+	fishCatches,
 	knowledgeUnlocks,
 	shopUnlocks,
 	dailyClaims,

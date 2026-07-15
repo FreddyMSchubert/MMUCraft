@@ -1,0 +1,12 @@
+{
+	"title": "Golden Item Magnet",
+	"id": "golden-item-magnet",
+	"baseItemOverride": "minecraft:clock",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 16,
+	"tooltips": [
+		"Raises the fishing item chance to 75%",
+		"10 casts"
+	]
+}

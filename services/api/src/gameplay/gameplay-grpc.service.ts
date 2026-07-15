@@ -5,6 +5,7 @@ import { UnaryCallback } from '../grpc/grpc.types'
 import { MinecraftStatInput, PlayersService } from '../players/players.service'
 import { KnowledgeService } from './knowledge/knowledge.service'
 import { ShopService } from './shop/shop.service'
+import { FishingService } from '../fishing/fishing.service'
 
 interface GameplayProtoRoot {
 	mcstack: {
@@ -25,6 +26,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly knowledge: KnowledgeService,
 		private readonly shop: ShopService,
 		private readonly players: PlayersService,
+		private readonly fishing: FishingService,
 	) { }
 
 	onModuleInit() {
@@ -35,6 +37,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			GetUnlockAvailability: this.getUnlockAvailability.bind(this),
 			SyncPlayerStats: this.syncPlayerStats.bind(this),
 			RecordMoneyEvent: this.recordMoneyEvent.bind(this),
+			RecordFishCatch: this.recordFishCatch.bind(this),
 		})
 	}
 
@@ -216,5 +219,44 @@ export class GameplayGrpcService implements OnModuleInit {
 		}
 
 		return 'knowledge'
+	}
+
+	private recordFishCatch(
+		call: grpc.ServerUnaryCall<{
+			minecraft_username?: string
+			minecraft_uuid?: string
+			fish_id?: string
+			length_cm?: number
+			rarity?: string
+			unix_ms?: number
+		}, {
+			recorded: boolean
+			account_linked: boolean
+			first_catch: boolean
+			personal_size_record: boolean
+			server_size_record: boolean
+			server_smallest_record: boolean
+			personal_smallest_record: boolean
+			message: string
+		}>,
+		callback: UnaryCallback<{
+			recorded: boolean
+			account_linked: boolean
+			first_catch: boolean
+			personal_size_record: boolean
+			server_size_record: boolean
+			server_smallest_record: boolean
+			personal_smallest_record: boolean
+			message: string
+		}>,
+	) {
+		callback(null, this.fishing.recordCatch({
+			minecraftUuid: call.request.minecraft_uuid ?? '',
+			minecraftUsername: call.request.minecraft_username ?? '',
+			fishId: call.request.fish_id ?? '',
+			lengthCm: call.request.length_cm ?? 0,
+			rarity: call.request.rarity ?? 'common',
+			caughtAtUnixMs: call.request.unix_ms ?? Date.now(),
+		}))
 	}
 }

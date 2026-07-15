@@ -23,6 +23,7 @@ public final class MainModRecipes {
     public static final RecipeSerializer<BackpackUpgradeRecipe> BACKPACK_UPGRADE_RECIPE = unit(new BackpackUpgradeRecipe());
     public static final RecipeSerializer<SetBowTrailRecipe> SET_BOW_TRAIL_SERIALIZER = unit(new SetBowTrailRecipe());
     public static final RecipeSerializer<EnderiteSmithingRecipe> ENDERITE_UPGRADE_SERIALIZER = unit(new EnderiteSmithingRecipe());
+    public static final RecipeSerializer<FishCookingRecipe> FISH_COOKING_SERIALIZER = unit(new FishCookingRecipe());
 
     public static final RecipeSerializer<FakeShapedCraftingRecipe> FAKE_CRAFTING_SHAPED_SERIALIZER = codecBacked(FakeShapedCraftingRecipe.CODEC);
     public static final RecipeSerializer<FakeShapelessCraftingRecipe> FAKE_CRAFTING_SHAPELESS_SERIALIZER = codecBacked(FakeShapelessCraftingRecipe.CODEC);
@@ -40,6 +41,7 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "dyeing"), DYEING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "bow_trail"), SET_BOW_TRAIL_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "enderite_upgrade"), ENDERITE_UPGRADE_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fish_cooking"), FISH_COOKING_SERIALIZER);
 
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shaped"), FAKE_CRAFTING_SHAPED_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shapeless"), FAKE_CRAFTING_SHAPELESS_SERIALIZER);

@@ -2,17 +2,15 @@
 	"title": "Slimefish",
 	"id": "fish-slimefish",
 	"modelType": "basic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 64,
 	"tooltips": [],
 	"fish": {
 		"shape": "fish_shadow_default_alt_2",
-		"size": 1.2,
-		"secondsAwayFromBobber": 0.2,
-		"approachSeconds": 0.5,
-		"retreatSeconds": 0.5,
-		"retreatDistance": 0.75,
-		"averageCatchSeconds": 6.7,
-		"struggleSeconds": 3
+		"tags": [],
+		"size": {
+			"averageLengthCm": 40
+		},
+		"furnaceResult": "white_meat"
 	}
 }

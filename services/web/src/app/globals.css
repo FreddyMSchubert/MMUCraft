@@ -2,6 +2,15 @@
    Base
    ============================================================ */
 
+:root {
+	--rarity-common: #fff;
+	--rarity-uncommon: #ffff55;
+	--rarity-rare: #55ffff;
+	--rarity-epic: #ff55ff;
+	--rarity-legendary: #55ff55;
+	--rarity-mythical: #ff5f00;
+}
+
 html,
 body {
 	margin: 0;
@@ -867,32 +876,32 @@ a {
 }
 
 .rarity-common .shopBadges span:last-child {
-	background: #eef0f3;
+	background: color-mix(in srgb, var(--rarity-common) 45%, #d9dde4);
 }
 
 .rarity-uncommon .shopBadges span:last-child {
-	background: #dff6df;
-	color: #174d21;
+	background: color-mix(in srgb, var(--rarity-uncommon) 36%, white);
+	color: #555500;
 }
 
 .rarity-rare .shopBadges span:last-child {
-	background: #e0f0ff;
-	color: #103f6d;
+	background: color-mix(in srgb, var(--rarity-rare) 32%, white);
+	color: #005555;
 }
 
 .rarity-epic .shopBadges span:last-child {
-	background: #f6e5ff;
-	color: #5c2478;
+	background: color-mix(in srgb, var(--rarity-epic) 28%, white);
+	color: #710071;
 }
 
 .rarity-legendary .shopBadges span:last-child {
-	background: #fff0bf;
-	color: #694500;
+	background: color-mix(in srgb, var(--rarity-legendary) 32%, white);
+	color: #704b00;
 }
 
 .rarity-mythical .shopBadges span:last-child {
-	background: #ffe0da;
-	color: #7a1e10;
+	background: color-mix(in srgb, var(--rarity-mythical) 28%, white);
+	color: #780000;
 }
 
 .shopCard h4 {
@@ -1779,6 +1788,23 @@ a {
 	box-shadow: 0 4px 14px rgba(255, 209, 102, 0.18);
 }
 
+.shopFilterRow .filter-common { --filter-accent: var(--rarity-common); }
+.shopFilterRow .filter-uncommon { --filter-accent: var(--rarity-uncommon); }
+.shopFilterRow .filter-rare { --filter-accent: var(--rarity-rare); }
+.shopFilterRow .filter-epic { --filter-accent: var(--rarity-epic); }
+.shopFilterRow .filter-legendary { --filter-accent: var(--rarity-legendary); }
+.shopFilterRow .filter-mythical { --filter-accent: var(--rarity-mythical); }
+
+.shopFilterRow button:is(.filter-common, .filter-uncommon, .filter-rare, .filter-epic, .filter-legendary, .filter-mythical) {
+	border-color: color-mix(in srgb, var(--filter-accent) 55%, transparent);
+	color: var(--filter-accent);
+}
+
+.shopFilterRow button:is(.filter-common, .filter-uncommon, .filter-rare, .filter-epic, .filter-legendary, .filter-mythical).active {
+	background: var(--filter-accent);
+	color: #111722;
+}
+
 .shopFilterRow button.filter-dyeable:not(.active) {
 	border-color: rgba(120, 240, 221, 0.62);
 	background: linear-gradient(105deg, rgba(255, 61, 112, 0.28), rgba(255, 190, 61, 0.25), rgba(66, 226, 151, 0.25), rgba(52, 179, 255, 0.27), rgba(190, 80, 255, 0.28));
@@ -1837,11 +1863,12 @@ a {
 
 .shopCard-charm { --card-accent: #53d6bd; background: linear-gradient(155deg, rgba(83, 214, 189, 0.08), transparent 40%), linear-gradient(160deg, #20293a, #161d29 64%); }
 .shopCard-cosmetic { --card-accent: #f0a3bd; background: linear-gradient(155deg, rgba(240, 163, 189, 0.08), transparent 40%), linear-gradient(160deg, #20293a, #161d29 64%); }
-.rarity-uncommon { --card-accent: #66cf79; }
-.rarity-rare { --card-accent: #5db4ff; }
-.rarity-epic { --card-accent: #c37aff; }
-.rarity-legendary { --card-accent: #ffca52; }
-.rarity-mythical { --card-accent: #ff7469; }
+.rarity-common { --card-accent: var(--rarity-common); }
+.rarity-uncommon { --card-accent: var(--rarity-uncommon); }
+.rarity-rare { --card-accent: var(--rarity-rare); }
+.rarity-epic { --card-accent: var(--rarity-epic); }
+.rarity-legendary { --card-accent: var(--rarity-legendary); }
+.rarity-mythical { --card-accent: var(--rarity-mythical); }
 
 .shopCard:hover,
 .shopCard:focus-visible {
@@ -2479,7 +2506,353 @@ a {
    Responsiveness
    ============================================================ */
 
+/* ============================================================
+   Fish compendium
+   ============================================================ */
+
+.fishCompendium {
+	display: grid;
+	gap: 18px;
+}
+
+.fishTop {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+}
+
+.fishTop h3,
+.fishTop p {
+	margin: 0;
+}
+
+.fishTop p {
+	margin-top: 4px;
+	color: rgba(255, 255, 255, 0.66);
+}
+
+.fishTop label {
+	display: grid;
+	gap: 5px;
+	min-width: 210px;
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.75rem;
+	text-transform: uppercase;
+}
+
+.fishTop select {
+	padding: 9px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 7px;
+	background: #20293a;
+	color: #fff;
+}
+
+.fishStats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 7px 16px;
+	align-items: center;
+	font-size: 0.78rem;
+}
+
+.fishStats strong {
+	font-size: 0.9rem;
+}
+
+.fishGuide {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 12px;
+	align-items: start;
+	padding: 13px;
+	border: 1px solid rgba(255, 255, 255, 0.13);
+	border-radius: 9px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.fishGuide button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 8px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.04);
+	color: rgba(255, 255, 255, 0.74);
+	font-size: 0.72rem;
+}
+
+.fishGuide button:hover,
+.fishGuide button.active {
+	border-color: #ffd166;
+	background: rgba(255, 209, 102, 0.16);
+	color: #fff;
+}
+
+.fishGuide i {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 3px;
+}
+
+.fishAllFilter {
+	min-height: 31px;
+}
+
+.fishFilterGroups {
+	display: grid;
+	gap: 9px;
+}
+
+.fishFilterGroup {
+	display: grid;
+	grid-template-columns: 92px minmax(0, 1fr);
+	gap: 8px;
+	align-items: start;
+}
+
+.fishFilterGroup > span {
+	padding-top: 6px;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 0.65rem;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.fishFilterGroup > div {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+
+.fishGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(96px, 116px));
+	gap: 9px;
+	align-items: stretch;
+}
+
+.fishCard {
+	position: relative;
+	display: grid;
+	place-items: center;
+	min-height: 118px;
+	padding: 3px 0 5px;
+	border: 2px solid var(--fish-rarity);
+	border-radius: 8px;
+	background:
+		radial-gradient(circle, color-mix(in srgb, var(--fish-rarity) 20%, transparent), transparent 62%),
+		#111722;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 8px 22px rgba(0, 0, 0, 0.24);
+	outline: none;
+}
+
+.fishCard:hover,
+.fishCard:focus-visible {
+	z-index: 20;
+	box-shadow: 0 0 24px color-mix(in srgb, var(--fish-rarity) 34%, transparent);
+}
+
+.fishCard > img {
+	width: 88.8888889%;
+	height: auto;
+	aspect-ratio: 1;
+	object-fit: contain;
+	image-rendering: pixelated;
+	filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.42));
+}
+
+.fishCard.unknown {
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.07), transparent 62%), #0d121b;
+}
+
+.fishQuestion {
+	display: grid;
+	place-items: center;
+	width: 88.8888889%;
+	height: auto;
+	aspect-ratio: 1;
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 3.2rem;
+	font-weight: 900;
+	line-height: 1;
+	text-shadow: 0 5px 0 rgba(0, 0, 0, 0.38);
+}
+
+.fishCardName {
+	max-width: 100%;
+	color: #fff;
+	font-size: 0.67rem;
+	font-weight: 800;
+	text-align: center;
+	overflow-wrap: anywhere;
+}
+
+.fishTagLines {
+	position: absolute;
+	top: 7px;
+	left: 7px;
+	display: grid;
+	gap: 0;
+	font-size: 0.7rem;
+	line-height: 1.05;
+	text-shadow: 0 1px 3px #000, 0 1px 3px #000;
+}
+
+.fishTooltip {
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 50%;
+	z-index: 100;
+	display: none;
+	width: min(330px, calc(100vw - 46px));
+	gap: 9px;
+	padding: 13px;
+	border: 1px solid color-mix(in srgb, var(--fish-rarity) 70%, #fff);
+	border-radius: 8px;
+	background: rgba(9, 13, 20, 0.98);
+	color: rgba(255, 255, 255, 0.84);
+	font-size: 0.76rem;
+	line-height: 1.45;
+	text-align: left;
+	box-shadow: 0 14px 38px rgba(0, 0, 0, 0.58);
+	transform: translateX(-50%);
+}
+
+.fishCard:hover .fishTooltip,
+.fishCard:focus-visible .fishTooltip {
+	display: grid;
+}
+
+.fishCard.tooltipAbove .fishTooltip {
+	top: auto;
+	bottom: calc(100% + 8px);
+}
+
+.fishTooltip > strong {
+	color: #fff;
+	font-size: 0.95rem;
+}
+
+.fishConditions,
+.fishPersonalRecords,
+.fishServerRecords {
+	display: grid;
+	gap: 3px;
+}
+
+.fishLuckWarning {
+	color: #ffd166;
+	font-style: italic;
+}
+
+.fishPersonalRecords,
+.fishServerRecords {
+	padding-top: 8px;
+	border-top: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.fishServerRecord,
+.fishOwnRecord {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.fishServerRecord img,
+.fishOwnRecord img {
+	width: 21px;
+	height: 21px;
+	flex: 0 0 auto;
+	image-rendering: pixelated;
+}
+
+.fishFireworks {
+	position: fixed;
+	inset: 0;
+	z-index: 2147483600;
+	pointer-events: none;
+}
+
+.miniFishCompendium {
+	margin-top: 16px;
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 9px;
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.miniFishCompendium summary {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	cursor: pointer;
+	color: #ffd166;
+	font-weight: 800;
+}
+
+.miniFishCompendium[open] summary {
+	margin-bottom: 12px;
+}
+
+.miniFishCompendium summary span {
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+}
+
+.fishGrid.compact {
+	grid-template-columns: repeat(auto-fill, minmax(68px, 80px));
+	gap: 6px;
+}
+
+.fishGrid.compact .fishCard {
+	min-height: 80px;
+	padding: 2px 0 4px;
+	border-width: 2px;
+	border-radius: 7px;
+}
+
+.fishGrid.compact .fishQuestion {
+	font-size: 2.8rem;
+}
+
+.fishGrid.compact .fishCardName {
+	font-size: 0.62rem;
+}
+
+.fishGrid.compact .fishTagLines {
+	top: 4px;
+	left: 4px;
+	font-size: 0.62rem;
+}
+
+.fishGrid.compact .fishTooltip {
+	width: min(270px, calc(100vw - 42px));
+}
+
 @media (max-width: 700px) {
+	.fishTop,
+	.fishGuide,
+	.fishFilterGroup {
+		grid-template-columns: 1fr;
+	}
+
+	.fishTop {
+		display: grid;
+	}
+
+	.fishTop label {
+		min-width: 0;
+		width: 100%;
+	}
+
+	.fishAllFilter {
+		justify-self: start;
+	}
+
 	.content {
 		width: min(100vw - 24px, 1100px);
 		padding: 28px 0 48px;
@@ -2567,6 +2940,10 @@ a {
 	.playerProfileNav button,
 	.playerProfileTop button {
 		width: 100%;
+	}
+
+	.fishGrid {
+		grid-template-columns: repeat(auto-fill, minmax(96px, 116px));
 	}
 
 	.playerProfileForm {

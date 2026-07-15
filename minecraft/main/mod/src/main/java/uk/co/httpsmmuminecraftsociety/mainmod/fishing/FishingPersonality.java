@@ -30,6 +30,10 @@ public record FishingPersonality(
         return Mth.ceil(approachSeconds * 20.0F);
     }
 
+    public int initialApproachTicks(double distance) {
+        return Math.max(1, Mth.ceil(distance / retreatDistance * approachTicks()));
+    }
+
     public int retreatTicks() {
         return Mth.ceil(retreatSeconds * 20.0F);
     }

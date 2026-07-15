@@ -22,45 +22,102 @@
 			]
 		},
 		"size": {
-			"type": "number",
-			"minimum": 0.1
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"averageLengthCm": {
+					"description": "The fish's average collectible length in centimeters.",
+					"type": "number",
+					"exclusiveMinimum": 0
+				},
+				"lengthDeviationCm": {
+					"description": "Optional override for the distance from the average that fewer than 1% of catches exceed. Defaults to one third of averageLengthCm.",
+					"type": "number",
+					"exclusiveMinimum": 0
+				}
+			},
+			"required": [
+				"averageLengthCm"
+			]
 		},
-		"struggleSeconds": {
-			"type": "number",
-			"minimum": 0
+		"catching": {
+			"description": "Optional overrides for the stable catching behavior generated from the fish id and rarity.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"shadowScale": {
+					"description": "Visual scale and bobber contact size used while catching the fish.",
+					"type": "number",
+					"minimum": 0.1
+				},
+				"struggleSeconds": {
+					"type": "number",
+					"minimum": 0
+				},
+				"secondsAwayFromBobber": {
+					"type": "number",
+					"minimum": 0
+				},
+				"approachSeconds": {
+					"description": "Seconds for a bounce approach from retreatDistance back to the bobber. The first arrival scales its duration to use this same speed.",
+					"type": "number",
+					"exclusiveMinimum": 0
+				},
+				"retreatSeconds": {
+					"type": "number",
+					"exclusiveMinimum": 0
+				},
+				"retreatDistance": {
+					"description": "Blocks the fish backs away after touching the bobber. This is added to the size-based contact distance.",
+					"type": "number",
+					"exclusiveMinimum": 0
+				},
+				"averageCatchSeconds": {
+					"description": "Target average seconds from the first bounce approach starting to the bite.",
+					"type": "number",
+					"minimum": 0
+				}
+			}
 		},
-		"secondsAwayFromBobber": {
-			"type": "number",
-			"minimum": 0
+		"tags": {
+			"description": "Spawn conditions. Tags in the same category are alternatives; different categories must all match.",
+			"type": "array",
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"enum": [
+					"warm",
+					"cold",
+					"temperate",
+					"river",
+					"ocean",
+					"day",
+					"night",
+					"deep",
+					"high",
+					"sunny",
+					"rainy",
+					"thunderstorm",
+					"snowy",
+					"waxing",
+					"waning",
+					"fullmoon",
+					"newmoon"
+				]
+			}
 		},
-		"approachSeconds": {
-			"description": "Seconds for normal bounce approaches from the retreat distance back to the bobber. The first arrival approach uses a fixed speed instead.",
-			"type": "number",
-			"exclusiveMinimum": 0
-		},
-		"retreatSeconds": {
-			"type": "number",
-			"exclusiveMinimum": 0
-		},
-		"retreatDistance": {
-			"description": "Blocks the fish backs away after touching the bobber. This is added to the size-based contact distance.",
-			"type": "number",
-			"exclusiveMinimum": 0
-		},
-		"averageCatchSeconds": {
-			"description": "Target average seconds from the first bounce approach starting to the bite. This is converted into the gaussian mean bounce count using approachSeconds, retreatSeconds, and secondsAwayFromBobber.",
-			"type": "number",
-			"minimum": 0
+		"furnaceResult": {
+			"type": "string",
+			"enum": [
+				"white_meat",
+				"red_meat"
+			]
 		}
 	},
 	"required": [
 		"shape",
 		"size",
-		"struggleSeconds",
-		"secondsAwayFromBobber",
-		"approachSeconds",
-		"retreatSeconds",
-		"retreatDistance",
-		"averageCatchSeconds"
+		"tags",
+		"furnaceResult"
 	]
 }

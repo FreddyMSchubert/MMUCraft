@@ -1,0 +1,9 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": ["GGG", "GWG", "GGG"],
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "W": "mainmod:worms"
+  },
+  "result": {"stack": "mainmod:golden-worms", "count": 1}
+}

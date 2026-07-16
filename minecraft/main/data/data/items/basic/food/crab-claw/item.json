@@ -1,0 +1,18 @@
+{
+	"title": "Crab Claw",
+	"id": "crab-claw",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Cooked shellfish meat"],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 1.6,
+		"canAlwaysEat": false,
+		"hungerBars": 2.5,
+		"saturationBars": 2.5,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	}
+}

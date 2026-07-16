@@ -1,0 +1,18 @@
+{
+    "title":  "Golden Swordfish",
+    "id":  "fish-golden_swordfish",
+    "modelType":  "basic",
+    "rarity":  "legendary",
+    "maxStackSize":  1,
+    "tooltips":  [
+                     "Its bill leaves a molten-looking line that cools into harmless gold dust."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_large",
+                 "tags":  ["ocean", "sunny"],
+                 "size":  {
+                              "averageLengthCm":  300
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

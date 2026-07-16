@@ -1,0 +1,20 @@
+{
+    "title":  "Killifish",
+    "id":  "fish-killifish",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Some killifish eggs survive dry seasons buried in dormant mud."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_tiny",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  5
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

@@ -1,0 +1,18 @@
+{
+    "title":  "Blue Discus",
+    "id":  "fish-blue_discus",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Discus parents feed their fry with nutrient-rich mucus from their skin."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  ["warm", "river"],
+                 "size":  {
+                              "averageLengthCm":  15
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

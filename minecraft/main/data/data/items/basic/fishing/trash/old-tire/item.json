@@ -1,0 +1,8 @@
+{
+	"title": "Old Tire",
+	"id": "old-tire",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": []
+}

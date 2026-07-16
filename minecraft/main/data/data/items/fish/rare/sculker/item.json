@@ -1,0 +1,18 @@
+{
+    "title":  "Sculker",
+    "id":  "fish-sculker",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "It senses footsteps through waterlogged stone and freezes when watched."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_weird",
+                 "tags":  ["deep"],
+                 "size":  {
+                              "averageLengthCm":  55
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

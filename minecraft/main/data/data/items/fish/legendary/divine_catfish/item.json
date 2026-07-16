@@ -1,0 +1,20 @@
+{
+    "title":  "Divine Catfish",
+    "id":  "fish-divine_catfish",
+    "modelType":  "basic",
+    "rarity":  "legendary",
+    "maxStackSize":  1,
+    "tooltips":  [
+                     "Its whiskers are said to trace tomorrow\u0027s river before rain arrives."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_shark",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  250
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

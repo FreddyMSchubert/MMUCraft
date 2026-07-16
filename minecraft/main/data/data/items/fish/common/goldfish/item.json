@@ -1,0 +1,20 @@
+{
+    "title":  "Goldfish",
+    "id":  "fish-goldfish",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Goldfish have no true stomach, so food passes steadily through the gut."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  15
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

@@ -1,0 +1,18 @@
+{
+    "title":  "Ice Cod",
+    "id":  "fish-ice_cod",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its blood carries antifreeze proteins that keep ice crystals from growing."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["cold"],
+                 "size":  {
+                              "averageLengthCm":  70
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

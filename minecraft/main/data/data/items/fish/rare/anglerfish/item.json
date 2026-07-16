@@ -1,0 +1,18 @@
+{
+    "title":  "Anglerfish",
+    "id":  "fish-anglerfish",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "A glowing lure draws curious prey within reach of its enormous mouth."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["ocean", "deep"],
+                 "size":  {
+                              "averageLengthCm":  45
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

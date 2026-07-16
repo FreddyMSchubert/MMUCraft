@@ -1,0 +1,20 @@
+{
+    "title":  "Panda Fish",
+    "id":  "fish-pandafish",
+    "modelType":  "basic",
+    "rarity":  "legendary",
+    "maxStackSize":  1,
+    "tooltips":  [
+                     "Despite its solemn markings, it spends hours tumbling through bubble rings."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  80
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

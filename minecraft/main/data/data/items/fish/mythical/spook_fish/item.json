@@ -1,0 +1,20 @@
+{
+    "title":  "Spook Fish",
+    "id":  "fish-spook_fish",
+    "modelType":  "basic",
+    "rarity":  "mythical",
+    "maxStackSize":  1,
+    "tooltips":  [
+                     "Spookfish use mirror-like structures in their eyes to gather faint deep-sea light."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  20
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

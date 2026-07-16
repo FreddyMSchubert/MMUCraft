@@ -1,0 +1,20 @@
+{
+    "title":  "Olive Flounder",
+    "id":  "fish-olive_flounder",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "The olive flounder is left-eyed, unlike many other flatfish."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_weird",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  50
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

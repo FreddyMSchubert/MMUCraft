@@ -1,0 +1,18 @@
+{
+    "title":  "Blizzard Bass",
+    "id":  "fish-blizzard_bass",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "It churns loose snow into the water to conceal a sudden strike."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  ["snowy"],
+                 "size":  {
+                              "averageLengthCm":  50
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

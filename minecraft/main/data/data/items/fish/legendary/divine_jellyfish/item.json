@@ -1,0 +1,18 @@
+{
+    "title":  "Divine Jellyfish",
+    "id":  "fish-divine_jellyfish",
+    "modelType":  "basic",
+    "rarity":  "legendary",
+    "maxStackSize":  1,
+    "tooltips":  [
+                     "Each pulse rings like distant glass and leaves the water perfectly clear."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_squid",
+                 "tags":  ["ocean"],
+                 "size":  {
+                              "averageLengthCm":  180
+                          },
+                 "furnaceResult":  "tentacle"
+             }
+}

@@ -1,0 +1,18 @@
+{
+    "title":  "Cloudy Crab",
+    "id":  "fish-cloudy_crab",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "A haze of pale hairs makes its shell resemble a drifting cloud."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_object",
+                 "tags":  ["rainy"],
+                 "size":  {
+                              "averageLengthCm":  18
+                          },
+                 "furnaceResult":  "crab_claw"
+             }
+}

@@ -1,0 +1,18 @@
+{
+    "title":  "Skyfish",
+    "id":  "fish-skyfish",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Air-filled fins let it glide above waves for astonishing distances."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["day", "high"],
+                 "size":  {
+                              "averageLengthCm":  35
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

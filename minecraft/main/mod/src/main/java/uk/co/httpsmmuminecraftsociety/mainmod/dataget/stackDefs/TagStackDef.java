@@ -5,8 +5,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 public record TagStackDef(String raw, TagKey<Item> tag, String displayNameOverride) implements StackDef {
+    private static final Identifier FISHES = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fishes");
+
     public TagStackDef
     {
         if (raw == null || raw.isBlank()) {
@@ -35,7 +39,11 @@ public record TagStackDef(String raw, TagKey<Item> tag, String displayNameOverri
 
     @Override
     public boolean matches(ItemStack stack) {
-        return !stack.isEmpty() && stack.is(tag);
+        if (stack.isEmpty()) return false;
+        if (stack.is(tag)) return true;
+        if (!tag.location().equals(FISHES)) return false;
+        var fakeItem = FakeItems.getFakeItemFromStack(stack);
+        return fakeItem != null && FakeItems.FISH.containsKey(fakeItem);
     }
 
     @Override

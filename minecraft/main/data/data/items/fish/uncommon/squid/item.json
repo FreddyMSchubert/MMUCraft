@@ -1,0 +1,18 @@
+{
+    "title":  "Squid",
+    "id":  "fish-squid",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Squid have three hearts and copper-rich blue blood."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_squid",
+                 "tags":  ["ocean"],
+                 "size":  {
+                              "averageLengthCm":  50
+                          },
+                 "furnaceResult":  "tentacle"
+             }
+}

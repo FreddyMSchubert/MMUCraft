@@ -1,0 +1,18 @@
+{
+    "title":  "Anchovy",
+    "id":  "fish-anchovy",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Anchovies form immense schools whose synchronized turns confuse predators."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  ["ocean"],
+                 "size":  {
+                              "averageLengthCm":  15
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

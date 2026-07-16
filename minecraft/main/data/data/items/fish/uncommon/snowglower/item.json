@@ -1,0 +1,18 @@
+{
+    "title":  "Snowglower",
+    "id":  "fish-snowglower",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Cold water triggers a gentle blue glow beneath its scales."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  ["night", "snowy"],
+                 "size":  {
+                              "averageLengthCm":  25
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

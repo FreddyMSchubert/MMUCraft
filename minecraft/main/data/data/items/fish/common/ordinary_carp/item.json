@@ -1,0 +1,20 @@
+{
+    "title":  "Ordinary Carp",
+    "id":  "fish-ordinary_carp",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its inner ear can detect remarkably faint low-frequency sounds."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  55
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

@@ -13,6 +13,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GetUnlockAvailabilityResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.UnlockNextKnowledgeResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -84,6 +85,16 @@ public final class UnlockBookLoot {
 
     public static void updateAvailability(ServerPlayer player, UnlockNextKnowledgeResponse response) {
         putAvailability(player, UnlockAvailability.from(response));
+    }
+
+    public static List<ItemStack> getAvailableUnlockBooks(ServerPlayer player) {
+        UnlockAvailability availability = getAvailability(player);
+        List<ItemStack> books = new ArrayList<>();
+        BOOK_DROPS.stream()
+                .filter(book -> book.availabilityType() != UnlockAvailabilityType.ALWAYS)
+                .filter(book -> book.isAvailable(availability))
+                .forEach(book -> addFakeItem(book.fakeItemId(), books));
+        return books;
     }
 
     private static boolean isEligibleLootTable(Identifier tableId) {

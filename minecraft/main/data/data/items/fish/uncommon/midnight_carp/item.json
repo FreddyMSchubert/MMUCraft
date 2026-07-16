@@ -1,0 +1,20 @@
+{
+    "title":  "Midnight Carp",
+    "id":  "fish-midnight_carp",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Black reflective scales make it nearly invisible beneath starlight."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  60
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

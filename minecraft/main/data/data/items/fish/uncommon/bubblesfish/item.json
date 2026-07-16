@@ -1,0 +1,20 @@
+{
+    "title":  "Bubblesfish",
+    "id":  "fish-bubblesfish",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "It traps bubbles beneath its scales and releases them as a sparkling decoy."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  20
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

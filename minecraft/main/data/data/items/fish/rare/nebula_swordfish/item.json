@@ -1,0 +1,18 @@
+{
+    "title":  "Nebula Swordfish",
+    "id":  "fish-nebula_swordfish",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Dustlike motes trail from its bill and swirl into miniature nebulae."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_large",
+                 "tags":  ["night", "high"],
+                 "size":  {
+                              "averageLengthCm":  240
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

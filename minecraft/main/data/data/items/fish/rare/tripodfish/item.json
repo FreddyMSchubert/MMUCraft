@@ -1,0 +1,18 @@
+{
+    "title":  "Tripodfish",
+    "id":  "fish-tripodfish",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Elongated fin rays let tripodfish stand above the deep seafloor."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_weird",
+                 "tags":  ["ocean", "deep"],
+                 "size":  {
+                              "averageLengthCm":  30
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

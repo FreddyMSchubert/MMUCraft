@@ -1,0 +1,20 @@
+{
+    "title":  "Mossfish",
+    "id":  "fish-mossfish",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Living algae in its rough scales turn an idle fish into a mossy stone."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  30
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

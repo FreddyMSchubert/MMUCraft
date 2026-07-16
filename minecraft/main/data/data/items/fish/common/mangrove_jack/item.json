@@ -1,0 +1,18 @@
+{
+    "title":  "Mangrove Jack",
+    "id":  "fish-mangrove_jack",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Young mangrove jacks shelter among tangled roots before moving offshore."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["warm", "sunny"],
+                 "size":  {
+                              "averageLengthCm":  65
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

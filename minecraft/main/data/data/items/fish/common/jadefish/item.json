@@ -1,0 +1,20 @@
+{
+    "title":  "Jadefish",
+    "id":  "fish-jadefish",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Mineral-rich scales slowly polish themselves to a glassy green shine."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  35
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

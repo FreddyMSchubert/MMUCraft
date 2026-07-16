@@ -1,0 +1,18 @@
+{
+    "title":  "Starry Salmon",
+    "id":  "fish-starry_salmon",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its speckles align with the night sky during its upstream migration."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["night"],
+                 "size":  {
+                              "averageLengthCm":  75
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

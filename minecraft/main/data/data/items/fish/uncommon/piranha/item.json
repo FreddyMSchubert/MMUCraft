@@ -1,0 +1,18 @@
+{
+    "title":  "Piranha",
+    "id":  "fish-piranha",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Piranhas use barks and drumlike sounds to warn rivals away."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  ["warm", "river"],
+                 "size":  {
+                              "averageLengthCm":  25
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

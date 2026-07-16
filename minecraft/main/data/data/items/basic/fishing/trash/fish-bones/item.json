@@ -1,0 +1,8 @@
+{
+	"title": "Fish Bones",
+	"id": "fish-bones",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": []
+}

@@ -1,0 +1,20 @@
+{
+    "title":  "Minnow",
+    "id":  "fish-minnow",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Injured minnows release an alarm scent that sends the school into hiding."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_tiny",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  7
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

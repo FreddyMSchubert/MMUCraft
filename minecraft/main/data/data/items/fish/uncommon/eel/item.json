@@ -1,0 +1,20 @@
+{
+    "title":  "Eel",
+    "id":  "fish-eel",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Eels begin life as transparent, leaf-shaped larvae called leptocephali."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_snake",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  80
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

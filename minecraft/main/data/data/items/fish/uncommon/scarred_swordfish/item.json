@@ -1,0 +1,18 @@
+{
+    "title":  "Scarred Swordfish",
+    "id":  "fish-scarred_swordfish",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Old bill marks record years of clashes with prey and rivals."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_large",
+                 "tags":  ["ocean"],
+                 "size":  {
+                              "averageLengthCm":  230
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

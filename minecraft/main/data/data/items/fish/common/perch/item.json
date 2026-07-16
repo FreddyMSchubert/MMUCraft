@@ -1,0 +1,20 @@
+{
+    "title":  "Perch",
+    "id":  "fish-perch",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its dark vertical bars break up the body outline among reeds."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  25
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

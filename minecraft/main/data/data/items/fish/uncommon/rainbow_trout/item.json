@@ -1,0 +1,18 @@
+{
+    "title":  "Rainbow Trout",
+    "id":  "fish-rainbow_trout",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Rainbow trout return toward cool, oxygen-rich gravel to spawn."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["cold", "river"],
+                 "size":  {
+                              "averageLengthCm":  45
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

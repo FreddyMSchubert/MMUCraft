@@ -1,0 +1,8 @@
+{
+	"title": "Seaweed",
+	"id": "seaweed",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": []
+}

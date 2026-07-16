@@ -1,0 +1,20 @@
+{
+    "title":  "Red Koi",
+    "id":  "fish-red_koi",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Koi can recognize familiar keepers and often gather when they approach."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  60
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

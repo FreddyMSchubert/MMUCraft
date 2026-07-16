@@ -1,0 +1,20 @@
+{
+    "title":  "Freddy Fish",
+    "id":  "fish-freddyfish",
+    "modelType":  "basic",
+    "rarity":  "epic",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its cheerful whistle carries through pipes long after the fish has left."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  40
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

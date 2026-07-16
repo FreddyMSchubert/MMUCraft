@@ -1,0 +1,20 @@
+{
+    "title":  "Coelacanth",
+    "id":  "fish-coelacanth",
+    "modelType":  "basic",
+    "rarity":  "mythical",
+    "maxStackSize":  1,
+    "tooltips":  [
+                     "Coelacanths were thought extinct until a living specimen was recognized in 1938."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_large",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  150
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

@@ -1,0 +1,20 @@
+{
+    "title":  "Reddock",
+    "id":  "fish-reddock",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Rust-red fins let it vanish against iron-rich river stones."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  40
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

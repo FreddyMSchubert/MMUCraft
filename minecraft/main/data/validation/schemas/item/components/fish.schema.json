@@ -110,7 +110,9 @@
 			"type": "string",
 			"enum": [
 				"white_meat",
-				"red_meat"
+				"red_meat",
+				"crab_claw",
+				"tentacle"
 			]
 		}
 	},

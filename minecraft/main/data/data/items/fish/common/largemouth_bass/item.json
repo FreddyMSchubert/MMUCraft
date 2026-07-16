@@ -1,0 +1,20 @@
+{
+    "title":  "Largemouth Bass",
+    "id":  "fish-largemouth_bass",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "It opens its huge mouth rapidly to vacuum prey in with the water."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  45
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

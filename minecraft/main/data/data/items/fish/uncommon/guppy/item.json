@@ -1,0 +1,20 @@
+{
+    "title":  "Guppy",
+    "id":  "fish-guppy",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Guppies give birth to live young rather than laying eggs."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_tiny",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  4
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

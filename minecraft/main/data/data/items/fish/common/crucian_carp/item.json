@@ -1,0 +1,20 @@
+{
+    "title":  "Crucian Carp",
+    "id":  "fish-crucian_carp",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Crucian carp can survive winter water containing almost no oxygen."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  30
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

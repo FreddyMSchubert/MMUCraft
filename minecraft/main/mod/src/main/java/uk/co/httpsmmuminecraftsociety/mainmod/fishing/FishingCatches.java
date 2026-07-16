@@ -2,10 +2,13 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -14,14 +17,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.RecordFishCatchResponse;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,25 +51,93 @@ public final class FishingCatches {
     static {
         addFish(FishRarity.COMMON, new ItemStack(Items.COD), 53.0, 25.0);
         addFish(FishRarity.COMMON, new ItemStack(Items.SALMON), 75.0, 35.0);
-        addFish(FishRarity.UNCOMMON, new ItemStack(Items.TROPICAL_FISH), 15.0, 7.0);
-        addFish(FishRarity.UNCOMMON, new ItemStack(Items.PUFFERFISH), 30.0, 12.0);
+        addFish(FishRarity.COMMON, new ItemStack(Items.TROPICAL_FISH), 15.0, 7.0);
+        addFish(FishRarity.COMMON, new ItemStack(Items.PUFFERFISH), 30.0, 12.0);
 
-        addTreasure(FishRarity.COMMON, new ItemStack(Items.BOWL));
-        addTreasure(FishRarity.COMMON, new ItemStack(Items.LEATHER));
-        addTreasure(FishRarity.COMMON, new ItemStack(Items.LEATHER_BOOTS));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.SUGAR_CANE));
         addTreasure(FishRarity.COMMON, new ItemStack(Items.ROTTEN_FLESH));
         addTreasure(FishRarity.COMMON, new ItemStack(Items.STICK));
         addTreasure(FishRarity.COMMON, new ItemStack(Items.STRING));
         addTreasure(FishRarity.COMMON, new ItemStack(Items.BONE));
-        addTreasure(FishRarity.COMMON, new ItemStack(Items.INK_SAC));
         addTreasure(FishRarity.COMMON, new ItemStack(Items.TRIPWIRE_HOOK));
         addTreasure(FishRarity.COMMON, new ItemStack(Items.LILY_PAD));
-        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.NAUTILUS_SHELL));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.KELP));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.SEAGRASS));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.SEA_PICKLE));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.FEATHER));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.FLINT));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.CHARCOAL));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.DEAD_BUSH));
+        ItemStack damagedShovel = new ItemStack(Items.WOODEN_SHOVEL);
+        damagedShovel.setDamageValue(damagedShovel.getMaxDamage() / 2);
+        addTreasure(FishRarity.COMMON, damagedShovel);
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.OAK_BOAT));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.POISONOUS_POTATO));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.WHEAT));
+        addTreasure(FishRarity.COMMON, new ItemStack(Items.COPPER_NUGGET));
+        addTreasure(FishRarity.COMMON, FakeItems.createFakeItemStack("boot", 1));
+        addTreasure(FishRarity.COMMON, FakeItems.createFakeItemStack("empty-can", 1));
+        addTreasure(FishRarity.COMMON, FakeItems.createFakeItemStack("fish-bones", 1));
+        addTreasure(FishRarity.COMMON, FakeItems.createFakeItemStack("old-tire", 1));
+        addTreasure(FishRarity.COMMON, FakeItems.createFakeItemStack("seaweed", 1));
+
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.BOWL));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.LEATHER_BOOTS));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.INK_SAC));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.GLOW_INK_SAC));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.COAL).copyWithCount((int)Math.floor(Math.random() * 3)));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.LEATHER));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.CLAY_BALL).copyWithCount((int)Math.floor(Math.random() * 5)));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.CLAY));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.GLASS_BOTTLE));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.BOW));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.SADDLE));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.FISHING_ROD));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.GOLDEN_SWORD));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.IRON_NUGGET));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.RAW_COPPER));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.COCOA_BEANS));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.MELON_SEEDS));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.PUMPKIN_SEEDS));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.MAP));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.CARROT));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.POTATO));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.WHEAT_SEEDS));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.BEETROOT_SEEDS));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.EMERALD));
+
+        addTreasure(FishRarity.RARE, new ItemStack(Items.RAW_IRON));
+        addTreasure(FishRarity.RARE, new ItemStack(Items.RAW_GOLD));
         addTreasure(FishRarity.RARE, new ItemStack(Items.NAME_TAG));
-        addTreasure(FishRarity.RARE, new ItemStack(Items.SADDLE));
-        addTreasure(FishRarity.EPIC, new ItemStack(Items.FISHING_ROD));
-        addTreasure(FishRarity.EPIC, new ItemStack(Items.BOW));
-        addTreasure(FishRarity.LEGENDARY, new ItemStack(Items.ENCHANTED_BOOK));
+        addTreasure(FishRarity.RARE, new ItemStack(Items.WET_SPONGE));
+        addTreasure(FishRarity.RARE, new ItemStack(Items.SPONGE));
+        addTreasure(FishRarity.RARE, new ItemStack(Items.TURTLE_SCUTE));
+        addTreasure(FishRarity.RARE, new ItemStack(Items.COMPASS));
+        addTreasure(FishRarity.RARE, new ItemStack(Items.CLOCK));
+        addTreasure(FishRarity.RARE, new ItemStack(Items.SPYGLASS));
+        addTreasure(FishRarity.RARE, new ItemStack(Items.EXPERIENCE_BOTTLE));
+        addTreasure(FishRarity.RARE, FakeItems.createFakeItemStack("sushi", 1));
+
+        addTreasure(FishRarity.EPIC, new ItemStack(Items.EXPERIENCE_BOTTLE).copyWithCount((int)Math.floor(Math.random() * 10)));
+        addTreasure(FishRarity.EPIC, PotionContents.createItemStack(Items.POTION, Potions.LUCK));
+        addTreasure(FishRarity.EPIC, PotionContents.createItemStack(Items.SPLASH_POTION, Potions.LUCK));
+        addTreasure(FishRarity.EPIC, new ItemStack(Items.NAUTILUS_SHELL));
+        addTreasure(FishRarity.EPIC, new ItemStack(Items.ANGLER_POTTERY_SHERD));
+        addTreasure(FishRarity.EPIC, new ItemStack(Items.AMETHYST_SHARD));
+        addTreasure(FishRarity.EPIC, new ItemStack(Items.PRISMARINE_SHARD));
+        addTreasure(FishRarity.EPIC, new ItemStack(Items.PRISMARINE_CRYSTALS));
+        addTreasure(FishRarity.EPIC, new ItemStack(Items.EMERALD_BLOCK));
+
+        addTreasure(FishRarity.LEGENDARY, new ItemStack(Items.HEART_OF_THE_SEA));
+        addTreasure(FishRarity.LEGENDARY, FakeItems.createFakeItemStack("golden-nutritional-paste", 1));
+        addTreasure(FishRarity.LEGENDARY, new ItemStack(Items.DIAMOND));
+        addTreasure(FishRarity.LEGENDARY, new ItemStack(Items.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE));
+        addTreasure(FishRarity.LEGENDARY, new ItemStack(Items.COAST_ARMOR_TRIM_SMITHING_TEMPLATE));
+
+        addTreasure(FishRarity.MYTHICAL, new ItemStack(Items.CONDUIT));
+        addTreasure(FishRarity.MYTHICAL, new ItemStack(Items.TRIDENT));
+        addTreasure(FishRarity.MYTHICAL, new ItemStack(Items.DIAMOND_BLOCK));
+        addTreasure(FishRarity.MYTHICAL, new ItemStack(Items.SNIFFER_EGG));
     }
 
     private FishingCatches() {
@@ -210,6 +287,15 @@ public final class FishingCatches {
             for (ItemStack stack : TREASURE_LOOT.get(rarity)) {
                 entries.add(new CatchEntry(stack, defaultPersonality(rarity, true), null));
             }
+            if (rarity == FishRarity.RARE) {
+                entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LURE), defaultPersonality(rarity, true), null));
+            } else if (rarity == FishRarity.EPIC) {
+                entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LUCK_OF_THE_SEA), defaultPersonality(rarity, true), null));
+            } else if (rarity == FishRarity.COMMON && hook.getPlayerOwner() instanceof ServerPlayer player) {
+                for (ItemStack stack : UnlockBookLoot.getAvailableUnlockBooks(player)) {
+                    entries.add(new CatchEntry(stack, defaultPersonality(rarity, true), null));
+                }
+            }
         } else {
             for (FishLoot fish : FISH_LOOT.get(rarity)) {
                 entries.add(new CatchEntry(fish.stack(), defaultPersonality(rarity, false), fish.length()));
@@ -225,6 +311,17 @@ public final class FishingCatches {
                     .forEach(entries::add);
         }
         return entries;
+    }
+
+    private static ItemStack enchantedBook(FishingHook hook, ResourceKey<Enchantment> enchantment) {
+        Holder<Enchantment> holder = hook.level().registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(enchantment);
+        ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        enchantments.set(holder, 1);
+        ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
+        stack.set(DataComponents.STORED_ENCHANTMENTS, enchantments.toImmutable());
+        return stack;
     }
 
     private static CatchEntry customFishEntry(Map.Entry<FakeItem, FishItemFeature> entry) {

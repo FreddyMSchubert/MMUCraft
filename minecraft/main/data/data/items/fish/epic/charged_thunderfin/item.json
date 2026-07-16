@@ -1,0 +1,18 @@
+{
+    "title":  "Charged Thunderfin",
+    "id":  "fish-charged_thunderfin",
+    "modelType":  "basic",
+    "rarity":  "epic",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "A fully charged adult can illuminate an entire rain cloud from below."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["thunderstorm"],
+                 "size":  {
+                              "averageLengthCm":  65
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

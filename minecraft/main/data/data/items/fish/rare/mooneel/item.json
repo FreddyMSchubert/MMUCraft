@@ -1,0 +1,18 @@
+{
+    "title":  "Mooneel",
+    "id":  "fish-mooneel",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "It rises from deep crevices only when moonlight reaches the water."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_snake",
+                 "tags":  ["night"],
+                 "size":  {
+                              "averageLengthCm":  120
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

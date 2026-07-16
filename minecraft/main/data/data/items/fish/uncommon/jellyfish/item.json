@@ -1,0 +1,20 @@
+{
+    "title":  "Jellyfish",
+    "id":  "fish-jellyfish",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Jellyfish have no brain, heart, or bones, relying on a simple nerve net."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_squid",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  25
+                          },
+                 "furnaceResult":  "tentacle"
+             }
+}

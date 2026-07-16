@@ -182,7 +182,7 @@ public class LootTableModifiers {
                         .lookupOrThrow(Registries.ENCHANTMENT)
                         .getOrThrow(enchType.enchantment);
                 ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
-                enchantments.set(enchantmentHolder, 1);
+                enchantments.set(enchantmentHolder, (int) Math.round(Math.random() * enchType.maxNormalGearLevel));
                 stack.set(DataComponents.STORED_ENCHANTMENTS, enchantments.toImmutable());
 
                 itemStacks.add(stack);

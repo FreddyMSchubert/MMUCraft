@@ -1,0 +1,18 @@
+{
+	"title": "Sushi",
+	"id": "sushi",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 32,
+	"tooltips": ["Fish rolled with kelp"],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 1.6,
+		"canAlwaysEat": false,
+		"hungerBars": 3.5,
+		"saturationBars": 4.0,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	}
+}

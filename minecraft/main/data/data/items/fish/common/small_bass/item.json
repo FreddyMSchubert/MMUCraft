@@ -1,0 +1,20 @@
+{
+    "title":  "Small Bass",
+    "id":  "fish-small_bass",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Small bass patrol in loose groups before becoming solitary adults."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  25
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

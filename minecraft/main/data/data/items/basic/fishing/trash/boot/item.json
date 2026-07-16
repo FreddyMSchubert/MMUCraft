@@ -1,0 +1,8 @@
+{
+	"title": "Boot",
+	"id": "boot",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": []
+}

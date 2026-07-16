@@ -1,0 +1,18 @@
+{
+	"title": "Tentacle",
+	"id": "tentacle",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Cooked cephalopod meat"],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 1.6,
+		"canAlwaysEat": false,
+		"hungerBars": 2.5,
+		"saturationBars": 2.5,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	}
+}

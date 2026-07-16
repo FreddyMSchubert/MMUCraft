@@ -1,0 +1,11 @@
+{
+	"type": "mainmod:fake_crafting_shapeless",
+	"ingredients": [
+		"#mainmod:fishes",
+		"minecraft:kelp"
+	],
+	"result": {
+		"stack": "mainmod:sushi",
+		"count": 1
+	}
+}

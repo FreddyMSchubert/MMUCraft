@@ -1,0 +1,20 @@
+{
+    "title":  "Ordinary Shrimp",
+    "id":  "fish-ordinary_shrimp",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "A shrimp\u0027s heart sits in the cephalothorax just behind its head."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_object",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  12
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

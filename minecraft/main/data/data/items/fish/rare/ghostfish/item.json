@@ -1,0 +1,20 @@
+{
+    "title":  "Ghostfish",
+    "id":  "fish-ghostfish",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its translucent organs fade whenever it enters another creature\u0027s shadow."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  30
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

@@ -1,0 +1,18 @@
+{
+    "title":  "Dab",
+    "id":  "fish-dab",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "A dab begins life upright before both eyes settle on its right side."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_weird",
+                 "tags":  ["ocean"],
+                 "size":  {
+                              "averageLengthCm":  25
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

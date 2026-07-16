@@ -1,0 +1,20 @@
+{
+    "title":  "Slimefish",
+    "id":  "fish-slimefish",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its elastic mucus closes small wounds before predators can follow the scent."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  40
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

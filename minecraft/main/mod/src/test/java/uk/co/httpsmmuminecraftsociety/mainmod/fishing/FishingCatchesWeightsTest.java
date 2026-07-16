@@ -70,7 +70,9 @@ public final class FishingCatchesWeightsTest {
 
     private static void checkFurnaceResultEnum() {
         if (FishFurnaceResult.fromJsonValue("white_meat") != FishFurnaceResult.WHITE_MEAT
-                || FishFurnaceResult.fromJsonValue("red_meat") != FishFurnaceResult.RED_MEAT) {
+                || FishFurnaceResult.fromJsonValue("red_meat") != FishFurnaceResult.RED_MEAT
+                || FishFurnaceResult.fromJsonValue("crab_claw") != FishFurnaceResult.CRAB_CLAW
+                || FishFurnaceResult.fromJsonValue("tentacle") != FishFurnaceResult.TENTACLE) {
             throw new AssertionError("Fish furnace-result JSON values are mapped incorrectly");
         }
 

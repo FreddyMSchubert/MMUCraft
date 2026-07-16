@@ -1,0 +1,20 @@
+{
+    "title":  "Bream",
+    "id":  "fish-bream",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Bream use throat-mounted pharyngeal teeth to grind tough food."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  35
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

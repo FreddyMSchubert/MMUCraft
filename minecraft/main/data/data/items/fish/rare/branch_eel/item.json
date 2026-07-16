@@ -1,0 +1,20 @@
+{
+    "title":  "Branch Eel",
+    "id":  "fish-branch_eel",
+    "modelType":  "basic",
+    "rarity":  "rare",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Forked feelers let it imitate a fallen branch while waiting for prey."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_snake",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  100
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

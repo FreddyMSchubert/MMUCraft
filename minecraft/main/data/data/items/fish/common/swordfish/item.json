@@ -1,0 +1,20 @@
+{
+    "title":  "Swordfish",
+    "id":  "fish-swordfish",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Special tissue warms a swordfish\u0027s eyes and brain in cold deep water."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_large",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  220
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

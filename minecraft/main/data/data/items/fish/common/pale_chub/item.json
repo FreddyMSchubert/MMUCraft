@@ -1,0 +1,18 @@
+{
+    "title":  "Pale Chub",
+    "id":  "fish-pale_chub",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Breeding males develop vivid blue and red markings each spring."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  ["river"],
+                 "size":  {
+                              "averageLengthCm":  18
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

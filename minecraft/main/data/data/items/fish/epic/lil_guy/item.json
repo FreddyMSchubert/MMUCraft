@@ -1,0 +1,20 @@
+{
+    "title":  "Lil Guy",
+    "id":  "fish-lil_guy",
+    "modelType":  "basic",
+    "rarity":  "epic",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "The smallest ripple sends it exploring instead of fleeing."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_tiny",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  8
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

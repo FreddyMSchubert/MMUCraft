@@ -1,0 +1,20 @@
+{
+    "title":  "Matrix Fish",
+    "id":  "fish-matrix_fish",
+    "modelType":  "basic",
+    "rarity":  "legendary",
+    "maxStackSize":  1,
+    "tooltips":  [
+                     "Green symbols stream across its scales whenever probability changes nearby."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  100
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

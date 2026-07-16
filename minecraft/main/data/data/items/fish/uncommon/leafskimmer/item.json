@@ -1,0 +1,20 @@
+{
+    "title":  "Leafskimmer",
+    "id":  "fish-leafskimmer",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "It lies flat beneath floating leaves and mirrors every ripple above."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  20
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

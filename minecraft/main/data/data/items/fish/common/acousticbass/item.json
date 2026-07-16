@@ -1,0 +1,20 @@
+{
+    "title":  "Acoustic Bass",
+    "id":  "fish-acousticbass",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its hollow ribs turn nearby currents into a low, woody hum."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default_alt_2",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  85
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

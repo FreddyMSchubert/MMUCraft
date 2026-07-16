@@ -1,0 +1,20 @@
+{
+    "title":  "Golden Fish",
+    "id":  "fish-golden_fish",
+    "modelType":  "basic",
+    "rarity":  "mythical",
+    "maxStackSize":  1,
+    "tooltips":  [
+                     "Every scale reflects a different sunrise it has witnessed."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  60
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

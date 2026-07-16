@@ -1,0 +1,20 @@
+{
+    "title":  "Flowerfish",
+    "id":  "fish-flowerfish",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Petal-shaped fins open at dawn to collect warmth from the surface."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  25
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

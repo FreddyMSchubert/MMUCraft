@@ -1,0 +1,18 @@
+{
+    "title":  "Thunderfin",
+    "id":  "fish-thunderfin",
+    "modelType":  "basic",
+    "rarity":  "uncommon",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Charged cells along its fins crackle when storm pressure falls."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["rainy"],
+                 "size":  {
+                              "averageLengthCm":  45
+                          },
+                 "furnaceResult":  "red_meat"
+             }
+}

@@ -1,0 +1,23 @@
+{
+    "title":  "Blobfish",
+    "id":  "fish-blobfish",
+    "modelType":  "basic",
+    "rarity":  "epic",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "At depth, a blobfish looks like an ordinary fish; decompression causes its famous sagging shape."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_weird",
+                 "tags":  ["ocean", "deep"],
+                 "size":  {
+                              "averageLengthCm":  30
+                          },
+                 "catching":  {
+                                  "secondsAwayFromBobber":  2,
+                                  "retreatSeconds":  2,
+                                  "averageCatchSeconds":  30
+                              },
+                 "furnaceResult":  "white_meat"
+             }
+}

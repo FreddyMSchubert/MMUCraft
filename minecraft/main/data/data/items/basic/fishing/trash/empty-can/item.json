@@ -1,0 +1,8 @@
+{
+	"title": "Empty Can",
+	"id": "empty-can",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": []
+}

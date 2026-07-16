@@ -1,0 +1,20 @@
+{
+    "title":  "Lil Dude",
+    "id":  "fish-lil_dude",
+    "modelType":  "basic",
+    "rarity":  "epic",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "It challenges fish ten times its size and somehow remains undefeated."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_small",
+                 "tags":  [
+
+                          ],
+                 "size":  {
+                              "averageLengthCm":  12
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

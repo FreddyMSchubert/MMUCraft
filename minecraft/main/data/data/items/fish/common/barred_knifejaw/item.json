@@ -1,0 +1,18 @@
+{
+    "title":  "Barred Knifejaw",
+    "id":  "fish-barred_knifejaw",
+    "modelType":  "basic",
+    "rarity":  "common",
+    "maxStackSize":  64,
+    "tooltips":  [
+                     "Its front teeth fuse into a beak strong enough to crush shells."
+                 ],
+    "fish":  {
+                 "shape":  "fish_shadow_default",
+                 "tags":  ["ocean"],
+                 "size":  {
+                              "averageLengthCm":  40
+                          },
+                 "furnaceResult":  "white_meat"
+             }
+}

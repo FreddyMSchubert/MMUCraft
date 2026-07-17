@@ -9,7 +9,9 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_snake",
-                 "tags":  ["night"],
+                 "tags":  [
+                              "newmoon"
+                          ],
                  "size":  {
                               "averageLengthCm":  45
                           },

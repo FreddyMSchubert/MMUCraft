@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "",
+		"description": "Unlock the Traffic Cone Hat cosmetic.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Traffic Cone Hat."
 	},

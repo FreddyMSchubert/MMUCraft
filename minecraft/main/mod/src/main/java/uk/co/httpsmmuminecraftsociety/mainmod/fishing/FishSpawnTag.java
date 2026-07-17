@@ -13,14 +13,12 @@ import java.util.Set;
 public enum FishSpawnTag {
     WARM("warm", Group.CLIMATE),
     COLD("cold", Group.CLIMATE),
-    TEMPERATE("temperate", Group.CLIMATE),
     RIVER("river", Group.WATER),
     OCEAN("ocean", Group.WATER),
     DAY("day", Group.TIME),
     NIGHT("night", Group.TIME),
     DEEP("deep", Group.HEIGHT),
     HIGH("high", Group.HEIGHT),
-    SUNNY("sunny", Group.WEATHER),
     RAINY("rainy", Group.WEATHER),
     THUNDERSTORM("thunderstorm", Group.WEATHER),
     SNOWY("snowy", Group.WEATHER),
@@ -54,21 +52,15 @@ public enum FishSpawnTag {
         EnumSet<FishSpawnTag> active = EnumSet.noneOf(FishSpawnTag.class);
         Holder<Biome> biome = level.getBiome(pos);
         float temperature = biome.value().getBaseTemperature();
-        if (level.dimension() == Level.NETHER) {
-            active.add(WARM);
-        } else if (level.dimension() == Level.END) {
-            active.add(COLD);
-        } else if (temperature >= 0.95F) {
-            active.add(WARM);
-        } else if (temperature < 0.15F) {
-            active.add(COLD);
-        } else {
-            active.add(TEMPERATE);
+        // Climate tags deliberately describe Overworld biomes, never dimensions.
+        if (level.dimension() == Level.OVERWORLD) {
+            if (temperature >= 0.95F) active.add(WARM);
+            if (temperature < 0.15F) active.add(COLD);
         }
 
         if (biome.is(BiomeTags.IS_RIVER)) active.add(RIVER);
         if (biome.is(BiomeTags.IS_OCEAN)) active.add(OCEAN);
-        if (pos.getY() < 64) active.add(DEEP);
+        if (pos.getY() < 60) active.add(DEEP);
         if (pos.getY() > 100) active.add(HIGH);
 
         long clock = level.getOverworldClockTime();
@@ -76,11 +68,9 @@ public enum FishSpawnTag {
         addMoonTags(active, MoonPhase.values()[(int) Math.floorMod(Math.floorDiv(clock, 24_000L), MoonPhase.COUNT)]);
 
         Biome.Precipitation precipitation = level.precipitationAt(pos);
-        if (!level.isRaining() || precipitation == Biome.Precipitation.NONE) {
-            active.add(SUNNY);
-        } else if (precipitation == Biome.Precipitation.SNOW) {
+        if (level.isRaining() && precipitation == Biome.Precipitation.SNOW) {
             active.add(SNOWY);
-        } else {
+        } else if (level.isRaining() && precipitation != Biome.Precipitation.NONE) {
             // Thunderstorms are rainy too; the specific tag merely narrows that condition.
             active.add(RAINY);
             if (level.isThundering()) active.add(THUNDERSTORM);

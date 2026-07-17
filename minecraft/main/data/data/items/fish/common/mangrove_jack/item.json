@@ -9,7 +9,12 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_default",
-                 "tags":  ["warm", "sunny"],
+                 "tags":  [
+                              "warm",
+                              "ocean",
+                              "day",
+                              "waxing"
+                          ],
                  "size":  {
                               "averageLengthCm":  65
                           },

@@ -10,7 +10,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 500,
-		"description": "",
+		"description": "Unlock the Obamium Pyramid cosmetic.",
 		"unlockWeight": 1,
 		"unlockMessage": "Unlocked relic: Obamium Pyramid."
 	},

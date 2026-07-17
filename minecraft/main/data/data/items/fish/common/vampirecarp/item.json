@@ -9,7 +9,13 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_default_alt_2",
-                 "tags":  ["night"],
+                 "tags":  [
+                              "cold",
+                              "night",
+                              "deep",
+                              "snowy",
+                              "newmoon"
+                          ],
                  "size":  {
                               "averageLengthCm":  70
                           },

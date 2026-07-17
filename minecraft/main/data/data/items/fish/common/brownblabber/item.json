@@ -10,7 +10,7 @@
     "fish":  {
                  "shape":  "fish_shadow_default",
                  "tags":  [
-
+                              "snowy"
                           ],
                  "size":  {
                               "averageLengthCm":  45

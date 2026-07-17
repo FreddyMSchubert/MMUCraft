@@ -9,7 +9,11 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_default_alt_2",
-                 "tags":  ["fullmoon"],
+                 "tags":  [
+                              "river",
+                              "night",
+                              "fullmoon"
+                          ],
                  "size":  {
                               "averageLengthCm":  60
                           },

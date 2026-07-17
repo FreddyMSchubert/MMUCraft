@@ -9,7 +9,9 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_object",
-                 "tags":  ["fullmoon"],
+                 "tags":  [
+                              "fullmoon"
+                          ],
                  "size":  {
                               "averageLengthCm":  10
                           },

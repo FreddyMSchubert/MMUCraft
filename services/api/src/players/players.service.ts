@@ -246,6 +246,12 @@ const ENTITY_IDS = [
 ]
 
 const KNOWN_MINECRAFT_OPTIONS: StatOption[] = [
+	{
+		key: minecraftStatKey('advancement', 'minecraft:earned'),
+		label: 'Advancements Earned',
+		group: 'minecraft',
+		category: 'advancement',
+	},
 	...CUSTOM_MINECRAFT_STATS.map((stat) => ({
 		key: minecraftStatKey('custom', stat.id),
 		label: stat.label,

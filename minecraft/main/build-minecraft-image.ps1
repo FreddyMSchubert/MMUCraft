@@ -34,9 +34,7 @@ finally {
 
 Write-Host '==> Building merged resource pack'
 python (Join-Path $ScriptDir 'respack\build-main-pack.py')
-if ($LASTEXITCODE -ne 0 -and (Test-Path -LiteralPath $GeneratedServerProperties -PathType Leaf)) {
-    Write-Warning "resource pack build failed with exit code $LASTEXITCODE; reusing existing $GeneratedServerProperties"
-}
+if ($LASTEXITCODE -ne 0) { throw "resource pack build failed with exit code $LASTEXITCODE" }
 
 if (-not (Test-Path -LiteralPath $GeneratedServerProperties -PathType Leaf)) {
     throw "resource pack build did not create $GeneratedServerProperties"

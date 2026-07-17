@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "",
+		"description": "Unlock the Ice Cream Hat cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Ice Cream Hat."
 	},

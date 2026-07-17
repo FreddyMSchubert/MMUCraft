@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "",
+		"description": "Unlock the Fancy Moustache cosmetic.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Fancy Moustache."
 	},

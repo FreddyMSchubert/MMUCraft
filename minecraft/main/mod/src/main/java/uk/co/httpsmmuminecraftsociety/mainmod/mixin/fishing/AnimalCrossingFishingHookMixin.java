@@ -37,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingJumpScares;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
 
@@ -444,19 +445,23 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique
     private void mainmod$finishCatch(ServerLevel level, FishingHook hook) {
         if (hook.getPlayerOwner() instanceof ServerPlayer player) {
-            ItemStack result = mainmod$catchResult();
-            CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, this.mainmod$catchingRod, hook, List.of(result));
-            FishingCatches.catchMessage(result).ifPresent(player::sendOverlayMessage);
-            FishingCatches.trackCatch(player, result);
+            if (FishingJumpScares.shouldTrigger(hook.getRandom())) {
+                FishingJumpScares.spawn(level, hook, player);
+            } else {
+                ItemStack result = mainmod$catchResult();
+                CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, this.mainmod$catchingRod, hook, List.of(result));
+                FishingCatches.catchMessage(result).ifPresent(player::sendOverlayMessage);
+                FishingCatches.trackCatch(player, result);
 
-            ItemEntity itemEntity = new ItemEntity(level, hook.getX(), hook.getY(), hook.getZ(), result.copy());
-            double dx = player.getX() - hook.getX();
-            double dy = player.getY() - hook.getY();
-            double dz = player.getZ() - hook.getZ();
-            itemEntity.setDeltaMovement(dx * 0.1D, dy * 0.1D + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08D, dz * 0.1D);
-            level.addFreshEntity(itemEntity);
-            level.addFreshEntity(new ExperienceOrb(level, player.getX(), player.getY() + 0.5D, player.getZ() + 0.5D, hook.getRandom().nextInt(6) + 1));
-            player.awardStat(Stats.FISH_CAUGHT, 1);
+                ItemEntity itemEntity = new ItemEntity(level, hook.getX(), hook.getY(), hook.getZ(), result.copy());
+                double dx = player.getX() - hook.getX();
+                double dy = player.getY() - hook.getY();
+                double dz = player.getZ() - hook.getZ();
+                itemEntity.setDeltaMovement(dx * 0.1D, dy * 0.1D + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08D, dz * 0.1D);
+                level.addFreshEntity(itemEntity);
+                level.addFreshEntity(new ExperienceOrb(level, player.getX(), player.getY() + 0.5D, player.getZ() + 0.5D, hook.getRandom().nextInt(6) + 1));
+                player.awardStat(Stats.FISH_CAUGHT, 1);
+            }
         }
 
         mainmod$cleanupFishShadow();

@@ -10,7 +10,7 @@
     "fish":  {
                  "shape":  "fish_shadow_small",
                  "tags":  [
-
+                              "river"
                           ],
                  "size":  {
                               "averageLengthCm":  15

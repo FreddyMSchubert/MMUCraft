@@ -9,7 +9,11 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_object",
-                 "tags":  ["night"],
+                 "tags":  [
+                              "ocean",
+                              "night",
+                              "newmoon"
+                          ],
                  "size":  {
                               "averageLengthCm":  30
                           },

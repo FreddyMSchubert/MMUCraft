@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "",
+		"description": "Unlock the Salmon Hat cosmetic.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Salmon Hat."
 	},

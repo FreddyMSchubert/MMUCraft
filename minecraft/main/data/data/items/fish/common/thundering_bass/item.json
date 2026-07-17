@@ -9,7 +9,12 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_default_alt_2",
-                 "tags":  ["rainy"],
+                 "tags":  [
+                              "river",
+                              "night",
+                              "thunderstorm",
+                              "waning"
+                          ],
                  "size":  {
                               "averageLengthCm":  60
                           },

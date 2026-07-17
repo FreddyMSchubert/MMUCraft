@@ -10,7 +10,7 @@
     "fish":  {
                  "shape":  "fish_shadow_snake",
                  "tags":  [
-
+                              "ocean"
                           ],
                  "size":  {
                               "averageLengthCm":  100

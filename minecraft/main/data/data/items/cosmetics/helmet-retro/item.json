@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "",
+		"description": "Unlock the Retro Helmet cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Retro Helmet."
 	},

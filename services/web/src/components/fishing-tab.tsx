@@ -2,6 +2,7 @@
 
 import { Fireworks } from 'fireworks-js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { LeaderboardPodium } from '@/components/leaderboard-podium'
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical'
 type TagGroup = 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon'
@@ -10,7 +11,9 @@ type FishSort = 'rarity' | 'location'
 interface PlayerOption {
 	id: number
 	minecraftUsername: string
+	pronouns: string
 	avatarUrl: string
+	caughtTotal: number
 }
 
 interface CatchPoint {
@@ -33,6 +36,7 @@ interface CompendiumFish {
 	title: string
 	rarity: Rarity
 	tags: string[]
+	facts: string[]
 	iconUrl: string
 	catch: FishCatch | null
 	serverLargest: ServerRecord | null
@@ -61,16 +65,14 @@ const RARITIES: Array<{ id: Rarity; label: string; color: string; hue: number }>
 ]
 
 const TAGS: Record<string, { emoji: string; label: string; group: TagGroup; phrase: string }> = {
-	warm: { emoji: '🔥', label: 'Warm', group: 'climate', phrase: 'warm biomes or the Nether' },
-	cold: { emoji: '❄️', label: 'Cold', group: 'climate', phrase: 'cold biomes or the End' },
-	temperate: { emoji: '🌤️', label: 'Temperate', group: 'climate', phrase: 'temperate biomes' },
-	river: { emoji: '🏞️', label: 'River', group: 'water', phrase: 'rivers' },
-	ocean: { emoji: '🌊', label: 'Ocean', group: 'water', phrase: 'oceans' },
+	warm: { emoji: '🔥', label: 'Warm', group: 'climate', phrase: 'hot Overworld biomes' },
+	cold: { emoji: '❄️', label: 'Cold', group: 'climate', phrase: 'cold Overworld biomes' },
+	river: { emoji: '🌉', label: 'River', group: 'water', phrase: 'rivers' },
+	ocean: { emoji: '🏖️', label: 'Ocean', group: 'water', phrase: 'oceans' },
 	day: { emoji: '☀️', label: 'Day', group: 'time', phrase: 'daytime' },
 	night: { emoji: '🌙', label: 'Night', group: 'time', phrase: 'nighttime' },
-	deep: { emoji: '⬇️', label: 'Deep', group: 'height', phrase: 'below Y 64' },
+	deep: { emoji: '⬇️', label: 'Deep', group: 'height', phrase: 'below Y 60' },
 	high: { emoji: '⬆️', label: 'High', group: 'height', phrase: 'above Y 100' },
-	sunny: { emoji: '🔆', label: 'Sunny', group: 'weather', phrase: 'clear weather' },
 	rainy: { emoji: '🌧️', label: 'Rainy', group: 'weather', phrase: 'rain' },
 	thunderstorm: { emoji: '⛈️', label: 'Thunderstorm', group: 'weather', phrase: 'thunderstorms' },
 	snowy: { emoji: '🌨️', label: 'Snowy', group: 'weather', phrase: 'snowfall' },
@@ -156,6 +158,14 @@ export function FishingTab() {
 	if (!data) return <p className={error ? 'authError' : ''}>{error || 'Loading fish compendium...'}</p>
 	const player = data.players.find((candidate) => candidate.id === data.selectedUserId)
 	const caughtTotal = data.fish.filter((fish) => fish.catch).length
+	const podiumEntries = data.players.map((candidate) => ({
+		id: candidate.id,
+		name: candidate.minecraftUsername,
+		pronouns: candidate.pronouns,
+		value: candidate.caughtTotal,
+		displayValue: new Intl.NumberFormat().format(candidate.caughtTotal),
+		avatarUrl: candidate.avatarUrl,
+	}))
 
 	return (
 		<section className="fishCompendium">
@@ -174,7 +184,10 @@ export function FishingTab() {
 				</label>
 			</div>
 
-			<CompendiumStats fish={data.fish} caughtTotal={caughtTotal} />
+			<div className="fishOverview">
+				<CompendiumStats fish={data.fish} caughtTotal={caughtTotal} />
+				<LeaderboardPodium entries={podiumEntries} label="Fish Caught" compact />
+			</div>
 			<CompendiumGuide
 				rarityFilters={rarityFilters}
 				tagFilters={tagFilters}
@@ -269,6 +282,9 @@ function FishCard({ fish, compact, player }: { fish: CompendiumFish; compact: bo
 				{compact
 					? <CompactRarity rarity={rarity} />
 					: <ConditionGuide fish={fish} rarity={rarity} />}
+				{caught && !compact && (fish.facts?.length ?? 0) > 0 && (
+					<div className="fishFacts">{fish.facts.map((fact) => <span key={fact}>{fact}</span>)}</div>
+				)}
 				{fish.catch && (
 					<div className="fishPersonalRecords">
 						<RecordLine label="First caught" point={fish.catch.first} player={player} />
@@ -289,14 +305,29 @@ function FishCard({ fish, compact, player }: { fish: CompendiumFish; compact: bo
 }
 
 function CompendiumStats({ fish, caughtTotal }: { fish: CompendiumFish[]; caughtTotal: number }) {
+	const percentage = fish.length ? Math.round(caughtTotal / fish.length * 100) : 0
 	return (
-		<div className="fishStats">
-			<strong>{caughtTotal} / {fish.length} caught</strong>
-			{RARITIES.map((rarity) => {
-				const entries = fish.filter((entry) => entry.rarity === rarity.id)
-				return <span key={rarity.id}><b style={{ color: rarity.color }}>{rarity.label}</b> {entries.filter((entry) => entry.catch).length}/{entries.length}</span>
-			})}
-		</div>
+		<section className="fishStats">
+			<div className="fishStatsHeading">
+				<div><span>Your collection</span><strong>{caughtTotal} / {fish.length} caught</strong></div>
+				<b>{percentage}%</b>
+			</div>
+			<progress value={caughtTotal} max={fish.length || 1}>{percentage}%</progress>
+			<div className="fishRarityBars">
+				{RARITIES.map((rarity) => {
+					const entries = fish.filter((entry) => entry.rarity === rarity.id)
+					const caught = entries.filter((entry) => entry.catch).length
+					const width = entries.length ? caught / entries.length * 100 : 0
+					return (
+						<div className="fishRarityProgress" key={rarity.id}>
+							<b style={{ color: rarity.color }}>{rarity.label}</b>
+							<span><i style={{ width: `${width}%`, background: rarity.color }} /></span>
+							<small>{caught}/{entries.length}</small>
+						</div>
+					)
+				})}
+			</div>
+		</section>
 	)
 }
 
@@ -338,11 +369,9 @@ function FilterGroup({ label, children }: { label: string; children: React.React
 }
 
 function ConditionGuide({ fish, rarity }: { fish: CompendiumFish; rarity: (typeof RARITIES)[number] }) {
-	const descriptions = conditionDescriptions(fish.tags)
 	return (
 		<div className="fishConditions">
-			<span>The {fish.catch ? fish.title : '???'} is of <b style={{ color: rarity.color }}>{rarity.label}</b> rarity and is catchable{descriptions.length ? ':' : ' anywhere and at any time.'}</span>
-			{descriptions.map((description) => <span key={description.group}>- <b>{description.emojis}</b> {description.text}</span>)}
+			<span>The {fish.catch ? fish.title : '???'} is a <b style={{ color: rarity.color }}>{rarity.label}</b> fish catchable {conditionSentence(fish.tags)}.</span>
 			{isLuckRarity(rarity.id) && <span className="fishLuckWarning">Highly unlikely to be caught without a high Luck level.</span>}
 		</div>
 	)
@@ -406,7 +435,10 @@ function locationKey(fish: CompendiumFish) {
 
 function positionTooltip(event: React.SyntheticEvent<HTMLElement>) {
 	const box = event.currentTarget.getBoundingClientRect()
+	const halfTooltip = Math.min(event.currentTarget.closest('.compact') ? 270 : 330, window.innerWidth - 46) / 2
 	event.currentTarget.classList.toggle('tooltipAbove', box.top + box.height / 2 > window.innerHeight / 2)
+	event.currentTarget.classList.toggle('tooltipAlignLeft', box.left + box.width / 2 < halfTooltip + 23)
+	event.currentTarget.classList.toggle('tooltipAlignRight', window.innerWidth - box.left - box.width / 2 < halfTooltip + 23)
 }
 
 function tagLines(tags: string[]) {
@@ -416,14 +448,15 @@ function tagLines(tags: string[]) {
 	})
 }
 
-function conditionDescriptions(tags: string[]) {
-	return GROUPS.flatMap((group) => {
+function conditionSentence(tags: string[]) {
+	const clauses = GROUPS.flatMap((group) => {
 		const matches = tags.flatMap((tag) => TAGS[tag]?.group === group ? [TAGS[tag]!] : [])
 		if (!matches.length) return []
-		const joined = joinOr(matches.map((match) => match.phrase))
 		const prefix = group === 'climate' || group === 'water' || group === 'height' ? 'in' : 'during'
-		return [{ group, emojis: matches.map((match) => match.emoji).join('/'), text: `${prefix} ${joined}` }]
+		const alternatives = matches.map((match) => `${match.emoji} ${prefix} ${match.phrase}`)
+		return [alternatives.length > 1 ? `(${joinOr(alternatives)})` : alternatives[0]!]
 	})
+	return clauses.length ? clauses.join(' ') : 'anywhere and at any time'
 }
 
 function joinOr(values: string[]) {
@@ -460,7 +493,11 @@ function formatLength(lengthCm: number) {
 }
 
 function formatDate(unixMs: number) {
-	return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(unixMs))
+	return new Intl.DateTimeFormat('en-GB', {
+		day: '2-digit',
+		month: '2-digit',
+		year: '2-digit',
+	}).format(new Date(unixMs)).replaceAll('/', '.')
 }
 
 function errorMessage(error: unknown) {

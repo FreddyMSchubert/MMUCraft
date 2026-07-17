@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "",
+		"description": "Unlock the Villager Nose cosmetic.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Villager Nose."
 	},

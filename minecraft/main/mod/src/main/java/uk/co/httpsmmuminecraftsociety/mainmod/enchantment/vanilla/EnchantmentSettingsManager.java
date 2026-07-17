@@ -85,7 +85,7 @@ public class EnchantmentSettingsManager
 
         // fishing enchantments
         new EnchantmentSettings(Enchantments.LUCK_OF_THE_SEA).maxLevels(2, 3, 3).inLoottable("chests/buried_treasure").dupedWithVanillaItem(Items.SALMON, 6),
-        new EnchantmentSettings(Enchantments.LURE).maxLevels(2, 3, 3).dupedWithVanillaItem(Items.PUFFERFISH, 3),
+        new EnchantmentSettings(Enchantments.LURE).maxLevels(2, 3, 3).dupedWithVanillaItem(Items.PUFFERFISH, 3), // obtained from fishing
 
         // crossbow enchantments
         new EnchantmentSettings(Enchantments.MULTISHOT).maxLevels(1, 1, 1).inLoottable("chests/pillager_outpost").rarity(Rarity.UNCOMMON).dupedWithVanillaItem(Items.TRIPWIRE_HOOK, 3),

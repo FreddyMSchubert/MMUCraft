@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MiniFishCompendium } from '@/components/fishing-tab'
+import { LeaderboardPodium } from '@/components/leaderboard-podium'
 
 type StatGroup = 'profile' | 'money' | 'fishing' | 'minecraft'
 
@@ -82,6 +83,7 @@ const DEFAULT_COLUMN_KEYS = [
 	'minecraft.custom.minecraft:play_time',
 	'minecraft.custom.minecraft:deaths',
 ]
+const DEFAULT_LEADERBOARD_KEY = 'minecraft.advancement.minecraft:earned'
 const PROFILE_TEXT_LIMITS = {
 	preferredName: 40,
 	pronouns: 32,
@@ -102,6 +104,7 @@ export function PlayersTab() {
 		direction: 'desc',
 	})
 	const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
+	const [leaderboardKey, setLeaderboardKey] = useState(DEFAULT_LEADERBOARD_KEY)
 
 	const load = useCallback(async () => {
 		const response = await fetch('/api/players', {
@@ -150,6 +153,21 @@ export function PlayersTab() {
 		const sortOption = statOptions.find((option) => option.key === sort.key) ?? fallbackOption(sort.key)
 		return [...players].sort((left, right) => comparePlayers(left, right, sortOption, sort.direction))
 	}, [players, sort, statOptions])
+	const leaderboardOptions = useMemo(() => statOptions
+		.filter((option) => option.group !== 'profile' && option.key !== 'minecraft.lastPlayedAtUnixMs'), [statOptions])
+	const leaderboardOption = leaderboardOptions.find((option) => option.key === leaderboardKey)
+		?? leaderboardOptions[0]
+	const podiumEntries = leaderboardOption ? players.map((player) => {
+		const value = getSortValue(player, leaderboardOption)
+		return {
+			id: player.id,
+			name: player.minecraftUsername,
+			pronouns: player.profile.pronouns,
+			value: typeof value === 'number' ? value : 0,
+			displayValue: formatColumnValue(player, leaderboardOption),
+			skinUrl: player.stats.minecraftProfile?.skinUrl,
+		}
+	}) : []
 
 	function updateColumn(index: number, key: string) {
 		const previousKey = columnKeys[index]
@@ -204,6 +222,15 @@ export function PlayersTab() {
 
 			{message && <p className="dailyMessage">{message}</p>}
 			{error && <p className="authError">{error}</p>}
+			{leaderboardOption && (
+				<LeaderboardPodium
+					entries={podiumEntries}
+					label={leaderboardOption.label}
+					options={leaderboardOptions}
+					selectedKey={leaderboardOption.key}
+					onChange={setLeaderboardKey}
+				/>
+			)}
 
 			<div className="playersTableWrap">
 				<table className="playersTable">

@@ -144,6 +144,13 @@ public final class FishingCatches {
     }
 
     public static Pair<ItemStack, FishingPersonality> random(FishingHook hook, double itemChance, int fishingLuckBonus) {
+        if (hook.getPlayerOwner() instanceof ServerPlayer player) {
+            ItemStack unlockBook = UnlockBookLoot.rollFishingBook(player, hook.getRandom());
+            if (!unlockBook.isEmpty()) {
+                return Pair.of(unlockBook, defaultPersonality(FishRarity.COMMON, true));
+            }
+        }
+
         double luck = hook.getPlayerOwner() == null
                 ? 0.0
                 : hook.getPlayerOwner().getAttributeValue(Attributes.LUCK) + fishingLuckBonus;

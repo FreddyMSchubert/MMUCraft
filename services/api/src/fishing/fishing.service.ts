@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path'
 import { eq } from 'drizzle-orm'
 import { interval, map, merge, of, Subject } from 'rxjs'
 import { AuthenticatedUser } from '../auth/auth.service'
-import { DatabaseService, FishCatchRow, fishCatches, users } from '../database/database.service'
+import { DatabaseService, FishCatchRow, fishCatches, playerProfiles, users } from '../database/database.service'
 import { MinecraftIdentityService } from '../database/minecraft-identity.service'
 
 const ITEM_ROOTS = [
@@ -19,6 +19,7 @@ interface FishDefinition {
 	title: string
 	rarity: string
 	tags: string[]
+	facts: string[]
 	iconUrl: string
 	textureFilePath: string | null
 }
@@ -27,6 +28,7 @@ interface FishItemJson {
 	id?: unknown
 	title?: unknown
 	rarity?: unknown
+	tooltips?: unknown
 	fish?: { tags?: unknown }
 }
 
@@ -40,10 +42,10 @@ interface RecordCatchInput {
 }
 
 const VANILLA_FISH: FishDefinition[] = [
-	vanillaFish('minecraft:cod', 'Cod', 'common'),
-	vanillaFish('minecraft:salmon', 'Salmon', 'common'),
-	vanillaFish('minecraft:tropical_fish', 'Tropical Fish', 'uncommon'),
-	vanillaFish('minecraft:pufferfish', 'Pufferfish', 'uncommon'),
+	vanillaFish('minecraft:cod', 'Cod', 'common', 'Cod use the small barbel beneath their chin to help search the seabed for food.'),
+	vanillaFish('minecraft:salmon', 'Salmon', 'common', 'Salmon can navigate back to the stream where they hatched after years at sea.'),
+	vanillaFish('minecraft:tropical_fish', 'Tropical Fish', 'uncommon', 'Many tropical reef fish can change colour or pattern as they mature.'),
+	vanillaFish('minecraft:pufferfish', 'Pufferfish', 'uncommon', 'Pufferfish inflate by rapidly swallowing water, making themselves difficult for predators to bite.'),
 ]
 
 @Injectable()
@@ -128,6 +130,8 @@ export class FishingService {
 		const selectedUserId = Number.isInteger(requestedUserId) && requestedUserId > 0 ? requestedUserId : viewer.id
 		const playerRows = this.database.connection.select().from(users).all()
 			.sort((left, right) => left.minecraft_username.localeCompare(right.minecraft_username, 'en', { sensitivity: 'base' }))
+		const profilesById = new Map(this.database.connection.select().from(playerProfiles).all()
+			.map((profile) => [profile.user_id, profile]))
 		if (!playerRows.some((player) => player.id === selectedUserId)) {
 			throw new NotFoundException('Player not found')
 		}
@@ -144,7 +148,9 @@ export class FishingService {
 			players: playerRows.map((player) => ({
 				id: player.id,
 				minecraftUsername: player.minecraft_username,
+				pronouns: profilesById.get(player.id)?.pronouns ?? '',
 				avatarUrl: avatarUrl(player.minecraft_username),
+				caughtTotal: allCatches.filter((fishCatch) => fishCatch.user_id === player.id).length,
 			})),
 			fish: this.loadDefinitions().map((definition) => {
 				const serverRows = allCatches.filter((fishCatch) => fishCatch.fish_id === definition.id)
@@ -153,6 +159,7 @@ export class FishingService {
 					title: definition.title,
 					rarity: definition.rarity,
 					tags: definition.tags,
+					facts: definition.facts,
 					iconUrl: definition.iconUrl,
 					catch: serializeCatch(selectedCatches.get(definition.id) ?? null),
 					serverLargest: serializeServerRecord(serverRows, playersById, 'largest'),
@@ -214,6 +221,9 @@ export class FishingService {
 				title: json.title,
 				rarity: typeof json.rarity === 'string' && RARITIES.has(json.rarity) ? json.rarity : 'common',
 				tags: Array.isArray(json.fish?.tags) ? json.fish.tags.filter((tag): tag is string => typeof tag === 'string') : [],
+				facts: Array.isArray(json.tooltips)
+					? json.tooltips.filter((fact): fact is string => typeof fact === 'string' && fact.trim().length > 0)
+					: [],
 				iconUrl: `/api/fishing/texture/${encodeURIComponent(json.id)}?v=${mtimeMs}`,
 				textureFilePath,
 			}]
@@ -295,13 +305,14 @@ function avatarUrl(username: string) {
 	return `https://mc-heads.net/avatar/${encodeURIComponent(username)}/32`
 }
 
-function vanillaFish(id: string, title: string, rarity: string): FishDefinition {
+function vanillaFish(id: string, title: string, rarity: string, fact: string): FishDefinition {
 	const textureName = id.slice('minecraft:'.length)
 	return {
 		id,
 		title,
 		rarity,
 		tags: [],
+		facts: [fact],
 		iconUrl: `/assets/mc_respack/assets/minecraft/textures/item/${textureName}.png`,
 		textureFilePath: null,
 	}

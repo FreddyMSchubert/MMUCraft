@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "",
+		"description": "Unlock the Cat Ears cosmetic.",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Cat Ears."
 	},

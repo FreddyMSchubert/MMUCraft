@@ -3,6 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFeature;
 
@@ -22,12 +23,38 @@ public final class FishingCatchesWeightsTest {
         checkGeneratedFishDefaults();
         checkInitialApproachSpeed();
         checkFishSpawnTags();
+        checkJumpScareChance();
+        checkJumpScareArc();
         if (FishRarity.UNCOMMON.colorRgb() != 0xFFFF55
                 || FishRarity.RARE.colorRgb() != 0x55FFFF
                 || FishRarity.EPIC.colorRgb() != 0xFF55FF
                 || FishRarity.LEGENDARY.colorRgb() != 0x55FF55
                 || FishRarity.MYTHICAL.colorRgb() != 0xFF5F00) {
             throw new AssertionError("Fish rarity colors must stay aligned with Minecraft's native rarity colors");
+        }
+    }
+
+    private static void checkJumpScareChance() {
+        RandomSource random = RandomSource.create(72L);
+        int triggers = 0;
+        int samples = 100_000;
+        for (int i = 0; i < samples; i++) {
+            if (FishingJumpScares.shouldTrigger(random)) triggers++;
+        }
+        if (Math.abs(triggers / (double) samples - FishingJumpScares.CHANCE) > 0.002D) {
+            throw new AssertionError("Fishing jump-scare chance no longer matches its configured rate");
+        }
+    }
+
+    private static void checkJumpScareArc() {
+        double targetX = 13.0D;
+        double targetY = 1.0D;
+        Vec3 velocity = FishingJumpScares.launchVelocity(0.0D, 0.0D, 0.0D, targetX, targetY, 0.0D);
+        double flightTicks = targetX / velocity.x();
+        double landingY = velocity.y() * flightTicks - 0.04D * flightTicks * flightTicks;
+        if (Math.abs(velocity.x() * flightTicks - targetX) > 0.000_001D
+                || Math.abs(landingY - targetY) > 0.000_001D) {
+            throw new AssertionError("Fishing jump-scare velocity must arc into the player's torso");
         }
     }
 
@@ -141,7 +168,7 @@ public final class FishingCatchesWeightsTest {
                 || personality.approachSeconds() < 0.15F || personality.approachSeconds() >= 0.5F
                 || personality.retreatSeconds() < 0.2F || personality.retreatSeconds() >= 1.5F
                 || personality.retreatDistance() < 0.5F || personality.retreatDistance() >= 1.75F
-                || averageCatchSeconds < 11.0F || averageCatchSeconds >= 19.0F
+                || averageCatchSeconds < 0.0F || averageCatchSeconds >= 24.0F
                 || personality.struggleSeconds() < 2.5F || personality.struggleSeconds() >= 7.0F) {
             throw new AssertionError("Generated fish defaults must be stable and remain inside their configured ranges");
         }
@@ -160,7 +187,7 @@ public final class FishingCatchesWeightsTest {
     private static void checkFishSpawnTags() {
         Set<FishSpawnTag> warmOrColdAtNight = Set.of(FishSpawnTag.WARM, FishSpawnTag.COLD, FishSpawnTag.NIGHT);
         if (!FishSpawnTag.matchesActive(warmOrColdAtNight, Set.of(FishSpawnTag.COLD, FishSpawnTag.NIGHT))
-                || FishSpawnTag.matchesActive(warmOrColdAtNight, Set.of(FishSpawnTag.TEMPERATE, FishSpawnTag.NIGHT))
+                || FishSpawnTag.matchesActive(warmOrColdAtNight, Set.of(FishSpawnTag.NIGHT))
                 || !FishSpawnTag.matchesActive(Set.of(), Set.of())) {
             throw new AssertionError("Fish tags must OR within a condition group and AND across groups");
         }

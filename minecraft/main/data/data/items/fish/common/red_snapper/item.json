@@ -9,7 +9,9 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_default_alt_2",
-                 "tags":  ["ocean", "day"],
+                 "tags":  [
+                              "ocean"
+                          ],
                  "size":  {
                               "averageLengthCm":  50
                           },

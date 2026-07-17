@@ -10,7 +10,7 @@
     "fish":  {
                  "shape":  "fish_shadow_squid",
                  "tags":  [
-
+                              "ocean"
                           ],
                  "size":  {
                               "averageLengthCm":  25

@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 1000000,
-		"description": "",
+		"description": "Unlock the Ornate Crown cosmetic.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Ornate Crown."
 	},

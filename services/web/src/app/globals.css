@@ -1005,6 +1005,139 @@ a {
 	font-size: 1.25rem;
 }
 
+.leaderboardPodium {
+	display: grid;
+	gap: 12px;
+	padding: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 10px;
+	background: radial-gradient(circle at 50% 0, rgba(255, 209, 102, 0.13), transparent 48%), rgba(255, 255, 255, 0.045);
+}
+
+.podiumPlaces {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	align-items: end;
+	min-height: 245px;
+}
+
+.podiumPlace {
+	display: grid;
+	justify-items: center;
+	align-content: end;
+	min-width: 0;
+}
+
+.podiumIdentity {
+	min-height: 34px;
+	padding: 0 5px;
+	color: rgba(255, 255, 255, 0.88);
+	font-size: 0.74rem;
+	line-height: 1.2;
+	text-align: center;
+	overflow-wrap: anywhere;
+}
+
+.podiumIdentity span {
+	color: rgba(255, 255, 255, 0.56);
+}
+
+.podiumHeadImage {
+	width: 82px;
+	height: 82px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 6px;
+	image-rendering: pixelated;
+}
+
+.podiumStep {
+	display: grid;
+	align-content: center;
+	width: 100%;
+	height: 104px;
+	padding: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: linear-gradient(160deg, #8c712d, #433410);
+	text-align: center;
+	box-shadow: inset 0 1px rgba(255, 255, 255, 0.18), 0 8px 18px rgba(0, 0, 0, 0.24);
+}
+
+.podiumPlace-1 .podiumStep {
+	height: 130px;
+	border-radius: 8px 8px 0 0;
+	background: linear-gradient(160deg, #e6bd4d, #725817);
+}
+
+.podiumPlace-2 .podiumStep {
+	height: 100px;
+	border-radius: 8px 0 0;
+	background: linear-gradient(160deg, #aeb9c7, #505965);
+}
+
+.podiumPlace-3 .podiumStep {
+	height: 76px;
+	border-radius: 0 8px 0 0;
+	background: linear-gradient(160deg, #bd7f4e, #663b23);
+}
+
+.podiumStep strong {
+	color: #fff;
+	font-size: 2rem;
+	line-height: 1;
+	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.podiumStep span {
+	margin-top: 6px;
+	color: rgba(255, 255, 255, 0.86);
+	font-size: 0.72rem;
+	font-weight: 800;
+}
+
+.podiumMetric {
+	justify-self: center;
+	min-width: min(320px, 100%);
+	margin: 0;
+	padding: 8px 11px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 7px;
+	background: #20293a;
+	color: #fff;
+	font-size: 0.78rem;
+	font-weight: 800;
+	text-align: center;
+}
+
+.podiumMetric option,
+.podiumMetric optgroup {
+	color: #111;
+}
+
+.leaderboardPodium.compact {
+	gap: 8px;
+	padding: 12px;
+}
+
+.leaderboardPodium.compact .podiumPlaces {
+	min-height: 174px;
+}
+
+.leaderboardPodium.compact .podiumIdentity {
+	min-height: 28px;
+	font-size: 0.64rem;
+}
+
+.leaderboardPodium.compact .playerHead-large,
+.leaderboardPodium.compact .podiumHeadImage {
+	width: 54px;
+	height: 54px;
+}
+
+.leaderboardPodium.compact .podiumPlace-1 .podiumStep { height: 92px; }
+.leaderboardPodium.compact .podiumPlace-2 .podiumStep { height: 72px; }
+.leaderboardPodium.compact .podiumPlace-3 .podiumStep { height: 56px; }
+.leaderboardPodium.compact .podiumStep strong { font-size: 1.5rem; }
+
 .playersTop button,
 .playerProfileNav button,
 .playerProfileTop button,
@@ -2549,16 +2682,92 @@ a {
 	color: #fff;
 }
 
-.fishStats {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 7px 16px;
-	align-items: center;
-	font-size: 0.78rem;
+.fishOverview {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	align-items: stretch;
 }
 
-.fishStats strong {
-	font-size: 0.9rem;
+.fishStats {
+	display: grid;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 10px;
+	background: radial-gradient(circle at 0 0, rgba(85, 255, 255, 0.1), transparent 45%), rgba(255, 255, 255, 0.045);
+}
+
+.fishStatsHeading {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: center;
+}
+
+.fishStatsHeading div {
+	display: grid;
+	gap: 2px;
+}
+
+.fishStatsHeading span {
+	color: rgba(255, 255, 255, 0.58);
+	font-size: 0.68rem;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.fishStatsHeading strong {
+	font-size: 1rem;
+}
+
+.fishStatsHeading > b {
+	color: #55ffff;
+	font-size: 1.45rem;
+}
+
+.fishStats progress {
+	width: 100%;
+	height: 14px;
+	border: 0;
+	border-radius: 999px;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.09);
+}
+
+.fishStats progress::-webkit-progress-bar { background: rgba(255, 255, 255, 0.09); }
+.fishStats progress::-webkit-progress-value { background: linear-gradient(90deg, #55ffff, #55ff55); }
+.fishStats progress::-moz-progress-bar { background: linear-gradient(90deg, #55ffff, #55ff55); }
+
+.fishRarityBars {
+	display: grid;
+	gap: 7px;
+}
+
+.fishRarityProgress {
+	display: grid;
+	grid-template-columns: 72px minmax(0, 1fr) 42px;
+	gap: 8px;
+	align-items: center;
+	font-size: 0.7rem;
+}
+
+.fishRarityProgress > span {
+	height: 7px;
+	overflow: hidden;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.09);
+}
+
+.fishRarityProgress i {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+}
+
+.fishRarityProgress small {
+	color: rgba(255, 255, 255, 0.64);
+	text-align: right;
 }
 
 .fishGuide {
@@ -2630,7 +2839,7 @@ a {
 
 .fishGrid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(96px, 116px));
+	grid-template-columns: repeat(10, minmax(0, 1fr));
 	gap: 9px;
 	align-items: stretch;
 }
@@ -2732,16 +2941,35 @@ a {
 	bottom: calc(100% + 8px);
 }
 
+.fishCard.tooltipAlignLeft .fishTooltip {
+	left: 0;
+	transform: none;
+}
+
+.fishCard.tooltipAlignRight .fishTooltip {
+	right: 0;
+	left: auto;
+	transform: none;
+}
+
 .fishTooltip > strong {
 	color: #fff;
 	font-size: 0.95rem;
 }
 
 .fishConditions,
+.fishFacts,
 .fishPersonalRecords,
 .fishServerRecords {
 	display: grid;
 	gap: 3px;
+}
+
+.fishFacts {
+	padding-top: 8px;
+	border-top: 1px solid rgba(255, 255, 255, 0.11);
+	color: rgba(255, 255, 255, 0.72);
+	font-style: italic;
 }
 
 .fishLuckWarning {
@@ -2804,7 +3032,7 @@ a {
 }
 
 .fishGrid.compact {
-	grid-template-columns: repeat(auto-fill, minmax(68px, 80px));
+	grid-template-columns: repeat(12, minmax(0, 1fr));
 	gap: 6px;
 }
 
@@ -2835,6 +3063,7 @@ a {
 
 @media (max-width: 700px) {
 	.fishTop,
+	.fishOverview,
 	.fishGuide,
 	.fishFilterGroup {
 		grid-template-columns: 1fr;

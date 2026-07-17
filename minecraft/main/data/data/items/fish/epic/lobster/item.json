@@ -9,7 +9,9 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_object",
-                 "tags":  ["ocean"],
+                 "tags":  [
+                              "ocean"
+                          ],
                  "size":  {
                               "averageLengthCm":  35
                           },

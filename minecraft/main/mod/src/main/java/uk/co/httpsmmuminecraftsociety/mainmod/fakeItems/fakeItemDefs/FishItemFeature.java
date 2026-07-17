@@ -52,7 +52,7 @@ public record FishItemFeature(
         float retreatSeconds = override(catching, "retreatSeconds", between(random, 0.2F, 1.5F));
         float retreatDistance = override(catching, "retreatDistance", between(random, 0.5F, 1.75F));
         float averageCatchSeconds = override(catching, "averageCatchSeconds",
-                between(random, 5.0F + 2.0F * rarityLevel, 10.0F + 3.0F * rarityLevel));
+                between(random, 0.0F, 15.0F + 3.0F * rarityLevel));
         float struggleSeconds = override(catching, "struggleSeconds",
                 between(random, 1.0F + 0.5F * rarityLevel, 2.5F + 1.5F * rarityLevel));
         float averageBounces = calculateAverageBounces(averageCatchSeconds, approachSeconds, retreatSeconds, secondsAwayFromBobber);

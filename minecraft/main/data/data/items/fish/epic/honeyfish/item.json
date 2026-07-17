@@ -9,7 +9,10 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_default",
-                 "tags":  ["sunny"],
+                 "tags":  [
+                              "warm",
+                              "day"
+                          ],
                  "size":  {
                               "averageLengthCm":  30
                           },

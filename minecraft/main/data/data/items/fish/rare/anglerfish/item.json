@@ -9,7 +9,11 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_default",
-                 "tags":  ["ocean", "deep"],
+                 "tags":  [
+                              "night",
+                              "deep",
+                              "newmoon"
+                          ],
                  "size":  {
                               "averageLengthCm":  45
                           },

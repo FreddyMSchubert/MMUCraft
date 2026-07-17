@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 35,
-		"description": "",
+		"description": "Unlock the War Bonnet cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: War Bonnet."
 	},

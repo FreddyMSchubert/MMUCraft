@@ -70,7 +70,7 @@ public final class PlayerStatsSync {
         return Math.floorMod(player.getUUID().hashCode(), STAGGER_WINDOW_TICKS);
     }
 
-    private static void syncNow(ServerPlayer player) {
+    public static void syncNow(ServerPlayer player) {
         syncNow(player, false);
     }
 
@@ -99,6 +99,18 @@ public final class PlayerStatsSync {
                 customLabel(statId),
                 stats.getValue(customStats, statId)
         ));
+
+        long completedAdvancements = player.getAdvancements().visible.stream()
+                .filter(holder -> holder.value().display().isPresent())
+                .filter(holder -> player.getAdvancements().getOrStartProgress(holder).isDone())
+                .count();
+        addStat(
+                entries,
+                "advancement",
+                Identifier.fromNamespaceAndPath("minecraft", "earned"),
+                "Advancements Earned",
+                (int) completedAdvancements
+        );
 
         for (Identifier entityId : BuiltInRegistries.ENTITY_TYPE.keySet()) {
             EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getValue(entityId);

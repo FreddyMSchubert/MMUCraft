@@ -10,7 +10,7 @@
     "fish":  {
                  "shape":  "fish_shadow_small",
                  "tags":  [
-
+                              "rainy"
                           ],
                  "size":  {
                               "averageLengthCm":  25

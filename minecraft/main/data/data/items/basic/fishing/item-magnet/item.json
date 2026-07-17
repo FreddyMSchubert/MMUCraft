@@ -6,7 +6,7 @@
 	"rarity": "uncommon",
 	"maxStackSize": 16,
 	"tooltips": [
-		"Raises the fishing item chance to 55%",
+		"Raises the fishing item chance to 50%",
 		"20 casts"
 	]
 }

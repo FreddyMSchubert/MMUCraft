@@ -9,7 +9,11 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_default",
-                 "tags":  ["day", "high"],
+                 "tags":  [
+                              "day",
+                              "high",
+                              "waxing"
+                          ],
                  "size":  {
                               "averageLengthCm":  35
                           },

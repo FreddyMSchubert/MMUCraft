@@ -10,7 +10,7 @@
     "fish":  {
                  "shape":  "fish_shadow_weird",
                  "tags":  [
-
+                              "ocean"
                           ],
                  "size":  {
                               "averageLengthCm":  15

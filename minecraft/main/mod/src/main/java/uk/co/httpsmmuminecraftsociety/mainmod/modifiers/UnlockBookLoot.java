@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.modifiers;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 public final class UnlockBookLoot {
     private static final long AVAILABILITY_CACHE_MS = 30_000L;
     private static final long AVAILABILITY_TIMEOUT_MS = 750L;
+    public static final double FISHING_BOOK_CHANCE = 1.0D / 4.5D;
 
     private static final List<BookDrop> BOOK_DROPS = List.of(
             new BookDrop("charm-knowledge-book", 33, UnlockAvailabilityType.KNOWLEDGE),
@@ -95,6 +97,37 @@ public final class UnlockBookLoot {
                 .filter(book -> book.isAvailable(availability))
                 .forEach(book -> addFakeItem(book.fakeItemId(), books));
         return books;
+    }
+
+    public static ItemStack rollFishingBook(ServerPlayer player, RandomSource random) {
+        if (random.nextDouble() >= FISHING_BOOK_CHANCE) {
+            return ItemStack.EMPTY;
+        }
+
+        UnlockAvailability availability = getAvailability(player);
+        List<BookDrop> candidates = BOOK_DROPS.stream()
+                // The aggressive fishing shortcut is for knowledge; other books retain their normal sources.
+                .filter(book -> book.availabilityType() == UnlockAvailabilityType.KNOWLEDGE)
+                .filter(book -> book.isAvailable(availability))
+                .toList();
+        if (candidates.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        int totalWeight = candidates.stream().mapToInt(BookDrop::weight).sum();
+        int remainingWeight = random.nextInt(totalWeight);
+        for (BookDrop book : candidates) {
+            remainingWeight -= book.weight();
+            if (remainingWeight < 0) {
+                FakeItem fakeItem = FakeItems.ID_MAP.get(book.fakeItemId());
+                if (fakeItem == null) {
+                    MainMod.LOGGER.warn("Cannot add fishing unlock-book drop because fake item {} is not loaded", book.fakeItemId());
+                    return ItemStack.EMPTY;
+                }
+                return fakeItem.createItemStack();
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     private static boolean isEligibleLootTable(Identifier tableId) {

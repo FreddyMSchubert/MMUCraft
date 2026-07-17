@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 190,
-		"description": "",
+		"description": "Unlock the Sombrerón cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Sombrerón."
 	},

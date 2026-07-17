@@ -9,7 +9,9 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_shark",
-                 "tags":  ["high"],
+                 "tags":  [
+
+                          ],
                  "size":  {
                               "averageLengthCm":  400
                           },

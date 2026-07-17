@@ -16,14 +16,14 @@ import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.BrushableBlockEntity
 import java.util.Map;
 
 public final class FishingModifiers {
-    public static final double DEFAULT_ITEM_CHANCE = 0.40;
+    public static final double DEFAULT_ITEM_CHANCE = 0.35;
     private static final int SEARCH_RADIUS = 8;
     private static final int SEARCH_HEIGHT = 4;
 
     private static final Map<String, Modifier> MODIFIERS = Map.of(
-            "item-magnet", new Modifier(0.55, 20),
-            "golden-item-magnet", new Modifier(0.75, 10),
-            "worms", new Modifier(0.20, 20),
+            "item-magnet", new Modifier(0.50, 20),
+            "golden-item-magnet", new Modifier(0.70, 10),
+            "worms", new Modifier(0.15, 20),
             "golden-worms", new Modifier(0.0, 10)
     );
 

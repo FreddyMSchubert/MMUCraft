@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
@@ -107,6 +108,8 @@ public class PlayerAdvancementMoney {
         if (advancementHolder.value().display().isEmpty()) {
             return;
         }
+
+        PlayerStatsSync.syncNow(this.player);
 
         AdvancementRewards rewards = advancementHolder.value().rewards();
         int money = AdvancementMoney.moneyForAdvancement(advancementHolder.id(), rewards.experience());

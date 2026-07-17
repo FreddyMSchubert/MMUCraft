@@ -10,7 +10,7 @@
     "fish":  {
                  "shape":  "fish_shadow_small",
                  "tags":  [
-
+                              "day"
                           ],
                  "size":  {
                               "averageLengthCm":  25

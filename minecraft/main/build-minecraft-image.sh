@@ -20,14 +20,7 @@ pushd "${MOD_DIR}" >/dev/null
 popd >/dev/null
 
 echo '==> Building merged resource pack'
-if ! python3 "${SCRIPT_DIR}/respack/build-main-pack.py"; then
-  if [[ -f "${GENERATED_SERVER_PROPERTIES}" ]]; then
-    echo "WARNING: resource pack build failed; reusing existing ${GENERATED_SERVER_PROPERTIES}" >&2
-  else
-    echo "resource pack build failed and did not create ${GENERATED_SERVER_PROPERTIES}" >&2
-    exit 1
-  fi
-fi
+python3 "${SCRIPT_DIR}/respack/build-main-pack.py"
 
 if [[ ! -f "${GENERATED_SERVER_PROPERTIES}" ]]; then
   echo "resource pack build did not create ${GENERATED_SERVER_PROPERTIES}" >&2

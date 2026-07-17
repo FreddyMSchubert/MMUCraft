@@ -9,7 +9,10 @@
                  ],
     "fish":  {
                  "shape":  "fish_shadow_squid",
-                 "tags":  ["ocean", "night"],
+                 "tags":  [
+                              "ocean",
+                              "night"
+                          ],
                  "size":  {
                               "averageLengthCm":  50
                           },

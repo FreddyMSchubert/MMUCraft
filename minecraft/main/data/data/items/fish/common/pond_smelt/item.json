@@ -10,7 +10,7 @@
     "fish":  {
                  "shape":  "fish_shadow_tiny",
                  "tags":  [
-
+                              "cold"
                           ],
                  "size":  {
                               "averageLengthCm":  10

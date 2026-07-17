@@ -80,7 +80,7 @@
 			}
 		},
 		"tags": {
-			"description": "Spawn conditions. Tags in the same category are alternatives; different categories must all match.",
+			"description": "Spawn conditions. Tags in the same category are alternatives (OR); different categories must all match (AND). Warm and cold only classify Overworld biomes.",
 			"type": "array",
 			"uniqueItems": true,
 			"items": {
@@ -88,14 +88,12 @@
 				"enum": [
 					"warm",
 					"cold",
-					"temperate",
 					"river",
 					"ocean",
 					"day",
 					"night",
 					"deep",
 					"high",
-					"sunny",
 					"rainy",
 					"thunderstorm",
 					"snowy",

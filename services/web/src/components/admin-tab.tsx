@@ -20,6 +20,19 @@ interface GiftCode {
 	redemptionCount: number
 }
 
+interface AuthRequest {
+	id: string
+	kind: 'signup' | 'signin'
+	email: string
+	minecraftUsername: string | null
+	code: string | null
+	deliveryStatus: 'sent' | 'manual'
+	createdAtUnixMs: number
+	expiresAtUnixMs: number
+	completedAtUnixMs: number | null
+	status: 'active' | 'verified' | 'expired'
+}
+
 const CODE_ADJECTIVES = [
 	'ancient', 'blocky', 'creeping', 'enchanted', 'ender', 'golden', 'hidden', 'nether', 'pixelated', 'redstone', 'shimmering', 'square', 'verdant', 'cute', 'creepy', 'gorgeous', 'pretty', 'speedy', 'rough', 'angry', 'anxious', 'attacking'
 ]
@@ -29,9 +42,10 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
-	const [activeSection, setActiveSection] = useState<'members' | 'gifts'>('members')
+	const [activeSection, setActiveSection] = useState<'members' | 'signins' | 'gifts'>('members')
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
+	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
 	const [suggestion, setSuggestion] = useState('enchanted-pickaxe')
 	const [code, setCode] = useState('')
 	const [amount, setAmount] = useState('')
@@ -44,18 +58,22 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 	const [message, setMessage] = useState('')
 
 	const load = useCallback(async () => {
-		const [playersResponse, codesResponse] = await Promise.all([
+		const [playersResponse, codesResponse, signinsResponse] = await Promise.all([
 			fetch('/api/admin/players', { cache: 'no-store' }),
 			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
+			fetch('/api/admin/signins', { cache: 'no-store' }),
 		])
 		const playersBody = await playersResponse.json().catch(() => null)
 		const codesBody = await codesResponse.json().catch(() => null)
+		const signinsBody = await signinsResponse.json().catch(() => null)
 
 		if (!playersResponse.ok) throw new Error(apiMessage(playersBody, 'Failed to load the member list'))
 		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'))
+		if (!signinsResponse.ok) throw new Error(apiMessage(signinsBody, 'Failed to load signins'))
 
 		setPlayers(playersBody.players as AdminPlayer[])
 		setGiftCodes(codesBody.giftCodes as GiftCode[])
+		setAuthRequests(signinsBody.requests as AuthRequest[])
 	}, [])
 
 	useEffect(() => {
@@ -177,6 +195,13 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 			<nav className="adminSubTabs" aria-label="Admin sections">
 				<button
 					type="button"
+					className={activeSection === 'signins' ? 'active' : ''}
+					onClick={() => setActiveSection('signins')}
+				>
+					Signins
+				</button>
+				<button
+					type="button"
 					className={activeSection === 'members' ? 'active' : ''}
 					onClick={() => setActiveSection('members')}
 				>
@@ -195,7 +220,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 				<section className="adminSection">
 					<div className="adminSectionHeader">
 						<h3>Member list</h3>
-						<p>Don't share this screen with people as it contains sensitive info about our members</p>
+						<p>Don&apos;t share this screen with people as it contains sensitive info about our members</p>
 					</div>
 
 					<div className="adminWarnings adminWarnings-critical" role="alert">
@@ -247,6 +272,48 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 									)}
 								</tr>
 							))}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			)}
+
+			{activeSection === 'signins' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader">
+						<h3>Signup and signin requests</h3>
+						<p>Active codes are sensitive and disappear after use, expiry, or replacement.</p>
+					</div>
+					<button type="button" onClick={() => void load()}>Refresh</button>
+					<div className="adminTableWrap">
+						<table className="adminTable">
+							<thead>
+								<tr>
+									<th>Type</th>
+									<th>Account</th>
+									<th>Requested</th>
+									<th>Delivery</th>
+									<th>Status</th>
+									<th>Active code</th>
+								</tr>
+							</thead>
+							<tbody>
+								{authRequests.map((request) => (
+									<tr key={request.id}>
+										<td>{request.kind === 'signup' ? 'Signup' : 'Signin'}</td>
+										<td>
+											{request.minecraftUsername && <><strong>{request.minecraftUsername}</strong><br /></>}
+											{request.email}
+										</td>
+										<td>{formatDateTime(request.createdAtUnixMs)}</td>
+										<td>{request.deliveryStatus === 'sent' ? 'Email sent' : 'Manual help needed'}</td>
+										<td>{request.status === 'verified' ? 'Verified' : request.status === 'expired' ? 'Expired' : `Active until ${formatDateTime(request.expiresAtUnixMs)}`}</td>
+										<td>{request.code ? <code>{request.code}</code> : '—'}</td>
+									</tr>
+								))}
+								{authRequests.length === 0 && (
+									<tr><td colSpan={6}>No signup or signin requests yet.</td></tr>
+								)}
 							</tbody>
 						</table>
 					</div>
@@ -383,6 +450,13 @@ function formatExpiry(expiresAtUnixMs: number) {
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	}).format(new Date(expiresAtUnixMs))
+}
+
+function formatDateTime(timestamp: number) {
+	return new Intl.DateTimeFormat(undefined, {
+		dateStyle: 'medium',
+		timeStyle: 'short',
+	}).format(new Date(timestamp))
 }
 
 function apiMessage(body: unknown, fallback: string) {

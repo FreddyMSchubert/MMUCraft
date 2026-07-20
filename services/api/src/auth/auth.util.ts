@@ -61,6 +61,16 @@ export function safeSecretEquals(rawValue: string, storedHash: string): boolean 
 	return timingSafeEqual(actual, expected)
 }
 
+export function isAuthRequestActive(request: {
+	active_code: string | null
+	completed_at_unix_ms: number | null
+	expires_at_unix_ms: number
+}, now = Date.now()): boolean {
+	return request.active_code !== null
+		&& request.completed_at_unix_ms === null
+		&& request.expires_at_unix_ms > now
+}
+
 export function isValidMinecraftUsername(username: string): boolean {
 	return /^[A-Za-z0-9_]{3,16}$/.test(username)
 }

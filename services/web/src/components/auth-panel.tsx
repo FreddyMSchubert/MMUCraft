@@ -10,6 +10,7 @@ type Step =
 	| 'rules'
 	| 'done'
 	| 'signin'
+	| 'signin-code'
 
 interface ApiError {
 	message?: string | string[]
@@ -52,7 +53,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	const [emailCode, setEmailCode] = useState('')
 	const [minecraftUsername, setMinecraftUsername] = useState('')
 	const [minecraftCode, setMinecraftCode] = useState('')
-	const [devEmailCode, setDevEmailCode] = useState('')
+	const [deliveryMessage, setDeliveryMessage] = useState('')
 	const [acceptedRules, setAcceptedRules] = useState<boolean[]>(() => SERVER_RULES.map(() => false))
 	const [error, setError] = useState('')
 	const [busy, setBusy] = useState(false)
@@ -75,9 +76,9 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault()
 
 		void run(async () => {
-			const result = await postJson<{ flowId: string; devEmailCode: string }>('/api/auth/signup', { email })
+			const result = await postJson<{ flowId: string; delivery: 'sent' | 'manual' }>('/api/auth/signup', { email })
 			setFlowId(result.flowId)
-			setDevEmailCode(result.devEmailCode)
+			setDeliveryMessage(verificationMessage(result.delivery, email))
 			setStep('email-code')
 		})
 	}
@@ -135,7 +136,18 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault()
 
 		void run(async () => {
-			await postJson('/api/auth/signin', { email })
+			const result = await postJson<{ flowId: string; delivery: 'sent' | 'manual' }>('/api/auth/signin', { email })
+			setFlowId(result.flowId)
+			setDeliveryMessage(verificationMessage(result.delivery, email))
+			setStep('signin-code')
+		})
+	}
+
+	function submitSignInCode(event: FormEvent) {
+		event.preventDefault()
+
+		void run(async () => {
+			await postJson('/api/auth/verify-signin', { flowId, code: emailCode })
 			setStep('done')
 			onSignedIn?.()
 		})
@@ -154,6 +166,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						placeholder="you@stu.mmu.ac.uk"
 						type="email"
 						autoComplete="email"
+						required
 					/>
 					<button disabled={busy}>Sign up</button>
 					<button type="button" disabled={busy} onClick={() => setStep('signin')}>
@@ -165,13 +178,14 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'signin' && (
 				<form onSubmit={submitSignIn} className="authForm">
 					<h2>Sign in</h2>
-					<p>For now, sign-in only asks for your email.</p>
+					<p>We&apos;ll send a verification code to your signup email.</p>
 					<input
 						value={email}
 						onChange={(event) => setEmail(event.target.value)}
 						placeholder="you@stu.mmu.ac.uk"
 						type="email"
 						autoComplete="email"
+						required
 					/>
 					<button disabled={busy}>Sign in</button>
 					<button type="button" disabled={busy} onClick={() => setStep('email')}>
@@ -183,14 +197,36 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'email-code' && (
 				<form onSubmit={submitEmailCode} className="authForm">
 					<h2>Verify email</h2>
-					<p>Temporary dev code: <strong>{devEmailCode}</strong></p>
+					<p>{deliveryMessage}</p>
 					<input
 						value={emailCode}
 						onChange={(event) => setEmailCode(event.target.value)}
 						placeholder="Email code"
 						inputMode="numeric"
+						autoComplete="one-time-code"
+						pattern="[0-9]{6}"
+						maxLength={6}
+						required
 					/>
 					<button disabled={busy}>Verify email</button>
+				</form>
+			)}
+
+			{step === 'signin-code' && (
+				<form onSubmit={submitSignInCode} className="authForm">
+					<h2>Verify sign in</h2>
+					<p>{deliveryMessage}</p>
+					<input
+						value={emailCode}
+						onChange={(event) => setEmailCode(event.target.value)}
+						placeholder="Email code"
+						inputMode="numeric"
+						autoComplete="one-time-code"
+						pattern="[0-9]{6}"
+						maxLength={6}
+						required
+					/>
+					<button disabled={busy}>Sign in</button>
 				</form>
 			)}
 
@@ -257,4 +293,10 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{error ? <p className="authError">{error}</p> : null}
 		</section>
 	)
+}
+
+function verificationMessage(delivery: 'sent' | 'manual', email: string) {
+	return delivery === 'sent'
+		? `We sent a six-digit code to ${email}. It expires in 10 minutes.`
+		: 'Email delivery is currently unavailable. Contact the administrators; they can find this active request and give you the code.'
 }

@@ -1,9 +1,11 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
-import { and, eq, gt } from 'drizzle-orm'
+import { and, desc, eq, gt, isNull, lte } from 'drizzle-orm'
 import {
+	AuthRequestRow,
 	DatabaseService,
 	UserRow,
+	authRequests,
 	sessions,
 	users,
 } from '../database/database.service'
@@ -15,6 +17,7 @@ import {
 	createOpaqueToken,
 	hashSecret,
 	isAllowedEmail,
+	isAuthRequestActive,
 	isValidMinecraftUsername,
 	normalizeEmail,
 	safeSecretEquals,
@@ -26,6 +29,8 @@ const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
+const AUTH_REQUEST_HISTORY_LIMIT = 200
+const MAX_EMAIL_CODE_ATTEMPTS = 5
 
 export interface AuthenticatedUser {
 	id: number
@@ -60,6 +65,7 @@ export class AuthService {
 		await this.deleteIncompleteSignupFlowsForEmail(email)
 
 		const now = Date.now()
+		this.expireActiveAuthRequests(email, 'signup', now)
 		const code = createNumericCode()
 		const flowId = randomUUID()
 
@@ -70,10 +76,13 @@ export class AuthService {
 			emailCodeExpiresAt: now + EMAIL_CODE_TTL_MS,
 			updatedAt: now,
 		})
+		this.createAuthRequest(flowId, 'signup', email, null, code, now)
+		const delivery = await this.deliverVerificationCode(email, code, 'signup')
+		this.setAuthRequestDelivery(flowId, delivery)
 
 		return {
 			flowId,
-			devEmailCode: code,
+			delivery,
 		}
 	}
 
@@ -89,7 +98,9 @@ export class AuthService {
 			throw new BadRequestException('Email code expired')
 		}
 
-		if (!safeSecretEquals(code, flow.emailCodeHash)) {
+		const request = this.getActiveAuthRequest(flowId, 'signup', now)
+		if (!safeSecretEquals(code, flow.emailCodeHash) || !safeSecretEquals(code, request.code_hash)) {
+			this.recordFailedAuthAttempt(request)
 			throw new BadRequestException('Invalid email code')
 		}
 
@@ -99,6 +110,7 @@ export class AuthService {
 
 		flow.step = 'minecraft-username'
 		flow.updatedAt = now
+		this.completeAuthRequest(flowId, now)
 
 		return { ok: true }
 	}
@@ -233,6 +245,8 @@ export class AuthService {
 
 				return created.id
 			})
+			this.database.connection.update(authRequests).set({ user_id: userId })
+				.where(eq(authRequests.id, flowId)).run()
 
 			signupFlows.delete(flowId)
 			return this.createSession(userId)
@@ -242,7 +256,7 @@ export class AuthService {
 		}
 	}
 
-	signIn(emailInput: string) {
+	async signIn(emailInput: string) {
 		const email = normalizeEmail(emailInput)
 		const user = this.findUserByEmail(email)
 
@@ -250,7 +264,59 @@ export class AuthService {
 			throw new UnauthorizedException('No account exists for this email')
 		}
 
-		return this.createSession(user.id)
+		const now = Date.now()
+		const code = createNumericCode()
+		const flowId = randomUUID()
+		this.expireActiveAuthRequests(email, 'signin', now)
+		this.createAuthRequest(flowId, 'signin', email, user.id, code, now)
+		const delivery = await this.deliverVerificationCode(email, code, 'signin')
+		this.setAuthRequestDelivery(flowId, delivery)
+
+		return { flowId, delivery }
+	}
+
+	verifySignIn(flowId: string, code: string) {
+		const now = Date.now()
+		const request = this.getActiveAuthRequest(flowId, 'signin', now)
+		if (!safeSecretEquals(code, request.code_hash)) {
+			this.recordFailedAuthAttempt(request)
+			throw new BadRequestException('Invalid email code')
+		}
+		if (!request.user_id) {
+			throw new UnauthorizedException('No account exists for this email')
+		}
+
+		this.completeAuthRequest(flowId, now)
+		return this.createSession(request.user_id)
+	}
+
+	listAuthRequests() {
+		const now = Date.now()
+		this.clearExpiredAuthRequestCodes(now)
+
+		const requests = this.database.connection.select({ request: authRequests, user: users })
+			.from(authRequests)
+			.leftJoin(users, eq(users.id, authRequests.user_id))
+			.orderBy(desc(authRequests.created_at_unix_ms))
+			.limit(AUTH_REQUEST_HISTORY_LIMIT)
+			.all()
+
+		return {
+			requests: requests.map(({ request, user }) => ({
+				id: request.id,
+				kind: request.kind,
+				email: request.email,
+				minecraftUsername: user?.minecraft_username ?? null,
+				code: isAuthRequestActive(request, now) ? request.active_code : null,
+				deliveryStatus: request.delivery_status,
+				createdAtUnixMs: request.created_at_unix_ms,
+				expiresAtUnixMs: request.expires_at_unix_ms,
+				completedAtUnixMs: request.completed_at_unix_ms,
+				status: request.completed_at_unix_ms !== null
+					? 'verified'
+					: request.expires_at_unix_ms <= now ? 'expired' : 'active',
+			})),
+		}
 	}
 
 	requireSession(rawCookieHeader: string | undefined): AuthenticatedUser {
@@ -347,6 +413,7 @@ export class AuthService {
 				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
 			}
 			signupFlows.delete(flowId)
+			this.expireAuthRequest(flowId)
 		}
 	}
 
@@ -359,7 +426,142 @@ export class AuthService {
 				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
 			}
 			signupFlows.delete(flowId)
+			this.expireAuthRequest(flowId)
 		}
+		this.clearExpiredAuthRequestCodes(Date.now())
+	}
+
+	private createAuthRequest(
+		id: string,
+		kind: 'signup' | 'signin',
+		email: string,
+		userId: number | null,
+		code: string,
+		now: number,
+	) {
+		this.database.connection.insert(authRequests).values({
+			id,
+			kind,
+			email,
+			user_id: userId,
+			code_hash: hashSecret(code),
+			active_code: code,
+			delivery_status: 'manual',
+			expires_at_unix_ms: now + EMAIL_CODE_TTL_MS,
+			created_at_unix_ms: now,
+		}).run()
+	}
+
+	private getActiveAuthRequest(id: string, kind: 'signup' | 'signin', now: number): AuthRequestRow {
+		const request = this.database.connection.select().from(authRequests)
+			.where(and(eq(authRequests.id, id), eq(authRequests.kind, kind))).get()
+
+		if (!request || !isAuthRequestActive(request, now)) {
+			throw new BadRequestException('Email verification request is not active')
+		}
+		return request
+	}
+
+	private completeAuthRequest(id: string, now: number) {
+		this.database.connection.update(authRequests).set({
+			active_code: null,
+			completed_at_unix_ms: now,
+		}).where(eq(authRequests.id, id)).run()
+	}
+
+	private recordFailedAuthAttempt(request: AuthRequestRow) {
+		const failedAttempts = request.failed_attempts + 1
+		this.database.connection.update(authRequests).set({
+			failed_attempts: failedAttempts,
+			...(failedAttempts >= MAX_EMAIL_CODE_ATTEMPTS ? {
+				active_code: null,
+				expires_at_unix_ms: Date.now(),
+			} : {}),
+		}).where(eq(authRequests.id, request.id)).run()
+	}
+
+	private expireAuthRequest(id: string) {
+		this.database.connection.update(authRequests).set({
+			active_code: null,
+			expires_at_unix_ms: Date.now(),
+		}).where(and(eq(authRequests.id, id), isNull(authRequests.completed_at_unix_ms))).run()
+	}
+
+	private expireActiveAuthRequests(email: string, kind: 'signup' | 'signin', now: number) {
+		this.database.connection.update(authRequests).set({
+			active_code: null,
+			expires_at_unix_ms: now,
+		}).where(and(
+			eq(authRequests.email, email),
+			eq(authRequests.kind, kind),
+			isNull(authRequests.completed_at_unix_ms),
+		)).run()
+	}
+
+	private clearExpiredAuthRequestCodes(now: number) {
+		this.database.connection.update(authRequests).set({ active_code: null })
+			.where(and(lte(authRequests.expires_at_unix_ms, now), isNull(authRequests.completed_at_unix_ms))).run()
+	}
+
+	private setAuthRequestDelivery(id: string, deliveryStatus: 'sent' | 'manual') {
+		this.database.connection.update(authRequests).set({ delivery_status: deliveryStatus })
+			.where(eq(authRequests.id, id)).run()
+	}
+
+	private async deliverVerificationCode(email: string, code: string, kind: 'signup' | 'signin'): Promise<'sent' | 'manual'> {
+		const apiKey = process.env.RESEND_API_KEY
+		const from = process.env.RESEND_FROM ?? 'MMU Minecraft Society <onboarding@resend.dev>'
+		const recipientDomain = email.split('@')[1] ?? 'invalid'
+		if (!apiKey) {
+			console.warn('[auth-email] Delivery skipped', {
+				kind,
+				recipientDomain,
+				reason: 'RESEND_API_KEY is missing from the API process environment',
+			})
+			return 'manual'
+		}
+
+		try {
+			const response = await fetch('https://api.resend.com/emails', {
+				method: 'POST',
+				signal: AbortSignal.timeout(10_000),
+				headers: {
+					Authorization: `Bearer ${apiKey}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					from,
+					to: [email],
+					subject: `Your MMU Minecraft Society ${kind === 'signup' ? 'signup' : 'signin'} code`,
+					text: `Your verification code is ${code}. It expires in 10 minutes. If you did not request this, you can ignore this email.`,
+					html: `<p>Your verification code is:</p><p style="font-size: 28px; font-weight: bold; letter-spacing: 4px">${code}</p><p>It expires in 10 minutes. If you did not request this, you can ignore this email.</p>`,
+				}),
+			})
+
+			if (response.ok) {
+				console.info('[auth-email] Resend accepted verification email', {
+					kind,
+					recipientDomain,
+					status: response.status,
+				})
+				return 'sent'
+			}
+			console.error('[auth-email] Resend rejected verification email', {
+				kind,
+				recipientDomain,
+				from,
+				status: response.status,
+				response: await response.text(),
+			})
+		} catch (error) {
+			console.error('[auth-email] Resend request failed', {
+				kind,
+				recipientDomain,
+				from,
+				error: error instanceof Error ? `${error.name}: ${error.message}` : String(error),
+			})
+		}
+		return 'manual'
 	}
 
 	private createSession(userId: number) {

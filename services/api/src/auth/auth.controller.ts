@@ -41,11 +41,18 @@ export class AuthController {
 	}
 
 	@Post('signin')
-	signIn(
+	async signIn(
 		@Body() body: { email?: string },
+	) {
+		return await this.auth.signIn(body.email ?? '')
+	}
+
+	@Post('verify-signin')
+	verifySignIn(
+		@Body() body: { flowId?: string; code?: string },
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		const session = this.auth.signIn(body.email ?? '')
+		const session = this.auth.verifySignIn(body.flowId ?? '', body.code ?? '')
 		this.setSessionCookie(response, session.token, session.maxAgeSeconds)
 
 		return { ok: true }

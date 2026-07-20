@@ -1,14 +1,15 @@
 {
 	"name": "mcstack-api",
 	"scripts": {
-		"dev": "tsc-watch -p tsconfig.json --onSuccess \"node dist/main.js\"",
+		"dev": "tsc-watch -p tsconfig.json --onSuccess \"node --env-file-if-exists=.env dist/main.js\"",
 		"build": "tsc -p tsconfig.json",
+		"test": "npm run build && node scripts/check-auth-request.js",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:check": "drizzle-kit check",
 		"db:studio": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/studio-cluster.ps1",
 		"db:studio:pod": "drizzle-kit studio",
-		"start": "node dist/main.js",
+		"start": "node --env-file-if-exists=.env dist/main.js",
 		"prod": "npm run build && npm run start"
 	},
 	"dependencies": {

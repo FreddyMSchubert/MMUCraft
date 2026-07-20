@@ -1,5 +1,15 @@
 allow_k8s_contexts('k3d-mc-dev')
 
+watch_file('services/api/.env')
+api_env_secret = local(
+    ['kubectl', 'create', 'secret', 'generic', 'api-env',
+     '--namespace', 'mc-stack-dev',
+     '--from-env-file=services/api/.env',
+     '--dry-run=client', '-o', 'yaml'],
+    quiet=True,
+    echo_off=True,
+)
+
 default_registry(
     'localhost:12345',
     host_from_cluster='mc-dev-registry:5000',
@@ -11,6 +21,7 @@ k8s_yaml([
     'k8s/30-web.yaml',
     'k8s/40-minecraft.yaml',
 ])
+k8s_yaml(api_env_secret)
 
 docker_build(
     'mcstack/api',
@@ -102,7 +113,7 @@ custom_build(
     ] + minecraft_resource_pack_deps,
 )
 
-k8s_resource(workload='api', port_forwards=[8080, 50051])
+k8s_resource(workload='api', port_forwards=[8080, 50051], resource_deps=['api-env'])
 k8s_resource(workload='web', port_forwards=[3000], resource_deps=['api'])
 k8s_resource(
     workload='minecraft',

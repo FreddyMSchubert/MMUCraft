@@ -1,0 +1,1 @@
+ALTER TABLE `auth_requests` ADD `failed_attempts` integer DEFAULT 0 NOT NULL;

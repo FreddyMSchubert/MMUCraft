@@ -31,23 +31,9 @@ spec:
         - name: api
           image: mcstack/api
           imagePullPolicy: IfNotPresent
-          env:
-            - name: PORT
-              value: "8080"
-            - name: HOST
-              value: "0.0.0.0"
-            - name: API_GRPC_HOST
-              value: "0.0.0.0"
-            - name: API_GRPC_PORT
-              value: "50051"
-            - name: MOD_GRPC_TARGET
-              value: "minecraft:50052"
-            - name: AUTH_CODE_SECRET
-              value: "dev-change-me"
-            - name: COOKIE_SECURE
-              value: "false"
-            - name: MANUAL_EMAIL_WHITELIST
-              value: ""
+          envFrom:
+            - secretRef:
+                name: api-env
           ports:
             - containerPort: 8080
             - containerPort: 50051

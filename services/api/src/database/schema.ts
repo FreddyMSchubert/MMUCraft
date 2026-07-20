@@ -41,6 +41,25 @@ export const sessions = sqliteTable('sessions', {
 	index('sessions_token_hash_idx').on(table.token_hash),
 ])
 
+export const authRequests = sqliteTable('auth_requests', {
+	id: text('id').primaryKey(),
+	kind: text('kind', { enum: ['signup', 'signin'] }).notNull(),
+	email: text('email').notNull(),
+	user_id: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
+	code_hash: text('code_hash').notNull(),
+	active_code: text('active_code'),
+	failed_attempts: integer('failed_attempts').notNull().default(0),
+	delivery_status: text('delivery_status', { enum: ['sent', 'manual'] }).notNull(),
+	expires_at_unix_ms: integer('expires_at_unix_ms').notNull(),
+	completed_at_unix_ms: integer('completed_at_unix_ms'),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+}, (table) => [
+	index('auth_requests_email_idx').on(table.email),
+	index('auth_requests_created_at_idx').on(table.created_at_unix_ms),
+	check('auth_requests_kind_check', sql`${table.kind} in ('signup', 'signin')`),
+	check('auth_requests_delivery_status_check', sql`${table.delivery_status} in ('sent', 'manual')`),
+])
+
 export const playerProfiles = sqliteTable('player_profiles', {
 	user_id: integer('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
 	preferred_name: text('preferred_name').notNull().default(''),
@@ -156,6 +175,7 @@ export const giftCodeRedemptions = sqliteTable('gift_code_redemptions', {
 
 export type UserRow = typeof users.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
+export type AuthRequestRow = typeof authRequests.$inferSelect
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect
 export type PlayerStatsRow = typeof playerStats.$inferSelect
 export type PlayerMoneyEventRow = typeof playerMoneyEvents.$inferSelect
@@ -169,6 +189,7 @@ export type GiftCodeRow = typeof giftCodes.$inferSelect
 export const schema = {
 	users,
 	sessions,
+	authRequests,
 	playerProfiles,
 	playerStats,
 	playerMoneyEvents,

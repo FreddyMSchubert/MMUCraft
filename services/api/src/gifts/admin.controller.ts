@@ -41,6 +41,12 @@ export class AdminController {
 		return this.gifts.listGiftCodes()
 	}
 
+	@Get('signins')
+	listSignins(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.auth.listAuthRequests()
+	}
+
 	@Post('gift-codes')
 	createGiftCode(
 		@Headers('cookie') cookieHeader: string | undefined,

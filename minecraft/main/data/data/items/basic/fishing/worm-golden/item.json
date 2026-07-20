@@ -1,7 +1,6 @@
 {
-	"title": "Golden Worms",
+	"title": "Golden Worm",
 	"id": "golden-worms",
-	"baseItemOverride": "minecraft:glow_berries",
 	"modelType": "basic",
 	"rarity": "rare",
 	"maxStackSize": 16,

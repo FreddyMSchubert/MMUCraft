@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from '@nestjs/common'
 import { AuthService } from '../auth/auth.service'
 import { GiftsService } from './gifts.service'
 
@@ -45,6 +45,30 @@ export class AdminController {
 	listSignins(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader)
 		return this.auth.listAuthRequests()
+	}
+
+	@Get('email-whitelist')
+	listEmailWhitelist(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.auth.listEmailWhitelist()
+	}
+
+	@Post('email-whitelist')
+	addEmailToWhitelist(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { email?: unknown; responsibleUserId?: unknown } | undefined,
+	) {
+		const admin = this.auth.requireCommitteeSession(cookieHeader)
+		return this.auth.addEmailToWhitelist(admin, body?.email, body?.responsibleUserId)
+	}
+
+	@Delete('email-whitelist/:email')
+	removeEmailFromWhitelist(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('email') email: string,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.auth.removeEmailFromWhitelist(email)
 	}
 
 	@Post('gift-codes')

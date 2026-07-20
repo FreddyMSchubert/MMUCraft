@@ -60,6 +60,13 @@ export const authRequests = sqliteTable('auth_requests', {
 	check('auth_requests_delivery_status_check', sql`${table.delivery_status} in ('sent', 'manual')`),
 ])
 
+export const emailWhitelist = sqliteTable('email_whitelist', {
+	email: text('email').primaryKey(),
+	added_by_user_id: integer('added_by_user_id').notNull().references(() => users.id),
+	responsible_user_id: integer('responsible_user_id').references(() => users.id),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+})
+
 export const playerProfiles = sqliteTable('player_profiles', {
 	user_id: integer('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
 	preferred_name: text('preferred_name').notNull().default(''),
@@ -176,6 +183,7 @@ export const giftCodeRedemptions = sqliteTable('gift_code_redemptions', {
 export type UserRow = typeof users.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
 export type AuthRequestRow = typeof authRequests.$inferSelect
+export type EmailWhitelistRow = typeof emailWhitelist.$inferSelect
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect
 export type PlayerStatsRow = typeof playerStats.$inferSelect
 export type PlayerMoneyEventRow = typeof playerMoneyEvents.$inferSelect
@@ -190,6 +198,7 @@ export const schema = {
 	users,
 	sessions,
 	authRequests,
+	emailWhitelist,
 	playerProfiles,
 	playerStats,
 	playerMoneyEvents,

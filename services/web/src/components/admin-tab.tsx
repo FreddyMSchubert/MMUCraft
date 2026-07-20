@@ -33,6 +33,13 @@ interface AuthRequest {
 	status: 'active' | 'verified' | 'expired'
 }
 
+interface WhitelistedEmail {
+	email: string
+	addedByMinecraftUsername: string
+	responsibleMinecraftUsername: string | null
+	createdAtUnixMs: number
+}
+
 const CODE_ADJECTIVES = [
 	'ancient', 'blocky', 'creeping', 'enchanted', 'ender', 'golden', 'hidden', 'nether', 'pixelated', 'redstone', 'shimmering', 'square', 'verdant', 'cute', 'creepy', 'gorgeous', 'pretty', 'speedy', 'rough', 'angry', 'anxious', 'attacking'
 ]
@@ -42,10 +49,13 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
-	const [activeSection, setActiveSection] = useState<'members' | 'signins' | 'gifts'>('members')
+	const [activeSection, setActiveSection] = useState<'members' | 'signins' | 'whitelist' | 'gifts'>('members')
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
 	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
+	const [whitelistedEmails, setWhitelistedEmails] = useState<WhitelistedEmail[]>([])
+	const [whitelistEmail, setWhitelistEmail] = useState('')
+	const [responsibleUsername, setResponsibleUsername] = useState('')
 	const [suggestion, setSuggestion] = useState('enchanted-pickaxe')
 	const [code, setCode] = useState('')
 	const [amount, setAmount] = useState('')
@@ -54,26 +64,31 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 	const [showAllGiftCodes, setShowAllGiftCodes] = useState(false)
 	const [busyPlayerId, setBusyPlayerId] = useState<number | null>(null)
 	const [creating, setCreating] = useState(false)
+	const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
 	const [error, setError] = useState('')
 	const [message, setMessage] = useState('')
 
 	const load = useCallback(async () => {
-		const [playersResponse, codesResponse, signinsResponse] = await Promise.all([
+		const [playersResponse, codesResponse, signinsResponse, whitelistResponse] = await Promise.all([
 			fetch('/api/admin/players', { cache: 'no-store' }),
 			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
 			fetch('/api/admin/signins', { cache: 'no-store' }),
+			fetch('/api/admin/email-whitelist', { cache: 'no-store' }),
 		])
 		const playersBody = await playersResponse.json().catch(() => null)
 		const codesBody = await codesResponse.json().catch(() => null)
 		const signinsBody = await signinsResponse.json().catch(() => null)
+		const whitelistBody = await whitelistResponse.json().catch(() => null)
 
 		if (!playersResponse.ok) throw new Error(apiMessage(playersBody, 'Failed to load the member list'))
 		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'))
 		if (!signinsResponse.ok) throw new Error(apiMessage(signinsBody, 'Failed to load signins'))
+		if (!whitelistResponse.ok) throw new Error(apiMessage(whitelistBody, 'Failed to load the email whitelist'))
 
 		setPlayers(playersBody.players as AdminPlayer[])
 		setGiftCodes(codesBody.giftCodes as GiftCode[])
 		setAuthRequests(signinsBody.requests as AuthRequest[])
+		setWhitelistedEmails(whitelistBody.entries as WhitelistedEmail[])
 	}, [])
 
 	useEffect(() => {
@@ -190,6 +205,59 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 		})()
 	}
 
+	function addWhitelistedEmail(event: FormEvent) {
+		event.preventDefault()
+		const responsiblePlayer = players.find((player) => (
+			player.minecraftUsername.localeCompare(responsibleUsername, 'en', { sensitivity: 'base' }) === 0
+		))
+		if (!responsiblePlayer) {
+			setError('Select a responsible user from the username list')
+			return
+		}
+		setUpdatingWhitelist(true)
+		setError('')
+		setMessage('')
+
+		void (async () => {
+			try {
+				const response = await fetch('/api/admin/email-whitelist', {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({ email: whitelistEmail, responsibleUserId: responsiblePlayer.id }),
+				})
+				const body = await response.json().catch(() => null)
+				if (!response.ok) throw new Error(apiMessage(body, 'Failed to whitelist the email address'))
+
+				setWhitelistEmail('')
+				setResponsibleUsername('')
+				setMessage(`${body.email} can now sign up.`)
+				await load()
+			} catch (caught) {
+				setError(errorMessage(caught, 'Failed to whitelist the email address'))
+			} finally {
+				setUpdatingWhitelist(false)
+			}
+		})()
+	}
+
+	async function removeWhitelistedEmail(email: string) {
+		if (!window.confirm(`Remove ${email} from the signup whitelist?`)) return
+		setUpdatingWhitelist(true)
+		setError('')
+		setMessage('')
+		try {
+			const response = await fetch(`/api/admin/email-whitelist/${encodeURIComponent(email)}`, { method: 'DELETE' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to remove the email address'))
+			setWhitelistedEmails((current) => current.filter((entry) => entry.email !== email))
+			setMessage(`${email} was removed from the signup whitelist.`)
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to remove the email address'))
+		} finally {
+			setUpdatingWhitelist(false)
+		}
+	}
+
 	return (
 		<div className="adminPanel">
 			<nav className="adminSubTabs" aria-label="Admin sections">
@@ -206,6 +274,13 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 					onClick={() => setActiveSection('members')}
 				>
 					Member list
+				</button>
+				<button
+					type="button"
+					className={activeSection === 'whitelist' ? 'active' : ''}
+					onClick={() => setActiveSection('whitelist')}
+				>
+					Email whitelist
 				</button>
 				<button
 					type="button"
@@ -314,6 +389,60 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 								{authRequests.length === 0 && (
 									<tr><td colSpan={6}>No signup or signin requests yet.</td></tr>
 								)}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			)}
+
+			{activeSection === 'whitelist' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader">
+						<h3>Email whitelist</h3>
+						<p>Allow a non-MMU email address to sign up. MMU email addresses are always allowed.</p>
+						<p>This should cost some money!</p>
+					</div>
+					<form className="emailWhitelistForm" onSubmit={addWhitelistedEmail}>
+						<label>
+							Email address
+							<input
+								type="email"
+								value={whitelistEmail}
+								onChange={(event) => setWhitelistEmail(event.target.value)}
+								placeholder="person@example.com"
+								required
+							/>
+						</label>
+						<label>
+							Responsible user
+							<input
+								value={responsibleUsername}
+								onChange={(event) => setResponsibleUsername(event.target.value)}
+								placeholder="Search Minecraft username"
+								list="whitelist-usernames"
+								autoComplete="off"
+								required
+							/>
+							<datalist id="whitelist-usernames">
+								{players.map((player) => <option key={player.id} value={player.minecraftUsername} />)}
+							</datalist>
+						</label>
+						<button disabled={updatingWhitelist}>Add email</button>
+					</form>
+					<div className="adminTableWrap">
+						<table className="adminTable">
+							<thead><tr><th>Email</th><th>Responsible user</th><th>Added by</th><th>Added</th><th></th></tr></thead>
+							<tbody>
+								{whitelistedEmails.map((entry) => (
+									<tr key={entry.email}>
+										<td>{entry.email}</td>
+										<td>{entry.responsibleMinecraftUsername ?? <span className="adminMissing">Not assigned</span>}</td>
+										<td>{entry.addedByMinecraftUsername}</td>
+										<td>{formatDateTime(entry.createdAtUnixMs)}</td>
+										<td><button type="button" disabled={updatingWhitelist} onClick={() => void removeWhitelistedEmail(entry.email)}>Remove</button></td>
+									</tr>
+								))}
+								{whitelistedEmails.length === 0 && <tr><td colSpan={5}>No extra email addresses are whitelisted.</td></tr>}
 							</tbody>
 						</table>
 					</div>

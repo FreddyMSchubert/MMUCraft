@@ -29,7 +29,7 @@ async function fetchMe(): Promise<SessionUser | null> {
 	})
 
 	if (!response.ok) {
-		return null
+		throw new Error('Failed to check session')
 	}
 
 	const data = await response.json().catch(() => null) as { user?: SessionUser | null } | null
@@ -38,7 +38,7 @@ async function fetchMe(): Promise<SessionUser | null> {
 
 export function SiteShell({ images }: { images: string[] }) {
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
-	const [activeTab, setActiveTab] = useState<TabId>('dailies')
+	const [activeTab, setActiveTab] = useState<TabId>('knowledge')
 
 	const reloadUser = useCallback(async () => {
 		setUser(await fetchMe())
@@ -46,11 +46,14 @@ export function SiteShell({ images }: { images: string[] }) {
 
 	useEffect(() => {
 		let cancelled = false
+		let retryTimer: number | undefined
 
 		async function loadInitialUser() {
-			const nextUser = await fetchMe()
-			if (!cancelled) {
-				setUser(nextUser)
+			try {
+				const nextUser = await fetchMe()
+				if (!cancelled) setUser(nextUser)
+			} catch {
+				if (!cancelled) retryTimer = window.setTimeout(() => void loadInitialUser(), 1000)
 			}
 		}
 
@@ -58,6 +61,7 @@ export function SiteShell({ images }: { images: string[] }) {
 
 		return () => {
 			cancelled = true
+			window.clearTimeout(retryTimer)
 		}
 	}, [])
 
@@ -67,7 +71,7 @@ export function SiteShell({ images }: { images: string[] }) {
 		})
 
 		setUser(null)
-		setActiveTab('dailies')
+		setActiveTab('knowledge')
 	}
 
 	return (

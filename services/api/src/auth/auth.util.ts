@@ -11,14 +11,11 @@ export function isAllowedEmail(email: string): boolean {
 	const parts = parseEmailParts(normalized)
 	if (!parts) return false
 
-	const manualWhitelist = (process.env.MANUAL_EMAIL_WHITELIST ?? '')
-		.split(',')
-		.map((value) => normalizeEmail(value))
-		.filter(Boolean)
-
-	if (manualWhitelist.includes(normalized)) return true
-
 	return MMU_EMAIL_DOMAINS.includes(parts.domain)
+}
+
+export function isValidEmail(email: string): boolean {
+	return parseEmailParts(normalizeEmail(email)) !== null
 }
 
 function parseEmailParts(email: string): { local: string; domain: string } | null {
@@ -28,7 +25,8 @@ function parseEmailParts(email: string): { local: string; domain: string } | nul
 	const [local, domain] = parts
 	if (!local || !domain) return null
 	if (!/^[^\s@]+$/.test(local)) return null
-	if (!/^[a-z0-9.-]+$/.test(domain)) return null
+	const domainParts = domain.split('.')
+	if (domainParts.length < 2 || domainParts.some((part) => !/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(part))) return null
 
 	return { local, domain }
 }

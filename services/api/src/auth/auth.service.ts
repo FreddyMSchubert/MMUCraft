@@ -1,11 +1,12 @@
-import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
-import { and, desc, eq, gt, isNull, lte } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, isNull, lte } from 'drizzle-orm'
 import {
 	AuthRequestRow,
 	DatabaseService,
 	UserRow,
 	authRequests,
+	emailWhitelist,
 	sessions,
 	users,
 } from '../database/database.service'
@@ -19,6 +20,7 @@ import {
 	isAllowedEmail,
 	isAuthRequestActive,
 	isValidMinecraftUsername,
+	isValidEmail,
 	normalizeEmail,
 	safeSecretEquals,
 } from './auth.util'
@@ -29,7 +31,7 @@ const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
-const AUTH_REQUEST_HISTORY_LIMIT = 200
+const AUTH_REQUEST_HISTORY_LIMIT = 50
 const MAX_EMAIL_CODE_ATTEMPTS = 5
 
 export interface AuthenticatedUser {
@@ -52,7 +54,7 @@ export class AuthService {
 	async createSignup(emailInput: string) {
 		const email = normalizeEmail(emailInput)
 
-		if (!isAllowedEmail(email)) {
+		if (!isAllowedEmail(email) && !this.isEmailWhitelisted(email)) {
 			throw new BadRequestException('Only MMU email addresses are allowed')
 		}
 
@@ -319,6 +321,69 @@ export class AuthService {
 		}
 	}
 
+	listEmailWhitelist() {
+		const usernamesById = new Map(this.database.connection.select({
+			id: users.id,
+			minecraftUsername: users.minecraft_username,
+		}).from(users).all().map((user) => [user.id, user.minecraftUsername]))
+
+		return {
+			entries: this.database.connection.select().from(emailWhitelist)
+				.orderBy(asc(emailWhitelist.email)).all()
+				.map((entry) => ({
+					email: entry.email,
+					addedByMinecraftUsername: usernamesById.get(entry.added_by_user_id) ?? 'Unknown user',
+					responsibleMinecraftUsername: entry.responsible_user_id === null
+						? null
+						: usernamesById.get(entry.responsible_user_id) ?? 'Unknown user',
+					createdAtUnixMs: entry.created_at_unix_ms,
+				})),
+		}
+	}
+
+	addEmailToWhitelist(admin: AuthenticatedUser, emailInput: unknown, responsibleUserIdInput: unknown) {
+		if (typeof emailInput !== 'string') {
+			throw new BadRequestException('Email is required')
+		}
+		const email = normalizeEmail(emailInput)
+		if (!isValidEmail(email)) {
+			throw new BadRequestException('Enter a valid email address')
+		}
+		if (isAllowedEmail(email)) {
+			throw new BadRequestException('MMU email addresses are already allowed')
+		}
+		if (typeof responsibleUserIdInput !== 'number' || !Number.isInteger(responsibleUserIdInput) || responsibleUserIdInput <= 0) {
+			throw new BadRequestException('Select a responsible user')
+		}
+		const responsibleUserId = responsibleUserIdInput
+		if (!this.database.connection.select({ id: users.id }).from(users)
+			.where(eq(users.id, responsibleUserId)).get()) {
+			throw new BadRequestException('Select a responsible user')
+		}
+
+		const result = this.database.connection.insert(emailWhitelist).values({
+			email,
+			added_by_user_id: admin.id,
+			responsible_user_id: responsibleUserId,
+			created_at_unix_ms: Date.now(),
+		}).onConflictDoNothing().run()
+		if (result.changes !== 1) {
+			throw new ConflictException('That email address is already whitelisted')
+		}
+
+		return { email }
+	}
+
+	removeEmailFromWhitelist(emailInput: string) {
+		const email = normalizeEmail(emailInput)
+		const result = this.database.connection.delete(emailWhitelist)
+			.where(eq(emailWhitelist.email, email)).run()
+		if (result.changes !== 1) {
+			throw new NotFoundException('Whitelisted email address not found')
+		}
+		return { ok: true }
+	}
+
 	requireSession(rawCookieHeader: string | undefined): AuthenticatedUser {
 		const user = this.getSession(rawCookieHeader)
 
@@ -394,6 +459,11 @@ export class AuthService {
 
 	private findUserByEmail(email: string): UserRow | null {
 		return this.database.connection.select().from(users).where(eq(users.email, email)).get() ?? null
+	}
+
+	private isEmailWhitelisted(email: string): boolean {
+		return this.database.connection.select({ email: emailWhitelist.email }).from(emailWhitelist)
+			.where(eq(emailWhitelist.email, email)).get() !== undefined
 	}
 
 	private findUserByMinecraftUsername(minecraftUsername: string): UserRow | null {

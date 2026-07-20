@@ -5,8 +5,13 @@ chatMessage: Welcome to the MMU Minecraft Society!
 sidebarTitle: Welcome!
 ====
 
-![Waving Freddy Skin](/assets/knowledge/welcome/wave_freddy.gif)
-![Waving oderzo Skin](/assets/knowledge/welcome/wave_oderzo.gif)
+<div class="welcomeWaves">
+<figure><img src="/assets/knowledge/welcome/wave_freddy.gif" alt="Waving Freddy skin"><figcaption><strong>Freddy</strong><span>(Chair)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/welcome/wave_oderzo.gif" alt="Waving oderzo skin"><figcaption><strong>oderzo</strong><span>(Secretary)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/welcome/wave_hannah.gif" alt="Waving Hannah skin"><figcaption><strong>Hannah</strong><span>(Treasurer)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/welcome/wave_mia.gif" alt="Waving Mia skin"><figcaption><strong>Mia</strong><span>(Wellbeing Officer)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/welcome/wave_calum.gif" alt="Waving Calum skin"><figcaption><strong>Calum</strong><span>(Social Media Manager)</span></figcaption></figure>
+</div>
 
 __Welcome to the MMU Minecraft Society!__ If you're reading this, your signup was successful. You can now join the server and start playing! *Please read this first though:*
 

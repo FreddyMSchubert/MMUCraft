@@ -17,14 +17,25 @@ async function checkFlows() {
 	const auth = new AuthService(database, grpc)
 	const now = Date.now()
 
-	database.connection.insert(users).values({
+	const member = database.connection.insert(users).values({
 		email: 'member@stu.mmu.ac.uk',
 		minecraft_uuid: '0123456789abcdef0123456789abcdef',
 		minecraft_username: 'Member',
 		whitelisted_at_unix_ms: now,
 		rules_accepted_at_unix_ms: now,
 		created_at_unix_ms: now,
-	}).run()
+	}).returning({ id: users.id }).get()
+
+	await assert.rejects(auth.createSignup('guest@example.com'), /Only MMU email addresses are allowed/)
+	assert.throws(() => auth.addEmailToWhitelist({ id: member.id }, 'guest@.example.com', member.id), /valid email address/)
+	assert.throws(() => auth.addEmailToWhitelist({ id: member.id }, 'guest@example.com'), /responsible user/)
+	auth.addEmailToWhitelist({ id: member.id }, 'Guest@Example.com', member.id)
+	assert.deepEqual(auth.listEmailWhitelist().entries.map((entry) => entry.email), ['guest@example.com'])
+	assert.equal(auth.listEmailWhitelist().entries[0].addedByMinecraftUsername, 'Member')
+	assert.equal(auth.listEmailWhitelist().entries[0].responsibleMinecraftUsername, 'Member')
+	const guestSignup = await auth.createSignup('guest@example.com')
+	assert.equal(guestSignup.delivery, 'manual')
+	auth.removeEmailFromWhitelist('guest@example.com')
 
 	const signin = await auth.signIn('member@stu.mmu.ac.uk')
 	assert.equal(signin.delivery, 'manual')

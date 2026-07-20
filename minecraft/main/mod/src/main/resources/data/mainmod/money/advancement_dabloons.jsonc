@@ -1271,7 +1271,7 @@
 	"minecraft:husbandry/breed_an_animal": 0, // Repopulation: breed any animal; ordinary farm progression, so no surprise payout.
 	"minecraft:husbandry/complete_catalogue": 85, // A Complete Catalogue: find villages/swamp huts for all cat variants and tame each; long animal-variant hunt.
 	"minecraft:husbandry/feed_snifflet": 8, // Little Sniffs: obtain Sniffers and Torchflower Seeds, then feed a baby; modest reward after archaeology/sniffer setup.
-	"minecraft:husbandry/fishy_business": 5, // Fishy Business: catch a fish with a rod; deliberate but quick, with low accidental chance.
+	"minecraft:husbandry/fishy_business": 15, // Fishy Business: catch a fish with a rod; deliberate but quick, with low accidental chance.
 	"minecraft:husbandry/froglights": 35, // Incandescent!: bring frogs to Magma Cubes or route cubes to frogs for all three froglights; awkward biome/mob setup.
 	"minecraft:husbandry/kill_axolotl_target": 12, // The Healing Power of Friendship: bucket/find an Axolotl, engage a target, and let it assist; small combat setup.
 	"minecraft:husbandry/leash_all_frog_variants": 45, // When the Squad Hops into Town: collect all frog variants from different climates and leash each; travel plus animal handling.

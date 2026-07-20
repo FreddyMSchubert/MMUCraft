@@ -1,0 +1,1 @@
+ALTER TABLE `email_whitelist` ADD `responsible_user_id` integer REFERENCES users(id);

@@ -1,12 +1,11 @@
 {
-	"title": "Worms",
+	"title": "Worm",
 	"id": "worms",
-	"baseItemOverride": "minecraft:string",
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 16,
 	"tooltips": [
-		"Raises the fishing fish chance to 85%",
+		"Raises the fishing fish chance to 80%",
 		"20 casts"
 	]
 }

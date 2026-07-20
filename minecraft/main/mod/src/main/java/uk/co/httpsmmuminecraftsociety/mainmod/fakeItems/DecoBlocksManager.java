@@ -13,6 +13,7 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
@@ -38,6 +39,23 @@ public final class DecoBlocksManager {
                 context.getClickLocation(),
                 context.getClickedFace(),
                 context.getClickedPos(),
+                context.isInside()
+        );
+        InteractionResult result = onUseBlock(player, context.getLevel(), context.getHand(), hitResult);
+        return result == InteractionResult.PASS ? null : result;
+    }
+
+    public static @Nullable InteractionResult onPlaceBlock(BlockPlaceContext context) {
+        Player player = context.getPlayer();
+        if (player == null) {
+            return null;
+        }
+
+        Direction face = context.getClickedFace();
+        BlockHitResult hitResult = new BlockHitResult(
+                context.getClickLocation(),
+                face,
+                context.getClickedPos().relative(face.getOpposite()),
                 context.isInside()
         );
         InteractionResult result = onUseBlock(player, context.getLevel(), context.getHand(), hitResult);

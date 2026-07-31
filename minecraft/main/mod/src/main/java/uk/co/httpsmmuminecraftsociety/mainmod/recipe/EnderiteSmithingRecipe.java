@@ -5,16 +5,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleSmithingRecipe;
 import net.minecraft.world.item.crafting.SmithingRecipeInput;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.enderite.EnderiteGearVisuals;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,7 @@ public final class EnderiteSmithingRecipe extends SimpleSmithingRecipe {
             Items.NETHERITE_LEGGINGS,
             Items.NETHERITE_BOOTS,
             Items.NETHERITE_SWORD,
+            Items.NETHERITE_SPEAR,
             Items.NETHERITE_PICKAXE,
             Items.NETHERITE_AXE,
             Items.NETHERITE_SHOVEL,
@@ -61,7 +64,19 @@ public final class EnderiteSmithingRecipe extends SimpleSmithingRecipe {
         tag.putBoolean(CharmorManager.ENDERITE_MARKER_BOOL, true);
         result.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
-        EnderiteGearVisuals.apply(result);
+        CustomModelData modelData = result.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        result.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
+                modelData.floats(), List.of(true), modelData.strings(), modelData.colors()
+        ));
+
+        Equippable equippable = result.get(DataComponents.EQUIPPABLE);
+        if (equippable != null) {
+            result.set(
+                    DataComponents.EQUIPPABLE,
+                    EquippableCharmItemFeature.createEquippableSettings("enderite", equippable.slot())
+            );
+        }
+
         CharmorManager.updateArmorTooltip(result);
         return result;
     }
@@ -104,6 +119,6 @@ public final class EnderiteSmithingRecipe extends SimpleSmithingRecipe {
     }
 
     private static boolean isUpgradeableBase(ItemStack stack) {
-        return EnderiteGearVisuals.supports(stack) && !CharmorManager.isEnderite(stack);
+        return BASE_INGREDIENT.test(stack) && !CharmorManager.isEnderite(stack);
     }
 }

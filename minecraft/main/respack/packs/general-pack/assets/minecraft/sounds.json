@@ -35,13 +35,21 @@
       }
     ]
   },
-  "minecraft:block.bamboo_wood_button.click_off": {
+  "block.bamboo_wood_button.click_off": {
     "replace": true,
     "sounds": [
       {
         "name": "mainmod:discs/9am",
         "stream": true
       }
+    ]
+  },
+  "block.bamboo_wood_button.click_on": {
+    "replace": true,
+    "sounds": [
+      "mainmod:obama/now_let_me_be_clear",
+      "mainmod:obama/obamna",
+      "mainmod:obama/thanks_obama"
     ]
   },
   "music.game": {

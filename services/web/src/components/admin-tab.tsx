@@ -383,7 +383,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 										<td>{formatDateTime(request.createdAtUnixMs)}</td>
 										<td>{request.deliveryStatus === 'sent' ? 'Email sent' : 'Manual help needed'}</td>
 										<td>{request.status === 'verified' ? 'Verified' : request.status === 'expired' ? 'Expired' : `Active until ${formatDateTime(request.expiresAtUnixMs)}`}</td>
-										<td>{request.code ? <code>{request.code}</code> : '—'}</td>
+										<td>{request.code ? <code>{request.code.replaceAll('|', ' → ')}</code> : '—'}</td>
 									</tr>
 								))}
 								{authRequests.length === 0 && (

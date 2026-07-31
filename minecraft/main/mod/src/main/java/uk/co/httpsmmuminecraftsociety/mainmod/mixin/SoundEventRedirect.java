@@ -44,6 +44,11 @@ public abstract class SoundEventRedirect
             new Tuple(
                     Identifier.fromNamespaceAndPath("minecraft", "block.bamboo_wood_button.click_off"),
                     Identifier.fromNamespaceAndPath("minecraft", "block.wooden_button.click_off")
+            ),
+            // obamium pyramid
+            new Tuple(
+                    Identifier.fromNamespaceAndPath("minecraft", "block.bamboo_wood_button.click_on"),
+                    Identifier.fromNamespaceAndPath("minecraft", "block.wooden_button.click_on")
             )
     );
     private static final Map<Identifier, Identifier> MAP = SWAPS.stream()

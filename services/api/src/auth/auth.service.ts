@@ -13,9 +13,10 @@ import {
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service'
 import { AuthGrpcService } from './auth-grpc.service'
 import {
-	createMinecraftCode,
-	createNumericCode,
+	AUTH_CODE_ITEMS,
+	createAuthCode,
 	createOpaqueToken,
+	displayAuthCode,
 	hashSecret,
 	isAllowedEmail,
 	isAuthRequestActive,
@@ -32,7 +33,42 @@ const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
 const AUTH_REQUEST_HISTORY_LIMIT = 50
-const MAX_EMAIL_CODE_ATTEMPTS = 5
+const MAX_AUTH_CODE_ATTEMPTS = 5
+const AUTH_CODE_IMAGE_BASE = 'https://mmuminecraftsociety.co.uk/assets/mc_respack/assets/minecraft/textures/'
+const AUTH_CODE_IMAGES: Partial<Record<(typeof AUTH_CODE_ITEMS)[number], string>> = {
+	Apple: 'item/apple.png',
+	Axe: 'item/golden_axe.png',
+	Beetroot: 'item/beetroot.png',
+	Coal: 'item/coal.png',
+	Copper: 'item/raw_copper.png',
+	Diamond: 'item/diamond.png',
+	Egg: 'item/egg.png',
+	Emerald: 'item/emerald.png',
+	Fish: 'item/tropical_fish.png',
+	'Flint and Steel': 'item/flint_and_steel.png',
+	Flower: 'block/red_tulip.png',
+	'Gold Ingot': 'item/gold_ingot.png',
+	Iron: 'item/raw_iron.png',
+	'Lapis Lazuli': 'item/lapis_lazuli.png',
+	'Lava Bucket': 'item/lava_bucket.png',
+	'Lily Pad': 'block/lily_pad.png',
+	'Melon Slice': 'item/melon_slice.png',
+	Mushroom: 'block/red_mushroom.png',
+	'Music Disk': 'item/music_disc_cat.png',
+	Netherite: 'item/netherite_scrap.png',
+	Pickaxe: 'item/iron_pickaxe.png',
+	Potato: 'item/potato.png',
+	Potion: 'item/potion.png',
+	Quartz: 'item/quartz.png',
+	Redstone: 'item/redstone.png',
+	Shovel: 'item/copper_shovel.png',
+	Slimeball: 'item/slime_ball.png',
+	Spear: 'item/diamond_spear.png',
+	Sword: 'item/wooden_sword.png',
+	Totem: 'item/totem_of_undying.png',
+	Trident: 'item/trident.png',
+	Wheat: 'item/wheat.png',
+}
 
 export interface AuthenticatedUser {
 	id: number
@@ -68,7 +104,7 @@ export class AuthService {
 
 		const now = Date.now()
 		this.expireActiveAuthRequests(email, 'signup', now)
-		const code = createNumericCode()
+		const code = createAuthCode()
 		const flowId = randomUUID()
 
 		signupFlows.set(flowId, {
@@ -96,7 +132,7 @@ export class AuthService {
 			throw new BadRequestException('This signup flow is not waiting for email verification')
 		}
 
-		if (flow.emailCodeExpiresAt < now) {
+		if (flow.emailCodeExpiresAt <= now) {
 			throw new BadRequestException('Email code expired')
 		}
 
@@ -124,6 +160,11 @@ export class AuthService {
 		const username = usernameInput.trim()
 		const now = Date.now()
 
+		if (flow.step === 'minecraft-code'
+			&& flow.minecraftUsername?.localeCompare(username, 'en', { sensitivity: 'base' }) === 0) {
+			return { ok: true }
+		}
+
 		if (flow.step !== 'minecraft-username') {
 			throw new BadRequestException('This signup flow is not waiting for a Minecraft username')
 		}
@@ -147,7 +188,7 @@ export class AuthService {
 			throw new BadRequestException('This Minecraft username is already being used in another signup flow')
 		}
 
-		const minecraftCode = createMinecraftCode()
+		const minecraftCode = createAuthCode()
 		const expiresAt = now + MINECRAFT_CODE_TTL_MS
 
 		flow.step = 'minecraft-code'
@@ -155,6 +196,7 @@ export class AuthService {
 		flow.minecraftUuid = undefined
 		flow.minecraftCodeHash = hashSecret(minecraftCode)
 		flow.minecraftCodeExpiresAt = expiresAt
+		flow.minecraftCodeFailedAttempts = 0
 		flow.updatedAt = now
 
 		await this.grpc.upsertPendingJoin({
@@ -178,11 +220,16 @@ export class AuthService {
 			throw new BadRequestException('Minecraft code is not available for this signup flow')
 		}
 
-		if (flow.minecraftCodeExpiresAt < now) {
+		if (flow.minecraftCodeExpiresAt <= now) {
 			throw new BadRequestException('Minecraft code expired')
 		}
 
-		if (!safeSecretEquals(code.trim().toUpperCase(), flow.minecraftCodeHash)) {
+		if (!safeSecretEquals(code.trim(), flow.minecraftCodeHash)) {
+			flow.minecraftCodeFailedAttempts = (flow.minecraftCodeFailedAttempts ?? 0) + 1
+			if (flow.minecraftCodeFailedAttempts >= MAX_AUTH_CODE_ATTEMPTS) {
+				flow.minecraftCodeExpiresAt = now
+				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
+			}
 			throw new BadRequestException('Invalid Minecraft code')
 		}
 
@@ -267,7 +314,7 @@ export class AuthService {
 		}
 
 		const now = Date.now()
-		const code = createNumericCode()
+		const code = createAuthCode()
 		const flowId = randomUUID()
 		this.expireActiveAuthRequests(email, 'signin', now)
 		this.createAuthRequest(flowId, 'signin', email, user.id, code, now)
@@ -543,7 +590,7 @@ export class AuthService {
 		const failedAttempts = request.failed_attempts + 1
 		this.database.connection.update(authRequests).set({
 			failed_attempts: failedAttempts,
-			...(failedAttempts >= MAX_EMAIL_CODE_ATTEMPTS ? {
+			...(failedAttempts >= MAX_AUTH_CODE_ATTEMPTS ? {
 				active_code: null,
 				expires_at_unix_ms: Date.now(),
 			} : {}),
@@ -603,8 +650,8 @@ export class AuthService {
 					from,
 					to: [email],
 					subject: `Your MMU Minecraft Society ${kind === 'signup' ? 'signup' : 'signin'} code`,
-					text: `Your verification code is ${code}. It expires in 10 minutes. If you did not request this, you can ignore this email.`,
-					html: `<p>Your verification code is:</p><p style="font-size: 28px; font-weight: bold; letter-spacing: 4px">${code}</p><p>It expires in 10 minutes. If you did not request this, you can ignore this email.</p>`,
+					text: `Your verification code is ${displayAuthCode(code)}. It expires in 10 minutes. If you did not request this, you can ignore this email.`,
+					html: verificationCodeEmailHtml(code),
 				}),
 			})
 
@@ -663,6 +710,15 @@ export class AuthService {
 
 		return decodeURIComponent(match.slice(name.length + 1))
 	}
+}
+
+function verificationCodeEmailHtml(code: string) {
+	const items = code.split('|').map((item) => {
+		const image = AUTH_CODE_IMAGES[item as keyof typeof AUTH_CODE_IMAGES]
+		return `<td style="padding: 8px; text-align: center; font-weight: bold">${image ? `<img src="${AUTH_CODE_IMAGE_BASE}${image}" alt="" width="40" height="40" style="display: block; margin: 0 auto 4px; image-rendering: pixelated; object-fit: contain">` : ''}${item}</td>`
+	}).join('')
+
+	return `<p>Your verification code is:</p><table role="presentation"><tr>${items}</tr></table><p>It expires in 10 minutes. If you did not request this, you can ignore this email.</p>`
 }
 
 function isSuperAdminUsername(minecraftUsername: string) {

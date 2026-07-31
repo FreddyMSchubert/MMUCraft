@@ -45,13 +45,12 @@ public class WhitelistMsgModify {
         else
             return Component.empty()
                     .append(Component.literal("Good job - almost finished.\n\n"))
-                    .append(Component.literal("Your signup code is: \""))
-                    .append(Component.literal(code)
+                    .append(Component.literal("Your signup code is:\n"))
+                    .append(Component.literal(code.replace("|", " → "))
                             .withStyle(style -> style
                                     .withColor(0xFFD166)
                                     .withBold(true)))
-                    .append(Component.literal("\".\n\n"))
-                    .append(Component.literal("Please input it on the website. :D"));
+                    .append(Component.literal("\n\nChoose these three items on the website. :D"));
     }
 
     @Inject(method = "canPlayerLogin", at = @At("RETURN"), cancellable = true)

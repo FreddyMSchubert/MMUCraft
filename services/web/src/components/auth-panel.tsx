@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 
 type Step =
 	| 'email'
@@ -25,6 +25,57 @@ const SERVER_RULES = [
 	'🤡 Fun is to be had, this is an order.'
 ] as const
 
+const TEXTURE_BASE = '/assets/mc_respack/assets/minecraft/textures'
+const AUTH_CODE_ITEMS = [
+	{ name: 'Apple', image: `${TEXTURE_BASE}/item/apple.png` },
+	{ name: 'Axe', image: `${TEXTURE_BASE}/item/golden_axe.png` },
+	{ name: 'Beetroot', image: `${TEXTURE_BASE}/item/beetroot.png` },
+	{ name: 'Coal', image: `${TEXTURE_BASE}/item/coal.png` },
+	{ name: 'Copper', image: `${TEXTURE_BASE}/item/raw_copper.png` },
+	{ name: 'Creeper', image: `${TEXTURE_BASE}/entity/creeper/creeper.png`, head: true },
+	{ name: 'Diamond', image: `${TEXTURE_BASE}/item/diamond.png` },
+	{ name: 'Egg', image: `${TEXTURE_BASE}/item/egg.png` },
+	{ name: 'Emerald', image: `${TEXTURE_BASE}/item/emerald.png` },
+	{ name: 'Fish', image: `${TEXTURE_BASE}/item/tropical_fish.png` },
+	{ name: 'Flint and Steel', image: `${TEXTURE_BASE}/item/flint_and_steel.png` },
+	{ name: 'Flower', image: `${TEXTURE_BASE}/block/red_tulip.png` },
+	{ name: 'Gold Ingot', image: `${TEXTURE_BASE}/item/gold_ingot.png` },
+	{ name: 'Iron', image: `${TEXTURE_BASE}/item/raw_iron.png` },
+	{ name: 'Lapis Lazuli', image: `${TEXTURE_BASE}/item/lapis_lazuli.png` },
+	{ name: 'Lava Bucket', image: `${TEXTURE_BASE}/item/lava_bucket.png` },
+	{ name: 'Lily Pad', image: `${TEXTURE_BASE}/block/lily_pad.png` },
+	{ name: 'Melon Slice', image: `${TEXTURE_BASE}/item/melon_slice.png` },
+	{ name: 'Mushroom', image: `${TEXTURE_BASE}/block/red_mushroom.png` },
+	{ name: 'Music Disk', image: `${TEXTURE_BASE}/item/music_disc_cat.png` },
+	{ name: 'Netherite', image: `${TEXTURE_BASE}/item/netherite_scrap.png` },
+	{ name: 'Pickaxe', image: `${TEXTURE_BASE}/item/iron_pickaxe.png` },
+	{ name: 'Potato', image: `${TEXTURE_BASE}/item/potato.png` },
+	{ name: 'Potion', image: `${TEXTURE_BASE}/item/potion.png` },
+	{ name: 'Quartz', image: `${TEXTURE_BASE}/item/quartz.png` },
+	{ name: 'Redstone', image: `${TEXTURE_BASE}/item/redstone.png` },
+	{ name: 'Shovel', image: `${TEXTURE_BASE}/item/copper_shovel.png` },
+	{ name: 'Slimeball', image: `${TEXTURE_BASE}/item/slime_ball.png` },
+	{ name: 'Spear', image: `${TEXTURE_BASE}/item/diamond_spear.png` },
+	{ name: 'Sword', image: `${TEXTURE_BASE}/item/wooden_sword.png` },
+	{ name: 'Totem', image: `${TEXTURE_BASE}/item/totem_of_undying.png` },
+	{ name: 'Trident', image: `${TEXTURE_BASE}/item/trident.png` },
+	{ name: 'Wheat', image: `${TEXTURE_BASE}/item/wheat.png` },
+	{ name: 'Zombie', image: `${TEXTURE_BASE}/entity/zombie/zombie.png`, head: true },
+] as const
+const AUTH_CODE_LENGTH = 3
+const SIGNUP_PROGRESS: Partial<Record<Step, number>> = {
+	email: 1,
+	'email-code': 2,
+	'minecraft-username': 3,
+	'minecraft-code': 4,
+	rules: 5,
+	done: 5,
+}
+
+function emptyAuthCode() {
+	return Array<string>(AUTH_CODE_LENGTH).fill('')
+}
+
 async function postJson<T>(url: string, body: unknown): Promise<T> {
 	const response = await fetch(url, {
 		method: 'POST',
@@ -48,18 +99,22 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
 
 export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	const [step, setStep] = useState<Step>('email')
+	const [isSigningIn, setIsSigningIn] = useState(false)
 	const [email, setEmail] = useState('')
 	const [flowId, setFlowId] = useState('')
-	const [emailCode, setEmailCode] = useState('')
+	const [authCode, setAuthCode] = useState(emptyAuthCode)
 	const [minecraftUsername, setMinecraftUsername] = useState('')
-	const [minecraftCode, setMinecraftCode] = useState('')
 	const [deliveryMessage, setDeliveryMessage] = useState('')
 	const [acceptedRules, setAcceptedRules] = useState<boolean[]>(() => SERVER_RULES.map(() => false))
 	const [error, setError] = useState('')
 	const [busy, setBusy] = useState(false)
+	const running = useRef(false)
 	const allRulesAccepted = acceptedRules.every(Boolean)
+	const signupProgress = isSigningIn ? undefined : SIGNUP_PROGRESS[step]
 
 	async function run(action: () => Promise<void>) {
+		if (running.current) return
+		running.current = true
 		setBusy(true)
 		setError('')
 
@@ -68,6 +123,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		} catch (caught) {
 			setError(caught instanceof Error ? caught.message : 'Something went wrong')
 		} finally {
+			running.current = false
 			setBusy(false)
 		}
 	}
@@ -79,6 +135,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			const result = await postJson<{ flowId: string; delivery: 'sent' | 'manual' }>('/api/auth/signup', { email })
 			setFlowId(result.flowId)
 			setDeliveryMessage(verificationMessage(result.delivery, email))
+			setAuthCode(emptyAuthCode())
 			setStep('email-code')
 		})
 	}
@@ -87,7 +144,8 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault()
 
 		void run(async () => {
-			await postJson('/api/auth/verify-email', { flowId, code: emailCode })
+			await postJson('/api/auth/verify-email', { flowId, code: authCode.join('|') })
+			setAuthCode(emptyAuthCode())
 			setStep('minecraft-username')
 		})
 	}
@@ -97,6 +155,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 
 		void run(async () => {
 			await postJson('/api/auth/minecraft-username', { flowId, minecraftUsername })
+			setAuthCode(emptyAuthCode())
 			setStep('minecraft-code')
 		})
 	}
@@ -105,7 +164,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault()
 
 		void run(async () => {
-			await postJson('/api/auth/verify-minecraft', { flowId, code: minecraftCode })
+			await postJson('/api/auth/verify-minecraft', { flowId, code: authCode.join('|') })
 			setStep('rules')
 		})
 	}
@@ -139,6 +198,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			const result = await postJson<{ flowId: string; delivery: 'sent' | 'manual' }>('/api/auth/signin', { email })
 			setFlowId(result.flowId)
 			setDeliveryMessage(verificationMessage(result.delivery, email))
+			setAuthCode(emptyAuthCode())
 			setStep('signin-code')
 		})
 	}
@@ -147,7 +207,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault()
 
 		void run(async () => {
-			await postJson('/api/auth/verify-signin', { flowId, code: emailCode })
+			await postJson('/api/auth/verify-signin', { flowId, code: authCode.join('|') })
 			setStep('done')
 			onSignedIn?.()
 		})
@@ -155,6 +215,12 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 
 	return (
 		<section className="authCard">
+			{signupProgress !== undefined && (
+				<div className="authSignupProgress">
+					<span>{step === 'done' ? 'Signup complete' : `Signup step ${signupProgress} of 5`}</span>
+					<progress value={signupProgress} max={5} />
+				</div>
+			)}
 			{step === 'email' && (
 				<form onSubmit={submitEmail} className="authForm">
 					<h2>Join the server</h2>
@@ -169,7 +235,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						required
 					/>
 					<button disabled={busy}>Sign up</button>
-					<button type="button" disabled={busy} onClick={() => setStep('signin')}>
+					<button type="button" disabled={busy} onClick={() => { setIsSigningIn(true); setStep('signin') }}>
 						Already signed up?
 					</button>
 				</form>
@@ -188,7 +254,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						required
 					/>
 					<button disabled={busy}>Sign in</button>
-					<button type="button" disabled={busy} onClick={() => setStep('email')}>
+					<button type="button" disabled={busy} onClick={() => { setIsSigningIn(false); setStep('email') }}>
 						Back to signup
 					</button>
 				</form>
@@ -198,16 +264,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 				<form onSubmit={submitEmailCode} className="authForm">
 					<h2>Verify email</h2>
 					<p>{deliveryMessage}</p>
-					<input
-						value={emailCode}
-						onChange={(event) => setEmailCode(event.target.value)}
-						placeholder="Email code"
-						inputMode="numeric"
-						autoComplete="one-time-code"
-						pattern="[0-9]{6}"
-						maxLength={6}
-						required
-					/>
+					<AuthCodeInputs value={authCode} onChange={setAuthCode} />
 					<button disabled={busy}>Verify email</button>
 				</form>
 			)}
@@ -216,16 +273,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 				<form onSubmit={submitSignInCode} className="authForm">
 					<h2>Verify sign in</h2>
 					<p>{deliveryMessage}</p>
-					<input
-						value={emailCode}
-						onChange={(event) => setEmailCode(event.target.value)}
-						placeholder="Email code"
-						inputMode="numeric"
-						autoComplete="one-time-code"
-						pattern="[0-9]{6}"
-						maxLength={6}
-						required
-					/>
+					<AuthCodeInputs value={authCode} onChange={setAuthCode} />
 					<button disabled={busy}>Sign in</button>
 				</form>
 			)}
@@ -246,13 +294,8 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'minecraft-code' && (
 				<form onSubmit={submitMinecraftCode} className="authForm">
 					<h2>Join the server</h2>
-					<p>Try to join Minecraft. The kick message will show a code. Enter it here.</p>
-					<input
-						value={minecraftCode}
-						onChange={(event) => setMinecraftCode(event.target.value)}
-						placeholder="Minecraft code"
-						autoCapitalize="characters"
-					/>
+					<p>Try to join Minecraft. The kick message will show three item names. Choose them here in the same order.</p>
+					<AuthCodeInputs value={authCode} onChange={setAuthCode} />
 					<button disabled={busy}>Verify Minecraft code</button>
 				</form>
 			)}
@@ -295,8 +338,49 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	)
 }
 
+function AuthCodeInputs({ value, onChange }: {
+	value: string[]
+	onChange: (value: string[]) => void
+}) {
+	return (
+		<div className="authCodeInputs" role="group" aria-label="Three-item verification code">
+			{value.map((selected, index) => (
+				<label className="authCodeInput" key={index}>
+					<span className="authCodePosition">{index + 1}</span>
+					<AuthCodeIcon itemName={selected} />
+					<select
+						value={selected}
+						onChange={(event) => onChange(value.map((item, itemIndex) => (
+							itemIndex === index ? event.target.value : item
+						)))}
+						aria-label={`Code item ${index + 1}`}
+						required
+					>
+						<option value="">Choose an item</option>
+						{AUTH_CODE_ITEMS.map((item) => (
+							<option value={item.name} key={item.name}>{item.name}</option>
+						))}
+					</select>
+				</label>
+			))}
+		</div>
+	)
+}
+
+function AuthCodeIcon({ itemName }: { itemName: string }) {
+	const item = AUTH_CODE_ITEMS.find((candidate) => candidate.name === itemName)
+	if (!item) return <span className="authCodeIcon authCodeIconEmpty" aria-hidden="true">?</span>
+
+	return <span
+		className={`authCodeIcon${'head' in item ? ' authCodeHeadIcon' : ''}`}
+		style={{ backgroundImage: `url(${item.image})` }}
+		role="img"
+		aria-label={'head' in item ? `${item.name} head` : item.name}
+	/>
+}
+
 function verificationMessage(delivery: 'sent' | 'manual', email: string) {
 	return delivery === 'sent'
-		? `We sent a six-digit code to ${email}. It expires in 10 minutes.`
+		? `We sent a three-item code to ${email}. It expires in 10 minutes.`
 		: 'Email delivery is currently unavailable. Contact the administrators; they can find this active request and give you the code.'
 }

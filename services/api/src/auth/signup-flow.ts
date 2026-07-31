@@ -7,6 +7,7 @@ export interface SignupFlow {
 	minecraftUuid?: string
 	minecraftCodeHash?: string
 	minecraftCodeExpiresAt?: number
+	minecraftCodeFailedAttempts?: number
 	updatedAt: number
 }
 

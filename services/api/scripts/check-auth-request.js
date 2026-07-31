@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict')
-const { isAuthRequestActive } = require('../dist/auth/auth.util')
+const { AUTH_CODE_ITEMS, createAuthCode, isAuthRequestActive } = require('../dist/auth/auth.util')
 const { AuthService } = require('../dist/auth/auth.service')
 const { DatabaseService, users } = require('../dist/database/database.service')
 
@@ -9,11 +9,24 @@ assert.equal(isAuthRequestActive(request, 2000), false)
 assert.equal(isAuthRequestActive({ ...request, active_code: null }, 1000), false)
 assert.equal(isAuthRequestActive({ ...request, completed_at_unix_ms: 1500 }, 1000), false)
 
+function assertAuthCode(code) {
+	const items = code.split('|')
+	assert.equal(items.length, 3)
+	assert.ok(items.every((item) => AUTH_CODE_ITEMS.includes(item)))
+}
+
+assertAuthCode(createAuthCode())
+
 async function checkFlows() {
 	process.env.DATABASE_URL = ':memory:'
 	delete process.env.RESEND_API_KEY
 	const database = new DatabaseService()
-	const grpc = { removePendingJoin: async () => undefined }
+	let pendingJoin
+	let pendingJoinUpdates = 0
+	const grpc = {
+		removePendingJoin: async () => undefined,
+		upsertPendingJoin: async (request) => { pendingJoin = request; pendingJoinUpdates++ },
+	}
 	const auth = new AuthService(database, grpc)
 	const now = Date.now()
 
@@ -41,7 +54,7 @@ async function checkFlows() {
 	assert.equal(signin.delivery, 'manual')
 	let signinRequest = auth.listAuthRequests().requests[0]
 	assert.equal(signinRequest.status, 'active')
-	assert.match(signinRequest.code, /^\d{6}$/)
+	assertAuthCode(signinRequest.code)
 	assert.ok(auth.verifySignIn(signin.flowId, signinRequest.code).token)
 	signinRequest = auth.listAuthRequests().requests[0]
 	assert.equal(signinRequest.status, 'verified')
@@ -51,11 +64,19 @@ async function checkFlows() {
 	assert.equal(signup.delivery, 'manual')
 	let signupRequest = auth.listAuthRequests().requests[0]
 	assert.equal(signupRequest.kind, 'signup')
-	assert.match(signupRequest.code, /^\d{6}$/)
+	assertAuthCode(signupRequest.code)
 	auth.verifyEmailCode(signup.flowId, signupRequest.code)
 	signupRequest = auth.listAuthRequests().requests[0]
 	assert.equal(signupRequest.status, 'verified')
 	assert.equal(signupRequest.code, null)
+	await auth.setMinecraftUsername(signup.flowId, 'NewMember')
+	await auth.setMinecraftUsername(signup.flowId, 'NewMember')
+	assert.equal(pendingJoinUpdates, 1)
+	assertAuthCode(pendingJoin.code)
+	for (let attempt = 0; attempt < 5; attempt++) {
+		await assert.rejects(auth.verifyMinecraftCode(signup.flowId, 'Not an item'), /Invalid Minecraft code/)
+	}
+	await assert.rejects(auth.verifyMinecraftCode(signup.flowId, pendingJoin.code), /Minecraft code expired/)
 
 	database.onModuleDestroy()
 }

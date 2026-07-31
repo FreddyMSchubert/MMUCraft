@@ -2,6 +2,43 @@ import { createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto
 
 const MMU_EMAIL_DOMAINS = ['stu.mmu.ac.uk', 'mmu.ac.uk']
 
+export const AUTH_CODE_ITEMS = [
+	'Apple',
+	'Axe',
+	'Beetroot',
+	'Coal',
+	'Copper',
+	'Creeper',
+	'Diamond',
+	'Egg',
+	'Emerald',
+	'Fish',
+	'Flint and Steel',
+	'Flower',
+	'Gold Ingot',
+	'Iron',
+	'Lapis Lazuli',
+	'Lava Bucket',
+	'Lily Pad',
+	'Melon Slice',
+	'Mushroom',
+	'Music Disk',
+	'Netherite',
+	'Pickaxe',
+	'Potato',
+	'Potion',
+	'Quartz',
+	'Redstone',
+	'Shovel',
+	'Slimeball',
+	'Spear',
+	'Sword',
+	'Totem',
+	'Trident',
+	'Wheat',
+	'Zombie',
+] as const
+
 export function normalizeEmail(email: string): string {
 	return email.trim().toLowerCase()
 }
@@ -31,14 +68,12 @@ function parseEmailParts(email: string): { local: string; domain: string } | nul
 	return { local, domain }
 }
 
-export function createNumericCode(length = 6): string {
-	const min = 10 ** (length - 1)
-	const max = 10 ** length
-	return String(randomInt(min, max))
+export function createAuthCode(length = 3): string {
+	return Array.from({ length }, () => AUTH_CODE_ITEMS[randomInt(AUTH_CODE_ITEMS.length)]).join('|')
 }
 
-export function createMinecraftCode(): string {
-	return randomBytes(4).toString('hex').toUpperCase()
+export function displayAuthCode(code: string): string {
+	return code.split('|').join(' → ')
 }
 
 export function createOpaqueToken(): string {

@@ -149,6 +149,7 @@ public final class CosmeticsManager {
         }
 
         // Cancel pumpkin placement everywhere else
+        DecoBlocksManager.syncHeldSlot(player, hand);
         return InteractionResult.FAIL;
     }
 }

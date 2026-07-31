@@ -1,0 +1,30 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "on_true": {
+      "type": "minecraft:select",
+      "property": "minecraft:display_context",
+      "cases": [
+        {
+          "when": ["gui", "ground", "fixed", "on_shelf"],
+          "model": { "type": "minecraft:model", "model": "mmu_pack:item/enderite/spear" }
+        }
+      ],
+      "fallback": { "type": "minecraft:model", "model": "mmu_pack:item/enderite/spear_in_hand" }
+    },
+    "on_false": {
+      "type": "minecraft:select",
+      "property": "minecraft:display_context",
+      "cases": [
+        {
+          "when": ["gui", "ground", "fixed", "on_shelf"],
+          "model": { "type": "minecraft:model", "model": "minecraft:item/netherite_spear" }
+        }
+      ],
+      "fallback": { "type": "minecraft:model", "model": "minecraft:item/netherite_spear_in_hand" }
+    }
+  },
+  "swap_animation_scale": 1.95
+}

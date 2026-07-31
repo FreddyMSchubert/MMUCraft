@@ -10,7 +10,6 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.equipment.Equippable;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
-import uk.co.httpsmmuminecraftsociety.mainmod.enderite.EnderiteGearVisuals;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
@@ -106,10 +105,6 @@ public class CharmorManager
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return;
 
         List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
-        if (isEnderite(stack)) {
-            EnderiteGearVisuals.apply(stack);
-        }
-
         if (storedCharms.isEmpty()) {
             return;
         }

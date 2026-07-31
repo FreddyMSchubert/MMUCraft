@@ -143,7 +143,7 @@ public final class DecoBlocksManager {
         return InteractionResult.FAIL;
     }
 
-    private static void syncHeldSlot(Player player, InteractionHand hand) {
+    static void syncHeldSlot(Player player, InteractionHand hand) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }

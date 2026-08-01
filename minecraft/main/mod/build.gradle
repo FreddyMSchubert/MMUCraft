@@ -53,14 +53,6 @@ dependencies {
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
 }
 
-testing {
-    suites {
-        test {
-            useJUnitJupiter()
-        }
-    }
-}
-
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:${protobufVersion}"

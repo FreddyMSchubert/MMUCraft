@@ -1,8 +1,10 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.ItemLore;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
@@ -11,12 +13,15 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFe
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFeature;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class FakeItems {
+        private static final int TOOLTIP_LINE_LENGTH = 50;
+
         private FakeItems() {}
 
         public static List<FakeItem> ALL = List.of();
@@ -99,5 +104,47 @@ public final class FakeItems {
         ItemStack stack = requireFakeItem(fakeItemId).createItemStack();
         stack.setCount(count);
         return stack;
+    }
+
+    public static void wrapTooltip(ItemStack stack) {
+        ItemLore lore = stack.get(DataComponents.LORE);
+        if (lore == null) return;
+
+        List<Component> wrapped = lore.lines().stream()
+                .flatMap(line -> wrapTooltipLine(line).stream())
+                .toList();
+        if (wrapped.size() != lore.lines().size()) {
+            stack.set(DataComponents.LORE, new ItemLore(wrapped));
+        }
+    }
+
+    private static List<Component> wrapTooltipLine(Component line) {
+        List<String> wrappedText = wrapTooltipLine(line.getString());
+        if (wrappedText.size() == 1) return List.of(line);
+
+        return wrappedText.stream()
+                .map(text -> Component.literal(text).setStyle(line.getStyle()))
+                .map(Component.class::cast)
+                .toList();
+    }
+
+    static List<String> wrapTooltipLine(String text) {
+        if (text.length() <= TOOLTIP_LINE_LENGTH) return List.of(text);
+
+        List<String> wrapped = new ArrayList<>();
+        int start = 0;
+        while (text.length() - start > TOOLTIP_LINE_LENGTH) {
+            int end = start + TOOLTIP_LINE_LENGTH;
+            int space = text.lastIndexOf(' ', end);
+            if (space > start) end = space;
+
+            wrapped.add(text.substring(start, end));
+            start = end;
+            while (start < text.length() && text.charAt(start) == ' ') start++;
+        }
+        if (start < text.length()) {
+            wrapped.add(text.substring(start));
+        }
+        return wrapped;
     }
 }

@@ -140,11 +140,13 @@ export class GameplayGrpcService implements OnModuleInit {
 		}, {
 			accepted: boolean
 			account_linked: boolean
+			is_member: boolean
 			message: string
 		}>,
 		callback: UnaryCallback<{
 			accepted: boolean
 			account_linked: boolean
+			is_member: boolean
 			message: string
 		}>,
 	) {
@@ -159,6 +161,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		callback(null, {
 			accepted: result.accepted,
 			account_linked: result.accountLinked,
+			is_member: result.isMember,
 			message: result.message,
 		})
 	}

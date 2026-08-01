@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public final class GameplayGrpcService extends GrpcHandler {
     static final GameplayGrpcService INSTANCE = new GameplayGrpcService();
@@ -211,7 +212,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .addAllStats(stats)
                 .build();
 
-        var rpc = client.syncPlayerStats(request);
+        var rpc = client.withDeadlineAfter(5, TimeUnit.SECONDS).syncPlayerStats(request);
         CompletableFuture<SyncPlayerStatsResponse> result = new CompletableFuture<>();
 
         rpc.addListener(() -> {

@@ -356,6 +356,7 @@ export class PlayersService {
 			return {
 				accepted: false,
 				accountLinked: false,
+				isMember: false,
 				message: 'No website account is linked to this Minecraft username yet.',
 			}
 		}
@@ -388,6 +389,7 @@ export class PlayersService {
 		return {
 			accepted: true,
 			accountLinked: true,
+			isMember: user.is_member === 1,
 			message: 'Stats synced.',
 		}
 	}

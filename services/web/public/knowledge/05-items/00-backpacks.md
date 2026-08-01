@@ -7,6 +7,8 @@ sidebarTitle: Backpacks
 
 When you right click a backpack, they open up an additional inventory for you to drop off your stuff. You can think of it as a chest in item form. This is quite powerful because you can upgrade them to store as much as a double chest, and you can have multiple at once.
 
+![Leather Backpack Usage Example](/assets/knowledge/items/backpacks/usage_example.png)
+
 You cannot put backpacks, Shulkers, or bundles inside backpacks. You also cannot put backpacks inside bundles.
 
 Backpacks are crafted and come in 6 different levels, each with one more row of inventory space.

@@ -1,29 +1,36 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.StatType;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EntityType;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons.PlayerAdvancementsAccessor;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class PlayerStatsSync {
     private static final long BASE_SYNC_INTERVAL_TICKS = 20L * 60L * 20L;
     private static final long STAGGER_WINDOW_TICKS = 5L * 60L * 20L;
     private static final Map<UUID, Long> nextSyncTickByPlayer = new ConcurrentHashMap<>();
+    private static final Map<UUID, Boolean> membershipByPlayer = new ConcurrentHashMap<>();
 
     private static long serverTicks;
+    private static boolean sundayRewardDay = AdvancementMoney.isSundayRewardDay();
 
     private PlayerStatsSync() {
     }
@@ -37,11 +44,20 @@ public final class PlayerStatsSync {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             syncNow(handler.player, true);
             nextSyncTickByPlayer.remove(handler.player.getUUID());
+            membershipByPlayer.remove(handler.player.getUUID());
         });
     }
 
     public static void onServerTick(MinecraftServer server) {
         serverTicks++;
+
+        if (serverTicks % (20L * 60L) == 0L) {
+            boolean currentSundayRewardDay = AdvancementMoney.isSundayRewardDay();
+            if (currentSundayRewardDay != sundayRewardDay) {
+                sundayRewardDay = currentSundayRewardDay;
+                server.getPlayerList().getPlayers().forEach(PlayerStatsSync::refreshAdvancementTooltips);
+            }
+        }
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             UUID playerId = player.getUUID();
@@ -70,20 +86,61 @@ public final class PlayerStatsSync {
         return Math.floorMod(player.getUUID().hashCode(), STAGGER_WINDOW_TICKS);
     }
 
-    public static void syncNow(ServerPlayer player) {
-        syncNow(player, false);
+    public static CompletableFuture<Boolean> syncNow(ServerPlayer player) {
+        return syncNow(player, false);
     }
 
-    private static void syncNow(ServerPlayer player, boolean allowDisconnectedPlayer) {
+    public static boolean isMember(ServerPlayer player) {
+        return player != null && membershipByPlayer.getOrDefault(player.getUUID(), false);
+    }
+
+    private static CompletableFuture<Boolean> syncNow(ServerPlayer player, boolean allowDisconnectedPlayer) {
         if (player == null || (!allowDisconnectedPlayer && player.hasDisconnected())) {
-            return;
+            return CompletableFuture.completedFuture(false);
         }
 
-        GameplayGrpcService.syncPlayerStats(player, collectStats(player))
+        CompletableFuture<Boolean> membershipSync = GameplayGrpcService.syncPlayerStats(player, collectStats(player))
+                .thenApply(response -> response.getAccountLinked() && response.getIsMember());
+
+        membershipSync
+                .thenAccept(isMember -> {
+                    if (!allowDisconnectedPlayer && !player.hasDisconnected()) {
+                        updateMembership(player, isMember);
+                    }
+                })
                 .exceptionally(error -> {
                     MainMod.LOGGER.debug("Failed to sync player stats for {}", player.getName().getString(), error);
                     return null;
                 });
+
+        return membershipSync.exceptionally(error -> isMember(player));
+    }
+
+    private static void updateMembership(ServerPlayer player, boolean isMember) {
+        Boolean previous = membershipByPlayer.put(player.getUUID(), isMember);
+        if (previous != null && previous == isMember) {
+            return;
+        }
+
+        MinecraftServer server = player.level().getServer();
+        if (server != null) {
+            server.execute(() -> refreshAdvancementTooltips(player));
+        }
+    }
+
+    private static void refreshAdvancementTooltips(ServerPlayer player) {
+        if (player.hasDisconnected()) {
+            return;
+        }
+
+        PlayerAdvancements advancements = player.getAdvancements();
+        PlayerAdvancementsAccessor accessor = (PlayerAdvancementsAccessor) advancements;
+        advancements.visible.clear();
+        for (AdvancementNode root : advancements.tree.roots()) {
+            accessor.mainmod$getRootsToUpdate().add(root);
+        }
+        accessor.mainmod$setFirstPacket(true);
+        advancements.flushDirty(player, true);
     }
 
     private static List<MinecraftStatEntry> collectStats(ServerPlayer player) {

@@ -19,6 +19,7 @@
       "InsertMultipleCoinsAtOnce",
       "SoundEventRedirect",
       "advancementDabloons.AdvancementMoneyTooltip",
+      "advancementDabloons.PlayerAdvancementsAccessor",
       "advancementDabloons.PlayerAdvancementMoney",
       "XPOrbMendVitality",
       "bowTrail.AttachDataToArrow",

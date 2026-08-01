@@ -109,33 +109,51 @@ public class PlayerAdvancementMoney {
             return;
         }
 
-        PlayerStatsSync.syncNow(this.player);
-
+        ServerPlayer rewardedPlayer = this.player;
+        var membership = PlayerStatsSync.syncNow(rewardedPlayer);
         AdvancementRewards rewards = advancementHolder.value().rewards();
-        int money = AdvancementMoney.moneyForAdvancement(advancementHolder.id(), rewards.experience());
-        MoneyHelper.GainMoney(this.player, money);
-        if (money > 0) {
+        membership.thenAccept(isMember -> rewardedPlayer.level().getServer().execute(
+                () -> grantMoney(rewardedPlayer, advancementHolder, rewards, isMember)
+        ));
+    }
+
+    private void grantMoney(
+            ServerPlayer rewardedPlayer,
+            AdvancementHolder advancementHolder,
+            AdvancementRewards rewards,
+            boolean isMember
+    ) {
+        if (rewardedPlayer.hasDisconnected()) {
+            return;
+        }
+
+        int money = AdvancementMoney.rewardForAdvancement(
+                advancementHolder.id(),
+                rewards.experience(),
+                isMember
+        ).totalReward();
+        if (money > 0 && MoneyHelper.GainMoney(rewardedPlayer, money)) {
             GameplayGrpcService.recordMoneyEvent(
-                    this.player.getName().getString(),
-                    this.player.getUUID().toString(),
+                    rewardedPlayer.getName().getString(),
+                    rewardedPlayer.getUUID().toString(),
                     money,
                     "earned",
                     "advancement",
                     advancementHolder.id().toString(),
-                    MoneyHelper.GetBalance(this.player)
+                    MoneyHelper.GetBalance(rewardedPlayer)
             ).exceptionally(error -> {
-                MainMod.LOGGER.debug("Failed to record advancement dabloons for {}", this.player.getName().getString(), error);
+                MainMod.LOGGER.debug("Failed to record advancement dabloons for {}", rewardedPlayer.getName().getString(), error);
                 return null;
             });
 
-            advancementHolder.value().display().ifPresent(displayInfo -> this.player.sendSystemMessage(
-                    Component.literal(randomCelebration() + ": You received " + money + " dabloons for completing ")
+            advancementHolder.value().display().ifPresent(displayInfo -> rewardedPlayer.sendSystemMessage(
+                    Component.literal(randomCelebration(rewardedPlayer) + ": You received " + money + " dabloons for completing ")
                             .append(displayInfo.getTitle().getString() + ". :D")
             ));
         }
     }
 
-    private String randomCelebration() {
-        return CELEBRATIONS.get(this.player.getRandom().nextInt(CELEBRATIONS.size()));
+    private String randomCelebration(ServerPlayer rewardedPlayer) {
+        return CELEBRATIONS.get(rewardedPlayer.getRandom().nextInt(CELEBRATIONS.size()));
     }
 }

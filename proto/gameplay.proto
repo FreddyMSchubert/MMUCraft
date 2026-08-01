@@ -93,6 +93,7 @@ message SyncPlayerStatsResponse {
   bool accepted = 1;
   bool account_linked = 2;
   string message = 3;
+  bool is_member = 4;
 }
 
 message RecordMoneyEventRequest {

@@ -13,6 +13,9 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.DayOfWeek;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +23,8 @@ public final class AdvancementMoney {
     private static final String MOD_ID = "mainmod";
     private static final Identifier REWARD_RESOURCE =
             Identifier.fromNamespaceAndPath(MOD_ID, "money/advancement_dabloons.jsonc");
+    private static final ZoneId REWARD_TIME_ZONE = ZoneId.of("Europe/London");
+    private static final int REWARD_DAY_RESET_HOUR = 4;
 
     private static Map<String, Integer> advancementRewards = Map.of();
 
@@ -36,6 +41,29 @@ public final class AdvancementMoney {
         }
 
         return fallbackMoneyForExperience(experience);
+    }
+
+    public static RewardCalculation rewardForAdvancement(
+            Identifier advancementId,
+            int experience,
+            boolean isMember
+    ) {
+        return calculateReward(moneyForAdvancement(advancementId, experience), isSundayRewardDay(), isMember);
+    }
+
+    public static RewardCalculation calculateReward(int baseReward, boolean isSunday, boolean isMember) {
+        int safeBaseReward = Math.max(0, baseReward);
+        long scaledReward = (long) safeBaseReward
+                * (isSunday ? 6L : 5L)
+                * (isMember ? 6L : 5L);
+        int totalReward = (int) Math.min(Integer.MAX_VALUE, (scaledReward + 24L) / 25L);
+        return new RewardCalculation(safeBaseReward, isSunday, isMember, totalReward);
+    }
+
+    public static boolean isSundayRewardDay() {
+        return ZonedDateTime.now(REWARD_TIME_ZONE)
+                .minusHours(REWARD_DAY_RESET_HOUR)
+                .getDayOfWeek() == DayOfWeek.SUNDAY;
     }
 
     private static int fallbackMoneyForExperience(int experience) {
@@ -119,10 +147,40 @@ public final class AdvancementMoney {
         return json.toString();
     }
 
-    public static Component appendMoneyReward(Identifier advancementId, DisplayInfo displayInfo, int experience) {
-        int money = moneyForAdvancement(advancementId, experience);
+    public static Component appendMoneyReward(
+            Identifier advancementId,
+            DisplayInfo displayInfo,
+            int experience,
+            boolean isMember
+    ) {
+        RewardCalculation reward = rewardForAdvancement(advancementId, experience, isMember);
+        if (reward.baseReward() == 0) {
+            return displayInfo.getDescription()
+                    .copy()
+                    .append(Component.literal("\n\nNo dabloon reward").withStyle(ChatFormatting.DARK_GRAY));
+        }
         return displayInfo.getDescription()
                 .copy()
-                .append(Component.literal("\nReward: " + money + " dabloons").withStyle(ChatFormatting.GOLD));
+                .append(Component.literal("\n\nReward calculation").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                .append(Component.literal("\nBase reward: " + reward.baseReward() + " dabloons").withStyle(ChatFormatting.GRAY))
+                .append(multiplierLine("Sunday bonus", reward.isSunday()))
+                .append(multiplierLine("Member bonus", reward.isMember()))
+                .append(Component.literal("\nTotal: " + reward.totalReward() + " dabloons").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+    }
+
+    private static Component multiplierLine(String label, boolean applied) {
+        if (applied) {
+            return Component.literal("\n" + label + ": ×1.2").withStyle(ChatFormatting.GREEN);
+        }
+        return Component.literal("\n" + label + ": ×1.2")
+                .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.STRIKETHROUGH);
+    }
+
+    public record RewardCalculation(
+            int baseReward,
+            boolean isSunday,
+            boolean isMember,
+            int totalReward
+    ) {
     }
 }

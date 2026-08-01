@@ -2,6 +2,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -14,9 +16,14 @@ import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
@@ -43,12 +50,22 @@ public class MainMod implements ModInitializer {
 	public static final String MOD_ID = "mainmod";
 	public static final String RESOURCE_PACK_ID = "mmu_pack";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    private static final ResourceKey<PlacedFeature> ALIEN_DEBRIS = ResourceKey.create(
+            Registries.PLACED_FEATURE,
+            Identifier.fromNamespaceAndPath(MOD_ID, "alien_debris")
+    );
 
     private static volatile HolderLookup.Provider registries;
 
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Hello MMU!");
+
+        BiomeModifications.addFeature(
+                BiomeSelectors.foundInTheEnd(),
+                GenerationStep.Decoration.UNDERGROUND_ORES,
+                ALIEN_DEBRIS
+        );
 
         DataLoader.init();
 

@@ -138,6 +138,7 @@ public record CharmItemFeature(
         }
 
         applyPresentation(stack, newLevel);
+        FakeItems.wrapTooltip(stack);
     }
 
     public boolean hasNextLevel(int level) {

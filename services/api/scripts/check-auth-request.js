@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict')
-const { AUTH_CODE_ITEMS, createAuthCode, isAuthRequestActive } = require('../dist/auth/auth.util')
+const { AUTH_CODE_ITEMS, createAuthCode, isAllowedEmail, isAuthRequestActive } = require('../dist/auth/auth.util')
 const { AuthService } = require('../dist/auth/auth.service')
 const { DatabaseService, users } = require('../dist/database/database.service')
 
@@ -16,6 +16,10 @@ function assertAuthCode(code) {
 }
 
 assertAuthCode(createAuthCode())
+
+assert.equal(isAllowedEmail('anything@mmu.ac.uk'), true)
+assert.equal(isAllowedEmail('12345678@stu.mmu.ac.uk'), true)
+assert.equal(isAllowedEmail('anything@stu.mmu.ac.uk'), false)
 
 async function checkFlows() {
 	process.env.DATABASE_URL = ':memory:'
@@ -39,7 +43,7 @@ async function checkFlows() {
 		created_at_unix_ms: now,
 	}).returning({ id: users.id }).get()
 
-	await assert.rejects(auth.createSignup('guest@example.com'), /Only MMU email addresses are allowed/)
+	await assert.rejects(auth.createSignup('guest@example.com'), /numeric @stu\.mmu\.ac\.uk address/)
 	assert.throws(() => auth.addEmailToWhitelist({ id: member.id }, 'guest@.example.com', member.id), /valid email address/)
 	assert.throws(() => auth.addEmailToWhitelist({ id: member.id }, 'guest@example.com'), /responsible user/)
 	auth.addEmailToWhitelist({ id: member.id }, 'Guest@Example.com', member.id)
@@ -60,7 +64,7 @@ async function checkFlows() {
 	assert.equal(signinRequest.status, 'verified')
 	assert.equal(signinRequest.code, null)
 
-	const signup = await auth.createSignup('newmember@stu.mmu.ac.uk')
+	const signup = await auth.createSignup('12345678@stu.mmu.ac.uk')
 	assert.equal(signup.delivery, 'manual')
 	let signupRequest = auth.listAuthRequests().requests[0]
 	assert.equal(signupRequest.kind, 'signup')

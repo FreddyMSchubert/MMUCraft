@@ -224,12 +224,12 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'email' && (
 				<form onSubmit={submitEmail} className="authForm">
 					<h2>Join the server</h2>
-					<p>Use your MMU email to start signup. (Must end in @stu.mmu.ac.uk or @mmu.ac.uk).</p>
+					<p>Use your MMU email to start signup: [student_id]@stu.mmu.ac.uk, or anything @mmu.ac.uk address if you're an employee.</p>
 					<p>If you are not an MMU member and want to join the server, please have someone you know at MMU contact the administrators. We&apos;re happy to have you!</p>
 					<input
 						value={email}
 						onChange={(event) => setEmail(event.target.value)}
-						placeholder="you@stu.mmu.ac.uk"
+						placeholder="12345678@stu.mmu.ac.uk"
 						type="email"
 						autoComplete="email"
 						required

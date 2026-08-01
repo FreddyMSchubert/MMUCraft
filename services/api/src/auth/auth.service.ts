@@ -91,7 +91,7 @@ export class AuthService {
 		const email = normalizeEmail(emailInput)
 
 		if (!isAllowedEmail(email) && !this.isEmailWhitelisted(email)) {
-			throw new BadRequestException('Only MMU email addresses are allowed')
+			throw new BadRequestException('Use an @mmu.ac.uk address or a numeric @stu.mmu.ac.uk address')
 		}
 
 		await this.cleanupStaleSignupFlows()

@@ -6,6 +6,7 @@ import { MinecraftStatInput, PlayersService } from '../players/players.service'
 import { KnowledgeService } from './knowledge/knowledge.service'
 import { ShopService } from './shop/shop.service'
 import { FishingService } from '../fishing/fishing.service'
+import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service'
 
 interface GameplayProtoRoot {
 	mcstack: {
@@ -27,6 +28,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly shop: ShopService,
 		private readonly players: PlayersService,
 		private readonly fishing: FishingService,
+		private readonly claims: ClaimsService,
 	) { }
 
 	onModuleInit() {
@@ -38,7 +40,15 @@ export class GameplayGrpcService implements OnModuleInit {
 			SyncPlayerStats: this.syncPlayerStats.bind(this),
 			RecordMoneyEvent: this.recordMoneyEvent.bind(this),
 			RecordFishCatch: this.recordFishCatch.bind(this),
+			GetClaimsSnapshot: this.getClaimsSnapshot.bind(this),
 		})
+	}
+
+	private getClaimsSnapshot(
+		_call: grpc.ServerUnaryCall<Record<string, never>, ClaimsSnapshot>,
+		callback: UnaryCallback<ClaimsSnapshot>,
+	) {
+		callback(null, this.claims.getSnapshot())
 	}
 
 	private unlockNextKnowledge(

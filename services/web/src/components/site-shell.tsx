@@ -10,6 +10,7 @@ import { MiscTab } from '@/components/misc-tab'
 import { PlayersTab } from '@/components/players-tab'
 import { ShopTab } from '@/components/shop-tab'
 import { FishingTab } from '@/components/fishing-tab'
+import { ClaimsTab } from '@/components/claims-tab'
 
 interface SessionUser {
 	id: number
@@ -21,7 +22,7 @@ interface SessionUser {
 	isSuperAdmin: boolean
 }
 
-type TabId = 'dailies' | 'knowledge' | 'shop' | 'fishing' | 'players' | 'admin' | 'misc'
+type TabId = 'dailies' | 'knowledge' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
 
 async function fetchMe(): Promise<SessionUser | null> {
 	const response = await fetch('/api/auth/me', {
@@ -134,6 +135,13 @@ export function SiteShell({ images }: { images: string[] }) {
 							</button>
 							<button
 								type="button"
+								className={activeTab === 'claims' ? 'active' : ''}
+								onClick={() => setActiveTab('claims')}
+							>
+								Claims
+							</button>
+							<button
+								type="button"
 								className={activeTab === 'fishing' ? 'active' : ''}
 								onClick={() => setActiveTab('fishing')}
 							>
@@ -168,6 +176,7 @@ export function SiteShell({ images }: { images: string[] }) {
 							{activeTab === 'dailies' && <DailiesTab />}
 							{activeTab === 'knowledge' && <KnowledgeTab />}
 							{activeTab === 'shop' && <ShopTab />}
+							{activeTab === 'claims' && <ClaimsTab />}
 							{activeTab === 'fishing' && <FishingTab />}
 							{activeTab === 'players' && <PlayersTab />}
 							{activeTab === 'admin' && user.isCommittee && <AdminTab isSuperAdmin={user.isSuperAdmin} />}

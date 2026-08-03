@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY services/api/package.json ./
 COPY services/api/package-lock.json ./
-RUN npm install
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY services/api/tsconfig.json ./
 COPY services/api/drizzle.config.ts ./

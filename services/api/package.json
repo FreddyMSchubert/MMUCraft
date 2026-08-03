@@ -7,8 +7,7 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:check": "drizzle-kit check",
-		"db:studio": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/studio-cluster.ps1",
-		"db:studio:pod": "drizzle-kit studio",
+		"db:studio": "drizzle-kit studio --host 0.0.0.0 --port 4983",
 		"start": "node --env-file-if-exists=.env dist/main.js",
 		"prod": "npm run build && npm run start"
 	},

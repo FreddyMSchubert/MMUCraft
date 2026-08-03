@@ -17,7 +17,7 @@ Don't miss your classes!
 Business before pleasure!
 Finish your homework first, play Minecraft with a good conscience!
 Hilariously overengineered!
-Powered by Elixir, k8s, k3s, Tilt, NextJS, Fastify, RabbitMQ, SQLite, Docker, and FabricMC!
+Powered by Next.js, NestJS, gRPC, SQLite, Docker, and FabricMC!
 With over 1000 additional new advancements!
 You're not poor enough irl yet, now you can be poor in Minecraft!
 Est. 2025

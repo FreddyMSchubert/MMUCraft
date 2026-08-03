@@ -23,13 +23,13 @@ function SettingsSection() {
 		<div className="settingsList">
 			<SettingToggle setting="arachnophobiaMode" checked={settings.arachnophobiaMode} onChange={updateSetting} title="Arachnophobia mode" description="Fully hides all images with spider-related stuff from the website. You may still encounter spidery things in-game." />
 			<SettingToggle setting="reduce3dRendering" checked={settings.reduce3dRendering} onChange={updateSetting} title="Reduce 3D rendering" description="Only loads 3D item models inside the detail view." />
-			<SettingToggle setting="reduceBackgroundImageLoading" checked={settings.reduceBackgroundImageLoading} onChange={updateSetting} title="Reduce background image loading" description="Replaces the changing image mosaic background with one static background image." />
+			<SettingToggle setting="mysteriousSetting" checked={settings.mysteriousSetting} onChange={updateSetting} title="the very mysterious and highly preculiar, though irregularly occurring, setting" />
 		</div>
 	</section>
 }
 
-function SettingToggle<Key extends keyof SiteSettings>({ setting, checked, onChange, title, description }: { setting: Key; checked: boolean; onChange: (key: Key, value: SiteSettings[Key]) => void; title: string; description: string }) {
-	return <label className="settingToggle"><span><strong>{title}</strong><small>{description}</small></span><input type="checkbox" checked={checked} onChange={(event) => onChange(setting, event.target.checked as SiteSettings[Key])} /><i aria-hidden="true" /></label>
+function SettingToggle<Key extends keyof SiteSettings>({ setting, checked, onChange, title, description }: { setting: Key; checked: boolean; onChange: (key: Key, value: SiteSettings[Key]) => void; title: string; description?: string }) {
+	return <label className="settingToggle"><span><strong>{title}</strong>{description && <small>{description}</small>}</span><input type="checkbox" checked={checked} onChange={(event) => onChange(setting, event.target.checked as SiteSettings[Key])} /><i aria-hidden="true" /></label>
 }
 
 function GiftCodeSection() {

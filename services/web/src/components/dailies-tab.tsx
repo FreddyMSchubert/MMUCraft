@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { ASSETS } from '@/lib/assets'
 
-const RESOURCE_PACK_ROOT = '/assets/mc_respack/assets'
+const RESOURCE_PACK_ROOT = ASSETS.minecraft.root
 
 interface DailyTask {
 	id: string

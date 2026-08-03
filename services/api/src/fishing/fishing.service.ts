@@ -6,6 +6,7 @@ import { interval, map, merge, of, Subject } from 'rxjs'
 import { AuthenticatedUser } from '../auth/auth.service'
 import { DatabaseService, FishCatchRow, fishCatches, playerProfiles, users } from '../database/database.service'
 import { MinecraftIdentityService } from '../database/minecraft-identity.service'
+import { ASSETS } from '../assets'
 
 const ITEM_ROOTS = [
 	join(process.cwd(), 'content', 'items'),
@@ -313,7 +314,7 @@ function vanillaFish(id: string, title: string, rarity: string, fact: string): F
 		rarity,
 		tags: [],
 		facts: [fact],
-		iconUrl: `/assets/mc_respack/assets/minecraft/textures/item/${textureName}.png`,
+		iconUrl: `${ASSETS.minecraft.vanilla}/textures/item/${textureName}.png`,
 		textureFilePath: null,
 	}
 }

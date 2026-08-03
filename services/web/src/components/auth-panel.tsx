@@ -1,6 +1,7 @@
 'use client'
 
 import { FormEvent, useRef, useState } from 'react'
+import { ASSETS } from '@/lib/assets'
 
 type Step =
 	| 'email'
@@ -25,7 +26,7 @@ const SERVER_RULES = [
 	'🤡 Fun is to be had, this is an order.'
 ] as const
 
-const TEXTURE_BASE = '/assets/mc_respack/assets/minecraft/textures'
+const TEXTURE_BASE = `${ASSETS.minecraft.vanilla}/textures`
 const AUTH_CODE_ITEMS = [
 	{ name: 'Apple', image: `${TEXTURE_BASE}/item/apple.png` },
 	{ name: 'Axe', image: `${TEXTURE_BASE}/item/golden_axe.png` },
@@ -224,7 +225,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'email' && (
 				<form onSubmit={submitEmail} className="authForm">
 					<h2>Join the server</h2>
-					<p>Use your MMU email to start signup: [student_id]@stu.mmu.ac.uk, or anything @mmu.ac.uk address if you're an employee.</p>
+					<p>Use your MMU email to start signup: [student_id]@stu.mmu.ac.uk, or anything @mmu.ac.uk address if you&apos;re an employee.</p>
 					<p>If you are not an MMU member and want to join the server, please have someone you know at MMU contact the administrators. We&apos;re happy to have you!</p>
 					<input
 						value={email}

@@ -38,6 +38,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
@@ -73,6 +74,7 @@ public class MainMod implements ModInitializer {
         MoneyCommand.init();
         WebsiteCommand.init();
         PlayerStatsSync.init();
+        ClaimsManager.init();
         MainModRecipes.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
@@ -92,11 +94,13 @@ public class MainMod implements ModInitializer {
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);
 
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> ClaimsManager.reset());
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> GrpcBridge.stop());
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             GrpcBridge.onServerTick();
             PlayerStatsSync.onServerTick(server);
+            ClaimsManager.tickBossBars(server);
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {

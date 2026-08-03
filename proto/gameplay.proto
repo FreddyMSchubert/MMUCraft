@@ -12,6 +12,7 @@ service GameplayEvents {
   rpc SyncPlayerStats(SyncPlayerStatsRequest) returns (SyncPlayerStatsResponse);
   rpc RecordMoneyEvent(RecordMoneyEventRequest) returns (RecordMoneyEventResponse);
   rpc RecordFishCatch(RecordFishCatchRequest) returns (RecordFishCatchResponse);
+  rpc GetClaimsSnapshot(GetClaimsSnapshotRequest) returns (ClaimsSnapshot);
 }
 
 service GameplayControl {
@@ -21,6 +22,56 @@ service GameplayControl {
   rpc PickDailyAdvancement(PickDailyAdvancementRequest) returns (PickDailyAdvancementResponse);
   rpc ClaimDailyAdvancement(ClaimDailyAdvancementRequest) returns (ClaimDailyAdvancementResponse);
   rpc PurchaseShopItem(PurchaseShopItemRequest) returns (PurchaseShopItemResponse);
+  rpc GetCurrentClaimChunk(GetCurrentClaimChunkRequest) returns (GetCurrentClaimChunkResponse);
+  rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
+  rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
+}
+
+message GetClaimsSnapshotRequest {}
+
+message ClaimData {
+  string id = 1;
+  string dimension = 2;
+  sint32 chunk_x = 3;
+  sint32 chunk_z = 4;
+  string owner_uuid = 5;
+  string owner_name = 6;
+  repeated string member_uuids = 7;
+}
+
+message ClaimsSnapshot {
+  repeated ClaimData claims = 1;
+}
+
+message GetCurrentClaimChunkRequest {
+  string minecraft_username = 1;
+}
+
+message GetCurrentClaimChunkResponse {
+  bool online = 1;
+  string dimension = 2;
+  sint32 chunk_x = 3;
+  sint32 chunk_z = 4;
+  int32 balance_dabloons = 5;
+  string message = 6;
+}
+
+message PurchaseClaimRequest {
+  string minecraft_username = 1;
+  string dimension = 2;
+  sint32 chunk_x = 3;
+  sint32 chunk_z = 4;
+}
+
+message PurchaseClaimResponse {
+  bool purchased = 1;
+  bool online = 2;
+  int32 balance_dabloons = 3;
+  string message = 4;
+}
+
+message ApplyClaimsSnapshotResponse {
+  bool applied = 1;
 }
 
 message GrantGiftCodeMoneyRequest {

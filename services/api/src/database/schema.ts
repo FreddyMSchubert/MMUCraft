@@ -80,6 +80,27 @@ export const playerProfiles = sqliteTable('player_profiles', {
 	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
 })
 
+export const claims = sqliteTable('claims', {
+	id: text('id').primaryKey(),
+	owner_user_id: integer('owner_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	dimension: text('dimension').notNull(),
+	chunk_x: integer('chunk_x').notNull(),
+	chunk_z: integer('chunk_z').notNull(),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+}, (table) => [
+	uniqueIndex('claims_dimension_chunk_unique').on(table.dimension, table.chunk_x, table.chunk_z),
+	index('claims_owner_user_id_idx').on(table.owner_user_id),
+])
+
+export const claimMembers = sqliteTable('claim_members', {
+	claim_id: text('claim_id').notNull().references(() => claims.id, { onDelete: 'cascade' }),
+	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	added_at_unix_ms: integer('added_at_unix_ms').notNull(),
+}, (table) => [
+	primaryKey({ columns: [table.claim_id, table.user_id] }),
+	index('claim_members_user_id_idx').on(table.user_id),
+])
+
 export const playerStats = sqliteTable('player_stats', {
 	user_id: integer('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
 	stats_json: text('stats_json').notNull(),
@@ -185,6 +206,8 @@ export type SessionRow = typeof sessions.$inferSelect
 export type AuthRequestRow = typeof authRequests.$inferSelect
 export type EmailWhitelistRow = typeof emailWhitelist.$inferSelect
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect
+export type ClaimRow = typeof claims.$inferSelect
+export type ClaimMemberRow = typeof claimMembers.$inferSelect
 export type PlayerStatsRow = typeof playerStats.$inferSelect
 export type PlayerMoneyEventRow = typeof playerMoneyEvents.$inferSelect
 export type FishCatchRow = typeof fishCatches.$inferSelect
@@ -200,6 +223,8 @@ export const schema = {
 	authRequests,
 	emailWhitelist,
 	playerProfiles,
+	claims,
+	claimMembers,
 	playerStats,
 	playerMoneyEvents,
 	fishCatches,

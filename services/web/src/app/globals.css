@@ -1065,6 +1065,111 @@ a {
 
 
 /* ============================================================
+   Claims
+   ============================================================ */
+
+.claimsPanel,
+.claimsList,
+.claimMembers {
+	display: grid;
+	gap: 14px;
+}
+
+.claimsTop,
+.claimHeader,
+.claimMember {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+}
+
+.claimsTop h3,
+.claimsTop p,
+.claimHeader h4 {
+	margin: 0;
+}
+
+.claimsTop p,
+.claimHeader span,
+.claimMember span,
+.claimMember small {
+	color: rgba(255, 255, 255, 0.68);
+}
+
+.claimsTop button,
+.claimMemberSearch button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 800;
+}
+
+.claimsTop button:disabled,
+.claimHeader button:disabled,
+.claimMember button:disabled,
+.claimMemberSearch button:disabled {
+	opacity: 0.55;
+}
+
+.claimsEmpty,
+.claimCard {
+	padding: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 9px;
+	background: rgba(255, 255, 255, 0.045);
+}
+
+.claimHeader {
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.claimHeader button,
+.claimMember button {
+	padding: 7px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.claimMembers {
+	margin-top: 12px;
+}
+
+.claimMember {
+	justify-content: flex-start;
+}
+
+.claimMember > div {
+	display: grid;
+	min-width: 0;
+}
+
+.claimMember > button,
+.claimMember > small {
+	margin-left: auto;
+}
+
+.claimMemberSearch {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 8px;
+}
+
+.claimMemberSearch input {
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 7px;
+	background: rgba(10, 14, 24, 0.72);
+	color: #fff;
+}
+
+/* ============================================================
    Players
    ============================================================ */
 

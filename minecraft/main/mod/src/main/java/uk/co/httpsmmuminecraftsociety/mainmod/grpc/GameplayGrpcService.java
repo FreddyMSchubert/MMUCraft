@@ -13,10 +13,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
@@ -115,11 +118,30 @@ public final class GameplayGrpcService extends GrpcHandler {
     @Override
     void start(ManagedChannel apiChannel) {
         gameplayEvents = GameplayEventsGrpc.newFutureStub(apiChannel);
+        requestClaimsSnapshot();
     }
 
     @Override
     void stop() {
         gameplayEvents = null;
+    }
+
+    private void requestClaimsSnapshot() {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+        if (client == null) return;
+
+        var rpc = client.withDeadlineAfter(5, TimeUnit.SECONDS)
+                .getClaimsSnapshot(GetClaimsSnapshotRequest.getDefaultInstance());
+        rpc.addListener(() -> {
+            try {
+                ClaimsSnapshot snapshot = rpc.get();
+                runOnMainThread(() -> ClaimsManager.apply(snapshot));
+                MainMod.LOGGER.info("Loaded {} chunk claims", snapshot.getClaimsCount());
+            } catch (Exception exception) {
+                MainMod.LOGGER.warn("Could not load claims; retrying in 5 seconds", exception);
+                CompletableFuture.delayedExecutor(5, TimeUnit.SECONDS).execute(this::requestClaimsSnapshot);
+            }
+        }, Runnable::run);
     }
 
     private CompletableFuture<UnlockNextKnowledgeResponse> unlockNextInternal(
@@ -613,6 +635,74 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
     }
 
+    private GetCurrentClaimChunkResponse getCurrentClaimChunkOnMainThread(GetCurrentClaimChunkRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        if (player == null || player.hasDisconnected()) {
+            return GetCurrentClaimChunkResponse.newBuilder()
+                    .setOnline(false)
+                    .setMessage("You have to be online on the server to claim a chunk.")
+                    .build();
+        }
+
+        ChunkPos chunk = player.chunkPosition();
+        return GetCurrentClaimChunkResponse.newBuilder()
+                .setOnline(true)
+                .setDimension(player.level().dimension().identifier().toString())
+                .setChunkX(chunk.x())
+                .setChunkZ(chunk.z())
+                .setBalanceDabloons(MoneyHelper.GetBalance(player))
+                .setMessage("Current chunk loaded.")
+                .build();
+    }
+
+    private PurchaseClaimResponse purchaseClaimOnMainThread(PurchaseClaimRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        if (player == null || player.hasDisconnected()) {
+            return PurchaseClaimResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(false)
+                    .setMessage("You have to be online on the server to buy a claim.")
+                    .build();
+        }
+
+        ChunkPos current = player.chunkPosition();
+        String dimension = player.level().dimension().identifier().toString();
+        if (!dimension.equals(request.getDimension())
+                || current.x() != request.getChunkX()
+                || current.z() != request.getChunkZ()) {
+            return PurchaseClaimResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(true)
+                    .setBalanceDabloons(MoneyHelper.GetBalance(player))
+                    .setMessage("Stay in the displayed chunk until the purchase finishes.")
+                    .build();
+        }
+
+        int price = 100;
+        int balance = MoneyHelper.GetBalance(player);
+        if (balance < price || !MoneyHelper.ReduceMoney(player, price)) {
+            return PurchaseClaimResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(true)
+                    .setBalanceDabloons(balance)
+                    .setMessage("You need 100 dabloons to buy this claim.")
+                    .build();
+        }
+
+        return PurchaseClaimResponse.newBuilder()
+                .setPurchased(true)
+                .setOnline(true)
+                .setBalanceDabloons(MoneyHelper.GetBalance(player))
+                .setMessage("Chunk claimed for 100 dabloons.")
+                .build();
+    }
+
     private ItemStack createShopGrantStack(PurchaseShopItemRequest request) {
         String deliveryKind = request.getDeliveryKind();
         String itemId = request.getItemId();
@@ -723,6 +813,35 @@ public final class GameplayGrpcService extends GrpcHandler {
         ) {
             callOnMainThread(() -> purchaseShopItemOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void getCurrentClaimChunk(
+                GetCurrentClaimChunkRequest request,
+                StreamObserver<GetCurrentClaimChunkResponse> responseObserver
+        ) {
+            callOnMainThread(() -> getCurrentClaimChunkOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void purchaseClaim(
+                PurchaseClaimRequest request,
+                StreamObserver<PurchaseClaimResponse> responseObserver
+        ) {
+            callOnMainThread(() -> purchaseClaimOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void applyClaimsSnapshot(
+                ClaimsSnapshot request,
+                StreamObserver<ApplyClaimsSnapshotResponse> responseObserver
+        ) {
+            callOnMainThread(() -> {
+                ClaimsManager.apply(request);
+                return ApplyClaimsSnapshotResponse.newBuilder().setApplied(true).build();
+            }).whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 
         private <T> void complete(StreamObserver<T> responseObserver, T response, Throwable error) {

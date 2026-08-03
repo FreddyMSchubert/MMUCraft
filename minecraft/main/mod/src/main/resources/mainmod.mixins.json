@@ -41,7 +41,15 @@
       "beacon.DynamicBeaconRangeMixin",
       "serverSideBlocks.ServerSideBlockDropsMixin",
       "serverSideBlocks.ServerSideBlockMiningMixin",
-      "serverSideBlocks.ServerSideBlockPlacementMixin"
+      "serverSideBlocks.ServerSideBlockPlacementMixin",
+      "claims.PlayerActionContextMixin",
+      "claims.LevelMutationMixin",
+      "claims.ServerLevelEntityMixin",
+      "claims.ProjectileWallMixin",
+      "claims.ExplosionMixin",
+      "claims.PistonMixin",
+      "claims.FireMixin",
+      "claims.WitherMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

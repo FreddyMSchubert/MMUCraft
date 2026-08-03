@@ -5,13 +5,13 @@ import { useEffect, useState } from 'react'
 export interface SiteSettings {
 	arachnophobiaMode: boolean
 	reduce3dRendering: boolean
-	reduceBackgroundImageLoading: boolean
+	mysteriousSetting: boolean
 }
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
 	arachnophobiaMode: false,
 	reduce3dRendering: false,
-	reduceBackgroundImageLoading: false,
+	mysteriousSetting: false,
 }
 
 const STORAGE_KEY = 'mmu-site-settings-v1'
@@ -23,7 +23,7 @@ function readSiteSettings(): SiteSettings {
 		return {
 			arachnophobiaMode: Boolean(stored.arachnophobiaMode),
 			reduce3dRendering: Boolean(stored.reduce3dRendering),
-			reduceBackgroundImageLoading: Boolean(stored.reduceBackgroundImageLoading),
+			mysteriousSetting: Boolean(stored.mysteriousSetting),
 		}
 	} catch {
 		return DEFAULT_SITE_SETTINGS

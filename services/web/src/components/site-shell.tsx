@@ -1,9 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { ASSETS } from '@/lib/assets'
 import { AuthPanel } from '@/components/auth-panel'
 import { AdminTab } from '@/components/admin-tab'
-import { BackgroundGrid } from '@/components/background-grid'
 import { DailiesTab } from '@/components/dailies-tab'
 import { KnowledgeTab } from '@/components/knowledge-tab'
 import { MiscTab } from '@/components/misc-tab'
@@ -37,7 +37,7 @@ async function fetchMe(): Promise<SessionUser | null> {
 	return data?.user ?? null
 }
 
-export function SiteShell({ images }: { images: string[] }) {
+export function SiteShell() {
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
 	const [activeTab, setActiveTab] = useState<TabId>('knowledge')
 
@@ -77,7 +77,7 @@ export function SiteShell({ images }: { images: string[] }) {
 
 	return (
 		<main className="page">
-			<BackgroundGrid images={images} />
+			<div className="siteBackground" style={{ backgroundImage: `url(${ASSETS.background})` }} aria-hidden="true" />
 
 			<div className="content">
 				<header className="siteHeader">

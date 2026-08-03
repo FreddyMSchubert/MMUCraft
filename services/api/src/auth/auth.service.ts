@@ -26,6 +26,7 @@ import {
 	safeSecretEquals,
 } from './auth.util'
 import { SignupFlow, signupFlows } from './signup-flow'
+import { ASSETS } from '../assets'
 
 const EMAIL_CODE_TTL_MS = 10 * 60 * 1000
 const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
@@ -34,7 +35,7 @@ const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
 const AUTH_REQUEST_HISTORY_LIMIT = 50
 const MAX_AUTH_CODE_ATTEMPTS = 5
-const AUTH_CODE_IMAGE_BASE = 'https://mmuminecraftsociety.co.uk/assets/mc_respack/assets/minecraft/textures/'
+const AUTH_CODE_IMAGE_BASE = `${ASSETS.minecraft.vanilla}/textures/`
 const AUTH_CODE_IMAGES: Partial<Record<(typeof AUTH_CODE_ITEMS)[number], string>> = {
 	Apple: 'item/apple.png',
 	Axe: 'item/golden_axe.png',

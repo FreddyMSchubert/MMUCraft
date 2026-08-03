@@ -9,6 +9,7 @@ import { DatabaseService, shopUnlocks } from '../../database/database.service'
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { KnowledgeService } from '../knowledge/knowledge.service'
+import { ASSETS } from '../../assets'
 
 const DEFAULT_ITEM_ROOTS = [
 	join(process.cwd(), 'content', 'items'),
@@ -16,7 +17,7 @@ const DEFAULT_ITEM_ROOTS = [
 	join(process.cwd(), 'minecraft', 'main', 'data', 'data', 'items'),
 ]
 
-const VANILLA_ITEM_TEXTURE_PREFIX = '/assets/mc_respack/assets/minecraft/textures/item'
+const VANILLA_ITEM_TEXTURE_PREFIX = `${ASSETS.minecraft.vanilla}/textures/item`
 const SHOP_ASSET_REVISION = `${Date.now().toString(36)}-${randomInt(0x100000000).toString(36)}`
 const DAILY_DEAL_MESSAGES = [
 	"What a steal!",

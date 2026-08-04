@@ -104,6 +104,10 @@ services:
         lithium?
         ferrite-core?
         krypton?
+        c2me-fabric?
+        scalablelux?
+        servercore?
+        zfastnoise?
       MODRINTH_DOWNLOAD_DEPENDENCIES: required
       MEMORY: 1536M
       INIT_MEMORY: 1G

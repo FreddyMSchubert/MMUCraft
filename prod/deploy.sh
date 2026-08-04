@@ -33,13 +33,17 @@ case "$PUBLIC_URL" in
 	https://*) ;;
 	*) echo "PUBLIC_URL must use HTTPS" >&2; exit 2 ;;
 esac
+public_host=${PUBLIC_URL#https://}
+case "$public_host" in
+	''|*[!A-Za-z0-9.-]*|.*|*..*|*.) echo "PUBLIC_URL must not contain a port, path, query, or fragment" >&2; exit 2 ;;
+esac
 [ "${#AUTH_CODE_SECRET}" -ge 32 ] || { echo "AUTH_CODE_SECRET must be at least 32 characters" >&2; exit 2; }
 case "$AUTH_CODE_SECRET:$RESEND_API_KEY" in
 	*replace*) echo "Replace the placeholder secrets in .env" >&2; exit 2 ;;
 esac
 
 umask 077
-printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\n' "$image_prefix" "$tag" > .release.env
+printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\n' "$image_prefix" "$tag" "$public_host" > .release.env
 mkdir -p data/api data/minecraft
 chmod 775 data/api data/minecraft
 

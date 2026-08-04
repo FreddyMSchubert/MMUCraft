@@ -10,5 +10,4 @@ __pycache__/
 *.py[cod]
 minecraft/minigames/
 minecraft/main/respack/items-respack-generator/output/
-minecraft/main/respack/ResourcePackMerger
 minecraft/main/respack/packs/general-pack/assets/mainmod/sounds/**/*.ogg

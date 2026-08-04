@@ -1,6 +1,7 @@
 import path from 'path';
 import { CHARM_ARMOR_MATERIALS, LEATHER_UNDYED_COLOR, PACK_MCMETA } from '../config';
 import type {
+  ArmorMaterial,
   Basic3dItemDefinition,
   BasicItemDefinition,
   CharmItemDefinition,
@@ -14,12 +15,9 @@ import type {
 } from '../types';
 import {
   copyFileWithDirectory,
-  ensureDirectory,
-  pathExists,
   resetDirectory,
   writeJsonFile,
 } from '../utils/fs';
-import { writeCompositedArmorTexture, writeUpscaledCopy } from '../utils/image';
 import { replaceTrailingVariant } from '../utils/paths';
 import {
   createCarvedPumpkinItemDefinition,
@@ -164,83 +162,26 @@ function getCharmLayerType(item: CharmItemDefinition): EquipmentLayerType {
 function createCharmEquipmentDefinition(
   namespace: string,
   item: CharmItemDefinition,
-  textureId: string,
+  material?: ArmorMaterial,
 ): Record<string, unknown> {
   const layerType = getCharmLayerType(item);
-
-  if (textureId.startsWith('leather__')) {
-    return {
-      layers: {
-        [layerType]: [
-          {
-            dyeable: {
-              color_when_undyed: LEATHER_UNDYED_COLOR,
-            },
-            texture: `${namespace}:${textureId}`,
-          },
-          {
-            texture: `${namespace}:leather_overlay__${item.baseName}`,
-          },
-        ],
-      },
-    };
-  }
+  const charmLayer = { texture: `${namespace}:${item.equippableAssetId}` };
 
   return {
     layers: {
-      [layerType]: [
-        {
-          texture: `${namespace}:${textureId}`,
-        },
-      ],
+      [layerType]: material
+        ? [
+            {
+              ...(material === 'leather'
+                ? { dyeable: { color_when_undyed: LEATHER_UNDYED_COLOR } }
+                : {}),
+              texture: `${material === 'enderite' ? namespace : 'minecraft'}:${material}`,
+            },
+            charmLayer,
+          ]
+        : [charmLayer],
     },
   };
-}
-
-function armorTexturePath(
-  options: GeneratorOptions,
-  layerType: EquipmentLayerType,
-  assetName: string,
-): string {
-  if (assetName === 'enderite') {
-    return path.join(
-      path.dirname(options.vanillaArmorAssetsDir),
-      '..',
-      'packs',
-      'general-pack',
-      'assets',
-      options.namespace,
-      'textures',
-      'entity',
-      'equipment',
-      layerType,
-      'enderite.png',
-    );
-  }
-
-  return path.join(options.vanillaArmorAssetsDir, layerType, `${assetName}.png`);
-}
-
-async function requireArmorTexture(
-  options: GeneratorOptions,
-  layerType: EquipmentLayerType,
-  assetName: string,
-): Promise<string> {
-  const texturePath = armorTexturePath(options, layerType, assetName);
-  if (!(await pathExists(texturePath))) {
-    throw new Error(`Missing armor texture: ${texturePath}`);
-  }
-
-  return texturePath;
-}
-
-async function findArmorTexture(
-  options: GeneratorOptions,
-  layerType: EquipmentLayerType,
-  assetName: string,
-): Promise<string | undefined> {
-  const texturePath = armorTexturePath(options, layerType, assetName);
-  return (await pathExists(texturePath)) ? texturePath : undefined;
 }
 
 async function generateBasicItem(
@@ -339,89 +280,25 @@ async function generateCharmEquipmentVariants(
   const layerType = getCharmLayerType(item);
 
   const charmAssetId = item.equippableAssetId;
-  const charmTextureId = charmAssetId;
 
   await writeJson(
     equipmentJsonPath(outputDir, namespace, charmAssetId),
-    createCharmEquipmentDefinition(namespace, item, charmTextureId),
+    createCharmEquipmentDefinition(namespace, item),
     context,
   );
   await copyFile(
     item.equippablePngPath,
-    equipmentTexturePngPath(outputDir, namespace, layerType, charmTextureId),
+    equipmentTexturePngPath(outputDir, namespace, layerType, charmAssetId),
     context,
   );
 
   for (const material of CHARM_ARMOR_MATERIALS) {
     const assetId = replaceTrailingVariant(item.equippableAssetId, material);
-    const textureId = `${material}__${item.baseName}`;
-    const equipmentDefinition = createCharmEquipmentDefinition(namespace, item, textureId);
-
-    await writeJson(equipmentJsonPath(outputDir, namespace, assetId), equipmentDefinition, context);
-
-    if (material === 'leather') {
-      const leatherBasePath = await requireArmorTexture(
-        context.options,
-        layerType,
-        'leather',
-      );
-      const leatherOverlayPath = await requireArmorTexture(
-        context.options,
-        layerType,
-        'leather_overlay',
-      );
-
-      const generatedLeatherBasePath = equipmentTexturePngPath(
-        outputDir,
-        namespace,
-        layerType,
-        textureId,
-      );
-      const generatedLeatherOverlayPath = equipmentTexturePngPath(
-        outputDir,
-        namespace,
-        layerType,
-        `leather_overlay__${item.baseName}`,
-      );
-
-      await ensureDirectory(path.dirname(generatedLeatherBasePath));
-      await writeUpscaledCopy({
-        sourcePngPath: leatherBasePath,
-        referencePngPath: item.equippablePngPath,
-        destinationPngPath: generatedLeatherBasePath,
-      });
-      context.generatedFiles += 1;
-
-      await writeCompositedArmorTexture({
-        basePngPath: leatherOverlayPath,
-        overlayPngPath: item.equippablePngPath,
-        destinationPngPath: generatedLeatherOverlayPath,
-      });
-      context.generatedFiles += 1;
-      continue;
-    }
-
-    const armorBasePath = material === 'enderite'
-      ? await findArmorTexture(context.options, layerType, material)
-      : await requireArmorTexture(context.options, layerType, material);
-    if (!armorBasePath) {
-      continue;
-    }
-
-    const generatedTexturePath = equipmentTexturePngPath(
-      outputDir,
-      namespace,
-      layerType,
-      textureId,
+    await writeJson(
+      equipmentJsonPath(outputDir, namespace, assetId),
+      createCharmEquipmentDefinition(namespace, item, material),
+      context,
     );
-
-    await ensureDirectory(path.dirname(generatedTexturePath));
-    await writeCompositedArmorTexture({
-      basePngPath: armorBasePath,
-      overlayPngPath: item.equippablePngPath,
-      destinationPngPath: generatedTexturePath,
-    });
-    context.generatedFiles += 1;
   }
 }
 

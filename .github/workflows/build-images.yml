@@ -61,7 +61,8 @@ jobs:
         run: |
           python3 ../stage_item_data.py --root ..
           chmod +x gradlew
-          ./gradlew runDatagen build --no-daemon
+          ./gradlew runDatagen --no-daemon
+          ./gradlew build --no-daemon
 
       - name: Build resource pack
         run: python3 minecraft/main/respack/build-main-pack.py

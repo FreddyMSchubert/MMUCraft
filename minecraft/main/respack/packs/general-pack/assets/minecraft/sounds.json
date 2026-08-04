@@ -51,53 +51,5 @@
       "mainmod:obama/obamna",
       "mainmod:obama/thanks_obama"
     ]
-  },
-  "music.game": {
-	"sounds": [
-		{
-			"name": "mainmod:beginning",
-			"stream": true
-		},
-		{
-			"name": "mainmod:chris",
-			"stream": true
-		},
-		{
-			"name": "mainmod:door",
-			"stream": true
-		},
-		{
-			"name": "mainmod:eleven",
-			"stream": true
-		},
-		{
-			"name": "mainmod:equinoxe",
-			"stream": true
-		},
-		{
-			"name": "mainmod:excuse",
-			"stream": true
-		},
-		{
-			"name": "mainmod:flake",
-			"stream": true
-		},
-		{
-			"name": "mainmod:intro",
-			"stream": true
-		},
-		{
-			"name": "mainmod:ki",
-			"stream": true
-		},
-		{
-			"name": "mainmod:kyoto",
-			"stream": true
-		},
-		{
-			"name": "mainmod:moog_city",
-			"stream": true
-		}
-	]
   }
 }

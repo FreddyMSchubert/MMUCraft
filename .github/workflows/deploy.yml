@@ -76,6 +76,34 @@ jobs:
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
 
+      - name: Verify SSH configuration
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER || 'deploy' }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+        run: |
+          ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null || {
+            echo "DEPLOY_SSH_KEY is not a valid OpenSSH private key" >&2
+            exit 1
+          }
+          ssh-keygen -lf ~/.ssh/known_hosts >/dev/null || {
+            echo "DEPLOY_KNOWN_HOSTS is not a valid known_hosts entry" >&2
+            exit 1
+          }
+
+          known_host="$DEPLOY_HOST"
+          [[ "$DEPLOY_PORT" == 22 ]] || known_host="[$DEPLOY_HOST]:$DEPLOY_PORT"
+          ssh-keygen -F "$known_host" -f ~/.ssh/known_hosts >/dev/null || {
+            echo "DEPLOY_KNOWN_HOSTS has no entry for the configured host and port" >&2
+            exit 1
+          }
+
+          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "$DEPLOY_USER@$DEPLOY_HOST" true || {
+            echo "SSH files are valid and the target entry exists, but strict connection failed; the OpenSSH error above distinguishes a changed host key from rejected client authentication" >&2
+            exit 1
+          }
+
       - name: Copy production files and deploy
         shell: bash
         env:

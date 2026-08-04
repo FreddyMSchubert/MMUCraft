@@ -33,15 +33,21 @@ case "$PUBLIC_URL" in
 	https://*) ;;
 	*) echo "PUBLIC_URL must use HTTPS" >&2; exit 2 ;;
 esac
+public_host=${PUBLIC_URL#https://}
+case "$public_host" in
+	''|*[!A-Za-z0-9.-]*|.*|*..*|*.) echo "PUBLIC_URL must not contain a port, path, query, or fragment" >&2; exit 2 ;;
+esac
 [ "${#AUTH_CODE_SECRET}" -ge 32 ] || { echo "AUTH_CODE_SECRET must be at least 32 characters" >&2; exit 2; }
 case "$AUTH_CODE_SECRET:$RESEND_API_KEY" in
 	*replace*) echo "Replace the placeholder secrets in .env" >&2; exit 2 ;;
 esac
 
 umask 077
-printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\n' "$image_prefix" "$tag" > .release.env
+printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\n' "$image_prefix" "$tag" "$public_host" > .release.env
 mkdir -p data/api data/minecraft
+[ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 chmod 775 data/api data/minecraft
+chmod 664 data/api/signup-allowlist.txt
 
 dc() {
 	docker compose --env-file .env --env-file .release.env "$@"
@@ -81,7 +87,6 @@ done
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
 chmod 664 "$server_properties"
 
-dc run --rm --no-deps nginx -t
 dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
 
 # Never prune volumes: they contain the database and Minecraft world.

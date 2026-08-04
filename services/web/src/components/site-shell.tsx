@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { ASSETS } from '@/lib/assets'
 import { AuthPanel } from '@/components/auth-panel'
+import { SitePage } from '@/components/site-page'
 import { AdminTab } from '@/components/admin-tab'
 import { DailiesTab } from '@/components/dailies-tab'
 import { KnowledgeTab } from '@/components/knowledge-tab'
@@ -37,7 +37,7 @@ async function fetchMe(): Promise<SessionUser | null> {
 	return data?.user ?? null
 }
 
-export function SiteShell() {
+export function SiteShell({ background, splash }: { background: string; splash: string }) {
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
 	const [activeTab, setActiveTab] = useState<TabId>('knowledge')
 
@@ -76,14 +76,7 @@ export function SiteShell() {
 	}
 
 	return (
-		<main className="page">
-			<div className="siteBackground" style={{ backgroundImage: `url(${ASSETS.background})` }} aria-hidden="true" />
-
-			<div className="content">
-				<header className="siteHeader">
-					<h1 className="title">MMU Minecraft Society</h1>
-				</header>
-
+		<SitePage background={background} splash={splash}>
 				{user === undefined && (
 					<section className="authCard">
 						<div className="authForm">
@@ -184,7 +177,6 @@ export function SiteShell() {
 						</div>
 					</section>
 				)}
-			</div>
-		</main>
+		</SitePage>
 	)
 }

@@ -63,6 +63,9 @@ services:
     image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-web:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
     environment:
       API_BASE_URL: http://api:8080
+      SITE_IMAGE_TAG: ${IMAGE_TAG}
+      DISCORD_URL: ${DISCORD_URL:-https://discord.gg/pPgZqRS5b2}
+      INSTAGRAM_URL: ${INSTAGRAM_URL:-https://www.instagram.com/mmuminecraftsociety/}
       TZ: ${TZ:-Europe/London}
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=32m,mode=1777

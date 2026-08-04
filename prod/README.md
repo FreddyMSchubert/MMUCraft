@@ -6,6 +6,8 @@ The API applies pending Drizzle migrations before it starts listening. The image
 
 On the VPS, copy `.env.example` to `.env`, fill every value, and keep the file readable only by the deployment user. The deployment user must be in the `docker` group and its numeric UID/GID should match `PUID`/`PGID`.
 
+Signups are closed by default. Add one permitted email address per line to `data/api/signup-allowlist.txt`. Email matching is case-insensitive. Put `*` on its own line to permit all valid signup addresses. The API reads the file for each signup attempt, so you do not have to restart it. Sign-in is not affected.
+
 ## One-time Let's Encrypt setup
 
 The production Nginx container serves HTTPS and redirects HTTP and `www` to the host in `PUBLIC_URL`. Certbot only creates and renews the host certificate.

@@ -87,7 +87,6 @@ done
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
 chmod 664 "$server_properties"
 
-dc run --rm --no-deps nginx nginx -t
 dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
 
 # Never prune volumes: they contain the database and Minecraft world.

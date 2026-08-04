@@ -79,10 +79,12 @@ jobs:
       - name: Verify SSH configuration
         shell: bash
         env:
-          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ vars.DEPLOY_USER || 'deploy' }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
         run: |
+          test -n "$DEPLOY_HOST" || { echo "DEPLOY_HOST variable is empty" >&2; exit 1; }
+          [[ "$DEPLOY_PORT" =~ ^[0-9]{1,5}$ ]] || { echo "DEPLOY_PORT variable is invalid" >&2; exit 1; }
           ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null || {
             echo "DEPLOY_SSH_KEY is not a valid OpenSSH private key" >&2
             exit 1

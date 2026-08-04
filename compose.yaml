@@ -49,6 +49,9 @@ services:
       target: dev
     environment:
       API_BASE_URL: http://api:8080
+      SITE_IMAGE_TAG: dev
+      DISCORD_URL: ${DISCORD_URL:-https://discord.gg/pPgZqRS5b2}
+      INSTAGRAM_URL: ${INSTAGRAM_URL:-https://www.instagram.com/mmuminecraftsociety/}
     ports:
       - "127.0.0.1:3000:3000"
     volumes:

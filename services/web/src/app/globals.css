@@ -11,6 +11,543 @@
 	--rarity-mythical: #ff5f00;
 }
 
+@font-face {
+	font-family: "Minecraft UI";
+	src: url("/assets/landing/fonts/minecraft.otf") format("opentype");
+	font-display: swap;
+}
+
+/* ============================================================
+   Minecraft-style landing page
+   ============================================================ */
+
+.minecraftHome {
+	position: relative;
+	display: grid;
+	place-items: start center;
+	min-height: 100vh;
+	min-height: 100svh;
+	overflow: hidden;
+	background: #111;
+	font-family: "Minecraft UI", monospace;
+	user-select: none;
+}
+
+.panoramaBackground,
+.minecraftShade {
+	position: absolute;
+	inset: -2px;
+}
+
+.panoramaBackground {
+	overflow: hidden;
+	background: center / cover no-repeat url("/assets/landing/panoramas/classic/panorama_0.webp");
+	perspective: 42vmax;
+	perspective-origin: 50% 50%;
+}
+
+.panoramaCube {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 200vmax;
+	height: 200vmax;
+	margin: -100vmax 0 0 -100vmax;
+	transform-style: preserve-3d;
+	animation: panoramaRotate 120s linear infinite;
+	will-change: transform;
+}
+
+.panoramaFace {
+	position: absolute;
+	inset: 0;
+	backface-visibility: hidden;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+.panoramaFace0 { transform: translateZ(-100vmax); }
+.panoramaFace1 { transform: translateX(100vmax) rotateY(-90deg); }
+.panoramaFace2 { transform: translateZ(100vmax) rotateY(180deg); }
+.panoramaFace3 { transform: translateX(-100vmax) rotateY(90deg); }
+.panoramaFace4 { transform: translateY(-100vmax) rotateX(-90deg); }
+.panoramaFace5 { transform: translateY(100vmax) rotateX(90deg); }
+
+@keyframes panoramaRotate {
+	from { transform: rotateX(-6deg) rotateY(0deg); }
+	to { transform: rotateX(-6deg) rotateY(360deg); }
+}
+
+.minecraftShade {
+	background:
+		radial-gradient(circle at 50% 42%, transparent 0 25%, rgba(0, 0, 0, 0.22) 75%),
+		rgba(0, 0, 0, 0.34);
+	pointer-events: none;
+}
+
+.minecraftMenu {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: min(900px, 94vw);
+	padding-top: clamp(28px, 5.5vh, 64px);
+}
+
+.minecraftLogoWrap {
+	position: relative;
+	width: 100%;
+	margin: 0 0 clamp(96px, 12vh, 124px);
+	line-height: 0;
+}
+
+.minecraftTitleLink { display: block; color: inherit; text-decoration: none; }
+
+.minecraftLogo {
+	display: block;
+	width: 100%;
+	height: auto;
+	filter: drop-shadow(0 4px 1px rgba(0, 0, 0, 0.72));
+}
+
+.minecraftSplash {
+	position: absolute;
+	top: 78%;
+	right: -20%;
+	display: block;
+	width: 72%;
+	color: #ffff00;
+	font-size: clamp(18px, 2vw, 31px);
+	line-height: 0.92;
+	text-align: center;
+	text-shadow: 2px 2px 0 #3f3f00;
+	overflow-wrap: normal;
+	word-break: normal;
+	transform: rotate(-18deg) scale(var(--splash-scale));
+	transform-origin: center;
+	animation: minecraftSplashPulse 700ms ease-in-out infinite alternate;
+}
+
+@keyframes minecraftSplashPulse {
+	from { transform: rotate(-18deg) scale(calc(var(--splash-scale) * 0.96)); }
+	to { transform: rotate(-18deg) scale(calc(var(--splash-scale) * 1.04)); }
+}
+
+.minecraftButtons {
+	display: grid;
+	gap: 9px;
+	width: min(600px, 88vw);
+}
+
+.minecraftButton {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-width: 0;
+	height: 60px;
+	padding: 7px 18px 9px;
+	border: 6px solid transparent;
+	border-image: url("/assets/landing/widgets/button.png") 3 fill stretch;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	color: #fff;
+	font-family: inherit;
+	font-size: 23px;
+	line-height: 1;
+	text-align: center;
+	text-decoration: none;
+	text-shadow: 2px 2px 0 #222;
+	image-rendering: pixelated;
+}
+
+.minecraftButton:hover,
+.minecraftButton:focus-visible {
+	outline: 0;
+	border-image-source: url("/assets/landing/widgets/button_highlighted.png");
+	background: none;
+	color: #ffffa0;
+}
+
+.menuCountdown {
+	position: absolute;
+	right: 12px;
+	color: #a8a8a8;
+	font-size: 11px;
+	text-shadow: 1px 1px 0 #222;
+}
+
+.playButton:hover .menuCountdown,
+.playButton:focus-visible .menuCountdown {
+	color: #ffffa0;
+}
+
+.minecraftButtonRow {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 9px;
+	margin-top: 8px;
+}
+
+.minecraftVersion,
+.minecraftLegal {
+	position: fixed;
+	z-index: 1;
+	bottom: 7px;
+	margin: 0;
+	color: #fff;
+	font-size: 13px;
+	line-height: 1.2;
+	text-shadow: 2px 2px 0 #222;
+}
+
+.minecraftVersion { left: 9px; }
+
+.minecraftLegal {
+	right: 9px;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.panoramaCredit { display: none; }
+
+/* ============================================================
+   Pre-launch play gate (keeps the existing site style)
+   ============================================================ */
+
+.launchGateContent { width: min(1100px, calc(100vw - 32px)); }
+
+.authCard.launchGateCard {
+	width: min(760px, 100%);
+	margin: 0 auto;
+	padding: clamp(24px, 5vw, 54px);
+	text-align: center;
+}
+
+.launchGateCard h2 {
+	margin: 0 0 14px;
+	font-size: clamp(1.8rem, 5vw, 3.2rem);
+}
+
+.launchGateCard > p {
+	max-width: 650px;
+	margin: 12px auto;
+	color: rgba(255, 255, 255, 0.82);
+	line-height: 1.6;
+}
+
+.secretWord {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	cursor: text;
+}
+
+.launchCountdown {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 10px;
+	margin: 28px 0 14px;
+}
+
+.launchCountdownSegment {
+	display: grid;
+	gap: 6px;
+	padding: 16px 8px;
+	border: 1px solid rgba(255, 209, 102, 0.38);
+	border-radius: 10px;
+	background: rgba(255, 209, 102, 0.08);
+}
+
+.launchCountdownSegment strong {
+	color: #ffd166;
+	font-size: clamp(1.5rem, 6vw, 3.2rem);
+	font-variant-numeric: tabular-nums;
+}
+
+.launchCountdownSegment span {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.78rem;
+	text-transform: capitalize;
+}
+
+.launchLive {
+	display: block;
+	margin: 28px 0 14px;
+	color: #88ff88;
+	font-size: 2rem;
+	font-weight: 800;
+}
+
+.launchGateCard .launchTimeLabel {
+	color: #fff;
+	font-weight: 700;
+}
+
+.launchGateCard .launchFairNote { color: #ffd166; }
+
+.launchGateActions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 26px;
+}
+
+.launchGateActions a,
+.launchGateActions button {
+	padding: 12px 16px;
+	border: 0;
+	border-radius: 9px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 800;
+	text-decoration: none;
+}
+
+/* ============================================================
+   Wordle (same visual system as the main site)
+   ============================================================ */
+
+.fireworksStage {
+	position: fixed;
+	inset: 0;
+	z-index: 8;
+	pointer-events: none;
+}
+
+.wordleContent {
+	display: grid;
+	gap: 24px;
+	width: min(1100px, calc(100vw - 32px));
+}
+
+.wordleContent .siteHeader {
+	margin-bottom: 48px;
+}
+
+.wordleDashboard {
+	width: min(100%, var(--wordle-shell-width));
+	margin: 0 auto;
+	overflow-x: auto;
+	text-align: center;
+}
+
+.wordleTopline {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding-bottom: 14px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.wordleTopline h2 {
+	margin: 0;
+	font-size: 1.25rem;
+}
+
+.wordleTopline span {
+	color: #ffd166;
+	font-size: 0.86rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.wordleRules {
+	padding: 14px 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+	color: rgba(255, 255, 255, 0.76);
+	text-align: left;
+}
+
+.wordleRules strong {
+	color: #fff;
+	font-size: 0.86rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.wordleRules ul {
+	display: grid;
+	gap: 6px;
+	margin: 10px 0 0;
+	padding-left: 22px;
+	font-size: 0.9rem;
+	line-height: 1.45;
+}
+
+.wordleStatus {
+	display: grid;
+	align-items: center;
+	min-height: 44px;
+	margin: 0;
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.wordleSolution {
+	width: min(100%, var(--wordle-board-width));
+	margin: 0 auto 14px;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	border-radius: 7px;
+	background: rgba(255, 209, 102, 0.1);
+	font-weight: 800;
+}
+
+.wordleBoard {
+	display: grid;
+	grid-template-columns: repeat(var(--word-length), minmax(0, 1fr));
+	gap: 7px;
+	width: min(100%, var(--wordle-board-width));
+	margin: 0 auto 16px;
+}
+
+.wordleTile {
+	display: grid;
+	place-items: center;
+	width: 100%;
+	aspect-ratio: 1;
+	border: 2px solid rgba(255, 255, 255, 0.25);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.06);
+	color: #fff;
+	font-size: 2rem;
+	font-weight: 900;
+	line-height: 1;
+	text-transform: uppercase;
+	transform-style: preserve-3d;
+}
+
+.wordleTile.filled {
+	border-color: rgba(255, 255, 255, 0.65);
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.wordleTile.correct { border-color: transparent; background: #5da75a; }
+.wordleTile.present { border-color: transparent; background: #c9a646; }
+.wordleTile.absent { border-color: transparent; background: #516056; }
+.wordleTile.skipped { border-color: rgba(255, 255, 255, 0.08); background: rgba(81, 96, 86, 0.22); }
+.wordleTile.reveal { animation: wordleTileReveal 520ms ease both; }
+.wordleTile.shake { animation: wordleTileShake 420ms ease; }
+.wordleTile.win { animation: wordleTileWin 700ms ease both; }
+
+.wordleKeyboard {
+	display: grid;
+	gap: 7px;
+	touch-action: manipulation;
+}
+
+.wordleKeyboardRow {
+	display: flex;
+	justify-content: center;
+	gap: 6px;
+}
+
+.wordleKey {
+	flex: 1 1 0;
+	min-width: 0;
+	min-height: 48px;
+	border: 0;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.22);
+	box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22);
+	color: #fff;
+	font-size: 0.9rem;
+	font-weight: 900;
+	text-transform: uppercase;
+}
+
+.wordleKey.wide { flex: 1.45 1 0; font-size: 0.74rem; }
+.wordleKey.correct { background: #5da75a; }
+.wordleKey.present { background: #c9a646; }
+.wordleKey.absent { background: #32443a; }
+.wordleKey:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22); }
+
+.copyPlaythrough {
+	width: min(100%, var(--wordle-board-width));
+	min-height: 46px;
+	margin: 16px auto 0;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 800;
+}
+
+.copyPlaythrough:disabled {
+	background: rgba(255, 255, 255, 0.18);
+	color: rgba(255, 255, 255, 0.58);
+}
+
+.wordleFooter {
+	color: rgba(255, 255, 255, 0.76);
+	font-size: 0.92rem;
+	text-align: center;
+}
+
+.wordleFooter strong {
+	color: #ffd166;
+	font-variant-numeric: tabular-nums;
+}
+
+@keyframes wordleTileReveal {
+	0% { transform: rotateX(0deg); }
+	48% { transform: rotateX(90deg); }
+	100% { transform: rotateX(0deg); }
+}
+
+@keyframes wordleTileShake {
+	0%, 100% { transform: translateX(0); }
+	20%, 60% { transform: translateX(-6px); }
+	40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes wordleTileWin {
+	0%, 100% { transform: translateY(0); }
+	45% { transform: translateY(-9px); }
+}
+
+@media (max-width: 600px) {
+	.minecraftMenu { padding-top: clamp(22px, 5vh, 44px); }
+	.minecraftLogoWrap { margin-bottom: clamp(82px, 12vh, 104px); }
+	.minecraftSplash { top: 78%; right: -4%; width: 68%; }
+	.minecraftButtons { width: 92vw; }
+	.minecraftButton { height: 54px; font-size: 18px; }
+	.menuCountdown { right: 8px; font-size: 9px; }
+	.minecraftVersion,
+	.minecraftLegal { font-size: 9px; }
+	.minecraftLegal { max-width: 55vw; white-space: normal; }
+	.launchCountdown { grid-template-columns: repeat(2, 1fr); }
+	.wordleContent { width: min(100% - 16px, 1100px); }
+	.wordleContent .siteHeader { margin-bottom: 34px; }
+	.wordleDashboard { padding: 14px 8px; }
+	.wordleTopline { align-items: flex-start; flex-direction: column; gap: 5px; }
+	.wordleBoard { gap: 5px; }
+	.wordleTile { font-size: 1.35rem; }
+	.wordleKey { min-height: 42px; font-size: 0.76rem; }
+	.wordleKey.wide { font-size: 0.64rem; }
+}
+
+@media (max-height: 650px) {
+	.minecraftMenu { width: min(760px, 88vw); padding-top: 14px; }
+	.minecraftLogoWrap { margin-bottom: 64px; }
+	.minecraftButtons { gap: 6px; }
+	.minecraftButton { height: 46px; font-size: 18px; }
+	.minecraftButtonRow { margin-top: 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.minecraftSplash { animation: none; }
+	.panoramaCube { animation: none; transform: rotateX(-6deg) rotateY(20deg); }
+}
+
 html,
 body {
 	margin: 0;
@@ -76,14 +613,12 @@ a {
 }
 
 .siteHeader {
-	margin-bottom: 24px;
+	margin-bottom: 72px;
 }
 
-.title {
-	margin: 0;
-	padding: 24px;
-	text-align: center;
-	font-size: 4rem;
+.siteHeader .siteMinecraftTitle {
+	width: min(820px, 92vw);
+	margin: 0 auto;
 }
 
 
@@ -3277,10 +3812,8 @@ a {
 		padding: 28px 0 48px;
 	}
 
-	.title {
-		padding: 12px;
-		font-size: 2.4rem;
-	}
+	.siteHeader { margin-bottom: 48px; }
+	.siteHeader .siteMinecraftTitle { width: min(100%, 820px); }
 
 	.dashboardTop {
 		display: grid;

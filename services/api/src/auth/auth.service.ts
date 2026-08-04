@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 import { and, asc, desc, eq, gt, isNull, lte } from 'drizzle-orm'
 import {
 	AuthRequestRow,
@@ -35,6 +36,7 @@ const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
 const AUTH_REQUEST_HISTORY_LIMIT = 50
 const MAX_AUTH_CODE_ATTEMPTS = 5
+const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signup-allowlist.txt'
 const AUTH_CODE_IMAGE_BASE = `${ASSETS.minecraft.vanilla}/textures/`
 const AUTH_CODE_IMAGES: Partial<Record<(typeof AUTH_CODE_ITEMS)[number], string>> = {
 	Apple: 'item/apple.png',
@@ -90,6 +92,15 @@ export class AuthService {
 
 	async createSignup(emailInput: string) {
 		const email = normalizeEmail(emailInput)
+		let signupAllowlist = new Set<string>()
+		try {
+			signupAllowlist = new Set(readFileSync(SIGNUP_ALLOWLIST_PATH, 'utf8')
+				.split(/\r?\n/).map(normalizeEmail).filter(Boolean))
+		} catch { /* A missing or unreadable allowlist closes signup. */ }
+
+		if (!signupAllowlist.has('*') && !signupAllowlist.has(email)) {
+			throw new ForbiddenException('Signups are not currently open for this email')
+		}
 
 		if (!isAllowedEmail(email) && !this.isEmailWhitelisted(email)) {
 			throw new BadRequestException('Use an @mmu.ac.uk address or a numeric @stu.mmu.ac.uk address')

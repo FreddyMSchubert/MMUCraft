@@ -45,7 +45,9 @@ esac
 umask 077
 printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\n' "$image_prefix" "$tag" "$public_host" > .release.env
 mkdir -p data/api data/minecraft
+[ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 chmod 775 data/api data/minecraft
+chmod 664 data/api/signup-allowlist.txt
 
 dc() {
 	docker compose --env-file .env --env-file .release.env "$@"
@@ -85,7 +87,7 @@ done
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
 chmod 664 "$server_properties"
 
-dc run --rm --no-deps nginx -t
+dc run --rm --no-deps nginx nginx -t
 dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
 
 # Never prune volumes: they contain the database and Minecraft world.

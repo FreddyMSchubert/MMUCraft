@@ -181,7 +181,7 @@ export class ShopService {
 			shoppingSunday: this.isShoppingSunday(),
 			items: visibleItems.map((item) => {
 				const isDailyDeal = dailyDealIds.has(item.id)
-				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id, item.priceDabloons) : 0
 				return {
 					id: item.id,
 					title: item.title,
@@ -232,7 +232,7 @@ export class ShopService {
 
 		const catalogItems = this.loadCatalog().items
 		const isDailyDeal = this.getDailyDealIds(catalogItems).has(item.id)
-		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id, item.priceDabloons) : 0
 		const purchasePrice = this.discountedPrice(item.priceDabloons, discountPercent)
 
 		let purchase: PurchaseShopItemResponse
@@ -685,13 +685,14 @@ export class ShopService {
 			.map((item) => item.id))
 	}
 
-	private getDailyDiscountPercent(itemId: string): number {
+	private getDailyDiscountPercent(itemId: string, price: number): number {
 		const roll =
 			this.seededRank(`${this.getDailyDealDate()}:discount:${itemId}`) % 100
 
 		const divisor = this.isShoppingSunday() ? 2 : 4
+		const minimumDiscountPercent = Math.ceil(Math.min(3, price - 1) / price * 100)
 
-		return Math.max(5, Math.ceil(roll / divisor))
+		return Math.max(5, minimumDiscountPercent, Math.ceil(roll / divisor))
 	}
 
 	private isShoppingSunday(): boolean {
@@ -704,7 +705,7 @@ export class ShopService {
 	}
 
 	private discountedPrice(price: number, discountPercent: number): number {
-		return Math.max(1, Math.ceil(price * (1 - discountPercent / 100)))
+		return Math.max(1, Math.floor(price * (1 - discountPercent / 100)))
 	}
 
 	private seededRank(value: string): number {

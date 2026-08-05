@@ -17,6 +17,7 @@ const CLAIM_BASE_PRICE_DABLOONS = 100
 const MEMBER_CLAIM_PRICE_GROWTH = 1.42
 const NORMAL_PLAYER_CLAIM_PRICE_GROWTH = 1.69
 const MAX_CLAIM_PRICE_DABLOONS = 2_000_000_000
+const CLAIM_NAME_MAX_LENGTH = 20
 const MAX_CHUNK_COORDINATE = 1_875_000
 
 interface ClaimData {
@@ -26,6 +27,8 @@ interface ClaimData {
 	chunk_z: number
 	owner_uuid: string
 	owner_name: string
+	name: string
+	color_hex: string
 	member_uuids: string[]
 }
 
@@ -105,6 +108,8 @@ export class ClaimsService {
 					dimension: claim.dimension,
 					chunkX: claim.chunk_x,
 					chunkZ: claim.chunk_z,
+					name: claim.claim_name,
+					color: claim.color_hex,
 					members: [claim.owner_user_id, ...(memberIdsByClaim.get(claim.id) ?? [])]
 						.map((userId) => peopleById.get(userId))
 						.filter((person) => person !== undefined)
@@ -186,6 +191,16 @@ export class ClaimsService {
 		return { ok: true }
 	}
 
+	async updateAppearance(user: AuthenticatedUser, claimId: string, input: Record<string, unknown>) {
+		this.requireOwnedClaim(user.id, claimId)
+		const name = normalizeClaimName(input.name)
+		const color = normalizeClaimColor(input.color)
+		this.database.connection.update(claims).set({ claim_name: name, color_hex: color })
+			.where(eq(claims.id, claimId)).run()
+		await this.alertMod()
+		return { name, color }
+	}
+
 	async addMember(user: AuthenticatedUser, claimId: string, targetUserIdInput: unknown) {
 		const claim = this.requireOwnedClaim(user.id, claimId)
 		const targetUserId = normalizeUserId(targetUserIdInput)
@@ -250,6 +265,8 @@ export class ClaimsService {
 					chunk_z: claim.chunk_z,
 					owner_uuid: owner.minecraft_uuid,
 					owner_name: owner.minecraft_username,
+					name: claim.claim_name,
+					color_hex: claim.color_hex,
 					member_uuids: memberUuidsByClaim.get(claim.id) ?? [],
 				}]
 			}),
@@ -340,6 +357,22 @@ export class ClaimsService {
 
 function claimPriceDabloons(claimNumber: number, growth: number) {
 	return Math.min(MAX_CLAIM_PRICE_DABLOONS, Math.round(CLAIM_BASE_PRICE_DABLOONS * growth ** (claimNumber - 1)))
+}
+
+function normalizeClaimName(value: unknown) {
+	if (typeof value !== 'string') throw new BadRequestException('Enter a claim name.')
+	const name = value.trim()
+	if (!name || name.length > CLAIM_NAME_MAX_LENGTH || /[\u0000-\u001f\u007f]/.test(name)) {
+		throw new BadRequestException(`Claim name must be 1-${CLAIM_NAME_MAX_LENGTH} characters on one line.`)
+	}
+	return name
+}
+
+function normalizeClaimColor(value: unknown) {
+	if (typeof value !== 'string' || !/^#[0-9a-f]{6}$/i.test(value)) {
+		throw new BadRequestException('Claim color must be a full hex color such as #FFD166.')
+	}
+	return value.toUpperCase()
 }
 
 function normalizeDimension(value: unknown) {

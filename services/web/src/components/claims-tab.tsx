@@ -16,6 +16,8 @@ interface Claim {
 	dimension: string
 	chunkX: number
 	chunkZ: number
+	name: string
+	color: string
 	members: ClaimPerson[]
 }
 
@@ -111,6 +113,17 @@ export function ClaimsTab() {
 		})
 	}
 
+	async function updateAppearance(claim: Claim, name: string, color: string) {
+		await run(async () => {
+			await request(`/api/claims/${claim.id}/appearance`, {
+				method: 'PATCH',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ name, color }),
+			})
+			return 'Claim appearance saved.'
+		})
+	}
+
 	async function addMember(claim: Claim) {
 		const value = searches[claim.id]?.trim() ?? ''
 		const candidate = data?.candidates.find((person) =>
@@ -145,7 +158,10 @@ export function ClaimsTab() {
 			<div className="claimsTop">
 				<div>
 					<h3>Chunk claims</h3>
-					<p>Each claim protects one whole chunk, from the bottom of the world to the top.</p>
+					<p>
+						Each claim protects one whole chunk, from the bottom of the world to the top.<br />
+						<strong>Tip:</strong> Your new claim is the chunk where you are standing. Press F3 + G in Minecraft to show chunk borders. On the F3 debug screen, find the <strong>Chunk</strong> line on the left. Its first and third numbers are the chunk X and Z coordinates shown here.
+					</p>
 				</div>
 				<button type="button" disabled={busy} onClick={() => void buyClaim()}>
 					<strong>Add claim</strong>
@@ -177,11 +193,31 @@ export function ClaimsTab() {
 							<section className="claimCard" key={claim.id}>
 								<div className="claimHeader">
 									<div>
-										<h4>Chunk {claim.chunkX}, {claim.chunkZ}</h4>
-										<span>{formatDimension(claim.dimension)}</span>
+										<h4 style={{ color: claim.color }}>{claim.name}</h4>
+										<span>Chunk {claim.chunkX}, {claim.chunkZ} - {formatDimension(claim.dimension)}</span>
 									</div>
 									<button type="button" disabled={busy} onClick={() => void removeClaim(claim)}>Delete claim</button>
 								</div>
+
+								<form
+									className="claimAppearanceForm"
+									key={`${claim.id}:${claim.name}:${claim.color}`}
+									onSubmit={(event) => {
+										event.preventDefault()
+										const form = new FormData(event.currentTarget)
+										void updateAppearance(claim, String(form.get('name') ?? ''), String(form.get('color') ?? ''))
+									}}
+								>
+									<label>
+										<span>Claim name (20 characters maximum)</span>
+										<input name="name" defaultValue={claim.name} maxLength={20} required disabled={busy} />
+									</label>
+									<label className="claimColorInput">
+										<span>Color</span>
+										<input name="color" type="color" defaultValue={claim.color} disabled={busy} />
+									</label>
+									<button type="submit" disabled={busy}>Save</button>
+								</form>
 
 								<div className="claimMembers">
 									{claim.members.map((person) => (

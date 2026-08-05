@@ -38,6 +38,8 @@ message ClaimData {
   string owner_uuid = 5;
   string owner_name = 6;
   repeated string member_uuids = 7;
+  string name = 8;
+  string color_hex = 9;
 }
 
 message ClaimsSnapshot {

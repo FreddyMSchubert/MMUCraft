@@ -88,6 +88,8 @@ export const claims = sqliteTable('claims', {
 	dimension: text('dimension').notNull(),
 	chunk_x: integer('chunk_x').notNull(),
 	chunk_z: integer('chunk_z').notNull(),
+	claim_name: text('claim_name').notNull().default('My claim'),
+	color_hex: text('color_hex').notNull().default('#FFD166'),
 	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 }, (table) => [
 	uniqueIndex('claims_dimension_chunk_unique').on(table.dimension, table.chunk_x, table.chunk_z),

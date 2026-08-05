@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,6 +40,14 @@ public final class ClaimsManager {
     private static final Map<UUID, ServerBossEvent> BOSS_BARS = new HashMap<>();
     private static final Map<UUID, String> BOSS_BAR_STATES = new HashMap<>();
     private static final Map<UUID, Long> LAST_DENIED_MESSAGE = new HashMap<>();
+    private static final BossEvent.BossBarColor[] NATIVE_BOSS_BAR_COLORS = {
+            BossEvent.BossBarColor.PINK, BossEvent.BossBarColor.BLUE, BossEvent.BossBarColor.RED,
+            BossEvent.BossBarColor.GREEN, BossEvent.BossBarColor.YELLOW, BossEvent.BossBarColor.PURPLE,
+            BossEvent.BossBarColor.WHITE
+    };
+    private static final int[] NATIVE_BOSS_BAR_RGB = {
+            0xFF55FF, 0x5555FF, 0xFF5555, 0x55FF55, 0xFFFF55, 0xAA00AA, 0xFFFFFF
+    };
 
     private static volatile Map<ClaimKey, Claim> claims = Map.of();
     private static volatile boolean ready;
@@ -81,9 +90,15 @@ public final class ClaimsManager {
                 for (String memberUuid : data.getMemberUuidsList()) {
                     members.add(parseUuid(memberUuid));
                 }
+                String name = data.getName().strip();
+                if (name.isEmpty()) name = "My claim";
+                if (name.length() > 20) name = name.substring(0, 20);
                 next.put(
                         new ClaimKey(data.getDimension(), ChunkPos.pack(data.getChunkX(), data.getChunkZ())),
-                        new Claim(data.getId(), ownerUuid, data.getOwnerName(), Set.copyOf(members))
+                        new Claim(
+                                data.getId(), ownerUuid, data.getOwnerName(), name,
+                                parseColor(data.getColorHex()), Set.copyOf(members)
+                        )
                 );
             } catch (IllegalArgumentException ignored) {
                 MainMod.LOGGER.warn("Ignored claim {} because it has an invalid Minecraft UUID", data.getId());
@@ -187,7 +202,7 @@ public final class ClaimsManager {
             }
 
             Claim claim = claimAt(player.level(), player.blockPosition());
-            String state = claim == null ? "" : claim.id() + ":" + accessType(player, claim);
+            String state = claim == null ? "" : claim.id();
             if (state.equals(BOSS_BAR_STATES.get(player.getUUID()))) continue;
             BOSS_BAR_STATES.put(player.getUUID(), state);
 
@@ -205,12 +220,9 @@ public final class ClaimsManager {
                 continue;
             }
 
-            boolean owner = claim.ownerUuid().equals(player.getUUID());
-            boolean allowed = claim.members().contains(player.getUUID()) || isOperator(player);
-            bar.setName(Component.literal(owner
-                    ? "Your claimed chunk"
-                    : allowed ? claim.ownerName() + "'s claim - access granted" : "Claimed by " + claim.ownerName()));
-            bar.setColor(owner ? BossEvent.BossBarColor.YELLOW : allowed ? BossEvent.BossBarColor.GREEN : BossEvent.BossBarColor.RED);
+            bar.setName(Component.literal(claim.ownerName() + "'s claim: " + claim.name())
+                    .withStyle(Style.EMPTY.withColor(claim.colorRgb())));
+            bar.setColor(closestBossBarColor(claim.colorRgb()));
             bar.setVisible(true);
         }
     }
@@ -247,9 +259,30 @@ public final class ClaimsManager {
         );
     }
 
-    private static String accessType(ServerPlayer player, Claim claim) {
-        if (claim.ownerUuid().equals(player.getUUID())) return "owner";
-        return claim.members().contains(player.getUUID()) || isOperator(player) ? "member" : "blocked";
+    private static int parseColor(String value) {
+        if (value.length() != 7 || value.charAt(0) != '#') return 0xFFD166;
+        try {
+            return Integer.parseInt(value.substring(1), 16);
+        } catch (NumberFormatException ignored) {
+            return 0xFFD166;
+        }
+    }
+
+    private static BossEvent.BossBarColor closestBossBarColor(int rgb) {
+        int closest = 0;
+        int shortestDistance = Integer.MAX_VALUE;
+        for (int index = 0; index < NATIVE_BOSS_BAR_RGB.length; index++) {
+            int candidate = NATIVE_BOSS_BAR_RGB[index];
+            int red = ((rgb >> 16) & 0xFF) - ((candidate >> 16) & 0xFF);
+            int green = ((rgb >> 8) & 0xFF) - ((candidate >> 8) & 0xFF);
+            int blue = (rgb & 0xFF) - (candidate & 0xFF);
+            int distance = red * red + green * green + blue * blue;
+            if (distance < shortestDistance) {
+                closest = index;
+                shortestDistance = distance;
+            }
+        }
+        return NATIVE_BOSS_BAR_COLORS[closest];
     }
 
     private static void removeBossBar(ServerPlayer player) {
@@ -262,6 +295,6 @@ public final class ClaimsManager {
     private record ClaimKey(String dimension, long chunk) {
     }
 
-    private record Claim(String id, UUID ownerUuid, String ownerName, Set<UUID> members) {
+    private record Claim(String id, UUID ownerUuid, String ownerName, String name, int colorRgb, Set<UUID> members) {
     }
 }

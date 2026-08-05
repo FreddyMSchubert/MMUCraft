@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { FormEvent, useCallback, useEffect, useState } from 'react'
 
 interface AdminPlayer {
@@ -48,8 +49,8 @@ const CODE_NOUNS = [
 ]
 const CODE_JOINERS = ['-', '_', '.']
 
-export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
-	const [activeSection, setActiveSection] = useState<'members' | 'signins' | 'whitelist' | 'gifts'>('members')
+export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
+	const activeSection = section === 'signins' || section === 'whitelist' || section === 'gifts' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
 	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
@@ -261,34 +262,30 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 	return (
 		<div className="adminPanel">
 			<nav className="adminSubTabs" aria-label="Admin sections">
-				<button
-					type="button"
+				<Link
 					className={activeSection === 'signins' ? 'active' : ''}
-					onClick={() => setActiveSection('signins')}
+					href="/play/admin/signins"
 				>
 					Signins
-				</button>
-				<button
-					type="button"
+				</Link>
+				<Link
 					className={activeSection === 'members' ? 'active' : ''}
-					onClick={() => setActiveSection('members')}
+					href="/play/admin/members"
 				>
 					Member list
-				</button>
-				<button
-					type="button"
+				</Link>
+				<Link
 					className={activeSection === 'whitelist' ? 'active' : ''}
-					onClick={() => setActiveSection('whitelist')}
+					href="/play/admin/whitelist"
 				>
 					Email whitelist
-				</button>
-				<button
-					type="button"
+				</Link>
+				<Link
 					className={activeSection === 'gifts' ? 'active' : ''}
-					onClick={() => setActiveSection('gifts')}
+					href="/play/admin/gifts"
 				>
 					Gift codes
-				</button>
+				</Link>
 			</nav>
 
 			{activeSection === 'members' && (

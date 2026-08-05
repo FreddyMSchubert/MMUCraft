@@ -1,6 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AuthPanel } from '@/components/auth-panel'
 import { SitePage } from '@/components/site-page'
 import { AdminTab } from '@/components/admin-tab'
@@ -24,6 +26,20 @@ interface SessionUser {
 
 type TabId = 'dailies' | 'knowledge' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
 
+const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
+const ADMIN_SECTIONS = new Set(['members', 'signins', 'whitelist', 'gifts'])
+const MISC_SECTIONS = new Set(['settings', 'gift-codes'])
+const TAB_LINKS: Array<{ id: TabId; label: string; href: string }> = [
+	{ id: 'knowledge', label: 'Knowledge', href: '/play/knowledge' },
+	{ id: 'dailies', label: 'Dailies', href: '/play/dailies' },
+	{ id: 'shop', label: 'Shop', href: '/play/shop' },
+	{ id: 'claims', label: 'Claims', href: '/play/claims' },
+	{ id: 'fishing', label: 'Fishing', href: '/play/fishing' },
+	{ id: 'players', label: 'Players', href: '/play/players' },
+	{ id: 'admin', label: 'Admin', href: '/play/admin/members' },
+	{ id: 'misc', label: 'Misc', href: '/play/misc/settings' },
+]
+
 async function fetchMe(): Promise<SessionUser | null> {
 	const response = await fetch('/api/auth/me', {
 		cache: 'no-store',
@@ -38,8 +54,12 @@ async function fetchMe(): Promise<SessionUser | null> {
 }
 
 export function SiteShell({ background, splash }: { background: string; splash: string }) {
+	const pathname = usePathname()
+	const router = useRouter()
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
-	const [activeTab, setActiveTab] = useState<TabId>('knowledge')
+	const route = useMemo(() => pathname.split('/').slice(2).map(decodePathSegment), [pathname])
+	const activeTab = TAB_IDS.has(route[0] as TabId) ? route[0] as TabId : 'knowledge'
+	const routeDetail = route[1]
 
 	const reloadUser = useCallback(async () => {
 		setUser(await fetchMe())
@@ -72,8 +92,41 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		})
 
 		setUser(null)
-		setActiveTab('knowledge')
 	}
+
+	useEffect(() => {
+		if (!user) return
+		if (!TAB_IDS.has(route[0] as TabId) || (activeTab === 'admin' && !user.isCommittee)) {
+			router.replace('/play/knowledge')
+			return
+		}
+
+		let canonicalPath: string | null = null
+		if (activeTab === 'admin') canonicalPath = `/play/admin/${ADMIN_SECTIONS.has(routeDetail ?? '') ? routeDetail : 'members'}`
+		else if (activeTab === 'misc') canonicalPath = `/play/misc/${MISC_SECTIONS.has(routeDetail ?? '') ? routeDetail : 'settings'}`
+		else if (activeTab === 'dailies' || activeTab === 'claims' || activeTab === 'fishing') canonicalPath = `/play/${activeTab}`
+		else if (route.length > 2) canonicalPath = routeDetail ? `/play/${activeTab}/${encodeURIComponent(routeDetail)}` : `/play/${activeTab}`
+
+		if (canonicalPath && pathname !== canonicalPath) router.replace(canonicalPath)
+	}, [activeTab, pathname, route, routeDetail, router, user])
+
+	const openKnowledge = useCallback((pageId: string, replace = false) => {
+		const href = `/play/knowledge/${encodeURIComponent(pageId)}`
+		if (replace) router.replace(href)
+		else router.push(href)
+	}, [router])
+
+	const openShop = useCallback((itemId: string | null, replace = false) => {
+		const href = itemId ? `/play/shop/${encodeURIComponent(itemId)}` : '/play/shop'
+		if (replace) router.replace(href)
+		else router.push(href)
+	}, [router])
+
+	const openPlayer = useCallback((playerName: string | null, replace = false) => {
+		const href = playerName ? `/play/players/${encodeURIComponent(playerName)}` : '/play/players'
+		if (replace) router.replace(href)
+		else router.push(href)
+	}, [router])
 
 	return (
 		<SitePage background={background} splash={splash}>
@@ -105,78 +158,33 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						</div>
 
 						<nav className="dashboardTabs" aria-label="Dashboard sections">
-							<button
-								type="button"
-								className={activeTab === 'knowledge' ? 'active' : ''}
-								onClick={() => setActiveTab('knowledge')}
-							>
-								Knowledge
-							</button>
-							<button
-								type="button"
-								className={activeTab === 'dailies' ? 'active' : ''}
-								onClick={() => setActiveTab('dailies')}
-							>
-								Dailies
-							</button>
-							<button
-								type="button"
-								className={activeTab === 'shop' ? 'active' : ''}
-								onClick={() => setActiveTab('shop')}
-							>
-								Shop
-							</button>
-							<button
-								type="button"
-								className={activeTab === 'claims' ? 'active' : ''}
-								onClick={() => setActiveTab('claims')}
-							>
-								Claims
-							</button>
-							<button
-								type="button"
-								className={activeTab === 'fishing' ? 'active' : ''}
-								onClick={() => setActiveTab('fishing')}
-							>
-								Fishing
-							</button>
-							<button
-								type="button"
-								className={activeTab === 'players' ? 'active' : ''}
-								onClick={() => setActiveTab('players')}
-							>
-								Players
-							</button>
-							{user.isCommittee && (
-								<button
-									type="button"
-									className={activeTab === 'admin' ? 'active' : ''}
-									onClick={() => setActiveTab('admin')}
-								>
-									Admin
-								</button>
-							)}
-							<button
-								type="button"
-								className={activeTab === 'misc' ? 'active' : ''}
-								onClick={() => setActiveTab('misc')}
-							>
-								Misc
-							</button>
+							{TAB_LINKS.filter((tab) => tab.id !== 'admin' || user.isCommittee).map((tab) => (
+								<Link key={tab.id} href={tab.href} className={activeTab === tab.id ? 'active' : ''}>
+									{tab.label}
+								</Link>
+							))}
 						</nav>
 
 						<div className="dashboardPanel">
 							{activeTab === 'dailies' && <DailiesTab />}
-							{activeTab === 'knowledge' && <KnowledgeTab />}
-							{activeTab === 'shop' && <ShopTab />}
+							{activeTab === 'knowledge' && <KnowledgeTab pageId={routeDetail} onSelectPage={openKnowledge} />}
+							{activeTab === 'shop' && <ShopTab itemId={routeDetail} onSelectItem={openShop} />}
 							{activeTab === 'claims' && <ClaimsTab />}
 							{activeTab === 'fishing' && <FishingTab />}
-							{activeTab === 'players' && <PlayersTab />}
-							{activeTab === 'admin' && user.isCommittee && <AdminTab isSuperAdmin={user.isSuperAdmin} />}
-							{activeTab === 'misc' && <MiscTab />}
+							{activeTab === 'players' && <PlayersTab playerName={routeDetail} onSelectPlayer={openPlayer} />}
+							{activeTab === 'admin' && user.isCommittee && <AdminTab isSuperAdmin={user.isSuperAdmin} section={routeDetail} />}
+							{activeTab === 'misc' && <MiscTab section={routeDetail} />}
 						</div>
 					</section>
 				)}
 		</SitePage>
 	)
+}
+
+function decodePathSegment(value: string) {
+	try {
+		return decodeURIComponent(value)
+	} catch {
+		return ''
+	}
 }

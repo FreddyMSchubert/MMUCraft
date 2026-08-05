@@ -1,18 +1,19 @@
 'use client'
 
+import Link from 'next/link'
 import { FormEvent, useState } from 'react'
 import { SiteSettings, useSiteSettings } from '@/lib/site-settings'
 
 type MiscSection = 'settings' | 'gift-codes'
 
-export function MiscTab() {
-	const [section, setSection] = useState<MiscSection>('settings')
+export function MiscTab({ section }: { section?: string }) {
+	const activeSection: MiscSection = section === 'gift-codes' ? 'gift-codes' : 'settings'
 	return <div className="miscPanel">
 		<nav className="miscSubTabs" aria-label="Miscellaneous sections">
-			<button type="button" className={section === 'settings' ? 'active' : ''} onClick={() => setSection('settings')}>Settings</button>
-			<button type="button" className={section === 'gift-codes' ? 'active' : ''} onClick={() => setSection('gift-codes')}>Redeem gift code</button>
+			<Link className={activeSection === 'settings' ? 'active' : ''} href="/play/misc/settings">Settings</Link>
+			<Link className={activeSection === 'gift-codes' ? 'active' : ''} href="/play/misc/gift-codes">Redeem gift code</Link>
 		</nav>
-		{section === 'settings' ? <SettingsSection /> : <GiftCodeSection />}
+		{activeSection === 'settings' ? <SettingsSection /> : <GiftCodeSection />}
 	</div>
 }
 

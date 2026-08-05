@@ -130,7 +130,10 @@ function pumpRendererSlots() {
 	}
 }
 
-export function ShopTab() {
+export function ShopTab({ itemId, onSelectItem }: {
+	itemId?: string
+	onSelectItem: (itemId: string | null, replace?: boolean) => void
+}) {
 	const { settings } = useSiteSettings()
 	const [data, setData] = useState<ShopResponse | null>(null)
 	const [error, setError] = useState('')
@@ -142,7 +145,6 @@ export function ShopTab() {
 	const [randomSeed, setRandomSeed] = useState(() => Math.random().toString(36))
 	const [buyingItemId, setBuyingItemId] = useState<string | null>(null)
 	const [hoveredItemId, setHoveredItemId] = useState<string | null>(null)
-	const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null)
 	const [featuredIndex, setFeaturedIndex] = useState(0)
 
 	const load = useCallback(async () => {
@@ -166,6 +168,11 @@ export function ShopTab() {
 	}, [load])
 
 	const dailyDeals = useMemo(() => data?.items.filter((item) => item.isDailyDeal && item.available) ?? [], [data?.items])
+	const selectedItem = useMemo(() => itemId ? data?.items.find((item) => item.id === itemId) ?? null : null, [data?.items, itemId])
+
+	useEffect(() => {
+		if (data && itemId && !selectedItem) onSelectItem(null, true)
+	}, [data, itemId, onSelectItem, selectedItem])
 
 	useEffect(() => {
 		if (dailyDeals.length < 2) return
@@ -212,7 +219,7 @@ export function ShopTab() {
 			if (!response.ok) throw new Error(body?.message ?? 'Purchase failed.')
 			const text = body?.message ?? `${item.title} purchased.`
 			setMessage(text)
-			setSelectedItem(null)
+			onSelectItem(null, true)
 			await load()
 		} catch (caught) {
 			const text = caught instanceof Error ? caught.message : 'Purchase failed'
@@ -239,7 +246,7 @@ export function ShopTab() {
 				<div className="shopDealCopy">
 					<div className="shopDealHeading"><span className="shopDealSpark">✦</span><div><p>{featured.dealMessage ?? 'Today’s find'}</p><h4>{featured.title}</h4></div><strong>−{featured.discountPercent}%</strong></div>
 					<p>{featured.description}</p>
-					<div className="shopDealActions"><span><del>{formatDabloons(featured.originalPriceDabloons)}</del> {formatDabloons(featured.discountedPriceDabloons)} dabloons</span><button type="button" onClick={() => setSelectedItem(featured)}>See details</button></div>
+					<div className="shopDealActions"><span><del>{formatDabloons(featured.originalPriceDabloons)}</del> {formatDabloons(featured.discountedPriceDabloons)} dabloons</span><button type="button" onClick={() => onSelectItem(featured.id)}>See details</button></div>
 				</div>
 				<div className="shopDealPreview" aria-hidden="true"><ShopPreview item={featured} hovered hidden={shouldHidePreview(featured, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} /></div>
 				{data.shoppingSunday && <span className="shoppingSundayBadge">Shopping Sunday · tons of huge discounts</span>}
@@ -265,11 +272,11 @@ export function ShopTab() {
 			{message && <p className="dailyMessage">{message}</p>}
 			{error && <p className="authError">{error}</p>}
 			<div className="shopGrid">
-				{visibleItems.map((item) => <ShopCard key={item.id} item={item} hovered={hoveredItemId === item.id} hidePreview={shouldHidePreview(item, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} onHover={setHoveredItemId} onOpen={setSelectedItem} />)}
+				{visibleItems.map((item) => <ShopCard key={item.id} item={item} hovered={hoveredItemId === item.id} hidePreview={shouldHidePreview(item, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} onHover={setHoveredItemId} onOpen={(selected) => onSelectItem(selected.id)} />)}
 			</div>
 			{visibleItems.length === 0 && <p className="shopEmptyState">No items match those filters.</p>}
 
-			{selectedItem && <ShopDetails item={selectedItem} buying={buyingItemId === selectedItem.id} hidePreview={shouldHidePreview(selectedItem, settings.arachnophobiaMode)} onClose={() => setSelectedItem(null)} onBuy={buy} />}
+			{selectedItem && <ShopDetails item={selectedItem} buying={buyingItemId === selectedItem.id} hidePreview={shouldHidePreview(selectedItem, settings.arachnophobiaMode)} onClose={() => onSelectItem(null, true)} onBuy={buy} />}
 		</div>
 	)
 }

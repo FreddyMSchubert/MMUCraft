@@ -3,6 +3,6 @@ import { getSiteVisuals } from '@/lib/site-assets'
 
 export const dynamic = 'force-dynamic'
 
-export default function SignInPage() {
+export default function PlaySectionPage() {
 	return <SiteShell {...getSiteVisuals()} />
 }

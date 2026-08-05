@@ -37,4 +37,13 @@ public final class WebsiteCommand {
                                 .withUnderlined(true)
                                 .withClickEvent(new ClickEvent.OpenUrl(WEBSITE_URI))));
     }
+
+    public static Component takeMeThere(String path) {
+        URI uri = WEBSITE_URI.resolve(path);
+        return Component.literal("Take me there!")
+                .withStyle(style -> style
+                        .withColor(ChatFormatting.GOLD)
+                        .withUnderlined(true)
+                        .withClickEvent(new ClickEvent.OpenUrl(uri)));
+    }
 }

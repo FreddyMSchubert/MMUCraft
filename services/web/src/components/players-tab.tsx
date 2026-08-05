@@ -94,7 +94,10 @@ const PROFILE_TEXT_LIMITS = {
 
 type SortDirection = 'desc' | 'asc'
 
-export function PlayersTab() {
+export function PlayersTab({ playerName, onSelectPlayer }: {
+	playerName?: string
+	onSelectPlayer: (playerName: string | null, replace?: boolean) => void
+}) {
 	const [data, setData] = useState<PlayersResponse | null>(null)
 	const [error, setError] = useState('')
 	const [message, setMessage] = useState('')
@@ -103,7 +106,6 @@ export function PlayersTab() {
 		key: 'minecraft.custom.minecraft:play_time',
 		direction: 'desc',
 	})
-	const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null)
 	const [leaderboardKey, setLeaderboardKey] = useState(DEFAULT_LEADERBOARD_KEY)
 
 	const load = useCallback(async () => {
@@ -142,8 +144,20 @@ export function PlayersTab() {
 	const players = useMemo(() => data?.players ?? [], [data?.players])
 	const statOptions = useMemo(() => data?.statOptions ?? [], [data?.statOptions])
 	const selectedPlayer = useMemo(() => {
-		return players.find((player) => player.id === selectedPlayerId) ?? null
-	}, [players, selectedPlayerId])
+		if (!playerName) return null
+		return players.find((player) => player.minecraftUsername.localeCompare(playerName, 'en', { sensitivity: 'base' }) === 0) ?? null
+	}, [playerName, players])
+
+	useEffect(() => {
+		if (!data || !playerName) return
+		if (!selectedPlayer) {
+			onSelectPlayer(null, true)
+			return
+		}
+		if (selectedPlayer.minecraftUsername !== playerName) {
+			onSelectPlayer(selectedPlayer.minecraftUsername, true)
+		}
+	}, [data, onSelectPlayer, playerName, selectedPlayer])
 
 	const selectedColumns = useMemo(() => columnKeys
 		.slice(0, 4)
@@ -206,7 +220,7 @@ export function PlayersTab() {
 				<PlayerProfilePanel
 					player={selectedPlayer}
 					statOptions={statOptions}
-					onBack={() => setSelectedPlayerId(null)}
+					onBack={() => onSelectPlayer(null, true)}
 					onSaved={() => void handleSaved()}
 					onError={setError}
 				/>
@@ -263,7 +277,7 @@ export function PlayersTab() {
 						{sortedPlayers.map((player) => (
 							<tr
 								key={player.id}
-								onClick={() => setSelectedPlayerId(player.id)}
+								onClick={() => onSelectPlayer(player.minecraftUsername)}
 							>
 								<td>
 									<PlayerCell player={player} />

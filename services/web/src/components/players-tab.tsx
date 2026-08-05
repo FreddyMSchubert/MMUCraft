@@ -144,6 +144,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 	}, [load])
 
 	const players = useMemo(() => data?.players ?? [], [data?.players])
+	const currentPlayer = players.find((player) => player.isCurrentUser)
 	const statOptions = useMemo(() => data?.statOptions ?? [], [data?.statOptions])
 	const selectedPlayer = useMemo(() => {
 		if (!playerName) return null
@@ -234,6 +235,11 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 		<div className="playersPanel">
 			<div className="playersTop">
 				<h3>Players</h3>
+				{currentPlayer && (
+					<button type="button" onClick={() => onSelectPlayer(currentPlayer.minecraftUsername)}>
+						View / edit own profile
+					</button>
+				)}
 			</div>
 
 			{message && <p className="dailyMessage">{message}</p>}

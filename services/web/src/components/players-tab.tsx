@@ -85,8 +85,8 @@ const DEFAULT_COLUMN_KEYS = [
 ]
 const DEFAULT_LEADERBOARD_KEY = 'minecraft.advancement.minecraft:earned'
 const PROFILE_TEXT_LIMITS = {
-	preferredName: 40,
-	pronouns: 32,
+	preferredName: 16,
+	pronouns: 16,
 	courseYear: 64,
 	discordUsername: 40,
 	bio: 280,
@@ -370,7 +370,7 @@ function ProfileFacts({ player }: { player: PlayerSummary }) {
 	const facts = [
 		{ label: 'Society member', value: player.isMember ? 'Yes' : 'No' },
 		{ label: 'Committee', value: player.isCommittee ? 'Yes' : 'No' },
-		profile.preferredName ? { label: 'Preferred name', value: profile.preferredName } : null,
+		profile.preferredName ? { label: 'Nickname', value: profile.preferredName } : null,
 		profile.pronouns ? { label: 'Pronouns', value: profile.pronouns } : null,
 		profile.courseYear ? { label: 'Course / Year', value: profile.courseYear } : null,
 		profile.discordUsername ? { label: 'Discord username', value: profile.discordUsername } : null,
@@ -461,7 +461,7 @@ function PlayerProfileForm({
 				All of this is optional, but it can help people know who you are, how to reach out, and how to find you.
 			</p>
 			<label>
-				<span>Preferred name</span>
+				<span>Nickname</span>
 				<input value={preferredName} onChange={(event) => setPreferredName(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.preferredName} />
 			</label>
 			<label>

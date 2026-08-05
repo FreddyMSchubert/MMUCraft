@@ -151,12 +151,18 @@ export class GameplayGrpcService implements OnModuleInit {
 			accepted: boolean
 			account_linked: boolean
 			is_member: boolean
+			is_committee: boolean
+			nickname: string
+			pronouns: string
 			message: string
 		}>,
 		callback: UnaryCallback<{
 			accepted: boolean
 			account_linked: boolean
 			is_member: boolean
+			is_committee: boolean
+			nickname: string
+			pronouns: string
 			message: string
 		}>,
 	) {
@@ -172,6 +178,9 @@ export class GameplayGrpcService implements OnModuleInit {
 			accepted: result.accepted,
 			account_linked: result.accountLinked,
 			is_member: result.isMember,
+			is_committee: result.isCommittee,
+			nickname: result.nickname,
+			pronouns: result.pronouns,
 			message: result.message,
 		})
 	}

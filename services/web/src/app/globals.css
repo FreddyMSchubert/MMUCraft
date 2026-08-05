@@ -1628,6 +1628,12 @@ a {
 	font-weight: 800;
 }
 
+.claimsTop button {
+	display: grid;
+	gap: 2px;
+	text-align: left;
+}
+
 .claimsTop button:disabled,
 .claimHeader button:disabled,
 .claimMember button:disabled,

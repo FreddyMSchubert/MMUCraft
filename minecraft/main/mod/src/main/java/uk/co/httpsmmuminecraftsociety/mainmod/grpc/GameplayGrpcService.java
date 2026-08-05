@@ -720,14 +720,23 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
-        int price = 100;
+        int price = request.getPriceDabloons();
+        if (price <= 0) {
+            return PurchaseClaimResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(true)
+                    .setBalanceDabloons(MoneyHelper.GetBalance(player))
+                    .setMessage("The claim price is invalid.")
+                    .build();
+        }
+
         int balance = MoneyHelper.GetBalance(player);
         if (balance < price || !MoneyHelper.ReduceMoney(player, price)) {
             return PurchaseClaimResponse.newBuilder()
                     .setPurchased(false)
                     .setOnline(true)
                     .setBalanceDabloons(balance)
-                    .setMessage("You need 100 dabloons to buy this claim.")
+                    .setMessage("You need " + price + " dabloons to buy this claim.")
                     .build();
         }
 
@@ -735,7 +744,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .setPurchased(true)
                 .setOnline(true)
                 .setBalanceDabloons(MoneyHelper.GetBalance(player))
-                .setMessage("Chunk claimed for 100 dabloons.")
+                .setMessage("Chunk claimed for " + price + " dabloons.")
                 .build();
     }
 

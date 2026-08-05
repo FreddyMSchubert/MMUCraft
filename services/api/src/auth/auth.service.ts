@@ -412,10 +412,14 @@ export class AuthService {
 				.orderBy(asc(emailWhitelist.email)).all()
 				.map((entry) => ({
 					email: entry.email,
-					addedBy: usernamesById.get(entry.added_by_user_id) ?? { name: 'Unknown user', color: '#E6E6E6' },
+					addedByMinecraftUsername: usernamesById.get(entry.added_by_user_id)?.name ?? 'Unknown user',
+					addedByColor: usernamesById.get(entry.added_by_user_id)?.color ?? '#E6E6E6',
 					responsibleMinecraftUsername: entry.responsible_user_id === null
 						? null
-						: usernamesById.get(entry.responsible_user_id) ?? { name: 'Unknown user', color: '#E6E6E6' },
+						: usernamesById.get(entry.responsible_user_id)?.name ?? 'Unknown user',
+					responsiblePlayerColor: entry.responsible_user_id === null
+						? null
+						: usernamesById.get(entry.responsible_user_id)?.color ?? '#E6E6E6',
 					createdAtUnixMs: entry.created_at_unix_ms,
 				})),
 		}

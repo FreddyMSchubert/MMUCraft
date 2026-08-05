@@ -41,8 +41,10 @@ interface AuthRequest {
 
 interface WhitelistedEmail {
 	email: string
-	addedBy: { name: string; color: string }
-	responsibleMinecraftUsername: { name: string; color: string } | null
+	addedByMinecraftUsername: string
+	addedByColor: string
+	responsibleMinecraftUsername: string | null
+	responsiblePlayerColor: string | null
 	createdAtUnixMs: number
 }
 
@@ -439,8 +441,8 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 								{whitelistedEmails.map((entry) => (
 									<tr key={entry.email}>
 										<td>{entry.email}</td>
-										<td>{entry.responsibleMinecraftUsername ? <PlayerName name={entry.responsibleMinecraftUsername.name} color={entry.responsibleMinecraftUsername.color} /> : <span className="adminMissing">Not assigned</span>}</td>
-										<td><PlayerName name={entry.addedBy.name} color={entry.addedBy.color} /></td>
+										<td>{entry.responsibleMinecraftUsername && entry.responsiblePlayerColor ? <PlayerName name={entry.responsibleMinecraftUsername} color={entry.responsiblePlayerColor} /> : <span className="adminMissing">Not assigned</span>}</td>
+										<td><PlayerName name={entry.addedByMinecraftUsername} color={entry.addedByColor} /></td>
 										<td>{formatDateTime(entry.createdAtUnixMs)}</td>
 										<td><button type="button" disabled={updatingWhitelist} onClick={() => void removeWhitelistedEmail(entry.email)}>Remove</button></td>
 									</tr>

@@ -28,6 +28,7 @@ async function checkFlows() {
 	let pendingJoin
 	let pendingJoinUpdates = 0
 	const grpc = {
+		purchaseExternalPlayerInvite: async () => ({ purchased: true, balance_dabloons: 900 }),
 		removePendingJoin: async () => undefined,
 		upsertPendingJoin: async (request) => { pendingJoin = request; pendingJoinUpdates++ },
 	}
@@ -44,9 +45,9 @@ async function checkFlows() {
 	}).returning({ id: users.id }).get()
 
 	await assert.rejects(auth.createSignup('guest@example.com'), /numeric @stu\.mmu\.ac\.uk address/)
-	assert.throws(() => auth.addEmailToWhitelist({ id: member.id }, 'guest@.example.com', member.id), /valid email address/)
-	assert.throws(() => auth.addEmailToWhitelist({ id: member.id }, 'guest@example.com'), /responsible user/)
-	auth.addEmailToWhitelist({ id: member.id }, 'Guest@Example.com', member.id)
+	await assert.rejects(auth.addEmailToWhitelist({ id: member.id }, 'guest@.example.com', member.id), /valid email address/)
+	await assert.rejects(auth.addEmailToWhitelist({ id: member.id }, 'guest@example.com'), /responsible user/)
+	await auth.addEmailToWhitelist({ id: member.id }, 'Guest@Example.com', member.id)
 	assert.deepEqual(auth.listEmailWhitelist().entries.map((entry) => entry.email), ['guest@example.com'])
 	assert.equal(auth.listEmailWhitelist().entries[0].addedByMinecraftUsername, 'Member')
 	assert.equal(auth.listEmailWhitelist().entries[0].responsibleMinecraftUsername, 'Member')

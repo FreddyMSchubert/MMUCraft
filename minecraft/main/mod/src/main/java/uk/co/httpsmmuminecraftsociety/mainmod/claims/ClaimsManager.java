@@ -41,15 +41,6 @@ public final class ClaimsManager {
     private static final Map<UUID, ServerBossEvent> BOSS_BARS = new HashMap<>();
     private static final Map<UUID, String> BOSS_BAR_STATES = new HashMap<>();
     private static final Map<UUID, Long> LAST_DENIED_MESSAGE = new HashMap<>();
-    private static final BossEvent.BossBarColor[] NATIVE_BOSS_BAR_COLORS = {
-            BossEvent.BossBarColor.PINK, BossEvent.BossBarColor.BLUE, BossEvent.BossBarColor.RED,
-            BossEvent.BossBarColor.GREEN, BossEvent.BossBarColor.YELLOW, BossEvent.BossBarColor.PURPLE,
-            BossEvent.BossBarColor.WHITE
-    };
-    private static final int[] NATIVE_BOSS_BAR_RGB = {
-            0xFF55FF, 0x5555FF, 0xFF5555, 0x55FF55, 0xFFFF55, 0xAA00AA, 0xFFFFFF
-    };
-
     private static volatile Map<ClaimKey, Claim> claims = Map.of();
     private static volatile boolean ready;
 
@@ -222,7 +213,7 @@ public final class ClaimsManager {
                 ServerBossEvent created = new ServerBossEvent(
                         UUID.randomUUID(), Component.empty(), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS
                 );
-                created.setProgress(1);
+                created.setProgress(0);
                 created.addPlayer(player);
                 return created;
             });
@@ -232,10 +223,10 @@ public final class ClaimsManager {
                 continue;
             }
 
-            bar.setName(Component.literal(claim.ownerName()).withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.ownerColorRgb())))
-                    .append(Component.literal("'s claim: " + claim.name())
+            bar.setName(Component.literal(claim.ownerName() + "'s claim: ")
+                    .withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.ownerColorRgb())))
+                    .append(Component.literal(claim.name())
                             .withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.colorRgb())))));
-            bar.setColor(closestBossBarColor(claim.colorRgb()));
             bar.setVisible(true);
         }
     }
@@ -292,23 +283,6 @@ public final class ClaimsManager {
         green = (int) Math.round(green + (255 - green) * whiteBlend);
         blue = (int) Math.round(blue + (255 - blue) * whiteBlend);
         return (red << 16) | (green << 8) | blue;
-    }
-
-    private static BossEvent.BossBarColor closestBossBarColor(int rgb) {
-        int closest = 0;
-        int shortestDistance = Integer.MAX_VALUE;
-        for (int index = 0; index < NATIVE_BOSS_BAR_RGB.length; index++) {
-            int candidate = NATIVE_BOSS_BAR_RGB[index];
-            int red = ((rgb >> 16) & 0xFF) - ((candidate >> 16) & 0xFF);
-            int green = ((rgb >> 8) & 0xFF) - ((candidate >> 8) & 0xFF);
-            int blue = (rgb & 0xFF) - (candidate & 0xFF);
-            int distance = red * red + green * green + blue * blue;
-            if (distance < shortestDistance) {
-                closest = index;
-                shortestDistance = distance;
-            }
-        }
-        return NATIVE_BOSS_BAR_COLORS[closest];
     }
 
     private static void removeBossBar(ServerPlayer player) {

@@ -36,6 +36,7 @@ const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
 const AUTH_REQUEST_HISTORY_LIMIT = 50
 const MAX_AUTH_CODE_ATTEMPTS = 5
+export const EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 100
 const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signup-allowlist.txt'
 const AUTH_CODE_IMAGE_BASE = `${ASSETS.minecraft.vanilla}/textures/`
 const AUTH_CODE_IMAGES: Partial<Record<(typeof AUTH_CODE_ITEMS)[number], string>> = {
@@ -288,6 +289,13 @@ export class AuthService {
 		if (this.findUserByMinecraftUuid(minecraftUuid)) {
 			throw new BadRequestException('This Minecraft account is already linked to a website account')
 		}
+		const responsibleUserId = isAllowedEmail(flow.email)
+			? null
+			: this.database.connection.select({ responsibleUserId: emailWhitelist.responsible_user_id })
+				.from(emailWhitelist).where(eq(emailWhitelist.email, flow.email)).get()?.responsibleUserId
+		if (!isAllowedEmail(flow.email) && !responsibleUserId) {
+			throw new ForbiddenException('This external player invitation is no longer active')
+		}
 
 		await this.grpc.whitelistPlayer(minecraftUsername)
 
@@ -297,6 +305,7 @@ export class AuthService {
 					email: flow.email,
 					minecraft_uuid: minecraftUuid,
 					minecraft_username: minecraftUsername,
+					responsible_user_id: responsibleUserId,
 					is_committee: isSuperAdminUsername(minecraftUsername) ? 1 : 0,
 					is_super_admin: isSuperAdminUsername(minecraftUsername) ? 1 : 0,
 					whitelisted_at_unix_ms: now,
@@ -400,7 +409,7 @@ export class AuthService {
 		}
 	}
 
-	addEmailToWhitelist(admin: AuthenticatedUser, emailInput: unknown, responsibleUserIdInput: unknown) {
+	async addEmailToWhitelist(admin: AuthenticatedUser, emailInput: unknown, responsibleUserIdInput: unknown) {
 		if (typeof emailInput !== 'string') {
 			throw new BadRequestException('Email is required')
 		}
@@ -415,9 +424,10 @@ export class AuthService {
 			throw new BadRequestException('Select a responsible user')
 		}
 		const responsibleUserId = responsibleUserIdInput
-		if (!this.database.connection.select({ id: users.id }).from(users)
-			.where(eq(users.id, responsibleUserId)).get()) {
-			throw new BadRequestException('Select a responsible user')
+		const responsibleUser = this.database.connection.select().from(users)
+			.where(and(eq(users.id, responsibleUserId), isNull(users.responsible_user_id))).get()
+		if (!responsibleUser) {
+			throw new BadRequestException('External players cannot be responsible for another external player')
 		}
 
 		const result = this.database.connection.insert(emailWhitelist).values({
@@ -430,7 +440,21 @@ export class AuthService {
 			throw new ConflictException('That email address is already whitelisted')
 		}
 
-		return { email }
+		try {
+			const purchase = await this.grpc.purchaseExternalPlayerInvite(responsibleUser.minecraft_username)
+			if (!purchase.purchased) {
+				throw new BadRequestException(purchase.message || 'The responsible player must be online with 100 dabloons')
+			}
+			return {
+				email,
+				priceDabloons: EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS,
+				balanceDabloons: purchase.balance_dabloons,
+			}
+		} catch (error) {
+			this.database.connection.delete(emailWhitelist).where(eq(emailWhitelist.email, email)).run()
+			if (error instanceof BadRequestException) throw error
+			throw new BadRequestException('The responsible player must be online to pay for this invitation')
+		}
 	}
 
 	removeEmailFromWhitelist(emailInput: string) {

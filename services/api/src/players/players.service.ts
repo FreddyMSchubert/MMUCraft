@@ -97,6 +97,8 @@ export interface PlayerSummary {
 	isCurrentUser: boolean
 	isMember: boolean
 	isCommittee: boolean
+	isExternal: boolean
+	responsibleMinecraftUsername: string | null
 	profile: PlayerProfile
 	fishing: Record<string, number>
 	stats: PlayerStats
@@ -358,6 +360,7 @@ export class PlayersService {
 				accountLinked: false,
 				isMember: false,
 				isCommittee: false,
+				isExternal: false,
 				nickname: '',
 				pronouns: '',
 				message: 'No website account is linked to this Minecraft username yet.',
@@ -395,6 +398,7 @@ export class PlayersService {
 			accountLinked: true,
 			isMember: user.is_member === 1,
 			isCommittee: user.is_super_admin === 1 || user.is_committee === 1,
+			isExternal: user.responsible_user_id !== null,
 			nickname: profile.preferredName.slice(0, PROFILE_TEXT_LIMITS.preferredName),
 			pronouns: profile.pronouns.slice(0, PROFILE_TEXT_LIMITS.pronouns),
 			message: 'Stats synced.',
@@ -484,6 +488,10 @@ export class PlayersService {
 			isCurrentUser: user.id === currentUserId,
 			isMember: user.is_member === 1,
 			isCommittee: user.is_committee === 1,
+			isExternal: user.responsible_user_id !== null,
+			responsibleMinecraftUsername: user.responsible_user_id === null
+				? null
+				: this.findUserById(user.responsible_user_id)?.minecraft_username ?? 'Unknown player',
 			profile: this.getProfile(user.id),
 			fishing: this.fishing.getCatchCounts(user.id),
 			stats,

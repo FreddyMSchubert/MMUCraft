@@ -66,6 +66,8 @@ interface PlayerSummary {
 	isCurrentUser: boolean
 	isMember: boolean
 	isCommittee: boolean
+	isExternal: boolean
+	responsibleMinecraftUsername: string | null
 	profile: PlayerProfile
 	fishing: Record<string, number>
 	stats: PlayerStats
@@ -368,6 +370,8 @@ function PlayerProfilePanel({
 function ProfileFacts({ player }: { player: PlayerSummary }) {
 	const profile = player.profile
 	const facts = [
+		player.isExternal ? { label: 'MMU affiliation', value: 'External player (not at MMU)' } : null,
+		player.isExternal ? { label: 'Responsible player', value: player.responsibleMinecraftUsername ?? 'Unknown player' } : null,
 		{ label: 'Society member', value: player.isMember ? 'Yes' : 'No' },
 		{ label: 'Committee', value: player.isCommittee ? 'Yes' : 'No' },
 		profile.preferredName ? { label: 'Nickname', value: profile.preferredName } : null,

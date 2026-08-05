@@ -10,6 +10,7 @@ interface AdminPlayer {
 	email: string
 	isMember: boolean
 	isCommittee: boolean
+	isExternal: boolean
 }
 
 interface GiftCode {
@@ -210,11 +211,13 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		event.preventDefault()
 		const responsiblePlayer = players.find((player) => (
 			player.minecraftUsername.localeCompare(responsibleUsername, 'en', { sensitivity: 'base' }) === 0
+			&& !player.isExternal
 		))
 		if (!responsiblePlayer) {
 			setError('Select a responsible user from the username list')
 			return
 		}
+		if (!window.confirm(`Charge ${responsiblePlayer.minecraftUsername} 100 dabloons to invite ${whitelistEmail}? They must be online.`)) return
 		setUpdatingWhitelist(true)
 		setError('')
 		setMessage('')
@@ -231,7 +234,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 
 				setWhitelistEmail('')
 				setResponsibleUsername('')
-				setMessage(`${body.email} can now sign up.`)
+				setMessage(`${body.email} can now sign up. ${responsiblePlayer.minecraftUsername} paid ${body.priceDabloons} dabloons and has ${body.balanceDabloons} left.`)
 				await load()
 			} catch (caught) {
 				setError(errorMessage(caught, 'Failed to whitelist the email address'))
@@ -397,7 +400,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					<div className="adminSectionHeader">
 						<h3>Email whitelist</h3>
 						<p>Allow a non-MMU email address to sign up. MMU email addresses are always allowed.</p>
-						<p>This should cost some money!</p>
+						<p>Inviting an external player costs the responsible player 100 dabloons. They must be online when you add the email.</p>
 					</div>
 					<form className="emailWhitelistForm" onSubmit={addWhitelistedEmail}>
 						<label>
@@ -412,17 +415,18 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 						</label>
 						<label>
 							Responsible user
-							<input
+							<select
 								value={responsibleUsername}
 								onChange={(event) => setResponsibleUsername(event.target.value)}
-								placeholder="Search Minecraft username"
-								list="whitelist-usernames"
-								autoComplete="off"
 								required
-							/>
-							<datalist id="whitelist-usernames">
-								{players.map((player) => <option key={player.id} value={player.minecraftUsername} />)}
-							</datalist>
+							>
+								<option value="">Select a player</option>
+								{players.map((player) => (
+									<option key={player.id} value={player.minecraftUsername} disabled={player.isExternal}>
+										{player.minecraftUsername}{player.isExternal ? ' (external - unavailable)' : ''}
+									</option>
+								))}
+							</select>
 						</label>
 						<button disabled={updatingWhitelist}>Add email</button>
 					</form>

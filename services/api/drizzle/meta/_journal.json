@@ -71,6 +71,13 @@
       "when": 1785666054910,
       "tag": "0009_brainy_onslaught",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1785921857997,
+      "tag": "0010_slimy_the_watchers",
+      "breakpoints": true
     }
   ]
 }

@@ -22,6 +22,7 @@ service GameplayControl {
   rpc PickDailyAdvancement(PickDailyAdvancementRequest) returns (PickDailyAdvancementResponse);
   rpc ClaimDailyAdvancement(ClaimDailyAdvancementRequest) returns (ClaimDailyAdvancementResponse);
   rpc PurchaseShopItem(PurchaseShopItemRequest) returns (PurchaseShopItemResponse);
+  rpc PurchaseExternalPlayerInvite(PurchaseExternalPlayerInviteRequest) returns (PurchaseExternalPlayerInviteResponse);
   rpc GetCurrentClaimChunk(GetCurrentClaimChunkRequest) returns (GetCurrentClaimChunkResponse);
   rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
   rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
@@ -148,6 +149,7 @@ message SyncPlayerStatsResponse {
   bool is_committee = 5;
   string nickname = 6;
   string pronouns = 7;
+  bool is_external = 8;
 }
 
 message RecordMoneyEventRequest {
@@ -259,6 +261,17 @@ message PurchaseShopItemRequest {
 }
 
 message PurchaseShopItemResponse {
+  bool purchased = 1;
+  bool online = 2;
+  int32 balance_dabloons = 3;
+  string message = 4;
+}
+
+message PurchaseExternalPlayerInviteRequest {
+  string minecraft_username = 1;
+}
+
+message PurchaseExternalPlayerInviteResponse {
   bool purchased = 1;
   bool online = 2;
   int32 balance_dabloons = 3;

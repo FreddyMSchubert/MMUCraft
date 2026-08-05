@@ -8,6 +8,7 @@ import {
 	sqliteTable,
 	text,
 	uniqueIndex,
+	type AnySQLiteColumn,
 } from 'drizzle-orm/sqlite-core'
 
 export const users = sqliteTable('users', {
@@ -15,6 +16,7 @@ export const users = sqliteTable('users', {
 	email: text('email').notNull(),
 	minecraft_uuid: text('minecraft_uuid'),
 	minecraft_username: text('minecraft_username').notNull(),
+	responsible_user_id: integer('responsible_user_id').references((): AnySQLiteColumn => users.id),
 	is_member: integer('is_member').notNull().default(0),
 	is_committee: integer('is_committee').notNull().default(0),
 	is_super_admin: integer('is_super_admin').notNull().default(0),

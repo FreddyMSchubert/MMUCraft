@@ -94,7 +94,7 @@ const GROUP_LABELS: Record<TagGroup, string> = {
 }
 const RARITY_RANK = new Map(RARITIES.map((rarity, index) => [rarity.id, index]))
 
-export function FishingTab() {
+export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: string) => void }) {
 	const [data, setData] = useState<CompendiumResponse | null>(null)
 	const [error, setError] = useState('')
 	const [rarityFilters, setRarityFilters] = useState<Set<Rarity>>(new Set())
@@ -189,7 +189,7 @@ export function FishingTab() {
 
 			<div className="fishOverview">
 				<CompendiumStats fish={data.fish} caughtTotal={caughtTotal} />
-				<LeaderboardPodium entries={podiumEntries} label="Fish Caught" compact />
+				<LeaderboardPodium entries={podiumEntries} label="Fish Caught" onSelectPlayer={onSelectPlayer} compact />
 			</div>
 			<CompendiumGuide
 				rarityFilters={rarityFilters}

@@ -258,6 +258,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 					options={leaderboardOptions}
 					selectedKey={leaderboardOption.key}
 					onChange={setLeaderboardKey}
+					onSelectPlayer={onSelectPlayer}
 				/>
 			)}
 

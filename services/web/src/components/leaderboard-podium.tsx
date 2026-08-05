@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { PlayerName } from '@/components/player-name'
 
 export interface PodiumEntry {
@@ -18,12 +19,13 @@ export interface PodiumOption {
 	label: string
 }
 
-export function LeaderboardPodium({ entries, label, options, selectedKey, onChange, compact = false }: {
+export function LeaderboardPodium({ entries, label, options, selectedKey, onChange, onSelectPlayer, compact = false }: {
 	entries: PodiumEntry[]
 	label: string
 	options?: PodiumOption[]
 	selectedKey?: string
 	onChange?: (key: string) => void
+	onSelectPlayer: (playerName: string) => void
 	compact?: boolean
 }) {
 	const ranked = [...entries]
@@ -36,7 +38,15 @@ export function LeaderboardPodium({ entries, label, options, selectedKey, onChan
 		<section className={`leaderboardPodium${compact ? ' compact' : ''}`}>
 			<div className="podiumPlaces">
 				{podiumOrder.map((entry) => (
-					<article key={entry.id} className={`podiumPlace podiumPlace-${entry.rank}`}>
+					<Link
+						key={entry.id}
+						className={`podiumPlace podiumPlace-${entry.rank}`}
+						href={`/play/players/${encodeURIComponent(entry.name)}`}
+						onNavigate={(event) => {
+							event.preventDefault()
+							onSelectPlayer(entry.name)
+						}}
+					>
 						<div className="podiumIdentity">
 							<strong><PlayerName name={entry.name} color={entry.color} /></strong>
 							{entry.pronouns && <span> ({entry.pronouns})</span>}
@@ -46,7 +56,7 @@ export function LeaderboardPodium({ entries, label, options, selectedKey, onChan
 							<strong>{entry.rank}</strong>
 							<span>{entry.displayValue}</span>
 						</div>
-					</article>
+					</Link>
 				))}
 			</div>
 			{options && selectedKey && onChange ? (

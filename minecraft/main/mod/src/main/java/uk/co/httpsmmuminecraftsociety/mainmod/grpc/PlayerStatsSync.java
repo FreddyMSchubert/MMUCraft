@@ -38,6 +38,7 @@ public final class PlayerStatsSync {
     private static final long STAGGER_WINDOW_TICKS = 5L * 60L * 20L;
     private static final String MEMBER_TEAM = "mmu_member";
     private static final String COMMITTEE_TEAM = "mmu_committee";
+    private static final String EXTERNAL_TEAM = "mmu_external";
     private static final String PROFILE_OBJECTIVE = "mmu_profile";
     private static final Map<UUID, Long> nextSyncTickByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, Boolean> membershipByPlayer = new ConcurrentHashMap<>();
@@ -161,11 +162,15 @@ public final class PlayerStatsSync {
         String playerName = player.getScoreboardName();
         String teamName = response.getAccountLinked() && response.getIsCommittee()
                 ? COMMITTEE_TEAM
-                : response.getAccountLinked() && response.getIsMember() ? MEMBER_TEAM : null;
+                : response.getAccountLinked() && response.getIsExternal()
+                        ? EXTERNAL_TEAM
+                        : response.getAccountLinked() && response.getIsMember() ? MEMBER_TEAM : null;
         PlayerTeam currentTeam = scoreboard.getPlayersTeam(playerName);
 
         if (teamName == null) {
-            if (currentTeam != null && (MEMBER_TEAM.equals(currentTeam.getName()) || COMMITTEE_TEAM.equals(currentTeam.getName()))) {
+            if (currentTeam != null && (MEMBER_TEAM.equals(currentTeam.getName())
+                    || COMMITTEE_TEAM.equals(currentTeam.getName())
+                    || EXTERNAL_TEAM.equals(currentTeam.getName()))) {
                 scoreboard.removePlayerFromTeam(playerName, currentTeam);
             }
             return;
@@ -174,8 +179,11 @@ public final class PlayerStatsSync {
         PlayerTeam team = scoreboard.getPlayerTeam(teamName);
         if (team == null) {
             team = scoreboard.addPlayerTeam(teamName);
-            team.setPlayerSuffix(Component.literal(teamName.equals(COMMITTEE_TEAM) ? " [Committee]" : " [Member]")
-                    .withStyle(teamName.equals(COMMITTEE_TEAM) ? ChatFormatting.GOLD : ChatFormatting.GREEN));
+            String label = teamName.equals(COMMITTEE_TEAM) ? " [Committee]"
+                    : teamName.equals(EXTERNAL_TEAM) ? " [External]" : " [Member]";
+            ChatFormatting colour = teamName.equals(COMMITTEE_TEAM) ? ChatFormatting.GOLD
+                    : teamName.equals(EXTERNAL_TEAM) ? ChatFormatting.GRAY : ChatFormatting.GREEN;
+            team.setPlayerSuffix(Component.literal(label).withStyle(colour));
         }
         if (currentTeam != team) {
             scoreboard.addPlayerToTeam(playerName, team);

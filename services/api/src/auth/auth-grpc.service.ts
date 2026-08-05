@@ -23,6 +23,7 @@ interface AuthProtoRoot {
 export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 	private readonly logger = new Logger(AuthGrpcService.name)
 	private modControlClient: grpc.Client | null = null
+	private gameplayControlClient: grpc.Client | null = null
 
 	constructor(
 		private readonly grpcServer: GrpcServerService,
@@ -36,6 +37,13 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
 			grpc.credentials.createInsecure(),
 		)
+		const gameplayProto = this.grpcServer.loadProto<{
+			mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } }
+		}>('gameplay.proto')
+		this.gameplayControlClient = new gameplayProto.mcstack.gameplay.v1.GameplayControl(
+			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
+			grpc.credentials.createInsecure(),
+		)
 
 		this.grpcServer.addService(authProto.mcstack.auth.v1.AuthEvents.service, {
 			Ping: this.ping.bind(this),
@@ -45,6 +53,7 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 
 	onModuleDestroy() {
 		this.modControlClient?.close()
+		this.gameplayControlClient?.close()
 	}
 
 	async upsertPendingJoin(input: {
@@ -71,19 +80,32 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 		})
 	}
 
-	private async callMod(methodName: string, request: Record<string, unknown>): Promise<unknown> {
-		if (!this.modControlClient) {
-			throw new Error('ModControl gRPC client is not initialized')
-		}
+	async purchaseExternalPlayerInvite(minecraftUsername: string) {
+		return await this.callClient<{
+			purchased: boolean
+			online: boolean
+			balance_dabloons: number
+			message: string
+		}>(this.gameplayControlClient, 'PurchaseExternalPlayerInvite', {
+			minecraft_username: minecraftUsername,
+		})
+	}
 
-		const method = this.modControlClient[methodName as keyof grpc.Client] as unknown
+	private async callMod(methodName: string, request: Record<string, unknown>): Promise<unknown> {
+		return await this.callClient(this.modControlClient, methodName, request)
+	}
+
+	private async callClient<T>(client: grpc.Client | null, methodName: string, request: Record<string, unknown>): Promise<T> {
+		if (!client) throw new Error('gRPC client is not initialized')
+
+		const method = client[methodName as keyof grpc.Client] as unknown
 
 		if (typeof method !== 'function') {
-			throw new Error(`Unknown ModControl method: ${methodName}`)
+			throw new Error(`Unknown gRPC method: ${methodName}`)
 		}
 
-		return await new Promise((resolve, reject) => {
-			method.call(this.modControlClient, request, (error: grpc.ServiceError | null, response: unknown) => {
+		return await new Promise<T>((resolve, reject) => {
+			method.call(client, request, (error: grpc.ServiceError | null, response: T) => {
 				if (error) {
 					reject(error)
 					return

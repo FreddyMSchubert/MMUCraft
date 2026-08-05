@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class GameplayGrpcService extends GrpcHandler {
     static final GameplayGrpcService INSTANCE = new GameplayGrpcService();
+    private static final int EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 100;
 
     private GameplayEventsGrpc.GameplayEventsFutureStub gameplayEvents;
 
@@ -635,6 +636,41 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
     }
 
+    private PurchaseExternalPlayerInviteResponse purchaseExternalPlayerInviteOnMainThread(
+            PurchaseExternalPlayerInviteRequest request
+    ) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        if (player == null || player.hasDisconnected()) {
+            return PurchaseExternalPlayerInviteResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(false)
+                    .setMessage("The responsible player must be online to pay for this invitation.")
+                    .build();
+        }
+
+        int balance = MoneyHelper.GetBalance(player);
+        if (balance < EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS
+                || !MoneyHelper.ReduceMoney(player, EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS)) {
+            return PurchaseExternalPlayerInviteResponse.newBuilder()
+                    .setPurchased(false)
+                    .setOnline(true)
+                    .setBalanceDabloons(balance)
+                    .setMessage("The responsible player needs 100 dabloons for this invitation.")
+                    .build();
+        }
+
+        int remaining = MoneyHelper.GetBalance(player);
+        return PurchaseExternalPlayerInviteResponse.newBuilder()
+                .setPurchased(true)
+                .setOnline(true)
+                .setBalanceDabloons(remaining)
+                .setMessage("External player invitation purchased for 100 dabloons.")
+                .build();
+    }
+
     private GetCurrentClaimChunkResponse getCurrentClaimChunkOnMainThread(GetCurrentClaimChunkRequest request) {
         MinecraftServer server = minecraftServer();
         if (server == null) throw new IllegalStateException("Minecraft server is not available");
@@ -812,6 +848,15 @@ public final class GameplayGrpcService extends GrpcHandler {
                 StreamObserver<PurchaseShopItemResponse> responseObserver
         ) {
             callOnMainThread(() -> purchaseShopItemOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void purchaseExternalPlayerInvite(
+                PurchaseExternalPlayerInviteRequest request,
+                StreamObserver<PurchaseExternalPlayerInviteResponse> responseObserver
+        ) {
+            callOnMainThread(() -> purchaseExternalPlayerInviteOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

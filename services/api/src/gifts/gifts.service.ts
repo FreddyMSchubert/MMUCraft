@@ -45,6 +45,7 @@ export class GiftsService {
 			is_member: users.is_member,
 			is_committee: users.is_committee,
 			is_super_admin: users.is_super_admin,
+			responsible_user_id: users.responsible_user_id,
 			discord_username: playerProfiles.discord_username,
 		}).from(users)
 			.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
@@ -59,6 +60,7 @@ export class GiftsService {
 				email: row.email,
 				isMember: row.is_member === 1,
 				isCommittee: row.is_super_admin === 1 || row.is_committee === 1,
+				isExternal: row.responsible_user_id !== null,
 			})),
 		}
 	}

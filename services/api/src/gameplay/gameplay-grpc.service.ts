@@ -152,6 +152,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			account_linked: boolean
 			is_member: boolean
 			is_committee: boolean
+			is_external: boolean
 			nickname: string
 			pronouns: string
 			message: string
@@ -161,6 +162,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			account_linked: boolean
 			is_member: boolean
 			is_committee: boolean
+			is_external: boolean
 			nickname: string
 			pronouns: string
 			message: string
@@ -179,6 +181,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			account_linked: result.accountLinked,
 			is_member: result.isMember,
 			is_committee: result.isCommittee,
+			is_external: result.isExternal,
 			nickname: result.nickname,
 			pronouns: result.pronouns,
 			message: result.message,

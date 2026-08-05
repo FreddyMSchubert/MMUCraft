@@ -117,6 +117,7 @@ services:
       USE_MEOWICE_FLAGS: "true"
       ENABLE_ROLLING_LOGS: "false"
       LOG_TIMESTAMP: "true"
+      CREATE_CONSOLE_IN_PIPE: "true"
       OVERRIDE_SERVER_PROPERTIES: "false"
       SKIP_SERVER_PROPERTIES: "true"
       UID: ${PUID:-1000}

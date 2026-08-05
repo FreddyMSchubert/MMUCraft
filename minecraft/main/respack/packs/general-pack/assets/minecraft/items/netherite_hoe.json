@@ -1,3 +1,0 @@
-{
-  "model": { "type": "minecraft:condition", "property": "minecraft:custom_model_data", "index": 0, "on_true": { "type": "minecraft:model", "model": "mmu_pack:item/enderite/hoe" }, "on_false": { "type": "minecraft:model", "model": "minecraft:item/netherite_hoe" } }
-}

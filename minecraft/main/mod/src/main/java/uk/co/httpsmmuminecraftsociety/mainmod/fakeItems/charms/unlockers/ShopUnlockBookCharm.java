@@ -20,20 +20,17 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
 
     private final String unlockType;
     private final String sourceItemId;
-    private final String studyingMessage;
     private final String busyMessage;
     private final String failureMessage;
 
     private ShopUnlockBookCharm(
             String unlockType,
             String sourceItemId,
-            String studyingMessage,
             String busyMessage,
             String failureMessage
     ) {
         this.unlockType = unlockType;
         this.sourceItemId = sourceItemId;
-        this.studyingMessage = studyingMessage;
         this.busyMessage = busyMessage;
         this.failureMessage = failureMessage;
     }
@@ -42,7 +39,6 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
         return new ShopUnlockBookCharm(
                 "charm",
                 "charm-magic-book",
-                "Reading the magic book...",
                 "Charm unlocking is already in progress. Try again in a moment.",
                 "A charm could not be unlocked right now."
         );
@@ -52,7 +48,6 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
         return new ShopUnlockBookCharm(
                 "cosmetic",
                 "charm-fashion-book",
-                "Reading the fashion book...",
                 "Cosmetic unlocking is already in progress. Try again in a moment.",
                 "A cosmetic could not be unlocked right now."
         );
@@ -67,8 +62,6 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
             player.sendSystemMessage(Component.literal(busyMessage));
             return InteractionResult.SUCCESS;
         }
-
-        player.sendSystemMessage(Component.literal(studyingMessage));
 
         GameplayGrpcService.unlockNext(
                 player.getGameProfile().name(),
@@ -87,7 +80,7 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
             Component message = Component.literal(response.getMessage());
             if (response.getUnlocked()) {
                 message = message.copy()
-                        .append(Component.literal("\n"))
+                        .append(Component.literal(" "))
                         .append(WebsiteCommand.takeMeThere("play/shop/" + response.getUnlockedId()));
             }
             player.sendSystemMessage(message);

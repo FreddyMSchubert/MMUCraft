@@ -114,21 +114,18 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 	const openKnowledge = useCallback((pageId: string, replace = false) => {
 		const href = `/play/knowledge/${encodeURIComponent(pageId)}`
-		if (replace) router.replace(href)
-		else router.push(href)
-	}, [router])
+		navigate(href, replace)
+	}, [])
 
 	const openShop = useCallback((itemId: string | null, replace = false) => {
 		const href = itemId ? `/play/shop/${encodeURIComponent(itemId)}` : '/play/shop'
-		if (replace) router.replace(href)
-		else router.push(href)
-	}, [router])
+		navigate(href, replace)
+	}, [])
 
 	const openPlayer = useCallback((playerName: string | null, replace = false) => {
 		const href = playerName ? `/play/players/${encodeURIComponent(playerName)}` : '/play/players'
-		if (replace) router.replace(href)
-		else router.push(href)
-	}, [router])
+		navigate(href, replace)
+	}, [])
 
 	return (
 		<SitePage background={background} splash={splash}>
@@ -161,7 +158,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 						<nav className="dashboardTabs" aria-label="Dashboard sections">
 							{TAB_LINKS.filter((tab) => tab.id !== 'admin' || user.isCommittee).map((tab) => (
-								<Link key={tab.id} href={tab.href} className={activeTab === tab.id ? 'active' : ''}>
+								<Link key={tab.id} href={tab.href} className={activeTab === tab.id ? 'active' : ''} onNavigate={(event) => {
+									event.preventDefault()
+									navigate(tab.href)
+								}}>
 									{tab.label}
 								</Link>
 							))}
@@ -181,6 +181,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				)}
 		</SitePage>
 	)
+}
+
+function navigate(href: string, replace = false) {
+	window.history[replace ? 'replaceState' : 'pushState'](null, '', href)
 }
 
 function decodePathSegment(value: string) {

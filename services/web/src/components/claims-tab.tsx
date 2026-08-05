@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { PlayerName, playerNameStyle } from '@/components/player-name'
 
 interface ClaimPerson {
@@ -161,28 +161,21 @@ export function ClaimsTab() {
 	return (
 		<div className="claimsPanel">
 			<div className="claimsTop">
-				<div>
-					<h3>Chunk claims</h3>
-					<p>
-						Each claim protects one whole chunk, from the bottom of the world to the top.<br />
-						<strong>Tip:</strong> Your new claim is the chunk where you are standing. Press F3 + G in Minecraft to show chunk borders. On the F3 debug screen, find the <strong>Chunk</strong> line on the left. Its first and third numbers are the chunk X and Z coordinates shown here.
-					</p>
+				<h3>Chunk claims</h3>
+				<div className="claimPurchase">
+					<button type="button" disabled={busy} onClick={() => void buyClaim()}>
+						Add claim · {data.priceDabloons} dabloons
+					</button>
+					<small>
+						{data.isMember ? (
+							<>Member claim {data.nextClaimNumber} cost: {data.memberPriceDabloons} · <del>Normal claim {data.nextClaimNumber} cost: {data.normalPlayerPriceDabloons}</del></>
+						) : (
+							<><del>Member claim {data.nextClaimNumber} cost: {data.memberPriceDabloons}</del> · Normal claim {data.nextClaimNumber} cost: {data.normalPlayerPriceDabloons}</>
+						)}
+					</small>
 				</div>
-				<button type="button" disabled={busy} onClick={() => void buyClaim()}>
-					<strong>Add claim</strong>
-					{data.isMember ? (
-						<>
-							<span>Member claim {data.nextClaimNumber} cost: {data.memberPriceDabloons} dabloons</span>
-							<del>Normal player claim {data.nextClaimNumber} cost: {data.normalPlayerPriceDabloons} dabloons</del>
-						</>
-					) : (
-						<>
-							<del>Member claim {data.nextClaimNumber} cost: {data.memberPriceDabloons} dabloons</del>
-							<span>Normal player claim {data.nextClaimNumber} cost: {data.normalPlayerPriceDabloons} dabloons</span>
-						</>
-					)}
-				</button>
 			</div>
+			<p className="claimsExplainer">Claims protect one full chunk. Stand in the chunk before you add it; press F3 + G in Minecraft to show chunk borders.</p>
 
 			{message && <p className="dailyMessage">{message}</p>}
 			{error && <p className="authError">{error}</p>}
@@ -198,7 +191,7 @@ export function ClaimsTab() {
 							<section className="claimCard" key={claim.id}>
 								<div className="claimHeader">
 									<div>
-										<h4 style={{ color: claim.color }}>{claim.name}</h4>
+										<h4 className="claimName" style={{ '--claim-color': claim.color } as CSSProperties}>{claim.name}</h4>
 										<span>Chunk {claim.chunkX}, {claim.chunkZ} - {formatDimension(claim.dimension)}</span>
 									</div>
 									<button type="button" disabled={busy} onClick={() => void removeClaim(claim)}>Delete claim</button>

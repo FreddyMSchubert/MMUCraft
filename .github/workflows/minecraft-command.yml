@@ -59,4 +59,4 @@ jobs:
             -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
-            "cd '$DEPLOY_PATH' && command=\$(cat) && docker compose --env-file .env --env-file .release.env exec -T minecraft mc-send-to-console \"\$command\""
+            "cd '$DEPLOY_PATH' && command=\$(cat) && . ./.env && docker compose --env-file .env --env-file .release.env exec -T --user \"\${PUID:-1000}:\${PGID:-1000}\" minecraft mc-send-to-console \"\$command\""

@@ -2,10 +2,13 @@
 
 import Link from 'next/link'
 import { FormEvent, useCallback, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
+import { PlayerName, playerNameStyle } from '@/components/player-name'
 
 interface AdminPlayer {
 	id: number
 	minecraftUsername: string
+	color: string
 	discordUsername: string
 	email: string
 	isMember: boolean
@@ -27,6 +30,7 @@ interface AuthRequest {
 	kind: 'signup' | 'signin'
 	email: string
 	minecraftUsername: string | null
+	color: string | null
 	code: string | null
 	deliveryStatus: 'sent' | 'manual'
 	createdAtUnixMs: number
@@ -37,8 +41,8 @@ interface AuthRequest {
 
 interface WhitelistedEmail {
 	email: string
-	addedByMinecraftUsername: string
-	responsibleMinecraftUsername: string | null
+	addedBy: { name: string; color: string }
+	responsibleMinecraftUsername: { name: string; color: string } | null
 	createdAtUnixMs: number
 }
 
@@ -68,7 +72,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [creating, setCreating] = useState(false)
 	const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
 	const [error, setError] = useState('')
-	const [message, setMessage] = useState('')
+	const [message, setMessage] = useState<ReactNode>('')
 
 	const load = useCallback(async () => {
 		const [playersResponse, codesResponse, signinsResponse, whitelistResponse] = await Promise.all([
@@ -119,7 +123,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 
 	async function setMembership(player: AdminPlayer, isMember: boolean) {
 		const action = isMember ? 'mark as a society member' : 'remove society membership from'
-		if (!window.confirm(`Are you sure you want to ${action} ${player.minecraftUsername}?`)) return
+		if (!window.confirm(`Are you sure you want to ${action} this player?`)) return
 
 		setBusyPlayerId(player.id)
 		setError('')
@@ -136,7 +140,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			setPlayers((current) => current.map((candidate) => (
 				candidate.id === player.id ? { ...candidate, isMember } : candidate
 			)))
-			setMessage(`${player.minecraftUsername} is ${isMember ? 'now' : 'no longer'} marked as a member.`)
+			setMessage(<><PlayerName name={player.minecraftUsername} color={player.color} /> is {isMember ? 'now' : 'no longer'} marked as a member.</>)
 		} catch (caught) {
 			setError(errorMessage(caught, 'Failed to update membership'))
 		} finally {
@@ -146,7 +150,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 
 	async function setCommittee(player: AdminPlayer, isCommittee: boolean) {
 		const action = isCommittee ? 'give committee access to' : 'remove committee access from'
-		if (!window.confirm(`Are you sure you want to ${action} ${player.minecraftUsername}?`)) return
+		if (!window.confirm(`Are you sure you want to ${action} this player?`)) return
 
 		setBusyPlayerId(player.id)
 		setError('')
@@ -163,7 +167,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			setPlayers((current) => current.map((candidate) => (
 				candidate.id === player.id ? { ...candidate, isCommittee } : candidate
 			)))
-			setMessage(`${player.minecraftUsername} ${isCommittee ? 'now has' : 'no longer has'} committee access.`)
+			setMessage(<><PlayerName name={player.minecraftUsername} color={player.color} /> {isCommittee ? 'now has' : 'no longer has'} committee access.</>)
 		} catch (caught) {
 			setError(errorMessage(caught, 'Failed to update committee access'))
 		} finally {
@@ -217,7 +221,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			setError('Select a responsible user from the username list')
 			return
 		}
-		if (!window.confirm(`Charge ${responsiblePlayer.minecraftUsername} 100 dabloons to invite ${whitelistEmail}? They must be online.`)) return
+		if (!window.confirm(`Charge the selected player 100 dabloons to invite ${whitelistEmail}? They must be online.`)) return
 		setUpdatingWhitelist(true)
 		setError('')
 		setMessage('')
@@ -234,7 +238,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 
 				setWhitelistEmail('')
 				setResponsibleUsername('')
-				setMessage(`${body.email} can now sign up. ${responsiblePlayer.minecraftUsername} paid ${body.priceDabloons} dabloons and has ${body.balanceDabloons} left.`)
+				setMessage(<>{body.email} can now sign up. <PlayerName name={responsiblePlayer.minecraftUsername} color={responsiblePlayer.color} /> paid {body.priceDabloons} dabloons and has {body.balanceDabloons} left.</>)
 				await load()
 			} catch (caught) {
 				setError(errorMessage(caught, 'Failed to whitelist the email address'))
@@ -320,7 +324,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 							{players.map((player) => (
 								<tr key={player.id}>
 									<td>
-										{player.minecraftUsername}
+										<PlayerName name={player.minecraftUsername} color={player.color} />
 										{player.isCommittee && <span className="committeeBadge">Committee</span>}
 									</td>
 									<td>{player.discordUsername || <span className="adminMissing">Not provided</span>}</td>
@@ -377,7 +381,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 									<tr key={request.id}>
 										<td>{request.kind === 'signup' ? 'Signup' : 'Signin'}</td>
 										<td>
-											{request.minecraftUsername && <><strong>{request.minecraftUsername}</strong><br /></>}
+											{request.minecraftUsername && request.color && <><strong><PlayerName name={request.minecraftUsername} color={request.color} /></strong><br /></>}
 											{request.email}
 										</td>
 										<td>{formatDateTime(request.createdAtUnixMs)}</td>
@@ -422,9 +426,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 							>
 								<option value="">Select a player</option>
 								{players.map((player) => (
-									<option key={player.id} value={player.minecraftUsername} disabled={player.isExternal}>
-										{player.minecraftUsername}{player.isExternal ? ' (external - unavailable)' : ''}
-									</option>
+									<option className="playerName" style={playerNameStyle(player.color)} key={player.id} value={player.minecraftUsername} disabled={player.isExternal} />
 								))}
 							</select>
 						</label>
@@ -437,8 +439,8 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 								{whitelistedEmails.map((entry) => (
 									<tr key={entry.email}>
 										<td>{entry.email}</td>
-										<td>{entry.responsibleMinecraftUsername ?? <span className="adminMissing">Not assigned</span>}</td>
-										<td>{entry.addedByMinecraftUsername}</td>
+										<td>{entry.responsibleMinecraftUsername ? <PlayerName name={entry.responsibleMinecraftUsername.name} color={entry.responsibleMinecraftUsername.color} /> : <span className="adminMissing">Not assigned</span>}</td>
+										<td><PlayerName name={entry.addedBy.name} color={entry.addedBy.color} /></td>
 										<td>{formatDateTime(entry.createdAtUnixMs)}</td>
 										<td><button type="button" disabled={updatingWhitelist} onClick={() => void removeWhitelistedEmail(entry.email)}>Remove</button></td>
 									</tr>

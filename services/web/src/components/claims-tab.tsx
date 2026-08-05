@@ -1,12 +1,15 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
+import { PlayerName, playerNameStyle } from '@/components/player-name'
 
 interface ClaimPerson {
 	id: number
 	minecraftUsername: string
 	preferredName: string
 	pronouns: string
+	color: string
 	skinUrl: string | null
 	isOwner?: boolean
 }
@@ -18,6 +21,8 @@ interface Claim {
 	chunkZ: number
 	name: string
 	color: string
+	defaultColor: string
+	customColor: string | null
 	members: ClaimPerson[]
 }
 
@@ -43,7 +48,7 @@ export function ClaimsTab() {
 	const [data, setData] = useState<ClaimsResponse | null>(null)
 	const [searches, setSearches] = useState<Record<string, string>>({})
 	const [error, setError] = useState('')
-	const [message, setMessage] = useState('')
+	const [message, setMessage] = useState<ReactNode>('')
 	const [busy, setBusy] = useState(false)
 
 	const load = useCallback(async () => {
@@ -70,7 +75,7 @@ export function ClaimsTab() {
 		}
 	}, [load])
 
-	async function run(action: () => Promise<string>) {
+	async function run(action: () => Promise<ReactNode>) {
 		setBusy(true)
 		setError('')
 		setMessage('')
@@ -113,7 +118,7 @@ export function ClaimsTab() {
 		})
 	}
 
-	async function updateAppearance(claim: Claim, name: string, color: string) {
+	async function updateAppearance(claim: Claim, name: string, color: string | null) {
 		await run(async () => {
 			await request(`/api/claims/${claim.id}/appearance`, {
 				method: 'PATCH',
@@ -140,14 +145,14 @@ export function ClaimsTab() {
 				body: JSON.stringify({ userId: candidate.id }),
 			})
 			setSearches((current) => ({ ...current, [claim.id]: '' }))
-			return `${candidate.minecraftUsername} can now use this claim.`
+			return <><PlayerName name={candidate.minecraftUsername} color={candidate.color} /> can now use this claim.</>
 		})
 	}
 
 	async function removeMember(claim: Claim, person: ClaimPerson) {
 		await run(async () => {
 			await request(`/api/claims/${claim.id}/members/${person.id}`, { method: 'DELETE' })
-			return `${person.minecraftUsername} removed from the claim.`
+			return <><PlayerName name={person.minecraftUsername} color={person.color} /> removed from the claim.</>
 		})
 	}
 
@@ -199,33 +204,15 @@ export function ClaimsTab() {
 									<button type="button" disabled={busy} onClick={() => void removeClaim(claim)}>Delete claim</button>
 								</div>
 
-								<form
-									className="claimAppearanceForm"
-									key={`${claim.id}:${claim.name}:${claim.color}`}
-									onSubmit={(event) => {
-										event.preventDefault()
-										const form = new FormData(event.currentTarget)
-										void updateAppearance(claim, String(form.get('name') ?? ''), String(form.get('color') ?? ''))
-									}}
-								>
-									<label>
-										<span>Claim name (20 characters maximum)</span>
-										<input name="name" defaultValue={claim.name} maxLength={20} required disabled={busy} />
-									</label>
-									<label className="claimColorInput">
-										<span>Color</span>
-										<input name="color" type="color" defaultValue={claim.color} disabled={busy} />
-									</label>
-									<button type="submit" disabled={busy}>Save</button>
-								</form>
+								<ClaimAppearanceForm claim={claim} busy={busy} onSave={(name, color) => updateAppearance(claim, name, color)} />
 
 								<div className="claimMembers">
 									{claim.members.map((person) => (
 										<div className="claimMember" key={person.id}>
 											<PlayerHead person={person} />
 											<div>
-												<strong>{person.preferredName || person.minecraftUsername}</strong>
-												<span>@{person.minecraftUsername}{person.pronouns ? ` - ${person.pronouns}` : ''}</span>
+												<strong>{person.preferredName || <PlayerName name={person.minecraftUsername} color={person.color} />}</strong>
+												<span>@<PlayerName name={person.minecraftUsername} color={person.color} />{person.pronouns ? ` - ${person.pronouns}` : ''}</span>
 											</div>
 											{person.isOwner ? <small>Owner</small> : (
 												<button type="button" disabled={busy} onClick={() => void removeMember(claim, person)}>Remove</button>
@@ -246,9 +233,7 @@ export function ClaimsTab() {
 										/>
 										<datalist id={`claim-candidates-${claim.id}`}>
 											{candidates.map((person) => (
-												<option key={person.id} value={person.minecraftUsername}>
-													{person.preferredName}{person.pronouns ? ` (${person.pronouns})` : ''}
-												</option>
+											<option className="playerName" style={playerNameStyle(person.color)} key={person.id} value={person.minecraftUsername} />
 											))}
 										</datalist>
 										<button type="submit" disabled={busy || candidates.length === 0}>Add</button>
@@ -260,6 +245,31 @@ export function ClaimsTab() {
 				</div>
 			)}
 		</div>
+	)
+}
+
+function ClaimAppearanceForm({ claim, busy, onSave }: {
+	claim: Claim
+	busy: boolean
+	onSave: (name: string, color: string | null) => Promise<void>
+}) {
+	const [color, setColor] = useState<string | null>(claim.customColor)
+	return (
+		<form className="claimAppearanceForm" onSubmit={(event) => {
+			event.preventDefault()
+			void onSave(String(new FormData(event.currentTarget).get('name') ?? ''), color)
+		}}>
+			<label>
+				<span>Claim name (20 characters maximum)</span>
+				<input name="name" defaultValue={claim.name} maxLength={20} required disabled={busy} />
+			</label>
+			<label className="claimColorInput">
+				<span>Color</span>
+				<input type="color" value={color ?? claim.defaultColor} onChange={(event) => setColor(event.target.value)} disabled={busy} />
+			</label>
+			<button type="button" disabled={busy || color === null} onClick={() => setColor(null)}>Reset color</button>
+			<button type="submit" disabled={busy}>Save</button>
+		</form>
 	)
 }
 

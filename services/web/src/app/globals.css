@@ -11,6 +11,18 @@
 	--rarity-mythical: #ff5f00;
 }
 
+.playerName {
+	color: var(--player-color);
+	color: color-mix(in oklch, var(--player-color) 72%, white);
+	color: oklch(from var(--player-color) calc(max(l, 0.72)) c h);
+}
+
+html[data-theme="light"] .playerName,
+.light .playerName {
+	color: color-mix(in oklch, var(--player-color) 72%, black);
+	color: oklch(from var(--player-color) calc(min(l, 0.42)) c h);
+}
+
 @font-face {
 	font-family: "Minecraft UI";
 	src: url("/assets/landing/fonts/minecraft.otf") format("opentype");
@@ -1667,7 +1679,7 @@ a {
 
 .claimAppearanceForm {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto auto;
+	grid-template-columns: minmax(0, 1fr) auto auto auto;
 	align-items: end;
 	gap: 8px;
 	padding-top: 12px;
@@ -2159,8 +2171,21 @@ a {
 
 .playerBioInput,
 .playerBaseInputs,
+.playerColorField,
 .playerProfileActions {
 	grid-column: 1 / -1;
+}
+
+.playerColorField {
+	display: flex;
+	align-items: end;
+	gap: 8px;
+}
+
+.playerColorField input {
+	width: 52px;
+	height: 40px;
+	padding: 3px;
 }
 
 .playerProfileForm textarea {

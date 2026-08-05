@@ -97,7 +97,8 @@ public final class ClaimsManager {
                         new ClaimKey(data.getDimension(), ChunkPos.pack(data.getChunkX(), data.getChunkZ())),
                         new Claim(
                                 data.getId(), ownerUuid, data.getOwnerName(), name,
-                                parseColor(data.getColorHex()), Set.copyOf(members)
+                                parseColor(data.getColorHex()), parseColor(data.getOwnerColorHex()),
+                                data.getHasCustomColor(), Set.copyOf(members)
                         )
                 );
             } catch (IllegalArgumentException ignored) {
@@ -106,6 +107,16 @@ public final class ClaimsManager {
         }
         claims = Map.copyOf(next);
         ready = true;
+        BOSS_BAR_STATES.clear();
+    }
+
+    public static void updateOwnerColor(UUID ownerUuid, int color) {
+        Map<ClaimKey, Claim> next = new HashMap<>(claims);
+        next.replaceAll((key, claim) -> claim.ownerUuid().equals(ownerUuid)
+                ? new Claim(claim.id(), claim.ownerUuid(), claim.ownerName(), claim.name(),
+                        claim.hasCustomColor() ? claim.colorRgb() : color, color, claim.hasCustomColor(), claim.members())
+                : claim);
+        claims = Map.copyOf(next);
         BOSS_BAR_STATES.clear();
     }
 
@@ -220,8 +231,9 @@ public final class ClaimsManager {
                 continue;
             }
 
-            bar.setName(Component.literal(claim.ownerName() + "'s claim: " + claim.name())
-                    .withStyle(Style.EMPTY.withColor(claim.colorRgb())));
+            bar.setName(Component.literal(claim.ownerName()).withStyle(Style.EMPTY.withColor(claim.ownerColorRgb()))
+                    .append(Component.literal("'s claim: " + claim.name())
+                            .withStyle(Style.EMPTY.withColor(claim.colorRgb()))));
             bar.setColor(closestBossBarColor(claim.colorRgb()));
             bar.setVisible(true);
         }
@@ -295,6 +307,7 @@ public final class ClaimsManager {
     private record ClaimKey(String dimension, long chunk) {
     }
 
-    private record Claim(String id, UUID ownerUuid, String ownerName, String name, int colorRgb, Set<UUID> members) {
+    private record Claim(String id, UUID ownerUuid, String ownerName, String name, int colorRgb,
+                         int ownerColorRgb, boolean hasCustomColor, Set<UUID> members) {
     }
 }

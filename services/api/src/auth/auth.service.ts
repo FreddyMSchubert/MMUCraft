@@ -8,6 +8,7 @@ import {
 	UserRow,
 	authRequests,
 	emailWhitelist,
+	playerProfiles,
 	sessions,
 	users,
 } from '../database/database.service'
@@ -28,6 +29,7 @@ import {
 } from './auth.util'
 import { SignupFlow, signupFlows } from './signup-flow'
 import { ASSETS } from '../assets'
+import { effectivePlayerColor } from '../players/player-color'
 
 const EMAIL_CODE_TTL_MS = 10 * 60 * 1000
 const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
@@ -77,6 +79,7 @@ const AUTH_CODE_IMAGES: Partial<Record<(typeof AUTH_CODE_ITEMS)[number], string>
 export interface AuthenticatedUser {
 	id: number
 	minecraftUsername: string
+	color: string
 	isMember: boolean
 	isCommittee: boolean
 	isSuperAdmin: boolean
@@ -370,6 +373,8 @@ export class AuthService {
 			.orderBy(desc(authRequests.created_at_unix_ms))
 			.limit(AUTH_REQUEST_HISTORY_LIMIT)
 			.all()
+		const profilesById = new Map(this.database.connection.select().from(playerProfiles).all()
+			.map((profile) => [profile.user_id, profile]))
 
 		return {
 			requests: requests.map(({ request, user }) => ({
@@ -377,6 +382,7 @@ export class AuthService {
 				kind: request.kind,
 				email: request.email,
 				minecraftUsername: user?.minecraft_username ?? null,
+				color: user ? effectivePlayerColor(user.minecraft_uuid, profilesById.get(user.id)?.color_hex) : null,
 				code: isAuthRequestActive(request, now) ? request.active_code : null,
 				deliveryStatus: request.delivery_status,
 				createdAtUnixMs: request.created_at_unix_ms,
@@ -390,20 +396,26 @@ export class AuthService {
 	}
 
 	listEmailWhitelist() {
+		const profilesById = new Map(this.database.connection.select().from(playerProfiles).all()
+			.map((profile) => [profile.user_id, profile]))
 		const usernamesById = new Map(this.database.connection.select({
 			id: users.id,
 			minecraftUsername: users.minecraft_username,
-		}).from(users).all().map((user) => [user.id, user.minecraftUsername]))
+			minecraftUuid: users.minecraft_uuid,
+		}).from(users).all().map((user) => [user.id, {
+			name: user.minecraftUsername,
+			color: effectivePlayerColor(user.minecraftUuid, profilesById.get(user.id)?.color_hex),
+		}]))
 
 		return {
 			entries: this.database.connection.select().from(emailWhitelist)
 				.orderBy(asc(emailWhitelist.email)).all()
 				.map((entry) => ({
 					email: entry.email,
-					addedByMinecraftUsername: usernamesById.get(entry.added_by_user_id) ?? 'Unknown user',
+					addedBy: usernamesById.get(entry.added_by_user_id) ?? { name: 'Unknown user', color: '#E6E6E6' },
 					responsibleMinecraftUsername: entry.responsible_user_id === null
 						? null
-						: usernamesById.get(entry.responsible_user_id) ?? 'Unknown user',
+						: usernamesById.get(entry.responsible_user_id) ?? { name: 'Unknown user', color: '#E6E6E6' },
 					createdAtUnixMs: entry.created_at_unix_ms,
 				})),
 		}
@@ -512,9 +524,12 @@ export class AuthService {
 		if (!row) return null
 
 		const isSuperAdmin = row.is_super_admin === 1
+		const profile = this.database.connection.select().from(playerProfiles)
+			.where(eq(playerProfiles.user_id, row.id)).get()
 		return {
 			id: row.id,
 			minecraftUsername: row.minecraft_username,
+			color: effectivePlayerColor(row.minecraft_uuid, profile?.color_hex),
 			isMember: row.is_member === 1,
 			isCommittee: isSuperAdmin || row.is_committee === 1,
 			isSuperAdmin,

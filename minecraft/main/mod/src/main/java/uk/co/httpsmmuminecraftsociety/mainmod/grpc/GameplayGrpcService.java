@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -748,6 +749,18 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
     }
 
+    private ApplyPlayerColorResponse applyPlayerColorOnMainThread(ApplyPlayerColorRequest request) {
+        if (!request.getColorHex().matches("^#[0-9A-Fa-f]{6}$")) {
+            throw new IllegalArgumentException("Invalid player color");
+        }
+        UUID playerId = UUID.fromString(request.getMinecraftUuid());
+        int color = Integer.parseInt(request.getColorHex().replace("#", ""), 16);
+        ClaimsManager.updateOwnerColor(playerId, color);
+        ServerPlayer player = minecraftServer().getPlayerList().getPlayer(playerId);
+        if (player != null && !player.hasDisconnected()) PlayerStatsSync.applyColor(player, color);
+        return ApplyPlayerColorResponse.newBuilder().setApplied(true).build();
+    }
+
     private ItemStack createShopGrantStack(PurchaseShopItemRequest request) {
         String deliveryKind = request.getDeliveryKind();
         String itemId = request.getItemId();
@@ -896,6 +909,15 @@ public final class GameplayGrpcService extends GrpcHandler {
                 ClaimsManager.apply(request);
                 return ApplyClaimsSnapshotResponse.newBuilder().setApplied(true).build();
             }).whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void applyPlayerColor(
+                ApplyPlayerColorRequest request,
+                StreamObserver<ApplyPlayerColorResponse> responseObserver
+        ) {
+            callOnMainThread(() -> applyPlayerColorOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 
         private <T> void complete(StreamObserver<T> responseObserver, T response, Throwable error) {

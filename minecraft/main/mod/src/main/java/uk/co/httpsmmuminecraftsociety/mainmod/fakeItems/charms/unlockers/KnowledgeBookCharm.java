@@ -49,9 +49,12 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             }
             player.sendSystemMessage(message);
 
-            if (response.getUnlocked() && !player.isCreative())
-            {
-                stack.shrink(1);
+            if (response.getUnlocked()) {
+                UnlockBookAnimation.play(player, stack);
+
+                if (!player.isCreative()) {
+                    stack.shrink(1);
+                }
             }
         }));
 

@@ -6,8 +6,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.WebsiteCommand;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 
@@ -85,8 +87,16 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
             }
             player.sendSystemMessage(message);
 
-            if (response.getUnlocked() && !player.isCreative()) {
-                stack.shrink(1);
+            if (response.getUnlocked()) {
+                FakeItem unlockedItem = FakeItems.ID_MAP.get(response.getUnlockedId());
+                ItemStack animationItem = "cosmetic".equals(unlockType) && unlockedItem != null
+                        ? unlockedItem.createItemStack()
+                        : stack;
+                UnlockBookAnimation.play(player, animationItem);
+
+                if (!player.isCreative()) {
+                    stack.shrink(1);
+                }
             }
         }));
 

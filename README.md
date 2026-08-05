@@ -422,10 +422,10 @@ hopefully with that i can figure it out
 
 ### Enchanting
 
-villagers dont drop enchanted books anymore. instead, get them from structures at increased reliable chances but only ever at the lowest level.
-you can put enchanted books on lecterns, and the corresponding librarian will offer that trade at high price but reset anvil cost, but will add a random curse to it. This can be removed with the cursebreaker tome.
-repairing items in an anvil with another item does not remove the enchantments, just keeps the first items enchantments. you can repair normally with materials and also repair netherite stuff with diamonds. repairing does not increase xp cost.
-combining books has changed, now a sharpness 1 + a sharpness 2 book makes a sharpness 3 book.
+Enchanting tables use the vanilla rules, enchantments, and levels.
+Vanilla enchanted-book loot remains available. Some structures and mobs have an additional chance to give specific enchanted books.
+Librarians keep their vanilla random enchanted-book trades. Soulbound is not in the vanilla trade pool. Put an enchanted book on a librarian's lectern to add a trade that duplicates that book.
+Anvils keep the custom repair and combination rules. Item repairs keep the enchantments from the first item. Material repairs support netherite items with diamonds and do not increase the XP cost. Book combinations add the levels together. For example, Sharpness I plus Sharpness II gives Sharpness III.
 
 | Enchantment | Initial book obtaining | Item needed to trade instead of book |
 | - | - | - |
@@ -456,7 +456,7 @@ combining books has changed, now a sharpness 1 + a sharpness 2 book makes a shar
 | Respiration | Shipwrecks | Turtle Helmet |
 | Depth Strider | Ocean Ruins | Prismarine Shard |
 | Charm Boost | Trail Ruins | Raw Gold Block |
-| Soulbound | Villages, Crafted with soul + book | Soul |
+| Soulbound | Crafted with a soul and a book | Soul |
 | Silk Touch | Mineshaft | brain_coral_block |
 | Feather Falling | Desert Temple | Parrot Feather |
 | Fire Aspect | Overworld-side ruined portals | fire charge |

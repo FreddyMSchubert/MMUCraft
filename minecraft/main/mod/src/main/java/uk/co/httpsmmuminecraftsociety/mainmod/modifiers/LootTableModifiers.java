@@ -134,7 +134,6 @@ public class LootTableModifiers {
     }
 
     public static void onModifyDrops(Holder<LootTable> lootTableHolder, LootContext lootContext, List<ItemStack> itemStacks) {
-        itemStacks.removeIf(stack -> stack.is(Items.ENCHANTED_BOOK));
         itemStacks.removeIf(stack -> stack.is(Items.DIAMOND) && lootTableHolder.unwrapKey().get().identifier().toString().contains("chest"));
 
         Identifier tableId = lootTableHolder.unwrapKey().map(ResourceKey::identifier).orElse(null);

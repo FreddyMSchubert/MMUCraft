@@ -31,7 +31,6 @@
       "anvilRework.AnvilMenuMixin",
       "anvilRework.AbstractContainerMenuInvoker",
       "anvilRework.ItemCombinerMenuAccessor",
-      "FilterEnchantingTableEnchs",
       "fishing.AnimalCrossingFishingHookMixin",
       "fishing.BrushableBlockEntityAccessor",
       "fishing.DisplayEntityAccessor",

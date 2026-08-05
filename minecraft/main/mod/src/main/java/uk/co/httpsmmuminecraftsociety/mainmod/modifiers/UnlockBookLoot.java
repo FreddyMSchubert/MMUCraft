@@ -48,14 +48,20 @@ public final class UnlockBookLoot {
         }
         UnlockAvailability availability = getAvailability(player);
 
-        int maxBooks = 1;
-        if (availability.hasKnowledgeToUnlock()) maxBooks++;
-        if (availability.hasCosmeticsToUnlock()) maxBooks++;
-        if (availability.hasCharmsToUnlock()) maxBooks++;
+        if (availability.hasKnowledgeToUnlock()) addFakeItem("charm-knowledge-book", itemStacks);
 
-        for (int i = 0; i < Math.floor(Math.round(Math.random() * maxBooks)); i++) {
-            addBookDrop(lootContext, itemStacks, availability);
+        boolean isVillage = tableId.toString().contains("village");
+        boolean dropCharm = false;
+        boolean dropCosmetic = false;
+        if (isVillage) {
+            if (Math.random() > 0.5f) dropCosmetic = true;
+        } else {
+            if (Math.random() > 0.5f) dropCharm = true;
+            if (Math.random() > 0.25f) dropCosmetic = true;
         }
+
+        if (availability.hasCharmsToUnlock() && dropCharm) addFakeItem("charm-magic-book", itemStacks);
+        if (availability.hasCosmeticsToUnlock() && dropCosmetic) addFakeItem("charm-fashion-book", itemStacks);
     }
     public static void addBookDrop(LootContext lootContext, List<ItemStack> itemStacks, UnlockAvailability availability) {
         int totalWeight = 0;

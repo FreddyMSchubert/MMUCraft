@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.ClaimData;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.ClaimsSnapshot;
 
@@ -74,17 +75,18 @@ public final class ClaimsManager {
         Map<ClaimKey, Claim> next = new HashMap<>();
         for (ClaimData data : snapshot.getClaimsList()) {
             try {
+                UUID ownerUuid = parseUuid(data.getOwnerUuid());
                 Set<UUID> members = new HashSet<>();
-                members.add(UUID.fromString(data.getOwnerUuid()));
+                members.add(ownerUuid);
                 for (String memberUuid : data.getMemberUuidsList()) {
-                    members.add(UUID.fromString(memberUuid));
+                    members.add(parseUuid(memberUuid));
                 }
                 next.put(
                         new ClaimKey(data.getDimension(), ChunkPos.pack(data.getChunkX(), data.getChunkZ())),
-                        new Claim(data.getId(), UUID.fromString(data.getOwnerUuid()), data.getOwnerName(), Set.copyOf(members))
+                        new Claim(data.getId(), ownerUuid, data.getOwnerName(), Set.copyOf(members))
                 );
             } catch (IllegalArgumentException ignored) {
-                // A malformed UUID cannot be allowed to make all otherwise valid claims disappear.
+                MainMod.LOGGER.warn("Ignored claim {} because it has an invalid Minecraft UUID", data.getId());
             }
         }
         claims = Map.copyOf(next);
@@ -234,6 +236,15 @@ public final class ClaimsManager {
     private static boolean isOperator(ServerPlayer player) {
         MinecraftServer server = player.level().getServer();
         return server != null && server.getPlayerList().isOp(player.nameAndId());
+    }
+
+    private static UUID parseUuid(String value) {
+        String compact = value.replace("-", "");
+        if (compact.length() != 32) throw new IllegalArgumentException("Invalid Minecraft UUID");
+        return new UUID(
+                Long.parseUnsignedLong(compact.substring(0, 16), 16),
+                Long.parseUnsignedLong(compact.substring(16), 16)
+        );
     }
 
     private static String accessType(ServerPlayer player, Claim claim) {

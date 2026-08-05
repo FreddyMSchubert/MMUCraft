@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, Param, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from '@nestjs/common'
 import { AuthService } from '../auth/auth.service'
 import { ClaimsService } from './claims.service'
 
@@ -33,6 +33,15 @@ export class ClaimsController {
 		@Param('claimId') claimId: string,
 	) {
 		return this.claims.remove(this.auth.requireSession(cookieHeader), claimId)
+	}
+
+	@Patch(':claimId/appearance')
+	updateAppearance(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Body() body: Record<string, unknown> | undefined,
+	) {
+		return this.claims.updateAppearance(this.auth.requireSession(cookieHeader), claimId, body ?? {})
 	}
 
 	@Post(':claimId/members')

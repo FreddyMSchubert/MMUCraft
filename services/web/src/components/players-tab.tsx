@@ -1,8 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { ReactElement } from 'react'
 import { MiniFishCompendium } from '@/components/fishing-tab'
 import { LeaderboardPodium } from '@/components/leaderboard-podium'
+import { PlayerName } from '@/components/player-name'
 
 type StatGroup = 'profile' | 'money' | 'fishing' | 'minecraft'
 
@@ -24,6 +26,9 @@ interface PlayerProfile {
 		z: number | null
 	}
 	bio: string
+	color: string
+	defaultColor: string
+	customColor: string | null
 	updatedAtUnixMs: number
 }
 
@@ -68,6 +73,7 @@ interface PlayerSummary {
 	isCommittee: boolean
 	isExternal: boolean
 	responsibleMinecraftUsername: string | null
+	responsiblePlayerColor: string | null
 	profile: PlayerProfile
 	fishing: Record<string, number>
 	stats: PlayerStats
@@ -179,6 +185,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 		return {
 			id: player.id,
 			name: player.minecraftUsername,
+			color: player.profile.color,
 			pronouns: player.profile.pronouns,
 			value: typeof value === 'number' ? value : 0,
 			displayValue: formatColumnValue(player, leaderboardOption),
@@ -292,7 +299,9 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 								</td>
 								{selectedColumns.map((column, index) => (
 									<td key={`${player.id}:${column.key}:${index}`}>
-										{formatColumnValue(player, column)}
+										{column.key === 'profile.playerName'
+											? <PlayerName name={player.minecraftUsername} color={player.profile.color} />
+											: formatColumnValue(player, column)}
 									</td>
 								))}
 							</tr>
@@ -334,6 +343,7 @@ function PlayerProfilePanel({
 	onError: (message: string) => void
 }) {
 	const [editing, setEditing] = useState(false)
+	const [previewColor, setPreviewColor] = useState(player.profile.color)
 
 	return (
 		<section className="playerProfilePanel">
@@ -343,11 +353,14 @@ function PlayerProfilePanel({
 			<div className="playerProfileTop">
 				<PlayerHead player={player} size="large" />
 				<div className="playerProfileIdentity">
-					<h4>{player.minecraftUsername}</h4>
+					<h4><PlayerName name={player.minecraftUsername} color={previewColor} /></h4>
 					<ProfileFacts player={player} />
 				</div>
 				{player.isCurrentUser && (
-					<button type="button" onClick={() => setEditing((current) => !current)}>
+					<button type="button" onClick={() => {
+						setPreviewColor(player.profile.color)
+						setEditing((current) => !current)
+					}}>
 						{editing ? 'Cancel' : 'Edit profile'}
 					</button>
 				)}
@@ -356,7 +369,11 @@ function PlayerProfilePanel({
 			{editing && player.isCurrentUser ? (
 				<PlayerProfileForm
 					player={player}
-					onCancel={() => setEditing(false)}
+					onCancel={() => {
+						setPreviewColor(player.profile.color)
+						setEditing(false)
+					}}
+					onColorChange={setPreviewColor}
 					onSaved={() => {
 						setEditing(false)
 						onSaved()
@@ -377,7 +394,12 @@ function ProfileFacts({ player }: { player: PlayerSummary }) {
 	const profile = player.profile
 	const facts = [
 		player.isExternal ? { label: 'MMU affiliation', value: 'External player (not at MMU)' } : null,
-		player.isExternal ? { label: 'Responsible player', value: player.responsibleMinecraftUsername ?? 'Unknown player' } : null,
+		player.isExternal ? {
+			label: 'Responsible player',
+			value: player.responsibleMinecraftUsername && player.responsiblePlayerColor
+				? <PlayerName name={player.responsibleMinecraftUsername} color={player.responsiblePlayerColor} />
+				: 'Unknown player',
+		} : null,
 		{ label: 'Society member', value: player.isMember ? 'Yes' : 'No' },
 		{ label: 'Committee', value: player.isCommittee ? 'Yes' : 'No' },
 		profile.preferredName ? { label: 'Nickname', value: profile.preferredName } : null,
@@ -385,7 +407,7 @@ function ProfileFacts({ player }: { player: PlayerSummary }) {
 		profile.courseYear ? { label: 'Course / Year', value: profile.courseYear } : null,
 		profile.discordUsername ? { label: 'Discord username', value: profile.discordUsername } : null,
 		hasBase(profile) ? { label: 'Base location', value: formatBase(profile.base) } : null,
-	].filter((fact): fact is { label: string; value: string } => Boolean(fact))
+	].filter((fact): fact is { label: string; value: string | ReactElement } => Boolean(fact))
 
 	if (facts.length === 0) {
 		return <p className="playerProfileEmpty">No profile details yet.</p>
@@ -408,11 +430,13 @@ function PlayerProfileForm({
 	onCancel,
 	onSaved,
 	onError,
+	onColorChange,
 }: {
 	player: PlayerSummary
 	onCancel: () => void
 	onSaved: () => void
 	onError: (message: string) => void
+	onColorChange: (color: string) => void
 }) {
 	const [preferredName, setPreferredName] = useState(player.profile.preferredName)
 	const [pronouns, setPronouns] = useState(player.profile.pronouns)
@@ -422,7 +446,9 @@ function PlayerProfileForm({
 	const [baseY, setBaseY] = useState(player.profile.base.y?.toString() ?? '')
 	const [baseZ, setBaseZ] = useState(player.profile.base.z?.toString() ?? '')
 	const [bio, setBio] = useState(player.profile.bio)
+	const [color, setColor] = useState<string | null>(player.profile.customColor)
 	const [saving, setSaving] = useState(false)
+	const displayedColor = color ?? player.profile.defaultColor
 
 	async function save() {
 		setSaving(true)
@@ -443,6 +469,7 @@ function PlayerProfileForm({
 					baseY: baseY === '' ? null : Number(baseY),
 					baseZ: baseZ === '' ? null : Number(baseZ),
 					bio,
+					color,
 				}),
 			})
 			const body = await response.json().catch(() => null)
@@ -505,6 +532,19 @@ function PlayerProfileForm({
 				<span>Bio</span>
 				<textarea value={bio} onChange={(event) => setBio(event.target.value)} maxLength={PROFILE_TEXT_LIMITS.bio} rows={4} />
 			</label>
+			<div className="playerColorField">
+				<label>
+					<span>Player color</span>
+					<input type="color" value={displayedColor} onChange={(event) => {
+						setColor(event.target.value)
+						onColorChange(event.target.value)
+					}} />
+				</label>
+				<button type="button" disabled={saving || color === null} onClick={() => {
+					setColor(null)
+					onColorChange(player.profile.defaultColor)
+				}}>Reset color</button>
+			</div>
 			<div className="playerProfileActions">
 				<button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
 				<button type="button" onClick={onCancel} disabled={saving}>Cancel</button>
@@ -564,7 +604,7 @@ function PlayerCell({ player }: { player: PlayerSummary }) {
 		<div className="playerCell">
 			<PlayerHead player={player} size="small" />
 			<span className="playerCellName">
-				{player.minecraftUsername}
+				<PlayerName name={player.minecraftUsername} color={player.profile.color} />
 				{player.profile.pronouns && (
 					<span className="playerCellPronouns"> ({player.profile.pronouns})</span>
 				)}

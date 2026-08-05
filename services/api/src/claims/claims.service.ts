@@ -12,6 +12,7 @@ import {
 	users,
 } from '../database/database.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
+import { effectivePlayerColor, normalizeOptionalColor } from '../players/player-color'
 
 const CLAIM_BASE_PRICE_DABLOONS = 100
 const MEMBER_CLAIM_PRICE_GROWTH = 1.42
@@ -29,6 +30,8 @@ interface ClaimData {
 	owner_name: string
 	name: string
 	color_hex: string
+	owner_color_hex: string
+	has_custom_color: boolean
 	member_uuids: string[]
 }
 
@@ -109,7 +112,9 @@ export class ClaimsService {
 					chunkX: claim.chunk_x,
 					chunkZ: claim.chunk_z,
 					name: claim.claim_name,
-					color: claim.color_hex,
+					color: claim.color_hex ?? peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6',
+					defaultColor: peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6',
+					customColor: claim.color_hex,
 					members: [claim.owner_user_id, ...(memberIdsByClaim.get(claim.id) ?? [])]
 						.map((userId) => peopleById.get(userId))
 						.filter((person) => person !== undefined)
@@ -194,11 +199,11 @@ export class ClaimsService {
 	async updateAppearance(user: AuthenticatedUser, claimId: string, input: Record<string, unknown>) {
 		this.requireOwnedClaim(user.id, claimId)
 		const name = normalizeClaimName(input.name)
-		const color = normalizeClaimColor(input.color)
+		const color = normalizeOptionalColor(input.color, 'Claim color')
 		this.database.connection.update(claims).set({ claim_name: name, color_hex: color })
 			.where(eq(claims.id, claimId)).run()
 		await this.alertMod()
-		return { name, color }
+		return { name, customColor: color }
 	}
 
 	async addMember(user: AuthenticatedUser, claimId: string, targetUserIdInput: unknown) {
@@ -243,6 +248,8 @@ export class ClaimsService {
 	getSnapshot(): ClaimsSnapshot {
 		const userRows = this.database.connection.select().from(users).all()
 		const usersById = new Map(userRows.map((user) => [user.id, user]))
+		const profilesByUserId = new Map(this.database.connection.select().from(playerProfiles).all()
+			.map((profile) => [profile.user_id, profile]))
 		const memberships = this.database.connection.select().from(claimMembers).all()
 		const memberUuidsByClaim = new Map<string, string[]>()
 
@@ -258,6 +265,7 @@ export class ClaimsService {
 			claims: this.database.connection.select().from(claims).all().flatMap((claim) => {
 				const owner = usersById.get(claim.owner_user_id)
 				if (!owner?.minecraft_uuid) return []
+				const ownerColor = effectivePlayerColor(owner.minecraft_uuid, profilesByUserId.get(owner.id)?.color_hex)
 				return [{
 					id: claim.id,
 					dimension: claim.dimension,
@@ -266,7 +274,9 @@ export class ClaimsService {
 					owner_uuid: owner.minecraft_uuid,
 					owner_name: owner.minecraft_username,
 					name: claim.claim_name,
-					color_hex: claim.color_hex,
+					color_hex: claim.color_hex ?? ownerColor,
+					owner_color_hex: ownerColor,
+					has_custom_color: claim.color_hex !== null,
 					member_uuids: memberUuidsByClaim.get(claim.id) ?? [],
 				}]
 			}),
@@ -348,6 +358,7 @@ export class ClaimsService {
 				minecraftUsername: user.minecraft_username,
 				preferredName: profile?.preferred_name ?? '',
 				pronouns: profile?.pronouns ?? '',
+				color: effectivePlayerColor(user.minecraft_uuid, profile?.color_hex),
 				skinUrl: readSkinUrl(statsByUserId.get(user.id)?.stats_json),
 				isMember: user.is_member === 1 && Boolean(user.minecraft_uuid),
 			}
@@ -366,13 +377,6 @@ function normalizeClaimName(value: unknown) {
 		throw new BadRequestException(`Claim name must be 1-${CLAIM_NAME_MAX_LENGTH} characters on one line.`)
 	}
 	return name
-}
-
-function normalizeClaimColor(value: unknown) {
-	if (typeof value !== 'string' || !/^#[0-9a-f]{6}$/i.test(value)) {
-		throw new BadRequestException('Claim color must be a full hex color such as #FFD166.')
-	}
-	return value.toUpperCase()
 }
 
 function normalizeDimension(value: unknown) {

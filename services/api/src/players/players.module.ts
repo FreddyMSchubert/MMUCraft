@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common'
 import { AuthModule } from '../auth/auth.module'
 import { DatabaseModule } from '../database/database.module'
 import { FishingModule } from '../fishing/fishing.module'
+import { GrpcModule } from '../grpc/grpc.module'
 import { PlayersController } from './players.controller'
 import { PlayersService } from './players.service'
 
 @Module({
-	imports: [AuthModule, DatabaseModule, FishingModule],
+	imports: [AuthModule, DatabaseModule, FishingModule, GrpcModule],
 	controllers: [PlayersController],
 	providers: [PlayersService],
 	exports: [PlayersService],

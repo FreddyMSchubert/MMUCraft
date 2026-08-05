@@ -13,10 +13,12 @@ import { PlayersTab } from '@/components/players-tab'
 import { ShopTab } from '@/components/shop-tab'
 import { FishingTab } from '@/components/fishing-tab'
 import { ClaimsTab } from '@/components/claims-tab'
+import { PlayerName } from '@/components/player-name'
 
 interface SessionUser {
 	id: number
 	minecraftUsername: string
+	color: string
 	whitelisted: boolean
 	rulesAccepted: boolean
 	isMember: boolean
@@ -148,7 +150,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							<div>
 								<h2>Dashboard</h2>
 								<p>
-									Signed in as <strong>{user.minecraftUsername}</strong>.
+									Signed in as <strong><PlayerName name={user.minecraftUsername} color={user.color} /></strong>.
 								</p>
 							</div>
 

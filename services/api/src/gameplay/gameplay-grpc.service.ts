@@ -155,6 +155,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			is_external: boolean
 			nickname: string
 			pronouns: string
+			color_hex: string
 			message: string
 		}>,
 		callback: UnaryCallback<{
@@ -165,6 +166,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			is_external: boolean
 			nickname: string
 			pronouns: string
+			color_hex: string
 			message: string
 		}>,
 	) {
@@ -184,6 +186,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			is_external: result.isExternal,
 			nickname: result.nickname,
 			pronouns: result.pronouns,
+			color_hex: result.color,
 			message: result.message,
 		})
 	}

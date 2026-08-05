@@ -12,6 +12,7 @@ import {
 } from '../database/database.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
 import { PlayersService } from '../players/players.service'
+import { effectivePlayerColor } from '../players/player-color'
 
 const GIFT_CODE_PATTERN = /^[A-Za-z0-9_.-]+$/
 const MAX_GIFT_CODE_LENGTH = 64
@@ -46,7 +47,9 @@ export class GiftsService {
 			is_committee: users.is_committee,
 			is_super_admin: users.is_super_admin,
 			responsible_user_id: users.responsible_user_id,
+			minecraft_uuid: users.minecraft_uuid,
 			discord_username: playerProfiles.discord_username,
+			color_hex: playerProfiles.color_hex,
 		}).from(users)
 			.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
 			.all()
@@ -56,6 +59,7 @@ export class GiftsService {
 			players: rows.map((row) => ({
 				id: row.id,
 				minecraftUsername: row.minecraft_username,
+				color: effectivePlayerColor(row.minecraft_uuid, row.color_hex),
 				discordUsername: row.discord_username ?? '',
 				email: row.email,
 				isMember: row.is_member === 1,

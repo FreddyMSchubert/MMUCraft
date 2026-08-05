@@ -79,6 +79,7 @@ export const playerProfiles = sqliteTable('player_profiles', {
 	base_y: integer('base_y'),
 	base_z: integer('base_z'),
 	bio: text('bio').notNull().default(''),
+	color_hex: text('color_hex'),
 	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
 })
 
@@ -89,7 +90,7 @@ export const claims = sqliteTable('claims', {
 	chunk_x: integer('chunk_x').notNull(),
 	chunk_z: integer('chunk_z').notNull(),
 	claim_name: text('claim_name').notNull().default('My claim'),
-	color_hex: text('color_hex').notNull().default('#FFD166'),
+	color_hex: text('color_hex'),
 	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 }, (table) => [
 	uniqueIndex('claims_dimension_chunk_unique').on(table.dimension, table.chunk_x, table.chunk_z),

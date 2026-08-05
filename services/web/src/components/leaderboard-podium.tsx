@@ -1,8 +1,11 @@
 'use client'
 
+import { PlayerName } from '@/components/player-name'
+
 export interface PodiumEntry {
 	id: number
 	name: string
+	color: string
 	pronouns: string
 	value: number
 	displayValue: string
@@ -35,7 +38,7 @@ export function LeaderboardPodium({ entries, label, options, selectedKey, onChan
 				{podiumOrder.map((entry) => (
 					<article key={entry.id} className={`podiumPlace podiumPlace-${entry.rank}`}>
 						<div className="podiumIdentity">
-							<strong>{entry.name}</strong>
+							<strong><PlayerName name={entry.name} color={entry.color} /></strong>
 							{entry.pronouns && <span> ({entry.pronouns})</span>}
 						</div>
 						<PodiumHead entry={entry} />

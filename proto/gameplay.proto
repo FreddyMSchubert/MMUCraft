@@ -26,6 +26,7 @@ service GameplayControl {
   rpc GetCurrentClaimChunk(GetCurrentClaimChunkRequest) returns (GetCurrentClaimChunkResponse);
   rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
   rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
+  rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
 }
 
 message GetClaimsSnapshotRequest {}
@@ -40,6 +41,8 @@ message ClaimData {
   repeated string member_uuids = 7;
   string name = 8;
   string color_hex = 9;
+  string owner_color_hex = 10;
+  bool has_custom_color = 11;
 }
 
 message ClaimsSnapshot {
@@ -75,6 +78,15 @@ message PurchaseClaimResponse {
 }
 
 message ApplyClaimsSnapshotResponse {
+  bool applied = 1;
+}
+
+message ApplyPlayerColorRequest {
+  string minecraft_uuid = 1;
+  string color_hex = 2;
+}
+
+message ApplyPlayerColorResponse {
   bool applied = 1;
 }
 
@@ -153,6 +165,7 @@ message SyncPlayerStatsResponse {
   string nickname = 6;
   string pronouns = 7;
   bool is_external = 8;
+  string color_hex = 9;
 }
 
 message RecordMoneyEventRequest {

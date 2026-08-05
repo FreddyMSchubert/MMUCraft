@@ -25,6 +25,7 @@
       "bowTrail.AttachDataToArrow",
       "bowTrail.SpawnParticles",
       "WhitelistMsgModify",
+      "PlayerDisplayNameMixin",
       "GrindstoneRemoveEnchantmentLock",
       "LibrarianEnchantedBookTradesMixin",
       "anvilRework.AnvilMenuMixin",

@@ -147,7 +147,16 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							<div>
 								<h2>Dashboard</h2>
 								<p>
-									Signed in as <strong><PlayerName name={user.minecraftUsername} color={user.color} /></strong>.
+									<Link
+										className="signedInPlayer"
+										href={`/play/players/${encodeURIComponent(user.minecraftUsername)}`}
+										onNavigate={(event) => {
+											event.preventDefault()
+											openPlayer(user.minecraftUsername)
+										}}
+									>
+										Signed in as <strong><PlayerName name={user.minecraftUsername} color={user.color} /></strong>.
+									</Link>
 								</p>
 							</div>
 
@@ -172,7 +181,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							{activeTab === 'knowledge' && <KnowledgeTab pageId={routeDetail} onSelectPage={openKnowledge} />}
 							{activeTab === 'shop' && <ShopTab itemId={routeDetail} onSelectItem={openShop} />}
 							{activeTab === 'claims' && <ClaimsTab />}
-							{activeTab === 'fishing' && <FishingTab />}
+							{activeTab === 'fishing' && <FishingTab onSelectPlayer={openPlayer} />}
 							{activeTab === 'players' && <PlayersTab playerName={routeDetail} onSelectPlayer={openPlayer} />}
 							{activeTab === 'admin' && user.isCommittee && <AdminTab isSuperAdmin={user.isSuperAdmin} section={routeDetail} />}
 							{activeTab === 'misc' && <MiscTab section={routeDetail} />}

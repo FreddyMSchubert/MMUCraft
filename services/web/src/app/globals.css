@@ -832,6 +832,16 @@ a {
 	margin: 0 0 6px;
 }
 
+.signedInPlayer {
+	color: inherit;
+	text-decoration: none;
+}
+
+.signedInPlayer:hover,
+.signedInPlayer:focus-visible {
+	text-decoration: underline;
+}
+
 .dashboardTop button {
 	flex: 0 0 auto;
 	padding: 10px 14px;
@@ -1818,6 +1828,8 @@ a {
 	justify-items: center;
 	align-content: end;
 	min-width: 0;
+	color: inherit;
+	text-decoration: none;
 }
 
 .podiumIdentity {

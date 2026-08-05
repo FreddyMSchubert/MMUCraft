@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class ClaimsManager {
+    private static final double MINIMUM_HEADING_LIGHTNESS = 0.6;
     private static final ThreadLocal<ArrayDeque<ServerPlayer>> ACTORS = ThreadLocal.withInitial(ArrayDeque::new);
     private static final ThreadLocal<Integer> FIRE_TICKS = ThreadLocal.withInitial(() -> 0);
     private static final Map<UUID, ServerBossEvent> BOSS_BARS = new HashMap<>();
@@ -231,9 +232,9 @@ public final class ClaimsManager {
                 continue;
             }
 
-            bar.setName(Component.literal(claim.ownerName()).withStyle(Style.EMPTY.withColor(claim.ownerColorRgb()))
+            bar.setName(Component.literal(claim.ownerName()).withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.ownerColorRgb())))
                     .append(Component.literal("'s claim: " + claim.name())
-                            .withStyle(Style.EMPTY.withColor(claim.colorRgb()))));
+                            .withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.colorRgb())))));
             bar.setColor(closestBossBarColor(claim.colorRgb()));
             bar.setVisible(true);
         }
@@ -278,6 +279,19 @@ public final class ClaimsManager {
         } catch (NumberFormatException ignored) {
             return 0xFFD166;
         }
+    }
+
+    private static int withMinimumLightness(int rgb) {
+        int red = (rgb >> 16) & 0xFF;
+        int green = (rgb >> 8) & 0xFF;
+        int blue = rgb & 0xFF;
+        double lightness = (Math.max(red, Math.max(green, blue)) + Math.min(red, Math.min(green, blue))) / 510.0;
+        if (lightness >= MINIMUM_HEADING_LIGHTNESS) return rgb;
+        double whiteBlend = (MINIMUM_HEADING_LIGHTNESS - lightness) / (1 - lightness);
+        red = (int) Math.round(red + (255 - red) * whiteBlend);
+        green = (int) Math.round(green + (255 - green) * whiteBlend);
+        blue = (int) Math.round(blue + (255 - blue) * whiteBlend);
+        return (red << 16) | (green << 8) | blue;
     }
 
     private static BossEvent.BossBarColor closestBossBarColor(int rgb) {

@@ -131,6 +131,7 @@ html[data-theme="light"] .playerName,
 	display: block;
 	width: 72%;
 	color: #ffff00;
+	font-family: "Minecraft UI", monospace;
 	font-size: clamp(18px, 2vw, 31px);
 	line-height: 0.92;
 	text-align: center;
@@ -1617,17 +1618,28 @@ a {
 	gap: 14px;
 }
 
+.claimName {
+	color: var(--claim-color);
+	color: color-mix(in oklch, var(--claim-color) 72%, white);
+	color: oklch(from var(--claim-color) calc(max(l, 0.72)) c h);
+}
+
 .claimsTop h3,
 .claimsTop p,
 .claimHeader h4 {
 	margin: 0;
 }
 
-.claimsTop p,
+.claimsExplainer,
 .claimHeader span,
 .claimMember span,
 .claimMember small {
 	color: rgba(255, 255, 255, 0.68);
+}
+
+.claimsExplainer {
+	margin: -6px 0 0;
+	font-size: 0.78rem;
 }
 
 .claimsTop button,
@@ -1640,10 +1652,16 @@ a {
 	font-weight: 800;
 }
 
-.claimsTop button {
+.claimPurchase {
 	display: grid;
-	gap: 2px;
-	text-align: left;
+	justify-items: end;
+	gap: 5px;
+}
+
+.claimPurchase small {
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.68rem;
+	white-space: nowrap;
 }
 
 .claimsTop button:disabled,
@@ -1873,7 +1891,8 @@ a {
 
 .podiumMetric option,
 .podiumMetric optgroup {
-	color: #111;
+	background: #20293a;
+	color: #fff;
 }
 
 .leaderboardPodium.compact {
@@ -2827,6 +2846,8 @@ a {
 .shopItemIcon {
 	width: min(82%, 142px);
 	height: min(82%, 142px);
+	object-fit: contain;
+	image-rendering: pixelated;
 	filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.38));
 }
 
@@ -3950,9 +3971,18 @@ a {
 	}
 
 	.playersTop,
-	.playerProfileTop {
+	.playerProfileTop,
+	.claimsTop {
 		grid-template-columns: 1fr;
 		display: grid;
+	}
+
+	.claimPurchase {
+		justify-items: stretch;
+	}
+
+	.claimPurchase small {
+		white-space: normal;
 	}
 
 	.playersTop button,

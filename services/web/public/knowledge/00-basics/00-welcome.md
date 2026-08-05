@@ -24,8 +24,7 @@ If you want to have a Minecraft experience very close to Vanilla, you can do tha
 3. Tons of awesome cosmetics. Pirate Hat, Cat Ears, Sniffer Hood - Anyone?
 4. Straight up Enderite because Mojang won't make an end update apparently.
 5. Over 1000 new advancements which add many interesting challenges.
-6. An economy with a centralized, stabilized currency you can use when trading with others.
-7. Obamium Pyramid.
+6. Obamium Pyramid.
 
 ## Some tips before you get started
 

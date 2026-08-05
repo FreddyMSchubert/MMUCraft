@@ -26,8 +26,6 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             return InteractionResult.SUCCESS;
         }
 
-        player.sendSystemMessage(Component.literal("Studying the knowledge book..."));
-
         GameplayGrpcService.unlockNext(
                 player.getGameProfile().name(),
                 player.getUUID().toString(),
@@ -46,7 +44,7 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             Component message = Component.literal(response.getMessage());
             if (response.getUnlocked()) {
                 message = message.copy()
-                        .append(Component.literal("\n"))
+                        .append(Component.literal(" "))
                         .append(WebsiteCommand.takeMeThere("play/knowledge/" + response.getKnowledgeId()));
             }
             player.sendSystemMessage(message);

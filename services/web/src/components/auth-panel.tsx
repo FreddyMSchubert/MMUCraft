@@ -225,8 +225,8 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'email' && (
 				<form onSubmit={submitEmail} className="authForm">
 					<h2>Join the server</h2>
-					<p>Use your MMU email to start signup: [student_id]@stu.mmu.ac.uk, or anything @mmu.ac.uk address if you&apos;re an employee.</p>
-					<p>If you are not an MMU member and want to join the server, please have someone you know at MMU contact the administrators. We&apos;re happy to have you!</p>
+					<p>Verify your MMU email to start signup: [student_id]@stu.mmu.ac.uk, or anything @mmu.ac.uk.</p>
+					<p>If you are not from MMU and want to join the server, please have someone you know at MMU contact the committee. We&apos;re happy to have you!</p>
 					<input
 						value={email}
 						onChange={(event) => setEmail(event.target.value)}
@@ -245,11 +245,11 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'signin' && (
 				<form onSubmit={submitSignIn} className="authForm">
 					<h2>Sign in</h2>
-					<p>We&apos;ll send a verification code to your signup email.</p>
+					<p>We&apos;ll send a verification code to your signup email. Please input the minecraft items in order.</p>
 					<input
 						value={email}
 						onChange={(event) => setEmail(event.target.value)}
-						placeholder="you@stu.mmu.ac.uk"
+						placeholder="12345678@stu.mmu.ac.uk"
 						type="email"
 						autoComplete="email"
 						required
@@ -282,7 +282,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'minecraft-username' && (
 				<form onSubmit={submitMinecraftUsername} className="authForm">
 					<h2>Minecraft username</h2>
-					<p>Enter the exact Java Edition username you will join with.</p>
+					<p>To ensure nobody can impersonate you, please enter the exact Java Edition username you will join with.</p>
 					<input
 						value={minecraftUsername}
 						onChange={(event) => setMinecraftUsername(event.target.value)}
@@ -295,7 +295,8 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'minecraft-code' && (
 				<form onSubmit={submitMinecraftCode} className="authForm">
 					<h2>Join the server</h2>
-					<p>Try to join Minecraft. The kick message will show three item names. Choose them here in the same order.</p>
+					<p>The IP is: <strong>mmuminecraftsociety.co.uk</strong></p>
+					<p>When you join the server, you will be given another verification code. Please input the minecraft items in order.</p>
 					<AuthCodeInputs value={authCode} onChange={setAuthCode} />
 					<button disabled={busy}>Verify Minecraft code</button>
 				</form>
@@ -304,7 +305,6 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'rules' && (
 				<form onSubmit={submitRules} className="authForm">
 					<h2>Accept the rules</h2>
-					<p>You must accept the server rules before your Minecraft username is whitelisted.</p>
 
 					<div className="authRules">
 						<p>Check every rule to confirm you have read and understood it:</p>
@@ -320,6 +320,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 								</label>
 							))}
 						</div>
+						<br></br>
 						<p>If you think any of these rules are being broken or feel unwell/unsafe on the server in any way,<br/>please reach out to our Wellbeing Officer Mia or <a href="https://discord.com/channels/1396896170751692931/1415746294659551384" target="_blank">open up a ticket</a> on our discord server.</p>
 					</div>
 
@@ -382,6 +383,6 @@ function AuthCodeIcon({ itemName }: { itemName: string }) {
 
 function verificationMessage(delivery: 'sent' | 'manual', email: string) {
 	return delivery === 'sent'
-		? `We sent a three-item code to ${email}. It expires in 10 minutes.`
+		? `We sent a three-item code to ${email}. It expires in 10 minutes. Please input the minecraft items in order.`
 		: 'Email delivery is currently unavailable. Contact the administrators; they can find this active request and give you the code.'
 }

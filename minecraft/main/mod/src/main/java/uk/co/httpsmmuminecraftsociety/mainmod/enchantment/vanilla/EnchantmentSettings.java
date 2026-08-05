@@ -20,7 +20,6 @@ public class EnchantmentSettings
 {
     public ResourceKey<Enchantment> enchantment;
 
-    public int maxEnchantingTableLevel = -1;
     public int maxNormalGearLevel = -1;
     public int maxEnderiteLevel = -1;
 
@@ -37,8 +36,7 @@ public class EnchantmentSettings
         this.enchantment = enchantment;
     }
 
-    public EnchantmentSettings maxLevels(int maxEnchantingTableLevel, int maxNormalGearLevel, int maxEnderiteLevel) {
-        this.maxEnchantingTableLevel = maxEnchantingTableLevel;
+    public EnchantmentSettings maxLevels(int maxNormalGearLevel, int maxEnderiteLevel) {
         this.maxNormalGearLevel = maxNormalGearLevel;
         this.maxEnderiteLevel = maxEnderiteLevel;
         return this;

@@ -4,6 +4,9 @@ FROM itzg/minecraft-server:java25
 ENV EULA=TRUE
 ENV TYPE=FABRIC
 ENV VERSION=26.2
+ENV ICON=/server-icon.jpg
+ENV OVERRIDE_ICON=TRUE
 
 COPY mod/build/libs/*.jar /mods/
 COPY server.properties.generated /defaults/server.properties
+COPY server-icon.jpg /server-icon.jpg

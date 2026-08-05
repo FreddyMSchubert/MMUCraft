@@ -145,6 +145,9 @@ message SyncPlayerStatsResponse {
   bool account_linked = 2;
   string message = 3;
   bool is_member = 4;
+  bool is_committee = 5;
+  string nickname = 6;
+  string pronouns = 7;
 }
 
 message RecordMoneyEventRequest {

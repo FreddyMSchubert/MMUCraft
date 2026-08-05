@@ -2,15 +2,25 @@ package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.numbers.FixedFormat;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.StatType;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.scores.DisplaySlot;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.ScoreAccess;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons.PlayerAdvancementsAccessor;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
@@ -26,8 +36,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class PlayerStatsSync {
     private static final long BASE_SYNC_INTERVAL_TICKS = 20L * 60L * 20L;
     private static final long STAGGER_WINDOW_TICKS = 5L * 60L * 20L;
+    private static final String MEMBER_TEAM = "mmu_member";
+    private static final String COMMITTEE_TEAM = "mmu_committee";
+    private static final String PROFILE_OBJECTIVE = "mmu_profile";
     private static final Map<UUID, Long> nextSyncTickByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, Boolean> membershipByPlayer = new ConcurrentHashMap<>();
+    private static final Map<UUID, SyncPlayerStatsResponse> presentationByPlayer = new ConcurrentHashMap<>();
+    private static final Map<UUID, String> renderedProfileByPlayer = new ConcurrentHashMap<>();
 
     private static long serverTicks;
     private static boolean sundayRewardDay = AdvancementMoney.isSundayRewardDay();
@@ -45,6 +60,8 @@ public final class PlayerStatsSync {
             syncNow(handler.player, true);
             nextSyncTickByPlayer.remove(handler.player.getUUID());
             membershipByPlayer.remove(handler.player.getUUID());
+            presentationByPlayer.remove(handler.player.getUUID());
+            renderedProfileByPlayer.remove(handler.player.getUUID());
         });
     }
 
@@ -60,6 +77,10 @@ public final class PlayerStatsSync {
         }
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            if (serverTicks % 20L == 0L) {
+                updateBelowName(player);
+            }
+
             UUID playerId = player.getUUID();
             long nextSyncTick = nextSyncTickByPlayer.computeIfAbsent(
                     playerId,
@@ -99,13 +120,17 @@ public final class PlayerStatsSync {
             return CompletableFuture.completedFuture(false);
         }
 
-        CompletableFuture<Boolean> membershipSync = GameplayGrpcService.syncPlayerStats(player, collectStats(player))
+        CompletableFuture<SyncPlayerStatsResponse> profileSync = GameplayGrpcService.syncPlayerStats(player, collectStats(player));
+        CompletableFuture<Boolean> membershipSync = profileSync
                 .thenApply(response -> response.getAccountLinked() && response.getIsMember());
 
-        membershipSync
-                .thenAccept(isMember -> {
+        profileSync
+                .thenAccept(response -> {
                     if (!allowDisconnectedPlayer && !player.hasDisconnected()) {
-                        updateMembership(player, isMember);
+                        MinecraftServer server = player.level().getServer();
+                        if (server != null) {
+                            server.execute(() -> updatePresentation(player, response));
+                        }
                     }
                 })
                 .exceptionally(error -> {
@@ -116,16 +141,79 @@ public final class PlayerStatsSync {
         return membershipSync.exceptionally(error -> isMember(player));
     }
 
-    private static void updateMembership(ServerPlayer player, boolean isMember) {
+    private static void updatePresentation(ServerPlayer player, SyncPlayerStatsResponse response) {
+        if (player.hasDisconnected()) return;
+
+        boolean isMember = response.getAccountLinked() && response.getIsMember();
         Boolean previous = membershipByPlayer.put(player.getUUID(), isMember);
-        if (previous != null && previous == isMember) {
+        presentationByPlayer.put(player.getUUID(), response);
+        renderedProfileByPlayer.remove(player.getUUID());
+        updateTeam(player, response);
+        updateBelowName(player);
+
+        if (previous == null || previous != isMember) {
+            refreshAdvancementTooltips(player);
+        }
+    }
+
+    private static void updateTeam(ServerPlayer player, SyncPlayerStatsResponse response) {
+        ServerScoreboard scoreboard = player.level().getServer().getScoreboard();
+        String playerName = player.getScoreboardName();
+        String teamName = response.getAccountLinked() && response.getIsCommittee()
+                ? COMMITTEE_TEAM
+                : response.getAccountLinked() && response.getIsMember() ? MEMBER_TEAM : null;
+        PlayerTeam currentTeam = scoreboard.getPlayersTeam(playerName);
+
+        if (teamName == null) {
+            if (currentTeam != null && (MEMBER_TEAM.equals(currentTeam.getName()) || COMMITTEE_TEAM.equals(currentTeam.getName()))) {
+                scoreboard.removePlayerFromTeam(playerName, currentTeam);
+            }
             return;
         }
 
-        MinecraftServer server = player.level().getServer();
-        if (server != null) {
-            server.execute(() -> refreshAdvancementTooltips(player));
+        PlayerTeam team = scoreboard.getPlayerTeam(teamName);
+        if (team == null) {
+            team = scoreboard.addPlayerTeam(teamName);
+            team.setPlayerSuffix(Component.literal(teamName.equals(COMMITTEE_TEAM) ? " [Committee]" : " [Member]")
+                    .withStyle(teamName.equals(COMMITTEE_TEAM) ? ChatFormatting.GOLD : ChatFormatting.GREEN));
         }
+        if (currentTeam != team) {
+            scoreboard.addPlayerToTeam(playerName, team);
+        }
+    }
+
+    private static void updateBelowName(ServerPlayer player) {
+        SyncPlayerStatsResponse presentation = presentationByPlayer.get(player.getUUID());
+        if (presentation == null) return;
+
+        ServerStatsCounter stats = player.getStats();
+        long dangerCount = (long) stats.getValue(Stats.ITEM_USED.get(Items.TOTEM_OF_UNDYING))
+                + stats.getValue(Stats.CUSTOM.get(Stats.DEATHS));
+        String nickname = presentation.getNickname().trim();
+        String pronouns = presentation.getPronouns().trim();
+        String prefix = nickname.isEmpty() ? pronouns : pronouns.isEmpty() ? nickname : nickname + " - " + pronouns;
+        String text = (prefix.isEmpty() ? "" : prefix + " - ") + dangerCount + "☠";
+        if (text.equals(renderedProfileByPlayer.put(player.getUUID(), text))) return;
+
+        ServerScoreboard scoreboard = player.level().getServer().getScoreboard();
+        Objective objective = scoreboard.getObjective(PROFILE_OBJECTIVE);
+        if (objective == null) {
+            objective = scoreboard.addObjective(
+                    PROFILE_OBJECTIVE,
+                    ObjectiveCriteria.DUMMY,
+                    Component.empty(),
+                    ObjectiveCriteria.RenderType.INTEGER,
+                    false,
+                    null
+            );
+        }
+        if (scoreboard.getDisplayObjective(DisplaySlot.BELOW_NAME) != objective) {
+            scoreboard.setDisplayObjective(DisplaySlot.BELOW_NAME, objective);
+        }
+
+        ScoreAccess score = scoreboard.getOrCreatePlayerScore(player, objective);
+        score.set(0);
+        score.numberFormatOverride(new FixedFormat(Component.literal(text)));
     }
 
     private static void refreshAdvancementTooltips(ServerPlayer player) {

@@ -18,8 +18,8 @@ import {
 const STATS_VERSION = 1
 const MOJANG_PROFILE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 const PROFILE_TEXT_LIMITS = {
-	preferredName: 40,
-	pronouns: 32,
+	preferredName: 16,
+	pronouns: 16,
 	courseYear: 64,
 	discordUsername: 40,
 	bio: 280,
@@ -106,7 +106,7 @@ const PROFILE_OPTIONS: StatOption[] = [
 	{ key: 'profile.playerName', label: 'Player Name', group: 'profile' },
 	{ key: 'profile.isMember', label: 'Society Member', group: 'profile' },
 	{ key: 'profile.isCommittee', label: 'Committee', group: 'profile' },
-	{ key: 'profile.preferredName', label: 'Preferred Name', group: 'profile' },
+	{ key: 'profile.preferredName', label: 'Nickname', group: 'profile' },
 	{ key: 'profile.pronouns', label: 'Pronouns', group: 'profile' },
 	{ key: 'profile.courseYear', label: 'Course / Year', group: 'profile' },
 	{ key: 'profile.discordUsername', label: 'Discord Username', group: 'profile' },
@@ -357,6 +357,9 @@ export class PlayersService {
 				accepted: false,
 				accountLinked: false,
 				isMember: false,
+				isCommittee: false,
+				nickname: '',
+				pronouns: '',
 				message: 'No website account is linked to this Minecraft username yet.',
 			}
 		}
@@ -386,10 +389,14 @@ export class PlayersService {
 
 		this.saveStats(user.id, stats, unixMs)
 
+		const profile = this.getProfile(user.id)
 		return {
 			accepted: true,
 			accountLinked: true,
 			isMember: user.is_member === 1,
+			isCommittee: user.is_super_admin === 1 || user.is_committee === 1,
+			nickname: profile.preferredName.slice(0, PROFILE_TEXT_LIMITS.preferredName),
+			pronouns: profile.pronouns.slice(0, PROFILE_TEXT_LIMITS.pronouns),
 			message: 'Stats synced.',
 		}
 	}
@@ -615,7 +622,7 @@ export class PlayersService {
 
 	private normalizeProfileInput(input: Record<string, unknown>): PlayerProfile {
 		return {
-			preferredName: sanitizeProfileText(input.preferredName, PROFILE_TEXT_LIMITS.preferredName, 'Preferred name'),
+			preferredName: sanitizeProfileText(input.preferredName, PROFILE_TEXT_LIMITS.preferredName, 'Nickname'),
 			pronouns: sanitizeProfileText(input.pronouns, PROFILE_TEXT_LIMITS.pronouns, 'Pronouns'),
 			courseYear: sanitizeProfileText(input.courseYear, PROFILE_TEXT_LIMITS.courseYear, 'Course / Year'),
 			discordUsername: sanitizeProfileText(input.discordUsername, PROFILE_TEXT_LIMITS.discordUsername, 'Discord username'),

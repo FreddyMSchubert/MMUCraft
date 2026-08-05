@@ -935,7 +935,7 @@
       },
       {
         "model": {
-          "model": "minecraft:item/enchantments/soulbound_1",
+          "model": "general-pack:item/enchantments/soulbound_1",
           "type": "minecraft:model"
         },
         "when": [
@@ -946,7 +946,7 @@
       },
       {
         "model": {
-          "model": "minecraft:item/enchantments/charm_boost_1",
+          "model": "general-pack:item/enchantments/charm_boost_1",
           "type": "minecraft:model"
         },
         "when": [

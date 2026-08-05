@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "general-pack:item/enderite/spear_in_hand"
+	}
+}

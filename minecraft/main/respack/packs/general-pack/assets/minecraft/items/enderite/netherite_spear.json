@@ -9,10 +9,10 @@
       "cases": [
         {
           "when": ["gui", "ground", "fixed", "on_shelf"],
-          "model": { "type": "minecraft:model", "model": "mmu_pack:item/enderite/spear" }
+          "model": { "type": "minecraft:model", "model": "general-pack:item/enderite/spear" }
         }
       ],
-      "fallback": { "type": "minecraft:model", "model": "mmu_pack:item/enderite/spear_in_hand" }
+      "fallback": { "type": "minecraft:model", "model": "general-pack:item/enderite/spear_in_hand" }
     },
     "on_false": {
       "type": "minecraft:select",

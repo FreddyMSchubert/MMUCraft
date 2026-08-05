@@ -13,7 +13,10 @@ import {
 } from '../database/database.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
 
-export const CLAIM_PRICE_DABLOONS = 100
+const CLAIM_BASE_PRICE_DABLOONS = 100
+const MEMBER_CLAIM_PRICE_GROWTH = 1.42
+const NORMAL_PLAYER_CLAIM_PRICE_GROWTH = 1.69
+const MAX_CLAIM_PRICE_DABLOONS = 2_000_000_000
 const MAX_CHUNK_COORDINATE = 1_875_000
 
 interface ClaimData {
@@ -52,7 +55,7 @@ interface GameplayControlClient extends grpc.Client {
 		callback: (error: grpc.ServiceError | null, response: CurrentChunkResponse) => void,
 	): void
 	PurchaseClaim(
-		request: { minecraft_username: string; dimension: string; chunk_x: number; chunk_z: number },
+		request: { minecraft_username: string; dimension: string; chunk_x: number; chunk_z: number; price_dabloons: number },
 		callback: (error: grpc.ServiceError | null, response: PurchaseClaimResponse) => void,
 	): void
 	ApplyClaimsSnapshot(
@@ -94,7 +97,7 @@ export class ClaimsService {
 		}
 
 		return {
-			priceDabloons: CLAIM_PRICE_DABLOONS,
+			...this.getNextClaimPricing(user),
 			claims: this.database.connection.select().from(claims)
 				.where(eq(claims.owner_user_id, user.id)).all()
 				.map((claim) => ({
@@ -125,18 +128,15 @@ export class ClaimsService {
 			chunkX: response.chunk_x,
 			chunkZ: response.chunk_z,
 			balanceDabloons: response.balance_dabloons,
-			priceDabloons: CLAIM_PRICE_DABLOONS,
+			...this.getNextClaimPricing(user),
 		}
 	}
 
 	async create(user: AuthenticatedUser, input: Record<string, unknown>) {
-		if (!user.isMember) {
-			throw new BadRequestException('Only society members can buy claims.')
-		}
-
 		const dimension = normalizeDimension(input.dimension)
 		const chunkX = normalizeChunkCoordinate(input.chunkX)
 		const chunkZ = normalizeChunkCoordinate(input.chunkZ)
+		const { priceDabloons } = this.getNextClaimPricing(user)
 		const claimId = randomUUID()
 		const inserted = this.database.connection.insert(claims).values({
 			id: claimId,
@@ -158,6 +158,7 @@ export class ClaimsService {
 				dimension,
 				chunk_x: chunkX,
 				chunk_z: chunkZ,
+				price_dabloons: priceDabloons,
 			})
 		} catch (error) {
 			this.database.connection.delete(claims).where(eq(claims.id, claimId)).run()
@@ -277,6 +278,20 @@ export class ClaimsService {
 		return claim
 	}
 
+	private getNextClaimPricing(user: AuthenticatedUser) {
+		const nextClaimNumber = this.database.connection.select().from(claims)
+			.where(eq(claims.owner_user_id, user.id)).all().length + 1
+		const memberPriceDabloons = claimPriceDabloons(nextClaimNumber, MEMBER_CLAIM_PRICE_GROWTH)
+		const normalPlayerPriceDabloons = claimPriceDabloons(nextClaimNumber, NORMAL_PLAYER_CLAIM_PRICE_GROWTH)
+		return {
+			isMember: user.isMember,
+			nextClaimNumber,
+			memberPriceDabloons,
+			normalPlayerPriceDabloons,
+			priceDabloons: user.isMember ? memberPriceDabloons : normalPlayerPriceDabloons,
+		}
+	}
+
 	private callMod<T>(methodName: 'GetCurrentClaimChunk' | 'PurchaseClaim' | 'ApplyClaimsSnapshot', request: object) {
 		const client = this.getGameplayControlClient()
 		const method = client[methodName] as unknown as (
@@ -321,6 +336,10 @@ export class ClaimsService {
 			}
 		})
 	}
+}
+
+function claimPriceDabloons(claimNumber: number, growth: number) {
+	return Math.min(MAX_CLAIM_PRICE_DABLOONS, Math.round(CLAIM_BASE_PRICE_DABLOONS * growth ** (claimNumber - 1)))
 }
 
 function normalizeDimension(value: unknown) {

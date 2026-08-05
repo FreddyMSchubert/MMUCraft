@@ -62,6 +62,7 @@ message PurchaseClaimRequest {
   string dimension = 2;
   sint32 chunk_x = 3;
   sint32 chunk_z = 4;
+  int32 price_dabloons = 5;
 }
 
 message PurchaseClaimResponse {

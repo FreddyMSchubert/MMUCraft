@@ -21,6 +21,10 @@ interface Claim {
 
 interface ClaimsResponse {
 	priceDabloons: number
+	isMember: boolean
+	nextClaimNumber: number
+	memberPriceDabloons: number
+	normalPlayerPriceDabloons: number
 	claims: Claim[]
 	candidates: ClaimPerson[]
 }
@@ -144,7 +148,18 @@ export function ClaimsTab() {
 					<p>Each claim protects one whole chunk, from the bottom of the world to the top.</p>
 				</div>
 				<button type="button" disabled={busy} onClick={() => void buyClaim()}>
-					Add claim - {data.priceDabloons} dabloons
+					<strong>Add claim</strong>
+					{data.isMember ? (
+						<>
+							<span>Member claim {data.nextClaimNumber} cost: {data.memberPriceDabloons} dabloons</span>
+							<del>Normal player claim {data.nextClaimNumber} cost: {data.normalPlayerPriceDabloons} dabloons</del>
+						</>
+					) : (
+						<>
+							<del>Member claim {data.nextClaimNumber} cost: {data.memberPriceDabloons} dabloons</del>
+							<span>Normal player claim {data.nextClaimNumber} cost: {data.normalPlayerPriceDabloons} dabloons</span>
+						</>
+					)}
 				</button>
 			</div>
 

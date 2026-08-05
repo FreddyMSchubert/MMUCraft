@@ -826,15 +826,17 @@ a {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
 
-.dashboardTabs button {
+.dashboardTabs a {
+	display: inline-block;
 	padding: 10px 14px;
 	border: 0;
 	border-radius: 10px;
 	background: rgba(255, 255, 255, 0.12);
 	color: #fff;
+	text-decoration: none;
 }
 
-.dashboardTabs button.active {
+.dashboardTabs a.active {
 	background: #ffd166;
 	color: #111;
 	font-weight: 700;
@@ -2218,16 +2220,17 @@ a {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.miscSubTabs button {
+.miscSubTabs a {
 	padding: 9px 13px;
 	border: 1px solid rgba(255, 255, 255, 0.12);
 	border-radius: 8px;
 	background: rgba(255, 255, 255, 0.055);
 	color: rgba(255, 255, 255, 0.7);
 	font-weight: 750;
+	text-decoration: none;
 }
 
-.miscSubTabs button.active {
+.miscSubTabs a.active {
 	border-color: #ffd166;
 	background: #ffd166;
 	color: #151922;
@@ -2310,15 +2313,16 @@ a {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
 
-.adminSubTabs button {
+.adminSubTabs a {
 	padding: 9px 13px;
 	border: 1px solid rgba(255, 255, 255, 0.16);
 	border-radius: 7px;
 	background: rgba(255, 255, 255, 0.08);
 	color: #fff;
+	text-decoration: none;
 }
 
-.adminSubTabs button.active {
+.adminSubTabs a.active {
 	border-color: #ffd166;
 	background: #ffd166;
 	color: #111;

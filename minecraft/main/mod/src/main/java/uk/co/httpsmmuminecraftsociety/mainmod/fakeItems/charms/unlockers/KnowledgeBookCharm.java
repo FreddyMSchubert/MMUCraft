@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import uk.co.httpsmmuminecraftsociety.mainmod.WebsiteCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
@@ -42,7 +43,13 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             }
 
             UnlockBookLoot.updateAvailability(player, response);
-            player.sendSystemMessage(Component.literal(response.getMessage()));
+            Component message = Component.literal(response.getMessage());
+            if (response.getUnlocked()) {
+                message = message.copy()
+                        .append(Component.literal("\n"))
+                        .append(WebsiteCommand.takeMeThere("play/knowledge/" + response.getKnowledgeId()));
+            }
+            player.sendSystemMessage(message);
 
             if (response.getUnlocked() && !player.isCreative())
             {

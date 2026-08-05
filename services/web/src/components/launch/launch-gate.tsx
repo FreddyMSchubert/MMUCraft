@@ -12,7 +12,7 @@ export function LaunchGate({ discordUrl, instagramUrl, background, splash }: { d
 	function tryPreviewBypass() {
 		const now = Date.now()
 		clicks.current = [...clicks.current.filter((time) => now - time <= 3000), now]
-		if (clicks.current.length >= 3) window.location.assign('/play/signin')
+		if (clicks.current.length >= 3) window.location.assign('/play')
 	}
 
 	return <SitePage background={background} splash={splash} className="launchGatePage" contentClassName="launchGateContent">

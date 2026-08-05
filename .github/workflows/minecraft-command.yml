@@ -1,0 +1,62 @@
+name: minecraft command
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: Run Minecraft console command without a leading slash
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  run-command:
+    runs-on: ubuntu-24.04
+    environment: production
+    timeout-minutes: 5
+    steps:
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          test -n "$DEPLOY_SSH_KEY"
+          test -n "$DEPLOY_KNOWN_HOSTS"
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+
+      - name: Run command
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/mmucraft' }}
+          MINECRAFT_COMMAND: ${{ inputs.command }}
+        run: |
+          test -n "$DEPLOY_HOST"
+          test -n "$DEPLOY_USER"
+          [[ "$DEPLOY_PORT" =~ ^[0-9]{1,5}$ ]]
+          [[ "$DEPLOY_PATH" =~ ^/[A-Za-z0-9._/-]+$ ]]
+          [[ "$DEPLOY_PATH" != / && "$DEPLOY_PATH" != *..* ]]
+          [[ -n "${MINECRAFT_COMMAND//[[:space:]]/}" ]]
+          [[ "$MINECRAFT_COMMAND" != -* ]]
+          [[ "$MINECRAFT_COMMAND" != *$'\n'* && "$MINECRAFT_COMMAND" != *$'\r'* ]]
+          [[ ${#MINECRAFT_COMMAND} -le 4096 ]]
+
+          printf '%s' "$MINECRAFT_COMMAND" | ssh \
+            -i ~/.ssh/deploy_key \
+            -p "$DEPLOY_PORT" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "cd '$DEPLOY_PATH' && command=\$(cat) && docker compose --env-file .env --env-file .release.env exec -T minecraft rcon-cli \"\$command\""

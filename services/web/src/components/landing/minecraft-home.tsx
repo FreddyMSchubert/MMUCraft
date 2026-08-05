@@ -23,7 +23,7 @@ export function MinecraftHome(props: MinecraftHomeProps) {
 			<MinecraftTitle splash={props.splash} />
 
 			<nav className="minecraftButtons" aria-label="Main links">
-				<Link className="minecraftButton playButton" href="/play">
+				<Link className="minecraftButton playButton" href="/countdown">
 					<span>Play Now</span>
 					<LaunchCountdown compact />
 				</Link>

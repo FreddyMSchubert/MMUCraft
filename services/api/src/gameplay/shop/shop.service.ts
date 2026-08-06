@@ -117,6 +117,14 @@ interface CatalogItem {
 	charmDetails: CharmDetailsDefinition | null
 }
 
+interface ItemRenderAsset {
+	animation: TextureAnimationDefinition | null
+	modelFilePath: string | null
+	modelUrl: string | null
+	textureFilePath: string | null
+	textureUrl: string | null
+}
+
 interface CachedShopCatalog {
 	root: string
 	mtimeMs: number
@@ -304,7 +312,7 @@ export class ShopService {
 			balanceDabloons: inventory.balance_dabloons,
 			message: inventory.message,
 			charms: inventory.charms.map((charm) => {
-				const item = catalog.find((candidate) => candidate.id === charm.item_id)
+				const item = this.renderAssetForItem(charm.item_id, catalog)
 				return {
 					itemId: charm.item_id,
 					title: charm.title,
@@ -314,15 +322,21 @@ export class ShopService {
 					priceDabloons: charm.price_dabloons,
 					currentAbility: charm.current_ability,
 					nextAbility: charm.next_ability,
+					modelUrl: item?.modelUrl ?? null,
 					textureUrl: item?.textureUrl ?? this.fallbackIconUrl('charm'),
 					animation: item?.animation ?? null,
-					ingredients: charm.ingredients.map((ingredient) => ({
-						raw: ingredient.raw,
-						displayName: ingredient.display_name,
-						requiredCount: ingredient.required_count,
-						inventoryCount: ingredient.inventory_count,
-						iconUrl: this.ingredientIconUrl(ingredient.icon_item_id, catalog),
-					})),
+					ingredients: charm.ingredients.map((ingredient) => {
+						const catalogItem = this.renderAssetForGameId(ingredient.icon_item_id, catalog)
+						return {
+							raw: ingredient.raw,
+							displayName: ingredient.display_name,
+							requiredCount: ingredient.required_count,
+							inventoryCount: ingredient.inventory_count,
+							itemId: ingredient.icon_item_id,
+							iconUrl: this.ingredientIconUrl(ingredient.icon_item_id, catalog),
+							modelUrl: catalogItem?.modelUrl ?? null,
+						}
+					}),
 				}
 			}),
 		}
@@ -346,11 +360,11 @@ export class ShopService {
 				Number(expectedLevel),
 			)
 		} catch {
-			throw new BadRequestException('You have to be online on the server to enchant a charm.')
+			throw new BadRequestException('You have to be online on the server to upgrade a charm.')
 		}
 
 		if (!result.upgraded) {
-			throw new BadRequestException(result.message || 'The charm could not be enchanted.')
+			throw new BadRequestException(result.message || 'The charm could not be upgraded.')
 		}
 
 		return {
@@ -486,7 +500,8 @@ export class ShopService {
 
 	getTextureFilePath(itemIdInput: string): string {
 		const itemId = itemIdInput.trim()
-		const item = this.loadCatalog().items.find((candidate) => candidate.id === itemId)
+		const catalog = this.loadCatalog().items
+		const item = this.renderAssetForItem(itemId, catalog)
 		if (!item?.textureFilePath) {
 			throw new NotFoundException('Shop item texture not found.')
 		}
@@ -496,7 +511,8 @@ export class ShopService {
 
 	getModelFilePath(itemIdInput: string): string {
 		const itemId = itemIdInput.trim()
-		const item = this.loadCatalog().items.find((candidate) => candidate.id === itemId)
+		const catalog = this.loadCatalog().items
+		const item = this.renderAssetForItem(itemId, catalog)
 		if (!item?.modelFilePath) {
 			throw new NotFoundException('Shop item model not found.')
 		}
@@ -1005,9 +1021,35 @@ export class ShopService {
 
 	private ingredientIconUrl(itemId: string, catalog: CatalogItem[]): string | null {
 		if (itemId.startsWith('minecraft:')) return this.vanillaItemIconUrl(itemId)
+		return this.renderAssetForGameId(itemId, catalog)?.textureUrl ?? null
+	}
+
+	private renderAssetForGameId(itemId: string, catalog: CatalogItem[]) {
 		if (!itemId.startsWith('mainmod:')) return null
-		const fakeItemId = itemId.slice('mainmod:'.length)
-		return catalog.find((item) => item.id === fakeItemId)?.textureUrl ?? null
+		return this.renderAssetForItem(itemId.slice('mainmod:'.length), catalog)
+	}
+
+	private renderAssetForItem(itemId: string, catalog: CatalogItem[]): ItemRenderAsset | null {
+		const catalogItem = catalog.find((item) => item.id === itemId)
+		if (catalogItem) return catalogItem
+
+		const root = this.loadCatalog().root
+		for (const filePath of this.findItemJsonFiles(root)) {
+			const definition = JSON.parse(readFileSync(filePath, 'utf8')) as FakeItemDefinition
+			if (definition.id !== itemId) continue
+			const directory = dirname(filePath)
+			const modelFilePath = this.findModelFilePath(directory)
+			const textureFilePath = this.findModelTextureFilePath(directory)
+				?? this.findFlatTextureFilePath(itemId, directory, root)
+			return {
+				animation: textureFilePath ? this.readAnimationDefinition(textureFilePath) : null,
+				modelFilePath,
+				modelUrl: modelFilePath ? this.shopAssetUrl('model', itemId) : null,
+				textureFilePath,
+				textureUrl: textureFilePath ? this.shopAssetUrl('texture', itemId) : null,
+			}
+		}
+		return null
 	}
 
 	private fallbackIconUrl(type: ShopItemType): string | null {

@@ -3,13 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { CharmForgeRenderer } from '@/lib/charm-forge-renderer'
+import { ASSETS } from '@/lib/assets'
 
 interface CharmIngredient {
 	raw: string
 	displayName: string
 	requiredCount: number
-	inventoryCount: number
+	itemId: string
 	iconUrl: string | null
+	modelUrl: string | null
 }
 
 interface HeldCharm {
@@ -21,6 +23,7 @@ interface HeldCharm {
 	priceDabloons: number
 	currentAbility: string
 	nextAbility: string
+	modelUrl: string | null
 	textureUrl: string | null
 	ingredients: CharmIngredient[]
 }
@@ -42,7 +45,7 @@ async function fetchCharmInventory() {
 export function CharmsTab() {
 	const [inventory, setInventory] = useState<CharmInventory | null>(null)
 	const [loading, setLoading] = useState(true)
-	const [enchanting, setEnchanting] = useState(false)
+	const [upgrading, setUpgrading] = useState(false)
 	const [message, setMessage] = useState('')
 	const forgeHost = useRef<HTMLDivElement>(null)
 	const forge = useRef<CharmForgeRenderer | null>(null)
@@ -80,8 +83,20 @@ export function CharmsTab() {
 		if (!forgeHost.current || !charm?.textureUrl) return
 
 		const renderer = new CharmForgeRenderer(forgeHost.current, {
-			charmTexture: charm.textureUrl,
-			ingredientTextures: charm.ingredients.map((ingredient) => ingredient.iconUrl),
+			charm: {
+				assetRoot: ASSETS.minecraft.root,
+				itemId: `mainmod:${charm.itemId}`,
+				modelUrl: charm.modelUrl,
+				textureUrl: charm.textureUrl,
+			},
+			ingredients: charm.ingredients.map((ingredient) => ingredient.itemId.startsWith('minecraft:')
+				? { assetRoot: ASSETS.minecraft.root, itemId: ingredient.itemId }
+				: {
+					assetRoot: ASSETS.minecraft.root,
+					itemId: ingredient.itemId,
+					modelUrl: ingredient.modelUrl,
+					textureUrl: ingredient.iconUrl,
+				}),
 		})
 		forge.current = renderer
 		return () => {
@@ -90,9 +105,9 @@ export function CharmsTab() {
 		}
 	}, [charm])
 
-	async function enchant() {
-		if (!charm || enchanting || charm.currentLevel >= charm.maxLevel) return
-		setEnchanting(true)
+	async function upgrade() {
+		if (!charm || upgrading || charm.currentLevel >= charm.maxLevel) return
+		setUpgrading(true)
 		setMessage('The forge is reading your main hand...')
 
 		try {
@@ -102,16 +117,19 @@ export function CharmsTab() {
 				body: JSON.stringify({ itemId: charm.itemId, expectedLevel: charm.currentLevel }),
 			})
 			const result = await response.json().catch(() => null) as { message?: string } | null
-			if (!response.ok) throw new Error(result?.message || 'The enchantment failed.')
+			if (!response.ok) throw new Error(result?.message || 'The upgrade failed.')
 
-			setMessage('Enchantment accepted. Stand back!')
-			await forge.current?.playEnchantment()
+			setMessage('Upgrade accepted. Stand back!')
+			await forge.current?.playUpgrade()
 			await refresh()
 			setMessage(result?.message || 'The charm grew stronger.')
 		} catch (error) {
-			setMessage(error instanceof Error ? error.message : 'The enchantment failed.')
+			const failure = error instanceof Error ? error.message : 'The upgrade failed.'
+			setLoading(true)
+			await refresh()
+			setMessage(failure)
 		} finally {
-			setEnchanting(false)
+			setUpgrading(false)
 		}
 	}
 
@@ -125,14 +143,13 @@ export function CharmsTab() {
 				</div>
 				<div className="charmForgeControls">
 					<span className="charmBalance" title="Current dabloon balance">
-						<i aria-hidden="true">D</i>
 						{inventory?.balanceDabloons ?? '—'} dabloons
 					</span>
 					<button type="button" className="charmRefresh" onClick={() => {
 						setLoading(true)
 						setMessage('')
 						void refresh()
-					}} disabled={loading || enchanting}>
+					}} disabled={loading || upgrading}>
 						<span aria-hidden="true">↻</span> Refresh main hand
 					</button>
 				</div>
@@ -155,7 +172,7 @@ export function CharmsTab() {
 
 			{!loading && charm && (
 				<>
-					<section className={`charmForgeStage ${enchanting ? 'enchanting' : ''}`} aria-label={`${charm.title} enchantment preview`}>
+					<section className={`charmForgeStage ${upgrading ? 'enchanting' : ''}`} aria-label={`${charm.title} upgrade preview`}>
 						<div className="charmForgeAura" aria-hidden="true" />
 						<div ref={forgeHost} className="charmForgeScene" />
 						<div className="charmIdentity">
@@ -167,7 +184,7 @@ export function CharmsTab() {
 
 					<section className="charmAbility">
 						<div>
-							<span>Current magic</span>
+							<span>Current level</span>
 							<p>{charm.currentAbility}</p>
 						</div>
 						{charm.currentLevel < charm.maxLevel && (
@@ -185,7 +202,6 @@ export function CharmsTab() {
 									<span>Reagents</span>
 									<h4>Required ingredients</h4>
 								</div>
-								<small>Counts update when you refresh or enchant.</small>
 							</div>
 							<ul className="charmIngredientGrid">
 								{charm.ingredients.map((ingredient) => (
@@ -196,15 +212,13 @@ export function CharmsTab() {
 												: <span aria-hidden="true">?</span>}
 										</div>
 										<strong>{ingredient.displayName}</strong>
-										<span className={ingredient.inventoryCount < ingredient.requiredCount ? 'short' : ''}>
-											{ingredient.inventoryCount} / {ingredient.requiredCount}
-										</span>
+									<span>× {ingredient.requiredCount}</span>
 									</li>
 								))}
 							</ul>
 						</section>
 					) : (
-						<div className="charmMastered"><span aria-hidden="true">✦</span> Maximum enchantment reached</div>
+						<div className="charmMastered"><span aria-hidden="true">✦</span> Maximum level reached</div>
 					)}
 
 					<div className="charmEnchantBar">
@@ -212,12 +226,12 @@ export function CharmsTab() {
 						<button
 							type="button"
 							className="charmEnchantButton"
-							onClick={() => void enchant()}
-							disabled={enchanting || charm.currentLevel >= charm.maxLevel}
+							onClick={() => void upgrade()}
+							disabled={upgrading || charm.currentLevel >= charm.maxLevel}
 						>
-							<span>{enchanting ? 'Enchanting...' : charm.currentLevel >= charm.maxLevel ? 'Charm mastered' : 'Enchant charm'}</span>
+							<span>{upgrading ? 'Upgrading...' : charm.currentLevel >= charm.maxLevel ? 'Charm mastered' : 'Upgrade charm'}</span>
 							{charm.currentLevel < charm.maxLevel && (
-								<strong>{charm.priceDabloons === 0 ? 'Free' : `${charm.priceDabloons} D`}</strong>
+								<strong>{charm.priceDabloons === 0 ? 'Free' : `${charm.priceDabloons} dabloons`}</strong>
 							)}
 						</button>
 					</div>

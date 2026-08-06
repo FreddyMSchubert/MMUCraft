@@ -189,7 +189,7 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 
 			<div className="fishOverview">
 				<CompendiumStats fish={data.fish} caughtTotal={caughtTotal} />
-				<LeaderboardPodium entries={podiumEntries} label="Fish Caught" onSelectPlayer={onSelectPlayer} compact />
+				<LeaderboardPodium entries={podiumEntries} label="Fish Species Caught" onSelectPlayer={onSelectPlayer} compact />
 			</div>
 			<CompendiumGuide
 				rarityFilters={rarityFilters}

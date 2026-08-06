@@ -258,7 +258,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 				<LeaderboardPodium
 					entries={podiumEntries}
 					label={leaderboardOption.label}
-					options={leaderboardOptions}
+					optionGroups={groupStatOptions(leaderboardOptions)}
 					selectedKey={leaderboardOption.key}
 					onChange={setLeaderboardKey}
 					onSelectPlayer={onSelectPlayer}
@@ -765,23 +765,33 @@ function groupStatOptions(options: StatOption[]) {
 		},
 		{
 			key: 'fishing',
-			label: 'Fishing',
+			label: 'Fishing Compendium',
 			options: options.filter((option) => option.group === 'fishing'),
 		},
 		{
-			key: 'minecraft-general',
-			label: 'General',
-			options: options.filter((option) => option.group === 'minecraft' && minecraftOptionGroup(option.category) === 'general'),
+			key: 'minecraft-session',
+			label: 'Minecraft - Session',
+			options: options.filter((option) => option.group === 'minecraft' && option.category === 'session'),
+		},
+		{
+			key: 'minecraft-advancement',
+			label: 'Minecraft - Advancements',
+			options: options.filter((option) => option.group === 'minecraft' && option.category === 'advancement'),
+		},
+		{
+			key: 'minecraft-custom',
+			label: 'Minecraft - General Stats',
+			options: options.filter((option) => option.group === 'minecraft' && option.category === 'custom'),
 		},
 		{
 			key: 'minecraft-killed',
-			label: 'Killed mob',
-			options: options.filter((option) => option.group === 'minecraft' && minecraftOptionGroup(option.category) === 'killed'),
+			label: 'Minecraft - Mobs Killed',
+			options: options.filter((option) => option.group === 'minecraft' && option.category === 'killed'),
 		},
 		{
 			key: 'minecraft-killed-by',
-			label: 'Killed by mob',
-			options: options.filter((option) => option.group === 'minecraft' && minecraftOptionGroup(option.category) === 'killed_by'),
+			label: 'Minecraft - Deaths by Mob',
+			options: options.filter((option) => option.group === 'minecraft' && option.category === 'killed_by'),
 		},
 	]
 
@@ -791,12 +801,6 @@ function groupStatOptions(options: StatOption[]) {
 			options: [...group.options].sort((left, right) => left.label.localeCompare(right.label, 'en')),
 		}))
 		.filter((group) => group.options.length > 0)
-}
-
-function minecraftOptionGroup(category?: string) {
-	if (category === 'killed') return 'killed'
-	if (category === 'killed_by') return 'killed_by'
-	return 'general'
 }
 
 function groupMinecraftStats(stats: MinecraftStatValue[]) {

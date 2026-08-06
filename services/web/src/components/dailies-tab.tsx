@@ -1,7 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ASSETS } from '@/lib/assets'
+import { MinecraftModelRenderer } from '@/lib/minecraft-model-renderer'
 
 const RESOURCE_PACK_ROOT = ASSETS.minecraft.root
 
@@ -238,142 +239,29 @@ function formatItemName(item: string) {
 	return item.replace(/^minecraft:/, '').replace(/_/g, ' ')
 }
 
-interface MinecraftModel {
-	parent?: string
-	textures?: Record<string, string>
-}
-
 function MinecraftModelIcon({ item }: { item: string }) {
-	const [iconPath, setIconPath] = useState<string | null>(null)
+	const hostRef = useRef<HTMLDivElement>(null)
+	const [failed, setFailed] = useState(false)
 
 	useEffect(() => {
+		const host = hostRef.current
+		if (!host) return
 		let cancelled = false
-
-		async function resolveIcon() {
-			const path = await resolveMinecraftModelIcon(item)
-			if (!cancelled) {
-				setIconPath(path)
-			}
-		}
-
-		void resolveIcon()
-
+		setFailed(false)
+		const renderer = new MinecraftModelRenderer(host, {
+			assetRoot: RESOURCE_PACK_ROOT,
+			canvasClassName: 'dailyModelCanvas',
+		})
+		void renderer.loadItem({ assetRoot: RESOURCE_PACK_ROOT, itemId: item })
+			.catch(() => { if (!cancelled) setFailed(true) })
 		return () => {
 			cancelled = true
+			renderer.destroy()
 		}
 	}, [item])
 
-	if (!iconPath) {
+	if (failed) {
 		return <div aria-hidden="true" className="dailyIcon dailyIconFallback" />
 	}
-
-	return (
-		<img
-			alt=""
-			className="dailyIcon"
-			src={iconPath}
-			onError={() => setIconPath(null)}
-		/>
-	)
-}
-
-async function resolveMinecraftModelIcon(item: string) {
-	const itemId = parseResourceId(item)
-	const directItemTexture = texturePath({ namespace: itemId.namespace, path: `item/${itemId.path}` })
-	const model = await loadModel({ namespace: itemId.namespace, folder: 'item', path: itemId.path })
-
-	if (!model) {
-		return directItemTexture
-	}
-
-	const resolved = await resolveModelTextures(model, itemId.namespace, new Set())
-	const texture = pickIconTexture(resolved)
-
-	return texture ? texturePath(texture) : directItemTexture
-}
-
-async function resolveModelTextures(model: MinecraftModel, namespace: string, seen: Set<string>) {
-	const textures: Record<string, string> = {}
-	let parentTextures: Record<string, string> = {}
-
-	if (model.parent) {
-		const parentId = parseResourceId(model.parent, namespace)
-		const key = `${parentId.namespace}:${parentId.path}`
-
-		if (!seen.has(key)) {
-			seen.add(key)
-			const [folder, ...pathParts] = parentId.path.split('/')
-			const parentModel = await loadModel({
-				namespace: parentId.namespace,
-				folder: folder === 'block' ? 'block' : 'item',
-				path: pathParts.length > 0 ? pathParts.join('/') : parentId.path,
-			})
-
-			if (parentModel) {
-				parentTextures = await resolveModelTextures(parentModel, parentId.namespace, seen)
-			}
-		}
-	}
-
-	Object.assign(textures, parentTextures)
-
-	for (const [key, value] of Object.entries(model.textures ?? {})) {
-		textures[key] = resolveTextureReference(value, textures, namespace)
-	}
-
-	return textures
-}
-
-function pickIconTexture(textures: Record<string, string>) {
-	for (const key of ['layer0', 'all', 'front', 'side', 'north', 'south', 'top', 'particle']) {
-		const value = textures[key]
-		if (value) {
-			return parseResourceId(value)
-		}
-	}
-
-	const firstTexture = Object.values(textures).find(Boolean)
-	return firstTexture ? parseResourceId(firstTexture) : null
-}
-
-function resolveTextureReference(value: string, textures: Record<string, string>, namespace: string): string {
-	let resolved = value
-	const seen = new Set<string>()
-
-	while (resolved.startsWith('#')) {
-		const key = resolved.slice(1)
-		if (seen.has(key)) {
-			break
-		}
-
-		seen.add(key)
-		resolved = textures[key] ?? resolved
-	}
-
-	const id = parseResourceId(resolved, namespace)
-	return `${id.namespace}:${id.path}`
-}
-
-async function loadModel({ namespace, folder, path }: { namespace: string; folder: 'item' | 'block'; path: string }) {
-	const response = await fetch(`${RESOURCE_PACK_ROOT}/${namespace}/models/${folder}/${path}.json`, {
-		cache: 'force-cache',
-	})
-
-	if (!response.ok) {
-		return null
-	}
-
-	return await response.json().catch(() => null) as MinecraftModel | null
-}
-
-function texturePath(texture: { namespace: string; path: string }) {
-	return `${RESOURCE_PACK_ROOT}/${texture.namespace}/textures/${texture.path}.png`
-}
-
-function parseResourceId(value: string, fallbackNamespace = 'minecraft') {
-	const [namespace, path] = value.includes(':')
-		? value.split(':', 2)
-		: [fallbackNamespace, value]
-
-	return { namespace, path }
+	return <div ref={hostRef} aria-hidden="true" className="dailyIcon dailyModelIcon" />
 }

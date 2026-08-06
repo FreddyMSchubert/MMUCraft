@@ -3,6 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.modifiers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -22,11 +24,14 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 public class LootTableModifiers {
     private static final Identifier SNIFFER_DIGGING = Identifier.fromNamespaceAndPath("minecraft", "gameplay/sniffer_digging");
+    private static final DateTimeFormatter SOUL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
     private record LootAddition(
             Identifier tableId,
             String fakeItemId,
@@ -160,6 +165,19 @@ public class LootTableModifiers {
                 stack = FakeItems.ID_MAP.get(addition.fakeItemId()).createItemStack();
             else if (addition.vanillaItem() != null)
                 stack = addition.vanillaItem().getDefaultInstance();
+
+            if ("soul".equals(addition.fakeItemId())
+                    && lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof Player player) {
+                String deathMessage = player.getCombatTracker().getDeathMessage().getString();
+                int firstSpace = deathMessage.indexOf(' ');
+                String owner = firstSpace < 0 ? player.getName().getString() : deathMessage.substring(0, firstSpace);
+                String death = firstSpace < 0 ? deathMessage : deathMessage.substring(firstSpace + 1);
+                stack.set(DataComponents.LORE, new ItemLore(List.of(
+                        Component.literal("This soul belonged to " + owner + ", who " + death),
+                        Component.literal("[Died: " + ZonedDateTime.now().format(SOUL_DATE_FORMAT) + "]")
+                )));
+                FakeItems.wrapTooltip(stack);
+            }
 
             stack.setCount(rolls);
             itemStacks.add(stack);

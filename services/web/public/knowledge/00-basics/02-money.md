@@ -28,7 +28,7 @@ You can also uncombine them in reverse:
 
 You can earn dabloons through a variety of methods:
 
-1. **Completing advancements** - You can see how many dabloons a given advancement will earn you before completing it by looking at it in the advancements menu. The server has over 1000 additional advancements beyond the Vanilla Minecraft ones.
+1. **Completing advancements** - You can see how many dabloons a given advancement will earn you before completing it by looking at it in the advancements menu. The server has over 1000 additional advancements beyond the Vanilla Minecraft ones. ([All advancements overview](https://docs.google.com/spreadsheets/d/1_DwKEZ0vqCOp2POhiOVSoMVeVNpU1WNPzk0L8qR_y2s))
 2. **Dailies** - Every day there are a few daily tasks. They pay quite well, which is why you can't do an unlimited amount of them. Check the "*Dailies*" tab for all infos.
 3. **Trading** - Stealing from players is not allowed. Trading is. Good luck, try not to get scammed.
 4. **Gift Codes** - Are occasionally handed out at events such as freshers fair. They are time limited codes, which pay you out some money if you type it into the website. Check the "*Misc*" tab for all infos.

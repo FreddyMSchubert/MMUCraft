@@ -3458,6 +3458,10 @@ a {
 	color: #8ff0a4;
 }
 
+.loadMoreButton {
+	justify-self: center;
+}
+
 .redeemForm {
 	max-width: 620px;
 }

@@ -92,6 +92,7 @@ const DEFAULT_COLUMN_KEYS = [
 	'minecraft.custom.minecraft:deaths',
 ]
 const DEFAULT_LEADERBOARD_KEY = 'minecraft.advancement.minecraft:earned'
+const PAGE_SIZE = 42
 const PROFILE_TEXT_LIMITS = {
 	preferredName: 16,
 	pronouns: 16,
@@ -115,6 +116,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 		direction: 'desc',
 	})
 	const [leaderboardKey, setLeaderboardKey] = useState(DEFAULT_LEADERBOARD_KEY)
+	const [visiblePlayerCount, setVisiblePlayerCount] = useState(PAGE_SIZE)
 
 	const load = useCallback(async () => {
 		const response = await fetch('/api/players', {
@@ -176,6 +178,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 		const sortOption = statOptions.find((option) => option.key === sort.key) ?? fallbackOption(sort.key)
 		return [...players].sort((left, right) => comparePlayers(left, right, sortOption, sort.direction))
 	}, [players, sort, statOptions])
+	const visiblePlayers = sortedPlayers.slice(0, visiblePlayerCount)
 	const leaderboardOptions = useMemo(() => statOptions
 		.filter((option) => option.group !== 'profile' && option.key !== 'minecraft.lastPlayedAtUnixMs'), [statOptions])
 	const leaderboardOption = leaderboardOptions.find((option) => option.key === leaderboardKey)
@@ -290,7 +293,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 						</tr>
 					</thead>
 					<tbody>
-						{sortedPlayers.map((player) => (
+						{visiblePlayers.map((player) => (
 							<tr
 								key={player.id}
 								onClick={() => onSelectPlayer(player.minecraftUsername)}
@@ -310,6 +313,11 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 					</tbody>
 				</table>
 			</div>
+			{visiblePlayerCount < sortedPlayers.length && (
+				<button type="button" className="loadMoreButton" onClick={() => setVisiblePlayerCount((current) => current + PAGE_SIZE)}>
+					Load more
+				</button>
+			)}
 		</div>
 	)
 }

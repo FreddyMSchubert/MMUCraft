@@ -29,7 +29,7 @@ interface SessionUser {
 type TabId = 'dailies' | 'knowledge' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
 
 const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
-const ADMIN_SECTIONS = new Set(['members', 'signins', 'whitelist', 'gifts'])
+const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'gifts'])
 const MISC_SECTIONS = new Set(['settings', 'gift-codes'])
 const TAB_LINKS: Array<{ id: TabId; label: string; href: string }> = [
 	{ id: 'knowledge', label: 'Knowledge', href: '/play/knowledge' },

@@ -48,6 +48,18 @@ interface WhitelistedEmail {
 	createdAtUnixMs: number
 }
 
+interface AdminClaim {
+	id: string
+	name: string
+	dimension: string
+	chunkX: number
+	chunkZ: number
+	minecraftUsername: string
+	color: string
+}
+
+const PAGE_SIZE = 42
+
 const CODE_ADJECTIVES = [
 	'ancient', 'blocky', 'creeping', 'enchanted', 'ender', 'golden', 'hidden', 'nether', 'pixelated', 'redstone', 'shimmering', 'square', 'verdant', 'cute', 'creepy', 'gorgeous', 'pretty', 'speedy', 'rough', 'angry', 'anxious', 'attacking'
 ]
@@ -57,10 +69,13 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
-	const activeSection = section === 'signins' || section === 'whitelist' || section === 'gifts' ? section : 'members'
+	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'gifts' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
 	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
+	const [authRequestsHaveMore, setAuthRequestsHaveMore] = useState(false)
+	const [claims, setClaims] = useState<AdminClaim[]>([])
+	const [claimsHaveMore, setClaimsHaveMore] = useState(false)
 	const [whitelistedEmails, setWhitelistedEmails] = useState<WhitelistedEmail[]>([])
 	const [whitelistEmail, setWhitelistEmail] = useState('')
 	const [responsibleUsername, setResponsibleUsername] = useState('')
@@ -71,31 +86,39 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [expiresAt, setExpiresAt] = useState('')
 	const [showAllGiftCodes, setShowAllGiftCodes] = useState(false)
 	const [busyPlayerId, setBusyPlayerId] = useState<number | null>(null)
+	const [busyClaimId, setBusyClaimId] = useState<string | null>(null)
+	const [loadingMore, setLoadingMore] = useState<'signins' | 'claims' | null>(null)
 	const [creating, setCreating] = useState(false)
 	const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
 	const [error, setError] = useState('')
 	const [message, setMessage] = useState<ReactNode>('')
 
 	const load = useCallback(async () => {
-		const [playersResponse, codesResponse, signinsResponse, whitelistResponse] = await Promise.all([
+		const [playersResponse, codesResponse, signinsResponse, claimsResponse, whitelistResponse] = await Promise.all([
 			fetch('/api/admin/players', { cache: 'no-store' }),
 			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
-			fetch('/api/admin/signins', { cache: 'no-store' }),
+			fetch(`/api/admin/signins?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
+			fetch(`/api/admin/claims?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch('/api/admin/email-whitelist', { cache: 'no-store' }),
 		])
 		const playersBody = await playersResponse.json().catch(() => null)
 		const codesBody = await codesResponse.json().catch(() => null)
 		const signinsBody = await signinsResponse.json().catch(() => null)
+		const claimsBody = await claimsResponse.json().catch(() => null)
 		const whitelistBody = await whitelistResponse.json().catch(() => null)
 
 		if (!playersResponse.ok) throw new Error(apiMessage(playersBody, 'Failed to load the member list'))
 		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'))
 		if (!signinsResponse.ok) throw new Error(apiMessage(signinsBody, 'Failed to load signins'))
+		if (!claimsResponse.ok) throw new Error(apiMessage(claimsBody, 'Failed to load claims'))
 		if (!whitelistResponse.ok) throw new Error(apiMessage(whitelistBody, 'Failed to load the email whitelist'))
 
 		setPlayers(playersBody.players as AdminPlayer[])
 		setGiftCodes(codesBody.giftCodes as GiftCode[])
 		setAuthRequests(signinsBody.requests as AuthRequest[])
+		setAuthRequestsHaveMore(Boolean(signinsBody.hasMore))
+		setClaims(claimsBody.claims as AdminClaim[])
+		setClaimsHaveMore(Boolean(claimsBody.hasMore))
 		setWhitelistedEmails(whitelistBody.entries as WhitelistedEmail[])
 	}, [])
 
@@ -268,6 +291,56 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		}
 	}
 
+	async function loadMoreSignins() {
+		setLoadingMore('signins')
+		setError('')
+		try {
+			const response = await fetch(`/api/admin/signins?offset=${authRequests.length}&limit=${PAGE_SIZE}`, { cache: 'no-store' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to load more signins'))
+			setAuthRequests((current) => [...current, ...(body.requests as AuthRequest[])])
+			setAuthRequestsHaveMore(Boolean(body.hasMore))
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to load more signins'))
+		} finally {
+			setLoadingMore(null)
+		}
+	}
+
+	async function loadMoreClaims() {
+		setLoadingMore('claims')
+		setError('')
+		try {
+			const response = await fetch(`/api/admin/claims?offset=${claims.length}&limit=${PAGE_SIZE}`, { cache: 'no-store' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to load more claims'))
+			setClaims((current) => [...current, ...(body.claims as AdminClaim[])])
+			setClaimsHaveMore(Boolean(body.hasMore))
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to load more claims'))
+		} finally {
+			setLoadingMore(null)
+		}
+	}
+
+	async function removeClaim(claim: AdminClaim) {
+		if (!window.confirm(`Delete ${claim.minecraftUsername}'s claim "${claim.name}" at ${claim.dimension} (${claim.chunkX}, ${claim.chunkZ})?`)) return
+		setBusyClaimId(claim.id)
+		setError('')
+		setMessage('')
+		try {
+			const response = await fetch(`/api/admin/claims/${encodeURIComponent(claim.id)}`, { method: 'DELETE' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to delete the claim'))
+			setClaims((current) => current.filter((candidate) => candidate.id !== claim.id))
+			setMessage(<>Deleted <PlayerName name={claim.minecraftUsername} color={claim.color} />&apos;s claim &quot;{claim.name}&quot;.</>)
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to delete the claim'))
+		} finally {
+			setBusyClaimId(null)
+		}
+	}
+
 	return (
 		<div className="adminPanel">
 			<nav className="adminSubTabs" aria-label="Admin sections">
@@ -282,6 +355,12 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					href="/play/admin/members"
 				>
 					Member list
+				</Link>
+				<Link
+					className={activeSection === 'claims' ? 'active' : ''}
+					href="/play/admin/claims"
+				>
+					Claims
 				</Link>
 				<Link
 					className={activeSection === 'whitelist' ? 'active' : ''}
@@ -359,6 +438,39 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 				</section>
 			)}
 
+			{activeSection === 'claims' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader">
+						<h3>Claims</h3>
+						<p>Review claimed chunks and delete claims that block or grief other players.</p>
+					</div>
+					<div className="adminTableWrap">
+						<table className="adminTable">
+							<thead>
+								<tr><th>Player</th><th>Claim name</th><th>Dimension</th><th>Chunk coordinate</th><th></th></tr>
+							</thead>
+							<tbody>
+								{claims.map((claim) => (
+									<tr key={claim.id}>
+										<td><PlayerName name={claim.minecraftUsername} color={claim.color} /></td>
+										<td>{claim.name}</td>
+										<td><code>{claim.dimension}</code></td>
+										<td><code>({claim.chunkX}, {claim.chunkZ})</code></td>
+										<td><button type="button" disabled={busyClaimId !== null} onClick={() => void removeClaim(claim)}>{busyClaimId === claim.id ? 'Deleting...' : 'Delete'}</button></td>
+									</tr>
+								))}
+								{claims.length === 0 && <tr><td colSpan={5}>No chunks are claimed.</td></tr>}
+							</tbody>
+						</table>
+					</div>
+					{claimsHaveMore && (
+						<button type="button" className="loadMoreButton" disabled={loadingMore !== null || busyClaimId !== null} onClick={() => void loadMoreClaims()}>
+							{loadingMore === 'claims' ? 'Loading...' : 'Load more'}
+						</button>
+					)}
+				</section>
+			)}
+
 			{activeSection === 'signins' && (
 				<section className="adminSection">
 					<div className="adminSectionHeader">
@@ -398,6 +510,11 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 							</tbody>
 						</table>
 					</div>
+					{authRequestsHaveMore && (
+						<button type="button" className="loadMoreButton" disabled={loadingMore !== null} onClick={() => void loadMoreSignins()}>
+							{loadingMore === 'signins' ? 'Loading...' : 'Load more'}
+						</button>
+					)}
 				</section>
 			)}
 

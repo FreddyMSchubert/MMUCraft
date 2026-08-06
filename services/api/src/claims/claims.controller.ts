@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common'
 import { AuthService } from '../auth/auth.service'
 import { ClaimsService } from './claims.service'
 
@@ -60,5 +60,32 @@ export class ClaimsController {
 		@Param('userId') userId: string,
 	) {
 		return this.claims.removeMember(this.auth.requireSession(cookieHeader), claimId, userId)
+	}
+}
+
+@Controller('api/admin/claims')
+export class AdminClaimsController {
+	constructor(
+		private readonly auth: AuthService,
+		private readonly claims: ClaimsService,
+	) { }
+
+	@Get()
+	list(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Query('offset') offset: string | undefined,
+		@Query('limit') limit: string | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.claims.listAdmin(offset, limit)
+	}
+
+	@Delete(':claimId')
+	remove(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.claims.removeAdmin(claimId)
 	}
 }

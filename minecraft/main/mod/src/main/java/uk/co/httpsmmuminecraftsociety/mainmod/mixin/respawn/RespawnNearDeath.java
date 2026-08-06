@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Mixin(ServerPlayer.class)
 public class RespawnNearDeath {
     private static final int MIN_DISTANCE = 64;
-    private static final int MAX_DISTANCE = 256;
+    private static final int MAX_DISTANCE = 160;
     private static final int MAX_SEARCHES = 16;
     private static final String VOID_DEATH_KEEP_INVENTORY_TAG = "mainmod_void_death_keep_inventory";
 

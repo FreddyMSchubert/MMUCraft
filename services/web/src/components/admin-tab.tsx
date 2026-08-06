@@ -20,6 +20,7 @@ interface GiftCode {
 	code: string
 	amountDabloons: number
 	redemptionMode: 'single' | 'per_user'
+	membersOnly: boolean
 	expiresAtUnixMs: number | null
 	createdAtUnixMs: number
 	redemptionCount: number
@@ -83,6 +84,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [code, setCode] = useState('')
 	const [amount, setAmount] = useState('')
 	const [redemptionMode, setRedemptionMode] = useState<'single' | 'per_user'>('single')
+	const [membersOnly, setMembersOnly] = useState(false)
 	const [expiresAt, setExpiresAt] = useState('')
 	const [showAllGiftCodes, setShowAllGiftCodes] = useState(false)
 	const [busyPlayerId, setBusyPlayerId] = useState<number | null>(null)
@@ -215,6 +217,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 						code,
 						amountDabloons: Number(amount),
 						redemptionMode,
+						membersOnly,
 						expiresAtUnixMs: expiresAt ? new Date(expiresAt).getTime() : null,
 					}),
 				})
@@ -224,6 +227,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 				setCode('')
 				setAmount('')
 				setRedemptionMode('single')
+				setMembersOnly(false)
 				setExpiresAt('')
 				setSuggestion(makeSuggestion())
 				setMessage(`Created ${body.code} for ${body.amountDabloons} dabloons.`)
@@ -642,6 +646,14 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 								<span>Once per player</span>
 							</label>
 						</fieldset>
+						<label>
+							<input
+								type="checkbox"
+								checked={membersOnly}
+								onChange={(event) => setMembersOnly(event.target.checked)}
+							/>
+							Members only
+						</label>
 						<button disabled={creating}>{creating ? 'Creating...' : 'Create gift code'}</button>
 					</form>
 
@@ -662,6 +674,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 										<span>{giftCode.amountDabloons} dabloons</span>
 										<span>
 											{giftCode.redemptionMode === 'per_user' ? 'Once per player' : 'One total'}
+											{giftCode.membersOnly ? ' - members only' : ''}
 											{giftCode.expiresAtUnixMs
 								? ` - until ${formatExpiry(giftCode.expiresAtUnixMs)}`
 								: ' - no expiry'}

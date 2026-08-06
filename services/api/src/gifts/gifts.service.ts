@@ -121,12 +121,14 @@ export class GiftsService {
 		codeInput: unknown,
 		amountInput: unknown,
 		redemptionModeInput: unknown,
+		membersOnlyInput: unknown,
 		expiresAtUnixMsInput: unknown,
 	) {
 		const code = normalizeGiftCode(codeInput)
 		const amountDabloons = normalizeAmount(amountInput)
 		const now = Date.now()
 		const redemptionMode = normalizeRedemptionMode(redemptionModeInput)
+		const membersOnly = normalizeMembersOnly(membersOnlyInput)
 		const expiresAtUnixMs = normalizeExpiry(expiresAtUnixMsInput, now)
 
 		try {
@@ -134,6 +136,7 @@ export class GiftsService {
 				code,
 				amount_dabloons: amountDabloons,
 				redemption_mode: redemptionMode,
+				members_only: membersOnly ? 1 : 0,
 				expires_at_unix_ms: expiresAtUnixMs,
 				created_by_user_id: admin.id,
 				created_at_unix_ms: now,
@@ -147,7 +150,7 @@ export class GiftsService {
 			throw error
 		}
 
-		return { code, amountDabloons, redemptionMode, expiresAtUnixMs, createdAtUnixMs: now }
+		return { code, amountDabloons, redemptionMode, membersOnly, expiresAtUnixMs, createdAtUnixMs: now }
 	}
 
 	listGiftCodes() {
@@ -174,6 +177,7 @@ export class GiftsService {
 				code: row.code,
 				amountDabloons: row.amount_dabloons,
 				redemptionMode: row.redemption_mode,
+				membersOnly: row.members_only === 1,
 				expiresAtUnixMs: row.expires_at_unix_ms,
 				createdAtUnixMs: row.created_at_unix_ms,
 				redemptionCount: row.redemption_count,
@@ -191,6 +195,9 @@ export class GiftsService {
 		const now = Date.now()
 		if (giftCode.expires_at_unix_ms !== null && giftCode.expires_at_unix_ms <= now) {
 			throw new BadRequestException('That gift code has expired')
+		}
+		if (giftCode.members_only === 1 && !user.isMember) {
+			throw new BadRequestException('That gift code is for society members only')
 		}
 		this.reserveRedemption(giftCode, user.id, now)
 		let moneyGranted = false
@@ -342,6 +349,12 @@ function normalizeAmount(value: unknown) {
 function normalizeRedemptionMode(value: unknown): 'single' | 'per_user' {
 	if (value === 'single' || value === 'per_user') return value
 	throw new BadRequestException('Redemption mode must be single or per_user')
+}
+
+function normalizeMembersOnly(value: unknown) {
+	if (value === undefined || value === false) return false
+	if (value === true) return true
+	throw new BadRequestException('membersOnly must be a boolean')
 }
 
 function normalizeExpiry(value: unknown, now: number): number | null {

@@ -82,6 +82,7 @@ export class AdminController {
 			code?: unknown
 			amountDabloons?: unknown
 			redemptionMode?: unknown
+			membersOnly?: unknown
 			expiresAtUnixMs?: unknown
 		} | undefined,
 	) {
@@ -91,6 +92,7 @@ export class AdminController {
 			body?.code,
 			body?.amountDabloons,
 			body?.redemptionMode,
+			body?.membersOnly,
 			body?.expiresAtUnixMs,
 		)
 	}

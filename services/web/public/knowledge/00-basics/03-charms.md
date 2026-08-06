@@ -5,4 +5,6 @@ chatMessage: You've unlocked knowledge on the basics of charms
 sidebarTitle: Charms
 ====
 
-What charms are, how to unlock, how to get, how to upgrade, how to combine and uncombine with armor.
+Charms are powerful magical artifacts. Once discovered, they can be infinitely rebought from the shop.
+
+Explain that player-facing Charms are the equippable abilities bought from the shop. Show the generic upgrade, combine, and separate recipes. Cover how to equip or remove a Charm from the correct armour slot. Do not repeat the effects already shown on each Charm.

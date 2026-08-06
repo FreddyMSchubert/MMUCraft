@@ -6,11 +6,11 @@ sidebarTitle: Welcome!
 ====
 
 <div class="welcomeWaves">
-<figure><img src="/assets/knowledge/welcome/wave_freddy.gif" alt="Waving Freddy skin"><figcaption><strong>Freddy</strong><span>(Chair)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/welcome/wave_oderzo.gif" alt="Waving oderzo skin"><figcaption><strong>oderzo</strong><span>(Secretary)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/welcome/wave_hannah.gif" alt="Waving Hannah skin"><figcaption><strong>Hannah</strong><span>(Treasurer)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/welcome/wave_mia.gif" alt="Waving Mia skin"><figcaption><strong>Mia</strong><span>(Wellbeing Officer)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/welcome/wave_calum.gif" alt="Waving Calum skin"><figcaption><strong>Calum</strong><span>(Social Media Manager)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_freddy.gif" alt="Waving Freddy skin"><figcaption><strong>Freddy</strong><span>(Chair)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_oderzo.gif" alt="Waving oderzo skin"><figcaption><strong>oderzo</strong><span>(Secretary)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_hannah.gif" alt="Waving Hannah skin"><figcaption><strong>Hannah</strong><span>(Treasurer)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_mia.gif" alt="Waving Mia skin"><figcaption><strong>Mia</strong><span>(Wellbeing Officer)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_calum.gif" alt="Waving Calum skin"><figcaption><strong>Calum</strong><span>(Social Media Manager)</span></figcaption></figure>
 </div>
 
 __Welcome to the MMU Minecraft Society!__ If you're reading this, you can now join the server and start playing!
@@ -32,5 +32,6 @@ If you want to have a Minecraft experience very close to Vanilla, you can do tha
 - **Build close to spawn** - There is no `/home` to avoid everyone living super far away from each other and never seeing each other. There is a way to teleport to the world spawn, but not your own respawn point.
 - **Fill out your profile** - Help people know who you are and what you do! To do so, click on `Players` in the top right, and edit your profile.
 - **Sunday Funday** - On sundays, all currency earned is increased via a multiplier and a bunch of shop items are discounted. Minecraft Day!
+- **Use claims to protect your stuff** - Claims can be purchased, stopping other players from being able to open your chests, place / destroy blocks, kill mobs, ... in your claimed chunks. You can find out more about this on the "*Claims*" tab at the top.
 
-![Cursed Obama](/assets/knowledge/welcome/cursed_obama.png)
+![Cursed Obama](/assets/knowledge/basics/welcome/cursed_obama.png)

@@ -1,6 +1,6 @@
 ====
 id: utility-staves
-unlockOrder: 3
+unlockOrder: 4
 chatMessage: You've unlocked knowledge on the server's utility staves.
 sidebarTitle: Utility Staves
 ====

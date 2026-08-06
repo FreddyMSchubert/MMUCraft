@@ -34,6 +34,23 @@ export class ShopController {
 		return this.shop.purchaseItem(user, body?.itemId)
 	}
 
+	@Get('charms')
+	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
+	getCharms(@Headers('cookie') cookieHeader: string | undefined) {
+		const user = this.auth.requireSession(cookieHeader)
+		return this.shop.getCharmInventory(user)
+	}
+
+	@Post('charms/upgrade')
+	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
+	upgradeCharm(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { itemId?: unknown; expectedLevel?: unknown },
+	) {
+		const user = this.auth.requireSession(cookieHeader)
+		return this.shop.upgradeCharm(user, body)
+	}
+
 	@Get('texture/:itemId')
 	@Header('Content-Type', 'image/png')
 	@Header('Cache-Control', VERSIONED_ASSET_CACHE_CONTROL)

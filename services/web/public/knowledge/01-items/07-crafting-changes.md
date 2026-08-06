@@ -1,6 +1,6 @@
 ====
 id: crafting-changes
-unlockOrder: 2
+unlockOrder: 4
 chatMessage: You've unlocked knowledge on the server's changed crafting recipes.
 sidebarTitle: Crafting Changes
 ====

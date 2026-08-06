@@ -1,6 +1,6 @@
 ====
 id: sculk-phial
-unlockOrder: 3
+unlockOrder: 4
 chatMessage: You've unlocked knowledge on storing experience in a Sculk Phial.
 sidebarTitle: Sculk Phial
 ====

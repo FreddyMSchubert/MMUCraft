@@ -20,6 +20,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "XP heals you. Costs 5 XP per hp.",
 				"abilityStatusRelative": "Collected XP heals you.",
+				"dabloons": 10,
 				"upgradeIngredients": [
 					"minecraft:lapis_lazuli",
 					"minecraft:lapis_lazuli",
@@ -35,6 +36,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "XP heals you. Costs 4 XP per hp.",
 				"abilityStatusRelative": "Improves healing to 4 XP per hp.",
+				"dabloons": 20,
 				"upgradeIngredients": [
 					"minecraft:enchanted_book[minecraft:stored_enchantments={\"minecraft:mending\":1}]=Mending Enchanted Book",
 					"minecraft:experience_bottle",
@@ -49,6 +51,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "XP heals you. Costs 3 XP per hp.",
 				"abilityStatusRelative": "Improves healing to 3 XP per hp.",
+				"dabloons": 30,
 				"upgradeIngredients": [
 					"minecraft:sculk",
 					"minecraft:sculk",
@@ -62,6 +65,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "XP heals you. Costs 2 XP per hp.",
 				"abilityStatusRelative": "Improves healing to 2 XP per hp.",
+				"dabloons": 40,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=healing]=Potion of Healing",
 					"minecraft:ghast_tear",
@@ -75,6 +79,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "XP heals you. Costs 1 XP per hp.",
 				"abilityStatusRelative": "Improves healing to 1 XP per hp.",
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:experience_bottle",
 					"minecraft:lingering_potion[minecraft:potion_contents=healing]=Lingering Potion of Healing",

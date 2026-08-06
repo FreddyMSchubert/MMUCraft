@@ -13,6 +13,7 @@ import { PlayersTab } from '@/components/players-tab'
 import { ShopTab } from '@/components/shop-tab'
 import { FishingTab } from '@/components/fishing-tab'
 import { ClaimsTab } from '@/components/claims-tab'
+import { CharmsTab } from '@/components/charms-tab'
 import { PlayerName } from '@/components/player-name'
 
 interface SessionUser {
@@ -26,14 +27,15 @@ interface SessionUser {
 	isSuperAdmin: boolean
 }
 
-type TabId = 'dailies' | 'knowledge' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
+type TabId = 'dailies' | 'knowledge' | 'charms' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
 
-const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
+const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'charms', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
 const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'gifts'])
 const MISC_SECTIONS = new Set(['settings', 'gift-codes'])
 const TAB_LINKS: Array<{ id: TabId; label: string; href: string }> = [
 	{ id: 'knowledge', label: 'Knowledge', href: '/play/knowledge' },
 	{ id: 'dailies', label: 'Dailies', href: '/play/dailies' },
+	{ id: 'charms', label: 'Charms', href: '/play/charms' },
 	{ id: 'shop', label: 'Shop', href: '/play/shop' },
 	{ id: 'claims', label: 'Claims', href: '/play/claims' },
 	{ id: 'fishing', label: 'Fishing', href: '/play/fishing' },
@@ -106,7 +108,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		let canonicalPath: string | null = null
 		if (activeTab === 'admin') canonicalPath = `/play/admin/${ADMIN_SECTIONS.has(routeDetail ?? '') ? routeDetail : 'members'}`
 		else if (activeTab === 'misc') canonicalPath = `/play/misc/${MISC_SECTIONS.has(routeDetail ?? '') ? routeDetail : 'settings'}`
-		else if (activeTab === 'dailies' || activeTab === 'claims' || activeTab === 'fishing') canonicalPath = `/play/${activeTab}`
+		else if (activeTab === 'dailies' || activeTab === 'charms' || activeTab === 'claims' || activeTab === 'fishing') canonicalPath = `/play/${activeTab}`
 		else if (route.length > 2) canonicalPath = routeDetail ? `/play/${activeTab}/${encodeURIComponent(routeDetail)}` : `/play/${activeTab}`
 
 		if (canonicalPath && pathname !== canonicalPath) router.replace(canonicalPath)
@@ -179,6 +181,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						<div className="dashboardPanel">
 							{activeTab === 'dailies' && <DailiesTab />}
 							{activeTab === 'knowledge' && <KnowledgeTab pageId={routeDetail} onSelectPage={openKnowledge} />}
+							{activeTab === 'charms' && <CharmsTab />}
 							{activeTab === 'shop' && <ShopTab itemId={routeDetail} onSelectItem={openShop} />}
 							{activeTab === 'claims' && <ClaimsTab />}
 							{activeTab === 'fishing' && <FishingTab onSelectPlayer={openPlayer} />}

@@ -23,6 +23,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Let's you jump two blocks high.",
 				"abilityStatusRelative": "Let's you jump a block higher than normal.",
+				"dabloons": 10,
 				"upgradeIngredients": [
 					"minecraft:feather",
 					"minecraft:feather",
@@ -34,6 +35,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Let's you jump three blocks high.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 20,
 				"upgradeIngredients": [
 					"minecraft:rabbit_foot",
 					"minecraft:rabbit_hide",
@@ -44,6 +46,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Let's you jump four blocks high.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 30,
 				"upgradeIngredients": [
 					"minecraft:scaffolding",
 					"minecraft:scaffolding",
@@ -56,6 +59,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Let's you jump four blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher & the bunnies now share the carrots they snack with you.",
+				"dabloons": 40,
 				"upgradeIngredients": [
 					"minecraft:carrot",
 					"minecraft:carrot",
@@ -71,6 +75,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Let's you jump five blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:slime_block",
 					"minecraft:feather",
@@ -86,6 +91,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Let's you jump six blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 60,
 				"upgradeIngredients": [
 					"minecraft:fire_charge",
 					"minecraft:phantom_membrane",
@@ -99,6 +105,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Let's you jump seven blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 70,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=strong_leaping]=Potion of Leaping II",
 					"minecraft:ghast_tear",
@@ -112,6 +119,7 @@
 				"level": 8,
 				"abilityStatusCurrent": "Let's you jump eight blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 80,
 				"upgradeIngredients": [
 					"minecraft:gilded_blackstone",
 					"minecraft:gilded_blackstone",
@@ -127,6 +135,7 @@
 				"level": 9,
 				"abilityStatusCurrent": "Let's you jump nine blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 90,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=strong_leaping]=Potion of Leaping II",
 					"minecraft:splash_potion[minecraft:potion_contents=strong_leaping]=Splash Potion of Leaping II",
@@ -140,6 +149,7 @@
 				"level": 10,
 				"abilityStatusCurrent": "Let's you jump ten blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:chorus_flower",
 					"minecraft:chorus_flower",
@@ -155,6 +165,7 @@
 				"level": 11,
 				"abilityStatusCurrent": "Let's you jump eleven blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 110,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=slow_falling]=Potion of Slow Falling",
 					"minecraft:splash_potion[minecraft:potion_contents=slow_falling]=Splash Potion of Slow Falling",
@@ -169,6 +180,7 @@
 				"level": 12,
 				"abilityStatusCurrent": "Let's you jump twelve blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 120,
 				"upgradeIngredients": [
 					"minecraft:end_crystal",
 					"minecraft:dragon_breath",
@@ -184,6 +196,7 @@
 				"level": 13,
 				"abilityStatusCurrent": "Let's you jump thirteen blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 130,
 				"upgradeIngredients": [
 					"minecraft:elytra",
 					"minecraft:dragon_head",
@@ -199,6 +212,7 @@
 				"level": 14,
 				"abilityStatusCurrent": "Let's you jump fourteen blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 140,
 				"upgradeIngredients": [
 					"minecraft:elytra",
 					"minecraft:end_crystal",
@@ -214,6 +228,7 @@
 				"level": 15,
 				"abilityStatusCurrent": "Let's you jump fifteen blocks high & the bunnies auto-eat carrot foods.",
 				"abilityStatusRelative": "Let's you jump another block higher.",
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:elytra",
 					"minecraft:dragon_head",

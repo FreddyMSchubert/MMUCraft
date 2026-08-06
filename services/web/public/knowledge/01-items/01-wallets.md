@@ -1,6 +1,6 @@
 ====
 id: wallets
-unlockOrder: public
+unlockOrder: 1
 chatMessage: You've unlocked knowledge on wallets, the way to store dabloons.
 sidebarTitle: Wallets
 ====

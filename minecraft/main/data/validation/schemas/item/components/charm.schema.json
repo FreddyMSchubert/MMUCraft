@@ -18,9 +18,9 @@
 				"level": { "type": "integer", "minimum": 0 },
 				"abilityStatusCurrent": { "type": "string", "minLength": 1 },
 				"abilityStatusRelative": { "type": "string" },
+				"dabloons": { "type": "integer", "minimum": 0 },
 				"upgradeIngredients": {
 					"type": "array",
-					"maxItems": 8,
 					"items": { 
 						"type": "string",
 						"pattern": "^(?:#?minecraft:|#?mainmod:)\\S.*$"
@@ -31,6 +31,7 @@
 				"level",
 				"abilityStatusCurrent",
 				"abilityStatusRelative",
+				"dabloons",
 				"upgradeIngredients"
 			]
 		}

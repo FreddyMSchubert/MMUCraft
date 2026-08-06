@@ -1,6 +1,6 @@
 ====
 id: potion-of-insomnia
-unlockOrder: 2
+unlockOrder: 4
 chatMessage: You've unlocked knowledge on the Potion of Insomnia and phantom changes.
 sidebarTitle: Potion of Insomnia
 ====

@@ -1,6 +1,6 @@
 ====
 id: cosmetics
-unlockOrder: 1
+unlockOrder: 3
 chatMessage: You've unlocked knowledge on the basics of cosmetics
 sidebarTitle: Cosmetics
 ====

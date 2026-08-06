@@ -1,6 +1,6 @@
 ====
 id: decorative-blocks
-unlockOrder: 3
+unlockOrder: 4
 chatMessage: You've unlocked knowledge on custom decorative blocks.
 sidebarTitle: Decorative Blocks
 ====

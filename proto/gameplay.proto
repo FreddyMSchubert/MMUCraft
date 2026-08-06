@@ -27,6 +27,53 @@ service GameplayControl {
   rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
   rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
   rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
+  rpc GetCharmInventory(GetCharmInventoryRequest) returns (GetCharmInventoryResponse);
+  rpc UpgradeCharm(UpgradeCharmRequest) returns (UpgradeCharmResponse);
+}
+
+message GetCharmInventoryRequest {
+  string minecraft_username = 1;
+}
+
+message CharmUpgradeIngredient {
+  string raw = 1;
+  string display_name = 2;
+  string icon_item_id = 3;
+  int32 required_count = 4;
+  int32 inventory_count = 5;
+}
+
+message InventoryCharm {
+  string item_id = 2;
+  string title = 3;
+  int32 current_level = 4;
+  int32 max_level = 5;
+  int32 target_level = 6;
+  int32 price_dabloons = 7;
+  string current_ability = 8;
+  string next_ability = 9;
+  repeated CharmUpgradeIngredient ingredients = 10;
+}
+
+message GetCharmInventoryResponse {
+  bool online = 1;
+  int32 balance_dabloons = 2;
+  repeated InventoryCharm charms = 3;
+  string message = 4;
+}
+
+message UpgradeCharmRequest {
+  string minecraft_username = 1;
+  string item_id = 2;
+  int32 expected_level = 3;
+}
+
+message UpgradeCharmResponse {
+  bool upgraded = 1;
+  bool online = 2;
+  int32 balance_dabloons = 3;
+  int32 new_level = 4;
+  string message = 5;
 }
 
 message GetClaimsSnapshotRequest {}

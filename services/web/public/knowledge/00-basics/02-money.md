@@ -1,6 +1,6 @@
 ====
 id: money-basics
-unlockOrder: 1
+unlockOrder: public
 chatMessage: You've unlocked knowledge on how to earn money
 sidebarTitle: Money
 ====
@@ -10,6 +10,9 @@ Money makes the world go round, including the Minecraft world, which is neither 
 The currency used on this server is called dabloons. They come in the forms of actual Minecraft Coin Items, in your inventory. (So, you know, dying with a bunch of money is probably a bad idea.)
 
 ![Some of the lower-value coin textures](/assets/knowledge/basics/money/coins.png)
+
+- To avoid the annoyance of having a bunch of coins clogging up your inventory, it is recommended you use a wallet. (See the seperate knowledge book on wallets)
+- To avoid the annoyance of losing your wallet upon death, it is recommended that you enchant it with Soulbound.
 
 ## Using the dabloons
 

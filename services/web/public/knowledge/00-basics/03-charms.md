@@ -1,10 +1,12 @@
 ====
 id: charms
-unlockOrder: 1
+unlockOrder: 3
 chatMessage: You've unlocked knowledge on the basics of charms
 sidebarTitle: Charms
 ====
 
-Charms are powerful magical artifacts. Once discovered, they can be infinitely rebought from the shop.
+Charms are powerful magical artifacts. Use a magic book to discover a charm. The book changes into the new charm at its minimum level. You can buy more copies of a discovered charm from the shop.
 
-Explain that player-facing Charms are the equippable abilities bought from the shop. Show the generic upgrade, combine, and separate recipes. Cover how to equip or remove a Charm from the correct armour slot. Do not repeat the effects already shown on each Charm.
+To upgrade a charm, hold it in your main hand and open the Charms page on the website. Refresh the page after you change the held item. The page shows the required ingredients and dabloon price. Select **Enchant charm** to upgrade it. The server checks the held charm, removes the ingredients and dabloons, and gives the charm its next level.
+
+To equip or remove a charm, use the combine or separate recipe for the correct armour slot. The crafting table does not upgrade charms.

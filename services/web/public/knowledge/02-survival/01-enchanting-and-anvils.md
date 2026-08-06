@@ -1,6 +1,6 @@
 ====
 id: enchanting-and-anvils
-unlockOrder: 2
+unlockOrder: 4
 chatMessage: You've unlocked knowledge on the server's enchanting and anvil progression.
 sidebarTitle: Enchanting & Anvils
 ====

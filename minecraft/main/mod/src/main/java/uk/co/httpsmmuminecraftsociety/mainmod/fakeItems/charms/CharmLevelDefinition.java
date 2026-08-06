@@ -12,12 +12,14 @@ public record CharmLevelDefinition(
         int level,
         String abilityStatusCurrent,
         String abilityStatusRelative,
+        int dabloons,
         List<StackDef> upgradeIngredients
 ) {
     public static final CharmLevelDefinition BROKEN_LEVEL = new CharmLevelDefinition(
             0,
             "None - Please repair to use.",
             "",
+            0,
             List.of()
     );
 
@@ -31,6 +33,9 @@ public record CharmLevelDefinition(
         if (!json.has("abilityStatusRelative")) {
             throw new IllegalStateException(filePath + ": charm level entry missing required field 'abilityStatusRelative'");
         }
+        if (!json.has("dabloons")) {
+            throw new IllegalStateException(filePath + ": charm level entry missing required field 'dabloons'");
+        }
         if (!json.has("upgradeIngredients") || !json.get("upgradeIngredients").isJsonArray()) {
             throw new IllegalStateException(filePath + ": charm level entry missing or invalid required field 'upgradeIngredients'");
         }
@@ -38,6 +43,10 @@ public record CharmLevelDefinition(
         int level = json.get("level").getAsInt();
         String current = json.get("abilityStatusCurrent").getAsString();
         String relative = json.get("abilityStatusRelative").getAsString();
+        int dabloons = json.get("dabloons").getAsInt();
+        if (dabloons < 0) {
+            throw new IllegalStateException(filePath + ": charm level dabloons cannot be negative");
+        }
 
         List<StackDef> ingredients = new ArrayList<>();
         for (JsonElement element : json.get("upgradeIngredients").getAsJsonArray()) {
@@ -53,6 +62,6 @@ public record CharmLevelDefinition(
             }
         }
 
-        return new CharmLevelDefinition(level, current, relative, List.copyOf(ingredients));
+        return new CharmLevelDefinition(level, current, relative, dabloons, List.copyOf(ingredients));
     }
 }

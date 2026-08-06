@@ -9,6 +9,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.WebsiteCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
@@ -83,23 +84,47 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
             if (response.getUnlocked()) {
                 message = message.copy()
                         .append(Component.literal(" "))
-                        .append(WebsiteCommand.takeMeThere("play/shop/" + response.getUnlockedId()));
+                        .append(WebsiteCommand.takeMeThere(
+                                "charm".equals(unlockType)
+                                        ? "play/charms"
+                                        : "play/shop/" + response.getUnlockedId()
+                        ));
             }
             player.sendSystemMessage(message);
 
             if (response.getUnlocked()) {
                 FakeItem unlockedItem = FakeItems.ID_MAP.get(response.getUnlockedId());
-                ItemStack animationItem = "cosmetic".equals(unlockType) && unlockedItem != null
-                        ? unlockedItem.createItemStack()
-                        : stack;
+                ItemStack animationItem = unlockedItem != null ? unlockedItem.createItemStack() : stack;
                 UnlockBookAnimation.play(player, animationItem);
 
-                if (!player.isCreative()) {
+                if ("charm".equals(unlockType) && unlockedItem != null) {
+                    CharmItemFeature charm = unlockedItem.getFeature(CharmItemFeature.class);
+                    if (charm != null) {
+                        replaceUsedBook(player, stack, unlockedItem.createItemStackAtLevel(charm.minLevel()));
+                    }
+                } else if (!player.isCreative()) {
                     stack.shrink(1);
                 }
             }
         }));
 
         return InteractionResult.SUCCESS;
+    }
+
+    private static void replaceUsedBook(ServerPlayer player, ItemStack book, ItemStack charm) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            if (player.getInventory().getItem(slot) == book) {
+                player.getInventory().setItem(slot, charm);
+                player.getInventory().setChanged();
+                player.containerMenu.broadcastChanges();
+                return;
+            }
+        }
+
+        book.shrink(1);
+        player.getInventory().add(charm);
+        if (!charm.isEmpty()) {
+            player.drop(charm, false);
+        }
     }
 }

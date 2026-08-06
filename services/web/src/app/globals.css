@@ -3474,6 +3474,390 @@ a {
 
 
 /* ============================================================
+   Charm forge
+   ============================================================ */
+
+.charmForge {
+	--forge-violet: #a86cff;
+	--forge-cyan: #6fffe9;
+	--forge-gold: #ffd36f;
+	display: grid;
+	gap: 18px;
+	color: #f8f4ff;
+}
+
+.charmForgeHeader,
+.charmForgeControls,
+.charmSectionHeading,
+.charmEnchantBar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.charmForgeHeader {
+	padding: 6px 2px 2px;
+}
+
+.charmForgeHeader h3,
+.charmForgeHeader p,
+.charmSectionHeading h4,
+.charmIdentity h4 {
+	margin: 0;
+}
+
+.charmForgeHeader h3 {
+	font-size: clamp(1.8rem, 4vw, 2.8rem);
+	line-height: 1.05;
+	text-shadow: 0 0 26px rgba(168, 108, 255, 0.35);
+}
+
+.charmForgeHeader p {
+	margin-top: 7px;
+	color: rgba(248, 244, 255, 0.63);
+}
+
+.charmEyebrow,
+.charmSectionHeading span,
+.charmAbility span {
+	color: var(--forge-cyan);
+	font-size: 0.68rem;
+	font-weight: 900;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+}
+
+.charmForgeControls {
+	flex: 0 0 auto;
+}
+
+.charmBalance,
+.charmRefresh {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 42px;
+	padding: 9px 13px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 9px;
+	background: rgba(11, 8, 22, 0.72);
+	color: rgba(255, 255, 255, 0.82);
+}
+
+.charmBalance i {
+	display: grid;
+	place-items: center;
+	width: 22px;
+	height: 22px;
+	border: 2px solid #8e6115;
+	border-radius: 50%;
+	background: radial-gradient(circle at 35% 30%, #fff0a4, #f2b52e 48%, #9a5b0a);
+	color: #5a3503;
+	font-size: 0.7rem;
+	font-style: normal;
+	font-weight: 1000;
+	box-shadow: 0 0 14px rgba(255, 202, 72, 0.3);
+}
+
+.charmRefresh {
+	cursor: pointer;
+	font: inherit;
+	font-weight: 800;
+	transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.charmRefresh:hover:not(:disabled) {
+	border-color: var(--forge-cyan);
+	background: rgba(111, 255, 233, 0.1);
+	transform: translateY(-1px);
+}
+
+.charmRefresh:disabled { cursor: wait; opacity: 0.5; }
+.charmRefresh span { color: var(--forge-cyan); font-size: 1.2rem; }
+
+.charmForgeStage {
+	position: relative;
+	min-height: 560px;
+	overflow: hidden;
+	border: 1px solid rgba(184, 135, 255, 0.28);
+	border-radius: 18px;
+	background:
+		radial-gradient(circle at 50% 48%, rgba(146, 78, 255, 0.21), transparent 24%),
+		radial-gradient(ellipse at 50% 110%, rgba(72, 255, 228, 0.13), transparent 52%),
+		linear-gradient(145deg, #080712, #111024 58%, #080b18);
+	box-shadow: inset 0 0 80px rgba(107, 56, 181, 0.12), 0 24px 75px rgba(0, 0, 0, 0.34);
+	isolation: isolate;
+}
+
+.charmForgeStage::before {
+	position: absolute;
+	inset: 22px;
+	z-index: -1;
+	border: 1px solid rgba(212, 181, 255, 0.08);
+	border-radius: 50%;
+	background: repeating-conic-gradient(from 0deg, rgba(201, 163, 255, 0.18) 0 0.5deg, transparent 0.5deg 14deg);
+	content: '';
+	mask: radial-gradient(circle, transparent 0 63%, #000 64% 65%, transparent 66%);
+	animation: charmRuneTurn 48s linear infinite;
+}
+
+.charmForgeStage::after {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(159, 94, 255, 0.48) 12%, transparent 42%);
+	content: '';
+	opacity: 0;
+	pointer-events: none;
+}
+
+.charmForgeStage.enchanting::after { animation: charmForgeFlash 1.9s ease-in-out both; }
+
+.charmForgeAura {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: min(56vw, 480px);
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(180, 114, 255, 0.21), rgba(102, 255, 227, 0.05) 52%, transparent 70%);
+	filter: blur(8px);
+	transform: translate(-50%, -50%);
+	animation: charmAuraBreathe 4.5s ease-in-out infinite;
+}
+
+.charmForgeScene,
+.charmForgeCanvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.charmForgeCanvas { cursor: crosshair; }
+
+.charmIdentity {
+	position: absolute;
+	bottom: 24px;
+	left: 50%;
+	z-index: 3;
+	display: grid;
+	grid-template-columns: auto auto;
+	gap: 2px 10px;
+	min-width: min(320px, calc(100% - 32px));
+	padding: 12px 18px;
+	border: 1px solid rgba(209, 177, 255, 0.2);
+	border-radius: 11px;
+	background: linear-gradient(120deg, rgba(9, 7, 18, 0.88), rgba(32, 20, 53, 0.82));
+	box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35), inset 0 1px rgba(255, 255, 255, 0.08);
+	text-align: center;
+	transform: translateX(-50%);
+	backdrop-filter: blur(10px);
+}
+
+.charmIdentity h4 { grid-column: 1 / -1; font-size: 1rem; }
+.charmIdentity strong { color: var(--forge-gold); text-align: right; }
+.charmIdentity span { color: var(--forge-cyan); text-align: left; }
+
+.charmAbility {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.charmAbility > div {
+	padding: 15px 17px;
+	border: 1px solid rgba(255, 255, 255, 0.11);
+	border-radius: 10px;
+	background: linear-gradient(135deg, rgba(168, 108, 255, 0.08), rgba(111, 255, 233, 0.04));
+}
+
+.charmAbility p {
+	margin: 6px 0 0;
+	color: rgba(255, 255, 255, 0.76);
+	line-height: 1.5;
+}
+
+.charmIngredientSection {
+	display: grid;
+	gap: 13px;
+	padding: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 13px;
+	background: rgba(8, 8, 18, 0.45);
+}
+
+.charmSectionHeading small { color: rgba(255, 255, 255, 0.44); }
+
+.charmIngredientGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 9px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.charmIngredientGrid li {
+	display: grid;
+	grid-template-columns: 48px minmax(0, 1fr);
+	grid-template-rows: 1fr auto;
+	gap: 2px 10px;
+	align-items: center;
+	min-width: 0;
+	padding: 10px;
+	border: 1px solid rgba(197, 160, 255, 0.13);
+	border-radius: 9px;
+	background: linear-gradient(135deg, rgba(147, 83, 244, 0.08), rgba(255, 255, 255, 0.025));
+}
+
+.charmIngredientIcon {
+	display: grid;
+	grid-row: 1 / 3;
+	place-items: center;
+	width: 48px;
+	height: 48px;
+	border-radius: 8px;
+	background: radial-gradient(circle, rgba(177, 114, 255, 0.22), rgba(255, 255, 255, 0.02));
+}
+
+.charmIngredientIcon img {
+	width: 42px;
+	height: 42px;
+	object-fit: contain;
+	image-rendering: pixelated;
+	filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.45));
+}
+
+.charmIngredientIcon span { color: rgba(255, 255, 255, 0.45); font-size: 1.4rem; }
+.charmIngredientGrid strong { overflow: hidden; font-size: 0.78rem; text-overflow: ellipsis; white-space: nowrap; }
+.charmIngredientGrid li > span { color: var(--forge-cyan); font-size: 0.76rem; font-weight: 900; }
+.charmIngredientGrid li > span.short { color: #ff8d9e; }
+
+.charmEnchantBar {
+	position: sticky;
+	bottom: 10px;
+	z-index: 10;
+	padding: 13px;
+	border: 1px solid rgba(194, 151, 255, 0.24);
+	border-radius: 13px;
+	background: rgba(11, 8, 22, 0.88);
+	box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+	backdrop-filter: blur(14px);
+}
+
+.charmForgeMessage {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.64);
+	font-size: 0.78rem;
+}
+
+.charmEnchantButton {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	min-width: 260px;
+	padding: 13px 17px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 10px;
+	background: linear-gradient(120deg, #6831ad, #9e52ed 50%, #487b9d);
+	color: #fff;
+	cursor: pointer;
+	font: inherit;
+	font-weight: 900;
+	box-shadow: 0 0 30px rgba(159, 82, 237, 0.24), inset 0 1px rgba(255, 255, 255, 0.2);
+	transition: filter 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.charmEnchantButton::before {
+	position: absolute;
+	top: -70%;
+	left: -24%;
+	width: 22%;
+	height: 240%;
+	background: rgba(255, 255, 255, 0.26);
+	content: '';
+	transform: rotate(22deg);
+	transition: left 420ms ease;
+}
+
+.charmEnchantButton:hover:not(:disabled) {
+	filter: brightness(1.13) saturate(1.12);
+	transform: translateY(-2px);
+	box-shadow: 0 0 38px rgba(159, 82, 237, 0.42), inset 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.charmEnchantButton:hover:not(:disabled)::before { left: 112%; }
+.charmEnchantButton:disabled { cursor: not-allowed; filter: grayscale(0.55); opacity: 0.58; }
+.charmEnchantButton strong { color: #fff0a6; }
+
+.charmMastered,
+.charmForgeEmpty {
+	display: grid;
+	place-items: center;
+	gap: 9px;
+	min-height: 260px;
+	padding: 36px;
+	border: 1px solid rgba(190, 147, 255, 0.18);
+	border-radius: 14px;
+	background: radial-gradient(circle, rgba(148, 83, 242, 0.12), transparent 55%), rgba(8, 8, 18, 0.42);
+	text-align: center;
+}
+
+.charmMastered { min-height: auto; color: var(--forge-gold); font-weight: 900; }
+.charmForgeEmpty p { max-width: 540px; margin: 0; color: rgba(255, 255, 255, 0.58); }
+.charmRune { color: var(--forge-violet); font-size: 3.5rem; text-shadow: 0 0 28px currentColor; animation: charmRunePulse 2.4s ease-in-out infinite; }
+
+@keyframes charmRuneTurn { to { transform: rotate(360deg); } }
+@keyframes charmAuraBreathe {
+	50% { opacity: 0.65; transform: translate(-50%, -50%) scale(1.12); }
+}
+@keyframes charmRunePulse { 50% { opacity: 0.58; transform: scale(1.12) rotate(10deg); } }
+@keyframes charmForgeFlash {
+	0%, 48%, 100% { opacity: 0; }
+	62% { opacity: 1; }
+	76% { opacity: 0.16; }
+}
+
+@media (max-width: 760px) {
+	.charmForgeHeader,
+	.charmForgeControls,
+	.charmSectionHeading,
+	.charmEnchantBar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.charmForgeControls { display: grid; grid-template-columns: 1fr 1fr; }
+	.charmForgeStage { min-height: 430px; border-radius: 13px; }
+	.charmForgeStage::before { inset: 8px; }
+	.charmAbility { grid-template-columns: 1fr; }
+	.charmIngredientSection { padding: 13px; }
+	.charmIngredientGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.charmEnchantButton { width: 100%; min-width: 0; }
+	.charmForgeMessage { text-align: center; }
+}
+
+@media (max-width: 430px) {
+	.charmForgeControls,
+	.charmIngredientGrid { grid-template-columns: 1fr; }
+	.charmForgeStage { min-height: 390px; }
+	.charmIdentity { bottom: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.charmForgeStage::before,
+	.charmForgeAura,
+	.charmRune { animation: none; }
+	.charmEnchantButton,
+	.charmRefresh { transition: none; }
+}
+
+/* ============================================================
    Responsiveness
    ============================================================ */
 

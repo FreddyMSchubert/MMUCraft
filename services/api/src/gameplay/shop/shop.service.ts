@@ -146,6 +146,41 @@ interface PurchaseShopItemResponse {
 	message: string
 }
 
+interface CharmUpgradeIngredientResponse {
+	raw: string
+	display_name: string
+	icon_item_id: string
+	required_count: number
+	inventory_count: number
+}
+
+interface InventoryCharmResponse {
+	item_id: string
+	title: string
+	current_level: number
+	max_level: number
+	target_level: number
+	price_dabloons: number
+	current_ability: string
+	next_ability: string
+	ingredients: CharmUpgradeIngredientResponse[]
+}
+
+interface GetCharmInventoryResponse {
+	online: boolean
+	balance_dabloons: number
+	charms: InventoryCharmResponse[]
+	message: string
+}
+
+interface UpgradeCharmResponse {
+	upgraded: boolean
+	online: boolean
+	balance_dabloons: number
+	new_level: number
+	message: string
+}
+
 interface GameplayProtoRoot {
 	mcstack: {
 		gameplay: {
@@ -252,6 +287,77 @@ export class ShopService {
 			online: purchase.online,
 			balanceDabloons: purchase.balance_dabloons,
 			message: purchase.message || `${item.title} purchased.`,
+		}
+	}
+
+	async getCharmInventory(user: AuthenticatedUser) {
+		let inventory: GetCharmInventoryResponse
+		try {
+			inventory = await this.getCharmInventoryFromMod(user.minecraftUsername)
+		} catch {
+			throw new BadRequestException('You have to be online on the server to view your charms.')
+		}
+
+		const catalog = this.loadCatalog().items
+		return {
+			online: inventory.online,
+			balanceDabloons: inventory.balance_dabloons,
+			message: inventory.message,
+			charms: inventory.charms.map((charm) => {
+				const item = catalog.find((candidate) => candidate.id === charm.item_id)
+				return {
+					itemId: charm.item_id,
+					title: charm.title,
+					currentLevel: charm.current_level,
+					maxLevel: charm.max_level,
+					targetLevel: charm.target_level,
+					priceDabloons: charm.price_dabloons,
+					currentAbility: charm.current_ability,
+					nextAbility: charm.next_ability,
+					textureUrl: item?.textureUrl ?? this.fallbackIconUrl('charm'),
+					animation: item?.animation ?? null,
+					ingredients: charm.ingredients.map((ingredient) => ({
+						raw: ingredient.raw,
+						displayName: ingredient.display_name,
+						requiredCount: ingredient.required_count,
+						inventoryCount: ingredient.inventory_count,
+						iconUrl: this.ingredientIconUrl(ingredient.icon_item_id, catalog),
+					})),
+				}
+			}),
+		}
+	}
+
+	async upgradeCharm(
+		user: AuthenticatedUser,
+		input: { itemId?: unknown; expectedLevel?: unknown },
+	) {
+		const itemId = typeof input?.itemId === 'string' ? input.itemId.trim() : ''
+		const expectedLevel = input?.expectedLevel
+		if (!itemId || !Number.isInteger(expectedLevel)) {
+			throw new BadRequestException('The selected charm is invalid.')
+		}
+
+		let result: UpgradeCharmResponse
+		try {
+			result = await this.upgradeCharmFromMod(
+				user.minecraftUsername,
+				itemId,
+				Number(expectedLevel),
+			)
+		} catch {
+			throw new BadRequestException('You have to be online on the server to enchant a charm.')
+		}
+
+		if (!result.upgraded) {
+			throw new BadRequestException(result.message || 'The charm could not be enchanted.')
+		}
+
+		return {
+			upgraded: true,
+			newLevel: result.new_level,
+			balanceDabloons: result.balance_dabloons,
+			message: result.message,
 		}
 	}
 
@@ -516,6 +622,37 @@ export class ShopService {
 
 				resolve(response)
 			})
+		})
+	}
+
+	private async getCharmInventoryFromMod(minecraftUsername: string): Promise<GetCharmInventoryResponse> {
+		const client = this.getGameplayControlClient()
+		const method = (client as unknown as Record<string, unknown>).GetCharmInventory
+		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: GetCharmInventory')
+
+		return await new Promise<GetCharmInventoryResponse>((resolve, reject) => {
+			method.call(client, { minecraft_username: minecraftUsername }, (
+				error: grpc.ServiceError | null,
+				response: GetCharmInventoryResponse,
+			) => error ? reject(error) : resolve(response))
+		})
+	}
+
+	private async upgradeCharmFromMod(
+		minecraftUsername: string,
+		itemId: string,
+		expectedLevel: number,
+	): Promise<UpgradeCharmResponse> {
+		const client = this.getGameplayControlClient()
+		const method = (client as unknown as Record<string, unknown>).UpgradeCharm
+		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: UpgradeCharm')
+
+		return await new Promise<UpgradeCharmResponse>((resolve, reject) => {
+			method.call(client, {
+				minecraft_username: minecraftUsername,
+				item_id: itemId,
+				expected_level: expectedLevel,
+			}, (error: grpc.ServiceError | null, response: UpgradeCharmResponse) => error ? reject(error) : resolve(response))
 		})
 	}
 
@@ -864,6 +1001,13 @@ export class ShopService {
 		}
 
 		return `${VANILLA_ITEM_TEXTURE_PREFIX}/${itemId.slice('minecraft:'.length)}.png`
+	}
+
+	private ingredientIconUrl(itemId: string, catalog: CatalogItem[]): string | null {
+		if (itemId.startsWith('minecraft:')) return this.vanillaItemIconUrl(itemId)
+		if (!itemId.startsWith('mainmod:')) return null
+		const fakeItemId = itemId.slice('mainmod:'.length)
+		return catalog.find((item) => item.id === fakeItemId)?.textureUrl ?? null
 	}
 
 	private fallbackIconUrl(type: ShopItemType): string | null {

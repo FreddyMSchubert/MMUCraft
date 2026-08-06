@@ -1,11 +1,12 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.claims;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -15,12 +16,16 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
@@ -31,6 +36,7 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,6 +64,7 @@ public final class ClaimsManager {
                 checkDirect(player, level, entity.blockPosition()) ? InteractionResult.PASS : InteractionResult.FAIL);
         UseEntityCallback.EVENT.register((player, level, hand, entity, hit) ->
                 checkDirect(player, level, entity.blockPosition()) ? InteractionResult.PASS : InteractionResult.FAIL);
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register(ClaimsManager::allowPlayerDamage);
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> removeBossBar(handler.getPlayer()));
     }
 
@@ -168,6 +175,10 @@ public final class ClaimsManager {
         return claim == null ? null : claim.id();
     }
 
+    public static boolean crossesClaimBoundary(Level level, BlockPos from, BlockPos to) {
+        return !Objects.equals(claimIdAt(level, from), claimIdAt(level, to));
+    }
+
     public static BlockHitResult projectileBarrier(Projectile projectile, Vec3 start, Vec3 movement) {
         if (movement.lengthSqr() == 0) return null;
         if (!ready) {
@@ -182,17 +193,26 @@ public final class ClaimsManager {
         ServerPlayer player = owner instanceof ServerPlayer serverPlayer ? serverPlayer : null;
         if (player != null && isOperator(player)) return null;
 
-        int steps = Math.max(1, (int) Math.ceil(movement.length() * 2));
-        for (int i = 0; i <= steps; i++) {
-            Vec3 point = start.add(movement.scale((double) i / steps));
-            BlockPos pos = BlockPos.containing(point);
-            Claim claim = claimAt(projectile.level(), pos);
-            if (claim != null && (player == null || !claim.members().contains(player.getUUID()))) {
-                Direction face = Direction.getApproximateNearest(movement).getOpposite();
-                return new BlockHitResult(point, face, pos, false);
-            }
-        }
-        return null;
+        Vec3 end = start.add(movement);
+        BlockPos blockedPos = BlockGetter.traverseBlocks(
+                start,
+                end,
+                projectile,
+                (ignored, pos) -> {
+                    Claim claim = claimAt(projectile.level(), pos);
+                    return claim != null && (player == null || !claim.members().contains(player.getUUID()))
+                            ? pos.immutable()
+                            : null;
+                },
+                ignored -> null
+        );
+        if (blockedPos == null) return null;
+
+        Vec3 point = BlockPos.containing(start).equals(blockedPos)
+                ? start
+                : new AABB(blockedPos).clip(start, end).orElse(start);
+        Direction face = Direction.getApproximateNearest(movement).getOpposite();
+        return new BlockHitResult(point, face, blockedPos, false);
     }
 
     public static void tickBossBars(MinecraftServer server) {
@@ -235,6 +255,13 @@ public final class ClaimsManager {
         if (!(player instanceof ServerPlayer serverPlayer) || level.isClientSide()) return true;
         boolean allowed = canAccess(serverPlayer, level, pos);
         if (!allowed) notifyDenied(serverPlayer);
+        return allowed;
+    }
+
+    private static boolean allowPlayerDamage(LivingEntity target, DamageSource source, float amount) {
+        if (!(source.getEntity() instanceof ServerPlayer player)) return true;
+        boolean allowed = canAccess(player, target.level(), target.blockPosition());
+        if (!allowed) notifyDenied(player);
         return allowed;
     }
 

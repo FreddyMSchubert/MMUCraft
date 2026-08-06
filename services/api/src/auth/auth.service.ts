@@ -37,6 +37,8 @@ const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
 const AUTH_REQUEST_HISTORY_LIMIT = 50
+const AUTH_REQUEST_PAGE_SIZE = 42
+const MAX_AUTH_REQUEST_PAGE_SIZE = 100
 const MAX_AUTH_CODE_ATTEMPTS = 5
 export const EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 100
 const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signup-allowlist.txt'
@@ -363,21 +365,23 @@ export class AuthService {
 		return this.createSession(request.user_id)
 	}
 
-	listAuthRequests() {
+	listAuthRequests(offsetInput?: string, limitInput?: string) {
 		const now = Date.now()
+		const { offset, limit } = normalizeAuthRequestPagination(offsetInput, limitInput)
 		this.clearExpiredAuthRequestCodes(now)
 
 		const requests = this.database.connection.select({ request: authRequests, user: users })
 			.from(authRequests)
 			.leftJoin(users, eq(users.id, authRequests.user_id))
 			.orderBy(desc(authRequests.created_at_unix_ms))
-			.limit(AUTH_REQUEST_HISTORY_LIMIT)
+			.limit(Math.min(limit + 1, Math.max(0, AUTH_REQUEST_HISTORY_LIMIT - offset)))
+			.offset(offset)
 			.all()
 		const profilesById = new Map(this.database.connection.select().from(playerProfiles).all()
 			.map((profile) => [profile.user_id, profile]))
 
 		return {
-			requests: requests.map(({ request, user }) => ({
+			requests: requests.slice(0, limit).map(({ request, user }) => ({
 				id: request.id,
 				kind: request.kind,
 				email: request.email,
@@ -392,6 +396,7 @@ export class AuthService {
 					? 'verified'
 					: request.expires_at_unix_ms <= now ? 'expired' : 'active',
 			})),
+			hasMore: requests.length > limit,
 		}
 	}
 
@@ -778,4 +783,13 @@ function verificationCodeEmailHtml(code: string) {
 
 function isSuperAdminUsername(minecraftUsername: string) {
 	return minecraftUsername.localeCompare(SUPER_ADMIN_MINECRAFT_USERNAME, 'en', { sensitivity: 'base' }) === 0
+}
+
+function normalizeAuthRequestPagination(offsetInput?: string, limitInput?: string) {
+	const offset = offsetInput === undefined ? 0 : Number(offsetInput)
+	const limit = limitInput === undefined ? AUTH_REQUEST_PAGE_SIZE : Number(limitInput)
+	if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(limit) || limit < 1 || limit > MAX_AUTH_REQUEST_PAGE_SIZE) {
+		throw new BadRequestException(`Pagination requires a non-negative offset and a limit from 1 to ${MAX_AUTH_REQUEST_PAGE_SIZE}.`)
+	}
+	return { offset, limit }
 }

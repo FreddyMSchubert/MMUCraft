@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
 import * as grpc from '@grpc/grpc-js'
-import { and, eq } from 'drizzle-orm'
+import { and, asc, eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../auth/auth.service'
 import {
 	claimMembers,
@@ -20,6 +20,8 @@ const NORMAL_PLAYER_CLAIM_PRICE_GROWTH = 1.69
 const MAX_CLAIM_PRICE_DABLOONS = 2_000_000_000
 const CLAIM_NAME_MAX_LENGTH = 20
 const MAX_CHUNK_COORDINATE = 1_875_000
+const ADMIN_PAGE_SIZE = 42
+const ADMIN_MAX_PAGE_SIZE = 100
 
 interface ClaimData {
 	id: string
@@ -124,6 +126,39 @@ export class ClaimsService {
 		}
 	}
 
+	listAdmin(offsetInput: string | undefined, limitInput: string | undefined) {
+		const { offset, limit } = normalizePagination(offsetInput, limitInput)
+		const rows = this.database.connection.select({
+			id: claims.id,
+			name: claims.claim_name,
+			dimension: claims.dimension,
+			chunkX: claims.chunk_x,
+			chunkZ: claims.chunk_z,
+			minecraftUsername: users.minecraft_username,
+			minecraftUuid: users.minecraft_uuid,
+			color: playerProfiles.color_hex,
+		}).from(claims)
+			.innerJoin(users, eq(users.id, claims.owner_user_id))
+			.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
+			.orderBy(asc(users.minecraft_username), asc(claims.dimension), asc(claims.chunk_x), asc(claims.chunk_z))
+			.limit(limit + 1)
+			.offset(offset)
+			.all()
+
+		return {
+			claims: rows.slice(0, limit).map((claim) => ({
+				id: claim.id,
+				name: claim.name,
+				dimension: claim.dimension,
+				chunkX: claim.chunkX,
+				chunkZ: claim.chunkZ,
+				minecraftUsername: claim.minecraftUsername,
+				color: effectivePlayerColor(claim.minecraftUuid, claim.color),
+			})),
+			hasMore: rows.length > limit,
+		}
+	}
+
 	async getCurrentChunk(user: AuthenticatedUser) {
 		const response = await this.callMod<CurrentChunkResponse>('GetCurrentClaimChunk', {
 			minecraft_username: user.minecraftUsername,
@@ -192,6 +227,13 @@ export class ClaimsService {
 	async remove(user: AuthenticatedUser, claimId: string) {
 		this.requireOwnedClaim(user.id, claimId)
 		this.database.connection.delete(claims).where(eq(claims.id, claimId)).run()
+		await this.alertMod()
+		return { ok: true }
+	}
+
+	async removeAdmin(claimId: string) {
+		const removed = this.database.connection.delete(claims).where(eq(claims.id, claimId)).run()
+		if (removed.changes !== 1) throw new NotFoundException('Claim not found.')
 		await this.alertMod()
 		return { ok: true }
 	}
@@ -399,6 +441,15 @@ function normalizeUserId(value: unknown) {
 		throw new BadRequestException('Select a server member.')
 	}
 	return userId
+}
+
+function normalizePagination(offsetInput: string | undefined, limitInput: string | undefined) {
+	const offset = offsetInput === undefined ? 0 : Number(offsetInput)
+	const limit = limitInput === undefined ? ADMIN_PAGE_SIZE : Number(limitInput)
+	if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(limit) || limit < 1 || limit > ADMIN_MAX_PAGE_SIZE) {
+		throw new BadRequestException(`Pagination requires a non-negative offset and a limit from 1 to ${ADMIN_MAX_PAGE_SIZE}.`)
+	}
+	return { offset, limit }
 }
 
 function readSkinUrl(statsJson: string | undefined): string | null {

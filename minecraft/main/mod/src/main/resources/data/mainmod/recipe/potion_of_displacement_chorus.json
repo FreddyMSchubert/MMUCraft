@@ -6,7 +6,7 @@
     " E "
   ],
   "key": {
-    "M": "minecraft:painting",
+    "M": "minecraft:chorus_fruit",
     "P": "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
     "E": "minecraft:ender_pearl"
   },

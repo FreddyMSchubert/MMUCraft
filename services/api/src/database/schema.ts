@@ -186,6 +186,7 @@ export const giftCodes = sqliteTable('gift_codes', {
 	code: text('code').primaryKey(),
 	amount_dabloons: integer('amount_dabloons').notNull(),
 	redemption_mode: text('redemption_mode', { enum: ['single', 'per_user'] }).notNull().default('single'),
+	members_only: integer('members_only').notNull().default(0),
 	expires_at_unix_ms: integer('expires_at_unix_ms'),
 	created_by_user_id: integer('created_by_user_id').notNull().references(() => users.id),
 	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
@@ -194,6 +195,7 @@ export const giftCodes = sqliteTable('gift_codes', {
 }, (table) => [
 	check('gift_codes_amount_check', sql`${table.amount_dabloons} > 0`),
 	check('gift_codes_redemption_mode_check', sql`${table.redemption_mode} in ('single', 'per_user')`),
+	check('gift_codes_members_only_check', sql`${table.members_only} in (0, 1)`),
 	check('gift_codes_redeemed_pair_check', sql`(${table.redeemed_by_user_id} is null and ${table.redeemed_at_unix_ms} is null) or (${table.redeemed_by_user_id} is not null and ${table.redeemed_at_unix_ms} is not null)`),
 ])
 

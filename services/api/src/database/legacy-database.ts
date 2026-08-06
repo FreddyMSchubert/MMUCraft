@@ -125,6 +125,7 @@ function copyLegacyRows(
 			}).from(giftCodes).all().map((row) => ({
 				...row,
 				redemption_mode: 'single' as const,
+				members_only: 0,
 				expires_at_unix_ms: null,
 			})),
 		)).map((row) => ({ ...row, code: row.code.toLowerCase() }))

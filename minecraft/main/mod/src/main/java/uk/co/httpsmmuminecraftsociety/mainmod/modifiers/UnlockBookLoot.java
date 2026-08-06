@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
@@ -48,20 +49,42 @@ public final class UnlockBookLoot {
         }
         UnlockAvailability availability = getAvailability(player);
 
-        if (availability.hasKnowledgeToUnlock()) addFakeItem("charm-knowledge-book", itemStacks);
+        float charmChance;
+        float cosmeticsChance;
+        float knowledgeChance;
 
-        boolean isVillage = tableId.toString().contains("village");
-        boolean dropCharm = false;
-        boolean dropCosmetic = false;
-        if (isVillage) {
-            if (Math.random() > 0.5f) dropCosmetic = true;
+        if (tableId.toString().contains("mansion"))
+            return; // wayy too many mansion chests, would be too op
+
+        boolean isManyChestsStructure = tableId.toString().contains("village") || tableId.toString().contains("end_city");
+        boolean isGoodChest = false;
+        for (ItemStack stack : itemStacks)
+            if (stack.is(ModItemTagProvider.CHARM_DROPPING_CHESTS_HAVE_ITEMS))
+                isGoodChest = true;
+
+        if (isManyChestsStructure) {
+            cosmeticsChance = 0.15f;
+            knowledgeChance = 0.25f;
+            charmChance = 0f;
         } else {
-            if (Math.random() > 0.5f) dropCharm = true;
-            if (Math.random() > 0.25f) dropCosmetic = true;
+            cosmeticsChance = 0.33f;
+            knowledgeChance = 0.5f;
+
+            if (isGoodChest)
+                charmChance = 0.2f;
+            else
+                charmChance = 0.002f;
         }
 
-        if (availability.hasCharmsToUnlock() && dropCharm) addFakeItem("charm-magic-book", itemStacks);
-        if (availability.hasCosmeticsToUnlock() && dropCosmetic) addFakeItem("charm-fashion-book", itemStacks);
+        if (availability.hasCharmsToUnlock() && Math.random() < charmChance)
+            addFakeItem("charm-magic-book", itemStacks);
+        if (availability.hasCosmeticsToUnlock() && Math.random() < cosmeticsChance)
+            addFakeItem("charm-fashion-book", itemStacks);
+        if (availability.hasKnowledgeToUnlock() && Math.random() < knowledgeChance)
+            addFakeItem("charm-knowledge-book", itemStacks);
+
+        if (Math.random() < 0.42f && availability.hasCosmeticsToUnlock())
+            addFakeItem("charm-fashion-book", itemStacks);
     }
 
     public static void updateAvailability(ServerPlayer player, UnlockNextKnowledgeResponse response) {

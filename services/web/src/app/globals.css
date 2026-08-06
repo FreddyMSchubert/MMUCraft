@@ -3345,6 +3345,10 @@ a {
 	flex: 1;
 }
 
+.emailWhitelistForm select {
+	color-scheme: dark;
+}
+
 .giftCodeHistory {
 	display: grid;
 	gap: 8px;

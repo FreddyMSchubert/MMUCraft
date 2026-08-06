@@ -5,22 +5,24 @@ chatMessage: You've unlocked knowledge on memberships
 sidebarTitle: Membership
 ====
 
-MMU students and staff can use an MMU email address to create a server account.
+Anybody can play on this server for free. But hosting the server does cost us money, so we need to have some sort of way of making income. (Plus, encouraging memberships is enforced by the MMU union.)
 
-Society membership gives extra economy benefits. For example, members get a bonus for daily tasks. These benefits support the society without giving exclusive access to core gameplay.
+Becoming a member gives you the following benefits:
+- More dabloons earned from completing advancements & dailies.
+- The price increase of buying more than one claim is less steep for members.
+- When not logging a day on the login streaks, for non-member the streak resets, where for members it is only cut in half.
+- Exclusive members-only events & other servers (e.g. modded) are planned, but not guaranteed.
 
-For a non-member, a missed daily login resets the login streak. For a member, a missed daily login reduces the streak by half.
+If you are unable or unwilling to pay for any reason, that is entirely fine. If you feel like the server is "pay-to-win" or unfair towards non-members, please reach out to us, we wish for everybody to have an equally amazing gaming experience.
 
-## External players
+The committee will never make any money in any shape or form from this society, all money earned gets reinvested.
 
-An external player is a player who is not at MMU. An existing MMU player must be responsible for each external player.
+We hope that you consider supporting our work on the server.
 
-To invite an external player:
+## Becoming a member
 
-1. Ask a committee member to add the external email address.
-2. Select the MMU player who is responsible for the external player.
-3. The responsible player must be online on the Minecraft server.
-4. The system takes 100 dabloons from the responsible player immediately.
-5. The external player can then create an account with the approved email address.
+Only MMU Students are able to become members.
 
-An external player cannot be responsible for another external player. The player profile identifies an external player and shows the responsible player.
+To do so, find [our societies page on the union website](https://www.theunionmmu.org/groups/26-2-minecraft-society), and click on the "**Join this group**" button. The rest will become apparent.
+
+Thank you!

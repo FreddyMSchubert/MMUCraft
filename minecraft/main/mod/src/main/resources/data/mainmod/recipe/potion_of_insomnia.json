@@ -1,14 +1,17 @@
 {
-  "type": "mainmod:fake_crafting_shapeless",
-  "ingredients": [
-    "minecraft:crying_obsidian",
-    "minecraft:crying_obsidian",
-    "minecraft:crying_obsidian",
-    "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
-    "minecraft:phantom_membrane"
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " M ",
+    "MPM",
+    " C "
   ],
+  "key": {
+    "M": "minecraft:crying_obsidian",
+    "P": "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
+    "C": "minecraft:phantom_membrane"
+  },
   "result": {
-    "stack": "mainmod:charm-potion-displacement",
+    "stack": "mainmod:charm-potion-insomnia",
     "count": 1
   }
 }

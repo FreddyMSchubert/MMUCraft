@@ -63,33 +63,6 @@ public final class UnlockBookLoot {
         if (availability.hasCharmsToUnlock() && dropCharm) addFakeItem("charm-magic-book", itemStacks);
         if (availability.hasCosmeticsToUnlock() && dropCosmetic) addFakeItem("charm-fashion-book", itemStacks);
     }
-    public static void addBookDrop(LootContext lootContext, List<ItemStack> itemStacks, UnlockAvailability availability) {
-        int totalWeight = 0;
-        for (BookDrop bookDrop : BOOK_DROPS) {
-            if (bookDrop.isAvailable(availability)) {
-                totalWeight += bookDrop.weight();
-            }
-        }
-
-        if (totalWeight <= 0) {
-            return;
-        }
-
-        int remainingWeight = lootContext.getRandom().nextInt(totalWeight);
-        for (BookDrop bookDrop : BOOK_DROPS) {
-            if (!bookDrop.isAvailable(availability)) {
-                continue;
-            }
-
-            remainingWeight -= bookDrop.weight();
-            if (remainingWeight >= 0) {
-                continue;
-            }
-
-            addFakeItem(bookDrop.fakeItemId(), itemStacks);
-            return;
-        }
-    }
 
     public static void updateAvailability(ServerPlayer player, UnlockNextKnowledgeResponse response) {
         putAvailability(player, UnlockAvailability.from(response));

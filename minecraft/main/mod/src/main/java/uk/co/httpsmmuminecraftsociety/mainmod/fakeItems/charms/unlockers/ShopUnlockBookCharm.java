@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -87,7 +88,9 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
                         .append(WebsiteCommand.takeMeThere(
                                 "charm".equals(unlockType)
                                         ? "play/charms"
-                                        : "play/shop/" + response.getUnlockedId()
+                                        : "play/shop/" + response.getUnlockedId(),
+                                "charm".equals(unlockType) ? "Upgrade it here." : "Get it here!",
+                                "charm".equals(unlockType) ? ChatFormatting.DARK_PURPLE : ChatFormatting.YELLOW
                         ));
             }
             player.sendSystemMessage(message);

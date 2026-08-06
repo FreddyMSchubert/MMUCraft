@@ -142,7 +142,7 @@ const FISHING_OPTIONS: StatOption[] = [
 	{ key: 'fishing.total', label: 'Fish Species Caught', group: 'fishing' },
 	...['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical'].map((rarity) => ({
 		key: `fishing.${rarity}`,
-		label: `${rarity.charAt(0).toUpperCase()}${rarity.slice(1)} Fish Caught`,
+		label: `${rarity.charAt(0).toUpperCase()}${rarity.slice(1)} Fish Species Caught`,
 		group: 'fishing' as const,
 	})),
 ]

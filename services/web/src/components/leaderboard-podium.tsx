@@ -19,10 +19,16 @@ export interface PodiumOption {
 	label: string
 }
 
-export function LeaderboardPodium({ entries, label, options, selectedKey, onChange, onSelectPlayer, compact = false }: {
+export interface PodiumOptionGroup {
+	key: string
+	label: string
+	options: PodiumOption[]
+}
+
+export function LeaderboardPodium({ entries, label, optionGroups, selectedKey, onChange, onSelectPlayer, compact = false }: {
 	entries: PodiumEntry[]
 	label: string
-	options?: PodiumOption[]
+	optionGroups?: PodiumOptionGroup[]
 	selectedKey?: string
 	onChange?: (key: string) => void
 	onSelectPlayer: (playerName: string) => void
@@ -59,9 +65,13 @@ export function LeaderboardPodium({ entries, label, options, selectedKey, onChan
 					</Link>
 				))}
 			</div>
-			{options && selectedKey && onChange ? (
+			{optionGroups && selectedKey && onChange ? (
 				<select className="podiumMetric" aria-label="Leaderboard comparison" value={selectedKey} onChange={(event) => onChange(event.target.value)}>
-					{options.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
+					{optionGroups.map((group) => (
+						<optgroup key={group.key} label={group.label}>
+							{group.options.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
+						</optgroup>
+					))}
 				</select>
 			) : <p className="podiumMetric">{label}</p>}
 		</section>

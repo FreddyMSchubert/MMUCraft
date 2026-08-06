@@ -2,6 +2,7 @@
 
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { ASSETS } from '@/lib/assets'
 import { MinecraftModelRenderer } from '@/lib/minecraft-model-renderer'
 import { useSiteSettings } from '@/lib/site-settings'
 
@@ -443,7 +444,7 @@ function ShopModelPreview({ item, hovered, interactive }: { item: ShopItem; hove
 		void modelPromise.then(async (model) => {
 			if (cancelled || !host.isConnected) return
 			rendererRef.current?.destroy()
-			const renderer = new MinecraftModelRenderer(host, { autoRotate: hoveredRef.current, dyeable: item.dyeable, enableDrag: interactive, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
+			const renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, autoRotate: hoveredRef.current, dyeable: item.dyeable, enableDrag: interactive, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
 			rendererRef.current = renderer
 			await renderer.loadModel(model as never)
 			if (!cancelled) setReady(true)

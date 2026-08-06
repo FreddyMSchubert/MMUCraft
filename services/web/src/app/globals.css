@@ -991,6 +991,9 @@ a {
 	filter: none;
 }
 
+.dailyModelIcon { position: relative; }
+.dailyModelCanvas { display: block; width: 100%; height: 100%; }
+
 .dailyTask button {
 	padding: 10px 14px;
 	border: 0;
@@ -3549,21 +3552,6 @@ a {
 	color: rgba(255, 255, 255, 0.82);
 }
 
-.charmBalance i {
-	display: grid;
-	place-items: center;
-	width: 22px;
-	height: 22px;
-	border: 2px solid #8e6115;
-	border-radius: 50%;
-	background: radial-gradient(circle at 35% 30%, #fff0a4, #f2b52e 48%, #9a5b0a);
-	color: #5a3503;
-	font-size: 0.7rem;
-	font-style: normal;
-	font-weight: 1000;
-	box-shadow: 0 0 14px rgba(255, 202, 72, 0.3);
-}
-
 .charmRefresh {
 	cursor: pointer;
 	font: inherit;
@@ -3692,8 +3680,6 @@ a {
 	background: rgba(8, 8, 18, 0.45);
 }
 
-.charmSectionHeading small { color: rgba(255, 255, 255, 0.44); }
-
 .charmIngredientGrid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -3737,7 +3723,6 @@ a {
 .charmIngredientIcon span { color: rgba(255, 255, 255, 0.45); font-size: 1.4rem; }
 .charmIngredientGrid strong { overflow: hidden; font-size: 0.78rem; text-overflow: ellipsis; white-space: nowrap; }
 .charmIngredientGrid li > span { color: var(--forge-cyan); font-size: 0.76rem; font-weight: 900; }
-.charmIngredientGrid li > span.short { color: #ff8d9e; }
 
 .charmEnchantBar {
 	position: sticky;

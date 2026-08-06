@@ -1,17 +1,16 @@
 import * as THREE from 'three'
+import { MinecraftItemSource, MinecraftModelObject } from '@/lib/minecraft-model-renderer'
 
 interface CharmForgeRendererOptions {
-	charmTexture: string
-	ingredientTextures: Array<string | null>
+	charm: MinecraftItemSource
+	ingredients: MinecraftItemSource[]
 }
 
 interface OrbitingItem {
-	mesh: THREE.Mesh
+	mesh: THREE.Group
 	angle: number
 	previousPosition: THREE.Vector3
 }
-
-const SIDE_MATERIAL = new THREE.MeshStandardMaterial({ color: 0x251838, roughness: 0.6, metalness: 0.25 })
 
 export class CharmForgeRenderer {
 	private readonly scene = new THREE.Scene()
@@ -20,16 +19,16 @@ export class CharmForgeRenderer {
 	private readonly clock = new THREE.Clock()
 	private readonly root = new THREE.Group()
 	private readonly ingredientRoot = new THREE.Group()
-	private readonly textureLoader = new THREE.TextureLoader()
-	private readonly textures: THREE.Texture[] = []
+	private readonly modelObjects: MinecraftModelObject[] = []
 	private readonly orbiters: OrbitingItem[] = []
 	private readonly particles: THREE.Points
 	private readonly particlePositions: Float32Array
 	private readonly resizeObserver: ResizeObserver
-	private centralCharm: THREE.Mesh | null = null
+	private centralCharm: THREE.Group | null = null
 	private frame: number | null = null
 	private destroyed = false
 	private pointer = new THREE.Vector2()
+	private pointerActive = false
 	private enchantStartedAt: number | null = null
 	private enchantResolve: (() => void) | null = null
 	private burst = 0
@@ -77,18 +76,18 @@ export class CharmForgeRenderer {
 		this.root.add(this.ingredientRoot)
 		this.scene.add(this.root)
 
-		void this.addItem(options.charmTexture, 2.15).then((mesh) => {
+		void this.addItem(options.charm, 2.15).then((mesh) => {
 			if (this.destroyed) return
 			this.centralCharm = mesh
 			this.root.add(mesh)
 		})
-		options.ingredientTextures.forEach((source, index) => {
+		options.ingredients.forEach((source, index) => {
 			void this.addItem(source, 0.82).then((mesh) => {
 				if (this.destroyed) return
 				this.ingredientRoot.add(mesh)
 				this.orbiters.push({
 					mesh,
-					angle: index / Math.max(1, options.ingredientTextures.length) * Math.PI * 2,
+					angle: index / Math.max(1, options.ingredients.length) * Math.PI * 2,
 					previousPosition: new THREE.Vector3(),
 				})
 			})
@@ -104,7 +103,7 @@ export class CharmForgeRenderer {
 		this.animate()
 	}
 
-	playEnchantment() {
+	playUpgrade() {
 		if (this.enchantStartedAt !== null) return Promise.resolve()
 		this.enchantStartedAt = performance.now()
 		return new Promise<void>((resolve) => {
@@ -119,51 +118,37 @@ export class CharmForgeRenderer {
 		this.resizeObserver.disconnect()
 		this.renderer.domElement.removeEventListener('pointermove', this.handlePointerMove)
 		this.renderer.domElement.removeEventListener('pointerleave', this.handlePointerLeave)
+		for (const modelObject of this.modelObjects) modelObject.dispose()
 		this.scene.traverse((object) => {
 			if (!(object instanceof THREE.Mesh || object instanceof THREE.Points)) return
 			object.geometry.dispose()
 			const materials = Array.isArray(object.material) ? object.material : [object.material]
-			for (const material of materials) {
-				if (material !== SIDE_MATERIAL) material.dispose()
-			}
+			for (const material of materials) material.dispose()
 		})
-		for (const texture of this.textures) texture.dispose()
 		this.renderer.dispose()
 		this.renderer.domElement.remove()
 	}
 
-	private async addItem(source: string | null, size: number) {
-		const texture = await this.loadTexture(source)
-		const face = new THREE.MeshStandardMaterial({
-			map: texture,
-			transparent: true,
-			alphaTest: 0.05,
-			roughness: 0.48,
-			metalness: 0.08,
-			side: THREE.DoubleSide,
-		})
-		return new THREE.Mesh(
-			new THREE.BoxGeometry(size, size, size * 0.08),
-			[SIDE_MATERIAL, SIDE_MATERIAL, SIDE_MATERIAL, SIDE_MATERIAL, face, face],
-		)
-	}
-
-	private async loadTexture(source: string | null) {
-		const texture = source
-			? await this.textureLoader.loadAsync(source)
-			: new THREE.CanvasTexture(createFallbackTexture())
-		texture.colorSpace = THREE.SRGBColorSpace
-		texture.magFilter = THREE.NearestFilter
-		texture.minFilter = THREE.NearestFilter
-		texture.generateMipmaps = false
-		this.textures.push(texture)
-		return texture
+	private async addItem(source: MinecraftItemSource, size: number) {
+		const modelObject = new MinecraftModelObject()
+		this.modelObjects.push(modelObject)
+		await modelObject.load(source)
+		const mesh = new THREE.Group()
+		mesh.add(modelObject.group)
+		const bounds = new THREE.Box3().setFromObject(modelObject.group)
+		const center = bounds.getCenter(new THREE.Vector3())
+		const extent = Math.max(0.01, ...bounds.getSize(new THREE.Vector3()).toArray())
+		modelObject.group.position.sub(center)
+		modelObject.group.scale.setScalar(size / extent)
+		return mesh
 	}
 
 	private animate() {
 		if (this.destroyed) return
 		this.frame = requestAnimationFrame(this.animate)
-		const elapsed = this.clock.getElapsedTime()
+		const deltaMs = this.clock.getDelta() * 1000
+		const elapsed = this.clock.elapsedTime
+		for (const modelObject of this.modelObjects) modelObject.update(deltaMs, 50)
 		const duration = this.reducedMotion ? 0.35 : 1.9
 		const enchantProgress = this.enchantStartedAt === null
 			? 0
@@ -188,12 +173,11 @@ export class CharmForgeRenderer {
 
 		if (this.centralCharm) {
 			this.centralCharm.position.y = Math.sin(elapsed * 1.25) * (this.reducedMotion ? 0.025 : 0.12)
-			this.centralCharm.rotation.x = THREE.MathUtils.lerp(this.centralCharm.rotation.x, -this.pointer.y * 0.18, 0.06)
-			this.centralCharm.rotation.y = THREE.MathUtils.lerp(
-				this.centralCharm.rotation.y,
-				this.pointer.x * 0.3 + elapsed * (this.reducedMotion ? 0.03 : 0.16),
-				0.05,
-			)
+			const idleTilt = this.reducedMotion ? 0 : 0.085
+			const targetX = this.pointerActive ? -this.pointer.y * 0.16 : Math.sin(elapsed * 0.7) * idleTilt
+			const targetY = this.pointerActive ? this.pointer.x * 0.19 : Math.cos(elapsed * 0.7) * idleTilt
+			this.centralCharm.rotation.x = THREE.MathUtils.lerp(this.centralCharm.rotation.x, targetX, 0.06)
+			this.centralCharm.rotation.y = THREE.MathUtils.lerp(this.centralCharm.rotation.y, targetY, 0.06)
 			const pulse = enchantProgress > 0.53 ? Math.sin((enchantProgress - 0.53) * Math.PI * 5) * 0.18 : 0
 			this.centralCharm.scale.setScalar(1 + Math.max(0, pulse))
 		}
@@ -227,29 +211,19 @@ export class CharmForgeRenderer {
 
 	private handlePointerMove(event: PointerEvent) {
 		const bounds = this.renderer.domElement.getBoundingClientRect()
+		this.pointerActive = true
 		this.pointer.set(
 			(event.clientX - bounds.left) / bounds.width * 2 - 1,
 			-((event.clientY - bounds.top) / bounds.height * 2 - 1),
 		)
 	}
 
-	private readonly handlePointerLeave = () => this.pointer.set(0, 0)
+	private readonly handlePointerLeave = () => {
+		this.pointerActive = false
+		this.pointer.set(0, 0)
+	}
 }
 
 function easeInOut(value: number) {
 	return value < 0.5 ? 2 * value * value : 1 - Math.pow(-2 * value + 2, 2) / 2
-}
-
-function createFallbackTexture() {
-	const canvas = document.createElement('canvas')
-	canvas.width = 16
-	canvas.height = 16
-	const context = canvas.getContext('2d')!
-	context.fillStyle = '#3a205c'
-	context.fillRect(0, 0, 16, 16)
-	context.fillStyle = '#d7b8ff'
-	context.font = 'bold 12px sans-serif'
-	context.textAlign = 'center'
-	context.fillText('?', 8, 13)
-	return canvas
 }

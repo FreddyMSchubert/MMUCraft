@@ -433,7 +433,7 @@ public final class GameplayGrpcService extends GrpcHandler {
         if (player == null || player.hasDisconnected()) {
             return UpgradeCharmResponse.newBuilder()
                     .setOnline(false)
-                    .setMessage("You have to be online on the server to enchant a charm.")
+                    .setMessage("You have to be online on the server to upgrade a charm.")
                     .build();
         }
 
@@ -458,7 +458,7 @@ public final class GameplayGrpcService extends GrpcHandler {
             return failedCharmUpgrade(player, "You no longer have all the required ingredients.");
         }
         if (MoneyHelper.GetBalance(player) < target.dabloons()) {
-            return failedCharmUpgrade(player, "You need " + target.dabloons() + " dabloons for this enchantment.");
+            return failedCharmUpgrade(player, "You need " + target.dabloons() + " dabloons for this upgrade.");
         }
 
         NonNullList<ItemStack> backup = NonNullList.withSize(player.getInventory().getContainerSize(), ItemStack.EMPTY);
@@ -473,7 +473,7 @@ public final class GameplayGrpcService extends GrpcHandler {
             }
             if (target.dabloons() > 0 && !MoneyHelper.ReduceMoney(player, target.dabloons())) {
                 restoreInventory(player, backup);
-                return failedCharmUpgrade(player, "Could not take the dabloons for this enchantment.");
+                return failedCharmUpgrade(player, "Could not take the dabloons for this upgrade.");
             }
 
             feature.setLevel(stack, targetLevel);

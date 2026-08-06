@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -45,7 +46,7 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             if (response.getUnlocked()) {
                 message = message.copy()
                         .append(Component.literal(" "))
-                        .append(WebsiteCommand.takeMeThere("play/knowledge/" + response.getKnowledgeId()));
+                        .append(WebsiteCommand.takeMeThere("play/knowledge/" + response.getKnowledgeId(), "Click to read!", ChatFormatting.RED));
             }
             player.sendSystemMessage(message);
 

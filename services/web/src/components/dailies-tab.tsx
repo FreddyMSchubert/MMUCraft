@@ -161,6 +161,8 @@ export function DailiesTab() {
 		return <p>Loading dailies...</p>
 	}
 
+	const loginBonusClaimed = data.tasks.some((task) => task.id === 'login_bonus' && task.claimed)
+
 	return (
 		<div className="dailiesPanel">
 			<div className="dailiesHeader">
@@ -169,7 +171,7 @@ export function DailiesTab() {
 					<p>Resets daily at 4 am.</p>
 					<p>You have to be online on the server to claim dailies.</p>
 				</div>
-				<div className="loginStreak" aria-label={`Login streak: ${data.loginStreak} days`}>
+				<div className={`loginStreak${loginBonusClaimed ? ' claimed' : ''}`} aria-label={`Login streak: ${data.loginStreak} days`}>
 					<span>Login Streak</span>
 					<strong>{data.loginStreak}</strong>
 				</div>
@@ -235,7 +237,7 @@ export function DailiesTab() {
 				<p className="dailyFootnote">
 					You can always earn money, even if today&apos;s dailies are already done or too hard, by completing advancements.
 				</p>
-				<section className="dailyCompletion" aria-labelledby="daily-completion-title">
+				<section className={`dailyCompletion${data.completion.claimed ? ' claimed' : ''}`} aria-labelledby="daily-completion-title">
 					<h4 id="daily-completion-title">Completed {data.completion.completedTaskCount}/{data.completion.totalTaskCount}</h4>
 					<div className="dailyCompletionCalculation" aria-label={`Completion reward: ${data.completion.rewardDabloons} dabloons`}>
 						<span>Base reward</span><strong>+{data.completion.baseRewardDabloons}</strong>

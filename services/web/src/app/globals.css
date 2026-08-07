@@ -928,6 +928,12 @@ a {
 	line-height: 1;
 }
 
+.loginStreak.claimed {
+	border-color: rgba(90, 210, 130, 0.5);
+	background: rgba(43, 145, 79, 0.16);
+	color: #86f5aa;
+}
+
 .dailiesHeader p,
 .dailyTask p,
 .dailyFootnote {
@@ -953,9 +959,12 @@ a {
 
 .dailyTask.completed {
 	border-color: rgba(90, 210, 130, 0.32);
-	background:
-		linear-gradient(to left, rgba(104, 255, 156, 0.2), transparent 58%),
-		rgba(8, 48, 31, 0.82);
+	background: linear-gradient(
+		to left,
+		rgba(104, 255, 156, 0.24) 0%,
+		rgba(104, 255, 156, 0.1) 30%,
+		transparent 68%
+	);
 }
 
 .dailyTask.completed .dailyNumber {
@@ -1030,6 +1039,7 @@ a {
 }
 
 .dailyModelIcon { position: relative; }
+.dailyModelIcon .minecraftItemIconCanvas { transform: scale(1.32); }
 .minecraftItemIconCanvas { display: block; width: 100%; height: 100%; }
 .minecraftItemIconFailed { border-radius: 6px; background: rgba(255, 255, 255, 0.08); }
 
@@ -1045,6 +1055,11 @@ a {
 .dailyTask button:disabled {
 	background: rgba(255, 255, 255, 0.18);
 	color: rgba(255, 255, 255, 0.72);
+}
+
+.dailyTask.completed button:disabled {
+	background: rgba(43, 145, 79, 0.3);
+	color: #86f5aa;
 }
 
 .dailyMessage {
@@ -1074,6 +1089,11 @@ a {
 .dailyCompletion h4 {
 	margin: 0 0 12px;
 	font-size: 1.1rem;
+}
+
+.dailyCompletion.claimed {
+	border-color: rgba(90, 210, 130, 0.5);
+	background: rgba(43, 145, 79, 0.14);
 }
 
 .dailyCompletionCalculation {
@@ -1113,6 +1133,11 @@ a {
 .dailyCompletion button:disabled {
 	background: rgba(255, 255, 255, 0.18);
 	color: rgba(255, 255, 255, 0.72);
+}
+
+.dailyCompletion.claimed button:disabled {
+	background: rgba(43, 145, 79, 0.3);
+	color: #86f5aa;
 }
 
 
@@ -3761,6 +3786,7 @@ a {
 .charmIngredientIcon span { color: rgba(255, 255, 255, 0.45); font-size: 1.4rem; }
 .charmIngredientGrid strong { overflow: hidden; font-size: 0.78rem; text-overflow: ellipsis; white-space: nowrap; }
 .charmIngredientGrid li > span { color: var(--forge-cyan); font-size: 0.76rem; font-weight: 900; }
+.charmIngredientGrid li.missing > span { color: #ff8e9e; }
 
 .charmEnchantBar {
 	position: sticky;
@@ -3821,6 +3847,11 @@ a {
 }
 
 .charmEnchantButton:hover:not(:disabled)::before { left: 112%; }
+.charmEnchantButton.insufficient {
+	background: linear-gradient(120deg, #761f34, #bd3b51 52%, #6f2634);
+	box-shadow: 0 0 30px rgba(213, 58, 83, 0.28), inset 0 1px rgba(255, 255, 255, 0.18);
+}
+.charmEnchantButton.insufficient:hover:not(:disabled) { box-shadow: 0 0 38px rgba(213, 58, 83, 0.45), inset 0 1px rgba(255, 255, 255, 0.22); }
 .charmEnchantButton:disabled { cursor: not-allowed; filter: grayscale(0.55); opacity: 0.58; }
 .charmEnchantButton strong { color: #fff0a6; }
 

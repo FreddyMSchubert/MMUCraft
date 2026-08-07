@@ -1017,7 +1017,8 @@ a {
 }
 
 .dailyModelIcon { position: relative; }
-.dailyModelCanvas { display: block; width: 100%; height: 100%; }
+.minecraftItemIconCanvas { display: block; width: 100%; height: 100%; }
+.minecraftItemIconFailed { border-radius: 6px; background: rgba(255, 255, 255, 0.08); }
 
 .dailyTask button {
 	padding: 10px 14px;
@@ -3737,11 +3738,10 @@ a {
 	background: radial-gradient(circle, rgba(177, 114, 255, 0.22), rgba(255, 255, 255, 0.02));
 }
 
-.charmIngredientIcon img {
+.charmIngredientModel {
+	position: relative;
 	width: 42px;
 	height: 42px;
-	object-fit: contain;
-	image-rendering: pixelated;
 	filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.45));
 }
 
@@ -3766,6 +3766,8 @@ a {
 	color: rgba(255, 255, 255, 0.64);
 	font-size: 0.78rem;
 }
+
+.charmForgeMessage.error { color: #ff9cad; }
 
 .charmEnchantButton {
 	position: relative;

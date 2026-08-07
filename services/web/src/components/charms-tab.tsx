@@ -1,9 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
 import { CharmForgeRenderer } from '@/lib/charm-forge-renderer'
 import { ASSETS } from '@/lib/assets'
+import { MinecraftItemIcon } from '@/components/minecraft-item-icon'
 
 interface CharmIngredient {
 	raw: string
@@ -47,6 +47,7 @@ export function CharmsTab() {
 	const [loading, setLoading] = useState(true)
 	const [upgrading, setUpgrading] = useState(false)
 	const [message, setMessage] = useState('')
+	const [messageIsError, setMessageIsError] = useState(false)
 	const forgeHost = useRef<HTMLDivElement>(null)
 	const forge = useRef<CharmForgeRenderer | null>(null)
 	const charm = inventory?.charms[0] ?? null
@@ -57,6 +58,7 @@ export function CharmsTab() {
 		} catch (error) {
 			setInventory(null)
 			setMessage(error instanceof Error ? error.message : 'Could not open the charm forge.')
+			setMessageIsError(true)
 		} finally {
 			setLoading(false)
 		}
@@ -69,7 +71,10 @@ export function CharmsTab() {
 				if (!cancelled) setInventory(data)
 			})
 			.catch((error: unknown) => {
-				if (!cancelled) setMessage(error instanceof Error ? error.message : 'Could not open the charm forge.')
+				if (!cancelled) {
+					setMessage(error instanceof Error ? error.message : 'Could not open the charm forge.')
+					setMessageIsError(true)
+				}
 			})
 			.finally(() => {
 				if (!cancelled) setLoading(false)
@@ -109,6 +114,7 @@ export function CharmsTab() {
 		if (!charm || upgrading || charm.currentLevel >= charm.maxLevel) return
 		setUpgrading(true)
 		setMessage('The forge is reading your main hand...')
+		setMessageIsError(false)
 
 		try {
 			const response = await fetch('/api/shop/charms/upgrade', {
@@ -123,11 +129,13 @@ export function CharmsTab() {
 			await forge.current?.playUpgrade()
 			await refresh()
 			setMessage(result?.message || 'The charm grew stronger.')
+			setMessageIsError(false)
 		} catch (error) {
 			const failure = error instanceof Error ? error.message : 'The upgrade failed.'
 			setLoading(true)
 			await refresh()
 			setMessage(failure)
+			setMessageIsError(true)
 		} finally {
 			setUpgrading(false)
 		}
@@ -148,6 +156,7 @@ export function CharmsTab() {
 					<button type="button" className="charmRefresh" onClick={() => {
 						setLoading(true)
 						setMessage('')
+						setMessageIsError(false)
 						void refresh()
 					}} disabled={loading || upgrading}>
 						<span aria-hidden="true">↻</span> Refresh main hand
@@ -166,7 +175,7 @@ export function CharmsTab() {
 				<div className="charmForgeEmpty">
 					<div className="charmRune" aria-hidden="true">✧</div>
 					<strong>No charm found in your main hand</strong>
-					<p>{inventory?.message || message || 'Equip a charm in your hotbar, select it, and press Refresh main hand.'}</p>
+					<p role={messageIsError ? 'alert' : undefined}>{message || inventory?.message || 'Equip a charm in your hotbar, select it, and press Refresh main hand.'}</p>
 				</div>
 			)}
 
@@ -207,9 +216,12 @@ export function CharmsTab() {
 								{charm.ingredients.map((ingredient) => (
 									<li key={ingredient.raw}>
 										<div className="charmIngredientIcon">
-											{ingredient.iconUrl
-												? <Image src={ingredient.iconUrl} alt="" width={42} height={42} unoptimized />
-												: <span aria-hidden="true">?</span>}
+											<MinecraftItemIcon
+												className="charmIngredientModel"
+												itemId={ingredient.itemId}
+												modelUrl={ingredient.modelUrl}
+												textureUrl={ingredient.iconUrl}
+											/>
 										</div>
 										<strong>{ingredient.displayName}</strong>
 									<span>× {ingredient.requiredCount}</span>
@@ -222,7 +234,7 @@ export function CharmsTab() {
 					)}
 
 					<div className="charmEnchantBar">
-						<div className="charmForgeMessage" role="status">{message || 'The server will verify your held charm, reagents, and balance.'}</div>
+						<div className={`charmForgeMessage ${messageIsError ? 'error' : ''}`} role={messageIsError ? 'alert' : 'status'}>{message || 'The server will verify your held charm, reagents, and balance.'}</div>
 						<button
 							type="button"
 							className="charmEnchantButton"

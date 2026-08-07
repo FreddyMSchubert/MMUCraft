@@ -180,7 +180,7 @@ export function DailiesTab() {
 
 			<div className="dailyTasks">
 				{data.tasks.map((task) => (
-					<div className="dailyTask" key={task.id}>
+					<div className={`dailyTask${task.claimed ? ' completed' : ''}`} key={task.id}>
 						<div className="dailyNumber" aria-hidden="true">{task.emoji}</div>
 						<div className="dailyTaskBody">
 							<h4>{task.name}{task.rewardDabloons > 0 ? (' - ' + task.rewardDabloons + ' Dabloons') : ''}</h4>

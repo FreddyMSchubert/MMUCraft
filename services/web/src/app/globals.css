@@ -951,6 +951,19 @@ a {
 	background: rgba(255, 255, 255, 0.08);
 }
 
+.dailyTask.completed {
+	border-color: rgba(90, 210, 130, 0.32);
+	background:
+		linear-gradient(to left, rgba(104, 255, 156, 0.2), transparent 58%),
+		rgba(8, 48, 31, 0.82);
+}
+
+.dailyTask.completed .dailyNumber {
+	border-color: rgba(104, 255, 156, 0.42);
+	background: rgba(43, 145, 79, 0.2);
+	color: #86f5aa;
+}
+
 .dailyNumber {
 	display: grid;
 	place-items: center;

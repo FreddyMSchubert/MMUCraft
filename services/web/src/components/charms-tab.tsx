@@ -9,6 +9,7 @@ interface CharmIngredient {
 	raw: string
 	displayName: string
 	requiredCount: number
+	inventoryCount: number
 	itemId: string
 	iconUrl: string | null
 	modelUrl: string | null
@@ -51,6 +52,7 @@ export function CharmsTab() {
 	const forgeHost = useRef<HTMLDivElement>(null)
 	const forge = useRef<CharmForgeRenderer | null>(null)
 	const charm = inventory?.charms[0] ?? null
+	const hasUpgradeMaterials = charm?.ingredients.every((ingredient) => ingredient.inventoryCount >= ingredient.requiredCount) ?? false
 
 	const refresh = useCallback(async () => {
 		try {
@@ -112,6 +114,13 @@ export function CharmsTab() {
 
 	async function upgrade() {
 		if (!charm || upgrading || charm.currentLevel >= charm.maxLevel) return
+		if (!hasUpgradeMaterials) {
+			const warning = 'Not enough materials found. Refresh inventory to update materials.'
+			setMessage(warning)
+			setMessageIsError(true)
+			window.alert(warning)
+			return
+		}
 		setUpgrading(true)
 		setMessage('The forge is reading your main hand...')
 		setMessageIsError(false)
@@ -132,7 +141,6 @@ export function CharmsTab() {
 			setMessageIsError(false)
 		} catch (error) {
 			const failure = error instanceof Error ? error.message : 'The upgrade failed.'
-			setLoading(true)
 			await refresh()
 			setMessage(failure)
 			setMessageIsError(true)
@@ -147,7 +155,7 @@ export function CharmsTab() {
 				<div>
 					<span className="charmEyebrow">Arcane workbench</span>
 					<h3>Charm Forge</h3>
-					<p>Hold one charm in your main hand, then refresh this page.</p>
+					<p>Hold one charm in your main hand, then refresh your inventory.</p>
 				</div>
 				<div className="charmForgeControls">
 					<span className="charmBalance" title="Current dabloon balance">
@@ -159,27 +167,27 @@ export function CharmsTab() {
 						setMessageIsError(false)
 						void refresh()
 					}} disabled={loading || upgrading}>
-						<span aria-hidden="true">↻</span> Refresh main hand
+						<span aria-hidden="true">↻</span> {loading && inventory ? 'Refreshing inventory...' : 'Refresh inventory'}
 					</button>
 				</div>
 			</header>
 
-			{loading && (
+			{loading && !inventory && (
 				<div className="charmForgeEmpty loading" role="status">
 					<div className="charmRune" aria-hidden="true">✦</div>
 					<strong>Reading the forge...</strong>
 				</div>
 			)}
 
-			{!loading && !charm && (
+			{!charm && (!loading || inventory !== null) && (
 				<div className="charmForgeEmpty">
 					<div className="charmRune" aria-hidden="true">✧</div>
 					<strong>No charm found in your main hand</strong>
-					<p role={messageIsError ? 'alert' : undefined}>{message || inventory?.message || 'Equip a charm in your hotbar, select it, and press Refresh main hand.'}</p>
+					<p role={messageIsError ? 'alert' : undefined}>{message || inventory?.message || 'Equip a charm in your hotbar, select it, and press Refresh inventory.'}</p>
 				</div>
 			)}
 
-			{!loading && charm && (
+			{charm && (
 				<>
 					<section className={`charmForgeStage ${upgrading ? 'enchanting' : ''}`} aria-label={`${charm.title} upgrade preview`}>
 						<div className="charmForgeAura" aria-hidden="true" />
@@ -214,7 +222,7 @@ export function CharmsTab() {
 							</div>
 							<ul className="charmIngredientGrid">
 								{charm.ingredients.map((ingredient) => (
-									<li key={ingredient.raw}>
+									<li className={ingredient.inventoryCount < ingredient.requiredCount ? 'missing' : undefined} key={ingredient.raw}>
 										<div className="charmIngredientIcon">
 											<MinecraftItemIcon
 												className="charmIngredientModel"
@@ -224,7 +232,7 @@ export function CharmsTab() {
 											/>
 										</div>
 										<strong>{ingredient.displayName}</strong>
-									<span>× {ingredient.requiredCount}</span>
+										<span aria-label={`${ingredient.inventoryCount} in inventory, ${ingredient.requiredCount} required`}>{ingredient.inventoryCount} / {ingredient.requiredCount}</span>
 									</li>
 								))}
 							</ul>
@@ -237,7 +245,7 @@ export function CharmsTab() {
 						<div className={`charmForgeMessage ${messageIsError ? 'error' : ''}`} role={messageIsError ? 'alert' : 'status'}>{message || 'The server will verify your held charm, reagents, and balance.'}</div>
 						<button
 							type="button"
-							className="charmEnchantButton"
+							className={`charmEnchantButton${!hasUpgradeMaterials && charm.currentLevel < charm.maxLevel ? ' insufficient' : ''}`}
 							onClick={() => void upgrade()}
 							disabled={upgrading || charm.currentLevel >= charm.maxLevel}
 						>

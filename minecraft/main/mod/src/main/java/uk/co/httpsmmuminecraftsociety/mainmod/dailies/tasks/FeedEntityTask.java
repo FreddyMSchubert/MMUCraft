@@ -17,7 +17,8 @@ public final class FeedEntityTask extends CountedTask {
 
     @Override protected String name(int count) { return "Feed " + entityName; }
     @Override protected String description(int count) {
-        return "Feed " + count + " " + entityName.toLowerCase() + ". A baby or a ready-to-breed adult counts.";
+        return "Feed " + count + " " + entityName.toLowerCase()
+                + "; food used to tame, heal, grow, or breed one counts.";
     }
     @Override protected boolean matches(JsonObject task, DailyTaskEvent event) {
         return event.type() == DailyTaskEvent.Type.FEED_ENTITY && event.subject().equals(entity);

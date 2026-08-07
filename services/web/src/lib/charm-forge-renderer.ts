@@ -47,13 +47,6 @@ export class CharmForgeRenderer {
 		light.position.set(0, 2.5, 4)
 		this.scene.add(light)
 
-		const ringMaterial = new THREE.MeshBasicMaterial({ color: 0xa870ff, transparent: true, opacity: 0.24 })
-		for (const [radius, tilt] of [[2.35, 0.2], [2.85, -0.35], [3.35, 0.48]] as const) {
-			const ring = new THREE.Mesh(new THREE.TorusGeometry(radius, 0.012, 8, 128), ringMaterial.clone())
-			ring.rotation.x = Math.PI / 2 + tilt
-			this.root.add(ring)
-		}
-
 		this.particlePositions = new Float32Array(360 * 3)
 		for (let index = 0; index < this.particlePositions.length; index += 3) {
 			const radius = 1.2 + Math.random() * 4.1

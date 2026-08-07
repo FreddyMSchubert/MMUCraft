@@ -182,6 +182,19 @@ export const dailyAdvancementTargets = sqliteTable('daily_advancement_targets', 
 	index('daily_advancement_targets_user_id_idx').on(table.user_id),
 ])
 
+export const dailyTasks = sqliteTable('daily_tasks', {
+	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	period_key: text('period_key').notNull(),
+	slot: integer('slot').notNull(),
+	task_id: text('task_id').notNull(),
+	task_json: text('task_json').notNull(),
+	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
+}, (table) => [
+	primaryKey({ columns: [table.user_id, table.period_key, table.slot] }),
+	uniqueIndex('daily_tasks_user_period_task_unique').on(table.user_id, table.period_key, table.task_id),
+	index('daily_tasks_period_key_idx').on(table.period_key),
+])
+
 export const giftCodes = sqliteTable('gift_codes', {
 	code: text('code').primaryKey(),
 	amount_dabloons: integer('amount_dabloons').notNull(),
@@ -222,6 +235,7 @@ export type KnowledgeUnlockRow = typeof knowledgeUnlocks.$inferSelect
 export type ShopUnlockRow = typeof shopUnlocks.$inferSelect
 export type DailyClaimRow = typeof dailyClaims.$inferSelect
 export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSelect
+export type DailyTaskRow = typeof dailyTasks.$inferSelect
 export type GiftCodeRow = typeof giftCodes.$inferSelect
 
 export const schema = {
@@ -239,6 +253,7 @@ export const schema = {
 	shopUnlocks,
 	dailyClaims,
 	dailyAdvancementTargets,
+	dailyTasks,
 	giftCodes,
 	giftCodeRedemptions,
 }

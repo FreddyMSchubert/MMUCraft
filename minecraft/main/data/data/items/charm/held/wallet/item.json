@@ -7,7 +7,7 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 25,
+		"priceDabloons": 50,
 		"description": "Stores dabloons by crafting.",
 		"unlockWeight": 100
 	},

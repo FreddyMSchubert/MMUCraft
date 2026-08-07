@@ -8,13 +8,15 @@ const RESOURCE_PACK_ROOT = ASSETS.minecraft.root
 
 interface DailyTask {
 	id: string
-	number: number
-	title: string
+	emoji: string
+	name: string
+	description?: string
 	rewardDabloons: number
 	claimed: boolean
-	item?: string
-	count?: number
-	dabloonsPerItem?: number
+	current: number
+	max: number
+	progressLabel?: string
+	progressUnit?: string
 	advancement?: {
 		advancementId: string
 		title: string
@@ -87,16 +89,27 @@ export function DailiesTab() {
 		}
 	}, [load])
 
+	useEffect(() => {
+		const source = new EventSource('/api/dailies/events')
+		source.onmessage = (messageEvent) => {
+			const event = JSON.parse(messageEvent.data) as { type?: string }
+			if (event.type === 'daily-update') {
+				void load().catch((caught) => setError(errorMessage(caught)))
+			}
+		}
+		return () => source.close()
+	}, [load])
+
 	async function claimTask(task: DailyTask) {
 		setError('')
 		setMessage('')
 		setClaimingTaskId(task.id)
 
-		const path = task.id === 'item_submission'
-			? '/api/dailies/item-submission/claim'
-			: task.id === 'advancement_bonus'
+		const path = task.id === 'advancement_bonus'
 				? '/api/dailies/advancement-bonus/claim'
-				: '/api/dailies/login-bonus/claim'
+				: task.id === 'login_bonus'
+					? '/api/dailies/login-bonus/claim'
+					: `/api/dailies/tasks/${encodeURIComponent(task.id)}/claim`
 
 		try {
 			const response = await fetch(path, {
@@ -171,16 +184,10 @@ export function DailiesTab() {
 			<div className="dailyTasks">
 				{data.tasks.map((task) => (
 					<div className="dailyTask" key={task.id}>
-						<div className="dailyNumber">{task.number}</div>
+						<div className="dailyNumber" aria-hidden="true">{task.emoji}</div>
 						<div className="dailyTaskBody">
-							<h4>{task.title}{task.rewardDabloons > 0 ? (' - ' + task.rewardDabloons + ' Dabloons') : ''}</h4>
-							{task.id === 'item_submission' ? (
-								<p>
-									{task.claimed
-										? <>Claimed: Submitted {task.count}x {formatItemName(task.item ?? '')} from your inventory for {task.rewardDabloons} dabloons.</>
-										: <>Click claim while holding {task.count}x {formatItemName(task.item ?? '')} in your inventory for {task.rewardDabloons} dabloons.</>}
-								</p>
-							) : task.id === 'advancement_bonus' ? (
+							<h4>{task.name}{task.rewardDabloons > 0 ? (' - ' + task.rewardDabloons + ' Dabloons') : ''}</h4>
+							{task.id === 'advancement_bonus' ? (
 								task.advancement ? (
 									<div className="dailyAdvancement">
 										<MinecraftModelIcon item={task.advancement.iconItem} />
@@ -195,18 +202,33 @@ export function DailiesTab() {
 								) : (
 									<p>{task.unavailableMessage ?? 'No daily advancement is available right now.'}</p>
 								)
-							) : (
+							) : task.id === 'login_bonus' ? (
 								<p>{task.claimed
 									? <>Claimed: Login again tomorrow for {data.nextLoginRewardDabloons} dabloons.</>
 									: <>Click claim while online to extend your login streak and earn {task.rewardDabloons} dabloons.</>}</p>
+							) : (
+								<>
+									<p>{task.claimed ? `Claimed: ${task.description ?? task.name}` : task.description}</p>
+									{task.max > 1 && <DailyProgress task={task} />}
+									{task.max === 1 && task.current >= task.max && !task.claimed && <p className="dailyTaskReady">Complete — claim your reward.</p>}
+								</>
 							)}
 						</div>
 						<button
 							type="button"
-							disabled={task.claimed || claimingTaskId === task.id || (task.id === 'advancement_bonus' && !task.advancement)}
+							disabled={task.claimed
+								|| claimingTaskId === task.id
+								|| (task.id === 'advancement_bonus' && !task.advancement)
+								|| (task.id !== 'login_bonus' && task.id !== 'advancement_bonus' && task.max !== -1 && task.current < task.max)}
 							onClick={() => claimTask(task)}
 						>
-							{task.claimed ? 'Claimed' : claimingTaskId === task.id ? 'Claiming...' : 'Claim'}
+			{task.claimed
+				? 'Claimed'
+				: claimingTaskId === task.id
+					? 'Claiming...'
+					: task.max !== -1 && task.current < task.max
+						? 'In progress'
+						: 'Claim'}
 						</button>
 					</div>
 				))}
@@ -235,8 +257,19 @@ export function DailiesTab() {
 	)
 }
 
-function formatItemName(item: string) {
-	return item.replace(/^minecraft:/, '').replace(/_/g, ' ')
+function DailyProgress({ task }: { task: DailyTask }) {
+	const percentage = Math.round(task.current / task.max * 100)
+	const amount = `${task.current}/${task.max}${task.progressUnit ? ` ${task.progressUnit}` : ''}`
+	return (
+		<div className="dailyProgress">
+			<div><span>{task.progressLabel ?? 'Progress'}</span><strong>{amount}</strong></div>
+			<progress value={task.current} max={task.max}>{percentage}%</progress>
+		</div>
+	)
+}
+
+function errorMessage(error: unknown) {
+	return error instanceof Error ? error.message : 'Failed to load dailies'
 }
 
 function MinecraftModelIcon({ item }: { item: string }) {

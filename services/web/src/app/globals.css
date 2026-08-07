@@ -968,6 +968,31 @@ a {
 	min-width: 0;
 }
 
+.dailyProgress {
+	display: grid;
+	gap: 5px;
+	max-width: 440px;
+	margin-top: 9px;
+}
+
+.dailyProgress div {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	font-size: 0.88rem;
+}
+
+.dailyProgress progress {
+	width: 100%;
+	height: 10px;
+	accent-color: #ffd166;
+}
+
+.dailyTaskReady {
+	margin-top: 5px !important;
+	color: #88ff88 !important;
+}
+
 .dailyAdvancement {
 	display: flex;
 	align-items: center;

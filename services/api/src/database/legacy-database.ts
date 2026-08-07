@@ -6,6 +6,7 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import {
 	dailyAdvancementTargets,
 	dailyClaims,
+	dailyTasks,
 	giftCodeRedemptions,
 	giftCodes,
 	knowledgeUnlocks,
@@ -143,6 +144,7 @@ function copyLegacyRows(
 			insertRows(tx, shopUnlocks, readOptional(() => legacy.select().from(shopUnlocks).all()))
 			insertRows(tx, dailyClaims, readOptional(() => legacy.select().from(dailyClaims).all()))
 			insertRows(tx, dailyAdvancementTargets, readOptional(() => legacy.select().from(dailyAdvancementTargets).all()))
+			insertRows(tx, dailyTasks, readOptional(() => legacy.select().from(dailyTasks).all()))
 			insertRows(tx, giftCodes, giftRows)
 			insertRows(tx, giftCodeRedemptions, redemptionRows)
 

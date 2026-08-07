@@ -13,12 +13,15 @@ service GameplayEvents {
   rpc RecordMoneyEvent(RecordMoneyEventRequest) returns (RecordMoneyEventResponse);
   rpc RecordFishCatch(RecordFishCatchRequest) returns (RecordFishCatchResponse);
   rpc GetClaimsSnapshot(GetClaimsSnapshotRequest) returns (ClaimsSnapshot);
+  rpc GetDailyTasksSnapshot(GetDailyTasksSnapshotRequest) returns (DailyTasksSnapshot);
+  rpc UpdateDailyTask(UpdateDailyTaskRequest) returns (UpdateDailyTaskResponse);
 }
 
 service GameplayControl {
   rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
   rpc GrantGiftCodeMoney(GrantGiftCodeMoneyRequest) returns (GrantGiftCodeMoneyResponse);
-  rpc SubmitDailyItems(SubmitDailyItemsRequest) returns (SubmitDailyItemsResponse);
+  rpc GenerateDailyTasks(GenerateDailyTasksRequest) returns (GenerateDailyTasksResponse);
+  rpc ClaimDailyTask(ClaimDailyTaskRequest) returns (ClaimDailyTaskResponse);
   rpc PickDailyAdvancement(PickDailyAdvancementRequest) returns (PickDailyAdvancementResponse);
   rpc ClaimDailyAdvancement(ClaimDailyAdvancementRequest) returns (ClaimDailyAdvancementResponse);
   rpc PurchaseShopItem(PurchaseShopItemRequest) returns (PurchaseShopItemResponse);
@@ -266,19 +269,56 @@ message GrantDailyLoginBonusResponse {
   string message = 3;
 }
 
-message SubmitDailyItemsRequest {
-  string minecraft_username = 1;
-  string item = 2;
-  int32 count = 3;
-  int32 reward_dabloons = 4;
-  string period_key = 5;
-  int64 unix_ms = 6;
+message DailyTaskState {
+  int32 user_id = 1;
+  string minecraft_username = 2;
+  string period_key = 3;
+  string task_json = 4;
+  bool claimed = 5;
 }
 
-message SubmitDailyItemsResponse {
-  bool submitted = 1;
+message GetDailyTasksSnapshotRequest {}
+
+message DailyTasksSnapshot {
+  repeated DailyTaskState tasks = 1;
+}
+
+message UpdateDailyTaskRequest {
+  int32 user_id = 1;
+  string period_key = 2;
+  string task_json = 3;
+  int64 unix_ms = 4;
+}
+
+message UpdateDailyTaskResponse {
+  bool accepted = 1;
+  string message = 2;
+}
+
+message GenerateDailyTasksRequest {
+  int32 user_id = 1;
+  string minecraft_username = 2;
+  string period_key = 3;
+  int32 count = 4;
+}
+
+message GenerateDailyTasksResponse {
+  bool generated = 1;
+  repeated string task_json = 2;
+  string message = 3;
+}
+
+message ClaimDailyTaskRequest {
+  int32 user_id = 1;
+  string minecraft_username = 2;
+  string period_key = 3;
+  string task_json = 4;
+}
+
+message ClaimDailyTaskResponse {
+  bool claimed = 1;
   bool online = 2;
-  int32 found_count = 3;
+  string task_json = 3;
   string message = 4;
 }
 

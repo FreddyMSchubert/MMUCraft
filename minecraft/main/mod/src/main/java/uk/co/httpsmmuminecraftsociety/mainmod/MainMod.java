@@ -27,6 +27,9 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyEvents;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry;
 import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -69,12 +72,14 @@ public class MainMod implements ModInitializer {
         );
 
         DataLoader.init();
+        DailyTaskRegistry.validate();
 
         FakeItemsCommand.init();
         MoneyCommand.init();
         WebsiteCommand.init();
         PlayerStatsSync.init();
         ClaimsManager.init();
+        DailyEvents.register();
         MainModRecipes.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
@@ -101,6 +106,7 @@ public class MainMod implements ModInitializer {
             GrpcBridge.onServerTick();
             PlayerStatsSync.onServerTick(server);
             ClaimsManager.tickBossBars(server);
+            DailyTaskManager.tick(server);
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {

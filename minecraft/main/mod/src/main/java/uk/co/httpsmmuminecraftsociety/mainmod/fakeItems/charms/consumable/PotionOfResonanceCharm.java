@@ -33,18 +33,18 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {}
 
     @Override
-    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
+    public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         String teleportPossibleTest = TeleportPotionUtils.checkTeleportable(player, level, 20, 16);
         if (!teleportPossibleTest.isEmpty()) {
             player.sendSystemMessage(Component.literal(teleportPossibleTest));
-            return;
+            return false;
         }
 
         ItemStack key = player.getOffhandItem();
         if (key.isEmpty()) {
             player.sendSystemMessage(Component.literal("Hold the item to resonate with in your offhand."));
-            return;
+            return false;
         }
 
         List<ServerPlayer> candidates = level.getServer().getPlayerList().getPlayers().stream()
@@ -54,7 +54,7 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
 
         if (candidates.isEmpty()) {
             player.sendSystemMessage(Component.literal("No other player is resonating with that item."));
-            return;
+            return false;
         }
 
         ServerPlayer target = candidates.get(level.getRandom().nextInt(candidates.size()));
@@ -90,6 +90,7 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
         player.sendSystemMessage(Component.literal("You resonated with " + target.getName().getString() + "."));
         target.sendSystemMessage(Component.literal(player.getName().getString() + " resonated with you."));
         stack.consume(1, player);
+        return true;
     }
 
     private static boolean holdsMatchingItem(ServerPlayer player, ItemStack key) {

@@ -7,6 +7,7 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import net.minecraft.server.MinecraftServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +31,7 @@ public final class GrpcBridge {
 
     public static void start(MinecraftServer server) {
         minecraftServer = server;
+        DailyTaskManager.reset();
 
         int port = Integer.parseInt(System.getenv().getOrDefault("MOD_GRPC_PORT", "50052"));
         String host = System.getenv().getOrDefault("MOD_GRPC_HOST", "0.0.0.0");

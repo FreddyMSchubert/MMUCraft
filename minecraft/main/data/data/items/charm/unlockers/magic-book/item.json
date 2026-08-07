@@ -5,11 +5,6 @@
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
-	"shopPurchasable": {
-		"priceDabloons": 75,
-		"description": "Use to unlock a random equipped charm on the website.",
-		"unlockWeight": 100
-	},
 	"charm": {
 		"charmId": 40,
 		"minLevel": 1,

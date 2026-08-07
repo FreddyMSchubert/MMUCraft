@@ -50,13 +50,13 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
     }
 
     @Override
-    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
+    public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         String teleportPossibleTest = TeleportPotionUtils.checkTeleportable(player, level, 20, 16);
         if (!teleportPossibleTest.isEmpty()) {
             player.sendSystemMessage(Component.literal(teleportPossibleTest));
             player.stopUsingItem();
-            return;
+            return false;
         }
 
         BlockPos spawn = level.getRespawnData().globalPos().pos();
@@ -86,6 +86,7 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
         applyEffectIfNotYetApplied(player, MobEffects.SATURATION, POST_DRINK_GOOD_EFFECT_DURATION, 0);
 
         stack.consume(1, player);
+        return true;
     }
 
     private static void applyEffectIfNotYetApplied(ServerPlayer player, Holder<MobEffect> effect, int duration, int amplifier) {

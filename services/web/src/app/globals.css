@@ -1869,7 +1869,7 @@ a {
 	overflow-wrap: anywhere;
 }
 
-.podiumIdentity span {
+.podiumIdentity > span {
 	color: rgba(255, 255, 255, 0.56);
 }
 

@@ -30,7 +30,6 @@ services:
       - ./services/api/drizzle:/app/drizzle
       - ./services/api/drizzle.config.ts:/app/drizzle.config.ts
       - ./services/api/tsconfig.json:/app/tsconfig.json
-      - ./services/api/content/daily-item-submissions.jsonc:/app/content/daily-item-submissions.jsonc
       - ./services/web/public/knowledge:/app/content/knowledge
       - ./minecraft/main/data/data/items:/app/content/items
       - ./proto:/app/proto

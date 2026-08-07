@@ -26,7 +26,6 @@ COPY services/api/tsconfig.json services/api/drizzle.config.ts ./
 COPY services/api/src ./src
 COPY services/api/scripts ./scripts
 COPY services/api/drizzle ./drizzle
-COPY services/api/content ./content
 COPY services/web/public/knowledge ./content/knowledge
 COPY minecraft/main/data/data/items ./content/items
 COPY proto ./proto
@@ -45,7 +44,6 @@ ENV NODE_ENV=production \
 COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/dist ./dist
 COPY --chown=node:node services/api/drizzle ./drizzle
-COPY --chown=node:node services/api/content ./content
 COPY --chown=node:node services/web/public/knowledge ./content/knowledge
 COPY --chown=node:node minecraft/main/data/data/items ./content/items
 COPY --chown=node:node proto ./proto

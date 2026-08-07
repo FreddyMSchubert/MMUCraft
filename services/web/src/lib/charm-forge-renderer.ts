@@ -95,8 +95,8 @@ export class CharmForgeRenderer {
 
 		this.handlePointerMove = this.handlePointerMove.bind(this)
 		this.animate = this.animate.bind(this)
-		this.renderer.domElement.addEventListener('pointermove', this.handlePointerMove)
-		this.renderer.domElement.addEventListener('pointerleave', this.handlePointerLeave)
+		this.container.addEventListener('pointermove', this.handlePointerMove)
+		this.container.addEventListener('pointerleave', this.handlePointerLeave)
 		this.resizeObserver = new ResizeObserver(() => this.resize())
 		this.resizeObserver.observe(container)
 		this.resize()
@@ -116,8 +116,8 @@ export class CharmForgeRenderer {
 		this.destroyed = true
 		if (this.frame !== null) cancelAnimationFrame(this.frame)
 		this.resizeObserver.disconnect()
-		this.renderer.domElement.removeEventListener('pointermove', this.handlePointerMove)
-		this.renderer.domElement.removeEventListener('pointerleave', this.handlePointerLeave)
+		this.container.removeEventListener('pointermove', this.handlePointerMove)
+		this.container.removeEventListener('pointerleave', this.handlePointerLeave)
 		for (const modelObject of this.modelObjects) modelObject.dispose()
 		this.scene.traverse((object) => {
 			if (!(object instanceof THREE.Mesh || object instanceof THREE.Points)) return
@@ -174,10 +174,10 @@ export class CharmForgeRenderer {
 		if (this.centralCharm) {
 			this.centralCharm.position.y = Math.sin(elapsed * 1.25) * (this.reducedMotion ? 0.025 : 0.12)
 			const idleTilt = this.reducedMotion ? 0 : 0.085
-			const targetX = this.pointerActive ? -this.pointer.y * 0.16 : Math.sin(elapsed * 0.7) * idleTilt
-			const targetY = this.pointerActive ? this.pointer.x * 0.19 : Math.cos(elapsed * 0.7) * idleTilt
-			this.centralCharm.rotation.x = THREE.MathUtils.lerp(this.centralCharm.rotation.x, targetX, 0.06)
-			this.centralCharm.rotation.y = THREE.MathUtils.lerp(this.centralCharm.rotation.y, targetY, 0.06)
+			const targetX = this.pointerActive ? -this.pointer.y * 0.24 : Math.sin(elapsed * 0.7) * idleTilt
+			const targetY = this.pointerActive ? this.pointer.x * 0.3 : Math.cos(elapsed * 0.7) * idleTilt
+			this.centralCharm.rotation.x = THREE.MathUtils.lerp(this.centralCharm.rotation.x, targetX, 0.14)
+			this.centralCharm.rotation.y = THREE.MathUtils.lerp(this.centralCharm.rotation.y, targetY, 0.14)
 			const pulse = enchantProgress > 0.53 ? Math.sin((enchantProgress - 0.53) * Math.PI * 5) * 0.18 : 0
 			this.centralCharm.scale.setScalar(1 + Math.max(0, pulse))
 		}

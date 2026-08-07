@@ -1,10 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { ASSETS } from '@/lib/assets'
-import { MinecraftModelRenderer } from '@/lib/minecraft-model-renderer'
-
-const RESOURCE_PACK_ROOT = ASSETS.minecraft.root
+import { useCallback, useEffect, useState } from 'react'
+import { MinecraftItemIcon } from '@/components/minecraft-item-icon'
 
 interface DailyTask {
 	id: string
@@ -190,7 +187,7 @@ export function DailiesTab() {
 							{task.id === 'advancement_bonus' ? (
 								task.advancement ? (
 									<div className="dailyAdvancement">
-										<MinecraftModelIcon item={task.advancement.iconItem} />
+										<MinecraftItemIcon className="dailyIcon dailyModelIcon" itemId={task.advancement.iconItem} />
 										<div>
 											<p>{task.advancement.title}</p>
 											<p>Tab: {task.advancement.tabTitle}</p>
@@ -270,31 +267,4 @@ function DailyProgress({ task }: { task: DailyTask }) {
 
 function errorMessage(error: unknown) {
 	return error instanceof Error ? error.message : 'Failed to load dailies'
-}
-
-function MinecraftModelIcon({ item }: { item: string }) {
-	const hostRef = useRef<HTMLDivElement>(null)
-	const [failed, setFailed] = useState(false)
-
-	useEffect(() => {
-		const host = hostRef.current
-		if (!host) return
-		let cancelled = false
-		setFailed(false)
-		const renderer = new MinecraftModelRenderer(host, {
-			assetRoot: RESOURCE_PACK_ROOT,
-			canvasClassName: 'dailyModelCanvas',
-		})
-		void renderer.loadItem({ assetRoot: RESOURCE_PACK_ROOT, itemId: item })
-			.catch(() => { if (!cancelled) setFailed(true) })
-		return () => {
-			cancelled = true
-			renderer.destroy()
-		}
-	}, [item])
-
-	if (failed) {
-		return <div aria-hidden="true" className="dailyIcon dailyIconFallback" />
-	}
-	return <div ref={hostRef} aria-hidden="true" className="dailyIcon dailyModelIcon" />
 }

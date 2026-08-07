@@ -29,7 +29,7 @@ public class PlayerAdvancementMoney {
     private ServerPlayer player;
 
     @Redirect(
-            method = "award",
+            method = "lambda$award$0",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"
@@ -40,7 +40,8 @@ public class PlayerAdvancementMoney {
             Component message,
             boolean overlay
     ) {
-        // @Redirect replaces the broadcast call with this no-op. The rest of award() still runs.
+        // Vanilla broadcasts from the display callback, not directly from award().
+        // @Redirect replaces only that broadcast call, so the rest of award() still runs.
         // grantMoney() sends the combined message after it resolves the membership multiplier.
     }
 

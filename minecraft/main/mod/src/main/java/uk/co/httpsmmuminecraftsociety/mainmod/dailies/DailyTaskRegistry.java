@@ -721,7 +721,7 @@ public final class DailyTaskRegistry {
             option(3, false, false, new CraftItemTask(Items.LOOM, "Looms", "🧶", 1, 3, 2.0D)),
             option(3, false, false, new CraftItemTask(Items.CARTOGRAPHY_TABLE, "Cartography Tables", "🗺️", 1, 3, 2.0D)),
             option(3, false, false, new CraftItemTask(Items.CAMPFIRE, "Campfires", "🏕️", 1, 4, 2.0D)),
-            option(3, false, false, new CraftItemTask(Items.SCAFFOLDING, "Scaffolding", "🏗️", 8, 24, 0.35D)),
+            option(3, false, false, new CraftItemTask(Items.SCAFFOLDING, "Scaffolding", "🏗️", 8, 100, 0.35D)),
             option(3, false, false, new CraftItemTask(Items.FIREWORK_STAR, "Firework Stars", "🎆", 2, 8, 1.0D)),
             option(2, false, false, new CraftItemTask(Items.RECOVERY_COMPASS, "Recovery Compasses", "🧭", 1, 1, 9.0D)),
             option(3, false, false, new CraftItemTask(Items.BRUSH, "Brushes", "🖌️", 1, 4, 2.0D)),

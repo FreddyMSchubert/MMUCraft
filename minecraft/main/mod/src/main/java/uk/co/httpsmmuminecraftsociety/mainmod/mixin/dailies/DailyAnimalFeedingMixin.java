@@ -2,7 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.dailies;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +14,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 
-@Mixin(LivingEntity.class)
+@Mixin(Mob.class)
 public abstract class DailyAnimalFeedingMixin {
     @Inject(method = "usePlayerItem", at = @At("HEAD"))
     private void mainmod$recordFeeding(Player player, InteractionHand hand, ItemStack item, CallbackInfo callback) {

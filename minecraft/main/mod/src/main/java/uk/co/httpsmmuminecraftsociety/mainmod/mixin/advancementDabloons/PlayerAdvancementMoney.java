@@ -1,21 +1,14 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.AdvancementType;
-import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.level.gamerules.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
@@ -23,27 +16,85 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
+import java.util.List;
+
 @Mixin(PlayerAdvancements.class)
 public class PlayerAdvancementMoney {
+    private static final List<String> CELEBRATIONS = List.of(
+            "Yippieh",
+            "Cha-ching",
+            "Hooray",
+            "Woo-hoo",
+            "Yayy",
+            "Wahoo",
+            "Whee",
+            "Wheeeeeeeeeeeeee",
+            "Wheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "Huzzah",
+            "HOT DOG!",
+            "Hallelujah!",
+            "Whoopee",
+            "Bingo",
+            "Bravo",
+            "Wow",
+
+            "GG",
+            "Number go up",
+            "Monkey brain happy",
+            "Go buy yourself something nice",
+            "Don't spend it all in one go",
+            "Penny for your thoughts",
+            "W in chat",
+            "Stonks",
+            "LGTM",
+            "TLDR",
+            "Profit",
+            "Cash Splash",
+            "Mint condition",
+            "Coin-grats",
+            "Pocket Change",
+            "Debit where debit is due",
+            "Crypto? No thanks. Dabloons? Real sh*t.",
+            "You're a dabloonatic",
+            "Latest in Block Chain news",
+            "And so the rich get richer",
+            "It's gonna start trickling down aaany minute now",
+            "I hereby cent-ence you to having a bit more money now",
+            "Makes cents",
+            "You're a coin-artist",
+
+            "Need for spend",
+            "Red Debt Redemption",
+            "This is a triumph",
+            "Achievement get",
+            "It's-a payday",
+            "Flawless economy",
+            "May the coins be with you",
+            "Mission passed",
+            "Hey! Listen!",
+            "Well excuuuuuuse me",
+            "Let's-a go get paid",
+            "Baba is rich",
+            "Expecto Paytronum",
+            "The empire pays back",
+            "My precious",
+            "Accio coins",
+            "Great Scott",
+            "With great power comes great profit",
+            "With great funds comes great responsibility",
+            "Dormammu, I've come to budget",
+            "Wololo",
+            "Loot acquired",
+            "Gotta cash 'em all",
+            "Winner winner dabloon dinner",
+            "It's dangerous to go broke",
+            "All your coins are belong to us",
+
+            "I said something NICE, not EXPENSIVE"
+    );
+
     @Shadow
     private ServerPlayer player;
-
-    @Redirect(
-            method = "lambda$award$0",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"
-            )
-    )
-    private void mainmod$suppressVanillaAdvancementAnnouncement(
-            PlayerList playerList,
-            Component message,
-            boolean overlay
-    ) {
-        // Vanilla broadcasts from the display callback, not directly from award().
-        // @Redirect replaces only that broadcast call, so the rest of award() still runs.
-        // grantMoney() sends the combined message after it resolves the membership multiplier.
-    }
 
     @Inject(
             method = "award",
@@ -95,55 +146,14 @@ public class PlayerAdvancementMoney {
                 return null;
             });
 
-            advancementHolder.value().display().ifPresent(displayInfo ->
-                    sendAdvancementAnnouncement(rewardedPlayer, advancementHolder, displayInfo, money)
-            );
-        } else {
-            advancementHolder.value().display().ifPresent(displayInfo ->
-                    deliverAdvancementMessage(
-                            rewardedPlayer,
-                            displayInfo,
-                            displayInfo.getType().createAnnouncement(advancementHolder, rewardedPlayer),
-                            true
-                    )
-            );
+            advancementHolder.value().display().ifPresent(displayInfo -> rewardedPlayer.sendSystemMessage(
+                    Component.literal(randomCelebration(rewardedPlayer) + ": You received " + money + " dabloons for completing ")
+                            .append(displayInfo.getTitle().getString() + ". :D")
+            ));
         }
     }
 
-    private void sendAdvancementAnnouncement(
-            ServerPlayer rewardedPlayer,
-            AdvancementHolder advancementHolder,
-            DisplayInfo displayInfo,
-            int money
-    ) {
-        AdvancementType type = displayInfo.getType();
-        String action = switch (type) {
-            case TASK -> " making the advancement ";
-            case GOAL -> " reaching the goal ";
-            case CHALLENGE -> " completing the challenge ";
-        };
-        Component message = Component.empty()
-                .append(rewardedPlayer.getDisplayName())
-                .append(" has earned ")
-                .append(Integer.toString(money)).withStyle(money > 50 ? ChatFormatting.GOLD : ChatFormatting.RESET)
-                .append(" dabloons" + action)
-                .append(Advancement.name(advancementHolder));
-
-        boolean announceToEveryone = advancementHolder.id().getNamespace().equals("minecraft") || money >= 30;
-        deliverAdvancementMessage(rewardedPlayer, displayInfo, message, announceToEveryone);
-    }
-
-    private void deliverAdvancementMessage(
-            ServerPlayer rewardedPlayer,
-            DisplayInfo displayInfo,
-            Component message,
-            boolean announceToEveryone
-    ) {
-        if (displayInfo.shouldAnnounceChat() && announceToEveryone
-                && rewardedPlayer.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)) {
-            rewardedPlayer.level().getServer().getPlayerList().broadcastSystemMessage(message, false);
-        } else {
-            rewardedPlayer.sendSystemMessage(message);
-        }
+    private String randomCelebration(ServerPlayer rewardedPlayer) {
+        return CELEBRATIONS.get(rewardedPlayer.getRandom().nextInt(CELEBRATIONS.size()));
     }
 }

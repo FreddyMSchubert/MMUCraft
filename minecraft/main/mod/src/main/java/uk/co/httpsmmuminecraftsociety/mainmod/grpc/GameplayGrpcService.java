@@ -30,6 +30,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskDefinition;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -122,6 +124,14 @@ public final class GameplayGrpcService extends GrpcHandler {
         );
     }
 
+    public static CompletableFuture<UpdateDailyTaskResponse> updateDailyTask(
+            int userId,
+            String periodKey,
+            String taskJson
+    ) {
+        return INSTANCE.updateDailyTaskInternal(userId, periodKey, taskJson);
+    }
+
     @Override
     List<BindableService> serverServices() {
         return List.of(new GameplayControlEndpoint());
@@ -131,6 +141,7 @@ public final class GameplayGrpcService extends GrpcHandler {
     void start(ManagedChannel apiChannel) {
         gameplayEvents = GameplayEventsGrpc.newFutureStub(apiChannel);
         requestClaimsSnapshot();
+        requestDailyTasksSnapshot();
     }
 
     @Override
@@ -326,6 +337,53 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
         var rpc = client.recordFishCatch(request);
         CompletableFuture<RecordFishCatchResponse> result = new CompletableFuture<>();
+        rpc.addListener(() -> {
+            try {
+                result.complete(rpc.get());
+            } catch (Exception exception) {
+                result.completeExceptionally(exception);
+            }
+        }, Runnable::run);
+        return result;
+    }
+
+    private void requestDailyTasksSnapshot() {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+        if (client == null) return;
+
+        var rpc = client.withDeadlineAfter(5, TimeUnit.SECONDS)
+                .getDailyTasksSnapshot(GetDailyTasksSnapshotRequest.getDefaultInstance());
+        rpc.addListener(() -> {
+            try {
+                DailyTasksSnapshot snapshot = rpc.get();
+                runOnMainThread(() -> DailyTaskManager.apply(snapshot));
+                MainMod.LOGGER.info("Loaded {} active daily tasks", snapshot.getTasksCount());
+            } catch (Exception exception) {
+                MainMod.LOGGER.warn("Could not load daily tasks; retrying in 5 seconds", exception);
+                CompletableFuture.delayedExecutor(5, TimeUnit.SECONDS).execute(this::requestDailyTasksSnapshot);
+            }
+        }, Runnable::run);
+    }
+
+    private CompletableFuture<UpdateDailyTaskResponse> updateDailyTaskInternal(
+            int userId,
+            String periodKey,
+            String taskJson
+    ) {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+        if (client == null) {
+            return CompletableFuture.failedFuture(new IllegalStateException("GameplayEvents gRPC client is not initialized"));
+        }
+
+        var rpc = client.withDeadlineAfter(5, TimeUnit.SECONDS).updateDailyTask(
+                UpdateDailyTaskRequest.newBuilder()
+                        .setUserId(userId)
+                        .setPeriodKey(periodKey)
+                        .setTaskJson(taskJson)
+                        .setUnixMs(System.currentTimeMillis())
+                        .build()
+        );
+        CompletableFuture<UpdateDailyTaskResponse> result = new CompletableFuture<>();
         rpc.addListener(() -> {
             try {
                 result.complete(rpc.get());
@@ -643,56 +701,46 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
     }
 
-    private SubmitDailyItemsResponse submitDailyItemsOnMainThread(SubmitDailyItemsRequest request) {
+    private GenerateDailyTasksResponse generateDailyTasksOnMainThread(GenerateDailyTasksRequest request) {
+        List<String> tasks = DailyTaskManager.generate(
+                request.getUserId(),
+                request.getMinecraftUsername(),
+                request.getPeriodKey(),
+                request.getCount()
+        );
+        return GenerateDailyTasksResponse.newBuilder()
+                .setGenerated(true)
+                .addAllTaskJson(tasks)
+                .setMessage("Daily tasks generated.")
+                .build();
+    }
+
+    private ClaimDailyTaskResponse claimDailyTaskOnMainThread(ClaimDailyTaskRequest request) {
         MinecraftServer server = minecraftServer();
         if (server == null) {
             throw new IllegalStateException("Minecraft server is not available");
         }
 
-        String username = request.getMinecraftUsername();
-        ServerPlayer player = server.getPlayerList().getPlayerByName(username);
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
         if (player == null || player.hasDisconnected()) {
-            return SubmitDailyItemsResponse.newBuilder()
-                    .setSubmitted(false)
+            return ClaimDailyTaskResponse.newBuilder()
+                    .setClaimed(false)
                     .setOnline(false)
-                    .setFoundCount(0)
-                    .setMessage("You have to be online on the server to submit daily items.")
+                    .setMessage("You have to be online on the server to claim this daily.")
                     .build();
         }
 
-        Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(request.getItem()));
-        int requiredCount = Math.max(1, request.getCount());
-        int foundCount = countItem(player, item);
-
-        if (foundCount < requiredCount) {
-            return SubmitDailyItemsResponse.newBuilder()
-                    .setSubmitted(false)
-                    .setOnline(true)
-                    .setFoundCount(foundCount)
-                    .setMessage("You need " + requiredCount + "x " + request.getItem() + " in your inventory. You currently have " + foundCount + ".")
-                    .build();
-        }
-
-        removeItem(player, item, requiredCount);
-
-        int reward = Math.max(0, request.getRewardDabloons());
-        if (!MoneyHelper.GainMoney(player, reward)) {
-            return SubmitDailyItemsResponse.newBuilder()
-                    .setSubmitted(false)
-                    .setOnline(true)
-                    .setFoundCount(foundCount)
-                    .setMessage("Could not grant the daily item reward.")
-                    .build();
-        }
-
-        player.getInventory().setChanged();
-        player.containerMenu.broadcastChanges();
-
-        return SubmitDailyItemsResponse.newBuilder()
-                .setSubmitted(true)
+        DailyTaskDefinition.ClaimResult result = DailyTaskManager.claim(
+                player,
+                request.getUserId(),
+                request.getPeriodKey(),
+                request.getTaskJson()
+        );
+        return ClaimDailyTaskResponse.newBuilder()
+                .setClaimed(result.claimed())
                 .setOnline(true)
-                .setFoundCount(foundCount)
-                .setMessage("Submitted " + requiredCount + "x " + request.getItem() + " and received " + reward + " dabloons.")
+                .setTaskJson(request.getTaskJson())
+                .setMessage(result.message())
                 .build();
     }
 
@@ -1036,35 +1084,6 @@ public final class GameplayGrpcService extends GrpcHandler {
         return null;
     }
 
-    private int countItem(ServerPlayer player, Item item) {
-        int count = 0;
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if (stack.is(item)) {
-                count += stack.getCount();
-            }
-        }
-        return count;
-    }
-
-    private void removeItem(ServerPlayer player, Item item, int count) {
-        int remaining = count;
-        for (int i = 0; i < player.getInventory().getContainerSize() && remaining > 0; i++) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if (!stack.is(item)) {
-                continue;
-            }
-
-            int remove = Math.min(remaining, stack.getCount());
-            stack.shrink(remove);
-            remaining -= remove;
-
-            if (stack.isEmpty()) {
-                player.getInventory().setItem(i, ItemStack.EMPTY);
-            }
-        }
-    }
-
     private String normalize(String value) {
         return value.toLowerCase(Locale.ROOT);
     }
@@ -1089,11 +1108,20 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         @Override
-        public void submitDailyItems(
-                SubmitDailyItemsRequest request,
-                StreamObserver<SubmitDailyItemsResponse> responseObserver
+        public void generateDailyTasks(
+                GenerateDailyTasksRequest request,
+                StreamObserver<GenerateDailyTasksResponse> responseObserver
         ) {
-            callOnMainThread(() -> submitDailyItemsOnMainThread(request))
+            callOnMainThread(() -> generateDailyTasksOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void claimDailyTask(
+                ClaimDailyTaskRequest request,
+                StreamObserver<ClaimDailyTaskResponse> responseObserver
+        ) {
+            callOnMainThread(() -> claimDailyTaskOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

@@ -31,6 +31,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.ShopUnl
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Tuple;
 
 import java.util.*;
@@ -173,13 +176,17 @@ public class CharmsManager
         int elapsedTicks = consumable.consumeTicks() - player.getUseItemRemainingTicks();
 
         if (player.getUseItemRemainingTicks() <= 1) {
-            callbacksCharm.onConsumeFinished(
+            boolean completed = callbacksCharm.onConsumeFinished(
                     activeStack,
                     player,
                     level,
                     elapsedTicks,
                     activeCharm.level()
             );
+            DailyCharm dailyCharm = DailyCharm.from(activeCharm.charm());
+            if (completed && dailyCharm != null) {
+                DailyTaskManager.record(player, DailyTaskEvent.charm(dailyCharm));
+            }
 
             player.stopUsingItem();
             return;

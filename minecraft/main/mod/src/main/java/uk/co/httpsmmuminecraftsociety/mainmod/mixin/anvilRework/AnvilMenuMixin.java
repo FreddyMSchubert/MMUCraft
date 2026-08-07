@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin.anvilRework;
 
 import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
@@ -22,6 +23,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailySimpleEvent;
+
+import java.util.Objects;
 
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin {
@@ -106,6 +112,14 @@ public abstract class AnvilMenuMixin {
         Container inputSlots = combiner.mainmod$getInputSlots();
         ResultContainer resultSlots = combiner.mainmod$getResultSlots();
         ContainerLevelAccess access = combiner.mainmod$getAccess();
+
+        ItemStack original = inputSlots.getItem(0);
+        if (player instanceof ServerPlayer serverPlayer
+                && original.get(DataComponents.TOOL) != null
+                && carried.get(DataComponents.CUSTOM_NAME) != null
+                && !Objects.equals(original.get(DataComponents.CUSTOM_NAME), carried.get(DataComponents.CUSTOM_NAME))) {
+            DailyTaskManager.record(serverPlayer, DailyTaskEvent.simple(DailySimpleEvent.RENAME_TOOL));
+        }
 
         int chargedCost = clampCost(this.mainmod$lastOutcome.xpLevelsConsumed());
         if (!player.hasInfiniteMaterials() && chargedCost > 0) {

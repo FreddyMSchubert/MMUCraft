@@ -20,6 +20,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.WrittenBookContent;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailySimpleEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 
@@ -97,7 +100,11 @@ public final class JokeCharm implements Charm, UseCallbackCharm {
 
     @Override
     public InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
+        boolean generated = !hasStoredJoke(stack);
         open(player, "Joke Book", getOrCreateJoke(stack));
+        if (generated) {
+            DailyTaskManager.record(player, DailyTaskEvent.simple(DailySimpleEvent.READ_NEW_JOKE));
+        }
         return InteractionResult.SUCCESS;
     }
 
@@ -208,6 +215,14 @@ public final class JokeCharm implements Charm, UseCallbackCharm {
         tag.putString(STORED_JOKE_TAG, joke);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return joke;
+    }
+
+    private static boolean hasStoredJoke(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag()
+                .getString(STORED_JOKE_TAG)
+                .filter(joke -> !joke.isBlank())
+                .isPresent();
     }
 
     private static Path jokesFile() {

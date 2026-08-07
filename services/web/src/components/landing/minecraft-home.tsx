@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { LaunchCountdown } from '@/components/launch/launch-countdown'
 import { MinecraftTitle } from '@/components/landing/minecraft-title'
 
-const MEMBERSHIP_URL = 'https://www.theunionmmu.org/groups/minecraft-society-2feb'
+const MEMBERSHIP_URL = 'https://www.theunionmmu.org/groups/26-2-minecraft-society'
 
 interface MinecraftHomeProps {
 	panorama: { id: string; label: string }

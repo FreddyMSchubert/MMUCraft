@@ -8,9 +8,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.server.level.ServerPlayer;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseEntityCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailySimpleEvent;
 
 public class InvisiCarrotCharm implements Charm, UseEntityCallbackCharm
 {
@@ -28,6 +32,10 @@ public class InvisiCarrotCharm implements Charm, UseEntityCallbackCharm
         frame.setInvisible(true);
 
         stack.shrink(1);
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            DailyTaskManager.record(serverPlayer, DailyTaskEvent.simple(DailySimpleEvent.MODIFY_ITEM_FRAME));
+        }
 
         return InteractionResult.SUCCESS_SERVER;
     }

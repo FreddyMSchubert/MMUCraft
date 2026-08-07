@@ -5,11 +5,6 @@
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
-	"shopPurchasable": {
-		"priceDabloons": 45,
-		"description": "Use to unlock a random cosmetic on the website.",
-		"unlockWeight": 100
-	},
 	"charm": {
 		"charmId": 41,
 		"minLevel": 1,

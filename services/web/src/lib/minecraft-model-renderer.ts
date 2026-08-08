@@ -717,8 +717,7 @@ async function resolveItemSource(source: MinecraftItemSource): Promise<ResolvedI
 		}
 	}
 
-	const fallbackTexture = source.textureUrl
-		?? (assetRoot && source.itemId && itemId.namespace === 'minecraft' ? `${assetRoot}/${itemId.namespace}/textures/item/${itemId.path}.png` : null)
+	const fallbackTexture = source.textureUrl ?? null
 	return {
 		fallbackTexture,
 		model: { parent: 'builtin/generated', textures: fallbackTexture ? { layer0: fallbackTexture } : {} },

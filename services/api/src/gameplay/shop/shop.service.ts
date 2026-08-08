@@ -9,7 +9,6 @@ import { DatabaseService, shopUnlocks } from '../../database/database.service'
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { KnowledgeService } from '../knowledge/knowledge.service'
-import { ASSETS } from '../../assets'
 
 const DEFAULT_ITEM_ROOTS = [
 	join(process.cwd(), 'content', 'items'),
@@ -17,7 +16,6 @@ const DEFAULT_ITEM_ROOTS = [
 	join(process.cwd(), 'minecraft', 'main', 'data', 'data', 'items'),
 ]
 
-const VANILLA_ITEM_TEXTURE_PREFIX = `${ASSETS.minecraft.vanilla}/textures/item`
 const SHOP_ASSET_REVISION = `${Date.now().toString(36)}-${randomInt(0x100000000).toString(36)}`
 const DAILY_DEAL_MESSAGES = [
 	"What a steal!",
@@ -323,7 +321,7 @@ export class ShopService {
 					currentAbility: charm.current_ability,
 					nextAbility: charm.next_ability,
 					modelUrl: item?.modelUrl ?? null,
-					textureUrl: item?.textureUrl ?? this.fallbackIconUrl('charm'),
+					textureUrl: item?.textureUrl ?? null,
 					animation: item?.animation ?? null,
 					ingredients: charm.ingredients.map((ingredient) => {
 						const catalogItem = this.renderAssetForGameId(ingredient.icon_item_id, catalog)
@@ -760,11 +758,8 @@ export class ShopService {
 			? modelTextureFilePath
 			: flatTextureFilePath ?? modelTextureFilePath
 
-		const baseItemOverride = typeof json.baseItemOverride === 'string' ? json.baseItemOverride : null
 		const textureUrl = textureFilePath ? this.shopAssetUrl('texture', id) : null
-		const iconUrl = renderMode === 'model'
-			? textureUrl
-			: textureUrl ?? this.vanillaItemIconUrl(baseItemOverride) ?? this.fallbackIconUrl(type)
+		const iconUrl = textureUrl
 		const animation = textureFilePath ? this.readAnimationDefinition(textureFilePath) : null
 
 		const tooltips = Array.isArray(json.tooltips)
@@ -785,7 +780,7 @@ export class ShopService {
 			iconUrl,
 			renderMode,
 			modelUrl: renderMode === 'model' ? this.shopAssetUrl('model', id) : null,
-			textureUrl: textureUrl ?? this.vanillaItemIconUrl(baseItemOverride) ?? this.fallbackIconUrl(type),
+			textureUrl,
 			animated: Boolean(animation),
 			dyeable: Boolean(json.dyeable && typeof json.dyeable === 'object'),
 			animation,
@@ -1013,16 +1008,8 @@ export class ShopService {
 		return `/api/shop/${kind}/${encodeURIComponent(itemId)}?v=${SHOP_ASSET_REVISION}`
 	}
 
-	private vanillaItemIconUrl(itemId: string | null): string | null {
-		if (!itemId?.startsWith('minecraft:')) {
-			return null
-		}
-
-		return `${VANILLA_ITEM_TEXTURE_PREFIX}/${itemId.slice('minecraft:'.length)}.png`
-	}
-
 	private ingredientIconUrl(itemId: string, catalog: CatalogItem[]): string | null {
-		if (itemId.startsWith('minecraft:')) return this.vanillaItemIconUrl(itemId)
+		if (itemId.startsWith('minecraft:')) return null
 		return this.renderAssetForGameId(itemId, catalog)?.textureUrl ?? null
 	}
 
@@ -1059,14 +1046,6 @@ export class ShopService {
 				textureUrl: textureFilePath ? this.shopAssetUrl('texture', itemId) : null,
 			}
 		}
-		return null
-	}
-
-	private fallbackIconUrl(type: ShopItemType): string | null {
-		if (type === 'charm') {
-			return `${VANILLA_ITEM_TEXTURE_PREFIX}/amethyst_shard.png`
-		}
-
 		return null
 	}
 

@@ -806,7 +806,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .setAdvancementId(selected.id().toString())
                 .setTitle(display.getTitle().getString())
                 .setTabTitle(tabTitle)
-                .setIconItem(BuiltInRegistries.ITEM.getKey(display.getIcon().item().value()).toString())
+				.setIconItem(iconItemId(display.getIcon().create()))
                 .setBaseRewardDabloons(baseReward)
                 .setBonusRewardDabloons(bonusReward)
                 .setMessage("Daily advancement target selected.")

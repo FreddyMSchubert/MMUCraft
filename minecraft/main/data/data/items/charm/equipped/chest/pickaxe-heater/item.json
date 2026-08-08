@@ -9,21 +9,66 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 90,
-		"description": "Mined block drops are converted into their furnace-smelted counterparts when using a pickaxe.",
+		"description": "Mined block drops are converted into their furnace-smelted counterparts upon mining.",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm."
+		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm. It can smelt items immediately as you mine them."
 	},
 	"charm": {
 		"charmId": 43,
-		"minLevel": 1,
-		"maxLevel": 1,
+		"minLevel": 0,
+		"maxLevel": 3,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Mined block drops are converted into their furnace-smelted counterparts when using a pickaxe.",
-				"abilityStatusRelative": "",
-				"dabloons": 0,
-				"upgradeIngredients": []
+				"abilityStatusCurrent": "Mined ore block drops are converted into their furnace-smelted counterparts upon mining.",
+				"abilityStatusRelative": "Ore blocks are smelted when mined.",
+				"dabloons": 100,
+				"upgradeIngredients": [
+					"minecraft:coal",
+					"minecraft:charcoal",
+					"minecraft:lava_bucket",
+					"minecraft:dried_kelp_block",
+					"minecraft:leaf_litter",
+					"minecraft:furnace"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Many mined block drops are converted into their furnace-smelted counterparts upon mining.",
+				"abilityStatusRelative": "More blocks are smelted when mined, such as wet sponge -> sponge, sand -> glass, and wood -> charcoal.",
+				"dabloons": 142,
+				"upgradeIngredients": [
+					"minecraft:short_dry_grass",
+					"minecraft:tall_dry_grass",
+					"minecraft:dead_bush",
+					"minecraft:magma_block",
+					"minecraft:magma_block",
+					"minecraft:magma_block",
+					"minecraft:smoker",
+					"minecraft:coal_block",
+					"minecraft:coal_block",
+					"minecraft:coal_block",
+					"minecraft:coal_block",
+					"minecraft:iron_block"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "All mined block drops are converted into their furnace-smelted counterparts upon mining.",
+				"abilityStatusRelative": "All (smeltable) blocks are smelted when mined.",
+				"dabloons": 200,
+				"upgradeIngredients": [
+					"minecraft:blaze_rod",
+					"minecraft:blaze_rod",
+					"minecraft:blaze_rod",
+					"minecraft:magma_cream",
+					"minecraft:magma_cream",
+					"minecraft:magma_cream",
+					"minecraft:blast_furnace",
+					"minecraft:iron_block",
+					"minecraft:gold_block",
+					"minecraft:copper_block"
+				]
 			}
 		]
 	},

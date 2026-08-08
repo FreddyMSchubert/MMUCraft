@@ -16,6 +16,7 @@ import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
@@ -63,11 +64,10 @@ public final class PickaxeHeaterCharm implements Charm
 
         ServerPlayer player = getMiningPlayer(lootContext);
         if (player == null) return;
-        if (!hasActiveHeaterCharm(player)) return;
+        int level = CharmsManager.getPlayerCharmLevel(player, PickaxeHeaterCharm.class);
 
         ItemStack tool = getToolStack(lootContext);
         if (tool.isEmpty()) return;
-        if (!tool.typeHolder().is(ItemTags.PICKAXES)) return;
 
         Map<Item, ItemStack> conversions = smeltedDropsByItem;
         if (conversions.isEmpty()) return;
@@ -75,6 +75,11 @@ public final class PickaxeHeaterCharm implements Charm
         for (int i = 0; i < itemStacks.size(); i++) {
             ItemStack original = itemStacks.get(i);
             if (original.isEmpty()) continue;
+
+            if (level <= 1 && !original.is(ModItemTagProvider.PICKAXE_HEATER_LEVEL1_SMELTABLE))
+                continue;
+            if (level <= 2 && !original.is(ModItemTagProvider.PICKAXE_HEATER_LEVEL2_SMELTABLE) && !original.is(ModItemTagProvider.PICKAXE_HEATER_LEVEL1_SMELTABLE))
+                continue;
 
             ItemStack smelted = conversions.get(original.getItem());
             if (smelted == null) continue;

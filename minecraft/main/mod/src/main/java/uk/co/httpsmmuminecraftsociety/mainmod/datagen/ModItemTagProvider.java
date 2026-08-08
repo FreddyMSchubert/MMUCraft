@@ -39,6 +39,9 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
 
     public static final TagKey<Item> CARPETS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "carpets"));
 
+    public static final TagKey<Item> PICKAXE_HEATER_LEVEL1_SMELTABLE = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "pickaxe_heater_level1_smeltable"));
+    public static final TagKey<Item> PICKAXE_HEATER_LEVEL2_SMELTABLE = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "pickaxe_heater_level2_smeltable"));
+
     public ModItemTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture)
     {
         super(output, registryLookupFuture);
@@ -161,6 +164,84 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(key(Items.NETHERITE_HORSE_ARMOR))
                 .add(key(Items.NETHERITE_NAUTILUS_ARMOR))
                 .add(key(Items.NETHERITE_SPEAR));
+
+        builder(PICKAXE_HEATER_LEVEL1_SMELTABLE)
+                // Iron
+                .add(key(Items.IRON_ORE))
+                .add(key(Items.DEEPSLATE_IRON_ORE))
+                .add(key(Items.RAW_IRON))
+
+                // Copper
+                .add(key(Items.COPPER_ORE))
+                .add(key(Items.DEEPSLATE_COPPER_ORE))
+                .add(key(Items.RAW_COPPER))
+
+                // Gold
+                .add(key(Items.GOLD_ORE))
+                .add(key(Items.DEEPSLATE_GOLD_ORE))
+                .add(key(Items.NETHER_GOLD_ORE))
+                .add(key(Items.RAW_GOLD))
+
+                // Netherite
+                .add(key(Items.ANCIENT_DEBRIS));
+
+        builder(PICKAXE_HEATER_LEVEL2_SMELTABLE)
+                // Miscellaneous
+                .add(key(Items.WET_SPONGE))
+                .add(key(Items.NETHERRACK))
+                .add(key(Items.RESIN_CLUMP))
+                .add(key(Items.CLAY_BALL))
+                .add(key(Items.CACTUS))
+                .add(key(Items.SEA_PICKLE))
+                .add(key(Items.CHORUS_FRUIT))
+                .add(key(Items.SAND))
+                .add(key(Items.RED_SAND))
+                .add(key(Items.STONE))
+                .add(key(Items.DEEPSLATE))
+
+                // Logs
+                .add(key(Items.OAK_LOG))
+                .add(key(Items.SPRUCE_LOG))
+                .add(key(Items.BIRCH_LOG))
+                .add(key(Items.JUNGLE_LOG))
+                .add(key(Items.ACACIA_LOG))
+                .add(key(Items.DARK_OAK_LOG))
+                .add(key(Items.MANGROVE_LOG))
+                .add(key(Items.CHERRY_LOG))
+                .add(key(Items.PALE_OAK_LOG))
+
+                // Stripped logs
+                .add(key(Items.STRIPPED_OAK_LOG))
+                .add(key(Items.STRIPPED_SPRUCE_LOG))
+                .add(key(Items.STRIPPED_BIRCH_LOG))
+                .add(key(Items.STRIPPED_JUNGLE_LOG))
+                .add(key(Items.STRIPPED_ACACIA_LOG))
+                .add(key(Items.STRIPPED_DARK_OAK_LOG))
+                .add(key(Items.STRIPPED_MANGROVE_LOG))
+                .add(key(Items.STRIPPED_CHERRY_LOG))
+                .add(key(Items.STRIPPED_PALE_OAK_LOG))
+
+                // Wood
+                .add(key(Items.OAK_WOOD))
+                .add(key(Items.SPRUCE_WOOD))
+                .add(key(Items.BIRCH_WOOD))
+                .add(key(Items.JUNGLE_WOOD))
+                .add(key(Items.ACACIA_WOOD))
+                .add(key(Items.DARK_OAK_WOOD))
+                .add(key(Items.MANGROVE_WOOD))
+                .add(key(Items.CHERRY_WOOD))
+                .add(key(Items.PALE_OAK_WOOD))
+
+                // Stripped wood
+                .add(key(Items.STRIPPED_OAK_WOOD))
+                .add(key(Items.STRIPPED_SPRUCE_WOOD))
+                .add(key(Items.STRIPPED_BIRCH_WOOD))
+                .add(key(Items.STRIPPED_JUNGLE_WOOD))
+                .add(key(Items.STRIPPED_ACACIA_WOOD))
+                .add(key(Items.STRIPPED_DARK_OAK_WOOD))
+                .add(key(Items.STRIPPED_MANGROVE_WOOD))
+                .add(key(Items.STRIPPED_CHERRY_WOOD))
+                .add(key(Items.STRIPPED_PALE_OAK_WOOD));
 
         // single: leather, copper, chainmail, iron, everything else unless they have charm boost enchantment
         // double: diamond

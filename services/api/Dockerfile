@@ -28,6 +28,7 @@ COPY services/api/scripts ./scripts
 COPY services/api/drizzle ./drizzle
 COPY services/web/public/knowledge ./content/knowledge
 COPY minecraft/main/data/data/items ./content/items
+COPY minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/wallet/wallet-0.png ./content/items/charm/held/wallet/texture.png
 COPY proto ./proto
 EXPOSE 8080 50051
 CMD ["npm", "run", "dev"]
@@ -46,6 +47,7 @@ COPY --from=build --chown=node:node /app/dist ./dist
 COPY --chown=node:node services/api/drizzle ./drizzle
 COPY --chown=node:node services/web/public/knowledge ./content/knowledge
 COPY --chown=node:node minecraft/main/data/data/items ./content/items
+COPY --chown=node:node minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/wallet/wallet-0.png ./content/items/charm/held/wallet/texture.png
 COPY --chown=node:node proto ./proto
 RUN mkdir /app/data && chown node:node /app/data
 USER node

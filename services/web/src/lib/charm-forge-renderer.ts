@@ -9,6 +9,7 @@ interface CharmForgeRendererOptions {
 interface OrbitingItem {
 	mesh: THREE.Group
 	angle: number
+	appearedAt: number
 	previousPosition: THREE.Vector3
 }
 
@@ -25,6 +26,7 @@ export class CharmForgeRenderer {
 	private readonly particlePositions: Float32Array
 	private readonly resizeObserver: ResizeObserver
 	private centralCharm: THREE.Group | null = null
+	private centralAppearedAt = 0
 	private frame: number | null = null
 	private destroyed = false
 	private pointer = new THREE.Vector2()
@@ -71,17 +73,24 @@ export class CharmForgeRenderer {
 
 		void this.addItem(options.charm, 2.15).then((mesh) => {
 			if (this.destroyed) return
+			mesh.scale.setScalar(0)
 			this.centralCharm = mesh
+			this.centralAppearedAt = performance.now()
 			this.root.add(mesh)
 		})
 		options.ingredients.forEach((source, index) => {
 			void this.addItem(source, 0.82).then((mesh) => {
 				if (this.destroyed) return
+				const angle = index / Math.max(1, options.ingredients.length) * Math.PI * 2
+				const position = this.orbitTarget(angle, this.clock.elapsedTime, 1)
+				mesh.position.copy(position)
+				mesh.scale.setScalar(0)
 				this.ingredientRoot.add(mesh)
 				this.orbiters.push({
 					mesh,
-					angle: index / Math.max(1, options.ingredients.length) * Math.PI * 2,
-					previousPosition: new THREE.Vector3(),
+					angle,
+					appearedAt: performance.now(),
+					previousPosition: position.clone(),
 				})
 			})
 		})
@@ -147,32 +156,34 @@ export class CharmForgeRenderer {
 			? 0
 			: Math.min(1, (performance.now() - this.enchantStartedAt) / 1000 / duration)
 		const pull = enchantProgress <= 0 ? 0 : easeInOut(Math.min(1, enchantProgress / 0.56))
+		const frameSeconds = Math.min(0.1, deltaMs / 1000)
+		const moveAlpha = 1 - Math.exp(-(enchantProgress > 0 ? 12 : 7) * frameSeconds)
+		const rotationAlpha = 1 - Math.exp(-9 * frameSeconds)
 
 		for (const orbiter of this.orbiters) {
-			const angle = orbiter.angle + elapsed * (this.reducedMotion ? 0.06 : 0.24)
-			const target = new THREE.Vector3(
-				Math.cos(angle) * 3.3 * (1 - pull),
-				Math.sin(angle) * 1.85 * (1 - pull),
-				Math.sin(angle * 2) * 0.65 * (1 - pull),
-			)
+			const target = this.orbitTarget(orbiter.angle, elapsed, 1 - pull)
 			const velocity = target.clone().sub(orbiter.previousPosition)
-			orbiter.mesh.position.lerp(target, enchantProgress > 0 ? 0.19 : 0.09)
-			orbiter.mesh.rotation.z = THREE.MathUtils.lerp(orbiter.mesh.rotation.z, -velocity.x * 1.8, 0.14)
-			orbiter.mesh.rotation.x = THREE.MathUtils.lerp(orbiter.mesh.rotation.x, this.pointer.y * 0.24 + velocity.y, 0.08)
-			orbiter.mesh.rotation.y = THREE.MathUtils.lerp(orbiter.mesh.rotation.y, this.pointer.x * 0.3 + elapsed * 0.35, 0.08)
-			orbiter.mesh.scale.setScalar(1 - Math.max(0, pull - 0.72) * 2.4)
+			orbiter.mesh.position.lerp(target, moveAlpha)
+			orbiter.mesh.rotation.z = THREE.MathUtils.lerp(orbiter.mesh.rotation.z, -velocity.x * 1.8, rotationAlpha)
+			orbiter.mesh.rotation.x = THREE.MathUtils.lerp(orbiter.mesh.rotation.x, this.pointer.y * 0.24 + velocity.y, rotationAlpha)
+			orbiter.mesh.rotation.y = THREE.MathUtils.lerp(orbiter.mesh.rotation.y, this.pointer.x * 0.3 + elapsed * 0.35, rotationAlpha)
+			const entrance = easeOut(Math.min(1, (performance.now() - orbiter.appearedAt) / 450))
+			const mergeScale = 1 - easeInOut(Math.max(0, (pull - 0.6) / 0.4))
+			orbiter.mesh.scale.setScalar(entrance * mergeScale)
 			orbiter.previousPosition.copy(target)
 		}
 
 		if (this.centralCharm) {
 			this.centralCharm.position.y = Math.sin(elapsed * 1.25) * (this.reducedMotion ? 0.025 : 0.12)
 			const idleTilt = this.reducedMotion ? 0 : 0.085
-			const targetX = this.pointerActive ? -this.pointer.y * 0.24 : Math.sin(elapsed * 0.7) * idleTilt
-			const targetY = this.pointerActive ? this.pointer.x * 0.3 : Math.cos(elapsed * 0.7) * idleTilt
-			this.centralCharm.rotation.x = THREE.MathUtils.lerp(this.centralCharm.rotation.x, targetX, 0.14)
-			this.centralCharm.rotation.y = THREE.MathUtils.lerp(this.centralCharm.rotation.y, targetY, 0.14)
-			const pulse = enchantProgress > 0.53 ? Math.sin((enchantProgress - 0.53) * Math.PI * 5) * 0.18 : 0
-			this.centralCharm.scale.setScalar(1 + Math.max(0, pulse))
+			const targetX = this.pointerActive ? -this.pointer.y * 0.34 : Math.sin(elapsed * 0.7) * idleTilt
+			const targetY = this.pointerActive ? this.pointer.x * 0.44 : Math.cos(elapsed * 0.7) * idleTilt
+			this.centralCharm.rotation.x = THREE.MathUtils.lerp(this.centralCharm.rotation.x, targetX, rotationAlpha)
+			this.centralCharm.rotation.y = THREE.MathUtils.lerp(this.centralCharm.rotation.y, targetY, rotationAlpha)
+			const pulseProgress = Math.max(0, Math.min(1, (enchantProgress - 0.5) / 0.5))
+			const pulse = Math.sin(pulseProgress * Math.PI) * 0.18
+			const entrance = easeOut(Math.min(1, (performance.now() - this.centralAppearedAt) / 500))
+			this.centralCharm.scale.setScalar(entrance * (1 + pulse))
 		}
 
 		this.root.rotation.z = Math.sin(elapsed * 0.35) * 0.025
@@ -185,9 +196,8 @@ export class CharmForgeRenderer {
 		}
 		positions.needsUpdate = true
 
-		if (enchantProgress >= 1 && this.enchantStartedAt !== null) {
-			this.enchantStartedAt = null
-			this.enchantResolve?.()
+		if (enchantProgress >= 1 && this.enchantResolve) {
+			this.enchantResolve()
 			this.enchantResolve = null
 		}
 		this.renderer.render(this.scene, this.camera)
@@ -200,6 +210,15 @@ export class CharmForgeRenderer {
 		this.camera.aspect = width / height
 		this.camera.position.z = width < 620 ? 12.5 : 10
 		this.camera.updateProjectionMatrix()
+	}
+
+	private orbitTarget(angle: number, elapsed: number, radiusScale: number) {
+		const currentAngle = angle + elapsed * (this.reducedMotion ? 0.06 : 0.24)
+		return new THREE.Vector3(
+			Math.cos(currentAngle) * 3.3 * radiusScale,
+			Math.sin(currentAngle) * 1.85 * radiusScale,
+			Math.sin(currentAngle * 2) * 0.65 * radiusScale,
+		)
 	}
 
 	private handlePointerMove(event: PointerEvent) {
@@ -219,4 +238,8 @@ export class CharmForgeRenderer {
 
 function easeInOut(value: number) {
 	return value < 0.5 ? 2 * value * value : 1 - Math.pow(-2 * value + 2, 2) / 2
+}
+
+function easeOut(value: number) {
+	return 1 - Math.pow(1 - value, 3)
 }

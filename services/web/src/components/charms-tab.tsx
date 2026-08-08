@@ -47,20 +47,32 @@ export function CharmsTab() {
 	const [inventory, setInventory] = useState<CharmInventory | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [upgrading, setUpgrading] = useState(false)
+	const [animating, setAnimating] = useState(false)
 	const [message, setMessage] = useState('')
 	const [messageIsError, setMessageIsError] = useState(false)
 	const forgeHost = useRef<HTMLDivElement>(null)
 	const forge = useRef<CharmForgeRenderer | null>(null)
 	const charm = inventory?.charms[0] ?? null
-	const hasUpgradeMaterials = charm?.ingredients.every((ingredient) => ingredient.inventoryCount >= ingredient.requiredCount) ?? false
+	const forgeCharm = useRef<HeldCharm | null>(charm)
+	const forgeKey = charm ? JSON.stringify({
+		itemId: charm.itemId,
+		currentLevel: charm.currentLevel,
+		modelUrl: charm.modelUrl,
+		textureUrl: charm.textureUrl,
+		ingredients: charm.ingredients.map(({ itemId, modelUrl, iconUrl }) => ({ itemId, modelUrl, iconUrl })),
+	}) : ''
+	const hasUpgradeMaterials = hasRequiredMaterials(charm)
 
 	const refresh = useCallback(async () => {
 		try {
-			setInventory(await fetchCharmInventory())
+			const nextInventory = await fetchCharmInventory()
+			setInventory(nextInventory)
+			return nextInventory
 		} catch (error) {
 			setInventory(null)
 			setMessage(error instanceof Error ? error.message : 'Could not open the charm forge.')
 			setMessageIsError(true)
+			return null
 		} finally {
 			setLoading(false)
 		}
@@ -85,18 +97,23 @@ export function CharmsTab() {
 	}, [])
 
 	useEffect(() => {
+		forgeCharm.current = charm
+	}, [charm])
+
+	useEffect(() => {
+		const renderedCharm = forgeCharm.current
 		forge.current?.destroy()
 		forge.current = null
-		if (!forgeHost.current || !charm?.textureUrl) return
+		if (!forgeHost.current || !renderedCharm?.textureUrl) return
 
 		const renderer = new CharmForgeRenderer(forgeHost.current, {
 			charm: {
 				assetRoot: ASSETS.minecraft.root,
-				itemId: `mainmod:${charm.itemId}`,
-				modelUrl: charm.modelUrl,
-				textureUrl: charm.textureUrl,
+				itemId: `mainmod:${renderedCharm.itemId}`,
+				modelUrl: renderedCharm.modelUrl,
+				textureUrl: renderedCharm.textureUrl,
 			},
-			ingredients: charm.ingredients.map((ingredient) => ingredient.itemId.startsWith('minecraft:')
+			ingredients: renderedCharm.ingredients.map((ingredient) => ingredient.itemId.startsWith('minecraft:')
 				? { assetRoot: ASSETS.minecraft.root, itemId: ingredient.itemId }
 				: {
 					assetRoot: ASSETS.minecraft.root,
@@ -110,31 +127,42 @@ export function CharmsTab() {
 			renderer.destroy()
 			if (forge.current === renderer) forge.current = null
 		}
-	}, [charm])
+	}, [forgeKey])
 
 	async function upgrade() {
 		if (!charm || upgrading || charm.currentLevel >= charm.maxLevel) return
-		if (!hasUpgradeMaterials) {
-			const warning = 'Not enough materials found. Refresh inventory to update materials.'
-			setMessage(warning)
-			setMessageIsError(true)
-			window.alert(warning)
-			return
-		}
 		setUpgrading(true)
-		setMessage('The forge is reading your main hand...')
+		setMessage('Checking your inventory...')
 		setMessageIsError(false)
 
 		try {
+			const latestInventory = await refresh()
+			if (!latestInventory) return
+			const latestCharm = latestInventory.charms[0] ?? null
+			if (!latestCharm || latestCharm.itemId !== charm.itemId || latestCharm.currentLevel !== charm.currentLevel) {
+				showUpgradeAlert('Your held charm changed. Review the refreshed inventory before upgrading.')
+				return
+			}
+			if (!hasRequiredMaterials(latestCharm)) {
+				showUpgradeAlert('Not enough materials found. Refresh inventory after you collect them.')
+				return
+			}
+			if (latestInventory.balanceDabloons < latestCharm.priceDabloons) {
+				showUpgradeAlert('Not enough dabloons found.')
+				return
+			}
+
+			setMessage('The forge is reading your main hand...')
 			const response = await fetch('/api/shop/charms/upgrade', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ itemId: charm.itemId, expectedLevel: charm.currentLevel }),
+				body: JSON.stringify({ itemId: latestCharm.itemId, expectedLevel: latestCharm.currentLevel }),
 			})
 			const result = await response.json().catch(() => null) as { message?: string } | null
 			if (!response.ok) throw new Error(result?.message || 'The upgrade failed.')
 
 			setMessage('Upgrade accepted. Stand back!')
+			setAnimating(true)
 			await forge.current?.playUpgrade()
 			await refresh()
 			setMessage(result?.message || 'The charm grew stronger.')
@@ -145,8 +173,15 @@ export function CharmsTab() {
 			setMessage(failure)
 			setMessageIsError(true)
 		} finally {
+			setAnimating(false)
 			setUpgrading(false)
 		}
+	}
+
+	function showUpgradeAlert(warning: string) {
+		setMessage(warning)
+		setMessageIsError(true)
+		window.alert(warning)
 	}
 
 	return (
@@ -189,7 +224,7 @@ export function CharmsTab() {
 
 			{charm && (
 				<>
-					<section className={`charmForgeStage ${upgrading ? 'enchanting' : ''}`} aria-label={`${charm.title} upgrade preview`}>
+					<section className={`charmForgeStage ${animating ? 'enchanting' : ''}`} aria-label={`${charm.title} upgrade preview`}>
 						<div className="charmForgeAura" aria-hidden="true" />
 						<div ref={forgeHost} className="charmForgeScene" />
 						<div className="charmIdentity">
@@ -261,4 +296,8 @@ export function CharmsTab() {
 			{!charm && message && <p className="charmForgeMessage" role="alert">{message}</p>}
 		</div>
 	)
+}
+
+function hasRequiredMaterials(charm: HeldCharm | null) {
+	return charm?.ingredients.every((ingredient) => ingredient.inventoryCount >= ingredient.requiredCount) ?? false
 }

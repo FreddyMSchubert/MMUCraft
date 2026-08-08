@@ -5,13 +5,18 @@ import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
+import net.minecraft.server.players.UserBanListEntry;
 import net.minecraft.server.players.UserWhiteListEntry;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public final class AuthGrpcService extends GrpcHandler {
     static final AuthGrpcService INSTANCE = new AuthGrpcService();
@@ -20,6 +25,7 @@ public final class AuthGrpcService extends GrpcHandler {
     private final Map<String, NameAndId> lastSeenProfiles = new ConcurrentHashMap<>();
 
     private AuthEventsGrpc.AuthEventsFutureStub authEvents;
+    private AuthEventsGrpc.AuthEventsBlockingStub blockingAuthEvents;
 
     private AuthGrpcService() {
     }
@@ -32,6 +38,18 @@ public final class AuthGrpcService extends GrpcHandler {
         return INSTANCE.getPendingCodeForInternal(minecraftUsername);
     }
 
+    public static BanCheck checkPlayerBan(NameAndId nameAndId) {
+        return INSTANCE.checkPlayerBanInternal(nameAndId);
+    }
+
+    public static void synchronizeBlacklist(NameAndId nameAndId, boolean blacklisted) {
+        try {
+            INSTANCE.setBlacklistedOnMainThread(nameAndId, blacklisted);
+        } catch (IOException exception) {
+            MainMod.LOGGER.error("Could not update the Minecraft blacklist for {}", nameAndId.name(), exception);
+        }
+    }
+
     @Override
     List<BindableService> serverServices() {
         return List.of(new ModControlEndpoint());
@@ -40,11 +58,13 @@ public final class AuthGrpcService extends GrpcHandler {
     @Override
     void start(ManagedChannel apiChannel) {
         authEvents = AuthEventsGrpc.newFutureStub(apiChannel);
+        blockingAuthEvents = AuthEventsGrpc.newBlockingStub(apiChannel);
     }
 
     @Override
     void stop() {
         authEvents = null;
+        blockingAuthEvents = null;
         pendingJoins.clear();
         lastSeenProfiles.clear();
     }
@@ -79,6 +99,23 @@ public final class AuthGrpcService extends GrpcHandler {
         return pendingJoin.code();
     }
 
+    private BanCheck checkPlayerBanInternal(NameAndId nameAndId) {
+        AuthEventsGrpc.AuthEventsBlockingStub client = blockingAuthEvents;
+        if (client == null) return null;
+
+        try {
+            CheckPlayerBanResponse response = client.withDeadlineAfter(2, TimeUnit.SECONDS)
+                    .checkPlayerBan(CheckPlayerBanRequest.newBuilder()
+                            .setMinecraftUsername(nameAndId.name())
+                            .setUuid(nameAndId.id().toString())
+                            .build());
+            return new BanCheck(response.getBanned(), response.getPermanent(), response.getExpiresAtUnixMs());
+        } catch (RuntimeException exception) {
+            MainMod.LOGGER.warn("Could not check the API ban status for {}", nameAndId.name(), exception);
+            return null;
+        }
+    }
+
     private boolean whitelistOnMainThread(String username) throws IOException {
         MinecraftServer server = minecraftServer();
         if (server == null) {
@@ -96,11 +133,57 @@ public final class AuthGrpcService extends GrpcHandler {
         return server.getPlayerList().isWhiteListed(nameAndId);
     }
 
+    private boolean blacklistOnMainThread(String username, String uuid, boolean blacklisted) throws IOException {
+        NameAndId nameAndId = profile(username, uuid);
+        return setBlacklistedOnMainThread(nameAndId, blacklisted);
+    }
+
+    private boolean setBlacklistedOnMainThread(NameAndId nameAndId, boolean blacklisted) throws IOException {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+
+        if (blacklisted) {
+            server.getPlayerList().getBans().add(new UserBanListEntry(
+                    nameAndId,
+                    new Date(),
+                    "MMU Minecraft Society website",
+                    null,
+                    "Account restricted by the committee"
+            ));
+            var onlinePlayer = server.getPlayerList().getPlayer(nameAndId.id());
+            if (onlinePlayer != null) {
+                onlinePlayer.connection.disconnect(net.minecraft.network.chat.Component.literal(
+                        "Your account has been restricted by the MMU Minecraft Society committee."
+                ));
+            }
+        } else {
+            server.getPlayerList().getBans().remove(nameAndId);
+        }
+        server.getPlayerList().getBans().save();
+        return server.getPlayerList().getBans().isBanned(nameAndId);
+    }
+
+    private NameAndId profile(String username, String uuid) {
+        try {
+            String canonicalUuid = uuid.length() == 32
+                    ? uuid.replaceFirst("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{12})", "$1-$2-$3-$4-$5")
+                    : uuid;
+            return new NameAndId(UUID.fromString(canonicalUuid), username);
+        } catch (IllegalArgumentException exception) {
+            NameAndId lastSeen = lastSeenProfiles.get(normalize(username));
+            if (lastSeen == null) throw new IllegalStateException("Player must attempt to join before blacklist changes can be applied");
+            return lastSeen;
+        }
+    }
+
     private String normalize(String value) {
         return value.toLowerCase(Locale.ROOT);
     }
 
     private record PendingJoin(String username, String code, long expiresAtUnixMs) {
+    }
+
+    public record BanCheck(boolean banned, boolean permanent, long expiresAtUnixMs) {
     }
 
     private final class ModControlEndpoint extends ModControlGrpc.ModControlImplBase {
@@ -160,6 +243,44 @@ public final class AuthGrpcService extends GrpcHandler {
                                 .build());
                         responseObserver.onCompleted();
                     });
+        }
+
+        @Override
+        public void blacklistPlayer(
+                PlayerBlacklistRequest request,
+                StreamObserver<PlayerBlacklistResponse> responseObserver
+        ) {
+            updateBlacklist(request, true, responseObserver);
+        }
+
+        @Override
+        public void unblacklistPlayer(
+                PlayerBlacklistRequest request,
+                StreamObserver<PlayerBlacklistResponse> responseObserver
+        ) {
+            updateBlacklist(request, false, responseObserver);
+        }
+
+        private void updateBlacklist(
+                PlayerBlacklistRequest request,
+                boolean blacklisted,
+                StreamObserver<PlayerBlacklistResponse> responseObserver
+        ) {
+            callOnMainThread(() -> blacklistOnMainThread(
+                    request.getMinecraftUsername(),
+                    request.getUuid(),
+                    blacklisted
+            )).whenComplete((stillBlacklisted, error) -> {
+                if (error != null) {
+                    responseObserver.onError(error);
+                    return;
+                }
+
+                responseObserver.onNext(PlayerBlacklistResponse.newBuilder()
+                        .setBlacklisted(Boolean.TRUE.equals(stillBlacklisted))
+                        .build());
+                responseObserver.onCompleted();
+            });
         }
     }
 }

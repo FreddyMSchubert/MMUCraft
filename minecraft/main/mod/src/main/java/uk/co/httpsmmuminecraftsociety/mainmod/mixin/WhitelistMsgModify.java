@@ -12,9 +12,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.AuthGrpcService;
 
 import java.net.SocketAddress;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Mixin(PlayerList.class)
 public class WhitelistMsgModify {
+    @Unique
+    private static final DateTimeFormatter BAN_DATE = DateTimeFormatter.ofPattern("d MMM uuuu, HH:mm z");
+
     @Unique
     private static Component customWhitelistMessage(String username, String code) {
         if (code == null)
@@ -53,6 +59,28 @@ public class WhitelistMsgModify {
                     .append(Component.literal("\n\nChoose these three items on the website. :D"));
     }
 
+    @Unique
+    private static Component customBanMessage(AuthGrpcService.BanCheck ban) {
+        String duration = ban.permanent()
+                ? "This ban is permanent."
+                : "Your timeout continues until " + BAN_DATE.format(
+                        Instant.ofEpochMilli(ban.expiresAtUnixMs()).atZone(ZoneId.systemDefault())
+                ) + ".";
+        return Component.empty()
+                .append(Component.literal("You cannot join this server.\n\n")
+                        .withStyle(style -> style.withColor(0xFF6B6B).withBold(true)))
+                .append(Component.literal(duration + "\n"))
+                .append(Component.literal("Contact the committee if you think this is an error."));
+    }
+
+    @Unique
+    private static Component restrictionEndedMessage() {
+        return Component.empty()
+                .append(Component.literal("Your timeout or ban is no longer active.\n\n")
+                        .withStyle(style -> style.withColor(0x72E39A).withBold(true)))
+                .append(Component.literal("You have been removed from the server blacklist. Please rejoin now."));
+    }
+
     @Inject(method = "canPlayerLogin", at = @At("RETURN"), cancellable = true)
     private void replaceWhitelistKickMessage(
             SocketAddress address,
@@ -60,6 +88,23 @@ public class WhitelistMsgModify {
             CallbackInfoReturnable<Component> cir
     ) {
         PlayerList playerList = (PlayerList) (Object) this;
+        boolean locallyBlacklisted = playerList.getBans().isBanned(nameAndId);
+        AuthGrpcService.BanCheck ban = AuthGrpcService.checkPlayerBan(nameAndId);
+
+        if (ban != null && ban.banned()) {
+            if (!locallyBlacklisted) AuthGrpcService.synchronizeBlacklist(nameAndId, true);
+            cir.setReturnValue(customBanMessage(ban));
+            return;
+        }
+
+        if (ban != null && locallyBlacklisted) {
+            AuthGrpcService.synchronizeBlacklist(nameAndId, false);
+            cir.setReturnValue(restrictionEndedMessage());
+            return;
+        }
+
+        if (locallyBlacklisted) return;
+
         boolean whitelisted = playerList.getWhiteList().isWhiteListed(nameAndId);
 
         AuthGrpcService.recordLoginAttempt(nameAndId, whitelisted);

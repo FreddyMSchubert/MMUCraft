@@ -14,6 +14,7 @@ import {
 } from '../database/database.service'
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service'
 import { AuthGrpcService } from './auth-grpc.service'
+import { PlayerBansService } from './player-bans.service'
 import {
 	AUTH_CODE_ITEMS,
 	createAuthCode,
@@ -94,6 +95,7 @@ export class AuthService {
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly grpc: AuthGrpcService,
+		private readonly bans: PlayerBansService,
 	) { }
 
 	async createSignup(emailInput: string) {
@@ -338,6 +340,7 @@ export class AuthService {
 		if (!user) {
 			throw new UnauthorizedException('No account exists for this email')
 		}
+		const timeoutEnded = await this.requirePlayerNotBanned(user)
 
 		const now = Date.now()
 		const code = createAuthCode()
@@ -347,10 +350,10 @@ export class AuthService {
 		const delivery = await this.deliverVerificationCode(email, code, 'signin')
 		this.setAuthRequestDelivery(flowId, delivery)
 
-		return { flowId, delivery }
+		return { flowId, delivery, timeoutEnded }
 	}
 
-	verifySignIn(flowId: string, code: string) {
+	async verifySignIn(flowId: string, code: string) {
 		const now = Date.now()
 		const request = this.getActiveAuthRequest(flowId, 'signin', now)
 		if (!safeSecretEquals(code, request.code_hash)) {
@@ -360,9 +363,67 @@ export class AuthService {
 		if (!request.user_id) {
 			throw new UnauthorizedException('No account exists for this email')
 		}
+		const user = this.database.connection.select().from(users).where(eq(users.id, request.user_id)).get()
+		if (!user) throw new UnauthorizedException('No account exists for this email')
+		await this.requirePlayerNotBanned(user)
 
 		this.completeAuthRequest(flowId, now)
 		return this.createSession(request.user_id)
+	}
+
+	listPlayerBans() {
+		return this.bans.list()
+	}
+
+	async applyPlayerBan(admin: AuthenticatedUser, userIdInput: unknown, expiresAtUnixMsInput: unknown) {
+		if (typeof userIdInput !== 'number' || !Number.isInteger(userIdInput) || userIdInput <= 0) {
+			throw new BadRequestException('Select a player')
+		}
+		if (expiresAtUnixMsInput !== null && (
+			typeof expiresAtUnixMsInput !== 'number'
+			|| !Number.isSafeInteger(expiresAtUnixMsInput)
+			|| expiresAtUnixMsInput <= Date.now()
+		)) {
+			throw new BadRequestException('Select a timeout date and time in the future')
+		}
+
+		const target = this.database.connection.select().from(users).where(eq(users.id, userIdInput)).get()
+		if (!target) throw new NotFoundException('Player not found')
+		if (target.id === admin.id) throw new BadRequestException('You cannot ban your own account')
+		if (target.is_super_admin === 1) throw new BadRequestException('The permanent super-admin cannot be banned')
+
+		this.bans.set(target.id, admin.id, expiresAtUnixMsInput)
+
+		let minecraftSynchronized = true
+		try {
+			await this.grpc.blacklistPlayer(target.minecraft_username, target.minecraft_uuid ?? '')
+		} catch {
+			minecraftSynchronized = false
+		}
+
+		return {
+			ok: true,
+			userId: target.id,
+			minecraftUsername: target.minecraft_username,
+			expiresAtUnixMs: expiresAtUnixMsInput,
+			minecraftSynchronized,
+		}
+	}
+
+	async removePlayerBan(userIdInput: string) {
+		const userId = Number(userIdInput)
+		if (!Number.isInteger(userId) || userId <= 0) throw new NotFoundException('Player not found')
+		const target = this.database.connection.select().from(users).where(eq(users.id, userId)).get()
+		if (!target || !this.bans.remove(userId)) throw new NotFoundException('Active ban not found')
+
+		let minecraftSynchronized = true
+		try {
+			await this.grpc.unblacklistPlayer(target.minecraft_username, target.minecraft_uuid ?? '')
+		} catch {
+			minecraftSynchronized = false
+		}
+
+		return { ok: true, userId, minecraftUsername: target.minecraft_username, minecraftSynchronized }
 	}
 
 	listAuthRequests(offsetInput?: string, limitInput?: string) {
@@ -770,6 +831,21 @@ export class AuthService {
 
 		return decodeURIComponent(match.slice(name.length + 1))
 	}
+
+	private async requirePlayerNotBanned(user: UserRow) {
+		const ban = this.bans.resolve(user.id)
+		if (ban.active) {
+			const message = ban.expiresAtUnixMs === null
+				? 'You are permanently banned from the MMU Minecraft Society server'
+				: `Your timeout continues until ${new Date(ban.expiresAtUnixMs).toUTCString()}`
+			throw new ForbiddenException(message)
+		}
+
+		if (ban.expired) {
+			await this.grpc.unblacklistPlayer(user.minecraft_username, user.minecraft_uuid ?? '').catch(() => undefined)
+		}
+		return ban.expired
+	}
 }
 
 function verificationCodeEmailHtml(code: string) {
@@ -791,5 +867,6 @@ function normalizeAuthRequestPagination(offsetInput?: string, limitInput?: strin
 	if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(limit) || limit < 1 || limit > MAX_AUTH_REQUEST_PAGE_SIZE) {
 		throw new BadRequestException(`Pagination requires a non-negative offset and a limit from 1 to ${MAX_AUTH_REQUEST_PAGE_SIZE}.`)
 	}
+
 	return { offset, limit }
 }

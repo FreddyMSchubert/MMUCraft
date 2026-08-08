@@ -196,9 +196,9 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault()
 
 		void run(async () => {
-			const result = await postJson<{ flowId: string; delivery: 'sent' | 'manual' }>('/api/auth/signin', { email })
+			const result = await postJson<{ flowId: string; delivery: 'sent' | 'manual'; timeoutEnded: boolean }>('/api/auth/signin', { email })
 			setFlowId(result.flowId)
-			setDeliveryMessage(verificationMessage(result.delivery, email))
+			setDeliveryMessage(`${result.timeoutEnded ? 'Your timeout has ended and Minecraft server access was restored. Rejoin the server now. ' : ''}${verificationMessage(result.delivery, email)}`)
 			setAuthCode(emptyAuthCode())
 			setStep('signin-code')
 		})

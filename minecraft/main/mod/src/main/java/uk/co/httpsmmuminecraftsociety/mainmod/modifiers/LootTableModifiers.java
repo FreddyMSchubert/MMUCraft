@@ -169,12 +169,15 @@ public class LootTableModifiers {
             if ("soul".equals(addition.fakeItemId())
                     && lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof Player player) {
                 String deathMessage = player.getCombatTracker().getDeathMessage().getString();
-                int firstSpace = deathMessage.indexOf(' ');
-                String owner = firstSpace < 0 ? player.getName().getString() : deathMessage.substring(0, firstSpace);
-                String death = firstSpace < 0 ? deathMessage : deathMessage.substring(firstSpace + 1);
+                String owner = player.getDisplayName().getString();
+
+                String death = deathMessage.startsWith(owner)
+                        ? deathMessage.substring(owner.length()).stripLeading()
+                        : deathMessage;
+
                 stack.set(DataComponents.LORE, new ItemLore(List.of(
-                        Component.literal("This soul belonged to " + owner + ", who " + death),
-                        Component.literal("[Died: " + ZonedDateTime.now().format(SOUL_DATE_FORMAT) + "]")
+                        Component.literal("This soul belonged to " + owner + ", who " + death + "."),
+                        Component.literal("[RIP - " + ZonedDateTime.now().format(SOUL_DATE_FORMAT) + "]")
                 )));
                 FakeItems.wrapTooltip(stack);
             }

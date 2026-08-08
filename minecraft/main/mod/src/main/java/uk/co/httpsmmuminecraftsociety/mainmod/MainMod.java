@@ -2,6 +2,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -14,12 +16,20 @@ import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyEvents;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry;
 import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -31,6 +41,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
@@ -43,6 +54,10 @@ public class MainMod implements ModInitializer {
 	public static final String MOD_ID = "mainmod";
 	public static final String RESOURCE_PACK_ID = "mmu_pack";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    private static final ResourceKey<PlacedFeature> ALIEN_DEBRIS = ResourceKey.create(
+            Registries.PLACED_FEATURE,
+            Identifier.fromNamespaceAndPath(MOD_ID, "alien_debris")
+    );
 
     private static volatile HolderLookup.Provider registries;
 
@@ -50,12 +65,21 @@ public class MainMod implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Hello MMU!");
 
+        BiomeModifications.addFeature(
+                BiomeSelectors.foundInTheEnd(),
+                GenerationStep.Decoration.UNDERGROUND_ORES,
+                ALIEN_DEBRIS
+        );
+
         DataLoader.init();
+        DailyTaskRegistry.validate();
 
         FakeItemsCommand.init();
         MoneyCommand.init();
         WebsiteCommand.init();
         PlayerStatsSync.init();
+        ClaimsManager.init();
+        DailyEvents.register();
         MainModRecipes.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
@@ -75,11 +99,14 @@ public class MainMod implements ModInitializer {
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);
 
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> ClaimsManager.reset());
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> GrpcBridge.stop());
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             GrpcBridge.onServerTick();
             PlayerStatsSync.onServerTick(server);
+            ClaimsManager.tickBossBars(server);
+            DailyTaskManager.tick(server);
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {

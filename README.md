@@ -1,27 +1,33 @@
 # KubeCraft
 
-> _Toto, I've a feeling we're not in Kansas anymore._
+## Development
 
-## Dev
+Install Docker Compose, Git, GNU Make, Python 3.10 or later, JDK 25, and Node.js.
 
-0. Shallow submodule import: `git submodule update --init --recursive --depth 1`
-1. Make sure k3d & kubectl, Docker, tilt are installed.
-2. For local non-Kubernetes web runs, copy `services/web/.env.example` to `services/web/.env` and fill in actual values. API configuration is provided through environment variables or Kubernetes manifests.
-3. To start local k3d instance: `k3d cluster create mc-dev --registry-create mc-dev-registry`. To clean up: `k3d cluster delete mc-dev`.
-4. Run `tilt up` to get started.
+```sh
+git submodule update --init --recursive --depth 1
+cp services/api/.env.example services/api/.env
+make
+```
 
-Tilt will now restart the minecraft pod automatically whenever the mod is built.
+The API uses port `8080`. The website uses port `3000`. The API and website watch source files. Minecraft does not watch files.
 
-- To access the server console: `kubectl attach -n mc-stack-dev -it deploy/minecraft`
-- To allow people to join server: `kubectl -n mc-stack-dev port-forward --address 0.0.0.0 svc/minecraft 25565:25565`
+| Command | Result |
+| --- | --- |
+| `make` | Build and start all services. Follow all service logs. |
+| `make restart` | Restart all running services. |
+| `make stop` | Stop all services. |
+| `make logs SERVICE=mc` | Print all retained Minecraft logs, then follow new logs. Use `api` or `web` for the other services. |
+| `make shell SERVICE=mc` | Open a Minecraft container shell. Use `api` or `web` for the other services. |
+| `make console` | Attach to the Minecraft server console. |
 
-### Database migrations
+`make` invokes item staging, protobuf generation, datagen, the mod build, and the resource-pack build. It then builds all images and starts all services. Compose prefixes each log line with the service name. The build tools can reuse outputs that are up to date. The Makefile does not omit a generation task. There is no automatic Minecraft build watcher.
 
-The API database schema is defined in `services/api/src/database/schema.ts`. Change that file, then run `npm run db:generate` from `services/api` and commit the generated `drizzle` migration. Do not edit generated migration SQL by hand. Use `npm run db:check` to validate the migration history; migrations are applied automatically when the API starts.
+Runtime files are in `.dev/`. API data is in `.dev/api/`. Minecraft data and log files are in `.dev/minecraft/`. Git ignores this directory.
 
-The first Drizzle-enabled startup adopts an existing pre-migration SQLite database automatically. It leaves the original database beside it with a `.pre-drizzle-<timestamp>` suffix as a rollback backup.
+Use `docker compose logs --since 30m api` to read earlier container logs. Use Ctrl+P, Ctrl+Q to detach from the Minecraft console.
 
-With the development Kubernetes cluster running, run `npm run db:studio` from `services/api`. The command starts Studio inside the API pod, forwards its database proxy to port `4983`, and prints the Studio URL. Open `https://local.drizzle.studio` and leave the command running; press Ctrl+C when finished. Studio therefore reads the same `/app/data/app.sqlite` PVC database as the website and does not create a separate local database.
+Use `make db-generate`, `make db-check`, and `make db-studio` for database work. Commit generated migration files from `services/api/drizzle/`.
 
 ## The goal
 
@@ -36,32 +42,12 @@ Making custom minecraft content isn't that hard with a fabric mod, so by adding 
 
 ## How
 
-Minecraft server setup
-- [K8s](https://kubernetes.io/) will maintain all the following pods:
-- **Server pods**: the currently running server (main or surprising saturday) and dynamically spin up one-off minigame worlds
-  - each pod will use a fabric server docker image with the mods already built in, built with pipelines from this repo
-  - k8s cron to automatically switch out main for saturday server saturdays 
-- [Velocity](https://papermc.io/software/velocity/) Minecraft Server Proxy will connect players to currently active server pod
-- [RabbitMQ](https://www.rabbitmq.com/) will handle communication between k8s pods & ScoreKeeper (winners etc)
-- [nginx](https://nginx.org/) for a tiny web server that enables minigame world downloads & serves cosmetics website
-- **ScoreKeeper/website** - Some centralized custom program that will
-  - determine which Minecraft account is linked to a website account, then allow players to buy cosmetics with in-game money.
-  - handles scoring while surprising saturday is running
-  - maintain inter-server player stats (will be called by main pod mod for permission checks)
-  - delete nginx-served world backups after some time
-  - maintain which cosmetics are owned by whom
-  - maybe even auto-update the server resource pack
-  - anything else we need
-- This repo will host the dynamic enforced server side resource pack, allowing for cosmetics to be rewarded to surprising saturday winners
-
-Setup will not be elastic and everything will be on one big VPS cause we don't have the budget for more.
-
-The surprising saturday & minigame world custom mods will be developed in this repo & then the surprising saturday docker image will be updated each week.
+Docker Compose runs the website, API, and optional Minecraft server. The API and Minecraft mod use gRPC. The website sends requests to the API and serves the resource pack. Production uses the same images on one VPS.
 
 ## To do list / priority order
 
 - [ ] Get a basic docker image for vanilla server set up
-- [ ] Make k8s pull & run it and restart it when its down
+- [ ] Publish and restart the server image on the production host
 - [ ] Velocity container that forwards to the main server
 - [ ] Server auth using MMU email verification and Minecraft join-code verification.
 - [ ] Setup rabbitmq that sends data between scorekeeper and main server mod. every day at 9, scorekeeper initiates border expansion.
@@ -436,10 +422,10 @@ hopefully with that i can figure it out
 
 ### Enchanting
 
-villagers dont drop enchanted books anymore. instead, get them from structures at increased reliable chances but only ever at the lowest level.
-you can put enchanted books on lecterns, and the corresponding librarian will offer that trade at high price but reset anvil cost, but will add a random curse to it. This can be removed with the cursebreaker tome.
-repairing items in an anvil with another item does not remove the enchantments, just keeps the first items enchantments. you can repair normally with materials and also repair netherite stuff with diamonds. repairing does not increase xp cost.
-combining books has changed, now a sharpness 1 + a sharpness 2 book makes a sharpness 3 book.
+Enchanting tables use the vanilla rules, enchantments, and levels.
+Vanilla enchanted-book loot remains available. Some structures and mobs have an additional chance to give specific enchanted books.
+Librarians keep their vanilla random enchanted-book trades. Soulbound is not in the vanilla trade pool. Put an enchanted book on a librarian's lectern to add a trade that duplicates that book.
+Anvils keep the custom repair and combination rules. Item repairs keep the enchantments from the first item. Material repairs support netherite items with diamonds and do not increase the XP cost. Book combinations add the levels together. For example, Sharpness I plus Sharpness II gives Sharpness III.
 
 | Enchantment | Initial book obtaining | Item needed to trade instead of book |
 | - | - | - |
@@ -470,7 +456,7 @@ combining books has changed, now a sharpness 1 + a sharpness 2 book makes a shar
 | Respiration | Shipwrecks | Turtle Helmet |
 | Depth Strider | Ocean Ruins | Prismarine Shard |
 | Charm Boost | Trail Ruins | Raw Gold Block |
-| Soulbound | Villages, Crafted with soul + book | Soul |
+| Soulbound | Crafted with a soul and a book | Soul |
 | Silk Touch | Mineshaft | brain_coral_block |
 | Feather Falling | Desert Temple | Parrot Feather |
 | Fire Aspect | Overworld-side ruined portals | fire charge |

@@ -8,6 +8,7 @@ import {
 	sqliteTable,
 	text,
 	uniqueIndex,
+	type AnySQLiteColumn,
 } from 'drizzle-orm/sqlite-core'
 
 export const users = sqliteTable('users', {
@@ -15,6 +16,7 @@ export const users = sqliteTable('users', {
 	email: text('email').notNull(),
 	minecraft_uuid: text('minecraft_uuid'),
 	minecraft_username: text('minecraft_username').notNull(),
+	responsible_user_id: integer('responsible_user_id').references((): AnySQLiteColumn => users.id),
 	is_member: integer('is_member').notNull().default(0),
 	is_committee: integer('is_committee').notNull().default(0),
 	is_super_admin: integer('is_super_admin').notNull().default(0),
@@ -77,8 +79,32 @@ export const playerProfiles = sqliteTable('player_profiles', {
 	base_y: integer('base_y'),
 	base_z: integer('base_z'),
 	bio: text('bio').notNull().default(''),
+	color_hex: text('color_hex'),
 	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
 })
+
+export const claims = sqliteTable('claims', {
+	id: text('id').primaryKey(),
+	owner_user_id: integer('owner_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	dimension: text('dimension').notNull(),
+	chunk_x: integer('chunk_x').notNull(),
+	chunk_z: integer('chunk_z').notNull(),
+	claim_name: text('claim_name').notNull().default('My claim'),
+	color_hex: text('color_hex'),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+}, (table) => [
+	uniqueIndex('claims_dimension_chunk_unique').on(table.dimension, table.chunk_x, table.chunk_z),
+	index('claims_owner_user_id_idx').on(table.owner_user_id),
+])
+
+export const claimMembers = sqliteTable('claim_members', {
+	claim_id: text('claim_id').notNull().references(() => claims.id, { onDelete: 'cascade' }),
+	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	added_at_unix_ms: integer('added_at_unix_ms').notNull(),
+}, (table) => [
+	primaryKey({ columns: [table.claim_id, table.user_id] }),
+	index('claim_members_user_id_idx').on(table.user_id),
+])
 
 export const playerStats = sqliteTable('player_stats', {
 	user_id: integer('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
@@ -156,10 +182,24 @@ export const dailyAdvancementTargets = sqliteTable('daily_advancement_targets', 
 	index('daily_advancement_targets_user_id_idx').on(table.user_id),
 ])
 
+export const dailyTasks = sqliteTable('daily_tasks', {
+	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	period_key: text('period_key').notNull(),
+	slot: integer('slot').notNull(),
+	task_id: text('task_id').notNull(),
+	task_json: text('task_json').notNull(),
+	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
+}, (table) => [
+	primaryKey({ columns: [table.user_id, table.period_key, table.slot] }),
+	uniqueIndex('daily_tasks_user_period_task_unique').on(table.user_id, table.period_key, table.task_id),
+	index('daily_tasks_period_key_idx').on(table.period_key),
+])
+
 export const giftCodes = sqliteTable('gift_codes', {
 	code: text('code').primaryKey(),
 	amount_dabloons: integer('amount_dabloons').notNull(),
 	redemption_mode: text('redemption_mode', { enum: ['single', 'per_user'] }).notNull().default('single'),
+	members_only: integer('members_only').notNull().default(0),
 	expires_at_unix_ms: integer('expires_at_unix_ms'),
 	created_by_user_id: integer('created_by_user_id').notNull().references(() => users.id),
 	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
@@ -168,6 +208,7 @@ export const giftCodes = sqliteTable('gift_codes', {
 }, (table) => [
 	check('gift_codes_amount_check', sql`${table.amount_dabloons} > 0`),
 	check('gift_codes_redemption_mode_check', sql`${table.redemption_mode} in ('single', 'per_user')`),
+	check('gift_codes_members_only_check', sql`${table.members_only} in (0, 1)`),
 	check('gift_codes_redeemed_pair_check', sql`(${table.redeemed_by_user_id} is null and ${table.redeemed_at_unix_ms} is null) or (${table.redeemed_by_user_id} is not null and ${table.redeemed_at_unix_ms} is not null)`),
 ])
 
@@ -185,6 +226,8 @@ export type SessionRow = typeof sessions.$inferSelect
 export type AuthRequestRow = typeof authRequests.$inferSelect
 export type EmailWhitelistRow = typeof emailWhitelist.$inferSelect
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect
+export type ClaimRow = typeof claims.$inferSelect
+export type ClaimMemberRow = typeof claimMembers.$inferSelect
 export type PlayerStatsRow = typeof playerStats.$inferSelect
 export type PlayerMoneyEventRow = typeof playerMoneyEvents.$inferSelect
 export type FishCatchRow = typeof fishCatches.$inferSelect
@@ -192,6 +235,7 @@ export type KnowledgeUnlockRow = typeof knowledgeUnlocks.$inferSelect
 export type ShopUnlockRow = typeof shopUnlocks.$inferSelect
 export type DailyClaimRow = typeof dailyClaims.$inferSelect
 export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSelect
+export type DailyTaskRow = typeof dailyTasks.$inferSelect
 export type GiftCodeRow = typeof giftCodes.$inferSelect
 
 export const schema = {
@@ -200,6 +244,8 @@ export const schema = {
 	authRequests,
 	emailWhitelist,
 	playerProfiles,
+	claims,
+	claimMembers,
 	playerStats,
 	playerMoneyEvents,
 	fishCatches,
@@ -207,6 +253,7 @@ export const schema = {
 	shopUnlocks,
 	dailyClaims,
 	dailyAdvancementTargets,
+	dailyTasks,
 	giftCodes,
 	giftCodeRedemptions,
 }

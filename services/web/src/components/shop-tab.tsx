@@ -2,6 +2,7 @@
 
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { ASSETS } from '@/lib/assets'
 import { MinecraftModelRenderer } from '@/lib/minecraft-model-renderer'
 import { useSiteSettings } from '@/lib/site-settings'
 
@@ -130,7 +131,10 @@ function pumpRendererSlots() {
 	}
 }
 
-export function ShopTab() {
+export function ShopTab({ itemId, onSelectItem }: {
+	itemId?: string
+	onSelectItem: (itemId: string | null, replace?: boolean) => void
+}) {
 	const { settings } = useSiteSettings()
 	const [data, setData] = useState<ShopResponse | null>(null)
 	const [error, setError] = useState('')
@@ -142,7 +146,6 @@ export function ShopTab() {
 	const [randomSeed, setRandomSeed] = useState(() => Math.random().toString(36))
 	const [buyingItemId, setBuyingItemId] = useState<string | null>(null)
 	const [hoveredItemId, setHoveredItemId] = useState<string | null>(null)
-	const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null)
 	const [featuredIndex, setFeaturedIndex] = useState(0)
 
 	const load = useCallback(async () => {
@@ -166,6 +169,11 @@ export function ShopTab() {
 	}, [load])
 
 	const dailyDeals = useMemo(() => data?.items.filter((item) => item.isDailyDeal && item.available) ?? [], [data?.items])
+	const selectedItem = useMemo(() => itemId ? data?.items.find((item) => item.id === itemId) ?? null : null, [data?.items, itemId])
+
+	useEffect(() => {
+		if (data && itemId && !selectedItem) onSelectItem(null, true)
+	}, [data, itemId, onSelectItem, selectedItem])
 
 	useEffect(() => {
 		if (dailyDeals.length < 2) return
@@ -212,7 +220,7 @@ export function ShopTab() {
 			if (!response.ok) throw new Error(body?.message ?? 'Purchase failed.')
 			const text = body?.message ?? `${item.title} purchased.`
 			setMessage(text)
-			setSelectedItem(null)
+			onSelectItem(null, true)
 			await load()
 		} catch (caught) {
 			const text = caught instanceof Error ? caught.message : 'Purchase failed'
@@ -239,7 +247,7 @@ export function ShopTab() {
 				<div className="shopDealCopy">
 					<div className="shopDealHeading"><span className="shopDealSpark">✦</span><div><p>{featured.dealMessage ?? 'Today’s find'}</p><h4>{featured.title}</h4></div><strong>−{featured.discountPercent}%</strong></div>
 					<p>{featured.description}</p>
-					<div className="shopDealActions"><span><del>{formatDabloons(featured.originalPriceDabloons)}</del> {formatDabloons(featured.discountedPriceDabloons)} dabloons</span><button type="button" onClick={() => setSelectedItem(featured)}>See details</button></div>
+					<div className="shopDealActions"><span><del>{formatDabloons(featured.originalPriceDabloons)}</del> {formatDabloons(featured.discountedPriceDabloons)} dabloons</span><button type="button" onClick={() => onSelectItem(featured.id)}>See details</button></div>
 				</div>
 				<div className="shopDealPreview" aria-hidden="true"><ShopPreview item={featured} hovered hidden={shouldHidePreview(featured, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} /></div>
 				{data.shoppingSunday && <span className="shoppingSundayBadge">Shopping Sunday · tons of huge discounts</span>}
@@ -265,11 +273,11 @@ export function ShopTab() {
 			{message && <p className="dailyMessage">{message}</p>}
 			{error && <p className="authError">{error}</p>}
 			<div className="shopGrid">
-				{visibleItems.map((item) => <ShopCard key={item.id} item={item} hovered={hoveredItemId === item.id} hidePreview={shouldHidePreview(item, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} onHover={setHoveredItemId} onOpen={setSelectedItem} />)}
+				{visibleItems.map((item) => <ShopCard key={item.id} item={item} hovered={hoveredItemId === item.id} hidePreview={shouldHidePreview(item, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} onHover={setHoveredItemId} onOpen={(selected) => onSelectItem(selected.id)} />)}
 			</div>
 			{visibleItems.length === 0 && <p className="shopEmptyState">No items match those filters.</p>}
 
-			{selectedItem && <ShopDetails item={selectedItem} buying={buyingItemId === selectedItem.id} hidePreview={shouldHidePreview(selectedItem, settings.arachnophobiaMode)} onClose={() => setSelectedItem(null)} onBuy={buy} />}
+			{selectedItem && <ShopDetails item={selectedItem} buying={buyingItemId === selectedItem.id} hidePreview={shouldHidePreview(selectedItem, settings.arachnophobiaMode)} onClose={() => onSelectItem(null, true)} onBuy={buy} />}
 		</div>
 	)
 }
@@ -342,8 +350,49 @@ function ShopPreview({ item, hovered, interactive = false, hidden = false, allow
 	if (hidden) return <div className="shopHiddenPreview" />
 	if (!allow3d && item.renderMode === 'model') return <div className="shopReduced3dPlaceholder" />
 	if (item.renderMode === 'model' && item.modelUrl && item.textureUrl) return <ShopModelPreview item={item} hovered={hovered} interactive={interactive} />
+	if (item.iconUrl && item.animation) return <AnimatedTexturePreview url={item.iconUrl} animation={item.animation} />
 	if (item.iconUrl) return <img src={item.iconUrl} alt="" className="shopItemIcon" />
 	return <div className="shopItemEmpty" />
+}
+
+function AnimatedTexturePreview({ url, animation }: { url: string; animation: NonNullable<ShopItem['animation']> }) {
+	const canvasRef = useRef<HTMLCanvasElement | null>(null)
+
+	useEffect(() => {
+		const canvas = canvasRef.current
+		if (!canvas) return
+		let timer: number | undefined
+		let cancelled = false
+		const image = new Image()
+		image.onload = () => {
+			if (cancelled) return
+			const frameSize = image.naturalWidth
+			const frameCount = Math.max(1, Math.floor(image.naturalHeight / frameSize))
+			const frames = (animation.frames ?? Array.from({ length: frameCount }, (_, index) => index))
+				.filter((frame) => frame < frameCount)
+			const context = canvas.getContext('2d')
+			if (!context || !frames.length) return
+			canvas.width = frameSize
+			canvas.height = frameSize
+			let frameIndex = 0
+			const draw = () => {
+				context.clearRect(0, 0, frameSize, frameSize)
+				context.drawImage(image, 0, frames[frameIndex]! * frameSize, frameSize, frameSize, 0, 0, frameSize, frameSize)
+			}
+			draw()
+			if (frames.length > 1) timer = window.setInterval(() => {
+				frameIndex = (frameIndex + 1) % frames.length
+				draw()
+			}, animation.frameDelayMs)
+		}
+		image.src = url
+		return () => {
+			cancelled = true
+			window.clearInterval(timer)
+		}
+	}, [animation.frameDelayMs, animation.frames, url])
+
+	return <canvas ref={canvasRef} className="shopItemIcon shopAnimatedTexture" />
 }
 
 function ShopModelPreview({ item, hovered, interactive }: { item: ShopItem; hovered: boolean; interactive: boolean }) {
@@ -395,7 +444,7 @@ function ShopModelPreview({ item, hovered, interactive }: { item: ShopItem; hove
 		void modelPromise.then(async (model) => {
 			if (cancelled || !host.isConnected) return
 			rendererRef.current?.destroy()
-			const renderer = new MinecraftModelRenderer(host, { autoRotate: hoveredRef.current, dyeable: item.dyeable, enableDrag: interactive, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
+			const renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, autoRotate: hoveredRef.current, dyeable: item.dyeable, enableDrag: interactive, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
 			rendererRef.current = renderer
 			await renderer.loadModel(model as never)
 			if (!cancelled) setReady(true)

@@ -1,20 +1,26 @@
 'use client'
 
+import Link from 'next/link'
 import { FormEvent, useCallback, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
+import { PlayerName, playerNameStyle } from '@/components/player-name'
 
 interface AdminPlayer {
 	id: number
 	minecraftUsername: string
+	color: string
 	discordUsername: string
 	email: string
 	isMember: boolean
 	isCommittee: boolean
+	isExternal: boolean
 }
 
 interface GiftCode {
 	code: string
 	amountDabloons: number
 	redemptionMode: 'single' | 'per_user'
+	membersOnly: boolean
 	expiresAtUnixMs: number | null
 	createdAtUnixMs: number
 	redemptionCount: number
@@ -25,6 +31,7 @@ interface AuthRequest {
 	kind: 'signup' | 'signin'
 	email: string
 	minecraftUsername: string | null
+	color: string | null
 	code: string | null
 	deliveryStatus: 'sent' | 'manual'
 	createdAtUnixMs: number
@@ -36,9 +43,23 @@ interface AuthRequest {
 interface WhitelistedEmail {
 	email: string
 	addedByMinecraftUsername: string
+	addedByColor: string
 	responsibleMinecraftUsername: string | null
+	responsiblePlayerColor: string | null
 	createdAtUnixMs: number
 }
+
+interface AdminClaim {
+	id: string
+	name: string
+	dimension: string
+	chunkX: number
+	chunkZ: number
+	minecraftUsername: string
+	color: string
+}
+
+const PAGE_SIZE = 42
 
 const CODE_ADJECTIVES = [
 	'ancient', 'blocky', 'creeping', 'enchanted', 'ender', 'golden', 'hidden', 'nether', 'pixelated', 'redstone', 'shimmering', 'square', 'verdant', 'cute', 'creepy', 'gorgeous', 'pretty', 'speedy', 'rough', 'angry', 'anxious', 'attacking'
@@ -48,11 +69,14 @@ const CODE_NOUNS = [
 ]
 const CODE_JOINERS = ['-', '_', '.']
 
-export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
-	const [activeSection, setActiveSection] = useState<'members' | 'signins' | 'whitelist' | 'gifts'>('members')
+export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
+	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'gifts' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
 	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
+	const [authRequestsHaveMore, setAuthRequestsHaveMore] = useState(false)
+	const [claims, setClaims] = useState<AdminClaim[]>([])
+	const [claimsHaveMore, setClaimsHaveMore] = useState(false)
 	const [whitelistedEmails, setWhitelistedEmails] = useState<WhitelistedEmail[]>([])
 	const [whitelistEmail, setWhitelistEmail] = useState('')
 	const [responsibleUsername, setResponsibleUsername] = useState('')
@@ -60,34 +84,43 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 	const [code, setCode] = useState('')
 	const [amount, setAmount] = useState('')
 	const [redemptionMode, setRedemptionMode] = useState<'single' | 'per_user'>('single')
+	const [membersOnly, setMembersOnly] = useState(false)
 	const [expiresAt, setExpiresAt] = useState('')
 	const [showAllGiftCodes, setShowAllGiftCodes] = useState(false)
 	const [busyPlayerId, setBusyPlayerId] = useState<number | null>(null)
+	const [busyClaimId, setBusyClaimId] = useState<string | null>(null)
+	const [loadingMore, setLoadingMore] = useState<'signins' | 'claims' | null>(null)
 	const [creating, setCreating] = useState(false)
 	const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
 	const [error, setError] = useState('')
-	const [message, setMessage] = useState('')
+	const [message, setMessage] = useState<ReactNode>('')
 
 	const load = useCallback(async () => {
-		const [playersResponse, codesResponse, signinsResponse, whitelistResponse] = await Promise.all([
+		const [playersResponse, codesResponse, signinsResponse, claimsResponse, whitelistResponse] = await Promise.all([
 			fetch('/api/admin/players', { cache: 'no-store' }),
 			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
-			fetch('/api/admin/signins', { cache: 'no-store' }),
+			fetch(`/api/admin/signins?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
+			fetch(`/api/admin/claims?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch('/api/admin/email-whitelist', { cache: 'no-store' }),
 		])
 		const playersBody = await playersResponse.json().catch(() => null)
 		const codesBody = await codesResponse.json().catch(() => null)
 		const signinsBody = await signinsResponse.json().catch(() => null)
+		const claimsBody = await claimsResponse.json().catch(() => null)
 		const whitelistBody = await whitelistResponse.json().catch(() => null)
 
 		if (!playersResponse.ok) throw new Error(apiMessage(playersBody, 'Failed to load the member list'))
 		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'))
 		if (!signinsResponse.ok) throw new Error(apiMessage(signinsBody, 'Failed to load signins'))
+		if (!claimsResponse.ok) throw new Error(apiMessage(claimsBody, 'Failed to load claims'))
 		if (!whitelistResponse.ok) throw new Error(apiMessage(whitelistBody, 'Failed to load the email whitelist'))
 
 		setPlayers(playersBody.players as AdminPlayer[])
 		setGiftCodes(codesBody.giftCodes as GiftCode[])
 		setAuthRequests(signinsBody.requests as AuthRequest[])
+		setAuthRequestsHaveMore(Boolean(signinsBody.hasMore))
+		setClaims(claimsBody.claims as AdminClaim[])
+		setClaimsHaveMore(Boolean(claimsBody.hasMore))
 		setWhitelistedEmails(whitelistBody.entries as WhitelistedEmail[])
 	}, [])
 
@@ -117,7 +150,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 
 	async function setMembership(player: AdminPlayer, isMember: boolean) {
 		const action = isMember ? 'mark as a society member' : 'remove society membership from'
-		if (!window.confirm(`Are you sure you want to ${action} ${player.minecraftUsername}?`)) return
+		if (!window.confirm(`Are you sure you want to ${action} this player?`)) return
 
 		setBusyPlayerId(player.id)
 		setError('')
@@ -134,7 +167,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 			setPlayers((current) => current.map((candidate) => (
 				candidate.id === player.id ? { ...candidate, isMember } : candidate
 			)))
-			setMessage(`${player.minecraftUsername} is ${isMember ? 'now' : 'no longer'} marked as a member.`)
+			setMessage(<><PlayerName name={player.minecraftUsername} color={player.color} /> is {isMember ? 'now' : 'no longer'} marked as a member.</>)
 		} catch (caught) {
 			setError(errorMessage(caught, 'Failed to update membership'))
 		} finally {
@@ -144,7 +177,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 
 	async function setCommittee(player: AdminPlayer, isCommittee: boolean) {
 		const action = isCommittee ? 'give committee access to' : 'remove committee access from'
-		if (!window.confirm(`Are you sure you want to ${action} ${player.minecraftUsername}?`)) return
+		if (!window.confirm(`Are you sure you want to ${action} this player?`)) return
 
 		setBusyPlayerId(player.id)
 		setError('')
@@ -161,7 +194,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 			setPlayers((current) => current.map((candidate) => (
 				candidate.id === player.id ? { ...candidate, isCommittee } : candidate
 			)))
-			setMessage(`${player.minecraftUsername} ${isCommittee ? 'now has' : 'no longer has'} committee access.`)
+			setMessage(<><PlayerName name={player.minecraftUsername} color={player.color} /> {isCommittee ? 'now has' : 'no longer has'} committee access.</>)
 		} catch (caught) {
 			setError(errorMessage(caught, 'Failed to update committee access'))
 		} finally {
@@ -184,6 +217,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 						code,
 						amountDabloons: Number(amount),
 						redemptionMode,
+						membersOnly,
 						expiresAtUnixMs: expiresAt ? new Date(expiresAt).getTime() : null,
 					}),
 				})
@@ -193,6 +227,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 				setCode('')
 				setAmount('')
 				setRedemptionMode('single')
+				setMembersOnly(false)
 				setExpiresAt('')
 				setSuggestion(makeSuggestion())
 				setMessage(`Created ${body.code} for ${body.amountDabloons} dabloons.`)
@@ -209,11 +244,13 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 		event.preventDefault()
 		const responsiblePlayer = players.find((player) => (
 			player.minecraftUsername.localeCompare(responsibleUsername, 'en', { sensitivity: 'base' }) === 0
+			&& !player.isExternal
 		))
 		if (!responsiblePlayer) {
 			setError('Select a responsible user from the username list')
 			return
 		}
+		if (!window.confirm(`Charge the selected player 100 dabloons to invite ${whitelistEmail}? They must be online.`)) return
 		setUpdatingWhitelist(true)
 		setError('')
 		setMessage('')
@@ -230,7 +267,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 
 				setWhitelistEmail('')
 				setResponsibleUsername('')
-				setMessage(`${body.email} can now sign up.`)
+				setMessage(<>{body.email} can now sign up. <PlayerName name={responsiblePlayer.minecraftUsername} color={responsiblePlayer.color} /> paid {body.priceDabloons} dabloons and has {body.balanceDabloons} left.</>)
 				await load()
 			} catch (caught) {
 				setError(errorMessage(caught, 'Failed to whitelist the email address'))
@@ -258,37 +295,89 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 		}
 	}
 
+	async function loadMoreSignins() {
+		setLoadingMore('signins')
+		setError('')
+		try {
+			const response = await fetch(`/api/admin/signins?offset=${authRequests.length}&limit=${PAGE_SIZE}`, { cache: 'no-store' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to load more signins'))
+			setAuthRequests((current) => [...current, ...(body.requests as AuthRequest[])])
+			setAuthRequestsHaveMore(Boolean(body.hasMore))
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to load more signins'))
+		} finally {
+			setLoadingMore(null)
+		}
+	}
+
+	async function loadMoreClaims() {
+		setLoadingMore('claims')
+		setError('')
+		try {
+			const response = await fetch(`/api/admin/claims?offset=${claims.length}&limit=${PAGE_SIZE}`, { cache: 'no-store' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to load more claims'))
+			setClaims((current) => [...current, ...(body.claims as AdminClaim[])])
+			setClaimsHaveMore(Boolean(body.hasMore))
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to load more claims'))
+		} finally {
+			setLoadingMore(null)
+		}
+	}
+
+	async function removeClaim(claim: AdminClaim) {
+		if (!window.confirm(`Delete ${claim.minecraftUsername}'s claim "${claim.name}" at ${claim.dimension} (${claim.chunkX}, ${claim.chunkZ})?`)) return
+		setBusyClaimId(claim.id)
+		setError('')
+		setMessage('')
+		try {
+			const response = await fetch(`/api/admin/claims/${encodeURIComponent(claim.id)}`, { method: 'DELETE' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to delete the claim'))
+			setClaims((current) => current.filter((candidate) => candidate.id !== claim.id))
+			setMessage(<>Deleted <PlayerName name={claim.minecraftUsername} color={claim.color} />&apos;s claim &quot;{claim.name}&quot;.</>)
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to delete the claim'))
+		} finally {
+			setBusyClaimId(null)
+		}
+	}
+
 	return (
 		<div className="adminPanel">
 			<nav className="adminSubTabs" aria-label="Admin sections">
-				<button
-					type="button"
+				<Link
 					className={activeSection === 'signins' ? 'active' : ''}
-					onClick={() => setActiveSection('signins')}
+					href="/play/admin/signins"
 				>
 					Signins
-				</button>
-				<button
-					type="button"
+				</Link>
+				<Link
 					className={activeSection === 'members' ? 'active' : ''}
-					onClick={() => setActiveSection('members')}
+					href="/play/admin/members"
 				>
 					Member list
-				</button>
-				<button
-					type="button"
+				</Link>
+				<Link
+					className={activeSection === 'claims' ? 'active' : ''}
+					href="/play/admin/claims"
+				>
+					Claims
+				</Link>
+				<Link
 					className={activeSection === 'whitelist' ? 'active' : ''}
-					onClick={() => setActiveSection('whitelist')}
+					href="/play/admin/whitelist"
 				>
 					Email whitelist
-				</button>
-				<button
-					type="button"
+				</Link>
+				<Link
 					className={activeSection === 'gifts' ? 'active' : ''}
-					onClick={() => setActiveSection('gifts')}
+					href="/play/admin/gifts"
 				>
 					Gift codes
-				</button>
+				</Link>
 			</nav>
 
 			{activeSection === 'members' && (
@@ -320,7 +409,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 							{players.map((player) => (
 								<tr key={player.id}>
 									<td>
-										{player.minecraftUsername}
+										<PlayerName name={player.minecraftUsername} color={player.color} />
 										{player.isCommittee && <span className="committeeBadge">Committee</span>}
 									</td>
 									<td>{player.discordUsername || <span className="adminMissing">Not provided</span>}</td>
@@ -353,6 +442,39 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 				</section>
 			)}
 
+			{activeSection === 'claims' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader">
+						<h3>Claims</h3>
+						<p>Review claimed chunks and delete claims that block or grief other players.</p>
+					</div>
+					<div className="adminTableWrap">
+						<table className="adminTable">
+							<thead>
+								<tr><th>Player</th><th>Claim name</th><th>Dimension</th><th>Chunk coordinate</th><th></th></tr>
+							</thead>
+							<tbody>
+								{claims.map((claim) => (
+									<tr key={claim.id}>
+										<td><PlayerName name={claim.minecraftUsername} color={claim.color} /></td>
+										<td>{claim.name}</td>
+										<td><code>{claim.dimension}</code></td>
+										<td><code>({claim.chunkX}, {claim.chunkZ})</code></td>
+										<td><button type="button" disabled={busyClaimId !== null} onClick={() => void removeClaim(claim)}>{busyClaimId === claim.id ? 'Deleting...' : 'Delete'}</button></td>
+									</tr>
+								))}
+								{claims.length === 0 && <tr><td colSpan={5}>No chunks are claimed.</td></tr>}
+							</tbody>
+						</table>
+					</div>
+					{claimsHaveMore && (
+						<button type="button" className="loadMoreButton" disabled={loadingMore !== null || busyClaimId !== null} onClick={() => void loadMoreClaims()}>
+							{loadingMore === 'claims' ? 'Loading...' : 'Load more'}
+						</button>
+					)}
+				</section>
+			)}
+
 			{activeSection === 'signins' && (
 				<section className="adminSection">
 					<div className="adminSectionHeader">
@@ -377,7 +499,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 									<tr key={request.id}>
 										<td>{request.kind === 'signup' ? 'Signup' : 'Signin'}</td>
 										<td>
-											{request.minecraftUsername && <><strong>{request.minecraftUsername}</strong><br /></>}
+											{request.minecraftUsername && request.color && <><strong><PlayerName name={request.minecraftUsername} color={request.color} /></strong><br /></>}
 											{request.email}
 										</td>
 										<td>{formatDateTime(request.createdAtUnixMs)}</td>
@@ -392,6 +514,11 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 							</tbody>
 						</table>
 					</div>
+					{authRequestsHaveMore && (
+						<button type="button" className="loadMoreButton" disabled={loadingMore !== null} onClick={() => void loadMoreSignins()}>
+							{loadingMore === 'signins' ? 'Loading...' : 'Load more'}
+						</button>
+					)}
 				</section>
 			)}
 
@@ -400,7 +527,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 					<div className="adminSectionHeader">
 						<h3>Email whitelist</h3>
 						<p>Allow a non-MMU email address to sign up. MMU email addresses are always allowed.</p>
-						<p>This should cost some money!</p>
+						<p>Inviting an external player costs the responsible player 100 dabloons. They must be online when you add the email.</p>
 					</div>
 					<form className="emailWhitelistForm" onSubmit={addWhitelistedEmail}>
 						<label>
@@ -415,17 +542,18 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 						</label>
 						<label>
 							Responsible user
-							<input
+							<select
 								value={responsibleUsername}
 								onChange={(event) => setResponsibleUsername(event.target.value)}
-								placeholder="Search Minecraft username"
-								list="whitelist-usernames"
-								autoComplete="off"
 								required
-							/>
-							<datalist id="whitelist-usernames">
-								{players.map((player) => <option key={player.id} value={player.minecraftUsername} />)}
-							</datalist>
+							>
+								<option value="">Select a player</option>
+								{players.map((player) => (
+									<option className="playerName" style={playerNameStyle(player.color)} key={player.id} value={player.minecraftUsername} disabled={player.isExternal}>
+										{player.minecraftUsername}
+									</option>
+								))}
+							</select>
 						</label>
 						<button disabled={updatingWhitelist}>Add email</button>
 					</form>
@@ -436,8 +564,8 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 								{whitelistedEmails.map((entry) => (
 									<tr key={entry.email}>
 										<td>{entry.email}</td>
-										<td>{entry.responsibleMinecraftUsername ?? <span className="adminMissing">Not assigned</span>}</td>
-										<td>{entry.addedByMinecraftUsername}</td>
+										<td>{entry.responsibleMinecraftUsername && entry.responsiblePlayerColor ? <PlayerName name={entry.responsibleMinecraftUsername} color={entry.responsiblePlayerColor} /> : <span className="adminMissing">Not assigned</span>}</td>
+										<td><PlayerName name={entry.addedByMinecraftUsername} color={entry.addedByColor} /></td>
 										<td>{formatDateTime(entry.createdAtUnixMs)}</td>
 										<td><button type="button" disabled={updatingWhitelist} onClick={() => void removeWhitelistedEmail(entry.email)}>Remove</button></td>
 									</tr>
@@ -520,6 +648,14 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 								<span>Once per player</span>
 							</label>
 						</fieldset>
+						<label>
+							<input
+								type="checkbox"
+								checked={membersOnly}
+								onChange={(event) => setMembersOnly(event.target.checked)}
+							/>
+							Members only
+						</label>
 						<button disabled={creating}>{creating ? 'Creating...' : 'Create gift code'}</button>
 					</form>
 
@@ -540,6 +676,7 @@ export function AdminTab({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 										<span>{giftCode.amountDabloons} dabloons</span>
 										<span>
 											{giftCode.redemptionMode === 'per_user' ? 'Once per player' : 'One total'}
+											{giftCode.membersOnly ? ' - members only' : ''}
 											{giftCode.expiresAtUnixMs
 								? ` - until ${formatExpiry(giftCode.expiresAtUnixMs)}`
 								: ' - no expiry'}

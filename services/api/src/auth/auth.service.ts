@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 import { and, asc, desc, eq, gt, isNull, lte } from 'drizzle-orm'
 import {
 	AuthRequestRow,
@@ -7,6 +8,7 @@ import {
 	UserRow,
 	authRequests,
 	emailWhitelist,
+	playerProfiles,
 	sessions,
 	users,
 } from '../database/database.service'
@@ -26,6 +28,8 @@ import {
 	safeSecretEquals,
 } from './auth.util'
 import { SignupFlow, signupFlows } from './signup-flow'
+import { ASSETS } from '../assets'
+import { effectivePlayerColor } from '../players/player-color'
 
 const EMAIL_CODE_TTL_MS = 10 * 60 * 1000
 const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
@@ -33,8 +37,12 @@ const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
 const AUTH_REQUEST_HISTORY_LIMIT = 50
+const AUTH_REQUEST_PAGE_SIZE = 42
+const MAX_AUTH_REQUEST_PAGE_SIZE = 100
 const MAX_AUTH_CODE_ATTEMPTS = 5
-const AUTH_CODE_IMAGE_BASE = 'https://mmuminecraftsociety.co.uk/assets/mc_respack/assets/minecraft/textures/'
+export const EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 100
+const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signup-allowlist.txt'
+const AUTH_CODE_IMAGE_BASE = `${ASSETS.minecraft.vanilla}/textures/`
 const AUTH_CODE_IMAGES: Partial<Record<(typeof AUTH_CODE_ITEMS)[number], string>> = {
 	Apple: 'item/apple.png',
 	Axe: 'item/golden_axe.png',
@@ -73,6 +81,7 @@ const AUTH_CODE_IMAGES: Partial<Record<(typeof AUTH_CODE_ITEMS)[number], string>
 export interface AuthenticatedUser {
 	id: number
 	minecraftUsername: string
+	color: string
 	isMember: boolean
 	isCommittee: boolean
 	isSuperAdmin: boolean
@@ -89,9 +98,18 @@ export class AuthService {
 
 	async createSignup(emailInput: string) {
 		const email = normalizeEmail(emailInput)
+		let signupAllowlist = new Set<string>()
+		try {
+			signupAllowlist = new Set(readFileSync(SIGNUP_ALLOWLIST_PATH, 'utf8')
+				.split(/\r?\n/).map(normalizeEmail).filter(Boolean))
+		} catch { /* A missing or unreadable allowlist closes signup. */ }
+
+		if (!signupAllowlist.has('*') && !signupAllowlist.has(email)) {
+			throw new ForbiddenException('Signups are not currently open for this email')
+		}
 
 		if (!isAllowedEmail(email) && !this.isEmailWhitelisted(email)) {
-			throw new BadRequestException('Only MMU email addresses are allowed')
+			throw new BadRequestException('Use an @mmu.ac.uk address or a numeric @stu.mmu.ac.uk address')
 		}
 
 		await this.cleanupStaleSignupFlows()
@@ -276,6 +294,13 @@ export class AuthService {
 		if (this.findUserByMinecraftUuid(minecraftUuid)) {
 			throw new BadRequestException('This Minecraft account is already linked to a website account')
 		}
+		const responsibleUserId = isAllowedEmail(flow.email)
+			? null
+			: this.database.connection.select({ responsibleUserId: emailWhitelist.responsible_user_id })
+				.from(emailWhitelist).where(eq(emailWhitelist.email, flow.email)).get()?.responsibleUserId
+		if (!isAllowedEmail(flow.email) && !responsibleUserId) {
+			throw new ForbiddenException('This external player invitation is no longer active')
+		}
 
 		await this.grpc.whitelistPlayer(minecraftUsername)
 
@@ -285,6 +310,7 @@ export class AuthService {
 					email: flow.email,
 					minecraft_uuid: minecraftUuid,
 					minecraft_username: minecraftUsername,
+					responsible_user_id: responsibleUserId,
 					is_committee: isSuperAdminUsername(minecraftUsername) ? 1 : 0,
 					is_super_admin: isSuperAdminUsername(minecraftUsername) ? 1 : 0,
 					whitelisted_at_unix_ms: now,
@@ -339,23 +365,28 @@ export class AuthService {
 		return this.createSession(request.user_id)
 	}
 
-	listAuthRequests() {
+	listAuthRequests(offsetInput?: string, limitInput?: string) {
 		const now = Date.now()
+		const { offset, limit } = normalizeAuthRequestPagination(offsetInput, limitInput)
 		this.clearExpiredAuthRequestCodes(now)
 
 		const requests = this.database.connection.select({ request: authRequests, user: users })
 			.from(authRequests)
 			.leftJoin(users, eq(users.id, authRequests.user_id))
 			.orderBy(desc(authRequests.created_at_unix_ms))
-			.limit(AUTH_REQUEST_HISTORY_LIMIT)
+			.limit(Math.min(limit + 1, Math.max(0, AUTH_REQUEST_HISTORY_LIMIT - offset)))
+			.offset(offset)
 			.all()
+		const profilesById = new Map(this.database.connection.select().from(playerProfiles).all()
+			.map((profile) => [profile.user_id, profile]))
 
 		return {
-			requests: requests.map(({ request, user }) => ({
+			requests: requests.slice(0, limit).map(({ request, user }) => ({
 				id: request.id,
 				kind: request.kind,
 				email: request.email,
 				minecraftUsername: user?.minecraft_username ?? null,
+				color: user ? effectivePlayerColor(user.minecraft_uuid, profilesById.get(user.id)?.color_hex) : null,
 				code: isAuthRequestActive(request, now) ? request.active_code : null,
 				deliveryStatus: request.delivery_status,
 				createdAtUnixMs: request.created_at_unix_ms,
@@ -365,30 +396,41 @@ export class AuthService {
 					? 'verified'
 					: request.expires_at_unix_ms <= now ? 'expired' : 'active',
 			})),
+			hasMore: requests.length > limit,
 		}
 	}
 
 	listEmailWhitelist() {
+		const profilesById = new Map(this.database.connection.select().from(playerProfiles).all()
+			.map((profile) => [profile.user_id, profile]))
 		const usernamesById = new Map(this.database.connection.select({
 			id: users.id,
 			minecraftUsername: users.minecraft_username,
-		}).from(users).all().map((user) => [user.id, user.minecraftUsername]))
+			minecraftUuid: users.minecraft_uuid,
+		}).from(users).all().map((user) => [user.id, {
+			name: user.minecraftUsername,
+			color: effectivePlayerColor(user.minecraftUuid, profilesById.get(user.id)?.color_hex),
+		}]))
 
 		return {
 			entries: this.database.connection.select().from(emailWhitelist)
 				.orderBy(asc(emailWhitelist.email)).all()
 				.map((entry) => ({
 					email: entry.email,
-					addedByMinecraftUsername: usernamesById.get(entry.added_by_user_id) ?? 'Unknown user',
+					addedByMinecraftUsername: usernamesById.get(entry.added_by_user_id)?.name ?? 'Unknown user',
+					addedByColor: usernamesById.get(entry.added_by_user_id)?.color ?? '#E6E6E6',
 					responsibleMinecraftUsername: entry.responsible_user_id === null
 						? null
-						: usernamesById.get(entry.responsible_user_id) ?? 'Unknown user',
+						: usernamesById.get(entry.responsible_user_id)?.name ?? 'Unknown user',
+					responsiblePlayerColor: entry.responsible_user_id === null
+						? null
+						: usernamesById.get(entry.responsible_user_id)?.color ?? '#E6E6E6',
 					createdAtUnixMs: entry.created_at_unix_ms,
 				})),
 		}
 	}
 
-	addEmailToWhitelist(admin: AuthenticatedUser, emailInput: unknown, responsibleUserIdInput: unknown) {
+	async addEmailToWhitelist(admin: AuthenticatedUser, emailInput: unknown, responsibleUserIdInput: unknown) {
 		if (typeof emailInput !== 'string') {
 			throw new BadRequestException('Email is required')
 		}
@@ -403,9 +445,10 @@ export class AuthService {
 			throw new BadRequestException('Select a responsible user')
 		}
 		const responsibleUserId = responsibleUserIdInput
-		if (!this.database.connection.select({ id: users.id }).from(users)
-			.where(eq(users.id, responsibleUserId)).get()) {
-			throw new BadRequestException('Select a responsible user')
+		const responsibleUser = this.database.connection.select().from(users)
+			.where(and(eq(users.id, responsibleUserId), isNull(users.responsible_user_id))).get()
+		if (!responsibleUser) {
+			throw new BadRequestException('External players cannot be responsible for another external player')
 		}
 
 		const result = this.database.connection.insert(emailWhitelist).values({
@@ -418,7 +461,21 @@ export class AuthService {
 			throw new ConflictException('That email address is already whitelisted')
 		}
 
-		return { email }
+		try {
+			const purchase = await this.grpc.purchaseExternalPlayerInvite(responsibleUser.minecraft_username)
+			if (!purchase.purchased) {
+				throw new BadRequestException(purchase.message || 'The responsible player must be online with 100 dabloons')
+			}
+			return {
+				email,
+				priceDabloons: EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS,
+				balanceDabloons: purchase.balance_dabloons,
+			}
+		} catch (error) {
+			this.database.connection.delete(emailWhitelist).where(eq(emailWhitelist.email, email)).run()
+			if (error instanceof BadRequestException) throw error
+			throw new BadRequestException('The responsible player must be online to pay for this invitation')
+		}
 	}
 
 	removeEmailFromWhitelist(emailInput: string) {
@@ -476,9 +533,12 @@ export class AuthService {
 		if (!row) return null
 
 		const isSuperAdmin = row.is_super_admin === 1
+		const profile = this.database.connection.select().from(playerProfiles)
+			.where(eq(playerProfiles.user_id, row.id)).get()
 		return {
 			id: row.id,
 			minecraftUsername: row.minecraft_username,
+			color: effectivePlayerColor(row.minecraft_uuid, profile?.color_hex),
 			isMember: row.is_member === 1,
 			isCommittee: isSuperAdmin || row.is_committee === 1,
 			isSuperAdmin,
@@ -723,4 +783,13 @@ function verificationCodeEmailHtml(code: string) {
 
 function isSuperAdminUsername(minecraftUsername: string) {
 	return minecraftUsername.localeCompare(SUPER_ADMIN_MINECRAFT_USERNAME, 'en', { sensitivity: 'base' }) === 0
+}
+
+function normalizeAuthRequestPagination(offsetInput?: string, limitInput?: string) {
+	const offset = offsetInput === undefined ? 0 : Number(offsetInput)
+	const limit = limitInput === undefined ? AUTH_REQUEST_PAGE_SIZE : Number(limitInput)
+	if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(limit) || limit < 1 || limit > MAX_AUTH_REQUEST_PAGE_SIZE) {
+		throw new BadRequestException(`Pagination requires a non-negative offset and a limit from 1 to ${MAX_AUTH_REQUEST_PAGE_SIZE}.`)
+	}
+	return { offset, limit }
 }

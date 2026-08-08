@@ -1,0 +1,207 @@
+name: kubecraft
+
+x-logging: &logging
+  driver: local
+  options:
+    max-size: 10m
+    max-file: "3"
+
+x-node-runtime: &node-runtime
+  init: true
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  pids_limit: 256
+  logging: *logging
+  restart: unless-stopped
+
+services:
+  api:
+    <<: *node-runtime
+    image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-api:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
+    user: ${PUID:-1000}:${PGID:-1000}
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "8080"
+      API_GRPC_HOST: 0.0.0.0
+      API_GRPC_PORT: "50051"
+      MOD_GRPC_TARGET: minecraft:50052
+      DATABASE_URL: /app/data/app.sqlite
+      DATABASE_MIGRATIONS_PATH: /app/drizzle
+      AUTH_CODE_SECRET: ${AUTH_CODE_SECRET:?set AUTH_CODE_SECRET in .env}
+      RESEND_API_KEY: ${RESEND_API_KEY:?set RESEND_API_KEY in .env}
+      RESEND_FROM: ${RESEND_FROM:?set RESEND_FROM in .env}
+      COOKIE_SECURE: "true"
+      TZ: ${TZ:-Europe/London}
+    volumes:
+      - ./data/api:/app/data
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=32m,mode=1777
+    mem_limit: 800m
+    mem_reservation: 384m
+    memswap_limit: 800m
+    deploy:
+      resources:
+        limits:
+          memory: 800m
+          pids: 256
+        reservations:
+          memory: 384m
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    networks: [app]
+
+  web:
+    <<: *node-runtime
+    image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-web:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
+    environment:
+      API_BASE_URL: http://api:8080
+      SITE_IMAGE_TAG: ${IMAGE_TAG}
+      DISCORD_URL: ${DISCORD_URL:-https://discord.gg/pPgZqRS5b2}
+      INSTAGRAM_URL: ${INSTAGRAM_URL:-https://www.instagram.com/mmuminecraftsociety/}
+      TZ: ${TZ:-Europe/London}
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=32m,mode=1777
+      - /app/.next/cache:rw,noexec,nosuid,size=64m,mode=1777
+    mem_limit: 800m
+    mem_reservation: 256m
+    memswap_limit: 800m
+    deploy:
+      resources:
+        limits:
+          memory: 800m
+          pids: 256
+        reservations:
+          memory: 256m
+    depends_on:
+      api:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    networks: [app]
+
+  minecraft:
+    image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-mc:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
+    init: true
+    stdin_open: true
+    tty: true
+    environment:
+      EULA: "TRUE"
+      TYPE: FABRIC
+      VERSION: "26.2"
+      FABRIC_LOADER_VERSION: "0.19.3"
+      MODRINTH_PROJECTS: |-
+        fabric-api
+        lithium?
+        ferrite-core?
+        krypton?
+        c2me-fabric?
+        scalablelux?
+        servercore?
+        zfastnoise?
+      MODRINTH_DOWNLOAD_DEPENDENCIES: required
+      MEMORY: 1536M
+      INIT_MEMORY: 1G
+      USE_MEOWICE_FLAGS: "true"
+      ENABLE_ROLLING_LOGS: "false"
+      LOG_TIMESTAMP: "true"
+      CREATE_CONSOLE_IN_PIPE: "true"
+      OVERRIDE_SERVER_PROPERTIES: "false"
+      SKIP_SERVER_PROPERTIES: "true"
+      UID: ${PUID:-1000}
+      GID: ${PGID:-1000}
+      TZ: ${TZ:-Europe/London}
+      MOD_GRPC_HOST: 0.0.0.0
+      MOD_GRPC_PORT: "50052"
+      API_GRPC_TARGET: api:50051
+    ports:
+      - "${MINECRAFT_BIND:-0.0.0.0}:${MINECRAFT_PORT:-25565}:25565/tcp"
+    volumes:
+      - ./data/minecraft:/data
+    mem_limit: 2g
+    mem_reservation: 1g
+    memswap_limit: 2g
+    pids_limit: 512
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+          pids: 512
+        reservations:
+          memory: 1g
+    depends_on:
+      api:
+        condition: service_healthy
+        restart: true
+    security_opt:
+      - no-new-privileges:true
+    logging: *logging
+    restart: unless-stopped
+    stop_grace_period: 2m
+    networks: [app]
+
+  nginx:
+    image: nginx:stable-alpine
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    pids_limit: 64
+    ports:
+      - "80:8080/tcp"
+      - "443:8443/tcp"
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST:?deploy.sh must set PUBLIC_HOST}
+      NGINX_ENVSUBST_FILTER: ^PUBLIC_HOST$
+    volumes:
+      - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - /etc/letsencrypt/live/mmucraft:/etc/letsencrypt/live/mmucraft:ro
+      - /etc/letsencrypt/archive/mmucraft:/etc/letsencrypt/archive/mmucraft:ro
+    tmpfs:
+      - /etc/nginx/conf.d:rw,noexec,nosuid,size=1m,mode=755
+      - /var/cache/nginx:rw,noexec,nosuid,size=16m,mode=1777
+      - /var/run:rw,noexec,nosuid,size=1m,mode=1777
+    mem_limit: 64m
+    mem_reservation: 16m
+    memswap_limit: 64m
+    deploy:
+      resources:
+        limits:
+          memory: 64m
+          pids: 64
+        reservations:
+          memory: 16m
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    logging: *logging
+    restart: unless-stopped
+    networks: [app]
+
+networks:
+  app:
+    driver: bridge

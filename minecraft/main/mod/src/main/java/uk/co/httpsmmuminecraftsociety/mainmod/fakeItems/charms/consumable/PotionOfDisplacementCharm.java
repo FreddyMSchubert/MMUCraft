@@ -27,13 +27,13 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     }
 
     @Override
-    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
+    public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         String teleportPossibleTest = TeleportPotionUtils.checkTeleportable(player, level, 20, 16);
         if (!teleportPossibleTest.isEmpty()) {
             player.sendSystemMessage(Component.literal(teleportPossibleTest));
             player.stopUsingItem();
-            return;
+            return false;
         }
 
         BlockPos pos = findSafeTeleportPos(level, player.blockPosition());
@@ -52,6 +52,8 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         );
 
         player.fallDistance = 0.0F;
+        stack.consume(1, player);
+        return true;
     }
 
     private BlockPos findSafeTeleportPos(ServerLevel level, BlockPos fallback)

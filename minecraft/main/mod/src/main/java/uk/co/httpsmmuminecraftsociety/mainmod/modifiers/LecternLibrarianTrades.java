@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Optional;
 
 public final class LecternLibrarianTrades {
+    private static final int LECTERN_COPY_MAX_USES = 999_999;
+
     private LecternLibrarianTrades() {
     }
 
@@ -39,15 +41,16 @@ public final class LecternLibrarianTrades {
         }
 
         MerchantOffers offers = villager.getOffers();
-        offers.removeIf(LecternLibrarianTrades::isEnchantedBookOffer);
+        offers.removeIf(LecternLibrarianTrades::isLecternCopyOffer);
 
         getJobSiteEnchantedBook(villager, level)
                 .flatMap(book -> createCopyOffer(book, level, villager.getUUID().toString()))
                 .ifPresent(offer -> offers.add(0, offer));
     }
 
-    private static boolean isEnchantedBookOffer(MerchantOffer offer) {
-        return offer.getResult().is(Items.ENCHANTED_BOOK);
+    private static boolean isLecternCopyOffer(MerchantOffer offer) {
+        return offer.getResult().is(Items.ENCHANTED_BOOK)
+                && offer.getMaxUses() == LECTERN_COPY_MAX_USES;
     }
 
     private static Optional<ItemStack> getJobSiteEnchantedBook(Villager villager, ServerLevel level) {
@@ -94,7 +97,7 @@ public final class LecternLibrarianTrades {
                         : Optional.of(itemCost(costs.dupeItem())),
                 result,
                 0,
-                999999,
+                LECTERN_COPY_MAX_USES,
                 0,
                 0.0F
         ));

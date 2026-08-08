@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, Post } from '@nestjs/common'
+import { Controller, Get, Headers, Param, Post, Sse } from '@nestjs/common'
 import { AuthService } from '../../auth/auth.service'
 import { DailiesService } from './dailies.service'
 
@@ -21,12 +21,6 @@ export class DailiesController {
 		return this.dailies.claimLoginBonus(user)
 	}
 
-	@Post('item-submission/claim')
-	claimItemSubmission(@Headers('cookie') cookieHeader: string | undefined) {
-		const user = this.auth.requireSession(cookieHeader)
-		return this.dailies.claimItemSubmission(user)
-	}
-
 	@Post('advancement-bonus/claim')
 	claimAdvancementBonus(@Headers('cookie') cookieHeader: string | undefined) {
 		const user = this.auth.requireSession(cookieHeader)
@@ -37,5 +31,18 @@ export class DailiesController {
 	claimDailyCompletion(@Headers('cookie') cookieHeader: string | undefined) {
 		const user = this.auth.requireSession(cookieHeader)
 		return this.dailies.claimDailyCompletion(user)
+	}
+
+	@Post('tasks/:taskId/claim')
+	claimTask(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('taskId') taskId: string,
+	) {
+		return this.dailies.claimTask(this.auth.requireSession(cookieHeader), taskId)
+	}
+
+	@Sse('events')
+	events(@Headers('cookie') cookieHeader: string | undefined) {
+		return this.dailies.events(this.auth.requireSession(cookieHeader).id)
 	}
 }

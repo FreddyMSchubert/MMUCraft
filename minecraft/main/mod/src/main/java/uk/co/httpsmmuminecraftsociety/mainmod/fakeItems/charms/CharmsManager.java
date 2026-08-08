@@ -21,6 +21,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.InvisiCarrotCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfInsomniaCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfResonanceCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfReturningCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.*;
@@ -30,6 +31,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.ShopUnl
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Tuple;
 
 import java.util.*;
@@ -78,7 +82,8 @@ public class CharmsManager
             Map.entry(BackpackCharm.Tier.WITHERED.charmId(), new BackpackCharm(BackpackCharm.Tier.WITHERED.rows())),
             Map.entry(BackpackCharm.Tier.ENDLESS.charmId(), new BackpackCharm(BackpackCharm.Tier.ENDLESS.rows())),
             Map.entry(50, new KangarooBootsCharm()),
-            Map.entry(51, new ObamiumPyramidCharm())
+            Map.entry(51, new ObamiumPyramidCharm()),
+            Map.entry(52, new PotionOfResonanceCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);
@@ -171,13 +176,17 @@ public class CharmsManager
         int elapsedTicks = consumable.consumeTicks() - player.getUseItemRemainingTicks();
 
         if (player.getUseItemRemainingTicks() <= 1) {
-            callbacksCharm.onConsumeFinished(
+            boolean completed = callbacksCharm.onConsumeFinished(
                     activeStack,
                     player,
                     level,
                     elapsedTicks,
                     activeCharm.level()
             );
+            DailyCharm dailyCharm = DailyCharm.from(activeCharm.charm());
+            if (completed && dailyCharm != null) {
+                DailyTaskManager.record(player, DailyTaskEvent.charm(dailyCharm));
+            }
 
             player.stopUsingItem();
             return;

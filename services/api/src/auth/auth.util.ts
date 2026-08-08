@@ -1,7 +1,5 @@
 import { createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto'
 
-const MMU_EMAIL_DOMAINS = ['stu.mmu.ac.uk', 'mmu.ac.uk']
-
 export const AUTH_CODE_ITEMS = [
 	'Apple',
 	'Axe',
@@ -48,7 +46,8 @@ export function isAllowedEmail(email: string): boolean {
 	const parts = parseEmailParts(normalized)
 	if (!parts) return false
 
-	return MMU_EMAIL_DOMAINS.includes(parts.domain)
+	return parts.domain === 'mmu.ac.uk'
+		|| (parts.domain === 'stu.mmu.ac.uk' && /^\d+$/.test(parts.local))
 }
 
 export function isValidEmail(email: string): boolean {

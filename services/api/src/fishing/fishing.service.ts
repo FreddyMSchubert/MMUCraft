@@ -6,6 +6,8 @@ import { interval, map, merge, of, Subject } from 'rxjs'
 import { AuthenticatedUser } from '../auth/auth.service'
 import { DatabaseService, FishCatchRow, fishCatches, playerProfiles, users } from '../database/database.service'
 import { MinecraftIdentityService } from '../database/minecraft-identity.service'
+import { ASSETS } from '../assets'
+import { effectivePlayerColor } from '../players/player-color'
 
 const ITEM_ROOTS = [
 	join(process.cwd(), 'content', 'items'),
@@ -149,6 +151,7 @@ export class FishingService {
 				id: player.id,
 				minecraftUsername: player.minecraft_username,
 				pronouns: profilesById.get(player.id)?.pronouns ?? '',
+				color: effectivePlayerColor(player.minecraft_uuid, profilesById.get(player.id)?.color_hex),
 				avatarUrl: avatarUrl(player.minecraft_username),
 				caughtTotal: allCatches.filter((fishCatch) => fishCatch.user_id === player.id).length,
 			})),
@@ -162,8 +165,8 @@ export class FishingService {
 					facts: definition.facts,
 					iconUrl: definition.iconUrl,
 					catch: serializeCatch(selectedCatches.get(definition.id) ?? null),
-					serverLargest: serializeServerRecord(serverRows, playersById, 'largest'),
-					serverSmallest: serializeServerRecord(serverRows, playersById, 'smallest'),
+					serverLargest: serializeServerRecord(serverRows, playersById, profilesById, 'largest'),
+					serverSmallest: serializeServerRecord(serverRows, playersById, profilesById, 'smallest'),
 				}
 			}),
 		}
@@ -260,7 +263,8 @@ function serializeCatch(row: FishCatchRow | null) {
 
 function serializeServerRecord(
 	rows: FishCatchRow[],
-	players: Map<number, { id: number; minecraft_username: string }>,
+	players: Map<number, { id: number; minecraft_username: string; minecraft_uuid: string | null }>,
+	profiles: Map<number, { color_hex: string | null }>,
 	kind: 'largest' | 'smallest',
 ) {
 	const row = rows.reduce<FishCatchRow | null>((record, candidate) => {
@@ -278,6 +282,7 @@ function serializeServerRecord(
 		player: {
 			id: player.id,
 			minecraftUsername: player.minecraft_username,
+			color: effectivePlayerColor(player.minecraft_uuid, profiles.get(player.id)?.color_hex),
 			avatarUrl: avatarUrl(player.minecraft_username),
 		},
 	}
@@ -313,7 +318,7 @@ function vanillaFish(id: string, title: string, rarity: string, fact: string): F
 		rarity,
 		tags: [],
 		facts: [fact],
-		iconUrl: `/assets/mc_respack/assets/minecraft/textures/item/${textureName}.png`,
+		iconUrl: `${ASSETS.minecraft.vanilla}/textures/item/${textureName}.png`,
 		textureFilePath: null,
 	}
 }

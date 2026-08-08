@@ -1,12 +1,15 @@
 {
-  "type": "mainmod:fake_crafting_shapeless",
-  "ingredients": [
-    "minecraft:amethyst_shard",
-    "minecraft:amethyst_shard",
-    "minecraft:amethyst_shard",
-    "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
-    "minecraft:ender_pearl"
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " M ",
+    "MPM",
+    " E "
   ],
+  "key": {
+    "M": "minecraft:painting",
+    "P": "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
+    "E": "minecraft:ender_pearl"
+  },
   "result": {
     "stack": "mainmod:charm-potion-displacement",
     "count": 1

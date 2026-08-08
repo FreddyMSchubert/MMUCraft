@@ -7,8 +7,8 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 25,
-		"description": "Stores and compresses dabloons by crafting.",
+		"priceDabloons": 50,
+		"description": "Stores dabloons by crafting.",
 		"unlockWeight": 100
 	},
 	"charm": {
@@ -18,8 +18,9 @@
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Stores and compresses dabloons by crafting.",
+				"abilityStatusCurrent": "Stores dabloons by crafting.",
 				"abilityStatusRelative": "",
+				"dabloons": 0,
 				"upgradeIngredients": []
 			}
 		]

@@ -10,6 +10,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
 
 import java.util.ArrayList;
@@ -78,6 +79,8 @@ public record FakeItem(
                 feature.apply(stack);
             }
         }
+
+        FakeItems.wrapTooltip(stack);
 
         return stack;
     }

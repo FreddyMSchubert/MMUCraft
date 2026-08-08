@@ -1,0 +1,17 @@
+{
+	"title": "Chick Tower",
+	"id": "cosmetic-chick-tower",
+	"modelType": "cosmetic",
+	"rarity": "mythical",
+	"maxStackSize": 1,
+	"tooltips": [
+		"A brood of chicken siblings named: Shellton John, Scarlet Johenson, Jenna Ortegga, Meryl Peep, Timothee Chalomlette,  Egg Sheeran, Eggatha Christie, Yolko Ono, Jeffrey Eggstein, Mishell Obama, Freggy Mercury"
+	],
+	"shopPurchasable": {
+		"priceDabloons": 550,
+		"description": "Nobody knows how they're stuck together, but they're happy to stay that way.",
+		"unlockWeight": 1,
+		"unlockMessage": "Welcome to your life: the Chick Tower."
+	},
+	"equippableCosmetic": {}
+}

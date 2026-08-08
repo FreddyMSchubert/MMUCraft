@@ -1,0 +1,17 @@
+{
+	"title": "Chick Hat",
+	"id": "cosmetic-chick-basic",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"A very cheap cheap cosmetic"
+	],
+	"shopPurchasable": {
+		"priceDabloons": 25,
+		"description": "Unlock the chick cosmetic.",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Chick Hat."
+	},
+	"equippableCosmetic": {}
+}

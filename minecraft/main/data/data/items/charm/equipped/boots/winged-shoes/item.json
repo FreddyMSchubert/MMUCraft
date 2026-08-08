@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Lets you jump in mid-air once.",
-		"unlockWeight": 100,
+		"unlockWeight": 33,
 		"unlockMessage": "Unlocked charm: Winged Shoes Charm."
 	},
 	"charm": {

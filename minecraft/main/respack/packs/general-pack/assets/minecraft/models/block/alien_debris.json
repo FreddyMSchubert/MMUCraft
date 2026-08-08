@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "minecraft:block/alien_debris"
+    "end": "general-pack:block/alien_debris_top",
+    "side": "general-pack:block/alien_debris_side"
   }
 }

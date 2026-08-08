@@ -197,6 +197,7 @@ export class CharmForgeRenderer {
 		positions.needsUpdate = true
 
 		if (enchantProgress >= 1 && this.enchantResolve) {
+			this.ingredientRoot.visible = false
 			this.enchantResolve()
 			this.enchantResolve = null
 		}

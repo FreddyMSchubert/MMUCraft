@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
 import { randomUUID } from 'node:crypto'
 import { eq } from 'drizzle-orm'
@@ -113,6 +113,7 @@ export interface PlayerSummary {
 	id: number
 	minecraftUsername: string
 	isCurrentUser: boolean
+	canEditProfile: boolean
 	isMember: boolean
 	isCommittee: boolean
 	isExternal: boolean
@@ -316,7 +317,7 @@ export class PlayersService {
 		const userRows = this.database.connection.select().from(users).all()
 			.sort((left, right) => left.minecraft_username.localeCompare(right.minecraft_username, 'en', { sensitivity: 'base' }))
 
-		const players = await Promise.all(userRows.map((user) => this.serializePlayer(user, viewer.id, true)))
+		const players = await Promise.all(userRows.map((user) => this.serializePlayer(user, viewer, true)))
 
 		return {
 			currentUserId: viewer.id,
@@ -339,16 +340,30 @@ export class PlayersService {
 		return {
 			currentUserId: viewer.id,
 			statOptions: this.getStatOptions([this.getStats(user.id)]),
-			player: await this.serializePlayer(user, viewer.id, true),
+			player: await this.serializePlayer(user, viewer, true),
 		}
 	}
 
 	async updateOwnProfile(user: AuthenticatedUser, input: Record<string, unknown>) {
+		return await this.updateProfile(user, String(user.id), input)
+	}
+
+	async updateProfile(viewer: AuthenticatedUser, userIdInput: string, input: Record<string, unknown>) {
+		const userId = Number(userIdInput)
+		if (!Number.isInteger(userId) || userId <= 0) {
+			throw new NotFoundException('Player not found')
+		}
+		if (userId !== viewer.id && !viewer.isCommittee) {
+			throw new ForbiddenException('Committee access is required to edit another player profile')
+		}
+		const target = this.findUserById(userId)
+		if (!target) throw new NotFoundException('Player not found')
+
 		const now = Date.now()
 		const profile = this.normalizeProfileInput(input)
 
 		const values = {
-			user_id: user.id,
+			user_id: target.id,
 			preferred_name: profile.preferredName,
 			pronouns: profile.pronouns,
 			course_year: profile.courseYear,
@@ -364,8 +379,8 @@ export class PlayersService {
 			.onConflictDoUpdate({ target: playerProfiles.user_id, set: values })
 			.run()
 
-		const savedProfile = this.getProfile(user.id)
-		const minecraftUuid = this.findUserById(user.id)?.minecraft_uuid
+		const savedProfile = this.getProfile(target.id)
+		const minecraftUuid = target.minecraft_uuid
 		if (minecraftUuid) {
 			await this.applyPlayerColor(minecraftUuid, savedProfile.color).catch((error) => {
 				this.logger.warn(`Could not immediately synchronize player color to Minecraft: ${String(error)}`)
@@ -510,7 +525,7 @@ export class PlayersService {
 		}
 	}
 
-	private async serializePlayer(user: UserRow, currentUserId: number, includeMojangProfile: boolean): Promise<PlayerSummary> {
+	private async serializePlayer(user: UserRow, viewer: AuthenticatedUser, includeMojangProfile: boolean): Promise<PlayerSummary> {
 		let stats = this.getStats(user.id)
 		if (includeMojangProfile) {
 			stats = await this.ensureMojangProfile(user, stats)
@@ -520,7 +535,8 @@ export class PlayersService {
 		return {
 			id: user.id,
 			minecraftUsername: user.minecraft_username,
-			isCurrentUser: user.id === currentUserId,
+			isCurrentUser: user.id === viewer.id,
+			canEditProfile: user.id === viewer.id || viewer.isCommittee,
 			isMember: user.is_member === 1,
 			isCommittee: user.is_committee === 1,
 			isExternal: user.responsible_user_id !== null,

@@ -3333,6 +3333,7 @@ a {
 
 .giftCodeForm label,
 .emailWhitelistForm label,
+.playerBanForm > label,
 .redeemForm {
 	display: grid;
 	gap: 6px;
@@ -3340,6 +3341,8 @@ a {
 
 .giftCodeForm input,
 .emailWhitelistForm input,
+.playerBanForm input:not([type="radio"]),
+.playerBanForm select,
 .redeemForm input {
 	width: 100%;
 	min-width: 0;
@@ -3393,6 +3396,7 @@ a {
 
 .giftCodeForm button,
 .emailWhitelistForm button,
+.playerBanForm button,
 .redeemForm button {
 	padding: 10px 14px;
 	border: 0;
@@ -3412,7 +3416,40 @@ a {
 	flex: 1;
 }
 
-.emailWhitelistForm select {
+.playerBanForm {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	align-items: end;
+}
+
+.playerBanForm fieldset {
+	display: flex;
+	gap: 14px;
+	min-width: 0;
+	margin: 0;
+	padding: 9px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 7px;
+}
+
+.playerBanForm fieldset label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.playerBanForm button {
+	grid-column: 1 / -1;
+}
+
+@media (max-width: 800px) {
+	.playerBanForm { grid-template-columns: 1fr; }
+}
+
+.emailWhitelistForm select,
+.playerBanForm select,
+.playerBanForm input {
 	color-scheme: dark;
 }
 

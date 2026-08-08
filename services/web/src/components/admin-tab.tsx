@@ -59,6 +59,15 @@ interface AdminClaim {
 	color: string
 }
 
+interface ActivePlayerBan {
+	userId: number
+	minecraftUsername: string
+	color: string
+	bannedByMinecraftUsername: string
+	expiresAtUnixMs: number | null
+	createdAtUnixMs: number
+}
+
 const PAGE_SIZE = 42
 
 const CODE_ADJECTIVES = [
@@ -70,7 +79,7 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
-	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'gifts' ? section : 'members'
+	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
 	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
@@ -78,8 +87,12 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [claims, setClaims] = useState<AdminClaim[]>([])
 	const [claimsHaveMore, setClaimsHaveMore] = useState(false)
 	const [whitelistedEmails, setWhitelistedEmails] = useState<WhitelistedEmail[]>([])
+	const [activePlayerBans, setActivePlayerBans] = useState<ActivePlayerBan[]>([])
 	const [whitelistEmail, setWhitelistEmail] = useState('')
 	const [responsibleUsername, setResponsibleUsername] = useState('')
+	const [banPlayerId, setBanPlayerId] = useState('')
+	const [banMode, setBanMode] = useState<'temporary' | 'permanent'>('temporary')
+	const [timeoutEndsAt, setTimeoutEndsAt] = useState('')
 	const [suggestion, setSuggestion] = useState('enchanted-pickaxe')
 	const [code, setCode] = useState('')
 	const [amount, setAmount] = useState('')
@@ -92,28 +105,32 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [loadingMore, setLoadingMore] = useState<'signins' | 'claims' | null>(null)
 	const [creating, setCreating] = useState(false)
 	const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
+	const [updatingBan, setUpdatingBan] = useState(false)
 	const [error, setError] = useState('')
 	const [message, setMessage] = useState<ReactNode>('')
 
 	const load = useCallback(async () => {
-		const [playersResponse, codesResponse, signinsResponse, claimsResponse, whitelistResponse] = await Promise.all([
+		const [playersResponse, codesResponse, signinsResponse, claimsResponse, whitelistResponse, bansResponse] = await Promise.all([
 			fetch('/api/admin/players', { cache: 'no-store' }),
 			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
 			fetch(`/api/admin/signins?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch(`/api/admin/claims?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch('/api/admin/email-whitelist', { cache: 'no-store' }),
+			fetch('/api/admin/player-bans', { cache: 'no-store' }),
 		])
 		const playersBody = await playersResponse.json().catch(() => null)
 		const codesBody = await codesResponse.json().catch(() => null)
 		const signinsBody = await signinsResponse.json().catch(() => null)
 		const claimsBody = await claimsResponse.json().catch(() => null)
 		const whitelistBody = await whitelistResponse.json().catch(() => null)
+		const bansBody = await bansResponse.json().catch(() => null)
 
 		if (!playersResponse.ok) throw new Error(apiMessage(playersBody, 'Failed to load the member list'))
 		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'))
 		if (!signinsResponse.ok) throw new Error(apiMessage(signinsBody, 'Failed to load signins'))
 		if (!claimsResponse.ok) throw new Error(apiMessage(claimsBody, 'Failed to load claims'))
 		if (!whitelistResponse.ok) throw new Error(apiMessage(whitelistBody, 'Failed to load the email whitelist'))
+		if (!bansResponse.ok) throw new Error(apiMessage(bansBody, 'Failed to load player bans'))
 
 		setPlayers(playersBody.players as AdminPlayer[])
 		setGiftCodes(codesBody.giftCodes as GiftCode[])
@@ -122,6 +139,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		setClaims(claimsBody.claims as AdminClaim[])
 		setClaimsHaveMore(Boolean(claimsBody.hasMore))
 		setWhitelistedEmails(whitelistBody.entries as WhitelistedEmail[])
+		setActivePlayerBans(bansBody.bans as ActivePlayerBan[])
 	}, [])
 
 	useEffect(() => {
@@ -295,6 +313,67 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		}
 	}
 
+	function applyPlayerBan(event: FormEvent) {
+		event.preventDefault()
+		const player = players.find((candidate) => candidate.id === Number(banPlayerId))
+		if (!player) {
+			setError('Select a player')
+			return
+		}
+		const expiresAtUnixMs = banMode === 'temporary' ? new Date(timeoutEndsAt).getTime() : null
+		if (expiresAtUnixMs !== null && (!Number.isFinite(expiresAtUnixMs) || expiresAtUnixMs <= Date.now())) {
+			setError('Select a timeout date and time in the future')
+			return
+		}
+
+		const restriction = banMode === 'permanent' ? 'permanently ban' : `put in timeout until ${formatDateTime(expiresAtUnixMs as number)}`
+		if (!window.confirm(`Warning 1 of 3: ${player.minecraftUsername} will be signed out everywhere and unable to sign in. Continue?`)) return
+		if (!window.confirm(`Warning 2 of 3: ${player.minecraftUsername} will be blacklisted from Minecraft. Check that you selected the correct player and any related external accounts. Continue?`)) return
+		if (!window.confirm(`Warning 3 of 3: Apply this action and ${restriction} ${player.minecraftUsername}?`)) return
+
+		setUpdatingBan(true)
+		setError('')
+		setMessage('')
+		void (async () => {
+			try {
+				const response = await fetch('/api/admin/player-bans', {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({ userId: player.id, expiresAtUnixMs }),
+				})
+				const body = await response.json().catch(() => null)
+				if (!response.ok) throw new Error(apiMessage(body, 'Failed to apply the ban or timeout'))
+
+				setBanPlayerId('')
+				setTimeoutEndsAt('')
+				setMessage(<><PlayerName name={player.minecraftUsername} color={player.color} /> was {banMode === 'permanent' ? 'permanently banned' : 'put in timeout'}.{body.minecraftSynchronized ? '' : ' Minecraft will synchronize when the player next attempts to join.'}</>)
+				await load()
+			} catch (caught) {
+				setError(errorMessage(caught, 'Failed to apply the ban or timeout'))
+			} finally {
+				setUpdatingBan(false)
+			}
+		})()
+	}
+
+	async function removePlayerBan(ban: ActivePlayerBan) {
+		if (!window.confirm(`Remove the ban or timeout for ${ban.minecraftUsername}?`)) return
+		setUpdatingBan(true)
+		setError('')
+		setMessage('')
+		try {
+			const response = await fetch(`/api/admin/player-bans/${ban.userId}`, { method: 'DELETE' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to remove the ban or timeout'))
+			setActivePlayerBans((current) => current.filter((candidate) => candidate.userId !== ban.userId))
+			setMessage(<><PlayerName name={ban.minecraftUsername} color={ban.color} /> can sign in and join again.{body.minecraftSynchronized ? '' : ' Minecraft will synchronize when the player next attempts to join.'}</>)
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to remove the ban or timeout'))
+		} finally {
+			setUpdatingBan(false)
+		}
+	}
+
 	async function loadMoreSignins() {
 		setLoadingMore('signins')
 		setError('')
@@ -377,6 +456,12 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					href="/play/admin/gifts"
 				>
 					Gift codes
+				</Link>
+				<Link
+					className={activeSection === 'bans' ? 'active' : ''}
+					href="/play/admin/bans"
+				>
+					Ban / timeout
 				</Link>
 			</nav>
 
@@ -571,6 +656,63 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 									</tr>
 								))}
 								{whitelistedEmails.length === 0 && <tr><td colSpan={5}>No extra email addresses are whitelisted.</td></tr>}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			)}
+
+			{activeSection === 'bans' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader">
+						<h3>Ban / timeout a player</h3>
+						<p>Putting a player in timeout temporarily or banning them permanently has the following effects during that time period:</p>
+						<ul>
+							<li>They are signed out from the website on all devices.</li>
+							<li>They can no longer sign in on any devices.</li>
+							<li>They are added to the server blacklist, making it impossible for them to join.</li>
+						</ul>
+						<p>If you are banning an external player, you should also ban / timeout the player responsible for them (see this on the profiles / on the email whitelist tab) and then all the other externals that player was responsible for.</p>
+					</div>
+
+					<form className="playerBanForm" onSubmit={applyPlayerBan}>
+						<label>
+							Player
+							<select value={banPlayerId} onChange={(event) => setBanPlayerId(event.target.value)} required>
+								<option value="">Select a player</option>
+								{players.map((player) => (
+									<option className="playerName" style={playerNameStyle(player.color)} key={player.id} value={player.id}>
+										{player.minecraftUsername}{player.isExternal ? ' (external)' : ''}
+									</option>
+								))}
+							</select>
+						</label>
+						<fieldset>
+							<legend>Duration</legend>
+							<label><input type="radio" name="banMode" checked={banMode === 'temporary'} onChange={() => setBanMode('temporary')} /> Temporary timeout</label>
+							<label><input type="radio" name="banMode" checked={banMode === 'permanent'} onChange={() => setBanMode('permanent')} /> Permanent ban</label>
+						</fieldset>
+						<label>
+							Timeout ends
+							<input type="datetime-local" value={timeoutEndsAt} onChange={(event) => setTimeoutEndsAt(event.target.value)} disabled={banMode === 'permanent'} required={banMode === 'temporary'} />
+						</label>
+						<button disabled={updatingBan}>{updatingBan ? 'Applying...' : 'Apply ban / timeout'}</button>
+					</form>
+
+					<div className="adminTableWrap">
+						<table className="adminTable">
+							<thead><tr><th>Player</th><th>Restriction</th><th>Applied by</th><th>Applied</th><th></th></tr></thead>
+							<tbody>
+								{activePlayerBans.map((ban) => (
+									<tr key={ban.userId}>
+										<td><PlayerName name={ban.minecraftUsername} color={ban.color} /></td>
+										<td>{ban.expiresAtUnixMs === null ? 'Permanent ban' : `Timeout until ${formatDateTime(ban.expiresAtUnixMs)}`}</td>
+										<td>{ban.bannedByMinecraftUsername}</td>
+										<td>{formatDateTime(ban.createdAtUnixMs)}</td>
+										<td><button type="button" disabled={updatingBan} onClick={() => void removePlayerBan(ban)}>Remove</button></td>
+									</tr>
+								))}
+								{activePlayerBans.length === 0 && <tr><td colSpan={5}>No players are banned or in timeout.</td></tr>}
 							</tbody>
 						</table>
 					</div>

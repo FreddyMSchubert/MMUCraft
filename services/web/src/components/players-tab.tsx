@@ -69,6 +69,7 @@ interface PlayerSummary {
 	id: number
 	minecraftUsername: string
 	isCurrentUser: boolean
+	canEditProfile: boolean
 	isMember: boolean
 	isCommittee: boolean
 	isExternal: boolean
@@ -365,7 +366,7 @@ function PlayerProfilePanel({
 					<h4><PlayerName name={player.minecraftUsername} color={previewColor} /></h4>
 					<ProfileFacts player={player} />
 				</div>
-				{player.isCurrentUser && (
+				{player.canEditProfile && (
 					<button type="button" onClick={() => {
 						setPreviewColor(player.profile.color)
 						setEditing((current) => !current)
@@ -375,7 +376,7 @@ function PlayerProfilePanel({
 				)}
 			</div>
 
-			{editing && player.isCurrentUser ? (
+			{editing && player.canEditProfile ? (
 				<PlayerProfileForm
 					player={player}
 					onCancel={() => {
@@ -464,7 +465,7 @@ function PlayerProfileForm({
 		onError('')
 
 		try {
-			const response = await fetch('/api/players/me/profile', {
+			const response = await fetch(`/api/players/${player.id}/profile`, {
 				method: 'PATCH',
 				headers: {
 					'content-type': 'application/json',

@@ -3,6 +3,7 @@ process.env.SIGNUP_ALLOWLIST_PATH ??= require('node:path').join(__dirname, 'sign
 const { AUTH_CODE_ITEMS, createAuthCode, isAllowedEmail, isAuthRequestActive } = require('../dist/auth/auth.util')
 const { AuthService } = require('../dist/auth/auth.service')
 const { PlayerBansService } = require('../dist/auth/player-bans.service')
+const { PlayersService } = require('../dist/players/players.service')
 const { DatabaseService, sessions, users } = require('../dist/database/database.service')
 
 const request = { active_code: '123456', completed_at_unix_ms: null, expires_at_unix_ms: 2000 }
@@ -79,6 +80,22 @@ async function checkFlows() {
 		rules_accepted_at_unix_ms: now,
 		created_at_unix_ms: now,
 	}).returning({ id: users.id }).get()
+	const managedPlayer = database.connection.insert(users).values({
+		email: 'managed@mmu.ac.uk',
+		minecraft_username: 'ManagedPlayer',
+		whitelisted_at_unix_ms: now,
+		rules_accepted_at_unix_ms: now,
+		created_at_unix_ms: now,
+	}).returning({ id: users.id }).get()
+	const players = new PlayersService(database, {}, {}, {})
+	await assert.rejects(
+		players.updateProfile({ id: member.id, isCommittee: false }, String(managedPlayer.id), {}),
+		/Committee access is required/,
+	)
+	assert.equal((await players.updateProfile({ id: admin.id, isCommittee: true }, String(managedPlayer.id), {
+		preferredName: 'Updated by admin',
+		color: null,
+	})).profile.preferredName, 'Updated by admin')
 	await auth.applyPlayerBan({ id: admin.id }, member.id, null)
 	assert.equal(database.connection.select().from(sessions).all().length, 0)
 	await assert.rejects(auth.signIn('member@stu.mmu.ac.uk'), /permanently banned/)

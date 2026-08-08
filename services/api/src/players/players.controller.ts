@@ -24,6 +24,16 @@ export class PlayersController {
 		return this.players.updateOwnProfile(user, body ?? {})
 	}
 
+	@Patch(':userId/profile')
+	updateProfile(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('userId') userId: string,
+		@Body() body: Record<string, unknown> | undefined,
+	) {
+		const user = this.auth.requireSession(cookieHeader)
+		return this.players.updateProfile(user, userId, body ?? {})
+	}
+
 	@Get(':userId')
 	getPlayer(
 		@Headers('cookie') cookieHeader: string | undefined,

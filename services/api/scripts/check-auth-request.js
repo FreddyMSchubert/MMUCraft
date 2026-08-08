@@ -1,7 +1,9 @@
 const assert = require('node:assert/strict')
+process.env.SIGNUP_ALLOWLIST_PATH ??= require('node:path').join(__dirname, 'signup-allowlist.txt')
 const { AUTH_CODE_ITEMS, createAuthCode, isAllowedEmail, isAuthRequestActive } = require('../dist/auth/auth.util')
 const { AuthService } = require('../dist/auth/auth.service')
-const { DatabaseService, users } = require('../dist/database/database.service')
+const { PlayerBansService } = require('../dist/auth/player-bans.service')
+const { DatabaseService, sessions, users } = require('../dist/database/database.service')
 
 const request = { active_code: '123456', completed_at_unix_ms: null, expires_at_unix_ms: 2000 }
 assert.equal(isAuthRequestActive(request, 1000), true)
@@ -28,11 +30,14 @@ async function checkFlows() {
 	let pendingJoin
 	let pendingJoinUpdates = 0
 	const grpc = {
+		blacklistPlayer: async () => undefined,
 		purchaseExternalPlayerInvite: async () => ({ purchased: true, balance_dabloons: 900 }),
 		removePendingJoin: async () => undefined,
+		unblacklistPlayer: async () => undefined,
 		upsertPendingJoin: async (request) => { pendingJoin = request; pendingJoinUpdates++ },
 	}
-	const auth = new AuthService(database, grpc)
+	const bans = new PlayerBansService(database)
+	const auth = new AuthService(database, grpc, bans)
 	const now = Date.now()
 
 	const member = database.connection.insert(users).values({
@@ -60,10 +65,26 @@ async function checkFlows() {
 	let signinRequest = auth.listAuthRequests().requests[0]
 	assert.equal(signinRequest.status, 'active')
 	assertAuthCode(signinRequest.code)
-	assert.ok(auth.verifySignIn(signin.flowId, signinRequest.code).token)
+	assert.ok((await auth.verifySignIn(signin.flowId, signinRequest.code)).token)
 	signinRequest = auth.listAuthRequests().requests[0]
 	assert.equal(signinRequest.status, 'verified')
 	assert.equal(signinRequest.code, null)
+
+	const admin = database.connection.insert(users).values({
+		email: 'admin@mmu.ac.uk',
+		minecraft_uuid: '1123456789abcdef0123456789abcdef',
+		minecraft_username: 'Admin',
+		is_committee: 1,
+		whitelisted_at_unix_ms: now,
+		rules_accepted_at_unix_ms: now,
+		created_at_unix_ms: now,
+	}).returning({ id: users.id }).get()
+	await auth.applyPlayerBan({ id: admin.id }, member.id, null)
+	assert.equal(database.connection.select().from(sessions).all().length, 0)
+	await assert.rejects(auth.signIn('member@stu.mmu.ac.uk'), /permanently banned/)
+	await auth.removePlayerBan(String(member.id))
+	bans.set(member.id, admin.id, now - 1_000, now - 2_000)
+	assert.equal((await auth.signIn('member@stu.mmu.ac.uk')).timeoutEnded, true)
 
 	const signup = await auth.createSignup('12345678@stu.mmu.ac.uk')
 	assert.equal(signup.delivery, 'manual')

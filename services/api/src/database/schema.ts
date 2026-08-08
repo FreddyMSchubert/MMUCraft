@@ -182,6 +182,15 @@ export const dailyAdvancementTargets = sqliteTable('daily_advancement_targets', 
 	index('daily_advancement_targets_user_id_idx').on(table.user_id),
 ])
 
+export const playerBans = sqliteTable('player_bans', {
+	user_id: integer('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
+	banned_by_user_id: integer('banned_by_user_id').notNull().references(() => users.id),
+	expires_at_unix_ms: integer('expires_at_unix_ms'),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+}, (table) => [
+	check('player_bans_expiry_check', sql`${table.expires_at_unix_ms} is null or ${table.expires_at_unix_ms} > ${table.created_at_unix_ms}`),
+])
+
 export const dailyTasks = sqliteTable('daily_tasks', {
 	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 	period_key: text('period_key').notNull(),
@@ -223,6 +232,7 @@ export const giftCodeRedemptions = sqliteTable('gift_code_redemptions', {
 
 export type UserRow = typeof users.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
+export type PlayerBanRow = typeof playerBans.$inferSelect
 export type AuthRequestRow = typeof authRequests.$inferSelect
 export type EmailWhitelistRow = typeof emailWhitelist.$inferSelect
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect
@@ -241,6 +251,7 @@ export type GiftCodeRow = typeof giftCodes.$inferSelect
 export const schema = {
 	users,
 	sessions,
+	playerBans,
 	authRequests,
 	emailWhitelist,
 	playerProfiles,

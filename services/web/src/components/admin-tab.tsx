@@ -549,7 +549,9 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 							>
 								<option value="">Select a player</option>
 								{players.map((player) => (
-									<option className="playerName" style={playerNameStyle(player.color)} key={player.id} value={player.minecraftUsername} disabled={player.isExternal} />
+									<option className="playerName" style={playerNameStyle(player.color)} key={player.id} value={player.minecraftUsername} disabled={player.isExternal}>
+										{player.minecraftUsername}
+									</option>
 								))}
 							</select>
 						</label>

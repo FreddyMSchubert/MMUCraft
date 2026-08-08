@@ -6,6 +6,7 @@ import { AuthenticatedUser } from '../../auth/auth.service'
 import { DatabaseService, dailyAdvancementTargets, dailyClaims, dailyTasks, users } from '../../database/database.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { PlayersService } from '../../players/players.service'
+import { ShopService } from '../shop/shop.service'
 
 const LOGIN_BONUS_TASK_ID = 'login_bonus'
 const LOGIN_BONUS_REWARDS = [3, 5, 6, 7, 8, 10] as const
@@ -59,6 +60,7 @@ export class DailiesService {
 		private readonly database: DatabaseService,
 		private readonly grpcServer: GrpcServerService,
 		private readonly players: PlayersService,
+		private readonly shop: ShopService,
 	) { }
 
 	async getStatus(user: AuthenticatedUser) {
@@ -109,7 +111,10 @@ export class DailiesService {
 					claimed: this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey),
 					current: this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey) ? 1 : 0,
 					max: -1,
-					advancement: advancementTask.target,
+					advancement: advancementTask.target ? {
+						...advancementTask.target,
+						...this.shop.getItemRenderAsset(advancementTask.target.iconItem),
+					} : null,
 					unavailableMessage: advancementTask.target ? undefined : advancementTask.message,
 				},
 				...generatedTasks.map((task) => ({

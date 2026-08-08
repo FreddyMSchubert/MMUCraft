@@ -609,6 +609,7 @@ function qualifyModelTextures(model: MinecraftModel, namespace: string, assetRoo
 	const textures = Object.fromEntries(Object.entries(model.textures ?? {}).map(([key, value]) => {
 		if (value.startsWith('#') || /^(?:https?:|\/)/.test(value)) return [key, value]
 		const texture = parseResourceId(value, namespace)
+		if (texture.namespace !== 'minecraft') return [key, '']
 		return [key, `${assetRoot}/${texture.namespace}/textures/${texture.path}.png`]
 	}))
 	return { ...model, textures }
@@ -672,6 +673,7 @@ async function resolveModelParents(
 	if (!assetRoot || !model.parent || model.parent.startsWith('builtin/')) return child
 
 	const parentId = parseResourceId(model.parent, namespace)
+	if (parentId.namespace !== 'minecraft') return child
 	const parentPath = parentId.path.includes('/') ? parentId.path : `item/${parentId.path}`
 	const key = `${parentId.namespace}:${parentPath}`
 	if (seen.has(key)) return child
@@ -695,7 +697,7 @@ async function resolveItemSource(source: MinecraftItemSource): Promise<ResolvedI
 	let model = source.model ?? (source.modelUrl ? await fetchModel(source.modelUrl) : null)
 	let modelNamespace = itemId.namespace
 
-	if (!model && assetRoot && source.itemId) {
+	if (!model && assetRoot && source.itemId && itemId.namespace === 'minecraft') {
 		const definition = await fetchItemDefinition(`${assetRoot}/${itemId.namespace}/items/${itemId.path}.json`)
 		const modelIdValue = itemDefinitionModel(definition)
 		if (modelIdValue) {
@@ -703,7 +705,8 @@ async function resolveItemSource(source: MinecraftItemSource): Promise<ResolvedI
 			modelNamespace = modelId.namespace
 			model = await fetchModel(`${assetRoot}/${modelId.namespace}/models/${modelId.path}.json`)
 		} else if (!definition) {
-			model = await fetchModel(`${assetRoot}/${itemId.namespace}/models/item/${itemId.path}.json`)
+			model = await fetchModel(`${assetRoot}/${itemId.namespace}/models/block/${itemId.path}.json`)
+				?? await fetchModel(`${assetRoot}/${itemId.namespace}/models/item/${itemId.path}.json`)
 		}
 	}
 
@@ -715,7 +718,7 @@ async function resolveItemSource(source: MinecraftItemSource): Promise<ResolvedI
 	}
 
 	const fallbackTexture = source.textureUrl
-		?? (assetRoot && source.itemId ? `${assetRoot}/${itemId.namespace}/textures/item/${itemId.path}.png` : null)
+		?? (assetRoot && source.itemId && itemId.namespace === 'minecraft' ? `${assetRoot}/${itemId.namespace}/textures/item/${itemId.path}.png` : null)
 	return {
 		fallbackTexture,
 		model: { parent: 'builtin/generated', textures: fallbackTexture ? { layer0: fallbackTexture } : {} },

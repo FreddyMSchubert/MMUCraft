@@ -82,9 +82,6 @@ public final class UnlockBookLoot {
             addFakeItem("charm-fashion-book", itemStacks);
         if (availability.hasKnowledgeToUnlock() && Math.random() < knowledgeChance)
             addFakeItem("charm-knowledge-book", itemStacks);
-
-        if (Math.random() < 0.42f && availability.hasCosmeticsToUnlock())
-            addFakeItem("charm-fashion-book", itemStacks);
     }
 
     public static void updateAvailability(ServerPlayer player, UnlockNextKnowledgeResponse response) {

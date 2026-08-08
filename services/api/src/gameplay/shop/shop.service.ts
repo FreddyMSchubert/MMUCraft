@@ -931,9 +931,11 @@ export class ShopService {
 		}
 
 		if (itemId === 'charm-wallet') {
-			const emptyWalletTexture = join(root, 'wallets', 'wallet-0', 'texture.png')
-			if (existsSync(emptyWalletTexture)) {
-				return emptyWalletTexture
+			for (const emptyWalletTexture of [
+				join(root, 'wallets', 'wallet-0', 'texture.png'),
+				join(root, '..', '..', '..', 'respack', 'packs', 'general-pack', 'assets', 'general-pack', 'textures', 'item', 'wallet', 'wallet-0.png'),
+			]) {
+				if (existsSync(emptyWalletTexture)) return emptyWalletTexture
 			}
 		}
 
@@ -1027,6 +1029,14 @@ export class ShopService {
 	private renderAssetForGameId(itemId: string, catalog: CatalogItem[]) {
 		if (!itemId.startsWith('mainmod:')) return null
 		return this.renderAssetForItem(itemId.slice('mainmod:'.length), catalog)
+	}
+
+	getItemRenderAsset(itemId: string) {
+		const item = this.renderAssetForGameId(itemId, this.loadCatalog().items)
+		return {
+			modelUrl: item?.modelUrl ?? null,
+			textureUrl: item?.textureUrl ?? null,
+		}
 	}
 
 	private renderAssetForItem(itemId: string, catalog: CatalogItem[]): ItemRenderAsset | null {

@@ -5,6 +5,7 @@ import { GrpcServerService } from '../grpc/grpc-server.service'
 import { UnaryCallback } from '../grpc/grpc.types'
 import { isValidMinecraftUsername } from './auth.util'
 import { signupFlows } from './signup-flow'
+import { PlayerBansService } from './player-bans.service'
 
 interface AuthProtoRoot {
 	mcstack: {
@@ -28,6 +29,7 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 	constructor(
 		private readonly grpcServer: GrpcServerService,
 		private readonly identities: MinecraftIdentityService,
+		private readonly bans: PlayerBansService,
 	) { }
 
 	onModuleInit() {
@@ -48,6 +50,7 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 		this.grpcServer.addService(authProto.mcstack.auth.v1.AuthEvents.service, {
 			Ping: this.ping.bind(this),
 			ReportLoginAttempt: this.reportLoginAttempt.bind(this),
+			CheckPlayerBan: this.checkPlayerBan.bind(this),
 		})
 	}
 
@@ -71,6 +74,20 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 	async whitelistPlayer(minecraftUsername: string): Promise<void> {
 		await this.callMod('WhitelistPlayer', {
 			minecraft_username: minecraftUsername,
+		})
+	}
+
+	async blacklistPlayer(minecraftUsername: string, uuid: string): Promise<void> {
+		await this.callMod('BlacklistPlayer', {
+			minecraft_username: minecraftUsername,
+			uuid,
+		})
+	}
+
+	async unblacklistPlayer(minecraftUsername: string, uuid: string): Promise<void> {
+		await this.callMod('UnblacklistPlayer', {
+			minecraft_username: minecraftUsername,
+			uuid,
 		})
 	}
 
@@ -154,6 +171,34 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 		)
 
 		callback(null, { received: true })
+	}
+
+	private checkPlayerBan(
+		call: grpc.ServerUnaryCall<{
+			minecraft_username?: string
+			uuid?: string
+		}, { banned: boolean; permanent: boolean; expires_at_unix_ms: number }>,
+		callback: UnaryCallback<{ banned: boolean; permanent: boolean; expires_at_unix_ms: number }>,
+	) {
+		const username = (call.request.minecraft_username ?? '').trim()
+		const uuid = normalizeMinecraftUuid(call.request.uuid ?? '')
+		if (!uuid || !isValidMinecraftUsername(username)) {
+			callback(null, { banned: false, permanent: false, expires_at_unix_ms: 0 })
+			return
+		}
+
+		const user = this.identities.resolveAndRefresh(uuid, username)
+		if (!user) {
+			callback(null, { banned: false, permanent: false, expires_at_unix_ms: 0 })
+			return
+		}
+
+		const ban = this.bans.resolve(user.id)
+		callback(null, {
+			banned: ban.active,
+			permanent: ban.active && ban.expiresAtUnixMs === null,
+			expires_at_unix_ms: ban.active ? ban.expiresAtUnixMs ?? 0 : 0,
+		})
 	}
 
 	private attachIdentityToPendingSignup(uuid: string, username: string) {

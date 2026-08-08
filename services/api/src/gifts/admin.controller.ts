@@ -57,6 +57,30 @@ export class AdminController {
 		return this.auth.listEmailWhitelist()
 	}
 
+	@Get('player-bans')
+	listPlayerBans(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.auth.listPlayerBans()
+	}
+
+	@Post('player-bans')
+	applyPlayerBan(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { userId?: unknown; expiresAtUnixMs?: unknown } | undefined,
+	) {
+		const admin = this.auth.requireCommitteeSession(cookieHeader)
+		return this.auth.applyPlayerBan(admin, body?.userId, body?.expiresAtUnixMs)
+	}
+
+	@Delete('player-bans/:userId')
+	removePlayerBan(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('userId') userId: string,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.auth.removePlayerBan(userId)
+	}
+
 	@Post('email-whitelist')
 	addEmailToWhitelist(
 		@Headers('cookie') cookieHeader: string | undefined,

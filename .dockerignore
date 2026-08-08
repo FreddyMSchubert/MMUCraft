@@ -12,7 +12,15 @@ third_party_licenses
 **/build
 **/dist
 minecraft/main/mod
-minecraft/main/respack
+minecraft/main/respack/**
+!minecraft/main/respack/packs/
+!minecraft/main/respack/packs/general-pack/
+!minecraft/main/respack/packs/general-pack/assets/
+!minecraft/main/respack/packs/general-pack/assets/general-pack/
+!minecraft/main/respack/packs/general-pack/assets/general-pack/textures/
+!minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/
+!minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/wallet/
+!minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/wallet/wallet-0.png
 minecraft/minigames
 services/api/data
 services/web/public/assets

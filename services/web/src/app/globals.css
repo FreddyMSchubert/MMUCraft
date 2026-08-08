@@ -3683,18 +3683,6 @@ a {
 	isolation: isolate;
 }
 
-.charmForgeStage::before {
-	position: absolute;
-	inset: 22px;
-	z-index: -1;
-	border: 1px solid rgba(212, 181, 255, 0.08);
-	border-radius: 50%;
-	background: repeating-conic-gradient(from 0deg, rgba(201, 163, 255, 0.18) 0 0.5deg, transparent 0.5deg 14deg);
-	content: '';
-	mask: radial-gradient(circle, transparent 0 63%, #000 64% 65%, transparent 66%);
-	animation: charmRuneTurn 48s linear infinite;
-}
-
 .charmForgeStage::after {
 	position: absolute;
 	inset: 0;
@@ -3909,7 +3897,6 @@ a {
 .charmForgeEmpty p { max-width: 540px; margin: 0; color: rgba(255, 255, 255, 0.58); }
 .charmRune { color: var(--forge-violet); font-size: 3.5rem; text-shadow: 0 0 28px currentColor; animation: charmRunePulse 2.4s ease-in-out infinite; }
 
-@keyframes charmRuneTurn { to { transform: rotate(360deg); } }
 @keyframes charmAuraBreathe {
 	50% { opacity: 0.65; transform: translate(-50%, -50%) scale(1.12); }
 }
@@ -3931,7 +3918,6 @@ a {
 
 	.charmForgeControls { display: grid; grid-template-columns: 1fr 1fr; }
 	.charmForgeStage { min-height: 430px; border-radius: 13px; }
-	.charmForgeStage::before { inset: 8px; }
 	.charmAbility { grid-template-columns: 1fr; }
 	.charmIngredientSection { padding: 13px; }
 	.charmIngredientGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -3947,7 +3933,6 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.charmForgeStage::before,
 	.charmForgeAura,
 	.charmRune { animation: none; }
 	.charmEnchantButton,

@@ -40,7 +40,7 @@ public final class AdvancementMoney {
             if (mappedReward != null) return mappedReward;
         }
 
-        return fallbackMoneyForExperience(experience);
+        return 0;
     }
 
     public static RewardCalculation rewardForAdvancement(
@@ -64,12 +64,6 @@ public final class AdvancementMoney {
         return ZonedDateTime.now(REWARD_TIME_ZONE)
                 .minusHours(REWARD_DAY_RESET_HOUR)
                 .getDayOfWeek() == DayOfWeek.SUNDAY;
-    }
-
-    private static int fallbackMoneyForExperience(int experience) {
-        int money = (int) Math.ceil(((double) experience * (double) experience / 600.0D) + 5.0D);
-        if (experience == 0) money = 3;
-        return money;
     }
 
     private static Map<String, Integer> loadAdvancementRewardsFromResource(ResourceManager resourceManager) {

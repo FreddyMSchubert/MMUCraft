@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "minecraft:block/enderite_block"
+    "end": "general-pack:block/enderite_block"
   }
 }

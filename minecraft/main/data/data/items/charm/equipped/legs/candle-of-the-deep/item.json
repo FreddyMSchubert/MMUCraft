@@ -10,8 +10,8 @@
 	"shopPurchasable": {
 		"priceDabloons": 90,
 		"description": "Gives you permanent night vision.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Candle of the Deep Charm."
+		"unlockWeight": 33,
+		"unlockMessage": "Unlocked charm: Candle of the Deep Charm. It gives permanent night vision."
 	},
 	"charm": {
 		"charmId": 8,
@@ -22,11 +22,18 @@
 				"level": 1,
 				"abilityStatusCurrent": "Gives you permanent night vision.",
 				"abilityStatusRelative": "",
-				"dabloons": 0,
+				"dabloons": 299,
 				"upgradeIngredients": [
 					"minecraft:torchflower",
-					"minecraft:glow_berries",
-					"minecraft:jack_o_lantern"
+					"minecraft:pearlescent_froglight",
+					"minecraft:jack_o_lantern",
+					"minecraft:glowstone",
+					"minecraft:glow_lichen",
+					"minecraft:glow_ink_sac",
+					"minecraft:copper_lantern",
+					"minecraft:lime_candle",
+					"minecraft:potion[minecraft:potion_contents=night_vision]=Potion of Night Vision",
+					"minecraft:splash_potion[minecraft:potion_contents=night_vision]=Potion of Night Vision"
 				]
 			}
 		]

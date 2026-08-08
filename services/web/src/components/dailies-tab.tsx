@@ -19,6 +19,8 @@ interface DailyTask {
 		title: string
 		tabTitle: string
 		iconItem: string
+		modelUrl: string | null
+		textureUrl: string | null
 		baseRewardDabloons: number
 		bonusRewardDabloons: number
 	} | null
@@ -189,7 +191,7 @@ export function DailiesTab() {
 							{task.id === 'advancement_bonus' ? (
 								task.advancement ? (
 									<div className="dailyAdvancement">
-										<MinecraftItemIcon className="dailyIcon dailyModelIcon" itemId={task.advancement.iconItem} />
+										<MinecraftItemIcon className="dailyIcon dailyModelIcon" itemId={task.advancement.iconItem} modelUrl={task.advancement.modelUrl} textureUrl={task.advancement.textureUrl} />
 										<div>
 											<p>{task.advancement.title}</p>
 											<p>Tab: {task.advancement.tabTitle}</p>

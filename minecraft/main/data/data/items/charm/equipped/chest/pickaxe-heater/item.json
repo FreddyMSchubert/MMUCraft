@@ -11,7 +11,7 @@
 		"priceDabloons": 90,
 		"description": "Mined block drops are converted into their furnace-smelted counterparts upon mining.",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm."
+		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm. It can smelt items immediately as you mine them."
 	},
 	"charm": {
 		"charmId": 43,
@@ -29,10 +29,6 @@
 					"minecraft:lava_bucket",
 					"minecraft:dried_kelp_block",
 					"minecraft:leaf_litter",
-					"minecraft:coal_block",
-					"minecraft:coal_block",
-					"minecraft:coal_block",
-					"minecraft:coal_block",
 					"minecraft:furnace"
 				]
 			},
@@ -49,6 +45,10 @@
 					"minecraft:magma_block",
 					"minecraft:magma_block",
 					"minecraft:smoker",
+					"minecraft:coal_block",
+					"minecraft:coal_block",
+					"minecraft:coal_block",
+					"minecraft:coal_block",
 					"minecraft:iron_block"
 				]
 			},

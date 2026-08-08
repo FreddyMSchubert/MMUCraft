@@ -1,0 +1,102 @@
+name: kubecraft
+
+x-logging: &logging
+  driver: local
+  options:
+    max-size: 20m
+    max-file: "5"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+      target: dev
+    env_file: services/api/.env
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8080
+      API_GRPC_HOST: 0.0.0.0
+      API_GRPC_PORT: 50051
+      MOD_GRPC_TARGET: minecraft:50052
+      DATABASE_URL: ./data/app.sqlite
+      DATABASE_MIGRATIONS_PATH: ./drizzle
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+      - "4983:4983"
+    volumes:
+      - ./services/api/src:/app/src
+      - ./services/api/drizzle:/app/drizzle
+      - ./services/api/drizzle.config.ts:/app/drizzle.config.ts
+      - ./services/api/tsconfig.json:/app/tsconfig.json
+      - ./services/web/public/knowledge:/app/content/knowledge
+      - ./minecraft/main/data/data/items:/app/content/items
+      - ./proto:/app/proto
+      - ./.dev/api:/app/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8080/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    logging: *logging
+    restart: unless-stopped
+
+  web:
+    build:
+      context: services/web
+      target: dev
+    environment:
+      API_BASE_URL: http://api:8080
+      SITE_IMAGE_TAG: dev
+      DISCORD_URL: ${DISCORD_URL:-https://discord.gg/pPgZqRS5b2}
+      INSTAGRAM_URL: ${INSTAGRAM_URL:-https://www.instagram.com/mmuminecraftsociety/}
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./services/web/src:/app/src
+      - ./services/web/public:/app/public
+      - ./services/web/next.config.ts:/app/next.config.ts
+      - ./services/web/tsconfig.json:/app/tsconfig.json
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    logging: *logging
+    restart: unless-stopped
+
+  minecraft:
+    profiles: [minecraft]
+    image: mcstack/minecraft-server:dev
+    build:
+      context: minecraft/main
+    stdin_open: true
+    tty: true
+    environment:
+      EULA: "TRUE"
+      TYPE: FABRIC
+      VERSION: "26.2"
+      MODRINTH_PROJECTS: fabric-api
+      MEMORY: 2G
+      INIT_MEMORY: 1G
+      OVERRIDE_SERVER_PROPERTIES: "false"
+      SKIP_SERVER_PROPERTIES: "true"
+      COPY_CONFIG_DEST: /data
+      SYNC_SKIP_NEWER_IN_DESTINATION: "true"
+      MOD_GRPC_HOST: 0.0.0.0
+      MOD_GRPC_PORT: 50052
+      API_GRPC_TARGET: api:50051
+    ports:
+      - "25565:25565"
+      - "50052:50052"
+    volumes:
+      - ./.dev/minecraft:/data
+    depends_on:
+      api:
+        condition: service_healthy
+    logging: *logging
+    restart: unless-stopped

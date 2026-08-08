@@ -22,6 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Increases block reach by 1 block.",
 				"abilityStatusRelative": "Increases block reach by a full block width.",
+				"dabloons": 10,
 				"upgradeIngredients": [
 					"minecraft:lead",
 					"minecraft:lead",
@@ -33,6 +34,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Increases block reach by 2 blocks.",
 				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"dabloons": 20,
 				"upgradeIngredients": [
 					"minecraft:iron_chain",
 					"minecraft:copper_chain",
@@ -48,6 +50,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Increases block reach by 3 blocks.",
 				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"dabloons": 30,
 				"upgradeIngredients": [
 					"minecraft:slime_block",
 					"minecraft:slime_block",
@@ -63,6 +66,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Increases block reach by 4 blocks.",
 				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"dabloons": 40,
 				"upgradeIngredients": [
 					"minecraft:vine",
 					"minecraft:pale_hanging_moss",
@@ -78,6 +82,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Increases block reach by 5 blocks.",
 				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:weeping_vines",
 					"minecraft:weeping_vines",
@@ -92,6 +97,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Increases block reach by 6 blocks.",
 				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"dabloons": 60,
 				"upgradeIngredients": [
 					"minecraft:dragon_head",
 					"minecraft:netherite_ingot",
@@ -104,6 +110,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Increases block reach by 7 blocks.",
 				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"dabloons": 70,
 				"upgradeIngredients": [
 					"minecraft:nether_star",
 					"minecraft:netherite_ingot",
@@ -119,6 +126,7 @@
 				"level": 8,
 				"abilityStatusCurrent": "Increases block reach by 8 blocks.",
 				"abilityStatusRelative": "Increases block reach by 1 more block.",
+				"dabloons": 80,
 				"upgradeIngredients": [
 					"minecraft:calibrated_sculk_sensor",
 					"minecraft:netherite_block",
@@ -134,6 +142,7 @@
 				"level": 9,
 				"abilityStatusCurrent": "Increases block reach by 15 blocks.",
 				"abilityStatusRelative": "Increases block reach by 7 more blocks.",
+				"dabloons": 90,
 				"upgradeIngredients": [
 					"minecraft:netherite_block",
 					"minecraft:netherite_block",

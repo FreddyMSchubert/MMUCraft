@@ -1,0 +1,18 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " C ",
+    "MPM",
+    " E "
+  ],
+  "key": {
+    "C": "minecraft:compass",
+    "M": "minecraft:amethyst_shard",
+    "P": "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
+    "E": "minecraft:ender_pearl"
+  },
+  "result": {
+    "stack": "mainmod:charm-potion-resonance",
+    "count": 1
+  }
+}

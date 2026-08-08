@@ -6,6 +6,8 @@ import { MinecraftStatInput, PlayersService } from '../players/players.service'
 import { KnowledgeService } from './knowledge/knowledge.service'
 import { ShopService } from './shop/shop.service'
 import { FishingService } from '../fishing/fishing.service'
+import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service'
+import { DailiesService } from './dailies/dailies.service'
 
 interface GameplayProtoRoot {
 	mcstack: {
@@ -27,6 +29,8 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly shop: ShopService,
 		private readonly players: PlayersService,
 		private readonly fishing: FishingService,
+		private readonly claims: ClaimsService,
+		private readonly dailies: DailiesService,
 	) { }
 
 	onModuleInit() {
@@ -38,7 +42,40 @@ export class GameplayGrpcService implements OnModuleInit {
 			SyncPlayerStats: this.syncPlayerStats.bind(this),
 			RecordMoneyEvent: this.recordMoneyEvent.bind(this),
 			RecordFishCatch: this.recordFishCatch.bind(this),
+			GetClaimsSnapshot: this.getClaimsSnapshot.bind(this),
+			GetDailyTasksSnapshot: this.getDailyTasksSnapshot.bind(this),
+			UpdateDailyTask: this.updateDailyTask.bind(this),
 		})
+	}
+
+	private getDailyTasksSnapshot(
+		_call: grpc.ServerUnaryCall<Record<string, never>, ReturnType<DailiesService['getMinecraftSnapshot']>>,
+		callback: UnaryCallback<ReturnType<DailiesService['getMinecraftSnapshot']>>,
+	) {
+		callback(null, this.dailies.getMinecraftSnapshot())
+	}
+
+	private updateDailyTask(
+		call: grpc.ServerUnaryCall<{
+			user_id?: number
+			period_key?: string
+			task_json?: string
+			unix_ms?: number
+		}, { accepted: boolean; message: string }>,
+		callback: UnaryCallback<{ accepted: boolean; message: string }>,
+	) {
+		callback(null, this.dailies.updateTaskFromMinecraft(
+			call.request.user_id ?? 0,
+			call.request.period_key ?? '',
+			call.request.task_json ?? '',
+		))
+	}
+
+	private getClaimsSnapshot(
+		_call: grpc.ServerUnaryCall<Record<string, never>, ClaimsSnapshot>,
+		callback: UnaryCallback<ClaimsSnapshot>,
+	) {
+		callback(null, this.claims.getSnapshot())
 	}
 
 	private unlockNextKnowledge(
@@ -140,11 +177,23 @@ export class GameplayGrpcService implements OnModuleInit {
 		}, {
 			accepted: boolean
 			account_linked: boolean
+			is_member: boolean
+			is_committee: boolean
+			is_external: boolean
+			nickname: string
+			pronouns: string
+			color_hex: string
 			message: string
 		}>,
 		callback: UnaryCallback<{
 			accepted: boolean
 			account_linked: boolean
+			is_member: boolean
+			is_committee: boolean
+			is_external: boolean
+			nickname: string
+			pronouns: string
+			color_hex: string
 			message: string
 		}>,
 	) {
@@ -159,6 +208,12 @@ export class GameplayGrpcService implements OnModuleInit {
 		callback(null, {
 			accepted: result.accepted,
 			account_linked: result.accountLinked,
+			is_member: result.isMember,
+			is_committee: result.isCommittee,
+			is_external: result.isExternal,
+			nickname: result.nickname,
+			pronouns: result.pronouns,
+			color_hex: result.color,
 			message: result.message,
 		})
 	}

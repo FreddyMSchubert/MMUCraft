@@ -138,6 +138,7 @@ public record CharmItemFeature(
         }
 
         applyPresentation(stack, newLevel);
+        FakeItems.wrapTooltip(stack);
     }
 
     public boolean hasNextLevel(int level) {
@@ -195,7 +196,10 @@ public record CharmItemFeature(
                 lines.add(toAbilityComponent("Next Level: " + next.abilityStatusRelative()));
             }
             if (!next.upgradeIngredients().isEmpty()) {
-                lines.add(toAbilityComponent("To Upgrade: " + formatUpgradeIngredients(next.upgradeIngredients())));
+                String price = next.dabloons() == 0 ? "" : next.dabloons() + " dabloons";
+                lines.add(toAbilityComponent(
+                        "Upgrade on Website: " + formatUpgradeIngredients(next.upgradeIngredients()) + ", " + price
+                ));
             }
         }
 

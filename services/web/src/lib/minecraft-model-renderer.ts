@@ -9,16 +9,26 @@ export interface TextureAnimationOptions {
 }
 
 export interface MinecraftModelRendererOptions {
+	assetRoot?: string
 	autoRotate?: boolean
 	background?: string | null
+	canvasClassName?: string
 	defaultTint?: RgbColor
 	dyeable?: boolean
 	enableDrag?: boolean
 	frameDelayMs?: number
 	frameSequence?: number[] | null
 	rotationSpeed?: number
-	textureSource: string
+	textureSource?: string
 	view?: PreviewView
+}
+
+export interface MinecraftItemSource {
+	assetRoot?: string
+	itemId?: string
+	model?: MinecraftModel
+	modelUrl?: string | null
+	textureUrl?: string | null
 }
 
 interface RgbColor {
@@ -27,7 +37,7 @@ interface RgbColor {
 	b: number
 }
 
-interface MinecraftModel {
+export interface MinecraftModel {
 	parent?: string
 	format_version?: string
 	credit?: string
@@ -38,6 +48,22 @@ interface MinecraftModel {
 	display?: Record<string, MinecraftDisplayTransform>
 	elements?: MinecraftElement[]
 	groups?: unknown[]
+}
+
+interface MinecraftItemDefinition {
+	model?: MinecraftItemModelNode
+}
+
+interface MinecraftItemModelNode {
+	base?: string
+	cases?: Array<{ model?: MinecraftItemModelNode }>
+	entries?: Array<{ model?: MinecraftItemModelNode }>
+	fallback?: MinecraftItemModelNode
+	model?: string
+	models?: MinecraftItemModelNode[]
+	on_false?: MinecraftItemModelNode
+	on_true?: MinecraftItemModelNode
+	type?: string
 }
 
 interface MinecraftDisplayTransform {
@@ -527,39 +553,379 @@ class ManagedTexture {
 }
 
 class TextureRegistry {
-	handle: ManagedTexture | null = null
-	source: string
-	frameSequence: number[] | null
+	private readonly handles = new Map<string, ManagedTexture>()
 
-	constructor(source: string, frameSequence: number[] | null) {
-		this.source = source
-		this.frameSequence = frameSequence
+	constructor(private readonly frameSequence: number[] | null) {}
+
+	async get(source: string | null) {
+		return (await this.getHandle(source)).texture
 	}
 
-	async get() {
-		if (this.handle) return this.handle.texture
+	async getHandle(source: string | null) {
+		const key = source ?? ''
+		const existing = this.handles.get(key)
+		if (existing) return existing
 
 		const handle = new ManagedTexture(this.frameSequence)
-		try {
-			handle.setImage(await loadImageFromSource(this.source))
-		} catch {
-			handle.drawMissing()
+		if (source) {
+			try {
+				handle.setImage(await loadImageFromSource(source))
+			} catch {
+				handle.drawMissing()
+			}
 		}
-		this.handle = handle
-		return handle.texture
+		this.handles.set(key, handle)
+		return handle
 	}
 
 	update(deltaMs: number, frameDelayMs: number) {
-		this.handle?.update(deltaMs, frameDelayMs)
+		for (const handle of this.handles.values()) handle.update(deltaMs, frameDelayMs)
 	}
 
 	isAnimated() {
-		return (this.handle?.frameCount ?? 1) > 1
+		return [...this.handles.values()].some((handle) => handle.frameCount > 1)
 	}
 
 	dispose() {
-		this.handle?.dispose()
-		this.handle = null
+		for (const handle of this.handles.values()) handle.dispose()
+		this.handles.clear()
+	}
+}
+
+interface ResolvedItemSource {
+	fallbackTexture: string | null
+	model: MinecraftModel
+}
+
+const modelSourceCache = new Map<string, Promise<MinecraftModel | null>>()
+const itemDefinitionCache = new Map<string, Promise<MinecraftItemDefinition | null>>()
+
+function parseResourceId(value: string, fallbackNamespace = 'minecraft') {
+	const [namespace, path] = value.includes(':') ? value.split(':', 2) : [fallbackNamespace, value]
+	return { namespace: namespace || fallbackNamespace, path: path || '' }
+}
+
+function qualifyModelTextures(model: MinecraftModel, namespace: string, assetRoot: string) {
+	const textures = Object.fromEntries(Object.entries(model.textures ?? {}).map(([key, value]) => {
+		if (value.startsWith('#') || /^(?:https?:|\/)/.test(value)) return [key, value]
+		const texture = parseResourceId(value, namespace)
+		return [key, `${assetRoot}/${texture.namespace}/textures/${texture.path}.png`]
+	}))
+	return { ...model, textures }
+}
+
+function mergeModels(parent: MinecraftModel, child: MinecraftModel): MinecraftModel {
+	return {
+		...parent,
+		...child,
+		textures: { ...parent.textures, ...child.textures },
+		display: { ...parent.display, ...child.display },
+		elements: child.elements ?? parent.elements,
+	}
+}
+
+async function fetchModel(url: string) {
+	const cached = modelSourceCache.get(url)
+	if (cached) return cached
+	const loading = fetch(url, { cache: 'force-cache' })
+		.then((response) => response.ok ? response.json() as Promise<MinecraftModel> : null)
+		.catch(() => null)
+	modelSourceCache.set(url, loading)
+	return loading
+}
+
+async function fetchItemDefinition(url: string) {
+	const cached = itemDefinitionCache.get(url)
+	if (cached) return cached
+	const loading = fetch(url, { cache: 'force-cache' })
+		.then((response) => response.ok ? response.json() as Promise<MinecraftItemDefinition> : null)
+		.catch(() => null)
+	itemDefinitionCache.set(url, loading)
+	return loading
+}
+
+function itemDefinitionModel(definition: MinecraftItemDefinition | null) {
+	const findModel = (node: MinecraftItemModelNode | undefined): string | null => {
+		if (!node) return null
+		if (node.type === 'minecraft:model' && typeof node.model === 'string') return node.model
+		if (node.type === 'minecraft:special' && node.base) return node.base
+		for (const candidate of [node.on_true, node.on_false, node.fallback]) {
+			const found = findModel(candidate)
+			if (found) return found
+		}
+		for (const candidate of [...(node.models ?? []), ...(node.entries ?? []).map((entry) => entry.model), ...(node.cases ?? []).map((entry) => entry.model)]) {
+			const found = findModel(candidate)
+			if (found) return found
+		}
+		return null
+	}
+	return findModel(definition?.model)
+}
+
+async function resolveModelParents(
+	model: MinecraftModel,
+	namespace: string,
+	assetRoot: string | undefined,
+	seen = new Set<string>(),
+): Promise<MinecraftModel> {
+	const child = assetRoot ? qualifyModelTextures(model, namespace, assetRoot) : deepClone(model)
+	if (!assetRoot || !model.parent || model.parent.startsWith('builtin/')) return child
+
+	const parentId = parseResourceId(model.parent, namespace)
+	const parentPath = parentId.path.includes('/') ? parentId.path : `item/${parentId.path}`
+	const key = `${parentId.namespace}:${parentPath}`
+	if (seen.has(key)) return child
+	seen.add(key)
+
+	const parent = await fetchModel(`${assetRoot}/${parentId.namespace}/models/${parentPath}.json`)
+	if (!parent) return child
+	return mergeModels(await resolveModelParents(parent, parentId.namespace, assetRoot, seen), child)
+}
+
+async function resolveItemSource(source: MinecraftItemSource): Promise<ResolvedItemSource> {
+	const assetRoot = source.assetRoot?.replace(/\/$/, '')
+	const itemId = parseResourceId(source.itemId ?? 'minecraft:air')
+	if (!source.model && !source.modelUrl && source.textureUrl) {
+		return {
+			fallbackTexture: source.textureUrl,
+			model: { parent: 'builtin/generated', textures: { layer0: source.textureUrl } },
+		}
+	}
+
+	let model = source.model ?? (source.modelUrl ? await fetchModel(source.modelUrl) : null)
+	let modelNamespace = itemId.namespace
+
+	if (!model && assetRoot && source.itemId) {
+		const definition = await fetchItemDefinition(`${assetRoot}/${itemId.namespace}/items/${itemId.path}.json`)
+		const modelIdValue = itemDefinitionModel(definition)
+		if (modelIdValue) {
+			const modelId = parseResourceId(modelIdValue, itemId.namespace)
+			modelNamespace = modelId.namespace
+			model = await fetchModel(`${assetRoot}/${modelId.namespace}/models/${modelId.path}.json`)
+		} else if (!definition) {
+			model = await fetchModel(`${assetRoot}/${itemId.namespace}/models/item/${itemId.path}.json`)
+		}
+	}
+
+	if (model) {
+		return {
+			fallbackTexture: source.textureUrl ?? null,
+			model: await resolveModelParents(model, modelNamespace, assetRoot),
+		}
+	}
+
+	const fallbackTexture = source.textureUrl
+		?? (assetRoot && source.itemId ? `${assetRoot}/${itemId.namespace}/textures/item/${itemId.path}.png` : null)
+	return {
+		fallbackTexture,
+		model: { parent: 'builtin/generated', textures: fallbackTexture ? { layer0: fallbackTexture } : {} },
+	}
+}
+
+function resolveModelTexture(textureRef: string | undefined, textures: Record<string, string>, fallback: string | null) {
+	if (fallback) return fallback
+	return resolveTextureReference(textureRef, textures)
+}
+
+function createFaceMaterial(texture: THREE.Texture, tintColor: THREE.Color, shade: boolean, lightEmission: number) {
+	const options = {
+		map: texture,
+		color: tintColor,
+		transparent: true,
+		alphaTest: 0.05,
+		side: THREE.DoubleSide,
+		toneMapped: false,
+	}
+	return shade
+		? new THREE.MeshStandardMaterial({
+			...options,
+			roughness: 1,
+			metalness: 0,
+			emissive: tintColor.clone(),
+			emissiveMap: texture,
+			emissiveIntensity: lightEmission / 15,
+		})
+		: new THREE.MeshBasicMaterial(options)
+}
+
+export class MinecraftModelObject {
+	readonly group = new THREE.Group()
+	private readonly textureRegistry: TextureRegistry
+	private readonly tintPalette = new Map<number, RgbColor>()
+	private readonly meshes: THREE.Mesh[] = []
+	private resolvedModel: MinecraftModel | null = null
+	private fallbackTexture: string | null = null
+
+	constructor(frameSequence: number[] | null = null, defaultTint: RgbColor = { r: 255, g: 0, b: 0 }) {
+		this.textureRegistry = new TextureRegistry(frameSequence)
+		this.tintPalette.set(0, defaultTint)
+	}
+
+	get model() {
+		return this.resolvedModel
+	}
+
+	async load(source: MinecraftItemSource) {
+		this.disposeMeshes()
+		const resolved = await resolveItemSource(source)
+		this.resolvedModel = resolved.model
+		this.fallbackTexture = resolved.fallbackTexture
+
+		if (this.resolvedModel.elements?.length) {
+			for (const element of this.resolvedModel.elements) {
+				await this.buildElement(element, this.resolvedModel.textures ?? {})
+			}
+		} else {
+			await this.buildGeneratedItem(this.resolvedModel.textures ?? {})
+		}
+		if (!this.meshes.length) throw new Error('Minecraft model did not produce renderable geometry.')
+		return this.resolvedModel
+	}
+
+	update(deltaMs: number, frameDelayMs: number) {
+		this.textureRegistry.update(deltaMs, frameDelayMs)
+	}
+
+	isAnimated() {
+		return this.textureRegistry.isAnimated()
+	}
+
+	setTint(index: number, colorValue: RgbColor) {
+		this.tintPalette.set(index, parseColorValue(colorValue))
+		for (const mesh of this.meshes) {
+			const tintIndex = mesh.userData.tintIndex as number
+			const nextColor = tintIndex > FACE_TINT_DEFAULT
+				? rgbToThreeColor(this.tintPalette.get(tintIndex) ?? this.tintPalette.get(0) ?? { r: 255, g: 255, b: 255 })
+				: new THREE.Color(1, 1, 1)
+			const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+			for (const material of materials) {
+				if (hasMaterialColor(material)) material.color.copy(nextColor)
+				if (hasMaterialEmissive(material)) material.emissive.copy(nextColor)
+			}
+		}
+	}
+
+	dispose() {
+		this.disposeMeshes()
+		this.textureRegistry.dispose()
+	}
+
+	private disposeMeshes() {
+		for (const mesh of this.meshes) {
+			mesh.geometry.dispose()
+			const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+			for (const material of materials) material.dispose()
+			this.group.remove(mesh)
+		}
+		this.meshes.length = 0
+	}
+
+	private addMesh(mesh: THREE.Mesh, metadata: Record<string, unknown>) {
+		mesh.userData = metadata
+		this.meshes.push(mesh)
+		this.group.add(mesh)
+	}
+
+	private async buildElement(element: MinecraftElement, textures: Record<string, string>) {
+		const fromVector = normalizeVector3(element.from)
+		const toVector = normalizeVector3(element.to)
+		const { from, to } = normalizeMinMax(fromVector, toVector)
+		const collapsedAxis = getCollapsedAxis(from, to)
+		const shade = element.shade !== false
+		const lightEmission = clamp(Number(element.light_emission) || 0, 0, 15)
+
+		for (const faceName of FACE_ORDER) {
+			const face = element.faces?.[faceName]
+			if (!face) continue
+			const vertices = getFaceVertices(faceName, from, to, collapsedAxis)
+			const rotatedVertices = vertices.map((vertex) => applyRotationSpec(vertex, element.rotation))
+			if (!quadHasArea(rotatedVertices)) continue
+
+			const textureSource = resolveModelTexture(face.texture, textures, this.fallbackTexture)
+			const texture = await this.textureRegistry.get(textureSource)
+			const uvRect = Array.isArray(face.uv) ? face.uv : inferDefaultUv(faceName, from, to)
+			const uvCorners = getUvCorners(faceName, uvRect, face.rotation || 0)
+			const worldVertices = rotatedVertices.map(modelSpaceToWorld)
+			const geometry = new THREE.BufferGeometry()
+			geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(worldVertices.flatMap((vertex) => [vertex.x, vertex.y, vertex.z])), 3))
+			geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvCorners.flatMap((uv) => [uv.x, uv.y])), 2))
+			geometry.setIndex([0, 1, 2, 0, 2, 3])
+			geometry.computeVertexNormals()
+
+			const tintIndex = Number.isInteger(face.tintindex) ? face.tintindex! : FACE_TINT_DEFAULT
+			const tintColor = tintIndex > FACE_TINT_DEFAULT
+				? rgbToThreeColor(this.tintPalette.get(tintIndex) ?? this.tintPalette.get(0) ?? { r: 255, g: 255, b: 255 })
+				: new THREE.Color(1, 1, 1)
+			this.addMesh(
+				new THREE.Mesh(geometry, createFaceMaterial(texture, tintColor, shade, lightEmission)),
+				{ tintIndex, faceName, shade, lightEmission },
+			)
+		}
+	}
+
+	private async buildGeneratedItem(textures: Record<string, string>) {
+		const layers = Object.entries(textures)
+			.filter(([key]) => /^layer\d+$/.test(key))
+			.sort(([left], [right]) => Number(left.slice(5)) - Number(right.slice(5)))
+		if (!layers.length && this.fallbackTexture) layers.push(['layer0', this.fallbackTexture])
+
+		for (let layerIndex = 0; layerIndex < layers.length; layerIndex += 1) {
+			const [, textureRef] = layers[layerIndex]!
+			const source = resolveModelTexture(textureRef, textures, this.fallbackTexture)
+			const handle = await this.textureRegistry.getHandle(source)
+			this.addGeneratedLayer(handle, layerIndex)
+		}
+	}
+
+	private addGeneratedLayer(handle: ManagedTexture, layerIndex: number) {
+		const width = handle.canvas.width
+		const height = handle.canvas.height
+		const alpha = handle.context.getImageData(0, 0, width, height).data
+		const positions: number[] = []
+		const uvs: number[] = []
+		const indices: number[] = []
+		const depth = 1 / 32 + layerIndex / 1024
+		const opaque = (x: number, y: number) => x >= 0 && y >= 0 && x < width && y < height && alpha[(y * width + x) * 4 + 3]! > 0
+		const addQuad = (vertices: number[][], textureUvs: number[][]) => {
+			const start = positions.length / 3
+			for (const vertex of vertices) positions.push(vertex[0]!, vertex[1]!, vertex[2]!)
+			for (const uv of textureUvs) uvs.push(uv[0]!, uv[1]!)
+			indices.push(start, start + 1, start + 2, start, start + 2, start + 3)
+		}
+
+		addQuad(
+			[[-0.5, 0.5, depth], [0.5, 0.5, depth], [0.5, -0.5, depth], [-0.5, -0.5, depth]],
+			[[0, 0], [1, 0], [1, 1], [0, 1]],
+		)
+		addQuad(
+			[[0.5, 0.5, -depth], [-0.5, 0.5, -depth], [-0.5, -0.5, -depth], [0.5, -0.5, -depth]],
+			[[1, 0], [0, 0], [0, 1], [1, 1]],
+		)
+
+		for (let y = 0; y < height; y += 1) {
+			for (let x = 0; x < width; x += 1) {
+				if (!opaque(x, y)) continue
+				const left = x / width - 0.5
+				const right = (x + 1) / width - 0.5
+				const top = 0.5 - y / height
+				const bottom = 0.5 - (y + 1) / height
+				const pixelUv = Array.from({ length: 4 }, () => [(x + 0.5) / width, (y + 0.5) / height])
+				if (!opaque(x - 1, y)) addQuad([[left, top, -depth], [left, top, depth], [left, bottom, depth], [left, bottom, -depth]], pixelUv)
+				if (!opaque(x + 1, y)) addQuad([[right, top, depth], [right, top, -depth], [right, bottom, -depth], [right, bottom, depth]], pixelUv)
+				if (!opaque(x, y - 1)) addQuad([[left, top, depth], [right, top, depth], [right, top, -depth], [left, top, -depth]], pixelUv)
+				if (!opaque(x, y + 1)) addQuad([[left, bottom, -depth], [right, bottom, -depth], [right, bottom, depth], [left, bottom, depth]], pixelUv)
+			}
+		}
+
+		const geometry = new THREE.BufferGeometry()
+		geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3))
+		geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2))
+		geometry.setIndex(indices)
+		geometry.computeVertexNormals()
+		this.addMesh(
+			new THREE.Mesh(geometry, createFaceMaterial(handle.texture, new THREE.Color(1, 1, 1), true, 0)),
+			{ tintIndex: FACE_TINT_DEFAULT, generatedLayer: layerIndex },
+		)
 	}
 }
 
@@ -571,9 +937,9 @@ export class MinecraftModelRenderer {
 	private readonly displayRoot = new THREE.Group()
 	private readonly spinRoot = new THREE.Group()
 	private readonly modelRoot = new THREE.Group()
-	private readonly textureRegistry: TextureRegistry
-	private readonly tintPalette = new Map<number, RgbColor>()
-	private readonly faceMeshes: THREE.Mesh[] = []
+	private readonly modelObject: MinecraftModelObject
+	private readonly assetRoot: string | undefined
+	private readonly fallbackTextureSource: string | undefined
 	private animationFrame: number | null = null
 	private currentDisplayMode = 'gui'
 	private currentResolvedModel: MinecraftModel | null = null
@@ -597,9 +963,13 @@ export class MinecraftModelRenderer {
 		this.dyeable = Boolean(options.dyeable)
 		this.enableDrag = Boolean(options.enableDrag)
 		this.view = options.view ?? 'basic3d'
+		this.assetRoot = options.assetRoot
+		this.fallbackTextureSource = options.textureSource
 		if (this.view === 'cosmetic') this.spinRoot.rotation.y = Math.PI
-		this.textureRegistry = new TextureRegistry(options.textureSource, options.frameSequence ?? null)
-		this.tintPalette.set(0, parseColorValue(options.defaultTint, { r: 255, g: 0, b: 0 }))
+		this.modelObject = new MinecraftModelObject(
+			options.frameSequence ?? null,
+			parseColorValue(options.defaultTint, { r: 255, g: 0, b: 0 }),
+		)
 
 		if (options.background) {
 			this.scene.background = new THREE.Color(options.background)
@@ -608,7 +978,7 @@ export class MinecraftModelRenderer {
 		this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: !options.background })
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 		this.renderer.outputColorSpace = THREE.SRGBColorSpace
-		this.renderer.domElement.classList.add('shopModelCanvas')
+		this.renderer.domElement.classList.add(options.canvasClassName ?? 'shopModelCanvas')
 		this.renderer.domElement.addEventListener('webglcontextlost', this.handleContextLost)
 		this.renderer.domElement.addEventListener('webglcontextrestored', this.handleContextRestored)
 		if (this.enableDrag) {
@@ -631,6 +1001,7 @@ export class MinecraftModelRenderer {
 		fillLight.position.set(-1.75, 1.8, -2.5)
 		this.scene.add(fillLight)
 
+		this.modelRoot.add(this.modelObject.group)
 		this.spinRoot.add(this.modelRoot)
 		this.displayRoot.add(this.spinRoot)
 		this.scene.add(this.displayRoot)
@@ -656,8 +1027,7 @@ export class MinecraftModelRenderer {
 		this.renderer.domElement.removeEventListener('pointermove', this.handlePointerMove)
 		this.renderer.domElement.removeEventListener('pointerup', this.handlePointerUp)
 		this.renderer.domElement.removeEventListener('pointercancel', this.handlePointerUp)
-		this.disposeModel()
-		this.textureRegistry.dispose()
+		this.modelObject.dispose()
 		this.renderer.dispose()
 		this.renderer.domElement.remove()
 	}
@@ -669,19 +1039,26 @@ export class MinecraftModelRenderer {
 
 	async loadModel(model: MinecraftModel) {
 		if (this.destroyed) return
-		this.currentResolvedModel = deepClone(model)
-		this.disposeModel()
+		this.currentResolvedModel = await this.modelObject.load({
+			assetRoot: this.assetRoot,
+			model,
+			textureUrl: this.fallbackTextureSource,
+		})
 		this.applyDisplayTransform(this.currentDisplayMode)
+		this.fitCameraToModel()
+		this.ensureAnimating()
+	}
 
-		if (!Array.isArray(this.currentResolvedModel.elements) || this.currentResolvedModel.elements.length === 0) {
-			throw new Error('This renderer needs explicit model elements.')
-		}
-
-		for (const element of this.currentResolvedModel.elements) {
-			await this.buildElement(element, this.currentResolvedModel.textures ?? {})
-			if (this.destroyed) return
-		}
-
+	async loadItem(source: MinecraftItemSource) {
+		if (this.destroyed) return
+		this.currentResolvedModel = await this.modelObject.load({
+			assetRoot: source.assetRoot ?? this.assetRoot,
+			itemId: source.itemId,
+			model: source.model,
+			modelUrl: source.modelUrl,
+			textureUrl: source.textureUrl ?? this.fallbackTextureSource,
+		})
+		this.applyDisplayTransform(this.currentDisplayMode)
 		this.fitCameraToModel()
 		this.ensureAnimating()
 	}
@@ -715,17 +1092,17 @@ export class MinecraftModelRenderer {
 			this.spinRoot.rotation.y += (deltaMs / 1000) * this.rotationSpeed
 		}
 		if (this.dyeable) {
-			this.setTint(0, hsvToRgb(((performance.now() / 28) + this.tintPhase) % 360, 0.82, 1))
+			this.modelObject.setTint(0, hsvToRgb(((performance.now() / 28) + this.tintPhase) % 360, 0.82, 1))
 		}
 
-		this.textureRegistry.update(deltaMs, this.frameDelayMs)
+		this.modelObject.update(deltaMs, this.frameDelayMs)
 		try {
 			this.renderer.render(this.scene, this.camera)
 		} catch {
 			this.contextLost = true
 			return
 		}
-		this.animationFrame = this.autoRotate || this.dyeable || this.textureRegistry.isAnimated()
+		this.animationFrame = this.autoRotate || this.dyeable || this.modelObject.isAnimated()
 			? requestAnimationFrame(this.animate)
 			: null
 	}
@@ -736,23 +1113,9 @@ export class MinecraftModelRenderer {
 		this.animate()
 	}
 
-	private disposeModel() {
-		for (const mesh of this.faceMeshes) {
-			mesh.geometry.dispose()
-			if (Array.isArray(mesh.material)) {
-				for (const material of mesh.material) material.dispose()
-			} else {
-				mesh.material.dispose()
-			}
-			this.modelRoot.remove(mesh)
-		}
-		this.faceMeshes.length = 0
-	}
-
 	private fitCameraToModel() {
-		if (this.faceMeshes.length === 0) return
-
 		const box = new THREE.Box3().setFromObject(this.displayRoot)
+		if (box.isEmpty()) return
 		const size = Math.max(0.1, box.getSize(new THREE.Vector3()).length())
 		const center = box.getCenter(new THREE.Vector3())
 		const distance = Math.max(1.6, size * 0.9 + 1)
@@ -765,21 +1128,6 @@ export class MinecraftModelRenderer {
 		this.camera.near = Math.max(0.01, distance / 200)
 		this.camera.far = Math.max(50, distance * 20)
 		this.camera.updateProjectionMatrix()
-	}
-
-	private setTint(index: number, colorValue: RgbColor) {
-		this.tintPalette.set(index, parseColorValue(colorValue))
-		for (const faceMesh of this.faceMeshes) {
-			const tintIndex = faceMesh.userData.tintIndex as number
-			const nextColor = tintIndex > FACE_TINT_DEFAULT
-				? rgbToThreeColor(this.tintPalette.get(tintIndex) ?? this.tintPalette.get(0) ?? { r: 255, g: 255, b: 255 })
-				: new THREE.Color(1, 1, 1)
-			const materials = Array.isArray(faceMesh.material) ? faceMesh.material : [faceMesh.material]
-			for (const material of materials) {
-				if (hasMaterialColor(material)) material.color.copy(nextColor)
-				if (hasMaterialEmissive(material)) material.emissive.copy(nextColor)
-			}
-		}
 	}
 
 	private handlePointerDown = (event: PointerEvent) => {
@@ -821,72 +1169,5 @@ export class MinecraftModelRenderer {
 		this.dragging = false
 		if (this.renderer.domElement.hasPointerCapture(event.pointerId)) this.renderer.domElement.releasePointerCapture(event.pointerId)
 		this.renderer.domElement.style.cursor = 'grab'
-	}
-
-	private async buildElement(element: MinecraftElement, textures: Record<string, string>) {
-		const fromVector = normalizeVector3(element.from)
-		const toVector = normalizeVector3(element.to)
-		const { from, to } = normalizeMinMax(fromVector, toVector)
-		const collapsedAxis = getCollapsedAxis(from, to)
-		const shade = element.shade !== false
-		const lightEmission = clamp(Number(element.light_emission) || 0, 0, 15)
-
-		for (const faceName of FACE_ORDER) {
-			const face = element.faces?.[faceName]
-			if (!face) continue
-
-			const vertices = getFaceVertices(faceName, from, to, collapsedAxis)
-			const rotatedVertices = vertices.map((vertex) => applyRotationSpec(vertex, element.rotation))
-			if (!quadHasArea(rotatedVertices)) continue
-
-			resolveTextureReference(face.texture, textures)
-			const texture = await this.textureRegistry.get()
-			const uvRect = Array.isArray(face.uv) ? face.uv : inferDefaultUv(faceName, from, to)
-			const uvCorners = getUvCorners(faceName, uvRect, face.rotation || 0)
-			const geometry = new THREE.BufferGeometry()
-			const worldVertices = rotatedVertices.map(modelSpaceToWorld)
-
-			geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
-				worldVertices[0]!.x, worldVertices[0]!.y, worldVertices[0]!.z,
-				worldVertices[1]!.x, worldVertices[1]!.y, worldVertices[1]!.z,
-				worldVertices[2]!.x, worldVertices[2]!.y, worldVertices[2]!.z,
-				worldVertices[3]!.x, worldVertices[3]!.y, worldVertices[3]!.z,
-			]), 3))
-			geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array([
-				uvCorners[0]!.x, uvCorners[0]!.y,
-				uvCorners[1]!.x, uvCorners[1]!.y,
-				uvCorners[2]!.x, uvCorners[2]!.y,
-				uvCorners[3]!.x, uvCorners[3]!.y,
-			]), 2))
-			geometry.setIndex([0, 1, 2, 0, 2, 3])
-			geometry.computeVertexNormals()
-
-			const tintIndex = Number.isInteger(face.tintindex) ? face.tintindex! : FACE_TINT_DEFAULT
-			const tintColor = tintIndex > FACE_TINT_DEFAULT
-				? rgbToThreeColor(this.tintPalette.get(tintIndex) ?? this.tintPalette.get(0) ?? { r: 255, g: 255, b: 255 })
-				: new THREE.Color(1, 1, 1)
-			const materialOptions = {
-				map: texture,
-				color: tintColor,
-				transparent: true,
-				alphaTest: 0.05,
-				side: THREE.DoubleSide,
-				toneMapped: false,
-			}
-			const material = shade
-				? new THREE.MeshStandardMaterial({
-					...materialOptions,
-					roughness: 1,
-					metalness: 0,
-					emissive: tintColor.clone(),
-					emissiveMap: texture,
-					emissiveIntensity: lightEmission / 15,
-				})
-				: new THREE.MeshBasicMaterial(materialOptions)
-			const mesh = new THREE.Mesh(geometry, material)
-			mesh.userData = { tintIndex, faceName, shade, lightEmission }
-			this.faceMeshes.push(mesh)
-			this.modelRoot.add(mesh)
-		}
 	}
 }

@@ -1,8 +1,23 @@
-import { SiteShell } from '@/components/site-shell'
-import { getMinecraftBlockTextures } from '@/lib/mc-textures'
+import { MinecraftHome } from '@/components/landing/minecraft-home'
+import { getLandingVisuals } from '@/lib/site-assets'
 
-export default async function HomePage() {
-	const images = await getMinecraftBlockTextures()
+export const dynamic = 'force-dynamic'
 
-	return <SiteShell images={images} />
+function imageVersion(tag = 'dev') {
+	const cleanTag = tag.trim() || 'dev'
+	if (cleanTag.toLowerCase() === 'dev') return 'MMU Minecraft dev'
+	const displayTag = /^v/i.test(cleanTag) || !/^\d+\.\d+\.\d+/.test(cleanTag) ? cleanTag : `v${cleanTag}`
+	return `MMU Minecraft ${displayTag}`
+}
+
+export default function HomePage() {
+	const { panorama, splash } = getLandingVisuals()
+
+	return <MinecraftHome
+		panorama={panorama}
+		splash={splash}
+		imageVersion={imageVersion(process.env.SITE_IMAGE_TAG)}
+		discordUrl={process.env.DISCORD_URL ?? ''}
+		instagramUrl={process.env.INSTAGRAM_URL ?? ''}
+	/>
 }

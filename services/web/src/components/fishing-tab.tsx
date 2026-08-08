@@ -3,6 +3,7 @@
 import { Fireworks } from 'fireworks-js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { LeaderboardPodium } from '@/components/leaderboard-podium'
+import { PlayerName } from '@/components/player-name'
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical'
 type TagGroup = 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon'
@@ -11,6 +12,7 @@ type FishSort = 'rarity' | 'location'
 interface PlayerOption {
 	id: number
 	minecraftUsername: string
+	color: string
 	pronouns: string
 	avatarUrl: string
 	caughtTotal: number
@@ -92,7 +94,7 @@ const GROUP_LABELS: Record<TagGroup, string> = {
 }
 const RARITY_RANK = new Map(RARITIES.map((rarity, index) => [rarity.id, index]))
 
-export function FishingTab() {
+export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: string) => void }) {
 	const [data, setData] = useState<CompendiumResponse | null>(null)
 	const [error, setError] = useState('')
 	const [rarityFilters, setRarityFilters] = useState<Set<Rarity>>(new Set())
@@ -161,6 +163,7 @@ export function FishingTab() {
 	const podiumEntries = data.players.map((candidate) => ({
 		id: candidate.id,
 		name: candidate.minecraftUsername,
+		color: candidate.color,
 		pronouns: candidate.pronouns,
 		value: candidate.caughtTotal,
 		displayValue: new Intl.NumberFormat().format(candidate.caughtTotal),
@@ -186,7 +189,7 @@ export function FishingTab() {
 
 			<div className="fishOverview">
 				<CompendiumStats fish={data.fish} caughtTotal={caughtTotal} />
-				<LeaderboardPodium entries={podiumEntries} label="Fish Caught" compact />
+				<LeaderboardPodium entries={podiumEntries} label="Fish Species Caught" onSelectPlayer={onSelectPlayer} compact />
 			</div>
 			<CompendiumGuide
 				rarityFilters={rarityFilters}
@@ -400,7 +403,7 @@ function ServerRecordLine({ label, record }: { label: string; record: ServerReco
 	return (
 		<span className="fishServerRecord">
 			<img src={record.player.avatarUrl} alt="" />
-			<b>{label}:</b> {record.player.minecraftUsername} · {formatLength(record.lengthCm)}
+			<b>{label}:</b> <PlayerName name={record.player.minecraftUsername} color={record.player.color} /> · {formatLength(record.lengthCm)}
 		</span>
 	)
 }

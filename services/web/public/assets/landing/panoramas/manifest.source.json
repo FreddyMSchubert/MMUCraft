@@ -1,0 +1,672 @@
+{
+    "generatedAt":  "2026-08-04T17:54:08.1171792Z",
+    "source":  "Official Mojang Java Edition client files and asset indexes",
+    "sets":  [
+                 {
+                     "id":  "beta-1.8",
+                     "label":  "Beta 1.8",
+                     "sourceVersion":  "b1.8.1",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "5d7ce44d6906452a415f8ea93e0d8db41cdd54bf",
+                                       "source":  "https://launcher.mojang.com/v1/objects/6b562463ccc2c7ff12ff350a2b04a67b3adcd37b/client.jar"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "21bbeca76cdfc6fd0abb055023c87088780d7a85",
+                                       "source":  "https://launcher.mojang.com/v1/objects/6b562463ccc2c7ff12ff350a2b04a67b3adcd37b/client.jar"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "d6784464ed37c07079b16f212f3350f445b3a35a",
+                                       "source":  "https://launcher.mojang.com/v1/objects/6b562463ccc2c7ff12ff350a2b04a67b3adcd37b/client.jar"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "54dab49f853bcb41b7c27d79fd9735d2c80b31f5",
+                                       "source":  "https://launcher.mojang.com/v1/objects/6b562463ccc2c7ff12ff350a2b04a67b3adcd37b/client.jar"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "2a61a1db7180d196dd91cee72283842e841b3ddb",
+                                       "source":  "https://launcher.mojang.com/v1/objects/6b562463ccc2c7ff12ff350a2b04a67b3adcd37b/client.jar"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "721f5449467551f990f0e349c462153ee66a05cf",
+                                       "source":  "https://launcher.mojang.com/v1/objects/6b562463ccc2c7ff12ff350a2b04a67b3adcd37b/client.jar"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "classic",
+                     "label":  "Classic",
+                     "sourceVersion":  "1.0",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "5d7ce44d6906452a415f8ea93e0d8db41cdd54bf",
+                                       "source":  "https://launcher.mojang.com/v1/objects/b679fea27f2284836202e9365e13a82552092e5d/client.jar"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "21bbeca76cdfc6fd0abb055023c87088780d7a85",
+                                       "source":  "https://launcher.mojang.com/v1/objects/b679fea27f2284836202e9365e13a82552092e5d/client.jar"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "d6784464ed37c07079b16f212f3350f445b3a35a",
+                                       "source":  "https://launcher.mojang.com/v1/objects/b679fea27f2284836202e9365e13a82552092e5d/client.jar"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "c23f1d086f54b0621b9fc5af4eaadf40c17bb0f6",
+                                       "source":  "https://launcher.mojang.com/v1/objects/b679fea27f2284836202e9365e13a82552092e5d/client.jar"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "2a61a1db7180d196dd91cee72283842e841b3ddb",
+                                       "source":  "https://launcher.mojang.com/v1/objects/b679fea27f2284836202e9365e13a82552092e5d/client.jar"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "721f5449467551f990f0e349c462153ee66a05cf",
+                                       "source":  "https://launcher.mojang.com/v1/objects/b679fea27f2284836202e9365e13a82552092e5d/client.jar"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "update-aquatic",
+                     "label":  "Update Aquatic",
+                     "sourceVersion":  "1.13",
+                     "faces":  [
+                                   {
+                                       "index":  0,
+                                       "sha1":  "39f20e6c806e4dbd110582797c0eca280e223c73",
+                                       "source":  "https://piston-data.mojang.com/v1/objects/c0b970952cdd279912da384cdbfc0c26e6c6090b/client.jar"
+                                   },
+                                   {
+                                       "index":  3,
+                                       "sha1":  "07d6e42c85a287b312faefd8ed01f27b6028a846",
+                                       "source":  "https://piston-data.mojang.com/v1/objects/c0b970952cdd279912da384cdbfc0c26e6c6090b/client.jar"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "bd2f8895d3d9e18f538742b5008c5140e5a3a22e",
+                                       "source":  "https://piston-data.mojang.com/v1/objects/c0b970952cdd279912da384cdbfc0c26e6c6090b/client.jar"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "a21bd35490d90c3dca72778d7c47de07b8051486",
+                                       "source":  "https://piston-data.mojang.com/v1/objects/c0b970952cdd279912da384cdbfc0c26e6c6090b/client.jar"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "b930a8829484f9028d381f3810e43a389916505c",
+                                       "source":  "https://piston-data.mojang.com/v1/objects/c0b970952cdd279912da384cdbfc0c26e6c6090b/client.jar"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "8c6e6e5f70619b946ec178778205d215fddc6e6b",
+                                       "source":  "https://piston-data.mojang.com/v1/objects/c0b970952cdd279912da384cdbfc0c26e6c6090b/client.jar"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "village-and-pillage",
+                     "label":  "Village \u0026 Pillage",
+                     "sourceVersion":  "1.14",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "20b8b2f99f0c6f659267366239f61d6a1b8c9156",
+                                       "source":  "https://resources.download.minecraft.net/20/20b8b2f99f0c6f659267366239f61d6a1b8c9156"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "42b33085867226820f5d6ea60d276fd22be2c0ef",
+                                       "source":  "https://resources.download.minecraft.net/42/42b33085867226820f5d6ea60d276fd22be2c0ef"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "b11528c03e56db38d3a09dc6f0f3fe7bcb4fc0f4",
+                                       "source":  "https://resources.download.minecraft.net/b1/b11528c03e56db38d3a09dc6f0f3fe7bcb4fc0f4"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "d75f4a52c3a7333e1676f9d648dbc3a129eaf182",
+                                       "source":  "https://resources.download.minecraft.net/d7/d75f4a52c3a7333e1676f9d648dbc3a129eaf182"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "efd77d8aef4530e470dde3ac37d63be6e480f8a0",
+                                       "source":  "https://resources.download.minecraft.net/ef/efd77d8aef4530e470dde3ac37d63be6e480f8a0"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "56422fac8e05210fdccb2ff208070f9218c0da6d",
+                                       "source":  "https://resources.download.minecraft.net/56/56422fac8e05210fdccb2ff208070f9218c0da6d"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "buzzy-bees",
+                     "label":  "Buzzy Bees",
+                     "sourceVersion":  "1.15",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "363803ca6e29e3b3a86238086bb4ea06874e8a77",
+                                       "source":  "https://resources.download.minecraft.net/36/363803ca6e29e3b3a86238086bb4ea06874e8a77"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "e0ea270a90cb51b0ab135371f3604888a77be739",
+                                       "source":  "https://resources.download.minecraft.net/e0/e0ea270a90cb51b0ab135371f3604888a77be739"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "af7c80d4229733c732623f3b08ffd45110608b13",
+                                       "source":  "https://resources.download.minecraft.net/af/af7c80d4229733c732623f3b08ffd45110608b13"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "5f2e3863ecb4f942315bf65c30083831570065bc",
+                                       "source":  "https://resources.download.minecraft.net/5f/5f2e3863ecb4f942315bf65c30083831570065bc"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "6d6218dbc0344524ffafbe6f63657940029e25ba",
+                                       "source":  "https://resources.download.minecraft.net/6d/6d6218dbc0344524ffafbe6f63657940029e25ba"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "f67b109ec66db2100c9580d974937fb14bad0d94",
+                                       "source":  "https://resources.download.minecraft.net/f6/f67b109ec66db2100c9580d974937fb14bad0d94"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "nether-update",
+                     "label":  "Nether Update",
+                     "sourceVersion":  "1.16",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "98729ec34c8e1bceb9b0ff41a85ebee33eff8b41",
+                                       "source":  "https://resources.download.minecraft.net/98/98729ec34c8e1bceb9b0ff41a85ebee33eff8b41"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "6c426128a04ff458f823319e3e68c8bc893d0dda",
+                                       "source":  "https://resources.download.minecraft.net/6c/6c426128a04ff458f823319e3e68c8bc893d0dda"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "945630f5471aa307ec6bd6e53e9c1a278ff35f32",
+                                       "source":  "https://resources.download.minecraft.net/94/945630f5471aa307ec6bd6e53e9c1a278ff35f32"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "fe531cd13f671fa7d7392d090b93bbeca4ed0029",
+                                       "source":  "https://resources.download.minecraft.net/fe/fe531cd13f671fa7d7392d090b93bbeca4ed0029"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "d8c61356bcb0c2dd087300d2857000078d05e862",
+                                       "source":  "https://resources.download.minecraft.net/d8/d8c61356bcb0c2dd087300d2857000078d05e862"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "781d243e743f1a716ae36d5fdcbd4c80adf8ee0d",
+                                       "source":  "https://resources.download.minecraft.net/78/781d243e743f1a716ae36d5fdcbd4c80adf8ee0d"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "caves-and-cliffs-1",
+                     "label":  "Caves \u0026 Cliffs I",
+                     "sourceVersion":  "1.17",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "5d3f8ef1dc0084d49b3a1c1e8b2606028d83cca0",
+                                       "source":  "https://resources.download.minecraft.net/5d/5d3f8ef1dc0084d49b3a1c1e8b2606028d83cca0"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "bc07f32c38f0321358c7399dc69f380a1401a888",
+                                       "source":  "https://resources.download.minecraft.net/bc/bc07f32c38f0321358c7399dc69f380a1401a888"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "873c08365fbb20413491b5d782f88aa0459fe8bc",
+                                       "source":  "https://resources.download.minecraft.net/87/873c08365fbb20413491b5d782f88aa0459fe8bc"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "81b7228275ad580fd0a47ab4e51061f330df0bd4",
+                                       "source":  "https://resources.download.minecraft.net/81/81b7228275ad580fd0a47ab4e51061f330df0bd4"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "4b7e517611dc9a5180201466046c2fe0d1216d00",
+                                       "source":  "https://resources.download.minecraft.net/4b/4b7e517611dc9a5180201466046c2fe0d1216d00"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "f4e61ad8551dad48c505b8258841d87ec7df75f5",
+                                       "source":  "https://resources.download.minecraft.net/f4/f4e61ad8551dad48c505b8258841d87ec7df75f5"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "caves-and-cliffs-2",
+                     "label":  "Caves \u0026 Cliffs II",
+                     "sourceVersion":  "1.18",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "a28ba83aece09a472178699d706f7aa5747f25bf",
+                                       "source":  "https://resources.download.minecraft.net/a2/a28ba83aece09a472178699d706f7aa5747f25bf"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "75a124e1be0d86c57bac49c7f2d7911486f6e98d",
+                                       "source":  "https://resources.download.minecraft.net/75/75a124e1be0d86c57bac49c7f2d7911486f6e98d"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "617783a408fca4c7f74af3ad73cb0f9263f01698",
+                                       "source":  "https://resources.download.minecraft.net/61/617783a408fca4c7f74af3ad73cb0f9263f01698"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "166d2109d4ba5a5c713fa31df0f07018220449a8",
+                                       "source":  "https://resources.download.minecraft.net/16/166d2109d4ba5a5c713fa31df0f07018220449a8"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "11dda623a695884d57f79b230f5ed0a709817758",
+                                       "source":  "https://resources.download.minecraft.net/11/11dda623a695884d57f79b230f5ed0a709817758"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "03658a18af099f00103fbc2bf5e1dde514e63dff",
+                                       "source":  "https://resources.download.minecraft.net/03/03658a18af099f00103fbc2bf5e1dde514e63dff"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "wild-update",
+                     "label":  "The Wild Update",
+                     "sourceVersion":  "1.19",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "70ae9c314c2c280af94a08c2403801e120ee4b3c",
+                                       "source":  "https://resources.download.minecraft.net/70/70ae9c314c2c280af94a08c2403801e120ee4b3c"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "9519c93477a4394b4ceaaa0f856c7fdd7babd834",
+                                       "source":  "https://resources.download.minecraft.net/95/9519c93477a4394b4ceaaa0f856c7fdd7babd834"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "9a5729d795b1edfeffaa99506983c8b279880fa9",
+                                       "source":  "https://resources.download.minecraft.net/9a/9a5729d795b1edfeffaa99506983c8b279880fa9"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "e956e0986b597ec1b7d1db720dc8aec3a0642630",
+                                       "source":  "https://resources.download.minecraft.net/e9/e956e0986b597ec1b7d1db720dc8aec3a0642630"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "e11e318343cc7dad5d1ffd7f73b64a38c8efd307",
+                                       "source":  "https://resources.download.minecraft.net/e1/e11e318343cc7dad5d1ffd7f73b64a38c8efd307"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "10d2bc498bffd73e0f120ba3eb336953db05c713",
+                                       "source":  "https://resources.download.minecraft.net/10/10d2bc498bffd73e0f120ba3eb336953db05c713"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "trails-and-tales",
+                     "label":  "Trails \u0026 Tales",
+                     "sourceVersion":  "1.20",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "29ef924f1bb2a66ec35aa032ca8ab59431a2ebf6",
+                                       "source":  "https://resources.download.minecraft.net/29/29ef924f1bb2a66ec35aa032ca8ab59431a2ebf6"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "dbd2a426590ecbbbe2ee416d8fa00e1cac800008",
+                                       "source":  "https://resources.download.minecraft.net/db/dbd2a426590ecbbbe2ee416d8fa00e1cac800008"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "344a480830217004a601358cb2bdbb4ccccf88a9",
+                                       "source":  "https://resources.download.minecraft.net/34/344a480830217004a601358cb2bdbb4ccccf88a9"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "f228a4964175f885b334033c5e5cf12bf62421d0",
+                                       "source":  "https://resources.download.minecraft.net/f2/f228a4964175f885b334033c5e5cf12bf62421d0"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "28389e89137ba4ed2578c6748b23543759580b06",
+                                       "source":  "https://resources.download.minecraft.net/28/28389e89137ba4ed2578c6748b23543759580b06"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "28ed5175e545a92757ec60a2cc05e4599dd3e96a",
+                                       "source":  "https://resources.download.minecraft.net/28/28ed5175e545a92757ec60a2cc05e4599dd3e96a"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "tricky-trials",
+                     "label":  "Tricky Trials",
+                     "sourceVersion":  "1.21",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "b6265425a2c765dd5fc286d5f355a812cad938e2",
+                                       "source":  "https://resources.download.minecraft.net/b6/b6265425a2c765dd5fc286d5f355a812cad938e2"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "cec25b0246d77e6f1dcef0d051ccb328ba39227a",
+                                       "source":  "https://resources.download.minecraft.net/ce/cec25b0246d77e6f1dcef0d051ccb328ba39227a"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "74703134a27a57d2de96860bca55d447759c0edc",
+                                       "source":  "https://resources.download.minecraft.net/74/74703134a27a57d2de96860bca55d447759c0edc"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "dca189017c6b77dc6e55ebfb0baca2b645b6e4cd",
+                                       "source":  "https://resources.download.minecraft.net/dc/dca189017c6b77dc6e55ebfb0baca2b645b6e4cd"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "97d080a6827e54904eb7bbe0f04df20eb9070d1a",
+                                       "source":  "https://resources.download.minecraft.net/97/97d080a6827e54904eb7bbe0f04df20eb9070d1a"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "d79ff13dd8ff2f7b8d497a7516db1bb2d86d2ab8",
+                                       "source":  "https://resources.download.minecraft.net/d7/d79ff13dd8ff2f7b8d497a7516db1bb2d86d2ab8"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "garden-awakens",
+                     "label":  "The Garden Awakens",
+                     "sourceVersion":  "1.21.4",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "8294df934ee4a6373d973cdb5257df793641ba34",
+                                       "source":  "https://resources.download.minecraft.net/82/8294df934ee4a6373d973cdb5257df793641ba34"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "60a0380dca096ae055fc1d7d88eebfc33ae94d7b",
+                                       "source":  "https://resources.download.minecraft.net/60/60a0380dca096ae055fc1d7d88eebfc33ae94d7b"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "7d5d238627d3e4171979be59f8c73e8aad5479ae",
+                                       "source":  "https://resources.download.minecraft.net/7d/7d5d238627d3e4171979be59f8c73e8aad5479ae"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "11e7261085b99ec9c850a59ed95b6bfbb576c8cc",
+                                       "source":  "https://resources.download.minecraft.net/11/11e7261085b99ec9c850a59ed95b6bfbb576c8cc"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "87a04c89609bad3c46e45420eba4ffddac4be836",
+                                       "source":  "https://resources.download.minecraft.net/87/87a04c89609bad3c46e45420eba4ffddac4be836"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "cf5c286cb670d4c0ea5fc03728252fe4003b3fbb",
+                                       "source":  "https://resources.download.minecraft.net/cf/cf5c286cb670d4c0ea5fc03728252fe4003b3fbb"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "spring-to-life",
+                     "label":  "Spring to Life",
+                     "sourceVersion":  "1.21.5",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "90662a383543c50f40f1e25927d95b18d8222ea0",
+                                       "source":  "https://resources.download.minecraft.net/90/90662a383543c50f40f1e25927d95b18d8222ea0"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "01ee504c51dfe11bbdfadbc0445c7c84b728d3a8",
+                                       "source":  "https://resources.download.minecraft.net/01/01ee504c51dfe11bbdfadbc0445c7c84b728d3a8"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "2b37830aab6dfb005764829dd2371bd371b87d66",
+                                       "source":  "https://resources.download.minecraft.net/2b/2b37830aab6dfb005764829dd2371bd371b87d66"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "4c91acd1304382c9815c9cda9be936a8f1add659",
+                                       "source":  "https://resources.download.minecraft.net/4c/4c91acd1304382c9815c9cda9be936a8f1add659"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "fe231871707578f0e122d0d7c85f467d04c8bb30",
+                                       "source":  "https://resources.download.minecraft.net/fe/fe231871707578f0e122d0d7c85f467d04c8bb30"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "2bf90cff6cfb2c2e9d5e74069a08fd3dbfa9f0c3",
+                                       "source":  "https://resources.download.minecraft.net/2b/2bf90cff6cfb2c2e9d5e74069a08fd3dbfa9f0c3"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "chase-the-skies",
+                     "label":  "Chase the Skies",
+                     "sourceVersion":  "1.21.6",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "0c55f2465e076e974d4c21fc0320fb4a44c870ef",
+                                       "source":  "https://resources.download.minecraft.net/0c/0c55f2465e076e974d4c21fc0320fb4a44c870ef"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "52c1682d1c7195b377109a73b1e68a614d145d54",
+                                       "source":  "https://resources.download.minecraft.net/52/52c1682d1c7195b377109a73b1e68a614d145d54"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "24b73002ef685bf6c2364219428f548c0c8b1488",
+                                       "source":  "https://resources.download.minecraft.net/24/24b73002ef685bf6c2364219428f548c0c8b1488"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "e3e856304400d0c4da3e41cf4954491e0c337e03",
+                                       "source":  "https://resources.download.minecraft.net/e3/e3e856304400d0c4da3e41cf4954491e0c337e03"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "89e4e7c845d442d308a6194488de8bd3397f0791",
+                                       "source":  "https://resources.download.minecraft.net/89/89e4e7c845d442d308a6194488de8bd3397f0791"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "80e51ad5c2febf6fab7fd4416ebf8d7b244ac726",
+                                       "source":  "https://resources.download.minecraft.net/80/80e51ad5c2febf6fab7fd4416ebf8d7b244ac726"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "copper-age",
+                     "label":  "The Copper Age",
+                     "sourceVersion":  "1.21.9",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "ec17c4fe7e64e499452071698702ecfa8c94f09b",
+                                       "source":  "https://resources.download.minecraft.net/ec/ec17c4fe7e64e499452071698702ecfa8c94f09b"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "69e16a0585be89de9bd4007a9b9eef330412c9e6",
+                                       "source":  "https://resources.download.minecraft.net/69/69e16a0585be89de9bd4007a9b9eef330412c9e6"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "36d4362fb349de7118d4c7143eb41e4dfb37fde7",
+                                       "source":  "https://resources.download.minecraft.net/36/36d4362fb349de7118d4c7143eb41e4dfb37fde7"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "0345cc0f9d4e5ddaf1b1c091c8785b28365d094f",
+                                       "source":  "https://resources.download.minecraft.net/03/0345cc0f9d4e5ddaf1b1c091c8785b28365d094f"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "5964341a814ba251ab15e4a8c986d045ecb8e799",
+                                       "source":  "https://resources.download.minecraft.net/59/5964341a814ba251ab15e4a8c986d045ecb8e799"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "dbc44494bd40cd75914a9f58a7ad8a6244dc6759",
+                                       "source":  "https://resources.download.minecraft.net/db/dbc44494bd40cd75914a9f58a7ad8a6244dc6759"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "mounts-of-mayhem",
+                     "label":  "Mounts of Mayhem",
+                     "sourceVersion":  "1.21.11",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "79795659716b1f0ad2b2b3078933acb7c86327d9",
+                                       "source":  "https://resources.download.minecraft.net/79/79795659716b1f0ad2b2b3078933acb7c86327d9"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "64d2b763bb3bcfcaee67ba1b9351b0a83c209ae7",
+                                       "source":  "https://resources.download.minecraft.net/64/64d2b763bb3bcfcaee67ba1b9351b0a83c209ae7"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "4ef46fd3165dcd588f4b2d945d4aacca9ad90d42",
+                                       "source":  "https://resources.download.minecraft.net/4e/4ef46fd3165dcd588f4b2d945d4aacca9ad90d42"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "af28e43df0b60875348cecd1c1f65e2325b54204",
+                                       "source":  "https://resources.download.minecraft.net/af/af28e43df0b60875348cecd1c1f65e2325b54204"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "15e3d77a4555455d752fde55b2661c159bee59ba",
+                                       "source":  "https://resources.download.minecraft.net/15/15e3d77a4555455d752fde55b2661c159bee59ba"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "bc648a153191d8490fbaaa49e89c62240c6b2936",
+                                       "source":  "https://resources.download.minecraft.net/bc/bc648a153191d8490fbaaa49e89c62240c6b2936"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "tiny-takeover",
+                     "label":  "Tiny Takeover",
+                     "sourceVersion":  "26.1",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "fb5668247ffd51905e3a13eff34b74c9b709e2f4",
+                                       "source":  "https://resources.download.minecraft.net/fb/fb5668247ffd51905e3a13eff34b74c9b709e2f4"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "0f66c27917abf3b05c61c58e79e012b87ff87bcb",
+                                       "source":  "https://resources.download.minecraft.net/0f/0f66c27917abf3b05c61c58e79e012b87ff87bcb"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "81dedcb3d42b47306fde0d47e7388c62792b5fd3",
+                                       "source":  "https://resources.download.minecraft.net/81/81dedcb3d42b47306fde0d47e7388c62792b5fd3"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "4a8493454b4307e330501892058541ed0bf228da",
+                                       "source":  "https://resources.download.minecraft.net/4a/4a8493454b4307e330501892058541ed0bf228da"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "9cf7432d7cf6ac9e1d67cb72fb3606860fdbca65",
+                                       "source":  "https://resources.download.minecraft.net/9c/9cf7432d7cf6ac9e1d67cb72fb3606860fdbca65"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "b1b1ffde0727a421f15b736c85b5bc6605ec1cc2",
+                                       "source":  "https://resources.download.minecraft.net/b1/b1b1ffde0727a421f15b736c85b5bc6605ec1cc2"
+                                   }
+                               ]
+                 },
+                 {
+                     "id":  "26.2",
+                     "label":  "Minecraft 26.2",
+                     "sourceVersion":  "26.2",
+                     "faces":  [
+                                   {
+                                       "index":  3,
+                                       "sha1":  "d57bf5739d53501e511593220aa730488f1be990",
+                                       "source":  "https://resources.download.minecraft.net/d5/d57bf5739d53501e511593220aa730488f1be990"
+                                   },
+                                   {
+                                       "index":  4,
+                                       "sha1":  "894dbd30f3c467d78629927b6ec89d9838412415",
+                                       "source":  "https://resources.download.minecraft.net/89/894dbd30f3c467d78629927b6ec89d9838412415"
+                                   },
+                                   {
+                                       "index":  5,
+                                       "sha1":  "e448b43724a15a06b9e2fe44114d2c203947d607",
+                                       "source":  "https://resources.download.minecraft.net/e4/e448b43724a15a06b9e2fe44114d2c203947d607"
+                                   },
+                                   {
+                                       "index":  0,
+                                       "sha1":  "f5e0a5cfbc2e7b1e89094d7882dde106b030ec26",
+                                       "source":  "https://resources.download.minecraft.net/f5/f5e0a5cfbc2e7b1e89094d7882dde106b030ec26"
+                                   },
+                                   {
+                                       "index":  1,
+                                       "sha1":  "7eed27f04c07c11f28c8500f3bfe768efcce4ccb",
+                                       "source":  "https://resources.download.minecraft.net/7e/7eed27f04c07c11f28c8500f3bfe768efcce4ccb"
+                                   },
+                                   {
+                                       "index":  2,
+                                       "sha1":  "cc6832a02808837dd5bc309020054592ef4b58de",
+                                       "source":  "https://resources.download.minecraft.net/cc/cc6832a02808837dd5bc309020054592ef4b58de"
+                                   }
+                               ]
+                 }
+             ]
+}

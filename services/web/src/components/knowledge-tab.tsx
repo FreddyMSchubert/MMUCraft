@@ -32,9 +32,11 @@ interface KnowledgeResponse {
 const POLL_INTERVAL_MS = 8000
 const VIEWED_STORAGE_KEY = 'mcstack.viewedKnowledgePages'
 
-export function KnowledgeTab() {
+export function KnowledgeTab({ pageId, onSelectPage }: {
+	pageId?: string
+	onSelectPage: (pageId: string, replace?: boolean) => void
+}) {
 	const [data, setData] = useState<KnowledgeResponse | null>(null)
-	const [activePageId, setActivePageId] = useState<string | null>(null)
 	const [pageMarkdown, setPageMarkdown] = useState('')
 	const [error, setError] = useState('')
 	const [viewedPageIds, setViewedPageIds] = useState<Set<string>>(() => readViewedPageIds())
@@ -42,7 +44,7 @@ export function KnowledgeTab() {
 
 	const visibleTree = useMemo(() => data ? filterUnlockedTree(data.tree) : [], [data])
 	const pages = useMemo(() => flattenPages(visibleTree), [visibleTree])
-	const activePage = pages.find((page) => page.id === activePageId) ?? pages[0] ?? null
+	const activePage = pages.find((page) => page.id === pageId) ?? pages[0] ?? null
 	const activePagePath = activePage?.path ?? null
 	const contentVersion = data?.contentVersion ?? 0
 
@@ -58,9 +60,9 @@ export function KnowledgeTab() {
 	}, [])
 
 	const selectPage = useCallback((pageId: string) => {
-		setActivePageId(pageId)
 		markPageViewed(pageId)
-	}, [markPageViewed])
+		onSelectPage(pageId)
+	}, [markPageViewed, onSelectPage])
 
 	const load = useCallback(async (options: { quiet?: boolean } = {}) => {
 		if (!options.quiet) {
@@ -79,22 +81,13 @@ export function KnowledgeTab() {
 
 		const knowledge = body as KnowledgeResponse
 		setData(knowledge)
-		setActivePageId((current) => {
-			const visiblePages = flattenPages(filterUnlockedTree(knowledge.tree))
-			const currentStillVisible = visiblePages.some((page) => page.id === current)
-
-			if (current && currentStillVisible) {
-				return current
-			}
-
-			const nextPageId = visiblePages[0]?.id ?? null
-			if (nextPageId) {
-				markPageViewed(nextPageId)
-			}
-
-			return nextPageId
-		})
-	}, [markPageViewed])
+		const visiblePages = flattenPages(filterUnlockedTree(knowledge.tree))
+		const selectedPage = visiblePages.find((page) => page.id === pageId) ?? visiblePages[0]
+		if (selectedPage) {
+			markPageViewed(selectedPage.id)
+			if (selectedPage.id !== pageId) onSelectPage(selectedPage.id, true)
+		}
+	}, [markPageViewed, onSelectPage, pageId])
 
 	useEffect(() => {
 		let cancelled = false

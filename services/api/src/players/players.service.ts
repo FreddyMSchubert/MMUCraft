@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import * as grpc from '@grpc/grpc-js'
 import { randomUUID } from 'node:crypto'
 import { eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../auth/auth.service'
 import { MinecraftIdentityService } from '../database/minecraft-identity.service'
 import { FishingService } from '../fishing/fishing.service'
+import { GrpcServerService } from '../grpc/grpc-server.service'
 import {
 	DatabaseService,
 	PlayerProfileRow,
@@ -14,12 +16,13 @@ import {
 	playerStats,
 	users,
 } from '../database/database.service'
+import { effectivePlayerColor, normalizeOptionalColor } from './player-color'
 
 const STATS_VERSION = 1
 const MOJANG_PROFILE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 const PROFILE_TEXT_LIMITS = {
-	preferredName: 40,
-	pronouns: 32,
+	preferredName: 16,
+	pronouns: 16,
 	courseYear: 64,
 	discordUsername: 40,
 	bio: 280,
@@ -45,7 +48,22 @@ interface PlayerProfile {
 		z: number | null
 	}
 	bio: string
+	color: string
+	defaultColor: string
+	customColor: string | null
 	updatedAtUnixMs: number
+}
+
+interface GameplayControlClient extends grpc.Client {
+	ApplyPlayerColor(
+		request: { minecraft_uuid: string; color_hex: string },
+		options: grpc.CallOptions,
+		callback: (error: grpc.ServiceError | null, response: { applied: boolean }) => void,
+	): void
+}
+
+interface GameplayProtoRoot {
+	mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } }
 }
 
 interface MinecraftStatValue {
@@ -97,6 +115,9 @@ export interface PlayerSummary {
 	isCurrentUser: boolean
 	isMember: boolean
 	isCommittee: boolean
+	isExternal: boolean
+	responsibleMinecraftUsername: string | null
+	responsiblePlayerColor: string | null
 	profile: PlayerProfile
 	fishing: Record<string, number>
 	stats: PlayerStats
@@ -106,7 +127,7 @@ const PROFILE_OPTIONS: StatOption[] = [
 	{ key: 'profile.playerName', label: 'Player Name', group: 'profile' },
 	{ key: 'profile.isMember', label: 'Society Member', group: 'profile' },
 	{ key: 'profile.isCommittee', label: 'Committee', group: 'profile' },
-	{ key: 'profile.preferredName', label: 'Preferred Name', group: 'profile' },
+	{ key: 'profile.preferredName', label: 'Nickname', group: 'profile' },
 	{ key: 'profile.pronouns', label: 'Pronouns', group: 'profile' },
 	{ key: 'profile.courseYear', label: 'Course / Year', group: 'profile' },
 	{ key: 'profile.discordUsername', label: 'Discord Username', group: 'profile' },
@@ -121,7 +142,7 @@ const FISHING_OPTIONS: StatOption[] = [
 	{ key: 'fishing.total', label: 'Fish Species Caught', group: 'fishing' },
 	...['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical'].map((rarity) => ({
 		key: `fishing.${rarity}`,
-		label: `${rarity.charAt(0).toUpperCase()}${rarity.slice(1)} Fish Caught`,
+		label: `${rarity.charAt(0).toUpperCase()}${rarity.slice(1)} Fish Species Caught`,
 		group: 'fishing' as const,
 	})),
 ]
@@ -281,10 +302,14 @@ const KNOWN_MINECRAFT_OPTIONS: StatOption[] = [
 
 @Injectable()
 export class PlayersService {
+	private readonly logger = new Logger(PlayersService.name)
+	private gameplayControlClient: GameplayControlClient | null = null
+
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
 		private readonly fishing: FishingService,
+		private readonly grpcServer: GrpcServerService,
 	) { }
 
 	async listPlayers(viewer: AuthenticatedUser) {
@@ -318,7 +343,7 @@ export class PlayersService {
 		}
 	}
 
-	updateOwnProfile(user: AuthenticatedUser, input: Record<string, unknown>) {
+	async updateOwnProfile(user: AuthenticatedUser, input: Record<string, unknown>) {
 		const now = Date.now()
 		const profile = this.normalizeProfileInput(input)
 
@@ -332,15 +357,24 @@ export class PlayersService {
 			base_y: profile.base.y,
 			base_z: profile.base.z,
 			bio: profile.bio,
+			color_hex: profile.customColor,
 			updated_at_unix_ms: now,
 		}
 		this.database.connection.insert(playerProfiles).values(values)
 			.onConflictDoUpdate({ target: playerProfiles.user_id, set: values })
 			.run()
 
+		const savedProfile = this.getProfile(user.id)
+		const minecraftUuid = this.findUserById(user.id)?.minecraft_uuid
+		if (minecraftUuid) {
+			await this.applyPlayerColor(minecraftUuid, savedProfile.color).catch((error) => {
+				this.logger.warn(`Could not immediately synchronize player color to Minecraft: ${String(error)}`)
+			})
+		}
+
 		return {
 			ok: true,
-			profile: this.getProfile(user.id),
+			profile: savedProfile,
 		}
 	}
 
@@ -356,6 +390,12 @@ export class PlayersService {
 			return {
 				accepted: false,
 				accountLinked: false,
+				isMember: false,
+				isCommittee: false,
+				isExternal: false,
+				nickname: '',
+				pronouns: '',
+				color: effectivePlayerColor(minecraftUuidInput),
 				message: 'No website account is linked to this Minecraft username yet.',
 			}
 		}
@@ -385,9 +425,16 @@ export class PlayersService {
 
 		this.saveStats(user.id, stats, unixMs)
 
+		const profile = this.getProfile(user.id)
 		return {
 			accepted: true,
 			accountLinked: true,
+			isMember: user.is_member === 1,
+			isCommittee: user.is_super_admin === 1 || user.is_committee === 1,
+			isExternal: user.responsible_user_id !== null,
+			nickname: profile.preferredName.slice(0, PROFILE_TEXT_LIMITS.preferredName),
+			pronouns: profile.pronouns.slice(0, PROFILE_TEXT_LIMITS.pronouns),
+			color: profile.color,
 			message: 'Stats synced.',
 		}
 	}
@@ -469,12 +516,18 @@ export class PlayersService {
 			stats = await this.ensureMojangProfile(user, stats)
 		}
 
+		const responsible = user.responsible_user_id === null ? null : this.findUserById(user.responsible_user_id)
 		return {
 			id: user.id,
 			minecraftUsername: user.minecraft_username,
 			isCurrentUser: user.id === currentUserId,
 			isMember: user.is_member === 1,
 			isCommittee: user.is_committee === 1,
+			isExternal: user.responsible_user_id !== null,
+			responsibleMinecraftUsername: responsible?.minecraft_username ?? null,
+			responsiblePlayerColor: responsible
+				? this.getProfile(responsible.id).color
+				: null,
 			profile: this.getProfile(user.id),
 			fishing: this.fishing.getCatchCounts(user.id),
 			stats,
@@ -484,6 +537,7 @@ export class PlayersService {
 	private getProfile(userId: number): PlayerProfile {
 		const row = this.database.connection.select().from(playerProfiles)
 			.where(eq(playerProfiles.user_id, userId)).get()
+		const minecraftUuid = this.findUserById(userId)?.minecraft_uuid ?? null
 
 		if (!row) {
 			return {
@@ -493,6 +547,9 @@ export class PlayersService {
 				discordUsername: '',
 				base: { x: null, y: null, z: null },
 				bio: '',
+				color: effectivePlayerColor(minecraftUuid),
+				defaultColor: effectivePlayerColor(minecraftUuid),
+				customColor: null,
 				updatedAtUnixMs: 0,
 			}
 		}
@@ -508,6 +565,9 @@ export class PlayersService {
 				z: row.base_z,
 			},
 			bio: row.bio,
+			color: effectivePlayerColor(minecraftUuid, row.color_hex),
+			defaultColor: effectivePlayerColor(minecraftUuid),
+			customColor: row.color_hex,
 			updatedAtUnixMs: row.updated_at_unix_ms,
 		}
 	}
@@ -613,7 +673,7 @@ export class PlayersService {
 
 	private normalizeProfileInput(input: Record<string, unknown>): PlayerProfile {
 		return {
-			preferredName: sanitizeProfileText(input.preferredName, PROFILE_TEXT_LIMITS.preferredName, 'Preferred name'),
+			preferredName: sanitizeProfileText(input.preferredName, PROFILE_TEXT_LIMITS.preferredName, 'Nickname'),
 			pronouns: sanitizeProfileText(input.pronouns, PROFILE_TEXT_LIMITS.pronouns, 'Pronouns'),
 			courseYear: sanitizeProfileText(input.courseYear, PROFILE_TEXT_LIMITS.courseYear, 'Course / Year'),
 			discordUsername: sanitizeProfileText(input.discordUsername, PROFILE_TEXT_LIMITS.discordUsername, 'Discord username'),
@@ -623,8 +683,32 @@ export class PlayersService {
 				z: normalizeCoordinate(input.baseZ, 'Base Z'),
 			},
 			bio: sanitizeProfileText(input.bio, PROFILE_TEXT_LIMITS.bio, 'Bio'),
+			color: '',
+			defaultColor: '',
+			customColor: normalizeOptionalColor(input.color),
 			updatedAtUnixMs: Date.now(),
 		}
+	}
+
+	private applyPlayerColor(minecraftUuid: string, color: string) {
+		const client = this.getGameplayControlClient()
+		return new Promise<void>((resolve, reject) => {
+			client.ApplyPlayerColor({ minecraft_uuid: minecraftUuid, color_hex: color }, { deadline: Date.now() + 10_000 }, (error, response) => {
+				if (error) reject(error)
+				else if (!response.applied) reject(new Error('Minecraft server refused the player color'))
+				else resolve()
+			})
+		})
+	}
+
+	private getGameplayControlClient() {
+		if (this.gameplayControlClient) return this.gameplayControlClient
+		const gameplayProto = this.grpcServer.loadProto<GameplayProtoRoot>('gameplay.proto')
+		this.gameplayControlClient = new gameplayProto.mcstack.gameplay.v1.GameplayControl(
+			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
+			grpc.credentials.createInsecure(),
+		) as unknown as GameplayControlClient
+		return this.gameplayControlClient
 	}
 
 	private normalizeMinecraftStatInput(input: MinecraftStatInput, unixMs: number): MinecraftStatValue | null {

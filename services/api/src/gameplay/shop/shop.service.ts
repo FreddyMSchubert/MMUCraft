@@ -9,6 +9,7 @@ import { DatabaseService, shopUnlocks } from '../../database/database.service'
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { KnowledgeService } from '../knowledge/knowledge.service'
+import { ASSETS } from '../../assets'
 
 const DEFAULT_ITEM_ROOTS = [
 	join(process.cwd(), 'content', 'items'),
@@ -16,7 +17,7 @@ const DEFAULT_ITEM_ROOTS = [
 	join(process.cwd(), 'minecraft', 'main', 'data', 'data', 'items'),
 ]
 
-const VANILLA_ITEM_TEXTURE_PREFIX = '/assets/mc_respack/assets/minecraft/textures/item'
+const VANILLA_ITEM_TEXTURE_PREFIX = `${ASSETS.minecraft.vanilla}/textures/item`
 const SHOP_ASSET_REVISION = `${Date.now().toString(36)}-${randomInt(0x100000000).toString(36)}`
 const DAILY_DEAL_MESSAGES = [
 	"What a steal!",
@@ -116,6 +117,14 @@ interface CatalogItem {
 	charmDetails: CharmDetailsDefinition | null
 }
 
+interface ItemRenderAsset {
+	animation: TextureAnimationDefinition | null
+	modelFilePath: string | null
+	modelUrl: string | null
+	textureFilePath: string | null
+	textureUrl: string | null
+}
+
 interface CachedShopCatalog {
 	root: string
 	mtimeMs: number
@@ -142,6 +151,41 @@ interface PurchaseShopItemResponse {
 	purchased: boolean
 	online: boolean
 	balance_dabloons: number
+	message: string
+}
+
+interface CharmUpgradeIngredientResponse {
+	raw: string
+	display_name: string
+	icon_item_id: string
+	required_count: number
+	inventory_count: number
+}
+
+interface InventoryCharmResponse {
+	item_id: string
+	title: string
+	current_level: number
+	max_level: number
+	target_level: number
+	price_dabloons: number
+	current_ability: string
+	next_ability: string
+	ingredients: CharmUpgradeIngredientResponse[]
+}
+
+interface GetCharmInventoryResponse {
+	online: boolean
+	balance_dabloons: number
+	charms: InventoryCharmResponse[]
+	message: string
+}
+
+interface UpgradeCharmResponse {
+	upgraded: boolean
+	online: boolean
+	balance_dabloons: number
+	new_level: number
 	message: string
 }
 
@@ -180,7 +224,7 @@ export class ShopService {
 			shoppingSunday: this.isShoppingSunday(),
 			items: visibleItems.map((item) => {
 				const isDailyDeal = dailyDealIds.has(item.id)
-				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id, item.priceDabloons) : 0
 				return {
 					id: item.id,
 					title: item.title,
@@ -231,7 +275,7 @@ export class ShopService {
 
 		const catalogItems = this.loadCatalog().items
 		const isDailyDeal = this.getDailyDealIds(catalogItems).has(item.id)
-		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id, item.priceDabloons) : 0
 		const purchasePrice = this.discountedPrice(item.priceDabloons, discountPercent)
 
 		let purchase: PurchaseShopItemResponse
@@ -251,6 +295,83 @@ export class ShopService {
 			online: purchase.online,
 			balanceDabloons: purchase.balance_dabloons,
 			message: purchase.message || `${item.title} purchased.`,
+		}
+	}
+
+	async getCharmInventory(user: AuthenticatedUser) {
+		let inventory: GetCharmInventoryResponse
+		try {
+			inventory = await this.getCharmInventoryFromMod(user.minecraftUsername)
+		} catch {
+			throw new BadRequestException('You have to be online on the server to view your charms.')
+		}
+
+		const catalog = this.loadCatalog().items
+		return {
+			online: inventory.online,
+			balanceDabloons: inventory.balance_dabloons,
+			message: inventory.message,
+			charms: inventory.charms.map((charm) => {
+				const item = this.renderAssetForItem(charm.item_id, catalog)
+				return {
+					itemId: charm.item_id,
+					title: charm.title,
+					currentLevel: charm.current_level,
+					maxLevel: charm.max_level,
+					targetLevel: charm.target_level,
+					priceDabloons: charm.price_dabloons,
+					currentAbility: charm.current_ability,
+					nextAbility: charm.next_ability,
+					modelUrl: item?.modelUrl ?? null,
+					textureUrl: item?.textureUrl ?? this.fallbackIconUrl('charm'),
+					animation: item?.animation ?? null,
+					ingredients: charm.ingredients.map((ingredient) => {
+						const catalogItem = this.renderAssetForGameId(ingredient.icon_item_id, catalog)
+						return {
+							raw: ingredient.raw,
+							displayName: ingredient.display_name,
+							requiredCount: ingredient.required_count,
+							inventoryCount: ingredient.inventory_count,
+							itemId: ingredient.icon_item_id,
+							iconUrl: this.ingredientIconUrl(ingredient.icon_item_id, catalog),
+							modelUrl: catalogItem?.modelUrl ?? null,
+						}
+					}),
+				}
+			}),
+		}
+	}
+
+	async upgradeCharm(
+		user: AuthenticatedUser,
+		input: { itemId?: unknown; expectedLevel?: unknown },
+	) {
+		const itemId = typeof input?.itemId === 'string' ? input.itemId.trim() : ''
+		const expectedLevel = input?.expectedLevel
+		if (!itemId || !Number.isInteger(expectedLevel)) {
+			throw new BadRequestException('The selected charm is invalid.')
+		}
+
+		let result: UpgradeCharmResponse
+		try {
+			result = await this.upgradeCharmFromMod(
+				user.minecraftUsername,
+				itemId,
+				Number(expectedLevel),
+			)
+		} catch {
+			throw new BadRequestException('You have to be online on the server to upgrade a charm.')
+		}
+
+		if (!result.upgraded) {
+			throw new BadRequestException(result.message || 'The charm could not be upgraded.')
+		}
+
+		return {
+			upgraded: true,
+			newLevel: result.new_level,
+			balanceDabloons: result.balance_dabloons,
+			message: result.message,
 		}
 	}
 
@@ -379,7 +500,8 @@ export class ShopService {
 
 	getTextureFilePath(itemIdInput: string): string {
 		const itemId = itemIdInput.trim()
-		const item = this.loadCatalog().items.find((candidate) => candidate.id === itemId)
+		const catalog = this.loadCatalog().items
+		const item = this.renderAssetForItem(itemId, catalog)
 		if (!item?.textureFilePath) {
 			throw new NotFoundException('Shop item texture not found.')
 		}
@@ -389,7 +511,8 @@ export class ShopService {
 
 	getModelFilePath(itemIdInput: string): string {
 		const itemId = itemIdInput.trim()
-		const item = this.loadCatalog().items.find((candidate) => candidate.id === itemId)
+		const catalog = this.loadCatalog().items
+		const item = this.renderAssetForItem(itemId, catalog)
 		if (!item?.modelFilePath) {
 			throw new NotFoundException('Shop item model not found.')
 		}
@@ -515,6 +638,37 @@ export class ShopService {
 
 				resolve(response)
 			})
+		})
+	}
+
+	private async getCharmInventoryFromMod(minecraftUsername: string): Promise<GetCharmInventoryResponse> {
+		const client = this.getGameplayControlClient()
+		const method = (client as unknown as Record<string, unknown>).GetCharmInventory
+		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: GetCharmInventory')
+
+		return await new Promise<GetCharmInventoryResponse>((resolve, reject) => {
+			method.call(client, { minecraft_username: minecraftUsername }, (
+				error: grpc.ServiceError | null,
+				response: GetCharmInventoryResponse,
+			) => error ? reject(error) : resolve(response))
+		})
+	}
+
+	private async upgradeCharmFromMod(
+		minecraftUsername: string,
+		itemId: string,
+		expectedLevel: number,
+	): Promise<UpgradeCharmResponse> {
+		const client = this.getGameplayControlClient()
+		const method = (client as unknown as Record<string, unknown>).UpgradeCharm
+		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: UpgradeCharm')
+
+		return await new Promise<UpgradeCharmResponse>((resolve, reject) => {
+			method.call(client, {
+				minecraft_username: minecraftUsername,
+				item_id: itemId,
+				expected_level: expectedLevel,
+			}, (error: grpc.ServiceError | null, response: UpgradeCharmResponse) => error ? reject(error) : resolve(response))
 		})
 	}
 
@@ -684,13 +838,14 @@ export class ShopService {
 			.map((item) => item.id))
 	}
 
-	private getDailyDiscountPercent(itemId: string): number {
+	private getDailyDiscountPercent(itemId: string, price: number): number {
 		const roll =
 			this.seededRank(`${this.getDailyDealDate()}:discount:${itemId}`) % 100
 
 		const divisor = this.isShoppingSunday() ? 2 : 4
+		const minimumDiscountPercent = Math.ceil(Math.min(3, price - 1) / price * 100)
 
-		return Math.max(5, Math.ceil(roll / divisor))
+		return Math.max(5, minimumDiscountPercent, Math.ceil(roll / divisor))
 	}
 
 	private isShoppingSunday(): boolean {
@@ -703,7 +858,7 @@ export class ShopService {
 	}
 
 	private discountedPrice(price: number, discountPercent: number): number {
-		return Math.max(1, Math.ceil(price * (1 - discountPercent / 100)))
+		return Math.max(1, Math.floor(price * (1 - discountPercent / 100)))
 	}
 
 	private seededRank(value: string): number {
@@ -862,6 +1017,39 @@ export class ShopService {
 		}
 
 		return `${VANILLA_ITEM_TEXTURE_PREFIX}/${itemId.slice('minecraft:'.length)}.png`
+	}
+
+	private ingredientIconUrl(itemId: string, catalog: CatalogItem[]): string | null {
+		if (itemId.startsWith('minecraft:')) return this.vanillaItemIconUrl(itemId)
+		return this.renderAssetForGameId(itemId, catalog)?.textureUrl ?? null
+	}
+
+	private renderAssetForGameId(itemId: string, catalog: CatalogItem[]) {
+		if (!itemId.startsWith('mainmod:')) return null
+		return this.renderAssetForItem(itemId.slice('mainmod:'.length), catalog)
+	}
+
+	private renderAssetForItem(itemId: string, catalog: CatalogItem[]): ItemRenderAsset | null {
+		const catalogItem = catalog.find((item) => item.id === itemId)
+		if (catalogItem) return catalogItem
+
+		const root = this.loadCatalog().root
+		for (const filePath of this.findItemJsonFiles(root)) {
+			const definition = JSON.parse(readFileSync(filePath, 'utf8')) as FakeItemDefinition
+			if (definition.id !== itemId) continue
+			const directory = dirname(filePath)
+			const modelFilePath = this.findModelFilePath(directory)
+			const textureFilePath = this.findModelTextureFilePath(directory)
+				?? this.findFlatTextureFilePath(itemId, directory, root)
+			return {
+				animation: textureFilePath ? this.readAnimationDefinition(textureFilePath) : null,
+				modelFilePath,
+				modelUrl: modelFilePath ? this.shopAssetUrl('model', itemId) : null,
+				textureFilePath,
+				textureUrl: textureFilePath ? this.shopAssetUrl('texture', itemId) : null,
+			}
+		}
+		return null
 	}
 
 	private fallbackIconUrl(type: ShopItemType): string | null {

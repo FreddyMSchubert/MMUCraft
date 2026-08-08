@@ -94,20 +94,21 @@ public class FoodModifier
         ItemStack vanillaStack = item.getDefaultInstance();
 
         FoodProperties vanillaFood = vanillaStack.get(DataComponents.FOOD);
-        if (vanillaFood == null) {
-            return;
-        }
-
-        FoodProperties.Builder foodBuilder = new FoodProperties.Builder()
+        FoodProperties tunedFood = new FoodProperties.Builder()
                 .nutrition(hungerBarsToNutrition(tune.hungerBars))
-                .saturationModifier(satBarsToSaturationModifier(tune.saturationBars));
+                .saturationModifier(satBarsToSaturationModifier(tune.saturationBars))
+                .build();
 
-        if (vanillaFood.canAlwaysEat()) {
-            foodBuilder.alwaysEdible();
+        if (vanillaFood != null) {
+            tunedFood = new FoodProperties(
+                    Math.max(vanillaFood.nutrition(), tunedFood.nutrition()),
+                    Math.max(vanillaFood.saturation(), tunedFood.saturation()),
+                    vanillaFood.canAlwaysEat()
+            );
         }
 
-        builder.set(DataComponents.FOOD, foodBuilder.build());
-        builder.set(DataComponents.MAX_STACK_SIZE, tune.stackSize);
+        builder.set(DataComponents.FOOD, tunedFood);
+        builder.set(DataComponents.MAX_STACK_SIZE, Math.max(vanillaStack.getMaxStackSize(), tune.stackSize));
 
         Consumable.Builder consumableBuilder = copyVanillaConsumable(vanillaStack.get(DataComponents.CONSUMABLE));
 

@@ -50,7 +50,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
     );
 
     @Override
-    public void onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
+    public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         // 4 normal phantoms
         for (int i = 0; i < 4; i++)
@@ -139,5 +139,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
         boss.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
 
         level.addFreshEntity(boss);
+        stack.consume(1, player);
+        return true;
     }
 }

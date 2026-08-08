@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common'
 import { AuthService } from '../auth/auth.service'
 import { GiftsService } from './gifts.service'
 
@@ -42,9 +42,13 @@ export class AdminController {
 	}
 
 	@Get('signins')
-	listSignins(@Headers('cookie') cookieHeader: string | undefined) {
+	listSignins(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Query('offset') offset: string | undefined,
+		@Query('limit') limit: string | undefined,
+	) {
 		this.auth.requireCommitteeSession(cookieHeader)
-		return this.auth.listAuthRequests()
+		return this.auth.listAuthRequests(offset, limit)
 	}
 
 	@Get('email-whitelist')
@@ -78,6 +82,7 @@ export class AdminController {
 			code?: unknown
 			amountDabloons?: unknown
 			redemptionMode?: unknown
+			membersOnly?: unknown
 			expiresAtUnixMs?: unknown
 		} | undefined,
 	) {
@@ -87,6 +92,7 @@ export class AdminController {
 			body?.code,
 			body?.amountDabloons,
 			body?.redemptionMode,
+			body?.membersOnly,
 			body?.expiresAtUnixMs,
 		)
 	}

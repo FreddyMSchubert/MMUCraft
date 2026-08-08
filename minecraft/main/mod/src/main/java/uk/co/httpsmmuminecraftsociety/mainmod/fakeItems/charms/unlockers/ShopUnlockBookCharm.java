@@ -1,12 +1,17 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import uk.co.httpsmmuminecraftsociety.mainmod.WebsiteCommand;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 
@@ -19,20 +24,17 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
 
     private final String unlockType;
     private final String sourceItemId;
-    private final String studyingMessage;
     private final String busyMessage;
     private final String failureMessage;
 
     private ShopUnlockBookCharm(
             String unlockType,
             String sourceItemId,
-            String studyingMessage,
             String busyMessage,
             String failureMessage
     ) {
         this.unlockType = unlockType;
         this.sourceItemId = sourceItemId;
-        this.studyingMessage = studyingMessage;
         this.busyMessage = busyMessage;
         this.failureMessage = failureMessage;
     }
@@ -41,7 +43,6 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
         return new ShopUnlockBookCharm(
                 "charm",
                 "charm-magic-book",
-                "Reading the magic book...",
                 "Charm unlocking is already in progress. Try again in a moment.",
                 "A charm could not be unlocked right now."
         );
@@ -51,7 +52,6 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
         return new ShopUnlockBookCharm(
                 "cosmetic",
                 "charm-fashion-book",
-                "Reading the fashion book...",
                 "Cosmetic unlocking is already in progress. Try again in a moment.",
                 "A cosmetic could not be unlocked right now."
         );
@@ -67,8 +67,6 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
             return InteractionResult.SUCCESS;
         }
 
-        player.sendSystemMessage(Component.literal(studyingMessage));
-
         GameplayGrpcService.unlockNext(
                 player.getGameProfile().name(),
                 player.getUUID().toString(),
@@ -83,13 +81,53 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
             }
 
             UnlockBookLoot.updateAvailability(player, response);
-            player.sendSystemMessage(Component.literal(response.getMessage()));
+            Component message = Component.literal(response.getMessage());
+            if (response.getUnlocked()) {
+                message = message.copy()
+                        .append(Component.literal(" "))
+                        .append(WebsiteCommand.takeMeThere(
+                                "charm".equals(unlockType)
+                                        ? "play/charms"
+                                        : "play/shop/" + response.getUnlockedId(),
+                                "charm".equals(unlockType) ? "Upgrade it here." : "Get it here!",
+                                "charm".equals(unlockType) ? ChatFormatting.DARK_PURPLE : ChatFormatting.YELLOW
+                        ));
+            }
+            player.sendSystemMessage(message);
 
-            if (response.getUnlocked() && !player.isCreative()) {
-                stack.shrink(1);
+            if (response.getUnlocked()) {
+                FakeItem unlockedItem = FakeItems.ID_MAP.get(response.getUnlockedId());
+                ItemStack animationItem = unlockedItem != null ? unlockedItem.createItemStack() : stack;
+                UnlockBookAnimation.play(player, animationItem);
+
+                if ("charm".equals(unlockType) && unlockedItem != null) {
+                    CharmItemFeature charm = unlockedItem.getFeature(CharmItemFeature.class);
+                    if (charm != null) {
+                        replaceUsedBook(player, stack, unlockedItem.createItemStackAtLevel(charm.minLevel()));
+                    }
+                } else if (!player.isCreative()) {
+                    stack.shrink(1);
+                }
             }
         }));
 
         return InteractionResult.SUCCESS;
+    }
+
+    private static void replaceUsedBook(ServerPlayer player, ItemStack book, ItemStack charm) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            if (player.getInventory().getItem(slot) == book) {
+                player.getInventory().setItem(slot, charm);
+                player.getInventory().setChanged();
+                player.containerMenu.broadcastChanges();
+                return;
+            }
+        }
+
+        book.shrink(1);
+        player.getInventory().add(charm);
+        if (!charm.isEmpty()) {
+            player.drop(charm, false);
+        }
     }
 }

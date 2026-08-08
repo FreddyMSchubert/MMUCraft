@@ -12,15 +12,132 @@ service GameplayEvents {
   rpc SyncPlayerStats(SyncPlayerStatsRequest) returns (SyncPlayerStatsResponse);
   rpc RecordMoneyEvent(RecordMoneyEventRequest) returns (RecordMoneyEventResponse);
   rpc RecordFishCatch(RecordFishCatchRequest) returns (RecordFishCatchResponse);
+  rpc GetClaimsSnapshot(GetClaimsSnapshotRequest) returns (ClaimsSnapshot);
+  rpc GetDailyTasksSnapshot(GetDailyTasksSnapshotRequest) returns (DailyTasksSnapshot);
+  rpc UpdateDailyTask(UpdateDailyTaskRequest) returns (UpdateDailyTaskResponse);
 }
 
 service GameplayControl {
   rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
   rpc GrantGiftCodeMoney(GrantGiftCodeMoneyRequest) returns (GrantGiftCodeMoneyResponse);
-  rpc SubmitDailyItems(SubmitDailyItemsRequest) returns (SubmitDailyItemsResponse);
+  rpc GenerateDailyTasks(GenerateDailyTasksRequest) returns (GenerateDailyTasksResponse);
+  rpc ClaimDailyTask(ClaimDailyTaskRequest) returns (ClaimDailyTaskResponse);
   rpc PickDailyAdvancement(PickDailyAdvancementRequest) returns (PickDailyAdvancementResponse);
   rpc ClaimDailyAdvancement(ClaimDailyAdvancementRequest) returns (ClaimDailyAdvancementResponse);
   rpc PurchaseShopItem(PurchaseShopItemRequest) returns (PurchaseShopItemResponse);
+  rpc PurchaseExternalPlayerInvite(PurchaseExternalPlayerInviteRequest) returns (PurchaseExternalPlayerInviteResponse);
+  rpc GetCurrentClaimChunk(GetCurrentClaimChunkRequest) returns (GetCurrentClaimChunkResponse);
+  rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
+  rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
+  rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
+  rpc GetCharmInventory(GetCharmInventoryRequest) returns (GetCharmInventoryResponse);
+  rpc UpgradeCharm(UpgradeCharmRequest) returns (UpgradeCharmResponse);
+}
+
+message GetCharmInventoryRequest {
+  string minecraft_username = 1;
+}
+
+message CharmUpgradeIngredient {
+  string raw = 1;
+  string display_name = 2;
+  string icon_item_id = 3;
+  int32 required_count = 4;
+  int32 inventory_count = 5;
+}
+
+message InventoryCharm {
+  string item_id = 2;
+  string title = 3;
+  int32 current_level = 4;
+  int32 max_level = 5;
+  int32 target_level = 6;
+  int32 price_dabloons = 7;
+  string current_ability = 8;
+  string next_ability = 9;
+  repeated CharmUpgradeIngredient ingredients = 10;
+}
+
+message GetCharmInventoryResponse {
+  bool online = 1;
+  int32 balance_dabloons = 2;
+  repeated InventoryCharm charms = 3;
+  string message = 4;
+}
+
+message UpgradeCharmRequest {
+  string minecraft_username = 1;
+  string item_id = 2;
+  int32 expected_level = 3;
+}
+
+message UpgradeCharmResponse {
+  bool upgraded = 1;
+  bool online = 2;
+  int32 balance_dabloons = 3;
+  int32 new_level = 4;
+  string message = 5;
+}
+
+message GetClaimsSnapshotRequest {}
+
+message ClaimData {
+  string id = 1;
+  string dimension = 2;
+  sint32 chunk_x = 3;
+  sint32 chunk_z = 4;
+  string owner_uuid = 5;
+  string owner_name = 6;
+  repeated string member_uuids = 7;
+  string name = 8;
+  string color_hex = 9;
+  string owner_color_hex = 10;
+  bool has_custom_color = 11;
+}
+
+message ClaimsSnapshot {
+  repeated ClaimData claims = 1;
+}
+
+message GetCurrentClaimChunkRequest {
+  string minecraft_username = 1;
+}
+
+message GetCurrentClaimChunkResponse {
+  bool online = 1;
+  string dimension = 2;
+  sint32 chunk_x = 3;
+  sint32 chunk_z = 4;
+  int32 balance_dabloons = 5;
+  string message = 6;
+}
+
+message PurchaseClaimRequest {
+  string minecraft_username = 1;
+  string dimension = 2;
+  sint32 chunk_x = 3;
+  sint32 chunk_z = 4;
+  int32 price_dabloons = 5;
+}
+
+message PurchaseClaimResponse {
+  bool purchased = 1;
+  bool online = 2;
+  int32 balance_dabloons = 3;
+  string message = 4;
+}
+
+message ApplyClaimsSnapshotResponse {
+  bool applied = 1;
+}
+
+message ApplyPlayerColorRequest {
+  string minecraft_uuid = 1;
+  string color_hex = 2;
+}
+
+message ApplyPlayerColorResponse {
+  bool applied = 1;
 }
 
 message GrantGiftCodeMoneyRequest {
@@ -93,6 +210,12 @@ message SyncPlayerStatsResponse {
   bool accepted = 1;
   bool account_linked = 2;
   string message = 3;
+  bool is_member = 4;
+  bool is_committee = 5;
+  string nickname = 6;
+  string pronouns = 7;
+  bool is_external = 8;
+  string color_hex = 9;
 }
 
 message RecordMoneyEventRequest {
@@ -146,19 +269,56 @@ message GrantDailyLoginBonusResponse {
   string message = 3;
 }
 
-message SubmitDailyItemsRequest {
-  string minecraft_username = 1;
-  string item = 2;
-  int32 count = 3;
-  int32 reward_dabloons = 4;
-  string period_key = 5;
-  int64 unix_ms = 6;
+message DailyTaskState {
+  int32 user_id = 1;
+  string minecraft_username = 2;
+  string period_key = 3;
+  string task_json = 4;
+  bool claimed = 5;
 }
 
-message SubmitDailyItemsResponse {
-  bool submitted = 1;
+message GetDailyTasksSnapshotRequest {}
+
+message DailyTasksSnapshot {
+  repeated DailyTaskState tasks = 1;
+}
+
+message UpdateDailyTaskRequest {
+  int32 user_id = 1;
+  string period_key = 2;
+  string task_json = 3;
+  int64 unix_ms = 4;
+}
+
+message UpdateDailyTaskResponse {
+  bool accepted = 1;
+  string message = 2;
+}
+
+message GenerateDailyTasksRequest {
+  int32 user_id = 1;
+  string minecraft_username = 2;
+  string period_key = 3;
+  int32 count = 4;
+}
+
+message GenerateDailyTasksResponse {
+  bool generated = 1;
+  repeated string task_json = 2;
+  string message = 3;
+}
+
+message ClaimDailyTaskRequest {
+  int32 user_id = 1;
+  string minecraft_username = 2;
+  string period_key = 3;
+  string task_json = 4;
+}
+
+message ClaimDailyTaskResponse {
+  bool claimed = 1;
   bool online = 2;
-  int32 found_count = 3;
+  string task_json = 3;
   string message = 4;
 }
 
@@ -204,6 +364,17 @@ message PurchaseShopItemRequest {
 }
 
 message PurchaseShopItemResponse {
+  bool purchased = 1;
+  bool online = 2;
+  int32 balance_dabloons = 3;
+  string message = 4;
+}
+
+message PurchaseExternalPlayerInviteRequest {
+  string minecraft_username = 1;
+}
+
+message PurchaseExternalPlayerInviteResponse {
   bool purchased = 1;
   bool online = 2;
   int32 balance_dabloons = 3;

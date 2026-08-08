@@ -6,7 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 30,
+		"priceDabloons": 10,
 		"description": "Use to unlock more knowledge readable on the website.",
 		"unlockWeight": 100
 	},
@@ -19,6 +19,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Use to unlock more knowledge readable on the website.",
 				"abilityStatusRelative": "",
+				"dabloons": 0,
 				"upgradeIngredients": []
 			}
 		]

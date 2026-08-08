@@ -169,6 +169,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	async function setMembership(player: AdminPlayer, isMember: boolean) {
 		const action = isMember ? 'mark as a society member' : 'remove society membership from'
 		if (!window.confirm(`Are you sure you want to ${action} this player?`)) return
+		if (player.isExternal && !window.confirm(`This player is external. Are you sure you want to ${action} them?`)) return
 
 		setBusyPlayerId(player.id)
 		setError('')
@@ -196,7 +197,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	async function setCommittee(player: AdminPlayer, isCommittee: boolean) {
 		const action = isCommittee ? 'give committee access to' : 'remove committee access from'
 		if (!window.confirm(`Are you sure you want to ${action} this player?`)) return
-
+		if (player.isExternal && !window.confirm(`This player is external. Are you sure you want to ${action} them?`)) return
 		setBusyPlayerId(player.id)
 		setError('')
 		setMessage('')

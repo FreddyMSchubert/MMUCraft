@@ -9,6 +9,7 @@ import {
 	WebhookClient,
 } from 'discord.js'
 import { GrpcServerService } from '../grpc/grpc-server.service'
+import { DatabaseService, discordAdminCommandLogs } from '../database/database.service'
 
 export interface MinecraftDiscordEvent {
 	type: string
@@ -29,14 +30,17 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 		charm: '✨',
 	}
 	const isServer = event.type !== 'chat' || !event.minecraft_username
-	const player = `${colorEmoji(event.color_hex)} **${event.minecraft_username}** [${roleLabel(event.role)}]`
+	const label = roleLabel(event.role)
+	const player = event.minecraft_username
+		? `${ansi(ansiColor(event.color_hex))}${event.minecraft_username}${ansi(0)}${label ? `${ansi(roleColor(event.role))}${label}${ansi(0)}` : ''}`
+		: ''
 	const username = isServer
 		? 'Minecraft Server'
-		: `${colorEmoji(event.color_hex)} ${event.minecraft_username} [${roleLabel(event.role)}]`.slice(0, 80)
+		: `${event.minecraft_username}${label}`.slice(0, 80)
 	return {
 		username,
 		content: (isServer
-			? `🤖 ${player} ${emoji[event.type] ? `${emoji[event.type]} ` : ''}${event.content}`
+			? `\`\`\`ansi\n🤖 ${player ? `${player} ` : ''}${emoji[event.type] ? `${emoji[event.type]} ` : ''}${event.content.replaceAll('```', '``\\`')}\n\`\`\``
 			: event.content).slice(0, 2_000),
 		isServer,
 	}
@@ -44,24 +48,34 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 
 function roleLabel(role: string) {
 	switch (role) {
-		case 'Committee': return '🟡 Committee'
-		case 'Member': return '🟢 Member'
-		case 'External': return '⚪ External'
-		default: return 'Player'
+		case 'Committee': return ' [Committee]'
+		case 'Member': return ' [Member]'
+		case 'External': return ' [External]'
+		default: return ''
 	}
 }
 
-function colorEmoji(color: string) {
+function roleColor(role: string) {
+	if (role === 'Committee') return 33
+	if (role === 'Member') return 32
+	if (role === 'External') return 30
+	return 37
+}
+
+function ansi(color: number) {
+	return `\u001b[${color}m`
+}
+
+export function ansiColor(color: string) {
 	const rgb = /^#([0-9a-f]{6})$/i.exec(color)?.[1]
-	if (!rgb) return '⚪'
+	if (!rgb) return 37
 	const value = Number.parseInt(rgb, 16)
 	const red = value >> 16 & 0xff
 	const green = value >> 8 & 0xff
 	const blue = value & 0xff
-	const choices: Array<[string, number, number, number]> = [
-		['🔴', 255, 0, 0], ['🟠', 255, 128, 0], ['🟡', 255, 255, 0],
-		['🟢', 0, 200, 0], ['🔵', 0, 100, 255], ['🟣', 160, 32, 240],
-		['🟤', 128, 72, 0], ['⚪', 255, 255, 255], ['⚫', 0, 0, 0],
+	const choices: Array<[number, number, number, number]> = [
+		[31, 255, 0, 0], [33, 255, 255, 0], [32, 0, 200, 0], [34, 0, 100, 255],
+		[35, 160, 32, 240], [30, 128, 128, 128], [37, 255, 255, 255],
 	]
 	return choices.reduce((best, candidate) => {
 		const distance = (red - candidate[1]) ** 2 + (green - candidate[2]) ** 2 + (blue - candidate[3]) ** 2
@@ -86,7 +100,10 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private readonly avatarBaseUrl = (process.env.DISCORD_AVATAR_BASE_URL
 		?? (process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/discord/avatar` : '')).replace(/\/$/, '')
 
-	constructor(private readonly grpcServer: GrpcServerService) { }
+	constructor(
+		private readonly grpcServer: GrpcServerService,
+		private readonly database: DatabaseService,
+	) { }
 
 	onApplicationBootstrap() {
 		const token = process.env.DISCORD_BOT_TOKEN?.trim()
@@ -169,9 +186,15 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		}
 
 		await interaction.deferReply({ ephemeral: true })
+		const command = interaction.options.getString('command', true)
 		try {
+			this.database.connection.insert(discordAdminCommandLogs).values({
+				command,
+				discord_username: interaction.user.tag,
+				created_at_unix_ms: interaction.createdTimestamp,
+			}).run()
 			const response = await this.callMinecraft<{ succeeded: boolean; result: number; output: string }>('RunServerCommand', {
-				command: interaction.options.getString('command', true),
+				command,
 				discord_user: interaction.user.tag,
 			})
 			const output = response.output || `Command returned ${response.result}.`

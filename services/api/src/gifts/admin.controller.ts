@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common'
+import { desc } from 'drizzle-orm'
 import { AuthService } from '../auth/auth.service'
+import { DatabaseService, discordAdminCommandLogs } from '../database/database.service'
 import { GiftsService } from './gifts.service'
 
 @Controller('api/admin')
@@ -7,12 +9,26 @@ export class AdminController {
 	constructor(
 		private readonly auth: AuthService,
 		private readonly gifts: GiftsService,
+		private readonly database: DatabaseService,
 	) { }
 
 	@Get('players')
 	listPlayers(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader)
 		return this.gifts.listAdminPlayers()
+	}
+
+	@Get('discord-admin-commands')
+	listDiscordAdminCommands(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return {
+			commands: this.database.connection.select().from(discordAdminCommandLogs)
+				.orderBy(desc(discordAdminCommandLogs.created_at_unix_ms)).limit(200).all().map((entry) => ({
+					command: entry.command,
+					discordUsername: entry.discord_username,
+					createdAtUnixMs: entry.created_at_unix_ms,
+				})),
+		}
 	}
 
 	@Patch('players/:userId/membership')

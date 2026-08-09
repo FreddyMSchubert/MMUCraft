@@ -222,7 +222,7 @@ export class ShopService {
 			shoppingSunday: this.isShoppingSunday(),
 			items: visibleItems.map((item) => {
 				const isDailyDeal = dailyDealIds.has(item.id)
-				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id, item.priceDabloons) : 0
+				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
 				return {
 					id: item.id,
 					title: item.title,
@@ -273,7 +273,7 @@ export class ShopService {
 
 		const catalogItems = this.loadCatalog().items
 		const isDailyDeal = this.getDailyDealIds(catalogItems).has(item.id)
-		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id, item.priceDabloons) : 0
+		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
 		const purchasePrice = this.discountedPrice(item.priceDabloons, discountPercent)
 
 		let purchase: PurchaseShopItemResponse

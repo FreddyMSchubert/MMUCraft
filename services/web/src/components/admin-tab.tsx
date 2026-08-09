@@ -68,6 +68,12 @@ interface ActivePlayerBan {
 	createdAtUnixMs: number
 }
 
+interface DiscordAdminCommand {
+	command: string
+	discordUsername: string
+	createdAtUnixMs: number
+}
+
 const PAGE_SIZE = 42
 
 const CODE_ADJECTIVES = [
@@ -79,7 +85,7 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
-	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' ? section : 'members'
+	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' || section === 'discord-commands' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
 	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
@@ -88,6 +94,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [claimsHaveMore, setClaimsHaveMore] = useState(false)
 	const [whitelistedEmails, setWhitelistedEmails] = useState<WhitelistedEmail[]>([])
 	const [activePlayerBans, setActivePlayerBans] = useState<ActivePlayerBan[]>([])
+	const [discordAdminCommands, setDiscordAdminCommands] = useState<DiscordAdminCommand[]>([])
 	const [whitelistEmail, setWhitelistEmail] = useState('')
 	const [responsibleUsername, setResponsibleUsername] = useState('')
 	const [banPlayerId, setBanPlayerId] = useState('')
@@ -110,13 +117,14 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [message, setMessage] = useState<ReactNode>('')
 
 	const load = useCallback(async () => {
-		const [playersResponse, codesResponse, signinsResponse, claimsResponse, whitelistResponse, bansResponse] = await Promise.all([
+		const [playersResponse, codesResponse, signinsResponse, claimsResponse, whitelistResponse, bansResponse, commandsResponse] = await Promise.all([
 			fetch('/api/admin/players', { cache: 'no-store' }),
 			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
 			fetch(`/api/admin/signins?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch(`/api/admin/claims?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch('/api/admin/email-whitelist', { cache: 'no-store' }),
 			fetch('/api/admin/player-bans', { cache: 'no-store' }),
+			fetch('/api/admin/discord-admin-commands', { cache: 'no-store' }),
 		])
 		const playersBody = await playersResponse.json().catch(() => null)
 		const codesBody = await codesResponse.json().catch(() => null)
@@ -124,6 +132,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		const claimsBody = await claimsResponse.json().catch(() => null)
 		const whitelistBody = await whitelistResponse.json().catch(() => null)
 		const bansBody = await bansResponse.json().catch(() => null)
+		const commandsBody = await commandsResponse.json().catch(() => null)
 
 		if (!playersResponse.ok) throw new Error(apiMessage(playersBody, 'Failed to load the member list'))
 		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'))
@@ -131,6 +140,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		if (!claimsResponse.ok) throw new Error(apiMessage(claimsBody, 'Failed to load claims'))
 		if (!whitelistResponse.ok) throw new Error(apiMessage(whitelistBody, 'Failed to load the email whitelist'))
 		if (!bansResponse.ok) throw new Error(apiMessage(bansBody, 'Failed to load player bans'))
+		if (!commandsResponse.ok) throw new Error(apiMessage(commandsBody, 'Failed to load Discord admin commands'))
 
 		setPlayers(playersBody.players as AdminPlayer[])
 		setGiftCodes(codesBody.giftCodes as GiftCode[])
@@ -140,6 +150,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		setClaimsHaveMore(Boolean(claimsBody.hasMore))
 		setWhitelistedEmails(whitelistBody.entries as WhitelistedEmail[])
 		setActivePlayerBans(bansBody.bans as ActivePlayerBan[])
+		setDiscordAdminCommands(commandsBody.commands as DiscordAdminCommand[])
 	}, [])
 
 	useEffect(() => {
@@ -459,12 +470,29 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					Gift codes
 				</Link>
 				<Link
+					className={activeSection === 'discord-commands' ? 'active' : ''}
+					href="/play/admin/discord-commands"
+				>
+					Discord commands
+				</Link>
+				<Link
 					className={activeSection === 'bans' ? 'active' : ''}
 					href="/play/admin/bans"
 				>
 					Ban / timeout
 				</Link>
 			</nav>
+
+			{activeSection === 'discord-commands' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader"><h3>Discord admin commands</h3><p>Commands sent to the Minecraft console through Discord.</p></div>
+					<button type="button" onClick={() => void load()}>Refresh</button>
+					<div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Command</th><th>Discord user</th><th>Created</th></tr></thead><tbody>
+						{discordAdminCommands.map((entry, index) => <tr key={`${entry.createdAtUnixMs}-${index}`}><td><code>{entry.command}</code></td><td>{entry.discordUsername}</td><td>{formatDateTime(entry.createdAtUnixMs)}</td></tr>)}
+						{discordAdminCommands.length === 0 && <tr><td colSpan={3}>No Discord admin commands yet.</td></tr>}
+					</tbody></table></div>
+				</section>
+			)}
 
 			{activeSection === 'members' && (
 				<section className="adminSection">

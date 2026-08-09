@@ -40,19 +40,17 @@ export class DiscordAvatarController {
 		)
 
 		const face = await skin.clone().extract({ left: 8, top: 8, width: 8, height: 8 })
-			.resize(128, 128, { kernel: 'nearest' }).png().toBuffer()
+			.resize(108, 108, { kernel: 'nearest' }).png().toBuffer()
 		const hat = await skin.clone().extract({ left: 40, top: 8, width: 8, height: 8 })
-			.resize(128, 128, { kernel: 'nearest' }).png().toBuffer()
+			.resize(108, 108, { kernel: 'nearest' }).png().toBuffer()
 		const mask = Buffer.from('<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg"><circle cx="64" cy="64" r="64" fill="white"/></svg>')
-		const playerHead = await sharp(face).composite([
-			{ input: hat },
-			{ input: mask, blend: 'dest-in' },
-		]).png().toBuffer()
+		const playerHead = await sharp(face).composite([{ input: hat }]).png().toBuffer()
 		const png = await sharp({
 			create: { width: 128, height: 128, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
 		}).composite([
-			{ input: playerHead },
+			{ input: playerHead, left: 10, top: 10 },
 			{ input: ring },
+			{ input: mask, blend: 'dest-in' },
 		]).png().toBuffer()
 
 		return new StreamableFile(png)

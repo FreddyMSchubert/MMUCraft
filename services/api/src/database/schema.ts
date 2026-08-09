@@ -230,6 +230,13 @@ export const giftCodeRedemptions = sqliteTable('gift_code_redemptions', {
 	index('gift_code_redemptions_code_idx').on(table.code),
 ])
 
+export const discordAdminCommandLogs = sqliteTable('discord_admin_command_logs', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	command: text('command').notNull(),
+	discord_username: text('discord_username').notNull(),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+}, (table) => [index('discord_admin_command_logs_created_at_idx').on(table.created_at_unix_ms)])
+
 export type UserRow = typeof users.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
 export type PlayerBanRow = typeof playerBans.$inferSelect
@@ -247,6 +254,7 @@ export type DailyClaimRow = typeof dailyClaims.$inferSelect
 export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSelect
 export type DailyTaskRow = typeof dailyTasks.$inferSelect
 export type GiftCodeRow = typeof giftCodes.$inferSelect
+export type DiscordAdminCommandLogRow = typeof discordAdminCommandLogs.$inferSelect
 
 export const schema = {
 	users,
@@ -267,4 +275,5 @@ export const schema = {
 	dailyTasks,
 	giftCodes,
 	giftCodeRedemptions,
+	discordAdminCommandLogs,
 }

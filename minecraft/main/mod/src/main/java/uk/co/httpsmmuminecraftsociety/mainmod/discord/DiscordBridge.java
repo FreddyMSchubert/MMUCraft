@@ -90,9 +90,38 @@ public final class DiscordBridge {
     private static String onlinePlayers(MinecraftServer server, ServerPlayer excluded) {
         String players = server.getPlayerList().getPlayers().stream()
                 .filter(player -> player != excluded && !player.hasDisconnected())
-                .map(player -> player.getName().getString())
+                .map(DiscordBridge::coloredOnlinePlayer)
                 .collect(Collectors.joining(", "));
         return players.isEmpty() ? "none" : players;
+    }
+
+    private static String coloredOnlinePlayer(ServerPlayer player) {
+        return ansiColor(PlayerStatsSync.discordPresentation(player).colorHex())
+                + player.getName().getString() + "\u001B[0m";
+    }
+
+    private static String ansiColor(String color) {
+        int rgb;
+        try {
+            rgb = color.startsWith("#") ? Integer.parseInt(color.substring(1), 16) : 0xE6E6E6;
+        } catch (NumberFormatException ignored) {
+            rgb = 0xE6E6E6;
+        }
+        int[][] choices = {{31, 255, 0, 0}, {33, 255, 255, 0}, {32, 0, 200, 0}, {34, 0, 100, 255},
+                {35, 160, 32, 240}, {30, 128, 128, 128}, {37, 255, 255, 255}};
+        int closest = 37;
+        int shortestDistance = Integer.MAX_VALUE;
+        for (int[] choice : choices) {
+            int red = (rgb >> 16 & 0xFF) - choice[1];
+            int green = (rgb >> 8 & 0xFF) - choice[2];
+            int blue = (rgb & 0xFF) - choice[3];
+            int distance = red * red + green * green + blue * blue;
+            if (distance < shortestDistance) {
+                closest = choice[0];
+                shortestDistance = distance;
+            }
+        }
+        return "\u001B[" + closest + "m";
     }
 
     private static boolean isCoveredPlayerEvent(Component message) {

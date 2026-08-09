@@ -212,7 +212,7 @@ public final class PlayerStatsSync {
         String label = response.getAccountLinked() && response.getIsCommittee() ? " [Committee]"
                 : response.getAccountLinked() && response.getIsExternal() ? " [External]"
                 : response.getAccountLinked() && response.getIsMember() ? " [Member]" : "";
-        ChatFormatting labelColor = response.getIsCommittee() ? ChatFormatting.GOLD
+        ChatFormatting labelColor = response.getIsCommittee() ? ChatFormatting.AQUA
                 : response.getIsExternal() ? ChatFormatting.GRAY : ChatFormatting.GREEN;
         team.setPlayerSuffix(Component.literal(label).withStyle(labelColor));
         team.setColor(Optional.of(closestTeamColor(parseColor(response.getColorHex()))));

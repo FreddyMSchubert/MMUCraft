@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -13,22 +14,28 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PublishDiscordEventRequest;
 
 import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 
 public final class DiscordBridge {
     private static boolean broadcastingDiscordMessage;
+    private static final Set<PlayerChatMessage> commandMessages = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private DiscordBridge() { }
 
     public static void init() {
-        ServerMessageEvents.CHAT_MESSAGE.register((message, sender, type) ->
-                publish("chat", sender, message.signedContent()));
+        ServerMessageEvents.CHAT_MESSAGE.register((message, sender, type) -> {
+            if (!commandMessages.remove(message)) publish("chat", sender, message.signedContent());
+        });
         ServerMessageEvents.GAME_MESSAGE.register((server, message, overlay) -> {
             if (!broadcastingDiscordMessage && !overlay && !isCoveredPlayerEvent(message)) {
                 publish("server", null, message.getString());
             }
         });
         ServerMessageEvents.COMMAND_MESSAGE.register((message, source, type) -> {
-            if (!source.isPlayer()) publish("server", null, message.decoratedContent().getString());
+            commandMessages.add(message);
+            publish("server", null, message.decoratedContent().getString());
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayer player = handler.player;

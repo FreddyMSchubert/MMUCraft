@@ -37,10 +37,11 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 	const username = isServer
 		? 'Minecraft Server'
 		: `${event.minecraft_username}${label}`.slice(0, 80)
+	const prefix = emoji[event.type] ?? '🤖'
 	return {
 		username,
 		content: (isServer
-			? `\`\`\`ansi\n🤖 ${player ? `${player} ` : ''}${emoji[event.type] ? `${emoji[event.type]} ` : ''}${event.content.replaceAll('```', '``\\`')}\n\`\`\``
+			? `${prefix} \`\`\`ansi\n${player ? `${player} ` : ''}${event.content.replaceAll('```', '``\\`')}\n\`\`\``
 			: event.content).slice(0, 2_000),
 		isServer,
 	}

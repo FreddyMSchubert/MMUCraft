@@ -21,6 +21,29 @@ export interface MinecraftDiscordEvent {
 	color_hex: string
 }
 
+export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
+	const emoji: Record<string, string> = {
+		advancement: '🏆',
+		join: '🟢',
+		leave: '🔴',
+		first_join: '🎉',
+		dailies: '✅',
+		shop: '🛒',
+		charm: '✨',
+		server: '📣',
+	}
+	const isServer = event.type === 'server' || !event.minecraft_username
+	const details = [event.nickname, event.pronouns].filter(Boolean).join(' · ')
+	const username = isServer
+		? 'Minecraft Server'
+		: [event.minecraft_username, event.role || 'Player', details && `[${details}]`].filter(Boolean).join(' · ').slice(0, 80)
+	return {
+		username,
+		content: `${emoji[event.type] ? `${emoji[event.type]} ` : ''}${event.content}`.slice(0, 2_000),
+		isServer,
+	}
+}
+
 interface GameplayProtoRoot {
 	mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } }
 }
@@ -34,7 +57,8 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	})
 	private webhook: WebhookClient | null = null
 	private minecraft: grpc.Client | null = null
-	private readonly avatarBaseUrl = process.env.DISCORD_AVATAR_BASE_URL?.replace(/\/$/, '') ?? ''
+	private readonly avatarBaseUrl = (process.env.DISCORD_AVATAR_BASE_URL
+		?? (process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/discord/avatar` : '')).replace(/\/$/, '')
 
 	constructor(private readonly grpcServer: GrpcServerService) { }
 
@@ -44,6 +68,9 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		if (!token || !webhookUrl || !this.channelId) {
 			this.logger.log('Discord bridge disabled; set DISCORD_BOT_TOKEN, DISCORD_WEBHOOK_URL, and DISCORD_CHANNEL_ID')
 			return
+		}
+		if (!this.avatarBaseUrl) {
+			this.logger.warn('Discord player avatars need a public DISCORD_AVATAR_BASE_URL or PUBLIC_URL')
 		}
 
 		this.webhook = new WebhookClient({ url: webhookUrl })
@@ -74,32 +101,15 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 
 	async publish(event: MinecraftDiscordEvent) {
 		if (!this.webhook) return false
-
-		const emoji: Record<string, string> = {
-			advancement: '🏆',
-			join: '🟢',
-			leave: '🔴',
-			first_join: '🎉',
-			dailies: '✅',
-			shop: '🛒',
-			charm: '✨',
-			server: '📣',
-		}
-		const profile = event.minecraft_username
-			? `**${event.role || 'Player'}** · (MC: ${event.minecraft_username} · Nickname: ${event.nickname || '—'} · Pronouns: ${event.pronouns || '—'})\n`
-			: ''
-		const prefix = emoji[event.type] ? `${emoji[event.type]} ` : ''
-		const color = /^#[0-9a-f]{6}$/i.test(event.color_hex) ? Number.parseInt(event.color_hex.slice(1), 16) : 0x5865f2
-
-		const avatarURL = event.minecraft_uuid && this.avatarBaseUrl
-			? `${this.avatarBaseUrl}/${event.minecraft_uuid}.png?color=${event.color_hex.replace(/^#/, '')}`
-			: event.minecraft_uuid
-				? `https://crafatar.com/avatars/${event.minecraft_uuid.replaceAll('-', '')}?size=128&overlay`
-				: undefined
+		const message = formatDiscordWebhookMessage(event)
+		if (!message.content.trim()) return false
+		const avatarURL = !message.isServer && event.minecraft_uuid && this.avatarBaseUrl
+			? `${this.avatarBaseUrl}/${event.minecraft_uuid}.png`
+			: undefined
 		await this.webhook.send({
-			username: event.minecraft_username || 'Minecraft Server',
+			username: message.username,
 			avatarURL,
-			embeds: [{ color, description: `${profile}${prefix}${event.content}`.slice(0, 4096) }],
+			content: message.content,
 			allowedMentions: { parse: [] },
 		})
 		return true

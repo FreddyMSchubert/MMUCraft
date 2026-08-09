@@ -628,6 +628,9 @@ export class ShopService {
 				price_dabloons: priceDabloons,
 				delivery_kind: item.deliveryKind,
 				unix_ms: Date.now(),
+				display_name: item.title,
+				item_type: item.type === 'generic' ? 'Item' : titleCase(item.type),
+				rarity: item.rarity,
 			}, (error: grpc.ServiceError | null, response: PurchaseShopItemResponse) => {
 				if (error) {
 					reject(error)
@@ -1091,4 +1094,8 @@ export class ShopService {
 			message,
 		}
 	}
+}
+
+function titleCase(value: string) {
+	return value ? value[0]!.toUpperCase() + value.slice(1) : value
 }

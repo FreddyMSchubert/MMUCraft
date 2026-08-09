@@ -794,6 +794,12 @@ async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftP
 		throw new Error('Mojang UUID lookup returned no UUID')
 	}
 
+	return fetchMojangProfileByUuid(uuid, name)
+}
+
+export async function fetchMojangProfileByUuid(uuidInput: string, fallbackName = ''): Promise<MinecraftProfile> {
+	const uuid = uuidInput.replaceAll('-', '')
+	if (!/^[0-9a-f]{32}$/i.test(uuid)) throw new Error('Invalid Mojang UUID')
 	const profileResponse = await fetch(
 		`https://sessionserver.mojang.com/session/minecraft/profile/${encodeURIComponent(uuid)}`,
 		{ cache: 'no-store' },
@@ -804,6 +810,8 @@ async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftP
 	}
 
 	const profileBody = await profileResponse.json().catch(() => null) as {
+		id?: unknown
+		name?: unknown
 		properties?: Array<{ name?: unknown; value?: unknown }>
 	} | null
 	const texturesProperty = profileBody?.properties?.find((property) => property.name === 'textures')
@@ -826,8 +834,8 @@ async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftP
 		: null
 
 	return {
-		uuid,
-		name,
+		uuid: typeof profileBody?.id === 'string' ? profileBody.id : uuid,
+		name: typeof profileBody?.name === 'string' ? profileBody.name : fallbackName,
 		skinUrl,
 		model,
 		fetchedAtUnixMs: Date.now(),

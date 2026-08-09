@@ -568,7 +568,8 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         DiscordBridge.playerEvent("charm", player,
-                player.getName().getString() + " upgraded " + item.title() + " to level " + targetLevel + ".");
+                "I just upgraded my " + item.title() + " to level " + targetLevel + ". ["
+                        + target.abilityStatusCurrent() + "]");
 
         return UpgradeCharmResponse.newBuilder()
                 .setUpgraded(true)
@@ -690,7 +691,7 @@ public final class GameplayGrpcService extends GrpcHandler {
 
         if ("daily_completion".equals(request.getSource())) {
             DiscordBridge.playerEvent("dailies", player,
-                    player.getName().getString() + " completed all of today's dailies.");
+                    "I just completed all of today's dailies.");
         }
 
         return GrantDailyLoginBonusResponse.newBuilder()
@@ -962,7 +963,8 @@ public final class GameplayGrpcService extends GrpcHandler {
 
         int remaining = MoneyHelper.GetBalance(player);
         DiscordBridge.playerEvent("shop", player,
-                player.getName().getString() + " bought " + request.getItemId() + " from the shop.");
+                "I just bought the " + request.getRarity() + " " + request.getDisplayName() + " "
+                        + request.getItemType() + " from the shop for " + price + " dabloons.");
         return PurchaseShopItemResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)

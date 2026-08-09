@@ -128,15 +128,16 @@ public class PlayerAdvancementMoney {
             return;
         }
 
-        advancementHolder.value().display().ifPresent(display ->
-                DiscordBridge.advancement(rewardedPlayer, display.getTitle().getString()));
-
         int money = AdvancementMoney.rewardForAdvancement(
                 advancementHolder.id(),
                 rewards.experience(),
                 isMember
         ).totalReward();
         if (money > 0 && MoneyHelper.GainMoney(rewardedPlayer, money)) {
+            if (money >= 33) {
+                advancementHolder.value().display().ifPresent(display ->
+                        DiscordBridge.advancement(rewardedPlayer, display.getTitle().getString()));
+            }
             GameplayGrpcService.recordMoneyEvent(
                     rewardedPlayer.getName().getString(),
                     rewardedPlayer.getUUID().toString(),

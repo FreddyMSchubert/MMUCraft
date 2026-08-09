@@ -400,6 +400,9 @@ message PurchaseShopItemRequest {
   int32 price_dabloons = 3;
   string delivery_kind = 4;
   int64 unix_ms = 5;
+  string display_name = 6;
+  string item_type = 7;
+  string rarity = 8;
 }
 
 message PurchaseShopItemResponse {

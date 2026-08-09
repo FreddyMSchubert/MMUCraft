@@ -36,16 +36,17 @@ async function check() {
 		assert.equal(metadata.height, 128)
 		const pixels = await sharp(Buffer.concat(chunks)).raw().toBuffer()
 		assert.deepEqual([...pixels.subarray((6 * 128 + 64) * 4, (6 * 128 + 64) * 4 + 3)], [255, 0, 170])
-		assert.deepEqual([...pixels.subarray((28 * 128 + 28) * 4, (28 * 128 + 28) * 4 + 3)], [171, 205, 239])
+		assert.equal(pixels[3], 0)
+		assert.deepEqual([...pixels.subarray((64 * 128 + 64) * 4, (64 * 128 + 64) * 4 + 3)], [171, 205, 239])
 		await assert.rejects(() => new DiscordAvatarController(database).avatar('not-a-uuid'))
 		assert.deepEqual(formatDiscordWebhookMessage({
 			type: 'chat', minecraft_username: 'Freddy', minecraft_uuid: 'id', content: 'Hello!',
 			role: 'Committee', nickname: 'Fred', pronouns: 'he/him', color_hex: '#ff00aa',
-		}), { username: 'Freddy · Committee · [Fred · he/him]', content: 'Hello!', isServer: false })
+		}), { username: '🟣 Freddy [🟡 Committee]', content: 'Hello!', isServer: false })
 		assert.deepEqual(formatDiscordWebhookMessage({
 			type: 'server', minecraft_username: 'Freddy', minecraft_uuid: 'id', content: 'Restarting.',
 			role: 'Committee', nickname: 'Fred', pronouns: 'he/him', color_hex: '#ff00aa',
-		}), { username: 'Minecraft Server', content: '📣 Restarting.', isServer: true })
+		}), { username: 'Minecraft Server', content: '🤖 🟣 **Freddy** [🟡 Committee] Restarting.', isServer: true })
 	} finally {
 		global.fetch = originalFetch
 	}

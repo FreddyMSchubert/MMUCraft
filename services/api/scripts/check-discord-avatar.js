@@ -46,7 +46,7 @@ async function check() {
 		assert.deepEqual(formatDiscordWebhookMessage({
 			type: 'server', minecraft_username: 'Freddy', minecraft_uuid: 'id', content: 'Restarting.',
 			role: 'Committee', nickname: 'Fred', pronouns: 'he/him', color_hex: '#ff00aa',
-		}), { username: 'Minecraft Server', content: '🤖 ```ansi\n\u001b[35mFreddy\u001b[0m\u001b[33m [Committee]\u001b[0m Restarting.\n```', isServer: true })
+		}), { username: 'Minecraft Server', content: '```ansi\n👾 \u001b[35mFreddy\u001b[0m\u001b[36m [Committee]\u001b[0m Restarting.\n```', isServer: true })
 	} finally {
 		global.fetch = originalFetch
 	}

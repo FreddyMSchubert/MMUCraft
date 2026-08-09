@@ -25,6 +25,9 @@ export interface MinecraftDiscordEvent {
 export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 	const emoji: Record<string, string> = {
 		advancement: '🏆',
+		join: '➡️',
+		leave: '⬅️',
+		first_join: '➡️ 👶',
 		dailies: '✅',
 		shop: '🛒',
 		charm: '✨',
@@ -37,11 +40,11 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 	const username = isServer
 		? 'Minecraft Server'
 		: `${event.minecraft_username}${label}`.slice(0, 80)
-	const prefix = emoji[event.type] ?? '🤖'
+	const prefix = emoji[event.type] ?? '👾'
 	return {
 		username,
 		content: (isServer
-			? `${prefix} \`\`\`ansi\n${player ? `${player} ` : ''}${event.content.replaceAll('```', '``\\`')}\n\`\`\``
+			? `\`\`\`ansi\n${prefix} ${player ? `${player} ` : ''}${event.content.replaceAll('```', '``\\`')}\n\`\`\``
 			: event.content).slice(0, 2_000),
 		isServer,
 	}
@@ -57,7 +60,7 @@ function roleLabel(role: string) {
 }
 
 function roleColor(role: string) {
-	if (role === 'Committee') return 33
+	if (role === 'Committee') return 36
 	if (role === 'Member') return 32
 	if (role === 'External') return 30
 	return 37

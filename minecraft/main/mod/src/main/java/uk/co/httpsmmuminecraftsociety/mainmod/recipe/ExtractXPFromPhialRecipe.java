@@ -56,6 +56,9 @@ public class ExtractXPFromPhialRecipe extends CustomRecipe
         if (storedXp <= 0) return ItemStack.EMPTY;
 
         ItemStack result = new ItemStack(Items.EXPERIENCE_BOTTLE, 1);
+        CompoundTag tag = new CompoundTag();
+        tag.putInt(SculkPhialCharm.XP_STORED_ID, storedXp);
+        result.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
         SculkPhialCharm.updateStoredXpVisuals(result, storedXp);
 

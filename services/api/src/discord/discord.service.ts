@@ -24,24 +24,50 @@ export interface MinecraftDiscordEvent {
 export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 	const emoji: Record<string, string> = {
 		advancement: '🏆',
-		join: '🟢',
-		leave: '🔴',
-		first_join: '🎉',
 		dailies: '✅',
 		shop: '🛒',
 		charm: '✨',
-		server: '📣',
 	}
-	const isServer = event.type === 'server' || !event.minecraft_username
-	const details = [event.nickname, event.pronouns].filter(Boolean).join(' · ')
+	const isServer = event.type !== 'chat' || !event.minecraft_username
+	const player = `${colorEmoji(event.color_hex)} **${event.minecraft_username}** [${roleLabel(event.role)}]`
 	const username = isServer
 		? 'Minecraft Server'
-		: [event.minecraft_username, event.role || 'Player', details && `[${details}]`].filter(Boolean).join(' · ').slice(0, 80)
+		: `${colorEmoji(event.color_hex)} ${event.minecraft_username} [${roleLabel(event.role)}]`.slice(0, 80)
 	return {
 		username,
-		content: `${emoji[event.type] ? `${emoji[event.type]} ` : ''}${event.content}`.slice(0, 2_000),
+		content: (isServer
+			? `🤖 ${player} ${emoji[event.type] ? `${emoji[event.type]} ` : ''}${event.content}`
+			: event.content).slice(0, 2_000),
 		isServer,
 	}
+}
+
+function roleLabel(role: string) {
+	switch (role) {
+		case 'Committee': return '🟡 Committee'
+		case 'Member': return '🟢 Member'
+		case 'External': return '⚪ External'
+		default: return 'Player'
+	}
+}
+
+function colorEmoji(color: string) {
+	const rgb = /^#([0-9a-f]{6})$/i.exec(color)?.[1]
+	if (!rgb) return '⚪'
+	const value = Number.parseInt(rgb, 16)
+	const red = value >> 16 & 0xff
+	const green = value >> 8 & 0xff
+	const blue = value & 0xff
+	const choices: Array<[string, number, number, number]> = [
+		['🔴', 255, 0, 0], ['🟠', 255, 128, 0], ['🟡', 255, 255, 0],
+		['🟢', 0, 200, 0], ['🔵', 0, 100, 255], ['🟣', 160, 32, 240],
+		['🟤', 128, 72, 0], ['⚪', 255, 255, 255], ['⚫', 0, 0, 0],
+	]
+	return choices.reduce((best, candidate) => {
+		const distance = (red - candidate[1]) ** 2 + (green - candidate[2]) ** 2 + (blue - candidate[3]) ** 2
+		const bestDistance = (red - best[1]) ** 2 + (green - best[2]) ** 2 + (blue - best[3]) ** 2
+		return distance < bestDistance ? candidate : best
+	})[0]
 }
 
 interface GameplayProtoRoot {

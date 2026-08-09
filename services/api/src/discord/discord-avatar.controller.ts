@@ -36,18 +36,22 @@ export class DiscordAvatarController {
 			throw new BadGatewayException('Mojang returned an invalid player skin')
 		}
 		const ring = Buffer.from(
-			`<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg"><circle cx="64" cy="64" r="58" fill="none" stroke="#${color}" stroke-width="10"/></svg>`,
+			`<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg"><circle cx="64" cy="64" r="64" fill="none" stroke="#${color}" stroke-width="20"/></svg>`,
 		)
 
 		const face = await skin.clone().extract({ left: 8, top: 8, width: 8, height: 8 })
-			.resize(96, 96, { kernel: 'nearest' }).png().toBuffer()
+			.resize(128, 128, { kernel: 'nearest' }).png().toBuffer()
 		const hat = await skin.clone().extract({ left: 40, top: 8, width: 8, height: 8 })
-			.resize(96, 96, { kernel: 'nearest' }).png().toBuffer()
+			.resize(128, 128, { kernel: 'nearest' }).png().toBuffer()
+		const mask = Buffer.from('<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg"><circle cx="64" cy="64" r="64" fill="white"/></svg>')
+		const playerHead = await sharp(face).composite([
+			{ input: hat },
+			{ input: mask, blend: 'dest-in' },
+		]).png().toBuffer()
 		const png = await sharp({
 			create: { width: 128, height: 128, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
 		}).composite([
-			{ input: face, left: 16, top: 16 },
-			{ input: hat, left: 16, top: 16 },
+			{ input: playerHead },
 			{ input: ring },
 		]).png().toBuffer()
 

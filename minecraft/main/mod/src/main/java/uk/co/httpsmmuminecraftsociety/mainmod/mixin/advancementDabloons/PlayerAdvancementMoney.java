@@ -134,9 +134,9 @@ public class PlayerAdvancementMoney {
                 isMember
         ).totalReward();
         if (money > 0 && MoneyHelper.GainMoney(rewardedPlayer, money)) {
-            if (money >= 33) {
+            if ("minecraft".equals(advancementHolder.id().getNamespace()) || money >= 10) {
                 advancementHolder.value().display().ifPresent(display ->
-                        DiscordBridge.advancement(rewardedPlayer, display.getTitle().getString()));
+                        DiscordBridge.advancement(rewardedPlayer, display.getTitle().getString(), money));
             }
             GameplayGrpcService.recordMoneyEvent(
                     rewardedPlayer.getName().getString(),

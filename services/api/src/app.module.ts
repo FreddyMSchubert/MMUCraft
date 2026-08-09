@@ -6,9 +6,10 @@ import { GrpcModule } from './grpc/grpc.module'
 import { GiftsModule } from './gifts/gifts.module'
 import { HealthController } from './health.controller'
 import { PlayersModule } from './players/players.module'
+import { DiscordModule } from './discord/discord.module'
 
 @Module({
-	imports: [DatabaseModule, GrpcModule, AuthModule, GameplayModule, PlayersModule, GiftsModule],
+	imports: [DatabaseModule, GrpcModule, DiscordModule, AuthModule, GameplayModule, PlayersModule, GiftsModule],
 	controllers: [HealthController],
 })
 export class AppModule { }

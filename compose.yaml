@@ -21,9 +21,13 @@ services:
       MOD_GRPC_TARGET: minecraft:50052
       DATABASE_URL: ./data/app.sqlite
       DATABASE_MIGRATIONS_PATH: ./drizzle
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
+      DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
+      DISCORD_AVATAR_BASE_URL: ${DISCORD_AVATAR_BASE_URL:-}
     ports:
       - "8080:8080"
-      - "50051:50051"
       - "4983:4983"
     volumes:
       - ./services/api/src:/app/src
@@ -92,7 +96,6 @@ services:
       API_GRPC_TARGET: api:50051
     ports:
       - "25565:25565"
-      - "50052:50052"
     volumes:
       - ./.dev/minecraft:/data
     depends_on:

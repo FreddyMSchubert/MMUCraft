@@ -8,6 +8,7 @@ import { ShopService } from './shop/shop.service'
 import { FishingService } from '../fishing/fishing.service'
 import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service'
 import { DailiesService } from './dailies/dailies.service'
+import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.service'
 
 interface GameplayProtoRoot {
 	mcstack: {
@@ -31,6 +32,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly fishing: FishingService,
 		private readonly claims: ClaimsService,
 		private readonly dailies: DailiesService,
+		private readonly discord: DiscordService,
 	) { }
 
 	onModuleInit() {
@@ -45,7 +47,17 @@ export class GameplayGrpcService implements OnModuleInit {
 			GetClaimsSnapshot: this.getClaimsSnapshot.bind(this),
 			GetDailyTasksSnapshot: this.getDailyTasksSnapshot.bind(this),
 			UpdateDailyTask: this.updateDailyTask.bind(this),
+			PublishDiscordEvent: this.publishDiscordEvent.bind(this),
 		})
+	}
+
+	private publishDiscordEvent(
+		call: grpc.ServerUnaryCall<MinecraftDiscordEvent, { accepted: boolean }>,
+		callback: UnaryCallback<{ accepted: boolean }>,
+	) {
+		void this.discord.publish(call.request)
+			.then((accepted) => callback(null, { accepted }))
+			.catch((error: grpc.ServiceError) => callback(error, { accepted: false }))
 	}
 
 	private getDailyTasksSnapshot(

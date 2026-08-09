@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
 import java.util.List;
 
@@ -126,6 +127,9 @@ public class PlayerAdvancementMoney {
         if (rewardedPlayer.hasDisconnected()) {
             return;
         }
+
+        advancementHolder.value().display().ifPresent(display ->
+                DiscordBridge.advancement(rewardedPlayer, display.getTitle().getString()));
 
         int money = AdvancementMoney.rewardForAdvancement(
                 advancementHolder.id(),

@@ -60,11 +60,7 @@ public final class PlayerStatsSync {
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             syncNow(handler.player, true);
-            nextSyncTickByPlayer.remove(handler.player.getUUID());
-            membershipByPlayer.remove(handler.player.getUUID());
-            presentationByPlayer.remove(handler.player.getUUID());
-            renderedProfileByPlayer.remove(handler.player.getUUID());
-            colorByPlayer.remove(handler.player.getUUID());
+            server.execute(() -> clearPlayer(handler.player.getUUID()));
         });
     }
 
@@ -165,6 +161,25 @@ public final class PlayerStatsSync {
     public static int colorFor(net.minecraft.world.entity.player.Player player) {
         return colorByPlayer.getOrDefault(player.getUUID(), -1);
     }
+
+    public static DiscordPresentation discordPresentation(ServerPlayer player) {
+        SyncPlayerStatsResponse response = presentationByPlayer.get(player.getUUID());
+        if (response == null) return new DiscordPresentation("Player", "", "", "#E6E6E6");
+        String role = response.getAccountLinked() && response.getIsCommittee() ? "Committee"
+                : response.getAccountLinked() && response.getIsMember() ? "Member"
+                : response.getAccountLinked() && response.getIsExternal() ? "External" : "Player";
+        return new DiscordPresentation(role, response.getNickname(), response.getPronouns(), response.getColorHex());
+    }
+
+    private static void clearPlayer(UUID playerId) {
+        nextSyncTickByPlayer.remove(playerId);
+        membershipByPlayer.remove(playerId);
+        presentationByPlayer.remove(playerId);
+        renderedProfileByPlayer.remove(playerId);
+        colorByPlayer.remove(playerId);
+    }
+
+    public record DiscordPresentation(String role, String nickname, String pronouns, String colorHex) { }
 
     public static void applyColor(ServerPlayer player, int color) {
         if (Integer.valueOf(color).equals(colorByPlayer.put(player.getUUID(), color))) return;

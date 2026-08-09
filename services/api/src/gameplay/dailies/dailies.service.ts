@@ -142,7 +142,7 @@ export class DailiesService {
 		}
 
 		try {
-			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons)
+			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons, 'login')
 
 			if (!result.granted) {
 				this.deleteClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey)
@@ -356,7 +356,7 @@ export class DailiesService {
 		}
 
 		try {
-			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons)
+			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons, 'daily_completion')
 
 			if (!result.granted) {
 				this.deleteClaim(user.id, DAILY_COMPLETION_TASK_ID, periodKey)
@@ -556,7 +556,7 @@ export class DailiesService {
 		}
 	}
 
-	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number, rewardDabloons: number) {
+	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number, rewardDabloons: number, source: string) {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).GrantDailyLoginBonus
 
@@ -570,6 +570,7 @@ export class DailiesService {
 				amount: rewardDabloons,
 				period_key: periodKey,
 				unix_ms: unixMs,
+				source,
 			}, (error: grpc.ServiceError | null, response: { granted: boolean; online: boolean; message: string }) => {
 				if (error) {
 					reject(error)

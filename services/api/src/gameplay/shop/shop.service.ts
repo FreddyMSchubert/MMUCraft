@@ -829,18 +829,19 @@ export class ShopService {
 		const date = this.getDailyDealDate()
 		return new Set([...items]
 			.sort((left, right) => this.seededRank(`${date}:${left.id}`) - this.seededRank(`${date}:${right.id}`))
-			.slice(0, Math.min(this.isShoppingSunday() ? 10 : 5, items.length))
+			.slice(0, Math.min(this.isShoppingSunday() ? 16 : 8, items.length))
 			.map((item) => item.id))
 	}
 
-	private getDailyDiscountPercent(itemId: string, price: number): number {
-		const roll =
-			this.seededRank(`${this.getDailyDealDate()}:discount:${itemId}`) % 100
+	private getDailyDiscountPercent(itemId: string): number {
+		const roll = this.seededRank(
+			`${this.getDailyDealDate()}:discount:${itemId}`,
+		)
 
-		const divisor = this.isShoppingSunday() ? 2 : 4
-		const minimumDiscountPercent = Math.ceil(Math.min(3, price - 1) / price * 100)
+		const minDiscount = this.isShoppingSunday() ? 20 : 10
+		const maxDiscount = this.isShoppingSunday() ? 50 : 30
 
-		return Math.max(5, minimumDiscountPercent, Math.ceil(roll / divisor))
+		return Math.max(5, minDiscount + (roll % (maxDiscount - minDiscount + 1)))
 	}
 
 	private isShoppingSunday(): boolean {

@@ -5,7 +5,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 
 public final class PlayTimeTask extends CountedTask {
     public PlayTimeTask() {
-        super("play_time", "⏰", 20, 60, 0.3D, "Played", "minutes");
+        super("play_time", "⏰", 10, 60, 0.3D, "Played", "minutes");
     }
 
     @Override protected String name(int count) { return "Stay a While"; }

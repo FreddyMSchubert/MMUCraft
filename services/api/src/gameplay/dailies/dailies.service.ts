@@ -9,7 +9,7 @@ import { PlayersService } from '../../players/players.service'
 import { ShopService } from '../shop/shop.service'
 
 const LOGIN_BONUS_TASK_ID = 'login_bonus'
-const LOGIN_BONUS_REWARDS = [3, 5, 6, 7, 8, 10] as const
+const LOGIN_BONUS_REWARDS = [3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] as const
 const ADVANCEMENT_BONUS_TASK_ID = 'advancement_bonus'
 const DAILY_COMPLETION_TASK_ID = 'daily_completion'
 const STATIC_DAILY_TASK_IDS = [LOGIN_BONUS_TASK_ID, ADVANCEMENT_BONUS_TASK_ID] as const
@@ -803,8 +803,11 @@ function rewardForStreak(streak: number) {
 	return LOGIN_BONUS_REWARDS[rewardIndex]!
 }
 
+// guard between 5 and 42, round to nearest 10
 function dailyAdvancementBonus(baseRewardDabloons: number) {
-	return Math.max(5, Math.min(42, baseRewardDabloons))
+	const bounded = Math.max(5, Math.min(39, baseRewardDabloons));
+	const toNextMultipleOf10 = Math.ceil(bounded / 10) * 10;
+	return toNextMultipleOf10 - bounded;
 }
 
 function dailyCompletionReward(periodKey: string, isMember: boolean) {

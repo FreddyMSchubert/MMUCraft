@@ -44,7 +44,6 @@ public class CharmsManager
             Map.entry(1, new CraftingStaffCharm()),
             Map.entry(2, new EnderChestStaffCharm()),
             Map.entry(3, new HeartCharm()),
-            Map.entry(7, new RunningShoesCharm()),
             Map.entry(8, new CandleOfTheDeepCharm()),
             Map.entry(9, new HikingBootsCharm()),
             Map.entry(12, new GiantsBootsCharm()),

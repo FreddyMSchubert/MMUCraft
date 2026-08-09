@@ -8,10 +8,10 @@
 		"Stardew Valley is fine I guess."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Hoe-harvests and replants the right-clicked ripe crop.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Farming Boots Charm."
+		"priceDabloons": 100,
+		"description": "Right-click crops to harvest & replant them in one click! Upgrade to increase the area of effect.",
+		"unlockWeight": 200,
+		"unlockMessage": "Unlocked charm: Farming Boots Charm. Harvests & replants crops in a large radius, in one click!"
 	},
 	"charm": {
 		"charmId": 34,
@@ -21,8 +21,8 @@
 			{
 				"level": 1,
 				"abilityStatusCurrent": "Hoe-harvests and replants the right-clicked ripe crop.",
-				"abilityStatusRelative": "Hoe-harvests and replants right-clicked ripe crops.",
-				"dabloons": 10,
+				"abilityStatusRelative": "Hoe-harvests and replants right-clicked crops.",
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:wooden_hoe",
 					"minecraft:water_bucket",
@@ -34,7 +34,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Hoe-harvests and replants a small cross.",
 				"abilityStatusRelative": "Harvests more crops in one click in the shape of a small cross.",
-				"dabloons": 20,
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:stone_hoe",
 					"minecraft:carrot",
@@ -47,7 +47,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Hoe-harvests and replants a 3x3 patch.",
 				"abilityStatusRelative": "Expands to a 3x3 patch.",
-				"dabloons": 30,
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:copper_hoe",
 					"minecraft:sugar_cane",
@@ -61,7 +61,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Hoe-harvests and replants a wider diamond.",
 				"abilityStatusRelative": "Expands to a wider diamond.",
-				"dabloons": 40,
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:iron_hoe",
 					"minecraft:cocoa_beans",
@@ -77,7 +77,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Hoe-harvests and replants a 5x5 patch.",
 				"abilityStatusRelative": "Expands to a 5x5 patch.",
-				"dabloons": 50,
+				"dabloons": 75,
 				"upgradeIngredients": [
 					"minecraft:golden_hoe",
 					"minecraft:melon",
@@ -92,7 +92,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Hoe-harvests and replants a huge diamond.",
 				"abilityStatusRelative": "Expands to a huge diamond.",
-				"dabloons": 60,
+				"dabloons": 75,
 				"upgradeIngredients": [
 					"minecraft:diamond_hoe",
 					"minecraft:glow_berries",
@@ -107,7 +107,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Hoe-harvests and replants a 7x7 patch.",
 				"abilityStatusRelative": "Expands to a 7x7 patch.",
-				"dabloons": 70,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:diamond_hoe",
 					"minecraft:diamond_hoe",
@@ -120,7 +120,7 @@
 				"level": 8,
 				"abilityStatusCurrent": "Hoe-harvests and replants a massive diamond.",
 				"abilityStatusRelative": "Expands to a massive diamond.",
-				"dabloons": 80,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:netherite_hoe",
 					"minecraft:nether_wart",
@@ -133,7 +133,7 @@
 				"level": 9,
 				"abilityStatusCurrent": "Hoe-harvests and replants a 9x9 field.",
 				"abilityStatusRelative": "Expands to a 9x9 field.",
-				"dabloons": 90,
+				"dabloons": 125,
 				"upgradeIngredients": [
 					"minecraft:netherite_hoe",
 					"minecraft:chorus_flower",

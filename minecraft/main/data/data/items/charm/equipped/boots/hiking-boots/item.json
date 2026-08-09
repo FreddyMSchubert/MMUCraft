@@ -8,10 +8,10 @@
 		"That's one pretty big step for man."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Increases step height to a full block",
+		"priceDabloons": 150,
+		"description": "Increases step height, allowing you to walk up blocks like they're stairs. (Note this is different to auto-jump, which slows you down. This doesn't!)",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Hiking Boots Charm."
+		"unlockMessage": "Unlocked charm: Hiking Boots Charm. It allows you to walk up blocks like they're stairs, without slowing you down!"
 	},
 	"charm": {
 		"charmId": 9,
@@ -21,8 +21,8 @@
 			{
 				"level": 1,
 				"abilityStatusCurrent": "Increases step height to a full block",
-				"abilityStatusRelative": "Allows you to walk up blocks without jumping",
-				"dabloons": 10,
+				"abilityStatusRelative": "Allows you to walk up blocks without jumping - it feels magical.",
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:andesite_stairs"
 				]
@@ -31,7 +31,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Allows you to walk over fences without jumping",
 				"abilityStatusRelative": "Increases step height to a fence-high block",
-				"dabloons": 20,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:rabbit_stew",
 					"minecraft:rabbit_hide",
@@ -46,7 +46,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Allows you to walk over a 2-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 2 blocks.",
-				"dabloons": 30,
+				"dabloons": 350,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=leaping]=Potion of Leaping",
 					"minecraft:copper_block",
@@ -55,19 +55,21 @@
 					"minecraft:emerald_block",
 					"minecraft:amethyst_block",
 					"minecraft:gold_block",
-					"minecraft:diamond"
+					"minecraft:diamond_block"
 				]
 			},
 			{
 				"level": 4,
 				"abilityStatusCurrent": "Allows you to walk over a 3-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 3 blocks.",
-				"dabloons": 40,
+				"dabloons": 500,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=leaping]=Potion of Leaping",
 					"minecraft:splash_potion[minecraft:potion_contents=leaping]=Splash Potion of Leaping",
 					"minecraft:lingering_potion[minecraft:potion_contents=leaping]=Lingering Potion of Leaping",
 					"minecraft:diamond_block",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
 					"minecraft:netherite_ingot"
 				]
 			},
@@ -75,37 +77,59 @@
 				"level": 5,
 				"abilityStatusCurrent": "Allows you to walk over a 4-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 4 blocks.",
-				"dabloons": 50,
+				"dabloons": 600,
 				"upgradeIngredients": [
 					"minecraft:lingering_potion[minecraft:potion_contents=leaping]=Lingering Potion of Leaping",
 					"minecraft:diamond_block",
 					"minecraft:diamond_block",
 					"minecraft:diamond_block",
 					"minecraft:diamond_block",
-					"minecraft:netherite_ingot",
-					"minecraft:netherite_ingot",
-					"minecraft:netherite_ingot"
+					"minecraft:netherite_block",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot"
 				]
 			},
 			{
 				"level": 6,
 				"abilityStatusCurrent": "Allows you to walk over a 5-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 5 blocks.",
-				"dabloons": 60,
+				"dabloons": 700,
 				"upgradeIngredients": [
 					"minecraft:netherite_block",
 					"minecraft:netherite_block",
 					"minecraft:diamond_block",
 					"minecraft:diamond_block",
 					"minecraft:nether_star",
-					"minecraft:nether_star"
+					"minecraft:nether_star",
+					"minecraft:nether_star",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot"
 				]
 			},
 			{
 				"level": 7,
 				"abilityStatusCurrent": "Allows you to walk over a 6-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 6 blocks.",
-				"dabloons": 70,
+				"dabloons": 800,
 				"upgradeIngredients": [
 					"minecraft:netherite_block",
 					"minecraft:netherite_block",
@@ -121,7 +145,7 @@
 				"level": 8,
 				"abilityStatusCurrent": "Allows you to walk over a 7-block wall without jumping",
 				"abilityStatusRelative": "Increases step height to 7 blocks.",
-				"dabloons": 80,
+				"dabloons": 900,
 				"upgradeIngredients": [
 					"minecraft:netherite_block",
 					"minecraft:netherite_block",

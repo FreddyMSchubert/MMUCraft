@@ -20,7 +20,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class FakeItems {
-        private static final int TOOLTIP_LINE_LENGTH = 50;
+        private static final int TOOLTIP_LINE_LENGTH = 80;
 
         private FakeItems() {}
 

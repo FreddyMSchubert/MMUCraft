@@ -49,6 +49,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
+import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
 public class MainMod implements ModInitializer {
 	public static final String MOD_ID = "mainmod";
@@ -78,6 +79,7 @@ public class MainMod implements ModInitializer {
         MoneyCommand.init();
         WebsiteCommand.init();
         PlayerStatsSync.init();
+        DiscordBridge.init();
         ClaimsManager.init();
         DailyEvents.register();
         MainModRecipes.register();

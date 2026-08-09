@@ -15,6 +15,7 @@ service GameplayEvents {
   rpc GetClaimsSnapshot(GetClaimsSnapshotRequest) returns (ClaimsSnapshot);
   rpc GetDailyTasksSnapshot(GetDailyTasksSnapshotRequest) returns (DailyTasksSnapshot);
   rpc UpdateDailyTask(UpdateDailyTaskRequest) returns (UpdateDailyTaskResponse);
+  rpc PublishDiscordEvent(PublishDiscordEventRequest) returns (PublishDiscordEventResponse);
 }
 
 service GameplayControl {
@@ -32,6 +33,43 @@ service GameplayControl {
   rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
   rpc GetCharmInventory(GetCharmInventoryRequest) returns (GetCharmInventoryResponse);
   rpc UpgradeCharm(UpgradeCharmRequest) returns (UpgradeCharmResponse);
+  rpc BroadcastDiscordMessage(BroadcastDiscordMessageRequest) returns (BroadcastDiscordMessageResponse);
+  rpc RunServerCommand(RunServerCommandRequest) returns (RunServerCommandResponse);
+}
+
+message PublishDiscordEventRequest {
+  string type = 1;
+  string minecraft_username = 2;
+  string minecraft_uuid = 3;
+  string content = 4;
+  string role = 5;
+  string nickname = 6;
+  string pronouns = 7;
+  string color_hex = 8;
+}
+
+message PublishDiscordEventResponse {
+  bool accepted = 1;
+}
+
+message BroadcastDiscordMessageRequest {
+  string discord_name = 1;
+  string content = 2;
+}
+
+message BroadcastDiscordMessageResponse {
+  bool broadcast = 1;
+}
+
+message RunServerCommandRequest {
+  string command = 1;
+  string discord_user = 2;
+}
+
+message RunServerCommandResponse {
+  bool succeeded = 1;
+  int32 result = 2;
+  string output = 3;
 }
 
 message GetCharmInventoryRequest {
@@ -261,6 +299,7 @@ message GrantDailyLoginBonusRequest {
   int32 amount = 2;
   string period_key = 3;
   int64 unix_ms = 4;
+  string source = 5;
 }
 
 message GrantDailyLoginBonusResponse {

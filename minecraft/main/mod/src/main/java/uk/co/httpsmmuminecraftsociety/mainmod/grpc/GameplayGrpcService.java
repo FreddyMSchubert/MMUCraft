@@ -14,6 +14,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +35,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFe
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,6 +47,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class GameplayGrpcService extends GrpcHandler {
     static final GameplayGrpcService INSTANCE = new GameplayGrpcService();
@@ -130,6 +136,10 @@ public final class GameplayGrpcService extends GrpcHandler {
             String taskJson
     ) {
         return INSTANCE.updateDailyTaskInternal(userId, periodKey, taskJson);
+    }
+
+    public static CompletableFuture<PublishDiscordEventResponse> publishDiscordEvent(PublishDiscordEventRequest request) {
+        return INSTANCE.publishDiscordEventInternal(request);
     }
 
     @Override
@@ -347,6 +357,21 @@ public final class GameplayGrpcService extends GrpcHandler {
         return result;
     }
 
+    private CompletableFuture<PublishDiscordEventResponse> publishDiscordEventInternal(PublishDiscordEventRequest request) {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+        if (client == null) return CompletableFuture.failedFuture(new IllegalStateException("GameplayEvents gRPC client is not initialized"));
+        var rpc = client.publishDiscordEvent(request);
+        CompletableFuture<PublishDiscordEventResponse> result = new CompletableFuture<>();
+        rpc.addListener(() -> {
+            try {
+                result.complete(rpc.get());
+            } catch (Exception exception) {
+                result.completeExceptionally(exception);
+            }
+        }, Runnable::run);
+        return result;
+    }
+
     private void requestDailyTasksSnapshot() {
         GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
         if (client == null) return;
@@ -542,6 +567,9 @@ public final class GameplayGrpcService extends GrpcHandler {
             throw exception;
         }
 
+        DiscordBridge.playerEvent("charm", player,
+                player.getName().getString() + " upgraded " + item.title() + " to level " + targetLevel + ".");
+
         return UpgradeCharmResponse.newBuilder()
                 .setUpgraded(true)
                 .setOnline(true)
@@ -658,6 +686,11 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .setOnline(true)
                     .setMessage("Could not grant the daily login bonus.")
                     .build();
+        }
+
+        if ("daily_completion".equals(request.getSource())) {
+            DiscordBridge.playerEvent("dailies", player,
+                    player.getName().getString() + " completed all of today's dailies.");
         }
 
         return GrantDailyLoginBonusResponse.newBuilder()
@@ -928,6 +961,8 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         int remaining = MoneyHelper.GetBalance(player);
+        DiscordBridge.playerEvent("shop", player,
+                player.getName().getString() + " bought " + request.getItemId() + " from the shop.");
         return PurchaseShopItemResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
@@ -1088,6 +1123,48 @@ public final class GameplayGrpcService extends GrpcHandler {
         return value.toLowerCase(Locale.ROOT);
     }
 
+    private BroadcastDiscordMessageResponse broadcastDiscordMessageOnMainThread(BroadcastDiscordMessageRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+        String name = request.getDiscordName().strip().replaceAll("[\\r\\n]", " ");
+        String content = request.getContent().strip().replaceAll("[\\r\\n]+", " ");
+        Component message = Component.literal("[Discord] ").withStyle(ChatFormatting.BLUE)
+                .append(Component.literal(name + ": ").withStyle(ChatFormatting.AQUA))
+                .append(Component.literal(content));
+        DiscordBridge.broadcastFromDiscord(server, message);
+        return BroadcastDiscordMessageResponse.newBuilder().setBroadcast(true).build();
+    }
+
+    private RunServerCommandResponse runServerCommandOnMainThread(RunServerCommandRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+        List<String> output = new ArrayList<>();
+        AtomicBoolean succeeded = new AtomicBoolean();
+        AtomicInteger result = new AtomicInteger();
+        CommandSource capture = new CommandSource() {
+            @Override public void sendSystemMessage(Component message) {
+                if (output.stream().mapToInt(String::length).sum() < 16_000) output.add(message.getString());
+            }
+            @Override public boolean acceptsSuccess() { return true; }
+            @Override public boolean acceptsFailure() { return true; }
+            @Override public boolean shouldInformAdmins() { return false; }
+        };
+        String command = request.getCommand().strip().replaceFirst("^/+", "");
+        server.getCommands().performPrefixedCommand(
+                server.createCommandSourceStack().withSource(capture).withCallback((success, value) -> {
+                    succeeded.set(success);
+                    result.set(value);
+                }),
+                command
+        );
+        MainMod.LOGGER.info("Discord admin {} ran server command: {}", request.getDiscordUser(), command);
+        return RunServerCommandResponse.newBuilder()
+                .setSucceeded(succeeded.get())
+                .setResult(result.get())
+                .setOutput(output.isEmpty() ? "Command returned " + result.get() + "." : String.join("\n", output))
+                .build();
+    }
+
     private final class GameplayControlEndpoint extends GameplayControlGrpc.GameplayControlImplBase {
         @Override
         public void grantDailyLoginBonus(
@@ -1214,6 +1291,24 @@ public final class GameplayGrpcService extends GrpcHandler {
                 StreamObserver<UpgradeCharmResponse> responseObserver
         ) {
             callOnMainThread(() -> upgradeCharmOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void broadcastDiscordMessage(
+                BroadcastDiscordMessageRequest request,
+                StreamObserver<BroadcastDiscordMessageResponse> responseObserver
+        ) {
+            callOnMainThread(() -> broadcastDiscordMessageOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void runServerCommand(
+                RunServerCommandRequest request,
+                StreamObserver<RunServerCommandResponse> responseObserver
+        ) {
+            callOnMainThread(() -> runServerCommandOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

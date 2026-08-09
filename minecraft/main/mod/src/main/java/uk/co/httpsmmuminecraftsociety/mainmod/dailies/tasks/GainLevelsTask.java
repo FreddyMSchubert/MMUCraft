@@ -5,7 +5,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 
 public final class GainLevelsTask extends CountedTask {
     public GainLevelsTask() {
-        super("gain_levels", "🟢", 5, 15, 0.75D, "Gained", "levels");
+        super("gain_levels", "🟢", 5, 15, 1D, "Gained", "levels");
     }
 
     @Override protected String name(int count) { return "Learn Something New"; }

@@ -37,20 +37,20 @@ public final class DiscordBridge {
                 if (!player.hasDisconnected()) publish(
                         firstJoin ? "first_join" : "join",
                         player,
-                        firstJoin ? player.getName().getString() + " joined the server for the first time! Players online: " + onlinePlayers(server, null)
-                                : player.getName().getString() + " joined the server. Players online: " + onlinePlayers(server, null)
+                        firstJoin ? "I just joined the server for the first time! Players online: " + onlinePlayers(server, null)
+                                : "I just joined the server. Players online: " + onlinePlayers(server, null)
                 );
             }));
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> publish(
                 "leave",
                 handler.player,
-                handler.player.getName().getString() + " left the server. Players online: " + onlinePlayers(server, handler.player)
+                "I just left the server. Players online: " + onlinePlayers(server, handler.player)
         ));
     }
 
     public static void advancement(ServerPlayer player, String title) {
-        publish("advancement", player, player.getName().getString() + " completed " + title + ".");
+        publish("advancement", player, "I just completed " + title + ".");
     }
 
     public static void playerEvent(String type, ServerPlayer player, String content) {

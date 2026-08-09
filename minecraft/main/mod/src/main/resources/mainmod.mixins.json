@@ -58,7 +58,6 @@
       "dailies.DailyEffectMixin",
       "dailies.DailyExperienceMixin",
       "dailies.DailyBredAnimalsMixin",
-      "dailies.DailyAnimalFeedingMixin",
       "dailies.DailyCakeMixin",
       "dailies.DailyBrewedPotionMixin",
       "dailies.DailyFishingMixin",

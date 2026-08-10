@@ -2,16 +2,16 @@
 	"title": "Giants Boots Charm",
 	"id": "charm-giants-boots",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"These boots are made for walkin'",
 		"Grants the user the lost power of the ancient giants."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
+		"priceDabloons": 100,
 		"description": "Grants the power of the ancient giants while equipped.",
-		"unlockWeight": 50,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked charm: Giants Boots Charm. It does... peculiar things."
 	},
 	"charm": {

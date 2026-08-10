@@ -2,13 +2,13 @@
 	"title": "Hiking Boots Charm",
 	"id": "charm-hiking-boots",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [
 		"That's one pretty big step for man."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 150,
+		"priceDabloons": 125,
 		"description": "Increases step height, allowing you to walk up blocks like they're stairs. (Note this is different to auto-jump, which slows you down. This doesn't!)",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked charm: Hiking Boots Charm. It allows you to walk up blocks like they're stairs, without slowing you down!"

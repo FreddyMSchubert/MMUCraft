@@ -2,11 +2,11 @@
 	"title": "Ushanka",
 	"id": "cosmetic-ushanka",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 75,
 		"description": "Unlock the Ushanka cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Ushanka."

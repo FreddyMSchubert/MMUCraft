@@ -8,7 +8,7 @@
 		"2016 called, they want their skins back"
 	],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 50,
 		"description": "Unlock the Headphones cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Headphones."

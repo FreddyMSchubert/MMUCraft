@@ -2,13 +2,13 @@
 	"title": "Fire",
 	"id": "cosmetic-fire-hat",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "legendary",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Don't get too hot-headed!"
 	],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 20,
 		"description": "Unlock the Fire cosmetic.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Fire."

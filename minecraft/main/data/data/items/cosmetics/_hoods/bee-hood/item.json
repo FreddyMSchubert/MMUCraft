@@ -2,11 +2,11 @@
 	"title": "Bee hood",
 	"id": "cosmetic-hood-bee",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 125,
 		"description": "Unlock the Bee hood cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Bee hood."

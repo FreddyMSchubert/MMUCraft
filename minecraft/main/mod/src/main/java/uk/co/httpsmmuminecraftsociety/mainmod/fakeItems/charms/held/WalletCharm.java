@@ -3,13 +3,19 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
@@ -18,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class WalletCharm implements Charm
+public class WalletCharm implements Charm, UseCallbackCharm
 {
     public static final String BALANCE_ID = "wallet_balance";
 
@@ -63,6 +69,26 @@ public class WalletCharm implements Charm
 
         walletBalance += coinVal * coin.count();
         setBalance(wallet, walletBalance, false);
+    }
+
+    @Override
+    public InteractionResult onUse(ItemStack wallet, ServerPlayer player, ServerLevel level, int charmLevel) {
+        if (isWallet(wallet) < 1) return InteractionResult.SUCCESS;
+
+        setBalance(wallet, -1, true);
+        ItemEntity coin = player.drop(FakeItems.ID_MAP.get("coin-1").createItemStack(), false);
+        if (coin != null) {
+            var random = level.getRandom();
+            double speed = 0.35 + random.nextDouble() * 0.4;
+            Vec3 direction = player.getLookAngle().scale(speed);
+            Vec3 spread = new Vec3(
+                    random.nextGaussian() * 0.08,
+                    random.nextGaussian() * 0.08,
+                    random.nextGaussian() * 0.08
+            );
+            coin.setDeltaMovement(direction.add(spread));
+        }
+        return InteractionResult.SUCCESS;
     }
     // Tuple<RemovedCoinStacks, LighterWallet>
     public static ItemStack removeCoinsFromWallet(ItemStack wallet) {

@@ -31,6 +31,8 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 		dailies: '✅',
 		shop: '🛒',
 		charm: '✨',
+		fish: '🐟',
+		fish_first: '🐟 👶',
 	}
 	const isServer = event.type !== 'chat' || !event.minecraft_username
 	const label = roleLabel(event.role)

@@ -292,6 +292,8 @@ message RecordFishCatchResponse {
   bool server_smallest_record = 6;
   string message = 7;
   bool personal_smallest_record = 8;
+  bool announce = 9;
+  bool first_server_catch_announcement = 10;
 }
 
 message GrantDailyLoginBonusRequest {

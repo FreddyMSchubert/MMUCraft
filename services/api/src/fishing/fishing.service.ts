@@ -79,6 +79,7 @@ export class FishingService {
 			const serverSmallest = serverRows.reduce((smallest, row) => Math.min(smallest, row.smallest_length_cm), Infinity)
 
 			const firstCatch = previous === null
+			const firstServerCatch = serverRows.length === 0
 			const personalSizeRecord = firstCatch || input.lengthCm > previous.largest_length_cm
 			const personalSmallestRecord = firstCatch || input.lengthCm < previous.smallest_length_cm
 			const serverSizeRecord = input.lengthCm > serverLargest
@@ -99,8 +100,10 @@ export class FishingService {
 				set: values,
 			}).run()
 
-			return { firstCatch, personalSizeRecord, personalSmallestRecord, serverSizeRecord, serverSmallestRecord }
+			return { firstCatch, firstServerCatch, personalSizeRecord, personalSmallestRecord, serverSizeRecord, serverSmallestRecord }
 		})
+		const firstServerCatchAnnouncement = result.firstServerCatch && ['rare', 'epic'].includes(definition.rarity)
+		const announce = firstServerCatchAnnouncement || ['legendary', 'mythical'].includes(definition.rarity)
 
 		const response = {
 			recorded: true,
@@ -110,6 +113,8 @@ export class FishingService {
 			personal_smallest_record: result.personalSmallestRecord,
 			server_size_record: result.serverSizeRecord,
 			server_smallest_record: result.serverSmallestRecord,
+			announce,
+			first_server_catch_announcement: firstServerCatchAnnouncement,
 			message: 'Fish catch recorded.',
 		}
 		if (Object.values(result).some(Boolean)) {
@@ -247,6 +252,8 @@ export class FishingService {
 			personal_smallest_record: false,
 			server_size_record: false,
 			server_smallest_record: false,
+			announce: false,
+			first_server_catch_announcement: false,
 			message,
 		}
 	}

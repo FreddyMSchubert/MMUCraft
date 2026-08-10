@@ -326,6 +326,10 @@ public class CharmsManager
     {
         if (!(player instanceof ServerPlayer)) return InteractionResult.PASS;
         if (!(level instanceof ServerLevel)) return InteractionResult.PASS;
+
+        InteractionResult useResult = onItemUse(level, player, interactionHand);
+        if (useResult != null) return useResult;
+
         for (Tuple<ItemStack, CharmInstance> instance : getPlayerCharmInstances((ServerPlayer) player)) {
             if (instance.getB().isBroken()) continue;
             if (!(instance.getB().charm() instanceof UseOnBlockCallbackCharm useOnBlockCallbackCharm)) continue;

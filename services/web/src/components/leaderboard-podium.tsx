@@ -8,7 +8,7 @@ export interface PodiumEntry {
 	name: string
 	color: string
 	pronouns: string
-	value: number
+	value: number | string | null
 	displayValue: string
 	avatarUrl?: string | null
 	skinUrl?: string | null
@@ -34,8 +34,9 @@ export function LeaderboardPodium({ entries, label, optionGroups, selectedKey, o
 	onSelectPlayer: (playerName: string) => void
 	compact?: boolean
 }) {
-	const ranked = [...entries]
-		.sort((left, right) => right.value - left.value || left.name.localeCompare(right.name, 'en'))
+	const ranked = entries
+		.filter((entry) => Number.isFinite(Number(entry.value)) && Number(entry.value) > 0)
+		.sort((left, right) => Number(right.value) - Number(left.value) || left.name.localeCompare(right.name, 'en'))
 		.slice(0, 3)
 		.map((entry, index) => ({ ...entry, rank: index + 1 }))
 	const podiumOrder = [2, 1, 3].flatMap((rank) => ranked.filter((entry) => entry.rank === rank))

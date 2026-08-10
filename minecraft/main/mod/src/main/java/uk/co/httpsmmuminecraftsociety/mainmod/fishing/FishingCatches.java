@@ -30,6 +30,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFea
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.RecordFishCatchResponse;
+import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 
 import java.util.ArrayList;
@@ -223,7 +224,14 @@ public final class FishingCatches {
             double lengthCm,
             RecordFishCatchResponse response
     ) {
-        if (!response.getRecorded()) return;
+		if (!response.getRecorded()) return;
+		if (response.getAnnounce()) {
+			MinecraftServer server = player.level().getServer();
+			server.execute(() -> {
+				DiscordBridge.fishAnnouncement(server, player,
+						"caught " + fishName + "!", response.getFirstServerCatchAnnouncement());
+			});
+		}
         List<Component> messages = new ArrayList<>();
         if (response.getFirstCatch()) {
             messages.add(recordMessage("First Catch", fishName, rarity, lengthCm));

@@ -20,6 +20,7 @@ import java.util.Set;
 
 public final class DiscordBridge {
     private static boolean broadcastingDiscordMessage;
+	private static boolean broadcastingFishAnnouncement;
     private static final Set<PlayerChatMessage> commandMessages = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private DiscordBridge() { }
@@ -29,7 +30,7 @@ public final class DiscordBridge {
             if (!commandMessages.remove(message)) publish("chat", sender, message.signedContent());
         });
         ServerMessageEvents.GAME_MESSAGE.register((server, message, overlay) -> {
-            if (!broadcastingDiscordMessage && !overlay && !isCoveredPlayerEvent(message)) {
+			if (!broadcastingDiscordMessage && !broadcastingFishAnnouncement && !overlay && !isCoveredPlayerEvent(message)) {
                 publish("server", null, message.getString());
             }
         });
@@ -73,6 +74,17 @@ public final class DiscordBridge {
             broadcastingDiscordMessage = false;
         }
     }
+
+	public static void fishAnnouncement(MinecraftServer server, ServerPlayer player, String content, boolean firstServerCatch) {
+		broadcastingFishAnnouncement = true;
+		try {
+			server.getPlayerList().broadcastSystemMessage(Component.literal((firstServerCatch ? "🐟 👶 " : "🐟 ")
+					+ player.getName().getString() + " " + content), false);
+		} finally {
+			broadcastingFishAnnouncement = false;
+		}
+		playerEvent(firstServerCatch ? "fish_first" : "fish", player, content);
+	}
 
     private static void publish(String type, ServerPlayer player, String content) {
         PlayerStatsSync.DiscordPresentation profile = player == null

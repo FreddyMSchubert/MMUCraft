@@ -8,7 +8,7 @@
 		"Stardew Valley is fine I guess."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 100,
+		"priceDabloons": 25,
 		"description": "Right-click crops to harvest & replant them in one click! Upgrade to increase the area of effect.",
 		"unlockWeight": 200,
 		"unlockMessage": "Unlocked charm: Farming Boots Charm. Harvests & replants crops in a large radius, in one click!"

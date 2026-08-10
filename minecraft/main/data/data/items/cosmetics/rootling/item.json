@@ -2,11 +2,11 @@
 	"title": "Rootling",
 	"id": "cosmetic-rootling",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 55,
+	"priceDabloons": 100,
 		"description": "Unlock the Rootling cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Rootling."

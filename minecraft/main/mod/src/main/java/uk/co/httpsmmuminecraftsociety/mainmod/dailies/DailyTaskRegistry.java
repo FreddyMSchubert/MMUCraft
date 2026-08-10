@@ -670,7 +670,7 @@ public final class DailyTaskRegistry {
             option(4, false, false, simple(DailySimpleEvent.FILL_FLOWER_POT, "Pot Some Flowers", "Put {count} flowers in flower pots. Give an empty corner some colour.", "🌷", 2, 5, 1.25D, "Potted", "flowers")),
             option(4, false, false, simple(DailySimpleEvent.HANG_PAINTING, "Curate a Wall", "Hang {count} paintings. Find one which suits the room.", "🖼️", 1, 4, 1.5D, "Hung", "paintings")),
             option(4, false, false, simple(DailySimpleEvent.FILL_BOOKSHELF, "Stock a Bookshelf", "Put {count} books in chiseled bookshelves. A library starts with one shelf.", "📚", 2, 6, 1.0D, "Stored", "books")),
-            option(3, false, false, simple(DailySimpleEvent.READ_NEW_JOKE, "Fresh Material", "Read a joke book which generates a joke you have not seen before.", "😂", 1, 1, 5.0D, "Read", "joke")),
+            option(3, false, false, simple(DailySimpleEvent.READ_NEW_JOKE, "Fresh Material", "Read a joke book you haven't read before.", "😂", 1, 1, 5.0D, "Read", "joke")),
             option(3, false, false, simple(DailySimpleEvent.KICK_SULFUR_CUBE, "Kick a Sulfur Cube", "Kick a sulfur cube. It probably had it coming.", "🟨", 1, 1, 5.0D, "Kicked", "cube")),
             option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.BASEDRUM, "Bass Drum")),
             option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.HARP, "Harp")),
@@ -690,11 +690,11 @@ public final class DailyTaskRegistry {
 
             // Crafting, activity, and curing
             option(2, false, false, new CraftItemTask(Items.CLOCK, "Clocks", "🕰️", 1, 3, 2.0D)),
-            option(4, false, false, new CraftItemTask(Items.GOLDEN_DANDELION, "Golden Dandelions", "🌼", 1, 10, 5.0D)),
-            option(3, false, false, new CraftItemTask(Items.SPYGLASS, "Spyglasses", "🔭", 1, 2, 4.0D)),
+            option(4, false, false, new CraftItemTask(Items.GOLDEN_DANDELION, "Golden Dandelions", "🌼", 1, 10, 2.0D)),
+            option(3, false, false, new CraftItemTask(Items.SPYGLASS, "Spyglasses", "🔭", 1, 2, 3.0D)),
             option(2, false, false, new CraftItemTask(Items.CONCRETE_POWDER.blue(), "Blue Concrete Powder", "🔵", 8, 24, 0.35D)),
             option(3, false, false, new CraftItemTask(Items.DAYLIGHT_DETECTOR, "Daylight Detectors", "☀️", 1, 3, 3.0D)),
-            option(3, false, false, new CraftItemTask(Items.STICKY_PISTON, "Sticky Pistons", "🟩", 1, 3, 3.0D)),
+            option(3, false, false, new CraftItemTask(Items.STICKY_PISTON, "Sticky Pistons", "🟩", 1, 3, 2.0D)),
             option(3, false, false, new CraftItemTask(Items.PUMPKIN_PIE, "Pumpkin Pies", "🥧", 2, 5, 1.75D)),
             option(3, false, false, new CraftItemTask(Items.NOTE_BLOCK, "Note Blocks", "🎵", 1, 3, 3.0D)),
             option(3, false, false, new CraftItemTask(Items.TRAPPED_CHEST, "Trapped Chests", "📦", 1, 3, 3.0D)),

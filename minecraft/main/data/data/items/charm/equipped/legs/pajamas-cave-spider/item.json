@@ -2,16 +2,16 @@
 	"title": "Cave Spider Pajamas Charm",
 	"id": "charm-cave-spider-pajamas",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Poison not included."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Ceiling crawling for two seconds.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Cave Spider Pajamas Charm."
+		"priceDabloons": 200,
+		"description": "Lets you crawl across ceilings.",
+		"unlockWeight": 20,
+		"unlockMessage": "Unlocked charm: Cave Spider Pajamas Charm. Crawls across ceilings."
 	},
 	"charm": {
 		"charmId": 20,
@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Ceiling crawling for two seconds.",
 				"abilityStatusRelative": "Unlocks slow ceiling crawling.",
-				"dabloons": 10,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:spider_eye"
 				]
@@ -31,7 +31,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Ceiling crawling for 4 seconds.",
 				"abilityStatusRelative": "Doubles max ceiling crawl duration.",
-				"dabloons": 20,
+				"dabloons": 125,
 				"upgradeIngredients": [
 					"minecraft:spider_eye",
 					"minecraft:pointed_dripstone",
@@ -42,7 +42,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Ceiling crawling for 8 seconds.",
 				"abilityStatusRelative": "Doubles max ceiling crawl duration.",
-				"dabloons": 30,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:spider_eye",
 					"minecraft:spider_eye",
@@ -55,7 +55,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Ceiling crawling for 16 seconds.",
 				"abilityStatusRelative": "Doubles max ceiling crawl duration.",
-				"dabloons": 40,
+				"dabloons": 175,
 				"upgradeIngredients": [
 					"minecraft:spider_eye",
 					"minecraft:spider_eye",
@@ -71,7 +71,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Ceiling crawling for 32 seconds.",
 				"abilityStatusRelative": "Doubles max ceiling crawl duration.",
-				"dabloons": 50,
+				"dabloons": 200,
 				"upgradeIngredients": [
 					"minecraft:fermented_spider_eye",
 					"minecraft:copper_block",
@@ -82,7 +82,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Ceiling crawling for 64 seconds.",
 				"abilityStatusRelative": "Doubles max ceiling crawl duration.",
-				"dabloons": 60,
+				"dabloons": 225,
 				"upgradeIngredients": [
 					"minecraft:fermented_spider_eye",
 					"minecraft:fermented_spider_eye",
@@ -98,7 +98,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Ceiling crawling with no time limit.",
 				"abilityStatusRelative": "Makes max ceiling crawl duration unlimited.",
-				"dabloons": 70,
+				"dabloons": 250,
 				"upgradeIngredients": [
 					"minecraft:fermented_spider_eye",
 					"minecraft:fermented_spider_eye",

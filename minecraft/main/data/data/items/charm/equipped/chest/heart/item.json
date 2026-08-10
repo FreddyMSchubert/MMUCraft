@@ -2,27 +2,27 @@
 	"title": "Heart of Gold Charm",
 	"id": "charm-heart",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Blessed be the pacemakers"
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Grants you 1 extra heart while equipped.",
-		"unlockWeight": 500,
-		"unlockMessage": "Unlocked charm: Heart of Gold Charm."
+		"priceDabloons": 50,
+		"description": "Grants you extra hearts while equipped.",
+		"unlockWeight": 100000,
+		"unlockMessage": "Unlocked charm: Heart of Gold Charm. It adds extra hearts to your health bar."
 	},
 	"charm": {
 		"charmId": 3,
-		"minLevel": 0,
+		"minLevel": 1,
 		"maxLevel": 10,
 		"levels": [
 			{
 				"level": 1,
 				"abilityStatusCurrent": "Grants you 1 extra heart while equipped.",
 				"abilityStatusRelative": "Grants you an extra heart.",
-				"dabloons": 10,
+				"dabloons": 42,
 				"upgradeIngredients": [
 					"minecraft:redstone",
 					"minecraft:redstone",
@@ -34,7 +34,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Grants you 2 extra hearts while equipped.",
 				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 20,
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:gold_ingot",
 					"minecraft:gold_ingot",
@@ -47,7 +47,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Grants you 3 extra hearts while equipped.",
 				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 30,
+				"dabloons": 75,
 				"upgradeIngredients": [
 					"minecraft:golden_apple",
 					"minecraft:golden_apple",
@@ -58,7 +58,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Grants you 4 extra hearts while equipped.",
 				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 40,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:raw_gold_block",
 					"minecraft:raw_gold_block",
@@ -73,7 +73,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Grants you 5 extra hearts while equipped.",
 				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 50,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
 					"minecraft:honey_bottle",
@@ -88,7 +88,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Grants you 6 extra hearts while equipped.",
 				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 60,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=healing]=Potion of Healing",
 					"minecraft:potion[minecraft:potion_contents=healing]=Potion of Healing",
@@ -104,7 +104,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Grants you 7 extra hearts while equipped.",
 				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 70,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:splash_potion[minecraft:potion_contents=healing]=Splash Potion of Healing",
 					"minecraft:splash_potion[minecraft:potion_contents=healing]=Splash Potion of Healing",
@@ -120,7 +120,7 @@
 				"level": 8,
 				"abilityStatusCurrent": "Grants you 8 extra hearts while equipped.",
 				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 80,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=healing]=Potion of Healing",
 					"minecraft:splash_potion[minecraft:potion_contents=healing]=Splash Potion of Healing",
@@ -136,7 +136,7 @@
 				"level": 9,
 				"abilityStatusCurrent": "Grants you 9 extra hearts while equipped.",
 				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 90,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=healing]=Potion of Healing",
 					"minecraft:splash_potion[minecraft:potion_contents=healing]=Splash Potion of Healing",
@@ -147,8 +147,8 @@
 			{
 				"level": 10,
 				"abilityStatusCurrent": "Doubles your hearts while equipped.",
-				"abilityStatusRelative": "Grants you one more heart.",
-				"dabloons": 100,
+				"abilityStatusRelative": "Grants you one more heart, thus putting you at twice your original heart count.",
+				"dabloons": 200,
 				"upgradeIngredients": [
 					"minecraft:potion[minecraft:potion_contents=healing]=Potion of Healing",
 					"minecraft:splash_potion[minecraft:potion_contents=healing]=Splash Potion of Healing",

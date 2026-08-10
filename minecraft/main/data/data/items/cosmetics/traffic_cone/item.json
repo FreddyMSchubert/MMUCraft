@@ -8,7 +8,7 @@
 		"Staple of scottish culture."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 42,
 		"description": "Unlock the Traffic Cone Hat cosmetic.",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Traffic Cone Hat."

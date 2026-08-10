@@ -2,11 +2,11 @@
 	"title": "Ornate Crown",
 	"id": "cosmetic-crown-ornate",
 	"modelType": "cosmetic",
-	"rarity": "epic",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 1000000,
+		"priceDabloons": 50000,
 		"description": "Unlock the Ornate Crown cosmetic.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Ornate Crown."

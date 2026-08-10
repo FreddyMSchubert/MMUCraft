@@ -2,14 +2,14 @@
 	"title": "Techno Crown",
 	"id": "cosmetic-crown-techno",
 	"modelType": "cosmetic",
-	"rarity": "rare",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Woah, is he some kind of king?",
 		"No, that's a legend."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 10000,
+		"priceDabloons": 5000,
 		"description": "Unlock the Techno Crown cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Techno Crown."

@@ -2,13 +2,13 @@
 	"title": "Tricorn",
 	"id": "cosmetic-tricorn",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 
 	],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 100,
 		"description": "Unlock the Tricorn cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Tricorn."

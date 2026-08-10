@@ -2,11 +2,11 @@
 	"title": "Unicorn Horn",
 	"id": "cosmetic-unicorn-horn",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "legendary",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 150,
 		"description": "Unlock the Unicorn Horn cosmetic.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Unicorn Horn."

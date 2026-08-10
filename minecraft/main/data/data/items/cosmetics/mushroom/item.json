@@ -2,11 +2,11 @@
 	"title": "Big Mushroom",
 	"id": "cosmetic-mushroom-big",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 75,
 		"description": "Unlock the Big Mushroom cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Big Mushroom."

@@ -2,13 +2,13 @@
 	"title": "Wyrm Skull",
 	"id": "cosmetic-wyrm-skull",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [
 		""
 	],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 125,
 		"description": "Unlock the Wyrm Skull cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Wyrm Skull."

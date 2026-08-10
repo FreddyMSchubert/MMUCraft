@@ -2,11 +2,11 @@
 	"title": "Devil Horns",
 	"id": "cosmetic-devil-horns",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 90,
 		"description": "Unlock the Devil Horns cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Devil Horns."

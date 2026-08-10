@@ -1,5 +1,5 @@
 {
-	"title": "Sombrerón",
+	"title": "SombrerÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n",
 	"id": "cosmetic-sombreron",
 	"modelType": "cosmetic",
 	"rarity": "epic",
@@ -8,10 +8,10 @@
 		"Still too small..."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 190,
-		"description": "Unlock the Sombrerón cosmetic.",
+	"priceDabloons": 150,
+		"description": "Unlock the SombrerÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n cosmetic.",
 		"unlockWeight": 25,
-		"unlockMessage": "Unlocked cosmetic: Sombrerón."
+		"unlockMessage": "Unlocked cosmetic: SombrerÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n."
 	},
 	"equippableCosmetic": {}
 }

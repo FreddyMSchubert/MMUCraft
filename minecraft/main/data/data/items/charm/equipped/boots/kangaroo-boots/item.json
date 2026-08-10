@@ -2,15 +2,15 @@
 	"title": "Sulfur Kangaroo Boots Charm",
 	"id": "charm-kangaroo-boots",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Boing."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
+		"priceDabloons": 100,
 		"description": "Makes you very bouncy. It's fun.",
-		"unlockWeight": 50,
+		"unlockWeight": 150,
 		"unlockMessage": "Unlocked charm: Kangaroo Boots Charm. It makes you very bouncy."
 	},
 	"charm": {
@@ -22,14 +22,14 @@
 				"level": 1,
 				"abilityStatusCurrent": "Adds a little bounciness while equipped.",
 				"abilityStatusRelative": "Increases bounciness while equipped.",
-				"dabloons": 50,
+				"dabloons": 75,
 				"upgradeIngredients": []
 			},
 			{
 				"level": 2,
 				"abilityStatusCurrent": "Adds springy bounciness while equipped.",
 				"abilityStatusRelative": "Increases bounciness while equipped.",
-				"dabloons": 50,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:rabbit_foot",
 					"minecraft:sulfur",

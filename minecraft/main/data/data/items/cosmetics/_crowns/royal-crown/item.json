@@ -2,11 +2,11 @@
 	"title": "Royal Crown",
 	"id": "cosmetic-crown-royal",
 	"modelType": "cosmetic",
-	"rarity": "rare",
+	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 100000,
+		"priceDabloons": 10000,
 		"description": "Unlock the Royal Crown cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Royal Crown."

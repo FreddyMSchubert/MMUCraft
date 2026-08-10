@@ -134,8 +134,7 @@ public final class UnlockBookLoot {
             return false;
         }
 
-        String path = tableId.getPath();
-        return !path.startsWith("entities/") && !path.startsWith("blocks/");
+        return tableId.getPath().startsWith("chests/");
     }
 
     private static UnlockAvailability getAvailability(ServerPlayer player) {

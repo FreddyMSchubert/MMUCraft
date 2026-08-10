@@ -8,10 +8,10 @@
 		"Hot enough to skip the furnace."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Mined block drops are converted into their furnace-smelted counterparts upon mining.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm. It can smelt items immediately as you mine them."
+		"priceDabloons": 75,
+		"description": "Smelts mined blocks automatically.",
+		"unlockWeight": 150,
+		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm. It can smelt items immediately as you mine them. Smelts mined blocks."
 	},
 	"charm": {
 		"charmId": 43,

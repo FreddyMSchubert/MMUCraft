@@ -6,10 +6,10 @@
 	"maxStackSize": 1,
 	"tooltips": [
 		"As seen on TV!",
-		"Comes with 68± unique voicelines!"
+		"Comes with 68ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â± unique voicelines!"
 	],
 	"shopPurchasable": {
-		"priceDabloons": 500,
+	"priceDabloons": 44,
 		"description": "Unlock the Obamium Pyramid cosmetic.",
 		"unlockWeight": 1,
 		"unlockMessage": "Unlocked relic: Obamium Pyramid."

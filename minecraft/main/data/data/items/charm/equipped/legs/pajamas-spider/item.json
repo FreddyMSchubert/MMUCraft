@@ -2,16 +2,16 @@
 	"title": "Spider Pajamas Charm",
 	"id": "charm-spider-pajamas",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Oohhhh how emo... /s"
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Wall climb is slow.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Spider Pajamas Charm."
+		"priceDabloons": 200,
+		"description": "Lets you climb walls.",
+		"unlockWeight": 20,
+		"unlockMessage": "Unlocked charm: Spider Pajamas Charm. Climbs walls."
 	},
 	"charm": {
 		"charmId": 19,
@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Wall climb is slow.",
 				"abilityStatusRelative": "Walk into walls to climb them.",
-				"dabloons": 10,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:black_wool",
 					"minecraft:spider_eye",
@@ -33,7 +33,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Wall climb is a bit faster.",
 				"abilityStatusRelative": "Wall climb gets faster.",
-				"dabloons": 20,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:cobweb",
 					"minecraft:black_dye",
@@ -46,7 +46,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Wall climb is steady.",
 				"abilityStatusRelative": "Wall climb gets much faster.",
-				"dabloons": 30,
+				"dabloons": 200,
 				"upgradeIngredients": [
 					"minecraft:soul_soil",
 					"minecraft:blackstone",
@@ -59,7 +59,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Wall climb is quick.",
 				"abilityStatusRelative": "Wall climb gets very fast.",
-				"dabloons": 40,
+				"dabloons": 250,
 				"upgradeIngredients": [
 					"minecraft:crying_obsidian",
 					"minecraft:gilded_blackstone",
@@ -72,7 +72,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Wall climb is near walking speed.",
 				"abilityStatusRelative": "",
-				"dabloons": 50,
+				"dabloons": 300,
 				"upgradeIngredients": [
 					"minecraft:shulker_shell",
 					"minecraft:shulker_shell",

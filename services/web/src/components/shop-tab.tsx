@@ -177,10 +177,10 @@ export function ShopTab({ itemId, onSelectItem }: {
 	}, [data, itemId, onSelectItem, selectedItem])
 
 	useEffect(() => {
-		if (dailyDeals.length < 2) return
+		if (dailyDeals.length < 2 || featuredHovered) return
 		const timer = window.setInterval(() => setFeaturedIndex((current) => (current + 1) % dailyDeals.length), 6500)
 		return () => window.clearInterval(timer)
-	}, [dailyDeals.length])
+	}, [dailyDeals.length, featuredHovered])
 
 	const visibleItems = useMemo(() => {
 		const filtered = (data?.items ?? []).filter((item) => {
@@ -198,8 +198,8 @@ export function ShopTab({ itemId, onSelectItem }: {
 			if (order === 'price-asc') return effectivePrice(left) - effectivePrice(right) || compareTitles(left, right)
 			if (order === 'alphabetical') return compareTitles(left, right)
 			if (order === 'alphabetical-desc') return compareTitles(right, left)
-			if (order === 'rarity') return rarityRank(left) - rarityRank(right) || compareTitles(left, right)
-			if (order === 'rarity-desc') return rarityRank(right) - rarityRank(left) || compareTitles(left, right)
+			if (order === 'rarity') return rarityRank(left) - rarityRank(right) || effectivePrice(left) - effectivePrice(right) || compareTitles(left, right)
+			if (order === 'rarity-desc') return rarityRank(right) - rarityRank(left) || effectivePrice(right) - effectivePrice(left) || compareTitles(left, right)
 			return seededRank(`${randomSeed}:${left.id}`) - seededRank(`${randomSeed}:${right.id}`)
 		})
 	}, [data?.items, order, randomSeed, rarityFilter, tagFilter, typeFilter])
@@ -407,7 +407,6 @@ function ShopModelPreview({ item, hovered, interactive }: { item: ShopItem; hove
 	const [interactiveHover, setInteractiveHover] = useState(false)
 	const [ready, setReady] = useState(false)
 	const [failed, setFailed] = useState(false)
-	const [featuredHovered, setFeaturedHovered] = useState(false)
 
 	useEffect(() => {
 		if (interactive) return

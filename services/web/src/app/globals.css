@@ -333,6 +333,21 @@ html[data-theme="light"] .playerName,
 	text-decoration: none;
 }
 
+.launchJoinNow {
+	display: inline-block;
+	margin-top: 22px;
+	padding: 18px 48px;
+	border: 3px solid #fff;
+	border-radius: 10px;
+	background: #ffd166;
+	box-shadow: 0 0 28px rgba(255, 209, 102, 0.9);
+	color: #111;
+	font-size: clamp(1.4rem, 5vw, 2.2rem);
+	font-weight: 900;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
 /* ============================================================
    Wordle (same visual system as the main site)
    ============================================================ */

@@ -14,7 +14,7 @@ function splitDuration(milliseconds: number) {
 }
 
 export function LaunchCountdown({ compact = false, reloadAtZero = false }: { compact?: boolean; reloadAtZero?: boolean }) {
-	const remainingSeconds = useSyncExternalStore(subscribeToClock, readRemainingSeconds, () => null)
+	const remainingSeconds = useLaunchRemainingSeconds()
 
 	useEffect(() => {
 		if (remainingSeconds !== null && remainingSeconds <= 0 && reloadAtZero) window.location.reload()
@@ -37,11 +37,20 @@ export function LaunchCountdown({ compact = false, reloadAtZero = false }: { com
 	</div>
 }
 
+export function useLaunchLive() {
+	const remainingSeconds = useLaunchRemainingSeconds()
+	return remainingSeconds !== null && remainingSeconds <= 0
+}
+
+function useLaunchRemainingSeconds() {
+	return useSyncExternalStore(subscribeToClock, readRemainingSeconds, () => null)
+}
+
 function subscribeToClock(callback: () => void) {
 	const timer = window.setInterval(callback, 1000)
 	return () => window.clearInterval(timer)
 }
 
 function readRemainingSeconds() {
-	return Math.max(0, Math.floor((LAUNCH_TIME - Date.now()) / 1000))
+	return Math.max(0, Math.ceil((LAUNCH_TIME - Date.now()) / 1000))
 }

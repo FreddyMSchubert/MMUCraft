@@ -905,7 +905,7 @@ a {
 
 .dashboardTop {
 	display: grid;
-	grid-template-columns: 1fr auto auto;
+	grid-template-columns: 1fr auto;
 	gap: 16px;
 	align-items: start;
 	margin-bottom: 16px;
@@ -919,7 +919,7 @@ a {
 
 .serverDetails {
 	text-align: right;
-	align-self: center;
+	margin: 0;
 	color: rgba(255, 255, 255, 0.72);
 }
 
@@ -941,6 +941,12 @@ a {
 	text-decoration: underline;
 }
 
+.dashboardControls {
+	display: grid;
+	justify-items: end;
+	gap: 6px;
+}
+
 .dashboardSignOut {
 	flex: 0 0 auto;
 	padding: 10px 14px;
@@ -952,18 +958,18 @@ a {
 
 @media (max-width: 600px) {
 	.dashboardTop {
-		display: grid;
-		grid-template-columns: 1fr auto;
+		grid-template-columns: 1fr;
 	}
 
 	.serverDetails {
-		max-width: 42vw;
-		align-self: start;
+		width: 100%;
+		text-align: left;
+		margin-bottom: 0;
 	}
 
-	.dashboardSignOut {
-		grid-column: 1;
-		justify-self: start;
+	.dashboardControls {
+		justify-items: start;
+		width: 100%;
 	}
 }
 

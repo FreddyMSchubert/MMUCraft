@@ -227,7 +227,7 @@ export function DailiesTab() {
 				? 'Claimed'
 				: claimingTaskId === task.id
 					? 'Claiming...'
-					: task.max !== -1 && task.current < task.max
+					: task.id === 'advancement_bonus' || (task.max !== -1 && task.current < task.max)
 						? 'In progress'
 						: 'Claim'}
 						</button>

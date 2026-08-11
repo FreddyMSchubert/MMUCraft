@@ -1183,6 +1183,7 @@ a {
 .minecraftItemIconFailed { border-radius: 6px; background: rgba(255, 255, 255, 0.08); }
 
 .dailyTask button {
+	min-width: 112px;
 	padding: 10px 14px;
 	border: 0;
 	border-radius: 6px;

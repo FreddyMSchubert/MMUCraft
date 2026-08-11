@@ -159,6 +159,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 									>
 										Signed in as <strong><PlayerName name={user.minecraftUsername} color={user.color} /></strong>.
 									</Link>
+									<small>Java Edition 26.2 · mmuminecraftsociety.co.uk</small>
 								</p>
 							</div>
 

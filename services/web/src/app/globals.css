@@ -670,6 +670,90 @@ a {
 	text-align: left;
 }
 
+.countdownGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	margin: -40px auto 24px;
+}
+
+.countdownGrid-1 .countdownCard,
+.countdownGrid-3 .countdownCard:last-child {
+	grid-column: 1 / -1;
+	width: calc(50% - 8px);
+	justify-self: center;
+}
+
+.countdownCard {
+	position: relative;
+	display: grid;
+	place-items: center;
+	gap: 9px;
+	min-width: 0;
+	overflow: hidden;
+	padding: 18px 20px;
+	border: 1px solid rgba(255, 209, 102, 0.44);
+	border-radius: 12px;
+	background: var(--countdown-background, rgba(0, 0, 0, 0.78));
+	background-image: linear-gradient(var(--countdown-background, rgba(0, 0, 0, 0.78)), var(--countdown-background, rgba(0, 0, 0, 0.78))), var(--countdown-image, none);
+	background-position: center;
+	background-size: cover;
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+	backdrop-filter: blur(8px);
+}
+
+.countdownCard h2,
+.countdownCard p {
+	margin: 0;
+}
+
+.countdownCard h2 {
+	color: var(--countdown-heading-color, #fff);
+	font-size: clamp(1rem, 2.5vw, 1.35rem);
+}
+
+.countdownCard p {
+	color: var(--countdown-description-color, rgba(255, 255, 255, 0.72));
+	font-size: 0.82rem;
+	line-height: 1.45;
+}
+
+.countdownTime {
+	color: #ffd166;
+	font-size: clamp(1.15rem, 3vw, 1.75rem);
+	font-variant-numeric: tabular-nums;
+	text-shadow: 2px 2px 0 #493400;
+}
+
+.countdownCard-now {
+	border-color: #ffe49c;
+	background: linear-gradient(120deg, rgba(75, 48, 0, 0.92), rgba(188, 125, 0, 0.86), rgba(75, 48, 0, 0.92));
+	background-size: 240% 100%;
+	animation: countdownShimmer 2s linear infinite;
+}
+
+.countdownNow {
+	display: inline-block;
+	color: #ff3b30;
+	font-family: "Minecraft UI", monospace;
+	font-size: clamp(1.6rem, 5vw, 2.8rem);
+	text-shadow: 3px 3px 0 #59110d;
+	animation: countdownNowBounce 550ms ease-in-out infinite alternate;
+}
+
+@keyframes countdownShimmer {
+	to { background-position: -240% 0; }
+}
+
+@keyframes countdownNowBounce {
+	to { transform: rotate(-3deg) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.countdownCard-now,
+	.countdownNow { animation: none; }
+}
+
 
 /* ============================================================
    Auth
@@ -3331,6 +3415,124 @@ a {
 	align-items: end;
 }
 
+.countdownForm {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	align-items: end;
+}
+
+.countdownForm label {
+	display: grid;
+	gap: 6px;
+}
+
+.countdownForm input,
+.countdownForm textarea {
+	width: 100%;
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.09);
+	color: #fff;
+	color-scheme: dark;
+	font: inherit;
+}
+
+.countdownAbstractInput,
+.countdownImageInput,
+.countdownColorOptions,
+.countdownForm button {
+	grid-column: 1 / -1;
+}
+
+.countdownColorOptions {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 7px;
+}
+
+.countdownColorOptions legend {
+	padding: 0 5px;
+}
+
+.countdownColorOptions input[type="color"] {
+	height: 36px;
+	padding: 3px;
+}
+
+.countdownColorOptions input[type="range"] {
+	padding: 0;
+	accent-color: #ffd166;
+}
+
+.countdownColorOptions code,
+.countdownColorOptions output {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.72rem;
+}
+
+.countdownForm button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.countdownAdminList {
+	display: grid;
+	gap: 8px;
+}
+
+.countdownAdminList > p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.65);
+}
+
+.countdownAdminList article {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: center;
+	padding: 11px 12px;
+	border-radius: 7px;
+	background: rgba(0, 0, 0, 0.24);
+}
+
+.countdownAdminList article > div:first-child {
+	display: grid;
+	gap: 4px;
+	min-width: 0;
+}
+
+.countdownAdminList article span,
+.countdownAdminList article p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.65);
+	font-size: 0.78rem;
+	overflow-wrap: anywhere;
+}
+
+.countdownAdminActions {
+	display: flex;
+	gap: 6px;
+}
+
+.countdownAdminActions button {
+	padding: 7px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
 .giftCodeForm label,
 .emailWhitelistForm label,
 .playerBanForm > label,
@@ -4495,8 +4697,28 @@ a {
 	}
 
 	.giftCodeForm,
+	.countdownForm,
 	.redeemForm > div {
 		grid-template-columns: 1fr;
+	}
+
+	.countdownGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.countdownGrid-1 .countdownCard,
+	.countdownGrid-3 .countdownCard:last-child {
+		grid-column: auto;
+		width: 100%;
+	}
+
+	.countdownAdminList article {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.countdownColorOptions {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
 	.giftCodeMode {

@@ -237,6 +237,24 @@ export const discordAdminCommandLogs = sqliteTable('discord_admin_command_logs',
 	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 }, (table) => [index('discord_admin_command_logs_created_at_idx').on(table.created_at_unix_ms)])
 
+export const countdowns = sqliteTable('countdowns', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	heading: text('heading').notNull(),
+	description: text('description').notNull(),
+	heading_color: text('heading_color').notNull(),
+	description_color: text('description_color').notNull(),
+	background_color: text('background_color').notNull(),
+	background_alpha: integer('background_alpha').notNull(),
+	background_image_url: text('background_image_url'),
+	target_at_unix_ms: integer('target_at_unix_ms').notNull(),
+	visible_until_unix_ms: integer('visible_until_unix_ms').notNull(),
+	position: integer('position').notNull(),
+}, (table) => [
+	index('countdowns_visible_until_idx').on(table.visible_until_unix_ms),
+	check('countdowns_position_check', sql`${table.position} >= 0`),
+	check('countdowns_background_alpha_check', sql`${table.background_alpha} between 0 and 100`),
+])
+
 export type UserRow = typeof users.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
 export type PlayerBanRow = typeof playerBans.$inferSelect
@@ -255,6 +273,7 @@ export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSel
 export type DailyTaskRow = typeof dailyTasks.$inferSelect
 export type GiftCodeRow = typeof giftCodes.$inferSelect
 export type DiscordAdminCommandLogRow = typeof discordAdminCommandLogs.$inferSelect
+export type CountdownRow = typeof countdowns.$inferSelect
 
 export const schema = {
 	users,
@@ -276,4 +295,5 @@ export const schema = {
 	giftCodes,
 	giftCodeRedemptions,
 	discordAdminCommandLogs,
+	countdowns,
 }

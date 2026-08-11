@@ -15,6 +15,7 @@ import { FishingTab } from '@/components/fishing-tab'
 import { ClaimsTab } from '@/components/claims-tab'
 import { CharmsTab } from '@/components/charms-tab'
 import { PlayerName } from '@/components/player-name'
+import { DynamicCountdowns } from '@/components/dynamic-countdowns'
 
 interface SessionUser {
 	id: number
@@ -30,7 +31,7 @@ interface SessionUser {
 type TabId = 'dailies' | 'knowledge' | 'charms' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
 
 const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'charms', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
-const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'bans', 'gifts', 'discord-commands'])
+const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'bans', 'gifts', 'countdowns', 'discord-commands'])
 const MISC_SECTIONS = new Set(['settings', 'gift-codes'])
 const TAB_LINKS: Array<{ id: TabId; label: string; href: string }> = [
 	{ id: 'knowledge', label: 'Knowledge', href: '/play/knowledge' },
@@ -131,6 +132,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 	return (
 		<SitePage background={background} splash={splash}>
+				<DynamicCountdowns />
 				{user === undefined && (
 					<section className="authCard">
 						<div className="authForm">

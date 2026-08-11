@@ -635,6 +635,8 @@ a {
 }
 
 .siteHeader {
+	position: relative;
+	z-index: 2;
 	margin-bottom: 72px;
 }
 
@@ -902,10 +904,10 @@ a {
    ============================================================ */
 
 .dashboardTop {
-	display: flex;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: 1fr auto auto;
 	gap: 16px;
-	align-items: flex-start;
+	align-items: start;
 	margin-bottom: 16px;
 }
 
@@ -914,16 +916,10 @@ a {
 	margin: 0 0 6px;
 }
 
-.dashboardActions {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-end;
-	align-items: center;
-	gap: 8px;
-	text-align: right;
-}
 
-.dashboardActions small {
+.serverDetails {
+	text-align: right;
+	align-self: center;
 	color: rgba(255, 255, 255, 0.72);
 }
 
@@ -952,6 +948,23 @@ a {
 	border-radius: 10px;
 	background: rgba(255, 255, 255, 0.12);
 	color: #fff;
+}
+
+@media (max-width: 600px) {
+	.dashboardTop {
+		display: grid;
+		grid-template-columns: 1fr auto;
+	}
+
+	.serverDetails {
+		max-width: 42vw;
+		align-self: start;
+	}
+
+	.dashboardSignOut {
+		grid-column: 1;
+		justify-self: start;
+	}
 }
 
 .dashboardTabs {

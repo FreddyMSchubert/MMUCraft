@@ -172,11 +172,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 								</p>
 							</div>
 
-							<div className="dashboardActions">
-								<small>Java Edition 26.2 · Server IP: <strong>{SERVER_IP}</strong></small>
-								<button className="copyServerIp" type="button" onClick={() => void copyServerIp()}>{copyLabel}</button>
-								<button className="dashboardSignOut" type="button" onClick={signOut}>Sign out</button>
-							</div>
+							<small className="serverDetails">Java Edition 26.2 · Server IP: <strong>{SERVER_IP}</strong> · <button className="copyServerIp" type="button" onClick={() => void copyServerIp()}>{copyLabel}</button></small>
+							<button className="dashboardSignOut" type="button" onClick={signOut}>Sign out</button>
 						</div>
 
 						<nav className="dashboardTabs" aria-label="Dashboard sections">

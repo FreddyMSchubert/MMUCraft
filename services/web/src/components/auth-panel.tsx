@@ -295,7 +295,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'minecraft-code' && (
 				<form onSubmit={submitMinecraftCode} className="authForm">
 					<h2>Join the server</h2>
-					<p>The IP is: <strong>mmuminecraftsociety.co.uk</strong></p>
+					<p>Join with <strong>Java Edition 26.2</strong> at <strong>mmuminecraftsociety.co.uk</strong>.</p>
 					<p>When you join the server, you will be given another verification code. Please input the minecraft items in order.</p>
 					<AuthCodeInputs value={authCode} onChange={setAuthCode} />
 					<button disabled={busy}>Verify Minecraft code</button>

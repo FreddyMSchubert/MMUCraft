@@ -31,38 +31,44 @@ export class CountdownsService {
 		backgroundAlphaInput: unknown,
 		backgroundImageUrlInput: unknown,
 	) {
-		const heading = requiredText(headingInput, 'Heading', 80)
-		const description = requiredText(descriptionInput, 'Abstract', 500)
-		const headingColor = hexColor(headingColorInput, 'Heading color')
-		const descriptionColor = hexColor(descriptionColorInput, 'Abstract color')
-		const backgroundColor = hexColor(backgroundColorInput, 'Background color')
-		const backgroundAlpha = percentage(backgroundAlphaInput)
-		const backgroundImageUrl = optionalImageUrl(backgroundImageUrlInput)
-		const targetAtUnixMs = parseLondonDateTime(targetInput)
+		const values = countdownValues(headingInput, targetInput, descriptionInput, headingColorInput, descriptionColorInput, backgroundColorInput, backgroundAlphaInput, backgroundImageUrlInput)
 		const now = Date.now()
-		if (targetAtUnixMs <= now) throw new BadRequestException('The countdown time must be in the future')
+		if (values.target_at_unix_ms <= now) throw new BadRequestException('The countdown time must be in the future')
 
-		const visibleUntilUnixMs = Math.max(nextLondonMidnight(targetAtUnixMs), targetAtUnixMs + 5 * 60 * 60 * 1000)
 		let createdId = 0
 		this.database.connection.transaction((tx) => {
 			tx.delete(countdowns).where(lte(countdowns.visible_until_unix_ms, now)).run()
 			const existing = tx.select().from(countdowns).orderBy(asc(countdowns.position)).all()
 			if (existing.length >= 4) throw new BadRequestException('You can have at most 4 countdowns')
 			createdId = Number(tx.insert(countdowns).values({
-				heading,
-				description,
-				heading_color: headingColor,
-				description_color: descriptionColor,
-				background_color: backgroundColor,
-				background_alpha: backgroundAlpha,
-				background_image_url: backgroundImageUrl,
-				target_at_unix_ms: targetAtUnixMs,
-				visible_until_unix_ms: visibleUntilUnixMs,
+				...values,
 				position: existing.length,
 			}).run().lastInsertRowid)
 		})
 
 		return toCountdown(this.database.connection.select().from(countdowns).where(eq(countdowns.id, createdId)).get()!)
+	}
+
+	update(
+		idInput: string,
+		headingInput: unknown,
+		targetInput: unknown,
+		descriptionInput: unknown,
+		headingColorInput: unknown,
+		descriptionColorInput: unknown,
+		backgroundColorInput: unknown,
+		backgroundAlphaInput: unknown,
+		backgroundImageUrlInput: unknown,
+	) {
+		const id = positiveId(idInput)
+		const existing = this.database.connection.select().from(countdowns).where(eq(countdowns.id, id)).get()
+		if (!existing) throw new NotFoundException('Countdown not found')
+		const values = countdownValues(headingInput, targetInput, descriptionInput, headingColorInput, descriptionColorInput, backgroundColorInput, backgroundAlphaInput, backgroundImageUrlInput)
+		if (values.target_at_unix_ms <= Date.now() && values.target_at_unix_ms !== existing.target_at_unix_ms) {
+			throw new BadRequestException('The countdown time must be in the future')
+		}
+		this.database.connection.update(countdowns).set(values).where(eq(countdowns.id, id)).run()
+		return toCountdown(this.database.connection.select().from(countdowns).where(eq(countdowns.id, id)).get()!)
 	}
 
 	remove(idInput: string) {
@@ -124,6 +130,30 @@ function requiredText(input: unknown, label: string, maxLength: number) {
 	const value = input.trim()
 	if (value.length > maxLength) throw new BadRequestException(`${label} must be ${maxLength} characters or fewer`)
 	return value
+}
+
+function countdownValues(
+	headingInput: unknown,
+	targetInput: unknown,
+	descriptionInput: unknown,
+	headingColorInput: unknown,
+	descriptionColorInput: unknown,
+	backgroundColorInput: unknown,
+	backgroundAlphaInput: unknown,
+	backgroundImageUrlInput: unknown,
+) {
+	const targetAtUnixMs = parseLondonDateTime(targetInput)
+	return {
+		heading: requiredText(headingInput, 'Heading', 80),
+		description: requiredText(descriptionInput, 'Abstract', 500),
+		heading_color: hexColor(headingColorInput, 'Heading color'),
+		description_color: hexColor(descriptionColorInput, 'Abstract color'),
+		background_color: hexColor(backgroundColorInput, 'Background color'),
+		background_alpha: percentage(backgroundAlphaInput),
+		background_image_url: optionalImageUrl(backgroundImageUrlInput),
+		target_at_unix_ms: targetAtUnixMs,
+		visible_until_unix_ms: Math.max(nextLondonMidnight(targetAtUnixMs), targetAtUnixMs + 5 * 60 * 60 * 1000),
+	}
 }
 
 function positiveId(input: string) {

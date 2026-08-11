@@ -5,6 +5,17 @@ import { DatabaseService, discordAdminCommandLogs } from '../database/database.s
 import { GiftsService } from './gifts.service'
 import { CountdownsService } from './countdowns.service'
 
+interface CountdownBody {
+	heading?: unknown
+	target?: unknown
+	description?: unknown
+	headingColor?: unknown
+	descriptionColor?: unknown
+	backgroundColor?: unknown
+	backgroundAlpha?: unknown
+	backgroundImageUrl?: unknown
+}
+
 @Controller('api/admin')
 export class AdminController {
 	constructor(
@@ -23,19 +34,20 @@ export class AdminController {
 	@Post('countdowns')
 	createCountdown(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: {
-			heading?: unknown
-			target?: unknown
-			description?: unknown
-			headingColor?: unknown
-			descriptionColor?: unknown
-			backgroundColor?: unknown
-			backgroundAlpha?: unknown
-			backgroundImageUrl?: unknown
-		} | undefined,
+		@Body() body: CountdownBody | undefined,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader)
 		return this.countdowns.create(body?.heading, body?.target, body?.description, body?.headingColor, body?.descriptionColor, body?.backgroundColor, body?.backgroundAlpha, body?.backgroundImageUrl)
+	}
+
+	@Patch('countdowns/:id')
+	updateCountdown(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('id') id: string,
+		@Body() body: CountdownBody | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.countdowns.update(id, body?.heading, body?.target, body?.description, body?.headingColor, body?.descriptionColor, body?.backgroundColor, body?.backgroundAlpha, body?.backgroundImageUrl)
 	}
 
 	@Patch('countdowns/:id/order')

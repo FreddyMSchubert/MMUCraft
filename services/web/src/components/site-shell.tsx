@@ -33,6 +33,7 @@ type TabId = 'dailies' | 'knowledge' | 'charms' | 'shop' | 'claims' | 'fishing' 
 const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'charms', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
 const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'bans', 'gifts', 'countdowns', 'discord-commands'])
 const MISC_SECTIONS = new Set(['settings', 'gift-codes'])
+const SERVER_IP = 'mmuminecraftsociety.co.uk'
 const TAB_LINKS: Array<{ id: TabId; label: string; href: string }> = [
 	{ id: 'knowledge', label: 'Knowledge', href: '/play/knowledge' },
 	{ id: 'dailies', label: 'Dailies', href: '/play/dailies' },
@@ -62,6 +63,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const pathname = usePathname()
 	const router = useRouter()
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
+	const [copyLabel, setCopyLabel] = useState('Copy IP')
 	const route = useMemo(() => pathname.split('/').slice(2).map(decodePathSegment), [pathname])
 	const activeTab = TAB_IDS.has(route[0] as TabId) ? route[0] as TabId : 'knowledge'
 	const routeDetail = route[1]
@@ -97,6 +99,12 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		})
 
 		setUser(null)
+	}
+
+	async function copyServerIp() {
+		await navigator.clipboard.writeText(SERVER_IP)
+		setCopyLabel('Copied')
+		window.setTimeout(() => setCopyLabel('Copy IP'), 1000)
 	}
 
 	useEffect(() => {
@@ -161,13 +169,14 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 									>
 										Signed in as <strong><PlayerName name={user.minecraftUsername} color={user.color} /></strong>.
 									</Link>
-									<small>Java Edition 26.2 · mmuminecraftsociety.co.uk</small>
 								</p>
 							</div>
 
-							<button type="button" onClick={signOut}>
-								Sign out
-							</button>
+							<div className="dashboardActions">
+								<small>Java Edition 26.2 · Server IP: <strong>{SERVER_IP}</strong></small>
+								<button className="copyServerIp" type="button" onClick={() => void copyServerIp()}>{copyLabel}</button>
+								<button className="dashboardSignOut" type="button" onClick={signOut}>Sign out</button>
+							</div>
 						</div>
 
 						<nav className="dashboardTabs" aria-label="Dashboard sections">

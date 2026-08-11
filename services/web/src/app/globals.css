@@ -914,6 +914,19 @@ a {
 	margin: 0 0 6px;
 }
 
+.dashboardActions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
+	text-align: right;
+}
+
+.dashboardActions small {
+	color: rgba(255, 255, 255, 0.72);
+}
+
 .signedInPlayer {
 	color: inherit;
 	text-decoration: none;
@@ -924,7 +937,15 @@ a {
 	text-decoration: underline;
 }
 
-.dashboardTop button {
+.copyServerIp {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	text-decoration: underline;
+}
+
+.dashboardSignOut {
 	flex: 0 0 auto;
 	padding: 10px 14px;
 	border: 0;
@@ -3443,8 +3464,13 @@ a {
 .countdownAbstractInput,
 .countdownImageInput,
 .countdownColorOptions,
-.countdownForm button {
+.countdownFormActions {
 	grid-column: 1 / -1;
+}
+
+.countdownFormActions {
+	display: flex;
+	gap: 10px;
 }
 
 .countdownColorOptions {
@@ -3478,6 +3504,7 @@ a {
 }
 
 .countdownForm button {
+	flex: 1;
 	padding: 10px 14px;
 	border: 0;
 	border-radius: 7px;

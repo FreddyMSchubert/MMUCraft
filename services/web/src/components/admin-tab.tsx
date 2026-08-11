@@ -116,6 +116,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [countdownBackgroundColor, setCountdownBackgroundColor] = useState('#000000')
 	const [countdownBackgroundAlpha, setCountdownBackgroundAlpha] = useState(78)
 	const [countdownBackgroundImageUrl, setCountdownBackgroundImageUrl] = useState('')
+	const [editingCountdownId, setEditingCountdownId] = useState<number | null>(null)
 	const [showAllGiftCodes, setShowAllGiftCodes] = useState(false)
 	const [busyPlayerId, setBusyPlayerId] = useState<number | null>(null)
 	const [busyClaimId, setBusyClaimId] = useState<string | null>(null)
@@ -451,15 +452,16 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		}
 	}
 
-	function createCountdown(event: FormEvent) {
+	function saveCountdown(event: FormEvent) {
 		event.preventDefault()
 		setCreating(true)
 		setError('')
 		setMessage('')
 		void (async () => {
 			try {
-				const response = await fetch('/api/admin/countdowns', {
-					method: 'POST',
+				const editing = editingCountdownId !== null
+				const response = await fetch(editingCountdownId === null ? '/api/admin/countdowns' : `/api/admin/countdowns/${editingCountdownId}`, {
+					method: editingCountdownId === null ? 'POST' : 'PATCH',
 					headers: { 'content-type': 'application/json' },
 					body: JSON.stringify({
 						heading: countdownHeading,
@@ -473,20 +475,43 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					}),
 				})
 				const body = await response.json().catch(() => null)
-				if (!response.ok) throw new Error(apiMessage(body, 'Failed to create the countdown'))
-				setCountdownHeading('')
-				setCountdownTarget('')
-				setCountdownDescription('')
-				setCountdownBackgroundImageUrl('')
-				setMessage(`Created the “${body.heading}” countdown.`)
+				if (!response.ok) throw new Error(apiMessage(body, `Failed to ${editing ? 'update' : 'create'} the countdown`))
+				setMessage(`${editing ? 'Updated' : 'Created'} the “${body.heading}” countdown.`)
+				resetCountdownForm()
 				await load()
 				window.dispatchEvent(new Event('countdowns-change'))
 			} catch (caught) {
-				setError(errorMessage(caught, 'Failed to create the countdown'))
+				setError(errorMessage(caught, `Failed to ${editingCountdownId === null ? 'create' : 'update'} the countdown`))
 			} finally {
 				setCreating(false)
 			}
 		})()
+	}
+
+	function editCountdown(countdown: Countdown) {
+		setEditingCountdownId(countdown.id)
+		setCountdownHeading(countdown.heading)
+		setCountdownTarget(formatLondonInput(countdown.targetAtUnixMs))
+		setCountdownDescription(countdown.description)
+		setCountdownHeadingColor(countdown.headingColor)
+		setCountdownDescriptionColor(countdown.descriptionColor)
+		setCountdownBackgroundColor(countdown.backgroundColor)
+		setCountdownBackgroundAlpha(countdown.backgroundAlpha)
+		setCountdownBackgroundImageUrl(countdown.backgroundImageUrl ?? '')
+		setError('')
+		setMessage('')
+	}
+
+	function resetCountdownForm() {
+		setEditingCountdownId(null)
+		setCountdownHeading('')
+		setCountdownTarget('')
+		setCountdownDescription('')
+		setCountdownHeadingColor('#ffffff')
+		setCountdownDescriptionColor('#ffffff')
+		setCountdownBackgroundColor('#000000')
+		setCountdownBackgroundAlpha(78)
+		setCountdownBackgroundImageUrl('')
 	}
 
 	async function moveCountdown(countdown: Countdown, direction: 'up' | 'down') {
@@ -518,6 +543,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			const body = await response.json().catch(() => null)
 			if (!response.ok) throw new Error(apiMessage(body, 'Failed to delete the countdown'))
 			setCountdowns((current) => current.filter((candidate) => candidate.id !== countdown.id))
+			if (editingCountdownId === countdown.id) resetCountdownForm()
 			setMessage(`Deleted the “${countdown.heading}” countdown.`)
 			window.dispatchEvent(new Event('countdowns-change'))
 		} catch (caught) {
@@ -586,7 +612,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 						<h3>Countdowns</h3>
 						<p>Create up to four countdowns. Enter the date and time in British time.</p>
 					</div>
-					<form className="countdownForm" onSubmit={createCountdown}>
+					<form className="countdownForm" onSubmit={saveCountdown}>
 						<label>
 							Heading
 							<input value={countdownHeading} onChange={(event) => setCountdownHeading(event.target.value)} maxLength={80} required />
@@ -610,7 +636,10 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 							<label>Background <input type="color" value={countdownBackgroundColor} onChange={(event) => setCountdownBackgroundColor(event.target.value)} /><code>{countdownBackgroundColor}</code></label>
 							<label>Background opacity <input type="range" min="0" max="100" step="1" value={countdownBackgroundAlpha} onChange={(event) => setCountdownBackgroundAlpha(Number(event.target.value))} /><output>{countdownBackgroundAlpha}%</output></label>
 						</fieldset>
-						<button disabled={creating || countdowns.length >= 4}>{creating ? 'Creating...' : countdowns.length >= 4 ? 'Maximum of 4 reached' : 'Create countdown'}</button>
+						<div className="countdownFormActions">
+							<button disabled={creating || (editingCountdownId === null && countdowns.length >= 4)}>{creating ? 'Saving...' : editingCountdownId === null ? countdowns.length >= 4 ? 'Maximum of 4 reached' : 'Create countdown' : 'Save changes'}</button>
+							{editingCountdownId !== null && <button type="button" onClick={resetCountdownForm}>Cancel editing</button>}
+						</div>
 					</form>
 
 					<div className="countdownAdminList">
@@ -622,6 +651,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 								<p>{countdown.description}</p>
 							</div>
 							<div className="countdownAdminActions">
+								<button type="button" disabled={busyCountdownId !== null} onClick={() => editCountdown(countdown)}>Edit</button>
 								<button type="button" aria-label={`Move ${countdown.heading} up`} disabled={index === 0 || busyCountdownId !== null} onClick={() => void moveCountdown(countdown, 'up')}>↑</button>
 								<button type="button" aria-label={`Move ${countdown.heading} down`} disabled={index === countdowns.length - 1 || busyCountdownId !== null} onClick={() => void moveCountdown(countdown, 'down')}>↓</button>
 								<button type="button" disabled={busyCountdownId !== null} onClick={() => void removeCountdown(countdown)}>Delete</button>
@@ -1051,6 +1081,19 @@ function formatLondonDateTime(timestamp: number) {
 		timeStyle: 'short',
 		timeZone: 'Europe/London',
 	}).format(new Date(timestamp))
+}
+
+function formatLondonInput(timestamp: number) {
+	const values = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+		timeZone: 'Europe/London',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hourCycle: 'h23',
+	}).formatToParts(new Date(timestamp)).map((part) => [part.type, part.value]))
+	return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}`
 }
 
 function apiMessage(body: unknown, fallback: string) {

@@ -384,5 +384,5 @@ function AuthCodeIcon({ itemName }: { itemName: string }) {
 function verificationMessage(delivery: 'sent' | 'manual', email: string) {
 	return delivery === 'sent'
 		? `We sent a three-item code to ${email}. It expires in 10 minutes. Please input the minecraft items in order.`
-		: 'Email delivery is currently unavailable. Contact the administrators; they can find this active request and give you the code.'
+		: 'Email delivery is currently unavailable. Go talk to the committee about it.'
 }

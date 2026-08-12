@@ -772,7 +772,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 				<section className="adminSection">
 					<div className="adminSectionHeader">
 						<h3>Signup and signin requests</h3>
-						<p>Active codes are sensitive and disappear after use, expiry, or replacement.</p>
+						<p>Use this only when email delivery fails: check that the requester uses an MMU email address, then send their active code to that address from your private email. Active codes are sensitive and disappear after use, expiry, or replacement.</p>
 					</div>
 					<button type="button" onClick={() => void load()}>Refresh</button>
 					<div className="adminTableWrap">

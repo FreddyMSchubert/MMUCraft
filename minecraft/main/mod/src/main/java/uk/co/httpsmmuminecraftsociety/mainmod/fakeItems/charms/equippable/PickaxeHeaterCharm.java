@@ -76,6 +76,7 @@ public final class PickaxeHeaterCharm implements Charm
             ItemStack original = itemStacks.get(i);
             if (original.isEmpty()) continue;
 
+            if (level <= 0) return;
             if (level <= 1 && !original.is(ModItemTagProvider.PICKAXE_HEATER_LEVEL1_SMELTABLE))
                 continue;
             if (level <= 2 && !original.is(ModItemTagProvider.PICKAXE_HEATER_LEVEL2_SMELTABLE) && !original.is(ModItemTagProvider.PICKAXE_HEATER_LEVEL1_SMELTABLE))

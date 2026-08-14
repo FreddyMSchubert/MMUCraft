@@ -1,6 +1,8 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.money;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -35,6 +37,15 @@ public final class MoneyHelper {
         }
 
         return balance;
+    }
+
+    public static void SendBalanceMessage(ServerPlayer player, String message) {
+        player.sendSystemMessage(Component.literal("[Dabloons: ")
+                .withStyle(ChatFormatting.GOLD)
+                .append(Component.literal(String.valueOf(GetBalance(player)))
+                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                .append(Component.literal("] ").withStyle(ChatFormatting.GOLD))
+                .append(Component.literal(message).withStyle(ChatFormatting.RESET)));
     }
 
     public static boolean ReduceMoney(ServerPlayer player, int amount) {

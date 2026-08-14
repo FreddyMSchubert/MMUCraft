@@ -573,6 +573,10 @@ public final class GameplayGrpcService extends GrpcHandler {
                 "upgraded " + item.title() + " to level " + targetLevel + ". [New effect: "
                         + target.abilityStatusCurrent() + "]");
 
+        if (target.dabloons() > 0) {
+            MoneyHelper.SendBalanceMessage(player, item.title() + " reached level " + targetLevel + ".");
+        }
+
         return UpgradeCharmResponse.newBuilder()
                 .setUpgraded(true)
                 .setOnline(true)
@@ -696,6 +700,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                     "completed all of today's dailies.");
         }
 
+        MoneyHelper.SendBalanceMessage(player, "You received " + amount + " dabloons.");
         return GrantDailyLoginBonusResponse.newBuilder()
                 .setGranted(true)
                 .setOnline(true)
@@ -729,6 +734,7 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         int balance = MoneyHelper.GetBalance(player);
+        MoneyHelper.SendBalanceMessage(player, "Gift code redeemed for " + amount + " dabloons.");
         return GrantGiftCodeMoneyResponse.newBuilder()
                 .setGranted(true)
                 .setOnline(true)
@@ -774,6 +780,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                 request.getPeriodKey(),
                 request.getTaskJson()
         );
+        if (result.claimed()) MoneyHelper.SendBalanceMessage(player, result.message());
         return ClaimDailyTaskResponse.newBuilder()
                 .setClaimed(result.claimed())
                 .setOnline(true)
@@ -911,6 +918,8 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
+        MoneyHelper.SendBalanceMessage(player,
+                "You received " + reward + " bonus dabloons for completing " + request.getAdvancementId() + ".");
         return ClaimDailyAdvancementResponse.newBuilder()
                 .setClaimed(true)
                 .setOnline(true)
@@ -976,6 +985,8 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         int remaining = MoneyHelper.GetBalance(player);
+        MoneyHelper.SendBalanceMessage(player,
+                "Purchased " + request.getItemId() + " for " + price + " dabloons.");
         DiscordBridge.playerEvent("shop", player,
                 "bought the " + request.getRarity() + " " + request.getDisplayName() + " "
                         + request.getItemType() + " from the shop for " + price + " dabloons.");
@@ -1014,6 +1025,7 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         int remaining = MoneyHelper.GetBalance(player);
+        MoneyHelper.SendBalanceMessage(player, "External player invitation purchased for 100 dabloons.");
         return PurchaseExternalPlayerInviteResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
@@ -1091,6 +1103,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
+        MoneyHelper.SendBalanceMessage(player, "Chunk claimed for " + price + " dabloons.");
         return PurchaseClaimResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)

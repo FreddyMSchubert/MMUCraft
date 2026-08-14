@@ -23,6 +23,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonChestLoot;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -147,6 +148,7 @@ public class LootTableModifiers {
         PickaxeHeaterCharm.heatMinedDrops(lootContext, itemStacks);
 
         addPlayerSpecificDrops(tableId, lootContext, itemStacks);
+        DabloonChestLoot.addDrops(tableId, lootContext, itemStacks);
         UnlockBookLoot.addBookDrops(tableId, lootContext, itemStacks);
         addSnifferClover(tableId, lootContext, itemStacks);
 

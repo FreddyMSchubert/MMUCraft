@@ -17,7 +17,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm
 {
     private static final int MAX_ATTEMPTS = 128;
-    private static final int MAX_TELEPORT_RADIUS = 20_000;
+    private static final int MAX_TELEPORT_RADIUS = 10_000;
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {

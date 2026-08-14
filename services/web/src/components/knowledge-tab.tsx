@@ -177,7 +177,7 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 		return html
 	}, [pageMarkdown])
 
-	if (error) {
+	if (error && !data) {
 		return <p className="authError">{error}</p>
 	}
 
@@ -207,6 +207,7 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 			</aside>
 
 			<section className="knowledgeReader">
+				{error && <p className="authError" role="alert">{error}</p>}
 				<div className="knowledgeReaderTop">
 					<div>
 						<p>Unlocked Entry</p>

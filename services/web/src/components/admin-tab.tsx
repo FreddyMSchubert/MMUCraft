@@ -5,6 +5,7 @@ import { FormEvent, useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { PlayerName, playerNameStyle } from '@/components/player-name'
 import type { Countdown } from '@/components/dynamic-countdowns'
+import { VelocityAdmin } from '@/components/velocity-admin'
 
 interface AdminPlayer {
 	id: number
@@ -86,7 +87,7 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
-	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' || section === 'countdowns' || section === 'discord-commands' ? section : 'members'
+	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' || section === 'countdowns' || section === 'discord-commands' || section === 'servers' || section === 'maintenance' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [countdowns, setCountdowns] = useState<Countdown[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
@@ -356,7 +357,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 
 		const restriction = banMode === 'permanent' ? 'permanently ban' : `put in timeout until ${formatDateTime(expiresAtUnixMs as number)}`
 		if (!window.confirm(`Warning 1 of 3: ${player.minecraftUsername} will be signed out everywhere and unable to sign in. Continue?`)) return
-		if (!window.confirm(`Warning 2 of 3: ${player.minecraftUsername} will be blacklisted from Minecraft. Check that you selected the correct player and any related external accounts. Continue?`)) return
+		if (!window.confirm(`Warning 2 of 3: Velocity will reject ${player.minecraftUsername} and disconnect them if online. Check that you selected the correct player and any related external accounts. Continue?`)) return
 		if (!window.confirm(`Warning 3 of 3: Apply this action and ${restriction} ${player.minecraftUsername}?`)) return
 
 		setUpdatingBan(true)
@@ -557,6 +558,18 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		<div className="adminPanel">
 			<nav className="adminSubTabs" aria-label="Admin sections">
 				<Link
+					className={activeSection === 'servers' ? 'active' : ''}
+					href="/play/admin/servers"
+				>
+					Server monitor
+				</Link>
+				<Link
+					className={activeSection === 'maintenance' ? 'active' : ''}
+					href="/play/admin/maintenance"
+				>
+					Maintenance
+				</Link>
+				<Link
 					className={activeSection === 'signins' ? 'active' : ''}
 					href="/play/admin/signins"
 				>
@@ -605,6 +618,9 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					Ban / timeout
 				</Link>
 			</nav>
+
+			{activeSection === 'servers' && <VelocityAdmin section="servers" />}
+			{activeSection === 'maintenance' && <VelocityAdmin section="maintenance" />}
 
 			{activeSection === 'countdowns' && (
 				<section className="adminSection">
@@ -878,7 +894,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 						<ul>
 							<li>They are signed out from the website on all devices.</li>
 							<li>They can no longer sign in on any devices.</li>
-							<li>They are added to the server blacklist, making it impossible for them to join.</li>
+							<li>Velocity rejects new joins and disconnects their current session within a few seconds.</li>
 						</ul>
 						<p>If you are banning an external player, you should also ban / timeout the player responsible for them (see this on the profiles / on the email whitelist tab) and then all the other externals that player was responsible for.</p>
 					</div>

@@ -125,6 +125,8 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(key(Items.DIAMOND_HORSE_ARMOR))
                 .add(key(Items.GOLD_NUGGET))
                 .add(key(Items.GOLDEN_APPLE))
+                .add(key(Items.GOLD_INGOT))
+                .add(key(Items.GOLD_BLOCK))
                 .add(key(Items.ENCHANTED_GOLDEN_APPLE))
                 .add(key(Items.COAST_ARMOR_TRIM_SMITHING_TEMPLATE))
                 .add(key(Items.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE))

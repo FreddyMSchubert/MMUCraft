@@ -255,6 +255,45 @@ export const countdowns = sqliteTable('countdowns', {
 	check('countdowns_background_alpha_check', sql`${table.background_alpha} between 0 and 100`),
 ])
 
+export const velocitySettings = sqliteTable('velocity_settings', {
+	id: integer('id').primaryKey(),
+	maintenance_mode: integer('maintenance_mode').notNull().default(0),
+	updated_by_user_id: integer('updated_by_user_id').references(() => users.id),
+	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
+}, (table) => [
+	check('velocity_settings_singleton_check', sql`${table.id} = 1`),
+	check('velocity_settings_maintenance_check', sql`${table.maintenance_mode} in (0, 1)`),
+])
+
+export const velocityServers = sqliteTable('velocity_servers', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	name: text('name').notNull(),
+	address: text('address').notNull(),
+	is_default: integer('is_default').notNull().default(0),
+	created_by_user_id: integer('created_by_user_id').references(() => users.id),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
+}, (table) => [
+	uniqueIndex('velocity_servers_name_unique').on(table.name),
+	uniqueIndex('velocity_servers_address_unique').on(table.address),
+	index('velocity_servers_default_idx').on(table.is_default),
+	check('velocity_servers_default_check', sql`${table.is_default} in (0, 1)`),
+])
+
+export const velocitySchedules = sqliteTable('velocity_schedules', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	name: text('name').notNull(),
+	server_id: integer('server_id').notNull().references(() => velocityServers.id),
+	starts_at_unix_ms: integer('starts_at_unix_ms').notNull(),
+	ends_at_unix_ms: integer('ends_at_unix_ms').notNull(),
+	created_by_user_id: integer('created_by_user_id').notNull().references(() => users.id),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+}, (table) => [
+	index('velocity_schedules_window_idx').on(table.starts_at_unix_ms, table.ends_at_unix_ms),
+	index('velocity_schedules_server_id_idx').on(table.server_id),
+	check('velocity_schedules_window_check', sql`${table.ends_at_unix_ms} > ${table.starts_at_unix_ms}`),
+])
+
 export type UserRow = typeof users.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
 export type PlayerBanRow = typeof playerBans.$inferSelect
@@ -274,6 +313,9 @@ export type DailyTaskRow = typeof dailyTasks.$inferSelect
 export type GiftCodeRow = typeof giftCodes.$inferSelect
 export type DiscordAdminCommandLogRow = typeof discordAdminCommandLogs.$inferSelect
 export type CountdownRow = typeof countdowns.$inferSelect
+export type VelocitySettingsRow = typeof velocitySettings.$inferSelect
+export type VelocityServerRow = typeof velocityServers.$inferSelect
+export type VelocityScheduleRow = typeof velocitySchedules.$inferSelect
 
 export const schema = {
 	users,
@@ -296,4 +338,7 @@ export const schema = {
 	giftCodeRedemptions,
 	discordAdminCommandLogs,
 	countdowns,
+	velocitySettings,
+	velocityServers,
+	velocitySchedules,
 }

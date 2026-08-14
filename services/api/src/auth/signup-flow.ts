@@ -5,6 +5,7 @@ export interface SignupFlow {
 	emailCodeExpiresAt: number
 	minecraftUsername?: string
 	minecraftUuid?: string
+	minecraftCode?: string
 	minecraftCodeHash?: string
 	minecraftCodeExpiresAt?: number
 	minecraftCodeFailedAttempts?: number

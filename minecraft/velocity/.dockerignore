@@ -1,0 +1,4 @@
+plugin/.gradle/
+plugin/build/*
+!plugin/build/libs/
+!plugin/build/libs/mmucraft-velocity-*.jar

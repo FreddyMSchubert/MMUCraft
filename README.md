@@ -10,20 +10,20 @@ cp services/api/.env.example services/api/.env
 make
 ```
 
-The API uses port `8080`. The website uses port `3000`. The API and website watch source files. Minecraft does not watch files.
+The API uses port `8080`. The website uses port `3000`. Velocity uses the public Minecraft port `25565`. The API and website watch source files. Minecraft and the Velocity plugin do not watch files.
 
 | Command | Result |
 | --- | --- |
 | `make` | Build and start all services. Follow all service logs. |
 | `make restart` | Restart all running services. |
 | `make stop` | Stop all services. |
-| `make logs SERVICE=mc` | Print all retained Minecraft logs, then follow new logs. Use `api` or `web` for the other services. |
-| `make shell SERVICE=mc` | Open a Minecraft container shell. Use `api` or `web` for the other services. |
+| `make logs SERVICE=mc` | Print all retained Minecraft logs, then follow new logs. Use `api`, `web`, or `velocity` for the other services. |
+| `make shell SERVICE=mc` | Open a Minecraft container shell. Use `api`, `web`, or `velocity` for the other services. |
 | `make console` | Attach to the Minecraft server console. |
 
-`make` invokes item staging, protobuf generation, datagen, the mod build, and the resource-pack build. It then builds all images and starts all services. Compose prefixes each log line with the service name. The build tools can reuse outputs that are up to date. The Makefile does not omit a generation task. There is no automatic Minecraft build watcher.
+`make` invokes item staging, protobuf generation, datagen, the main mod build, the Velocity plugin build, and the resource-pack build. It then builds all images and starts all services. Compose prefixes each log line with the service name. The build tools can reuse outputs that are up to date. The Makefile does not omit a generation task. There is no automatic Minecraft build watcher.
 
-Runtime files are in `.dev/`. API data is in `.dev/api/`. Minecraft data and log files are in `.dev/minecraft/`. Git ignores this directory.
+Runtime files are in `.dev/`. API data is in `.dev/api/`. Minecraft data and log files are in `.dev/minecraft/`. Velocity data and log files are in `.dev/velocity/`. Git ignores this directory.
 
 Use `docker compose logs --since 30m api` to read earlier container logs. Use Ctrl+P, Ctrl+Q to detach from the Minecraft console.
 
@@ -42,14 +42,32 @@ Making custom minecraft content isn't that hard with a fabric mod, so by adding 
 
 ## How
 
-Docker Compose runs the website, API, and optional Minecraft server. The API and Minecraft mod use gRPC. The website sends requests to the API and serves the resource pack. Production uses the same images on one VPS.
+Docker Compose runs the website, API, Velocity proxy, and Minecraft servers. Velocity owns the only public Minecraft port. Backend servers use private Docker addresses. The website sends requests to the API and serves the resource pack. The API and main server mod still use gRPC for gameplay features. Velocity uses a private HTTP API for login authorization and routing control. Production uses the same images on one VPS.
+
+### Server routing
+
+Use the **Admin > Server monitor** page to register backends, select the default server, move online players, and create routing schedules. Use **Admin > Maintenance** to reject new logins and disconnect all online players.
+
+Velocity polls the API every three seconds. It checks each registered backend, reports player locations, and applies control changes. A schedule moves all connected players at its start and end. A manual move is an exception for the current player session. A new schedule target, a schedule end, a default change, or a disconnect clears that exception.
+
+Velocity does not use automatic failover. If the assigned server is unhealthy, the player is disconnected. An unrelated healthy server is never selected.
+
+To add a manually managed backend:
+
+1. Start a Minecraft container on the `kubecraft_app` Docker network.
+2. Do not publish the backend Minecraft port on the host.
+3. Configure Velocity modern forwarding. Use the same `VELOCITY_FORWARDING_SECRET` value as the proxy. Fabric servers can use FabricProxy-Lite and its `FABRIC_PROXY_SECRET` variable.
+4. Open **Admin > Server monitor**. Add a short name and its Docker address, such as `event-server:25565`.
+5. Wait for the health state to become `online` before you assign players or schedules to it.
+
+Registration does not start, stop, or delete a backend container. It only changes the private server registry that Velocity receives from the API.
 
 ## To do list / priority order
 
 - [ ] Get a basic docker image for vanilla server set up
 - [ ] Publish and restart the server image on the production host
-- [ ] Velocity container that forwards to the main server
-- [ ] Server auth using MMU email verification and Minecraft join-code verification.
+- [x] Velocity container that forwards to API-managed backend servers
+- [x] Server auth using MMU email verification and Minecraft join-code verification
 - [ ] Setup rabbitmq that sends data between scorekeeper and main server mod. every day at 9, scorekeeper initiates border expansion.
 - [ ] On website, add shop tab. Create a few placeholder cosmetics. When bought, send rabbitmq message to mod to unlock that cosmetic for player / give player the item.
 

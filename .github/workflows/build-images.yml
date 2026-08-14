@@ -65,6 +65,10 @@ jobs:
           ./gradlew runDatagen --no-daemon
           ./gradlew build --no-daemon
 
+      - name: Build Velocity plugin
+        working-directory: minecraft/main/mod
+        run: ./gradlew -p ../../velocity/plugin build --no-daemon
+
       - name: Build resource pack
         run: python3 minecraft/main/respack/build-main-pack.py
 
@@ -144,5 +148,22 @@ jobs:
             org.opencontainers.image.version=${{ steps.image.outputs.tag }}
           cache-from: type=gha,scope=mc
           cache-to: type=gha,mode=max,scope=mc
+          provenance: mode=max
+          sbom: true
+
+      - name: Build and push Velocity
+        uses: docker/build-push-action@v7
+        with:
+          context: minecraft/velocity
+          platforms: linux/amd64
+          pull: true
+          push: true
+          tags: ${{ steps.image.outputs.prefix }}-velocity:${{ steps.image.outputs.tag }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.image.outputs.tag }}
+          cache-from: type=gha,scope=velocity
+          cache-to: type=gha,mode=max,scope=velocity
           provenance: mode=max
           sbom: true

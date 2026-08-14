@@ -14,15 +14,16 @@ NULL := /dev/null
 endif
 
 RUNNING_SERVICES = $(shell $(COMPOSE) ps --status running --services 2>$(NULL))
-check-service = $(if $(SERVICE),,$(error SERVICE is required. Valid values: api web mc))$(if $(filter api web mc,$(SERVICE)),,$(error Unknown SERVICE '$(SERVICE)'. Valid values: api web mc))
+check-service = $(if $(SERVICE),,$(error SERVICE is required. Valid values: api web mc velocity))$(if $(filter api web mc velocity,$(SERVICE)),,$(error Unknown SERVICE '$(SERVICE)'. Valid values: api web mc velocity))
 check-running = $(if $(filter $(1),$(RUNNING_SERVICES)),,$(error Service '$(1)' is not running. Start Docker and then run make))
-check-stack = $(if $(filter-out $(RUNNING_SERVICES),api web minecraft),$(error One or more services are not running. Start Docker and then run make))
+check-stack = $(if $(filter-out $(RUNNING_SERVICES),api web velocity minecraft),$(error One or more services are not running. Start Docker and then run make))
 
 .PHONY: start restart stop logs shell console db-generate db-check db-studio
 
 start:
 	$(PYTHON) $(MC)/stage_item_data.py --root $(MC)
 	cd $(MC)/mod && $(GRADLEW) generateProto runDatagen build
+	cd $(MC)/mod && $(GRADLEW) -p ../../velocity/plugin build
 	$(PYTHON) $(MC)/respack/build-main-pack.py
 	$(COMPOSE) --profile minecraft up --build
 

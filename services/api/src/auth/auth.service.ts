@@ -13,7 +13,7 @@ import {
 	users,
 } from '../database/database.service'
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service'
-import { AuthGrpcService } from './auth-grpc.service'
+import { MinecraftGameplayClient } from './minecraft-gameplay-client.service'
 import { PlayerBansService } from './player-bans.service'
 import {
 	AUTH_CODE_ITEMS,
@@ -94,7 +94,7 @@ export interface AuthenticatedUser {
 export class AuthService {
 	constructor(
 		private readonly database: DatabaseService,
-		private readonly grpc: AuthGrpcService,
+		private readonly minecraft: MinecraftGameplayClient,
 		private readonly bans: PlayerBansService,
 	) { }
 
@@ -214,16 +214,11 @@ export class AuthService {
 		flow.step = 'minecraft-code'
 		flow.minecraftUsername = username
 		flow.minecraftUuid = undefined
+		flow.minecraftCode = minecraftCode
 		flow.minecraftCodeHash = hashSecret(minecraftCode)
 		flow.minecraftCodeExpiresAt = expiresAt
 		flow.minecraftCodeFailedAttempts = 0
 		flow.updatedAt = now
-
-		await this.grpc.upsertPendingJoin({
-			minecraftUsername: username,
-			code: minecraftCode,
-			expiresAtUnixMs: expiresAt,
-		})
 
 		return { ok: true }
 	}
@@ -248,7 +243,6 @@ export class AuthService {
 			flow.minecraftCodeFailedAttempts = (flow.minecraftCodeFailedAttempts ?? 0) + 1
 			if (flow.minecraftCodeFailedAttempts >= MAX_AUTH_CODE_ATTEMPTS) {
 				flow.minecraftCodeExpiresAt = now
-				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
 			}
 			throw new BadRequestException('Invalid Minecraft code')
 		}
@@ -261,9 +255,8 @@ export class AuthService {
 			throw new BadRequestException('This Minecraft account is already linked to a website account')
 		}
 
-		await this.grpc.removePendingJoin(flow.minecraftUsername)
-
 		flow.step = 'rules'
+		flow.minecraftCode = undefined
 		flow.updatedAt = now
 	}
 
@@ -304,10 +297,7 @@ export class AuthService {
 			throw new ForbiddenException('This external player invitation is no longer active')
 		}
 
-		await this.grpc.whitelistPlayer(minecraftUsername)
-
-		try {
-			const userId = this.database.connection.transaction((tx) => {
+		const userId = this.database.connection.transaction((tx) => {
 				const created = tx.insert(users).values({
 					email: flow.email,
 					minecraft_uuid: minecraftUuid,
@@ -320,17 +310,13 @@ export class AuthService {
 					created_at_unix_ms: now,
 				}).returning({ id: users.id }).get()
 
-				return created.id
-			})
-			this.database.connection.update(authRequests).set({ user_id: userId })
-				.where(eq(authRequests.id, flowId)).run()
+			return created.id
+		})
+		this.database.connection.update(authRequests).set({ user_id: userId })
+			.where(eq(authRequests.id, flowId)).run()
 
-			signupFlows.delete(flowId)
-			return this.createSession(userId)
-		} catch (error) {
-			await this.grpc.removePendingJoin(minecraftUsername).catch(() => undefined)
-			throw error
-		}
+		signupFlows.delete(flowId)
+		return this.createSession(userId)
 	}
 
 	async signIn(emailInput: string) {
@@ -394,19 +380,12 @@ export class AuthService {
 
 		this.bans.set(target.id, admin.id, expiresAtUnixMsInput)
 
-		let minecraftSynchronized = true
-		try {
-			await this.grpc.blacklistPlayer(target.minecraft_username, target.minecraft_uuid ?? '')
-		} catch {
-			minecraftSynchronized = false
-		}
-
 		return {
 			ok: true,
 			userId: target.id,
 			minecraftUsername: target.minecraft_username,
 			expiresAtUnixMs: expiresAtUnixMsInput,
-			minecraftSynchronized,
+			minecraftSynchronized: true,
 		}
 	}
 
@@ -416,14 +395,7 @@ export class AuthService {
 		const target = this.database.connection.select().from(users).where(eq(users.id, userId)).get()
 		if (!target || !this.bans.remove(userId)) throw new NotFoundException('Active ban not found')
 
-		let minecraftSynchronized = true
-		try {
-			await this.grpc.unblacklistPlayer(target.minecraft_username, target.minecraft_uuid ?? '')
-		} catch {
-			minecraftSynchronized = false
-		}
-
-		return { ok: true, userId, minecraftUsername: target.minecraft_username, minecraftSynchronized }
+		return { ok: true, userId, minecraftUsername: target.minecraft_username, minecraftSynchronized: true }
 	}
 
 	listAuthRequests(offsetInput?: string, limitInput?: string) {
@@ -523,7 +495,7 @@ export class AuthService {
 		}
 
 		try {
-			const purchase = await this.grpc.purchaseExternalPlayerInvite(responsibleUser.minecraft_username)
+			const purchase = await this.minecraft.purchaseExternalPlayerInvite(responsibleUser.minecraft_username)
 			if (!purchase.purchased) {
 				throw new BadRequestException(purchase.message || 'The responsible player must be online with 100 dabloons')
 			}
@@ -647,9 +619,6 @@ export class AuthService {
 	private async deleteIncompleteSignupFlowsForEmail(email: string) {
 		for (const [flowId, flow] of signupFlows) {
 			if (flow.email !== email) continue
-			if (flow.minecraftUsername) {
-				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
-			}
 			signupFlows.delete(flowId)
 			this.expireAuthRequest(flowId)
 		}
@@ -660,9 +629,6 @@ export class AuthService {
 
 		for (const [flowId, flow] of signupFlows) {
 			if (flow.updatedAt >= cutoff) continue
-			if (flow.minecraftUsername) {
-				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
-			}
 			signupFlows.delete(flowId)
 			this.expireAuthRequest(flowId)
 		}
@@ -841,9 +807,6 @@ export class AuthService {
 			throw new ForbiddenException(message)
 		}
 
-		if (ban.expired) {
-			await this.grpc.unblacklistPlayer(user.minecraft_username, user.minecraft_uuid ?? '').catch(() => undefined)
-		}
 		return ban.expired
 	}
 }

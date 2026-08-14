@@ -28,17 +28,11 @@ async function checkFlows() {
 	process.env.DATABASE_URL = ':memory:'
 	delete process.env.RESEND_API_KEY
 	const database = new DatabaseService()
-	let pendingJoin
-	let pendingJoinUpdates = 0
-	const grpc = {
-		blacklistPlayer: async () => undefined,
+	const minecraft = {
 		purchaseExternalPlayerInvite: async () => ({ purchased: true, balance_dabloons: 900 }),
-		removePendingJoin: async () => undefined,
-		unblacklistPlayer: async () => undefined,
-		upsertPendingJoin: async (request) => { pendingJoin = request; pendingJoinUpdates++ },
 	}
 	const bans = new PlayerBansService(database)
-	const auth = new AuthService(database, grpc, bans)
+	const auth = new AuthService(database, minecraft, bans)
 	const now = Date.now()
 
 	const member = database.connection.insert(users).values({
@@ -114,12 +108,12 @@ async function checkFlows() {
 	assert.equal(signupRequest.code, null)
 	await auth.setMinecraftUsername(signup.flowId, 'NewMember')
 	await auth.setMinecraftUsername(signup.flowId, 'NewMember')
-	assert.equal(pendingJoinUpdates, 1)
-	assertAuthCode(pendingJoin.code)
+	const signupFlow = require('../dist/auth/signup-flow').signupFlows.get(signup.flowId)
+	assertAuthCode(signupFlow.minecraftCode)
 	for (let attempt = 0; attempt < 5; attempt++) {
 		await assert.rejects(auth.verifyMinecraftCode(signup.flowId, 'Not an item'), /Invalid Minecraft code/)
 	}
-	await assert.rejects(auth.verifyMinecraftCode(signup.flowId, pendingJoin.code), /Minecraft code expired/)
+	await assert.rejects(auth.verifyMinecraftCode(signup.flowId, signupFlow.minecraftCode), /Minecraft code expired/)
 
 	database.onModuleDestroy()
 }

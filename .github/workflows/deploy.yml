@@ -60,7 +60,7 @@ jobs:
           IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
           IMAGE_TAG: ${{ steps.version.outputs.tag }}
         run: |
-          for service in api web mc; do
+          for service in api web mc velocity; do
             docker manifest inspect "${IMAGE_PREFIX}-${service}:${IMAGE_TAG}" >/dev/null
           done
 

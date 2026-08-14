@@ -3830,6 +3830,134 @@ a {
 	color: #8ff0a4;
 }
 
+.velocityAdmin {
+	display: grid;
+	gap: 14px;
+}
+
+.velocityHeading {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: start;
+}
+
+.velocityStatus,
+.velocityHealth {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.velocityStatus-online,
+.velocityHealth-online {
+	background: rgba(143, 240, 164, 0.14);
+	color: #8ff0a4;
+}
+
+.velocityStatus-offline,
+.velocityHealth-offline {
+	background: rgba(255, 107, 107, 0.14);
+	color: #ff8f8f;
+}
+
+.velocityHealth-unknown {
+	background: rgba(255, 255, 255, 0.1);
+	color: rgba(255, 255, 255, 0.68);
+}
+
+.velocityError {
+	display: block;
+	max-width: 280px;
+	margin-top: 5px;
+	color: rgba(255, 255, 255, 0.6);
+	overflow-wrap: anywhere;
+}
+
+.velocityHint {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.82rem;
+}
+
+.velocityForm,
+.velocityScheduleForm {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+	gap: 10px;
+	align-items: end;
+}
+
+.velocityScheduleForm {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.velocityForm label,
+.velocityScheduleForm label {
+	display: grid;
+	gap: 6px;
+}
+
+.velocityForm input,
+.velocityScheduleForm input,
+.velocityScheduleForm select,
+.velocityAdmin .adminTable select {
+	width: 100%;
+	min-width: 0;
+	padding: 9px 11px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.09);
+	color: #fff;
+	color-scheme: dark;
+}
+
+.velocityForm button,
+.velocityScheduleForm button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.velocityScheduleForm > button {
+	grid-column: 1 / -1;
+}
+
+.maintenanceToggle {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	width: fit-content;
+	padding: 14px 16px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.2);
+	font-weight: 700;
+}
+
+.maintenanceToggle input {
+	width: 24px;
+	height: 24px;
+	accent-color: #ff6b6b;
+}
+
+@media (max-width: 800px) {
+	.velocityForm,
+	.velocityScheduleForm {
+		grid-template-columns: 1fr;
+	}
+
+	.velocityScheduleForm > button {
+		grid-column: auto;
+	}
+}
+
 .loadMoreButton {
 	justify-self: center;
 }

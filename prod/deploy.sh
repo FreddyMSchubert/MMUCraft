@@ -29,6 +29,8 @@ set +a
 : "${AUTH_CODE_SECRET:?set AUTH_CODE_SECRET in .env}"
 : "${RESEND_API_KEY:?set RESEND_API_KEY in .env}"
 : "${RESEND_FROM:?set RESEND_FROM in .env}"
+: "${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}"
+: "${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}"
 case "$PUBLIC_URL" in
 	https://*) ;;
 	*) echo "PUBLIC_URL must use HTTPS" >&2; exit 2 ;;
@@ -38,15 +40,17 @@ case "$public_host" in
 	''|*[!A-Za-z0-9.-]*|.*|*..*|*.) echo "PUBLIC_URL must not contain a port, path, query, or fragment" >&2; exit 2 ;;
 esac
 [ "${#AUTH_CODE_SECRET}" -ge 32 ] || { echo "AUTH_CODE_SECRET must be at least 32 characters" >&2; exit 2; }
-case "$AUTH_CODE_SECRET:$RESEND_API_KEY" in
+[ "${#VELOCITY_API_SECRET}" -ge 32 ] || { echo "VELOCITY_API_SECRET must be at least 32 characters" >&2; exit 2; }
+[ "${#VELOCITY_FORWARDING_SECRET}" -ge 32 ] || { echo "VELOCITY_FORWARDING_SECRET must be at least 32 characters" >&2; exit 2; }
+case "$AUTH_CODE_SECRET:$VELOCITY_API_SECRET:$VELOCITY_FORWARDING_SECRET:$RESEND_API_KEY" in
 	*replace*) echo "Replace the placeholder secrets in .env" >&2; exit 2 ;;
 esac
 
 umask 077
 printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\n' "$image_prefix" "$tag" "$public_host" > .release.env
-mkdir -p data/api data/minecraft
+mkdir -p data/api data/minecraft data/velocity
 [ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
-chmod 775 data/api data/minecraft
+chmod 775 data/api data/minecraft data/velocity
 chmod 664 data/api/signup-allowlist.txt
 
 dc() {
@@ -87,6 +91,8 @@ done
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
 chmod 664 "$server_properties"
 
+# Release the public Minecraft port before Velocity takes ownership of it.
+dc stop minecraft
 dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
 
 # Never prune volumes: they contain the database and Minecraft world.

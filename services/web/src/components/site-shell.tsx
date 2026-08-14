@@ -31,7 +31,7 @@ interface SessionUser {
 type TabId = 'dailies' | 'knowledge' | 'charms' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
 
 const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'charms', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
-const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'bans', 'gifts', 'countdowns', 'discord-commands'])
+const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'bans', 'gifts', 'countdowns', 'discord-commands', 'servers', 'maintenance'])
 const MISC_SECTIONS = new Set(['settings', 'gift-codes'])
 const SERVER_IP = 'mmuminecraftsociety.co.uk'
 const TAB_LINKS: Array<{ id: TabId; label: string; href: string }> = [

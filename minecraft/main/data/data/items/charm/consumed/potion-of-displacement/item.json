@@ -25,7 +25,7 @@
 	"consumable": {
 		"isDrink": true,
 		"canAlwaysEat": true,
-		"consumeSeconds": 15,
+		"consumeSeconds": 8,
 		"directHearts": 0,
 		"effects": [
 			{

@@ -9,16 +9,13 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
-import java.util.Set;
-
 public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
 {
-    public static final int DRINK_DURATION_TICKS = 15 * 20;
+    public static final int DRINK_DURATION_TICKS = 8 * 20;
     public static final int POST_DRINK_BAD_EFFECT_DURATION = 3 * 20;
     public static final int POST_DRINK_GOOD_EFFECT_DURATION = 15 * 20;
     public static final int DARKNESS_START_TICKS = DRINK_DURATION_TICKS / 100 * 50;
@@ -27,6 +24,15 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
+        if (elapsedTicks == 0) {
+            String teleportPossibleTest = TeleportPotionUtils.checkTeleportable(player, level, 20, 16);
+            if (!teleportPossibleTest.isEmpty()) {
+                player.sendSystemMessage(Component.literal(teleportPossibleTest));
+                player.stopUsingItem();
+                return;
+            }
+        }
+
         int effectDuration = DRINK_DURATION_TICKS - elapsedTicks;
         effectDuration += POST_DRINK_BAD_EFFECT_DURATION;
 
@@ -52,7 +58,7 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
     @Override
     public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
-        String teleportPossibleTest = TeleportPotionUtils.checkTeleportable(player, level, 20, 16);
+        String teleportPossibleTest = TeleportPotionUtils.checkTeleportableAfterSelfDamage(player, level, 20, 16);
         if (!teleportPossibleTest.isEmpty()) {
             player.sendSystemMessage(Component.literal(teleportPossibleTest));
             player.stopUsingItem();
@@ -61,17 +67,15 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
 
         BlockPos spawn = level.getRespawnData().globalPos().pos();
 
-        MainMod.LOGGER.info("Teleporting (Portion of Returning) player " + player.getName().getString() + " from (" + player.getX() + ", " + player.getY() + ", " + player.getZ() + ") to spawn (" + spawn.getX() + ", " + spawn.getY() + ", " + spawn.getZ() + ").");
-
-        player.teleportTo(
+        TeleportPotionUtils.teleportWithCompanions(
+                "returning",
+                player,
                 level,
                 spawn.getX() + 0.5,
                 spawn.getY() + 10.5,
                 spawn.getZ() + 0.5,
-                Set.of(),
                 player.getYRot(),
-                player.getXRot(),
-                false
+                player.getXRot()
         );
 
         player.fallDistance = 0.0F;

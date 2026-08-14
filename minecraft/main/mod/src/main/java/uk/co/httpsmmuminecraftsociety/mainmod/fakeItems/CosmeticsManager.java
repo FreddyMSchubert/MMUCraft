@@ -88,7 +88,6 @@ public final class CosmeticsManager {
         }
 
         replica.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
-        replica.remove(DataComponents.EQUIPPABLE);
         return replica;
     }
 

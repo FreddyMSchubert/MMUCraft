@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
@@ -29,8 +30,14 @@ public class RefreshCharmOnArmorEquip
     private void recoverArmorCharms(Item item, EquipmentSlot slot, CallbackInfo info) {
         if (!slot.isArmor() || !((Object) this instanceof ServerPlayer player)) return;
 
-        List<StoredCharmData> storedCharms = CharmorManager.getStoredArmorCharms(player.getItemBySlot(slot));
-        boolean slotIsEmpty = true;
+        ItemStack brokenStack = player.getItemBySlot(slot);
+        ItemStack cosmetic = CosmeticsManager.cosmeticFromHelmetReplica(brokenStack);
+        if (!cosmetic.isEmpty()) {
+            player.setItemSlot(EquipmentSlot.HEAD, cosmetic);
+        }
+
+        List<StoredCharmData> storedCharms = CharmorManager.getStoredArmorCharms(brokenStack);
+        boolean slotIsEmpty = cosmetic.isEmpty();
         for (StoredCharmData storedCharm : storedCharms) {
             FakeItem fakeItem = FakeItems.CHARM_ID_MAP.get(storedCharm.charmId());
             if (fakeItem == null) continue;

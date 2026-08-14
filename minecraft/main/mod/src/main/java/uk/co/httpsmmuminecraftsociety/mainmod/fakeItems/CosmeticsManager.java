@@ -28,6 +28,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -145,6 +146,27 @@ public final class CosmeticsManager {
         CharmorManager.updateArmorTooltip(helmet);
 
         return helmet;
+    }
+
+    public static ItemStack cosmeticFromHelmetReplica(ItemStack replica) {
+        CosmeticsInfo info = determineCosmeticType(replica);
+        CustomModelData modelData = replica.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        if (!info.isHelmet() || modelData.strings().isEmpty()) return ItemStack.EMPTY;
+
+        FakeItem cosmetic = FakeItems.ID_MAP.get(modelData.strings().getFirst());
+        if (cosmetic == null) return ItemStack.EMPTY;
+
+        ItemStack result = cosmetic.createItemStack();
+        DyedItemColor color = replica.get(DataComponents.DYED_COLOR);
+        if (color != null) result.set(DataComponents.DYED_COLOR, color);
+
+        CompoundTag replicaData = replica.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (replicaData.contains(COLOR_CYCLING_BOOLEAN)) {
+            CompoundTag cosmeticData = result.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            cosmeticData.putBoolean(COLOR_CYCLING_BOOLEAN, replicaData.getBooleanOr(COLOR_CYCLING_BOOLEAN, false));
+            result.set(DataComponents.CUSTOM_DATA, CustomData.of(cosmeticData));
+        }
+        return result;
     }
 
     public static InteractionResult onUseBlock(Player player, Level world, InteractionHand hand, BlockHitResult hitResult)

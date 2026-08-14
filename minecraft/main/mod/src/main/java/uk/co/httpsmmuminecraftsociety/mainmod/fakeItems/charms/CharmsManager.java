@@ -119,6 +119,8 @@ public class CharmsManager
         List<CharmInstance> charms = getCharmInstances(stack);
         if (charms.isEmpty()) return false;
 
+        CharmorManager.refreshArmorCharmAppearance(stack);
+
         for (CharmInstance instance : charms) {
             if (instance.charm() instanceof BaseItemChangeCallbackCharm callback) {
                 callback.disableEffectForItem(stack, instance.level());

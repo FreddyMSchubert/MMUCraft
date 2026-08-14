@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.tasks.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -744,8 +745,9 @@ public final class DailyTaskRegistry {
         }
     }
 
-    public static List<JsonObject> pick(String seed, int count) {
+    public static List<JsonObject> pick(String seed, int count, Collection<String> excludedIds) {
         List<Option> available = new ArrayList<>(TASKS.stream()
+                .filter(option -> !excludedIds.contains(option.definition().getId()))
                 .filter(option -> (!option.nether() || NETHER_ENABLED) && (!option.end() || END_ENABLED))
                 .toList());
         long availableTypes = available.stream().map(option -> option.definition().getClass()).distinct().count();

@@ -239,6 +239,9 @@ export function DailiesTab() {
 				<p className="dailyFootnote">
 					You can always earn money, even if today&apos;s dailies are already done or too hard, by completing advancements.
 				</p>
+				<p className="dailyFootnote">
+					If a daily seems impossible or ludicrously frustrating, contact the committee.
+				</p>
 				<section className={`dailyCompletion${data.completion.claimed ? ' claimed' : ''}`} aria-labelledby="daily-completion-title">
 					<h4 id="daily-completion-title">Completed {data.completion.completedTaskCount}/{data.completion.totalTaskCount}</h4>
 					<div className="dailyCompletionCalculation" aria-label={`Completion reward: ${data.completion.rewardDabloons} dabloons`}>

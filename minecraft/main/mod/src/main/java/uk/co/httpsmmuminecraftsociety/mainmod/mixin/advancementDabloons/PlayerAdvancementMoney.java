@@ -2,7 +2,6 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -151,9 +150,10 @@ public class PlayerAdvancementMoney {
                 return null;
             });
 
-            advancementHolder.value().display().ifPresent(displayInfo -> rewardedPlayer.sendSystemMessage(
-                    Component.literal(randomCelebration(rewardedPlayer) + ": You received " + money + " dabloons for completing ")
-                            .append(displayInfo.getTitle().getString() + ". :D")
+            advancementHolder.value().display().ifPresent(displayInfo -> MoneyHelper.SendBalanceMessage(
+                    rewardedPlayer,
+                    randomCelebration(rewardedPlayer) + ": You received " + money + " dabloons for completing "
+                            + displayInfo.getTitle().getString() + ". :D"
             ));
         }
     }

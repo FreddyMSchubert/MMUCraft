@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 100,
 		"description": "Increases fishing luck.",
-		"unlockWeight": 125,
+		"unlockWeight": 25,
 		"unlockMessage": "Unlocked charm: Lucky Charm. Increases fishing luck."
 	},
 	"charm": {

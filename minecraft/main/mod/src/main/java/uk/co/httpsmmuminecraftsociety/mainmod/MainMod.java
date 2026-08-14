@@ -89,6 +89,7 @@ public class MainMod implements ModInitializer {
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> CharmsManager.refreshInventory(handler.player));
         ItemEvents.USE.register(CharmsManager::onItemUse);
+        ItemEvents.USE_ON.register(CharmsManager::onItemUseOn);
         ItemEvents.USE_ON.register(DecoBlocksManager::onUseItemOn);
         ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);

@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -274,6 +275,11 @@ public class CharmsManager
         return null;
     }
 
+    public static InteractionResult onItemUseOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        return player == null ? null : onItemUse(context.getLevel(), player, context.getHand());
+    }
+
     public static void onAfterBlockBreak(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity)
     {
         if (!(player instanceof ServerPlayer)) return;
@@ -328,9 +334,6 @@ public class CharmsManager
     {
         if (!(player instanceof ServerPlayer)) return InteractionResult.PASS;
         if (!(level instanceof ServerLevel)) return InteractionResult.PASS;
-
-        InteractionResult useResult = onItemUse(level, player, interactionHand);
-        if (useResult != null) return useResult;
 
         for (Tuple<ItemStack, CharmInstance> instance : getPlayerCharmInstances((ServerPlayer) player)) {
             if (instance.getB().isBroken()) continue;

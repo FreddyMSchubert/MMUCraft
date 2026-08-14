@@ -403,6 +403,7 @@ message ClaimDailyAdvancementRequest {
   int32 bonus_reward_dabloons = 3;
   string period_key = 4;
   int64 unix_ms = 5;
+  bool check_only = 6;
 }
 
 message ClaimDailyAdvancementResponse {

@@ -263,6 +263,9 @@ export class GameplayGrpcService implements OnModuleInit {
 			call.request.reference_id ?? '',
 			typeof call.request.unix_ms === 'number' ? call.request.unix_ms : null,
 		)
+		if (call.request.source === 'advancement') {
+			this.dailies.notifyAdvancementCompletion(result.userId, call.request.reference_id ?? '')
+		}
 
 		callback(null, {
 			recorded: result.recorded,

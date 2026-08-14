@@ -113,7 +113,8 @@ public final class MoneyHelper {
         return wallets;
     }
 
-    private static void addCoins(ServerPlayer player, int amount) {
+    public static List<ItemStack> createCoinStacks(int amount) {
+        List<ItemStack> stacks = new ArrayList<>();
         for (WalletCharm.CoinDef coin : WalletCharm.COINS.stream()
                 .sorted(Comparator.comparingInt(WalletCharm.CoinDef::value).reversed())
                 .toList()) {
@@ -122,13 +123,17 @@ public final class MoneyHelper {
 
             while (count > 0) {
                 int stackSize = Math.min(count, 64);
-                ItemStack stack = FakeItems.createFakeItemStack(coin.id(), stackSize);
-                player.getInventory().add(stack);
-                if (!stack.isEmpty()) {
-                    player.drop(stack, false);
-                }
+                stacks.add(FakeItems.createFakeItemStack(coin.id(), stackSize));
                 count -= stackSize;
             }
+        }
+        return stacks;
+    }
+
+    private static void addCoins(ServerPlayer player, int amount) {
+        for (ItemStack stack : createCoinStacks(amount)) {
+            player.getInventory().add(stack);
+            if (!stack.isEmpty()) player.drop(stack, false);
         }
     }
 }

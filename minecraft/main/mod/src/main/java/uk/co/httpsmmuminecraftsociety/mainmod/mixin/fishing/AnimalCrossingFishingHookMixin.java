@@ -448,7 +448,7 @@ public abstract class AnimalCrossingFishingHookMixin {
             if (FishingJumpScares.shouldTrigger(hook.getRandom())) {
                 FishingJumpScares.spawn(level, hook, player);
             } else {
-                ItemStack result = FishingCatches.claimDrop(mainmod$catchResult(), hook.getRandom());
+                ItemStack result = FishingCatches.claimDrop(player, mainmod$catchResult(), hook.getRandom());
                 CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, this.mainmod$catchingRod, hook, List.of(result));
                 FishingCatches.catchMessage(result).ifPresent(player::sendOverlayMessage);
                 FishingCatches.trackCatch(player, result);

@@ -217,8 +217,8 @@ public final class FishingCatches {
                 });
     }
 
-    public static ItemStack claimDrop(ItemStack stack, RandomSource random) {
-        if (UnlockBookLoot.claimFishingDrop(stack)) return stack;
+    public static ItemStack claimDrop(ServerPlayer player, ItemStack stack, RandomSource random) {
+        if (UnlockBookLoot.claimFishingDrop(player, stack)) return stack;
         List<ItemStack> commonTreasure = TREASURE_LOOT.get(FishRarity.COMMON);
         return commonTreasure.get(random.nextInt(commonTreasure.size())).copy();
     }

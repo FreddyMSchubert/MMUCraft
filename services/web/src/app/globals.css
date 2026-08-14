@@ -1378,9 +1378,28 @@ a {
 }
 
 .knowledgeReaderTop {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
 	margin-bottom: 16px;
 	padding-bottom: 12px;
 	border-bottom: 1px solid rgba(123, 235, 255, 0.18);
+}
+
+.knowledgeReadButton {
+	flex: 0 0 auto;
+	padding: 8px 10px;
+	border: 1px solid rgba(255, 209, 102, 0.7);
+	border-radius: 4px;
+	background: rgba(255, 209, 102, 0.15);
+	color: #ffd166;
+	font: inherit;
+	font-weight: 700;
+}
+
+.knowledgeReadButton:disabled {
+	opacity: 0.65;
 }
 
 .knowledgeReaderTop p,

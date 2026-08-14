@@ -21,6 +21,7 @@ service GameplayEvents {
 service GameplayControl {
   rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
   rpc GrantGiftCodeMoney(GrantGiftCodeMoneyRequest) returns (GrantGiftCodeMoneyResponse);
+  rpc GrantKnowledgeReadMoney(GrantKnowledgeReadMoneyRequest) returns (GrantKnowledgeReadMoneyResponse);
   rpc GenerateDailyTasks(GenerateDailyTasksRequest) returns (GenerateDailyTasksResponse);
   rpc ClaimDailyTask(ClaimDailyTaskRequest) returns (ClaimDailyTaskResponse);
   rpc PickDailyAdvancement(PickDailyAdvancementRequest) returns (PickDailyAdvancementResponse);
@@ -190,6 +191,18 @@ message GrantGiftCodeMoneyResponse {
   bool online = 2;
   int32 balance_dabloons = 3;
   string message = 4;
+}
+
+message GrantKnowledgeReadMoneyRequest {
+  string minecraft_username = 1;
+  int32 amount_dabloons = 2;
+  string message = 3;
+}
+
+message GrantKnowledgeReadMoneyResponse {
+  bool granted = 1;
+  int32 balance_dabloons = 2;
+  string message = 3;
 }
 
 message UnlockNextKnowledgeRequest {

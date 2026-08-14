@@ -146,6 +146,15 @@ export const knowledgeUnlocks = sqliteTable('knowledge_unlocks', {
 	index('knowledge_unlocks_user_id_idx').on(table.user_id),
 ])
 
+export const knowledgeReads = sqliteTable('knowledge_reads', {
+	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	knowledge_id: text('knowledge_id').notNull(),
+	read_at_unix_ms: integer('read_at_unix_ms').notNull(),
+}, (table) => [
+	primaryKey({ columns: [table.user_id, table.knowledge_id] }),
+	index('knowledge_reads_user_id_idx').on(table.user_id),
+])
+
 export const shopUnlocks = sqliteTable('shop_unlocks', {
 	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 	item_id: text('item_id').notNull(),
@@ -267,6 +276,7 @@ export type PlayerStatsRow = typeof playerStats.$inferSelect
 export type PlayerMoneyEventRow = typeof playerMoneyEvents.$inferSelect
 export type FishCatchRow = typeof fishCatches.$inferSelect
 export type KnowledgeUnlockRow = typeof knowledgeUnlocks.$inferSelect
+export type KnowledgeReadRow = typeof knowledgeReads.$inferSelect
 export type ShopUnlockRow = typeof shopUnlocks.$inferSelect
 export type DailyClaimRow = typeof dailyClaims.$inferSelect
 export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSelect
@@ -288,6 +298,7 @@ export const schema = {
 	playerMoneyEvents,
 	fishCatches,
 	knowledgeUnlocks,
+	knowledgeReads,
 	shopUnlocks,
 	dailyClaims,
 	dailyAdvancementTargets,

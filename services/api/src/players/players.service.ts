@@ -484,6 +484,19 @@ export class PlayersService {
 		)
 	}
 
+	async grantKnowledgeReadMoney(minecraftUsername: string, amountDabloons: number) {
+		const client = this.getGameplayControlClient()
+		const method = (client as unknown as Record<string, unknown>).GrantKnowledgeReadMoney
+		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: GrantKnowledgeReadMoney')
+
+		return await new Promise<{ granted: boolean; balance_dabloons: number; message: string }>((resolve, reject) => {
+			method.call(client, { minecraft_username: minecraftUsername, amount_dabloons: amountDabloons, message: `Knowledge read: you received ${amountDabloons} dabloons.` }, (error: grpc.ServiceError | null, response: { granted: boolean; balance_dabloons: number; message: string }) => {
+				if (error) reject(error)
+				else resolve(response)
+			})
+		})
+	}
+
 	recordMoneyForMinecraftUsername(
 		minecraftUuidInput: string,
 		minecraftUsernameInput: string,

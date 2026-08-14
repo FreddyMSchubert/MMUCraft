@@ -742,7 +742,9 @@ public final class GameplayGrpcService extends GrpcHandler {
                 request.getUserId(),
                 request.getMinecraftUsername(),
                 request.getPeriodKey(),
-                request.getCount()
+                request.getCount(),
+                request.getUnixMs(),
+                request.getExcludedTaskIdsList()
         );
         return GenerateDailyTasksResponse.newBuilder()
                 .setGenerated(true)
@@ -811,7 +813,8 @@ public final class GameplayGrpcService extends GrpcHandler {
                     || !DailyAdvancementPolicy.allows(holder.id(), node.root().holder().id())
                     || !playerAdvancements.getOrStartProgress(parent.holder()).isDone()
                     || reward < 1
-                    || reward > MAX_DAILY_ADVANCEMENT_REWARD) {
+                    || reward > MAX_DAILY_ADVANCEMENT_REWARD
+                    || holder.id().toString().equals(request.getExcludedAdvancementId())) {
                 continue;
             }
 
@@ -830,7 +833,7 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         candidates.sort(Comparator.comparing(holder -> holder.id().toString()));
-        String seed = request.getPeriodKey() + ":" + normalize(username);
+        String seed = request.getPeriodKey() + ":" + normalize(username) + ":" + request.getUnixMs();
         AdvancementHolder selected = candidates.get(Math.floorMod(seed.hashCode(), candidates.size()));
         DisplayInfo display = selected.value().display().orElseThrow();
         AdvancementNode node = tree.get(selected);

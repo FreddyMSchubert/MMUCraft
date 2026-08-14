@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
 import { and, eq } from 'drizzle-orm'
 import { filter, interval, map, merge, of, Subject } from 'rxjs'
@@ -276,6 +276,85 @@ export class DailiesService {
 			this.deleteClaim(user.id, task.id, periodKey)
 			if (error instanceof BadRequestException) throw error
 			throw new BadRequestException('You have to be online on the server to claim this daily.')
+		}
+	}
+
+	async refreshForAdmin(userIdInput: string) {
+		const userId = Number(userIdInput)
+		if (!Number.isInteger(userId) || userId < 1) throw new BadRequestException('Select a valid player.')
+
+		const row = this.database.connection.select().from(users).where(eq(users.id, userId)).get()
+		if (!row) throw new NotFoundException('Player not found.')
+
+		const user = {
+			id: row.id,
+			minecraftUsername: row.minecraft_username,
+		}
+		const periodKey = currentDailyPeriodKey()
+		const currentTasks = this.database.connection.select().from(dailyTasks)
+			.where(and(eq(dailyTasks.user_id, userId), eq(dailyTasks.period_key, periodKey))).all()
+		const keptTasks = currentTasks.filter((task) => this.hasClaimed(userId, task.task_id, periodKey))
+		const refreshedSlots = Array.from({ length: GENERATED_TASK_COUNT }, (_, slot) => slot)
+			.filter((slot) => !keptTasks.some((task) => task.slot === slot))
+		const advancementClaimed = this.hasClaimed(userId, ADVANCEMENT_BONUS_TASK_ID, periodKey)
+		const currentAdvancement = this.getAdvancementTarget(userId, periodKey)
+		const now = Date.now()
+
+		const advancement = advancementClaimed
+			? null
+			: await this.pickDailyAdvancement(user.minecraftUsername, periodKey, now, currentAdvancement?.advancementId)
+		if (advancement && !advancement.selected) {
+			throw new BadRequestException(advancement.message || 'The Minecraft server could not regenerate the advancement daily.')
+		}
+		if (advancement?.selected && advancement.advancement_id === currentAdvancement?.advancementId) {
+			throw new BadRequestException('The Minecraft server returned the same advancement daily.')
+		}
+
+		const generated = refreshedSlots.length === 0
+			? { generated: true, task_json: [], message: '' }
+			: await this.generateMinecraftTasks(user, periodKey, refreshedSlots.length, now, currentTasks.map((task) => task.task_id))
+		if (!generated.generated || generated.task_json.length !== refreshedSlots.length) {
+			throw new BadRequestException(generated.message || 'The Minecraft server could not regenerate the random dailies.')
+		}
+		const parsed = generated.task_json.map(parseDailyTaskJson)
+		if (new Set([...currentTasks.map((task) => task.task_id), ...parsed.map((task) => task.id)]).size !== currentTasks.length + parsed.length) {
+			throw new BadRequestException('The Minecraft server generated duplicate daily tasks.')
+		}
+
+		this.database.connection.transaction((tx) => {
+			tx.delete(dailyTasks).where(and(eq(dailyTasks.user_id, userId), eq(dailyTasks.period_key, periodKey))).run()
+			for (const task of keptTasks) tx.insert(dailyTasks).values(task).run()
+			for (const [index, task] of parsed.entries()) tx.insert(dailyTasks).values({
+				user_id: userId,
+				period_key: periodKey,
+				slot: refreshedSlots[index]!,
+				task_id: task.id,
+				task_json: JSON.stringify(task),
+				updated_at_unix_ms: now,
+			}).run()
+
+			if (advancement?.selected) {
+				tx.delete(dailyAdvancementTargets).where(and(
+					eq(dailyAdvancementTargets.user_id, userId),
+					eq(dailyAdvancementTargets.period_key, periodKey),
+				)).run()
+				tx.insert(dailyAdvancementTargets).values({
+					user_id: userId,
+					period_key: periodKey,
+					advancement_id: advancement.advancement_id,
+					title: advancement.title,
+					tab_title: advancement.tab_title,
+					icon_item: advancement.icon_item,
+					base_reward_dabloons: advancement.base_reward_dabloons,
+					bonus_reward_dabloons: dailyAdvancementBonus(advancement.base_reward_dabloons),
+					selected_at_unix_ms: now,
+				}).run()
+			}
+		})
+
+		this.taskEvents.next({ userId })
+		return {
+			message: `Regenerated ${parsed.length} random ${parsed.length === 1 ? 'daily' : 'dailies'}${advancementClaimed ? '; kept the completed advancement daily' : ' and the advancement daily'}.`,
 		}
 	}
 
@@ -582,7 +661,7 @@ export class DailiesService {
 		})
 	}
 
-	private async generateMinecraftTasks(user: AuthenticatedUser, periodKey: string) {
+	private async generateMinecraftTasks(user: Pick<AuthenticatedUser, 'id' | 'minecraftUsername'>, periodKey: string, count = GENERATED_TASK_COUNT, unixMs = Date.now(), excludedTaskIds: string[] = []) {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).GenerateDailyTasks
 
@@ -595,7 +674,9 @@ export class DailiesService {
 				user_id: user.id,
 				minecraft_username: user.minecraftUsername,
 				period_key: periodKey,
-				count: GENERATED_TASK_COUNT,
+				count,
+				unix_ms: unixMs,
+				excluded_task_ids: excludedTaskIds,
 			}, (error: grpc.ServiceError | null, response: { generated: boolean; task_json: string[]; message: string }) => {
 				if (error) {
 					reject(error)
@@ -625,7 +706,7 @@ export class DailiesService {
 		})
 	}
 
-	private async pickDailyAdvancement(minecraftUsername: string, periodKey: string, unixMs: number) {
+	private async pickDailyAdvancement(minecraftUsername: string, periodKey: string, unixMs: number, excludedAdvancementId = '') {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).PickDailyAdvancement
 
@@ -650,6 +731,7 @@ export class DailiesService {
 				minecraft_username: minecraftUsername,
 				period_key: periodKey,
 				unix_ms: unixMs,
+				excluded_advancement_id: excludedAdvancementId,
 			}, (error: grpc.ServiceError | null, response: PickDailyAdvancementResponse) => {
 				if (error) {
 					reject(error)

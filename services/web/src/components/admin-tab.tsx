@@ -86,7 +86,7 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
-	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' || section === 'countdowns' || section === 'discord-commands' ? section : 'members'
+	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' || section === 'countdowns' || section === 'discord-commands' || section === 'dailies' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [countdowns, setCountdowns] = useState<Countdown[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
@@ -125,6 +125,8 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [creating, setCreating] = useState(false)
 	const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
 	const [updatingBan, setUpdatingBan] = useState(false)
+	const [dailyPlayerId, setDailyPlayerId] = useState('')
+	const [refreshingDailies, setRefreshingDailies] = useState(false)
 	const [error, setError] = useState('')
 	const [message, setMessage] = useState<ReactNode>('')
 
@@ -245,6 +247,26 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			setError(errorMessage(caught, 'Failed to update committee access'))
 		} finally {
 			setBusyPlayerId(null)
+		}
+	}
+
+	async function refreshDailies(event: FormEvent) {
+		event.preventDefault()
+		const player = players.find((candidate) => candidate.id === Number(dailyPlayerId))
+		if (!player || !window.confirm(`Regenerate today's uncompleted dailies for ${player.minecraftUsername}?`)) return
+
+		setRefreshingDailies(true)
+		setError('')
+		setMessage('')
+		try {
+			const response = await fetch(`/api/admin/dailies/${player.id}/refresh`, { method: 'POST' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to regenerate dailies'))
+			setMessage(body.message)
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to regenerate dailies'))
+		} finally {
+			setRefreshingDailies(false)
 		}
 	}
 
@@ -599,12 +621,44 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					Discord commands
 				</Link>
 				<Link
+					className={activeSection === 'dailies' ? 'active' : ''}
+					href="/play/admin/dailies"
+				>
+					Dailies
+				</Link>
+				<Link
 					className={activeSection === 'bans' ? 'active' : ''}
 					href="/play/admin/bans"
 				>
 					Ban / timeout
 				</Link>
 			</nav>
+
+			{activeSection === 'dailies' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader">
+						<h3>Regenerate dailies</h3>
+						<p>The player must be online so the server can choose a new advancement daily. Completed dailies do not change.</p>
+					</div>
+					<div className="adminWarnings adminWarnings-critical" role="note">
+						<strong>Use this only when a daily is impossible or ludicrously hard.</strong>
+						<ul>
+							<li>It is intentional that not everyone can complete every daily. These are challenges, not tasks.</li>
+							<li>Reach out to Freddy afterward and tell him which daily caused the problem so he can fix why it appeared.</li>
+						</ul>
+					</div>
+					<form className="playerBanForm" onSubmit={refreshDailies}>
+						<label>
+							Player
+							<select value={dailyPlayerId} onChange={(event) => setDailyPlayerId(event.target.value)} required>
+								<option value="">Select a player</option>
+								{players.map((player) => <option key={player.id} value={player.id}>{player.minecraftUsername}</option>)}
+							</select>
+						</label>
+						<button disabled={refreshingDailies}>{refreshingDailies ? 'Regenerating...' : 'Regenerate uncompleted dailies'}</button>
+					</form>
+				</section>
+			)}
 
 			{activeSection === 'countdowns' && (
 				<section className="adminSection">

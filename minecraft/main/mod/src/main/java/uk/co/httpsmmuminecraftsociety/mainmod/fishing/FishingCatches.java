@@ -145,16 +145,16 @@ public final class FishingCatches {
     }
 
     public static Pair<ItemStack, FishingPersonality> random(FishingHook hook, double itemChance, int fishingLuckBonus) {
+        double luck = hook.getPlayerOwner() == null
+                ? 0.0
+                : hook.getPlayerOwner().getAttributeValue(Attributes.LUCK) + fishingLuckBonus;
         if (hook.getPlayerOwner() instanceof ServerPlayer player) {
-            ItemStack unlockBook = UnlockBookLoot.rollFishingBook(player, hook.getRandom());
+            ItemStack unlockBook = UnlockBookLoot.rollFishingBook(player, hook.getRandom(), luck);
             if (!unlockBook.isEmpty()) {
                 return Pair.of(unlockBook, defaultPersonality(FishRarity.COMMON, true));
             }
         }
 
-        double luck = hook.getPlayerOwner() == null
-                ? 0.0
-                : hook.getPlayerOwner().getAttributeValue(Attributes.LUCK) + fishingLuckBonus;
         boolean treasure = hook.getRandom().nextDouble() < itemChance;
         FishRarity rarity = randomRarity(hook.getRandom(), luck);
         List<CatchEntry> entries = entriesFor(treasure, rarity, hook);
@@ -215,6 +215,12 @@ public final class FishingCatches {
                     MainMod.LOGGER.warn("Could not record fish catch for {}", player.getName().getString(), error);
                     return null;
                 });
+    }
+
+    public static ItemStack claimDrop(ItemStack stack, RandomSource random) {
+        if (UnlockBookLoot.claimFishingDrop(stack)) return stack;
+        List<ItemStack> commonTreasure = TREASURE_LOOT.get(FishRarity.COMMON);
+        return commonTreasure.get(random.nextInt(commonTreasure.size())).copy();
     }
 
     private static void showRecordMessages(
@@ -306,10 +312,6 @@ public final class FishingCatches {
                 entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LURE), defaultPersonality(rarity, true), null));
             } else if (rarity == FishRarity.EPIC) {
                 entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LUCK_OF_THE_SEA), defaultPersonality(rarity, true), null));
-            } else if (rarity == FishRarity.COMMON && hook.getPlayerOwner() instanceof ServerPlayer player) {
-                for (ItemStack stack : UnlockBookLoot.getAvailableUnlockBooks(player)) {
-                    entries.add(new CatchEntry(stack, defaultPersonality(rarity, true), null));
-                }
             }
         } else {
             for (FishLoot fish : FISH_LOOT.get(rarity)) {

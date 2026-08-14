@@ -26,12 +26,11 @@ interface KnowledgeResponse {
 	contentVersion: number
 	lastUnlockedKnowledgeId: string | null
 	unlockedKnowledgeIds: string[]
+	readKnowledgeIds: string[]
 	tree: KnowledgeTreeEntry[]
 }
 
 const POLL_INTERVAL_MS = 8000
-const VIEWED_STORAGE_KEY = 'mcstack.viewedKnowledgePages'
-
 export function KnowledgeTab({ pageId, onSelectPage }: {
 	pageId?: string
 	onSelectPage: (pageId: string, replace?: boolean) => void
@@ -39,7 +38,8 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 	const [data, setData] = useState<KnowledgeResponse | null>(null)
 	const [pageMarkdown, setPageMarkdown] = useState('')
 	const [error, setError] = useState('')
-	const [viewedPageIds, setViewedPageIds] = useState<Set<string>>(() => readViewedPageIds())
+	const [readPageIds, setReadPageIds] = useState<Set<string>>(new Set())
+	const [markingRead, setMarkingRead] = useState(false)
 	const articleRef = useRef<HTMLElement | null>(null)
 
 	const visibleTree = useMemo(() => data ? filterUnlockedTree(data.tree) : [], [data])
@@ -48,21 +48,9 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 	const activePagePath = activePage?.path ?? null
 	const contentVersion = data?.contentVersion ?? 0
 
-	const markPageViewed = useCallback((pageId: string) => {
-		setViewedPageIds((current) => {
-			if (current.has(pageId)) return current
-
-			const next = new Set(current)
-			next.add(pageId)
-			writeViewedPageIds(next)
-			return next
-		})
-	}, [])
-
 	const selectPage = useCallback((pageId: string) => {
-		markPageViewed(pageId)
 		onSelectPage(pageId)
-	}, [markPageViewed, onSelectPage])
+	}, [onSelectPage])
 
 	const load = useCallback(async (options: { quiet?: boolean } = {}) => {
 		if (!options.quiet) {
@@ -81,13 +69,31 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 
 		const knowledge = body as KnowledgeResponse
 		setData(knowledge)
+		setReadPageIds(new Set(knowledge.readKnowledgeIds))
 		const visiblePages = flattenPages(filterUnlockedTree(knowledge.tree))
 		const selectedPage = visiblePages.find((page) => page.id === pageId) ?? visiblePages[0]
 		if (selectedPage) {
-			markPageViewed(selectedPage.id)
 			if (selectedPage.id !== pageId) onSelectPage(selectedPage.id, true)
 		}
-	}, [markPageViewed, onSelectPage, pageId])
+	}, [onSelectPage, pageId])
+
+	const markRead = useCallback(async () => {
+		if (!activePage || markingRead) return
+		setMarkingRead(true)
+		setError('')
+		try {
+			const response = await fetch('/api/knowledge/read', {
+				method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ knowledgeId: activePage.id }),
+			})
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(body?.message ?? 'Failed to mark knowledge as read')
+			setReadPageIds((current) => new Set(current).add(activePage.id))
+		} catch (caught) {
+			setError(caught instanceof Error ? caught.message : 'Failed to mark knowledge as read')
+		} finally {
+			setMarkingRead(false)
+		}
+	}, [activePage, markingRead])
 
 	useEffect(() => {
 		let cancelled = false
@@ -192,7 +198,7 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 							key={entry.type === 'folder' ? `folder-${entry.name}` : entry.id}
 							entry={entry}
 							activePageId={activePage.id}
-							viewedPageIds={viewedPageIds}
+							readPageIds={readPageIds}
 							onSelectPage={selectPage}
 							depth={0}
 						/>
@@ -206,6 +212,9 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 						<p>Unlocked Entry</p>
 						<h3>{activePage.sidebarTitle}</h3>
 					</div>
+					<button type="button" className="knowledgeReadButton" onClick={() => void markRead()} disabled={readPageIds.has(activePage.id) || markingRead}>
+						{readPageIds.has(activePage.id) ? 'Read' : markingRead ? 'Marking…' : 'Mark as read (+3 dabloons)'}
+					</button>
 				</div>
 
 				<article
@@ -221,13 +230,13 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 function KnowledgeTreeNode({
 	entry,
 	activePageId,
-	viewedPageIds,
+	readPageIds,
 	onSelectPage,
 	depth,
 }: {
 	entry: KnowledgeTreeEntry
 	activePageId: string
-	viewedPageIds: Set<string>
+	readPageIds: Set<string>
 	onSelectPage: (pageId: string) => void
 	depth: number
 }) {
@@ -243,7 +252,7 @@ function KnowledgeTreeNode({
 							key={child.type === 'folder' ? `folder-${entry.name}-${child.name}` : child.id}
 							entry={child}
 							activePageId={activePageId}
-							viewedPageIds={viewedPageIds}
+							readPageIds={readPageIds}
 							onSelectPage={onSelectPage}
 							depth={depth + 1}
 						/>
@@ -264,8 +273,8 @@ function KnowledgeTreeNode({
 			onClick={() => onSelectPage(entry.id)}
 		>
 			<span>{entry.sidebarTitle}</span>
-			{!viewedPageIds.has(entry.id) && (
-				<span className="knowledgeTreeNew" aria-label="Not viewed yet">!</span>
+			{!readPageIds.has(entry.id) && (
+				<span className="knowledgeTreeNew" aria-label="Not read yet">!</span>
 			)}
 		</button>
 	)
@@ -314,24 +323,4 @@ function stripMetadataBlock(markdown: string) {
 
 function stripDangerousHtml(html: string) {
 	return html.replace(/<script\b[\s\S]*?<\/script>/gi, '')
-}
-
-function readViewedPageIds(): Set<string> {
-	if (typeof window === 'undefined') return new Set()
-
-	const raw = window.localStorage.getItem(VIEWED_STORAGE_KEY)
-	if (!raw) return new Set()
-
-	try {
-		const values = JSON.parse(raw)
-		return Array.isArray(values)
-			? new Set(values.filter((value): value is string => typeof value === 'string'))
-			: new Set()
-	} catch {
-		return new Set()
-	}
-}
-
-function writeViewedPageIds(ids: Set<string>) {
-	window.localStorage.setItem(VIEWED_STORAGE_KEY, JSON.stringify([...ids]))
 }

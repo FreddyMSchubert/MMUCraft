@@ -8,17 +8,16 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
 import java.util.List;
-import java.util.Set;
 
 public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
 {
-    private static final int RESONANCE_EFFECT_DURATION_TICKS = 3 * 60 * 20;
     private static final int RESONANCE_EFFECT_AMPLIFIER = 2;
     private static final List<Holder<MobEffect>> RESONANCE_EFFECTS = List.of(
             MobEffects.SPEED,
@@ -59,33 +58,22 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
 
         ServerPlayer target = candidates.get(level.getRandom().nextInt(candidates.size()));
 
-        MainMod.LOGGER.info(
-                "Teleporting (Potion of Resonance) player {} from ({}, {}, {}) to player {} at ({}, {}, {}).",
-                player.getName().getString(),
-                player.getX(),
-                player.getY(),
-                player.getZ(),
-                target.getName().getString(),
-                target.getX(),
-                target.getY(),
-                target.getZ()
-        );
-
-        player.teleportTo(
+        TeleportPotionUtils.teleportWithCompanions(
+                "resonance",
+                player,
                 (ServerLevel) target.level(),
                 target.getX(),
                 target.getY(),
                 target.getZ(),
-                Set.of(),
                 player.getYRot(),
-                player.getXRot(),
-                false
+                player.getXRot()
         );
 
         player.fallDistance = 0.0F;
         Holder<MobEffect> sharedEffect = RESONANCE_EFFECTS.get(level.getRandom().nextInt(RESONANCE_EFFECTS.size()));
-        player.addEffect(new MobEffectInstance(sharedEffect, RESONANCE_EFFECT_DURATION_TICKS, RESONANCE_EFFECT_AMPLIFIER));
-        target.addEffect(new MobEffectInstance(sharedEffect, RESONANCE_EFFECT_DURATION_TICKS, RESONANCE_EFFECT_AMPLIFIER));
+        int sharedEffectDurationTicks = (10 + level.getRandom().nextInt(21)) * 20;
+        player.addEffect(new MobEffectInstance(sharedEffect, sharedEffectDurationTicks, RESONANCE_EFFECT_AMPLIFIER));
+        target.addEffect(new MobEffectInstance(sharedEffect, sharedEffectDurationTicks, RESONANCE_EFFECT_AMPLIFIER));
 
         player.sendSystemMessage(Component.literal("You resonated with " + target.getName().getString() + "."));
         target.sendSystemMessage(Component.literal(player.getName().getString() + " resonated with you."));
@@ -94,7 +82,15 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
     }
 
     private static boolean holdsMatchingItem(ServerPlayer player, ItemStack key) {
-        return ItemStack.isSameItemSameComponents(player.getMainHandItem(), key)
-                || ItemStack.isSameItemSameComponents(player.getOffhandItem(), key);
+        return matchesItemType(player.getMainHandItem(), key) || matchesItemType(player.getOffhandItem(), key);
+    }
+
+    private static boolean matchesItemType(ItemStack candidate, ItemStack key) {
+        FakeItem candidateFakeItem = FakeItems.getFakeItemFromStack(candidate);
+        FakeItem keyFakeItem = FakeItems.getFakeItemFromStack(key);
+        if (candidateFakeItem != null || keyFakeItem != null) {
+            return candidateFakeItem != null && keyFakeItem != null && candidateFakeItem.id().equals(keyFakeItem.id());
+        }
+        return candidate.is(key.getItem());
     }
 }

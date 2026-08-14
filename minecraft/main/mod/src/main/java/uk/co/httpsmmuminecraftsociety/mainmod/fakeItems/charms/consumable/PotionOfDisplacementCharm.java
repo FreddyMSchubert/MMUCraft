@@ -10,12 +10,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.block.state.BlockState;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
-
-import java.util.Set;
 
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm
 {
@@ -38,17 +35,15 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
 
         BlockPos pos = findSafeTeleportPos(level, player.blockPosition());
 
-        MainMod.LOGGER.info("Teleporting (Portion of Displacement) player " + player.getName().getString() + " from (" + player.getX() + ", " + player.getY() + ", " + player.getZ() + ") to spawn (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ").");
-
-        player.teleportTo(
+        TeleportPotionUtils.teleportWithCompanions(
+                "displacement",
+                player,
                 level,
                 pos.getX() + 0.5D,
                 pos.getY(),
                 pos.getZ() + 0.5D,
-                Set.of(),
                 player.getYRot(),
-                player.getXRot(),
-                false
+                player.getXRot()
         );
 
         player.fallDistance = 0.0F;

@@ -86,7 +86,12 @@ public class AnvilUtils
             changed = !merged.isEmpty();
         }
 
-        int cost = totalChangedEnchantCost(leftEnchants, rightEnchants, merged);
+        int cost = totalChangedEnchantCost(
+                leftEnchants,
+                rightEnchants,
+                merged,
+                right.has(DataComponents.STORED_ENCHANTMENTS)
+        );
         return new MergeInfo(cost, changed);
     }
 
@@ -117,7 +122,12 @@ public class AnvilUtils
         return changed;
     }
 
-    private static int totalChangedEnchantCost(ItemEnchantments leftEnchants, ItemEnchantments rightEnchants, ItemEnchantments resultEnchants) {
+    private static int totalChangedEnchantCost(
+            ItemEnchantments leftEnchants,
+            ItemEnchantments rightEnchants,
+            ItemEnchantments resultEnchants,
+            boolean rightIsEnchantedBook
+    ) {
         int cost = 0;
         Set<Holder<Enchantment>> all = new HashSet<>();
 
@@ -141,7 +151,11 @@ public class AnvilUtils
             }
 
             if (chargedLevels > 0) {
-                cost += ench.value().getAnvilCost() * chargedLevels;
+                int anvilCost = ench.value().getAnvilCost();
+                if (rightIsEnchantedBook) {
+                    anvilCost = Math.max(1, anvilCost / 2);
+                }
+                cost += anvilCost * chargedLevels;
             }
         }
 

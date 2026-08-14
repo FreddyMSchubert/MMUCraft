@@ -1,0 +1,117 @@
+{
+  "excluded": {
+    "blazeandcave:bacap/root": "This tab contains pack milestones and setup tasks.",
+    "blazeandcave:challenges/root": "This tab contains super challenges.",
+    "blazeandcave:statistics/root": "This tab contains long-term counters.",
+
+    "blazeandcave:adventure/deals_off": "A Wandering Trader can take more than two hours to spawn.",
+    "blazeandcave:adventure/florist": "The required Wandering Trader trade is random.",
+    "blazeandcave:adventure/prime_specimen": "The required village chest loot is random.",
+    "blazeandcave:adventure/rebuilding_the_oceans": "The required Wandering Trader trade is random.",
+    "blazeandcave:adventure/shady_deals": "This requires a Wandering Trader at the correct time.",
+    "blazeandcave:adventure/superhero_of_the_village": "This requires one stack of Ominous Banners.",
+    "blazeandcave:adventure/the_sound_of_silence": "The Silence template has a low chest chance.",
+    "blazeandcave:adventure/traveller": "This requires travel to every village type.",
+    "blazeandcave:adventure/vexingly_hard_to_find": "A mansion can contain no Vex template.",
+
+    "blazeandcave:animal/a_horse_in_shining_armor": "Diamond horse armor depends on random structure loot.",
+    "blazeandcave:animal/beef_moover": "This requires all cow variants in one place.",
+    "blazeandcave:animal/in_a_hole_there_lived_a_rabbit": "This requires one stack each of rabbit meat and hide.",
+    "blazeandcave:animal/master_angler": "This requires one stack of each fish type.",
+    "blazeandcave:animal/mooshroom_kingdom": "Finding a mushroom island can take more than two hours.",
+    "blazeandcave:animal/mushroom_scientist": "This requires a mooshroom and suitable lightning.",
+    "blazeandcave:animal/save_the_turtles": "This requires 64 turtle eggs and many breeding cycles.",
+    "blazeandcave:animal/screaming_milk": "A screaming goat is a rare random variant.",
+    "blazeandcave:animal/someones_been_here_before": "Fishing up leather boots has a low random chance.",
+    "blazeandcave:animal/the_three_little_pigs": "This requires all pig variants in one place.",
+
+    "blazeandcave:biomes/cold_feet": "This requires every snowy biome.",
+    "blazeandcave:biomes/high_feet": "This requires every mountain biome.",
+    "blazeandcave:biomes/naughtylus": "A Zombie Nautilus Jockey is a rare random spawn.",
+    "blazeandcave:biomes/one_with_the_forest": "This requires every forest biome.",
+    "blazeandcave:biomes/overgrown": "This requires every overgrown biome.",
+    "blazeandcave:biomes/titanic": "This requires a shipwreck in an iceberg biome.",
+    "blazeandcave:biomes/voyage": "This requires 100 kilometres of travel.",
+    "blazeandcave:biomes/warm_feet": "This requires every dry biome.",
+    "blazeandcave:biomes/wet_feet": "This requires every water biome.",
+
+    "blazeandcave:building/built_on_sand_set_in_stone": "This requires one stack of each of 20 sandstone forms.",
+    "blazeandcave:building/the_ritual_begins": "This requires 64 candles and time-gated honeycomb.",
+
+    "blazeandcave:enchanting/scuba_gear": "This requires every water enchantment on items and books.",
+
+    "blazeandcave:mining/called_shot": "This depends on suitable lightning.",
+    "blazeandcave:mining/chestful_of_cobblestone": "This requires mining and storing 1728 cobblestone.",
+    "blazeandcave:mining/frigid_diversions": "This requires a specific Ancient City room and chest.",
+    "blazeandcave:mining/mineral_collection": "This includes a Netherite Block and every other mineral block.",
+    "blazeandcave:mining/rest_in_pickaxes": "This requires 1561 uses of a diamond pickaxe.",
+    "blazeandcave:mining/spelunker": "This requires every cave biome.",
+    "blazeandcave:mining/the_statue_of_liberty": "Full copper oxidation has a long random wait.",
+
+    "blazeandcave:monsters/grim_neigh": "A Zombie Horse is a rare random spawn.",
+    "blazeandcave:monsters/lancelot": "A Zombie Horseman is a rare random spawn.",
+    "blazeandcave:monsters/mollusc_man": "A Drowned with a nautilus shell is a rare random spawn.",
+    "blazeandcave:monsters/phantom_slayer": "This requires one stack of Phantom Membranes.",
+    "blazeandcave:monsters/the_undead_cavalry": "A Skeleton Horse depends on a thunderstorm trap.",
+
+    "blazeandcave:nether/legend_of_hell_chicken_riders": "A Nether chicken jockey is a rare random spawn.",
+    "blazeandcave:nether/this_ones_mine": "A Zombified Piglin riding a Strider is a rare random spawn.",
+    "blazeandcave:nether/wub_wub_wub": "Pigstep depends on random Bastion chest loot.",
+
+    "blazeandcave:redstone/engineer": "This requires 70 different components from several progression stages.",
+
+    "blazeandcave:weaponry/multiclassed": "This requires 22 weapon types from several progression stages.",
+
+    "minecraft:husbandry/obtain_sniffer_egg": "A Sniffer Egg depends on random archaeology loot."
+  },
+
+  "requires_nether": {
+    "blazeandcave:potion/root": "Brewing requires Blaze Powder.",
+    "minecraft:nether/root": "This is the Nether tab.",
+    "minecraft:end/root": "Normal End access requires Blaze Powder.",
+
+    "blazeandcave:adventure/nerds_never_die": "This requires a Piglin Brute.",
+    "blazeandcave:building/blackstonehenge": "This requires Blackstone.",
+    "blazeandcave:building/cerulean": "This requires Soul Sand or Soul Soil.",
+    "blazeandcave:building/fake_fortress": "This requires Nether Bricks and Nether Wart.",
+    "blazeandcave:building/fluorescent": "End Rods require Blaze Rods.",
+    "blazeandcave:building/rock_polish": "This requires Basalt and Blackstone.",
+    "blazeandcave:building/shroom_lightyear": "This requires Shroomlight.",
+    "blazeandcave:enchanting/gotta_go_fast": "Soul Speed comes from Piglins or Bastions.",
+    "blazeandcave:farming/hot_chocolate": "This must be done in the Nether.",
+    "blazeandcave:monsters/baby_baby_baby_noo": "This includes a baby Zombified Piglin.",
+    "blazeandcave:monsters/hell_hunter": "This requires all Nether mob types.",
+    "blazeandcave:monsters/plane_walker": "This requires an Enderman kill in the Nether.",
+    "blazeandcave:monsters/poison_dart": "The reliable path requires brewing a Poison potion.",
+    "blazeandcave:monsters/the_ghastly_eyes": "The reliable path requires brewing an Invisibility potion.",
+    "blazeandcave:monsters/well_handle_this": "This must be done in the Nether.",
+    "blazeandcave:weaponry/a_snowballs_chance_in_hell": "This requires a Blaze.",
+    "blazeandcave:weaponry/backfire": "This requires a Blaze and a Blaze Rod.",
+    "blazeandcave:weaponry/death_star": "A Nether Star normally requires Wither Skeleton Skulls.",
+    "blazeandcave:weaponry/shovel_knight": "This includes a Netherite Shovel.",
+    "blazeandcave:weaponry/toasted_marshmallow": "This requires a Ghast.",
+    "minecraft:adventure/spyglass_at_ghast": "This requires a Ghast.",
+    "minecraft:adventure/use_lodestone": "A Lodestone requires Netherite.",
+    "minecraft:husbandry/place_dried_ghast_in_water": "This requires a Dried Ghast.",
+    "minecraft:story/cure_zombie_villager": "The normal cure requires a brewed Weakness potion.",
+    "minecraft:story/enter_the_end": "Eyes of Ender require Blaze Powder.",
+    "minecraft:story/enter_the_nether": "This requires entering the Nether.",
+    "minecraft:story/follow_ender_eye": "Eyes of Ender require Blaze Powder."
+  },
+
+  "requires_end": {
+    "minecraft:end/root": "This is the End tab.",
+
+    "blazeandcave:building/fluorescent": "End Rods require Popped Chorus Fruit.",
+    "blazeandcave:building/washing_machine": "This requires a Shulker Box.",
+    "blazeandcave:monsters/plane_walker": "This requires an Enderman kill in the End.",
+    "blazeandcave:monsters/poison_dart": "The reliable path requires a tipped arrow and Dragon's Breath.",
+    "blazeandcave:monsters/void_ender": "This requires all End mob types.",
+    "blazeandcave:potion/gas": "A Lingering Potion requires Dragon's Breath.",
+    "blazeandcave:potion/imbued_projectiles": "Crafting tipped arrows requires a Lingering Potion.",
+    "blazeandcave:potion/noxious_fumes": "This explicitly requires Dragon's Breath.",
+    "blazeandcave:potion/string_shot": "The reliable path requires a tipped arrow and Dragon's Breath.",
+    "minecraft:adventure/spyglass_at_dragon": "This requires the Ender Dragon.",
+    "minecraft:story/enter_the_end": "This requires entering the End."
+  }
+}

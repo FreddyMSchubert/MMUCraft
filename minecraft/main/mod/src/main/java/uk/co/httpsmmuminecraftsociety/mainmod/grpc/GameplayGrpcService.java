@@ -26,6 +26,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDef;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.TagStackDef;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyAdvancementPolicy;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmLevelDefinition;
@@ -53,6 +54,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class GameplayGrpcService extends GrpcHandler {
     static final GameplayGrpcService INSTANCE = new GameplayGrpcService();
     private static final int EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 100;
+    private static final int MAX_DAILY_ADVANCEMENT_REWARD = 20;
 
     private GameplayEventsGrpc.GameplayEventsFutureStub gameplayEvents;
 
@@ -797,9 +799,19 @@ public final class GameplayGrpcService extends GrpcHandler {
         PlayerAdvancements playerAdvancements = player.getAdvancements();
         Set<AdvancementHolder> visible = playerAdvancements.visible;
         List<AdvancementHolder> candidates = new ArrayList<>();
+        AdvancementTree tree = playerAdvancements.tree;
 
         for (AdvancementHolder holder : visible) {
-            if (holder.value().display().isEmpty()) {
+            AdvancementNode node = tree.get(holder);
+            AdvancementNode parent = node == null ? null : node.parent();
+            int reward = AdvancementMoney.moneyForAdvancement(holder.id(), holder.value().rewards().experience());
+            if (holder.value().display().isEmpty()
+                    || node == null
+                    || parent == null
+                    || !DailyAdvancementPolicy.allows(holder.id(), node.root().holder().id())
+                    || !playerAdvancements.getOrStartProgress(parent.holder()).isDone()
+                    || reward < 1
+                    || reward > MAX_DAILY_ADVANCEMENT_REWARD) {
                 continue;
             }
 
@@ -813,7 +825,7 @@ public final class GameplayGrpcService extends GrpcHandler {
             return PickDailyAdvancementResponse.newBuilder()
                     .setSelected(false)
                     .setOnline(true)
-                    .setMessage("No visible incomplete advancements are available right now.")
+                    .setMessage("No suitable next-step advancements are available right now.")
                     .build();
         }
 
@@ -821,7 +833,6 @@ public final class GameplayGrpcService extends GrpcHandler {
         String seed = request.getPeriodKey() + ":" + normalize(username);
         AdvancementHolder selected = candidates.get(Math.floorMod(seed.hashCode(), candidates.size()));
         DisplayInfo display = selected.value().display().orElseThrow();
-        AdvancementTree tree = playerAdvancements.tree;
         AdvancementNode node = tree.get(selected);
         AdvancementNode root = node == null ? null : node.root();
 

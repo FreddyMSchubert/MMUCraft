@@ -40,7 +40,7 @@ public class EnchantmentSettingsManager
 
         // general armor enchantments
         new EnchantmentSettings(Enchantments.FEATHER_FALLING).maxLevels(3, 68).inLoottable("chests/desert_pyramid").rarity(Rarity.UNCOMMON).dupedWithVanillaItem(Items.ANVIL),
-        new EnchantmentSettings(Enchantments.THORNS).maxLevels(3, 5).inLoottable("chests/simple_dungeon").dupedWithVanillaItem(Items.CACTUS_FLOWER, 2),
+        new EnchantmentSettings(Enchantments.THORNS).maxLevels(3, 5).inLoottable("chests/simple_dungeon").rarity(Rarity.UNCOMMON).dupedWithVanillaItem(Items.CACTUS_FLOWER, 2),
         new EnchantmentSettings(ModEnchantments.CHARM_BOOST).maxLevels(1, 1).dupedWithVanillaItem(Items.RAW_GOLD_BLOCK), // TODO: obtainable via archaeology loottables
         new EnchantmentSettings(Enchantments.PROTECTION).maxLevels(2, 4).inLoottable("chests/end_city_treasure").rarity(Rarity.EPIC).dupedWithVanillaItem(Items.ARMADILLO_SCUTE, 5),
         new EnchantmentSettings(Enchantments.BLAST_PROTECTION).maxLevels(3, 5).dupedWithVanillaItem(Items.ARMADILLO_SCUTE, 3),

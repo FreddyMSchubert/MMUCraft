@@ -4,11 +4,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 
 import java.util.*;
 
@@ -132,9 +134,11 @@ public class EnchantmentSettingsManager
                 .findFirst();
     }
 
-    public static int getMaxAnvilLevel(Holder<Enchantment> enchantment) {
+    public static int getMaxAnvilLevel(Holder<Enchantment> enchantment, ItemStack stack) {
         return getSettingsForEnch(enchantment)
-                .map(settings -> settings.maxEnderiteLevel)
+                .map(settings -> CharmorManager.isEnderite(stack)
+                        ? settings.maxEnderiteLevel
+                        : settings.maxNormalGearLevel)
                 .orElse(0);
     }
 

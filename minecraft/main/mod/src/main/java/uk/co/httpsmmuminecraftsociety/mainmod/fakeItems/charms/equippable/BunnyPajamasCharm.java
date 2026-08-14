@@ -137,7 +137,7 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
 
     private static float getIntendedMaxJumpHeightPerLevel(int level)
     {
-        return level + 1;
+        return level + 1.05F;
     }
 
     private static float getJumpStrengthAdditionPerLevel(int level)

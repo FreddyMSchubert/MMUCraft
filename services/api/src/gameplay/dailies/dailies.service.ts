@@ -929,11 +929,11 @@ function rewardForStreak(streak: number) {
 	return LOGIN_BONUS_REWARDS[rewardIndex]!
 }
 
-// guard between 5 and 42, round to nearest 10
+// Round the total advancement reward to the next 10, with a 10-dabloon daily minimum.
 function dailyAdvancementBonus(baseRewardDabloons: number) {
 	const bounded = Math.max(5, Math.min(39, baseRewardDabloons));
 	const toNextMultipleOf10 = Math.ceil(bounded / 10) * 10;
-	return toNextMultipleOf10 - bounded;
+	return Math.max(10, toNextMultipleOf10 - bounded);
 }
 
 function dailyCompletionReward(periodKey: string, isMember: boolean) {

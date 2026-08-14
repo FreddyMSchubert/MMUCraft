@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, gte, or } from 'drizzle-orm'
 import { filter, interval, map, merge, of, Subject } from 'rxjs'
 import { AuthenticatedUser } from '../../auth/auth.service'
-import { DatabaseService, dailyAdvancementTargets, dailyClaims, dailyTasks, users } from '../../database/database.service'
+import { DatabaseService, dailyAdvancementTargets, dailyClaims, dailyTasks, playerMoneyEvents, users } from '../../database/database.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { PlayersService } from '../../players/players.service'
 import { ShopService } from '../shop/shop.service'
@@ -39,6 +39,7 @@ interface DailyAdvancementTarget {
 	iconItem: string
 	baseRewardDabloons: number
 	bonusRewardDabloons: number
+	selectedAtUnixMs: number
 }
 
 interface GameplayProtoRoot {
@@ -75,6 +76,10 @@ export class DailiesService {
 			target: null,
 			message: error instanceof Error ? error.message : 'Daily advancement target is unavailable right now.',
 		}))
+		const advancementClaimed = this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey)
+		const advancementCompleted = advancementClaimed || Boolean(
+			advancementTask.target && await this.isAdvancementCompleted(user, periodKey, advancementTask.target),
+		)
 
 		return {
 			resetHour: RESET_HOUR,
@@ -108,11 +113,16 @@ export class DailiesService {
 					emoji: '🏆',
 					name: 'Advancement bonus',
 					rewardDabloons: advancementTask.target?.bonusRewardDabloons ?? 0,
-					claimed: this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey),
-					current: this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey) ? 1 : 0,
-					max: -1,
+					claimed: advancementClaimed,
+					current: advancementCompleted ? 1 : 0,
+					max: 1,
 					advancement: advancementTask.target ? {
-						...advancementTask.target,
+						advancementId: advancementTask.target.advancementId,
+						title: advancementTask.target.title,
+						tabTitle: advancementTask.target.tabTitle,
+						iconItem: advancementTask.target.iconItem,
+						baseRewardDabloons: advancementTask.target.baseRewardDabloons,
+						bonusRewardDabloons: advancementTask.target.bonusRewardDabloons,
 						...this.shop.getItemRenderAsset(advancementTask.target.iconItem),
 					} : null,
 					unavailableMessage: advancementTask.target ? undefined : advancementTask.message,
@@ -296,11 +306,12 @@ export class DailiesService {
 		const keptTasks = currentTasks.filter((task) => this.hasClaimed(userId, task.task_id, periodKey))
 		const refreshedSlots = Array.from({ length: GENERATED_TASK_COUNT }, (_, slot) => slot)
 			.filter((slot) => !keptTasks.some((task) => task.slot === slot))
-		const advancementClaimed = this.hasClaimed(userId, ADVANCEMENT_BONUS_TASK_ID, periodKey)
 		const currentAdvancement = this.getAdvancementTarget(userId, periodKey)
+		const advancementCompleted = this.hasClaimed(userId, ADVANCEMENT_BONUS_TASK_ID, periodKey)
+			|| Boolean(currentAdvancement && await this.isAdvancementCompleted(user, periodKey, currentAdvancement))
 		const now = Date.now()
 
-		const advancement = advancementClaimed
+		const advancement = advancementCompleted
 			? null
 			: await this.pickDailyAdvancement(user.minecraftUsername, periodKey, now, currentAdvancement?.advancementId)
 		if (advancement && !advancement.selected) {
@@ -354,8 +365,14 @@ export class DailiesService {
 
 		this.taskEvents.next({ userId })
 		return {
-			message: `Regenerated ${parsed.length} random ${parsed.length === 1 ? 'daily' : 'dailies'}${advancementClaimed ? '; kept the completed advancement daily' : ' and the advancement daily'}.`,
+			message: `Regenerated ${parsed.length} random ${parsed.length === 1 ? 'daily' : 'dailies'}${advancementCompleted ? '; kept the completed advancement daily' : ' and the advancement daily'}.`,
 		}
+	}
+
+	notifyAdvancementCompletion(userId: number | null, advancementId: string) {
+		if (!userId) return
+		const target = this.getAdvancementTarget(userId, currentDailyPeriodKey())
+		if (target?.advancementId === advancementId) this.taskEvents.next({ userId })
 	}
 
 	events(userId: number) {
@@ -632,7 +649,31 @@ export class DailiesService {
 			iconItem: row.icon_item,
 			baseRewardDabloons: row.base_reward_dabloons,
 			bonusRewardDabloons: dailyAdvancementBonus(row.base_reward_dabloons),
+			selectedAtUnixMs: row.selected_at_unix_ms,
 		}
+	}
+
+	private async isAdvancementCompleted(
+		user: Pick<AuthenticatedUser, 'id' | 'minecraftUsername'>,
+		periodKey: string,
+		target: DailyAdvancementTarget,
+	) {
+		const recorded = this.database.connection.select({ id: playerMoneyEvents.id })
+			.from(playerMoneyEvents)
+			.where(and(
+				eq(playerMoneyEvents.user_id, user.id),
+				eq(playerMoneyEvents.source, 'advancement'),
+				gte(playerMoneyEvents.created_at_unix_ms, target.selectedAtUnixMs),
+				or(
+					eq(playerMoneyEvents.id, `advancement:${target.advancementId}`),
+					eq(playerMoneyEvents.id, `advancement:${user.id}:${target.advancementId}`),
+				),
+			)).get()
+		if (recorded) return true
+
+		return this.claimDailyAdvancement(user.minecraftUsername, periodKey, Date.now(), target, true)
+			.then((result) => result.completed)
+			.catch(() => false)
 	}
 
 	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number, rewardDabloons: number, source: string) {
@@ -747,6 +788,7 @@ export class DailiesService {
 		periodKey: string,
 		unixMs: number,
 		target: DailyAdvancementTarget,
+		checkOnly = false,
 	) {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).ClaimDailyAdvancement
@@ -762,6 +804,7 @@ export class DailiesService {
 				bonus_reward_dabloons: target.bonusRewardDabloons,
 				period_key: periodKey,
 				unix_ms: unixMs,
+				check_only: checkOnly,
 			}, (error: grpc.ServiceError | null, response: { claimed: boolean; online: boolean; completed: boolean; message: string }) => {
 				if (error) {
 					reject(error)

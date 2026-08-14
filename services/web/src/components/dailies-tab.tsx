@@ -197,7 +197,9 @@ export function DailiesTab() {
 											<p>Tab: {task.advancement.tabTitle}</p>
 											<p>{task.claimed
 												? <>Claimed: Finished the advancement and earned {task.advancement.bonusRewardDabloons} bonus dabloons.</>
-												: <>Finish it today, then claim {task.advancement.bonusRewardDabloons} bonus dabloons in addition to the advancements reward.</>}</p>
+												: task.current >= task.max
+													? <>Complete — claim {task.advancement.bonusRewardDabloons} bonus dabloons.</>
+													: <>Finish it today, then claim {task.advancement.bonusRewardDabloons} bonus dabloons in addition to the advancements reward.</>}</p>
 										</div>
 									</div>
 								) : (
@@ -227,7 +229,7 @@ export function DailiesTab() {
 				? 'Claimed'
 				: claimingTaskId === task.id
 					? 'Claiming...'
-					: task.id === 'advancement_bonus' || (task.max !== -1 && task.current < task.max)
+					: task.max !== -1 && task.current < task.max
 						? 'In progress'
 						: 'Claim'}
 						</button>

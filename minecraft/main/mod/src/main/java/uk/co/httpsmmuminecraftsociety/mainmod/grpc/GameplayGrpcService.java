@@ -930,6 +930,15 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
+        if (request.getCheckOnly()) {
+            return ClaimDailyAdvancementResponse.newBuilder()
+                    .setClaimed(false)
+                    .setOnline(true)
+                    .setCompleted(true)
+                    .setMessage("Daily advancement completed.")
+                    .build();
+        }
+
         int reward = Math.max(0, request.getBonusRewardDabloons());
         if (!MoneyHelper.GainMoney(player, reward)) {
             return ClaimDailyAdvancementResponse.newBuilder()

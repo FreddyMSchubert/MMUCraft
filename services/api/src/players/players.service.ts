@@ -513,6 +513,7 @@ export class PlayersService {
 				recorded: false,
 				duplicate: false,
 				accountLinked: false,
+				userId: null,
 				message: 'No website account is linked to this Minecraft username yet.',
 			}
 		}
@@ -520,7 +521,7 @@ export class PlayersService {
 		const direction = normalizeDirection(directionInput)
 		const source = sanitizeToken(sourceInput, 'minecraft')
 		const referenceId = sanitizeToken(referenceIdInput, '')
-		const eventId = referenceId ? `${source}:${referenceId}` : randomUUID()
+		const eventId = referenceId ? `${source}:${user.id}:${referenceId}` : randomUUID()
 		const result = this.recordMoneyEvent(
 			user.id,
 			direction,
@@ -534,6 +535,7 @@ export class PlayersService {
 		return {
 			...result,
 			accountLinked: true,
+			userId: user.id,
 			message: result.duplicate ? 'Money event already recorded.' : 'Money event recorded.',
 		}
 	}

@@ -24,7 +24,7 @@ public final class AnvilLogic
     ) {
         public Outcome
         {
-            xpLevelsConsumed = Math.min(xpLevelsConsumed, 39); // never exceed xp limit
+            xpLevelsConsumed = Math.min(xpLevelsConsumed, 30); // never exceed xp limit
             if (!result.isEmpty())
                 result.set(DataComponents.REPAIR_COST, 0);
         }

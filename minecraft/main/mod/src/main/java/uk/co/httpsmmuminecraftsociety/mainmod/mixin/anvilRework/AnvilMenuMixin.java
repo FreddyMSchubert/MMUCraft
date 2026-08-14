@@ -167,6 +167,6 @@ public abstract class AnvilMenuMixin {
     @Unique
     private static int clampCost(int cost) {
         if (cost < 0) return 0;
-        return Math.min(cost, 39);
+        return Math.min(cost, 30);
     }
 }

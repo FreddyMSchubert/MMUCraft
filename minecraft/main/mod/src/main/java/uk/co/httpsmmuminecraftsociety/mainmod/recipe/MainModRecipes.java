@@ -12,6 +12,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 public final class MainModRecipes {
     public static final RecipeSerializer<CombineCharmorRecipe> COMBINE_CHARMOR_SERIALIZER = unit(new CombineCharmorRecipe());
+    public static final RecipeSerializer<CharmorVisualResetRecipe> CHARMOR_VISUAL_RESET_SERIALIZER = unit(new CharmorVisualResetRecipe());
     public static final RecipeSerializer<SeperateCharmorRecipe> SEPERATE_CHARMOR_SERIALIZER = unit(new SeperateCharmorRecipe());
     public static final RecipeSerializer<CombineCosmeticRecipe> COMBINE_COSMETIC_SERIALIZER = unit(new CombineCosmeticRecipe());
     public static final RecipeSerializer<SeperateCosmeticRecipe> SEPERATE_COSMETIC_SERIALIZER = unit(new SeperateCosmeticRecipe());
@@ -29,6 +30,7 @@ public final class MainModRecipes {
 
     public static void register() {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_charmor"), COMBINE_CHARMOR_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "charmor_visual_reset"), CHARMOR_VISUAL_RESET_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_charmor"), SEPERATE_CHARMOR_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "backpack_upgrade"), BACKPACK_UPGRADE_RECIPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_cosmetic"), COMBINE_COSMETIC_SERIALIZER);

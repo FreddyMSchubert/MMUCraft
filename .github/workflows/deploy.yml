@@ -8,6 +8,11 @@ on:
         required: true
         default: dev
         type: string
+      warning_minutes:
+        description: Minutes to warn Minecraft players before restart (0 disables)
+        required: true
+        default: 3
+        type: number
 
 permissions:
   contents: read
@@ -117,6 +122,7 @@ jobs:
           GHCR_USER: ${{ github.actor }}
           IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
           IMAGE_TAG: ${{ steps.version.outputs.tag }}
+          WARNING_MINUTES: ${{ inputs.warning_minutes }}
         run: |
           test -n "$DEPLOY_HOST"
           test -n "$DEPLOY_USER"
@@ -133,6 +139,6 @@ jobs:
 
           printf '%s' "$GHCR_TOKEN" | ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker login ghcr.io --username '$GHCR_USER' --password-stdin"
           status=0
-          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && ./deploy.sh '$IMAGE_TAG' '$IMAGE_PREFIX'" || status=$?
+          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && ./deploy.sh '$IMAGE_TAG' '$IMAGE_PREFIX' '$WARNING_MINUTES'" || status=$?
           ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker logout ghcr.io" || true
           exit "$status"

@@ -318,7 +318,8 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			setError('Select a responsible user from the username list')
 			return
 		}
-		if (!window.confirm(`Charge the selected player 100 dabloons to invite ${whitelistEmail}? They must be online.`)) return
+		const invitePrice = responsiblePlayer.isMember ? 150 : 250
+		if (!window.confirm(`Charge the selected player ${invitePrice} dabloons to invite ${whitelistEmail}? They must be online.`)) return
 		setUpdatingWhitelist(true)
 		setError('')
 		setMessage('')
@@ -874,7 +875,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					<div className="adminSectionHeader">
 						<h3>Email whitelist</h3>
 						<p>Allow a non-MMU email address to sign up. MMU email addresses are always allowed.</p>
-						<p>Inviting an external player costs the responsible player 100 dabloons. They must be online when you add the email.</p>
+						<p>Inviting an external player costs the responsible player 150 dabloons for members or 250 dabloons for non-members. They must be online when you add the email.</p>
 					</div>
 					<form className="emailWhitelistForm" onSubmit={addWhitelistedEmail}>
 						<label>

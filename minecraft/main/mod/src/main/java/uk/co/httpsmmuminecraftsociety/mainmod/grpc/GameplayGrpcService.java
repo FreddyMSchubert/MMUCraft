@@ -53,7 +53,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class GameplayGrpcService extends GrpcHandler {
     static final GameplayGrpcService INSTANCE = new GameplayGrpcService();
-    private static final int EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 100;
+    private static final int MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 150;
+    private static final int NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 250;
     private static final int MAX_DAILY_ADVANCEMENT_REWARD = 20;
 
     private GameplayEventsGrpc.GameplayEventsFutureStub gameplayEvents;
@@ -1044,24 +1045,26 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
+        int price = PlayerStatsSync.isMember(player)
+                ? MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS
+                : NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS;
         int balance = MoneyHelper.GetBalance(player);
-        if (balance < EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS
-                || !MoneyHelper.ReduceMoney(player, EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS)) {
+        if (balance < price || !MoneyHelper.ReduceMoney(player, price)) {
             return PurchaseExternalPlayerInviteResponse.newBuilder()
                     .setPurchased(false)
                     .setOnline(true)
                     .setBalanceDabloons(balance)
-                    .setMessage("The responsible player needs 100 dabloons for this invitation.")
+                    .setMessage("The responsible player needs " + price + " dabloons for this invitation.")
                     .build();
         }
 
         int remaining = MoneyHelper.GetBalance(player);
-        MoneyHelper.SendBalanceMessage(player, "External player invitation purchased for 100 dabloons.");
+        MoneyHelper.SendBalanceMessage(player, "External player invitation purchased for " + price + " dabloons.");
         return PurchaseExternalPlayerInviteResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
                 .setBalanceDabloons(remaining)
-                .setMessage("External player invitation purchased for 100 dabloons.")
+                .setMessage("External player invitation purchased for " + price + " dabloons.")
                 .build();
     }
 

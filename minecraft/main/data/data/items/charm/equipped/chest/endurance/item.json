@@ -2,16 +2,16 @@
 	"title": "Iron Stomach Charm",
 	"id": "charm-endurance",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"For when the journey keeps chewing, but you don't."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Reduces movement and mining hunger drain by 15%.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Iron Stomach Charm."
+		"priceDabloons": 100,
+		"description": "Reduces hunger drain from movement and mining.",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked charm: Iron Stomach Charm. Reduces hunger drain."
 	},
 	"charm": {
 		"charmId": 39,
@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 15%.",
 				"abilityStatusRelative": "Reduces movement and mining hunger drain by 15%.",
-				"dabloons": 10,
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:leather",
 					"minecraft:leather",
@@ -33,7 +33,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 30%.",
 				"abilityStatusRelative": "Reduces movement and mining hunger drain by 15% more.",
-				"dabloons": 20,
+				"dabloons": 75,
 				"upgradeIngredients": [
 					"minecraft:leather",
 					"minecraft:golden_carrot",
@@ -45,7 +45,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 45%.",
 				"abilityStatusRelative": "Reduces movement and mining hunger drain by 15% more.",
-				"dabloons": 30,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:rabbit_stew",
 					"minecraft:cooked_beef",
@@ -57,7 +57,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 60%.",
 				"abilityStatusRelative": "Reduces movement and mining hunger drain by 15% more.",
-				"dabloons": 40,
+				"dabloons": 125,
 				"upgradeIngredients": [
 					"minecraft:golden_apple",
 					"minecraft:diamond_block",
@@ -70,7 +70,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Reduces movement and mining hunger drain by 75%.",
 				"abilityStatusRelative": "",
-				"dabloons": 50,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:enchanted_golden_apple",
 					"minecraft:netherite_ingot",

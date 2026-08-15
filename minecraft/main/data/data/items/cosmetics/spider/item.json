@@ -2,11 +2,11 @@
 	"title": "Spider Hat",
 	"id": "cosmetic-spider",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 75,
 		"description": "Unlock the Spider Hat cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Spider Hat."

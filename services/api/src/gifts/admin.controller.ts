@@ -1,18 +1,88 @@
 import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common'
+import { desc } from 'drizzle-orm'
 import { AuthService } from '../auth/auth.service'
+import { DatabaseService, discordAdminCommandLogs } from '../database/database.service'
 import { GiftsService } from './gifts.service'
+import { CountdownsService } from './countdowns.service'
+
+interface CountdownBody {
+	heading?: unknown
+	target?: unknown
+	description?: unknown
+	headingColor?: unknown
+	descriptionColor?: unknown
+	backgroundColor?: unknown
+	backgroundAlpha?: unknown
+	backgroundImageUrl?: unknown
+}
 
 @Controller('api/admin')
 export class AdminController {
 	constructor(
 		private readonly auth: AuthService,
 		private readonly gifts: GiftsService,
+		private readonly database: DatabaseService,
+		private readonly countdowns: CountdownsService,
 	) { }
+
+	@Get('countdowns')
+	listCountdowns(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.countdowns.list()
+	}
+
+	@Post('countdowns')
+	createCountdown(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: CountdownBody | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.countdowns.create(body?.heading, body?.target, body?.description, body?.headingColor, body?.descriptionColor, body?.backgroundColor, body?.backgroundAlpha, body?.backgroundImageUrl)
+	}
+
+	@Patch('countdowns/:id')
+	updateCountdown(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('id') id: string,
+		@Body() body: CountdownBody | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.countdowns.update(id, body?.heading, body?.target, body?.description, body?.headingColor, body?.descriptionColor, body?.backgroundColor, body?.backgroundAlpha, body?.backgroundImageUrl)
+	}
+
+	@Patch('countdowns/:id/order')
+	moveCountdown(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('id') id: string,
+		@Body() body: { direction?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.countdowns.move(id, body?.direction)
+	}
+
+	@Delete('countdowns/:id')
+	removeCountdown(@Headers('cookie') cookieHeader: string | undefined, @Param('id') id: string) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.countdowns.remove(id)
+	}
 
 	@Get('players')
 	listPlayers(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader)
 		return this.gifts.listAdminPlayers()
+	}
+
+	@Get('discord-admin-commands')
+	listDiscordAdminCommands(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return {
+			commands: this.database.connection.select().from(discordAdminCommandLogs)
+				.orderBy(desc(discordAdminCommandLogs.created_at_unix_ms)).limit(200).all().map((entry) => ({
+					command: entry.command,
+					discordUsername: entry.discord_username,
+					createdAtUnixMs: entry.created_at_unix_ms,
+				})),
+		}
 	}
 
 	@Patch('players/:userId/membership')

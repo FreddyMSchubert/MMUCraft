@@ -34,6 +34,11 @@ services:
       AUTH_CODE_SECRET: ${AUTH_CODE_SECRET:?set AUTH_CODE_SECRET in .env}
       RESEND_API_KEY: ${RESEND_API_KEY:?set RESEND_API_KEY in .env}
       RESEND_FROM: ${RESEND_FROM:?set RESEND_FROM in .env}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
+      DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
+      DISCORD_AVATAR_BASE_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}/api/discord/avatar
       COOKIE_SECURE: "true"
       TZ: ${TZ:-Europe/London}
     volumes:
@@ -53,6 +58,7 @@ services:
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 15s
+      start_interval: 1s
       timeout: 3s
       retries: 10
       start_period: 15s
@@ -87,6 +93,7 @@ services:
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 15s
+      start_interval: 1s
       timeout: 3s
       retries: 10
       start_period: 15s

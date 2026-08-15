@@ -6,7 +6,7 @@
 	"maxStackSize": 16,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 1,
 		"description": "Unlock the Cardboard Box cosmetic.",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Carboard Box."

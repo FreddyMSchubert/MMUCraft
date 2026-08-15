@@ -2,16 +2,16 @@
 	"title": "Saw Belt Charm",
 	"id": "charm-saw-belt",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Timber without the climb."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Breaks up to 2 extra logs while using axe and sneaking.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Saw Belt Charm."
+		"priceDabloons": 100,
+		"description": "Chops connected logs while sneaking with an axe.",
+		"unlockWeight": 175,
+		"unlockMessage": "Unlocked charm: Saw Belt Charm. Chops connected logs."
 	},
 	"charm": {
 		"charmId": 35,
@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Breaks up to 2 extra logs while using axe and sneaking.",
 				"abilityStatusRelative": "Sneak with an axe to chop 2 extra logs.",
-				"dabloons": 10,
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:wooden_axe",
 					"minecraft:oak_log",
@@ -34,7 +34,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Breaks up to 4 extra logs while using axe and sneaking.",
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 20,
+				"dabloons": 75,
 				"upgradeIngredients": [
 					"minecraft:oak_log",
 					"minecraft:apple",
@@ -46,7 +46,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Breaks up to 8 extra logs while using axe and sneaking.",
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 30,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:jungle_log",
 					"minecraft:cocoa_beans",
@@ -58,7 +58,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Breaks up to 16 extra logs while using axe and sneaking.",
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 40,
+				"dabloons": 125,
 				"upgradeIngredients": [
 					"minecraft:mangrove_log",
 					"minecraft:mangrove_propagule",
@@ -70,7 +70,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Breaks up to 32 extra logs while using axe and sneaking.",
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 50,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:cherry_log",
 					"minecraft:pink_petals",
@@ -84,7 +84,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Breaks up to 64 extra logs while using axe and sneaking.",
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 60,
+				"dabloons": 175,
 				"upgradeIngredients": [
 					"minecraft:pale_oak_log",
 					"minecraft:resin_clump",
@@ -99,7 +99,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Breaks up to 128 extra logs while using axe and sneaking.",
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 70,
+				"dabloons": 200,
 				"upgradeIngredients": [
 					"minecraft:crimson_stem",
 					"minecraft:warped_stem",
@@ -115,7 +115,7 @@
 				"level": 8,
 				"abilityStatusCurrent": "Breaks up to 256 extra logs while using axe and sneaking.",
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 80,
+				"dabloons": 225,
 				"upgradeIngredients": [
 					"minecraft:chorus_flower",
 					"minecraft:chorus_flower",

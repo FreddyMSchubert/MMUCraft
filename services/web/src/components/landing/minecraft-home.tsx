@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { LaunchCountdown } from '@/components/launch/launch-countdown'
+import { LaunchCountdown, useLaunchLive } from '@/components/launch/launch-countdown'
 import { MinecraftTitle } from '@/components/landing/minecraft-title'
 
 const MEMBERSHIP_URL = 'https://www.theunionmmu.org/groups/26-2-minecraft-society'
@@ -15,6 +15,8 @@ interface MinecraftHomeProps {
 }
 
 export function MinecraftHome(props: MinecraftHomeProps) {
+	const launchLive = useLaunchLive()
+
 	return <main className="minecraftHome">
 		<PanoramaBackground panoramaId={props.panorama.id} />
 		<div className="minecraftShade" aria-hidden="true" />
@@ -23,7 +25,7 @@ export function MinecraftHome(props: MinecraftHomeProps) {
 			<MinecraftTitle splash={props.splash} />
 
 			<nav className="minecraftButtons" aria-label="Main links">
-				<Link className="minecraftButton playButton" href="/countdown">
+				<Link className="minecraftButton playButton" href={launchLive ? '/play' : '/countdown'}>
 					<span>Play Now</span>
 					<LaunchCountdown compact />
 				</Link>

@@ -11,6 +11,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.DailyTasksSnapshot;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -41,8 +42,8 @@ public final class DailyTaskManager {
         }
     }
 
-    public static List<String> generate(int userId, String username, String periodKey, int count) {
-        List<String> tasks = DailyTaskRegistry.pick(periodKey + ":" + normalize(username), count).stream()
+    public static List<String> generate(int userId, String username, String periodKey, int count, long unixMs, Collection<String> excludedIds) {
+        List<String> tasks = DailyTaskRegistry.pick(periodKey + ":" + normalize(username) + ":" + unixMs, count, excludedIds).stream()
                 .map(JsonObject::toString)
                 .toList();
         ACTIVE.removeIf(task -> task.userId() == userId);

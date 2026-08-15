@@ -46,3 +46,17 @@ export class DailiesController {
 		return this.dailies.events(this.auth.requireSession(cookieHeader).id)
 	}
 }
+
+@Controller('api/admin/dailies')
+export class AdminDailiesController {
+	constructor(
+		private readonly auth: AuthService,
+		private readonly dailies: DailiesService,
+	) { }
+
+	@Post(':userId/refresh')
+	refresh(@Headers('cookie') cookieHeader: string | undefined, @Param('userId') userId: string) {
+		this.auth.requireCommitteeSession(cookieHeader)
+		return this.dailies.refreshForAdmin(userId)
+	}
+}

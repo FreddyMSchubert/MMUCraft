@@ -32,7 +32,8 @@ You can earn dabloons through a variety of methods:
 2. **Dailies** - Every day there are a few daily tasks. They pay quite well, which is why you can't do an unlimited amount of them. Check the "*Dailies*" tab for all infos.
 3. **Trading** - Stealing from players is not allowed. Trading is. Good luck, try not to get scammed.
 4. **Gift Codes** - Are occasionally handed out at events such as freshers fair. They are time limited codes, which pay you out some money if you type it into the website. Check the "*Misc*" tab for all infos.
-5. **The secret method** - (we colloquially call it corruption) - buy the committee a drink (for legal reasons, this is a joke, and will not work.)
+5. **Reading knowledge** - Mark each knowledge page as read on the website to earn 3 dabloons. You must be online on the server to receive them.
+6. **The secret method** - (we colloquially call it corruption) - buy the committee a drink (for legal reasons, this is a joke, and will not work.)
 
 If you find a bug and report it, we may also reward you some dabloons - though this is handled on a case-by-base basis and you are not owed anything by finding a bug. If you find a bug and don't report it, you'll get banned. Also, that's mean.
 

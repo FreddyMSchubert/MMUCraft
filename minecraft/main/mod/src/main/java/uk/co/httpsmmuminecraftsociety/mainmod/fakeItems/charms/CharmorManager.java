@@ -106,6 +106,12 @@ public class CharmorManager
 
         List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
         if (storedCharms.isEmpty()) {
+            Equippable itemDefaultEquippable = stack.getItem().components().get(DataComponents.EQUIPPABLE);
+            if (itemDefaultEquippable != null) {
+                stack.set(DataComponents.EQUIPPABLE, isEnderite(stack)
+                        ? EquippableCharmItemFeature.createEquippableSettings("enderite", itemDefaultEquippable.slot())
+                        : itemDefaultEquippable);
+            }
             return;
         }
 

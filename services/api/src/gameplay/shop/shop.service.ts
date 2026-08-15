@@ -222,7 +222,7 @@ export class ShopService {
 			shoppingSunday: this.isShoppingSunday(),
 			items: visibleItems.map((item) => {
 				const isDailyDeal = dailyDealIds.has(item.id)
-				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id, item.priceDabloons) : 0
+				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
 				return {
 					id: item.id,
 					title: item.title,
@@ -273,7 +273,7 @@ export class ShopService {
 
 		const catalogItems = this.loadCatalog().items
 		const isDailyDeal = this.getDailyDealIds(catalogItems).has(item.id)
-		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id, item.priceDabloons) : 0
+		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
 		const purchasePrice = this.discountedPrice(item.priceDabloons, discountPercent)
 
 		let purchase: PurchaseShopItemResponse
@@ -628,6 +628,9 @@ export class ShopService {
 				price_dabloons: priceDabloons,
 				delivery_kind: item.deliveryKind,
 				unix_ms: Date.now(),
+				display_name: item.title,
+				item_type: item.type === 'generic' ? 'Item' : titleCase(item.type),
+				rarity: item.rarity,
 			}, (error: grpc.ServiceError | null, response: PurchaseShopItemResponse) => {
 				if (error) {
 					reject(error)
@@ -829,18 +832,19 @@ export class ShopService {
 		const date = this.getDailyDealDate()
 		return new Set([...items]
 			.sort((left, right) => this.seededRank(`${date}:${left.id}`) - this.seededRank(`${date}:${right.id}`))
-			.slice(0, Math.min(this.isShoppingSunday() ? 10 : 5, items.length))
+			.slice(0, Math.min(this.isShoppingSunday() ? 16 : 8, items.length))
 			.map((item) => item.id))
 	}
 
-	private getDailyDiscountPercent(itemId: string, price: number): number {
-		const roll =
-			this.seededRank(`${this.getDailyDealDate()}:discount:${itemId}`) % 100
+	private getDailyDiscountPercent(itemId: string): number {
+		const roll = this.seededRank(
+			`${this.getDailyDealDate()}:discount:${itemId}`,
+		)
 
-		const divisor = this.isShoppingSunday() ? 2 : 4
-		const minimumDiscountPercent = Math.ceil(Math.min(3, price - 1) / price * 100)
+		const minDiscount = this.isShoppingSunday() ? 20 : 10
+		const maxDiscount = this.isShoppingSunday() ? 50 : 30
 
-		return Math.max(5, minimumDiscountPercent, Math.ceil(roll / divisor))
+		return Math.max(5, minDiscount + (roll % (maxDiscount - minDiscount + 1)))
 	}
 
 	private isShoppingSunday(): boolean {
@@ -1090,4 +1094,8 @@ export class ShopService {
 			message,
 		}
 	}
+}
+
+function titleCase(value: string) {
+	return value ? value[0]!.toUpperCase() + value.slice(1) : value
 }

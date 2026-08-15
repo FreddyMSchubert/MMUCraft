@@ -14,7 +14,7 @@
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Teleports you to a random online player who holds an identical copy of your offhand item in either hand. Both players receive the same random positive effect.",
+				"abilityStatusCurrent": "Teleports you to a random online player who holds the same item type or fake item as your offhand item in either hand. Both players receive the same random positive effect for 10-30 seconds.",
 				"abilityStatusRelative": "",
 				"dabloons": 0,
 				"upgradeIngredients": []
@@ -24,7 +24,7 @@
 	"consumable": {
 		"isDrink": true,
 		"canAlwaysEat": true,
-		"consumeSeconds": 15,
+		"consumeSeconds": 8,
 		"directHearts": 0,
 		"effects": [
 			{

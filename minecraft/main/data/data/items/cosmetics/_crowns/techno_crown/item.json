@@ -2,7 +2,7 @@
 	"title": "Techno Crown",
 	"id": "cosmetic-crown-techno",
 	"modelType": "cosmetic",
-	"rarity": "rare",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Woah, is he some kind of king?",

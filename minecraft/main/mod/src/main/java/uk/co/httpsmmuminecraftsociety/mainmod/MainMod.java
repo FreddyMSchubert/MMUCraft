@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -49,6 +50,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
+import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
 public class MainMod implements ModInitializer {
 	public static final String MOD_ID = "mainmod";
@@ -78,13 +80,16 @@ public class MainMod implements ModInitializer {
         MoneyCommand.init();
         WebsiteCommand.init();
         PlayerStatsSync.init();
+        DiscordBridge.init();
         ClaimsManager.init();
         DailyEvents.register();
         MainModRecipes.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> CharmsManager.refreshInventory(handler.player));
         ItemEvents.USE.register(CharmsManager::onItemUse);
+        ItemEvents.USE_ON.register(CharmsManager::onItemUseOn);
         ItemEvents.USE_ON.register(DecoBlocksManager::onUseItemOn);
         ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);

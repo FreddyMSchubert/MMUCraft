@@ -2,11 +2,11 @@
 	"title": "Sleeping Mobs",
 	"id": "cosmetic-sleeping-mobs",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 125,
 		"description": "Unlock the Sleeping Mobs cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Sleeping Mobs."

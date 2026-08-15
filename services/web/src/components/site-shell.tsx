@@ -15,6 +15,7 @@ import { FishingTab } from '@/components/fishing-tab'
 import { ClaimsTab } from '@/components/claims-tab'
 import { CharmsTab } from '@/components/charms-tab'
 import { PlayerName } from '@/components/player-name'
+import { DynamicCountdowns } from '@/components/dynamic-countdowns'
 
 interface SessionUser {
 	id: number
@@ -30,8 +31,9 @@ interface SessionUser {
 type TabId = 'dailies' | 'knowledge' | 'charms' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
 
 const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'charms', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
-const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'bans', 'gifts'])
+const ADMIN_SECTIONS = new Set(['members', 'signins', 'claims', 'whitelist', 'bans', 'gifts', 'countdowns', 'discord-commands', 'dailies'])
 const MISC_SECTIONS = new Set(['settings', 'gift-codes'])
+const SERVER_IP = 'mmuminecraftsociety.co.uk'
 const TAB_LINKS: Array<{ id: TabId; label: string; href: string }> = [
 	{ id: 'knowledge', label: 'Knowledge', href: '/play/knowledge' },
 	{ id: 'dailies', label: 'Dailies', href: '/play/dailies' },
@@ -61,6 +63,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const pathname = usePathname()
 	const router = useRouter()
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
+	const [copyLabel, setCopyLabel] = useState('Copy IP')
 	const route = useMemo(() => pathname.split('/').slice(2).map(decodePathSegment), [pathname])
 	const activeTab = TAB_IDS.has(route[0] as TabId) ? route[0] as TabId : 'knowledge'
 	const routeDetail = route[1]
@@ -98,6 +101,12 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		setUser(null)
 	}
 
+	async function copyServerIp() {
+		await navigator.clipboard.writeText(SERVER_IP)
+		setCopyLabel('Copied')
+		window.setTimeout(() => setCopyLabel('Copy IP'), 1000)
+	}
+
 	useEffect(() => {
 		if (!user) return
 		if (!TAB_IDS.has(route[0] as TabId) || (activeTab === 'admin' && !user.isCommittee)) {
@@ -131,6 +140,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 	return (
 		<SitePage background={background} splash={splash}>
+				<DynamicCountdowns />
 				{user === undefined && (
 					<section className="authCard">
 						<div className="authForm">
@@ -162,9 +172,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 								</p>
 							</div>
 
-							<button type="button" onClick={signOut}>
-								Sign out
-							</button>
+							<div className="dashboardControls">
+								<button className="dashboardSignOut" type="button" onClick={signOut}>Sign out</button>
+								<small className="serverDetails">Java Edition 26.2 · <button className="copyServerIp" type="button" onClick={() => void copyServerIp()}>{copyLabel}</button> · Server IP: <strong>{SERVER_IP}</strong></small>
+							</div>
 						</div>
 
 						<nav className="dashboardTabs" aria-label="Dashboard sections">

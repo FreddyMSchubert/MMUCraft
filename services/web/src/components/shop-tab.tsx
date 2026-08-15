@@ -147,6 +147,7 @@ export function ShopTab({ itemId, onSelectItem }: {
 	const [buyingItemId, setBuyingItemId] = useState<string | null>(null)
 	const [hoveredItemId, setHoveredItemId] = useState<string | null>(null)
 	const [featuredIndex, setFeaturedIndex] = useState(0)
+	const [featuredHovered, setFeaturedHovered] = useState(false)
 
 	const load = useCallback(async () => {
 		const response = await fetch('/api/shop', { cache: 'no-store' })
@@ -176,10 +177,10 @@ export function ShopTab({ itemId, onSelectItem }: {
 	}, [data, itemId, onSelectItem, selectedItem])
 
 	useEffect(() => {
-		if (dailyDeals.length < 2) return
+		if (dailyDeals.length < 2 || featuredHovered) return
 		const timer = window.setInterval(() => setFeaturedIndex((current) => (current + 1) % dailyDeals.length), 6500)
 		return () => window.clearInterval(timer)
-	}, [dailyDeals.length])
+	}, [dailyDeals.length, featuredHovered])
 
 	const visibleItems = useMemo(() => {
 		const filtered = (data?.items ?? []).filter((item) => {
@@ -197,8 +198,8 @@ export function ShopTab({ itemId, onSelectItem }: {
 			if (order === 'price-asc') return effectivePrice(left) - effectivePrice(right) || compareTitles(left, right)
 			if (order === 'alphabetical') return compareTitles(left, right)
 			if (order === 'alphabetical-desc') return compareTitles(right, left)
-			if (order === 'rarity') return rarityRank(left) - rarityRank(right) || compareTitles(left, right)
-			if (order === 'rarity-desc') return rarityRank(right) - rarityRank(left) || compareTitles(left, right)
+			if (order === 'rarity') return rarityRank(left) - rarityRank(right) || effectivePrice(left) - effectivePrice(right) || compareTitles(left, right)
+			if (order === 'rarity-desc') return rarityRank(right) - rarityRank(left) || effectivePrice(right) - effectivePrice(left) || compareTitles(left, right)
 			return seededRank(`${randomSeed}:${left.id}`) - seededRank(`${randomSeed}:${right.id}`)
 		})
 	}, [data?.items, order, randomSeed, rarityFilter, tagFilter, typeFilter])
@@ -242,14 +243,14 @@ export function ShopTab({ itemId, onSelectItem }: {
 				<div><p className="shopEyebrow">The Dabloon Exchange</p><h3>Shop</h3></div>
 			</div>
 
-			{featured && <section className="shopDeals" aria-label="Today's deals">
+			{featured && <section className="shopDeals" aria-label="Today's deals" onPointerEnter={() => setFeaturedHovered(true)} onPointerLeave={() => setFeaturedHovered(false)}>
 				{dailyDeals.length > 1 && <button type="button" className="shopDealArrow previous" aria-label="Previous daily deal" onClick={() => setFeaturedIndex((current) => (current - 1 + dailyDeals.length) % dailyDeals.length)}>‹</button>}
 				<div className="shopDealCopy">
 					<div className="shopDealHeading"><span className="shopDealSpark">✦</span><div><p>{featured.dealMessage ?? 'Today’s find'}</p><h4>{featured.title}</h4></div><strong>−{featured.discountPercent}%</strong></div>
 					<p>{featured.description}</p>
 					<div className="shopDealActions"><span><del>{formatDabloons(featured.originalPriceDabloons)}</del> {formatDabloons(featured.discountedPriceDabloons)} dabloons</span><button type="button" onClick={() => onSelectItem(featured.id)}>See details</button></div>
 				</div>
-				<div className="shopDealPreview" aria-hidden="true"><ShopPreview item={featured} hovered hidden={shouldHidePreview(featured, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} /></div>
+				<div className="shopDealPreview" aria-hidden="true"><ShopPreview item={featured} hovered={!featuredHovered} hidden={shouldHidePreview(featured, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} /></div>
 				{data.shoppingSunday && <span className="shoppingSundayBadge">Shopping Sunday · tons of huge discounts</span>}
 				{dailyDeals.length > 1 && <button type="button" className="shopDealArrow next" aria-label="Next daily deal" onClick={() => setFeaturedIndex((current) => (current + 1) % dailyDeals.length)}>›</button>}
 				{dailyDeals.length > 1 && <div className="shopDealDots" aria-label="Choose daily deal">{dailyDeals.map((item, index) => <button key={item.id} type="button" className={index === safeFeaturedIndex ? 'active' : ''} aria-label={`Show ${item.title}`} onClick={() => setFeaturedIndex(index)} />)}</div>}

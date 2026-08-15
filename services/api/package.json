@@ -3,7 +3,7 @@
 	"scripts": {
 		"dev": "tsc-watch -p tsconfig.json --onSuccess \"node --env-file-if-exists=.env dist/main.js\"",
 		"build": "tsc -p tsconfig.json",
-		"test": "npm run build && node scripts/check-auth-request.js",
+		"test": "npm run build && node scripts/check-auth-request.js && node scripts/check-discord-avatar.js",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:check": "drizzle-kit check",
@@ -18,10 +18,15 @@
 		"@nestjs/core": "^11.1.18",
 		"@nestjs/platform-fastify": "^11.0.20",
 		"better-sqlite3": "^12.8.0",
+		"discord.js": "^14.27.0",
 		"drizzle-orm": "^0.45.2",
-		"fastify": "^5.8.2",
+		"fastify": "^5.11.3",
 		"reflect-metadata": "^0.2.2",
-		"rxjs": "^7.8.2"
+		"rxjs": "^7.8.2",
+		"sharp": "^0.35.3"
+	},
+	"overrides": {
+		"find-my-way": "9.7.0"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.13",

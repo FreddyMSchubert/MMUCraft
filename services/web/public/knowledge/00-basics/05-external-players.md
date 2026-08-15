@@ -2,7 +2,7 @@
 id: externalplayers
 unlockOrder: public
 chatMessage: You've unlocked knowledge on the basics of cosmetics
-sidebarTitle: Cosmetics
+sidebarTitle: Non-MMU Players
 ====
 
 You may wish to play on this server with people that aren't MMU. This is **entirely possible**!

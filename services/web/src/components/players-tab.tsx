@@ -191,7 +191,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 			name: player.minecraftUsername,
 			color: player.profile.color,
 			pronouns: player.profile.pronouns,
-			value: typeof value === 'number' ? value : 0,
+			value: value ?? 0,
 			displayValue: formatColumnValue(player, leaderboardOption),
 			skinUrl: player.stats.minecraftProfile?.skinUrl,
 		}

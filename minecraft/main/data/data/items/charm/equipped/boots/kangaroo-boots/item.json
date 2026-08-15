@@ -2,32 +2,28 @@
 	"title": "Cinnabar Kangaroo Boots Charm",
 	"id": "charm-kangaroo-boots",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Boioioing."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Adds a little bounciness while equipped.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Kangaroo Boots Charm."
+		"priceDabloons": 100,
+		"description": "Makes you very bouncy. It's fun.",
+		"unlockWeight": 150,
+		"unlockMessage": "Unlocked charm: Kangaroo Boots Charm. It makes you very bouncy."
 	},
 	"charm": {
 		"charmId": 50,
-		"minLevel": 0,
+		"minLevel": 1,
 		"maxLevel": 5,
 		"levels": [
 			{
 				"level": 1,
 				"abilityStatusCurrent": "Adds a little bounciness while equipped.",
 				"abilityStatusRelative": "Increases bounciness while equipped.",
-				"dabloons": 10,
-				"upgradeIngredients": [
-					"minecraft:rabbit_foot",
-					"minecraft:cinnabar",
-					"minecraft:leather_boots"
-				]
+				"dabloons": 75,
+				"upgradeIngredients": []
 			},
 			{
 				"level": 2,
@@ -46,8 +42,9 @@
 				"level": 3,
 				"abilityStatusCurrent": "Adds lively bounciness while equipped.",
 				"abilityStatusRelative": "Increases bounciness more while equipped.",
-				"dabloons": 30,
+				"dabloons": 100,
 				"upgradeIngredients": [
+					"minecraft:sulfur_cube_bucket",
 					"minecraft:slime_block",
 					"minecraft:honey_block",
 					"minecraft:cinnabar",
@@ -60,11 +57,13 @@
 				"level": 4,
 				"abilityStatusCurrent": "Adds powerful bounciness while equipped.",
 				"abilityStatusRelative": "Increases bounciness more while equipped.",
-				"dabloons": 40,
+				"dabloons": 150,
 				"upgradeIngredients": [
+					"minecraft:sulfur_cube_bucket",
 					"minecraft:slime_block",
 					"minecraft:cinnabar_bricks",
 					"minecraft:potent_sulfur",
+					"minecraft:wind_charge",
 					"minecraft:wind_charge",
 					"minecraft:wind_charge",
 					"minecraft:diamond_boots"
@@ -74,8 +73,10 @@
 				"level": 5,
 				"abilityStatusCurrent": "Adds maximum bounciness while equipped.",
 				"abilityStatusRelative": "Increases bounciness more while equipped.",
-				"dabloons": 50,
+				"dabloons": 200,
 				"upgradeIngredients": [
+					"minecraft:sulfur_cube_bucket",
+					"minecraft:sulfur_cube_bucket",
 					"minecraft:sulfur_cube_bucket",
 					"minecraft:slime_block",
 					"minecraft:honey_block",

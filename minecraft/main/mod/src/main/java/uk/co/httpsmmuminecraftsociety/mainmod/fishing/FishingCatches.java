@@ -30,6 +30,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFea
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.RecordFishCatchResponse;
+import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 
 import java.util.ArrayList;
@@ -144,16 +145,16 @@ public final class FishingCatches {
     }
 
     public static Pair<ItemStack, FishingPersonality> random(FishingHook hook, double itemChance, int fishingLuckBonus) {
+        double luck = hook.getPlayerOwner() == null
+                ? 0.0
+                : hook.getPlayerOwner().getAttributeValue(Attributes.LUCK) + fishingLuckBonus;
         if (hook.getPlayerOwner() instanceof ServerPlayer player) {
-            ItemStack unlockBook = UnlockBookLoot.rollFishingBook(player, hook.getRandom());
+            ItemStack unlockBook = UnlockBookLoot.rollFishingBook(player, hook.getRandom(), luck);
             if (!unlockBook.isEmpty()) {
                 return Pair.of(unlockBook, defaultPersonality(FishRarity.COMMON, true));
             }
         }
 
-        double luck = hook.getPlayerOwner() == null
-                ? 0.0
-                : hook.getPlayerOwner().getAttributeValue(Attributes.LUCK) + fishingLuckBonus;
         boolean treasure = hook.getRandom().nextDouble() < itemChance;
         FishRarity rarity = randomRarity(hook.getRandom(), luck);
         List<CatchEntry> entries = entriesFor(treasure, rarity, hook);
@@ -216,6 +217,12 @@ public final class FishingCatches {
                 });
     }
 
+    public static ItemStack claimDrop(ServerPlayer player, ItemStack stack, RandomSource random) {
+        if (UnlockBookLoot.claimFishingDrop(player, stack)) return stack;
+        List<ItemStack> commonTreasure = TREASURE_LOOT.get(FishRarity.COMMON);
+        return commonTreasure.get(random.nextInt(commonTreasure.size())).copy();
+    }
+
     private static void showRecordMessages(
             ServerPlayer player,
             String fishName,
@@ -223,7 +230,14 @@ public final class FishingCatches {
             double lengthCm,
             RecordFishCatchResponse response
     ) {
-        if (!response.getRecorded()) return;
+		if (!response.getRecorded()) return;
+		if (response.getAnnounce()) {
+			MinecraftServer server = player.level().getServer();
+			server.execute(() -> {
+				DiscordBridge.fishAnnouncement(server, player,
+						"caught " + fishName + "!", response.getFirstServerCatchAnnouncement());
+			});
+		}
         List<Component> messages = new ArrayList<>();
         if (response.getFirstCatch()) {
             messages.add(recordMessage("First Catch", fishName, rarity, lengthCm));
@@ -298,10 +312,6 @@ public final class FishingCatches {
                 entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LURE), defaultPersonality(rarity, true), null));
             } else if (rarity == FishRarity.EPIC) {
                 entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LUCK_OF_THE_SEA), defaultPersonality(rarity, true), null));
-            } else if (rarity == FishRarity.COMMON && hook.getPlayerOwner() instanceof ServerPlayer player) {
-                for (ItemStack stack : UnlockBookLoot.getAvailableUnlockBooks(player)) {
-                    entries.add(new CatchEntry(stack, defaultPersonality(rarity, true), null));
-                }
             }
         } else {
             for (FishLoot fish : FISH_LOOT.get(rarity)) {

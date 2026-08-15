@@ -2,16 +2,16 @@
 	"title": "Lucky Charm",
 	"id": "charm-lucky-charm",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Luck favours the prepared."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
-		"description": "Grants 1 fishing luck while equipped.",
-		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Lucky Charm."
+		"priceDabloons": 100,
+		"description": "Increases fishing luck.",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked charm: Lucky Charm. Increases fishing luck."
 	},
 	"charm": {
 		"charmId": 37,
@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Grants 1 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 fishing luck.",
-				"dabloons": 10,
+				"dabloons": 50,
 				"upgradeIngredients": [
 					"minecraft:gold_ingot",
 					"minecraft:gold_ingot",
@@ -33,7 +33,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Grants 2 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 more fishing luck.",
-				"dabloons": 20,
+				"dabloons": 75,
 				"upgradeIngredients": [
 					"minecraft:gold_block",
 					"minecraft:rabbit_foot",
@@ -45,7 +45,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Grants 3 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 more fishing luck.",
-				"dabloons": 30,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:gold_block",
 					"minecraft:gold_block",
@@ -58,7 +58,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Grants 4 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 more fishing luck.",
-				"dabloons": 40,
+				"dabloons": 125,
 				"upgradeIngredients": [
 					"minecraft:emerald_block",
 					"minecraft:emerald_block",
@@ -72,7 +72,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Grants 5 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 more fishing luck.",
-				"dabloons": 50,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:nether_star",
 					"minecraft:emerald_block",

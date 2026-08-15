@@ -146,6 +146,15 @@ export const knowledgeUnlocks = sqliteTable('knowledge_unlocks', {
 	index('knowledge_unlocks_user_id_idx').on(table.user_id),
 ])
 
+export const knowledgeReads = sqliteTable('knowledge_reads', {
+	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	knowledge_id: text('knowledge_id').notNull(),
+	read_at_unix_ms: integer('read_at_unix_ms').notNull(),
+}, (table) => [
+	primaryKey({ columns: [table.user_id, table.knowledge_id] }),
+	index('knowledge_reads_user_id_idx').on(table.user_id),
+])
+
 export const shopUnlocks = sqliteTable('shop_unlocks', {
 	user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 	item_id: text('item_id').notNull(),
@@ -230,6 +239,31 @@ export const giftCodeRedemptions = sqliteTable('gift_code_redemptions', {
 	index('gift_code_redemptions_code_idx').on(table.code),
 ])
 
+export const discordAdminCommandLogs = sqliteTable('discord_admin_command_logs', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	command: text('command').notNull(),
+	discord_username: text('discord_username').notNull(),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+}, (table) => [index('discord_admin_command_logs_created_at_idx').on(table.created_at_unix_ms)])
+
+export const countdowns = sqliteTable('countdowns', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	heading: text('heading').notNull(),
+	description: text('description').notNull(),
+	heading_color: text('heading_color').notNull(),
+	description_color: text('description_color').notNull(),
+	background_color: text('background_color').notNull(),
+	background_alpha: integer('background_alpha').notNull(),
+	background_image_url: text('background_image_url'),
+	target_at_unix_ms: integer('target_at_unix_ms').notNull(),
+	visible_until_unix_ms: integer('visible_until_unix_ms').notNull(),
+	position: integer('position').notNull(),
+}, (table) => [
+	index('countdowns_visible_until_idx').on(table.visible_until_unix_ms),
+	check('countdowns_position_check', sql`${table.position} >= 0`),
+	check('countdowns_background_alpha_check', sql`${table.background_alpha} between 0 and 100`),
+])
+
 export type UserRow = typeof users.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
 export type PlayerBanRow = typeof playerBans.$inferSelect
@@ -242,11 +276,14 @@ export type PlayerStatsRow = typeof playerStats.$inferSelect
 export type PlayerMoneyEventRow = typeof playerMoneyEvents.$inferSelect
 export type FishCatchRow = typeof fishCatches.$inferSelect
 export type KnowledgeUnlockRow = typeof knowledgeUnlocks.$inferSelect
+export type KnowledgeReadRow = typeof knowledgeReads.$inferSelect
 export type ShopUnlockRow = typeof shopUnlocks.$inferSelect
 export type DailyClaimRow = typeof dailyClaims.$inferSelect
 export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSelect
 export type DailyTaskRow = typeof dailyTasks.$inferSelect
 export type GiftCodeRow = typeof giftCodes.$inferSelect
+export type DiscordAdminCommandLogRow = typeof discordAdminCommandLogs.$inferSelect
+export type CountdownRow = typeof countdowns.$inferSelect
 
 export const schema = {
 	users,
@@ -261,10 +298,13 @@ export const schema = {
 	playerMoneyEvents,
 	fishCatches,
 	knowledgeUnlocks,
+	knowledgeReads,
 	shopUnlocks,
 	dailyClaims,
 	dailyAdvancementTargets,
 	dailyTasks,
 	giftCodes,
 	giftCodeRedemptions,
+	discordAdminCommandLogs,
+	countdowns,
 }

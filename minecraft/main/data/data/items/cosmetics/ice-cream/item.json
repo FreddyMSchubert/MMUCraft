@@ -2,11 +2,11 @@
 	"title": "Ice Cream Hat",
 	"id": "cosmetic-ice-cream",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 80,
 		"description": "Unlock the Ice Cream Hat cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Ice Cream Hat."

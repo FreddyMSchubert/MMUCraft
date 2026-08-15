@@ -58,7 +58,11 @@ public class CombineCosmeticRecipe extends CustomRecipe
         craftingInfo cinfo = getCraftingInfo(input);
 
         ItemStack pumpkin = CosmeticsManager.helmetToPumpkinReplica(cinfo.armor);
-        pumpkin.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(cinfo.cosmetic.get(DataComponents.CUSTOM_MODEL_DATA).getString(0)), List.of()));
+        CustomModelData armorModelData = cinfo.armor.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        pumpkin.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
+                armorModelData.floats(), armorModelData.flags(),
+                List.of(cinfo.cosmetic.get(DataComponents.CUSTOM_MODEL_DATA).getString(0)), armorModelData.colors()
+        ));
         DyedItemColor cosmeticColor = cinfo.cosmetic.get(DataComponents.DYED_COLOR);
         if (cosmeticColor != null) {
             pumpkin.set(DataComponents.DYED_COLOR, cosmeticColor);

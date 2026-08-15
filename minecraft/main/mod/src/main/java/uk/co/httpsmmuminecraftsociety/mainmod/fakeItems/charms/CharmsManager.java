@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -44,7 +45,6 @@ public class CharmsManager
             Map.entry(1, new CraftingStaffCharm()),
             Map.entry(2, new EnderChestStaffCharm()),
             Map.entry(3, new HeartCharm()),
-            Map.entry(7, new RunningShoesCharm()),
             Map.entry(8, new CandleOfTheDeepCharm()),
             Map.entry(9, new HikingBootsCharm()),
             Map.entry(12, new GiantsBootsCharm()),
@@ -114,6 +114,33 @@ public class CharmsManager
                 .map(CharmsManager::resolveCharmInstance)
                 .filter(Objects::nonNull)
                 .toList();
+    }
+
+    public static boolean refresh(ItemStack stack) {
+        List<CharmInstance> charms = getCharmInstances(stack);
+        if (charms.isEmpty()) return false;
+
+        CharmorManager.refreshArmorCharmAppearance(stack);
+
+        for (CharmInstance instance : charms) {
+            if (instance.charm() instanceof BaseItemChangeCallbackCharm callback) {
+                callback.disableEffectForItem(stack, instance.level());
+            }
+        }
+        for (CharmInstance instance : charms) {
+            if (!instance.isBroken() && instance.charm() instanceof BaseItemChangeCallbackCharm callback) {
+                callback.enableEffectForItem(stack, instance.level());
+            }
+        }
+        return true;
+    }
+
+    public static void refreshInventory(ServerPlayer player) {
+        boolean changed = false;
+        for (ItemStack stack : player.getInventory()) {
+            changed |= refresh(stack);
+        }
+        if (changed) player.getInventory().setChanged();
     }
     public static List<Tuple<ItemStack, CharmInstance>> getPlayerCharmInstances(ServerPlayer player) {
         List<Tuple<ItemStack, CharmInstance>> charms = new ArrayList<>();
@@ -248,6 +275,11 @@ public class CharmsManager
         return null;
     }
 
+    public static InteractionResult onItemUseOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        return player == null ? null : onItemUse(context.getLevel(), player, context.getHand());
+    }
+
     public static void onAfterBlockBreak(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity)
     {
         if (!(player instanceof ServerPlayer)) return;
@@ -302,6 +334,7 @@ public class CharmsManager
     {
         if (!(player instanceof ServerPlayer)) return InteractionResult.PASS;
         if (!(level instanceof ServerLevel)) return InteractionResult.PASS;
+
         for (Tuple<ItemStack, CharmInstance> instance : getPlayerCharmInstances((ServerPlayer) player)) {
             if (instance.getB().isBroken()) continue;
             if (!(instance.getB().charm() instanceof UseOnBlockCallbackCharm useOnBlockCallbackCharm)) continue;

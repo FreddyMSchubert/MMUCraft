@@ -8,7 +8,7 @@
 		""
 	],
 	"shopPurchasable": {
-		"priceDabloons": 150,
+	"priceDabloons": 75,
 		"description": "Unlock the chick stack.",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Chick Stack."

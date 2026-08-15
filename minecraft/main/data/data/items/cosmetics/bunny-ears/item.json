@@ -2,11 +2,11 @@
 	"title": "Bunny Ears",
 	"id": "cosmetic-bunny-ears",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 80,
 		"description": "Unlock the Bunny Ears cosmetic.",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Bunny Ears."

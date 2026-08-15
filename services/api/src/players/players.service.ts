@@ -484,6 +484,19 @@ export class PlayersService {
 		)
 	}
 
+	async grantKnowledgeReadMoney(minecraftUsername: string, amountDabloons: number) {
+		const client = this.getGameplayControlClient()
+		const method = (client as unknown as Record<string, unknown>).GrantKnowledgeReadMoney
+		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: GrantKnowledgeReadMoney')
+
+		return await new Promise<{ granted: boolean; balance_dabloons: number; message: string }>((resolve, reject) => {
+			method.call(client, { minecraft_username: minecraftUsername, amount_dabloons: amountDabloons, message: `Knowledge read: you received ${amountDabloons} dabloons.` }, (error: grpc.ServiceError | null, response: { granted: boolean; balance_dabloons: number; message: string }) => {
+				if (error) reject(error)
+				else resolve(response)
+			})
+		})
+	}
+
 	recordMoneyForMinecraftUsername(
 		minecraftUuidInput: string,
 		minecraftUsernameInput: string,
@@ -500,6 +513,7 @@ export class PlayersService {
 				recorded: false,
 				duplicate: false,
 				accountLinked: false,
+				userId: null,
 				message: 'No website account is linked to this Minecraft username yet.',
 			}
 		}
@@ -507,7 +521,7 @@ export class PlayersService {
 		const direction = normalizeDirection(directionInput)
 		const source = sanitizeToken(sourceInput, 'minecraft')
 		const referenceId = sanitizeToken(referenceIdInput, '')
-		const eventId = referenceId ? `${source}:${referenceId}` : randomUUID()
+		const eventId = referenceId ? `${source}:${user.id}:${referenceId}` : randomUUID()
 		const result = this.recordMoneyEvent(
 			user.id,
 			direction,
@@ -521,6 +535,7 @@ export class PlayersService {
 		return {
 			...result,
 			accountLinked: true,
+			userId: user.id,
 			message: result.duplicate ? 'Money event already recorded.' : 'Money event recorded.',
 		}
 	}
@@ -794,6 +809,12 @@ async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftP
 		throw new Error('Mojang UUID lookup returned no UUID')
 	}
 
+	return fetchMojangProfileByUuid(uuid, name)
+}
+
+export async function fetchMojangProfileByUuid(uuidInput: string, fallbackName = ''): Promise<MinecraftProfile> {
+	const uuid = uuidInput.replaceAll('-', '')
+	if (!/^[0-9a-f]{32}$/i.test(uuid)) throw new Error('Invalid Mojang UUID')
 	const profileResponse = await fetch(
 		`https://sessionserver.mojang.com/session/minecraft/profile/${encodeURIComponent(uuid)}`,
 		{ cache: 'no-store' },
@@ -804,6 +825,8 @@ async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftP
 	}
 
 	const profileBody = await profileResponse.json().catch(() => null) as {
+		id?: unknown
+		name?: unknown
 		properties?: Array<{ name?: unknown; value?: unknown }>
 	} | null
 	const texturesProperty = profileBody?.properties?.find((property) => property.name === 'textures')
@@ -826,8 +849,8 @@ async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftP
 		: null
 
 	return {
-		uuid,
-		name,
+		uuid: typeof profileBody?.id === 'string' ? profileBody.id : uuid,
+		name: typeof profileBody?.name === 'string' ? profileBody.name : fallbackName,
 		skinUrl,
 		model,
 		fetchedAtUnixMs: Date.now(),

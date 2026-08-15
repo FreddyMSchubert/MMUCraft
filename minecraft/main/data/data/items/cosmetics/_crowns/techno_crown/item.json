@@ -9,7 +9,7 @@
 		"No, that's a legend."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 10000,
+		"priceDabloons": 5000,
 		"description": "Unlock the Techno Crown cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Techno Crown."

@@ -4,9 +4,11 @@
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Made from solid gold leaf!"
+	],
 	"shopPurchasable": {
-		"priceDabloons": 100000,
+		"priceDabloons": 1000,
 		"description": "Unlock the Royal Crown cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Royal Crown."

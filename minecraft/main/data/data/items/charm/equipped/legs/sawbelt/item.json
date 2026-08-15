@@ -36,7 +36,8 @@
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
 				"dabloons": 75,
 				"upgradeIngredients": [
-					"minecraft:oak_log",
+					"minecraft:birch_log",
+					"minecraft:acacia_log",
 					"minecraft:apple",
 					"minecraft:honeycomb",
 					"minecraft:honeycomb"
@@ -48,6 +49,7 @@
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
 				"dabloons": 100,
 				"upgradeIngredients": [
+					"minecraft:dark_oak_log",
 					"minecraft:jungle_log",
 					"minecraft:cocoa_beans",
 					"minecraft:cocoa_beans",
@@ -60,6 +62,7 @@
 				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
 				"dabloons": 125,
 				"upgradeIngredients": [
+					"minecraft:spruce_log",
 					"minecraft:mangrove_log",
 					"minecraft:mangrove_propagule",
 					"minecraft:mud",

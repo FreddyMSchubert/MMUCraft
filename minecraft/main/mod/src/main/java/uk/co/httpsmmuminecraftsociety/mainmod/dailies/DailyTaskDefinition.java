@@ -11,6 +11,15 @@ public interface DailyTaskDefinition {
 
     JsonObject create(Random random);
 
+    default JsonObject create(Random random, String name, String description) {
+        JsonObject task = create(random);
+        int instances = task.get("max").getAsInt();
+        if (instances < 1) instances = task.get("requiredCount").getAsInt();
+        task.addProperty("name", name);
+        task.addProperty("description", description.replace("{count}", Integer.toString(instances)));
+        return task;
+    }
+
     int getReward(JsonObject task);
 
     default int progress(JsonObject task, DailyTaskEvent event) {

@@ -27,6 +27,7 @@ interface DailyTaskJson extends Record<string, unknown> {
 	name: string
 	description: string
 	rewardDabloons: number
+	baseCost: number
 	rewardPerIteration?: number
 	current: number
 	max: number
@@ -844,6 +845,7 @@ function parseDailyTaskJson(json: string): DailyTaskJson {
 		|| ('progressUnit' in value && (typeof value.progressUnit !== 'string' || value.progressUnit.length > 80))
 		|| ('rewardPerIteration' in value && (typeof value.rewardPerIteration !== 'number'
 			|| !Number.isFinite(value.rewardPerIteration) || value.rewardPerIteration < 0))
+		|| !Number.isInteger(value.baseCost) || value.baseCost! < 0
 		|| !Number.isInteger(value.rewardDabloons) || value.rewardDabloons! < 0
 		|| !Number.isInteger(value.current) || value.current! < 0
 		|| !Number.isInteger(value.max) || value.max === 0 || value.max! < -1

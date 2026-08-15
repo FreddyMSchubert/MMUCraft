@@ -45,7 +45,7 @@ public final class MoneyHelper {
                 .append(Component.literal(String.valueOf(GetBalance(player)))
                         .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
                 .append(Component.literal("] ").withStyle(ChatFormatting.GOLD))
-                .append(Component.literal(message).withStyle(ChatFormatting.RESET)));
+                .append(Component.literal(message).withStyle(ChatFormatting.WHITE)));
     }
 
     public static boolean ReduceMoney(ServerPlayer player, int amount) {

@@ -1,6 +1,6 @@
 ====
 id: backpacks
-unlockOrder: 2
+unlockOrder: 1
 chatMessage: You've unlocked knowledge on backpacks, a powerful early game shulker alternative.
 sidebarTitle: Backpacks
 ====

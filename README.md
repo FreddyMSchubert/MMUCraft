@@ -80,6 +80,9 @@ better
 unserted / potentially worse
 
 - achievements who can get the most
+- take damage, your inventory shrinks https://www.youtube.com/watch?v=rSdFEjKOL0Y&t=656s
+- every time you take damage you teleport
+- when you hit someone your inventory swaps
 - zombie challenge - being in sun burns you
 - randomized mob challenge - everybody spawns in as a random mob, find each other
 - no block placing

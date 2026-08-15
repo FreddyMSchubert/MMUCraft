@@ -10,7 +10,7 @@ public final class BrushBlockTask extends CountedTask {
     private final String blockName;
 
     public BrushBlockTask(Block block, String blockName) {
-        super("brush:" + DailyTargetId.of(block), "🖌️", 4, 12, 0.75D, "Brushed", "times");
+        super("brush:" + DailyTargetId.of(block), "🖌️", 4, 12, 0.5D, "Brushed", "times");
         this.block = DailyTargetId.of(block);
         this.blockName = blockName;
     }

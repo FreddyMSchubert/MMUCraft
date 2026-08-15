@@ -213,9 +213,6 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 						<p>Unlocked Entry</p>
 						<h3>{activePage.sidebarTitle}</h3>
 					</div>
-					<button type="button" className="knowledgeReadButton" onClick={() => void markRead()} disabled={readPageIds.has(activePage.id) || markingRead}>
-						{readPageIds.has(activePage.id) ? 'Read' : markingRead ? 'Marking…' : 'Mark as read (+3 dabloons)'}
-					</button>
 				</div>
 
 				<article
@@ -223,6 +220,9 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 					className="knowledgePage"
 					dangerouslySetInnerHTML={{ __html: renderedHtml }}
 				/>
+				<button type="button" className="knowledgeReadButton" onClick={() => void markRead()} disabled={readPageIds.has(activePage.id) || markingRead}>
+					{readPageIds.has(activePage.id) ? 'Read' : markingRead ? 'Marking…' : 'Mark as read (+3 dabloons)'}
+				</button>
 			</section>
 		</div>
 	)

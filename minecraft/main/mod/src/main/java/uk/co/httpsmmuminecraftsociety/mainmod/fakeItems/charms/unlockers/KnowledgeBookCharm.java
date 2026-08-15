@@ -45,7 +45,7 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             Component message = Component.literal(response.getMessage());
             if (response.getUnlocked()) {
                 message = message.copy()
-                        .append(Component.literal(" "))
+                        .append(Component.literal(" Read to earn 3 dabloons! "))
                         .append(WebsiteCommand.takeMeThere("play/knowledge/" + response.getKnowledgeId(), "Click to read!", ChatFormatting.RED));
             }
             player.sendSystemMessage(message);

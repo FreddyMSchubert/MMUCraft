@@ -1388,7 +1388,8 @@ a {
 }
 
 .knowledgeReadButton {
-	flex: 0 0 auto;
+	display: block;
+	margin: 16px 0 0 auto;
 	padding: 8px 10px;
 	border: 1px solid rgba(255, 209, 102, 0.7);
 	border-radius: 4px;

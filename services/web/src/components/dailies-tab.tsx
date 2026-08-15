@@ -239,9 +239,7 @@ export function DailiesTab() {
 
 			<div className="dailiesFooter">
 				<p className="dailyFootnote">
-					You can always earn money, even if today&apos;s dailies are already done or too hard, by completing advancements.
-				</p>
-				<p className="dailyFootnote">
+					You can always earn money, even if today&apos;s dailies are already done or too hard, by completing advancements.<br></br>
 					If a daily seems impossible or ludicrously frustrating, contact the committee.
 				</p>
 				<section className={`dailyCompletion${data.completion.claimed ? ' claimed' : ''}`} aria-labelledby="daily-completion-title">

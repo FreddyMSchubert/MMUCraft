@@ -3,6 +3,9 @@ package uk.co.httpsmmuminecraftsociety.mainmod.dailies;
 import com.google.gson.JsonObject;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.EntityTypes;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
@@ -71,6 +74,29 @@ public final class DailyTaskManager {
     public static void onEat(ServerPlayer player, ItemStack stack) {
         String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
         advance(player, "eat:" + itemId);
+    }
+
+    public static void recordEnchantedItem(ServerPlayer player, ItemStack stack, boolean atTable) {
+        if (atTable) record(player, DailyTaskEvent.of(DailyTaskEvent.Type.ENCHANT_AT_TABLE));
+        record(player, DailyTaskEvent.of(
+                DailyTaskEvent.Type.ENCHANT_ITEM,
+                BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()
+        ));
+        recordType(player, stack, ItemTags.SWORDS);
+        recordType(player, stack, ItemTags.AXES);
+        recordType(player, stack, ItemTags.PICKAXES);
+        recordType(player, stack, ItemTags.SHOVELS);
+        recordType(player, stack, ItemTags.HOES);
+        recordType(player, stack, ItemTags.SPEARS);
+        recordType(player, stack, ItemTags.FOOT_ARMOR);
+        recordType(player, stack, ItemTags.LEG_ARMOR);
+        recordType(player, stack, ItemTags.CHEST_ARMOR);
+        recordType(player, stack, ItemTags.HEAD_ARMOR);
+        recordType(player, stack, ItemTags.SKULLS);
+    }
+
+    private static void recordType(ServerPlayer player, ItemStack stack, TagKey<Item> type) {
+        if (stack.is(type)) record(player, DailyTaskEvent.of(DailyTaskEvent.Type.ENCHANT_ITEM, DailyTargetId.of(type)));
     }
 
     public static void advance(ServerPlayer player, String taskId) {

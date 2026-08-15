@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
@@ -114,6 +115,12 @@ public abstract class AnvilMenuMixin {
         ContainerLevelAccess access = combiner.mainmod$getAccess();
 
         ItemStack original = inputSlots.getItem(0);
+        if (player instanceof ServerPlayer serverPlayer
+                && !Objects.equals(
+                        EnchantmentHelper.getEnchantmentsForCrafting(original),
+                        EnchantmentHelper.getEnchantmentsForCrafting(carried))) {
+            DailyTaskManager.recordEnchantedItem(serverPlayer, carried, false);
+        }
         if (player instanceof ServerPlayer serverPlayer
                 && original.get(DataComponents.TOOL) != null
                 && carried.get(DataComponents.CUSTOM_NAME) != null

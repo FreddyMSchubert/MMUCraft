@@ -104,8 +104,11 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
     @Override
     public JsonObject create(Random random) {
         int count = random.nextInt(minimum, maximum + 1);
-        String instructions = "Hold " + count + "× " + itemName
-                + " in your inventory, then click Claim to trade the items in.";
+        String instructions = description == null || description.isBlank()
+                ? "Submit {count} " + itemName.toLowerCase() + "."
+                : description;
+        instructions = instructions.replace("{count}", Integer.toString(count))
+                + " Hold the items in your inventory, then click Claim.";
         JsonObject task = CountedTask.base(
                 id,
                 "Submit " + itemName,

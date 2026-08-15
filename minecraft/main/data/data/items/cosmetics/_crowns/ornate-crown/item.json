@@ -4,12 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "mythical",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"A royal waste of money"
+	],
 	"shopPurchasable": {
 		"priceDabloons": 50000,
 		"description": "Unlock the Ornate Crown cosmetic.",
 		"unlockWeight": 10,
-		"unlockMessage": "Unlocked cosmetic: Ornate Crown."
+		"unlockMessage": "You have been crowned Biggest Moneywaster."
 	},
 	"equippableCosmetic": {}
 }

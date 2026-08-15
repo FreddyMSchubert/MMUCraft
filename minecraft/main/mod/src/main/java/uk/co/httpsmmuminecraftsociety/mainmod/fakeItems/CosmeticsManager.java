@@ -75,7 +75,11 @@ public final class CosmeticsManager {
         // component time
         replica.set(DataComponents.MAX_STACK_SIZE, 1);
         replica.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, false);
-        replica.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Cosmetic reskin of " + helmet.getItem().getName(helmet).getString() + "."))));
+        String helmetName = CharmorManager.isEnderite(helmet)
+                ? "Enderite Helmet"
+                : helmet.getItem().getName(helmet).getString();
+        replica.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Cosmetic reskin of " + helmetName + "."))));
+        replica.set(DataComponents.EQUIPPABLE, Items.CARVED_PUMPKIN.components().get(DataComponents.EQUIPPABLE));
 
         replica.set(DataComponents.MAX_DAMAGE, helmet.getMaxDamage());
         replica.set(DataComponents.DAMAGE, helmet.getDamageValue());

@@ -3,7 +3,7 @@
 	"id": "charm-potion-resonance",
 	"modelType": "basic",
 	"rarity": "rare",
-	"maxStackSize": 1,
+	"maxStackSize": 16,
 	"tooltips": [
 		"Find someone on your wavelength."
 	],

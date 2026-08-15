@@ -1,6 +1,6 @@
 ====
 id: death-and-respawning
-unlockOrder: 4
+unlockOrder: 2
 chatMessage: You've unlocked knowledge on the server's death and respawn rules.
 sidebarTitle: Death & Respawning
 ====

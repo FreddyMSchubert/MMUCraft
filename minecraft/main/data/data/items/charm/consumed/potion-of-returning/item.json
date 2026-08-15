@@ -3,7 +3,7 @@
 	"id": "charm-potion-returning",
 	"modelType": "basic",
 	"rarity": "common",
-	"maxStackSize": 1,
+	"maxStackSize": 16,
 	"tooltips": [
 		"Not for the faint of heart"
 	],

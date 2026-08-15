@@ -31,6 +31,7 @@ import java.util.Optional;
 
 public final class LecternLibrarianTrades {
     private static final int LECTERN_COPY_MAX_USES = 999_999;
+    private static final int LECTERN_COPY_XP = 10;
 
     private LecternLibrarianTrades() {
     }
@@ -98,7 +99,7 @@ public final class LecternLibrarianTrades {
                 result,
                 0,
                 LECTERN_COPY_MAX_USES,
-                0,
+                LECTERN_COPY_XP,
                 0.0F
         ));
     }

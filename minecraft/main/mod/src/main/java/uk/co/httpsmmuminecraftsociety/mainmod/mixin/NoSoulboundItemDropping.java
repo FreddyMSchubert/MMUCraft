@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +19,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 
 @Mixin(Inventory.class)
 public abstract class NoSoulboundItemDropping {
+    private static final int DEATH_DROP_AGE = -12_000;
+
     @Shadow @Final public Player player;
 
     @Shadow
@@ -45,7 +48,10 @@ public abstract class NoSoulboundItemDropping {
                 continue;
             }
 
-            this.player.drop(stack, true, false);
+            ItemEntity drop = this.player.drop(stack, true, false);
+            if (drop != null) {
+                ((ItemEntityAgeAccessor) drop).mainmod$setAge(DEATH_DROP_AGE);
+            }
             this.setItem(slot, ItemStack.EMPTY);
         }
 

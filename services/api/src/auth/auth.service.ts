@@ -41,7 +41,8 @@ const AUTH_REQUEST_HISTORY_LIMIT = 50
 const AUTH_REQUEST_PAGE_SIZE = 42
 const MAX_AUTH_REQUEST_PAGE_SIZE = 100
 const MAX_AUTH_CODE_ATTEMPTS = 5
-export const EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 100
+export const MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 150
+export const NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 250
 const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signup-allowlist.txt'
 const AUTH_CODE_IMAGE_BASE = `${ASSETS.minecraft.vanilla}/textures/`
 const AUTH_CODE_IMAGES: Partial<Record<(typeof AUTH_CODE_ITEMS)[number], string>> = {
@@ -523,13 +524,16 @@ export class AuthService {
 		}
 
 		try {
+			const priceDabloons = responsibleUser.is_member === 1
+				? MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS
+				: NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS
 			const purchase = await this.grpc.purchaseExternalPlayerInvite(responsibleUser.minecraft_username)
 			if (!purchase.purchased) {
-				throw new BadRequestException(purchase.message || 'The responsible player must be online with 100 dabloons')
+				throw new BadRequestException(purchase.message || `The responsible player must be online with ${priceDabloons} dabloons`)
 			}
 			return {
 				email,
-				priceDabloons: EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS,
+				priceDabloons,
 				balanceDabloons: purchase.balance_dabloons,
 			}
 		} catch (error) {

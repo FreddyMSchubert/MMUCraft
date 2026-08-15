@@ -25,6 +25,7 @@ public record DailyTaskEvent(Type type, String subject, String secondary, int am
 
     public enum Type {
         ENCHANT_AT_TABLE,
+        ENCHANT_ITEM,
         KILL_ENTITY,
         RECEIVE_EFFECT,
         GAIN_LEVEL,

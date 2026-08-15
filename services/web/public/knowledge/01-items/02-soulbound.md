@@ -13,8 +13,6 @@ That is to say, you won't lose ***SOULBOUND*** items when you die. They'll stay 
 
 ![Soulbound Book Crafting Recipe](/assets/knowledge/items/soulbound/recipe.png)
 
-TODO
-
 You may notice that it requires a mysterious blue flame to craft. This is a ***SOUL***. It is dropped by players when they die. *It is left to the discretion and creativity of the reader to obtain souls in a morally unobjectionable manner.*
 
 ![Souls Example Image](/assets/knowledge/items/soulbound/soul.png)

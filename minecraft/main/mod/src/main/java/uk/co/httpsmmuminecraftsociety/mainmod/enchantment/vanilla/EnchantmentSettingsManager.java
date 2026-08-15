@@ -136,7 +136,7 @@ public class EnchantmentSettingsManager
 
     public static int getMaxAnvilLevel(Holder<Enchantment> enchantment, ItemStack stack) {
         return getSettingsForEnch(enchantment)
-                .map(settings -> CharmorManager.isEnderite(stack)
+                .map(settings -> stack.is(Items.ENCHANTED_BOOK) || CharmorManager.isEnderite(stack)
                         ? settings.maxEnderiteLevel
                         : settings.maxNormalGearLevel)
                 .orElse(0);

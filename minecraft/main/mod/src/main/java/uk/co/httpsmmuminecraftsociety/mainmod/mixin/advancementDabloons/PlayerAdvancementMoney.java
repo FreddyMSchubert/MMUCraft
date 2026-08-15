@@ -2,19 +2,21 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.network.chat.Component;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
 import java.util.List;
 
@@ -96,6 +98,15 @@ public class PlayerAdvancementMoney {
     @Shadow
     private ServerPlayer player;
 
+    @Inject(method = "lambda$award$0", at = @At("HEAD"), cancellable = true)
+    private void mainmod$deferAdvancementAnnouncement(
+            AdvancementHolder advancementHolder,
+            DisplayInfo displayInfo,
+            CallbackInfo ci
+    ) {
+        ci.cancel();
+    }
+
     @Inject(
             method = "award",
             at = @At(
@@ -133,6 +144,15 @@ public class PlayerAdvancementMoney {
                 isMember
         ).totalReward();
         if (money > 0 && MoneyHelper.GainMoney(rewardedPlayer, money)) {
+            if ("minecraft".equals(advancementHolder.id().getNamespace()) || money >= 10) {
+                advancementHolder.value().display().ifPresent(display -> {
+                    DiscordBridge.advancement(rewardedPlayer, display.getTitle().getString(), money);
+                    rewardedPlayer.level().getServer().getPlayerList().broadcastSystemMessage(
+                            display.getType().createAnnouncement(advancementHolder, rewardedPlayer),
+                            false
+                    );
+                });
+            }
             GameplayGrpcService.recordMoneyEvent(
                     rewardedPlayer.getName().getString(),
                     rewardedPlayer.getUUID().toString(),
@@ -146,9 +166,10 @@ public class PlayerAdvancementMoney {
                 return null;
             });
 
-            advancementHolder.value().display().ifPresent(displayInfo -> rewardedPlayer.sendSystemMessage(
-                    Component.literal(randomCelebration(rewardedPlayer) + ": You received " + money + " dabloons for completing ")
-                            .append(displayInfo.getTitle().getString() + ". :D")
+            advancementHolder.value().display().ifPresent(displayInfo -> MoneyHelper.SendBalanceMessage(
+                    rewardedPlayer,
+                    randomCelebration(rewardedPlayer) + ": You received " + money + " dabloons for completing "
+                            + displayInfo.getTitle().getString() + ". :D"
             ));
         }
     }

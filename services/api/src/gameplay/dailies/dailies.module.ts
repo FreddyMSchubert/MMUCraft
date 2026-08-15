@@ -3,12 +3,12 @@ import { AuthModule } from '../../auth/auth.module'
 import { DatabaseModule } from '../../database/database.module'
 import { PlayersModule } from '../../players/players.module'
 import { ShopModule } from '../shop/shop.module'
-import { DailiesController } from './dailies.controller'
+import { AdminDailiesController, DailiesController } from './dailies.controller'
 import { DailiesService } from './dailies.service'
 
 @Module({
 	imports: [AuthModule, DatabaseModule, PlayersModule, ShopModule],
-	controllers: [DailiesController],
+	controllers: [DailiesController, AdminDailiesController],
 	providers: [DailiesService],
 	exports: [DailiesService],
 })

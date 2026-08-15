@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { randomInt } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { basename, join, relative, sep } from 'node:path'
-import { desc, eq } from 'drizzle-orm'
-import { DatabaseService, knowledgeUnlocks } from '../../database/database.service'
+import { and, desc, eq } from 'drizzle-orm'
+import { AuthenticatedUser } from '../../auth/auth.service'
+import { DatabaseService, knowledgeReads, knowledgeUnlocks } from '../../database/database.service'
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service'
+import { PlayersService } from '../../players/players.service'
 
 const DEFAULT_KNOWLEDGE_ROOTS = [
 	join(process.cwd(), 'content', 'knowledge'),
 	join(process.cwd(), '..', 'web', 'public', 'knowledge'),
 ]
+const KNOWLEDGE_READ_REWARD_DABLOONS = 3
 
 type KnowledgePageMetadata = {
 	id: string
@@ -64,18 +67,55 @@ export class KnowledgeService {
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
+		private readonly players: PlayersService,
 	) { }
 
 	getKnowledgeForUser(userId: number) {
 		const document = this.loadDocument()
 		const unlockedIds = this.getUnlockedIds(userId)
+		const readKnowledgeIds = this.getReadIds(userId)
 		const lastUnlockedKnowledgeId = this.getLastUnlockedKnowledgeId(userId, document.unlockable)
 
 		return {
 			contentVersion: document.mtimeMs,
 			lastUnlockedKnowledgeId,
 			unlockedKnowledgeIds: [...unlockedIds].filter((id) => document.unlockable.some((page) => page.id === id)),
+			readKnowledgeIds: [...readKnowledgeIds],
 			tree: this.applyUnlockState(document.tree, unlockedIds),
+		}
+	}
+
+	async markRead(user: AuthenticatedUser, knowledgeIdInput: unknown) {
+		const knowledgeId = typeof knowledgeIdInput === 'string' ? knowledgeIdInput.trim() : ''
+		const page = this.loadDocument().pages.find((candidate) => candidate.id === knowledgeId)
+		if (!page) throw new BadRequestException('Knowledge page not found.')
+		if (!page.unlockedByDefault && !this.getUnlockedIds(user.id).has(page.id)) {
+			throw new BadRequestException('That knowledge page is locked.')
+		}
+
+		const now = Date.now()
+		const reserved = this.database.connection.insert(knowledgeReads).values({
+			user_id: user.id,
+			knowledge_id: page.id,
+			read_at_unix_ms: now,
+		}).onConflictDoNothing().run()
+		if (reserved.changes !== 1) return { read: true, rewarded: false, amountDabloons: 0 }
+
+		let moneyGranted = false
+		try {
+			const result = await this.players.grantKnowledgeReadMoney(user.minecraftUsername, KNOWLEDGE_READ_REWARD_DABLOONS)
+			if (!result.granted) throw new BadRequestException(result.message || 'You have to be online on the server to receive dabloons.')
+			moneyGranted = true
+			this.players.recordMoneyForUser(user.id, 'earned', 'knowledge_read', KNOWLEDGE_READ_REWARD_DABLOONS, result.balance_dabloons, `knowledge-read:${user.id}:${page.id}`, now)
+			return { read: true, rewarded: true, amountDabloons: KNOWLEDGE_READ_REWARD_DABLOONS }
+		} catch (error) {
+			if (!moneyGranted) {
+				this.database.connection.delete(knowledgeReads).where(and(
+					eq(knowledgeReads.user_id, user.id),
+					eq(knowledgeReads.knowledge_id, page.id),
+				)).run()
+			}
+			throw error
 		}
 	}
 
@@ -190,6 +230,11 @@ export class KnowledgeService {
 			.all()
 
 		return new Set(rows.map((row) => row.knowledge_id))
+	}
+
+	private getReadIds(userId: number): Set<string> {
+		return new Set(this.database.connection.select({ knowledge_id: knowledgeReads.knowledge_id })
+			.from(knowledgeReads).where(eq(knowledgeReads.user_id, userId)).all().map((row) => row.knowledge_id))
 	}
 
 	private pickRandomLowestOrderPage(pages: KnowledgePage[]): KnowledgePage {

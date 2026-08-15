@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { FormEvent, useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { PlayerName, playerNameStyle } from '@/components/player-name'
+import type { Countdown } from '@/components/dynamic-countdowns'
 
 interface AdminPlayer {
 	id: number
@@ -68,6 +69,12 @@ interface ActivePlayerBan {
 	createdAtUnixMs: number
 }
 
+interface DiscordAdminCommand {
+	command: string
+	discordUsername: string
+	createdAtUnixMs: number
+}
+
 const PAGE_SIZE = 42
 
 const CODE_ADJECTIVES = [
@@ -79,8 +86,9 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
-	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' ? section : 'members'
+	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' || section === 'countdowns' || section === 'discord-commands' || section === 'dailies' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
+	const [countdowns, setCountdowns] = useState<Countdown[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
 	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
 	const [authRequestsHaveMore, setAuthRequestsHaveMore] = useState(false)
@@ -88,6 +96,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [claimsHaveMore, setClaimsHaveMore] = useState(false)
 	const [whitelistedEmails, setWhitelistedEmails] = useState<WhitelistedEmail[]>([])
 	const [activePlayerBans, setActivePlayerBans] = useState<ActivePlayerBan[]>([])
+	const [discordAdminCommands, setDiscordAdminCommands] = useState<DiscordAdminCommand[]>([])
 	const [whitelistEmail, setWhitelistEmail] = useState('')
 	const [responsibleUsername, setResponsibleUsername] = useState('')
 	const [banPlayerId, setBanPlayerId] = useState('')
@@ -99,47 +108,67 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [redemptionMode, setRedemptionMode] = useState<'single' | 'per_user'>('single')
 	const [membersOnly, setMembersOnly] = useState(false)
 	const [expiresAt, setExpiresAt] = useState('')
+	const [countdownHeading, setCountdownHeading] = useState('')
+	const [countdownTarget, setCountdownTarget] = useState('')
+	const [countdownDescription, setCountdownDescription] = useState('')
+	const [countdownHeadingColor, setCountdownHeadingColor] = useState('#ffffff')
+	const [countdownDescriptionColor, setCountdownDescriptionColor] = useState('#ffffff')
+	const [countdownBackgroundColor, setCountdownBackgroundColor] = useState('#000000')
+	const [countdownBackgroundAlpha, setCountdownBackgroundAlpha] = useState(78)
+	const [countdownBackgroundImageUrl, setCountdownBackgroundImageUrl] = useState('')
+	const [editingCountdownId, setEditingCountdownId] = useState<number | null>(null)
 	const [showAllGiftCodes, setShowAllGiftCodes] = useState(false)
 	const [busyPlayerId, setBusyPlayerId] = useState<number | null>(null)
 	const [busyClaimId, setBusyClaimId] = useState<string | null>(null)
+	const [busyCountdownId, setBusyCountdownId] = useState<number | null>(null)
 	const [loadingMore, setLoadingMore] = useState<'signins' | 'claims' | null>(null)
 	const [creating, setCreating] = useState(false)
 	const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
 	const [updatingBan, setUpdatingBan] = useState(false)
+	const [dailyPlayerId, setDailyPlayerId] = useState('')
+	const [refreshingDailies, setRefreshingDailies] = useState(false)
 	const [error, setError] = useState('')
 	const [message, setMessage] = useState<ReactNode>('')
 
 	const load = useCallback(async () => {
-		const [playersResponse, codesResponse, signinsResponse, claimsResponse, whitelistResponse, bansResponse] = await Promise.all([
+		const [playersResponse, codesResponse, countdownsResponse, signinsResponse, claimsResponse, whitelistResponse, bansResponse, commandsResponse] = await Promise.all([
 			fetch('/api/admin/players', { cache: 'no-store' }),
 			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
+			fetch('/api/admin/countdowns', { cache: 'no-store' }),
 			fetch(`/api/admin/signins?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch(`/api/admin/claims?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch('/api/admin/email-whitelist', { cache: 'no-store' }),
 			fetch('/api/admin/player-bans', { cache: 'no-store' }),
+			fetch('/api/admin/discord-admin-commands', { cache: 'no-store' }),
 		])
 		const playersBody = await playersResponse.json().catch(() => null)
 		const codesBody = await codesResponse.json().catch(() => null)
+		const countdownsBody = await countdownsResponse.json().catch(() => null)
 		const signinsBody = await signinsResponse.json().catch(() => null)
 		const claimsBody = await claimsResponse.json().catch(() => null)
 		const whitelistBody = await whitelistResponse.json().catch(() => null)
 		const bansBody = await bansResponse.json().catch(() => null)
+		const commandsBody = await commandsResponse.json().catch(() => null)
 
 		if (!playersResponse.ok) throw new Error(apiMessage(playersBody, 'Failed to load the member list'))
 		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'))
+		if (!countdownsResponse.ok) throw new Error(apiMessage(countdownsBody, 'Failed to load countdowns'))
 		if (!signinsResponse.ok) throw new Error(apiMessage(signinsBody, 'Failed to load signins'))
 		if (!claimsResponse.ok) throw new Error(apiMessage(claimsBody, 'Failed to load claims'))
 		if (!whitelistResponse.ok) throw new Error(apiMessage(whitelistBody, 'Failed to load the email whitelist'))
 		if (!bansResponse.ok) throw new Error(apiMessage(bansBody, 'Failed to load player bans'))
+		if (!commandsResponse.ok) throw new Error(apiMessage(commandsBody, 'Failed to load Discord admin commands'))
 
 		setPlayers(playersBody.players as AdminPlayer[])
 		setGiftCodes(codesBody.giftCodes as GiftCode[])
+		setCountdowns(countdownsBody.countdowns as Countdown[])
 		setAuthRequests(signinsBody.requests as AuthRequest[])
 		setAuthRequestsHaveMore(Boolean(signinsBody.hasMore))
 		setClaims(claimsBody.claims as AdminClaim[])
 		setClaimsHaveMore(Boolean(claimsBody.hasMore))
 		setWhitelistedEmails(whitelistBody.entries as WhitelistedEmail[])
 		setActivePlayerBans(bansBody.bans as ActivePlayerBan[])
+		setDiscordAdminCommands(commandsBody.commands as DiscordAdminCommand[])
 	}, [])
 
 	useEffect(() => {
@@ -218,6 +247,26 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			setError(errorMessage(caught, 'Failed to update committee access'))
 		} finally {
 			setBusyPlayerId(null)
+		}
+	}
+
+	async function refreshDailies(event: FormEvent) {
+		event.preventDefault()
+		const player = players.find((candidate) => candidate.id === Number(dailyPlayerId))
+		if (!player || !window.confirm(`Regenerate today's uncompleted dailies for ${player.minecraftUsername}?`)) return
+
+		setRefreshingDailies(true)
+		setError('')
+		setMessage('')
+		try {
+			const response = await fetch(`/api/admin/dailies/${player.id}/refresh`, { method: 'POST' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to regenerate dailies'))
+			setMessage(body.message)
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to regenerate dailies'))
+		} finally {
+			setRefreshingDailies(false)
 		}
 	}
 
@@ -425,6 +474,107 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		}
 	}
 
+	function saveCountdown(event: FormEvent) {
+		event.preventDefault()
+		setCreating(true)
+		setError('')
+		setMessage('')
+		void (async () => {
+			try {
+				const editing = editingCountdownId !== null
+				const response = await fetch(editingCountdownId === null ? '/api/admin/countdowns' : `/api/admin/countdowns/${editingCountdownId}`, {
+					method: editingCountdownId === null ? 'POST' : 'PATCH',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({
+						heading: countdownHeading,
+						target: countdownTarget,
+						description: countdownDescription,
+						headingColor: countdownHeadingColor,
+						descriptionColor: countdownDescriptionColor,
+						backgroundColor: countdownBackgroundColor,
+						backgroundAlpha: countdownBackgroundAlpha,
+						backgroundImageUrl: countdownBackgroundImageUrl,
+					}),
+				})
+				const body = await response.json().catch(() => null)
+				if (!response.ok) throw new Error(apiMessage(body, `Failed to ${editing ? 'update' : 'create'} the countdown`))
+				setMessage(`${editing ? 'Updated' : 'Created'} the “${body.heading}” countdown.`)
+				resetCountdownForm()
+				await load()
+				window.dispatchEvent(new Event('countdowns-change'))
+			} catch (caught) {
+				setError(errorMessage(caught, `Failed to ${editingCountdownId === null ? 'create' : 'update'} the countdown`))
+			} finally {
+				setCreating(false)
+			}
+		})()
+	}
+
+	function editCountdown(countdown: Countdown) {
+		setEditingCountdownId(countdown.id)
+		setCountdownHeading(countdown.heading)
+		setCountdownTarget(formatLondonInput(countdown.targetAtUnixMs))
+		setCountdownDescription(countdown.description)
+		setCountdownHeadingColor(countdown.headingColor)
+		setCountdownDescriptionColor(countdown.descriptionColor)
+		setCountdownBackgroundColor(countdown.backgroundColor)
+		setCountdownBackgroundAlpha(countdown.backgroundAlpha)
+		setCountdownBackgroundImageUrl(countdown.backgroundImageUrl ?? '')
+		setError('')
+		setMessage('')
+	}
+
+	function resetCountdownForm() {
+		setEditingCountdownId(null)
+		setCountdownHeading('')
+		setCountdownTarget('')
+		setCountdownDescription('')
+		setCountdownHeadingColor('#ffffff')
+		setCountdownDescriptionColor('#ffffff')
+		setCountdownBackgroundColor('#000000')
+		setCountdownBackgroundAlpha(78)
+		setCountdownBackgroundImageUrl('')
+	}
+
+	async function moveCountdown(countdown: Countdown, direction: 'up' | 'down') {
+		setBusyCountdownId(countdown.id)
+		setError('')
+		try {
+			const response = await fetch(`/api/admin/countdowns/${countdown.id}/order`, {
+				method: 'PATCH',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ direction }),
+			})
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to reorder the countdown'))
+			setCountdowns(body.countdowns as Countdown[])
+			window.dispatchEvent(new Event('countdowns-change'))
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to reorder the countdown'))
+		} finally {
+			setBusyCountdownId(null)
+		}
+	}
+
+	async function removeCountdown(countdown: Countdown) {
+		if (!window.confirm(`Delete the “${countdown.heading}” countdown?`)) return
+		setBusyCountdownId(countdown.id)
+		setError('')
+		try {
+			const response = await fetch(`/api/admin/countdowns/${countdown.id}`, { method: 'DELETE' })
+			const body = await response.json().catch(() => null)
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to delete the countdown'))
+			setCountdowns((current) => current.filter((candidate) => candidate.id !== countdown.id))
+			if (editingCountdownId === countdown.id) resetCountdownForm()
+			setMessage(`Deleted the “${countdown.heading}” countdown.`)
+			window.dispatchEvent(new Event('countdowns-change'))
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to delete the countdown'))
+		} finally {
+			setBusyCountdownId(null)
+		}
+	}
+
 	return (
 		<div className="adminPanel">
 			<nav className="adminSubTabs" aria-label="Admin sections">
@@ -459,12 +609,123 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					Gift codes
 				</Link>
 				<Link
+					className={activeSection === 'countdowns' ? 'active' : ''}
+					href="/play/admin/countdowns"
+				>
+					Countdowns
+				</Link>
+				<Link
+					className={activeSection === 'discord-commands' ? 'active' : ''}
+					href="/play/admin/discord-commands"
+				>
+					Discord commands
+				</Link>
+				<Link
+					className={activeSection === 'dailies' ? 'active' : ''}
+					href="/play/admin/dailies"
+				>
+					Dailies
+				</Link>
+				<Link
 					className={activeSection === 'bans' ? 'active' : ''}
 					href="/play/admin/bans"
 				>
 					Ban / timeout
 				</Link>
 			</nav>
+
+			{activeSection === 'dailies' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader">
+						<h3>Regenerate dailies</h3>
+						<p>The player must be online so the server can choose a new advancement daily. Completed dailies do not change.</p>
+					</div>
+					<div className="adminWarnings adminWarnings-critical" role="note">
+						<strong>Use this only when a daily is impossible or ludicrously hard.</strong>
+						<ul>
+							<li>It is intentional that not everyone can complete every daily. These are challenges, not tasks.</li>
+							<li>Reach out to Freddy afterward and tell him which daily caused the problem so he can fix why it appeared.</li>
+						</ul>
+					</div>
+					<form className="playerBanForm" onSubmit={refreshDailies}>
+						<label>
+							Player
+							<select value={dailyPlayerId} onChange={(event) => setDailyPlayerId(event.target.value)} required>
+								<option value="">Select a player</option>
+								{players.map((player) => <option key={player.id} value={player.id}>{player.minecraftUsername}</option>)}
+							</select>
+						</label>
+						<button disabled={refreshingDailies}>{refreshingDailies ? 'Regenerating...' : 'Regenerate uncompleted dailies'}</button>
+					</form>
+				</section>
+			)}
+
+			{activeSection === 'countdowns' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader">
+						<h3>Countdowns</h3>
+						<p>Create up to four countdowns. Enter the date and time in British time.</p>
+					</div>
+					<form className="countdownForm" onSubmit={saveCountdown}>
+						<label>
+							Heading
+							<input value={countdownHeading} onChange={(event) => setCountdownHeading(event.target.value)} maxLength={80} required />
+						</label>
+						<label>
+							Date and time (UK)
+							<input type="datetime-local" value={countdownTarget} onChange={(event) => setCountdownTarget(event.target.value)} required />
+						</label>
+						<label className="countdownAbstractInput">
+							Abstract
+							<textarea value={countdownDescription} onChange={(event) => setCountdownDescription(event.target.value)} maxLength={500} rows={3} required />
+						</label>
+						<label className="countdownImageInput">
+							Background image URL (optional)
+							<input type="url" value={countdownBackgroundImageUrl} onChange={(event) => setCountdownBackgroundImageUrl(event.target.value)} placeholder="https://example.com/event.jpg" pattern="https://.*" maxLength={2000} />
+						</label>
+						<fieldset className="countdownColorOptions">
+							<legend>Colors</legend>
+							<label>Heading <input type="color" value={countdownHeadingColor} onChange={(event) => setCountdownHeadingColor(event.target.value)} /><code>{countdownHeadingColor}</code></label>
+							<label>Abstract <input type="color" value={countdownDescriptionColor} onChange={(event) => setCountdownDescriptionColor(event.target.value)} /><code>{countdownDescriptionColor}</code></label>
+							<label>Background <input type="color" value={countdownBackgroundColor} onChange={(event) => setCountdownBackgroundColor(event.target.value)} /><code>{countdownBackgroundColor}</code></label>
+							<label>Background opacity <input type="range" min="0" max="100" step="1" value={countdownBackgroundAlpha} onChange={(event) => setCountdownBackgroundAlpha(Number(event.target.value))} /><output>{countdownBackgroundAlpha}%</output></label>
+						</fieldset>
+						<div className="countdownFormActions">
+							<button disabled={creating || (editingCountdownId === null && countdowns.length >= 4)}>{creating ? 'Saving...' : editingCountdownId === null ? countdowns.length >= 4 ? 'Maximum of 4 reached' : 'Create countdown' : 'Save changes'}</button>
+							{editingCountdownId !== null && <button type="button" onClick={resetCountdownForm}>Cancel editing</button>}
+						</div>
+					</form>
+
+					<div className="countdownAdminList">
+						{countdowns.map((countdown, index) => <article key={countdown.id}>
+							<div>
+								<strong>{countdown.heading}</strong>
+								<span>{formatLondonDateTime(countdown.targetAtUnixMs)}</span>
+								{countdown.backgroundImageUrl && <span>Background image: {countdown.backgroundImageUrl}</span>}
+								<p>{countdown.description}</p>
+							</div>
+							<div className="countdownAdminActions">
+								<button type="button" disabled={busyCountdownId !== null} onClick={() => editCountdown(countdown)}>Edit</button>
+								<button type="button" aria-label={`Move ${countdown.heading} up`} disabled={index === 0 || busyCountdownId !== null} onClick={() => void moveCountdown(countdown, 'up')}>↑</button>
+								<button type="button" aria-label={`Move ${countdown.heading} down`} disabled={index === countdowns.length - 1 || busyCountdownId !== null} onClick={() => void moveCountdown(countdown, 'down')}>↓</button>
+								<button type="button" disabled={busyCountdownId !== null} onClick={() => void removeCountdown(countdown)}>Delete</button>
+							</div>
+						</article>)}
+						{countdowns.length === 0 && <p>No countdowns are active.</p>}
+					</div>
+				</section>
+			)}
+
+			{activeSection === 'discord-commands' && (
+				<section className="adminSection">
+					<div className="adminSectionHeader"><h3>Discord admin commands</h3><p>Commands sent to the Minecraft console through Discord.</p></div>
+					<button type="button" onClick={() => void load()}>Refresh</button>
+					<div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Command</th><th>Discord user</th><th>Created</th></tr></thead><tbody>
+						{discordAdminCommands.map((entry, index) => <tr key={`${entry.createdAtUnixMs}-${index}`}><td><code>{entry.command}</code></td><td>{entry.discordUsername}</td><td>{formatDateTime(entry.createdAtUnixMs)}</td></tr>)}
+						{discordAdminCommands.length === 0 && <tr><td colSpan={3}>No Discord admin commands yet.</td></tr>}
+					</tbody></table></div>
+				</section>
+			)}
 
 			{activeSection === 'members' && (
 				<section className="adminSection">
@@ -565,7 +826,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 				<section className="adminSection">
 					<div className="adminSectionHeader">
 						<h3>Signup and signin requests</h3>
-						<p>Active codes are sensitive and disappear after use, expiry, or replacement.</p>
+						<p>Use this only when email delivery fails: check that the requester uses an MMU email address, then send their active code to that address from your private email. Active codes are sensitive and disappear after use, expiry, or replacement.</p>
 					</div>
 					<button type="button" onClick={() => void load()}>Refresh</button>
 					<div className="adminTableWrap">
@@ -866,6 +1127,27 @@ function formatDateTime(timestamp: number) {
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	}).format(new Date(timestamp))
+}
+
+function formatLondonDateTime(timestamp: number) {
+	return new Intl.DateTimeFormat('en-GB', {
+		dateStyle: 'medium',
+		timeStyle: 'short',
+		timeZone: 'Europe/London',
+	}).format(new Date(timestamp))
+}
+
+function formatLondonInput(timestamp: number) {
+	const values = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+		timeZone: 'Europe/London',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hourCycle: 'h23',
+	}).formatToParts(new Date(timestamp)).map((part) => [part.type, part.value]))
+	return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}`
 }
 
 function apiMessage(body: unknown, fallback: string) {

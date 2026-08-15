@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -40,7 +41,7 @@ public class AnvilUtils
             Holder<Enchantment> ench = entry.getKey();
             int level = entry.getIntValue();
 
-            if (!resultIsBook && !ench.value().isSupportedItem(result)) {
+            if (!resultIsBook && !result.canBeEnchantedWith(ench, EnchantingContext.ACCEPTABLE)) {
                 continue;
             }
             if (!resultIsBook && conflictsWithExisting(mutable, ench)) {
@@ -55,13 +56,12 @@ public class AnvilUtils
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : rightEnchants.entrySet()) {
             Holder<Enchantment> ench = entry.getKey();
-            Enchantment value = ench.value();
 
             int leftLevel = mutable.getLevel(ench);
             int rightLevel = entry.getIntValue();
 
             if (!resultIsBook) {
-                if (!value.isSupportedItem(result)) {
+                if (!result.canBeEnchantedWith(ench, EnchantingContext.ACCEPTABLE)) {
                     continue;
                 }
                 if (leftLevel == 0 && conflictsWithExisting(mutable, ench)) {
@@ -86,12 +86,17 @@ public class AnvilUtils
             changed = !merged.isEmpty();
         }
 
-        int cost = totalChangedEnchantCost(leftEnchants, rightEnchants, merged);
+        int cost = totalChangedEnchantCost(
+                leftEnchants,
+                rightEnchants,
+                merged,
+                right.has(DataComponents.STORED_ENCHANTMENTS)
+        );
         return new MergeInfo(cost, changed);
     }
 
     private static int capAnvilLevel(Holder<Enchantment> enchantment, ItemStack stack, int level) {
-        return Math.min(level, EnchantmentSettingsManager.getMaxAnvilLevel(enchantment));
+        return Math.min(level, EnchantmentSettingsManager.getMaxAnvilLevel(enchantment, stack));
     }
 
     private static boolean normalizeEnchantmentLevels(ItemStack stack, ItemEnchantments.Mutable mutable) {
@@ -117,7 +122,12 @@ public class AnvilUtils
         return changed;
     }
 
-    private static int totalChangedEnchantCost(ItemEnchantments leftEnchants, ItemEnchantments rightEnchants, ItemEnchantments resultEnchants) {
+    private static int totalChangedEnchantCost(
+            ItemEnchantments leftEnchants,
+            ItemEnchantments rightEnchants,
+            ItemEnchantments resultEnchants,
+            boolean rightIsEnchantedBook
+    ) {
         int cost = 0;
         Set<Holder<Enchantment>> all = new HashSet<>();
 
@@ -141,7 +151,11 @@ public class AnvilUtils
             }
 
             if (chargedLevels > 0) {
-                cost += ench.value().getAnvilCost() * chargedLevels;
+                int anvilCost = ench.value().getAnvilCost();
+                if (rightIsEnchantedBook) {
+                    anvilCost = Math.max(1, anvilCost / 2);
+                }
+                cost += anvilCost * chargedLevels;
             }
         }
 

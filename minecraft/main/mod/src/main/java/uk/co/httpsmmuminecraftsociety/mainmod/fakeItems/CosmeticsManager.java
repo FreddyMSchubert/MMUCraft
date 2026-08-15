@@ -18,6 +18,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -25,6 +26,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +69,7 @@ public final class CosmeticsManager {
         ItemStack replica = helmet.transmuteCopy(Items.CARVED_PUMPKIN, helmet.getCount());
 
         // store original item id
-        CompoundTag nbt = new CompoundTag();
+        CompoundTag nbt = helmet.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         nbt.putString(ORIGINAL_ITEM_ID, BuiltInRegistries.ITEM.getKey(helmet.getItem()).toString());
 
         // component time
@@ -122,7 +126,47 @@ public final class CosmeticsManager {
             helmet.set(DataComponents.DYED_COLOR, new DyedItemColor(nbt.getInt(HELMET_DYED_COLOR_ID).get()));
         }
 
+        nbt.remove(ORIGINAL_ITEM_ID);
+        nbt.remove(HELMET_DYED_COLOR_ID);
+        nbt.remove(COLOR_CYCLING_BOOLEAN);
+        helmet.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
+
+        CustomModelData modelData = replica.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        helmet.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
+                modelData.floats(), modelData.flags(), List.of(), modelData.colors()
+        ));
+
+        if (CharmorManager.isEnderite(helmet)) {
+            Equippable equippable = helmet.get(DataComponents.EQUIPPABLE);
+            if (equippable != null) {
+                helmet.set(DataComponents.EQUIPPABLE,
+                        EquippableCharmItemFeature.createEquippableSettings("enderite", equippable.slot()));
+            }
+        }
+        CharmorManager.updateArmorTooltip(helmet);
+
         return helmet;
+    }
+
+    public static ItemStack cosmeticFromHelmetReplica(ItemStack replica) {
+        CosmeticsInfo info = determineCosmeticType(replica);
+        CustomModelData modelData = replica.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        if (!info.isHelmet() || modelData.strings().isEmpty()) return ItemStack.EMPTY;
+
+        FakeItem cosmetic = FakeItems.ID_MAP.get(modelData.strings().getFirst());
+        if (cosmetic == null) return ItemStack.EMPTY;
+
+        ItemStack result = cosmetic.createItemStack();
+        DyedItemColor color = replica.get(DataComponents.DYED_COLOR);
+        if (color != null) result.set(DataComponents.DYED_COLOR, color);
+
+        CompoundTag replicaData = replica.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (replicaData.contains(COLOR_CYCLING_BOOLEAN)) {
+            CompoundTag cosmeticData = result.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            cosmeticData.putBoolean(COLOR_CYCLING_BOOLEAN, replicaData.getBooleanOr(COLOR_CYCLING_BOOLEAN, false));
+            result.set(DataComponents.CUSTOM_DATA, CustomData.of(cosmeticData));
+        }
+        return result;
     }
 
     public static InteractionResult onUseBlock(Player player, Level world, InteractionHand hand, BlockHitResult hitResult)

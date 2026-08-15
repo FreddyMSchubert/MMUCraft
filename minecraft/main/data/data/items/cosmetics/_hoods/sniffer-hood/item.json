@@ -2,11 +2,11 @@
 	"title": "Sniffer Hood",
 	"id": "cosmetic-hood-sniffer",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 125,
 		"description": "Unlock the Sniffer Hood cosmetic.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Sniffer Hood."

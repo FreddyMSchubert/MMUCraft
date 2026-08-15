@@ -1,17 +1,17 @@
 {
-	"title": "Sombrerónn",
+	"title": "SombrerÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³nn",
 	"id": "cosmetic-sombreronn",
 	"modelType": "cosmetic",
-	"rarity": "epic",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Nevermind, this may be too big O.o"
 	],
 	"shopPurchasable": {
-		"priceDabloons": 35,
-		"description": "Unlock the Sombrerónn cosmetic.",
+	"priceDabloons": 200,
+		"description": "Unlock the SombrerÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³nn cosmetic.",
 		"unlockWeight": 10,
-		"unlockMessage": "Unlocked cosmetic: Sombrerónn."
+		"unlockMessage": "Unlocked cosmetic: SombrerÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³nn."
 	},
 	"equippableCosmetic": {}
 }

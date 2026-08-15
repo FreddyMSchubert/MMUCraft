@@ -102,6 +102,7 @@ public final class MoneyCommand {
             return 0;
         }
 
+        MoneyHelper.SendBalanceMessage(player, "Your dabloon balance was set to " + amount + ".");
         sendChanged(source, "Set", player, amount);
         return 1;
     }
@@ -112,6 +113,7 @@ public final class MoneyCommand {
             return 0;
         }
 
+        MoneyHelper.SendBalanceMessage(player, "You received " + amount + " dabloons.");
         sendChanged(source, "Added", player, amount);
         return 1;
     }
@@ -122,11 +124,13 @@ public final class MoneyCommand {
             return 0;
         }
 
+        MoneyHelper.SendBalanceMessage(player, amount + " dabloons were removed from your balance.");
         sendChanged(source, "Subtracted", player, amount);
         return 1;
     }
 
     private static void sendChanged(CommandSourceStack source, String action, ServerPlayer player, int amount) {
+        if (source.getEntity() == player) return;
         source.sendSuccess(
                 () -> Component.literal(action + " " + amount + " dabloons for " + player.getName().getString() + "."),
                 true

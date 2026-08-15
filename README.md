@@ -57,11 +57,14 @@ Docker Compose runs the website, API, and optional Minecraft server. The API and
 
 All very unordered, potentially bad, some probably too hard / unfun, whatever - idea collection.
 
+its not like someone always has to win, its totally valid if theres one (e.g. the limited blocks placed etc one) where anybody that fulfills a given condition gets a smaller reward. could make for some more collaborative gameplay.
+
 better
 
 - killing a mob turns you into it, kill all mobs (-> https://www.spigotmc.org/resources/morph.8846/)
-- stack of blocks in alphabetical order - add something for X + U + V, also kelp block, enable mob drop heads for z Zombie, Budding Amethyst renamed to xeno-amethyst or smth
+- lifesteal, most hearts wins
 - lucky block flat world - some lucky blocks give you a hint towards something mega obscure you have to do to win, like suffocating while standing in a cauldron. small world border to annoy each other.
+- stack of blocks in alphabetical order - add something for X + U + V, also kelp block, enable mob drop heads for z Zombie, Budding Amethyst renamed to xeno-amethyst or smth
 - most unique death messages (same message a second time doesnt count) - keepinv, instant respawn, respawn VERY CLOSE to death location
 - vegan run. eating meat, throwing eggs, killing any mob or player kills you immediately from moral decay. Kill dragon via accidental death by unfortunate bed placement. Increase tick speed slightly, make leaves drop more apples, make nether chests have more blaze rods.
 - you can only break oak logs, stone, coal ore, iron ore, diamond ore, end stone, gravel, cactus; you can only place crafting table, furnace, obsidian, torch, oxidised copper stairs, TNT, oak boats, green beds. defeat dragon
@@ -70,6 +73,9 @@ better
 - who can get the most of item x in their ender chest (e.g. watermelons). griefing and theft is encouraged and recommended.
 - https://modrinth.com/datapack/chunklock, whoever gets the most gold wins.
 - one block (per person that joins)
+- played on a copy of the server once its already developed and been built on a little bit - person to have mined (or destroyed / exploded) the most blocks by the end wins.
+- everyone shares a synced inventory, try to be the first to kill the dragon
+- a puzzle, like the bac advancements pirate puzzle, but longer and more difficult, with more hints released every hour, first to get it wins.
 
 unserted / potentially worse
 
@@ -119,7 +125,6 @@ unserted / potentially worse
 - one hit wither with mace
 - longest online time between deaths, everyone can see each others positions, small world border
 - randomised crafting recipes
-- everyone shares a synced inventory trying to kill the dragon
 - every like 2 minutes your location is swapped with another player's
 - monster hunter alphabet challenge - kill mobs in alphabetical order
 - fetchr / bingo full or only one line - maybe as gamemode

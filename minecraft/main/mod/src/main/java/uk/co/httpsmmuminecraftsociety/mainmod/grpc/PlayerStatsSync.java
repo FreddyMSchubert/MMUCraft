@@ -60,11 +60,7 @@ public final class PlayerStatsSync {
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             syncNow(handler.player, true);
-            nextSyncTickByPlayer.remove(handler.player.getUUID());
-            membershipByPlayer.remove(handler.player.getUUID());
-            presentationByPlayer.remove(handler.player.getUUID());
-            renderedProfileByPlayer.remove(handler.player.getUUID());
-            colorByPlayer.remove(handler.player.getUUID());
+            server.execute(() -> clearPlayer(handler.player.getUUID()));
         });
     }
 
@@ -166,7 +162,27 @@ public final class PlayerStatsSync {
         return colorByPlayer.getOrDefault(player.getUUID(), -1);
     }
 
+    public static DiscordPresentation discordPresentation(ServerPlayer player) {
+        SyncPlayerStatsResponse response = presentationByPlayer.get(player.getUUID());
+        if (response == null) return new DiscordPresentation("Player", "", "", "#E6E6E6");
+        String role = response.getAccountLinked() && response.getIsCommittee() ? "Committee"
+                : response.getAccountLinked() && response.getIsMember() ? "Member"
+                : response.getAccountLinked() && response.getIsExternal() ? "External" : "Player";
+        return new DiscordPresentation(role, response.getNickname(), response.getPronouns(), response.getColorHex());
+    }
+
+    private static void clearPlayer(UUID playerId) {
+        nextSyncTickByPlayer.remove(playerId);
+        membershipByPlayer.remove(playerId);
+        presentationByPlayer.remove(playerId);
+        renderedProfileByPlayer.remove(playerId);
+        colorByPlayer.remove(playerId);
+    }
+
+    public record DiscordPresentation(String role, String nickname, String pronouns, String colorHex) { }
+
     public static void applyColor(ServerPlayer player, int color) {
+        color = withMinimumLightness(color);
         if (Integer.valueOf(color).equals(colorByPlayer.put(player.getUUID(), color))) return;
         var waypoints = player.level().getWaypointManager();
         waypoints.untrackWaypoint(player);
@@ -178,10 +194,23 @@ public final class PlayerStatsSync {
     private static int parseColor(String color) {
         if (color.length() != 7 || color.charAt(0) != '#') return 0xE6E6E6;
         try {
-            return Integer.parseInt(color.substring(1), 16);
+            return withMinimumLightness(Integer.parseInt(color.substring(1), 16));
         } catch (NumberFormatException ignored) {
             return 0xE6E6E6;
         }
+    }
+
+    private static int withMinimumLightness(int rgb) {
+        int red = rgb >> 16 & 0xFF;
+        int green = rgb >> 8 & 0xFF;
+        int blue = rgb & 0xFF;
+        double lightness = (Math.max(red, Math.max(green, blue)) + Math.min(red, Math.min(green, blue))) / 510.0;
+        if (lightness >= 0.6) return rgb;
+        double whiteBlend = (0.6 - lightness) / (1 - lightness);
+        red = (int) Math.round(red + (255 - red) * whiteBlend);
+        green = (int) Math.round(green + (255 - green) * whiteBlend);
+        blue = (int) Math.round(blue + (255 - blue) * whiteBlend);
+        return red << 16 | green << 8 | blue;
     }
 
     private static void updateTeam(ServerPlayer player, SyncPlayerStatsResponse response) {
@@ -197,7 +226,7 @@ public final class PlayerStatsSync {
         String label = response.getAccountLinked() && response.getIsCommittee() ? " [Committee]"
                 : response.getAccountLinked() && response.getIsExternal() ? " [External]"
                 : response.getAccountLinked() && response.getIsMember() ? " [Member]" : "";
-        ChatFormatting labelColor = response.getIsCommittee() ? ChatFormatting.GOLD
+        ChatFormatting labelColor = response.getIsCommittee() ? ChatFormatting.AQUA
                 : response.getIsExternal() ? ChatFormatting.GRAY : ChatFormatting.GREEN;
         team.setPlayerSuffix(Component.literal(label).withStyle(labelColor));
         team.setColor(Optional.of(closestTeamColor(parseColor(response.getColorHex()))));

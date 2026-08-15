@@ -14,6 +14,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +26,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDef;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.TagStackDef;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyAdvancementPolicy;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmLevelDefinition;
@@ -32,6 +36,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFe
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,10 +48,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class GameplayGrpcService extends GrpcHandler {
     static final GameplayGrpcService INSTANCE = new GameplayGrpcService();
     private static final int EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 100;
+    private static final int MAX_DAILY_ADVANCEMENT_REWARD = 20;
 
     private GameplayEventsGrpc.GameplayEventsFutureStub gameplayEvents;
 
@@ -130,6 +138,10 @@ public final class GameplayGrpcService extends GrpcHandler {
             String taskJson
     ) {
         return INSTANCE.updateDailyTaskInternal(userId, periodKey, taskJson);
+    }
+
+    public static CompletableFuture<PublishDiscordEventResponse> publishDiscordEvent(PublishDiscordEventRequest request) {
+        return INSTANCE.publishDiscordEventInternal(request);
     }
 
     @Override
@@ -347,6 +359,21 @@ public final class GameplayGrpcService extends GrpcHandler {
         return result;
     }
 
+    private CompletableFuture<PublishDiscordEventResponse> publishDiscordEventInternal(PublishDiscordEventRequest request) {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+        if (client == null) return CompletableFuture.failedFuture(new IllegalStateException("GameplayEvents gRPC client is not initialized"));
+        var rpc = client.publishDiscordEvent(request);
+        CompletableFuture<PublishDiscordEventResponse> result = new CompletableFuture<>();
+        rpc.addListener(() -> {
+            try {
+                result.complete(rpc.get());
+            } catch (Exception exception) {
+                result.completeExceptionally(exception);
+            }
+        }, Runnable::run);
+        return result;
+    }
+
     private void requestDailyTasksSnapshot() {
         GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
         if (client == null) return;
@@ -542,6 +569,14 @@ public final class GameplayGrpcService extends GrpcHandler {
             throw exception;
         }
 
+        DiscordBridge.playerEvent("charm", player,
+                "upgraded " + item.title() + " to level " + targetLevel + ". [New effect: "
+                        + target.abilityStatusCurrent() + "]");
+
+        if (target.dabloons() > 0) {
+            MoneyHelper.SendBalanceMessage(player, item.title() + " reached level " + targetLevel + ".");
+        }
+
         return UpgradeCharmResponse.newBuilder()
                 .setUpgraded(true)
                 .setOnline(true)
@@ -660,6 +695,12 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
+        if ("daily_completion".equals(request.getSource())) {
+            DiscordBridge.playerEvent("dailies", player,
+                    "completed all of today's dailies.");
+        }
+
+        MoneyHelper.SendBalanceMessage(player, "You received " + amount + " dabloons.");
         return GrantDailyLoginBonusResponse.newBuilder()
                 .setGranted(true)
                 .setOnline(true)
@@ -693,6 +734,7 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         int balance = MoneyHelper.GetBalance(player);
+        MoneyHelper.SendBalanceMessage(player, "Gift code redeemed for " + amount + " dabloons.");
         return GrantGiftCodeMoneyResponse.newBuilder()
                 .setGranted(true)
                 .setOnline(true)
@@ -701,12 +743,36 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
     }
 
+    private GrantKnowledgeReadMoneyResponse grantKnowledgeReadMoneyOnMainThread(GrantKnowledgeReadMoneyRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        if (player == null || player.hasDisconnected()) {
+            return GrantKnowledgeReadMoneyResponse.newBuilder().setGranted(false)
+                    .setMessage("You have to be online on the server to receive dabloons.").build();
+        }
+
+        int amount = Math.max(0, request.getAmountDabloons());
+        if (amount == 0 || !MoneyHelper.GainMoney(player, amount)) {
+            return GrantKnowledgeReadMoneyResponse.newBuilder().setGranted(false)
+                    .setBalanceDabloons(MoneyHelper.GetBalance(player)).setMessage("Could not grant the dabloons.").build();
+        }
+
+        int balance = MoneyHelper.GetBalance(player);
+        MoneyHelper.SendBalanceMessage(player, request.getMessage());
+        return GrantKnowledgeReadMoneyResponse.newBuilder().setGranted(true)
+                .setBalanceDabloons(balance).setMessage(request.getMessage()).build();
+    }
+
     private GenerateDailyTasksResponse generateDailyTasksOnMainThread(GenerateDailyTasksRequest request) {
         List<String> tasks = DailyTaskManager.generate(
                 request.getUserId(),
                 request.getMinecraftUsername(),
                 request.getPeriodKey(),
-                request.getCount()
+                request.getCount(),
+                request.getUnixMs(),
+                request.getExcludedTaskIdsList()
         );
         return GenerateDailyTasksResponse.newBuilder()
                 .setGenerated(true)
@@ -736,6 +802,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                 request.getPeriodKey(),
                 request.getTaskJson()
         );
+        if (result.claimed()) MoneyHelper.SendBalanceMessage(player, result.message());
         return ClaimDailyTaskResponse.newBuilder()
                 .setClaimed(result.claimed())
                 .setOnline(true)
@@ -763,9 +830,20 @@ public final class GameplayGrpcService extends GrpcHandler {
         PlayerAdvancements playerAdvancements = player.getAdvancements();
         Set<AdvancementHolder> visible = playerAdvancements.visible;
         List<AdvancementHolder> candidates = new ArrayList<>();
+        AdvancementTree tree = playerAdvancements.tree;
 
         for (AdvancementHolder holder : visible) {
-            if (holder.value().display().isEmpty()) {
+            AdvancementNode node = tree.get(holder);
+            AdvancementNode parent = node == null ? null : node.parent();
+            int reward = AdvancementMoney.moneyForAdvancement(holder.id(), holder.value().rewards().experience());
+            if (holder.value().display().isEmpty()
+                    || node == null
+                    || parent == null
+                    || !DailyAdvancementPolicy.allows(holder.id(), node.root().holder().id())
+                    || !playerAdvancements.getOrStartProgress(parent.holder()).isDone()
+                    || reward < 1
+                    || reward > MAX_DAILY_ADVANCEMENT_REWARD
+                    || holder.id().toString().equals(request.getExcludedAdvancementId())) {
                 continue;
             }
 
@@ -779,15 +857,14 @@ public final class GameplayGrpcService extends GrpcHandler {
             return PickDailyAdvancementResponse.newBuilder()
                     .setSelected(false)
                     .setOnline(true)
-                    .setMessage("No visible incomplete advancements are available right now.")
+                    .setMessage("No suitable next-step advancements are available right now.")
                     .build();
         }
 
         candidates.sort(Comparator.comparing(holder -> holder.id().toString()));
-        String seed = request.getPeriodKey() + ":" + normalize(username);
+        String seed = request.getPeriodKey() + ":" + normalize(username) + ":" + request.getUnixMs();
         AdvancementHolder selected = candidates.get(Math.floorMod(seed.hashCode(), candidates.size()));
         DisplayInfo display = selected.value().display().orElseThrow();
-        AdvancementTree tree = playerAdvancements.tree;
         AdvancementNode node = tree.get(selected);
         AdvancementNode root = node == null ? null : node.root();
 
@@ -853,6 +930,15 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
+        if (request.getCheckOnly()) {
+            return ClaimDailyAdvancementResponse.newBuilder()
+                    .setClaimed(false)
+                    .setOnline(true)
+                    .setCompleted(true)
+                    .setMessage("Daily advancement completed.")
+                    .build();
+        }
+
         int reward = Math.max(0, request.getBonusRewardDabloons());
         if (!MoneyHelper.GainMoney(player, reward)) {
             return ClaimDailyAdvancementResponse.newBuilder()
@@ -863,6 +949,8 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
+        MoneyHelper.SendBalanceMessage(player,
+                "You received " + reward + " bonus dabloons for completing " + request.getAdvancementId() + ".");
         return ClaimDailyAdvancementResponse.newBuilder()
                 .setClaimed(true)
                 .setOnline(true)
@@ -928,6 +1016,11 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         int remaining = MoneyHelper.GetBalance(player);
+        MoneyHelper.SendBalanceMessage(player,
+                "Purchased " + request.getItemId() + " for " + price + " dabloons.");
+        DiscordBridge.playerEvent("shop", player,
+                "bought the " + request.getRarity() + " " + request.getDisplayName() + " "
+                        + request.getItemType() + " from the shop for " + price + " dabloons.");
         return PurchaseShopItemResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
@@ -963,6 +1056,7 @@ public final class GameplayGrpcService extends GrpcHandler {
         }
 
         int remaining = MoneyHelper.GetBalance(player);
+        MoneyHelper.SendBalanceMessage(player, "External player invitation purchased for 100 dabloons.");
         return PurchaseExternalPlayerInviteResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
@@ -1040,6 +1134,7 @@ public final class GameplayGrpcService extends GrpcHandler {
                     .build();
         }
 
+        MoneyHelper.SendBalanceMessage(player, "Chunk claimed for " + price + " dabloons.");
         return PurchaseClaimResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
@@ -1088,6 +1183,48 @@ public final class GameplayGrpcService extends GrpcHandler {
         return value.toLowerCase(Locale.ROOT);
     }
 
+    private BroadcastDiscordMessageResponse broadcastDiscordMessageOnMainThread(BroadcastDiscordMessageRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+        String name = request.getDiscordName().strip().replaceAll("[\\r\\n]", " ");
+        String content = request.getContent().strip().replaceAll("[\\r\\n]+", " ");
+        Component message = Component.literal("[Discord] ").withStyle(ChatFormatting.BLUE)
+                .append(Component.literal(name + ": ").withStyle(ChatFormatting.AQUA))
+                .append(Component.literal(content));
+        DiscordBridge.broadcastFromDiscord(server, message);
+        return BroadcastDiscordMessageResponse.newBuilder().setBroadcast(true).build();
+    }
+
+    private RunServerCommandResponse runServerCommandOnMainThread(RunServerCommandRequest request) {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+        List<String> output = new ArrayList<>();
+        AtomicBoolean succeeded = new AtomicBoolean();
+        AtomicInteger result = new AtomicInteger();
+        CommandSource capture = new CommandSource() {
+            @Override public void sendSystemMessage(Component message) {
+                if (output.stream().mapToInt(String::length).sum() < 16_000) output.add(message.getString());
+            }
+            @Override public boolean acceptsSuccess() { return true; }
+            @Override public boolean acceptsFailure() { return true; }
+            @Override public boolean shouldInformAdmins() { return false; }
+        };
+        String command = request.getCommand().strip().replaceFirst("^/+", "");
+        server.getCommands().performPrefixedCommand(
+                server.createCommandSourceStack().withSource(capture).withCallback((success, value) -> {
+                    succeeded.set(success);
+                    result.set(value);
+                }),
+                command
+        );
+        MainMod.LOGGER.info("Discord admin {} ran server command: {}", request.getDiscordUser(), command);
+        return RunServerCommandResponse.newBuilder()
+                .setSucceeded(succeeded.get())
+                .setResult(result.get())
+                .setOutput(output.isEmpty() ? "Command returned " + result.get() + "." : String.join("\n", output))
+                .build();
+    }
+
     private final class GameplayControlEndpoint extends GameplayControlGrpc.GameplayControlImplBase {
         @Override
         public void grantDailyLoginBonus(
@@ -1104,6 +1241,15 @@ public final class GameplayGrpcService extends GrpcHandler {
                 StreamObserver<GrantGiftCodeMoneyResponse> responseObserver
         ) {
             callOnMainThread(() -> grantGiftCodeMoneyOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void grantKnowledgeReadMoney(
+                GrantKnowledgeReadMoneyRequest request,
+                StreamObserver<GrantKnowledgeReadMoneyResponse> responseObserver
+        ) {
+            callOnMainThread(() -> grantKnowledgeReadMoneyOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 
@@ -1214,6 +1360,24 @@ public final class GameplayGrpcService extends GrpcHandler {
                 StreamObserver<UpgradeCharmResponse> responseObserver
         ) {
             callOnMainThread(() -> upgradeCharmOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void broadcastDiscordMessage(
+                BroadcastDiscordMessageRequest request,
+                StreamObserver<BroadcastDiscordMessageResponse> responseObserver
+        ) {
+            callOnMainThread(() -> broadcastDiscordMessageOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void runServerCommand(
+                RunServerCommandRequest request,
+                StreamObserver<RunServerCommandResponse> responseObserver
+        ) {
+            callOnMainThread(() -> runServerCommandOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

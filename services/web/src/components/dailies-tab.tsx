@@ -197,7 +197,9 @@ export function DailiesTab() {
 											<p>Tab: {task.advancement.tabTitle}</p>
 											<p>{task.claimed
 												? <>Claimed: Finished the advancement and earned {task.advancement.bonusRewardDabloons} bonus dabloons.</>
-												: <>Finish it today, then claim {task.advancement.bonusRewardDabloons} bonus dabloons in addition to the advancements reward.</>}</p>
+												: task.current >= task.max
+													? <>Complete — claim {task.advancement.bonusRewardDabloons} bonus dabloons.</>
+													: <>Finish it today, then claim {task.advancement.bonusRewardDabloons} bonus dabloons in addition to the advancements reward.</>}</p>
 										</div>
 									</div>
 								) : (
@@ -238,6 +240,9 @@ export function DailiesTab() {
 			<div className="dailiesFooter">
 				<p className="dailyFootnote">
 					You can always earn money, even if today&apos;s dailies are already done or too hard, by completing advancements.
+				</p>
+				<p className="dailyFootnote">
+					If a daily seems impossible or ludicrously frustrating, contact the committee.
 				</p>
 				<section className={`dailyCompletion${data.completion.claimed ? ' claimed' : ''}`} aria-labelledby="daily-completion-title">
 					<h4 id="daily-completion-title">Completed {data.completion.completedTaskCount}/{data.completion.totalTaskCount}</h4>

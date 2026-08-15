@@ -2,15 +2,15 @@
 	"title": "Winged Shoes Charm",
 	"id": "charm-winged-shoes",
 	"modelType": "charm",
-	"rarity": "common",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Don't get cold feet."
 	],
 	"shopPurchasable": {
-		"priceDabloons": 90,
+		"priceDabloons": 225,
 		"description": "Lets you jump in mid-air once.",
-		"unlockWeight": 33,
+		"unlockWeight": 10,
 		"unlockMessage": "Unlocked charm: Winged Shoes Charm."
 	},
 	"charm": {
@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Lets you jump in mid-air once.",
 				"abilityStatusRelative": "Lets you jump in mid-air once.",
-				"dabloons": 10,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:feather"
 				]
@@ -31,7 +31,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Lets you jump in mid-air twice.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 20,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:feather",
 					"minecraft:feather",
@@ -43,7 +43,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Lets you jump in mid-air 3 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 30,
+				"dabloons": 200,
 				"upgradeIngredients": [
 					"minecraft:feather",
 					"minecraft:feather",
@@ -55,7 +55,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Lets you jump in mid-air 4 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 40,
+				"dabloons": 250,
 				"upgradeIngredients": [
 					"minecraft:feather",
 					"minecraft:feather",
@@ -68,7 +68,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Lets you jump in mid-air 5 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 50,
+				"dabloons": 300,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane"
 				]
@@ -77,7 +77,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Lets you jump in mid-air 6 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 60,
+				"dabloons": 350,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -89,7 +89,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Lets you jump in mid-air 7 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 70,
+				"dabloons": 400,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -101,7 +101,7 @@
 				"level": 8,
 				"abilityStatusCurrent": "Lets you jump in mid-air 8 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 80,
+				"dabloons": 450,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -113,7 +113,7 @@
 				"level": 9,
 				"abilityStatusCurrent": "Lets you jump in mid-air 9 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 90,
+				"dabloons": 500,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -125,7 +125,7 @@
 				"level": 10,
 				"abilityStatusCurrent": "Lets you jump in mid-air 15 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air 6 more times.",
-				"dabloons": 100,
+				"dabloons": 1000,
 				"upgradeIngredients": [
 					"minecraft:feather",
 					"minecraft:wind_charge",

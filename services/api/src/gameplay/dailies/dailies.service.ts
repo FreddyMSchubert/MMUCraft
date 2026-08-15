@@ -1,22 +1,22 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, gte, or } from 'drizzle-orm'
 import { filter, interval, map, merge, of, Subject } from 'rxjs'
 import { AuthenticatedUser } from '../../auth/auth.service'
-import { DatabaseService, dailyAdvancementTargets, dailyClaims, dailyTasks, users } from '../../database/database.service'
+import { DatabaseService, dailyAdvancementTargets, dailyClaims, dailyTasks, playerMoneyEvents, users } from '../../database/database.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { PlayersService } from '../../players/players.service'
 import { ShopService } from '../shop/shop.service'
 
 const LOGIN_BONUS_TASK_ID = 'login_bonus'
-const LOGIN_BONUS_REWARDS = [3, 5, 6, 7, 8, 10] as const
+const LOGIN_BONUS_REWARDS = [3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] as const
 const ADVANCEMENT_BONUS_TASK_ID = 'advancement_bonus'
 const DAILY_COMPLETION_TASK_ID = 'daily_completion'
 const STATIC_DAILY_TASK_IDS = [LOGIN_BONUS_TASK_ID, ADVANCEMENT_BONUS_TASK_ID] as const
 const GENERATED_TASK_COUNT = 3
 const DAILY_COMPLETION_BASE_REWARD = 20
-const DAILY_COMPLETION_SUNDAY_BONUS = 10
-const DAILY_COMPLETION_MEMBER_BONUS = 12
+const DAILY_COMPLETION_SUNDAY_BONUS = 12
+const DAILY_COMPLETION_MEMBER_BONUS = 10
 const RESET_HOUR = 4
 const RESET_TIME_ZONE = 'Europe/London'
 const MAX_TASK_JSON_LENGTH = 16_384
@@ -39,6 +39,7 @@ interface DailyAdvancementTarget {
 	iconItem: string
 	baseRewardDabloons: number
 	bonusRewardDabloons: number
+	selectedAtUnixMs: number
 }
 
 interface GameplayProtoRoot {
@@ -75,6 +76,10 @@ export class DailiesService {
 			target: null,
 			message: error instanceof Error ? error.message : 'Daily advancement target is unavailable right now.',
 		}))
+		const advancementClaimed = this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey)
+		const advancementCompleted = advancementClaimed || Boolean(
+			advancementTask.target && await this.isAdvancementCompleted(user, periodKey, advancementTask.target),
+		)
 
 		return {
 			resetHour: RESET_HOUR,
@@ -108,11 +113,16 @@ export class DailiesService {
 					emoji: '🏆',
 					name: 'Advancement bonus',
 					rewardDabloons: advancementTask.target?.bonusRewardDabloons ?? 0,
-					claimed: this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey),
-					current: this.hasClaimed(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey) ? 1 : 0,
-					max: -1,
+					claimed: advancementClaimed,
+					current: advancementCompleted ? 1 : 0,
+					max: 1,
 					advancement: advancementTask.target ? {
-						...advancementTask.target,
+						advancementId: advancementTask.target.advancementId,
+						title: advancementTask.target.title,
+						tabTitle: advancementTask.target.tabTitle,
+						iconItem: advancementTask.target.iconItem,
+						baseRewardDabloons: advancementTask.target.baseRewardDabloons,
+						bonusRewardDabloons: advancementTask.target.bonusRewardDabloons,
 						...this.shop.getItemRenderAsset(advancementTask.target.iconItem),
 					} : null,
 					unavailableMessage: advancementTask.target ? undefined : advancementTask.message,
@@ -142,7 +152,7 @@ export class DailiesService {
 		}
 
 		try {
-			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons)
+			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons, 'login')
 
 			if (!result.granted) {
 				this.deleteClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey)
@@ -279,6 +289,92 @@ export class DailiesService {
 		}
 	}
 
+	async refreshForAdmin(userIdInput: string) {
+		const userId = Number(userIdInput)
+		if (!Number.isInteger(userId) || userId < 1) throw new BadRequestException('Select a valid player.')
+
+		const row = this.database.connection.select().from(users).where(eq(users.id, userId)).get()
+		if (!row) throw new NotFoundException('Player not found.')
+
+		const user = {
+			id: row.id,
+			minecraftUsername: row.minecraft_username,
+		}
+		const periodKey = currentDailyPeriodKey()
+		const currentTasks = this.database.connection.select().from(dailyTasks)
+			.where(and(eq(dailyTasks.user_id, userId), eq(dailyTasks.period_key, periodKey))).all()
+		const keptTasks = currentTasks.filter((task) => this.hasClaimed(userId, task.task_id, periodKey))
+		const refreshedSlots = Array.from({ length: GENERATED_TASK_COUNT }, (_, slot) => slot)
+			.filter((slot) => !keptTasks.some((task) => task.slot === slot))
+		const currentAdvancement = this.getAdvancementTarget(userId, periodKey)
+		const advancementCompleted = this.hasClaimed(userId, ADVANCEMENT_BONUS_TASK_ID, periodKey)
+			|| Boolean(currentAdvancement && await this.isAdvancementCompleted(user, periodKey, currentAdvancement))
+		const now = Date.now()
+
+		const advancement = advancementCompleted
+			? null
+			: await this.pickDailyAdvancement(user.minecraftUsername, periodKey, now, currentAdvancement?.advancementId)
+		if (advancement && !advancement.selected) {
+			throw new BadRequestException(advancement.message || 'The Minecraft server could not regenerate the advancement daily.')
+		}
+		if (advancement?.selected && advancement.advancement_id === currentAdvancement?.advancementId) {
+			throw new BadRequestException('The Minecraft server returned the same advancement daily.')
+		}
+
+		const generated = refreshedSlots.length === 0
+			? { generated: true, task_json: [], message: '' }
+			: await this.generateMinecraftTasks(user, periodKey, refreshedSlots.length, now, currentTasks.map((task) => task.task_id))
+		if (!generated.generated || generated.task_json.length !== refreshedSlots.length) {
+			throw new BadRequestException(generated.message || 'The Minecraft server could not regenerate the random dailies.')
+		}
+		const parsed = generated.task_json.map(parseDailyTaskJson)
+		if (new Set([...currentTasks.map((task) => task.task_id), ...parsed.map((task) => task.id)]).size !== currentTasks.length + parsed.length) {
+			throw new BadRequestException('The Minecraft server generated duplicate daily tasks.')
+		}
+
+		this.database.connection.transaction((tx) => {
+			tx.delete(dailyTasks).where(and(eq(dailyTasks.user_id, userId), eq(dailyTasks.period_key, periodKey))).run()
+			for (const task of keptTasks) tx.insert(dailyTasks).values(task).run()
+			for (const [index, task] of parsed.entries()) tx.insert(dailyTasks).values({
+				user_id: userId,
+				period_key: periodKey,
+				slot: refreshedSlots[index]!,
+				task_id: task.id,
+				task_json: JSON.stringify(task),
+				updated_at_unix_ms: now,
+			}).run()
+
+			if (advancement?.selected) {
+				tx.delete(dailyAdvancementTargets).where(and(
+					eq(dailyAdvancementTargets.user_id, userId),
+					eq(dailyAdvancementTargets.period_key, periodKey),
+				)).run()
+				tx.insert(dailyAdvancementTargets).values({
+					user_id: userId,
+					period_key: periodKey,
+					advancement_id: advancement.advancement_id,
+					title: advancement.title,
+					tab_title: advancement.tab_title,
+					icon_item: advancement.icon_item,
+					base_reward_dabloons: advancement.base_reward_dabloons,
+					bonus_reward_dabloons: dailyAdvancementBonus(advancement.base_reward_dabloons),
+					selected_at_unix_ms: now,
+				}).run()
+			}
+		})
+
+		this.taskEvents.next({ userId })
+		return {
+			message: `Regenerated ${parsed.length} random ${parsed.length === 1 ? 'daily' : 'dailies'}${advancementCompleted ? '; kept the completed advancement daily' : ' and the advancement daily'}.`,
+		}
+	}
+
+	notifyAdvancementCompletion(userId: number | null, advancementId: string) {
+		if (!userId) return
+		const target = this.getAdvancementTarget(userId, currentDailyPeriodKey())
+		if (target?.advancementId === advancementId) this.taskEvents.next({ userId })
+	}
+
 	events(userId: number) {
 		return merge(
 			of({ data: { type: 'ready' } }),
@@ -356,7 +452,7 @@ export class DailiesService {
 		}
 
 		try {
-			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons)
+			const result = await this.grantDailyLoginBonus(user.minecraftUsername, periodKey, now, rewardDabloons, 'daily_completion')
 
 			if (!result.granted) {
 				this.deleteClaim(user.id, DAILY_COMPLETION_TASK_ID, periodKey)
@@ -553,10 +649,34 @@ export class DailiesService {
 			iconItem: row.icon_item,
 			baseRewardDabloons: row.base_reward_dabloons,
 			bonusRewardDabloons: dailyAdvancementBonus(row.base_reward_dabloons),
+			selectedAtUnixMs: row.selected_at_unix_ms,
 		}
 	}
 
-	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number, rewardDabloons: number) {
+	private async isAdvancementCompleted(
+		user: Pick<AuthenticatedUser, 'id' | 'minecraftUsername'>,
+		periodKey: string,
+		target: DailyAdvancementTarget,
+	) {
+		const recorded = this.database.connection.select({ id: playerMoneyEvents.id })
+			.from(playerMoneyEvents)
+			.where(and(
+				eq(playerMoneyEvents.user_id, user.id),
+				eq(playerMoneyEvents.source, 'advancement'),
+				gte(playerMoneyEvents.created_at_unix_ms, target.selectedAtUnixMs),
+				or(
+					eq(playerMoneyEvents.id, `advancement:${target.advancementId}`),
+					eq(playerMoneyEvents.id, `advancement:${user.id}:${target.advancementId}`),
+				),
+			)).get()
+		if (recorded) return true
+
+		return this.claimDailyAdvancement(user.minecraftUsername, periodKey, Date.now(), target, true)
+			.then((result) => result.completed)
+			.catch(() => false)
+	}
+
+	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number, rewardDabloons: number, source: string) {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).GrantDailyLoginBonus
 
@@ -570,6 +690,7 @@ export class DailiesService {
 				amount: rewardDabloons,
 				period_key: periodKey,
 				unix_ms: unixMs,
+				source,
 			}, (error: grpc.ServiceError | null, response: { granted: boolean; online: boolean; message: string }) => {
 				if (error) {
 					reject(error)
@@ -581,7 +702,7 @@ export class DailiesService {
 		})
 	}
 
-	private async generateMinecraftTasks(user: AuthenticatedUser, periodKey: string) {
+	private async generateMinecraftTasks(user: Pick<AuthenticatedUser, 'id' | 'minecraftUsername'>, periodKey: string, count = GENERATED_TASK_COUNT, unixMs = Date.now(), excludedTaskIds: string[] = []) {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).GenerateDailyTasks
 
@@ -594,7 +715,9 @@ export class DailiesService {
 				user_id: user.id,
 				minecraft_username: user.minecraftUsername,
 				period_key: periodKey,
-				count: GENERATED_TASK_COUNT,
+				count,
+				unix_ms: unixMs,
+				excluded_task_ids: excludedTaskIds,
 			}, (error: grpc.ServiceError | null, response: { generated: boolean; task_json: string[]; message: string }) => {
 				if (error) {
 					reject(error)
@@ -624,7 +747,7 @@ export class DailiesService {
 		})
 	}
 
-	private async pickDailyAdvancement(minecraftUsername: string, periodKey: string, unixMs: number) {
+	private async pickDailyAdvancement(minecraftUsername: string, periodKey: string, unixMs: number, excludedAdvancementId = '') {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).PickDailyAdvancement
 
@@ -649,6 +772,7 @@ export class DailiesService {
 				minecraft_username: minecraftUsername,
 				period_key: periodKey,
 				unix_ms: unixMs,
+				excluded_advancement_id: excludedAdvancementId,
 			}, (error: grpc.ServiceError | null, response: PickDailyAdvancementResponse) => {
 				if (error) {
 					reject(error)
@@ -664,6 +788,7 @@ export class DailiesService {
 		periodKey: string,
 		unixMs: number,
 		target: DailyAdvancementTarget,
+		checkOnly = false,
 	) {
 		const client = this.getGameplayControlClient()
 		const method = (client as unknown as Record<string, unknown>).ClaimDailyAdvancement
@@ -679,6 +804,7 @@ export class DailiesService {
 				bonus_reward_dabloons: target.bonusRewardDabloons,
 				period_key: periodKey,
 				unix_ms: unixMs,
+				check_only: checkOnly,
 			}, (error: grpc.ServiceError | null, response: { claimed: boolean; online: boolean; completed: boolean; message: string }) => {
 				if (error) {
 					reject(error)
@@ -803,8 +929,11 @@ function rewardForStreak(streak: number) {
 	return LOGIN_BONUS_REWARDS[rewardIndex]!
 }
 
+// Round the total advancement reward to the next 10, with a 10-dabloon daily minimum.
 function dailyAdvancementBonus(baseRewardDabloons: number) {
-	return Math.max(5, Math.min(42, baseRewardDabloons))
+	const bounded = Math.max(5, Math.min(39, baseRewardDabloons));
+	const toNextMultipleOf10 = Math.ceil(bounded / 10) * 10;
+	return Math.max(10, toNextMultipleOf10 - bounded);
 }
 
 function dailyCompletionReward(periodKey: string, isMember: boolean) {

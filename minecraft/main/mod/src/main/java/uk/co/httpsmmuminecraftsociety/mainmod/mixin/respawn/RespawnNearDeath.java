@@ -25,8 +25,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Mixin(ServerPlayer.class)
 public class RespawnNearDeath {
-    private static final int MIN_DISTANCE = 64;
-    private static final int MAX_DISTANCE = 160;
     private static final int MAX_SEARCHES = 16;
     private static final String VOID_DEATH_KEEP_INVENTORY_TAG = "mainmod_void_death_keep_inventory";
 
@@ -108,18 +106,27 @@ public class RespawnNearDeath {
 
     private BlockPos locateCandidate(ServerPlayer player, ServerLevel level) {
         BlockPos deathPos = player.blockPosition();
-        int x = offsetCoordinate(deathPos.getX());
-        int z = offsetCoordinate(deathPos.getZ());
+        double maxDistance = server.getPlayerList().getViewDistance() * 16.0;
+        double minDistance = maxDistance * 0.5;
+        double angle = ThreadLocalRandom.current().nextDouble(Math.TAU);
+        double distance = ThreadLocalRandom.current().nextDouble(minDistance, maxDistance);
+        int x = deathPos.getX() + (int) Math.round(Math.cos(angle) * distance);
+        int z = deathPos.getZ() + (int) Math.round(Math.sin(angle) * distance);
 
         BlockPos found = PlayerSpawnFinder.getSpawnPosInChunk(
                 level,
                 new ChunkPos(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z))
         );
-        if (found == null) {
+        if (found == null || !level.getWorldBorder().isWithinBounds(found)) {
             return null;
         }
 
-        return level.getWorldBorder().isWithinBounds(found) ? found : null;
+        long dx = found.getX() - deathPos.getX();
+        long dz = found.getZ() - deathPos.getZ();
+        double distanceSquared = dx * dx + dz * dz;
+        return distanceSquared >= minDistance * minDistance && distanceSquared <= maxDistance * maxDistance
+                ? found
+                : null;
     }
 
     private boolean hasVoidDeathTag(ServerPlayer player) {
@@ -130,9 +137,4 @@ public class RespawnNearDeath {
         return removed;
     }
 
-    private int offsetCoordinate(int origin) {
-        int distance = ThreadLocalRandom.current().nextInt(MIN_DISTANCE, MAX_DISTANCE);
-        int direction = ThreadLocalRandom.current().nextBoolean() ? 1 : -1;
-        return origin + (distance * direction);
-    }
 }

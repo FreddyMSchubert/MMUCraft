@@ -1,6 +1,8 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.money;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -35,6 +37,15 @@ public final class MoneyHelper {
         }
 
         return balance;
+    }
+
+    public static void SendBalanceMessage(ServerPlayer player, String message) {
+        player.sendSystemMessage(Component.literal("[Dabloons: ")
+                .withStyle(ChatFormatting.GOLD)
+                .append(Component.literal(String.valueOf(GetBalance(player)))
+                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                .append(Component.literal("] ").withStyle(ChatFormatting.GOLD))
+                .append(Component.literal(message).withStyle(ChatFormatting.RESET)));
     }
 
     public static boolean ReduceMoney(ServerPlayer player, int amount) {
@@ -102,7 +113,8 @@ public final class MoneyHelper {
         return wallets;
     }
 
-    private static void addCoins(ServerPlayer player, int amount) {
+    public static List<ItemStack> createCoinStacks(int amount) {
+        List<ItemStack> stacks = new ArrayList<>();
         for (WalletCharm.CoinDef coin : WalletCharm.COINS.stream()
                 .sorted(Comparator.comparingInt(WalletCharm.CoinDef::value).reversed())
                 .toList()) {
@@ -111,13 +123,17 @@ public final class MoneyHelper {
 
             while (count > 0) {
                 int stackSize = Math.min(count, 64);
-                ItemStack stack = FakeItems.createFakeItemStack(coin.id(), stackSize);
-                player.getInventory().add(stack);
-                if (!stack.isEmpty()) {
-                    player.drop(stack, false);
-                }
+                stacks.add(FakeItems.createFakeItemStack(coin.id(), stackSize));
                 count -= stackSize;
             }
+        }
+        return stacks;
+    }
+
+    private static void addCoins(ServerPlayer player, int amount) {
+        for (ItemStack stack : createCoinStacks(amount)) {
+            player.getInventory().add(stack);
+            if (!stack.isEmpty()) player.drop(stack, false);
         }
     }
 }

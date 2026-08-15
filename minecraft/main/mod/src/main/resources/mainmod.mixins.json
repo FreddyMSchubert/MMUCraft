@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
       "ArmorAddToolTipFirstTick",
+      "RefreshCharmOnArmorEquip",
       "decoBlocks.PlaceFakeItemsAsFrames",
       "decoBlocks.NoDecoBlockFrameItemDrops",
       "decoBlocks.RemoveEmptyDecoBlockFrames",
@@ -25,6 +26,7 @@
       "bowTrail.AttachDataToArrow",
       "bowTrail.SpawnParticles",
       "WhitelistMsgModify",
+      "EntityDisplayNameMixin",
       "PlayerDisplayNameMixin",
       "GrindstoneRemoveEnchantmentLock",
       "LibrarianEnchantedBookTradesMixin",
@@ -58,7 +60,6 @@
       "dailies.DailyEffectMixin",
       "dailies.DailyExperienceMixin",
       "dailies.DailyBredAnimalsMixin",
-      "dailies.DailyAnimalFeedingMixin",
       "dailies.DailyCakeMixin",
       "dailies.DailyBrewedPotionMixin",
       "dailies.DailyFishingMixin",

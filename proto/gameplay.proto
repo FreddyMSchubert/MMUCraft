@@ -15,11 +15,13 @@ service GameplayEvents {
   rpc GetClaimsSnapshot(GetClaimsSnapshotRequest) returns (ClaimsSnapshot);
   rpc GetDailyTasksSnapshot(GetDailyTasksSnapshotRequest) returns (DailyTasksSnapshot);
   rpc UpdateDailyTask(UpdateDailyTaskRequest) returns (UpdateDailyTaskResponse);
+  rpc PublishDiscordEvent(PublishDiscordEventRequest) returns (PublishDiscordEventResponse);
 }
 
 service GameplayControl {
   rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
   rpc GrantGiftCodeMoney(GrantGiftCodeMoneyRequest) returns (GrantGiftCodeMoneyResponse);
+  rpc GrantKnowledgeReadMoney(GrantKnowledgeReadMoneyRequest) returns (GrantKnowledgeReadMoneyResponse);
   rpc GenerateDailyTasks(GenerateDailyTasksRequest) returns (GenerateDailyTasksResponse);
   rpc ClaimDailyTask(ClaimDailyTaskRequest) returns (ClaimDailyTaskResponse);
   rpc PickDailyAdvancement(PickDailyAdvancementRequest) returns (PickDailyAdvancementResponse);
@@ -32,6 +34,43 @@ service GameplayControl {
   rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
   rpc GetCharmInventory(GetCharmInventoryRequest) returns (GetCharmInventoryResponse);
   rpc UpgradeCharm(UpgradeCharmRequest) returns (UpgradeCharmResponse);
+  rpc BroadcastDiscordMessage(BroadcastDiscordMessageRequest) returns (BroadcastDiscordMessageResponse);
+  rpc RunServerCommand(RunServerCommandRequest) returns (RunServerCommandResponse);
+}
+
+message PublishDiscordEventRequest {
+  string type = 1;
+  string minecraft_username = 2;
+  string minecraft_uuid = 3;
+  string content = 4;
+  string role = 5;
+  string nickname = 6;
+  string pronouns = 7;
+  string color_hex = 8;
+}
+
+message PublishDiscordEventResponse {
+  bool accepted = 1;
+}
+
+message BroadcastDiscordMessageRequest {
+  string discord_name = 1;
+  string content = 2;
+}
+
+message BroadcastDiscordMessageResponse {
+  bool broadcast = 1;
+}
+
+message RunServerCommandRequest {
+  string command = 1;
+  string discord_user = 2;
+}
+
+message RunServerCommandResponse {
+  bool succeeded = 1;
+  int32 result = 2;
+  string output = 3;
 }
 
 message GetCharmInventoryRequest {
@@ -154,6 +193,18 @@ message GrantGiftCodeMoneyResponse {
   string message = 4;
 }
 
+message GrantKnowledgeReadMoneyRequest {
+  string minecraft_username = 1;
+  int32 amount_dabloons = 2;
+  string message = 3;
+}
+
+message GrantKnowledgeReadMoneyResponse {
+  bool granted = 1;
+  int32 balance_dabloons = 2;
+  string message = 3;
+}
+
 message UnlockNextKnowledgeRequest {
   string minecraft_username = 1;
   string source_item_id = 2;
@@ -254,6 +305,8 @@ message RecordFishCatchResponse {
   bool server_smallest_record = 6;
   string message = 7;
   bool personal_smallest_record = 8;
+  bool announce = 9;
+  bool first_server_catch_announcement = 10;
 }
 
 message GrantDailyLoginBonusRequest {
@@ -261,6 +314,7 @@ message GrantDailyLoginBonusRequest {
   int32 amount = 2;
   string period_key = 3;
   int64 unix_ms = 4;
+  string source = 5;
 }
 
 message GrantDailyLoginBonusResponse {
@@ -300,6 +354,8 @@ message GenerateDailyTasksRequest {
   string minecraft_username = 2;
   string period_key = 3;
   int32 count = 4;
+  int64 unix_ms = 5;
+  repeated string excluded_task_ids = 6;
 }
 
 message GenerateDailyTasksResponse {
@@ -326,6 +382,7 @@ message PickDailyAdvancementRequest {
   string minecraft_username = 1;
   string period_key = 2;
   int64 unix_ms = 3;
+  string excluded_advancement_id = 4;
 }
 
 message PickDailyAdvancementResponse {
@@ -346,6 +403,7 @@ message ClaimDailyAdvancementRequest {
   int32 bonus_reward_dabloons = 3;
   string period_key = 4;
   int64 unix_ms = 5;
+  bool check_only = 6;
 }
 
 message ClaimDailyAdvancementResponse {
@@ -361,6 +419,9 @@ message PurchaseShopItemRequest {
   int32 price_dabloons = 3;
   string delivery_kind = 4;
   int64 unix_ms = 5;
+  string display_name = 6;
+  string item_type = 7;
+  string rarity = 8;
 }
 
 message PurchaseShopItemResponse {

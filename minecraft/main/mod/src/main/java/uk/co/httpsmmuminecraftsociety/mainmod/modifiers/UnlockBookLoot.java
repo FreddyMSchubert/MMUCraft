@@ -11,11 +11,13 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingJumpScares;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GetUnlockAvailabilityResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.UnlockNextKnowledgeResponse;
+import uk.co.httpsmmuminecraftsociety.mainmod.utils.PlayerCooldown;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -25,16 +27,18 @@ import java.util.concurrent.TimeUnit;
 public final class UnlockBookLoot {
     private static final long AVAILABILITY_CACHE_MS = 30_000L;
     private static final long AVAILABILITY_TIMEOUT_MS = 750L;
-    public static final double FISHING_BOOK_CHANCE = 1.0D / 4.5D;
-
-    private static final List<BookDrop> BOOK_DROPS = List.of(
-            new BookDrop("charm-knowledge-book", 33, UnlockAvailabilityType.KNOWLEDGE),
-            new BookDrop("charm-fashion-book", 11, UnlockAvailabilityType.COSMETIC),
-            new BookDrop("charm-magic-book", 16, UnlockAvailabilityType.CHARM),
-            new BookDrop("charm-joke-book", 3, UnlockAvailabilityType.ALWAYS)
-    );
-
+    private static final String CHARM_BOOK_ID = "charm-magic-book";
+    private static final double FISHING_KNOWLEDGE_CHANCE = 1.0D / 4.5D;
+    private static final double FISHING_JOKE_CHANCE = 0.005D;
+    private static final double FISHING_CHARM_MIN_CHANCE = 0.0025D;
+    private static final double FISHING_CHARM_MAX_CHANCE = 0.025D;
+    private static final double FISHING_COSMETIC_MIN_CHANCE = 0.005D;
+    private static final double FISHING_COSMETIC_MAX_CHANCE = 0.0275D;
+    private static final double FISHING_DELIVERY_RATE = 1.0D - FishingJumpScares.CHANCE;
     private static final Map<UUID, CacheEntry> AVAILABILITY_CACHE = new ConcurrentHashMap<>();
+    private static final PlayerCooldown CHARM_DROP_COOLDOWN = new PlayerCooldown(Duration.ofHours(1));
+    private static final PlayerCooldown COSMETIC_DROP_COOLDOWN = new PlayerCooldown(Duration.ofMinutes(30));
+    private static final PlayerCooldown KNOWLEDGE_DROP_COOLDOWN = new PlayerCooldown(Duration.ofMinutes(30));
 
     private UnlockBookLoot() {
     }
@@ -47,20 +51,17 @@ public final class UnlockBookLoot {
         if (!(entity instanceof ServerPlayer player)) {
             return;
         }
-        UnlockAvailability availability = getAvailability(player);
-
         float charmChance;
         float cosmeticsChance;
         float knowledgeChance;
-
         if (tableId.toString().contains("mansion"))
             return; // wayy too many mansion chests, would be too op
 
+        UnlockAvailability availability = getAvailability(player);
+
         boolean isManyChestsStructure = tableId.toString().contains("village") || tableId.toString().contains("end_city");
-        boolean isGoodChest = false;
-        for (ItemStack stack : itemStacks)
-            if (stack.is(ModItemTagProvider.CHARM_DROPPING_CHESTS_HAVE_ITEMS))
-                isGoodChest = true;
+        boolean isGoodChest = itemStacks.stream()
+                .anyMatch(stack -> stack.is(ModItemTagProvider.CHARM_DROPPING_CHESTS_HAVE_ITEMS));
 
         if (isManyChestsStructure) {
             cosmeticsChance = 0.15f;
@@ -77,55 +78,54 @@ public final class UnlockBookLoot {
         }
 
         if (availability.hasCharmsToUnlock() && Math.random() < charmChance)
-            addFakeItem("charm-magic-book", itemStacks);
+            addCharmIfAvailable(player, itemStacks);
         if (availability.hasCosmeticsToUnlock() && Math.random() < cosmeticsChance)
-            addFakeItem("charm-fashion-book", itemStacks);
+            addCosmeticIfAvailable(player, itemStacks);
         if (availability.hasKnowledgeToUnlock() && Math.random() < knowledgeChance)
-            addFakeItem("charm-knowledge-book", itemStacks);
+            addKnowledgeIfAvailable(player, itemStacks);
     }
 
     public static void updateAvailability(ServerPlayer player, UnlockNextKnowledgeResponse response) {
         putAvailability(player, UnlockAvailability.from(response));
     }
 
-    public static List<ItemStack> getAvailableUnlockBooks(ServerPlayer player) {
-        UnlockAvailability availability = getAvailability(player);
-        List<ItemStack> books = new ArrayList<>();
-        BOOK_DROPS.stream()
-                .filter(book -> book.availabilityType() != UnlockAvailabilityType.ALWAYS)
-                .filter(book -> book.isAvailable(availability))
-                .forEach(book -> addFakeItem(book.fakeItemId(), books));
-        return books;
+    public static boolean claimFishingDrop(ServerPlayer player, ItemStack stack) {
+        if (FakeItems.isSpecificFakeItem(stack, CHARM_BOOK_ID))
+            return CHARM_DROP_COOLDOWN.tryStart(player.getUUID());
+        if (FakeItems.isSpecificFakeItem(stack, "charm-fashion-book"))
+            return COSMETIC_DROP_COOLDOWN.tryStart(player.getUUID());
+        if (FakeItems.isSpecificFakeItem(stack, "charm-knowledge-book"))
+            return KNOWLEDGE_DROP_COOLDOWN.tryStart(player.getUUID());
+        return true;
     }
 
-    public static ItemStack rollFishingBook(ServerPlayer player, RandomSource random) {
-        if (random.nextDouble() >= FISHING_BOOK_CHANCE) {
-            return ItemStack.EMPTY;
-        }
-
+    public static ItemStack rollFishingBook(ServerPlayer player, RandomSource random, double luck) {
         UnlockAvailability availability = getAvailability(player);
-        List<BookDrop> candidates = BOOK_DROPS.stream()
-                // The aggressive fishing shortcut is for knowledge; other books retain their normal sources.
-                .filter(book -> book.availabilityType() == UnlockAvailabilityType.KNOWLEDGE)
-                .filter(book -> book.isAvailable(availability))
-                .toList();
-        if (candidates.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
+        double progress = Math.max(0.0D, Math.min(11.0D, luck)) / 11.0D;
+        double cosmeticChance = FISHING_COSMETIC_MIN_CHANCE
+                + (FISHING_COSMETIC_MAX_CHANCE - FISHING_COSMETIC_MIN_CHANCE) * progress;
+        double charmChance = FISHING_CHARM_MIN_CHANCE
+                + (FISHING_CHARM_MAX_CHANCE - FISHING_CHARM_MIN_CHANCE) * progress;
+        double roll = random.nextDouble();
+        double cursor = FISHING_KNOWLEDGE_CHANCE;
 
-        int totalWeight = candidates.stream().mapToInt(BookDrop::weight).sum();
-        int remainingWeight = random.nextInt(totalWeight);
-        for (BookDrop book : candidates) {
-            remainingWeight -= book.weight();
-            if (remainingWeight < 0) {
-                FakeItem fakeItem = FakeItems.ID_MAP.get(book.fakeItemId());
-                if (fakeItem == null) {
-                    MainMod.LOGGER.warn("Cannot add fishing unlock-book drop because fake item {} is not loaded", book.fakeItemId());
-                    return ItemStack.EMPTY;
-                }
-                return fakeItem.createItemStack();
-            }
-        }
+        if (roll < cursor) return availability.hasKnowledgeToUnlock() && KNOWLEDGE_DROP_COOLDOWN.isReady(player.getUUID())
+                ? createFishingBook("charm-knowledge-book") : ItemStack.EMPTY;
+        cursor += cosmeticChance / FISHING_DELIVERY_RATE;
+        if (roll < cursor) return availability.hasCosmeticsToUnlock() && COSMETIC_DROP_COOLDOWN.isReady(player.getUUID())
+                ? createFishingBook("charm-fashion-book") : ItemStack.EMPTY;
+        cursor += charmChance / FISHING_DELIVERY_RATE;
+        if (roll < cursor) return availability.hasCharmsToUnlock() && CHARM_DROP_COOLDOWN.isReady(player.getUUID())
+                ? createFishingBook(CHARM_BOOK_ID) : ItemStack.EMPTY;
+        cursor += FISHING_JOKE_CHANCE / FISHING_DELIVERY_RATE;
+        if (roll < cursor) return createFishingBook("charm-joke-book");
+        return ItemStack.EMPTY;
+    }
+
+    private static ItemStack createFishingBook(String fakeItemId) {
+        FakeItem fakeItem = FakeItems.ID_MAP.get(fakeItemId);
+        if (fakeItem != null) return fakeItem.createItemStack();
+        MainMod.LOGGER.warn("Cannot add fishing unlock-book drop because fake item {} is not loaded", fakeItemId);
         return ItemStack.EMPTY;
     }
 
@@ -134,8 +134,7 @@ public final class UnlockBookLoot {
             return false;
         }
 
-        String path = tableId.getPath();
-        return !path.startsWith("entities/") && !path.startsWith("blocks/");
+        return tableId.getPath().startsWith("chests/");
     }
 
     private static UnlockAvailability getAvailability(ServerPlayer player) {
@@ -174,31 +173,41 @@ public final class UnlockBookLoot {
         AVAILABILITY_CACHE.put(player.getUUID(), new CacheEntry(availability, System.currentTimeMillis()));
     }
 
-    private static void addFakeItem(String fakeItemId, List<ItemStack> itemStacks) {
+    private static boolean addFakeItem(String fakeItemId, List<ItemStack> itemStacks) {
         FakeItem fakeItem = FakeItems.ID_MAP.get(fakeItemId);
         if (fakeItem == null) {
             MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", fakeItemId);
-            return;
+            return false;
         }
 
         itemStacks.add(fakeItem.createItemStack());
+        return true;
     }
 
-    private enum UnlockAvailabilityType {
-        KNOWLEDGE,
-        COSMETIC,
-        CHARM,
-        ALWAYS
+    private static void addCharmIfAvailable(ServerPlayer player, List<ItemStack> itemStacks) {
+        FakeItem charmBook = FakeItems.ID_MAP.get(CHARM_BOOK_ID);
+        if (charmBook == null) {
+            MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", CHARM_BOOK_ID);
+        } else if (CHARM_DROP_COOLDOWN.tryStart(player.getUUID())) {
+            itemStacks.add(charmBook.createItemStack());
+        }
     }
 
-    private record BookDrop(String fakeItemId, int weight, UnlockAvailabilityType availabilityType) {
-        private boolean isAvailable(UnlockAvailability availability) {
-            return switch (availabilityType) {
-                case KNOWLEDGE -> availability.hasKnowledgeToUnlock();
-                case COSMETIC -> availability.hasCosmeticsToUnlock();
-                case CHARM -> availability.hasCharmsToUnlock();
-                case ALWAYS -> true;
-            };
+    private static void addCosmeticIfAvailable(ServerPlayer player, List<ItemStack> itemStacks) {
+        FakeItem cosmeticBook = FakeItems.ID_MAP.get("charm-fashion-book");
+        if (cosmeticBook == null) {
+            MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", "charm-fashion-book");
+        } else if (COSMETIC_DROP_COOLDOWN.tryStart(player.getUUID())) {
+            itemStacks.add(cosmeticBook.createItemStack());
+        }
+    }
+
+    private static void addKnowledgeIfAvailable(ServerPlayer player, List<ItemStack> itemStacks) {
+        FakeItem knowledgeBook = FakeItems.ID_MAP.get("charm-knowledge-book");
+        if (knowledgeBook == null) {
+            MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", "charm-knowledge-book");
+        } else if (KNOWLEDGE_DROP_COOLDOWN.tryStart(player.getUUID())) {
+            itemStacks.add(knowledgeBook.createItemStack());
         }
     }
 

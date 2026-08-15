@@ -3,6 +3,7 @@ set -eu
 
 tag=${1:-}
 image_prefix=${2:-}
+warning_minutes=${3:-3}
 
 case "$tag" in
 	''|*[!A-Za-z0-9_.-]*) echo "Invalid image tag: $tag" >&2; exit 2 ;;
@@ -15,6 +16,10 @@ case "$image_prefix" in
 	*[!a-z0-9./_-]*) echo "Invalid GHCR image prefix: $image_prefix" >&2; exit 2 ;;
 esac
 [ "${#tag}" -le 128 ] || { echo "Image tag is too long" >&2; exit 2; }
+case "$warning_minutes" in
+	0|[1-9]|[1-5][0-9]|60) ;;
+	*) echo "Restart warning must be a whole number from 0 to 60 minutes" >&2; exit 2 ;;
+esac
 
 if [ ! -f .env ]; then
 	echo "Missing $(pwd)/.env; copy .env.example and fill it first." >&2
@@ -86,6 +91,12 @@ for key in resource-pack-id resource-pack-sha1; do
 done
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
 chmod 664 "$server_properties"
+
+if [ "$warning_minutes" -gt 0 ] && dc ps --status running --services | grep -qx minecraft; then
+	dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
+		"say Server will be restarted in $warning_minutes minutes. This will not take long, roughly 3 minutes, 5 at max, otherwise something is wrong. Please be careful, don't go underwater etc. See you soon! :)"
+	sleep "$((warning_minutes * 60))"
+fi
 
 dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
 

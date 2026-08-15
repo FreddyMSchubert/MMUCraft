@@ -8,9 +8,9 @@
 		"Traditional style sun hat"
 	],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 50,
 		"description": "Unlock the Sun Hat cosmetic.",
-		"unlockWeight": 100,
+		"unlockWeight": 10000,
 		"unlockMessage": "Unlocked cosmetic: Sun Hat."
 	},
 	"equippableCosmetic": {},

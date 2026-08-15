@@ -2,11 +2,11 @@
 	"title": "Spartan Helmet",
 	"id": "cosmetic-spartan-helmet",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "legendary",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 35,
+	"priceDabloons": 150,
 		"description": "Unlock the Spartan Helmet cosmetic.",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Spartan Helmet."

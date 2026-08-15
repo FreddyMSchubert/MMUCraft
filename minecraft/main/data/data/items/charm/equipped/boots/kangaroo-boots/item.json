@@ -1,11 +1,11 @@
 {
-	"title": "Sulfur Kangaroo Boots Charm",
+	"title": "Cinnabar Kangaroo Boots Charm",
 	"id": "charm-kangaroo-boots",
 	"modelType": "charm",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Boing."
+		"Boioioing."
 	],
 	"shopPurchasable": {
 		"priceDabloons": 100,
@@ -28,12 +28,14 @@
 			{
 				"level": 2,
 				"abilityStatusCurrent": "Adds springy bounciness while equipped.",
-				"abilityStatusRelative": "Increases bounciness while equipped.",
-				"dabloons": 100,
+				"abilityStatusRelative": "Increases bounciness more while equipped.",
+				"dabloons": 20,
 				"upgradeIngredients": [
 					"minecraft:rabbit_foot",
-					"minecraft:sulfur",
-					"minecraft:leather_boots"
+					"minecraft:rabbit_hide",
+					"minecraft:slime_ball",
+					"minecraft:cinnabar_slab",
+					"minecraft:wind_charge"
 				]
 			},
 			{
@@ -45,8 +47,10 @@
 					"minecraft:sulfur_cube_bucket",
 					"minecraft:slime_block",
 					"minecraft:honey_block",
-					"minecraft:golden_boots",
-					"minecraft:sulfur_slab"
+					"minecraft:cinnabar",
+					"minecraft:polished_cinnabar",
+					"minecraft:wind_charge",
+					"minecraft:golden_boots"
 				]
 			},
 			{
@@ -57,8 +61,7 @@
 				"upgradeIngredients": [
 					"minecraft:sulfur_cube_bucket",
 					"minecraft:slime_block",
-					"minecraft:sulfur_bricks",
-					"minecraft:polished_sulfur",
+					"minecraft:cinnabar_bricks",
 					"minecraft:potent_sulfur",
 					"minecraft:wind_charge",
 					"minecraft:wind_charge",
@@ -77,7 +80,7 @@
 					"minecraft:sulfur_cube_bucket",
 					"minecraft:slime_block",
 					"minecraft:honey_block",
-					"minecraft:chiseled_sulfur",
+					"minecraft:chiseled_cinnabar",
 					"minecraft:polished_cinnabar",
 					"minecraft:wind_charge",
 					"minecraft:netherite_boots",

@@ -4,6 +4,9 @@
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"If lost you can buy a new one for 1 dabloon",
+		"Made in China"
+	],
 	"equippableCosmetic": {}
 }

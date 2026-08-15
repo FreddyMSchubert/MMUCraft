@@ -151,7 +151,7 @@ export function WordleGame({ dateKey, background, splash }: { dateKey: string; b
 		if (!canCopy) return
 		const score = won ? guesses.length : 'X'
 		const rows = guesses.map((guess) => guess.result.map((result) => SHARE_TILES[result]).join(''))
-		const text = [`MMU Minecraft Society Wordle ${formatDisplayDate(puzzle!.dateKey)} ${score}/${puzzle!.maxGuesses} (➡️ https://mmuminecraftsociety.co.uk/)`, ...rows].join('\n')
+		const text = [`MMU Minecraft Society Wordle ${formatDisplayDate(puzzle!.dateKey)} ${score}/${puzzle!.maxGuesses} (➡️ https://mmuminecraftsociety.co.uk/wordle/)`, ...rows].join('\n')
 		try {
 			await copyText(text)
 			setStatus('Playthrough copied.')

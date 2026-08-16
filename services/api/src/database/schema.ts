@@ -80,6 +80,7 @@ export const playerProfiles = sqliteTable('player_profiles', {
 	base_z: integer('base_z'),
 	bio: text('bio').notNull().default(''),
 	color_hex: text('color_hex'),
+	show_death_counter: integer('show_death_counter').notNull().default(1),
 	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
 })
 

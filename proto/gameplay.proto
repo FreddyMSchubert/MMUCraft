@@ -32,6 +32,7 @@ service GameplayControl {
   rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
   rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
   rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
+  rpc ApplyPlayerSettings(ApplyPlayerSettingsRequest) returns (ApplyPlayerSettingsResponse);
   rpc GetCharmInventory(GetCharmInventoryRequest) returns (GetCharmInventoryResponse);
   rpc UpgradeCharm(UpgradeCharmRequest) returns (UpgradeCharmResponse);
   rpc BroadcastDiscordMessage(BroadcastDiscordMessageRequest) returns (BroadcastDiscordMessageResponse);
@@ -179,6 +180,15 @@ message ApplyPlayerColorResponse {
   bool applied = 1;
 }
 
+message ApplyPlayerSettingsRequest {
+  string minecraft_uuid = 1;
+  bool show_death_counter = 2;
+}
+
+message ApplyPlayerSettingsResponse {
+  bool applied = 1;
+}
+
 message GrantGiftCodeMoneyRequest {
   string minecraft_username = 1;
   int32 amount_dabloons = 2;
@@ -267,6 +277,7 @@ message SyncPlayerStatsResponse {
   string pronouns = 7;
   bool is_external = 8;
   string color_hex = 9;
+  optional bool show_death_counter = 10;
 }
 
 message RecordMoneyEventRequest {

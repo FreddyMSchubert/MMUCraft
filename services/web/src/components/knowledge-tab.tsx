@@ -285,7 +285,7 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 					<div className="knowledgeLocked" role="status">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
 						<div>
-							<h4>You haven't unlocked this knowledge book yet</h4>
+							<h4>You haven&apos;t unlocked this knowledge book yet</h4>
 							<p>You can get knowledge books by finding them in chests, buying them in the <Link href="/play/shop/charm-knowledge-book">shop</Link>, or fishing them up.</p>
 						</div>
 					</div>

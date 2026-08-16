@@ -51,12 +51,18 @@ interface PlayerProfile {
 	color: string
 	defaultColor: string
 	customColor: string | null
+	showDeathCounter: boolean
 	updatedAtUnixMs: number
 }
 
 interface GameplayControlClient extends grpc.Client {
 	ApplyPlayerColor(
 		request: { minecraft_uuid: string; color_hex: string },
+		options: grpc.CallOptions,
+		callback: (error: grpc.ServiceError | null, response: { applied: boolean }) => void,
+	): void
+	ApplyPlayerSettings(
+		request: { minecraft_uuid: string; show_death_counter: boolean },
 		options: grpc.CallOptions,
 		callback: (error: grpc.ServiceError | null, response: { applied: boolean }) => void,
 	): void
@@ -348,6 +354,35 @@ export class PlayersService {
 		return await this.updateProfile(user, String(user.id), input)
 	}
 
+	getOwnSettings(user: AuthenticatedUser) {
+		return { showDeathCounter: this.getProfile(user.id).showDeathCounter }
+	}
+
+	async updateOwnSettings(user: AuthenticatedUser, input: Record<string, unknown>) {
+		if (typeof input.showDeathCounter !== 'boolean') {
+			throw new BadRequestException('Show death counter must be true or false')
+		}
+
+		const now = Date.now()
+		const values = {
+			user_id: user.id,
+			show_death_counter: input.showDeathCounter ? 1 : 0,
+			updated_at_unix_ms: now,
+		}
+		this.database.connection.insert(playerProfiles).values(values)
+			.onConflictDoUpdate({ target: playerProfiles.user_id, set: values })
+			.run()
+
+		const minecraftUuid = this.findUserById(user.id)?.minecraft_uuid
+		if (minecraftUuid) {
+			await this.applyPlayerSettings(minecraftUuid, input.showDeathCounter).catch((error) => {
+				this.logger.warn(`Could not immediately synchronize player settings to Minecraft: ${String(error)}`)
+			})
+		}
+
+		return { showDeathCounter: input.showDeathCounter }
+	}
+
 	async updateProfile(viewer: AuthenticatedUser, userIdInput: string, input: Record<string, unknown>) {
 		const userId = Number(userIdInput)
 		if (!Number.isInteger(userId) || userId <= 0) {
@@ -411,6 +446,7 @@ export class PlayersService {
 				nickname: '',
 				pronouns: '',
 				color: effectivePlayerColor(minecraftUuidInput),
+				showDeathCounter: true,
 				message: 'No website account is linked to this Minecraft username yet.',
 			}
 		}
@@ -450,6 +486,7 @@ export class PlayersService {
 			nickname: profile.preferredName.slice(0, PROFILE_TEXT_LIMITS.preferredName),
 			pronouns: profile.pronouns.slice(0, PROFILE_TEXT_LIMITS.pronouns),
 			color: profile.color,
+			showDeathCounter: profile.showDeathCounter,
 			message: 'Stats synced.',
 		}
 	}
@@ -581,6 +618,7 @@ export class PlayersService {
 				color: effectivePlayerColor(minecraftUuid),
 				defaultColor: effectivePlayerColor(minecraftUuid),
 				customColor: null,
+				showDeathCounter: true,
 				updatedAtUnixMs: 0,
 			}
 		}
@@ -599,6 +637,7 @@ export class PlayersService {
 			color: effectivePlayerColor(minecraftUuid, row.color_hex),
 			defaultColor: effectivePlayerColor(minecraftUuid),
 			customColor: row.color_hex,
+			showDeathCounter: row.show_death_counter === 1,
 			updatedAtUnixMs: row.updated_at_unix_ms,
 		}
 	}
@@ -717,6 +756,7 @@ export class PlayersService {
 			color: '',
 			defaultColor: '',
 			customColor: normalizeOptionalColor(input.color),
+			showDeathCounter: true,
 			updatedAtUnixMs: Date.now(),
 		}
 	}
@@ -727,6 +767,17 @@ export class PlayersService {
 			client.ApplyPlayerColor({ minecraft_uuid: minecraftUuid, color_hex: color }, { deadline: Date.now() + 10_000 }, (error, response) => {
 				if (error) reject(error)
 				else if (!response.applied) reject(new Error('Minecraft server refused the player color'))
+				else resolve()
+			})
+		})
+	}
+
+	private applyPlayerSettings(minecraftUuid: string, showDeathCounter: boolean) {
+		const client = this.getGameplayControlClient()
+		return new Promise<void>((resolve, reject) => {
+			client.ApplyPlayerSettings({ minecraft_uuid: minecraftUuid, show_death_counter: showDeathCounter }, { deadline: Date.now() + 10_000 }, (error, response) => {
+				if (error) reject(error)
+				else if (!response.applied) reject(new Error('Minecraft server refused the player settings'))
 				else resolve()
 			})
 		})

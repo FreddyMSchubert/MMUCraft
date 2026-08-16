@@ -101,17 +101,37 @@ function copyLegacyRows(
 
 		const profileRows = readOptional(() => readWithFallback(
 			() => legacy.select().from(playerProfiles).all(),
-			() => legacy.select({
-				user_id: playerProfiles.user_id,
-				preferred_name: playerProfiles.preferred_name,
-				course_year: playerProfiles.course_year,
-				discord_username: playerProfiles.discord_username,
-				base_x: playerProfiles.base_x,
-				base_y: playerProfiles.base_y,
-				base_z: playerProfiles.base_z,
-				bio: playerProfiles.bio,
-				updated_at_unix_ms: playerProfiles.updated_at_unix_ms,
-			}).from(playerProfiles).all().map((row) => ({ ...row, pronouns: '' })),
+			() => readWithFallback(
+				() => legacy.select({
+					user_id: playerProfiles.user_id,
+					preferred_name: playerProfiles.preferred_name,
+					pronouns: playerProfiles.pronouns,
+					course_year: playerProfiles.course_year,
+					discord_username: playerProfiles.discord_username,
+					base_x: playerProfiles.base_x,
+					base_y: playerProfiles.base_y,
+					base_z: playerProfiles.base_z,
+					bio: playerProfiles.bio,
+					color_hex: playerProfiles.color_hex,
+					updated_at_unix_ms: playerProfiles.updated_at_unix_ms,
+				}).from(playerProfiles).all().map((row) => ({ ...row, show_death_counter: 1 })),
+				() => legacy.select({
+					user_id: playerProfiles.user_id,
+					preferred_name: playerProfiles.preferred_name,
+					course_year: playerProfiles.course_year,
+					discord_username: playerProfiles.discord_username,
+					base_x: playerProfiles.base_x,
+					base_y: playerProfiles.base_y,
+					base_z: playerProfiles.base_z,
+					bio: playerProfiles.bio,
+					updated_at_unix_ms: playerProfiles.updated_at_unix_ms,
+				}).from(playerProfiles).all().map((row) => ({
+					...row,
+					pronouns: '',
+					color_hex: null,
+					show_death_counter: 1,
+				})),
+			),
 		))
 
 		const giftRows = readOptional(() => readWithFallback(

@@ -191,6 +191,16 @@ public final class PlayerStatsSync {
         updateTeamColor(player, color);
     }
 
+    public static void applyShowDeathCounter(ServerPlayer player, boolean showDeathCounter) {
+        SyncPlayerStatsResponse presentation = presentationByPlayer.get(player.getUUID());
+        if (presentation == null) return;
+        presentationByPlayer.put(player.getUUID(), presentation.toBuilder()
+                .setShowDeathCounter(showDeathCounter)
+                .build());
+        renderedProfileByPlayer.remove(player.getUUID());
+        updateBelowName(player);
+    }
+
     private static int parseColor(String color) {
         if (color.length() != 7 || color.charAt(0) != '#') return 0xE6E6E6;
         try {
@@ -268,7 +278,9 @@ public final class PlayerStatsSync {
         String nickname = presentation.getNickname().trim();
         String pronouns = presentation.getPronouns().trim();
         String prefix = nickname.isEmpty() ? pronouns : pronouns.isEmpty() ? nickname : nickname + " - " + pronouns;
-        String text = (prefix.isEmpty() ? "" : prefix + " - ") + dangerCount + "☠";
+        boolean showDeathCounter = !presentation.hasShowDeathCounter() || presentation.getShowDeathCounter();
+        String dangerText = showDeathCounter ? dangerCount + "☠" : "";
+        String text = prefix + (prefix.isEmpty() || dangerText.isEmpty() ? "" : " - ") + dangerText;
         if (text.equals(renderedProfileByPlayer.put(player.getUUID(), text))) return;
 
         ServerScoreboard scoreboard = player.level().getServer().getScoreboard();

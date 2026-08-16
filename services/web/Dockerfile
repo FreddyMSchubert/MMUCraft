@@ -17,8 +17,6 @@ ENV NODE_ENV=development \
     PORT=3000
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json tsconfig.json next-env.d.ts next.config.ts eslint.config.mjs ./
-COPY knowledge-recipe.schema.json ./
-COPY scripts/validate-knowledge-recipes.mjs ./scripts/
 COPY public ./public
 COPY src ./src
 EXPOSE 3000
@@ -28,8 +26,6 @@ FROM base AS builder
 ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json tsconfig.json next-env.d.ts next.config.ts eslint.config.mjs ./
-COPY knowledge-recipe.schema.json ./
-COPY scripts/validate-knowledge-recipes.mjs ./scripts/
 COPY public ./public
 COPY src ./src
 RUN npm run check

@@ -13,34 +13,13 @@ Sculk Phials store exactly 30 experience levels.
 
 Sculk Phials can either be found in ancient city chests, or crafted like this:
 
-```recipe
-{
-  "type": "shaped",
-  "inputs": [
-    { "pos": "TM", "name": "Echo Shard", "asset": "minecraft:echo_shard", "wikiUrl": "https://minecraft.wiki/w/Echo_Shard" },
-    { "pos": "ML", "name": "Echo Shard", "asset": "minecraft:echo_shard", "wikiUrl": "https://minecraft.wiki/w/Echo_Shard" },
-    { "pos": "M", "name": "Bottle o' Enchanting", "asset": "minecraft:experience_bottle", "wikiUrl": "https://minecraft.wiki/w/Bottle_o%27_Enchanting" },
-    { "pos": "MR", "name": "Echo Shard", "asset": "minecraft:echo_shard", "wikiUrl": "https://minecraft.wiki/w/Echo_Shard" },
-    { "pos": "BM", "name": "Echo Shard", "asset": "minecraft:echo_shard", "wikiUrl": "https://minecraft.wiki/w/Echo_Shard" }
-  ],
-  "output": { "name": "Sculk Phial", "asset": "mainmod:charm-sculk-phial" }
-}
-```
+![Sculk Phial Crafting Recipe](/assets/knowledge/items/sculk_phial/recipe.png)
 
 ## How to use the sculk phial
 
 Right click while its in your hand to suck out some experience. Use the following recipe to extract the experience out of the bottle:
 
-```recipe
-{
-  "type": "shapeless",
-  "inputs": [
-    { "pos": "M", "name": "Filled Sculk Phial", "asset": "mainmod:charm-sculk-phial" },
-    { "pos": "MR", "name": "Glass Bottle", "asset": "minecraft:glass_bottle", "wikiUrl": "https://minecraft.wiki/w/Glass_Bottle" }
-  ],
-  "output": { "name": "Bottle o' Enchanting", "tooltip": "The bottle stores all XP from the phial. The empty phial remains in the grid.", "asset": "minecraft:experience_bottle", "wikiUrl": "https://minecraft.wiki/w/Bottle_o%27_Enchanting" }
-}
-```
+![Sculk Phial XP Extraction Crafting Recipe](/assets/knowledge/items/sculk_phial/recipe_extract.png)
 
 You can turn a sculk phial's XP into a bottle o' enchanting even if the sculk phial isn't full to the brim.
 

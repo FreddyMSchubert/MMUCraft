@@ -73,22 +73,4 @@ Enchanted books can be combined up to the [Enderite](/play/knowledge/enderite) m
 | Unbreaking | Open an End City treasure chest (25%) | 3 | 5 |
 | Wind Burst | Open any Trial Chamber reward vault (25%) | 3 | 3 |
 
-<sup>1</sup> **Fortune recipe:**
-
-```recipe
-{
-  "type": "shapeless",
-  "inputs": [
-    { "pos": "TL", "name": "Block of Coal", "asset": "minecraft:coal_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Coal" },
-    { "pos": "TM", "name": "Block of Copper", "asset": "minecraft:copper_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Copper" },
-    { "pos": "TR", "name": "Block of Emerald", "asset": "minecraft:emerald_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Emerald" },
-    { "pos": "ML", "name": "Block of Gold", "asset": "minecraft:gold_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Gold" },
-    { "pos": "M", "name": "Block of Iron", "asset": "minecraft:iron_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Iron" },
-    { "pos": "MR", "name": "Block of Lapis Lazuli", "asset": "minecraft:lapis_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Lapis_Lazuli" },
-    { "pos": "BL", "name": "Block of Diamond", "asset": "minecraft:diamond_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Diamond" },
-    { "pos": "BM", "name": "Block of Quartz", "asset": "minecraft:quartz_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Quartz" },
-    { "pos": "BR", "name": "Block of Redstone", "asset": "minecraft:redstone_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Redstone" }
-  ],
-  "output": { "name": "Fortune I Enchanted Book", "asset": "minecraft:enchanted_book" }
-}
-```
+<sup>1</sup> **Fortune recipe:** Shapelessly combine one block each of coal, copper, emerald, gold, iron, lapis lazuli, diamond, quartz, and redstone.

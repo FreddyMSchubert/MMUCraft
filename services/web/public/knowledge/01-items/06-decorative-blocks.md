@@ -17,7 +17,7 @@ Show the complete recipe grid, appearance, placement surfaces, and any interacti
 
 ## Shop decorations
 
-Explain how players unlock or buy the Book Stack, Butterflies Flower, Candle, Cardboard Box, Cheese Hat, Fishbowl, Flying Saucer, Microwave, Plunger Hat, and Woodpecker. Identify decorations that can also be equipped as cosmetics.
+Explain how players unlock or buy the Book Stack, Butterflies Flower, Candle, Cardboard Box, Cheese Hat, Fishbowl, Flying Saucer, Microwave, Plunger Hat, and Woodpecker. Identify decorations that can also be equipped as [cosmetics](/play/knowledge/cosmetics).
 
 ## Placement reference
 

@@ -46,12 +46,7 @@ public class CharmorManager
             armorTypeCharmSlots = 3;
         }
 
-        int slotCount = 1 + (hasCharmBoost ? armorTypeCharmSlots : 0);
-        if (isEnderite(stack)) {
-            slotCount += 2;
-        }
-
-        return slotCount;
+        return 1 + (hasCharmBoost ? armorTypeCharmSlots : 0);
     }
     public static boolean canEquipMoreCharms(ItemStack stack) {
         return getStoredArmorCharms(stack).size() < calcCharmSlotCount(stack);

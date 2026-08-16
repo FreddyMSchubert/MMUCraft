@@ -1,0 +1,17 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " RW",
+    " SR",
+    "S  "
+  ],
+  "key": {
+    "S": "mainmod:trident-shaft",
+    "W": "minecraft:white_wool",
+    "R": "minecraft:red_wool"
+  },
+  "result": {
+    "stack": "mainmod:charm-umbrella-staff",
+    "count": 1
+  }
+}

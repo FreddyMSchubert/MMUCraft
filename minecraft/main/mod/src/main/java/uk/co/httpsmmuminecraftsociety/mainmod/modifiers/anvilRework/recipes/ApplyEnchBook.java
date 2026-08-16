@@ -39,10 +39,15 @@ public final class ApplyEnchBook implements AnvilRecipe
 
         CharmorManager.updateArmorTooltip(result);
 
+        ItemStack rightRemainder = ItemStack.EMPTY;
+        if (!right.is(Items.BOOK) && !right.is(Items.ENCHANTED_BOOK)) {
+            rightRemainder = EnchantmentLock.removeAllEnchantmentsAndUnlock(right.copy());
+        }
+
         return new AnvilLogic.Outcome(
                 merge.cost(),
                 ItemStack.EMPTY,
-                ItemStack.EMPTY,
+                rightRemainder,
                 result
         );
     }

@@ -13,8 +13,8 @@ Show the changed recipes for Eyes of Ender, End Crystals, and Ender Chests. Make
 
 ## Other changed recipes
 
-Show the changed Jukebox and Powered Rail recipes and the added Trident recipe. List how players obtain Trident Shafts and Trident Prongs. Do not publish the Trident instructions until both components have implemented sources. Confirm the copper-based Powered Rail recipe is implemented before documenting it as available.
+Show the changed Jukebox and Powered Rail recipes and the added Trident recipe. Link the Trident details to [Utility Staves](/play/knowledge/utility-staves). List how players obtain Trident Shafts and Trident Prongs. Do not publish the Trident instructions until both components have implemented sources. Confirm the copper-based Powered Rail recipe is implemented before documenting it as available.
 
 ## Item repair
 
-State that combining damaged items in a crafting grid is disabled. Refer players to Enchanting & Anvils for the replacement repair system.
+State that combining damaged items in a crafting grid is disabled. Refer players to [Enchanting & Anvils](/play/knowledge/enchanting-and-anvils) for the replacement repair system.

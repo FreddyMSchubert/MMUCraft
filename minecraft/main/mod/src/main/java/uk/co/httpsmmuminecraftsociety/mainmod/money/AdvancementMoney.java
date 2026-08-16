@@ -155,7 +155,6 @@ public final class AdvancementMoney {
         }
         return displayInfo.getDescription()
                 .copy()
-                .append(Component.literal("\n\nReward calculation").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
                 .append(Component.literal("\nBase reward: " + reward.baseReward() + " dabloons").withStyle(ChatFormatting.GRAY))
                 .append(multiplierLine("Sunday bonus", reward.isSunday()))
                 .append(multiplierLine("Member bonus", reward.isMember()))

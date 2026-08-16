@@ -11,8 +11,13 @@ The currency used on this server is called dabloons. They come in the forms of a
 
 ![Some of the lower-value coin textures](/assets/knowledge/basics/money/coins.png)
 
-- To avoid the annoyance of having a bunch of coins clogging up your inventory, it is recommended you use a wallet. (See the seperate knowledge book on wallets)
-- To avoid the annoyance of losing your wallet upon death, it is recommended that you enchant it with Soulbound.
+:::tip
+To avoid coins clogging up your inventory, use a [wallet](/play/knowledge/wallets).
+:::
+
+:::tip
+To avoid losing your wallet when you die, enchant it with [Soulbound](/play/knowledge/soulbound).
+:::
 
 ## Using the dabloons
 
@@ -40,5 +45,5 @@ If you find a bug and report it, we may also reward you some dabloons - though t
 ## Spending dabloons
 
 - Buying claims costs money, and is critical to protecting your belongings.
-- Buying items from the shop costs money, you can buy powerful magical artifacts, cosmetics, and much more.
+- Buying items from the shop costs money. You can buy powerful magical artifacts, [cosmetics](/play/knowledge/cosmetics), and much more.
 - Trading

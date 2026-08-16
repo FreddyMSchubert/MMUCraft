@@ -5,7 +5,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { and, eq } from 'drizzle-orm'
 import { AuthenticatedUser } from '../../auth/auth.service'
-import { DatabaseService, shopUnlocks } from '../../database/database.service'
+import { DatabaseService, shopUnlocks, users } from '../../database/database.service'
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
 import { KnowledgeService } from '../knowledge/knowledge.service'
@@ -17,6 +17,11 @@ const DEFAULT_ITEM_ROOTS = [
 ]
 
 const SHOP_ASSET_REVISION = `${Date.now().toString(36)}-${randomInt(0x100000000).toString(36)}`
+const BRITISH_MONTH_AND_DAY = new Intl.DateTimeFormat('en-GB', {
+	timeZone: 'Europe/London',
+	month: '2-digit',
+	day: '2-digit',
+})
 const DAILY_DEAL_MESSAGES = [
 	"What a steal!",
 	"Limited time offer",
@@ -214,6 +219,7 @@ export class ShopService {
 		const unlockedIds = this.getUnlockedItemIds(user.id)
 		const availability = this.getUnlockAvailabilityForUser(user.id)
 		const dailyDealIds = this.getDailyDealIds(items)
+		const signupAnniversary = this.isSignupAnniversary(user.id)
 		const visibleItems = items.filter((item) => this.isVisibleInShop(item, unlockedIds))
 
 		return {
@@ -221,8 +227,9 @@ export class ShopService {
 			dealDate: this.getDailyDealDate(),
 			shoppingSunday: this.isShoppingSunday(),
 			items: visibleItems.map((item) => {
-				const isDailyDeal = dailyDealIds.has(item.id)
-				const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+				const dailyDiscountPercent = dailyDealIds.has(item.id) ? this.getDailyDiscountPercent(item.id) : 0
+				const discountPercent = shopDiscountPercent(item.id, signupAnniversary, dailyDiscountPercent)
+				const isDailyDeal = discountPercent > 0
 				return {
 					id: item.id,
 					title: item.title,
@@ -273,7 +280,8 @@ export class ShopService {
 
 		const catalogItems = this.loadCatalog().items
 		const isDailyDeal = this.getDailyDealIds(catalogItems).has(item.id)
-		const discountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+		const dailyDiscountPercent = isDailyDeal ? this.getDailyDiscountPercent(item.id) : 0
+		const discountPercent = shopDiscountPercent(item.id, this.isSignupAnniversary(user.id), dailyDiscountPercent)
 		const purchasePrice = this.discountedPrice(item.priceDabloons, discountPercent)
 
 		let purchase: PurchaseShopItemResponse
@@ -828,6 +836,12 @@ export class ShopService {
 		return new Date().toISOString().slice(0, 10)
 	}
 
+	private isSignupAnniversary(userId: number): boolean {
+		const createdAt = this.database.connection.select({ value: users.created_at_unix_ms })
+			.from(users).where(eq(users.id, userId)).get()?.value
+		return createdAt !== undefined && isBritishAnniversary(createdAt, Date.now())
+	}
+
 	private getDailyDealIds(items: CatalogItem[]): Set<string> {
 		const date = this.getDailyDealDate()
 		return new Set([...items]
@@ -1094,6 +1108,14 @@ export class ShopService {
 			message,
 		}
 	}
+}
+
+export function isBritishAnniversary(createdAtUnixMs: number, nowUnixMs: number): boolean {
+	return BRITISH_MONTH_AND_DAY.format(createdAtUnixMs) === BRITISH_MONTH_AND_DAY.format(nowUnixMs)
+}
+
+export function shopDiscountPercent(itemId: string, signupAnniversary: boolean, dailyDiscountPercent: number): number {
+	return itemId === 'charm-wallet' && signupAnniversary ? 42 : dailyDiscountPercent
 }
 
 function titleCase(value: string) {

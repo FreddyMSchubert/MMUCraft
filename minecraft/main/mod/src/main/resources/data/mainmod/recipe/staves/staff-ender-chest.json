@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "  C",
+    " S ",
+    "S  "
+  ],
+  "key": {
+    "S": "mainmod:trident-shaft",
+    "C": "minecraft:ender_chest"
+  },
+  "result": {
+    "stack": "mainmod:charm-ender-chest-staff",
+    "count": 1
+  }
+}

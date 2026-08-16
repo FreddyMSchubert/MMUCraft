@@ -3,7 +3,7 @@
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ASSETS } from '@/lib/assets'
-import { MinecraftModelRenderer } from '@/lib/minecraft-model-renderer'
+import { MinecraftModelRenderer, type MinecraftModelPreviewState } from '@/lib/minecraft-model-renderer'
 import { useSiteSettings } from '@/lib/site-settings'
 
 type ShopItemType = 'charm' | 'cosmetic' | 'generic'
@@ -78,6 +78,7 @@ const ORDER_OPTIONS: Array<{ value: ShopOrder; label: string }> = [
 ]
 
 const modelCache = new Map<string, Promise<unknown>>()
+const modelPreviewStateCache = new Map<string, MinecraftModelPreviewState>()
 let staticRenderQueue = Promise.resolve()
 
 function queueStaticRender(render: () => Promise<void>) {
@@ -357,12 +358,13 @@ function ShopModelPreview({ item, hovered, interactive }: { item: ShopItem; hove
 	const rendererRef = useRef<MinecraftModelRenderer | null>(null)
 	const [interactiveHover, setInteractiveHover] = useState(false)
 	const [ready, setReady] = useState(false)
+	const [liveReady, setLiveReady] = useState(false)
 	const [failed, setFailed] = useState(false)
 
 	useEffect(() => {
 		const host = hostRef.current
 		const canvas = canvasRef.current
-		if (interactive || !host || !canvas || !item.modelUrl || !item.textureUrl) return
+		if (interactive || item.animated || !host || !canvas || !item.modelUrl || !item.textureUrl) return
 		let cancelled = false
 		let renderer: MinecraftModelRenderer | null = null
 		setFailed(false)
@@ -371,47 +373,67 @@ function ShopModelPreview({ item, hovered, interactive }: { item: ShopItem; hove
 		void queueStaticRender(async () => {
 			const model = await modelPromise
 			if (cancelled || !host.isConnected) return
-			renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, autoRotate: false, animateTextures: false, dyeable: item.dyeable, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
+			renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, animateDye: false, autoRotate: false, animateTextures: false, dyeable: item.dyeable, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
 			await renderer.loadModel(model as never)
-			if (!cancelled && renderer.copyFrameTo(canvas)) setReady(true)
+			const savedState = modelPreviewStateCache.get(item.id)
+			if (savedState) renderer.setPreviewState(savedState)
+			if (!cancelled && renderer.copyFrameTo(canvas)) {
+				modelPreviewStateCache.set(item.id, renderer.getPreviewState())
+				setReady(true)
+			}
 			renderer.destroy()
 			renderer = null
 		}).catch(() => { if (!cancelled) setFailed(true) })
 		return () => { cancelled = true; renderer?.destroy(); renderer = null }
-	}, [interactive, item.animation?.frameDelayMs, item.animation?.frames, item.dyeable, item.modelUrl, item.textureUrl, item.type])
+	}, [interactive, item.animated, item.animation?.frameDelayMs, item.animation?.frames, item.dyeable, item.id, item.modelUrl, item.textureUrl, item.type])
 
 	const shouldAutoRotate = interactive ? !interactiveHover : hovered
-	const rendererActive = interactive || hovered
+	const shouldAnimateDye = interactive ? interactiveHover : hovered
+	const rendererActive = interactive || hovered || item.animated
 	const autoRotateRef = useRef(shouldAutoRotate)
+	const animateDyeRef = useRef(shouldAnimateDye)
 	useEffect(() => { autoRotateRef.current = shouldAutoRotate; rendererRef.current?.setAutoRotate(shouldAutoRotate) }, [shouldAutoRotate])
+	useEffect(() => { animateDyeRef.current = shouldAnimateDye; rendererRef.current?.setDyeAnimation(shouldAnimateDye) }, [shouldAnimateDye])
 
 	useEffect(() => {
 		const host = hostRef.current
 		const canvas = canvasRef.current
-		if (!rendererActive || !host || !item.modelUrl || !item.textureUrl) return
+		if (!rendererActive || !host || !item.modelUrl || !item.textureUrl) {
+			setLiveReady(false)
+			return
+		}
 		let cancelled = false
 		let renderer: MinecraftModelRenderer | null = null
+		setLiveReady(false)
 		setFailed(false)
 		const modelPromise = modelCache.get(item.modelUrl) ?? fetch(item.modelUrl).then((response) => { if (!response.ok) throw new Error('Model failed to load'); return response.json() })
 		modelCache.set(item.modelUrl, modelPromise)
 		void modelPromise.then(async (model) => {
 			if (cancelled || !host.isConnected) return
-			renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, autoRotate: autoRotateRef.current, dyeable: item.dyeable, enableDrag: interactive, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
+			renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, animateDye: animateDyeRef.current, autoRotate: autoRotateRef.current, dyeable: item.dyeable, enableDrag: interactive, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
 			rendererRef.current = renderer
 			await renderer.loadModel(model as never)
-			if (!cancelled) { renderer.setAutoRotate(autoRotateRef.current); setReady(true) }
+			const savedState = modelPreviewStateCache.get(item.id)
+			if (savedState) renderer.setPreviewState(savedState)
+			if (!cancelled) {
+				renderer.setAutoRotate(autoRotateRef.current)
+				renderer.setDyeAnimation(animateDyeRef.current)
+				setReady(true)
+				setLiveReady(true)
+			}
 		}).catch(() => { if (!cancelled) setFailed(true) })
 		return () => {
 			cancelled = true
-			if (!interactive && canvas) renderer?.copyFrameTo(canvas)
+			if (renderer) modelPreviewStateCache.set(item.id, renderer.getPreviewState())
+			if (!interactive && !item.animated && canvas) renderer?.copyFrameTo(canvas)
 			renderer?.destroy()
 			if (rendererRef.current === renderer) rendererRef.current = null
 			renderer = null
 		}
-	}, [interactive, item.animation?.frameDelayMs, item.animation?.frames, item.dyeable, item.modelUrl, item.textureUrl, item.type, rendererActive])
+	}, [interactive, item.animated, item.animation?.frameDelayMs, item.animation?.frames, item.dyeable, item.id, item.modelUrl, item.textureUrl, item.type, rendererActive])
 
 	if (failed && item.iconUrl) return <img src={item.iconUrl} alt="" className="shopItemIcon" />
-	return <div ref={hostRef} className={`shopModelHost ${ready ? 'ready' : 'loading'} ${interactive ? 'interactive' : ''}`} onPointerEnter={() => interactive && setInteractiveHover(true)} onPointerLeave={() => interactive && setInteractiveHover(false)}><canvas ref={canvasRef} className="shopModelSnapshot" /></div>
+	return <div ref={hostRef} className={`shopModelHost ${ready ? 'ready' : 'loading'} ${liveReady ? 'live' : ''} ${interactive ? 'interactive' : ''}`} onPointerEnter={() => interactive && setInteractiveHover(true)} onPointerLeave={() => interactive && setInteractiveHover(false)}><canvas ref={canvasRef} className="shopModelSnapshot" /></div>
 }
 
 function ShopMetaIcons({ item }: { item: ShopItem }) {

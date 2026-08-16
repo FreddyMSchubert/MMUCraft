@@ -1615,7 +1615,7 @@ a {
 .knowledgeRecipe {
 	position: relative;
 	display: block !important;
-	width: min(620px, 100%);
+	width: min(465px, 100%);
 	max-width: 100%;
 	aspect-ratio: 124 / 62;
 	margin: 0 !important;
@@ -1662,7 +1662,7 @@ a {
 
 .knowledgeRecipeItem {
 	position: absolute;
-	inset: 0;
+	inset: 5.556%;
 	display: block;
 	color: #fff;
 	text-decoration: none;
@@ -1782,7 +1782,7 @@ a.knowledgeRecipeItem {
 }
 
 .knowledgeRecipeOutput .knowledgeRecipeItem {
-	inset: 15.385%;
+	inset: 19.231%;
 }
 
 .knowledgeRecipe figcaption {
@@ -1791,7 +1791,7 @@ a.knowledgeRecipeItem {
 	bottom: 3px;
 	z-index: 1;
 	color: #555 !important;
-	font-size: 12px !important;
+	font-size: 14px !important;
 	line-height: 1;
 	text-transform: lowercase;
 }

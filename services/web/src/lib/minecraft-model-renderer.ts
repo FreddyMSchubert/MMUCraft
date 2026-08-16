@@ -11,6 +11,7 @@ export interface TextureAnimationOptions {
 export interface MinecraftModelRendererOptions {
 	assetRoot?: string
 	antialias?: boolean
+	animateDye?: boolean
 	animateTextures?: boolean
 	autoRotate?: boolean
 	background?: string | null
@@ -25,6 +26,12 @@ export interface MinecraftModelRendererOptions {
 	rotationSpeed?: number
 	textureSource?: string
 	view?: PreviewView
+}
+
+export interface MinecraftModelPreviewState {
+	rotationX: number
+	rotationY: number
+	tintHue: number
 }
 
 export interface MinecraftItemSource {
@@ -132,6 +139,7 @@ const DEGENERATE_OFFSET = 0.001
 const FACE_TINT_DEFAULT = -1
 const MODEL_UV_UNITS = 16
 const TICK_MS = 50
+const DYE_CYCLE_MS = 4200
 const MISSING_TEXTURE_SIZE = 16
 const imageSourceCache = new Map<string, Promise<HTMLImageElement>>()
 
@@ -983,8 +991,9 @@ export class MinecraftModelRenderer {
 	private pointerX = 0
 	private pointerY = 0
 	private contextLost = false
+	private animateDye: boolean
 	private animateTextures: boolean
-	private readonly tintPhase = Math.random() * 360
+	private tintHue = Math.random() * 360
 
 	constructor(private readonly container: HTMLElement, options: MinecraftModelRendererOptions) {
 		this.animateTextures = options.animateTextures ?? true
@@ -992,6 +1001,7 @@ export class MinecraftModelRenderer {
 		this.frameDelayMs = Math.max(TICK_MS, options.frameDelayMs ?? TICK_MS)
 		this.rotationSpeed = options.rotationSpeed ?? 0.85
 		this.dyeable = Boolean(options.dyeable)
+		this.animateDye = this.dyeable && (options.animateDye ?? true)
 		this.enableDrag = Boolean(options.enableDrag)
 		this.view = options.view ?? 'basic3d'
 		this.assetRoot = options.assetRoot
@@ -1071,6 +1081,27 @@ export class MinecraftModelRenderer {
 
 	setAutoRotate(enabled: boolean) {
 		this.autoRotate = enabled
+		this.ensureAnimating()
+	}
+
+	setDyeAnimation(enabled: boolean) {
+		this.animateDye = this.dyeable && enabled
+		this.ensureAnimating()
+	}
+
+	getPreviewState(): MinecraftModelPreviewState {
+		return {
+			rotationX: this.spinRoot.rotation.x,
+			rotationY: this.spinRoot.rotation.y,
+			tintHue: this.tintHue,
+		}
+	}
+
+	setPreviewState(state: MinecraftModelPreviewState) {
+		this.spinRoot.rotation.x = state.rotationX
+		this.spinRoot.rotation.y = state.rotationY
+		this.tintHue = ((state.tintHue % 360) + 360) % 360
+		if (this.dyeable) this.modelObject.setTint(0, hsvToRgb(this.tintHue, 0.82, 1))
 		this.ensureAnimating()
 	}
 
@@ -1166,7 +1197,8 @@ export class MinecraftModelRenderer {
 			this.spinRoot.rotation.y += (deltaMs / 1000) * this.rotationSpeed
 		}
 		if (this.dyeable) {
-			this.modelObject.setTint(0, hsvToRgb(((performance.now() / 28) + this.tintPhase) % 360, 0.82, 1))
+			if (this.animateDye) this.tintHue = (this.tintHue + (deltaMs * 360 / DYE_CYCLE_MS)) % 360
+			this.modelObject.setTint(0, hsvToRgb(this.tintHue, 0.82, 1))
 		}
 
 		if (this.animateTextures) this.modelObject.update(deltaMs, this.frameDelayMs)
@@ -1176,7 +1208,7 @@ export class MinecraftModelRenderer {
 			this.contextLost = true
 			return
 		}
-		this.animationFrame = this.autoRotate || this.dyeable || (this.animateTextures && this.modelObject.isAnimated())
+		this.animationFrame = this.autoRotate || this.animateDye || (this.animateTextures && this.modelObject.isAnimated())
 			? requestAnimationFrame(this.animate)
 			: null
 	}

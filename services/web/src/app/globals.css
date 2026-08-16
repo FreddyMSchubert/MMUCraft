@@ -3237,10 +3237,10 @@ a {
 }
 
 .shopModelHost.ready::before { opacity: 0; }
-.shopModelSnapshot { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; }
+.shopModelSnapshot { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; opacity: 1; transition: opacity 180ms ease; }
 .shopModelCanvas { position: absolute; inset: 0; z-index: 2; opacity: 0; transition: opacity 220ms ease; }
-.shopModelHost.ready .shopModelCanvas { opacity: 1; }
-.shopModelHost:has(.shopModelCanvas) .shopModelSnapshot { opacity: 0; }
+.shopModelHost.live .shopModelCanvas { opacity: 1; }
+.shopModelHost.live:has(.shopModelCanvas) .shopModelSnapshot { opacity: 0; }
 
 .shopItemIcon {
 	width: min(82%, 142px);

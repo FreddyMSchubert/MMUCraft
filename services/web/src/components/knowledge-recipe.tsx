@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { MinecraftItemIcon } from '@/components/minecraft-item-icon'
+import { usePathname } from 'next/navigation'
+import { MinecraftItemSnapshot } from '@/components/minecraft-item-snapshot'
 import { RECIPE_POSITIONS, type KnowledgeRecipe, type RecipeAssetFrame, type RecipeItem } from '@/lib/knowledge-recipe'
 
 export function KnowledgeRecipeWidget({ recipe }: { recipe: KnowledgeRecipe }) {
@@ -15,7 +16,6 @@ export function KnowledgeRecipeWidget({ recipe }: { recipe: KnowledgeRecipe }) {
 					</div>
 				))}
 			</div>
-			<div className="knowledgeRecipeArrow" aria-hidden="true" />
 			<div className="knowledgeRecipeSlot knowledgeRecipeOutput">
 				<RecipeItemView item={recipe.output} />
 			</div>
@@ -25,6 +25,7 @@ export function KnowledgeRecipeWidget({ recipe }: { recipe: KnowledgeRecipe }) {
 }
 
 function RecipeItemView({ item }: { item: RecipeItem }) {
+	const pathname = usePathname()
 	const frames: RecipeAssetFrame[] = typeof item.asset === 'string' ? [{ src: item.asset }] : item.asset
 	const [frameIndex, setFrameIndex] = useState(0)
 
@@ -36,9 +37,10 @@ function RecipeItemView({ item }: { item: RecipeItem }) {
 
 	const frame = frames[frameIndex] ?? frames[0]!
 	const name = frame.title ?? item.name
-	const href = item.knowledgeUrl || item.wikiUrl
+	const knowledgeUrl = item.knowledgeUrl === pathname ? undefined : item.knowledgeUrl
+	const href = knowledgeUrl || item.wikiUrl
 	const content = <>
-		<RecipeAsset src={frame.src} />
+		<RecipeAsset key={frame.src} src={frame.src} />
 		{item.count && <span className="knowledgeRecipeCount">{item.count}</span>}
 		<span className="knowledgeRecipeTooltip" role="tooltip">
 			<strong>{name}</strong>
@@ -55,10 +57,10 @@ function RecipeItemView({ item }: { item: RecipeItem }) {
 }
 
 function RecipeAsset({ src }: { src: string }) {
-	if (src.startsWith('minecraft:')) return <MinecraftItemIcon className="knowledgeRecipeIcon" itemId={src} />
+	if (src.startsWith('minecraft:')) return <MinecraftItemSnapshot className="knowledgeRecipeIcon" itemId={src} />
 	if (src.startsWith('mainmod:')) {
 		const id = src.slice('mainmod:'.length)
-		return <MinecraftItemIcon
+		return <MinecraftItemSnapshot
 			className="knowledgeRecipeIcon"
 			itemId={src}
 			modelUrl={`/api/shop/model/${encodeURIComponent(id)}`}

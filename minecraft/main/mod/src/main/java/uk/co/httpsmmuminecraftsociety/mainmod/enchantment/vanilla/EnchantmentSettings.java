@@ -4,14 +4,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.TriState;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.LootTable;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +20,6 @@ public class EnchantmentSettings
 
     public List<Identifier> foundInLoottables = new ArrayList<>();
     public Rarity loottableRarity = Rarity.COMMON;
-
-    public TriState usesFakeItemToDupe = TriState.DEFAULT;
-    public Item normalDupeItem = Items.FIRE_CORAL;
-    public String fakeDupeItemId;
-    public int itemCountPerDupeLevel = 1;
 
     public EnchantmentSettings(ResourceKey<Enchantment> enchantment)
     {
@@ -60,41 +50,6 @@ public class EnchantmentSettings
     public EnchantmentSettings rarity(Rarity rarity) {
         loottableRarity = rarity;
         return this;
-    }
-
-    public EnchantmentSettings dupedWithVanillaItem(Item item) {
-        return dupedWithVanillaItem(item, 1);
-    }
-    public EnchantmentSettings dupedWithVanillaItem(Item item, int count) {
-        usesFakeItemToDupe = TriState.FALSE;
-        normalDupeItem = item;
-        itemCountPerDupeLevel = count;
-        return this;
-    }
-    public EnchantmentSettings dupedWithFakeItem(String itemId) { return dupedWithFakeItem(itemId, 1); }
-    public EnchantmentSettings dupedWithFakeItem(String itemId, int count) {
-        if (!FakeItems.ID_MAP.containsKey(itemId))
-            throw new RuntimeException("No such fake item id: " + itemId);
-
-        usesFakeItemToDupe = TriState.TRUE;
-        fakeDupeItemId = itemId;
-        itemCountPerDupeLevel = count;
-        return this;
-    }
-
-    public boolean hasDupeItem() {
-        return usesFakeItemToDupe != TriState.DEFAULT;
-    }
-    public ItemStack createDupeItemStack(int enchantmentLevel) {
-        int count = Math.max(1, itemCountPerDupeLevel * enchantmentLevel);
-
-        if (usesFakeItemToDupe == TriState.TRUE) {
-            return FakeItems.createFakeItemStack(fakeDupeItemId, count);
-        }
-
-        ItemStack stack = normalDupeItem.getDefaultInstance();
-        stack.setCount(count);
-        return stack;
     }
 
     public List<Identifier> validateLoottables(HolderLookup.Provider registries) {

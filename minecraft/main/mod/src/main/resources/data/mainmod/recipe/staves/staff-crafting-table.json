@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "  C",
+    " S ",
+    "S  "
+  ],
+  "key": {
+    "S": "mainmod:trident-shaft",
+    "C": "minecraft:crafting_table"
+  },
+  "result": {
+    "stack": "mainmod:charm-crafting-staff",
+    "count": 1
+  }
+}

@@ -1403,6 +1403,38 @@ a {
 	opacity: 0.65;
 }
 
+.knowledgeLocked {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	border-left: 4px solid #ffd166;
+	border-radius: 6px;
+	background: rgba(255, 209, 102, 0.09);
+}
+
+.knowledgeLocked svg {
+	flex: 0 0 auto;
+	width: 24px;
+	height: 24px;
+	fill: none;
+	stroke: #ffd166;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 2;
+}
+
+.knowledgeLocked h4,
+.knowledgeLocked p {
+	margin: 0;
+}
+
+.knowledgeLocked h4 {
+	margin-bottom: 4px;
+	color: #ffd166;
+}
+
 .knowledgeReaderTop p,
 .knowledgeReaderTop h3 {
 	margin: 0;
@@ -1460,10 +1492,102 @@ a {
 	color: rgba(255, 255, 255, 0.88);
 }
 
+.knowledgeAdmonition {
+	--admonition-color: #7bebff;
+	margin-bottom: 14px;
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--admonition-color) 55%, transparent);
+	border-left-width: 4px;
+	border-radius: 6px;
+	background: color-mix(in srgb, var(--admonition-color) 9%, transparent);
+}
+
+.knowledgeAdmonition.warning { --admonition-color: #ffd166; }
+.knowledgeAdmonition.error { --admonition-color: #ff6b6b; }
+.knowledgeAdmonition.hint { --admonition-color: #c792ea; }
+.knowledgeAdmonition.tip { --admonition-color: #70e1a1; }
+.knowledgeAdmonition.note { --admonition-color: #aeb8c4; }
+.knowledgeAdmonition.tldr { --admonition-color: #ff9f6e; }
+.knowledgeAdmonition.context { --admonition-color: #8da2ff; }
+
+.knowledgeAdmonitionTitle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 12px;
+	background: color-mix(in srgb, var(--admonition-color) 12%, transparent);
+	color: var(--admonition-color);
+	font-size: 0.82rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.knowledgeAdmonitionTitle svg {
+	width: 18px;
+	height: 18px;
+	fill: none;
+	stroke: currentColor;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 2;
+}
+
+.knowledgeAdmonitionBody {
+	padding: 10px 12px;
+}
+
+.knowledgeAdmonitionBody > :last-child {
+	margin-bottom: 0;
+}
+
 .knowledgePage code {
 	padding: 2px 5px;
 	border-radius: 6px;
 	background: rgba(255, 255, 255, 0.12);
+}
+
+.knowledgePage table {
+	display: block;
+	width: 100%;
+	margin-bottom: 14px;
+	overflow-x: auto;
+	border: 1px solid rgba(123, 235, 255, 0.22);
+	border-radius: 8px;
+	border-spacing: 0;
+	font-size: 0.88rem;
+}
+
+.knowledgePage th,
+.knowledgePage td {
+	padding: 8px 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	text-align: left;
+	vertical-align: top;
+}
+
+.knowledgePage th {
+	position: sticky;
+	top: 0;
+	background: #183746;
+	color: #7bebff;
+	font-size: 0.76rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.knowledgePage tbody tr:nth-child(even) {
+	background: rgba(255, 255, 255, 0.035);
+}
+
+.knowledgePage tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.knowledgePage td:first-child {
+	color: #ffd166;
+	font-weight: 700;
+	white-space: nowrap;
 }
 
 .knowledgePage figure {

@@ -8,7 +8,7 @@ sidebarTitle: Non-MMU Players
 You may wish to play on this server with people that aren't MMU. This is **entirely possible**!
 
 - By inviting an external player, you become responsible for them. If they break our rules, you get banned along with them.
-- Inviting an external player costs a certain amount of dabloons. (Please ask committee for the specific, current amount.)
+- Inviting an external player costs a certain amount of [dabloons](/play/knowledge/money-basics). (Please ask committee for the specific, current amount.)
 
 To invite an external player:
 

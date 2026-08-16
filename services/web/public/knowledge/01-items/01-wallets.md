@@ -5,9 +5,9 @@ chatMessage: You've unlocked knowledge on wallets, the way to store dabloons.
 sidebarTitle: Wallets
 ====
 
-Dealing with dabloons manually in your inventory can become annoying quite quickly. The bundle is here to solve all your problems: It can hold an unlimited amount of dabloons!
+Dealing with [dabloons](/play/knowledge/money-basics) manually in your inventory can become annoying quite quickly. The bundle is here to solve all your problems: It can hold an unlimited amount of dabloons!
 
-You can get it by buying it from the shop or by crafting it like this:
+You can get it by **[buying it from the shop](/play/shop/charm-wallet)** or by crafting it like this:
 
 ![Wallet Crafting Recipe](/assets/knowledge/items/wallet/recipe.png)
 
@@ -21,4 +21,4 @@ You can remove dabloons by putting the wallet alone into the crafting grid:
 
 When selling, buying or trading on the website, the dabloons you spend or earn will be directly taken from or inserted into your wallet, no need to take it out.
 
-You can apply the Soulbound enchantment to wallets to ensure that you never lose any dabloons, even if you die.
+You can apply the [Soulbound enchantment](/play/knowledge/soulbound) to wallets to ensure that you never lose any dabloons, even if you die.

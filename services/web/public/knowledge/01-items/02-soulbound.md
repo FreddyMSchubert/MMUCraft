@@ -7,7 +7,15 @@ sidebarTitle: Soulbound Enchantment
 
 An item enchanted with ***SOULBOUND*** will attach to your soul, not your physical form. This allows it to stay affixed to your innermost being as it travels the afterlife in search of a new body to inhabit.
 
-That is to say, you won't lose ***SOULBOUND*** items when you die. They'll stay in your inventory.
+That is to say, you won't lose ***SOULBOUND*** items under the server's [death and respawning rules](/play/knowledge/death-and-respawning). They'll stay in your inventory.
+
+## Notes
+
+***SOULBOUND*** can be applied to all armor and tools, but also to [*wallets*](/play/knowledge/wallets) and *recovery compasses*. Those latter two especially are **supremely useful**.
+
+Please note that the ***SOULBOUND*** enchantment is not compatible with Mending, similar to how you can't have Infinity and Mending on the same bow.
+
+## Obtaining
 
 ***SOULBOUND*** books can be crafted like this:
 

@@ -54,14 +54,16 @@ public class LootTableModifiers {
     }
     private static final List<LootAddition> additions = List.of(
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), "soul", null, 1.0F, 1, 1),
-            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/enderman"), null, Items.ENDER_PEARL, 1.0F, 1, 10),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/enderman"), null, Items.ENDER_PEARL, 1.0F, 3, 10),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), "charm-sculk-phial", null, 0.1F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/bat"), null, Items.PHANTOM_MEMBRANE, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), null, Items.PHANTOM_MEMBRANE, 1.0F, 0, 15),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), null, Items.DRAGON_EGG, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), null, Items.DRAGON_HEAD, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/ender_dragon"), null, Items.ELYTRA, 1.0F, 1, 1),
-            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/phantom"), null, Items.PHANTOM_MEMBRANE, 1.0F, 1, 2)
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/phantom"), null, Items.PHANTOM_MEMBRANE, 1.0F, 1, 2),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/buried_treasure"), "trident-shaft", null, 1.0F, 2, 5),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/elder_guardian"), "trident-prong", null, 1.0F, 1, 1)
     );
 
     private record PlayerLootAddition(

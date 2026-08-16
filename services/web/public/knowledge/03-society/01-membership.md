@@ -11,7 +11,7 @@ Becoming a member gives you the following benefits:
 - More dabloons earned from completing advancements & dailies.
 - The price increase of buying more than one claim is less steep for members.
 - When not logging a day on the login streaks, for non-member the streak resets, where for members it is only cut in half.
-- Inviting an external player costs 150 dabloons for members and 250 dabloons for non-members.
+- Inviting a [Non-MMU Player](/play/knowledge/externalplayers) costs 150 [dabloons](/play/knowledge/money-basics) for members and 250 dabloons for non-members.
 - Exclusive members-only events & other servers (e.g. modded) are planned, but not guaranteed.
 
 If you are unable or unwilling to pay for any reason, that is entirely fine. If you feel like the server is "pay-to-win" or unfair towards non-members, please reach out to us, we wish for everybody to have an equally amazing gaming experience.

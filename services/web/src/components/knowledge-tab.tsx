@@ -2,7 +2,10 @@
 
 import { Marked, type Tokens } from 'marked'
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
+import { KnowledgeRecipeWidget } from '@/components/knowledge-recipe'
+import { parseKnowledgeRecipe } from '@/lib/knowledge-recipe'
 
 type AdmonitionType = 'info' | 'warning' | 'error' | 'hint' | 'tip' | 'note' | 'tldr' | 'context'
 
@@ -26,6 +29,15 @@ const ADMONITION_ICONS: Record<AdmonitionType, string> = {
 
 const knowledgeMarkdown = new Marked({
 	renderer: {
+		code({ text, lang }) {
+			if (lang !== 'recipe') return false
+			try {
+				const recipe = parseKnowledgeRecipe(text)
+				return `<div class="knowledgeRecipeMount" data-recipe="${escapeHtml(encodeURIComponent(JSON.stringify(recipe)))}"></div>`
+			} catch (error) {
+				return `<p class="knowledgeRecipeError" role="alert">Invalid recipe: ${escapeHtml(error instanceof Error ? error.message : 'Unknown error')}</p>`
+			}
+		},
 		link({ href, title, tokens }) {
 			const titleAttribute = title ? ` title="${escapeHtml(title)}"` : ''
 			const externalAttributes = isExternalKnowledgeLink(href) ? ' target="_blank" rel="noopener noreferrer"' : ''
@@ -96,7 +108,6 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 	const [error, setError] = useState('')
 	const [readPageIds, setReadPageIds] = useState<Set<string>>(new Set())
 	const [markingRead, setMarkingRead] = useState(false)
-	const articleRef = useRef<HTMLElement | null>(null)
 
 	const visibleTree = useMemo(() => data ? filterUnlockedTree(data.tree) : [], [data])
 	const pages = useMemo(() => data ? flattenPages(data.tree) : [], [data])
@@ -273,11 +284,7 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 				</div>
 
 				{activePageUnlocked ? <>
-					<article
-						ref={articleRef}
-						className="knowledgePage"
-						dangerouslySetInnerHTML={{ __html: renderedHtml }}
-					/>
+					<KnowledgeArticle html={renderedHtml} />
 					<button type="button" className="knowledgeReadButton" onClick={() => void markRead()} disabled={readPageIds.has(activePage.id) || markingRead}>
 						{readPageIds.has(activePage.id) ? 'Read' : markingRead ? 'Marking…' : 'Mark as read (+3 dabloons)'}
 					</button>
@@ -294,6 +301,23 @@ export function KnowledgeTab({ pageId, onSelectPage }: {
 		</div>
 	)
 }
+
+const KnowledgeArticle = memo(function KnowledgeArticle({ html }: { html: string }) {
+	const articleRef = useRef<HTMLElement | null>(null)
+
+	useEffect(() => {
+		const roots: Root[] = []
+		for (const mount of articleRef.current?.querySelectorAll<HTMLElement>('[data-recipe]') ?? []) {
+			const recipe = parseKnowledgeRecipe(decodeURIComponent(mount.dataset.recipe ?? ''))
+			const root = createRoot(mount)
+			root.render(<KnowledgeRecipeWidget recipe={recipe} />)
+			roots.push(root)
+		}
+		return () => roots.forEach((root) => root.unmount())
+	}, [html])
+
+	return <article ref={articleRef} className="knowledgePage" dangerouslySetInnerHTML={{ __html: html }} />
+})
 
 function KnowledgeTreeNode({
 	entry,

@@ -903,7 +903,7 @@
 	"blazeandcave:nether/midport_village": 12, // Midport Village: ride a Happy Ghast into a village; custom mount plus travel target.
 	"blazeandcave:nether/moar_upgraded_tools": 33, // MOAR Upgraded Tools: upgrade pickaxe, axe, shovel, and hoe to netherite; high material/template cost and includes the rarely-made hoe.
 	"blazeandcave:nether/nether_rock_collection": 17, // Nether Rock Collection: collect stacks of Netherrack, Basalt, Blackstone, and Magma; Nether block stockpile.
-	"blazeandcave:nether/netherite_mad_lad": 3600, // Netherite Mad Lad: grind a stack of Netherite Blocks; absurd Ancient Debris capstone at reward ceiling.
+	"blazeandcave:nether/netherite_mad_lad": 500, // Netherite Mad Lad: grind a stack of Netherite Blocks; absurd Ancient Debris capstone at reward ceiling.
 	"blazeandcave:nether/netherite_miner": 100, // Netherite Miner: mine a stack of Ancient Debris; long targeted rare-ore grind.
 	"blazeandcave:nether/nugget_in_a_biscuit": 0, // Nugget in a Biscuit: mine Nether Gold Ore; common Nether resource pickup, no reward.
 	"blazeandcave:nether/piglin_peril": 7, // Piglin Peril: obtain a Piglin Head; server drops reduce it to killing a few Piglins, with Nether travel/risk as the extra cost.

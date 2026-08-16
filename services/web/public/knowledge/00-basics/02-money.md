@@ -40,7 +40,9 @@ You can earn dabloons through a variety of methods:
 5. **Reading knowledge** - Mark each knowledge page as read on the website to earn 3 dabloons. You must be online on the server to receive them.
 6. **The secret method** - (we colloquially call it corruption) - buy the committee a drink (for legal reasons, this is a joke, and will not work.)
 
+:::info
 If you find a bug and report it, we may also reward you some dabloons - though this is handled on a case-by-base basis and you are not owed anything by finding a bug. If you find a bug and don't report it, you'll get banned. Also, that's mean.
+:::
 
 ## Spending dabloons
 

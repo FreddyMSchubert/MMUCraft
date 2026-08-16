@@ -22,7 +22,7 @@ For performance reasons, the range is capped at **200 blocks maximum**. The chun
 :::
 
 :::tip
-If you right-click a beacon while sneaking, it will tell you how far its range currently extends.
+If you right-click a beacon while sneaking, it will tell you how far its range currently extends:
 :::
 
 ![Beacon demo image](/assets/knowledge/survival/beacons/image.png)

@@ -10,6 +10,7 @@ export interface TextureAnimationOptions {
 
 export interface MinecraftModelRendererOptions {
 	assetRoot?: string
+	antialias?: boolean
 	animateTextures?: boolean
 	autoRotate?: boolean
 	background?: string | null
@@ -19,6 +20,7 @@ export interface MinecraftModelRendererOptions {
 	enableDrag?: boolean
 	frameDelayMs?: number
 	frameSequence?: number[] | null
+	pixelRatio?: number
 	preserveDrawingBuffer?: boolean
 	rotationSpeed?: number
 	textureSource?: string
@@ -742,7 +744,7 @@ function resolveModelTexture(textureRef: string | undefined, textures: Record<st
 	return resolveTextureReference(textureRef, textures)
 }
 
-function createFaceMaterial(texture: THREE.Texture, tintColor: THREE.Color, shade: boolean, lightEmission: number) {
+function createFaceMaterial(texture: THREE.Texture, tintColor: THREE.Color, shade: boolean, lightEmission: number, unlit: boolean) {
 	const options = {
 		map: texture,
 		color: tintColor,
@@ -751,7 +753,7 @@ function createFaceMaterial(texture: THREE.Texture, tintColor: THREE.Color, shad
 		side: THREE.DoubleSide,
 		toneMapped: false,
 	}
-	return shade
+	return shade && !unlit
 		? new THREE.MeshStandardMaterial({
 			...options,
 			roughness: 1,
@@ -771,7 +773,11 @@ export class MinecraftModelObject {
 	private resolvedModel: MinecraftModel | null = null
 	private fallbackTexture: string | null = null
 
-	constructor(frameSequence: number[] | null = null, defaultTint: RgbColor = { r: 255, g: 0, b: 0 }) {
+	constructor(
+		frameSequence: number[] | null = null,
+		defaultTint: RgbColor = { r: 255, g: 0, b: 0 },
+		private readonly unlit = false,
+	) {
 		this.textureRegistry = new TextureRegistry(frameSequence)
 		this.tintPalette.set(0, defaultTint)
 	}
@@ -880,7 +886,7 @@ export class MinecraftModelObject {
 				? rgbToThreeColor(this.tintPalette.get(tintIndex) ?? this.tintPalette.get(0) ?? { r: 255, g: 255, b: 255 })
 				: new THREE.Color(1, 1, 1)
 			this.addMesh(
-				new THREE.Mesh(geometry, createFaceMaterial(texture, tintColor, shade, lightEmission)),
+				new THREE.Mesh(geometry, createFaceMaterial(texture, tintColor, shade, lightEmission, this.unlit)),
 				{ tintIndex, faceName, shade, lightEmission },
 			)
 		}
@@ -946,7 +952,7 @@ export class MinecraftModelObject {
 		geometry.setIndex(indices)
 		geometry.computeVertexNormals()
 		this.addMesh(
-			new THREE.Mesh(geometry, createFaceMaterial(handle.texture, new THREE.Color(1, 1, 1), true, 0)),
+			new THREE.Mesh(geometry, createFaceMaterial(handle.texture, new THREE.Color(1, 1, 1), true, 0, this.unlit)),
 			{ tintIndex: FACE_TINT_DEFAULT, generatedLayer: layerIndex },
 		)
 	}
@@ -994,6 +1000,7 @@ export class MinecraftModelRenderer {
 		this.modelObject = new MinecraftModelObject(
 			options.frameSequence ?? null,
 			parseColorValue(options.defaultTint, { r: 255, g: 0, b: 0 }),
+			this.view === 'icon',
 		)
 
 		if (options.background) {
@@ -1001,11 +1008,11 @@ export class MinecraftModelRenderer {
 		}
 
 		this.renderer = new THREE.WebGLRenderer({
-			antialias: true,
+			antialias: options.antialias ?? true,
 			alpha: !options.background,
 			preserveDrawingBuffer: options.preserveDrawingBuffer,
 		})
-		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+		this.renderer.setPixelRatio(options.pixelRatio ?? Math.min(window.devicePixelRatio, 2))
 		this.renderer.outputColorSpace = THREE.SRGBColorSpace
 		this.renderer.domElement.classList.add(options.canvasClassName ?? 'shopModelCanvas')
 		this.renderer.domElement.addEventListener('webglcontextlost', this.handleContextLost)
@@ -1130,7 +1137,10 @@ export class MinecraftModelRenderer {
 	applyDisplayTransform(mode = 'gui') {
 		this.currentDisplayMode = mode
 		const transform = this.view === 'cosmetic' ? {} : this.currentResolvedModel?.display?.[mode] ?? {}
-		const rotation = normalizeVector3(transform.rotation, [0, 0, 0])
+		const isIconBlock = this.view === 'icon' && Boolean(this.currentResolvedModel?.elements?.length)
+		const rotation = isIconBlock
+			? new THREE.Vector3(25, 225, 0)
+			: normalizeVector3(transform.rotation, [0, 0, 0])
 		const translation = normalizeVector3(transform.translation, [0, 0, 0]).multiplyScalar(1 / 16)
 		const scale = normalizeVector3(transform.scale, [1, 1, 1])
 
@@ -1187,7 +1197,7 @@ export class MinecraftModelRenderer {
 		const iconDistance = (Math.max(
 			dimensions.y / (2 * Math.tan(verticalFov / 2)),
 			dimensions.x / (2 * Math.tan(verticalFov / 2) * this.camera.aspect),
-		) + dimensions.z / 2) * 1.04
+		) + dimensions.z / 2)
 		const distance = this.view === 'icon' ? Math.max(0.1, iconDistance) : Math.max(1.6, size * 0.9 + 1)
 		const offset = this.view === 'cosmetic'
 			? new THREE.Vector3(0, distance * 0.28, distance * 1.12)

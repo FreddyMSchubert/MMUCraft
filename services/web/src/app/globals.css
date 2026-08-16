@@ -1615,14 +1615,14 @@ a {
 .knowledgeRecipe {
 	position: relative;
 	display: block !important;
-	width: min(352px, 100%);
+	width: min(620px, 100%);
 	max-width: 100%;
-	aspect-ratio: 176 / 83;
+	aspect-ratio: 124 / 62;
 	margin: 0 !important;
 	padding: 0;
 	border: 0;
 	border-radius: 0;
-	background: url("/assets/knowledge/recipe/crafting-table.png") 0 0 / 100% 100% no-repeat;
+	background: #c6c6c6;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
 	font-family: "Minecraft UI", monospace;
 	font-kerning: none;
@@ -1630,15 +1630,28 @@ a {
 	line-height: 1.25;
 }
 
+.knowledgeRecipeBackground {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100% !important;
+	height: 100% !important;
+	border-radius: 0 !important;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+	pointer-events: none;
+}
+
 .knowledgeRecipeGrid {
 	position: absolute;
-	top: 19.277%;
-	left: 16.477%;
+	top: 6.452%;
+	left: 3.226%;
+	z-index: 1;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	grid-template-rows: repeat(3, 1fr);
-	width: 30.682%;
-	height: 65.06%;
+	width: 43.548%;
+	height: 87.097%;
 }
 
 .knowledgeRecipeSlot {
@@ -1649,7 +1662,7 @@ a {
 
 .knowledgeRecipeItem {
 	position: absolute;
-	inset: 5.5%;
+	inset: 0;
 	display: block;
 	color: #fff;
 	text-decoration: none;
@@ -1761,16 +1774,22 @@ a.knowledgeRecipeItem {
 
 .knowledgeRecipeOutput {
 	position: absolute;
-	top: 36.145%;
-	left: 67.614%;
-	width: 14.773%;
-	height: 31.325%;
+	top: 29.032%;
+	left: 75.806%;
+	z-index: 1;
+	width: 20.968%;
+	height: 41.935%;
+}
+
+.knowledgeRecipeOutput .knowledgeRecipeItem {
+	inset: 15.385%;
 }
 
 .knowledgeRecipe figcaption {
 	position: absolute;
-	right: 6px;
-	bottom: 4px;
+	right: 5px;
+	bottom: 3px;
+	z-index: 1;
 	color: #555 !important;
 	font-size: 12px !important;
 	line-height: 1;

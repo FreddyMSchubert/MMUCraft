@@ -18,7 +18,7 @@ interface ItemRaster {
 
 const FRAME_DELAY_MS = 50
 const MAX_ANIMATION_FRAMES = 100
-const RENDER_SIZE = 64
+const RENDER_SIZE = 128
 const rasterCache = new Map<string, Promise<ItemRaster>>()
 let renderQueue = Promise.resolve()
 
@@ -78,10 +78,12 @@ async function renderRaster({ itemId, modelUrl, textureUrl }: Omit<MinecraftItem
 
 	try {
 		renderer = new MinecraftModelRenderer(host, {
+			antialias: false,
 			animateTextures: false,
 			assetRoot: ASSETS.minecraft.root,
 			canvasClassName: 'minecraftItemSnapshotSource',
 			frameDelayMs: FRAME_DELAY_MS,
+			pixelRatio: 1,
 			preserveDrawingBuffer: true,
 			view: 'icon',
 		})

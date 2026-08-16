@@ -77,11 +77,11 @@ async function renderRaster({ itemId, modelUrl, textureUrl }: Omit<MinecraftItem
 	let renderer: MinecraftModelRenderer | undefined
 
 	try {
-		renderer = new MinecraftModelRenderer(host, {
+			renderer = new MinecraftModelRenderer(host, {
 			antialias: false,
 			animateTextures: false,
 			assetRoot: ASSETS.minecraft.root,
-			canvasClassName: 'minecraftItemSnapshotSource',
+				canvasClassName: 'minecraftItemSnapshotSource',
 			frameDelayMs: FRAME_DELAY_MS,
 			pixelRatio: 1,
 			preserveDrawingBuffer: true,

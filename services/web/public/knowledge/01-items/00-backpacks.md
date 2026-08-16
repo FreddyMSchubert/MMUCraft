@@ -140,7 +140,7 @@ The Endless Backpack (*not actually endless at all, sorry about that*) has 6 row
   "type": "shaped",
   "inputs": [
     { "pos": "TL", "name": "End Stone", "asset": "minecraft:end_stone", "wikiUrl": "https://minecraft.wiki/w/End_Stone" },
-    { "pos": "TM", "name": "Dragon Head", "asset": "https://minecraft.wiki/images/Invicon_Dragon_Head.png", "wikiUrl": "https://minecraft.wiki/w/Dragon_Head" },
+    { "pos": "TM", "name": "Dragon Head", "asset": "https://minecraft.wiki/images/thumb/Dragon_Head_%28S%29_JE1.png/150px-Dragon_Head_%28S%29_JE1.png?66f9a", "wikiUrl": "https://minecraft.wiki/w/Dragon_Head" },
     { "pos": "TR", "name": "End Stone", "asset": "minecraft:end_stone", "wikiUrl": "https://minecraft.wiki/w/End_Stone" },
     { "pos": "ML", "name": "Enderite Ingot", "asset": "mainmod:enderite-ingot", "knowledgeUrl": "/play/knowledge/enderite" },
     { "pos": "M", "name": "Withered Backpack", "tooltip": "The previous backpack tier. Its contents are kept.", "asset": "mainmod:charm-withered-backpack" },

@@ -1139,7 +1139,7 @@ export class MinecraftModelRenderer {
 		const transform = this.view === 'cosmetic' ? {} : this.currentResolvedModel?.display?.[mode] ?? {}
 		const isIconBlock = this.view === 'icon' && Boolean(this.currentResolvedModel?.elements?.length)
 		const rotation = isIconBlock
-			? new THREE.Vector3(25, 225, 0)
+			? new THREE.Vector3(35.264, 225, 0)
 			: normalizeVector3(transform.rotation, [0, 0, 0])
 		const translation = normalizeVector3(transform.translation, [0, 0, 0]).multiplyScalar(1 / 16)
 		const scale = normalizeVector3(transform.scale, [1, 1, 1])

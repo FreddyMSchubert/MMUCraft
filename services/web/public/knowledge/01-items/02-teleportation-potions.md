@@ -19,9 +19,33 @@ It teleports you somewhere random in a radius of 10000 blocks. This can be great
 
 It can be crafted in these two ways:
 
-![Potion of Displacement Crafting Recipe](/assets/knowledge/items/tp-potions/displacement.png)
+```recipe
+{
+  "type": "shaped",
+  "inputs": [
+    { "pos": "TM", "name": "Painting", "asset": "minecraft:painting", "wikiUrl": "https://minecraft.wiki/w/Painting" },
+    { "pos": "ML", "name": "Painting", "asset": "minecraft:painting", "wikiUrl": "https://minecraft.wiki/w/Painting" },
+    { "pos": "M", "name": "Water Bottle", "asset": "https://minecraft.wiki/images/Invicon_Water_Bottle.png", "wikiUrl": "https://minecraft.wiki/w/Water_Bottle" },
+    { "pos": "MR", "name": "Painting", "asset": "minecraft:painting", "wikiUrl": "https://minecraft.wiki/w/Painting" },
+    { "pos": "BM", "name": "Ender Pearl", "asset": "minecraft:ender_pearl", "wikiUrl": "https://minecraft.wiki/w/Ender_Pearl" }
+  ],
+  "output": { "name": "Potion of Displacement", "asset": "mainmod:charm-potion-displacement", "count": 4 }
+}
+```
 
-![Potion of Displacement alternative Crafting Recipe](/assets/knowledge/items/tp-potions/displacement_alt.png)
+```recipe
+{
+  "type": "shaped",
+  "inputs": [
+    { "pos": "TM", "name": "Chorus Fruit", "asset": "minecraft:chorus_fruit", "wikiUrl": "https://minecraft.wiki/w/Chorus_Fruit" },
+    { "pos": "ML", "name": "Chorus Fruit", "asset": "minecraft:chorus_fruit", "wikiUrl": "https://minecraft.wiki/w/Chorus_Fruit" },
+    { "pos": "M", "name": "Water Bottle", "asset": "https://minecraft.wiki/images/Invicon_Water_Bottle.png", "wikiUrl": "https://minecraft.wiki/w/Water_Bottle" },
+    { "pos": "MR", "name": "Chorus Fruit", "asset": "minecraft:chorus_fruit", "wikiUrl": "https://minecraft.wiki/w/Chorus_Fruit" },
+    { "pos": "BM", "name": "Ender Pearl", "asset": "minecraft:ender_pearl", "wikiUrl": "https://minecraft.wiki/w/Ender_Pearl" }
+  ],
+  "output": { "name": "Potion of Displacement", "asset": "mainmod:charm-potion-displacement", "count": 4 }
+}
+```
 
 But now you're somewhere off 10000 blocks away from your home. That'll be quite the walk! Or, alternatively, you could use the:
 
@@ -35,7 +59,19 @@ It teleports you to the world spawn instead of to your own home or respawn point
 
 Here's how to teleport to the world spawn from anywhere:
 
-![Potion of Returning Crafting Recipe](/assets/knowledge/items/tp-potions/returning.png)
+```recipe
+{
+  "type": "shaped",
+  "inputs": [
+    { "pos": "TM", "name": "Compass", "asset": "minecraft:compass", "wikiUrl": "https://minecraft.wiki/w/Compass" },
+    { "pos": "ML", "name": "Lapis Lazuli", "asset": "minecraft:lapis_lazuli", "wikiUrl": "https://minecraft.wiki/w/Lapis_Lazuli" },
+    { "pos": "M", "name": "Water Bottle", "asset": "https://minecraft.wiki/images/Invicon_Water_Bottle.png", "wikiUrl": "https://minecraft.wiki/w/Water_Bottle" },
+    { "pos": "MR", "name": "Lapis Lazuli", "asset": "minecraft:lapis_lazuli", "wikiUrl": "https://minecraft.wiki/w/Lapis_Lazuli" },
+    { "pos": "BM", "name": "Ender Pearl", "asset": "minecraft:ender_pearl", "wikiUrl": "https://minecraft.wiki/w/Ender_Pearl" }
+  ],
+  "output": { "name": "Potion of Returning", "asset": "mainmod:charm-potion-returning", "count": 4 }
+}
+```
 
 ## Potion of Resonance
 
@@ -49,4 +85,16 @@ The person teleporting must drink the potion, the person being teleported to mus
 
 Here's how to teleport to a player that is currently holding the same item you are holding in your offhand:
 
-![Potion of Resonance Crafting Recipe](/assets/knowledge/items/tp-potions/resonance.png)
+```recipe
+{
+  "type": "shaped",
+  "inputs": [
+    { "pos": "TM", "name": "Compass", "asset": "minecraft:compass", "wikiUrl": "https://minecraft.wiki/w/Compass" },
+    { "pos": "ML", "name": "Amethyst Shard", "asset": "minecraft:amethyst_shard", "wikiUrl": "https://minecraft.wiki/w/Amethyst_Shard" },
+    { "pos": "M", "name": "Water Bottle", "asset": "https://minecraft.wiki/images/Invicon_Water_Bottle.png", "wikiUrl": "https://minecraft.wiki/w/Water_Bottle" },
+    { "pos": "MR", "name": "Amethyst Shard", "asset": "minecraft:amethyst_shard", "wikiUrl": "https://minecraft.wiki/w/Amethyst_Shard" },
+    { "pos": "BM", "name": "Ender Pearl", "asset": "minecraft:ender_pearl", "wikiUrl": "https://minecraft.wiki/w/Ender_Pearl" }
+  ],
+  "output": { "name": "Potion of Resonance", "asset": "mainmod:charm-potion-resonance", "count": 4 }
+}
+```

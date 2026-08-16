@@ -21,7 +21,20 @@ The ***SOULBOUND*** enchantment is not compatible with Mending, similar to how y
 
 ***SOULBOUND*** books can be crafted like this:
 
-![Soulbound Book Crafting Recipe](/assets/knowledge/items/soulbound/recipe.png)
+```recipe
+{
+  "type": "shapeless",
+  "inputs": [
+    { "pos": "TL", "name": "Soul", "asset": "mainmod:soul" },
+    { "pos": "TM", "name": "Book", "asset": "minecraft:book", "wikiUrl": "https://minecraft.wiki/w/Book" },
+    { "pos": "TR", "name": "Block of Lapis Lazuli", "asset": "minecraft:lapis_block", "wikiUrl": "https://minecraft.wiki/w/Block_of_Lapis_Lazuli" },
+    { "pos": "ML", "name": "Amethyst Shard", "asset": "minecraft:amethyst_shard", "wikiUrl": "https://minecraft.wiki/w/Amethyst_Shard" },
+    { "pos": "M", "name": "Soul Sand", "asset": "minecraft:soul_sand", "wikiUrl": "https://minecraft.wiki/w/Soul_Sand" },
+    { "pos": "MR", "name": "Soul Soil", "asset": "minecraft:soul_soil", "wikiUrl": "https://minecraft.wiki/w/Soul_Soil" }
+  ],
+  "output": { "name": "Soulbound Enchanted Book", "asset": "minecraft:enchanted_book" }
+}
+```
 
 You may notice that it requires a mysterious blue flame to craft. This is a ***SOUL***. It is dropped by players when they die.
 
@@ -33,6 +46,38 @@ You may notice that it requires a mysterious blue flame to craft. This is a ***S
 
 If you are wondering if it's possible to obtain ***SOULBOUND*** if you haven't ventured into the Nether yet, it very much is. You can obtain the ***SOUL***sand and ***SOUL***soil required to craft the book using these recipes:
 
-![Soul Soil Crafting Recipe](/assets/knowledge/items/soulbound/soul_soil.png)
+```recipe
+{
+  "type": "shapeless",
+  "inputs": [
+    { "pos": "TL", "name": "Dirt", "asset": "minecraft:dirt", "wikiUrl": "https://minecraft.wiki/w/Dirt" },
+    { "pos": "TM", "name": "Dirt", "asset": "minecraft:dirt", "wikiUrl": "https://minecraft.wiki/w/Dirt" },
+    { "pos": "TR", "name": "Dirt", "asset": "minecraft:dirt", "wikiUrl": "https://minecraft.wiki/w/Dirt" },
+    { "pos": "ML", "name": "Dirt", "asset": "minecraft:dirt", "wikiUrl": "https://minecraft.wiki/w/Dirt" },
+    { "pos": "M", "name": "Soul", "asset": "mainmod:soul" },
+    { "pos": "MR", "name": "Dirt", "asset": "minecraft:dirt", "wikiUrl": "https://minecraft.wiki/w/Dirt" },
+    { "pos": "BL", "name": "Dirt", "asset": "minecraft:dirt", "wikiUrl": "https://minecraft.wiki/w/Dirt" },
+    { "pos": "BM", "name": "Dirt", "asset": "minecraft:dirt", "wikiUrl": "https://minecraft.wiki/w/Dirt" },
+    { "pos": "BR", "name": "Dirt", "asset": "minecraft:dirt", "wikiUrl": "https://minecraft.wiki/w/Dirt" }
+  ],
+  "output": { "name": "Soul Soil", "asset": "minecraft:soul_soil", "wikiUrl": "https://minecraft.wiki/w/Soul_Soil", "count": 8 }
+}
+```
 
-![Soul Sand Crafting Recipe](/assets/knowledge/items/soulbound/soul_sand.png)
+```recipe
+{
+  "type": "shapeless",
+  "inputs": [
+    { "pos": "TL", "name": "Sand", "asset": "minecraft:sand", "wikiUrl": "https://minecraft.wiki/w/Sand" },
+    { "pos": "TM", "name": "Sand", "asset": "minecraft:sand", "wikiUrl": "https://minecraft.wiki/w/Sand" },
+    { "pos": "TR", "name": "Sand", "asset": "minecraft:sand", "wikiUrl": "https://minecraft.wiki/w/Sand" },
+    { "pos": "ML", "name": "Sand", "asset": "minecraft:sand", "wikiUrl": "https://minecraft.wiki/w/Sand" },
+    { "pos": "M", "name": "Soul", "asset": "mainmod:soul" },
+    { "pos": "MR", "name": "Sand", "asset": "minecraft:sand", "wikiUrl": "https://minecraft.wiki/w/Sand" },
+    { "pos": "BL", "name": "Sand", "asset": "minecraft:sand", "wikiUrl": "https://minecraft.wiki/w/Sand" },
+    { "pos": "BM", "name": "Sand", "asset": "minecraft:sand", "wikiUrl": "https://minecraft.wiki/w/Sand" },
+    { "pos": "BR", "name": "Sand", "asset": "minecraft:sand", "wikiUrl": "https://minecraft.wiki/w/Sand" }
+  ],
+  "output": { "name": "Soul Sand", "asset": "minecraft:soul_sand", "wikiUrl": "https://minecraft.wiki/w/Soul_Sand", "count": 8 }
+}
+```

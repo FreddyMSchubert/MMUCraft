@@ -21,7 +21,15 @@ It can be crafted in these two ways:
 
 ![Potion of Displacement Crafting Recipe](/assets/knowledge/items/tp-potions/displacement.png)
 
+:::recipe-items
+[Painting](https://minecraft.wiki/w/Painting) (TC, CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (BC) → Potion of Displacement ×4
+:::
+
 ![Potion of Displacement alternative Crafting Recipe](/assets/knowledge/items/tp-potions/displacement_alt.png)
+
+:::recipe-items
+[Chorus Fruit](https://minecraft.wiki/w/Chorus_Fruit) (TC, CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (BC) → Potion of Displacement ×4
+:::
 
 But now you're somewhere off 10000 blocks away from your home. That'll be quite the walk! Or, alternatively, you could use the:
 
@@ -37,6 +45,10 @@ Here's how to teleport to the world spawn from anywhere:
 
 ![Potion of Returning Crafting Recipe](/assets/knowledge/items/tp-potions/returning.png)
 
+:::recipe-items
+[Compass](https://minecraft.wiki/w/Compass) (TC) · [Lapis Lazuli](https://minecraft.wiki/w/Lapis_Lazuli) (CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (BC) → Potion of Returning ×4
+:::
+
 ## Potion of Resonance
 
 This potion allows you to teleport directly to another player currently playing on the server.
@@ -50,3 +62,7 @@ The person teleporting must drink the potion, the person being teleported to mus
 Here's how to teleport to a player that is currently holding the same item you are holding in your offhand:
 
 ![Potion of Resonance Crafting Recipe](/assets/knowledge/items/tp-potions/resonance.png)
+
+:::recipe-items
+[Compass](https://minecraft.wiki/w/Compass) (TC) · [Amethyst Shard](https://minecraft.wiki/w/Amethyst_Shard) (CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (BC) → Potion of Resonance ×4
+:::

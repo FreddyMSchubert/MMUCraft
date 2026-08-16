@@ -11,13 +11,25 @@ You can get it by **[buying it from the shop](/play/shop/charm-wallet)** or by c
 
 ![Wallet Crafting Recipe](/assets/knowledge/items/wallet/recipe.png)
 
+:::recipe-items
+[String](https://minecraft.wiki/w/String) · [Rabbit Hide](https://minecraft.wiki/w/Rabbit_Hide) → Wallet
+:::
+
 You can insert dabloons into the wallet by crafting the wallet and the dabloons you want to insert together:
 
 ![Wallet Crafting Recipe](/assets/knowledge/items/wallet/recipe-into.png)
 
+:::recipe-items
+Wallet · [Any dabloon coins](/play/knowledge/money-basics) → Wallet
+:::
+
 You can remove dabloons by putting the wallet alone into the crafting grid:
 
 ![Wallet Crafting Recipe](/assets/knowledge/items/wallet/recipe-from.png)
+
+:::recipe-items
+Wallet → [Dabloon Coin](/play/knowledge/money-basics)
+:::
 
 When selling, buying or trading on the website, the dabloons you spend or earn will be directly taken from or inserted into your wallet, no need to take them out.
 

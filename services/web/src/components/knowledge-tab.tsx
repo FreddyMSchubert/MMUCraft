@@ -13,6 +13,11 @@ interface AdmonitionToken extends Tokens.Generic {
 	tokens: Tokens.Generic[]
 }
 
+interface RecipeItemsToken extends Tokens.Generic {
+	type: 'recipeItems'
+	tokens: Tokens.Generic[]
+}
+
 const ADMONITION_ICONS: Record<AdmonitionType, string> = {
 	info: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg>',
 	warning: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 3.7 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>',
@@ -54,6 +59,25 @@ const knowledgeMarkdown = new Marked({
 		renderer(token) {
 			const admonition = token as AdmonitionToken
 			return `<aside class="knowledgeAdmonition ${admonition.kind}" role="note"><div class="knowledgeAdmonitionTitle">${ADMONITION_ICONS[admonition.kind]}<span>${escapeHtml(admonition.title)}</span></div><div class="knowledgeAdmonitionBody">${this.parser.parse(admonition.tokens)}</div></aside>`
+		},
+		childTokens: ['tokens'],
+	}, {
+		name: 'recipeItems',
+		level: 'block',
+		start(source) {
+			return source.match(/^:::recipe-items\b/m)?.index
+		},
+		tokenizer(source) {
+			const match = /^:::recipe-items[ \t]*\r?\n([^\r\n]+)\r?\n:::[ \t]*(?:\r?\n|$)/.exec(source)
+			if (!match) return
+			return {
+				type: 'recipeItems',
+				raw: match[0],
+				tokens: this.lexer.inlineTokens(match[1].trim()),
+			} satisfies RecipeItemsToken
+		},
+		renderer(token) {
+			return `<div class="knowledgeRecipeItems">${this.parser.parseInline((token as RecipeItemsToken).tokens)}</div>`
 		},
 		childTokens: ['tokens'],
 	}],

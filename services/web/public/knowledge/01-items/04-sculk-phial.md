@@ -15,11 +15,19 @@ Sculk Phials can either be found in ancient city chests, or crafted like this:
 
 ![Sculk Phial Crafting Recipe](/assets/knowledge/items/sculk_phial/recipe.png)
 
+:::recipe-items
+[Echo Shard](https://minecraft.wiki/w/Echo_Shard) (TC, CL, CR, BC) · [Bottle o' Enchanting](https://minecraft.wiki/w/Bottle_o%27_Enchanting) (C) → Sculk Phial
+:::
+
 ## How to use the sculk phial
 
 Right click while its in your hand to suck out some experience. Use the following recipe to extract the experience out of the bottle:
 
 ![Sculk Phial XP Extraction Crafting Recipe](/assets/knowledge/items/sculk_phial/recipe_extract.png)
+
+:::recipe-items
+Filled Sculk Phial · [Glass Bottle](https://minecraft.wiki/w/Glass_Bottle) → [Bottle o' Enchanting](https://minecraft.wiki/w/Bottle_o%27_Enchanting)
+:::
 
 You can turn a sculk phial's XP into a bottle o' enchanting even if the sculk phial isn't full to the brim.
 

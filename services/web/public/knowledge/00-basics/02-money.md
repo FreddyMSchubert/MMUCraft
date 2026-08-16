@@ -25,9 +25,17 @@ You can combine multiple lower-value dabloon coins into one higher-value dabloon
 
 ![Compress dabloons by putting enough coins of the same type into the crafting table](/assets/knowledge/basics/money/compress.png)
 
+:::recipe-items
+1 Dabloon ×5 → 5 Dabloons
+:::
+
 You can also uncombine them in reverse:
 
 ![Decompress dabloons by putting the coin to decompress in the crafting table](/assets/knowledge/basics/money/decompress.png)
+
+:::recipe-items
+5 Dabloons → 1 Dabloon ×5
+:::
 
 ## Earning dabloons
 

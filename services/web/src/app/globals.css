@@ -1608,6 +1608,31 @@ a {
 	image-rendering: crisp-edges;
 }
 
+.knowledgeRecipeItems {
+	margin: -12px 0 14px;
+	color: rgba(255, 255, 255, 0.62);
+	font-size: clamp(0.82rem, 1.5vw, 0.9rem);
+	line-height: 1.45;
+}
+
+.knowledgeRecipeItems::before {
+	color: rgba(255, 255, 255, 0.72);
+	font-weight: 700;
+	content: "Items: ";
+}
+
+.knowledgeRecipeItems a {
+	color: rgba(155, 226, 242, 0.82);
+	text-decoration-color: rgba(155, 226, 242, 0.35);
+	text-underline-offset: 2px;
+}
+
+.knowledgeRecipeItems a:hover,
+.knowledgeRecipeItems a:focus-visible {
+	color: #b9efff;
+	text-decoration-color: currentColor;
+}
+
 .knowledgePage .welcomeWaves {
 	display: grid;
 	grid-template-columns: repeat(5, minmax(0, 1fr));

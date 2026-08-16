@@ -13,6 +13,10 @@ Instead, to summon phantoms, you can drink a potion of insomnia, which is crafte
 
 ![Potion of Insomnia Crafting Recipe](/assets/knowledge/items/summoning-phantoms/image.png)
 
+:::recipe-items
+[Crying Obsidian](https://minecraft.wiki/w/Crying_Obsidian) (TC, CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Phantom Membrane](https://minecraft.wiki/w/Phantom_Membrane) (BC) → Potion of Insomnia ×4
+:::
+
 You may notice this potion requires a phantom membrane to craft, an item that is usually obtained only from phantoms.
 
 Don't worry, because bats now also drop phantom membranes, along with the ender dragon. Just find a bat and you're ready for phantom slaying!

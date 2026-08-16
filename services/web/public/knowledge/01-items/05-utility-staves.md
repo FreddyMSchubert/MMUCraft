@@ -29,4 +29,8 @@ Of course, seeing as it's called a *Trident* Staff, you can also use it to make 
 
 ![Trident Crafting Recipe](/assets/knowledge/items/util_staves/trident_recipe.png)
 
+:::recipe-items
+Trident Prong (TC, TR, CR) · Trident Shaft (C, BL) → [Trident](https://minecraft.wiki/w/Trident)
+:::
+
 Those white thingies are *trident prongs*. Every elder guardian drops 1 trident prong when they are defeated.

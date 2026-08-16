@@ -9,11 +9,13 @@ An item enchanted with ***SOULBOUND*** will attach to your soul, not your physic
 
 That is to say, you won't lose ***SOULBOUND*** items under the server's [death and respawning rules](/play/knowledge/death-and-respawning). They'll stay in your inventory.
 
-## Notes
+:::tip
+***SOULBOUND*** can be applied to all armor and tools, but also to [*wallets*](/play/knowledge/wallets) and [*recovery compasses*](/play/knowledge/death-and-respawning). Those latter two especially are **supremely useful**.
+:::
 
-***SOULBOUND*** can be applied to all armor and tools, but also to [*wallets*](/play/knowledge/wallets) and *recovery compasses*. Those latter two especially are **supremely useful**.
-
-Please note that the ***SOULBOUND*** enchantment is not compatible with Mending, similar to how you can't have Infinity and Mending on the same bow.
+:::note
+The ***SOULBOUND*** enchantment is not compatible with Mending, similar to how you can't have Infinity and Mending on the same bow.
+:::
 
 ## Obtaining
 
@@ -21,7 +23,11 @@ Please note that the ***SOULBOUND*** enchantment is not compatible with Mending,
 
 ![Soulbound Book Crafting Recipe](/assets/knowledge/items/soulbound/recipe.png)
 
-You may notice that it requires a mysterious blue flame to craft. This is a ***SOUL***. It is dropped by players when they die. *It is left to the discretion and creativity of the reader to obtain souls in a morally unobjectionable manner.*
+You may notice that it requires a mysterious blue flame to craft. This is a ***SOUL***. It is dropped by players when they die.
+
+:::note
+*It is left to the discretion and creativity of the reader to obtain souls in a morally unobjectionable manner.*
+:::
 
 ![Souls Example Image](/assets/knowledge/items/soulbound/soul.png)
 

@@ -7,12 +7,13 @@ sidebarTitle: Enchanting & Anvils
 
 You can still use the game exactly as normal. BUT villager refreshing is very unfun, so we added some features to get your hands on enchantments differently, if you feel like it.
 
-TLDR:
+:::tldr
 - Librarian villagers can duplicate enchanted books (Even ones you've created yourself, with many enchantments on it)
 - Enchanted books can be combined way more liberally in an anvil, allowing you e.g. to combine `Thorns I` and `Thorns II` to get `Thorns III`
 - Anvil prior use penalty (Items costing more and more XP to upgrade over time) is gone
 - It is no longer possible for items to become **Too expensive** to upgrade further. So just apply your enchantments & don't worry!
 - Life is just way easier now
+:::
 
 ## Duplicating books
 

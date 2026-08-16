@@ -5,7 +5,9 @@ chatMessage: You've unlocked knowledge on Summoning Phantoms and the Potion of I
 sidebarTitle: Summoning Phantoms
 ====
 
+:::context
 Since they are incredibly annoying, natural phantom spawns have been disabled on the server.
+:::
 
 Instead, to summon phantoms, you can drink a potion of insomnia, which is crafted like this:
 

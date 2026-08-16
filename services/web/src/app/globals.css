@@ -1608,6 +1608,186 @@ a {
 	image-rendering: crisp-edges;
 }
 
+.knowledgeRecipeMount {
+	margin-bottom: 14px;
+}
+
+.knowledgeRecipe {
+	position: relative;
+	display: grid !important;
+	grid-template-columns: auto 76px auto;
+	align-items: center;
+	justify-content: center;
+	gap: 18px !important;
+	width: fit-content;
+	max-width: 100%;
+	min-height: 212px;
+	margin: 0 !important;
+	padding: 18px 24px 30px;
+	border: 4px solid;
+	border-color: #fff #555 #555 #fff;
+	border-radius: 0;
+	background: #c6c6c6;
+	box-shadow: inset 0 0 0 3px #8b8b8b, 0 4px 12px rgba(0, 0, 0, 0.28);
+	font-family: "Minecraft UI", monospace;
+	font-kerning: none;
+	font-variant-ligatures: none;
+	line-height: 1.25;
+}
+
+.knowledgeRecipeGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 56px);
+	grid-template-rows: repeat(3, 56px);
+}
+
+.knowledgeRecipeSlot {
+	position: relative;
+	width: 56px;
+	height: 56px;
+	border: 3px solid;
+	border-color: #373737 #fff #fff #373737;
+	background: #8b8b8b;
+	box-shadow: inset 1px 1px #575757, inset -1px -1px #c6c6c6;
+}
+
+.knowledgeRecipeItem {
+	position: absolute;
+	inset: 3px;
+	display: block;
+	color: #fff;
+	text-decoration: none;
+	cursor: default;
+}
+
+a.knowledgeRecipeItem {
+	cursor: pointer;
+}
+
+.knowledgeRecipeItem > img,
+.knowledgeRecipeIcon {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	image-rendering: pixelated;
+}
+
+.knowledgeRecipeCount {
+	position: absolute;
+	right: -1px;
+	bottom: -3px;
+	z-index: 2;
+	color: #fff;
+	font-size: 20px;
+	line-height: 1;
+	text-shadow: 2px 2px 0 #3f3f3f;
+}
+
+.knowledgeRecipeTooltip {
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 50%;
+	z-index: 20;
+	display: none;
+	width: max-content;
+	max-width: min(320px, 70vw);
+	padding: 7px 9px;
+	border: 2px solid #2a0a63;
+	background: #100010;
+	box-shadow: inset 0 0 0 2px #5000a0, 3px 3px 0 rgba(0, 0, 0, 0.5);
+	color: #fff;
+	font-size: 15px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1.35;
+	text-shadow: 2px 2px 0 #3f3f3f;
+	white-space: normal;
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.knowledgeRecipeTooltip strong,
+.knowledgeRecipeTooltip span,
+.knowledgeRecipeTooltip em {
+	display: block;
+}
+
+.knowledgeRecipeTooltip strong {
+	font: inherit;
+}
+
+.knowledgeRecipeTooltip em {
+	margin-top: 5px;
+	color: #ffff55;
+	font-style: normal;
+	text-shadow: 2px 2px 0 #3f3f00;
+}
+
+.knowledgeRecipeItem:hover .knowledgeRecipeTooltip,
+.knowledgeRecipeItem:focus-visible .knowledgeRecipeTooltip {
+	display: block;
+}
+
+.knowledgeRecipeItem:focus-visible {
+	outline: 2px solid #fff;
+	outline-offset: -2px;
+}
+
+.knowledgeRecipeArrow {
+	position: relative;
+	width: 66px;
+	height: 18px;
+	background: #8b8b8b;
+}
+
+.knowledgeRecipeArrow::after {
+	position: absolute;
+	top: -15px;
+	right: -8px;
+	width: 0;
+	height: 0;
+	border-top: 24px solid transparent;
+	border-bottom: 24px solid transparent;
+	border-left: 28px solid #8b8b8b;
+	content: "";
+}
+
+.knowledgeRecipeOutput {
+	width: 64px;
+	height: 64px;
+}
+
+.knowledgeRecipe figcaption {
+	position: absolute;
+	right: 10px;
+	bottom: 8px;
+	color: #555 !important;
+	font-size: 13px !important;
+	line-height: 1;
+	text-transform: lowercase;
+}
+
+.knowledgeRecipeError {
+	padding: 10px 12px;
+	border-left: 4px solid #ff6b6b;
+	background: rgba(255, 107, 107, 0.1);
+	color: #ff9a9a;
+}
+
+@media (max-width: 720px) {
+	.knowledgeRecipe {
+		grid-template-columns: auto 42px auto;
+		gap: 10px !important;
+		padding-right: 12px;
+		padding-left: 12px;
+	}
+
+	.knowledgeRecipeArrow {
+		width: 34px;
+	}
+}
+
 .knowledgePage .welcomeWaves {
 	display: grid;
 	grid-template-columns: repeat(5, minmax(0, 1fr));

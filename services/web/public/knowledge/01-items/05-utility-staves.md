@@ -7,17 +7,23 @@ sidebarTitle: Utility Staves
 
 Here's a few other fun things you may consider crafting.
 
-## Staff of [Soulbound](/play/knowledge/soulbound) Storage
+## Staff of Soulbound Storage
 
 Easily access your ender chest without ever placing down or bringing an actual ender chest, just wave the staff!
+
+TODO recipe
 
 ## Staff of Brolly
 
 The Staff of Brolly grants the holder a slow descent when holding it while falling.
 
+TODO Recipe
+
 ## Staff of Crafting
 
 The Staff of Crafting brings up a full 3 by 3 crafting table UI, just by waving the staff once - no block placing necessary.
+
+TODO Recipe
 
 You may be wondering "*What's that blue stick thing down there?*". It's a **trident shaft**. You can find it in buried treasure chests:
 

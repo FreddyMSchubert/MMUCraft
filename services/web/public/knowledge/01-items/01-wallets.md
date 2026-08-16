@@ -19,6 +19,8 @@ You can remove dabloons by putting the wallet alone into the crafting grid:
 
 ![Wallet Crafting Recipe](/assets/knowledge/items/wallet/recipe-from.png)
 
-When selling, buying or trading on the website, the dabloons you spend or earn will be directly taken from or inserted into your wallet, no need to take it out.
+When selling, buying or trading on the website, the dabloons you spend or earn will be directly taken from or inserted into your wallet, no need to take them out.
 
+:::tip
 You can apply the [Soulbound enchantment](/play/knowledge/soulbound) to wallets to ensure that you never lose any dabloons, even if you die.
+:::

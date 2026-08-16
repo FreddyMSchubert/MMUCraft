@@ -17,7 +17,9 @@ Specifically, you respawn at a random position **within the server render distan
 
 ![Death Screen](/assets/knowledge/survival/death-respawning/death_screen.png)
 
+:::note
 When dying to the void in the end specifically, you keep all your items and respawn at world spawn.
+:::
 
 ## [Soulbound](/play/knowledge/soulbound)
 

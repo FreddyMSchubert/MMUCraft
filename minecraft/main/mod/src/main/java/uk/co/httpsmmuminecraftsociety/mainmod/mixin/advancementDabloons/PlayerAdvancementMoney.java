@@ -5,6 +5,7 @@ import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -104,6 +105,10 @@ public class PlayerAdvancementMoney {
             DisplayInfo displayInfo,
             CallbackInfo ci
     ) {
+        if (displayInfo.shouldAnnounceChat()
+                && this.player.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)) {
+            this.player.sendSystemMessage(displayInfo.getType().createAnnouncement(advancementHolder, this.player));
+        }
         ci.cancel();
     }
 
@@ -144,12 +149,12 @@ public class PlayerAdvancementMoney {
                 isMember
         ).totalReward();
         if (money > 0 && MoneyHelper.GainMoney(rewardedPlayer, money)) {
-            if ("minecraft".equals(advancementHolder.id().getNamespace()) || money >= 10) {
+            if ("minecraft".equals(advancementHolder.id().getNamespace()) || money >= 30) {
                 advancementHolder.value().display().ifPresent(display -> {
-                    DiscordBridge.advancement(rewardedPlayer, display.getTitle().getString(), money);
-                    rewardedPlayer.level().getServer().getPlayerList().broadcastSystemMessage(
-                            display.getType().createAnnouncement(advancementHolder, rewardedPlayer),
-                            false
+                    DiscordBridge.advancement(
+                            rewardedPlayer,
+                            display.getTitle().getString(),
+                            money
                     );
                 });
             }

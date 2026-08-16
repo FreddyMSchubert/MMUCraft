@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 
 type FaceName = 'north' | 'east' | 'south' | 'west' | 'up' | 'down'
-type PreviewView = 'basic3d' | 'cosmetic'
+type PreviewView = 'basic3d' | 'cosmetic' | 'icon'
 
 export interface TextureAnimationOptions {
 	frameDelayMs: number
@@ -10,6 +10,7 @@ export interface TextureAnimationOptions {
 
 export interface MinecraftModelRendererOptions {
 	assetRoot?: string
+	animateTextures?: boolean
 	autoRotate?: boolean
 	background?: string | null
 	canvasClassName?: string
@@ -18,6 +19,7 @@ export interface MinecraftModelRendererOptions {
 	enableDrag?: boolean
 	frameDelayMs?: number
 	frameSequence?: number[] | null
+	preserveDrawingBuffer?: boolean
 	rotationSpeed?: number
 	textureSource?: string
 	view?: PreviewView
@@ -464,6 +466,7 @@ class ManagedTexture {
 	frameElapsedMs = 0
 	frameSequenceIndex = 0
 	frameSequence: number[] | null
+	failed = false
 
 	constructor(frameSequence: number[] | null) {
 		this.frameSequence = frameSequence
@@ -480,6 +483,7 @@ class ManagedTexture {
 	}
 
 	setImage(image: HTMLImageElement) {
+		this.failed = false
 		const sourceWidth = image.naturalWidth || image.width || MISSING_TEXTURE_SIZE
 		const sourceHeight = image.naturalHeight || image.height || sourceWidth
 		const isAnimatedVerticalStrip = sourceHeight > sourceWidth
@@ -571,6 +575,7 @@ class TextureRegistry {
 			try {
 				handle.setImage(await loadImageFromSource(source))
 			} catch {
+				handle.failed = true
 				handle.drawMissing()
 			}
 		}
@@ -584,6 +589,14 @@ class TextureRegistry {
 
 	isAnimated() {
 		return [...this.handles.values()].some((handle) => handle.frameCount > 1)
+	}
+
+	hasFailed() {
+		return [...this.handles.values()].some((handle) => handle.failed)
+	}
+
+	animationKey() {
+		return [...this.handles.values()].map((handle) => `${handle.currentFrame}:${handle.frameSequenceIndex}`).join('|')
 	}
 
 	dispose() {
@@ -792,6 +805,14 @@ export class MinecraftModelObject {
 		return this.textureRegistry.isAnimated()
 	}
 
+	hasFailedTextures() {
+		return this.textureRegistry.hasFailed()
+	}
+
+	animationKey() {
+		return this.textureRegistry.animationKey()
+	}
+
 	setTint(index: number, colorValue: RgbColor) {
 		this.tintPalette.set(index, parseColorValue(colorValue))
 		for (const mesh of this.meshes) {
@@ -956,9 +977,11 @@ export class MinecraftModelRenderer {
 	private pointerX = 0
 	private pointerY = 0
 	private contextLost = false
+	private animateTextures: boolean
 	private readonly tintPhase = Math.random() * 360
 
 	constructor(private readonly container: HTMLElement, options: MinecraftModelRendererOptions) {
+		this.animateTextures = options.animateTextures ?? true
 		this.autoRotate = Boolean(options.autoRotate)
 		this.frameDelayMs = Math.max(TICK_MS, options.frameDelayMs ?? TICK_MS)
 		this.rotationSpeed = options.rotationSpeed ?? 0.85
@@ -977,7 +1000,11 @@ export class MinecraftModelRenderer {
 			this.scene.background = new THREE.Color(options.background)
 		}
 
-		this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: !options.background })
+		this.renderer = new THREE.WebGLRenderer({
+			antialias: true,
+			alpha: !options.background,
+			preserveDrawingBuffer: options.preserveDrawingBuffer,
+		})
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 		this.renderer.outputColorSpace = THREE.SRGBColorSpace
 		this.renderer.domElement.classList.add(options.canvasClassName ?? 'shopModelCanvas')
@@ -1031,12 +1058,47 @@ export class MinecraftModelRenderer {
 		this.renderer.domElement.removeEventListener('pointercancel', this.handlePointerUp)
 		this.modelObject.dispose()
 		this.renderer.dispose()
+		this.renderer.forceContextLoss()
 		this.renderer.domElement.remove()
 	}
 
 	setAutoRotate(enabled: boolean) {
 		this.autoRotate = enabled
 		this.ensureAnimating()
+	}
+
+	isAnimated() {
+		return this.modelObject.isAnimated()
+	}
+
+	hasFailedTextures() {
+		return this.modelObject.hasFailedTextures()
+	}
+
+	animationKey() {
+		return this.modelObject.animationKey()
+	}
+
+	renderFrame(deltaMs = 0) {
+		if (this.destroyed || this.contextLost) return
+		if (deltaMs > 0) this.modelObject.update(deltaMs, this.frameDelayMs)
+		this.renderer.render(this.scene, this.camera)
+	}
+
+	copyFrameTo(canvas: HTMLCanvasElement) {
+		if (this.destroyed || this.contextLost) return false
+		this.renderFrame()
+		const source = this.renderer.domElement
+		const context = canvas.getContext('2d')
+		if (!context) return false
+		canvas.width = source.width
+		canvas.height = source.height
+		context.drawImage(source, 0, 0)
+		return true
+	}
+
+	captureFrame() {
+		return createImageBitmap(this.renderer.domElement)
 	}
 
 	async loadModel(model: MinecraftModel) {
@@ -1097,14 +1159,14 @@ export class MinecraftModelRenderer {
 			this.modelObject.setTint(0, hsvToRgb(((performance.now() / 28) + this.tintPhase) % 360, 0.82, 1))
 		}
 
-		this.modelObject.update(deltaMs, this.frameDelayMs)
+		if (this.animateTextures) this.modelObject.update(deltaMs, this.frameDelayMs)
 		try {
 			this.renderer.render(this.scene, this.camera)
 		} catch {
 			this.contextLost = true
 			return
 		}
-		this.animationFrame = this.autoRotate || this.dyeable || this.modelObject.isAnimated()
+		this.animationFrame = this.autoRotate || this.dyeable || (this.animateTextures && this.modelObject.isAnimated())
 			? requestAnimationFrame(this.animate)
 			: null
 	}
@@ -1118,12 +1180,18 @@ export class MinecraftModelRenderer {
 	private fitCameraToModel() {
 		const box = new THREE.Box3().setFromObject(this.displayRoot)
 		if (box.isEmpty()) return
-		const size = Math.max(0.1, box.getSize(new THREE.Vector3()).length())
+		const dimensions = box.getSize(new THREE.Vector3())
+		const size = Math.max(0.1, dimensions.length())
 		const center = box.getCenter(new THREE.Vector3())
-		const distance = Math.max(1.6, size * 0.9 + 1)
+		const verticalFov = toRadians(this.camera.fov)
+		const iconDistance = (Math.max(
+			dimensions.y / (2 * Math.tan(verticalFov / 2)),
+			dimensions.x / (2 * Math.tan(verticalFov / 2) * this.camera.aspect),
+		) + dimensions.z / 2) * 1.04
+		const distance = this.view === 'icon' ? Math.max(0.1, iconDistance) : Math.max(1.6, size * 0.9 + 1)
 		const offset = this.view === 'cosmetic'
 			? new THREE.Vector3(0, distance * 0.28, distance * 1.12)
-			: new THREE.Vector3(0, 0, distance * 1.28)
+			: new THREE.Vector3(0, 0, distance * (this.view === 'icon' ? 1 : 1.28))
 
 		this.camera.position.copy(center.clone().add(offset))
 		this.camera.lookAt(center)

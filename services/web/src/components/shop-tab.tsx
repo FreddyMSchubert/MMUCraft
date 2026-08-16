@@ -78,57 +78,12 @@ const ORDER_OPTIONS: Array<{ value: ShopOrder; label: string }> = [
 ]
 
 const modelCache = new Map<string, Promise<unknown>>()
-const MAX_ACTIVE_SHOP_RENDERERS = 10
-interface RendererSlotRequest {
-	id: symbol
-	priority: number
-	order: number
-	activate: () => void
-	deactivate: () => void
-}
-const activeRendererSlots = new Map<symbol, RendererSlotRequest>()
-const waitingRendererSlots = new Map<symbol, RendererSlotRequest>()
-let rendererSlotOrder = 0
+let staticRenderQueue = Promise.resolve()
 
-function requestRendererSlot(id: symbol, priority: number, activate: () => void, deactivate: () => void) {
-	const existing = activeRendererSlots.get(id) ?? waitingRendererSlots.get(id)
-	if (existing) {
-		const updated = { ...existing, priority, activate, deactivate }
-		if (activeRendererSlots.has(id)) activeRendererSlots.set(id, updated)
-		else waitingRendererSlots.set(id, updated)
-		pumpRendererSlots()
-		return
-	}
-	waitingRendererSlots.set(id, { id, priority, order: rendererSlotOrder++, activate, deactivate })
-	pumpRendererSlots()
-}
-
-function releaseRendererSlot(id: symbol, notify = true) {
-	const active = activeRendererSlots.get(id)
-	activeRendererSlots.delete(id)
-	waitingRendererSlots.delete(id)
-	if (active && notify) queueMicrotask(active.deactivate)
-	pumpRendererSlots()
-}
-
-function pumpRendererSlots() {
-	const waiting = [...waitingRendererSlots.values()].sort((left, right) => right.priority - left.priority || left.order - right.order)
-	const next = waiting[0]
-	if (next && activeRendererSlots.size >= MAX_ACTIVE_SHOP_RENDERERS) {
-		const victim = [...activeRendererSlots.values()].sort((left, right) => left.priority - right.priority || left.order - right.order)[0]
-		if (victim && next.priority > victim.priority) {
-			activeRendererSlots.delete(victim.id)
-			waitingRendererSlots.set(victim.id, { ...victim, order: rendererSlotOrder++ })
-			queueMicrotask(victim.deactivate)
-		}
-	}
-	while (activeRendererSlots.size < MAX_ACTIVE_SHOP_RENDERERS) {
-		const candidate = [...waitingRendererSlots.values()].sort((left, right) => right.priority - left.priority || left.order - right.order)[0]
-		if (!candidate) break
-		waitingRendererSlots.delete(candidate.id)
-		activeRendererSlots.set(candidate.id, candidate)
-		queueMicrotask(candidate.activate)
-	}
+function queueStaticRender(render: () => Promise<void>) {
+	const queued = staticRenderQueue.then(render, render)
+	staticRenderQueue = queued.catch(() => undefined)
+	return queued
 }
 
 export function ShopTab({ itemId, onSelectItem }: {
@@ -250,7 +205,7 @@ export function ShopTab({ itemId, onSelectItem }: {
 					<p>{featured.description}</p>
 					<div className="shopDealActions"><span><del>{formatDabloons(featured.originalPriceDabloons)}</del> {formatDabloons(featured.discountedPriceDabloons)} dabloons</span><button type="button" onClick={() => onSelectItem(featured.id)}>See details</button></div>
 				</div>
-				<div className="shopDealPreview" aria-hidden="true"><ShopPreview item={featured} hovered={!featuredHovered} hidden={shouldHidePreview(featured, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} /></div>
+				<div className="shopDealPreview" aria-hidden="true"><ShopPreview item={featured} hovered={featuredHovered} hidden={shouldHidePreview(featured, settings.arachnophobiaMode)} allow3d={!settings.reduce3dRendering} /></div>
 				{data.shoppingSunday && <span className="shoppingSundayBadge">Shopping Sunday · tons of huge discounts</span>}
 				{dailyDeals.length > 1 && <button type="button" className="shopDealArrow next" aria-label="Next daily deal" onClick={() => setFeaturedIndex((current) => (current + 1) % dailyDeals.length)}>›</button>}
 				{dailyDeals.length > 1 && <div className="shopDealDots" aria-label="Choose daily deal">{dailyDeals.map((item, index) => <button key={item.id} type="button" className={index === safeFeaturedIndex ? 'active' : ''} aria-label={`Show ${item.title}`} onClick={() => setFeaturedIndex(index)} />)}</div>}
@@ -398,63 +353,65 @@ function AnimatedTexturePreview({ url, animation }: { url: string; animation: No
 
 function ShopModelPreview({ item, hovered, interactive }: { item: ShopItem; hovered: boolean; interactive: boolean }) {
 	const hostRef = useRef<HTMLDivElement | null>(null)
+	const canvasRef = useRef<HTMLCanvasElement | null>(null)
 	const rendererRef = useRef<MinecraftModelRenderer | null>(null)
-	const slotIdRef = useRef(Symbol(item.id))
-	const hoveredRef = useRef(hovered)
-	const [nearViewport, setNearViewport] = useState(interactive)
-	const [inViewport, setInViewport] = useState(interactive)
-	const [hasRendererSlot, setHasRendererSlot] = useState(false)
 	const [interactiveHover, setInteractiveHover] = useState(false)
 	const [ready, setReady] = useState(false)
 	const [failed, setFailed] = useState(false)
 
 	useEffect(() => {
-		if (interactive) return
 		const host = hostRef.current
-		if (!host) return
-		const preloadObserver = new IntersectionObserver(([entry]) => setNearViewport(Boolean(entry?.isIntersecting)), { threshold: 0, rootMargin: '600px 0px' })
-		const viewportObserver = new IntersectionObserver(([entry]) => setInViewport(Boolean(entry?.isIntersecting)), { threshold: 0, rootMargin: '0px' })
-		preloadObserver.observe(host)
-		viewportObserver.observe(host)
-		return () => { preloadObserver.disconnect(); viewportObserver.disconnect() }
-	}, [interactive])
-
-	useEffect(() => {
-		const slotId = slotIdRef.current
-		const priority = interactive ? 100 : inViewport ? 10 : 1
-		if (nearViewport) requestRendererSlot(slotId, priority, () => setHasRendererSlot(true), () => setHasRendererSlot(false))
-		else releaseRendererSlot(slotId)
-	}, [inViewport, interactive, nearViewport])
-
-	useEffect(() => {
-		const slotId = slotIdRef.current
-		return () => releaseRendererSlot(slotId, false)
-	}, [])
+		const canvas = canvasRef.current
+		if (interactive || !host || !canvas || !item.modelUrl || !item.textureUrl) return
+		let cancelled = false
+		let renderer: MinecraftModelRenderer | null = null
+		setFailed(false)
+		const modelPromise = modelCache.get(item.modelUrl) ?? fetch(item.modelUrl).then((response) => { if (!response.ok) throw new Error('Model failed to load'); return response.json() })
+		modelCache.set(item.modelUrl, modelPromise)
+		void queueStaticRender(async () => {
+			const model = await modelPromise
+			if (cancelled || !host.isConnected) return
+			renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, autoRotate: false, animateTextures: false, dyeable: item.dyeable, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
+			await renderer.loadModel(model as never)
+			if (!cancelled && renderer.copyFrameTo(canvas)) setReady(true)
+			renderer.destroy()
+			renderer = null
+		}).catch(() => { if (!cancelled) setFailed(true) })
+		return () => { cancelled = true; renderer?.destroy(); renderer = null }
+	}, [interactive, item.animation?.frameDelayMs, item.animation?.frames, item.dyeable, item.modelUrl, item.textureUrl, item.type])
 
 	const shouldAutoRotate = interactive ? !interactiveHover : hovered
-	useEffect(() => { hoveredRef.current = shouldAutoRotate; rendererRef.current?.setAutoRotate(shouldAutoRotate) }, [shouldAutoRotate])
+	const rendererActive = interactive || hovered
+	const autoRotateRef = useRef(shouldAutoRotate)
+	useEffect(() => { autoRotateRef.current = shouldAutoRotate; rendererRef.current?.setAutoRotate(shouldAutoRotate) }, [shouldAutoRotate])
 
 	useEffect(() => {
 		const host = hostRef.current
-		if (!host || !hasRendererSlot || !item.modelUrl || !item.textureUrl) { rendererRef.current?.destroy(); rendererRef.current = null; setReady(false); return }
+		const canvas = canvasRef.current
+		if (!rendererActive || !host || !item.modelUrl || !item.textureUrl) return
 		let cancelled = false
+		let renderer: MinecraftModelRenderer | null = null
 		setFailed(false)
-		setReady(false)
 		const modelPromise = modelCache.get(item.modelUrl) ?? fetch(item.modelUrl).then((response) => { if (!response.ok) throw new Error('Model failed to load'); return response.json() })
 		modelCache.set(item.modelUrl, modelPromise)
 		void modelPromise.then(async (model) => {
 			if (cancelled || !host.isConnected) return
-			rendererRef.current?.destroy()
-			const renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, autoRotate: hoveredRef.current, dyeable: item.dyeable, enableDrag: interactive, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
+			renderer = new MinecraftModelRenderer(host, { assetRoot: ASSETS.minecraft.root, autoRotate: autoRotateRef.current, dyeable: item.dyeable, enableDrag: interactive, frameDelayMs: item.animation?.frameDelayMs, frameSequence: item.animation?.frames ?? null, textureSource: item.textureUrl!, view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d' })
 			rendererRef.current = renderer
 			await renderer.loadModel(model as never)
-			if (!cancelled) setReady(true)
+			if (!cancelled) { renderer.setAutoRotate(autoRotateRef.current); setReady(true) }
 		}).catch(() => { if (!cancelled) setFailed(true) })
-		return () => { cancelled = true; rendererRef.current?.destroy(); rendererRef.current = null }
-	}, [hasRendererSlot, interactive, item.animation?.frameDelayMs, item.animation?.frames, item.dyeable, item.modelUrl, item.textureUrl, item.type])
+		return () => {
+			cancelled = true
+			if (!interactive && canvas) renderer?.copyFrameTo(canvas)
+			renderer?.destroy()
+			if (rendererRef.current === renderer) rendererRef.current = null
+			renderer = null
+		}
+	}, [interactive, item.animation?.frameDelayMs, item.animation?.frames, item.dyeable, item.modelUrl, item.textureUrl, item.type, rendererActive])
 
 	if (failed && item.iconUrl) return <img src={item.iconUrl} alt="" className="shopItemIcon" />
-	return <div ref={hostRef} className={`shopModelHost ${ready ? 'ready' : 'loading'} ${interactive ? 'interactive' : ''}`} onPointerEnter={() => interactive && setInteractiveHover(true)} onPointerLeave={() => interactive && setInteractiveHover(false)} />
+	return <div ref={hostRef} className={`shopModelHost ${ready ? 'ready' : 'loading'} ${interactive ? 'interactive' : ''}`} onPointerEnter={() => interactive && setInteractiveHover(true)} onPointerLeave={() => interactive && setInteractiveHover(false)}><canvas ref={canvasRef} className="shopModelSnapshot" /></div>
 }
 
 function ShopMetaIcons({ item }: { item: ShopItem }) {

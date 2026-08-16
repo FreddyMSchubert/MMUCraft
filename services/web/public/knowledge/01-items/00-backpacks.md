@@ -61,7 +61,7 @@ The Ingot Backpack has 2 rows / 18 slots and is crafted like this:
 }
 ```
 
-The Magic Backpack (not actually magic in any way, sorry about that) has 3 rows / 27 slots and is crafted like this:
+The Magic Backpack (*not actually magic in any way, sorry about that*) has 3 rows / 27 slots and is crafted like this:
 
 ```recipe
 {
@@ -133,7 +133,7 @@ The Withered Backpack has 5 rows / 45 slots and is crafted like this:
 }
 ```
 
-The Endless Backpack (not actually endless at all, sorry about that) has 6 rows / 54 slots and is crafted like this:
+The Endless Backpack (*not actually endless at all, sorry about that*) has 6 rows / 54 slots and is crafted like this:
 
 ```recipe
 {

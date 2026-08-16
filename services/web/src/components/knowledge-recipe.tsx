@@ -55,7 +55,6 @@ function RecipeItemView({ item }: { item: RecipeItem }) {
 }
 
 function RecipeAsset({ src }: { src: string }) {
-	if (!src.includes(':')) return <img src={src} alt="" />
 	if (src.startsWith('minecraft:')) return <MinecraftItemIcon className="knowledgeRecipeIcon" itemId={src} />
 	if (src.startsWith('mainmod:')) {
 		const id = src.slice('mainmod:'.length)
@@ -66,5 +65,7 @@ function RecipeAsset({ src }: { src: string }) {
 			textureUrl={`/api/shop/texture/${encodeURIComponent(id)}`}
 		/>
 	}
-	return null
+	// Recipe authors can use local paths or arbitrary external image hosts.
+	// eslint-disable-next-line @next/next/no-img-element
+	return <img src={src} alt="" />
 }

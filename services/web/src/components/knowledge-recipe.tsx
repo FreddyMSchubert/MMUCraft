@@ -9,6 +9,9 @@ export function KnowledgeRecipeWidget({ recipe }: { recipe: KnowledgeRecipe }) {
 	const items = new Map(recipe.inputs.map((item) => [item.pos, item]))
 	return (
 		<figure className="knowledgeRecipe" aria-label={`${recipe.type} crafting recipe for ${recipe.output.name}`}>
+			{/* The source is a cropped vanilla GUI texture and must retain its source pixels. */}
+			{/* eslint-disable-next-line @next/next/no-img-element */}
+			<img className="knowledgeRecipeBackground" src="/assets/knowledge/recipe/crafting-table.png" alt="" />
 			<div className="knowledgeRecipeGrid">
 				{RECIPE_POSITIONS.map((position) => (
 					<div className="knowledgeRecipeSlot" key={position}>

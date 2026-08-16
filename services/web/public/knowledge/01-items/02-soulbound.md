@@ -23,6 +23,10 @@ The ***SOULBOUND*** enchantment is not compatible with Mending, similar to how y
 
 ![Soulbound Book Crafting Recipe](/assets/knowledge/items/soulbound/recipe.png)
 
+:::recipe-items
+Soul · [Book](https://minecraft.wiki/w/Book) · [Block of Lapis Lazuli](https://minecraft.wiki/w/Block_of_Lapis_Lazuli) · [Amethyst Shard](https://minecraft.wiki/w/Amethyst_Shard) · [Soul Sand](https://minecraft.wiki/w/Soul_Sand) · [Soul Soil](https://minecraft.wiki/w/Soul_Soil) → Soulbound Enchanted Book
+:::
+
 You may notice that it requires a mysterious blue flame to craft. This is a ***SOUL***. It is dropped by players when they die.
 
 :::note
@@ -35,4 +39,12 @@ If you are wondering if it's possible to obtain ***SOULBOUND*** if you haven't v
 
 ![Soul Soil Crafting Recipe](/assets/knowledge/items/soulbound/soul_soil.png)
 
+:::recipe-items
+[Dirt](https://minecraft.wiki/w/Dirt) ×8 · Soul → [Soul Soil](https://minecraft.wiki/w/Soul_Soil) ×8
+:::
+
 ![Soul Sand Crafting Recipe](/assets/knowledge/items/soulbound/soul_sand.png)
+
+:::recipe-items
+[Sand](https://minecraft.wiki/w/Sand) ×8 · Soul → [Soul Sand](https://minecraft.wiki/w/Soul_Sand) ×8
+:::

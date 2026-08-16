@@ -195,6 +195,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			nickname: string
 			pronouns: string
 			color_hex: string
+			show_death_counter: boolean
 			message: string
 		}>,
 		callback: UnaryCallback<{
@@ -206,6 +207,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			nickname: string
 			pronouns: string
 			color_hex: string
+			show_death_counter: boolean
 			message: string
 		}>,
 	) {
@@ -226,6 +228,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			nickname: result.nickname,
 			pronouns: result.pronouns,
 			color_hex: result.color,
+			show_death_counter: result.showDeathCounter,
 			message: result.message,
 		})
 	}

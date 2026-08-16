@@ -1,0 +1,1 @@
+ALTER TABLE `player_profiles` ADD `show_death_counter` integer DEFAULT 1 NOT NULL;

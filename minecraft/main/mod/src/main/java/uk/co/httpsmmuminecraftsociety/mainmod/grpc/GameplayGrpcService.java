@@ -1158,6 +1158,15 @@ public final class GameplayGrpcService extends GrpcHandler {
         return ApplyPlayerColorResponse.newBuilder().setApplied(true).build();
     }
 
+    private ApplyPlayerSettingsResponse applyPlayerSettingsOnMainThread(ApplyPlayerSettingsRequest request) {
+        UUID playerId = UUID.fromString(request.getMinecraftUuid());
+        ServerPlayer player = minecraftServer().getPlayerList().getPlayer(playerId);
+        if (player != null && !player.hasDisconnected()) {
+            PlayerStatsSync.applyShowDeathCounter(player, request.getShowDeathCounter());
+        }
+        return ApplyPlayerSettingsResponse.newBuilder().setApplied(true).build();
+    }
+
     private ItemStack createShopGrantStack(PurchaseShopItemRequest request) {
         String deliveryKind = request.getDeliveryKind();
         String itemId = request.getItemId();
@@ -1345,6 +1354,15 @@ public final class GameplayGrpcService extends GrpcHandler {
                 StreamObserver<ApplyPlayerColorResponse> responseObserver
         ) {
             callOnMainThread(() -> applyPlayerColorOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void applyPlayerSettings(
+                ApplyPlayerSettingsRequest request,
+                StreamObserver<ApplyPlayerSettingsResponse> responseObserver
+        ) {
+            callOnMainThread(() -> applyPlayerSettingsOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

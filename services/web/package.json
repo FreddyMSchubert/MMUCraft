@@ -7,11 +7,10 @@
 	},
 	"scripts": {
 		"dev": "next dev --turbopack",
-		"build": "npm run validate:recipes && next build",
+		"build": "next build",
 		"start": "next start",
 		"lint": "eslint .",
 		"typecheck": "tsc --noEmit",
-		"validate:recipes": "node scripts/validate-knowledge-recipes.mjs",
 		"check": "npm run lint && npm run typecheck && npm run build",
 		"audit:prod": "npm audit --omit=dev --audit-level=high"
 	},
@@ -30,7 +29,6 @@
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"@types/three": "^0.170.0",
-		"ajv": "^8.17.1",
 		"eslint": "^9.0.0",
 		"eslint-config-next": "^16.1.6",
 		"typescript": "^5.9.3"

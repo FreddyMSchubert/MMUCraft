@@ -5,30 +5,16 @@ chatMessage: You've unlocked knowledge on the server's changed crafting recipes.
 sidebarTitle: Crafting Changes
 ====
 
-This page lists implemented recipes that differ from vanilla Minecraft.
+This page should list the important vanilla items whose recipes are changed or added by the server. Show the complete crafting grid for every recipe because these recipes are not visible in the recipe book.
 
-## Trident
+## End progression
 
-The server adds a Trident recipe. Buried treasure chests supply Trident Shafts, and each Elder Guardian drops one Trident Prong. See [Utility Staves](/play/knowledge/utility-staves) for the related staff recipes.
+Show the changed recipes for Eyes of Ender, End Crystals, and Ender Chests. Make the Eye of Ender recipe especially prominent because it changes the route to the End.
 
-```recipe
-{
-  "type": "shaped",
-  "inputs": [
-    { "pos": "TM", "name": "Trident Prong", "asset": "mainmod:trident-prong" },
-    { "pos": "TR", "name": "Trident Prong", "asset": "mainmod:trident-prong" },
-    { "pos": "M", "name": "Trident Shaft", "asset": "mainmod:trident-shaft" },
-    { "pos": "MR", "name": "Trident Prong", "asset": "mainmod:trident-prong" },
-    { "pos": "BL", "name": "Trident Shaft", "asset": "mainmod:trident-shaft" }
-  ],
-  "output": { "name": "Trident", "asset": "minecraft:trident", "wikiUrl": "https://minecraft.wiki/w/Trident" }
-}
-```
+## Other changed recipes
 
-## Recipes awaiting implementation data
-
-The checked-in project does not define changed recipes for Eyes of Ender, End Crystals, Ender Chests, Jukeboxes, or Powered Rails. They are not shown here because an accurate grid cannot be generated without source data.
+Show the changed Jukebox and Powered Rail recipes and the added Trident recipe. Link the Trident details to [Utility Staves](/play/knowledge/utility-staves). List how players obtain Trident Shafts and Trident Prongs. Do not publish the Trident instructions until both components have implemented sources. Confirm the copper-based Powered Rail recipe is implemented before documenting it as available.
 
 ## Item repair
 
-Combining damaged items in a crafting grid is disabled. Use the systems described in [Enchanting & Anvils](/play/knowledge/enchanting-and-anvils) instead.
+State that combining damaged items in a crafting grid is disabled. Refer players to [Enchanting & Anvils](/play/knowledge/enchanting-and-anvils) for the replacement repair system.

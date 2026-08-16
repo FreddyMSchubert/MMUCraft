@@ -23,31 +23,11 @@ To avoid losing your wallet when you die, enchant it with [Soulbound](/play/know
 
 You can combine multiple lower-value dabloon coins into one higher-value dabloon coin:
 
-```recipe
-{
-  "type": "shapeless",
-  "inputs": [
-    { "pos": "TL", "name": "1 Dabloon", "asset": "mainmod:coin-1" },
-    { "pos": "TM", "name": "1 Dabloon", "asset": "mainmod:coin-1" },
-    { "pos": "TR", "name": "1 Dabloon", "asset": "mainmod:coin-1" },
-    { "pos": "ML", "name": "1 Dabloon", "asset": "mainmod:coin-1" },
-    { "pos": "M", "name": "1 Dabloon", "asset": "mainmod:coin-1" }
-  ],
-  "output": { "name": "5 Dabloons", "asset": "mainmod:coin-5" }
-}
-```
+![Compress dabloons by putting enough coins of the same type into the crafting table](/assets/knowledge/basics/money/compress.png)
 
 You can also uncombine them in reverse:
 
-```recipe
-{
-  "type": "shapeless",
-  "inputs": [
-    { "pos": "M", "name": "5 Dabloons", "asset": "mainmod:coin-5" }
-  ],
-  "output": { "name": "1 Dabloon", "asset": "mainmod:coin-1", "count": 5 }
-}
-```
+![Decompress dabloons by putting the coin to decompress in the crafting table](/assets/knowledge/basics/money/decompress.png)
 
 ## Earning dabloons
 

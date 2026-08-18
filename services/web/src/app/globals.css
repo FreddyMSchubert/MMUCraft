@@ -1619,7 +1619,7 @@ a {
 .knowledgeRecipeItems::before {
 	color: rgba(255, 255, 255, 0.72);
 	font-weight: 700;
-	content: "Items: ";
+	content: "Recipe: ";
 }
 
 .knowledgeRecipeItems a {

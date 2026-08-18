@@ -11,6 +11,10 @@ There are 3 teleportation potions available on the server, all of which are **su
 For all of these potions, if you have a tamed animal *following you* (not sitting), or an animal leashed, they will teleport with you.
 :::
 
+:::note
+Endermen now drop significantly more ender pearls when killed, making many of these recipes quite cheap actually!
+:::
+
 ## Potion of Displacement
 
 This potion has the same effect that some may know as the `/rtp` command (random teleport) from previous years server.
@@ -38,7 +42,7 @@ But now you're somewhere off 10000 blocks away from your home. That'll be quite 
 This potion teleports you to the world spawn of the server, the place you started when joining the server for the first time.
 
 :::context
-It teleports you to the world spawn instead of to your own home or respawn point to avoid everybody building super far away from each other and never seeing each other like last year. Don't worry though, minecart speed has been boosted to 20 blocks/second, which is incredibly quick. (Also, [you can craft powered rails with copper now](/play/knowledge/crafting-changes).) A minecart track from world spawn to your house should do the trick. Plus it make it easier for others to visit you! 🙂
+It teleports you to the world spawn instead of to your own home or respawn point to avoid everybody building super far away from each other and never seeing each other like last year. Don't worry though, minecart speed has been boosted to 20 blocks/second, which is incredibly quick. That way, you can still build somewhere nice. (Also, you can craft powered rails with copper now.) A minecart track from world spawn to your house should do the trick. Plus it make it easier for others to visit you! 🙂
 :::
 
 Here's how to teleport to the world spawn from anywhere:

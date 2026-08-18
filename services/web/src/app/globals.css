@@ -469,8 +469,8 @@ html[data-theme="light"] .playerName,
 
 .wordleTile.correct { border-color: transparent; background: #5da75a; }
 .wordleTile.present { border-color: transparent; background: #c9a646; }
-.wordleTile.absent { border-color: transparent; background: #516056; }
-.wordleTile.skipped { border-color: rgba(255, 255, 255, 0.08); background: rgba(81, 96, 86, 0.22); }
+.wordleTile.absent { border-color: transparent; background: #3e3e3e; }
+.wordleTile.skipped { border-color: rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.12); }
 .wordleTile.reveal { animation: wordleTileReveal 520ms ease both; }
 .wordleTile.shake { animation: wordleTileShake 420ms ease; }
 .wordleTile.win { animation: wordleTileWin 700ms ease both; }
@@ -493,7 +493,7 @@ html[data-theme="light"] .playerName,
 	min-height: 48px;
 	border: 0;
 	border-radius: 6px;
-	background: rgba(255, 255, 255, 0.22);
+	background: #777;
 	box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22);
 	color: #fff;
 	font-size: 0.9rem;
@@ -504,10 +504,11 @@ html[data-theme="light"] .playerName,
 .wordleKey.wide { flex: 1.45 1 0; font-size: 0.74rem; }
 .wordleKey.correct { background: #5da75a; }
 .wordleKey.present { background: #c9a646; }
-.wordleKey.absent { background: #32443a; }
+.wordleKey.absent { background: #3e3e3e; }
 .wordleKey:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22); }
 
 .copyPlaythrough {
+	display: block;
 	width: min(100%, var(--wordle-board-width));
 	min-height: 46px;
 	margin: 16px auto 0;

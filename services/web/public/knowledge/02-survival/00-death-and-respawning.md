@@ -5,7 +5,7 @@ chatMessage: You've unlocked knowledge on the server's death and respawn rules.
 sidebarTitle: Death & Respawning
 ====
 
-Of course, since Minecraft is a childrens game, youd never get killed in any circumstance. Right? 👀
+Of course, since Minecraft is a childrens game, youd never get killed. Right? 👀
 
 Anyways, for those of you that are experiencing occasional skill issues, here's what we changed about dying on the server:
 

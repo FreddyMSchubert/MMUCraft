@@ -28,7 +28,7 @@ If you want to have a Minecraft experience very close to Vanilla, you can do tha
 
 ## Some tips before you get started
 
-- **Use minecarts** - Their speed has been more than doubled, making it the fastest transportation method with the same speed as elytra. [Powered rails can now be crafted with copper instead of gold](/play/knowledge/crafting-changes).
+- **Use minecarts** - Their speed has been more than doubled, making it the fastest transportation method with the same speed as elytra. Powered rails can now be crafted with copper instead of gold.
 - **Build close to spawn** - There is no `/home` to avoid everyone living super far away from each other and never seeing each other. A [Potion of Returning](/play/knowledge/teleportation-potions) lets you teleport to the world spawn, but not to your own respawn point.
 - **Fill out your profile** - Help people know who you are and what you do! To do so, click on `Players` in the top right, and edit your profile.
 - **Sunday Funday** - On sundays, all currency earned is increased via a multiplier and a bunch of shop items are discounted. Minecraft Day!

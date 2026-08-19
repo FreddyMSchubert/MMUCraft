@@ -9,32 +9,28 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
 
 public final class TakeDamageTask extends CountedTask {
     private final String source;
-    private final String sourceName;
     private final boolean entity;
 
-    private TakeDamageTask(String source, String sourceName, String emoji, boolean entity, double reward) {
-        super("damaged_by:" + (entity ? "entity:" : "type:") + source, emoji, 1, 1, reward, "Damaged", "time");
+    private TakeDamageTask(String source, boolean entity) {
+        super("damaged_by:" + (entity ? "entity:" : "type:") + source, "Damaged", "time");
         this.source = source;
-        this.sourceName = sourceName;
         this.entity = entity;
     }
 
-    public TakeDamageTask(ResourceKey<DamageType> source, String sourceName, String emoji, double reward) {
-        this(DailyTargetId.of(source), sourceName, emoji, false, reward);
+    public TakeDamageTask(ResourceKey<DamageType> source) {
+        this(DailyTargetId.of(source), false);
     }
 
-    public TakeDamageTask(EntityType<?> source, String sourceName, String emoji, double reward) {
-        this(DailyTargetId.of(source), sourceName, emoji, true, reward);
+    public TakeDamageTask(EntityType<?> source) {
+        this(DailyTargetId.of(source), true);
     }
 
-    @Override protected String name(int count) { return "Get Hurt by " + sourceName; }
-    @Override protected String description(int count) { return "Take damage from " + sourceName.toLowerCase() + " without dying."; }
     @Override protected boolean matches(JsonObject task, DailyTaskEvent event) {
         return event.type() == DailyTaskEvent.Type.TAKE_DAMAGE
                 && event.subject().equals(entity ? "entity" : "type")
                 && event.secondary().equals(source);
     }
-    @Override protected void addTaskData(JsonObject task, java.util.Random random) {
+    @Override protected void addTaskData(JsonObject task) {
         task.addProperty(entity ? "entity" : "damageType", source);
     }
 }

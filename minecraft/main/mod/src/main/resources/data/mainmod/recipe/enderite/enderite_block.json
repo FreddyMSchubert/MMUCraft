@@ -1,0 +1,15 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "EEE",
+    "EEE",
+    "EEE"
+  ],
+  "key": {
+    "E": "mainmod:enderite-ingot"
+  },
+  "result": {
+    "stack": "minecraft:test_instance_block",
+    "count": 1
+  }
+}

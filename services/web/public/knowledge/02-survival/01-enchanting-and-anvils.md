@@ -29,13 +29,27 @@ Anvils are now a lot more freely usable. It is hard to list all changes here, as
 
 **Copying the enchantments from a sword onto a book**:
 
+![Copying the enchantments from a sword onto a book](/assets/knowledge/survival/enchanting-and-anvils/copying_from_sword_onto_book.png)
+
 **Merging two items now actually carries over the enchantments from both**:
+
+![Merging two items now actually carries over the enchantments from both](/assets/knowledge/survival/enchanting-and-anvils/merging_items_carries_enchs.png)
 
 **Enchantments now get summed, so Sharpness 1 + Sharpness 2 = Sharpness 3**:
 
+![Enchantments now get summed](/assets/knowledge/survival/enchanting-and-anvils/ench_level_summing.png)
+
 **Renaming an item now costs no more XP**:
 
-**Cheaper item repairing**:
+![Renaming an item now costs no more XP](/assets/knowledge/survival/enchanting-and-anvils/renaming_free.png)
+
+**Cheaper item repairing (Normally this would only remove a third of the damage)**:
+
+![Cheaper item repairing](/assets/knowledge/survival/enchanting-and-anvils/cheaper_item_repairing.png)
+
+**Netherite Stuff can be repaired with diamonds (at a slightly reduced rate)**:
+
+![Netherite Stuff can be repaired with diamonds](/assets/knowledge/survival/enchanting-and-anvils/repairing_netherite_with_diamonds.png)
 
 **And there's tons more stuff! The logic has been reworked from the ground up to be ore permissive.**
 
@@ -95,9 +109,7 @@ Instead of getting them randomly, it's way more reliable (and fun) to get books 
 
 ### Fortune I recipe
 
-Craft the first Fortune I book with one of each listed item. The recipe is shapeless.
-
-![Fortune I recipe: take a crafting-table screenshot with coal, copper ingot, emerald, gold ingot, iron ingot, lapis lazuli, diamond, a book, and redstone. Hover the enchanted-book result so Fortune I is readable.](/assets/knowledge/survival/enchanting-and-anvils/fortune-book.png)
+![Fortune I Crafting Recipe](/assets/knowledge/survival/enchanting-and-anvils/fortune_recipe.png)
 
 :::recipe-items
 [Coal](https://minecraft.wiki/w/Coal) · [Copper Ingot](https://minecraft.wiki/w/Copper_Ingot) · [Emerald](https://minecraft.wiki/w/Emerald) · [Gold Ingot](https://minecraft.wiki/w/Gold_Ingot) · [Iron Ingot](https://minecraft.wiki/w/Iron_Ingot) · [Lapis Lazuli](https://minecraft.wiki/w/Lapis_Lazuli) · [Diamond](https://minecraft.wiki/w/Diamond) · [Book](https://minecraft.wiki/w/Book) · [Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) → Fortune I Enchanted Book

@@ -44,6 +44,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public final class FishingCatches {
+    private static final double LURE_BOOK_CHANCE = 0.10D;
     private static final String LENGTH_TAG = "mainmod_fish_length_cm";
     private static final String RARITY_TAG = "mainmod_fish_rarity";
     private static final Map<FishRarity, List<FishLoot>> FISH_LOOT = emptyLootTable();
@@ -145,7 +146,11 @@ public final class FishingCatches {
     private FishingCatches() {
     }
 
-    public static Pair<ItemStack, FishingPersonality> random(FishingHook hook, double itemChance, int fishingLuckBonus) {
+    public static Pair<ItemStack, FishingPersonality> random(FishingHook hook, double itemChance, int fishingLuckBonus, int lureLevel) {
+        if (lureLevel == 0 && hook.getRandom().nextDouble() < LURE_BOOK_CHANCE) {
+            return Pair.of(enchantedBook(hook, Enchantments.LURE), defaultPersonality(FishRarity.UNCOMMON, true));
+        }
+
         double luck = hook.getPlayerOwner() == null
                 ? 0.0
                 : hook.getPlayerOwner().getAttributeValue(Attributes.LUCK) + fishingLuckBonus;
@@ -309,7 +314,7 @@ public final class FishingCatches {
             for (ItemStack stack : TREASURE_LOOT.get(rarity)) {
                 entries.add(new CatchEntry(stack, defaultPersonality(rarity, true), null));
             }
-            if (rarity == FishRarity.RARE) {
+            if (rarity == FishRarity.UNCOMMON) {
                 entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LURE), defaultPersonality(rarity, true), null));
             } else if (rarity == FishRarity.EPIC) {
                 entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LUCK_OF_THE_SEA), defaultPersonality(rarity, true), null));

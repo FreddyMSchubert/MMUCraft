@@ -22,9 +22,9 @@ public final class FishingModifiers {
 
     private static final Map<String, Modifier> MODIFIERS = Map.of(
             "item-magnet", new Modifier(0.50, 20),
-            "golden-item-magnet", new Modifier(0.70, 10),
+            "golden-item-magnet", new Modifier(0.70, 20),
             "worms", new Modifier(0.15, 20),
-            "golden-worms", new Modifier(0.0, 10)
+            "golden-worms", new Modifier(0.0, 20)
     );
 
     private FishingModifiers() {

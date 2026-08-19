@@ -42,7 +42,7 @@ public class EnchantmentSettingsManager
         // general armor enchantments
         new EnchantmentSettings(Enchantments.FEATHER_FALLING).maxLevels(3, 68).inLoottable("chests/desert_pyramid").rarity(Rarity.UNCOMMON),
         new EnchantmentSettings(Enchantments.THORNS).maxLevels(3, 5).inLoottable("chests/simple_dungeon").rarity(Rarity.UNCOMMON),
-        new EnchantmentSettings(ModEnchantments.CHARM_BOOST).maxLevels(1, 1).inLoottable(archaeologyRewards).rarity(Rarity.RARE),
+        new EnchantmentSettings(ModEnchantments.CHARM_BOOST).maxLevels(1, 1).inLoottable(archaeologyRewards).loottableChance(0.075f),
         new EnchantmentSettings(Enchantments.PROTECTION).maxLevels(2, 5).inLoottable("chests/end_city_treasure").rarity(Rarity.EPIC),
         new EnchantmentSettings(Enchantments.BLAST_PROTECTION).maxLevels(3, 5),
         new EnchantmentSettings(Enchantments.FIRE_PROTECTION).maxLevels(3, 5),

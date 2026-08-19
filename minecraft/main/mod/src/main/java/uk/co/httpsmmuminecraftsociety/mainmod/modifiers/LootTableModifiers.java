@@ -201,6 +201,7 @@ public class LootTableModifiers {
                     case Rarity.EPIC -> chance = 0.125f;
                     default -> chance = 1.0f;
                 }
+                if (enchType.loottableChance >= 0.0f) chance = enchType.loottableChance;
                 if (lootContext.getRandom().nextFloat() >= chance) continue;
 
                 ItemStack stack = Items.ENCHANTED_BOOK.getDefaultInstance();

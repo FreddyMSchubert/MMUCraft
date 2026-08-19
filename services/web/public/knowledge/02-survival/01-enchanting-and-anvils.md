@@ -34,7 +34,7 @@ Enchanted books can be combined up to the [Enderite](/play/knowledge/enderite) m
 | Blast Protection | Enchanting table or librarian trade | 3 | 5 |
 | Breach | Open any Trial Chamber reward vault (100%) | 4 | 4 |
 | Channeling | Open a Shipwreck supply chest (100%) | 1 | 1 |
-| Charm Boost | Brush suspicious sand or gravel at any archaeology site (25%). See [Charms](/play/knowledge/charms). | 1 | 1 |
+| Charm Boost | Brush suspicious sand or gravel at any archaeology site (7.5%). See [Charms](/play/knowledge/charms). | 1 | 1 |
 | Density | Open any Trial Chamber reward vault (100%) | 5 | 5 |
 | Depth Strider | Kill a Drowned (12.5%) | 3 | 4 |
 | Efficiency | Open a Stronghold corridor, crossing, or library chest (25%) | 5 | 8 |

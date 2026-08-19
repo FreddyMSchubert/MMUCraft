@@ -6,6 +6,6 @@
 	"maxStackSize": 16,
 	"tooltips": [
 		"Raises the fishing item chance to 75%",
-		"10 casts"
+		"20 casts"
 	]
 }

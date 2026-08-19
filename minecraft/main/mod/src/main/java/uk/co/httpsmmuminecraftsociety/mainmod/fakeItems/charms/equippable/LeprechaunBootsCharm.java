@@ -26,7 +26,6 @@ public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, B
         Utils.applyItemAttrModifier(stack, "leprechaun_boots_jump", Attributes.JUMP_STRENGTH, -0.2, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         Utils.applyItemAttrModifier(stack, "leprechaun_boots_attack", Attributes.ATTACK_DAMAGE, -1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
         Utils.applyItemAttrModifier(stack, "leprechaun_boots_health", Attributes.MAX_HEALTH, -19, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
-        Utils.applyItemAttrModifier(stack, "leprechaun_boots_luck", Attributes.LUCK, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.FEET);
     }
 
     @Override
@@ -40,7 +39,6 @@ public class LeprechaunBootsCharm implements Charm, EquippedTickCallbackCharm, B
         Utils.removeItemAttrModifier(stack, "leprechaun_boots_jump", Attributes.JUMP_STRENGTH);
         Utils.removeItemAttrModifier(stack, "leprechaun_boots_attack", Attributes.ATTACK_DAMAGE);
         Utils.removeItemAttrModifier(stack, "leprechaun_boots_health", Attributes.MAX_HEALTH);
-        Utils.removeItemAttrModifier(stack, "leprechaun_boots_luck", Attributes.LUCK);
     }
 
     @Override

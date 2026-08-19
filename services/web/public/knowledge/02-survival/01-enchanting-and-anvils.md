@@ -57,7 +57,7 @@ Enchanted books can be combined up to the [Enderite](/play/knowledge/enderite) m
 | Piercing | Open a Pillager Outpost chest (50%) | 4 | 4 |
 | Power | Open any Bastion Remnant chest (25%) | 5 | 5 |
 | Projectile Protection | Enchanting table or librarian trade | 3 | 5 |
-| Protection | Open an End City treasure chest (12.5%) | 2 | 4 |
+| Protection | Open an End City treasure chest (12.5%) | 2 | 5 |
 | Punch | Open a Jungle Temple chest (50%) | 3 | 3 |
 | Quick Charge | Open a Pillager Outpost chest (50%) | 3 | 3 |
 | Respiration | Kill a Nautilus Zombie (25%) | 3 | 10 |

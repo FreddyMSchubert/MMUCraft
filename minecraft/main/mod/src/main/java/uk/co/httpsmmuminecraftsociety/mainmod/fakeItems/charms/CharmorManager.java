@@ -38,7 +38,9 @@ public class CharmorManager
         }
 
         int armorTypeCharmSlots = 0;
-        if (stack.is(ModItemTagProvider.SINGLE_CHARM_COMBINABLE_ARMOR_ITEMS)) {
+        if (isEnderite(stack)) {
+            armorTypeCharmSlots = 5;
+        } else if (stack.is(ModItemTagProvider.SINGLE_CHARM_COMBINABLE_ARMOR_ITEMS)) {
             armorTypeCharmSlots = 1;
         } else if (stack.is(ModItemTagProvider.DOUBLE_CHARM_COMBINABLE_ARMOR_ITEMS)) {
             armorTypeCharmSlots = 2;

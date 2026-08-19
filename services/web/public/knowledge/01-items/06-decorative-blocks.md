@@ -5,56 +5,64 @@ chatMessage: You've unlocked knowledge on custom decorative blocks.
 sidebarTitle: Decorative Blocks
 ====
 
-Ever though there aren't enough decorations in game? Why not give these a try! Just craft them and place them down like blocks - you can even right click to rotate them.
+Ever thought there aren't enough decorations in game? Why not give these a try! Just craft them and place them down like blocks - you can even right click to rotate them.
 
 ## Kettle
 
 ![Kettle Recipe](/assets/knowledge/items/decorative-blocks/kettle-recipe.png)
-![Kettle Placed](/assets/knowledge/items/decorative-blocks/kettle-deco.png)
-
 :::recipe-items
 [Copper Nugget](https://minecraft.wiki/w/Copper_Nugget) (TL, TC, TR, CL, CR, BL, BC, BR) → Kettle
 :::
+![Kettle Placed](/assets/knowledge/items/decorative-blocks/kettle-deco.png)
+
 
 ## Fruit Bowl
 
 ![Fruit-Bowl Recipe](/assets/knowledge/items/decorative-blocks/fruit-bowl-recipe.png)
-![Fruit-Bowl Placed](/assets/knowledge/items/decorative-blocks/fruit-bowl-deco.png)
-
 :::recipe-items
 [Apple](https://minecraft.wiki/w/Apple) · [Melon Slice](https://minecraft.wiki/w/Melon_Slice) · [Pumpkin](https://minecraft.wiki/w/Pumpkin) · [Glistering Melon Slice](https://minecraft.wiki/w/Glistering_Melon_Slice) · [Glow Berries](https://minecraft.wiki/w/Glow_Berries) · [Sweet Berries](https://minecraft.wiki/w/Sweet Berries) · [Bowl](https://minecraft.wiki/w/Bowl) → Fruit Bowl
 :::
+![Fruit-Bowl Placed](/assets/knowledge/items/decorative-blocks/fruit-bowl-deco.png)
+
 
 ## Cookie Jar
 
 ![Cookie-Jar Recipe](/assets/knowledge/items/decorative-blocks/cookie-jar-recipe.png)
-![Cookie-Jar Placed](/assets/knowledge/items/decorative-blocks/cookie-jar-deco.png)
-
 :::recipe-items
 [Cookie](https://minecraft.wiki/w/Cookie) · [Glass Bottle](https://minecraft.wiki/w/Glass_Bottle) → Cookie Jar
 :::
+![Cookie-Jar Placed](/assets/knowledge/items/decorative-blocks/cookie-jar-deco.png)
+
 
 ## Firefly Jar
 
 ![Firefly-Jar Recipe](/assets/knowledge/items/decorative-blocks/firefly-jar-recipe.png)
-![Firefly-Jar Placed](/assets/knowledge/items/decorative-blocks/firefly-jar-deco.png)
-
 :::recipe-items
 [Firefly-Bush](https://minecraft.wiki/w/Firefly_Bush) · [Glass Bottle](https://minecraft.wiki/w/Glass_Bottle) → Firefly Jar
 :::
+![Firefly-Jar Placed](/assets/knowledge/items/decorative-blocks/firefly-jar-deco.png)
 
-## Beer
+
+## Spoons Carpets
+
+### Beer
 
 While beer can't be directly placed down, you can use an item frame (and make it invisible with the invisi-carrot) to use it as decoration.
 Its primary use is instead either for drinking, or for crafting Spoons Carpets. 
 
 ![Beer Recipe](/assets/knowledge/items/decorative-blocks/beer-recipe.png)
-![Beer Placed](/assets/knowledge/items/decorative-blocks/beer-deco.png)
-
 :::recipe-items
 [Wheat](https://minecraft.wiki/w/Wheat) · [Mundane Potion](https://minecraft.wiki/w/Mundane_Potion) → Beer
 :::
+![Beer Placed](/assets/knowledge/items/decorative-blocks/beer-deco.png)
 
-## Spoons Carpets
+
+All types of Spoons Carpets can be placed either on the floor or on the ceiling, this allows for features that normal minecraft carpets cant do - form a seamless carpet even through tables and chairs!
+
+### Grandiloquent Spoons Carpet
+
+### Junoesque Spoons Carpet
+
+### Meretricious Spoons Carpet
 
 TODO

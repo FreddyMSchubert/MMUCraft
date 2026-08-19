@@ -20,6 +20,7 @@ public class EnchantmentSettings
 
     public List<Identifier> foundInLoottables = new ArrayList<>();
     public Rarity loottableRarity = Rarity.COMMON;
+    public float loottableChance = -1.0f;
 
     public EnchantmentSettings(ResourceKey<Enchantment> enchantment)
     {
@@ -49,6 +50,11 @@ public class EnchantmentSettings
 
     public EnchantmentSettings rarity(Rarity rarity) {
         loottableRarity = rarity;
+        return this;
+    }
+
+    public EnchantmentSettings loottableChance(float chance) {
+        loottableChance = chance;
         return this;
     }
 

@@ -26,7 +26,7 @@ When dying to the void in the end specifically, you keep all your items and resp
 The [Soulbound enchantment](/play/knowledge/soulbound) makes it possible to keep certain items on your person after death. The following items can be enchanted with it:
 - Tools, Weapons & Armor
 - [Wallets](/play/knowledge/wallets) (Which is very useful so you don't lose your hard-earned dabloons)
-- **Recovery Compasses** (Which is very useful because respawning somewhere unknown can be disorienting, and they always point to your last death location)
+- [**Recovery Compasses**](https://minecraft.wiki/w/Recovery_Compass) (Which is very useful because respawning somewhere unknown can be disorienting, and they always point to your last death location)
 
 (For more info and the crafting recipe, read the [Soulbound Enchantment](/play/knowledge/soulbound) entry.)
 

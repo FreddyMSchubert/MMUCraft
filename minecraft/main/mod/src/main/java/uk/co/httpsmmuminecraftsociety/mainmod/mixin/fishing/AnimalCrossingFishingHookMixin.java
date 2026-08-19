@@ -168,7 +168,7 @@ public abstract class AnimalCrossingFishingHookMixin {
 
     @Unique
     private void mainmod$spawnFish(ServerLevel level, FishingHook hook) {
-        Pair<ItemStack, FishingPersonality> fish = FishingCatches.random(hook, this.mainmod$itemChance, this.luck);
+        Pair<ItemStack, FishingPersonality> fish = FishingCatches.random(hook, this.mainmod$itemChance, this.luck, mainmod$lureLevel());
         this.mainmod$catchResult = fish.getFirst();
         this.mainmod$catchPersonality = fish.getSecond();
 

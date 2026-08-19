@@ -2,11 +2,10 @@
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
     "mainmod:beer",
-    "#mainmod:carpets",
-    "#mainmod:carpets"
+    "minecraft:blue_carpet"
   ],
   "result": {
     "stack": "mainmod:spoons-carpet-grandiloquent",
-    "count": 1
+    "count": 8
   }
 }

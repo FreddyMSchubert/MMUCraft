@@ -2,10 +2,10 @@
   "type": "mainmod:fake_crafting_shapeless",
   "ingredients": [
     "mainmod:beer",
-    "#mainmod:carpets"
+    "minecraft:black_carpet"
   ],
   "result": {
     "stack": "mainmod:spoons-carpet-junoesque",
-    "count": 1
+    "count": 8
   }
 }

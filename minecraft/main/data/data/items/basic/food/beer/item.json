@@ -5,6 +5,11 @@
 	"rarity": "common",
 	"maxStackSize": 16,
 	"tooltips": [],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false
+	},
 	"consumable": {
 		"isDrink": true,
 		"consumeSeconds": 3,

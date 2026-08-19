@@ -13,7 +13,7 @@
     "D": "minecraft:diamond"
   },
   "result": {
-    "stack": "mainmod:enderite-upgrade-smithing-templat",
+    "stack": "mainmod:enderite-upgrade-smithing-template",
     "count": 2
   }
 }

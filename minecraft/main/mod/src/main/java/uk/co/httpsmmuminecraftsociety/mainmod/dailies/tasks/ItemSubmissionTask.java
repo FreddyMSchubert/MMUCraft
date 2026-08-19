@@ -8,64 +8,22 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
-import java.util.Random;
-
 public final class ItemSubmissionTask implements DailyTaskDefinition {
     private final String id;
     private final Item item;
     private final String customItemId;
     private final String itemId;
-    private final String itemName;
-    private final String description;
-    private final String emoji;
-    private final int minimum;
-    private final int maximum;
-    private final double rewardPerItem;
-
-    public ItemSubmissionTask(
-            Item item,
-            String itemName,
-            String emoji,
-            int minimum,
-            int maximum,
-            double rewardPerItem
-    ) {
-        this(item, itemName, null, emoji, minimum, maximum, rewardPerItem);
+    public ItemSubmissionTask(Item item) {
+        this("submit:" + DailyTargetId.of(item), item, null, DailyTargetId.of(item));
     }
 
-    public ItemSubmissionTask(
-            Item item,
-            String itemName,
-            String description,
-            String emoji,
-            int minimum,
-            int maximum,
-            double rewardPerItem
-    ) {
-        this("submit:" + DailyTargetId.of(item), item, null, DailyTargetId.of(item), itemName, description, emoji, minimum, maximum, rewardPerItem);
-    }
-
-    public static ItemSubmissionTask custom(
-            String fakeItemId,
-            String itemName,
-            String description,
-            String emoji,
-            int minimum,
-            int maximum,
-            double rewardPerItem
-    ) {
+    public static ItemSubmissionTask custom(String fakeItemId) {
         FakeItems.requireFakeItem(fakeItemId);
         return new ItemSubmissionTask(
                 "submit:fake:" + fakeItemId,
                 null,
                 fakeItemId,
-                fakeItemId,
-                itemName,
-                description,
-                emoji,
-                minimum,
-                maximum,
-                rewardPerItem
+                fakeItemId
         );
     }
 
@@ -73,27 +31,12 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
             String id,
             Item item,
             String customItemId,
-            String itemId,
-            String itemName,
-            String description,
-            String emoji,
-            int minimum,
-            int maximum,
-            double rewardPerItem
+            String itemId
     ) {
-        if (minimum < 1 || maximum < minimum || !Double.isFinite(rewardPerItem) || rewardPerItem < 0.0D) {
-            throw new IllegalArgumentException("Invalid item submission daily settings for " + itemId);
-        }
         this.id = id;
         this.item = item;
         this.customItemId = customItemId;
         this.itemId = itemId;
-        this.itemName = itemName;
-        this.description = description;
-        this.emoji = emoji;
-        this.minimum = minimum;
-        this.maximum = maximum;
-        this.rewardPerItem = rewardPerItem;
     }
 
     @Override
@@ -102,25 +45,11 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
     }
 
     @Override
-    public JsonObject create(Random random) {
-        int count = random.nextInt(minimum, maximum + 1);
-        String instructions = description == null || description.isBlank()
-                ? "Submit {count} " + itemName.toLowerCase() + "."
-                : description;
-        instructions = instructions.replace("{count}", Integer.toString(count))
-                + " Hold the items in your inventory, then click Claim.";
-        JsonObject task = CountedTask.base(
-                id,
-                "Submit " + itemName,
-                instructions,
-                emoji,
-                reward(count),
-                -1
-        );
+    public JsonObject create(int count) {
+        JsonObject task = CountedTask.base(id, -1);
         task.addProperty("item", itemId);
         task.addProperty("customItem", customItemId != null);
         task.addProperty("requiredCount", count);
-        task.addProperty("rewardPerIteration", rewardPerItem);
         return task;
     }
 
@@ -143,10 +72,6 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
         player.getInventory().setChanged();
         player.containerMenu.broadcastChanges();
         return ClaimResult.success("Submitted " + requiredCount + " items and received " + getReward(task) + " dabloons.");
-    }
-
-    private int reward(int count) {
-        return Math.max(1, (int)Math.round(count * rewardPerItem));
     }
 
     private int count(ServerPlayer player) {

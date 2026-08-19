@@ -7,18 +7,13 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
 
 public final class HitPlayerWithProjectileTask extends CountedTask {
     private final String projectile;
-    private final String projectileName;
-
-    public HitPlayerWithProjectileTask(EntityType<?> projectile, String projectileName) {
-        super("hit_player:" + DailyTargetId.of(projectile), "🎯", 2, 6, 1.0D, "Hits", "players");
+    public HitPlayerWithProjectileTask(EntityType<?> projectile) {
+        super("hit_player:" + DailyTargetId.of(projectile), "Hits", "players");
         this.projectile = DailyTargetId.of(projectile);
-        this.projectileName = projectileName;
     }
 
-    @Override protected String name(int count) { return projectileName + " Fight"; }
-    @Override protected String description(int count) { return "Hit another player with " + projectileName.toLowerCase() + " " + count + " times."; }
     @Override protected boolean matches(JsonObject task, DailyTaskEvent event) {
         return event.type() == DailyTaskEvent.Type.HIT_PLAYER_WITH_PROJECTILE && event.subject().equals(projectile);
     }
-    @Override protected void addTaskData(JsonObject task, java.util.Random random) { task.addProperty("projectile", projectile); }
+    @Override protected void addTaskData(JsonObject task) { task.addProperty("projectile", projectile); }
 }

@@ -4,21 +4,10 @@ import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerPlayer;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
-import java.util.Random;
-
 public interface DailyTaskDefinition {
     String getId();
 
-    JsonObject create(Random random);
-
-    default JsonObject create(Random random, String name, String description) {
-        JsonObject task = create(random);
-        int instances = task.get("max").getAsInt();
-        if (instances < 1) instances = task.get("requiredCount").getAsInt();
-        task.addProperty("name", name);
-        task.addProperty("description", description.replace("{count}", Integer.toString(instances)));
-        return task;
-    }
+    JsonObject create(int count);
 
     int getReward(JsonObject task);
 

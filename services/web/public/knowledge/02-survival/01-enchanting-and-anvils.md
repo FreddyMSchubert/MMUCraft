@@ -5,42 +5,62 @@ chatMessage: You've unlocked knowledge on the server's enchanting and anvil prog
 sidebarTitle: Enchanting & Anvils
 ====
 
-You can still use the game exactly as normal. BUT villager refreshing is very unfun, so we added some features to get your hands on enchantments differently, if you feel like it.
+If you want to, you still can treat enchanting and anvils just as usual. The default behaviour is still supported. But you'd be making a mistake!
 
 :::tldr
-- Librarian villagers can duplicate enchanted books (Even ones you've created yourself, with many enchantments on it)
-- Enchanted books can be combined way more liberally in an anvil, allowing you e.g. to combine `Thorns I` and `Thorns II` to get `Thorns III`
-- Anvil prior use penalty (Items costing more and more XP to upgrade over time) is gone
-- It is no longer possible for items to become **Too expensive** to upgrade further. So just apply your enchantments & don't worry!
-- Life is just way easier now
+- Find or craft one enchanted book once, then copy it infinitely with a librarian. (No more need to refresh librarians)
+- Levels add more liberally in an anvil. `Sharpness I + Sharpness II = Sharpness III`.
+- Anvils never become "Too Expensive", have no prior-work penalty (meaning XP cost doesn't grow larger and larger), and cost at most 30 levels.
 :::
+
+![Librarian with a book on their lectern](/assets/knowledge/survival/enchanting-and-anvils/book-on-lectern.png)
 
 ## Duplicating books
 
-Put an enchanted book on the lectern used by a librarian. The librarian's first trade becomes an exact copy of that book. Copies only cost emeralds. The price depends on the enchantments and their levels.
+Put an enchanted book on the lectern used by a librarian. The librarian's first trade becomes an exact copy of that book. Replace the lectern book whenever you want a different copy trade.
 
-A book with several enchantments costs twice as many emeralds.
+The normal random-pick book trades remain.
+
+![Librarian offering book duplicate trade](/assets/knowledge/survival/enchanting-and-anvils/book-duplicated.png)
+
+## Anvils
+
+Anvils are now a lot more freely usable. It is hard to list all changes here, as their behaviour has been fully rewritten. It is recommended you play around with it yourself to figure things out. But, a couple examples:
+
+**Copying the enchantments from a sword onto a book**:
+
+**Merging two items now actually carries over the enchantments from both**:
+
+**Enchantments now get summed, so Sharpness 1 + Sharpness 2 = Sharpness 3**:
+
+**Renaming an item now costs no more XP**:
+
+**Cheaper item repairing**:
+
+**And there's tons more stuff! The logic has been reworked from the ground up to be ore permissive.**
+
+:::tip
+You can now also repair anvils. To do so, just right click an anvil with an iron block (100 % chance to repair), or with an iron ingot (1/9 chance to reapir anvil - care to test your luck?).
+:::
 
 ## Alternative book obtaining
 
-Vanilla methods still work. The locations below are the additional server sources. Chest and mob percentages are the chance that the source adds the book.
-
-Enchanted books can be combined up to the [Enderite](/play/knowledge/enderite) maximum. Normal gear only accepts the standard maximum.
+Instead of getting them randomly, it's way more reliable (and fun) to get books by finding them predictably. Here's how you can get the books for all the enchantments.
 
 | Enchantment | How to get the first book | Max level | Max level on [Enderite gear](/play/knowledge/enderite) |
 | :-- | :-- | :--: | :--: |
 | Aqua Affinity | Kill a Guardian (25%) | 1 | 1 |
-| Bane of Arthropods | Enchanting table or librarian trade | 100 | 100 |
-| Blast Protection | Enchanting table or librarian trade | 3 | 5 |
+| Bane of Arthropods | Enchanting table | 100 | 100 |
+| Blast Protection | Enchanting table | 3 | 5 |
 | Breach | Open any Trial Chamber reward vault (100%) | 4 | 4 |
 | Channeling | Open a Shipwreck supply chest (100%) | 1 | 1 |
-| Charm Boost | Brush suspicious sand or gravel at any archaeology site (7.5%). See [Charms](/play/knowledge/charms). | 1 | 1 |
+| Charm Boost | Brush a suspicious archaeology block. See [Charms](/play/knowledge/charms). | 1 | 1 |
 | Density | Open any Trial Chamber reward vault (100%) | 5 | 5 |
 | Depth Strider | Kill a Drowned (12.5%) | 3 | 4 |
 | Efficiency | Open a Stronghold corridor, crossing, or library chest (25%) | 5 | 8 |
 | Feather Falling | Open a Desert Pyramid chest (50%) | 3 | 68 |
 | Fire Aspect | Open a Ruined Portal chest (50%) | 1 | 2 |
-| Fire Protection | Enchanting table or librarian trade | 3 | 5 |
+| Fire Protection | Enchanting table | 3 | 5 |
 | Flame | Open a Ruined Portal chest (50%) | 1 | 1 |
 | Fortune | Craft a Fortune I book.<sup>1</sup> | 3 | 4 |
 | Frost Walker | Open an Igloo chest (100%) | 2 | 3 |
@@ -56,21 +76,29 @@ Enchanted books can be combined up to the [Enderite](/play/knowledge/enderite) m
 | Multishot | Open a Pillager Outpost chest (50%) | 1 | 1 |
 | Piercing | Open a Pillager Outpost chest (50%) | 4 | 4 |
 | Power | Open any Bastion Remnant chest (25%) | 5 | 5 |
-| Projectile Protection | Enchanting table or librarian trade | 3 | 5 |
+| Projectile Protection | Enchanting table | 3 | 5 |
 | Protection | Open an End City treasure chest (12.5%) | 2 | 5 |
 | Punch | Open a Jungle Temple chest (50%) | 3 | 3 |
 | Quick Charge | Open a Pillager Outpost chest (50%) | 3 | 3 |
 | Respiration | Kill a Nautilus Zombie (25%) | 3 | 10 |
 | Riptide | Open a Shipwreck map chest (12.5%) | 3 | 3 |
-| Sharpness | Enchanting table or librarian trade | 5 | 11 |
+| Sharpness | Enchanting table | 5 | 11 |
 | Silk Touch | Open a Mineshaft chest (25%) | 1 | 1 |
-| Smite | Enchanting table or librarian trade | 4 | 6 |
+| Smite | Enchanting table | 4 | 6 |
 | Soul Speed | Open any Bastion Remnant chest (25%) | 2 | 3 |
-| Soulbound | See [Soulbound Enchantment](/play/knowledge/soulbound). | 1 | 1 |
+| Soulbound | Craft it. See [Soulbound Enchantment](/play/knowledge/soulbound). | 1 | 1 |
 | Sweeping Edge | Open a Woodland Mansion chest (100%) | 3 | 5 |
 | Swift Sneak | Open an Ancient City or Ancient City ice-box chest (12.5%) | 3 | 4 |
 | Thorns | Open a Dungeon chest (50%) | 3 | 5 |
 | Unbreaking | Open an End City treasure chest (25%) | 3 | 5 |
 | Wind Burst | Open any Trial Chamber reward vault (25%) | 3 | 3 |
 
-<sup>1</sup> **Fortune recipe:** Shapelessly combine one block each of coal, copper, emerald, gold, iron, lapis lazuli, diamond, quartz, and redstone.
+### Fortune I recipe
+
+Craft the first Fortune I book with one of each listed item. The recipe is shapeless.
+
+![Fortune I recipe: take a crafting-table screenshot with coal, copper ingot, emerald, gold ingot, iron ingot, lapis lazuli, diamond, a book, and redstone. Hover the enchanted-book result so Fortune I is readable.](/assets/knowledge/survival/enchanting-and-anvils/fortune-book.png)
+
+:::recipe-items
+[Coal](https://minecraft.wiki/w/Coal) · [Copper Ingot](https://minecraft.wiki/w/Copper_Ingot) · [Emerald](https://minecraft.wiki/w/Emerald) · [Gold Ingot](https://minecraft.wiki/w/Gold_Ingot) · [Iron Ingot](https://minecraft.wiki/w/Iron_Ingot) · [Lapis Lazuli](https://minecraft.wiki/w/Lapis_Lazuli) · [Diamond](https://minecraft.wiki/w/Diamond) · [Book](https://minecraft.wiki/w/Book) · [Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) → Fortune I Enchanted Book
+:::

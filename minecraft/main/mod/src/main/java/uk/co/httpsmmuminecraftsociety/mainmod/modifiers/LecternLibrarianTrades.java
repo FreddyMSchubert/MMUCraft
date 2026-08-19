@@ -5,7 +5,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
@@ -69,10 +68,7 @@ public final class LecternLibrarianTrades {
             return Optional.empty();
         }
 
-        long nonCurseEnchantmentCount = enchantments.keySet().stream()
-                .filter(enchantment -> !enchantment.is(EnchantmentTags.CURSE))
-                .count();
-        int emeraldCost = calculateEmeraldCost(enchantments, nonCurseEnchantmentCount);
+        int emeraldCost = calculateEmeraldCost(enchantments);
 
         ItemStack result = sourceBook.copyWithCount(1);
 
@@ -87,15 +83,11 @@ public final class LecternLibrarianTrades {
         ));
     }
 
-    private static int calculateEmeraldCost(ItemEnchantments enchantments, long nonCurseEnchantmentCount) {
+    private static int calculateEmeraldCost(ItemEnchantments enchantments) {
         int emeraldCost = 0;
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
             emeraldCost += entry.getKey().value().getAnvilCost() * entry.getIntValue();
-        }
-
-        if (nonCurseEnchantmentCount > 1) {
-            emeraldCost *= 2;
         }
 
         return Math.max(1, emeraldCost);

@@ -1,15 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:coal_block",
-    "minecraft:copper_block",
-    "minecraft:emerald_block",
-    "minecraft:gold_block",
-    "minecraft:iron_block",
-    "minecraft:lapis_block",
-    "minecraft:diamond_block",
-    "minecraft:quartz_block",
-    "minecraft:redstone_block"
+    "minecraft:coal",
+    "minecraft:copper_ingot",
+    "minecraft:emerald",
+    "minecraft:gold_ingot",
+    "minecraft:iron_ingot",
+    "minecraft:lapis_lazuli",
+    "minecraft:diamond",
+    "minecraft:book",
+    "minecraft:redstone"
   ],
   "result": {
     "id": "minecraft:enchanted_book",

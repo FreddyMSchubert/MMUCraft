@@ -1,13 +1,23 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.dailies;
 
 import com.google.gson.JsonObject;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.tasks.*;
@@ -206,6 +216,32 @@ public final class DailyTaskRegistry {
                     option(10, false, false, new ItemSubmissionTask(Items.FURNACE_MINECART), 1, 1, 2, 3, "🚂", "Submit Minecarts with Furnaces", "Submit {count} minecarts with furnaces. Powered rail is not the only answer. Hold the items in your inventory, then click Claim."),
                     option(8, false, false, new ItemSubmissionTask(Items.TURTLE_HELMET), 28, 0, 1, 1, "🐢", "Submit a Turtle Shell", "Submit one turtle shell. Breeding turtles and waiting for five scutes is the real cost. Hold the item in your inventory, then click Claim."),
                     option(12, false, false, new ItemSubmissionTask(Items.VINE), 5, 0.25D, 12, 32, "🌿", "Submit Vines", "Submit {count} vines. Hold the items in your inventory, then click Claim."),
+                    option(5, false, false, new ItemSubmissionTask(Items.GOLDEN_HOE), 4, 0.25D, 3, 12, "\uD83D\uDD11", "Submit Golden Hoes", "Submit {count} golden hoes. WHAT DO YOU MEAN THESE DAILIES ARE NONSENSICAL? frankly, i'm offended."),
+                    option(12, false, false, new ItemSubmissionTask(Items.GLOW_BERRIES), 5, 0.3D, 8, 24, "✨", "Submit Glow Berries", "Submit {count} glow berries. Hold the items in your inventory, then click Claim."),
+                    option(6, false, false, new ItemSubmissionTask(Items.COPPER_HORSE_ARMOR), 5, 3, 1, 3, "🐴", "Submit Copper Horse Armor", "Submit {count} copper horse armor. Hold the items in your inventory, then click Claim."),
+                    option(5, false, false, ItemSubmissionTask.matching("brown", Items.LEATHER_HORSE_ARMOR, (player, stack) -> stack.getOrDefault(DataComponents.DYED_COLOR, null) != null && stack.get(DataComponents.DYED_COLOR).rgb() == DyeColor.BROWN.getTextureDiffuseColor()), 5, 3, 1, 3, "🐴", "Submit Brown Leather Horse Armor", "Submit {count} brown leather horse armor. Hold the items in your inventory, then click Claim."),
+                    option(6, false, false, new ItemSubmissionTask(Items.HARNESS.gray()), 5, 2, 1, 3, "🐴", "Submit Grey Harnesses", "Submit {count} grey harnesses. Hold the items in your inventory, then click Claim."),
+                    option(5, false, false, ItemSubmissionTask.matching("mending", Items.WOODEN_SHOVEL, (player, stack) -> hasEnchantment(player, stack, Enchantments.MENDING, 1)), 12, 0, 1, 1, "🪏", "Submit a Mending Wooden Shovel", "Submit one wooden shovel with Mending. Hold the item in your inventory, then click Claim."),
+                    option(8, false, false, new ItemSubmissionTask(Items.TURTLE_SCUTE), 5, 1.5D, 2, 6, "🐢", "Submit Turtle Scutes", "Submit {count} turtle scutes. Hold the items in your inventory, then click Claim."),
+                    option(6, false, false, ItemSubmissionTask.matching("one-durability", Items.BRUSH, (player, stack) -> stack.getMaxDamage() - stack.getDamageValue() == 1), 11, 0, 1, 1, "🖌️", "Submit a Worn Brush", "Submit one brush with one use left. Hold the item in your inventory, then click Claim."),
+                    option(6, false, false, ItemSubmissionTask.matching("under-half-durability", Items.CARROT_ON_A_STICK, (player, stack) -> stack.getDamageValue() * 2 > stack.getMaxDamage()), 10, 0, 1, 1, "🥕", "Submit a Worn Carrot on a Stick", "Submit one carrot on a stick with less than half durability left. Hold the item in your inventory, then click Claim."),
+                    option(5, false, false, new ItemSubmissionTask(Items.COPPER_NAUTILUS_ARMOR), 5, 3, 1, 3, "🐚", "Submit Copper Nautilus Armor", "Submit {count} copper nautilus armor. Hold the items in your inventory, then click Claim."),
+                    option(4, false, false, ItemSubmissionTask.matching("with-bees", Items.BEE_NEST, (player, stack) -> stack.has(DataComponents.BLOCK_ENTITY_DATA) && !stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTagWithoutId().getListOrEmpty("Bees").isEmpty()), 15, 0, 1, 1, "🐝", "Submit a Bee Nest with Bees", "Submit one bee nest that still has bees inside. Hold the item in your inventory, then click Claim."),
+                    option(12, false, false, new ItemSubmissionTask(Items.END_ROD), 5, 0.5D, 6, 16, "💡", "Submit End Rods", "Submit {count} end rods. Hold the items in your inventory, then click Claim."),
+                    option(12, false, false, new ItemSubmissionTask(Items.RED_SANDSTONE_STAIRS), 5, 0.15D, 16, 48, "🪜", "Submit Red Sandstone Stairs", "Submit {count} red sandstone stairs. Hold the items in your inventory, then click Claim."),
+                    option(12, false, false, new ItemSubmissionTask(Items.CARPET.cyan()), 5, 0.25D, 12, 32, "🟦", "Submit Cyan Carpets", "Submit {count} cyan carpets. Hold the items in your inventory, then click Claim."),
+                    option(10, false, false, new ItemSubmissionTask(Items.RAW_COPPER_BLOCK), 5, 1.5D, 2, 6, "🟧", "Submit Blocks of Raw Copper", "Submit {count} blocks of raw copper. Hold the items in your inventory, then click Claim."),
+                    option(6, false, false, ItemSubmissionTask.matching("ominous", Items.BANNER.white(), (player, stack) -> ItemStack.isSameItemSameComponents(stack, Raid.getOminousBannerInstance(player.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN)))), 12, 0, 1, 1, "🏴", "Submit an Ominous Banner", "Submit one ominous banner. Hold the item in your inventory, then click Claim."),
+                    option(8, false, false, new ItemSubmissionTask(Items.CHISELED_COPPER.waxed().weathered()), 5, 2, 1, 4, "🟩", "Submit Waxed Weathered Chiseled Copper", "Submit {count} waxed weathered chiseled copper blocks. Hold the items in your inventory, then click Claim."),
+                    option(16, false, false, new ItemSubmissionTask(Items.COOKIE), 5, 0.2D, 16, 48, "🍪", "Submit Cookies", "Submit {count} cookies. Hold the items in your inventory, then click Claim."),
+                    option(5, false, false, ItemSubmissionTask.matching("sharpness-2", Items.ENCHANTED_BOOK, (player, stack) -> hasEnchantment(player, stack, Enchantments.SHARPNESS, 2)), 10, 0, 1, 1, "📕", "Submit a Sharpness II Book", "Submit one enchanted book with Sharpness II. Hold the item in your inventory, then click Claim."),
+                    option(10, false, false, new ItemSubmissionTask(Items.GLOW_ITEM_FRAME), 5, 1, 2, 6, "🖼️", "Submit Glow Item Frames", "Submit {count} glow item frames. Hold the items in your inventory, then click Claim."),
+                    option(12, false, false, new ItemSubmissionTask(Items.SHROOMLIGHT), 5, 0.625D, 6, 16, "🍄", "Submit Shroomlights", "Submit {count} shroomlights. Hold the items in your inventory, then click Claim."),
+                    option(12, false, false, new ItemSubmissionTask(Items.POINTED_DRIPSTONE), 5, 0.25D, 12, 32, "🪨", "Submit Pointed Dripstone", "Submit {count} pointed dripstone. Hold the items in your inventory, then click Claim."),
+                    option(6, false, false, ItemSubmissionTask.matching("slow-falling", Items.POTION, (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, net.minecraft.world.item.alchemy.PotionContents.EMPTY).is(Potions.SLOW_FALLING)), 8, 0.5D, 2, 5, "🧪", "Submit Slow Falling Potions", "Submit {count} potions of slow falling. Hold the items in your inventory, then click Claim."),
+                    option(6, false, false, ItemSubmissionTask.matching("oozing", Items.POTION, (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, net.minecraft.world.item.alchemy.PotionContents.EMPTY).is(Potions.OOZING)), 8, 0.5D, 2, 5, "🧪", "Submit Oozing Potions", "Submit {count} potions of oozing. Hold the items in your inventory, then click Claim."),
+                    option(6, false, false, ItemSubmissionTask.matching("weaving", Items.POTION, (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, net.minecraft.world.item.alchemy.PotionContents.EMPTY).is(Potions.WEAVING)), 8, 0.5D, 2, 5, "🧪", "Submit Weaving Potions", "Submit {count} potions of weaving. Hold the items in your inventory, then click Claim."),
+                    option(6, false, false, ItemSubmissionTask.matching("infestation", Items.POTION, (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, net.minecraft.world.item.alchemy.PotionContents.EMPTY).is(Potions.INFESTED)), 8, 0.5D, 2, 5, "🧪", "Submit Infestation Potions", "Submit {count} potions of infestation. Hold the items in your inventory, then click Claim."),
                     option(10, false, false, new ItemSubmissionTask(Items.WRITTEN_BOOK), 11, 0, 1, 1, "📖", "Submit Written Books", "Submit one written book. Give it a title worth shelving. Hold the items in your inventory, then click Claim."),
                     option(10, false, false, new ItemSubmissionTask(Items.PLAYER_HEAD), 13, 0, 1, 1, "🗿", "Submit Player Heads", "Submit one player head. The likeness is uncanny. Hold the items in your inventory, then click Claim."),
                     option(12, false, false, new ItemSubmissionTask(Items.EXPERIENCE_BOTTLE), 5, 0.75D, 4, 12, "✨", "Submit Bottles o' Enchanting", "Submit {count} bottles o' enchanting. Experience is liquid currency now. Hold the items in your inventory, then click Claim."),
@@ -813,6 +849,12 @@ public final class DailyTaskRegistry {
 
     private static <T> Weighted<T> weighted(int weight, T value) {
         return new Weighted<>(weight, value);
+    }
+
+    private static boolean hasEnchantment(ServerPlayer player, ItemStack stack, ResourceKey<Enchantment> enchantment, int level) {
+        return EnchantmentHelper.getItemEnchantmentLevel(
+                player.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment), stack
+        ) >= level;
     }
 
     private static Weighted<Option> option(

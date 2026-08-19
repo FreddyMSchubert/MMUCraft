@@ -8,13 +8,20 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
+import java.util.function.BiPredicate;
+
 public final class ItemSubmissionTask implements DailyTaskDefinition {
     private final String id;
     private final Item item;
     private final String customItemId;
     private final String itemId;
+    private final BiPredicate<ServerPlayer, ItemStack> matcher;
     public ItemSubmissionTask(Item item) {
-        this("submit:" + DailyTargetId.of(item), item, null, DailyTargetId.of(item));
+        this("submit:" + DailyTargetId.of(item), item, null, DailyTargetId.of(item), (player, stack) -> true);
+    }
+
+    public static ItemSubmissionTask matching(String idSuffix, Item item, BiPredicate<ServerPlayer, ItemStack> matcher) {
+        return new ItemSubmissionTask("submit:" + DailyTargetId.of(item) + ":" + idSuffix, item, null, DailyTargetId.of(item), matcher);
     }
 
     public static ItemSubmissionTask custom(String fakeItemId) {
@@ -23,7 +30,8 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
                 "submit:fake:" + fakeItemId,
                 null,
                 fakeItemId,
-                fakeItemId
+                fakeItemId,
+                (player, stack) -> true
         );
     }
 
@@ -31,12 +39,14 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
             String id,
             Item item,
             String customItemId,
-            String itemId
+            String itemId,
+            BiPredicate<ServerPlayer, ItemStack> matcher
     ) {
         this.id = id;
         this.item = item;
         this.customItemId = customItemId;
         this.itemId = itemId;
+        this.matcher = matcher;
     }
 
     @Override
@@ -77,7 +87,7 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
     private int count(ServerPlayer player) {
         int total = 0;
         ItemStack customTemplate = customTemplate();
-        for (ItemStack stack : player.getInventory()) if (matches(stack, customTemplate)) total += stack.getCount();
+        for (ItemStack stack : player.getInventory()) if (matches(player, stack, customTemplate)) total += stack.getCount();
         return total;
     }
 
@@ -85,7 +95,7 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
         ItemStack customTemplate = customTemplate();
         for (int slot = 0; slot < player.getInventory().getContainerSize() && count > 0; slot++) {
             ItemStack stack = player.getInventory().getItem(slot);
-            if (!matches(stack, customTemplate)) continue;
+            if (!matches(player, stack, customTemplate)) continue;
             int removed = Math.min(count, stack.getCount());
             stack.shrink(removed);
             count -= removed;
@@ -96,7 +106,8 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
         return customItemId == null ? null : FakeItems.requireFakeItem(customItemId).createItemStack();
     }
 
-    private boolean matches(ItemStack stack, ItemStack customTemplate) {
-        return item != null ? stack.is(item) : ItemStack.isSameItemSameComponents(stack, customTemplate);
+    private boolean matches(ServerPlayer player, ItemStack stack, ItemStack customTemplate) {
+        return (item != null ? stack.is(item) : ItemStack.isSameItemSameComponents(stack, customTemplate))
+                && matcher.test(player, stack);
     }
 }

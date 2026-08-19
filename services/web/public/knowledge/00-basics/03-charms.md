@@ -5,9 +5,9 @@ chatMessage: You've unlocked knowledge on the basics of charms
 sidebarTitle: Charms
 ====
 
-Charms are powerful magical artifacts of divine origins. Their powers range from the simple but effective (such as granting extra hearts), the helpful (such as insta-mining ore veins and trees), to the strange (such as climbing on walls and ceilings, or jumping in mid-air).
+Charms are powerful magical artifacts of divine origins. Their powers range from the **simple but effective** (such as granting extra hearts), the **helpful** (such as insta-mining ore veins and trees), to the **strange** (such as climbing on walls and ceilings, or jumping in mid-air).
 
-You can find charms by looking for the rare magic books, sometimes spawning in treasure chests. Look out for the dark teal cover:
+You can find charms by looking for rare magic books, sometimes spawning in treasure chests. Look out for the dark teal cover:
 
 ![A buried treasure chest with a magic book spawned](/assets/knowledge/items/util_staves/buried_treasure.png)
 
@@ -43,7 +43,7 @@ The **Charm Boost Enchantment** can fix this for you. When applied to a piece of
 
 ![Equipped charm example image](/assets/knowledge/basics/charms/applying_charm_boost.png)
 
-Different armor types are better and conducting magic. Here's how many charm slots each armor set has with and without the Charm Boost Enchantment:
+Different armor types are better than others at conducting magic. Here's how many charm slots each armor set has with and without the Charm Boost Enchantment:
 
 | Armour | Slots without Charm Boost | Slots with Charm Boost |
 | :-- | :--: | :--: |

@@ -117,6 +117,7 @@ public final class FishingCatches {
         addTreasure(FishRarity.RARE, new ItemStack(Items.CLOCK));
         addTreasure(FishRarity.RARE, new ItemStack(Items.SPYGLASS));
         addTreasure(FishRarity.RARE, new ItemStack(Items.EXPERIENCE_BOTTLE));
+        addTreasure(FishRarity.RARE, FakeItems.createFakeItemStack("trident-shaft", 1));
         addTreasure(FishRarity.RARE, FakeItems.createFakeItemStack("sushi", 1));
 
         addTreasure(FishRarity.EPIC, new ItemStack(Items.EXPERIENCE_BOTTLE).copyWithCount((int)Math.floor(Math.random() * 10)));

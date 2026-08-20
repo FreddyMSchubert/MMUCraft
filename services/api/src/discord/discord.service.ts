@@ -96,7 +96,7 @@ export function formatOnlinePlayers(players: Array<{ minecraftUsername: string; 
 		const label = roleLabel(player.role)
 		return `${ansi(ansiColor(player.color))}${player.minecraftUsername}${ansi(0)}${label ? `${ansi(roleColor(player.role))}${label}${ansi(0)}` : ''}`
 	})
-	return `\`\`\`ansi\n${lines.join('\n') || 'No players online.'}\n\`\`\``
+	return `\`\`\`ansi\n${ansi(37)}Players online:${ansi(0)}\n${lines.join('\n') || 'No players online.'}\n\`\`\``
 }
 
 interface GameplayProtoRoot {
@@ -203,7 +203,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	}
 
 	private async listPlayers(interaction: ChatInputCommandInteraction) {
-		await interaction.deferReply()
+		await interaction.deferReply({ ephemeral: true })
 		try {
 			const { players } = await this.players.listOnlinePlayers()
 			await interaction.editReply(formatOnlinePlayers(players))

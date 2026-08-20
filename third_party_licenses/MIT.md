@@ -6,6 +6,31 @@ https://github.com/ochotonida/artifacts
 Copyright (c) 2021 Draylar
 https://github.com/Draylar/inmis
 
+Copyright (c) 2020 Draylar1
+https://github.com/Patbox/gone-fishing
+
+Copyright (c) 2024 Vg34100
+https://github.com/Vg34100/Minecraft-FishingFrenzy
+
+Copyright (c) 2024 RobinsPlaza
+https://github.com/SoYeahImAGamer/fishery
+
+Copyright (c) Exline
+https://modrinth.com/mod/exlines-fishing
+
+Copyright (c) 2024 MobGlare
+https://github.com/MobGlare/FishingSim
+
+FishingSim texture credit: @a_cshbotond
+https://modrinth.com/datapack/fishingsim
+
+Copyright (c) 2024 Macck209
+https://github.com/Macck209/Fishing101
+
+Fish of Thieves code:
+Copyright (c) 2022-2026 Wasinthorn Suksri
+https://github.com/SteveKunG/FishOfThieves
+
 MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

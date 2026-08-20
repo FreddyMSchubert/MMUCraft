@@ -12,12 +12,22 @@
 		},
 		"ceiling": {
 			"type": "boolean"
+		},
+		"glowing": {
+			"type": "boolean"
+		},
+		"lightLevel": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 15
 		}
 	},
 	"required": [
 		"ground",
 		"wall",
-		"ceiling"
+		"ceiling",
+		"glowing",
+		"lightLevel"
 	],
 	"anyOf": [
 		{

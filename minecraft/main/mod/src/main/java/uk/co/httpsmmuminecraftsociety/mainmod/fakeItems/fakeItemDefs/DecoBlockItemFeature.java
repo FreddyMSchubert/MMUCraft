@@ -7,7 +7,9 @@ import net.minecraft.world.item.ItemStack;
 public record DecoBlockItemFeature(
         boolean ground,
         boolean wall,
-        boolean ceiling
+        boolean ceiling,
+        boolean glowing,
+        int lightLevel
 ) implements ItemFeature
 {
     public static ItemFeature of(JsonObject json)
@@ -15,7 +17,9 @@ public record DecoBlockItemFeature(
         return new DecoBlockItemFeature(
                 json.get("ground").getAsBoolean(),
                 json.get("wall").getAsBoolean(),
-                json.get("ceiling").getAsBoolean()
+                json.get("ceiling").getAsBoolean(),
+                json.get("glowing").getAsBoolean(),
+                json.get("lightLevel").getAsInt()
         );
     }
 
@@ -39,6 +43,9 @@ public record DecoBlockItemFeature(
     {
         if (!ground && !wall && !ceiling) {
             throw new IllegalStateException("Deco block must be placeable on at least one surface.");
+        }
+        if (lightLevel < 0 || lightLevel > 15) {
+            throw new IllegalStateException("Deco block light level must be between 0 and 15.");
         }
     }
 }

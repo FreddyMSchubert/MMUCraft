@@ -8,6 +8,8 @@
       "decoBlocks.PlaceFakeItemsAsFrames",
       "decoBlocks.NoDecoBlockFrameItemDrops",
       "decoBlocks.RemoveEmptyDecoBlockFrames",
+      "decoBlocks.RemoveDecoBlockLights",
+      "decoBlocks.BreakDecoBlockFrameWithLight",
       "UpdateArmorTooltipAfterAnvilUse",
       "KittyPajamaScareCreeper",
       "NoSoulboundItemDropping",

@@ -11,6 +11,8 @@
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
-		"ceiling": false
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
 	}
 }

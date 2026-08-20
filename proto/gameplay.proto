@@ -19,6 +19,7 @@ service GameplayEvents {
 }
 
 service GameplayControl {
+  rpc GetOnlinePlayers(GetOnlinePlayersRequest) returns (GetOnlinePlayersResponse);
   rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
   rpc GrantGiftCodeMoney(GrantGiftCodeMoneyRequest) returns (GrantGiftCodeMoneyResponse);
   rpc GrantKnowledgeReadMoney(GrantKnowledgeReadMoneyRequest) returns (GrantKnowledgeReadMoneyResponse);
@@ -37,6 +38,17 @@ service GameplayControl {
   rpc UpgradeCharm(UpgradeCharmRequest) returns (UpgradeCharmResponse);
   rpc BroadcastDiscordMessage(BroadcastDiscordMessageRequest) returns (BroadcastDiscordMessageResponse);
   rpc RunServerCommand(RunServerCommandRequest) returns (RunServerCommandResponse);
+}
+
+message GetOnlinePlayersRequest {}
+
+message OnlinePlayer {
+  string minecraft_username = 1;
+  string minecraft_uuid = 2;
+}
+
+message GetOnlinePlayersResponse {
+  repeated OnlinePlayer players = 1;
 }
 
 message PublishDiscordEventRequest {

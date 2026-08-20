@@ -3,7 +3,7 @@
 	"scripts": {
 		"dev": "tsc-watch -p tsconfig.json --onSuccess \"node --env-file-if-exists=.env dist/main.js\"",
 		"build": "tsc -p tsconfig.json",
-		"test": "npm run build && node scripts/check-auth-request.js && node scripts/check-discord-avatar.js && node scripts/check-shop.js",
+		"test": "npm run build && node scripts/check-auth-request.js && node scripts/check-discord-avatar.js && node scripts/check-shop.js && node scripts/check-online-presence.js",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:check": "drizzle-kit check",

@@ -20,6 +20,7 @@ import { effectivePlayerColor, normalizeOptionalColor } from './player-color'
 
 const STATS_VERSION = 1
 const MOJANG_PROFILE_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const ONLINE_PLAYERS_RECONCILE_MS = 5 * 60 * 1000
 const PROFILE_TEXT_LIMITS = {
 	preferredName: 16,
 	pronouns: 16,
@@ -56,6 +57,13 @@ interface PlayerProfile {
 }
 
 interface GameplayControlClient extends grpc.Client {
+	GetOnlinePlayers(
+		request: Record<string, never>,
+		options: grpc.CallOptions,
+		callback: (error: grpc.ServiceError | null, response: {
+			players: Array<{ minecraft_username: string; minecraft_uuid: string }>
+		}) => void,
+	): void
 	ApplyPlayerColor(
 		request: { minecraft_uuid: string; color_hex: string },
 		options: grpc.CallOptions,
@@ -311,6 +319,8 @@ const KNOWN_MINECRAFT_OPTIONS: StatOption[] = [
 export class PlayersService {
 	private readonly logger = new Logger(PlayersService.name)
 	private gameplayControlClient: GameplayControlClient | null = null
+	private readonly onlinePlayers = new Map<string, { minecraft_username: string; minecraft_uuid: string }>()
+	private onlinePlayersReconciledAt = 0
 
 	constructor(
 		private readonly database: DatabaseService,
@@ -330,6 +340,34 @@ export class PlayersService {
 			statOptions: this.getStatOptions(players.map((player) => player.stats)),
 			players,
 		}
+	}
+
+	async listOnlinePlayers() {
+		if (Date.now() - this.onlinePlayersReconciledAt >= ONLINE_PLAYERS_RECONCILE_MS) {
+			await this.reconcileOnlinePlayers()
+		}
+
+		return {
+			players: [...this.onlinePlayers.values()]
+				.sort((left, right) => left.minecraft_username.localeCompare(right.minecraft_username, 'en', { sensitivity: 'base' }))
+				.map((player) => {
+					const user = this.identities.findByUuid(player.minecraft_uuid)
+					return {
+						minecraftUsername: user?.minecraft_username ?? player.minecraft_username,
+						color: user ? this.getProfile(user.id).color : effectivePlayerColor(player.minecraft_uuid),
+					}
+				}),
+		}
+	}
+
+	recordPresenceEvent(event: { type: string; minecraft_username: string; minecraft_uuid: string }) {
+		if (event.type !== 'join' && event.type !== 'first_join' && event.type !== 'leave') return
+		const key = onlinePlayerKey(event.minecraft_uuid, event.minecraft_username)
+		if (event.type === 'leave') this.onlinePlayers.delete(key)
+		else this.onlinePlayers.set(key, {
+			minecraft_username: event.minecraft_username,
+			minecraft_uuid: event.minecraft_uuid,
+		})
 	}
 
 	async getPlayer(viewer: AuthenticatedUser, userIdInput: string) {
@@ -772,6 +810,24 @@ export class PlayersService {
 		return this.gameplayControlClient
 	}
 
+	private async reconcileOnlinePlayers() {
+		this.onlinePlayersReconciledAt = Date.now()
+		try {
+			const players = await new Promise<Array<{ minecraft_username: string; minecraft_uuid: string }>>((resolve, reject) => {
+				this.getGameplayControlClient().GetOnlinePlayers({}, { deadline: Date.now() + 5_000 }, (error, response) => {
+					if (error) reject(error)
+					else resolve(response.players)
+				})
+			})
+			this.onlinePlayers.clear()
+			for (const player of players) {
+				this.onlinePlayers.set(onlinePlayerKey(player.minecraft_uuid, player.minecraft_username), player)
+			}
+		} catch (error) {
+			this.logger.warn(`Could not reconcile online players with Minecraft: ${String(error)}`)
+		}
+	}
+
 	private normalizeMinecraftStatInput(input: MinecraftStatInput, unixMs: number): MinecraftStatValue | null {
 		const category = sanitizeToken(input.category, '')
 		const id = sanitizeResourceId(input.id)
@@ -820,6 +876,10 @@ export class PlayersService {
 			return stats
 		}
 	}
+}
+
+function onlinePlayerKey(minecraftUuid: string, minecraftUsername: string) {
+	return minecraftUuid.toLowerCase().replaceAll('-', '') || minecraftUsername.toLowerCase()
 }
 
 async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftProfile> {

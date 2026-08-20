@@ -6,11 +6,11 @@ sidebarTitle: Welcome!
 ====
 
 <div class="welcomeWaves">
-<figure><img src="/assets/knowledge/basics/welcome/wave_freddy.gif" alt="Waving Freddy skin"><figcaption><strong>Freddy</strong><span>(Chair)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/basics/welcome/wave_oderzo.gif" alt="Waving oderzo skin"><figcaption><strong>oderzo</strong><span>(Secretary)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/basics/welcome/wave_hannah.gif" alt="Waving Hannah skin"><figcaption><strong>Hannah</strong><span>(Treasurer)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/basics/welcome/wave_mia.gif" alt="Waving Mia skin"><figcaption><strong>Mia</strong><span>(Wellbeing Officer)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/basics/welcome/wave_calum.gif" alt="Waving Calum skin"><figcaption><strong>Calum</strong><span>(Social Media Manager)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_freddy.gif" alt="Waving Freddy skin"><figcaption><strong><a href="/play/players/Freddy">Freddy</a></strong><span>(Chair)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_oderzo.gif" alt="Waving oderzo skin"><figcaption><strong><a href="/play/players/oderzo">oderzo</a></strong><span>(Secretary)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_hannah.gif" alt="Waving Hannah skin"><figcaption><strong><a href="/play/players/Hannah">Hannah</a></strong><span>(Treasurer)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_mia.gif" alt="Waving Mia skin"><figcaption><strong><a href="/play/players/Mia">Mia</a></strong><span>(Wellbeing Officer)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_calum.gif" alt="Waving Calum skin"><figcaption><strong><a href="/play/players/Calum">Calum</a></strong><span>(Social Media Manager)</span></figcaption></figure>
 </div>
 
 __Welcome to the MMU Minecraft Society!__ If you're reading this, you can now join the server and start playing!

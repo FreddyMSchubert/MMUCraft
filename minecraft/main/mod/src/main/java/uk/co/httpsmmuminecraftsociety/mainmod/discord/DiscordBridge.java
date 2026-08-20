@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.discord;
 
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.chat.PlayerChatMessage;
@@ -55,6 +56,14 @@ public final class DiscordBridge {
                 handler.player,
                 "left the server. [Players online: " + onlinePlayers(server, handler.player) + "]"
         ));
+        ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+            if (!(entity instanceof ServerPlayer player)) return;
+            String message = player.getCombatTracker().getDeathMessage().getString();
+            String displayName = player.getDisplayName().getString();
+            publish("death", player, message.startsWith(displayName)
+                    ? message.substring(displayName.length()).stripLeading()
+                    : message);
+        });
     }
 
     public static void advancement(ServerPlayer player, String title, int dabloons) {
@@ -119,8 +128,14 @@ public final class DiscordBridge {
     }
 
     private static String coloredOnlinePlayer(ServerPlayer player) {
-        return ansiColor(PlayerStatsSync.discordPresentation(player).colorHex())
-                + player.getName().getString() + "\u001B[0m";
+        PlayerStatsSync.DiscordPresentation profile = PlayerStatsSync.discordPresentation(player);
+        String label = switch (profile.role()) {
+            case "Committee" -> "\u001B[36m [Committee]";
+            case "Member" -> "\u001B[32m [Member]";
+            case "External" -> "\u001B[30m [External]";
+            default -> "";
+        };
+        return ansiColor(profile.colorHex()) + player.getName().getString() + "\u001B[0m" + label + "\u001B[0m";
     }
 
     private static String ansiColor(String color) {
@@ -152,6 +167,7 @@ public final class DiscordBridge {
         String key = translated.getKey();
         return key.startsWith("multiplayer.player.joined")
                 || key.startsWith("multiplayer.player.left")
-                || key.startsWith("chat.type.advancement");
+                || key.startsWith("chat.type.advancement")
+                || key.startsWith("death.");
     }
 }

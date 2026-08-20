@@ -47,6 +47,10 @@ async function check() {
 			type: 'server', minecraft_username: 'Freddy', minecraft_uuid: 'id', content: 'Restarting.',
 			role: 'Committee', nickname: 'Fred', pronouns: 'he/him', color_hex: '#ff00aa',
 		}), { username: 'Minecraft Server', content: '```ansi\n👾 \u001b[35mFreddy\u001b[0m\u001b[36m [Committee]\u001b[0m Restarting.\n```', isServer: true })
+		assert.deepEqual(formatDiscordWebhookMessage({
+			type: 'death', minecraft_username: 'Freddy', minecraft_uuid: 'id', content: 'fell from a high place',
+			role: 'Committee', nickname: 'Fred', pronouns: 'he/him', color_hex: '#ff00aa',
+		}), { username: 'Minecraft Server', content: '```ansi\n☠️ \u001b[35mFreddy\u001b[0m\u001b[36m [Committee]\u001b[0m fell from a high place\n```', isServer: true })
 		assert.equal(formatOnlinePlayers([
 			{ minecraftUsername: 'Freddy', color: '#ff00aa', role: 'Committee' },
 			{ minecraftUsername: 'Merlinspace', color: '#00ff00', role: 'Member' },

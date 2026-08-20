@@ -32,6 +32,7 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 		dailies: '✅',
 		shop: '🛒',
 		charm: '✨',
+		death: '☠️',
 		fish: '🐟',
 		fish_first: '🐟 👶',
 	}
@@ -161,10 +162,19 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 
 	async publish(event: MinecraftDiscordEvent) {
 		if (!this.webhook) return false
-		const message = formatDiscordWebhookMessage(event)
+		const presentation = event.minecraft_uuid ? this.players.discordPresentation(event.minecraft_uuid) : null
+		const currentEvent = presentation ? {
+			...event,
+			minecraft_username: presentation.minecraftUsername || event.minecraft_username,
+			role: presentation.role,
+			nickname: presentation.nickname,
+			pronouns: presentation.pronouns,
+			color_hex: presentation.colorHex,
+		} : event
+		const message = formatDiscordWebhookMessage(currentEvent)
 		if (!message.content.trim()) return false
-		const avatarURL = !message.isServer && event.minecraft_uuid && this.avatarBaseUrl
-			? `${this.avatarBaseUrl}/${event.minecraft_uuid}.png`
+		const avatarURL = !message.isServer && currentEvent.minecraft_uuid && this.avatarBaseUrl
+			? `${this.avatarBaseUrl}/${currentEvent.minecraft_uuid}.png`
 			: undefined
 		await this.webhook.send({
 			username: message.username,

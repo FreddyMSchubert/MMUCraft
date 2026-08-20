@@ -351,17 +351,31 @@ export class PlayersService {
 			players: [...this.onlinePlayers.values()]
 				.sort((left, right) => left.minecraft_username.localeCompare(right.minecraft_username, 'en', { sensitivity: 'base' }))
 				.map((player) => {
-					const user = this.identities.findByUuid(player.minecraft_uuid)
+					const presentation = this.discordPresentation(player.minecraft_uuid)
 					return {
-						minecraftUsername: user?.minecraft_username ?? player.minecraft_username,
-						color: user ? this.getProfile(user.id).color : effectivePlayerColor(player.minecraft_uuid),
-						role: user?.is_super_admin === 1 || user?.is_committee === 1
-							? 'Committee'
-							: user?.is_member === 1
-								? 'Member'
-								: user?.responsible_user_id !== null && user?.responsible_user_id !== undefined ? 'External' : 'Player',
+						minecraftUsername: presentation.minecraftUsername || player.minecraft_username,
+						color: presentation.colorHex,
+						role: presentation.role,
 					}
 				}),
+		}
+	}
+
+	discordPresentation(minecraftUuid: string) {
+		const user = this.identities.findByUuid(minecraftUuid)
+		if (!user) return {
+			minecraftUsername: '', role: 'Player', nickname: '', pronouns: '',
+			colorHex: effectivePlayerColor(minecraftUuid),
+		}
+		const profile = this.getProfile(user.id)
+		return {
+			minecraftUsername: user.minecraft_username,
+			role: user.is_super_admin === 1 || user.is_committee === 1 ? 'Committee'
+				: user.is_member === 1 ? 'Member'
+					: user.responsible_user_id !== null ? 'External' : 'Player',
+			nickname: profile.preferredName,
+			pronouns: profile.pronouns,
+			colorHex: profile.color,
 		}
 	}
 

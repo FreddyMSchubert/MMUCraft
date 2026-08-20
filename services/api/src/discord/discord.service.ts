@@ -10,6 +10,7 @@ import {
 } from 'discord.js'
 import { GrpcServerService } from '../grpc/grpc-server.service'
 import { DatabaseService, discordAdminCommandLogs } from '../database/database.service'
+import { PlayersService } from '../players/players.service'
 
 export interface MinecraftDiscordEvent {
 	type: string
@@ -90,6 +91,14 @@ export function ansiColor(color: string) {
 	})[0]
 }
 
+export function formatOnlinePlayers(players: Array<{ minecraftUsername: string; color: string; role: string }>) {
+	const lines = players.map((player) => {
+		const label = roleLabel(player.role)
+		return `${ansi(ansiColor(player.color))}${player.minecraftUsername}${ansi(0)}${label ? `${ansi(roleColor(player.role))}${label}${ansi(0)}` : ''}`
+	})
+	return `\`\`\`ansi\n${lines.join('\n') || 'No players online.'}\n\`\`\``
+}
+
 interface GameplayProtoRoot {
 	mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } }
 }
@@ -109,6 +118,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	constructor(
 		private readonly grpcServer: GrpcServerService,
 		private readonly database: DatabaseService,
+		private readonly players: PlayersService,
 	) { }
 
 	onApplicationBootstrap() {
@@ -129,8 +139,8 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			grpc.credentials.createInsecure(),
 		)
 
-		this.client.once('ready', () => void this.registerCommand()
-			.catch((error) => this.logger.error('Could not register the Discord command', error)))
+		this.client.once('ready', () => void this.registerCommands()
+			.catch((error) => this.logger.error('Could not register the Discord commands', error)))
 		this.client.on('messageCreate', (message) => {
 			if (message.channelId !== this.channelId || message.author.bot || message.webhookId) return
 			const attachments = [...message.attachments.values()].map((attachment) => attachment.url)
@@ -142,8 +152,9 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			}).catch((error) => this.logger.error('Could not send Discord message to Minecraft', error))
 		})
 		this.client.on('interactionCreate', (interaction) => {
-			if (!interaction.isChatInputCommand() || interaction.commandName !== 'mc') return
-			void this.runCommand(interaction)
+			if (!interaction.isChatInputCommand()) return
+			if (interaction.commandName === 'mc') void this.runCommand(interaction)
+			else if (interaction.commandName === 'players') void this.listPlayers(interaction)
 		})
 		void this.client.login(token).catch((error) => this.logger.error('Could not connect the Discord bot', error))
 	}
@@ -170,19 +181,36 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		this.client.destroy()
 	}
 
-	private async registerCommand() {
-		const command = new SlashCommandBuilder()
-			.setName('mc')
-			.setDescription('Run a Minecraft server console command')
-			.addStringOption((option) => option.setName('command').setDescription('Command without the leading slash').setRequired(true))
-			.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+	private async registerCommands() {
+		const commands = [
+			new SlashCommandBuilder()
+				.setName('mc')
+				.setDescription('Run a Minecraft server console command')
+				.addStringOption((option) => option.setName('command').setDescription('Command without the leading slash').setRequired(true))
+				.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+			new SlashCommandBuilder()
+				.setName('players')
+				.setDescription('List the players who are online'),
+		]
 		const guildId = process.env.DISCORD_GUILD_ID?.trim()
 		if (guildId) {
-			await (await this.client.guilds.fetch(guildId)).commands.create(command)
+			const guild = await this.client.guilds.fetch(guildId)
+			for (const command of commands) await guild.commands.create(command)
 		} else {
-			await this.client.application?.commands.create(command)
+			for (const command of commands) await this.client.application?.commands.create(command)
 		}
 		this.logger.log('Discord bridge connected')
+	}
+
+	private async listPlayers(interaction: ChatInputCommandInteraction) {
+		await interaction.deferReply()
+		try {
+			const { players } = await this.players.listOnlinePlayers()
+			await interaction.editReply(formatOnlinePlayers(players))
+		} catch (error) {
+			this.logger.error('Could not list online players', error)
+			await interaction.editReply('Could not retrieve the online players.')
+		}
 	}
 
 	private async runCommand(interaction: ChatInputCommandInteraction) {

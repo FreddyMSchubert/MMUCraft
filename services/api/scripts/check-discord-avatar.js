@@ -50,8 +50,8 @@ async function check() {
 		assert.equal(formatOnlinePlayers([
 			{ minecraftUsername: 'Freddy', color: '#ff00aa', role: 'Committee' },
 			{ minecraftUsername: 'Merlinspace', color: '#00ff00', role: 'Member' },
-		]), '```ansi\n\u001b[35mFreddy\u001b[0m\u001b[36m [Committee]\u001b[0m\n\u001b[32mMerlinspace\u001b[0m\u001b[32m [Member]\u001b[0m\n```')
-		assert.equal(formatOnlinePlayers([]), '```ansi\nNo players online.\n```')
+		]), '```ansi\n\u001b[37mPlayers online:\u001b[0m\n\u001b[35mFreddy\u001b[0m\u001b[36m [Committee]\u001b[0m\n\u001b[32mMerlinspace\u001b[0m\u001b[32m [Member]\u001b[0m\n```')
+		assert.equal(formatOnlinePlayers([]), '```ansi\n\u001b[37mPlayers online:\u001b[0m\nNo players online.\n```')
 	} finally {
 		global.fetch = originalFetch
 	}

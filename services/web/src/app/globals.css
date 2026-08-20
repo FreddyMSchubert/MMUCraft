@@ -972,6 +972,7 @@ a {
 	flex-wrap: wrap;
 	justify-content: flex-end;
 	gap: 4px 12px;
+	font-size: 0.78rem;
 }
 
 .onlinePlayerList a {

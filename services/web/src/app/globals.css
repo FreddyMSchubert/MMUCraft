@@ -921,35 +921,38 @@ a {
 
 .dashboardTop {
 	display: grid;
-	grid-template-columns: 1fr auto;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 16px;
 	align-items: start;
 	margin-bottom: 16px;
 }
 
-.dashboardTop h2,
 .dashboardTop p {
-	margin: 0 0 6px;
+	margin: 0;
 }
 
+.dashboardIdentity {
+	display: grid;
+	gap: 6px;
+}
+
+.dashboardEyebrow {
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+}
 
 .serverDetails {
-	text-align: right;
-	margin: 0;
 	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+	overflow-wrap: anywhere;
 }
 
 .signedInPlayer {
 	color: inherit;
-	text-decoration: none;
-}
-
-.signedInPlayer:hover,
-.signedInPlayer:focus-visible {
 	text-decoration: underline;
 }
 
-.copyServerIp {
+.textAction {
 	padding: 0;
 	border: 0;
 	background: none;
@@ -957,19 +960,28 @@ a {
 	text-decoration: underline;
 }
 
-.dashboardControls {
+.onlinePlayers {
 	display: grid;
-	justify-items: end;
 	gap: 6px;
+	min-width: 0;
+	text-align: right;
 }
 
-.dashboardSignOut {
-	flex: 0 0 auto;
-	padding: 10px 14px;
-	border: 0;
-	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.12);
-	color: #fff;
+.onlinePlayerList {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 4px 12px;
+}
+
+.onlinePlayerList a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.onlinePlayersEmpty {
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 0.82rem;
 }
 
 @media (max-width: 600px) {
@@ -978,14 +990,15 @@ a {
 	}
 
 	.serverDetails {
-		width: 100%;
-		text-align: left;
-		margin-bottom: 0;
+		overflow-wrap: anywhere;
 	}
 
-	.dashboardControls {
-		justify-items: start;
-		width: 100%;
+	.onlinePlayers {
+		text-align: left;
+	}
+
+	.onlinePlayerList {
+		justify-content: flex-start;
 	}
 }
 
@@ -4840,10 +4853,6 @@ a {
 
 	.dashboardTop {
 		display: grid;
-	}
-
-	.dashboardTop button {
-		width: 100%;
 	}
 
 	.knowledgePda {

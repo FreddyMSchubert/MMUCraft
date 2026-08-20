@@ -55,6 +55,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		call: grpc.ServerUnaryCall<MinecraftDiscordEvent, { accepted: boolean }>,
 		callback: UnaryCallback<{ accepted: boolean }>,
 	) {
+		this.players.recordPresenceEvent(call.request)
 		void this.discord.publish(call.request)
 			.then((accepted) => callback(null, { accepted }))
 			.catch((error: grpc.ServiceError) => callback(error, { accepted: false }))

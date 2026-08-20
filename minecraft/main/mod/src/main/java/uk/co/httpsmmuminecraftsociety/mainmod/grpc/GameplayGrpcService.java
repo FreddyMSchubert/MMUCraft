@@ -1237,7 +1237,26 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .build();
     }
 
+    private GetOnlinePlayersResponse getOnlinePlayersOnMainThread() {
+        GetOnlinePlayersResponse.Builder response = GetOnlinePlayersResponse.newBuilder();
+        minecraftServer().getPlayerList().getPlayers().stream()
+                .sorted(Comparator.comparing(player -> player.getName().getString(), String.CASE_INSENSITIVE_ORDER))
+                .forEach(player -> response.addPlayers(OnlinePlayer.newBuilder()
+                        .setMinecraftUsername(player.getName().getString())
+                        .setMinecraftUuid(player.getUUID().toString())));
+        return response.build();
+    }
+
     private final class GameplayControlEndpoint extends GameplayControlGrpc.GameplayControlImplBase {
+        @Override
+        public void getOnlinePlayers(
+                GetOnlinePlayersRequest request,
+                StreamObserver<GetOnlinePlayersResponse> responseObserver
+        ) {
+            callOnMainThread(GameplayGrpcService.this::getOnlinePlayersOnMainThread)
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
         @Override
         public void grantDailyLoginBonus(
                 GrantDailyLoginBonusRequest request,

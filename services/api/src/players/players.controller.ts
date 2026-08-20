@@ -15,6 +15,12 @@ export class PlayersController {
 		return this.players.listPlayers(user)
 	}
 
+	@Get('online')
+	listOnlinePlayers(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireSession(cookieHeader)
+		return this.players.listOnlinePlayers()
+	}
+
 	@Patch('me/profile')
 	updateOwnProfile(
 		@Headers('cookie') cookieHeader: string | undefined,

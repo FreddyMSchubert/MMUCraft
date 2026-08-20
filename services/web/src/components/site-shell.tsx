@@ -28,6 +28,11 @@ interface SessionUser {
 	isSuperAdmin: boolean
 }
 
+interface OnlinePlayer {
+	minecraftUsername: string
+	color: string
+}
+
 type TabId = 'dailies' | 'knowledge' | 'charms' | 'shop' | 'claims' | 'fishing' | 'players' | 'admin' | 'misc'
 
 const TAB_IDS = new Set<TabId>(['dailies', 'knowledge', 'charms', 'shop', 'claims', 'fishing', 'players', 'admin', 'misc'])
@@ -63,6 +68,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const pathname = usePathname()
 	const router = useRouter()
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
+	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null)
 	const [copyLabel, setCopyLabel] = useState('Copy IP')
 	const route = useMemo(() => pathname.split('/').slice(2).map(decodePathSegment), [pathname])
 	const activeTab = TAB_IDS.has(route[0] as TabId) ? route[0] as TabId : 'knowledge'
@@ -93,12 +99,36 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		}
 	}, [])
 
+	useEffect(() => {
+		if (!user) return
+
+		let cancelled = false
+		async function loadOnlinePlayers() {
+			try {
+				const response = await fetch('/api/players/online', { cache: 'no-store' })
+				if (!response.ok) return
+				const data = await response.json() as { players?: OnlinePlayer[] }
+				if (!cancelled) setOnlinePlayers(data.players ?? [])
+			} catch {
+				// Keep the last successful roster during a temporary server outage.
+			}
+		}
+
+		void loadOnlinePlayers()
+		const timer = window.setInterval(() => void loadOnlinePlayers(), 60_000)
+		return () => {
+			cancelled = true
+			window.clearInterval(timer)
+		}
+	}, [user])
+
 	async function signOut() {
 		await fetch('/api/auth/signout', {
 			method: 'POST',
 		})
 
 		setUser(null)
+		setOnlinePlayers(null)
 	}
 
 	async function copyServerIp() {
@@ -156,9 +186,9 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				{user && (
 					<section className="dashboard">
 						<div className="dashboardTop">
-							<div>
-								<h2>Dashboard</h2>
-								<p>
+							<div className="dashboardIdentity">
+								<p className="dashboardEyebrow">
+									Signed in as{' '}
 									<Link
 										className="signedInPlayer"
 										href={`/play/players/${encodeURIComponent(user.minecraftUsername)}`}
@@ -167,14 +197,34 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 											openPlayer(user.minecraftUsername)
 										}}
 									>
-										Signed in as <strong><PlayerName name={user.minecraftUsername} color={user.color} /></strong>.
+										<PlayerName name={user.minecraftUsername} color={user.color} />
 									</Link>
+									{' - '}
+									<button className="textAction" type="button" onClick={signOut}>Sign out</button>
+								</p>
+								<p className="serverDetails">
+									Java Edition 26.2 - IP: <strong>{SERVER_IP}</strong> -{' '}
+									<button className="textAction" type="button" onClick={() => void copyServerIp()}>{copyLabel}</button>
 								</p>
 							</div>
 
-							<div className="dashboardControls">
-								<button className="dashboardSignOut" type="button" onClick={signOut}>Sign out</button>
-								<small className="serverDetails">Java Edition 26.2 · <button className="copyServerIp" type="button" onClick={() => void copyServerIp()}>{copyLabel}</button> · Server IP: <strong>{SERVER_IP}</strong></small>
+							<div className="onlinePlayers">
+								<p className="dashboardEyebrow">Online players</p>
+								<div className="onlinePlayerList">
+									{onlinePlayers?.map((player) => (
+										<Link
+											key={player.minecraftUsername}
+											href={`/play/players/${encodeURIComponent(player.minecraftUsername)}`}
+											onNavigate={(event) => {
+												event.preventDefault()
+												openPlayer(player.minecraftUsername)
+											}}
+										>
+											<PlayerName name={player.minecraftUsername} color={player.color} />
+										</Link>
+									))}
+									{onlinePlayers?.length === 0 && <span className="onlinePlayersEmpty">No players online</span>}
+								</div>
 							</div>
 						</div>
 

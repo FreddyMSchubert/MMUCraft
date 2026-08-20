@@ -2593,6 +2593,14 @@ a {
 	grid-column: 1 / -1;
 }
 
+.playerProfileForm .settingToggle {
+	grid-column: 1 / -1;
+	display: flex;
+	color: inherit;
+	font-size: inherit;
+	text-transform: none;
+}
+
 .playerColorField {
 	display: flex;
 	align-items: end;

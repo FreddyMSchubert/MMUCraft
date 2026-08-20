@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { useSiteSettings } from '@/lib/site-settings'
 
 type MiscSection = 'settings' | 'gift-codes'
@@ -10,7 +10,7 @@ export function MiscTab({ section }: { section?: string }) {
 	const activeSection: MiscSection = section === 'gift-codes' ? 'gift-codes' : 'settings'
 	return <div className="miscPanel">
 		<nav className="miscSubTabs" aria-label="Miscellaneous sections">
-			<Link className={activeSection === 'settings' ? 'active' : ''} href="/play/misc/settings">Settings</Link>
+			<Link className={activeSection === 'settings' ? 'active' : ''} href="/play/misc/settings">Website settings</Link>
 			<Link className={activeSection === 'gift-codes' ? 'active' : ''} href="/play/misc/gift-codes">Redeem gift code</Link>
 		</nav>
 		{activeSection === 'settings' ? <SettingsSection /> : <GiftCodeSection />}
@@ -19,63 +19,19 @@ export function MiscTab({ section }: { section?: string }) {
 
 function SettingsSection() {
 	const { settings, updateSetting } = useSiteSettings()
-	const [showDeathCounter, setShowDeathCounter] = useState(true)
-	const [playerSettingReady, setPlayerSettingReady] = useState(false)
-	const [savingPlayerSetting, setSavingPlayerSetting] = useState(false)
-	const [error, setError] = useState('')
-
-	useEffect(() => {
-		let cancelled = false
-		void (async () => {
-			try {
-				const response = await fetch('/api/players/me/settings', { cache: 'no-store' })
-				const body = await response.json().catch(() => null)
-				if (!response.ok) throw new Error(body?.message ?? 'Could not load player settings')
-				if (!cancelled) setShowDeathCounter(body?.showDeathCounter !== false)
-			} catch (caught) {
-				if (!cancelled) setError(caught instanceof Error ? caught.message : 'Could not load player settings')
-			} finally {
-				if (!cancelled) setPlayerSettingReady(true)
-			}
-		})()
-		return () => { cancelled = true }
-	}, [])
-
-	async function updateDeathCounter(checked: boolean) {
-		const previous = showDeathCounter
-		setShowDeathCounter(checked)
-		setSavingPlayerSetting(true)
-		setError('')
-		try {
-			const response = await fetch('/api/players/me/settings', {
-				method: 'PATCH',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ showDeathCounter: checked }),
-			})
-			const body = await response.json().catch(() => null)
-			if (!response.ok) throw new Error(body?.message ?? 'Could not save player settings')
-		} catch (caught) {
-			setShowDeathCounter(previous)
-			setError(caught instanceof Error ? caught.message : 'Could not save player settings')
-		} finally {
-			setSavingPlayerSetting(false)
-		}
-	}
 
 	return <section className="settingsSection">
-		<h3>Settings</h3>
+		<h3>Website settings</h3>
 		<div className="settingsList">
-			<SettingToggle checked={showDeathCounter} disabled={!playerSettingReady || savingPlayerSetting} onChange={(checked) => void updateDeathCounter(checked)} title="Show death counter in nametag" description="Shows your death and used-totem count below your in-game nametag." />
 			<SettingToggle checked={settings.arachnophobiaMode} onChange={(checked) => updateSetting('arachnophobiaMode', checked)} title="Arachnophobia mode" description="Fully hides all images with spider-related stuff from the website. You may still encounter spidery things in-game." />
 			<SettingToggle checked={settings.reduce3dRendering} onChange={(checked) => updateSetting('reduce3dRendering', checked)} title="Reduce 3D rendering" description="Only loads 3D item models inside the detail view." />
 			<SettingToggle checked={settings.mysteriousSetting} onChange={(checked) => updateSetting('mysteriousSetting', checked)} title="the very mysterious and highly preculiar, though irregularly occurring, setting" />
 		</div>
-		{error && <p className="authError">{error}</p>}
 	</section>
 }
 
-function SettingToggle({ checked, disabled = false, onChange, title, description }: { checked: boolean; disabled?: boolean; onChange: (checked: boolean) => void; title: string; description?: string }) {
-	return <label className="settingToggle"><span><strong>{title}</strong>{description && <small>{description}</small>}</span><input type="checkbox" checked={checked} disabled={disabled} onChange={(event) => onChange(event.target.checked)} /><i aria-hidden="true" /></label>
+function SettingToggle({ checked, onChange, title, description }: { checked: boolean; onChange: (checked: boolean) => void; title: string; description?: string }) {
+	return <label className="settingToggle"><span><strong>{title}</strong>{description && <small>{description}</small>}</span><input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} /><i aria-hidden="true" /></label>
 }
 
 function GiftCodeSection() {

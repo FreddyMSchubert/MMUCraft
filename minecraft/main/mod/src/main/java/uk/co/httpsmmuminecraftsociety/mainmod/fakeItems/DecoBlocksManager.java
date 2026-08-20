@@ -9,6 +9,8 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.GlowItemFrame;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +19,11 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DecoBlockItemFeature;
@@ -27,6 +33,7 @@ public final class DecoBlocksManager {
     private DecoBlocksManager() {}
 
     public static final String DECO_BLOCK_FRAME_TAG = "mainmod_deco_block";
+    public static final String DECO_BLOCK_LIGHT_TAG = "mainmod_deco_block_light";
     private static final String DECO_BLOCK_STASHED_CUSTOM_NAME_TAG = "mainmod_deco_block_custom_name";
 
     public static @Nullable InteractionResult onUseItemOn(UseOnContext context) {
@@ -89,23 +96,71 @@ public final class DecoBlocksManager {
             return rejectPlacement(player, hand);
         }
 
-        ItemFrame frame = new ItemFrame(level, placePos, face);
+        boolean hasLight = decoBlock.lightLevel() > 0;
+        if (hasLight && !level.isEmptyBlock(placePos)) {
+            return rejectPlacement(player, hand);
+        }
+
+        ItemFrame frame = decoBlock.glowing()
+                ? new GlowItemFrame(level, placePos, face)
+                : new ItemFrame(level, placePos, face);
         frame.setInvisible(true);
         frame.addTag(DECO_BLOCK_FRAME_TAG);
+        if (hasLight) {
+            frame.addTag(DECO_BLOCK_LIGHT_TAG);
+        }
         frame.setItem(hideCustomNameForFrame(stack.copyWithCount(1)), false);
 
         if (!frame.survives()) {
             return rejectPlacement(player, hand);
         }
 
-        frame.playPlacementSound();
-        level.gameEvent(player, GameEvent.ENTITY_PLACE, frame.position());
-        if (!level.addFreshEntity(frame)) {
+        if (hasLight && !level.setBlock(
+                placePos,
+                Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, decoBlock.lightLevel()),
+                Block.UPDATE_ALL
+        )) {
             return rejectPlacement(player, hand);
         }
 
+        if (!frame.survives() || !level.addFreshEntity(frame)) {
+            removeOwnedLight(frame);
+            return rejectPlacement(player, hand);
+        }
+
+        frame.playPlacementSound();
+        level.gameEvent(player, GameEvent.ENTITY_PLACE, frame.position());
         stack.shrink(1);
         return InteractionResult.SUCCESS_SERVER;
+    }
+
+    public static void removeOwnedLight(ItemFrame frame) {
+        if (!frame.removeTag(DECO_BLOCK_LIGHT_TAG)) {
+            return;
+        }
+
+        Level level = frame.level();
+        BlockPos pos = frame.blockPosition();
+        if (!level.isClientSide() && level.getBlockState(pos).is(Blocks.LIGHT)) {
+            level.removeBlock(pos, false);
+        }
+    }
+
+    public static void breakFrameAfterLightRemoval(Level level, BlockPos pos) {
+        if (!(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+            return;
+        }
+
+        level.getEntities((Entity) null, new AABB(pos), entity ->
+                        entity instanceof ItemFrame frame
+                                && frame.blockPosition().equals(pos)
+                                && frame.entityTags().contains(DECO_BLOCK_LIGHT_TAG))
+                .forEach(entity -> {
+                    ItemFrame frame = (ItemFrame) entity;
+                    frame.removeTag(DECO_BLOCK_LIGHT_TAG);
+                    frame.kill(serverLevel);
+                    frame.dropItem(serverLevel, null);
+                });
     }
 
     public static ItemStack restoreCustomNameFromFrame(ItemStack stack) {

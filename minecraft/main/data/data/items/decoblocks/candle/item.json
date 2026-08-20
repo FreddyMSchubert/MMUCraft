@@ -8,7 +8,9 @@
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
-		"ceiling": false
+		"ceiling": false,
+		"glowing": true,
+		"lightLevel": 8
 	},
 	"shopPurchasable": {
 		"priceDabloons": 35,

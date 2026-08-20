@@ -22,7 +22,8 @@ public class NoDecoBlockFrameItemDrops {
             )
     )
     private ItemEntity mainmod$skipDecoBlockFrameDrop(ItemFrame frame, ServerLevel level, ItemStack stack) {
-        if (frame.entityTags().contains(DecoBlocksManager.DECO_BLOCK_FRAME_TAG) && stack.is(Items.ITEM_FRAME)) {
+        if (frame.entityTags().contains(DecoBlocksManager.DECO_BLOCK_FRAME_TAG)
+                && (stack.is(Items.ITEM_FRAME) || stack.is(Items.GLOW_ITEM_FRAME))) {
             return null;
         }
 

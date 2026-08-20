@@ -29,6 +29,7 @@ interface PlayerProfile {
 	color: string
 	defaultColor: string
 	customColor: string | null
+	showDeathCounter: boolean
 	updatedAtUnixMs: number
 }
 
@@ -457,6 +458,7 @@ function PlayerProfileForm({
 	const [baseZ, setBaseZ] = useState(player.profile.base.z?.toString() ?? '')
 	const [bio, setBio] = useState(player.profile.bio)
 	const [color, setColor] = useState<string | null>(player.profile.customColor)
+	const [showDeathCounter, setShowDeathCounter] = useState(player.profile.showDeathCounter)
 	const [saving, setSaving] = useState(false)
 	const displayedColor = color ?? player.profile.defaultColor
 
@@ -480,6 +482,7 @@ function PlayerProfileForm({
 					baseZ: baseZ === '' ? null : Number(baseZ),
 					bio,
 					color,
+					showDeathCounter,
 				}),
 			})
 			const body = await response.json().catch(() => null)
@@ -555,6 +558,11 @@ function PlayerProfileForm({
 					onColorChange(player.profile.defaultColor)
 				}}>Reset color</button>
 			</div>
+			<label className="settingToggle">
+				<span><strong>Show death counter in nametag</strong><small>Shows your death and used-totem count below your in-game nametag.</small></span>
+				<input type="checkbox" checked={showDeathCounter} onChange={(event) => setShowDeathCounter(event.target.checked)} />
+				<i aria-hidden="true" />
+			</label>
 			<div className="playerProfileActions">
 				<button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
 				<button type="button" onClick={onCancel} disabled={saving}>Cancel</button>

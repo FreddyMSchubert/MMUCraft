@@ -354,35 +354,6 @@ export class PlayersService {
 		return await this.updateProfile(user, String(user.id), input)
 	}
 
-	getOwnSettings(user: AuthenticatedUser) {
-		return { showDeathCounter: this.getProfile(user.id).showDeathCounter }
-	}
-
-	async updateOwnSettings(user: AuthenticatedUser, input: Record<string, unknown>) {
-		if (typeof input.showDeathCounter !== 'boolean') {
-			throw new BadRequestException('Show death counter must be true or false')
-		}
-
-		const now = Date.now()
-		const values = {
-			user_id: user.id,
-			show_death_counter: input.showDeathCounter ? 1 : 0,
-			updated_at_unix_ms: now,
-		}
-		this.database.connection.insert(playerProfiles).values(values)
-			.onConflictDoUpdate({ target: playerProfiles.user_id, set: values })
-			.run()
-
-		const minecraftUuid = this.findUserById(user.id)?.minecraft_uuid
-		if (minecraftUuid) {
-			await this.applyPlayerSettings(minecraftUuid, input.showDeathCounter).catch((error) => {
-				this.logger.warn(`Could not immediately synchronize player settings to Minecraft: ${String(error)}`)
-			})
-		}
-
-		return { showDeathCounter: input.showDeathCounter }
-	}
-
 	async updateProfile(viewer: AuthenticatedUser, userIdInput: string, input: Record<string, unknown>) {
 		const userId = Number(userIdInput)
 		if (!Number.isInteger(userId) || userId <= 0) {
@@ -395,7 +366,7 @@ export class PlayersService {
 		if (!target) throw new NotFoundException('Player not found')
 
 		const now = Date.now()
-		const profile = this.normalizeProfileInput(input)
+		const profile = this.normalizeProfileInput(input, this.getProfile(target.id).showDeathCounter)
 
 		const values = {
 			user_id: target.id,
@@ -408,6 +379,7 @@ export class PlayersService {
 			base_z: profile.base.z,
 			bio: profile.bio,
 			color_hex: profile.customColor,
+			show_death_counter: profile.showDeathCounter ? 1 : 0,
 			updated_at_unix_ms: now,
 		}
 		this.database.connection.insert(playerProfiles).values(values)
@@ -419,6 +391,9 @@ export class PlayersService {
 		if (minecraftUuid) {
 			await this.applyPlayerColor(minecraftUuid, savedProfile.color).catch((error) => {
 				this.logger.warn(`Could not immediately synchronize player color to Minecraft: ${String(error)}`)
+			})
+			await this.applyPlayerSettings(minecraftUuid, savedProfile.showDeathCounter).catch((error) => {
+				this.logger.warn(`Could not immediately synchronize player settings to Minecraft: ${String(error)}`)
 			})
 		}
 
@@ -741,7 +716,11 @@ export class PlayersService {
 		})
 	}
 
-	private normalizeProfileInput(input: Record<string, unknown>): PlayerProfile {
+	private normalizeProfileInput(input: Record<string, unknown>, currentShowDeathCounter: boolean): PlayerProfile {
+		if (input.showDeathCounter !== undefined && typeof input.showDeathCounter !== 'boolean') {
+			throw new BadRequestException('Show death counter must be true or false')
+		}
+
 		return {
 			preferredName: sanitizeProfileText(input.preferredName, PROFILE_TEXT_LIMITS.preferredName, 'Nickname'),
 			pronouns: sanitizeProfileText(input.pronouns, PROFILE_TEXT_LIMITS.pronouns, 'Pronouns'),
@@ -756,7 +735,7 @@ export class PlayersService {
 			color: '',
 			defaultColor: '',
 			customColor: normalizeOptionalColor(input.color),
-			showDeathCounter: true,
+			showDeathCounter: input.showDeathCounter ?? currentShowDeathCounter,
 			updatedAtUnixMs: Date.now(),
 		}
 	}

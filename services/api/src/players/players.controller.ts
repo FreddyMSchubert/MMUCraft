@@ -24,21 +24,6 @@ export class PlayersController {
 		return this.players.updateOwnProfile(user, body ?? {})
 	}
 
-	@Get('me/settings')
-	getOwnSettings(@Headers('cookie') cookieHeader: string | undefined) {
-		const user = this.auth.requireSession(cookieHeader)
-		return this.players.getOwnSettings(user)
-	}
-
-	@Patch('me/settings')
-	updateOwnSettings(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: Record<string, unknown> | undefined,
-	) {
-		const user = this.auth.requireSession(cookieHeader)
-		return this.players.updateOwnSettings(user, body ?? {})
-	}
-
 	@Patch(':userId/profile')
 	updateProfile(
 		@Headers('cookie') cookieHeader: string | undefined,

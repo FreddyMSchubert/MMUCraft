@@ -1562,10 +1562,8 @@ a {
 }
 
 .knowledgePage table {
-	display: block;
-	width: 100%;
 	margin-bottom: 14px;
-	overflow-x: auto;
+	max-width: 100%;
 	border: 1px solid rgba(123, 235, 255, 0.22);
 	border-radius: 8px;
 	border-spacing: 0;

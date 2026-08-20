@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict')
 const sharp = require('sharp')
 const { DiscordAvatarController } = require('../dist/discord/discord-avatar.controller')
-const { formatDiscordWebhookMessage } = require('../dist/discord/discord.service')
+const { formatDiscordWebhookMessage, formatOnlinePlayers } = require('../dist/discord/discord.service')
 
 async function check() {
 	const face = await sharp({ create: { width: 8, height: 8, channels: 4, background: '#112233' } }).png().toBuffer()
@@ -47,6 +47,11 @@ async function check() {
 			type: 'server', minecraft_username: 'Freddy', minecraft_uuid: 'id', content: 'Restarting.',
 			role: 'Committee', nickname: 'Fred', pronouns: 'he/him', color_hex: '#ff00aa',
 		}), { username: 'Minecraft Server', content: '```ansi\n👾 \u001b[35mFreddy\u001b[0m\u001b[36m [Committee]\u001b[0m Restarting.\n```', isServer: true })
+		assert.equal(formatOnlinePlayers([
+			{ minecraftUsername: 'Freddy', color: '#ff00aa', role: 'Committee' },
+			{ minecraftUsername: 'Merlinspace', color: '#00ff00', role: 'Member' },
+		]), '```ansi\n\u001b[35mFreddy\u001b[0m\u001b[36m [Committee]\u001b[0m\n\u001b[32mMerlinspace\u001b[0m\u001b[32m [Member]\u001b[0m\n```')
+		assert.equal(formatOnlinePlayers([]), '```ansi\nNo players online.\n```')
 	} finally {
 		global.fetch = originalFetch
 	}

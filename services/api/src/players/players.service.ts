@@ -355,6 +355,11 @@ export class PlayersService {
 					return {
 						minecraftUsername: user?.minecraft_username ?? player.minecraft_username,
 						color: user ? this.getProfile(user.id).color : effectivePlayerColor(player.minecraft_uuid),
+						role: user?.is_super_admin === 1 || user?.is_committee === 1
+							? 'Committee'
+							: user?.is_member === 1
+								? 'Member'
+								: user?.responsible_user_id !== null && user?.responsible_user_id !== undefined ? 'External' : 'Player',
 					}
 				}),
 		}

@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Headers, HttpCode, Post, Res } from '@nestjs/common'
-import type { FastifyReply } from 'fastify'
+import { Body, Controller, Get, Headers, HttpCode, Post, Req, Res } from '@nestjs/common'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import { AuthService } from './auth.service'
 
 @Controller('api/auth')
@@ -7,8 +7,8 @@ export class AuthController {
 	constructor(private readonly auth: AuthService) { }
 
 	@Post('signup')
-	createSignup(@Body() body: { email?: string }) {
-		return this.auth.createSignup(body.email ?? '')
+	createSignup(@Body() body: { email?: string }, @Req() request: FastifyRequest) {
+		return this.auth.createSignup(body.email ?? '', clientIp(request))
 	}
 
 	@Post('verify-email')
@@ -43,8 +43,9 @@ export class AuthController {
 	@Post('signin')
 	async signIn(
 		@Body() body: { email?: string },
+		@Req() request: FastifyRequest,
 	) {
-		return await this.auth.signIn(body.email ?? '')
+		return await this.auth.signIn(body.email ?? '', clientIp(request))
 	}
 
 	@Post('verify-signin')
@@ -88,4 +89,9 @@ export class AuthController {
 			].filter(Boolean).join('; '),
 		)
 	}
+}
+
+function clientIp(request: FastifyRequest) {
+	const realIp = request.headers['x-real-ip']
+	return typeof realIp === 'string' ? realIp : request.ip
 }

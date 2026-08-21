@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useRef, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import { ASSETS } from '@/lib/assets'
 
 type Step =
@@ -15,6 +15,13 @@ type Step =
 
 interface ApiError {
 	message?: string | string[]
+	retryAfterSeconds?: number
+}
+
+class ApiRequestError extends Error {
+	constructor(message: string, readonly retryAfterSeconds?: number) {
+		super(message)
+	}
 }
 
 const SERVER_RULES = [
@@ -64,6 +71,7 @@ const AUTH_CODE_ITEMS = [
 	{ name: 'Zombie', image: `${TEXTURE_BASE}/entity/zombie/zombie.png`, head: true },
 ] as const
 const AUTH_CODE_LENGTH = 3
+const RESEND_DELAY_MS = 60_000
 const SIGNUP_PROGRESS: Partial<Record<Step, number>> = {
 	email: 1,
 	'email-code': 2,
@@ -92,7 +100,7 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
 			? error.message.join(', ')
 			: error?.message ?? 'Request failed'
 
-		throw new Error(message)
+		throw new ApiRequestError(message, error?.retryAfterSeconds)
 	}
 
 	return data as T
@@ -106,12 +114,29 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	const [authCode, setAuthCode] = useState(emptyAuthCode)
 	const [minecraftUsername, setMinecraftUsername] = useState('')
 	const [deliveryMessage, setDeliveryMessage] = useState('')
+	const [showEmailHelp, setShowEmailHelp] = useState(false)
+	const [showMinecraftHelp, setShowMinecraftHelp] = useState(false)
+	const [resendAvailableAt, setResendAvailableAt] = useState(0)
+	const [resendNow, setResendNow] = useState(() => Date.now())
 	const [acceptedRules, setAcceptedRules] = useState<boolean[]>(() => SERVER_RULES.map(() => false))
 	const [error, setError] = useState('')
 	const [busy, setBusy] = useState(false)
 	const running = useRef(false)
 	const allRulesAccepted = acceptedRules.every(Boolean)
 	const signupProgress = isSigningIn ? undefined : SIGNUP_PROGRESS[step]
+	const resendSeconds = Math.max(0, Math.ceil((resendAvailableAt - resendNow) / 1000))
+
+	useEffect(() => {
+		if (resendSeconds === 0) return
+		const timer = window.setInterval(() => setResendNow(Date.now()), 1_000)
+		return () => window.clearInterval(timer)
+	}, [resendSeconds])
+
+	function restartResendCountdown() {
+		const now = Date.now()
+		setResendNow(now)
+		setResendAvailableAt(now + RESEND_DELAY_MS)
+	}
 
 	async function run(action: () => Promise<void>) {
 		if (running.current) return
@@ -122,6 +147,11 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		try {
 			await action()
 		} catch (caught) {
+			if (caught instanceof ApiRequestError && caught.retryAfterSeconds) {
+				const now = Date.now()
+				setResendNow(now)
+				setResendAvailableAt(now + caught.retryAfterSeconds * 1000)
+			}
 			setError(caught instanceof Error ? caught.message : 'Something went wrong')
 		} finally {
 			running.current = false
@@ -133,10 +163,12 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault()
 
 		void run(async () => {
-			const result = await postJson<{ flowId: string; delivery: 'sent' | 'manual' }>('/api/auth/signup', { email })
+			const result = await postJson<{ flowId: string }>('/api/auth/signup', { email })
 			setFlowId(result.flowId)
-			setDeliveryMessage(verificationMessage(result.delivery, email))
+			setDeliveryMessage(verificationMessage(email))
+			setShowEmailHelp(false)
 			setAuthCode(emptyAuthCode())
+			restartResendCountdown()
 			setStep('email-code')
 		})
 	}
@@ -196,10 +228,12 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault()
 
 		void run(async () => {
-			const result = await postJson<{ flowId: string; delivery: 'sent' | 'manual'; timeoutEnded: boolean }>('/api/auth/signin', { email })
+			const result = await postJson<{ flowId: string; timeoutEnded: boolean }>('/api/auth/signin', { email })
 			setFlowId(result.flowId)
-			setDeliveryMessage(`${result.timeoutEnded ? 'Your timeout has ended and Minecraft server access was restored. Rejoin the server now. ' : ''}${verificationMessage(result.delivery, email)}`)
+			setDeliveryMessage(`${result.timeoutEnded ? 'Your timeout has ended and Minecraft server access was restored. Rejoin the server now. ' : ''}${verificationMessage(email)}`)
+			setShowEmailHelp(false)
 			setAuthCode(emptyAuthCode())
+			restartResendCountdown()
 			setStep('signin-code')
 		})
 	}
@@ -211,6 +245,19 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			await postJson('/api/auth/verify-signin', { flowId, code: authCode.join('|') })
 			setStep('done')
 			onSignedIn?.()
+		})
+	}
+
+	function resendEmail() {
+		void run(async () => {
+			const result = step === 'signin-code'
+				? await postJson<{ flowId: string }>('/api/auth/signin', { email })
+				: await postJson<{ flowId: string }>('/api/auth/signup', { email })
+			setFlowId(result.flowId)
+			setAuthCode(emptyAuthCode())
+			setDeliveryMessage(verificationMessage(email, true))
+			restartResendCountdown()
+			setShowEmailHelp(false)
 		})
 	}
 
@@ -235,7 +282,9 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						autoComplete="email"
 						required
 					/>
-					<button disabled={busy}>Sign up</button>
+					<button disabled={busy || resendSeconds > 0}>
+						{resendSeconds > 0 ? `Try again in ${formatCountdown(resendSeconds)}` : 'Sign up'}
+					</button>
 					<button type="button" disabled={busy} onClick={() => { setIsSigningIn(true); setStep('signin') }}>
 						Already signed up?
 					</button>
@@ -254,9 +303,11 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						autoComplete="email"
 						required
 					/>
-					<button disabled={busy}>Sign in</button>
-					<button type="button" disabled={busy} onClick={() => { setIsSigningIn(false); setStep('email') }}>
-						Back to signup
+					<button disabled={busy || resendSeconds > 0}>
+						{resendSeconds > 0 ? `Try again in ${formatCountdown(resendSeconds)}` : 'Sign in'}
+					</button>
+					<button className="authOutlinedButton" type="button" disabled={busy} onClick={() => { setIsSigningIn(false); setStep('email') }}>
+						Sign up instead
 					</button>
 				</form>
 			)}
@@ -265,6 +316,9 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 				<form onSubmit={submitEmailCode} className="authForm">
 					<h2>Verify email</h2>
 					<p>{deliveryMessage}</p>
+					<button className="authHelpButton" type="button" disabled={busy} onClick={() => setShowEmailHelp(true)}>
+						I didn&apos;t get an email
+					</button>
 					<AuthCodeInputs value={authCode} onChange={setAuthCode} />
 					<button disabled={busy}>Verify email</button>
 				</form>
@@ -274,6 +328,9 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 				<form onSubmit={submitSignInCode} className="authForm">
 					<h2>Verify sign in</h2>
 					<p>{deliveryMessage}</p>
+					<button className="authHelpButton" type="button" disabled={busy} onClick={() => setShowEmailHelp(true)}>
+						I didn&apos;t get an email
+					</button>
 					<AuthCodeInputs value={authCode} onChange={setAuthCode} />
 					<button disabled={busy}>Sign in</button>
 				</form>
@@ -295,8 +352,10 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'minecraft-code' && (
 				<form onSubmit={submitMinecraftCode} className="authForm">
 					<h2>Join the server</h2>
-					<p>Join with <strong>Java Edition 26.2</strong> at <strong>mmuminecraftsociety.co.uk</strong>.</p>
-					<p>When you join the server, you will be given another verification code. Please input the minecraft items in order.</p>
+					<p>Join the Minecraft server at <strong>mmuminecraftsociety.co.uk</strong> using <strong>Java Edition 26.2</strong>.</p>
+					<button className="authHelpButton" type="button" disabled={busy} onClick={() => setShowMinecraftHelp(true)}>
+						I couldn&apos;t get a code
+					</button>
 					<AuthCodeInputs value={authCode} onChange={setAuthCode} />
 					<button disabled={busy}>Verify Minecraft code</button>
 				</form>
@@ -335,7 +394,35 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 				</div>
 			)}
 
-			{error ? <p className="authError">{error}</p> : null}
+			{showEmailHelp && (step === 'email-code' || step === 'signin-code') && (
+				<div className="authHelpBackdrop">
+					<section className="authHelpDialog" role="dialog" aria-modal="true" aria-labelledby="auth-email-help-title">
+						<button className="authHelpClose" type="button" aria-label="Close" onClick={() => setShowEmailHelp(false)}>×</button>
+						<h3 id="auth-email-help-title">Didn&apos;t get the email?</h3>
+						<p>Check your spam folder and confirm that <strong>{email}</strong> is correct.</p>
+						<p>If the email still does not arrive, contact the committee.</p>
+						{error ? <p className="authError">{error}</p> : null}
+						<button className="authSecondaryButton" type="button" disabled={busy || resendSeconds > 0} onClick={resendEmail}>
+							{resendSeconds > 0 ? `Resend available in ${formatCountdown(resendSeconds)}` : 'Resend email'}
+						</button>
+					</section>
+				</div>
+			)}
+
+			{showMinecraftHelp && step === 'minecraft-code' && (
+				<div className="authHelpBackdrop">
+					<section className="authHelpDialog" role="dialog" aria-modal="true" aria-labelledby="auth-minecraft-help-title">
+						<button className="authHelpClose" type="button" aria-label="Close" onClick={() => setShowMinecraftHelp(false)}>×</button>
+						<h3 id="auth-minecraft-help-title">Couldn&apos;t get a code?</h3>
+						<p>Check that your Minecraft username is correct: <strong>{minecraftUsername}</strong>.</p>
+						<p>Join the server, wait for the verification code, then leave and join again if it does not appear.</p>
+						<p>A message saying that you are not whitelisted is expected during signup. The code should appear before you are disconnected.</p>
+						<p>If you still cannot get a code, contact the committee.</p>
+					</section>
+				</div>
+			)}
+
+			{error && !showEmailHelp && !showMinecraftHelp ? <p className="authError">{error}</p> : null}
 		</section>
 	)
 }
@@ -381,8 +468,16 @@ function AuthCodeIcon({ itemName }: { itemName: string }) {
 	/>
 }
 
-function verificationMessage(delivery: 'sent' | 'manual', email: string) {
-	return delivery === 'sent'
-		? `We sent a three-item code to ${email}. It expires in 10 minutes. Please input the minecraft items in order.`
-		: 'Email delivery is currently unavailable. Go talk to the committee about it.'
+function verificationMessage(email: string, resent = false) {
+	return resent
+		? `We sent another three-item code to ${email}. It expires in 10 minutes.`
+		: `We sent a three-item code to ${email}. It expires in 10 minutes.`
+}
+
+function formatCountdown(totalSeconds: number) {
+	if (totalSeconds <= 60) return `${totalSeconds}s`
+	const hours = Math.floor(totalSeconds / 3600)
+	const minutes = Math.floor((totalSeconds % 3600) / 60)
+	const seconds = totalSeconds % 60
+	return [hours ? `${hours}h` : '', minutes ? `${minutes}m` : '', !hours && seconds ? `${seconds}s` : ''].filter(Boolean).join(' ')
 }

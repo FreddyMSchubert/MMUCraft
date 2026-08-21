@@ -1,12 +1,11 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { randomUUID } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import { and, asc, desc, eq, gt, isNull, lte } from 'drizzle-orm'
+import { and, asc, eq, gt, gte, isNull, lt } from 'drizzle-orm'
 import {
-	AuthRequestRow,
 	DatabaseService,
 	UserRow,
-	authRequests,
+	emailSendEvents,
 	emailWhitelist,
 	playerProfiles,
 	sessions,
@@ -22,13 +21,13 @@ import {
 	displayAuthCode,
 	hashSecret,
 	isAllowedEmail,
-	isAuthRequestActive,
 	isValidMinecraftUsername,
 	isValidEmail,
 	normalizeEmail,
+	normalizeIpBucket,
 	safeSecretEquals,
 } from './auth.util'
-import { SignupFlow, signupFlows } from './signup-flow'
+import { SignupFlow, signinFlows, signupFlows } from './signup-flow'
 import { ASSETS } from '../assets'
 import { effectivePlayerColor } from '../players/player-color'
 
@@ -37,10 +36,11 @@ const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000
 const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace'
-const AUTH_REQUEST_HISTORY_LIMIT = 50
-const AUTH_REQUEST_PAGE_SIZE = 42
-const MAX_AUTH_REQUEST_PAGE_SIZE = 100
 const MAX_AUTH_CODE_ATTEMPTS = 5
+const FIVE_MINUTES_MS = 5 * 60 * 1000
+const DAY_MS = 24 * 60 * 60 * 1000
+const EMAIL_SEND_LIMITS = { fiveMinutes: 2, day: 8 }
+const IP_SEND_LIMITS = { fiveMinutes: 10, day: 30 }
 export const MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 150
 export const NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 250
 const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signup-allowlist.txt'
@@ -99,7 +99,7 @@ export class AuthService {
 		private readonly bans: PlayerBansService,
 	) { }
 
-	async createSignup(emailInput: string) {
+	async createSignup(emailInput: string, sourceIp: string) {
 		const email = normalizeEmail(emailInput)
 		let signupAllowlist = new Set<string>()
 		try {
@@ -121,10 +121,9 @@ export class AuthService {
 			throw new BadRequestException('An account with this email already exists')
 		}
 
-		await this.deleteIncompleteSignupFlowsForEmail(email)
-
 		const now = Date.now()
-		this.expireActiveAuthRequests(email, 'signup', now)
+		this.reserveEmailSend(email, sourceIp, now)
+		await this.deleteIncompleteSignupFlowsForEmail(email)
 		const code = createAuthCode()
 		const flowId = randomUUID()
 
@@ -135,14 +134,9 @@ export class AuthService {
 			emailCodeExpiresAt: now + EMAIL_CODE_TTL_MS,
 			updatedAt: now,
 		})
-		this.createAuthRequest(flowId, 'signup', email, null, code, now)
-		const delivery = await this.deliverVerificationCode(email, code, 'signup')
-		this.setAuthRequestDelivery(flowId, delivery)
+		await this.deliverVerificationCode(email, code, 'signup')
 
-		return {
-			flowId,
-			delivery,
-		}
+		return { flowId }
 	}
 
 	verifyEmailCode(flowId: string, code: string) {
@@ -157,9 +151,9 @@ export class AuthService {
 			throw new BadRequestException('Email code expired')
 		}
 
-		const request = this.getActiveAuthRequest(flowId, 'signup', now)
-		if (!safeSecretEquals(code, flow.emailCodeHash) || !safeSecretEquals(code, request.code_hash)) {
-			this.recordFailedAuthAttempt(request)
+		if (!safeSecretEquals(code, flow.emailCodeHash)) {
+			flow.emailCodeFailedAttempts = (flow.emailCodeFailedAttempts ?? 0) + 1
+			if (flow.emailCodeFailedAttempts >= MAX_AUTH_CODE_ATTEMPTS) flow.emailCodeExpiresAt = now
 			throw new BadRequestException('Invalid email code')
 		}
 
@@ -169,7 +163,6 @@ export class AuthService {
 
 		flow.step = 'minecraft-username'
 		flow.updatedAt = now
-		this.completeAuthRequest(flowId, now)
 
 		return { ok: true }
 	}
@@ -323,9 +316,6 @@ export class AuthService {
 
 				return created.id
 			})
-			this.database.connection.update(authRequests).set({ user_id: userId })
-				.where(eq(authRequests.id, flowId)).run()
-
 			signupFlows.delete(flowId)
 			return this.createSession(userId)
 		} catch (error) {
@@ -334,7 +324,7 @@ export class AuthService {
 		}
 	}
 
-	async signIn(emailInput: string) {
+	async signIn(emailInput: string, sourceIp: string) {
 		const email = normalizeEmail(emailInput)
 		const user = this.findUserByEmail(email)
 
@@ -344,32 +334,42 @@ export class AuthService {
 		const timeoutEnded = await this.requirePlayerNotBanned(user)
 
 		const now = Date.now()
+		this.cleanupSigninFlows(now)
+		this.reserveEmailSend(email, sourceIp, now)
 		const code = createAuthCode()
 		const flowId = randomUUID()
-		this.expireActiveAuthRequests(email, 'signin', now)
-		this.createAuthRequest(flowId, 'signin', email, user.id, code, now)
-		const delivery = await this.deliverVerificationCode(email, code, 'signin')
-		this.setAuthRequestDelivery(flowId, delivery)
+		for (const [activeFlowId, flow] of signinFlows) {
+			if (flow.userId === user.id) signinFlows.delete(activeFlowId)
+		}
+		signinFlows.set(flowId, {
+			userId: user.id,
+			codeHash: hashSecret(code),
+			expiresAtUnixMs: now + EMAIL_CODE_TTL_MS,
+			failedAttempts: 0,
+		})
+		await this.deliverVerificationCode(email, code, 'signin')
 
-		return { flowId, delivery, timeoutEnded }
+		return { flowId, timeoutEnded }
 	}
 
 	async verifySignIn(flowId: string, code: string) {
 		const now = Date.now()
-		const request = this.getActiveAuthRequest(flowId, 'signin', now)
-		if (!safeSecretEquals(code, request.code_hash)) {
-			this.recordFailedAuthAttempt(request)
+		const flow = signinFlows.get(flowId)
+		if (!flow || flow.expiresAtUnixMs <= now) {
+			signinFlows.delete(flowId)
+			throw new BadRequestException('Email verification request is not active')
+		}
+		if (!safeSecretEquals(code, flow.codeHash)) {
+			flow.failedAttempts++
+			if (flow.failedAttempts >= MAX_AUTH_CODE_ATTEMPTS) signinFlows.delete(flowId)
 			throw new BadRequestException('Invalid email code')
 		}
-		if (!request.user_id) {
-			throw new UnauthorizedException('No account exists for this email')
-		}
-		const user = this.database.connection.select().from(users).where(eq(users.id, request.user_id)).get()
+		const user = this.database.connection.select().from(users).where(eq(users.id, flow.userId)).get()
 		if (!user) throw new UnauthorizedException('No account exists for this email')
 		await this.requirePlayerNotBanned(user)
 
-		this.completeAuthRequest(flowId, now)
-		return this.createSession(request.user_id)
+		signinFlows.delete(flowId)
+		return this.createSession(flow.userId)
 	}
 
 	listPlayerBans() {
@@ -425,41 +425,6 @@ export class AuthService {
 		}
 
 		return { ok: true, userId, minecraftUsername: target.minecraft_username, minecraftSynchronized }
-	}
-
-	listAuthRequests(offsetInput?: string, limitInput?: string) {
-		const now = Date.now()
-		const { offset, limit } = normalizeAuthRequestPagination(offsetInput, limitInput)
-		this.clearExpiredAuthRequestCodes(now)
-
-		const requests = this.database.connection.select({ request: authRequests, user: users })
-			.from(authRequests)
-			.leftJoin(users, eq(users.id, authRequests.user_id))
-			.orderBy(desc(authRequests.created_at_unix_ms))
-			.limit(Math.min(limit + 1, Math.max(0, AUTH_REQUEST_HISTORY_LIMIT - offset)))
-			.offset(offset)
-			.all()
-		const profilesById = new Map(this.database.connection.select().from(playerProfiles).all()
-			.map((profile) => [profile.user_id, profile]))
-
-		return {
-			requests: requests.slice(0, limit).map(({ request, user }) => ({
-				id: request.id,
-				kind: request.kind,
-				email: request.email,
-				minecraftUsername: user?.minecraft_username ?? null,
-				color: user ? effectivePlayerColor(user.minecraft_uuid, profilesById.get(user.id)?.color_hex) : null,
-				code: isAuthRequestActive(request, now) ? request.active_code : null,
-				deliveryStatus: request.delivery_status,
-				createdAtUnixMs: request.created_at_unix_ms,
-				expiresAtUnixMs: request.expires_at_unix_ms,
-				completedAtUnixMs: request.completed_at_unix_ms,
-				status: request.completed_at_unix_ms !== null
-					? 'verified'
-					: request.expires_at_unix_ms <= now ? 'expired' : 'active',
-			})),
-			hasMore: requests.length > limit,
-		}
 	}
 
 	listEmailWhitelist() {
@@ -655,7 +620,6 @@ export class AuthService {
 				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
 			}
 			signupFlows.delete(flowId)
-			this.expireAuthRequest(flowId)
 		}
 	}
 
@@ -668,89 +632,66 @@ export class AuthService {
 				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined)
 			}
 			signupFlows.delete(flowId)
-			this.expireAuthRequest(flowId)
 		}
-		this.clearExpiredAuthRequestCodes(Date.now())
 	}
 
-	private createAuthRequest(
-		id: string,
-		kind: 'signup' | 'signin',
-		email: string,
-		userId: number | null,
-		code: string,
-		now: number,
-	) {
-		this.database.connection.insert(authRequests).values({
-			id,
-			kind,
-			email,
-			user_id: userId,
-			code_hash: hashSecret(code),
-			active_code: code,
-			delivery_status: 'manual',
-			expires_at_unix_ms: now + EMAIL_CODE_TTL_MS,
-			created_at_unix_ms: now,
-		}).run()
+	private reserveEmailSend(email: string, sourceIp: string, now: number) {
+		const emailHash = hashSecret(`email:${email}`)
+		const ipHash = hashSecret(`ip:${normalizeIpBucket(sourceIp)}`)
+		const dayCutoff = now - DAY_MS
+
+		this.database.connection.transaction((tx) => {
+			tx.delete(emailSendEvents).where(lt(emailSendEvents.sent_at_unix_ms, dayCutoff)).run()
+			const emailEvents = tx.select({ sentAt: emailSendEvents.sent_at_unix_ms }).from(emailSendEvents)
+				.where(and(eq(emailSendEvents.email_hash, emailHash), gte(emailSendEvents.sent_at_unix_ms, dayCutoff))).all()
+			const ipEvents = tx.select({ sentAt: emailSendEvents.sent_at_unix_ms }).from(emailSendEvents)
+				.where(and(eq(emailSendEvents.ip_hash, ipHash), gte(emailSendEvents.sent_at_unix_ms, dayCutoff))).all()
+			const emailFiveMinuteRetry = retryAtForLimit(emailEvents, EMAIL_SEND_LIMITS.fiveMinutes, FIVE_MINUTES_MS, now)
+			const emailDayRetry = retryAtForLimit(emailEvents, EMAIL_SEND_LIMITS.day, DAY_MS, now)
+			const ipFiveMinuteRetry = retryAtForLimit(ipEvents, IP_SEND_LIMITS.fiveMinutes, FIVE_MINUTES_MS, now)
+			const ipDayRetry = retryAtForLimit(ipEvents, IP_SEND_LIMITS.day, DAY_MS, now)
+			const emailRetries = [emailFiveMinuteRetry, emailDayRetry].filter((retry): retry is number => retry !== null)
+			const ipRetries = [ipFiveMinuteRetry, ipDayRetry].filter((retry): retry is number => retry !== null)
+			const tooManyEmails = emailRetries.length > 0
+			const tooManyFromIp = ipRetries.length > 0
+
+			if (tooManyEmails || tooManyFromIp) {
+				const retryAt = Math.max(...emailRetries, ...ipRetries)
+				const retryAfterSeconds = Math.max(1, Math.ceil((retryAt - now) / 1000))
+				throw new HttpException(
+					{
+						statusCode: HttpStatus.TOO_MANY_REQUESTS,
+						error: 'Too Many Requests',
+						message: emailRateLimitMessage({
+							emailFiveMinutes: emailFiveMinuteRetry !== null,
+							emailDay: emailDayRetry !== null,
+							ipFiveMinutes: ipFiveMinuteRetry !== null,
+							ipDay: ipDayRetry !== null,
+							retryAfterSeconds,
+						}),
+						rateLimit: tooManyEmails && tooManyFromIp ? 'email-and-network' : tooManyEmails ? 'email' : 'network',
+						retryAfterSeconds,
+					},
+					HttpStatus.TOO_MANY_REQUESTS,
+				)
+			}
+
+			tx.insert(emailSendEvents).values({
+				id: randomUUID(),
+				email_hash: emailHash,
+				ip_hash: ipHash,
+				sent_at_unix_ms: now,
+			}).run()
+		})
 	}
 
-	private getActiveAuthRequest(id: string, kind: 'signup' | 'signin', now: number): AuthRequestRow {
-		const request = this.database.connection.select().from(authRequests)
-			.where(and(eq(authRequests.id, id), eq(authRequests.kind, kind))).get()
-
-		if (!request || !isAuthRequestActive(request, now)) {
-			throw new BadRequestException('Email verification request is not active')
+	private cleanupSigninFlows(now: number) {
+		for (const [flowId, flow] of signinFlows) {
+			if (flow.expiresAtUnixMs <= now) signinFlows.delete(flowId)
 		}
-		return request
 	}
 
-	private completeAuthRequest(id: string, now: number) {
-		this.database.connection.update(authRequests).set({
-			active_code: null,
-			completed_at_unix_ms: now,
-		}).where(eq(authRequests.id, id)).run()
-	}
-
-	private recordFailedAuthAttempt(request: AuthRequestRow) {
-		const failedAttempts = request.failed_attempts + 1
-		this.database.connection.update(authRequests).set({
-			failed_attempts: failedAttempts,
-			...(failedAttempts >= MAX_AUTH_CODE_ATTEMPTS ? {
-				active_code: null,
-				expires_at_unix_ms: Date.now(),
-			} : {}),
-		}).where(eq(authRequests.id, request.id)).run()
-	}
-
-	private expireAuthRequest(id: string) {
-		this.database.connection.update(authRequests).set({
-			active_code: null,
-			expires_at_unix_ms: Date.now(),
-		}).where(and(eq(authRequests.id, id), isNull(authRequests.completed_at_unix_ms))).run()
-	}
-
-	private expireActiveAuthRequests(email: string, kind: 'signup' | 'signin', now: number) {
-		this.database.connection.update(authRequests).set({
-			active_code: null,
-			expires_at_unix_ms: now,
-		}).where(and(
-			eq(authRequests.email, email),
-			eq(authRequests.kind, kind),
-			isNull(authRequests.completed_at_unix_ms),
-		)).run()
-	}
-
-	private clearExpiredAuthRequestCodes(now: number) {
-		this.database.connection.update(authRequests).set({ active_code: null })
-			.where(and(lte(authRequests.expires_at_unix_ms, now), isNull(authRequests.completed_at_unix_ms))).run()
-	}
-
-	private setAuthRequestDelivery(id: string, deliveryStatus: 'sent' | 'manual') {
-		this.database.connection.update(authRequests).set({ delivery_status: deliveryStatus })
-			.where(eq(authRequests.id, id)).run()
-	}
-
-	private async deliverVerificationCode(email: string, code: string, kind: 'signup' | 'signin'): Promise<'sent' | 'manual'> {
+	private async deliverVerificationCode(email: string, code: string, kind: 'signup' | 'signin') {
 		const apiKey = process.env.RESEND_API_KEY
 		const from = process.env.RESEND_FROM ?? 'MMU Minecraft Society <onboarding@resend.dev>'
 		const recipientDomain = email.split('@')[1] ?? 'invalid'
@@ -760,7 +701,7 @@ export class AuthService {
 				recipientDomain,
 				reason: 'RESEND_API_KEY is missing from the API process environment',
 			})
-			return 'manual'
+			return
 		}
 
 		try {
@@ -786,7 +727,7 @@ export class AuthService {
 					recipientDomain,
 					status: response.status,
 				})
-				return 'sent'
+				return
 			}
 			console.error('[auth-email] Resend rejected verification email', {
 				kind,
@@ -803,7 +744,6 @@ export class AuthService {
 				error: error instanceof Error ? `${error.name}: ${error.message}` : String(error),
 			})
 		}
-		return 'manual'
 	}
 
 	private createSession(userId: number) {
@@ -865,12 +805,45 @@ function isSuperAdminUsername(minecraftUsername: string) {
 	return minecraftUsername.localeCompare(SUPER_ADMIN_MINECRAFT_USERNAME, 'en', { sensitivity: 'base' }) === 0
 }
 
-function normalizeAuthRequestPagination(offsetInput?: string, limitInput?: string) {
-	const offset = offsetInput === undefined ? 0 : Number(offsetInput)
-	const limit = limitInput === undefined ? AUTH_REQUEST_PAGE_SIZE : Number(limitInput)
-	if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(limit) || limit < 1 || limit > MAX_AUTH_REQUEST_PAGE_SIZE) {
-		throw new BadRequestException(`Pagination requires a non-negative offset and a limit from 1 to ${MAX_AUTH_REQUEST_PAGE_SIZE}.`)
-	}
+function retryAtForLimit(events: { sentAt: number }[], limit: number, windowMs: number, now: number) {
+	const eventsInWindow = events.filter((event) => event.sentAt >= now - windowMs)
+	if (eventsInWindow.length < limit) return null
+	return Math.min(...eventsInWindow.map((event) => event.sentAt)) + windowMs + 1
+}
 
-	return { offset, limit }
+function emailRateLimitMessage(limits: {
+	emailFiveMinutes: boolean
+	emailDay: boolean
+	ipFiveMinutes: boolean
+	ipDay: boolean
+	retryAfterSeconds: number
+}) {
+	const emailLimits = [
+		limits.emailFiveMinutes ? '2 emails in 5 minutes' : '',
+		limits.emailDay ? '8 emails in 24 hours' : '',
+	].filter(Boolean)
+	const networkLimits = [
+		limits.ipFiveMinutes ? '10 emails in 5 minutes' : '',
+		limits.ipDay ? '30 emails in 24 hours' : '',
+	].filter(Boolean)
+	const retry = `Try again in ${formatDuration(limits.retryAfterSeconds)}.`
+
+	if (emailLimits.length && networkLimits.length) {
+		return `Both limits were reached: this email address reached ${emailLimits.join(' and ')}, and this network reached ${networkLimits.join(' and ')}. ${retry} A different network will not clear the email-address limit. If you still need help, contact the committee.`
+	}
+	if (emailLimits.length) {
+		return `Email-address limit reached: this address reached ${emailLimits.join(' and ')}. ${retry} If you did not make these requests or still need help, contact the committee.`
+	}
+	return `Network limit reached: this network reached ${networkLimits.join(' and ')}. ${retry} This can happen on shared university, accommodation, workplace, or public Wi-Fi. You can wait or try a different trusted connection, such as mobile data. If you still need help, contact the committee.`
+}
+
+function formatDuration(totalSeconds: number) {
+	const hours = Math.floor(totalSeconds / 3600)
+	const minutes = Math.floor((totalSeconds % 3600) / 60)
+	const seconds = totalSeconds % 60
+	return [
+		hours ? `${hours} hour${hours === 1 ? '' : 's'}` : '',
+		minutes ? `${minutes} minute${minutes === 1 ? '' : 's'}` : '',
+		!hours && seconds ? `${seconds} second${seconds === 1 ? '' : 's'}` : '',
+	].filter(Boolean).join(' ')
 }

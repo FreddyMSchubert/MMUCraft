@@ -111,16 +111,6 @@ export class AdminController {
 		return this.gifts.listGiftCodes()
 	}
 
-	@Get('signins')
-	listSignins(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Query('offset') offset: string | undefined,
-		@Query('limit') limit: string | undefined,
-	) {
-		this.auth.requireCommitteeSession(cookieHeader)
-		return this.auth.listAuthRequests(offset, limit)
-	}
-
 	@Get('email-whitelist')
 	listEmailWhitelist(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader)

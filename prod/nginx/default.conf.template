@@ -1,12 +1,18 @@
+limit_req_zone $binary_remote_addr zone=site_per_ip:10m rate=30r/s;
+limit_req_zone $binary_remote_addr zone=api_per_ip:10m rate=15r/s;
+limit_req_status 429;
+
 server {
     listen 8080;
     server_name ${PUBLIC_HOST} www.${PUBLIC_HOST};
+    limit_req zone=site_per_ip burst=90 nodelay;
     return 308 https://${PUBLIC_HOST}$request_uri;
 }
 
 server {
     listen 8443 ssl;
     server_name www.${PUBLIC_HOST};
+    limit_req zone=site_per_ip burst=90 nodelay;
 
     ssl_certificate /etc/letsencrypt/live/mmucraft/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/mmucraft/privkey.pem;
@@ -36,6 +42,7 @@ server {
     add_header Referrer-Policy strict-origin-when-cross-origin always;
 
     location /api/ {
+        limit_req zone=api_per_ip burst=30 nodelay;
         proxy_pass http://api:8080;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
@@ -47,6 +54,7 @@ server {
     }
 
     location /_next/static/ {
+        limit_req zone=site_per_ip burst=90 nodelay;
         proxy_pass http://web:3000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
@@ -55,6 +63,7 @@ server {
     }
 
     location /packs/ {
+        limit_req zone=site_per_ip burst=90 nodelay;
         proxy_pass http://web:3000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
@@ -62,6 +71,7 @@ server {
     }
 
     location / {
+        limit_req zone=site_per_ip burst=90 nodelay;
         proxy_pass http://web:3000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;

@@ -27,20 +27,6 @@ interface GiftCode {
 	redemptionCount: number
 }
 
-interface AuthRequest {
-	id: string
-	kind: 'signup' | 'signin'
-	email: string
-	minecraftUsername: string | null
-	color: string | null
-	code: string | null
-	deliveryStatus: 'sent' | 'manual'
-	createdAtUnixMs: number
-	expiresAtUnixMs: number
-	completedAtUnixMs: number | null
-	status: 'active' | 'verified' | 'expired'
-}
-
 interface WhitelistedEmail {
 	email: string
 	addedByMinecraftUsername: string
@@ -86,12 +72,10 @@ const CODE_NOUNS = [
 const CODE_JOINERS = ['-', '_', '.']
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
-	const activeSection = section === 'signins' || section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' || section === 'countdowns' || section === 'discord-commands' || section === 'dailies' ? section : 'members'
+	const activeSection = section === 'claims' || section === 'whitelist' || section === 'bans' || section === 'gifts' || section === 'countdowns' || section === 'discord-commands' || section === 'dailies' ? section : 'members'
 	const [players, setPlayers] = useState<AdminPlayer[]>([])
 	const [countdowns, setCountdowns] = useState<Countdown[]>([])
 	const [giftCodes, setGiftCodes] = useState<GiftCode[]>([])
-	const [authRequests, setAuthRequests] = useState<AuthRequest[]>([])
-	const [authRequestsHaveMore, setAuthRequestsHaveMore] = useState(false)
 	const [claims, setClaims] = useState<AdminClaim[]>([])
 	const [claimsHaveMore, setClaimsHaveMore] = useState(false)
 	const [whitelistedEmails, setWhitelistedEmails] = useState<WhitelistedEmail[]>([])
@@ -121,7 +105,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [busyPlayerId, setBusyPlayerId] = useState<number | null>(null)
 	const [busyClaimId, setBusyClaimId] = useState<string | null>(null)
 	const [busyCountdownId, setBusyCountdownId] = useState<number | null>(null)
-	const [loadingMore, setLoadingMore] = useState<'signins' | 'claims' | null>(null)
+	const [loadingMore, setLoadingMore] = useState<'claims' | null>(null)
 	const [creating, setCreating] = useState(false)
 	const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
 	const [updatingBan, setUpdatingBan] = useState(false)
@@ -131,11 +115,10 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [message, setMessage] = useState<ReactNode>('')
 
 	const load = useCallback(async () => {
-		const [playersResponse, codesResponse, countdownsResponse, signinsResponse, claimsResponse, whitelistResponse, bansResponse, commandsResponse] = await Promise.all([
+		const [playersResponse, codesResponse, countdownsResponse, claimsResponse, whitelistResponse, bansResponse, commandsResponse] = await Promise.all([
 			fetch('/api/admin/players', { cache: 'no-store' }),
 			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
 			fetch('/api/admin/countdowns', { cache: 'no-store' }),
-			fetch(`/api/admin/signins?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch(`/api/admin/claims?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
 			fetch('/api/admin/email-whitelist', { cache: 'no-store' }),
 			fetch('/api/admin/player-bans', { cache: 'no-store' }),
@@ -144,7 +127,6 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		const playersBody = await playersResponse.json().catch(() => null)
 		const codesBody = await codesResponse.json().catch(() => null)
 		const countdownsBody = await countdownsResponse.json().catch(() => null)
-		const signinsBody = await signinsResponse.json().catch(() => null)
 		const claimsBody = await claimsResponse.json().catch(() => null)
 		const whitelistBody = await whitelistResponse.json().catch(() => null)
 		const bansBody = await bansResponse.json().catch(() => null)
@@ -153,7 +135,6 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		if (!playersResponse.ok) throw new Error(apiMessage(playersBody, 'Failed to load the member list'))
 		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'))
 		if (!countdownsResponse.ok) throw new Error(apiMessage(countdownsBody, 'Failed to load countdowns'))
-		if (!signinsResponse.ok) throw new Error(apiMessage(signinsBody, 'Failed to load signins'))
 		if (!claimsResponse.ok) throw new Error(apiMessage(claimsBody, 'Failed to load claims'))
 		if (!whitelistResponse.ok) throw new Error(apiMessage(whitelistBody, 'Failed to load the email whitelist'))
 		if (!bansResponse.ok) throw new Error(apiMessage(bansBody, 'Failed to load player bans'))
@@ -162,8 +143,6 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		setPlayers(playersBody.players as AdminPlayer[])
 		setGiftCodes(codesBody.giftCodes as GiftCode[])
 		setCountdowns(countdownsBody.countdowns as Countdown[])
-		setAuthRequests(signinsBody.requests as AuthRequest[])
-		setAuthRequestsHaveMore(Boolean(signinsBody.hasMore))
 		setClaims(claimsBody.claims as AdminClaim[])
 		setClaimsHaveMore(Boolean(claimsBody.hasMore))
 		setWhitelistedEmails(whitelistBody.entries as WhitelistedEmail[])
@@ -425,22 +404,6 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		}
 	}
 
-	async function loadMoreSignins() {
-		setLoadingMore('signins')
-		setError('')
-		try {
-			const response = await fetch(`/api/admin/signins?offset=${authRequests.length}&limit=${PAGE_SIZE}`, { cache: 'no-store' })
-			const body = await response.json().catch(() => null)
-			if (!response.ok) throw new Error(apiMessage(body, 'Failed to load more signins'))
-			setAuthRequests((current) => [...current, ...(body.requests as AuthRequest[])])
-			setAuthRequestsHaveMore(Boolean(body.hasMore))
-		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to load more signins'))
-		} finally {
-			setLoadingMore(null)
-		}
-	}
-
 	async function loadMoreClaims() {
 		setLoadingMore('claims')
 		setError('')
@@ -579,12 +542,6 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	return (
 		<div className="adminPanel">
 			<nav className="adminSubTabs" aria-label="Admin sections">
-				<Link
-					className={activeSection === 'signins' ? 'active' : ''}
-					href="/play/admin/signins"
-				>
-					Signins
-				</Link>
 				<Link
 					className={activeSection === 'members' ? 'active' : ''}
 					href="/play/admin/members"
@@ -818,53 +775,6 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 					{claimsHaveMore && (
 						<button type="button" className="loadMoreButton" disabled={loadingMore !== null || busyClaimId !== null} onClick={() => void loadMoreClaims()}>
 							{loadingMore === 'claims' ? 'Loading...' : 'Load more'}
-						</button>
-					)}
-				</section>
-			)}
-
-			{activeSection === 'signins' && (
-				<section className="adminSection">
-					<div className="adminSectionHeader">
-						<h3>Signup and signin requests</h3>
-						<p>Use this only when email delivery fails: check that the requester uses an MMU email address, then send their active code to that address from your private email. Active codes are sensitive and disappear after use, expiry, or replacement.</p>
-					</div>
-					<button type="button" onClick={() => void load()}>Refresh</button>
-					<div className="adminTableWrap">
-						<table className="adminTable">
-							<thead>
-								<tr>
-									<th>Type</th>
-									<th>Account</th>
-									<th>Requested</th>
-									<th>Delivery</th>
-									<th>Status</th>
-									<th>Active code</th>
-								</tr>
-							</thead>
-							<tbody>
-								{authRequests.map((request) => (
-									<tr key={request.id}>
-										<td>{request.kind === 'signup' ? 'Signup' : 'Signin'}</td>
-										<td>
-											{request.minecraftUsername && request.color && <><strong><PlayerName name={request.minecraftUsername} color={request.color} /></strong><br /></>}
-											{request.email}
-										</td>
-										<td>{formatDateTime(request.createdAtUnixMs)}</td>
-										<td>{request.deliveryStatus === 'sent' ? 'Email sent' : 'Manual help needed'}</td>
-										<td>{request.status === 'verified' ? 'Verified' : request.status === 'expired' ? 'Expired' : `Active until ${formatDateTime(request.expiresAtUnixMs)}`}</td>
-										<td>{request.code ? <code>{request.code.replaceAll('|', ' → ')}</code> : '—'}</td>
-									</tr>
-								))}
-								{authRequests.length === 0 && (
-									<tr><td colSpan={6}>No signup or signin requests yet.</td></tr>
-								)}
-							</tbody>
-						</table>
-					</div>
-					{authRequestsHaveMore && (
-						<button type="button" className="loadMoreButton" disabled={loadingMore !== null} onClick={() => void loadMoreSignins()}>
-							{loadingMore === 'signins' ? 'Loading...' : 'Load more'}
 						</button>
 					)}
 				</section>

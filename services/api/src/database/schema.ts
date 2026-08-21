@@ -43,23 +43,15 @@ export const sessions = sqliteTable('sessions', {
 	index('sessions_token_hash_idx').on(table.token_hash),
 ])
 
-export const authRequests = sqliteTable('auth_requests', {
+export const emailSendEvents = sqliteTable('email_send_events', {
 	id: text('id').primaryKey(),
-	kind: text('kind', { enum: ['signup', 'signin'] }).notNull(),
-	email: text('email').notNull(),
-	user_id: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
-	code_hash: text('code_hash').notNull(),
-	active_code: text('active_code'),
-	failed_attempts: integer('failed_attempts').notNull().default(0),
-	delivery_status: text('delivery_status', { enum: ['sent', 'manual'] }).notNull(),
-	expires_at_unix_ms: integer('expires_at_unix_ms').notNull(),
-	completed_at_unix_ms: integer('completed_at_unix_ms'),
-	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+	email_hash: text('email_hash').notNull(),
+	ip_hash: text('ip_hash').notNull(),
+	sent_at_unix_ms: integer('sent_at_unix_ms').notNull(),
 }, (table) => [
-	index('auth_requests_email_idx').on(table.email),
-	index('auth_requests_created_at_idx').on(table.created_at_unix_ms),
-	check('auth_requests_kind_check', sql`${table.kind} in ('signup', 'signin')`),
-	check('auth_requests_delivery_status_check', sql`${table.delivery_status} in ('sent', 'manual')`),
+	index('email_send_events_email_time_idx').on(table.email_hash, table.sent_at_unix_ms),
+	index('email_send_events_ip_time_idx').on(table.ip_hash, table.sent_at_unix_ms),
+	index('email_send_events_time_idx').on(table.sent_at_unix_ms),
 ])
 
 export const emailWhitelist = sqliteTable('email_whitelist', {
@@ -268,7 +260,7 @@ export const countdowns = sqliteTable('countdowns', {
 export type UserRow = typeof users.$inferSelect
 export type SessionRow = typeof sessions.$inferSelect
 export type PlayerBanRow = typeof playerBans.$inferSelect
-export type AuthRequestRow = typeof authRequests.$inferSelect
+export type EmailSendEventRow = typeof emailSendEvents.$inferSelect
 export type EmailWhitelistRow = typeof emailWhitelist.$inferSelect
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect
 export type ClaimRow = typeof claims.$inferSelect
@@ -290,7 +282,7 @@ export const schema = {
 	users,
 	sessions,
 	playerBans,
-	authRequests,
+	emailSendEvents,
 	emailWhitelist,
 	playerProfiles,
 	claims,

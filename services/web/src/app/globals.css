@@ -829,6 +829,79 @@ a {
 	font-weight: 700;
 }
 
+.authForm .authHelpButton {
+	justify-self: center;
+	margin-top: -4px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.85rem;
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.authForm .authOutlinedButton {
+	border: 1px solid rgba(255, 209, 102, 0.45);
+	background: transparent;
+	color: #ffd166;
+	font-weight: 700;
+}
+
+.authHelpBackdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	display: grid;
+	place-items: center;
+	padding: 20px;
+	background: rgba(0, 0, 0, 0.72);
+}
+
+.authHelpDialog {
+	position: relative;
+	display: grid;
+	gap: 12px;
+	width: min(440px, 100%);
+	padding: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 14px;
+	background: #171717;
+	box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+
+.authHelpDialog h3,
+.authHelpDialog p {
+	margin: 0;
+}
+
+.authHelpDialog button {
+	padding: 10px 12px;
+	border-radius: 10px;
+}
+
+.authHelpDialog .authSecondaryButton {
+	width: 100%;
+	border: 0;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.authHelpDialog .authHelpClose {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 1.5rem;
+}
+
 .authRules {
 	padding: 12px;
 	border: 1px solid rgba(255, 255, 255, 0.14);

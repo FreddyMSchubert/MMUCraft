@@ -1,16 +1,10 @@
 const assert = require('node:assert/strict')
 process.env.SIGNUP_ALLOWLIST_PATH ??= require('node:path').join(__dirname, 'signup-allowlist.txt')
-const { AUTH_CODE_ITEMS, createAuthCode, isAllowedEmail, isAuthRequestActive } = require('../dist/auth/auth.util')
+const { AUTH_CODE_ITEMS, createAuthCode, isAllowedEmail } = require('../dist/auth/auth.util')
 const { AuthService } = require('../dist/auth/auth.service')
 const { PlayerBansService } = require('../dist/auth/player-bans.service')
 const { PlayersService } = require('../dist/players/players.service')
 const { DatabaseService, sessions, users } = require('../dist/database/database.service')
-
-const request = { active_code: '123456', completed_at_unix_ms: null, expires_at_unix_ms: 2000 }
-assert.equal(isAuthRequestActive(request, 1000), true)
-assert.equal(isAuthRequestActive(request, 2000), false)
-assert.equal(isAuthRequestActive({ ...request, active_code: null }, 1000), false)
-assert.equal(isAuthRequestActive({ ...request, completed_at_unix_ms: 1500 }, 1000), false)
 
 function assertAuthCode(code) {
 	const items = code.split('|')
@@ -26,7 +20,15 @@ assert.equal(isAllowedEmail('anything@stu.mmu.ac.uk'), false)
 
 async function checkFlows() {
 	process.env.DATABASE_URL = ':memory:'
-	delete process.env.RESEND_API_KEY
+	process.env.RESEND_API_KEY = 'test-key'
+	const deliveredCodes = new Map()
+	global.fetch = async (_url, options) => {
+		const body = JSON.parse(options.body)
+		const code = body.text.match(/code is (.+)\. It expires/)?.[1].replaceAll(' → ', '|')
+		assertAuthCode(code)
+		deliveredCodes.set(body.to[0], code)
+		return { ok: true, status: 202 }
+	}
 	const database = new DatabaseService()
 	let pendingJoin
 	let pendingJoinUpdates = 0
@@ -50,26 +52,18 @@ async function checkFlows() {
 		created_at_unix_ms: now,
 	}).returning({ id: users.id }).get()
 
-	await assert.rejects(auth.createSignup('guest@example.com'), /numeric @stu\.mmu\.ac\.uk address/)
+	await assert.rejects(auth.createSignup('guest@example.com', '127.0.0.1'), /numeric @stu\.mmu\.ac\.uk address/)
 	await assert.rejects(auth.addEmailToWhitelist({ id: member.id }, 'guest@.example.com', member.id), /valid email address/)
 	await assert.rejects(auth.addEmailToWhitelist({ id: member.id }, 'guest@example.com'), /responsible user/)
 	await auth.addEmailToWhitelist({ id: member.id }, 'Guest@Example.com', member.id)
 	assert.deepEqual(auth.listEmailWhitelist().entries.map((entry) => entry.email), ['guest@example.com'])
 	assert.equal(auth.listEmailWhitelist().entries[0].addedByMinecraftUsername, 'Member')
 	assert.equal(auth.listEmailWhitelist().entries[0].responsibleMinecraftUsername, 'Member')
-	const guestSignup = await auth.createSignup('guest@example.com')
-	assert.equal(guestSignup.delivery, 'manual')
+	await auth.createSignup('guest@example.com', '127.0.0.1')
 	auth.removeEmailFromWhitelist('guest@example.com')
 
-	const signin = await auth.signIn('member@stu.mmu.ac.uk')
-	assert.equal(signin.delivery, 'manual')
-	let signinRequest = auth.listAuthRequests().requests[0]
-	assert.equal(signinRequest.status, 'active')
-	assertAuthCode(signinRequest.code)
-	assert.ok((await auth.verifySignIn(signin.flowId, signinRequest.code)).token)
-	signinRequest = auth.listAuthRequests().requests[0]
-	assert.equal(signinRequest.status, 'verified')
-	assert.equal(signinRequest.code, null)
+	const signin = await auth.signIn('member@stu.mmu.ac.uk', '127.0.0.1')
+	assert.ok((await auth.verifySignIn(signin.flowId, deliveredCodes.get('member@stu.mmu.ac.uk'))).token)
 
 	const admin = database.connection.insert(users).values({
 		email: 'admin@mmu.ac.uk',
@@ -98,20 +92,13 @@ async function checkFlows() {
 	})).profile.preferredName, 'Updated by admin')
 	await auth.applyPlayerBan({ id: admin.id }, member.id, null)
 	assert.equal(database.connection.select().from(sessions).all().length, 0)
-	await assert.rejects(auth.signIn('member@stu.mmu.ac.uk'), /permanently banned/)
+	await assert.rejects(auth.signIn('member@stu.mmu.ac.uk', '127.0.0.1'), /permanently banned/)
 	await auth.removePlayerBan(String(member.id))
 	bans.set(member.id, admin.id, now - 1_000, now - 2_000)
-	assert.equal((await auth.signIn('member@stu.mmu.ac.uk')).timeoutEnded, true)
+	assert.equal((await auth.signIn('member@stu.mmu.ac.uk', '127.0.0.1')).timeoutEnded, true)
 
-	const signup = await auth.createSignup('12345678@stu.mmu.ac.uk')
-	assert.equal(signup.delivery, 'manual')
-	let signupRequest = auth.listAuthRequests().requests[0]
-	assert.equal(signupRequest.kind, 'signup')
-	assertAuthCode(signupRequest.code)
-	auth.verifyEmailCode(signup.flowId, signupRequest.code)
-	signupRequest = auth.listAuthRequests().requests[0]
-	assert.equal(signupRequest.status, 'verified')
-	assert.equal(signupRequest.code, null)
+	const signup = await auth.createSignup('12345678@stu.mmu.ac.uk', '127.0.0.1')
+	auth.verifyEmailCode(signup.flowId, deliveredCodes.get('12345678@stu.mmu.ac.uk'))
 	await auth.setMinecraftUsername(signup.flowId, 'NewMember')
 	await auth.setMinecraftUsername(signup.flowId, 'NewMember')
 	assert.equal(pendingJoinUpdates, 1)

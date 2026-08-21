@@ -1,4 +1,5 @@
 import { createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto'
+import { isIP } from 'node:net'
 
 export const AUTH_CODE_ITEMS = [
 	'Apple',
@@ -93,14 +94,20 @@ export function safeSecretEquals(rawValue: string, storedHash: string): boolean 
 	return timingSafeEqual(actual, expected)
 }
 
-export function isAuthRequestActive(request: {
-	active_code: string | null
-	completed_at_unix_ms: number | null
-	expires_at_unix_ms: number
-}, now = Date.now()): boolean {
-	return request.active_code !== null
-		&& request.completed_at_unix_ms === null
-		&& request.expires_at_unix_ms > now
+export function normalizeIpBucket(input: string): string {
+	const ip = input.trim().split('%')[0] ?? ''
+	const mappedIpv4 = ip.match(/^::ffff:(.+)$/i)?.[1]
+	if (mappedIpv4 && isIP(mappedIpv4) === 4) return mappedIpv4
+	if (isIP(ip) !== 6) return ip || 'unknown'
+
+	const [left = '', right = ''] = ip.toLowerCase().split('::')
+	const leftParts = left ? left.split(':') : []
+	const rightParts = right ? right.split(':') : []
+	const parts = ip.includes('::')
+		? [...leftParts, ...Array(8 - leftParts.length - rightParts.length).fill('0'), ...rightParts]
+		: leftParts
+
+	return `${parts.slice(0, 4).map((part) => part.padStart(4, '0')).join(':')}::/64`
 }
 
 export function isValidMinecraftUsername(username: string): boolean {

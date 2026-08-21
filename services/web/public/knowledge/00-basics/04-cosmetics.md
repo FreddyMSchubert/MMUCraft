@@ -37,7 +37,7 @@ This works just like normal minecraft dyeing: put it in a crafting table with a 
 
 Do note that all cosmetics come pre-coloured. 
 Want to add your own coat of paint (or fix a botched dye-job)?
-Just wash it in a cauldron!
+You can wash it in a cauldron by just right clicking!
 
 ![Cosmetic over cauldron](/assets/knowledge/items/cosmetics/cauldron.png)
 ![Cleaned cosmetic](/assets/knowledge/items/cosmetics/clean.png)

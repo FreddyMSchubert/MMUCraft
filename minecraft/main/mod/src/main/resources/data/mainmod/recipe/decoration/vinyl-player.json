@@ -6,9 +6,9 @@
     "LLL"
   ],
   "key": {
-    "L": "#mainmod:stripped-logs",
+    "L": "minecraft:stripped_oak_log",
     "G": "minecraft:glass",
-    "D": "#mainmod:music_discs"
+    "D": "minecraft:music_disc_cat"
   },
   "result": {
     "stack": "mainmod:vinyl-player",

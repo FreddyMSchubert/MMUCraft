@@ -53,11 +53,18 @@ export function DynamicCountdowns() {
 				<h2>{countdown.heading}</h2>
 				{finished
 					? <strong className="countdownNow" role="status">NOW!</strong>
-					: <time className="countdownTime" dateTime={new Date(countdown.targetAtUnixMs).toISOString()}>{formatRemaining(countdown.targetAtUnixMs - now)}</time>}
+					: <time className="countdownTime" dateTime={new Date(countdown.targetAtUnixMs).toISOString()}>
+						{formatRemaining(countdown.targetAtUnixMs - now)}
+						<small>({formatEndTime(countdown.targetAtUnixMs)})</small>
+					</time>}
 				<p>{countdown.description}</p>
 			</article>
 		})}
 	</section>
+}
+
+function formatEndTime(timestamp: number) {
+	return new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Europe/London' }).format(timestamp)
 }
 
 function hexWithAlpha(hex: string, alpha: number) {

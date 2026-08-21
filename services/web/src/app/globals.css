@@ -737,10 +737,20 @@ a {
 }
 
 .countdownTime {
+	display: grid;
+	justify-items: center;
+	gap: 2px;
 	color: #ffd166;
 	font-size: clamp(1.15rem, 3vw, 1.75rem);
 	font-variant-numeric: tabular-nums;
 	text-shadow: 2px 2px 0 #493400;
+}
+
+.countdownTime small {
+	font-size: 0.55em;
+	font-weight: 400;
+	opacity: 0.72;
+	text-shadow: none;
 }
 
 .countdownCard-now {

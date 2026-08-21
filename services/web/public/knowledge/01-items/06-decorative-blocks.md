@@ -61,8 +61,22 @@ All types of Spoons Carpets can be placed either on the floor or on the ceiling,
 
 ### Grandiloquent Spoons Carpet
 
+![Blue Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-blue-recipe.png)
+:::recipe-items
+Beer · [Blue Carpet](https://minecraft.wiki/w/Carpets) → Grandiloquent Spoons Carpet
+:::
+![Blue Carpet Placed](/assets/knowledge/items/decorative-blocks/sc-blue-deco.png) 
+
 ### Junoesque Spoons Carpet
+
+![Brown Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-brown-recipe.png)
+:::recipe-items
+Beer · [Brown Carpet](https://minecraft.wiki/w/Carpets) → Junoesque Spoons Carpet
+:::
+![Brown Carpet Placed](/assets/knowledge/items/decorative-blocks/sc-brown-deco.png)
 
 ### Meretricious Spoons Carpet
 
-TODO
+COMING SOON...
+
+![Blue Carpet Placed](/assets/knowledge/items/decorative-blocks/sc-black-deco.png)

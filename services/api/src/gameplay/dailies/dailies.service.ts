@@ -5,6 +5,7 @@ import { filter, interval, map, merge, of, Subject } from 'rxjs'
 import { AuthenticatedUser } from '../../auth/auth.service'
 import { DatabaseService, dailyAdvancementTargets, dailyClaims, dailyTasks, playerMoneyEvents, users } from '../../database/database.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
+import { callUnary } from '../../grpc/grpc.types'
 import { PlayersService } from '../../players/players.service'
 import { ShopService } from '../shop/shop.service'
 
@@ -678,84 +679,42 @@ export class DailiesService {
 	}
 
 	private async grantDailyLoginBonus(minecraftUsername: string, periodKey: string, unixMs: number, rewardDabloons: number, source: string) {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).GrantDailyLoginBonus
-
-		if (typeof method !== 'function') {
-			throw new Error('Unknown GameplayControl method: GrantDailyLoginBonus')
-		}
-
-		return await new Promise<{ granted: boolean; online: boolean; message: string }>((resolve, reject) => {
-			method.call(client, {
+		return await callUnary<{ granted: boolean; online: boolean; message: string }>(
+			this.getGameplayControlClient(), 'GrantDailyLoginBonus', {
 				minecraft_username: minecraftUsername,
 				amount: rewardDabloons,
 				period_key: periodKey,
 				unix_ms: unixMs,
 				source,
-			}, (error: grpc.ServiceError | null, response: { granted: boolean; online: boolean; message: string }) => {
-				if (error) {
-					reject(error)
-					return
-				}
-
-				resolve(response)
-			})
-		})
+			},
+		)
 	}
 
 	private async generateMinecraftTasks(user: Pick<AuthenticatedUser, 'id' | 'minecraftUsername'>, periodKey: string, count = GENERATED_TASK_COUNT, unixMs = Date.now(), excludedTaskIds: string[] = []) {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).GenerateDailyTasks
-
-		if (typeof method !== 'function') {
-			throw new Error('Unknown GameplayControl method: GenerateDailyTasks')
-		}
-
-		return await new Promise<{ generated: boolean; task_json: string[]; message: string }>((resolve, reject) => {
-			method.call(client, {
+		return await callUnary<{ generated: boolean; task_json: string[]; message: string }>(
+			this.getGameplayControlClient(), 'GenerateDailyTasks', {
 				user_id: user.id,
 				minecraft_username: user.minecraftUsername,
 				period_key: periodKey,
 				count,
 				unix_ms: unixMs,
 				excluded_task_ids: excludedTaskIds,
-			}, (error: grpc.ServiceError | null, response: { generated: boolean; task_json: string[]; message: string }) => {
-				if (error) {
-					reject(error)
-					return
-				}
-
-				resolve(response)
-			})
-		})
+			},
+		)
 	}
 
 	private async claimMinecraftTask(user: AuthenticatedUser, periodKey: string, taskJson: string) {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).ClaimDailyTask
-		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: ClaimDailyTask')
-
-		return await new Promise<{ claimed: boolean; online: boolean; task_json: string; message: string }>((resolve, reject) => {
-			method.call(client, {
+		return await callUnary<{ claimed: boolean; online: boolean; task_json: string; message: string }>(
+			this.getGameplayControlClient(), 'ClaimDailyTask', {
 				user_id: user.id,
 				minecraft_username: user.minecraftUsername,
 				period_key: periodKey,
 				task_json: taskJson,
-			}, (error: grpc.ServiceError | null, response: { claimed: boolean; online: boolean; task_json: string; message: string }) => {
-				if (error) return reject(error)
-				resolve(response)
-			})
-		})
+			},
+		)
 	}
 
 	private async pickDailyAdvancement(minecraftUsername: string, periodKey: string, unixMs: number, excludedAdvancementId = '') {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).PickDailyAdvancement
-
-		if (typeof method !== 'function') {
-			throw new Error('Unknown GameplayControl method: PickDailyAdvancement')
-		}
-
 		type PickDailyAdvancementResponse = {
 			selected: boolean
 			online: boolean
@@ -768,20 +727,11 @@ export class DailiesService {
 			message: string
 		}
 
-		return await new Promise<PickDailyAdvancementResponse>((resolve, reject) => {
-			method.call(client, {
+		return await callUnary<PickDailyAdvancementResponse>(this.getGameplayControlClient(), 'PickDailyAdvancement', {
 				minecraft_username: minecraftUsername,
 				period_key: periodKey,
 				unix_ms: unixMs,
 				excluded_advancement_id: excludedAdvancementId,
-			}, (error: grpc.ServiceError | null, response: PickDailyAdvancementResponse) => {
-				if (error) {
-					reject(error)
-					return
-				}
-
-				resolve(response)
-			})
 		})
 	}
 	private async claimDailyAdvancement(
@@ -791,30 +741,16 @@ export class DailiesService {
 		target: DailyAdvancementTarget,
 		checkOnly = false,
 	) {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).ClaimDailyAdvancement
-
-		if (typeof method !== 'function') {
-			throw new Error('Unknown GameplayControl method: ClaimDailyAdvancement')
-		}
-
-		return await new Promise<{ claimed: boolean; online: boolean; completed: boolean; message: string }>((resolve, reject) => {
-			method.call(client, {
+		return await callUnary<{ claimed: boolean; online: boolean; completed: boolean; message: string }>(
+			this.getGameplayControlClient(), 'ClaimDailyAdvancement', {
 				minecraft_username: minecraftUsername,
 				advancement_id: target.advancementId,
 				bonus_reward_dabloons: target.bonusRewardDabloons,
 				period_key: periodKey,
 				unix_ms: unixMs,
 				check_only: checkOnly,
-			}, (error: grpc.ServiceError | null, response: { claimed: boolean; online: boolean; completed: boolean; message: string }) => {
-				if (error) {
-					reject(error)
-					return
-				}
-
-				resolve(response)
-			})
-		})
+			},
+		)
 	}
 
 	private getGameplayControlClient() {

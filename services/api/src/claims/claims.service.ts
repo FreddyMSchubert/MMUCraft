@@ -11,6 +11,7 @@ import {
 	users,
 } from '../database/database.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
+import { callUnary } from '../grpc/grpc.types'
 import { effectivePlayerColor, normalizeOptionalColor, playerAvatarUrl } from '../players/player-color'
 
 const CLAIM_BASE_PRICE_DABLOONS = 100
@@ -361,19 +362,7 @@ export class ClaimsService {
 	}
 
 	private callMod<T>(methodName: 'GetCurrentClaimChunk' | 'PurchaseClaim' | 'ApplyClaimsSnapshot', request: object) {
-		const client = this.getGameplayControlClient()
-		const method = client[methodName] as unknown as (
-			request: object,
-			options: grpc.CallOptions,
-			callback: (error: grpc.ServiceError | null, response: T) => void,
-		) => void
-
-		return new Promise<T>((resolve, reject) => {
-			method.call(client, request, { deadline: Date.now() + 10_000 }, (error, response) => {
-				if (error) reject(error)
-				else resolve(response)
-			})
-		})
+		return callUnary<T>(this.getGameplayControlClient(), methodName, request)
 	}
 
 	private getGameplayControlClient() {

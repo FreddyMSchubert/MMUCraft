@@ -11,6 +11,7 @@ import {
 	users,
 } from '../database/database.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
+import { callUnary } from '../grpc/grpc.types'
 import { PlayersService } from '../players/players.service'
 import { effectivePlayerColor } from '../players/player-color'
 
@@ -281,36 +282,16 @@ export class GiftsService {
 		amountDabloons: number,
 		unixMs: number,
 	) {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).GrantGiftCodeMoney
-
-		if (typeof method !== 'function') {
-			throw new Error('Unknown GameplayControl method: GrantGiftCodeMoney')
-		}
-
-		return await new Promise<{
+		return await callUnary<{
 			granted: boolean
 			online: boolean
 			balance_dabloons: number
 			message: string
-		}>((resolve, reject) => {
-			method.call(client, {
+		}>(this.getGameplayControlClient(), 'GrantGiftCodeMoney', {
 				minecraft_username: minecraftUsername,
 				amount_dabloons: amountDabloons,
 				code,
 				unix_ms: unixMs,
-			}, (error: grpc.ServiceError | null, response: {
-				granted: boolean
-				online: boolean
-				balance_dabloons: number
-				message: string
-			}) => {
-				if (error) {
-					reject(error)
-					return
-				}
-				resolve(response)
-			})
 		})
 	}
 

@@ -1,12 +1,15 @@
 import { Body, Controller, Get, Headers, Param, Patch, Query } from '@nestjs/common';
-import { AuthService } from '../auth/auth.service';
+import { AuthSessionService } from '../auth/auth-session.service';
+import type { PlayerProfileInput } from './player-profile';
+import { OnlinePlayerPresenceService } from './online-player-presence.service';
 import { PlayersService } from './players.service';
 
 @Controller('api/players')
 export class PlayersController {
 	constructor(
-		private readonly auth: AuthService,
+		private readonly auth: AuthSessionService,
 		private readonly players: PlayersService,
+		private readonly playerPresence: OnlinePlayerPresenceService,
 	) {}
 
 	@Get()
@@ -22,13 +25,13 @@ export class PlayersController {
 	@Get('online')
 	listOnlinePlayers(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireSession(cookieHeader);
-		return this.players.listOnlinePlayers();
+		return this.playerPresence.listOnlinePlayers();
 	}
 
 	@Patch('me/profile')
 	updateOwnProfile(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: Record<string, unknown> | undefined,
+		@Body() body: PlayerProfileInput | undefined,
 	) {
 		const user = this.auth.requireSession(cookieHeader);
 		return this.players.updateOwnProfile(user, body ?? {});
@@ -38,7 +41,7 @@ export class PlayersController {
 	updateProfile(
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Param('userId') userId: string,
-		@Body() body: Record<string, unknown> | undefined,
+		@Body() body: PlayerProfileInput | undefined,
 	) {
 		const user = this.auth.requireSession(cookieHeader);
 		return this.players.updateProfile(user, userId, body ?? {});

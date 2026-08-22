@@ -1,0 +1,220 @@
+.shopDeals:has(.shopDealArrow) .shopDealCopy {
+	padding-left: 60px;
+}
+.shopDeals:has(.shopDealArrow) .shopDealPreview {
+	padding-right: 34px;
+}
+
+.shoppingSundayBadge {
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	z-index: 5;
+	padding: 5px 9px;
+	border: 1px solid rgba(255, 209, 102, 0.42);
+	border-radius: 999px;
+	background: rgba(35, 26, 9, 0.88);
+	color: #ffe29a;
+	font-size: 0.67rem;
+	font-weight: 850;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.shopFilterStack {
+	display: grid;
+	gap: 8px;
+	padding: 12px;
+	border: 1px solid var(--shop-border);
+	border-radius: 10px;
+	background: rgba(14, 19, 28, 0.55);
+}
+
+.shopFilterRow {
+	display: grid;
+	grid-template-columns: 58px minmax(0, 1fr);
+	gap: 10px;
+	align-items: center;
+}
+
+.shopFilterRow > span {
+	color: rgba(255, 255, 255, 0.52);
+	font-size: 0.68rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.shopFilterRow > div {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.shopFilterRow button {
+	padding: 7px 11px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.045);
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.77rem;
+	font-weight: 700;
+	transition:
+		color 130ms ease,
+		background 130ms ease,
+		border-color 130ms ease;
+}
+
+.shopFilterRow button:hover {
+	color: #fff;
+	border-color: rgba(255, 255, 255, 0.25);
+}
+
+.shopFilterRow button.active {
+	border-color: #ffd166;
+	background: #ffd166;
+	color: #151922;
+	box-shadow: 0 4px 14px rgba(255, 209, 102, 0.18);
+}
+
+.shopFilterRow .filter-common {
+	--filter-accent: var(--rarity-common);
+}
+.shopFilterRow .filter-uncommon {
+	--filter-accent: var(--rarity-uncommon);
+}
+.shopFilterRow .filter-rare {
+	--filter-accent: var(--rarity-rare);
+}
+.shopFilterRow .filter-epic {
+	--filter-accent: var(--rarity-epic);
+}
+.shopFilterRow .filter-legendary {
+	--filter-accent: var(--rarity-legendary);
+}
+.shopFilterRow .filter-mythical {
+	--filter-accent: var(--rarity-mythical);
+}
+
+.shopFilterRow
+	button:is(
+		.filter-common,
+		.filter-uncommon,
+		.filter-rare,
+		.filter-epic,
+		.filter-legendary,
+		.filter-mythical
+	) {
+	border-color: color-mix(in srgb, var(--filter-accent) 55%, transparent);
+	color: var(--filter-accent);
+}
+
+.shopFilterRow
+	button:is(
+		.filter-common,
+		.filter-uncommon,
+		.filter-rare,
+		.filter-epic,
+		.filter-legendary,
+		.filter-mythical
+	).active {
+	background: var(--filter-accent);
+	color: #111722;
+}
+
+.shopFilterRow button.filter-dyeable:not(.active) {
+	border-color: rgba(120, 240, 221, 0.62);
+	background: linear-gradient(
+		105deg,
+		rgba(255, 61, 112, 0.28),
+		rgba(255, 190, 61, 0.25),
+		rgba(66, 226, 151, 0.25),
+		rgba(52, 179, 255, 0.27),
+		rgba(190, 80, 255, 0.28)
+	);
+	color: #fff;
+	animation: shopRainbowHue 4.8s linear infinite;
+}
+
+.shopFilterRow button.filter-dyeable.active {
+	border-color: rgba(255, 255, 255, 0.82);
+	background: linear-gradient(105deg, #ff3d70, #ffbe3d, #42e297, #34b3ff, #be50ff, #ff3d70);
+	color: #10141d;
+	box-shadow: 0 0 18px rgba(96, 210, 255, 0.32);
+	animation: shopRainbowHue 4s linear infinite;
+}
+
+.shopFilterRow button.filter-animated:not(.active) {
+	border-color: rgba(195, 122, 255, 0.32);
+	color: #dec2ff;
+	animation: shopAnimatedTagPulse 1.8s ease-in-out infinite;
+}
+
+.shopFilterRow button.filter-animated.active {
+	border-color: #d5a4ff;
+	background: rgba(195, 122, 255, 0.22);
+	color: #f2e4ff;
+	box-shadow: 0 0 16px rgba(195, 122, 255, 0.32);
+}
+
+.shopResultLine {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: -6px;
+	color: rgba(255, 255, 255, 0.43);
+	font-size: 0.73rem;
+}
+
+.shopGrid {
+	grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+	gap: 14px;
+}
+
+.shopCard {
+	--card-accent: #8591a4;
+	display: grid;
+	grid-template-rows: 180px 1fr auto;
+	gap: 12px;
+	min-height: 354px;
+	padding: 11px;
+	border: 1px solid color-mix(in srgb, var(--card-accent) 60%, #30394a);
+	border-radius: 11px;
+	background: linear-gradient(160deg, #20293a, #161d29 64%);
+	color: #f6f8fb;
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--card-accent) 11%, transparent),
+		0 14px 28px rgba(0, 0, 0, 0.25);
+	cursor: pointer;
+}
+
+.shopCard-charm {
+	--card-accent: #53d6bd;
+	background:
+		linear-gradient(155deg, rgba(83, 214, 189, 0.08), transparent 40%),
+		linear-gradient(160deg, #20293a, #161d29 64%);
+}
+.shopCard-cosmetic {
+	--card-accent: #f0a3bd;
+	background:
+		linear-gradient(155deg, rgba(240, 163, 189, 0.08), transparent 40%),
+		linear-gradient(160deg, #20293a, #161d29 64%);
+}
+.rarity-common {
+	--card-accent: var(--rarity-common);
+}
+.rarity-uncommon {
+	--card-accent: var(--rarity-uncommon);
+}
+.rarity-rare {
+	--card-accent: var(--rarity-rare);
+}
+.rarity-epic {
+	--card-accent: var(--rarity-epic);
+}
+.rarity-legendary {
+	--card-accent: var(--rarity-legendary);
+}
+.rarity-mythical {
+	--card-accent: var(--rarity-mythical);
+}
+

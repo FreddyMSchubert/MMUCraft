@@ -1,11 +1,11 @@
 import { Controller, Get, Headers, Param, Post, Sse } from '@nestjs/common';
-import { AuthService } from '../../auth/auth.service';
+import { AuthSessionService } from '../../auth/auth-session.service';
 import { DailiesService } from './dailies.service';
 
 @Controller('api/dailies')
 export class DailiesController {
 	constructor(
-		private readonly auth: AuthService,
+		private readonly auth: AuthSessionService,
 		private readonly dailies: DailiesService,
 	) {}
 
@@ -50,7 +50,7 @@ export class DailiesController {
 @Controller('api/admin/dailies')
 export class AdminDailiesController {
 	constructor(
-		private readonly auth: AuthService,
+		private readonly auth: AuthSessionService,
 		private readonly dailies: DailiesService,
 	) {}
 

@@ -1,0 +1,31 @@
+/* ============================================================
+   Base
+   ============================================================ */
+
+:root {
+	--rarity-common: #fff;
+	--rarity-uncommon: #ffff55;
+	--rarity-rare: #55ffff;
+	--rarity-epic: #ff55ff;
+	--rarity-legendary: #55ff55;
+	--rarity-mythical: #ff5f00;
+}
+
+.playerName {
+	color: var(--player-color);
+	color: color-mix(in oklch, var(--player-color) 72%, white);
+	color: oklch(from var(--player-color) calc(max(l, 0.72)) c h);
+}
+
+html[data-theme='light'] .playerName,
+.light .playerName {
+	color: color-mix(in oklch, var(--player-color) 72%, black);
+	color: oklch(from var(--player-color) calc(min(l, 0.42)) c h);
+}
+
+@font-face {
+	font-family: 'Minecraft UI';
+	src: url('/assets/landing/fonts/minecraft.otf') format('opentype');
+	font-display: swap;
+}
+

@@ -1,0 +1,216 @@
+@media (max-width: 700px) {
+	.shopDeals {
+		grid-template-columns: 1fr 120px;
+	}
+	.shopDealCopy {
+		padding: 20px;
+	}
+	.shopDealCopy > p {
+		display: none;
+	}
+	.shopDealHeading {
+		flex-wrap: wrap;
+	}
+	.shopDealSpark {
+		display: none;
+	}
+	.shopDealActions {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+	.shopDealArrow {
+		width: 32px;
+		height: 50px;
+	}
+	.shopDealArrow.previous {
+		left: 6px;
+	}
+	.shopDealArrow.next {
+		right: 6px;
+	}
+	.shopDeals:has(.shopDealArrow) .shopDealCopy {
+		padding-left: 45px;
+	}
+	.shopCatalogToolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+	.shopCatalogToolbar .shopOrderControl select {
+		width: 100%;
+	}
+	.shopFilterRow {
+		grid-template-columns: 1fr;
+	}
+	.shopGrid {
+		grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+	}
+	.shopCard {
+		grid-template-rows: 150px 1fr auto;
+		min-height: 322px;
+	}
+	.shopImageFrame,
+	.shopModelHost {
+		min-height: 148px;
+	}
+	.shopDetailsBackdrop {
+		padding: 0;
+	}
+	.shopDetails {
+		width: 100%;
+		min-height: 100vh;
+		border-radius: 0;
+	}
+	.shopDetailsHero {
+		grid-template-columns: 1fr;
+	}
+	.shopDetailsPreview,
+	.shopDetailsPreview .shopModelHost,
+	.shopDetailsPreview .shopItemIcon {
+		min-height: 300px;
+		height: 300px;
+	}
+	.shopDetailsSummary {
+		padding: 28px 22px 34px;
+	}
+	.charmProgression {
+		padding: 20px;
+	}
+	.charmProgressionHeading {
+		align-items: stretch;
+		flex-direction: column;
+	}
+}
+
+.adminWarnings,
+.giftInstructions {
+	padding: 13px 15px;
+	border: 1px solid rgba(255, 209, 102, 0.42);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.1);
+}
+
+.adminWarnings-critical {
+	border-color: rgba(255, 112, 112, 0.55);
+	background: rgba(255, 74, 74, 0.1);
+}
+
+.adminWarnings ul,
+.giftInstructions ol {
+	margin: 8px 0 0;
+	padding-left: 22px;
+}
+
+.adminWarnings li,
+.giftInstructions li {
+	margin-top: 5px;
+}
+
+.giftInstructions {
+	display: grid;
+	gap: 8px;
+}
+
+.giftCodeForm {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	align-items: end;
+}
+
+.countdownForm {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	align-items: end;
+}
+
+.countdownForm label {
+	display: grid;
+	gap: 6px;
+}
+
+.countdownForm input,
+.countdownForm textarea {
+	width: 100%;
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.09);
+	color: #fff;
+	color-scheme: dark;
+	font: inherit;
+}
+
+.countdownAbstractInput,
+.countdownImageInput,
+.countdownColorOptions,
+.countdownFormActions {
+	grid-column: 1 / -1;
+}
+
+.countdownFormActions {
+	display: flex;
+	gap: 10px;
+}
+
+.countdownColorOptions {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 7px;
+}
+
+.countdownColorOptions legend {
+	padding: 0 5px;
+}
+
+.countdownColorOptions input[type='color'] {
+	height: 36px;
+	padding: 3px;
+}
+
+.countdownColorOptions input[type='range'] {
+	padding: 0;
+	accent-color: #ffd166;
+}
+
+.countdownColorOptions code,
+.countdownColorOptions output {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.72rem;
+}
+
+.countdownForm button {
+	flex: 1;
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.countdownAdminList {
+	display: grid;
+	gap: 8px;
+}
+
+.countdownAdminList > p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.65);
+}
+
+.countdownAdminList article {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: center;
+	padding: 11px 12px;
+	border-radius: 7px;
+	background: rgba(0, 0, 0, 0.24);
+}
+

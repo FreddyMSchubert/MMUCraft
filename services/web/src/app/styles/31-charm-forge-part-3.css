@@ -1,0 +1,59 @@
+@media (max-width: 760px) {
+	.charmForgeHeader,
+	.charmForgeControls,
+	.charmSectionHeading,
+	.charmEnchantBar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.charmForgeControls {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+	.charmForgeStage {
+		min-height: 430px;
+		border-radius: 13px;
+	}
+	.charmAbility {
+		grid-template-columns: 1fr;
+	}
+	.charmIngredientSection {
+		padding: 13px;
+	}
+	.charmIngredientGrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.charmEnchantButton {
+		width: 100%;
+		min-width: 0;
+	}
+	.charmForgeMessage {
+		text-align: center;
+	}
+}
+
+@media (max-width: 430px) {
+	.charmForgeControls,
+	.charmIngredientGrid {
+		grid-template-columns: 1fr;
+	}
+	.charmForgeStage {
+		min-height: 390px;
+	}
+	.charmIdentity {
+		bottom: 14px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.charmForgeAura,
+	.charmRune {
+		animation: none;
+	}
+	.charmEnchantButton,
+	.charmRefresh {
+		transition: none;
+	}
+}
+

@@ -13,6 +13,17 @@ const LONDON_TIME = new Intl.DateTimeFormat('en-GB', {
 	hourCycle: 'h23',
 });
 
+export interface CountdownInput {
+	heading?: string;
+	target?: string;
+	description?: string;
+	headingColor?: string;
+	descriptionColor?: string;
+	backgroundColor?: string;
+	backgroundAlpha?: number;
+	backgroundImageUrl?: string | null;
+}
+
 @Injectable()
 export class CountdownsService {
 	constructor(private readonly database: DatabaseService) {}
@@ -21,26 +32,8 @@ export class CountdownsService {
 		return { countdowns: this.activeRows().map(toCountdown) };
 	}
 
-	create(
-		headingInput: unknown,
-		targetInput: unknown,
-		descriptionInput: unknown,
-		headingColorInput: unknown,
-		descriptionColorInput: unknown,
-		backgroundColorInput: unknown,
-		backgroundAlphaInput: unknown,
-		backgroundImageUrlInput: unknown,
-	) {
-		const values = countdownValues(
-			headingInput,
-			targetInput,
-			descriptionInput,
-			headingColorInput,
-			descriptionColorInput,
-			backgroundColorInput,
-			backgroundAlphaInput,
-			backgroundImageUrlInput,
-		);
+	create(input: CountdownInput) {
+		const values = countdownValues(input);
 		const now = Date.now();
 		if (values.target_at_unix_ms <= now)
 			throw new BadRequestException('The countdown time must be in the future');
@@ -71,17 +64,7 @@ export class CountdownsService {
 		return toCountdown(created);
 	}
 
-	update(
-		idInput: string,
-		headingInput: unknown,
-		targetInput: unknown,
-		descriptionInput: unknown,
-		headingColorInput: unknown,
-		descriptionColorInput: unknown,
-		backgroundColorInput: unknown,
-		backgroundAlphaInput: unknown,
-		backgroundImageUrlInput: unknown,
-	) {
+	update(idInput: string, input: CountdownInput) {
 		const id = positiveId(idInput);
 		const existing = this.database.connection
 			.select()
@@ -89,16 +72,7 @@ export class CountdownsService {
 			.where(eq(countdowns.id, id))
 			.get();
 		if (!existing) throw new NotFoundException('Countdown not found');
-		const values = countdownValues(
-			headingInput,
-			targetInput,
-			descriptionInput,
-			headingColorInput,
-			descriptionColorInput,
-			backgroundColorInput,
-			backgroundAlphaInput,
-			backgroundImageUrlInput,
-		);
+		const values = countdownValues(input);
 		if (
 			values.target_at_unix_ms <= Date.now() &&
 			values.target_at_unix_ms !== existing.target_at_unix_ms
@@ -132,7 +106,7 @@ export class CountdownsService {
 		return { ok: true };
 	}
 
-	move(idInput: string, directionInput: unknown) {
+	move(idInput: string, directionInput: 'up' | 'down' | undefined) {
 		const id = positiveId(idInput);
 		if (directionInput !== 'up' && directionInput !== 'down') {
 			throw new BadRequestException('Direction must be up or down');
@@ -184,7 +158,7 @@ function toCountdown(row: typeof countdowns.$inferSelect) {
 	};
 }
 
-function requiredText(input: unknown, label: string, maxLength: number) {
+function requiredText(input: string | undefined, label: string, maxLength: number) {
 	if (typeof input !== 'string' || !input.trim())
 		throw new BadRequestException(`${label} is required`);
 	const value = input.trim();
@@ -193,25 +167,16 @@ function requiredText(input: unknown, label: string, maxLength: number) {
 	return value;
 }
 
-function countdownValues(
-	headingInput: unknown,
-	targetInput: unknown,
-	descriptionInput: unknown,
-	headingColorInput: unknown,
-	descriptionColorInput: unknown,
-	backgroundColorInput: unknown,
-	backgroundAlphaInput: unknown,
-	backgroundImageUrlInput: unknown,
-) {
-	const targetAtUnixMs = parseLondonDateTime(targetInput);
+function countdownValues(input: CountdownInput) {
+	const targetAtUnixMs = parseLondonDateTime(input.target);
 	return {
-		heading: requiredText(headingInput, 'Heading', 80),
-		description: requiredText(descriptionInput, 'Abstract', 500),
-		heading_color: hexColor(headingColorInput, 'Heading color'),
-		description_color: hexColor(descriptionColorInput, 'Abstract color'),
-		background_color: hexColor(backgroundColorInput, 'Background color'),
-		background_alpha: percentage(backgroundAlphaInput),
-		background_image_url: optionalImageUrl(backgroundImageUrlInput),
+		heading: requiredText(input.heading, 'Heading', 80),
+		description: requiredText(input.description, 'Abstract', 500),
+		heading_color: hexColor(input.headingColor, 'Heading color'),
+		description_color: hexColor(input.descriptionColor, 'Abstract color'),
+		background_color: hexColor(input.backgroundColor, 'Background color'),
+		background_alpha: percentage(input.backgroundAlpha),
+		background_image_url: optionalImageUrl(input.backgroundImageUrl),
 		target_at_unix_ms: targetAtUnixMs,
 		visible_until_unix_ms: Math.max(
 			nextLondonMidnight(targetAtUnixMs),
@@ -226,20 +191,20 @@ function positiveId(input: string) {
 	return id;
 }
 
-function hexColor(input: unknown, label: string) {
+function hexColor(input: string | undefined, label: string) {
 	if (typeof input !== 'string' || !/^#[0-9a-f]{6}$/i.test(input))
 		throw new BadRequestException(`${label} must be a 6-digit hex color`);
 	return input.toLowerCase();
 }
 
-function percentage(input: unknown) {
+function percentage(input: number | undefined) {
 	if (typeof input !== 'number' || !Number.isInteger(input) || input < 0 || input > 100) {
 		throw new BadRequestException('Background opacity must be a whole number from 0 to 100');
 	}
 	return input;
 }
 
-function optionalImageUrl(input: unknown) {
+function optionalImageUrl(input: string | null | undefined) {
 	if (input === null || input === undefined || input === '') return null;
 	if (typeof input !== 'string' || input.length > 2_000)
 		throw new BadRequestException('Background image URL is invalid');
@@ -252,7 +217,7 @@ function optionalImageUrl(input: unknown) {
 	}
 }
 
-function parseLondonDateTime(input: unknown) {
+function parseLondonDateTime(input: string | undefined) {
 	if (typeof input !== 'string')
 		throw new BadRequestException('Enter a valid British date and time');
 	const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(input);

@@ -1,0 +1,182 @@
+/* ============================================================
+   Admin and misc
+   ============================================================ */
+
+.adminPanel,
+.miscPanel {
+	display: grid;
+	gap: 18px;
+}
+
+.miscSubTabs {
+	display: flex;
+	gap: 8px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.miscSubTabs a {
+	padding: 9px 13px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.055);
+	color: rgba(255, 255, 255, 0.7);
+	font-weight: 750;
+	text-decoration: none;
+}
+
+.miscSubTabs a.active {
+	border-color: #ffd166;
+	background: #ffd166;
+	color: #151922;
+}
+
+.settingsSection,
+.giftCodeSection {
+	display: grid;
+	gap: 18px;
+}
+
+.settingsSection > div:first-child > p,
+.giftCodeSection > div:first-child > p {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.settingsList {
+	display: grid;
+	gap: 10px;
+}
+
+.settingToggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	padding: 14px 16px;
+	border: 1px solid rgba(255, 255, 255, 0.13);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.05);
+	cursor: pointer;
+}
+
+.settingToggle > span {
+	display: grid;
+	gap: 5px;
+}
+
+.settingToggle strong {
+	color: #fff;
+	font-size: 0.9rem;
+}
+.settingToggle small {
+	max-width: 680px;
+	color: rgba(255, 255, 255, 0.58);
+	line-height: 1.45;
+}
+.settingToggle input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.settingToggle i {
+	position: relative;
+	flex: 0 0 auto;
+	width: 46px;
+	height: 26px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.09);
+	transition:
+		background 150ms ease,
+		border-color 150ms ease;
+}
+
+.settingToggle i::after {
+	content: '';
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.72);
+	transition:
+		transform 150ms ease,
+		background 150ms ease;
+}
+
+.settingToggle:has(input:checked) {
+	border-color: rgba(255, 209, 102, 0.35);
+	background: rgba(255, 209, 102, 0.065);
+}
+
+.settingToggle input:checked + i {
+	border-color: #ffd166;
+	background: #ffd166;
+}
+.settingToggle input:checked + i::after {
+	background: #161a23;
+	transform: translateX(20px);
+}
+.settingToggle:focus-within {
+	outline: 2px solid rgba(255, 209, 102, 0.72);
+	outline-offset: 2px;
+}
+
+.adminSubTabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.adminSubTabs a {
+	padding: 9px 13px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+	text-decoration: none;
+}
+
+.adminSubTabs a.active {
+	border-color: #ffd166;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.adminSection {
+	display: grid;
+	gap: 14px;
+	padding: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.adminSectionHeader h3,
+.adminSectionHeader p,
+.miscPanel h3,
+.miscPanel p,
+.giftInstructions h4,
+.giftInstructions ol,
+.giftCodeHistory h4,
+.adminMessage {
+	margin: 0;
+}
+
+.adminSectionHeader h3,
+.miscPanel h3 {
+	margin-bottom: 5px;
+	font-size: 1.25rem;
+}
+
+.adminSectionHeader p,
+.miscPanel > div > p,
+.giftInstructions p {
+	color: rgba(255, 255, 255, 0.76);
+}
+

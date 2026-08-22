@@ -1,0 +1,215 @@
+.shopCard:hover,
+.shopCard:focus-visible {
+	border-color: var(--card-accent);
+	transform: translateY(-3px);
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--card-accent) 34%, transparent),
+		0 18px 35px rgba(0, 0, 0, 0.36),
+		0 0 24px color-mix(in srgb, var(--card-accent) 9%, transparent);
+	outline: none;
+}
+
+.shopCard.unavailable {
+	filter: none;
+	opacity: 0.72;
+}
+
+.shopImageFrame {
+	min-height: 180px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 8px;
+	background:
+		radial-gradient(
+			circle at 50% 52%,
+			color-mix(in srgb, var(--card-accent) 26%, transparent) 0 9%,
+			color-mix(in srgb, var(--card-accent) 12%, transparent) 28%,
+			transparent 67%
+		),
+		linear-gradient(150deg, rgba(255, 255, 255, 0.035), transparent 55%), #111722;
+}
+
+.shopModelHost {
+	position: relative;
+	min-height: 178px;
+}
+
+.shopModelHost::before {
+	content: '';
+	position: absolute;
+	inset: 20%;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		color-mix(in srgb, var(--card-accent, #fff) 12%, transparent),
+		transparent 68%
+	);
+	opacity: 1;
+	transition: opacity 240ms ease;
+}
+
+.shopModelHost.ready::before {
+	opacity: 0;
+}
+.shopModelSnapshot {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	opacity: 1;
+	transition: opacity 180ms ease;
+}
+.shopModelCanvas {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	opacity: 0;
+	transition: opacity 220ms ease;
+}
+.shopModelHost.live .shopModelCanvas {
+	opacity: 1;
+}
+.shopModelHost.live:has(.shopModelCanvas) .shopModelSnapshot {
+	opacity: 0;
+}
+
+.shopItemIcon {
+	width: min(82%, 142px);
+	height: min(82%, 142px);
+	object-fit: contain;
+	image-rendering: pixelated;
+	filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.38));
+}
+
+.shopMetaIcon {
+	border-color: rgba(255, 255, 255, 0.2);
+	background-color: rgba(18, 24, 35, 0.88);
+}
+
+.shopMetaIcon-animated::before {
+	border-left-color: #fff;
+}
+
+.shopDealBadge {
+	position: absolute;
+	bottom: 7px;
+	left: 7px;
+	padding: 4px 7px;
+	border: 1px solid rgba(255, 209, 102, 0.42);
+	border-radius: 6px;
+	background: rgba(24, 21, 14, 0.9);
+	color: #ffe39a;
+	font-size: 0.67rem;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.shopBadges span {
+	border-color: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.07);
+	color: rgba(255, 255, 255, 0.65);
+}
+
+.shopBadges span:last-child,
+.rarity-common .shopBadges span:last-child,
+.rarity-uncommon .shopBadges span:last-child,
+.rarity-rare .shopBadges span:last-child,
+.rarity-epic .shopBadges span:last-child,
+.rarity-legendary .shopBadges span:last-child,
+.rarity-mythical .shopBadges span:last-child {
+	border-color: color-mix(in srgb, var(--card-accent, #8591a4) 42%, transparent);
+	background: color-mix(in srgb, var(--card-accent, #8591a4) 13%, transparent);
+	color: color-mix(in srgb, var(--card-accent, #d8dce4) 72%, white);
+}
+
+.shopBadges span.deal {
+	border-color: rgba(255, 209, 102, 0.42);
+	background: rgba(255, 209, 102, 0.1);
+	color: #ffe39a;
+}
+
+.shopBadgeLines {
+	display: grid;
+	gap: 6px;
+}
+
+.shopTagBadges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+
+.shopTagBadges .shopTag {
+	padding: 3px 7px;
+	border: 1px solid rgba(255, 255, 255, 0.13);
+	border-radius: 999px;
+	font-size: 0.65rem;
+	font-weight: 800;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
+
+.shopTag.dyeable {
+	border-color: rgba(255, 255, 255, 0.45);
+	background: linear-gradient(
+		105deg,
+		rgba(255, 61, 112, 0.7),
+		rgba(255, 190, 61, 0.68),
+		rgba(66, 226, 151, 0.68),
+		rgba(52, 179, 255, 0.7),
+		rgba(190, 80, 255, 0.7)
+	);
+	color: #fff;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.72);
+	animation: shopRainbowHue 4.4s linear infinite;
+}
+
+.shopTag.animated {
+	border-color: rgba(195, 122, 255, 0.42);
+	background: rgba(195, 122, 255, 0.11);
+	color: #e4c9ff;
+	animation: shopAnimatedTagPulse 1.8s ease-in-out infinite;
+}
+
+.shopTag.discounted {
+	border-color: rgba(79, 220, 163, 0.4);
+	background: rgba(79, 220, 163, 0.11);
+	color: #8ce8c2;
+}
+.shopTag.soldOut {
+	border-color: rgba(255, 116, 105, 0.4);
+	background: rgba(255, 116, 105, 0.11);
+	color: #ffaaa3;
+}
+
+@keyframes shopAnimatedTagPulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 rgba(195, 122, 255, 0);
+	}
+	50% {
+		box-shadow: 0 0 12px rgba(195, 122, 255, 0.28);
+	}
+}
+
+@keyframes shopRainbowHue {
+	from {
+		filter: hue-rotate(0deg);
+	}
+	to {
+		filter: hue-rotate(360deg);
+	}
+}
+
+.animatedWave {
+	display: inline-flex;
+	align-items: baseline;
+}
+
+.animatedWave > span {
+	display: inline-block;
+	transform-origin: center bottom;
+	animation: shopAnimatedLetterWave 1.45s ease-in-out infinite;
+	animation-delay: calc(var(--wave-index) * 70ms);
+}
+

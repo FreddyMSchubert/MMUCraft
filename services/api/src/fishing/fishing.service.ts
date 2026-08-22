@@ -1,10 +1,7 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { randomInt } from 'node:crypto';
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { and, count, eq, inArray, max, min } from 'drizzle-orm';
 import { interval, map, merge, of, Subject } from 'rxjs';
-import { AuthenticatedUser } from '../auth/auth.service';
+import { AuthenticatedUser } from '../auth/auth-session.service';
 import {
 	DatabaseService,
 	FishCatchRow,
@@ -13,34 +10,8 @@ import {
 	users,
 } from '../database/database.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
-import { ASSETS } from '../assets';
 import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color';
-
-const ITEM_ROOTS = [
-	join(process.cwd(), 'content', 'items'),
-	join(process.cwd(), '..', '..', 'minecraft', 'main', 'data', 'data', 'items'),
-	join(process.cwd(), 'minecraft', 'main', 'data', 'data', 'items'),
-] as const;
-const RARITIES = new Set(['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical']);
-const FISH_ASSET_REVISION = `${Date.now().toString(36)}-${randomInt(0x100000000).toString(36)}`;
-
-interface FishDefinition {
-	id: string;
-	title: string;
-	rarity: string;
-	tags: string[];
-	facts: string[];
-	iconUrl: string;
-	textureFilePath: string | null;
-}
-
-interface FishItemJson {
-	id?: unknown;
-	title?: unknown;
-	rarity?: unknown;
-	tooltips?: unknown;
-	fish?: { tags?: unknown };
-}
+import { FishCatalogService } from './fish-catalog.service';
 
 interface RecordCatchInput {
 	minecraftUuid: string;
@@ -51,53 +22,18 @@ interface RecordCatchInput {
 	caughtAtUnixMs: number;
 }
 
-const VANILLA_FISH: FishDefinition[] = [
-	vanillaFish(
-		'minecraft:cod',
-		'Cod',
-		'common',
-		'Cod use the small barbel beneath their chin to help search the seabed for food.',
-	),
-	vanillaFish(
-		'minecraft:salmon',
-		'Salmon',
-		'common',
-		'Salmon can navigate back to the stream where they hatched after years at sea.',
-	),
-	vanillaFish(
-		'minecraft:tropical_fish',
-		'Tropical Fish',
-		'uncommon',
-		'Many tropical reef fish can change colour or pattern as they mature.',
-	),
-	vanillaFish(
-		'minecraft:pufferfish',
-		'Pufferfish',
-		'uncommon',
-		'Pufferfish inflate by rapidly swallowing water, making themselves difficult for predators to bite.',
-	),
-];
-
 @Injectable()
-export class FishingService implements OnModuleInit {
+export class FishingService {
 	private readonly catchEvents = new Subject<{ data: unknown }>();
-	private cachedDefinitions: {
-		mtimeMs: number;
-		definitions: FishDefinition[];
-		byId: Map<string, FishDefinition>;
-	} | null = null;
 
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
+		private readonly fishCatalog: FishCatalogService,
 	) {}
 
-	onModuleInit() {
-		if (process.env.NODE_ENV === 'production') this.loadDefinitions();
-	}
-
 	recordCatch(input: RecordCatchInput) {
-		const definition = this.loadDefinitions().find((fish) => fish.id === input.fishId);
+		const definition = this.fishCatalog.definitions().find((fish) => fish.id === input.fishId);
 		const user = this.identities.resolveAndRefresh(
 			input.minecraftUuid,
 			input.minecraftUsername,
@@ -268,7 +204,7 @@ export class FishingService implements OnModuleInit {
 					caughtTotal: catchCountByUserId.get(player.id) ?? 0,
 				};
 			}),
-			fish: this.loadDefinitions().map((definition) => {
+			fish: this.fishCatalog.definitions().map((definition) => {
 				const serverRows = catchesByFishId.get(definition.id) ?? [];
 				return {
 					id: definition.id,
@@ -300,7 +236,9 @@ export class FishingService implements OnModuleInit {
 	}
 
 	getCatchCountsForUsers(userIds: number[]) {
-		const rarityByFish = new Map(this.loadDefinitions().map((fish) => [fish.id, fish.rarity]));
+		const rarityByFish = new Map(
+			this.fishCatalog.definitions().map((fish) => [fish.id, fish.rarity]),
+		);
 		const countsByUserId = new Map(userIds.map((userId) => [userId, emptyCatchCounts()]));
 		if (userIds.length === 0) return countsByUserId;
 
@@ -329,76 +267,7 @@ export class FishingService implements OnModuleInit {
 	}
 
 	getTextureFilePath(fishId: string) {
-		const definition = this.loadDefinitionsCache().byId.get(fishId);
-		if (!definition?.textureFilePath) throw new NotFoundException('Fish texture not found');
-		return definition.textureFilePath;
-	}
-
-	private loadDefinitions() {
-		return this.loadDefinitionsCache().definitions;
-	}
-
-	private loadDefinitionsCache() {
-		if (process.env.NODE_ENV === 'production' && this.cachedDefinitions)
-			return this.cachedDefinitions;
-
-		const itemRoot = ITEM_ROOTS.find((candidate) => existsSync(candidate)) ?? ITEM_ROOTS[0];
-		const fishRoot = join(itemRoot, 'fish');
-		if (!existsSync(fishRoot)) {
-			this.cachedDefinitions = {
-				mtimeMs: 0,
-				definitions: VANILLA_FISH,
-				byId: new Map(VANILLA_FISH.map((fish) => [fish.id, fish])),
-			};
-			return this.cachedDefinitions;
-		}
-		const mtimeMs = treeMtime(fishRoot);
-		if (this.cachedDefinitions?.mtimeMs === mtimeMs) return this.cachedDefinitions;
-		const revision =
-			process.env.NODE_ENV === 'production' ? FISH_ASSET_REVISION : String(mtimeMs);
-
-		const customDefinitions = findItemFiles(fishRoot).flatMap((filePath): FishDefinition[] => {
-			const json = JSON.parse(readFileSync(filePath, 'utf8')) as FishItemJson;
-			const directory = dirname(filePath);
-			const textureFilePath = join(directory, 'texture.png');
-			if (
-				typeof json.id !== 'string' ||
-				typeof json.title !== 'string' ||
-				!existsSync(textureFilePath)
-			)
-				return [];
-			return [
-				{
-					id: json.id,
-					title: json.title,
-					rarity:
-						typeof json.rarity === 'string' && RARITIES.has(json.rarity)
-							? json.rarity
-							: 'common',
-					tags: Array.isArray(json.fish?.tags)
-						? json.fish.tags.filter((tag): tag is string => typeof tag === 'string')
-						: [],
-					facts: Array.isArray(json.tooltips)
-						? json.tooltips.filter(
-								(fact): fact is string =>
-									typeof fact === 'string' && fact.trim().length > 0,
-							)
-						: [],
-					iconUrl: `/api/fishing/texture/${encodeURIComponent(json.id)}?v=${revision}`,
-					textureFilePath,
-				},
-			];
-		});
-		const definitions = [...VANILLA_FISH, ...customDefinitions].sort((left, right) =>
-			left.title.localeCompare(right.title, 'en'),
-		);
-
-		this.cachedDefinitions = {
-			mtimeMs,
-			definitions,
-			byId: new Map(definitions.map((fish) => [fish.id, fish])),
-		};
-		return this.cachedDefinitions;
+		return this.fishCatalog.textureFilePath(fishId);
 	}
 
 	private unrecorded(accountLinked: boolean, message: string) {
@@ -474,35 +343,6 @@ function serializeServerRecord(
 	};
 }
 
-function findItemFiles(directory: string): string[] {
-	return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-		const path = join(directory, entry.name);
-		return entry.isDirectory() ? findItemFiles(path) : entry.name === 'item.json' ? [path] : [];
-	});
-}
-
-function treeMtime(path: string): number {
-	const stat = statSync(path);
-	if (!stat.isDirectory()) return stat.mtimeMs;
-	return readdirSync(path, { withFileTypes: true }).reduce(
-		(mtime, child) => Math.max(mtime, treeMtime(join(path, child.name))),
-		stat.mtimeMs,
-	);
-}
-
 function normalizeUnixMs(value: number) {
 	return Number.isFinite(value) && value > 0 ? Math.trunc(value) : Date.now();
-}
-
-function vanillaFish(id: string, title: string, rarity: string, fact: string): FishDefinition {
-	const textureName = id.slice('minecraft:'.length);
-	return {
-		id,
-		title,
-		rarity,
-		tags: [],
-		facts: [fact],
-		iconUrl: `${ASSETS.minecraft.vanilla}/textures/item/${textureName}.png`,
-		textureFilePath: null,
-	};
 }

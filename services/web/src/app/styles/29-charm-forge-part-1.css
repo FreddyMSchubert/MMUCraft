@@ -1,0 +1,215 @@
+/* ============================================================
+   Charm forge
+   ============================================================ */
+
+.charmForge {
+	--forge-violet: #a86cff;
+	--forge-cyan: #6fffe9;
+	--forge-gold: #ffd36f;
+	display: grid;
+	gap: 18px;
+	color: #f8f4ff;
+}
+
+.charmForgeHeader,
+.charmForgeControls,
+.charmSectionHeading,
+.charmEnchantBar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.charmForgeHeader {
+	padding: 6px 2px 2px;
+}
+
+.charmForgeHeader h3,
+.charmForgeHeader p,
+.charmSectionHeading h4,
+.charmIdentity h4 {
+	margin: 0;
+}
+
+.charmForgeHeader h3 {
+	font-size: clamp(1.8rem, 4vw, 2.8rem);
+	line-height: 1.05;
+	text-shadow: 0 0 26px rgba(168, 108, 255, 0.35);
+}
+
+.charmForgeHeader p {
+	margin-top: 7px;
+	color: rgba(248, 244, 255, 0.63);
+}
+
+.charmEyebrow,
+.charmSectionHeading span,
+.charmAbility span {
+	color: var(--forge-cyan);
+	font-size: 0.68rem;
+	font-weight: 900;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+}
+
+.charmForgeControls {
+	flex: 0 0 auto;
+}
+
+.charmBalance,
+.charmRefresh {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 42px;
+	padding: 9px 13px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 9px;
+	background: rgba(11, 8, 22, 0.72);
+	color: rgba(255, 255, 255, 0.82);
+}
+
+.charmRefresh {
+	cursor: pointer;
+	font: inherit;
+	font-weight: 800;
+	transition:
+		border-color 160ms ease,
+		background 160ms ease,
+		transform 160ms ease;
+}
+
+.charmRefresh:hover:not(:disabled) {
+	border-color: var(--forge-cyan);
+	background: rgba(111, 255, 233, 0.1);
+	transform: translateY(-1px);
+}
+
+.charmRefresh:disabled {
+	cursor: wait;
+	opacity: 0.5;
+}
+.charmRefresh span {
+	color: var(--forge-cyan);
+	font-size: 1.2rem;
+}
+
+.charmForgeStage {
+	position: relative;
+	min-height: 560px;
+	overflow: hidden;
+	border: 1px solid rgba(184, 135, 255, 0.28);
+	border-radius: 18px;
+	background:
+		radial-gradient(circle at 50% 48%, rgba(146, 78, 255, 0.21), transparent 24%),
+		radial-gradient(ellipse at 50% 110%, rgba(72, 255, 228, 0.13), transparent 52%),
+		linear-gradient(145deg, #080712, #111024 58%, #080b18);
+	box-shadow:
+		inset 0 0 80px rgba(107, 56, 181, 0.12),
+		0 24px 75px rgba(0, 0, 0, 0.34);
+	isolation: isolate;
+}
+
+.charmForgeStage::after {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	background: radial-gradient(
+		circle,
+		rgba(255, 255, 255, 0.95),
+		rgba(159, 94, 255, 0.48) 12%,
+		transparent 42%
+	);
+	content: '';
+	opacity: 0;
+	pointer-events: none;
+}
+
+.charmForgeStage.enchanting::after {
+	animation: charmForgeFlash 1.9s ease-in-out both;
+}
+
+.charmForgeAura {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: min(56vw, 480px);
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		rgba(180, 114, 255, 0.21),
+		rgba(102, 255, 227, 0.05) 52%,
+		transparent 70%
+	);
+	filter: blur(8px);
+	transform: translate(-50%, -50%);
+	animation: charmAuraBreathe 4.5s ease-in-out infinite;
+}
+
+.charmForgeScene,
+.charmForgeCanvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.charmForgeCanvas {
+	cursor: crosshair;
+}
+
+.charmIdentity {
+	position: absolute;
+	bottom: 24px;
+	left: 50%;
+	z-index: 3;
+	display: grid;
+	grid-template-columns: auto auto;
+	gap: 2px 10px;
+	min-width: min(320px, calc(100% - 32px));
+	padding: 12px 18px;
+	border: 1px solid rgba(209, 177, 255, 0.2);
+	border-radius: 11px;
+	background: linear-gradient(120deg, rgba(9, 7, 18, 0.88), rgba(32, 20, 53, 0.82));
+	box-shadow:
+		0 10px 35px rgba(0, 0, 0, 0.35),
+		inset 0 1px rgba(255, 255, 255, 0.08);
+	text-align: center;
+	transform: translateX(-50%);
+	backdrop-filter: blur(10px);
+}
+
+.charmIdentity h4 {
+	grid-column: 1 / -1;
+	font-size: 1rem;
+}
+.charmIdentity strong {
+	color: var(--forge-gold);
+	text-align: right;
+}
+.charmIdentity span {
+	color: var(--forge-cyan);
+	text-align: left;
+}
+
+.charmAbility {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.charmAbility > div {
+	padding: 15px 17px;
+	border: 1px solid rgba(255, 255, 255, 0.11);
+	border-radius: 10px;
+	background: linear-gradient(135deg, rgba(168, 108, 255, 0.08), rgba(111, 255, 233, 0.04));
+}
+
+.charmAbility p {
+	margin: 6px 0 0;
+	color: rgba(255, 255, 255, 0.76);
+	line-height: 1.5;
+}
+

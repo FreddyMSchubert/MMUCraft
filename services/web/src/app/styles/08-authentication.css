@@ -1,0 +1,221 @@
+/* ============================================================
+   Auth
+   ============================================================ */
+
+.authForm {
+	display: grid;
+	gap: 12px;
+}
+
+.authSignupProgress {
+	display: grid;
+	gap: 6px;
+	margin-bottom: 16px;
+	color: rgba(255, 255, 255, 0.78);
+	font-size: 0.85rem;
+}
+
+.authSignupProgress progress {
+	width: 100%;
+	height: 10px;
+	accent-color: #ffd166;
+}
+
+.authForm h2,
+.authForm p {
+	margin: 0;
+}
+
+.authForm input {
+	width: 100%;
+	padding: 12px 14px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.authForm button {
+	padding: 12px 14px;
+	border: 0;
+	border-radius: 10px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.authForm .authHelpButton {
+	justify-self: center;
+	margin-top: -4px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.85rem;
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.authForm .authPrivacyNote {
+	margin-top: -6px;
+	color: rgba(255, 255, 255, 0.56);
+	font-size: 0.72rem;
+	line-height: 1.4;
+}
+
+.authForm .authOutlinedButton {
+	border: 1px solid rgba(255, 209, 102, 0.45);
+	background: transparent;
+	color: #ffd166;
+	font-weight: 700;
+}
+
+.authHelpBackdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	display: grid;
+	place-items: center;
+	padding: 20px;
+	background: rgba(0, 0, 0, 0.72);
+}
+
+.authHelpDialog {
+	position: relative;
+	display: grid;
+	gap: 12px;
+	width: min(440px, 100%);
+	padding: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 14px;
+	background: #171717;
+	box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+
+.authHelpDialog h3,
+.authHelpDialog p {
+	margin: 0;
+}
+
+.authHelpDialog button {
+	padding: 10px 12px;
+	border-radius: 10px;
+}
+
+.authHelpDialog .authSecondaryButton {
+	width: 100%;
+	border: 0;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.authHelpDialog .authHelpClose {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 1.5rem;
+}
+
+.authRules {
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.06);
+	text-align: left;
+}
+
+.authCodeInputs {
+	display: grid;
+	gap: 8px;
+}
+
+.authCodeInput {
+	display: grid;
+	grid-template-columns: 24px 32px 1fr;
+	gap: 10px;
+	align-items: center;
+}
+
+.authCodePosition {
+	color: rgba(255, 255, 255, 0.65);
+	font-weight: 700;
+	text-align: center;
+}
+
+.authCodeIcon {
+	display: block;
+	width: 32px;
+	height: 32px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	image-rendering: pixelated;
+}
+
+.authCodeIconEmpty {
+	display: grid;
+	place-items: center;
+	border: 1px dashed rgba(255, 255, 255, 0.2);
+	border-radius: 6px;
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.authCodeHeadIcon {
+	background-position: -32px -32px;
+	background-size: 256px auto;
+}
+
+.authCodeInput select {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 10px;
+	background: #252525;
+	color: #fff;
+}
+
+.authRuleList {
+	display: grid;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.authRule {
+	display: grid;
+	grid-template-columns: 20px 1fr;
+	gap: 10px;
+	align-items: start;
+	padding: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.18);
+	cursor: pointer;
+	line-height: 1.4;
+}
+
+.authForm .authRule input {
+	width: 18px;
+	height: 18px;
+	margin: 1px 0 0;
+	padding: 0;
+	accent-color: #ffd166;
+}
+
+.authRule:has(input:checked) {
+	border-color: rgba(255, 209, 102, 0.55);
+	background: rgba(255, 209, 102, 0.1);
+}
+
+.authError {
+	margin: 14px 0 0;
+	color: #ff9a9a;
+}
+

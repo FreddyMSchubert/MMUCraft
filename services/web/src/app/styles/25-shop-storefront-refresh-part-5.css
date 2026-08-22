@@ -1,0 +1,139 @@
+.shopItemEffect strong {
+	color: #ffd166;
+	font-size: 0.68rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.shopItemEffect p,
+.shopItemTooltips p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.7);
+	line-height: 1.55;
+}
+
+.shopItemTooltips {
+	padding: 10px 12px;
+	border-left: 3px solid color-mix(in srgb, var(--card-accent) 72%, white);
+	background: color-mix(in srgb, var(--card-accent) 7%, transparent);
+}
+
+.shopItemTooltips p {
+	font-size: 0.82rem;
+	font-style: italic;
+}
+
+.charmProgression {
+	padding: 26px;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	background: #111722;
+}
+
+.charmProgressionHeading {
+	display: flex;
+	justify-content: space-between;
+	align-items: end;
+	gap: 18px;
+	margin-bottom: 18px;
+}
+
+.charmProgressionHeading h3 {
+	margin: 0;
+}
+
+.charmReceiveLevel {
+	display: grid;
+	grid-template-columns: auto auto;
+	align-items: center;
+	gap: 1px 10px;
+	padding: 9px 12px;
+	border: 1px solid rgba(83, 214, 189, 0.35);
+	border-radius: 8px;
+	background: rgba(83, 214, 189, 0.08);
+}
+
+.charmReceiveLevel span {
+	align-self: center;
+	color: rgba(255, 255, 255, 0.55);
+	font-size: 0.7rem;
+	line-height: 1;
+	text-transform: uppercase;
+}
+.charmReceiveLevel strong {
+	align-self: center;
+	color: #73e0c8;
+	line-height: 1;
+}
+.charmReceiveLevel small {
+	grid-column: 1 / -1;
+	color: rgba(255, 255, 255, 0.5);
+}
+.charmReceiveLevel.broken {
+	border-color: rgba(255, 116, 105, 0.42);
+	background: rgba(255, 116, 105, 0.08);
+}
+.charmReceiveLevel.broken strong {
+	color: #ff9b93;
+}
+
+.charmTableWrap {
+	overflow-x: auto;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 9px;
+}
+.charmTableWrap table {
+	width: 100%;
+	min-width: 620px;
+	border-collapse: collapse;
+	font-size: 0.78rem;
+}
+.charmTableWrap th,
+.charmTableWrap td {
+	padding: 11px 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+	text-align: left;
+	vertical-align: top;
+}
+.charmTableWrap thead {
+	background: rgba(255, 255, 255, 0.055);
+	color: rgba(255, 255, 255, 0.58);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.charmTableWrap tbody th {
+	color: #ffd166;
+	white-space: nowrap;
+}
+.charmTableWrap tbody td {
+	color: rgba(255, 255, 255, 0.68);
+	line-height: 1.45;
+}
+.charmTableWrap tr.received {
+	background: rgba(83, 214, 189, 0.055);
+}
+.charmTableWrap tr.broken {
+	background: rgba(255, 116, 105, 0.07);
+}
+.charmTableWrap tr.broken th {
+	color: #ff9b93;
+}
+.charmTableWrap tr.broken td:last-child {
+	color: rgba(255, 255, 255, 0.46);
+	font-style: italic;
+}
+.charmIngredients {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	min-width: 190px;
+}
+.charmIngredients span {
+	padding: 3px 6px;
+	border-radius: 5px;
+	background: rgba(255, 255, 255, 0.065);
+	color: rgba(255, 255, 255, 0.72);
+}
+.charmIngredients strong {
+	color: #ffd166;
+}
+

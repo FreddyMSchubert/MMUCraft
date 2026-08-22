@@ -1,11 +1,14 @@
 import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common';
-import { AuthService } from '../auth/auth.service';
-import { ClaimsService } from './claims.service';
+import { AuthSessionService } from '../auth/auth-session.service';
+import { ClaimAdministrationService } from './claim-administration.service';
+import { ClaimPurchasingService, CreateClaimInput } from './claim-purchasing.service';
+import { ClaimAppearanceInput, ClaimsService } from './claims.service';
 
 @Controller('api/claims')
 export class ClaimsController {
 	constructor(
-		private readonly auth: AuthService,
+		private readonly auth: AuthSessionService,
+		private readonly claimPurchasing: ClaimPurchasingService,
 		private readonly claims: ClaimsService,
 	) {}
 
@@ -16,15 +19,15 @@ export class ClaimsController {
 
 	@Get('current')
 	current(@Headers('cookie') cookieHeader: string | undefined) {
-		return this.claims.getCurrentChunk(this.auth.requireSession(cookieHeader));
+		return this.claimPurchasing.getCurrentChunk(this.auth.requireSession(cookieHeader));
 	}
 
 	@Post()
 	create(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: Record<string, unknown> | undefined,
+		@Body() body: CreateClaimInput | undefined,
 	) {
-		return this.claims.create(this.auth.requireSession(cookieHeader), body ?? {});
+		return this.claimPurchasing.create(this.auth.requireSession(cookieHeader), body ?? {});
 	}
 
 	@Delete(':claimId')
@@ -36,7 +39,7 @@ export class ClaimsController {
 	updateAppearance(
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Param('claimId') claimId: string,
-		@Body() body: Record<string, unknown> | undefined,
+		@Body() body: ClaimAppearanceInput | undefined,
 	) {
 		return this.claims.updateAppearance(
 			this.auth.requireSession(cookieHeader),
@@ -49,7 +52,7 @@ export class ClaimsController {
 	addMember(
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Param('claimId') claimId: string,
-		@Body() body: { userId?: unknown } | undefined,
+		@Body() body: { userId?: number } | undefined,
 	) {
 		return this.claims.addMember(this.auth.requireSession(cookieHeader), claimId, body?.userId);
 	}
@@ -67,8 +70,8 @@ export class ClaimsController {
 @Controller('api/admin/claims')
 export class AdminClaimsController {
 	constructor(
-		private readonly auth: AuthService,
-		private readonly claims: ClaimsService,
+		private readonly auth: AuthSessionService,
+		private readonly claimAdministration: ClaimAdministrationService,
 	) {}
 
 	@Get()
@@ -78,12 +81,12 @@ export class AdminClaimsController {
 		@Query('limit') limit: string | undefined,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.claims.listAdmin(offset, limit);
+		return this.claimAdministration.list(offset, limit);
 	}
 
 	@Delete(':claimId')
 	remove(@Headers('cookie') cookieHeader: string | undefined, @Param('claimId') claimId: string) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.claims.removeAdmin(claimId);
+		return this.claimAdministration.remove(claimId);
 	}
 }

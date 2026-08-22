@@ -1,0 +1,221 @@
+.fishCard {
+	position: relative;
+	display: grid;
+	place-items: center;
+	min-height: 118px;
+	padding: 3px 0 5px;
+	border: 2px solid var(--fish-rarity);
+	border-radius: 8px;
+	background:
+		radial-gradient(
+			circle,
+			color-mix(in srgb, var(--fish-rarity) 20%, transparent),
+			transparent 62%
+		),
+		#111722;
+	box-shadow:
+		inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+		0 8px 22px rgba(0, 0, 0, 0.24);
+	outline: none;
+}
+
+.fishCard:hover,
+.fishCard:focus-visible {
+	z-index: 20;
+	box-shadow: 0 0 24px color-mix(in srgb, var(--fish-rarity) 34%, transparent);
+}
+
+.fishCard > img {
+	width: 88.8888889%;
+	height: auto;
+	aspect-ratio: 1;
+	object-fit: contain;
+	image-rendering: pixelated;
+	filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.42));
+}
+
+.fishCard.unknown {
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.07), transparent 62%), #0d121b;
+}
+
+.fishQuestion {
+	display: grid;
+	place-items: center;
+	width: 88.8888889%;
+	height: auto;
+	aspect-ratio: 1;
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 3.2rem;
+	font-weight: 900;
+	line-height: 1;
+	text-shadow: 0 5px 0 rgba(0, 0, 0, 0.38);
+}
+
+.fishCardName {
+	max-width: 100%;
+	color: #fff;
+	font-size: 0.67rem;
+	font-weight: 800;
+	text-align: center;
+	overflow-wrap: anywhere;
+}
+
+.fishTagLines {
+	position: absolute;
+	top: 7px;
+	left: 7px;
+	display: grid;
+	gap: 0;
+	font-size: 0.7rem;
+	line-height: 1.05;
+	text-shadow:
+		0 1px 3px #000,
+		0 1px 3px #000;
+}
+
+.fishTooltip {
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 50%;
+	z-index: 100;
+	display: none;
+	width: min(330px, calc(100vw - 46px));
+	gap: 9px;
+	padding: 13px;
+	border: 1px solid color-mix(in srgb, var(--fish-rarity) 70%, #fff);
+	border-radius: 8px;
+	background: rgba(9, 13, 20, 0.98);
+	color: rgba(255, 255, 255, 0.84);
+	font-size: 0.76rem;
+	line-height: 1.45;
+	text-align: left;
+	box-shadow: 0 14px 38px rgba(0, 0, 0, 0.58);
+	transform: translateX(-50%);
+}
+
+.fishCard:hover .fishTooltip,
+.fishCard:focus-visible .fishTooltip {
+	display: grid;
+}
+
+.fishCard.tooltipAbove .fishTooltip {
+	top: auto;
+	bottom: calc(100% + 8px);
+}
+
+.fishCard.tooltipAlignLeft .fishTooltip {
+	left: 0;
+	transform: none;
+}
+
+.fishCard.tooltipAlignRight .fishTooltip {
+	right: 0;
+	left: auto;
+	transform: none;
+}
+
+.fishTooltip > strong {
+	color: #fff;
+	font-size: 0.95rem;
+}
+
+.fishConditions,
+.fishFacts,
+.fishPersonalRecords,
+.fishServerRecords {
+	display: grid;
+	gap: 3px;
+}
+
+.fishFacts {
+	padding-top: 8px;
+	border-top: 1px solid rgba(255, 255, 255, 0.11);
+	color: rgba(255, 255, 255, 0.72);
+	font-style: italic;
+}
+
+.fishLuckWarning {
+	color: #ffd166;
+	font-style: italic;
+}
+
+.fishPersonalRecords,
+.fishServerRecords {
+	padding-top: 8px;
+	border-top: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.fishServerRecord,
+.fishOwnRecord {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.fishServerRecord img,
+.fishOwnRecord img {
+	width: 21px;
+	height: 21px;
+	flex: 0 0 auto;
+	image-rendering: pixelated;
+}
+
+.fishFireworks {
+	position: fixed;
+	inset: 0;
+	z-index: 2147483600;
+	pointer-events: none;
+}
+
+.miniFishCompendium {
+	margin-top: 16px;
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 9px;
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.miniFishCompendium summary {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	cursor: pointer;
+	color: #ffd166;
+	font-weight: 800;
+}
+
+.miniFishCompendium[open] summary {
+	margin-bottom: 12px;
+}
+
+.miniFishCompendium summary span {
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+}
+
+.fishGrid.compact {
+	grid-template-columns: repeat(12, minmax(0, 1fr));
+	gap: 6px;
+}
+
+.fishGrid.compact .fishCard {
+	min-height: 80px;
+	padding: 2px 0 4px;
+	border-width: 2px;
+	border-radius: 7px;
+}
+
+.fishGrid.compact .fishQuestion {
+	font-size: 2.8rem;
+}
+
+.fishGrid.compact .fishCardName {
+	font-size: 0.62rem;
+}
+
+.fishGrid.compact .fishTagLines {
+	top: 4px;
+	left: 4px;
+	font-size: 0.62rem;
+}
+

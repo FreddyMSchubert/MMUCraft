@@ -1,20 +1,20 @@
 import { Body, Controller, Headers, Post } from '@nestjs/common';
-import { AuthService } from '../auth/auth.service';
-import { GiftsService } from './gifts.service';
+import { AuthSessionService } from '../auth/auth-session.service';
+import { GiftCodeRedemptionService } from './gift-code-redemption.service';
 
 @Controller('api/gift-codes')
 export class GiftsController {
 	constructor(
-		private readonly auth: AuthService,
-		private readonly gifts: GiftsService,
+		private readonly auth: AuthSessionService,
+		private readonly giftCodeRedemption: GiftCodeRedemptionService,
 	) {}
 
 	@Post('redeem')
 	redeem(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: { code?: unknown } | undefined,
+		@Body() body: { code?: string } | undefined,
 	) {
 		const user = this.auth.requireSession(cookieHeader);
-		return this.gifts.redeem(user, body?.code);
+		return this.giftCodeRedemption.redeem(user, body?.code);
 	}
 }

@@ -1,0 +1,217 @@
+/* ============================================================
+   Wordle (same visual system as the main site)
+   ============================================================ */
+
+.fireworksStage {
+	position: fixed;
+	inset: 0;
+	z-index: 8;
+	pointer-events: none;
+}
+
+.wordleContent {
+	display: grid;
+	gap: 24px;
+	width: min(1100px, calc(100vw - 32px));
+}
+
+.wordleContent .siteHeader {
+	margin-bottom: 48px;
+}
+
+.wordleDashboard {
+	width: min(100%, var(--wordle-shell-width));
+	margin: 0 auto;
+	overflow-x: auto;
+	text-align: center;
+}
+
+.wordleTopline {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding-bottom: 14px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.wordleTopline h2 {
+	margin: 0;
+	font-size: 1.25rem;
+}
+
+.wordleTopline span {
+	color: #ffd166;
+	font-size: 0.86rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.wordleRules {
+	padding: 14px 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+	color: rgba(255, 255, 255, 0.76);
+	text-align: left;
+}
+
+.wordleRules strong {
+	color: #fff;
+	font-size: 0.86rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.wordleRules ul {
+	display: grid;
+	gap: 6px;
+	margin: 10px 0 0;
+	padding-left: 22px;
+	font-size: 0.9rem;
+	line-height: 1.45;
+}
+
+.wordleStatus {
+	display: grid;
+	align-items: center;
+	min-height: 44px;
+	margin: 0;
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.wordleSolution {
+	width: min(100%, var(--wordle-board-width));
+	margin: 0 auto 14px;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	border-radius: 7px;
+	background: rgba(255, 209, 102, 0.1);
+	font-weight: 800;
+}
+
+.wordleBoard {
+	display: grid;
+	grid-template-columns: repeat(var(--word-length), minmax(0, 1fr));
+	gap: 7px;
+	width: min(100%, var(--wordle-board-width));
+	margin: 0 auto 16px;
+}
+
+.wordleTile {
+	display: grid;
+	place-items: center;
+	width: 100%;
+	aspect-ratio: 1;
+	border: 2px solid rgba(255, 255, 255, 0.25);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.06);
+	color: #fff;
+	font-size: 2rem;
+	font-weight: 900;
+	line-height: 1;
+	text-transform: uppercase;
+	transform-style: preserve-3d;
+}
+
+.wordleTile.filled {
+	border-color: rgba(255, 255, 255, 0.65);
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.wordleTile.correct {
+	border-color: transparent;
+	background: #5da75a;
+}
+.wordleTile.present {
+	border-color: transparent;
+	background: #c9a646;
+}
+.wordleTile.absent {
+	border-color: transparent;
+	background: #3e3e3e;
+}
+.wordleTile.skipped {
+	border-color: rgba(255, 255, 255, 0.18);
+	background: rgba(255, 255, 255, 0.12);
+}
+.wordleTile.reveal {
+	animation: wordleTileReveal 520ms ease both;
+}
+.wordleTile.shake {
+	animation: wordleTileShake 420ms ease;
+}
+.wordleTile.win {
+	animation: wordleTileWin 700ms ease both;
+}
+
+.wordleKeyboard {
+	display: grid;
+	gap: 7px;
+	touch-action: manipulation;
+}
+
+.wordleKeyboardRow {
+	display: flex;
+	justify-content: center;
+	gap: 6px;
+}
+
+.wordleKey {
+	flex: 1 1 0;
+	min-width: 0;
+	min-height: 48px;
+	border: 0;
+	border-radius: 6px;
+	background: #777;
+	box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.22);
+	color: #fff;
+	font-size: 0.9rem;
+	font-weight: 900;
+	text-transform: uppercase;
+}
+
+.wordleKey.wide {
+	flex: 1.45 1 0;
+	font-size: 0.74rem;
+}
+.wordleKey.correct {
+	background: #5da75a;
+}
+.wordleKey.present {
+	background: #c9a646;
+}
+.wordleKey.absent {
+	background: #3e3e3e;
+}
+.wordleKey:active {
+	transform: translateY(2px);
+	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+}
+
+.copyPlaythrough {
+	display: block;
+	width: min(100%, var(--wordle-board-width));
+	min-height: 46px;
+	margin: 16px auto 0;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 800;
+}
+
+.copyPlaythrough:disabled {
+	background: rgba(255, 255, 255, 0.18);
+	color: rgba(255, 255, 255, 0.58);
+}
+
+.wordleFooter {
+	color: rgba(255, 255, 255, 0.76);
+	font-size: 0.92rem;
+	text-align: center;
+}
+
+.wordleFooter strong {
+	color: #ffd166;
+	font-variant-numeric: tabular-nums;
+}
+

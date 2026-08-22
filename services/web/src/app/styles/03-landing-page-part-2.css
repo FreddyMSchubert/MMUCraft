@@ -1,0 +1,26 @@
+.minecraftVersion,
+.minecraftLegal {
+	position: fixed;
+	z-index: 1;
+	bottom: 7px;
+	margin: 0;
+	color: #fff;
+	font-size: 13px;
+	line-height: 1.2;
+	text-shadow: 2px 2px 0 #222;
+}
+
+.minecraftVersion {
+	left: 9px;
+}
+
+.minecraftLegal {
+	right: 9px;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.panoramaCredit {
+	display: none;
+}
+

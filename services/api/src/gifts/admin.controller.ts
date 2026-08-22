@@ -1,26 +1,20 @@
 import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from '@nestjs/common';
 import { desc } from 'drizzle-orm';
-import { AuthService } from '../auth/auth.service';
+import { AuthAccountAdministrationService } from '../auth/auth-account-administration.service';
+import { AuthSessionService } from '../auth/auth-session.service';
 import { DatabaseService, discordAdminCommandLogs } from '../database/database.service';
-import { GiftsService } from './gifts.service';
-import { CountdownsService } from './countdowns.service';
-
-interface CountdownBody {
-	heading?: unknown;
-	target?: unknown;
-	description?: unknown;
-	headingColor?: unknown;
-	descriptionColor?: unknown;
-	backgroundColor?: unknown;
-	backgroundAlpha?: unknown;
-	backgroundImageUrl?: unknown;
-}
+import { CountdownInput, CountdownsService } from './countdowns.service';
+import { GiftCodeAdministrationService } from './gift-code-administration.service';
+import { GiftCodeInput } from './gift-code-validation';
+import { PlayerRoleAdministrationService } from './player-role-administration.service';
 
 @Controller('api/admin')
 export class AdminController {
 	constructor(
-		private readonly auth: AuthService,
-		private readonly gifts: GiftsService,
+		private readonly auth: AuthSessionService,
+		private readonly authAdministration: AuthAccountAdministrationService,
+		private readonly giftCodes: GiftCodeAdministrationService,
+		private readonly playerRoles: PlayerRoleAdministrationService,
 		private readonly database: DatabaseService,
 		private readonly countdowns: CountdownsService,
 	) {}
@@ -34,46 +28,27 @@ export class AdminController {
 	@Post('countdowns')
 	createCountdown(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: CountdownBody | undefined,
+		@Body() body: CountdownInput | undefined,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.countdowns.create(
-			body?.heading,
-			body?.target,
-			body?.description,
-			body?.headingColor,
-			body?.descriptionColor,
-			body?.backgroundColor,
-			body?.backgroundAlpha,
-			body?.backgroundImageUrl,
-		);
+		return this.countdowns.create(body ?? {});
 	}
 
 	@Patch('countdowns/:id')
 	updateCountdown(
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Param('id') id: string,
-		@Body() body: CountdownBody | undefined,
+		@Body() body: CountdownInput | undefined,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.countdowns.update(
-			id,
-			body?.heading,
-			body?.target,
-			body?.description,
-			body?.headingColor,
-			body?.descriptionColor,
-			body?.backgroundColor,
-			body?.backgroundAlpha,
-			body?.backgroundImageUrl,
-		);
+		return this.countdowns.update(id, body ?? {});
 	}
 
 	@Patch('countdowns/:id/order')
 	moveCountdown(
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Param('id') id: string,
-		@Body() body: { direction?: unknown } | undefined,
+		@Body() body: { direction?: 'up' | 'down' } | undefined,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
 		return this.countdowns.move(id, body?.direction);
@@ -88,7 +63,7 @@ export class AdminController {
 	@Get('players')
 	listPlayers(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.gifts.listAdminPlayers();
+		return this.playerRoles.listPlayers();
 	}
 
 	@Get('discord-admin-commands')
@@ -113,47 +88,47 @@ export class AdminController {
 	setMembership(
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Param('userId') userId: string,
-		@Body() body: { isMember?: unknown } | undefined,
+		@Body() body: { isMember?: boolean } | undefined,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.gifts.setMembership(userId, body?.isMember);
+		return this.playerRoles.setMembership(userId, body?.isMember);
 	}
 
 	@Patch('players/:userId/committee')
 	setCommittee(
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Param('userId') userId: string,
-		@Body() body: { isCommittee?: unknown } | undefined,
+		@Body() body: { isCommittee?: boolean } | undefined,
 	) {
 		this.auth.requireSuperAdminSession(cookieHeader);
-		return this.gifts.setCommittee(userId, body?.isCommittee);
+		return this.playerRoles.setCommittee(userId, body?.isCommittee);
 	}
 
 	@Get('gift-codes')
 	listGiftCodes(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.gifts.listGiftCodes();
+		return this.giftCodes.listActive();
 	}
 
 	@Get('email-whitelist')
 	listEmailWhitelist(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.auth.listEmailWhitelist();
+		return this.authAdministration.listEmailWhitelist();
 	}
 
 	@Get('player-bans')
 	listPlayerBans(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.auth.listPlayerBans();
+		return this.authAdministration.listPlayerBans();
 	}
 
 	@Post('player-bans')
 	applyPlayerBan(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: { userId?: unknown; expiresAtUnixMs?: unknown } | undefined,
+		@Body() body: { userId?: number; expiresAtUnixMs?: number | null } | undefined,
 	) {
 		const admin = this.auth.requireCommitteeSession(cookieHeader);
-		return this.auth.applyPlayerBan(admin, body?.userId, body?.expiresAtUnixMs);
+		return this.authAdministration.applyPlayerBan(admin, body?.userId, body?.expiresAtUnixMs);
 	}
 
 	@Delete('player-bans/:userId')
@@ -162,16 +137,20 @@ export class AdminController {
 		@Param('userId') userId: string,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.auth.removePlayerBan(userId);
+		return this.authAdministration.removePlayerBan(userId);
 	}
 
 	@Post('email-whitelist')
 	addEmailToWhitelist(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: { email?: unknown; responsibleUserId?: unknown } | undefined,
+		@Body() body: { email?: string; responsibleUserId?: number } | undefined,
 	) {
 		const admin = this.auth.requireCommitteeSession(cookieHeader);
-		return this.auth.addEmailToWhitelist(admin, body?.email, body?.responsibleUserId);
+		return this.authAdministration.addEmailToWhitelist(
+			admin,
+			body?.email,
+			body?.responsibleUserId,
+		);
 	}
 
 	@Delete('email-whitelist/:email')
@@ -180,31 +159,15 @@ export class AdminController {
 		@Param('email') email: string,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.auth.removeEmailFromWhitelist(email);
+		return this.authAdministration.removeEmailFromWhitelist(email);
 	}
 
 	@Post('gift-codes')
 	createGiftCode(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body()
-		body:
-			| {
-					code?: unknown;
-					amountDabloons?: unknown;
-					redemptionMode?: unknown;
-					membersOnly?: unknown;
-					expiresAtUnixMs?: unknown;
-			  }
-			| undefined,
+		@Body() body: GiftCodeInput | undefined,
 	) {
 		const admin = this.auth.requireCommitteeSession(cookieHeader);
-		return this.gifts.createGiftCode(
-			admin,
-			body?.code,
-			body?.amountDabloons,
-			body?.redemptionMode,
-			body?.membersOnly,
-			body?.expiresAtUnixMs,
-		);
+		return this.giftCodes.create(admin, body ?? {});
 	}
 }

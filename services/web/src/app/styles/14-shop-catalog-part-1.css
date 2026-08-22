@@ -1,0 +1,218 @@
+/* ============================================================
+   Shop
+   ============================================================ */
+
+.shopPanel {
+	display: grid;
+	gap: 16px;
+}
+
+.shopTop {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: flex-start;
+}
+
+.shopTop h3,
+.shopPrice,
+.shopEmptyState,
+.shopHoverDescription,
+.shopCard h4 {
+	margin: 0;
+}
+
+.shopTop h3 {
+	font-size: 1.25rem;
+}
+
+.shopControls {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+.shopControls label {
+	display: grid;
+	gap: 5px;
+	color: rgba(255, 255, 255, 0.76);
+	font-size: 0.78rem;
+	text-transform: uppercase;
+}
+
+.shopControls select {
+	min-width: 150px;
+	padding: 9px 32px 9px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.1);
+	color: #fff;
+}
+
+.shopControls option {
+	color: #111;
+}
+
+.shopGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(174px, 1fr));
+	gap: 12px;
+	align-items: stretch;
+}
+
+.shopCard {
+	position: relative;
+	display: grid;
+	grid-template-rows: 112px 1fr auto;
+	gap: 10px;
+	min-height: 276px;
+	padding: 10px;
+	overflow: hidden;
+	border: 1px solid #d6d8dc;
+	border-radius: 8px;
+	background: linear-gradient(180deg, #ffffff 0%, #f4f6f8 100%);
+	color: #14171f;
+	text-align: left;
+	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+	transition:
+		transform 140ms ease,
+		box-shadow 140ms ease,
+		border-color 140ms ease;
+}
+
+.shopCard:hover:not(:disabled),
+.shopCard:focus-visible {
+	transform: translateY(-2px);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.32);
+}
+
+.shopCard:disabled {
+	opacity: 0.78;
+}
+
+.shopCard-charm {
+	border: 2px solid #53d6bd;
+	background: linear-gradient(180deg, rgba(238, 255, 250, 0.98), rgba(245, 247, 255, 0.98)), #fff;
+	box-shadow:
+		0 0 0 1px rgba(83, 214, 189, 0.18),
+		0 10px 22px rgba(0, 0, 0, 0.24);
+}
+
+.shopCard-cosmetic {
+	border: 2px solid #f0a3bd;
+	background: linear-gradient(180deg, rgba(255, 250, 253, 0.98), rgba(250, 248, 240, 0.98)), #fff;
+	box-shadow:
+		0 0 0 1px rgba(240, 163, 189, 0.18),
+		0 10px 22px rgba(0, 0, 0, 0.24);
+}
+
+.shopCard-generic {
+	border-color: #c9ced6;
+}
+
+.shopCard.unavailable {
+	filter: saturate(0.82);
+}
+
+.shopImageFrame {
+	position: relative;
+	display: grid;
+	place-items: center;
+	min-width: 0;
+	overflow: hidden;
+	border: 1px solid rgba(20, 23, 31, 0.12);
+	border-radius: 6px;
+	background:
+		linear-gradient(45deg, rgba(20, 23, 31, 0.045) 25%, transparent 25%),
+		linear-gradient(-45deg, rgba(20, 23, 31, 0.045) 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, rgba(20, 23, 31, 0.045) 75%),
+		linear-gradient(-45deg, transparent 75%, rgba(20, 23, 31, 0.045) 75%), #fbfcfd;
+	background-position:
+		0 0,
+		0 8px,
+		8px -8px,
+		-8px 0;
+	background-size: 16px 16px;
+}
+
+.shopModelHost {
+	width: 100%;
+	height: 100%;
+	min-height: 110px;
+}
+
+.shopModelCanvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.shopItemIcon {
+	width: 76px;
+	height: 76px;
+	object-fit: contain;
+	object-position: center;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+	filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.28));
+}
+
+.shopItemEmpty {
+	width: 76px;
+	height: 76px;
+	border: 1px dashed rgba(20, 23, 31, 0.18);
+	border-radius: 6px;
+	background: rgba(20, 23, 31, 0.035);
+}
+
+.shopMetaIcons {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	z-index: 2;
+	display: flex;
+	gap: 5px;
+}
+
+.shopMetaIcon {
+	position: relative;
+	display: inline-grid;
+	place-items: center;
+	width: 22px;
+	height: 22px;
+	border: 1px solid rgba(20, 23, 31, 0.18);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.86);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.shopMetaIcon-animated::before {
+	content: '';
+	width: 0;
+	height: 0;
+	margin-left: 2px;
+	border-top: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+	border-left: 8px solid #233044;
+}
+
+.shopMetaIcon-dyeable {
+	background:
+		radial-gradient(circle at center, #fff 0 22%, transparent 24%),
+		conic-gradient(from 0deg, #ff3b30, #ffcc00, #34c759, #00c7be, #007aff, #af52de, #ff3b30);
+}
+
+.shopCardBody {
+	display: grid;
+	align-content: start;
+	gap: 8px;
+	min-width: 0;
+}
+
+.shopBadges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+

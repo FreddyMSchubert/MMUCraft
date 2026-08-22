@@ -1,0 +1,221 @@
+/* ============================================================
+   Knowledge
+   ============================================================ */
+
+.knowledgePda {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	align-items: stretch;
+	min-height: 560px;
+	border: 1px solid rgba(123, 235, 255, 0.28);
+	background: rgba(2, 18, 24, 0.84);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.knowledgeSidebar {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+	border-right: 1px solid rgba(123, 235, 255, 0.22);
+	background: rgba(4, 28, 36, 0.78);
+}
+
+.knowledgeSidebarHeader {
+	padding: 12px;
+	border-bottom: 1px solid rgba(123, 235, 255, 0.2);
+	color: #7bebff;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.knowledgeTree {
+	flex: 1 1 auto;
+	overflow: auto;
+	padding: 10px 0 12px;
+}
+
+.knowledgeTreeHeading {
+	padding-top: 12px;
+	padding-right: 12px;
+	padding-bottom: 6px;
+	color: rgba(123, 235, 255, 0.72);
+	font-size: 0.78rem;
+	font-weight: 700;
+	line-height: 1.25;
+	text-transform: uppercase;
+}
+
+.knowledgeTreePage {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	width: 100%;
+	min-height: 38px;
+	padding-top: 8px;
+	padding-right: 10px;
+	padding-bottom: 8px;
+	border: 0;
+	border-left: 3px solid transparent;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.82);
+	text-align: left;
+}
+
+.knowledgeTreePage:hover,
+.knowledgeTreePage.active {
+	border-left-color: #ffd166;
+	background: rgba(123, 235, 255, 0.12);
+	color: #fff;
+}
+
+.knowledgeTreePage span:first-child {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.knowledgeTreeNew {
+	display: inline-grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 18px;
+	aspect-ratio: 1;
+	border: 1px solid rgba(255, 209, 102, 0.55);
+	border-radius: 999px;
+	background: rgba(255, 209, 102, 0.14);
+	color: #ffd166;
+	font-size: 0.78rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.knowledgeReader {
+	min-width: 0;
+	padding: 18px 20px 24px;
+}
+
+.knowledgeReaderTop {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 16px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(123, 235, 255, 0.18);
+}
+
+.knowledgeReadButton {
+	display: block;
+	margin: 16px 0 0 auto;
+	padding: 8px 10px;
+	border: 1px solid rgba(255, 209, 102, 0.7);
+	border-radius: 4px;
+	background: rgba(255, 209, 102, 0.15);
+	color: #ffd166;
+	font: inherit;
+	font-weight: 700;
+}
+
+.knowledgeReadButton:disabled {
+	opacity: 0.65;
+}
+
+.knowledgeLocked {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	border-left: 4px solid #ffd166;
+	border-radius: 6px;
+	background: rgba(255, 209, 102, 0.09);
+}
+
+.knowledgeLocked svg {
+	flex: 0 0 auto;
+	width: 24px;
+	height: 24px;
+	fill: none;
+	stroke: #ffd166;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 2;
+}
+
+.knowledgeLocked h4,
+.knowledgeLocked p {
+	margin: 0;
+}
+
+.knowledgeLocked h4 {
+	margin-bottom: 4px;
+	color: #ffd166;
+}
+
+.knowledgeReaderTop p,
+.knowledgeReaderTop h3 {
+	margin: 0;
+}
+
+.knowledgeReaderTop p {
+	color: rgba(123, 235, 255, 0.7);
+	font-size: 0.82rem;
+	text-transform: uppercase;
+}
+
+.knowledgeReaderTop h3 {
+	margin-top: 4px;
+	color: #fff;
+	font-size: 1.35rem;
+}
+
+.knowledgePage {
+	position: relative;
+	line-height: 1.65;
+}
+
+.knowledgePage h2,
+.knowledgePage h3,
+.knowledgePage p,
+.knowledgePage ul,
+.knowledgePage ol,
+.knowledgePage blockquote,
+.knowledgePage figure {
+	margin-top: 0;
+}
+
+.knowledgePage h2,
+.knowledgePage h3 {
+	margin-bottom: 10px;
+}
+
+.knowledgePage p,
+.knowledgePage ul,
+.knowledgePage ol,
+.knowledgePage blockquote,
+.knowledgePage figure {
+	margin-bottom: 14px;
+}
+
+.knowledgePage ul,
+.knowledgePage ol {
+	padding-left: 24px;
+}
+
+.knowledgePage blockquote {
+	padding: 10px 14px;
+	border-left: 4px solid rgba(255, 209, 102, 0.8);
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.88);
+}
+
+.knowledgeAdmonition {
+	--admonition-color: #7bebff;
+	margin-bottom: 14px;
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--admonition-color) 55%, transparent);
+	border-left-width: 4px;
+	border-radius: 6px;
+	background: color-mix(in srgb, var(--admonition-color) 9%, transparent);
+}
+

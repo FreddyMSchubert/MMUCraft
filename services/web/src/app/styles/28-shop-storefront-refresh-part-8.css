@@ -1,0 +1,62 @@
+.adminTable th,
+.adminTable td {
+	padding: 11px 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+	text-align: left;
+	vertical-align: middle;
+}
+
+.adminTable th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background: #292929;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+	text-transform: uppercase;
+}
+
+.adminTable tr:last-child td {
+	border-bottom: 0;
+}
+
+.adminTable .membershipCell {
+	width: 90px;
+	text-align: center;
+}
+
+.membershipCell input {
+	width: 22px;
+	height: 22px;
+	accent-color: #ffd166;
+}
+
+.committeeBadge {
+	display: inline-block;
+	margin-left: 8px;
+	padding: 2px 5px;
+	border-radius: 4px;
+	background: rgba(123, 235, 255, 0.16);
+	color: #7bebff;
+	font-size: 0.68rem;
+	text-transform: uppercase;
+}
+
+.adminMessage {
+	color: #8ff0a4;
+}
+
+.loadMoreButton {
+	justify-self: center;
+}
+
+.redeemForm {
+	max-width: 620px;
+}
+
+.redeemForm > div {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 10px;
+}
+

@@ -9,19 +9,13 @@ import {
 	ServiceUnavailableException,
 } from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
-import * as grpc from '@grpc/grpc-js';
 import { DiscordService } from './discord/discord.service';
 import { DiscordModule } from './discord/discord.module';
 import { GrpcServerService } from './grpc/grpc-server.service';
-import { callUnary } from './grpc/grpc.types';
-
-interface GameplayProtoRoot {
-	mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } };
-}
+import { MinecraftGrpcClientService } from './grpc/minecraft-grpc-client.service';
 
 @Injectable()
 export class ShutdownService implements OnModuleDestroy {
-	private readonly minecraft: grpc.Client;
 	private acceptingRequests = true;
 	private activeRequests = 0;
 	private drained: (() => void) | null = null;
@@ -29,14 +23,9 @@ export class ShutdownService implements OnModuleDestroy {
 
 	constructor(
 		private readonly grpcServer: GrpcServerService,
+		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly discord: DiscordService,
-	) {
-		const gameplayProto = grpcServer.loadProto<GameplayProtoRoot>('gameplay.proto');
-		this.minecraft = new gameplayProto.mcstack.gameplay.v1.GameplayControl(
-			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
-			grpc.credentials.createInsecure(),
-		);
-	}
+	) {}
 
 	beginRequest() {
 		if (!this.acceptingRequests) return false;
@@ -56,7 +45,6 @@ export class ShutdownService implements OnModuleDestroy {
 
 	async onModuleDestroy() {
 		await (this.draining ??= this.drain());
-		this.minecraft.close();
 	}
 
 	private async drain() {
@@ -69,11 +57,10 @@ export class ShutdownService implements OnModuleDestroy {
 	}
 
 	private async saveMinecraft() {
-		const response = await callUnary<{ succeeded: boolean; output: string }>(
-			this.minecraft,
-			'RunServerCommand',
-			{ command: 'save-all flush', discord_user: 'deployment' },
-		);
+		const response = await this.minecraft.gameplay<{
+			succeeded: boolean;
+			output: string;
+		}>('RunServerCommand', { command: 'save-all flush', discord_user: 'deployment' });
 		if (!response.succeeded) {
 			throw new ServiceUnavailableException(response.output || 'Minecraft save failed');
 		}

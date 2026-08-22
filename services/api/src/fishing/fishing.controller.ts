@@ -9,7 +9,7 @@ import {
 	StreamableFile,
 } from '@nestjs/common';
 import { createReadStream } from 'node:fs';
-import { AuthService } from '../auth/auth.service';
+import { AuthSessionService } from '../auth/auth-session.service';
 import { FishingService } from './fishing.service';
 
 const NO_STORE = 'no-store, no-cache, must-revalidate, proxy-revalidate';
@@ -17,7 +17,7 @@ const NO_STORE = 'no-store, no-cache, must-revalidate, proxy-revalidate';
 @Controller('api/fishing')
 export class FishingController {
 	constructor(
-		private readonly auth: AuthService,
+		private readonly auth: AuthSessionService,
 		private readonly fishing: FishingService,
 	) {}
 

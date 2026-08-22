@@ -1,0 +1,115 @@
+/* ============================================================
+   Pre-launch play gate (keeps the existing site style)
+   ============================================================ */
+
+.launchGateContent {
+	width: min(1100px, calc(100vw - 32px));
+}
+
+.authCard.launchGateCard {
+	width: min(760px, 100%);
+	margin: 0 auto;
+	padding: clamp(24px, 5vw, 54px);
+	text-align: center;
+}
+
+.launchGateCard h2 {
+	margin: 0 0 14px;
+	font-size: clamp(1.8rem, 5vw, 3.2rem);
+}
+
+.launchGateCard > p {
+	max-width: 650px;
+	margin: 12px auto;
+	color: rgba(255, 255, 255, 0.82);
+	line-height: 1.6;
+}
+
+.secretWord {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	cursor: text;
+}
+
+.launchCountdown {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 10px;
+	margin: 28px 0 14px;
+}
+
+.launchCountdownSegment {
+	display: grid;
+	gap: 6px;
+	padding: 16px 8px;
+	border: 1px solid rgba(255, 209, 102, 0.38);
+	border-radius: 10px;
+	background: rgba(255, 209, 102, 0.08);
+}
+
+.launchCountdownSegment strong {
+	color: #ffd166;
+	font-size: clamp(1.5rem, 6vw, 3.2rem);
+	font-variant-numeric: tabular-nums;
+}
+
+.launchCountdownSegment span {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.78rem;
+	text-transform: capitalize;
+}
+
+.launchLive {
+	display: block;
+	margin: 28px 0 14px;
+	color: #88ff88;
+	font-size: 2rem;
+	font-weight: 800;
+}
+
+.launchGateCard .launchTimeLabel {
+	color: #fff;
+	font-weight: 700;
+}
+
+.launchGateCard .launchFairNote {
+	color: #ffd166;
+}
+
+.launchGateActions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 26px;
+}
+
+.launchGateActions a,
+.launchGateActions button {
+	padding: 12px 16px;
+	border: 0;
+	border-radius: 9px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 800;
+	text-decoration: none;
+}
+
+.launchJoinNow {
+	display: inline-block;
+	margin-top: 22px;
+	padding: 18px 48px;
+	border: 3px solid #fff;
+	border-radius: 10px;
+	background: #ffd166;
+	box-shadow: 0 0 28px rgba(255, 209, 102, 0.9);
+	color: #111;
+	font-size: clamp(1.4rem, 5vw, 2.2rem);
+	font-weight: 900;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+

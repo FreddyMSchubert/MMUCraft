@@ -12,7 +12,7 @@ import { eq } from 'drizzle-orm';
 import sharp from 'sharp';
 import { DatabaseService, playerProfiles, users } from '../database/database.service';
 import { effectivePlayerColor } from './player-color';
-import { fetchMojangProfileByUuid } from './players.service';
+import { fetchMinecraftProfileByUuid } from './minecraft-profile-fetcher';
 
 const AVATAR_CACHE_SECONDS = 25 * 60 * 60;
 const AVATAR_CACHE_MS = AVATAR_CACHE_SECONDS * 1000;
@@ -108,7 +108,7 @@ export class PlayerAvatarController {
 
 	private async generateHead(uuid: string, fallbackName: string) {
 		const signal = AbortSignal.timeout(FETCH_TIMEOUT_MS);
-		const skinUrl = (await fetchMojangProfileByUuid(uuid, fallbackName, signal)).skinUrl;
+		const skinUrl = (await fetchMinecraftProfileByUuid(uuid, fallbackName, signal)).skinUrl;
 		if (!skinUrl) throw new BadGatewayException('Mojang did not return a player skin');
 		const url = new URL(skinUrl);
 		if (url.protocol !== 'https:' || url.hostname !== 'textures.minecraft.net') {

@@ -1,11 +1,12 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import * as grpc from '@grpc/grpc-js';
 import {
 	MinecraftIdentityService,
 	normalizeMinecraftUuid,
 } from '../database/minecraft-identity.service';
 import { GrpcServerService } from '../grpc/grpc-server.service';
-import { callUnary, UnaryCallback } from '../grpc/grpc.types';
+import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
+import { UnaryCallback } from '../grpc/grpc.types';
 import { isValidMinecraftUsername } from './auth.util';
 import { signupFlows } from './signup-flow';
 import { PlayerBansService } from './player-bans.service';
@@ -24,13 +25,12 @@ interface AuthProtoRoot {
 }
 
 @Injectable()
-export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
+export class AuthGrpcService implements OnModuleInit {
 	private readonly logger = new Logger(AuthGrpcService.name);
-	private modControlClient: grpc.Client | null = null;
-	private gameplayControlClient: grpc.Client | null = null;
 
 	constructor(
 		private readonly grpcServer: GrpcServerService,
+		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly identities: MinecraftIdentityService,
 		private readonly bans: PlayerBansService,
 	) {}
@@ -38,28 +38,11 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 	onModuleInit() {
 		const authProto = this.grpcServer.loadProto<AuthProtoRoot>('auth.proto');
 
-		this.modControlClient = new authProto.mcstack.auth.v1.ModControl(
-			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
-			grpc.credentials.createInsecure(),
-		);
-		const gameplayProto = this.grpcServer.loadProto<{
-			mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } };
-		}>('gameplay.proto');
-		this.gameplayControlClient = new gameplayProto.mcstack.gameplay.v1.GameplayControl(
-			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
-			grpc.credentials.createInsecure(),
-		);
-
 		this.grpcServer.addService(authProto.mcstack.auth.v1.AuthEvents.service, {
 			Ping: this.ping.bind(this),
 			ReportLoginAttempt: this.reportLoginAttempt.bind(this),
 			CheckPlayerBan: this.checkPlayerBan.bind(this),
 		});
-	}
-
-	onModuleDestroy() {
-		this.modControlClient?.close();
-		this.gameplayControlClient?.close();
 	}
 
 	async upsertPendingJoin(input: {
@@ -109,12 +92,12 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	async purchaseExternalPlayerInvite(minecraftUsername: string) {
-		return await this.callClient<{
+		return await this.minecraft.gameplay<{
 			purchased: boolean;
 			online: boolean;
 			balance_dabloons: number;
 			message: string;
-		}>(this.gameplayControlClient, 'PurchaseExternalPlayerInvite', {
+		}>('PurchaseExternalPlayerInvite', {
 			minecraft_username: minecraftUsername,
 		});
 	}
@@ -123,15 +106,7 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 		methodName: string,
 		request: Record<string, unknown>,
 	): Promise<T> {
-		return await this.callClient<T>(this.modControlClient, methodName, request);
-	}
-
-	private async callClient<T>(
-		client: grpc.Client | null,
-		methodName: string,
-		request: Record<string, unknown>,
-	): Promise<T> {
-		return await callUnary<T>(client, methodName, request);
+		return await this.minecraft.mod<T>(methodName, request);
 	}
 
 	private ping(

@@ -1,0 +1,217 @@
+/* ============================================================
+   Responsiveness
+   ============================================================ */
+
+/* ============================================================
+   Fish compendium
+   ============================================================ */
+
+.fishCompendium {
+	display: grid;
+	gap: 18px;
+}
+
+.fishTop {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+}
+
+.fishTop h3,
+.fishTop p {
+	margin: 0;
+}
+
+.fishTop p {
+	margin-top: 4px;
+	color: rgba(255, 255, 255, 0.66);
+}
+
+.fishTop label {
+	display: grid;
+	gap: 5px;
+	min-width: 210px;
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.75rem;
+	text-transform: uppercase;
+}
+
+.fishTop select {
+	padding: 9px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 7px;
+	background: #20293a;
+	color: #fff;
+}
+
+.fishOverview {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	align-items: stretch;
+}
+
+.fishStats {
+	display: grid;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 10px;
+	background:
+		radial-gradient(circle at 0 0, rgba(85, 255, 255, 0.1), transparent 45%),
+		rgba(255, 255, 255, 0.045);
+}
+
+.fishStatsHeading {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: center;
+}
+
+.fishStatsHeading div {
+	display: grid;
+	gap: 2px;
+}
+
+.fishStatsHeading span {
+	color: rgba(255, 255, 255, 0.58);
+	font-size: 0.68rem;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.fishStatsHeading strong {
+	font-size: 1rem;
+}
+
+.fishStatsHeading > b {
+	color: #55ffff;
+	font-size: 1.45rem;
+}
+
+.fishStats progress {
+	width: 100%;
+	height: 14px;
+	border: 0;
+	border-radius: 999px;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.09);
+}
+
+.fishStats progress::-webkit-progress-bar {
+	background: rgba(255, 255, 255, 0.09);
+}
+.fishStats progress::-webkit-progress-value {
+	background: linear-gradient(90deg, #55ffff, #55ff55);
+}
+.fishStats progress::-moz-progress-bar {
+	background: linear-gradient(90deg, #55ffff, #55ff55);
+}
+
+.fishRarityBars {
+	display: grid;
+	gap: 7px;
+}
+
+.fishRarityProgress {
+	display: grid;
+	grid-template-columns: 72px minmax(0, 1fr) 42px;
+	gap: 8px;
+	align-items: center;
+	font-size: 0.7rem;
+}
+
+.fishRarityProgress > span {
+	height: 7px;
+	overflow: hidden;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.09);
+}
+
+.fishRarityProgress i {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+}
+
+.fishRarityProgress small {
+	color: rgba(255, 255, 255, 0.64);
+	text-align: right;
+}
+
+.fishGuide {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 12px;
+	align-items: start;
+	padding: 13px;
+	border: 1px solid rgba(255, 255, 255, 0.13);
+	border-radius: 9px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.fishGuide button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 8px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.04);
+	color: rgba(255, 255, 255, 0.74);
+	font-size: 0.72rem;
+}
+
+.fishGuide button:hover,
+.fishGuide button.active {
+	border-color: #ffd166;
+	background: rgba(255, 209, 102, 0.16);
+	color: #fff;
+}
+
+.fishGuide i {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 3px;
+}
+
+.fishAllFilter {
+	min-height: 31px;
+}
+
+.fishFilterGroups {
+	display: grid;
+	gap: 9px;
+}
+
+.fishFilterGroup {
+	display: grid;
+	grid-template-columns: 92px minmax(0, 1fr);
+	gap: 8px;
+	align-items: start;
+}
+
+.fishFilterGroup > span {
+	padding-top: 6px;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 0.65rem;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.fishFilterGroup > div {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+
+.fishGrid {
+	display: grid;
+	grid-template-columns: repeat(10, minmax(0, 1fr));
+	gap: 9px;
+	align-items: stretch;
+}
+

@@ -1,0 +1,167 @@
+.fishGrid.compact .fishTooltip {
+	width: min(270px, calc(100vw - 42px));
+}
+
+@media (max-width: 700px) {
+	.fishTop,
+	.fishOverview,
+	.fishGuide,
+	.fishFilterGroup {
+		grid-template-columns: 1fr;
+	}
+
+	.fishTop {
+		display: grid;
+	}
+
+	.fishTop label {
+		min-width: 0;
+		width: 100%;
+	}
+
+	.fishAllFilter {
+		justify-self: start;
+	}
+
+	.content {
+		width: min(100vw - 24px, 1100px);
+		padding: 28px 0 48px;
+	}
+
+	.siteHeader {
+		margin-bottom: 48px;
+	}
+	.siteHeader .siteMinecraftTitle {
+		width: min(100%, 820px);
+	}
+
+	.dashboardTop {
+		display: grid;
+	}
+
+	.knowledgePda {
+		grid-template-columns: 1fr;
+	}
+
+	.knowledgeSidebar {
+		border-right: 0;
+		border-bottom: 1px solid rgba(123, 235, 255, 0.22);
+	}
+
+	.knowledgeTree {
+		flex: 0 1 auto;
+		max-height: 260px;
+	}
+
+	.dailyTask {
+		grid-template-columns: 48px 1fr;
+	}
+
+	.dailyTask button {
+		grid-column: 1 / -1;
+		width: 100%;
+	}
+
+	.dailiesHeader {
+		align-items: flex-start;
+	}
+
+	.loginStreak {
+		flex-direction: column;
+		gap: 2px;
+		text-align: center;
+	}
+
+	.dailiesFooter {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.dailyCompletion {
+		align-self: flex-end;
+	}
+
+	.shopTop {
+		display: grid;
+	}
+
+	.shopControls {
+		justify-content: stretch;
+	}
+
+	.shopControls label,
+	.shopControls select {
+		width: 100%;
+	}
+
+	.shopGrid {
+		grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+	}
+
+	.playersTop,
+	.playerProfileTop,
+	.claimsTop {
+		grid-template-columns: 1fr;
+		display: grid;
+	}
+
+	.claimPurchase {
+		justify-items: stretch;
+	}
+
+	.claimPurchase small {
+		white-space: normal;
+	}
+
+	.playersTop button,
+	.playerProfileNav button,
+	.playerProfileTop button {
+		width: 100%;
+	}
+
+	.fishGrid {
+		grid-template-columns: repeat(auto-fill, minmax(96px, 116px));
+	}
+
+	.playerProfileForm {
+		grid-template-columns: 1fr;
+	}
+
+	.playerBaseInputs {
+		grid-template-columns: 1fr;
+	}
+
+	.giftCodeForm,
+	.countdownForm,
+	.redeemForm > div {
+		grid-template-columns: 1fr;
+	}
+
+	.countdownGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.countdownGrid-1 .countdownCard,
+	.countdownGrid-3 .countdownCard:last-child {
+		grid-column: auto;
+		width: 100%;
+	}
+
+	.countdownAdminList article {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.countdownColorOptions {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.giftCodeMode {
+		grid-column: 1;
+		grid-template-columns: 1fr;
+	}
+
+	.giftCodeHistory li {
+		grid-template-columns: 1fr;
+	}
+}

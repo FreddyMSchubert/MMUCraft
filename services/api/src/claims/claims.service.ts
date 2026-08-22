@@ -2,14 +2,10 @@ import {
 	BadRequestException,
 	ConflictException,
 	Injectable,
-	Logger,
 	NotFoundException,
-	OnModuleDestroy,
 } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
-import * as grpc from '@grpc/grpc-js';
-import { and, asc, count, eq } from 'drizzle-orm';
-import { AuthenticatedUser } from '../auth/auth.service';
+import { and, eq } from 'drizzle-orm';
+import { AuthenticatedUser } from '../auth/auth-session.service';
 import {
 	claimMembers,
 	claims,
@@ -17,106 +13,33 @@ import {
 	playerProfiles,
 	users,
 } from '../database/database.service';
-import { GrpcServerService } from '../grpc/grpc-server.service';
-import { callUnary } from '../grpc/grpc.types';
 import {
 	effectivePlayerColor,
 	normalizeOptionalColor,
 	playerAvatarUrl,
 } from '../players/player-color';
+import {
+	ClaimMinecraftSynchronizationService,
+	type ClaimsSnapshot,
+} from './claim-minecraft-synchronization.service';
+import { ClaimPurchasingService } from './claim-purchasing.service';
 
-const CLAIM_BASE_PRICE_DABLOONS = 100;
-const MEMBER_CLAIM_PRICE_GROWTH = 1.42;
-const NORMAL_PLAYER_CLAIM_PRICE_GROWTH = 1.69;
-const MAX_CLAIM_PRICE_DABLOONS = 2_000_000_000;
 const CLAIM_NAME_MAX_LENGTH = 20;
-const MAX_CHUNK_COORDINATE = 1_875_000;
-const ADMIN_PAGE_SIZE = 42;
-const ADMIN_MAX_PAGE_SIZE = 100;
-const CLAIM_SYNC_RETRY_MS = 5_000;
 
-interface ClaimData {
-	id: string;
-	dimension: string;
-	chunk_x: number;
-	chunk_z: number;
-	owner_uuid: string;
-	owner_name: string;
-	name: string;
-	color_hex: string;
-	owner_color_hex: string;
-	has_custom_color: boolean;
-	member_uuids: string[];
+export interface ClaimAppearanceInput {
+	name?: string;
+	color?: string | null;
 }
 
-export interface ClaimsSnapshot {
-	claims: ClaimData[];
-}
-
-interface CurrentChunkResponse {
-	online: boolean;
-	dimension: string;
-	chunk_x: number;
-	chunk_z: number;
-	balance_dabloons: number;
-	message: string;
-}
-
-interface PurchaseClaimResponse {
-	purchased: boolean;
-	online: boolean;
-	balance_dabloons: number;
-	message: string;
-}
-
-interface GameplayControlClient extends grpc.Client {
-	GetCurrentClaimChunk(
-		request: { minecraft_username: string },
-		callback: (error: grpc.ServiceError | null, response: CurrentChunkResponse) => void,
-	): void;
-	PurchaseClaim(
-		request: {
-			minecraft_username: string;
-			dimension: string;
-			chunk_x: number;
-			chunk_z: number;
-			price_dabloons: number;
-		},
-		callback: (error: grpc.ServiceError | null, response: PurchaseClaimResponse) => void,
-	): void;
-	ApplyClaimsSnapshot(
-		request: ClaimsSnapshot,
-		callback: (error: grpc.ServiceError | null, response: { applied: boolean }) => void,
-	): void;
-}
-
-interface GameplayProtoRoot {
-	mcstack: {
-		gameplay: {
-			v1: {
-				GameplayControl: grpc.ServiceClientConstructor;
-			};
-		};
-	};
-}
+export type { ClaimsSnapshot } from './claim-minecraft-synchronization.service';
 
 @Injectable()
-export class ClaimsService implements OnModuleDestroy {
-	private readonly logger = new Logger(ClaimsService.name);
-	private gameplayControlClient: GameplayControlClient | null = null;
-	private syncPending = false;
-	private syncInFlight = false;
-	private syncTimer: ReturnType<typeof setTimeout> | null = null;
-
+export class ClaimsService {
 	constructor(
 		private readonly database: DatabaseService,
-		private readonly grpcServer: GrpcServerService,
+		private readonly claimPurchasing: ClaimPurchasingService,
+		private readonly minecraftSynchronization: ClaimMinecraftSynchronizationService,
 	) {}
-
-	onModuleDestroy() {
-		if (this.syncTimer) clearTimeout(this.syncTimer);
-		this.gameplayControlClient?.close();
-	}
 
 	list(user: AuthenticatedUser) {
 		const people = this.getPeople();
@@ -131,7 +54,7 @@ export class ClaimsService implements OnModuleDestroy {
 		}
 
 		return {
-			...this.getNextClaimPricing(user),
+			...this.claimPurchasing.getNextClaimPricing(user),
 			claims: this.database.connection
 				.select()
 				.from(claims)
@@ -159,138 +82,14 @@ export class ClaimsService implements OnModuleDestroy {
 		};
 	}
 
-	listAdmin(offsetInput: string | undefined, limitInput: string | undefined) {
-		const { offset, limit } = normalizePagination(offsetInput, limitInput);
-		const rows = this.database.connection
-			.select({
-				id: claims.id,
-				name: claims.claim_name,
-				dimension: claims.dimension,
-				chunkX: claims.chunk_x,
-				chunkZ: claims.chunk_z,
-				minecraftUsername: users.minecraft_username,
-				minecraftUuid: users.minecraft_uuid,
-				color: playerProfiles.color_hex,
-			})
-			.from(claims)
-			.innerJoin(users, eq(users.id, claims.owner_user_id))
-			.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
-			.orderBy(
-				asc(users.minecraft_username),
-				asc(claims.dimension),
-				asc(claims.chunk_x),
-				asc(claims.chunk_z),
-			)
-			.limit(limit + 1)
-			.offset(offset)
-			.all();
-
-		return {
-			claims: rows.slice(0, limit).map((claim) => ({
-				id: claim.id,
-				name: claim.name,
-				dimension: claim.dimension,
-				chunkX: claim.chunkX,
-				chunkZ: claim.chunkZ,
-				minecraftUsername: claim.minecraftUsername,
-				color: effectivePlayerColor(claim.minecraftUuid, claim.color),
-			})),
-			hasMore: rows.length > limit,
-		};
-	}
-
-	async getCurrentChunk(user: AuthenticatedUser) {
-		const response = await this.callMod<CurrentChunkResponse>('GetCurrentClaimChunk', {
-			minecraft_username: user.minecraftUsername,
-		}).catch(() => null);
-
-		if (!response?.online) {
-			throw new BadRequestException(
-				response?.message ?? 'You have to be online on the server to claim a chunk.',
-			);
-		}
-
-		return {
-			dimension: response.dimension,
-			chunkX: response.chunk_x,
-			chunkZ: response.chunk_z,
-			balanceDabloons: response.balance_dabloons,
-			...this.getNextClaimPricing(user),
-		};
-	}
-
-	async create(user: AuthenticatedUser, input: Record<string, unknown>) {
-		const dimension = normalizeDimension(input.dimension);
-		const chunkX = normalizeChunkCoordinate(input.chunkX);
-		const chunkZ = normalizeChunkCoordinate(input.chunkZ);
-		const { priceDabloons } = this.getNextClaimPricing(user);
-		const claimId = randomUUID();
-		const inserted = this.database.connection
-			.insert(claims)
-			.values({
-				id: claimId,
-				owner_user_id: user.id,
-				dimension,
-				chunk_x: chunkX,
-				chunk_z: chunkZ,
-				created_at_unix_ms: Date.now(),
-			})
-			.onConflictDoNothing()
-			.run();
-
-		if (inserted.changes !== 1) {
-			throw new ConflictException('That chunk has already been claimed.');
-		}
-
-		let purchase: PurchaseClaimResponse;
-		try {
-			purchase = await this.callMod<PurchaseClaimResponse>('PurchaseClaim', {
-				minecraft_username: user.minecraftUsername,
-				dimension,
-				chunk_x: chunkX,
-				chunk_z: chunkZ,
-				price_dabloons: priceDabloons,
-			});
-		} catch {
-			this.database.connection.delete(claims).where(eq(claims.id, claimId)).run();
-			throw new BadRequestException(
-				'You have to stay online in that chunk while buying the claim.',
-			);
-		}
-
-		if (!purchase.purchased) {
-			this.database.connection.delete(claims).where(eq(claims.id, claimId)).run();
-			throw new BadRequestException(purchase.message || 'The claim could not be purchased.');
-		}
-
-		await this.alertMod();
-		return {
-			created: true,
-			claimId,
-			balanceDabloons: purchase.balance_dabloons,
-			message: purchase.message,
-		};
-	}
-
 	async remove(user: AuthenticatedUser, claimId: string) {
 		this.requireOwnedClaim(user.id, claimId);
 		this.database.connection.delete(claims).where(eq(claims.id, claimId)).run();
-		await this.alertMod();
+		await this.minecraftSynchronization.synchronize();
 		return { ok: true };
 	}
 
-	async removeAdmin(claimId: string) {
-		const removed = this.database.connection.delete(claims).where(eq(claims.id, claimId)).run();
-		if (removed.changes !== 1) throw new NotFoundException('Claim not found.');
-		await this.alertMod();
-		return { ok: true };
-	}
-
-	async updateAppearance(
-		user: AuthenticatedUser,
-		claimId: string,
-		input: Record<string, unknown>,
-	) {
+	async updateAppearance(user: AuthenticatedUser, claimId: string, input: ClaimAppearanceInput) {
 		this.requireOwnedClaim(user.id, claimId);
 		const name = normalizeClaimName(input.name);
 		const color = normalizeOptionalColor(input.color, 'Claim color');
@@ -299,11 +98,15 @@ export class ClaimsService implements OnModuleDestroy {
 			.set({ claim_name: name, color_hex: color })
 			.where(eq(claims.id, claimId))
 			.run();
-		await this.alertMod();
+		await this.minecraftSynchronization.synchronize();
 		return { name, customColor: color };
 	}
 
-	async addMember(user: AuthenticatedUser, claimId: string, targetUserIdInput: unknown) {
+	async addMember(
+		user: AuthenticatedUser,
+		claimId: string,
+		targetUserIdInput: number | undefined,
+	) {
 		const claim = this.requireOwnedClaim(user.id, claimId);
 		const targetUserId = normalizeUserId(targetUserIdInput);
 		if (targetUserId === claim.owner_user_id) {
@@ -332,7 +135,7 @@ export class ClaimsService implements OnModuleDestroy {
 			throw new ConflictException('That member already has access.');
 		}
 
-		await this.alertMod();
+		await this.minecraftSynchronization.synchronize();
 		return { ok: true };
 	}
 
@@ -347,109 +150,12 @@ export class ClaimsService implements OnModuleDestroy {
 			throw new NotFoundException('Claim member not found.');
 		}
 
-		await this.alertMod();
+		await this.minecraftSynchronization.synchronize();
 		return { ok: true };
 	}
 
 	getSnapshot(): ClaimsSnapshot {
-		const userRows = this.database.connection.select().from(users).all();
-		const usersById = new Map(userRows.map((user) => [user.id, user]));
-		const profilesByUserId = new Map(
-			this.database.connection
-				.select()
-				.from(playerProfiles)
-				.all()
-				.map((profile) => [profile.user_id, profile]),
-		);
-		const memberships = this.database.connection.select().from(claimMembers).all();
-		const memberUuidsByClaim = new Map<string, string[]>();
-
-		for (const membership of memberships) {
-			const member = usersById.get(membership.user_id);
-			if (!member?.minecraft_uuid || member.is_member !== 1) continue;
-			const memberUuids = memberUuidsByClaim.get(membership.claim_id) ?? [];
-			memberUuids.push(member.minecraft_uuid);
-			memberUuidsByClaim.set(membership.claim_id, memberUuids);
-		}
-
-		return {
-			claims: this.database.connection
-				.select()
-				.from(claims)
-				.all()
-				.flatMap((claim) => {
-					const owner = usersById.get(claim.owner_user_id);
-					if (!owner?.minecraft_uuid) return [];
-					const ownerColor = effectivePlayerColor(
-						owner.minecraft_uuid,
-						profilesByUserId.get(owner.id)?.color_hex,
-					);
-					return [
-						{
-							id: claim.id,
-							dimension: claim.dimension,
-							chunk_x: claim.chunk_x,
-							chunk_z: claim.chunk_z,
-							owner_uuid: owner.minecraft_uuid,
-							owner_name: owner.minecraft_username,
-							name: claim.claim_name,
-							color_hex: claim.color_hex ?? ownerColor,
-							owner_color_hex: ownerColor,
-							has_custom_color: claim.color_hex !== null,
-							member_uuids: memberUuidsByClaim.get(claim.id) ?? [],
-						},
-					];
-				}),
-		};
-	}
-
-	private async pushSnapshot() {
-		const response = await this.callMod<{ applied: boolean }>(
-			'ApplyClaimsSnapshot',
-			this.getSnapshot(),
-		);
-		if (!response.applied) {
-			throw new Error('Minecraft server refused the claims snapshot');
-		}
-	}
-
-	private async alertMod() {
-		this.syncPending = true;
-		await this.synchronizeClaims();
-	}
-
-	private async synchronizeClaims() {
-		if (this.syncInFlight) return;
-		this.syncInFlight = true;
-
-		try {
-			while (this.syncPending) {
-				this.syncPending = false;
-				try {
-					await this.pushSnapshot();
-					if (this.syncTimer) clearTimeout(this.syncTimer);
-					this.syncTimer = null;
-				} catch (error) {
-					this.syncPending = true;
-					this.logger.warn(
-						`Could not synchronize claims to Minecraft; retrying: ${String(error)}`,
-					);
-					this.scheduleClaimsSync();
-					return;
-				}
-			}
-		} finally {
-			this.syncInFlight = false;
-		}
-	}
-
-	private scheduleClaimsSync() {
-		if (this.syncTimer) return;
-		this.syncTimer = setTimeout(() => {
-			this.syncTimer = null;
-			void this.synchronizeClaims();
-		}, CLAIM_SYNC_RETRY_MS);
-		this.syncTimer.unref();
+		return this.minecraftSynchronization.getSnapshot();
 	}
 
 	private requireOwnedClaim(ownerUserId: number, claimId: string) {
@@ -460,45 +166,6 @@ export class ClaimsService implements OnModuleDestroy {
 			.get();
 		if (!claim) throw new NotFoundException('Claim not found.');
 		return claim;
-	}
-
-	private getNextClaimPricing(user: AuthenticatedUser) {
-		const claimCount =
-			this.database.connection
-				.select({ value: count() })
-				.from(claims)
-				.where(eq(claims.owner_user_id, user.id))
-				.get()?.value ?? 0;
-		const nextClaimNumber = claimCount + 1;
-		const memberPriceDabloons = claimPriceDabloons(nextClaimNumber, MEMBER_CLAIM_PRICE_GROWTH);
-		const normalPlayerPriceDabloons = claimPriceDabloons(
-			nextClaimNumber,
-			NORMAL_PLAYER_CLAIM_PRICE_GROWTH,
-		);
-		return {
-			isMember: user.isMember,
-			nextClaimNumber,
-			memberPriceDabloons,
-			normalPlayerPriceDabloons,
-			priceDabloons: user.isMember ? memberPriceDabloons : normalPlayerPriceDabloons,
-		};
-	}
-
-	private callMod<T>(
-		methodName: 'GetCurrentClaimChunk' | 'PurchaseClaim' | 'ApplyClaimsSnapshot',
-		request: object,
-	) {
-		return callUnary<T>(this.getGameplayControlClient(), methodName, request);
-	}
-
-	private getGameplayControlClient() {
-		if (this.gameplayControlClient) return this.gameplayControlClient;
-		const gameplayProto = this.grpcServer.loadProto<GameplayProtoRoot>('gameplay.proto');
-		this.gameplayControlClient = new gameplayProto.mcstack.gameplay.v1.GameplayControl(
-			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
-			grpc.credentials.createInsecure(),
-		) as unknown as GameplayControlClient;
-		return this.gameplayControlClient;
 	}
 
 	private getPeople() {
@@ -529,14 +196,7 @@ export class ClaimsService implements OnModuleDestroy {
 	}
 }
 
-function claimPriceDabloons(claimNumber: number, growth: number) {
-	return Math.min(
-		MAX_CLAIM_PRICE_DABLOONS,
-		Math.round(CLAIM_BASE_PRICE_DABLOONS * growth ** (claimNumber - 1)),
-	);
-}
-
-function normalizeClaimName(value: unknown) {
+function normalizeClaimName(value: string | undefined) {
 	if (typeof value !== 'string') throw new BadRequestException('Enter a claim name.');
 	const name = value.trim();
 	let hasControlCharacter = false;
@@ -555,45 +215,10 @@ function normalizeClaimName(value: unknown) {
 	return name;
 }
 
-function normalizeDimension(value: unknown) {
-	if (typeof value !== 'string' || !/^[a-z0-9_.-]+:[a-z0-9_./-]+$/.test(value)) {
-		throw new BadRequestException('Invalid Minecraft dimension.');
-	}
-	return value;
-}
-
-function normalizeChunkCoordinate(value: unknown) {
-	if (
-		typeof value !== 'number' ||
-		!Number.isInteger(value) ||
-		Math.abs(value) > MAX_CHUNK_COORDINATE
-	) {
-		throw new BadRequestException('Invalid chunk coordinate.');
-	}
-	return value;
-}
-
-function normalizeUserId(value: unknown) {
+function normalizeUserId(value: number | string | undefined) {
 	const userId = typeof value === 'string' ? Number(value) : value;
 	if (typeof userId !== 'number' || !Number.isInteger(userId) || userId <= 0) {
 		throw new BadRequestException('Select a server member.');
 	}
 	return userId;
-}
-
-function normalizePagination(offsetInput: string | undefined, limitInput: string | undefined) {
-	const offset = offsetInput === undefined ? 0 : Number(offsetInput);
-	const limit = limitInput === undefined ? ADMIN_PAGE_SIZE : Number(limitInput);
-	if (
-		!Number.isInteger(offset) ||
-		offset < 0 ||
-		!Number.isInteger(limit) ||
-		limit < 1 ||
-		limit > ADMIN_MAX_PAGE_SIZE
-	) {
-		throw new BadRequestException(
-			`Pagination requires a non-negative offset and a limit from 1 to ${ADMIN_MAX_PAGE_SIZE}.`,
-		);
-	}
-	return { offset, limit };
 }

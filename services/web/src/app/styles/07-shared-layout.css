@@ -1,0 +1,136 @@
+/* ============================================================
+   Shared
+   ============================================================ */
+
+.authCard,
+.dashboard {
+	position: relative;
+	z-index: 1;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 16px;
+	background: rgba(0, 0, 0, 0.72);
+	backdrop-filter: blur(8px);
+}
+
+.authCard {
+	width: min(420px, calc(100vw - 32px));
+	margin: 20px auto 0;
+	padding: 20px;
+}
+
+.dashboard {
+	width: 100%;
+	padding: 20px;
+	text-align: left;
+}
+
+.countdownGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	margin: -40px auto 24px;
+}
+
+.countdownGrid-1 .countdownCard,
+.countdownGrid-3 .countdownCard:last-child {
+	grid-column: 1 / -1;
+	width: calc(50% - 8px);
+	justify-self: center;
+}
+
+.countdownCard {
+	position: relative;
+	display: grid;
+	place-items: center;
+	gap: 9px;
+	min-width: 0;
+	overflow: hidden;
+	padding: 18px 20px;
+	border: 1px solid rgba(255, 209, 102, 0.44);
+	border-radius: 12px;
+	background: var(--countdown-background, rgba(0, 0, 0, 0.78));
+	background-image:
+		linear-gradient(
+			var(--countdown-background, rgba(0, 0, 0, 0.78)),
+			var(--countdown-background, rgba(0, 0, 0, 0.78))
+		),
+		var(--countdown-image, none);
+	background-position: center;
+	background-size: cover;
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+	backdrop-filter: blur(8px);
+}
+
+.countdownCard h2,
+.countdownCard p {
+	margin: 0;
+}
+
+.countdownCard h2 {
+	color: var(--countdown-heading-color, #fff);
+	font-size: clamp(1rem, 2.5vw, 1.35rem);
+}
+
+.countdownCard p {
+	color: var(--countdown-description-color, rgba(255, 255, 255, 0.72));
+	font-size: 0.82rem;
+	line-height: 1.45;
+}
+
+.countdownTime {
+	display: grid;
+	justify-items: center;
+	gap: 2px;
+	color: #ffd166;
+	font-size: clamp(1.15rem, 3vw, 1.75rem);
+	font-variant-numeric: tabular-nums;
+	text-shadow: 2px 2px 0 #493400;
+}
+
+.countdownTime small {
+	font-size: 0.55em;
+	font-weight: 400;
+	opacity: 0.72;
+	text-shadow: none;
+}
+
+.countdownCard-now {
+	border-color: #ffe49c;
+	background: linear-gradient(
+		120deg,
+		rgba(75, 48, 0, 0.92),
+		rgba(188, 125, 0, 0.86),
+		rgba(75, 48, 0, 0.92)
+	);
+	background-size: 240% 100%;
+	animation: countdownShimmer 2s linear infinite;
+}
+
+.countdownNow {
+	display: inline-block;
+	color: #ff3b30;
+	font-family: 'Minecraft UI', monospace;
+	font-size: clamp(1.6rem, 5vw, 2.8rem);
+	text-shadow: 3px 3px 0 #59110d;
+	animation: countdownNowBounce 550ms ease-in-out infinite alternate;
+}
+
+@keyframes countdownShimmer {
+	to {
+		background-position: -240% 0;
+	}
+}
+
+@keyframes countdownNowBounce {
+	to {
+		transform: rotate(-3deg) scale(1.1);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.countdownCard-now,
+	.countdownNow {
+		animation: none;
+	}
+}
+

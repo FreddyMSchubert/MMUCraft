@@ -1,55 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { randomInt } from 'node:crypto';
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { basename, join, relative, sep } from 'node:path';
 import { and, desc, eq } from 'drizzle-orm';
-import { AuthenticatedUser } from '../../auth/auth.service';
+import { AuthenticatedUser } from '../../auth/auth-session.service';
 import { DatabaseService, knowledgeReads, knowledgeUnlocks } from '../../database/database.service';
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service';
-import { PlayersService } from '../../players/players.service';
+import { PlayerMoneyHistoryService } from '../../players/player-money-history.service';
+import { KnowledgeDocumentCatalogService } from './knowledge-document-catalog.service';
+import type { KnowledgePage, KnowledgeTreeEntry } from './knowledge-document.types';
 
-const DEFAULT_KNOWLEDGE_ROOTS = [
-	join(process.cwd(), 'content', 'knowledge'),
-	join(process.cwd(), '..', 'web', 'public', 'knowledge'),
-] as const;
 const KNOWLEDGE_READ_REWARD_DABLOONS = 3;
-
-interface KnowledgePageMetadata {
-	id: string;
-	unlockOrder: number | null;
-	chatMessage: string;
-	sidebarTitle: string;
-}
-
-type KnowledgePage = KnowledgePageMetadata & {
-	type: 'page';
-	path: string;
-	folders: string[];
-	unlockedByDefault: boolean;
-	unlocked?: boolean;
-};
-
-interface KnowledgeFolder {
-	type: 'folder';
-	name: string;
-	children: KnowledgeTreeEntry[];
-}
-
-type KnowledgeTreeEntry = KnowledgeFolder | KnowledgePage;
-
-interface KnowledgeDocument {
-	root: string;
-	mtimeMs: number;
-	pages: KnowledgePage[];
-	tree: KnowledgeTreeEntry[];
-	unlockable: KnowledgePage[];
-}
-
-interface CachedKnowledgeDocument {
-	root: string;
-	mtimeMs: number;
-	document: KnowledgeDocument;
-}
 
 interface KnowledgeUnlockResponse {
 	unlocked: boolean;
@@ -62,16 +21,15 @@ interface KnowledgeUnlockResponse {
 
 @Injectable()
 export class KnowledgeService {
-	private cached: CachedKnowledgeDocument | null = null;
-
 	constructor(
 		private readonly database: DatabaseService,
+		private readonly documents: KnowledgeDocumentCatalogService,
 		private readonly identities: MinecraftIdentityService,
-		private readonly players: PlayersService,
+		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
 	) {}
 
 	getKnowledgeForUser(userId: number) {
-		const document = this.loadDocument();
+		const document = this.documents.loadDocument();
 		const unlockedIds = this.getUnlockedIds(userId);
 		const readKnowledgeIds = this.getReadIds(userId);
 		const lastUnlockedKnowledgeId = this.getLastUnlockedKnowledgeId(
@@ -90,9 +48,11 @@ export class KnowledgeService {
 		};
 	}
 
-	async markRead(user: AuthenticatedUser, knowledgeIdInput: unknown) {
+	async markRead(user: AuthenticatedUser, knowledgeIdInput: string | undefined) {
 		const knowledgeId = typeof knowledgeIdInput === 'string' ? knowledgeIdInput.trim() : '';
-		const page = this.loadDocument().pages.find((candidate) => candidate.id === knowledgeId);
+		const page = this.documents
+			.loadDocument()
+			.pages.find((candidate) => candidate.id === knowledgeId);
 		if (!page) throw new BadRequestException('Knowledge page not found.');
 		if (!page.unlockedByDefault && !this.getUnlockedIds(user.id).has(page.id)) {
 			throw new BadRequestException('That knowledge page is locked.');
@@ -112,7 +72,7 @@ export class KnowledgeService {
 
 		let moneyGranted = false;
 		try {
-			const result = await this.players.grantKnowledgeReadMoney(
+			const result = await this.playerMoneyHistory.grantKnowledgeReadMoney(
 				user.minecraftUsername,
 				KNOWLEDGE_READ_REWARD_DABLOONS,
 			);
@@ -121,7 +81,7 @@ export class KnowledgeService {
 					result.message || 'You have to be online on the server to receive dabloons.',
 				);
 			moneyGranted = true;
-			this.players.recordMoneyForUser(
+			this.playerMoneyHistory.recordForUser(
 				user.id,
 				'knowledge_read',
 				KNOWLEDGE_READ_REWARD_DABLOONS,
@@ -147,7 +107,7 @@ export class KnowledgeService {
 	}
 
 	hasRemainingForUser(userId: number): boolean {
-		const document = this.loadDocument();
+		const document = this.documents.loadDocument();
 		if (document.unlockable.length === 0) {
 			return false;
 		}
@@ -174,7 +134,7 @@ export class KnowledgeService {
 			return this.noUnlock('No website account is linked to this Minecraft username yet.');
 		}
 
-		const document = this.loadDocument();
+		const document = this.documents.loadDocument();
 
 		if (document.unlockable.length === 0) {
 			return {
@@ -299,186 +259,6 @@ export class KnowledgeService {
 
 		return rows.find((row) => configuredIds.has(row.knowledge_id))?.knowledge_id ?? null;
 	}
-
-	private loadDocument(): KnowledgeDocument {
-		const root =
-			process.env.KNOWLEDGE_ROOT ??
-			DEFAULT_KNOWLEDGE_ROOTS.find((candidate) => existsSync(candidate)) ??
-			DEFAULT_KNOWLEDGE_ROOTS[0];
-
-		if (!existsSync(root)) {
-			return {
-				root,
-				mtimeMs: 0,
-				pages: [],
-				tree: [],
-				unlockable: [],
-			};
-		}
-
-		const mtimeMs = this.getTreeMtimeMs(root);
-
-		if (this.cached?.root === root && this.cached.mtimeMs === mtimeMs) {
-			return this.cached.document;
-		}
-
-		const document = this.parseKnowledgeRoot(root, mtimeMs);
-
-		this.cached = {
-			root,
-			mtimeMs,
-			document,
-		};
-
-		return document;
-	}
-
-	private parseKnowledgeRoot(root: string, mtimeMs: number): KnowledgeDocument {
-		const tree = this.readDirectory(root, root);
-		const pages = this.flattenPages(tree);
-		const unlockable = pages.filter((page) => !page.unlockedByDefault);
-
-		const seen = new Set<string>();
-		for (const page of pages) {
-			if (seen.has(page.id)) {
-				throw new Error(`Duplicate knowledge id: ${page.id}`);
-			}
-
-			seen.add(page.id);
-		}
-
-		return {
-			root,
-			mtimeMs,
-			pages,
-			tree,
-			unlockable,
-		};
-	}
-
-	private readDirectory(root: string, directory: string): KnowledgeTreeEntry[] {
-		const children = readdirSync(directory, { withFileTypes: true })
-			.filter((entry) => !entry.name.startsWith('.'))
-			.sort((left, right) => left.name.localeCompare(right.name, 'en'));
-
-		const entries: KnowledgeTreeEntry[] = [];
-
-		for (const child of children) {
-			const childPath = join(directory, child.name);
-
-			if (child.isDirectory()) {
-				entries.push({
-					type: 'folder',
-					name: this.displayName(child.name),
-					children: this.readDirectory(root, childPath),
-				});
-				continue;
-			}
-
-			if (!child.isFile() || !child.name.endsWith('.md')) {
-				continue;
-			}
-
-			const source = readFileSync(childPath, 'utf8');
-			const metadata = this.parseMetadata(source, childPath);
-			const relativePath = relative(root, childPath).split(sep).join('/');
-			const folders = relative(root, directory)
-				.split(sep)
-				.filter((part) => part && part !== '.')
-				.map((part) => this.displayName(part));
-
-			entries.push({
-				type: 'page',
-				...metadata,
-				path: relativePath,
-				folders,
-				unlockedByDefault: metadata.unlockOrder === null,
-			});
-		}
-
-		return entries;
-	}
-
-	private parseMetadata(source: string, filePath: string): KnowledgePageMetadata {
-		const match = /^====\r?\n([\s\S]*?)\r?\n====/.exec(source);
-
-		if (!match) {
-			throw new Error(`Knowledge markdown file is missing metadata block: ${filePath}`);
-		}
-
-		const values = new Map<string, string>();
-		const metadata = match[1];
-		if (metadata === undefined) throw new Error(`Knowledge metadata is invalid: ${filePath}`);
-		for (const line of metadata.replace(/\r\n/g, '\n').split('\n')) {
-			const parsed = /^([A-Za-z][A-Za-z0-9_-]*)\s*:\s*(.*)$/.exec(line);
-			const key = parsed?.[1];
-			const value = parsed?.[2];
-			if (key && value !== undefined) values.set(key, value.trim());
-		}
-
-		const id = values.get('id');
-		const unlockOrderValue = values.get('unlockOrder');
-		const sidebarTitle = values.get('sidebarTitle');
-
-		if (!id) throw new Error(`Knowledge markdown file is missing id: ${filePath}`);
-		if (!unlockOrderValue)
-			throw new Error(`Knowledge markdown file is missing unlockOrder: ${filePath}`);
-		if (!sidebarTitle)
-			throw new Error(`Knowledge markdown file is missing sidebarTitle: ${filePath}`);
-
-		const unlockOrder = unlockOrderValue === 'public' ? null : Number(unlockOrderValue);
-
-		if (unlockOrder !== null && !Number.isInteger(unlockOrder)) {
-			throw new Error(`Knowledge unlockOrder must be an integer or public: ${filePath}`);
-		}
-
-		return {
-			id,
-			unlockOrder,
-			chatMessage:
-				values.get('chatMessage') ??
-				`You've unlocked new knowledge about ${sidebarTitle}. Visit the website to learn more.`,
-			sidebarTitle,
-		};
-	}
-
-	private flattenPages(entries: KnowledgeTreeEntry[]): KnowledgePage[] {
-		const pages: KnowledgePage[] = [];
-
-		for (const entry of entries) {
-			if (entry.type === 'folder') {
-				pages.push(...this.flattenPages(entry.children));
-			} else {
-				pages.push(entry);
-			}
-		}
-
-		return pages;
-	}
-
-	private getTreeMtimeMs(path: string): number {
-		const stats = statSync(path);
-		let mtimeMs = stats.mtimeMs;
-
-		if (!stats.isDirectory()) {
-			return mtimeMs;
-		}
-
-		for (const child of readdirSync(path, { withFileTypes: true })) {
-			if (child.name.startsWith('.')) continue;
-			mtimeMs = Math.max(mtimeMs, this.getTreeMtimeMs(join(path, child.name)));
-		}
-
-		return mtimeMs;
-	}
-
-	private displayName(name: string): string {
-		return basename(name)
-			.replace(/^\d+[-_]/, '')
-			.replace(/[-_]+/g, ' ')
-			.replace(/\b\w/g, (letter) => letter.toUpperCase());
-	}
-
 	private noUnlock(message: string): KnowledgeUnlockResponse {
 		return {
 			unlocked: false,

@@ -1,5 +1,4 @@
 import { Injectable, Logger, OnApplicationBootstrap, OnModuleDestroy } from '@nestjs/common';
-import * as grpc from '@grpc/grpc-js';
 import {
 	Client,
 	ChatInputCommandInteraction,
@@ -8,10 +7,9 @@ import {
 	SlashCommandBuilder,
 	WebhookClient,
 } from 'discord.js';
-import { GrpcServerService } from '../grpc/grpc-server.service';
-import { callUnary } from '../grpc/grpc.types';
+import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { DatabaseService, discordAdminCommandLogs } from '../database/database.service';
-import { PlayersService } from '../players/players.service';
+import { OnlinePlayerPresenceService } from '../players/online-player-presence.service';
 
 export interface MinecraftDiscordEvent {
 	type: string;
@@ -114,10 +112,6 @@ export function formatOnlinePlayers(
 	return `\`\`\`ansi\n${ansi(37)}Players online:${ansi(0)}\n${lines.join('\n') || 'No players online.'}\n\`\`\``;
 }
 
-interface GameplayProtoRoot {
-	mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } };
-}
-
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private readonly logger = new Logger(DiscordService.name);
@@ -130,7 +124,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		],
 	});
 	private webhook: WebhookClient | null = null;
-	private minecraft: grpc.Client | null = null;
 	private draining = false;
 	private drainPromise: Promise<void> | null = null;
 	private readonly pending = new Set<Promise<unknown>>();
@@ -140,9 +133,9 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	).replace(/\/$/, '');
 
 	constructor(
-		private readonly grpcServer: GrpcServerService,
+		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly database: DatabaseService,
-		private readonly players: PlayersService,
+		private readonly playerPresence: OnlinePlayerPresenceService,
 	) {}
 
 	onApplicationBootstrap() {
@@ -161,12 +154,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		}
 
 		this.webhook = new WebhookClient({ url: webhookUrl });
-		const gameplayProto = this.grpcServer.loadProto<GameplayProtoRoot>('gameplay.proto');
-		this.minecraft = new gameplayProto.mcstack.gameplay.v1.GameplayControl(
-			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
-			grpc.credentials.createInsecure(),
-		);
-
 		this.client.once(
 			'ready',
 			() =>
@@ -210,7 +197,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	async publish(event: MinecraftDiscordEvent) {
 		if (!this.webhook) return false;
 		const presentation = event.minecraft_uuid
-			? this.players.discordPresentation(event.minecraft_uuid)
+			? this.playerPresence.discordPresentation(event.minecraft_uuid)
 			: null;
 		const currentEvent = presentation
 			? {
@@ -249,7 +236,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 
 	async onModuleDestroy() {
 		await this.drain();
-		this.minecraft?.close();
 		this.webhook?.destroy();
 	}
 
@@ -293,7 +279,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private async listPlayers(interaction: ChatInputCommandInteraction) {
 		await interaction.deferReply({ ephemeral: true });
 		try {
-			const { players } = await this.players.listOnlinePlayers();
+			const { players } = await this.playerPresence.listOnlinePlayers();
 			await interaction.editReply(formatOnlinePlayers(players));
 		} catch (error) {
 			this.logger.error('Could not list online players', error);
@@ -347,6 +333,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		methodName: string,
 		request: Record<string, unknown>,
 	): Promise<T> {
-		return await callUnary<T>(this.minecraft, methodName, request);
+		return await this.minecraft.gameplay<T>(methodName, request);
 	}
 }

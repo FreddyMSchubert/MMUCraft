@@ -1,0 +1,117 @@
+/* ============================================================
+   Dashboard
+   ============================================================ */
+
+.dashboardTop {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	align-items: start;
+	margin-bottom: 16px;
+}
+
+.dashboardTop p {
+	margin: 0;
+}
+
+.dashboardIdentity {
+	display: grid;
+	gap: 6px;
+}
+
+.dashboardEyebrow {
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+}
+
+.serverDetails {
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+	overflow-wrap: anywhere;
+}
+
+.signedInPlayer {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.textAction {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	text-decoration: underline;
+}
+
+.onlinePlayers {
+	display: grid;
+	gap: 6px;
+	min-width: 0;
+	text-align: right;
+}
+
+.onlinePlayerList {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 4px 12px;
+	font-size: 0.78rem;
+}
+
+.onlinePlayerList a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.onlinePlayersEmpty {
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 0.82rem;
+}
+
+@media (max-width: 600px) {
+	.dashboardTop {
+		grid-template-columns: 1fr;
+	}
+
+	.serverDetails {
+		overflow-wrap: anywhere;
+	}
+
+	.onlinePlayers {
+		text-align: left;
+	}
+
+	.onlinePlayerList {
+		justify-content: flex-start;
+	}
+}
+
+.dashboardTabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.dashboardTabs a {
+	display: inline-block;
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	text-decoration: none;
+}
+
+.dashboardTabs a.active {
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.dashboardPanel {
+	min-height: 240px;
+}
+

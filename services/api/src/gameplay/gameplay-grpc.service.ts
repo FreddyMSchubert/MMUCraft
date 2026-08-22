@@ -2,13 +2,30 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as grpc from '@grpc/grpc-js';
 import { GrpcServerService } from '../grpc/grpc-server.service';
 import { UnaryCallback } from '../grpc/grpc.types';
-import { MinecraftStatInput, PlayersService } from '../players/players.service';
+import { OnlinePlayerPresenceService } from '../players/online-player-presence.service';
+import { PlayerMoneyHistoryService } from '../players/player-money-history.service';
+import { PlayerStatisticsSynchronizationService } from '../players/player-statistics-synchronization.service';
 import { KnowledgeService } from './knowledge/knowledge.service';
-import { ShopService } from './shop/shop.service';
+import { ShopUnlocksService } from './shop/shop-unlocks.service';
 import { FishingService } from '../fishing/fishing.service';
 import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service';
 import { DailiesService } from './dailies/dailies.service';
 import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.service';
+import type {
+	DailyTaskUpdateRequest,
+	DailyTaskUpdateResponse,
+	EmptyGrpcRequest,
+	FishCatchRequest,
+	FishCatchResponse,
+	KnowledgeUnlockRequest,
+	KnowledgeUnlockResponse,
+	MoneyEventRequest,
+	MoneyEventResponse,
+	PlayerStatisticsSyncRequest,
+	PlayerStatisticsSyncResponse,
+	UnlockAvailabilityRequest,
+	UnlockAvailabilityResponse,
+} from './gameplay-grpc-message.types';
 
 interface GameplayProtoRoot {
 	mcstack: {
@@ -27,8 +44,10 @@ export class GameplayGrpcService implements OnModuleInit {
 	constructor(
 		private readonly grpcServer: GrpcServerService,
 		private readonly knowledge: KnowledgeService,
-		private readonly shop: ShopService,
-		private readonly players: PlayersService,
+		private readonly shopUnlocks: ShopUnlocksService,
+		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
+		private readonly playerStatistics: PlayerStatisticsSynchronizationService,
+		private readonly playerPresence: OnlinePlayerPresenceService,
 		private readonly fishing: FishingService,
 		private readonly claims: ClaimsService,
 		private readonly dailies: DailiesService,
@@ -55,7 +74,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		call: grpc.ServerUnaryCall<MinecraftDiscordEvent, { accepted: boolean }>,
 		callback: UnaryCallback<{ accepted: boolean }>,
 	) {
-		this.players.recordPresenceEvent(call.request);
+		this.playerPresence.recordPresenceEvent(call.request);
 		void this.discord
 			.publish(call.request)
 			.then((accepted) => {
@@ -74,7 +93,7 @@ export class GameplayGrpcService implements OnModuleInit {
 
 	private getDailyTasksSnapshot(
 		_call: grpc.ServerUnaryCall<
-			Record<string, never>,
+			EmptyGrpcRequest,
 			ReturnType<DailiesService['getMinecraftSnapshot']>
 		>,
 		callback: UnaryCallback<ReturnType<DailiesService['getMinecraftSnapshot']>>,
@@ -83,16 +102,8 @@ export class GameplayGrpcService implements OnModuleInit {
 	}
 
 	private updateDailyTask(
-		call: grpc.ServerUnaryCall<
-			{
-				user_id?: number;
-				period_key?: string;
-				task_json?: string;
-				unix_ms?: number;
-			},
-			{ accepted: boolean; message: string }
-		>,
-		callback: UnaryCallback<{ accepted: boolean; message: string }>,
+		call: grpc.ServerUnaryCall<DailyTaskUpdateRequest, DailyTaskUpdateResponse>,
+		callback: UnaryCallback<DailyTaskUpdateResponse>,
 	) {
 		callback(
 			null,
@@ -105,48 +116,15 @@ export class GameplayGrpcService implements OnModuleInit {
 	}
 
 	private getClaimsSnapshot(
-		_call: grpc.ServerUnaryCall<Record<string, never>, ClaimsSnapshot>,
+		_call: grpc.ServerUnaryCall<EmptyGrpcRequest, ClaimsSnapshot>,
 		callback: UnaryCallback<ClaimsSnapshot>,
 	) {
 		callback(null, this.claims.getSnapshot());
 	}
 
 	private unlockNextKnowledge(
-		call: grpc.ServerUnaryCall<
-			{
-				minecraft_username?: string;
-				minecraft_uuid?: string;
-				source_item_id?: string;
-				unix_ms?: number;
-				unlock_type?: string;
-			},
-			{
-				unlocked: boolean;
-				all_unlocked: boolean;
-				knowledge_id: string;
-				unlocked_id: string;
-				priority: number;
-				topic: string;
-				message: string;
-				unlock_type: string;
-				has_knowledge_to_unlock: boolean;
-				has_charms_to_unlock: boolean;
-				has_cosmetics_to_unlock: boolean;
-			}
-		>,
-		callback: UnaryCallback<{
-			unlocked: boolean;
-			all_unlocked: boolean;
-			knowledge_id: string;
-			unlocked_id: string;
-			priority: number;
-			topic: string;
-			message: string;
-			unlock_type: string;
-			has_knowledge_to_unlock: boolean;
-			has_charms_to_unlock: boolean;
-			has_cosmetics_to_unlock: boolean;
-		}>,
+		call: grpc.ServerUnaryCall<KnowledgeUnlockRequest, KnowledgeUnlockResponse>,
+		callback: UnaryCallback<KnowledgeUnlockResponse>,
 	) {
 		const minecraftUsername = call.request.minecraft_username ?? '';
 		const minecraftUuid = call.request.minecraft_uuid ?? '';
@@ -159,13 +137,13 @@ export class GameplayGrpcService implements OnModuleInit {
 						minecraftUsername,
 						sourceItemId,
 					)
-				: this.shop.unlockNextForMinecraftUsername(
+				: this.shopUnlocks.unlockNextForMinecraftPlayer(
 						minecraftUuid,
 						minecraftUsername,
 						unlockType,
 						sourceItemId,
 					);
-		const availability = this.shop.getUnlockAvailabilityForMinecraftUsername(
+		const availability = this.shopUnlocks.availabilityForMinecraftPlayer(
 			minecraftUuid,
 			minecraftUsername,
 		);
@@ -184,29 +162,10 @@ export class GameplayGrpcService implements OnModuleInit {
 	}
 
 	private getUnlockAvailability(
-		call: grpc.ServerUnaryCall<
-			{
-				minecraft_username?: string;
-				minecraft_uuid?: string;
-				unix_ms?: number;
-			},
-			{
-				account_linked: boolean;
-				has_knowledge_to_unlock: boolean;
-				has_charms_to_unlock: boolean;
-				has_cosmetics_to_unlock: boolean;
-				message: string;
-			}
-		>,
-		callback: UnaryCallback<{
-			account_linked: boolean;
-			has_knowledge_to_unlock: boolean;
-			has_charms_to_unlock: boolean;
-			has_cosmetics_to_unlock: boolean;
-			message: string;
-		}>,
+		call: grpc.ServerUnaryCall<UnlockAvailabilityRequest, UnlockAvailabilityResponse>,
+		callback: UnaryCallback<UnlockAvailabilityResponse>,
 	) {
-		const availability = this.shop.getUnlockAvailabilityForMinecraftUsername(
+		const availability = this.shopUnlocks.availabilityForMinecraftPlayer(
 			call.request.minecraft_uuid ?? '',
 			call.request.minecraft_username ?? '',
 		);
@@ -221,41 +180,10 @@ export class GameplayGrpcService implements OnModuleInit {
 	}
 
 	private syncPlayerStats(
-		call: grpc.ServerUnaryCall<
-			{
-				minecraft_username?: string;
-				minecraft_uuid?: string;
-				unix_ms?: number;
-				balance_dabloons?: number;
-				stats?: MinecraftStatInput[];
-			},
-			{
-				accepted: boolean;
-				account_linked: boolean;
-				is_member: boolean;
-				is_committee: boolean;
-				is_external: boolean;
-				nickname: string;
-				pronouns: string;
-				color_hex: string;
-				show_death_counter: boolean;
-				message: string;
-			}
-		>,
-		callback: UnaryCallback<{
-			accepted: boolean;
-			account_linked: boolean;
-			is_member: boolean;
-			is_committee: boolean;
-			is_external: boolean;
-			nickname: string;
-			pronouns: string;
-			color_hex: string;
-			show_death_counter: boolean;
-			message: string;
-		}>,
+		call: grpc.ServerUnaryCall<PlayerStatisticsSyncRequest, PlayerStatisticsSyncResponse>,
+		callback: UnaryCallback<PlayerStatisticsSyncResponse>,
 	) {
-		const result = this.players.syncMinecraftStats(
+		const result = this.playerStatistics.synchronizeFromMinecraft(
 			call.request.minecraft_uuid ?? '',
 			call.request.minecraft_username ?? '',
 			call.request.stats ?? [],
@@ -280,31 +208,10 @@ export class GameplayGrpcService implements OnModuleInit {
 	}
 
 	private recordMoneyEvent(
-		call: grpc.ServerUnaryCall<
-			{
-				minecraft_username?: string;
-				minecraft_uuid?: string;
-				amount_dabloons?: number;
-				source?: string;
-				reference_id?: string;
-				unix_ms?: number;
-				balance_dabloons?: number;
-			},
-			{
-				recorded: boolean;
-				duplicate: boolean;
-				account_linked: boolean;
-				message: string;
-			}
-		>,
-		callback: UnaryCallback<{
-			recorded: boolean;
-			duplicate: boolean;
-			account_linked: boolean;
-			message: string;
-		}>,
+		call: grpc.ServerUnaryCall<MoneyEventRequest, MoneyEventResponse>,
+		callback: UnaryCallback<MoneyEventResponse>,
 	) {
-		const result = this.players.recordMoneyForMinecraftUsername(
+		const result = this.playerMoneyHistory.recordForMinecraftPlayer(
 			call.request.minecraft_uuid ?? '',
 			call.request.minecraft_username ?? '',
 			call.request.source ?? 'minecraft',
@@ -350,36 +257,8 @@ export class GameplayGrpcService implements OnModuleInit {
 	}
 
 	private recordFishCatch(
-		call: grpc.ServerUnaryCall<
-			{
-				minecraft_username?: string;
-				minecraft_uuid?: string;
-				fish_id?: string;
-				length_cm?: number;
-				rarity?: string;
-				unix_ms?: number;
-			},
-			{
-				recorded: boolean;
-				account_linked: boolean;
-				first_catch: boolean;
-				personal_size_record: boolean;
-				server_size_record: boolean;
-				server_smallest_record: boolean;
-				personal_smallest_record: boolean;
-				message: string;
-			}
-		>,
-		callback: UnaryCallback<{
-			recorded: boolean;
-			account_linked: boolean;
-			first_catch: boolean;
-			personal_size_record: boolean;
-			server_size_record: boolean;
-			server_smallest_record: boolean;
-			personal_smallest_record: boolean;
-			message: string;
-		}>,
+		call: grpc.ServerUnaryCall<FishCatchRequest, FishCatchResponse>,
+		callback: UnaryCallback<FishCatchResponse>,
 	) {
 		callback(
 			null,

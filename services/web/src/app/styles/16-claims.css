@@ -1,0 +1,160 @@
+/* ============================================================
+   Claims
+   ============================================================ */
+
+.claimsPanel,
+.claimsList,
+.claimMembers {
+	display: grid;
+	gap: 14px;
+}
+
+.claimsTop,
+.claimHeader,
+.claimMember {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+}
+
+.claimName {
+	color: var(--claim-color);
+	color: color-mix(in oklch, var(--claim-color) 72%, white);
+	color: oklch(from var(--claim-color) calc(max(l, 0.72)) c h);
+}
+
+.claimsTop h3,
+.claimsTop p,
+.claimHeader h4 {
+	margin: 0;
+}
+
+.claimsExplainer,
+.claimHeader span,
+.claimMember span,
+.claimMember small {
+	color: rgba(255, 255, 255, 0.68);
+}
+
+.claimsExplainer {
+	margin: -6px 0 0;
+	font-size: 0.78rem;
+}
+
+.claimsTop button,
+.claimMemberSearch button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 800;
+}
+
+.claimPurchase {
+	display: grid;
+	justify-items: end;
+	gap: 5px;
+}
+
+.claimPurchase small {
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.68rem;
+	white-space: nowrap;
+}
+
+.claimsTop button:disabled,
+.claimHeader button:disabled,
+.claimMember button:disabled,
+.claimAppearanceForm button:disabled,
+.claimMemberSearch button:disabled {
+	opacity: 0.55;
+}
+
+.claimsEmpty,
+.claimCard {
+	padding: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 9px;
+	background: rgba(255, 255, 255, 0.045);
+}
+
+.claimHeader {
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.claimHeader button,
+.claimMember button,
+.claimAppearanceForm button {
+	padding: 7px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.claimAppearanceForm {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto auto;
+	align-items: end;
+	gap: 8px;
+	padding-top: 12px;
+}
+
+.claimAppearanceForm label {
+	display: grid;
+	gap: 5px;
+	color: rgba(255, 255, 255, 0.68);
+}
+
+.claimAppearanceForm input {
+	box-sizing: border-box;
+	height: 40px;
+	min-width: 0;
+	padding: 8px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 7px;
+	background: rgba(10, 14, 24, 0.72);
+	color: #fff;
+}
+
+.claimAppearanceForm .claimColorInput input {
+	width: 52px;
+	padding: 3px;
+}
+
+.claimMembers {
+	margin-top: 12px;
+}
+
+.claimMember {
+	justify-content: flex-start;
+}
+
+.claimMember > div {
+	display: grid;
+	min-width: 0;
+}
+
+.claimMember > button,
+.claimMember > small {
+	margin-left: auto;
+}
+
+.claimMemberSearch {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 8px;
+}
+
+.claimMemberSearch input {
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 7px;
+	background: rgba(10, 14, 24, 0.72);
+	color: #fff;
+}
+

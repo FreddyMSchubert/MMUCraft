@@ -1,4 +1,4 @@
-# KubeCraft
+# MMUCraft
 
 ## Development
 

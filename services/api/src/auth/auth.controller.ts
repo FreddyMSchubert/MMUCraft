@@ -1,24 +1,30 @@
 import { Body, Controller, Get, Headers, HttpCode, Post, Req, Res } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { AuthService } from './auth.service';
+import { AuthSessionService } from './auth-session.service';
+import { AuthSigninService } from './auth-signin.service';
+import { AuthSignupService } from './auth-signup.service';
 
 @Controller('api/auth')
 export class AuthController {
-	constructor(private readonly auth: AuthService) {}
+	constructor(
+		private readonly signup: AuthSignupService,
+		private readonly sessions: AuthSessionService,
+		private readonly signin: AuthSigninService,
+	) {}
 
 	@Post('signup')
 	createSignup(@Body() body: { email?: string }, @Req() request: FastifyRequest) {
-		return this.auth.createSignup(body.email ?? '', clientIp(request));
+		return this.signup.createSignup(body.email ?? '', clientIp(request));
 	}
 
 	@Post('verify-email')
 	verifyEmail(@Body() body: { flowId?: string; code?: string }) {
-		return this.auth.verifyEmailCode(body.flowId ?? '', body.code ?? '');
+		return this.signup.verifyEmailCode(body.flowId ?? '', body.code ?? '');
 	}
 
 	@Post('minecraft-username')
 	async setMinecraftUsername(@Body() body: { flowId?: string; minecraftUsername?: string }) {
-		return await this.auth.setMinecraftUsername(
+		return await this.signup.setMinecraftUsername(
 			body.flowId ?? '',
 			body.minecraftUsername ?? '',
 		);
@@ -26,7 +32,7 @@ export class AuthController {
 
 	@Post('verify-minecraft')
 	async verifyMinecraft(@Body() body: { flowId?: string; code?: string }) {
-		await this.auth.verifyMinecraftCode(body.flowId ?? '', body.code ?? '');
+		await this.signup.verifyMinecraftCode(body.flowId ?? '', body.code ?? '');
 	}
 
 	@Post('accept-rules')
@@ -34,7 +40,7 @@ export class AuthController {
 		@Body() body: { flowId?: string },
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		const session = await this.auth.acceptRules(body.flowId ?? '');
+		const session = await this.signup.acceptRules(body.flowId ?? '');
 		this.setSessionCookie(response, session.token, session.maxAgeSeconds);
 
 		return { ok: true };
@@ -42,7 +48,7 @@ export class AuthController {
 
 	@Post('signin')
 	async signIn(@Body() body: { email?: string }, @Req() request: FastifyRequest) {
-		return await this.auth.signIn(body.email ?? '', clientIp(request));
+		return await this.signin.start(body.email ?? '', clientIp(request));
 	}
 
 	@Post('verify-signin')
@@ -50,7 +56,7 @@ export class AuthController {
 		@Body() body: { flowId?: string; code?: string },
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		const session = await this.auth.verifySignIn(body.flowId ?? '', body.code ?? '');
+		const session = await this.signin.verify(body.flowId ?? '', body.code ?? '');
 		this.setSessionCookie(response, session.token, session.maxAgeSeconds);
 
 		return { ok: true };
@@ -58,7 +64,7 @@ export class AuthController {
 
 	@Get('me')
 	me(@Headers('cookie') cookieHeader: string | undefined) {
-		return { user: this.auth.getSession(cookieHeader) };
+		return { user: this.sessions.getSession(cookieHeader) };
 	}
 
 	@Post('signout')
@@ -67,7 +73,7 @@ export class AuthController {
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		this.auth.deleteSession(cookieHeader);
+		this.sessions.deleteSession(cookieHeader);
 		response.header(
 			'Set-Cookie',
 			'mcstack_session=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0',

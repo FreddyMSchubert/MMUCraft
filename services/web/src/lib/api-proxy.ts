@@ -24,12 +24,15 @@ export async function proxyApiRequest(request: Request, path: string) {
 	const headers = new Headers()
 	const contentType = upstream.headers.get('content-type')
 	const setCookie = upstream.headers.get('set-cookie')
+	const cacheControl = upstream.headers.get('cache-control')
+	const pragma = upstream.headers.get('pragma')
+	const expires = upstream.headers.get('expires')
 
 	if (contentType) headers.set('content-type', contentType)
 	if (setCookie) headers.set('set-cookie', setCookie)
-	headers.set('cache-control', upstream.headers.get('cache-control') ?? NO_STORE_CACHE_CONTROL)
-	headers.set('pragma', upstream.headers.get('pragma') ?? 'no-cache')
-	headers.set('expires', upstream.headers.get('expires') ?? '0')
+	headers.set('cache-control', cacheControl ?? NO_STORE_CACHE_CONTROL)
+	if (pragma) headers.set('pragma', pragma)
+	if (expires) headers.set('expires', expires)
 
 	// Passing the body through keeps ordinary responses working and lets SSE stay live.
 	return new Response(upstream.body, {

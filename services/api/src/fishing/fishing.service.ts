@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common'
+import { randomInt } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { eq } from 'drizzle-orm'
@@ -7,7 +8,7 @@ import { AuthenticatedUser } from '../auth/auth.service'
 import { DatabaseService, FishCatchRow, fishCatches, playerProfiles, users } from '../database/database.service'
 import { MinecraftIdentityService } from '../database/minecraft-identity.service'
 import { ASSETS } from '../assets'
-import { effectivePlayerColor } from '../players/player-color'
+import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color'
 
 const ITEM_ROOTS = [
 	join(process.cwd(), 'content', 'items'),
@@ -15,6 +16,7 @@ const ITEM_ROOTS = [
 	join(process.cwd(), 'minecraft', 'main', 'data', 'data', 'items'),
 ]
 const RARITIES = new Set(['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical'])
+const FISH_ASSET_REVISION = `${Date.now().toString(36)}-${randomInt(0x100000000).toString(36)}`
 
 interface FishDefinition {
 	id: string
@@ -51,14 +53,18 @@ const VANILLA_FISH: FishDefinition[] = [
 ]
 
 @Injectable()
-export class FishingService {
+export class FishingService implements OnModuleInit {
 	private readonly catchEvents = new Subject<{ data: unknown }>()
-	private cachedDefinitions: { mtimeMs: number; definitions: FishDefinition[] } | null = null
+	private cachedDefinitions: { mtimeMs: number; definitions: FishDefinition[]; byId: Map<string, FishDefinition> } | null = null
 
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
 	) { }
+
+	onModuleInit() {
+		if (process.env.NODE_ENV === 'production') this.loadDefinitions()
+	}
 
 	recordCatch(input: RecordCatchInput) {
 		const definition = this.loadDefinitions().find((fish) => fish.id === input.fishId)
@@ -152,14 +158,17 @@ export class FishingService {
 		return {
 			currentUserId: viewer.id,
 			selectedUserId,
-			players: playerRows.map((player) => ({
-				id: player.id,
-				minecraftUsername: player.minecraft_username,
-				pronouns: profilesById.get(player.id)?.pronouns ?? '',
-				color: effectivePlayerColor(player.minecraft_uuid, profilesById.get(player.id)?.color_hex),
-				avatarUrl: avatarUrl(player.minecraft_username),
-				caughtTotal: allCatches.filter((fishCatch) => fishCatch.user_id === player.id).length,
-			})),
+			players: playerRows.map((player) => {
+				const color = effectivePlayerColor(player.minecraft_uuid, profilesById.get(player.id)?.color_hex)
+				return {
+					id: player.id,
+					minecraftUsername: player.minecraft_username,
+					pronouns: profilesById.get(player.id)?.pronouns ?? '',
+					color,
+					avatarUrl: playerAvatarUrl(player.minecraft_uuid),
+					caughtTotal: allCatches.filter((fishCatch) => fishCatch.user_id === player.id).length,
+				}
+			}),
 			fish: this.loadDefinitions().map((definition) => {
 				const serverRows = allCatches.filter((fishCatch) => fishCatch.fish_id === definition.id)
 				return {
@@ -207,17 +216,27 @@ export class FishingService {
 	}
 
 	getTextureFilePath(fishId: string) {
-		const definition = this.loadDefinitions().find((fish) => fish.id === fishId)
+		const definition = this.loadDefinitionsCache().byId.get(fishId)
 		if (!definition?.textureFilePath) throw new NotFoundException('Fish texture not found')
 		return definition.textureFilePath
 	}
 
 	private loadDefinitions() {
+		return this.loadDefinitionsCache().definitions
+	}
+
+	private loadDefinitionsCache() {
+		if (process.env.NODE_ENV === 'production' && this.cachedDefinitions) return this.cachedDefinitions
+
 		const itemRoot = ITEM_ROOTS.find((candidate) => existsSync(candidate)) ?? ITEM_ROOTS[0]!
 		const fishRoot = join(itemRoot, 'fish')
-		if (!existsSync(fishRoot)) return VANILLA_FISH
+		if (!existsSync(fishRoot)) {
+			this.cachedDefinitions = { mtimeMs: 0, definitions: VANILLA_FISH, byId: new Map(VANILLA_FISH.map((fish) => [fish.id, fish])) }
+			return this.cachedDefinitions
+		}
 		const mtimeMs = treeMtime(fishRoot)
-		if (this.cachedDefinitions?.mtimeMs === mtimeMs) return this.cachedDefinitions.definitions
+		if (this.cachedDefinitions?.mtimeMs === mtimeMs) return this.cachedDefinitions
+		const revision = process.env.NODE_ENV === 'production' ? FISH_ASSET_REVISION : String(mtimeMs)
 
 		const customDefinitions = findItemFiles(fishRoot).flatMap((filePath): FishDefinition[] => {
 			const json = JSON.parse(readFileSync(filePath, 'utf8')) as FishItemJson
@@ -232,15 +251,15 @@ export class FishingService {
 				facts: Array.isArray(json.tooltips)
 					? json.tooltips.filter((fact): fact is string => typeof fact === 'string' && fact.trim().length > 0)
 					: [],
-				iconUrl: `/api/fishing/texture/${encodeURIComponent(json.id)}?v=${mtimeMs}`,
+				iconUrl: `/api/fishing/texture/${encodeURIComponent(json.id)}?v=${revision}`,
 				textureFilePath,
 			}]
 		})
 		const definitions = [...VANILLA_FISH, ...customDefinitions]
 			.sort((left, right) => left.title.localeCompare(right.title, 'en'))
 
-		this.cachedDefinitions = { mtimeMs, definitions }
-		return definitions
+		this.cachedDefinitions = { mtimeMs, definitions, byId: new Map(definitions.map((fish) => [fish.id, fish])) }
+		return this.cachedDefinitions
 	}
 
 	private unrecorded(accountLinked: boolean, message: string) {
@@ -283,14 +302,15 @@ function serializeServerRecord(
 	if (!row) return null
 	const player = players.get(row.user_id)
 	if (!player) return null
+	const color = effectivePlayerColor(player.minecraft_uuid, profiles.get(player.id)?.color_hex)
 	return {
 		lengthCm: kind === 'largest' ? row.largest_length_cm : row.smallest_length_cm,
 		caughtAtUnixMs: kind === 'largest' ? row.largest_caught_at_unix_ms : row.smallest_caught_at_unix_ms,
 		player: {
 			id: player.id,
 			minecraftUsername: player.minecraft_username,
-			color: effectivePlayerColor(player.minecraft_uuid, profiles.get(player.id)?.color_hex),
-			avatarUrl: avatarUrl(player.minecraft_username),
+			color,
+			avatarUrl: playerAvatarUrl(player.minecraft_uuid),
 		},
 	}
 }
@@ -311,10 +331,6 @@ function treeMtime(path: string): number {
 
 function normalizeUnixMs(value: number) {
 	return Number.isFinite(value) && value > 0 ? Math.trunc(value) : Date.now()
-}
-
-function avatarUrl(username: string) {
-	return `https://mc-heads.net/avatar/${encodeURIComponent(username)}/32`
 }
 
 function vanillaFish(id: string, title: string, rarity: string, fact: string): FishDefinition {

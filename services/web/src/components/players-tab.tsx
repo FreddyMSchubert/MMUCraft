@@ -69,6 +69,7 @@ interface PlayerStats {
 interface PlayerSummary {
 	id: number
 	minecraftUsername: string
+	avatarUrl: string | null
 	isCurrentUser: boolean
 	canEditProfile: boolean
 	isMember: boolean
@@ -194,7 +195,7 @@ export function PlayersTab({ playerName, onSelectPlayer }: {
 			pronouns: player.profile.pronouns,
 			value: value ?? 0,
 			displayValue: formatColumnValue(player, leaderboardOption),
-			skinUrl: player.stats.minecraftProfile?.skinUrl,
+			avatarUrl: player.avatarUrl,
 		}
 	}) : []
 
@@ -632,10 +633,9 @@ function PlayerCell({ player }: { player: PlayerSummary }) {
 }
 
 function PlayerHead({ player, size }: { player: PlayerSummary; size: 'small' | 'large' }) {
-	const skinUrl = player.stats.minecraftProfile?.skinUrl
 	const label = `${player.minecraftUsername} head`
 
-	if (!skinUrl) {
+	if (!player.avatarUrl) {
 		return (
 			<span className={`playerHead playerHead-${size} playerHeadFallback`} role="img" aria-label={label}>
 				{player.minecraftUsername.charAt(0).toUpperCase()}
@@ -643,12 +643,7 @@ function PlayerHead({ player, size }: { player: PlayerSummary; size: 'small' | '
 		)
 	}
 
-	return (
-		<span className={`playerHead playerHead-${size}`} role="img" aria-label={label}>
-			<span className="playerHeadLayer playerHeadFace" style={{ backgroundImage: `url("${skinUrl}")` }} />
-			<span className="playerHeadLayer playerHeadHat" style={{ backgroundImage: `url("${skinUrl}")` }} />
-		</span>
-	)
+	return <img className={`playerHead playerHead-${size}`} src={player.avatarUrl} alt={label} />
 }
 
 function formatColumnValue(player: PlayerSummary, option: StatOption) {

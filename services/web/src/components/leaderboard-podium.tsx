@@ -11,7 +11,6 @@ export interface PodiumEntry {
 	value: number | string | null
 	displayValue: string
 	avatarUrl?: string | null
-	skinUrl?: string | null
 }
 
 export interface PodiumOption {
@@ -83,14 +82,6 @@ function PodiumHead({ entry }: { entry: PodiumEntry }) {
 	const label = `${entry.name} head`
 	if (entry.avatarUrl) {
 		return <img className="podiumHeadImage" src={entry.avatarUrl} alt={label} />
-	}
-	if (entry.skinUrl) {
-		return (
-			<span className="playerHead playerHead-large" role="img" aria-label={label}>
-				<span className="playerHeadLayer playerHeadFace" style={{ backgroundImage: `url("${entry.skinUrl}")` }} />
-				<span className="playerHeadLayer playerHeadHat" style={{ backgroundImage: `url("${entry.skinUrl}")` }} />
-			</span>
-		)
 	}
 	return <span className="playerHead playerHead-large playerHeadFallback" role="img" aria-label={label}>{entry.name.charAt(0)}</span>
 }

@@ -8,11 +8,10 @@ import {
 	claims,
 	DatabaseService,
 	playerProfiles,
-	playerStats,
 	users,
 } from '../database/database.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
-import { effectivePlayerColor, normalizeOptionalColor } from '../players/player-color'
+import { effectivePlayerColor, normalizeOptionalColor, playerAvatarUrl } from '../players/player-color'
 
 const CLAIM_BASE_PRICE_DABLOONS = 100
 const MEMBER_CLAIM_PRICE_GROWTH = 1.42
@@ -390,18 +389,16 @@ export class ClaimsService {
 	private getPeople() {
 		const profilesByUserId = new Map(this.database.connection.select().from(playerProfiles).all()
 			.map((profile) => [profile.user_id, profile]))
-		const statsByUserId = new Map(this.database.connection.select().from(playerStats).all()
-			.map((stats) => [stats.user_id, stats]))
-
 		return this.database.connection.select().from(users).all().map((user) => {
 			const profile = profilesByUserId.get(user.id)
+			const color = effectivePlayerColor(user.minecraft_uuid, profile?.color_hex)
 			return {
 				id: user.id,
 				minecraftUsername: user.minecraft_username,
 				preferredName: profile?.preferred_name ?? '',
 				pronouns: profile?.pronouns ?? '',
-				color: effectivePlayerColor(user.minecraft_uuid, profile?.color_hex),
-				skinUrl: readSkinUrl(statsByUserId.get(user.id)?.stats_json),
+				color,
+				avatarUrl: playerAvatarUrl(user.minecraft_uuid),
 				isMember: user.is_member === 1 && Boolean(user.minecraft_uuid),
 			}
 		})
@@ -450,14 +447,4 @@ function normalizePagination(offsetInput: string | undefined, limitInput: string
 		throw new BadRequestException(`Pagination requires a non-negative offset and a limit from 1 to ${ADMIN_MAX_PAGE_SIZE}.`)
 	}
 	return { offset, limit }
-}
-
-function readSkinUrl(statsJson: string | undefined): string | null {
-	if (!statsJson) return null
-	try {
-		const parsed = JSON.parse(statsJson) as { minecraftProfile?: { skinUrl?: unknown } }
-		return typeof parsed.minecraftProfile?.skinUrl === 'string' ? parsed.minecraftProfile.skinUrl : null
-	} catch {
-		return null
-	}
 }

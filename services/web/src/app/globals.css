@@ -2535,6 +2535,7 @@ a {
 	background: rgba(255, 255, 255, 0.1);
 	color: #ffd166;
 	font-weight: 800;
+	object-fit: cover;
 	image-rendering: pixelated;
 	image-rendering: crisp-edges;
 }
@@ -2549,23 +2550,6 @@ a {
 	width: 82px;
 	height: 82px;
 	font-size: 1.8rem;
-}
-
-.playerHeadLayer {
-	position: absolute;
-	inset: 0;
-	background-repeat: no-repeat;
-	background-size: 800% 800%;
-	image-rendering: pixelated;
-	image-rendering: crisp-edges;
-}
-
-.playerHeadFace {
-	background-position: 14.2857% 14.2857%;
-}
-
-.playerHeadHat {
-	background-position: 71.4286% 14.2857%;
 }
 
 .playerHeadFallback {

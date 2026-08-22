@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict')
 const sharp = require('sharp')
-const { DiscordAvatarController } = require('../dist/discord/discord-avatar.controller')
+const { PlayerAvatarController } = require('../dist/players/player-avatar.controller')
 const { formatDiscordWebhookMessage, formatOnlinePlayers } = require('../dist/discord/discord.service')
 
 async function check() {
@@ -27,7 +27,7 @@ async function check() {
 					: { color_hex: '#FF00AA' } }) }) }),
 			},
 		}
-		const file = await new DiscordAvatarController(database).avatar('8667ba71-b85a-4004-af54-457a9734eed7')
+		const file = await new PlayerAvatarController(database).discordAvatar('8667ba71-b85a-4004-af54-457a9734eed7')
 		const chunks = []
 		for await (const chunk of file.getStream()) chunks.push(chunk)
 		const metadata = await sharp(Buffer.concat(chunks)).metadata()
@@ -38,7 +38,7 @@ async function check() {
 		assert.deepEqual([...pixels.subarray((6 * 128 + 64) * 4, (6 * 128 + 64) * 4 + 3)], [255, 0, 170])
 		assert.equal(pixels[3], 0)
 		assert.deepEqual([...pixels.subarray((64 * 128 + 64) * 4, (64 * 128 + 64) * 4 + 3)], [171, 205, 239])
-		await assert.rejects(() => new DiscordAvatarController(database).avatar('not-a-uuid'))
+		await assert.rejects(() => new PlayerAvatarController(database).discordAvatar('not-a-uuid'))
 		assert.deepEqual(formatDiscordWebhookMessage({
 			type: 'chat', minecraft_username: 'Freddy', minecraft_uuid: 'id', content: 'Hello!',
 			role: 'Committee', nickname: 'Fred', pronouns: 'he/him', color_hex: '#ff00aa',

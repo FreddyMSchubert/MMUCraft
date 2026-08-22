@@ -114,7 +114,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private webhook: WebhookClient | null = null
 	private minecraft: grpc.Client | null = null
 	private readonly avatarBaseUrl = (process.env.DISCORD_AVATAR_BASE_URL
-		?? (process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/discord/avatar` : '')).replace(/\/$/, '')
+		?? (process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/players/avatar` : '')).replace(/\/$/, '')
 
 	constructor(
 		private readonly grpcServer: GrpcServerService,
@@ -174,7 +174,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		const message = formatDiscordWebhookMessage(currentEvent)
 		if (!message.content.trim()) return false
 		const avatarURL = !message.isServer && currentEvent.minecraft_uuid && this.avatarBaseUrl
-			? `${this.avatarBaseUrl}/${currentEvent.minecraft_uuid}.png`
+			? `${this.avatarBaseUrl}/${currentEvent.minecraft_uuid}.png?v=${currentEvent.color_hex.replace('#', '').toLowerCase()}`
 			: undefined
 		await this.webhook.send({
 			username: message.username,

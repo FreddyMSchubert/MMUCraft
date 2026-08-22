@@ -9,6 +9,7 @@ import {
 	WebhookClient,
 } from 'discord.js'
 import { GrpcServerService } from '../grpc/grpc-server.service'
+import { callUnary } from '../grpc/grpc.types'
 import { DatabaseService, discordAdminCommandLogs } from '../database/database.service'
 import { PlayersService } from '../players/players.service'
 
@@ -155,7 +156,9 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		this.client.on('interactionCreate', (interaction) => {
 			if (!interaction.isChatInputCommand()) return
 			if (interaction.commandName === 'mc') void this.runCommand(interaction)
+				.catch((error) => this.logger.error('Could not handle the Discord command', error))
 			else if (interaction.commandName === 'players') void this.listPlayers(interaction)
+				.catch((error) => this.logger.error('Could not handle the Discord command', error))
 		})
 		void this.client.login(token).catch((error) => this.logger.error('Could not connect the Discord bot', error))
 	}
@@ -250,12 +253,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	}
 
 	private async callMinecraft<T>(methodName: string, request: Record<string, unknown>): Promise<T> {
-		if (!this.minecraft) throw new Error('Minecraft gRPC client is not initialized')
-		const method = (this.minecraft as unknown as Record<string, unknown>)[methodName]
-		if (typeof method !== 'function') throw new Error(`Unknown GameplayControl method: ${methodName}`)
-		return await new Promise<T>((resolve, reject) => method.call(this.minecraft, request, (
-			error: grpc.ServiceError | null,
-			response: T,
-		) => error ? reject(error) : resolve(response)))
+		return await callUnary<T>(this.minecraft, methodName, request)
 	}
 }

@@ -6,6 +6,7 @@ import { AuthenticatedUser } from '../auth/auth.service'
 import { MinecraftIdentityService } from '../database/minecraft-identity.service'
 import { FishingService } from '../fishing/fishing.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
+import { callUnary } from '../grpc/grpc.types'
 import {
 	DatabaseService,
 	PlayerProfileRow,
@@ -556,16 +557,13 @@ export class PlayersService {
 	}
 
 	async grantKnowledgeReadMoney(minecraftUsername: string, amountDabloons: number) {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).GrantKnowledgeReadMoney
-		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: GrantKnowledgeReadMoney')
-
-		return await new Promise<{ granted: boolean; balance_dabloons: number; message: string }>((resolve, reject) => {
-			method.call(client, { minecraft_username: minecraftUsername, amount_dabloons: amountDabloons, message: `Knowledge read: you received ${amountDabloons} dabloons.` }, (error: grpc.ServiceError | null, response: { granted: boolean; balance_dabloons: number; message: string }) => {
-				if (error) reject(error)
-				else resolve(response)
-			})
-		})
+		return await callUnary<{ granted: boolean; balance_dabloons: number; message: string }>(
+			this.getGameplayControlClient(), 'GrantKnowledgeReadMoney', {
+				minecraft_username: minecraftUsername,
+				amount_dabloons: amountDabloons,
+				message: `Knowledge read: you received ${amountDabloons} dabloons.`,
+			},
+		)
 	}
 
 	recordMoneyForMinecraftUsername(
@@ -801,26 +799,21 @@ export class PlayersService {
 		}
 	}
 
-	private applyPlayerColor(minecraftUuid: string, color: string) {
-		const client = this.getGameplayControlClient()
-		return new Promise<void>((resolve, reject) => {
-			client.ApplyPlayerColor({ minecraft_uuid: minecraftUuid, color_hex: color }, { deadline: Date.now() + 10_000 }, (error, response) => {
-				if (error) reject(error)
-				else if (!response.applied) reject(new Error('Minecraft server refused the player color'))
-				else resolve()
-			})
-		})
+	private async applyPlayerColor(minecraftUuid: string, color: string) {
+		const response = await callUnary<{ applied: boolean }>(
+			this.getGameplayControlClient(), 'ApplyPlayerColor', { minecraft_uuid: minecraftUuid, color_hex: color },
+		)
+		if (!response.applied) throw new Error('Minecraft server refused the player color')
 	}
 
-	private applyPlayerSettings(minecraftUuid: string, showDeathCounter: boolean) {
-		const client = this.getGameplayControlClient()
-		return new Promise<void>((resolve, reject) => {
-			client.ApplyPlayerSettings({ minecraft_uuid: minecraftUuid, show_death_counter: showDeathCounter }, { deadline: Date.now() + 10_000 }, (error, response) => {
-				if (error) reject(error)
-				else if (!response.applied) reject(new Error('Minecraft server refused the player settings'))
-				else resolve()
-			})
-		})
+	private async applyPlayerSettings(minecraftUuid: string, showDeathCounter: boolean) {
+		const response = await callUnary<{ applied: boolean }>(
+			this.getGameplayControlClient(), 'ApplyPlayerSettings', {
+				minecraft_uuid: minecraftUuid,
+				show_death_counter: showDeathCounter,
+			},
+		)
+		if (!response.applied) throw new Error('Minecraft server refused the player settings')
 	}
 
 	private getGameplayControlClient() {
@@ -836,14 +829,11 @@ export class PlayersService {
 	private async reconcileOnlinePlayers() {
 		this.onlinePlayersReconciledAt = Date.now()
 		try {
-			const players = await new Promise<Array<{ minecraft_username: string; minecraft_uuid: string }>>((resolve, reject) => {
-				this.getGameplayControlClient().GetOnlinePlayers({}, { deadline: Date.now() + 5_000 }, (error, response) => {
-					if (error) reject(error)
-					else resolve(response.players)
-				})
-			})
+			const response = await callUnary<{ players: Array<{ minecraft_username: string; minecraft_uuid: string }> }>(
+				this.getGameplayControlClient(), 'GetOnlinePlayers', {}, { deadline: Date.now() + 5_000 },
+			)
 			this.onlinePlayers.clear()
-			for (const player of players) {
+			for (const player of response.players) {
 				this.onlinePlayers.set(onlinePlayerKey(player.minecraft_uuid, player.minecraft_username), player)
 			}
 		} catch (error) {

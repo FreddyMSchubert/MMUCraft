@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import * as grpc from '@grpc/grpc-js'
 import { MinecraftIdentityService, normalizeMinecraftUuid } from '../database/minecraft-identity.service'
 import { GrpcServerService } from '../grpc/grpc-server.service'
-import { UnaryCallback } from '../grpc/grpc.types'
+import { callUnary, UnaryCallback } from '../grpc/grpc.types'
 import { isValidMinecraftUsername } from './auth.util'
 import { signupFlows } from './signup-flow'
 import { PlayerBansService } from './player-bans.service'
@@ -113,24 +113,7 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	private async callClient<T>(client: grpc.Client | null, methodName: string, request: Record<string, unknown>): Promise<T> {
-		if (!client) throw new Error('gRPC client is not initialized')
-
-		const method = client[methodName as keyof grpc.Client] as unknown
-
-		if (typeof method !== 'function') {
-			throw new Error(`Unknown gRPC method: ${methodName}`)
-		}
-
-		return await new Promise<T>((resolve, reject) => {
-			method.call(client, request, (error: grpc.ServiceError | null, response: T) => {
-				if (error) {
-					reject(error)
-					return
-				}
-
-				resolve(response)
-			})
-		})
+		return await callUnary<T>(client, methodName, request)
 	}
 
 	private ping(

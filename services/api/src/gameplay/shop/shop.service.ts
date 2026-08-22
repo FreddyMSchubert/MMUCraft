@@ -8,6 +8,7 @@ import { AuthenticatedUser } from '../../auth/auth.service'
 import { DatabaseService, shopUnlocks, users } from '../../database/database.service'
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service'
 import { GrpcServerService } from '../../grpc/grpc-server.service'
+import { callUnary } from '../../grpc/grpc.types'
 import { KnowledgeService } from '../knowledge/knowledge.service'
 
 const DEFAULT_ITEM_ROOTS = [
@@ -624,15 +625,7 @@ export class ShopService implements OnModuleInit {
 	}
 
 	private async purchaseFromMod(minecraftUsername: string, item: CatalogItem, priceDabloons: number): Promise<PurchaseShopItemResponse> {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).PurchaseShopItem
-
-		if (typeof method !== 'function') {
-			throw new Error('Unknown GameplayControl method: PurchaseShopItem')
-		}
-
-		return await new Promise<PurchaseShopItemResponse>((resolve, reject) => {
-			method.call(client, {
+		return await callUnary<PurchaseShopItemResponse>(this.getGameplayControlClient(), 'PurchaseShopItem', {
 				minecraft_username: minecraftUsername,
 				item_id: item.deliveryItemId,
 				price_dabloons: priceDabloons,
@@ -641,28 +634,13 @@ export class ShopService implements OnModuleInit {
 				display_name: item.title,
 				item_type: item.type === 'generic' ? 'Item' : titleCase(item.type),
 				rarity: item.rarity,
-			}, (error: grpc.ServiceError | null, response: PurchaseShopItemResponse) => {
-				if (error) {
-					reject(error)
-					return
-				}
-
-				resolve(response)
-			})
 		})
 	}
 
 	private async getCharmInventoryFromMod(minecraftUsername: string): Promise<GetCharmInventoryResponse> {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).GetCharmInventory
-		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: GetCharmInventory')
-
-		return await new Promise<GetCharmInventoryResponse>((resolve, reject) => {
-			method.call(client, { minecraft_username: minecraftUsername }, (
-				error: grpc.ServiceError | null,
-				response: GetCharmInventoryResponse,
-			) => error ? reject(error) : resolve(response))
-		})
+		return await callUnary<GetCharmInventoryResponse>(
+			this.getGameplayControlClient(), 'GetCharmInventory', { minecraft_username: minecraftUsername },
+		)
 	}
 
 	private async upgradeCharmFromMod(
@@ -670,16 +648,10 @@ export class ShopService implements OnModuleInit {
 		itemId: string,
 		expectedLevel: number,
 	): Promise<UpgradeCharmResponse> {
-		const client = this.getGameplayControlClient()
-		const method = (client as unknown as Record<string, unknown>).UpgradeCharm
-		if (typeof method !== 'function') throw new Error('Unknown GameplayControl method: UpgradeCharm')
-
-		return await new Promise<UpgradeCharmResponse>((resolve, reject) => {
-			method.call(client, {
+		return await callUnary<UpgradeCharmResponse>(this.getGameplayControlClient(), 'UpgradeCharm', {
 				minecraft_username: minecraftUsername,
 				item_id: itemId,
 				expected_level: expectedLevel,
-			}, (error: grpc.ServiceError | null, response: UpgradeCharmResponse) => error ? reject(error) : resolve(response))
 		})
 	}
 

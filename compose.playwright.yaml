@@ -1,0 +1,66 @@
+name: ${COMPOSE_PROJECT_NAME:-kubecraft-playwright}
+
+services:
+    api:
+        build:
+            context: .
+            dockerfile: services/api/Dockerfile
+            target: runner
+        environment:
+            AUTH_CODE_SECRET: playwright-only-secret
+            DATABASE_URL: /app/data/playwright.sqlite
+            DATABASE_MIGRATIONS_PATH: /app/drizzle
+            DISCORD_BOT_TOKEN: ''
+            DISCORD_WEBHOOK_URL: ''
+            MOD_GRPC_TARGET: minecraft-not-present:50052
+            NODE_PATH: /app/node_modules
+        volumes:
+            - playwright-database:/app/data
+            - ./tests/fixtures:/tests/fixtures:ro
+        networks: [playwright]
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'node',
+                    '-e',
+                    "fetch('http://localhost:8080/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+                ]
+            interval: 2s
+            timeout: 2s
+            retries: 30
+
+    web:
+        build:
+            context: services/web
+            target: runner
+        environment:
+            API_BASE_URL: http://api:8080
+            SITE_IMAGE_TAG: playwright
+            DISCORD_URL: https://discord.gg/test
+            INSTAGRAM_URL: https://instagram.com/test
+        ports:
+            - '127.0.0.1:${PLAYWRIGHT_WEB_PORT:-3100}:3000'
+        networks: [playwright]
+        depends_on:
+            api:
+                condition: service_healthy
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'node',
+                    '-e',
+                    "fetch('http://localhost:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+                ]
+            interval: 2s
+            timeout: 2s
+            retries: 30
+
+volumes:
+    playwright-database:
+        name: ${COMPOSE_PROJECT_NAME:-kubecraft-playwright}-database
+
+networks:
+    playwright:
+        name: ${COMPOSE_PROJECT_NAME:-kubecraft-playwright}-network

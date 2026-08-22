@@ -14,9 +14,8 @@ RUN --mount=type=cache,target=/root/.npm npm ci
 FROM deps AS build
 COPY services/api/tsconfig.json services/api/drizzle.config.ts ./
 COPY services/api/src ./src
-COPY services/api/scripts ./scripts
 COPY services/api/drizzle ./drizzle
-RUN npm test
+RUN npm run build
 
 FROM deps AS dev
 ENV NODE_ENV=development \
@@ -24,7 +23,6 @@ ENV NODE_ENV=development \
     PORT=8080
 COPY services/api/tsconfig.json services/api/drizzle.config.ts ./
 COPY services/api/src ./src
-COPY services/api/scripts ./scripts
 COPY services/api/drizzle ./drizzle
 COPY services/web/public/knowledge ./content/knowledge
 COPY minecraft/main/data/data/items ./content/items

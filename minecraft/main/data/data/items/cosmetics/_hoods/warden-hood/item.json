@@ -1,0 +1,15 @@
+{
+	"title": "Warden hood",
+	"id": "cosmetic-hood-warden",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+	"priceDabloons": 250,
+		"description": "Unlock the Warden hood cosmetic.",
+		"unlockWeight": 40,
+		"unlockMessage": "Unlocked cosmetic: Warden hood."
+	},
+	"equippableCosmetic": {}
+}

@@ -133,6 +133,20 @@ public final class AuthGrpcService extends GrpcHandler {
         return server.getPlayerList().isWhiteListed(nameAndId);
     }
 
+    private boolean unwhitelistOnMainThread(String username) throws IOException {
+        MinecraftServer server = minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+
+        NameAndId nameAndId = lastSeenProfiles.get(normalize(username));
+        if (nameAndId == null) {
+            throw new IllegalStateException("Player must attempt to join before whitelist changes can be applied");
+        }
+
+        server.getPlayerList().getWhiteList().remove(nameAndId);
+        server.getPlayerList().getWhiteList().save();
+        return server.getPlayerList().isWhiteListed(nameAndId);
+    }
+
     private boolean blacklistOnMainThread(String username, String uuid, boolean blacklisted) throws IOException {
         NameAndId nameAndId = profile(username, uuid);
         return setBlacklistedOnMainThread(nameAndId, blacklisted);
@@ -232,6 +246,25 @@ public final class AuthGrpcService extends GrpcHandler {
                 StreamObserver<WhitelistPlayerResponse> responseObserver
         ) {
             callOnMainThread(() -> whitelistOnMainThread(request.getMinecraftUsername()))
+                    .whenComplete((whitelisted, error) -> {
+                        if (error != null) {
+                            responseObserver.onError(error);
+                            return;
+                        }
+
+                        responseObserver.onNext(WhitelistPlayerResponse.newBuilder()
+                                .setWhitelisted(Boolean.TRUE.equals(whitelisted))
+                                .build());
+                        responseObserver.onCompleted();
+                    });
+        }
+
+        @Override
+        public void unwhitelistPlayer(
+                WhitelistPlayerRequest request,
+                StreamObserver<WhitelistPlayerResponse> responseObserver
+        ) {
+            callOnMainThread(() -> unwhitelistOnMainThread(request.getMinecraftUsername()))
                     .whenComplete((whitelisted, error) -> {
                         if (error != null) {
                             responseObserver.onError(error);

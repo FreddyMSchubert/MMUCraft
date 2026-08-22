@@ -193,63 +193,90 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	const [message, setMessage] = useState<ReactNode>('');
 
 	const load = useCallback(async () => {
-		const [
-			playersResponse,
-			codesResponse,
-			countdownsResponse,
-			claimsResponse,
-			whitelistResponse,
-			bansResponse,
-			commandsResponse,
-		] = await Promise.all([
-			fetch('/api/admin/players', { cache: 'no-store' }),
-			fetch('/api/admin/gift-codes', { cache: 'no-store' }),
-			fetch('/api/admin/countdowns', { cache: 'no-store' }),
-			fetch(`/api/admin/claims?limit=${PAGE_SIZE}`, { cache: 'no-store' }),
-			fetch('/api/admin/email-whitelist', { cache: 'no-store' }),
-			fetch('/api/admin/player-bans', { cache: 'no-store' }),
-			fetch('/api/admin/discord-admin-commands', { cache: 'no-store' }),
-		]);
-		const playersBody = await playersResponse.json().catch(() => null);
-		const codesBody = await codesResponse.json().catch(() => null);
-		const countdownsBody = await countdownsResponse.json().catch(() => null);
-		const claimsBody = await claimsResponse.json().catch(() => null);
-		const whitelistBody = await whitelistResponse.json().catch(() => null);
-		const bansBody = await bansResponse.json().catch(() => null);
-		const commandsBody = await commandsResponse.json().catch(() => null);
-
-		if (!playersResponse.ok)
-			throw new Error(apiMessage(playersBody, 'Failed to load the member list'));
-		if (!codesResponse.ok) throw new Error(apiMessage(codesBody, 'Failed to load gift codes'));
-		if (!countdownsResponse.ok)
-			throw new Error(apiMessage(countdownsBody, 'Failed to load countdowns'));
-		if (!claimsResponse.ok) throw new Error(apiMessage(claimsBody, 'Failed to load claims'));
-		if (!whitelistResponse.ok)
-			throw new Error(apiMessage(whitelistBody, 'Failed to load the email whitelist'));
-		if (!bansResponse.ok) throw new Error(apiMessage(bansBody, 'Failed to load player bans'));
-		if (!commandsResponse.ok)
-			throw new Error(apiMessage(commandsBody, 'Failed to load Discord admin commands'));
-
-		setPlayers(apiBody<{ players: AdminPlayer[] }>(playersBody).players);
-		setGiftCodes(apiBody<{ giftCodes: GiftCode[] }>(codesBody).giftCodes);
-		setCountdowns(apiBody<{ countdowns: Countdown[] }>(countdownsBody).countdowns);
-		const claimsData = apiBody<{ claims: AdminClaim[]; hasMore?: boolean }>(claimsBody);
-		setClaims(claimsData.claims);
-		setClaimsHaveMore(Boolean(claimsData.hasMore));
-		setWhitelistedEmails(apiBody<{ entries: WhitelistedEmail[] }>(whitelistBody).entries);
-		setActivePlayerBans(apiBody<{ bans: ActivePlayerBan[] }>(bansBody).bans);
-		setDiscordAdminCommands(
-			apiBody<{ commands: DiscordAdminCommand[] }>(commandsBody).commands,
-		);
-	}, []);
+		const jobs: Promise<void>[] = [];
+		if (['members', 'whitelist', 'bans', 'dailies'].includes(activeSection)) {
+			jobs.push(
+				fetchAdmin<{ players: AdminPlayer[] }>(
+					'/api/admin/players',
+					'Failed to load the member list',
+				).then((body) => {
+					setPlayers(body.players);
+				}),
+			);
+		}
+		if (activeSection === 'gifts') {
+			jobs.push(
+				fetchAdmin<{ giftCodes: GiftCode[] }>(
+					'/api/admin/gift-codes',
+					'Failed to load gift codes',
+				).then((body) => {
+					setGiftCodes(body.giftCodes);
+				}),
+			);
+		}
+		if (activeSection === 'countdowns') {
+			jobs.push(
+				fetchAdmin<{ countdowns: Countdown[] }>(
+					'/api/admin/countdowns',
+					'Failed to load countdowns',
+				).then((body) => {
+					setCountdowns(body.countdowns);
+				}),
+			);
+		}
+		if (activeSection === 'claims') {
+			jobs.push(
+				fetchAdmin<{ claims: AdminClaim[]; hasMore?: boolean }>(
+					`/api/admin/claims?limit=${PAGE_SIZE}`,
+					'Failed to load claims',
+				).then((body) => {
+					setClaims(body.claims);
+					setClaimsHaveMore(Boolean(body.hasMore));
+				}),
+			);
+		}
+		if (activeSection === 'whitelist') {
+			jobs.push(
+				fetchAdmin<{ entries: WhitelistedEmail[] }>(
+					'/api/admin/email-whitelist',
+					'Failed to load the email whitelist',
+				).then((body) => {
+					setWhitelistedEmails(body.entries);
+				}),
+			);
+		}
+		if (activeSection === 'bans') {
+			jobs.push(
+				fetchAdmin<{ bans: ActivePlayerBan[] }>(
+					'/api/admin/player-bans',
+					'Failed to load player bans',
+				).then((body) => {
+					setActivePlayerBans(body.bans);
+				}),
+			);
+		}
+		if (activeSection === 'discord-commands') {
+			jobs.push(
+				fetchAdmin<{ commands: DiscordAdminCommand[] }>(
+					'/api/admin/discord-admin-commands',
+					'Failed to load Discord admin commands',
+				).then((body) => {
+					setDiscordAdminCommands(body.commands);
+				}),
+			);
+		}
+		await Promise.all(jobs);
+	}, [activeSection]);
 
 	useEffect(() => {
 		let cancelled = false;
 		const refreshSuggestion = () => {
 			setSuggestion((current) => makeDifferentSuggestion(current));
 		};
-		const initialSuggestionTimer = window.setTimeout(refreshSuggestion, 0);
-		const suggestionInterval = window.setInterval(refreshSuggestion, 5_000);
+		const initialSuggestionTimer =
+			activeSection === 'gifts' ? window.setTimeout(refreshSuggestion, 0) : null;
+		const suggestionInterval =
+			activeSection === 'gifts' ? window.setInterval(refreshSuggestion, 5_000) : null;
 
 		async function loadInitial() {
 			try {
@@ -262,10 +289,10 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		void loadInitial();
 		return () => {
 			cancelled = true;
-			window.clearTimeout(initialSuggestionTimer);
-			window.clearInterval(suggestionInterval);
+			if (initialSuggestionTimer !== null) window.clearTimeout(initialSuggestionTimer);
+			if (suggestionInterval !== null) window.clearInterval(suggestionInterval);
 		};
-	}, [load]);
+	}, [activeSection, load]);
 
 	async function setMembership(player: AdminPlayer, isMember: boolean) {
 		const action = isMember ? 'mark as a society member' : 'remove society membership from';
@@ -1727,6 +1754,13 @@ function apiBody<T extends object>(body: unknown): T {
 	if (!body || typeof body !== 'object')
 		throw new Error('The server returned an invalid response.');
 	return body as T;
+}
+
+async function fetchAdmin<T extends object>(path: string, fallback: string): Promise<T> {
+	const response = await fetch(path, { cache: 'no-store' });
+	const body = await response.json().catch(() => null);
+	if (!response.ok) throw new Error(apiMessage(body, fallback));
+	return apiBody<T>(body);
 }
 
 function errorMessage(error: unknown, fallback: string) {

@@ -258,7 +258,6 @@ export class GiftsService {
 
 			this.players.recordMoneyForUser(
 				user.id,
-				'earned',
 				'gift_code',
 				giftCode.amount_dabloons,
 				result.balance_dabloons,

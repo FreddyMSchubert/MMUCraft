@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { randomInt } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { eq } from 'drizzle-orm';
+import { and, count, eq, inArray, max, min } from 'drizzle-orm';
 import { interval, map, merge, of, Subject } from 'rxjs';
 import { AuthenticatedUser } from '../auth/auth.service';
 import {
@@ -115,30 +115,32 @@ export class FishingService implements OnModuleInit {
 				tx
 					.select()
 					.from(fishCatches)
-					.where(eq(fishCatches.user_id, user.id))
-					.all()
-					.find((catchRow) => catchRow.fish_id === definition.id) ?? null;
-			const serverRows = tx
-				.select()
+					.where(
+						and(
+							eq(fishCatches.user_id, user.id),
+							eq(fishCatches.fish_id, definition.id),
+						),
+					)
+					.get() ?? null;
+			const serverRecords = tx
+				.select({
+					count: count(),
+					largest: max(fishCatches.largest_length_cm),
+					smallest: min(fishCatches.smallest_length_cm),
+				})
 				.from(fishCatches)
 				.where(eq(fishCatches.fish_id, definition.id))
-				.all();
-			const serverLargest = serverRows.reduce(
-				(largest, row) => Math.max(largest, row.largest_length_cm),
-				-Infinity,
-			);
-			const serverSmallest = serverRows.reduce(
-				(smallest, row) => Math.min(smallest, row.smallest_length_cm),
-				Infinity,
-			);
+				.get();
 
 			const firstCatch = previous === null;
-			const firstServerCatch = serverRows.length === 0;
+			const firstServerCatch = !serverRecords?.count;
 			const personalSizeRecord = firstCatch || input.lengthCm > previous.largest_length_cm;
 			const personalSmallestRecord =
 				firstCatch || input.lengthCm < previous.smallest_length_cm;
-			const serverSizeRecord = input.lengthCm > serverLargest;
-			const serverSmallestRecord = input.lengthCm < serverSmallest;
+			const serverSizeRecord =
+				serverRecords?.largest == null || input.lengthCm > serverRecords.largest;
+			const serverSmallestRecord =
+				serverRecords?.smallest == null || input.lengthCm < serverRecords.smallest;
 			const values = {
 				user_id: user.id,
 				fish_id: definition.id,
@@ -232,11 +234,21 @@ export class FishingService implements OnModuleInit {
 		}
 
 		const allCatches = this.database.connection.select().from(fishCatches).all();
-		const selectedCatches = new Map(
-			allCatches
-				.filter((fishCatch) => fishCatch.user_id === selectedUserId)
-				.map((fishCatch) => [fishCatch.fish_id, fishCatch]),
-		);
+		const selectedCatches = new Map<string, FishCatchRow>();
+		const catchCountByUserId = new Map<number, number>();
+		const catchesByFishId = new Map<string, FishCatchRow[]>();
+		for (const fishCatch of allCatches) {
+			if (fishCatch.user_id === selectedUserId) {
+				selectedCatches.set(fishCatch.fish_id, fishCatch);
+			}
+			catchCountByUserId.set(
+				fishCatch.user_id,
+				(catchCountByUserId.get(fishCatch.user_id) ?? 0) + 1,
+			);
+			const serverRows = catchesByFishId.get(fishCatch.fish_id) ?? [];
+			serverRows.push(fishCatch);
+			catchesByFishId.set(fishCatch.fish_id, serverRows);
+		}
 		const playersById = new Map(playerRows.map((player) => [player.id, player]));
 
 		return {
@@ -253,14 +265,11 @@ export class FishingService implements OnModuleInit {
 					pronouns: profilesById.get(player.id)?.pronouns ?? '',
 					color,
 					avatarUrl: playerAvatarUrl(player.minecraft_uuid),
-					caughtTotal: allCatches.filter((fishCatch) => fishCatch.user_id === player.id)
-						.length,
+					caughtTotal: catchCountByUserId.get(player.id) ?? 0,
 				};
 			}),
 			fish: this.loadDefinitions().map((definition) => {
-				const serverRows = allCatches.filter(
-					(fishCatch) => fishCatch.fish_id === definition.id,
-				);
+				const serverRows = catchesByFishId.get(definition.id) ?? [];
 				return {
 					id: definition.id,
 					title: definition.title,
@@ -287,27 +296,28 @@ export class FishingService implements OnModuleInit {
 	}
 
 	getCatchCounts(userId: number) {
+		return this.getCatchCountsForUsers([userId]).get(userId) ?? emptyCatchCounts();
+	}
+
+	getCatchCountsForUsers(userIds: number[]) {
 		const rarityByFish = new Map(this.loadDefinitions().map((fish) => [fish.id, fish.rarity]));
-		const counts: Record<string, number> = {
-			total: 0,
-			common: 0,
-			uncommon: 0,
-			rare: 0,
-			epic: 0,
-			legendary: 0,
-			mythical: 0,
-		};
-		for (const row of this.database.connection
+		const countsByUserId = new Map(userIds.map((userId) => [userId, emptyCatchCounts()]));
+		if (userIds.length === 0) return countsByUserId;
+
+		const rows = this.database.connection
 			.select()
 			.from(fishCatches)
-			.where(eq(fishCatches.user_id, userId))
-			.all()) {
+			.where(inArray(fishCatches.user_id, userIds))
+			.all();
+		for (const row of rows) {
 			const rarity = rarityByFish.get(row.fish_id);
 			if (!rarity) continue;
+			const counts = countsByUserId.get(row.user_id);
+			if (!counts) continue;
 			counts.total = (counts.total ?? 0) + 1;
 			counts[rarity] = (counts[rarity] ?? 0) + 1;
 		}
-		return counts;
+		return countsByUserId;
 	}
 
 	events() {
@@ -416,6 +426,18 @@ function serializeCatch(row: FishCatchRow | null) {
 			caughtAtUnixMs: row.smallest_caught_at_unix_ms,
 		},
 		largest: { lengthCm: row.largest_length_cm, caughtAtUnixMs: row.largest_caught_at_unix_ms },
+	};
+}
+
+function emptyCatchCounts(): Record<string, number> {
+	return {
+		total: 0,
+		common: 0,
+		uncommon: 0,
+		rare: 0,
+		epic: 0,
+		legendary: 0,
+		mythical: 0,
 	};
 }
 

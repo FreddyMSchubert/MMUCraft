@@ -4,10 +4,11 @@ import {
 	Injectable,
 	Logger,
 	NotFoundException,
+	OnModuleDestroy,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import * as grpc from '@grpc/grpc-js';
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, count, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../auth/auth.service';
 import {
 	claimMembers,
@@ -32,6 +33,7 @@ const CLAIM_NAME_MAX_LENGTH = 20;
 const MAX_CHUNK_COORDINATE = 1_875_000;
 const ADMIN_PAGE_SIZE = 42;
 const ADMIN_MAX_PAGE_SIZE = 100;
+const CLAIM_SYNC_RETRY_MS = 5_000;
 
 interface ClaimData {
 	id: string;
@@ -99,14 +101,22 @@ interface GameplayProtoRoot {
 }
 
 @Injectable()
-export class ClaimsService {
+export class ClaimsService implements OnModuleDestroy {
 	private readonly logger = new Logger(ClaimsService.name);
 	private gameplayControlClient: GameplayControlClient | null = null;
+	private syncPending = false;
+	private syncInFlight = false;
+	private syncTimer: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly grpcServer: GrpcServerService,
 	) {}
+
+	onModuleDestroy() {
+		if (this.syncTimer) clearTimeout(this.syncTimer);
+		this.gameplayControlClient?.close();
+	}
 
 	list(user: AuthenticatedUser) {
 		const people = this.getPeople();
@@ -404,13 +414,42 @@ export class ClaimsService {
 	}
 
 	private async alertMod() {
+		this.syncPending = true;
+		await this.synchronizeClaims();
+	}
+
+	private async synchronizeClaims() {
+		if (this.syncInFlight) return;
+		this.syncInFlight = true;
+
 		try {
-			await this.pushSnapshot();
-		} catch (error) {
-			this.logger.warn(
-				`Could not immediately synchronize claims to Minecraft: ${String(error)}`,
-			);
+			while (this.syncPending) {
+				this.syncPending = false;
+				try {
+					await this.pushSnapshot();
+					if (this.syncTimer) clearTimeout(this.syncTimer);
+					this.syncTimer = null;
+				} catch (error) {
+					this.syncPending = true;
+					this.logger.warn(
+						`Could not synchronize claims to Minecraft; retrying: ${String(error)}`,
+					);
+					this.scheduleClaimsSync();
+					return;
+				}
+			}
+		} finally {
+			this.syncInFlight = false;
 		}
+	}
+
+	private scheduleClaimsSync() {
+		if (this.syncTimer) return;
+		this.syncTimer = setTimeout(() => {
+			this.syncTimer = null;
+			void this.synchronizeClaims();
+		}, CLAIM_SYNC_RETRY_MS);
+		this.syncTimer.unref();
 	}
 
 	private requireOwnedClaim(ownerUserId: number, claimId: string) {
@@ -424,12 +463,13 @@ export class ClaimsService {
 	}
 
 	private getNextClaimPricing(user: AuthenticatedUser) {
-		const nextClaimNumber =
+		const claimCount =
 			this.database.connection
-				.select()
+				.select({ value: count() })
 				.from(claims)
 				.where(eq(claims.owner_user_id, user.id))
-				.all().length + 1;
+				.get()?.value ?? 0;
+		const nextClaimNumber = claimCount + 1;
 		const memberPriceDabloons = claimPriceDabloons(nextClaimNumber, MEMBER_CLAIM_PRICE_GROWTH);
 		const normalPlayerPriceDabloons = claimPriceDabloons(
 			nextClaimNumber,

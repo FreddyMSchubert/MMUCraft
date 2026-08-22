@@ -102,7 +102,6 @@ public final class GameplayGrpcService extends GrpcHandler {
             String minecraftUsername,
             String minecraftUuid,
             int amountDabloons,
-            String direction,
             String source,
             String referenceId,
             int balanceDabloons
@@ -111,7 +110,6 @@ public final class GameplayGrpcService extends GrpcHandler {
                 minecraftUsername,
                 minecraftUuid,
                 amountDabloons,
-                direction,
                 source,
                 referenceId,
                 balanceDabloons
@@ -288,7 +286,6 @@ public final class GameplayGrpcService extends GrpcHandler {
             String minecraftUsername,
             String minecraftUuid,
             int amountDabloons,
-            String direction,
             String source,
             String referenceId,
             int balanceDabloons
@@ -305,7 +302,6 @@ public final class GameplayGrpcService extends GrpcHandler {
                 .setMinecraftUsername(minecraftUsername)
                 .setMinecraftUuid(minecraftUuid)
                 .setAmountDabloons(Math.max(0, amountDabloons))
-                .setDirection(direction)
                 .setSource(source)
                 .setReferenceId(referenceId)
                 .setUnixMs(System.currentTimeMillis())

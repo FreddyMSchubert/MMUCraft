@@ -86,8 +86,14 @@ interface PlayerSummary {
 
 interface PlayersResponse {
 	currentUserId: number;
+	currentUserMinecraftUsername: string;
 	statOptions: StatOption[];
 	players: PlayerSummary[];
+	selectedPlayer: PlayerSummary | null;
+	requestedPlayer: string | null;
+	page: number;
+	pageSize: number;
+	hasMore: boolean;
 }
 
 const DEFAULT_COLUMN_KEYS = [
@@ -97,7 +103,6 @@ const DEFAULT_COLUMN_KEYS = [
 	'minecraft.custom.minecraft:deaths',
 ];
 const DEFAULT_LEADERBOARD_KEY = 'minecraft.advancement.minecraft:earned';
-const PAGE_SIZE = 42;
 const PROFILE_TEXT_LIMITS = {
 	preferredName: 16,
 	pronouns: 16,
@@ -124,27 +129,44 @@ export function PlayersTab({
 		direction: 'desc',
 	});
 	const [leaderboardKey, setLeaderboardKey] = useState(DEFAULT_LEADERBOARD_KEY);
-	const [visiblePlayerCount, setVisiblePlayerCount] = useState(PAGE_SIZE);
+	const [loadingMore, setLoadingMore] = useState(false);
 
-	const load = useCallback(async () => {
-		const response = await fetch('/api/players', {
-			cache: 'no-store',
-		});
-		const body = await response.json().catch(() => null);
+	const load = useCallback(
+		async (page = 0, append = false, signal?: AbortSignal) => {
+			const query = new URLSearchParams({ page: String(page) });
+			if (playerName) query.set('player', playerName);
+			const response = await fetch(`/api/players?${query}`, {
+				cache: 'no-store',
+				signal,
+			});
+			const body = await response.json().catch(() => null);
 
-		if (!response.ok) {
-			throw new Error(apiMessage(body, 'Failed to load players'));
-		}
+			if (!response.ok) {
+				throw new Error(apiMessage(body, 'Failed to load players'));
+			}
 
-		setData(body as PlayersResponse);
-	}, []);
+			const next = body as PlayersResponse;
+			setData((current) => {
+				if (!append || !current) return next;
+				const players = new Map(current.players.map((player) => [player.id, player]));
+				for (const player of next.players) players.set(player.id, player);
+				return {
+					...next,
+					players: [...players.values()],
+					statOptions: mergeStatOptions(current.statOptions, next.statOptions),
+				};
+			});
+		},
+		[playerName],
+	);
 
 	useEffect(() => {
 		let cancelled = false;
+		const controller = new AbortController();
 
 		async function loadInitial() {
 			try {
-				await load();
+				await load(0, false, controller.signal);
 			} catch (caught) {
 				if (!cancelled) {
 					setError(caught instanceof Error ? caught.message : 'Failed to load players');
@@ -156,26 +178,31 @@ export function PlayersTab({
 
 		return () => {
 			cancelled = true;
+			controller.abort();
 		};
 	}, [load]);
 
 	const players = useMemo(() => data?.players ?? [], [data?.players]);
-	const currentPlayer = players.find((player) => player.isCurrentUser);
 	const statOptions = useMemo(() => data?.statOptions ?? [], [data?.statOptions]);
 	const selectedPlayer = useMemo(() => {
 		if (!playerName) return null;
 		return (
-			players.find(
+			[data?.selectedPlayer, ...players].find(
 				(player) =>
-					player.minecraftUsername.localeCompare(playerName, 'en', {
+					player?.minecraftUsername.localeCompare(playerName, 'en', {
 						sensitivity: 'base',
 					}) === 0,
 			) ?? null
 		);
-	}, [playerName, players]);
+	}, [data?.selectedPlayer, playerName, players]);
 
 	useEffect(() => {
-		if (!data || !playerName) return;
+		if (
+			!data ||
+			!playerName ||
+			data.requestedPlayer?.localeCompare(playerName, 'en', { sensitivity: 'base' }) !== 0
+		)
+			return;
 		if (!selectedPlayer) {
 			onSelectPlayer(null, true);
 			return;
@@ -203,7 +230,6 @@ export function PlayersTab({
 			comparePlayers(left, right, sortOption, sort.direction),
 		);
 	}, [players, sort, statOptions]);
-	const visiblePlayers = sortedPlayers.slice(0, visiblePlayerCount);
 	const leaderboardOptions = useMemo(
 		() =>
 			statOptions.filter(
@@ -253,6 +279,19 @@ export function PlayersTab({
 		await load();
 	}
 
+	async function loadMore() {
+		if (!data || loadingMore || !data.hasMore) return;
+		setLoadingMore(true);
+		setError('');
+		try {
+			await load(data.page + 1, true);
+		} catch (caught) {
+			setError(caught instanceof Error ? caught.message : 'Failed to load more players');
+		} finally {
+			setLoadingMore(false);
+		}
+	}
+
 	if (error && !data) {
 		return <p className="authError">{error}</p>;
 	}
@@ -283,11 +322,11 @@ export function PlayersTab({
 		<div className="playersPanel">
 			<div className="playersTop">
 				<h3>Players</h3>
-				{currentPlayer && (
+				{data.currentUserMinecraftUsername && (
 					<button
 						type="button"
 						onClick={() => {
-							onSelectPlayer(currentPlayer.minecraftUsername);
+							onSelectPlayer(data.currentUserMinecraftUsername);
 						}}
 					>
 						View / edit own profile
@@ -344,7 +383,7 @@ export function PlayersTab({
 						</tr>
 					</thead>
 					<tbody>
-						{visiblePlayers.map((player) => (
+						{sortedPlayers.map((player) => (
 							<tr
 								key={player.id}
 								onClick={() => {
@@ -371,19 +410,22 @@ export function PlayersTab({
 					</tbody>
 				</table>
 			</div>
-			{visiblePlayerCount < sortedPlayers.length && (
+			{data.hasMore && (
 				<button
 					type="button"
 					className="loadMoreButton"
-					onClick={() => {
-						setVisiblePlayerCount((current) => current + PAGE_SIZE);
-					}}
+					disabled={loadingMore}
+					onClick={() => void loadMore()}
 				>
-					Load more
+					{loadingMore ? 'Loading...' : 'Load 42 more'}
 				</button>
 			)}
 		</div>
 	);
+}
+
+function mergeStatOptions(current: StatOption[], next: StatOption[]) {
+	return [...new Map([...current, ...next].map((option) => [option.key, option])).values()];
 }
 
 function StatOptionGroups({ options }: { options: StatOption[] }) {

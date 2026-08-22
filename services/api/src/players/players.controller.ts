@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Patch, Query } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { PlayersService } from './players.service';
 
@@ -10,9 +10,13 @@ export class PlayersController {
 	) {}
 
 	@Get()
-	listPlayers(@Headers('cookie') cookieHeader: string | undefined) {
+	listPlayers(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Query('page') page: string | undefined,
+		@Query('player') player: string | undefined,
+	) {
 		const user = this.auth.requireSession(cookieHeader);
-		return this.players.listPlayers(user);
+		return this.players.listPlayers(user, page, player);
 	}
 
 	@Get('online')

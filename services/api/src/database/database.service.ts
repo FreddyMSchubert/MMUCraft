@@ -2,13 +2,15 @@ import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import Database from 'better-sqlite3';
-import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { drizzle, BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { adoptLegacyDatabase } from './legacy-database';
 import { schema, users } from './schema';
 
 export * from './schema';
+
+export const SUPER_ADMIN_MINECRAFT_UUID = '8580f9f830c44b83a66cac52ac6d5b0b';
 
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
@@ -39,23 +41,14 @@ export class DatabaseService implements OnModuleDestroy {
 	}
 
 	private promoteSuperAdmin() {
-		const superAdmin = this.connection
-			.select()
-			.from(users)
-			.all()
-			.find(
-				(user) =>
-					user.minecraft_username.localeCompare('MerlinSpace', 'en', {
-						sensitivity: 'base',
-					}) === 0,
-			);
-
-		if (superAdmin) {
-			this.connection
-				.update(users)
+		this.connection.transaction((tx) => {
+			tx.update(users).set({ is_super_admin: 0 }).run();
+			tx.update(users)
 				.set({ is_committee: 1, is_super_admin: 1 })
-				.where(eq(users.id, superAdmin.id))
+				.where(
+					sql`lower(replace(${users.minecraft_uuid}, '-', '')) = ${SUPER_ADMIN_MINECRAFT_UUID}`,
+				)
 				.run();
-		}
+		});
 	}
 }

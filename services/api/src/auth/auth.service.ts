@@ -5,6 +5,7 @@ import {
 	HttpException,
 	HttpStatus,
 	Injectable,
+	Logger,
 	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { readFileSync } from 'node:fs';
 import { and, asc, eq, gt, gte, isNull, lt } from 'drizzle-orm';
 import {
 	DatabaseService,
+	SUPER_ADMIN_MINECRAFT_UUID,
 	UserRow,
 	emailSendEvents,
 	emailWhitelist,
@@ -44,7 +46,6 @@ const EMAIL_CODE_TTL_MS = 10 * 60 * 1000;
 const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000;
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000;
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000;
-const SUPER_ADMIN_MINECRAFT_USERNAME = 'MerlinSpace';
 const MAX_AUTH_CODE_ATTEMPTS = 5;
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -102,6 +103,8 @@ export interface AuthenticatedUser {
 
 @Injectable()
 export class AuthService {
+	private readonly logger = new Logger(AuthService.name);
+
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly grpc: AuthGrpcService,
@@ -342,9 +345,9 @@ export class AuthService {
 			throw new ForbiddenException('This external player invitation is no longer active');
 		}
 
-		await this.grpc.whitelistPlayer(minecraftUsername);
-
+		let accountCreated = false;
 		try {
+			await this.grpc.whitelistPlayer(minecraftUsername);
 			const userId = this.database.connection.transaction((tx) => {
 				const created = tx
 					.insert(users)
@@ -353,8 +356,8 @@ export class AuthService {
 						minecraft_uuid: minecraftUuid,
 						minecraft_username: minecraftUsername,
 						responsible_user_id: responsibleUserId,
-						is_committee: isSuperAdminUsername(minecraftUsername) ? 1 : 0,
-						is_super_admin: isSuperAdminUsername(minecraftUsername) ? 1 : 0,
+						is_committee: minecraftUuid === SUPER_ADMIN_MINECRAFT_UUID ? 1 : 0,
+						is_super_admin: minecraftUuid === SUPER_ADMIN_MINECRAFT_UUID ? 1 : 0,
 						whitelisted_at_unix_ms: now,
 						rules_accepted_at_unix_ms: now,
 						created_at_unix_ms: now,
@@ -364,11 +367,22 @@ export class AuthService {
 
 				return created.id;
 			});
+			accountCreated = true;
 			signupFlows.delete(flowId);
 			return this.createSession(userId);
 		} catch (error) {
-			await this.grpc.removePendingJoin(minecraftUsername).catch(() => undefined);
+			if (!accountCreated) {
+				await this.grpc
+					.unwhitelistPlayer(minecraftUsername)
+					.catch((cleanupError: unknown) => {
+						this.logger.error(
+							`Could not compensate the whitelist update for ${minecraftUsername}: ${String(cleanupError)}`,
+						);
+					});
+			}
 			throw error;
+		} finally {
+			await this.grpc.removePendingJoin(minecraftUsername).catch(() => undefined);
 		}
 	}
 
@@ -1006,14 +1020,6 @@ function verificationCodeEmailHtml(code: string) {
 		.join('');
 
 	return `<p>Your verification code is:</p><table role="presentation"><tr>${items}</tr></table><p>It expires in 10 minutes. If you did not request this, you can ignore this email.</p>`;
-}
-
-function isSuperAdminUsername(minecraftUsername: string) {
-	return (
-		minecraftUsername.localeCompare(SUPER_ADMIN_MINECRAFT_USERNAME, 'en', {
-			sensitivity: 'base',
-		}) === 0
-	);
 }
 
 function retryAtForLimit(

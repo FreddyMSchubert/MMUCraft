@@ -293,9 +293,9 @@ message SyncPlayerStatsResponse {
 }
 
 message RecordMoneyEventRequest {
+  reserved 3;
   string minecraft_username = 1;
   int32 amount_dabloons = 2;
-  string direction = 3;
   string source = 4;
   string reference_id = 5;
   int64 unix_ms = 6;

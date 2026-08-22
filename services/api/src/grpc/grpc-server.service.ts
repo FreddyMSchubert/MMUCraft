@@ -9,6 +9,7 @@ export class GrpcServerService implements OnApplicationBootstrap, OnModuleDestro
 	private readonly logger = new Logger(GrpcServerService.name);
 	private readonly server = new grpc.Server();
 	private listening = false;
+	private draining: Promise<void> | null = null;
 
 	addService(service: grpc.ServiceDefinition, implementation: grpc.UntypedServiceImplementation) {
 		if (this.listening) {
@@ -68,7 +69,19 @@ export class GrpcServerService implements OnApplicationBootstrap, OnModuleDestro
 		});
 	}
 
+	drain() {
+		return (this.draining ??= this.drainOnce());
+	}
+
+	private async drainOnce() {
+		if (!this.listening) return;
+		await new Promise<void>((resolve, reject) =>
+			this.server.tryShutdown((error) => (error ? reject(error) : resolve())),
+		);
+		this.listening = false;
+	}
+
 	onModuleDestroy() {
-		this.server.forceShutdown();
+		return this.drain();
 	}
 }

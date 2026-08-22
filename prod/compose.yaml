@@ -16,6 +16,7 @@ x-node-runtime: &node-runtime
   pids_limit: 256
   logging: *logging
   restart: unless-stopped
+  stop_grace_period: 30s
 
 services:
   api:
@@ -121,6 +122,7 @@ services:
       MODRINTH_DOWNLOAD_DEPENDENCIES: required
       MEMORY: 1536M
       INIT_MEMORY: 1G
+      STOP_DURATION: "110"
       USE_MEOWICE_FLAGS: "true"
       ENABLE_ROLLING_LOGS: "false"
       LOG_TIMESTAMP: "true"
@@ -157,6 +159,13 @@ services:
     logging: *logging
     restart: unless-stopped
     stop_grace_period: 2m
+    healthcheck:
+      test: ["CMD", "mc-health"]
+      interval: 10s
+      start_interval: 1s
+      timeout: 5s
+      retries: 12
+      start_period: 2m
     networks: [app]
 
   nginx:

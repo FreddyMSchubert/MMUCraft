@@ -88,6 +88,7 @@ services:
       MODRINTH_PROJECTS: fabric-api
       MEMORY: 2G
       INIT_MEMORY: 1G
+      STOP_DURATION: "110"
       OVERRIDE_SERVER_PROPERTIES: "false"
       SKIP_SERVER_PROPERTIES: "true"
       COPY_CONFIG_DEST: /data
@@ -104,3 +105,11 @@ services:
         condition: service_healthy
     logging: *logging
     restart: unless-stopped
+    stop_grace_period: 2m
+    healthcheck:
+      test: ["CMD", "mc-health"]
+      interval: 10s
+      start_interval: 1s
+      timeout: 5s
+      retries: 12
+      start_period: 2m

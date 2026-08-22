@@ -4,6 +4,7 @@ set -eu
 tag=${1:-}
 image_prefix=${2:-}
 warning_minutes=${3:-3}
+force=${4:-false}
 
 case "$tag" in
 	''|*[!A-Za-z0-9_.-]*) echo "Invalid image tag: $tag" >&2; exit 2 ;;
@@ -19,6 +20,10 @@ esac
 case "$warning_minutes" in
 	0|[1-9]|[1-5][0-9]|60) ;;
 	*) echo "Restart warning must be a whole number from 0 to 60 minutes" >&2; exit 2 ;;
+esac
+case "$force" in
+	true|false) ;;
+	*) echo "Force must be true or false" >&2; exit 2 ;;
 esac
 
 if [ ! -f .env ]; then
@@ -98,11 +103,38 @@ if [ "$warning_minutes" -gt 0 ] && dc ps --status running --services | grep -qx 
 	sleep "$((warning_minutes * 60))"
 fi
 
+if dc ps --status running --services | grep -qx minecraft; then
+	status=0
+	dc exec -T api node -e '
+		fetch("http://127.0.0.1:8080/api/internal/shutdown", {
+			method: "POST",
+			signal: AbortSignal.timeout(30_000),
+		}).then(async response => {
+			if (response.status === 404) process.exit(42);
+			if (!response.ok) throw new Error(response.status + " " + await response.text());
+			console.log(await response.text());
+		}).catch(error => { console.error(error); process.exit(1); });
+	' || status=$?
+	if [ "$status" -eq 42 ]; then
+		echo "Current API does not support draining yet; using Minecraft's graceful stop for this deployment."
+	elif [ "$status" -ne 0 ]; then
+		if [ "$force" = true ]; then
+			echo "WARNING: API drain/save failed; forcing deployment." >&2
+		else
+			echo "API drain/save failed; restarting the drained API before aborting." >&2
+			dc restart api
+			dc up -d --wait --wait-timeout 60 api
+			exit "$status"
+		fi
+	fi
+	dc stop minecraft
+fi
+
 dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
 
 # Never prune volumes: they contain the database and Minecraft world.
 docker container prune -f >/dev/null
-docker image prune -f >/dev/null
+docker image prune -f --filter until=168h >/dev/null
 docker builder prune -f --filter until=168h >/dev/null
 
 dc ps

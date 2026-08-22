@@ -131,6 +131,9 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	});
 	private webhook: WebhookClient | null = null;
 	private minecraft: grpc.Client | null = null;
+	private draining = false;
+	private drainPromise: Promise<void> | null = null;
+	private readonly pending = new Set<Promise<unknown>>();
 	private readonly avatarBaseUrl = (
 		process.env.DISCORD_AVATAR_BASE_URL ??
 		(process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/players/avatar` : '')
@@ -172,30 +175,32 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 				}),
 		);
 		this.client.on('messageCreate', (message) => {
-			if (message.channelId !== this.channelId || message.author.bot || message.webhookId)
+			if (
+				this.draining ||
+				message.channelId !== this.channelId ||
+				message.author.bot ||
+				message.webhookId
+			)
 				return;
 			const attachments = [...message.attachments.values()].map(
 				(attachment) => attachment.url,
 			);
 			const content = [message.content, ...attachments].filter(Boolean).join(' ');
 			if (!content) return;
-			void this.callMinecraft('BroadcastDiscordMessage', {
-				discord_name: message.member?.displayName ?? message.author.displayName,
-				content,
-			}).catch((error: unknown) => {
-				this.logger.error('Could not send Discord message to Minecraft', error);
-			});
+			this.track(
+				this.callMinecraft('BroadcastDiscordMessage', {
+					discord_name: message.member?.displayName ?? message.author.displayName,
+					content,
+				}),
+				'Could not send Discord message to Minecraft',
+			);
 		});
 		this.client.on('interactionCreate', (interaction) => {
-			if (!interaction.isChatInputCommand()) return;
+			if (this.draining || !interaction.isChatInputCommand()) return;
 			if (interaction.commandName === 'mc')
-				void this.runCommand(interaction).catch((error: unknown) => {
-					this.logger.error('Could not handle the Discord command', error);
-				});
+				this.track(this.runCommand(interaction), 'Could not handle the Discord command');
 			else if (interaction.commandName === 'players')
-				void this.listPlayers(interaction).catch((error: unknown) => {
-					this.logger.error('Could not handle the Discord command', error);
-				});
+				this.track(this.listPlayers(interaction), 'Could not handle the Discord command');
 		});
 		void this.client.login(token).catch((error: unknown) => {
 			this.logger.error('Could not connect the Discord bot', error);
@@ -232,10 +237,27 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		return true;
 	}
 
-	onModuleDestroy() {
+	drain() {
+		return (this.drainPromise ??= this.drainOnce());
+	}
+
+	private async drainOnce() {
+		this.draining = true;
+		await this.client.destroy();
+		await Promise.allSettled(this.pending);
+	}
+
+	async onModuleDestroy() {
+		await this.drain();
 		this.minecraft?.close();
 		this.webhook?.destroy();
-		void this.client.destroy();
+	}
+
+	private track(task: Promise<unknown>, failureMessage: string) {
+		this.pending.add(task);
+		void task
+			.catch((error: unknown) => this.logger.error(failureMessage, error))
+			.finally(() => this.pending.delete(task));
 	}
 
 	private async registerCommands() {

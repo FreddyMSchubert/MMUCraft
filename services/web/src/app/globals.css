@@ -842,6 +842,13 @@ a {
 	text-underline-offset: 3px;
 }
 
+.authForm .authPrivacyNote {
+	margin-top: -6px;
+	color: rgba(255, 255, 255, 0.56);
+	font-size: 0.72rem;
+	line-height: 1.4;
+}
+
 .authForm .authOutlinedButton {
 	border: 1px solid rgba(255, 209, 102, 0.45);
 	background: transparent;

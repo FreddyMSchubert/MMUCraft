@@ -282,6 +282,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						autoComplete="email"
 						required
 					/>
+					<p className="authPrivacyNote">Your email address and student ID are visible only to the committee, not other society members.</p>
 					<button disabled={busy || resendSeconds > 0}>
 						{resendSeconds > 0 ? `Try again in ${formatCountdown(resendSeconds)}` : 'Sign up'}
 					</button>

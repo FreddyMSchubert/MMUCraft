@@ -508,7 +508,7 @@ function PlayerProfileForm({
 			}}
 		>
 			<p className="playerProfileHint">
-				All of this is optional, but it can help people know who you are, how to reach out, and how to find you.
+				Everything you enter here is visible to every society member. Be open and share a little about yourself so people know who they&apos;re talking to. Your nickname and pronouns are also displayed in-game.
 			</p>
 			<label>
 				<span>Nickname</span>

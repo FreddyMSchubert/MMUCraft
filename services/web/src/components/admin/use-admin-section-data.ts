@@ -106,7 +106,7 @@ export function useAdminSectionData(
 
 	useEffect(() => {
 		let cancelled = false;
-		void load().catch((caught) => {
+		void load().catch((caught: unknown) => {
 			if (!cancelled) setError(errorMessage(caught, 'Failed to load admin tools'));
 		});
 		return () => {

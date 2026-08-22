@@ -91,8 +91,9 @@ export function readTextureAnimation(textureFilePath: string): TextureAnimationD
 			? parsed.animation.frames
 					.map((frame) => {
 						if (typeof frame === 'number') return frame;
-						if (frame && typeof frame === 'object' && 'index' in frame)
-							return frame.index;
+						if (frame && typeof frame === 'object' && 'index' in frame) {
+							return (frame as { index: unknown }).index;
+						}
 						return null;
 					})
 					.filter(

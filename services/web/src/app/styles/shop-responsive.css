@@ -1,0 +1,82 @@
+@media (max-width: 700px) {
+	.shopDeals {
+		grid-template-columns: 1fr 120px;
+	}
+	.shopDealCopy {
+		padding: 20px;
+	}
+	.shopDealCopy > p {
+		display: none;
+	}
+	.shopDealHeading {
+		flex-wrap: wrap;
+	}
+	.shopDealSpark {
+		display: none;
+	}
+	.shopDealActions {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+	.shopDealArrow {
+		width: 32px;
+		height: 50px;
+	}
+	.shopDealArrow.previous {
+		left: 6px;
+	}
+	.shopDealArrow.next {
+		right: 6px;
+	}
+	.shopDeals:has(.shopDealArrow) .shopDealCopy {
+		padding-left: 45px;
+	}
+	.shopCatalogToolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+	.shopCatalogToolbar .shopOrderControl select {
+		width: 100%;
+	}
+	.shopFilterRow {
+		grid-template-columns: 1fr;
+	}
+	.shopGrid {
+		grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+	}
+	.shopCard {
+		grid-template-rows: 150px 1fr auto;
+		min-height: 322px;
+	}
+	.shopImageFrame,
+	.shopModelHost {
+		min-height: 148px;
+	}
+	.shopDetailsBackdrop {
+		padding: 0;
+	}
+	.shopDetails {
+		width: 100%;
+		min-height: 100vh;
+		border-radius: 0;
+	}
+	.shopDetailsHero {
+		grid-template-columns: 1fr;
+	}
+	.shopDetailsPreview,
+	.shopDetailsPreview .shopModelHost,
+	.shopDetailsPreview .shopItemIcon {
+		min-height: 300px;
+		height: 300px;
+	}
+	.shopDetailsSummary {
+		padding: 28px 22px 34px;
+	}
+	.charmProgression {
+		padding: 20px;
+	}
+	.charmProgressionHeading {
+		align-items: stretch;
+		flex-direction: column;
+	}
+}

@@ -1,3 +1,44 @@
+.page {
+	position: relative;
+	min-height: 100vh;
+	overflow-x: hidden;
+}
+
+.page::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	background: rgba(0, 0, 0, 0.35);
+	pointer-events: none;
+}
+
+.siteBackground {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	background: center / cover no-repeat;
+}
+
+.content {
+	position: relative;
+	z-index: 1;
+	width: min(1100px, calc(100vw - 32px));
+	margin: 0 auto;
+	padding: 48px 0 72px;
+	text-align: center;
+}
+
+.siteHeader {
+	position: relative;
+	z-index: 2;
+	margin-bottom: 72px;
+}
+
+.siteHeader .siteMinecraftTitle {
+	width: min(820px, 92vw);
+	margin: 0 auto;
+}
 /* ============================================================
    Shared
    ============================================================ */
@@ -133,4 +174,3 @@
 		animation: none;
 	}
 }
-

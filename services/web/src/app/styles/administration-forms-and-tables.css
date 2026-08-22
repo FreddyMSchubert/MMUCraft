@@ -1,3 +1,135 @@
+.adminWarnings,
+.giftInstructions {
+	padding: 13px 15px;
+	border: 1px solid rgba(255, 209, 102, 0.42);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.1);
+}
+
+.adminWarnings-critical {
+	border-color: rgba(255, 112, 112, 0.55);
+	background: rgba(255, 74, 74, 0.1);
+}
+
+.adminWarnings ul,
+.giftInstructions ol {
+	margin: 8px 0 0;
+	padding-left: 22px;
+}
+
+.adminWarnings li,
+.giftInstructions li {
+	margin-top: 5px;
+}
+
+.giftInstructions {
+	display: grid;
+	gap: 8px;
+}
+
+.giftCodeForm {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	align-items: end;
+}
+
+.countdownForm {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	align-items: end;
+}
+
+.countdownForm label {
+	display: grid;
+	gap: 6px;
+}
+
+.countdownForm input,
+.countdownForm textarea {
+	width: 100%;
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.09);
+	color: #fff;
+	color-scheme: dark;
+	font: inherit;
+}
+
+.countdownAbstractInput,
+.countdownImageInput,
+.countdownColorOptions,
+.countdownFormActions {
+	grid-column: 1 / -1;
+}
+
+.countdownFormActions {
+	display: flex;
+	gap: 10px;
+}
+
+.countdownColorOptions {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 7px;
+}
+
+.countdownColorOptions legend {
+	padding: 0 5px;
+}
+
+.countdownColorOptions input[type='color'] {
+	height: 36px;
+	padding: 3px;
+}
+
+.countdownColorOptions input[type='range'] {
+	padding: 0;
+	accent-color: #ffd166;
+}
+
+.countdownColorOptions code,
+.countdownColorOptions output {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.72rem;
+}
+
+.countdownForm button {
+	flex: 1;
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.countdownAdminList {
+	display: grid;
+	gap: 8px;
+}
+
+.countdownAdminList > p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.65);
+}
+
+.countdownAdminList article {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: center;
+	padding: 11px 12px;
+	border-radius: 7px;
+	background: rgba(0, 0, 0, 0.24);
+}
 .countdownAdminList article > div:first-child {
 	display: grid;
 	gap: 4px;
@@ -213,4 +345,64 @@
 	min-width: 760px;
 	border-collapse: collapse;
 }
+.adminTable th,
+.adminTable td {
+	padding: 11px 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+	text-align: left;
+	vertical-align: middle;
+}
 
+.adminTable th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background: #292929;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+	text-transform: uppercase;
+}
+
+.adminTable tr:last-child td {
+	border-bottom: 0;
+}
+
+.adminTable .membershipCell {
+	width: 90px;
+	text-align: center;
+}
+
+.membershipCell input {
+	width: 22px;
+	height: 22px;
+	accent-color: #ffd166;
+}
+
+.committeeBadge {
+	display: inline-block;
+	margin-left: 8px;
+	padding: 2px 5px;
+	border-radius: 4px;
+	background: rgba(123, 235, 255, 0.16);
+	color: #7bebff;
+	font-size: 0.68rem;
+	text-transform: uppercase;
+}
+
+.adminMessage {
+	color: #8ff0a4;
+}
+
+.loadMoreButton {
+	justify-self: center;
+}
+
+.redeemForm {
+	max-width: 620px;
+}
+
+.redeemForm > div {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 10px;
+}

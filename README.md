@@ -1,5 +1,7 @@
 # MMUCraft
 
+MMUCraft has three main parts. `services/web` is the Next.js website. `services/api` is the NestJS API and owns authentication, application rules, and SQLite data. `minecraft/main/mod` is the Fabric server mod. The mod connects Minecraft events and commands to the API through gRPC.
+
 ## Development
 
 Install Docker Compose, Git, GNU Make, Python 3.10 or later, JDK 25, and Node.js 24.14.0.

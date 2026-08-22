@@ -1,3 +1,221 @@
+/* Dark storefront refresh */
+.shopPanel {
+	gap: 18px;
+	--shop-surface: #151b27;
+	--shop-surface-raised: #1c2433;
+	--shop-border: rgba(255, 255, 255, 0.13);
+}
+
+.shopTop {
+	align-items: end;
+}
+
+.shopEyebrow,
+.shopDealHeading p,
+.charmProgressionHeading p {
+	margin: 0 0 3px;
+	color: #ffd166;
+	font-size: 0.68rem;
+	font-weight: 800;
+	letter-spacing: 0.13em;
+	text-transform: uppercase;
+}
+
+.shopOrderControl {
+	display: grid;
+	gap: 5px;
+	color: rgba(255, 255, 255, 0.65);
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.shopOrderControl select {
+	min-width: 205px;
+	padding: 9px 34px 9px 11px;
+	border: 1px solid var(--shop-border);
+	border-radius: 7px;
+	background: #171e2b;
+	color: #fff;
+}
+
+.shopCatalogToolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: end;
+	gap: 16px;
+}
+
+.shopCatalogToolbar > span {
+	color: rgba(255, 255, 255, 0.48);
+	font-size: 0.75rem;
+}
+
+.shopDeals {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(170px, 28%);
+	min-height: 188px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 209, 102, 0.42);
+	border-radius: 12px;
+	background:
+		radial-gradient(circle at 88% 42%, rgba(255, 209, 102, 0.14), transparent 32%),
+		linear-gradient(115deg, #20283a, #151b27 62%);
+	box-shadow:
+		0 18px 42px rgba(0, 0, 0, 0.25),
+		inset 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.shopDealCopy {
+	position: relative;
+	z-index: 2;
+	display: grid;
+	align-content: center;
+	gap: 12px;
+	padding: 24px 28px;
+}
+
+.shopDealCopy > p {
+	max-width: 680px;
+	margin: 0;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.87rem;
+	line-height: 1.5;
+}
+
+.shopDealHeading,
+.shopDealActions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.shopDealHeading h4 {
+	margin: 0;
+	font-size: clamp(1.15rem, 2.5vw, 1.65rem);
+}
+
+.shopDealHeading > strong {
+	padding: 5px 8px;
+	border: 1px solid rgba(255, 209, 102, 0.42);
+	border-radius: 999px;
+	background: rgba(255, 209, 102, 0.12);
+	color: #ffe39a;
+	font-size: 0.8rem;
+}
+
+.shopDealSpark {
+	display: grid;
+	place-items: center;
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
+	background: #ffd166;
+	color: #171b24;
+	font-size: 1.25rem;
+	box-shadow: 0 0 24px rgba(255, 209, 102, 0.28);
+}
+
+.shopDealActions span {
+	color: #ffe39a;
+	font-weight: 800;
+}
+
+.shopDealActions del {
+	margin-right: 4px;
+	color: rgba(255, 255, 255, 0.42);
+	font-weight: 600;
+}
+
+.shopDealActions button,
+.shopDetailsBuy {
+	padding: 9px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #151922;
+	font-weight: 850;
+}
+
+.shopDealPreview {
+	min-height: 188px;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.025));
+}
+
+.shopDealPreview .shopModelHost,
+.shopDealPreview .shopItemIcon {
+	width: 100%;
+	height: 100%;
+	min-height: 188px;
+}
+
+.shopDealPreview .shopItemIcon {
+	padding: 28px;
+	object-fit: contain;
+}
+
+.shopDealDots {
+	position: absolute;
+	right: 12px;
+	bottom: 10px;
+	z-index: 3;
+	display: flex;
+	gap: 6px;
+}
+
+.shopDealDots button {
+	width: 7px;
+	height: 7px;
+	padding: 0;
+	border: 0;
+	border-radius: 99px;
+	background: rgba(255, 255, 255, 0.28);
+	transition:
+		width 180ms ease,
+		background 180ms ease;
+}
+
+.shopDealDots button.active {
+	width: 22px;
+	background: #ffd166;
+}
+
+.shopDealArrow {
+	position: absolute;
+	top: 50%;
+	z-index: 6;
+	display: grid;
+	place-items: center;
+	width: 38px;
+	height: 58px;
+	padding: 0;
+	border: 1px solid rgba(255, 209, 102, 0.42);
+	border-radius: 9px;
+	background: rgba(10, 14, 21, 0.86);
+	color: #ffe29a;
+	font-size: 2rem;
+	line-height: 1;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
+	transform: translateY(-50%);
+	transition:
+		background 140ms ease,
+		color 140ms ease,
+		transform 140ms ease;
+}
+
+.shopDealArrow:hover {
+	background: #ffd166;
+	color: #141820;
+	transform: translateY(-50%) scale(1.06);
+}
+.shopDealArrow.previous {
+	left: 10px;
+}
+.shopDealArrow.next {
+	right: 10px;
+}
 .shopDeals:has(.shopDealArrow) .shopDealCopy {
 	padding-left: 60px;
 }
@@ -217,4 +435,3 @@
 .rarity-mythical {
 	--card-accent: var(--rarity-mythical);
 }
-

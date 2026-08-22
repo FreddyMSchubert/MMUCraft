@@ -38,7 +38,7 @@ services:
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
       DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-}
       DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
-      DISCORD_AVATAR_BASE_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}/api/discord/avatar
+      DISCORD_AVATAR_BASE_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}/api/players/avatar
       COOKIE_SECURE: "true"
       TZ: ${TZ:-Europe/London}
     volumes:

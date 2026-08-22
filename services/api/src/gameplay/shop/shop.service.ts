@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common'
 import * as grpc from '@grpc/grpc-js'
 import { randomInt } from 'node:crypto'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
@@ -132,6 +132,7 @@ interface CachedShopCatalog {
 	root: string
 	mtimeMs: number
 	items: CatalogItem[]
+	assets: Map<string, ItemRenderAsset>
 }
 
 interface UnlockAvailability {
@@ -203,7 +204,7 @@ interface GameplayProtoRoot {
 }
 
 @Injectable()
-export class ShopService {
+export class ShopService implements OnModuleInit {
 	private cached: CachedShopCatalog | null = null
 	private gameplayControlClient: grpc.Client | null = null
 
@@ -213,6 +214,10 @@ export class ShopService {
 		private readonly grpcServer: GrpcServerService,
 		private readonly knowledge: KnowledgeService,
 	) { }
+
+	onModuleInit() {
+		if (process.env.NODE_ENV === 'production') this.loadCatalog()
+	}
 
 	getShopForUser(user: AuthenticatedUser) {
 		const items = this.loadCatalog().items
@@ -312,13 +317,12 @@ export class ShopService {
 			throw new BadRequestException('You have to be online on the server to view your charms.')
 		}
 
-		const catalog = this.loadCatalog().items
 		return {
 			online: inventory.online,
 			balanceDabloons: inventory.balance_dabloons,
 			message: inventory.message,
 			charms: inventory.charms.map((charm) => {
-				const item = this.renderAssetForItem(charm.item_id, catalog)
+				const item = this.renderAssetForItem(charm.item_id)
 				return {
 					itemId: charm.item_id,
 					title: charm.title,
@@ -332,14 +336,14 @@ export class ShopService {
 					textureUrl: item?.textureUrl ?? null,
 					animation: item?.animation ?? null,
 					ingredients: charm.ingredients.map((ingredient) => {
-						const catalogItem = this.renderAssetForGameId(ingredient.icon_item_id, catalog)
+						const catalogItem = this.renderAssetForGameId(ingredient.icon_item_id)
 						return {
 							raw: ingredient.raw,
 							displayName: ingredient.display_name,
 							requiredCount: ingredient.required_count,
 							inventoryCount: ingredient.inventory_count,
 							itemId: ingredient.icon_item_id,
-							iconUrl: this.ingredientIconUrl(ingredient.icon_item_id, catalog),
+							iconUrl: this.ingredientIconUrl(ingredient.icon_item_id),
 							modelUrl: catalogItem?.modelUrl ?? null,
 						}
 					}),
@@ -506,8 +510,7 @@ export class ShopService {
 
 	getTextureFilePath(itemIdInput: string): string {
 		const itemId = itemIdInput.trim()
-		const catalog = this.loadCatalog().items
-		const item = this.renderAssetForItem(itemId, catalog)
+		const item = this.renderAssetForItem(itemId)
 		if (!item?.textureFilePath) {
 			throw new NotFoundException('Shop item texture not found.')
 		}
@@ -517,8 +520,7 @@ export class ShopService {
 
 	getModelFilePath(itemIdInput: string): string {
 		const itemId = itemIdInput.trim()
-		const catalog = this.loadCatalog().items
-		const item = this.renderAssetForItem(itemId, catalog)
+		const item = this.renderAssetForItem(itemId)
 		if (!item?.modelFilePath) {
 			throw new NotFoundException('Shop item model not found.')
 		}
@@ -696,14 +698,18 @@ export class ShopService {
 	}
 
 	private loadCatalog(): CachedShopCatalog {
+		if (process.env.NODE_ENV === 'production' && this.cached) return this.cached
+
 		const root = process.env.SHOP_ITEM_ROOT ?? DEFAULT_ITEM_ROOTS.find((candidate) => existsSync(candidate)) ?? DEFAULT_ITEM_ROOTS[0]!
 
 		if (!existsSync(root)) {
-			return {
+			this.cached = {
 				root,
 				mtimeMs: 0,
 				items: [],
+				assets: new Map(),
 			}
+			return this.cached
 		}
 
 		const mtimeMs = this.getTreeMtimeMs(root)
@@ -711,7 +717,8 @@ export class ShopService {
 			return this.cached
 		}
 
-		const items = this.readCatalogItems(root).sort((left, right) => {
+		const { items, assets } = this.readCatalog(root)
+		items.sort((left, right) => {
 			const typeCompare = left.type.localeCompare(right.type, 'en')
 			if (typeCompare !== 0) return typeCompare
 			return left.title.localeCompare(right.title, 'en')
@@ -721,22 +728,37 @@ export class ShopService {
 			root,
 			mtimeMs,
 			items,
+			assets,
 		}
 
 		return this.cached
 	}
 
-	private readCatalogItems(root: string): CatalogItem[] {
+	private readCatalog(root: string) {
 		const items: CatalogItem[] = []
+		const assets = new Map<string, ItemRenderAsset>()
 		for (const filePath of this.findItemJsonFiles(root)) {
 			const parsed = JSON.parse(readFileSync(filePath, 'utf8')) as FakeItemDefinition
-			const item = this.parseCatalogItem(parsed, dirname(filePath), root)
+			const directory = dirname(filePath)
+			const item = this.parseCatalogItem(parsed, directory, root)
 			if (item) {
 				items.push(item)
+				assets.set(item.id, item)
+			} else if (typeof parsed.id === 'string') {
+				const modelFilePath = this.findModelFilePath(directory)
+				const textureFilePath = this.findModelTextureFilePath(directory)
+					?? this.findFlatTextureFilePath(parsed.id, directory, root)
+				assets.set(parsed.id, {
+					animation: textureFilePath ? this.readAnimationDefinition(textureFilePath) : null,
+					modelFilePath,
+					modelUrl: modelFilePath ? this.shopAssetUrl('model', parsed.id) : null,
+					textureFilePath,
+					textureUrl: textureFilePath ? this.shopAssetUrl('texture', parsed.id) : null,
+				})
 			}
 		}
 
-		return items
+		return { items, assets }
 	}
 
 	private parseCatalogItem(json: FakeItemDefinition, directory: string, root: string): CatalogItem | null {
@@ -1026,45 +1048,26 @@ export class ShopService {
 		return `/api/shop/${kind}/${encodeURIComponent(itemId)}?v=${SHOP_ASSET_REVISION}`
 	}
 
-	private ingredientIconUrl(itemId: string, catalog: CatalogItem[]): string | null {
+	private ingredientIconUrl(itemId: string): string | null {
 		if (itemId.startsWith('minecraft:')) return null
-		return this.renderAssetForGameId(itemId, catalog)?.textureUrl ?? null
+		return this.renderAssetForGameId(itemId)?.textureUrl ?? null
 	}
 
-	private renderAssetForGameId(itemId: string, catalog: CatalogItem[]) {
+	private renderAssetForGameId(itemId: string) {
 		if (!itemId.startsWith('mainmod:')) return null
-		return this.renderAssetForItem(itemId.slice('mainmod:'.length), catalog)
+		return this.renderAssetForItem(itemId.slice('mainmod:'.length))
 	}
 
 	getItemRenderAsset(itemId: string) {
-		const item = this.renderAssetForGameId(itemId, this.loadCatalog().items)
+		const item = this.renderAssetForGameId(itemId)
 		return {
 			modelUrl: item?.modelUrl ?? null,
 			textureUrl: item?.textureUrl ?? null,
 		}
 	}
 
-	private renderAssetForItem(itemId: string, catalog: CatalogItem[]): ItemRenderAsset | null {
-		const catalogItem = catalog.find((item) => item.id === itemId)
-		if (catalogItem) return catalogItem
-
-		const root = this.loadCatalog().root
-		for (const filePath of this.findItemJsonFiles(root)) {
-			const definition = JSON.parse(readFileSync(filePath, 'utf8')) as FakeItemDefinition
-			if (definition.id !== itemId) continue
-			const directory = dirname(filePath)
-			const modelFilePath = this.findModelFilePath(directory)
-			const textureFilePath = this.findModelTextureFilePath(directory)
-				?? this.findFlatTextureFilePath(itemId, directory, root)
-			return {
-				animation: textureFilePath ? this.readAnimationDefinition(textureFilePath) : null,
-				modelFilePath,
-				modelUrl: modelFilePath ? this.shopAssetUrl('model', itemId) : null,
-				textureFilePath,
-				textureUrl: textureFilePath ? this.shopAssetUrl('texture', itemId) : null,
-			}
-		}
-		return null
+	private renderAssetForItem(itemId: string): ItemRenderAsset | null {
+		return this.loadCatalog().assets.get(itemId) ?? null
 	}
 
 	private bookUnlockType(itemId: string): BookUnlockType | null {

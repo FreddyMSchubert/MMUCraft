@@ -16,10 +16,11 @@ import {
 	playerStats,
 	users,
 } from '../database/database.service'
-import { effectivePlayerColor, normalizeOptionalColor } from './player-color'
+import { effectivePlayerColor, normalizeOptionalColor, playerAvatarUrl } from './player-color'
 
 const STATS_VERSION = 1
 const MOJANG_PROFILE_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const MOJANG_FETCH_TIMEOUT_MS = 5_000
 const ONLINE_PLAYERS_RECONCILE_MS = 5 * 60 * 1000
 const PROFILE_TEXT_LIMITS = {
 	preferredName: 16,
@@ -126,6 +127,7 @@ export interface MinecraftStatInput {
 export interface PlayerSummary {
 	id: number
 	minecraftUsername: string
+	avatarUrl: string | null
 	isCurrentUser: boolean
 	canEditProfile: boolean
 	isMember: boolean
@@ -616,9 +618,11 @@ export class PlayersService {
 		}
 
 		const responsible = user.responsible_user_id === null ? null : this.findUserById(user.responsible_user_id)
+		const profile = this.getProfile(user.id)
 		return {
 			id: user.id,
 			minecraftUsername: user.minecraft_username,
+			avatarUrl: playerAvatarUrl(user.minecraft_uuid),
 			isCurrentUser: user.id === viewer.id,
 			canEditProfile: user.id === viewer.id || viewer.isCommittee,
 			isMember: user.is_member === 1,
@@ -628,7 +632,7 @@ export class PlayersService {
 			responsiblePlayerColor: responsible
 				? this.getProfile(responsible.id).color
 				: null,
-			profile: this.getProfile(user.id),
+			profile,
 			fishing: this.fishing.getCatchCounts(user.id),
 			stats,
 		}
@@ -902,9 +906,10 @@ function onlinePlayerKey(minecraftUuid: string, minecraftUsername: string) {
 }
 
 async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftProfile> {
+	const signal = AbortSignal.timeout(MOJANG_FETCH_TIMEOUT_MS)
 	const uuidResponse = await fetch(
 		`https://api.mojang.com/users/profiles/minecraft/${encodeURIComponent(minecraftUsername)}`,
-		{ cache: 'no-store' },
+		{ cache: 'no-store', signal },
 	)
 
 	if (!uuidResponse.ok) {
@@ -918,15 +923,15 @@ async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftP
 		throw new Error('Mojang UUID lookup returned no UUID')
 	}
 
-	return fetchMojangProfileByUuid(uuid, name)
+	return fetchMojangProfileByUuid(uuid, name, signal)
 }
 
-export async function fetchMojangProfileByUuid(uuidInput: string, fallbackName = ''): Promise<MinecraftProfile> {
+export async function fetchMojangProfileByUuid(uuidInput: string, fallbackName = '', signal?: AbortSignal): Promise<MinecraftProfile> {
 	const uuid = uuidInput.replaceAll('-', '')
 	if (!/^[0-9a-f]{32}$/i.test(uuid)) throw new Error('Invalid Mojang UUID')
 	const profileResponse = await fetch(
 		`https://sessionserver.mojang.com/session/minecraft/profile/${encodeURIComponent(uuid)}`,
-		{ cache: 'no-store' },
+		{ cache: 'no-store', signal },
 	)
 
 	if (!profileResponse.ok) {

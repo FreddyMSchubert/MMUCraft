@@ -10,7 +10,7 @@ interface ClaimPerson {
 	preferredName: string
 	pronouns: string
 	color: string
-	skinUrl: string | null
+	avatarUrl: string | null
 	isOwner?: boolean
 }
 
@@ -268,15 +268,10 @@ function ClaimAppearanceForm({ claim, busy, onSave }: {
 
 function PlayerHead({ person }: { person: ClaimPerson }) {
 	const label = `${person.minecraftUsername} head`
-	if (!person.skinUrl) {
+	if (!person.avatarUrl) {
 		return <span className="playerHead playerHead-small playerHeadFallback" role="img" aria-label={label}>{person.minecraftUsername[0]}</span>
 	}
-	return (
-		<span className="playerHead playerHead-small" role="img" aria-label={label}>
-			<span className="playerHeadLayer playerHeadFace" style={{ backgroundImage: `url("${person.skinUrl}")` }} />
-			<span className="playerHeadLayer playerHeadHat" style={{ backgroundImage: `url("${person.skinUrl}")` }} />
-		</span>
-	)
+	return <img className="playerHead playerHead-small" src={person.avatarUrl} alt={label} />
 }
 
 async function request<T = Record<string, unknown>>(url: string, init?: RequestInit): Promise<T> {

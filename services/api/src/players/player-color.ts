@@ -21,6 +21,12 @@ export function effectivePlayerColor(minecraftUuid: string | null, customColor?:
 	return setBrightness(hash & 0xFFFFFF, 0.9)
 }
 
+export function playerAvatarUrl(minecraftUuid: string | null): string | null {
+	const uuid = minecraftUuid?.replaceAll('-', '').toLowerCase() ?? ''
+	if (!/^[0-9a-f]{32}$/.test(uuid)) return null
+	return `/api/players/avatar/${uuid}.png`
+}
+
 function setBrightness(rgb: number, brightness: number) {
 	const red = rgb >> 16 & 0xFF
 	const green = rgb >> 8 & 0xFF

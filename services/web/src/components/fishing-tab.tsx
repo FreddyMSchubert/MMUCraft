@@ -14,7 +14,7 @@ interface PlayerOption {
 	minecraftUsername: string
 	color: string
 	pronouns: string
-	avatarUrl: string
+	avatarUrl: string | null
 	caughtTotal: number
 }
 
@@ -392,7 +392,7 @@ function CompactRarity({ rarity }: { rarity: (typeof RARITIES)[number] }) {
 function RecordLine({ label, point, player }: { label: string; point: CatchPoint; player?: PlayerOption }) {
 	return (
 		<span className="fishOwnRecord">
-			{player && <img src={player.avatarUrl} alt="" />}
+			{player?.avatarUrl && <img src={player.avatarUrl} alt="" />}
 			<span><b>{label}:</b> {formatLength(point.lengthCm)} · {formatDate(point.caughtAtUnixMs)}</span>
 		</span>
 	)
@@ -402,7 +402,7 @@ function ServerRecordLine({ label, record }: { label: string; record: ServerReco
 	if (!record) return <span><b>{label}:</b> No catches yet</span>
 	return (
 		<span className="fishServerRecord">
-			<img src={record.player.avatarUrl} alt="" />
+			{record.player.avatarUrl && <img src={record.player.avatarUrl} alt="" />}
 			<b>{label}:</b> <PlayerName name={record.player.minecraftUsername} color={record.player.color} /> · {formatLength(record.lengthCm)}
 		</span>
 	)

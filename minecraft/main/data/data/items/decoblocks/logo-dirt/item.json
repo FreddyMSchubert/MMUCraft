@@ -1,0 +1,17 @@
+{
+	"title": "Logo Dirt",
+	"id": "logo dirt",
+	"modelType": "basic-3d",
+	"rarity":"mythical",
+	"maxStackSize": 1,
+	"tooltips": [
+		"You shouldn't have this..."
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": true,
+		"lightLevel": 15
+	}
+}

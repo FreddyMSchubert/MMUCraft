@@ -1,0 +1,15 @@
+{
+	"title": "Camel hood",
+	"id": "cosmetic-hood-camel",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+	"priceDabloons": 125,
+		"description": "Unlock the Camel hood cosmetic.",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Camel hood."
+	},
+	"equippableCosmetic": {}
+}

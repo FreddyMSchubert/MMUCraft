@@ -6,3 +6,4 @@
 **/*.md
 services/api/drizzle/meta
 services/web/public
+services/web/next-env.d.ts

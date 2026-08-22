@@ -193,7 +193,6 @@ export class DailiesService {
 
 			this.players.recordMoneyForUser(
 				user.id,
-				'earned',
 				'daily_login_bonus',
 				rewardDabloons,
 				null,
@@ -257,7 +256,6 @@ export class DailiesService {
 
 			this.players.recordMoneyForUser(
 				user.id,
-				'earned',
 				'daily_advancement_bonus',
 				picked.target.bonusRewardDabloons,
 				null,
@@ -327,7 +325,6 @@ export class DailiesService {
 			if (result.task_json) this.storeTaskUpdate(user.id, periodKey, result.task_json, now);
 			this.players.recordMoneyForUser(
 				user.id,
-				'earned',
 				'daily_task',
 				task.rewardDabloons,
 				null,
@@ -605,7 +602,6 @@ export class DailiesService {
 
 			this.players.recordMoneyForUser(
 				user.id,
-				'earned',
 				'daily_completion_bonus',
 				rewardDabloons,
 				null,

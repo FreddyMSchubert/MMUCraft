@@ -123,7 +123,6 @@ export class KnowledgeService {
 			moneyGranted = true;
 			this.players.recordMoneyForUser(
 				user.id,
-				'earned',
 				'knowledge_read',
 				KNOWLEDGE_READ_REWARD_DABLOONS,
 				result.balance_dabloons,

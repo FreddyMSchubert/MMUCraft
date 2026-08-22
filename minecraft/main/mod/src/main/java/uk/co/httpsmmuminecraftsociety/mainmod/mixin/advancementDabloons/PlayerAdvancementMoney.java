@@ -162,7 +162,6 @@ public class PlayerAdvancementMoney {
                     rewardedPlayer.getName().getString(),
                     rewardedPlayer.getUUID().toString(),
                     money,
-                    "earned",
                     "advancement",
                     advancementHolder.id().toString(),
                     MoneyHelper.GetBalance(rewardedPlayer)

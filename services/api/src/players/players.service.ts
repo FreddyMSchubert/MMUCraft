@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import * as grpc from '@grpc/grpc-js';
 import { randomUUID } from 'node:crypto';
-import { eq } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 import { AuthenticatedUser } from '../auth/auth.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { FishingService } from '../fishing/fishing.service';
@@ -24,9 +24,8 @@ import {
 import { effectivePlayerColor, normalizeOptionalColor, playerAvatarUrl } from './player-color';
 
 const STATS_VERSION = 1;
-const MOJANG_PROFILE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-const MOJANG_FETCH_TIMEOUT_MS = 5_000;
 const ONLINE_PLAYERS_RECONCILE_MS = 5 * 60 * 1000;
+const PLAYER_PAGE_SIZE = 42;
 const PROFILE_TEXT_LIMITS = {
 	preferredName: 16,
 	pronouns: 16,
@@ -34,8 +33,6 @@ const PROFILE_TEXT_LIMITS = {
 	discordUsername: 40,
 	bio: 280,
 } as const;
-
-type MoneyDirection = 'earned';
 
 export interface StatOption {
 	key: string;
@@ -352,25 +349,54 @@ export class PlayersService {
 		private readonly grpcServer: GrpcServerService,
 	) {}
 
-	async listPlayers(viewer: AuthenticatedUser) {
+	listPlayers(
+		viewer: AuthenticatedUser,
+		pageInput?: string,
+		selectedMinecraftUsernameInput?: string,
+	) {
+		const page = normalizePage(pageInput);
 		const userRows = this.database.connection
 			.select()
 			.from(users)
-			.all()
-			.sort((left, right) =>
-				left.minecraft_username.localeCompare(right.minecraft_username, 'en', {
-					sensitivity: 'base',
-				}),
-			);
+			.orderBy(asc(sql`lower(${users.minecraft_username})`))
+			.limit(PLAYER_PAGE_SIZE + 1)
+			.offset(page * PLAYER_PAGE_SIZE)
+			.all();
+		const hasMore = userRows.length > PLAYER_PAGE_SIZE;
+		const pageRows = userRows.slice(0, PLAYER_PAGE_SIZE);
 
-		const players = await Promise.all(
-			userRows.map((user) => this.serializePlayer(user, viewer, true)),
+		const catchCounts = this.fishing.getCatchCountsForUsers(pageRows.map((user) => user.id));
+		const players = pageRows.map((user) =>
+			this.serializePlayer(user, viewer, catchCounts.get(user.id)),
 		);
+		const selectedMinecraftUsername = selectedMinecraftUsernameInput?.trim() ?? '';
+		const selectedRow = selectedMinecraftUsername
+			? (this.database.connection
+					.select()
+					.from(users)
+					.where(
+						sql`lower(${users.minecraft_username}) = ${selectedMinecraftUsername.toLowerCase()}`,
+					)
+					.get() ?? null)
+			: null;
+		const selectedPlayer = selectedRow
+			? (players.find((player) => player.id === selectedRow.id) ??
+				this.serializePlayer(selectedRow, viewer))
+			: null;
+		const stats = selectedPlayer
+			? [...players.map((player) => player.stats), selectedPlayer.stats]
+			: players.map((player) => player.stats);
 
 		return {
 			currentUserId: viewer.id,
-			statOptions: this.getStatOptions(players.map((player) => player.stats)),
+			currentUserMinecraftUsername: viewer.minecraftUsername,
+			statOptions: this.getStatOptions(stats),
 			players,
+			selectedPlayer,
+			requestedPlayer: selectedMinecraftUsername || null,
+			page,
+			pageSize: PLAYER_PAGE_SIZE,
+			hasMore,
 		};
 	}
 
@@ -440,7 +466,7 @@ export class PlayersService {
 			});
 	}
 
-	async getPlayer(viewer: AuthenticatedUser, userIdInput: string) {
+	getPlayer(viewer: AuthenticatedUser, userIdInput: string) {
 		const userId = Number(userIdInput);
 		if (!Number.isInteger(userId) || userId <= 0) {
 			throw new NotFoundException('Player not found');
@@ -454,7 +480,7 @@ export class PlayersService {
 		return {
 			currentUserId: viewer.id,
 			statOptions: this.getStatOptions([this.getStats(user.id)]),
-			player: await this.serializePlayer(user, viewer, true),
+			player: this.serializePlayer(user, viewer),
 		};
 	}
 
@@ -595,7 +621,6 @@ export class PlayersService {
 
 	recordMoneyForUser(
 		userId: number,
-		direction: MoneyDirection,
 		source: string,
 		amountDabloonsInput: number,
 		balanceDabloonsInput: number | null,
@@ -614,7 +639,6 @@ export class PlayersService {
 
 		return this.recordMoneyEvent(
 			user.id,
-			direction,
 			source,
 			amountDabloons,
 			normalizeNullableInteger(balanceDabloonsInput),
@@ -638,7 +662,6 @@ export class PlayersService {
 	recordMoneyForMinecraftUsername(
 		minecraftUuidInput: string,
 		minecraftUsernameInput: string,
-		directionInput: string,
 		sourceInput: string,
 		amountDabloonsInput: number,
 		balanceDabloonsInput: number | null,
@@ -656,13 +679,11 @@ export class PlayersService {
 			};
 		}
 
-		const direction = normalizeDirection(directionInput);
 		const source = sanitizeToken(sourceInput, 'minecraft');
 		const referenceId = sanitizeToken(referenceIdInput, '');
 		const eventId = referenceId ? `${source}:${user.id}:${referenceId}` : randomUUID();
 		const result = this.recordMoneyEvent(
 			user.id,
-			direction,
 			source,
 			normalizePositiveInteger(amountDabloonsInput),
 			normalizeNullableInteger(balanceDabloonsInput),
@@ -678,16 +699,11 @@ export class PlayersService {
 		};
 	}
 
-	private async serializePlayer(
+	private serializePlayer(
 		user: UserRow,
 		viewer: AuthenticatedUser,
-		includeMojangProfile: boolean,
-	): Promise<PlayerSummary> {
-		let stats = this.getStats(user.id);
-		if (includeMojangProfile) {
-			stats = await this.ensureMojangProfile(user, stats);
-		}
-
+		fishing = this.fishing.getCatchCounts(user.id),
+	): PlayerSummary {
 		const responsible =
 			user.responsible_user_id === null ? null : this.findUserById(user.responsible_user_id);
 		const profile = this.getProfile(user.id);
@@ -703,8 +719,8 @@ export class PlayersService {
 			responsibleMinecraftUsername: responsible?.minecraft_username ?? null,
 			responsiblePlayerColor: responsible ? this.getProfile(responsible.id).color : null,
 			profile,
-			fishing: this.fishing.getCatchCounts(user.id),
-			stats,
+			fishing,
+			stats: this.getStats(user.id),
 		};
 	}
 
@@ -780,7 +796,6 @@ export class PlayersService {
 
 	private recordMoneyEvent(
 		userId: number,
-		direction: MoneyDirection,
 		sourceInput: string,
 		amountDabloons: number,
 		balanceDabloons: number | null,
@@ -801,7 +816,7 @@ export class PlayersService {
 				.values({
 					id: eventId,
 					user_id: userId,
-					direction,
+					direction: 'earned',
 					source,
 					amount_dabloons: amountDabloons,
 					balance_dabloons: balanceDabloons,
@@ -986,59 +1001,10 @@ export class PlayersService {
 			this.database.connection.select().from(users).where(eq(users.id, userId)).get() ?? null
 		);
 	}
-
-	private async ensureMojangProfile(user: UserRow, stats: PlayerStats): Promise<PlayerStats> {
-		const profile = stats.minecraftProfile;
-		const now = Date.now();
-		if (profile) {
-			this.identities.resolveAndRefresh(profile.uuid, profile.name);
-		}
-		if (profile && now - profile.fetchedAtUnixMs < MOJANG_PROFILE_TTL_MS) {
-			return stats;
-		}
-
-		try {
-			const nextProfile = await fetchMojangProfile(user.minecraft_username);
-			this.identities.resolveAndRefresh(nextProfile.uuid, nextProfile.name);
-			const nextStats = {
-				...stats,
-				minecraftProfile: nextProfile,
-			};
-
-			this.saveStats(user.id, nextStats, now);
-			return nextStats;
-		} catch {
-			return stats;
-		}
-	}
 }
 
 function onlinePlayerKey(minecraftUuid: string, minecraftUsername: string) {
 	return minecraftUuid.toLowerCase().replaceAll('-', '') || minecraftUsername.toLowerCase();
-}
-
-async function fetchMojangProfile(minecraftUsername: string): Promise<MinecraftProfile> {
-	const signal = AbortSignal.timeout(MOJANG_FETCH_TIMEOUT_MS);
-	const uuidResponse = await fetch(
-		`https://api.mojang.com/users/profiles/minecraft/${encodeURIComponent(minecraftUsername)}`,
-		{ cache: 'no-store', signal },
-	);
-
-	if (!uuidResponse.ok) {
-		throw new Error('Mojang username lookup failed');
-	}
-
-	const uuidBody = (await uuidResponse.json().catch(() => null)) as {
-		id?: unknown;
-		name?: unknown;
-	} | null;
-	const uuid = typeof uuidBody?.id === 'string' ? uuidBody.id : '';
-	const name = typeof uuidBody?.name === 'string' ? uuidBody.name : minecraftUsername;
-	if (!uuid) {
-		throw new Error('Mojang UUID lookup returned no UUID');
-	}
-
-	return fetchMojangProfileByUuid(uuid, name, signal);
 }
 
 export async function fetchMojangProfileByUuid(
@@ -1209,8 +1175,11 @@ function normalizeMinecraftProfile(value: unknown): MinecraftProfile | null {
 	};
 }
 
-function normalizeDirection(_value: string): MoneyDirection {
-	return 'earned';
+function normalizePage(value: unknown): number {
+	const page = Number(value);
+	return Number.isSafeInteger(page) && page >= 0 && Number.isSafeInteger(page * PLAYER_PAGE_SIZE)
+		? page
+		: 0;
 }
 
 function normalizePositiveInteger(value: unknown): number {

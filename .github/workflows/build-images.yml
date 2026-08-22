@@ -61,7 +61,6 @@ jobs:
               working-directory: minecraft/main/mod
               run: |
                   python3 ../stage_item_data.py --root ..
-                  chmod +x gradlew
                   ./gradlew runDatagen --no-daemon
                   ./gradlew build --no-daemon
 

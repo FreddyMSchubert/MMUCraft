@@ -75,6 +75,7 @@ service ModControl {
   rpc UpsertPendingJoin(UpsertPendingJoinRequest) returns (UpsertPendingJoinResponse);
   rpc RemovePendingJoin(RemovePendingJoinRequest) returns (Empty);
   rpc WhitelistPlayer(WhitelistPlayerRequest) returns (WhitelistPlayerResponse);
+  rpc UnwhitelistPlayer(WhitelistPlayerRequest) returns (WhitelistPlayerResponse);
   rpc BlacklistPlayer(PlayerBlacklistRequest) returns (PlayerBlacklistResponse);
   rpc UnblacklistPlayer(PlayerBlacklistRequest) returns (PlayerBlacklistResponse);
 }

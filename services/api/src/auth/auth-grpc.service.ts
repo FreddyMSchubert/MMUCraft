@@ -75,9 +75,17 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	async whitelistPlayer(minecraftUsername: string): Promise<void> {
-		await this.callMod('WhitelistPlayer', {
+		const response = await this.callMod<{ whitelisted: boolean }>('WhitelistPlayer', {
 			minecraft_username: minecraftUsername,
 		});
+		if (!response.whitelisted) throw new Error('Minecraft server refused the whitelist update');
+	}
+
+	async unwhitelistPlayer(minecraftUsername: string): Promise<void> {
+		const response = await this.callMod<{ whitelisted: boolean }>('UnwhitelistPlayer', {
+			minecraft_username: minecraftUsername,
+		});
+		if (response.whitelisted) throw new Error('Minecraft server refused the whitelist removal');
 	}
 
 	async blacklistPlayer(minecraftUsername: string, uuid: string): Promise<void> {
@@ -111,8 +119,11 @@ export class AuthGrpcService implements OnModuleInit, OnModuleDestroy {
 		});
 	}
 
-	private async callMod(methodName: string, request: Record<string, unknown>): Promise<unknown> {
-		return await this.callClient(this.modControlClient, methodName, request);
+	private async callMod<T = unknown>(
+		methodName: string,
+		request: Record<string, unknown>,
+	): Promise<T> {
+		return await this.callClient<T>(this.modControlClient, methodName, request);
 	}
 
 	private async callClient<T>(

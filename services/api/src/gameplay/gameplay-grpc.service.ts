@@ -285,7 +285,6 @@ export class GameplayGrpcService implements OnModuleInit {
 				minecraft_username?: string;
 				minecraft_uuid?: string;
 				amount_dabloons?: number;
-				direction?: string;
 				source?: string;
 				reference_id?: string;
 				unix_ms?: number;
@@ -308,7 +307,6 @@ export class GameplayGrpcService implements OnModuleInit {
 		const result = this.players.recordMoneyForMinecraftUsername(
 			call.request.minecraft_uuid ?? '',
 			call.request.minecraft_username ?? '',
-			call.request.direction ?? 'earned',
 			call.request.source ?? 'minecraft',
 			call.request.amount_dabloons ?? 0,
 			typeof call.request.balance_dabloons === 'number'

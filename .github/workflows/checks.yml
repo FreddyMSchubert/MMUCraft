@@ -1,0 +1,52 @@
+name: checks
+
+on:
+    push:
+    pull_request:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: checks-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    check:
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
+              with:
+                  persist-credentials: false
+
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '24'
+                  cache: npm
+                  cache-dependency-path: |
+                      package-lock.json
+                      services/api/package-lock.json
+                      services/web/package-lock.json
+                      minecraft/main/respack/items-respack-generator/package-lock.json
+
+            - name: Install dependencies
+              run: |
+                  npm ci
+                  npm ci --prefix services/api
+                  npm ci --prefix services/web
+                  npm ci --prefix minecraft/main/respack/items-respack-generator
+
+            - name: Audit dependencies
+              run: |
+                  npm audit
+                  npm audit --prefix services/api
+                  npm audit --prefix services/web
+                  npm audit --prefix minecraft/main/respack/items-respack-generator
+
+            - run: npm run format:check
+            - run: npm run lint
+            - run: npm run typecheck --prefix services/api
+            - run: npm run check --prefix services/web
+            - run: npm run check --prefix minecraft/main/respack/items-respack-generator

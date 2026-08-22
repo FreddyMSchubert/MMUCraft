@@ -392,5 +392,4 @@ export const WORDLE_WORDS = [
 	'shear',
 	'mossy',
 	'giant',
-] as const
-
+] as const;

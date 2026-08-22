@@ -17,15 +17,15 @@
 	color: oklch(from var(--player-color) calc(max(l, 0.72)) c h);
 }
 
-html[data-theme="light"] .playerName,
+html[data-theme='light'] .playerName,
 .light .playerName {
 	color: color-mix(in oklch, var(--player-color) 72%, black);
 	color: oklch(from var(--player-color) calc(min(l, 0.42)) c h);
 }
 
 @font-face {
-	font-family: "Minecraft UI";
-	src: url("/assets/landing/fonts/minecraft.otf") format("opentype");
+	font-family: 'Minecraft UI';
+	src: url('/assets/landing/fonts/minecraft.otf') format('opentype');
 	font-display: swap;
 }
 
@@ -41,7 +41,7 @@ html[data-theme="light"] .playerName,
 	min-height: 100svh;
 	overflow: hidden;
 	background: #111;
-	font-family: "Minecraft UI", monospace;
+	font-family: 'Minecraft UI', monospace;
 	font-kerning: none;
 	font-variant-ligatures: none;
 	letter-spacing: -1px;
@@ -58,7 +58,7 @@ html[data-theme="light"] .playerName,
 
 .panoramaBackground {
 	overflow: hidden;
-	background: center / cover no-repeat url("/assets/landing/panoramas/classic/panorama_0.webp");
+	background: center / cover no-repeat url('/assets/landing/panoramas/classic/panorama_0.webp');
 	perspective: 42vmax;
 	perspective-origin: 50% 50%;
 }
@@ -86,16 +86,32 @@ html[data-theme="light"] .playerName,
 	image-rendering: crisp-edges;
 }
 
-.panoramaFace0 { transform: translateZ(-100vmax); }
-.panoramaFace1 { transform: translateX(100vmax) rotateY(-90deg); }
-.panoramaFace2 { transform: translateZ(100vmax) rotateY(180deg); }
-.panoramaFace3 { transform: translateX(-100vmax) rotateY(90deg); }
-.panoramaFace4 { transform: translateY(-100vmax) rotateX(-90deg); }
-.panoramaFace5 { transform: translateY(100vmax) rotateX(90deg); }
+.panoramaFace0 {
+	transform: translateZ(-100vmax);
+}
+.panoramaFace1 {
+	transform: translateX(100vmax) rotateY(-90deg);
+}
+.panoramaFace2 {
+	transform: translateZ(100vmax) rotateY(180deg);
+}
+.panoramaFace3 {
+	transform: translateX(-100vmax) rotateY(90deg);
+}
+.panoramaFace4 {
+	transform: translateY(-100vmax) rotateX(-90deg);
+}
+.panoramaFace5 {
+	transform: translateY(100vmax) rotateX(90deg);
+}
 
 @keyframes panoramaRotate {
-	from { transform: rotateX(-6deg) rotateY(0deg); }
-	to { transform: rotateX(-6deg) rotateY(360deg); }
+	from {
+		transform: rotateX(-6deg) rotateY(0deg);
+	}
+	to {
+		transform: rotateX(-6deg) rotateY(360deg);
+	}
 }
 
 .minecraftShade {
@@ -122,7 +138,11 @@ html[data-theme="light"] .playerName,
 	line-height: 0;
 }
 
-.minecraftTitleLink { display: block; color: inherit; text-decoration: none; }
+.minecraftTitleLink {
+	display: block;
+	color: inherit;
+	text-decoration: none;
+}
 
 .minecraftLogo {
 	display: block;
@@ -140,7 +160,7 @@ html[data-theme="light"] .playerName,
 	display: block;
 	width: 72%;
 	color: #ffff00;
-	font-family: "Minecraft UI", monospace;
+	font-family: 'Minecraft UI', monospace;
 	font-size: clamp(18px, 2vw, 31px);
 	line-height: 0.92;
 	text-align: center;
@@ -153,8 +173,12 @@ html[data-theme="light"] .playerName,
 }
 
 @keyframes minecraftSplashPulse {
-	from { transform: rotate(-18deg) scale(calc(var(--splash-scale) * 0.96)); }
-	to { transform: rotate(-18deg) scale(calc(var(--splash-scale) * 1.04)); }
+	from {
+		transform: rotate(-18deg) scale(calc(var(--splash-scale) * 0.96));
+	}
+	to {
+		transform: rotate(-18deg) scale(calc(var(--splash-scale) * 1.04));
+	}
 }
 
 .minecraftButtons {
@@ -173,7 +197,7 @@ html[data-theme="light"] .playerName,
 	height: 60px;
 	padding: 7px 18px 9px;
 	border: 10px solid transparent;
-	border-image: url("/assets/landing/widgets/button.png") 3 fill stretch;
+	border-image: url('/assets/landing/widgets/button.png') 3 fill stretch;
 	border-radius: 0;
 	background: none;
 	box-shadow: none;
@@ -190,7 +214,7 @@ html[data-theme="light"] .playerName,
 .minecraftButton:hover,
 .minecraftButton:focus-visible {
 	outline: 0;
-	border-image-source: url("/assets/landing/widgets/button_highlighted.png");
+	border-image-source: url('/assets/landing/widgets/button_highlighted.png');
 	background: none;
 	color: #ffffa0;
 }
@@ -227,7 +251,9 @@ html[data-theme="light"] .playerName,
 	text-shadow: 2px 2px 0 #222;
 }
 
-.minecraftVersion { left: 9px; }
+.minecraftVersion {
+	left: 9px;
+}
 
 .minecraftLegal {
 	right: 9px;
@@ -235,13 +261,17 @@ html[data-theme="light"] .playerName,
 	white-space: nowrap;
 }
 
-.panoramaCredit { display: none; }
+.panoramaCredit {
+	display: none;
+}
 
 /* ============================================================
    Pre-launch play gate (keeps the existing site style)
    ============================================================ */
 
-.launchGateContent { width: min(1100px, calc(100vw - 32px)); }
+.launchGateContent {
+	width: min(1100px, calc(100vw - 32px));
+}
 
 .authCard.launchGateCard {
 	width: min(760px, 100%);
@@ -312,7 +342,9 @@ html[data-theme="light"] .playerName,
 	font-weight: 700;
 }
 
-.launchGateCard .launchFairNote { color: #ffd166; }
+.launchGateCard .launchFairNote {
+	color: #ffd166;
+}
 
 .launchGateActions {
 	display: flex;
@@ -467,13 +499,31 @@ html[data-theme="light"] .playerName,
 	background: rgba(255, 255, 255, 0.12);
 }
 
-.wordleTile.correct { border-color: transparent; background: #5da75a; }
-.wordleTile.present { border-color: transparent; background: #c9a646; }
-.wordleTile.absent { border-color: transparent; background: #3e3e3e; }
-.wordleTile.skipped { border-color: rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.12); }
-.wordleTile.reveal { animation: wordleTileReveal 520ms ease both; }
-.wordleTile.shake { animation: wordleTileShake 420ms ease; }
-.wordleTile.win { animation: wordleTileWin 700ms ease both; }
+.wordleTile.correct {
+	border-color: transparent;
+	background: #5da75a;
+}
+.wordleTile.present {
+	border-color: transparent;
+	background: #c9a646;
+}
+.wordleTile.absent {
+	border-color: transparent;
+	background: #3e3e3e;
+}
+.wordleTile.skipped {
+	border-color: rgba(255, 255, 255, 0.18);
+	background: rgba(255, 255, 255, 0.12);
+}
+.wordleTile.reveal {
+	animation: wordleTileReveal 520ms ease both;
+}
+.wordleTile.shake {
+	animation: wordleTileShake 420ms ease;
+}
+.wordleTile.win {
+	animation: wordleTileWin 700ms ease both;
+}
 
 .wordleKeyboard {
 	display: grid;
@@ -501,11 +551,23 @@ html[data-theme="light"] .playerName,
 	text-transform: uppercase;
 }
 
-.wordleKey.wide { flex: 1.45 1 0; font-size: 0.74rem; }
-.wordleKey.correct { background: #5da75a; }
-.wordleKey.present { background: #c9a646; }
-.wordleKey.absent { background: #3e3e3e; }
-.wordleKey:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22); }
+.wordleKey.wide {
+	flex: 1.45 1 0;
+	font-size: 0.74rem;
+}
+.wordleKey.correct {
+	background: #5da75a;
+}
+.wordleKey.present {
+	background: #c9a646;
+}
+.wordleKey.absent {
+	background: #3e3e3e;
+}
+.wordleKey:active {
+	transform: translateY(2px);
+	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+}
 
 .copyPlaythrough {
 	display: block;
@@ -536,54 +598,133 @@ html[data-theme="light"] .playerName,
 }
 
 @keyframes wordleTileReveal {
-	0% { transform: rotateX(0deg); }
-	48% { transform: rotateX(90deg); }
-	100% { transform: rotateX(0deg); }
+	0% {
+		transform: rotateX(0deg);
+	}
+	48% {
+		transform: rotateX(90deg);
+	}
+	100% {
+		transform: rotateX(0deg);
+	}
 }
 
 @keyframes wordleTileShake {
-	0%, 100% { transform: translateX(0); }
-	20%, 60% { transform: translateX(-6px); }
-	40%, 80% { transform: translateX(6px); }
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	20%,
+	60% {
+		transform: translateX(-6px);
+	}
+	40%,
+	80% {
+		transform: translateX(6px);
+	}
 }
 
 @keyframes wordleTileWin {
-	0%, 100% { transform: translateY(0); }
-	45% { transform: translateY(-9px); }
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	45% {
+		transform: translateY(-9px);
+	}
 }
 
 @media (max-width: 600px) {
-	.minecraftMenu { padding-top: clamp(22px, 5vh, 44px); }
-	.minecraftLogoWrap { margin-bottom: clamp(82px, 12vh, 104px); }
-	.minecraftSplash { top: 78%; right: -4%; width: 68%; }
-	.minecraftButtons { width: 92vw; }
-	.minecraftButton { height: 54px; font-size: 18px; }
-	.menuCountdown { right: 8px; font-size: 9px; }
+	.minecraftMenu {
+		padding-top: clamp(22px, 5vh, 44px);
+	}
+	.minecraftLogoWrap {
+		margin-bottom: clamp(82px, 12vh, 104px);
+	}
+	.minecraftSplash {
+		top: 78%;
+		right: -4%;
+		width: 68%;
+	}
+	.minecraftButtons {
+		width: 92vw;
+	}
+	.minecraftButton {
+		height: 54px;
+		font-size: 18px;
+	}
+	.menuCountdown {
+		right: 8px;
+		font-size: 9px;
+	}
 	.minecraftVersion,
-	.minecraftLegal { font-size: 9px; }
-	.minecraftLegal { max-width: 55vw; white-space: normal; }
-	.launchCountdown { grid-template-columns: repeat(2, 1fr); }
-	.wordleContent { width: min(100% - 16px, 1100px); }
-	.wordleContent .siteHeader { margin-bottom: 34px; }
-	.wordleDashboard { padding: 14px 8px; }
-	.wordleTopline { align-items: flex-start; flex-direction: column; gap: 5px; }
-	.wordleBoard { gap: 5px; }
-	.wordleTile { font-size: 1.35rem; }
-	.wordleKey { min-height: 42px; font-size: 0.76rem; }
-	.wordleKey.wide { font-size: 0.64rem; }
+	.minecraftLegal {
+		font-size: 9px;
+	}
+	.minecraftLegal {
+		max-width: 55vw;
+		white-space: normal;
+	}
+	.launchCountdown {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.wordleContent {
+		width: min(100% - 16px, 1100px);
+	}
+	.wordleContent .siteHeader {
+		margin-bottom: 34px;
+	}
+	.wordleDashboard {
+		padding: 14px 8px;
+	}
+	.wordleTopline {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 5px;
+	}
+	.wordleBoard {
+		gap: 5px;
+	}
+	.wordleTile {
+		font-size: 1.35rem;
+	}
+	.wordleKey {
+		min-height: 42px;
+		font-size: 0.76rem;
+	}
+	.wordleKey.wide {
+		font-size: 0.64rem;
+	}
 }
 
 @media (max-height: 650px) {
-	.minecraftMenu { width: min(760px, 88vw); padding-top: 14px; }
-	.minecraftLogoWrap { margin-bottom: 64px; }
-	.minecraftButtons { gap: 6px; }
-	.minecraftButton { height: 46px; font-size: 18px; }
-	.minecraftButtonRow { margin-top: 3px; }
+	.minecraftMenu {
+		width: min(760px, 88vw);
+		padding-top: 14px;
+	}
+	.minecraftLogoWrap {
+		margin-bottom: 64px;
+	}
+	.minecraftButtons {
+		gap: 6px;
+	}
+	.minecraftButton {
+		height: 46px;
+		font-size: 18px;
+	}
+	.minecraftButtonRow {
+		margin-top: 3px;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.minecraftSplash { animation: none; }
-	.panoramaCube { animation: none; transform: rotateX(-6deg) rotateY(20deg); }
+	.minecraftSplash {
+		animation: none;
+	}
+	.panoramaCube {
+		animation: none;
+		transform: rotateX(-6deg) rotateY(20deg);
+	}
 }
 
 html,
@@ -592,7 +733,7 @@ body {
 	min-height: 100%;
 	background: #000;
 	color: #fff;
-	font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", Consolas, "Courier New", monospace;
+	font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas, 'Courier New', monospace;
 }
 
 * {
@@ -626,7 +767,7 @@ a {
 }
 
 .page::after {
-	content: "";
+	content: '';
 	position: fixed;
 	inset: 0;
 	z-index: 0;
@@ -660,7 +801,6 @@ a {
 	width: min(820px, 92vw);
 	margin: 0 auto;
 }
-
 
 /* ============================================================
    Shared
@@ -713,7 +853,12 @@ a {
 	border: 1px solid rgba(255, 209, 102, 0.44);
 	border-radius: 12px;
 	background: var(--countdown-background, rgba(0, 0, 0, 0.78));
-	background-image: linear-gradient(var(--countdown-background, rgba(0, 0, 0, 0.78)), var(--countdown-background, rgba(0, 0, 0, 0.78))), var(--countdown-image, none);
+	background-image:
+		linear-gradient(
+			var(--countdown-background, rgba(0, 0, 0, 0.78)),
+			var(--countdown-background, rgba(0, 0, 0, 0.78))
+		),
+		var(--countdown-image, none);
 	background-position: center;
 	background-size: cover;
 	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
@@ -755,7 +900,12 @@ a {
 
 .countdownCard-now {
 	border-color: #ffe49c;
-	background: linear-gradient(120deg, rgba(75, 48, 0, 0.92), rgba(188, 125, 0, 0.86), rgba(75, 48, 0, 0.92));
+	background: linear-gradient(
+		120deg,
+		rgba(75, 48, 0, 0.92),
+		rgba(188, 125, 0, 0.86),
+		rgba(75, 48, 0, 0.92)
+	);
 	background-size: 240% 100%;
 	animation: countdownShimmer 2s linear infinite;
 }
@@ -763,25 +913,30 @@ a {
 .countdownNow {
 	display: inline-block;
 	color: #ff3b30;
-	font-family: "Minecraft UI", monospace;
+	font-family: 'Minecraft UI', monospace;
 	font-size: clamp(1.6rem, 5vw, 2.8rem);
 	text-shadow: 3px 3px 0 #59110d;
 	animation: countdownNowBounce 550ms ease-in-out infinite alternate;
 }
 
 @keyframes countdownShimmer {
-	to { background-position: -240% 0; }
+	to {
+		background-position: -240% 0;
+	}
 }
 
 @keyframes countdownNowBounce {
-	to { transform: rotate(-3deg) scale(1.1); }
+	to {
+		transform: rotate(-3deg) scale(1.1);
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.countdownCard-now,
-	.countdownNow { animation: none; }
+	.countdownNow {
+		animation: none;
+	}
 }
-
 
 /* ============================================================
    Auth
@@ -1003,7 +1158,6 @@ a {
 	margin: 14px 0 0;
 	color: #ff9a9a;
 }
-
 
 /* ============================================================
    Dashboard
@@ -1282,10 +1436,21 @@ a {
 	filter: none;
 }
 
-.dailyModelIcon { position: relative; }
-.dailyModelIcon .minecraftItemIconCanvas { transform: scale(1.32); }
-.minecraftItemIconCanvas { display: block; width: 100%; height: 100%; }
-.minecraftItemIconFailed { border-radius: 6px; background: rgba(255, 255, 255, 0.08); }
+.dailyModelIcon {
+	position: relative;
+}
+.dailyModelIcon .minecraftItemIconCanvas {
+	transform: scale(1.32);
+}
+.minecraftItemIconCanvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.minecraftItemIconFailed {
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.08);
+}
 
 .dailyTask button {
 	min-width: 112px;
@@ -1384,7 +1549,6 @@ a {
 	background: rgba(43, 145, 79, 0.3);
 	color: #86f5aa;
 }
-
 
 /* ============================================================
    Knowledge
@@ -1607,13 +1771,27 @@ a {
 	background: color-mix(in srgb, var(--admonition-color) 9%, transparent);
 }
 
-.knowledgeAdmonition.warning { --admonition-color: #ffd166; }
-.knowledgeAdmonition.error { --admonition-color: #ff6b6b; }
-.knowledgeAdmonition.hint { --admonition-color: #c792ea; }
-.knowledgeAdmonition.tip { --admonition-color: #70e1a1; }
-.knowledgeAdmonition.note { --admonition-color: #aeb8c4; }
-.knowledgeAdmonition.tldr { --admonition-color: #ff9f6e; }
-.knowledgeAdmonition.context { --admonition-color: #8da2ff; }
+.knowledgeAdmonition.warning {
+	--admonition-color: #ffd166;
+}
+.knowledgeAdmonition.error {
+	--admonition-color: #ff6b6b;
+}
+.knowledgeAdmonition.hint {
+	--admonition-color: #c792ea;
+}
+.knowledgeAdmonition.tip {
+	--admonition-color: #70e1a1;
+}
+.knowledgeAdmonition.note {
+	--admonition-color: #aeb8c4;
+}
+.knowledgeAdmonition.tldr {
+	--admonition-color: #ff9f6e;
+}
+.knowledgeAdmonition.context {
+	--admonition-color: #8da2ff;
+}
 
 .knowledgeAdmonitionTitle {
 	display: flex;
@@ -1721,7 +1899,7 @@ a {
 .knowledgeRecipeItems::before {
 	color: rgba(255, 255, 255, 0.72);
 	font-weight: 700;
-	content: "Recipe: ";
+	content: 'Recipe: ';
 }
 
 .knowledgeRecipeItems a {
@@ -1766,7 +1944,6 @@ a {
 	text-shadow: 1px 1px 0 #163816;
 	white-space: pre;
 }
-
 
 /* ============================================================
    Shop
@@ -1845,7 +2022,10 @@ a {
 	color: #14171f;
 	text-align: left;
 	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
-	transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+	transition:
+		transform 140ms ease,
+		box-shadow 140ms ease,
+		border-color 140ms ease;
 }
 
 .shopCard:hover:not(:disabled),
@@ -1860,18 +2040,18 @@ a {
 
 .shopCard-charm {
 	border: 2px solid #53d6bd;
-	background:
-		linear-gradient(180deg, rgba(238, 255, 250, 0.98), rgba(245, 247, 255, 0.98)),
-		#fff;
-	box-shadow: 0 0 0 1px rgba(83, 214, 189, 0.18), 0 10px 22px rgba(0, 0, 0, 0.24);
+	background: linear-gradient(180deg, rgba(238, 255, 250, 0.98), rgba(245, 247, 255, 0.98)), #fff;
+	box-shadow:
+		0 0 0 1px rgba(83, 214, 189, 0.18),
+		0 10px 22px rgba(0, 0, 0, 0.24);
 }
 
 .shopCard-cosmetic {
 	border: 2px solid #f0a3bd;
-	background:
-		linear-gradient(180deg, rgba(255, 250, 253, 0.98), rgba(250, 248, 240, 0.98)),
-		#fff;
-	box-shadow: 0 0 0 1px rgba(240, 163, 189, 0.18), 0 10px 22px rgba(0, 0, 0, 0.24);
+	background: linear-gradient(180deg, rgba(255, 250, 253, 0.98), rgba(250, 248, 240, 0.98)), #fff;
+	box-shadow:
+		0 0 0 1px rgba(240, 163, 189, 0.18),
+		0 10px 22px rgba(0, 0, 0, 0.24);
 }
 
 .shopCard-generic {
@@ -1894,9 +2074,12 @@ a {
 		linear-gradient(45deg, rgba(20, 23, 31, 0.045) 25%, transparent 25%),
 		linear-gradient(-45deg, rgba(20, 23, 31, 0.045) 25%, transparent 25%),
 		linear-gradient(45deg, transparent 75%, rgba(20, 23, 31, 0.045) 75%),
-		linear-gradient(-45deg, transparent 75%, rgba(20, 23, 31, 0.045) 75%),
-		#fbfcfd;
-	background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+		linear-gradient(-45deg, transparent 75%, rgba(20, 23, 31, 0.045) 75%), #fbfcfd;
+	background-position:
+		0 0,
+		0 8px,
+		8px -8px,
+		-8px 0;
 	background-size: 16px 16px;
 }
 
@@ -1952,7 +2135,7 @@ a {
 }
 
 .shopMetaIcon-animated::before {
-	content: "";
+	content: '';
 	width: 0;
 	height: 0;
 	margin-left: 2px;
@@ -2078,7 +2261,9 @@ a {
 	opacity: 0;
 	pointer-events: none;
 	transform: translateY(5px);
-	transition: opacity 140ms ease, transform 140ms ease;
+	transition:
+		opacity 140ms ease,
+		transform 140ms ease;
 }
 
 .shopCard:hover .shopHoverDescription,
@@ -2094,7 +2279,6 @@ a {
 	background: rgba(255, 255, 255, 0.06);
 	color: rgba(255, 255, 255, 0.76);
 }
-
 
 /* ============================================================
    Claims
@@ -2290,7 +2474,9 @@ a {
 	padding: 18px;
 	border: 1px solid rgba(255, 255, 255, 0.15);
 	border-radius: 10px;
-	background: radial-gradient(circle at 50% 0, rgba(255, 209, 102, 0.13), transparent 48%), rgba(255, 255, 255, 0.045);
+	background:
+		radial-gradient(circle at 50% 0, rgba(255, 209, 102, 0.13), transparent 48%),
+		rgba(255, 255, 255, 0.045);
 }
 
 .podiumPlaces {
@@ -2340,7 +2526,9 @@ a {
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	background: linear-gradient(160deg, #8c712d, #433410);
 	text-align: center;
-	box-shadow: inset 0 1px rgba(255, 255, 255, 0.18), 0 8px 18px rgba(0, 0, 0, 0.24);
+	box-shadow:
+		inset 0 1px rgba(255, 255, 255, 0.18),
+		0 8px 18px rgba(0, 0, 0, 0.24);
 }
 
 .podiumPlace-1 .podiumStep {
@@ -2415,10 +2603,18 @@ a {
 	height: 54px;
 }
 
-.leaderboardPodium.compact .podiumPlace-1 .podiumStep { height: 92px; }
-.leaderboardPodium.compact .podiumPlace-2 .podiumStep { height: 72px; }
-.leaderboardPodium.compact .podiumPlace-3 .podiumStep { height: 56px; }
-.leaderboardPodium.compact .podiumStep strong { font-size: 1.5rem; }
+.leaderboardPodium.compact .podiumPlace-1 .podiumStep {
+	height: 92px;
+}
+.leaderboardPodium.compact .podiumPlace-2 .podiumStep {
+	height: 72px;
+}
+.leaderboardPodium.compact .podiumPlace-3 .podiumStep {
+	height: 56px;
+}
+.leaderboardPodium.compact .podiumStep strong {
+	font-size: 1.5rem;
+}
 
 .playersTop button,
 .playerProfileNav button,
@@ -2711,7 +2907,7 @@ a {
 	gap: 8px;
 }
 
-.playerProfileActions button[type="button"] {
+.playerProfileActions button[type='button'] {
 	background: rgba(255, 255, 255, 0.14);
 	color: #fff;
 }
@@ -2775,7 +2971,6 @@ a {
 .playerStatGrid {
 	padding: 0 12px 12px;
 }
-
 
 /* ============================================================
    Admin and misc
@@ -2843,9 +3038,20 @@ a {
 	gap: 5px;
 }
 
-.settingToggle strong { color: #fff; font-size: 0.9rem; }
-.settingToggle small { max-width: 680px; color: rgba(255, 255, 255, 0.58); line-height: 1.45; }
-.settingToggle input { position: absolute; opacity: 0; pointer-events: none; }
+.settingToggle strong {
+	color: #fff;
+	font-size: 0.9rem;
+}
+.settingToggle small {
+	max-width: 680px;
+	color: rgba(255, 255, 255, 0.58);
+	line-height: 1.45;
+}
+.settingToggle input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
 
 .settingToggle i {
 	position: relative;
@@ -2855,11 +3061,13 @@ a {
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 999px;
 	background: rgba(255, 255, 255, 0.09);
-	transition: background 150ms ease, border-color 150ms ease;
+	transition:
+		background 150ms ease,
+		border-color 150ms ease;
 }
 
 .settingToggle i::after {
-	content: "";
+	content: '';
 	position: absolute;
 	top: 3px;
 	left: 3px;
@@ -2867,7 +3075,9 @@ a {
 	height: 18px;
 	border-radius: 50%;
 	background: rgba(255, 255, 255, 0.72);
-	transition: transform 150ms ease, background 150ms ease;
+	transition:
+		transform 150ms ease,
+		background 150ms ease;
 }
 
 .settingToggle:has(input:checked) {
@@ -2875,9 +3085,18 @@ a {
 	background: rgba(255, 209, 102, 0.065);
 }
 
-.settingToggle input:checked + i { border-color: #ffd166; background: #ffd166; }
-.settingToggle input:checked + i::after { background: #161a23; transform: translateX(20px); }
-.settingToggle:focus-within { outline: 2px solid rgba(255, 209, 102, 0.72); outline-offset: 2px; }
+.settingToggle input:checked + i {
+	border-color: #ffd166;
+	background: #ffd166;
+}
+.settingToggle input:checked + i::after {
+	background: #161a23;
+	transform: translateX(20px);
+}
+.settingToggle:focus-within {
+	outline: 2px solid rgba(255, 209, 102, 0.72);
+	outline-offset: 2px;
+}
 
 .adminSubTabs {
 	display: flex;
@@ -3000,7 +3219,9 @@ a {
 	background:
 		radial-gradient(circle at 88% 42%, rgba(255, 209, 102, 0.14), transparent 32%),
 		linear-gradient(115deg, #20283a, #151b27 62%);
-	box-shadow: 0 18px 42px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.06);
+	box-shadow:
+		0 18px 42px rgba(0, 0, 0, 0.25),
+		inset 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .shopDealCopy {
@@ -3107,7 +3328,9 @@ a {
 	border: 0;
 	border-radius: 99px;
 	background: rgba(255, 255, 255, 0.28);
-	transition: width 180ms ease, background 180ms ease;
+	transition:
+		width 180ms ease,
+		background 180ms ease;
 }
 
 .shopDealDots button.active {
@@ -3132,15 +3355,30 @@ a {
 	line-height: 1;
 	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
 	transform: translateY(-50%);
-	transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+	transition:
+		background 140ms ease,
+		color 140ms ease,
+		transform 140ms ease;
 }
 
-.shopDealArrow:hover { background: #ffd166; color: #141820; transform: translateY(-50%) scale(1.06); }
-.shopDealArrow.previous { left: 10px; }
-.shopDealArrow.next { right: 10px; }
+.shopDealArrow:hover {
+	background: #ffd166;
+	color: #141820;
+	transform: translateY(-50%) scale(1.06);
+}
+.shopDealArrow.previous {
+	left: 10px;
+}
+.shopDealArrow.next {
+	right: 10px;
+}
 
-.shopDeals:has(.shopDealArrow) .shopDealCopy { padding-left: 60px; }
-.shopDeals:has(.shopDealArrow) .shopDealPreview { padding-right: 34px; }
+.shopDeals:has(.shopDealArrow) .shopDealCopy {
+	padding-left: 60px;
+}
+.shopDeals:has(.shopDealArrow) .shopDealPreview {
+	padding-right: 34px;
+}
 
 .shoppingSundayBadge {
 	position: absolute;
@@ -3196,7 +3434,10 @@ a {
 	color: rgba(255, 255, 255, 0.7);
 	font-size: 0.77rem;
 	font-weight: 700;
-	transition: color 130ms ease, background 130ms ease, border-color 130ms ease;
+	transition:
+		color 130ms ease,
+		background 130ms ease,
+		border-color 130ms ease;
 }
 
 .shopFilterRow button:hover {
@@ -3211,26 +3452,61 @@ a {
 	box-shadow: 0 4px 14px rgba(255, 209, 102, 0.18);
 }
 
-.shopFilterRow .filter-common { --filter-accent: var(--rarity-common); }
-.shopFilterRow .filter-uncommon { --filter-accent: var(--rarity-uncommon); }
-.shopFilterRow .filter-rare { --filter-accent: var(--rarity-rare); }
-.shopFilterRow .filter-epic { --filter-accent: var(--rarity-epic); }
-.shopFilterRow .filter-legendary { --filter-accent: var(--rarity-legendary); }
-.shopFilterRow .filter-mythical { --filter-accent: var(--rarity-mythical); }
+.shopFilterRow .filter-common {
+	--filter-accent: var(--rarity-common);
+}
+.shopFilterRow .filter-uncommon {
+	--filter-accent: var(--rarity-uncommon);
+}
+.shopFilterRow .filter-rare {
+	--filter-accent: var(--rarity-rare);
+}
+.shopFilterRow .filter-epic {
+	--filter-accent: var(--rarity-epic);
+}
+.shopFilterRow .filter-legendary {
+	--filter-accent: var(--rarity-legendary);
+}
+.shopFilterRow .filter-mythical {
+	--filter-accent: var(--rarity-mythical);
+}
 
-.shopFilterRow button:is(.filter-common, .filter-uncommon, .filter-rare, .filter-epic, .filter-legendary, .filter-mythical) {
+.shopFilterRow
+	button:is(
+		.filter-common,
+		.filter-uncommon,
+		.filter-rare,
+		.filter-epic,
+		.filter-legendary,
+		.filter-mythical
+	) {
 	border-color: color-mix(in srgb, var(--filter-accent) 55%, transparent);
 	color: var(--filter-accent);
 }
 
-.shopFilterRow button:is(.filter-common, .filter-uncommon, .filter-rare, .filter-epic, .filter-legendary, .filter-mythical).active {
+.shopFilterRow
+	button:is(
+		.filter-common,
+		.filter-uncommon,
+		.filter-rare,
+		.filter-epic,
+		.filter-legendary,
+		.filter-mythical
+	).active {
 	background: var(--filter-accent);
 	color: #111722;
 }
 
 .shopFilterRow button.filter-dyeable:not(.active) {
 	border-color: rgba(120, 240, 221, 0.62);
-	background: linear-gradient(105deg, rgba(255, 61, 112, 0.28), rgba(255, 190, 61, 0.25), rgba(66, 226, 151, 0.25), rgba(52, 179, 255, 0.27), rgba(190, 80, 255, 0.28));
+	background: linear-gradient(
+		105deg,
+		rgba(255, 61, 112, 0.28),
+		rgba(255, 190, 61, 0.25),
+		rgba(66, 226, 151, 0.25),
+		rgba(52, 179, 255, 0.27),
+		rgba(190, 80, 255, 0.28)
+	);
 	color: #fff;
 	animation: shopRainbowHue 4.8s linear infinite;
 }
@@ -3280,24 +3556,51 @@ a {
 	border-radius: 11px;
 	background: linear-gradient(160deg, #20293a, #161d29 64%);
 	color: #f6f8fb;
-	box-shadow: 0 0 0 1px color-mix(in srgb, var(--card-accent) 11%, transparent), 0 14px 28px rgba(0, 0, 0, 0.25);
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--card-accent) 11%, transparent),
+		0 14px 28px rgba(0, 0, 0, 0.25);
 	cursor: pointer;
 }
 
-.shopCard-charm { --card-accent: #53d6bd; background: linear-gradient(155deg, rgba(83, 214, 189, 0.08), transparent 40%), linear-gradient(160deg, #20293a, #161d29 64%); }
-.shopCard-cosmetic { --card-accent: #f0a3bd; background: linear-gradient(155deg, rgba(240, 163, 189, 0.08), transparent 40%), linear-gradient(160deg, #20293a, #161d29 64%); }
-.rarity-common { --card-accent: var(--rarity-common); }
-.rarity-uncommon { --card-accent: var(--rarity-uncommon); }
-.rarity-rare { --card-accent: var(--rarity-rare); }
-.rarity-epic { --card-accent: var(--rarity-epic); }
-.rarity-legendary { --card-accent: var(--rarity-legendary); }
-.rarity-mythical { --card-accent: var(--rarity-mythical); }
+.shopCard-charm {
+	--card-accent: #53d6bd;
+	background:
+		linear-gradient(155deg, rgba(83, 214, 189, 0.08), transparent 40%),
+		linear-gradient(160deg, #20293a, #161d29 64%);
+}
+.shopCard-cosmetic {
+	--card-accent: #f0a3bd;
+	background:
+		linear-gradient(155deg, rgba(240, 163, 189, 0.08), transparent 40%),
+		linear-gradient(160deg, #20293a, #161d29 64%);
+}
+.rarity-common {
+	--card-accent: var(--rarity-common);
+}
+.rarity-uncommon {
+	--card-accent: var(--rarity-uncommon);
+}
+.rarity-rare {
+	--card-accent: var(--rarity-rare);
+}
+.rarity-epic {
+	--card-accent: var(--rarity-epic);
+}
+.rarity-legendary {
+	--card-accent: var(--rarity-legendary);
+}
+.rarity-mythical {
+	--card-accent: var(--rarity-mythical);
+}
 
 .shopCard:hover,
 .shopCard:focus-visible {
 	border-color: var(--card-accent);
 	transform: translateY(-3px);
-	box-shadow: 0 0 0 1px color-mix(in srgb, var(--card-accent) 34%, transparent), 0 18px 35px rgba(0, 0, 0, 0.36), 0 0 24px color-mix(in srgb, var(--card-accent) 9%, transparent);
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--card-accent) 34%, transparent),
+		0 18px 35px rgba(0, 0, 0, 0.36),
+		0 0 24px color-mix(in srgb, var(--card-accent) 9%, transparent);
 	outline: none;
 }
 
@@ -3311,9 +3614,13 @@ a {
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 8px;
 	background:
-		radial-gradient(circle at 50% 52%, color-mix(in srgb, var(--card-accent) 26%, transparent) 0 9%, color-mix(in srgb, var(--card-accent) 12%, transparent) 28%, transparent 67%),
-		linear-gradient(150deg, rgba(255, 255, 255, 0.035), transparent 55%),
-		#111722;
+		radial-gradient(
+			circle at 50% 52%,
+			color-mix(in srgb, var(--card-accent) 26%, transparent) 0 9%,
+			color-mix(in srgb, var(--card-accent) 12%, transparent) 28%,
+			transparent 67%
+		),
+		linear-gradient(150deg, rgba(255, 255, 255, 0.035), transparent 55%), #111722;
 }
 
 .shopModelHost {
@@ -3322,20 +3629,44 @@ a {
 }
 
 .shopModelHost::before {
-	content: "";
+	content: '';
 	position: absolute;
 	inset: 20%;
 	border-radius: 50%;
-	background: radial-gradient(circle, color-mix(in srgb, var(--card-accent, #fff) 12%, transparent), transparent 68%);
+	background: radial-gradient(
+		circle,
+		color-mix(in srgb, var(--card-accent, #fff) 12%, transparent),
+		transparent 68%
+	);
 	opacity: 1;
 	transition: opacity 240ms ease;
 }
 
-.shopModelHost.ready::before { opacity: 0; }
-.shopModelSnapshot { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; opacity: 1; transition: opacity 180ms ease; }
-.shopModelCanvas { position: absolute; inset: 0; z-index: 2; opacity: 0; transition: opacity 220ms ease; }
-.shopModelHost.live .shopModelCanvas { opacity: 1; }
-.shopModelHost.live:has(.shopModelCanvas) .shopModelSnapshot { opacity: 0; }
+.shopModelHost.ready::before {
+	opacity: 0;
+}
+.shopModelSnapshot {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	opacity: 1;
+	transition: opacity 180ms ease;
+}
+.shopModelCanvas {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	opacity: 0;
+	transition: opacity 220ms ease;
+}
+.shopModelHost.live .shopModelCanvas {
+	opacity: 1;
+}
+.shopModelHost.live:has(.shopModelCanvas) .shopModelSnapshot {
+	opacity: 0;
+}
 
 .shopItemIcon {
 	width: min(82%, 142px);
@@ -3350,7 +3681,9 @@ a {
 	background-color: rgba(18, 24, 35, 0.88);
 }
 
-.shopMetaIcon-animated::before { border-left-color: #fff; }
+.shopMetaIcon-animated::before {
+	border-left-color: #fff;
+}
 
 .shopDealBadge {
 	position: absolute;
@@ -3413,7 +3746,14 @@ a {
 
 .shopTag.dyeable {
 	border-color: rgba(255, 255, 255, 0.45);
-	background: linear-gradient(105deg, rgba(255, 61, 112, 0.7), rgba(255, 190, 61, 0.68), rgba(66, 226, 151, 0.68), rgba(52, 179, 255, 0.7), rgba(190, 80, 255, 0.7));
+	background: linear-gradient(
+		105deg,
+		rgba(255, 61, 112, 0.7),
+		rgba(255, 190, 61, 0.68),
+		rgba(66, 226, 151, 0.68),
+		rgba(52, 179, 255, 0.7),
+		rgba(190, 80, 255, 0.7)
+	);
 	color: #fff;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.72);
 	animation: shopRainbowHue 4.4s linear infinite;
@@ -3426,17 +3766,34 @@ a {
 	animation: shopAnimatedTagPulse 1.8s ease-in-out infinite;
 }
 
-.shopTag.discounted { border-color: rgba(79, 220, 163, 0.4); background: rgba(79, 220, 163, 0.11); color: #8ce8c2; }
-.shopTag.soldOut { border-color: rgba(255, 116, 105, 0.4); background: rgba(255, 116, 105, 0.11); color: #ffaaa3; }
+.shopTag.discounted {
+	border-color: rgba(79, 220, 163, 0.4);
+	background: rgba(79, 220, 163, 0.11);
+	color: #8ce8c2;
+}
+.shopTag.soldOut {
+	border-color: rgba(255, 116, 105, 0.4);
+	background: rgba(255, 116, 105, 0.11);
+	color: #ffaaa3;
+}
 
 @keyframes shopAnimatedTagPulse {
-	0%, 100% { box-shadow: 0 0 0 rgba(195, 122, 255, 0); }
-	50% { box-shadow: 0 0 12px rgba(195, 122, 255, 0.28); }
+	0%,
+	100% {
+		box-shadow: 0 0 0 rgba(195, 122, 255, 0);
+	}
+	50% {
+		box-shadow: 0 0 12px rgba(195, 122, 255, 0.28);
+	}
 }
 
 @keyframes shopRainbowHue {
-	from { filter: hue-rotate(0deg); }
-	to { filter: hue-rotate(360deg); }
+	from {
+		filter: hue-rotate(0deg);
+	}
+	to {
+		filter: hue-rotate(360deg);
+	}
 }
 
 .animatedWave {
@@ -3452,9 +3809,23 @@ a {
 }
 
 @keyframes shopAnimatedLetterWave {
-	0%, 44%, 100% { color: inherit; text-shadow: 0 0 0 rgba(215, 164, 255, 0); transform: translateY(0) rotate(0deg); }
-	12% { color: #fff; text-shadow: 0 0 7px rgba(215, 164, 255, 0.78); transform: translateY(-3px) rotate(-4deg); }
-	24% { color: #f0d7ff; text-shadow: 0 0 4px rgba(215, 164, 255, 0.5); transform: translateY(1px) rotate(2deg); }
+	0%,
+	44%,
+	100% {
+		color: inherit;
+		text-shadow: 0 0 0 rgba(215, 164, 255, 0);
+		transform: translateY(0) rotate(0deg);
+	}
+	12% {
+		color: #fff;
+		text-shadow: 0 0 7px rgba(215, 164, 255, 0.78);
+		transform: translateY(-3px) rotate(-4deg);
+	}
+	24% {
+		color: #f0d7ff;
+		text-shadow: 0 0 4px rgba(215, 164, 255, 0.5);
+		transform: translateY(1px) rotate(2deg);
+	}
 }
 
 .shopHiddenPreview,
@@ -3470,7 +3841,12 @@ a {
 
 .shopReduced3dPlaceholder {
 	background:
-		radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--card-accent) 38%, transparent) 0 8%, color-mix(in srgb, var(--card-accent) 19%, transparent) 24%, transparent 62%),
+		radial-gradient(
+			circle at 50% 50%,
+			color-mix(in srgb, var(--card-accent) 38%, transparent) 0 8%,
+			color-mix(in srgb, var(--card-accent) 19%, transparent) 24%,
+			transparent 62%
+		),
 		radial-gradient(ellipse at 50% 72%, rgba(0, 0, 0, 0.48), transparent 42%);
 	filter: blur(2px);
 }
@@ -3493,8 +3869,12 @@ a {
 	font-size: 1.04rem;
 }
 
-.shopPrice del { color: rgba(255, 255, 255, 0.35); }
-.shopPrice.deal strong { color: #79e1bd; }
+.shopPrice del {
+	color: rgba(255, 255, 255, 0.35);
+}
+.shopPrice.deal strong {
+	color: #79e1bd;
+}
 
 .shopCardFoot {
 	width: 100%;
@@ -3504,11 +3884,21 @@ a {
 	cursor: pointer;
 }
 
-.shopCardFoot:hover:not(:disabled) { background: #ffd166; color: #141820; }
+.shopCardFoot:hover:not(:disabled) {
+	background: #ffd166;
+	color: #141820;
+}
 .shopCard.unavailable .shopCardFoot,
-.shopCardFoot:disabled { border-color: rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.045); color: rgba(255, 255, 255, 0.42); cursor: default; }
+.shopCardFoot:disabled {
+	border-color: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.045);
+	color: rgba(255, 255, 255, 0.42);
+	cursor: default;
+}
 
-.shopModalOpen { overflow: hidden; }
+.shopModalOpen {
+	overflow: hidden;
+}
 
 .shopDetailsBackdrop {
 	position: fixed;
@@ -3530,7 +3920,13 @@ a {
 	overflow: visible;
 	border: 1px solid rgba(255, 255, 255, 0.16);
 	border-radius: 14px;
-	background: radial-gradient(circle at 18% 24%, color-mix(in srgb, var(--card-accent) 15%, transparent), transparent 34%), #141b27;
+	background:
+		radial-gradient(
+			circle at 18% 24%,
+			color-mix(in srgb, var(--card-accent) 15%, transparent),
+			transparent 34%
+		),
+		#141b27;
 	color: #f7f8fb;
 	box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58);
 }
@@ -3558,7 +3954,14 @@ a {
 .shopDetailsPreview {
 	position: relative;
 	min-height: 420px;
-	background: radial-gradient(circle at center, color-mix(in srgb, var(--card-accent) 30%, transparent) 0 8%, color-mix(in srgb, var(--card-accent) 13%, transparent) 31%, transparent 68%), #0d131d;
+	background:
+		radial-gradient(
+			circle at center,
+			color-mix(in srgb, var(--card-accent) 30%, transparent) 0 8%,
+			color-mix(in srgb, var(--card-accent) 13%, transparent) 31%,
+			transparent 68%
+		),
+		#0d131d;
 }
 
 .shopDetailsPreview .shopModelHost,
@@ -3568,7 +3971,10 @@ a {
 	min-height: 420px;
 }
 
-.shopDetailsPreview .shopItemIcon { padding: 65px; object-fit: contain; }
+.shopDetailsPreview .shopItemIcon {
+	padding: 65px;
+	object-fit: contain;
+}
 
 .shopDetailsPreview > span {
 	position: absolute;
@@ -3590,11 +3996,30 @@ a {
 	padding: 48px clamp(28px, 5vw, 58px);
 }
 
-.shopDetailsSummary h2 { margin: 0; font-size: clamp(1.65rem, 4vw, 2.6rem); line-height: 1.08; }
-.shopDetailsSummary > p { margin: 0; color: rgba(255, 255, 255, 0.67); line-height: 1.6; }
-.shopDetailsSummary .shopFeatureNote { margin: -8px 0; color: #83dbc9; font-size: 0.78rem; }
-.shopDetailsBuy { justify-self: start; min-width: 210px; padding: 12px 16px; }
-.shopDetailsBuy:disabled { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.42); }
+.shopDetailsSummary h2 {
+	margin: 0;
+	font-size: clamp(1.65rem, 4vw, 2.6rem);
+	line-height: 1.08;
+}
+.shopDetailsSummary > p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.67);
+	line-height: 1.6;
+}
+.shopDetailsSummary .shopFeatureNote {
+	margin: -8px 0;
+	color: #83dbc9;
+	font-size: 0.78rem;
+}
+.shopDetailsBuy {
+	justify-self: start;
+	min-width: 210px;
+	padding: 12px 16px;
+}
+.shopDetailsBuy:disabled {
+	background: rgba(255, 255, 255, 0.08);
+	color: rgba(255, 255, 255, 0.42);
+}
 
 .shopItemEffect,
 .shopItemTooltips {
@@ -3641,7 +4066,9 @@ a {
 	margin-bottom: 18px;
 }
 
-.charmProgressionHeading h3 { margin: 0; }
+.charmProgressionHeading h3 {
+	margin: 0;
+}
 
 .charmReceiveLevel {
 	display: grid;
@@ -3654,51 +4081,172 @@ a {
 	background: rgba(83, 214, 189, 0.08);
 }
 
-.charmReceiveLevel span { align-self: center; color: rgba(255, 255, 255, 0.55); font-size: 0.7rem; line-height: 1; text-transform: uppercase; }
-.charmReceiveLevel strong { align-self: center; color: #73e0c8; line-height: 1; }
-.charmReceiveLevel small { grid-column: 1 / -1; color: rgba(255, 255, 255, 0.5); }
-.charmReceiveLevel.broken { border-color: rgba(255, 116, 105, 0.42); background: rgba(255, 116, 105, 0.08); }
-.charmReceiveLevel.broken strong { color: #ff9b93; }
+.charmReceiveLevel span {
+	align-self: center;
+	color: rgba(255, 255, 255, 0.55);
+	font-size: 0.7rem;
+	line-height: 1;
+	text-transform: uppercase;
+}
+.charmReceiveLevel strong {
+	align-self: center;
+	color: #73e0c8;
+	line-height: 1;
+}
+.charmReceiveLevel small {
+	grid-column: 1 / -1;
+	color: rgba(255, 255, 255, 0.5);
+}
+.charmReceiveLevel.broken {
+	border-color: rgba(255, 116, 105, 0.42);
+	background: rgba(255, 116, 105, 0.08);
+}
+.charmReceiveLevel.broken strong {
+	color: #ff9b93;
+}
 
-.charmTableWrap { overflow-x: auto; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 9px; }
-.charmTableWrap table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 0.78rem; }
+.charmTableWrap {
+	overflow-x: auto;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 9px;
+}
+.charmTableWrap table {
+	width: 100%;
+	min-width: 620px;
+	border-collapse: collapse;
+	font-size: 0.78rem;
+}
 .charmTableWrap th,
-.charmTableWrap td { padding: 11px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.075); text-align: left; vertical-align: top; }
-.charmTableWrap thead { background: rgba(255, 255, 255, 0.055); color: rgba(255, 255, 255, 0.58); text-transform: uppercase; letter-spacing: 0.05em; }
-.charmTableWrap tbody th { color: #ffd166; white-space: nowrap; }
-.charmTableWrap tbody td { color: rgba(255, 255, 255, 0.68); line-height: 1.45; }
-.charmTableWrap tr.received { background: rgba(83, 214, 189, 0.055); }
-.charmTableWrap tr.broken { background: rgba(255, 116, 105, 0.07); }
-.charmTableWrap tr.broken th { color: #ff9b93; }
-.charmTableWrap tr.broken td:last-child { color: rgba(255, 255, 255, 0.46); font-style: italic; }
-.charmIngredients { display: flex; flex-wrap: wrap; gap: 5px; min-width: 190px; }
-.charmIngredients span { padding: 3px 6px; border-radius: 5px; background: rgba(255, 255, 255, 0.065); color: rgba(255, 255, 255, 0.72); }
-.charmIngredients strong { color: #ffd166; }
+.charmTableWrap td {
+	padding: 11px 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+	text-align: left;
+	vertical-align: top;
+}
+.charmTableWrap thead {
+	background: rgba(255, 255, 255, 0.055);
+	color: rgba(255, 255, 255, 0.58);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.charmTableWrap tbody th {
+	color: #ffd166;
+	white-space: nowrap;
+}
+.charmTableWrap tbody td {
+	color: rgba(255, 255, 255, 0.68);
+	line-height: 1.45;
+}
+.charmTableWrap tr.received {
+	background: rgba(83, 214, 189, 0.055);
+}
+.charmTableWrap tr.broken {
+	background: rgba(255, 116, 105, 0.07);
+}
+.charmTableWrap tr.broken th {
+	color: #ff9b93;
+}
+.charmTableWrap tr.broken td:last-child {
+	color: rgba(255, 255, 255, 0.46);
+	font-style: italic;
+}
+.charmIngredients {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	min-width: 190px;
+}
+.charmIngredients span {
+	padding: 3px 6px;
+	border-radius: 5px;
+	background: rgba(255, 255, 255, 0.065);
+	color: rgba(255, 255, 255, 0.72);
+}
+.charmIngredients strong {
+	color: #ffd166;
+}
 
 @media (max-width: 700px) {
-	.shopDeals { grid-template-columns: 1fr 120px; }
-	.shopDealCopy { padding: 20px; }
-	.shopDealCopy > p { display: none; }
-	.shopDealHeading { flex-wrap: wrap; }
-	.shopDealSpark { display: none; }
-	.shopDealActions { align-items: flex-start; flex-direction: column; }
-	.shopDealArrow { width: 32px; height: 50px; }
-	.shopDealArrow.previous { left: 6px; }
-	.shopDealArrow.next { right: 6px; }
-	.shopDeals:has(.shopDealArrow) .shopDealCopy { padding-left: 45px; }
-	.shopCatalogToolbar { align-items: stretch; flex-direction: column; }
-	.shopCatalogToolbar .shopOrderControl select { width: 100%; }
-	.shopFilterRow { grid-template-columns: 1fr; }
-	.shopGrid { grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); }
-	.shopCard { grid-template-rows: 150px 1fr auto; min-height: 322px; }
-	.shopImageFrame, .shopModelHost { min-height: 148px; }
-	.shopDetailsBackdrop { padding: 0; }
-	.shopDetails { width: 100%; min-height: 100vh; border-radius: 0; }
-	.shopDetailsHero { grid-template-columns: 1fr; }
-	.shopDetailsPreview, .shopDetailsPreview .shopModelHost, .shopDetailsPreview .shopItemIcon { min-height: 300px; height: 300px; }
-	.shopDetailsSummary { padding: 28px 22px 34px; }
-	.charmProgression { padding: 20px; }
-	.charmProgressionHeading { align-items: stretch; flex-direction: column; }
+	.shopDeals {
+		grid-template-columns: 1fr 120px;
+	}
+	.shopDealCopy {
+		padding: 20px;
+	}
+	.shopDealCopy > p {
+		display: none;
+	}
+	.shopDealHeading {
+		flex-wrap: wrap;
+	}
+	.shopDealSpark {
+		display: none;
+	}
+	.shopDealActions {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+	.shopDealArrow {
+		width: 32px;
+		height: 50px;
+	}
+	.shopDealArrow.previous {
+		left: 6px;
+	}
+	.shopDealArrow.next {
+		right: 6px;
+	}
+	.shopDeals:has(.shopDealArrow) .shopDealCopy {
+		padding-left: 45px;
+	}
+	.shopCatalogToolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+	.shopCatalogToolbar .shopOrderControl select {
+		width: 100%;
+	}
+	.shopFilterRow {
+		grid-template-columns: 1fr;
+	}
+	.shopGrid {
+		grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+	}
+	.shopCard {
+		grid-template-rows: 150px 1fr auto;
+		min-height: 322px;
+	}
+	.shopImageFrame,
+	.shopModelHost {
+		min-height: 148px;
+	}
+	.shopDetailsBackdrop {
+		padding: 0;
+	}
+	.shopDetails {
+		width: 100%;
+		min-height: 100vh;
+		border-radius: 0;
+	}
+	.shopDetailsHero {
+		grid-template-columns: 1fr;
+	}
+	.shopDetailsPreview,
+	.shopDetailsPreview .shopModelHost,
+	.shopDetailsPreview .shopItemIcon {
+		min-height: 300px;
+		height: 300px;
+	}
+	.shopDetailsSummary {
+		padding: 28px 22px 34px;
+	}
+	.charmProgression {
+		padding: 20px;
+	}
+	.charmProgressionHeading {
+		align-items: stretch;
+		flex-direction: column;
+	}
 }
 
 .adminWarnings,
@@ -3788,12 +4336,12 @@ a {
 	padding: 0 5px;
 }
 
-.countdownColorOptions input[type="color"] {
+.countdownColorOptions input[type='color'] {
 	height: 36px;
 	padding: 3px;
 }
 
-.countdownColorOptions input[type="range"] {
+.countdownColorOptions input[type='range'] {
 	padding: 0;
 	accent-color: #ffd166;
 }
@@ -3871,7 +4419,7 @@ a {
 
 .giftCodeForm input,
 .emailWhitelistForm input,
-.playerBanForm input:not([type="radio"]),
+.playerBanForm input:not([type='radio']),
 .playerBanForm select,
 .redeemForm input {
 	width: 100%;
@@ -3974,7 +4522,9 @@ a {
 }
 
 @media (max-width: 800px) {
-	.playerBanForm { grid-template-columns: 1fr; }
+	.playerBanForm {
+		grid-template-columns: 1fr;
+	}
 }
 
 .emailWhitelistForm select,
@@ -4110,7 +4660,6 @@ a {
 	gap: 10px;
 }
 
-
 /* ============================================================
    Charm forge
    ============================================================ */
@@ -4187,7 +4736,10 @@ a {
 	cursor: pointer;
 	font: inherit;
 	font-weight: 800;
-	transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+	transition:
+		border-color 160ms ease,
+		background 160ms ease,
+		transform 160ms ease;
 }
 
 .charmRefresh:hover:not(:disabled) {
@@ -4196,8 +4748,14 @@ a {
 	transform: translateY(-1px);
 }
 
-.charmRefresh:disabled { cursor: wait; opacity: 0.5; }
-.charmRefresh span { color: var(--forge-cyan); font-size: 1.2rem; }
+.charmRefresh:disabled {
+	cursor: wait;
+	opacity: 0.5;
+}
+.charmRefresh span {
+	color: var(--forge-cyan);
+	font-size: 1.2rem;
+}
 
 .charmForgeStage {
 	position: relative;
@@ -4209,7 +4767,9 @@ a {
 		radial-gradient(circle at 50% 48%, rgba(146, 78, 255, 0.21), transparent 24%),
 		radial-gradient(ellipse at 50% 110%, rgba(72, 255, 228, 0.13), transparent 52%),
 		linear-gradient(145deg, #080712, #111024 58%, #080b18);
-	box-shadow: inset 0 0 80px rgba(107, 56, 181, 0.12), 0 24px 75px rgba(0, 0, 0, 0.34);
+	box-shadow:
+		inset 0 0 80px rgba(107, 56, 181, 0.12),
+		0 24px 75px rgba(0, 0, 0, 0.34);
 	isolation: isolate;
 }
 
@@ -4217,13 +4777,20 @@ a {
 	position: absolute;
 	inset: 0;
 	z-index: 4;
-	background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(159, 94, 255, 0.48) 12%, transparent 42%);
+	background: radial-gradient(
+		circle,
+		rgba(255, 255, 255, 0.95),
+		rgba(159, 94, 255, 0.48) 12%,
+		transparent 42%
+	);
 	content: '';
 	opacity: 0;
 	pointer-events: none;
 }
 
-.charmForgeStage.enchanting::after { animation: charmForgeFlash 1.9s ease-in-out both; }
+.charmForgeStage.enchanting::after {
+	animation: charmForgeFlash 1.9s ease-in-out both;
+}
 
 .charmForgeAura {
 	position: absolute;
@@ -4232,7 +4799,12 @@ a {
 	width: min(56vw, 480px);
 	aspect-ratio: 1;
 	border-radius: 50%;
-	background: radial-gradient(circle, rgba(180, 114, 255, 0.21), rgba(102, 255, 227, 0.05) 52%, transparent 70%);
+	background: radial-gradient(
+		circle,
+		rgba(180, 114, 255, 0.21),
+		rgba(102, 255, 227, 0.05) 52%,
+		transparent 70%
+	);
 	filter: blur(8px);
 	transform: translate(-50%, -50%);
 	animation: charmAuraBreathe 4.5s ease-in-out infinite;
@@ -4246,7 +4818,9 @@ a {
 	height: 100%;
 }
 
-.charmForgeCanvas { cursor: crosshair; }
+.charmForgeCanvas {
+	cursor: crosshair;
+}
 
 .charmIdentity {
 	position: absolute;
@@ -4261,15 +4835,26 @@ a {
 	border: 1px solid rgba(209, 177, 255, 0.2);
 	border-radius: 11px;
 	background: linear-gradient(120deg, rgba(9, 7, 18, 0.88), rgba(32, 20, 53, 0.82));
-	box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35), inset 0 1px rgba(255, 255, 255, 0.08);
+	box-shadow:
+		0 10px 35px rgba(0, 0, 0, 0.35),
+		inset 0 1px rgba(255, 255, 255, 0.08);
 	text-align: center;
 	transform: translateX(-50%);
 	backdrop-filter: blur(10px);
 }
 
-.charmIdentity h4 { grid-column: 1 / -1; font-size: 1rem; }
-.charmIdentity strong { color: var(--forge-gold); text-align: right; }
-.charmIdentity span { color: var(--forge-cyan); text-align: left; }
+.charmIdentity h4 {
+	grid-column: 1 / -1;
+	font-size: 1rem;
+}
+.charmIdentity strong {
+	color: var(--forge-gold);
+	text-align: right;
+}
+.charmIdentity span {
+	color: var(--forge-cyan);
+	text-align: left;
+}
 
 .charmAbility {
 	display: grid;
@@ -4338,10 +4923,24 @@ a {
 	filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.45));
 }
 
-.charmIngredientIcon span { color: rgba(255, 255, 255, 0.45); font-size: 1.4rem; }
-.charmIngredientGrid strong { overflow: hidden; font-size: 0.78rem; text-overflow: ellipsis; white-space: nowrap; }
-.charmIngredientGrid li > span { color: var(--forge-cyan); font-size: 0.76rem; font-weight: 900; }
-.charmIngredientGrid li.missing > span { color: #ff8e9e; }
+.charmIngredientIcon span {
+	color: rgba(255, 255, 255, 0.45);
+	font-size: 1.4rem;
+}
+.charmIngredientGrid strong {
+	overflow: hidden;
+	font-size: 0.78rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.charmIngredientGrid li > span {
+	color: var(--forge-cyan);
+	font-size: 0.76rem;
+	font-weight: 900;
+}
+.charmIngredientGrid li.missing > span {
+	color: #ff8e9e;
+}
 
 .charmEnchantBar {
 	position: sticky;
@@ -4361,7 +4960,9 @@ a {
 	font-size: 0.78rem;
 }
 
-.charmForgeMessage.error { color: #ff9cad; }
+.charmForgeMessage.error {
+	color: #ff9cad;
+}
 
 .charmEnchantButton {
 	position: relative;
@@ -4379,8 +4980,13 @@ a {
 	cursor: pointer;
 	font: inherit;
 	font-weight: 900;
-	box-shadow: 0 0 30px rgba(159, 82, 237, 0.24), inset 0 1px rgba(255, 255, 255, 0.2);
-	transition: filter 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+	box-shadow:
+		0 0 30px rgba(159, 82, 237, 0.24),
+		inset 0 1px rgba(255, 255, 255, 0.2);
+	transition:
+		filter 160ms ease,
+		transform 160ms ease,
+		box-shadow 160ms ease;
 }
 
 .charmEnchantButton::before {
@@ -4398,17 +5004,33 @@ a {
 .charmEnchantButton:hover:not(:disabled) {
 	filter: brightness(1.13) saturate(1.12);
 	transform: translateY(-2px);
-	box-shadow: 0 0 38px rgba(159, 82, 237, 0.42), inset 0 1px rgba(255, 255, 255, 0.25);
+	box-shadow:
+		0 0 38px rgba(159, 82, 237, 0.42),
+		inset 0 1px rgba(255, 255, 255, 0.25);
 }
 
-.charmEnchantButton:hover:not(:disabled)::before { left: 112%; }
+.charmEnchantButton:hover:not(:disabled)::before {
+	left: 112%;
+}
 .charmEnchantButton.insufficient {
 	background: linear-gradient(120deg, #761f34, #bd3b51 52%, #6f2634);
-	box-shadow: 0 0 30px rgba(213, 58, 83, 0.28), inset 0 1px rgba(255, 255, 255, 0.18);
+	box-shadow:
+		0 0 30px rgba(213, 58, 83, 0.28),
+		inset 0 1px rgba(255, 255, 255, 0.18);
 }
-.charmEnchantButton.insufficient:hover:not(:disabled) { box-shadow: 0 0 38px rgba(213, 58, 83, 0.45), inset 0 1px rgba(255, 255, 255, 0.22); }
-.charmEnchantButton:disabled { cursor: not-allowed; filter: grayscale(0.55); opacity: 0.58; }
-.charmEnchantButton strong { color: #fff0a6; }
+.charmEnchantButton.insufficient:hover:not(:disabled) {
+	box-shadow:
+		0 0 38px rgba(213, 58, 83, 0.45),
+		inset 0 1px rgba(255, 255, 255, 0.22);
+}
+.charmEnchantButton:disabled {
+	cursor: not-allowed;
+	filter: grayscale(0.55);
+	opacity: 0.58;
+}
+.charmEnchantButton strong {
+	color: #fff0a6;
+}
 
 .charmMastered,
 .charmForgeEmpty {
@@ -4419,22 +5041,52 @@ a {
 	padding: 36px;
 	border: 1px solid rgba(190, 147, 255, 0.18);
 	border-radius: 14px;
-	background: radial-gradient(circle, rgba(148, 83, 242, 0.12), transparent 55%), rgba(8, 8, 18, 0.42);
+	background:
+		radial-gradient(circle, rgba(148, 83, 242, 0.12), transparent 55%), rgba(8, 8, 18, 0.42);
 	text-align: center;
 }
 
-.charmMastered { min-height: auto; color: var(--forge-gold); font-weight: 900; }
-.charmForgeEmpty p { max-width: 540px; margin: 0; color: rgba(255, 255, 255, 0.58); }
-.charmRune { color: var(--forge-violet); font-size: 3.5rem; text-shadow: 0 0 28px currentColor; animation: charmRunePulse 2.4s ease-in-out infinite; }
+.charmMastered {
+	min-height: auto;
+	color: var(--forge-gold);
+	font-weight: 900;
+}
+.charmForgeEmpty p {
+	max-width: 540px;
+	margin: 0;
+	color: rgba(255, 255, 255, 0.58);
+}
+.charmRune {
+	color: var(--forge-violet);
+	font-size: 3.5rem;
+	text-shadow: 0 0 28px currentColor;
+	animation: charmRunePulse 2.4s ease-in-out infinite;
+}
 
 @keyframes charmAuraBreathe {
-	50% { opacity: 0.65; transform: translate(-50%, -50%) scale(1.12); }
+	50% {
+		opacity: 0.65;
+		transform: translate(-50%, -50%) scale(1.12);
+	}
 }
-@keyframes charmRunePulse { 50% { opacity: 0.58; transform: scale(1.12) rotate(10deg); } }
+@keyframes charmRunePulse {
+	50% {
+		opacity: 0.58;
+		transform: scale(1.12) rotate(10deg);
+	}
+}
 @keyframes charmForgeFlash {
-	0%, 48%, 100% { opacity: 0; }
-	62% { opacity: 1; }
-	76% { opacity: 0.16; }
+	0%,
+	48%,
+	100% {
+		opacity: 0;
+	}
+	62% {
+		opacity: 1;
+	}
+	76% {
+		opacity: 0.16;
+	}
 }
 
 @media (max-width: 760px) {
@@ -4446,27 +5098,54 @@ a {
 		flex-direction: column;
 	}
 
-	.charmForgeControls { display: grid; grid-template-columns: 1fr 1fr; }
-	.charmForgeStage { min-height: 430px; border-radius: 13px; }
-	.charmAbility { grid-template-columns: 1fr; }
-	.charmIngredientSection { padding: 13px; }
-	.charmIngredientGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-	.charmEnchantButton { width: 100%; min-width: 0; }
-	.charmForgeMessage { text-align: center; }
+	.charmForgeControls {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+	.charmForgeStage {
+		min-height: 430px;
+		border-radius: 13px;
+	}
+	.charmAbility {
+		grid-template-columns: 1fr;
+	}
+	.charmIngredientSection {
+		padding: 13px;
+	}
+	.charmIngredientGrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.charmEnchantButton {
+		width: 100%;
+		min-width: 0;
+	}
+	.charmForgeMessage {
+		text-align: center;
+	}
 }
 
 @media (max-width: 430px) {
 	.charmForgeControls,
-	.charmIngredientGrid { grid-template-columns: 1fr; }
-	.charmForgeStage { min-height: 390px; }
-	.charmIdentity { bottom: 14px; }
+	.charmIngredientGrid {
+		grid-template-columns: 1fr;
+	}
+	.charmForgeStage {
+		min-height: 390px;
+	}
+	.charmIdentity {
+		bottom: 14px;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.charmForgeAura,
-	.charmRune { animation: none; }
+	.charmRune {
+		animation: none;
+	}
 	.charmEnchantButton,
-	.charmRefresh { transition: none; }
+	.charmRefresh {
+		transition: none;
+	}
 }
 
 /* ============================================================
@@ -4529,7 +5208,9 @@ a {
 	padding: 16px;
 	border: 1px solid rgba(255, 255, 255, 0.15);
 	border-radius: 10px;
-	background: radial-gradient(circle at 0 0, rgba(85, 255, 255, 0.1), transparent 45%), rgba(255, 255, 255, 0.045);
+	background:
+		radial-gradient(circle at 0 0, rgba(85, 255, 255, 0.1), transparent 45%),
+		rgba(255, 255, 255, 0.045);
 }
 
 .fishStatsHeading {
@@ -4569,9 +5250,15 @@ a {
 	background: rgba(255, 255, 255, 0.09);
 }
 
-.fishStats progress::-webkit-progress-bar { background: rgba(255, 255, 255, 0.09); }
-.fishStats progress::-webkit-progress-value { background: linear-gradient(90deg, #55ffff, #55ff55); }
-.fishStats progress::-moz-progress-bar { background: linear-gradient(90deg, #55ffff, #55ff55); }
+.fishStats progress::-webkit-progress-bar {
+	background: rgba(255, 255, 255, 0.09);
+}
+.fishStats progress::-webkit-progress-value {
+	background: linear-gradient(90deg, #55ffff, #55ff55);
+}
+.fishStats progress::-moz-progress-bar {
+	background: linear-gradient(90deg, #55ffff, #55ff55);
+}
 
 .fishRarityBars {
 	display: grid;
@@ -4687,9 +5374,15 @@ a {
 	border: 2px solid var(--fish-rarity);
 	border-radius: 8px;
 	background:
-		radial-gradient(circle, color-mix(in srgb, var(--fish-rarity) 20%, transparent), transparent 62%),
+		radial-gradient(
+			circle,
+			color-mix(in srgb, var(--fish-rarity) 20%, transparent),
+			transparent 62%
+		),
 		#111722;
-	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 8px 22px rgba(0, 0, 0, 0.24);
+	box-shadow:
+		inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+		0 8px 22px rgba(0, 0, 0, 0.24);
 	outline: none;
 }
 
@@ -4742,7 +5435,9 @@ a {
 	gap: 0;
 	font-size: 0.7rem;
 	line-height: 1.05;
-	text-shadow: 0 1px 3px #000, 0 1px 3px #000;
+	text-shadow:
+		0 1px 3px #000,
+		0 1px 3px #000;
 }
 
 .fishTooltip {
@@ -4921,8 +5616,12 @@ a {
 		padding: 28px 0 48px;
 	}
 
-	.siteHeader { margin-bottom: 48px; }
-	.siteHeader .siteMinecraftTitle { width: min(100%, 820px); }
+	.siteHeader {
+		margin-bottom: 48px;
+	}
+	.siteHeader .siteMinecraftTitle {
+		width: min(100%, 820px);
+	}
 
 	.dashboardTop {
 		display: grid;

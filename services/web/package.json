@@ -9,19 +9,19 @@
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint .",
+		"lint": "eslint . --max-warnings=0",
 		"typecheck": "tsc --noEmit",
-		"check": "npm run lint && npm run typecheck && npm run build",
+		"check": "npm run lint && npm run typecheck",
 		"audit:prod": "npm audit --omit=dev --audit-level=high"
 	},
 	"dependencies": {
 		"@formkit/auto-animate": "^0.10.0",
 		"fireworks-js": "^2.10.8",
 		"marked": "^18.0.4",
-		"next": "^16.1.6",
+		"next": "^16.3.2",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
-		"sharp": "^0.34.5",
+		"sharp": "^0.35.3",
 		"three": "^0.170.0"
 	},
 	"devDependencies": {

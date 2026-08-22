@@ -3,7 +3,6 @@
 import { Fireworks } from 'fireworks-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LeaderboardPodium } from '@/components/leaderboard-podium';
-import { PlayerName } from '@/components/player-name';
 import { apiMessage } from '@/lib/api-response';
 import { CompendiumGuide, CompendiumStats, FishGrid } from './fishing/fish-compendium-components';
 import {
@@ -13,7 +12,6 @@ import {
 	toggled,
 } from './fishing/fish-compendium-format';
 import {
-	RARITIES,
 	type CatchEvent,
 	type CompendiumResponse,
 	type FishSort,

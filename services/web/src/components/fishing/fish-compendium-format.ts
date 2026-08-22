@@ -1,4 +1,4 @@
-import { Fireworks } from 'fireworks-js';
+import type { Fireworks } from 'fireworks-js';
 import type React from 'react';
 import {
 	GROUPS,

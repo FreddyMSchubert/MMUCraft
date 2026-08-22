@@ -6,7 +6,7 @@ import type { Countdown } from '@/components/dynamic-countdowns';
 import { apiBody, apiMessage, errorMessage, formatLondonInput } from './admin-api';
 
 export function useCountdownAdministration({
-	countdowns,
+	countdowns: _countdowns,
 	setCountdowns,
 	reload,
 	setError,

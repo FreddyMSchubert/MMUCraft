@@ -1,8 +1,4 @@
-import {
-	BadRequestException,
-	ForbiddenException,
-	Injectable,
-} from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';

@@ -21,11 +21,11 @@ import {
 import {
 	hasMaterialColor,
 	hasMaterialEmissive,
-	ManagedTexture,
 	parseColorValue,
 	rgbToThreeColor,
 	TextureRegistry,
 } from './minecraft-texture-registry';
+import type { ManagedTexture } from './minecraft-texture-registry';
 import type {
 	MinecraftElement,
 	MinecraftItemSource,

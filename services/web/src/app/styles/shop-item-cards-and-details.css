@@ -212,4 +212,221 @@
 	animation: shopAnimatedLetterWave 1.45s ease-in-out infinite;
 	animation-delay: calc(var(--wave-index) * 70ms);
 }
+@keyframes shopAnimatedLetterWave {
+	0%,
+	44%,
+	100% {
+		color: inherit;
+		text-shadow: 0 0 0 rgba(215, 164, 255, 0);
+		transform: translateY(0) rotate(0deg);
+	}
+	12% {
+		color: #fff;
+		text-shadow: 0 0 7px rgba(215, 164, 255, 0.78);
+		transform: translateY(-3px) rotate(-4deg);
+	}
+	24% {
+		color: #f0d7ff;
+		text-shadow: 0 0 4px rgba(215, 164, 255, 0.5);
+		transform: translateY(1px) rotate(2deg);
+	}
+}
 
+.shopHiddenPreview,
+.shopReduced3dPlaceholder {
+	width: 100%;
+	height: 100%;
+	min-height: inherit;
+}
+
+.shopHiddenPreview {
+	background: radial-gradient(circle, rgba(12, 17, 25, 0.55), rgba(8, 11, 17, 0.92));
+}
+
+.shopReduced3dPlaceholder {
+	background:
+		radial-gradient(
+			circle at 50% 50%,
+			color-mix(in srgb, var(--card-accent) 38%, transparent) 0 8%,
+			color-mix(in srgb, var(--card-accent) 19%, transparent) 24%,
+			transparent 62%
+		),
+		radial-gradient(ellipse at 50% 72%, rgba(0, 0, 0, 0.48), transparent 42%);
+	filter: blur(2px);
+}
+
+.shopCard h4 {
+	color: #f5f7fb;
+	font-size: 1rem;
+}
+
+.shopPrice {
+	display: flex;
+	align-items: baseline;
+	gap: 4px;
+	color: rgba(255, 255, 255, 0.58);
+	font-size: 0.82rem;
+}
+
+.shopPrice strong {
+	color: #ffd166;
+	font-size: 1.04rem;
+}
+
+.shopPrice del {
+	color: rgba(255, 255, 255, 0.35);
+}
+.shopPrice.deal strong {
+	color: #79e1bd;
+}
+
+.shopCardFoot {
+	width: 100%;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	background: rgba(255, 209, 102, 0.12);
+	color: #ffe29a;
+	cursor: pointer;
+}
+
+.shopCardFoot:hover:not(:disabled) {
+	background: #ffd166;
+	color: #141820;
+}
+.shopCard.unavailable .shopCardFoot,
+.shopCardFoot:disabled {
+	border-color: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.045);
+	color: rgba(255, 255, 255, 0.42);
+	cursor: default;
+}
+
+.shopModalOpen {
+	overflow: hidden;
+}
+
+.shopDetailsBackdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 2147483000;
+	display: grid;
+	place-items: start center;
+	padding: 24px;
+	overflow-y: auto;
+	background: rgba(5, 8, 13, 0.78);
+	backdrop-filter: blur(8px);
+}
+
+.shopDetails {
+	--card-accent: #8591a4;
+	position: relative;
+	width: min(1040px, 100%);
+	margin: auto;
+	overflow: visible;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 14px;
+	background:
+		radial-gradient(
+			circle at 18% 24%,
+			color-mix(in srgb, var(--card-accent) 15%, transparent),
+			transparent 34%
+		),
+		#141b27;
+	color: #f7f8fb;
+	box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58);
+}
+
+.shopDetailsClose {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 4;
+	width: 36px;
+	height: 36px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 50%;
+	background: rgba(12, 16, 24, 0.8);
+	color: #fff;
+	font-size: 1.35rem;
+}
+
+.shopDetailsHero {
+	display: grid;
+	grid-template-columns: minmax(310px, 46%) 1fr;
+	min-height: 420px;
+}
+
+.shopDetailsPreview {
+	position: relative;
+	min-height: 420px;
+	background:
+		radial-gradient(
+			circle at center,
+			color-mix(in srgb, var(--card-accent) 30%, transparent) 0 8%,
+			color-mix(in srgb, var(--card-accent) 13%, transparent) 31%,
+			transparent 68%
+		),
+		#0d131d;
+}
+
+.shopDetailsPreview .shopModelHost,
+.shopDetailsPreview .shopItemIcon {
+	width: 100%;
+	height: 100%;
+	min-height: 420px;
+}
+
+.shopDetailsPreview .shopItemIcon {
+	padding: 65px;
+	object-fit: contain;
+}
+
+.shopDetailsPreview > span {
+	position: absolute;
+	bottom: 14px;
+	left: 50%;
+	padding: 5px 9px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 99px;
+	background: rgba(7, 10, 16, 0.62);
+	color: rgba(255, 255, 255, 0.55);
+	font-size: 0.68rem;
+	transform: translateX(-50%);
+}
+
+.shopDetailsSummary {
+	display: grid;
+	align-content: center;
+	gap: 16px;
+	padding: 48px clamp(28px, 5vw, 58px);
+}
+
+.shopDetailsSummary h2 {
+	margin: 0;
+	font-size: clamp(1.65rem, 4vw, 2.6rem);
+	line-height: 1.08;
+}
+.shopDetailsSummary > p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.67);
+	line-height: 1.6;
+}
+.shopDetailsSummary .shopFeatureNote {
+	margin: -8px 0;
+	color: #83dbc9;
+	font-size: 0.78rem;
+}
+.shopDetailsBuy {
+	justify-self: start;
+	min-width: 210px;
+	padding: 12px 16px;
+}
+.shopDetailsBuy:disabled {
+	background: rgba(255, 255, 255, 0.08);
+	color: rgba(255, 255, 255, 0.42);
+}
+
+.shopItemEffect,
+.shopItemTooltips {
+	display: grid;
+	gap: 6px;
+}

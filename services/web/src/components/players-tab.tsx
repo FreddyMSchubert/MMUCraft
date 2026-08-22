@@ -8,7 +8,6 @@ import {
 	DEFAULT_COLUMN_KEYS,
 	DEFAULT_LEADERBOARD_KEY,
 	type PlayersResponse,
-	type PlayerSummary,
 	type SortDirection,
 	type StatOption,
 } from './players/player-data.types';

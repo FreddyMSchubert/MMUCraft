@@ -47,7 +47,7 @@ export function normalizeGiftCodeRedemptionMode(
 	throw new BadRequestException('Redemption mode must be single or per_user');
 }
 
-export function normalizeGiftCodeMembersOnly(value: boolean | undefined) {
+export function normalizeGiftCodeMembersOnly(value: unknown) {
 	if (value === undefined || value === false) return false;
 	if (value === true) return true;
 	throw new BadRequestException('membersOnly must be a boolean');

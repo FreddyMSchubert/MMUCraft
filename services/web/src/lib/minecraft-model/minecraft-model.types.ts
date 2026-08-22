@@ -56,7 +56,7 @@ export interface MinecraftModel {
 	textures?: Record<string, string>;
 	display?: Record<string, MinecraftDisplayTransform>;
 	elements?: MinecraftElement[];
-	groups?: Array<{ name?: string; origin?: number[]; children?: Array<number | string> }>;
+	groups?: { name?: string; origin?: number[]; children?: (number | string)[] }[];
 }
 
 export interface MinecraftItemDefinition {

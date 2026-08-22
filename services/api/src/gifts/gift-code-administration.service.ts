@@ -1,11 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { and, count, desc, eq, getTableColumns, gt, isNull, notExists, or } from 'drizzle-orm';
 import { AuthenticatedUser } from '../auth/auth-session.service';
-import {
-	DatabaseService,
-	giftCodeRedemptions,
-	giftCodes,
-} from '../database/database.service';
+import { DatabaseService, giftCodeRedemptions, giftCodes } from '../database/database.service';
 import {
 	GiftCodeInput,
 	normalizeGiftCode,

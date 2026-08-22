@@ -4,7 +4,6 @@ import { type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { AuthCodeInputs } from './auth/auth-code-inputs';
 import {
 	ApiRequestError,
-	AUTH_CODE_LENGTH,
 	emptyAuthCode,
 	formatCountdown,
 	postJson,

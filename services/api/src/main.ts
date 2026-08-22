@@ -9,7 +9,7 @@ async function bootstrap() {
 	app.enableShutdownHooks();
 	const server = app.getHttpAdapter().getInstance();
 	const shutdown = app.get(ShutdownService);
-	const trackedRequests = new WeakSet<object>();
+	const trackedRequests = new WeakSet();
 	server.addHook('onRequest', async (request, reply) => {
 		const path = request.url.split('?', 1)[0];
 		if (path === '/api/internal/shutdown') return;
@@ -20,10 +20,10 @@ async function bootstrap() {
 		if (!path?.endsWith('/events')) trackedRequests.add(request);
 		else shutdown.endRequest();
 	});
-	server.addHook('onResponse', async (request) => {
+	server.addHook('onResponse', (request) => {
 		if (trackedRequests.delete(request)) shutdown.endRequest();
 	});
-	server.addHook('onRequestAbort', async (request) => {
+	server.addHook('onRequestAbort', (request) => {
 		if (trackedRequests.delete(request)) shutdown.endRequest();
 	});
 

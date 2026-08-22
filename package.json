@@ -1,0 +1,16 @@
+{
+	"name": "mmucraft-checks",
+	"private": true,
+	"scripts": {
+		"format": "prettier --write .github/workflows services/api services/web minecraft/main/respack/items-respack-generator",
+		"format:check": "prettier --check .github/workflows services/api services/web minecraft/main/respack/items-respack-generator",
+		"lint": "eslint --no-config-lookup --config eslint.config.mjs --max-warnings=0 services/api services/web minecraft/main/respack/items-respack-generator"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"eslint": "^10.9.0",
+		"globals": "^17.11.0",
+		"prettier": "3.9.6",
+		"typescript-eslint": "^8.67.0"
+	}
+}

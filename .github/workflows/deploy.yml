@@ -1,144 +1,144 @@
 name: deploy
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: dev or an exact release tag
-        required: true
-        default: dev
-        type: string
-      warning_minutes:
-        description: Minutes to warn Minecraft players before restart (0 disables)
-        required: true
-        default: 3
-        type: number
+    workflow_dispatch:
+        inputs:
+            version:
+                description: dev or an exact release tag
+                required: true
+                default: dev
+                type: string
+            warning_minutes:
+                description: Minutes to warn Minecraft players before restart (0 disables)
+                required: true
+                default: 3
+                type: number
 
 permissions:
-  contents: read
-  packages: read
+    contents: read
+    packages: read
 
 concurrency:
-  group: production
-  cancel-in-progress: false
+    group: production
+    cancel-in-progress: false
 
 jobs:
-  deploy:
-    runs-on: ubuntu-24.04
-    environment: production
-    steps:
-      - name: Validate requested version
-        id: version
-        shell: bash
-        env:
-          REQUESTED_VERSION: ${{ inputs.version }}
-        run: |
-          tag="$REQUESTED_VERSION"
-          ref="$REQUESTED_VERSION"
-          if [[ "${tag,,}" == dev ]]; then
-            tag=dev
-            ref="$GITHUB_REF"
-          fi
-          if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
-            echo "'$tag' is not a valid image tag" >&2
-            exit 1
-          fi
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "ref=$ref" >> "$GITHUB_OUTPUT"
-          echo "prefix=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+    deploy:
+        runs-on: ubuntu-24.04
+        environment: production
+        steps:
+            - name: Validate requested version
+              id: version
+              shell: bash
+              env:
+                  REQUESTED_VERSION: ${{ inputs.version }}
+              run: |
+                  tag="$REQUESTED_VERSION"
+                  ref="$REQUESTED_VERSION"
+                  if [[ "${tag,,}" == dev ]]; then
+                    tag=dev
+                    ref="$GITHUB_REF"
+                  fi
+                  if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+                    echo "'$tag' is not a valid image tag" >&2
+                    exit 1
+                  fi
+                  echo "tag=$tag" >> "$GITHUB_OUTPUT"
+                  echo "ref=$ref" >> "$GITHUB_OUTPUT"
+                  echo "prefix=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout deployment files
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ steps.version.outputs.ref }}
-          persist-credentials: false
+            - name: Checkout deployment files
+              uses: actions/checkout@v6
+              with:
+                  ref: ${{ steps.version.outputs.ref }}
+                  persist-credentials: false
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Log in to GHCR
+              uses: docker/login-action@v4
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verify all requested images exist
-        env:
-          IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
-          IMAGE_TAG: ${{ steps.version.outputs.tag }}
-        run: |
-          for service in api web mc; do
-            docker manifest inspect "${IMAGE_PREFIX}-${service}:${IMAGE_TAG}" >/dev/null
-          done
+            - name: Verify all requested images exist
+              env:
+                  IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
+                  IMAGE_TAG: ${{ steps.version.outputs.tag }}
+              run: |
+                  for service in api web mc; do
+                    docker manifest inspect "${IMAGE_PREFIX}-${service}:${IMAGE_TAG}" >/dev/null
+                  done
 
-      - name: Configure SSH
-        env:
-          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
-        run: |
-          test -n "$DEPLOY_SSH_KEY"
-          test -n "$DEPLOY_KNOWN_HOSTS"
-          install -d -m 700 ~/.ssh
-          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
-          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+            - name: Configure SSH
+              env:
+                  DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+                  DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+              run: |
+                  test -n "$DEPLOY_SSH_KEY"
+                  test -n "$DEPLOY_KNOWN_HOSTS"
+                  install -d -m 700 ~/.ssh
+                  printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+                  printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+                  chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
 
-      - name: Verify SSH configuration
-        shell: bash
-        env:
-          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
-        run: |
-          test -n "$DEPLOY_HOST" || { echo "DEPLOY_HOST variable is empty" >&2; exit 1; }
-          [[ "$DEPLOY_PORT" =~ ^[0-9]{1,5}$ ]] || { echo "DEPLOY_PORT variable is invalid" >&2; exit 1; }
-          ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null || {
-            echo "DEPLOY_SSH_KEY is not a valid OpenSSH private key" >&2
-            exit 1
-          }
-          ssh-keygen -lf ~/.ssh/known_hosts >/dev/null || {
-            echo "DEPLOY_KNOWN_HOSTS is not a valid known_hosts entry" >&2
-            exit 1
-          }
+            - name: Verify SSH configuration
+              shell: bash
+              env:
+                  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+                  DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+                  DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+              run: |
+                  test -n "$DEPLOY_HOST" || { echo "DEPLOY_HOST variable is empty" >&2; exit 1; }
+                  [[ "$DEPLOY_PORT" =~ ^[0-9]{1,5}$ ]] || { echo "DEPLOY_PORT variable is invalid" >&2; exit 1; }
+                  ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null || {
+                    echo "DEPLOY_SSH_KEY is not a valid OpenSSH private key" >&2
+                    exit 1
+                  }
+                  ssh-keygen -lf ~/.ssh/known_hosts >/dev/null || {
+                    echo "DEPLOY_KNOWN_HOSTS is not a valid known_hosts entry" >&2
+                    exit 1
+                  }
 
-          known_host="$DEPLOY_HOST"
-          [[ "$DEPLOY_PORT" == 22 ]] || known_host="[$DEPLOY_HOST]:$DEPLOY_PORT"
-          ssh-keygen -F "$known_host" -f ~/.ssh/known_hosts >/dev/null || {
-            echo "DEPLOY_KNOWN_HOSTS has no entry for the configured host and port" >&2
-            exit 1
-          }
+                  known_host="$DEPLOY_HOST"
+                  [[ "$DEPLOY_PORT" == 22 ]] || known_host="[$DEPLOY_HOST]:$DEPLOY_PORT"
+                  ssh-keygen -F "$known_host" -f ~/.ssh/known_hosts >/dev/null || {
+                    echo "DEPLOY_KNOWN_HOSTS has no entry for the configured host and port" >&2
+                    exit 1
+                  }
 
-          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "$DEPLOY_USER@$DEPLOY_HOST" true || {
-            echo "SSH files are valid and the target entry exists, but strict connection failed; the OpenSSH error above distinguishes a changed host key from rejected client authentication" >&2
-            exit 1
-          }
+                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "$DEPLOY_USER@$DEPLOY_HOST" true || {
+                    echo "SSH files are valid and the target entry exists, but strict connection failed; the OpenSSH error above distinguishes a changed host key from rejected client authentication" >&2
+                    exit 1
+                  }
 
-      - name: Copy production files and deploy
-        shell: bash
-        env:
-          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
-          DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/mmucraft' }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GHCR_USER: ${{ github.actor }}
-          IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
-          IMAGE_TAG: ${{ steps.version.outputs.tag }}
-          WARNING_MINUTES: ${{ inputs.warning_minutes }}
-        run: |
-          test -n "$DEPLOY_HOST"
-          test -n "$DEPLOY_USER"
-          [[ "$DEPLOY_PORT" =~ ^[0-9]{1,5}$ ]]
-          [[ "$DEPLOY_PATH" =~ ^/[A-Za-z0-9._/-]+$ ]]
-          [[ "$DEPLOY_PATH" != / && "$DEPLOY_PATH" != *..* ]]
+            - name: Copy production files and deploy
+              shell: bash
+              env:
+                  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+                  DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+                  DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+                  DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/mmucraft' }}
+                  GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GHCR_USER: ${{ github.actor }}
+                  IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
+                  IMAGE_TAG: ${{ steps.version.outputs.tag }}
+                  WARNING_MINUTES: ${{ inputs.warning_minutes }}
+              run: |
+                  test -n "$DEPLOY_HOST"
+                  test -n "$DEPLOY_USER"
+                  [[ "$DEPLOY_PORT" =~ ^[0-9]{1,5}$ ]]
+                  [[ "$DEPLOY_PATH" =~ ^/[A-Za-z0-9._/-]+$ ]]
+                  [[ "$DEPLOY_PATH" != / && "$DEPLOY_PATH" != *..* ]]
 
-          archive="$RUNNER_TEMP/kubecraft-prod.tgz"
-          tar -czf "$archive" -C prod .
+                  archive="$RUNNER_TEMP/kubecraft-prod.tgz"
+                  tar -czf "$archive" -C prod .
 
-          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH'"
-          scp -i ~/.ssh/deploy_key -P "$DEPLOY_PORT" "$archive" "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.deploy.tgz"
-          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "tar -xzf '$DEPLOY_PATH/.deploy.tgz' -C '$DEPLOY_PATH' && rm '$DEPLOY_PATH/.deploy.tgz' && chmod 700 '$DEPLOY_PATH/deploy.sh'"
+                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH'"
+                  scp -i ~/.ssh/deploy_key -P "$DEPLOY_PORT" "$archive" "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.deploy.tgz"
+                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "tar -xzf '$DEPLOY_PATH/.deploy.tgz' -C '$DEPLOY_PATH' && rm '$DEPLOY_PATH/.deploy.tgz' && chmod 700 '$DEPLOY_PATH/deploy.sh'"
 
-          printf '%s' "$GHCR_TOKEN" | ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker login ghcr.io --username '$GHCR_USER' --password-stdin"
-          status=0
-          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o ServerAliveInterval=30 -o ServerAliveCountMax=3 "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && ./deploy.sh '$IMAGE_TAG' '$IMAGE_PREFIX' '$WARNING_MINUTES'" || status=$?
-          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker logout ghcr.io" || true
-          exit "$status"
+                  printf '%s' "$GHCR_TOKEN" | ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker login ghcr.io --username '$GHCR_USER' --password-stdin"
+                  status=0
+                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o ServerAliveInterval=30 -o ServerAliveCountMax=3 "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && ./deploy.sh '$IMAGE_TAG' '$IMAGE_PREFIX' '$WARNING_MINUTES'" || status=$?
+                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker logout ghcr.io" || true
+                  exit "$status"

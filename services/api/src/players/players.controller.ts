@@ -1,24 +1,24 @@
-import { Body, Controller, Get, Headers, Param, Patch } from '@nestjs/common'
-import { AuthService } from '../auth/auth.service'
-import { PlayersService } from './players.service'
+import { Body, Controller, Get, Headers, Param, Patch } from '@nestjs/common';
+import { AuthService } from '../auth/auth.service';
+import { PlayersService } from './players.service';
 
 @Controller('api/players')
 export class PlayersController {
 	constructor(
 		private readonly auth: AuthService,
 		private readonly players: PlayersService,
-	) { }
+	) {}
 
 	@Get()
 	listPlayers(@Headers('cookie') cookieHeader: string | undefined) {
-		const user = this.auth.requireSession(cookieHeader)
-		return this.players.listPlayers(user)
+		const user = this.auth.requireSession(cookieHeader);
+		return this.players.listPlayers(user);
 	}
 
 	@Get('online')
 	listOnlinePlayers(@Headers('cookie') cookieHeader: string | undefined) {
-		this.auth.requireSession(cookieHeader)
-		return this.players.listOnlinePlayers()
+		this.auth.requireSession(cookieHeader);
+		return this.players.listOnlinePlayers();
 	}
 
 	@Patch('me/profile')
@@ -26,8 +26,8 @@ export class PlayersController {
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Body() body: Record<string, unknown> | undefined,
 	) {
-		const user = this.auth.requireSession(cookieHeader)
-		return this.players.updateOwnProfile(user, body ?? {})
+		const user = this.auth.requireSession(cookieHeader);
+		return this.players.updateOwnProfile(user, body ?? {});
 	}
 
 	@Patch(':userId/profile')
@@ -36,8 +36,8 @@ export class PlayersController {
 		@Param('userId') userId: string,
 		@Body() body: Record<string, unknown> | undefined,
 	) {
-		const user = this.auth.requireSession(cookieHeader)
-		return this.players.updateProfile(user, userId, body ?? {})
+		const user = this.auth.requireSession(cookieHeader);
+		return this.players.updateProfile(user, userId, body ?? {});
 	}
 
 	@Get(':userId')
@@ -45,7 +45,7 @@ export class PlayersController {
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Param('userId') userId: string,
 	) {
-		const user = this.auth.requireSession(cookieHeader)
-		return this.players.getPlayer(user, userId)
+		const user = this.auth.requireSession(cookieHeader);
+		return this.players.getPlayer(user, userId);
 	}
 }

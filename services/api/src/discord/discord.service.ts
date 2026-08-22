@@ -1,5 +1,5 @@
-import { Injectable, Logger, OnApplicationBootstrap, OnModuleDestroy } from '@nestjs/common'
-import * as grpc from '@grpc/grpc-js'
+import { Injectable, Logger, OnApplicationBootstrap, OnModuleDestroy } from '@nestjs/common';
+import * as grpc from '@grpc/grpc-js';
 import {
 	Client,
 	ChatInputCommandInteraction,
@@ -7,21 +7,21 @@ import {
 	PermissionFlagsBits,
 	SlashCommandBuilder,
 	WebhookClient,
-} from 'discord.js'
-import { GrpcServerService } from '../grpc/grpc-server.service'
-import { callUnary } from '../grpc/grpc.types'
-import { DatabaseService, discordAdminCommandLogs } from '../database/database.service'
-import { PlayersService } from '../players/players.service'
+} from 'discord.js';
+import { GrpcServerService } from '../grpc/grpc-server.service';
+import { callUnary } from '../grpc/grpc.types';
+import { DatabaseService, discordAdminCommandLogs } from '../database/database.service';
+import { PlayersService } from '../players/players.service';
 
 export interface MinecraftDiscordEvent {
-	type: string
-	minecraft_username: string
-	minecraft_uuid: string
-	content: string
-	role: string
-	nickname: string
-	pronouns: string
-	color_hex: string
+	type: string;
+	minecraft_username: string;
+	minecraft_uuid: string;
+	content: string;
+	role: string;
+	nickname: string;
+	pronouns: string;
+	color_hex: string;
 }
 
 export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
@@ -36,162 +36,206 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 		death: '☠️',
 		fish: '🐟',
 		fish_first: '🐟 👶',
-	}
-	const isServer = event.type !== 'chat' || !event.minecraft_username
-	const label = roleLabel(event.role)
+	};
+	const isServer = event.type !== 'chat' || !event.minecraft_username;
+	const label = roleLabel(event.role);
 	const player = event.minecraft_username
 		? `${ansi(ansiColor(event.color_hex))}${event.minecraft_username}${ansi(0)}${label ? `${ansi(roleColor(event.role))}${label}${ansi(0)}` : ''}`
-		: ''
+		: '';
 	const username = isServer
 		? 'Minecraft Server'
-		: `${event.minecraft_username}${label}`.slice(0, 80)
-	const prefix = emoji[event.type] ?? '👾'
+		: `${event.minecraft_username}${label}`.slice(0, 80);
+	const prefix = emoji[event.type] ?? '👾';
 	return {
 		username,
 		content: (isServer
 			? `\`\`\`ansi\n${prefix} ${player ? `${player} ` : ''}${event.content.replaceAll('```', '``\\`')}\n\`\`\``
-			: event.content).slice(0, 2_000),
+			: event.content
+		).slice(0, 2_000),
 		isServer,
-	}
+	};
 }
 
 function roleLabel(role: string) {
 	switch (role) {
-		case 'Committee': return ' [Committee]'
-		case 'Member': return ' [Member]'
-		case 'External': return ' [External]'
-		default: return ''
+		case 'Committee':
+			return ' [Committee]';
+		case 'Member':
+			return ' [Member]';
+		case 'External':
+			return ' [External]';
+		default:
+			return '';
 	}
 }
 
 function roleColor(role: string) {
-	if (role === 'Committee') return 36
-	if (role === 'Member') return 32
-	if (role === 'External') return 30
-	return 37
+	if (role === 'Committee') return 36;
+	if (role === 'Member') return 32;
+	if (role === 'External') return 30;
+	return 37;
 }
 
 function ansi(color: number) {
-	return `\u001b[${color}m`
+	return `\u001b[${color}m`;
 }
 
 export function ansiColor(color: string) {
-	const rgb = /^#([0-9a-f]{6})$/i.exec(color)?.[1]
-	if (!rgb) return 37
-	const value = Number.parseInt(rgb, 16)
-	const red = value >> 16 & 0xff
-	const green = value >> 8 & 0xff
-	const blue = value & 0xff
-	const choices: Array<[number, number, number, number]> = [
-		[31, 255, 0, 0], [33, 255, 255, 0], [32, 0, 200, 0], [34, 0, 100, 255],
-		[35, 160, 32, 240], [30, 128, 128, 128], [37, 255, 255, 255],
-	]
+	const rgb = /^#([0-9a-f]{6})$/i.exec(color)?.[1];
+	if (!rgb) return 37;
+	const value = Number.parseInt(rgb, 16);
+	const red = (value >> 16) & 0xff;
+	const green = (value >> 8) & 0xff;
+	const blue = value & 0xff;
+	const choices: [number, number, number, number][] = [
+		[31, 255, 0, 0],
+		[33, 255, 255, 0],
+		[32, 0, 200, 0],
+		[34, 0, 100, 255],
+		[35, 160, 32, 240],
+		[30, 128, 128, 128],
+		[37, 255, 255, 255],
+	];
 	return choices.reduce((best, candidate) => {
-		const distance = (red - candidate[1]) ** 2 + (green - candidate[2]) ** 2 + (blue - candidate[3]) ** 2
-		const bestDistance = (red - best[1]) ** 2 + (green - best[2]) ** 2 + (blue - best[3]) ** 2
-		return distance < bestDistance ? candidate : best
-	})[0]
+		const distance =
+			(red - candidate[1]) ** 2 + (green - candidate[2]) ** 2 + (blue - candidate[3]) ** 2;
+		const bestDistance = (red - best[1]) ** 2 + (green - best[2]) ** 2 + (blue - best[3]) ** 2;
+		return distance < bestDistance ? candidate : best;
+	})[0];
 }
 
-export function formatOnlinePlayers(players: Array<{ minecraftUsername: string; color: string; role: string }>) {
+export function formatOnlinePlayers(
+	players: { minecraftUsername: string; color: string; role: string }[],
+) {
 	const lines = players.map((player) => {
-		const label = roleLabel(player.role)
-		return `${ansi(ansiColor(player.color))}${player.minecraftUsername}${ansi(0)}${label ? `${ansi(roleColor(player.role))}${label}${ansi(0)}` : ''}`
-	})
-	return `\`\`\`ansi\n${ansi(37)}Players online:${ansi(0)}\n${lines.join('\n') || 'No players online.'}\n\`\`\``
+		const label = roleLabel(player.role);
+		return `${ansi(ansiColor(player.color))}${player.minecraftUsername}${ansi(0)}${label ? `${ansi(roleColor(player.role))}${label}${ansi(0)}` : ''}`;
+	});
+	return `\`\`\`ansi\n${ansi(37)}Players online:${ansi(0)}\n${lines.join('\n') || 'No players online.'}\n\`\`\``;
 }
 
 interface GameplayProtoRoot {
-	mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } }
+	mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } };
 }
 
 @Injectable()
 export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
-	private readonly logger = new Logger(DiscordService.name)
-	private readonly channelId = process.env.DISCORD_CHANNEL_ID?.trim() ?? ''
+	private readonly logger = new Logger(DiscordService.name);
+	private readonly channelId = process.env.DISCORD_CHANNEL_ID?.trim() ?? '';
 	private readonly client = new Client({
-		intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
-	})
-	private webhook: WebhookClient | null = null
-	private minecraft: grpc.Client | null = null
-	private readonly avatarBaseUrl = (process.env.DISCORD_AVATAR_BASE_URL
-		?? (process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/players/avatar` : '')).replace(/\/$/, '')
+		intents: [
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.MessageContent,
+		],
+	});
+	private webhook: WebhookClient | null = null;
+	private minecraft: grpc.Client | null = null;
+	private readonly avatarBaseUrl = (
+		process.env.DISCORD_AVATAR_BASE_URL ??
+		(process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/players/avatar` : '')
+	).replace(/\/$/, '');
 
 	constructor(
 		private readonly grpcServer: GrpcServerService,
 		private readonly database: DatabaseService,
 		private readonly players: PlayersService,
-	) { }
+	) {}
 
 	onApplicationBootstrap() {
-		const token = process.env.DISCORD_BOT_TOKEN?.trim()
-		const webhookUrl = process.env.DISCORD_WEBHOOK_URL?.trim()
+		const token = process.env.DISCORD_BOT_TOKEN?.trim();
+		const webhookUrl = process.env.DISCORD_WEBHOOK_URL?.trim();
 		if (!token || !webhookUrl || !this.channelId) {
-			this.logger.log('Discord bridge disabled; set DISCORD_BOT_TOKEN, DISCORD_WEBHOOK_URL, and DISCORD_CHANNEL_ID')
-			return
+			this.logger.log(
+				'Discord bridge disabled; set DISCORD_BOT_TOKEN, DISCORD_WEBHOOK_URL, and DISCORD_CHANNEL_ID',
+			);
+			return;
 		}
 		if (!this.avatarBaseUrl) {
-			this.logger.warn('Discord player avatars need a public DISCORD_AVATAR_BASE_URL or PUBLIC_URL')
+			this.logger.warn(
+				'Discord player avatars need a public DISCORD_AVATAR_BASE_URL or PUBLIC_URL',
+			);
 		}
 
-		this.webhook = new WebhookClient({ url: webhookUrl })
-		const gameplayProto = this.grpcServer.loadProto<GameplayProtoRoot>('gameplay.proto')
+		this.webhook = new WebhookClient({ url: webhookUrl });
+		const gameplayProto = this.grpcServer.loadProto<GameplayProtoRoot>('gameplay.proto');
 		this.minecraft = new gameplayProto.mcstack.gameplay.v1.GameplayControl(
 			process.env.MOD_GRPC_TARGET ?? 'minecraft:50052',
 			grpc.credentials.createInsecure(),
-		)
+		);
 
-		this.client.once('ready', () => void this.registerCommands()
-			.catch((error) => this.logger.error('Could not register the Discord commands', error)))
+		this.client.once(
+			'ready',
+			() =>
+				void this.registerCommands().catch((error: unknown) => {
+					this.logger.error('Could not register the Discord commands', error);
+				}),
+		);
 		this.client.on('messageCreate', (message) => {
-			if (message.channelId !== this.channelId || message.author.bot || message.webhookId) return
-			const attachments = [...message.attachments.values()].map((attachment) => attachment.url)
-			const content = [message.content, ...attachments].filter(Boolean).join(' ')
-			if (!content) return
+			if (message.channelId !== this.channelId || message.author.bot || message.webhookId)
+				return;
+			const attachments = [...message.attachments.values()].map(
+				(attachment) => attachment.url,
+			);
+			const content = [message.content, ...attachments].filter(Boolean).join(' ');
+			if (!content) return;
 			void this.callMinecraft('BroadcastDiscordMessage', {
 				discord_name: message.member?.displayName ?? message.author.displayName,
 				content,
-			}).catch((error) => this.logger.error('Could not send Discord message to Minecraft', error))
-		})
+			}).catch((error: unknown) => {
+				this.logger.error('Could not send Discord message to Minecraft', error);
+			});
+		});
 		this.client.on('interactionCreate', (interaction) => {
-			if (!interaction.isChatInputCommand()) return
-			if (interaction.commandName === 'mc') void this.runCommand(interaction)
-				.catch((error) => this.logger.error('Could not handle the Discord command', error))
-			else if (interaction.commandName === 'players') void this.listPlayers(interaction)
-				.catch((error) => this.logger.error('Could not handle the Discord command', error))
-		})
-		void this.client.login(token).catch((error) => this.logger.error('Could not connect the Discord bot', error))
+			if (!interaction.isChatInputCommand()) return;
+			if (interaction.commandName === 'mc')
+				void this.runCommand(interaction).catch((error: unknown) => {
+					this.logger.error('Could not handle the Discord command', error);
+				});
+			else if (interaction.commandName === 'players')
+				void this.listPlayers(interaction).catch((error: unknown) => {
+					this.logger.error('Could not handle the Discord command', error);
+				});
+		});
+		void this.client.login(token).catch((error: unknown) => {
+			this.logger.error('Could not connect the Discord bot', error);
+		});
 	}
 
 	async publish(event: MinecraftDiscordEvent) {
-		if (!this.webhook) return false
-		const presentation = event.minecraft_uuid ? this.players.discordPresentation(event.minecraft_uuid) : null
-		const currentEvent = presentation ? {
-			...event,
-			minecraft_username: presentation.minecraftUsername || event.minecraft_username,
-			role: presentation.role,
-			nickname: presentation.nickname,
-			pronouns: presentation.pronouns,
-			color_hex: presentation.colorHex,
-		} : event
-		const message = formatDiscordWebhookMessage(currentEvent)
-		if (!message.content.trim()) return false
-		const avatarURL = !message.isServer && currentEvent.minecraft_uuid && this.avatarBaseUrl
-			? `${this.avatarBaseUrl}/${currentEvent.minecraft_uuid}.png?v=${currentEvent.color_hex.replace('#', '').toLowerCase()}`
-			: undefined
+		if (!this.webhook) return false;
+		const presentation = event.minecraft_uuid
+			? this.players.discordPresentation(event.minecraft_uuid)
+			: null;
+		const currentEvent = presentation
+			? {
+					...event,
+					minecraft_username: presentation.minecraftUsername || event.minecraft_username,
+					role: presentation.role,
+					nickname: presentation.nickname,
+					pronouns: presentation.pronouns,
+					color_hex: presentation.colorHex,
+				}
+			: event;
+		const message = formatDiscordWebhookMessage(currentEvent);
+		if (!message.content.trim()) return false;
+		const avatarURL =
+			!message.isServer && currentEvent.minecraft_uuid && this.avatarBaseUrl
+				? `${this.avatarBaseUrl}/${currentEvent.minecraft_uuid}.png?v=${currentEvent.color_hex.replace('#', '').toLowerCase()}`
+				: undefined;
 		await this.webhook.send({
 			username: message.username,
 			avatarURL,
 			content: message.content,
 			allowedMentions: { parse: [] },
-		})
-		return true
+		});
+		return true;
 	}
 
 	onModuleDestroy() {
-		this.minecraft?.close()
-		this.webhook?.destroy()
-		this.client.destroy()
+		this.minecraft?.close();
+		this.webhook?.destroy();
+		void this.client.destroy();
 	}
 
 	private async registerCommands() {
@@ -199,60 +243,84 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			new SlashCommandBuilder()
 				.setName('mc')
 				.setDescription('Run a Minecraft server console command')
-				.addStringOption((option) => option.setName('command').setDescription('Command without the leading slash').setRequired(true))
+				.addStringOption((option) =>
+					option
+						.setName('command')
+						.setDescription('Command without the leading slash')
+						.setRequired(true),
+				)
 				.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 			new SlashCommandBuilder()
 				.setName('players')
 				.setDescription('List the players who are online'),
-		]
-		const guildId = process.env.DISCORD_GUILD_ID?.trim()
+		];
+		const guildId = process.env.DISCORD_GUILD_ID?.trim();
 		if (guildId) {
-			const guild = await this.client.guilds.fetch(guildId)
-			for (const command of commands) await guild.commands.create(command)
+			const guild = await this.client.guilds.fetch(guildId);
+			for (const command of commands) await guild.commands.create(command);
 		} else {
-			for (const command of commands) await this.client.application?.commands.create(command)
+			for (const command of commands) await this.client.application?.commands.create(command);
 		}
-		this.logger.log('Discord bridge connected')
+		this.logger.log('Discord bridge connected');
 	}
 
 	private async listPlayers(interaction: ChatInputCommandInteraction) {
-		await interaction.deferReply({ ephemeral: true })
+		await interaction.deferReply({ ephemeral: true });
 		try {
-			const { players } = await this.players.listOnlinePlayers()
-			await interaction.editReply(formatOnlinePlayers(players))
+			const { players } = await this.players.listOnlinePlayers();
+			await interaction.editReply(formatOnlinePlayers(players));
 		} catch (error) {
-			this.logger.error('Could not list online players', error)
-			await interaction.editReply('Could not retrieve the online players.')
+			this.logger.error('Could not list online players', error);
+			await interaction.editReply('Could not retrieve the online players.');
 		}
 	}
 
 	private async runCommand(interaction: ChatInputCommandInteraction) {
-		if (interaction.channelId !== this.channelId || !interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
-			await interaction.reply({ content: 'This command is restricted to server administrators in the bridge channel.', ephemeral: true })
-			return
+		if (
+			interaction.channelId !== this.channelId ||
+			!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)
+		) {
+			await interaction.reply({
+				content:
+					'This command is restricted to server administrators in the bridge channel.',
+				ephemeral: true,
+			});
+			return;
 		}
 
-		await interaction.deferReply({ ephemeral: true })
-		const command = interaction.options.getString('command', true)
+		await interaction.deferReply({ ephemeral: true });
+		const command = interaction.options.getString('command', true);
 		try {
-			this.database.connection.insert(discordAdminCommandLogs).values({
-				command,
-				discord_username: interaction.user.tag,
-				created_at_unix_ms: interaction.createdTimestamp,
-			}).run()
-			const response = await this.callMinecraft<{ succeeded: boolean; result: number; output: string }>('RunServerCommand', {
+			this.database.connection
+				.insert(discordAdminCommandLogs)
+				.values({
+					command,
+					discord_username: interaction.user.tag,
+					created_at_unix_ms: interaction.createdTimestamp,
+				})
+				.run();
+			const response = await this.callMinecraft<{
+				succeeded: boolean;
+				result: number;
+				output: string;
+			}>('RunServerCommand', {
 				command,
 				discord_user: interaction.user.tag,
-			})
-			const output = response.output || `Command returned ${response.result}.`
-			await interaction.editReply(`\`\`\`\n${output.replaceAll('```', '``\\`').slice(0, 1900)}\n\`\`\``)
+			});
+			const output = response.output || `Command returned ${response.result}.`;
+			await interaction.editReply(
+				`\`\`\`\n${output.replaceAll('```', '``\\`').slice(0, 1900)}\n\`\`\``,
+			);
 		} catch (error) {
-			this.logger.error('Could not run Minecraft command', error)
-			await interaction.editReply('The Minecraft server did not accept the command.')
+			this.logger.error('Could not run Minecraft command', error);
+			await interaction.editReply('The Minecraft server did not accept the command.');
 		}
 	}
 
-	private async callMinecraft<T>(methodName: string, request: Record<string, unknown>): Promise<T> {
-		return await callUnary<T>(this.minecraft, methodName, request)
+	private async callMinecraft<T>(
+		methodName: string,
+		request: Record<string, unknown>,
+	): Promise<T> {
+		return await callUnary<T>(this.minecraft, methodName, request);
 	}
 }

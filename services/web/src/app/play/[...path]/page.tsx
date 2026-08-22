@@ -1,8 +1,8 @@
-import { SiteShell } from '@/components/site-shell'
-import { getSiteVisuals } from '@/lib/site-assets'
+import { SiteShell } from '@/components/site-shell';
+import { getSiteVisuals } from '@/lib/site-assets';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 export default function PlaySectionPage() {
-	return <SiteShell {...getSiteVisuals()} />
+	return <SiteShell {...getSiteVisuals()} />;
 }

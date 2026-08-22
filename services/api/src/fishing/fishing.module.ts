@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common'
-import { AuthModule } from '../auth/auth.module'
-import { DatabaseModule } from '../database/database.module'
-import { FishingController } from './fishing.controller'
-import { FishingService } from './fishing.service'
+import { Module } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
+import { DatabaseModule } from '../database/database.module';
+import { FishingController } from './fishing.controller';
+import { FishingService } from './fishing.service';
 
 @Module({
 	imports: [AuthModule, DatabaseModule],
@@ -10,4 +10,4 @@ import { FishingService } from './fishing.service'
 	providers: [FishingService],
 	exports: [FishingService],
 })
-export class FishingModule { }
+export class FishingModule {}

@@ -54,22 +54,12 @@ export interface CharmItemDefinition extends BaseDiscoveredItem {
 }
 
 export type DiscoveredItem =
-	| BasicItemDefinition
-	| Basic3dItemDefinition
-	| CosmeticItemDefinition
-	| CharmItemDefinition;
+	BasicItemDefinition | Basic3dItemDefinition | CosmeticItemDefinition | CharmItemDefinition;
 
 export type EquipmentLayerType = 'humanoid' | 'humanoid_leggings';
 
 export type ArmorMaterial =
-	| 'chainmail'
-	| 'leather'
-	| 'iron'
-	| 'gold'
-	| 'diamond'
-	| 'netherite'
-	| 'enderite'
-	| 'copper';
+	'chainmail' | 'leather' | 'iron' | 'gold' | 'diamond' | 'netherite' | 'enderite' | 'copper';
 
 export interface GeneratorOptions {
 	readonly sourceDir: string;

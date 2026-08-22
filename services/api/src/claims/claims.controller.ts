@@ -1,22 +1,22 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common'
-import { AuthService } from '../auth/auth.service'
-import { ClaimsService } from './claims.service'
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common';
+import { AuthService } from '../auth/auth.service';
+import { ClaimsService } from './claims.service';
 
 @Controller('api/claims')
 export class ClaimsController {
 	constructor(
 		private readonly auth: AuthService,
 		private readonly claims: ClaimsService,
-	) { }
+	) {}
 
 	@Get()
 	list(@Headers('cookie') cookieHeader: string | undefined) {
-		return this.claims.list(this.auth.requireSession(cookieHeader))
+		return this.claims.list(this.auth.requireSession(cookieHeader));
 	}
 
 	@Get('current')
 	current(@Headers('cookie') cookieHeader: string | undefined) {
-		return this.claims.getCurrentChunk(this.auth.requireSession(cookieHeader))
+		return this.claims.getCurrentChunk(this.auth.requireSession(cookieHeader));
 	}
 
 	@Post()
@@ -24,15 +24,12 @@ export class ClaimsController {
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Body() body: Record<string, unknown> | undefined,
 	) {
-		return this.claims.create(this.auth.requireSession(cookieHeader), body ?? {})
+		return this.claims.create(this.auth.requireSession(cookieHeader), body ?? {});
 	}
 
 	@Delete(':claimId')
-	remove(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Param('claimId') claimId: string,
-	) {
-		return this.claims.remove(this.auth.requireSession(cookieHeader), claimId)
+	remove(@Headers('cookie') cookieHeader: string | undefined, @Param('claimId') claimId: string) {
+		return this.claims.remove(this.auth.requireSession(cookieHeader), claimId);
 	}
 
 	@Patch(':claimId/appearance')
@@ -41,7 +38,11 @@ export class ClaimsController {
 		@Param('claimId') claimId: string,
 		@Body() body: Record<string, unknown> | undefined,
 	) {
-		return this.claims.updateAppearance(this.auth.requireSession(cookieHeader), claimId, body ?? {})
+		return this.claims.updateAppearance(
+			this.auth.requireSession(cookieHeader),
+			claimId,
+			body ?? {},
+		);
 	}
 
 	@Post(':claimId/members')
@@ -50,7 +51,7 @@ export class ClaimsController {
 		@Param('claimId') claimId: string,
 		@Body() body: { userId?: unknown } | undefined,
 	) {
-		return this.claims.addMember(this.auth.requireSession(cookieHeader), claimId, body?.userId)
+		return this.claims.addMember(this.auth.requireSession(cookieHeader), claimId, body?.userId);
 	}
 
 	@Delete(':claimId/members/:userId')
@@ -59,7 +60,7 @@ export class ClaimsController {
 		@Param('claimId') claimId: string,
 		@Param('userId') userId: string,
 	) {
-		return this.claims.removeMember(this.auth.requireSession(cookieHeader), claimId, userId)
+		return this.claims.removeMember(this.auth.requireSession(cookieHeader), claimId, userId);
 	}
 }
 
@@ -68,7 +69,7 @@ export class AdminClaimsController {
 	constructor(
 		private readonly auth: AuthService,
 		private readonly claims: ClaimsService,
-	) { }
+	) {}
 
 	@Get()
 	list(
@@ -76,16 +77,13 @@ export class AdminClaimsController {
 		@Query('offset') offset: string | undefined,
 		@Query('limit') limit: string | undefined,
 	) {
-		this.auth.requireCommitteeSession(cookieHeader)
-		return this.claims.listAdmin(offset, limit)
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claims.listAdmin(offset, limit);
 	}
 
 	@Delete(':claimId')
-	remove(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Param('claimId') claimId: string,
-	) {
-		this.auth.requireCommitteeSession(cookieHeader)
-		return this.claims.removeAdmin(claimId)
+	remove(@Headers('cookie') cookieHeader: string | undefined, @Param('claimId') claimId: string) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claims.removeAdmin(claimId);
 	}
 }

@@ -75,9 +75,12 @@ export class GrpcServerService implements OnApplicationBootstrap, OnModuleDestro
 
 	private async drainOnce() {
 		if (!this.listening) return;
-		await new Promise<void>((resolve, reject) =>
-			this.server.tryShutdown((error) => (error ? reject(error) : resolve())),
-		);
+		await new Promise<void>((resolve, reject) => {
+			this.server.tryShutdown((error) => {
+				if (error) reject(error);
+				else resolve();
+			});
+		});
 		this.listening = false;
 	}
 

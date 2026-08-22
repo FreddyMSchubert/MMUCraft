@@ -256,8 +256,12 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private track(task: Promise<unknown>, failureMessage: string) {
 		this.pending.add(task);
 		void task
-			.catch((error: unknown) => this.logger.error(failureMessage, error))
-			.finally(() => this.pending.delete(task));
+			.catch((error: unknown) => {
+				this.logger.error(failureMessage, error);
+			})
+			.finally(() => {
+				this.pending.delete(task);
+			});
 	}
 
 	private async registerCommands() {

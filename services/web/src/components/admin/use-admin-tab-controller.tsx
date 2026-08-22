@@ -29,7 +29,6 @@ export function useAdminTabController({
 	const {
 		players,
 		setPlayers,
-		countdowns,
 		setCountdowns,
 		claims,
 		setClaims,
@@ -57,7 +56,6 @@ export function useAdminTabController({
 		setMessage,
 	});
 	const countdownAdministration = useCountdownAdministration({
-		countdowns,
 		setCountdowns,
 		reload: load,
 		setError,

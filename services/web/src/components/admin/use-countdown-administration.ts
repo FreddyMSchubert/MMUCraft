@@ -6,13 +6,11 @@ import type { Countdown } from '@/components/dynamic-countdowns';
 import { apiBody, apiMessage, errorMessage, formatLondonInput } from './admin-api';
 
 export function useCountdownAdministration({
-	countdowns: _countdowns,
 	setCountdowns,
 	reload,
 	setError,
 	setMessage,
 }: {
-	countdowns: Countdown[];
 	setCountdowns: Dispatch<SetStateAction<Countdown[]>>;
 	reload: () => Promise<void>;
 	setError: Dispatch<SetStateAction<string>>;

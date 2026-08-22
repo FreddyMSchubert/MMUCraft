@@ -7,6 +7,7 @@ import { GiftsModule } from './gifts/gifts.module';
 import { HealthController } from './health.controller';
 import { PlayersModule } from './players/players.module';
 import { DiscordModule } from './discord/discord.module';
+import { ShutdownModule } from './shutdown';
 
 @Module({
 	imports: [
@@ -17,6 +18,7 @@ import { DiscordModule } from './discord/discord.module';
 		GameplayModule,
 		PlayersModule,
 		GiftsModule,
+		ShutdownModule,
 	],
 	controllers: [HealthController],
 })

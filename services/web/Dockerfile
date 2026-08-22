@@ -28,7 +28,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json tsconfig.json next-env.d.ts next.config.ts eslint.config.mjs ./
 COPY public ./public
 COPY src ./src
-RUN npm run check
+RUN npm run build
 
 FROM node:${NODE_VERSION}-bookworm-slim AS runner
 WORKDIR /app

@@ -5,12 +5,15 @@
 		"node": ">=24.0.0 <25"
 	},
 	"scripts": {
-		"format": "prettier --write .github/workflows services/api services/web minecraft/main/respack/items-respack-generator",
-		"format:check": "prettier --check .github/workflows services/api services/web minecraft/main/respack/items-respack-generator",
-		"lint": "eslint --no-config-lookup --config eslint.config.mjs --max-warnings=0 services/api services/web minecraft/main/respack/items-respack-generator"
+		"format": "prettier --write .github/workflows services/api services/web minecraft/main/respack/items-respack-generator tests playwright.config.ts compose.playwright.yaml",
+		"format:check": "prettier --check .github/workflows services/api services/web minecraft/main/respack/items-respack-generator tests playwright.config.ts compose.playwright.yaml",
+		"lint": "eslint --no-config-lookup --config eslint.config.mjs --max-warnings=0 services/api services/web minecraft/main/respack/items-respack-generator tests playwright.config.ts",
+		"test": "bash tests/run-playwright.sh",
+		"test:playwright": "playwright test"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.62.1",
 		"eslint": "^10.9.0",
 		"globals": "^17.11.0",
 		"prettier": "3.9.6",

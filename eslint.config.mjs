@@ -26,7 +26,11 @@ export default tseslint.config(
 			globals: { ...globals.browser, ...globals.node },
 			parserOptions: {
 				projectService: {
-					allowDefaultProject: ['services/api/drizzle.config.ts'],
+					allowDefaultProject: [
+						'services/api/drizzle.config.ts',
+						'playwright.config.ts',
+						'tests/playwright/*.ts',
+					],
 					defaultProject: 'services/api/tsconfig.json',
 				},
 				tsconfigRootDir: import.meta.dirname,
@@ -67,7 +71,11 @@ export default tseslint.config(
 	},
 	{
 		...tseslint.configs.disableTypeChecked,
-		files: ['services/api/drizzle.config.ts'],
+		files: [
+			'services/api/drizzle.config.ts',
+			'playwright.config.ts',
+			'tests/playwright/*.ts',
+		],
 	},
 	{
 		files: ['**/*.mjs'],

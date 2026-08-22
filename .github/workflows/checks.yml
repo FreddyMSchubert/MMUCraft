@@ -1,23 +1,27 @@
-name: checks
+name: checks-tests-images
 
 on:
     push:
     pull_request:
+    release:
+        types: [published]
 
 permissions:
     contents: read
+    packages: write
 
 concurrency:
-    group: checks-${{ github.ref }}
-    cancel-in-progress: true
+    group: checks-tests-images-${{ github.event_name == 'release' && github.event.release.tag_name || github.ref }}
+    cancel-in-progress: ${{ github.event_name != 'release' }}
 
 jobs:
-    check:
+    verify-and-publish:
         runs-on: ubuntu-24.04
         steps:
             - name: Checkout repository
               uses: actions/checkout@v6
               with:
+                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.sha }}
                   persist-credentials: false
 
             - name: Set up Node
@@ -45,8 +49,164 @@ jobs:
                   npm audit --prefix services/web
                   npm audit --prefix minecraft/main/respack/items-respack-generator
 
-            - run: npm run format:check
-            - run: npm run lint
-            - run: npm run typecheck --prefix services/api
-            - run: npm run check --prefix services/web
-            - run: npm run check --prefix minecraft/main/respack/items-respack-generator
+            - name: Check formatting
+              run: npm run format:check
+
+            - name: Lint source
+              run: npm run lint
+
+            - name: Type-check API
+              run: npm run typecheck --prefix services/api
+
+            - name: Check web
+              run: npm run check --prefix services/web
+
+            - name: Check resource-pack generator
+              run: npm run check --prefix minecraft/main/respack/items-respack-generator
+
+            - name: Install Playwright Chromium
+              run: npx playwright install --with-deps chromium
+
+            - name: Run isolated Playwright tests
+              env:
+                  COMPOSE_PROJECT_NAME: kubecraft-playwright-${{ github.run_id }}-${{ github.run_attempt }}
+              run: npm test
+
+            - name: Upload Playwright diagnostics
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: playwright-report
+                  path: |
+                      playwright-report
+                      test-results
+                  if-no-files-found: ignore
+                  retention-days: 7
+
+            - name: Resolve private assets revision
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              id: assets
+              shell: bash
+              run: echo "ref=$(git ls-tree HEAD assets | awk '{print $3}')" >> "$GITHUB_OUTPUT"
+
+            - name: Checkout private assets at the pinned revision
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: actions/checkout@v6
+              with:
+                  repository: ${{ format('{0}_assets', github.repository) }}
+                  ref: ${{ steps.assets.outputs.ref }}
+                  path: assets
+                  token: ${{ secrets.RESOURCE_PACK_ASSETS_PAT }}
+                  persist-credentials: false
+
+            - name: Checkout public resource-pack merger
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              run: git submodule update --init --depth 1 minecraft/main/respack/ResourcePackMerger
+
+            - name: Set up Java
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: actions/setup-java@v5
+              with:
+                  distribution: microsoft
+                  java-version: '25'
+
+            - name: Set up Gradle
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: gradle/actions/setup-gradle@v6
+
+            - name: Generate and build Minecraft once
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              working-directory: minecraft/main/mod
+              run: |
+                  python3 ../stage_item_data.py --root ..
+                  ./gradlew runDatagen --no-daemon
+                  ./gradlew build --no-daemon
+
+            - name: Build resource pack
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              run: python3 minecraft/main/respack/build-main-pack.py
+
+            - name: Resolve image names and tag
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              id: image
+              shell: bash
+              env:
+                  RELEASE_TAG: ${{ github.event.release.tag_name }}
+              run: |
+                  tag=dev
+                  if [[ "${GITHUB_EVENT_NAME}" == release ]]; then
+                    tag="${RELEASE_TAG}"
+                  fi
+                  if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+                    echo "Release tag '$tag' is not a valid Docker tag" >&2
+                    exit 1
+                  fi
+                  echo "prefix=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+                  echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+            - name: Set up Docker Buildx
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/setup-buildx-action@v4
+
+            - name: Log in to GHCR
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/login-action@v4
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and push API
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/build-push-action@v7
+              with:
+                  context: .
+                  file: services/api/Dockerfile
+                  platforms: linux/amd64
+                  pull: true
+                  push: true
+                  tags: ${{ steps.image.outputs.prefix }}-api:${{ steps.image.outputs.tag }}
+                  labels: |
+                      org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
+                  cache-from: type=gha,scope=api
+                  cache-to: type=gha,mode=max,scope=api
+                  provenance: mode=max
+                  sbom: true
+
+            - name: Build and push web
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/build-push-action@v7
+              with:
+                  context: services/web
+                  platforms: linux/amd64
+                  pull: true
+                  push: true
+                  tags: ${{ steps.image.outputs.prefix }}-web:${{ steps.image.outputs.tag }}
+                  labels: |
+                      org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
+                  cache-from: type=gha,scope=web
+                  cache-to: type=gha,mode=max,scope=web
+                  provenance: mode=max
+                  sbom: true
+
+            - name: Build and push Minecraft
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/build-push-action@v7
+              with:
+                  context: minecraft/main
+                  platforms: linux/amd64
+                  pull: true
+                  push: true
+                  tags: ${{ steps.image.outputs.prefix }}-mc:${{ steps.image.outputs.tag }}
+                  labels: |
+                      org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
+                  cache-from: type=gha,scope=mc
+                  cache-to: type=gha,mode=max,scope=mc
+                  provenance: mode=max
+                  sbom: true

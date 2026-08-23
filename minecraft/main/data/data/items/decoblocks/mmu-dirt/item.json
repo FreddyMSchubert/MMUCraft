@@ -1,8 +1,8 @@
 {
 	"title": "Logo Dirt",
-	"id": "logo dirt",
+	"id": "mmu-dirt",
 	"modelType": "basic-3d",
-	"rarity":"mythical",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": [
 		"You shouldn't have this..."

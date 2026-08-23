@@ -2,6 +2,16 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "item.schema.json",
 	"title": "Composable fake item",
+	"$defs": {
+		"resourceIdentifier": {
+			"type": "string",
+			"pattern": "^[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
+		},
+		"namespacedResourceIdentifier": {
+			"type": "string",
+			"pattern": "^[a-z0-9._-]+:[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
+		}
+	},
 	"type": "object",
 	"additionalProperties": false,
 	"properties": {
@@ -10,12 +20,10 @@
 			"minLength": 1
 		},
 		"id": {
-			"type": "string",
-			"minLength": 1
+			"$ref": "#/$defs/resourceIdentifier"
 		},
 		"baseItemOverride": {
-			"type": "string",
-			"minLength": 1
+			"$ref": "#/$defs/namespacedResourceIdentifier"
 		},
 		"modelType": {
 			"type": "string",

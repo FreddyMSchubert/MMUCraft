@@ -6,7 +6,7 @@
 	"properties": {
 		"songId": {
 			"type": "string",
-			"minLength": 1
+			"pattern": "^[a-z0-9._-]+:[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
 		}
 	},
 	"required": [

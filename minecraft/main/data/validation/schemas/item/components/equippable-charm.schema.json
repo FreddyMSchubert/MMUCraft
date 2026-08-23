@@ -14,7 +14,7 @@
 		},
 		"equippableAssetId": {
 			"type": "string",
-			"pattern": ".*__charm$"
+			"pattern": "^[a-z0-9._-]+(?:/[a-z0-9._-]+)*__charm$"
 		}
 	},
 	"required": [

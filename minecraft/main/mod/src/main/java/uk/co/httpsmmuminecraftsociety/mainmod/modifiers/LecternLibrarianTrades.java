@@ -32,11 +32,23 @@ public final class LecternLibrarianTrades {
         }
 
         MerchantOffers offers = villager.getOffers();
-        offers.removeIf(LecternLibrarianTrades::isLecternCopyOffer);
+        Optional<MerchantOffer> copyOffer = getJobSiteEnchantedBook(villager, level)
+                .flatMap(LecternLibrarianTrades::createCopyOffer);
 
-        getJobSiteEnchantedBook(villager, level)
-                .flatMap(LecternLibrarianTrades::createCopyOffer)
-                .ifPresent(offer -> offers.add(0, offer));
+        if (copyOffer.isPresent() && offers.stream()
+                .filter(LecternLibrarianTrades::isLecternCopyOffer)
+                .anyMatch(existing -> sameTrade(existing, copyOffer.get()))) {
+            return;
+        }
+
+        offers.removeIf(LecternLibrarianTrades::isLecternCopyOffer);
+        copyOffer.ifPresent(offer -> offers.add(0, offer));
+    }
+
+    private static boolean sameTrade(MerchantOffer first, MerchantOffer second) {
+        return first.getItemCostA().equals(second.getItemCostA())
+                && first.getItemCostB().equals(second.getItemCostB())
+                && ItemStack.matches(first.getResult(), second.getResult());
     }
 
     private static boolean isLecternCopyOffer(MerchantOffer offer) {

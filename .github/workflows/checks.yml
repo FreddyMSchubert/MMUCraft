@@ -24,6 +24,17 @@ jobs:
                   ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.sha }}
                   persist-credentials: false
 
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              with:
+                  python-version: '3.12'
+
+            - name: Install item-schema validator
+              run: python3 -m pip install --requirement minecraft/main/data/validation/requirements.txt
+
+            - name: Validate item definitions
+              run: python3 minecraft/main/data/validation/validate.py --root minecraft/main
+
             - name: Set up Node
               uses: actions/setup-node@v6
               with:
@@ -42,13 +53,6 @@ jobs:
                   npm ci --prefix services/web
                   npm ci --prefix minecraft/main/respack/items-respack-generator
 
-            - name: Audit dependencies
-              run: |
-                  npm audit
-                  npm audit --prefix services/api
-                  npm audit --prefix services/web
-                  npm audit --prefix minecraft/main/respack/items-respack-generator
-
             - name: Check formatting
               run: npm run format:check
 
@@ -58,11 +62,18 @@ jobs:
             - name: Type-check API
               run: npm run typecheck --prefix services/api
 
+            - name: Check resource-pack generator
+              run: npm run check --prefix minecraft/main/respack/items-respack-generator
+
             - name: Check web
               run: npm run check --prefix services/web
 
-            - name: Check resource-pack generator
-              run: npm run check --prefix minecraft/main/respack/items-respack-generator
+            - name: Audit dependencies
+              run: |
+                  npm audit
+                  npm audit --prefix services/api
+                  npm audit --prefix services/web
+                  npm audit --prefix minecraft/main/respack/items-respack-generator
 
             - name: Install Playwright Chromium
               run: npx playwright install --with-deps chromium
@@ -110,16 +121,9 @@ jobs:
                   distribution: microsoft
                   java-version: '25'
 
-            - name: Set up Python
-              uses: actions/setup-python@v6
-              with:
-                  python-version: '3.12'
-
-            - name: Install item-schema validator
-              run: python3 -m pip install --requirement minecraft/main/data/validation/requirements.txt
-
-            - name: Validate item definitions
-              run: python3 minecraft/main/data/validation/validate.py --root minecraft/main
+            - name: Build resource pack
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              run: python3 minecraft/main/respack/build-main-pack.py
 
             - name: Set up Gradle
               if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
@@ -131,10 +135,6 @@ jobs:
               run: |
                   ./gradlew runDatagen --no-daemon
                   ./gradlew build --no-daemon
-
-            - name: Build resource pack
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
-              run: python3 minecraft/main/respack/build-main-pack.py
 
             - name: Resolve image names and tag
               if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}

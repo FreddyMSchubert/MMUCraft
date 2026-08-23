@@ -1,0 +1,647 @@
+{
+	"annotations": { "list": [] },
+	"editable": false,
+	"graphTooltip": 1,
+	"panels": [
+		{
+			"id": 1,
+			"type": "stat",
+			"title": "Players Online Now",
+			"description": "Players connected to the Minecraft server right now.",
+			"gridPos": { "h": 5, "w": 6, "x": 0, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mainmod_online_players",
+					"instant": true,
+					"legendFormat": "Online",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "fixed", "fixedColor": "green" },
+					"decimals": 0,
+					"min": 0,
+					"noValue": "Offline"
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 2,
+			"type": "stat",
+			"title": "All-Time Concurrent Record",
+			"gridPos": { "h": 5, "w": 6, "x": 6, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mainmod_peak_online_players",
+					"instant": true,
+					"legendFormat": "Players",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 0, "min": 0, "noValue": "No data" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 3,
+			"type": "stat",
+			"title": "Players Signed Up",
+			"gridPos": { "h": 5, "w": 6, "x": 12, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_users",
+					"instant": true,
+					"legendFormat": "Players",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 4,
+			"type": "stat",
+			"title": "Total Hours Played",
+			"gridPos": { "h": 5, "w": 6, "x": 18, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_play_seconds{measure=\"total\"} / 3600",
+					"instant": true,
+					"legendFormat": "Hours",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "min": 0, "unit": "h" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 5,
+			"type": "timeseries",
+			"title": "Concurrent Players",
+			"description": "Prometheus builds this history from five-second MainMod samples.",
+			"gridPos": { "h": 9, "w": 24, "x": 0, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{ "expr": "mainmod_online_players", "legendFormat": "Online players", "refId": "A" }
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 25,
+						"lineInterpolation": "smooth",
+						"lineWidth": 2,
+						"showPoints": "never",
+						"spanNulls": false
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["max", "mean"],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "single", "sort": "none" }
+			}
+		},
+		{
+			"id": 6,
+			"type": "stat",
+			"title": "Minecart Distance",
+			"gridPos": { "h": 5, "w": 6, "x": 0, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecart_distance_meters",
+					"instant": true,
+					"legendFormat": "Minecart travel",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "min": 0, "unit": "lengthm" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 7,
+			"type": "stat",
+			"title": "That Is About...",
+			"description": "A random choice between the nearest comparison units below and above the total distance.",
+			"gridPos": { "h": 5, "w": 6, "x": 6, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecart_distance_comparison",
+					"instant": true,
+					"legendFormat": "{{unit}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 1, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "none",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 8,
+			"type": "stat",
+			"title": "Total Travel Distance",
+			"description": "All native distance statistics combined.",
+			"gridPos": { "h": 5, "w": 6, "x": 12, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(mmucraft_minecraft_stat{category=\"custom\",id=~\"minecraft:(walk|sprint|crouch|fall|fly|swim|boat|minecart|horse|pig|strider|aviate)_one_cm\",summary=\"total\"}) / 100",
+					"instant": true,
+					"legendFormat": "Travel",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "min": 0, "unit": "lengthm" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 9,
+			"type": "stat",
+			"title": "Ancient Debris Mined",
+			"gridPos": { "h": 5, "w": 6, "x": 18, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecraft_stat{category=\"mined\",id=\"minecraft:ancient_debris\",summary=\"total\"}",
+					"instant": true,
+					"legendFormat": "Blocks",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 10,
+			"type": "stat",
+			"title": "Player Deaths",
+			"gridPos": { "h": 5, "w": 6, "x": 0, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecraft_stat{category=\"custom\",id=\"minecraft:deaths\",summary=\"total\"}",
+					"instant": true,
+					"legendFormat": "Deaths",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 11,
+			"type": "stat",
+			"title": "Sniffers Killed",
+			"gridPos": { "h": 5, "w": 6, "x": 6, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecraft_stat{category=\"killed\",id=\"minecraft:sniffer\",summary=\"total\"}",
+					"instant": true,
+					"legendFormat": "Sniffers",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 12,
+			"type": "stat",
+			"title": "Fish Caught (Rolling 24h)",
+			"gridPos": { "h": 5, "w": 6, "x": 12, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "clamp_min(delta(mmucraft_minecraft_stat{category=\"custom\",id=\"minecraft:fish_caught\",summary=\"total\"}[24h]), 0)",
+					"instant": true,
+					"legendFormat": "Fish",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 13,
+			"type": "stat",
+			"title": "Stone per Diamond Ore",
+			"description": "Native stone plus deepslate mined divided by native diamond ores mined. Minecraft's native counter does not distinguish Silk Touch.",
+			"gridPos": { "h": 5, "w": 6, "x": 18, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(mmucraft_minecraft_stat{category=\"mined\",id=~\"minecraft:(stone|deepslate)\",summary=\"total\"}) / clamp_min(sum(mmucraft_minecraft_stat{category=\"mined\",id=~\"minecraft:(diamond_ore|deepslate_diamond_ore)\",summary=\"total\"}), 1)",
+					"instant": true,
+					"legendFormat": "Ratio",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 1, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 14,
+			"type": "timeseries",
+			"title": "New vs Returning Joins",
+			"description": "Join events observed since Prometheus instrumentation was installed.",
+			"gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (kind) (increase(mainmod_player_joins_total[$__rate_interval]))",
+					"legendFormat": "{{kind}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"custom": {
+						"drawStyle": "bars",
+						"fillOpacity": 70,
+						"lineWidth": 1,
+						"showPoints": "never",
+						"stacking": { "group": "A", "mode": "normal" }
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 15,
+			"type": "bargauge",
+			"title": "Notable Mobs Killed",
+			"gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecraft_stat{category=\"killed\",id=~\"minecraft:(zombie|skeleton|creeper|enderman|wither|ender_dragon|sniffer)\",summary=\"total\"}",
+					"instant": true,
+					"legendFormat": "{{name}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		},
+		{
+			"id": 16,
+			"type": "bargauge",
+			"title": "MMUCraft Potions Used",
+			"gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mainmod_potions_used_total",
+					"instant": true,
+					"legendFormat": "{{potion}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		},
+		{
+			"id": 17,
+			"type": "bargauge",
+			"title": "Notable Blocks Mined",
+			"description": "A deliberately small native-stat allowlist, not every block in Minecraft.",
+			"gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecraft_stat{category=\"mined\",summary=\"total\"}",
+					"instant": true,
+					"legendFormat": "{{name}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		},
+		{
+			"id": 21,
+			"type": "stat",
+			"title": "Most-Killed Mob",
+			"gridPos": { "h": 5, "w": 12, "x": 0, "y": 40 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_top_mob{kind=\"most_killed\"}",
+					"instant": true,
+					"legendFormat": "{{mob}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 22,
+			"type": "stat",
+			"title": "Mob Causing Most Player Deaths",
+			"gridPos": { "h": 5, "w": 12, "x": 12, "y": 40 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_top_mob{kind=\"most_player_deaths\"}",
+					"instant": true,
+					"legendFormat": "{{mob}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 18,
+			"type": "stat",
+			"title": "Selected Stat — Total",
+			"gridPos": { "h": 6, "w": 8, "x": 0, "y": 45 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecraft_stat{category=\"$category\",id=\"$stat\",summary=\"total\"}",
+					"instant": true,
+					"legendFormat": "{{name}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 1, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 19,
+			"type": "stat",
+			"title": "Selected Stat — Average per Player",
+			"gridPos": { "h": 6, "w": 8, "x": 8, "y": 45 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecraft_stat{category=\"$category\",id=\"$stat\",summary=\"average\"}",
+					"instant": true,
+					"legendFormat": "{{name}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 1, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 20,
+			"type": "stat",
+			"title": "Selected Stat — Median per Player",
+			"gridPos": { "h": 6, "w": 8, "x": 16, "y": 45 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_minecraft_stat{category=\"$category\",id=\"$stat\",summary=\"median\"}",
+					"instant": true,
+					"legendFormat": "{{name}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 1, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		}
+	],
+	"refresh": "15s",
+	"schemaVersion": 42,
+	"tags": ["statistics", "minecraft", "mmucraft"],
+	"templating": {
+		"list": [
+			{
+				"name": "category",
+				"label": "Stat group",
+				"type": "query",
+				"datasource": { "type": "prometheus", "uid": "prometheus" },
+				"query": {
+					"query": "label_values(mmucraft_minecraft_stat, category)",
+					"refId": "PrometheusVariableQueryEditor-Category"
+				},
+				"definition": "label_values(mmucraft_minecraft_stat, category)",
+				"current": { "text": "custom", "value": "custom" },
+				"refresh": 1,
+				"sort": 1
+			},
+			{
+				"name": "stat",
+				"label": "Minecraft stat",
+				"type": "query",
+				"datasource": { "type": "prometheus", "uid": "prometheus" },
+				"query": {
+					"query": "label_values(mmucraft_minecraft_stat{category=\"$category\"}, id)",
+					"refId": "PrometheusVariableQueryEditor-Stat"
+				},
+				"definition": "label_values(mmucraft_minecraft_stat{category=\"$category\"}, id)",
+				"current": { "text": "minecraft:deaths", "value": "minecraft:deaths" },
+				"refresh": 1,
+				"sort": 1
+			}
+		]
+	},
+	"time": { "from": "now-7d", "to": "now" },
+	"timepicker": {},
+	"timezone": "browser",
+	"title": "MMUCraft Statistics",
+	"uid": "mmucraft-statistics",
+	"version": 1
+}

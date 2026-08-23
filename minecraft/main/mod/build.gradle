@@ -62,6 +62,7 @@ dependencies {
     implementation include("io.prometheus:prometheus-metrics-exporter-common:${prometheusVersion}")
     implementation include("io.prometheus:prometheus-metrics-exposition-textformats:${prometheusVersion}")
     implementation include("io.prometheus:prometheus-metrics-exposition-formats:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-instrumentation-jvm:${prometheusVersion}")
 
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
 }

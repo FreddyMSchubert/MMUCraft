@@ -14,7 +14,9 @@ make
 
 The API uses port `8080`. The website uses port `3000`. The API and website watch source files. Minecraft does not watch files.
 
-Grafana uses `http://localhost:3001` with username `admin`. Set `GRAFANA_ADMIN_PASSWORD` before `make`; local development defaults to password `admin`. The provisioned Minecraft dashboard shows the live online-player count and 90 days of history.
+Grafana uses `http://localhost:3000/grafana/` with username `admin`. Set `GRAFANA_ADMIN_PASSWORD` before `make`; local development defaults to password `admin`. Anonymous access and Grafana account creation are disabled. The instance contains the Statistics, Gameplay Admin, and Technical dashboards.
+
+Prometheus retains 90 days of history. It scrapes MainMod runtime and JVM metrics, API application and Node.js metrics, and its own health. Production also runs cAdvisor for container metrics and node_exporter for VPS metrics. Monitoring configuration and all three password-gated dashboards are in `monitoring/`.
 
 | Command | Result |
 | --- | --- |

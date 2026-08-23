@@ -53,6 +53,7 @@ services:
       target: dev
     environment:
       API_BASE_URL: http://api:8080
+      GRAFANA_BASE_URL: http://grafana:3000
       SITE_IMAGE_TAG: dev
       DISCORD_URL: ${DISCORD_URL:-https://discord.gg/pPgZqRS5b2}
       INSTAGRAM_URL: ${INSTAGRAM_URL:-https://www.instagram.com/mmuminecraftsociety/}
@@ -121,7 +122,7 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=90d
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus-dev.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     depends_on:
       minecraft:
@@ -138,13 +139,14 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_USERS_DEFAULT_THEME: dark
-      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/dashboards/mainmod.json
-    ports:
-      - "127.0.0.1:3001:3000"
+      GF_SERVER_ROOT_URL: http://localhost:3000/grafana/
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/dashboards/gameplay.json
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+      - ./monitoring/grafana/provisioning/datasources/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./monitoring/grafana/provisioning/dashboards/private.yml:/etc/grafana/provisioning/dashboards/main.yml:ro
+      - ./monitoring/grafana/dashboards/admin:/etc/grafana/dashboards:ro
     depends_on:
       prometheus:
         condition: service_started

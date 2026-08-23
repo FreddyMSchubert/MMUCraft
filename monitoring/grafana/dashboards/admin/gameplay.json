@@ -1,0 +1,871 @@
+{
+	"annotations": { "list": [] },
+	"editable": false,
+	"graphTooltip": 1,
+	"panels": [
+		{
+			"id": 1,
+			"type": "stat",
+			"title": "Players Online",
+			"gridPos": { "h": 5, "w": 6, "x": 0, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mainmod_online_players",
+					"instant": true,
+					"legendFormat": "Now",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "fixed", "fixedColor": "green" },
+					"decimals": 0,
+					"min": 0,
+					"noValue": "Offline"
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 2,
+			"type": "stat",
+			"title": "Active Players (7d)",
+			"gridPos": { "h": 5, "w": 6, "x": 6, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_active_players{days=\"7\"}",
+					"instant": true,
+					"legendFormat": "Players",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 3,
+			"type": "stat",
+			"title": "10-Day Churn",
+			"description": "Players with Minecraft activity who have not been seen for at least ten days.",
+			"gridPos": { "h": 5, "w": 6, "x": 12, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_churn_ratio",
+					"instant": true,
+					"legendFormat": "Churned",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"max": 1,
+					"min": 0,
+					"unit": "percentunit",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "orange", "value": 0.25 },
+							{ "color": "red", "value": 0.5 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 4,
+			"type": "stat",
+			"title": "D7 Retention",
+			"description": "Share of synced players whose last observed play was at least seven days after website signup.",
+			"gridPos": { "h": 5, "w": 6, "x": 18, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_retention_ratio{days=\"7\"}",
+					"instant": true,
+					"legendFormat": "D7",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "max": 1, "min": 0, "unit": "percentunit" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 5,
+			"type": "timeseries",
+			"title": "Concurrent Players",
+			"gridPos": { "h": 9, "w": 16, "x": 0, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{ "expr": "mainmod_online_players", "legendFormat": "Online", "refId": "A" }
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 25,
+						"lineInterpolation": "smooth",
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["max", "mean"],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "single", "sort": "none" }
+			}
+		},
+		{
+			"id": 6,
+			"type": "timeseries",
+			"title": "Hourly Average Concurrent Players",
+			"description": "Rolling one-hour average. Use a longer dashboard range to compare hours and weekdays as history accumulates.",
+			"gridPos": { "h": 9, "w": 8, "x": 16, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "avg_over_time(mainmod_online_players[1h])",
+					"legendFormat": "Hourly average",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"min": 0,
+					"custom": {
+						"drawStyle": "bars",
+						"fillOpacity": 60,
+						"lineWidth": 1,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": { "displayMode": "hidden", "placement": "bottom", "showLegend": false },
+				"tooltip": { "mode": "single", "sort": "none" }
+			}
+		},
+		{
+			"id": 7,
+			"type": "stat",
+			"title": "Total Play Time",
+			"gridPos": { "h": 5, "w": 4, "x": 0, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_play_seconds{measure=\"total\"}",
+					"instant": true,
+					"legendFormat": "Total",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "min": 0, "unit": "s" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 8,
+			"type": "stat",
+			"title": "Average per Player",
+			"gridPos": { "h": 5, "w": 4, "x": 4, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_play_seconds{measure=\"average_per_player\"}",
+					"instant": true,
+					"legendFormat": "Mean",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "min": 0, "unit": "s" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 9,
+			"type": "stat",
+			"title": "Median per Player",
+			"gridPos": { "h": 5, "w": 4, "x": 8, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_play_seconds{measure=\"median_per_player\"}",
+					"instant": true,
+					"legendFormat": "Median",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "min": 0, "unit": "s" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 10,
+			"type": "stat",
+			"title": "Average Session",
+			"description": "Native total play time divided by native leave-game count.",
+			"gridPos": { "h": 5, "w": 4, "x": 12, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_play_seconds{measure=\"average_session\"}",
+					"instant": true,
+					"legendFormat": "Mean",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "min": 0, "unit": "s" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 11,
+			"type": "stat",
+			"title": "Play Sessions Ever",
+			"gridPos": { "h": 5, "w": 4, "x": 16, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_play_seconds{measure=\"sessions_ever\"}",
+					"instant": true,
+					"legendFormat": "Sessions",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 12,
+			"type": "stat",
+			"title": "Sessions per Active Player (24h)",
+			"description": "Rolling observed joins divided by players seen in the last day. Starts at instrumentation deployment.",
+			"gridPos": { "h": 5, "w": 4, "x": 20, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(increase(mainmod_player_joins_total[24h])) / clamp_min(mmucraft_active_players{days=\"1\"}, 1)",
+					"instant": true,
+					"legendFormat": "Sessions",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 2, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 13,
+			"type": "bargauge",
+			"title": "D1 / D7 / D30 Retention",
+			"gridPos": { "h": 7, "w": 8, "x": 0, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_retention_ratio",
+					"instant": true,
+					"legendFormat": "D{{days}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 1, "max": 1, "min": 0, "unit": "percentunit" },
+				"overrides": []
+			},
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		},
+		{
+			"id": 14,
+			"type": "bargauge",
+			"title": "Active Players",
+			"gridPos": { "h": 7, "w": 8, "x": 8, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_active_players",
+					"instant": true,
+					"legendFormat": "Last {{days}}d",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		},
+		{
+			"id": 15,
+			"type": "timeseries",
+			"title": "New vs Returning Players by Day",
+			"gridPos": { "h": 7, "w": 8, "x": 16, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (kind) (increase(mainmod_player_joins_total[1d]))",
+					"legendFormat": "{{kind}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 20,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 16,
+			"type": "stat",
+			"title": "Longest Current Streak",
+			"gridPos": { "h": 5, "w": 4, "x": 0, "y": 26 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_login_streak_days{scope=\"current_max\"}",
+					"instant": true,
+					"legendFormat": "Days",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 0, "min": 0, "unit": "d" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 17,
+			"type": "stat",
+			"title": "Longest Streak Ever",
+			"gridPos": { "h": 5, "w": 4, "x": 4, "y": 26 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_login_streak_days{scope=\"all_time_max\"}",
+					"instant": true,
+					"legendFormat": "Days",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 0, "min": 0, "unit": "d" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 18,
+			"type": "stat",
+			"title": "Players on 7+ Day Streak",
+			"gridPos": { "h": 5, "w": 4, "x": 8, "y": 26 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_players_with_streak{days=\"7\"}",
+					"instant": true,
+					"legendFormat": "Players",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 19,
+			"type": "table",
+			"title": "Login Streak Leaderboards",
+			"description": "Player names stay on the password-gated dashboard.",
+			"gridPos": { "h": 8, "w": 12, "x": 12, "y": 26 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_login_streak_leaderboard",
+					"format": "table",
+					"instant": true,
+					"legendFormat": "{{scope}} #{{rank}} {{player}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 0, "min": 0, "unit": "d" },
+				"overrides": []
+			},
+			"options": {
+				"cellHeight": "sm",
+				"showHeader": true,
+				"sortBy": [{ "desc": true, "displayName": "Value" }]
+			}
+		},
+		{
+			"id": 20,
+			"type": "stat",
+			"title": "Money in Player Hands",
+			"gridPos": { "h": 5, "w": 4, "x": 0, "y": 34 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_money_dabloons{measure=\"player_supply\"}",
+					"instant": true,
+					"legendFormat": "Dabloons",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 21,
+			"type": "stat",
+			"title": "Money Issued Ever",
+			"gridPos": { "h": 5, "w": 4, "x": 4, "y": 34 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_money_dabloons{measure=\"issued\"}",
+					"instant": true,
+					"legendFormat": "Dabloons",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 22,
+			"type": "stat",
+			"title": "Returned or Removed",
+			"description": "Issued money minus current player balances. Existing data does not distinguish purchases from administrative removal.",
+			"gridPos": { "h": 5, "w": 4, "x": 8, "y": 34 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_money_dabloons{measure=\"returned_or_removed\"}",
+					"instant": true,
+					"legendFormat": "Dabloons",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 23,
+			"type": "stat",
+			"title": "Median Balance",
+			"gridPos": { "h": 5, "w": 4, "x": 12, "y": 34 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_money_dabloons{measure=\"median_balance\"}",
+					"instant": true,
+					"legendFormat": "Dabloons",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 1, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 24,
+			"type": "stat",
+			"title": "7-Day Supply Growth",
+			"description": "A money-supply growth proxy, not price inflation. It becomes available after seven days of Prometheus history.",
+			"gridPos": { "h": 5, "w": 4, "x": 16, "y": 34 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_money_dabloons{measure=\"player_supply\"} / clamp_min(mmucraft_money_dabloons{measure=\"player_supply\"} offset 7d, 1) - 1",
+					"instant": true,
+					"legendFormat": "Growth",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 2, "unit": "percentunit" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 25,
+			"type": "table",
+			"title": "Richest Player",
+			"gridPos": { "h": 5, "w": 4, "x": 20, "y": 34 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_richest_player_dabloons",
+					"format": "table",
+					"instant": true,
+					"legendFormat": "{{player}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": { "cellHeight": "sm", "showHeader": true }
+		},
+		{
+			"id": 26,
+			"type": "timeseries",
+			"title": "Money Supply and Flows",
+			"description": "History starts when Prometheus begins scraping these database snapshots.",
+			"gridPos": { "h": 9, "w": 16, "x": 0, "y": 39 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{ "expr": "mmucraft_money_dabloons", "legendFormat": "{{measure}}", "refId": "A" }
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 27,
+			"type": "bargauge",
+			"title": "Player Wealth Distribution",
+			"gridPos": { "h": 9, "w": 8, "x": 16, "y": 39 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_player_balance_distribution",
+					"instant": true,
+					"legendFormat": "{{band}} dabloons",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		},
+		{
+			"id": 28,
+			"type": "bargauge",
+			"title": "Daily Claims",
+			"gridPos": { "h": 8, "w": 8, "x": 0, "y": 48 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_daily_claims",
+					"instant": true,
+					"legendFormat": "{{scope}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		},
+		{
+			"id": 29,
+			"type": "bargauge",
+			"title": "Unlock Books and Reads",
+			"gridPos": { "h": 8, "w": 8, "x": 8, "y": 48 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_unlocks",
+					"instant": true,
+					"legendFormat": "{{type}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		},
+		{
+			"id": 30,
+			"type": "bargauge",
+			"title": "Website and World State",
+			"gridPos": { "h": 8, "w": 8, "x": 16, "y": 48 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_active_website_sessions",
+					"instant": true,
+					"legendFormat": "Signed-in sessions",
+					"refId": "A"
+				},
+				{
+					"expr": "mmucraft_claims",
+					"instant": true,
+					"legendFormat": "Current claims",
+					"refId": "B"
+				},
+				{
+					"expr": "mmucraft_charms_upgraded_total",
+					"instant": true,
+					"legendFormat": "Charm upgrades observed",
+					"refId": "C"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"displayMode": "gradient",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		}
+	],
+	"refresh": "15s",
+	"schemaVersion": 42,
+	"tags": ["admin", "gameplay", "mmucraft"],
+	"templating": { "list": [] },
+	"time": { "from": "now-30d", "to": "now" },
+	"timepicker": {},
+	"timezone": "browser",
+	"title": "MMUCraft Gameplay Admin",
+	"uid": "mmucraft-gameplay-admin",
+	"version": 1
+}

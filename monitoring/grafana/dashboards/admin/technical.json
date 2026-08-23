@@ -1,0 +1,844 @@
+{
+	"annotations": { "list": [] },
+	"editable": false,
+	"graphTooltip": 1,
+	"panels": [
+		{
+			"id": 1,
+			"type": "stat",
+			"title": "Minecraft TPS",
+			"gridPos": { "h": 5, "w": 4, "x": 0, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mainmod_ticks_per_second",
+					"instant": true,
+					"legendFormat": "TPS",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 2,
+					"max": 20,
+					"min": 0,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "red", "value": null },
+							{ "color": "orange", "value": 15 },
+							{ "color": "green", "value": 19 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 2,
+			"type": "stat",
+			"title": "Minecraft MSPT",
+			"gridPos": { "h": 5, "w": 4, "x": 4, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mainmod_milliseconds_per_tick",
+					"instant": true,
+					"legendFormat": "MSPT",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 2,
+					"min": 0,
+					"unit": "ms",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "orange", "value": 40 },
+							{ "color": "red", "value": 50 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 3,
+			"type": "stat",
+			"title": "API Mean Latency (5m)",
+			"gridPos": { "h": 5, "w": 4, "x": 8, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(rate(mmucraft_api_http_request_duration_seconds_sum[5m])) / clamp_min(sum(rate(mmucraft_api_http_request_duration_seconds_count[5m])), 0.001)",
+					"instant": true,
+					"legendFormat": "Mean",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 3,
+					"min": 0,
+					"unit": "s",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "orange", "value": 0.25 },
+							{ "color": "red", "value": 1 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 4,
+			"type": "stat",
+			"title": "API Request Rate",
+			"gridPos": { "h": 5, "w": 4, "x": 12, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(rate(mmucraft_api_http_requests_total[5m]))",
+					"instant": true,
+					"legendFormat": "Requests/s",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 2, "min": 0, "unit": "reqps" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 5,
+			"type": "stat",
+			"title": "API Requests (Selected Range)",
+			"description": "Counter increase across the current dashboard time range, including process restarts.",
+			"gridPos": { "h": 5, "w": 4, "x": 16, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(increase(mmucraft_api_http_requests_total[$__range]))",
+					"instant": true,
+					"legendFormat": "Requests",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 6,
+			"type": "stat",
+			"title": "Minecraft Uptime",
+			"gridPos": { "h": 5, "w": 4, "x": 20, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mainmod_uptime_seconds",
+					"instant": true,
+					"legendFormat": "Uptime",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 0, "min": 0, "unit": "s" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 7,
+			"type": "timeseries",
+			"title": "TPS and MSPT History",
+			"gridPos": { "h": 9, "w": 12, "x": 0, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{ "expr": "mainmod_ticks_per_second", "legendFormat": "TPS", "refId": "A" },
+				{ "expr": "mainmod_milliseconds_per_tick", "legendFormat": "MSPT", "refId": "B" }
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 2,
+					"min": 0,
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 15,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["min", "max", "mean"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 8,
+			"type": "timeseries",
+			"title": "API Latency History",
+			"gridPos": { "h": 9, "w": 12, "x": 12, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(rate(mmucraft_api_http_request_duration_seconds_sum[5m])) / clamp_min(sum(rate(mmucraft_api_http_request_duration_seconds_count[5m])), 0.001)",
+					"legendFormat": "mean",
+					"refId": "A"
+				},
+				{
+					"expr": "histogram_quantile(0.50, sum by (le) (rate(mmucraft_api_http_request_duration_seconds_bucket[5m])))",
+					"legendFormat": "p50",
+					"refId": "B"
+				},
+				{
+					"expr": "histogram_quantile(0.95, sum by (le) (rate(mmucraft_api_http_request_duration_seconds_bucket[5m])))",
+					"legendFormat": "p95",
+					"refId": "C"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 3,
+					"min": 0,
+					"unit": "s",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["max", "mean"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 9,
+			"type": "timeseries",
+			"title": "Loaded Chunks and Entities",
+			"gridPos": { "h": 8, "w": 8, "x": 0, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{ "expr": "mainmod_loaded_chunks", "legendFormat": "Chunks", "refId": "A" },
+				{ "expr": "mainmod_entities", "legendFormat": "Entities", "refId": "B" }
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 15,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull", "max"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 10,
+			"type": "timeseries",
+			"title": "API Requests by Route",
+			"gridPos": { "h": 8, "w": 8, "x": 8, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (route) (rate(mmucraft_api_http_requests_total[5m]))",
+					"legendFormat": "{{route}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 2,
+					"min": 0,
+					"unit": "reqps",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 1,
+						"showPoints": "never",
+						"stacking": { "group": "A", "mode": "normal" }
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull"],
+					"displayMode": "table",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 11,
+			"type": "timeseries",
+			"title": "API Errors by Status",
+			"gridPos": { "h": 8, "w": 8, "x": 16, "y": 14 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (status) (rate(mmucraft_api_http_requests_total{status=~\"4..|5..|aborted\"}[5m]))",
+					"legendFormat": "{{status}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 2,
+					"min": 0,
+					"unit": "reqps",
+					"custom": {
+						"drawStyle": "bars",
+						"fillOpacity": 60,
+						"lineWidth": 1,
+						"showPoints": "never",
+						"stacking": { "group": "A", "mode": "normal" }
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 12,
+			"type": "timeseries",
+			"title": "gRPC Latency",
+			"gridPos": { "h": 8, "w": 12, "x": 0, "y": 22 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "histogram_quantile(0.50, sum by (le, service) (rate(mmucraft_api_grpc_request_duration_seconds_bucket[5m])))",
+					"legendFormat": "p50 {{service}}",
+					"refId": "A"
+				},
+				{
+					"expr": "histogram_quantile(0.95, sum by (le, service) (rate(mmucraft_api_grpc_request_duration_seconds_bucket[5m])))",
+					"legendFormat": "p95 {{service}}",
+					"refId": "B"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 3,
+					"min": 0,
+					"unit": "s",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["max", "mean"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 13,
+			"type": "timeseries",
+			"title": "Monitoring Database Snapshot Cost",
+			"description": "This is the one batched SQLite read used to publish business metrics, not every application query.",
+			"gridPos": { "h": 8, "w": 12, "x": 12, "y": 22 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "histogram_quantile(0.50, sum by (le) (rate(mmucraft_monitoring_database_snapshot_duration_seconds_bucket[5m])))",
+					"legendFormat": "p50",
+					"refId": "A"
+				},
+				{
+					"expr": "histogram_quantile(0.95, sum by (le) (rate(mmucraft_monitoring_database_snapshot_duration_seconds_bucket[5m])))",
+					"legendFormat": "p95",
+					"refId": "B"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 3,
+					"min": 0,
+					"unit": "s",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["max", "mean"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 14,
+			"type": "timeseries",
+			"title": "Container CPU",
+			"gridPos": { "h": 9, "w": 12, "x": 0, "y": 30 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (container_label_com_docker_compose_service) (rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service!=\"\",image!=\"\"}[5m]))",
+					"legendFormat": "{{container_label_com_docker_compose_service}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"min": 0,
+					"unit": "percentunit",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 12,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull", "max"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 15,
+			"type": "timeseries",
+			"title": "Container Memory Working Set",
+			"gridPos": { "h": 9, "w": 12, "x": 12, "y": 30 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (container_label_com_docker_compose_service) (container_memory_working_set_bytes{container_label_com_docker_compose_service!=\"\",image!=\"\"})",
+					"legendFormat": "{{container_label_com_docker_compose_service}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"min": 0,
+					"unit": "bytes",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 12,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull", "max"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 16,
+			"type": "timeseries",
+			"title": "VPS CPU and RAM Used",
+			"gridPos": { "h": 9, "w": 12, "x": 0, "y": 39 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))",
+					"legendFormat": "CPU",
+					"refId": "A"
+				},
+				{
+					"expr": "1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes",
+					"legendFormat": "RAM",
+					"refId": "B"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"max": 1,
+					"min": 0,
+					"unit": "percentunit",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 15,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull", "max"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 17,
+			"type": "timeseries",
+			"title": "VPS Disk Used",
+			"gridPos": { "h": 9, "w": 12, "x": 12, "y": 39 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "1 - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay|squashfs\",mountpoint=\"/\"} / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay|squashfs\",mountpoint=\"/\"}",
+					"legendFormat": "Root disk",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"max": 1,
+					"min": 0,
+					"unit": "percentunit",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "orange", "value": 0.8 },
+							{ "color": "red", "value": 0.9 }
+						]
+					},
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 20,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull", "max"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 18,
+			"type": "timeseries",
+			"title": "JVM and Node Heap Used",
+			"gridPos": { "h": 9, "w": 12, "x": 0, "y": 48 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "jvm_memory_used_bytes{job=\"mainmod\",area=\"heap\"}",
+					"legendFormat": "Minecraft JVM heap",
+					"refId": "A"
+				},
+				{
+					"expr": "mmucraft_api_nodejs_heap_size_used_bytes",
+					"legendFormat": "API Node heap",
+					"refId": "B"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"min": 0,
+					"unit": "bytes",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 15,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull", "max"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 19,
+			"type": "timeseries",
+			"title": "Garbage Collection Time",
+			"gridPos": { "h": 9, "w": 12, "x": 12, "y": 48 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (gc) (rate(jvm_gc_collection_seconds_sum{job=\"mainmod\"}[5m]))",
+					"legendFormat": "JVM {{gc}}",
+					"refId": "A"
+				},
+				{
+					"expr": "rate(mmucraft_api_nodejs_gc_duration_seconds_sum[5m])",
+					"legendFormat": "API Node",
+					"refId": "B"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 4,
+					"min": 0,
+					"unit": "s",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull", "max"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 20,
+			"type": "timeseries",
+			"title": "Container Network Traffic",
+			"gridPos": { "h": 8, "w": 8, "x": 0, "y": 57 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (container_label_com_docker_compose_service) (rate(container_network_receive_bytes_total{container_label_com_docker_compose_service!=\"\"}[5m]))",
+					"legendFormat": "RX {{container_label_com_docker_compose_service}}",
+					"refId": "A"
+				},
+				{
+					"expr": "-sum by (container_label_com_docker_compose_service) (rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service!=\"\"}[5m]))",
+					"legendFormat": "TX {{container_label_com_docker_compose_service}}",
+					"refId": "B"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"unit": "Bps",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 15,
+						"lineWidth": 1,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": { "displayMode": "hidden", "placement": "bottom", "showLegend": false },
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 21,
+			"type": "timeseries",
+			"title": "Container Block I/O",
+			"gridPos": { "h": 8, "w": 8, "x": 8, "y": 57 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum by (container_label_com_docker_compose_service, operation) (rate(container_blkio_device_usage_total{container_label_com_docker_compose_service!=\"\"}[5m]))",
+					"legendFormat": "{{container_label_com_docker_compose_service}} {{operation}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"min": 0,
+					"unit": "Bps",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"lineWidth": 1,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": { "displayMode": "hidden", "placement": "bottom", "showLegend": false },
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 22,
+			"type": "bargauge",
+			"title": "Scrape Target Health",
+			"gridPos": { "h": 8, "w": 8, "x": 16, "y": 57 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "up",
+					"instant": true,
+					"legendFormat": "{{job}} {{instance}}",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"max": 1,
+					"min": 0,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "red", "value": null },
+							{ "color": "green", "value": 1 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"displayMode": "basic",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"namePlacement": "auto",
+				"orientation": "horizontal",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"showUnfilled": true,
+				"sizing": "auto",
+				"valueMode": "color"
+			}
+		}
+	],
+	"refresh": "15s",
+	"schemaVersion": 42,
+	"tags": ["admin", "technical", "mmucraft"],
+	"templating": { "list": [] },
+	"time": { "from": "now-24h", "to": "now" },
+	"timepicker": {},
+	"timezone": "browser",
+	"title": "MMUCraft Technical",
+	"uid": "mmucraft-technical",
+	"version": 1
+}

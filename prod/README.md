@@ -10,4 +10,6 @@ Signups are closed by default. Add one permitted email address per line to `data
 
 The homepage defaults to the society Discord invite and Instagram account. Override `DISCORD_URL` or `INSTAGRAM_URL` in `prod/.env` if either link changes. The homepage version label is populated automatically from the deployed `IMAGE_TAG`.
 
-Grafana is available at `https://PUBLIC_HOST/grafana/`. Sign in as `admin` with `GRAFANA_ADMIN_PASSWORD` from `.env`. Anonymous access and account creation are disabled. Prometheus retains 90 days of player-count history in its Docker volume.
+Grafana is available at `https://PUBLIC_HOST/grafana/`. Sign in as `admin` with `GRAFANA_ADMIN_PASSWORD` from `.env`. Anonymous access and Grafana account creation are disabled. Website accounts are not affected.
+
+Grafana contains the Statistics, Gameplay Admin, and Technical dashboards. Prometheus retains 90 days of history in a Docker volume.

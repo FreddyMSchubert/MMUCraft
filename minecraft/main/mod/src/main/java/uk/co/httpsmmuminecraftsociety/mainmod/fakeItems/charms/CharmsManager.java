@@ -35,6 +35,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.metrics.MetricsServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Tuple;
 
 import java.util.*;
@@ -212,6 +213,7 @@ public class CharmsManager
             );
             DailyCharm dailyCharm = DailyCharm.from(activeCharm.charm());
             if (completed && dailyCharm != null) {
+                MetricsServer.recordPotionUse(dailyCharm);
                 DailyTaskManager.record(player, DailyTaskEvent.charm(dailyCharm));
             }
 

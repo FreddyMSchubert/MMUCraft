@@ -14,6 +14,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.StatType;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.scores.DisplaySlot;
@@ -45,6 +47,15 @@ public final class PlayerStatsSync {
     private static final Map<UUID, SyncPlayerStatsResponse> presentationByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, String> renderedProfileByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, Integer> colorByPlayer = new ConcurrentHashMap<>();
+    private static final List<Block> NOTABLE_MINED_BLOCKS = List.of(
+            Blocks.STONE,
+            Blocks.DEEPSLATE,
+            Blocks.DIAMOND_ORE,
+            Blocks.DEEPSLATE_DIAMOND_ORE,
+            Blocks.ANCIENT_DEBRIS,
+            Blocks.EMERALD_ORE,
+            Blocks.DEEPSLATE_EMERALD_ORE
+    );
 
     private static long serverTicks;
     private static boolean sundayRewardDay = AdvancementMoney.isSundayRewardDay();
@@ -332,6 +343,17 @@ public final class PlayerStatsSync {
                 customLabel(statId),
                 stats.getValue(customStats, statId)
         ));
+
+        for (Block block : NOTABLE_MINED_BLOCKS) {
+            Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
+            addStat(
+                    entries,
+                    "mined",
+                    blockId,
+                    humanize(blockId) + " Mined",
+                    stats.getValue(Stats.BLOCK_MINED, block)
+            );
+        }
 
         long completedAdvancements = player.getAdvancements().visible.stream()
                 .filter(holder -> holder.value().display().isPresent())

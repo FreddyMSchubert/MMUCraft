@@ -3,14 +3,17 @@ import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { ShutdownService } from './shutdown';
+import { MonitoringService } from './monitoring/monitoring.service';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 	app.enableShutdownHooks();
 	const server = app.getHttpAdapter().getInstance();
 	const shutdown = app.get(ShutdownService);
+	const monitoring = app.get(MonitoringService);
 	const trackedRequests = new WeakSet();
 	server.addHook('onRequest', async (request, reply) => {
+		monitoring.beginRequest(request);
 		const path = request.url.split('?', 1)[0];
 		if (path === '/api/internal/shutdown') return;
 		if (!shutdown.beginRequest()) {
@@ -20,10 +23,12 @@ async function bootstrap() {
 		if (!path?.endsWith('/events')) trackedRequests.add(request);
 		else shutdown.endRequest();
 	});
-	server.addHook('onResponse', (request) => {
+	server.addHook('onResponse', (request, reply) => {
+		monitoring.finishRequest(request, reply.statusCode);
 		if (trackedRequests.delete(request)) shutdown.endRequest();
 	});
 	server.addHook('onRequestAbort', (request) => {
+		monitoring.finishRequest(request, 'aborted');
 		if (trackedRequests.delete(request)) shutdown.endRequest();
 	});
 

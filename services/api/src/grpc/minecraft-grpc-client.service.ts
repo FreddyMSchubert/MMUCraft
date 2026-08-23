@@ -2,6 +2,7 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import * as grpc from '@grpc/grpc-js';
 import { GrpcServerService } from './grpc-server.service';
 import { callUnary } from './grpc.types';
+import { observeGrpc } from '../monitoring/monitoring.service';
 
 interface GameplayProtoRoot {
 	mcstack: { gameplay: { v1: { GameplayControl: grpc.ServiceClientConstructor } } };
@@ -19,11 +20,15 @@ export class MinecraftGrpcClientService implements OnModuleDestroy {
 	constructor(private readonly grpcServer: GrpcServerService) {}
 
 	gameplay<T>(methodName: string, request: object, options?: grpc.CallOptions) {
-		return callUnary<T>(this.getGameplayClient(), methodName, request, options);
+		return observeGrpc('gameplay', methodName, () =>
+			callUnary<T>(this.getGameplayClient(), methodName, request, options),
+		);
 	}
 
 	mod<T>(methodName: string, request: object, options?: grpc.CallOptions) {
-		return callUnary<T>(this.getModClient(), methodName, request, options);
+		return observeGrpc('mod', methodName, () =>
+			callUnary<T>(this.getModClient(), methodName, request, options),
+		);
 	}
 
 	onModuleDestroy() {

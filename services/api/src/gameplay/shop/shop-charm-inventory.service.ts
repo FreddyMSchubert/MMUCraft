@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { AuthenticatedUser } from '../../auth/auth-session.service';
 import { MinecraftGrpcClientService } from '../../grpc/minecraft-grpc-client.service';
 import { ShopItemCatalogService } from './shop-item-catalog.service';
+import { charmsUpgraded } from '../../monitoring/monitoring.service';
 
 interface CharmUpgradeIngredientResponse {
 	raw: string;
@@ -126,6 +127,7 @@ export class ShopCharmInventoryService {
 		if (!result.upgraded) {
 			throw new BadRequestException(result.message || 'The charm could not be upgraded.');
 		}
+		charmsUpgraded.inc();
 		return {
 			upgraded: true,
 			newLevel: result.new_level,

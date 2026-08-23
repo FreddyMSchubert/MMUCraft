@@ -39,6 +39,7 @@ set +a
 : "${AUTH_CODE_SECRET:?set AUTH_CODE_SECRET in .env}"
 : "${RESEND_API_KEY:?set RESEND_API_KEY in .env}"
 : "${RESEND_FROM:?set RESEND_FROM in .env}"
+: "${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}"
 case "$PUBLIC_URL" in
 	https://*) ;;
 	*) echo "PUBLIC_URL must use HTTPS" >&2; exit 2 ;;
@@ -48,12 +49,16 @@ case "$public_host" in
 	''|*[!A-Za-z0-9.-]*|.*|*..*|*.) echo "PUBLIC_URL must not contain a port, path, query, or fragment" >&2; exit 2 ;;
 esac
 [ "${#AUTH_CODE_SECRET}" -ge 32 ] || { echo "AUTH_CODE_SECRET must be at least 32 characters" >&2; exit 2; }
+[ "${#GRAFANA_ADMIN_PASSWORD}" -ge 24 ] || { echo "GRAFANA_ADMIN_PASSWORD must be at least 24 characters" >&2; exit 2; }
 case "$AUTH_CODE_SECRET:$RESEND_API_KEY" in
 	*replace*) echo "Replace the placeholder secrets in .env" >&2; exit 2 ;;
 esac
+case "$GRAFANA_ADMIN_PASSWORD" in
+	*replace*) echo "Replace the placeholder Grafana password in .env" >&2; exit 2 ;;
+esac
 
 umask 077
-printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\n' "$image_prefix" "$tag" "$public_host" > .release.env
+printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\n' "$image_prefix" "$tag" "$public_host" > .release.env
 mkdir -p data/api data/minecraft
 [ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 chmod 775 data/api data/minecraft

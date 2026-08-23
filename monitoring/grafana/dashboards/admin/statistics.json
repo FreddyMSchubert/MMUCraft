@@ -157,7 +157,8 @@
 			"id": 6,
 			"type": "stat",
 			"title": "Minecart Distance",
-			"gridPos": { "h": 5, "w": 6, "x": 0, "y": 14 },
+			"description": "Total native minecart distance across every synced player.",
+			"gridPos": { "h": 5, "w": 6, "x": 6, "y": 14 },
 			"datasource": { "type": "prometheus", "uid": "prometheus" },
 			"targets": [
 				{
@@ -184,9 +185,9 @@
 		{
 			"id": 7,
 			"type": "stat",
-			"title": "That Is About...",
-			"description": "A random choice between the nearest comparison units below and above the total distance.",
-			"gridPos": { "h": 5, "w": 6, "x": 6, "y": 14 },
+			"title": "Minecart Distance Is About...",
+			"description": "The minecart distance shown immediately to the left, expressed using a nearby comparison unit.",
+			"gridPos": { "h": 5, "w": 6, "x": 12, "y": 14 },
 			"datasource": { "type": "prometheus", "uid": "prometheus" },
 			"targets": [
 				{
@@ -210,13 +211,13 @@
 		{
 			"id": 8,
 			"type": "stat",
-			"title": "Total Travel Distance",
-			"description": "All native distance statistics combined.",
-			"gridPos": { "h": 5, "w": 6, "x": 12, "y": 14 },
+			"title": "Total Travel — All Players, All Time",
+			"description": "Sum of all native movement counters across every synced player, including travel by foot, water, air, and vehicles. Normal teleports do not increase them.",
+			"gridPos": { "h": 5, "w": 6, "x": 0, "y": 14 },
 			"datasource": { "type": "prometheus", "uid": "prometheus" },
 			"targets": [
 				{
-					"expr": "sum(mmucraft_minecraft_stat{category=\"custom\",id=~\"minecraft:(walk|sprint|crouch|fall|fly|swim|boat|minecart|horse|pig|strider|aviate)_one_cm\",summary=\"total\"}) / 100",
+					"expr": "sum(mmucraft_minecraft_stat{category=\"custom\",id=~\"minecraft:.*_one_cm\",summary=\"total\"}) / 100",
 					"instant": true,
 					"legendFormat": "Travel",
 					"refId": "A"

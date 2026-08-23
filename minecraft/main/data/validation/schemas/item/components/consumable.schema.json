@@ -24,7 +24,7 @@
 		},
 		"useRemainderItem": {
 			"type": "string",
-			"minLength": 0
+			"pattern": "^(?:$|[a-z0-9._-]+:[a-z0-9._-]+(?:/[a-z0-9._-]+)*)$"
 		},
 		"effects": {
 			"type": "array",
@@ -34,7 +34,7 @@
 				"properties": {
 					"id": {
 						"type": "string",
-						"minLength": 1
+						"pattern": "^[a-z0-9._-]+:[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
 					},
 					"durationTicks": {
 						"type": "integer"

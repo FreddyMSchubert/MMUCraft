@@ -110,6 +110,17 @@ jobs:
                   distribution: microsoft
                   java-version: '25'
 
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              with:
+                  python-version: '3.12'
+
+            - name: Install item-schema validator
+              run: python3 -m pip install --requirement minecraft/main/data/validation/requirements.txt
+
+            - name: Validate item definitions
+              run: python3 minecraft/main/data/validation/validate.py --root minecraft/main
+
             - name: Set up Gradle
               if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
               uses: gradle/actions/setup-gradle@v6
@@ -118,7 +129,6 @@ jobs:
               if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
               working-directory: minecraft/main/mod
               run: |
-                  python3 ../stage_item_data.py --root ..
                   ./gradlew runDatagen --no-daemon
                   ./gradlew build --no-daemon
 

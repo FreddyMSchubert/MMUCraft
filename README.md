@@ -14,6 +14,8 @@ make
 
 The API uses port `8080`. The website uses port `3000`. The API and website watch source files. Minecraft does not watch files.
 
+Grafana uses `http://localhost:3001` with username `admin`. Set `GRAFANA_ADMIN_PASSWORD` before `make`; local development defaults to password `admin`. The provisioned Minecraft dashboard shows the live online-player count and 90 days of history.
+
 | Command | Result |
 | --- | --- |
 | `make` | Build and start all services. Follow all service logs. |

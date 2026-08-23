@@ -34,6 +34,7 @@ loom {
 
 def grpcVersion = '1.69.1'
 def protobufVersion = '3.25.5'
+def prometheusVersion = '1.8.0'
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -49,6 +50,18 @@ dependencies {
     implementation include("io.grpc:grpc-stub:${grpcVersion}")
     implementation include("io.grpc:grpc-protobuf-lite:${grpcVersion}")
     implementation include("io.perfmark:perfmark-api:0.27.0")
+
+    implementation include("io.prometheus:prometheus-metrics-core:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-model:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-config:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-tracer-initializer:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-tracer-common:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-tracer-otel:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-tracer-otel-agent:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-exporter-httpserver:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-exporter-common:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-exposition-textformats:${prometheusVersion}")
+    implementation include("io.prometheus:prometheus-metrics-exposition-formats:${prometheusVersion}")
 
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
 }

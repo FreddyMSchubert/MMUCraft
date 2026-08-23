@@ -24,6 +24,9 @@ export function AdminSectionNavigation({ activeSection }: { activeSection: Admin
 					{label}
 				</Link>
 			))}
+			<a href="/grafana/" target="_blank" rel="noopener noreferrer">
+				Statistics
+			</a>
 		</nav>
 	);
 }

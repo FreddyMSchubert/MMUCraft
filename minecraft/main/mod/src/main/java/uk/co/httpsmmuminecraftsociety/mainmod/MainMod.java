@@ -48,6 +48,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyCommand;
+import uk.co.httpsmmuminecraftsociety.mainmod.metrics.MetricsServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
@@ -106,8 +107,13 @@ public class MainMod implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> ClaimsManager.reset());
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> GrpcBridge.stop());
+        ServerLifecycleEvents.SERVER_STARTED.register(MetricsServer::start);
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            MetricsServer.stop();
+            GrpcBridge.stop();
+        });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            MetricsServer.update(server);
             GrpcBridge.onServerTick();
             PlayerStatsSync.onServerTick(server);
             ClaimsManager.tickBossBars(server);

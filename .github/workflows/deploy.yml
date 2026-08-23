@@ -137,7 +137,7 @@ jobs:
                   [[ "$DEPLOY_PATH" != / && "$DEPLOY_PATH" != *..* ]]
 
                   archive="$RUNNER_TEMP/kubecraft-prod.tgz"
-                  tar -czf "$archive" -C prod .
+                  tar -czf "$archive" -C prod . -C .. monitoring
 
                   ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH'"
                   scp -i ~/.ssh/deploy_key -P "$DEPLOY_PORT" "$archive" "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.deploy.tgz"

@@ -9,3 +9,5 @@ On the VPS, copy `.env.example` to `.env`, fill every value, and keep the file r
 Signups are closed by default. Add one permitted email address per line to `data/api/signup-allowlist.txt`. Email matching is case-insensitive. Put `*` on its own line to permit all valid signup addresses. The API reads the file for each signup attempt, so you do not have to restart it. Sign-in is not affected.
 
 The homepage defaults to the society Discord invite and Instagram account. Override `DISCORD_URL` or `INSTAGRAM_URL` in `prod/.env` if either link changes. The homepage version label is populated automatically from the deployed `IMAGE_TAG`.
+
+Grafana is available at `https://PUBLIC_HOST/grafana/`. Sign in as `admin` with `GRAFANA_ADMIN_PASSWORD` from `.env`. Anonymous access and account creation are disabled. Prometheus retains 90 days of player-count history in its Docker volume.

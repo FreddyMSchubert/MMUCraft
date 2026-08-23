@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: MainMod
+    folder: Minecraft
+    type: file
+    disableDeletion: true
+    editable: false
+    options:
+      path: /etc/grafana/dashboards

@@ -207,7 +207,9 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		}
 
 		window.addEventListener('scroll', updateHeader, { passive: true });
-		return () => window.removeEventListener('scroll', updateHeader);
+		return () => {
+			window.removeEventListener('scroll', updateHeader);
+		};
 	}, [menuOpen]);
 
 	useEffect(() => {
@@ -255,7 +257,9 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						aria-label={menuOpen ? 'Close menu' : 'Open menu'}
 						aria-expanded={menuOpen}
 						aria-controls="dashboard-menu"
-						onClick={() => setMenuOpen((open) => !open)}
+						onClick={() => {
+							setMenuOpen((open) => !open);
+						}}
 					>
 						<span />
 						<span />

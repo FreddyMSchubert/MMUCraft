@@ -41,11 +41,11 @@
 .knowledgeTree {
 	flex: 1 1 auto;
 	overflow: auto;
-	padding: 10px 0 12px;
+	padding: 0 0 8px;
 }
 
 .knowledgeTreeHeading {
-	padding-top: 12px;
+	padding-top: 8px;
 	padding-right: 12px;
 	padding-bottom: 6px;
 	color: rgba(255, 255, 255, 0.55);
@@ -101,12 +101,13 @@
 
 .knowledgeReader {
 	min-width: 0;
+	max-width: 100%;
 	padding-bottom: 8px;
 }
 
 .knowledgePageTitle {
 	margin: 0 0 18px;
-	font-size: clamp(1.8rem, 4vw, 2.5rem);
+	font-size: clamp(1.35rem, 2.5vw, 1.55rem);
 	line-height: 1.1;
 }
 
@@ -160,7 +161,10 @@
 
 .knowledgePage {
 	position: relative;
+	min-width: 0;
+	max-width: 100%;
 	line-height: 1.65;
+	overflow-wrap: anywhere;
 }
 
 .knowledgePage h2,
@@ -318,7 +322,9 @@
 }
 
 .knowledgePage img {
+	width: auto;
 	max-width: 100%;
+	max-inline-size: 100%;
 	height: auto;
 	border-radius: 6px;
 	image-rendering: pixelated;
@@ -415,7 +421,21 @@
 	}
 
 	.playPage .knowledgePageTitle {
-		font-size: 1.8rem;
+		font-size: 1.4rem;
+	}
+
+	.playPage .knowledgePage table,
+	.playPage .knowledgePage pre {
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		overflow-x: auto;
+		overscroll-behavior-inline: contain;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.playPage .knowledgePage td:first-child {
+		white-space: normal;
 	}
 
 	.playPage .knowledgePage .welcomeWaves {

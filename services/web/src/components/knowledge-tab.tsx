@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { apiMessage } from '@/lib/api-response';
 import {
 	knowledgeMarkdown,
@@ -13,6 +13,7 @@ import {
 	flattenPages,
 	KnowledgeTreeNode,
 	type KnowledgeResponse,
+	type KnowledgeTreeEntry,
 } from './knowledge/knowledge-tree';
 
 const POLL_INTERVAL_MS = 8000;
@@ -28,8 +29,6 @@ export function KnowledgeTab({
 	const [error, setError] = useState('');
 	const [readPageIds, setReadPageIds] = useState<Set<string>>(new Set());
 	const [markingRead, setMarkingRead] = useState(false);
-	const articleRef = useRef<HTMLElement | null>(null);
-
 	const visibleTree = useMemo(() => (data ? filterUnlockedTree(data.tree) : []), [data]);
 	const pages = useMemo(() => (data ? flattenPages(data.tree) : []), [data]);
 	const activePage =
@@ -195,6 +194,22 @@ export function KnowledgeTab({
 			<div className="knowledgeTop">
 				<h3>Knowledge</h3>
 			</div>
+			<label className="knowledgeMobileNav" htmlFor="knowledge-page-select">
+				<span>Knowledge page</span>
+				<select
+					id="knowledge-page-select"
+					value={activePage.id}
+					onChange={(event) => {
+						selectPage(event.target.value);
+					}}
+				>
+					<KnowledgeSelectOptions
+						entries={visibleTree}
+						readPageIds={readPageIds}
+						depth={0}
+					/>
+				</select>
+			</label>
 
 			<div className="knowledgePda">
 				<aside className="knowledgeSidebar" aria-label="Knowledge pages">
@@ -218,17 +233,11 @@ export function KnowledgeTab({
 							{error}
 						</p>
 					)}
-					<div className="knowledgeReaderTop">
-						<div>
-							<p>{activePageUnlocked ? 'Unlocked Entry' : 'Locked Entry'}</p>
-							<h3>{activePage.sidebarTitle}</h3>
-						</div>
-					</div>
+					<h1 className="knowledgePageTitle">{activePage.sidebarTitle}</h1>
 
 					{activePageUnlocked ? (
 						<>
 							<article
-								ref={articleRef}
 								className="knowledgePage"
 								dangerouslySetInnerHTML={{ __html: renderedHtml }}
 							/>
@@ -266,4 +275,36 @@ export function KnowledgeTab({
 			</div>
 		</div>
 	);
+}
+
+function KnowledgeSelectOptions({
+	entries,
+	readPageIds,
+	depth,
+}: {
+	entries: KnowledgeTreeEntry[];
+	readPageIds: Set<string>;
+	depth: number;
+}) {
+	return entries.map((entry) => {
+		const indent = '\u00a0'.repeat(depth * 2);
+		if (entry.type === 'folder') {
+			return (
+				<Fragment key={`folder-${depth}-${entry.name}`}>
+					<option disabled>{`${indent}${entry.name.toUpperCase()}`}</option>
+					<KnowledgeSelectOptions
+						entries={entry.children}
+						readPageIds={readPageIds}
+						depth={depth + 1}
+					/>
+				</Fragment>
+			);
+		}
+
+		return (
+			<option key={entry.id} value={entry.id}>
+				{`${indent}${entry.sidebarTitle}${readPageIds.has(entry.id) ? '' : ' ❗'}`}
+			</option>
+		);
+	});
 }

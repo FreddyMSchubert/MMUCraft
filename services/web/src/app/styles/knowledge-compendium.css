@@ -5,6 +5,16 @@
 .knowledgePanel {
 	display: grid;
 	gap: 16px;
+	font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas, 'Courier New', monospace;
+}
+
+.knowledgePanel h1,
+.knowledgePanel h2,
+.knowledgePanel h3,
+.knowledgePanel h4,
+.knowledgePanel h5,
+.knowledgePanel h6 {
+	font-family: inherit;
 }
 
 .knowledgeTop h3 {
@@ -15,19 +25,17 @@
 .knowledgePda {
 	display: grid;
 	grid-template-columns: 280px minmax(0, 1fr);
-	align-items: stretch;
-	min-height: 560px;
-	border: 1px solid rgba(123, 235, 255, 0.28);
-	background: rgba(2, 18, 24, 0.84);
-	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+	align-items: start;
+	gap: 20px;
 }
 
 .knowledgeSidebar {
 	display: flex;
 	flex-direction: column;
-	min-height: 100%;
-	border-right: 1px solid rgba(123, 235, 255, 0.22);
-	background: rgba(4, 28, 36, 0.78);
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.05);
 }
 
 .knowledgeTree {
@@ -40,7 +48,7 @@
 	padding-top: 12px;
 	padding-right: 12px;
 	padding-bottom: 6px;
-	color: rgba(123, 235, 255, 0.72);
+	color: rgba(255, 255, 255, 0.55);
 	font-size: 0.78rem;
 	font-weight: 700;
 	line-height: 1.25;
@@ -67,7 +75,7 @@
 .knowledgeTreePage:hover,
 .knowledgeTreePage.active {
 	border-left-color: #ffd166;
-	background: rgba(123, 235, 255, 0.12);
+	background: rgba(255, 255, 255, 0.09);
 	color: #fff;
 }
 
@@ -93,17 +101,13 @@
 
 .knowledgeReader {
 	min-width: 0;
-	padding: 18px 20px 24px;
+	padding-bottom: 8px;
 }
 
-.knowledgeReaderTop {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	margin-bottom: 16px;
-	padding-bottom: 12px;
-	border-bottom: 1px solid rgba(123, 235, 255, 0.18);
+.knowledgePageTitle {
+	margin: 0 0 18px;
+	font-size: clamp(1.8rem, 4vw, 2.5rem);
+	line-height: 1.1;
 }
 
 .knowledgeReadButton {
@@ -152,23 +156,6 @@
 .knowledgeLocked h4 {
 	margin-bottom: 4px;
 	color: #ffd166;
-}
-
-.knowledgeReaderTop p,
-.knowledgeReaderTop h3 {
-	margin: 0;
-}
-
-.knowledgeReaderTop p {
-	color: rgba(123, 235, 255, 0.7);
-	font-size: 0.82rem;
-	text-transform: uppercase;
-}
-
-.knowledgeReaderTop h3 {
-	margin-top: 4px;
-	color: #fff;
-	font-size: 1.35rem;
 }
 
 .knowledgePage {
@@ -282,7 +269,7 @@
 .knowledgePage table {
 	margin-bottom: 14px;
 	max-width: 100%;
-	border: 1px solid rgba(123, 235, 255, 0.22);
+	border: 1px solid rgba(255, 255, 255, 0.16);
 	border-radius: 8px;
 	border-spacing: 0;
 	font-size: 0.88rem;
@@ -299,8 +286,8 @@
 .knowledgePage th {
 	position: sticky;
 	top: 0;
-	background: #183746;
-	color: #7bebff;
+	background: rgba(255, 255, 255, 0.1);
+	color: #ffd166;
 	font-size: 0.76rem;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
@@ -392,4 +379,47 @@
 	color: #88ff88;
 	text-shadow: 1px 1px 0 #163816;
 	white-space: pre;
+}
+
+.knowledgeMobileNav {
+	display: none;
+}
+
+@media (max-width: 700px) {
+	.playPage .knowledgeMobileNav {
+		display: grid;
+		gap: 6px;
+	}
+
+	.playPage .knowledgeMobileNav span {
+		color: rgba(255, 255, 255, 0.65);
+		font-size: 0.78rem;
+	}
+
+	.playPage .knowledgeMobileNav select {
+		width: 100%;
+		min-height: 44px;
+		padding: 9px 38px 9px 12px;
+		border: 1px solid rgba(255, 255, 255, 0.16);
+		border-radius: 10px;
+		background: rgba(255, 255, 255, 0.08);
+		color: #fff;
+	}
+
+	.playPage .knowledgePda {
+		display: block;
+	}
+
+	.playPage .knowledgeSidebar {
+		display: none;
+	}
+
+	.playPage .knowledgePageTitle {
+		font-size: 1.8rem;
+	}
+
+	.playPage .knowledgePage .welcomeWaves {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 16px 8px;
+	}
 }

@@ -28,3 +28,12 @@ html[data-theme='light'] .playerName,
 	src: url('/assets/landing/fonts/minecraft.otf') format('opentype');
 	font-display: swap;
 }
+
+@font-face {
+	font-family: 'Noto Sans';
+	src: url('/assets/fonts/noto-sans/noto-sans-latin.woff2') format('woff2');
+	font-display: swap;
+	font-stretch: 100%;
+	font-style: normal;
+	font-weight: 400 800;
+}

@@ -2,6 +2,19 @@
    Dashboard
    ============================================================ */
 
+.playPage {
+	font-family: 'Noto Sans', Arial, sans-serif;
+}
+
+.playPage h1,
+.playPage h2,
+.playPage h3,
+.playPage h4,
+.playPage h5,
+.playPage h6 {
+	font-family: 'Minecraft UI', 'Noto Sans', sans-serif;
+}
+
 .dashboardTop {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -180,11 +193,6 @@
 		padding: calc(64px + env(safe-area-inset-top)) 0 0;
 	}
 
-	.playPage::after,
-	.playPage .siteBackground {
-		display: none;
-	}
-
 	.playPage .siteHeader {
 		position: fixed;
 		top: 0;
@@ -273,11 +281,12 @@
 	}
 
 	.playPage .dashboard {
+		min-height: calc(100dvh - 64px - env(safe-area-inset-top));
 		padding: 12px;
-		border-right: 0;
-		border-left: 0;
+		border: 0;
 		border-radius: 0;
-		backdrop-filter: none;
+		background: rgba(0, 0, 0, 0.72);
+		backdrop-filter: blur(8px);
 	}
 
 	.playPage .authCard {

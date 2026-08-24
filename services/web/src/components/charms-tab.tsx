@@ -211,7 +211,6 @@ export function CharmsTab() {
 		<div className="charmForge">
 			<header className="charmForgeHeader">
 				<div>
-					<span className="charmEyebrow">Arcane workbench</span>
 					<h3>Charm Forge</h3>
 					<p>Hold one charm in your main hand, then refresh your inventory.</p>
 				</div>

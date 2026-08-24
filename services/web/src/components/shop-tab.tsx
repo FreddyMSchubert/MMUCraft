@@ -162,10 +162,7 @@ export function ShopTab({
 	return (
 		<div className="shopPanel">
 			<div className="shopTop">
-				<div>
-					<p className="shopEyebrow">The Dabloon Exchange</p>
-					<h3>Shop</h3>
-				</div>
+				<h3>Shop</h3>
 			</div>
 
 			{featured && (

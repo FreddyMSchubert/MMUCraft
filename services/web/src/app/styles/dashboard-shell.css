@@ -15,6 +15,23 @@
 	font-family: 'Minecraft UI', 'Noto Sans', sans-serif;
 }
 
+.playPage .knowledgeTop h3,
+.playPage .dailiesHeader h3,
+.playPage .charmForgeHeader h3,
+.playPage .shopTop h3,
+.playPage .claimsTop h3,
+.playPage .fishTop h3,
+.playPage .playersTop h3,
+.playPage .adminSectionHeader h3,
+.playPage .miscPanel h3 {
+	font-size: clamp(1.55rem, 3vw, 1.8rem);
+	line-height: 1.15;
+}
+
+.playPage .knowledgeTop h3 {
+	font-family: 'Minecraft UI', 'Noto Sans', sans-serif;
+}
+
 .dashboardTop {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -188,6 +205,16 @@
 }
 
 @media (max-width: 700px) {
+	.playPage {
+		min-height: 100dvh;
+		overflow-x: auto;
+	}
+
+	.playPage::after {
+		background: rgba(0, 0, 0, 0.62);
+		backdrop-filter: blur(8px);
+	}
+
 	.playPage .content {
 		width: 100%;
 		padding: calc(64px + env(safe-area-inset-top)) 0 0;
@@ -285,8 +312,8 @@
 		padding: 12px;
 		border: 0;
 		border-radius: 0;
-		background: rgba(0, 0, 0, 0.72);
-		backdrop-filter: blur(8px);
+		background: transparent;
+		backdrop-filter: none;
 	}
 
 	.playPage .authCard {
@@ -300,18 +327,24 @@
 
 	.playPage .dashboardMenu {
 		position: fixed;
-		inset: 0;
+		top: 0;
+		right: 0;
+		left: 0;
 		z-index: 20;
 		display: flex;
 		visibility: hidden;
 		flex-direction: column;
 		align-items: flex-end;
 		gap: 20px;
-		overflow-y: auto;
+		height: 100dvh;
+		max-height: 100dvh;
+		overflow-y: scroll;
 		overscroll-behavior: contain;
 		padding: calc(88px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));
 		background: rgba(8, 10, 14, 0.98);
 		opacity: 0;
+		touch-action: pan-y;
+		-webkit-overflow-scrolling: touch;
 		transition:
 			opacity 180ms ease,
 			visibility 180ms;

@@ -1,12 +1,13 @@
 @media (max-width: 700px) {
 	.shopDeals {
-		grid-template-columns: 1fr 120px;
+		grid-template-columns: 1fr;
 	}
 	.shopDealCopy {
-		padding: 20px;
+		grid-row: 2;
+		padding: 18px 20px 28px;
 	}
 	.shopDealCopy > p {
-		display: none;
+		display: block;
 	}
 	.shopDealHeading {
 		flex-wrap: wrap;
@@ -19,6 +20,7 @@
 		flex-direction: column;
 	}
 	.shopDealArrow {
+		top: 120px;
 		width: 32px;
 		height: 50px;
 	}
@@ -29,7 +31,20 @@
 		right: 6px;
 	}
 	.shopDeals:has(.shopDealArrow) .shopDealCopy {
-		padding-left: 45px;
+		padding-left: 20px;
+	}
+	.shopDealPreview,
+	.shopDeals:has(.shopDealArrow) .shopDealPreview {
+		grid-row: 1;
+		height: 240px;
+		min-height: 240px;
+		padding: 20px 54px;
+	}
+	.shopDealPreview .shopModelHost,
+	.shopDealPreview .shopItemIcon {
+		height: 200px;
+		min-height: 200px;
+		padding: 0;
 	}
 	.shopCatalogToolbar {
 		align-items: stretch;

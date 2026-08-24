@@ -67,16 +67,16 @@ const ADMIN_SECTIONS = new Set([
 ]);
 const MISC_SECTIONS = new Set(['settings', 'gift-codes']);
 const SERVER_IP = 'mmuminecraftsociety.co.uk';
-const TAB_LINKS: { id: TabId; label: string; href: string }[] = [
-	{ id: 'knowledge', label: 'Knowledge', href: '/play/knowledge' },
-	{ id: 'dailies', label: 'Dailies', href: '/play/dailies' },
-	{ id: 'charms', label: 'Charms', href: '/play/charms' },
-	{ id: 'shop', label: 'Shop', href: '/play/shop' },
-	{ id: 'claims', label: 'Claims', href: '/play/claims' },
-	{ id: 'fishing', label: 'Fishing', href: '/play/fishing' },
-	{ id: 'players', label: 'Players', href: '/play/players' },
-	{ id: 'admin', label: 'Admin', href: '/play/admin/members' },
-	{ id: 'misc', label: 'Misc', href: '/play/misc/settings' },
+const TAB_LINKS: { id: TabId; label: string; emoji: string; href: string }[] = [
+	{ id: 'knowledge', label: 'Knowledge', emoji: '📖', href: '/play/knowledge' },
+	{ id: 'dailies', label: 'Dailies', emoji: '📋', href: '/play/dailies' },
+	{ id: 'charms', label: 'Charms', emoji: '✨', href: '/play/charms' },
+	{ id: 'shop', label: 'Shop', emoji: '🛍️', href: '/play/shop' },
+	{ id: 'claims', label: 'Claims', emoji: '🔒', href: '/play/claims' },
+	{ id: 'fishing', label: 'Fishing', emoji: '🪝', href: '/play/fishing' },
+	{ id: 'players', label: 'Players', emoji: '👤', href: '/play/players' },
+	{ id: 'admin', label: 'Admin', emoji: '🪄', href: '/play/admin/members' },
+	{ id: 'misc', label: 'Misc', emoji: '⚙️', href: '/play/misc/settings' },
 ];
 
 async function fetchMe(): Promise<SessionUser | null> {
@@ -98,6 +98,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
 	const [copyLabel, setCopyLabel] = useState('Copy IP');
+	const [menuOpen, setMenuOpen] = useState(false);
+	const [headerHidden, setHeaderHidden] = useState(false);
 	const route = useMemo(() => pathname.split('/').slice(2).map(decodePathSegment), [pathname]);
 	const activeTab = TAB_IDS.has(route[0] as TabId) ? (route[0] as TabId) : 'knowledge';
 	const routeDetail = route.at(1);
@@ -155,6 +157,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			method: 'POST',
 		});
 
+		setMenuOpen(false);
 		setUser(null);
 		setOnlinePlayers(null);
 	}
@@ -194,6 +197,34 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		if (canonicalPath && pathname !== canonicalPath) router.replace(canonicalPath);
 	}, [activeTab, pathname, route, routeDetail, router, user]);
 
+	useEffect(() => {
+		let lastY = window.scrollY;
+		function updateHeader() {
+			const currentY = window.scrollY;
+			if (Math.abs(currentY - lastY) < 8) return;
+			setHeaderHidden(!menuOpen && currentY > lastY && currentY > 64);
+			lastY = currentY;
+		}
+
+		window.addEventListener('scroll', updateHeader, { passive: true });
+		return () => window.removeEventListener('scroll', updateHeader);
+	}, [menuOpen]);
+
+	useEffect(() => {
+		if (!menuOpen) return;
+		const previousOverflow = document.body.style.overflow;
+		function closeOnEscape(event: KeyboardEvent) {
+			if (event.key === 'Escape') setMenuOpen(false);
+		}
+
+		document.body.style.overflow = 'hidden';
+		window.addEventListener('keydown', closeOnEscape);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			window.removeEventListener('keydown', closeOnEscape);
+		};
+	}, [menuOpen]);
+
 	const openKnowledge = useCallback((pageId: string, replace = false) => {
 		const href = `/play/knowledge/${encodeURIComponent(pageId)}`;
 		navigate(href, replace);
@@ -212,8 +243,28 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	}, []);
 
 	return (
-		<SitePage background={background} splash={splash}>
-			<DynamicCountdowns />
+		<SitePage
+			background={background}
+			splash={splash}
+			className={`playPage ${menuOpen ? 'menuOpen' : ''} ${headerHidden ? 'mobileHeaderHidden' : ''}`}
+			headerActions={
+				user && (
+					<button
+						className="mobileMenuButton"
+						type="button"
+						aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+						aria-expanded={menuOpen}
+						aria-controls="dashboard-menu"
+						onClick={() => setMenuOpen((open) => !open)}
+					>
+						<span />
+						<span />
+						<span />
+					</button>
+				)
+			}
+		>
+			<DynamicCountdowns className="desktopCountdowns" />
 			{user === undefined && (
 				<section className="authCard">
 					<div className="authForm">
@@ -226,79 +277,157 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 			{user && (
 				<section className="dashboard">
-					<div className="dashboardTop">
-						<div className="dashboardIdentity">
-							<p className="dashboardEyebrow">
-								Signed in as{' '}
-								<Link
-									className="signedInPlayer"
-									href={`/play/players/${encodeURIComponent(user.minecraftUsername)}`}
-									onNavigate={(event) => {
-										event.preventDefault();
-										openPlayer(user.minecraftUsername);
-									}}
-								>
-									<PlayerName name={user.minecraftUsername} color={user.color} />
-								</Link>
-								{' - '}
-								<button className="textAction" type="button" onClick={signOut}>
-									Sign out
-								</button>
-							</p>
-							<p className="serverDetails">
-								Java Edition 26.2 - IP: <strong>{SERVER_IP}</strong> -{' '}
-								<button
-									className="textAction"
-									type="button"
-									onClick={() => void copyServerIp()}
-								>
-									{copyLabel}
-								</button>
-							</p>
-						</div>
-
-						<div className="onlinePlayers">
-							<p className="dashboardEyebrow">Online players</p>
-							<div className="onlinePlayerList">
-								{onlinePlayers?.map((player) => (
+					<div className="dashboardMenu" id="dashboard-menu">
+						<div className="dashboardTop">
+							<div className="dashboardIdentity">
+								<p className="dashboardEyebrow">
+									Signed in as{' '}
 									<Link
-										key={player.minecraftUsername}
-										href={`/play/players/${encodeURIComponent(player.minecraftUsername)}`}
+										className="signedInPlayer"
+										href={`/play/players/${encodeURIComponent(user.minecraftUsername)}`}
 										onNavigate={(event) => {
 											event.preventDefault();
-											openPlayer(player.minecraftUsername);
+											setMenuOpen(false);
+											openPlayer(user.minecraftUsername);
 										}}
 									>
 										<PlayerName
-											name={player.minecraftUsername}
-											color={player.color}
+											name={user.minecraftUsername}
+											color={user.color}
 										/>
 									</Link>
-								))}
-								{onlinePlayers?.length === 0 && (
-									<span className="onlinePlayersEmpty">No players online</span>
-								)}
+									{' - '}
+									<button className="textAction" type="button" onClick={signOut}>
+										Sign out
+									</button>
+								</p>
+								<p className="serverDetails">
+									Java Edition 26.2 - IP: <strong>{SERVER_IP}</strong> -{' '}
+									<button
+										className="textAction"
+										type="button"
+										onClick={() => void copyServerIp()}
+									>
+										{copyLabel}
+									</button>
+								</p>
+							</div>
+
+							<div className="onlinePlayers">
+								<p className="dashboardEyebrow">Online players</p>
+								<div className="onlinePlayerList">
+									{onlinePlayers?.map((player) => (
+										<Link
+											key={player.minecraftUsername}
+											href={`/play/players/${encodeURIComponent(player.minecraftUsername)}`}
+											onNavigate={(event) => {
+												event.preventDefault();
+												setMenuOpen(false);
+												openPlayer(player.minecraftUsername);
+											}}
+										>
+											<PlayerName
+												name={player.minecraftUsername}
+												color={player.color}
+											/>
+										</Link>
+									))}
+									{onlinePlayers?.length === 0 && (
+										<span className="onlinePlayersEmpty">
+											No players online
+										</span>
+									)}
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<nav className="dashboardTabs" aria-label="Dashboard sections">
-						{TAB_LINKS.filter((tab) => tab.id !== 'admin' || user.isCommittee).map(
-							(tab) => (
-								<Link
-									key={tab.id}
-									href={tab.href}
-									className={activeTab === tab.id ? 'active' : ''}
-									onNavigate={(event) => {
-										event.preventDefault();
-										navigate(tab.href);
-									}}
-								>
-									{tab.label}
-								</Link>
-							),
-						)}
-					</nav>
+						<div className="mobileMenuMeta">
+							<div className="mobileMenuBlock">
+								<p>
+									Signed in as{' '}
+									<Link
+										className="signedInPlayer"
+										href={`/play/players/${encodeURIComponent(user.minecraftUsername)}`}
+										onNavigate={(event) => {
+											event.preventDefault();
+											setMenuOpen(false);
+											openPlayer(user.minecraftUsername);
+										}}
+									>
+										<PlayerName
+											name={user.minecraftUsername}
+											color={user.color}
+										/>
+									</Link>
+								</p>
+								<button className="textAction" type="button" onClick={signOut}>
+									Sign out
+								</button>
+							</div>
+
+							<div className="mobileMenuBlock">
+								<p>Server:</p>
+								<p>
+									Version: <strong>Java Edition 26.2</strong>
+								</p>
+								<p>
+									IP: <strong>{SERVER_IP}</strong>
+								</p>
+							</div>
+
+							<div className="mobileMenuBlock">
+								<p>Online players</p>
+								<div className="onlinePlayerList">
+									{onlinePlayers?.map((player) => (
+										<Link
+											key={player.minecraftUsername}
+											href={`/play/players/${encodeURIComponent(player.minecraftUsername)}`}
+											onNavigate={(event) => {
+												event.preventDefault();
+												setMenuOpen(false);
+												openPlayer(player.minecraftUsername);
+											}}
+										>
+											<PlayerName
+												name={player.minecraftUsername}
+												color={player.color}
+											/>
+										</Link>
+									))}
+									{onlinePlayers?.length === 0 && (
+										<span className="onlinePlayersEmpty">
+											No players online
+										</span>
+									)}
+								</div>
+							</div>
+						</div>
+
+						<nav className="dashboardTabs" aria-label="Dashboard sections">
+							{TAB_LINKS.filter((tab) => tab.id !== 'admin' || user.isCommittee).map(
+								(tab) => (
+									<Link
+										key={tab.id}
+										href={tab.href}
+										className={activeTab === tab.id ? 'active' : ''}
+										aria-current={activeTab === tab.id ? 'page' : undefined}
+										onNavigate={(event) => {
+											event.preventDefault();
+											setMenuOpen(false);
+											navigate(tab.href);
+										}}
+									>
+										<span className="dashboardTabEmoji" aria-hidden="true">
+											{tab.emoji}
+										</span>
+										<span>{tab.label}</span>
+									</Link>
+								),
+							)}
+						</nav>
+
+						<DynamicCountdowns className="mobileCountdowns" />
+					</div>
 
 					<div className="dashboardPanel">
 						{activeTab === 'dailies' && <DailiesTab />}

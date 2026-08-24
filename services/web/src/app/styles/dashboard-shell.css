@@ -96,7 +96,9 @@
 }
 
 .dashboardTabs a {
-	display: inline-block;
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
 	padding: 10px 14px;
 	border: 0;
 	border-radius: 10px;
@@ -113,4 +115,278 @@
 
 .dashboardPanel {
 	min-height: 240px;
+}
+
+.playPage .knowledgeTop h3::before {
+	content: '📖';
+}
+
+.playPage .dailiesHeader h3::before {
+	content: '📋';
+}
+
+.playPage .charmForgeHeader h3::before {
+	content: '✨';
+}
+
+.playPage .shopTop h3::before {
+	content: '🛍️';
+}
+
+.playPage .claimsTop h3::before {
+	content: '🔒';
+}
+
+.playPage .fishTop h3::before {
+	content: '🪝';
+}
+
+.playPage .playersTop h3::before {
+	content: '👤';
+}
+
+.playPage .adminSectionHeader h3::before {
+	content: '🪄';
+}
+
+.playPage .miscPanel h3::before {
+	content: '⚙️';
+}
+
+.playPage .knowledgeTop h3::before,
+.playPage .dailiesHeader h3::before,
+.playPage .charmForgeHeader h3::before,
+.playPage .shopTop h3::before,
+.playPage .claimsTop h3::before,
+.playPage .fishTop h3::before,
+.playPage .playersTop h3::before,
+.playPage .adminSectionHeader h3::before,
+.playPage .miscPanel h3::before {
+	margin-right: 0.35em;
+}
+
+.mobileMenuButton {
+	display: none;
+}
+
+.mobileMenuMeta,
+.mobileCountdowns {
+	display: none;
+}
+
+@media (max-width: 700px) {
+	.playPage .content {
+		width: 100%;
+		padding: calc(64px + env(safe-area-inset-top)) 0 0;
+	}
+
+	.playPage::after,
+	.playPage .siteBackground {
+		display: none;
+	}
+
+	.playPage .siteHeader {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 30;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		height: calc(64px + env(safe-area-inset-top));
+		margin: 0;
+		padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+		background: rgba(8, 10, 14, 0.96);
+		backdrop-filter: blur(12px);
+		transition: transform 180ms ease;
+	}
+
+	.playPage.mobileHeaderHidden:not(.menuOpen) .siteHeader {
+		transform: translateY(-100%);
+	}
+
+	.playPage .siteHeader .siteMinecraftTitle {
+		width: min(220px, calc(100vw - 76px));
+		margin: 0;
+	}
+
+	.playPage .siteHeader .minecraftSplash {
+		display: none;
+	}
+
+	.playPage .mobileMenuButton {
+		position: relative;
+		display: block;
+		width: 42px;
+		height: 42px;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: #fff;
+	}
+
+	.playPage .mobileMenuButton span {
+		position: absolute;
+		left: 8px;
+		display: block;
+		width: 26px;
+		height: 2px;
+		background: currentColor;
+		transition:
+			top 180ms ease,
+			transform 180ms ease,
+			opacity 120ms ease;
+	}
+
+	.playPage .mobileMenuButton span:first-child {
+		top: 12px;
+	}
+
+	.playPage .mobileMenuButton span:nth-child(2) {
+		top: 20px;
+	}
+
+	.playPage .mobileMenuButton span:last-child {
+		top: 28px;
+	}
+
+	.playPage.menuOpen .mobileMenuButton span:first-child,
+	.playPage.menuOpen .mobileMenuButton span:last-child {
+		top: 20px;
+	}
+
+	.playPage.menuOpen .mobileMenuButton span:first-child {
+		transform: rotate(45deg);
+	}
+
+	.playPage.menuOpen .mobileMenuButton span:nth-child(2) {
+		opacity: 0;
+	}
+
+	.playPage.menuOpen .mobileMenuButton span:last-child {
+		transform: rotate(-45deg);
+	}
+
+	.playPage .desktopCountdowns {
+		display: none;
+	}
+
+	.playPage .dashboard {
+		padding: 12px;
+		border-right: 0;
+		border-left: 0;
+		border-radius: 0;
+		backdrop-filter: none;
+	}
+
+	.playPage .authCard {
+		width: 100%;
+		margin: 0;
+		padding: 12px;
+		border-right: 0;
+		border-left: 0;
+		border-radius: 0;
+	}
+
+	.playPage .dashboardMenu {
+		position: fixed;
+		inset: 0;
+		z-index: 20;
+		display: flex;
+		visibility: hidden;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 20px;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding: calc(88px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));
+		background: rgba(8, 10, 14, 0.98);
+		opacity: 0;
+		transition:
+			opacity 180ms ease,
+			visibility 180ms;
+	}
+
+	.playPage.menuOpen .dashboardMenu {
+		visibility: visible;
+		opacity: 1;
+	}
+
+	.playPage .dashboardTop {
+		display: none;
+	}
+
+	.playPage .mobileMenuMeta {
+		display: grid;
+		justify-items: end;
+		gap: 24px;
+		width: 100%;
+		text-align: right;
+	}
+
+	.playPage .mobileMenuBlock {
+		display: grid;
+		justify-items: end;
+		gap: 6px;
+		width: 100%;
+		color: rgba(255, 255, 255, 0.72);
+		font-size: 0.88rem;
+		line-height: 1.4;
+	}
+
+	.playPage .mobileMenuBlock p {
+		margin: 0;
+	}
+
+	.playPage .mobileMenuBlock strong {
+		color: #fff;
+	}
+
+	.playPage .mobileMenuBlock .onlinePlayerList {
+		justify-content: flex-end;
+		font-size: inherit;
+	}
+
+	.playPage .dashboardTabs {
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 2px;
+		margin: 0;
+		padding: 24px 0;
+		border: 0;
+	}
+
+	.playPage .dashboardTabs a,
+	.playPage .dashboardTabs a.active {
+		flex-direction: row-reverse;
+		padding: 9px 12px 9px 24px;
+		border-right: 3px solid transparent;
+		border-radius: 0;
+		background: none;
+		color: #fff;
+		font-size: 1.15rem;
+		text-align: right;
+	}
+
+	.playPage .dashboardTabs a.active {
+		border-right-color: #ffd166;
+		color: #ffd166;
+	}
+
+	.playPage .mobileCountdowns {
+		display: grid;
+		gap: 8px;
+		width: 100%;
+		margin: auto 0 0;
+		padding-top: 8px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.playPage .siteHeader,
+	.playPage .dashboardMenu,
+	.playPage .mobileMenuButton span {
+		transition: none;
+	}
 }

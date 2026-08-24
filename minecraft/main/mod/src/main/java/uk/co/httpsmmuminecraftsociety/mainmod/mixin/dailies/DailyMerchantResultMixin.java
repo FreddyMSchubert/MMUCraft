@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 
@@ -29,6 +30,18 @@ public abstract class DailyMerchantResultMixin {
         if (!(player instanceof ServerPlayer serverPlayer)) return;
         MerchantOffer offer = slots.getActiveOffer();
         if (offer == null) return;
+
+        if (merchant instanceof Villager villager
+                && villager.getVillagerData().profession().is(net.minecraft.world.entity.npc.villager.VillagerProfession.LIBRARIAN)) {
+            ItemStack first = slots.getItem(0);
+            ItemStack second = slots.getItem(1);
+            MainMod.LOGGER.info(
+                    "[VillagerTradeDebug] serverTake uuid={} level={} serverXp={} offerXp={} accepted={} uses={}/{} first={} second={}",
+                    villager.getUUID(), villager.getVillagerData().level(), villager.getVillagerXp(), offer.getXp(),
+                    offer.satisfiedBy(first, second) || offer.satisfiedBy(second, first),
+                    offer.getUses(), offer.getMaxUses(), first, second
+            );
+        }
 
         if (result.is(Items.EMERALD)) {
             record(serverPlayer, "receive_emeralds", "", result.getCount());

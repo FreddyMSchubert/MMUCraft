@@ -16,7 +16,7 @@ export interface Countdown {
 	backgroundImageUrl: string | null;
 }
 
-export function DynamicCountdowns() {
+export function DynamicCountdowns({ className = '' }: { className?: string }) {
 	const [countdowns, setCountdowns] = useState<Countdown[]>([]);
 	const [now, setNow] = useState(() => Date.now());
 	const load = useCallback(async () => {
@@ -44,7 +44,7 @@ export function DynamicCountdowns() {
 
 	return (
 		<section
-			className={`countdownGrid countdownGrid-${visible.length}`}
+			className={`countdownGrid countdownGrid-${visible.length} ${className}`.trim()}
 			aria-label="Upcoming events"
 		>
 			{visible.map((countdown) => {

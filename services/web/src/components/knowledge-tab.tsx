@@ -191,76 +191,79 @@ export function KnowledgeTab({
 	}
 
 	return (
-		<div className="knowledgePda">
-			<aside className="knowledgeSidebar" aria-label="Knowledge pages">
-				<div className="knowledgeSidebarHeader">
-					<span>Knowledge</span>
-				</div>
+		<div className="knowledgePanel">
+			<div className="knowledgeTop">
+				<h3>Knowledge</h3>
+			</div>
 
-				<nav className="knowledgeTree">
-					{visibleTree.map((entry) => (
-						<KnowledgeTreeNode
-							key={entry.type === 'folder' ? `folder-${entry.name}` : entry.id}
-							entry={entry}
-							activePageId={activePage.id}
-							readPageIds={readPageIds}
-							onSelectPage={selectPage}
-							depth={0}
-						/>
-					))}
-				</nav>
-			</aside>
+			<div className="knowledgePda">
+				<aside className="knowledgeSidebar" aria-label="Knowledge pages">
+					<nav className="knowledgeTree">
+						{visibleTree.map((entry) => (
+							<KnowledgeTreeNode
+								key={entry.type === 'folder' ? `folder-${entry.name}` : entry.id}
+								entry={entry}
+								activePageId={activePage.id}
+								readPageIds={readPageIds}
+								onSelectPage={selectPage}
+								depth={0}
+							/>
+						))}
+					</nav>
+				</aside>
 
-			<section className="knowledgeReader">
-				{error && (
-					<p className="authError" role="alert">
-						{error}
-					</p>
-				)}
-				<div className="knowledgeReaderTop">
-					<div>
-						<p>{activePageUnlocked ? 'Unlocked Entry' : 'Locked Entry'}</p>
-						<h3>{activePage.sidebarTitle}</h3>
-					</div>
-				</div>
-
-				{activePageUnlocked ? (
-					<>
-						<article
-							ref={articleRef}
-							className="knowledgePage"
-							dangerouslySetInnerHTML={{ __html: renderedHtml }}
-						/>
-						<button
-							type="button"
-							className="knowledgeReadButton"
-							onClick={() => void markRead()}
-							disabled={readPageIds.has(activePage.id) || markingRead}
-						>
-							{readPageIds.has(activePage.id)
-								? 'Read'
-								: markingRead
-									? 'Marking…'
-									: 'Mark as read (+3 dabloons)'}
-						</button>
-					</>
-				) : (
-					<div className="knowledgeLocked" role="status">
-						<svg viewBox="0 0 24 24" aria-hidden="true">
-							<rect x="5" y="10" width="14" height="11" rx="2" />
-							<path d="M8 10V7a4 4 0 0 1 8 0v3" />
-						</svg>
+				<section className="knowledgeReader">
+					{error && (
+						<p className="authError" role="alert">
+							{error}
+						</p>
+					)}
+					<div className="knowledgeReaderTop">
 						<div>
-							<h4>You haven&apos;t unlocked this knowledge book yet</h4>
-							<p>
-								You can get knowledge books by finding them in chests, buying them
-								in the <Link href="/play/shop/charm-knowledge-book">shop</Link>, or
-								fishing them up.
-							</p>
+							<p>{activePageUnlocked ? 'Unlocked Entry' : 'Locked Entry'}</p>
+							<h3>{activePage.sidebarTitle}</h3>
 						</div>
 					</div>
-				)}
-			</section>
+
+					{activePageUnlocked ? (
+						<>
+							<article
+								ref={articleRef}
+								className="knowledgePage"
+								dangerouslySetInnerHTML={{ __html: renderedHtml }}
+							/>
+							<button
+								type="button"
+								className="knowledgeReadButton"
+								onClick={() => void markRead()}
+								disabled={readPageIds.has(activePage.id) || markingRead}
+							>
+								{readPageIds.has(activePage.id)
+									? 'Read'
+									: markingRead
+										? 'Marking…'
+										: 'Mark as read (+3 dabloons)'}
+							</button>
+						</>
+					) : (
+						<div className="knowledgeLocked" role="status">
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<rect x="5" y="10" width="14" height="11" rx="2" />
+								<path d="M8 10V7a4 4 0 0 1 8 0v3" />
+							</svg>
+							<div>
+								<h4>You haven&apos;t unlocked this knowledge book yet</h4>
+								<p>
+									You can get knowledge books by finding them in chests, buying
+									them in the{' '}
+									<Link href="/play/shop/charm-knowledge-book">shop</Link>, or
+									fishing them up.
+								</p>
+							</div>
+						</div>
+					)}
+				</section>
+			</div>
 		</div>
 	);
 }

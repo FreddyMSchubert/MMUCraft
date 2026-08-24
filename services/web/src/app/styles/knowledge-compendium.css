@@ -2,6 +2,16 @@
    Knowledge
    ============================================================ */
 
+.knowledgePanel {
+	display: grid;
+	gap: 16px;
+}
+
+.knowledgeTop h3 {
+	margin: 0;
+	font-size: 1.25rem;
+}
+
 .knowledgePda {
 	display: grid;
 	grid-template-columns: 280px minmax(0, 1fr);
@@ -18,14 +28,6 @@
 	min-height: 100%;
 	border-right: 1px solid rgba(123, 235, 255, 0.22);
 	background: rgba(4, 28, 36, 0.78);
-}
-
-.knowledgeSidebarHeader {
-	padding: 12px;
-	border-bottom: 1px solid rgba(123, 235, 255, 0.2);
-	color: #7bebff;
-	font-weight: 700;
-	text-transform: uppercase;
 }
 
 .knowledgeTree {

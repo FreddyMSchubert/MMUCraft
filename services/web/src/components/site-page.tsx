@@ -5,6 +5,7 @@ export function SitePage({
 	children,
 	className = '',
 	contentClassName = '',
+	headerActions,
 	overlay,
 	background,
 	splash,
@@ -12,6 +13,7 @@ export function SitePage({
 	children: ReactNode;
 	className?: string;
 	contentClassName?: string;
+	headerActions?: ReactNode;
 	overlay?: ReactNode;
 	background: string;
 	splash: string;
@@ -27,6 +29,7 @@ export function SitePage({
 			<div className={`content ${contentClassName}`.trim()}>
 				<header className="siteHeader">
 					<MinecraftTitle className="siteMinecraftTitle" href="/" splash={splash} />
+					{headerActions}
 				</header>
 				{children}
 			</div>

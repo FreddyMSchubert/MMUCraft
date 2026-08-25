@@ -2,8 +2,8 @@ node_modules
 .next
 .gradle
 dist
-playwright-report/
-test-results/
+tests/playwright-report/
+tests/test-results/
 .DS_Store
 .env
 *.bak

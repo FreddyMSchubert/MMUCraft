@@ -48,4 +48,4 @@ npm test
 
 The command creates a `kubecraft-playwright-network` network and a `kubecraft-playwright-database` volume. It does not use `.dev/api` or the development network. The command removes the test containers, network, and database volume when the run ends.
 
-Playwright keeps traces, screenshots, and video for failed tests in `test-results/`. It writes the HTML report to `playwright-report/`.
+Playwright keeps traces, screenshots, and video for failed tests in `tests/test-results/`. It writes the HTML report to `tests/playwright-report/`.

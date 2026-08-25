@@ -3,7 +3,7 @@ name: ${COMPOSE_PROJECT_NAME:-kubecraft-playwright}
 services:
     api:
         build:
-            context: .
+            context: ..
             dockerfile: services/api/Dockerfile
             target: runner
         environment:
@@ -16,7 +16,7 @@ services:
             NODE_PATH: /app/node_modules
         volumes:
             - playwright-database:/app/data
-            - ./tests/fixtures:/tests/fixtures:ro
+            - ./fixtures:/tests/fixtures:ro
         networks: [playwright]
         healthcheck:
             test:
@@ -32,7 +32,7 @@ services:
 
     web:
         build:
-            context: services/web
+            context: ../services/web
             target: runner
         environment:
             API_BASE_URL: http://api:8080

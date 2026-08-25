@@ -187,7 +187,7 @@ function ShopModelPreview({
 	]);
 
 	const shouldAutoRotate = interactive ? !interactiveHover : hovered;
-	const shouldAnimateDye = interactive ? interactiveHover : hovered;
+	const shouldAnimateDye = interactive ? liveReady && !interactiveHover : hovered;
 	const rendererActive = interactive || hovered || item.animated;
 	const autoRotateRef = useRef(shouldAutoRotate);
 	const animateDyeRef = useRef(shouldAnimateDye);

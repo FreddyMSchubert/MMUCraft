@@ -114,7 +114,7 @@
 
 .countdownCard p {
 	color: var(--countdown-description-color, rgba(255, 255, 255, 0.72));
-	font-size: 0.82rem;
+	font-size: 0.76rem;
 	line-height: 1.45;
 }
 
@@ -123,6 +123,7 @@
 	justify-items: center;
 	gap: 2px;
 	color: #ffd166;
+	font-family: 'Minecraft UI', monospace;
 	font-size: clamp(1.15rem, 3vw, 1.75rem);
 	font-variant-numeric: tabular-nums;
 	text-shadow: 2px 2px 0 #493400;
@@ -131,7 +132,7 @@
 .countdownTime small {
 	font-size: 0.55em;
 	font-weight: 400;
-	opacity: 0.72;
+	opacity: 0.86;
 	text-shadow: none;
 }
 

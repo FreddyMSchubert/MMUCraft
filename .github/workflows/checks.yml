@@ -89,8 +89,8 @@ jobs:
               with:
                   name: playwright-report
                   path: |
-                      playwright-report
-                      test-results
+                      tests/playwright-report
+                      tests/test-results
                   if-no-files-found: ignore
                   retention-days: 7
 

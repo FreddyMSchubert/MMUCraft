@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-compose=(docker compose -f compose.playwright.yaml)
+compose=(docker compose -f tests/compose.yaml)
 
 # Remove the test database and network on success, failure, or interruption.
 cleanup() {

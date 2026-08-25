@@ -1,0 +1,24 @@
+{
+	"title": "Wrench",
+	"id": "charm-wrench",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Be a Mensch, use a wrench!"
+	],
+	"charm": {
+		"charmId": 53,
+		"minLevel": 1,
+		"maxLevel": 1,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Changes the properties of blocks when used, very similar to a debug stick.",
+				"abilityStatusRelative": "",
+				"dabloons": 0,
+				"upgradeIngredients": []
+			}
+		]
+	}
+}

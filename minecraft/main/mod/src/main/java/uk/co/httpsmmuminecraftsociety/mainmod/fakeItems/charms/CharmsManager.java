@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -84,7 +85,8 @@ public class CharmsManager
             Map.entry(BackpackCharm.Tier.ENDLESS.charmId(), new BackpackCharm(BackpackCharm.Tier.ENDLESS.rows())),
             Map.entry(50, new KangarooBootsCharm()),
             Map.entry(51, new ObamiumPyramidCharm()),
-            Map.entry(52, new PotionOfResonanceCharm())
+            Map.entry(52, new PotionOfResonanceCharm()),
+            Map.entry(53, new WrenchCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);
@@ -357,6 +359,35 @@ public class CharmsManager
             return result;
         }
 
+        return InteractionResult.PASS;
+    }
+
+    public static InteractionResult onAttackBlock(
+            Player player,
+            Level level,
+            InteractionHand hand,
+            BlockPos pos,
+            Direction direction
+    ) {
+        if (!(player instanceof ServerPlayer serverPlayer) || !(level instanceof ServerLevel serverLevel)) {
+            return InteractionResult.PASS;
+        }
+
+        for (Tuple<ItemStack, CharmInstance> instance : getPlayerCharmInstances(serverPlayer)) {
+            if (instance.getB().isBroken()) continue;
+            if (!(instance.getB().charm() instanceof AttackBlockCallbackCharm callback)) continue;
+
+            InteractionResult result = callback.onAttackBlock(
+                    instance.getA(),
+                    serverPlayer,
+                    serverLevel,
+                    hand,
+                    pos,
+                    direction,
+                    instance.getB().level()
+            );
+            if (result != null && result != InteractionResult.PASS) return result;
+        }
         return InteractionResult.PASS;
     }
 }

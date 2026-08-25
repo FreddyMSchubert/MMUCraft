@@ -46,15 +46,15 @@ public final class DiscordBridge {
                 if (!player.hasDisconnected()) publish(
                         firstJoin ? "first_join" : "join",
                         player,
-                        firstJoin ? "joined the server for the first time. [Players online: " + onlinePlayers(server, null) + "]"
-                                : "joined the server. [Players online: " + onlinePlayers(server, null) + "]"
+                        firstJoin ? "joined the server for the first time. (Players online: " + onlinePlayers(server, null) + ")"
+                                : "joined the server. (Players online: " + onlinePlayers(server, null) + ")"
                 );
             }));
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> publish(
                 "leave",
                 handler.player,
-                "left the server. [Players online: " + onlinePlayers(server, handler.player) + "]"
+                "left the server. (Players online: " + onlinePlayers(server, handler.player) + ")"
         ));
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             if (!(entity instanceof ServerPlayer player)) return;

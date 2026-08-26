@@ -179,8 +179,13 @@ export function DailiesTab() {
 			<div className="dailiesHeader">
 				<div>
 					<h3>Dailies</h3>
-					<p>Resets daily at 4 am.</p>
-					<p>You have to be online on the server to claim dailies.</p>
+					<p className="tabSubtitle">
+						Every day you get a new set of challenges that reward you with a lot of
+						dabloons if you are able to complete them all.
+					</p>
+					<p className="tabNote">
+						New challenges arrive at 4 am. You must be online to claim rewards.
+					</p>
 				</div>
 				<div
 					className={`loginStreak${loginBonusClaimed ? ' claimed' : ''}`}

@@ -162,7 +162,12 @@ export function ShopTab({
 	return (
 		<div className="shopPanel">
 			<div className="shopTop">
-				<h3>Shop</h3>
+				<div>
+					<h3>Shop</h3>
+					<p className="tabSubtitle">
+						The dabloon exchange — the best items for the best prices.
+					</p>
+				</div>
 			</div>
 
 			{featured && (

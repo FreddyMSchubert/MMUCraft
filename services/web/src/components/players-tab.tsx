@@ -230,7 +230,14 @@ export function PlayersTab({
 	return (
 		<div className="playersPanel">
 			<div className="playersTop">
-				<h3>Players</h3>
+				<div>
+					<h3>Players</h3>
+					<p className="tabSubtitle">
+						See who else plays on the server, learn a little about them, find their
+						bases and compare your progress. Fill out your own profile so everyone can
+						get to know you too.
+					</p>
+				</div>
 				{data.currentUserMinecraftUsername && (
 					<button
 						type="button"

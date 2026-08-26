@@ -223,8 +223,8 @@ function parseShopPurchasableComponent(
 		1,
 		`${relativeDirectory} shopPurchasable.priceDabloons`,
 	);
-	if (value.description !== undefined) {
-		assertString(value.description, `${relativeDirectory} shopPurchasable.description`);
+	if (value.description !== undefined && typeof value.description !== 'string') {
+		throw new Error(`${relativeDirectory} shopPurchasable.description must be a string.`);
 	}
 	if (value.unlockMessage !== undefined) {
 		assertString(value.unlockMessage, `${relativeDirectory} shopPurchasable.unlockMessage`);

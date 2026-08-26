@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 50000,
-		"description": "Unlock the Ornate Crown cosmetic.",
+		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "You have been crowned Biggest Moneywaster."
 	},

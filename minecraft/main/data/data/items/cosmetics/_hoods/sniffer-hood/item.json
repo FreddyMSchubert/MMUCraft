@@ -4,10 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Made from 100% real Sniffer"
+	],
 	"shopPurchasable": {
 	"priceDabloons": 125,
-		"description": "Unlock the Sniffer Hood cosmetic.",
+		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Sniffer Hood."
 	},

@@ -1,0 +1,17 @@
+{
+	"title": "Clown Nose",
+	"id": "cosmetic-clown-nose",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Very serious headgear."
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Clown Nose."
+	},
+	"equippableCosmetic": {}
+}

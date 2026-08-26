@@ -1,0 +1,24 @@
+{
+	"title": "Book Stack",
+	"id": "cosmetic-book-stack",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"A stack of some nostalgic, iconic books."
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Book Stack."
+	},
+	"equippableCosmetic": {}
+}

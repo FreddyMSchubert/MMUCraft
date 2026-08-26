@@ -1,0 +1,17 @@
+{
+	"title": "Sea Scorpion",
+	"id": "cosmetic-sea-scorpion",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"As seen in 480 million BC!"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 125,
+		"description": "",
+		"unlockWeight": 10,
+		"unlockMessage": "Purchased cosmetic: Sea Scorpion."
+	},
+	"equippableCosmetic": {}
+}

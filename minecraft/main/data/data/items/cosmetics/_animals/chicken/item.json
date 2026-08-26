@@ -1,0 +1,17 @@
+{
+	"title": "Chicken Hat",
+	"id": "cosmetic-chicken",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Why did the chicken cross the road?"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Purchased cosmetic: Chicken Hat."
+	},
+	"equippableCosmetic": {}
+}

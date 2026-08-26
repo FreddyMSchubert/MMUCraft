@@ -1,0 +1,20 @@
+{
+	"title": "Mohawk",
+	"id": "cosmetic-mohawk",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Mohawk-tuah!"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Mohawk."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#24ddba"
+	}
+}

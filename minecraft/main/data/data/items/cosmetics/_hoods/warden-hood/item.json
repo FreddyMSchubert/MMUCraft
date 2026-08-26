@@ -4,10 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Not as dangerous as the real thing"
+	],
 	"shopPurchasable": {
 	"priceDabloons": 250,
-		"description": "Unlock the Warden hood cosmetic.",
+		"description": "",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Warden hood."
 	},

@@ -4,10 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"It's really quite simple"
+	],
 	"shopPurchasable": {
 	"priceDabloons": 75,
-		"description": "Unlock the Fancy Moustache cosmetic.",
+		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Fancy Moustache."
 	},

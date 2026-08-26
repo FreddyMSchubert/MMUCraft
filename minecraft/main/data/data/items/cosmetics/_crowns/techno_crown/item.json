@@ -10,7 +10,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 5000,
-		"description": "Unlock the Techno Crown cosmetic.",
+		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Techno Crown."
 	},

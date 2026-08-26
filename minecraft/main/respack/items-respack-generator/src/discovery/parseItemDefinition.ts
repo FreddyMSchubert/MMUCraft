@@ -223,7 +223,9 @@ function parseShopPurchasableComponent(
 		1,
 		`${relativeDirectory} shopPurchasable.priceDabloons`,
 	);
-	assertString(value.description, `${relativeDirectory} shopPurchasable.description`);
+	if (value.description !== undefined) {
+		assertString(value.description, `${relativeDirectory} shopPurchasable.description`);
+	}
 	if (value.unlockMessage !== undefined) {
 		assertString(value.unlockMessage, `${relativeDirectory} shopPurchasable.unlockMessage`);
 	}
@@ -235,7 +237,7 @@ function parseShopPurchasableComponent(
 
 	return {
 		priceDabloons: value.priceDabloons,
-		description: value.description,
+		description: value.description ?? '',
 		unlockMessage: value.unlockMessage,
 		unlockWeight: value.unlockWeight,
 	};

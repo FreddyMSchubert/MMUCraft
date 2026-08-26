@@ -212,7 +212,13 @@ export function CharmsTab() {
 			<header className="charmForgeHeader">
 				<div>
 					<h3>Charm Forge</h3>
-					<p>Hold one charm in your main hand, then refresh your inventory.</p>
+					<p className="tabSubtitle">
+						Charms give you new abilities, from climbing walls to mining whole veins of
+						ore. Upgrade them here to make those abilities stronger.
+					</p>
+					<p className="tabNote">
+						Hold a charm in your main hand, then refresh your inventory.
+					</p>
 				</div>
 				<div className="charmForgeControls">
 					<span className="charmBalance" title="Current dabloon balance">

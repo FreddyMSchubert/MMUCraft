@@ -175,7 +175,18 @@ export function ClaimsTab() {
 	return (
 		<div className="claimsPanel">
 			<div className="claimsTop">
-				<h3>Chunk claims</h3>
+				<div>
+					<h3>Chunk claims</h3>
+					<p className="tabSubtitle">
+						Minecraft divides the world into 16×16-block areas called chunks. Claiming
+						one means only you and the players you choose can build, break blocks or
+						interact there, keeping your home safe while you are away.
+					</p>
+					<p className="tabNote">
+						Stand in the chunk you want to claim. Press F3 + G in Minecraft to see its
+						borders.
+					</p>
+				</div>
 				<div className="claimPurchase">
 					<button type="button" disabled={busy} onClick={() => void buyClaim()}>
 						Add claim · {data.priceDabloons} dabloons
@@ -203,11 +214,6 @@ export function ClaimsTab() {
 					</small>
 				</div>
 			</div>
-			<p className="claimsExplainer">
-				Claims protect one full chunk. Stand in the chunk before you add it; press F3 + G in
-				Minecraft to show chunk borders.
-			</p>
-
 			{message && <p className="dailyMessage">{message}</p>}
 			{error && <p className="authError">{error}</p>}
 

@@ -34,14 +34,19 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
             BlockStateProperties.HORIZONTAL_AXIS,
             BlockStateProperties.ORIENTATION,
             BlockStateProperties.ROTATION_16,
+            BlockStateProperties.UP,
+            BlockStateProperties.DOWN,
+            BlockStateProperties.NORTH,
+            BlockStateProperties.EAST,
+            BlockStateProperties.SOUTH,
+            BlockStateProperties.WEST,
             BlockStateProperties.ATTACH_FACE,
-            BlockStateProperties.ATTACHED,
             BlockStateProperties.HALF,
             BlockStateProperties.STAIRS_SHAPE,
             BlockStateProperties.DOOR_HINGE,
             BlockStateProperties.BELL_ATTACHMENT,
-            BlockStateProperties.EAST_WALL,
             BlockStateProperties.NORTH_WALL,
+            BlockStateProperties.EAST_WALL,
             BlockStateProperties.SOUTH_WALL,
             BlockStateProperties.WEST_WALL,
             BlockStateProperties.RAIL_SHAPE,
@@ -52,25 +57,15 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
             BlockStateProperties.COPPER_GOLEM_POSE,
             BlockStateProperties.CRACKED,
             BlockStateProperties.BLOOM,
-            BlockStateProperties.NOTEBLOCK_INSTRUMENT,
-            BlockStateProperties.NOTE,
-            BlockStateProperties.MODE_COMPARATOR,
-            BlockStateProperties.DELAY,
-            BlockStateProperties.INVERTED,
-            BlockStateProperties.LOCKED,
-            BlockStateProperties.OCCUPIED,
+            BlockStateProperties.LIT,
             BlockStateProperties.OPEN,
             BlockStateProperties.BOTTOM,
             BlockStateProperties.IN_WALL,
             BlockStateProperties.SHORT,
             BlockStateProperties.SIGNAL_FIRE,
             BlockStateProperties.SNOWY,
-            BlockStateProperties.UP,
-            BlockStateProperties.DOWN,
-            BlockStateProperties.NORTH,
-            BlockStateProperties.EAST,
-            BlockStateProperties.SOUTH,
-            BlockStateProperties.WEST
+            BlockStateProperties.UNSTABLE,
+            BlockStateProperties.PERSISTENT
     );
 
     static {
@@ -97,7 +92,7 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
         List<Property<?>> properties = allowedProperties(state);
         if (properties.isEmpty()) return showNoProperties(player);
 
-        Property<?> selected = player.isSecondaryUseActive()
+        Property<?> selected = player.isShiftKeyDown()
                 ? selectedProperty(stack, state, properties)
                 : properties.getFirst();
         BlockState changed = cycle(state, selected);
@@ -163,7 +158,7 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
     }
 
     private static InteractionResult showNoProperties(ServerPlayer player) {
-        player.sendOverlayMessage(Component.literal("No safe properties").withStyle(ChatFormatting.RED));
+        player.sendOverlayMessage(Component.literal("No modifiable properties").withStyle(ChatFormatting.RED));
         return InteractionResult.SUCCESS_SERVER;
     }
 

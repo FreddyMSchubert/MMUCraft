@@ -30,16 +30,10 @@
 	margin: 0;
 }
 
-.claimsExplainer,
 .claimHeader span,
 .claimMember span,
 .claimMember small {
 	color: rgba(255, 255, 255, 0.68);
-}
-
-.claimsExplainer {
-	margin: -6px 0 0;
-	font-size: 0.78rem;
 }
 
 .claimsTop button,

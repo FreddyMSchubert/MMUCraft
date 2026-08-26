@@ -1,0 +1,20 @@
+{
+	"title": "Amogus Hat",
+	"id": "cosmetic-amogus",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"When the impostor is sus"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 67,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Amogus Hat."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#FF0000"
+	}
+}

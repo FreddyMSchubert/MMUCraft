@@ -4,10 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Larp being employed"
+	],
 	"shopPurchasable": {
 	"priceDabloons": 42,
-		"description": "Unlock the Fisherman Hat cosmetic.",
+		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Fisherman Hat."
 	},

@@ -1,0 +1,17 @@
+{
+	"title": "War Bonnet",
+	"id": "cosmetic-war-bonnet",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Calling it a feather in your cap would really be under-plume-ing its significance"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 125,
+		"description": "Unlock the War Bonnet cosmetic.",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: War Bonnet."
+	},
+	"equippableCosmetic": {}
+}

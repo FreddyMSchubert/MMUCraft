@@ -1,0 +1,20 @@
+{
+	"title": "Devil Horns",
+	"id": "cosmetic-devil-horns",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Stolen from the statue in Satan's Hollow"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 90,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Devil Horns."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#ff0000"
+	}
+}

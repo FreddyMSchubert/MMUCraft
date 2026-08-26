@@ -1,0 +1,17 @@
+{
+	"title": "Chick Stack",
+	"id": "cosmetic-chick-stack",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		""
+	],
+	"shopPurchasable": {
+	"priceDabloons": 75,
+		"description": "",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked cosmetic: Chick Stack."
+	},
+	"equippableCosmetic": {}
+}

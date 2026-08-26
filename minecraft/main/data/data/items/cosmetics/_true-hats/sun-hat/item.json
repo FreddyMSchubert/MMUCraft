@@ -1,0 +1,20 @@
+{
+	"title": "Sun Hat",
+	"id": "cosmetic-sun-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Perfect for vampires"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 10000,
+		"unlockMessage": "Unlocked cosmetic: Sun Hat."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#f1337f"
+	}
+}

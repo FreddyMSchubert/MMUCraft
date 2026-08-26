@@ -1,0 +1,27 @@
+{
+	"title": "Big Mushroom",
+	"id": "cosmetic-mushroom-big",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"This type of red mushrooms is called a Fly Agaric"
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
+	"shopPurchasable": {
+	"priceDabloons": 75,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Big Mushroom."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#e13b3b"
+	}
+}

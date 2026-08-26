@@ -4,10 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Become part of the hive-mind"
+	],
 	"shopPurchasable": {
 	"priceDabloons": 125,
-		"description": "Unlock the Bee hood cosmetic.",
+		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Bee hood."
 	},

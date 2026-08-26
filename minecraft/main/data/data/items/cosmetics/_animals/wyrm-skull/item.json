@@ -1,0 +1,17 @@
+{
+	"title": "Wyrm Skull",
+	"id": "cosmetic-wyrm-skull",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"I would write a joke here, but it would just drag-on"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 125,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Purchased cosmetic: Wyrm Skull."
+	},
+	"equippableCosmetic": {}
+}

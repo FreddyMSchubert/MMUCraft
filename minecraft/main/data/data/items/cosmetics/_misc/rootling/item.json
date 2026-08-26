@@ -1,0 +1,20 @@
+{
+	"title": "Rootling",
+	"id": "cosmetic-rootling",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"It came to me in a dream"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 100,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Rootling."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#169C9C"
+	}
+}

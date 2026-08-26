@@ -1,0 +1,17 @@
+{
+	"title": "Patriotic Helmet",
+	"id": "cosmetic-helmet-patriotic",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"ODIO le vespe, insetti INUTILI!!!!"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 75,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Patriotic Helmet."
+	},
+	"equippableCosmetic": {}
+}

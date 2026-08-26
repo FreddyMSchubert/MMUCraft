@@ -1,0 +1,17 @@
+{
+	"title": "Cowboy Hat",
+	"id": "cosmetic-cowboy-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"You're a wanted cosmetic, Cowboy Hat"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Cowboy Hat."
+	},
+	"equippableCosmetic": {}
+}

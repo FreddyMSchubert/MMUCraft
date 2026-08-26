@@ -1,0 +1,24 @@
+{
+	"title": "Cardboard Box",
+	"id": "cosmetic-cardboard-box",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": [
+		"Big fish, little fish"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 1,
+		"description": "",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked cosmetic: Carboard Box."
+	},
+	"equippableCosmetic": {},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	}
+}

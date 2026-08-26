@@ -1,0 +1,17 @@
+{
+	"title": "Beret",
+	"id": "cosmetic-beret",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"The sign of a true fashionista"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Beret."
+	},
+	"equippableCosmetic": {}
+}

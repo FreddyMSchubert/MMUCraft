@@ -4,10 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Perfect for a motorcycle ride"
+	],
 	"shopPurchasable": {
 	"priceDabloons": 42,
-		"description": "Unlock the Square Moustache cosmetic.",
+		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Square Moustache."
 	},

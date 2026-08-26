@@ -1,0 +1,21 @@
+{
+	"title": "Spider Hat",
+	"id": "cosmetic-spider",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"What do you call a spider with 20 eyes?",
+		"A spiiiiiiiiiiiiiiiiiiiider."
+	],
+	"shopPurchasable": {
+	"priceDabloons": 75,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Purchased cosmetic: Spider Hat."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#f9801d"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"title": "Slime head",
+	"id": "cosmetic-slime-head",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Bit gooey, innit"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 75,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Slime head."
+	},
+	"equippableCosmetic": {}
+}

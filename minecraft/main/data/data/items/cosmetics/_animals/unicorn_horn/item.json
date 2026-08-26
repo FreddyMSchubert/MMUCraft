@@ -1,0 +1,17 @@
+{
+	"title": "Unicorn Horn",
+	"id": "cosmetic-unicorn-horn",
+	"modelType": "cosmetic",
+	"rarity": "legendary",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Reality called - I ignored it for magic!!!"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 150,
+		"description": "",
+		"unlockWeight": 10,
+		"unlockMessage": "Purchased cosmetic: Unicorn Horn."
+	},
+	"equippableCosmetic": {}
+}

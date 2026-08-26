@@ -1,0 +1,24 @@
+{
+	"title": "Flying Saucer",
+	"id": "cosmetic-ufo",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Don't eat this one"
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true,
+		"glowing": true,
+		"lightLevel": 12
+	},
+	"shopPurchasable": {
+		"priceDabloons": 115,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Flying Saucer."
+	},
+	"equippableCosmetic": {}
+}

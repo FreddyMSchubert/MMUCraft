@@ -4,10 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"Just bee yourself"
+	],
 	"shopPurchasable": {
 	"priceDabloons": 125,
-		"description": "Unlock the Trans Bee hood cosmetic.",
+		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Trans Bee hood."
 	},

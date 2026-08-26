@@ -1,0 +1,24 @@
+{
+	"title": "Pumpkin Hat",
+	"id": "cosmetic-pumpkin",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Is it halloween already?"
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
+	"shopPurchasable": {
+	"priceDabloons": 100,
+		"description": "",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked cosmetic: Pumpkin Hat."
+	},
+	"equippableCosmetic": {}
+}

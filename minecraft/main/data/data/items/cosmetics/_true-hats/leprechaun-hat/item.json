@@ -1,0 +1,17 @@
+{
+	"title": "Leprechaun Hat",
+	"id": "cosmetic-leprichaun",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Follow the rainbow"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 80,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Leprechaun Hat."
+	},
+	"equippableCosmetic": {}
+}

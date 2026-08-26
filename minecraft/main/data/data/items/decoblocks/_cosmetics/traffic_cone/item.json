@@ -1,0 +1,24 @@
+{
+	"title": "Traffic Cone Hat",
+	"id": "cosmetic-traffic-cone",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Staple of scottish culture."
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Traffic Cone Hat."
+	},
+	"equippableCosmetic": {}
+}

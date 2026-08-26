@@ -1,0 +1,24 @@
+{
+	"title": "Microwave",
+	"id": "cosmetic-microwave",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"You spin me right round"
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Microwave."
+	},
+	"equippableCosmetic": {}
+}

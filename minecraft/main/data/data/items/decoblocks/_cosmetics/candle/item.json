@@ -1,0 +1,27 @@
+{
+	"title": "Candle",
+	"id": "cosmetic-candle",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Nobody showed up for my birthday :("
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": true,
+		"lightLevel": 8
+	},
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Candle."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#d8d29d"
+	}
+}

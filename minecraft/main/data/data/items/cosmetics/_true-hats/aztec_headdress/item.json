@@ -1,0 +1,17 @@
+{
+	"title": "Moctezuma's Headdress",
+	"id": "cosmetic-aztec-headdress",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Although I like to call it quetzalapanecayotl"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 300,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Moctezuma's Headdress."
+	},
+	"equippableCosmetic": {}
+}

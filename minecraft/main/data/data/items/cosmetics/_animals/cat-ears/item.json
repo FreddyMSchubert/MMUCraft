@@ -1,0 +1,17 @@
+{
+	"title": "Cat Ears",
+	"id": "cosmetic-cat-ears",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"I cat think of a good pun at the moment..."
+	],
+	"shopPurchasable": {
+	"priceDabloons": 80,
+		"description": "",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked cosmetic: Cat Ears."
+	},
+	"equippableCosmetic": {}
+}

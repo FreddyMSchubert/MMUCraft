@@ -1,0 +1,17 @@
+{
+	"title": "Retro Helmet",
+	"id": "cosmetic-helmet-retro",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Perfect for a Vespa ride"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 75,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Retro Helmet."
+	},
+	"equippableCosmetic": {}
+}

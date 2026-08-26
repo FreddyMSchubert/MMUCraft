@@ -1,0 +1,17 @@
+{
+	"title": "Tricorn",
+	"id": "cosmetic-tricorn",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"NOT a pirate hat"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 100,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Tricorn."
+	},
+	"equippableCosmetic": {}
+}

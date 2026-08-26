@@ -1,0 +1,17 @@
+{
+	"title": "Sombrero",
+	"id": "cosmetic-sombrero",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"The cheapest item in our mexican collection"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Sombrero."
+	},
+	"equippableCosmetic": {}
+}

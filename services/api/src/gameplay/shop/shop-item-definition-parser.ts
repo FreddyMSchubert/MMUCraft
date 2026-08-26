@@ -89,7 +89,7 @@ function parseShopPurchasable(value: unknown): ShopPurchasableDefinition | null 
 	if (
 		typeof candidate.priceDabloons !== 'number' ||
 		!Number.isInteger(candidate.priceDabloons) ||
-		typeof candidate.description !== 'string' ||
+		(candidate.description !== undefined && typeof candidate.description !== 'string') ||
 		(candidate.unlockMessage !== undefined && typeof candidate.unlockMessage !== 'string') ||
 		typeof candidate.unlockWeight !== 'number' ||
 		!Number.isInteger(candidate.unlockWeight) ||
@@ -98,7 +98,7 @@ function parseShopPurchasable(value: unknown): ShopPurchasableDefinition | null 
 		return null;
 	return {
 		priceDabloons: candidate.priceDabloons,
-		description: candidate.description,
+		description: candidate.description ?? '',
 		unlockMessage: candidate.unlockMessage ?? null,
 		unlockWeight: candidate.unlockWeight,
 	};

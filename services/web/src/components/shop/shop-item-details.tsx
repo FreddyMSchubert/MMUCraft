@@ -174,7 +174,7 @@ export function ShopDetails({
 						<h2 id="shop-detail-title">{item.title}</h2>
 						{item.description && (
 							<div className="shopItemEffect">
-								<strong>Effect</strong>
+								<strong>{item.type === 'charm' ? 'Effect' : 'Description'}</strong>
 								<p>{item.description}</p>
 							</div>
 						)}

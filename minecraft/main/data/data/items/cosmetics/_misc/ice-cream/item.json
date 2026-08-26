@@ -1,0 +1,20 @@
+{
+	"title": "Ice Cream Hat",
+	"id": "cosmetic-ice-cream",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Sorry, we ran out of flakes"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 80,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Ice Cream Hat."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#835432"
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"title": "Small Frog",
+	"id": "cosmetic-frog-small",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Why did the frog go to the hospital?",
+		"He needed a hop-eration!"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 142,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Purchased cosmetic: Small Frog."
+	},
+	"equippableCosmetic": {}
+}

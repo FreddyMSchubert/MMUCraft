@@ -1,0 +1,17 @@
+{
+	"title": "Fazbear Head",
+	"id": "cosmetic-freddy-fazbear",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Ar ar ar ar"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 150,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Fazbear Head."
+	},
+	"equippableCosmetic": {}
+}

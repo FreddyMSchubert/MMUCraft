@@ -9,7 +9,7 @@
 	],
 	"shopPurchasable": {
 		"priceDabloons": 10000,
-		"description": "Unlock the Royal Crown cosmetic.",
+		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Royal Crown."
 	},

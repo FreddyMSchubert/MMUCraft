@@ -1,0 +1,17 @@
+{
+	"title": "Skull Hat",
+	"id": "cosmetic-skull",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Sourced from last the committe"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Skull Hat."
+	},
+	"equippableCosmetic": {}
+}

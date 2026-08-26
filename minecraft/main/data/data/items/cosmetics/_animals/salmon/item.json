@@ -1,0 +1,17 @@
+{
+	"title": "Salmon Hat",
+	"id": "cosmetic-salmon",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Might be a bit late to toss it back"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Purchased cosmetic: Salmon Hat."
+	},
+	"equippableCosmetic": {}
+}

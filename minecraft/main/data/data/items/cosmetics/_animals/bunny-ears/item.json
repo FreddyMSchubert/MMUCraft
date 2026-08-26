@@ -1,0 +1,17 @@
+{
+	"title": "Bunny Ears",
+	"id": "cosmetic-bunny-ears",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Lets you become ear-resistable"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 80,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Bunny Ears."
+	},
+	"equippableCosmetic": {}
+}

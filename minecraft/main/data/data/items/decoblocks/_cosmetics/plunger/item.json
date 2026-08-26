@@ -1,0 +1,27 @@
+{
+	"title": "Plunger Hat",
+	"id": "cosmetic-plunger",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Personally - I wouldn't put that on my head"
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": true,
+		"ceiling": true,
+		"glowing": false,
+		"lightLevel": 0
+	},
+	"shopPurchasable": {
+		"priceDabloons": 35,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Plunger Hat."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#ff0000"
+	}
+}

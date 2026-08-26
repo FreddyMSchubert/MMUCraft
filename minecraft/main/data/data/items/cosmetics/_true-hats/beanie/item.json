@@ -1,0 +1,20 @@
+{
+	"title": "Beanie",
+	"id": "cosmetic-beanie",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Two guys with a dream"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Beanie."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#a600ff"
+	}
+}

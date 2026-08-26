@@ -1,0 +1,17 @@
+{
+	"title": "Villager Nose",
+	"id": "cosmetic-villager-nose",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Bigger than the sniffer's"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Villager Nose."
+	},
+	"equippableCosmetic": {}
+}

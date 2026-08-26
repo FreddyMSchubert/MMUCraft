@@ -4,10 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": [
+		"It's not much of a tail, but I'm sort of attached to it"
+	],
 	"shopPurchasable": {
 	"priceDabloons": 125,
-		"description": "Unlock the Eeyore cosmetic.",
+		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Eeyore."
 	},

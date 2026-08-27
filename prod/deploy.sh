@@ -40,6 +40,8 @@ set +a
 : "${RESEND_API_KEY:?set RESEND_API_KEY in .env}"
 : "${RESEND_FROM:?set RESEND_FROM in .env}"
 : "${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}"
+: "${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}"
+: "${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}"
 case "$PUBLIC_URL" in
 	https://*) ;;
 	*) echo "PUBLIC_URL must use HTTPS" >&2; exit 2 ;;
@@ -50,7 +52,9 @@ case "$public_host" in
 esac
 [ "${#AUTH_CODE_SECRET}" -ge 32 ] || { echo "AUTH_CODE_SECRET must be at least 32 characters" >&2; exit 2; }
 [ "${#GRAFANA_ADMIN_PASSWORD}" -ge 24 ] || { echo "GRAFANA_ADMIN_PASSWORD must be at least 24 characters" >&2; exit 2; }
-case "$AUTH_CODE_SECRET:$RESEND_API_KEY" in
+[ "${#VELOCITY_API_SECRET}" -ge 32 ] || { echo "VELOCITY_API_SECRET must be at least 32 characters" >&2; exit 2; }
+[ "${#VELOCITY_FORWARDING_SECRET}" -ge 32 ] || { echo "VELOCITY_FORWARDING_SECRET must be at least 32 characters" >&2; exit 2; }
+case "$AUTH_CODE_SECRET:$VELOCITY_API_SECRET:$VELOCITY_FORWARDING_SECRET:$RESEND_API_KEY" in
 	*replace*) echo "Replace the placeholder secrets in .env" >&2; exit 2 ;;
 esac
 case "$GRAFANA_ADMIN_PASSWORD" in
@@ -59,9 +63,9 @@ esac
 
 umask 077
 printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\n' "$image_prefix" "$tag" "$public_host" > .release.env
-mkdir -p data/api data/minecraft
+mkdir -p data/api data/minecraft data/velocity
 [ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
-chmod 775 data/api data/minecraft
+chmod 775 data/api data/minecraft data/velocity
 chmod 664 data/api/signup-allowlist.txt
 
 dc() {
@@ -85,6 +89,7 @@ set_property() {
 dc config --quiet
 dc pull --quiet
 
+api_image="${image_prefix}-api:${tag}"
 mc_image="${image_prefix}-mc:${tag}"
 defaults=$(mktemp)
 trap 'rm -f "$defaults"' EXIT HUP INT TERM
@@ -100,6 +105,10 @@ for key in resource-pack-id resource-pack-sha1; do
 	[ -n "$value" ] && set_property "$server_properties" "$key" "$value"
 done
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
+set_property "$server_properties" online-mode false
+set_property "$server_properties" white-list false
+set_property "$server_properties" enforce-whitelist false
+set_property "$server_properties" enforce-secure-profile false
 chmod 664 "$server_properties"
 
 if [ "$warning_minutes" -gt 0 ] && dc ps --status running --services | grep -qx minecraft; then
@@ -133,6 +142,27 @@ if dc ps --status running --services | grep -qx minecraft; then
 		fi
 	fi
 	dc stop minecraft
+fi
+
+legacy_bans=data/minecraft/banned-players.json
+if [ -s "$legacy_bans" ]; then
+	[ -e "${legacy_bans}.pre-velocity" ] || cp -p "$legacy_bans" "${legacy_bans}.pre-velocity"
+	docker run --rm \
+		--user "${PUID:-1000}:${PGID:-1000}" \
+		--volume "$PWD/data/minecraft:/data" \
+		--entrypoint node \
+		"$api_image" \
+		-e '
+			const fs = require("node:fs");
+			const path = "/data/banned-players.json";
+			const entries = JSON.parse(fs.readFileSync(path, "utf8"));
+			const kept = entries.filter(entry => entry.source !== "MMU Minecraft Society website");
+			if (kept.length !== entries.length) {
+				fs.writeFileSync(path + ".tmp", JSON.stringify(kept, null, 2) + "\n");
+				fs.renameSync(path + ".tmp", path);
+				console.log(`Removed ${entries.length - kept.length} legacy website ban(s).`);
+			}
+		'
 fi
 
 dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"

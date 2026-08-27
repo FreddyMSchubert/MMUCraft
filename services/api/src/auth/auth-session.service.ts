@@ -14,8 +14,6 @@ export interface AuthenticatedUser {
 	isMember: boolean;
 	isCommittee: boolean;
 	isSuperAdmin: boolean;
-	whitelisted: true;
-	rulesAccepted: true;
 }
 
 @Injectable()
@@ -85,8 +83,6 @@ export class AuthSessionService {
 			isMember: row.is_member === 1,
 			isCommittee: isSuperAdmin || row.is_committee === 1,
 			isSuperAdmin,
-			whitelisted: true,
-			rulesAccepted: true,
 		};
 	}
 

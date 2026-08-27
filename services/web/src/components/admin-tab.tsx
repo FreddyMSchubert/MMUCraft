@@ -11,6 +11,7 @@ import { MemberAccessAdminSection } from './admin/member-access-admin-section';
 import { PlayerBanAdminSection } from './admin/player-ban-admin-section';
 import { ServerClaimAdministrationSection } from './admin/server-claim-administration-section';
 import { useAdminTabController } from './admin/use-admin-tab-controller';
+import { VelocityAdminSection } from './admin/velocity-admin-section';
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
 	const controller = useAdminTabController({ isSuperAdmin, section });
@@ -27,6 +28,10 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			<EmailWhitelistAdminSection controller={controller} />
 			<PlayerBanAdminSection controller={controller} />
 			<GiftCodeAdminSection controller={controller} />
+			{(controller.activeSection === 'servers' ||
+				controller.activeSection === 'maintenance') && (
+				<VelocityAdminSection section={controller.activeSection} />
+			)}
 			{controller.error && <p className="authError">{controller.error}</p>}
 		</div>
 	);

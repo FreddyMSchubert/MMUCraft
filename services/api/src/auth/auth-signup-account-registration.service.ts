@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import {
 	DatabaseService,
@@ -7,7 +7,6 @@ import {
 	users,
 } from '../database/database.service';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
-import { AuthGrpcService } from './auth-grpc.service';
 import { AuthSessionService } from './auth-session.service';
 import { AuthUserLookupService } from './auth-user-lookup.service';
 import { isAllowedEmail } from './auth.util';
@@ -15,16 +14,13 @@ import { SignupFlow, signupFlows } from './signup-flow';
 
 @Injectable()
 export class AuthSignupAccountRegistrationService {
-	private readonly logger = new Logger(AuthSignupAccountRegistrationService.name);
-
 	constructor(
 		private readonly database: DatabaseService,
-		private readonly grpc: AuthGrpcService,
 		private readonly sessions: AuthSessionService,
 		private readonly userLookup: AuthUserLookupService,
 	) {}
 
-	async register(flowId: string, flow: SignupFlow) {
+	register(flowId: string, flow: SignupFlow) {
 		const now = Date.now();
 		if (flow.step !== 'rules') {
 			throw new BadRequestException('This signup flow is not waiting for rules acceptance');
@@ -55,11 +51,9 @@ export class AuthSignupAccountRegistrationService {
 			throw new ForbiddenException('This external player invitation is no longer active');
 		}
 
-		let accountCreated = false;
-		try {
-			await this.grpc.whitelistPlayer(minecraftUsername);
-			const userId = this.database.connection.transaction((transaction) => {
-				const created = transaction
+		const userId = this.database.connection.transaction(
+			(transaction) =>
+				transaction
 					.insert(users)
 					.values({
 						email: flow.email,
@@ -73,26 +67,10 @@ export class AuthSignupAccountRegistrationService {
 						created_at_unix_ms: now,
 					})
 					.returning({ id: users.id })
-					.get();
-				return created.id;
-			});
-			accountCreated = true;
-			signupFlows.delete(flowId);
-			return this.sessions.createForUser(userId);
-		} catch (error) {
-			if (!accountCreated) {
-				await this.grpc
-					.unwhitelistPlayer(minecraftUsername)
-					.catch((cleanupError: unknown) => {
-						this.logger.error(
-							`Could not compensate the whitelist update for ${minecraftUsername}: ${String(cleanupError)}`,
-						);
-					});
-			}
-			throw error;
-		} finally {
-			await this.grpc.removePendingJoin(minecraftUsername).catch(() => undefined);
-		}
+					.get().id,
+		);
+		signupFlows.delete(flowId);
+		return this.sessions.createForUser(userId);
 	}
 
 	private assertAccountDoesNotExist(

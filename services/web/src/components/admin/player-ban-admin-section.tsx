@@ -33,8 +33,7 @@ export function PlayerBanAdminSection({ controller }: { controller: AdminTabCont
 							<li>They are signed out from the website on all devices.</li>
 							<li>They can no longer sign in on any devices.</li>
 							<li>
-								They are added to the server blacklist, making it impossible for
-								them to join.
+								Velocity blocks new joins and disconnects them if they are online.
 							</li>
 						</ul>
 						<p>

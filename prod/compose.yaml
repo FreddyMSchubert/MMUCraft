@@ -41,6 +41,8 @@ services:
       DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
       DISCORD_AVATAR_BASE_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}/api/players/avatar
       COOKIE_SECURE: "true"
+      PUBLIC_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}
+      VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
       TZ: ${TZ:-Europe/London}
     volumes:
       - ./data/api:/app/data
@@ -119,6 +121,7 @@ services:
         scalablelux?
         servercore?
         zfastnoise?
+        fabricproxy-lite:2.12.0
       MODRINTH_DOWNLOAD_DEPENDENCIES: required
       MEMORY: 1536M
       INIT_MEMORY: 1G
@@ -135,8 +138,7 @@ services:
       MOD_GRPC_HOST: 0.0.0.0
       MOD_GRPC_PORT: "50052"
       API_GRPC_TARGET: api:50051
-    ports:
-      - "${MINECRAFT_BIND:-0.0.0.0}:${MINECRAFT_PORT:-25565}:25565/tcp"
+      FABRIC_PROXY_SECRET: ${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}
     volumes:
       - ./data/minecraft:/data
     mem_limit: 2g
@@ -166,6 +168,43 @@ services:
       timeout: 5s
       retries: 12
       start_period: 2m
+    networks: [app]
+
+  velocity:
+    image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-velocity:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
+    init: true
+    stdin_open: true
+    tty: true
+    environment:
+      CFG_VELOCITY_FORWARDING_SECRET: ${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}
+      VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
+      MMU_API_BASE_URL: http://api:8080
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ:-Europe/London}
+    ports:
+      - "${MINECRAFT_BIND:-0.0.0.0}:${MINECRAFT_PORT:-25565}:25565/tcp"
+    volumes:
+      - ./data/velocity:/server
+    mem_limit: 768m
+    mem_reservation: 256m
+    memswap_limit: 768m
+    pids_limit: 256
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+          pids: 256
+        reservations:
+          memory: 256m
+    depends_on:
+      api:
+        condition: service_healthy
+        restart: true
+    security_opt:
+      - no-new-privileges:true
+    logging: *logging
+    restart: unless-stopped
     networks: [app]
 
   prometheus:

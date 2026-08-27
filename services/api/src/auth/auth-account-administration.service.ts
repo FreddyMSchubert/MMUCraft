@@ -12,7 +12,7 @@ import {
 	users,
 } from '../database/database.service';
 import { effectivePlayerColor } from '../players/player-color';
-import { AuthGrpcService } from './auth-grpc.service';
+import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import type { AuthenticatedUser } from './auth-session.service';
 import { isAllowedEmail, isValidEmail, normalizeEmail } from './auth.util';
 import { PlayerBansService } from './player-bans.service';
@@ -24,7 +24,7 @@ export const NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 250;
 export class AuthAccountAdministrationService {
 	constructor(
 		private readonly database: DatabaseService,
-		private readonly grpc: AuthGrpcService,
+		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly bans: PlayerBansService,
 	) {}
 
@@ -32,7 +32,7 @@ export class AuthAccountAdministrationService {
 		return this.bans.list();
 	}
 
-	async applyPlayerBan(
+	applyPlayerBan(
 		admin: AuthenticatedUser,
 		userIdInput: number | undefined,
 		expiresAtUnixMsInput: number | null | undefined,
@@ -60,22 +60,15 @@ export class AuthAccountAdministrationService {
 			throw new BadRequestException('The permanent super-admin cannot be banned');
 
 		this.bans.set(target.id, admin.id, expiresAtUnixMs);
-		let minecraftSynchronized = true;
-		try {
-			await this.grpc.blacklistPlayer(target.minecraft_username, target.minecraft_uuid ?? '');
-		} catch {
-			minecraftSynchronized = false;
-		}
 		return {
 			ok: true,
 			userId: target.id,
 			minecraftUsername: target.minecraft_username,
 			expiresAtUnixMs,
-			minecraftSynchronized,
 		};
 	}
 
-	async removePlayerBan(userIdInput: string) {
+	removePlayerBan(userIdInput: string) {
 		const userId = Number(userIdInput);
 		if (!Number.isInteger(userId) || userId <= 0)
 			throw new NotFoundException('Player not found');
@@ -86,20 +79,10 @@ export class AuthAccountAdministrationService {
 			.get();
 		if (!target || !this.bans.remove(userId))
 			throw new NotFoundException('Active ban not found');
-		let minecraftSynchronized = true;
-		try {
-			await this.grpc.unblacklistPlayer(
-				target.minecraft_username,
-				target.minecraft_uuid ?? '',
-			);
-		} catch {
-			minecraftSynchronized = false;
-		}
 		return {
 			ok: true,
 			userId,
 			minecraftUsername: target.minecraft_username,
-			minecraftSynchronized,
 		};
 	}
 
@@ -197,9 +180,13 @@ export class AuthAccountAdministrationService {
 				responsibleUser.is_member === 1
 					? MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS
 					: NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS;
-			const purchase = await this.grpc.purchaseExternalPlayerInvite(
-				responsibleUser.minecraft_username,
-			);
+			const purchase = await this.minecraft.gameplay<{
+				purchased: boolean;
+				balance_dabloons: number;
+				message: string;
+			}>('PurchaseExternalPlayerInvite', {
+				minecraft_username: responsibleUser.minecraft_username,
+			});
 			if (!purchase.purchased)
 				throw new BadRequestException(
 					purchase.message ||

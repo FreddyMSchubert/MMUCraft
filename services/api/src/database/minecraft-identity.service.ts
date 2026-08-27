@@ -57,7 +57,7 @@ export class MinecraftIdentityService {
 			}
 		}
 
-		// Backwards compatibility for an older Minecraft mod during a rolling deployment.
+		// Keep username-only lookup for legacy account rows that do not have a UUID.
 		return username ? this.findByUsername(username) : null;
 	}
 

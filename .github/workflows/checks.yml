@@ -135,6 +135,7 @@ jobs:
               run: |
                   ./gradlew runDatagen --no-daemon
                   ./gradlew build --no-daemon
+                  ./gradlew -p ../../../services/velocity/plugin build --no-daemon
 
             - name: Resolve image names and tag
               if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
@@ -218,5 +219,23 @@ jobs:
                       org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=mc
                   cache-to: type=gha,mode=max,scope=mc
+                  provenance: mode=max
+                  sbom: true
+
+            - name: Build and push Velocity
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/build-push-action@v7
+              with:
+                  context: services/velocity
+                  platforms: linux/amd64
+                  pull: true
+                  push: true
+                  tags: ${{ steps.image.outputs.prefix }}-velocity:${{ steps.image.outputs.tag }}
+                  labels: |
+                      org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
+                  cache-from: type=gha,scope=velocity
+                  cache-to: type=gha,mode=max,scope=velocity
                   provenance: mode=max
                   sbom: true

@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type { UserRow } from '../database/database.service';
-import { AuthGrpcService } from './auth-grpc.service';
 import { AuthSessionService } from './auth-session.service';
 import { AuthUserLookupService } from './auth-user-lookup.service';
 import { createAuthCode, hashSecret, normalizeEmail, safeSecretEquals } from './auth.util';
@@ -20,7 +19,6 @@ const MAX_AUTH_CODE_ATTEMPTS = 5;
 @Injectable()
 export class AuthSigninService {
 	constructor(
-		private readonly grpc: AuthGrpcService,
 		private readonly bans: PlayerBansService,
 		private readonly sessions: AuthSessionService,
 		private readonly userLookup: AuthUserLookupService,
@@ -31,7 +29,7 @@ export class AuthSigninService {
 		const email = normalizeEmail(emailInput);
 		const user = this.userLookup.byEmail(email);
 		if (!user) throw new UnauthorizedException('No account exists for this email');
-		const timeoutEnded = await this.requirePlayerNotBanned(user);
+		const timeoutEnded = this.requirePlayerNotBanned(user);
 
 		const now = Date.now();
 		this.cleanupExpiredFlows(now);
@@ -50,7 +48,7 @@ export class AuthSigninService {
 		return { flowId, timeoutEnded };
 	}
 
-	async verify(flowId: string, code: string) {
+	verify(flowId: string, code: string) {
 		const now = Date.now();
 		const flow = signinFlows.get(flowId);
 		if (!flow || flow.expiresAtUnixMs <= now) {
@@ -64,7 +62,7 @@ export class AuthSigninService {
 		}
 		const account = this.userLookup.byId(flow.userId);
 		if (!account) throw new UnauthorizedException('No account exists for this email');
-		await this.requirePlayerNotBanned(account);
+		this.requirePlayerNotBanned(account);
 		signinFlows.delete(flowId);
 		return this.sessions.createForUser(flow.userId);
 	}
@@ -74,7 +72,7 @@ export class AuthSigninService {
 			if (flow.expiresAtUnixMs <= now) signinFlows.delete(flowId);
 	}
 
-	private async requirePlayerNotBanned(user: UserRow) {
+	private requirePlayerNotBanned(user: UserRow) {
 		const ban = this.bans.resolve(user.id);
 		if (ban.active)
 			throw new ForbiddenException(
@@ -82,10 +80,6 @@ export class AuthSigninService {
 					? 'You are permanently banned from the MMU Minecraft Society server'
 					: `Your timeout continues until ${new Date(ban.expiresAtUnixMs).toUTCString()}`,
 			);
-		if (ban.expired)
-			await this.grpc
-				.unblacklistPlayer(user.minecraft_username, user.minecraft_uuid ?? '')
-				.catch(() => undefined);
 		return ban.expired;
 	}
 }

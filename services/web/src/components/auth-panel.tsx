@@ -467,8 +467,8 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 							again if it does not appear.
 						</p>
 						<p>
-							A message saying that you are not whitelisted is expected during signup.
-							The code should appear before you are disconnected.
+							The verification code appears in the disconnect message. Enter it here,
+							then join the server again after signup finishes.
 						</p>
 						<p>If you still cannot get a code, contact the committee.</p>
 					</section>

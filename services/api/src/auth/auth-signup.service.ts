@@ -2,7 +2,6 @@ import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/com
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
-import { AuthGrpcService } from './auth-grpc.service';
 import {
 	createAuthCode,
 	hashSecret,
@@ -25,7 +24,6 @@ const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signu
 @Injectable()
 export class AuthSignupService {
 	constructor(
-		private readonly grpc: AuthGrpcService,
 		private readonly userLookup: AuthUserLookupService,
 		private readonly verificationEmails: AuthVerificationEmailService,
 		private readonly accountRegistration: AuthSignupAccountRegistrationService,
@@ -55,7 +53,7 @@ export class AuthSignupService {
 			);
 		}
 
-		await this.cleanupStaleSignupFlows();
+		this.cleanupStaleSignupFlows();
 
 		if (this.userLookup.byEmail(email)) {
 			throw new BadRequestException('An account with this email already exists');
@@ -63,7 +61,7 @@ export class AuthSignupService {
 
 		const now = Date.now();
 		this.verificationEmails.reserveSend(email, sourceIp, now);
-		await this.deleteIncompleteSignupFlowsForEmail(email);
+		this.deleteIncompleteSignupFlowsForEmail(email);
 		const code = createAuthCode();
 		const flowId = randomUUID();
 
@@ -108,8 +106,8 @@ export class AuthSignupService {
 		return { ok: true };
 	}
 
-	async setMinecraftUsername(flowId: string, usernameInput: string) {
-		await this.cleanupStaleSignupFlows();
+	setMinecraftUsername(flowId: string, usernameInput: string) {
+		this.cleanupStaleSignupFlows();
 
 		const flow = this.getFlow(flowId);
 		const username = usernameInput.trim();
@@ -160,21 +158,16 @@ export class AuthSignupService {
 		flow.step = 'minecraft-code';
 		flow.minecraftUsername = username;
 		flow.minecraftUuid = undefined;
+		flow.minecraftCode = minecraftCode;
 		flow.minecraftCodeHash = hashSecret(minecraftCode);
 		flow.minecraftCodeExpiresAt = expiresAt;
 		flow.minecraftCodeFailedAttempts = 0;
 		flow.updatedAt = now;
 
-		await this.grpc.upsertPendingJoin({
-			minecraftUsername: username,
-			code: minecraftCode,
-			expiresAtUnixMs: expiresAt,
-		});
-
 		return { ok: true };
 	}
 
-	async verifyMinecraftCode(flowId: string, code: string) {
+	verifyMinecraftCode(flowId: string, code: string) {
 		const flow = this.getFlow(flowId);
 		const now = Date.now();
 
@@ -194,10 +187,8 @@ export class AuthSignupService {
 
 		if (!safeSecretEquals(code.trim(), flow.minecraftCodeHash)) {
 			flow.minecraftCodeFailedAttempts = (flow.minecraftCodeFailedAttempts ?? 0) + 1;
-			if (flow.minecraftCodeFailedAttempts >= MAX_AUTH_CODE_ATTEMPTS) {
+			if (flow.minecraftCodeFailedAttempts >= MAX_AUTH_CODE_ATTEMPTS)
 				flow.minecraftCodeExpiresAt = now;
-				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined);
-			}
 			throw new BadRequestException('Invalid Minecraft code');
 		}
 
@@ -213,13 +204,13 @@ export class AuthSignupService {
 			);
 		}
 
-		await this.grpc.removePendingJoin(flow.minecraftUsername);
-
 		flow.step = 'rules';
+		flow.minecraftCode = undefined;
+		flow.minecraftCodeHash = undefined;
 		flow.updatedAt = now;
 	}
 
-	async acceptRules(flowId: string) {
+	acceptRules(flowId: string) {
 		return this.accountRegistration.register(flowId, this.getFlow(flowId));
 	}
 
@@ -233,24 +224,18 @@ export class AuthSignupService {
 		return flow;
 	}
 
-	private async deleteIncompleteSignupFlowsForEmail(email: string) {
+	private deleteIncompleteSignupFlowsForEmail(email: string) {
 		for (const [flowId, flow] of signupFlows) {
 			if (flow.email !== email) continue;
-			if (flow.minecraftUsername) {
-				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined);
-			}
 			signupFlows.delete(flowId);
 		}
 	}
 
-	private async cleanupStaleSignupFlows() {
+	private cleanupStaleSignupFlows() {
 		const cutoff = Date.now() - SIGNUP_FLOW_IDLE_TTL_MS;
 
 		for (const [flowId, flow] of signupFlows) {
 			if (flow.updatedAt >= cutoff) continue;
-			if (flow.minecraftUsername) {
-				await this.grpc.removePendingJoin(flow.minecraftUsername).catch(() => undefined);
-			}
 			signupFlows.delete(flowId);
 		}
 	}

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../database/database.module';
 import { AuthController } from './auth.controller';
 import { AuthAccountAdministrationService } from './auth-account-administration.service';
-import { AuthGrpcService } from './auth-grpc.service';
 import { AuthSessionService } from './auth-session.service';
 import { AuthSigninService } from './auth-signin.service';
 import { AuthVerificationEmailService } from './auth-verification-email.service';
@@ -18,7 +17,6 @@ import { PlayerBansService } from './player-bans.service';
 		AuthSignupService,
 		AuthSignupAccountRegistrationService,
 		AuthAccountAdministrationService,
-		AuthGrpcService,
 		AuthSessionService,
 		AuthSigninService,
 		AuthUserLookupService,
@@ -30,6 +28,7 @@ import { PlayerBansService } from './player-bans.service';
 		AuthSessionService,
 		AuthSigninService,
 		AuthSignupService,
+		PlayerBansService,
 	],
 })
 export class AuthModule {}

@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class GrpcBridge {
     private static final List<GrpcHandler> HANDLERS = List.of(
-            AuthGrpcService.INSTANCE,
             GameplayGrpcService.INSTANCE
     );
 

@@ -21,8 +21,6 @@ interface SessionUser {
 	id: number;
 	minecraftUsername: string;
 	color: string;
-	whitelisted: boolean;
-	rulesAccepted: boolean;
 	isMember: boolean;
 	isCommittee: boolean;
 	isSuperAdmin: boolean;
@@ -65,6 +63,8 @@ const ADMIN_SECTIONS = new Set([
 	'countdowns',
 	'discord-commands',
 	'dailies',
+	'servers',
+	'maintenance',
 ]);
 const MISC_SECTIONS = new Set(['settings', 'gift-codes']);
 const SERVER_IP = 'mmuminecraftsociety.co.uk';

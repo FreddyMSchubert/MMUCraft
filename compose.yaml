@@ -27,6 +27,7 @@ services:
       DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
       DISCORD_AVATAR_BASE_URL: ${DISCORD_AVATAR_BASE_URL:-}
       PUBLIC_URL: ${PUBLIC_URL:-}
+      VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
     ports:
       - "8080:8080"
       - "4983:4983"
@@ -75,6 +76,26 @@ services:
     logging: *logging
     restart: unless-stopped
 
+  velocity:
+    image: mcstack/velocity:dev
+    build:
+      context: services/velocity
+    stdin_open: true
+    tty: true
+    environment:
+      CFG_VELOCITY_FORWARDING_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
+      VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
+      MMU_API_BASE_URL: http://api:8080
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./.dev/velocity:/server
+    depends_on:
+      api:
+        condition: service_healthy
+    logging: *logging
+    restart: unless-stopped
+
   minecraft:
     profiles: [minecraft]
     image: mcstack/minecraft-server:dev
@@ -86,7 +107,7 @@ services:
       EULA: "TRUE"
       TYPE: FABRIC
       VERSION: "26.2"
-      MODRINTH_PROJECTS: fabric-api
+      MODRINTH_PROJECTS: fabric-api,fabricproxy-lite:2.12.0
       MEMORY: 2G
       INIT_MEMORY: 1G
       STOP_DURATION: "110"
@@ -97,8 +118,7 @@ services:
       MOD_GRPC_HOST: 0.0.0.0
       MOD_GRPC_PORT: 50052
       API_GRPC_TARGET: api:50051
-    ports:
-      - "25565:25565"
+      FABRIC_PROXY_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
     volumes:
       - ./.dev/minecraft:/data
     depends_on:

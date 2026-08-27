@@ -7,7 +7,9 @@ export type AdminSection =
 	| 'gifts'
 	| 'countdowns'
 	| 'discord-commands'
-	| 'dailies';
+	| 'dailies'
+	| 'servers'
+	| 'maintenance';
 
 export interface AdminPlayer {
 	id: number;
@@ -74,7 +76,9 @@ export function normalizeAdminSection(section: string | undefined): AdminSection
 		section === 'gifts' ||
 		section === 'countdowns' ||
 		section === 'discord-commands' ||
-		section === 'dailies'
+		section === 'dailies' ||
+		section === 'servers' ||
+		section === 'maintenance'
 		? section
 		: 'members';
 }

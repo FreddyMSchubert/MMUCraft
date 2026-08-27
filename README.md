@@ -1,6 +1,6 @@
 # MMUCraft
 
-MMUCraft has three main parts. `services/web` is the Next.js website. `services/api` is the NestJS API and owns authentication, application rules, and SQLite data. `minecraft/main/mod` is the Fabric server mod. The mod connects Minecraft events and commands to the API through gRPC.
+MMUCraft has four main parts. `services/web` is the Next.js website. `services/api` is the NestJS API and owns authentication, application rules, routing, and SQLite data. `services/velocity` is the public Minecraft entry point. It authenticates players and routes them to backend servers. `minecraft/main/mod` is the Fabric server mod. The mod connects gameplay events and commands to the API through gRPC.
 
 ## Development
 
@@ -12,7 +12,7 @@ cp services/api/.env.example services/api/.env
 make
 ```
 
-The API uses port `8080`. The website uses port `3000`. The API and website watch source files. Minecraft does not watch files.
+The API uses port `8080`. The website uses port `3000`. Velocity uses port `25565`. The main Minecraft server has no public port. The API and website watch source files. Minecraft and Velocity do not watch files.
 
 Grafana uses `http://localhost:3000/grafana/` with username `admin`. Set `GRAFANA_ADMIN_PASSWORD` before `make`; local development defaults to password `admin`. Anonymous access and Grafana account creation are disabled. The instance contains the Statistics, Gameplay Admin, and Technical dashboards.
 
@@ -23,11 +23,11 @@ Prometheus retains 90 days of history. It scrapes MainMod runtime and JVM metric
 | `make` | Build and start all services. Follow all service logs. |
 | `make restart` | Restart all running services. |
 | `make stop` | Stop all services. |
-| `make logs SERVICE=mc` | Print all retained Minecraft logs, then follow new logs. Use `api` or `web` for the other services. |
-| `make shell SERVICE=mc` | Open a Minecraft container shell. Use `api` or `web` for the other services. |
+| `make logs SERVICE=mc` | Print all retained Minecraft logs, then follow new logs. Use `api`, `web`, or `velocity` for another service. |
+| `make shell SERVICE=mc` | Open a Minecraft container shell. Use `api`, `web`, or `velocity` for another service. |
 | `make console` | Attach to the Minecraft server console. |
 
-`make` invokes item staging, protobuf generation, datagen, the mod build, and the resource-pack build. It then builds all images and starts all services.
+`make` invokes item staging, protobuf generation, datagen, the Fabric mod build, the Velocity plugin build, and the resource-pack build. It then builds all images and starts all services.
 
 Use `make db-generate`, `make db-check`, and `make db-studio` for database work. Commit generated migration files from `services/api/drizzle/`.
 

@@ -8,6 +8,7 @@ import { SitePage } from '@/components/site-page';
 import {
 	formatDisplayDate,
 	getDailyAnswer,
+	getDifficulty,
 	getMaxGuesses,
 	getNextUKMidnight,
 	getStorageKey,
@@ -28,8 +29,8 @@ const KEYBOARD = [
 const SHARE_TILES: Record<TileResult, string> = {
 	correct: '🟩',
 	present: '🟨',
-	absent: '⬛',
-	skipped: '⬜',
+	absent: '⬜',
+	skipped: '⬛',
 };
 const WORD_SETS = WORDLE_WORDS.reduce((sets, word) => {
 	if (!sets.has(word.length)) sets.set(word.length, new Set());
@@ -186,6 +187,7 @@ export function WordleGame({
 				: 'Out of guesses. Come back tomorrow.'
 			: "Today's puzzle is ready.");
 	const canCopy = gameOver && guesses.length > 0;
+	const difficulty = getDifficulty(puzzle.answer.length);
 	const layout = getWordleLayout(puzzle.answer.length);
 	const styles = {
 		'--word-length': puzzle.answer.length,
@@ -201,7 +203,7 @@ export function WordleGame({
 			guess.result.map((result) => SHARE_TILES[result]).join(''),
 		);
 		const text = [
-			`MMU Minecraft Society Wordle ${formatDisplayDate(puzzle.dateKey)} ${score}/${puzzle.maxGuesses} (➡️ https://mmuminecraftsociety.co.uk/wordle/)`,
+			`MMU Minecraft Society Wordle ${formatDisplayDate(puzzle.dateKey)} — ${difficulty} (${puzzle.answer.length} letters) ${score}/${puzzle.maxGuesses} (➡️ https://mmuminecraftsociety.co.uk/wordle/)`,
 			...rows,
 		].join('\n');
 		try {
@@ -228,7 +230,9 @@ export function WordleGame({
 			<section className="dashboard wordleDashboard" style={styles}>
 				<div className="wordleTopline">
 					<h2>MMU Minecraft Society Wordle</h2>
-					<span>{formatDisplayDate(puzzle.dateKey)}</span>
+					<span>
+						{formatDisplayDate(puzzle.dateKey)} · {difficulty} · {puzzle.answer.length} letters
+					</span>
 				</div>
 				<div className="wordleRules">
 					<strong>Rules</strong>

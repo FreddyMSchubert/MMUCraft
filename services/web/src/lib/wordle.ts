@@ -13,7 +13,20 @@ const MS_PER_DAY = 86_400_000;
 const UK_TIME_ZONE = 'Europe/London';
 
 export function getMaxGuesses(wordLength: number) {
+	if (wordLength === 4) return BASE_GUESS_COUNT + 1;
 	return BASE_GUESS_COUNT + Math.ceil(Math.max(0, wordLength - 5) / 2);
+}
+
+export function getDifficulty(wordLength: number) {
+	if (wordLength <= 3) return 'Hard';
+	if (wordLength === 4) return 'Tricky';
+	if (wordLength === 5) return 'Normal';
+	if (wordLength === 6) return 'Tricky';
+	if (wordLength === 7) return 'Hard';
+	if (wordLength === 8) return 'Difficult';
+	if (wordLength === 9) return 'Extreme';
+	if (wordLength === 10) return 'Ultra';
+	return 'Impossible';
 }
 
 export function getDailyAnswer(words: readonly string[], dateKey: string) {

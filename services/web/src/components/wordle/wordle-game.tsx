@@ -205,7 +205,7 @@ export function WordleGame({
 			guess.result.map((result) => SHARE_TILES[result]).join(''),
 		);
 		const text = [
-			`MMU Minecraft Society Wordle ${formatDisplayDate(puzzle.dateKey)} — ${difficulty} (${puzzle.answer.length} letters) ${score}/${puzzle.maxGuesses} (➡️ https://mmuminecraftsociety.co.uk/wordle/)`,
+			`MMU Minecraft Society Wordle ${formatDisplayDate(puzzle.dateKey)} — ${difficulty.emoji} ${difficulty.label} (${puzzle.answer.length} letters) ${score}/${puzzle.maxGuesses} (➡️ https://mmuminecraftsociety.co.uk/wordle/)`,
 			...rows,
 		].join('\n');
 		try {
@@ -236,10 +236,13 @@ export function WordleGame({
 			<section className="dashboard wordleDashboard" style={styles}>
 				<div className="wordleTopline">
 					<h2>MMU Minecraft Society Wordle</h2>
-					<span>
-						{formatDisplayDate(puzzle.dateKey)} · {difficulty} · {puzzle.answer.length}{' '}
-						letters
-					</span>
+					<div className="wordleMeta">
+						<span>{formatDisplayDate(puzzle.dateKey)}</span>
+						<span className={`wordleDifficulty ${difficulty.tone}`}>
+							{difficulty.emoji} {difficulty.label}
+						</span>
+						<span>{puzzle.answer.length} letters</span>
+					</div>
 				</div>
 				<div className="wordleRules">
 					<strong>Rules</strong>

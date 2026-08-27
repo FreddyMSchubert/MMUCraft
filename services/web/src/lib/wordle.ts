@@ -18,15 +18,14 @@ export function getMaxGuesses(wordLength: number) {
 }
 
 export function getDifficulty(wordLength: number) {
-	if (wordLength <= 3) return 'Hard';
-	if (wordLength === 4) return 'Tricky';
-	if (wordLength === 5) return 'Normal';
-	if (wordLength === 6) return 'Tricky';
-	if (wordLength === 7) return 'Hard';
-	if (wordLength === 8) return 'Difficult';
-	if (wordLength === 9) return 'Extreme';
-	if (wordLength === 10) return 'Ultra';
-	return 'Impossible';
+	if (wordLength <= 3 || wordLength === 7) return { label: 'Hard', emoji: '⚔️', tone: 'hard' };
+	if (wordLength === 4 || wordLength === 6)
+		return { label: 'Tricky', emoji: '🧩', tone: 'tricky' };
+	if (wordLength === 5) return { label: 'Normal', emoji: '🙂', tone: 'normal' };
+	if (wordLength === 8) return { label: 'Difficult', emoji: '🧗', tone: 'difficult' };
+	if (wordLength === 9) return { label: 'Extreme', emoji: '🔥', tone: 'extreme' };
+	if (wordLength === 10) return { label: 'Ultra', emoji: '⚡', tone: 'ultra' };
+	return { label: 'Impossible', emoji: '☠️', tone: 'impossible' };
 }
 
 export function getDailyAnswer(words: readonly string[], dateKey: string) {

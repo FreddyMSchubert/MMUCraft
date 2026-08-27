@@ -173,6 +173,10 @@ export function DailiesTab() {
 	}
 
 	const loginBonusClaimed = data.tasks.some((task) => task.id === 'login_bonus' && task.claimed);
+	const remainingDailies = Math.max(
+		0,
+		data.completion.totalTaskCount - data.completion.completedTaskCount,
+	);
 
 	return (
 		<div className="dailiesPanel">
@@ -319,10 +323,7 @@ export function DailiesTab() {
 					className={`dailyCompletion${data.completion.claimed ? ' claimed' : ''}`}
 					aria-labelledby="daily-completion-title"
 				>
-					<h4 id="daily-completion-title">
-						Completed {data.completion.completedTaskCount}/
-						{data.completion.totalTaskCount}
-					</h4>
+					<h4 id="daily-completion-title">Full completion reward</h4>
 					<div
 						className="dailyCompletionCalculation"
 						aria-label={`Completion reward: ${data.completion.rewardDabloons} dabloons`}
@@ -344,21 +345,23 @@ export function DailiesTab() {
 						<span>Total</span>
 						<strong>{data.completion.rewardDabloons} dabloons</strong>
 					</div>
-					{data.completion.eligible && (
-						<button
-							type="button"
-							disabled={
-								data.completion.claimed || claimingTaskId === 'daily_completion'
-							}
-							onClick={() => void finishDailies()}
-						>
-							{data.completion.claimed
-								? 'Dailies finished'
-								: claimingTaskId === 'daily_completion'
-									? 'Finishing...'
-									: 'Finish dailies'}
-						</button>
-					)}
+					<button
+						type="button"
+						disabled={
+							!data.completion.eligible ||
+							data.completion.claimed ||
+							claimingTaskId === 'daily_completion'
+						}
+						onClick={() => void finishDailies()}
+					>
+						{data.completion.claimed
+							? 'Dailies finished'
+							: claimingTaskId === 'daily_completion'
+								? 'Finishing...'
+								: remainingDailies > 0
+									? `${remainingDailies} daily${remainingDailies === 1 ? '' : 'ies'} to do`
+									: 'All done - claim bonus'}
+					</button>
 				</section>
 			</div>
 		</div>

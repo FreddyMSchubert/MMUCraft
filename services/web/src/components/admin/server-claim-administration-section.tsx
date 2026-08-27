@@ -34,9 +34,16 @@ export function ServerClaimAdministrationSection({
 	useEffect(() => {
 		if (!active) return;
 		let cancelled = false;
-		void load().catch((caught: unknown) => {
-			if (!cancelled) setError(readError(caught));
-		});
+
+		async function loadInitial() {
+			try {
+				await load();
+			} catch (caught) {
+				if (!cancelled) setError(readError(caught));
+			}
+		}
+
+		void loadInitial();
 		return () => {
 			cancelled = true;
 		};

@@ -115,12 +115,10 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 				<div>
 					<h3>Fish Compendium</h3>
 					<p className="tabSubtitle">
-						The server has its own fish, and different species appear in different
-						places, weather, times and moon phases. The compendium tells you what to
-						look for and records the biggest and smallest catches on the server.
-					</p>
-					<p className="tabNote">
-						Your first catch of each species is saved, and new catches appear here live.
+						The server has its own fish, along with way more powerful item rewards for
+						fishing. The compendium tracks the fish you caught. For all infos on
+						fishing, check out the{' '}
+						<a href="/play/knowledge/fishing">fishing knowledge book</a>.
 					</p>
 				</div>
 				<label className="fishSort">

@@ -9,6 +9,7 @@ import { PlayersModule } from './players/players.module';
 import { DiscordModule } from './discord/discord.module';
 import { ShutdownModule } from './shutdown';
 import { MonitoringModule } from './monitoring/monitoring.module';
+import { VelocityModule } from './velocity/velocity.module';
 
 @Module({
 	imports: [
@@ -21,6 +22,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
 		GiftsModule,
 		ShutdownModule,
 		MonitoringModule,
+		VelocityModule,
 	],
 	controllers: [HealthController],
 })

@@ -321,7 +321,7 @@ export function useAdminTabController({
 		if (
 			!(await confirm({
 				title: 'Apply this player restriction?',
-				message: `${player.minecraftUsername} will be signed out everywhere, blocked from website sign-in, and blacklisted from the Minecraft server. Check the selected player and any related external accounts before you apply this action: ${restriction} ${player.minecraftUsername}.`,
+				message: `${player.minecraftUsername} will be signed out everywhere, blocked from website sign-in, and blocked by Velocity. Check the selected player and any related external accounts before you apply this action: ${restriction} ${player.minecraftUsername}.`,
 				confirmLabel: banMode === 'permanent' ? 'Permanently ban' : 'Apply timeout',
 				confirmTone: 'danger',
 				tone: 'danger',
@@ -341,8 +341,6 @@ export function useAdminTabController({
 				const body = await response.json().catch(() => null);
 				if (!response.ok)
 					throw new Error(apiMessage(body, 'Failed to apply the ban or timeout'));
-				const result = apiBody<{ minecraftSynchronized: boolean }>(body);
-
 				setBanPlayerId('');
 				setTimeoutEndsAt('');
 				await showAlert({
@@ -352,9 +350,6 @@ export function useAdminTabController({
 						<>
 							<PlayerName name={player.minecraftUsername} color={player.color} /> was{' '}
 							{banMode === 'permanent' ? 'permanently banned' : 'put in timeout'}.
-							{result.minecraftSynchronized
-								? ''
-								: ' Minecraft will synchronize when the player next attempts to join.'}
 						</>
 					),
 				});
@@ -389,7 +384,6 @@ export function useAdminTabController({
 			const body = await response.json().catch(() => null);
 			if (!response.ok)
 				throw new Error(apiMessage(body, 'Failed to remove the ban or timeout'));
-			const result = apiBody<{ minecraftSynchronized: boolean }>(body);
 			setActivePlayerBans((current) =>
 				current.filter((candidate) => candidate.userId !== ban.userId),
 			);
@@ -400,9 +394,6 @@ export function useAdminTabController({
 					<>
 						<PlayerName name={ban.minecraftUsername} color={ban.color} /> can sign in
 						and join again.
-						{result.minecraftSynchronized
-							? ''
-							: ' Minecraft will synchronize when the player next attempts to join.'}
 					</>
 				),
 			});

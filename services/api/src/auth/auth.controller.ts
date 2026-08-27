@@ -23,40 +23,37 @@ export class AuthController {
 	}
 
 	@Post('minecraft-username')
-	async setMinecraftUsername(@Body() body: { flowId?: string; minecraftUsername?: string }) {
-		return await this.signup.setMinecraftUsername(
-			body.flowId ?? '',
-			body.minecraftUsername ?? '',
-		);
+	setMinecraftUsername(@Body() body: { flowId?: string; minecraftUsername?: string }) {
+		return this.signup.setMinecraftUsername(body.flowId ?? '', body.minecraftUsername ?? '');
 	}
 
 	@Post('verify-minecraft')
-	async verifyMinecraft(@Body() body: { flowId?: string; code?: string }) {
-		await this.signup.verifyMinecraftCode(body.flowId ?? '', body.code ?? '');
+	verifyMinecraft(@Body() body: { flowId?: string; code?: string }) {
+		this.signup.verifyMinecraftCode(body.flowId ?? '', body.code ?? '');
 	}
 
 	@Post('accept-rules')
-	async acceptRules(
+	acceptRules(
 		@Body() body: { flowId?: string },
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		const session = await this.signup.acceptRules(body.flowId ?? '');
+		const session = this.signup.acceptRules(body.flowId ?? '');
 		this.setSessionCookie(response, session.token, session.maxAgeSeconds);
 
 		return { ok: true };
 	}
 
 	@Post('signin')
-	async signIn(@Body() body: { email?: string }, @Req() request: FastifyRequest) {
-		return await this.signin.start(body.email ?? '', clientIp(request));
+	signIn(@Body() body: { email?: string }, @Req() request: FastifyRequest) {
+		return this.signin.start(body.email ?? '', clientIp(request));
 	}
 
 	@Post('verify-signin')
-	async verifySignIn(
+	verifySignIn(
 		@Body() body: { flowId?: string; code?: string },
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		const session = await this.signin.verify(body.flowId ?? '', body.code ?? '');
+		const session = this.signin.verify(body.flowId ?? '', body.code ?? '');
 		this.setSessionCookie(response, session.token, session.maxAgeSeconds);
 
 		return { ok: true };

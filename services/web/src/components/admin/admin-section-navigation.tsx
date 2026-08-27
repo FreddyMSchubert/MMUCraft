@@ -11,6 +11,8 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'discord-commands', label: 'Discord commands' },
 	{ section: 'dailies', label: 'Dailies' },
 	{ section: 'bans', label: 'Ban / timeout' },
+	{ section: 'servers', label: 'Servers' },
+	{ section: 'maintenance', label: 'Maintenance' },
 ];
 
 export function AdminSectionNavigation({ activeSection }: { activeSection: AdminSection }) {

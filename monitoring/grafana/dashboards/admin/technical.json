@@ -829,12 +829,61 @@
 				"sizing": "auto",
 				"valueMode": "color"
 			}
+		},
+		{
+			"id": 23,
+			"type": "logs",
+			"title": "Container Logs",
+			"gridPos": { "h": 16, "w": 24, "x": 0, "y": 65 },
+			"datasource": { "type": "loki", "uid": "loki" },
+			"targets": [
+				{
+					"datasource": { "type": "loki", "uid": "loki" },
+					"editorMode": "code",
+					"expr": "{service=~\"$service\"}",
+					"queryType": "range",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": {}, "overrides": [] },
+			"options": {
+				"dedupStrategy": "none",
+				"enableLogDetails": true,
+				"prettifyLogMessage": false,
+				"showCommonLabels": false,
+				"showLabels": true,
+				"showTime": true,
+				"sortOrder": "Descending",
+				"wrapLogMessage": true
+			}
 		}
 	],
 	"refresh": "15s",
 	"schemaVersion": 42,
 	"tags": ["admin", "technical", "mmucraft"],
-	"templating": { "list": [] },
+	"templating": {
+		"list": [
+			{
+				"allValue": ".+",
+				"current": { "text": "All", "value": "$__all" },
+				"datasource": { "type": "loki", "uid": "loki" },
+				"definition": "label_values(service)",
+				"includeAll": true,
+				"label": "Service",
+				"name": "service",
+				"options": [],
+				"query": {
+					"label": "service",
+					"refId": "LokiVariableQueryEditor-VariableQuery",
+					"stream": "",
+					"type": 1
+				},
+				"refresh": 1,
+				"sort": 1,
+				"type": "query"
+			}
+		]
+	},
 	"time": { "from": "now-24h", "to": "now" },
 	"timepicker": {},
 	"timezone": "browser",

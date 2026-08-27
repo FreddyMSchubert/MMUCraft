@@ -7,6 +7,8 @@ limit_req_zone $binary_remote_addr zone=sse_per_ip:10m rate=2r/s;
 limit_conn_zone $binary_remote_addr zone=connections_per_ip:10m;
 limit_req_status 429;
 limit_conn_status 429;
+access_log off;
+error_log /dev/stderr warn;
 
 server {
     listen 8080;

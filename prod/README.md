@@ -12,4 +12,4 @@ The homepage defaults to the society Discord invite and Instagram account. Overr
 
 Grafana is available at `https://PUBLIC_HOST/grafana/`. Sign in as `admin` with `GRAFANA_ADMIN_PASSWORD` from `.env`. Anonymous access and Grafana account creation are disabled. Website accounts are not affected.
 
-Grafana contains the Statistics, Gameplay Admin, and Technical dashboards. Prometheus retains 90 days of history in a Docker volume.
+Grafana contains the Statistics, Gameplay Admin, and Technical dashboards. The Technical dashboard shows container logs and lets you filter them by service. Prometheus retains 90 days of metrics, and Loki retains 14 days of logs. Both services store their data in Docker volumes.

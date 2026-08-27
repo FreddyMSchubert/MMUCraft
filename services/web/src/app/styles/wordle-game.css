@@ -40,7 +40,68 @@
 	font-size: 1.25rem;
 }
 
-.wordleTopline span {
+.wordleMeta {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	flex-wrap: wrap;
+	color: #ffd166;
+	font-size: 0.86rem;
+	font-weight: 700;
+}
+
+.wordleDifficulty {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 6px 10px;
+	border: 1px solid currentcolor;
+	border-radius: 999px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	font-size: 0.78rem;
+	font-weight: 900;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.wordleDifficulty.normal {
+	color: #d8f5a2;
+	background: rgba(108, 153, 60, 0.35);
+}
+
+.wordleDifficulty.tricky {
+	color: #ffe490;
+	background: rgba(174, 126, 24, 0.38);
+}
+
+.wordleDifficulty.hard {
+	color: #ffb37b;
+	background: rgba(179, 73, 28, 0.4);
+}
+
+.wordleDifficulty.difficult {
+	color: #ff9b9b;
+	background: rgba(171, 45, 45, 0.42);
+}
+
+.wordleDifficulty.extreme {
+	color: #ff96d0;
+	background: rgba(151, 36, 98, 0.48);
+}
+
+.wordleDifficulty.ultra {
+	color: #d7b3ff;
+	background: rgba(91, 46, 155, 0.52);
+}
+
+.wordleDifficulty.impossible {
+	color: #fff;
+	background: rgba(35, 35, 35, 0.9);
+}
+
+.wordleMeta > span:not(.wordleDifficulty) {
 	color: #ffd166;
 	font-size: 0.86rem;
 	font-weight: 700;
@@ -299,6 +360,9 @@
 		align-items: flex-start;
 		flex-direction: column;
 		gap: 5px;
+	}
+	.wordleMeta {
+		justify-content: flex-start;
 	}
 	.wordleBoard {
 		gap: 5px;

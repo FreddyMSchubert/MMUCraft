@@ -13,7 +13,7 @@ If you want to, you still can treat enchanting and anvils just as usual. The def
 - Anvils never become "Too Expensive", have no prior-work penalty (meaning XP cost doesn't grow larger and larger), and cost at most 30 levels.
 :::
 
-![Librarian with a book on their lectern](/assets/knowledge/survival/enchanting-and-anvils/book-on-lectern.png)
+![Librarian with a book on their lectern](/assets/knowledge/survival/enchanting-anvils/book-on-lectern.png)
 
 ## Duplicating books
 
@@ -21,7 +21,7 @@ Put an enchanted book on the lectern used by a librarian. The librarian's first 
 
 The normal random-pick book trades remain.
 
-![Librarian offering book duplicate trade](/assets/knowledge/survival/enchanting-and-anvils/book-duplicated.png)
+![Librarian offering book duplicate trade](/assets/knowledge/survival/enchanting-anvils/book-duplicated.png)
 
 ## Anvils
 
@@ -29,32 +29,32 @@ Anvils are now a lot more freely usable. It is hard to list all changes here, as
 
 **Copying the enchantments from a sword onto a book**:
 
-![Copying the enchantments from a sword onto a book](/assets/knowledge/survival/enchanting-and-anvils/copying_from_sword_onto_book.png)
+![Copying the enchantments from a sword onto a book](/assets/knowledge/survival/enchanting-anvils/copying_from_sword_onto_book.png)
 
 **Merging two items now actually carries over the enchantments from both**:
 
-![Merging two items now actually carries over the enchantments from both](/assets/knowledge/survival/enchanting-and-anvils/merging_items_carries_enchs.png)
+![Merging two items now actually carries over the enchantments from both](/assets/knowledge/survival/enchanting-anvils/merging_items_carries_enchs.png)
 
 **Enchantments now get summed, so Sharpness 1 + Sharpness 2 = Sharpness 3**:
 
-![Enchantments now get summed](/assets/knowledge/survival/enchanting-and-anvils/ench_level_summing.png)
+![Enchantments now get summed](/assets/knowledge/survival/enchanting-anvils/ench_level_summing.png)
 
 **Renaming an item now costs no more XP**:
 
-![Renaming an item now costs no more XP](/assets/knowledge/survival/enchanting-and-anvils/renaming_free.png)
+![Renaming an item now costs no more XP](/assets/knowledge/survival/enchanting-anvils/renaming_free.png)
 
 **Cheaper item repairing (Normally this would only remove a third of the damage)**:
 
-![Cheaper item repairing](/assets/knowledge/survival/enchanting-and-anvils/cheaper_item_repairing.png)
+![Cheaper item repairing](/assets/knowledge/survival/enchanting-anvils/cheaper_item_repairing.png)
 
 **Netherite Stuff can be repaired with diamonds (at a slightly reduced rate)**:
 
-![Netherite Stuff can be repaired with diamonds](/assets/knowledge/survival/enchanting-and-anvils/repairing_netherite_with_diamonds.png)
+![Netherite Stuff can be repaired with diamonds](/assets/knowledge/survival/enchanting-anvils/repairing_netherite_with_diamonds.png)
 
-**And there's tons more stuff! The logic has been reworked from the ground up to be ore permissive.**
+**And there's tons more stuff! The logic has been reworked from the ground up to be more permissive.**
 
 :::tip
-You can now also repair anvils. To do so, just right click an anvil with an iron block (100 % chance to repair), or with an iron ingot (1/9 chance to reapir anvil - care to test your luck?).
+You can now also repair anvils. To do so, just right click an anvil with an iron block (100 % chance to repair), or with an iron ingot (1/9 chance to repair the anvil - care to test your luck?).
 :::
 
 ## Alternative book obtaining
@@ -109,7 +109,7 @@ Instead of getting them randomly, it's way more reliable (and fun) to get books 
 
 ### Fortune I recipe
 
-![Fortune I Crafting Recipe](/assets/knowledge/survival/enchanting-and-anvils/fortune_recipe.png)
+![Fortune I Crafting Recipe](/assets/knowledge/survival/enchanting-anvils/fortune_recipe.png)
 
 :::recipe-items
 [Coal](https://minecraft.wiki/w/Coal) · [Copper Ingot](https://minecraft.wiki/w/Copper_Ingot) · [Emerald](https://minecraft.wiki/w/Emerald) · [Gold Ingot](https://minecraft.wiki/w/Gold_Ingot) · [Iron Ingot](https://minecraft.wiki/w/Iron_Ingot) · [Lapis Lazuli](https://minecraft.wiki/w/Lapis_Lazuli) · [Diamond](https://minecraft.wiki/w/Diamond) · [Book](https://minecraft.wiki/w/Book) · [Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) → Fortune I Enchanted Book

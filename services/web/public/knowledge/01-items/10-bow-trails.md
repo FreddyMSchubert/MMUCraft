@@ -13,6 +13,6 @@ Just put the bow in the crafting table along with whatever colours you want the 
 
 ![Recipe](/assets/knowledge/items/bow-trails/recipe.png)
 
-Want a new set of colours? Just put the bow back in the crafting table with the new dyes and the trail with reset to the new palette.
+Want a new set of colours? Just put the bow back in the crafting table with the new dyes and the trail will reset to the new palette.
 
 ![Target-Practice](/assets/knowledge/items/bow-trails/target-practice.png)

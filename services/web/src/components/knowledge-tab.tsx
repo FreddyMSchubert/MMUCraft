@@ -194,8 +194,8 @@ export function KnowledgeTab({
 			<div className="knowledgeTop">
 				<h3>Knowledge</h3>
 				<p className="tabSubtitle">
-					Here you can find info on all the unique features of this server. You can unlock
-					more entries by finding Knowledge Books in-game!
+					Here you can find all infos on this server & the society. You can unlock more
+					entries by finding Knowledge Books in-game!
 				</p>
 			</div>
 			<label className="knowledgeMobileNav" htmlFor="knowledge-page-select">

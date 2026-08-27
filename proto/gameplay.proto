@@ -145,6 +145,7 @@ message ClaimData {
   string color_hex = 9;
   string owner_color_hex = 10;
   bool has_custom_color = 11;
+  bool is_server_claim = 12;
 }
 
 message ClaimsSnapshot {

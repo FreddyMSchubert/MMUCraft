@@ -85,7 +85,7 @@ public final class ClaimsManager {
             try {
                 UUID ownerUuid = parseUuid(data.getOwnerUuid());
                 Set<UUID> members = new HashSet<>();
-                members.add(ownerUuid);
+                if (!data.getIsServerClaim()) members.add(ownerUuid);
                 for (String memberUuid : data.getMemberUuidsList()) {
                     members.add(parseUuid(memberUuid));
                 }
@@ -97,7 +97,7 @@ public final class ClaimsManager {
                         new Claim(
                                 data.getId(), ownerUuid, data.getOwnerName(), name,
                                 parseColor(data.getColorHex()), parseColor(data.getOwnerColorHex()),
-                                data.getHasCustomColor(), Set.copyOf(members)
+                                data.getHasCustomColor(), data.getIsServerClaim(), Set.copyOf(members)
                         )
                 );
             } catch (IllegalArgumentException ignored) {
@@ -113,7 +113,8 @@ public final class ClaimsManager {
         Map<ClaimKey, Claim> next = new HashMap<>(claims);
         next.replaceAll((key, claim) -> claim.ownerUuid().equals(ownerUuid)
                 ? new Claim(claim.id(), claim.ownerUuid(), claim.ownerName(), claim.name(),
-                        claim.hasCustomColor() ? claim.colorRgb() : color, color, claim.hasCustomColor(), claim.members())
+                        claim.hasCustomColor() ? claim.colorRgb() : color, color, claim.hasCustomColor(),
+                        claim.serverClaim(), claim.members())
                 : claim);
         claims = Map.copyOf(next);
         BOSS_BAR_STATES.clear();
@@ -156,10 +157,9 @@ public final class ClaimsManager {
     }
 
     public static boolean canAccess(ServerPlayer player, Level level, BlockPos pos) {
-        if (isOperator(player)) return true;
-        if (!ready) return false;
+        if (!ready) return isOperator(player);
         Claim claim = claimAt(level, pos);
-        return claim == null || claim.members().contains(player.getUUID());
+        return claim == null || canAccessClaim(player, claim);
     }
 
     public static boolean isClaimed(Level level, BlockPos pos) {
@@ -191,8 +191,6 @@ public final class ClaimsManager {
         }
         Entity owner = projectile.getOwner();
         ServerPlayer player = owner instanceof ServerPlayer serverPlayer ? serverPlayer : null;
-        if (player != null && isOperator(player)) return null;
-
         Vec3 end = start.add(movement);
         BlockPos blockedPos = BlockGetter.traverseBlocks(
                 start,
@@ -200,7 +198,7 @@ public final class ClaimsManager {
                 projectile,
                 (ignored, pos) -> {
                     Claim claim = claimAt(projectile.level(), pos);
-                    return claim != null && (player == null || !claim.members().contains(player.getUUID()))
+                    return claim != null && (player == null || !canAccessClaim(player, claim))
                             ? pos.immutable()
                             : null;
                 },
@@ -243,10 +241,13 @@ public final class ClaimsManager {
                 continue;
             }
 
-            bar.setName(Component.literal(claim.ownerName() + "'s claim: ")
-                    .withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.ownerColorRgb())))
-                    .append(Component.literal(claim.name())
-                            .withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.colorRgb())))));
+            Component name = Component.literal(claim.name())
+                    .withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.colorRgb())));
+            bar.setName(claim.serverClaim()
+                    ? name
+                    : Component.literal(claim.ownerName() + "'s claim: ")
+                            .withStyle(Style.EMPTY.withColor(withMinimumLightness(claim.ownerColorRgb())))
+                            .append(name));
             bar.setVisible(true);
         }
     }
@@ -279,6 +280,11 @@ public final class ClaimsManager {
     private static boolean isOperator(ServerPlayer player) {
         MinecraftServer server = player.level().getServer();
         return server != null && server.getPlayerList().isOp(player.nameAndId());
+    }
+
+    private static boolean canAccessClaim(ServerPlayer player, Claim claim) {
+        return claim.members().contains(player.getUUID())
+                || (!claim.serverClaim() && isOperator(player));
     }
 
     private static UUID parseUuid(String value) {
@@ -323,6 +329,6 @@ public final class ClaimsManager {
     }
 
     private record Claim(String id, UUID ownerUuid, String ownerName, String name, int colorRgb,
-                         int ownerColorRgb, boolean hasCustomColor, Set<UUID> members) {
+                         int ownerColorRgb, boolean hasCustomColor, boolean serverClaim, Set<UUID> members) {
     }
 }

@@ -108,6 +108,7 @@ export const claims = sqliteTable(
 		chunk_z: integer('chunk_z').notNull(),
 		claim_name: text('claim_name').notNull().default('My claim'),
 		color_hex: text('color_hex'),
+		is_server: integer('is_server').notNull().default(0),
 		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 	},
 	(table) => [
@@ -117,6 +118,7 @@ export const claims = sqliteTable(
 			table.chunk_z,
 		),
 		index('claims_owner_user_id_idx').on(table.owner_user_id),
+		check('claims_is_server_check', sql`${table.is_server} in (0, 1)`),
 	],
 );
 

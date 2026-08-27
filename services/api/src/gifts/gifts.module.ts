@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
+import { ClaimsModule } from '../claims/claims.module';
 import { DatabaseModule } from '../database/database.module';
 import { PlayersModule } from '../players/players.module';
 import { AdminController } from './admin.controller';
@@ -11,7 +12,7 @@ import { GiftCodeRedemptionService } from './gift-code-redemption.service';
 import { PlayerRoleAdministrationService } from './player-role-administration.service';
 
 @Module({
-	imports: [AuthModule, DatabaseModule, PlayersModule],
+	imports: [AuthModule, ClaimsModule, DatabaseModule, PlayersModule],
 	controllers: [AdminController, CountdownsController, GiftsController],
 	providers: [
 		CountdownsService,

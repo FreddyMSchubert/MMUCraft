@@ -3,7 +3,8 @@ import type { AdminSection } from './admin-data.types';
 
 const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'members', label: 'Member list' },
-	{ section: 'claims', label: 'Claims' },
+	{ section: 'claims', label: 'Player claims' },
+	{ section: 'server-claims', label: 'Server claims' },
 	{ section: 'whitelist', label: 'Email whitelist' },
 	{ section: 'gifts', label: 'Gift codes' },
 	{ section: 'countdowns', label: 'Countdowns' },

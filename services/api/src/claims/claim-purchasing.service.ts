@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { count, eq } from 'drizzle-orm';
+import { and, count, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../auth/auth-session.service';
 import { claims, DatabaseService } from '../database/database.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
@@ -65,55 +65,43 @@ export class ClaimPurchasingService {
 	}
 
 	async create(user: AuthenticatedUser, input: CreateClaimInput) {
-		const dimension = normalizeDimension(input.dimension);
-		const chunkX = normalizeChunkCoordinate(input.chunkX);
-		const chunkZ = normalizeChunkCoordinate(input.chunkZ);
 		const { priceDabloons } = this.getNextClaimPricing(user);
-		const claimId = randomUUID();
-		const inserted = this.database.connection
-			.insert(claims)
-			.values({
-				id: claimId,
-				owner_user_id: user.id,
-				dimension,
-				chunk_x: chunkX,
-				chunk_z: chunkZ,
-				created_at_unix_ms: Date.now(),
-			})
-			.onConflictDoNothing()
-			.run();
-		if (inserted.changes !== 1) {
-			throw new ConflictException('That chunk has already been claimed.');
-		}
+		const claim = this.insertClaim(user, input, false);
 
 		let purchase: PurchaseClaimResponse;
 		try {
 			purchase = await this.minecraft.gameplay<PurchaseClaimResponse>('PurchaseClaim', {
 				minecraft_username: user.minecraftUsername,
-				dimension,
-				chunk_x: chunkX,
-				chunk_z: chunkZ,
+				dimension: claim.dimension,
+				chunk_x: claim.chunkX,
+				chunk_z: claim.chunkZ,
 				price_dabloons: priceDabloons,
 			});
 		} catch {
-			this.database.connection.delete(claims).where(eq(claims.id, claimId)).run();
+			this.database.connection.delete(claims).where(eq(claims.id, claim.id)).run();
 			throw new BadRequestException(
 				'You have to stay online in that chunk while buying the claim.',
 			);
 		}
 
 		if (!purchase.purchased) {
-			this.database.connection.delete(claims).where(eq(claims.id, claimId)).run();
+			this.database.connection.delete(claims).where(eq(claims.id, claim.id)).run();
 			throw new BadRequestException(purchase.message || 'The claim could not be purchased.');
 		}
 
 		await this.minecraftSynchronization.synchronize();
 		return {
 			created: true,
-			claimId,
+			claimId: claim.id,
 			balanceDabloons: purchase.balance_dabloons,
 			message: purchase.message,
 		};
+	}
+
+	async createServerClaim(user: AuthenticatedUser, input: CreateClaimInput) {
+		const claim = this.insertClaim(user, input, true);
+		await this.minecraftSynchronization.synchronize();
+		return { created: true, claimId: claim.id };
 	}
 
 	getNextClaimPricing(user: AuthenticatedUser) {
@@ -121,7 +109,7 @@ export class ClaimPurchasingService {
 			this.database.connection
 				.select({ value: count() })
 				.from(claims)
-				.where(eq(claims.owner_user_id, user.id))
+				.where(and(eq(claims.owner_user_id, user.id), eq(claims.is_server, 0)))
 				.get()?.value ?? 0;
 		const nextClaimNumber = claimCount + 1;
 		const memberPriceDabloons = claimPriceDabloons(nextClaimNumber, MEMBER_CLAIM_PRICE_GROWTH);
@@ -136,6 +124,33 @@ export class ClaimPurchasingService {
 			normalPlayerPriceDabloons,
 			priceDabloons: user.isMember ? memberPriceDabloons : normalPlayerPriceDabloons,
 		};
+	}
+
+	private insertClaim(user: AuthenticatedUser, input: CreateClaimInput, isServer: boolean) {
+		const claim = {
+			id: randomUUID(),
+			dimension: normalizeDimension(input.dimension),
+			chunkX: normalizeChunkCoordinate(input.chunkX),
+			chunkZ: normalizeChunkCoordinate(input.chunkZ),
+		};
+		const inserted = this.database.connection
+			.insert(claims)
+			.values({
+				id: claim.id,
+				owner_user_id: user.id,
+				dimension: claim.dimension,
+				chunk_x: claim.chunkX,
+				chunk_z: claim.chunkZ,
+				claim_name: isServer ? 'Server claim' : 'My claim',
+				is_server: isServer ? 1 : 0,
+				created_at_unix_ms: Date.now(),
+			})
+			.onConflictDoNothing()
+			.run();
+		if (inserted.changes !== 1) {
+			throw new ConflictException('That chunk has already been claimed.');
+		}
+		return claim;
 	}
 }
 

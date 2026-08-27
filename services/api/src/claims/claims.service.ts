@@ -58,7 +58,7 @@ export class ClaimsService {
 			claims: this.database.connection
 				.select()
 				.from(claims)
-				.where(eq(claims.owner_user_id, user.id))
+				.where(and(eq(claims.owner_user_id, user.id), eq(claims.is_server, 0)))
 				.all()
 				.map((claim) => ({
 					id: claim.id,
@@ -91,6 +91,15 @@ export class ClaimsService {
 
 	async updateAppearance(user: AuthenticatedUser, claimId: string, input: ClaimAppearanceInput) {
 		this.requireOwnedClaim(user.id, claimId);
+		return this.saveAppearance(claimId, input);
+	}
+
+	async updateServerAppearance(claimId: string, input: ClaimAppearanceInput) {
+		this.requireServerClaim(claimId);
+		return this.saveAppearance(claimId, input);
+	}
+
+	private async saveAppearance(claimId: string, input: ClaimAppearanceInput) {
 		const name = normalizeClaimName(input.name);
 		const color = normalizeOptionalColor(input.color, 'Claim color');
 		this.database.connection
@@ -162,9 +171,25 @@ export class ClaimsService {
 		const claim = this.database.connection
 			.select()
 			.from(claims)
-			.where(and(eq(claims.id, claimId), eq(claims.owner_user_id, ownerUserId)))
+			.where(
+				and(
+					eq(claims.id, claimId),
+					eq(claims.owner_user_id, ownerUserId),
+					eq(claims.is_server, 0),
+				),
+			)
 			.get();
 		if (!claim) throw new NotFoundException('Claim not found.');
+		return claim;
+	}
+
+	private requireServerClaim(claimId: string) {
+		const claim = this.database.connection
+			.select()
+			.from(claims)
+			.where(and(eq(claims.id, claimId), eq(claims.is_server, 1)))
+			.get();
+		if (!claim) throw new NotFoundException('Server claim not found.');
 		return claim;
 	}
 

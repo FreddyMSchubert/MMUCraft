@@ -18,7 +18,7 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 			{activeSection === 'claims' && (
 				<section className="adminSection">
 					<div className="adminSectionHeader">
-						<h3>Claims</h3>
+						<h3>Player claims</h3>
 						<p>
 							Review claimed chunks and delete claims that block or grief other
 							players.

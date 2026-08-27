@@ -127,7 +127,7 @@ export class ShopPurchasesService {
 			});
 		} catch {
 			throw new BadRequestException(
-				'You have to be online on the server to buy from the shop.',
+				'Join the Minecraft server, then try this purchase again while you are online.',
 			);
 		}
 
@@ -136,7 +136,7 @@ export class ShopPurchasesService {
 				purchase.message ||
 					(purchase.online
 						? 'Purchase failed.'
-						: 'You have to be online on the server to buy from the shop.'),
+						: 'Join the Minecraft server, then try this purchase again while you are online.'),
 			);
 		}
 		return {

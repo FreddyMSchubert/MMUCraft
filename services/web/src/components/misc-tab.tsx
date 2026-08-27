@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { type SyntheticEvent, useState } from 'react';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import { useSiteSettings } from '@/lib/site-settings';
 
@@ -95,16 +96,13 @@ function SettingToggle({
 }
 
 function GiftCodeSection() {
+	const { showAlert } = useSiteAlert();
 	const [code, setCode] = useState('');
 	const [busy, setBusy] = useState(false);
-	const [message, setMessage] = useState('');
-	const [error, setError] = useState('');
 
 	function redeem(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
 		setBusy(true);
-		setMessage('');
-		setError('');
 		void (async () => {
 			try {
 				const response = await fetch('/api/gift-codes/redeem', {
@@ -115,9 +113,23 @@ function GiftCodeSection() {
 				const body = await response.json().catch(() => null);
 				if (!response.ok) throw new Error(apiMessage(body, 'Could not redeem gift code'));
 				setCode('');
-				setMessage(apiMessage(body, 'Gift code redeemed.'));
+				await showAlert({
+					title: 'Gift code redeemed',
+					message: apiMessage(
+						body,
+						'The reward was added to your Minecraft account. Check your dabloon balance in-game.',
+					),
+					tone: 'success',
+				});
 			} catch (caught) {
-				setError(caught instanceof Error ? caught.message : 'Could not redeem gift code');
+				await showAlert({
+					title: 'Could not redeem this gift code',
+					message:
+						caught instanceof Error
+							? caught.message
+							: 'Check the code, make sure you are online in Minecraft, and try again.',
+					tone: 'danger',
+				});
 			} finally {
 				setBusy(false);
 			}
@@ -152,8 +164,6 @@ function GiftCodeSection() {
 					<button disabled={busy}>{busy ? 'Redeeming...' : 'Redeem'}</button>
 				</div>
 			</form>
-			{message && <p className="adminMessage">{message}</p>}
-			{error && <p className="authError">{error}</p>}
 		</section>
 	);
 }

@@ -50,7 +50,8 @@ export class ClaimPurchasingService {
 			.catch(() => null);
 		if (!response?.online) {
 			throw new BadRequestException(
-				response?.message ?? 'You have to be online on the server to claim a chunk.',
+				response?.message ??
+					'Join the Minecraft server and stand in the chunk you want to claim, then try again.',
 			);
 		}
 

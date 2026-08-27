@@ -11,7 +11,6 @@
 .dailiesHeader p,
 .dailyTask h4,
 .dailyTask p,
-.dailyMessage,
 .dailyFootnote {
 	margin: 0;
 }
@@ -192,10 +191,6 @@
 .dailyTask.completed button:disabled {
 	background: rgba(43, 145, 79, 0.3);
 	color: #86f5aa;
-}
-
-.dailyMessage {
-	color: #88ff88;
 }
 
 .dailyFootnote {

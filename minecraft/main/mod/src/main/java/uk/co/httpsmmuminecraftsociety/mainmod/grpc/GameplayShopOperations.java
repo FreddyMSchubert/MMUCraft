@@ -26,7 +26,7 @@ final class GameplayShopOperations {
                     .setPurchased(false)
                     .setOnline(false)
                     .setBalanceDabloons(0)
-                    .setMessage("You have to be online on the server to buy from the shop.")
+                    .setMessage("Join the Minecraft server, then try this purchase again while you are online.")
                     .build();
         }
 
@@ -37,7 +37,10 @@ final class GameplayShopOperations {
                     .setPurchased(false)
                     .setOnline(true)
                     .setBalanceDabloons(balance)
-                    .setMessage("You need " + price + " dabloons, but only have " + balance + ".")
+                    .setMessage(
+                            request.getDisplayName() + " costs " + price + " dabloons, but your balance is " + balance
+                                    + ". Earn " + (price - balance) + " more and try again."
+                    )
                     .build();
         }
 
@@ -47,7 +50,7 @@ final class GameplayShopOperations {
                     .setPurchased(false)
                     .setOnline(true)
                     .setBalanceDabloons(balance)
-                    .setMessage("That shop item is not available on the server.")
+                    .setMessage(request.getDisplayName() + " is not available on the Minecraft server right now.")
                     .build();
         }
 
@@ -56,7 +59,7 @@ final class GameplayShopOperations {
                     .setPurchased(false)
                     .setOnline(true)
                     .setBalanceDabloons(MoneyHelper.GetBalance(player))
-                    .setMessage("Could not take the dabloons for this purchase.")
+                    .setMessage("Your balance changed before the purchase finished. Check it in-game and try again.")
                     .build();
         }
 
@@ -79,7 +82,10 @@ final class GameplayShopOperations {
                 .setPurchased(true)
                 .setOnline(true)
                 .setBalanceDabloons(remaining)
-                .setMessage("Purchased " + request.getItemId() + " for " + price + " dabloons.")
+                .setMessage(
+                        "Purchased " + request.getDisplayName() + " for " + price + " dabloons. Your remaining balance is "
+                                + remaining + "."
+                )
                 .build();
     }
 

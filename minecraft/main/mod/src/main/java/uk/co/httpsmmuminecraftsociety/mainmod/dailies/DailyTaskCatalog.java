@@ -732,7 +732,7 @@ final class DailyTaskCatalog {
             )),
             // Activity
             weighted(5, List.of(
-                    option(3, false, false, new PlayTimeTask(), 5, 0.15D, 20, 45, "⏰", "Stay a While", "Play on the server for at least {count} minutes today.")
+                    option(3, false, false, new PlayTimeTask(), 5, 0.15D, 20, 60, "⏰", "Stay a While", "Play on the server for at least {count} minutes today.")
             )),
             // Zombie curing
             weighted(2, List.of(

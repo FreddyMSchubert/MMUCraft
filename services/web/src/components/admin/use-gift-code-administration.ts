@@ -1,7 +1,7 @@
 'use client';
 
 import { type SyntheticEvent, useEffect, useState } from 'react';
-import type { Dispatch, ReactNode, SetStateAction } from 'react';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiBody, apiMessage, errorMessage } from './admin-api';
 import type { AdminSection } from './admin-data.types';
 import { makeDifferentGiftCodeSuggestion, makeGiftCodeSuggestion } from './gift-code-suggestions';
@@ -9,14 +9,11 @@ import { makeDifferentGiftCodeSuggestion, makeGiftCodeSuggestion } from './gift-
 export function useGiftCodeAdministration({
 	activeSection,
 	reload,
-	setError,
-	setMessage,
 }: {
 	activeSection: AdminSection;
 	reload: () => Promise<void>;
-	setError: Dispatch<SetStateAction<string>>;
-	setMessage: Dispatch<SetStateAction<ReactNode>>;
 }) {
+	const { showAlert } = useSiteAlert();
 	const [suggestion, setSuggestion] = useState('enchanted-pickaxe');
 	const [code, setCode] = useState('');
 	const [amount, setAmount] = useState('');
@@ -42,8 +39,6 @@ export function useGiftCodeAdministration({
 	function createGiftCode(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
 		setSavingGiftCode(true);
-		setError('');
-		setMessage('');
 
 		void (async () => {
 			try {
@@ -68,10 +63,18 @@ export function useGiftCodeAdministration({
 				setMembersOnly(false);
 				setExpiresAt('');
 				setSuggestion(makeGiftCodeSuggestion());
-				setMessage(`Created ${created.code} for ${created.amountDabloons} dabloons.`);
 				await reload();
+				await showAlert({
+					title: 'Gift code created',
+					message: `${created.code} is ready to redeem for ${created.amountDabloons} dabloons. Share it only with the intended players.`,
+					tone: 'success',
+				});
 			} catch (caught) {
-				setError(errorMessage(caught, 'Failed to create gift code'));
+				await showAlert({
+					title: 'Could not create the gift code',
+					message: errorMessage(caught, 'Check the code settings and try again.'),
+					tone: 'danger',
+				});
 			} finally {
 				setSavingGiftCode(false);
 			}

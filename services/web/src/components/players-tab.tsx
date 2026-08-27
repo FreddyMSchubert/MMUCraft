@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LeaderboardPodium } from '@/components/leaderboard-podium';
 import { PlayerName } from '@/components/player-name';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import {
 	DEFAULT_COLUMN_KEYS,
@@ -29,9 +30,9 @@ export function PlayersTab({
 	playerName?: string;
 	onSelectPlayer: (playerName: string | null, replace?: boolean) => void;
 }) {
+	const { showAlert } = useSiteAlert();
 	const [data, setData] = useState<PlayersResponse | null>(null);
 	const [error, setError] = useState('');
-	const [message, setMessage] = useState('');
 	const [columnKeys, setColumnKeys] = useState(DEFAULT_COLUMN_KEYS);
 	const [sort, setSort] = useState<{ key: string; direction: SortDirection }>({
 		key: 'minecraft.custom.minecraft:play_time',
@@ -184,8 +185,18 @@ export function PlayersTab({
 	}
 
 	async function handleSaved() {
-		setMessage('Profile saved.');
-		await load();
+		try {
+			await load();
+		} catch (caught) {
+			await showAlert({
+				title: 'Profile saved, but refresh failed',
+				message:
+					caught instanceof Error
+						? caught.message
+						: 'Reload the page to see the saved profile.',
+				tone: 'danger',
+			});
+		}
 	}
 
 	async function loadMore() {
@@ -195,7 +206,14 @@ export function PlayersTab({
 		try {
 			await load(data.page + 1, true);
 		} catch (caught) {
-			setError(caught instanceof Error ? caught.message : 'Failed to load more players');
+			await showAlert({
+				title: 'Could not load more players',
+				message:
+					caught instanceof Error
+						? caught.message
+						: 'The next page of players could not be loaded. Please try again.',
+				tone: 'danger',
+			});
 		} finally {
 			setLoadingMore(false);
 		}
@@ -212,8 +230,6 @@ export function PlayersTab({
 	if (selectedPlayer) {
 		return (
 			<div className="playersPanel">
-				{message && <p className="dailyMessage">{message}</p>}
-				{error && <p className="authError">{error}</p>}
 				<PlayerProfilePanel
 					player={selectedPlayer}
 					statOptions={statOptions}
@@ -221,7 +237,14 @@ export function PlayersTab({
 						onSelectPlayer(null, true);
 					}}
 					onSaved={() => void handleSaved()}
-					onError={setError}
+					onError={(message) => {
+						if (message)
+							void showAlert({
+								title: 'Could not save the profile',
+								message,
+								tone: 'danger',
+							});
+					}}
 				/>
 			</div>
 		);
@@ -250,8 +273,6 @@ export function PlayersTab({
 				)}
 			</div>
 
-			{message && <p className="dailyMessage">{message}</p>}
-			{error && <p className="authError">{error}</p>}
 			{leaderboardOption && (
 				<LeaderboardPodium
 					entries={podiumEntries}

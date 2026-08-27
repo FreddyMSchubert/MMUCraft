@@ -78,7 +78,7 @@ export class DailyGeneratedTaskClaimsService {
 			this.dailyStorage.deleteClaim(user.id, task.id, periodKey);
 			if (error instanceof BadRequestException) throw error;
 			throw new BadRequestException(
-				'You have to be online on the server to claim this daily.',
+				'Join the Minecraft server with this account, then claim the daily again while you are online.',
 			);
 		}
 	}

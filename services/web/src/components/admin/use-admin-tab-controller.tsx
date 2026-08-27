@@ -1,8 +1,8 @@
 'use client';
 
 import { type SyntheticEvent, useState } from 'react';
-import type { ReactNode } from 'react';
 import { PlayerName } from '@/components/player-name';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiBody, apiMessage, errorMessage, formatDateTime } from './admin-api';
 import {
 	ADMIN_PAGE_SIZE,
@@ -22,9 +22,9 @@ export function useAdminTabController({
 	isSuperAdmin: boolean;
 	section?: string;
 }) {
+	const { confirm, showAlert } = useSiteAlert();
 	const activeSection = normalizeAdminSection(section);
 	const [error, setError] = useState('');
-	const [message, setMessage] = useState<ReactNode>('');
 	const adminSectionData = useAdminSectionData(activeSection, setError);
 	const {
 		players,
@@ -52,28 +52,27 @@ export function useAdminTabController({
 	const giftCodeAdministration = useGiftCodeAdministration({
 		activeSection,
 		reload: load,
-		setError,
-		setMessage,
 	});
 	const countdownAdministration = useCountdownAdministration({
 		setCountdowns,
 		reload: load,
-		setError,
-		setMessage,
 	});
 
 	async function setMembership(player: AdminPlayer, isMember: boolean) {
 		const action = isMember ? 'mark as a society member' : 'remove society membership from';
-		if (!window.confirm(`Are you sure you want to ${action} this player?`)) return;
 		if (
-			player.isExternal &&
-			!window.confirm(`This player is external. Are you sure you want to ${action} them?`)
+			!(await confirm({
+				title: `${isMember ? 'Grant' : 'Remove'} society membership?`,
+				message: `This will ${action} ${player.minecraftUsername}.${player.isExternal ? ' This is an external player, so verify that you selected the correct account.' : ''}`,
+				confirmLabel: isMember ? 'Grant membership' : 'Remove membership',
+				confirmTone: isMember ? 'primary' : 'danger',
+				tone: isMember ? 'info' : 'danger',
+			}))
 		)
 			return;
 
 		setBusyPlayerId(player.id);
 		setError('');
-		setMessage('');
 		try {
 			const response = await fetch(`/api/admin/players/${player.id}/membership`, {
 				method: 'PATCH',
@@ -88,14 +87,12 @@ export function useAdminTabController({
 					candidate.id === player.id ? { ...candidate, isMember } : candidate,
 				),
 			);
-			setMessage(
-				<>
-					<PlayerName name={player.minecraftUsername} color={player.color} /> is{' '}
-					{isMember ? 'now' : 'no longer'} marked as a member.
-				</>,
-			);
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to update membership'));
+			await showFailure(
+				'Could not update membership',
+				caught,
+				'No membership changes were made.',
+			);
 		} finally {
 			setBusyPlayerId(null);
 		}
@@ -103,15 +100,18 @@ export function useAdminTabController({
 
 	async function setCommittee(player: AdminPlayer, isCommittee: boolean) {
 		const action = isCommittee ? 'give committee access to' : 'remove committee access from';
-		if (!window.confirm(`Are you sure you want to ${action} this player?`)) return;
 		if (
-			player.isExternal &&
-			!window.confirm(`This player is external. Are you sure you want to ${action} them?`)
+			!(await confirm({
+				title: `${isCommittee ? 'Grant' : 'Remove'} committee access?`,
+				message: `This will ${action} ${player.minecraftUsername}.${player.isExternal ? ' This is an external player, so verify that you selected the correct account.' : ''}`,
+				confirmLabel: isCommittee ? 'Grant access' : 'Remove access',
+				confirmTone: isCommittee ? 'primary' : 'danger',
+				tone: isCommittee ? 'info' : 'danger',
+			}))
 		)
 			return;
 		setBusyPlayerId(player.id);
 		setError('');
-		setMessage('');
 		try {
 			const response = await fetch(`/api/admin/players/${player.id}/committee`, {
 				method: 'PATCH',
@@ -127,14 +127,12 @@ export function useAdminTabController({
 					candidate.id === player.id ? { ...candidate, isCommittee } : candidate,
 				),
 			);
-			setMessage(
-				<>
-					<PlayerName name={player.minecraftUsername} color={player.color} />{' '}
-					{isCommittee ? 'now has' : 'no longer has'} committee access.
-				</>,
-			);
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to update committee access'));
+			await showFailure(
+				'Could not update committee access',
+				caught,
+				'No committee-access changes were made.',
+			);
 		} finally {
 			setBusyPlayerId(null);
 		}
@@ -145,30 +143,42 @@ export function useAdminTabController({
 		const player = players.find((candidate) => candidate.id === Number(dailyPlayerId));
 		if (
 			!player ||
-			!window.confirm(
-				`Regenerate today's uncompleted dailies for ${player.minecraftUsername}?`,
-			)
+			!(await confirm({
+				title: 'Regenerate this player’s dailies?',
+				message: `Today’s unfinished daily tasks for ${player.minecraftUsername} will be replaced. Completed tasks and claimed rewards will stay unchanged.`,
+				confirmLabel: 'Regenerate dailies',
+			}))
 		)
 			return;
 
 		setRefreshingDailies(true);
 		setError('');
-		setMessage('');
 		try {
 			const response = await fetch(`/api/admin/dailies/${player.id}/refresh`, {
 				method: 'POST',
 			});
 			const body = await response.json().catch(() => null);
 			if (!response.ok) throw new Error(apiMessage(body, 'Failed to regenerate dailies'));
-			setMessage(apiMessage(body, 'Dailies regenerated.'));
+			await showAlert({
+				title: 'Dailies regenerated',
+				message: apiMessage(
+					body,
+					`${player.minecraftUsername} now has a new set of unfinished daily tasks.`,
+				),
+				tone: 'success',
+			});
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to regenerate dailies'));
+			await showFailure(
+				'Could not regenerate dailies',
+				caught,
+				'The player’s current daily tasks were not changed.',
+			);
 		} finally {
 			setRefreshingDailies(false);
 		}
 	}
 
-	function addWhitelistedEmail(event: SyntheticEvent<HTMLFormElement>) {
+	async function addWhitelistedEmail(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
 		const responsiblePlayer = players.find(
 			(player) =>
@@ -177,19 +187,25 @@ export function useAdminTabController({
 				}) === 0 && !player.isExternal,
 		);
 		if (!responsiblePlayer) {
-			setError('Select a responsible user from the username list');
+			await showAlert({
+				title: 'Choose a responsible player',
+				message:
+					'Select an internal server player from the username suggestions. This account will pay for and be responsible for the external invitation.',
+				tone: 'danger',
+			});
 			return;
 		}
 		const invitePrice = responsiblePlayer.isMember ? 150 : 250;
 		if (
-			!window.confirm(
-				`Charge the selected player ${invitePrice} dabloons to invite ${whitelistEmail}? They must be online.`,
-			)
+			!(await confirm({
+				title: 'Add this signup invitation?',
+				message: `${responsiblePlayer.minecraftUsername} will pay ${invitePrice} dabloons so ${whitelistEmail} can create an account. The responsible player must stay online in Minecraft until the charge finishes.`,
+				confirmLabel: `Charge ${invitePrice} dabloons`,
+			}))
 		)
 			return;
 		setUpdatingWhitelist(true);
 		setError('');
-		setMessage('');
 
 		void (async () => {
 			try {
@@ -212,19 +228,28 @@ export function useAdminTabController({
 
 				setWhitelistEmail('');
 				setResponsibleUsername('');
-				setMessage(
-					<>
-						{result.email} can now sign up.{' '}
-						<PlayerName
-							name={responsiblePlayer.minecraftUsername}
-							color={responsiblePlayer.color}
-						/>{' '}
-						paid {result.priceDabloons} dabloons and has {result.balanceDabloons} left.
-					</>,
-				);
+				await showAlert({
+					title: 'Signup invitation added',
+					tone: 'success',
+					message: (
+						<>
+							{result.email} can now sign up.{' '}
+							<PlayerName
+								name={responsiblePlayer.minecraftUsername}
+								color={responsiblePlayer.color}
+							/>{' '}
+							paid {result.priceDabloons} dabloons and has {result.balanceDabloons}{' '}
+							left.
+						</>
+					),
+				});
 				await load();
 			} catch (caught) {
-				setError(errorMessage(caught, 'Failed to whitelist the email address'));
+				await showFailure(
+					'Could not add the signup invitation',
+					caught,
+					'The email was not added and the responsible player was not charged.',
+				);
 			} finally {
 				setUpdatingWhitelist(false);
 			}
@@ -232,10 +257,18 @@ export function useAdminTabController({
 	}
 
 	async function removeWhitelistedEmail(email: string) {
-		if (!window.confirm(`Remove ${email} from the signup whitelist?`)) return;
+		if (
+			!(await confirm({
+				title: 'Remove this signup invitation?',
+				message: `${email} will no longer be able to use this invitation to create an account.`,
+				confirmLabel: 'Remove invitation',
+				confirmTone: 'danger',
+				tone: 'danger',
+			}))
+		)
+			return;
 		setUpdatingWhitelist(true);
 		setError('');
-		setMessage('');
 		try {
 			const response = await fetch(
 				`/api/admin/email-whitelist/${encodeURIComponent(email)}`,
@@ -245,19 +278,26 @@ export function useAdminTabController({
 			if (!response.ok)
 				throw new Error(apiMessage(body, 'Failed to remove the email address'));
 			setWhitelistedEmails((current) => current.filter((entry) => entry.email !== email));
-			setMessage(`${email} was removed from the signup whitelist.`);
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to remove the email address'));
+			await showFailure(
+				'Could not remove the signup invitation',
+				caught,
+				`${email} is still on the signup whitelist.`,
+			);
 		} finally {
 			setUpdatingWhitelist(false);
 		}
 	}
 
-	function applyPlayerBan(event: SyntheticEvent<HTMLFormElement>) {
+	async function applyPlayerBan(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
 		const player = players.find((candidate) => candidate.id === Number(banPlayerId));
 		if (!player) {
-			setError('Select a player');
+			await showAlert({
+				title: 'Choose a player',
+				message: 'Select the exact Minecraft account that should receive the restriction.',
+				tone: 'danger',
+			});
 			return;
 		}
 		const expiresAtUnixMs = banMode === 'temporary' ? new Date(timeoutEndsAt).getTime() : null;
@@ -265,7 +305,11 @@ export function useAdminTabController({
 			expiresAtUnixMs !== null &&
 			(!Number.isFinite(expiresAtUnixMs) || expiresAtUnixMs <= Date.now())
 		) {
-			setError('Select a timeout date and time in the future');
+			await showAlert({
+				title: 'Choose a future timeout end',
+				message: 'A temporary timeout must end later than the current date and time.',
+				tone: 'danger',
+			});
 			return;
 		}
 
@@ -275,27 +319,18 @@ export function useAdminTabController({
 			restriction = `put in timeout until ${formatDateTime(expiresAtUnixMs)}`;
 		}
 		if (
-			!window.confirm(
-				`Warning 1 of 3: ${player.minecraftUsername} will be signed out everywhere and unable to sign in. Continue?`,
-			)
-		)
-			return;
-		if (
-			!window.confirm(
-				`Warning 2 of 3: ${player.minecraftUsername} will be blacklisted from Minecraft. Check that you selected the correct player and any related external accounts. Continue?`,
-			)
-		)
-			return;
-		if (
-			!window.confirm(
-				`Warning 3 of 3: Apply this action and ${restriction} ${player.minecraftUsername}?`,
-			)
+			!(await confirm({
+				title: 'Apply this player restriction?',
+				message: `${player.minecraftUsername} will be signed out everywhere, blocked from website sign-in, and blacklisted from the Minecraft server. Check the selected player and any related external accounts before you apply this action: ${restriction} ${player.minecraftUsername}.`,
+				confirmLabel: banMode === 'permanent' ? 'Permanently ban' : 'Apply timeout',
+				confirmTone: 'danger',
+				tone: 'danger',
+			}))
 		)
 			return;
 
 		setUpdatingBan(true);
 		setError('');
-		setMessage('');
 		void (async () => {
 			try {
 				const response = await fetch('/api/admin/player-bans', {
@@ -310,18 +345,26 @@ export function useAdminTabController({
 
 				setBanPlayerId('');
 				setTimeoutEndsAt('');
-				setMessage(
-					<>
-						<PlayerName name={player.minecraftUsername} color={player.color} /> was{' '}
-						{banMode === 'permanent' ? 'permanently banned' : 'put in timeout'}.
-						{result.minecraftSynchronized
-							? ''
-							: ' Minecraft will synchronize when the player next attempts to join.'}
-					</>,
-				);
+				await showAlert({
+					title: banMode === 'permanent' ? 'Player banned' : 'Player timed out',
+					tone: 'success',
+					message: (
+						<>
+							<PlayerName name={player.minecraftUsername} color={player.color} /> was{' '}
+							{banMode === 'permanent' ? 'permanently banned' : 'put in timeout'}.
+							{result.minecraftSynchronized
+								? ''
+								: ' Minecraft will synchronize when the player next attempts to join.'}
+						</>
+					),
+				});
 				await load();
 			} catch (caught) {
-				setError(errorMessage(caught, 'Failed to apply the ban or timeout'));
+				await showFailure(
+					'Could not apply the player restriction',
+					caught,
+					'The player’s access was not changed.',
+				);
 			} finally {
 				setUpdatingBan(false);
 			}
@@ -329,10 +372,16 @@ export function useAdminTabController({
 	}
 
 	async function removePlayerBan(ban: ActivePlayerBan) {
-		if (!window.confirm(`Remove the ban or timeout for ${ban.minecraftUsername}?`)) return;
+		if (
+			!(await confirm({
+				title: 'Restore this player’s access?',
+				message: `${ban.minecraftUsername} will be able to sign in to the website and join the Minecraft server again.`,
+				confirmLabel: 'Restore access',
+			}))
+		)
+			return;
 		setUpdatingBan(true);
 		setError('');
-		setMessage('');
 		try {
 			const response = await fetch(`/api/admin/player-bans/${ban.userId}`, {
 				method: 'DELETE',
@@ -344,17 +393,25 @@ export function useAdminTabController({
 			setActivePlayerBans((current) =>
 				current.filter((candidate) => candidate.userId !== ban.userId),
 			);
-			setMessage(
-				<>
-					<PlayerName name={ban.minecraftUsername} color={ban.color} /> can sign in and
-					join again.
-					{result.minecraftSynchronized
-						? ''
-						: ' Minecraft will synchronize when the player next attempts to join.'}
-				</>,
-			);
+			await showAlert({
+				title: 'Player access restored',
+				tone: 'success',
+				message: (
+					<>
+						<PlayerName name={ban.minecraftUsername} color={ban.color} /> can sign in
+						and join again.
+						{result.minecraftSynchronized
+							? ''
+							: ' Minecraft will synchronize when the player next attempts to join.'}
+					</>
+				),
+			});
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to remove the ban or timeout'));
+			await showFailure(
+				'Could not restore player access',
+				caught,
+				'The ban or timeout is still active.',
+			);
 		} finally {
 			setUpdatingBan(false);
 		}
@@ -374,7 +431,11 @@ export function useAdminTabController({
 			setClaims((current) => [...current, ...result.claims]);
 			setClaimsHaveMore(Boolean(result.hasMore));
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to load more claims'));
+			await showFailure(
+				'Could not load more claims',
+				caught,
+				'The next page of claims could not be loaded. Please try again.',
+			);
 		} finally {
 			setLoadingMore(null);
 		}
@@ -382,14 +443,17 @@ export function useAdminTabController({
 
 	async function removeClaim(claim: AdminClaim) {
 		if (
-			!window.confirm(
-				`Delete ${claim.minecraftUsername}'s claim "${claim.name}" at ${claim.dimension} (${claim.chunkX}, ${claim.chunkZ})?`,
-			)
+			!(await confirm({
+				title: 'Delete this player claim?',
+				message: `${claim.minecraftUsername}’s claim “${claim.name}” at ${claim.dimension} (${claim.chunkX}, ${claim.chunkZ}) will lose all protection. The player will not receive a refund.`,
+				confirmLabel: 'Delete claim',
+				confirmTone: 'danger',
+				tone: 'danger',
+			}))
 		)
 			return;
 		setBusyClaimId(claim.id);
 		setError('');
-		setMessage('');
 		try {
 			const response = await fetch(`/api/admin/claims/${encodeURIComponent(claim.id)}`, {
 				method: 'DELETE',
@@ -397,14 +461,12 @@ export function useAdminTabController({
 			const body = await response.json().catch(() => null);
 			if (!response.ok) throw new Error(apiMessage(body, 'Failed to delete the claim'));
 			setClaims((current) => current.filter((candidate) => candidate.id !== claim.id));
-			setMessage(
-				<>
-					Deleted <PlayerName name={claim.minecraftUsername} color={claim.color} />
-					&apos;s claim &quot;{claim.name}&quot;.
-				</>,
-			);
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to delete the claim'));
+			await showFailure(
+				'Could not delete the player claim',
+				caught,
+				'The claim is still protected.',
+			);
 		} finally {
 			setBusyClaimId(null);
 		}
@@ -434,7 +496,6 @@ export function useAdminTabController({
 		setDailyPlayerId,
 		refreshingDailies,
 		error,
-		message,
 		setMembership,
 		setCommittee,
 		refreshDailies,
@@ -445,6 +506,10 @@ export function useAdminTabController({
 		loadMoreClaims,
 		removeClaim,
 	};
+
+	function showFailure(title: string, caught: unknown, fallback: string) {
+		return showAlert({ title, message: errorMessage(caught, fallback), tone: 'danger' });
+	}
 }
 
 export type AdminTabController = ReturnType<typeof useAdminTabController>;

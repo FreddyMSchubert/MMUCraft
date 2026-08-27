@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { MinecraftItemIcon } from '@/components/minecraft-item-icon';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 
 interface DailyTask {
@@ -49,9 +50,9 @@ interface DailiesResponse {
 }
 
 export function DailiesTab() {
+	const { showAlert } = useSiteAlert();
 	const [data, setData] = useState<DailiesResponse | null>(null);
 	const [error, setError] = useState('');
-	const [message, setMessage] = useState('');
 	const [claimingTaskId, setClaimingTaskId] = useState<string | null>(null);
 
 	const load = useCallback(async () => {
@@ -94,9 +95,7 @@ export function DailiesTab() {
 		source.onmessage = (messageEvent) => {
 			const event = JSON.parse(String(messageEvent.data)) as { type?: string };
 			if (event.type === 'daily-update') {
-				void load().catch((caught: unknown) => {
-					setError(errorMessage(caught));
-				});
+				void load().catch(() => undefined);
 			}
 		};
 		return () => {
@@ -106,7 +105,6 @@ export function DailiesTab() {
 
 	async function claimTask(task: DailyTask) {
 		setError('');
-		setMessage('');
 		setClaimingTaskId(task.id);
 
 		const path =
@@ -123,18 +121,24 @@ export function DailiesTab() {
 			const body = await response.json().catch(() => null);
 
 			if (!response.ok) {
-				const text = apiMessage(
-					body,
-					'You have to be online on the server to receive the money.',
+				throw new Error(
+					apiMessage(
+						body,
+						'Join the Minecraft server, then try to claim this daily again.',
+					),
 				);
-				window.alert(text);
-				throw new Error(text);
 			}
 
-			setMessage(apiMessage(body, 'Daily bonus claimed.'));
 			await load();
 		} catch (caught) {
-			setError(caught instanceof Error ? caught.message : 'Failed to claim daily bonus');
+			await showAlert({
+				title: `Could not claim “${task.name}”`,
+				message:
+					caught instanceof Error
+						? caught.message
+						: 'The daily reward could not be claimed. Please try again.',
+				tone: 'danger',
+			});
 		} finally {
 			setClaimingTaskId(null);
 		}
@@ -142,7 +146,6 @@ export function DailiesTab() {
 
 	async function finishDailies() {
 		setError('');
-		setMessage('');
 		setClaimingTaskId('daily_completion');
 
 		try {
@@ -150,15 +153,32 @@ export function DailiesTab() {
 			const body = await response.json().catch(() => null);
 
 			if (!response.ok) {
-				const text = apiMessage(body, 'Failed to finish dailies.');
-				window.alert(text);
-				throw new Error(text);
+				throw new Error(
+					apiMessage(
+						body,
+						'Complete every daily and stay online in Minecraft before claiming the completion reward.',
+					),
+				);
 			}
 
-			setMessage(apiMessage(body, 'Dailies finished!'));
 			await load();
+			await showAlert({
+				title: 'Daily set complete',
+				message: apiMessage(
+					body,
+					`You received ${data?.completion.rewardDabloons ?? 'your'} completion-reward dabloons. Come back tomorrow for a new set.`,
+				),
+				tone: 'success',
+			});
 		} catch (caught) {
-			setError(caught instanceof Error ? caught.message : 'Failed to finish dailies');
+			await showAlert({
+				title: 'Could not claim the completion reward',
+				message:
+					caught instanceof Error
+						? caught.message
+						: 'The completion reward could not be claimed. Please try again.',
+				tone: 'danger',
+			});
 		} finally {
 			setClaimingTaskId(null);
 		}
@@ -197,9 +217,6 @@ export function DailiesTab() {
 					<strong>{data.loginStreak}</strong>
 				</div>
 			</div>
-
-			{message && <p className="dailyMessage">{message}</p>}
-			{error && <p className="authError">{error}</p>}
 
 			<div className="dailyTasks">
 				{data.tasks.map((task) => (
@@ -382,8 +399,4 @@ function DailyProgress({ task }: { task: DailyTask }) {
 			</progress>
 		</div>
 	);
-}
-
-function errorMessage(error: unknown) {
-	return error instanceof Error ? error.message : 'Failed to load dailies';
 }

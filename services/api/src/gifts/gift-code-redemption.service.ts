@@ -28,14 +28,20 @@ export class GiftCodeRedemptionService {
 			.get();
 
 		if (!giftCode) {
-			throw new BadRequestException('That gift code does not exist');
+			throw new BadRequestException(
+				'That gift code does not exist. Check every character and try again.',
+			);
 		}
 		const now = Date.now();
 		if (giftCode.expires_at_unix_ms !== null && giftCode.expires_at_unix_ms <= now) {
-			throw new BadRequestException('That gift code has expired');
+			throw new BadRequestException(
+				'That gift code has expired and can no longer be redeemed.',
+			);
 		}
 		if (giftCode.members_only === 1 && !user.isMember) {
-			throw new BadRequestException('That gift code is for society members only');
+			throw new BadRequestException(
+				'That gift code can only be redeemed by society members.',
+			);
 		}
 		this.reserveRedemption(giftCode, user.id, now);
 		let moneyGranted = false;
@@ -56,7 +62,8 @@ export class GiftCodeRedemptionService {
 			if (!result.granted) {
 				this.releaseReservation(giftCode.code, user.id, now);
 				throw new BadRequestException(
-					result.message || 'You have to be online on the server to redeem a gift code.',
+					result.message ||
+						'Join the Minecraft server, then redeem the gift code again while you are online.',
 				);
 			}
 			moneyGranted = true;

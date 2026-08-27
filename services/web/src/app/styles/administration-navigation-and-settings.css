@@ -163,8 +163,7 @@
 .miscPanel p,
 .giftInstructions h4,
 .giftInstructions ol,
-.giftCodeHistory h4,
-.adminMessage {
+.giftCodeHistory h4 {
 	margin: 0;
 }
 

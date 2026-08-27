@@ -15,6 +15,8 @@ That is to say, you won't lose ***SOULBOUND*** items under the server's [death a
 
 :::note
 The ***SOULBOUND*** enchantment is not compatible with Mending, similar to how you can't have Infinity and Mending on the same bow.
+
+That sounds bad, but **don't worry**: Reparing tools in an anvil is way cheaper on the server and can be done infinitely, without rising XP costs. [All infos here](/player/knowledge/enchanting-and-anvils)
 :::
 
 ## Obtaining

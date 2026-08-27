@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { LaunchCountdown, useLaunchLive } from '@/components/launch/launch-countdown';
 import { MinecraftTitle } from '@/components/landing/minecraft-title';
+import { useSiteAlert } from '@/components/site-alert';
 
 const MEMBERSHIP_URL = 'https://www.theunionmmu.org/groups/26-2-minecraft-society';
 
@@ -16,6 +17,7 @@ interface MinecraftHomeProps {
 
 export function MinecraftHome(props: MinecraftHomeProps) {
 	const launchLive = useLaunchLive();
+	const { showAlert } = useSiteAlert();
 
 	return (
 		<main className="minecraftHome">
@@ -37,11 +39,13 @@ export function MinecraftHome(props: MinecraftHomeProps) {
 						href={props.discordUrl}
 						label="Discord"
 						missingMessage="The Discord portal is still being enchanted. Check back soon!"
+						onMissing={showAlert}
 					/>
 					<ExternalMenuLink
 						href={props.instagramUrl}
 						label="Instagram"
 						missingMessage="The Instagram creeper ate the link. Check back soon!"
+						onMissing={showAlert}
 					/>
 					<div className="minecraftButtonRow">
 						<Link className="minecraftButton" href="/wordle">
@@ -75,10 +79,12 @@ function ExternalMenuLink({
 	href,
 	label,
 	missingMessage,
+	onMissing,
 }: {
 	href: string;
 	label: string;
 	missingMessage: string;
+	onMissing: (message: string) => Promise<unknown>;
 }) {
 	if (!href)
 		return (
@@ -86,7 +92,7 @@ function ExternalMenuLink({
 				className="minecraftButton"
 				type="button"
 				onClick={() => {
-					window.alert(missingMessage);
+					void onMissing(missingMessage);
 				}}
 			>
 				{label}

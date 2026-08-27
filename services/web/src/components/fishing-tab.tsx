@@ -80,9 +80,7 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 				.then((next) => {
 					setData(next);
 				})
-				.catch((caught: unknown) => {
-					setError(errorMessage(caught));
-				});
+				.catch(() => undefined);
 			launchFireworks(fireworks.current, event.rarity ?? 'common', stopTimer);
 		};
 		return () => {
@@ -159,7 +157,6 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 					setTagFilters(new Set());
 				}}
 			/>
-			{error && <p className="authError">{error}</p>}
 			{visibleFish.length ? (
 				<FishGrid fish={visibleFish} compact={false} player={player} />
 			) : (
@@ -200,9 +197,7 @@ export function MiniFishCompendium({ userId }: { userId: number }) {
 					.then((next) => {
 						setData(next);
 					})
-					.catch((caught: unknown) => {
-						setError(errorMessage(caught));
-					});
+					.catch(() => undefined);
 			}
 		};
 		return () => {
@@ -221,15 +216,16 @@ export function MiniFishCompendium({ userId }: { userId: number }) {
 					</span>
 				)}
 			</summary>
-			{error && <p className="authError">{error}</p>}
 			{data ? (
 				<FishGrid
 					fish={sortAndFilterFish(data.fish, new Set(), new Set(), 'rarity')}
 					compact
 					player={data.players.find((player) => player.id === data.selectedUserId)}
 				/>
+			) : error ? (
+				<p className="authError">{error}</p>
 			) : (
-				!error && <p>Loading fish...</p>
+				<p>Loading fish...</p>
 			)}
 		</details>
 	);

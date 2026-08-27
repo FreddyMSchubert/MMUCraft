@@ -70,14 +70,6 @@
 	line-height: 1.45;
 }
 
-.wordleStatus {
-	display: grid;
-	align-items: center;
-	min-height: 44px;
-	margin: 0;
-	color: rgba(255, 255, 255, 0.78);
-}
-
 .wordleSolution {
 	width: min(100%, var(--wordle-board-width));
 	margin: 0 auto 14px;

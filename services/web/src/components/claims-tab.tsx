@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import { PlayerName, playerNameStyle } from '@/components/player-name';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 
 interface ClaimPerson {
@@ -47,10 +48,10 @@ interface CurrentChunkResponse {
 }
 
 export function ClaimsTab() {
+	const { confirm, showAlert } = useSiteAlert();
 	const [data, setData] = useState<ClaimsResponse | null>(null);
 	const [searches, setSearches] = useState<Partial<Record<string, string>>>({});
 	const [error, setError] = useState('');
-	const [message, setMessage] = useState<ReactNode>('');
 	const [busy, setBusy] = useState(false);
 
 	const load = useCallback(async () => {
@@ -77,15 +78,14 @@ export function ClaimsTab() {
 		};
 	}, [load]);
 
-	async function run(action: () => Promise<ReactNode>) {
+	async function run(action: () => Promise<void>, failureTitle: string) {
 		setBusy(true);
 		setError('');
-		setMessage('');
 		try {
-			setMessage(await action());
+			await action();
 			await load();
 		} catch (caught) {
-			setError(readError(caught));
+			await showAlert({ title: failureTitle, message: readError(caught), tone: 'danger' });
 		} finally {
 			setBusy(false);
 		}
@@ -94,10 +94,12 @@ export function ClaimsTab() {
 	async function buyClaim() {
 		await run(async () => {
 			const current = await request<CurrentChunkResponse>('/api/claims/current');
-			const confirmed = window.confirm(
-				`Claim chunk ${current.chunkX}, ${current.chunkZ} in ${formatDimension(current.dimension)} for ${current.priceDabloons} dabloons?\n\nCurrent balance: ${current.balanceDabloons} dabloons. Stay online in this chunk while buying.`,
-			);
-			if (!confirmed) return '';
+			const confirmed = await confirm({
+				title: 'Buy this chunk claim?',
+				message: `Chunk ${current.chunkX}, ${current.chunkZ} in ${formatDimension(current.dimension)} costs ${current.priceDabloons} dabloons. Your current balance is ${current.balanceDabloons} dabloons.\n\nStay online and remain inside this chunk until the purchase finishes.`,
+				confirmLabel: `Buy for ${current.priceDabloons}`,
+			});
+			if (!confirmed) return;
 
 			const result = await request<{ message?: string }>('/api/claims', {
 				method: 'POST',
@@ -108,16 +110,30 @@ export function ClaimsTab() {
 					chunkZ: current.chunkZ,
 				}),
 			});
-			return result.message ?? 'Chunk claimed.';
-		});
+			await showAlert({
+				title: 'Chunk claimed',
+				message:
+					result.message ??
+					`Chunk ${current.chunkX}, ${current.chunkZ} is now protected and only accessible to you and the members you add.`,
+				tone: 'success',
+			});
+		}, 'Could not claim this chunk');
 	}
 
 	async function removeClaim(claim: Claim) {
-		if (!window.confirm(`Delete the claim at chunk ${claim.chunkX}, ${claim.chunkZ}?`)) return;
+		if (
+			!(await confirm({
+				title: 'Delete this claim?',
+				message: `Chunk ${claim.chunkX}, ${claim.chunkZ} will no longer be protected. This does not refund the claim price.`,
+				confirmLabel: 'Delete claim',
+				confirmTone: 'danger',
+				tone: 'danger',
+			}))
+		)
+			return;
 		await run(async () => {
 			await request(`/api/claims/${claim.id}`, { method: 'DELETE' });
-			return 'Claim removed.';
-		});
+		}, 'Could not delete the claim');
 	}
 
 	async function updateAppearance(claim: Claim, name: string, color: string | null) {
@@ -127,8 +143,7 @@ export function ClaimsTab() {
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify({ name, color }),
 			});
-			return 'Claim appearance saved.';
-		});
+		}, 'Could not save the claim appearance');
 	}
 
 	async function addMember(claim: Claim) {
@@ -138,7 +153,12 @@ export function ClaimsTab() {
 				person.minecraftUsername.localeCompare(value, 'en', { sensitivity: 'base' }) === 0,
 		);
 		if (!candidate) {
-			setError('Choose a server member from the suggestions.');
+			await showAlert({
+				title: 'Choose a valid claim member',
+				message:
+					'Select a server member from the suggestions so the correct Minecraft account receives access.',
+				tone: 'danger',
+			});
 			return;
 		}
 
@@ -149,25 +169,13 @@ export function ClaimsTab() {
 				body: JSON.stringify({ userId: candidate.id }),
 			});
 			setSearches((current) => ({ ...current, [claim.id]: '' }));
-			return (
-				<>
-					<PlayerName name={candidate.minecraftUsername} color={candidate.color} /> can
-					now use this claim.
-				</>
-			);
-		});
+		}, 'Could not add the claim member');
 	}
 
 	async function removeMember(claim: Claim, person: ClaimPerson) {
 		await run(async () => {
 			await request(`/api/claims/${claim.id}/members/${person.id}`, { method: 'DELETE' });
-			return (
-				<>
-					<PlayerName name={person.minecraftUsername} color={person.color} /> removed from
-					the claim.
-				</>
-			);
-		});
+		}, 'Could not remove the claim member');
 	}
 
 	if (!data) return error ? <p className="authError">{error}</p> : <p>Loading claims...</p>;
@@ -226,9 +234,6 @@ export function ClaimsTab() {
 					</small>
 				</div>
 			</div>
-			{message && <p className="dailyMessage">{message}</p>}
-			{error && <p className="authError">{error}</p>}
-
 			{data.claims.length === 0 ? (
 				<p className="claimsEmpty">You do not own any claimed chunks yet.</p>
 			) : (

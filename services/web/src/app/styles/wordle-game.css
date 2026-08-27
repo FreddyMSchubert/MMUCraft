@@ -135,6 +135,15 @@
 	animation: wordleTileWin 700ms ease both;
 }
 
+.wordleChecking {
+	min-height: 1.5em;
+	margin: -6px 0 10px;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.88rem;
+	font-weight: 700;
+	text-align: center;
+}
+
 .wordleKeyboard {
 	display: grid;
 	gap: 7px;

@@ -1,6 +1,7 @@
 export type AdminSection =
 	| 'members'
 	| 'claims'
+	| 'server-claims'
 	| 'whitelist'
 	| 'bans'
 	| 'gifts'
@@ -67,6 +68,7 @@ export const ADMIN_PAGE_SIZE = 42;
 
 export function normalizeAdminSection(section: string | undefined): AdminSection {
 	return section === 'claims' ||
+		section === 'server-claims' ||
 		section === 'whitelist' ||
 		section === 'bans' ||
 		section === 'gifts' ||

@@ -1,11 +1,15 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { DatabaseService, playerProfiles, users } from '../database/database.service';
+import { ClaimMinecraftSynchronizationService } from '../claims/claim-minecraft-synchronization.service';
 import { effectivePlayerColor } from '../players/player-color';
 
 @Injectable()
 export class PlayerRoleAdministrationService {
-	constructor(private readonly database: DatabaseService) {}
+	constructor(
+		private readonly database: DatabaseService,
+		private readonly claims: ClaimMinecraftSynchronizationService,
+	) {}
 
 	listPlayers() {
 		const rows = this.database.connection
@@ -62,7 +66,7 @@ export class PlayerRoleAdministrationService {
 		return { ok: true, userId, isMember };
 	}
 
-	setCommittee(userIdInput: string, isCommittee: boolean | undefined) {
+	async setCommittee(userIdInput: string, isCommittee: boolean | undefined) {
 		const userId = parseUserId(userIdInput);
 		if (typeof isCommittee !== 'boolean') {
 			throw new BadRequestException('isCommittee must be a boolean');
@@ -87,6 +91,7 @@ export class PlayerRoleAdministrationService {
 			.set({ is_committee: isCommittee ? 1 : 0 })
 			.where(eq(users.id, userId))
 			.run();
+		await this.claims.synchronize();
 		return { ok: true, userId, isCommittee };
 	}
 }

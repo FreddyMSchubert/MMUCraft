@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 import { claims, DatabaseService, playerProfiles, users } from '../database/database.service';
 import { effectivePlayerColor } from '../players/player-color';
 import { ClaimMinecraftSynchronizationService } from './claim-minecraft-synchronization.service';
@@ -30,6 +30,7 @@ export class ClaimAdministrationService {
 			.from(claims)
 			.innerJoin(users, eq(users.id, claims.owner_user_id))
 			.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
+			.where(eq(claims.is_server, 0))
 			.orderBy(
 				asc(users.minecraft_username),
 				asc(claims.dimension),
@@ -55,8 +56,59 @@ export class ClaimAdministrationService {
 	}
 
 	async remove(claimId: string) {
-		const removed = this.database.connection.delete(claims).where(eq(claims.id, claimId)).run();
+		const removed = this.database.connection
+			.delete(claims)
+			.where(and(eq(claims.id, claimId), eq(claims.is_server, 0)))
+			.run();
 		if (removed.changes !== 1) throw new NotFoundException('Claim not found.');
+		await this.minecraftSynchronization.synchronize();
+		return { ok: true };
+	}
+
+	listServerClaims() {
+		return {
+			claims: this.database.connection
+				.select({
+					id: claims.id,
+					name: claims.claim_name,
+					dimension: claims.dimension,
+					chunkX: claims.chunk_x,
+					chunkZ: claims.chunk_z,
+					customColor: claims.color_hex,
+					minecraftUuid: users.minecraft_uuid,
+					ownerColor: playerProfiles.color_hex,
+				})
+				.from(claims)
+				.innerJoin(users, eq(users.id, claims.owner_user_id))
+				.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
+				.where(eq(claims.is_server, 1))
+				.orderBy(asc(claims.dimension), asc(claims.chunk_x), asc(claims.chunk_z))
+				.all()
+				.map((claim) => {
+					const defaultColor = effectivePlayerColor(
+						claim.minecraftUuid,
+						claim.ownerColor,
+					);
+					return {
+						id: claim.id,
+						name: claim.name,
+						dimension: claim.dimension,
+						chunkX: claim.chunkX,
+						chunkZ: claim.chunkZ,
+						color: claim.customColor ?? defaultColor,
+						defaultColor,
+						customColor: claim.customColor,
+					};
+				}),
+		};
+	}
+
+	async removeServerClaim(claimId: string) {
+		const removed = this.database.connection
+			.delete(claims)
+			.where(and(eq(claims.id, claimId), eq(claims.is_server, 1)))
+			.run();
+		if (removed.changes !== 1) throw new NotFoundException('Server claim not found.');
 		await this.minecraftSynchronization.synchronize();
 		return { ok: true };
 	}

@@ -58,6 +58,7 @@ const TAB_IDS = new Set<TabId>([
 const ADMIN_SECTIONS = new Set([
 	'members',
 	'claims',
+	'server-claims',
 	'whitelist',
 	'bans',
 	'gifts',

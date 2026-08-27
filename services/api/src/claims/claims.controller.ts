@@ -90,3 +90,53 @@ export class AdminClaimsController {
 		return this.claimAdministration.remove(claimId);
 	}
 }
+
+@Controller('api/admin/server-claims')
+export class AdminServerClaimsController {
+	constructor(
+		private readonly auth: AuthSessionService,
+		private readonly claimAdministration: ClaimAdministrationService,
+		private readonly claimPurchasing: ClaimPurchasingService,
+		private readonly claims: ClaimsService,
+	) {}
+
+	@Get()
+	list(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claimAdministration.listServerClaims();
+	}
+
+	@Get('current')
+	current(@Headers('cookie') cookieHeader: string | undefined) {
+		return this.claimPurchasing.getCurrentChunk(
+			this.auth.requireCommitteeSession(cookieHeader),
+		);
+	}
+
+	@Post()
+	create(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: CreateClaimInput | undefined,
+	) {
+		return this.claimPurchasing.createServerClaim(
+			this.auth.requireCommitteeSession(cookieHeader),
+			body ?? {},
+		);
+	}
+
+	@Patch(':claimId/appearance')
+	updateAppearance(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Body() body: ClaimAppearanceInput | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claims.updateServerAppearance(claimId, body ?? {});
+	}
+
+	@Delete(':claimId')
+	remove(@Headers('cookie') cookieHeader: string | undefined, @Param('claimId') claimId: string) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claimAdministration.removeServerClaim(claimId);
+	}
+}

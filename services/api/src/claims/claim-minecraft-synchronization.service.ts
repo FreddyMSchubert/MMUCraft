@@ -22,6 +22,7 @@ interface ClaimData {
 	color_hex: string;
 	owner_color_hex: string;
 	has_custom_color: boolean;
+	is_server_claim: boolean;
 	member_uuids: string[];
 }
 
@@ -56,6 +57,11 @@ export class ClaimMinecraftSynchronizationService implements OnModuleDestroy {
 				.map((profile) => [profile.user_id, profile]),
 		);
 		const memberUuidsByClaim = new Map<string, string[]>();
+		const committeeUuids = userRows.flatMap((user) =>
+			user.minecraft_uuid && (user.is_committee === 1 || user.is_super_admin === 1)
+				? [user.minecraft_uuid]
+				: [],
+		);
 		for (const membership of this.database.connection.select().from(claimMembers).all()) {
 			const member = usersById.get(membership.user_id);
 			if (!member?.minecraft_uuid || member.is_member !== 1) continue;
@@ -87,7 +93,11 @@ export class ClaimMinecraftSynchronizationService implements OnModuleDestroy {
 							color_hex: claim.color_hex ?? ownerColor,
 							owner_color_hex: ownerColor,
 							has_custom_color: claim.color_hex !== null,
-							member_uuids: memberUuidsByClaim.get(claim.id) ?? [],
+							is_server_claim: claim.is_server === 1,
+							member_uuids:
+								claim.is_server === 1
+									? committeeUuids
+									: (memberUuidsByClaim.get(claim.id) ?? []),
 						},
 					];
 				}),

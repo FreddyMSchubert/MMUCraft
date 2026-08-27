@@ -2,7 +2,11 @@
 
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
-import type { CSSProperties } from 'react';
+import {
+	ClaimEditorCard,
+	formatDimension,
+	type EditableClaim,
+} from '@/components/claim-editor-card';
 import { PlayerName, playerNameStyle } from '@/components/player-name';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
@@ -17,15 +21,7 @@ interface ClaimPerson {
 	isOwner?: boolean;
 }
 
-interface Claim {
-	id: string;
-	dimension: string;
-	chunkX: number;
-	chunkZ: number;
-	name: string;
-	color: string;
-	defaultColor: string;
-	customColor: string | null;
+interface Claim extends EditableClaim {
 	members: ClaimPerson[];
 }
 
@@ -244,37 +240,13 @@ export function ClaimsTab() {
 							(person) => !existingIds.has(person.id),
 						);
 						return (
-							<section className="claimCard" key={claim.id}>
-								<div className="claimHeader">
-									<div>
-										<h4
-											className="claimName"
-											style={
-												{ '--claim-color': claim.color } as CSSProperties
-											}
-										>
-											{claim.name}
-										</h4>
-										<span>
-											Chunk {claim.chunkX}, {claim.chunkZ} -{' '}
-											{formatDimension(claim.dimension)}
-										</span>
-									</div>
-									<button
-										type="button"
-										disabled={busy}
-										onClick={() => void removeClaim(claim)}
-									>
-										Delete claim
-									</button>
-								</div>
-
-								<ClaimAppearanceForm
-									claim={claim}
-									busy={busy}
-									onSave={(name, color) => updateAppearance(claim, name, color)}
-								/>
-
+							<ClaimEditorCard
+								key={claim.id}
+								claim={claim}
+								busy={busy}
+								onDelete={() => void removeClaim(claim)}
+								onSave={(name, color) => updateAppearance(claim, name, color)}
+							>
 								<div className="claimMembers">
 									{claim.members.map((person) => (
 										<div className="claimMember" key={person.id}>
@@ -348,68 +320,12 @@ export function ClaimsTab() {
 										</button>
 									</form>
 								</div>
-							</section>
+							</ClaimEditorCard>
 						);
 					})}
 				</div>
 			)}
 		</div>
-	);
-}
-
-function ClaimAppearanceForm({
-	claim,
-	busy,
-	onSave,
-}: {
-	claim: Claim;
-	busy: boolean;
-	onSave: (name: string, color: string | null) => Promise<void>;
-}) {
-	const [color, setColor] = useState<string | null>(claim.customColor);
-	return (
-		<form
-			className="claimAppearanceForm"
-			onSubmit={(event) => {
-				event.preventDefault();
-				const name = new FormData(event.currentTarget).get('name');
-				void onSave(typeof name === 'string' ? name : '', color);
-			}}
-		>
-			<label>
-				<span>Claim name (20 characters maximum)</span>
-				<input
-					name="name"
-					defaultValue={claim.name}
-					maxLength={20}
-					required
-					disabled={busy}
-				/>
-			</label>
-			<label className="claimColorInput">
-				<span>Color</span>
-				<input
-					type="color"
-					value={color ?? claim.defaultColor}
-					onChange={(event) => {
-						setColor(event.target.value);
-					}}
-					disabled={busy}
-				/>
-			</label>
-			<button
-				type="button"
-				disabled={busy || color === null}
-				onClick={() => {
-					setColor(null);
-				}}
-			>
-				Reset color
-			</button>
-			<button type="submit" disabled={busy}>
-				Save
-			</button>
-		</form>
 	);
 }
 
@@ -443,10 +359,6 @@ async function request<T = Record<string, unknown>>(url: string, init?: RequestI
 	const body = await response.json().catch(() => null);
 	if (!response.ok) throw new Error(apiMessage(body, 'Request failed'));
 	return body as T;
-}
-
-function formatDimension(dimension: string) {
-	return dimension.replace('minecraft:', '').replaceAll('_', ' ');
 }
 
 function readError(caught: unknown) {

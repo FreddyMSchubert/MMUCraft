@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -54,6 +55,7 @@ public class LootTableModifiers {
     }
     private static final List<LootAddition> additions = List.of(
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), "soul", null, 1.0F, 1, 1),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), null, Items.PLAYER_HEAD, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/enderman"), null, Items.ENDER_PEARL, 1.0F, 3, 10),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), "charm-sculk-phial", null, 0.1F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), "enderite-upgrade-smithing-template", null, 0.125F, 1, 1),
@@ -171,7 +173,8 @@ public class LootTableModifiers {
             else if (addition.vanillaItem() != null)
                 stack = addition.vanillaItem().getDefaultInstance();
 
-            if ("soul".equals(addition.fakeItemId())
+            if (stack.is(Items.PLAYER_HEAD)
+                    && Identifier.fromNamespaceAndPath("minecraft", "entities/player").equals(tableId)
                     && lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof Player player) {
                 String deathMessage = player.getCombatTracker().getDeathMessage().getString();
                 String owner = player.getDisplayName().getString();
@@ -184,7 +187,7 @@ public class LootTableModifiers {
                         Component.literal("This soul belonged to " + owner + ", who " + death + "."),
                         Component.literal("[RIP - " + ZonedDateTime.now().format(SOUL_DATE_FORMAT) + "]")
                 )));
-                FakeItems.wrapTooltip(stack);
+                stack.set(DataComponents.PROFILE, ResolvableProfile.createResolved(player.getGameProfile()));
             }
 
             stack.setCount(rolls);

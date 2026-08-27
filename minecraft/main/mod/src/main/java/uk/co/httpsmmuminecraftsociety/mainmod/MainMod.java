@@ -17,7 +17,11 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -26,6 +30,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
@@ -54,6 +59,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
+import java.util.List;
+
 public class MainMod implements ModInitializer {
 	public static final String MOD_ID = "mainmod";
 	public static final String RESOURCE_PACK_ID = "mmu_pack";
@@ -68,6 +75,13 @@ public class MainMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Hello MMU!");
+		if (!ResourceLoader.registerBuiltinPack(
+				Identifier.fromNamespaceAndPath(MOD_ID, "hide_vanillatweaks_advancements"),
+				FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(),
+				PackActivationType.ALWAYS_ENABLED
+		)) {
+			throw new IllegalStateException("Could not register the Vanilla Tweaks advancement filter");
+		}
 
         BiomeModifications.addFeature(
                 BiomeSelectors.foundInTheEnd(),
@@ -104,6 +118,10 @@ public class MainMod implements ModInitializer {
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
         DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);
+        DefaultItemComponentEvents.MODIFY.register(context -> context.modify(
+                List.of(Items.MINECART, Items.CHEST_MINECART, Items.FURNACE_MINECART, Items.TNT_MINECART, Items.HOPPER_MINECART),
+                (builder, item) -> builder.set(DataComponents.MAX_STACK_SIZE, 64)
+        ));
         ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);

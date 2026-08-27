@@ -1,0 +1,15 @@
+{
+  "pack": {
+    "description": "Hide the Vanilla Tweaks advancement tab",
+    "min_format": [107, 1],
+    "max_format": 107
+  },
+  "filter": {
+    "block": [
+      {
+        "namespace": "^vanillatweaks$",
+        "path": "^advancement/.*$"
+      }
+    ]
+  }
+}

@@ -25,7 +25,6 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			<EmailWhitelistAdminSection controller={controller} />
 			<PlayerBanAdminSection controller={controller} />
 			<GiftCodeAdminSection controller={controller} />
-			{controller.message && <p className="adminMessage">{controller.message}</p>}
 			{controller.error && <p className="authError">{controller.error}</p>}
 		</div>
 	);

@@ -73,7 +73,11 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
         int requiredCount = task.get("requiredCount").getAsInt();
         int found = count(player);
         if (found < requiredCount) {
-            return ClaimResult.failure("You need " + requiredCount + " items, but you only have " + found + ".");
+            int missing = requiredCount - found;
+            return ClaimResult.failure(
+                    "This daily needs " + requiredCount + " of “" + itemName() + "”, but your inventory contains "
+                            + found + ". Collect " + missing + " more and try again."
+            );
         }
 
         ClaimResult reward = DailyTaskDefinition.super.claim(player, task);
@@ -81,7 +85,9 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
         remove(player, requiredCount);
         player.getInventory().setChanged();
         player.containerMenu.broadcastChanges();
-        return ClaimResult.success("Submitted " + requiredCount + " items and received " + getReward(task) + " dabloons.");
+        return ClaimResult.success(
+                "Submitted " + requiredCount + " of “" + itemName() + "” and received " + getReward(task) + " dabloons."
+        );
     }
 
     private int count(ServerPlayer player) {
@@ -104,6 +110,11 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
 
     private ItemStack customTemplate() {
         return customItemId == null ? null : FakeItems.requireFakeItem(customItemId).createItemStack();
+    }
+
+    private String itemName() {
+        ItemStack stack = item == null ? customTemplate() : new ItemStack(item);
+        return stack.getHoverName().getString();
     }
 
     private boolean matches(ServerPlayer player, ItemStack stack, ItemStack customTemplate) {

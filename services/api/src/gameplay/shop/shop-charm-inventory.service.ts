@@ -62,7 +62,7 @@ export class ShopCharmInventoryService {
 			);
 		} catch {
 			throw new BadRequestException(
-				'You have to be online on the server to view your charms.',
+				'Join the Minecraft server with this account, hold a charm in your main hand, and refresh the forge.',
 			);
 		}
 
@@ -120,7 +120,7 @@ export class ShopCharmInventoryService {
 			});
 		} catch {
 			throw new BadRequestException(
-				'You have to be online on the server to upgrade a charm.',
+				'Join the Minecraft server, keep the charm in your main hand, and try the upgrade again.',
 			);
 		}
 

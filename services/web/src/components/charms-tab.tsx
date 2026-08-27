@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { CharmForgeRenderer } from '@/lib/charm-forge-renderer';
 import { ASSETS } from '@/lib/assets';
 import { MinecraftItemIcon } from '@/components/minecraft-item-icon';
+import { useSiteAlert } from '@/components/site-alert';
 
 interface CharmIngredient {
 	raw: string;
@@ -46,6 +47,7 @@ async function fetchCharmInventory() {
 }
 
 export function CharmsTab() {
+	const { showAlert } = useSiteAlert();
 	const [inventory, setInventory] = useState<CharmInventory | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [upgrading, setUpgrading] = useState(false);
@@ -158,18 +160,30 @@ export function CharmsTab() {
 				latestCharm.currentLevel !== charm.currentLevel
 			) {
 				showUpgradeAlert(
+					'Held charm changed',
 					'Your held charm changed. Review the refreshed inventory before upgrading.',
 				);
 				return;
 			}
 			if (!hasRequiredMaterials(latestCharm)) {
+				const missing = latestCharm.ingredients
+					.filter((ingredient) => ingredient.inventoryCount < ingredient.requiredCount)
+					.map(
+						(ingredient) =>
+							`${ingredient.displayName}: ${ingredient.inventoryCount} available, ${ingredient.requiredCount} required`,
+					)
+					.join('\n');
 				showUpgradeAlert(
-					'Not enough materials found. Refresh inventory after you collect them.',
+					'Missing upgrade materials',
+					`Your inventory does not contain everything this upgrade needs:\n\n${missing}\n\nCollect the missing items, keep them in your inventory, then refresh the forge.`,
 				);
 				return;
 			}
 			if (latestInventory.balanceDabloons < latestCharm.priceDabloons) {
-				showUpgradeAlert('Not enough dabloons found.');
+				showUpgradeAlert(
+					'Not enough dabloons',
+					`This upgrade costs ${latestCharm.priceDabloons} dabloons, but your balance is ${latestInventory.balanceDabloons}. Earn ${latestCharm.priceDabloons - latestInventory.balanceDabloons} more and try again.`,
+				);
 				return;
 			}
 
@@ -196,16 +210,17 @@ export function CharmsTab() {
 			await refresh();
 			setMessage(failure);
 			setMessageIsError(true);
+			await showAlert({ title: 'Charm upgrade failed', message: failure, tone: 'danger' });
 		} finally {
 			setAnimating(false);
 			setUpgrading(false);
 		}
 	}
 
-	function showUpgradeAlert(warning: string) {
+	function showUpgradeAlert(title: string, warning: string) {
 		setMessage(warning);
 		setMessageIsError(true);
-		window.alert(warning);
+		void showAlert({ title, message: warning, tone: 'danger' });
 	}
 
 	return (

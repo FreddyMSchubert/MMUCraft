@@ -1,21 +1,19 @@
 'use client';
 
 import { type SyntheticEvent, useState } from 'react';
-import type { Dispatch, ReactNode, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import type { Countdown } from '@/components/dynamic-countdowns';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiBody, apiMessage, errorMessage, formatLondonInput } from './admin-api';
 
 export function useCountdownAdministration({
 	setCountdowns,
 	reload,
-	setError,
-	setMessage,
 }: {
 	setCountdowns: Dispatch<SetStateAction<Countdown[]>>;
 	reload: () => Promise<void>;
-	setError: Dispatch<SetStateAction<string>>;
-	setMessage: Dispatch<SetStateAction<ReactNode>>;
 }) {
+	const { confirm, showAlert } = useSiteAlert();
 	const [countdownHeading, setCountdownHeading] = useState('');
 	const [countdownTarget, setCountdownTarget] = useState('');
 	const [countdownDescription, setCountdownDescription] = useState('');
@@ -31,8 +29,6 @@ export function useCountdownAdministration({
 	function saveCountdown(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
 		setSavingCountdown(true);
-		setError('');
-		setMessage('');
 		void (async () => {
 			try {
 				const editing = editingCountdownId !== null;
@@ -64,18 +60,15 @@ export function useCountdownAdministration({
 						),
 					);
 				}
-				const result = apiBody<{ heading: string }>(body);
-				setMessage(`${editing ? 'Updated' : 'Created'} the “${result.heading}” countdown.`);
 				resetCountdownForm();
 				await reload();
 				window.dispatchEvent(new Event('countdowns-change'));
 			} catch (caught) {
-				setError(
-					errorMessage(
-						caught,
-						`Failed to ${editingCountdownId === null ? 'create' : 'update'} the countdown`,
-					),
-				);
+				await showAlert({
+					title: `Could not ${editingCountdownId === null ? 'create' : 'update'} the countdown`,
+					message: errorMessage(caught, 'Check the countdown details and try again.'),
+					tone: 'danger',
+				});
 			} finally {
 				setSavingCountdown(false);
 			}
@@ -92,8 +85,6 @@ export function useCountdownAdministration({
 		setCountdownBackgroundColor(countdown.backgroundColor);
 		setCountdownBackgroundAlpha(countdown.backgroundAlpha);
 		setCountdownBackgroundImageUrl(countdown.backgroundImageUrl ?? '');
-		setError('');
-		setMessage('');
 	}
 
 	function resetCountdownForm() {
@@ -110,7 +101,6 @@ export function useCountdownAdministration({
 
 	async function moveCountdown(countdown: Countdown, direction: 'up' | 'down') {
 		setBusyCountdownId(countdown.id);
-		setError('');
 		try {
 			const response = await fetch(`/api/admin/countdowns/${countdown.id}/order`, {
 				method: 'PATCH',
@@ -122,16 +112,31 @@ export function useCountdownAdministration({
 			setCountdowns(apiBody<{ countdowns: Countdown[] }>(body).countdowns);
 			window.dispatchEvent(new Event('countdowns-change'));
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to reorder the countdown'));
+			await showAlert({
+				title: 'Could not reorder the countdown',
+				message: errorMessage(
+					caught,
+					'The countdown order was not changed. Please try again.',
+				),
+				tone: 'danger',
+			});
 		} finally {
 			setBusyCountdownId(null);
 		}
 	}
 
 	async function removeCountdown(countdown: Countdown) {
-		if (!window.confirm(`Delete the “${countdown.heading}” countdown?`)) return;
+		if (
+			!(await confirm({
+				title: 'Delete this countdown?',
+				message: `“${countdown.heading}” will immediately disappear from the website.`,
+				confirmLabel: 'Delete countdown',
+				confirmTone: 'danger',
+				tone: 'danger',
+			}))
+		)
+			return;
 		setBusyCountdownId(countdown.id);
-		setError('');
 		try {
 			const response = await fetch(`/api/admin/countdowns/${countdown.id}`, {
 				method: 'DELETE',
@@ -142,10 +147,13 @@ export function useCountdownAdministration({
 				current.filter((candidate) => candidate.id !== countdown.id),
 			);
 			if (editingCountdownId === countdown.id) resetCountdownForm();
-			setMessage(`Deleted the “${countdown.heading}” countdown.`);
 			window.dispatchEvent(new Event('countdowns-change'));
 		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to delete the countdown'));
+			await showAlert({
+				title: 'Could not delete the countdown',
+				message: errorMessage(caught, 'The countdown is still active. Please try again.'),
+				tone: 'danger',
+			});
 		} finally {
 			setBusyCountdownId(null);
 		}

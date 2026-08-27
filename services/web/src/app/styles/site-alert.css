@@ -1,0 +1,215 @@
+.siteAlert {
+	width: min(520px, calc(100vw - 32px));
+	max-height: calc(100dvh - 32px);
+	margin: auto;
+	padding: 26px;
+	overflow: auto;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 22px;
+	background:
+		linear-gradient(145deg, rgba(48, 53, 68, 0.56), rgba(10, 12, 19, 0.68)),
+		rgba(15, 17, 24, 0.58);
+	-webkit-backdrop-filter: blur(26px) saturate(1.35);
+	backdrop-filter: blur(26px) saturate(1.35);
+	box-shadow:
+		0 32px 100px rgba(0, 0, 0, 0.72),
+		inset 0 1px 0 rgba(255, 255, 255, 0.18);
+	color: #fff;
+	font-family: 'Noto Sans', Arial, sans-serif;
+	overscroll-behavior: contain;
+	animation: siteAlertIn 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.siteAlert::backdrop {
+	background: rgba(3, 5, 10, 0.68);
+	backdrop-filter: blur(10px) saturate(0.7);
+	animation: siteAlertBackdropIn 180ms ease-out;
+}
+
+.siteAlert.closing {
+	opacity: 0;
+	transform: translateY(10px) scale(0.97);
+	transition:
+		opacity 180ms ease-in,
+		transform 180ms ease-in;
+}
+
+.siteAlert.closing::backdrop {
+	background: transparent;
+	backdrop-filter: blur(0);
+	transition:
+		background 180ms ease-in,
+		backdrop-filter 180ms ease-in;
+}
+
+.siteAlertGlow {
+	position: absolute;
+	top: -90px;
+	right: -70px;
+	width: 220px;
+	height: 180px;
+	border-radius: 50%;
+	background: rgba(255, 209, 102, 0.18);
+	filter: blur(30px);
+	pointer-events: none;
+}
+
+.siteAlert-success .siteAlertGlow {
+	background: rgba(77, 231, 137, 0.22);
+}
+
+.siteAlert-danger .siteAlertGlow {
+	background: rgba(255, 85, 105, 0.24);
+}
+
+.siteAlertHeading {
+	position: relative;
+	display: flex;
+	gap: 13px;
+	align-items: center;
+}
+
+.siteAlertHeading h2 {
+	margin: 0;
+	font-family: 'Minecraft UI', 'Noto Sans', sans-serif;
+	font-size: clamp(1.2rem, 5vw, 1.55rem);
+	line-height: 1.2;
+}
+
+.siteAlertIcon {
+	display: grid;
+	place-items: center;
+	width: 38px;
+	height: 38px;
+	flex: 0 0 auto;
+	border: 1px solid rgba(255, 209, 102, 0.6);
+	border-radius: 12px;
+	background: rgba(255, 209, 102, 0.16);
+	color: #ffd166;
+	font-size: 1.25rem;
+	font-weight: 800;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.siteAlert-success .siteAlertIcon {
+	border-color: rgba(77, 231, 137, 0.65);
+	background: rgba(77, 231, 137, 0.14);
+	color: #83f5af;
+}
+
+.siteAlert-danger .siteAlertIcon {
+	border-color: rgba(255, 103, 121, 0.65);
+	background: rgba(255, 85, 105, 0.14);
+	color: #ff94a1;
+}
+
+.siteAlertMessage {
+	position: relative;
+	margin-top: 18px;
+	color: rgba(255, 255, 255, 0.78);
+	font-size: 0.95rem;
+	line-height: 1.6;
+	white-space: pre-line;
+}
+
+.siteAlertMessage p {
+	margin: 0;
+}
+
+.siteAlertMessage p + p {
+	margin-top: 10px;
+}
+
+.siteAlertActions {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 24px;
+}
+
+.siteAlertButton {
+	min-width: 104px;
+	padding: 11px 18px;
+	border: 1px solid var(--alert-button-outline, rgba(255, 209, 102, 0.72));
+	border-radius: 11px;
+	background: var(--alert-button-fill, #ffd166);
+	box-shadow:
+		0 8px 24px rgba(0, 0, 0, 0.24),
+		inset 0 1px 0 rgba(255, 255, 255, 0.28);
+	color: var(--alert-button-text, #17120a);
+	font-weight: 800;
+	transition:
+		transform 120ms ease,
+		filter 120ms ease;
+}
+
+.siteAlertButton:hover {
+	filter: brightness(1.08);
+	transform: translateY(-1px);
+}
+
+.siteAlertButton:focus-visible {
+	outline: 3px solid rgba(255, 255, 255, 0.88);
+	outline-offset: 3px;
+}
+
+.siteAlertButton-secondary {
+	--alert-button-fill: rgba(255, 255, 255, 0.07);
+	--alert-button-outline: rgba(255, 255, 255, 0.28);
+	--alert-button-text: rgba(255, 255, 255, 0.88);
+}
+
+.siteAlertButton-danger {
+	--alert-button-fill: #e6465c;
+	--alert-button-outline: #ff7e8e;
+	--alert-button-text: #fff;
+}
+
+body:has(.siteAlert[open]) {
+	overflow: hidden;
+}
+
+@keyframes siteAlertIn {
+	from {
+		opacity: 0;
+		transform: translateY(14px) scale(0.96);
+	}
+}
+
+@keyframes siteAlertBackdropIn {
+	from {
+		background: transparent;
+		backdrop-filter: blur(0);
+	}
+}
+
+@media (max-width: 480px) {
+	.siteAlert {
+		width: calc(100vw - 24px);
+		max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+		padding: 21px;
+		border-radius: 18px;
+	}
+
+	.siteAlertActions {
+		flex-direction: column;
+	}
+
+	.siteAlertButton {
+		width: 100%;
+		min-height: 46px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.siteAlert,
+	.siteAlert::backdrop,
+	.siteAlert.closing,
+	.siteAlert.closing::backdrop,
+	.siteAlertButton {
+		animation: none;
+		transition: none;
+	}
+}

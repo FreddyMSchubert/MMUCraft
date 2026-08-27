@@ -15,7 +15,7 @@ final class GameplayClaimOperations {
         if (player == null || player.hasDisconnected()) {
             return GetCurrentClaimChunkResponse.newBuilder()
                     .setOnline(false)
-                    .setMessage("You have to be online on the server to claim a chunk.")
+                    .setMessage("Join the Minecraft server and stand in the chunk you want to claim, then try again.")
                     .build();
         }
 
@@ -39,7 +39,7 @@ final class GameplayClaimOperations {
             return PurchaseClaimResponse.newBuilder()
                     .setPurchased(false)
                     .setOnline(false)
-                    .setMessage("You have to be online on the server to buy a claim.")
+                    .setMessage("Join the Minecraft server and remain in the selected chunk until the claim purchase finishes.")
                     .build();
         }
 
@@ -72,7 +72,10 @@ final class GameplayClaimOperations {
                     .setPurchased(false)
                     .setOnline(true)
                     .setBalanceDabloons(balance)
-                    .setMessage("You need " + price + " dabloons to buy this claim.")
+                    .setMessage(
+                            "This claim costs " + price + " dabloons, but your balance is " + balance + ". Earn "
+                                    + Math.max(0, price - balance) + " more and try again."
+                    )
                     .build();
         }
 
@@ -81,7 +84,10 @@ final class GameplayClaimOperations {
                 .setPurchased(true)
                 .setOnline(true)
                 .setBalanceDabloons(MoneyHelper.GetBalance(player))
-                .setMessage("Chunk claimed for " + price + " dabloons.")
+                .setMessage(
+                        "Chunk claimed for " + price + " dabloons. Your remaining balance is "
+                                + MoneyHelper.GetBalance(player) + "."
+                )
                 .build();
     }
 }

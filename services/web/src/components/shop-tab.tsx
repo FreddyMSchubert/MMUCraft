@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import { useSiteSettings } from '@/lib/site-settings';
 import { FilterRow, ShopCard, ShopDetails } from './shop/shop-item-details';
@@ -33,9 +34,9 @@ export function ShopTab({
 	onSelectItem: (itemId: string | null, replace?: boolean) => void;
 }) {
 	const { settings } = useSiteSettings();
+	const { confirm, showAlert } = useSiteAlert();
 	const [data, setData] = useState<ShopResponse | null>(null);
 	const [error, setError] = useState('');
-	const [message, setMessage] = useState('');
 	const [typeFilter, setTypeFilter] = useState<'all' | ShopItemType>('all');
 	const [rarityFilter, setRarityFilter] = useState<(typeof RARITY_OPTIONS)[number]>('all');
 	const [tagFilter, setTagFilter] = useState<ShopTagFilter>('all');
@@ -129,10 +130,16 @@ export function ShopTab({
 	async function buy(item: ShopItem) {
 		if (!item.available || buyingItemId) return;
 		const price = effectivePrice(item);
-		if (!window.confirm(`Buy ${item.title} for ${formatDabloons(price)} dabloons?`)) return;
+		if (
+			!(await confirm({
+				title: `Buy ${item.title}?`,
+				message: `${item.description}\n\nThis purchase costs ${formatDabloons(price)} dabloons. Stay online in Minecraft until it finishes so the item can be delivered.`,
+				confirmLabel: `Buy for ${formatDabloons(price)}`,
+			}))
+		)
+			return;
 		setBuyingItemId(item.id);
 		setError('');
-		setMessage('');
 		try {
 			const response = await fetch('/api/shop/purchase', {
 				method: 'POST',
@@ -142,13 +149,20 @@ export function ShopTab({
 			const body = await response.json().catch(() => null);
 			if (!response.ok) throw new Error(apiMessage(body, 'Purchase failed.'));
 			const text = apiMessage(body, `${item.title} purchased.`);
-			setMessage(text);
 			onSelectItem(null, true);
 			await load();
+			await showAlert({
+				title: `${item.title} purchased`,
+				message: `${text} Check your Minecraft inventory for the item.`,
+				tone: 'success',
+			});
 		} catch (caught) {
 			const text = caught instanceof Error ? caught.message : 'Purchase failed';
-			setError(text);
-			window.alert(text);
+			await showAlert({
+				title: `Could not buy ${item.title}`,
+				message: text,
+				tone: 'danger',
+			});
 		} finally {
 			setBuyingItemId(null);
 		}
@@ -314,8 +328,6 @@ export function ShopTab({
 				/>
 			</div>
 
-			{message && <p className="dailyMessage">{message}</p>}
-			{error && <p className="authError">{error}</p>}
 			<div className="shopGrid">
 				{visibleItems.map((item) => (
 					<ShopCard

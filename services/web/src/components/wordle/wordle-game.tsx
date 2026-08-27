@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { Fireworks } from 'fireworks-js';
 import { WORDLE_WORDS } from '@/data/wordle-words';
 import { SitePage } from '@/components/site-page';
+import { useSiteAlert } from '@/components/site-alert';
 import {
 	formatDisplayDate,
 	getDailyAnswer,
@@ -54,6 +55,7 @@ export function WordleGame({
 	splash: string;
 }) {
 	const fireworksStage = useRef<HTMLDivElement>(null);
+	const { showAlert } = useSiteAlert();
 	const busy = useRef(false);
 	const puzzle = useMemo(() => {
 		const answer = getDailyAnswer(WORDLE_WORDS, dateKey);
@@ -77,7 +79,6 @@ export function WordleGame({
 	);
 	const gameOver = sessionGameOver ?? savedGameOver;
 	const [currentGuess, setCurrentGuess] = useState('');
-	const [statusOverride, setStatus] = useState<string | null>(null);
 	const [revealingRow, setRevealingRow] = useState<number | null>(null);
 	const [winningRow, setWinningRow] = useState<number | null>(null);
 	const [shakeToken, setShakeToken] = useState(0);
@@ -109,16 +110,22 @@ export function WordleGame({
 		if (gameOver || busy.current) return;
 		if (currentGuess.length < MIN_WORD_LENGTH) {
 			setShakeToken((value) => value + 1);
-			setStatus(`Guesses need at least ${MIN_WORD_LENGTH} letters.`);
+			void showAlert({
+				title: 'That guess is too short',
+				message: `Enter at least ${MIN_WORD_LENGTH} letters before submitting your guess.`,
+			});
 			return;
 		}
 
 		busy.current = true;
-		setStatus('Checking word...');
 		if (!(await validateGuess(currentGuess))) {
 			busy.current = false;
 			setShakeToken((value) => value + 1);
-			setStatus("Not in today's word list or dictionary.");
+			void showAlert({
+				title: 'Word not found',
+				message:
+					"That guess is not in today's Minecraft word list or the English dictionary. Check the spelling and try another word.",
+			});
 			return;
 		}
 
@@ -140,15 +147,14 @@ export function WordleGame({
 				setGameOver(finished);
 				persistGame(puzzle, nextGuesses, finished);
 				if (won) {
-					setStatus('You got it. Nicely done.');
 					setWinningRow(row);
 					if (fireworksStage.current)
 						launchFireworks(fireworksStage.current, row + 1, puzzle.maxGuesses);
-				} else setStatus(finished ? 'Out of guesses. Come back tomorrow.' : 'Keep going.');
+				}
 			},
 			puzzle.answer.length * 120 + 260,
 		);
-	}, [currentGuess, gameOver, guesses, puzzle]);
+	}, [currentGuess, gameOver, guesses, puzzle, showAlert]);
 
 	const handleKey = useCallback(
 		(key: string) => {
@@ -179,13 +185,6 @@ export function WordleGame({
 
 	const won = guesses.at(-1)?.word === puzzle.answer;
 	const lost = gameOver && !won;
-	const status =
-		statusOverride ??
-		(gameOver
-			? won
-				? 'You got it. Nicely done.'
-				: 'Out of guesses. Come back tomorrow.'
-			: "Today's puzzle is ready.");
 	const canCopy = gameOver && guesses.length > 0;
 	const difficulty = getDifficulty(puzzle.answer.length);
 	const layout = getWordleLayout(puzzle.answer.length);
@@ -208,11 +207,15 @@ export function WordleGame({
 		].join('\n');
 		try {
 			await copyText(text);
-			setStatus('Playthrough copied.');
 			setCopyLabel('Copied');
 		} catch {
-			setStatus('Copy failed. Please try again.');
 			setCopyLabel('Copy failed');
+			void showAlert({
+				title: 'Could not copy the playthrough',
+				message:
+					'Your browser did not allow the result to be copied. Check clipboard permission and try again.',
+				tone: 'danger',
+			});
 		}
 		window.setTimeout(() => {
 			setCopyLabel('Copy playthrough');
@@ -258,9 +261,6 @@ export function WordleGame({
 					</ul>
 				</div>
 
-				<p className="wordleStatus" role="status" aria-live="polite">
-					{status}
-				</p>
 				{lost && <p className="wordleSolution">Solution: {puzzle.answer.toUpperCase()}</p>}
 
 				<div className="wordleBoard" aria-label="Daily word puzzle">

@@ -57,7 +57,8 @@ export class DailyBonusClaimsService {
 			if (!result.granted) {
 				this.dailyStorage.deleteClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey);
 				throw new BadRequestException(
-					result.message || 'You have to be online on the server to receive the money.',
+					result.message ||
+						'Join the Minecraft server, then claim the login bonus again while you are online.',
 				);
 			}
 
@@ -79,7 +80,7 @@ export class DailyBonusClaimsService {
 			this.dailyStorage.deleteClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey);
 			if (error instanceof BadRequestException) throw error;
 			throw new BadRequestException(
-				'You have to be online on the server to receive the money.',
+				'Join the Minecraft server, then claim the login bonus again while you are online.',
 			);
 		}
 	}
@@ -142,7 +143,7 @@ export class DailyBonusClaimsService {
 			this.dailyStorage.deleteClaim(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey);
 			if (error instanceof BadRequestException) throw error;
 			throw new BadRequestException(
-				'You have to be online on the server to claim the daily advancement bonus.',
+				'Join the Minecraft server, then claim the advancement bonus again while you are online.',
 			);
 		}
 	}
@@ -185,7 +186,8 @@ export class DailyBonusClaimsService {
 			if (!result.granted) {
 				this.dailyStorage.deleteClaim(user.id, DAILY_COMPLETION_TASK_ID, periodKey);
 				throw new BadRequestException(
-					result.message || 'You have to be online on the server to receive the money.',
+					result.message ||
+						'Join the Minecraft server, then claim the completion reward again while you are online.',
 				);
 			}
 
@@ -207,7 +209,7 @@ export class DailyBonusClaimsService {
 			this.dailyStorage.deleteClaim(user.id, DAILY_COMPLETION_TASK_ID, periodKey);
 			if (error instanceof BadRequestException) throw error;
 			throw new BadRequestException(
-				'You have to be online on the server to receive the money.',
+				'Join the Minecraft server, then claim the completion reward again while you are online.',
 			);
 		}
 	}

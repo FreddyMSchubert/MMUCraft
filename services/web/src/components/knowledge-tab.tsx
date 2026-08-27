@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import {
 	knowledgeMarkdown,
@@ -24,6 +25,7 @@ export function KnowledgeTab({
 	pageId?: string;
 	onSelectPage: (pageId: string, replace?: boolean) => void;
 }) {
+	const { showAlert } = useSiteAlert();
 	const [data, setData] = useState<KnowledgeResponse | null>(null);
 	const [pageMarkdown, setPageMarkdown] = useState('');
 	const [error, setError] = useState('');
@@ -88,11 +90,18 @@ export function KnowledgeTab({
 			if (!response.ok) throw new Error(apiMessage(body, 'Failed to mark knowledge as read'));
 			setReadPageIds((current) => new Set(current).add(activePage.id));
 		} catch (caught) {
-			setError(caught instanceof Error ? caught.message : 'Failed to mark knowledge as read');
+			await showAlert({
+				title: 'Could not mark this page as read',
+				message:
+					caught instanceof Error
+						? caught.message
+						: 'The reading reward could not be recorded. Please try again.',
+				tone: 'danger',
+			});
 		} finally {
 			setMarkingRead(false);
 		}
-	}, [activePage, markingRead]);
+	}, [activePage, markingRead, showAlert]);
 
 	useEffect(() => {
 		let cancelled = false;

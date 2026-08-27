@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import { Fireworks } from 'fireworks-js';
 import { LaunchCountdown, useLaunchLive } from '@/components/launch/launch-countdown';
 import { SitePage } from '@/components/site-page';
+import { useSiteAlert } from '@/components/site-alert';
 import { LAUNCH_TIME_LABEL } from '@/lib/launch';
 
 export function LaunchGate({
@@ -21,6 +22,7 @@ export function LaunchGate({
 	const clicks = useRef<number[]>([]);
 	const fireworksStage = useRef<HTMLDivElement>(null);
 	const launchLive = useLaunchLive();
+	const { showAlert } = useSiteAlert();
 
 	useEffect(() => {
 		const stage = fireworksStage.current;
@@ -87,8 +89,16 @@ export function LaunchGate({
 							today&apos;s Wordle.
 						</p>
 						<div className="launchGateActions">
-							<SocialLink href={discordUrl} label="Join Discord" />
-							<SocialLink href={instagramUrl} label="Instagram" />
+							<SocialLink
+								href={discordUrl}
+								label="Join Discord"
+								onMissing={showAlert}
+							/>
+							<SocialLink
+								href={instagramUrl}
+								label="Instagram"
+								onMissing={showAlert}
+							/>
 							<Link href="/wordle">Play Wordle</Link>
 						</div>
 					</>
@@ -98,13 +108,21 @@ export function LaunchGate({
 	);
 }
 
-function SocialLink({ href, label }: { href: string; label: string }) {
+function SocialLink({
+	href,
+	label,
+	onMissing,
+}: {
+	href: string;
+	label: string;
+	onMissing: (message: string) => Promise<unknown>;
+}) {
 	if (!href)
 		return (
 			<button
 				type="button"
 				onClick={() => {
-					window.alert(`${label} link coming soon!`);
+					void onMissing(`${label} link coming soon!`);
 				}}
 			>
 				{label}

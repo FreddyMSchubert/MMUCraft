@@ -1,6 +1,7 @@
 'use client';
 
 import { Fireworks } from 'fireworks-js';
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LeaderboardPodium } from '@/components/leaderboard-podium';
 import { apiMessage } from '@/lib/api-response';
@@ -118,7 +119,7 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 						The server has its own fish, along with way more powerful item rewards for
 						fishing. The compendium tracks the fish you caught. For all infos on
 						fishing, check out the{' '}
-						<a href="/play/knowledge/fishing">fishing knowledge book</a>.
+						<Link href="/play/knowledge/fishing">fishing knowledge book</Link>.
 					</p>
 				</div>
 				<label className="fishSort">

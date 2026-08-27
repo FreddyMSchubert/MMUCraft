@@ -303,6 +303,8 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    cap_add:
+      - DAC_OVERRIDE
     volumes:
       - ${MONITORING_CONFIG_PATH:-../monitoring}/alloy/config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro

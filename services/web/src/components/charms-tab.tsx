@@ -214,10 +214,12 @@ export function CharmsTab() {
 					<h3>Charm Forge</h3>
 					<p className="tabSubtitle">
 						Charms give you new abilities, from climbing walls to mining whole veins of
-						ore. Upgrade them here to make those abilities stronger.
+						ore. You can pgrade them here to make those abilities stronger. For all
+						infos, check out the <a href="">charms knowledge book</a>.
 					</p>
 					<p className="tabNote">
-						Hold a charm in your main hand, then refresh your inventory.
+						Hold the charm you want to upgrade in your main hand, then refresh your
+						inventory.
 					</p>
 				</div>
 				<div className="charmForgeControls">

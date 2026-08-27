@@ -231,7 +231,8 @@ export function WordleGame({
 				<div className="wordleTopline">
 					<h2>MMU Minecraft Society Wordle</h2>
 					<span>
-						{formatDisplayDate(puzzle.dateKey)} · {difficulty} · {puzzle.answer.length} letters
+						{formatDisplayDate(puzzle.dateKey)} · {difficulty} · {puzzle.answer.length}{' '}
+						letters
 					</span>
 				</div>
 				<div className="wordleRules">

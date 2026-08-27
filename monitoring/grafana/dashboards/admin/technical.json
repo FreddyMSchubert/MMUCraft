@@ -2,6 +2,19 @@
 	"annotations": { "list": [] },
 	"editable": false,
 	"graphTooltip": 1,
+	"links": [
+		{
+			"asDropdown": false,
+			"icon": "external link",
+			"includeVars": false,
+			"keepTime": true,
+			"targetBlank": false,
+			"title": "Open Logs Drilldown",
+			"tooltip": "Search logs, filter levels, inspect fields, and view context",
+			"type": "link",
+			"url": "/grafana/a/grafana-lokiexplore-app/explore"
+		}
+	],
 	"panels": [
 		{
 			"id": 1,
@@ -724,7 +737,8 @@
 		{
 			"id": 20,
 			"type": "timeseries",
-			"title": "Container Network Traffic",
+			"title": "Container Network RX/TX (bytes/s)",
+			"description": "RX is traffic received by a container. TX is traffic sent by a container and is drawn below zero.",
 			"gridPos": { "h": 8, "w": 8, "x": 0, "y": 57 },
 			"datasource": { "type": "prometheus", "uid": "prometheus" },
 			"targets": [
@@ -833,14 +847,14 @@
 		{
 			"id": 23,
 			"type": "logs",
-			"title": "Container Logs",
-			"gridPos": { "h": 16, "w": 24, "x": 0, "y": 65 },
+			"title": "Minecraft Logs",
+			"gridPos": { "h": 14, "w": 12, "x": 0, "y": 65 },
 			"datasource": { "type": "loki", "uid": "loki" },
 			"targets": [
 				{
 					"datasource": { "type": "loki", "uid": "loki" },
 					"editorMode": "code",
-					"expr": "{service=~\"$service\"}",
+					"expr": "{service=\"minecraft\"}",
 					"queryType": "range",
 					"refId": "A"
 				}
@@ -851,7 +865,89 @@
 				"enableLogDetails": true,
 				"prettifyLogMessage": false,
 				"showCommonLabels": false,
-				"showLabels": true,
+				"showLabels": false,
+				"showTime": true,
+				"sortOrder": "Descending",
+				"wrapLogMessage": true
+			}
+		},
+		{
+			"id": 24,
+			"type": "logs",
+			"title": "API Logs",
+			"gridPos": { "h": 14, "w": 12, "x": 12, "y": 65 },
+			"datasource": { "type": "loki", "uid": "loki" },
+			"targets": [
+				{
+					"datasource": { "type": "loki", "uid": "loki" },
+					"editorMode": "code",
+					"expr": "{service=\"api\"}",
+					"queryType": "range",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": {}, "overrides": [] },
+			"options": {
+				"dedupStrategy": "none",
+				"enableLogDetails": true,
+				"prettifyLogMessage": false,
+				"showCommonLabels": false,
+				"showLabels": false,
+				"showTime": true,
+				"sortOrder": "Descending",
+				"wrapLogMessage": true
+			}
+		},
+		{
+			"id": 25,
+			"type": "logs",
+			"title": "Web Logs",
+			"gridPos": { "h": 14, "w": 12, "x": 0, "y": 79 },
+			"datasource": { "type": "loki", "uid": "loki" },
+			"targets": [
+				{
+					"datasource": { "type": "loki", "uid": "loki" },
+					"editorMode": "code",
+					"expr": "{service=\"web\"}",
+					"queryType": "range",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": {}, "overrides": [] },
+			"options": {
+				"dedupStrategy": "none",
+				"enableLogDetails": true,
+				"prettifyLogMessage": false,
+				"showCommonLabels": false,
+				"showLabels": false,
+				"showTime": true,
+				"sortOrder": "Descending",
+				"wrapLogMessage": true
+			}
+		},
+		{
+			"id": 26,
+			"type": "logs",
+			"title": "Misc Logs",
+			"description": "Logs from every current or future Compose service except Minecraft, API, Web, Alloy, and Loki.",
+			"gridPos": { "h": 14, "w": 12, "x": 12, "y": 79 },
+			"datasource": { "type": "loki", "uid": "loki" },
+			"targets": [
+				{
+					"datasource": { "type": "loki", "uid": "loki" },
+					"editorMode": "code",
+					"expr": "{service=~\".+\", service!~\"minecraft|api|web|alloy|loki\"}",
+					"queryType": "range",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": {}, "overrides": [] },
+			"options": {
+				"dedupStrategy": "none",
+				"enableLogDetails": true,
+				"prettifyLogMessage": false,
+				"showCommonLabels": false,
+				"showLabels": false,
 				"showTime": true,
 				"sortOrder": "Descending",
 				"wrapLogMessage": true
@@ -861,29 +957,7 @@
 	"refresh": "15s",
 	"schemaVersion": 42,
 	"tags": ["admin", "technical", "mmucraft"],
-	"templating": {
-		"list": [
-			{
-				"allValue": ".+",
-				"current": { "text": "All", "value": "$__all" },
-				"datasource": { "type": "loki", "uid": "loki" },
-				"definition": "label_values(service)",
-				"includeAll": true,
-				"label": "Service",
-				"name": "service",
-				"options": [],
-				"query": {
-					"label": "service",
-					"refId": "LokiVariableQueryEditor-VariableQuery",
-					"stream": "",
-					"type": 1
-				},
-				"refresh": 1,
-				"sort": 1,
-				"type": "query"
-			}
-		]
-	},
+	"templating": { "list": [] },
 	"time": { "from": "now-24h", "to": "now" },
 	"timepicker": {},
 	"timezone": "browser",

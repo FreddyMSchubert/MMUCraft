@@ -138,7 +138,7 @@ export class AuthVerificationEmailService {
 		const from = process.env.RESEND_FROM ?? 'MMU Minecraft Society <onboarding@resend.dev>';
 		const recipientDomain = email.split('@')[1] ?? 'invalid';
 		if (!apiKey) {
-			console.warn('[auth-email] Delivery skipped', {
+			console.warn('[auth-email] WARN Delivery skipped', {
 				kind,
 				recipientDomain,
 				reason: 'RESEND_API_KEY is missing from the API process environment',
@@ -159,14 +159,14 @@ export class AuthVerificationEmailService {
 				}),
 			});
 			if (!response.ok)
-				console.error('[auth-email] Resend rejected verification email', {
+				console.error('[auth-email] ERROR Resend rejected verification email', {
 					kind,
 					recipientDomain,
 					status: response.status,
 					response: await response.text(),
 				});
 		} catch (error) {
-			console.error('[auth-email] Resend request failed', {
+			console.error('[auth-email] ERROR Resend request failed', {
 				kind,
 				recipientDomain,
 				error: error instanceof Error ? `${error.name}: ${error.message}` : String(error),

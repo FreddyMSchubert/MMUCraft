@@ -24,11 +24,11 @@ export async function proxyApiRequest(request: Request, path: string) {
 			cache: 'no-store',
 		});
 	} catch (error) {
-		console.error(`[api-proxy] ${request.method} ${route} failed`, error);
+		console.error(`[api-proxy] ERROR ${request.method} ${route} failed`, error);
 		throw error;
 	}
 	if (upstream.status >= 500) {
-		console.error(`[api-proxy] ${request.method} ${route} -> ${upstream.status}`);
+		console.error(`[api-proxy] ERROR ${request.method} ${route} -> ${upstream.status}`);
 	}
 
 	const headers = new Headers();

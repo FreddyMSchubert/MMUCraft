@@ -19,7 +19,6 @@ import {
 	type WordleGuess,
 } from '@/lib/wordle';
 
-const DICTIONARY_API = 'https://api.dictionaryapi.dev/api/v2/entries/en';
 const DICTIONARY_CACHE_PREFIX = 'mmu-mcsoc-dictionary';
 const DICTIONARY_CACHE_MAX_AGE = 30 * 86_400_000;
 const KEYBOARD = [
@@ -79,6 +78,7 @@ export function WordleGame({
 	);
 	const gameOver = sessionGameOver ?? savedGameOver;
 	const [currentGuess, setCurrentGuess] = useState('');
+	const [checkingWord, setCheckingWord] = useState(false);
 	const [revealingRow, setRevealingRow] = useState<number | null>(null);
 	const [winningRow, setWinningRow] = useState<number | null>(null);
 	const [shakeToken, setShakeToken] = useState(0);
@@ -118,7 +118,10 @@ export function WordleGame({
 		}
 
 		busy.current = true;
-		if (!(await validateGuess(currentGuess))) {
+		setCheckingWord(true);
+		const valid = await validateGuess(currentGuess);
+		setCheckingWord(false);
+		if (!valid) {
 			busy.current = false;
 			setShakeToken((value) => value + 1);
 			void showAlert({
@@ -303,6 +306,10 @@ export function WordleGame({
 					)}
 				</div>
 
+				<p className="wordleChecking" role="status" aria-live="polite">
+					{checkingWord ? 'Checking word...' : '\u00a0'}
+				</p>
+
 				<div className="wordleKeyboard" aria-label="On-screen keyboard">
 					{KEYBOARD.map((row, rowIndex) => (
 						<div className="wordleKeyboardRow" key={rowIndex}>
@@ -390,12 +397,12 @@ async function validateGuess(guess: string) {
 		controller.abort();
 	}, 3500);
 	try {
-		const response = await fetch(`${DICTIONARY_API}/${encodeURIComponent(guess)}`, {
+		const response = await fetch(`/api/wordle/validate?guess=${encodeURIComponent(guess)}`, {
 			cache: 'force-cache',
 			signal: controller.signal,
 		});
-		if (!response.ok && response.status !== 404) return true;
-		const isWord = response.ok && Array.isArray(await response.json());
+		if (!response.ok) return false;
+		const { isWord } = (await response.json()) as { isWord: boolean };
 		try {
 			localStorage.setItem(cacheKey, JSON.stringify({ isWord, savedAt: Date.now() }));
 		} catch {
@@ -403,7 +410,7 @@ async function validateGuess(guess: string) {
 		}
 		return isWord;
 	} catch {
-		return true;
+		return false;
 	} finally {
 		window.clearTimeout(timeout);
 	}

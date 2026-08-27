@@ -178,13 +178,25 @@ export function ClaimsTab() {
 				<div>
 					<h3>Chunk claims</h3>
 					<p className="tabSubtitle">
-						Minecraft divides the world into 16×16-block areas called chunks. Claiming
-						one means only you and the players you choose can build, break blocks or
-						interact there, keeping your home safe while you are away.
+						Minecraft divides the world into 16x16-block areas called{' '}
+						<a href="https://minecraft.wiki/w/Chunk" target="_blank">
+							chunks
+						</a>
+						. You can claim a chunk as your own. That means that in the claim only you
+						and players you choose can:
+						<ul>
+							<li>Place & break blocks</li>
+							<li>Open Chests, Barrels etc</li>
+							<li>Interact with anything at all (e.g. doors)</li>
+						</ul>
+						This also includes other mobs like creepers, which can't damage the things
+						in your claims! Claims are perfect to{' '}
+						<strong>protect your items and builds</strong>!
 					</p>
 					<p className="tabNote">
-						Stand in the chunk you want to claim. Press F3 + G in Minecraft to see its
-						borders.
+						Stand in the chunk you want to claim, then press "Add Claim". Press F3 + G
+						in Minecraft to see chunks in-game. You can see the coordinates of the chunk
+						you are in on the F3 debug screen.
 					</p>
 				</div>
 				<div className="claimPurchase">

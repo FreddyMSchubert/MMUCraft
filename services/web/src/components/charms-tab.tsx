@@ -215,7 +215,8 @@ export function CharmsTab() {
 					<p className="tabSubtitle">
 						Charms give you new abilities, from climbing walls to mining whole veins of
 						ore. You can pgrade them here to make those abilities stronger. For all
-						infos, check out the <a href="">charms knowledge book</a>.
+						infos, check out the{' '}
+						<a href="/play/knowledge/charms">charms knowledge book</a>.
 					</p>
 					<p className="tabNote">
 						Hold the charm you want to upgrade in your main hand, then refresh your

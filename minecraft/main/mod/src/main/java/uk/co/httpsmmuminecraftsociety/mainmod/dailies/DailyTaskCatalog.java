@@ -192,8 +192,8 @@ final class DailyTaskCatalog {
                     option(12, false, false, new ItemSubmissionTask(Items.PRISMARINE_SHARD), 5, 0.25D, 12, 32, "🔱", "Submit Prismarine Shards", "Submit {count} prismarine shards. Hold the items in your inventory, then click Claim."),
                     option(12, false, false, new ItemSubmissionTask(Items.PRISMARINE_CRYSTALS), 5, 0.375D, 8, 24, "💠", "Submit Prismarine Crystals", "Submit {count} prismarine crystals. Hold the items in your inventory, then click Claim."),
                     option(12, false, false, new ItemSubmissionTask(Items.PUFFERFISH), 5, 0.75D, 2, 8, "🐡", "Submit Pufferfish", "Submit {count} pufferfish. Please do not make lunch with them. Hold the items in your inventory, then click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.RAW_GOLD_BLOCK), 5, 2, 2, 6, "🟨", "Submit Blocks of Raw Gold", "Submit {count} blocks of raw gold. Hold the items in your inventory, then click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.RAW_IRON_BLOCK), 5, 1.5D, 2, 6, "⬜", "Submit Blocks of Raw Iron", "Submit {count} blocks of raw iron. Hold the items in your inventory, then click Claim."),
+                    option(10, false, false, new ItemSubmissionTask(Items.RAW_GOLD_BLOCK), 0, 8, 1, 4, "🟨", "Submit Blocks of Raw Gold", "Submit {count} blocks of raw gold. Hold the items in your inventory, then click Claim."),
+                    option(10, false, false, new ItemSubmissionTask(Items.RAW_IRON_BLOCK), 0, 5, 1, 6, "⬜", "Submit Blocks of Raw Iron", "Submit {count} blocks of raw iron. Hold the items in your inventory, then click Claim."),
                     option(20, false, false, new ItemSubmissionTask(Items.DIAMOND_BLOCK), 5, 5, 1, 3, "💎", "Submit Diamond Blocks", "Convert {count} diamond blocks into dabloons. There is no raw diamond block, so polished wealth will do. Hold the items in your inventory, then click Claim."),
                     option(12, false, false, new ItemSubmissionTask(Items.SLIME_BLOCK), 5, 1, 2, 8, "🟩", "Submit Slime Blocks", "Submit {count} slime blocks. Bounce on them before packing them up. Hold the items in your inventory, then click Claim."),
                     option(12, false, false, new ItemSubmissionTask(Items.SLIME_BALL), 5, 0.25D, 12, 32, "🟢", "Submit Slimeballs", "Submit {count} slimeballs. Hold the items in your inventory, then click Claim."),
@@ -537,10 +537,10 @@ final class DailyTaskCatalog {
             )),
             // Mining
             weighted(2, List.of(
-                    option(3, false, false, new BreakBlockTask(Blocks.INFESTED_STONE), 5, 1.5D, 1, 5, "🪲", "Mine Infested Stone", "Mine {count} infested stone."),
-                    option(3, true, false, new BreakBlockTask(Blocks.GILDED_BLACKSTONE), 8, 3, 1, 2, "🟨", "Mine Gilded Blackstone", "Mine {count} gilded blackstone."),
-                    option(3, true, false, new BreakBlockTask(Blocks.CRYING_OBSIDIAN), 8, 2, 1, 3, "🟪", "Mine Crying Obsidian", "Mine {count} crying obsidian."),
-                    option(4, true, false, new BreakBlockTask(Blocks.ANCIENT_DEBRIS), 8, 4, 1, 2, "🟫", "Mine Ancient Debris", "Mine {count} ancient debris.")
+                    option(3, false, false, new BreakBlockTask(Blocks.INFESTED_STONE), 8, 1.5D, 1, 5, "🪲", "Mine Infested Stone", "Mine {count} infested stone."),
+                    option(3, true, false, new BreakBlockTask(Blocks.GILDED_BLACKSTONE), 6, 1, 1, 10, "🟨", "Mine Gilded Blackstone", "Mine {count} gilded blackstone."),
+                    option(3, true, false, new BreakBlockTask(Blocks.CRYING_OBSIDIAN), 7, 1, 1, 5, "🟪", "Mine Crying Obsidian", "Mine {count} crying obsidian."),
+                    option(4, true, false, new BreakBlockTask(Blocks.ANCIENT_DEBRIS), 10, 1.5D, 1, 8, "🟫", "Mine Ancient Debris", "Mine {count} ancient debris.")
             )),
             // World interactions
             weighted(15, List.of(
@@ -732,7 +732,7 @@ final class DailyTaskCatalog {
             )),
             // Activity
             weighted(5, List.of(
-                    option(3, false, false, new PlayTimeTask(), 5, 0.15D, 10, 30, "⏰", "Stay a While", "Play on the server for at least {count} minutes today.")
+                    option(3, false, false, new PlayTimeTask(), 5, 0.15D, 20, 45, "⏰", "Stay a While", "Play on the server for at least {count} minutes today.")
             )),
             // Zombie curing
             weighted(2, List.of(

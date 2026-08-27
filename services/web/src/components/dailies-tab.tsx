@@ -180,11 +180,9 @@ export function DailiesTab() {
 				<div>
 					<h3>Dailies</h3>
 					<p className="tabSubtitle">
-						Every day you get a new set of challenges that reward you with a lot of
-						dabloons if you are able to complete them all.
-					</p>
-					<p className="tabNote">
-						New challenges arrive at 4 am. You must be online to claim rewards.
+						Every day you get a new set of challenges. You can gain a bunch of dabloons
+						by completing them, especially if you manage to complete all the dailies on
+						a given day.
 					</p>
 				</div>
 				<div

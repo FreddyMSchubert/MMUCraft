@@ -121,6 +121,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=90d
+      - --log.level=warn
     volumes:
       - ./monitoring/prometheus-dev.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
@@ -139,6 +140,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_USERS_DEFAULT_THEME: dark
+      GF_LOG_LEVEL: warn
       GF_SERVER_ROOT_URL: http://localhost:3000/grafana/
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/dashboards/gameplay.json
@@ -150,9 +152,40 @@ services:
     depends_on:
       prometheus:
         condition: service_started
+      loki:
+        condition: service_started
+    logging: *logging
+    restart: unless-stopped
+
+  loki:
+    profiles: [minecraft]
+    image: grafana/loki:3.7.6
+    command: -config.file=/etc/loki/loki.yml
+    volumes:
+      - ./monitoring/loki.yml:/etc/loki/loki.yml:ro
+      - loki-data:/loki
+    logging: *logging
+    restart: unless-stopped
+
+  alloy:
+    profiles: [minecraft]
+    image: grafana/alloy:v1.18.0
+    command:
+      - run
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    volumes:
+      - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy-data:/var/lib/alloy/data
+    depends_on:
+      loki:
+        condition: service_started
     logging: *logging
     restart: unless-stopped
 
 volumes:
   prometheus-data:
   grafana-data:
+  loki-data:
+  alloy-data:

@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
@@ -6,7 +7,10 @@ import { ShutdownService } from './shutdown';
 import { MonitoringService } from './monitoring/monitoring.service';
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+	const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
+		logger: ['error', 'warn'],
+	});
+	const httpLogger = new Logger('HTTP');
 	app.enableShutdownHooks();
 	const server = app.getHttpAdapter().getInstance();
 	const shutdown = app.get(ShutdownService);
@@ -25,6 +29,11 @@ async function bootstrap() {
 	});
 	server.addHook('onResponse', (request, reply) => {
 		monitoring.finishRequest(request, reply.statusCode);
+		if (reply.statusCode >= 500) {
+			httpLogger.error(
+				`${request.method} ${request.url.split('?', 1)[0]} -> ${reply.statusCode}`,
+			);
+		}
 		if (trackedRequests.delete(request)) shutdown.endRequest();
 	});
 	server.addHook('onRequestAbort', (request) => {

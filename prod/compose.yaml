@@ -173,6 +173,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=90d
+      - --log.level=warn
     read_only: true
     security_opt:
       - no-new-privileges:true
@@ -207,6 +208,7 @@ services:
       GF_SECURITY_COOKIE_SAMESITE: strict
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_USERS_DEFAULT_THEME: dark
+      GF_LOG_LEVEL: warn
       GF_SERVER_ROOT_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}/grafana/
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/dashboards/gameplay.json
@@ -227,6 +229,8 @@ services:
     memswap_limit: 384m
     depends_on:
       prometheus:
+        condition: service_started
+      loki:
         condition: service_started
     logging: *logging
     restart: unless-stopped
@@ -254,6 +258,7 @@ services:
     image: quay.io/prometheus/node-exporter:v1.12.1
     command:
       - --path.rootfs=/host
+      - --log.level=warn
     pid: host
     read_only: true
     security_opt:
@@ -265,6 +270,51 @@ services:
     mem_limit: 128m
     mem_reservation: 32m
     memswap_limit: 128m
+    logging: *logging
+    restart: unless-stopped
+    networks: [app]
+
+  loki:
+    image: grafana/loki:3.7.6
+    command: -config.file=/etc/loki/loki.yml
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - ${MONITORING_CONFIG_PATH:-../monitoring}/loki.yml:/etc/loki/loki.yml:ro
+      - loki-data:/loki
+    mem_limit: 512m
+    mem_reservation: 128m
+    memswap_limit: 512m
+    logging: *logging
+    restart: unless-stopped
+    networks: [app]
+
+  alloy:
+    image: grafana/alloy:v1.18.0
+    command:
+      - run
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - ${MONITORING_CONFIG_PATH:-../monitoring}/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy-data:/var/lib/alloy/data
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m,mode=1777
+    mem_limit: 256m
+    mem_reservation: 64m
+    memswap_limit: 256m
+    depends_on:
+      loki:
+        condition: service_started
     logging: *logging
     restart: unless-stopped
     networks: [app]
@@ -328,3 +378,5 @@ networks:
 volumes:
   prometheus-data:
   grafana-data:
+  loki-data:
+  alloy-data:

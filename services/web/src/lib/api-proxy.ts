@@ -14,12 +14,22 @@ export async function proxyApiRequest(request: Request, path: string) {
 		requestHeaders['content-type'] = requestContentType;
 	}
 
-	const upstream = await fetch(`${API_BASE_URL}${path}`, {
-		method: request.method,
-		headers: requestHeaders,
-		body: requestBody,
-		cache: 'no-store',
-	});
+	const route = path.split('?', 1)[0];
+	let upstream: Response;
+	try {
+		upstream = await fetch(`${API_BASE_URL}${path}`, {
+			method: request.method,
+			headers: requestHeaders,
+			body: requestBody,
+			cache: 'no-store',
+		});
+	} catch (error) {
+		console.error(`[api-proxy] ${request.method} ${route} failed`, error);
+		throw error;
+	}
+	if (upstream.status >= 500) {
+		console.error(`[api-proxy] ${request.method} ${route} -> ${upstream.status}`);
+	}
 
 	const headers = new Headers();
 	const contentType = upstream.headers.get('content-type');

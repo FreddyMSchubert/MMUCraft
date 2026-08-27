@@ -189,12 +189,12 @@ export function ClaimsTab() {
 							<li>Open Chests, Barrels etc</li>
 							<li>Interact with anything at all (e.g. doors)</li>
 						</ul>
-						This also includes other mobs like creepers, which can't damage the things
+						This also includes other mobs like creepers, which can&apos;t damage the things
 						in your claims! Claims are perfect to{' '}
 						<strong>protect your items and builds</strong>!
 					</p>
 					<p className="tabNote">
-						Stand in the chunk you want to claim, then press "Add Claim". Press F3 + G
+						Stand in the chunk you want to claim, then press &quot;Add Claim&quot;. Press F3 + G
 						in Minecraft to see chunks in-game. You can see the coordinates of the chunk
 						you are in on the F3 debug screen.
 					</p>

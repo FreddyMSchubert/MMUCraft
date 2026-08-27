@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { CharmForgeRenderer } from '@/lib/charm-forge-renderer';
 import { ASSETS } from '@/lib/assets';
 import { MinecraftItemIcon } from '@/components/minecraft-item-icon';
@@ -216,7 +217,7 @@ export function CharmsTab() {
 						Charms give you new abilities, from climbing walls to mining whole veins of
 						ore. You can pgrade them here to make those abilities stronger. For all
 						infos, check out the{' '}
-						<a href="/play/knowledge/charms">charms knowledge book</a>.
+						<Link href="/play/knowledge/charms">charms knowledge book</Link>.
 					</p>
 					<p className="tabNote">
 						Hold the charm you want to upgrade in your main hand, then refresh your

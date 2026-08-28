@@ -30,17 +30,26 @@ export function FeatureToggleAdminSection() {
 	const [error, setError] = useState('');
 
 	const load = useCallback(async () => {
-		const result = await fetchAdmin<{ toggles: FeatureToggle[] }>(
+		return fetchAdmin<{ toggles: FeatureToggle[] }>(
 			'/api/admin/toggles',
 			'Failed to load feature toggles',
 		);
-		setToggles(result.toggles);
 	}, []);
 
 	useEffect(() => {
-		void load().catch((caught: unknown) => {
-			setError(errorMessage(caught, 'Failed to load feature toggles'));
-		});
+		let cancelled = false;
+		async function refresh() {
+			try {
+				const result = await load();
+				if (!cancelled) setToggles(result.toggles);
+			} catch (caught) {
+				if (!cancelled) setError(errorMessage(caught, 'Failed to load feature toggles'));
+			}
+		}
+		void refresh();
+		return () => {
+			cancelled = true;
+		};
 	}, [load]);
 
 	async function setToggle(key: string, enabled: boolean) {

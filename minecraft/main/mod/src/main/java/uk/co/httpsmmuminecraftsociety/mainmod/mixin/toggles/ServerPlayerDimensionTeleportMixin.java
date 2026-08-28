@@ -20,7 +20,7 @@ abstract class ServerPlayerDimensionTeleportMixin {
         ServerPlayer player = (ServerPlayer) (Object) this;
         if (DimensionAccess.allows(player, transition)) return;
         String dimension = transition.newLevel().dimension().equals(Level.END) ? "The End" : "The Nether";
-        player.displayClientMessage(Component.literal(dimension + " is currently disabled."), true);
+        player.sendOverlayMessage(Component.literal(dimension + " is currently disabled."));
         callback.setReturnValue(null);
     }
 }

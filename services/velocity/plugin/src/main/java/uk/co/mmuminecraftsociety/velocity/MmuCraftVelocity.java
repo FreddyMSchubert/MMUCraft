@@ -6,6 +6,7 @@ import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
+import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -114,6 +115,19 @@ public final class MmuCraftVelocity {
             return;
         }
         event.setResult(ServerPreConnectEvent.ServerResult.allowed(target));
+    }
+
+    @Subscribe
+    public void onKickedFromServer(KickedFromServerEvent event) {
+        if (event.getPlayer().getCurrentServer().isEmpty()) {
+            event.setResult(KickedFromServerEvent.DisconnectPlayer.create(Messages.unavailable()));
+        } else if (event.kickedDuringServerConnect()) {
+            event.setResult(KickedFromServerEvent.Notify.create(Messages.transferUnavailable()));
+        } else {
+            event.setResult(KickedFromServerEvent.DisconnectPlayer.create(
+                    Messages.disconnected(event.getServerKickReason().orElse(null))
+            ));
+        }
     }
 
     @Subscribe

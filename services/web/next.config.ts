@@ -1,4 +1,7 @@
+import { existsSync } from 'node:fs';
 import type { NextConfig } from 'next';
+
+if (existsSync('../../.env')) process.loadEnvFile('../../.env');
 
 const nextConfig: NextConfig = {
 	output: 'standalone',

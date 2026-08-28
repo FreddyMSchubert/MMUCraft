@@ -96,19 +96,9 @@ trap 'rm -f "$defaults"' EXIT HUP INT TERM
 docker run --rm --entrypoint cat "$mc_image" /defaults/server.properties > "$defaults"
 
 server_properties=data/minecraft/server.properties
-if [ ! -s "$server_properties" ]; then
-	cp "$defaults" "$server_properties"
-fi
+cp "$defaults" "$server_properties"
 
-for key in resource-pack-id resource-pack-sha1; do
-	value=$(sed -n "s/^${key}=//p" "$defaults" | head -n 1)
-	[ -n "$value" ] && set_property "$server_properties" "$key" "$value"
-done
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
-set_property "$server_properties" online-mode false
-set_property "$server_properties" white-list false
-set_property "$server_properties" enforce-whitelist false
-set_property "$server_properties" enforce-secure-profile false
 chmod 664 "$server_properties"
 
 if [ "$warning_minutes" -gt 0 ] && dc ps --status running --services | grep -qx minecraft; then

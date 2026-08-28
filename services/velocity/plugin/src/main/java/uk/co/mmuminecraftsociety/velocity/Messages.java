@@ -34,9 +34,13 @@ final class Messages {
     }
 
     static Component unavailable() {
-        return Component.text("Your assigned Minecraft server is unavailable.\n\n", RED)
+        return Component.text("The Minecraft server you are joining is temporarily unavailable.\n\n", RED)
                 .decorate(TextDecoration.BOLD)
-                .append(Component.text("No fallback server was selected. Please try again later."));
+                .append(Component.text("Please try again later. If this continues, tell the committee on "))
+                .append(Component.text("Discord", BLUE)
+                        .decorate(TextDecoration.UNDERLINED)
+                        .clickEvent(ClickEvent.openUrl("https://discord.gg/pPgZqRS5b2")))
+                .append(Component.text("."));
     }
 
     static Component authenticationUnavailable() {

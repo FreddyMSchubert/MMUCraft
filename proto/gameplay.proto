@@ -13,6 +13,7 @@ service GameplayEvents {
   rpc RecordMoneyEvent(RecordMoneyEventRequest) returns (RecordMoneyEventResponse);
   rpc RecordFishCatch(RecordFishCatchRequest) returns (RecordFishCatchResponse);
   rpc GetClaimsSnapshot(GetClaimsSnapshotRequest) returns (ClaimsSnapshot);
+  rpc GetFeatureToggles(GetFeatureTogglesRequest) returns (FeatureTogglesSnapshot);
   rpc GetDailyTasksSnapshot(GetDailyTasksSnapshotRequest) returns (DailyTasksSnapshot);
   rpc UpdateDailyTask(UpdateDailyTaskRequest) returns (UpdateDailyTaskResponse);
   rpc PublishDiscordEvent(PublishDiscordEventRequest) returns (PublishDiscordEventResponse);
@@ -32,6 +33,7 @@ service GameplayControl {
   rpc GetCurrentClaimChunk(GetCurrentClaimChunkRequest) returns (GetCurrentClaimChunkResponse);
   rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
   rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
+  rpc ApplyFeatureToggles(FeatureTogglesSnapshot) returns (ApplyFeatureTogglesResponse);
   rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
   rpc ApplyPlayerSettings(ApplyPlayerSettingsRequest) returns (ApplyPlayerSettingsResponse);
   rpc GetCharmInventory(GetCharmInventoryRequest) returns (GetCharmInventoryResponse);
@@ -181,6 +183,21 @@ message PurchaseClaimResponse {
 }
 
 message ApplyClaimsSnapshotResponse {
+  bool applied = 1;
+}
+
+message GetFeatureTogglesRequest {}
+
+message FeatureToggle {
+  string key = 1;
+  bool enabled = 2;
+}
+
+message FeatureTogglesSnapshot {
+  repeated FeatureToggle toggles = 1;
+}
+
+message ApplyFeatureTogglesResponse {
   bool applied = 1;
 }
 

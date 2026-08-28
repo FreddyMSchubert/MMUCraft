@@ -10,6 +10,7 @@ import { DiscordModule } from './discord/discord.module';
 import { ShutdownModule } from './shutdown';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { VelocityModule } from './velocity/velocity.module';
+import { FeatureTogglesModule } from './toggles/feature-toggles.module';
 
 @Module({
 	imports: [
@@ -23,6 +24,7 @@ import { VelocityModule } from './velocity/velocity.module';
 		ShutdownModule,
 		MonitoringModule,
 		VelocityModule,
+		FeatureTogglesModule,
 	],
 	controllers: [HealthController],
 })

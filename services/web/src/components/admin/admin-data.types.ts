@@ -8,6 +8,7 @@ export type AdminSection =
 	| 'countdowns'
 	| 'discord-commands'
 	| 'dailies'
+	| 'toggles'
 	| 'servers'
 	| 'maintenance';
 
@@ -77,6 +78,7 @@ export function normalizeAdminSection(section: string | undefined): AdminSection
 		section === 'countdowns' ||
 		section === 'discord-commands' ||
 		section === 'dailies' ||
+		section === 'toggles' ||
 		section === 'servers' ||
 		section === 'maintenance'
 		? section

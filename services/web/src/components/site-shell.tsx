@@ -63,6 +63,7 @@ const ADMIN_SECTIONS = new Set([
 	'countdowns',
 	'discord-commands',
 	'dailies',
+	'toggles',
 	'servers',
 	'maintenance',
 ]);

@@ -11,6 +11,10 @@ import { FishingService } from '../fishing/fishing.service';
 import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service';
 import { DailiesService } from './dailies/dailies.service';
 import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.service';
+import {
+	FeatureTogglesService,
+	type FeatureTogglesSnapshot,
+} from '../toggles/feature-toggles.service';
 import type {
 	DailyTaskUpdateRequest,
 	DailyTaskUpdateResponse,
@@ -52,6 +56,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly claims: ClaimsService,
 		private readonly dailies: DailiesService,
 		private readonly discord: DiscordService,
+		private readonly featureToggles: FeatureTogglesService,
 	) {}
 
 	onModuleInit() {
@@ -64,6 +69,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			RecordMoneyEvent: this.recordMoneyEvent.bind(this),
 			RecordFishCatch: this.recordFishCatch.bind(this),
 			GetClaimsSnapshot: this.getClaimsSnapshot.bind(this),
+			GetFeatureToggles: this.getFeatureToggles.bind(this),
 			GetDailyTasksSnapshot: this.getDailyTasksSnapshot.bind(this),
 			UpdateDailyTask: this.updateDailyTask.bind(this),
 			PublishDiscordEvent: this.publishDiscordEvent.bind(this),
@@ -120,6 +126,13 @@ export class GameplayGrpcService implements OnModuleInit {
 		callback: UnaryCallback<ClaimsSnapshot>,
 	) {
 		callback(null, this.claims.getSnapshot());
+	}
+
+	private getFeatureToggles(
+		_call: grpc.ServerUnaryCall<EmptyGrpcRequest, FeatureTogglesSnapshot>,
+		callback: UnaryCallback<FeatureTogglesSnapshot>,
+	) {
+		callback(null, this.featureToggles.getSnapshot());
 	}
 
 	private unlockNextKnowledge(

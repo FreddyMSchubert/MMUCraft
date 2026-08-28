@@ -15,10 +15,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public final class DailyTaskRegistry {
-    public static final boolean NETHER_ENABLED = false;
-    public static final boolean END_ENABLED = false;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
+public final class DailyTaskRegistry {
     private static final List<Weighted<List<Weighted<Option>>>> TASKS = DailyTaskCatalog.taskFamilies();
 
     private DailyTaskRegistry() {
@@ -181,7 +180,8 @@ public final class DailyTaskRegistry {
         }
 
         private boolean available() {
-            return (!nether || NETHER_ENABLED) && (!end || END_ENABLED);
+            return (!nether || FeatureToggles.isEnabled(FeatureToggles.NETHER))
+                    && (!end || FeatureToggles.isEnabled(FeatureToggles.END));
         }
 
         private JsonObject create(Random random) {

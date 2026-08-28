@@ -4,6 +4,7 @@ import io.grpc.BindableService;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -197,6 +198,17 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
             callOnMainThread(() -> {
                 ClaimsManager.apply(request);
                 return ApplyClaimsSnapshotResponse.newBuilder().setApplied(true).build();
+            }).whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void applyFeatureToggles(
+                FeatureTogglesSnapshot request,
+                StreamObserver<ApplyFeatureTogglesResponse> responseObserver
+        ) {
+            callOnMainThread(() -> {
+                FeatureToggles.apply(request);
+                return ApplyFeatureTogglesResponse.newBuilder().setApplied(true).build();
             }).whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

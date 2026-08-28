@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
+
 public final class DailyAdvancementPolicy {
     private static final Identifier RESOURCE =
             Identifier.fromNamespaceAndPath("mainmod", "dailies/advancement_policy.json");
@@ -39,8 +41,10 @@ public final class DailyAdvancementPolicy {
 
     public static boolean allows(Identifier advancementId, Identifier rootId) {
         if (matches(policy.excluded(), advancementId, rootId)) return false;
-        if (!DailyTaskRegistry.NETHER_ENABLED && matches(policy.requiresNether(), advancementId, rootId)) return false;
-        return DailyTaskRegistry.END_ENABLED || !matches(policy.requiresEnd(), advancementId, rootId);
+        if (!FeatureToggles.isEnabled(FeatureToggles.NETHER)
+                && matches(policy.requiresNether(), advancementId, rootId)) return false;
+        return FeatureToggles.isEnabled(FeatureToggles.END)
+                || !matches(policy.requiresEnd(), advancementId, rootId);
     }
 
     private static Set<Identifier> readIds(JsonObject json, String group) {

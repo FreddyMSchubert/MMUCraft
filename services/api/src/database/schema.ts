@@ -395,6 +395,15 @@ export const countdowns = sqliteTable(
 	],
 );
 
+export const featureToggles = sqliteTable(
+	'feature_toggles',
+	{
+		key: text('key').primaryKey(),
+		enabled: integer('enabled').notNull().default(0),
+	},
+	(table) => [check('feature_toggles_enabled_check', sql`${table.enabled} in (0, 1)`)],
+);
+
 export const velocitySettings = sqliteTable(
 	'velocity_settings',
 	{
@@ -464,6 +473,7 @@ export type DailyTaskRow = typeof dailyTasks.$inferSelect;
 export type GiftCodeRow = typeof giftCodes.$inferSelect;
 export type DiscordAdminCommandLogRow = typeof discordAdminCommandLogs.$inferSelect;
 export type CountdownRow = typeof countdowns.$inferSelect;
+export type FeatureToggleRow = typeof featureToggles.$inferSelect;
 export type VelocitySettingsRow = typeof velocitySettings.$inferSelect;
 export type VelocityServerRow = typeof velocityServers.$inferSelect;
 export type VelocityScheduleRow = typeof velocitySchedules.$inferSelect;
@@ -490,6 +500,7 @@ export const schema = {
 	giftCodeRedemptions,
 	discordAdminCommandLogs,
 	countdowns,
+	featureToggles,
 	velocitySettings,
 	velocityServers,
 	velocitySchedules,

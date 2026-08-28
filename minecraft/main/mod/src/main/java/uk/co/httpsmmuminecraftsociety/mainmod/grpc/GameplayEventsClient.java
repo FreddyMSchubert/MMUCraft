@@ -7,6 +7,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -19,6 +20,7 @@ final class GameplayEventsClient {
     void start(ManagedChannel apiChannel) {
         gameplayEvents = GameplayEventsGrpc.newFutureStub(apiChannel);
         requestClaimsSnapshot();
+        requestFeatureToggles();
         requestDailyTasksSnapshot();
     }
 
@@ -155,6 +157,24 @@ final class GameplayEventsClient {
             } catch (Exception exception) {
                 MainMod.LOGGER.warn("Could not load daily tasks; retrying in 5 seconds", exception);
                 CompletableFuture.delayedExecutor(5, TimeUnit.SECONDS).execute(this::requestDailyTasksSnapshot);
+            }
+        }, Runnable::run);
+    }
+
+    private void requestFeatureToggles() {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+        if (client == null) return;
+
+        ListenableFuture<FeatureTogglesSnapshot> rpc = client.withDeadlineAfter(5, TimeUnit.SECONDS)
+                .getFeatureToggles(GetFeatureTogglesRequest.getDefaultInstance());
+        rpc.addListener(() -> {
+            try {
+                FeatureTogglesSnapshot snapshot = rpc.get();
+                GrpcBridge.runOnMainThread(() -> FeatureToggles.apply(snapshot));
+                MainMod.LOGGER.info("Loaded {} feature toggles", snapshot.getTogglesCount());
+            } catch (Exception exception) {
+                MainMod.LOGGER.warn("Could not load feature toggles; retrying in 5 seconds", exception);
+                CompletableFuture.delayedExecutor(5, TimeUnit.SECONDS).execute(this::requestFeatureToggles);
             }
         }, Runnable::run);
     }

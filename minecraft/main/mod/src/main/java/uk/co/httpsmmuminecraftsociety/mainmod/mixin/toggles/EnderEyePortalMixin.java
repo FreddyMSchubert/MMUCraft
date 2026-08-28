@@ -18,10 +18,11 @@ abstract class EnderEyePortalMixin {
             UseOnContext context,
             CallbackInfoReturnable<InteractionResult> callback
     ) {
-        if (FeatureToggles.isEnabled(FeatureToggles.END)
+        if (context.getLevel().isClientSide()
+                || FeatureToggles.isEnabled(FeatureToggles.END)
                 || !context.getLevel().getBlockState(context.getClickedPos()).is(Blocks.END_PORTAL_FRAME)) return;
-        if (!context.getLevel().isClientSide() && context.getPlayer() != null) {
-            context.getPlayer().displayClientMessage(Component.literal("The End is currently disabled."), true);
+        if (context.getPlayer() != null) {
+            context.getPlayer().sendOverlayMessage(Component.literal("The End is currently disabled."));
         }
         callback.setReturnValue(InteractionResult.FAIL);
     }

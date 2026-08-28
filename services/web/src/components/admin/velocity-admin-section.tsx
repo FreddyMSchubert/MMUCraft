@@ -122,7 +122,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 		if (
 			!(await confirm({
 				title: 'Change the default server?',
-				message: `${server.name} will become the target outside routing schedules. Connected players will move there within a few seconds.`,
+				message: `${server.name} will be used whenever no routing schedule is active. If no schedule is active now, connected players will move there within a few seconds. During an active schedule, players stay on its server and move to ${server.name} when it ends.`,
 				confirmLabel: 'Change default',
 			}))
 		)
@@ -133,7 +133,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				{ method: 'PATCH' },
 				'Failed to set the default server',
 			);
-			return `${server.name} is now the default server.`;
+			return `${server.name} is now the default server used outside routing schedules.`;
 		});
 	}
 
@@ -179,7 +179,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 			setScheduleServerId('');
 			setScheduleStartsAt('');
 			setScheduleEndsAt('');
-			return 'The schedule will apply automatically at its start and end times.';
+			return 'At the start, connected players will move to the scheduled server. At the end, they will move to the default server.';
 		});
 	}
 
@@ -187,7 +187,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 		if (
 			!(await confirm({
 				title: 'Remove this routing schedule?',
-				message: `The schedule “${schedule.name}” will no longer change the assigned server.`,
+				message: `The schedule “${schedule.name}” will stop controlling the route. If it is active, connected players will return to the default server within a few seconds.`,
 				confirmLabel: 'Remove schedule',
 				confirmTone: 'danger',
 				tone: 'danger',
@@ -224,7 +224,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				},
 				'Failed to move the player',
 			);
-			return `${player.username} will move within a few seconds. This choice lasts for the current routing period or until the player disconnects.`;
+			return `${player.username} will move within a few seconds. This choice lasts until the player disconnects or the default or scheduled route changes.`;
 		});
 	}
 
@@ -305,7 +305,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 						<h3>Server monitor</h3>
 						<p>
 							Velocity reports backend health and player locations every three
-							seconds.
+							seconds. The default server receives players whenever no schedule is
+							active.
 						</p>
 					</div>
 					<span
@@ -416,7 +417,10 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 			<section className="adminSection">
 				<div className="adminSectionHeader">
 					<h3>Online players</h3>
-					<p>A manual move overrides the current route for this player session.</p>
+					<p>
+						A manual move overrides the default or scheduled route for one player. It
+						ends when the player disconnects or that route changes.
+					</p>
 				</div>
 				<div className="adminTableWrap">
 					<table className="adminTable">
@@ -482,8 +486,11 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				<div className="adminSectionHeader">
 					<h3>Routing schedules</h3>
 					<p>
-						At the start and end, connected players move to the newly assigned server.
-						Schedules cannot overlap.
+						While a schedule is active, new players join its server instead of the
+						default server. At its start, connected players move to the scheduled
+						server. At its end, they move to the current default server. Only one
+						scheduled route can be active, so schedules cannot overlap. There is no
+						automatic fallback if the scheduled server is offline.
 					</p>
 				</div>
 				<form className="velocityScheduleForm" onSubmit={addSchedule}>

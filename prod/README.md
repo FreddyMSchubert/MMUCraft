@@ -22,7 +22,7 @@ Every three seconds, Velocity sends backend health, online players, and complete
 
 Use the Admin **Servers** page to add one temporary or event server. Start that backend without a public port. Attach it to the `kubecraft_app` Docker network. Install Fabric API and FabricProxy-Lite `2.12.0`, and set `FABRIC_PROXY_SECRET` to the production forwarding secret. Add its Docker address, such as `event-server:25565`, in the website. Removing the registry entry does not stop or delete the backend container.
 
-The Servers page also shows online players and backend health. A manual move lasts until the player disconnects or the active route changes. A schedule moves connected players at its start and end. The Maintenance page disconnects current players and rejects new logins during the next control sync.
+The Servers page also shows online players and backend health. A manual move lasts until the player disconnects or the active route changes. A schedule temporarily replaces the default route. At its start, connected players move to the scheduled server. At its end, they move to the current default server. Players who join during the schedule also use its server. The system does not fall back to the default server if the scheduled server is offline. The Maintenance page disconnects current players and rejects new logins during the next control sync.
 
 Signups are closed by default. Add one permitted email address per line to `data/api/signup-allowlist.txt`. Email matching is case-insensitive. Put `*` on its own line to permit all valid signup addresses. The API reads the file for each signup attempt, so you do not have to restart it. Sign-in is not affected.
 

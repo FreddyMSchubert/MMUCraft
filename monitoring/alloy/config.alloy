@@ -37,8 +37,28 @@ discovery.relabel "containers" {
 loki.source.docker "containers" {
 	host             = "unix:///var/run/docker.sock"
 	targets          = discovery.relabel.containers.output
-	forward_to       = [loki.write.local.receiver]
+	forward_to       = [loki.process.containers.receiver]
 	refresh_interval = "5s"
+}
+
+loki.process "containers" {
+	stage.decolorize {}
+	stage.drop {
+		drop_counter_reason = "empty_after_decolorize"
+		expression          = `^\s*$`
+	}
+
+	stage.match {
+		selector = "{service=~\"minecraft|velocity\"}"
+
+		stage.multiline {
+			firstline     = `^(?:\[[^]]+\](?: \[[^]]+\])?|WARNING:|OpenJDK )`
+			max_lines     = 512
+			max_wait_time = "3s"
+		}
+	}
+
+	forward_to = [loki.write.local.receiver]
 }
 
 loki.write "local" {

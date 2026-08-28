@@ -83,8 +83,6 @@ services:
     image: mcstack/velocity:dev
     build:
       context: services/velocity
-    stdin_open: true
-    tty: true
     environment:
       CFG_VELOCITY_FORWARDING_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
       VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}

@@ -90,6 +90,7 @@ set_property() {
 
 dc config --quiet
 dc pull --quiet
+dc run --rm --no-deps alloy validate /etc/alloy/config.alloy
 
 api_image="${image_prefix}-api:${tag}"
 mc_image="${image_prefix}-mc:${tag}"

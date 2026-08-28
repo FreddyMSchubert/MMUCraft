@@ -12,7 +12,6 @@ services:
       context: .
       dockerfile: services/api/Dockerfile
       target: dev
-    env_file: services/api/.env
     environment:
       HOST: 0.0.0.0
       PORT: 8080
@@ -21,6 +20,10 @@ services:
       MOD_GRPC_TARGET: minecraft:50052
       DATABASE_URL: ./data/app.sqlite
       DATABASE_MIGRATIONS_PATH: ./drizzle
+      AUTH_CODE_SECRET: ${AUTH_CODE_SECRET:-dev-change-me}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM: "${RESEND_FROM:-MMU Minecraft Society <onboarding@resend.dev>}"
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
       DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
       DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-}

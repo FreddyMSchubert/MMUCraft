@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import {
 	ClaimEditorCard,
 	formatDimension,
@@ -32,6 +32,7 @@ interface ClaimsResponse {
 	memberPriceDabloons: number;
 	normalPlayerPriceDabloons: number;
 	claims: Claim[];
+	memberClaims: Claim[];
 	candidates: ClaimPerson[];
 }
 
@@ -80,8 +81,10 @@ export function ClaimsTab() {
 		try {
 			await action();
 			await load();
+			return true;
 		} catch (caught) {
 			await showAlert({ title: failureTitle, message: readError(caught), tone: 'danger' });
+			return false;
 		} finally {
 			setBusy(false);
 		}
@@ -133,7 +136,7 @@ export function ClaimsTab() {
 	}
 
 	async function updateAppearance(claim: Claim, name: string, color: string | null) {
-		await run(async () => {
+		return run(async () => {
 			await request(`/api/claims/${claim.id}/appearance`, {
 				method: 'PATCH',
 				headers: { 'content-type': 'application/json' },
@@ -230,101 +233,144 @@ export function ClaimsTab() {
 					</small>
 				</div>
 			</div>
-			{data.claims.length === 0 ? (
-				<p className="claimsEmpty">You do not own any claimed chunks yet.</p>
-			) : (
-				<div className="claimsList">
-					{data.claims.map((claim) => {
-						const existingIds = new Set(claim.members.map((person) => person.id));
-						const candidates = data.candidates.filter(
-							(person) => !existingIds.has(person.id),
-						);
-						return (
-							<ClaimEditorCard
-								key={claim.id}
-								claim={claim}
-								busy={busy}
-								onDelete={() => void removeClaim(claim)}
-								onSave={(name, color) => updateAppearance(claim, name, color)}
-							>
-								<div className="claimMembers">
-									{claim.members.map((person) => (
-										<div className="claimMember" key={person.id}>
-											<PlayerHead person={person} />
-											<div>
-												<strong>
-													{person.preferredName || (
-														<PlayerName
-															name={person.minecraftUsername}
-															color={person.color}
-														/>
-													)}
-												</strong>
-												<span>
-													@
-													<PlayerName
-														name={person.minecraftUsername}
-														color={person.color}
-													/>
-													{person.pronouns ? ` - ${person.pronouns}` : ''}
-												</span>
-											</div>
-											{person.isOwner ? (
-												<small>Owner</small>
-											) : (
-												<button
-													type="button"
-													disabled={busy}
-													onClick={() => void removeMember(claim, person)}
-												>
-													Remove
-												</button>
-											)}
-										</div>
-									))}
-
-									<form
-										className="claimMemberSearch"
-										onSubmit={(event) => {
-											event.preventDefault();
-											void addMember(claim);
-										}}
-									>
-										<input
-											list={`claim-candidates-${claim.id}`}
-											value={searches[claim.id] ?? ''}
-											onChange={(event) => {
-												setSearches((current) => ({
-													...current,
-													[claim.id]: event.target.value,
-												}));
-											}}
-											placeholder="Search server members"
-											disabled={busy || candidates.length === 0}
-										/>
-										<datalist id={`claim-candidates-${claim.id}`}>
-											{candidates.map((person) => (
-												<option
-													className="playerName"
-													style={playerNameStyle(person.color)}
-													key={person.id}
-													value={person.minecraftUsername}
+			<ClaimSection
+				title="My claims"
+				claims={data.claims}
+				emptyMessage="You do not own any claimed chunks yet."
+				renderClaim={(claim) => {
+					const existingIds = new Set(claim.members.map((person) => person.id));
+					const candidates = data.candidates.filter(
+						(person) => !existingIds.has(person.id),
+					);
+					return (
+						<ClaimEditorCard
+							key={claim.id}
+							claim={claim}
+							busy={busy}
+							onDelete={() => void removeClaim(claim)}
+							onSave={(name, color) => updateAppearance(claim, name, color)}
+							summary={<ClaimMembersSummary members={claim.members} />}
+						>
+							<div className="claimMembers">
+								{claim.members.map((person) => (
+									<div className="claimMember" key={person.id}>
+										<PlayerHead person={person} />
+										<div>
+											<strong>
+												<PlayerName
+													name={person.minecraftUsername}
+													color={person.color}
 												/>
-											))}
-										</datalist>
-										<button
-											type="submit"
-											disabled={busy || candidates.length === 0}
-										>
-											Add
-										</button>
-									</form>
-								</div>
-							</ClaimEditorCard>
-						);
-					})}
-				</div>
+											</strong>
+											{person.pronouns && <span>{person.pronouns}</span>}
+										</div>
+										{person.isOwner ? (
+											<small>Owner</small>
+										) : (
+											<button
+												type="button"
+												disabled={busy}
+												onClick={() => void removeMember(claim, person)}
+											>
+												Remove
+											</button>
+										)}
+									</div>
+								))}
+
+								<form
+									className="claimMemberSearch"
+									onSubmit={(event) => {
+										event.preventDefault();
+										void addMember(claim);
+									}}
+								>
+									<input
+										list={`claim-candidates-${claim.id}`}
+										value={searches[claim.id] ?? ''}
+										onChange={(event) => {
+											setSearches((current) => ({
+												...current,
+												[claim.id]: event.target.value,
+											}));
+										}}
+										placeholder="Search server members"
+										disabled={busy || candidates.length === 0}
+									/>
+									<datalist id={`claim-candidates-${claim.id}`}>
+										{candidates.map((person) => (
+											<option
+												className="playerName"
+												style={playerNameStyle(person.color)}
+												key={person.id}
+												value={person.minecraftUsername}
+											/>
+										))}
+									</datalist>
+									<button
+										type="submit"
+										disabled={busy || candidates.length === 0}
+									>
+										Add
+									</button>
+								</form>
+							</div>
+						</ClaimEditorCard>
+					);
+				}}
+			/>
+			<ClaimSection
+				title="Other claims I’m a member of"
+				claims={data.memberClaims}
+				emptyMessage="You are not a member of anyone else’s claims."
+				renderClaim={(claim) => (
+					<ClaimEditorCard
+						key={claim.id}
+						claim={claim}
+						busy={busy}
+						summary={<ClaimMembersSummary members={claim.members} />}
+					/>
+				)}
+			/>
+		</div>
+	);
+}
+
+function ClaimSection({
+	title,
+	claims,
+	emptyMessage,
+	renderClaim,
+}: {
+	title: string;
+	claims: Claim[];
+	emptyMessage: string;
+	renderClaim: (claim: Claim) => ReactNode;
+}) {
+	return (
+		<section className="claimsSection">
+			<h3>{title}</h3>
+			{claims.length === 0 ? (
+				<p className="claimsEmpty">{emptyMessage}</p>
+			) : (
+				<div className="claimsList">{claims.map(renderClaim)}</div>
 			)}
+		</section>
+	);
+}
+
+function ClaimMembersSummary({ members }: { members: ClaimPerson[] }) {
+	return (
+		<div className="claimMembersSummary">
+			<span>Members</span>
+			<div className="claimMemberInlineList">
+				{members.map((person) => (
+					<span className="claimMemberInline" key={person.id}>
+						<PlayerHead person={person} />
+						<PlayerName name={person.minecraftUsername} color={person.color} />
+					</span>
+				))}
+			</div>
 		</div>
 	);
 }

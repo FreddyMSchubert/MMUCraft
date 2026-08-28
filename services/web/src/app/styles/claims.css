@@ -4,9 +4,14 @@
 
 .claimsPanel,
 .claimsList,
-.claimMembers {
+.claimMembers,
+.claimsSection {
 	display: grid;
 	gap: 14px;
+}
+
+.claimsSection > h3 {
+	margin: 0;
 }
 
 .claimsTop,
@@ -72,6 +77,56 @@
 	border: 1px solid rgba(255, 255, 255, 0.14);
 	border-radius: 9px;
 	background: rgba(255, 255, 255, 0.045);
+}
+
+.claimCardCollapsed {
+	padding: 9px 12px;
+}
+
+.claimCardCollapsed .claimHeader {
+	flex-wrap: wrap;
+	padding: 0;
+	border: 0;
+}
+
+.claimCardCollapsed .claimIdentity {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+}
+
+.claimCardCollapsed .claimName {
+	white-space: nowrap;
+}
+
+.claimMembersSummary,
+.claimMemberInlineList,
+.claimMemberInline {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.claimMembersSummary {
+	min-width: 0;
+	margin-left: auto;
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.78rem;
+}
+
+.claimMemberInlineList {
+	overflow-x: auto;
+}
+
+.claimMemberInline {
+	white-space: nowrap;
+}
+
+.claimMembersSummary .playerHead-small {
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+	font-size: 0.7rem;
 }
 
 .claimHeader {

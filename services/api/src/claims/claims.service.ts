@@ -52,6 +52,23 @@ export class ClaimsService {
 			ids.push(membership.user_id);
 			memberIdsByClaim.set(membership.claim_id, ids);
 		}
+		const presentClaim = (claim: typeof claims.$inferSelect) => ({
+			id: claim.id,
+			dimension: claim.dimension,
+			chunkX: claim.chunk_x,
+			chunkZ: claim.chunk_z,
+			name: claim.claim_name,
+			color: claim.color_hex ?? peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6',
+			defaultColor: peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6',
+			customColor: claim.color_hex,
+			members: [claim.owner_user_id, ...(memberIdsByClaim.get(claim.id) ?? [])]
+				.map((userId) => peopleById.get(userId))
+				.filter((person) => person !== undefined)
+				.map((person) => ({
+					...person,
+					isOwner: person.id === claim.owner_user_id,
+				})),
+		});
 
 		return {
 			...this.claimPurchasing.getNextClaimPricing(user),
@@ -60,24 +77,14 @@ export class ClaimsService {
 				.from(claims)
 				.where(and(eq(claims.owner_user_id, user.id), eq(claims.is_server, 0)))
 				.all()
-				.map((claim) => ({
-					id: claim.id,
-					dimension: claim.dimension,
-					chunkX: claim.chunk_x,
-					chunkZ: claim.chunk_z,
-					name: claim.claim_name,
-					color:
-						claim.color_hex ?? peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6',
-					defaultColor: peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6',
-					customColor: claim.color_hex,
-					members: [claim.owner_user_id, ...(memberIdsByClaim.get(claim.id) ?? [])]
-						.map((userId) => peopleById.get(userId))
-						.filter((person) => person !== undefined)
-						.map((person) => ({
-							...person,
-							isOwner: person.id === claim.owner_user_id,
-						})),
-				})),
+				.map(presentClaim),
+			memberClaims: this.database.connection
+				.select({ claim: claims })
+				.from(claimMembers)
+				.innerJoin(claims, eq(claimMembers.claim_id, claims.id))
+				.where(and(eq(claimMembers.user_id, user.id), eq(claims.is_server, 0)))
+				.all()
+				.map(({ claim }) => presentClaim(claim)),
 			candidates: people.filter((person) => person.id !== user.id && person.isMember),
 		};
 	}

@@ -55,8 +55,10 @@ export function ServerClaimAdministrationSection({
 		try {
 			await action();
 			await load();
+			return true;
 		} catch (caught) {
 			await showAlert({ title: failureTitle, message: readError(caught), tone: 'danger' });
+			return false;
 		} finally {
 			setBusy(false);
 		}
@@ -82,7 +84,7 @@ export function ServerClaimAdministrationSection({
 	}
 
 	async function updateAppearance(claim: EditableClaim, name: string, color: string | null) {
-		await run(async () => {
+		return run(async () => {
 			await request(`/api/admin/server-claims/${claim.id}/appearance`, {
 				method: 'PATCH',
 				headers: { 'content-type': 'application/json' },

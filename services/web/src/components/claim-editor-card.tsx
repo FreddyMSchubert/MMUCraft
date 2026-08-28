@@ -18,18 +18,22 @@ export function ClaimEditorCard({
 	busy,
 	onDelete,
 	onSave,
+	summary,
 	children,
 }: {
 	claim: EditableClaim;
 	busy: boolean;
-	onDelete: () => void;
-	onSave: (name: string, color: string | null) => Promise<void>;
+	onDelete?: () => void;
+	onSave?: (name: string, color: string | null) => Promise<boolean>;
+	summary?: ReactNode;
 	children?: ReactNode;
 }) {
+	const [editing, setEditing] = useState(false);
+
 	return (
-		<section className="claimCard">
+		<section className={`claimCard${editing ? '' : ' claimCardCollapsed'}`}>
 			<div className="claimHeader">
-				<div>
+				<div className="claimIdentity">
 					<h4
 						className="claimName"
 						style={{ '--claim-color': claim.color } as CSSProperties}
@@ -40,13 +44,38 @@ export function ClaimEditorCard({
 						Chunk {claim.chunkX}, {claim.chunkZ} - {formatDimension(claim.dimension)}
 					</span>
 				</div>
-				<button type="button" disabled={busy} onClick={onDelete}>
-					Delete claim
-				</button>
+				{!editing && summary}
+				{editing && onDelete && (
+					<button type="button" disabled={busy} onClick={onDelete}>
+						Delete claim
+					</button>
+				)}
+				{!editing && onSave && (
+					<button
+						type="button"
+						disabled={busy}
+						aria-expanded={false}
+						onClick={() => {
+							setEditing(true);
+						}}
+					>
+						Edit
+					</button>
+				)}
 			</div>
 
-			<ClaimAppearanceForm claim={claim} busy={busy} onSave={onSave} />
-			{children}
+			{editing && onSave && (
+				<>
+					<ClaimAppearanceForm
+						claim={claim}
+						busy={busy}
+						onSave={async (name, color) => {
+							if (await onSave(name, color)) setEditing(false);
+						}}
+					/>
+					{children}
+				</>
+			)}
 		</section>
 	);
 }

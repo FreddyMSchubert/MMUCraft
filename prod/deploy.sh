@@ -93,9 +93,12 @@ dc pull --quiet
 
 api_image="${image_prefix}-api:${tag}"
 mc_image="${image_prefix}-mc:${tag}"
+velocity_image="${image_prefix}-velocity:${tag}"
 defaults=$(mktemp)
 trap 'rm -f "$defaults"' EXIT HUP INT TERM
 docker run --rm --entrypoint cat "$mc_image" /defaults/server.properties > "$defaults"
+docker run --rm --entrypoint cat "$velocity_image" /config/velocity.toml > data/velocity/velocity.toml
+chmod 600 data/velocity/velocity.toml
 
 server_properties=data/minecraft/server.properties
 cp "$defaults" "$server_properties"

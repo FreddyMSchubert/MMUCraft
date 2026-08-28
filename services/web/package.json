@@ -6,9 +6,9 @@
 		"node": ">=24.0.0 <25"
 	},
 	"scripts": {
-		"dev": "next dev --turbopack",
-		"build": "next build",
-		"start": "next start",
+		"dev": "node --env-file-if-exists=../../.env node_modules/next/dist/bin/next dev --turbopack",
+		"build": "node --env-file-if-exists=../../.env node_modules/next/dist/bin/next build",
+		"start": "node --env-file-if-exists=../../.env node_modules/next/dist/bin/next start",
 		"lint": "eslint . --max-warnings=0",
 		"typecheck": "tsc --noEmit",
 		"check": "npm run lint && npm run typecheck",

@@ -19,8 +19,6 @@ import {
 	type WordleGuess,
 } from '@/lib/wordle';
 
-const DICTIONARY_CACHE_PREFIX = 'mmu-mcsoc-dictionary';
-const DICTIONARY_CACHE_MAX_AGE = 30 * 86_400_000;
 const KEYBOARD = [
 	['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
 	['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
@@ -379,38 +377,17 @@ function getKeyboardClasses(guesses: WordleGuess[]) {
 
 async function validateGuess(guess: string) {
 	if (WORD_SETS.get(guess.length)?.has(guess)) return true;
-	const cacheKey = `${DICTIONARY_CACHE_PREFIX}:${guess}`;
-	try {
-		const cached = JSON.parse(localStorage.getItem(cacheKey) ?? 'null') as {
-			isWord?: boolean;
-			savedAt?: number;
-		} | null;
-		if (
-			cached &&
-			typeof cached.isWord === 'boolean' &&
-			Date.now() - (cached.savedAt ?? 0) < DICTIONARY_CACHE_MAX_AGE
-		)
-			return cached.isWord;
-	} catch {
-		/* Continue to the dictionary. */
-	}
-
 	const controller = new AbortController();
 	const timeout = window.setTimeout(() => {
 		controller.abort();
 	}, 3500);
 	try {
-		const response = await fetch(`/api/wordle/validate?guess=${encodeURIComponent(guess)}`, {
-			cache: 'force-cache',
+		const response = await fetch(`/wordle/validate?guess=${encodeURIComponent(guess)}`, {
+			cache: 'no-store',
 			signal: controller.signal,
 		});
 		if (!response.ok) return false;
 		const { isWord } = (await response.json()) as { isWord: boolean };
-		try {
-			localStorage.setItem(cacheKey, JSON.stringify({ isWord, savedAt: Date.now() }));
-		} catch {
-			/* Cache is optional. */
-		}
 		return isWord;
 	} catch {
 		return false;

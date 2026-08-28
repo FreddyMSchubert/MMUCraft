@@ -171,8 +171,8 @@ public final class DailyTaskRegistry {
                     || minimum < 1 || maximum < minimum) {
                 throw new IllegalArgumentException("Invalid daily task reward settings for " + definition.getId());
             }
-            if (minimum == maximum && rewardPerIteration != 0) {
-                throw new IllegalArgumentException("Fixed daily tasks must put the full reward in baseCost");
+            if (new DailyTaskAmount(baseCost, rewardPerIteration).reward(minimum) < 3) {
+                throw new IllegalArgumentException("Daily task rewards must start at 3 dabloons for " + definition.getId());
             }
             if (name.isBlank() || description.isBlank() || emoji.isBlank()) {
                 throw new IllegalArgumentException("Daily task copy must not be blank");

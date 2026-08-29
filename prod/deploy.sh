@@ -5,7 +5,9 @@ tag=${1:-}
 image_prefix=${2:-}
 warning_minutes=${3:-3}
 force=${4:-false}
+notify_update_complete=false
 
+# Validate deployment inputs before changing server state.
 case "$tag" in
 	''|*[!A-Za-z0-9_.-]*) echo "Invalid image tag: $tag" >&2; exit 2 ;;
 esac
@@ -61,6 +63,7 @@ case "$GRAFANA_ADMIN_PASSWORD" in
 	*replace*) echo "Replace the placeholder Grafana password in .env" >&2; exit 2 ;;
 esac
 
+# Prepare release configuration and persistent data.
 umask 077
 printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\n' "$image_prefix" "$tag" "$public_host" > .release.env
 mkdir -p data/api data/minecraft data/velocity
@@ -72,6 +75,24 @@ chmod 600 data/velocity/forwarding.secret
 
 dc() {
 	docker compose --env-file .env --env-file .release.env "$@"
+}
+
+api_post() {
+	dc exec -T api node -e '
+		fetch("http://127.0.0.1:8080" + process.argv[1], {
+			method: "POST",
+			signal: AbortSignal.timeout(30_000),
+		}).then(async response => {
+			if (response.status === 404) process.exit(42);
+			if (!response.ok) throw new Error(response.status + " " + await response.text());
+			console.log(await response.text());
+		}).catch(error => { console.error(error); process.exit(1); });
+	' "$1"
+}
+
+announce_update_complete() {
+	[ "$notify_update_complete" = true ] || return 0
+	api_post /api/internal/deployment/complete >/dev/null
 }
 
 set_property() {
@@ -88,6 +109,7 @@ set_property() {
 	mv "$tmp" "$file"
 }
 
+# Pull and validate images before player downtime starts.
 dc config --quiet
 dc pull --quiet
 dc run --rm --no-deps alloy validate /etc/alloy/config.alloy
@@ -107,6 +129,7 @@ cp "$defaults" "$server_properties"
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
 chmod 664 "$server_properties"
 
+# Warn and disconnect active players before shutdown.
 if [ "$warning_minutes" -gt 0 ] && dc ps --status running --services | grep -qx minecraft; then
 	dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
 		"say Server will be restarted in $warning_minutes minutes. This will not take long, roughly 3 minutes, 5 at max, otherwise something is wrong. Please be careful, don't go underwater etc. See you soon! :)"
@@ -114,18 +137,26 @@ if [ "$warning_minutes" -gt 0 ] && dc ps --status running --services | grep -qx 
 fi
 
 if dc ps --status running --services | grep -qx minecraft; then
+	if [ "$force" = false ]; then
+		deployment_status=0
+		notify_update_complete=$(api_post /api/internal/deployment/start) || deployment_status=$?
+		if [ "$deployment_status" -eq 42 ]; then
+			echo "Current API does not support deployment notices yet; they will start with the next deployment."
+			notify_update_complete=false
+		elif [ "$deployment_status" -ne 0 ]; then
+			echo "Player disconnect or Discord notice failed; aborting deployment." >&2
+			exit "$deployment_status"
+		fi
+		case "$notify_update_complete" in
+			true|false) ;;
+			*) echo "Deployment start returned an invalid response" >&2; exit 1 ;;
+		esac
+	fi
+
+	# Drain requests and save the world before replacing containers.
 	shutdown_started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 	status=0
-	dc exec -T api node -e '
-		fetch("http://127.0.0.1:8080/api/internal/shutdown", {
-			method: "POST",
-			signal: AbortSignal.timeout(30_000),
-		}).then(async response => {
-			if (response.status === 404) process.exit(42);
-			if (!response.ok) throw new Error(response.status + " " + await response.text());
-			console.log(await response.text());
-		}).catch(error => { console.error(error); process.exit(1); });
-	' || status=$?
+	api_post /api/internal/shutdown || status=$?
 	if [ "$status" -eq 42 ]; then
 		echo "Current API does not support draining yet; using Minecraft's graceful stop for this deployment."
 	elif [ "$status" -ne 0 ]; then
@@ -137,12 +168,14 @@ if dc ps --status running --services | grep -qx minecraft; then
 			echo "API drain/save failed; restarting the drained API before aborting." >&2
 			dc restart api
 			dc up -d --wait --wait-timeout 60 api
+			announce_update_complete
 			exit "$status"
 		fi
 	fi
 	dc stop minecraft
 fi
 
+# Remove obsolete website-managed bans from older releases.
 legacy_bans=data/minecraft/banned-players.json
 if [ -s "$legacy_bans" ]; then
 	[ -e "${legacy_bans}.pre-velocity" ] || cp -p "$legacy_bans" "${legacy_bans}.pre-velocity"
@@ -164,9 +197,11 @@ if [ -s "$legacy_bans" ]; then
 		'
 fi
 
+# Start the release and wait for every health check.
 dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
+announce_update_complete
 
-# Never prune volumes: they contain the database and Minecraft world.
+# Remove unused Docker artifacts. Never prune persistent volumes.
 docker container prune -f >/dev/null
 docker image prune -f --filter until=168h >/dev/null
 docker builder prune -f --filter until=168h >/dev/null

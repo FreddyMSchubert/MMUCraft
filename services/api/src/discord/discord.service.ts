@@ -25,6 +25,8 @@ export interface MinecraftDiscordEvent {
 export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 	const emoji: Record<string, string> = {
 		advancement: '🏆',
+		deployment_complete: '✅',
+		deployment_start: '🛠️',
 		join: '➡️',
 		leave: '⬅️',
 		first_join: '➡️ 👶',
@@ -222,6 +224,19 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			allowedMentions: { parse: [] },
 		});
 		return true;
+	}
+
+	publishServer(type: string, content: string) {
+		return this.publish({
+			type,
+			content,
+			minecraft_username: '',
+			minecraft_uuid: '',
+			role: '',
+			nickname: '',
+			pronouns: '',
+			color_hex: '',
+		});
 	}
 
 	drain() {

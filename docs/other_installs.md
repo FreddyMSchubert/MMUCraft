@@ -23,8 +23,5 @@ https://modrinth.com/datapack/more-mobs
 - custom nether portals
 - cauldron concrete & mud
 - painting picker
-- more effective tools
-- glass always drops
 - fast leaf decay
-- ender chest always drops
 - husks drop sand

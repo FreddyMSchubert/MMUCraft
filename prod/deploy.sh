@@ -114,6 +114,7 @@ if [ "$warning_minutes" -gt 0 ] && dc ps --status running --services | grep -qx 
 fi
 
 if dc ps --status running --services | grep -qx minecraft; then
+	shutdown_started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 	status=0
 	dc exec -T api node -e '
 		fetch("http://127.0.0.1:8080/api/internal/shutdown", {
@@ -128,6 +129,8 @@ if dc ps --status running --services | grep -qx minecraft; then
 	if [ "$status" -eq 42 ]; then
 		echo "Current API does not support draining yet; using Minecraft's graceful stop for this deployment."
 	elif [ "$status" -ne 0 ]; then
+		echo "API and Minecraft logs from the failed drain/save attempt:" >&2
+		dc logs --no-color --timestamps --since "$shutdown_started_at" api minecraft >&2 || true
 		if [ "$force" = true ]; then
 			echo "WARNING: API drain/save failed; forcing deployment." >&2
 		else

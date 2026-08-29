@@ -28,7 +28,7 @@ final class DailyTaskCatalog {
         return List.of(
             // Item submissions
             weighted(20, List.of(
-                    option(12, false, false, new ItemSubmissionTask(Items.POISONOUS_POTATO), 0, 0.5D, 6, 12, "🥔", "Submit Poisonous Potatoes", "Submit {count} poisonous potatoes. Put one from the next harvest in a glass case labelled quality control. Hold them, then click Claim."),
+                    option(10, false, false, new ItemSubmissionTask(Items.POISONOUS_POTATO), 2, 0.5D, 4, 8, "🥔", "Submit Poisonous Potatoes", "Submit {count} poisonous potatoes. We are breaking a sacred law of Minecraft game design by making poisonous potatoes useful for something. Very illegal stuff."),
                     option(10, false, false, new ItemSubmissionTask(Items.DEAD_BUSH), 1, 0.5D, 4, 10, "🌵", "Submit Dead Bushes", "Submit {count} dead bushes. Save the next batch for a ghost town or desert garden. Hold them, then click Claim."),
                     option(12, false, false, new ItemSubmissionTask(Items.TINTED_GLASS), 0, 0.75D, 4, 8, "🪟", "Submit Tinted Glass", "Submit {count} tinted glass. Use the next batch for a mob-viewing window or darkroom. Hold it, then click Claim."),
                     option(3, false, false, new ItemSubmissionTask(Items.SUNFLOWER), 0, 0.25D, 12, 24, "🌻", "Submit Sunflowers", "Submit {count} sunflowers. Plant the rest along a path or around a windmill. Hold them, then click Claim."),

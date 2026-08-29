@@ -32,14 +32,12 @@ The server is pretty Vanilla, but we have added some fun additional stuff you ca
 3. Tons of awesome [cosmetics](/play/knowledge/cosmetics). Pirate Hat, Cat Ears, Sniffer Hood - Anyone?
 4. Straight up [Enderite](/play/knowledge/enderite) because Mojang won't make an end update apparently.
 5. Over 1000 new advancements which add many interesting challenges.
-6. Obamium Pyramid.
-
-![Cursed Obama](/assets/knowledge/basics/welcome/cursed_obama.png)
+6. Obamium Pyramid. (⬇️)
 
 ## Some tips before you get started
 
 :::tip Use minecarts
-Their speed has been more than doubled, making it the fastest transportation method with the same speed as elytra. Powered rails can now be crafted with copper instead of gold.
+Their speed has been more than doubled, making it the fastest transportation method with the **same speed as elytra**. Powered rails can now be crafted with copper instead of gold.
 :::
 
 :::tip Build close to spawn
@@ -50,7 +48,7 @@ There is no `/home` to avoid everyone living super far away from each other and 
 On sundays, tons of [shop](/play/shop) items are heavily discounted and many different money sources hand out more cash. **Minecraft Day!**
 :::
 
-:::tip Use claims toprotect your stuff
+:::tip Use claims to protect your stuff
 [Claims](/play/claims) stop other players and mobs from opening chests / placing, breaking or otherwise interacting with any of the blocks or entities inside of the area you've claimed. This is the best way to protect your belongings!
 
 You can find out more about this on the "[Claims](/play/claims)" tab at the top.
@@ -65,3 +63,5 @@ The committee doesn't make any money from this society, but Minecraft servers ar
 :::
 
 **HAVE FUN!**
+
+![Cursed Obama](/assets/knowledge/basics/welcome/cursed_obama.png)

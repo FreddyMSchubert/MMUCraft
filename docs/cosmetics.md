@@ -1,5 +1,15 @@
 # Cosmetics
 
+## MIT existing stuff to maybe use
+
+- https://modrinth.com/datapack/hats-off!-datapack
+- https://modrinth.com/datapack/mad-hatter
+- https://github.com/OrangeUtan/Hats
+- https://modrinth.com/mod/give-me-hats
+- https://modrinth.com/resourcepack/wearable-villager-hats
+- https://modrinth.com/datapack/villager-vanity
+- https://modrinth.com/mod/villager-hats
+
 these arent mit licensed but we can just get some inspiration
 
 - https://modrinth.com/resourcepack/many-hats

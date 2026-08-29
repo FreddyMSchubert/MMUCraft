@@ -28,7 +28,15 @@ export function AdminSectionNavigation({ activeSection }: { activeSection: Admin
 					{label}
 				</Link>
 			))}
-			<a href="/grafana/" target="_blank" rel="noopener noreferrer">
+			<a
+				href={
+					process.env.NODE_ENV === 'production'
+						? 'https://grafana.mmuminecraftsociety.co.uk/'
+						: '/grafana/'
+				}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				Statistics
 			</a>
 		</nav>

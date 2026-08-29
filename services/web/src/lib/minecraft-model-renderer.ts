@@ -5,5 +5,6 @@ export type {
 	MinecraftModel,
 	MinecraftModelPreviewState,
 	MinecraftModelRendererOptions,
+	PreviewView,
 	TextureAnimationOptions,
 } from './minecraft-model/minecraft-model.types';

@@ -4,6 +4,7 @@ import type { NextConfig } from 'next';
 if (existsSync('../../.env')) process.loadEnvFile('../../.env');
 
 const nextConfig: NextConfig = {
+	agentRules: false,
 	output: 'standalone',
 	turbopack: { root: process.cwd() },
 	rewrites() {

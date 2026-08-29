@@ -352,12 +352,20 @@
 .shopDetailsHero {
 	display: grid;
 	grid-template-columns: minmax(310px, 46%) 1fr;
-	min-height: 420px;
+	min-height: 478px;
 }
 
 .shopDetailsPreview {
+	display: grid;
+	grid-template-rows: minmax(420px, 1fr) auto;
+	min-width: 0;
+	background: #0d131d;
+}
+
+.shopDetailsPreviewEmbed {
 	position: relative;
 	min-height: 420px;
+	overflow: hidden;
 	background:
 		radial-gradient(
 			circle at center,
@@ -368,19 +376,25 @@
 		#0d131d;
 }
 
-.shopDetailsPreview .shopModelHost,
-.shopDetailsPreview .shopItemIcon {
+.shopDetailsPreviewEmbed:has(.view-item-frame) {
+	background:
+		linear-gradient(rgba(12, 20, 29, 0.18), rgba(12, 20, 29, 0.42)),
+		center / cover no-repeat url('/assets/landing/panoramas/classic/panorama_0.webp');
+}
+
+.shopDetailsPreviewEmbed .shopModelHost,
+.shopDetailsPreviewEmbed .shopItemIcon {
 	width: 100%;
 	height: 100%;
 	min-height: 420px;
 }
 
-.shopDetailsPreview .shopItemIcon {
+.shopDetailsPreviewEmbed .shopItemIcon {
 	padding: 65px;
 	object-fit: contain;
 }
 
-.shopDetailsPreview > span {
+.shopDetailsPreviewEmbed > span {
 	position: absolute;
 	bottom: 14px;
 	left: 50%;
@@ -391,6 +405,56 @@
 	color: rgba(255, 255, 255, 0.55);
 	font-size: 0.68rem;
 	transform: translateX(-50%);
+}
+
+.shopCosmeticViewControl {
+	position: relative;
+	z-index: 3;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1px;
+	padding: 1px;
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.shopCosmeticViewControl button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	min-height: 55px;
+	padding: 8px 10px;
+	border: 0;
+	background: #101722;
+	color: rgba(255, 255, 255, 0.58);
+}
+
+.shopCosmeticViewControl button:hover:not(:disabled),
+.shopCosmeticViewControl button:focus-visible {
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+	outline: none;
+}
+
+.shopCosmeticViewControl button[aria-pressed='true'] {
+	background: color-mix(in srgb, var(--card-accent) 18%, #101722);
+	color: color-mix(in srgb, var(--card-accent) 68%, white);
+	box-shadow: inset 0 -2px var(--card-accent);
+}
+
+.shopCosmeticViewControl button:disabled {
+	opacity: 0.38;
+}
+
+.shopCosmeticViewControl span {
+	font-size: 1.15rem;
+	line-height: 1;
+}
+
+.shopCosmeticViewControl small {
+	font-size: 0.7rem;
+	font-weight: 800;
 }
 
 .shopDetailsSummary {

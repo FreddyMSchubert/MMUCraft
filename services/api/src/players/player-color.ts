@@ -30,6 +30,12 @@ export function playerAvatarUrl(minecraftUuid: string | null): string | null {
 	return `/api/players/avatar/${uuid}.png`;
 }
 
+export function playerSkinUrl(minecraftUuid: string | null): string | null {
+	const uuid = minecraftUuid?.replaceAll('-', '').toLowerCase() ?? '';
+	if (!/^[0-9a-f]{32}$/.test(uuid)) return null;
+	return `/api/players/skin/${uuid}.png`;
+}
+
 function setBrightness(rgb: number, brightness: number) {
 	const red = (rgb >> 16) & 0xff;
 	const green = (rgb >> 8) & 0xff;

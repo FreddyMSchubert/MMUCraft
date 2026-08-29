@@ -6,8 +6,10 @@ import {
 	Header,
 	NotFoundException,
 	Param,
+	Res,
 	StreamableFile,
 } from '@nestjs/common';
+import type { FastifyReply } from 'fastify';
 import { eq } from 'drizzle-orm';
 import sharp from 'sharp';
 import { DatabaseService, playerProfiles, users } from '../database/database.service';
@@ -20,16 +22,22 @@ const AVATAR_CACHE_SIZE = 1_000;
 const MAX_SKIN_BYTES = 1_000_000;
 const FETCH_TIMEOUT_MS = 5_000;
 
-interface CachedAvatar {
+interface CachedAsset<T> {
 	expiresAt: number;
-	png: Promise<Buffer>;
+	value: Promise<T>;
+}
+
+interface PlayerSkin {
+	model: 'classic' | 'legacy' | 'slim';
+	png: Buffer;
 }
 
 @Controller('api')
 export class PlayerAvatarController {
 	// ponytail: This cache is process-local. Use a shared cache if the API runs multiple replicas.
-	private readonly heads = new Map<string, CachedAvatar>();
-	private readonly discordAvatars = new Map<string, CachedAvatar>();
+	private readonly skins = new Map<string, CachedAsset<PlayerSkin>>();
+	private readonly heads = new Map<string, CachedAsset<Buffer>>();
+	private readonly discordAvatars = new Map<string, CachedAsset<Buffer>>();
 
 	constructor(private readonly database: DatabaseService) {}
 
@@ -41,6 +49,21 @@ export class PlayerAvatarController {
 		const user = this.findUser(uuid);
 		if (!user) throw new NotFoundException('Player avatar not found');
 		return new StreamableFile(await this.getHead(uuid, user.minecraft_username));
+	}
+
+	@Get('players/skin/:uuid.png')
+	@Header('Content-Type', 'image/png')
+	@Header('Cache-Control', `public, max-age=${AVATAR_CACHE_SECONDS}, must-revalidate`)
+	async playerSkin(
+		@Param('uuid') uuidInput: string,
+		@Res({ passthrough: true }) response: FastifyReply,
+	) {
+		const uuid = this.normalizeUuid(uuidInput);
+		const user = this.findUser(uuid);
+		if (!user) throw new NotFoundException('Player skin not found');
+		const skin = await this.getSkin(uuid, user.minecraft_username);
+		response.header('X-Minecraft-Skin-Model', skin.model);
+		return new StreamableFile(skin.png);
 	}
 
 	@Get('discord/avatar/:uuid.png')
@@ -81,34 +104,41 @@ export class PlayerAvatarController {
 	}
 
 	private getHead(uuid: string, fallbackName: string) {
-		return this.getCached(this.heads, uuid, () => this.generateHead(uuid, fallbackName));
+		return this.getCached(this.heads, uuid, async () =>
+			this.generateHead((await this.getSkin(uuid, fallbackName)).png),
+		);
 	}
 
-	private async getCached(
-		cache: Map<string, CachedAvatar>,
+	private getSkin(uuid: string, fallbackName: string) {
+		return this.getCached(this.skins, uuid, () => this.generateSkin(uuid, fallbackName));
+	}
+
+	private async getCached<T>(
+		cache: Map<string, CachedAsset<T>>,
 		key: string,
-		generate: () => Promise<Buffer>,
+		generate: () => Promise<T>,
 	) {
 		const cached = cache.get(key);
-		if (cached && cached.expiresAt > Date.now()) return cached.png;
+		if (cached && cached.expiresAt > Date.now()) return cached.value;
 		if (cached) cache.delete(key);
 		if (cache.size >= AVATAR_CACHE_SIZE) {
 			const oldestKey = cache.keys().next().value;
 			if (oldestKey !== undefined) cache.delete(oldestKey);
 		}
 
-		const png = generate().catch((error: unknown) => {
+		const value = generate().catch((error: unknown) => {
 			cache.delete(key);
 			if (error instanceof BadGatewayException) throw error;
-			throw new BadGatewayException('The Minecraft avatar could not be generated');
+			throw new BadGatewayException('The Minecraft player image could not be generated');
 		});
-		cache.set(key, { expiresAt: Date.now() + AVATAR_CACHE_MS, png });
-		return png;
+		cache.set(key, { expiresAt: Date.now() + AVATAR_CACHE_MS, value });
+		return value;
 	}
 
-	private async generateHead(uuid: string, fallbackName: string) {
+	private async generateSkin(uuid: string, fallbackName: string): Promise<PlayerSkin> {
 		const signal = AbortSignal.timeout(FETCH_TIMEOUT_MS);
-		const skinUrl = (await fetchMinecraftProfileByUuid(uuid, fallbackName, signal)).skinUrl;
+		const profile = await fetchMinecraftProfileByUuid(uuid, fallbackName, signal);
+		const skinUrl = profile.skinUrl;
 		if (!skinUrl) throw new BadGatewayException('Mojang did not return a player skin');
 		const url = new URL(skinUrl);
 		if (url.protocol !== 'https:' || url.hostname !== 'textures.minecraft.net') {
@@ -117,10 +147,26 @@ export class PlayerAvatarController {
 		const response = await fetch(url, { signal });
 		if (!response.ok)
 			throw new BadGatewayException(
-				'The Minecraft avatar service did not return a player head',
+				'The Minecraft avatar service did not return a player skin',
 			);
-		const head = await readLimitedBody(response, MAX_SKIN_BYTES);
-		const skin = sharp(head);
+		const png = await readLimitedBody(response, MAX_SKIN_BYTES);
+		const metadata = await sharp(png).metadata();
+		if (
+			metadata.format !== 'png' ||
+			metadata.width !== 64 ||
+			(metadata.height !== 32 && metadata.height !== 64)
+		) {
+			throw new BadGatewayException('Mojang returned an invalid player skin');
+		}
+		return {
+			model:
+				metadata.height === 32 ? 'legacy' : profile.model === 'slim' ? 'slim' : 'classic',
+			png,
+		};
+	}
+
+	private async generateHead(png: Buffer) {
+		const skin = sharp(png);
 		const metadata = await skin.metadata();
 		if (metadata.width < 48 || metadata.height < 16) {
 			throw new BadGatewayException('Mojang returned an invalid player skin');

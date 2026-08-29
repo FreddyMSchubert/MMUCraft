@@ -2,6 +2,7 @@
 
 import { type CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import type { CosmeticPreviewView } from '@/lib/site-settings';
 import { ShopMetaIcons, ShopPreview } from './shop-item-preview';
 import {
 	effectivePrice,
@@ -119,15 +120,23 @@ export function ShopDetails({
 	item,
 	buying,
 	hidePreview,
+	previewView,
+	skinUrl,
+	onSelectPreviewView,
 	onClose,
 	onBuy,
 }: {
 	item: ShopItem;
 	buying: boolean;
 	hidePreview: boolean;
+	previewView: CosmeticPreviewView;
+	skinUrl: string | null;
+	onSelectPreviewView: (view: CosmeticPreviewView) => void;
 	onClose: () => void;
 	onBuy: (item: ShopItem) => Promise<void>;
 }) {
+	const effectivePreviewView = previewView === 'player' && !skinUrl ? 'cosmetic' : previewView;
+
 	useEffect(() => {
 		const close = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') onClose();
@@ -164,10 +173,29 @@ export function ShopDetails({
 				</button>
 				<div className="shopDetailsHero">
 					<div className="shopDetailsPreview">
-						<ShopPreview item={item} hovered={false} interactive hidden={hidePreview} />
-						{item.renderMode === 'model' && !hidePreview && (
-							<span>Hover to pause · drag to rotate</span>
-						)}
+						<div className="shopDetailsPreviewEmbed">
+							<ShopPreview
+								key={effectivePreviewView}
+								item={item}
+								hovered={false}
+								interactive
+								hidden={hidePreview}
+								view={effectivePreviewView}
+								skinUrl={skinUrl}
+							/>
+							{item.renderMode === 'model' && !hidePreview && (
+								<span>Hover to pause · drag to rotate</span>
+							)}
+						</div>
+						{item.type === 'cosmetic' &&
+							item.renderMode === 'model' &&
+							!hidePreview && (
+								<CosmeticViewControl
+									selected={effectivePreviewView}
+									skinAvailable={Boolean(skinUrl)}
+									onSelect={onSelectPreviewView}
+								/>
+							)}
 					</div>
 					<div className="shopDetailsSummary">
 						<ItemBadges item={item} />
@@ -206,6 +234,46 @@ export function ShopDetails({
 			</section>
 		</div>,
 		document.body,
+	);
+}
+
+const COSMETIC_VIEW_OPTIONS: {
+	value: CosmeticPreviewView;
+	label: string;
+	icon: string;
+}[] = [
+	{ value: 'cosmetic', label: 'Cosmetic', icon: '◇' },
+	{ value: 'player', label: 'Player', icon: '👤' },
+	{ value: 'item-frame', label: 'Item frame', icon: '▣' },
+];
+
+function CosmeticViewControl({
+	selected,
+	skinAvailable,
+	onSelect,
+}: {
+	selected: CosmeticPreviewView;
+	skinAvailable: boolean;
+	onSelect: (view: CosmeticPreviewView) => void;
+}) {
+	return (
+		<div className="shopCosmeticViewControl" role="group" aria-label="Cosmetic preview view">
+			{COSMETIC_VIEW_OPTIONS.map((option) => (
+				<button
+					type="button"
+					key={option.value}
+					aria-pressed={selected === option.value}
+					disabled={option.value === 'player' && !skinAvailable}
+					title={option.label}
+					onClick={() => {
+						onSelect(option.value);
+					}}
+				>
+					<span aria-hidden="true">{option.icon}</span>
+					<small>{option.label}</small>
+				</button>
+			))}
+		</div>
 	);
 }
 

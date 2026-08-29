@@ -37,12 +37,14 @@ export async function proxyApiRequest(request: Request, path: string) {
 	const cacheControl = upstream.headers.get('cache-control');
 	const pragma = upstream.headers.get('pragma');
 	const expires = upstream.headers.get('expires');
+	const minecraftSkinModel = upstream.headers.get('x-minecraft-skin-model');
 
 	if (contentType) headers.set('content-type', contentType);
 	if (setCookie) headers.set('set-cookie', setCookie);
 	headers.set('cache-control', cacheControl ?? NO_STORE_CACHE_CONTROL);
 	if (pragma) headers.set('pragma', pragma);
 	if (expires) headers.set('expires', expires);
+	if (minecraftSkinModel) headers.set('x-minecraft-skin-model', minecraftSkinModel);
 
 	// Passing the body through keeps ordinary responses working and lets SSE stay live.
 	return new Response(upstream.body, {

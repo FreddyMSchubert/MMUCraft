@@ -2,7 +2,14 @@ import * as THREE from 'three';
 import { clamp, MISSING_TEXTURE_SIZE, TICK_MS } from './minecraft-model-geometry';
 import type { RgbColor } from './minecraft-model.types';
 
-const imageSourceCache = new Map<string, Promise<HTMLImageElement>>();
+export type MinecraftSkinModel = 'classic' | 'legacy' | 'slim';
+
+export interface ImageResource {
+	image: HTMLImageElement;
+	minecraftSkinModel: MinecraftSkinModel;
+}
+
+const imageSourceCache = new Map<string, Promise<ImageResource>>();
 
 export function hsvToRgb(hueInput: number, saturation = 1, value = 1): RgbColor {
 	const hue = ((hueInput % 360) + 360) % 360;
@@ -109,13 +116,16 @@ export function drawMissingTexture(ctx: CanvasRenderingContext2D, width: number,
 	}
 }
 
-export function loadImageFromSource(url: string) {
+export function loadImageResource(url: string) {
 	const cached = imageSourceCache.get(url);
 	if (cached) return cached;
 
 	const loading = (async () => {
 		const response = await fetch(url, { cache: 'force-cache' });
 		if (!response.ok) throw new Error(`Could not load texture source: ${url}`);
+		const model = response.headers.get('X-Minecraft-Skin-Model');
+		const minecraftSkinModel: MinecraftSkinModel =
+			model === 'legacy' || model === 'slim' ? model : 'classic';
 		const objectUrl = URL.createObjectURL(await response.blob());
 		return await new Promise<HTMLImageElement>((resolve, reject) => {
 			const image = new Image();
@@ -129,11 +139,15 @@ export function loadImageFromSource(url: string) {
 				reject(new Error(`Could not load texture source: ${url}`));
 			};
 			image.src = objectUrl;
-		});
+		}).then((image) => ({ image, minecraftSkinModel }));
 	})();
 	imageSourceCache.set(url, loading);
 	void loading.catch(() => imageSourceCache.delete(url));
 	return loading;
+}
+
+export async function loadImageFromSource(url: string) {
+	return (await loadImageResource(url)).image;
 }
 
 export class ManagedTexture {

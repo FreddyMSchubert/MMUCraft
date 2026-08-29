@@ -78,11 +78,18 @@
 	.shopDetailsHero {
 		grid-template-columns: 1fr;
 	}
-	.shopDetailsPreview,
-	.shopDetailsPreview .shopModelHost,
-	.shopDetailsPreview .shopItemIcon {
+	.shopDetailsPreview {
+		grid-template-rows: 300px auto;
+		min-height: 0;
+	}
+	.shopDetailsPreviewEmbed,
+	.shopDetailsPreviewEmbed .shopModelHost,
+	.shopDetailsPreviewEmbed .shopItemIcon {
 		min-height: 300px;
 		height: 300px;
+	}
+	.shopCosmeticViewControl button {
+		min-height: 52px;
 	}
 	.shopDetailsSummary {
 		padding: 28px 22px 34px;

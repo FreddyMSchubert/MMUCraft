@@ -7,6 +7,7 @@ import {
 	MinecraftModelRenderer,
 	type MinecraftModel,
 	type MinecraftModelPreviewState,
+	type PreviewView,
 } from '@/lib/minecraft-model-renderer';
 import type { ShopItem } from './shop-catalog.types';
 
@@ -26,18 +27,36 @@ export function ShopPreview({
 	interactive = false,
 	hidden = false,
 	allow3d = true,
+	view,
+	skinUrl,
 }: {
 	item: ShopItem;
 	hovered: boolean;
 	interactive?: boolean;
 	hidden?: boolean;
 	allow3d?: boolean;
+	view?: PreviewView;
+	skinUrl?: string | null;
 }) {
 	if (hidden) return <div className="shopHiddenPreview" />;
 	if (!allow3d && item.renderMode === 'model')
 		return <div className="shopReduced3dPlaceholder" />;
 	if (item.renderMode === 'model' && item.modelUrl && item.textureUrl)
-		return <ShopModelPreview item={item} hovered={hovered} interactive={interactive} />;
+		return (
+			<ShopModelPreview
+				item={item}
+				hovered={hovered}
+				interactive={interactive}
+				view={
+					interactive && item.type === 'cosmetic'
+						? (view ?? 'cosmetic')
+						: item.type === 'cosmetic'
+							? 'cosmetic'
+							: 'basic3d'
+				}
+				skinUrl={skinUrl}
+			/>
+		);
 	if (item.iconUrl && item.animation)
 		return <AnimatedTexturePreview url={item.iconUrl} animation={item.animation} />;
 	if (item.iconUrl)
@@ -116,10 +135,14 @@ function ShopModelPreview({
 	item,
 	hovered,
 	interactive,
+	view,
+	skinUrl,
 }: {
 	item: ShopItem;
 	hovered: boolean;
 	interactive: boolean;
+	view: PreviewView;
+	skinUrl?: string | null;
 }) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -156,13 +179,15 @@ function ShopModelPreview({
 				frameDelayMs: item.animation?.frameDelayMs,
 				frameSequence: item.animation?.frames ?? null,
 				textureSource: textureUrl,
-				view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d',
+				view,
+				skinSource: view === 'player' ? (skinUrl ?? undefined) : undefined,
 			});
 			await renderer.loadModel(model);
-			const savedState = modelPreviewStateCache.get(item.id);
+			const stateKey = `${item.id}:${view}`;
+			const savedState = modelPreviewStateCache.get(stateKey);
 			if (savedState) renderer.setPreviewState(savedState);
 			if (isConnected(host) && renderer.copyFrameTo(canvas)) {
-				modelPreviewStateCache.set(item.id, renderer.getPreviewState());
+				modelPreviewStateCache.set(stateKey, renderer.getPreviewState());
 				setReady(true);
 			}
 			renderer.destroy();
@@ -183,7 +208,8 @@ function ShopModelPreview({
 		item.id,
 		item.modelUrl,
 		item.textureUrl,
-		item.type,
+		skinUrl,
+		view,
 	]);
 
 	const shouldAutoRotate = interactive ? !interactiveHover : hovered;
@@ -230,11 +256,13 @@ function ShopModelPreview({
 					frameDelayMs: item.animation?.frameDelayMs,
 					frameSequence: item.animation?.frames ?? null,
 					textureSource: textureUrl,
-					view: item.type === 'cosmetic' ? 'cosmetic' : 'basic3d',
+					view,
+					skinSource: view === 'player' ? (skinUrl ?? undefined) : undefined,
 				});
 				rendererRef.current = renderer;
 				await renderer.loadModel(model);
-				const savedState = modelPreviewStateCache.get(item.id);
+				const stateKey = `${item.id}:${view}`;
+				const savedState = modelPreviewStateCache.get(stateKey);
 				if (savedState) renderer.setPreviewState(savedState);
 				if (isConnected(host)) {
 					renderer.setAutoRotate(autoRotateRef.current);
@@ -247,7 +275,8 @@ function ShopModelPreview({
 				if (host.isConnected) setFailed(true);
 			});
 		return () => {
-			if (renderer) modelPreviewStateCache.set(item.id, renderer.getPreviewState());
+			if (renderer)
+				modelPreviewStateCache.set(`${item.id}:${view}`, renderer.getPreviewState());
 			if (!interactive && !item.animated && canvas) renderer?.copyFrameTo(canvas);
 			renderer?.destroy();
 			if (rendererRef.current === renderer) rendererRef.current = null;
@@ -262,8 +291,9 @@ function ShopModelPreview({
 		item.id,
 		item.modelUrl,
 		item.textureUrl,
-		item.type,
 		rendererActive,
+		skinUrl,
+		view,
 	]);
 
 	if (failed && item.iconUrl)
@@ -280,7 +310,7 @@ function ShopModelPreview({
 	return (
 		<div
 			ref={hostRef}
-			className={`shopModelHost ${ready ? 'ready' : 'loading'} ${liveReady ? 'live' : ''} ${interactive ? 'interactive' : ''}`}
+			className={`shopModelHost view-${view} ${ready ? 'ready' : 'loading'} ${liveReady ? 'live' : ''} ${interactive ? 'interactive' : ''}`}
 			onPointerEnter={() => {
 				if (interactive) setInteractiveHover(true);
 			}}

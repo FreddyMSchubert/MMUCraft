@@ -28,12 +28,14 @@ import {
 
 export function ShopTab({
 	itemId,
+	skinUrl,
 	onSelectItem,
 }: {
 	itemId?: string;
+	skinUrl: string | null;
 	onSelectItem: (itemId: string | null, replace?: boolean) => void;
 }) {
-	const { settings } = useSiteSettings();
+	const { settings, updateSetting } = useSiteSettings();
 	const { confirm, showAlert } = useSiteAlert();
 	const [data, setData] = useState<ShopResponse | null>(null);
 	const [error, setError] = useState('');
@@ -352,6 +354,11 @@ export function ShopTab({
 					item={selectedItem}
 					buying={buyingItemId === selectedItem.id}
 					hidePreview={shouldHidePreview(selectedItem, settings.arachnophobiaMode)}
+					previewView={settings.cosmeticPreviewView}
+					skinUrl={skinUrl}
+					onSelectPreviewView={(view) => {
+						updateSetting('cosmeticPreviewView', view);
+					}}
 					onClose={() => {
 						onSelectItem(null, true);
 					}}

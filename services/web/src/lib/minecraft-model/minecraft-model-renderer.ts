@@ -7,6 +7,7 @@ import {
 	toRadians,
 } from './minecraft-model-geometry';
 import { MinecraftModelObject } from './minecraft-model-object';
+import { createGrassFloorModel, loadPlayerModel } from './minecraft-preview-scenes';
 import { hsvToRgb, parseColorValue } from './minecraft-texture-registry';
 import type {
 	MinecraftItemSource,
@@ -23,10 +24,13 @@ export class MinecraftModelRenderer {
 	private readonly renderer: THREE.WebGLRenderer;
 	private readonly displayRoot = new THREE.Group();
 	private readonly spinRoot = new THREE.Group();
+	private readonly modelMount = new THREE.Group();
 	private readonly modelRoot = new THREE.Group();
 	private readonly modelObject: MinecraftModelObject;
+	private readonly previewObjects: MinecraftModelObject[] = [];
 	private readonly assetRoot: string | undefined;
 	private readonly fallbackTextureSource: string | undefined;
+	private readonly skinSource: string | undefined;
 	private animationFrame: number | null = null;
 	private currentDisplayMode = 'gui';
 	private currentResolvedModel: MinecraftModel | null = null;
@@ -59,7 +63,9 @@ export class MinecraftModelRenderer {
 		this.view = options.view ?? 'basic3d';
 		this.assetRoot = options.assetRoot;
 		this.fallbackTextureSource = options.textureSource;
-		if (this.view === 'cosmetic') this.spinRoot.rotation.y = Math.PI;
+		this.skinSource = options.skinSource;
+		if (this.view === 'cosmetic' || this.view === 'player') this.spinRoot.rotation.y = Math.PI;
+		if (this.view === 'item-frame') this.spinRoot.rotation.y = Math.PI + 0.35;
 		this.modelObject = new MinecraftModelObject(
 			options.frameSequence ?? null,
 			parseColorValue(options.defaultTint, { r: 255, g: 0, b: 0 }),
@@ -104,7 +110,8 @@ export class MinecraftModelRenderer {
 		this.scene.add(fillLight);
 
 		this.modelRoot.add(this.modelObject.group);
-		this.spinRoot.add(this.modelRoot);
+		this.modelMount.add(this.modelRoot);
+		this.spinRoot.add(this.modelMount);
 		this.displayRoot.add(this.spinRoot);
 		this.scene.add(this.displayRoot);
 
@@ -133,6 +140,7 @@ export class MinecraftModelRenderer {
 		this.renderer.domElement.removeEventListener('pointerup', this.handlePointerUp);
 		this.renderer.domElement.removeEventListener('pointercancel', this.handlePointerUp);
 		this.modelObject.dispose();
+		for (const object of this.previewObjects) object.dispose();
 		this.renderer.dispose();
 		this.renderer.forceContextLoss();
 		this.renderer.domElement.remove();
@@ -205,6 +213,7 @@ export class MinecraftModelRenderer {
 			model,
 			textureUrl: this.fallbackTextureSource,
 		});
+		await this.loadPreviewScene();
 		this.applyDisplayTransform(this.currentDisplayMode);
 		this.fitCameraToModel();
 		this.ensureAnimating();
@@ -219,6 +228,7 @@ export class MinecraftModelRenderer {
 			modelUrl: source.modelUrl,
 			textureUrl: source.textureUrl ?? this.fallbackTextureSource,
 		});
+		await this.loadPreviewScene();
 		this.applyDisplayTransform(this.currentDisplayMode);
 		this.fitCameraToModel();
 		this.ensureAnimating();
@@ -226,8 +236,12 @@ export class MinecraftModelRenderer {
 
 	applyDisplayTransform(mode = 'gui') {
 		this.currentDisplayMode = mode;
+		const displayMode =
+			this.view === 'player' ? 'head' : this.view === 'item-frame' ? 'fixed' : mode;
 		const transform =
-			this.view === 'cosmetic' ? {} : (this.currentResolvedModel?.display?.[mode] ?? {});
+			this.view === 'cosmetic'
+				? {}
+				: (this.currentResolvedModel?.display?.[displayMode] ?? {});
 		const isIconBlock =
 			this.view === 'icon' && Boolean(this.currentResolvedModel?.elements?.length);
 		const rotation = isIconBlock
@@ -245,6 +259,33 @@ export class MinecraftModelRenderer {
 			toRadians(rotation.z),
 		);
 		this.modelRoot.scale.copy(scale);
+	}
+
+	private async loadPreviewScene() {
+		if (this.previewObjects.length) return;
+
+		if (this.view === 'player' && this.skinSource) {
+			const player = new MinecraftModelObject();
+			try {
+				await player.load({ model: await loadPlayerModel(this.skinSource) });
+				this.previewObjects.push(player);
+				this.spinRoot.add(player.group);
+				this.modelMount.scale.setScalar(0.625);
+			} catch {
+				player.dispose();
+				this.view = 'cosmetic';
+			}
+		}
+
+		if (this.view === 'item-frame' && this.assetRoot) {
+			const floor = new MinecraftModelObject(null, { r: 111, g: 167, b: 65 });
+			await floor.load({ model: createGrassFloorModel(this.assetRoot) });
+			this.previewObjects.push(floor);
+			this.spinRoot.add(floor.group);
+			this.modelMount.position.y = -0.5;
+			this.modelMount.rotation.x = Math.PI / 2;
+			this.modelMount.scale.setScalar(0.5);
+		}
 	}
 
 	private handleResize() {
@@ -314,7 +355,9 @@ export class MinecraftModelRenderer {
 		const offset =
 			this.view === 'cosmetic'
 				? new THREE.Vector3(0, distance * 0.28, distance * 1.12)
-				: new THREE.Vector3(0, 0, distance * (this.view === 'icon' ? 1 : 1.28));
+				: this.view === 'item-frame'
+					? new THREE.Vector3(0, distance * 0.42, distance * 1.16)
+					: new THREE.Vector3(0, 0, distance * (this.view === 'icon' ? 1 : 1.28));
 
 		this.camera.position.copy(center.clone().add(offset));
 		this.camera.lookAt(center);

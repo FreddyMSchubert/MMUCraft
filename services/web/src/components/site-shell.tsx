@@ -20,6 +20,7 @@ import { DynamicCountdowns } from '@/components/dynamic-countdowns';
 interface SessionUser {
 	id: number;
 	minecraftUsername: string;
+	skinUrl: string | null;
 	color: string;
 	isMember: boolean;
 	isCommittee: boolean;
@@ -442,7 +443,11 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						)}
 						{activeTab === 'charms' && <CharmsTab />}
 						{activeTab === 'shop' && (
-							<ShopTab itemId={routeDetail} onSelectItem={openShop} />
+							<ShopTab
+								itemId={routeDetail}
+								skinUrl={user.skinUrl}
+								onSelectItem={openShop}
+							/>
 						)}
 						{activeTab === 'claims' && <ClaimsTab />}
 						{activeTab === 'fishing' && <FishingTab onSelectPlayer={openPlayer} />}

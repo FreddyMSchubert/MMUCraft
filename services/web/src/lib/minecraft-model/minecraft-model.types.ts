@@ -1,5 +1,5 @@
 export type FaceName = 'north' | 'east' | 'south' | 'west' | 'up' | 'down';
-export type PreviewView = 'basic3d' | 'cosmetic' | 'icon';
+export type PreviewView = 'basic3d' | 'cosmetic' | 'icon' | 'item-frame' | 'player';
 
 export interface TextureAnimationOptions {
 	frameDelayMs: number;
@@ -22,6 +22,7 @@ export interface MinecraftModelRendererOptions {
 	pixelRatio?: number;
 	preserveDrawingBuffer?: boolean;
 	rotationSpeed?: number;
+	skinSource?: string;
 	textureSource?: string;
 	view?: PreviewView;
 }

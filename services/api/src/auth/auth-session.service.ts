@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/c
 import { randomUUID } from 'node:crypto';
 import { and, eq, gt } from 'drizzle-orm';
 import { DatabaseService, playerProfiles, sessions, users } from '../database/database.service';
-import { effectivePlayerColor } from '../players/player-color';
+import { effectivePlayerColor, playerSkinUrl } from '../players/player-color';
 import { createOpaqueToken, hashSecret } from './auth.util';
 
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000;
@@ -10,6 +10,7 @@ const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000;
 export interface AuthenticatedUser {
 	id: number;
 	minecraftUsername: string;
+	skinUrl: string | null;
 	color: string;
 	isMember: boolean;
 	isCommittee: boolean;
@@ -79,6 +80,7 @@ export class AuthSessionService {
 		return {
 			id: row.id,
 			minecraftUsername: row.minecraft_username,
+			skinUrl: playerSkinUrl(row.minecraft_uuid),
 			color: effectivePlayerColor(row.minecraft_uuid, profile?.color_hex),
 			isMember: row.is_member === 1,
 			isCommittee: isSuperAdmin || row.is_committee === 1,

@@ -2,14 +2,18 @@
 
 import { useEffect, useState } from 'react';
 
+export type CosmeticPreviewView = 'cosmetic' | 'item-frame' | 'player';
+
 export interface SiteSettings {
 	arachnophobiaMode: boolean;
+	cosmeticPreviewView: CosmeticPreviewView;
 	reduce3dRendering: boolean;
 	mysteriousSetting: boolean;
 }
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
 	arachnophobiaMode: false,
+	cosmeticPreviewView: 'cosmetic',
 	reduce3dRendering: false,
 	mysteriousSetting: false,
 };
@@ -24,6 +28,11 @@ function readSiteSettings(): SiteSettings {
 		) as Partial<SiteSettings>;
 		return {
 			arachnophobiaMode: Boolean(stored.arachnophobiaMode),
+			cosmeticPreviewView:
+				stored.cosmeticPreviewView === 'item-frame' ||
+				stored.cosmeticPreviewView === 'player'
+					? stored.cosmeticPreviewView
+					: 'cosmetic',
 			reduce3dRendering: Boolean(stored.reduce3dRendering),
 			mysteriousSetting: Boolean(stored.mysteriousSetting),
 		};

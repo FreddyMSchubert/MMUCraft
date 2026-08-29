@@ -12,7 +12,7 @@
 			"title": "Open Logs Drilldown",
 			"tooltip": "Search logs, filter levels, inspect fields, and view context",
 			"type": "link",
-			"url": "/grafana/a/grafana-lokiexplore-app/explore"
+			"url": "/a/grafana-lokiexplore-app/explore"
 		}
 	],
 	"panels": [

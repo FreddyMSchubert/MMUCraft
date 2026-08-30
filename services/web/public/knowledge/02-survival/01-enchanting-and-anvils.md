@@ -76,7 +76,7 @@ Instead of getting them randomly, it's way more reliable (and fun) to get books 
 | Fire Aspect | Open a Ruined Portal chest (50%) | 1 | 2 |
 | Fire Protection | Enchanting table | 3 | 5 |
 | Flame | Open a Ruined Portal chest (50%) | 1 | 1 |
-| Fortune | Craft a Fortune I book.<sup>1</sup> | 3 | 4 |
+| Fortune | Craft a Fortune I book.<sup><a href="#fortune-footnote">1</a></sup> | 3 | 4 |
 | Frost Walker | Open an Igloo chest (100%) | 2 | 3 |
 | Impaling | Open a Shipwreck treasure chest (100%) | 5 | 5 |
 | Infinity | Open a Jungle Temple chest (50%) | 1 | 1 |
@@ -107,7 +107,7 @@ Instead of getting them randomly, it's way more reliable (and fun) to get books 
 | Unbreaking | Open an End City treasure chest (25%) | 3 | 5 |
 | Wind Burst | Open any Trial Chamber reward vault (25%) | 3 | 3 |
 
-### Fortune I recipe
+### <span id="fortune-footnote">1.</span> Fortune I recipe
 
 ![Fortune I Crafting Recipe](/assets/knowledge/survival/enchanting-anvils/fortune_recipe.png)
 

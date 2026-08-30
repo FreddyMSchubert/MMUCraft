@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { AssetResponseError, loadAssetJson } from '@/lib/asset-fetch-cache';
 import { deepClone, resolveTextureReference } from './minecraft-model-geometry';
 import type {
 	MinecraftItemDefinition,
@@ -47,9 +48,11 @@ export function mergeModels(parent: MinecraftModel, child: MinecraftModel): Mine
 export async function fetchModel(url: string) {
 	const cached = modelSourceCache.get(url);
 	if (cached) return cached;
-	const loading = fetch(url, { cache: 'force-cache' })
-		.then((response) => (response.ok ? (response.json() as Promise<MinecraftModel>) : null))
-		.catch(() => null);
+	const loading = loadAssetJson<MinecraftModel>(url).catch((error: unknown) => {
+		if (error instanceof AssetResponseError && error.status === 404) return null;
+		modelSourceCache.delete(url);
+		throw error;
+	});
 	modelSourceCache.set(url, loading);
 	return loading;
 }
@@ -57,11 +60,11 @@ export async function fetchModel(url: string) {
 export async function fetchItemDefinition(url: string) {
 	const cached = itemDefinitionCache.get(url);
 	if (cached) return cached;
-	const loading = fetch(url, { cache: 'force-cache' })
-		.then((response) =>
-			response.ok ? (response.json() as Promise<MinecraftItemDefinition>) : null,
-		)
-		.catch(() => null);
+	const loading = loadAssetJson<MinecraftItemDefinition>(url).catch((error: unknown) => {
+		if (error instanceof AssetResponseError && error.status === 404) return null;
+		itemDefinitionCache.delete(url);
+		throw error;
+	});
 	itemDefinitionCache.set(url, loading);
 	return loading;
 }

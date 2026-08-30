@@ -3,6 +3,7 @@
 import NextImage from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { ASSETS } from '@/lib/assets';
+import { loadAssetJson } from '@/lib/asset-fetch-cache';
 import {
 	MinecraftModelRenderer,
 	type MinecraftModel,
@@ -13,7 +14,53 @@ import type { ShopItem } from './shop-catalog.types';
 
 const modelCache = new Map<string, Promise<MinecraftModel>>();
 const modelPreviewStateCache = new Map<string, MinecraftModelPreviewState>();
+const snapshotCache = new Map<string, HTMLCanvasElement>();
+const MAX_SNAPSHOT_CACHE_SIZE = 48;
 let staticRenderQueue = Promise.resolve();
+
+function loadModel(url: string) {
+	const cached = modelCache.get(url);
+	if (cached) return cached;
+	const loading = loadAssetJson<MinecraftModel>(url).catch((error: unknown) => {
+		modelCache.delete(url);
+		throw error;
+	});
+	modelCache.set(url, loading);
+	return loading;
+}
+
+function snapshotKey(
+	modelUrl: string,
+	textureUrl: string,
+	view: PreviewView,
+	skinUrl?: string | null,
+) {
+	return `${modelUrl}:${textureUrl}:${view}:${skinUrl ?? ''}`;
+}
+
+function restoreSnapshot(target: HTMLCanvasElement, key: string) {
+	const cached = snapshotCache.get(key);
+	if (!cached) return false;
+	target.width = cached.width;
+	target.height = cached.height;
+	target.getContext('2d')?.drawImage(cached, 0, 0);
+	snapshotCache.delete(key);
+	snapshotCache.set(key, cached);
+	return true;
+}
+
+function cacheSnapshot(source: HTMLCanvasElement, key: string) {
+	const snapshot = document.createElement('canvas');
+	snapshot.width = source.width;
+	snapshot.height = source.height;
+	snapshot.getContext('2d')?.drawImage(source, 0, 0);
+	snapshotCache.set(key, snapshot);
+	while (snapshotCache.size > MAX_SNAPSHOT_CACHE_SIZE) {
+		const oldest = snapshotCache.keys().next().value;
+		if (oldest === undefined) break;
+		snapshotCache.delete(oldest);
+	}
+}
 
 function queueStaticRender(render: () => Promise<void>) {
 	const queued = staticRenderQueue.then(render, render);
@@ -155,18 +202,16 @@ function ShopModelPreview({
 	useEffect(() => {
 		const host = hostRef.current;
 		const canvas = canvasRef.current;
-		if (interactive || item.animated || !host || !canvas || !item.modelUrl || !item.textureUrl)
-			return;
+		if (interactive || !host || !canvas || !item.modelUrl || !item.textureUrl) return;
 		const textureUrl = item.textureUrl;
+		const cacheKey = snapshotKey(item.modelUrl, item.textureUrl, view, skinUrl);
+		if (restoreSnapshot(canvas, cacheKey)) {
+			setReady(true);
+			return;
+		}
 		let renderer: MinecraftModelRenderer | null = null;
 		setFailed(false);
-		const modelPromise =
-			modelCache.get(item.modelUrl) ??
-			fetch(item.modelUrl).then((response) => {
-				if (!response.ok) throw new Error('Model failed to load');
-				return response.json() as Promise<MinecraftModel>;
-			});
-		modelCache.set(item.modelUrl, modelPromise);
+		const modelPromise = loadModel(item.modelUrl);
 		void queueStaticRender(async () => {
 			const model = await modelPromise;
 			if (!host.isConnected) return;
@@ -188,6 +233,7 @@ function ShopModelPreview({
 			if (savedState) renderer.setPreviewState(savedState);
 			if (isConnected(host) && renderer.copyFrameTo(canvas)) {
 				modelPreviewStateCache.set(stateKey, renderer.getPreviewState());
+				cacheSnapshot(canvas, cacheKey);
 				setReady(true);
 			}
 			renderer.destroy();
@@ -214,7 +260,7 @@ function ShopModelPreview({
 
 	const shouldAutoRotate = interactive ? !interactiveHover : hovered;
 	const shouldAnimateDye = interactive ? liveReady && !interactiveHover : hovered;
-	const rendererActive = interactive || hovered || item.animated;
+	const rendererActive = interactive || hovered;
 	const autoRotateRef = useRef(shouldAutoRotate);
 	const animateDyeRef = useRef(shouldAnimateDye);
 	useEffect(() => {
@@ -237,13 +283,7 @@ function ShopModelPreview({
 		let renderer: MinecraftModelRenderer | null = null;
 		setLiveReady(false);
 		setFailed(false);
-		const modelPromise =
-			modelCache.get(item.modelUrl) ??
-			fetch(item.modelUrl).then((response) => {
-				if (!response.ok) throw new Error('Model failed to load');
-				return response.json() as Promise<MinecraftModel>;
-			});
-		modelCache.set(item.modelUrl, modelPromise);
+		const modelPromise = loadModel(item.modelUrl);
 		void modelPromise
 			.then(async (model) => {
 				if (!host.isConnected) return;

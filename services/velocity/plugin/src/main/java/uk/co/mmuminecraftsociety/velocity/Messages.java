@@ -10,6 +10,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 final class Messages {
+    private static final String DISCORD_URL = "https://discord.gg/pPgZqRS5b2";
+    private static final String DISCORD_DISPLAY_URL = "discord.gg/pPgZqRS5b2";
     private static final TextColor GOLD = TextColor.color(0xFFD166);
     private static final TextColor RED = TextColor.color(0xFF6B6B);
     private static final TextColor BLUE = TextColor.color(0xA6DEFF);
@@ -90,7 +92,6 @@ final class Messages {
                 .append(Component.text("Do not worry. This is normal.\n\n", MUTED))
                 .append(Component.text("Finish signup here:\n", TEXT))
                 .append(Component.text(url, BLUE)
-                        .decorate(TextDecoration.UNDERLINED)
                         .clickEvent(ClickEvent.openUrl(url)))
                 .append(Component.text("\n\nAfter verification, join again.", MUTED));
     }
@@ -132,9 +133,9 @@ final class Messages {
 
     private static Component discordHelp(String introduction) {
         return Component.text(introduction, MUTED)
-                .append(Component.text("Discord", BLUE)
-                        .decorate(TextDecoration.UNDERLINED)
-                        .clickEvent(ClickEvent.openUrl("https://discord.gg/pPgZqRS5b2")))
+                .append(Component.text("Discord: ", BLUE))
+                .append(Component.text(DISCORD_DISPLAY_URL, BLUE)
+                        .clickEvent(ClickEvent.openUrl(DISCORD_URL)))
                 .append(Component.text(".", MUTED));
     }
 

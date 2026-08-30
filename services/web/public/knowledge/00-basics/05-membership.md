@@ -28,4 +28,6 @@ Only MMU Students are able to become members.
 
 To do so, find [our societies page on the union website](https://www.theunionmmu.org/groups/26-2-minecraft-society), and click on the "**Join this group**" button. The rest will become apparent.
 
+By joining, you agree to follow [The Union's Membership Code of Conduct 2026](https://www.theunionmmu.org/resources/the-union-s-membership-code-of-conduct-2026/download_attachment).
+
 Thank you!

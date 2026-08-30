@@ -42,6 +42,34 @@
 	background: #ffd166;
 	color: #111;
 	font-weight: 700;
+	cursor: pointer;
+	transition:
+		background-color 150ms ease,
+		border-color 150ms ease,
+		color 150ms ease,
+		transform 150ms ease;
+}
+
+.authForm > button:not(.authHelpButton):not(:disabled):hover,
+.authForm > button:not(.authHelpButton):not(:disabled):focus-visible {
+	background: #e8ba4f;
+	transform: translateY(-2px);
+}
+
+.authForm > button:not(.authHelpButton):not(:disabled):active {
+	transform: translateY(0);
+}
+
+.authForm button:disabled {
+	cursor: not-allowed;
+	opacity: 0.62;
+}
+
+.authSignupPrompt {
+	display: grid;
+	gap: 6px;
+	justify-items: center;
+	text-align: center;
 }
 
 .authForm .authHelpButton {
@@ -57,6 +85,32 @@
 	text-underline-offset: 3px;
 }
 
+.authForm .authTextButton {
+	justify-self: center;
+	padding: 0;
+	border-radius: 2px;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.78rem;
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.authForm .authTextButton:not(:disabled):hover {
+	background: transparent;
+	color: #ffd166;
+	transform: none;
+}
+
+.authForm .authTextButton:not(:disabled):focus-visible {
+	outline: 2px solid rgba(255, 255, 255, 0.45);
+	outline-offset: 3px;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.72);
+	transform: none;
+}
+
 .authForm .authPrivacyNote {
 	margin-top: -6px;
 	color: rgba(255, 255, 255, 0.56);
@@ -69,6 +123,20 @@
 	background: transparent;
 	color: #ffd166;
 	font-weight: 700;
+}
+
+.authForm .authGuestNote {
+	color: rgba(255, 255, 255, 0.82);
+	font-size: 0.84rem;
+	line-height: 1.45;
+	text-align: center;
+}
+
+.authForm > .authOutlinedButton:not(:disabled):hover,
+.authForm > .authOutlinedButton:not(:disabled):focus-visible {
+	border-color: rgba(255, 209, 102, 0.72);
+	background: rgba(255, 209, 102, 0.12);
+	color: #ffe09a;
 }
 
 .authHelpBackdrop {
@@ -212,6 +280,23 @@
 .authRule:has(input:checked) {
 	border-color: rgba(255, 209, 102, 0.55);
 	background: rgba(255, 209, 102, 0.1);
+}
+
+.authRulesSupport {
+	margin-top: 16px !important;
+	padding-top: 14px;
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.authForm button {
+		transition: none;
+	}
+
+	.authForm > button:not(.authHelpButton):not(:disabled):hover,
+	.authForm > button:not(.authHelpButton):not(:disabled):focus-visible {
+		transform: none;
+	}
 }
 
 .authError {

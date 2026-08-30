@@ -14,6 +14,11 @@
 	margin: 0;
 }
 
+.claimsCoordinateHelp {
+	color: rgba(255, 255, 255, 0.58);
+	font-size: 0.7rem;
+}
+
 .claimsTop,
 .claimHeader,
 .claimMember {

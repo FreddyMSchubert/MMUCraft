@@ -155,20 +155,11 @@ export class PlayersService {
 		const savedProfile = this.profiles.get(target.id);
 		const minecraftUuid = target.minecraft_uuid;
 		if (minecraftUuid) {
-			await this.applyPlayerColor(minecraftUuid, savedProfile.color).catch(
-				(error: unknown) => {
-					this.logger.warn(
-						`Could not immediately synchronize player color to Minecraft: ${String(error)}`,
-					);
-				},
-			);
-			await this.applyPlayerSettings(minecraftUuid, savedProfile.showDeathCounter).catch(
-				(error: unknown) => {
-					this.logger.warn(
-						`Could not immediately synchronize player settings to Minecraft: ${String(error)}`,
-					);
-				},
-			);
+			await this.applyPlayerPresentation(target, savedProfile).catch((error: unknown) => {
+				this.logger.warn(
+					`Could not immediately synchronize player presentation to Minecraft: ${String(error)}`,
+				);
+			});
 		}
 
 		return {
@@ -202,23 +193,21 @@ export class PlayersService {
 		};
 	}
 
-	private async applyPlayerColor(minecraftUuid: string, color: string) {
-		const response = await this.minecraft.gameplay<{ applied: boolean }>('ApplyPlayerColor', {
-			minecraft_uuid: minecraftUuid,
-			color_hex: color,
-		});
-		if (!response.applied) throw new Error('Minecraft server refused the player color');
-	}
-
-	private async applyPlayerSettings(minecraftUuid: string, showDeathCounter: boolean) {
+	private async applyPlayerPresentation(target: UserRow, profile: PlayerProfile) {
 		const response = await this.minecraft.gameplay<{ applied: boolean }>(
-			'ApplyPlayerSettings',
+			'ApplyPlayerPresentation',
 			{
-				minecraft_uuid: minecraftUuid,
-				show_death_counter: showDeathCounter,
+				minecraft_uuid: target.minecraft_uuid,
+				nickname: profile.preferredName,
+				pronouns: profile.pronouns,
+				color_hex: profile.color,
+				show_death_counter: profile.showDeathCounter,
+				is_member: target.is_member === 1,
+				is_committee: target.is_super_admin === 1 || target.is_committee === 1,
+				is_external: target.responsible_user_id !== null,
 			},
 		);
-		if (!response.applied) throw new Error('Minecraft server refused the player settings');
+		if (!response.applied) throw new Error('Minecraft server refused the player presentation');
 	}
 
 	private findUserById(userId: number): UserRow | null {

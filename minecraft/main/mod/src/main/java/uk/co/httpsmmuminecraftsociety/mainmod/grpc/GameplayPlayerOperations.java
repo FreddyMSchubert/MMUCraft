@@ -29,6 +29,31 @@ final class GameplayPlayerOperations {
         return ApplyPlayerSettingsResponse.newBuilder().setApplied(true).build();
     }
 
+    static ApplyPlayerPresentationResponse applyPlayerPresentationOnMainThread(
+            ApplyPlayerPresentationRequest request
+    ) {
+        if (!request.getColorHex().matches("^#[0-9A-Fa-f]{6}$")) {
+            throw new IllegalArgumentException("Invalid player color");
+        }
+        UUID playerId = UUID.fromString(request.getMinecraftUuid());
+        int color = Integer.parseInt(request.getColorHex().substring(1), 16);
+        ClaimsManager.updateOwnerColor(playerId, color);
+        ServerPlayer player = GrpcBridge.minecraftServer().getPlayerList().getPlayer(playerId);
+        if (player != null && !player.hasDisconnected()) {
+            PlayerStatsSync.applyPresentation(
+                    player,
+                    request.getNickname(),
+                    request.getPronouns(),
+                    request.getColorHex(),
+                    request.getShowDeathCounter(),
+                    request.getIsMember(),
+                    request.getIsCommittee(),
+                    request.getIsExternal()
+            );
+        }
+        return ApplyPlayerPresentationResponse.newBuilder().setApplied(true).build();
+    }
+
     static GetOnlinePlayersResponse getOnlinePlayersOnMainThread() {
         GetOnlinePlayersResponse.Builder response = GetOnlinePlayersResponse.newBuilder();
         GrpcBridge.minecraftServer().getPlayerList().getPlayers().stream()

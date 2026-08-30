@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,8 +42,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class PlayerStatsSync {
     private static final long BASE_SYNC_INTERVAL_TICKS = 20L * 60L * 20L;
     private static final long STAGGER_WINDOW_TICKS = 5L * 60L * 20L;
+    private static final long SYNC_RETRY_TICKS = 5L * 20L;
     private static final String PROFILE_OBJECTIVE = "mmu_profile";
     private static final Map<UUID, Long> nextSyncTickByPlayer = new ConcurrentHashMap<>();
+    private static final Map<UUID, CompletableFuture<SyncPlayerStatsResponse>> activeSyncByPlayer = new ConcurrentHashMap<>();
+    private static final Set<UUID> joinRefreshPending = ConcurrentHashMap.newKeySet();
     private static final Map<UUID, Boolean> membershipByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, SyncPlayerStatsResponse> presentationByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, String> renderedProfileByPlayer = new ConcurrentHashMap<>();
@@ -65,8 +69,9 @@ public final class PlayerStatsSync {
 
     public static void init() {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            joinRefreshPending.add(handler.player.getUUID());
+            scheduleRetry(handler.player);
             syncNow(handler.player);
-            scheduleNext(handler.player);
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
@@ -101,9 +106,16 @@ public final class PlayerStatsSync {
                 continue;
             }
 
+            // Keep a short retry scheduled until a successful response replaces it with the
+            // normal interval. In particular, a failed first-join request must not leave the
+            // player with vanilla presentation colors until the next 20-minute sync.
+            scheduleRetry(player);
             syncNow(player);
-            scheduleNext(player);
         }
+    }
+
+    private static void scheduleRetry(ServerPlayer player) {
+        nextSyncTickByPlayer.put(player.getUUID(), serverTicks + SYNC_RETRY_TICKS);
     }
 
     private static void scheduleNext(ServerPlayer player) {
@@ -130,25 +142,49 @@ public final class PlayerStatsSync {
             return CompletableFuture.completedFuture(false);
         }
 
-        CompletableFuture<SyncPlayerStatsResponse> profileSync = GameplayGrpcService.syncPlayerStats(player, collectStats(player));
+        CompletableFuture<SyncPlayerStatsResponse> profileSync = allowDisconnectedPlayer
+                ? GameplayGrpcService.syncPlayerStats(player, collectStats(player))
+                : synchronizePresentation(player);
         CompletableFuture<Boolean> membershipSync = profileSync
                 .thenApply(response -> response.getAccountLinked() && response.getIsMember());
 
-        profileSync
-                .thenAccept(response -> {
-                    if (!allowDisconnectedPlayer && !player.hasDisconnected()) {
-                        MinecraftServer server = player.level().getServer();
-                        if (server != null) {
-                            server.execute(() -> updatePresentation(player, response));
-                        }
-                    }
-                })
-                .exceptionally(error -> {
-                    MainMod.LOGGER.debug("Failed to sync player stats for {}", player.getName().getString(), error);
-                    return null;
-                });
+        if (allowDisconnectedPlayer) {
+            profileSync.exceptionally(error -> {
+                MainMod.LOGGER.debug("Failed to sync departing player stats for {}", player.getName().getString(), error);
+                return null;
+            });
+        }
 
         return membershipSync.exceptionally(error -> isMember(player));
+    }
+
+    private static CompletableFuture<SyncPlayerStatsResponse> synchronizePresentation(ServerPlayer player) {
+        UUID playerId = player.getUUID();
+        CompletableFuture<SyncPlayerStatsResponse> current = activeSyncByPlayer.get(playerId);
+        if (current != null) return current;
+
+        CompletableFuture<SyncPlayerStatsResponse> started = GameplayGrpcService.syncPlayerStats(player, collectStats(player));
+        current = activeSyncByPlayer.putIfAbsent(playerId, started);
+        if (current != null) return current;
+        started.whenComplete((response, error) -> activeSyncByPlayer.remove(playerId, started));
+        started.thenAccept(response -> {
+            if (player.hasDisconnected()) return;
+            MinecraftServer server = player.level().getServer();
+            if (server == null) return;
+            server.execute(() -> {
+                if (player.hasDisconnected()) return;
+                updatePresentation(player, response);
+                if (joinRefreshPending.remove(playerId)) {
+                    scheduleRetry(player);
+                } else {
+                    scheduleNext(player);
+                }
+            });
+        }).exceptionally(error -> {
+            MainMod.LOGGER.debug("Failed to sync player stats for {}", player.getName().getString(), error);
+            return null;
+        });
+        return started;
     }
 
     private static void updatePresentation(ServerPlayer player, SyncPlayerStatsResponse response) {
@@ -184,6 +220,8 @@ public final class PlayerStatsSync {
 
     private static void clearPlayer(UUID playerId) {
         nextSyncTickByPlayer.remove(playerId);
+        activeSyncByPlayer.remove(playerId);
+        joinRefreshPending.remove(playerId);
         membershipByPlayer.remove(playerId);
         presentationByPlayer.remove(playerId);
         renderedProfileByPlayer.remove(playerId);
@@ -194,7 +232,7 @@ public final class PlayerStatsSync {
 
     public static void applyColor(ServerPlayer player, int color) {
         color = withMinimumLightness(color);
-        if (Integer.valueOf(color).equals(colorByPlayer.put(player.getUUID(), color))) return;
+        colorByPlayer.put(player.getUUID(), color);
         var waypoints = player.level().getWaypointManager();
         waypoints.untrackWaypoint(player);
         player.waypointIcon().color = Optional.of(color);
@@ -210,6 +248,31 @@ public final class PlayerStatsSync {
                 .build());
         renderedProfileByPlayer.remove(player.getUUID());
         updateBelowName(player);
+    }
+
+    public static void applyPresentation(
+            ServerPlayer player,
+            String nickname,
+            String pronouns,
+            String colorHex,
+            boolean showDeathCounter,
+            boolean isMember,
+            boolean isCommittee,
+            boolean isExternal
+    ) {
+        SyncPlayerStatsResponse response = SyncPlayerStatsResponse.newBuilder()
+                .setAccepted(true)
+                .setAccountLinked(true)
+                .setIsMember(isMember)
+                .setIsCommittee(isCommittee)
+                .setIsExternal(isExternal)
+                .setNickname(nickname)
+                .setPronouns(pronouns)
+                .setColorHex(colorHex)
+                .setShowDeathCounter(showDeathCounter)
+                .setMessage("Profile updated from website.")
+                .build();
+        updatePresentation(player, response);
     }
 
     private static int parseColor(String color) {

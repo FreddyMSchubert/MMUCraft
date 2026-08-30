@@ -350,6 +350,17 @@ function ClaimSection({
 	return (
 		<section className="claimsSection">
 			<h3>{title}</h3>
+			<small className="claimsCoordinateHelp">
+				To convert chunk coordinates to block coordinates,{' '}
+				<a
+					href="https://minecraft.wiki/w/Calculators/Chunk_coordinates"
+					target="_blank"
+					rel="noreferrer"
+				>
+					click here
+				</a>
+				.
+			</small>
 			{claims.length === 0 ? (
 				<p className="claimsEmpty">{emptyMessage}</p>
 			) : (

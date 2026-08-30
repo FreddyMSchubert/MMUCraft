@@ -231,6 +231,7 @@ export function PlayersTab({
 		return (
 			<div className="playersPanel">
 				<PlayerProfilePanel
+					key={selectedPlayer.id}
 					player={selectedPlayer}
 					statOptions={statOptions}
 					onBack={() => {

@@ -231,6 +231,15 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
         }
 
         @Override
+        public void applyPlayerPresentation(
+                ApplyPlayerPresentationRequest request,
+                StreamObserver<ApplyPlayerPresentationResponse> responseObserver
+        ) {
+            callOnMainThread(() -> GameplayPlayerOperations.applyPlayerPresentationOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
         public void getCharmInventory(
                 GetCharmInventoryRequest request,
                 StreamObserver<GetCharmInventoryResponse> responseObserver

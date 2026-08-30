@@ -36,6 +36,7 @@ service GameplayControl {
   rpc ApplyFeatureToggles(FeatureTogglesSnapshot) returns (ApplyFeatureTogglesResponse);
   rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
   rpc ApplyPlayerSettings(ApplyPlayerSettingsRequest) returns (ApplyPlayerSettingsResponse);
+  rpc ApplyPlayerPresentation(ApplyPlayerPresentationRequest) returns (ApplyPlayerPresentationResponse);
   rpc GetCharmInventory(GetCharmInventoryRequest) returns (GetCharmInventoryResponse);
   rpc UpgradeCharm(UpgradeCharmRequest) returns (UpgradeCharmResponse);
   rpc BroadcastDiscordMessage(BroadcastDiscordMessageRequest) returns (BroadcastDiscordMessageResponse);
@@ -216,6 +217,21 @@ message ApplyPlayerSettingsRequest {
 }
 
 message ApplyPlayerSettingsResponse {
+  bool applied = 1;
+}
+
+message ApplyPlayerPresentationRequest {
+  string minecraft_uuid = 1;
+  string nickname = 2;
+  string pronouns = 3;
+  string color_hex = 4;
+  bool show_death_counter = 5;
+  bool is_member = 6;
+  bool is_committee = 7;
+  bool is_external = 8;
+}
+
+message ApplyPlayerPresentationResponse {
   bool applied = 1;
 }
 

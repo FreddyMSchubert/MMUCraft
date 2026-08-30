@@ -9,7 +9,7 @@ sidebarTitle: Mini Blocks
 
 They can be great for decorating:
 
-TODO: decoration example
+![Recipe](/assets/knowledge/items/mini-blocks/example.png)
 
 ### There's two ways to get them:
 
@@ -19,4 +19,4 @@ TODO: decoration example
 
 2. Trade for them with a wandering trader:
 
-TODO trading example
+![Recipe](/assets/knowledge/items/mini-blocks/wandering_trades.png)

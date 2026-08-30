@@ -61,6 +61,11 @@
 	align-items: stretch;
 }
 
+.shopLoadMoreSentinel {
+	height: 1px;
+	pointer-events: none;
+}
+
 .shopCard {
 	position: relative;
 	display: grid;

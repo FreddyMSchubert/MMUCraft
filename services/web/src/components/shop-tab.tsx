@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import { useSiteSettings } from '@/lib/site-settings';
@@ -48,6 +48,10 @@ export function ShopTab({
 	const [hoveredItemId, setHoveredItemId] = useState<string | null>(null);
 	const [featuredIndex, setFeaturedIndex] = useState(0);
 	const [featuredHovered, setFeaturedHovered] = useState(false);
+	const [gridColumns, setGridColumns] = useState(4);
+	const [visibleItemCount, setVisibleItemCount] = useState(16);
+	const gridRef = useRef<HTMLDivElement | null>(null);
+	const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
 	const load = useCallback(async () => {
 		const response = await fetch('/api/shop', { cache: 'no-store' });
@@ -128,6 +132,47 @@ export function ShopTab({
 			return seededRank(`${randomSeed}:${left.id}`) - seededRank(`${randomSeed}:${right.id}`);
 		});
 	}, [data?.items, order, randomSeed, rarityFilter, tagFilter, typeFilter]);
+	const renderedItems = visibleItems.slice(0, visibleItemCount);
+
+	useEffect(() => {
+		const grid = gridRef.current;
+		if (!grid) return;
+		const updateColumns = () => {
+			const columns = gridColumnCount(grid);
+			if (columns > 0) {
+				setGridColumns(columns);
+				setVisibleItemCount((current) => Math.max(current, columns * 4));
+			}
+		};
+		updateColumns();
+		const observer = new ResizeObserver(updateColumns);
+		observer.observe(grid);
+		return () => {
+			observer.disconnect();
+		};
+	}, []);
+
+	useEffect(() => {
+		setVisibleItemCount(gridRef.current ? gridColumnCount(gridRef.current) * 4 : 16);
+	}, [order, randomSeed, rarityFilter, tagFilter, typeFilter]);
+
+	useEffect(() => {
+		const target = loadMoreRef.current;
+		if (!target || visibleItemCount >= visibleItems.length) return;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (!entries.some((entry) => entry.isIntersecting)) return;
+				setVisibleItemCount((current) =>
+					Math.min(visibleItems.length, current + gridColumns * 3),
+				);
+			},
+			{ rootMargin: '900px 0px' },
+		);
+		observer.observe(target);
+		return () => {
+			observer.disconnect();
+		};
+	}, [gridColumns, visibleItemCount, visibleItems.length]);
 
 	async function buy(item: ShopItem) {
 		if (!item.available || buyingItemId) return;
@@ -330,8 +375,8 @@ export function ShopTab({
 				/>
 			</div>
 
-			<div className="shopGrid">
-				{visibleItems.map((item) => (
+			<div ref={gridRef} className="shopGrid">
+				{renderedItems.map((item) => (
 					<ShopCard
 						key={item.id}
 						item={item}
@@ -345,6 +390,9 @@ export function ShopTab({
 					/>
 				))}
 			</div>
+			{renderedItems.length < visibleItems.length && (
+				<div ref={loadMoreRef} className="shopLoadMoreSentinel" aria-hidden="true" />
+			)}
 			{visibleItems.length === 0 && (
 				<p className="shopEmptyState">No items match those filters.</p>
 			)}
@@ -367,4 +415,8 @@ export function ShopTab({
 			)}
 		</div>
 	);
+}
+
+function gridColumnCount(grid: HTMLDivElement) {
+	return window.getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
 }

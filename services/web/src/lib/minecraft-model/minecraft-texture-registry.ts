@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { loadAssetResponse } from '@/lib/asset-fetch-cache';
 import { clamp, MISSING_TEXTURE_SIZE, TICK_MS } from './minecraft-model-geometry';
 import type { RgbColor } from './minecraft-model.types';
 
@@ -121,8 +122,7 @@ export function loadImageResource(url: string) {
 	if (cached) return cached;
 
 	const loading = (async () => {
-		const response = await fetch(url, { cache: 'force-cache' });
-		if (!response.ok) throw new Error(`Could not load texture source: ${url}`);
+		const response = await loadAssetResponse(url);
 		const model = response.headers.get('X-Minecraft-Skin-Model');
 		const minecraftSkinModel: MinecraftSkinModel =
 			model === 'legacy' || model === 'slim' ? model : 'classic';

@@ -254,8 +254,8 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 					)}
 					{!studentSignup && (
 						<p className="authGuestNote">
-							Not from MMU? You&apos;re welcome to join too. Ask someone you know at MMU
-							to contact the committee and help arrange access.
+							Not from MMU? You&apos;re welcome to join too. Ask someone you know at
+							MMU to contact the committee and help arrange access.
 						</p>
 					)}
 					<p className="authPrivacyNote">

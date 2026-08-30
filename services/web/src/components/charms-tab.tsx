@@ -230,7 +230,7 @@ export function CharmsTab() {
 					<h3>Charm Forge</h3>
 					<p className="tabSubtitle">
 						Charms give you new abilities, from climbing walls to mining whole veins of
-						ore. You can pgrade them here to make those abilities stronger. For all
+						ore. You can upgrade them here to make those abilities stronger. For all
 						infos, check out the{' '}
 						<Link href="/play/knowledge/charms">charms knowledge book</Link>.
 					</p>

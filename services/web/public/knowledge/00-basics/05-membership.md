@@ -30,4 +30,6 @@ To do so, find [our societies page on the union website](https://www.theunionmmu
 
 By joining, you agree to follow [The Union's Membership Code of Conduct 2026](https://www.theunionmmu.org/resources/the-union-s-membership-code-of-conduct-2026/download_attachment).
 
-Thank you!
+Once you are done on the union site, please [open up a ticket on the discord server](https://discord.com/channels/1396896170751692931/1415746294659551384/1415753985561854043) so we can give you your new rank and abilities.
+
+Thank you and Have Fun!

@@ -76,9 +76,9 @@ const TAB_LINKS: { id: TabId; label: string; emoji: string; href: string }[] = [
 	{ id: 'charms', label: 'Charms', emoji: '✨', href: '/play/charms' },
 	{ id: 'shop', label: 'Shop', emoji: '🛍️', href: '/play/shop' },
 	{ id: 'claims', label: 'Claims', emoji: '🔒', href: '/play/claims' },
-	{ id: 'fishing', label: 'Fishing', emoji: '🪝', href: '/play/fishing' },
+	{ id: 'fishing', label: 'Fishing', emoji: '🐟', href: '/play/fishing' },
 	{ id: 'players', label: 'Players', emoji: '👤', href: '/play/players' },
-	{ id: 'admin', label: 'Admin', emoji: '🪄', href: '/play/admin/members' },
+	{ id: 'admin', label: 'Admin', emoji: '👨‍💻', href: '/play/admin/members' },
 	{ id: 'misc', label: 'Misc', emoji: '⚙️', href: '/play/misc/settings' },
 ];
 

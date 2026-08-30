@@ -1,7 +1,7 @@
 ====
 id: tweaks
 unlockOrder: 3
-chatMessage: You've unlocked knowledge on the updated Vanilla recipes this server modifies. Some of them are incredibly useful to learn about - please check them out.
+chatMessage: You've unlocked knowledge on the servers crafting tweaks. Some of them are incredibly useful to learn about - please check them out.
 sidebarTitle: Crafting Tweaks
 ====
 
@@ -13,7 +13,7 @@ Rails are super cool. We've made them cooler:
 - 💰 **WAY CHEAPER**: When you now craft the usual [rail recipes](TODO link) or minecarts, you get way more items as the output!
 - ‼️ **EASIER TO MAKE**: You can now craft powered rails with copper instead of gold ingots:
 
-TODO powered rails screenshot
+![Powered Rails from Copper Example Image](/assets/knowledge/survival/crafting-tweaks/powered_from_copper.png)
 
 **So get railing!**
 
@@ -21,7 +21,7 @@ TODO powered rails screenshot
 
 Very convenient!
 
-TODO leather from rotten flesh screenshot
+![Powered Rails from Copper Example Image](/assets/knowledge/survival/crafting-tweaks/powered_from_copper.png)
 
 ## Wood Cutting
 

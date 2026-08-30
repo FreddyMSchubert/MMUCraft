@@ -17,6 +17,8 @@ import {
 export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	const [step, setAuthenticationStep] = useState<AuthenticationStep>('email');
 	const [isSigningIn, setIsSigningIn] = useState(false);
+	const [studentSignup, setStudentSignup] = useState(true);
+	const [studentId, setStudentId] = useState('');
 	const [email, setEmail] = useState('');
 	const [flowId, setFlowId] = useState('');
 	const [authCode, setAuthCode] = useState(emptyAuthCode);
@@ -77,9 +79,13 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault();
 
 		void run(async () => {
-			const result = await postJson<{ flowId: string }>('/api/auth/signup', { email });
+			const signupEmail = studentSignup ? `${studentId}@stu.mmu.ac.uk` : email.trim();
+			const result = await postJson<{ flowId: string }>('/api/auth/signup', {
+				email: signupEmail,
+			});
+			setEmail(signupEmail);
 			setFlowId(result.flowId);
-			setDeliveryMessage(verificationMessage(email));
+			setDeliveryMessage(verificationMessage());
 			setShowEmailHelp(false);
 			setAuthCode(emptyAuthCode());
 			restartResendCountdown();
@@ -148,7 +154,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			);
 			setFlowId(result.flowId);
 			setDeliveryMessage(
-				`${result.timeoutEnded ? 'Your timeout has ended and Minecraft server access was restored. Rejoin the server now. ' : ''}${verificationMessage(email)}`,
+				`${result.timeoutEnded ? 'Your timeout has ended and Minecraft server access was restored. Rejoin the server now. ' : ''}${verificationMessage()}`,
 			);
 			setShowEmailHelp(false);
 			setAuthCode(emptyAuthCode());
@@ -175,7 +181,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 					: await postJson<{ flowId: string }>('/api/auth/signup', { email });
 			setFlowId(result.flowId);
 			setAuthCode(emptyAuthCode());
-			setDeliveryMessage(verificationMessage(email, true));
+			setDeliveryMessage(verificationMessage(true));
 			restartResendCountdown();
 			setShowEmailHelp(false);
 		});
@@ -193,25 +199,65 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			)}
 			{step === 'email' && (
 				<form onSubmit={submitEmail} className="authForm">
-					<h2>Join the server</h2>
-					<p>
-						Verify your MMU email to start signup: [student_id]@stu.mmu.ac.uk, or
-						anything @mmu.ac.uk.
-					</p>
-					<p>
-						If you are not from MMU and want to join the server, please have someone you
-						know at MMU contact the committee. We&apos;re happy to have you!
-					</p>
-					<input
-						value={email}
-						onChange={(event) => {
-							setEmail(event.target.value);
-						}}
-						placeholder="12345678@stu.mmu.ac.uk"
-						type="email"
-						autoComplete="email"
-						required
-					/>
+					<h2>{studentSignup ? 'Hello' : 'Join the server'}</h2>
+					<div className="authSignupPrompt">
+						<p>
+							{studentSignup ? (
+								'Please enter your eight-digit student ID.'
+							) : (
+								<>
+									Manually enter another email address. MMU staff can use their{' '}
+									<strong>@mmu.ac.uk</strong> address.
+								</>
+							)}
+						</p>
+						<button
+							className="authTextButton"
+							type="button"
+							disabled={busy}
+							onClick={() => {
+								setStudentSignup((current) => !current);
+								setError('');
+							}}
+						>
+							{studentSignup ? "I'm not an MMU student" : "I'm an MMU student"}
+						</button>
+					</div>
+					{studentSignup ? (
+						<input
+							aria-label="Student ID"
+							value={studentId}
+							onChange={(event) => {
+								setStudentId(event.target.value.replace(/\D/g, '').slice(0, 8));
+							}}
+							placeholder="12345678"
+							type="text"
+							inputMode="numeric"
+							pattern="\d{8}"
+							minLength={8}
+							maxLength={8}
+							autoComplete="username"
+							required
+						/>
+					) : (
+						<input
+							aria-label="Email address"
+							value={email}
+							onChange={(event) => {
+								setEmail(event.target.value);
+							}}
+							placeholder="you@example.com"
+							type="email"
+							autoComplete="email"
+							required
+						/>
+					)}
+					{!studentSignup && (
+						<p className="authGuestNote">
+							Not from MMU? You&apos;re welcome to join too. Ask someone you know at MMU
+							to contact the committee and help arrange access.
+						</p>
+					)}
 					<p className="authPrivacyNote">
 						Your email address and student ID are visible only to the committee, not
 						other society members.
@@ -222,6 +268,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 							: 'Sign up'}
 					</button>
 					<button
+						className="authOutlinedButton"
 						type="button"
 						disabled={busy}
 						onClick={() => {
@@ -273,7 +320,12 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'email-code' && (
 				<form onSubmit={submitEmailCode} className="authForm">
 					<h2>Verify email</h2>
-					<p>{deliveryMessage}</p>
+					<p>
+						{deliveryMessage}
+						<strong>{email}</strong>.
+						<br />
+						It expires in 10 minutes.
+					</p>
 					<button
 						className="authHelpButton"
 						type="button"
@@ -292,7 +344,12 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'signin-code' && (
 				<form onSubmit={submitSignInCode} className="authForm">
 					<h2>Verify sign in</h2>
-					<p>{deliveryMessage}</p>
+					<p>
+						{deliveryMessage}
+						<strong>{email}</strong>.
+						<br />
+						It expires in 10 minutes.
+					</p>
 					<button
 						className="authHelpButton"
 						type="button"
@@ -368,15 +425,15 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 								</label>
 							))}
 						</div>
-						<br></br>
-						<p>
+						<p className="authRulesSupport">
 							If you think any of these rules are being broken or feel unwell/unsafe
 							on the server in any way,
 							<br />
 							please reach out to our Wellbeing Officer Mia or{' '}
 							<a
-								href="https://discord.com/channels/1396896170751692931/1415746294659551384"
+								href="https://discord.com/channels/1396896170751692931/1415746294659551384/1415753985561854043"
 								target="_blank"
+								rel="noreferrer"
 							>
 								open up a ticket
 							</a>{' '}

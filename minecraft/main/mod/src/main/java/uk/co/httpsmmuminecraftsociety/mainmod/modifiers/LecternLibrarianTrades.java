@@ -20,6 +20,8 @@ import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import java.util.Optional;
 
 public final class LecternLibrarianTrades {
+    private static final int LECTERN_COPY_BASE_EMERALD_COST = 5;
+    private static final int LECTERN_COPY_MIN_EMERALD_COST = 12;
     private static final int LECTERN_COPY_MAX_USES = 999_999;
     private static final int LECTERN_COPY_XP = 10;
 
@@ -74,7 +76,7 @@ public final class LecternLibrarianTrades {
 
         return Optional.of(new MerchantOffer(
                 currencyCost(emeraldCost),
-                Optional.empty(),
+                Optional.of(new ItemCost(Items.BOOK)),
                 result,
                 0,
                 LECTERN_COPY_MAX_USES,
@@ -84,13 +86,13 @@ public final class LecternLibrarianTrades {
     }
 
     private static int calculateEmeraldCost(ItemEnchantments enchantments) {
-        int emeraldCost = 0;
+        int emeraldCost = LECTERN_COPY_BASE_EMERALD_COST;
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
             emeraldCost += entry.getKey().value().getAnvilCost() * entry.getIntValue();
         }
 
-        return Math.max(1, emeraldCost);
+        return Math.max(LECTERN_COPY_MIN_EMERALD_COST, emeraldCost);
     }
 
     private static ItemCost currencyCost(int emeraldCost) {

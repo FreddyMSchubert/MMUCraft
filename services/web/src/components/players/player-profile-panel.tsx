@@ -148,7 +148,7 @@ export function PlayerProfileForm({
 	const [loadingLocation, setLoadingLocation] = useState(false);
 	const displayedColor = color ?? player.profile.defaultColor;
 
-	async function useCurrentLocation() {
+	async function loadCurrentLocation() {
 		setLoadingLocation(true);
 		onError('');
 		try {
@@ -282,7 +282,7 @@ export function PlayerProfileForm({
 					<button
 						type="button"
 						disabled={saving || loadingLocation}
-						onClick={() => void useCurrentLocation()}
+						onClick={() => void loadCurrentLocation()}
 					>
 						{loadingLocation ? 'Loading...' : 'Use current location'}
 					</button>

@@ -3,6 +3,7 @@
 	"package": "uk.co.httpsmmuminecraftsociety.mainmod.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
+      "CommandNodeAccessor",
       "ArmorAddToolTipFirstTick",
       "RefreshCharmOnArmorEquip",
       "decoBlocks.PlaceFakeItemsAsFrames",

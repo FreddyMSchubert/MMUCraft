@@ -103,6 +103,7 @@ public class MainMod implements ModInitializer {
         MainModRecipes.register();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
+        ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> CharmsManager.refreshInventory(handler.player));
         ItemEvents.USE.register(CharmsManager::onItemUse);

@@ -55,6 +55,13 @@ public final class FakeItemsCommand {
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("id", StringArgumentType.word())
                                         .suggests(FAKE_ITEM_SUGGESTIONS)
+                                        .executes(ctx -> give(
+                                                ctx.getSource(),
+                                                EntityArgument.getPlayers(ctx, "targets"),
+                                                StringArgumentType.getString(ctx, "id"),
+                                                1,
+                                                null
+                                        ))
                                         .then(Commands.argument("amount", IntegerArgumentType.integer(1, 1_000_000))
                                                 .executes(ctx -> give(
                                                         ctx.getSource(),

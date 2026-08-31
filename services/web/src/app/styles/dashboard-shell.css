@@ -183,7 +183,7 @@
 }
 
 .playPage .fishTop h3::before {
-	content: '🪝';
+	content: '🐟';
 }
 
 .playPage .playersTop h3::before {
@@ -191,7 +191,7 @@
 }
 
 .playPage .adminSectionHeader h3::before {
-	content: '🪄';
+	content: '👨‍💻';
 }
 
 .playPage .miscPanel h3::before {

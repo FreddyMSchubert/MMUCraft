@@ -4,7 +4,7 @@ import { AdminSectionNavigation } from './admin/admin-section-navigation';
 import { ClaimAdministrationSection } from './admin/claim-administration-section';
 import { CountdownAdminSection } from './admin/countdown-admin-section';
 import { DailyRefreshAdminSection } from './admin/daily-refresh-admin-section';
-import { DiscordCommandHistoryAdminSection } from './admin/discord-command-history-admin-section';
+import { CommandHistoryAdminSection } from './admin/command-history-admin-section';
 import { EmailWhitelistAdminSection } from './admin/email-whitelist-admin-section';
 import { GiftCodeAdminSection } from './admin/gift-code-admin-section';
 import { MemberAccessAdminSection } from './admin/member-access-admin-section';
@@ -22,7 +22,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			<AdminSectionNavigation activeSection={controller.activeSection} />
 			<DailyRefreshAdminSection controller={controller} />
 			<CountdownAdminSection controller={controller} />
-			<DiscordCommandHistoryAdminSection controller={controller} />
+			<CommandHistoryAdminSection controller={controller} />
 			<MemberAccessAdminSection controller={controller} />
 			<ClaimAdministrationSection controller={controller} />
 			<ServerClaimAdministrationSection controller={controller} />

@@ -2,6 +2,17 @@ import type { MinecraftStatInput } from '../players/player-statistics';
 
 export type EmptyGrpcRequest = Record<string, never>;
 
+export interface CommandExecutionRequest {
+	command?: string;
+	source?: string;
+	actor_name?: string;
+	minecraft_uuid?: string;
+	is_operator?: boolean;
+	succeeded?: boolean;
+	result?: number;
+	unix_ms?: number;
+}
+
 export interface DailyTaskUpdateRequest {
 	user_id?: number;
 	period_key?: string;

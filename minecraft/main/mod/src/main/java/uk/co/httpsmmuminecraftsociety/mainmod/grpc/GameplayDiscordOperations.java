@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.commands.CommandExecutionLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +42,14 @@ final class GameplayDiscordOperations {
             @Override public boolean shouldInformAdmins() { return false; }
         };
         String command = request.getCommand().strip().replaceFirst("^/+", "");
-        server.getCommands().performPrefixedCommand(
-                server.createCommandSourceStack().withSource(capture).withCallback((success, value) -> {
-                    succeeded.set(success);
-                    result.set(value);
-                }),
-                command
+        CommandExecutionLogger.fromDiscord(request.getDiscordUser(), () ->
+                server.getCommands().performPrefixedCommand(
+                        server.createCommandSourceStack().withSource(capture).withCallback((success, value) -> {
+                            succeeded.set(success);
+                            result.set(value);
+                        }),
+                        command
+                )
         );
         MainMod.LOGGER.info("Discord admin {} ran server command: {}", request.getDiscordUser(), command);
         return RunServerCommandResponse.newBuilder()

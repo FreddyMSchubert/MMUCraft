@@ -8,7 +8,6 @@ import {
 	WebhookClient,
 } from 'discord.js';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
-import { DatabaseService, discordAdminCommandLogs } from '../database/database.service';
 import { OnlinePlayerPresenceService } from '../players/online-player-presence.service';
 
 export interface MinecraftDiscordEvent {
@@ -136,7 +135,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 
 	constructor(
 		private readonly minecraft: MinecraftGrpcClientService,
-		private readonly database: DatabaseService,
 		private readonly playerPresence: OnlinePlayerPresenceService,
 	) {}
 
@@ -318,14 +316,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		await interaction.deferReply({ ephemeral: true });
 		const command = interaction.options.getString('command', true);
 		try {
-			this.database.connection
-				.insert(discordAdminCommandLogs)
-				.values({
-					command,
-					discord_username: interaction.user.tag,
-					created_at_unix_ms: interaction.createdTimestamp,
-				})
-				.run();
 			const response = await this.callMinecraft<{
 				succeeded: boolean;
 				result: number;

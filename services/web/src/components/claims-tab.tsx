@@ -7,7 +7,8 @@ import {
 	formatDimension,
 	type EditableClaim,
 } from '@/components/claim-editor-card';
-import { PlayerName, playerNameStyle } from '@/components/player-name';
+import { PlayerName } from '@/components/player-name';
+import { PlayerSelector } from '@/components/player-selector';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 
@@ -285,28 +286,19 @@ export function ClaimsTab() {
 										void addMember(claim);
 									}}
 								>
-									<input
-										list={`claim-candidates-${claim.id}`}
+									<PlayerSelector
+										datalistId={`claim-candidates-${claim.id}`}
+										options={candidates}
 										value={searches[claim.id] ?? ''}
-										onChange={(event) => {
+										onChange={(value) => {
 											setSearches((current) => ({
 												...current,
-												[claim.id]: event.target.value,
+												[claim.id]: value,
 											}));
 										}}
 										placeholder="Search server players"
 										disabled={busy || candidates.length === 0}
 									/>
-									<datalist id={`claim-candidates-${claim.id}`}>
-										{candidates.map((person) => (
-											<option
-												className="playerName"
-												style={playerNameStyle(person.color)}
-												key={person.id}
-												value={person.minecraftUsername}
-											/>
-										))}
-									</datalist>
 									<button
 										type="submit"
 										disabled={busy || candidates.length === 0}

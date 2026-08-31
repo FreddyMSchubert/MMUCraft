@@ -372,6 +372,112 @@
 	text-align: center;
 }
 
+.commandLogFilters {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	align-items: end;
+}
+
+.commandLogFilters > label {
+	display: grid;
+	gap: 6px;
+}
+
+.commandLogFilters input,
+.commandLogFilters select {
+	width: 100%;
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.09);
+	color: #fff;
+	color-scheme: dark;
+	font: inherit;
+}
+
+.commandLogSearch {
+	grid-column: span 3;
+}
+
+.commandLogDateFilter > div,
+.commandLogFilterActions,
+.commandLogLoadMore {
+	display: flex;
+	gap: 8px;
+}
+
+.commandLogDateFilter input {
+	flex: 1;
+}
+
+.commandLogFilters button,
+.commandLogLoadMore button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.commandLogFilters button.secondary {
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.commandLogFilterActions {
+	align-items: stretch;
+}
+
+.commandLogFilterActions button {
+	flex: 1;
+}
+
+.commandLogTableWrap {
+	max-height: none;
+}
+
+.commandLogTableWrap code {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	color: #ffd166;
+}
+
+.commandOutcome {
+	font-size: 1.05rem;
+}
+
+.commandOutcome-success {
+	filter: saturate(1.15);
+}
+
+.commandOutcome-failure {
+	filter: saturate(1.1);
+}
+
+.commandLogLoadMore {
+	justify-content: center;
+	align-items: center;
+	min-height: 42px;
+}
+
+.commandLogLoadMore span {
+	color: rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 900px) {
+	.commandLogFilters {
+		grid-template-columns: 1fr;
+	}
+
+	.commandLogSearch {
+		grid-column: auto;
+	}
+}
+
 .membershipCell input {
 	width: 22px;
 	height: 22px;

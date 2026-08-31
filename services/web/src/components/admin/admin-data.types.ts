@@ -6,7 +6,7 @@ export type AdminSection =
 	| 'bans'
 	| 'gifts'
 	| 'countdowns'
-	| 'discord-commands'
+	| 'commands'
 	| 'dailies'
 	| 'toggles'
 	| 'servers'
@@ -61,9 +61,15 @@ export interface ActivePlayerBan {
 	createdAtUnixMs: number;
 }
 
-export interface DiscordAdminCommand {
+export interface CommandLogEntry {
+	id: number;
 	command: string;
-	discordUsername: string;
+	source: 'minecraft' | 'discord';
+	actorName: string;
+	userId: number | null;
+	isOperator: boolean;
+	succeeded: boolean | null;
+	result: number | null;
 	createdAtUnixMs: number;
 }
 
@@ -76,7 +82,7 @@ export function normalizeAdminSection(section: string | undefined): AdminSection
 		section === 'bans' ||
 		section === 'gifts' ||
 		section === 'countdowns' ||
-		section === 'discord-commands' ||
+		section === 'commands' ||
 		section === 'dailies' ||
 		section === 'toggles' ||
 		section === 'servers' ||

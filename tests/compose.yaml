@@ -15,7 +15,6 @@ services:
             MOD_GRPC_TARGET: minecraft-not-present:50052
             NODE_PATH: /app/node_modules
         volumes:
-            - playwright-database:/app/data
             - ./fixtures:/tests/fixtures:ro
         networks: [playwright]
         healthcheck:
@@ -56,10 +55,6 @@ services:
             interval: 2s
             timeout: 2s
             retries: 30
-
-volumes:
-    playwright-database:
-        name: ${COMPOSE_PROJECT_NAME:-kubecraft-playwright}-database
 
 networks:
     playwright:

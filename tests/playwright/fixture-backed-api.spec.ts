@@ -34,7 +34,7 @@ test('member endpoints serialize the seeded database', async ({ request }) => {
 		expect(body.player).toMatchObject({ id: 2, minecraftUsername: 'PlaywrightMember' });
 	});
 
-	await test.step('List the member claim and candidate members', async () => {
+	await test.step('List the member claim and all candidate players', async () => {
 		const body = await getJson(request, '/api/claims');
 		expect(body.claims).toEqual(
 			expect.arrayContaining([
@@ -42,8 +42,31 @@ test('member endpoints serialize the seeded database', async ({ request }) => {
 			]),
 		);
 		expect(body.candidates).toEqual(
-			expect.arrayContaining([expect.objectContaining({ id: 1 })]),
+			expect.arrayContaining([
+				expect.objectContaining({ id: 1 }),
+				expect.objectContaining({ id: 3, minecraftUsername: 'PlaywrightGuest' }),
+			]),
 		);
+	});
+
+	await test.step('Add and remove a non-member player from the claim', async () => {
+		const addResponse = await request.post('/api/claims/playwright-claim/members', {
+			headers: memberCookie,
+			data: { userId: 3 },
+		});
+		await expect(addResponse).toBeOK();
+
+		const body = await getJson(request, '/api/claims');
+		expect(body.claims[0].members).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ id: 3, minecraftUsername: 'PlaywrightGuest' }),
+			]),
+		);
+
+		const removeResponse = await request.delete('/api/claims/playwright-claim/members/3', {
+			headers: memberCookie,
+		});
+		await expect(removeResponse).toBeOK();
 	});
 
 	await test.step('Load the knowledge tree', async () => {

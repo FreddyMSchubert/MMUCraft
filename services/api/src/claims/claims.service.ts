@@ -4,7 +4,7 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNotNull } from 'drizzle-orm';
 import { AuthenticatedUser } from '../auth/auth-session.service';
 import {
 	claimMembers,
@@ -44,6 +44,14 @@ export class ClaimsService {
 	list(user: AuthenticatedUser) {
 		const people = this.getPeople();
 		const peopleById = new Map(people.map((person) => [person.id, person]));
+		const claimCandidateIds = new Set(
+			this.database.connection
+				.select({ id: users.id })
+				.from(users)
+				.where(isNotNull(users.minecraft_uuid))
+				.all()
+				.map(({ id }) => id),
+		);
 		const memberships = this.database.connection.select().from(claimMembers).all();
 		const memberIdsByClaim = new Map<string, number[]>();
 
@@ -85,7 +93,9 @@ export class ClaimsService {
 				.where(and(eq(claimMembers.user_id, user.id), eq(claims.is_server, 0)))
 				.all()
 				.map(({ claim }) => presentClaim(claim)),
-			candidates: people.filter((person) => person.id !== user.id && person.isMember),
+			candidates: people.filter(
+				(person) => person.id !== user.id && claimCandidateIds.has(person.id),
+			),
 		};
 	}
 
@@ -132,10 +142,10 @@ export class ClaimsService {
 		const target = this.database.connection
 			.select()
 			.from(users)
-			.where(and(eq(users.id, targetUserId), eq(users.is_member, 1)))
+			.where(eq(users.id, targetUserId))
 			.get();
 		if (!target?.minecraft_uuid) {
-			throw new BadRequestException('Select an active server member.');
+			throw new BadRequestException('Select an active server player.');
 		}
 
 		const inserted = this.database.connection
@@ -250,7 +260,7 @@ function normalizeClaimName(value: string | undefined) {
 function normalizeUserId(value: number | string | undefined) {
 	const userId = typeof value === 'string' ? Number(value) : value;
 	if (typeof userId !== 'number' || !Number.isInteger(userId) || userId <= 0) {
-		throw new BadRequestException('Select a server member.');
+		throw new BadRequestException('Select a server player.');
 	}
 	return userId;
 }

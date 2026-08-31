@@ -3,6 +3,15 @@ id: teleportation-potions
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on the server's teleportation potions.
 sidebarTitle: Teleportation Potions
+tips:
+- Endermen drop more Ender Pearls than usual on this server, allowing you to easily make many of the powerful Teleportation Potions.
+- The Potion of Displacement teleports you somewhere random quite far away. That's great to find different biomes & structures that haven't been visited yet.
+- If you struggle to find a biome or structure or block, try a Potion of Displacement.
+- Whenever you can't find your way home, just use a Potion of Returning!
+- Use a Potion of Returning if you're super far from your base and you want to get back in an instant.
+- Tired of looking for your friends? Use a Potion of Resonance to teleport directly to them.
+- Any player can teleport directly to you (or the other way around) if the player that wants to travel drinks a potion of Resonance.
+- To teleport to another player using a Potion of Resonance, make sure that you hold one of the items they are holding in either hand in your offhand while you drink the potion.
 ====
 
 There are 3 teleportation potions available on the server, all of which are **supremely useful** for getting around quickly.

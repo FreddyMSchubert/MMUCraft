@@ -23,6 +23,8 @@ import type {
 	FishCatchResponse,
 	KnowledgeUnlockRequest,
 	KnowledgeUnlockResponse,
+	KnowledgeTipRequest,
+	KnowledgeTipResponse,
 	MoneyEventRequest,
 	MoneyEventResponse,
 	PlayerStatisticsSyncRequest,
@@ -64,6 +66,7 @@ export class GameplayGrpcService implements OnModuleInit {
 
 		this.grpcServer.addService(gameplayProto.mcstack.gameplay.v1.GameplayEvents.service, {
 			UnlockNextKnowledge: this.unlockNextKnowledge.bind(this),
+			GetKnowledgeTip: this.getKnowledgeTip.bind(this),
 			GetUnlockAvailability: this.getUnlockAvailability.bind(this),
 			SyncPlayerStats: this.syncPlayerStats.bind(this),
 			RecordMoneyEvent: this.recordMoneyEvent.bind(this),
@@ -74,6 +77,19 @@ export class GameplayGrpcService implements OnModuleInit {
 			UpdateDailyTask: this.updateDailyTask.bind(this),
 			PublishDiscordEvent: this.publishDiscordEvent.bind(this),
 		});
+	}
+
+	private getKnowledgeTip(
+		call: grpc.ServerUnaryCall<KnowledgeTipRequest, KnowledgeTipResponse>,
+		callback: UnaryCallback<KnowledgeTipResponse>,
+	) {
+		callback(
+			null,
+			this.knowledge.getRandomTipForMinecraftPlayer(
+				call.request.minecraft_uuid ?? '',
+				call.request.minecraft_username ?? '',
+			),
+		);
 	}
 
 	private publishDiscordEvent(
@@ -216,6 +232,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			pronouns: result.pronouns,
 			color_hex: result.color,
 			show_death_counter: result.showDeathCounter,
+			previous_last_played_at_unix_ms: result.previousLastPlayedAtUnixMs,
 			message: result.message,
 		});
 	}

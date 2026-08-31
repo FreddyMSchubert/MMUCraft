@@ -3,6 +3,12 @@ id: soulbound
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on the Soulbound enchantment, a method to never lose certain items - even if you die.
 sidebarTitle: Soulbound Enchantment
+tips:
+- Items enchanted with Soulbound stay with you after you have died.
+- The Soulbound enchantment works on tools and armor, but also on wallets and recovery compasses - the last two especially are quite handy.
+- Souls are dropped whenever a player dies. You can use them to make the powerful Soulbound enchantment.
+- You can get Soul Sand without entering the Nether by crafting 8 sand and 1 soul together.
+- Soul Soil can be gotten before entering the Nether by crafting 8 dirt and 1 soul together.
 ====
 
 An item enchanted with ***SOULBOUND*** will attach to your soul, not your physical form. This allows it to stay affixed to your innermost being as it travels the afterlife in search of a new body to inhabit.

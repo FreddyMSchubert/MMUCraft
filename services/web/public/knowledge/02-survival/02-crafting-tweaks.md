@@ -3,9 +3,18 @@ id: tweaks
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the servers crafting tweaks. Some of them are incredibly useful to learn about - please check them out.
 sidebarTitle: Crafting Tweaks
+tips:
+- All of the minecart rail recipes now give way more output items than usual. Instead of 16, crafting the normal rail recipe now gives 64 rails at once!
+- Minecart rails go wayyyy faster on this server - over 2.5 times the normal speed!
+- Powered rails are significantly easier to craft now, because you can make them using copper instead of gold.
+- You can get different wooden items more efficiently by using a Stonecutter! (I know, the naming is unintuitive).
+- Instead of breaking and placing a painting dozens of times to get the one you want, just put a painting in a Stonecutter. This will allow you to select the exact painting you want.
+- This server has some additional crafting recipes, such as crafting wool into string, crafting nether wart blocks into nether wart, and crafting compressed ice into uncompressed ice.
+- You can turn concrete powder into concrete way quicker now by throwing concrete powder items into a cauldron filled with water. This will conver them in an instant!
+- You can get your hands on mud blocks way way easier than usual by throwing dirt blocks into a cauldron filled with water. The dirt blocks will turn into mud blocks instantly!
 ====
 
-## Rails
+## Minecart Rails
 
 Rails are super cool. We've made them cooler:
 

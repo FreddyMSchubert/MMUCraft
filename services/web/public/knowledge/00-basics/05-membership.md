@@ -3,6 +3,9 @@ id: membership
 unlockOrder: public
 chatMessage: You've unlocked knowledge on memberships
 sidebarTitle: Membership
+tips:
+- Becoming a society member comes with many helpful benefits. It is a one-time payment and lasts you for the whole year.
+- The committee is made up of volunteers, we do not make money from running this server. Please consider becoming a society member so we can recoup the costs.
 ====
 
 Anybody can play on this server for free. But hosting the server does cost us money, so we need to have some sort of way of making income. (Plus, encouraging memberships is enforced by the MMU union.)

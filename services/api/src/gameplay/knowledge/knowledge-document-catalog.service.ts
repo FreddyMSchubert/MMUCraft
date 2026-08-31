@@ -99,6 +99,12 @@ export class KnowledgeDocumentCatalogService {
 		const values = new Map<string, string>();
 		const metadata = match[1];
 		if (metadata === undefined) throw new Error(`Knowledge metadata is invalid: ${filePath}`);
+		const tips = /^tips:\s*\n((?:- .+(?:\n|$))+)/m
+			.exec(metadata.replace(/\r\n/g, '\n'))?.[1]
+			?.trimEnd()
+			.split('\n')
+			.map((line) => line.slice(2).trim())
+			.filter(Boolean);
 		for (const line of metadata.replace(/\r\n/g, '\n').split('\n')) {
 			const parsed = /^([A-Za-z][A-Za-z0-9_-]*)\s*:\s*(.*)$/.exec(line);
 			const key = parsed?.[1];
@@ -116,6 +122,7 @@ export class KnowledgeDocumentCatalogService {
 		if (!sidebarTitle) {
 			throw new Error(`Knowledge markdown file is missing sidebarTitle: ${filePath}`);
 		}
+		if (!tips?.length) throw new Error(`Knowledge markdown file is missing tips: ${filePath}`);
 
 		const unlockOrder = unlockOrderValue === 'public' ? null : Number(unlockOrderValue);
 		if (unlockOrder !== null && !Number.isInteger(unlockOrder)) {
@@ -129,6 +136,7 @@ export class KnowledgeDocumentCatalogService {
 				values.get('chatMessage') ??
 				`You've unlocked new knowledge about ${sidebarTitle}. Visit the website to learn more.`,
 			sidebarTitle,
+			tips,
 		};
 	}
 

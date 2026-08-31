@@ -43,12 +43,14 @@ export class PlayerStatisticsSynchronizationService {
 				pronouns: '',
 				color: effectivePlayerColor(minecraftUuidInput),
 				showDeathCounter: true,
+				previousLastPlayedAtUnixMs: 0,
 				message: 'No website account is linked to this Minecraft username yet.',
 			};
 		}
 
 		const unixMs = normalizeUnixMs(unixMsInput);
 		const stats = this.getForUser(user.id);
+		const previousLastPlayedAtUnixMs = stats.minecraft.lastPlayedAtUnixMs ?? 0;
 		const nextMinecraftStats: Record<string, MinecraftStatValue> = { ...stats.minecraft.stats };
 		for (const statInput of statsInput) {
 			const stat = normalizeMinecraftStat(statInput, unixMs);
@@ -78,6 +80,7 @@ export class PlayerStatisticsSynchronizationService {
 			pronouns: profile.pronouns.slice(0, PROFILE_TEXT_LIMITS.pronouns),
 			color: profile.color,
 			showDeathCounter: profile.showDeathCounter,
+			previousLastPlayedAtUnixMs,
 			message: 'Stats synced.',
 		};
 	}

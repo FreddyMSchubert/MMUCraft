@@ -3,6 +3,18 @@ id: enchanting-and-anvils
 unlockOrder: 4
 chatMessage: You've unlocked knowledge on the server's enchanting and anvil progression.
 sidebarTitle: Enchanting & Anvils
+tips:
+- You can copy any enchanted book by placing it on a librarians lectern. The librarian will start offering a copy of the book as one of their trades.
+- Combining levels in an anvil uses addition on this server. For example, combining Sharpness I and Sharpness II results in Sharpness III.
+- The "Too Expensive" anvil limit has been fully removed, you can keep upgrading and repairing your gear forever.
+- Anvils work differently in the server. For example, it is possible to copy enchantments that are applied to an item back onto a book.
+- When merging two items in an anvil, the resulting item now actually carries over the enchantments from both items.
+- Renaming items in an anvil no longer costs any XP.
+- Repairing weapons and armor in an anvil is cheaper on this server. It is now a viable long-term alternative to getting Mending.
+- Netherite tools, weapons & armor can now be repaired in an anvil using diamonds.
+- You can repair anvils by right clicking them with an iron block (100% repair chance) or an iron ingot (1 / 9 repair chance).
+- Instead of randomly refreshing librarians, it is possible to get enchanted books way easier! Each type of enchantment has received a unique way of getting it way more reliably.
+- To get the fortune enchantment easily, you can now craft fortune enchanted books.
 ====
 
 If you want to, you still can treat enchanting and anvils just as usual. The default behaviour is still supported. But you'd be making a mistake!

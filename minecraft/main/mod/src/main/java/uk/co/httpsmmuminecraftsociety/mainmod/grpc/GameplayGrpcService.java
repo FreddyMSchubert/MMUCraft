@@ -33,6 +33,12 @@ public final class GameplayGrpcService extends GrpcHandler {
         return INSTANCE.eventsClient.getUnlockAvailability(minecraftUsername, minecraftUuid);
     }
 
+    public static CompletableFuture<GetKnowledgeTipResponse> getKnowledgeTip(
+            String minecraftUsername, String minecraftUuid
+    ) {
+        return INSTANCE.eventsClient.getKnowledgeTip(minecraftUsername, minecraftUuid);
+    }
+
     public static CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
             net.minecraft.server.level.ServerPlayer player, List<MinecraftStatEntry> stats
     ) {

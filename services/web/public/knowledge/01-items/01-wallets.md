@@ -3,6 +3,10 @@ id: wallets
 unlockOrder: 1
 chatMessage: You've unlocked knowledge on wallets, the way to store dabloons.
 sidebarTitle: Wallets
+tips:
+- Annoyed with Dabloons clogging up your inventory? Craft or invest in a wallet!
+- If you have a wallet and earn or spend Dabloons, they are removed and inserted right into your wallet - no hassle.
+- If you apply the Soulbound enchantment to a Wallet, you can never lose your hard-earned Dabloons if you die.
 ====
 
 Dealing with [dabloons](/play/knowledge/money-basics) manually in your inventory can become annoying quite quickly. The bundle is here to solve all your problems: It can hold an unlimited amount of dabloons!

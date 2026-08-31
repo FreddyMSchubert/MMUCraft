@@ -3,6 +3,10 @@ id: enderite
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on Enderite equipment, the final equipment tier post-Netherite.
 sidebarTitle: Enderite
+tips:
+- Since Mojang won't do it, we have added Enderite gear to the game, which spawns in the End.
+- Spyglasses can be helpful to spot Alien Debris blocks that are exposed at the bottom of End Islands.
+- Enderite armor is more magical than other armor sets, which makes it possible to apply higher levels of normal enchantments to it.
 ====
 
 *I mean, if Mojang won't do it...*

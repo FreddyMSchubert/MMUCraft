@@ -3,6 +3,11 @@ id: death-and-respawning
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on the server's death and respawn rules.
 sidebarTitle: Death & Respawning
+tips:
+- When you die, you won't have to walk a bunch to get your items back. Instead, you will spawn somewhere random close to where you died.
+- Recovery compasses can have Soulbound applied to stay on your person after you die. That makes them super useful for finding your last death location.
+- When you die in the void, you do not lose the items in your inventory.
+- When players die on the server, they drop their head. The head will have a note saying what they died from (including who did it). How about a hunting trophy?
 ====
 
 Of course, since Minecraft is a childrens game, youd never get killed. Right? 👀

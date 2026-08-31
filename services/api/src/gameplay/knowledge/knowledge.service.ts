@@ -19,6 +19,12 @@ interface KnowledgeUnlockResponse {
 	message: string;
 }
 
+interface KnowledgeTipResponse {
+	found: boolean;
+	knowledge_id: string;
+	tip: string;
+}
+
 @Injectable()
 export class KnowledgeService {
 	constructor(
@@ -46,6 +52,21 @@ export class KnowledgeService {
 			readKnowledgeIds: [...readKnowledgeIds],
 			tree: this.applyUnlockState(document.tree, unlockedIds),
 		};
+	}
+
+	getRandomTipForMinecraftPlayer(
+		minecraftUuid: string,
+		minecraftUsername: string,
+	): KnowledgeTipResponse {
+		const document = this.documents.loadDocument();
+		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
+		const unlockedIds = user ? this.getUnlockedIds(user.id) : new Set<string>();
+		const tips = document.pages
+			.filter((page) => page.unlockedByDefault || unlockedIds.has(page.id))
+			.flatMap((page) => page.tips.map((tip) => ({ knowledge_id: page.id, tip })));
+		const picked = tips.length ? tips[randomInt(tips.length)] : undefined;
+
+		return picked ? { found: true, ...picked } : { found: false, knowledge_id: '', tip: '' };
 	}
 
 	async markRead(user: AuthenticatedUser, knowledgeIdInput: string | undefined) {

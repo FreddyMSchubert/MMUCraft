@@ -56,6 +56,17 @@ final class GameplayEventsClient {
         return call(client -> client.getUnlockAvailability(request));
     }
 
+    CompletableFuture<GetKnowledgeTipResponse> getKnowledgeTip(
+            String minecraftUsername,
+            String minecraftUuid
+    ) {
+        GetKnowledgeTipRequest request = GetKnowledgeTipRequest.newBuilder()
+                .setMinecraftUsername(minecraftUsername)
+                .setMinecraftUuid(minecraftUuid)
+                .build();
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).getKnowledgeTip(request));
+    }
+
     CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
             ServerPlayer player,
             List<MinecraftStatEntry> stats

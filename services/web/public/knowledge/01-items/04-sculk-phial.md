@@ -3,6 +3,9 @@ id: sculk-phial
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on storing experience in a Sculk Phial.
 sidebarTitle: Sculk Phial
+tips:
+- Sculk Phials can extract XP from you so you can store it for later or trade with it.
+- If you don't want to lose all of your levels in case you die, store your experience in a Sculk Phial instead.
 ====
 
 Sculk Phials are powerful items, but only if used correctly. They suck the life force / experience levels out of your body (in a very whole wholesome, non-objectionable and totally PG sort of way), allowing you to store, transfer, and sell experience.

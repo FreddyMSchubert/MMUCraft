@@ -3,6 +3,8 @@ id: externalplayers
 unlockOrder: public
 chatMessage: You've unlocked knowledge on the basics of cosmetics
 sidebarTitle: Non-MMU Players
+tips:
+- You can play with external players that aren't from MMU.
 ====
 
 You may wish to play on this server with people that aren't MMU. This is **entirely possible**!

@@ -3,6 +3,11 @@ id: cosmetics
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the basics of cosmetics
 sidebarTitle: Cosmetics
+tips:
+- Use fashion books to unlock stylish cosmetics. To wear them after you've unlocked them, visit the shop.
+- You can combine a cosmetic hat with a helmet to look stylish while still staying protected by the helmet.
+- You can craft some cosmetics together with a few dyes to change their color or dip them in a water-filled cauldron to wash off the colors again.
+- Cosmetics can also make for nice decorations if you place them in an item frame (and optionally make the item frame invisible using Invisi-Carrots).
 ====
 
 Cover what cosmetics are and how Fashion Books unlock them in the shop. Show the dyeing, combining, separating, equipping, and removing recipes. Include the bow-trail recipe, repeated-dye weighting, and the recipe that removes a trail. Mention animated textures and cosmetics that also work as [decorative blocks](/play/knowledge/decorative-blocks).
@@ -44,7 +49,7 @@ You can wash it in a cauldron by just right clicking!
 
 ## As Decoration
 
-Some cosmetics can be placed in item frames to look like props, combine this with invisible item frames and you can make a nice, cozy base.
+Some cosmetics can be placed in item frames to look like props, combine this with [invisible item frames](/play/knowledge/invisicarrot) and you can make a nice, cozy base.
 
 ![Road-Works](/assets/knowledge/items/cosmetics/road-works.png)
 ![Dark Forest](/assets/knowledge/items/cosmetics/mushroom.png)

@@ -3,6 +3,10 @@ id: potion-of-insomnia
 unlockOrder: 4
 chatMessage: You've unlocked knowledge on Summoning Phantoms and the Potion of Insomnia.
 sidebarTitle: Summoning Phantoms
+tips:
+- Phantoms are annoying, which is why we disabled natural spawning. You won't encounter any even if you never sleep! You can summon them instead.
+- A Potion of Insomnia can be used to summon phantoms.
+- On this server, bats and the ender dragon drop phantom membranes in addition to phantoms.
 ====
 
 :::context

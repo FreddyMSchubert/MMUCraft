@@ -29,6 +29,7 @@ export default tseslint.config(
 					allowDefaultProject: [
 						'services/api/drizzle.config.ts',
 						'tests/playwright.config.ts',
+						'tests/playwright.local.config.ts',
 						'tests/playwright/*.ts',
 					],
 					defaultProject: 'services/api/tsconfig.json',
@@ -74,6 +75,7 @@ export default tseslint.config(
 		files: [
 			'services/api/drizzle.config.ts',
 			'tests/playwright.config.ts',
+			'tests/playwright.local.config.ts',
 			'tests/playwright/*.ts',
 		],
 	},

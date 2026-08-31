@@ -8,6 +8,10 @@
 	font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas, 'Courier New', monospace;
 }
 
+.playPage:has(.knowledgePanel) {
+	overflow-x: clip;
+}
+
 .knowledgePanel h1,
 .knowledgePanel h2,
 .knowledgePanel h3,
@@ -27,6 +31,12 @@
 	grid-template-columns: 280px minmax(0, 1fr);
 	align-items: start;
 	gap: 20px;
+}
+
+.knowledgeSidebarRail {
+	position: relative;
+	align-self: stretch;
+	min-width: 0;
 }
 
 .knowledgeSidebar {
@@ -97,6 +107,62 @@
 	font-size: 0.78rem;
 	font-weight: 700;
 	line-height: 1;
+}
+
+.knowledgeOutline {
+	width: 100%;
+	max-height: calc(100vh - 24px);
+	margin-top: 12px;
+	overflow: auto;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.knowledgeOutline.measuring {
+	position: absolute;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+.knowledgeOutline.visible {
+	position: sticky;
+	top: 12px;
+}
+
+.knowledgeOutlineTitle {
+	margin: 0;
+	padding: 10px 12px 8px;
+	color: rgba(255, 255, 255, 0.55);
+	font-size: 0.78rem;
+	font-weight: 700;
+	line-height: 1.25;
+	text-transform: uppercase;
+}
+
+.knowledgeOutline nav {
+	padding-bottom: 8px;
+}
+
+.knowledgeOutline a {
+	display: block;
+	min-height: 34px;
+	padding-top: 7px;
+	padding-right: 10px;
+	padding-bottom: 7px;
+	border-left: 3px solid transparent;
+	color: rgba(255, 255, 255, 0.76);
+	font-size: 0.8rem;
+	line-height: 1.35;
+	text-decoration: none;
+	overflow-wrap: anywhere;
+}
+
+.knowledgeOutline a:hover,
+.knowledgeOutline a.active {
+	border-left-color: #ffd166;
+	background: rgba(255, 255, 255, 0.09);
+	color: #fff;
 }
 
 .knowledgeReader {
@@ -178,8 +244,12 @@
 }
 
 .knowledgePage h2,
-.knowledgePage h3 {
+.knowledgePage h3,
+.knowledgePage h4,
+.knowledgePage h5,
+.knowledgePage h6 {
 	margin-bottom: 10px;
+	scroll-margin-top: 16px;
 }
 
 .knowledgePage p,
@@ -392,6 +462,10 @@
 }
 
 @media (max-width: 700px) {
+	.playPage:has(.knowledgePanel) {
+		overflow-x: auto;
+	}
+
 	.playPage .knowledgeMobileNav {
 		display: grid;
 		gap: 6px;
@@ -416,7 +490,7 @@
 		display: block;
 	}
 
-	.playPage .knowledgeSidebar {
+	.playPage .knowledgeSidebarRail {
 		display: none;
 	}
 

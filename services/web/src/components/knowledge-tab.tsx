@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import {
@@ -16,6 +16,7 @@ import {
 	type KnowledgeResponse,
 	type KnowledgeTreeEntry,
 } from './knowledge/knowledge-tree';
+import { KnowledgeOutline } from './knowledge/knowledge-outline';
 
 const POLL_INTERVAL_MS = 8000;
 export function KnowledgeTab({
@@ -31,6 +32,9 @@ export function KnowledgeTab({
 	const [error, setError] = useState('');
 	const [readPageIds, setReadPageIds] = useState<Set<string>>(new Set());
 	const [markingRead, setMarkingRead] = useState(false);
+	const sidebarRef = useRef<HTMLElement>(null);
+	const readerRef = useRef<HTMLElement>(null);
+	const articleRef = useRef<HTMLElement>(null);
 	const visibleTree = useMemo(() => (data ? filterUnlockedTree(data.tree) : []), [data]);
 	const pages = useMemo(() => (data ? flattenPages(data.tree) : []), [data]);
 	const activePage =
@@ -225,22 +229,38 @@ export function KnowledgeTab({
 			</label>
 
 			<div className="knowledgePda">
-				<aside className="knowledgeSidebar" aria-label="Knowledge pages">
-					<nav className="knowledgeTree">
-						{visibleTree.map((entry) => (
-							<KnowledgeTreeNode
-								key={entry.type === 'folder' ? `folder-${entry.name}` : entry.id}
-								entry={entry}
-								activePageId={activePage.id}
-								readPageIds={readPageIds}
-								onSelectPage={selectPage}
-								depth={0}
-							/>
-						))}
-					</nav>
-				</aside>
+				<div className="knowledgeSidebarRail">
+					<aside
+						ref={sidebarRef}
+						className="knowledgeSidebar"
+						aria-label="Knowledge pages"
+					>
+						<nav className="knowledgeTree">
+							{visibleTree.map((entry) => (
+								<KnowledgeTreeNode
+									key={
+										entry.type === 'folder' ? `folder-${entry.name}` : entry.id
+									}
+									entry={entry}
+									activePageId={activePage.id}
+									readPageIds={readPageIds}
+									onSelectPage={selectPage}
+									depth={0}
+								/>
+							))}
+						</nav>
+					</aside>
+					{activePageUnlocked && (
+						<KnowledgeOutline
+							articleRef={articleRef}
+							readerRef={readerRef}
+							sidebarRef={sidebarRef}
+							contentKey={`${activePage.id}:${renderedHtml}`}
+						/>
+					)}
+				</div>
 
-				<section className="knowledgeReader">
+				<section ref={readerRef} className="knowledgeReader">
 					{error && (
 						<p className="authError" role="alert">
 							{error}
@@ -251,6 +271,7 @@ export function KnowledgeTab({
 					{activePageUnlocked ? (
 						<>
 							<article
+								ref={articleRef}
 								className="knowledgePage"
 								dangerouslySetInnerHTML={{ __html: renderedHtml }}
 							/>

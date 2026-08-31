@@ -3,6 +3,19 @@ id: welcome
 unlockOrder: public
 chatMessage: Welcome to the MMU Minecraft Society!
 sidebarTitle: Welcome!
+tips:
+- Join the free Discord community to meet like-minded Minecrafters! You'll also find many society announcements and more there.
+- Follow us on Instagram for awesome posts and all the society announcements!
+- To make the most of your time on the server, read the knowledge books when you find them to learn about the powerful new features we added. Teleportation and mid-air jumping, anyone?
+- Build close to spawn. It's more fun that way - it's always more fun if you see other players more often.
+- Build close to spawn. That will make Potions of Returning, which teleport you to the world spawn, very useful to get close to your home.
+- Sunday Funday! On sundays, tons of shop items are heavily discounted and many different money sources hand out more cash. Minecraft Day!
+- Use claims to protect your builds! Players you don't invite won't be able to open chests, break & place blocks in your claims.
+- Use claims to protect your builds! When you do, other players, creepers and withers can't destroy any of the blocks in your claims anymore.
+- Fill out your profile! That way, other players will be able to reach out and chat with you, for example to trade for items.
+- Check out the profiles of other players! You can learn about who the other people on the server are in the players section on the website.
+- Please feel free to reach out to the committee about any questions or feedback you may have!
+- Check out the Countdowns at the top of the website for all the cool things happening soon.
 ====
 
 <div class="welcomeWaves">

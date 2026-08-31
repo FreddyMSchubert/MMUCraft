@@ -3,6 +3,11 @@ id: backpacks
 unlockOrder: 1
 chatMessage: You've unlocked knowledge on backpacks, a powerful early game shulker alternative.
 sidebarTitle: Backpacks
+tips:
+- Use backpacks - they allow you to carry more items with you, and are quite easy to acquire. You just need 8 leather and a chest.
+- You can upgrade backpacks so they can fit even more of your items - very useful!
+- You can get leather even if you can't find enough cows by smelting rotten flesh in a furnace.
+- Backpacks are opened without needing to be placed first.
 ====
 
 Backpacks allow you to carry more items with you, very similar to Shulker Boxes, but you don't need to place them down to access their contents.

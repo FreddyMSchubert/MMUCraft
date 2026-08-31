@@ -36,6 +36,17 @@ export interface KnowledgeUnlockResponse {
 	has_cosmetics_to_unlock: boolean;
 }
 
+export interface KnowledgeTipRequest {
+	minecraft_username?: string;
+	minecraft_uuid?: string;
+}
+
+export interface KnowledgeTipResponse {
+	found: boolean;
+	knowledge_id: string;
+	tip: string;
+}
+
 export interface UnlockAvailabilityRequest {
 	minecraft_username?: string;
 	minecraft_uuid?: string;
@@ -68,6 +79,7 @@ export interface PlayerStatisticsSyncResponse {
 	pronouns: string;
 	color_hex: string;
 	show_death_counter: boolean;
+	previous_last_played_at_unix_ms: number;
 	message: string;
 }
 

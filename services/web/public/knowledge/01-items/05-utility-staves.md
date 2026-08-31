@@ -3,6 +3,12 @@ id: utility-staves
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the server's utility staves.
 sidebarTitle: Utility Staves
+tips:
+- The Staff of Crafting allows you to craft in a 3 by 3 grid just by waving the Staff, no need to bring or place a crafting table.
+- The Staff of Soulbound Storage allows you to use your Ender Chest anywhere - no need to place a block.
+- The Staff of Brolly is a powerful item that slows your fall a lot while you hold it.
+- A trident shaft is a useful item that can be used to make multiple powerful utility staves, as well as a trident.
+- You can get a trident much easier than usual by crafting it using Trident Shafts and Trident Prongs.
 ====
 
 Here's a few other fun things you may consider crafting.

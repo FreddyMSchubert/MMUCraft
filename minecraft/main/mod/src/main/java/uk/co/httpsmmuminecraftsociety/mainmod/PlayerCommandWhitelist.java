@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 public final class PlayerCommandWhitelist {
-    private static final Set<String> ALLOWED_COMMANDS = Set.of("tell", "website");
+    private static final Set<String> ALLOWED_COMMANDS = Set.of("tell", "tip", "website");
 
     private PlayerCommandWhitelist() {}
 

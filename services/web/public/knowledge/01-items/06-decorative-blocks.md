@@ -3,6 +3,10 @@ id: decorative-blocks
 unlockOrder: 4
 chatMessage: You've unlocked knowledge on custom decorative blocks.
 sidebarTitle: Decorative Blocks
+tips:
+- There are many decorative blocks available on the server. They would look great in your builds!
+- You can enjoy the magnificence of Spoons carpets in game. They are obtainable as decorative blocks.
+- Care for a pint? You can get beer in-game, we've added it!
 ====
 
 Ever thought there aren't enough decorations in game? Why not give these a try! Just craft them and place them down like blocks - you can even right click to rotate them.

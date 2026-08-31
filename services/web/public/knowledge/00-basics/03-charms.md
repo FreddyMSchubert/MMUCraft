@@ -3,6 +3,10 @@ id: charms
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the basics of charms
 sidebarTitle: Charms
+tips:
+- To use charms while still having the protection of a full armour set, combine the charms with the armor.
+- Charms can be made exponentially more powerful when upgrading them on the website.
+- If you find a broken Charm, you have to repair it by upgrading it once before it will start working.
 ====
 
 Charms are powerful magical artifacts of divine origins. Their powers range from the **simple but effective** (such as granting extra hearts), the **helpful** (such as insta-mining ore veins and trees), to the **strange** (such as climbing on walls and ceilings, or jumping in mid-air).

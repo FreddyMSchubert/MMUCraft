@@ -51,6 +51,7 @@ public final class PlayerStatsSync {
     private static final Map<UUID, SyncPlayerStatsResponse> presentationByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, String> renderedProfileByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, Integer> colorByPlayer = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> previousLastPlayedAtByPlayer = new ConcurrentHashMap<>();
     private static final List<Block> NOTABLE_MINED_BLOCKS = List.of(
             Blocks.STONE,
             Blocks.DEEPSLATE,
@@ -137,6 +138,10 @@ public final class PlayerStatsSync {
         return player != null && membershipByPlayer.getOrDefault(player.getUUID(), false);
     }
 
+    public static long previousLastPlayedAtUnixMs(ServerPlayer player) {
+        return previousLastPlayedAtByPlayer.getOrDefault(player.getUUID(), 0L);
+    }
+
     private static CompletableFuture<Boolean> syncNow(ServerPlayer player, boolean allowDisconnectedPlayer) {
         if (player == null || (!allowDisconnectedPlayer && player.hasDisconnected())) {
             return CompletableFuture.completedFuture(false);
@@ -145,8 +150,12 @@ public final class PlayerStatsSync {
         CompletableFuture<SyncPlayerStatsResponse> profileSync = allowDisconnectedPlayer
                 ? GameplayGrpcService.syncPlayerStats(player, collectStats(player))
                 : synchronizePresentation(player);
-        CompletableFuture<Boolean> membershipSync = profileSync
-                .thenApply(response -> response.getAccountLinked() && response.getIsMember());
+        CompletableFuture<Boolean> membershipSync = profileSync.thenApply(response -> {
+            if (!allowDisconnectedPlayer) {
+                previousLastPlayedAtByPlayer.put(player.getUUID(), response.getPreviousLastPlayedAtUnixMs());
+            }
+            return response.getAccountLinked() && response.getIsMember();
+        });
 
         if (allowDisconnectedPlayer) {
             profileSync.exceptionally(error -> {
@@ -226,6 +235,7 @@ public final class PlayerStatsSync {
         presentationByPlayer.remove(playerId);
         renderedProfileByPlayer.remove(playerId);
         colorByPlayer.remove(playerId);
+        previousLastPlayedAtByPlayer.remove(playerId);
     }
 
     public record DiscordPresentation(String role, String nickname, String pronouns, String colorHex) { }

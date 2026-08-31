@@ -8,6 +8,7 @@ option java_outer_classname = "GameplayProto";
 
 service GameplayEvents {
   rpc UnlockNextKnowledge(UnlockNextKnowledgeRequest) returns (UnlockNextKnowledgeResponse);
+  rpc GetKnowledgeTip(GetKnowledgeTipRequest) returns (GetKnowledgeTipResponse);
   rpc GetUnlockAvailability(GetUnlockAvailabilityRequest) returns (GetUnlockAvailabilityResponse);
   rpc SyncPlayerStats(SyncPlayerStatsRequest) returns (SyncPlayerStatsResponse);
   rpc RecordMoneyEvent(RecordMoneyEventRequest) returns (RecordMoneyEventResponse);
@@ -283,6 +284,17 @@ message UnlockNextKnowledgeResponse {
   bool has_cosmetics_to_unlock = 11;
 }
 
+message GetKnowledgeTipRequest {
+  string minecraft_username = 1;
+  string minecraft_uuid = 2;
+}
+
+message GetKnowledgeTipResponse {
+  bool found = 1;
+  string knowledge_id = 2;
+  string tip = 3;
+}
+
 message GetUnlockAvailabilityRequest {
   string minecraft_username = 1;
   int64 unix_ms = 2;
@@ -324,6 +336,7 @@ message SyncPlayerStatsResponse {
   bool is_external = 8;
   string color_hex = 9;
   optional bool show_death_counter = 10;
+  int64 previous_last_played_at_unix_ms = 11;
 }
 
 message RecordMoneyEventRequest {

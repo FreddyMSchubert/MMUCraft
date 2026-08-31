@@ -3,6 +3,9 @@ id: fishing
 unlockOrder: 4
 chatMessage: You've unlocked knowledge on the server's fishing system.
 sidebarTitle: Fishing
+tips:
+- The fishing system has had major reworks and changes done to it. Instead of the normal fishing minigame, there's now a fish shadow that appears. To catch the fish, wait for it to properly bite the bobber, then quickly pull it out of the water.
+- Annoyed by how slow fishing is? Make sure you fish without blocks above your head and with Lure applied to your fishing rod. Fishing in rain will make things even quicker.
 ====
 
 :::tldr

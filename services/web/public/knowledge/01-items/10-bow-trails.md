@@ -3,6 +3,9 @@ id: bow-trails
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on Bow Trails - fight with style.
 sidebarTitle: Bow Trails
+tips:
+- You can show some personality by making your arrows leave a colorful trail behind.
+- You can combine multiple dyes with a bow to make the arrows that bow shoots leave a trail in those colors behind.
 ====
 
 ![War-Horse](/assets/knowledge/items/bow-trails/war-horse.png)

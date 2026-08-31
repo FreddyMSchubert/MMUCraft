@@ -1,8 +1,8 @@
 {
-	"title": "Warden hood",
-	"id": "cosmetic-hood-warden",
+	"title": "Warden Head",
+	"id": "cosmetic-head-warden",
 	"modelType": "cosmetic",
-	"rarity": "rare",
+	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Not as dangerous as the real thing"
@@ -10,8 +10,8 @@
 	"shopPurchasable": {
 	"priceDabloons": 250,
 		"description": "",
-		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Warden hood."
+		"unlockWeight": 20,
+		"unlockMessage": "Unlocked cosmetic: Warden Head."
 	},
 	"equippableCosmetic": {}
 }

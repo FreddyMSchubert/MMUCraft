@@ -17,7 +17,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 35,
 		"description": "",
-		"unlockWeight": 25,
+		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Cheese Hat."
 	},
 	"equippableCosmetic": {}

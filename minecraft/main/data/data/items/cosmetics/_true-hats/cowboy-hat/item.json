@@ -8,9 +8,9 @@
 		"You're a wanted cosmetic, Cowboy Hat"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 50,
+	"priceDabloons": 75,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Cowboy Hat."
 	},
 	"equippableCosmetic": {}

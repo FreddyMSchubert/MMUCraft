@@ -8,9 +8,9 @@
 		"ODIO le vespe, insetti INUTILI!!!!"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 75,
+	"priceDabloons": 100,
 		"description": "",
-		"unlockWeight": 25,
+		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Patriotic Helmet."
 	},
 	"equippableCosmetic": {}

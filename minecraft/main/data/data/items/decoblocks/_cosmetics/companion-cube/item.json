@@ -2,7 +2,7 @@
 	"title": "Companion Cube",
 	"id": "cosmetic-companion-cube",
 	"modelType": "cosmetic",
-	"rarity": "uncommon",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [
 		"When you're dying I'll be still alive"
@@ -15,9 +15,9 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
-	"priceDabloons": 100,
+	"priceDabloons": 150,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Companion Cube."
 	},
 	"equippableCosmetic": {}

@@ -2,13 +2,13 @@
 	"title": "Copper Golem Antenna",
 	"id": "cosmetic-copper-golem-antenna",
 	"modelType": "cosmetic",
-	"rarity": "uncommon",
+	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
 		"I tried making a copper joke, but I didn't Cu laughing"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 75,
+	"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Copper Golem Antenna."

@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 	"priceDabloons": 42,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 90,
 		"unlockMessage": "Purchased cosmetic: Cod Hat."
 	},
 	"equippableCosmetic": {}

@@ -13,7 +13,6 @@ import {
 import type { ShopItem } from './shop-catalog.types';
 
 const modelCache = new Map<string, Promise<MinecraftModel>>();
-const modelPreviewStateCache = new Map<string, MinecraftModelPreviewState>();
 const snapshotCache = new Map<string, HTMLCanvasElement>();
 const MAX_SNAPSHOT_CACHE_SIZE = 48;
 let staticRenderQueue = Promise.resolve();
@@ -194,6 +193,7 @@ function ShopModelPreview({
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const rendererRef = useRef<MinecraftModelRenderer | null>(null);
+	const previewStateRef = useRef<MinecraftModelPreviewState | null>(null);
 	const [interactiveHover, setInteractiveHover] = useState(false);
 	const [ready, setReady] = useState(false);
 	const [liveReady, setLiveReady] = useState(false);
@@ -202,19 +202,21 @@ function ShopModelPreview({
 	useEffect(() => {
 		const host = hostRef.current;
 		const canvas = canvasRef.current;
-		if (interactive || !host || !canvas || !item.modelUrl || !item.textureUrl) return;
+		if (interactive || item.animated || !host || !canvas || !item.modelUrl || !item.textureUrl)
+			return;
 		const textureUrl = item.textureUrl;
 		const cacheKey = snapshotKey(item.modelUrl, item.textureUrl, view, skinUrl);
-		if (restoreSnapshot(canvas, cacheKey)) {
+		if (!item.dyeable && restoreSnapshot(canvas, cacheKey)) {
 			setReady(true);
 			return;
 		}
 		let renderer: MinecraftModelRenderer | null = null;
+		const abortController = new AbortController();
 		setFailed(false);
 		const modelPromise = loadModel(item.modelUrl);
 		void queueStaticRender(async () => {
 			const model = await modelPromise;
-			if (!host.isConnected) return;
+			if (isAborted(abortController.signal) || !host.isConnected) return;
 			renderer = new MinecraftModelRenderer(host, {
 				assetRoot: ASSETS.minecraft.root,
 				animateDye: false,
@@ -228,20 +230,21 @@ function ShopModelPreview({
 				skinSource: view === 'player' ? (skinUrl ?? undefined) : undefined,
 			});
 			await renderer.loadModel(model);
-			const stateKey = `${item.id}:${view}`;
-			const savedState = modelPreviewStateCache.get(stateKey);
+			if (isAborted(abortController.signal)) return;
+			const savedState = previewStateRef.current;
 			if (savedState) renderer.setPreviewState(savedState);
 			if (isConnected(host) && renderer.copyFrameTo(canvas)) {
-				modelPreviewStateCache.set(stateKey, renderer.getPreviewState());
-				cacheSnapshot(canvas, cacheKey);
+				previewStateRef.current = renderer.getPreviewState();
+				if (!item.dyeable) cacheSnapshot(canvas, cacheKey);
 				setReady(true);
 			}
 			renderer.destroy();
 			renderer = null;
 		}).catch(() => {
-			if (host.isConnected) setFailed(true);
+			if (!isAborted(abortController.signal) && host.isConnected) setFailed(true);
 		});
 		return () => {
+			abortController.abort();
 			renderer?.destroy();
 			renderer = null;
 		};
@@ -260,7 +263,7 @@ function ShopModelPreview({
 
 	const shouldAutoRotate = interactive ? !interactiveHover : hovered;
 	const shouldAnimateDye = interactive ? liveReady && !interactiveHover : hovered;
-	const rendererActive = interactive || hovered;
+	const rendererActive = interactive || hovered || item.animated;
 	const autoRotateRef = useRef(shouldAutoRotate);
 	const animateDyeRef = useRef(shouldAnimateDye);
 	useEffect(() => {
@@ -281,12 +284,13 @@ function ShopModelPreview({
 		}
 		const textureUrl = item.textureUrl;
 		let renderer: MinecraftModelRenderer | null = null;
+		const abortController = new AbortController();
 		setLiveReady(false);
 		setFailed(false);
 		const modelPromise = loadModel(item.modelUrl);
 		void modelPromise
 			.then(async (model) => {
-				if (!host.isConnected) return;
+				if (isAborted(abortController.signal) || !host.isConnected) return;
 				renderer = new MinecraftModelRenderer(host, {
 					assetRoot: ASSETS.minecraft.root,
 					animateDye: animateDyeRef.current,
@@ -301,8 +305,8 @@ function ShopModelPreview({
 				});
 				rendererRef.current = renderer;
 				await renderer.loadModel(model);
-				const stateKey = `${item.id}:${view}`;
-				const savedState = modelPreviewStateCache.get(stateKey);
+				if (isAborted(abortController.signal)) return;
+				const savedState = previewStateRef.current;
 				if (savedState) renderer.setPreviewState(savedState);
 				if (isConnected(host)) {
 					renderer.setAutoRotate(autoRotateRef.current);
@@ -312,11 +316,11 @@ function ShopModelPreview({
 				}
 			})
 			.catch(() => {
-				if (host.isConnected) setFailed(true);
+				if (!isAborted(abortController.signal) && host.isConnected) setFailed(true);
 			});
 		return () => {
-			if (renderer)
-				modelPreviewStateCache.set(`${item.id}:${view}`, renderer.getPreviewState());
+			abortController.abort();
+			if (renderer) previewStateRef.current = renderer.getPreviewState();
 			if (!interactive && !item.animated && canvas) renderer?.copyFrameTo(canvas);
 			renderer?.destroy();
 			if (rendererRef.current === renderer) rendererRef.current = null;
@@ -365,6 +369,10 @@ function ShopModelPreview({
 
 function isConnected(element: Element) {
 	return element.isConnected;
+}
+
+function isAborted(signal: AbortSignal) {
+	return signal.aborted;
 }
 
 export function ShopMetaIcons({ item }: { item: ShopItem }) {

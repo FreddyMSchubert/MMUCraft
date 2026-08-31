@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 	"priceDabloons": 75,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Shulker Hat."
 	},
 	"equippableCosmetic": {},

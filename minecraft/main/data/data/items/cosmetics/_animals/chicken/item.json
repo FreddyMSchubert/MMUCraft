@@ -8,7 +8,7 @@
 		"Why did the chicken cross the road?"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 42,
+	"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Purchased cosmetic: Chicken Hat."

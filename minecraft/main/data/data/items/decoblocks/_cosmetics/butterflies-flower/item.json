@@ -2,7 +2,7 @@
 	"title": "Butterflies Flower",
 	"id": "cosmetic-butterflies",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Prettier than their moth cousins"
@@ -15,9 +15,9 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
-		"priceDabloons": 35,
+		"priceDabloons": 25,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 60,
 		"unlockMessage": "Unlocked cosmetic: Butterflies Flower."
 	},
 	"equippableCosmetic": {}

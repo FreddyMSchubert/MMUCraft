@@ -2,15 +2,15 @@
 	"title": "Propeller Hat",
 	"id": "cosmetic-propeller",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Whimsy not included"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 75,
+	"priceDabloons": 150,
 		"description": "",
-		"unlockWeight": 25,
+		"unlockWeight": 37,
 		"unlockMessage": "Unlocked cosmetic: Propeller Hat."
 	},
 	"equippableCosmetic": {}

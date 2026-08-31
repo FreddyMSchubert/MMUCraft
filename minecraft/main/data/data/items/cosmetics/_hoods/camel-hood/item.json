@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 	"priceDabloons": 125,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 70,
 		"unlockMessage": "Unlocked cosmetic: Camel hood."
 	},
 	"equippableCosmetic": {}

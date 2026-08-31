@@ -2,7 +2,7 @@
 	"title": "Fishbowl",
 	"id": "cosmetic-fishbowl",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Bubble-teamed"
@@ -15,9 +15,9 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
-		"priceDabloons": 35,
+		"priceDabloons": 100,
 		"description": "",
-		"unlockWeight": 25,
+		"unlockWeight": 60,
 		"unlockMessage": "Unlocked cosmetic: Fishbowl."
 	},
 	"equippableCosmetic": {}

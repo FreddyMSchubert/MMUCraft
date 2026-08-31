@@ -8,9 +8,9 @@
 		"Perfect for a Vespa ride"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 75,
+	"priceDabloons": 100,
 		"description": "",
-		"unlockWeight": 25,
+		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Retro Helmet."
 	},
 	"equippableCosmetic": {}

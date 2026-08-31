@@ -2,15 +2,15 @@
 	"title": "Eeyore",
 	"id": "cosmetic-hood-eeyore",
 	"modelType": "cosmetic",
-	"rarity": "rare",
+	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": [
 		"It's not much of a tail, but I'm sort of attached to it"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 125,
+	"priceDabloons": 200,
 		"description": "",
-		"unlockWeight": 10,
+		"unlockWeight": 30,
 		"unlockMessage": "Unlocked cosmetic: Eeyore."
 	},
 	"equippableCosmetic": {}

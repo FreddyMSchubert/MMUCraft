@@ -5,7 +5,7 @@
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
-		"This type of red mushrooms is called a Fly Agaric"
+		"Big enough for a year's supply of mushroom stew"
 	],
 	"decoBlock": {
 		"ground": true,
@@ -15,9 +15,9 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
-	"priceDabloons": 75,
+	"priceDabloons": 15,
 		"description": "",
-		"unlockWeight": 25,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Big Mushroom."
 	},
 	"equippableCosmetic": {},

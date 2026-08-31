@@ -15,9 +15,9 @@
 		"lightLevel": 8
 	},
 	"shopPurchasable": {
-		"priceDabloons": 35,
+		"priceDabloons": 25,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Candle."
 	},
 	"equippableCosmetic": {},

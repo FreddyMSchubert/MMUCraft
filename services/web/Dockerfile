@@ -16,7 +16,7 @@ ENV NODE_ENV=development \
     HOSTNAME=0.0.0.0 \
     PORT=3000
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json tsconfig.json next-env.d.ts next.config.ts eslint.config.mjs ./
+COPY package.json package-lock.json tsconfig.json next-env.d.ts next.config.ts ./
 COPY public ./public
 COPY src ./src
 EXPOSE 3000
@@ -25,7 +25,7 @@ CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0"]
 FROM base AS builder
 ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json tsconfig.json next-env.d.ts next.config.ts eslint.config.mjs ./
+COPY package.json package-lock.json tsconfig.json next-env.d.ts next.config.ts ./
 COPY public ./public
 COPY src ./src
 RUN npm run build

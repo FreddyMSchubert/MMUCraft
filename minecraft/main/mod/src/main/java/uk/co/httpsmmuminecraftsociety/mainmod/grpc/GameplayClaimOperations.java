@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -20,12 +21,16 @@ final class GameplayClaimOperations {
         }
 
         ChunkPos chunk = player.chunkPosition();
+        BlockPos position = player.blockPosition();
         return GetCurrentClaimChunkResponse.newBuilder()
                 .setOnline(true)
                 .setDimension(player.level().dimension().identifier().toString())
                 .setChunkX(chunk.x())
                 .setChunkZ(chunk.z())
                 .setBalanceDabloons(MoneyHelper.GetBalance(player))
+                .setBlockX(position.getX())
+                .setBlockY(position.getY())
+                .setBlockZ(position.getZ())
                 .setMessage("Current chunk loaded.")
                 .build();
     }

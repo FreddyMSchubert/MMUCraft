@@ -167,6 +167,9 @@ message GetCurrentClaimChunkResponse {
   sint32 chunk_z = 4;
   int32 balance_dabloons = 5;
   string message = 6;
+  sint32 block_x = 7;
+  sint32 block_y = 8;
+  sint32 block_z = 9;
 }
 
 message PurchaseClaimRequest {
@@ -293,6 +296,7 @@ message GetKnowledgeTipResponse {
   bool found = 1;
   string knowledge_id = 2;
   string tip = 3;
+  bool has_unread_knowledge = 4;
 }
 
 message GetUnlockAvailabilityRequest {

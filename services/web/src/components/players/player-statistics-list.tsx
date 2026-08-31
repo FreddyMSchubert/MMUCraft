@@ -15,9 +15,13 @@ export function PlayerStatsList({
 	statOptions: StatOption[];
 }) {
 	const optionByKey = new Map(statOptions.map((option) => [option.key, option]));
+	const advancement = Object.values(player.stats.minecraft.stats).find(
+		(stat) => stat?.category === 'advancement',
+	);
 	const statGroups = groupMinecraftStats(
 		Object.values(player.stats.minecraft.stats).filter(
-			(stat): stat is MinecraftStatValue => stat !== undefined,
+			(stat): stat is MinecraftStatValue =>
+				stat !== undefined && stat.category !== 'advancement',
 		),
 	);
 
@@ -33,11 +37,16 @@ export function PlayerStatsList({
 					label="Dabloons Earned"
 					value={formatNumber(player.stats.money.earnedDabloons)}
 				/>
-				<StatLine
-					label="Last Sync"
-					value={formatTimestamp(player.stats.minecraft.lastSyncedAtUnixMs)}
-				/>
+				{advancement && (
+					<StatLine
+						label={optionByKey.get(advancement.key)?.label ?? advancement.label}
+						value={formatMinecraftStatValue(advancement)}
+					/>
+				)}
 			</div>
+			<p className="playerStatsSyncHint">
+				Stats update occasionally. Manually refresh by leaving and rejoining the server.
+			</p>
 
 			{statGroups.length === 0 ? (
 				<p className="playerProfileEmpty">No Minecraft stats synced yet.</p>

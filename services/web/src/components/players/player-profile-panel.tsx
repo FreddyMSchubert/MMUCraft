@@ -23,7 +23,6 @@ export function PlayerProfilePanel({
 	onError: (message: string) => void;
 }) {
 	const [editing, setEditing] = useState(false);
-	const [previewColor, setPreviewColor] = useState(player.profile.color);
 
 	return (
 		<section className="playerProfilePanel">
@@ -32,35 +31,12 @@ export function PlayerProfilePanel({
 					Back
 				</button>
 			</div>
-			<div className="playerProfileTop">
-				<PlayerHead player={player} size="large" />
-				<div className="playerProfileIdentity">
-					<h4>
-						<PlayerName name={player.minecraftUsername} color={previewColor} />
-					</h4>
-					<ProfileFacts player={player} />
-				</div>
-				{player.canEditProfile && (
-					<button
-						type="button"
-						onClick={() => {
-							setPreviewColor(player.profile.color);
-							setEditing((current) => !current);
-						}}
-					>
-						{editing ? 'Cancel' : 'Edit profile'}
-					</button>
-				)}
-			</div>
-
 			{editing && player.canEditProfile ? (
 				<PlayerProfileForm
 					player={player}
 					onCancel={() => {
-						setPreviewColor(player.profile.color);
 						setEditing(false);
 					}}
-					onColorChange={setPreviewColor}
 					onSaved={() => {
 						setEditing(false);
 						onSaved();
@@ -68,11 +44,34 @@ export function PlayerProfilePanel({
 					onError={onError}
 				/>
 			) : (
-				<p className="playerBio">{player.profile.bio || 'No bio yet.'}</p>
+				<>
+					<div className="playerProfileTop">
+						<PlayerHead player={player} size="large" />
+						<div className="playerProfileIdentity">
+							<h4>
+								<PlayerName
+									name={player.minecraftUsername}
+									color={player.profile.color}
+								/>
+							</h4>
+							<ProfileFacts player={player} />
+						</div>
+						{player.canEditProfile && (
+							<button
+								type="button"
+								onClick={() => {
+									setEditing(true);
+								}}
+							>
+								Edit profile
+							</button>
+						)}
+					</div>
+					<p className="playerBio">{player.profile.bio || 'No bio yet.'}</p>
+					<PlayerStatsList player={player} statOptions={statOptions} />
+					<MiniFishCompendium userId={player.id} />
+				</>
 			)}
-
-			<PlayerStatsList player={player} statOptions={statOptions} />
-			<MiniFishCompendium userId={player.id} />
 		</section>
 	);
 }
@@ -129,13 +128,11 @@ export function PlayerProfileForm({
 	onCancel,
 	onSaved,
 	onError,
-	onColorChange,
 }: {
 	player: PlayerSummary;
 	onCancel: () => void;
 	onSaved: () => void;
 	onError: (message: string) => void;
-	onColorChange: (color: string) => void;
 }) {
 	const [preferredName, setPreferredName] = useState(player.profile.preferredName);
 	const [pronouns, setPronouns] = useState(player.profile.pronouns);
@@ -148,7 +145,32 @@ export function PlayerProfileForm({
 	const [color, setColor] = useState<string | null>(player.profile.customColor);
 	const [showDeathCounter, setShowDeathCounter] = useState(player.profile.showDeathCounter);
 	const [saving, setSaving] = useState(false);
+	const [loadingLocation, setLoadingLocation] = useState(false);
 	const displayedColor = color ?? player.profile.defaultColor;
+
+	async function useCurrentLocation() {
+		setLoadingLocation(true);
+		onError('');
+		try {
+			const response = await fetch(`/api/players/${player.id}/current-location`, {
+				cache: 'no-store',
+			});
+			const body = await response.json().catch(() => null);
+			if (!response.ok) {
+				throw new Error(apiMessage(body, 'Failed to load the current location'));
+			}
+			const location = body as { x: number; y: number; z: number };
+			setBaseX(String(location.x));
+			setBaseY(String(location.y));
+			setBaseZ(String(location.z));
+		} catch (caught) {
+			onError(
+				caught instanceof Error ? caught.message : 'Failed to load the current location',
+			);
+		} finally {
+			setLoadingLocation(false);
+		}
+	}
 
 	async function save() {
 		setSaving(true);
@@ -195,6 +217,20 @@ export function PlayerProfileForm({
 				void save();
 			}}
 		>
+			<div className="playerProfileFormHeader">
+				<div>
+					<h4>Edit profile</h4>
+					<p>{player.minecraftUsername}</p>
+				</div>
+				<div className="playerProfileActions">
+					<button type="button" onClick={onCancel} disabled={saving}>
+						Cancel
+					</button>
+					<button type="submit" disabled={saving}>
+						{saving ? 'Saving...' : 'Save'}
+					</button>
+				</div>
+			</div>
 			<p className="playerProfileHint">
 				Everything you enter here is visible to every society member. Be open and share a
 				little about yourself so people know who they&apos;re talking to. Your nickname and
@@ -241,7 +277,16 @@ export function PlayerProfileForm({
 				/>
 			</label>
 			<div className="playerBaseInputs">
-				<span>Base location (XYZ)</span>
+				<div className="playerBaseHeader">
+					<span>Base location (XYZ)</span>
+					<button
+						type="button"
+						disabled={saving || loadingLocation}
+						onClick={() => void useCurrentLocation()}
+					>
+						{loadingLocation ? 'Loading...' : 'Use current location'}
+					</button>
+				</div>
 				<label>
 					<span>X</span>
 					<input
@@ -292,7 +337,6 @@ export function PlayerProfileForm({
 						value={displayedColor}
 						onChange={(event) => {
 							setColor(event.target.value);
-							onColorChange(event.target.value);
 						}}
 					/>
 				</label>
@@ -301,7 +345,6 @@ export function PlayerProfileForm({
 					disabled={saving || color === null}
 					onClick={() => {
 						setColor(null);
-						onColorChange(player.profile.defaultColor);
 					}}
 				>
 					Reset color
@@ -321,14 +364,6 @@ export function PlayerProfileForm({
 				/>
 				<i aria-hidden="true" />
 			</label>
-			<div className="playerProfileActions">
-				<button type="submit" disabled={saving}>
-					{saving ? 'Saving...' : 'Save'}
-				</button>
-				<button type="button" onClick={onCancel} disabled={saving}>
-					Cancel
-				</button>
-			</div>
 		</form>
 	);
 }

@@ -9,8 +9,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.biome.Biome;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GetKnowledgeTipResponse;
@@ -117,9 +119,9 @@ public final class KnowledgeTips {
             message(11, "Back in the mines, huh?", context -> context.player().getY() < 30.0D),
             message(11, "It appears you yearned for the mines.", context -> context.player().getY() < 0.0D),
 
-            message(25, "Full moon. Mind the werewolves.", context -> context.isNight() && context.level().getMoonPhase() == 0),
-            message(3, "Full moon is coming up soon.", context -> context.isNight() && (context.level().getMoonPhase() == 1 || context.level().getMoonPhase() == 7)),
-            message(20, "New moon tonight.", context -> context.isNight() && context.level().getMoonPhase() == 4),
+            message(25, "Full moon. Mind the werewolves.", context -> context.isNight() && context.moonPhase() == MoonPhase.FULL_MOON),
+            message(3, "Full moon is coming up soon.", context -> context.isNight() && (context.moonPhase() == MoonPhase.WANING_GIBBOUS || context.moonPhase() == MoonPhase.WAXING_GIBBOUS)),
+            message(20, "New moon tonight.", context -> context.isNight() && context.moonPhase() == MoonPhase.NEW_MOON),
 
             message(22, "Careful, something hostile is nearby!", Context::monstersNearby),
             message(18, "You are not alone.", Context::monstersNearby),
@@ -227,6 +229,12 @@ public final class KnowledgeTips {
         server.execute(() -> {
             if (player.hasDisconnected()) return;
             if (greet) player.sendSystemMessage(greeting(player, previousLastPlayedAtUnixMs));
+            if (greet && response.getHasUnreadKnowledge()) {
+                player.sendSystemMessage(Component.literal("Warning: You have unread message books. Read them ")
+                        .withStyle(ChatFormatting.GOLD)
+                        .append(WebsiteCommand.takeMeThere("knowledge", "here", ChatFormatting.RED))
+                        .append(Component.literal(".").withStyle(ChatFormatting.GOLD)));
+            }
             if (!response.getFound()) return;
             player.sendSystemMessage(Component.literal("Tip: ")
                     .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)
@@ -294,7 +302,7 @@ public final class KnowledgeTips {
 
     private record WeightedMessage(int weight, String text, Predicate<Context> condition) {
         private WeightedMessage {
-            if (weight <= 0 || text.isBlank()) throw new IllegalArgumentException("Messages need text and weight");
+            if (weight <= 0) throw new IllegalArgumentException("Messages need a positive weight");
         }
     }
 
@@ -315,7 +323,11 @@ public final class KnowledgeTips {
         }
 
         long worldTime() {
-            return Math.floorMod(level.getDayTime(), 24_000L);
+            return Math.floorMod(level.getOverworldClockTime(), 24_000L);
+        }
+
+        MoonPhase moonPhase() {
+            return level.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, player.blockPosition());
         }
 
         boolean hasSkyTime() {

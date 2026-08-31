@@ -23,6 +23,7 @@ interface KnowledgeTipResponse {
 	found: boolean;
 	knowledge_id: string;
 	tip: string;
+	has_unread_knowledge: boolean;
 }
 
 @Injectable()
@@ -61,12 +62,27 @@ export class KnowledgeService {
 		const document = this.documents.loadDocument();
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
 		const unlockedIds = user ? this.getUnlockedIds(user.id) : new Set<string>();
+		const readIds = user ? this.getReadIds(user.id) : new Set<string>();
+		const hasUnreadKnowledge = Boolean(
+			user &&
+			document.pages.some(
+				(page) =>
+					(page.unlockedByDefault || unlockedIds.has(page.id)) && !readIds.has(page.id),
+			),
+		);
 		const tips = document.pages
 			.filter((page) => page.unlockedByDefault || unlockedIds.has(page.id))
 			.flatMap((page) => page.tips.map((tip) => ({ knowledge_id: page.id, tip })));
 		const picked = tips.length ? tips[randomInt(tips.length)] : undefined;
 
-		return picked ? { found: true, ...picked } : { found: false, knowledge_id: '', tip: '' };
+		return picked
+			? { found: true, ...picked, has_unread_knowledge: hasUnreadKnowledge }
+			: {
+					found: false,
+					knowledge_id: '',
+					tip: '',
+					has_unread_knowledge: hasUnreadKnowledge,
+				};
 	}
 
 	async markRead(user: AuthenticatedUser, knowledgeIdInput: string | undefined) {

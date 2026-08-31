@@ -27,23 +27,11 @@
 		},
 		"modelType": {
 			"type": "string",
-			"enum": [
-				"basic",
-				"basic-3d",
-				"charm",
-				"cosmetic"
-			]
+			"enum": ["basic", "basic-3d", "charm", "cosmetic"]
 		},
 		"rarity": {
 			"type": "string",
-			"enum": [
-				"common",
-				"uncommon",
-				"rare",
-				"epic",
-				"legendary",
-				"mythical"
-			]
+			"enum": ["common", "uncommon", "rare", "epic", "legendary", "mythical"]
 		},
 		"maxStackSize": {
 			"oneOf": [
@@ -53,6 +41,9 @@
 					"maximum": 99
 				}
 			]
+		},
+		"fireproof": {
+			"type": "boolean"
 		},
 		"tooltips": {
 			"type": "array",
@@ -80,10 +71,7 @@
 					"minimum": 1
 				}
 			},
-			"required": [
-				"priceDabloons",
-				"unlockWeight"
-			]
+			"required": ["priceDabloons", "unlockWeight"]
 		},
 		"charm": {
 			"$ref": "./components/charm.schema.json"
@@ -110,20 +98,11 @@
 			"$ref": "./components/fish.schema.json"
 		}
 	},
-	"required": [
-		"title",
-		"id",
-		"modelType",
-		"rarity",
-		"maxStackSize",
-		"tooltips"
-	],
+	"required": ["title", "id", "modelType", "rarity", "maxStackSize", "tooltips"],
 	"allOf": [
 		{
 			"if": {
-				"required": [
-					"equippableCosmetic"
-				]
+				"required": ["equippableCosmetic"]
 			},
 			"then": {
 				"properties": {
@@ -136,9 +115,7 @@
 		},
 		{
 			"if": {
-				"required": [
-					"fish"
-				]
+				"required": ["fish"]
 			},
 			"then": {
 				"properties": {
@@ -151,9 +128,7 @@
 		},
 		{
 			"if": {
-				"required": [
-					"charm"
-				]
+				"required": ["charm"]
 			},
 			"then": {
 				"properties": {
@@ -171,14 +146,10 @@
 						"const": "charm"
 					}
 				},
-				"required": [
-					"modelType"
-				]
+				"required": ["modelType"]
 			},
 			"then": {
-				"required": [
-					"equippableCharm"
-				]
+				"required": ["equippableCharm"]
 			}
 		},
 		{
@@ -188,22 +159,15 @@
 						"const": "cosmetic"
 					}
 				},
-				"required": [
-					"modelType"
-				]
+				"required": ["modelType"]
 			},
 			"then": {
-				"required": [
-					"equippableCosmetic"
-				]
+				"required": ["equippableCosmetic"]
 			}
 		},
 		{
 			"not": {
-				"required": [
-					"equippableCharm",
-					"equippableCosmetic"
-				]
+				"required": ["equippableCharm", "equippableCosmetic"]
 			}
 		}
 	]

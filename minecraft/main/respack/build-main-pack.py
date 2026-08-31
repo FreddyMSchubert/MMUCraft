@@ -71,9 +71,18 @@ def set_property(text: str, key: str, value: str) -> str:
 	return text.rstrip("\n") + "\n" + line + "\n"
 
 
+def format_pack_size(size_bytes: int) -> str:
+	return f"{size_bytes / 1_000_000:.1f} MB"
+
+
 def write_server_properties(pack_sha1: str):
 	text = SERVER_PROPERTIES_TEMPLATE.read_text(encoding="utf-8")
 	text = set_property(text, "resource-pack-id", str(uuid.uuid5(RESOURCE_PACK_ID_NAMESPACE, pack_sha1)))
+	prompt = json.dumps(
+		{"text": f"This server requires its {format_pack_size(FINAL_ZIP.stat().st_size)} resource pack."},
+		separators=(",", ":"),
+	)
+	text = set_property(text, "resource-pack-prompt", prompt)
 	text = set_property(text, "resource-pack-sha1", pack_sha1)
 	GENERATED_SERVER_PROPERTIES.write_text(text, encoding="utf-8", newline="\n")
 

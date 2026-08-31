@@ -1,5 +1,5 @@
 import type { DiscoveredItem } from '../types';
-import { pathExists, listSubdirectories } from '../utils/fs';
+import { listSubdirectories } from '../utils/fs';
 import { isRecoverableItemAssetError, parseItemDefinition } from './parseItemDefinition';
 
 async function collectLeafDirectories(directory: string): Promise<string[]> {
@@ -45,15 +45,6 @@ function logRecoverableSkip(leafDirectory: string, error: unknown): void {
 }
 
 export async function discoverItems(sourceRoot: string): Promise<DiscoveredItem[]> {
-	if (!(await pathExists(sourceRoot))) {
-		throw new Error(`Source items directory does not exist: ${sourceRoot}`);
-	}
-
-	const sourceStat = await import('fs/promises').then((fs) => fs.stat(sourceRoot));
-	if (!sourceStat.isDirectory()) {
-		throw new Error(`Source items path is not a directory: ${sourceRoot}`);
-	}
-
 	const leafDirectories = await collectLeafDirectories(sourceRoot);
 	const items: DiscoveredItem[] = [];
 
@@ -70,7 +61,6 @@ export async function discoverItems(sourceRoot: string): Promise<DiscoveredItem[
 		}
 	}
 
-	ensureUnique(items, (item) => item.relativeDirectory, 'Leaf item directories');
 	ensureUnique(items, (item) => item.id, 'Item id values');
 	ensureUnique(
 		items.filter(

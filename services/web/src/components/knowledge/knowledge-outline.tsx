@@ -49,17 +49,20 @@ export function KnowledgeOutline({
 			});
 		}
 
-		setEntries(nextEntries);
 		const requestedId = readHashId();
 		const requestedEntry = nextEntries.find((entry) => entry.id === requestedId);
-		setActiveId(requestedEntry?.id ?? nextEntries.at(0)?.id ?? '');
-		setVisible(false);
+		const initialFrame = window.requestAnimationFrame(() => {
+			if (cancelled) return;
+			setEntries(nextEntries);
+			setActiveId(requestedEntry?.id ?? nextEntries.at(0)?.id ?? '');
+			setVisible(false);
+			if (requestedEntry) document.getElementById(requestedEntry.id)?.scrollIntoView();
+		});
 
 		if (requestedEntry) {
 			const scrollToRequestedHeading = () => {
 				if (!cancelled) document.getElementById(requestedEntry.id)?.scrollIntoView();
 			};
-			window.requestAnimationFrame(scrollToRequestedHeading);
 
 			const images = Array.from(articleRef.current?.querySelectorAll('img') ?? []);
 			void Promise.all(
@@ -91,6 +94,7 @@ export function KnowledgeOutline({
 
 		return () => {
 			cancelled = true;
+			window.cancelAnimationFrame(initialFrame);
 		};
 	}, [articleRef, contentKey]);
 
@@ -111,7 +115,7 @@ export function KnowledgeOutline({
 			setVisible(currentReader.scrollHeight > combinedSidebarHeight);
 		}
 
-		updateVisibility();
+		const initialFrame = window.requestAnimationFrame(updateVisibility);
 		const resizeObserver = new ResizeObserver(updateVisibility);
 		resizeObserver.observe(reader);
 		resizeObserver.observe(sidebar);
@@ -119,6 +123,7 @@ export function KnowledgeOutline({
 		window.addEventListener('resize', updateVisibility);
 
 		return () => {
+			window.cancelAnimationFrame(initialFrame);
 			resizeObserver.disconnect();
 			window.removeEventListener('resize', updateVisibility);
 		};
@@ -156,7 +161,7 @@ export function KnowledgeOutline({
 			}
 		}
 
-		updateActiveHeading();
+		scheduleUpdate();
 		window.addEventListener('scroll', scheduleUpdate, { passive: true });
 		window.addEventListener('resize', scheduleUpdate);
 

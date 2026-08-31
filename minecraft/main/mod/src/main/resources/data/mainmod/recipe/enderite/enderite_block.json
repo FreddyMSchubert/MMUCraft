@@ -9,7 +9,7 @@
     "E": "mainmod:enderite-ingot"
   },
   "result": {
-    "stack": "minecraft:test_instance_block",
+    "stack": "minecraft:test_instance_block[minecraft:damage_resistant={types:\"#minecraft:is_fire\"}]",
     "count": 1
   }
 }

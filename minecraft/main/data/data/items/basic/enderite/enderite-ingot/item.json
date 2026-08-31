@@ -4,5 +4,6 @@
 	"modelType": "basic",
 	"rarity": "epic",
 	"maxStackSize": 64,
+	"fireproof": true,
 	"tooltips": []
 }

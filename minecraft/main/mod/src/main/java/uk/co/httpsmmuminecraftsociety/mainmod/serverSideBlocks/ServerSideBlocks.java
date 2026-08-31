@@ -13,8 +13,8 @@ import java.util.Map;
 public final class ServerSideBlocks {
     private static final float INSTANT_DESTROY_PROGRESS = 1.0F;
     private static final Map<Block, Definition> SERVER_SIDE_BLOCKS = Map.of(
-            Blocks.TEST_BLOCK, new Definition("Alien Debris", Rarity.RARE),
-            Blocks.TEST_INSTANCE_BLOCK, new Definition("Enderite Block", Rarity.EPIC)
+            Blocks.TEST_BLOCK, new Definition("Alien Debris", Rarity.RARE, false),
+            Blocks.TEST_INSTANCE_BLOCK, new Definition("Enderite Block", Rarity.EPIC, true)
     );
 
     private ServerSideBlocks() {}
@@ -49,7 +49,10 @@ public final class ServerSideBlocks {
 
         stack.set(DataComponents.ITEM_NAME, Component.literal(definition.itemName()));
         stack.set(DataComponents.RARITY, definition.rarity());
+        if (definition.fireproof()) {
+            stack.set(DataComponents.DAMAGE_RESISTANT, Blocks.NETHERITE_BLOCK.asItem().components().get(DataComponents.DAMAGE_RESISTANT));
+        }
     }
 
-    private record Definition(String itemName, Rarity rarity) {}
+    private record Definition(String itemName, Rarity rarity, boolean fireproof) {}
 }

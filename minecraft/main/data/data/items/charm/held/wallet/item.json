@@ -5,6 +5,7 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 1,
+	"fireproof": true,
 	"tooltips": [],
 	"shopPurchasable": {
 		"priceDabloons": 50,

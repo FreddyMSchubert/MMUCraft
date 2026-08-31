@@ -59,6 +59,7 @@ public final class EnderiteSmithingRecipe extends SimpleSmithingRecipe {
 
         ItemStack result = input.base().copy();
         result.setCount(1);
+        result.set(DataComponents.DAMAGE_RESISTANT, Items.NETHERITE_INGOT.components().get(DataComponents.DAMAGE_RESISTANT));
 
         CompoundTag tag = result.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         tag.putBoolean(CharmorManager.ENDERITE_MARKER_BOOL, true);

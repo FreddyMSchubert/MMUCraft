@@ -22,6 +22,7 @@ public record FakeItem(
         String id,
         Rarity rarity,
         int maxStackSize,
+        boolean fireproof,
         List<Component> tooltip,
         Item baseItem,
         List<ItemFeature> features
@@ -32,6 +33,7 @@ public record FakeItem(
             String id = json.get("id").getAsString();
             Rarity rarity = JsonUtils.parseRarity(json.get("rarity").getAsString());
             int maxStackSize = json.get("maxStackSize").getAsInt();
+            boolean fireproof = json.has("fireproof") && json.get("fireproof").getAsBoolean();
             List<Component> tooltip = json.get("tooltips").getAsJsonArray()
                     .asList()
                     .stream()
@@ -52,6 +54,7 @@ public record FakeItem(
                     id,
                     rarity,
                     maxStackSize,
+                    fireproof,
                     tooltip,
                     baseItem,
                     features);
@@ -71,6 +74,9 @@ public record FakeItem(
             stack.set(DataComponents.LORE, new ItemLore(lore));
         stack.set(DataComponents.RARITY, rarity);
         stack.set(DataComponents.MAX_STACK_SIZE, maxStackSize);
+        if (fireproof) {
+            stack.set(DataComponents.DAMAGE_RESISTANT, Items.NETHERITE_INGOT.components().get(DataComponents.DAMAGE_RESISTANT));
+        }
 
         for (ItemFeature feature : features) {
             if (feature instanceof CharmItemFeature cif && charmLevel != -1) {

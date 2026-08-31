@@ -1,4 +1,10 @@
-import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	ForbiddenException,
+	Injectable,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { asc, eq, sql } from 'drizzle-orm';
 import { AuthenticatedUser } from '../auth/auth-session.service';
 import { FishingService } from '../fishing/fishing.service';
@@ -116,18 +122,28 @@ export class PlayersService {
 		return await this.updateProfile(user, String(user.id), input);
 	}
 
-	async updateProfile(viewer: AuthenticatedUser, userIdInput: string, input: PlayerProfileInput) {
-		const userId = Number(userIdInput);
-		if (!Number.isInteger(userId) || userId <= 0) {
-			throw new NotFoundException('Player not found');
-		}
-		if (userId !== viewer.id && !viewer.isCommittee) {
-			throw new ForbiddenException(
-				'Committee access is required to edit another player profile',
+	async getCurrentLocation(viewer: AuthenticatedUser, userIdInput: string) {
+		const target = this.requireEditablePlayer(viewer, userIdInput);
+		const response = await this.minecraft
+			.gameplay<{
+				online: boolean;
+				block_x: number;
+				block_y: number;
+				block_z: number;
+			}>('GetCurrentClaimChunk', { minecraft_username: target.minecraft_username })
+			.catch(() => null);
+
+		if (!response?.online) {
+			throw new BadRequestException(
+				`${target.minecraft_username} must be online in Minecraft to use their current location.`,
 			);
 		}
-		const target = this.findUserById(userId);
-		if (!target) throw new NotFoundException('Player not found');
+
+		return { x: response.block_x, y: response.block_y, z: response.block_z };
+	}
+
+	async updateProfile(viewer: AuthenticatedUser, userIdInput: string, input: PlayerProfileInput) {
+		const target = this.requireEditablePlayer(viewer, userIdInput);
 
 		const now = Date.now();
 		const profile = normalizeProfileInput(input, this.profiles.get(target.id).showDeathCounter);
@@ -214,6 +230,21 @@ export class PlayersService {
 		return (
 			this.database.connection.select().from(users).where(eq(users.id, userId)).get() ?? null
 		);
+	}
+
+	private requireEditablePlayer(viewer: AuthenticatedUser, userIdInput: string) {
+		const userId = Number(userIdInput);
+		if (!Number.isInteger(userId) || userId <= 0) {
+			throw new NotFoundException('Player not found');
+		}
+		if (userId !== viewer.id && !viewer.isCommittee) {
+			throw new ForbiddenException(
+				'Committee access is required to edit another player profile',
+			);
+		}
+		const target = this.findUserById(userId);
+		if (!target) throw new NotFoundException('Player not found');
+		return target;
 	}
 }
 

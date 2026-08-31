@@ -179,6 +179,27 @@
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 12px;
+	padding: 16px;
+	border: 1px solid rgba(255, 209, 102, 0.28);
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.18);
+}
+
+.playerProfileFormHeader {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.playerProfileFormHeader h4 {
+	font-size: 1.2rem;
+}
+
+.playerProfileFormHeader p {
+	margin-top: 3px;
+	color: rgba(255, 255, 255, 0.62);
 }
 
 .playerProfileHint {
@@ -202,11 +223,23 @@
 	gap: 8px;
 }
 
-.playerBaseInputs > span {
+.playerBaseHeader {
 	grid-column: 1 / -1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.playerBaseHeader > span {
 	color: rgba(255, 255, 255, 0.76);
 	font-size: 0.78rem;
 	text-transform: uppercase;
+}
+
+.playerBaseHeader button {
+	padding: 7px 10px;
+	font-size: 0.78rem;
 }
 
 .playerBioInput,
@@ -244,6 +277,7 @@
 .playerProfileActions {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: flex-end;
 	gap: 8px;
 }
 
@@ -259,6 +293,12 @@
 
 .playerStatsPanel h5 {
 	font-size: 1rem;
+}
+
+.playerStatsSyncHint {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.58);
+	font-size: 0.8rem;
 }
 
 .playerStatsCore,

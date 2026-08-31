@@ -55,4 +55,13 @@ export class PlayersController {
 		const user = this.auth.requireSession(cookieHeader);
 		return this.players.getPlayer(user, userId);
 	}
+
+	@Get(':userId/current-location')
+	getCurrentLocation(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('userId') userId: string,
+	) {
+		const user = this.auth.requireSession(cookieHeader);
+		return this.players.getCurrentLocation(user, userId);
+	}
 }

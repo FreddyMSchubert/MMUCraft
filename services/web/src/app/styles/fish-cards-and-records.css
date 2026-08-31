@@ -176,12 +176,27 @@
 }
 
 .miniFishCompendium summary {
-	display: flex;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
 	gap: 12px;
 	cursor: pointer;
 	color: #ffd166;
 	font-weight: 800;
+}
+
+.miniFishCompendium summary::before {
+	content: '▶';
+	font-size: 0.7rem;
+	transition: transform 120ms ease;
+}
+
+.miniFishCompendium[open] summary::before {
+	transform: rotate(90deg);
+}
+
+.miniFishCompendium summary span {
+	grid-column: 3;
 }
 
 .miniFishCompendium[open] summary {

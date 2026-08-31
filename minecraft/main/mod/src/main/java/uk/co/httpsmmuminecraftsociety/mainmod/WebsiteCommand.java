@@ -11,7 +11,8 @@ import net.minecraft.network.chat.Component;
 import java.net.URI;
 
 public final class WebsiteCommand {
-    private static final URI WEBSITE_URI = URI.create("https://mmuminecraftsociety.co.uk/");
+    private static final String WEBSITE_URI_READABLE = "mmuminecraftsociety.co.uk";
+    private static final URI WEBSITE_URI = URI.create("https://mmuminecraftsociety.co.uk/play/");
 
     private WebsiteCommand() {}
 
@@ -30,12 +31,11 @@ public final class WebsiteCommand {
     }
 
     private static Component message() {
-        return Component.literal("Open the MMU Minecraft Society website: ")
-                .append(Component.literal(WEBSITE_URI.toString())
+        return Component.literal(WEBSITE_URI_READABLE)
                         .withStyle(style -> style
                                 .withColor(ChatFormatting.GOLD)
                                 .withUnderlined(true)
-                                .withClickEvent(new ClickEvent.OpenUrl(WEBSITE_URI))));
+                                .withClickEvent(new ClickEvent.OpenUrl(WEBSITE_URI)));
     }
 
     public static Component takeMeThere(String path, String message, ChatFormatting color) {

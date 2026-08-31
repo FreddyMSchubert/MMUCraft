@@ -1,14 +1,14 @@
 ====
 id: money-basics
 unlockOrder: public
-chatMessage: You've unlocked knowledge on how to earn money
-sidebarTitle: Money
+chatMessage: You've unlocked knowledge on how to earn Dabloons
+sidebarTitle: Dabloons
 tips:
 - Don't forget to extend your login streak each day - that's free Dabloons you're missing out on. Extend your streak in the 'Dailies' tab on the website.
 - You can combine multiple lower-value Dabloon coins together in a crafting table to turn them into a higher-value Dabloon coin. (And do the reverse as well).
 - You can turn a higher-value Dabloon coin into multiple lower-value Dabloon coins in a crafting table. (And you can do the reverse as well.)
 - Don't forget to read the knowledge books you unlock! Once you're done reading, you'll even get some Dabloons as a reward!
-- Dailies give especially large amounts of Dabloons if you manage to complete all of them at once.
+- Dailies give especially large amounts of Dabloons if you manage to complete all of them on a given day.
 - If you find a bug, we may decide to reward you some Dabloons when you report it, although this is not guaranteed. If you intentionally exploit a bug you will get banned.
 ====
 

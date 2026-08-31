@@ -50,7 +50,7 @@ public final class KnowledgeTips {
             message(1, "Welcome back in the cubicle!", context -> true),
 
             message(25, "Back already?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
-            message(25, "Miss me?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
+            message(25, "Missed the server already?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "Welcome back, that was quick!", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "Hey, you again!", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "Right back at it.", context -> context.recentlyPlayed(15L * MINUTE_MS)),
@@ -262,7 +262,7 @@ public final class KnowledgeTips {
         ServerLevel level = player.level();
         boolean monstersNearby = !level.getEntitiesOfClass(
                 Monster.class,
-                player.getBoundingBox().inflate(16.0D),
+                player.getBoundingBox().inflate(10.0D, 5.0D, 10.0D),
                 Monster::isAlive
         ).isEmpty();
         boolean playersNearby = level.players().stream()

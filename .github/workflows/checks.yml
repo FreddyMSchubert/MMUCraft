@@ -53,20 +53,8 @@ jobs:
                   npm ci --prefix services/web
                   npm ci --prefix minecraft/main/respack/items-respack-generator
 
-            - name: Check formatting
-              run: npm run format:check
-
-            - name: Lint source
-              run: npm run lint
-
-            - name: Type-check API
-              run: npm run typecheck --prefix services/api
-
-            - name: Check resource-pack generator
-              run: npm run check --prefix minecraft/main/respack/items-respack-generator
-
-            - name: Check web
-              run: npm run check --prefix services/web
+            - name: Check source
+              run: npm run check
 
             - name: Audit dependencies
               run: |

@@ -153,9 +153,9 @@ export function ClaimsTab() {
 		);
 		if (!candidate) {
 			await showAlert({
-				title: 'Choose a valid claim member',
+				title: 'Choose a valid player',
 				message:
-					'Select a server member from the suggestions so the correct Minecraft account receives access.',
+					'Select a player from the suggestions so the correct Minecraft account receives access.',
 				tone: 'danger',
 			});
 			return;
@@ -294,7 +294,7 @@ export function ClaimsTab() {
 												[claim.id]: event.target.value,
 											}));
 										}}
-										placeholder="Search server members"
+										placeholder="Search server players"
 										disabled={busy || candidates.length === 0}
 									/>
 									<datalist id={`claim-candidates-${claim.id}`}>

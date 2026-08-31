@@ -152,6 +152,7 @@ public final class ClaimsManager {
     }
 
     public static boolean allowEntitySpawn(Level level, Entity entity) {
+        if (!(entity instanceof Projectile)) return true;
         ArrayDeque<ServerPlayer> actors = ACTORS.get();
         return actors.isEmpty() || canAccess(actors.peek(), level, entity.blockPosition());
     }

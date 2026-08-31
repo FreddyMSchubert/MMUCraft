@@ -120,8 +120,9 @@ test('committee endpoints expose seeded administration data', async ({ request }
 		expect(bans.bans).toEqual([]);
 	});
 
-	await test.step('List Discord command history', async () => {
-		const body = await getJson(request, '/api/admin/discord-admin-commands', adminCookie);
+	await test.step('List command history', async () => {
+		const body = await getJson(request, '/api/admin/command-logs', adminCookie);
 		expect(body.commands).toEqual([]);
+		expect(body.hasMore).toBe(false);
 	});
 });

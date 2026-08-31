@@ -10,7 +10,6 @@ import {
 	type AdminClaim,
 	type AdminPlayer,
 	type AdminSection,
-	type DiscordAdminCommand,
 	type GiftCode,
 	type WhitelistedEmail,
 } from './admin-data.types';
@@ -26,11 +25,10 @@ export function useAdminSectionData(
 	const [claimsHaveMore, setClaimsHaveMore] = useState(false);
 	const [whitelistedEmails, setWhitelistedEmails] = useState<WhitelistedEmail[]>([]);
 	const [activePlayerBans, setActivePlayerBans] = useState<ActivePlayerBan[]>([]);
-	const [discordAdminCommands, setDiscordAdminCommands] = useState<DiscordAdminCommand[]>([]);
 
 	const load = useCallback(async () => {
 		const jobs: Promise<void>[] = [];
-		if (['members', 'whitelist', 'bans', 'dailies'].includes(activeSection)) {
+		if (['members', 'whitelist', 'bans', 'dailies', 'commands'].includes(activeSection)) {
 			jobs.push(
 				fetchAdmin<{ players: AdminPlayer[] }>(
 					'/api/admin/players',
@@ -91,16 +89,6 @@ export function useAdminSectionData(
 				}),
 			);
 		}
-		if (activeSection === 'discord-commands') {
-			jobs.push(
-				fetchAdmin<{ commands: DiscordAdminCommand[] }>(
-					'/api/admin/discord-admin-commands',
-					'Failed to load Discord admin commands',
-				).then((body) => {
-					setDiscordAdminCommands(body.commands);
-				}),
-			);
-		}
 		await Promise.all(jobs);
 	}, [activeSection]);
 
@@ -128,7 +116,6 @@ export function useAdminSectionData(
 		setWhitelistedEmails,
 		activePlayerBans,
 		setActivePlayerBans,
-		discordAdminCommands,
 		load,
 	};
 }

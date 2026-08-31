@@ -359,15 +359,25 @@ export const giftCodeRedemptions = sqliteTable(
 	],
 );
 
-export const discordAdminCommandLogs = sqliteTable(
-	'discord_admin_command_logs',
+export const commandLogs = sqliteTable(
+	'command_logs',
 	{
 		id: integer('id').primaryKey({ autoIncrement: true }),
 		command: text('command').notNull(),
-		discord_username: text('discord_username').notNull(),
+		source: text('source').notNull(),
+		actor_name: text('actor_name').notNull(),
+		user_id: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
+		is_operator: integer('is_operator').notNull(),
+		succeeded: integer('succeeded'),
+		result: integer('result'),
 		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 	},
-	(table) => [index('discord_admin_command_logs_created_at_idx').on(table.created_at_unix_ms)],
+	(table) => [
+		index('command_logs_created_at_idx').on(table.created_at_unix_ms),
+		index('command_logs_user_id_created_at_idx').on(table.user_id, table.created_at_unix_ms),
+		check('command_logs_source_check', sql`${table.source} in ('minecraft', 'discord')`),
+		check('command_logs_is_operator_check', sql`${table.is_operator} in (0, 1)`),
+	],
 );
 
 export const countdowns = sqliteTable(
@@ -471,7 +481,7 @@ export type DailyClaimRow = typeof dailyClaims.$inferSelect;
 export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSelect;
 export type DailyTaskRow = typeof dailyTasks.$inferSelect;
 export type GiftCodeRow = typeof giftCodes.$inferSelect;
-export type DiscordAdminCommandLogRow = typeof discordAdminCommandLogs.$inferSelect;
+export type CommandLogRow = typeof commandLogs.$inferSelect;
 export type CountdownRow = typeof countdowns.$inferSelect;
 export type FeatureToggleRow = typeof featureToggles.$inferSelect;
 export type VelocitySettingsRow = typeof velocitySettings.$inferSelect;
@@ -498,7 +508,7 @@ export const schema = {
 	dailyTasks,
 	giftCodes,
 	giftCodeRedemptions,
-	discordAdminCommandLogs,
+	commandLogs,
 	countdowns,
 	featureToggles,
 	velocitySettings,

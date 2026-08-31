@@ -1,8 +1,7 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from '@nestjs/common';
-import { desc } from 'drizzle-orm';
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common';
 import { AuthAccountAdministrationService } from '../auth/auth-account-administration.service';
 import { AuthSessionService } from '../auth/auth-session.service';
-import { DatabaseService, discordAdminCommandLogs } from '../database/database.service';
+import { CommandLogsService } from '../database/command-logs.service';
 import { CountdownInput, CountdownsService } from './countdowns.service';
 import { GiftCodeAdministrationService } from './gift-code-administration.service';
 import { GiftCodeInput } from './gift-code-validation';
@@ -15,7 +14,7 @@ export class AdminController {
 		private readonly authAdministration: AuthAccountAdministrationService,
 		private readonly giftCodes: GiftCodeAdministrationService,
 		private readonly playerRoles: PlayerRoleAdministrationService,
-		private readonly database: DatabaseService,
+		private readonly commandLogs: CommandLogsService,
 		private readonly countdowns: CountdownsService,
 	) {}
 
@@ -66,22 +65,27 @@ export class AdminController {
 		return this.playerRoles.listPlayers();
 	}
 
-	@Get('discord-admin-commands')
-	listDiscordAdminCommands(@Headers('cookie') cookieHeader: string | undefined) {
+	@Get('command-logs')
+	listCommandLogs(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Query('beforeId') beforeId: string | undefined,
+		@Query('isOperator') isOperator: string | undefined,
+		@Query('source') source: string | undefined,
+		@Query('userId') userId: string | undefined,
+		@Query('fromUnixMs') fromUnixMs: string | undefined,
+		@Query('toUnixMs') toUnixMs: string | undefined,
+		@Query('search') search: string | undefined,
+	) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return {
-			commands: this.database.connection
-				.select()
-				.from(discordAdminCommandLogs)
-				.orderBy(desc(discordAdminCommandLogs.created_at_unix_ms))
-				.limit(200)
-				.all()
-				.map((entry) => ({
-					command: entry.command,
-					discordUsername: entry.discord_username,
-					createdAtUnixMs: entry.created_at_unix_ms,
-				})),
-		};
+		return this.commandLogs.list({
+			beforeId,
+			isOperator,
+			source,
+			userId,
+			fromUnixMs,
+			toUnixMs,
+			search,
+		});
 	}
 
 	@Patch('players/:userId/membership')

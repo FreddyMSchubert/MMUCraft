@@ -8,7 +8,7 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'whitelist', label: 'Email whitelist' },
 	{ section: 'gifts', label: 'Gift codes' },
 	{ section: 'countdowns', label: 'Countdowns' },
-	{ section: 'discord-commands', label: 'Discord commands' },
+	{ section: 'commands', label: 'Command log' },
 	{ section: 'dailies', label: 'Dailies' },
 	{ section: 'toggles', label: 'Gameplay toggles' },
 	{ section: 'bans', label: 'Ban / timeout' },

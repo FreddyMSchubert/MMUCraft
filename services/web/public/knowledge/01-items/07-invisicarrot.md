@@ -4,7 +4,7 @@ unlockOrder: 5
 chatMessage: You've unlocked knowledge on Invisi-Carrots, which can be used to turn item frames invisible!
 sidebarTitle: Invisi-Carrots
 tips:
-- You can use Invisi-Carrots to hide item frames, turning any item into a gorgeous decoration.
+- You can use Invisi-Carrots to hide item frames, turning any item into a nice decoration.
 - You can turn cosmetics into decorations by putting them in an item frame and hiding the frame with an Invisi-Carrot.
 ====
 

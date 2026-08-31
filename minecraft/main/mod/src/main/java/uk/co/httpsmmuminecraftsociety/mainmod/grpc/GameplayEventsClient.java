@@ -136,6 +136,10 @@ final class GameplayEventsClient {
         return call(client -> client.publishDiscordEvent(request));
     }
 
+    CompletableFuture<RecordCommandExecutionResponse> recordCommandExecution(RecordCommandExecutionRequest request) {
+        return call(client -> client.recordCommandExecution(request));
+    }
+
     private void requestClaimsSnapshot() {
         GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
         if (client == null) return;

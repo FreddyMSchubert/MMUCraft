@@ -11,6 +11,7 @@ import { FishingService } from '../fishing/fishing.service';
 import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service';
 import { DailiesService } from './dailies/dailies.service';
 import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.service';
+import { CommandLogsService } from '../database/command-logs.service';
 import {
 	FeatureTogglesService,
 	type FeatureTogglesSnapshot,
@@ -18,6 +19,7 @@ import {
 import type {
 	DailyTaskUpdateRequest,
 	DailyTaskUpdateResponse,
+	CommandExecutionRequest,
 	EmptyGrpcRequest,
 	FishCatchRequest,
 	FishCatchResponse,
@@ -58,6 +60,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly claims: ClaimsService,
 		private readonly dailies: DailiesService,
 		private readonly discord: DiscordService,
+		private readonly commandLogs: CommandLogsService,
 		private readonly featureToggles: FeatureTogglesService,
 	) {}
 
@@ -76,7 +79,15 @@ export class GameplayGrpcService implements OnModuleInit {
 			GetDailyTasksSnapshot: this.getDailyTasksSnapshot.bind(this),
 			UpdateDailyTask: this.updateDailyTask.bind(this),
 			PublishDiscordEvent: this.publishDiscordEvent.bind(this),
+			RecordCommandExecution: this.recordCommandExecution.bind(this),
 		});
+	}
+
+	private recordCommandExecution(
+		call: grpc.ServerUnaryCall<CommandExecutionRequest, { accepted: boolean }>,
+		callback: UnaryCallback<{ accepted: boolean }>,
+	) {
+		callback(null, this.commandLogs.record(call.request));
 	}
 
 	private getKnowledgeTip(

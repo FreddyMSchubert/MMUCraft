@@ -18,6 +18,7 @@ service GameplayEvents {
   rpc GetDailyTasksSnapshot(GetDailyTasksSnapshotRequest) returns (DailyTasksSnapshot);
   rpc UpdateDailyTask(UpdateDailyTaskRequest) returns (UpdateDailyTaskResponse);
   rpc PublishDiscordEvent(PublishDiscordEventRequest) returns (PublishDiscordEventResponse);
+  rpc RecordCommandExecution(RecordCommandExecutionRequest) returns (RecordCommandExecutionResponse);
 }
 
 service GameplayControl {
@@ -67,6 +68,21 @@ message PublishDiscordEventRequest {
 }
 
 message PublishDiscordEventResponse {
+  bool accepted = 1;
+}
+
+message RecordCommandExecutionRequest {
+  string command = 1;
+  string source = 2;
+  string actor_name = 3;
+  string minecraft_uuid = 4;
+  bool is_operator = 5;
+  int64 unix_ms = 6;
+  bool succeeded = 7;
+  int32 result = 8;
+}
+
+message RecordCommandExecutionResponse {
   bool accepted = 1;
 }
 

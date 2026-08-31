@@ -237,11 +237,11 @@ public final class KnowledgeTips {
             }
             if (!response.getFound()) return;
             player.sendSystemMessage(Component.literal("Tip: ")
-                    .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)
+                    .withStyle(ChatFormatting.AQUA)
                     .append(Component.literal(response.getTip()).withStyle(ChatFormatting.WHITE))
                     .append(" ")
                     .append(WebsiteCommand.takeMeThere(
-                            "play/knowledge/" + response.getKnowledgeId(),
+                            "knowledge/" + response.getKnowledgeId(),
                             "[Read more]",
                             ChatFormatting.GOLD
                     )));

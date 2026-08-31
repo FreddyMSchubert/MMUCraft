@@ -72,6 +72,12 @@ public final class GameplayGrpcService extends GrpcHandler {
         return INSTANCE.eventsClient.publishDiscordEvent(request);
     }
 
+    public static CompletableFuture<RecordCommandExecutionResponse> recordCommandExecution(
+            RecordCommandExecutionRequest request
+    ) {
+        return INSTANCE.eventsClient.recordCommandExecution(request);
+    }
+
     @Override
     List<BindableService> serverServices() {
         return List.of(new GameplayControlEndpoint());

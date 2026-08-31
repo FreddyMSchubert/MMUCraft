@@ -62,7 +62,7 @@ const ADMIN_SECTIONS = new Set([
 	'bans',
 	'gifts',
 	'countdowns',
-	'discord-commands',
+	'commands',
 	'dailies',
 	'toggles',
 	'servers',

@@ -116,7 +116,7 @@ test('knowledge outlines stay out of the mobile layout', async ({ page }) => {
 		page.getByRole('heading', { name: 'Decorative Blocks', exact: true }),
 	).toBeVisible();
 	await expect(page.locator('.knowledgeOutline')).toBeHidden();
-	await expect(page.getByLabel('Knowledge page')).toBeVisible();
+	await expect(page.locator('#knowledge-page-select')).toBeVisible();
 });
 
 test('short knowledge pages do not show a redundant outline', async ({ page }) => {

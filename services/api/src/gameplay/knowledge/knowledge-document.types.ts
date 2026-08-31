@@ -3,7 +3,6 @@ export interface KnowledgePageMetadata {
 	unlockOrder: number | null;
 	chatMessage: string;
 	sidebarTitle: string;
-	tips: string[];
 }
 
 export type KnowledgePage = KnowledgePageMetadata & {

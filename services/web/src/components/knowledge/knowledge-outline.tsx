@@ -172,7 +172,7 @@ export function KnowledgeOutline({
 		};
 	}, [articleRef, entries]);
 
-	if (entries.length === 0) return null;
+	if (entries.length <= 1) return null;
 
 	return (
 		<aside

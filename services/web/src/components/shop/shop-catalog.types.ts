@@ -86,13 +86,10 @@ export const ORDER_OPTIONS: { value: ShopOrder; label: string }[] = [
 ];
 
 const RARITY_RANK = new Map(RARITY_OPTIONS.map((rarity, index) => [rarity, index]));
+export { DABLOON_SYMBOL, formatDabloons } from '@/lib/dabloons';
 
 export function effectivePrice(item: ShopItem) {
 	return item.isDailyDeal ? item.discountedPriceDabloons : item.priceDabloons;
-}
-
-export function formatDabloons(value: number) {
-	return value.toLocaleString('en-US');
 }
 
 export function shouldHidePreview(item: ShopItem, arachnophobiaMode: boolean) {

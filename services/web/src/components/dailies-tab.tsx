@@ -262,6 +262,7 @@ export function DailiesTab() {
 																task.advancement.bonusRewardDabloons
 															}
 															format="full"
+															tone="inherit"
 														/>
 														.
 													</>
@@ -273,6 +274,7 @@ export function DailiesTab() {
 																task.advancement.bonusRewardDabloons
 															}
 															format="full"
+															tone="inherit"
 														/>
 														.
 													</>
@@ -284,6 +286,7 @@ export function DailiesTab() {
 																task.advancement.bonusRewardDabloons
 															}
 															format="full"
+															tone="inherit"
 														/>{' '}
 														in addition to the advancement reward.
 													</>
@@ -305,6 +308,7 @@ export function DailiesTab() {
 											<DabloonAmount
 												amount={data.nextLoginRewardDabloons}
 												format="full"
+												tone="inherit"
 											/>
 											.
 										</>
@@ -315,6 +319,7 @@ export function DailiesTab() {
 											<DabloonAmount
 												amount={task.rewardDabloons}
 												format="full"
+												tone="inherit"
 											/>
 											.
 										</>

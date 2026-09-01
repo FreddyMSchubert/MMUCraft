@@ -30,8 +30,9 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 						</p>
 						<p>
 							Inviting an external player costs the responsible player{' '}
-							<DabloonAmount amount={150} format="full" />
-							for members or <DabloonAmount amount={250} format="full" /> for
+							<DabloonAmount amount={150} format="full" tone="inherit" />
+							for members or{' '}
+							<DabloonAmount amount={250} format="full" tone="inherit" /> for
 							non-members. They must be online when you add the email.
 						</p>
 					</div>

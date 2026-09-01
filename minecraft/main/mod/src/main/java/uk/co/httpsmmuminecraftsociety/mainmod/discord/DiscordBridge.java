@@ -66,12 +66,8 @@ public final class DiscordBridge {
         });
     }
 
-    public static void advancement(ServerPlayer player, String title, int dabloons) {
-        String content = "has made the advancement [" + title + "] and earned " + dabloons + " Dabloons.";
-        Component message = Component.empty().append(player.getDisplayName()).append(" " + content);
-        player.level().getServer().getPlayerList().getPlayers().stream()
-                .filter(recipient -> recipient != player && !recipient.hasDisconnected())
-                .forEach(recipient -> recipient.sendSystemMessage(message));
+    public static void advancement(ServerPlayer player, String action, String title, int dabloons) {
+        String content = action + " [" + title + "] and earned " + dabloons + " Dabloons.";
         publish("advancement", player, content);
     }
 

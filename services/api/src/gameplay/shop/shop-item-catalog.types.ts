@@ -25,6 +25,7 @@ export interface RawItemDefinition {
 export interface CharmLevelDefinition {
 	level: number;
 	abilityStatusCurrent: string;
+	dabloons: number;
 	upgradeIngredients: string[];
 }
 

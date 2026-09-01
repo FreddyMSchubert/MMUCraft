@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { CharmForgeRenderer } from '@/lib/charm-forge-renderer';
 import { ASSETS } from '@/lib/assets';
 import { MinecraftItemIcon } from '@/components/minecraft-item-icon';
+import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
+import { formatDabloonWord } from '@/lib/dabloons';
 
 interface CharmIngredient {
 	raw: string;
@@ -181,8 +183,8 @@ export function CharmsTab() {
 			}
 			if (latestInventory.balanceDabloons < latestCharm.priceDabloons) {
 				showUpgradeAlert(
-					'Not enough dabloons',
-					`This upgrade costs ${latestCharm.priceDabloons} dabloons, but your balance is ${latestInventory.balanceDabloons}. Earn ${latestCharm.priceDabloons - latestInventory.balanceDabloons} more and try again.`,
+					'Not enough Dabloons',
+					`This upgrade costs ${formatDabloonWord(latestCharm.priceDabloons)}, but your balance is ${formatDabloonWord(latestInventory.balanceDabloons)}. Earn ${formatDabloonWord(latestCharm.priceDabloons - latestInventory.balanceDabloons)} more and try again.`,
 				);
 				return;
 			}
@@ -240,8 +242,12 @@ export function CharmsTab() {
 					</p>
 				</div>
 				<div className="charmForgeControls">
-					<span className="charmBalance" title="Current dabloon balance">
-						{inventory?.balanceDabloons ?? '—'} dabloons
+					<span className="charmBalance" title="Current Dabloon balance">
+						{inventory ? (
+							<DabloonAmount amount={inventory.balanceDabloons} format="full" />
+						) : (
+							'—'
+						)}
 					</span>
 					<button
 						type="button"
@@ -276,10 +282,12 @@ export function CharmsTab() {
 					</div>
 					<strong>No charm found in your main hand</strong>
 					<p role={messageIsError ? 'alert' : undefined}>
-						{message.length > 0
-							? message
-							: (inventory?.message ??
-								'Equip a charm in your hotbar, select it, and press Refresh inventory.')}
+						<DabloonText>
+							{message.length > 0
+								? message
+								: (inventory?.message ??
+									'Equip a charm in your hotbar, select it, and press Refresh inventory.')}
+						</DabloonText>
 					</p>
 				</div>
 			)}
@@ -293,7 +301,9 @@ export function CharmsTab() {
 						<div className="charmForgeAura" aria-hidden="true" />
 						<div ref={forgeHost} className="charmForgeScene" />
 						<div className="charmIdentity">
-							<h4>{charm.title}</h4>
+							<h4>
+								<DabloonText>{charm.title}</DabloonText>
+							</h4>
 							<strong>Level {charm.currentLevel}</strong>
 							{charm.currentLevel < charm.maxLevel && (
 								<span>→ Level {charm.targetLevel}</span>
@@ -361,8 +371,10 @@ export function CharmsTab() {
 							className={`charmForgeMessage ${messageIsError ? 'error' : ''}`}
 							role={messageIsError ? 'alert' : 'status'}
 						>
-							{message ||
-								'The server will verify your held charm, reagents, and balance.'}
+							<DabloonText>
+								{message ||
+									'The server will verify your held charm, reagents, and balance.'}
+							</DabloonText>
 						</div>
 						<button
 							type="button"
@@ -379,9 +391,15 @@ export function CharmsTab() {
 							</span>
 							{charm.currentLevel < charm.maxLevel && (
 								<strong>
-									{charm.priceDabloons === 0
-										? 'Free'
-										: `${charm.priceDabloons} dabloons`}
+									{charm.priceDabloons === 0 ? (
+										'Free'
+									) : (
+										<DabloonAmount
+											amount={charm.priceDabloons}
+											format="full"
+											tone="inherit"
+										/>
+									)}
 								</strong>
 							)}
 						</button>
@@ -391,7 +409,7 @@ export function CharmsTab() {
 
 			{!charm && message && (
 				<p className="charmForgeMessage" role="alert">
-					{message}
+					<DabloonText>{message}</DabloonText>
 				</p>
 			)}
 		</div>

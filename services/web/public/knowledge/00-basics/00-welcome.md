@@ -9,7 +9,7 @@ tips:
 - To make the most of your time on the server, read the knowledge books when you find them to learn about the powerful new features we added. Teleportation and mid-air jumping, anyone?
 - Build close to spawn. It's more fun that way - it's always more fun if you see other players more often.
 - Build close to spawn. That will make Potions of Returning, which teleport you to the world spawn, very useful to get close to your home.
-- Sunday Funday! On sundays, tons of shop items are heavily discounted and many different money sources hand out more cash. Minecraft Day!
+- Sunday Funday! On sundays, tons of shop items are heavily discounted and many different Dabloon sources hand out more Dabloons. Minecraft Day!
 - Use claims to protect your builds! Players you don't invite won't be able to open chests, break & place blocks in your claims.
 - Use claims to protect your builds! When you do, other players, creepers and withers can't destroy any of the blocks in your claims anymore.
 - Fill out your profile! That way, other players will be able to reach out and chat with you, for example to trade for items.
@@ -58,7 +58,7 @@ There is no `/home` to avoid everyone living super far away from each other and 
 :::
 
 :::tip Sunday Funday
-On sundays, tons of [shop](/play/shop) items are heavily discounted and many different money sources hand out more cash. **Minecraft Day!**
+On sundays, tons of [shop](/play/shop) items are heavily discounted and many different Dabloon sources hand out more Dabloons. **Minecraft Day!**
 :::
 
 :::tip Use claims to protect your stuff
@@ -72,7 +72,7 @@ Help people know who you are and what you do! To do so, click on "[Players](/pla
 :::
 
 :::note Become a society member
-The committee doesn't make any money from this society, but Minecraft servers aren't free. Please consider supporting us by becoming a member. Members get many perks! Check out all the benefits of Memberships [here](/play/knowledge/membership).
+The committee does not profit from this society, but Minecraft servers aren't free. Please consider supporting us by becoming a member. Members get many perks! Check out all the benefits of Memberships [here](/play/knowledge/membership).
 :::
 
 **HAVE FUN!**

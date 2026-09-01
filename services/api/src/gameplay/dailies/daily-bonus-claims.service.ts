@@ -74,7 +74,7 @@ export class DailyBonusClaimsService {
 			return {
 				claimed: true,
 				granted: true,
-				message: result.message || `You received ${rewardDabloons} dabloons.`,
+				message: result.message || `You received ${rewardDabloons} Dabloons.`,
 			};
 		} catch (error) {
 			this.dailyStorage.deleteClaim(user.id, LOGIN_BONUS_TASK_ID, periodKey);
@@ -137,7 +137,7 @@ export class DailyBonusClaimsService {
 				granted: true,
 				message:
 					result.message ||
-					`You received ${picked.target.bonusRewardDabloons} bonus dabloons.`,
+					`You received ${picked.target.bonusRewardDabloons} bonus Dabloons.`,
 			};
 		} catch (error) {
 			this.dailyStorage.deleteClaim(user.id, ADVANCEMENT_BONUS_TASK_ID, periodKey);
@@ -203,7 +203,7 @@ export class DailyBonusClaimsService {
 			return {
 				claimed: true,
 				granted: true,
-				message: `Dailies finished! You received ${rewardDabloons} dabloons.`,
+				message: `Dailies finished! You received ${rewardDabloons} Dabloons.`,
 			};
 		} catch (error) {
 			this.dailyStorage.deleteClaim(user.id, DAILY_COMPLETION_TASK_ID, periodKey);

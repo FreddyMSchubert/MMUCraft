@@ -151,14 +151,17 @@ public final class AdvancementMoney {
         if (reward.baseReward() == 0) {
             return displayInfo.getDescription()
                     .copy()
-                    .append(Component.literal("\n\nNo dabloon reward").withStyle(ChatFormatting.DARK_GRAY));
+                    .append(MoneyHelper.ReplaceDabloonWords("\n\nNo Dabloon reward")
+                            .withStyle(ChatFormatting.DARK_GRAY));
         }
         return displayInfo.getDescription()
                 .copy()
-                .append(Component.literal("\nBase reward: " + reward.baseReward() + " dabloons").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal("\nBase reward: ").withStyle(ChatFormatting.GRAY))
+                .append(MoneyHelper.FormatDabloonWord(reward.baseReward()).withStyle(ChatFormatting.GREEN))
                 .append(multiplierLine("Sunday bonus", reward.isSunday()))
                 .append(multiplierLine("Member bonus", reward.isMember()))
-                .append(Component.literal("\nTotal: " + reward.totalReward() + " dabloons").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+                .append(Component.literal("\nTotal: ").withStyle(ChatFormatting.GRAY))
+                .append(MoneyHelper.FormatDabloonWord(reward.totalReward()).withStyle(ChatFormatting.GREEN));
     }
 
     private static Component multiplierLine(String label, boolean applied) {

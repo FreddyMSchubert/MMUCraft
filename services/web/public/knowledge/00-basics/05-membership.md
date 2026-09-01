@@ -5,10 +5,10 @@ chatMessage: You've unlocked knowledge on memberships
 sidebarTitle: Membership
 tips:
 - Becoming a society member comes with many helpful benefits. It is a one-time payment and lasts you for the whole year.
-- The committee is made up of volunteers, we do not make money from running this server. Please consider becoming a society member so we can recoup the costs.
+- The committee is made up of volunteers; we do not profit from running this server. Please consider becoming a society member so we can recoup the costs.
 ====
 
-Anybody can play on this server for free. But hosting the server does cost us money, so we need to have some sort of way of making income. (Plus, encouraging memberships is enforced by the MMU union.)
+Anybody can play on this server for free. But hosting the server has real costs, so we need some way to fund it. (Plus, encouraging memberships is enforced by the MMU union.)
 
 Becoming a member gives you the following benefits:
 - More dabloons earned from completing advancements & dailies.
@@ -20,7 +20,7 @@ Becoming a member gives you the following benefits:
 If you are unable or unwilling to pay for any reason, that is entirely fine. If you feel like the server is "pay-to-win" or unfair towards non-members, please reach out to us, we wish for everybody to have an equally amazing gaming experience.
 
 :::note
-The committee will never make any money in any shape or form from this society, all money earned gets reinvested.
+The committee will never profit from this society; all income is reinvested.
 :::
 
 We hope that you consider supporting our work on the server.

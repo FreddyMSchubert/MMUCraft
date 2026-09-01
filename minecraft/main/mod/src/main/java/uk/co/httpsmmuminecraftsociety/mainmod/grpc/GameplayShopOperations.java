@@ -38,7 +38,7 @@ final class GameplayShopOperations {
                     .setOnline(true)
                     .setBalanceDabloons(balance)
                     .setMessage(
-                            request.getDisplayName() + " costs " + price + " dabloons, but your balance is " + balance
+                            request.getDisplayName() + " costs " + price + " Dabloons, but your balance is " + balance
                                     + ". Earn " + (price - balance) + " more and try again."
                     )
                     .build();
@@ -73,17 +73,17 @@ final class GameplayShopOperations {
         }
 
         int remaining = MoneyHelper.GetBalance(player);
-        MoneyHelper.SendBalanceMessage(player,
-                "Purchased " + request.getItemId() + " for " + price + " dabloons.");
+        MoneyHelper.SendBalanceMessage(player, -price,
+                "Purchased " + request.getDisplayName());
         DiscordBridge.playerEvent("shop", player,
                 "bought the " + request.getRarity() + " " + request.getDisplayName() + " "
-                        + request.getItemType() + " from the shop for " + price + " dabloons.");
+                        + request.getItemType() + " from the shop for " + price + " Dabloons.");
         return PurchaseShopItemResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
                 .setBalanceDabloons(remaining)
                 .setMessage(
-                        "Purchased " + request.getDisplayName() + " for " + price + " dabloons. Your remaining balance is "
+                        "Purchased " + request.getDisplayName() + " for " + price + " Dabloons. Your remaining balance is "
                                 + remaining + "."
                 )
                 .build();

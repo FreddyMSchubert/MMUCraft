@@ -1,6 +1,6 @@
 # Dabloon symbol
 
-This project uses **U+F0DAB** for the dabloon sign.
+This project uses **U+F0DAB** for the Dabloon sign.
 
 Do not paste the private-use character into source code or documentation. Most fonts do not contain it, so editors and Markdown renderers show a missing-glyph box. Use these ASCII-only representations instead:
 
@@ -59,7 +59,15 @@ Use the shared formatter in Java:
 
 ```java
 Component amount = MoneyHelper.FormatDabloons(1250);
+Component fullWord = MoneyHelper.FormatDabloonWord(1250);
 ```
+
+The only two display formats are:
+
+- compact: `1,250 U+F0DAB` (the actual symbol follows the number);
+- full: `1,250 U+F0DABabloons` (the symbol replaces the capital `D`).
+
+Never put the symbol before the number, and never follow the compact form with a second written-out `Dabloons`.
 
 The implementation constructs the character from its numeric code point, so no private-use glyph needs to be copied into the source:
 
@@ -68,13 +76,33 @@ public static final int DABLOON_CODEPOINT = 0xF0DAB;
 private static final String DABLOON_SYMBOL = Character.toString(DABLOON_CODEPOINT);
 ```
 
-For a manual in-game test, JSON uses the UTF-16 surrogate-pair escape:
+For a manual in-game test, JSON uses the UTF-16 surrogate-pair escape. This prints the canonical compact form without requiring the private-use character in the command source:
 
 ```text
-/tellraw @s {"text":"\udb83\uddab1,250","color":"gold"}
+/tellraw @s {"text":"125 \udb83\uddab","color":"green"}
 ```
 
 No `"font":"..."` field is needed. Java Edition does not automatically expand a shortcode such as `:dabloon:` in player chat; implementing chat shortcodes would be a separate server feature. Application code should call the formatter rather than make people copy the character.
+
+Do not apply Minecraft's `bold` style to text containing the bitmap symbol. Minecraft implements bold by drawing a second shifted copy of the glyph; on this five-pixel design that fills the internal one-pixel gaps and turns it into a blob.
+
+### Minecraft transaction messages
+
+All transaction messages use the same short one-line shape:
+
+```text
+{current balance U+F0DAB} Operation (+amount U+F0DAB)
+{current balance U+F0DAB} Operation (-amount U+F0DAB)
+```
+
+- Balance braces and positive deltas use `ChatFormatting.GREEN` (`#55FF55`).
+- Spending and other negative deltas use `ChatFormatting.DARK_GREEN` (`#00AA00`).
+- Curly braces are reserved for the current Dabloon balance.
+- Round brackets contain the signed change.
+- Square brackets identify hoverable or clickable content, such as an advancement title.
+- The message text and symbol are never bold.
+
+`MoneyHelper.SendBalanceMessage` owns this layout; callers provide only the operation label and signed delta. Advancement messages replace the vanilla broadcast, preserve task/goal/challenge wording, and use Minecraft's own hoverable advancement-name component.
 
 After changing the PNG or font JSON, rebuild the normal pack:
 
@@ -106,21 +134,41 @@ The SVG conversion was a one-time build step. Only the finished WOFF2 files are 
 
 ## Website usage
 
-The initial rollout is intentionally limited to the shop flow. `.playPage` uses the Noto Sans symbol fallback, and shop prices and purchase prompts call the shared formatter. The Minecraft UI and JetBrains Mono symbol faces are built and registered but are not yet added to unrelated page font stacks.
+The symbol fallback is installed before every corresponding base-font stack:
 
-Use the shared formatter:
+- `Dabloon Symbol Minecraft UI` before `Minecraft UI`;
+- `Dabloon Symbol Noto Sans` before `Noto Sans`;
+- `Dabloon Symbol JetBrains Mono` before `JetBrainsMono Nerd Font`.
+
+This includes content rendered through portals, such as shop details and alerts. Because each symbol font contains only U+F0DAB, every other character falls through to the normal site font.
+
+Use `DabloonAmount` in React UI rather than manually combining the number, symbol, and word:
 
 ```tsx
-import { formatDabloons } from '@/lib/dabloons';
+import { DabloonAmount } from '@/components/dabloon-amount';
 
-<span aria-label="1,250 dabloons">{formatDabloons(1250)}</span>
+<DabloonAmount amount={1250} />
+<DabloonAmount amount={1250} format="full" />
+<DabloonAmount amount={30} format="delta" />
+<DabloonAmount amount={-100} format="delta" />
 ```
 
-`services/web/src/lib/dabloons.ts` constructs U+F0DAB with `String.fromCodePoint`, so TypeScript source and documentation remain readable on machines that do not have the custom font installed.
+Compact, full-word, and signed-delta strings are also available from `services/web/src/lib/dabloons.ts`. `DabloonText` replaces the leading `D` in prose without coloring the surrounding text. Both helpers include readable accessibility labels.
+
+The CSS colors deliberately match Minecraft exactly:
+
+- `--dabloon-positive: #55ff55` for default values and gains;
+- `--dabloon-negative: #00aa00` for losses and spending.
+
+Use the bright shade by default. Use the dark shade only when a value represents a negative change. Use `tone="inherit"` when green would fight the surrounding design, such as the yellow full-completion reward panel.
+
+Knowledge pages automatically replace Dabloon words after Markdown rendering. The `money-basics` page is the intentional exception: its title/sidebar read `Dabloons (Money)`, and it keeps ordinary `D` letters while introducing the currency to new players.
 
 ## Verification
 
-1. Load a shop price and purchase prompt in the web dashboard.
-2. Rebuild the resource pack.
-3. Run the escaped `/tellraw` command above or trigger the server balance message.
-4. Confirm that ordinary letters and digits still use their original fonts in both applications.
+1. Load shop overview and detail prices, a daily reward, the Charm Forge, and a Knowledge page in the web dashboard.
+2. Confirm the symbol follows the amount and matches the active Noto Sans, Minecraft UI, or JetBrains Mono style.
+3. Rebuild the resource pack.
+4. Run the escaped `/tellraw` command above or trigger gain and spending messages.
+5. Confirm the 5×9 glyph remains hollow, gains use bright green, spending uses dark green, and no currency chat is bold.
+6. Confirm that ordinary letters and digits still use their original fonts in both applications.

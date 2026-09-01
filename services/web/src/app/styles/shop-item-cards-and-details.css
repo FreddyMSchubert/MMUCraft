@@ -460,8 +460,13 @@
 .shopDetailsSummary {
 	display: grid;
 	align-content: center;
-	gap: 16px;
+	gap: 9px;
 	padding: 48px clamp(28px, 5vw, 58px);
+}
+
+.shopDetailsSummary > .shopDetailsBuy + .shopItemEffect,
+.shopDetailsSummary > .shopDetailsBuy + .shopItemTooltips {
+	margin-top: 12px;
 }
 
 .shopDetailsSummary h2 {

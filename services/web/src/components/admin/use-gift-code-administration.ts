@@ -3,6 +3,7 @@
 import { type SyntheticEvent, useEffect, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiBody, apiMessage, errorMessage } from './admin-api';
+import { formatDabloonWord } from '@/lib/dabloons';
 import type { AdminSection } from './admin-data.types';
 import { makeDifferentGiftCodeSuggestion, makeGiftCodeSuggestion } from './gift-code-suggestions';
 
@@ -66,7 +67,7 @@ export function useGiftCodeAdministration({
 				await reload();
 				await showAlert({
 					title: 'Gift code created',
-					message: `${created.code} is ready to redeem for ${created.amountDabloons} dabloons. Share it only with the intended players.`,
+					message: `${created.code} is ready to redeem for ${formatDabloonWord(created.amountDabloons)}. Share it only with the intended players.`,
 					tone: 'success',
 				});
 			} catch (caught) {

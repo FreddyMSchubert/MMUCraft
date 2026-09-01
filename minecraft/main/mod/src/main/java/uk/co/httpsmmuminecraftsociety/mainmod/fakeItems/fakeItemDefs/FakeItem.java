@@ -11,6 +11,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public record FakeItem(
                     .asList()
                     .stream()
                     .map(e -> e == null || e.isJsonNull() ? "" : e.getAsString())
-                    .map(Component::literal)
+                    .map(MoneyHelper::ReplaceDabloonWords)
                     .map(Component.class::cast)
                     .toList();
             List<ItemFeature> features = ItemFeature.of(json);
@@ -68,7 +69,7 @@ public record FakeItem(
         ItemStack stack = new ItemStack(baseItem, 1);
 
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(id), List.of()));
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(title));
+        stack.set(DataComponents.CUSTOM_NAME, MoneyHelper.ReplaceDabloonWords(title));
         List<Component> lore = buildLore();
         if (!lore.isEmpty())
             stack.set(DataComponents.LORE, new ItemLore(lore));

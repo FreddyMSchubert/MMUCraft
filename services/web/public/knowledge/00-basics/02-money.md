@@ -2,7 +2,7 @@
 id: money-basics
 unlockOrder: public
 chatMessage: You've unlocked knowledge on how to earn Dabloons
-sidebarTitle: Dabloons
+sidebarTitle: Dabloons (Money)
 tips:
 - Don't forget to extend your login streak each day - that's free Dabloons you're missing out on. Extend your streak in the 'Dailies' tab on the website.
 - You can combine multiple lower-value Dabloon coins together in a crafting table to turn them into a higher-value Dabloon coin. (And do the reverse as well).

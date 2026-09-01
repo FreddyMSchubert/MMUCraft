@@ -1,6 +1,7 @@
 'use client';
 
 import { PlayerName, playerNameStyle } from '@/components/player-name';
+import { DabloonAmount } from '@/components/dabloon-amount';
 import { formatDateTime } from './admin-api';
 import type { AdminTabController } from './use-admin-tab-controller';
 
@@ -28,9 +29,10 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 							allowed.
 						</p>
 						<p>
-							Inviting an external player costs the responsible player 150 dabloons
-							for members or 250 dabloons for non-members. They must be online when
-							you add the email.
+							Inviting an external player costs the responsible player{' '}
+							<DabloonAmount amount={150} format="full" />
+							for members or <DabloonAmount amount={250} format="full" /> for
+							non-members. They must be online when you add the email.
 						</p>
 					</div>
 					<form className="emailWhitelistForm" onSubmit={addWhitelistedEmail}>

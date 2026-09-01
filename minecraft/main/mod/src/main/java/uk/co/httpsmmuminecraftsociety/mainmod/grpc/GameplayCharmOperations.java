@@ -145,7 +145,7 @@ final class GameplayCharmOperations {
             return failedCharmUpgrade(player, "You no longer have all the required ingredients.");
         }
         if (MoneyHelper.GetBalance(player) < target.dabloons()) {
-            return failedCharmUpgrade(player, "You need " + target.dabloons() + " dabloons for this upgrade.");
+            return failedCharmUpgrade(player, "You need " + target.dabloons() + " Dabloons for this upgrade.");
         }
 
         NonNullList<ItemStack> backup = NonNullList.withSize(player.getInventory().getContainerSize(), ItemStack.EMPTY);
@@ -160,7 +160,7 @@ final class GameplayCharmOperations {
             }
             if (target.dabloons() > 0 && !MoneyHelper.ReduceMoney(player, target.dabloons())) {
                 restoreInventory(player, backup);
-                return failedCharmUpgrade(player, "Could not take the dabloons for this upgrade.");
+                return failedCharmUpgrade(player, "Could not take the Dabloons for this upgrade.");
             }
 
             feature.setLevel(stack, targetLevel);
@@ -176,7 +176,8 @@ final class GameplayCharmOperations {
                         + target.abilityStatusCurrent() + "]");
 
         if (target.dabloons() > 0) {
-            MoneyHelper.SendBalanceMessage(player, item.title() + " reached level " + targetLevel + ".");
+            MoneyHelper.SendBalanceMessage(player, -target.dabloons(),
+                    item.title() + " reached level " + targetLevel);
         }
 
         return UpgradeCharmResponse.newBuilder()

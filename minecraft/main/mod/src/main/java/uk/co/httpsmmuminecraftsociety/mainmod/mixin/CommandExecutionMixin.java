@@ -22,6 +22,7 @@ public final class CommandExecutionMixin {
     @ModifyVariable(method = "performCommand", at = @At("HEAD"), argsOnly = true, ordinal = 0)
     private ParseResults<CommandSourceStack> mainmod$attachCommandOutcome(
             ParseResults<CommandSourceStack> parseResults,
+            ParseResults<CommandSourceStack> originalParseResults,
             String command
     ) {
         CommandResultCallback outcome = CommandExecutionLogger.record(

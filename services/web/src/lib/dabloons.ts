@@ -6,7 +6,7 @@ export function formatDabloons(value: number) {
 }
 
 export function formatDabloonWord(value: number) {
-	return `${formatDabloons(value)}${value === 1 ? 'abloon' : 'abloons'}`;
+	return `${formatDabloonNumber(value)} ${value === 1 ? 'Dabloon' : 'Dabloons'}`;
 }
 
 export function formatDabloonDelta(value: number) {
@@ -15,7 +15,7 @@ export function formatDabloonDelta(value: number) {
 }
 
 export function dabloonizeWords(value: string) {
-	return value.replace(/\bdabloons?\b/gi, (word) => `${DABLOON_SYMBOL}${word.slice(1)}`);
+	return value;
 }
 
 function formatDabloonNumber(value: number) {

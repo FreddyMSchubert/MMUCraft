@@ -37,34 +37,19 @@ export function DabloonAmount({
 }
 
 export function DabloonText({ children }: { children: string }) {
-	const amountPattern = `[+−-]?[\\d,]+\\s+(?:${DABLOON_SYMBOL}(?:abloons?)?|dabloons?)`;
-	const parts = children.split(new RegExp(`(${amountPattern}|\\bdabloons?\\b)`, 'gi'));
+	const amountPattern = `[+−-]?[\\d,]+\\s+${DABLOON_SYMBOL}`;
+	const parts = children.split(new RegExp(`(${amountPattern})`, 'gi'));
 	return parts.map((part, index) => {
-		if (/^dabloons?$/i.test(part)) {
-			return (
-				<span className="dabloonWord" aria-label={part} key={`${part}-${index}`}>
-					{DABLOON_SYMBOL}
-					{part.slice(1)}
-				</span>
-			);
-		}
-
 		if (new RegExp(`^${amountPattern}$`, 'i').test(part)) {
-			const text = part.replace(
-				/\b(dabloons?)/i,
-				(word) => `${DABLOON_SYMBOL}${word.slice(1)}`,
-			);
-			const readable = text.includes(`${DABLOON_SYMBOL}abloon`)
-				? text.replace(DABLOON_SYMBOL, 'D')
-				: `${text.replace(DABLOON_SYMBOL, '').trim()} Dabloons`;
-			const tone = /^[−-]/.test(text) ? 'negative' : 'default';
+			const readable = `${part.replace(DABLOON_SYMBOL, '').trim()} Dabloons`;
+			const tone = /^[−-]/.test(part) ? 'negative' : 'default';
 			return (
 				<span
 					className={`dabloonAmount dabloonTone-${tone}`}
 					aria-label={readable}
 					key={`${part}-${index}`}
 				>
-					{text}
+					{part}
 				</span>
 			);
 		}

@@ -13,13 +13,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class MoneyHelper {
     public static final int DABLOON_CODEPOINT = 0xF0DAB;
     private static final String DABLOON_SYMBOL = Character.toString(DABLOON_CODEPOINT);
-    private static final Pattern DABLOON_WORD = Pattern.compile("(?i)\\bdabloons?\\b");
 
     private MoneyHelper() {}
 
@@ -28,8 +25,7 @@ public final class MoneyHelper {
     }
 
     public static MutableComponent FormatDabloonWord(int amount) {
-        return FormatDabloons(amount)
-                .append(Component.literal(amount == 1 ? "abloon" : "abloons"));
+        return Component.literal(formatNumber(amount) + (amount == 1 ? " Dabloon" : " Dabloons"));
     }
 
     public static MutableComponent FormatDabloonDelta(int amount) {
@@ -42,17 +38,7 @@ public final class MoneyHelper {
     }
 
     public static MutableComponent ReplaceDabloonWords(String text) {
-        Matcher matcher = DABLOON_WORD.matcher(text);
-        MutableComponent result = Component.empty();
-        int cursor = 0;
-
-        while (matcher.find()) {
-            result.append(Component.literal(text.substring(cursor, matcher.start())));
-            result.append(Component.literal(DABLOON_SYMBOL + matcher.group().substring(1)));
-            cursor = matcher.end();
-        }
-
-        return result.append(Component.literal(text.substring(cursor)));
+        return Component.literal(text);
     }
 
     public static int GetBalance(ServerPlayer player) {
@@ -84,13 +70,17 @@ public final class MoneyHelper {
     }
 
     public static void SendBalanceMessage(ServerPlayer player, int delta, Component message) {
-        player.sendSystemMessage(Component.literal("{")
+        player.sendSystemMessage(balanceMessage(player, message)
+                .append(Component.literal(" "))
+                .append(FormatDabloonDelta(delta)));
+    }
+
+    private static MutableComponent balanceMessage(ServerPlayer player, Component message) {
+        return Component.literal("{")
                 .withStyle(ChatFormatting.GREEN)
                 .append(FormatDabloons(GetBalance(player)).withStyle(ChatFormatting.GREEN))
                 .append(Component.literal("} ").withStyle(ChatFormatting.GREEN))
-                .append(message.copy().withStyle(ChatFormatting.WHITE))
-                .append(Component.literal(" "))
-                .append(FormatDabloonDelta(delta)));
+                .append(message.copy().withStyle(ChatFormatting.WHITE));
     }
 
     private static String formatNumber(int amount) {

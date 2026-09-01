@@ -3,6 +3,8 @@
 	"package": "uk.co.httpsmmuminecraftsociety.mainmod.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
+      "BacapMessageFilterMixin",
+      "VanillaAdvancementAnnouncementMixin",
       "CommandNodeAccessor",
       "CommandExecutionMixin",
       "ArmorAddToolTipFirstTick",

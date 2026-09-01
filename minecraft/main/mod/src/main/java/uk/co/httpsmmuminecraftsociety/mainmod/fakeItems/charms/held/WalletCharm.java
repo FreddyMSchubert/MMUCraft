@@ -118,9 +118,11 @@ public class WalletCharm implements Charm, UseCallbackCharm
 
         List<Component> lines = new ArrayList<>(wallet.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
         if (!lines.isEmpty()) {
-            lines.set(lines.size() - 1, Component.literal("Balance: ")
-                    .append(MoneyHelper.FormatDabloonWord(balance).withStyle(net.minecraft.ChatFormatting.GREEN))
-                    .append(Component.literal(".")));
+            lines.set(lines.size() - 1, Component.literal("{")
+                    .withStyle(net.minecraft.ChatFormatting.GREEN)
+                    .append(MoneyHelper.FormatDabloons(balance).withStyle(net.minecraft.ChatFormatting.GREEN))
+                    .append(Component.literal("} ").withStyle(net.minecraft.ChatFormatting.GREEN))
+                    .append(Component.literal("stored.").withStyle(net.minecraft.ChatFormatting.WHITE)));
             wallet.set(DataComponents.LORE, new ItemLore(lines));
         }
     }

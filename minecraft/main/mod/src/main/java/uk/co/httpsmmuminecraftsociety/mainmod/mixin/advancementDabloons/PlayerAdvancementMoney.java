@@ -49,11 +49,12 @@ public class PlayerAdvancementMoney {
         }
 
         ServerPlayer rewardedPlayer = this.player;
-        var membership = PlayerStatsSync.syncNow(rewardedPlayer);
-        AdvancementRewards rewards = advancementHolder.value().rewards();
-        membership.exceptionally(error -> false).thenAccept(isMember -> rewardedPlayer.level().getServer().execute(
-                () -> grantMoney(rewardedPlayer, advancementHolder, rewards, isMember)
-        ));
+        grantMoney(
+                rewardedPlayer,
+                advancementHolder,
+                advancementHolder.value().rewards(),
+                PlayerStatsSync.isMember(rewardedPlayer)
+        );
     }
 
     private void grantMoney(
@@ -77,6 +78,7 @@ public class PlayerAdvancementMoney {
                 advancementHolder.value().display().ifPresent(display -> {
                     DiscordBridge.advancement(
                             rewardedPlayer,
+                            discordAction(display),
                             display.getTitle().getString(),
                             reward
                     );
@@ -96,8 +98,15 @@ public class PlayerAdvancementMoney {
 
         }
 
-        advancementHolder.value().display().ifPresent(display ->
-                announceAdvancement(rewardedPlayer, advancementHolder, display, rewarded ? reward : 0));
+        int awardedReward = rewarded ? reward : 0;
+        if (shouldAnnounceAdvancement(advancementHolder, awardedReward)) {
+            advancementHolder.value().display().ifPresent(display ->
+                    announceAdvancement(rewardedPlayer, advancementHolder, display, awardedReward));
+        }
+    }
+
+    private boolean shouldAnnounceAdvancement(AdvancementHolder advancementHolder, int reward) {
+        return "minecraft".equals(advancementHolder.id().getNamespace()) || reward >= 30;
     }
 
     private void announceAdvancement(
@@ -112,7 +121,7 @@ public class PlayerAdvancementMoney {
         }
 
         String action = switch (display.getType()) {
-            case TASK -> "made the advancement";
+            case TASK -> "achieved";
             case GOAL -> "reached the goal";
             case CHALLENGE -> "completed the challenge";
         };
@@ -120,7 +129,7 @@ public class PlayerAdvancementMoney {
 
         for (ServerPlayer viewer : rewardedPlayer.level().getServer().getPlayerList().getPlayers()) {
             Component message;
-            if (viewer == rewardedPlayer) {
+            if (viewer.getUUID().equals(rewardedPlayer.getUUID())) {
                 message = Component.literal("You " + action + " ").append(advancementName.copy());
                 if (reward > 0) {
                     MoneyHelper.SendBalanceMessage(viewer, reward, message);
@@ -134,5 +143,13 @@ public class PlayerAdvancementMoney {
             }
             viewer.sendSystemMessage(message);
         }
+    }
+
+    private String discordAction(DisplayInfo display) {
+        return switch (display.getType()) {
+            case TASK -> "achieved";
+            case GOAL -> "reached the goal";
+            case CHALLENGE -> "completed the challenge";
+        };
     }
 }

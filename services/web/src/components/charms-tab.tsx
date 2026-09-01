@@ -243,11 +243,7 @@ export function CharmsTab() {
 				</div>
 				<div className="charmForgeControls">
 					<span className="charmBalance" title="Current Dabloon balance">
-						{inventory ? (
-							<DabloonAmount amount={inventory.balanceDabloons} format="full" />
-						) : (
-							'—'
-						)}
+						{inventory ? <DabloonAmount amount={inventory.balanceDabloons} /> : '—'}
 					</span>
 					<button
 						type="button"

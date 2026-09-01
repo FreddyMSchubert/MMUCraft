@@ -100,18 +100,7 @@ export function stripDangerousHtml(html: string) {
 }
 
 export function decorateDabloonHtml(html: string) {
-	return html
-		.split(/(<[^>]+>)/g)
-		.map((part) =>
-			part.startsWith('<')
-				? part
-				: part.replace(
-						/\bdabloons?\b/gi,
-						(word) =>
-							`<span class="dabloonWord" aria-label="${word}">&#xF0DAB;${word.slice(1)}</span>`,
-					),
-		)
-		.join('');
+	return html;
 }
 
 function escapeHtml(value: string) {

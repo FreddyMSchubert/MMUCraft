@@ -14,7 +14,7 @@ tips:
 
 Money makes the world go round, including the Minecraft world, which is neither round nor rotating. (I assume...)
 
-The currency used on this server is called dabloons. They come in the forms of actual Minecraft Coin Items, in your inventory. (So, you know, dying with a bunch of money is probably a bad idea.)
+The currency used on this server is called dabloons. (<span class="dabloonAmount dabloonTone-inherit" aria-label="Dabloon symbol">&#xF0DAB;</span>) They come in the forms of actual Minecraft Coin Items, in your inventory. (So, you know, dying with a bunch of money is probably a bad idea.)
 
 ![Some of the lower-value coin textures](/assets/knowledge/basics/money/coins.png)
 

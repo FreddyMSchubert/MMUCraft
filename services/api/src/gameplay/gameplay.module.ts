@@ -8,6 +8,7 @@ import { FishingModule } from '../fishing/fishing.module';
 import { ClaimsModule } from '../claims/claims.module';
 import { DiscordModule } from '../discord/discord.module';
 import { FeatureTogglesModule } from '../toggles/feature-toggles.module';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
 	imports: [
@@ -19,6 +20,7 @@ import { FeatureTogglesModule } from '../toggles/feature-toggles.module';
 		ClaimsModule,
 		DiscordModule,
 		FeatureTogglesModule,
+		DatabaseModule,
 	],
 	providers: [GameplayGrpcService],
 })

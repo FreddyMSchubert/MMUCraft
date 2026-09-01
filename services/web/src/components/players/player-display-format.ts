@@ -5,6 +5,7 @@ import type {
 	SortDirection,
 	StatOption,
 } from './player-data.types';
+import { dabloonizeWords, formatDabloons } from '@/lib/dabloons';
 
 export function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.playerName') return player.minecraftUsername;
@@ -17,7 +18,7 @@ export function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.base')
 		return hasBase(player.profile) ? formatBase(player.profile.base) : '-';
 	if (option.key === 'money.earnedDabloons')
-		return formatNumber(player.stats.money.earnedDabloons);
+		return formatDabloons(player.stats.money.earnedDabloons);
 	if (option.key.startsWith('fishing.'))
 		return formatNumber(player.fishing[option.key.slice(8)] ?? 0);
 	if (option.key === 'minecraft.lastPlayedAtUnixMs')
@@ -131,54 +132,58 @@ export function hasBase(profile: PlayerProfile) {
 }
 
 export function groupStatOptions(options: StatOption[]) {
+	const displayOptions = options.map((option) => ({
+		...option,
+		label: dabloonizeWords(option.label),
+	}));
 	const groups = [
 		{
 			key: 'profile',
 			label: 'Profile',
-			options: options.filter((option) => option.group === 'profile'),
+			options: displayOptions.filter((option) => option.group === 'profile'),
 		},
 		{
 			key: 'money',
-			label: 'Dabloons',
-			options: options.filter((option) => option.group === 'money'),
+			label: dabloonizeWords('Dabloons'),
+			options: displayOptions.filter((option) => option.group === 'money'),
 		},
 		{
 			key: 'fishing',
 			label: 'Fishing Compendium',
-			options: options.filter((option) => option.group === 'fishing'),
+			options: displayOptions.filter((option) => option.group === 'fishing'),
 		},
 		{
 			key: 'minecraft-session',
 			label: 'Minecraft - Session',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'session',
 			),
 		},
 		{
 			key: 'minecraft-advancement',
 			label: 'Minecraft - Advancements',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'advancement',
 			),
 		},
 		{
 			key: 'minecraft-custom',
 			label: 'Minecraft - General Stats',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'custom',
 			),
 		},
 		{
 			key: 'minecraft-killed',
 			label: 'Minecraft - Mobs Killed',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'killed',
 			),
 		},
 		{
 			key: 'minecraft-killed-by',
 			label: 'Minecraft - Deaths by Mob',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'killed_by',
 			),
 		},

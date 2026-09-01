@@ -190,7 +190,7 @@ export class AuthAccountAdministrationService {
 			if (!purchase.purchased)
 				throw new BadRequestException(
 					purchase.message ||
-						`The responsible player must be online with ${priceDabloons} dabloons`,
+						`The responsible player must be online with ${priceDabloons} Dabloons`,
 				);
 			return { email, priceDabloons, balanceDabloons: purchase.balance_dabloons };
 		} catch (error) {

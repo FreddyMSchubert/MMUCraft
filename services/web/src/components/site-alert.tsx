@@ -11,12 +11,13 @@ import {
 	type CSSProperties,
 	type ReactNode,
 } from 'react';
+import { decorateDabloonText } from '@/components/dabloon-amount';
 
 type AlertTone = 'info' | 'success' | 'danger';
 type ButtonTone = 'primary' | 'secondary' | 'danger';
 
 export interface AlertButton {
-	label: string;
+	label: ReactNode;
 	value?: string;
 	tone?: ButtonTone;
 	fillColor?: string;
@@ -33,8 +34,8 @@ export interface AlertOptions {
 }
 
 interface ConfirmOptions extends Omit<AlertOptions, 'buttons'> {
-	confirmLabel?: string;
-	cancelLabel?: string;
+	confirmLabel?: ReactNode;
+	cancelLabel?: ReactNode;
 	confirmTone?: ButtonTone;
 }
 
@@ -151,16 +152,16 @@ export function SiteAlertProvider({ children }: { children: ReactNode }) {
 							{tone === 'success' ? '✓' : tone === 'danger' ? '!' : 'i'}
 						</span>
 						<h2 id={`site-alert-title-${active.id}`}>
-							{active.options.title ?? defaultTitle(tone)}
+							{decorateDabloonText(active.options.title ?? defaultTitle(tone))}
 						</h2>
 					</div>
 					<div className="siteAlertMessage" id={`site-alert-message-${active.id}`}>
-						{active.options.message}
+						{decorateDabloonText(active.options.message)}
 					</div>
 					<div className="siteAlertActions">
 						{buttons.map((button, index) => (
 							<button
-								key={`${button.label}-${index}`}
+								key={index}
 								type="button"
 								className={`siteAlertButton siteAlertButton-${button.tone ?? 'primary'}`}
 								style={buttonStyle(button)}
@@ -169,7 +170,7 @@ export function SiteAlertProvider({ children }: { children: ReactNode }) {
 									choose(button);
 								}}
 							>
-								{button.label}
+								{decorateDabloonText(button.label)}
 							</button>
 						))}
 					</div>

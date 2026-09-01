@@ -2,10 +2,13 @@
 
 import Link from 'next/link';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
+import { dabloonizeWords } from '@/lib/dabloons';
 import {
 	knowledgeMarkdown,
+	decorateDabloonHtml,
 	stripDangerousHtml,
 	stripMetadataBlock,
 } from './knowledge/knowledge-markdown-renderer';
@@ -191,8 +194,8 @@ export function KnowledgeTab({
 
 	const renderedHtml = useMemo(() => {
 		const html = stripDangerousHtml(knowledgeMarkdown.parse(pageMarkdown, { async: false }));
-		return html;
-	}, [pageMarkdown]);
+		return activePage?.id === 'money-basics' ? html : decorateDabloonHtml(html);
+	}, [activePage?.id, pageMarkdown]);
 
 	if (error && !data) {
 		return <p className="authError">{error}</p>;
@@ -266,7 +269,13 @@ export function KnowledgeTab({
 							{error}
 						</p>
 					)}
-					<h1 className="knowledgePageTitle">{activePage.sidebarTitle}</h1>
+					<h1 className="knowledgePageTitle">
+						{activePage.id === 'money-basics' ? (
+							activePage.sidebarTitle
+						) : (
+							<DabloonText>{activePage.sidebarTitle}</DabloonText>
+						)}
+					</h1>
 
 					{activePageUnlocked ? (
 						<>
@@ -281,11 +290,16 @@ export function KnowledgeTab({
 								onClick={() => void markRead()}
 								disabled={readPageIds.has(activePage.id) || markingRead}
 							>
-								{readPageIds.has(activePage.id)
-									? 'Read'
-									: markingRead
-										? 'Marking…'
-										: 'Mark as read (+3 dabloons)'}
+								{readPageIds.has(activePage.id) ? (
+									'Read'
+								) : markingRead ? (
+									'Marking…'
+								) : (
+									<>
+										Mark as read{' '}
+										<DabloonAmount amount={3} format="delta" tone="inherit" />
+									</>
+								)}
 							</button>
 						</>
 					) : (
@@ -337,7 +351,7 @@ function KnowledgeSelectOptions({
 
 		return (
 			<option key={entry.id} value={entry.id}>
-				{`${indent}${entry.sidebarTitle}${readPageIds.has(entry.id) ? '' : ' ❗'}`}
+				{`${indent}${entry.id === 'money-basics' ? entry.sidebarTitle : dabloonizeWords(entry.sidebarTitle)}${readPageIds.has(entry.id) ? '' : ' ❗'}`}
 			</option>
 		);
 	});

@@ -114,6 +114,7 @@ function parseCharmDetails(value: unknown): CharmDetailsDefinition | null {
 			const level = raw as {
 				level?: unknown;
 				abilityStatusCurrent?: unknown;
+				dabloons?: unknown;
 				upgradeIngredients?: unknown;
 			};
 			if (!Number.isInteger(level.level)) return [];
@@ -124,6 +125,10 @@ function parseCharmDetails(value: unknown): CharmDetailsDefinition | null {
 						typeof level.abilityStatusCurrent === 'string'
 							? level.abilityStatusCurrent
 							: '',
+					dabloons:
+						Number.isInteger(level.dabloons) && Number(level.dabloons) >= 0
+							? Number(level.dabloons)
+							: 0,
 					upgradeIngredients: Array.isArray(level.upgradeIngredients)
 						? level.upgradeIngredients.filter(
 								(ingredient): ingredient is string =>

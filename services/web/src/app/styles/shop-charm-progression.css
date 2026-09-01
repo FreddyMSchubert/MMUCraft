@@ -136,3 +136,7 @@
 .charmIngredients strong {
 	color: #ffd166;
 }
+.charmLevelCost {
+	display: grid;
+	gap: 6px;
+}

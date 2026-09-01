@@ -115,7 +115,7 @@ export class KnowledgeService {
 			);
 			if (!result.granted)
 				throw new BadRequestException(
-					result.message || 'You have to be online on the server to receive dabloons.',
+					result.message || 'You have to be online on the server to receive Dabloons.',
 				);
 			moneyGranted = true;
 			this.playerMoneyHistory.recordForUser(

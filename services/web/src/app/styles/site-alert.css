@@ -74,7 +74,7 @@
 .siteAlertHeading h2 {
 	min-width: 0;
 	margin: 0;
-	font-family: 'Minecraft UI', 'Noto Sans', sans-serif;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', 'Noto Sans', sans-serif;
 	font-size: clamp(1.2rem, 5vw, 1.55rem);
 	line-height: 1.2;
 	overflow-wrap: anywhere;

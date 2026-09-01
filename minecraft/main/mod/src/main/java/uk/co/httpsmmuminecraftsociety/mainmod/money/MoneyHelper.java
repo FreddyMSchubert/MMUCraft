@@ -12,15 +12,47 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WalletCharm;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class MoneyHelper {
     public static final int DABLOON_CODEPOINT = 0xF0DAB;
     private static final String DABLOON_SYMBOL = Character.toString(DABLOON_CODEPOINT);
+    private static final Pattern DABLOON_WORD = Pattern.compile("(?i)\\bdabloons?\\b");
 
     private MoneyHelper() {}
 
     public static MutableComponent FormatDabloons(int amount) {
-        return Component.literal(DABLOON_SYMBOL + amount);
+        return Component.literal(formatNumber(amount) + " " + DABLOON_SYMBOL);
+    }
+
+    public static MutableComponent FormatDabloonWord(int amount) {
+        return FormatDabloons(amount)
+                .append(Component.literal(amount == 1 ? "abloon" : "abloons"));
+    }
+
+    public static MutableComponent FormatDabloonDelta(int amount) {
+        ChatFormatting colour = amount < 0 ? ChatFormatting.DARK_GREEN : ChatFormatting.GREEN;
+        String sign = amount < 0 ? "-" : "+";
+        return Component.literal("(" + sign)
+                .append(FormatDabloons(Math.abs(amount)))
+                .append(Component.literal(")"))
+                .withStyle(colour);
+    }
+
+    public static MutableComponent ReplaceDabloonWords(String text) {
+        Matcher matcher = DABLOON_WORD.matcher(text);
+        MutableComponent result = Component.empty();
+        int cursor = 0;
+
+        while (matcher.find()) {
+            result.append(Component.literal(text.substring(cursor, matcher.start())));
+            result.append(Component.literal(DABLOON_SYMBOL + matcher.group().substring(1)));
+            cursor = matcher.end();
+        }
+
+        return result.append(Component.literal(text.substring(cursor)));
     }
 
     public static int GetBalance(ServerPlayer player) {
@@ -47,13 +79,22 @@ public final class MoneyHelper {
         return balance;
     }
 
-    public static void SendBalanceMessage(ServerPlayer player, String message) {
-        player.sendSystemMessage(Component.literal("[")
-                .withStyle(ChatFormatting.GOLD)
-                .append(FormatDabloons(GetBalance(player))
-                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-                .append(Component.literal("] ").withStyle(ChatFormatting.GOLD))
-                .append(Component.literal(message).withStyle(ChatFormatting.WHITE)));
+    public static void SendBalanceMessage(ServerPlayer player, int delta, String message) {
+        SendBalanceMessage(player, delta, ReplaceDabloonWords(message));
+    }
+
+    public static void SendBalanceMessage(ServerPlayer player, int delta, Component message) {
+        player.sendSystemMessage(Component.literal("{")
+                .withStyle(ChatFormatting.GREEN)
+                .append(FormatDabloons(GetBalance(player)).withStyle(ChatFormatting.GREEN))
+                .append(Component.literal("} ").withStyle(ChatFormatting.GREEN))
+                .append(message.copy().withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(" "))
+                .append(FormatDabloonDelta(delta)));
+    }
+
+    private static String formatNumber(int amount) {
+        return String.format(Locale.ROOT, "%,d", amount);
     }
 
     public static boolean ReduceMoney(ServerPlayer player, int amount) {

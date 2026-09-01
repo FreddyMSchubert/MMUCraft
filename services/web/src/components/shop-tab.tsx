@@ -2,14 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
+import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import { apiMessage } from '@/lib/api-response';
+import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
 import { useSiteSettings } from '@/lib/site-settings';
 import { FilterRow, ShopCard, ShopDetails } from './shop/shop-item-details';
 import { ShopPreview } from './shop/shop-item-preview';
 import {
 	compareTitles,
 	effectivePrice,
-	formatDabloons,
 	formatOption,
 	isSoldOut,
 	ORDER_OPTIONS,
@@ -180,7 +181,7 @@ export function ShopTab({
 		if (
 			!(await confirm({
 				title: `Buy ${item.title}?`,
-				message: `${item.description}\n\nThis purchase costs ${formatDabloons(price)} dabloons. Stay online in Minecraft until it finishes so the item can be delivered.`,
+				message: `${item.description}\n\nThis purchase costs ${formatDabloonWord(price)}. Stay online in Minecraft until it finishes so the item can be delivered.`,
 				confirmLabel: `Buy for ${formatDabloons(price)}`,
 			}))
 		)
@@ -226,7 +227,8 @@ export function ShopTab({
 				<div>
 					<h3>Shop</h3>
 					<p className="tabSubtitle">
-						The dabloon exchange — the best items for the best prices.
+						The <DabloonText>Dabloon</DabloonText> exchange — the best items for the
+						best prices.
 					</p>
 				</div>
 			</div>
@@ -261,16 +263,29 @@ export function ShopTab({
 						<div className="shopDealHeading">
 							<span className="shopDealSpark">✦</span>
 							<div>
-								<p>{featured.dealMessage ?? 'Today’s find'}</p>
-								<h4>{featured.title}</h4>
+								<p>
+									<DabloonText>
+										{featured.dealMessage ?? 'Today’s find'}
+									</DabloonText>
+								</p>
+								<h4>
+									<DabloonText>{featured.title}</DabloonText>
+								</h4>
 							</div>
 							<strong>−{featured.discountPercent}%</strong>
 						</div>
-						<p>{featured.description}</p>
+						<p>
+							<DabloonText>{featured.description}</DabloonText>
+						</p>
 						<div className="shopDealActions">
 							<span>
-								<del>{formatDabloons(featured.originalPriceDabloons)}</del>{' '}
-								{formatDabloons(featured.discountedPriceDabloons)} dabloons
+								<del>
+									<DabloonAmount
+										amount={featured.originalPriceDabloons}
+										tone="inherit"
+									/>
+								</del>{' '}
+								<DabloonAmount amount={featured.discountedPriceDabloons} />
 							</span>
 							<button
 								type="button"

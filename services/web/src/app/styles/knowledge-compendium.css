@@ -5,7 +5,9 @@
 .knowledgePanel {
 	display: grid;
 	gap: 16px;
-	font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas, 'Courier New', monospace;
+	font-family:
+		'Dabloon Symbol JetBrains Mono', 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas,
+		'Courier New', monospace;
 }
 
 .playPage:has(.knowledgePanel) {

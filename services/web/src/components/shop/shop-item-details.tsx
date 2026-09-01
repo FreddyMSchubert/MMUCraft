@@ -2,11 +2,11 @@
 
 import { type CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import type { CosmeticPreviewView } from '@/lib/site-settings';
 import { ShopMetaIcons, ShopPreview } from './shop-item-preview';
 import {
 	effectivePrice,
-	formatDabloons,
 	formatIngredient,
 	formatOption,
 	isSoldOut,
@@ -98,7 +98,9 @@ export function ShopCard({
 			</div>
 			<div className="shopCardBody">
 				<ItemBadges item={item} />
-				<h4>{item.title}</h4>
+				<h4>
+					<DabloonText>{item.title}</DabloonText>
+				</h4>
 				<Price item={item} />
 			</div>
 			<button
@@ -199,20 +201,9 @@ export function ShopDetails({
 					</div>
 					<div className="shopDetailsSummary">
 						<ItemBadges item={item} />
-						<h2 id="shop-detail-title">{item.title}</h2>
-						{item.description && (
-							<div className="shopItemEffect">
-								<strong>{item.type === 'charm' ? 'Effect' : 'Description'}</strong>
-								<p>{item.description}</p>
-							</div>
-						)}
-						{item.tooltips.length > 0 && (
-							<div className="shopItemTooltips">
-								{item.tooltips.map((tooltip) => (
-									<p key={tooltip}>{tooltip}</p>
-								))}
-							</div>
-						)}
+						<h2 id="shop-detail-title">
+							<DabloonText>{item.title}</DabloonText>
+						</h2>
 						<Price item={item} />
 						<button
 							type="button"
@@ -220,12 +211,39 @@ export function ShopDetails({
 							disabled={!item.available || buying}
 							onClick={() => void onBuy(item)}
 						>
-							{item.available
-								? buying
-									? 'Buying…'
-									: `Buy for ${formatDabloons(effectivePrice(item))} dabloons`
-								: 'Sold out'}
+							{item.available ? (
+								buying ? (
+									'Buying…'
+								) : (
+									<>
+										Buy now ·{' '}
+										<DabloonAmount
+											amount={effectivePrice(item)}
+											tone="inherit"
+										/>
+									</>
+								)
+							) : (
+								'Sold out'
+							)}
 						</button>
+						{item.description && (
+							<div className="shopItemEffect">
+								<strong>{item.type === 'charm' ? 'Effect' : 'Description'}</strong>
+								<p>
+									<DabloonText>{item.description}</DabloonText>
+								</p>
+							</div>
+						)}
+						{item.tooltips.length > 0 && (
+							<div className="shopItemTooltips">
+								{item.tooltips.map((tooltip) => (
+									<p key={tooltip}>
+										<DabloonText>{tooltip}</DabloonText>
+									</p>
+								))}
+							</div>
+						)}
 					</div>
 				</div>
 				{item.type === 'charm' && item.charmDetails && (
@@ -323,7 +341,26 @@ function CharmProgression({ details }: { details: NonNullable<ShopItem['charmDet
 								<th>Lv. {level.level}</th>
 								<td>{level.abilityStatusCurrent || '—'}</td>
 								<td>
-									<IngredientList ingredients={level.upgradeIngredients} />
+									{level.level === details.minLevel && !receivedBroken ? (
+										'Received in this state'
+									) : (
+										<div className="charmLevelCost">
+											{level.dabloons > 0 && (
+												<DabloonAmount
+													amount={level.dabloons}
+													format="full"
+												/>
+											)}
+											{level.upgradeIngredients.length > 0 && (
+												<IngredientList
+													ingredients={level.upgradeIngredients}
+												/>
+											)}
+											{level.dabloons === 0 &&
+												level.upgradeIngredients.length === 0 &&
+												'Free'}
+										</div>
+									)}
 								</td>
 							</tr>
 						))}
@@ -402,12 +439,18 @@ function IngredientList({ ingredients }: { ingredients: string[] }) {
 function Price({ item }: { item: ShopItem }) {
 	return item.isDailyDeal ? (
 		<p className="shopPrice deal">
-			<del>{formatDabloons(item.originalPriceDabloons)}</del>
-			<strong>{formatDabloons(item.discountedPriceDabloons)}</strong> dabloons
+			<del>
+				<DabloonAmount amount={item.originalPriceDabloons} tone="inherit" />
+			</del>
+			<strong>
+				<DabloonAmount amount={item.discountedPriceDabloons} />
+			</strong>
 		</p>
 	) : (
 		<p className="shopPrice">
-			<strong>{formatDabloons(item.priceDabloons)}</strong> dabloons
+			<strong>
+				<DabloonAmount amount={item.priceDabloons} />
+			</strong>
 		</p>
 	);
 }

@@ -10,6 +10,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
 import java.util.Set;
 import java.util.UUID;
@@ -42,10 +43,12 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             }
 
             UnlockBookLoot.updateAvailability(player, response);
-            Component message = Component.literal(response.getMessage());
+            Component message = MoneyHelper.ReplaceDabloonWords(response.getMessage());
             if (response.getUnlocked()) {
                 message = message.copy()
-                        .append(Component.literal(" Read to earn 3 dabloons! "))
+                        .append(Component.literal(" Read for "))
+                        .append(MoneyHelper.FormatDabloons(3).withStyle(ChatFormatting.GREEN))
+                        .append(Component.literal(". "))
                         .append(WebsiteCommand.takeMeThere("knowledge/" + response.getKnowledgeId(), "Click to read!", ChatFormatting.RED));
             }
             player.sendSystemMessage(message);

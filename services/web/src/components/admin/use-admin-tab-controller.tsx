@@ -2,7 +2,9 @@
 
 import { type SyntheticEvent, useState } from 'react';
 import { PlayerName } from '@/components/player-name';
+import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
+import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
 import { apiBody, apiMessage, errorMessage, formatDateTime } from './admin-api';
 import {
 	ADMIN_PAGE_SIZE,
@@ -199,8 +201,8 @@ export function useAdminTabController({
 		if (
 			!(await confirm({
 				title: 'Add this signup invitation?',
-				message: `${responsiblePlayer.minecraftUsername} will pay ${invitePrice} dabloons so ${whitelistEmail} can create an account. The responsible player must stay online in Minecraft until the charge finishes.`,
-				confirmLabel: `Charge ${invitePrice} dabloons`,
+				message: `${responsiblePlayer.minecraftUsername} will pay ${formatDabloonWord(invitePrice)} so ${whitelistEmail} can create an account. The responsible player must stay online in Minecraft until the charge finishes.`,
+				confirmLabel: `Charge ${formatDabloons(invitePrice)}`,
 			}))
 		)
 			return;
@@ -238,8 +240,8 @@ export function useAdminTabController({
 								name={responsiblePlayer.minecraftUsername}
 								color={responsiblePlayer.color}
 							/>{' '}
-							paid {result.priceDabloons} dabloons and has {result.balanceDabloons}{' '}
-							left.
+							paid <DabloonAmount amount={result.priceDabloons} /> and has{' '}
+							<DabloonAmount amount={result.balanceDabloons} /> left.
 						</>
 					),
 				});

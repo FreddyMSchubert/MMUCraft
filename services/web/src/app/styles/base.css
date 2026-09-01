@@ -3,12 +3,33 @@
    ============================================================ */
 
 :root {
+	--dabloon-positive: #55ff55;
+	--dabloon-negative: #00aa00;
 	--rarity-common: #fff;
 	--rarity-uncommon: #ffff55;
 	--rarity-rare: #55ffff;
 	--rarity-epic: #ff55ff;
 	--rarity-legendary: #55ff55;
 	--rarity-mythical: #ff5f00;
+}
+
+.dabloonAmount,
+.dabloonWord {
+	font-variant-numeric: tabular-nums;
+}
+
+.dabloonAmount.dabloonTone-default,
+.dabloonAmount.dabloonTone-positive {
+	color: var(--dabloon-positive);
+}
+
+.dabloonAmount.dabloonTone-negative {
+	color: var(--dabloon-negative);
+}
+
+.dabloonAmount.dabloonTone-inherit,
+.dabloonWord {
+	color: inherit;
 }
 
 .playerName {

@@ -12,6 +12,7 @@ export type ShopTagFilter = 'all' | 'dyeable' | 'animated' | 'discounted' | 'sol
 interface CharmLevel {
 	level: number;
 	abilityStatusCurrent: string;
+	dabloons: number;
 	upgradeIngredients: string[];
 }
 

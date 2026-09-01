@@ -1,7 +1,8 @@
+import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
+import type { ReactNode } from 'react';
 import {
 	formatCategory,
 	formatMinecraftStatValue,
-	formatNumber,
 	formatTimestamp,
 	groupMinecraftStats,
 } from './player-display-format';
@@ -34,8 +35,8 @@ export function PlayerStatsList({
 					value={formatTimestamp(player.stats.minecraft.lastPlayedAtUnixMs)}
 				/>
 				<StatLine
-					label="Dabloons Earned"
-					value={formatNumber(player.stats.money.earnedDabloons)}
+					label={<DabloonText>Dabloons Earned</DabloonText>}
+					value={<DabloonAmount amount={player.stats.money.earnedDabloons} />}
 				/>
 				{advancement && (
 					<StatLine
@@ -72,7 +73,7 @@ export function PlayerStatsList({
 	);
 }
 
-export function StatLine({ label, value }: { label: string; value: string }) {
+export function StatLine({ label, value }: { label: ReactNode; value: ReactNode }) {
 	return (
 		<div className="playerStatLine">
 			<span>{label}</span>

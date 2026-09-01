@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { type SyntheticEvent, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
+import { DabloonText } from '@/components/dabloon-amount';
 import { apiMessage } from '@/lib/api-response';
 import { useSiteSettings } from '@/lib/site-settings';
 
@@ -117,7 +118,7 @@ function GiftCodeSection() {
 					title: 'Gift code redeemed',
 					message: apiMessage(
 						body,
-						'The reward was added to your Minecraft account. Check your dabloon balance in-game.',
+						'The reward was added to your Minecraft account. Check your Dabloon balance in-game.',
 					),
 					tone: 'success',
 				});
@@ -140,7 +141,10 @@ function GiftCodeSection() {
 		<section className="giftCodeSection">
 			<div>
 				<h3>Gift codes</h3>
-				<p>Enter a gift code while online to receive dabloons in-game.</p>
+				<p>
+					Enter a gift code while online to receive <DabloonText>Dabloons</DabloonText>{' '}
+					in-game.
+				</p>
 			</div>
 			<div className="giftInstructions">
 				<p>

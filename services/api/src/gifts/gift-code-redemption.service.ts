@@ -82,7 +82,7 @@ export class GiftCodeRedemptionService {
 				amountDabloons: giftCode.amount_dabloons,
 				message:
 					result.message ||
-					`Gift code redeemed for ${giftCode.amount_dabloons} dabloons.`,
+					`Gift code redeemed for ${giftCode.amount_dabloons} Dabloons.`,
 			};
 		} catch (error) {
 			if (!moneyGranted && !(error instanceof BadRequestException)) {
@@ -93,7 +93,7 @@ export class GiftCodeRedemptionService {
 			}
 			if (moneyGranted && !(error instanceof BadRequestException)) {
 				throw new BadRequestException(
-					'The dabloons were granted, but the website record could not be updated. Contact committee if your balance looks wrong.',
+					'The Dabloons were granted, but the website record could not be updated. Contact committee if your balance looks wrong.',
 				);
 			}
 			throw error;

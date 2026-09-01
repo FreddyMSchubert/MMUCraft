@@ -85,9 +85,7 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
         remove(player, requiredCount);
         player.getInventory().setChanged();
         player.containerMenu.broadcastChanges();
-        return ClaimResult.success(
-                "Submitted " + requiredCount + " of “" + itemName() + "” and received " + getReward(task) + " dabloons."
-        );
+        return ClaimResult.success("Submitted " + requiredCount + " × " + itemName(), getReward(task));
     }
 
     private int count(ServerPlayer player) {

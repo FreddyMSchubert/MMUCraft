@@ -1,0 +1,85 @@
+import { Fragment, type ReactNode } from 'react';
+import {
+	DABLOON_SYMBOL,
+	formatDabloonDelta,
+	formatDabloons,
+	formatDabloonWord,
+} from '@/lib/dabloons';
+
+type DabloonTone = 'default' | 'positive' | 'negative' | 'inherit';
+
+export function DabloonAmount({
+	amount,
+	format = 'compact',
+	tone = 'default',
+}: {
+	amount: number;
+	format?: 'compact' | 'full' | 'delta';
+	tone?: DabloonTone;
+}) {
+	const effectiveTone =
+		format === 'delta' && tone === 'default' ? (amount < 0 ? 'negative' : 'positive') : tone;
+	const text =
+		format === 'full'
+			? formatDabloonWord(amount)
+			: format === 'delta'
+				? formatDabloonDelta(amount)
+				: formatDabloons(amount);
+
+	return (
+		<span
+			className={`dabloonAmount dabloonTone-${effectiveTone}`}
+			aria-label={readableDabloons(amount, format === 'delta')}
+		>
+			{text}
+		</span>
+	);
+}
+
+export function DabloonText({ children }: { children: string }) {
+	const amountPattern = `[+−-]?[\\d,]+\\s+(?:${DABLOON_SYMBOL}(?:abloons?)?|dabloons?)`;
+	const parts = children.split(new RegExp(`(${amountPattern}|\\bdabloons?\\b)`, 'gi'));
+	return parts.map((part, index) => {
+		if (/^dabloons?$/i.test(part)) {
+			return (
+				<span className="dabloonWord" aria-label={part} key={`${part}-${index}`}>
+					{DABLOON_SYMBOL}
+					{part.slice(1)}
+				</span>
+			);
+		}
+
+		if (new RegExp(`^${amountPattern}$`, 'i').test(part)) {
+			const text = part.replace(
+				/\b(dabloons?)/i,
+				(word) => `${DABLOON_SYMBOL}${word.slice(1)}`,
+			);
+			const readable = text.includes(`${DABLOON_SYMBOL}abloon`)
+				? text.replace(DABLOON_SYMBOL, 'D')
+				: `${text.replace(DABLOON_SYMBOL, '').trim()} Dabloons`;
+			const tone = /^[−-]/.test(text) ? 'negative' : 'default';
+			return (
+				<span
+					className={`dabloonAmount dabloonTone-${tone}`}
+					aria-label={readable}
+					key={`${part}-${index}`}
+				>
+					{text}
+				</span>
+			);
+		}
+
+		return <Fragment key={`${part}-${index}`}>{part}</Fragment>;
+	});
+}
+
+export function decorateDabloonText(node: ReactNode) {
+	return typeof node === 'string' ? <DabloonText>{node}</DabloonText> : node;
+}
+
+function readableDabloons(amount: number, delta: boolean) {
+	const absolute = Math.abs(amount).toLocaleString('en-US');
+	const word = Math.abs(amount) === 1 ? 'Dabloon' : 'Dabloons';
+	if (!delta) return `${amount.toLocaleString('en-US')} ${word}`;
+	return `${amount < 0 ? 'lost' : 'gained'} ${absolute} ${word}`;
+}

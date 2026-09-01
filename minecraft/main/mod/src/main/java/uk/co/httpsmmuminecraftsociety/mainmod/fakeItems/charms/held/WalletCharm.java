@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
@@ -117,7 +118,9 @@ public class WalletCharm implements Charm, UseCallbackCharm
 
         List<Component> lines = new ArrayList<>(wallet.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
         if (!lines.isEmpty()) {
-            lines.set(lines.size() - 1, Component.literal("Balance: " + balance + (balance == 1 ? " dabloon." : " dabloons.")));
+            lines.set(lines.size() - 1, Component.literal("Balance: ")
+                    .append(MoneyHelper.FormatDabloonWord(balance).withStyle(net.minecraft.ChatFormatting.GREEN))
+                    .append(Component.literal(".")));
             wallet.set(DataComponents.LORE, new ItemLore(lines));
         }
     }

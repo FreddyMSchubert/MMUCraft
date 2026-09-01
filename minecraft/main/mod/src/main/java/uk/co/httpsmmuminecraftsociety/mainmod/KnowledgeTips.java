@@ -39,13 +39,24 @@ public final class KnowledgeTips {
 
     private static final List<WeightedMessage> GREETINGS = List.of(
             message(10, "Welcome back!", context -> true),
+            message(3, "Oh hey, Welcome back!", context -> true),
+            message(5, "Greetings!", context -> true),
+            message(1, "Greetings, individual with great taste in video games!", context -> true),
             message(4, "Glad youre back!", context -> true),
             message(4, "You're back! Hi!", context -> true),
+            message(4, "Welcome, welcome!", context -> true),
             message(2, "Hey, Welcome back!", context -> true),
             message(4, "Good to see you!", context -> true),
             message(4, "Happy to have you!", context -> true),
+            message(5, "Hey again.", context -> true),
+            message(1, "Hello there. (General Kenobi)", context -> true),
+            message(6, "Hello again.", context -> true),
             message(4, "Look who's back!", context -> true),
             message(5, "Good to see you!", context -> true),
+            message(3, "Hey there!", context -> true),
+            message(3, "Always nice to see you!", context -> true),
+            message(2, "Fancy seeing you here!", context -> true),
+            message(2, "Good to see a familiar face!", context -> true),
             message(3, "Hello there!", context -> true),
             message(1, "Welcome back in the cubicle!", context -> true),
 
@@ -56,6 +67,7 @@ public final class KnowledgeTips {
             message(20, "Right back at it.", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "That was fast.", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "Picking up where we left off?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
+            message(20, "Ready for round two?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
 
             message(100, "Long time no see!", context -> context.goneFor(7L * DAY_MS)),
             message(100, "Feels like it's been a minute.", context -> context.goneFor(7L * DAY_MS)),
@@ -69,22 +81,22 @@ public final class KnowledgeTips {
             message(1000000, "You do still exist!", context -> context.goneFor(90L * DAY_MS)),
 
             message(25, "Hello, night owl!", context -> context.hour() < 5),
-            message(30, "Couldn't sleep?", context -> context.hour() < 5),
+            message(30, "Hiya, couldn't sleep?", context -> context.hour() < 5),
             message(20, "Still awake?", context -> context.hour() < 5),
             message(18, "Good Morning!", context -> context.hour() >= 5 && context.hour() < 8),
             message(18, "You're up early.", context -> context.hour() >= 5 && context.hour() < 8),
             message(25, "Good Morning, early bird!", context -> context.hour() >= 5 && context.hour() < 8),
-            message(15, "Good morning!", context -> context.hour() >= 8 && context.hour() < 12),
-            message(15, "Good afternoon!", context -> context.hour() >= 12 && context.hour() < 18),
-            message(15, "Good evening!", context -> context.hour() >= 18),
+            message(27, "Good morning!", context -> context.hour() >= 8 && context.hour() < 12),
+            message(27, "Good afternoon!", context -> context.hour() >= 12 && context.hour() < 18),
+            message(27, "Good evening!", context -> context.hour() >= 18),
 
-            message(13, "Happy Monday!", context -> context.day() == DayOfWeek.MONDAY),
-            message(13, "Happy Tuesday!", context -> context.day() == DayOfWeek.TUESDAY),
-            message(13, "Happy Wednesday!", context -> context.day() == DayOfWeek.WEDNESDAY),
-            message(13, "Happy Thursday!", context -> context.day() == DayOfWeek.THURSDAY),
-            message(13, "Happy Friday!", context -> context.day() == DayOfWeek.FRIDAY),
-            message(16, "Happy Surprising Saturday!", context -> context.day() == DayOfWeek.SATURDAY),
-            message(16, "Happy Sunday Funday!", context -> context.day() == DayOfWeek.SUNDAY)
+            message(14, "Happy Monday!", context -> context.day() == DayOfWeek.MONDAY),
+            message(14, "Happy Tuesday!", context -> context.day() == DayOfWeek.TUESDAY),
+            message(14, "Happy Wednesday!", context -> context.day() == DayOfWeek.WEDNESDAY),
+            message(14, "Happy Thursday!", context -> context.day() == DayOfWeek.THURSDAY),
+            message(14, "Happy Friday!", context -> context.day() == DayOfWeek.FRIDAY),
+            message(20, "Happy Surprising Saturday!", context -> context.day() == DayOfWeek.SATURDAY),
+            message(20, "Happy Sunday Funday!", context -> context.day() == DayOfWeek.SUNDAY)
     );
 
     private static final List<WeightedMessage> FLAVOURS = List.of(
@@ -166,7 +178,7 @@ public final class KnowledgeTips {
             message(2, "Another day in the blocky world.", context -> true),
             message(2, "Creepers like their personal space.", context -> true),
             message(6, "Have you read all your knowledge books?", context -> true),
-            message(6, "Have you signed up for the next few society events?", context -> true),
+            message(6, "Have you signed up for the next society events?", context -> true),
             message(6, "Have you checked out your dailies?", context -> true)
     );
 

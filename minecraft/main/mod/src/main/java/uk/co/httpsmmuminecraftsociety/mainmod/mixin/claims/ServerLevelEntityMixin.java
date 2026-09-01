@@ -12,6 +12,12 @@ import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 abstract class ServerLevelEntityMixin {
     @Inject(method = "addFreshEntity", at = @At("HEAD"), cancellable = true)
     private void mainmod$guardClaimedEntitySpawn(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (!ClaimsManager.allowEntitySpawn((ServerLevel) (Object) this, entity)) cir.setReturnValue(false);
+        if (!ClaimsManager.allowEntitySpawn((ServerLevel) (Object) this, entity)) {
+            // Some entities register themselves with their owner in their constructor. Ensure a rejected
+            // spawn runs normal removal cleanup instead of leaving an owner pointing at an entity that was
+            // never added to the level (FishingHook is one vanilla example).
+            entity.discard();
+            cir.setReturnValue(false);
+        }
     }
 }

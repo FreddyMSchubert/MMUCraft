@@ -19,6 +19,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -152,7 +153,7 @@ public final class ClaimsManager {
     }
 
     public static boolean allowEntitySpawn(Level level, Entity entity) {
-        if (!(entity instanceof Projectile)) return true;
+        if (!(entity instanceof Projectile) || entity instanceof FishingHook) return true;
         ArrayDeque<ServerPlayer> actors = ACTORS.get();
         return actors.isEmpty() || canAccess(actors.peek(), level, entity.blockPosition());
     }
@@ -181,6 +182,7 @@ public final class ClaimsManager {
     }
 
     public static BlockHitResult projectileBarrier(Projectile projectile, Vec3 start, Vec3 movement) {
+        if (projectile instanceof FishingHook) return null;
         if (movement.lengthSqr() == 0) return null;
         if (!ready) {
             return new BlockHitResult(

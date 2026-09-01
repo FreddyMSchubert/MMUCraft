@@ -30,10 +30,54 @@ html[data-theme='light'] .playerName,
 }
 
 @font-face {
+	font-family: 'Dabloon Symbol Minecraft UI';
+	src: url('/assets/fonts/dabloon-symbol/dabloon-symbol-minecraft.woff2') format('woff2');
+	font-display: block;
+	font-style: normal;
+	font-weight: 400 800;
+	unicode-range: U+F0DAB;
+}
+
+@font-face {
 	font-family: 'Noto Sans';
 	src: url('/assets/fonts/noto-sans/noto-sans-latin.woff2') format('woff2');
 	font-display: swap;
 	font-stretch: 100%;
 	font-style: normal;
 	font-weight: 400 800;
+}
+
+@font-face {
+	font-family: 'Dabloon Symbol Noto Sans';
+	src: url('/assets/fonts/dabloon-symbol/dabloon-symbol-noto-sans.woff2') format('woff2');
+	font-display: block;
+	font-stretch: 100%;
+	font-style: normal;
+	font-weight: 400 800;
+	unicode-range: U+F0DAB;
+}
+
+@font-face {
+	font-family: 'JetBrainsMono Nerd Font';
+	src: url('/assets/fonts/jetbrains-mono-nerd/jetbrains-mono-nerd-regular.woff2') format('woff2');
+	font-display: swap;
+	font-style: normal;
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'JetBrainsMono Nerd Font';
+	src: url('/assets/fonts/jetbrains-mono-nerd/jetbrains-mono-nerd-bold.woff2') format('woff2');
+	font-display: swap;
+	font-style: normal;
+	font-weight: 700 900;
+}
+
+@font-face {
+	font-family: 'Dabloon Symbol JetBrains Mono';
+	src: url('/assets/fonts/dabloon-symbol/dabloon-symbol-jetbrains-mono.woff2') format('woff2');
+	font-display: block;
+	font-style: normal;
+	font-weight: 400 800;
+	unicode-range: U+F0DAB;
 }

@@ -1,0 +1,11 @@
+{
+	"providers": [
+		{
+			"type": "bitmap",
+			"file": "general-pack:font/dabloon.png",
+			"ascent": 8,
+			"height": 9,
+			"chars": ["\udb83\uddab"]
+		}
+	]
+}

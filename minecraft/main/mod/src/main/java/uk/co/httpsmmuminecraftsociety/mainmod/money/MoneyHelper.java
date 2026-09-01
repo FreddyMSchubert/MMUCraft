@@ -3,6 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.money;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -13,7 +14,14 @@ import java.util.Comparator;
 import java.util.List;
 
 public final class MoneyHelper {
+    public static final int DABLOON_CODEPOINT = 0xF0DAB;
+    private static final String DABLOON_SYMBOL = Character.toString(DABLOON_CODEPOINT);
+
     private MoneyHelper() {}
+
+    public static MutableComponent FormatDabloons(int amount) {
+        return Component.literal(DABLOON_SYMBOL + amount);
+    }
 
     public static int GetBalance(ServerPlayer player) {
         if (player == null || player.hasDisconnected()) {
@@ -40,9 +48,9 @@ public final class MoneyHelper {
     }
 
     public static void SendBalanceMessage(ServerPlayer player, String message) {
-        player.sendSystemMessage(Component.literal("[Dabloons: ")
+        player.sendSystemMessage(Component.literal("[")
                 .withStyle(ChatFormatting.GOLD)
-                .append(Component.literal(String.valueOf(GetBalance(player)))
+                .append(FormatDabloons(GetBalance(player))
                         .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
                 .append(Component.literal("] ").withStyle(ChatFormatting.GOLD))
                 .append(Component.literal(message).withStyle(ChatFormatting.WHITE)));

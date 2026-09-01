@@ -73,16 +73,31 @@ public class PlayerAdvancementMoney {
                 isMember
         ).totalReward();
         boolean rewarded = reward > 0 && MoneyHelper.GainMoney(rewardedPlayer, reward);
+        DisplayInfo display = advancementHolder.value().display().orElseThrow();
+        int awardedReward = rewarded ? reward : 0;
+        boolean announcePublicly = shouldAnnouncePublicly(
+                rewardedPlayer,
+                advancementHolder,
+                display,
+                awardedReward
+        );
+
+        announceAdvancement(
+                rewardedPlayer,
+                advancementHolder,
+                display,
+                awardedReward,
+                announcePublicly
+        );
+
         if (rewarded) {
-            if ("minecraft".equals(advancementHolder.id().getNamespace()) || reward >= 30) {
-                advancementHolder.value().display().ifPresent(display -> {
-                    DiscordBridge.advancement(
-                            rewardedPlayer,
-                            discordAction(display),
-                            display.getTitle().getString(),
-                            reward
-                    );
-                });
+            if (announcePublicly) {
+                DiscordBridge.advancement(
+                        rewardedPlayer,
+                        discordAction(display),
+                        display.getTitle().getString(),
+                        reward
+                );
             }
             GameplayGrpcService.recordMoneyEvent(
                     rewardedPlayer.getName().getString(),
@@ -97,51 +112,59 @@ public class PlayerAdvancementMoney {
             });
 
         }
-
-        int awardedReward = rewarded ? reward : 0;
-        if (shouldAnnounceAdvancement(advancementHolder, awardedReward)) {
-            advancementHolder.value().display().ifPresent(display ->
-                    announceAdvancement(rewardedPlayer, advancementHolder, display, awardedReward));
-        }
     }
 
-    private boolean shouldAnnounceAdvancement(AdvancementHolder advancementHolder, int reward) {
-        return "minecraft".equals(advancementHolder.id().getNamespace()) || reward >= 30;
+    private boolean shouldAnnouncePublicly(
+            ServerPlayer rewardedPlayer,
+            AdvancementHolder advancementHolder,
+            DisplayInfo display,
+            int reward
+    ) {
+        if (!rewardedPlayer.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)) {
+            return false;
+        }
+
+        if ("minecraft".equals(advancementHolder.id().getNamespace())) {
+            return display.shouldAnnounceChat();
+        }
+
+        return reward >= 30;
     }
 
     private void announceAdvancement(
             ServerPlayer rewardedPlayer,
             AdvancementHolder advancementHolder,
             DisplayInfo display,
-            int reward
+            int reward,
+            boolean announcePublicly
     ) {
-        if (!display.shouldAnnounceChat()
-                || !rewardedPlayer.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)) {
-            return;
-        }
-
         String action = switch (display.getType()) {
             case TASK -> "achieved";
             case GOAL -> "reached the goal";
             case CHALLENGE -> "completed the challenge";
         };
         Component advancementName = Advancement.name(advancementHolder);
+        Component privateMessage = Component.literal("You " + action + " ")
+                .append(advancementName.copy());
 
+        if (reward > 0) {
+            MoneyHelper.SendBalanceMessage(rewardedPlayer, reward, privateMessage);
+        } else {
+            MoneyHelper.SendSystemMessage(rewardedPlayer, privateMessage);
+        }
+
+        if (!announcePublicly) {
+            return;
+        }
+
+        Component publicMessage = Component.empty()
+                .append(rewardedPlayer.getDisplayName())
+                .append(Component.literal(" " + action + " "))
+                .append(advancementName.copy());
         for (ServerPlayer viewer : rewardedPlayer.level().getServer().getPlayerList().getPlayers()) {
-            Component message;
-            if (viewer.getUUID().equals(rewardedPlayer.getUUID())) {
-                message = Component.literal("You " + action + " ").append(advancementName.copy());
-                if (reward > 0) {
-                    MoneyHelper.SendBalanceMessage(viewer, reward, message);
-                    continue;
-                }
-            } else {
-                message = Component.empty()
-                        .append(rewardedPlayer.getDisplayName())
-                        .append(Component.literal(" " + action + " "))
-                        .append(advancementName.copy());
+            if (!viewer.getUUID().equals(rewardedPlayer.getUUID())) {
+                MoneyHelper.SendSystemMessage(viewer, publicMessage);
             }
-            viewer.sendSystemMessage(message);
         }
     }
 

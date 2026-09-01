@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -70,9 +71,17 @@ public final class MoneyHelper {
     }
 
     public static void SendBalanceMessage(ServerPlayer player, int delta, Component message) {
-        player.sendSystemMessage(balanceMessage(player, message)
+        SendSystemMessage(player, balanceMessage(player, message)
                 .append(Component.literal(" "))
                 .append(FormatDabloonDelta(delta)));
+    }
+
+    public static void SendSystemMessage(ServerPlayer player, Component message) {
+        if (player == null || player.hasDisconnected()) {
+            return;
+        }
+
+        player.connection.send(new ClientboundSystemChatPacket(message, false));
     }
 
     private static MutableComponent balanceMessage(ServerPlayer player, Component message) {

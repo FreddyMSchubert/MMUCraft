@@ -19,7 +19,6 @@ https://modrinth.com/datapack/more-mobs
 
 ### Datapacks
 
-- mini blocks & wandering trades
 - custom nether portals
 - cauldron concrete & mud
 - painting picker

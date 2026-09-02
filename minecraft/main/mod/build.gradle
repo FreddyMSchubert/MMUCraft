@@ -1,3 +1,6 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
@@ -96,12 +99,63 @@ sourceSets {
 }
 
 processResources {
+    dependsOn "generateMiniBlockRecipes"
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
         expand "version": inputs.properties.version
     }
 }
+
+def miniBlockCatalog = file("src/main/resources/data/mainmod/miniblocks.json")
+def generatedMiniBlockResources = layout.buildDirectory.dir("generated/miniblockResources")
+
+tasks.register("generateMiniBlockRecipes") {
+    inputs.file(miniBlockCatalog)
+    outputs.dir(generatedMiniBlockResources)
+
+    doLast {
+        File resourceRoot = generatedMiniBlockResources.get().asFile
+        File recipeDirectory = new File(resourceRoot, "data/mainmod/recipe/miniblocks")
+        delete(recipeDirectory)
+        recipeDirectory.mkdirs()
+
+        List<Map<String, String>> definitions = new JsonSlurper().parse(miniBlockCatalog) as List<Map<String, String>>
+        Set<String> ids = new HashSet<>()
+
+        definitions.each { definition ->
+            for (String field : ["id", "input", "name", "texture"]) {
+                if (!(definition[field] instanceof String) || definition[field].isBlank()) {
+                    throw new GradleException("Mini block definition is missing string field '${field}'")
+                }
+            }
+            if (!ids.add(definition.id)) {
+                throw new GradleException("Duplicate mini block id: ${definition.id}")
+            }
+
+            Map<String, Object> recipe = [
+                    type      : "minecraft:stonecutting",
+                    ingredient: definition.input,
+                    result    : [
+                            id        : "minecraft:player_head",
+                            count     : 8,
+                            components: [
+                                    "minecraft:profile"  : [
+                                            properties: [[name: "textures", value: definition.texture]]
+                                    ],
+                                    "minecraft:item_name": definition.name,
+                                    "minecraft:rarity"   : "common"
+                            ]
+                    ]
+            ]
+
+            File recipeFile = new File(recipeDirectory, "${definition.id}.json")
+            recipeFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(recipe)) + System.lineSeparator()
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir(generatedMiniBlockResources)
 
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 25

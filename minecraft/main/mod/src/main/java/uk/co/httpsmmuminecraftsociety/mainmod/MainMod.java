@@ -55,6 +55,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.metrics.MetricsServer;
+import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
+import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
@@ -90,9 +92,11 @@ public class MainMod implements ModInitializer {
         );
 
         DataLoader.init();
+        LOGGER.info("Loaded {} mini block definitions", MiniBlockCatalog.definitions().size());
         DailyTaskRegistry.validate();
 
         FakeItemsCommand.init();
+        MiniBlockCommand.init();
         MoneyCommand.init();
         WebsiteCommand.init();
         KnowledgeTips.init();

@@ -1,18 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import MiniSearch from 'minisearch';
+import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { randomInt } from 'node:crypto';
 import { and, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/auth-session.service';
 import { DatabaseService, knowledgeReads, knowledgeUnlocks } from '../../database/database.service';
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service';
 import { PlayerMoneyHistoryService } from '../../players/player-money-history.service';
+import { CachedSearchIndex } from '../../search/cached-search-index';
 import { KnowledgeDocumentCatalogService } from './knowledge-document-catalog.service';
-import type { KnowledgePage, KnowledgeTreeEntry } from './knowledge-document.types';
+import type {
+	KnowledgePage,
+	KnowledgeSearchPage,
+	KnowledgeTreeEntry,
+} from './knowledge-document.types';
 
 const KNOWLEDGE_READ_REWARD_DABLOONS = 3;
-const SEARCH_CACHE_MS = 60_000;
-const SEARCH_CACHE_SIZE = 100;
-const SEARCH_RESULT_LIMIT = 50;
 
 interface KnowledgeUnlockResponse {
 	unlocked: boolean;
@@ -34,9 +35,19 @@ type KnowledgeSearchResult =
 	{ locked: true } | { locked: false; id: string; title: string; folders: string[] };
 
 @Injectable()
-export class KnowledgeService {
-	private searchIndex: { version: number; value: MiniSearch } | null = null;
-	private readonly searchCache = new Map<string, { expiresAt: number; ids: string[] }>();
+export class KnowledgeService implements OnModuleInit {
+	private readonly searchIndex = new CachedSearchIndex<KnowledgeSearchPage>(
+		{
+			fields: ['title', 'folders', 'tags', 'content'],
+			searchOptions: {
+				boost: { title: 4, tags: 3, folders: 2 },
+				combineWith: 'AND',
+				fuzzy: 0.2,
+				prefix: true,
+			},
+		},
+		50,
+	);
 
 	constructor(
 		private readonly database: DatabaseService,
@@ -44,6 +55,11 @@ export class KnowledgeService {
 		private readonly identities: MinecraftIdentityService,
 		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
 	) {}
+
+	onModuleInit() {
+		const document = this.documents.loadDocument();
+		this.searchIndex.build(document.mtimeMs, document.searchPages);
+	}
 
 	getKnowledgeForUser(userId: number) {
 		const document = this.documents.loadDocument();
@@ -71,7 +87,7 @@ export class KnowledgeService {
 		if (!query) return { query, results: [] };
 
 		const document = this.documents.loadDocument();
-		const ids = this.searchIds(document.mtimeMs, document.searchPages, query);
+		const ids = this.searchIndex.search(document.mtimeMs, document.searchPages, query);
 		const pagesById = new Map(document.pages.map((page) => [page.id, page]));
 		const unlockedIds = this.getUnlockedIds(userId);
 		return {
@@ -92,43 +108,6 @@ export class KnowledgeService {
 				];
 			}),
 		};
-	}
-
-	private searchIds(
-		version: number,
-		pages: { id: string; title: string; folders: string; tags: string; content: string }[],
-		query: string,
-	): string[] {
-		if (this.searchIndex?.version !== version) {
-			const value = new MiniSearch({
-				fields: ['title', 'folders', 'tags', 'content'],
-				searchOptions: {
-					boost: { title: 4, tags: 3, folders: 2 },
-					combineWith: 'AND',
-					fuzzy: 0.2,
-					prefix: true,
-				},
-			});
-			value.addAll(pages);
-			this.searchIndex = { version, value };
-			this.searchCache.clear();
-		}
-
-		const key = query.toLocaleLowerCase('en');
-		const cached = this.searchCache.get(key);
-		if (cached?.expiresAt && cached.expiresAt > Date.now()) return cached.ids;
-		if (cached) this.searchCache.delete(key);
-
-		const ids = this.searchIndex.value
-			.search(query)
-			.slice(0, SEARCH_RESULT_LIMIT)
-			.map((result) => String(result.id));
-		if (this.searchCache.size >= SEARCH_CACHE_SIZE) {
-			const oldestKey = this.searchCache.keys().next().value;
-			if (oldestKey !== undefined) this.searchCache.delete(oldestKey);
-		}
-		this.searchCache.set(key, { expiresAt: Date.now() + SEARCH_CACHE_MS, ids });
-		return ids;
 	}
 
 	getRandomTipForMinecraftPlayer(

@@ -89,6 +89,24 @@ export class ShopPurchasesService {
 		};
 	}
 
+	searchShopForUser(user: AuthenticatedUser, queryInput: string | undefined) {
+		const query = queryInput?.trim() ?? '';
+		if (query.length > 100) throw new BadRequestException('Search query is too long.');
+		if (!query) return { query, itemIds: [] };
+
+		const catalog = this.itemCatalog.load();
+		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
+		const visibleIds = new Set(
+			catalog.items
+				.filter((item) => isVisibleInShop(item, unlockedIds))
+				.map((item) => item.id),
+		);
+		return {
+			query,
+			itemIds: this.itemCatalog.search(query).filter((id) => visibleIds.has(id)),
+		};
+	}
+
 	async purchaseItem(user: AuthenticatedUser, itemIdInput: string | undefined) {
 		const itemId = typeof itemIdInput === 'string' ? itemIdInput.trim() : '';
 		if (!itemId) throw new BadRequestException('No shop item was selected.');

@@ -4,14 +4,13 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"When the impostor is sus"
-	],
+	"tooltips": ["When the impostor is sus"],
 	"shopPurchasable": {
-	"priceDabloons": 67,
+		"priceDabloons": 67,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Amogus Hat."
+		"unlockMessage": "Unlocked cosmetic: Amogus Hat.",
+		"tags": ["amongus", "among us"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

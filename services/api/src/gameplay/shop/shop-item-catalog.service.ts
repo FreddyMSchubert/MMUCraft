@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { CachedSearchIndex } from '../../search/cached-search-index';
 import { findItemDefinitionFiles } from './shop-item-asset-files';
 import { parseShopItemDefinition, unlistedItemRenderAsset } from './shop-item-definition-parser';
 import type {
@@ -8,6 +9,7 @@ import type {
 	ItemRenderAsset,
 	RawItemDefinition,
 	ShopItemCatalog,
+	ShopSearchDocument,
 } from './shop-item-catalog.types';
 
 export type {
@@ -26,13 +28,18 @@ const DEFAULT_ITEM_ROOTS = [
 @Injectable()
 export class ShopItemCatalogService implements OnModuleInit {
 	private cache: ShopItemCatalog | null = null;
+	private readonly searchIndex = new CachedSearchIndex<ShopSearchDocument>({
+		fields: ['content'],
+		searchOptions: { combineWith: 'AND', fuzzy: 0.2, prefix: true },
+	});
 
 	onModuleInit() {
-		if (process.env.NODE_ENV === 'production') this.load();
+		const catalog = this.load();
+		this.searchIndex.build(catalog.mtimeMs, catalog.searchDocuments);
 	}
 
 	load(): ShopItemCatalog {
-		if (process.env.NODE_ENV === 'production' && this.cache) return this.cache;
+		if (this.cache) return this.cache;
 		const root =
 			process.env.SHOP_ITEM_ROOT ??
 			DEFAULT_ITEM_ROOTS.find((candidate) => existsSync(candidate)) ??
@@ -40,15 +47,18 @@ export class ShopItemCatalogService implements OnModuleInit {
 		if (!existsSync(root)) return (this.cache = emptyCatalog(root));
 
 		const mtimeMs = treeMtime(root);
-		if (this.cache?.root === root && this.cache.mtimeMs === mtimeMs) return this.cache;
-
-		const { items, assets } = readCatalog(root);
+		const { items, assets, searchDocuments } = readCatalog(root);
 		items.sort(
 			(left, right) =>
 				left.type.localeCompare(right.type, 'en') ||
 				left.title.localeCompare(right.title, 'en'),
 		);
-		return (this.cache = { root, mtimeMs, items, assets });
+		return (this.cache = { root, mtimeMs, items, assets, searchDocuments });
+	}
+
+	search(query: string): string[] {
+		const catalog = this.load();
+		return this.searchIndex.search(catalog.mtimeMs, catalog.searchDocuments, query);
 	}
 
 	itemAsset(itemId: string): ItemRenderAsset | null {
@@ -65,6 +75,7 @@ export class ShopItemCatalogService implements OnModuleInit {
 function readCatalog(root: string) {
 	const items: CatalogItem[] = [];
 	const assets = new Map<string, ItemRenderAsset>();
+	const searchDocuments: ShopSearchDocument[] = [];
 	for (const filePath of findItemDefinitionFiles(root)) {
 		const json = JSON.parse(readFileSync(filePath, 'utf8')) as RawItemDefinition;
 		const directory = dirname(filePath);
@@ -72,15 +83,16 @@ function readCatalog(root: string) {
 		if (item) {
 			items.push(item);
 			assets.set(item.id, item);
+			searchDocuments.push({ id: item.id, content: JSON.stringify(json) });
 		} else if (typeof json.id === 'string') {
 			assets.set(json.id, unlistedItemRenderAsset(json.id, directory, root));
 		}
 	}
-	return { items, assets };
+	return { items, assets, searchDocuments };
 }
 
 function emptyCatalog(root: string): ShopItemCatalog {
-	return { root, mtimeMs: 0, items: [], assets: new Map() };
+	return { root, mtimeMs: 0, items: [], assets: new Map(), searchDocuments: [] };
 }
 
 function treeMtime(path: string): number {

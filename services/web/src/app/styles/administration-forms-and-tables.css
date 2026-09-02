@@ -169,6 +169,7 @@
 .emailWhitelistForm input,
 .playerBanForm input:not([type='radio']),
 .playerBanForm select,
+.adminSection > input,
 .redeemForm input {
 	width: 100%;
 	min-width: 0;

@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LeaderboardPodium } from '@/components/leaderboard-podium';
 import { PlayerName } from '@/components/player-name';
+import { fuzzyFilter, PlayerSelector } from '@/components/player-selector';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import {
@@ -40,6 +41,8 @@ export function PlayersTab({
 	});
 	const [leaderboardKey, setLeaderboardKey] = useState(DEFAULT_LEADERBOARD_KEY);
 	const [loadingMore, setLoadingMore] = useState(false);
+	const [search, setSearch] = useState('');
+	const autoLoadedPage = useRef(-1);
 
 	const load = useCallback(
 		async (page = 0, append = false, signal?: AbortSignal) => {
@@ -107,6 +110,7 @@ export function PlayersTab({
 	}, [data?.selectedPlayer, playerName, players]);
 
 	useEffect(() => {
+		// ponytail: Load every page during a search. Add server-side fuzzy search if this becomes slow.
 		if (
 			!data ||
 			!playerName ||
@@ -140,6 +144,15 @@ export function PlayersTab({
 			comparePlayers(left, right, sortOption, sort.direction),
 		);
 	}, [players, sort, statOptions]);
+	const visiblePlayers = useMemo(
+		() =>
+			fuzzyFilter(sortedPlayers, search, [
+				'minecraftUsername',
+				'profile.preferredName',
+				'profile.discordUsername',
+			]),
+		[search, sortedPlayers],
+	);
 	const leaderboardOptions = useMemo(
 		() =>
 			statOptions.filter(
@@ -199,7 +212,7 @@ export function PlayersTab({
 		}
 	}
 
-	async function loadMore() {
+	const loadMore = useCallback(async () => {
 		if (!data || loadingMore || !data.hasMore) return;
 		setLoadingMore(true);
 		setError('');
@@ -217,7 +230,19 @@ export function PlayersTab({
 		} finally {
 			setLoadingMore(false);
 		}
-	}
+	}, [data, load, loadingMore, showAlert]);
+
+	useEffect(() => {
+		if (
+			search.trim() &&
+			data?.hasMore &&
+			!loadingMore &&
+			autoLoadedPage.current !== data.page
+		) {
+			autoLoadedPage.current = data.page;
+			void loadMore();
+		}
+	}, [data?.hasMore, data?.page, loadMore, loadingMore, search]);
 
 	if (error && !data) {
 		return <p className="authError">{error}</p>;
@@ -285,6 +310,28 @@ export function PlayersTab({
 				/>
 			)}
 
+			<div className="playerDirectorySearch">
+				<PlayerSelector
+					datalistId="player-directory-search"
+					options={[]}
+					value={search}
+					onChange={(value) => {
+						autoLoadedPage.current = -1;
+						setSearch(value);
+					}}
+					placeholder="Search by Minecraft name, preferred name or Discord name"
+					showSuggestions={false}
+					ariaLabel="Search players"
+				/>
+				{search.trim() && (
+					<span>
+						{loadingMore
+							? 'Searching all players...'
+							: `${visiblePlayers.length} found`}
+					</span>
+				)}
+			</div>
+
 			<div className="playersTableWrap">
 				<table className="playersTable">
 					<thead>
@@ -321,7 +368,7 @@ export function PlayersTab({
 						</tr>
 					</thead>
 					<tbody>
-						{sortedPlayers.map((player) => (
+						{visiblePlayers.map((player) => (
 							<tr
 								key={player.id}
 								onClick={() => {
@@ -345,10 +392,17 @@ export function PlayersTab({
 								))}
 							</tr>
 						))}
+						{visiblePlayers.length === 0 && !loadingMore && (
+							<tr>
+								<td colSpan={selectedColumns.length + 1}>
+									No players match that search.
+								</td>
+							</tr>
+						)}
 					</tbody>
 				</table>
 			</div>
-			{data.hasMore && (
+			{data.hasMore && !search.trim() && (
 				<button
 					type="button"
 					className="loadMoreButton"

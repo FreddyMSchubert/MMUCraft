@@ -1,5 +1,6 @@
 'use client';
 
+import { PlayerSelector } from '@/components/player-selector';
 import type { AdminTabController } from './use-admin-tab-controller';
 
 export function DailyRefreshAdminSection({ controller }: { controller: AdminTabController }) {
@@ -40,20 +41,15 @@ export function DailyRefreshAdminSection({ controller }: { controller: AdminTabC
 					<form className="playerBanForm" onSubmit={refreshDailies}>
 						<label>
 							Player
-							<select
+							<PlayerSelector
+								datalistId="daily-refresh-players"
+								options={players}
 								value={dailyPlayerId}
-								onChange={(event) => {
-									setDailyPlayerId(event.target.value);
-								}}
+								onChange={setDailyPlayerId}
+								placeholder="Search server players"
+								disabled={refreshingDailies}
 								required
-							>
-								<option value="">Select a player</option>
-								{players.map((player) => (
-									<option key={player.id} value={player.id}>
-										{player.minecraftUsername}
-									</option>
-								))}
-							</select>
+							/>
 						</label>
 						<button disabled={refreshingDailies}>
 							{refreshingDailies

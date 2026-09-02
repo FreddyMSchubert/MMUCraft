@@ -36,6 +36,7 @@
       "PlayerDisplayNameMixin",
       "GrindstoneRemoveEnchantmentLock",
       "LibrarianEnchantedBookTradesMixin",
+      "MiniBlockWanderingTraderMixin",
       "anvilRework.AnvilMenuMixin",
       "anvilRework.AbstractContainerMenuInvoker",
       "anvilRework.ItemCombinerMenuAccessor",

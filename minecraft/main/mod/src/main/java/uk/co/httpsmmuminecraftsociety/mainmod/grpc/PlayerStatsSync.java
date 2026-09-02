@@ -428,9 +428,11 @@ public final class PlayerStatsSync {
             );
         }
 
-        long completedAdvancements = player.getAdvancements().visible.stream()
+        PlayerAdvancements advancements = player.getAdvancements();
+        long completedAdvancements = advancements.tree.nodes().stream()
+                .map(AdvancementNode::holder)
                 .filter(holder -> holder.value().display().isPresent())
-                .filter(holder -> player.getAdvancements().getOrStartProgress(holder).isDone())
+                .filter(holder -> advancements.getOrStartProgress(holder).isDone())
                 .count();
         addStat(
                 entries,

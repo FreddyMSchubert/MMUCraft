@@ -451,6 +451,29 @@
 	--admonition-color: #8da2ff;
 }
 
+.knowledgeAdmonition.perk {
+	--perk-gradient: linear-gradient(
+		135deg,
+		rgba(255, 145, 70, 0.18) 0%,
+		rgba(255, 215, 90, 0.18) 32%,
+		rgba(105, 220, 140, 0.18) 65%,
+		rgba(100, 175, 255, 0.18) 100%
+	);
+
+	border-color: transparent;
+
+	background: var(--perk-gradient);
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionTitle {
+	background: rgba(255, 255, 255, 0.055);
+	color: rgba(255, 255, 255, 0.95);
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionBody {
+	background: rgba(0, 0, 0, 0.08);
+}
+
 .knowledgeAdmonitionTitle {
 	display: flex;
 	align-items: center;

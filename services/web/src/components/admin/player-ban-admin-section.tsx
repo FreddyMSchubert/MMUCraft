@@ -1,6 +1,7 @@
 'use client';
 
-import { PlayerName, playerNameStyle } from '@/components/player-name';
+import { PlayerName } from '@/components/player-name';
+import { PlayerSelector } from '@/components/player-selector';
 import { formatDateTime } from './admin-api';
 import type { AdminTabController } from './use-admin-tab-controller';
 
@@ -47,26 +48,15 @@ export function PlayerBanAdminSection({ controller }: { controller: AdminTabCont
 					<form className="playerBanForm" onSubmit={applyPlayerBan}>
 						<label>
 							Player
-							<select
+							<PlayerSelector
+								datalistId="ban-players"
+								options={players}
 								value={banPlayerId}
-								onChange={(event) => {
-									setBanPlayerId(event.target.value);
-								}}
+								onChange={setBanPlayerId}
+								placeholder="Search server players"
+								disabled={updatingBan}
 								required
-							>
-								<option value="">Select a player</option>
-								{players.map((player) => (
-									<option
-										className="playerName"
-										style={playerNameStyle(player.color)}
-										key={player.id}
-										value={player.id}
-									>
-										{player.minecraftUsername}
-										{player.isExternal ? ' (external)' : ''}
-									</option>
-								))}
-							</select>
+							/>
 						</label>
 						<fieldset>
 							<legend>Duration</legend>

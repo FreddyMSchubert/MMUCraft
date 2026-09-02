@@ -142,7 +142,7 @@ export function useAdminTabController({
 
 	async function refreshDailies(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
-		const player = players.find((candidate) => candidate.id === Number(dailyPlayerId));
+		const player = findPlayerByName(players, dailyPlayerId);
 		if (
 			!player ||
 			!(await confirm({
@@ -293,7 +293,7 @@ export function useAdminTabController({
 
 	async function applyPlayerBan(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
-		const player = players.find((candidate) => candidate.id === Number(banPlayerId));
+		const player = findPlayerByName(players, banPlayerId);
 		if (!player) {
 			await showAlert({
 				title: 'Choose a player',
@@ -506,3 +506,12 @@ export function useAdminTabController({
 }
 
 export type AdminTabController = ReturnType<typeof useAdminTabController>;
+
+function findPlayerByName(players: AdminPlayer[], value: string) {
+	return players.find(
+		(player) =>
+			player.minecraftUsername.localeCompare(value.trim(), 'en', {
+				sensitivity: 'base',
+			}) === 0,
+	);
+}

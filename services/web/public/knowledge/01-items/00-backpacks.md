@@ -32,7 +32,7 @@ The Leather Backpack has 1 row / 9 slots and is crafted like this:
 :::
 
 :::tip
-You can also cook rotten flesh in a furnace to get leather.
+You can also [cook rotten flesh in a furnace to get leather](/play/knowledge/tweaks#knowledge-easier-leather).
 :::
 
 The Ingot Backpack has 2 rows / 18 slots and is crafted like this:

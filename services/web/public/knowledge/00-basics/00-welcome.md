@@ -5,6 +5,8 @@ chatMessage: Welcome to the MMU Minecraft Society!
 sidebarTitle: Welcome!
 tags:
 - welcom
+- hello
+- minceraft
 - minecaft society
 tips:
 - Join the free Discord community to meet like-minded Minecrafters! You'll also find many society announcements and more there.
@@ -29,45 +31,36 @@ tips:
 <figure><img src="/assets/knowledge/basics/welcome/wave_calum.gif" alt="Waving Calum skin"><figcaption><strong><a href="/play/players/Calum">Calum</a></strong><span>(Social Media Manager)</span></figcaption></figure>
 </div>
 
-__Welcome to the MMU Minecraft Society!__ If you're reading this, you can now join the server and start playing!
+## Tips & Tricks
 
-We **highly recommend** you read through this at some point tho, so you know whats going on:
-
-:::tip Join our Discord
-Minecraft is more fun with friends! Join the Discord community (completely free) [here](https://discord.gg/pPgZqRS5b2).
-:::
-
-:::tip Follow our Instagram
-For all the latest infos on server updates and events, follow our Instagram (also completely free) [here](https://www.instagram.com/mmuminecraftsociety/).
-:::
-
-The server is pretty Vanilla, but we have added some fun additional stuff you can play around with if you're interested:
-
-1. Powerful [charms](/play/knowledge/charms) which grant strong abilites such as Veinminer, Walking on Walls and Ceilings, Mid-Air Jumping, and over 20 more.
-2. Many powerful new items, such as [backpacks](/play/knowledge/backpacks), an early-game alternative to Shulker Chests.
-3. Tons of awesome [cosmetics](/play/knowledge/cosmetics). Pirate Hat, Cat Ears, Sniffer Hood - Anyone?
-4. Straight up [Enderite](/play/knowledge/enderite) because Mojang won't make an end update apparently.
-5. Over 1000 new advancements which add many interesting challenges.
-6. Obamium Pyramid. (⬇️)
-
-## Some tips before you get started
+### Gameplay Tips
 
 :::tip Use minecarts
-Their speed has been more than doubled, making it the fastest transportation method with the **same speed as elytra**. Powered rails can now be crafted with copper instead of gold.
+Their speed is over 2.5x faster, making it the fastest transportation method with the **same speed as elytra**. [Learn more](/play/knowledge/tweaks).
 :::
 
 :::tip Build close to spawn
-There is no `/home` to avoid everyone living super far away from each other and never seeing each other. A [Potion of Returning](/play/knowledge/teleportation-potions) lets you teleport to the world spawn, but not to your own respawn point. (Don't worry though, you can still get to your home very quickly, see the tip up above.)
-:::
-
-:::tip Sunday Funday
-On sundays, tons of [shop](/play/shop) items are heavily discounted and many different Dabloon sources hand out more Dabloons. **Minecraft Day!**
+[Potions of Returning](/play/knowledge/teleportation-potions) let you teleport to the world spawn immediately. This can be helpful to skip some otherwise long walks.
 :::
 
 :::tip Use claims to protect your stuff
-[Claims](/play/claims) stop other players and mobs from opening chests / placing, breaking or otherwise interacting with any of the blocks or entities inside of the area you've claimed. This is the best way to protect your belongings!
+[Claims](/play/claims) stop other players and mobs from doing anything in a certain area you claim as your own (e.g. placing & breaking blocks, opening chests, ...). This is the best way to protect your belongings!
+:::
 
-You can find out more about this on the "[Claims](/play/claims)" tab at the top.
+### Stay up-to-date with the Society
+
+:::tip Join our **Discord**
+Minecraft is more fun with friends! Join the Discord community (completely free) [here](https://discord.gg/pPgZqRS5b2).
+:::
+
+:::tip Follow our **Instagram**
+For all the latest infos on server updates and events, follow our Instagram (also completely free) [here](https://www.instagram.com/mmuminecraftsociety/).
+:::
+
+### Other tips
+
+:::tip Sunday Funday
+On sundays, tons of [shop](/play/shop) items are heavily discounted and many different Dabloon sources hand out more Dabloons. **Minecraft Day!**
 :::
 
 :::tip Fill out your profile
@@ -75,9 +68,11 @@ Help people know who you are and what you do! To do so, click on "[Players](/pla
 :::
 
 :::note Become a society member
-The committee does not profit from this society, but Minecraft servers aren't free. Please consider supporting us by becoming a member. Members get many perks! Check out all the benefits of Memberships [here](/play/knowledge/membership).
+The committee does not profit from this society, but Minecraft servers aren't free. Please consider supporting us by becoming a member. **Members get many perks!** Check out all the benefits of Memberships [here](/play/knowledge/membership).
 :::
 
-**HAVE FUN!**
+## On an unrelated note
 
 ![Cursed Obama](/assets/knowledge/basics/welcome/cursed_obama.png)
+
+**HAVE FUN!**

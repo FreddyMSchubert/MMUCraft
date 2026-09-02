@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementAnnouncements;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
@@ -75,20 +76,23 @@ public class PlayerAdvancementMoney {
         boolean rewarded = reward > 0 && MoneyHelper.GainMoney(rewardedPlayer, reward);
         DisplayInfo display = advancementHolder.value().display().orElseThrow();
         int awardedReward = rewarded ? reward : 0;
-        boolean announcePublicly = shouldAnnouncePublicly(
+        boolean silenced = AdvancementAnnouncements.isSilenced(advancementHolder.id());
+        boolean announcePublicly = !silenced && shouldAnnouncePublicly(
                 rewardedPlayer,
                 advancementHolder,
                 display,
                 awardedReward
         );
 
-        announceAdvancement(
-                rewardedPlayer,
-                advancementHolder,
-                display,
-                awardedReward,
-                announcePublicly
-        );
+        if (!silenced) {
+            announceAdvancement(
+                    rewardedPlayer,
+                    advancementHolder,
+                    display,
+                    awardedReward,
+                    announcePublicly
+            );
+        }
 
         if (rewarded) {
             if (announcePublicly) {

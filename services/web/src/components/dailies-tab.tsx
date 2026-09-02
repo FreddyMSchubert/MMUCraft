@@ -21,6 +21,7 @@ interface DailyTask {
 	advancement?: {
 		advancementId: string;
 		title: string;
+		description: string;
 		tabTitle: string;
 		iconItem: string;
 		modelUrl: string | null;
@@ -51,6 +52,18 @@ interface DailiesResponse {
 	tasks: DailyTask[];
 }
 
+function userFacingApiMessage(response: Response, body: unknown, fallback: string) {
+	return response.status >= 500 ? fallback : apiMessage(body, fallback);
+}
+
+async function fetchDailies(input: string, init?: RequestInit) {
+	try {
+		return await fetch(input, init);
+	} catch {
+		throw new Error('Dailies are unavailable right now. Please try again soon.');
+	}
+}
+
 export function DailiesTab() {
 	const { showAlert } = useSiteAlert();
 	const [data, setData] = useState<DailiesResponse | null>(null);
@@ -58,13 +71,19 @@ export function DailiesTab() {
 	const [claimingTaskId, setClaimingTaskId] = useState<string | null>(null);
 
 	const load = useCallback(async () => {
-		const response = await fetch('/api/dailies', {
+		const response = await fetchDailies('/api/dailies', {
 			cache: 'no-store',
 		});
 		const body = await response.json().catch(() => null);
 
 		if (!response.ok) {
-			throw new Error(apiMessage(body, 'Failed to load dailies'));
+			throw new Error(
+				userFacingApiMessage(
+					response,
+					body,
+					'Dailies are unavailable right now. Please try again soon.',
+				),
+			);
 		}
 
 		setData(body as DailiesResponse);
@@ -117,16 +136,17 @@ export function DailiesTab() {
 					: `/api/dailies/tasks/${encodeURIComponent(task.id)}/claim`;
 
 		try {
-			const response = await fetch(path, {
+			const response = await fetchDailies(path, {
 				method: 'POST',
 			});
 			const body = await response.json().catch(() => null);
 
 			if (!response.ok) {
 				throw new Error(
-					apiMessage(
+					userFacingApiMessage(
+						response,
 						body,
-						'Join the Minecraft server, then try to claim this daily again.',
+						'We could not reach the Minecraft server. Please try again soon.',
 					),
 				);
 			}
@@ -151,14 +171,17 @@ export function DailiesTab() {
 		setClaimingTaskId('daily_completion');
 
 		try {
-			const response = await fetch('/api/dailies/completion/claim', { method: 'POST' });
+			const response = await fetchDailies('/api/dailies/completion/claim', {
+				method: 'POST',
+			});
 			const body = await response.json().catch(() => null);
 
 			if (!response.ok) {
 				throw new Error(
-					apiMessage(
+					userFacingApiMessage(
+						response,
 						body,
-						'Complete every daily and stay online in Minecraft before claiming the completion reward.',
+						'We could not reach the Minecraft server. Please try again soon.',
 					),
 				);
 			}
@@ -230,7 +253,9 @@ export function DailiesTab() {
 						</div>
 						<div className="dailyTaskBody">
 							<h4>
-								{task.name}
+								{task.id === 'advancement_bonus' && task.advancement
+									? `Complete "${task.advancement.title}"`
+									: task.name}
 								{task.rewardDabloons > 0 && (
 									<>
 										{' '}
@@ -251,8 +276,11 @@ export function DailiesTab() {
 											textureUrl={task.advancement.textureUrl}
 										/>
 										<div>
-											<p>{task.advancement.title}</p>
-											<p>Tab: {task.advancement.tabTitle}</p>
+											<p>{task.advancement.description}</p>
+											<p>
+												(Advancement from the {task.advancement.tabTitle}{' '}
+												tab).
+											</p>
 											<p>
 												{task.claimed ? (
 													<>

@@ -158,9 +158,16 @@ export function useAdminTabController({
 		try {
 			const response = await fetch(`/api/admin/dailies/${player.id}/refresh`, {
 				method: 'POST',
+			}).catch(() => {
+				throw new Error('The dailies service is unavailable. Please try again soon.');
 			});
 			const body = await response.json().catch(() => null);
-			if (!response.ok) throw new Error(apiMessage(body, 'Failed to regenerate dailies'));
+			if (!response.ok)
+				throw new Error(
+					response.status >= 500
+						? 'The Minecraft server is unavailable. Please try again soon.'
+						: apiMessage(body, 'Could not regenerate dailies.'),
+				);
 			await showAlert({
 				title: 'Dailies regenerated',
 				message: apiMessage(

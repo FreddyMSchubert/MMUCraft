@@ -25,6 +25,7 @@ export interface DailyTaskJson extends Record<string, unknown> {
 export interface DailyAdvancementTarget {
 	advancementId: string;
 	title: string;
+	description: string;
 	tabTitle: string;
 	iconItem: string;
 	baseRewardDabloons: number;

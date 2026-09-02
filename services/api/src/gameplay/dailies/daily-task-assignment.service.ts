@@ -84,6 +84,7 @@ export class DailyTaskAssignmentService {
 				period_key: periodKey,
 				advancement_id: result.advancement_id,
 				title: result.title,
+				description: result.description,
 				tab_title: result.tab_title,
 				icon_item: result.icon_item,
 				base_reward_dabloons: result.base_reward_dabloons,

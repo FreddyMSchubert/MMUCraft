@@ -132,6 +132,7 @@ export class DailyAdminRefreshService {
 						period_key: periodKey,
 						advancement_id: advancement.advancement_id,
 						title: advancement.title,
+						description: advancement.description,
 						tab_title: advancement.tab_title,
 						icon_item: advancement.icon_item,
 						base_reward_dabloons: advancement.base_reward_dabloons,

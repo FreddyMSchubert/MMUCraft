@@ -4,6 +4,9 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.PlainTextContents;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class BedrockFormatting {
     private BedrockFormatting() {}
 
@@ -32,6 +35,32 @@ public final class BedrockFormatting {
 
         append(result, text.substring(start), style);
         return result;
+    }
+
+    public static String toDiscord(String text) {
+        StringBuilder result = new StringBuilder(text.length());
+        List<Character> active = new ArrayList<>(4);
+
+        for (int i = 0; i < text.length(); i++) {
+            char code;
+            if (text.charAt(i) != '&' || i + 1 == text.length()
+                    || !isCode(code = Character.toLowerCase(text.charAt(i + 1)))) {
+                result.append(text.charAt(i));
+                continue;
+            }
+
+            if (code == 'r') closeDiscordFormatting(result, active);
+            else if (code == 'l' || code == 'm' || code == 'n' || code == 'o') {
+                if (!active.contains(code)) {
+                    result.append(discordMarker(code));
+                    active.add(code);
+                }
+            }
+            i++;
+        }
+
+        closeDiscordFormatting(result, active);
+        return result.toString();
     }
 
     private static void append(MutableComponent result, String text, Style style) {
@@ -64,8 +93,8 @@ public final class BedrockFormatting {
             case 'j' -> style.withColor(0x443A3B);
             case 'k' -> style.withObfuscated(true);
             case 'l' -> style.withBold(true);
-            case 'm' -> style.withColor(0x971607);
-            case 'n' -> style.withColor(0xB4684D);
+            case 'm' -> style.withStrikethrough(true);
+            case 'n' -> style.withUnderlined(true);
             case 'o' -> style.withItalic(true);
             case 'p' -> style.withColor(0xDEB12D);
             case 'q' -> style.withColor(0x119F36);
@@ -82,5 +111,20 @@ public final class BedrockFormatting {
 
     private static boolean isCode(char code) {
         return code >= '0' && code <= '9' || code >= 'a' && code <= 'z';
+    }
+
+    private static void closeDiscordFormatting(StringBuilder result, List<Character> active) {
+        for (int i = active.size() - 1; i >= 0; i--) result.append(discordMarker(active.get(i)));
+        active.clear();
+    }
+
+    private static String discordMarker(char code) {
+        return switch (code) {
+            case 'l' -> "**";
+            case 'm' -> "~~";
+            case 'n' -> "__";
+            case 'o' -> "*";
+            default -> "";
+        };
     }
 }

@@ -546,6 +546,16 @@
 	border-bottom: 0;
 }
 
+.minecraftFormattingTable,
+.minecraftFormattingTable code {
+	font-family: 'Minecraft UI', monospace;
+}
+
+.minecraftFormattingTable .minecraftTextPreview {
+	font-size: 1rem;
+	text-shadow: 2px 2px 0 color-mix(in srgb, currentColor 25%, black);
+}
+
 .knowledgePage td:first-child {
 	color: #ffd166;
 	font-weight: 700;

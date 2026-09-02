@@ -1,7 +1,7 @@
 ====
 id: cosmetics
 unlockOrder: 3
-chatMessage: You've unlocked knowledge on the basics of cosmetics
+chatMessage: You've unlocked knowledge on the basics of cosmetics.
 sidebarTitle: Cosmetics
 tags:
 - cosmatics

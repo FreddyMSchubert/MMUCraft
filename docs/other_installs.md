@@ -23,4 +23,3 @@ https://modrinth.com/datapack/more-mobs
 - cauldron concrete & mud
 - painting picker
 - fast leaf decay
-- husks drop sand

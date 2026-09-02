@@ -2,7 +2,7 @@
 id: money-basics
 unlockOrder: public
 chatMessage: You've unlocked knowledge on how to earn Dabloons
-sidebarTitle: Dabloons (Money)
+sidebarTitle: Coins (Currency)
 tags:
 - dubloons
 - dabaloons

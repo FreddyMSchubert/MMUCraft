@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
+package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -7,16 +7,16 @@ import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.phys.AABB;
 
-final class AnimalCrossingFishingEnvironment {
+public final class AnimalCrossingFishingEnvironment {
     private static final double SCURRY_TRIGGER_DISTANCE = 1.15D;
 
     private AnimalCrossingFishingEnvironment() {}
 
-    static boolean isStillInWater(ServerLevel level, FishingHook hook) {
+    public static boolean isStillInWater(ServerLevel level, FishingHook hook) {
         return level.getFluidState(hook.blockPosition()).is(FluidTags.WATER);
     }
 
-    static int weatherWaitSpeed(ServerLevel level, BlockPos bobberBlockPos, FishingHook hook) {
+    public static int weatherWaitSpeed(ServerLevel level, BlockPos bobberBlockPos, FishingHook hook) {
         int speed = 1;
         BlockPos above = bobberBlockPos.above();
         if (hook.getRandom().nextFloat() < 0.25F && level.isRainingAt(above)) speed++;
@@ -24,7 +24,7 @@ final class AnimalCrossingFishingEnvironment {
         return Math.max(1, speed);
     }
 
-    static boolean hasNearbyThreat(
+    public static boolean hasNearbyThreat(
             ServerLevel level,
             FishingHook hook,
             Display.ItemDisplay fishShadow

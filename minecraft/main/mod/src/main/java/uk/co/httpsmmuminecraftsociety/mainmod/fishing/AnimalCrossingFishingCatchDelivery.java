@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
+package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.server.level.ServerLevel;
@@ -8,15 +8,12 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
-import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
-import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingJumpScares;
-
 import java.util.List;
 
-final class AnimalCrossingFishingCatchDelivery {
+public final class AnimalCrossingFishingCatchDelivery {
     private AnimalCrossingFishingCatchDelivery() {}
 
-    static void deliver(
+    public static void deliver(
             ServerLevel level,
             FishingHook hook,
             ServerPlayer player,

@@ -13,21 +13,6 @@ tips:
 
 Anybody can play on this server for free. But hosting the server has real costs, so we need some way to fund it. (Plus, encouraging memberships is enforced by the MMU union.)
 
-Becoming a member gives you the following benefits:
-- More dabloons earned from completing advancements & dailies.
-- The price increase of buying more than one claim is less steep for members.
-- When not logging a day on the login streaks, for non-member the streak resets, where for members it is only cut in half.
-- Inviting a [Non-MMU Player](/play/knowledge/externalplayers) less for members.
-- Exclusive members-only events & other servers (e.g. modded) are planned, but not guaranteed.
-
-If you are unable or unwilling to pay for any reason, that is entirely fine. If you feel like the server is "pay-to-win" or unfair towards non-members, please reach out to us, we wish for everybody to have an equally amazing gaming experience.
-
-:::note
-The committee will never profit from this society; all income is reinvested.
-:::
-
-We hope that you consider supporting our work on the server.
-
 ## Becoming a member
 
 Only MMU Students are able to become members.
@@ -39,3 +24,20 @@ By joining, you agree to follow [The Union's Membership Code of Conduct 2026](ht
 Once you are done on the union site, please [open up a ticket on the discord server](https://discord.com/channels/1396896170751692931/1415746294659551384/1415753985561854043) so we can give you your new rank and abilities.
 
 Thank you and Have Fun!
+
+## Benefits
+
+- Exclusive members-only events & other servers (e.g. modded) are planned.
+- More dabloons earned from completing advancements & dailies.
+- The price increase of buying more than one claim is less steep for members.
+- When not logging a day on the login streaks, for non-member the streak resets, where for members it is only cut in half.
+- We will add any new [mini blocks](/play/knowledge/mini-blocks) you want to the game for you. Infinite decorations!
+- Inviting a [Non-MMU Player](/play/knowledge/externalplayers) less for members.
+
+If you are unable or unwilling to pay for any reason, that is entirely fine. If you feel like the server is "pay-to-win" or unfair towards non-members, please reach out to us, we wish for everybody to have an equally amazing gaming experience.
+
+:::note
+The committee will never profit from this society; all income is reinvested.
+:::
+
+We hope that you consider supporting our work on the server.

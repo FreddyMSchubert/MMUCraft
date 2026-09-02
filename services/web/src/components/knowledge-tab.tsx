@@ -23,8 +23,23 @@ import {
 import { KnowledgeOutline } from './knowledge/knowledge-outline';
 
 const POLL_INTERVAL_MS = 8000;
+interface KnowledgeSearchSnippet {
+	before: string;
+	match: string;
+	after: string;
+}
+
 type KnowledgeSearchResult =
-	{ locked: true } | { locked: false; id: string; title: string; folders: string[] };
+	| { locked: true }
+	| {
+			locked: false;
+			id: string;
+			title: string;
+			folders: string[];
+			direct: boolean;
+			terms: string[];
+			snippets: KnowledgeSearchSnippet[];
+	  };
 
 export function KnowledgeTab({
 	pageId,
@@ -32,13 +47,28 @@ export function KnowledgeTab({
 	onSearch,
 }: {
 	pageId?: string;
-	onSelectPage: (pageId: string, replace?: boolean) => void;
+	onSelectPage: (pageId: string, replace?: boolean, highlightTerms?: string[]) => void;
 	onSearch: (query: string) => void;
 }) {
 	const { showAlert } = useSiteAlert();
 	const searchParams = useSearchParams();
 	const showingSearch = pageId === 'search';
 	const searchQuery = showingSearch ? (searchParams.get('q')?.trim() ?? '') : '';
+	const highlightKey = showingSearch
+		? ''
+		: searchParams
+				.getAll('find')
+				.filter((term) => term.length <= 100)
+				.slice(0, 50)
+				.join('\0');
+	const highlightTerms = useMemo(
+		() =>
+			highlightKey
+				.split('\0')
+				.map((term) => term.trim())
+				.filter(Boolean),
+		[highlightKey],
+	);
 	const [data, setData] = useState<KnowledgeResponse | null>(null);
 	const [pageMarkdown, setPageMarkdown] = useState('');
 	const [error, setError] = useState('');
@@ -52,6 +82,7 @@ export function KnowledgeTab({
 	const sidebarRef = useRef<HTMLElement>(null);
 	const readerRef = useRef<HTMLElement>(null);
 	const articleRef = useRef<HTMLElement>(null);
+	const searchInputRef = useRef<HTMLInputElement>(null);
 	const visibleTree = useMemo(() => (data ? filterUnlockedTree(data.tree) : []), [data]);
 	const pages = useMemo(() => (data ? flattenPages(data.tree) : []), [data]);
 	const activePage =
@@ -64,8 +95,8 @@ export function KnowledgeTab({
 	const searching = Boolean(searchQuery && searchResponse.query !== searchQuery);
 
 	const selectPage = useCallback(
-		(pageId: string) => {
-			onSelectPage(pageId);
+		(pageId: string, terms?: string[]) => {
+			onSelectPage(pageId, false, terms);
 		},
 		[onSelectPage],
 	);
@@ -250,6 +281,22 @@ export function KnowledgeTab({
 		return activePage?.id === 'money-basics' ? html : decorateDabloonHtml(html);
 	}, [activePage?.id, pageMarkdown]);
 
+	useEffect(() => {
+		const article = articleRef.current;
+		if (!article) return;
+		article.innerHTML = renderedHtml;
+		if (!highlightTerms.length) return;
+
+		const first = highlightArticleMatches(article, highlightTerms);
+		if (!first) return;
+		const frame = window.requestAnimationFrame(() => {
+			first.scrollIntoView({ block: 'center' });
+		});
+		return () => {
+			window.cancelAnimationFrame(frame);
+		};
+	}, [highlightTerms, renderedHtml]);
+
 	if (error && !data) {
 		return <p className="authError">{error}</p>;
 	}
@@ -269,7 +316,6 @@ export function KnowledgeTab({
 			</div>
 			<div className="knowledgePda">
 				<form
-					key={searchQuery}
 					className="knowledgeSearch"
 					role="search"
 					onSubmit={(event) => {
@@ -278,16 +324,34 @@ export function KnowledgeTab({
 						if (typeof query === 'string' && query.trim()) onSearch(query.trim());
 					}}
 				>
-					<input
-						type="search"
-						name="q"
-						aria-label="Search knowledge"
-						placeholder="Search all knowledge…"
-						defaultValue={searchQuery}
-						maxLength={100}
-						required
-					/>
-					<button type="submit">Search</button>
+					<div className="knowledgeSearchField">
+						<input
+							key={searchQuery}
+							ref={searchInputRef}
+							type="text"
+							name="q"
+							aria-label="Search knowledge"
+							placeholder="Search…"
+							defaultValue={searchQuery}
+							maxLength={100}
+							required
+						/>
+						<button
+							type="button"
+							className="knowledgeSearchClear"
+							aria-label="Clear search"
+							onClick={() => {
+								if (!searchInputRef.current) return;
+								searchInputRef.current.value = '';
+								searchInputRef.current.focus();
+							}}
+						>
+							×
+						</button>
+					</div>
+					<button className="knowledgeSearchSubmit" type="submit">
+						Search
+					</button>
 				</form>
 
 				<label className="knowledgeMobileNav" htmlFor="knowledge-page-select">
@@ -432,8 +496,11 @@ function KnowledgeSearchResults({
 	results: KnowledgeSearchResult[];
 	searching: boolean;
 	error: string;
-	onSelectPage: (pageId: string) => void;
+	onSelectPage: (pageId: string, highlightTerms?: string[]) => void;
 }) {
+	const directResults = results.filter((result) => !result.locked && result.direct);
+	const similarResults = results.filter((result) => result.locked || !result.direct);
+
 	return (
 		<>
 			<h1 className="knowledgePageTitle">Search results</h1>
@@ -447,33 +514,123 @@ function KnowledgeSearchResults({
 			{!searching && !error && query && results.length === 0 && (
 				<p>No knowledge matched your search.</p>
 			)}
-			{!searching && results.length > 0 && (
-				<ul className="knowledgeSearchResults">
-					{results.map((result, index) =>
-						result.locked ? (
-							<li key={`locked-${index}`} className="locked">
-								<strong>🔒 Locked knowledge</strong>
-								<span>Unlock this knowledge book to read the matching result.</span>
-							</li>
-						) : (
-							<li key={result.id}>
-								<Link
-									href={`/play/knowledge/${encodeURIComponent(result.id)}`}
-									onNavigate={(event) => {
-										event.preventDefault();
-										onSelectPage(result.id);
-									}}
-								>
-									<strong>{result.title}</strong>
-									<span>{result.folders.join(' / ')}</span>
-								</Link>
-							</li>
-						),
-					)}
-				</ul>
+			{!searching && directResults.length > 0 && (
+				<KnowledgeSearchResultList results={directResults} onSelectPage={onSelectPage} />
+			)}
+			{!searching && directResults.length > 0 && similarResults.length > 0 && (
+				<h2 className="knowledgeSimilarHeading">Other similar matches</h2>
+			)}
+			{!searching && similarResults.length > 0 && (
+				<KnowledgeSearchResultList results={similarResults} onSelectPage={onSelectPage} />
 			)}
 		</>
 	);
+}
+
+function KnowledgeSearchResultList({
+	results,
+	onSelectPage,
+}: {
+	results: KnowledgeSearchResult[];
+	onSelectPage: (pageId: string, highlightTerms?: string[]) => void;
+}) {
+	return (
+		<ul className="knowledgeSearchResults">
+			{results.map((result, index) =>
+				result.locked ? (
+					<li key={`locked-${index}`} className="locked">
+						<strong>🔒 Locked knowledge</strong>
+						<span>Unlock this knowledge book to read the matching result.</span>
+					</li>
+				) : (
+					<li key={result.id}>
+						<Link
+							className="knowledgeSearchResultTitle"
+							href={`/play/knowledge/${encodeURIComponent(result.id)}`}
+							onNavigate={(event) => {
+								event.preventDefault();
+								onSelectPage(result.id);
+							}}
+						>
+							{result.folders.length > 0 && (
+								<span>{result.folders.join(' / ')}/</span>
+							)}
+							<strong>{result.title}</strong>
+						</Link>
+						{result.snippets.length > 0 && (
+							<ul className="knowledgeSearchMatches">
+								{result.snippets.map((snippet, snippetIndex) => {
+									const href = knowledgeHighlightHref(result.id, result.terms);
+									return (
+										<li
+											key={`${snippet.before}-${snippet.match}-${snippetIndex}`}
+										>
+											<Link
+												href={href}
+												onNavigate={(event) => {
+													event.preventDefault();
+													onSelectPage(result.id, result.terms);
+												}}
+											>
+												{snippet.before}
+												<mark>{snippet.match}</mark>
+												{snippet.after}
+											</Link>
+										</li>
+									);
+								})}
+							</ul>
+						)}
+					</li>
+				),
+			)}
+		</ul>
+	);
+}
+
+function knowledgeHighlightHref(pageId: string, terms: string[]) {
+	const params = new URLSearchParams();
+	for (const term of terms) params.append('find', term);
+	return `/play/knowledge/${encodeURIComponent(pageId)}?${params.toString()}`;
+}
+
+function highlightArticleMatches(article: HTMLElement, terms: string[]) {
+	const uniqueTerms = [...new Set(terms)].sort((left, right) => right.length - left.length);
+	if (!uniqueTerms.length) return null;
+	const expression = new RegExp(
+		`(?<![\\p{L}\\p{N}_])(?:${uniqueTerms.map(escapeRegExp).join('|')})(?![\\p{L}\\p{N}_])`,
+		'giu',
+	);
+	const walker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT);
+	const textNodes: Text[] = [];
+	while (walker.nextNode()) textNodes.push(walker.currentNode as Text);
+	let first: HTMLElement | null = null;
+
+	for (const node of textNodes) {
+		const text = node.data;
+		const matches = [...text.matchAll(expression)];
+		if (!matches.length) continue;
+		const fragment = document.createDocumentFragment();
+		let cursor = 0;
+		for (const match of matches) {
+			const index = match.index;
+			fragment.append(text.slice(cursor, index));
+			const mark = document.createElement('mark');
+			mark.className = 'knowledgeSearchHighlight';
+			mark.textContent = match[0];
+			fragment.append(mark);
+			first ??= mark;
+			cursor = index + match[0].length;
+		}
+		fragment.append(text.slice(cursor));
+		node.replaceWith(fragment);
+	}
+
+	return first;
+}
+
+function escapeRegExp(value: string) {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function KnowledgeSelectOptions({

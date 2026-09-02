@@ -43,18 +43,46 @@
 	gap: 8px;
 }
 
-.knowledgeSearch input {
+.knowledgeSearchField {
+	display: flex;
+	align-items: center;
 	min-width: 0;
 	width: 100%;
-	padding: 9px 10px;
 	border: 1px solid rgba(255, 255, 255, 0.16);
 	border-radius: 8px;
 	background: rgba(255, 255, 255, 0.08);
+}
+
+.knowledgeSearch input {
+	min-width: 0;
+	width: 100%;
+	padding: 9px 0 9px 10px;
+	border: 0;
+	outline: 0;
+	background: transparent;
 	color: #fff;
 	font: inherit;
 }
 
-.knowledgeSearch button {
+.knowledgeSearchClear {
+	align-self: stretch;
+	padding: 0 10px;
+	border: 0;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.65);
+	font: inherit;
+	font-size: 1.1rem;
+}
+
+.knowledgeSearchClear:hover {
+	color: #ffd166;
+}
+
+.knowledgeSearchField:has(input:placeholder-shown) .knowledgeSearchClear {
+	display: none;
+}
+
+.knowledgeSearchSubmit {
 	padding: 9px 12px;
 	border: 1px solid rgba(255, 209, 102, 0.7);
 	border-radius: 8px;
@@ -219,36 +247,76 @@
 	list-style: none;
 }
 
-.knowledgeSearchResults li,
-.knowledgeSearchResults a {
+.knowledgeSearchResults > li {
 	display: grid;
-	gap: 4px;
+	gap: 8px;
 }
 
-.knowledgeSearchResults li {
+.knowledgeSearchResults > li {
 	padding: 12px 14px;
 	border: 1px solid rgba(255, 255, 255, 0.16);
 	border-radius: 8px;
 	background: rgba(255, 255, 255, 0.05);
 }
 
-.knowledgeSearchResults a {
+.knowledgeSearchResultTitle {
+	display: flex;
+	align-items: baseline;
+	gap: 0.55em;
 	color: #fff;
+	font-size: 0.9rem;
 	text-decoration: none;
 }
 
-.knowledgeSearchResults a:hover strong {
+.knowledgeSearchResultTitle:hover strong {
 	color: #ffd166;
 }
 
-.knowledgeSearchResults span {
+.knowledgeSearchResultTitle span {
 	color: rgba(255, 255, 255, 0.62);
-	font-size: 0.82rem;
+	font-size: inherit;
 }
 
 .knowledgeSearchResults .locked {
 	border-color: rgba(255, 209, 102, 0.35);
 	color: #ffd166;
+}
+
+.knowledgeSearchResults .locked span {
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.82rem;
+}
+
+.knowledgeSearchMatches {
+	display: grid;
+	gap: 5px;
+	margin: 0;
+	padding-left: 18px;
+}
+
+.knowledgeSearchMatches a {
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.82rem;
+	line-height: 1.45;
+	text-decoration: none;
+}
+
+.knowledgeSearchMatches a:hover {
+	color: #fff;
+}
+
+.knowledgeSearchMatches mark,
+.knowledgeSearchHighlight {
+	padding: 0 2px;
+	border-radius: 3px;
+	background: #ffd166;
+	color: #151922;
+}
+
+.knowledgeSimilarHeading {
+	margin: 20px 0 10px;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.92rem;
 }
 
 .knowledgePageTitle {

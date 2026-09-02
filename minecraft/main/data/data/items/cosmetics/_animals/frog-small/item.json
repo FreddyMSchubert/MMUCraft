@@ -12,7 +12,7 @@
 	"priceDabloons": 142,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Purchased cosmetic: Small Frog."
+		"unlockMessage": "Unlocked cosmetic: Small Frog."
 	},
 	"equippableCosmetic": {}
 }

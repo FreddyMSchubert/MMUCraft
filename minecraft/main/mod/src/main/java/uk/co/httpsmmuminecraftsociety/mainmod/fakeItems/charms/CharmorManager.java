@@ -78,11 +78,11 @@ public class CharmorManager
         List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
 
         List<Component> tooltip = new ArrayList<>();
-        tooltip.add(Component.literal("Charm Slots:"));
+        tooltip.add(Component.literal("Charm Slots:").withStyle(style -> style.withItalic(false)));
 
         int slotCount = calcCharmSlotCount(stack);
         for (int i = 0; i < slotCount; i++) {
-            String literal = "[Slot " + (i + 1) + "]: ";
+            String literal = (i + 1) + ": ";
 
             if (i >= storedCharms.size()) {
                 literal += "-";
@@ -90,7 +90,7 @@ public class CharmorManager
                 literal += resolveStoredCharmDisplayName(storedCharms.get(i));
             }
 
-            tooltip.add(Component.literal(literal));
+            tooltip.add(Component.literal(literal).withStyle(style -> style.withItalic(false)));
         }
 
         stack.set(DataComponents.LORE, new ItemLore(tooltip));

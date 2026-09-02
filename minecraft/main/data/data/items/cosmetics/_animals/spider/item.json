@@ -12,7 +12,7 @@
 	"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Purchased cosmetic: Spider Hat."
+		"unlockMessage": "Unlocked cosmetic: Spider Hat."
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

@@ -31,6 +31,8 @@ tips:
 <figure><img src="/assets/knowledge/basics/welcome/wave_calum.gif" alt="Waving Calum skin"><figcaption><strong><a href="/play/players/Calum">Calum</a></strong><span>(Social Media Manager)</span></figcaption></figure>
 </div>
 
+It's time to join the server and get started!
+
 ## Tips & Tricks
 
 ### Gameplay Tips

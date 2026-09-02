@@ -176,6 +176,13 @@
       "when": 1788182250526,
       "tag": "0024_fair_cammi",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1788348454523,
+      "tag": "0025_yellow_absorbing_man",
+      "breakpoints": true
     }
   ]
 }

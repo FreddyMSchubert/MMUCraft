@@ -8,6 +8,7 @@ interface PickDailyAdvancementResponse {
 	online: boolean;
 	advancement_id: string;
 	title: string;
+	description: string;
 	tab_title: string;
 	icon_item: string;
 	base_reward_dabloons: number;

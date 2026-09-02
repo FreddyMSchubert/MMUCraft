@@ -256,6 +256,7 @@ export const dailyAdvancementTargets = sqliteTable(
 		period_key: text('period_key').notNull(),
 		advancement_id: text('advancement_id').notNull(),
 		title: text('title').notNull(),
+		description: text('description').notNull().default(''),
 		tab_title: text('tab_title').notNull(),
 		icon_item: text('icon_item').notNull(),
 		base_reward_dabloons: integer('base_reward_dabloons').notNull(),

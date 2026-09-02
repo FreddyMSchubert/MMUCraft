@@ -142,6 +142,7 @@ final class GameplayDailyOperations {
                 .setOnline(true)
                 .setAdvancementId(selected.id().toString())
                 .setTitle(display.getTitle().getString())
+                .setDescription(display.getDescription().getString())
                 .setTabTitle(tabTitle)
 				.setIconItem(MinecraftItemIdentifier.forStack(display.getIcon().create()))
                 .setBaseRewardDabloons(baseReward)

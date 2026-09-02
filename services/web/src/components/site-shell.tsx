@@ -230,10 +230,15 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		};
 	}, [menuOpen]);
 
-	const openKnowledge = useCallback((pageId: string, replace = false) => {
-		const href = `/play/knowledge/${encodeURIComponent(pageId)}`;
-		navigate(href, replace);
-	}, []);
+	const openKnowledge = useCallback(
+		(pageId: string, replace = false, highlightTerms: string[] = []) => {
+			const params = new URLSearchParams();
+			for (const term of highlightTerms) params.append('find', term);
+			const query = params.size ? `?${params.toString()}` : '';
+			navigate(`/play/knowledge/${encodeURIComponent(pageId)}${query}`, replace);
+		},
+		[],
+	);
 	const searchKnowledge = useCallback((query: string) => {
 		navigate(`/play/knowledge/search?q=${encodeURIComponent(query)}`);
 	}, []);

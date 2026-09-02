@@ -140,12 +140,20 @@ export class KnowledgeDocumentCatalogService {
 	private toSearchPage(root: string, page: KnowledgePage): KnowledgeSearchPage {
 		const source = readFileSync(join(root, page.path), 'utf8');
 		const metadata = /^====\r?\n([\s\S]*?)\r?\n====/.exec(source)?.[1] ?? '';
+		const content = source.replace(/^====\r?\n[\s\S]*?\r?\n====\r?\n?/, '');
 		return {
 			id: page.id,
 			title: page.sidebarTitle,
 			folders: page.folders.join(' '),
 			tags: this.parseList(metadata, 'tags').join(' '),
-			content: source.replace(/^====\r?\n[\s\S]*?\r?\n====\r?\n?/, ''),
+			content: content
+				.replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+				.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+				.replace(/<[^>]+>/g, ' ')
+				.replace(/:::[A-Za-z-]*/g, ' ')
+				.replace(/[`*_>#|~]/g, ' ')
+				.replace(/\s+/g, ' ')
+				.trim(),
 		};
 	}
 

@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
+import type { SearchResult } from 'minisearch';
 import { randomInt } from 'node:crypto';
 import { and, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/auth-session.service';
@@ -33,6 +34,18 @@ interface KnowledgeTipResponse {
 
 type KnowledgeSearchResult =
 	{ locked: true } | { locked: false; id: string; title: string; folders: string[] };
+
+interface KnowledgeSearchSnippet {
+	before: string;
+	match: string;
+	after: string;
+}
+
+type UnlockedKnowledgeSearchResult = Extract<KnowledgeSearchResult, { locked: false }> & {
+	direct: boolean;
+	terms: string[];
+	snippets: KnowledgeSearchSnippet[];
+};
 
 @Injectable()
 export class KnowledgeService implements OnModuleInit {
@@ -87,26 +100,38 @@ export class KnowledgeService implements OnModuleInit {
 		if (!query) return { query, results: [] };
 
 		const document = this.documents.loadDocument();
-		const ids = this.searchIndex.search(document.mtimeMs, document.searchPages, query);
+		const matches = this.searchIndex.searchResults(
+			document.mtimeMs,
+			document.searchPages,
+			query,
+		);
 		const pagesById = new Map(document.pages.map((page) => [page.id, page]));
+		const searchPagesById = new Map(document.searchPages.map((page) => [page.id, page]));
 		const unlockedIds = this.getUnlockedIds(userId);
 		return {
 			query,
-			results: ids.flatMap<KnowledgeSearchResult>((id) => {
-				const page = pagesById.get(id);
-				if (!page) return [];
-				if (!page.unlockedByDefault && !unlockedIds.has(page.id)) {
-					return [{ locked: true as const }];
-				}
-				return [
-					{
-						locked: false as const,
-						id: page.id,
-						title: page.sidebarTitle,
-						folders: page.folders,
-					},
-				];
-			}),
+			results: matches.flatMap<KnowledgeSearchResult | UnlockedKnowledgeSearchResult>(
+				(match) => {
+					const id = String(match.id);
+					const page = pagesById.get(id);
+					if (!page) return [];
+					if (!page.unlockedByDefault && !unlockedIds.has(page.id)) {
+						return [{ locked: true as const }];
+					}
+					const searchPage = searchPagesById.get(id);
+					return [
+						{
+							locked: false as const,
+							id: page.id,
+							title: page.sidebarTitle,
+							folders: page.folders,
+							direct: isDirectMatch(match),
+							terms: match.terms,
+							snippets: searchPage ? searchSnippets(searchPage, match) : [],
+						},
+					];
+				},
+			),
 		};
 	}
 
@@ -361,4 +386,68 @@ export class KnowledgeService implements OnModuleInit {
 			message,
 		};
 	}
+}
+
+function isDirectMatch(result: SearchResult) {
+	return result.queryTerms.every((queryTerm) =>
+		result.terms.some((term) => term === queryTerm || term.startsWith(queryTerm)),
+	);
+}
+
+function searchSnippets(page: KnowledgeSearchPage, result: SearchResult) {
+	const snippets: KnowledgeSearchSnippet[] = [];
+	const seen = new Set<string>();
+	const matchesByTerm = new Map(
+		result.terms.map((term) => [term, [] as KnowledgeSearchSnippet[]]),
+	);
+	const fields: [keyof Omit<KnowledgeSearchPage, 'id'>, string][] = [
+		['content', page.content],
+		['title', page.title],
+		['tags', page.tags],
+		['folders', page.folders],
+	];
+
+	for (const [field, source] of fields) {
+		const terms = result.terms.filter((term) => result.match[term]?.includes(field));
+		for (const term of terms) {
+			const expression = new RegExp(
+				`(?<![\\p{L}\\p{N}_])${escapeRegExp(term)}(?![\\p{L}\\p{N}_])`,
+				'giu',
+			);
+			for (const found of source.matchAll(expression)) {
+				const index = found.index;
+				const end = index + found[0].length;
+				const beforeStart = Math.max(0, index - 48);
+				const afterEnd = Math.min(source.length, end + 48);
+				const before = source.slice(beforeStart, index).trimStart();
+				const after = source.slice(end, afterEnd).trimEnd();
+				matchesByTerm.get(term)?.push({
+					before: beforeStart ? `…${before.replace(/^\S+\s*/, '')}` : before,
+					match: found[0],
+					after: afterEnd < source.length ? `${after.replace(/\s+\S*$/, '')}…` : after,
+				});
+			}
+		}
+	}
+
+	for (let occurrence = 0; snippets.length < 5; occurrence += 1) {
+		let foundMatch = false;
+		for (const matches of matchesByTerm.values()) {
+			const snippet = matches[occurrence];
+			if (!snippet) continue;
+			foundMatch = true;
+			const key = `${snippet.before}\0${snippet.match}\0${snippet.after}`;
+			if (seen.has(key)) continue;
+			seen.add(key);
+			snippets.push(snippet);
+			if (snippets.length === 5) break;
+		}
+		if (!foundMatch) break;
+	}
+
+	return snippets;
+}
+
+function escapeRegExp(value: string) {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

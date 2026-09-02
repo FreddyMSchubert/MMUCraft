@@ -1,12 +1,11 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
+package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.projectile.FishingHook;
-import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
 
-final class AnimalCrossingFishingTiming {
+public final class AnimalCrossingFishingTiming {
     private static final int MAX_LATENCY_COMPENSATION_TICKS = 20;
     private static final int WAIT_CENTER_TICKS_WITHOUT_LURE = 20 * 30;
     private static final int WAIT_CENTER_TICKS_WITH_LURE_3 = 20 * 5;
@@ -18,9 +17,9 @@ final class AnimalCrossingFishingTiming {
 
 	private AnimalCrossingFishingTiming() {}
 
-	record DistanceMovement(double distance, int remainingTicks, boolean reachedTarget) {}
+	public record DistanceMovement(double distance, int remainingTicks, boolean reachedTarget) {}
 
-	static DistanceMovement moveToward(double distance, double targetDistance, int remainingTicks) {
+	public static DistanceMovement moveToward(double distance, double targetDistance, int remainingTicks) {
 		if (remainingTicks <= 0) return new DistanceMovement(targetDistance, 0, true);
 
 		double nextDistance = distance + (targetDistance - distance) / remainingTicks;
@@ -30,12 +29,12 @@ final class AnimalCrossingFishingTiming {
 				: new DistanceMovement(nextDistance, nextRemainingTicks, false);
 	}
 
-    static double bobberContactDistance(FishingPersonality personality) {
+    public static double bobberContactDistance(FishingPersonality personality) {
         return BASE_FISH_DISPLAY_WIDTH_BLOCKS * personality.size() * 0.5D
                 + BOBBER_TOUCH_PADDING_BLOCKS;
     }
 
-    static int biteWindowTicks(FishingHook hook, FishingPersonality personality) {
+    public static int biteWindowTicks(FishingHook hook, FishingPersonality personality) {
         if (hook.getPlayerOwner() instanceof ServerPlayer player) {
             int latencyCompensationTicks = Mth.ceil(player.connection.latency() / 50.0F);
             return personality.baseCatchWindowTicks()
@@ -44,7 +43,7 @@ final class AnimalCrossingFishingTiming {
         return personality.baseCatchWindowTicks();
     }
 
-    static int initialWaitTicks(RandomSource random, int lureSpeed) {
+    public static int initialWaitTicks(RandomSource random, int lureSpeed) {
         int lureLevel = lureLevel(lureSpeed);
         int centerTicks = lureScaledTicks(
                 WAIT_CENTER_TICKS_WITHOUT_LURE,
@@ -59,12 +58,12 @@ final class AnimalCrossingFishingTiming {
         return Mth.nextInt(random, Math.max(20, centerTicks - spreadTicks), centerTicks + spreadTicks);
     }
 
-    static int lureLevel(int lureSpeed) {
+    public static int lureLevel(int lureSpeed) {
         if (lureSpeed <= 3) return Mth.clamp(lureSpeed, 0, 3);
         return Mth.clamp(Math.round(lureSpeed / 100.0F), 0, 3);
     }
 
-    static int rollBounceCount(RandomSource random, FishingPersonality personality) {
+    public static int rollBounceCount(RandomSource random, FishingPersonality personality) {
         double averageBounces = personality.averageBounces();
         int rightEdge = Math.max(1, Mth.ceil(averageBounces * 2.0D - 1.0D));
         if (rightEdge <= 1) return 1;

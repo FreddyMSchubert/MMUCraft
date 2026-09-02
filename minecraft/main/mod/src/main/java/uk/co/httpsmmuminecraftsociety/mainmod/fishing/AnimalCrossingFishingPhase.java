@@ -1,6 +1,6 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
+package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
-enum AnimalCrossingFishingPhase {
+public enum AnimalCrossingFishingPhase {
     WAITING,
     ARRIVING,
     APPROACHING,

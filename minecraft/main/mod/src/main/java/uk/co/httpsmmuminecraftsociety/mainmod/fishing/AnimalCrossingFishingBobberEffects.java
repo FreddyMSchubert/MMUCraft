@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
+package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -8,19 +8,19 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.projectile.FishingHook;
 
-final class AnimalCrossingFishingBobberEffects {
+public final class AnimalCrossingFishingBobberEffects {
     private static final int BOP_RECOVERY_TICKS = 7;
 
     private AnimalCrossingFishingBobberEffects() {}
 
-    static void playFishArrival(ServerLevel level, Display.ItemDisplay display) {
+    public static void playFishArrival(ServerLevel level, Display.ItemDisplay display) {
         level.playSound(
                 null, display.getX(), display.getY(), display.getZ(),
                 SoundEvents.FISH_SWIM, SoundSource.PLAYERS, 0.20F, 0.82F
         );
     }
 
-    static void playBounce(ServerLevel level, FishingHook hook) {
+    public static void playBounce(ServerLevel level, FishingHook hook) {
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.FISH_SWIM,
                 SoundSource.PLAYERS, 0.34F, Mth.nextFloat(hook.getRandom(), 1.15F, 1.45F));
         level.sendParticles(ParticleTypes.SPLASH, hook.getX(), hook.getY() + 0.06D, hook.getZ(),
@@ -29,18 +29,18 @@ final class AnimalCrossingFishingBobberEffects {
                 3, 0.11D, 0.01D, 0.11D, 0.018D);
     }
 
-    static int bop(FishingHook hook) {
+    public static int bop(FishingHook hook) {
         hook.setDeltaMovement(hook.getDeltaMovement().add(0.0D, -0.045D, 0.0D));
         return BOP_RECOVERY_TICKS;
     }
 
-    static int recoverFromBop(FishingHook hook, int recoveryTicks) {
+    public static int recoverFromBop(FishingHook hook, int recoveryTicks) {
         if (recoveryTicks <= 0) return 0;
         hook.setDeltaMovement(hook.getDeltaMovement().add(0.0D, 0.010D, 0.0D));
         return recoveryTicks - 1;
     }
 
-    static void playBite(ServerLevel level, FishingHook hook) {
+    public static void playBite(ServerLevel level, FishingHook hook) {
         hook.setDeltaMovement(hook.getDeltaMovement().add(0.0D, -0.36D, 0.0D));
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.GENERIC_SPLASH,
                 SoundSource.PLAYERS, 0.75F, Mth.nextFloat(hook.getRandom(), 1.05F, 1.18F));
@@ -52,13 +52,13 @@ final class AnimalCrossingFishingBobberEffects {
                 8, 0.24D, 0.02D, 0.24D, 0.03D);
     }
 
-    static void playBiteTick(ServerLevel level, FishingHook hook) {
+    public static void playBiteTick(ServerLevel level, FishingHook hook) {
         hook.setDeltaMovement(hook.getDeltaMovement().add(0.0D, -0.018D, 0.0D));
         level.sendParticles(ParticleTypes.BUBBLE, hook.getX(), hook.getY() + 0.04D, hook.getZ(),
                 2, 0.08D, 0.02D, 0.08D, 0.0D);
     }
 
-    static void playCatchStruggle(ServerLevel level, FishingHook hook, int animationTicks) {
+    public static void playCatchStruggle(ServerLevel level, FishingHook hook, int animationTicks) {
         hook.setDeltaMovement(hook.getDeltaMovement().add(0.0D, -0.024D, 0.0D));
         level.sendParticles(ParticleTypes.BUBBLE, hook.getX(), hook.getY() + 0.05D, hook.getZ(),
                 4, 0.24D, 0.03D, 0.24D, 0.025D);
@@ -74,7 +74,7 @@ final class AnimalCrossingFishingBobberEffects {
                 8, 0.26D, 0.02D, 0.26D, 0.035D);
     }
 
-    static void playScurry(ServerLevel level, FishingHook hook) {
+    public static void playScurry(ServerLevel level, FishingHook hook) {
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.FISH_SWIM,
                 SoundSource.PLAYERS, 0.65F, 1.55F);
     }

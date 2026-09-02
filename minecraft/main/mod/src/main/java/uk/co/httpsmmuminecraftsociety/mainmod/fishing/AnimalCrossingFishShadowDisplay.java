@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
+package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import com.mojang.math.Transformation;
 import net.minecraft.core.component.DataComponents;
@@ -12,15 +12,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
+import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.DisplayEntityAccessor;
+import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.ItemDisplayEntityAccessor;
 
-final class AnimalCrossingFishShadowDisplay {
-	static final int ARRIVAL_TICKS = 18;
-	static final int SCURRY_TICKS = 16;
+public final class AnimalCrossingFishShadowDisplay {
+	public static final int ARRIVAL_TICKS = 18;
+	public static final int SCURRY_TICKS = 16;
 
 	private AnimalCrossingFishShadowDisplay() {}
 
-	record AnimationState(
+	public record AnimationState(
 			AnimalCrossingFishingPhase phase,
 			double orbitDegrees,
 			double fishDistance,
@@ -30,7 +31,7 @@ final class AnimalCrossingFishShadowDisplay {
 			int catchAnimationTicks
 	) {}
 
-    static Display.ItemDisplay create(ServerLevel level, FishingPersonality personality) {
+    public static Display.ItemDisplay create(ServerLevel level, FishingPersonality personality) {
         Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         display.setNoGravity(true);
         display.setSilent(true);
@@ -54,7 +55,7 @@ final class AnimalCrossingFishShadowDisplay {
         return display;
     }
 
-	static void position(
+	public static void position(
 			FishingHook hook,
 			Display.ItemDisplay display,
 			FishingPersonality personality,

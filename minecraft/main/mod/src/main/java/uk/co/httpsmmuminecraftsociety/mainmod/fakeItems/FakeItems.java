@@ -107,15 +107,20 @@ public final class FakeItems {
     }
 
     public static void wrapTooltip(ItemStack stack) {
+        Component customName = stack.get(DataComponents.CUSTOM_NAME);
+        if (customName != null) {
+            stack.set(DataComponents.CUSTOM_NAME, customName.copy().withStyle(style -> style.withItalic(false)));
+        }
+
         ItemLore lore = stack.get(DataComponents.LORE);
         if (lore == null) return;
 
         List<Component> wrapped = lore.lines().stream()
                 .flatMap(line -> wrapTooltipLine(line).stream())
+                .map(line -> line.copy().withStyle(style -> style.withItalic(false)))
+                .map(Component.class::cast)
                 .toList();
-        if (wrapped.size() != lore.lines().size()) {
-            stack.set(DataComponents.LORE, new ItemLore(wrapped));
-        }
+        stack.set(DataComponents.LORE, new ItemLore(wrapped));
     }
 
     private static List<Component> wrapTooltipLine(Component line) {

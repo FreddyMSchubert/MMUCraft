@@ -46,10 +46,10 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             Component message = MoneyHelper.ReplaceDabloonWords(response.getMessage());
             if (response.getUnlocked()) {
                 message = message.copy()
-                        .append(Component.literal(" Read for "))
+						.append(WebsiteCommand.takeMeThere("knowledge/" + response.getKnowledgeId(), "Read it ", ChatFormatting.GOLD))
+                        .append(Component.literal(" for "))
                         .append(MoneyHelper.FormatDabloons(3).withStyle(ChatFormatting.GREEN))
-                        .append(Component.literal(". "))
-                        .append(WebsiteCommand.takeMeThere("knowledge/" + response.getKnowledgeId(), "Click to read!", ChatFormatting.RED));
+                        .append(Component.literal(". "));
             }
             player.sendSystemMessage(message);
 

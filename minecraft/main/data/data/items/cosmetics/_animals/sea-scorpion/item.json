@@ -11,7 +11,7 @@
 	"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 10,
-		"unlockMessage": "Purchased cosmetic: Sea Scorpion."
+		"unlockMessage": "Unlocked cosmetic: Sea Scorpion."
 	},
 	"equippableCosmetic": {}
 }

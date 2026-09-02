@@ -363,15 +363,14 @@ export function CharmsTab() {
 					)}
 
 					<div className="charmEnchantBar">
-						<div
-							className={`charmForgeMessage ${messageIsError ? 'error' : ''}`}
-							role={messageIsError ? 'alert' : 'status'}
-						>
-							<DabloonText>
-								{message ||
-									'The server will verify your held charm, reagents, and balance.'}
-							</DabloonText>
-						</div>
+						{message && (
+							<div
+								className={`charmForgeMessage ${messageIsError ? 'error' : ''}`}
+								role={messageIsError ? 'alert' : 'status'}
+							>
+								<DabloonText>{message}</DabloonText>
+							</div>
+						)}
 						<button
 							type="button"
 							className={`charmEnchantButton${!hasUpgradeMaterials && charm.currentLevel < charm.maxLevel ? ' insufficient' : ''}`}

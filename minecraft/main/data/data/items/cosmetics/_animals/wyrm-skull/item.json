@@ -11,7 +11,7 @@
 	"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Purchased cosmetic: Wyrm Skull."
+		"unlockMessage": "Unlocked cosmetic: Wyrm Skull."
 	},
 	"equippableCosmetic": {}
 }

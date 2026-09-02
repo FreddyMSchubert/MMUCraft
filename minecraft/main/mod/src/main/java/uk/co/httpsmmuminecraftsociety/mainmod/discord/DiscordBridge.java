@@ -9,6 +9,7 @@ import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import uk.co.httpsmmuminecraftsociety.mainmod.BedrockFormatting;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
@@ -101,7 +102,7 @@ public final class DiscordBridge {
                 : PlayerStatsSync.discordPresentation(player);
         PublishDiscordEventRequest.Builder request = PublishDiscordEventRequest.newBuilder()
                 .setType(type)
-                .setContent(content)
+                .setContent(BedrockFormatting.toDiscord(content))
                 .setRole(profile.role())
                 .setNickname(profile.nickname())
                 .setPronouns(profile.pronouns())

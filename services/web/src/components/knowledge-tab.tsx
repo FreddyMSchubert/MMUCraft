@@ -284,7 +284,6 @@ export function KnowledgeTab({
 	useEffect(() => {
 		const article = articleRef.current;
 		if (!article) return;
-		article.innerHTML = renderedHtml;
 		if (!highlightTerms.length) return;
 
 		const first = highlightArticleMatches(article, highlightTerms);

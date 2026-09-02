@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post, Query } from '@nestjs/common';
 import { AuthSessionService } from '../../auth/auth-session.service';
 import { KnowledgeService } from './knowledge.service';
 
@@ -13,6 +13,15 @@ export class KnowledgeController {
 	getKnowledge(@Headers('cookie') cookieHeader: string | undefined) {
 		const user = this.auth.requireSession(cookieHeader);
 		return this.knowledge.getKnowledgeForUser(user.id);
+	}
+
+	@Get('search')
+	search(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Query('q') query: string | undefined,
+	) {
+		const user = this.auth.requireSession(cookieHeader);
+		return this.knowledge.searchForUser(user.id, query);
 	}
 
 	@Post('read')

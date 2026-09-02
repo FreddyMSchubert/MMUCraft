@@ -3,6 +3,9 @@ id: externalplayers
 unlockOrder: public
 chatMessage: You've unlocked knowledge on the basics of cosmetics
 sidebarTitle: Non-MMU Players
+tags:
+- extenal players
+- non mmu
 tips:
 - You can play with external players that aren't from MMU.
 ====

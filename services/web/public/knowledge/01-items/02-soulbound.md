@@ -3,6 +3,9 @@ id: soulbound
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on the Soulbound enchantment, a method to never lose certain items - even if you die.
 sidebarTitle: Soulbound Enchantment
+tags:
+- soul bound
+- solbound
 tips:
 - Items enchanted with Soulbound stay with you after you have died.
 - The Soulbound enchantment works on tools and armor, but also on wallets and recovery compasses - the last two especially are quite handy.

@@ -3,6 +3,9 @@ id: utility-staves
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the server's utility staves.
 sidebarTitle: Utility Staves
+tags:
+- utility staffs
+- utility stafs
 tips:
 - The Staff of Crafting allows you to craft in a 3 by 3 grid just by waving the Staff, no need to bring or place a crafting table.
 - The Staff of Soulbound Storage allows you to use your Ender Chest anywhere - no need to place a block.

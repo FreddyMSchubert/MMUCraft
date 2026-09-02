@@ -3,6 +3,9 @@ id: mini-blocks
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on Mini Blocks - a cute and super versatile decoration option.
 sidebarTitle: Mini Blocks
+tags:
+- miniblocks
+- mini bloks
 tips:
 - There are tons of mini versions of blocks available as a decoration. They add some great variety!
 - You can craft tiny versions of some blocks by putting their normal-size version into a Stonecutter.

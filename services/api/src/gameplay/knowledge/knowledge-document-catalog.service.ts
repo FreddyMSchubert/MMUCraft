@@ -5,6 +5,7 @@ import type {
 	KnowledgeDocument,
 	KnowledgePage,
 	KnowledgePageMetadata,
+	KnowledgeSearchPage,
 	KnowledgeTreeEntry,
 } from './knowledge-document.types';
 
@@ -13,46 +14,44 @@ const DEFAULT_KNOWLEDGE_ROOTS = [
 	join(process.cwd(), '..', 'web', 'public', 'knowledge'),
 ] as const;
 
-interface CachedKnowledgeDocument {
-	root: string;
-	mtimeMs: number;
-	document: KnowledgeDocument;
-}
-
 @Injectable()
 export class KnowledgeDocumentCatalogService {
-	private cached: CachedKnowledgeDocument | null = null;
+	private cached: KnowledgeDocument | null = null;
 
 	loadDocument(): KnowledgeDocument {
+		if (this.cached) return this.cached;
+
 		const root =
 			process.env.KNOWLEDGE_ROOT ??
 			DEFAULT_KNOWLEDGE_ROOTS.find((candidate) => existsSync(candidate)) ??
 			DEFAULT_KNOWLEDGE_ROOTS[0];
 
 		if (!existsSync(root)) {
-			return { root, mtimeMs: 0, pages: [], tree: [], unlockable: [] };
+			return (this.cached = {
+				root,
+				mtimeMs: 0,
+				pages: [],
+				tree: [],
+				unlockable: [],
+				searchPages: [],
+			});
 		}
 
 		const mtimeMs = this.getTreeMtimeMs(root);
-		if (this.cached?.root === root && this.cached.mtimeMs === mtimeMs) {
-			return this.cached.document;
-		}
-
-		const document = this.parseKnowledgeRoot(root, mtimeMs);
-		this.cached = { root, mtimeMs, document };
-		return document;
+		return (this.cached = this.parseKnowledgeRoot(root, mtimeMs));
 	}
 
 	private parseKnowledgeRoot(root: string, mtimeMs: number): KnowledgeDocument {
 		const tree = this.readDirectory(root, root);
 		const pages = this.flattenPages(tree);
 		const unlockable = pages.filter((page) => !page.unlockedByDefault);
+		const searchPages = pages.map((page) => this.toSearchPage(root, page));
 		const seen = new Set<string>();
 		for (const page of pages) {
 			if (seen.has(page.id)) throw new Error(`Duplicate knowledge id: ${page.id}`);
 			seen.add(page.id);
 		}
-		return { root, mtimeMs, pages, tree, unlockable };
+		return { root, mtimeMs, pages, tree, unlockable, searchPages };
 	}
 
 	private readDirectory(root: string, directory: string): KnowledgeTreeEntry[] {
@@ -99,12 +98,7 @@ export class KnowledgeDocumentCatalogService {
 		const values = new Map<string, string>();
 		const metadata = match[1];
 		if (metadata === undefined) throw new Error(`Knowledge metadata is invalid: ${filePath}`);
-		const tips = /^tips:\s*\n((?:- .+(?:\n|$))+)/m
-			.exec(metadata.replace(/\r\n/g, '\n'))?.[1]
-			?.trimEnd()
-			.split('\n')
-			.map((line) => line.slice(2).trim())
-			.filter(Boolean);
+		const tips = this.parseList(metadata, 'tips');
 		for (const line of metadata.replace(/\r\n/g, '\n').split('\n')) {
 			const parsed = /^([A-Za-z][A-Za-z0-9_-]*)\s*:\s*(.*)$/.exec(line);
 			const key = parsed?.[1];
@@ -122,7 +116,10 @@ export class KnowledgeDocumentCatalogService {
 		if (!sidebarTitle) {
 			throw new Error(`Knowledge markdown file is missing sidebarTitle: ${filePath}`);
 		}
-		if (!tips?.length) throw new Error(`Knowledge markdown file is missing tips: ${filePath}`);
+		if (!this.parseList(metadata, 'tags').length) {
+			throw new Error(`Knowledge markdown file is missing tags: ${filePath}`);
+		}
+		if (!tips.length) throw new Error(`Knowledge markdown file is missing tips: ${filePath}`);
 
 		const unlockOrder = unlockOrderValue === 'public' ? null : Number(unlockOrderValue);
 		if (unlockOrder !== null && !Number.isInteger(unlockOrder)) {
@@ -138,6 +135,29 @@ export class KnowledgeDocumentCatalogService {
 			sidebarTitle,
 			tips,
 		};
+	}
+
+	private toSearchPage(root: string, page: KnowledgePage): KnowledgeSearchPage {
+		const source = readFileSync(join(root, page.path), 'utf8');
+		const metadata = /^====\r?\n([\s\S]*?)\r?\n====/.exec(source)?.[1] ?? '';
+		return {
+			id: page.id,
+			title: page.sidebarTitle,
+			folders: page.folders.join(' '),
+			tags: this.parseList(metadata, 'tags').join(' '),
+			content: source.replace(/^====\r?\n[\s\S]*?\r?\n====\r?\n?/, ''),
+		};
+	}
+
+	private parseList(metadata: string, key: string): string[] {
+		return (
+			new RegExp(`^${key}:\\s*\\n((?:- .+(?:\\n|$))+)`, 'm')
+				.exec(metadata.replace(/\r\n/g, '\n'))?.[1]
+				?.trimEnd()
+				.split('\n')
+				.map((line) => line.slice(2).trim())
+				.filter(Boolean) ?? []
+		);
 	}
 
 	private flattenPages(entries: KnowledgeTreeEntry[]): KnowledgePage[] {

@@ -3,6 +3,9 @@ id: decorative-blocks
 unlockOrder: 4
 chatMessage: You've unlocked knowledge on custom decorative blocks.
 sidebarTitle: Decorative Blocks
+tags:
+- decoritive blocks
+- decrotive blocks
 tips:
 - There are many decorative blocks available on the server. They would look great in your builds!
 - You can enjoy the magnificence of Spoons carpets in game. They are obtainable as decorative blocks.

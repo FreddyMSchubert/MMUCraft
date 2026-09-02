@@ -3,6 +3,9 @@ id: dynamic-beacons
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on material-based beacon ranges.
 sidebarTitle: Beacon Ranges
+tags:
+- becaons
+- becon range
 tips:
 - The range in which a beacon spreads its effects is determined by what mineral blocks are placed under it. The more valuable the block, the farther it extends the beacons range.
 ====

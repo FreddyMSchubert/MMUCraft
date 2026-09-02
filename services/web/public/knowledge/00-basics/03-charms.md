@@ -3,6 +3,9 @@ id: charms
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the basics of charms
 sidebarTitle: Charms
+tags:
+- charmes
+- chrams
 tips:
 - To use charms while still having the protection of a full armour set, combine the charms with the armor.
 - Charms can be made exponentially more powerful when upgrading them on the website.

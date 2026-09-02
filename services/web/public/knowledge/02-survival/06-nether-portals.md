@@ -3,6 +3,9 @@ id: nether-portals
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on a secret and incredibly cool feature about Nether Portals on this server. Trust me, it's cool, please check it out.
 sidebarTitle: Nether Portals
+tags:
+- netherportal
+- nether portel
 tips:
 - On this server, Nether Portals can be built in any shape or size.
 ====

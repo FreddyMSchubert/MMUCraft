@@ -234,6 +234,9 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		const href = `/play/knowledge/${encodeURIComponent(pageId)}`;
 		navigate(href, replace);
 	}, []);
+	const searchKnowledge = useCallback((query: string) => {
+		navigate(`/play/knowledge/search?q=${encodeURIComponent(query)}`);
+	}, []);
 
 	const openShop = useCallback((itemId: string | null, replace = false) => {
 		const href = itemId ? `/play/shop/${encodeURIComponent(itemId)}` : '/play/shop';
@@ -439,7 +442,11 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 					<div className="dashboardPanel">
 						{activeTab === 'dailies' && <DailiesTab />}
 						{activeTab === 'knowledge' && (
-							<KnowledgeTab pageId={routeDetail} onSelectPage={openKnowledge} />
+							<KnowledgeTab
+								pageId={routeDetail}
+								onSelectPage={openKnowledge}
+								onSearch={searchKnowledge}
+							/>
 						)}
 						{activeTab === 'charms' && <CharmsTab />}
 						{activeTab === 'shop' && (

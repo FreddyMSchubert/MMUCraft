@@ -3,6 +3,9 @@ id: wallets
 unlockOrder: 1
 chatMessage: You've unlocked knowledge on wallets, the way to store dabloons.
 sidebarTitle: Wallets
+tags:
+- walets
+- walletts
 tips:
 - Annoyed with Dabloons clogging up your inventory? Craft or invest in a wallet!
 - If you have a wallet and earn or spend Dabloons, they are removed and inserted right into your wallet - no hassle.

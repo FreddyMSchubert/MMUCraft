@@ -100,23 +100,23 @@ public final class KnowledgeTips {
     );
 
     private static final List<WeightedMessage> FLAVOURS = List.of(
-			message(50, "", context -> true), // no flavour text - makes it more special if there is one.
+			message(60, "", context -> true), // no flavour text - makes it more special if there is one.
 
             message(10, "Careful, it's stormy out there.", context -> context.level().isThundering()),
             message(10, "Rough weather out there.", context -> context.level().isThundering()),
-            message(10, "It's snowing out!", Context::isSnowing),
+            message(10, "It's snowing out.", Context::isSnowing),
             message(10, "Snowy out there.", Context::isSnowing),
             message(10, "Stay dry out there.", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
             message(10, "Don't forget an umbrella.", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
             message(10, "Rainy one today.", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
-            message(10, "It's raning cats and dogs!", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
+            message(10, "It's raining cats and dogs!", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
             message(20, "Come rain or shine, Minecraft time!", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
             message(10, "Beautiful day out.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
             message(10, "What a gorgeous day.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
             message(10, "It's a beautiful day today!", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
             message(10, "Hard to complain about that weather.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
             message(10, "Looking bright today.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
-            message(5, "The weather is perfect for a picnic!", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
+            message(5, "The weather is just perfect.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
 
             message(5, "Plenty of daylight left.", Context::isDay),
             message(10, "Sunset is close.", Context::isSunset),
@@ -127,7 +127,6 @@ public final class KnowledgeTips {
             message(15, "That's quite a view.", context -> context.player().getY() >= 200.0D),
             message(10, "Up in the clouds?", context -> context.player().getY() >= 120.0D),
             message(10, "Thin air up here.", context -> context.player().getY() >= 120.0D),
-            message(14, "Deep slate, deeper plans.", context -> context.player().getY() <= -40.0D),
             message(11, "Back in the mines, huh?", context -> context.player().getY() < 30.0D),
             message(11, "It appears you yearned for the mines.", context -> context.player().getY() < 0.0D),
 
@@ -242,7 +241,7 @@ public final class KnowledgeTips {
             if (player.hasDisconnected()) return;
             if (greet) player.sendSystemMessage(greeting(player, previousLastPlayedAtUnixMs));
             if (greet && response.getHasUnreadKnowledge()) {
-                player.sendSystemMessage(Component.literal("Warning: You have unread message books. Read them ")
+                player.sendSystemMessage(Component.literal("Warning: You have unread knowledge books. Read them ")
                         .withStyle(ChatFormatting.GOLD)
                         .append(WebsiteCommand.takeMeThere("knowledge", "here", ChatFormatting.RED))
                         .append(Component.literal(".").withStyle(ChatFormatting.GOLD)));

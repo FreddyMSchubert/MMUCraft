@@ -43,6 +43,13 @@ export function ShopTab({
 	const [typeFilter, setTypeFilter] = useState<'all' | ShopItemType>('all');
 	const [rarityFilter, setRarityFilter] = useState<(typeof RARITY_OPTIONS)[number]>('all');
 	const [tagFilter, setTagFilter] = useState<ShopTagFilter>('all');
+	const [searchQuery, setSearchQuery] = useState('');
+	const [searchFocused, setSearchFocused] = useState(false);
+	const [searchResponse, setSearchResponse] = useState<{
+		query: string;
+		itemIds: string[];
+		error: string;
+	}>({ query: '', itemIds: [], error: '' });
 	const [order, setOrder] = useState<ShopOrder>('random');
 	const [randomSeed, setRandomSeed] = useState(() => Math.random().toString(36));
 	const [buyingItemId, setBuyingItemId] = useState<string | null>(null);
@@ -53,6 +60,14 @@ export function ShopTab({
 	const [visibleItemCount, setVisibleItemCount] = useState(16);
 	const gridRef = useRef<HTMLDivElement | null>(null);
 	const loadMoreRef = useRef<HTMLDivElement | null>(null);
+	const searchInputRef = useRef<HTMLInputElement | null>(null);
+	const normalizedSearchQuery = searchQuery.trim();
+	const matchingItemIds = useMemo(
+		() =>
+			searchResponse.query === normalizedSearchQuery ? new Set(searchResponse.itemIds) : null,
+		[normalizedSearchQuery, searchResponse.itemIds, searchResponse.query],
+	);
+	const searchError = searchResponse.query === normalizedSearchQuery ? searchResponse.error : '';
 
 	const load = useCallback(async () => {
 		const response = await fetch('/api/shop', { cache: 'no-store' });
@@ -76,6 +91,43 @@ export function ShopTab({
 			cancelled = true;
 		};
 	}, [load]);
+
+	useEffect(() => {
+		if (!normalizedSearchQuery) return;
+
+		const controller = new AbortController();
+		const timer = window.setTimeout(() => {
+			void fetch(`/api/shop/search?q=${encodeURIComponent(normalizedSearchQuery)}`, {
+				cache: 'no-store',
+				signal: controller.signal,
+			})
+				.then(async (response) => {
+					const body = (await response.json().catch(() => null)) as {
+						query?: string;
+						itemIds?: string[];
+					} | null;
+					if (!response.ok) throw new Error(apiMessage(body, 'Failed to search shop'));
+					setSearchResponse({
+						query: normalizedSearchQuery,
+						itemIds: body?.itemIds ?? [],
+						error: '',
+					});
+				})
+				.catch((caught: unknown) => {
+					if (caught instanceof DOMException && caught.name === 'AbortError') return;
+					setSearchResponse({
+						query: normalizedSearchQuery,
+						itemIds: [],
+						error: caught instanceof Error ? caught.message : 'Failed to search shop',
+					});
+				});
+		}, 150);
+
+		return () => {
+			window.clearTimeout(timer);
+			controller.abort();
+		};
+	}, [normalizedSearchQuery]);
 
 	const dailyDeals = useMemo(
 		() => data?.items.filter((item) => item.isDailyDeal && item.available) ?? [],
@@ -102,6 +154,8 @@ export function ShopTab({
 
 	const visibleItems = useMemo(() => {
 		const filtered = (data?.items ?? []).filter((item) => {
+			if (normalizedSearchQuery && matchingItemIds && !matchingItemIds.has(item.id))
+				return false;
 			if (typeFilter !== 'all' && item.type !== typeFilter) return false;
 			if (rarityFilter !== 'all' && item.rarity !== rarityFilter) return false;
 			if (tagFilter === 'dyeable' && !item.dyeable) return false;
@@ -132,7 +186,16 @@ export function ShopTab({
 				);
 			return seededRank(`${randomSeed}:${left.id}`) - seededRank(`${randomSeed}:${right.id}`);
 		});
-	}, [data?.items, order, randomSeed, rarityFilter, tagFilter, typeFilter]);
+	}, [
+		data?.items,
+		matchingItemIds,
+		normalizedSearchQuery,
+		order,
+		randomSeed,
+		rarityFilter,
+		tagFilter,
+		typeFilter,
+	]);
 	const renderedItems = visibleItems.slice(0, visibleItemCount);
 
 	useEffect(() => {
@@ -155,7 +218,7 @@ export function ShopTab({
 
 	useEffect(() => {
 		setVisibleItemCount(gridRef.current ? gridColumnCount(gridRef.current) * 4 : 16);
-	}, [order, randomSeed, rarityFilter, tagFilter, typeFilter]);
+	}, [normalizedSearchQuery, order, randomSeed, rarityFilter, tagFilter, typeFilter]);
 
 	useEffect(() => {
 		const target = loadMoreRef.current;
@@ -364,6 +427,44 @@ export function ShopTab({
 			</div>
 
 			<div className="shopFilterStack" aria-label="Shop filters">
+				<div className="shopFilterRow">
+					<span>Search</span>
+					<div role="group" aria-label="Search filter">
+						<button
+							type="button"
+							className={!searchFocused && !normalizedSearchQuery ? 'active' : ''}
+							aria-pressed={!searchFocused && !normalizedSearchQuery}
+							onClick={() => {
+								setSearchQuery('');
+								setSearchFocused(false);
+								searchInputRef.current?.blur();
+							}}
+						>
+							All
+						</button>
+						<label
+							className={`shopSearchFilter ${searchFocused || normalizedSearchQuery ? 'active' : ''}`}
+						>
+							<input
+								ref={searchInputRef}
+								type="search"
+								aria-label="Search shop items"
+								placeholder="Search items…"
+								value={searchQuery}
+								maxLength={100}
+								onFocus={() => {
+									setSearchFocused(true);
+								}}
+								onBlur={() => {
+									setSearchFocused(false);
+								}}
+								onChange={(event) => {
+									setSearchQuery(event.target.value);
+								}}
+							/>
+						</label>
+					</div>
+				</div>
 				<FilterRow
 					label="Type"
 					options={TYPE_OPTIONS}
@@ -389,6 +490,11 @@ export function ShopTab({
 					}}
 				/>
 			</div>
+			{searchError && (
+				<p className="authError" role="alert">
+					{searchError}
+				</p>
+			)}
 
 			<div ref={gridRef} className="shopGrid">
 				{renderedItems.map((item) => (

@@ -3,6 +3,9 @@ id: cosmetics
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the basics of cosmetics
 sidebarTitle: Cosmetics
+tags:
+- cosmatics
+- cosmetcis
 tips:
 - Use fashion books to unlock stylish cosmetics. To wear them after you've unlocked them, visit the shop.
 - You can combine a cosmetic hat with a helmet to look stylish while still staying protected by the helmet.

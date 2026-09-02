@@ -3,6 +3,9 @@ id: backpacks
 unlockOrder: 1
 chatMessage: You've unlocked knowledge on backpacks, a powerful early game shulker alternative.
 sidebarTitle: Backpacks
+tags:
+- backpaks
+- bagpacks
 tips:
 - Use backpacks - they allow you to carry more items with you, and are quite easy to acquire. You just need 8 leather and a chest.
 - You can upgrade backpacks so they can fit even more of your items - very useful!

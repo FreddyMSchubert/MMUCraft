@@ -31,12 +31,43 @@
 .knowledgePda {
 	display: grid;
 	grid-template-columns: 280px minmax(0, 1fr);
+	grid-template-rows: auto 1fr;
 	align-items: start;
-	gap: 20px;
+	column-gap: 20px;
+	row-gap: 12px;
+}
+
+.knowledgeSearch {
+	display: flex;
+	grid-column: 1;
+	gap: 8px;
+}
+
+.knowledgeSearch input {
+	min-width: 0;
+	width: 100%;
+	padding: 9px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+	font: inherit;
+}
+
+.knowledgeSearch button {
+	padding: 9px 12px;
+	border: 1px solid rgba(255, 209, 102, 0.7);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.15);
+	color: #ffd166;
+	font: inherit;
+	font-weight: 700;
 }
 
 .knowledgeSidebarRail {
 	position: relative;
+	grid-column: 1;
+	grid-row: 2;
 	align-self: stretch;
 	min-width: 0;
 }
@@ -168,9 +199,56 @@
 }
 
 .knowledgeReader {
+	grid-column: 2;
+	grid-row: 1 / span 2;
 	min-width: 0;
 	max-width: 100%;
 	padding-bottom: 8px;
+}
+
+.knowledgeSearchSummary {
+	margin: -10px 0 18px;
+	color: rgba(255, 255, 255, 0.65);
+}
+
+.knowledgeSearchResults {
+	display: grid;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.knowledgeSearchResults li,
+.knowledgeSearchResults a {
+	display: grid;
+	gap: 4px;
+}
+
+.knowledgeSearchResults li {
+	padding: 12px 14px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.knowledgeSearchResults a {
+	color: #fff;
+	text-decoration: none;
+}
+
+.knowledgeSearchResults a:hover strong {
+	color: #ffd166;
+}
+
+.knowledgeSearchResults span {
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.82rem;
+}
+
+.knowledgeSearchResults .locked {
+	border-color: rgba(255, 209, 102, 0.35);
+	color: #ffd166;
 }
 
 .knowledgePageTitle {
@@ -471,6 +549,7 @@
 	.playPage .knowledgeMobileNav {
 		display: grid;
 		gap: 6px;
+		margin-top: 12px;
 	}
 
 	.playPage .knowledgeMobileNav span {
@@ -490,6 +569,10 @@
 
 	.playPage .knowledgePda {
 		display: block;
+	}
+
+	.playPage .knowledgeReader {
+		margin-top: 18px;
 	}
 
 	.playPage .knowledgeSidebarRail {

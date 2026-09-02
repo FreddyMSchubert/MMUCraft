@@ -3,6 +3,9 @@ id: membership
 unlockOrder: public
 chatMessage: You've unlocked knowledge on memberships
 sidebarTitle: Membership
+tags:
+- memebership
+- membersip
 tips:
 - Becoming a society member comes with many helpful benefits. It is a one-time payment and lasts you for the whole year.
 - The committee is made up of volunteers; we do not profit from running this server. Please consider becoming a society member so we can recoup the costs.

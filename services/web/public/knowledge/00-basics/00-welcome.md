@@ -3,6 +3,9 @@ id: welcome
 unlockOrder: public
 chatMessage: Welcome to the MMU Minecraft Society!
 sidebarTitle: Welcome!
+tags:
+- welcom
+- minecaft society
 tips:
 - Join the free Discord community to meet like-minded Minecrafters! You'll also find many society announcements and more there.
 - Follow us on Instagram for awesome posts and all the society announcements!

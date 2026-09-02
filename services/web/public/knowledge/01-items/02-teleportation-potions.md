@@ -3,6 +3,9 @@ id: teleportation-potions
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on the server's teleportation potions.
 sidebarTitle: Teleportation Potions
+tags:
+- teleportaton
+- telportation
 tips:
 - Endermen drop more Ender Pearls than usual on this server, allowing you to easily make many of the powerful Teleportation Potions.
 - The Potion of Displacement teleports you somewhere random quite far away. That's great to find different biomes & structures that haven't been visited yet.

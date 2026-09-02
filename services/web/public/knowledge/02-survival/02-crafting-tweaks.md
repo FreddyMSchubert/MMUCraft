@@ -3,6 +3,9 @@ id: tweaks
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the servers crafting tweaks. Some of them are incredibly useful to learn about - please check them out.
 sidebarTitle: Crafting Tweaks
+tags:
+- crafting tweeks
+- recipies
 tips:
 - All of the minecart rail recipes now give way more output items than usual. Instead of 16, crafting the normal rail recipe now gives 64 rails at once!
 - Minecart rails go wayyyy faster on this server - over 2.5 times the normal speed!

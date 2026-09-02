@@ -3,6 +3,9 @@ id: death-and-respawning
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on the server's death and respawn rules.
 sidebarTitle: Death & Respawning
+tags:
+- respawing
+- death and respawn
 tips:
 - When you die, you won't have to walk a bunch to get your items back. Instead, you will spawn somewhere random close to where you died.
 - Recovery compasses can have Soulbound applied to stay on your person after you die. That makes them super useful for finding your last death location.

@@ -3,6 +3,9 @@ id: golden-nutritional-paste
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on Golden Nutritional Paste, the best food in the game.
 sidebarTitle: Golden Nutritional Paste
+tags:
+- golden nutrition paste
+- nutriotional paste
 tips:
 - The Golden Nutritional Paste is the best food in the game! It can be drunk at full hunger, restores all your hunger and your saturation, and it heals 16 hearts!
 - Found yourself in a sticky situation? Bring some Golden Nutritional Paste with your to immediately recover all your health and hunger.

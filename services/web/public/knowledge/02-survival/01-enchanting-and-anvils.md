@@ -3,6 +3,9 @@ id: enchanting-and-anvils
 unlockOrder: 4
 chatMessage: You've unlocked knowledge on the server's enchanting and anvil progression.
 sidebarTitle: Enchanting & Anvils
+tags:
+- enchantng
+- anvilles
 tips:
 - You can copy any enchanted book by placing it on a librarians lectern. The librarian will start offering a copy of the book as one of their trades.
 - Combining levels in an anvil uses addition on this server. For example, combining Sharpness I and Sharpness II results in Sharpness III.

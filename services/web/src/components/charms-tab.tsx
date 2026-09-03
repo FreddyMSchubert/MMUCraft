@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { CharmForgeRenderer } from '@/lib/charm-forge-renderer';
 import { ASSETS } from '@/lib/assets';
-import { MinecraftItemIcon } from '@/components/minecraft-item-icon';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { formatDabloonWord } from '@/lib/dabloons';
@@ -66,14 +65,22 @@ export function CharmsTab() {
 				currentLevel: charm.currentLevel,
 				modelUrl: charm.modelUrl,
 				textureUrl: charm.textureUrl,
-				ingredients: charm.ingredients.map(({ itemId, modelUrl, iconUrl }) => ({
-					itemId,
-					modelUrl,
-					iconUrl,
-				})),
+				ingredients: charm.ingredients.map(
+					({ itemId, modelUrl, iconUrl, requiredCount }) => ({
+						itemId,
+						modelUrl,
+						iconUrl,
+						requiredCount,
+					}),
+				),
 			})
 		: '';
 	const hasUpgradeMaterials = hasRequiredMaterials(charm);
+	const canUpgrade =
+		charm !== null &&
+		charm.currentLevel < charm.maxLevel &&
+		hasUpgradeMaterials &&
+		(inventory?.balanceDabloons ?? 0) >= charm.priceDabloons;
 
 	const refresh = useCallback(async () => {
 		try {
@@ -113,6 +120,18 @@ export function CharmsTab() {
 	}, []);
 
 	useEffect(() => {
+		const refreshOnFocus = () => {
+			setMessage('');
+			setMessageIsError(false);
+			void refresh();
+		};
+		window.addEventListener('focus', refreshOnFocus);
+		return () => {
+			window.removeEventListener('focus', refreshOnFocus);
+		};
+	}, [refresh]);
+
+	useEffect(() => {
 		forgeCharm.current = charm;
 	}, [charm]);
 
@@ -129,15 +148,17 @@ export function CharmsTab() {
 				modelUrl: renderedCharm.modelUrl,
 				textureUrl: renderedCharm.textureUrl,
 			},
-			ingredients: renderedCharm.ingredients.map((ingredient) =>
-				ingredient.itemId.startsWith('minecraft:')
-					? { assetRoot: ASSETS.minecraft.root, itemId: ingredient.itemId }
-					: {
-							assetRoot: ASSETS.minecraft.root,
-							itemId: ingredient.itemId,
-							modelUrl: ingredient.modelUrl,
-							textureUrl: ingredient.iconUrl,
-						},
+			ingredients: renderedCharm.ingredients.flatMap((ingredient) =>
+				Array.from({ length: ingredient.requiredCount }, () =>
+					ingredient.itemId.startsWith('minecraft:')
+						? { assetRoot: ASSETS.minecraft.root, itemId: ingredient.itemId }
+						: {
+								assetRoot: ASSETS.minecraft.root,
+								itemId: ingredient.itemId,
+								modelUrl: ingredient.modelUrl,
+								textureUrl: ingredient.iconUrl,
+							},
+				),
 			),
 		});
 		forge.current = renderer;
@@ -156,6 +177,13 @@ export function CharmsTab() {
 		try {
 			const latestInventory = await refresh();
 			if (!latestInventory) return;
+			if (latestInventory.charms.length === 0) {
+				showUpgradeAlert(
+					'Held charm changed',
+					'Your held charm changed. Review the refreshed inventory before upgrading.',
+				);
+				return;
+			}
 			const latestCharm = latestInventory.charms[0];
 			if (
 				latestCharm.itemId !== charm.itemId ||
@@ -168,16 +196,15 @@ export function CharmsTab() {
 				return;
 			}
 			if (!hasRequiredMaterials(latestCharm)) {
-				const missing = latestCharm.ingredients
-					.filter((ingredient) => ingredient.inventoryCount < ingredient.requiredCount)
+				const materials = latestCharm.ingredients
 					.map(
 						(ingredient) =>
-							`${ingredient.displayName}: ${ingredient.inventoryCount} available, ${ingredient.requiredCount} required`,
+							`${ingredient.displayName} ${ingredient.inventoryCount >= ingredient.requiredCount ? '✅' : '❌'} (${ingredient.inventoryCount} out of ${ingredient.requiredCount})`,
 					)
 					.join('\n');
 				showUpgradeAlert(
 					'Missing upgrade materials',
-					`Your inventory does not contain everything this upgrade needs:\n\n${missing}\n\nCollect the missing items, keep them in your inventory, then refresh the forge.`,
+					`Your inventory does not contain everything this upgrade needs.\n\n${materials}`,
 				);
 				return;
 			}
@@ -220,7 +247,7 @@ export function CharmsTab() {
 	}
 
 	function showUpgradeAlert(title: string, warning: string) {
-		setMessage(warning);
+		setMessage(title);
 		setMessageIsError(true);
 		void showAlert({ title, message: warning, tone: 'danger' });
 	}
@@ -289,80 +316,31 @@ export function CharmsTab() {
 			)}
 
 			{charm && (
-				<>
-					<section
-						className={`charmForgeStage ${animating ? 'enchanting' : ''}`}
-						aria-label={`${charm.title} upgrade preview`}
-					>
-						<div className="charmForgeAura" aria-hidden="true" />
-						<div ref={forgeHost} className="charmForgeScene" />
-						<div className="charmIdentity">
-							<h4>
-								<DabloonText>{charm.title}</DabloonText>
-							</h4>
+				<section
+					className={`charmForgeStage ${animating ? 'enchanting' : ''}`}
+					aria-label={`${charm.title} upgrade preview`}
+				>
+					<div className="charmForgeAura" aria-hidden="true" />
+					<div ref={forgeHost} className="charmForgeScene" />
+					<div className="charmIdentity">
+						<h4>
+							<DabloonText>{charm.title}</DabloonText>
+						</h4>
+						<div className="charmLevelRoute">
 							<strong>Level {charm.currentLevel}</strong>
 							{charm.currentLevel < charm.maxLevel && (
 								<span>→ Level {charm.targetLevel}</span>
 							)}
 						</div>
-					</section>
-
-					<section className="charmAbility">
-						<div>
-							<span>Current level</span>
-							<p>{charm.currentAbility}</p>
-						</div>
-						{charm.currentLevel < charm.maxLevel && (
-							<div>
-								<span>Next level</span>
-								<p>{charm.nextAbility}</p>
-							</div>
+						{charm.currentLevel < charm.maxLevel ? (
+							<p className="charmUpgradeSummary">
+								Level {charm.targetLevel} {lowercaseFirst(charm.nextAbility)}
+							</p>
+						) : (
+							<p className="charmUpgradeSummary">Maximum level reached.</p>
 						)}
-					</section>
-
-					{charm.currentLevel < charm.maxLevel ? (
-						<section className="charmIngredientSection">
-							<div className="charmSectionHeading">
-								<div>
-									<span>Reagents</span>
-									<h4>Required ingredients</h4>
-								</div>
-							</div>
-							<ul className="charmIngredientGrid">
-								{charm.ingredients.map((ingredient) => (
-									<li
-										className={
-											ingredient.inventoryCount < ingredient.requiredCount
-												? 'missing'
-												: undefined
-										}
-										key={ingredient.raw}
-									>
-										<div className="charmIngredientIcon">
-											<MinecraftItemIcon
-												className="charmIngredientModel"
-												itemId={ingredient.itemId}
-												modelUrl={ingredient.modelUrl}
-												textureUrl={ingredient.iconUrl}
-											/>
-										</div>
-										<strong>{ingredient.displayName}</strong>
-										<span
-											aria-label={`${ingredient.inventoryCount} in inventory, ${ingredient.requiredCount} required`}
-										>
-											{ingredient.inventoryCount} / {ingredient.requiredCount}
-										</span>
-									</li>
-								))}
-							</ul>
-						</section>
-					) : (
-						<div className="charmMastered">
-							<span aria-hidden="true">✦</span> Maximum level reached
-						</div>
-					)}
-
-					<div className="charmEnchantBar">
+					</div>
+					<div className="charmUpgradePanel">
 						{message && (
 							<div
 								className={`charmForgeMessage ${messageIsError ? 'error' : ''}`}
@@ -373,7 +351,7 @@ export function CharmsTab() {
 						)}
 						<button
 							type="button"
-							className={`charmEnchantButton${!hasUpgradeMaterials && charm.currentLevel < charm.maxLevel ? ' insufficient' : ''}`}
+							className={`charmEnchantButton ${canUpgrade ? 'available' : 'insufficient'}`}
 							onClick={() => void upgrade()}
 							disabled={upgrading || charm.currentLevel >= charm.maxLevel}
 						>
@@ -387,19 +365,23 @@ export function CharmsTab() {
 							{charm.currentLevel < charm.maxLevel && (
 								<strong>
 									{charm.priceDabloons === 0 ? (
-										'Free'
+										'(Free)'
 									) : (
-										<DabloonAmount
-											amount={charm.priceDabloons}
-											format="full"
-											tone="inherit"
-										/>
+										<>
+											(
+											<DabloonAmount
+												amount={charm.priceDabloons}
+												format="full"
+												tone="inherit"
+											/>
+											)
+										</>
 									)}
 								</strong>
 							)}
 						</button>
 					</div>
-				</>
+				</section>
 			)}
 
 			{!charm && message && (
@@ -417,4 +399,8 @@ function hasRequiredMaterials(charm: HeldCharm | null) {
 			(ingredient) => ingredient.inventoryCount >= ingredient.requiredCount,
 		) ?? false
 	);
+}
+
+function lowercaseFirst(value: string) {
+	return value.charAt(0).toLowerCase() + value.slice(1);
 }

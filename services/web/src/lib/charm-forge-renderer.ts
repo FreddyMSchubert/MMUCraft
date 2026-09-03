@@ -25,6 +25,7 @@ export class CharmForgeRenderer {
 	private readonly particles: THREE.Points;
 	private readonly particlePositions: Float32Array;
 	private readonly resizeObserver: ResizeObserver;
+	private orbitRadiusX = 3.3;
 	private centralCharm: THREE.Group | null = null;
 	private centralAppearedAt = 0;
 	private frame: number | null = null;
@@ -52,13 +53,11 @@ export class CharmForgeRenderer {
 		light.position.set(0, 2.5, 4);
 		this.scene.add(light);
 
-		this.particlePositions = new Float32Array(360 * 3);
+		this.particlePositions = new Float32Array(560 * 3);
 		for (let index = 0; index < this.particlePositions.length; index += 3) {
-			const radius = 1.2 + Math.random() * 4.1;
-			const angle = Math.random() * Math.PI * 2;
-			this.particlePositions[index] = Math.cos(angle) * radius;
-			this.particlePositions[index + 1] = (Math.random() - 0.5) * 4.8;
-			this.particlePositions[index + 2] = (Math.random() - 0.5) * 2;
+			this.particlePositions[index] = (Math.random() - 0.5) * 10;
+			this.particlePositions[index + 1] = (Math.random() - 0.5) * 10;
+			this.particlePositions[index + 2] = (Math.random() - 0.5) * 4;
 		}
 		const particleGeometry = new THREE.BufferGeometry();
 		particleGeometry.setAttribute(
@@ -229,14 +228,19 @@ export class CharmForgeRenderer {
 		}
 
 		this.root.rotation.z = Math.sin(elapsed * 0.35) * 0.025;
-		this.particles.rotation.y = elapsed * (this.reducedMotion ? 0.01 : 0.08);
+		const particleMotion = this.reducedMotion ? 0.12 : 1;
+		this.particles.position.set(
+			Math.sin(elapsed * 0.21) * 0.28 * particleMotion,
+			Math.cos(elapsed * 0.17) * 0.2 * particleMotion,
+			Math.sin(elapsed * 0.13) * 0.24 * particleMotion,
+		);
+		this.particles.rotation.set(
+			Math.sin(elapsed * 0.16) * 0.035 * particleMotion,
+			Math.sin(elapsed * 0.19) * 0.04 * particleMotion,
+			Math.cos(elapsed * 0.14) * 0.025 * particleMotion,
+		);
 		if (enchantProgress > 0.5) this.burst = Math.max(this.burst, (enchantProgress - 0.5) * 2);
-		const positions = this.particles.geometry.getAttribute('position') as THREE.BufferAttribute;
-		for (let index = 0; index < this.particlePositions.length; index += 3) {
-			this.particlePositions[index + 1] += 0.002 + this.burst * 0.018;
-			if (this.particlePositions[index + 1] > 3.2) this.particlePositions[index + 1] = -3.2;
-		}
-		positions.needsUpdate = true;
+		if (this.burst > 0) this.particles.scale.setScalar(1 + this.burst * 0.18);
 
 		if (enchantProgress >= 1 && this.enchantResolve) {
 			this.ingredientRoot.visible = false;
@@ -251,15 +255,16 @@ export class CharmForgeRenderer {
 		const height = Math.max(1, this.container.clientHeight);
 		this.renderer.setSize(width, height, false);
 		this.camera.aspect = width / height;
-		this.camera.position.z = width < 620 ? 12.5 : 10;
+		this.camera.position.z = 10;
+		this.orbitRadiusX = 3.3 * Math.min(1, this.camera.aspect);
 		this.camera.updateProjectionMatrix();
 	}
 
 	private orbitTarget(angle: number, elapsed: number, radiusScale: number) {
 		const currentAngle = angle + elapsed * (this.reducedMotion ? 0.06 : 0.24);
 		return new THREE.Vector3(
-			Math.cos(currentAngle) * 3.3 * radiusScale,
-			Math.sin(currentAngle) * 1.85 * radiusScale,
+			Math.cos(currentAngle) * this.orbitRadiusX * radiusScale,
+			Math.sin(currentAngle) * 1.55 * radiusScale,
 			Math.sin(currentAngle * 2) * 0.65 * radiusScale,
 		);
 	}

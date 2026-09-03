@@ -1,8 +1,6 @@
 @media (max-width: 760px) {
 	.charmForgeHeader,
-	.charmForgeControls,
-	.charmSectionHeading,
-	.charmEnchantBar {
+	.charmForgeControls {
 		align-items: stretch;
 		flex-direction: column;
 	}
@@ -11,46 +9,54 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 	}
+
 	.charmForgeStage {
-		min-height: 430px;
+		aspect-ratio: 4 / 5;
 		border-radius: 13px;
 	}
-	.charmAbility {
-		grid-template-columns: 1fr;
-	}
-	.charmIngredientSection {
-		padding: 13px;
-	}
-	.charmIngredientGrid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-	.charmEnchantButton {
-		width: 100%;
-		min-width: 0;
-	}
+
 	.charmForgeMessage {
 		text-align: center;
 	}
 }
 
 @media (max-width: 430px) {
-	.charmForgeControls,
-	.charmIngredientGrid {
+	.charmForgeControls {
 		grid-template-columns: 1fr;
 	}
-	.charmForgeStage {
-		min-height: 390px;
-	}
+
 	.charmIdentity {
-		bottom: 14px;
+		top: 10px;
+		gap: 5px;
+		width: calc(100% - 20px);
+		padding: 10px;
+	}
+
+	.charmUpgradePanel {
+		bottom: 10px;
+		width: calc(100% - 20px);
+	}
+
+	.charmIdentity h4 {
+		font-size: 0.92rem;
+	}
+
+	.charmUpgradeSummary {
+		font-size: 0.76rem;
+	}
+
+	.charmEnchantButton {
+		min-height: 52px;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.charmForgeAura,
-	.charmRune {
+	.charmRune,
+	.charmEnchantButton {
 		animation: none;
 	}
+
 	.charmEnchantButton,
 	.charmRefresh {
 		transition: none;

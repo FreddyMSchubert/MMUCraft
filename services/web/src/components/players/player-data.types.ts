@@ -28,6 +28,7 @@ export interface MinecraftStatValue {
 	id: string;
 	label: string;
 	value: number;
+	total?: number;
 	updatedAtUnixMs: number;
 }
 
@@ -69,6 +70,8 @@ export interface PlayerSummary {
 	profile: PlayerProfile;
 	fishing: Record<string, number>;
 	stats: PlayerStats;
+	unlocks: Record<'charms' | 'cosmetics' | 'knowledge', { unlocked: number; total: number }>;
+	ranks: Record<string, number>;
 }
 
 export interface PlayersResponse {

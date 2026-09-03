@@ -216,6 +216,10 @@ export function MiniFishCompendium({ userId }: { userId: number }) {
 					</span>
 				)}
 			</summary>
+			<p className="miniFishCompendiumIntro">
+				This is a compact view of the fish this player has caught. For every catch detail,
+				see the <Link href="/play/fishing">full Fishing Compendium</Link>.
+			</p>
 			{data ? (
 				<FishGrid
 					fish={sortAndFilterFish(data.fish, new Set(), new Set(), 'rarity')}

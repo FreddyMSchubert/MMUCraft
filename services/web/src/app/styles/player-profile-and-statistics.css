@@ -309,6 +309,7 @@
 }
 
 .playerStatLine {
+	position: relative;
 	display: grid;
 	gap: 5px;
 	min-width: 0;
@@ -318,10 +319,47 @@
 	background: rgba(0, 0, 0, 0.2);
 }
 
-.playerStatLine span {
+.playerStatLine > span:first-child {
 	color: rgba(255, 255, 255, 0.62);
 	font-size: 0.76rem;
 	text-transform: uppercase;
+}
+
+.playerStatRank {
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+	min-width: 23px;
+	padding: 2px 4px;
+	border: 1px solid var(--rank-color);
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--rank-color) 20%, #101018);
+	box-shadow: 0 0 8px color-mix(in srgb, var(--rank-color) 35%, transparent);
+	color: var(--rank-color);
+	font-size: 0.68rem;
+	font-weight: 800;
+	line-height: 1;
+	text-align: center;
+	cursor: help;
+}
+
+.playerStatRank.rank-common {
+	--rank-color: var(--rarity-common);
+}
+.playerStatRank.rank-uncommon {
+	--rank-color: var(--rarity-uncommon);
+}
+.playerStatRank.rank-rare {
+	--rank-color: var(--rarity-rare);
+}
+.playerStatRank.rank-epic {
+	--rank-color: var(--rarity-epic);
+}
+.playerStatRank.rank-legendary {
+	--rank-color: var(--rarity-legendary);
+}
+.playerStatRank.rank-mythical {
+	--rank-color: var(--rarity-mythical);
 }
 
 .playerStatLine strong {

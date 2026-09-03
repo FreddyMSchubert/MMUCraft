@@ -51,11 +51,11 @@ Their speed is over 2.5x faster, making it the fastest transportation method wit
 
 ### Stay up-to-date with the Society
 
-:::tip Join our **Discord**
+:::tip Join our Discord
 Minecraft is more fun with friends! Join the Discord community (completely free) [here](https://discord.gg/pPgZqRS5b2).
 :::
 
-:::tip Follow our **Instagram**
+:::tip Follow our Instagram
 For all the latest infos on server updates and events, follow our Instagram (also completely free) [here](https://www.instagram.com/mmuminecraftsociety/).
 :::
 

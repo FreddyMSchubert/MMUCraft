@@ -13,7 +13,7 @@ tips:
 - You can get different wooden items more efficiently by using a Stonecutter! (I know, the naming is unintuitive).
 - Instead of breaking and placing a painting dozens of times to get the one you want, just put a painting in a Stonecutter. This will allow you to select the exact painting you want.
 - This server has some additional crafting recipes, such as crafting wool into string, crafting nether wart blocks into nether wart, and crafting compressed ice into uncompressed ice.
-- You can turn concrete powder into concrete way quicker now by throwing concrete powder items into a cauldron filled with water. This will conver them in an instant!
+- You can turn concrete powder into concrete way quicker now by throwing concrete powder items into a cauldron filled with water. This will convert them in an instant!
 - You can get your hands on mud blocks way way easier than usual by throwing dirt blocks into a cauldron filled with water. The dirt blocks will turn into mud blocks instantly!
 ====
 
@@ -82,6 +82,22 @@ Throw concrete powder blocks of any color into a water-filled cauldron to quickl
 Similarly, throw dirt blocks in a water-filled cauldron to turn the dirt into mud! Wayyy easier:
 
 ![Throw dirt in a water-filled cauldron to turn it into mud](/assets/knowledge/survival/crafting-tweaks/easier-mud.png)
+
+## Early Glowstone
+
+Even if you haven't reached the Nether yet, you can already create Glowstone in the Overworld only using this recipe:
+
+![Glowstone from glow berries](/assets/knowledge/survival/crafting-tweaks/glowstone_berries.png)
+
+:::recipe-items
+[Stone](https://minecraft.wiki/w/Stone) (TL, TC, TR, CL, CR, BL, BC, BL) · [Glow Berries](https://minecraft.wiki/w/Glow_Berries) (C) → [Glowstone](https://minecraft.wiki/w/Glowstone) ×8
+:::
+
+![Glowstone from glow ink sacs](/assets/knowledge/survival/crafting-tweaks/glowstone_sac.png)
+
+:::recipe-items
+[Stone](https://minecraft.wiki/w/Stone) (TL, TC, TR, CL, CR, BL, BC, BL) · [Glow Ink Sac](https://minecraft.wiki/w/Glow_Ink_Sac) (C) → [Glowstone](https://minecraft.wiki/w/Glowstone) ×8
+:::
 
 ## MORE
 

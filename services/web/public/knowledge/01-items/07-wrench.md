@@ -15,13 +15,14 @@ tips:
 
 The wrench works in a similar way to the debug stick. Right click a block using the wrench to modify its blockstates.
 
+![Wrench Crafting Recipe](/assets/knowledge/items/wrench/example.png)
+
 ## What are the effects
 
 For most blocks, the wrench mainly rotates them. This is already supremely useful to make building redstone less annoying, for example.
 
 For some blocks, the wrench can do even more stuff, e.g.:
 
-- Copper Golem Statue Pose
 - Grass Block Snowiness
 - Sculk Catalyst Perma-Loop Bloom Animation
 - Permanently Lit furnace, campfire, ... regardless of fuel

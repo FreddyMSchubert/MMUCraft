@@ -38,3 +38,17 @@ There's a buncha fun stuff.
 :::recipe-items
 [Copper Ingot](https://minecraft.wiki/w/Copper_Ingot) (C, BL) · [Iron Nugget](https://minecraft.wiki/w/Iron_Nugget) → Wrench
 :::
+
+## How to use it
+
+#### Right-clicking
+
+Right-clicking cycles the main property of the block you are looking to modify, which is the property you will be looking to modify anyways most of the time.
+
+#### Shift + Left-Clicking
+
+Holding Shift while Left-Clicking on the block cycles through all the modifyable properties of the block.
+
+#### Shift + Right-Clicking
+
+Holding Shift while Right-Clicking modifies the exact property of the block that was previously specified by holding Shift + Left-Clicking.

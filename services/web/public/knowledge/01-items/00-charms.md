@@ -61,7 +61,9 @@ Different armor types are better than others at conducting magic. Here's how man
 
 To get your hands on the Charm Boost enchantment, you need to find a Charm Boost Enchanted Book, which spawn buried in Sand or Gravel in Archeological digsites. (e.g. Trail Ruins, Desert Pyramids, Desert Wells, Ocean Ruins).
 
-## Upgrade a charm
+## Reparing & Upgrading charms
+
+Sometimes you may find a broken charm, which needs to be upgraded before you can use it. But you can upgrade almost all charms way past the point where they start working, which makes them more and more powerful.
 
 Almost all charms start out with decent power, but can be leveled to be very powerful. To do so:
 

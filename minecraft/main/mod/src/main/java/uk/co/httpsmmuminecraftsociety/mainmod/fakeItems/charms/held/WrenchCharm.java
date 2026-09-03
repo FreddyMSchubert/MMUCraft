@@ -54,7 +54,6 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
             BlockStateProperties.SIDE_CHAIN_PART,
             BlockStateProperties.BAMBOO_LEAVES,
             BlockStateProperties.TILT,
-            BlockStateProperties.COPPER_GOLEM_POSE,
             BlockStateProperties.CRACKED,
             BlockStateProperties.BLOOM,
             BlockStateProperties.LIT,

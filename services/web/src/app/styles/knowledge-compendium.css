@@ -413,6 +413,12 @@
 	padding-left: 24px;
 }
 
+.knowledgePage hr {
+	margin: 24px 0;
+	border: 0;
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 .knowledgePage blockquote {
 	padding: 10px 14px;
 	border-left: 4px solid rgba(255, 209, 102, 0.8);
@@ -452,22 +458,75 @@
 }
 
 .knowledgeAdmonition.perk {
-	--perk-gradient: linear-gradient(
-		135deg,
-		rgba(255, 145, 70, 0.18) 0%,
-		rgba(255, 215, 90, 0.18) 32%,
-		rgba(105, 220, 140, 0.18) 65%,
-		rgba(100, 175, 255, 0.18) 100%
+	position: relative;
+	isolation: isolate;
+	border: 0;
+	background: repeating-linear-gradient(
+		90deg,
+		rgba(255, 105, 130, 0.28) 0%,
+		rgba(255, 170, 85, 0.28) 7%,
+		rgba(245, 220, 105, 0.26) 14%,
+		rgba(100, 230, 155, 0.3) 21%,
+		rgba(90, 210, 245, 0.32) 28%,
+		rgba(125, 160, 255, 0.4) 35%,
+		rgba(200, 135, 255, 0.34) 42%,
+		rgba(255, 105, 130, 0.28) 50%
 	);
+	background-size: 200% 100%;
+	animation: knowledgePerkRainbow 8s linear infinite paused;
+	transition: transform 180ms ease;
+}
 
-	border-color: transparent;
+.knowledgeAdmonition.perk:hover {
+	animation-play-state: running;
+	transform: translateY(-2px);
+}
 
-	background: var(--perk-gradient);
+@keyframes knowledgePerkRainbow {
+	from {
+		background-position: 0% 0%;
+	}
+	to {
+		background-position: 100% 0%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.knowledgeAdmonition.perk {
+		animation: none;
+		transition: none;
+	}
+
+	.knowledgeAdmonition.perk:hover {
+		transform: none;
+	}
 }
 
 .knowledgeAdmonition.perk .knowledgeAdmonitionTitle {
 	background: rgba(255, 255, 255, 0.055);
 	color: rgba(255, 255, 255, 0.95);
+	text-decoration: none;
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionTitle::after {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	content: '';
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionTitle:hover::after {
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionTitle:focus-visible::after {
+	outline: 2px solid #fff;
+	outline-offset: -2px;
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionBody a {
+	position: relative;
+	z-index: 1;
 }
 
 .knowledgeAdmonition.perk .knowledgeAdmonitionBody {

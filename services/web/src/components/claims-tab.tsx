@@ -197,7 +197,7 @@ export function ClaimsTab() {
 						<ul>
 							<li>Place & break blocks</li>
 							<li>Open Chests, Barrels etc</li>
-							<li>Interact with anything at all (e.g. doors)</li>
+							<li>Interact with anything at all</li>
 						</ul>
 						This also includes other mobs like creepers, which can&apos;t damage the
 						things in your claims! Claims are perfect to{' '}

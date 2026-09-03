@@ -19,19 +19,17 @@ tips:
 
 There are 3 teleportation potions available on the server, all of which are **supremely useful** for getting around quickly.
 
-:::tip
-For all of these potions, if you have a tamed animal *following you* (not sitting), or an animal leashed, they will teleport with you.
-:::
-
 :::note
 Endermen now drop significantly more ender pearls when killed, making many of these recipes quite cheap actually!
 :::
 
-## Potion of Displacement
+## Potions
+
+### Potion of Displacement
 
 This potion has the same effect that some may know as the `/rtp` command (random teleport) from previous years server.
 
-It teleports you somewhere random in a radius of 10000 blocks. This can be great for finding new biomes & resources.
+It teleports you somewhere random in a radius of 7500 blocks. This can be great for finding new biomes & resources.
 
 It can be crafted in these two ways:
 
@@ -47,9 +45,17 @@ It can be crafted in these two ways:
 [Chorus Fruit](https://minecraft.wiki/w/Chorus_Fruit) (TC, CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (BC) → Potion of Displacement ×4
 :::
 
-But now you're somewhere off 10000 blocks away from your home. That'll be quite the walk! Or, alternatively, you could use the:
+Non-Members teleport seomwhere random in a radius of 7500 blocks.
 
-## Potion of Returning
+:::perk
+If you're a member, Potions of Displacement will instead teleport you somewhere within an extended radius of **15000 blocks**, making it easier to find new biomes and stuff.
+
+(For context, we decided not to make this available to everybody because it can be degrading for server performance and world file size. Sorry to everyone else, but we need to limit it somehow.)
+:::
+
+But now you're somewhere off 7500, or even 15000, blocks away from your home. That'll be quite the walk! Or, alternatively, you could use the:
+
+### Potion of Returning
 
 This potion teleports you to the world spawn of the server, the place you started when joining the server for the first time.
 
@@ -65,7 +71,7 @@ Here's how to teleport to the world spawn from anywhere:
 [Compass](https://minecraft.wiki/w/Compass) (TC) · [Lapis Lazuli](https://minecraft.wiki/w/Lapis_Lazuli) (CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (BC) → Potion of Returning ×4
 :::
 
-## Potion of Resonance
+### Potion of Resonance
 
 This potion allows you to teleport directly to another player currently playing on the server.
 
@@ -81,4 +87,15 @@ Here's how to teleport to a player that is currently holding the same item you a
 
 :::recipe-items
 [Compass](https://minecraft.wiki/w/Compass) (TC) · [Amethyst Shard](https://minecraft.wiki/w/Amethyst_Shard) (CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (BC) → Potion of Resonance ×4
+:::
+
+## Teleporting with Mobs
+
+:::perk
+Members are able to bring animals with them when they use these potions.
+
+The following mobs will follow along when a member teleports:
+- Animals on a lead
+- Tamed animals following the teleporting player (They can't be sitting)
+- Animals currently being ridden by the teleporting player
 :::

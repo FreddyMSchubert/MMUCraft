@@ -11,6 +11,10 @@ tips:
 - The committee is made up of volunteers; we do not profit from running this server. Please consider becoming a society member so we can recoup the costs.
 ====
 
+***A membership costs 5£ once for the whole year.*** Thank you for your support! 🫶 We hope you enjoy your perks.
+
+---
+
 Anybody can play on this server for free. But hosting the server has real costs, so we need some way to fund it. (Plus, encouraging memberships is enforced by the MMU union.)
 
 ## Becoming a member
@@ -27,12 +31,33 @@ Thank you and Have Fun!
 
 ## Benefits
 
-- Exclusive members-only events & other servers (e.g. modded) are planned.
-- More dabloons earned from completing advancements & dailies.
+In no particular order:
+
+### Main Benefits
+
+- Feeling of superiority
+
+### Gameplay Benefits
+
+- Permanent multiplier to dabloons payout earned from completing advancements.
+- More dabloons earned when claiming the full daily completion reward on a given day.
 - The price increase of buying more than one claim is less steep for members.
+- Respawn at half the distance from your death location as normal players.
 - When not logging a day on the login streaks, for non-member the streak resets, where for members it is only cut in half.
+- Travel up to 15,000 blocks instead of only 7,500 blocks when using a Potion of Displacement to find what you're looking for easier.
+- Bring animals & mobs with you when using teleportation potions.
 - We will add any new [mini blocks](/play/knowledge/mini-blocks) you want to the game for you. Infinite decorations!
 - Inviting a [Non-MMU Player](/play/knowledge/externalplayers) less for members.
+- Exclusive other servers (e.g. modded) are planned.
+
+### Other Benefits
+
+- You get a cool MMU Minecraft Society Keychain.
+- At some pubs we go to, showing you MMU Minecraft Society Keychain when you order drinks will get you a discount.
+- Discounts to ticketed society events.
+- Exclusive members-only events are planned.
+- Access to exclusive & private members-only channels on the discord server.
+- Free bonus raffle entries if we do society raffles.
 
 If you are unable or unwilling to pay for any reason, that is entirely fine. If you feel like the server is "pay-to-win" or unfair towards non-members, please reach out to us, we wish for everybody to have an equally amazing gaming experience.
 

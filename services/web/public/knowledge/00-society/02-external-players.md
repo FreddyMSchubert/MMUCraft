@@ -16,8 +16,16 @@ You may wish to play on this server with people that aren't MMU. This is **entir
 By inviting an external player, you become responsible for them. If they break our rules, you get banned along with them.
 :::
 
-:::note
-Inviting an external player costs a certain amount of [dabloons](/play/knowledge/money-basics). (Please ask committee for the specific, current amount.)
+Inviting an external player costs 250 [Dabloons](/play/knowledge/money-basics).
+
+:::perk
+For members, inviting an external player only costs 150 [Dabloons](/play/knowledge/money-basics).
+:::
+
+You can invite any amount of external players.
+
+:::info
+None of this is needed to play with people from MMU, they can just sign up for free like you did.
 :::
 
 To invite an external player:

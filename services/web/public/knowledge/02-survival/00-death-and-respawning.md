@@ -23,6 +23,10 @@ After death, you no longer respawn next to your bed, but closer to wherever you 
 
 Specifically, you respawn at a random position **within the server render distance** of where you died. This means that when you respawn, you are always able to see the position you died at (unless it's in a cave, behind a hill, or your render distance is set lower than the server render distance).
 
+:::perk
+Members respawn closer to their death location, half as close as normal players on average.
+:::
+
 ![Death Screen](/assets/knowledge/survival/death-respawning/death_screen.png)
 
 :::note

@@ -77,6 +77,10 @@ export class AuthSignupService {
 		return { flowId };
 	}
 
+	emailForFlow(flowId: string) {
+		return signupFlows.get(flowId)?.email ?? null;
+	}
+
 	verifyEmailCode(flowId: string, code: string) {
 		const flow = this.getFlow(flowId);
 		const now = Date.now();

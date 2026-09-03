@@ -17,6 +17,7 @@ export const signupFlows = new Map<string, SignupFlow>();
 
 export interface SigninFlow {
 	userId: number;
+	email: string;
 	codeHash: string;
 	expiresAtUnixMs: number;
 	failedAttempts: number;

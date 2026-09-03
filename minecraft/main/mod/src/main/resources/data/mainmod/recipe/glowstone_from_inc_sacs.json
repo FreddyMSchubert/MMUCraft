@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "minecraft:glow_ink_sac",
+    "S": "minecraft:stone"
+  },
+  "pattern": [
+    "SSS",
+    "SGS",
+    "SSS"
+  ],
+  "result": {
+    "count": 8,
+    "id": "minecraft:glowstone"
+  }
+}

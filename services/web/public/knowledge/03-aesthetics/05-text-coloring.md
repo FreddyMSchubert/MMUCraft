@@ -20,7 +20,7 @@ You can make text colorful and add cool formatting to it!
 
 When you put `&` and another character anywhere in text (chat, signs, books, item names, name tags, ...), all text following the & will start having a different color, formatting, ...
 
-![Text Coloring Example](/assets/knowledge/survival/text-coloring/coloring_example.png)
+![Text Coloring Example](/assets/knowledge/aesthetics/text-coloring/coloring_example.png)
 
 Formatting stays active until you use `&r`.
 

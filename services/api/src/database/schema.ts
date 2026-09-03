@@ -381,6 +381,38 @@ export const commandLogs = sqliteTable(
 	],
 );
 
+export const signinAttemptLogs = sqliteTable(
+	'signin_attempt_logs',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		email: text('email'),
+		journey: text('journey', { enum: ['signin', 'signup'] }).notNull(),
+		event: text('event', {
+			enum: [
+				'email_send',
+				'email_resend',
+				'email_code_input',
+				'minecraft_username_input',
+				'minecraft_code_input',
+				'rules_accept',
+			],
+		}).notNull(),
+		succeeded: integer('succeeded'),
+		detail: text('detail'),
+		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+	},
+	(table) => [
+		index('signin_attempt_logs_created_at_idx').on(table.created_at_unix_ms),
+		index('signin_attempt_logs_email_created_at_idx').on(table.email, table.created_at_unix_ms),
+		check('signin_attempt_logs_journey_check', sql`${table.journey} in ('signin', 'signup')`),
+		check(
+			'signin_attempt_logs_event_check',
+			sql`${table.event} in ('email_send', 'email_resend', 'email_code_input', 'minecraft_username_input', 'minecraft_code_input', 'rules_accept')`,
+		),
+		check('signin_attempt_logs_succeeded_check', sql`${table.succeeded} in (0, 1)`),
+	],
+);
+
 export const countdowns = sqliteTable(
 	'countdowns',
 	{
@@ -483,6 +515,7 @@ export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSel
 export type DailyTaskRow = typeof dailyTasks.$inferSelect;
 export type GiftCodeRow = typeof giftCodes.$inferSelect;
 export type CommandLogRow = typeof commandLogs.$inferSelect;
+export type SigninAttemptLogRow = typeof signinAttemptLogs.$inferSelect;
 export type CountdownRow = typeof countdowns.$inferSelect;
 export type FeatureToggleRow = typeof featureToggles.$inferSelect;
 export type VelocitySettingsRow = typeof velocitySettings.$inferSelect;
@@ -510,6 +543,7 @@ export const schema = {
 	giftCodes,
 	giftCodeRedemptions,
 	commandLogs,
+	signinAttemptLogs,
 	countdowns,
 	featureToggles,
 	velocitySettings,

@@ -183,6 +183,13 @@
       "when": 1788348454523,
       "tag": "0025_yellow_absorbing_man",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "6",
+      "when": 1788427080396,
+      "tag": "0026_clever_liz_osborn",
+      "breakpoints": true
     }
   ]
 }

@@ -47,7 +47,7 @@ export class CharmForgeRenderer {
 		this.renderer.domElement.className = 'charmForgeCanvas';
 		this.container.appendChild(this.renderer.domElement);
 
-		this.camera.position.set(0, 0.15, 10);
+		this.camera.position.set(0, 0.15, 11.5);
 		this.scene.add(new THREE.AmbientLight(0xb9a7ff, 2.2));
 		const light = new THREE.PointLight(0x9f65ff, 18, 20);
 		light.position.set(0, 2.5, 4);
@@ -172,7 +172,7 @@ export class CharmForgeRenderer {
 		const pull = enchantProgress <= 0 ? 0 : easeInOut(Math.min(1, enchantProgress / 0.56));
 		const frameSeconds = Math.min(0.1, deltaMs / 1000);
 		const moveAlpha = 1 - Math.exp(-(enchantProgress > 0 ? 12 : 7) * frameSeconds);
-		const rotationAlpha = 1 - Math.exp(-9 * frameSeconds);
+		const rotationAlpha = 1 - Math.exp(-(this.pointerActive ? 11 : 2.2) * frameSeconds);
 
 		for (const orbiter of this.orbiters) {
 			const target = this.orbitTarget(orbiter.angle, elapsed, 1 - pull);
@@ -185,12 +185,16 @@ export class CharmForgeRenderer {
 			);
 			orbiter.mesh.rotation.x = THREE.MathUtils.lerp(
 				orbiter.mesh.rotation.x,
-				this.pointer.y * 0.24 + velocity.y,
+				(this.pointerActive
+					? -this.pointer.y * 0.58
+					: Math.sin(elapsed * 0.55 + orbiter.angle) * 0.08) + velocity.y,
 				rotationAlpha,
 			);
 			orbiter.mesh.rotation.y = THREE.MathUtils.lerp(
 				orbiter.mesh.rotation.y,
-				this.pointer.x * 0.3 + elapsed * 0.35,
+				this.pointerActive
+					? this.pointer.x * 0.72
+					: Math.cos(elapsed * 0.5 + orbiter.angle) * 0.1,
 				rotationAlpha,
 			);
 			const entrance = easeOut(Math.min(1, (performance.now() - orbiter.appearedAt) / 450));
@@ -204,10 +208,10 @@ export class CharmForgeRenderer {
 				Math.sin(elapsed * 1.25) * (this.reducedMotion ? 0.025 : 0.12);
 			const idleTilt = this.reducedMotion ? 0 : 0.085;
 			const targetX = this.pointerActive
-				? -this.pointer.y * 0.34
+				? -this.pointer.y * 0.62
 				: Math.sin(elapsed * 0.7) * idleTilt;
 			const targetY = this.pointerActive
-				? this.pointer.x * 0.44
+				? this.pointer.x * 0.8
 				: Math.cos(elapsed * 0.7) * idleTilt;
 			this.centralCharm.rotation.x = THREE.MathUtils.lerp(
 				this.centralCharm.rotation.x,
@@ -255,8 +259,11 @@ export class CharmForgeRenderer {
 		const height = Math.max(1, this.container.clientHeight);
 		this.renderer.setSize(width, height, false);
 		this.camera.aspect = width / height;
-		this.camera.position.z = 10;
-		this.orbitRadiusX = 3.3 * Math.min(1, this.camera.aspect);
+		const halfWidth =
+			Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) *
+			(this.camera.position.z - 0.65) *
+			this.camera.aspect;
+		this.orbitRadiusX = Math.min(3.1, halfWidth - 0.72);
 		this.camera.updateProjectionMatrix();
 	}
 

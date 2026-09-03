@@ -438,14 +438,16 @@ export function DailiesTab() {
 								tone="inherit"
 							/>
 						</strong>
-						<span>Total</span>
-						<strong>
-							<DabloonAmount
-								amount={data.completion.rewardDabloons}
-								format="full"
-								tone="inherit"
-							/>
-						</strong>
+						<div className="dailyCompletionTotal">
+							<span>Total</span>
+							<strong>
+								<DabloonAmount
+									amount={data.completion.rewardDabloons}
+									format="full"
+									tone="inherit"
+								/>
+							</strong>
+						</div>
 					</div>
 					<button
 						type="button"

@@ -40,6 +40,6 @@ For an example of whats possible with Minecraft Player Heads, check out [minecra
 
 ### Adding your own mini blocks
 
-:::perk Membership Perk
+:::perk
 If you're a member, we can add any minecraft player heads you want to the game for you. Just send the committee a link to the player heads you want us to add. The world's your oyster!
 :::

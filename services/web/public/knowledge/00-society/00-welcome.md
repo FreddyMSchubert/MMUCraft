@@ -21,6 +21,8 @@ tips:
 - Check out the profiles of other players! You can learn about who the other people on the server are in the players section on the website.
 - Please feel free to reach out to the committee about any questions or feedback you may have!
 - Check out the Countdowns at the top of the website for all the cool things happening soon.
+- Please spread the word about this society! Invite your friends and people you know. Servers with more people are more fun!
+- You can find and buy jokes filled with Minecraft Jokes! Please tell us about Minecraft Jokes you like, and we will add them as well.
 ====
 
 <div class="welcomeWaves">

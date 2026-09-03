@@ -197,8 +197,9 @@ public record CharmItemFeature(
                 lines.add(toAbilityComponent("Next Level: " + next.abilityStatusRelative()));
             }
             if (!next.upgradeIngredients().isEmpty()) {
+                String upgradeVerb = next.level() == 0 ? "Repair" : "Upgrade";
                 Component upgrade = Component.literal(
-                        "Upgrade on Website: " + formatUpgradeIngredients(next.upgradeIngredients())
+                        upgradeVerb + " on Website with: " + formatUpgradeIngredients(next.upgradeIngredients())
                 );
                 if (next.dabloons() > 0) {
                     upgrade = upgrade.copy()

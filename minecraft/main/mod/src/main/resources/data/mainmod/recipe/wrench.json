@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " I ",
+    " CI",
+    "C  "
+  ],
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "I": "minecraft:iron_nugget"
+  },
+  "result": {
+    "stack": "mainmod:charm-wrench",
+    "count": 1
+  }
+}

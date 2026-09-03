@@ -30,8 +30,7 @@ Rails are super cool. We've made them cooler:
 ![Powered Rails from Copper Example Image](/assets/knowledge/survival/crafting-tweaks/powered_from_copper.png)
 
 :::recipe-items
-[Copper Ingots](https://minecraft.wiki/w/Copper_Ingot) **OR** [Gold Ingots](https://minecraft.wiki/w/Gold_Ingot) (TL, TR, CL, CR, BL, BR)  · 
-[Leather](https://minecraft.wiki/w/Leather) (TL, TC, TR, CL, CR, BL, BC, BR) · [Chest](https://minecraft.wiki/w/Chest) (C) → Leather Backpack
+[Copper Ingots](https://minecraft.wiki/w/Copper_Ingot) **OR** [Gold Ingots](https://minecraft.wiki/w/Gold_Ingot) (TL, TR, CL, CR, BL, BR) · [Stick](https://minecraft.wiki/w/Stick) (C) · [Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) (BC) → [Powered Rail](https://minecraft.wiki/w/Powered_Rail) x16
 :::
 
 **So get railing!**

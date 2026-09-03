@@ -16,6 +16,7 @@ import { ClaimsTab } from '@/components/claims-tab';
 import { CharmsTab } from '@/components/charms-tab';
 import { PlayerName } from '@/components/player-name';
 import { DynamicCountdowns } from '@/components/dynamic-countdowns';
+import { normalizeAdminSection } from '@/components/admin/admin-data.types';
 
 interface SessionUser {
 	id: number;
@@ -53,20 +54,6 @@ const TAB_IDS = new Set<TabId>([
 	'players',
 	'admin',
 	'misc',
-]);
-const ADMIN_SECTIONS = new Set([
-	'members',
-	'claims',
-	'server-claims',
-	'whitelist',
-	'bans',
-	'gifts',
-	'countdowns',
-	'commands',
-	'dailies',
-	'toggles',
-	'servers',
-	'maintenance',
 ]);
 const MISC_SECTIONS = new Set(['settings', 'gift-codes']);
 const SERVER_IP = 'mmuminecraftsociety.co.uk';
@@ -182,7 +169,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 		let canonicalPath: string | null = null;
 		if (activeTab === 'admin')
-			canonicalPath = `/play/admin/${ADMIN_SECTIONS.has(routeDetail ?? '') ? routeDetail : 'members'}`;
+			canonicalPath = `/play/admin/${normalizeAdminSection(routeDetail)}`;
 		else if (activeTab === 'misc')
 			canonicalPath = `/play/misc/${MISC_SECTIONS.has(routeDetail ?? '') ? routeDetail : 'settings'}`;
 		else if (

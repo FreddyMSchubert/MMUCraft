@@ -230,12 +230,12 @@
 	overflow: hidden;
 	border: 1px solid rgba(255, 255, 255, 0.25);
 	border-radius: 12px;
-	background-size: 240% 240%;
+	background-size: 200% 200%;
 	color: #fff;
 	cursor: pointer;
 	font: inherit;
 	font-weight: 900;
-	animation: charmButtonGradient 5s linear infinite;
+	animation: charmButtonGradient 5s ease-in-out infinite alternate;
 	transition:
 		filter 160ms ease,
 		transform 160ms ease,
@@ -244,26 +244,23 @@
 
 .charmEnchantButton::before {
 	position: absolute;
-	top: -60%;
-	left: -45%;
-	width: 26%;
-	height: 220%;
+	top: 0;
+	left: -60%;
+	width: 45%;
+	height: 100%;
 	background: linear-gradient(
-		90deg,
-		#ff315c,
-		#ff9d2e,
-		#fff06a,
-		#57f287,
-		#4ddfff,
-		#6674ff,
-		#d55cff
+		125deg,
+		transparent 22%,
+		rgba(255, 255, 255, 0.08) 38%,
+		rgba(255, 255, 255, 0.55) 50%,
+		rgba(255, 255, 255, 0.08) 62%,
+		transparent 78%
 	);
 	content: '';
-	filter: blur(8px);
+	filter: blur(5px);
 	opacity: 0;
-	transform: rotate(-28deg);
 	transition:
-		left 320ms ease,
+		left 300ms ease,
 		opacity 100ms ease;
 }
 
@@ -275,7 +272,19 @@
 }
 
 .charmEnchantButton.available:hover:not(:disabled) {
+	background-image: linear-gradient(
+		125deg,
+		#ff335f 0%,
+		#ff9b38 16%,
+		#ffe45f 32%,
+		#55e58c 48%,
+		#45d8ff 64%,
+		#6474ff 80%,
+		#cb5cff 100%
+	);
+	background-size: 100% 100%;
 	filter: brightness(1.13) saturate(1.12);
+	animation: none;
 	transform: translateY(-2px);
 	box-shadow:
 		0 0 38px rgba(73, 220, 194, 0.42),
@@ -283,8 +292,8 @@
 }
 
 .charmEnchantButton.available:hover:not(:disabled)::before {
-	left: 125%;
-	opacity: 0.8;
+	left: 115%;
+	opacity: 0.72;
 }
 
 .charmEnchantButton.insufficient {
@@ -361,7 +370,11 @@
 }
 
 @keyframes charmButtonGradient {
+	from {
+		background-position: 0% 50%;
+	}
+
 	to {
-		background-position: 240% 0;
+		background-position: 100% 50%;
 	}
 }

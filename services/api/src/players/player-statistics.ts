@@ -13,6 +13,7 @@ export interface MinecraftStatValue {
 	id: string;
 	label: string;
 	value: number;
+	total?: number;
 	updatedAtUnixMs: number;
 }
 
@@ -46,6 +47,7 @@ export interface MinecraftStatInput {
 	id?: string;
 	label?: string;
 	value?: number;
+	total?: number;
 }
 
 const PROFILE_OPTIONS: StatOption[] = [
@@ -115,6 +117,9 @@ const ENTITY_IDS = `
 const KNOWN_OPTIONS: StatOption[] = [
 	...PROFILE_OPTIONS,
 	{ key: 'money.earnedDabloons', label: 'Dabloons Earned', group: 'money' },
+	{ key: 'unlocks.charms', label: 'Charms Unlocked', group: 'money' },
+	{ key: 'unlocks.cosmetics', label: 'Cosmetics Unlocked', group: 'money' },
+	{ key: 'unlocks.knowledge', label: 'Knowledge Pages Unlocked', group: 'money' },
 	...FISHING_OPTIONS,
 	{
 		key: 'minecraft.lastPlayedAtUnixMs',
@@ -180,6 +185,7 @@ export function normalizeMinecraftStat(
 	const category = sanitizeToken(input.category, '');
 	const id = sanitizeResourceId(input.id);
 	const value = normalizeNullableInteger(input.value);
+	const total = normalizeNullableInteger(input.total);
 	const key = sanitizeToken(input.key, '') || minecraftStatKey(category, id);
 	if (!category || !id || !key || value === null || value < 0) return null;
 	return {
@@ -188,6 +194,7 @@ export function normalizeMinecraftStat(
 		id,
 		label: sanitizeText(input.label, 120) || defaultMinecraftStatLabel(category, id),
 		value,
+		...(total !== null && total >= value ? { total } : {}),
 		updatedAtUnixMs: unixMs,
 	};
 }
@@ -288,6 +295,7 @@ function normalizeMinecraftStats(value: unknown): Record<string, MinecraftStatVa
 		const category = sanitizeToken(candidate.category, '');
 		const id = sanitizeResourceId(candidate.id);
 		const statValue = normalizeNullableInteger(candidate.value);
+		const total = normalizeNullableInteger(candidate.total);
 		if (!safeKey || !category || !id || statValue === null || statValue < 0) continue;
 		stats[safeKey] = {
 			key: safeKey,
@@ -295,6 +303,7 @@ function normalizeMinecraftStats(value: unknown): Record<string, MinecraftStatVa
 			id,
 			label: sanitizeText(candidate.label, 120) || defaultMinecraftStatLabel(category, id),
 			value: statValue,
+			...(total !== null && total >= statValue ? { total } : {}),
 			updatedAtUnixMs: normalizePositiveInteger(candidate.updatedAtUnixMs),
 		};
 	}

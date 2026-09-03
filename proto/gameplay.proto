@@ -335,6 +335,7 @@ message MinecraftStatEntry {
   string id = 3;
   string label = 4;
   int64 value = 5;
+  int64 total = 6;
 }
 
 message SyncPlayerStatsRequest {

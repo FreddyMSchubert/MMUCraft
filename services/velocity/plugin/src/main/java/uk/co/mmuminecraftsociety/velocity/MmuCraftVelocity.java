@@ -10,14 +10,17 @@ import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.PingOptions;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
+import net.kyori.adventure.text.Component;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -50,6 +53,8 @@ public final class MmuCraftVelocity {
     private final Set<Long> acknowledgedCommands = ConcurrentHashMap.newKeySet();
     private volatile ApiClient.Route route;
     private volatile boolean maintenanceMode;
+    private String deploymentId;
+    private boolean deploymentHadPlayers;
 
     @Inject
     public MmuCraftVelocity(ProxyServer proxy, Logger logger) {
@@ -72,10 +77,18 @@ public final class MmuCraftVelocity {
         proxy.getScheduler().buildTask(this, this::synchronize)
                 .repeat(Duration.ofSeconds(3))
                 .schedule();
+        proxy.getScheduler().buildTask(this, this::checkDeployment)
+                .repeat(Duration.ofSeconds(1))
+                .schedule();
     }
 
     @Subscribe
     public EventTask onLogin(LoginEvent event) {
+        Component update = deploymentMessage();
+        if (update != null) {
+            event.setResult(ResultedEvent.ComponentResult.denied(update));
+            return null;
+        }
         if (!configured) {
             event.setResult(ResultedEvent.ComponentResult.denied(Messages.authenticationUnavailable()));
             return null;
@@ -86,7 +99,10 @@ public final class MmuCraftVelocity {
                         event.getPlayer().getUsername()
                 )
                 .handle((access, error) -> {
-                    if (error != null || access == null) {
+                    Component currentUpdate = deploymentMessage();
+                    if (currentUpdate != null) {
+                        event.setResult(ResultedEvent.ComponentResult.denied(currentUpdate));
+                    } else if (error != null || access == null) {
                         logger.warn("Could not authenticate {}: {}", event.getPlayer().getUsername(), errorMessage(error));
                         event.setResult(ResultedEvent.ComponentResult.denied(Messages.authenticationUnavailable()));
                     } else if (!"ALLOWED".equals(access.status())) {
@@ -101,6 +117,12 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onChooseInitialServer(PlayerChooseInitialServerEvent event) {
+        Component update = deploymentMessage();
+        if (update != null) {
+            event.setInitialServer(null);
+            event.getPlayer().disconnect(update);
+            return;
+        }
         RegisteredServer target = targetFor(event.getPlayer());
         event.setInitialServer(target);
         if (target == null) event.getPlayer().disconnect(Messages.unavailable());
@@ -108,6 +130,12 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onServerPreConnect(ServerPreConnectEvent event) {
+        Component update = deploymentMessage();
+        if (update != null) {
+            event.setResult(ServerPreConnectEvent.ServerResult.denied());
+            event.getPlayer().disconnect(update);
+            return;
+        }
         RegisteredServer target = targetFor(event.getPlayer());
         if (target == null) {
             event.setResult(ServerPreConnectEvent.ServerResult.denied());
@@ -119,7 +147,10 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onKickedFromServer(KickedFromServerEvent event) {
-        if (event.getPlayer().getCurrentServer().isEmpty()) {
+        Component update = deploymentMessage();
+        if (update != null) {
+            event.setResult(KickedFromServerEvent.DisconnectPlayer.create(update));
+        } else if (event.getPlayer().getCurrentServer().isEmpty()) {
             event.setResult(KickedFromServerEvent.DisconnectPlayer.create(Messages.unavailable()));
         } else if (event.kickedDuringServerConnect()) {
             event.setResult(KickedFromServerEvent.Notify.create(Messages.transferUnavailable()));
@@ -135,6 +166,50 @@ public final class MmuCraftVelocity {
         manualDestinations.remove(event.getPlayer().getUniqueId());
     }
 
+    @Subscribe
+    public void onPing(ProxyPingEvent event) {
+        Component update = deploymentMessage();
+        if (update != null) event.setPing(event.getPing().asBuilder().description(update).build());
+    }
+
+    private Component deploymentMessage() {
+        try {
+            DeploymentState state = DeploymentState.read();
+            return state == null ? null : Messages.updating(state.startedAt(), mainOnline());
+        } catch (IOException error) {
+            return Messages.updateStateUnavailable();
+        }
+    }
+
+    private boolean mainOnline() {
+        ApiClient.ServerHealth main = health.get("main");
+        return main != null && main.online();
+    }
+
+    private synchronized void checkDeployment() {
+        try {
+            DeploymentState state = DeploymentState.read();
+            if (state == null) {
+                deploymentId = null;
+                deploymentHadPlayers = false;
+                return;
+            }
+            if (!state.id().equals(deploymentId)) {
+                deploymentId = state.id();
+                deploymentHadPlayers = false;
+            }
+            List<Player> players = new ArrayList<>(proxy.getAllPlayers());
+            deploymentHadPlayers |= !players.isEmpty();
+            Component message = deploymentMessage();
+            if (message == null) return;
+            players.forEach(player -> player.disconnect(message));
+            if (proxy.getPlayerCount() == 0) state.acknowledge(deploymentHadPlayers,
+                    configured && route != null && mainOnline());
+        } catch (IOException error) {
+            logger.error("Could not read or acknowledge deployment state", error);
+        }
+    }
+
     private void synchronize() {
         if (!configured || !synchronizing.compareAndSet(false, true)) return;
 
@@ -145,9 +220,13 @@ public final class MmuCraftVelocity {
                 sentAcknowledgements
         );
         api.sync(request)
+                .exceptionally(error -> {
+                    logger.warn("Velocity control sync failed: {}", errorMessage(error));
+                    return null;
+                })
                 .thenCompose(response -> {
+                    if (response == null) return refreshHealth();
                     acknowledgedCommands.removeAll(sentAcknowledgements);
-                    if (response == null) return CompletableFuture.completedFuture(null);
                     applyServers(response.servers() == null ? List.of() : response.servers());
                     if (response.maintenanceMode()) {
                         applyControl(response);
@@ -162,6 +241,11 @@ public final class MmuCraftVelocity {
     }
 
     private void applyControl(ApiClient.SyncResponse response) {
+        if (deploymentMessage() != null) {
+            route = response.route();
+            maintenanceMode = response.maintenanceMode();
+            return;
+        }
         boolean wasInMaintenance = maintenanceMode;
         maintenanceMode = response.maintenanceMode();
         if (maintenanceMode) {

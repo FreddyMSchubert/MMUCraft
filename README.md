@@ -33,6 +33,22 @@ Prometheus retains 90 days of history. It scrapes MainMod runtime and JVM metric
 
 Use `make db-generate`, `make db-check`, and `make db-studio` for database work. Commit generated migration files from `services/api/drizzle/`.
 
+## Voice chat
+
+Simple Voice Chat provides proximity audio up to 48 blocks and whisper audio up to 24 blocks. Players can also create groups for distance-independent chat. Players without the client mod can still join, but cannot send or receive voice audio.
+
+The setup installs Simple Voice Chat Fabric `2.6.23` for Minecraft `26.2` and the Velocity plugin `2.6.18`. Velocity publishes UDP port `24454` and forwards voice packets to the private backend. The containers have separate network addresses, so they can use the same internal port. See the [official proxy setup](https://modrepo.de/minecraft/voicechat/wiki/proxy_setup).
+
+Install [Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat) for Minecraft `26.2` and your client mod loader. Join the server, press `V`, and complete the microphone setup. Use push-to-talk or voice activation. Leave your group to use proximity chat.
+
+Run `make` to build the images and start the updated local setup. Allow inbound UDP `24454` in the host firewall and hosting panel. For a home server, forward this UDP port through the router. TCP port `25565` alone does not carry voice audio.
+
+The backend settings are in `minecraft/main/config/voicechat/voicechat-server.properties`. The proxy settings are in `services/velocity/config/plugins/voicechat/voicechat-proxy.properties`. The images copy these files into the persistent server directories at startup. Local development keeps newer destination files. To change an existing local configuration, edit `.dev/minecraft/config/voicechat/voicechat-server.properties` and restart Minecraft.
+
+The empty proxy `voice_host` uses the address that the player uses to join. If that address does not reach the same host for UDP, set `voice_host` to a reachable host and port, such as `voice.example.com:24454`. Rebuild and restart Velocity after you change its source configuration.
+
+After startup, run `/voicechat test <player>` as an operator with a connected player. Check proximity audio with two modded clients at different distances. A successful Minecraft health check does not verify UDP audio.
+
 ## Tests
 
 Install the test dependency and Chromium once:

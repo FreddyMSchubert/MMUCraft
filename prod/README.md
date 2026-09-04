@@ -12,6 +12,12 @@ Generate separate values for `VELOCITY_API_SECRET` and `VELOCITY_FORWARDING_SECR
 
 Velocity owns the public Minecraft port. Backend servers have no published port. They use offline mode because Velocity authenticates the Mojang account. FabricProxy-Lite verifies the forwarding secret and restores the authenticated UUID, username, skin, and client address on each Fabric backend.
 
+Simple Voice Chat uses UDP port `24454` on Velocity. The production Compose file publishes this port on `MINECRAFT_BIND`. Allow inbound UDP `24454` in the VPS firewall and hosting panel. Keep the Minecraft backend ports private. Voice packets go from the client to Velocity, then to the backend over the Docker network. HTTP proxies do not carry this UDP traffic.
+
+The images include the voice configuration. The backend enables 48-block proximity audio, 24-block whispers, and group chat. Players must install the client mod to use audio. See the root README for client setup. Deploy the updated Minecraft and Velocity images with the normal deployment workflow. After deployment, use `/voicechat test <player>` and two modded clients to check audio. Container health checks do not verify voice traffic.
+
+Install Simple Voice Chat on each temporary or event backend too. Permit UDP traffic from Velocity to that backend on its configured voice port. Separate containers can each use port `24454`. Servers that share one network address must use different voice ports.
+
 The database migration creates the `main` backend. The Velocity configuration has no static backend. If the MMUcraft Velocity plugin does not start, the proxy cannot route a player to a backend.
 
 The first Velocity deployment saves `banned-players.json.pre-velocity`. It removes only Minecraft ban entries that the old website blacklist created. It keeps bans that an operator or the console created.

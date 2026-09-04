@@ -122,6 +122,7 @@ services:
         servercore?
         zfastnoise?
         fabricproxy-lite:2.12.0
+        simple-voice-chat:JDkcoyAy
       MODRINTH_DOWNLOAD_DEPENDENCIES: required
       MEMORY: 1536M
       INIT_MEMORY: 1G
@@ -132,6 +133,8 @@ services:
       CREATE_CONSOLE_IN_PIPE: "true"
       OVERRIDE_SERVER_PROPERTIES: "false"
       SKIP_SERVER_PROPERTIES: "true"
+      COPY_CONFIG_DEST: /data
+      SYNC_SKIP_NEWER_IN_DESTINATION: "false"
       UID: ${PUID:-1000}
       GID: ${PGID:-1000}
       TZ: ${TZ:-Europe/London}
@@ -182,6 +185,7 @@ services:
       TZ: ${TZ:-Europe/London}
     ports:
       - "${MINECRAFT_BIND:-0.0.0.0}:${MINECRAFT_PORT:-25565}:25565/tcp"
+      - "${MINECRAFT_BIND:-0.0.0.0}:24454:24454/udp"
     volumes:
       - ./data/velocity:/server
     mem_limit: 768m

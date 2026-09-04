@@ -12,7 +12,6 @@ public final class WeightedTrailSpec {
     private final Map<TrailParticle, Integer> weights;
     private final long totalWeight;
     private final long dustWeight;
-    private final int interval;
 
     public WeightedTrailSpec(Map<TrailParticle, Integer> weights) {
         Map<TrailParticle, Integer> valid = new EnumMap<>(TrailParticle.class);
@@ -21,7 +20,6 @@ public final class WeightedTrailSpec {
         this.totalWeight = valid.values().stream().mapToLong(Integer::longValue).sum();
         this.dustWeight = valid.entrySet().stream().filter(entry -> entry.getKey().isBasicDust())
                 .mapToLong(Map.Entry::getValue).sum();
-        this.interval = valid.keySet().stream().mapToInt(particle -> particle.interval).max().orElse(1);
     }
 
     public Map<TrailParticle, Integer> weights() {
@@ -30,10 +28,6 @@ public final class WeightedTrailSpec {
 
     public long totalWeight(boolean member) {
         return member ? totalWeight : dustWeight;
-    }
-
-    public int interval(boolean member) {
-        return member ? interval : 1;
     }
 
     public TrailParticle pick(RandomSource random, boolean member) {

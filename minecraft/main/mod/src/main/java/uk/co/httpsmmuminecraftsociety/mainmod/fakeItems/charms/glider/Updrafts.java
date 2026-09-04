@@ -12,8 +12,8 @@ final class Updrafts {
     static final int FIRE_RANGE = 60;
     static final int LAVA_RANGE = 80;
     static final int SOUL_FIRE_RANGE = 100;
-    static final double ACCELERATION = 0.05;
-    static final double SOURCE_ACCELERATION = 0.30;
+    static final double SOURCE_ACCELERATION = 0.15;
+    static final double TOP_ACCELERATION = 0.01;
     static final double MAX_UPWARD_SPEED = 1.0;
     static final int CARRY_TICKS = 20;
 
@@ -21,8 +21,8 @@ final class Updrafts {
         double liftAt(double feetY, int tick) {
             if (tick >= expiresAt || feetY >= ceilingY || ceilingY <= sourceY) return 0;
             double remainingFraction = Math.min(1.0, (ceilingY - feetY) / (ceilingY - sourceY));
-            return ACCELERATION * remainingFraction
-                    + (SOURCE_ACCELERATION - ACCELERATION) * remainingFraction * remainingFraction * remainingFraction;
+            return TOP_ACCELERATION
+                    + (SOURCE_ACCELERATION - TOP_ACCELERATION) * remainingFraction * remainingFraction * remainingFraction;
         }
     }
 

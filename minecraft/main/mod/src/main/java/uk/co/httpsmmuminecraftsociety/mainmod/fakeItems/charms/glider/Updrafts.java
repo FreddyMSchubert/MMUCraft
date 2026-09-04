@@ -6,6 +6,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 final class Updrafts {
     static final int FIRE_RANGE = 60;
@@ -13,8 +14,16 @@ final class Updrafts {
     static final int SOUL_FIRE_RANGE = 100;
     static final double ACCELERATION = 0.05;
     static final double MAX_UPWARD_SPEED = 1.0;
+    static final int CARRY_TICKS = 20;
 
-    static double liftAt(ServerPlayer player) {
+    record Updraft(int sourceY, int ceilingY, int expiresAt) {
+        double liftAt(double feetY, int tick) {
+            if (tick >= expiresAt || feetY >= ceilingY || ceilingY <= sourceY) return 0;
+            return ACCELERATION * Math.min(1.0, (ceilingY - feetY) / (ceilingY - sourceY));
+        }
+    }
+
+    static @Nullable Updraft findAt(ServerPlayer player) {
         var level = player.level();
         BlockPos feet = BlockPos.containing(player.getX(), player.getBoundingBox().minY, player.getZ());
         int maxRange = Math.max(FIRE_RANGE, Math.max(LAVA_RANGE, SOUL_FIRE_RANGE));
@@ -23,7 +32,7 @@ final class Updrafts {
             BlockState block = level.getBlockState(pos);
             int range = level.getFluidState(pos).is(FluidTags.LAVA) ? LAVA_RANGE : heatRange(block);
             if (range > 0) {
-                if (distance >= range) return 0;
+                if (distance >= range) return null;
                 int ceilingDistance = range - distance;
                 BlockPos head = BlockPos.containing(player.getX(), player.getBoundingBox().maxY, player.getZ());
                 for (int above = 0; above < ceilingDistance; above++) {
@@ -33,11 +42,11 @@ final class Updrafts {
                     }
                 }
                 int end = Math.min(range, distance + ceilingDistance);
-                return end <= distance ? 0 : ACCELERATION * (1.0 - (double) distance / end);
+                return end <= distance ? null : new Updraft(pos.getY(), pos.getY() + end, player.tickCount + CARRY_TICKS);
             }
-            if (!block.isAir()) return 0;
+            if (!block.isAir()) return null;
         }
-        return 0;
+        return null;
     }
 
     static int heatRange(BlockState block) {

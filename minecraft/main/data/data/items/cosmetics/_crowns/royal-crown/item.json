@@ -2,7 +2,7 @@
 	"title": "Royal Crown",
 	"id": "cosmetic-crown-royal",
 	"modelType": "cosmetic",
-	"rarity": "epic",
+	"rarity": "legendary",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Made from solid gold leaf!"
@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 10000,
 		"description": "",
-		"unlockWeight": 25,
+		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Royal Crown."
 	},
 	"equippableCosmetic": {}

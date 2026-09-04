@@ -2,15 +2,15 @@
 	"title": "Fez",
 	"id": "cosmetic-fez",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Not the most fez-tive of hats"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 50,
+	"priceDabloons": 80,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Fez."
 	},
 	"equippableCosmetic": {}

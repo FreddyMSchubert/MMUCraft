@@ -8,9 +8,9 @@
 		"Perfect for vampires"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 50,
+	"priceDabloons": 42,
 		"description": "",
-		"unlockWeight": 10000,
+		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Sun Hat."
 	},
 	"equippableCosmetic": {},

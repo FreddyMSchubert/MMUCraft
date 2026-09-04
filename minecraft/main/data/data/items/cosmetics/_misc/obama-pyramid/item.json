@@ -9,9 +9,9 @@
 		"Comes with 68ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â± unique voicelines!"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 44,
-		"description": "",
-		"unlockWeight": 1,
+	"priceDabloons": 320,
+		"description": "Plays a random Obama sound when used.",
+		"unlockWeight": 5,
 		"unlockMessage": "Unlocked relic: Obamium Pyramid."
 	},
 	"charm": {

@@ -15,9 +15,9 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
-		"priceDabloons": 35,
+		"priceDabloons": 25,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Book Stack."
 	},
 	"equippableCosmetic": {}

@@ -2,7 +2,7 @@
 	"title": "Woodpecker",
 	"id": "cosmetic-woodpecker",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Can become a bit of a headache after a while..."
@@ -15,9 +15,9 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
-		"priceDabloons": 35,
+		"priceDabloons": 125,
 		"description": "",
-		"unlockWeight": 10,
+		"unlockWeight": 45,
 		"unlockMessage": "Unlocked cosmetic: Woodpecker."
 	},
 	"equippableCosmetic": {}

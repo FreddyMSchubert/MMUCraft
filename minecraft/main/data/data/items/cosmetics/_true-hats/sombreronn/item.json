@@ -2,13 +2,13 @@
 	"title": "Sombreronn",
 	"id": "cosmetic-sombreronn",
 	"modelType": "cosmetic",
-	"rarity": "mythical",
+	"rarity": "legendary",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Nevermind, this may be too big O.o"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 200,
+	"priceDabloons": 300,
 		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Sombreronn."

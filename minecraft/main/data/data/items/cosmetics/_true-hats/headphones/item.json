@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 	"priceDabloons": 50,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 80,
 		"unlockMessage": "Unlocked cosmetic: Headphones."
 	},
 	"equippableCosmetic": {},

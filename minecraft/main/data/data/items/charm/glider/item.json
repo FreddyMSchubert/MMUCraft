@@ -1,6 +1,6 @@
 {
 	"title": "Glider",
-	"id": "glider",
+	"id": "charm-glider",
 	"modelType": "basic",
 	"baseItemOverride": "minecraft:elytra",
 	"rarity": "uncommon",

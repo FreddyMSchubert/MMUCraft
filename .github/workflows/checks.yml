@@ -57,11 +57,18 @@ jobs:
               run: npm run check
 
             - name: Audit dependencies
+              timeout-minutes: 10
+              env:
+                  npm_config_fetch_timeout: '30000'
+                  npm_config_loglevel: http
               run: |
-                  npm audit
-                  npm audit --prefix services/api
-                  npm audit --prefix services/web
-                  npm audit --prefix minecraft/main/respack/items-respack-generator
+                  for project in . services/api services/web minecraft/main/respack/items-respack-generator; do
+                    echo "Audit $project"
+                    npm audit --prefix "$project" --json || {
+                      echo "Audit failed for $project. Retry once."
+                      npm audit --prefix "$project" --json
+                    }
+                  done
 
             - name: Install Playwright Chromium
               run: npx playwright install --with-deps chromium

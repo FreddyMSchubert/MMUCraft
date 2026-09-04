@@ -27,7 +27,7 @@ public final class GliderFlight {
 
     private static final Map<ServerPlayer, FlightState> STATES = new WeakHashMap<>();
 
-    private static final class FlightState {
+    static final class FlightState {
         double speedLimit = GLIDER_SPEED_BPS;
         int ascentGraceUntil;
         int impulseTick = Integer.MIN_VALUE;
@@ -108,19 +108,7 @@ public final class GliderFlight {
         }
 
         if (glider) {
-            Updrafts.Updraft caught = Updrafts.findAt(player);
-            if (caught != null) state.updraft = caught;
-            double lift = state.updraft == null ? 0 : state.updraft.liftAt(player.getBoundingBox().minY, player.tickCount);
-            if (lift > 0) {
-                velocity = new Vec3(velocity.x, Math.min(Updrafts.MAX_UPWARD_SPEED, velocity.y + lift), velocity.z);
-                state.speedLimit = BOOST_SPEED_BPS;
-                state.ascentGraceUntil = player.tickCount + ASCENT_GRACE_TICKS;
-            } else {
-                state.updraft = null;
-            }
-            if (player.tickCount >= state.ascentGraceUntil && velocity.y > 0) {
-                velocity = new Vec3(velocity.x, velocity.y * UPWARD_DAMPING, velocity.z);
-            }
+            velocity = applyUpdraft(state, Updrafts.findAt(player), velocity, player.getBoundingBox().minY, player.tickCount);
         }
 
         velocity = clampSpeed(velocity, glider ? state.speedLimit : ELYTRA_SPEED_BPS);
@@ -128,6 +116,25 @@ public final class GliderFlight {
             player.setDeltaMovement(velocity);
             player.connection.send(new ClientboundSetEntityMotionPacket(player));
         }
+    }
+
+    static Vec3 applyUpdraft(FlightState state, Updrafts.Updraft caught, Vec3 velocity, double feetY, int tick) {
+        if (caught != null) state.updraft = caught;
+        double lift = state.updraft == null ? 0 : state.updraft.liftAt(feetY, tick);
+        double upwardSpeed = velocity.y;
+        if (lift > 0) {
+            upwardSpeed = Math.min(Updrafts.MAX_UPWARD_SPEED, upwardSpeed + lift);
+            state.speedLimit = BOOST_SPEED_BPS;
+        }
+        if (state.updraft != null && tick >= state.ascentGraceUntil) {
+            // Stop heat-driven ascent at the source ceiling. Other boosts can pass it.
+            upwardSpeed = Math.min(upwardSpeed, Math.max(0, state.updraft.ceilingY() - feetY));
+        }
+        if (lift == 0) {
+            state.updraft = null;
+            if (tick >= state.ascentGraceUntil && upwardSpeed > 0) upwardSpeed *= UPWARD_DAMPING;
+        }
+        return new Vec3(velocity.x, upwardSpeed, velocity.z);
     }
 
     public static double decaySpeedLimit(double speedLimit) {

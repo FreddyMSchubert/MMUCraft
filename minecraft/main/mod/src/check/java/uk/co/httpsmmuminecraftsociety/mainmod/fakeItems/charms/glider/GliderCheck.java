@@ -5,6 +5,7 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -16,8 +17,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -31,6 +36,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.recipe.FakeShapedCraftingRecipe;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,20 +96,58 @@ public final class GliderCheck {
         assert Math.abs(GliderFlight.clampSpeed(new Vec3(2, 3, 4), 17).length() * 20 - 17) < 1.0E-9;
         assert GliderFlight.clampSpeed(Vec3.ZERO, 17).equals(Vec3.ZERO);
         assert Updrafts.heatRange(Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, false)) == 0;
-        assert Updrafts.heatRange(Blocks.FIRE.defaultBlockState()) == 60;
-        assert Updrafts.heatRange(Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true)) == 100;
-        var caught = new Updrafts.Updraft(64, 124, 100 + Updrafts.CARRY_TICKS);
+        assert Updrafts.heatRange(Blocks.FIRE.defaultBlockState()) == 20;
+        assert Updrafts.heatRange(Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true)) == 50;
+        assert Updrafts.LAVA_RANGE == 35;
+        var caught = new Updrafts.Updraft(64, 84, 100 + Updrafts.CARRY_TICKS);
         assert Math.abs(caught.liftAt(64, 100) - 0.15) < 1.0E-9;
-        assert Math.abs(caught.liftAt(94, 100) - 0.0275) < 1.0E-9;
-        assert Math.abs(caught.liftAt(118, 100) - 0.01014) < 1.0E-9;
-        assert Math.abs(caught.liftAt(123.999, 100) - 0.01) < 1.0E-9;
+        assert Math.abs(caught.liftAt(74, 100) - 0.0275) < 1.0E-9;
+        assert Math.abs(caught.liftAt(82, 100) - 0.01014) < 1.0E-9;
+        assert Math.abs(caught.liftAt(83.999, 100) - 0.01) < 1.0E-9;
         assert caught.liftAt(63, 100) <= Updrafts.SOURCE_ACCELERATION;
-        assert caught.liftAt(94, 119) > 0;
-        assert caught.liftAt(94, 120) == 0;
-        assert caught.liftAt(124, 101) == 0;
-        assert caught.liftAt(125, 101) == 0;
-        assert caught.liftAt(110, 101) < caught.liftAt(94, 100);
+        assert caught.liftAt(74, 119) > 0;
+        assert caught.liftAt(74, 120) == 0;
+        assert caught.liftAt(84, 101) == 0;
+        assert caught.liftAt(85, 101) == 0;
+        assert caught.liftAt(80, 101) < caught.liftAt(74, 100);
         assert new Updrafts.Updraft(64, 80, 120).liftAt(80, 101) == 0;
+        var blocks = new HashMap<BlockPos, BlockState>();
+        BlockGetter level = new BlockGetter() {
+            public BlockEntity getBlockEntity(BlockPos pos) { return null; }
+            public BlockState getBlockState(BlockPos pos) { return blocks.getOrDefault(pos, Blocks.AIR.defaultBlockState()); }
+            public FluidState getFluidState(BlockPos pos) { return getBlockState(pos).getFluidState(); }
+            public int getHeight() { return 384; }
+            public int getMinY() { return -64; }
+        };
+        for (var source : Map.of(Blocks.FIRE, 20, Blocks.CAMPFIRE, 20, Blocks.SOUL_FIRE, 50, Blocks.SOUL_CAMPFIRE, 50).entrySet()) {
+            for (int sourceY : new int[]{-32, 64}) {
+                blocks.clear();
+                blocks.put(new BlockPos(0, sourceY, 0), source.getKey().defaultBlockState());
+                double ceilingY = sourceY + source.getValue();
+                var low = Updrafts.findAt(level, new Vec3(0.5, sourceY + 1, 0.5), 0.6, 100);
+                var high = Updrafts.findAt(level, new Vec3(0.5, ceilingY - 0.2, 0.5), 0.6, 110);
+                assert low != null && high != null;
+                assert low.sourceY() == sourceY && low.ceilingY() == ceilingY && high.ceilingY() == ceilingY;
+                assert high.expiresAt() == 130;
+                assert Updrafts.findAt(level, new Vec3(0.5, ceilingY, 0.5), 0.6, 110) == null;
+                assert Updrafts.findAt(level, new Vec3(1.5, sourceY + 1, 0.5), 0.6, 110) == null;
+                blocks.put(new BlockPos(0, sourceY + 10, 0), Blocks.STONE.defaultBlockState());
+                assert Math.abs(Updrafts.findAt(level, new Vec3(0.5, sourceY + 1, 0.5), 0.6, 100).ceilingY() - (sourceY + 9.4)) < 1.0E-9;
+            }
+        }
+        var state = new GliderFlight.FlightState();
+        Vec3 rising = new Vec3(0.3, 0.8, 0.4);
+        GliderFlight.applyUpdraft(state, caught, rising, 74, 100);
+        assert state.ascentGraceUntil == 0;
+        assert GliderFlight.applyUpdraft(state, null, rising, 74, 119).y > rising.y;
+        assert Math.abs(GliderFlight.applyUpdraft(state, null, rising, 74, 120).y - rising.y * GliderFlight.UPWARD_DAMPING) < 1.0E-9;
+        assert state.updraft == null;
+        Vec3 nearTop = GliderFlight.applyUpdraft(state, caught, rising, 83.8, 101);
+        assert Math.abs(nearTop.y - 0.2) < 1.0E-9 && nearTop.x == rising.x && nearTop.z == rising.z;
+        assert GliderFlight.applyUpdraft(state, null, rising, 84, 102).y == 0 && state.updraft == null;
+        assert GliderFlight.applyUpdraft(state, caught, new Vec3(0, -0.2, 0), 85, 103).y == -0.2;
+        state.ascentGraceUntil = 150;
+        assert GliderFlight.applyUpdraft(state, caught, rising, 84, 104).y == rising.y;
         System.out.println("Glider checks passed: item, recipe, repairs, enchantments, speed, and heat sources.");
     }
 }

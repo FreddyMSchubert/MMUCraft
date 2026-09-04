@@ -96,6 +96,21 @@ sourceSets {
             srcDirs = [file('../../../proto')]
         }
     }
+    trailCheck {
+        java.srcDir 'src/check/java'
+        compileClasspath += sourceSets.main.output + configurations.runtimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+tasks.register('checkParticleTrails', JavaExec) {
+    group = 'verification'
+    description = 'Check trail recipes, saved data, membership filters, and flight positions.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.ParticleTrailsCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('trailCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
 }
 
 processResources {

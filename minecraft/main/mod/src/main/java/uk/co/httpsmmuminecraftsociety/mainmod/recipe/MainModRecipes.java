@@ -21,7 +21,7 @@ public final class MainModRecipes {
     public static final RecipeSerializer<WalletExtractRecipe> WALLET_EXTRACT_RECIPE = unit(new WalletExtractRecipe());
     public static final RecipeSerializer<DyeingRecipe> DYEING_SERIALIZER = unit(new DyeingRecipe());
     public static final RecipeSerializer<BackpackUpgradeRecipe> BACKPACK_UPGRADE_RECIPE = unit(new BackpackUpgradeRecipe());
-    public static final RecipeSerializer<SetBowTrailRecipe> SET_BOW_TRAIL_SERIALIZER = unit(new SetBowTrailRecipe());
+    public static final RecipeSerializer<SetParticleTrailRecipe> SET_PARTICLE_TRAIL_SERIALIZER = unit(new SetParticleTrailRecipe());
     public static final RecipeSerializer<EnderiteSmithingRecipe> ENDERITE_UPGRADE_SERIALIZER = unit(new EnderiteSmithingRecipe());
     public static final RecipeSerializer<EnderiteScrapSmeltingRecipe> ENDERITE_SCRAP_SMELTING_SERIALIZER = unit(new EnderiteScrapSmeltingRecipe());
     public static final RecipeSerializer<FishCookingRecipe> FISH_COOKING_SERIALIZER = unit(new FishCookingRecipe());
@@ -40,7 +40,7 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "wallet_insert"), WALLET_INSERT_RECIPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "wallet_extract"), WALLET_EXTRACT_RECIPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "dyeing"), DYEING_SERIALIZER);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "bow_trail"), SET_BOW_TRAIL_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "bow_trail"), SET_PARTICLE_TRAIL_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "enderite_upgrade"), ENDERITE_UPGRADE_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "enderite_scrap_smelting"), ENDERITE_SCRAP_SMELTING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fish_cooking"), FISH_COOKING_SERIALIZER);

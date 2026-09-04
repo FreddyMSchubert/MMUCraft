@@ -26,6 +26,40 @@
 	font-size: 1.25rem;
 }
 
+.playerDirectorySearch {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px;
+	border: 1px solid rgba(255, 209, 102, 0.32);
+	border-radius: 10px;
+	background: linear-gradient(135deg, rgba(255, 209, 102, 0.11), rgba(123, 235, 255, 0.06));
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+}
+
+.playerDirectorySearch input {
+	flex: 1;
+	min-width: 0;
+	padding: 11px 13px;
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	border-radius: 7px;
+	outline: none;
+	background: rgba(10, 13, 20, 0.72);
+	color: #fff;
+	font: inherit;
+}
+
+.playerDirectorySearch input:focus {
+	border-color: #ffd166;
+	box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.14);
+}
+
+.playerDirectorySearch span {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.78rem;
+	white-space: nowrap;
+}
+
 .leaderboardPodium {
 	display: grid;
 	gap: 12px;

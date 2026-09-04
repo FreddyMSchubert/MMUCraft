@@ -7,6 +7,7 @@ export type AdminSection =
 	| 'gifts'
 	| 'countdowns'
 	| 'commands'
+	| 'signin-attempts'
 	| 'dailies'
 	| 'toggles'
 	| 'servers'
@@ -73,6 +74,22 @@ export interface CommandLogEntry {
 	createdAtUnixMs: number;
 }
 
+export interface SigninAttemptLogEntry {
+	id: number;
+	email: string | null;
+	journey: 'signin' | 'signup';
+	event:
+		| 'email_send'
+		| 'email_resend'
+		| 'email_code_input'
+		| 'minecraft_username_input'
+		| 'minecraft_code_input'
+		| 'rules_accept';
+	succeeded: boolean | null;
+	detail: string | null;
+	createdAtUnixMs: number;
+}
+
 export const ADMIN_PAGE_SIZE = 42;
 
 export function normalizeAdminSection(section: string | undefined): AdminSection {
@@ -83,6 +100,7 @@ export function normalizeAdminSection(section: string | undefined): AdminSection
 		section === 'gifts' ||
 		section === 'countdowns' ||
 		section === 'commands' ||
+		section === 'signin-attempts' ||
 		section === 'dailies' ||
 		section === 'toggles' ||
 		section === 'servers' ||

@@ -1,8 +1,10 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons;
 
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.gamerules.GameRules;
@@ -15,87 +17,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementAnnouncements;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
-import java.util.List;
-
 @Mixin(PlayerAdvancements.class)
 public class PlayerAdvancementMoney {
-    private static final List<String> CELEBRATIONS = List.of(
-            "Yippieh",
-            "Cha-ching",
-            "Hooray",
-            "Woo-hoo",
-            "Yayy",
-            "Wahoo",
-            "Whee",
-            "Wheeeeeeeeeeeeee",
-            "Wheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-            "Huzzah",
-            "HOT DOG!",
-            "Hallelujah!",
-            "Whoopee",
-            "Bingo",
-            "Bravo",
-            "Wow",
-
-            "GG",
-            "Number go up",
-            "Monkey brain happy",
-            "Go buy yourself something nice",
-            "Don't spend it all in one go",
-            "Penny for your thoughts",
-            "W in chat",
-            "Stonks",
-            "LGTM",
-            "TLDR",
-            "Profit",
-            "Cash Splash",
-            "Mint condition",
-            "Coin-grats",
-            "Pocket Change",
-            "Debit where debit is due",
-            "Crypto? No thanks. Dabloons? Real sh*t.",
-            "You're a dabloonatic",
-            "Latest in Block Chain news",
-            "And so the rich get richer",
-            "It's gonna start trickling down aaany minute now",
-            "I hereby cent-ence you to having a bit more money now",
-            "Makes cents",
-            "You're a coin-artist",
-
-            "Need for spend",
-            "Red Debt Redemption",
-            "This is a triumph",
-            "Achievement get",
-            "It's-a payday",
-            "Flawless economy",
-            "May the coins be with you",
-            "Mission passed",
-            "Hey! Listen!",
-            "Well excuuuuuuse me",
-            "Let's-a go get paid",
-            "Baba is rich",
-            "Expecto Paytronum",
-            "The empire pays back",
-            "My precious",
-            "Accio coins",
-            "Great Scott",
-            "With great power comes great profit",
-            "With great funds comes great responsibility",
-            "Dormammu, I've come to budget",
-            "Wololo",
-            "Loot acquired",
-            "Gotta cash 'em all",
-            "Winner winner dabloon dinner",
-            "It's dangerous to go broke",
-            "All your coins are belong to us",
-
-            "I said something NICE, not EXPENSIVE"
-    );
-
     @Shadow
     private ServerPlayer player;
 
@@ -105,10 +33,6 @@ public class PlayerAdvancementMoney {
             DisplayInfo displayInfo,
             CallbackInfo ci
     ) {
-        if (displayInfo.shouldAnnounceChat()
-                && this.player.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)) {
-            this.player.sendSystemMessage(displayInfo.getType().createAnnouncement(advancementHolder, this.player));
-        }
         ci.cancel();
     }
 
@@ -126,11 +50,12 @@ public class PlayerAdvancementMoney {
         }
 
         ServerPlayer rewardedPlayer = this.player;
-        var membership = PlayerStatsSync.syncNow(rewardedPlayer);
-        AdvancementRewards rewards = advancementHolder.value().rewards();
-        membership.thenAccept(isMember -> rewardedPlayer.level().getServer().execute(
-                () -> grantMoney(rewardedPlayer, advancementHolder, rewards, isMember)
-        ));
+        grantMoney(
+                rewardedPlayer,
+                advancementHolder,
+                advancementHolder.value().rewards(),
+                PlayerStatsSync.isMember(rewardedPlayer)
+        );
     }
 
     private void grantMoney(
@@ -143,25 +68,45 @@ public class PlayerAdvancementMoney {
             return;
         }
 
-        int money = AdvancementMoney.rewardForAdvancement(
+        int reward = AdvancementMoney.rewardForAdvancement(
                 advancementHolder.id(),
                 rewards.experience(),
                 isMember
         ).totalReward();
-        if (money > 0 && MoneyHelper.GainMoney(rewardedPlayer, money)) {
-            if ("minecraft".equals(advancementHolder.id().getNamespace()) || money >= 30) {
-                advancementHolder.value().display().ifPresent(display -> {
-                    DiscordBridge.advancement(
-                            rewardedPlayer,
-                            display.getTitle().getString(),
-                            money
-                    );
-                });
+        boolean rewarded = reward > 0 && MoneyHelper.GainMoney(rewardedPlayer, reward);
+        DisplayInfo display = advancementHolder.value().display().orElseThrow();
+        int awardedReward = rewarded ? reward : 0;
+        boolean silenced = AdvancementAnnouncements.isSilenced(advancementHolder.id());
+        boolean announcePublicly = !silenced && shouldAnnouncePublicly(
+                rewardedPlayer,
+                advancementHolder,
+                display,
+                awardedReward
+        );
+
+        if (!silenced) {
+            announceAdvancement(
+                    rewardedPlayer,
+                    advancementHolder,
+                    display,
+                    awardedReward,
+                    announcePublicly
+            );
+        }
+
+        if (rewarded) {
+            if (announcePublicly) {
+                DiscordBridge.advancement(
+                        rewardedPlayer,
+                        discordAction(display),
+                        display.getTitle().getString(),
+                        reward
+                );
             }
             GameplayGrpcService.recordMoneyEvent(
                     rewardedPlayer.getName().getString(),
                     rewardedPlayer.getUUID().toString(),
-                    money,
+                    reward,
                     "advancement",
                     advancementHolder.id().toString(),
                     MoneyHelper.GetBalance(rewardedPlayer)
@@ -170,15 +115,68 @@ public class PlayerAdvancementMoney {
                 return null;
             });
 
-            advancementHolder.value().display().ifPresent(displayInfo -> MoneyHelper.SendBalanceMessage(
-                    rewardedPlayer,
-                    randomCelebration(rewardedPlayer) + ": You received " + money + " dabloons for completing "
-                            + displayInfo.getTitle().getString() + ". :D"
-            ));
         }
     }
 
-    private String randomCelebration(ServerPlayer rewardedPlayer) {
-        return CELEBRATIONS.get(rewardedPlayer.getRandom().nextInt(CELEBRATIONS.size()));
+    private boolean shouldAnnouncePublicly(
+            ServerPlayer rewardedPlayer,
+            AdvancementHolder advancementHolder,
+            DisplayInfo display,
+            int reward
+    ) {
+        if (!rewardedPlayer.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)) {
+            return false;
+        }
+
+        if ("minecraft".equals(advancementHolder.id().getNamespace())) {
+            return display.shouldAnnounceChat();
+        }
+
+        return reward >= 30;
+    }
+
+    private void announceAdvancement(
+            ServerPlayer rewardedPlayer,
+            AdvancementHolder advancementHolder,
+            DisplayInfo display,
+            int reward,
+            boolean announcePublicly
+    ) {
+        String action = switch (display.getType()) {
+            case TASK -> "achieved";
+            case GOAL -> "reached the goal";
+            case CHALLENGE -> "completed the challenge";
+        };
+        Component advancementName = Advancement.name(advancementHolder);
+        Component privateMessage = Component.literal("You " + action + " ")
+                .append(advancementName.copy());
+
+        if (reward > 0) {
+            MoneyHelper.SendBalanceMessage(rewardedPlayer, reward, privateMessage);
+        } else {
+            MoneyHelper.SendSystemMessage(rewardedPlayer, privateMessage);
+        }
+
+        if (!announcePublicly) {
+            return;
+        }
+
+        Component publicMessage = Component.empty()
+                .append(rewardedPlayer.getDisplayName())
+                .append(Component.literal(" " + action + " "))
+                .append(advancementName.copy());
+        for (ServerPlayer viewer : rewardedPlayer.level().getServer().getPlayerList().getPlayers()) {
+            if (!viewer.getUUID().equals(rewardedPlayer.getUUID())) {
+                MoneyHelper.SendSystemMessage(viewer, publicMessage);
+            }
+        }
+    }
+
+    private String discordAction(DisplayInfo display) {
+        return switch (display.getType()) {
+            case TASK -> "achieved";
+            case GOAL -> "reached the goal";
+            case CHALLENGE -> "completed the challenge";
+        };
     }
 }

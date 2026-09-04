@@ -2,13 +2,13 @@ package uk.co.httpsmmuminecraftsociety.mainmod.discord;
 
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import uk.co.httpsmmuminecraftsociety.mainmod.BedrockFormatting;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
@@ -31,7 +31,15 @@ public final class DiscordBridge {
             if (!commandMessages.remove(message)) publish("chat", sender, message.signedContent());
         });
         ServerMessageEvents.GAME_MESSAGE.register((server, message, overlay) -> {
-			if (!broadcastingDiscordMessage && !broadcastingFishAnnouncement && !overlay && !isCoveredPlayerEvent(message)) {
+            if (broadcastingDiscordMessage || broadcastingFishAnnouncement || overlay) return;
+            ServerPlayer deadPlayer = deathPlayer(server, message);
+            if (deadPlayer != null) {
+                String deathMessage = message.getString();
+                String displayName = deadPlayer.getDisplayName().getString();
+                publish("death", deadPlayer, deathMessage.startsWith(displayName)
+                        ? deathMessage.substring(displayName.length()).stripLeading()
+                        : deathMessage);
+            } else if (!isCoveredPlayerEvent(message)) {
                 publish("server", null, message.getString());
             }
         });
@@ -56,22 +64,10 @@ public final class DiscordBridge {
                 handler.player,
                 "left the server. (Players online: " + onlinePlayers(server, handler.player) + ")"
         ));
-        ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
-            if (!(entity instanceof ServerPlayer player)) return;
-            String message = player.getCombatTracker().getDeathMessage().getString();
-            String displayName = player.getDisplayName().getString();
-            publish("death", player, message.startsWith(displayName)
-                    ? message.substring(displayName.length()).stripLeading()
-                    : message);
-        });
     }
 
-    public static void advancement(ServerPlayer player, String title, int dabloons) {
-        String content = "has made the advancement [" + title + "] and earned " + dabloons + " dabloons.";
-        Component message = Component.empty().append(player.getDisplayName()).append(" " + content);
-        player.level().getServer().getPlayerList().getPlayers().stream()
-                .filter(recipient -> recipient != player && !recipient.hasDisconnected())
-                .forEach(recipient -> recipient.sendSystemMessage(message));
+    public static void advancement(ServerPlayer player, String action, String title, int dabloons) {
+        String content = action + " [" + title + "] and earned " + dabloons + " Dabloons.";
         publish("advancement", player, content);
     }
 
@@ -105,7 +101,7 @@ public final class DiscordBridge {
                 : PlayerStatsSync.discordPresentation(player);
         PublishDiscordEventRequest.Builder request = PublishDiscordEventRequest.newBuilder()
                 .setType(type)
-                .setContent(content)
+                .setContent(BedrockFormatting.toDiscord(content))
                 .setRole(profile.role())
                 .setNickname(profile.nickname())
                 .setPronouns(profile.pronouns())
@@ -169,5 +165,15 @@ public final class DiscordBridge {
                 || key.startsWith("multiplayer.player.left")
                 || key.startsWith("chat.type.advancement")
                 || key.startsWith("death.");
+    }
+
+    private static ServerPlayer deathPlayer(MinecraftServer server, Component message) {
+        if (!(message.getContents() instanceof TranslatableContents translated)
+                || !translated.getKey().startsWith("death.")) return null;
+        String displayName = translated.getArgument(0).getString();
+        return server.getPlayerList().getPlayers().stream()
+                .filter(player -> player.getDisplayName().getString().equals(displayName))
+                .findFirst()
+                .orElse(null);
     }
 }

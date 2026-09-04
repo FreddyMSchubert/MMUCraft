@@ -5,6 +5,11 @@ compose=(docker compose -f tests/compose.yaml)
 
 # Remove the test database and network on success, failure, or interruption.
 cleanup() {
+  status=$?
+  if (( status != 0 )); then
+    "${compose[@]}" ps --all || true
+    "${compose[@]}" logs --no-color api web || true
+  fi
   "${compose[@]}" down --volumes --remove-orphans
 }
 trap cleanup EXIT

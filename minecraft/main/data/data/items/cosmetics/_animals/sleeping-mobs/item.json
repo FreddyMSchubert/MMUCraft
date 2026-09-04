@@ -11,7 +11,7 @@
 	"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,
-		"unlockMessage": "Purchased cosmetic: Sleeping Mobs."
+		"unlockMessage": "Unlocked cosmetic: Sleeping Mobs."
 	},
 	"equippableCosmetic": {}
 }

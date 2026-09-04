@@ -9,14 +9,16 @@
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint . --max-warnings=0",
+		"format:check": "prettier --check next.config.ts package.json src",
+		"lint": "eslint --no-config-lookup --config ../../eslint.config.mjs --max-warnings=0 .",
 		"typecheck": "tsc --noEmit",
-		"check": "npm run lint && npm run typecheck",
+		"check": "npm run format:check && npm run lint && npm run typecheck",
 		"audit:prod": "npm audit --omit=dev --audit-level=high"
 	},
 	"dependencies": {
 		"@formkit/auto-animate": "^0.10.0",
 		"fireworks-js": "^2.10.8",
+		"fuse.js": "^7.5.0",
 		"marked": "^18.0.4",
 		"next": "^16.3.2",
 		"react": "^19.2.4",

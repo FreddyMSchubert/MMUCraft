@@ -25,16 +25,16 @@ public interface DailyTaskDefinition {
         if (!MoneyHelper.GainMoney(player, reward)) {
             return ClaimResult.failure("Could not grant the daily reward.");
         }
-        return ClaimResult.success("Daily claimed for " + reward + " dabloons.");
+        return ClaimResult.success("Claimed daily", reward);
     }
 
-    record ClaimResult(boolean claimed, String message) {
-        public static ClaimResult success(String message) {
-            return new ClaimResult(true, message);
+    record ClaimResult(boolean claimed, String message, int rewardDabloons) {
+        public static ClaimResult success(String message, int rewardDabloons) {
+            return new ClaimResult(true, message, rewardDabloons);
         }
 
         public static ClaimResult failure(String message) {
-            return new ClaimResult(false, message);
+            return new ClaimResult(false, message, 0);
         }
     }
 }

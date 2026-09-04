@@ -3,6 +3,9 @@ id: tweaks
 unlockOrder: 3
 chatMessage: You've unlocked knowledge on the servers crafting tweaks. Some of them are incredibly useful to learn about - please check them out.
 sidebarTitle: Crafting Tweaks
+tags:
+- crafting tweeks
+- recipies
 tips:
 - All of the minecart rail recipes now give way more output items than usual. Instead of 16, crafting the normal rail recipe now gives 64 rails at once!
 - Minecart rails go wayyyy faster on this server - over 2.5 times the normal speed!
@@ -10,19 +13,25 @@ tips:
 - You can get different wooden items more efficiently by using a Stonecutter! (I know, the naming is unintuitive).
 - Instead of breaking and placing a painting dozens of times to get the one you want, just put a painting in a Stonecutter. This will allow you to select the exact painting you want.
 - This server has some additional crafting recipes, such as crafting wool into string, crafting nether wart blocks into nether wart, and crafting compressed ice into uncompressed ice.
-- You can turn concrete powder into concrete way quicker now by throwing concrete powder items into a cauldron filled with water. This will conver them in an instant!
+- You can turn concrete powder into concrete way quicker now by throwing concrete powder items into a cauldron filled with water. This will convert them in an instant!
 - You can get your hands on mud blocks way way easier than usual by throwing dirt blocks into a cauldron filled with water. The dirt blocks will turn into mud blocks instantly!
 ====
+
+![Fun Rails example image](/assets/knowledge/survival/crafting-tweaks/minecarts-example.png)
 
 ## Minecart Rails
 
 Rails are super cool. We've made them cooler:
 
 - ⚡ **SUPER FAST**: The max speed of rails now goes up to more than **2.5x** the speed - making them the same speed as Elytra!
-- 💰 **WAY CHEAPER**: When you now craft the usual [rail recipes](TODO link) or minecarts, you get way more items as the output!
-- ‼️ **EASIER TO MAKE**: You can now craft powered rails with copper instead of gold ingots:
+- 💰 **WAY CHEAPER**: When you now craft the usual [rail recipes](https://minecraft.wiki/w/Rail_(disambiguation)) or [minecarts](https://minecraft.wiki/w/Minecart), you get way more items as the output!
+- ‼️ **EASIER TO MAKE**: You can now craft [powered rails](https://minecraft.wiki/w/Powered_Rail) with copper instead of gold ingots:
 
 ![Powered Rails from Copper Example Image](/assets/knowledge/survival/crafting-tweaks/powered_from_copper.png)
+
+:::recipe-items
+[Copper Ingots](https://minecraft.wiki/w/Copper_Ingot) **OR** [Gold Ingots](https://minecraft.wiki/w/Gold_Ingot) (TL, TR, CL, CR, BL, BR) · [Stick](https://minecraft.wiki/w/Stick) (C) · [Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) (BC) → [Powered Rail](https://minecraft.wiki/w/Powered_Rail) x16
+:::
 
 **So get railing!**
 
@@ -30,7 +39,11 @@ Rails are super cool. We've made them cooler:
 
 Very convenient!
 
-![Powered Rails from Copper Example Image](/assets/knowledge/survival/crafting-tweaks/powered_from_copper.png)
+![Rotten Flesh Smelting Recipe](/assets/knowledge/survival/crafting-tweaks/rotten-flesh-smelting.png)
+
+:::recipe-items
+[Rotten Flesh](https://minecraft.wiki/w/Rotten_Flesh) → [Leather](https://minecraft.wiki/w/Leather)
+:::
 
 ## Wood Cutting
 
@@ -39,12 +52,12 @@ Again, supremely useful:
 ![Wood Cutting Example Image](/assets/knowledge/survival/crafting-tweaks/woodcutter-recipe.png)
 
 :::note
-**Please do not overlook**: These wood cutting recipes reuse the existing [Stonecutter Block](Todo: link), we did not add a new block for these.
+**Please do not overlook**: These wood cutting recipes reuse the existing [Stonecutter Block](https://minecraft.wiki/w/Stonecutter), we did not add a new block for these.
 :::
 
 ## Painting Picking
 
-But that's not all for the [Stonecutter](Todo: link again)! You can also pick a specific painting that you want to show without having to refresh it 20 times until you get the right one:
+But that's not all for the [Stonecutter](https://minecraft.wiki/w/Stonecutter)! You can also pick a specific painting that you want to show without having to refresh it 20 times until you get the right one:
 
 ![Wood Cutting Example Image](/assets/knowledge/survival/crafting-tweaks/paintingpicker-recipe.png)
 
@@ -70,18 +83,24 @@ Similarly, throw dirt blocks in a water-filled cauldron to turn the dirt into mu
 
 ![Throw dirt in a water-filled cauldron to turn it into mud](/assets/knowledge/survival/crafting-tweaks/easier-mud.png)
 
+## Early Glowstone
+
+Even if you haven't reached the Nether yet, you can already create Glowstone in the Overworld only using this recipe:
+
+![Glowstone from glow berries](/assets/knowledge/survival/crafting-tweaks/glowstone_berries.png)
+
+:::recipe-items
+[Stone](https://minecraft.wiki/w/Stone) (TL, TC, TR, CL, CR, BL, BC, BL) · [Glow Berries](https://minecraft.wiki/w/Glow_Berries) (C) → [Glowstone](https://minecraft.wiki/w/Glowstone) ×8
+:::
+
+![Glowstone from glow ink sacs](/assets/knowledge/survival/crafting-tweaks/glowstone_sac.png)
+
+:::recipe-items
+[Stone](https://minecraft.wiki/w/Stone) (TL, TC, TR, CL, CR, BL, BC, BL) · [Glow Ink Sac](https://minecraft.wiki/w/Glow_Ink_Sac) (C) → [Glowstone](https://minecraft.wiki/w/Glowstone) ×8
+:::
+
 ## MORE
 
 Many many recipes give more output items when you craft them. This is because it's convenient & less grindy.
 
 ![Example of a recipe giving more output](/assets/knowledge/survival/crafting-tweaks/more.png)
-
-## Husks drop Sand
-
-Husks now drop sand when killed.
-
-This makes sand farming way easier. Finally, a decent way of acquiring a lot of a basic block!
-
-Yeah ngl did not know which knowledge book to put this in.
-
-TODO all the recipe explainers on this page

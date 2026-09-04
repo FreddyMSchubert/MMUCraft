@@ -28,6 +28,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.Potion
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.*;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.KnowledgeBookCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.ShopUnlockBookCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
@@ -86,7 +87,8 @@ public class CharmsManager
             Map.entry(50, new KangarooBootsCharm()),
             Map.entry(51, new ObamiumPyramidCharm()),
             Map.entry(52, new PotionOfResonanceCharm()),
-            Map.entry(53, new WrenchCharm())
+            Map.entry(53, new WrenchCharm()),
+            Map.entry(GliderCharm.CHARM_ID, new GliderCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

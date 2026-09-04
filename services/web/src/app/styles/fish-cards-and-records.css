@@ -168,11 +168,16 @@
 }
 
 .miniFishCompendium {
-	margin-top: 16px;
 	padding: 12px;
 	border: 1px solid rgba(255, 255, 255, 0.14);
 	border-radius: 9px;
 	background: rgba(255, 255, 255, 0.04);
+}
+
+.miniFishCompendiumIntro {
+	margin: 0 0 12px;
+	color: rgba(255, 255, 255, 0.66);
+	font-size: 0.82rem;
 }
 
 .miniFishCompendium summary {

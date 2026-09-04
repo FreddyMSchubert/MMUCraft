@@ -19,7 +19,7 @@ final class GameplayMoneyOperations {
             return GrantDailyLoginBonusResponse.newBuilder()
                     .setGranted(false)
                     .setOnline(false)
-                    .setMessage("You have to be online on the server to receive the money.")
+                    .setMessage("You have to be online on the server to receive the Dabloons.")
                     .build();
         }
 
@@ -37,11 +37,12 @@ final class GameplayMoneyOperations {
                     "completed all of today's dailies.");
         }
 
-        MoneyHelper.SendBalanceMessage(player, "You received " + amount + " dabloons.");
+        MoneyHelper.SendBalanceMessage(player, amount,
+                "daily_completion".equals(request.getSource()) ? "Completed all dailies" : "Daily login reward");
         return GrantDailyLoginBonusResponse.newBuilder()
                 .setGranted(true)
                 .setOnline(true)
-                .setMessage("You received " + amount + " dabloons.")
+                .setMessage("You received " + amount + " Dabloons.")
                 .build();
     }
 
@@ -66,17 +67,17 @@ final class GameplayMoneyOperations {
                     .setGranted(false)
                     .setOnline(true)
                     .setBalanceDabloons(MoneyHelper.GetBalance(player))
-                    .setMessage("Could not grant the gift code dabloons.")
+                    .setMessage("Could not grant the gift code Dabloons.")
                     .build();
         }
 
         int balance = MoneyHelper.GetBalance(player);
-        MoneyHelper.SendBalanceMessage(player, "Gift code redeemed for " + amount + " dabloons.");
+        MoneyHelper.SendBalanceMessage(player, amount, "Redeemed gift code");
         return GrantGiftCodeMoneyResponse.newBuilder()
                 .setGranted(true)
                 .setOnline(true)
                 .setBalanceDabloons(balance)
-                .setMessage("Gift code redeemed for " + amount + " dabloons.")
+                .setMessage("Gift code redeemed for " + amount + " Dabloons.")
                 .build();
     }
 
@@ -87,17 +88,17 @@ final class GameplayMoneyOperations {
         ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
         if (player == null || player.hasDisconnected()) {
             return GrantKnowledgeReadMoneyResponse.newBuilder().setGranted(false)
-                    .setMessage("You have to be online on the server to receive dabloons.").build();
+                    .setMessage("You have to be online on the server to receive Dabloons.").build();
         }
 
         int amount = Math.max(0, request.getAmountDabloons());
         if (amount == 0 || !MoneyHelper.GainMoney(player, amount)) {
             return GrantKnowledgeReadMoneyResponse.newBuilder().setGranted(false)
-                    .setBalanceDabloons(MoneyHelper.GetBalance(player)).setMessage("Could not grant the dabloons.").build();
+                    .setBalanceDabloons(MoneyHelper.GetBalance(player)).setMessage("Could not grant the Dabloons.").build();
         }
 
         int balance = MoneyHelper.GetBalance(player);
-        MoneyHelper.SendBalanceMessage(player, request.getMessage());
+        MoneyHelper.SendBalanceMessage(player, amount, "Read knowledge");
         return GrantKnowledgeReadMoneyResponse.newBuilder().setGranted(true)
                 .setBalanceDabloons(balance).setMessage(request.getMessage()).build();
     }
@@ -126,17 +127,17 @@ final class GameplayMoneyOperations {
                     .setPurchased(false)
                     .setOnline(true)
                     .setBalanceDabloons(balance)
-                    .setMessage("The responsible player needs " + price + " dabloons for this invitation.")
+                    .setMessage("The responsible player needs " + price + " Dabloons for this invitation.")
                     .build();
         }
 
         int remaining = MoneyHelper.GetBalance(player);
-        MoneyHelper.SendBalanceMessage(player, "External player invitation purchased for " + price + " dabloons.");
+        MoneyHelper.SendBalanceMessage(player, -price, "Purchased external player invitation");
         return PurchaseExternalPlayerInviteResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
                 .setBalanceDabloons(remaining)
-                .setMessage("External player invitation purchased for " + price + " dabloons.")
+                .setMessage("External player invitation purchased for " + price + " Dabloons.")
                 .build();
     }
     private static final int MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 150;

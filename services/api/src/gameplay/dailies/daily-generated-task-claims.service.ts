@@ -72,7 +72,7 @@ export class DailyGeneratedTaskClaimsService {
 			return {
 				claimed: true,
 				granted: true,
-				message: result.message || `You received ${task.rewardDabloons} dabloons.`,
+				message: result.message || `You received ${task.rewardDabloons} Dabloons.`,
 			};
 		} catch (error) {
 			this.dailyStorage.deleteClaim(user.id, task.id, periodKey);

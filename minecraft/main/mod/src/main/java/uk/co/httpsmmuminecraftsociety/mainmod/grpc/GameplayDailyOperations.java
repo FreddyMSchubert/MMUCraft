@@ -60,7 +60,9 @@ final class GameplayDailyOperations {
                 request.getPeriodKey(),
                 request.getTaskJson()
         );
-        if (result.claimed()) MoneyHelper.SendBalanceMessage(player, result.message());
+        if (result.claimed()) {
+            MoneyHelper.SendBalanceMessage(player, result.rewardDabloons(), result.message());
+        }
         return ClaimDailyTaskResponse.newBuilder()
                 .setClaimed(result.claimed())
                 .setOnline(true)
@@ -140,6 +142,7 @@ final class GameplayDailyOperations {
                 .setOnline(true)
                 .setAdvancementId(selected.id().toString())
                 .setTitle(display.getTitle().getString())
+                .setDescription(display.getDescription().getString())
                 .setTabTitle(tabTitle)
 				.setIconItem(MinecraftItemIdentifier.forStack(display.getIcon().create()))
                 .setBaseRewardDabloons(baseReward)
@@ -207,13 +210,12 @@ final class GameplayDailyOperations {
                     .build();
         }
 
-        MoneyHelper.SendBalanceMessage(player,
-                "You received " + reward + " bonus dabloons for completing " + request.getAdvancementId() + ".");
+        MoneyHelper.SendBalanceMessage(player, reward, "Completed daily advancement");
         return ClaimDailyAdvancementResponse.newBuilder()
                 .setClaimed(true)
                 .setOnline(true)
                 .setCompleted(true)
-                .setMessage("You received " + reward + " bonus dabloons for completing " + request.getAdvancementId() + ".")
+                .setMessage("You received " + reward + " bonus Dabloons for completing " + request.getAdvancementId() + ".")
                 .build();
     }
     private static final int MAX_DAILY_ADVANCEMENT_REWARD = 20;

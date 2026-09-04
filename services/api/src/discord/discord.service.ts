@@ -130,7 +130,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private readonly pending = new Set<Promise<unknown>>();
 	private readonly avatarBaseUrl = (
 		process.env.DISCORD_AVATAR_BASE_URL ??
-		(process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/players/avatar` : '')
+		(process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/discord/avatar` : '')
 	).replace(/\/$/, '');
 
 	constructor(

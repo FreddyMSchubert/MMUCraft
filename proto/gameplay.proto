@@ -335,6 +335,7 @@ message MinecraftStatEntry {
   string id = 3;
   string label = 4;
   int64 value = 5;
+  int64 total = 6;
 }
 
 message SyncPlayerStatsRequest {
@@ -485,6 +486,7 @@ message PickDailyAdvancementResponse {
   int32 base_reward_dabloons = 7;
   int32 bonus_reward_dabloons = 8;
   string message = 9;
+  string description = 10;
 }
 
 message ClaimDailyAdvancementRequest {

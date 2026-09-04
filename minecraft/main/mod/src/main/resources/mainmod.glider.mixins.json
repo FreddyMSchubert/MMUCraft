@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "GliderLivingEntityMixin",
+    "GliderImpulseMixin",
+    "GliderFireworkItemMixin",
+    "GliderFireworkEntityMixin",
+    "GliderGrindstoneMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

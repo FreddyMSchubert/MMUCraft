@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -106,7 +107,7 @@ public class RespawnNearDeath {
 
     private BlockPos locateCandidate(ServerPlayer player, ServerLevel level) {
         BlockPos deathPos = player.blockPosition();
-        double maxDistance = server.getPlayerList().getViewDistance() * 16.0;
+        double maxDistance = server.getPlayerList().getViewDistance() * (PlayerStatsSync.isMember(player) ? 8.0 : 16.0);
         double minDistance = maxDistance * 0.5;
         double angle = ThreadLocalRandom.current().nextDouble(Math.TAU);
         double distance = ThreadLocalRandom.current().nextDouble(minDistance, maxDistance);

@@ -233,8 +233,11 @@
 	text-align: right;
 }
 
-.dailyCompletionCalculation span:last-of-type,
-.dailyCompletionCalculation strong:last-child {
+.dailyCompletionTotal {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
 	margin-top: 5px;
 	padding-top: 7px;
 	border-top: 1px solid rgba(255, 255, 255, 0.18);

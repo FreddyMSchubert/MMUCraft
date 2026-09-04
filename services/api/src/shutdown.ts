@@ -13,12 +13,10 @@ import { DiscordService } from './discord/discord.service';
 import { DiscordModule } from './discord/discord.module';
 import { GrpcServerService } from './grpc/grpc-server.service';
 import { MinecraftGrpcClientService } from './grpc/minecraft-grpc-client.service';
-import { OnlinePlayerPresenceService } from './players/online-player-presence.service';
-import { PlayersModule } from './players/players.module';
 
-const DEPLOYMENT_START_MESSAGE = 'Server is down for a few seconds to make an update.';
-const DEPLOYMENT_COMPLETE_MESSAGE =
-	'Server update done - enjoy a server with more features and less bugs!';
+const DEPLOYMENT_START_MESSAGE =
+	'A server update is starting. Please allow about 200–300 seconds, then join again. If it takes more than 10 minutes, contact the committee.';
+const DEPLOYMENT_COMPLETE_MESSAGE = 'The server update is complete. You can join again. Have fun!';
 
 @Injectable()
 export class ShutdownService implements OnModuleDestroy {
@@ -31,7 +29,6 @@ export class ShutdownService implements OnModuleDestroy {
 		private readonly grpcServer: GrpcServerService,
 		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly discord: DiscordService,
-		private readonly playerPresence: OnlinePlayerPresenceService,
 	) {}
 
 	beginRequest() {
@@ -50,18 +47,19 @@ export class ShutdownService implements OnModuleDestroy {
 		await this.saveMinecraft();
 	}
 
-	async startDeployment() {
-		const { players } = await this.playerPresence.listOnlinePlayers();
-		if (players.length === 0) return false;
-		await this.runMinecraftCommand(
-			'kick @a Server update in progress. Reconnect in a few seconds.',
-		);
-		await this.sendDeploymentNotice('deployment_start', DEPLOYMENT_START_MESSAGE);
-		return true;
+	startDeployment() {
+		return this.sendDeploymentNotice('deployment_start', DEPLOYMENT_START_MESSAGE);
 	}
 
 	completeDeployment() {
 		return this.sendDeploymentNotice('deployment_complete', DEPLOYMENT_COMPLETE_MESSAGE);
+	}
+
+	cancelDeployment() {
+		return this.sendDeploymentNotice(
+			'deployment_cancelled',
+			'The update was cancelled. The current server is available. You can join again.',
+		);
 	}
 
 	async onModuleDestroy() {
@@ -113,6 +111,12 @@ class DeploymentController {
 		requireLoopback(request);
 		return this.shutdown.completeDeployment();
 	}
+
+	@Post('cancel')
+	cancel(@Req() request: FastifyRequest) {
+		requireLoopback(request);
+		return this.shutdown.cancelDeployment();
+	}
 }
 
 @Controller('api/internal/shutdown')
@@ -132,7 +136,7 @@ function requireLoopback(request: FastifyRequest) {
 }
 
 @Module({
-	imports: [DiscordModule, PlayersModule],
+	imports: [DiscordModule],
 	controllers: [DeploymentController, ShutdownController],
 	providers: [ShutdownService],
 	exports: [ShutdownService],

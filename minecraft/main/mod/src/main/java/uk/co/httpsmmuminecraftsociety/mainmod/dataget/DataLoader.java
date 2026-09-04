@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyAdvancementPolicy;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementAnnouncements;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 
 import java.io.BufferedReader;
@@ -74,6 +75,7 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
 
     @Override
     public void onResourceManagerReload(ResourceManager manager) {
+        AdvancementAnnouncements.load(manager);
         AdvancementMoney.loadAdvancementRewards(manager);
         DailyAdvancementPolicy.load(manager);
         fakeItems = loadFromResourceManager(manager);

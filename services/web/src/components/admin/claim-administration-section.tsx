@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { PlayerName } from '@/components/player-name';
+import { fuzzyFilter, PlayerSelector } from '@/components/player-selector';
 import type { AdminTabController } from './use-admin-tab-controller';
 
 export function ClaimAdministrationSection({ controller }: { controller: AdminTabController }) {
@@ -12,7 +14,34 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 		claimsHaveMore,
 		loadingMore,
 		loadMoreClaims,
+		players,
 	} = controller;
+	const [search, setSearch] = useState('');
+	const autoLoadedCount = useRef(-1);
+	const visibleClaims = useMemo(
+		() =>
+			fuzzyFilter(claims, search, [
+				'minecraftUsername',
+				'name',
+				'dimension',
+				'chunkX',
+				'chunkZ',
+			]),
+		[claims, search],
+	);
+
+	useEffect(() => {
+		// ponytail: Load every page during a search. Add server-side fuzzy search if this becomes slow.
+		if (
+			search.trim() &&
+			claimsHaveMore &&
+			loadingMore === null &&
+			autoLoadedCount.current !== claims.length
+		) {
+			autoLoadedCount.current = claims.length;
+			void loadMoreClaims();
+		}
+	}, [claims.length, claimsHaveMore, loadMoreClaims, loadingMore, search]);
 	return (
 		<>
 			{activeSection === 'claims' && (
@@ -24,6 +53,17 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 							players.
 						</p>
 					</div>
+					<PlayerSelector
+						datalistId="player-claim-players"
+						options={players}
+						value={search}
+						onChange={(value) => {
+							autoLoadedCount.current = -1;
+							setSearch(value);
+						}}
+						placeholder="Search players or claims"
+						ariaLabel="Search player claims"
+					/>
 					<div className="adminTableWrap">
 						<table className="adminTable">
 							<thead>
@@ -36,7 +76,7 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 								</tr>
 							</thead>
 							<tbody>
-								{claims.map((claim) => (
+								{visibleClaims.map((claim) => (
 									<tr key={claim.id}>
 										<td>
 											<PlayerName
@@ -66,15 +106,19 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 										</td>
 									</tr>
 								))}
-								{claims.length === 0 && (
+								{visibleClaims.length === 0 && loadingMore === null && (
 									<tr>
-										<td colSpan={5}>No chunks are claimed.</td>
+										<td colSpan={5}>
+											{search.trim()
+												? 'No player claims match that search.'
+												: 'No chunks are claimed.'}
+										</td>
 									</tr>
 								)}
 							</tbody>
 						</table>
 					</div>
-					{claimsHaveMore && (
+					{claimsHaveMore && !search.trim() && (
 						<button
 							type="button"
 							className="loadMoreButton"

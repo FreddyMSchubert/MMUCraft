@@ -1,8 +1,18 @@
+import { createRequire } from 'node:module';
 import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+const requireFromWeb = createRequire(new URL('./services/web/package.json', import.meta.url));
+const nextVitals = requireFromWeb('eslint-config-next/core-web-vitals');
 const typedFiles = ['**/*.{ts,tsx}'];
+const webFiles = ['services/web/**/*.{js,jsx,ts,tsx}'];
+const scopedNextConfig = nextVitals
+	.filter((config) => config.name !== 'next/typescript')
+	.map((config) => ({
+		...config,
+		files: webFiles,
+	}));
 
 export default tseslint.config(
 	{
@@ -16,6 +26,13 @@ export default tseslint.config(
 		],
 	},
 	js.configs.recommended,
+	...scopedNextConfig,
+	{
+		files: webFiles,
+		rules: {
+			'@next/next/no-html-link-for-pages': 'off',
+		},
+	},
 	...tseslint.configs.strictTypeChecked.map((config) => ({ ...config, files: typedFiles })),
 	...tseslint.configs.stylisticTypeChecked.map((config) => ({ ...config, files: typedFiles })),
 	{

@@ -53,27 +53,20 @@ jobs:
                   npm ci --prefix services/web
                   npm ci --prefix minecraft/main/respack/items-respack-generator
 
-            - name: Check formatting
-              run: npm run format:check
-
-            - name: Lint source
-              run: npm run lint
-
-            - name: Type-check API
-              run: npm run typecheck --prefix services/api
-
-            - name: Check resource-pack generator
-              run: npm run check --prefix minecraft/main/respack/items-respack-generator
-
-            - name: Check web
-              run: npm run check --prefix services/web
+            - name: Check source
+              run: npm run check
 
             - name: Audit dependencies
+              env:
+                  npm_config_loglevel: http
               run: |
-                  npm audit
-                  npm audit --prefix services/api
-                  npm audit --prefix services/web
-                  npm audit --prefix minecraft/main/respack/items-respack-generator
+                  for project in . services/api services/web minecraft/main/respack/items-respack-generator; do
+                    echo "Audit $project"
+                    npm audit --prefix "$project" --json || {
+                      echo "Audit failed for $project. Retry once."
+                      npm audit --prefix "$project" --json
+                    }
+                  done
 
             - name: Install Playwright Chromium
               run: npx playwright install --with-deps chromium

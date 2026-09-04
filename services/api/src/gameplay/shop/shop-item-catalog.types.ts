@@ -7,6 +7,7 @@ export interface ShopPurchasableDefinition {
 	description: string;
 	unlockMessage: string | null;
 	unlockWeight: number;
+	tags: string[];
 }
 
 export interface RawItemDefinition {
@@ -25,6 +26,7 @@ export interface RawItemDefinition {
 export interface CharmLevelDefinition {
 	level: number;
 	abilityStatusCurrent: string;
+	dabloons: number;
 	upgradeIngredients: string[];
 }
 
@@ -73,4 +75,10 @@ export interface ShopItemCatalog {
 	mtimeMs: number;
 	items: CatalogItem[];
 	assets: Map<string, ItemRenderAsset>;
+	searchDocuments: ShopSearchDocument[];
+}
+
+export interface ShopSearchDocument {
+	id: string;
+	content: string;
 }

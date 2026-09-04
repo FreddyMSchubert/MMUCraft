@@ -1,5 +1,6 @@
 'use client';
 
+import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import { formatExpiry } from './admin-api';
 import type { AdminTabController } from './use-admin-tab-controller';
 
@@ -30,8 +31,8 @@ export function GiftCodeAdminSection({ controller }: { controller: AdminTabContr
 					<div className="adminSectionHeader">
 						<h3>Gift codes</h3>
 						<p>
-							Create a code that gives dabloons to eligible signed-in players who
-							redeem it while online.
+							Create a code that gives <DabloonText>Dabloons</DabloonText> to eligible
+							signed-in players who redeem it while online.
 						</p>
 					</div>
 
@@ -61,7 +62,7 @@ export function GiftCodeAdminSection({ controller }: { controller: AdminTabContr
 							/>
 						</label>
 						<label>
-							Dabloons
+							<DabloonText>Dabloons</DabloonText>
 							<input
 								value={amount}
 								onChange={(event) => {
@@ -149,7 +150,12 @@ export function GiftCodeAdminSection({ controller }: { controller: AdminTabContr
 									(giftCode) => (
 										<li key={giftCode.code}>
 											<code>{giftCode.code}</code>
-											<span>{giftCode.amountDabloons} dabloons</span>
+											<span>
+												<DabloonAmount
+													amount={giftCode.amountDabloons}
+													format="full"
+												/>
+											</span>
 											<span>
 												{giftCode.redemptionMode === 'per_user'
 													? 'Once per player'

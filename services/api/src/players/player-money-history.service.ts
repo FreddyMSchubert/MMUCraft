@@ -52,7 +52,7 @@ export class PlayerMoneyHistoryService {
 		}>('GrantKnowledgeReadMoney', {
 			minecraft_username: minecraftUsername,
 			amount_dabloons: amountDabloons,
-			message: `Knowledge read: you received ${amountDabloons} dabloons.`,
+			message: `Knowledge read: you received ${amountDabloons} Dabloons.`,
 		});
 	}
 
@@ -92,7 +92,9 @@ export class PlayerMoneyHistoryService {
 			...result,
 			accountLinked: true,
 			userId: user.id,
-			message: result.duplicate ? 'Money event already recorded.' : 'Money event recorded.',
+			message: result.duplicate
+				? 'Dabloon event already recorded.'
+				: 'Dabloon event recorded.',
 		};
 	}
 

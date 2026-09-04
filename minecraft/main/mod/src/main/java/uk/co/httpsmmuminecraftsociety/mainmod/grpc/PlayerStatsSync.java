@@ -428,17 +428,22 @@ public final class PlayerStatsSync {
             );
         }
 
-        long completedAdvancements = player.getAdvancements().visible.stream()
-                .filter(holder -> holder.value().display().isPresent())
-                .filter(holder -> player.getAdvancements().getOrStartProgress(holder).isDone())
+        PlayerAdvancements advancements = player.getAdvancements();
+        List<AdvancementNode> visibleAdvancements = advancements.tree.nodes().stream()
+                .filter(node -> node.holder().value().display().isPresent())
+                .toList();
+        long completedAdvancements = visibleAdvancements.stream()
+                .map(AdvancementNode::holder)
+                .filter(holder -> advancements.getOrStartProgress(holder).isDone())
                 .count();
-        addStat(
-                entries,
-                "advancement",
-                Identifier.fromNamespaceAndPath("minecraft", "earned"),
-                "Advancements Earned",
-                (int) completedAdvancements
-        );
+        entries.add(MinecraftStatEntry.newBuilder()
+                .setKey("minecraft.advancement.minecraft:earned")
+                .setCategory("advancement")
+                .setId("minecraft:earned")
+                .setLabel("Advancements Earned")
+                .setValue(completedAdvancements)
+                .setTotal(visibleAdvancements.size())
+                .build());
 
         for (Identifier entityId : BuiltInRegistries.ENTITY_TYPE.keySet()) {
             EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getValue(entityId);

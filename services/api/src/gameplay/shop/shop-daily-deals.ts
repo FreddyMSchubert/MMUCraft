@@ -24,7 +24,7 @@ const DAILY_DEAL_MESSAGES = [
 	'Too good to leave behind',
 	'Limited-time deal',
 	"Treat yo' self",
-	'Shut up and take my money!',
+	'Shut up and take my Dabloons!',
 	'Anything from the trolley, dears?',
 	"We'll take the lot.",
 	"Buy somethin', will ya!",
@@ -32,7 +32,7 @@ const DAILY_DEAL_MESSAGES = [
 	"Let's go shopping!",
 	'Capitalism, baby!',
 	"It's our best-seller.",
-	'A fool and her money soon part.',
+	'A fool and her Dabloons soon part.',
 ] as const;
 
 export function currentShopDealDate(): string {

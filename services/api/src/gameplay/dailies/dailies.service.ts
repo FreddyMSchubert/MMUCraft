@@ -55,12 +55,9 @@ export class DailiesService {
 		const completionReward = dailyCompletionReward(periodKey, user.isMember);
 		const advancementTask = await this.dailyTaskAssignment
 			.advancementForPeriod(user, periodKey)
-			.catch((error: unknown) => ({
+			.catch(() => ({
 				target: null,
-				message:
-					error instanceof Error
-						? error.message
-						: 'Daily advancement target is unavailable right now.',
+				message: 'The advancement daily is unavailable right now. Please try again soon.',
 			}));
 		const advancementClaimed = this.dailyStorage.hasClaimed(
 			user.id,
@@ -118,6 +115,7 @@ export class DailiesService {
 						? {
 								advancementId: advancementTask.target.advancementId,
 								title: advancementTask.target.title,
+								description: advancementTask.target.description,
 								tabTitle: advancementTask.target.tabTitle,
 								iconItem: advancementTask.target.iconItem,
 								baseRewardDabloons: advancementTask.target.baseRewardDabloons,

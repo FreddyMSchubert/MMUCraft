@@ -6,6 +6,7 @@ import {
 	Headers,
 	Param,
 	Post,
+	Query,
 	StreamableFile,
 } from '@nestjs/common';
 import { createReadStream } from 'node:fs';
@@ -31,6 +32,16 @@ export class ShopController {
 	getShop(@Headers('cookie') cookieHeader: string | undefined) {
 		const user = this.auth.requireSession(cookieHeader);
 		return this.purchases.getShopForUser(user);
+	}
+
+	@Get('search')
+	@Header('Cache-Control', NO_STORE_CACHE_CONTROL)
+	search(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Query('q') query: string | undefined,
+	) {
+		const user = this.auth.requireSession(cookieHeader);
+		return this.purchases.searchShopForUser(user, query);
 	}
 
 	@Post('purchase')

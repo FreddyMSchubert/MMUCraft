@@ -41,6 +41,7 @@ export class ShopPurchasesService {
 		const signupAnniversary = this.isSignupAnniversary(user.id);
 
 		return {
+			isMember: user.isMember,
 			availability,
 			dealDate,
 			shoppingSunday: isShoppingSunday(dealDate),
@@ -80,12 +81,32 @@ export class ShopPurchasesService {
 						textureUrl: item.textureUrl,
 						animated: item.animated,
 						dyeable: item.dyeable,
+						membersOnly: isMembersOnly(item),
+						membershipLocked: isMembersOnly(item) && !user.isMember,
 						animation: item.animation,
 						charmDetails: item.charmDetails,
 						unlocked: isUnlocked(item, unlockedIds),
-						available: isAvailableForPurchase(user.id, item, availability, unlockedIds),
+						available: isAvailableForPurchase(user, item, availability, unlockedIds),
 					};
 				}),
+		};
+	}
+
+	searchShopForUser(user: AuthenticatedUser, queryInput: string | undefined) {
+		const query = queryInput?.trim() ?? '';
+		if (query.length > 100) throw new BadRequestException('Search query is too long.');
+		if (!query) return { query, itemIds: [] };
+
+		const catalog = this.itemCatalog.load();
+		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
+		const visibleIds = new Set(
+			catalog.items
+				.filter((item) => isVisibleInShop(item, unlockedIds))
+				.map((item) => item.id),
+		);
+		return {
+			query,
+			itemIds: this.itemCatalog.search(query).filter((id) => visibleIds.has(id)),
 		};
 	}
 
@@ -98,8 +119,8 @@ export class ShopPurchasesService {
 
 		const availability = this.unlocks.availabilityForUser(user.id);
 		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
-		if (!isAvailableForPurchase(user.id, item, availability, unlockedIds)) {
-			throw new BadRequestException(unavailablePurchaseMessage(item));
+		if (!isAvailableForPurchase(user, item, availability, unlockedIds)) {
+			throw new BadRequestException(unavailablePurchaseMessage(user, item));
 		}
 
 		const dealDate = currentShopDealDate();
@@ -171,16 +192,17 @@ export class ShopPurchasesService {
 }
 
 function isAvailableForPurchase(
-	userId: number,
+	user: AuthenticatedUser,
 	item: CatalogItem,
 	availability: ShopUnlockAvailability,
 	unlockedIds: Set<string>,
 ): boolean {
+	if (isMembersOnly(item) && !user.isMember) return false;
 	if (item.type === 'charm' || item.type === 'cosmetic') return unlockedIds.has(item.id);
 	if (item.bookUnlockType === 'knowledge') return availability.knowledge;
 	if (item.bookUnlockType === 'charm') return availability.charms;
 	if (item.bookUnlockType === 'cosmetic') return availability.cosmetics;
-	return userId > 0;
+	return user.id > 0;
 }
 
 function isVisibleInShop(item: CatalogItem, unlockedIds: Set<string>): boolean {
@@ -191,7 +213,12 @@ function isUnlocked(item: CatalogItem, unlockedIds: Set<string>): boolean {
 	return isVisibleInShop(item, unlockedIds);
 }
 
-function unavailablePurchaseMessage(item: CatalogItem): string {
+function isMembersOnly(item: CatalogItem): boolean {
+	return item.dyeable || item.animated;
+}
+
+function unavailablePurchaseMessage(user: AuthenticatedUser, item: CatalogItem): string {
+	if (isMembersOnly(item) && !user.isMember) return 'This item is for members only.';
 	if (item.type === 'charm') return 'Unlock this charm with a magic book before buying it.';
 	if (item.type === 'cosmetic')
 		return 'Unlock this cosmetic with a fashion book before buying it.';

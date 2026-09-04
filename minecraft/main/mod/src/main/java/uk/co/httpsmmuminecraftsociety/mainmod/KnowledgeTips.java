@@ -39,23 +39,35 @@ public final class KnowledgeTips {
 
     private static final List<WeightedMessage> GREETINGS = List.of(
             message(10, "Welcome back!", context -> true),
+            message(3, "Oh hey, Welcome back!", context -> true),
+            message(5, "Greetings!", context -> true),
+            message(1, "Greetings, individual with great taste in video games!", context -> true),
             message(4, "Glad youre back!", context -> true),
             message(4, "You're back! Hi!", context -> true),
+            message(4, "Welcome, welcome!", context -> true),
             message(2, "Hey, Welcome back!", context -> true),
             message(4, "Good to see you!", context -> true),
             message(4, "Happy to have you!", context -> true),
+            message(5, "Hey again.", context -> true),
+            message(1, "Hello there. (General Kenobi)", context -> true),
+            message(6, "Hello again.", context -> true),
             message(4, "Look who's back!", context -> true),
             message(5, "Good to see you!", context -> true),
+            message(3, "Hey there!", context -> true),
+            message(3, "Always nice to see you!", context -> true),
+            message(2, "Fancy seeing you here!", context -> true),
+            message(2, "Good to see a familiar face!", context -> true),
             message(3, "Hello there!", context -> true),
             message(1, "Welcome back in the cubicle!", context -> true),
 
             message(25, "Back already?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
-            message(25, "Miss me?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
+            message(25, "Missed the server already?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "Welcome back, that was quick!", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "Hey, you again!", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "Right back at it.", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "That was fast.", context -> context.recentlyPlayed(15L * MINUTE_MS)),
             message(20, "Picking up where we left off?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
+            message(20, "Ready for round two?", context -> context.recentlyPlayed(15L * MINUTE_MS)),
 
             message(100, "Long time no see!", context -> context.goneFor(7L * DAY_MS)),
             message(100, "Feels like it's been a minute.", context -> context.goneFor(7L * DAY_MS)),
@@ -69,42 +81,42 @@ public final class KnowledgeTips {
             message(1000000, "You do still exist!", context -> context.goneFor(90L * DAY_MS)),
 
             message(25, "Hello, night owl!", context -> context.hour() < 5),
-            message(30, "Couldn't sleep?", context -> context.hour() < 5),
+            message(30, "Hiya, couldn't sleep?", context -> context.hour() < 5),
             message(20, "Still awake?", context -> context.hour() < 5),
             message(18, "Good Morning!", context -> context.hour() >= 5 && context.hour() < 8),
             message(18, "You're up early.", context -> context.hour() >= 5 && context.hour() < 8),
             message(25, "Good Morning, early bird!", context -> context.hour() >= 5 && context.hour() < 8),
-            message(15, "Good morning!", context -> context.hour() >= 8 && context.hour() < 12),
-            message(15, "Good afternoon!", context -> context.hour() >= 12 && context.hour() < 18),
-            message(15, "Good evening!", context -> context.hour() >= 18),
+            message(27, "Good morning!", context -> context.hour() >= 8 && context.hour() < 12),
+            message(27, "Good afternoon!", context -> context.hour() >= 12 && context.hour() < 18),
+            message(27, "Good evening!", context -> context.hour() >= 18),
 
-            message(13, "Happy Monday!", context -> context.day() == DayOfWeek.MONDAY),
-            message(13, "Happy Tuesday!", context -> context.day() == DayOfWeek.TUESDAY),
-            message(13, "Happy Wednesday!", context -> context.day() == DayOfWeek.WEDNESDAY),
-            message(13, "Happy Thursday!", context -> context.day() == DayOfWeek.THURSDAY),
-            message(13, "Happy Friday!", context -> context.day() == DayOfWeek.FRIDAY),
-            message(16, "Happy Surprising Saturday!", context -> context.day() == DayOfWeek.SATURDAY),
-            message(16, "Happy Sunday Funday!", context -> context.day() == DayOfWeek.SUNDAY)
+            message(14, "Happy Monday!", context -> context.day() == DayOfWeek.MONDAY),
+            message(14, "Happy Tuesday!", context -> context.day() == DayOfWeek.TUESDAY),
+            message(14, "Happy Wednesday!", context -> context.day() == DayOfWeek.WEDNESDAY),
+            message(14, "Happy Thursday!", context -> context.day() == DayOfWeek.THURSDAY),
+            message(14, "Happy Friday!", context -> context.day() == DayOfWeek.FRIDAY),
+            message(20, "Happy Surprising Saturday!", context -> context.day() == DayOfWeek.SATURDAY),
+            message(20, "Happy Sunday Funday!", context -> context.day() == DayOfWeek.SUNDAY)
     );
 
     private static final List<WeightedMessage> FLAVOURS = List.of(
-			message(50, "", context -> true), // no flavour text - makes it more special if there is one.
+			message(60, "", context -> true), // no flavour text - makes it more special if there is one.
 
             message(10, "Careful, it's stormy out there.", context -> context.level().isThundering()),
             message(10, "Rough weather out there.", context -> context.level().isThundering()),
-            message(10, "It's snowing out!", Context::isSnowing),
+            message(10, "It's snowing out.", Context::isSnowing),
             message(10, "Snowy out there.", Context::isSnowing),
             message(10, "Stay dry out there.", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
             message(10, "Don't forget an umbrella.", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
             message(10, "Rainy one today.", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
-            message(10, "It's raning cats and dogs!", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
+            message(10, "It's raining cats and dogs!", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
             message(20, "Come rain or shine, Minecraft time!", context -> context.level().isRaining() && !context.isSnowing() && !context.level().isThundering()),
             message(10, "Beautiful day out.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
             message(10, "What a gorgeous day.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
             message(10, "It's a beautiful day today!", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
             message(10, "Hard to complain about that weather.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
             message(10, "Looking bright today.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
-            message(5, "The weather is perfect for a picnic!", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
+            message(5, "The weather is just perfect.", context -> context.level().dimension() == Level.OVERWORLD && !context.level().isRaining() && !context.isNight()),
 
             message(5, "Plenty of daylight left.", Context::isDay),
             message(10, "Sunset is close.", Context::isSunset),
@@ -115,7 +127,6 @@ public final class KnowledgeTips {
             message(15, "That's quite a view.", context -> context.player().getY() >= 200.0D),
             message(10, "Up in the clouds?", context -> context.player().getY() >= 120.0D),
             message(10, "Thin air up here.", context -> context.player().getY() >= 120.0D),
-            message(14, "Deep slate, deeper plans.", context -> context.player().getY() <= -40.0D),
             message(11, "Back in the mines, huh?", context -> context.player().getY() < 30.0D),
             message(11, "It appears you yearned for the mines.", context -> context.player().getY() < 0.0D),
 
@@ -166,7 +177,7 @@ public final class KnowledgeTips {
             message(2, "Another day in the blocky world.", context -> true),
             message(2, "Creepers like their personal space.", context -> true),
             message(6, "Have you read all your knowledge books?", context -> true),
-            message(6, "Have you signed up for the next few society events?", context -> true),
+            message(6, "Have you signed up for the next society events?", context -> true),
             message(6, "Have you checked out your dailies?", context -> true)
     );
 
@@ -230,7 +241,7 @@ public final class KnowledgeTips {
             if (player.hasDisconnected()) return;
             if (greet) player.sendSystemMessage(greeting(player, previousLastPlayedAtUnixMs));
             if (greet && response.getHasUnreadKnowledge()) {
-                player.sendSystemMessage(Component.literal("Warning: You have unread message books. Read them ")
+                player.sendSystemMessage(Component.literal("Warning: You have unread knowledge books. Read them ")
                         .withStyle(ChatFormatting.GOLD)
                         .append(WebsiteCommand.takeMeThere("knowledge", "here", ChatFormatting.RED))
                         .append(Component.literal(".").withStyle(ChatFormatting.GOLD)));
@@ -262,7 +273,7 @@ public final class KnowledgeTips {
         ServerLevel level = player.level();
         boolean monstersNearby = !level.getEntitiesOfClass(
                 Monster.class,
-                player.getBoundingBox().inflate(16.0D),
+                player.getBoundingBox().inflate(10.0D, 5.0D, 10.0D),
                 Monster::isAlive
         ).isEmpty();
         boolean playersNearby = level.players().stream()

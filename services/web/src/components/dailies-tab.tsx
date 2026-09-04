@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { MinecraftItemIcon } from '@/components/minecraft-item-icon';
+import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
+import { formatDabloonWord } from '@/lib/dabloons';
 
 interface DailyTask {
 	id: string;
@@ -19,6 +21,7 @@ interface DailyTask {
 	advancement?: {
 		advancementId: string;
 		title: string;
+		description: string;
 		tabTitle: string;
 		iconItem: string;
 		modelUrl: string | null;
@@ -49,6 +52,18 @@ interface DailiesResponse {
 	tasks: DailyTask[];
 }
 
+function userFacingApiMessage(response: Response, body: unknown, fallback: string) {
+	return response.status >= 500 ? fallback : apiMessage(body, fallback);
+}
+
+async function fetchDailies(input: string, init?: RequestInit) {
+	try {
+		return await fetch(input, init);
+	} catch {
+		throw new Error('Dailies are unavailable right now. Please try again soon.');
+	}
+}
+
 export function DailiesTab() {
 	const { showAlert } = useSiteAlert();
 	const [data, setData] = useState<DailiesResponse | null>(null);
@@ -56,13 +71,19 @@ export function DailiesTab() {
 	const [claimingTaskId, setClaimingTaskId] = useState<string | null>(null);
 
 	const load = useCallback(async () => {
-		const response = await fetch('/api/dailies', {
+		const response = await fetchDailies('/api/dailies', {
 			cache: 'no-store',
 		});
 		const body = await response.json().catch(() => null);
 
 		if (!response.ok) {
-			throw new Error(apiMessage(body, 'Failed to load dailies'));
+			throw new Error(
+				userFacingApiMessage(
+					response,
+					body,
+					'Dailies are unavailable right now. Please try again soon.',
+				),
+			);
 		}
 
 		setData(body as DailiesResponse);
@@ -115,16 +136,17 @@ export function DailiesTab() {
 					: `/api/dailies/tasks/${encodeURIComponent(task.id)}/claim`;
 
 		try {
-			const response = await fetch(path, {
+			const response = await fetchDailies(path, {
 				method: 'POST',
 			});
 			const body = await response.json().catch(() => null);
 
 			if (!response.ok) {
 				throw new Error(
-					apiMessage(
+					userFacingApiMessage(
+						response,
 						body,
-						'Join the Minecraft server, then try to claim this daily again.',
+						'We could not reach the Minecraft server. Please try again soon.',
 					),
 				);
 			}
@@ -149,14 +171,17 @@ export function DailiesTab() {
 		setClaimingTaskId('daily_completion');
 
 		try {
-			const response = await fetch('/api/dailies/completion/claim', { method: 'POST' });
+			const response = await fetchDailies('/api/dailies/completion/claim', {
+				method: 'POST',
+			});
 			const body = await response.json().catch(() => null);
 
 			if (!response.ok) {
 				throw new Error(
-					apiMessage(
+					userFacingApiMessage(
+						response,
 						body,
-						'Complete every daily and stay online in Minecraft before claiming the completion reward.',
+						'We could not reach the Minecraft server. Please try again soon.',
 					),
 				);
 			}
@@ -166,7 +191,9 @@ export function DailiesTab() {
 				title: 'Daily set complete',
 				message: apiMessage(
 					body,
-					`You received ${data?.completion.rewardDabloons ?? 'your'} completion-reward dabloons. Come back tomorrow for a new set.`,
+					data
+						? `You received ${formatDabloonWord(data.completion.rewardDabloons)}. Come back tomorrow for a new set.`
+						: 'You received your completion reward. Come back tomorrow for a new set.',
 				),
 				tone: 'success',
 			});
@@ -204,9 +231,9 @@ export function DailiesTab() {
 				<div>
 					<h3>Dailies</h3>
 					<p className="tabSubtitle">
-						Every day you get a new set of challenges. You can gain a bunch of dabloons
-						by completing them, especially if you manage to complete all the dailies on
-						a given day.
+						Every day you get a new set of challenges. You can gain a bunch of{' '}
+						<DabloonText>Dabloons</DabloonText> by completing them, especially if you
+						manage to complete all the dailies on a given day.
 					</p>
 				</div>
 				<div
@@ -226,10 +253,18 @@ export function DailiesTab() {
 						</div>
 						<div className="dailyTaskBody">
 							<h4>
-								{task.name}
-								{task.rewardDabloons > 0
-									? ` - ${task.rewardDabloons} Dabloons`
-									: ''}
+								{task.id === 'advancement_bonus' && task.advancement
+									? `Complete "${task.advancement.title}"`
+									: task.name}
+								{task.rewardDabloons > 0 && (
+									<>
+										{' '}
+										<DabloonAmount
+											amount={task.rewardDabloons}
+											format="delta"
+										/>
+									</>
+								)}
 							</h4>
 							{task.id === 'advancement_bonus' ? (
 								task.advancement ? (
@@ -241,27 +276,47 @@ export function DailiesTab() {
 											textureUrl={task.advancement.textureUrl}
 										/>
 										<div>
-											<p>{task.advancement.title}</p>
-											<p>Tab: {task.advancement.tabTitle}</p>
+											<p>{task.advancement.description}</p>
+											<p>
+												(Advancement from the {task.advancement.tabTitle}{' '}
+												tab).
+											</p>
 											<p>
 												{task.claimed ? (
 													<>
 														Claimed: Finished the advancement and earned{' '}
-														{task.advancement.bonusRewardDabloons} bonus
-														dabloons.
+														<DabloonAmount
+															amount={
+																task.advancement.bonusRewardDabloons
+															}
+															format="full"
+															tone="inherit"
+														/>
+														.
 													</>
 												) : task.current >= task.max ? (
 													<>
 														Complete — claim{' '}
-														{task.advancement.bonusRewardDabloons} bonus
-														dabloons.
+														<DabloonAmount
+															amount={
+																task.advancement.bonusRewardDabloons
+															}
+															format="full"
+															tone="inherit"
+														/>
+														.
 													</>
 												) : (
 													<>
 														Finish it today, then claim{' '}
-														{task.advancement.bonusRewardDabloons} bonus
-														dabloons in addition to the advancements
-														reward.
+														<DabloonAmount
+															amount={
+																task.advancement.bonusRewardDabloons
+															}
+															format="full"
+															tone="inherit"
+														/>{' '}
+														in addition to the advancement reward.
 													</>
 												)}
 											</p>
@@ -278,21 +333,34 @@ export function DailiesTab() {
 									{task.claimed ? (
 										<>
 											Claimed: Login again tomorrow for{' '}
-											{data.nextLoginRewardDabloons} dabloons.
+											<DabloonAmount
+												amount={data.nextLoginRewardDabloons}
+												format="full"
+												tone="inherit"
+											/>
+											.
 										</>
 									) : (
 										<>
 											Click claim while online to extend your login streak and
-											earn {task.rewardDabloons} dabloons.
+											earn{' '}
+											<DabloonAmount
+												amount={task.rewardDabloons}
+												format="full"
+												tone="inherit"
+											/>
+											.
 										</>
 									)}
 								</p>
 							) : (
 								<>
 									<p>
-										{task.claimed
-											? `Claimed: ${task.description ?? task.name}`
-											: task.description}
+										<DabloonText>
+											{task.claimed
+												? `Claimed: ${task.description ?? task.name}`
+												: (task.description ?? '')}
+										</DabloonText>
 									</p>
 									{task.max > 1 && <DailyProgress task={task} />}
 									{task.max === 1 &&
@@ -332,8 +400,8 @@ export function DailiesTab() {
 
 			<div className="dailiesFooter">
 				<p className="dailyFootnote">
-					You can always earn money, even if today&apos;s dailies are already done or too
-					hard, by completing advancements.<br></br>
+					You can always earn <DabloonText>Dabloons</DabloonText>, even if today&apos;s
+					dailies are already done or too hard, by completing advancements.<br></br>
 					If a daily seems impossible or ludicrously frustrating, contact the committee.
 				</p>
 				<section
@@ -343,24 +411,43 @@ export function DailiesTab() {
 					<h4 id="daily-completion-title">Full completion reward</h4>
 					<div
 						className="dailyCompletionCalculation"
-						aria-label={`Completion reward: ${data.completion.rewardDabloons} dabloons`}
+						aria-label={`Completion reward: ${data.completion.rewardDabloons} Dabloons`}
 					>
 						<span>Base reward</span>
-						<strong>+{data.completion.baseRewardDabloons}</strong>
+						<strong>
+							<DabloonAmount
+								amount={data.completion.baseRewardDabloons}
+								tone="inherit"
+							/>
+						</strong>
 						<span className={data.completion.isSunday ? '' : 'notApplied'}>
 							Sunday bonus
 						</span>
 						<strong className={data.completion.isSunday ? '' : 'notApplied'}>
-							+{data.completion.sundayBonusDabloons}
+							<DabloonAmount
+								amount={data.completion.sundayBonusDabloons}
+								tone="inherit"
+							/>
 						</strong>
 						<span className={data.completion.isMember ? '' : 'notApplied'}>
 							Member bonus
 						</span>
 						<strong className={data.completion.isMember ? '' : 'notApplied'}>
-							+{data.completion.memberBonusDabloons}
+							<DabloonAmount
+								amount={data.completion.memberBonusDabloons}
+								tone="inherit"
+							/>
 						</strong>
-						<span>Total</span>
-						<strong>{data.completion.rewardDabloons} dabloons</strong>
+						<div className="dailyCompletionTotal">
+							<span>Total</span>
+							<strong>
+								<DabloonAmount
+									amount={data.completion.rewardDabloons}
+									format="full"
+									tone="inherit"
+								/>
+							</strong>
+						</div>
 					</div>
 					<button
 						type="button"
@@ -376,7 +463,7 @@ export function DailiesTab() {
 							: claimingTaskId === 'daily_completion'
 								? 'Finishing...'
 								: remainingDailies > 0
-									? `${remainingDailies} daily${remainingDailies === 1 ? '' : 'ies'} to do`
+									? `${remainingDailies} ${remainingDailies === 1 ? 'daily' : 'dailies'} to do`
 									: 'All done - claim bonus'}
 					</button>
 				</section>

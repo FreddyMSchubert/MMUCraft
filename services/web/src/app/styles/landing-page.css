@@ -10,7 +10,7 @@
 	min-height: 100svh;
 	overflow: hidden;
 	background: #111;
-	font-family: 'Minecraft UI', monospace;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', monospace;
 	font-kerning: none;
 	font-variant-ligatures: none;
 	letter-spacing: -1px;
@@ -129,7 +129,7 @@
 	display: block;
 	width: 72%;
 	color: #ffff00;
-	font-family: 'Minecraft UI', monospace;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', monospace;
 	font-size: clamp(18px, 2vw, 31px);
 	line-height: 0.92;
 	text-align: center;

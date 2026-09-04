@@ -9,6 +9,7 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'gifts', label: 'Gift codes' },
 	{ section: 'countdowns', label: 'Countdowns' },
 	{ section: 'commands', label: 'Command log' },
+	{ section: 'signin-attempts', label: 'Sign-in attempts' },
 	{ section: 'dailies', label: 'Dailies' },
 	{ section: 'toggles', label: 'Gameplay toggles' },
 	{ section: 'bans', label: 'Ban / timeout' },

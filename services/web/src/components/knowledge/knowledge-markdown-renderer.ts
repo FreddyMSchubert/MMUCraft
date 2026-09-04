@@ -1,6 +1,7 @@
 import { Marked, type Tokens } from 'marked';
 
-type AdmonitionType = 'info' | 'warning' | 'error' | 'hint' | 'tip' | 'note' | 'tldr' | 'context';
+type AdmonitionType =
+	'info' | 'warning' | 'error' | 'hint' | 'tip' | 'note' | 'tldr' | 'context' | 'perk';
 
 interface AdmonitionToken extends Tokens.Generic {
 	type: 'admonition';
@@ -25,6 +26,7 @@ const ADMONITION_ICONS: Record<AdmonitionType, string> = {
 	tldr: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13"/></svg>',
 	context:
 		'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg>',
+	perk: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>',
 };
 
 export const knowledgeMarkdown = new Marked({
@@ -42,12 +44,12 @@ export const knowledgeMarkdown = new Marked({
 			name: 'admonition',
 			level: 'block',
 			start(source) {
-				return /^:::(?:info|warning|error|hint|tip|note|tldr|context)\b/m.exec(source)
+				return /^:::(?:info|warning|error|hint|tip|note|tldr|context|perk)\b/m.exec(source)
 					?.index;
 			},
 			tokenizer(source) {
 				const match =
-					/^:::(info|warning|error|hint|tip|note|tldr|context)(?:[ \t]+([^\r\n]+))?[ \t]*\r?\n([\s\S]*?)\r?\n:::[ \t]*(?:\r?\n|$)/.exec(
+					/^:::(info|warning|error|hint|tip|note|tldr|context|perk)(?:[ \t]+([^\r\n]+))?[ \t]*\r?\n([\s\S]*?)\r?\n:::[ \t]*(?:\r?\n|$)/.exec(
 						source,
 					);
 				if (!match) return;
@@ -57,13 +59,20 @@ export const knowledgeMarkdown = new Marked({
 					type: 'admonition',
 					raw: match[0],
 					kind,
-					title: match.at(2)?.trim() ?? kind.toUpperCase(),
+					title:
+						match.at(2)?.trim() ??
+						(kind === 'perk' ? 'Membership Perk' : kind.toUpperCase()),
 					tokens: this.lexer.blockTokens(match.at(3) ?? ''),
 				} satisfies AdmonitionToken;
 			},
 			renderer(token) {
 				const admonition = token as AdmonitionToken;
-				return `<aside class="knowledgeAdmonition ${admonition.kind}" role="note"><div class="knowledgeAdmonitionTitle">${ADMONITION_ICONS[admonition.kind]}<span>${escapeHtml(admonition.title)}</span></div><div class="knowledgeAdmonitionBody">${this.parser.parse(admonition.tokens)}</div></aside>`;
+				const title = `${ADMONITION_ICONS[admonition.kind]}<span>${escapeHtml(admonition.title)}</span>`;
+				const heading =
+					admonition.kind === 'perk'
+						? `<a class="knowledgeAdmonitionTitle" href="/play/knowledge/membership">${title}</a>`
+						: `<div class="knowledgeAdmonitionTitle">${title}</div>`;
+				return `<aside class="knowledgeAdmonition ${admonition.kind}" role="note">${heading}<div class="knowledgeAdmonitionBody">${this.parser.parse(admonition.tokens)}</div></aside>`;
 			},
 			childTokens: ['tokens'],
 		},
@@ -97,6 +106,10 @@ export function stripMetadataBlock(markdown: string) {
 
 export function stripDangerousHtml(html: string) {
 	return html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
+}
+
+export function decorateDabloonHtml(html: string) {
+	return html;
 }
 
 function escapeHtml(value: string) {

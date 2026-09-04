@@ -3,6 +3,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod.money;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -11,9 +13,34 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WalletCharm;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public final class MoneyHelper {
+    public static final int DABLOON_CODEPOINT = 0xF0DAB;
+    private static final String DABLOON_SYMBOL = Character.toString(DABLOON_CODEPOINT);
+
     private MoneyHelper() {}
+
+    public static MutableComponent FormatDabloons(int amount) {
+        return Component.literal(formatNumber(amount) + " " + DABLOON_SYMBOL);
+    }
+
+    public static MutableComponent FormatDabloonWord(int amount) {
+        return Component.literal(formatNumber(amount) + (amount == 1 ? " Dabloon" : " Dabloons"));
+    }
+
+    public static MutableComponent FormatDabloonDelta(int amount) {
+        ChatFormatting colour = amount < 0 ? ChatFormatting.DARK_GREEN : ChatFormatting.GREEN;
+        String sign = amount < 0 ? "-" : "+";
+        return Component.literal("(" + sign)
+                .append(FormatDabloons(Math.abs(amount)))
+                .append(Component.literal(")"))
+                .withStyle(colour);
+    }
+
+    public static MutableComponent ReplaceDabloonWords(String text) {
+        return Component.literal(text);
+    }
 
     public static int GetBalance(ServerPlayer player) {
         if (player == null || player.hasDisconnected()) {
@@ -39,13 +66,34 @@ public final class MoneyHelper {
         return balance;
     }
 
-    public static void SendBalanceMessage(ServerPlayer player, String message) {
-        player.sendSystemMessage(Component.literal("[Dabloons: ")
-                .withStyle(ChatFormatting.GOLD)
-                .append(Component.literal(String.valueOf(GetBalance(player)))
-                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-                .append(Component.literal("] ").withStyle(ChatFormatting.GOLD))
-                .append(Component.literal(message).withStyle(ChatFormatting.WHITE)));
+    public static void SendBalanceMessage(ServerPlayer player, int delta, String message) {
+        SendBalanceMessage(player, delta, ReplaceDabloonWords(message));
+    }
+
+    public static void SendBalanceMessage(ServerPlayer player, int delta, Component message) {
+        SendSystemMessage(player, balanceMessage(player, message)
+                .append(Component.literal(" "))
+                .append(FormatDabloonDelta(delta)));
+    }
+
+    public static void SendSystemMessage(ServerPlayer player, Component message) {
+        if (player == null || player.hasDisconnected()) {
+            return;
+        }
+
+        player.connection.send(new ClientboundSystemChatPacket(message, false));
+    }
+
+    private static MutableComponent balanceMessage(ServerPlayer player, Component message) {
+        return Component.literal("{")
+                .withStyle(ChatFormatting.GREEN)
+                .append(FormatDabloons(GetBalance(player)).withStyle(ChatFormatting.GREEN))
+                .append(Component.literal("} ").withStyle(ChatFormatting.GREEN))
+                .append(message.copy().withStyle(ChatFormatting.WHITE));
+    }
+
+    private static String formatNumber(int amount) {
+        return String.format(Locale.ROOT, "%,d", amount);
     }
 
     public static boolean ReduceMoney(ServerPlayer player, int amount) {

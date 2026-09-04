@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { and, eq, gte, lt } from 'drizzle-orm';
 import { ASSETS } from '../assets';
@@ -123,7 +123,7 @@ export class AuthVerificationEmailService {
 				recipientDomain,
 				reason: 'RESEND_API_KEY is missing from the API process environment',
 			});
-			return;
+			throw new ServiceUnavailableException('Verification email could not be sent');
 		}
 		try {
 			const response = await fetch('https://api.resend.com/emails', {
@@ -138,19 +138,23 @@ export class AuthVerificationEmailService {
 					html: verificationCodeEmailHtml(code),
 				}),
 			});
-			if (!response.ok)
+			if (!response.ok) {
 				console.error('[auth-email] ERROR Resend rejected verification email', {
 					kind,
 					recipientDomain,
 					status: response.status,
 					response: await response.text(),
 				});
+				throw new ServiceUnavailableException('Verification email could not be sent');
+			}
 		} catch (error) {
+			if (error instanceof ServiceUnavailableException) throw error;
 			console.error('[auth-email] ERROR Resend request failed', {
 				kind,
 				recipientDomain,
 				error: error instanceof Error ? `${error.name}: ${error.message}` : String(error),
 			});
+			throw new ServiceUnavailableException('Verification email could not be sent');
 		}
 	}
 }

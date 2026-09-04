@@ -1,0 +1,40 @@
+====
+id: externalplayers
+unlockOrder: public
+chatMessage: You've unlocked knowledge on the basics of cosmetics
+sidebarTitle: Non-MMU Players
+tags:
+- extenal players
+- non mmu
+tips:
+- You can play with external players that aren't from MMU.
+====
+
+You may wish to play on this server with people that aren't MMU. This is **entirely possible**!
+
+:::warning
+By inviting an external player, you become responsible for them. If they break our rules, you get banned along with them.
+:::
+
+Inviting an external player costs 250 [Dabloons](/play/knowledge/money-basics).
+
+:::perk
+For members, inviting an external player only costs 150 [Dabloons](/play/knowledge/money-basics).
+:::
+
+You can invite any amount of external players.
+
+:::info
+None of this is needed to play with people from MMU, they can just sign up for free like you did.
+:::
+
+To invite an external player:
+
+1. Ask a committee member to add an external player.
+2. Tell the committee member the new players email address.
+3. You must be online on the server while the committe member adds them to the whitelist and removes the dabloons from your inventory.
+4. The external player can then create an account with the approved email address.
+
+:::info
+An external player cannot be responsible for another external player.
+:::

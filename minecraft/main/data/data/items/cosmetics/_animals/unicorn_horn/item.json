@@ -11,7 +11,7 @@
 	"priceDabloons": 267,
 		"description": "",
 		"unlockWeight": 10,
-		"unlockMessage": "Purchased cosmetic: Unicorn Horn."
+		"unlockMessage": "Unlocked cosmetic: Unicorn Horn."
 	},
 	"equippableCosmetic": {}
 }

@@ -3,12 +3,14 @@ import { eq } from 'drizzle-orm';
 import { DatabaseService, playerProfiles, users } from '../database/database.service';
 import { ClaimMinecraftSynchronizationService } from '../claims/claim-minecraft-synchronization.service';
 import { effectivePlayerColor } from '../players/player-color';
+import { PlayersService } from '../players/players.service';
 
 @Injectable()
 export class PlayerRoleAdministrationService {
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly claims: ClaimMinecraftSynchronizationService,
+		private readonly players: PlayersService,
 	) {}
 
 	listPlayers() {
@@ -48,7 +50,7 @@ export class PlayerRoleAdministrationService {
 		};
 	}
 
-	setMembership(userIdInput: string, isMember: boolean | undefined) {
+	async setMembership(userIdInput: string, isMember: boolean | undefined) {
 		const userId = parseUserId(userIdInput);
 		if (typeof isMember !== 'boolean') {
 			throw new BadRequestException('isMember must be a boolean');
@@ -63,6 +65,7 @@ export class PlayerRoleAdministrationService {
 		if (updated.changes !== 1) {
 			throw new NotFoundException('Player not found');
 		}
+		await this.players.synchronizePlayerPresentation(userId);
 		return { ok: true, userId, isMember };
 	}
 
@@ -91,6 +94,7 @@ export class PlayerRoleAdministrationService {
 			.set({ is_committee: isCommittee ? 1 : 0 })
 			.where(eq(users.id, userId))
 			.run();
+		await this.players.synchronizePlayerPresentation(userId);
 		await this.claims.synchronize();
 		return { ok: true, userId, isCommittee };
 	}

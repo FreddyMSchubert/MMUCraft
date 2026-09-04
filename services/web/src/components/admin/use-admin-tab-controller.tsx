@@ -2,7 +2,9 @@
 
 import { type SyntheticEvent, useState } from 'react';
 import { PlayerName } from '@/components/player-name';
+import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
+import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
 import { apiBody, apiMessage, errorMessage, formatDateTime } from './admin-api';
 import {
 	ADMIN_PAGE_SIZE,
@@ -140,7 +142,7 @@ export function useAdminTabController({
 
 	async function refreshDailies(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
-		const player = players.find((candidate) => candidate.id === Number(dailyPlayerId));
+		const player = findPlayerByName(players, dailyPlayerId);
 		if (
 			!player ||
 			!(await confirm({
@@ -156,9 +158,16 @@ export function useAdminTabController({
 		try {
 			const response = await fetch(`/api/admin/dailies/${player.id}/refresh`, {
 				method: 'POST',
+			}).catch(() => {
+				throw new Error('The dailies service is unavailable. Please try again soon.');
 			});
 			const body = await response.json().catch(() => null);
-			if (!response.ok) throw new Error(apiMessage(body, 'Failed to regenerate dailies'));
+			if (!response.ok)
+				throw new Error(
+					response.status >= 500
+						? 'The Minecraft server is unavailable. Please try again soon.'
+						: apiMessage(body, 'Could not regenerate dailies.'),
+				);
 			await showAlert({
 				title: 'Dailies regenerated',
 				message: apiMessage(
@@ -199,8 +208,8 @@ export function useAdminTabController({
 		if (
 			!(await confirm({
 				title: 'Add this signup invitation?',
-				message: `${responsiblePlayer.minecraftUsername} will pay ${invitePrice} dabloons so ${whitelistEmail} can create an account. The responsible player must stay online in Minecraft until the charge finishes.`,
-				confirmLabel: `Charge ${invitePrice} dabloons`,
+				message: `${responsiblePlayer.minecraftUsername} will pay ${formatDabloonWord(invitePrice)} so ${whitelistEmail} can create an account. The responsible player must stay online in Minecraft until the charge finishes.`,
+				confirmLabel: `Charge ${formatDabloons(invitePrice)}`,
 			}))
 		)
 			return;
@@ -238,8 +247,8 @@ export function useAdminTabController({
 								name={responsiblePlayer.minecraftUsername}
 								color={responsiblePlayer.color}
 							/>{' '}
-							paid {result.priceDabloons} dabloons and has {result.balanceDabloons}{' '}
-							left.
+							paid <DabloonAmount amount={result.priceDabloons} /> and has{' '}
+							<DabloonAmount amount={result.balanceDabloons} /> left.
 						</>
 					),
 				});
@@ -291,7 +300,7 @@ export function useAdminTabController({
 
 	async function applyPlayerBan(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
-		const player = players.find((candidate) => candidate.id === Number(banPlayerId));
+		const player = findPlayerByName(players, banPlayerId);
 		if (!player) {
 			await showAlert({
 				title: 'Choose a player',
@@ -504,3 +513,12 @@ export function useAdminTabController({
 }
 
 export type AdminTabController = ReturnType<typeof useAdminTabController>;
+
+function findPlayerByName(players: AdminPlayer[], value: string) {
+	return players.find(
+		(player) =>
+			player.minecraftUsername.localeCompare(value.trim(), 'en', {
+				sensitivity: 'base',
+			}) === 0,
+	);
+}

@@ -57,9 +57,7 @@ jobs:
               run: npm run check
 
             - name: Audit dependencies
-              timeout-minutes: 10
               env:
-                  npm_config_fetch_timeout: '30000'
                   npm_config_loglevel: http
               run: |
                   for project in . services/api services/web minecraft/main/respack/items-respack-generator; do

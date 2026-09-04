@@ -41,6 +41,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderFlight;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
@@ -106,6 +107,7 @@ public class MainMod implements ModInitializer {
         ClaimsManager.init();
         DailyEvents.register();
         MainModRecipes.register();
+        GliderFlight.init();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);

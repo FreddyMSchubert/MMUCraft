@@ -1,0 +1,15 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "MMM",
+    "S S"
+  ],
+  "key": {
+    "M": "minecraft:phantom_membrane",
+    "S": "minecraft:stick"
+  },
+  "result": {
+    "stack": "mainmod:glider",
+    "count": 1
+  }
+}

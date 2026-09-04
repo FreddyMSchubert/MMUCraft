@@ -8,9 +8,9 @@
 		"Nice to wear in an Ice Spikes biome"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 75,
+	"priceDabloons": 85,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 65,
 		"unlockMessage": "Unlocked cosmetic: Ushanka."
 	},
 	"equippableCosmetic": {},

@@ -25,11 +25,12 @@ public final class ParticleTrailData {
     private ParticleTrailData() {}
 
     public static boolean supports(ItemStack stack) {
-        return stack != null && (stack.is(Items.BOW) || stack.is(Items.ELYTRA));
+        return stack != null && (stack.is(Items.BOW) || stack.is(Items.ELYTRA)
+                || stack.is(Items.TRIDENT) || stack.is(Items.CROSSBOW) || stack.is(Items.MACE));
     }
 
     public static WeightedTrailSpec getTrailSpec(ItemStack stack) {
-        if (!supports(stack)) return WeightedTrailSpec.EMPTY;
+        if (stack == null || stack.isEmpty()) return WeightedTrailSpec.EMPTY;
         CompoundTag data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         ListTag list = data.getList(DATA_KEY).orElseGet(ListTag::new);
         Map<TrailParticle, Integer> weights = new EnumMap<>(TrailParticle.class);

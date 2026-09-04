@@ -1,31 +1,42 @@
 ====
 id: bow-trails
 unlockOrder: 5
-chatMessage: You unlocked Bow and Elytra Trails. Add particles to your arrows and flights.
-sidebarTitle: Bow and Elytra Trails
+chatMessage: You unlocked Particle Trails. Add particles to your weapons and elytra.
+sidebarTitle: Particle Trails
 tags:
 - bowtrails
 - bow trails
 - elytra trails
+- trident trails
+- crossbow trails
+- mace trails
 - particles
 - member particles
 tips:
-- Craft a bow or elytra with particle ingredients to add to its trail.
-- Craft a bow or elytra alone to clear all of its trail particles.
+- Craft a bow, crossbow, trident, mace, or elytra with particle ingredients to add to its trail.
+- Craft the item alone to clear all of its trail particles.
 - Members can use special particles. Other players can use coloured dust.
 ====
 
-Add a particle trail to a bow or elytra. Arrows leave particles while they move. An elytra leaves particles while you glide.
+Add a particle trail to a **bow, crossbow, trident, mace, or elytra**. All five items use the same ingredients, weights, tooltip, and membership rules.
+
+| Item | When the trail appears |
+| --- | --- |
+| Bow | Behind arrows in flight. |
+| Crossbow | Behind arrows and firework rockets in flight. Each Multishot projectile gets the trail. |
+| Trident | Behind a thrown trident, including its Loyalty return flight. |
+| Mace | Behind you while you descend with a mace in your main hand and meet the smash-attack condition. |
+| Elytra | Behind you while you glide. |
 
 ## Add, mix, or clear particles
 
-Put **one bow or one elytra** in a crafting grid. Add any ingredients from the tables below. The slot positions do not matter. Both the inventory grid and the crafting table work.
+Put **one bow, crossbow, trident, mace, or elytra** in a crafting grid. Add any ingredients from the tables below. The slot positions do not matter. Both the inventory grid and the crafting table work. Do not put two trail items in the same recipe.
 
 Each occupied ingredient slot adds **one weight** to that particle. Crafting consumes one item from each ingredient slot. A stack of 64 in one slot adds one weight, not 64. Use more slots or craft again to increase a weight.
 
-New ingredients **add to the saved trail**. They do not replace it. Repeated ingredients increase the chance of that particle. To clear all particles, craft the bow or elytra **alone**. This does not return the ingredients.
+New ingredients **add to the saved trail**. They do not replace it. Repeated ingredients increase the chance of that particle. To clear all particles, craft the item **alone**. This does not return the ingredients.
 
-Names, damage, enchantments, other custom data, and other lore stay on the item. Existing dyed bows retain their colours.
+Names, damage, enchantments, other custom data, and other lore stay on the item. A loaded crossbow keeps its ammunition. Existing dyed bows retain their colours.
 
 :::tip Read the tooltip
 The tooltip lists all saved particles. The percentage in brackets is the chance for each particle when the full trail is active. For example, `Red dust (50%)` means that half of the selections use red dust on average. Percentages are rounded to two decimal places. Very small chances show as `<0.01%`.
@@ -36,7 +47,7 @@ If the saved trail has two red weights and one blue weight, add one blue dye to 
 ## Membership
 
 :::perk Special particles
-All particles except ordinary coloured dust require membership. This applies to both bows and elytra. The server checks the player before it selects particles. The person who crafted the item does not control access.
+All particles except ordinary coloured dust require membership. This applies to all five trail items. The server checks the shooter, thrower, mace user, or elytra wearer before it selects particles. The person who crafted the item does not control access.
 :::
 
 Anyone can craft and keep the ingredients on an item. For a non-member, the server selects only dust and recalculates the chances across those dust weights. In the example above, a non-member gets **50% red and 50% blue**. If an item has no dust, a non-member gets no custom trail.
@@ -45,9 +56,11 @@ Special particles stay saved on the item. They become active when a member uses 
 
 ## Flight and particle behaviour
 
-Elytra particles start at least two blocks behind the direction of travel. You and nearby players can see the trail. Use third-person view or look back to see your own trail.
+Elytra and mace particles start at least two blocks behind the direction of travel. You and nearby players can see the trail. Use third-person view or look back to see your own trail.
 
-Particles stop when you stop gliding. Arrow particles stop when the arrow stops in a block, is removed, or reaches 30 seconds of age. Trails do not change critical-hit damage.
+Elytra particles stop when you stop gliding. A mace trail starts after you fall more than 1.5 blocks with the mace in your main hand. It stops when you land, stop descending, switch items, or no longer meet the smash-attack condition. Normal ground attacks do not produce a mace trail.
+
+Arrow and trident particles stop when the projectile stops in a block, is removed, or reaches 30 seconds of age. A Loyalty trident can produce particles again when it returns. Crossbow firework trails stop when the rocket is removed or explodes. Each projectile keeps the trail from the weapon that fired it, even if you then switch items or change the weapon's trail.
 
 All trails select two particles per game tick. Large effects use the same rate as dust. The saved weights control the chance of each particle.
 

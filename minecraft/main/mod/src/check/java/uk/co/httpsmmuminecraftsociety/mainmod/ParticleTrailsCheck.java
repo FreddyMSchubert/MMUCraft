@@ -12,7 +12,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
@@ -27,13 +29,18 @@ public final class ParticleTrailsCheck {
     public static void main(String[] args) {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
-        BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(VanillaRegistries.createLookup()).forEach(components -> components.apply());
+        var registries = VanillaRegistries.createLookup();
+        BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries).forEach(components -> components.apply());
         SetParticleTrailRecipe recipe = new SetParticleTrailRecipe();
-        for (var item : List.of(Items.BOW, Items.ELYTRA)) {
+        for (var item : List.of(Items.BOW, Items.ELYTRA, Items.TRIDENT, Items.CROSSBOW, Items.MACE)) {
             ItemStack original = new ItemStack(item);
             original.setDamageValue(12);
             original.set(DataComponents.CUSTOM_NAME, Component.literal("Keep this name"));
             original.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Keep this lore"))));
+            if (item == Items.CROSSBOW) {
+                original.set(DataComponents.CHARGED_PROJECTILES,
+                        ChargedProjectiles.ofNonEmpty(List.of(new ItemStack(Items.FIREWORK_ROCKET))));
+            }
             CompoundTag data = new CompoundTag();
             data.putString("unrelated", "keep");
             original.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
@@ -79,6 +86,18 @@ public final class ParticleTrailsCheck {
         var memberOnly = new WeightedTrailSpec(Map.of(TrailParticle.SONIC_BOOM, 1));
         assert memberOnly.pick(fixed(0), false) == null;
         assert memberOnly.pick(fixed(0), true) == TrailParticle.SONIC_BOOM;
+        ItemStack ammunition = new ItemStack(Items.FIREWORK_ROCKET);
+        ammunition.set(DataComponents.FIREWORKS, new Fireworks(3, List.of()));
+        ItemStack firedRocket = ammunition.copy();
+        ParticleTrailData.setTrailSpec(firedRocket, memberOnly);
+        assert !ParticleTrailData.supports(firedRocket);
+        assert !recipe.matches(grid(firedRocket), null);
+        assert ParticleTrailData.getTrailSpec(ammunition).totalWeight(true) == 0;
+        var ops = registries.createSerializationContext(JsonOps.INSTANCE);
+        var savedRocket = ItemStack.CODEC.encodeStart(ops, firedRocket).getOrThrow();
+        ItemStack loadedRocket = ItemStack.CODEC.parse(ops, savedRocket).getOrThrow();
+        assert ParticleTrailData.getTrailSpec(loadedRocket).weights().equals(memberOnly.weights());
+        assert loadedRocket.get(DataComponents.FIREWORKS).equals(ammunition.get(DataComponents.FIREWORKS));
         var large = new WeightedTrailSpec(Map.of(TrailParticle.RED, Integer.MAX_VALUE, TrailParticle.BLUE, Integer.MAX_VALUE));
         assert large.totalWeight(false) == 2L * Integer.MAX_VALUE;
         assert ParticleTrailData.percentage(1, 8).equals("12.5%");

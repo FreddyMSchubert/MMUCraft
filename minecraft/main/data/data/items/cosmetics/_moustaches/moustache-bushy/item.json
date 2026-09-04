@@ -2,15 +2,15 @@
 	"title": "Bushy Moustache",
 	"id": "cosmetic-mousetache-bushy",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
 		"It tickles a bit"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 42,
+	"priceDabloons": 100,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 60,
 		"unlockMessage": "Unlocked cosmetic: Bushy Moustache."
 	},
 	"equippableCosmetic": {},

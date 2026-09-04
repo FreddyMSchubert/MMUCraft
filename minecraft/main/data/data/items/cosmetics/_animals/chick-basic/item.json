@@ -8,7 +8,7 @@
 		"A very cheap cheap cosmetic"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 42,
+	"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Chick Hat."

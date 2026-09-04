@@ -2,7 +2,7 @@
 	"title": "Skull Mask",
 	"id": "cosmetic-skull-mask",
 	"modelType": "cosmetic",
-	"rarity": "uncommon",
+	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [
 		"Sourced from last the committe"

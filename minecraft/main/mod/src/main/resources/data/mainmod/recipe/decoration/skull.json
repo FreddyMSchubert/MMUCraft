@@ -1,0 +1,10 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    "mainmod:cosmetic-skull-mask"
+  ],
+  "result": {
+    "stack": "mainmod:cosmetic-skull",
+    "count": 1
+  }
+}

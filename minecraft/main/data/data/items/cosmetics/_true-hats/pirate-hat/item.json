@@ -2,15 +2,15 @@
 	"title": "Pirate Hat",
 	"id": "cosmetic-pirate",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Ahoy matey"
+		"Ahoy, matey"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 50,
+	"priceDabloons": 125,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Pirate Hat."
 	},
 	"equippableCosmetic": {}

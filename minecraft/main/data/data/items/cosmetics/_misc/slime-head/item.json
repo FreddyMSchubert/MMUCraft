@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 	"priceDabloons": 75,
 		"description": "",
-		"unlockWeight": 25,
+		"unlockWeight": 60,
 		"unlockMessage": "Unlocked cosmetic: Slime head."
 	},
 	"equippableCosmetic": {}

@@ -2,13 +2,13 @@
 	"title": "Mohawk",
 	"id": "cosmetic-mohawk",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": ["Mohawk-tuah!"],
 	"shopPurchasable": {
-		"priceDabloons": 42,
+		"priceDabloons": 100,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Mohawk.",
 		"tags": ["hair"]
 	},

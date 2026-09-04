@@ -12,6 +12,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.ArrayList;
@@ -54,7 +55,8 @@ public class CombineCharmorRecipe extends CustomRecipe
             }
 
             FakeItem fakeItem = FakeItems.CHARM_ID_MAP.get(stackCharm.charmId());
-            if (fakeItem == null || fakeItem.getFeature(CharmItemFeature.class) == null) {
+            if (fakeItem == null || fakeItem.getFeature(CharmItemFeature.class) == null
+                    || fakeItem.getFeature(EquippableCharmItemFeature.class) == null) {
                 continue;
             }
 

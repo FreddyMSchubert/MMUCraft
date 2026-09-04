@@ -13,6 +13,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -149,7 +150,7 @@ public record CharmItemFeature(
     {
         validateLevel(level);
 
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(getDisplayTitle(level)));
+        stack.set(DataComponents.CUSTOM_NAME, MoneyHelper.ReplaceDabloonWords(getDisplayTitle(level)));
         stack.set(DataComponents.LORE, new ItemLore(buildTooltip(level)));
     }
 
@@ -196,10 +197,16 @@ public record CharmItemFeature(
                 lines.add(toAbilityComponent("Next Level: " + next.abilityStatusRelative()));
             }
             if (!next.upgradeIngredients().isEmpty()) {
-                String price = next.dabloons() == 0 ? "" : next.dabloons() + " dabloons";
-                lines.add(toAbilityComponent(
-                        "Upgrade on Website: " + formatUpgradeIngredients(next.upgradeIngredients()) + ", " + price
-                ));
+                String upgradeVerb = current.level() == 0 ? "Repair" : "Upgrade";
+                Component upgrade = Component.literal(
+                        upgradeVerb + " on Website with: " + formatUpgradeIngredients(next.upgradeIngredients())
+                );
+                if (next.dabloons() > 0) {
+                    upgrade = upgrade.copy()
+                            .append(Component.literal(", "))
+                            .append(MoneyHelper.FormatDabloons(next.dabloons()));
+                }
+                lines.add(upgrade.copy().withStyle(ChatFormatting.RESET).withStyle(ChatFormatting.WHITE));
             }
         }
 

@@ -91,6 +91,11 @@ function parseShopPurchasable(value: unknown): ShopPurchasableDefinition | null 
 		!Number.isInteger(candidate.priceDabloons) ||
 		(candidate.description !== undefined && typeof candidate.description !== 'string') ||
 		(candidate.unlockMessage !== undefined && typeof candidate.unlockMessage !== 'string') ||
+		(candidate.tags !== undefined &&
+			(!Array.isArray(candidate.tags) ||
+				!candidate.tags.every(
+					(tag) => typeof tag === 'string' && tag.trim().length > 0,
+				))) ||
 		typeof candidate.unlockWeight !== 'number' ||
 		!Number.isInteger(candidate.unlockWeight) ||
 		candidate.unlockWeight < 1
@@ -101,6 +106,9 @@ function parseShopPurchasable(value: unknown): ShopPurchasableDefinition | null 
 		description: candidate.description ?? '',
 		unlockMessage: candidate.unlockMessage ?? null,
 		unlockWeight: candidate.unlockWeight,
+		tags: Array.isArray(candidate.tags)
+			? candidate.tags.filter((tag): tag is string => typeof tag === 'string')
+			: [],
 	};
 }
 
@@ -114,6 +122,7 @@ function parseCharmDetails(value: unknown): CharmDetailsDefinition | null {
 			const level = raw as {
 				level?: unknown;
 				abilityStatusCurrent?: unknown;
+				dabloons?: unknown;
 				upgradeIngredients?: unknown;
 			};
 			if (!Number.isInteger(level.level)) return [];
@@ -124,6 +133,10 @@ function parseCharmDetails(value: unknown): CharmDetailsDefinition | null {
 						typeof level.abilityStatusCurrent === 'string'
 							? level.abilityStatusCurrent
 							: '',
+					dabloons:
+						Number.isInteger(level.dabloons) && Number(level.dabloons) >= 0
+							? Number(level.dabloons)
+							: 0,
 					upgradeIngredients: Array.isArray(level.upgradeIngredients)
 						? level.upgradeIngredients.filter(
 								(ingredient): ingredient is string =>

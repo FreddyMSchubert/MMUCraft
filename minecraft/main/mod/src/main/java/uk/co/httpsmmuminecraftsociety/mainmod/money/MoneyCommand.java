@@ -37,7 +37,7 @@ public final class MoneyCommand {
 
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
-                Commands.literal("money")
+                Commands.literal("dabloons")
                         .requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
                         .then(Commands.literal("get")
                                 .then(Commands.argument("target", StringArgumentType.word())
@@ -90,41 +90,50 @@ public final class MoneyCommand {
 
     private static int get(CommandSourceStack source, ServerPlayer player) {
         source.sendSuccess(
-                () -> Component.literal(player.getName().getString() + " has " + MoneyHelper.GetBalance(player) + " dabloons."),
+                () -> Component.literal(player.getName().getString() + " has ")
+                        .append(MoneyHelper.FormatDabloonWord(MoneyHelper.GetBalance(player)))
+                        .append(Component.literal(".")),
                 false
         );
         return 1;
     }
 
     private static int set(CommandSourceStack source, ServerPlayer player, int amount) {
+        int previousBalance = MoneyHelper.GetBalance(player);
         if (!MoneyHelper.SetMoney(player, amount)) {
-            source.sendFailure(Component.literal("Could not set money for " + player.getName().getString() + "."));
+            source.sendFailure(MoneyHelper.ReplaceDabloonWords(
+                    "Could not set Dabloons for " + player.getName().getString() + "."
+            ));
             return 0;
         }
 
-        MoneyHelper.SendBalanceMessage(player, "Your dabloon balance was set to " + amount + ".");
+        MoneyHelper.SendBalanceMessage(player, amount - previousBalance, "Balance set");
         sendChanged(source, "Set", player, amount);
         return 1;
     }
 
     private static int add(CommandSourceStack source, ServerPlayer player, int amount) {
         if (!MoneyHelper.GainMoney(player, amount)) {
-            source.sendFailure(Component.literal("Could not add money for " + player.getName().getString() + "."));
+            source.sendFailure(MoneyHelper.ReplaceDabloonWords(
+                    "Could not add Dabloons for " + player.getName().getString() + "."
+            ));
             return 0;
         }
 
-        MoneyHelper.SendBalanceMessage(player, "You received " + amount + " dabloons.");
+        MoneyHelper.SendBalanceMessage(player, amount, "Received admin grant");
         sendChanged(source, "Added", player, amount);
         return 1;
     }
 
     private static int subtract(CommandSourceStack source, ServerPlayer player, int amount) {
         if (!MoneyHelper.ReduceMoney(player, amount)) {
-            source.sendFailure(Component.literal(player.getName().getString() + " does not have enough dabloons."));
+            source.sendFailure(MoneyHelper.ReplaceDabloonWords(
+                    player.getName().getString() + " does not have enough Dabloons."
+            ));
             return 0;
         }
 
-        MoneyHelper.SendBalanceMessage(player, amount + " dabloons were removed from your balance.");
+        MoneyHelper.SendBalanceMessage(player, -amount, "Admin adjustment");
         sendChanged(source, "Subtracted", player, amount);
         return 1;
     }
@@ -132,7 +141,9 @@ public final class MoneyCommand {
     private static void sendChanged(CommandSourceStack source, String action, ServerPlayer player, int amount) {
         if (source.getEntity() == player) return;
         source.sendSuccess(
-                () -> Component.literal(action + " " + amount + " dabloons for " + player.getName().getString() + "."),
+                () -> Component.literal(action + " ")
+                        .append(MoneyHelper.FormatDabloons(amount))
+                        .append(Component.literal(" for " + player.getName().getString() + ".")),
                 true
         );
     }

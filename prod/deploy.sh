@@ -6,6 +6,9 @@ image_prefix=${2:-}
 warning_minutes=${3:-3}
 force=${4:-false}
 notify_update_complete=false
+update_started=false
+shutdown_attempted=false
+defaults=''
 
 # Validate deployment inputs before changing server state.
 case "$tag" in
@@ -90,6 +93,63 @@ api_post() {
 	' "$1"
 }
 
+graceful_failure() {
+	if [ "$force" = true ]; then
+		echo "WARNING: $1; forcing deployment after the failed attempt." >&2
+	else
+		echo "$1; aborting deployment." >&2
+		exit 1
+	fi
+}
+
+clear_update() {
+	printf 'updating=false\n' > data/velocity/deployment.properties.tmp
+	chmod 644 data/velocity/deployment.properties.tmp
+	mv data/velocity/deployment.properties.tmp data/velocity/deployment.properties
+	update_started=false
+}
+
+cancel_update() {
+	clear_update
+	if [ "$notify_update_complete" = true ]; then
+		api_post /api/internal/deployment/cancel >/dev/null \
+			|| echo "Could not send the update cancellation notice." >&2
+	fi
+}
+
+cleanup() {
+	status=$?
+	trap - EXIT
+	[ -z "$defaults" ] || rm -f "$defaults"
+	if [ "$update_started" = true ]; then
+		if [ "$shutdown_attempted" = false ]; then
+			cancel_update
+			echo "Deployment stopped before shutdown. The current server can accept players." >&2
+		else
+			echo "Deployment did not finish. Update status stays active until a successful deployment." >&2
+		fi
+	fi
+	exit "$status"
+}
+trap cleanup EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+wait_for_proxy() {
+	deadline=$(( $(date +%s) + 30 ))
+	while [ "$(date +%s)" -lt "$deadline" ]; do
+		ack=$(cat data/velocity/deployment-drained 2>/dev/null || true)
+		case "$ack" in
+			"$deployment_id true true"|"$deployment_id false true") return 0 ;;
+			"$deployment_id true false"|"$deployment_id false false")
+				[ "$1" = drained ] && return 0 ;;
+		esac
+		sleep 1
+	done
+	return 1
+}
+
 announce_update_complete() {
 	[ "$notify_update_complete" = true ] || return 0
 	api_post /api/internal/deployment/complete >/dev/null
@@ -118,7 +178,6 @@ api_image="${image_prefix}-api:${tag}"
 mc_image="${image_prefix}-mc:${tag}"
 velocity_image="${image_prefix}-velocity:${tag}"
 defaults=$(mktemp)
-trap 'rm -f "$defaults"' EXIT HUP INT TERM
 docker run --rm --entrypoint cat "$mc_image" /defaults/server.properties > "$defaults"
 docker run --rm --entrypoint cat "$velocity_image" /config/velocity.toml > data/velocity/velocity.toml
 chmod 600 data/velocity/velocity.toml
@@ -129,50 +188,87 @@ cp "$defaults" "$server_properties"
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
 chmod 664 "$server_properties"
 
-# Warn and disconnect active players before shutdown.
-if [ "$warning_minutes" -gt 0 ] && dc ps --status running --services | grep -qx minecraft; then
+# Warn players before the update starts.
+running_services=$(dc ps --status running --services)
+if printf '%s\n' "$running_services" | grep -qx minecraft; then
+	if [ "$warning_minutes" -gt 0 ]; then
+		dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
+			"execute if entity @a run say Server update in $warning_minutes minutes. Please move to a safe place. Allow about 200-300 seconds for the update, then join again." \
+			|| graceful_failure "Could not send the restart warning"
+		sleep "$((warning_minutes * 60))"
+	fi
 	dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
-		"say Server will be restarted in $warning_minutes minutes. This will not take long, roughly 3 minutes, 5 at max, otherwise something is wrong. Please be careful, don't go underwater etc. See you soon! :)"
-	sleep "$((warning_minutes * 60))"
+		"execute if entity @a run say Server update starting now. Please join again in about 200-300 seconds. If it takes more than 10 minutes, contact the committee." \
+		|| graceful_failure "Could not send the update message"
 fi
 
-if dc ps --status running --services | grep -qx minecraft; then
-	if [ "$force" = false ]; then
-		deployment_status=0
-		notify_update_complete=$(api_post /api/internal/deployment/start) || deployment_status=$?
-		if [ "$deployment_status" -eq 42 ]; then
-			echo "Current API does not support deployment notices yet; they will start with the next deployment."
-			notify_update_complete=false
-		elif [ "$deployment_status" -ne 0 ]; then
-			echo "Player disconnect or Discord notice failed; aborting deployment." >&2
-			exit "$deployment_status"
-		fi
-		case "$notify_update_complete" in
-			true|false) ;;
-			*) echo "Deployment start returned an invalid response" >&2; exit 1 ;;
-		esac
-	fi
+# Velocity blocks new joins and confirms that all connections have closed.
+if grep -qx 'updating=true' data/velocity/deployment.properties 2>/dev/null; then
+	shutdown_attempted=true
+fi
+deployment_id="$(date +%s)-$$"
+printf 'updating=true\nstartedAt=%s\nid=%s\n' "$(date +%s)" "$deployment_id" > data/velocity/deployment.properties.tmp
+chmod 644 data/velocity/deployment.properties.tmp
+update_started=true
+mv data/velocity/deployment.properties.tmp data/velocity/deployment.properties
 
+proxy_drained=true
+had_players=false
+if printf '%s\n' "$running_services" | grep -Eq '^(velocity|minecraft)$'; then
+	if wait_for_proxy drained; then
+		case "$ack" in
+			"$deployment_id true "*) had_players=true ;;
+		esac
+	else
+		proxy_drained=false
+		had_players=true
+	fi
+fi
+
+# Unknown player state also needs a notice. Force does not skip this attempt.
+if [ "$had_players" = true ]; then
+	notify_update_complete=true
+	deployment_status=0
+	notice=$(api_post /api/internal/deployment/start) || deployment_status=$?
+	if [ "$deployment_status" -ne 0 ]; then
+		graceful_failure "Player disconnect or Discord notice failed (status $deployment_status)"
+	elif [ "$notice" = false ]; then
+		# Older APIs return false when their player list is empty.
+		notify_update_complete=false
+		graceful_failure "The current API did not send a deployment notice"
+	elif [ "$notice" != true ]; then
+		graceful_failure "Deployment start did not confirm a Discord notice"
+	fi
+fi
+[ "$proxy_drained" = true ] || graceful_failure "Velocity did not confirm that all players disconnected"
+
+# Update the proxy first so it can show progress while the API and main server restart.
+shutdown_attempted=true
+rm -f data/velocity/deployment-drained
+dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" velocity
+wait_for_proxy drained || graceful_failure "Velocity did not acknowledge the update after startup"
+
+if printf '%s\n' "$running_services" | grep -qx minecraft; then
 	# Drain requests and save the world before replacing containers.
 	shutdown_started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 	status=0
 	api_post /api/internal/shutdown || status=$?
-	if [ "$status" -eq 42 ]; then
-		echo "Current API does not support draining yet; using Minecraft's graceful stop for this deployment."
-	elif [ "$status" -ne 0 ]; then
+	if [ "$status" -ne 0 ]; then
 		echo "API and Minecraft logs from the failed drain/save attempt:" >&2
 		dc logs --no-color --timestamps --since "$shutdown_started_at" api minecraft >&2 || true
 		if [ "$force" = true ]; then
-			echo "WARNING: API drain/save failed; forcing deployment." >&2
+			graceful_failure "API drain/save failed"
 		else
-			echo "API drain/save failed; restarting the drained API before aborting." >&2
-			dc restart api
-			dc up -d --wait --wait-timeout 60 api
-			announce_update_complete
+			echo "API drain/save failed. Restart the existing API before aborting." >&2
+			dc restart --no-deps api
+			# Start the existing container. Do not replace it with the new image.
+			dc start --wait --wait-timeout 60 api
+			wait_for_proxy ready || { echo "The current server has not recovered." >&2; exit 1; }
+			cancel_update
 			exit "$status"
 		fi
 	fi
-	dc stop minecraft
+	dc stop minecraft api
 fi
 
 # Remove obsolete website-managed bans from older releases.
@@ -198,8 +294,12 @@ if [ -s "$legacy_bans" ]; then
 fi
 
 # Start the release and wait for every health check.
-dc up -d --remove-orphans --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
-announce_update_complete
+dc up -d --remove-orphans --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
+# Compose cannot detect changes inside configuration bind mounts.
+dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" prometheus grafana loki alloy nginx
+wait_for_proxy ready || { echo "Velocity has not confirmed that main is ready." >&2; exit 1; }
+clear_update
+announce_update_complete || graceful_failure "Could not send the update completion notice"
 
 # Remove unused Docker artifacts. Never prune persistent volumes.
 docker container prune -f >/dev/null

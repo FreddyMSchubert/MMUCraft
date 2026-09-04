@@ -3,7 +3,7 @@
    ============================================================ */
 
 .playPage {
-	font-family: 'Noto Sans', Arial, sans-serif;
+	font-family: 'Dabloon Symbol Noto Sans', 'Noto Sans', Arial, sans-serif;
 }
 
 .playPage h1,
@@ -12,7 +12,7 @@
 .playPage h4,
 .playPage h5,
 .playPage h6 {
-	font-family: 'Minecraft UI', 'Noto Sans', sans-serif;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', 'Noto Sans', sans-serif;
 }
 
 .playPage .knowledgeTop h3,
@@ -29,7 +29,7 @@
 }
 
 .playPage .knowledgeTop h3 {
-	font-family: 'Minecraft UI', 'Noto Sans', sans-serif;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', 'Noto Sans', sans-serif;
 }
 
 .playPage .tabSubtitle {

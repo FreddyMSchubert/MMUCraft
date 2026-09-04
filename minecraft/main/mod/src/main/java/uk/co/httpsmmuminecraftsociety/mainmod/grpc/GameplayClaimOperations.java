@@ -78,19 +78,19 @@ final class GameplayClaimOperations {
                     .setOnline(true)
                     .setBalanceDabloons(balance)
                     .setMessage(
-                            "This claim costs " + price + " dabloons, but your balance is " + balance + ". Earn "
+                            "This claim costs " + price + " Dabloons, but your balance is " + balance + ". Earn "
                                     + Math.max(0, price - balance) + " more and try again."
                     )
                     .build();
         }
 
-        MoneyHelper.SendBalanceMessage(player, "Chunk claimed for " + price + " dabloons.");
+        MoneyHelper.SendBalanceMessage(player, -price, "Claimed chunk");
         return PurchaseClaimResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)
                 .setBalanceDabloons(MoneyHelper.GetBalance(player))
                 .setMessage(
-                        "Chunk claimed for " + price + " dabloons. Your remaining balance is "
+                        "Chunk claimed for " + price + " Dabloons. Your remaining balance is "
                                 + MoneyHelper.GetBalance(player) + "."
                 )
                 .build();

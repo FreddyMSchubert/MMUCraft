@@ -123,7 +123,7 @@
 	justify-items: center;
 	gap: 2px;
 	color: #ffd166;
-	font-family: 'Minecraft UI', monospace;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', monospace;
 	font-size: clamp(1.15rem, 3vw, 1.75rem);
 	font-variant-numeric: tabular-nums;
 	text-shadow: 2px 2px 0 #493400;
@@ -151,7 +151,7 @@
 .countdownNow {
 	display: inline-block;
 	color: #ff3b30;
-	font-family: 'Minecraft UI', monospace;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', monospace;
 	font-size: clamp(1.6rem, 5vw, 2.8rem);
 	text-shadow: 3px 3px 0 #59110d;
 	animation: countdownNowBounce 550ms ease-in-out infinite alternate;

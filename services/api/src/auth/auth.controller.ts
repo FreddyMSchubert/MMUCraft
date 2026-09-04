@@ -1,8 +1,24 @@
-import { Body, Controller, Get, Headers, HttpCode, Post, Req, Res } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	Headers,
+	HttpCode,
+	HttpException,
+	Post,
+	Req,
+	Res,
+} from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import {
+	type AuthEvent,
+	type AuthJourney,
+	SigninAttemptLogsService,
+} from '../database/signin-attempt-logs.service';
 import { AuthSessionService } from './auth-session.service';
 import { AuthSigninService } from './auth-signin.service';
 import { AuthSignupService } from './auth-signup.service';
+import { normalizeEmail } from './auth.util';
 
 @Controller('api/auth')
 export class AuthController {
@@ -10,50 +26,89 @@ export class AuthController {
 		private readonly signup: AuthSignupService,
 		private readonly sessions: AuthSessionService,
 		private readonly signin: AuthSigninService,
+		private readonly signinAttempts: SigninAttemptLogsService,
 	) {}
 
 	@Post('signup')
-	createSignup(@Body() body: { email?: string }, @Req() request: FastifyRequest) {
-		return this.signup.createSignup(body.email ?? '', clientIp(request));
+	createSignup(
+		@Body() body: { email?: string; resend?: boolean },
+		@Req() request: FastifyRequest,
+	) {
+		const email = normalizeEmail(body.email ?? '');
+		return this.track('signup', body.resend ? 'email_resend' : 'email_send', email, () =>
+			this.signup.createSignup(email, clientIp(request)),
+		);
 	}
 
 	@Post('verify-email')
 	verifyEmail(@Body() body: { flowId?: string; code?: string }) {
-		return this.signup.verifyEmailCode(body.flowId ?? '', body.code ?? '');
+		const flowId = body.flowId ?? '';
+		return this.track('signup', 'email_code_input', this.signup.emailForFlow(flowId), () =>
+			this.signup.verifyEmailCode(flowId, body.code ?? ''),
+		);
 	}
 
 	@Post('minecraft-username')
 	setMinecraftUsername(@Body() body: { flowId?: string; minecraftUsername?: string }) {
-		return this.signup.setMinecraftUsername(body.flowId ?? '', body.minecraftUsername ?? '');
+		const flowId = body.flowId ?? '';
+		return this.track(
+			'signup',
+			'minecraft_username_input',
+			this.signup.emailForFlow(flowId),
+			() => this.signup.setMinecraftUsername(flowId, body.minecraftUsername ?? ''),
+		);
 	}
 
 	@Post('verify-minecraft')
 	verifyMinecraft(@Body() body: { flowId?: string; code?: string }) {
-		this.signup.verifyMinecraftCode(body.flowId ?? '', body.code ?? '');
+		const flowId = body.flowId ?? '';
+		return this.track(
+			'signup',
+			'minecraft_code_input',
+			this.signup.emailForFlow(flowId),
+			() => {
+				this.signup.verifyMinecraftCode(flowId, body.code ?? '');
+			},
+		);
 	}
 
 	@Post('accept-rules')
-	acceptRules(
+	async acceptRules(
 		@Body() body: { flowId?: string },
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		const session = this.signup.acceptRules(body.flowId ?? '');
+		const flowId = body.flowId ?? '';
+		const session = await this.track(
+			'signup',
+			'rules_accept',
+			this.signup.emailForFlow(flowId),
+			() => this.signup.acceptRules(flowId),
+		);
 		this.setSessionCookie(response, session.token, session.maxAgeSeconds);
 
 		return { ok: true };
 	}
 
 	@Post('signin')
-	signIn(@Body() body: { email?: string }, @Req() request: FastifyRequest) {
-		return this.signin.start(body.email ?? '', clientIp(request));
+	signIn(@Body() body: { email?: string; resend?: boolean }, @Req() request: FastifyRequest) {
+		const email = normalizeEmail(body.email ?? '');
+		return this.track('signin', body.resend ? 'email_resend' : 'email_send', email, () =>
+			this.signin.start(email, clientIp(request)),
+		);
 	}
 
 	@Post('verify-signin')
-	verifySignIn(
+	async verifySignIn(
 		@Body() body: { flowId?: string; code?: string },
 		@Res({ passthrough: true }) response: FastifyReply,
 	) {
-		const session = this.signin.verify(body.flowId ?? '', body.code ?? '');
+		const flowId = body.flowId ?? '';
+		const session = await this.track(
+			'signin',
+			'email_code_input',
+			this.signin.emailForFlow(flowId),
+			() => this.signin.verify(flowId, body.code ?? ''),
+		);
 		this.setSessionCookie(response, session.token, session.maxAgeSeconds);
 
 		return { ok: true };
@@ -93,6 +148,28 @@ export class AuthController {
 				.filter(Boolean)
 				.join('; '),
 		);
+	}
+
+	private async track<T>(
+		journey: AuthJourney,
+		event: AuthEvent,
+		email: string | null,
+		action: () => T | Promise<T>,
+	): Promise<T> {
+		try {
+			const result = await action();
+			this.signinAttempts.record(email, journey, event, true, null);
+			return result;
+		} catch (error) {
+			this.signinAttempts.record(
+				email,
+				journey,
+				event,
+				false,
+				error instanceof HttpException ? error.message : 'Internal error',
+			);
+			throw error;
+		}
 	}
 }
 

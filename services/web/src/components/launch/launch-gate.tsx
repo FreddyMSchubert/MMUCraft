@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { Fireworks } from 'fireworks-js';
 import { LaunchCountdown, useLaunchLive } from '@/components/launch/launch-countdown';
@@ -22,6 +23,7 @@ export function LaunchGate({
 	const clicks = useRef<number[]>([]);
 	const fireworksStage = useRef<HTMLDivElement>(null);
 	const launchLive = useLaunchLive();
+	const router = useRouter();
 	const { showAlert } = useSiteAlert();
 
 	useEffect(() => {
@@ -45,7 +47,7 @@ export function LaunchGate({
 	function tryPreviewBypass() {
 		const now = Date.now();
 		clicks.current = [...clicks.current.filter((time) => now - time <= 3000), now];
-		if (clicks.current.length >= 3) window.location.assign('/play');
+		if (clicks.current.length >= 3) router.push('/play');
 	}
 
 	return (

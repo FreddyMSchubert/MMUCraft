@@ -87,11 +87,20 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
                         .append(Component.literal(" "))
                         .append(WebsiteCommand.takeMeThere(
                                 "charm".equals(unlockType)
-                                        ? "play/charms"
-                                        : "play/shop/" + response.getUnlockedId(),
+                                        ? "charms"
+                                        : "shop/" + response.getUnlockedId(),
                                 "charm".equals(unlockType) ? "Upgrade it here." : "Get it here!",
                                 "charm".equals(unlockType) ? ChatFormatting.DARK_PURPLE : ChatFormatting.YELLOW
                         ));
+                if ("charm".equals(unlockType)) {
+                    message = message.copy()
+                            .append(Component.literal(" "))
+                            .append(WebsiteCommand.takeMeThere(
+                                    "shop/" + response.getUnlockedId(),
+                                    "All details.",
+                                    ChatFormatting.YELLOW
+                            ));
+                }
             }
             player.sendSystemMessage(message);
 

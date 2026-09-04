@@ -5,6 +5,7 @@ import type {
 	SortDirection,
 	StatOption,
 } from './player-data.types';
+import { dabloonizeWords, formatDabloons } from '@/lib/dabloons';
 
 export function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.playerName') return player.minecraftUsername;
@@ -17,7 +18,11 @@ export function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.base')
 		return hasBase(player.profile) ? formatBase(player.profile.base) : '-';
 	if (option.key === 'money.earnedDabloons')
-		return formatNumber(player.stats.money.earnedDabloons);
+		return formatDabloons(player.stats.money.earnedDabloons);
+	if (option.key.startsWith('unlocks.')) {
+		const progress = player.unlocks[option.key.slice(8) as keyof PlayerSummary['unlocks']];
+		return `${formatNumber(progress.unlocked)}/${formatNumber(progress.total)}`;
+	}
 	if (option.key.startsWith('fishing.'))
 		return formatNumber(player.fishing[option.key.slice(8)] ?? 0);
 	if (option.key === 'minecraft.lastPlayedAtUnixMs')
@@ -53,6 +58,8 @@ export function getSortValue(player: PlayerSummary, option: StatOption): number 
 	if (option.key === 'profile.base')
 		return hasBase(player.profile) ? formatBase(player.profile.base) : null;
 	if (option.key === 'money.earnedDabloons') return player.stats.money.earnedDabloons;
+	if (option.key.startsWith('unlocks.'))
+		return player.unlocks[option.key.slice(8) as keyof PlayerSummary['unlocks']].unlocked;
 	if (option.key.startsWith('fishing.')) return player.fishing[option.key.slice(8)] ?? 0;
 	if (option.key === 'minecraft.lastPlayedAtUnixMs')
 		return player.stats.minecraft.lastPlayedAtUnixMs;
@@ -86,6 +93,9 @@ export function compareSortValues(
 }
 
 export function formatMinecraftStatValue(stat: MinecraftStatValue) {
+	if (stat.category === 'advancement' && stat.total !== undefined) {
+		return `${formatNumber(stat.value)}/${formatNumber(stat.total)}`;
+	}
 	if (stat.id.endsWith('_one_cm')) {
 		const meters = stat.value / 100;
 		if (meters >= 1000) return `${formatNumber(meters / 1000)} km`;
@@ -131,54 +141,58 @@ export function hasBase(profile: PlayerProfile) {
 }
 
 export function groupStatOptions(options: StatOption[]) {
+	const displayOptions = options.map((option) => ({
+		...option,
+		label: dabloonizeWords(option.label),
+	}));
 	const groups = [
 		{
 			key: 'profile',
 			label: 'Profile',
-			options: options.filter((option) => option.group === 'profile'),
+			options: displayOptions.filter((option) => option.group === 'profile'),
 		},
 		{
 			key: 'money',
-			label: 'Dabloons',
-			options: options.filter((option) => option.group === 'money'),
+			label: dabloonizeWords('Dabloons'),
+			options: displayOptions.filter((option) => option.group === 'money'),
 		},
 		{
 			key: 'fishing',
 			label: 'Fishing Compendium',
-			options: options.filter((option) => option.group === 'fishing'),
+			options: displayOptions.filter((option) => option.group === 'fishing'),
 		},
 		{
 			key: 'minecraft-session',
 			label: 'Minecraft - Session',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'session',
 			),
 		},
 		{
 			key: 'minecraft-advancement',
 			label: 'Minecraft - Advancements',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'advancement',
 			),
 		},
 		{
 			key: 'minecraft-custom',
 			label: 'Minecraft - General Stats',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'custom',
 			),
 		},
 		{
 			key: 'minecraft-killed',
 			label: 'Minecraft - Mobs Killed',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'killed',
 			),
 		},
 		{
 			key: 'minecraft-killed-by',
 			label: 'Minecraft - Deaths by Mob',
-			options: options.filter(
+			options: displayOptions.filter(
 				(option) => option.group === 'minecraft' && option.category === 'killed_by',
 			),
 		},

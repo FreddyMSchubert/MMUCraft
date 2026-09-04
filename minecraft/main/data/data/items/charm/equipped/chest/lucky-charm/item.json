@@ -11,7 +11,7 @@
 		"priceDabloons": 100,
 		"description": "Increases fishing luck.",
 		"unlockWeight": 25,
-		"unlockMessage": "Unlocked charm: Lucky Charm. Increases fishing luck."
+		"unlockMessage": "Unlocked charm: Lucky Charm - a super important tool for high-level fishing."
 	},
 	"charm": {
 		"charmId": 37,
@@ -22,23 +22,25 @@
 				"level": 1,
 				"abilityStatusCurrent": "Grants 1 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 fishing luck.",
-				"dabloons": 50,
+				"dabloons": 20,
 				"upgradeIngredients": [
-					"minecraft:gold_ingot",
-					"minecraft:gold_ingot",
-					"minecraft:rabbit_foot"
+					"minecraft:fishing_rod",
+					"minecraft:cod",
+					"minecraft:salmon",
+					"minecraft:pufferfish"
 				]
 			},
 			{
 				"level": 2,
 				"abilityStatusCurrent": "Grants 2 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 more fishing luck.",
-				"dabloons": 75,
+				"dabloons": 50,
 				"upgradeIngredients": [
-					"minecraft:gold_block",
-					"minecraft:rabbit_foot",
-					"minecraft:rabbit_foot",
-					"minecraft:diamond"
+					"mainmod:1-leaf-clover",
+					"mainmod:item-magnet",
+					"mainmod:fish-seaweed_eel",
+					"mainmod:fish-bass",
+					"mainmod:fish-goldfish"
 				]
 			},
 			{
@@ -47,41 +49,41 @@
 				"abilityStatusRelative": "Grants 1 more fishing luck.",
 				"dabloons": 100,
 				"upgradeIngredients": [
-					"minecraft:gold_block",
-					"minecraft:gold_block",
-					"minecraft:diamond_block",
-					"minecraft:rabbit_foot",
-					"minecraft:rabbit_foot"
+					"mainmod:2-leaf-clover",
+					"mainmod:worms",
+					"mainmod:fish-swordfish",
+					"mainmod:fish-echofin",
+					"mainmod:fish-jadefish",
+					"minecraft:potion[minecraft:potion_contents=luck]=Potion of Luck"
 				]
 			},
 			{
 				"level": 4,
 				"abilityStatusCurrent": "Grants 4 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 more fishing luck.",
-				"dabloons": 125,
+				"dabloons": 150,
 				"upgradeIngredients": [
-					"minecraft:emerald_block",
-					"minecraft:emerald_block",
-					"minecraft:diamond_block",
-					"minecraft:echo_shard",
-					"minecraft:rabbit_foot",
-					"minecraft:rabbit_foot"
+					"mainmod:3-leaf-clover",
+					"mainmod:golden-item-magnet",
+					"mainmod:fish-cloudy_crab",
+					"mainmod:fish-ghostjellyfish",
+					"mainmod:fish-angelfish",
+					"minecraft:potion[minecraft:potion_contents=luck]=Potion of Luck"
 				]
 			},
 			{
 				"level": 5,
 				"abilityStatusCurrent": "Grants 5 fishing luck while equipped.",
 				"abilityStatusRelative": "Grants 1 more fishing luck.",
-				"dabloons": 150,
+				"dabloons": 200,
 				"upgradeIngredients": [
-					"minecraft:nether_star",
-					"minecraft:emerald_block",
-					"minecraft:emerald_block",
-					"minecraft:diamond_block",
-					"minecraft:diamond_block",
-					"minecraft:rabbit_foot",
-					"minecraft:rabbit_foot",
-					"minecraft:rabbit_foot"
+					"mainmod:4-leaf-clover",
+					"mainmod:golden-worms",
+					"mainmod:fish-midnight_carp",
+					"mainmod:fish-arowana",
+					"mainmod:fish-lil_guy",
+					"mainmod:fish-lil_dude",
+					"minecraft:potion[minecraft:potion_contents=luck]=Potion of Luck"
 				]
 			}
 		]

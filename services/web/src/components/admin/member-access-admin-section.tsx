@@ -1,11 +1,18 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { PlayerName } from '@/components/player-name';
+import { fuzzyFilter, PlayerSelector } from '@/components/player-selector';
 import type { AdminTabController } from './use-admin-tab-controller';
 
 export function MemberAccessAdminSection({ controller }: { controller: AdminTabController }) {
 	const { activeSection, isSuperAdmin, players, busyPlayerId, setMembership, setCommittee } =
 		controller;
+	const [search, setSearch] = useState('');
+	const visiblePlayers = useMemo(
+		() => fuzzyFilter(players, search, ['minecraftUsername', 'discordUsername', 'email']),
+		[players, search],
+	);
 	return (
 		<>
 			{activeSection === 'members' && (
@@ -24,6 +31,14 @@ export function MemberAccessAdminSection({ controller }: { controller: AdminTabC
 							<li>Match the Minecraft, Discord and email identities.</li>
 						</ul>
 					</div>
+					<PlayerSelector
+						datalistId="member-list-players"
+						options={players}
+						value={search}
+						onChange={setSearch}
+						placeholder="Search members"
+						ariaLabel="Search the member list"
+					/>
 
 					<div className="adminTableWrap">
 						<table className="adminTable">
@@ -37,7 +52,7 @@ export function MemberAccessAdminSection({ controller }: { controller: AdminTabC
 								</tr>
 							</thead>
 							<tbody>
-								{players.map((player) => (
+								{visiblePlayers.map((player) => (
 									<tr key={player.id}>
 										<td>
 											<PlayerName
@@ -87,6 +102,13 @@ export function MemberAccessAdminSection({ controller }: { controller: AdminTabC
 										)}
 									</tr>
 								))}
+								{visiblePlayers.length === 0 && (
+									<tr>
+										<td colSpan={isSuperAdmin ? 5 : 4}>
+											No members match that search.
+										</td>
+									</tr>
+								)}
 							</tbody>
 						</table>
 					</div>

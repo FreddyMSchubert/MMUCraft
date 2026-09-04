@@ -171,6 +171,18 @@
 	animation: shopAnimatedTagPulse 1.8s ease-in-out infinite;
 }
 
+.shopTag.membersOnly,
+.shopFilterRow button.filter-members-only {
+	border-color: rgba(255, 209, 102, 0.42);
+	background: rgba(255, 209, 102, 0.12);
+	color: #ffe39a;
+}
+
+.shopFilterRow button.filter-members-only.active {
+	background: #ffd166;
+	color: #141820;
+}
+
 .shopTag.discounted {
 	border-color: rgba(79, 220, 163, 0.4);
 	background: rgba(79, 220, 163, 0.11);
@@ -460,8 +472,13 @@
 .shopDetailsSummary {
 	display: grid;
 	align-content: center;
-	gap: 16px;
+	gap: 9px;
 	padding: 48px clamp(28px, 5vw, 58px);
+}
+
+.shopDetailsSummary > .shopDetailsBuy + .shopItemEffect,
+.shopDetailsSummary > .shopDetailsBuy + .shopItemTooltips {
+	margin-top: 12px;
 }
 
 .shopDetailsSummary h2 {

@@ -54,6 +54,13 @@ export class PlayerStatisticsSynchronizationService {
 		const nextMinecraftStats: Record<string, MinecraftStatValue> = { ...stats.minecraft.stats };
 		for (const statInput of statsInput) {
 			const stat = normalizeMinecraftStat(statInput, unixMs);
+			// Keep the last nonzero advancement count when Minecraft reports a transient empty set.
+			if (
+				stat?.category === 'advancement' &&
+				stat.value === 0 &&
+				(nextMinecraftStats[stat.key]?.value ?? 0) > 0
+			)
+				continue;
 			if (stat) nextMinecraftStats[stat.key] = stat;
 		}
 

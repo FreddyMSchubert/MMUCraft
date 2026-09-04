@@ -89,6 +89,7 @@ services:
       MMU_API_BASE_URL: http://api:8080
     ports:
       - "25565:25565"
+      - "24454:24454/udp"
     volumes:
       - ./.dev/velocity:/server
     depends_on:
@@ -108,7 +109,7 @@ services:
       EULA: "TRUE"
       TYPE: FABRIC
       VERSION: "26.2"
-      MODRINTH_PROJECTS: fabric-api,fabricproxy-lite:2.12.0
+      MODRINTH_PROJECTS: fabric-api,fabricproxy-lite:2.12.0,simple-voice-chat:JDkcoyAy
       MEMORY: 2G
       INIT_MEMORY: 1G
       STOP_DURATION: "110"

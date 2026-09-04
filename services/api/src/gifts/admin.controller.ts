@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } fro
 import { AuthAccountAdministrationService } from '../auth/auth-account-administration.service';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { CommandLogsService } from '../database/command-logs.service';
+import { SigninAttemptLogsService } from '../database/signin-attempt-logs.service';
 import { CountdownInput, CountdownsService } from './countdowns.service';
 import { GiftCodeAdministrationService } from './gift-code-administration.service';
 import { GiftCodeInput } from './gift-code-validation';
@@ -15,6 +16,7 @@ export class AdminController {
 		private readonly giftCodes: GiftCodeAdministrationService,
 		private readonly playerRoles: PlayerRoleAdministrationService,
 		private readonly commandLogs: CommandLogsService,
+		private readonly signinAttempts: SigninAttemptLogsService,
 		private readonly countdowns: CountdownsService,
 	) {}
 
@@ -22,6 +24,29 @@ export class AdminController {
 	listCountdowns(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader);
 		return this.countdowns.list();
+	}
+
+	@Get('signin-attempt-logs')
+	listSigninAttemptLogs(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Query('beforeId') beforeId: string | undefined,
+		@Query('journey') journey: string | undefined,
+		@Query('event') event: string | undefined,
+		@Query('succeeded') succeeded: string | undefined,
+		@Query('fromUnixMs') fromUnixMs: string | undefined,
+		@Query('toUnixMs') toUnixMs: string | undefined,
+		@Query('search') search: string | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.signinAttempts.list({
+			beforeId,
+			journey,
+			event,
+			succeeded,
+			fromUnixMs,
+			toUnixMs,
+			search,
+		});
 	}
 
 	@Post('countdowns')

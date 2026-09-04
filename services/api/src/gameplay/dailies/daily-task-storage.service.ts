@@ -148,6 +148,7 @@ export class DailyTaskStorageService {
 			? {
 					advancementId: row.advancement_id,
 					title: row.title,
+					description: row.description,
 					tabTitle: row.tab_title,
 					iconItem: row.icon_item,
 					baseRewardDabloons: row.base_reward_dabloons,

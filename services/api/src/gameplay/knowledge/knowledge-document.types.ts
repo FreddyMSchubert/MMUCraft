@@ -28,4 +28,13 @@ export interface KnowledgeDocument {
 	pages: KnowledgePage[];
 	tree: KnowledgeTreeEntry[];
 	unlockable: KnowledgePage[];
+	searchPages: KnowledgeSearchPage[];
+}
+
+export interface KnowledgeSearchPage {
+	id: string;
+	title: string;
+	folders: string;
+	tags: string;
+	content: string;
 }

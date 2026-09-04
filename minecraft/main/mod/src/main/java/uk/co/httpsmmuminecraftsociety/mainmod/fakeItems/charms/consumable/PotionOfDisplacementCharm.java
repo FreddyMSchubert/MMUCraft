@@ -13,11 +13,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm
 {
     private static final int MAX_ATTEMPTS = 128;
-    private static final int MAX_TELEPORT_RADIUS = 10_000;
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {
@@ -33,7 +33,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             return false;
         }
 
-        BlockPos pos = findSafeTeleportPos(level, player.blockPosition());
+        BlockPos pos = findSafeTeleportPos(level, player.blockPosition(), PlayerStatsSync.isMember(player) ? 15_000 : 7_500);
 
         TeleportPotionUtils.teleportWithCompanions(
                 "displacement",
@@ -51,11 +51,11 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         return true;
     }
 
-    private BlockPos findSafeTeleportPos(ServerLevel level, BlockPos fallback)
+    private BlockPos findSafeTeleportPos(ServerLevel level, BlockPos fallback, int radius)
     {
         for (int i = 0; i < MAX_ATTEMPTS; i++)
         {
-            BlockPos pos = tryFindPosOnce(level, fallback);
+            BlockPos pos = tryFindPosOnce(level, fallback, radius);
             if (pos != null)
             {
                 return pos;
@@ -65,14 +65,14 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         return fallback;
     }
 
-    private BlockPos tryFindPosOnce(Level level, BlockPos origin)
+    private BlockPos tryFindPosOnce(Level level, BlockPos origin, int radius)
     {
         WorldBorder border = level.getWorldBorder();
 
-        int minX = Math.max(Mth.ceil(border.getMinX()), radiusMin(origin.getX()));
-        int maxX = Math.min(Mth.floor(border.getMaxX() - 1.0D), radiusMax(origin.getX()));
-        int minZ = Math.max(Mth.ceil(border.getMinZ()), radiusMin(origin.getZ()));
-        int maxZ = Math.min(Mth.floor(border.getMaxZ() - 1.0D), radiusMax(origin.getZ()));
+        int minX = Math.max(Mth.ceil(border.getMinX()), radiusMin(origin.getX(), radius));
+        int maxX = Math.min(Mth.floor(border.getMaxX() - 1.0D), radiusMax(origin.getX(), radius));
+        int minZ = Math.max(Mth.ceil(border.getMinZ()), radiusMin(origin.getZ(), radius));
+        int maxZ = Math.min(Mth.floor(border.getMaxZ() - 1.0D), radiusMax(origin.getZ(), radius));
 
         if (minX > maxX || minZ > maxZ)
         {
@@ -82,14 +82,18 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         int x = Mth.nextInt(level.getRandom(), minX, maxX);
         int z = Mth.nextInt(level.getRandom(), minZ, maxZ);
 
+        long dx = (long) x - origin.getX();
+        long dz = (long) z - origin.getZ();
+        if (dx * dx + dz * dz > (long) radius * radius) return null;
+
         return possibleSpawnPos(x, z, level);
     }
 
-    private int radiusMin(int origin) {
-        return (int)Math.max(Integer.MIN_VALUE, (long)origin - MAX_TELEPORT_RADIUS);
+    private int radiusMin(int origin, int radius) {
+        return (int)Math.max(Integer.MIN_VALUE, (long)origin - radius);
     }
-    private int radiusMax(int origin) {
-        return (int)Math.min(Integer.MAX_VALUE, (long)origin + MAX_TELEPORT_RADIUS);
+    private int radiusMax(int origin, int radius) {
+        return (int)Math.min(Integer.MAX_VALUE, (long)origin + radius);
     }
 
     private BlockPos possibleSpawnPos(int x, int z, Level level)

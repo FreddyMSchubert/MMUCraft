@@ -65,8 +65,13 @@ export class ClaimPurchasingService {
 	}
 
 	async create(user: AuthenticatedUser, input: CreateClaimInput) {
-		const { priceDabloons } = this.getNextClaimPricing(user);
-		const claim = this.insertClaim(user, input, false);
+		const { priceDabloons, nextClaimNumber } = this.getNextClaimPricing(user);
+		const claim = this.insertClaim(
+			user,
+			input,
+			false,
+			`My ${formatOrdinal(nextClaimNumber)} Claim`,
+		);
 
 		let purchase: PurchaseClaimResponse;
 		try {
@@ -99,7 +104,7 @@ export class ClaimPurchasingService {
 	}
 
 	async createServerClaim(user: AuthenticatedUser, input: CreateClaimInput) {
-		const claim = this.insertClaim(user, input, true);
+		const claim = this.insertClaim(user, input, true, 'Server claim');
 		await this.minecraftSynchronization.synchronize();
 		return { created: true, claimId: claim.id };
 	}
@@ -126,7 +131,12 @@ export class ClaimPurchasingService {
 		};
 	}
 
-	private insertClaim(user: AuthenticatedUser, input: CreateClaimInput, isServer: boolean) {
+	private insertClaim(
+		user: AuthenticatedUser,
+		input: CreateClaimInput,
+		isServer: boolean,
+		claimName: string,
+	) {
 		const claim = {
 			id: randomUUID(),
 			dimension: normalizeDimension(input.dimension),
@@ -141,7 +151,7 @@ export class ClaimPurchasingService {
 				dimension: claim.dimension,
 				chunk_x: claim.chunkX,
 				chunk_z: claim.chunkZ,
-				claim_name: isServer ? 'Server claim' : 'My claim',
+				claim_name: claimName,
 				is_server: isServer ? 1 : 0,
 				created_at_unix_ms: Date.now(),
 			})
@@ -159,6 +169,15 @@ function claimPriceDabloons(claimNumber: number, growth: number) {
 		MAX_CLAIM_PRICE_DABLOONS,
 		Math.round(CLAIM_BASE_PRICE_DABLOONS * growth ** (claimNumber - 1)),
 	);
+}
+
+function formatOrdinal(value: number) {
+	const lastTwoDigits = value % 100;
+	const suffix =
+		lastTwoDigits >= 11 && lastTwoDigits <= 13
+			? 'th'
+			: (['th', 'st', 'nd', 'rd'][value % 10] ?? 'th');
+	return `${value}${suffix}`;
 }
 
 function normalizeDimension(value: string | undefined) {

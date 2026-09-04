@@ -9,8 +9,10 @@ import {
 } from '@/components/claim-editor-card';
 import { PlayerName } from '@/components/player-name';
 import { PlayerSelector } from '@/components/player-selector';
+import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
+import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
 
 interface ClaimPerson {
 	id: number;
@@ -96,8 +98,8 @@ export function ClaimsTab() {
 			const current = await request<CurrentChunkResponse>('/api/claims/current');
 			const confirmed = await confirm({
 				title: 'Buy this chunk claim?',
-				message: `Chunk ${current.chunkX}, ${current.chunkZ} in ${formatDimension(current.dimension)} costs ${current.priceDabloons} dabloons. Your current balance is ${current.balanceDabloons} dabloons.\n\nStay online and remain inside this chunk until the purchase finishes.`,
-				confirmLabel: `Buy for ${current.priceDabloons}`,
+				message: `Chunk ${current.chunkX}, ${current.chunkZ} in ${formatDimension(current.dimension)} costs ${formatDabloonWord(current.priceDabloons)}. Your current balance is ${formatDabloonWord(current.balanceDabloons)}.\n\nStay online and remain inside this chunk until the purchase finishes.`,
+				confirmLabel: `Buy for ${formatDabloons(current.priceDabloons)}`,
 			});
 			if (!confirmed) return;
 
@@ -195,7 +197,7 @@ export function ClaimsTab() {
 						<ul>
 							<li>Place & break blocks</li>
 							<li>Open Chests, Barrels etc</li>
-							<li>Interact with anything at all (e.g. doors)</li>
+							<li>Interact with anything at all</li>
 						</ul>
 						This also includes other mobs like creepers, which can&apos;t damage the
 						things in your claims! Claims are perfect to{' '}
@@ -209,26 +211,32 @@ export function ClaimsTab() {
 				</div>
 				<div className="claimPurchase">
 					<button type="button" disabled={busy} onClick={() => void buyClaim()}>
-						Add claim · {data.priceDabloons} dabloons
+						Add claim · <DabloonAmount amount={data.priceDabloons} tone="inherit" />
 					</button>
 					<small>
 						{data.isMember ? (
 							<>
-								Member claim {data.nextClaimNumber} cost: {data.memberPriceDabloons}{' '}
-								·{' '}
+								Member claim {data.nextClaimNumber} cost:{' '}
+								<DabloonAmount amount={data.memberPriceDabloons} /> ·{' '}
 								<del>
 									Normal claim {data.nextClaimNumber} cost:{' '}
-									{data.normalPlayerPriceDabloons}
+									<DabloonAmount
+										amount={data.normalPlayerPriceDabloons}
+										tone="inherit"
+									/>
 								</del>
 							</>
 						) : (
 							<>
 								<del>
 									Member claim {data.nextClaimNumber} cost:{' '}
-									{data.memberPriceDabloons}
+									<DabloonAmount
+										amount={data.memberPriceDabloons}
+										tone="inherit"
+									/>
 								</del>{' '}
 								· Normal claim {data.nextClaimNumber} cost:{' '}
-								{data.normalPlayerPriceDabloons}
+								<DabloonAmount amount={data.normalPlayerPriceDabloons} />
 							</>
 						)}
 					</small>

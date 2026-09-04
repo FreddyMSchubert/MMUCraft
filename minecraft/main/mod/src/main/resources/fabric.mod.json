@@ -23,7 +23,8 @@
     ]
   },
   "mixins": [
-    "mainmod.mixins.json"
+    "mainmod.mixins.json",
+    "mainmod.glider.mixins.json"
   ],
   "accessWidener": "mainmod.accesswidener",
   "depends": {

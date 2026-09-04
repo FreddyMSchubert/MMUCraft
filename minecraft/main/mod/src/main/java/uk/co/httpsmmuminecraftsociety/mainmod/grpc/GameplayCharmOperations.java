@@ -11,6 +11,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmLevelDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
@@ -48,7 +49,7 @@ final class GameplayCharmOperations {
         StoredCharmData stored = CharmStackData.getSingleStoredCharm(stack).orElse(null);
         FakeItem item = stored == null ? null : FakeItems.CHARM_ID_MAP.get(stored.charmId());
         CharmItemFeature feature = item == null ? null : item.getFeature(CharmItemFeature.class);
-        if (feature != null) {
+        if (feature != null && !GliderCharm.isGlider(stack)) {
             response.addCharms(buildInventoryCharm(player, slot, item, feature, stored.level()));
         } else {
             response.setMessage("Hold one charm in your main hand, then refresh the forge.");
@@ -145,7 +146,7 @@ final class GameplayCharmOperations {
             return failedCharmUpgrade(player, "You no longer have all the required ingredients.");
         }
         if (MoneyHelper.GetBalance(player) < target.dabloons()) {
-            return failedCharmUpgrade(player, "You need " + target.dabloons() + " dabloons for this upgrade.");
+            return failedCharmUpgrade(player, "You need " + target.dabloons() + " Dabloons for this upgrade.");
         }
 
         NonNullList<ItemStack> backup = NonNullList.withSize(player.getInventory().getContainerSize(), ItemStack.EMPTY);
@@ -160,7 +161,7 @@ final class GameplayCharmOperations {
             }
             if (target.dabloons() > 0 && !MoneyHelper.ReduceMoney(player, target.dabloons())) {
                 restoreInventory(player, backup);
-                return failedCharmUpgrade(player, "Could not take the dabloons for this upgrade.");
+                return failedCharmUpgrade(player, "Could not take the Dabloons for this upgrade.");
             }
 
             feature.setLevel(stack, targetLevel);
@@ -176,7 +177,8 @@ final class GameplayCharmOperations {
                         + target.abilityStatusCurrent() + "]");
 
         if (target.dabloons() > 0) {
-            MoneyHelper.SendBalanceMessage(player, item.title() + " reached level " + targetLevel + ".");
+            MoneyHelper.SendBalanceMessage(player, -target.dabloons(),
+                    item.title() + " reached level " + targetLevel);
         }
 
         return UpgradeCharmResponse.newBuilder()

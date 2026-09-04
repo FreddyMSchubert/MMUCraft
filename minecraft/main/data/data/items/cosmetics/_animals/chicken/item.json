@@ -11,7 +11,7 @@
 	"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Purchased cosmetic: Chicken Hat."
+		"unlockMessage": "Unlocked cosmetic: Chicken Hat."
 	},
 	"equippableCosmetic": {}
 }

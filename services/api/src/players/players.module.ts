@@ -3,6 +3,8 @@ import { AuthModule } from '../auth/auth.module';
 import { DatabaseModule } from '../database/database.module';
 import { FishingModule } from '../fishing/fishing.module';
 import { GrpcModule } from '../grpc/grpc.module';
+import { KnowledgeDocumentCatalogService } from '../gameplay/knowledge/knowledge-document-catalog.service';
+import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
 import { PlayerAvatarController } from './player-avatar.controller';
 import { OnlinePlayerPresenceService } from './online-player-presence.service';
 import { PlayersController } from './players.controller';
@@ -20,6 +22,8 @@ import { PlayersService } from './players.service';
 		PlayerMoneyHistoryService,
 		PlayerProfileStorageService,
 		PlayerStatisticsSynchronizationService,
+		KnowledgeDocumentCatalogService,
+		ShopItemCatalogService,
 	],
 	exports: [
 		PlayersService,

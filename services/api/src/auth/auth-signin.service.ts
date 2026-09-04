@@ -40,12 +40,17 @@ export class AuthSigninService {
 			if (flow.userId === user.id) signinFlows.delete(activeFlowId);
 		signinFlows.set(flowId, {
 			userId: user.id,
+			email,
 			codeHash: hashSecret(code),
 			expiresAtUnixMs: now + EMAIL_CODE_TTL_MS,
 			failedAttempts: 0,
 		});
 		await this.verificationEmails.deliverCode(email, code, 'signin');
 		return { flowId, timeoutEnded };
+	}
+
+	emailForFlow(flowId: string) {
+		return signinFlows.get(flowId)?.email ?? null;
 	}
 
 	verify(flowId: string, code: string) {

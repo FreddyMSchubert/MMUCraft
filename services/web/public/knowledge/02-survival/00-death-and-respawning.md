@@ -3,6 +3,9 @@ id: death-and-respawning
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on the server's death and respawn rules.
 sidebarTitle: Death & Respawning
+tags:
+- respawing
+- death and respawn
 tips:
 - When you die, you won't have to walk a bunch to get your items back. Instead, you will spawn somewhere random close to where you died.
 - Recovery compasses can have Soulbound applied to stay on your person after you die. That makes them super useful for finding your last death location.
@@ -19,6 +22,10 @@ Anyways, for those of you that are experiencing occasional skill issues, here's 
 After death, you no longer respawn next to your bed, but closer to wherever you died. This is mainly because walking a bunch is annoying, not fun.
 
 Specifically, you respawn at a random position **within the server render distance** of where you died. This means that when you respawn, you are always able to see the position you died at (unless it's in a cave, behind a hill, or your render distance is set lower than the server render distance).
+
+:::perk
+Members respawn closer to their death location, half as close as normal players on average.
+:::
 
 ![Death Screen](/assets/knowledge/survival/death-respawning/death_screen.png)
 

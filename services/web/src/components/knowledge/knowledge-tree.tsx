@@ -1,3 +1,5 @@
+import { DabloonText } from '@/components/dabloon-amount';
+
 export type KnowledgeTreeEntry = KnowledgeFolder | KnowledgePage;
 
 export interface KnowledgeFolder {
@@ -77,7 +79,13 @@ export function KnowledgeTreeNode({
 				onSelectPage(entry.id);
 			}}
 		>
-			<span>{entry.sidebarTitle}</span>
+			<span>
+				{entry.id === 'money-basics' ? (
+					entry.sidebarTitle
+				) : (
+					<DabloonText>{entry.sidebarTitle}</DabloonText>
+				)}
+			</span>
 			{!readPageIds.has(entry.id) && (
 				<span className="knowledgeTreeNew" aria-label="Not read yet">
 					!

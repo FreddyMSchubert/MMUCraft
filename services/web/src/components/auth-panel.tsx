@@ -177,8 +177,14 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		void run(async () => {
 			const result =
 				step === 'signin-code'
-					? await postJson<{ flowId: string }>('/api/auth/signin', { email })
-					: await postJson<{ flowId: string }>('/api/auth/signup', { email });
+					? await postJson<{ flowId: string }>('/api/auth/signin', {
+							email,
+							resend: true,
+						})
+					: await postJson<{ flowId: string }>('/api/auth/signup', {
+							email,
+							resend: true,
+						});
 			setFlowId(result.flowId);
 			setAuthCode(emptyAuthCode());
 			setDeliveryMessage(verificationMessage(true));

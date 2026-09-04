@@ -1,6 +1,9 @@
 'use client';
 
-import { PlayerName, playerNameStyle } from '@/components/player-name';
+import { useMemo, useState } from 'react';
+import { PlayerName } from '@/components/player-name';
+import { fuzzyFilter, PlayerSelector } from '@/components/player-selector';
+import { DabloonAmount } from '@/components/dabloon-amount';
 import { formatDateTime } from './admin-api';
 import type { AdminTabController } from './use-admin-tab-controller';
 
@@ -17,6 +20,16 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 		whitelistedEmails,
 		removeWhitelistedEmail,
 	} = controller;
+	const [search, setSearch] = useState('');
+	const visibleEntries = useMemo(
+		() =>
+			fuzzyFilter(whitelistedEmails, search, [
+				'email',
+				'responsibleMinecraftUsername',
+				'addedByMinecraftUsername',
+			]),
+		[search, whitelistedEmails],
+	);
 	return (
 		<>
 			{activeSection === 'whitelist' && (
@@ -28,9 +41,11 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 							allowed.
 						</p>
 						<p>
-							Inviting an external player costs the responsible player 150 dabloons
-							for members or 250 dabloons for non-members. They must be online when
-							you add the email.
+							Inviting an external player costs the responsible player{' '}
+							<DabloonAmount amount={150} format="full" tone="inherit" />
+							for members or{' '}
+							<DabloonAmount amount={250} format="full" tone="inherit" /> for
+							non-members. They must be online when you add the email.
 						</p>
 					</div>
 					<form className="emailWhitelistForm" onSubmit={addWhitelistedEmail}>
@@ -48,29 +63,26 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 						</label>
 						<label>
 							Responsible user
-							<select
+							<PlayerSelector
+								datalistId="whitelist-responsible-player"
+								options={players.filter((player) => !player.isExternal)}
 								value={responsibleUsername}
-								onChange={(event) => {
-									setResponsibleUsername(event.target.value);
-								}}
+								onChange={setResponsibleUsername}
+								placeholder="Search internal players"
+								disabled={updatingWhitelist}
 								required
-							>
-								<option value="">Select a player</option>
-								{players.map((player) => (
-									<option
-										className="playerName"
-										style={playerNameStyle(player.color)}
-										key={player.id}
-										value={player.minecraftUsername}
-										disabled={player.isExternal}
-									>
-										{player.minecraftUsername}
-									</option>
-								))}
-							</select>
+							/>
 						</label>
 						<button disabled={updatingWhitelist}>Add email</button>
 					</form>
+					<PlayerSelector
+						datalistId="email-whitelist-players"
+						options={players}
+						value={search}
+						onChange={setSearch}
+						placeholder="Search emails or players"
+						ariaLabel="Search the email whitelist"
+					/>
 					<div className="adminTableWrap">
 						<table className="adminTable">
 							<thead>
@@ -83,7 +95,7 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 								</tr>
 							</thead>
 							<tbody>
-								{whitelistedEmails.map((entry) => (
+								{visibleEntries.map((entry) => (
 									<tr key={entry.email}>
 										<td>{entry.email}</td>
 										<td>
@@ -117,10 +129,12 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 										</td>
 									</tr>
 								))}
-								{whitelistedEmails.length === 0 && (
+								{visibleEntries.length === 0 && (
 									<tr>
 										<td colSpan={5}>
-											No extra email addresses are whitelisted.
+											{search.trim()
+												? 'No whitelist entries match that search.'
+												: 'No extra email addresses are whitelisted.'}
 										</td>
 									</tr>
 								)}

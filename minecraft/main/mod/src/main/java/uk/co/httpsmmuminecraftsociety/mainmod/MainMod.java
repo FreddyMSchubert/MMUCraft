@@ -41,6 +41,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderFlight;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
@@ -55,6 +56,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.metrics.MetricsServer;
+import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
+import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
@@ -90,9 +93,11 @@ public class MainMod implements ModInitializer {
         );
 
         DataLoader.init();
+        LOGGER.info("Loaded {} mini block definitions", MiniBlockCatalog.definitions().size());
         DailyTaskRegistry.validate();
 
         FakeItemsCommand.init();
+        MiniBlockCommand.init();
         MoneyCommand.init();
         WebsiteCommand.init();
         KnowledgeTips.init();
@@ -102,6 +107,7 @@ public class MainMod implements ModInitializer {
         ClaimsManager.init();
         DailyEvents.register();
         MainModRecipes.register();
+        GliderFlight.init();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);

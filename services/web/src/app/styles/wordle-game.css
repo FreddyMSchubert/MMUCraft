@@ -415,7 +415,9 @@ body {
 	min-height: 100%;
 	background: #000;
 	color: #fff;
-	font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas, 'Courier New', monospace;
+	font-family:
+		'Dabloon Symbol JetBrains Mono', 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas,
+		'Courier New', monospace;
 }
 
 * {

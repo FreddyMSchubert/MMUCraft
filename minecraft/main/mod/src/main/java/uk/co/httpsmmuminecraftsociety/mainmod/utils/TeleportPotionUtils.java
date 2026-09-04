@@ -15,6 +15,7 @@ import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,10 +86,15 @@ public class TeleportPotionUtils
         Vec3 origin = player.position();
         String sourceDimension = source.dimension().identifier().toString();
         long gameTime = source.getGameTime();
+        boolean member = PlayerStatsSync.isMember(player);
+        if (!member) {
+            player.stopRiding();
+            player.ejectPassengers();
+        }
         Entity vehicle = player.isPassenger() ? player.getRootVehicle() : null;
-        Set<Entity> leashed = Leashable.leashableLeashedTo(player).stream()
+        Set<Entity> leashed = member ? Leashable.leashableLeashedTo(player).stream()
                 .map(leashable -> (Entity) leashable)
-                .collect(java.util.stream.Collectors.toSet());
+                .collect(java.util.stream.Collectors.toSet()) : Set.of();
         Map<Entity, Set<String>> companionRoles = new LinkedHashMap<>();
         leashed.forEach(entity -> addRole(companionRoles, entity, "leashed"));
 
@@ -100,15 +106,17 @@ public class TeleportPotionUtils
             });
         }
 
-        // ponytail: scans loaded entities; index active pets by owner if potion use makes this hot.
-        source.getAllEntities().forEach(entity -> {
-            if (entity instanceof TamableAnimal pet
-                    && pet.isTame()
-                    && !pet.isOrderedToSit()
-                    && pet.getOwner() == player) {
-                addRole(companionRoles, pet, "pet");
-            }
-        });
+        if (member) {
+            // ponytail: scans loaded entities; index active pets by owner if potion use makes this hot.
+            source.getAllEntities().forEach(entity -> {
+                if (entity instanceof TamableAnimal pet
+                        && pet.isTame()
+                        && !pet.isOrderedToSit()
+                        && pet.getOwner() == player) {
+                    addRole(companionRoles, pet, "pet");
+                }
+            });
+        }
 
         List<String> movedCompanions = new ArrayList<>();
         List<String> failedCompanions = new ArrayList<>();

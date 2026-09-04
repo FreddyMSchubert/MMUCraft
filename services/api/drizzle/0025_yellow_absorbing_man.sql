@@ -1,0 +1,1 @@
+ALTER TABLE `daily_advancement_targets` ADD `description` text DEFAULT '' NOT NULL;

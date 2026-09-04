@@ -5,7 +5,9 @@
 .knowledgePanel {
 	display: grid;
 	gap: 16px;
-	font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas, 'Courier New', monospace;
+	font-family:
+		'Dabloon Symbol JetBrains Mono', 'JetBrainsMono Nerd Font', 'JetBrains Mono', Consolas,
+		'Courier New', monospace;
 }
 
 .playPage:has(.knowledgePanel) {
@@ -29,12 +31,71 @@
 .knowledgePda {
 	display: grid;
 	grid-template-columns: 280px minmax(0, 1fr);
+	grid-template-rows: auto 1fr;
 	align-items: start;
-	gap: 20px;
+	column-gap: 20px;
+	row-gap: 12px;
+}
+
+.knowledgeSearch {
+	display: flex;
+	grid-column: 1;
+	gap: 8px;
+}
+
+.knowledgeSearchField {
+	display: flex;
+	align-items: center;
+	min-width: 0;
+	width: 100%;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.knowledgeSearch input {
+	min-width: 0;
+	width: 100%;
+	padding: 9px 0 9px 10px;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: #fff;
+	font: inherit;
+}
+
+.knowledgeSearchClear {
+	align-self: stretch;
+	padding: 0 10px;
+	border: 0;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.65);
+	font: inherit;
+	font-size: 1.1rem;
+}
+
+.knowledgeSearchClear:hover {
+	color: #ffd166;
+}
+
+.knowledgeSearchField:has(input:placeholder-shown) .knowledgeSearchClear {
+	display: none;
+}
+
+.knowledgeSearchSubmit {
+	padding: 9px 12px;
+	border: 1px solid rgba(255, 209, 102, 0.7);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.15);
+	color: #ffd166;
+	font: inherit;
+	font-weight: 700;
 }
 
 .knowledgeSidebarRail {
 	position: relative;
+	grid-column: 1;
+	grid-row: 2;
 	align-self: stretch;
 	min-width: 0;
 }
@@ -166,9 +227,96 @@
 }
 
 .knowledgeReader {
+	grid-column: 2;
+	grid-row: 1 / span 2;
 	min-width: 0;
 	max-width: 100%;
 	padding-bottom: 8px;
+}
+
+.knowledgeSearchSummary {
+	margin: -10px 0 18px;
+	color: rgba(255, 255, 255, 0.65);
+}
+
+.knowledgeSearchResults {
+	display: grid;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.knowledgeSearchResults > li {
+	display: grid;
+	gap: 8px;
+}
+
+.knowledgeSearchResults > li {
+	padding: 12px 14px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.knowledgeSearchResultTitle {
+	display: flex;
+	align-items: baseline;
+	gap: 0.55em;
+	color: #fff;
+	font-size: 0.9rem;
+	text-decoration: none;
+}
+
+.knowledgeSearchResultTitle:hover strong {
+	color: #ffd166;
+}
+
+.knowledgeSearchResultTitle span {
+	color: rgba(255, 255, 255, 0.62);
+	font-size: inherit;
+}
+
+.knowledgeSearchResults .locked {
+	border-color: rgba(255, 209, 102, 0.35);
+	color: #ffd166;
+}
+
+.knowledgeSearchResults .locked span {
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.82rem;
+}
+
+.knowledgeSearchMatches {
+	display: grid;
+	gap: 5px;
+	margin: 0;
+	padding-left: 18px;
+}
+
+.knowledgeSearchMatches a {
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.82rem;
+	line-height: 1.45;
+	text-decoration: none;
+}
+
+.knowledgeSearchMatches a:hover {
+	color: #fff;
+}
+
+.knowledgeSearchMatches mark,
+.knowledgeSearchHighlight {
+	padding: 0 2px;
+	border-radius: 3px;
+	background: #ffd166;
+	color: #151922;
+}
+
+.knowledgeSimilarHeading {
+	margin: 20px 0 10px;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.92rem;
 }
 
 .knowledgePageTitle {
@@ -265,6 +413,12 @@
 	padding-left: 24px;
 }
 
+.knowledgePage hr {
+	margin: 24px 0;
+	border: 0;
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 .knowledgePage blockquote {
 	padding: 10px 14px;
 	border-left: 4px solid rgba(255, 209, 102, 0.8);
@@ -301,6 +455,82 @@
 }
 .knowledgeAdmonition.context {
 	--admonition-color: #8da2ff;
+}
+
+.knowledgeAdmonition.perk {
+	position: relative;
+	isolation: isolate;
+	border: 0;
+	background: repeating-linear-gradient(
+		90deg,
+		rgba(255, 105, 130, 0.28) 0%,
+		rgba(255, 170, 85, 0.28) 7%,
+		rgba(245, 220, 105, 0.26) 14%,
+		rgba(100, 230, 155, 0.3) 21%,
+		rgba(90, 210, 245, 0.32) 28%,
+		rgba(125, 160, 255, 0.4) 35%,
+		rgba(200, 135, 255, 0.34) 42%,
+		rgba(255, 105, 130, 0.28) 50%
+	);
+	background-size: 200% 100%;
+	animation: knowledgePerkRainbow 8s linear infinite paused;
+	transition: transform 180ms ease;
+}
+
+.knowledgeAdmonition.perk:hover {
+	animation-play-state: running;
+	transform: translateY(-2px);
+}
+
+@keyframes knowledgePerkRainbow {
+	from {
+		background-position: 0% 0%;
+	}
+	to {
+		background-position: 100% 0%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.knowledgeAdmonition.perk {
+		animation: none;
+		transition: none;
+	}
+
+	.knowledgeAdmonition.perk:hover {
+		transform: none;
+	}
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionTitle {
+	background: rgba(255, 255, 255, 0.055);
+	color: rgba(255, 255, 255, 0.95);
+	text-decoration: none;
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionTitle::after {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	content: '';
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionTitle:hover::after {
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionTitle:focus-visible::after {
+	outline: 2px solid #fff;
+	outline-offset: -2px;
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionBody a {
+	position: relative;
+	z-index: 1;
+}
+
+.knowledgeAdmonition.perk .knowledgeAdmonitionBody {
+	background: rgba(0, 0, 0, 0.08);
 }
 
 .knowledgeAdmonitionTitle {
@@ -373,6 +603,16 @@
 
 .knowledgePage tbody tr:last-child td {
 	border-bottom: 0;
+}
+
+.minecraftFormattingTable,
+.minecraftFormattingTable code {
+	font-family: 'Minecraft UI', monospace;
+}
+
+.minecraftFormattingTable .minecraftTextPreview {
+	font-size: 1rem;
+	text-shadow: 2px 2px 0 color-mix(in srgb, currentColor 25%, black);
 }
 
 .knowledgePage td:first-child {
@@ -469,6 +709,7 @@
 	.playPage .knowledgeMobileNav {
 		display: grid;
 		gap: 6px;
+		margin-top: 12px;
 	}
 
 	.playPage .knowledgeMobileNav span {
@@ -488,6 +729,10 @@
 
 	.playPage .knowledgePda {
 		display: block;
+	}
+
+	.playPage .knowledgeReader {
+		margin-top: 18px;
 	}
 
 	.playPage .knowledgeSidebarRail {

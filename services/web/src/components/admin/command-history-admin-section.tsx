@@ -77,7 +77,9 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 		const timeoutId = window.setTimeout(() => {
 			void loadPage(null, false);
 		}, 0);
-		return () => window.clearTimeout(timeoutId);
+		return () => {
+			window.clearTimeout(timeoutId);
+		};
 	}, [activeSection, loadPage]);
 
 	if (activeSection !== 'commands') return null;

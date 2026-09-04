@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 		"priceDabloons": 50000,
 		"description": "",
-		"unlockWeight": 10,
+		"unlockWeight": 3,
 		"unlockMessage": "You have been crowned Biggest Moneywaster."
 	},
 	"equippableCosmetic": {}

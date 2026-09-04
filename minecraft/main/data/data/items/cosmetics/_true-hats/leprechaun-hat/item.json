@@ -8,9 +8,9 @@
 		"Follow the rainbow"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 80,
+	"priceDabloons": 140,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Leprechaun Hat."
 	},
 	"equippableCosmetic": {}

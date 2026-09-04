@@ -10,8 +10,11 @@
 	"shopPurchasable": {
 	"priceDabloons": 50,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 90,
 		"unlockMessage": "Unlocked cosmetic: Beret."
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#fc1414"
+	}
 }

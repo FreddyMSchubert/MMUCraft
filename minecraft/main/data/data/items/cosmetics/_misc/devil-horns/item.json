@@ -10,7 +10,7 @@
 	"shopPurchasable": {
 	"priceDabloons": 90,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 65,
 		"unlockMessage": "Unlocked cosmetic: Devil Horns."
 	},
 	"equippableCosmetic": {},

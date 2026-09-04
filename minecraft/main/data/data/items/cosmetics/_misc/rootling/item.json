@@ -2,15 +2,15 @@
 	"title": "Rootling",
 	"id": "cosmetic-rootling",
 	"modelType": "cosmetic",
-	"rarity": "uncommon",
+	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [
 		"It came to me in a dream"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 100,
+	"priceDabloons": 50,
 		"description": "",
-		"unlockWeight": 50,
+		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Rootling."
 	},
 	"equippableCosmetic": {},

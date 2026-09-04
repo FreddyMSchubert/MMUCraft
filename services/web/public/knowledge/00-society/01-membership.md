@@ -36,6 +36,7 @@ In no particular order:
 ### Main Benefits
 
 - Feeling of superiority
+- Your money helps fund the server - We'd be dead without you - THANK YOU! 💙
 
 ### Gameplay Benefits
 

@@ -93,9 +93,10 @@ public final class GliderCheck {
         assert Updrafts.heatRange(Blocks.FIRE.defaultBlockState()) == 60;
         assert Updrafts.heatRange(Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true)) == 100;
         var caught = new Updrafts.Updraft(64, 124, 100 + Updrafts.CARRY_TICKS);
-        assert caught.liftAt(65, 100) > 0.25;
-        assert Math.abs(caught.liftAt(94, 100) - 0.05625) < 1.0E-9;
-        assert Math.abs(caught.liftAt(118, 100) - 0.00525) < 1.0E-9;
+        assert Math.abs(caught.liftAt(64, 100) - 0.15) < 1.0E-9;
+        assert Math.abs(caught.liftAt(94, 100) - 0.0275) < 1.0E-9;
+        assert Math.abs(caught.liftAt(118, 100) - 0.01014) < 1.0E-9;
+        assert Math.abs(caught.liftAt(123.999, 100) - 0.01) < 1.0E-9;
         assert caught.liftAt(63, 100) <= Updrafts.SOURCE_ACCELERATION;
         assert caught.liftAt(94, 119) > 0;
         assert caught.liftAt(94, 120) == 0;

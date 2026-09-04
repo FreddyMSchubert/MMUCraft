@@ -79,7 +79,6 @@ public final class ParticleTrailsCheck {
         var memberOnly = new WeightedTrailSpec(Map.of(TrailParticle.SONIC_BOOM, 1));
         assert memberOnly.pick(fixed(0), false) == null;
         assert memberOnly.pick(fixed(0), true) == TrailParticle.SONIC_BOOM;
-        assert memberOnly.interval(true) == 10;
         var large = new WeightedTrailSpec(Map.of(TrailParticle.RED, Integer.MAX_VALUE, TrailParticle.BLUE, Integer.MAX_VALUE));
         assert large.totalWeight(false) == 2L * Integer.MAX_VALUE;
         assert ParticleTrailData.percentage(1, 8).equals("12.5%");

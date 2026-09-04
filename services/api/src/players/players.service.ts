@@ -190,14 +190,7 @@ export class PlayersService {
 			.run();
 
 		const savedProfile = this.profiles.get(target.id);
-		const minecraftUuid = target.minecraft_uuid;
-		if (minecraftUuid) {
-			await this.applyPlayerPresentation(target, savedProfile).catch((error: unknown) => {
-				this.logger.warn(
-					`Could not immediately synchronize player presentation to Minecraft: ${String(error)}`,
-				);
-			});
-		}
+		await this.synchronizePlayerPresentation(target.id);
 
 		return {
 			ok: true,
@@ -320,6 +313,19 @@ export class PlayersService {
 			},
 		);
 		if (!response.applied) throw new Error('Minecraft server refused the player presentation');
+	}
+
+	async synchronizePlayerPresentation(userId: number) {
+		const target = this.findUserById(userId);
+		if (!target?.minecraft_uuid) return;
+
+		await this.applyPlayerPresentation(target, this.profiles.get(userId)).catch(
+			(error: unknown) => {
+				this.logger.warn(
+					`Could not immediately synchronize player presentation to Minecraft: ${String(error)}`,
+				);
+			},
+		);
 	}
 
 	private findUserById(userId: number): UserRow | null {

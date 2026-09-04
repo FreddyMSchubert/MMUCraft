@@ -92,6 +92,14 @@ public final class GliderCheck {
         assert Updrafts.heatRange(Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, false)) == 0;
         assert Updrafts.heatRange(Blocks.FIRE.defaultBlockState()) == 60;
         assert Updrafts.heatRange(Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true)) == 100;
+        var caught = new Updrafts.Updraft(64, 124, 100 + Updrafts.CARRY_TICKS);
+        assert caught.liftAt(94, 100) == Updrafts.ACCELERATION / 2;
+        assert caught.liftAt(94, 119) > 0;
+        assert caught.liftAt(94, 120) == 0;
+        assert caught.liftAt(124, 101) == 0;
+        assert caught.liftAt(125, 101) == 0;
+        assert caught.liftAt(110, 101) < caught.liftAt(94, 100);
+        assert new Updrafts.Updraft(64, 80, 120).liftAt(80, 101) == 0;
         System.out.println("Glider checks passed: item, recipe, repairs, enchantments, speed, and heat sources.");
     }
 }

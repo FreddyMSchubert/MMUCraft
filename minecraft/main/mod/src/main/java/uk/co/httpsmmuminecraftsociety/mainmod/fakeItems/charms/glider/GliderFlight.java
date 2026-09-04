@@ -33,6 +33,7 @@ public final class GliderFlight {
         int impulseTick = Integer.MIN_VALUE;
         Vec3 previousPosition;
         ResourceKey<Level> dimension;
+        Updrafts.Updraft updraft;
     }
 
     public static void init() {
@@ -70,12 +71,15 @@ public final class GliderFlight {
 
         FlightState state = STATES.computeIfAbsent(player, ignored -> new FlightState());
         Vec3 position = player.getBoundingBox().getCenter();
+        if (!glider) state.updraft = null;
         if (state.dimension != player.level().dimension()) {
+            state.updraft = null;
             state.speedLimit = GLIDER_SPEED_BPS;
             state.previousPosition = null;
             state.dimension = player.level().dimension();
         }
         if (!player.isFallFlying()) {
+            state.updraft = null;
             state.speedLimit = GLIDER_SPEED_BPS;
             state.previousPosition = position;
             if (player.tickCount >= state.ascentGraceUntil) STATES.remove(player);
@@ -104,11 +108,15 @@ public final class GliderFlight {
         }
 
         if (glider) {
-            double lift = Updrafts.liftAt(player);
+            Updrafts.Updraft caught = Updrafts.findAt(player);
+            if (caught != null) state.updraft = caught;
+            double lift = state.updraft == null ? 0 : state.updraft.liftAt(player.getBoundingBox().minY, player.tickCount);
             if (lift > 0) {
                 velocity = new Vec3(velocity.x, Math.min(Updrafts.MAX_UPWARD_SPEED, velocity.y + lift), velocity.z);
                 state.speedLimit = BOOST_SPEED_BPS;
                 state.ascentGraceUntil = player.tickCount + ASCENT_GRACE_TICKS;
+            } else {
+                state.updraft = null;
             }
             if (player.tickCount >= state.ascentGraceUntil && velocity.y > 0) {
                 velocity = new Vec3(velocity.x, velocity.y * UPWARD_DAMPING, velocity.z);

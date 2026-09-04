@@ -47,8 +47,8 @@ public enum TrailParticle {
     HEART(Items.POPPY, "Hearts", ParticleTypes.HEART),
     SOUL(Items.SOUL_SAND, "Souls", ParticleTypes.SOUL),
     SCULK_CHARGE_POP(Items.SCULK, "Sculk sparks", ParticleTypes.SCULK_CHARGE_POP),
-    EXPLOSION(Items.TNT, "Explosion", ParticleTypes.EXPLOSION, 10),
-    SONIC_BOOM(Items.ECHO_SHARD, "Sonic boom", ParticleTypes.SONIC_BOOM, 10),
+    EXPLOSION(Items.TNT, "Explosion", ParticleTypes.EXPLOSION),
+    SONIC_BOOM(Items.ECHO_SHARD, "Sonic boom", ParticleTypes.SONIC_BOOM),
     HAPPY_VILLAGER(Items.EMERALD, "Happy villager", ParticleTypes.HAPPY_VILLAGER),
     ANGRY_VILLAGER(Items.ROTTEN_FLESH, "Angry villager", ParticleTypes.ANGRY_VILLAGER),
     EGG_CRACK(Items.TURTLE_EGG, "Egg sparks", ParticleTypes.EGG_CRACK),
@@ -57,8 +57,8 @@ public enum TrailParticle {
     NAUTILUS(Items.NAUTILUS_SHELL, "Nautilus", ParticleTypes.NAUTILUS),
     INFESTED(Items.SPIDER_EYE, "Infested", ParticleTypes.INFESTED),
     SMALL_GUST(Items.BREEZE_ROD, "Small gust", ParticleTypes.SMALL_GUST),
-    GUST(Items.WIND_CHARGE, "Gust", ParticleTypes.GUST, 10),
-    CAMPFIRE_COSY_SMOKE(Items.CAMPFIRE, "Campfire smoke", ParticleTypes.CAMPFIRE_COSY_SMOKE, 10),
+    GUST(Items.WIND_CHARGE, "Gust", ParticleTypes.GUST),
+    CAMPFIRE_COSY_SMOKE(Items.CAMPFIRE, "Campfire smoke", ParticleTypes.CAMPFIRE_COSY_SMOKE),
     CLOUD(Items.FEATHER, "Cloud", ParticleTypes.CLOUD),
     SMOKE(Items.CHARCOAL, "Smoke", ParticleTypes.SMOKE),
     POOF(Items.BONE, "Poof", ParticleTypes.POOF),
@@ -72,7 +72,7 @@ public enum TrailParticle {
     SCRAPE(Items.COPPER_BLOCK.weathering().oxidized(), "Copper scrape", ParticleTypes.SCRAPE),
     CRIT(Items.FLINT, "Critical sparks", ParticleTypes.CRIT),
     DAMAGE_INDICATOR(Items.SWEET_BERRIES, "Damage hearts", ParticleTypes.DAMAGE_INDICATOR),
-    SWEEP_ATTACK(Items.IRON_SWORD, "Sweeping arc", ParticleTypes.SWEEP_ATTACK, 10),
+    SWEEP_ATTACK(Items.IRON_SWORD, "Sweeping arc", ParticleTypes.SWEEP_ATTACK),
     ITEM_SLIME(Items.SLIME_BALL, "Slime", ParticleTypes.ITEM_SLIME),
     ITEM_COBWEB(Items.COBWEB, "Cobweb", ParticleTypes.ITEM_COBWEB),
     ITEM_SNOWBALL(Items.SNOWBALL, "Snowball", ParticleTypes.ITEM_SNOWBALL),
@@ -97,7 +97,7 @@ public enum TrailParticle {
     OMINOUS_SPAWNING(Items.HEAVY_CORE, "Ominous spawning", ParticleTypes.OMINOUS_SPAWNING),
     RAID_OMEN(Items.OMINOUS_BOTTLE, "Raid omen", ParticleTypes.RAID_OMEN),
     TRIAL_OMEN(Items.CHISELED_TUFF_BRICKS, "Trial omen", ParticleTypes.TRIAL_OMEN),
-    NOXIOUS_GAS(Items.POTENT_SULFUR, "Noxious gas", ParticleTypes.NOXIOUS_GAS, 10),
+    NOXIOUS_GAS(Items.POTENT_SULFUR, "Noxious gas", ParticleTypes.NOXIOUS_GAS),
     SULFUR_CUBE_GOO(Items.SULFUR_CUBE_BUCKET, "Sulfur goo", ParticleTypes.SULFUR_CUBE_GOO),
     REDSTONE(Items.REDSTONE, "Redstone dust", new DustParticleOptions(0xFF0000, 0.9f)),
     TINTED_LEAVES(Items.OAK_LEAVES, "Green leaves", ColorParticleOption.create(ParticleTypes.TINTED_LEAVES, 0xFF48B518)),
@@ -106,7 +106,7 @@ public enum TrailParticle {
     INSTANT_EFFECT(Items.GLISTERING_MELON_SLICE, "Instant effect", SpellParticleOption.create(ParticleTypes.INSTANT_EFFECT, 0xF82423, 1.0f)),
     DUST_COLOR_TRANSITION(Items.SCULK_SENSOR, "Sculk colour fade", DustColorTransitionOptions.SCULK_TO_REDSTONE),
     SCULK_CHARGE(Items.SCULK_VEIN, "Sculk charge", new SculkChargeParticleOptions(0.0f)),
-    SHRIEK(Items.SCULK_SHRIEKER, "Shriek", new ShriekParticleOption(0), 10),
+    SHRIEK(Items.SCULK_SHRIEKER, "Shriek", new ShriekParticleOption(0)),
     BLOCK(Items.AMETHYST_BLOCK, "Amethyst fragments", new BlockParticleOption(ParticleTypes.BLOCK, Blocks.AMETHYST_BLOCK.defaultBlockState())),
     FALLING_DUST(Items.SAND, "Sand dust", new BlockParticleOption(ParticleTypes.FALLING_DUST, Blocks.SAND.defaultBlockState())),
     BLOCK_CRUMBLE(Items.CREAKING_HEART, "Creaking fragments", new BlockParticleOption(ParticleTypes.BLOCK_CRUMBLE, Blocks.CREAKING_HEART.defaultBlockState())),
@@ -118,21 +118,15 @@ public enum TrailParticle {
     public final Item ingredient;
     public final String label;
     public final ParticleOptions options;
-    public final int interval;
 
     TrailParticle(Item ingredient, DyeColor dye) {
         this(ingredient, title(dye.getName()) + " dust", new DustParticleOptions(boostColor(dye.getTextureDiffuseColor()), 0.9f));
     }
 
     TrailParticle(Item ingredient, String label, ParticleOptions options) {
-        this(ingredient, label, options, 1);
-    }
-
-    TrailParticle(Item ingredient, String label, ParticleOptions options, int interval) {
         this.ingredient = ingredient;
         this.label = label;
         this.options = options;
-        this.interval = interval;
     }
 
     public String id() {

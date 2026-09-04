@@ -42,6 +42,28 @@ final class Messages {
                 .append(Component.text("Please try again later.", MUTED));
     }
 
+    static Component updating(long startedAt, boolean mainOnline) {
+        long elapsed = Math.max(0, Instant.now().getEpochSecond() - startedAt);
+        if (elapsed > 600) {
+            return heading("Server update delayed", RED)
+                    .append(Component.text("The update started " + elapsed + " seconds ago (more than 10 minutes).\n", TEXT))
+                    .append(Component.text(mainOnline
+                            ? "The main server responds, but deployment checks have not finished.\n\n"
+                            : "The main Minecraft server is still not reachable.\n\n", TEXT))
+                    .append(discordHelp("Please contact the committee on "));
+        }
+        return heading("Server update in progress", GOLD)
+                .append(Component.text("The update started " + elapsed + " seconds ago.\n", TEXT))
+                .append(Component.text("Please allow about 200–300 seconds in total.\n", TEXT))
+                .append(Component.text("Join again in a few minutes. Thank you for waiting!", MUTED));
+    }
+
+    static Component updateStateUnavailable() {
+        return heading("Update status unavailable", RED)
+                .append(Component.text("We cannot read the server update status.\n\n", TEXT))
+                .append(discordHelp("Please contact the committee on "));
+    }
+
     static Component unavailable() {
         return heading("Server unavailable", RED)
                 .append(Component.text("We could not connect you to the selected Minecraft server.\n", TEXT))

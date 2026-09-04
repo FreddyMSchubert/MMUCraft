@@ -31,3 +31,33 @@ The homepage defaults to the society Discord invite and Instagram account. Overr
 Grafana is available at `https://grafana.PUBLIC_HOST/`. Requests to the old `/grafana/` path redirect to this host. Sign in as `admin` with `GRAFANA_ADMIN_PASSWORD` from `.env`. Anonymous access and Grafana account creation are disabled. Website accounts are not affected.
 
 Grafana contains the Statistics, Gameplay Admin, and Technical dashboards. The Technical dashboard shows container logs and lets you filter them by service. Prometheus retains 90 days of metrics, and Loki retains 14 days of logs. Both services store their data in Docker volumes.
+
+## Update sequence
+
+Images are pulled and checked before the warning period. The script sends the warning only if the main server has players, then writes `data/velocity/deployment.properties`. The file contains `updating=true`, a start time in Unix seconds, and a unique deployment ID. The script writes a temporary file and renames it so Velocity cannot read a partial update.
+
+Velocity reads this file without the API. It blocks new joins and disconnects connected players with an update message. It writes `deployment-drained` only after all proxy connections have closed. This file contains the deployment ID, whether players were connected, and whether the main server and route are ready. The deployment script rejects an acknowledgement from a different deployment.
+
+If players were connected, the API sends a Discord start notice and a completion notice. If Velocity confirms that no players were connected, the script skips both notices. If the player state is unknown, the script attempts a notice. `force=true` still attempts notices, disconnects, and a world save. It continues after a failed attempt and writes a warning to the deployment log. Without force, a failed attempt stops deployment. Force does not bypass release health checks.
+
+The script updates Velocity before it stops the API and Minecraft. Velocity has no API startup dependency. It can show update progress while those services restart. A Velocity image change still causes a short proxy restart. During that restart, the proxy cannot show a message.
+
+The server list shows the update status. Each connection attempt shows the elapsed update time and an estimate of 200–300 seconds. After 10 minutes, the message asks players to contact the committee. It states whether the main server responds. The time is refreshed on each request; a disconnect screen does not update after the connection closes.
+
+The script clears the update flag after the services pass their health checks and Velocity confirms that the main server and route are ready. If a deployment fails after shutdown starts, the flag stays active. This prevents a failed update from appearing complete. Run a successful deployment to clear this state. If deployment stops before shutdown, the script clears the flag. If the API fails to save, a normal deployment first restarts the existing API and checks recovery before it clears the flag.
+
+The first deployment of this change requires `force=true` because the old Velocity plugin cannot write an acknowledgement. The script still calls the old API to attempt its disconnect and notice. The new behaviour is available after the proxy has been updated. Later deployments can use `force=false`.
+
+Run the local deployment check with:
+
+```sh
+python3 prod/check-deployment.py
+```
+
+This check uses temporary command substitutes. It does not start Docker or contact a server.
+
+## Replacement server limits
+
+The main server owns one persistent world at `data/minecraft`. A second Minecraft process cannot safely use that live world. A separate world copy would become stale while players continue to play. A safe switch would require a final save, a consistent copy, and a new server start. The API also owns one SQLite database and applies migrations at startup. Two releases would need compatible database access.
+
+For this setup, keep one main server. Pull images before downtime, save and stop the current server, then start the replacement. Compose recreates application containers when their image or configuration changes. The API is stopped after its drain so it starts accepting requests again even when its image has not changed. Nginx and the monitoring services are recreated to load changes in their mounted configuration files. Compose cannot detect changes inside those files.

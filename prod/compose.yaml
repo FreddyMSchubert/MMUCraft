@@ -195,10 +195,6 @@ services:
           pids: 256
         reservations:
           memory: 256m
-    depends_on:
-      api:
-        condition: service_healthy
-        restart: true
     security_opt:
       - no-new-privileges:true
     logging: *logging

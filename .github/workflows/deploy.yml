@@ -14,7 +14,7 @@ on:
                 default: 3
                 type: number
             force:
-                description: Deploy even if the server cannot save
+                description: Attempt a graceful update, then continue if notices, disconnects, or saving fail
                 required: true
                 default: false
                 type: boolean

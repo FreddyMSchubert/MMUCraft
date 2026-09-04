@@ -113,6 +113,17 @@ tasks.register('checkParticleTrails', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkGlider', JavaExec) {
+    group = 'verification'
+    description = 'Check the glider item, recipe, repairs, enchantments, speed, and heat sources.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCheck'
+    enableAssertions = true
+    args projectDir.absolutePath
+    workingDir = layout.buildDirectory.dir('gliderCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
 processResources {
     dependsOn "generateMiniBlockRecipes"
     inputs.property "version", project.version

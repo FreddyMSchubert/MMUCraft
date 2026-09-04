@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 
@@ -14,7 +15,8 @@ public final class RepairSameItem implements AnvilRecipe
     {
         return left.isDamageableItem()
                 && right.isDamageableItem()
-                && left.is(right.getItem());
+                && left.is(right.getItem())
+                && GliderCharm.isGlider(left) == GliderCharm.isGlider(right);
     }
 
     @Override

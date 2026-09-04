@@ -11,6 +11,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmLevelDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
@@ -48,7 +49,7 @@ final class GameplayCharmOperations {
         StoredCharmData stored = CharmStackData.getSingleStoredCharm(stack).orElse(null);
         FakeItem item = stored == null ? null : FakeItems.CHARM_ID_MAP.get(stored.charmId());
         CharmItemFeature feature = item == null ? null : item.getFeature(CharmItemFeature.class);
-        if (feature != null) {
+        if (feature != null && !GliderCharm.isGlider(stack)) {
             response.addCharms(buildInventoryCharm(player, slot, item, feature, stored.level()));
         } else {
             response.setMessage("Hold one charm in your main hand, then refresh the forge.");

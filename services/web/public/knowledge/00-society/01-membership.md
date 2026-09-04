@@ -44,6 +44,7 @@ In no particular order:
 - More dabloons earned when claiming the full daily completion reward on a given day.
 - The price increase of buying more than one claim is less steep for members.
 - Respawn at half the distance from your death location as normal players.
+- Way more cool particles for particle trails than just the colored dust for your elytra, bow, crossbow, trident and mace.
 - When not logging a day on the login streaks, for non-member the streak resets, where for members it is only cut in half.
 - Travel up to 15,000 blocks instead of only 7,500 blocks when using a Potion of Displacement to find what you're looking for easier.
 - Bring animals & mobs with you when using teleportation potions.

@@ -1,12 +1,15 @@
 ====
 id: bow-trails
 unlockOrder: 5
-chatMessage: You unlocked knowledge on Bow and Elytra Trails. Add particles to your arrows and flights.
+chatMessage: You unlocked Particle Trails. Add awesome particles to your weapons and elytra.
 sidebarTitle: Particle Trails
 tags:
 - bowtrails
 - bow trails
 - elytra trails
+- trident trails
+- crossbow trails
+- mace trails
 - particles
 - member particles
 - glide
@@ -45,11 +48,13 @@ Combining a tool with red, green and white dye would for example create:
 
 ![Target-Practice](/assets/knowledge/items/bow-trails/target-practice.png)
 
+:::perk
+Normal players can use colored dust particles, but members can additionally use all the other cool particles there are in the game!
+:::
+
 ### All Particles
 
 Here's the comprehensive list:
-
-Each dye uses its own colour. The shared wiki preview shows the dust shape in red. **The dye name determines your trail colour.**
 
 | Ingredient | Particle | Example | Available to everyone? |
 | --- | --- | --- | --- |

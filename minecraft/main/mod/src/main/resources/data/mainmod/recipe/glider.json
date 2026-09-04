@@ -9,7 +9,7 @@
     "S": "minecraft:stick"
   },
   "result": {
-    "stack": "mainmod:glider",
+    "stack": "mainmod:charm-glider",
     "count": 1
   }
 }

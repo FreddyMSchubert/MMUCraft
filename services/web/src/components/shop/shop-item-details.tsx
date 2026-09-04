@@ -17,11 +17,13 @@ export function FilterRow({
 	label,
 	options,
 	selected,
+	membershipLocked = false,
 	onSelect,
 }: {
 	label: string;
 	options: { value: string; label: string }[];
 	selected: string;
+	membershipLocked?: boolean;
 	onSelect: (value: string) => void;
 }) {
 	return (
@@ -38,6 +40,10 @@ export function FilterRow({
 							onSelect(option.value);
 						}}
 					>
+						{membershipLocked &&
+							['dyeable', 'animated', 'members-only'].includes(option.value) && (
+								<ShopLock />
+							)}
 						{option.value === 'animated' ? <AnimatedLabel /> : option.label}
 					</button>
 				))}
@@ -63,7 +69,7 @@ export function ShopCard({
 }) {
 	return (
 		<article
-			className={`shopCard shopCard-${item.type} rarity-${item.rarity} ${!item.available ? 'unavailable' : ''}`}
+			className={`shopCard shopCard-${item.type} rarity-${item.rarity} ${!item.available && !item.membershipLocked ? 'unavailable' : ''}`}
 			tabIndex={0}
 			role="button"
 			aria-label={`View ${item.title}`}
@@ -106,13 +112,22 @@ export function ShopCard({
 			<button
 				type="button"
 				className="shopCardFoot"
-				disabled={isSoldOut(item)}
+				disabled={isSoldOut(item) || item.membershipLocked}
 				onClick={(event) => {
 					event.stopPropagation();
 					onOpen(item);
 				}}
 			>
-				{isSoldOut(item) ? 'Sold out' : 'Buy now'}
+				{item.membershipLocked ? (
+					<>
+						<ShopLock />
+						Members only
+					</>
+				) : isSoldOut(item) ? (
+					'Sold out'
+				) : (
+					'Buy now'
+				)}
 			</button>
 		</article>
 	);
@@ -211,7 +226,12 @@ export function ShopDetails({
 							disabled={!item.available || buying}
 							onClick={() => void onBuy(item)}
 						>
-							{item.available ? (
+							{item.membershipLocked ? (
+								<>
+									<ShopLock />
+									Members only
+								</>
+							) : item.available ? (
 								buying ? (
 									'Buying…'
 								) : (
@@ -375,12 +395,20 @@ function ItemBadges({ item }: { item: ShopItem }) {
 	const tags = [
 		item.dyeable ? (
 			<span key="dyeable" className="shopTag dyeable">
+				{item.membershipLocked && <ShopLock />}
 				Dyeable
 			</span>
 		) : null,
 		item.animated ? (
 			<span key="animated" className="shopTag animated">
+				{item.membershipLocked && <ShopLock />}
 				<AnimatedLabel />
+			</span>
+		) : null,
+		item.membersOnly ? (
+			<span key="members-only" className="shopTag membersOnly">
+				{item.membershipLocked && <ShopLock />}
+				Members-only
 			</span>
 		) : null,
 		item.isDailyDeal ? (
@@ -403,6 +431,10 @@ function ItemBadges({ item }: { item: ShopItem }) {
 			{tags.length > 0 && <div className="shopTagBadges">{tags}</div>}
 		</div>
 	);
+}
+
+function ShopLock() {
+	return <span aria-hidden="true">🔒 </span>;
 }
 
 function AnimatedLabel() {

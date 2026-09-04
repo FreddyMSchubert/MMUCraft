@@ -7,7 +7,8 @@ export type ShopOrder =
 	| 'rarity-desc'
 	| 'price-desc'
 	| 'price-asc';
-export type ShopTagFilter = 'all' | 'dyeable' | 'animated' | 'discounted' | 'sold-out';
+export type ShopTagFilter =
+	'all' | 'dyeable' | 'animated' | 'discounted' | 'sold-out' | 'members-only';
 
 interface CharmLevel {
 	level: number;
@@ -38,6 +39,8 @@ export interface ShopItem {
 	textureUrl: string | null;
 	animated: boolean;
 	dyeable: boolean;
+	membersOnly: boolean;
+	membershipLocked: boolean;
 	animation: { frameDelayMs: number; frames: number[] | null } | null;
 	charmDetails: { minLevel: number; maxLevel: number; levels: CharmLevel[] } | null;
 	unlocked: boolean;
@@ -45,6 +48,7 @@ export interface ShopItem {
 }
 
 export interface ShopResponse {
+	isMember: boolean;
 	dealDate: string;
 	shoppingSunday: boolean;
 	availability: { knowledge: boolean; charms: boolean; cosmetics: boolean };
@@ -72,6 +76,7 @@ export const TAG_OPTIONS: { value: ShopTagFilter; label: string }[] = [
 	{ value: 'all', label: 'All' },
 	{ value: 'dyeable', label: 'Dyeable' },
 	{ value: 'animated', label: 'Animated' },
+	{ value: 'members-only', label: 'Members-only' },
 	{ value: 'discounted', label: 'Discounted' },
 	{ value: 'sold-out', label: 'Sold out' },
 ];
@@ -98,7 +103,7 @@ export function shouldHidePreview(item: ShopItem, arachnophobiaMode: boolean) {
 }
 
 export function isSoldOut(item: ShopItem) {
-	return item.type === 'generic' && !item.available;
+	return item.type === 'generic' && !item.available && !item.membershipLocked;
 }
 
 export function compareTitles(left: ShopItem, right: ShopItem) {

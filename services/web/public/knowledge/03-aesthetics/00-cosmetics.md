@@ -13,11 +13,11 @@ tips:
 - Cosmetics can also make for nice decorations if you place them in an item frame (and optionally make the item frame invisible using Invisi-Carrots).
 ====
 
-Cover what cosmetics are and how Fashion Books unlock them in the shop. Show the dyeing, combining, separating, equipping, and removing recipes. Include the bow-trail recipe, repeated-dye weighting, and the recipe that removes a trail. Mention animated textures and cosmetics that also work as [decorative blocks](/play/knowledge/decorative-blocks).
+TODO: note that as a member perk dyeable stuff and animated stuff is members-only
 
 ## Fashion Books
 
-(image of book in loot chest)
+TODO: (image of book in loot chest)
 
 You may have noticed the "Fashion Books" in loot chests, when right clicking these books you will unlock a cosmetic at random that you can then purchase from the shop. 
 

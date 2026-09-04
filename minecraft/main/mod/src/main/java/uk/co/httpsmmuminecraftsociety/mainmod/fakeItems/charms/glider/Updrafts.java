@@ -3,21 +3,23 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 final class Updrafts {
-    static final int FIRE_RANGE = 60;
-    static final int LAVA_RANGE = 80;
-    static final int SOUL_FIRE_RANGE = 100;
+    static final int FIRE_RANGE = 20;
+    static final int LAVA_RANGE = 35;
+    static final int SOUL_FIRE_RANGE = 50;
     static final double SOURCE_ACCELERATION = 0.15;
     static final double TOP_ACCELERATION = 0.01;
     static final double MAX_UPWARD_SPEED = 1.0;
     static final int CARRY_TICKS = 20;
 
-    record Updraft(int sourceY, int ceilingY, int expiresAt) {
+    record Updraft(int sourceY, double ceilingY, int expiresAt) {
         double liftAt(double feetY, int tick) {
             if (tick >= expiresAt || feetY >= ceilingY || ceilingY <= sourceY) return 0;
             double remainingFraction = Math.min(1.0, (ceilingY - feetY) / (ceilingY - sourceY));
@@ -27,8 +29,11 @@ final class Updrafts {
     }
 
     static @Nullable Updraft findAt(ServerPlayer player) {
-        var level = player.level();
-        BlockPos feet = BlockPos.containing(player.getX(), player.getBoundingBox().minY, player.getZ());
+        return findAt(player.level(), player.position(), player.getBbHeight(), player.tickCount);
+    }
+
+    static @Nullable Updraft findAt(BlockGetter level, Vec3 position, double height, int tick) {
+        BlockPos feet = BlockPos.containing(position);
         int maxRange = Math.max(FIRE_RANGE, Math.max(LAVA_RANGE, SOUL_FIRE_RANGE));
         for (int distance = 0; distance <= maxRange && feet.getY() - distance >= level.getMinY(); distance++) {
             BlockPos pos = feet.below(distance);
@@ -36,16 +41,15 @@ final class Updrafts {
             int range = level.getFluidState(pos).is(FluidTags.LAVA) ? LAVA_RANGE : heatRange(block);
             if (range > 0) {
                 if (distance >= range) return null;
-                int ceilingDistance = range - distance;
-                BlockPos head = BlockPos.containing(player.getX(), player.getBoundingBox().maxY, player.getZ());
-                for (int above = 0; above < ceilingDistance; above++) {
-                    if (!level.getBlockState(head.above(above)).isAir()) {
-                        ceilingDistance = above;
+                double ceilingY = pos.getY() + range;
+                BlockPos head = BlockPos.containing(position.x, position.y + height, position.z);
+                for (int y = head.getY(); y < ceilingY + height; y++) {
+                    if (!level.getBlockState(new BlockPos(head.getX(), y, head.getZ())).isAir()) {
+                        ceilingY = y - height;
                         break;
                     }
                 }
-                int end = Math.min(range, distance + ceilingDistance);
-                return end <= distance ? null : new Updraft(pos.getY(), pos.getY() + end, player.tickCount + CARRY_TICKS);
+                return ceilingY <= position.y ? null : new Updraft(pos.getY(), ceilingY, tick + CARRY_TICKS);
             }
             if (!block.isAir()) return null;
         }

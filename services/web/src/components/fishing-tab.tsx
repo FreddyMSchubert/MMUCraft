@@ -102,6 +102,7 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 		name: candidate.minecraftUsername,
 		color: candidate.color,
 		pronouns: candidate.pronouns,
+		emojis: candidate.emojis,
 		value: candidate.caughtTotal,
 		displayValue: new Intl.NumberFormat().format(candidate.caughtTotal),
 		avatarUrl: candidate.avatarUrl,

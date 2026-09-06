@@ -175,6 +175,41 @@
 	color: #fff;
 }
 
+.podiumOverflow {
+	display: grid;
+	gap: 8px;
+	justify-items: center;
+}
+
+.podiumOverflow p {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.72rem;
+	font-weight: 800;
+}
+
+.podiumOverflow > div {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+}
+
+.podiumOverflow a {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	color: inherit;
+	font-size: 0.74rem;
+	text-decoration: none;
+}
+
+.podiumOverflow .playerHead-large,
+.podiumOverflow .podiumHeadImage {
+	width: 32px;
+	height: 32px;
+}
+
 .leaderboardPodium.compact {
 	gap: 8px;
 	padding: 12px;

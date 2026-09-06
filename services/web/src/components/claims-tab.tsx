@@ -7,7 +7,7 @@ import {
 	formatDimension,
 	type EditableClaim,
 } from '@/components/claim-editor-card';
-import { PlayerName } from '@/components/player-name';
+import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 import { PlayerSelector } from '@/components/player-selector';
 import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
@@ -21,6 +21,7 @@ interface ClaimPerson {
 	pronouns: string;
 	color: string;
 	avatarUrl: string | null;
+	emojis: PlayerEmoji[];
 	isOwner?: boolean;
 }
 
@@ -269,6 +270,7 @@ export function ClaimsTab() {
 												<PlayerName
 													name={person.minecraftUsername}
 													color={person.color}
+													emojis={person.emojis}
 												/>
 											</strong>
 											{person.pronouns && <span>{person.pronouns}</span>}
@@ -378,7 +380,11 @@ function ClaimMembersSummary({ members }: { members: ClaimPerson[] }) {
 				{members.map((person) => (
 					<span className="claimMemberInline" key={person.id}>
 						<PlayerHead person={person} />
-						<PlayerName name={person.minecraftUsername} color={person.color} />
+						<PlayerName
+							name={person.minecraftUsername}
+							color={person.color}
+							emojis={person.emojis}
+						/>
 					</span>
 				))}
 			</div>

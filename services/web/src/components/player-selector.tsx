@@ -7,6 +7,7 @@ export interface PlayerSelectorOption {
 	id: number;
 	minecraftUsername: string;
 	color: string;
+	emojis?: { emoji: string }[];
 }
 
 export function PlayerSelector({
@@ -54,8 +55,10 @@ export function PlayerSelector({
 							value={player.minecraftUsername}
 							label={
 								value.trim()
-									? `${value.trim()} → ${player.minecraftUsername}`
-									: undefined
+									? `${value.trim()} → ${player.emojis?.map(({ emoji }) => emoji).join('') ?? ''} ${player.minecraftUsername}`.trim()
+									: player.emojis?.length
+										? `${player.emojis.map(({ emoji }) => emoji).join('')} ${player.minecraftUsername}`
+										: undefined
 							}
 						/>
 					))}

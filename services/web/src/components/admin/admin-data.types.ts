@@ -1,5 +1,8 @@
+import type { PlayerEmoji } from '@/components/player-name';
+
 export type AdminSection =
 	| 'members'
+	| 'emojis'
 	| 'claims'
 	| 'server-claims'
 	| 'whitelist'
@@ -22,6 +25,7 @@ export interface AdminPlayer {
 	isMember: boolean;
 	isCommittee: boolean;
 	isExternal: boolean;
+	emojis: PlayerEmoji[];
 }
 
 export interface GiftCode {
@@ -40,6 +44,8 @@ export interface WhitelistedEmail {
 	addedByColor: string;
 	responsibleMinecraftUsername: string | null;
 	responsiblePlayerColor: string | null;
+	responsiblePlayerEmojis: PlayerEmoji[];
+	addedByEmojis: PlayerEmoji[];
 	createdAtUnixMs: number;
 }
 
@@ -51,13 +57,16 @@ export interface AdminClaim {
 	chunkZ: number;
 	minecraftUsername: string;
 	color: string;
+	emojis: PlayerEmoji[];
 }
 
 export interface ActivePlayerBan {
 	userId: number;
 	minecraftUsername: string;
 	color: string;
+	emojis: PlayerEmoji[];
 	bannedByMinecraftUsername: string;
+	bannedByEmojis: PlayerEmoji[];
 	expiresAtUnixMs: number | null;
 	createdAtUnixMs: number;
 }
@@ -93,7 +102,8 @@ export interface SigninAttemptLogEntry {
 export const ADMIN_PAGE_SIZE = 42;
 
 export function normalizeAdminSection(section: string | undefined): AdminSection {
-	return section === 'claims' ||
+	return section === 'emojis' ||
+		section === 'claims' ||
 		section === 'server-claims' ||
 		section === 'whitelist' ||
 		section === 'bans' ||

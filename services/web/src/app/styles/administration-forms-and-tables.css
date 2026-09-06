@@ -485,15 +485,29 @@
 	accent-color: #ffd166;
 }
 
-.committeeBadge {
-	display: inline-block;
-	margin-left: 8px;
-	padding: 2px 5px;
-	border-radius: 4px;
-	background: rgba(123, 235, 255, 0.16);
-	color: #7bebff;
-	font-size: 0.68rem;
-	text-transform: uppercase;
+.emojiEditor,
+.adminActions {
+	display: grid;
+	gap: 6px;
+}
+
+.emojiEditorRow {
+	display: grid;
+	grid-template-columns: 4rem minmax(12rem, 1fr) auto;
+	gap: 6px;
+}
+
+.emojiEditorRow input {
+	min-width: 0;
+	padding: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.emojiSummary {
+	display: block;
 }
 
 .loadMoreButton {

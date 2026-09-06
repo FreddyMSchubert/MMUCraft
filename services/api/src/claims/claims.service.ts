@@ -18,6 +18,7 @@ import {
 	normalizeOptionalColor,
 	playerAvatarUrl,
 } from '../players/player-color';
+import { playerEmojis } from '../players/player-emojis';
 import {
 	ClaimMinecraftSynchronizationService,
 	type ClaimsSnapshot,
@@ -233,6 +234,11 @@ export class ClaimsService {
 					color,
 					avatarUrl: playerAvatarUrl(user.minecraft_uuid),
 					isMember: user.is_member === 1 && Boolean(user.minecraft_uuid),
+					emojis: playerEmojis(
+						user.is_member === 1,
+						user.is_super_admin === 1 || user.is_committee === 1,
+						profile?.emoji_override_json,
+					),
 				};
 			});
 	}

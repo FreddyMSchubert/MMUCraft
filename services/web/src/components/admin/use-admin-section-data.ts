@@ -29,7 +29,7 @@ export function useAdminSectionData(
 	const load = useCallback(async () => {
 		const jobs: Promise<void>[] = [];
 		if (
-			['members', 'claims', 'whitelist', 'bans', 'dailies', 'commands'].includes(
+			['members', 'emojis', 'claims', 'whitelist', 'bans', 'dailies', 'commands'].includes(
 				activeSection,
 			)
 		) {

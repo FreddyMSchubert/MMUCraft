@@ -10,6 +10,7 @@ import { EmailWhitelistAdminSection } from './admin/email-whitelist-admin-sectio
 import { GiftCodeAdminSection } from './admin/gift-code-admin-section';
 import { MemberAccessAdminSection } from './admin/member-access-admin-section';
 import { PlayerBanAdminSection } from './admin/player-ban-admin-section';
+import { PlayerEmojiAdminSection } from './admin/player-emoji-admin-section';
 import { ServerClaimAdministrationSection } from './admin/server-claim-administration-section';
 import { useAdminTabController } from './admin/use-admin-tab-controller';
 import { VelocityAdminSection } from './admin/velocity-admin-section';
@@ -26,6 +27,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			<CommandHistoryAdminSection controller={controller} />
 			<SigninAttemptHistoryAdminSection controller={controller} />
 			<MemberAccessAdminSection controller={controller} />
+			<PlayerEmojiAdminSection controller={controller} />
 			<ClaimAdministrationSection controller={controller} />
 			<ServerClaimAdministrationSection controller={controller} />
 			<EmailWhitelistAdminSection controller={controller} />

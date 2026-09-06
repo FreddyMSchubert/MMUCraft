@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { and, asc, eq } from 'drizzle-orm';
 import { claims, DatabaseService, playerProfiles, users } from '../database/database.service';
 import { effectivePlayerColor } from '../players/player-color';
+import { playerEmojis } from '../players/player-emojis';
 import { ClaimMinecraftSynchronizationService } from './claim-minecraft-synchronization.service';
 
 const ADMIN_PAGE_SIZE = 42;
@@ -26,6 +27,10 @@ export class ClaimAdministrationService {
 				minecraftUsername: users.minecraft_username,
 				minecraftUuid: users.minecraft_uuid,
 				color: playerProfiles.color_hex,
+				emojiOverrideJson: playerProfiles.emoji_override_json,
+				isMember: users.is_member,
+				isCommittee: users.is_committee,
+				isSuperAdmin: users.is_super_admin,
 			})
 			.from(claims)
 			.innerJoin(users, eq(users.id, claims.owner_user_id))
@@ -50,6 +55,11 @@ export class ClaimAdministrationService {
 				chunkZ: claim.chunkZ,
 				minecraftUsername: claim.minecraftUsername,
 				color: effectivePlayerColor(claim.minecraftUuid, claim.color),
+				emojis: playerEmojis(
+					claim.isMember === 1,
+					claim.isSuperAdmin === 1 || claim.isCommittee === 1,
+					claim.emojiOverrideJson,
+				),
 			})),
 			hasMore: rows.length > limit,
 		};

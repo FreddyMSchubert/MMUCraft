@@ -118,6 +118,7 @@ export function PlayerBanAdminSection({ controller }: { controller: AdminTabCont
 											<PlayerName
 												name={ban.minecraftUsername}
 												color={ban.color}
+												emojis={ban.emojis}
 											/>
 										</td>
 										<td>
@@ -125,7 +126,13 @@ export function PlayerBanAdminSection({ controller }: { controller: AdminTabCont
 												? 'Permanent ban'
 												: `Timeout until ${formatDateTime(ban.expiresAtUnixMs)}`}
 										</td>
-										<td>{ban.bannedByMinecraftUsername}</td>
+										<td>
+											<PlayerName
+												name={ban.bannedByMinecraftUsername}
+												color="#E6E6E6"
+												emojis={ban.bannedByEmojis}
+											/>
+										</td>
 										<td>{formatDateTime(ban.createdAtUnixMs)}</td>
 										<td>
 											<button

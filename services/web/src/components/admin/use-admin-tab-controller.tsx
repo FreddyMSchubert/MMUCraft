@@ -30,7 +30,6 @@ export function useAdminTabController({
 	const adminSectionData = useAdminSectionData(activeSection, setError);
 	const {
 		players,
-		setPlayers,
 		setCountdowns,
 		claims,
 		setClaims,
@@ -84,11 +83,7 @@ export function useAdminTabController({
 			const body = await response.json().catch(() => null);
 			if (!response.ok) throw new Error(apiMessage(body, 'Failed to update membership'));
 
-			setPlayers((current) =>
-				current.map((candidate) =>
-					candidate.id === player.id ? { ...candidate, isMember } : candidate,
-				),
-			);
+			await load();
 		} catch (caught) {
 			await showFailure(
 				'Could not update membership',
@@ -124,11 +119,7 @@ export function useAdminTabController({
 			if (!response.ok)
 				throw new Error(apiMessage(body, 'Failed to update committee access'));
 
-			setPlayers((current) =>
-				current.map((candidate) =>
-					candidate.id === player.id ? { ...candidate, isCommittee } : candidate,
-				),
-			);
+			await load();
 		} catch (caught) {
 			await showFailure(
 				'Could not update committee access',
@@ -246,6 +237,7 @@ export function useAdminTabController({
 							<PlayerName
 								name={responsiblePlayer.minecraftUsername}
 								color={responsiblePlayer.color}
+								emojis={responsiblePlayer.emojis}
 							/>{' '}
 							paid <DabloonAmount amount={result.priceDabloons} /> and has{' '}
 							<DabloonAmount amount={result.balanceDabloons} /> left.
@@ -357,8 +349,12 @@ export function useAdminTabController({
 					tone: 'success',
 					message: (
 						<>
-							<PlayerName name={player.minecraftUsername} color={player.color} /> was{' '}
-							{banMode === 'permanent' ? 'permanently banned' : 'put in timeout'}.
+							<PlayerName
+								name={player.minecraftUsername}
+								color={player.color}
+								emojis={player.emojis}
+							/>{' '}
+							was {banMode === 'permanent' ? 'permanently banned' : 'put in timeout'}.
 						</>
 					),
 				});
@@ -401,8 +397,12 @@ export function useAdminTabController({
 				tone: 'success',
 				message: (
 					<>
-						<PlayerName name={ban.minecraftUsername} color={ban.color} /> can sign in
-						and join again.
+						<PlayerName
+							name={ban.minecraftUsername}
+							color={ban.color}
+							emojis={ban.emojis}
+						/>{' '}
+						can sign in and join again.
 					</>
 				),
 			});

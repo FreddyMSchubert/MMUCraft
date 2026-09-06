@@ -11,6 +11,8 @@
   "blazeandcave:redstone/root",
   "blazeandcave:statistics/root",
   "blazeandcave:weaponry/root",
+  "global:master_cutter",
+  "global:root",
   "minecraft:adventure/root",
   "minecraft:end/root",
   "minecraft:husbandry/root",

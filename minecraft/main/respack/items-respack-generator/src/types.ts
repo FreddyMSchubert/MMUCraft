@@ -17,6 +17,7 @@ export interface BaseDiscoveredItem {
 }
 
 export interface ShopPurchasableDefinition {
+	readonly gameplayToggle?: string;
 	readonly priceDabloons: number;
 	readonly description: string;
 	readonly unlockMessage?: string;

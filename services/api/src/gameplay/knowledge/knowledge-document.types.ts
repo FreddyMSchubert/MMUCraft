@@ -1,5 +1,6 @@
 export interface KnowledgePageMetadata {
 	id: string;
+	gameplayToggle: string | null;
 	unlockOrder: number | null;
 	chatMessage: string;
 	sidebarTitle: string;

@@ -9,6 +9,9 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from stage_item_data import validate_gameplay_toggle_references
+
 
 ITEMS_ROOT = Path("data/data/items")
 SCHEMA_ROOT = Path("data/validation/schemas/item")
@@ -115,6 +118,10 @@ def main() -> int:
 
 	item_jsons = discover_item_jsons(items_root)
 	registry = build_schema_registry(schema_root)
+	try:
+		validate_gameplay_toggle_references(root)
+	except (OSError, ValueError, json.JSONDecodeError) as exc:
+		raise ItemDataError(str(exc)) from exc
 
 	for item_json, _ in item_jsons:
 		validate_item(root_schema, registry, item_json)

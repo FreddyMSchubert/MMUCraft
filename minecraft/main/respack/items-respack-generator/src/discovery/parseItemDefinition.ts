@@ -77,6 +77,7 @@ function parseShopPurchasableComponent(
 	}
 
 	return {
+		gameplayToggle: value.gameplayToggle,
 		priceDabloons: value.priceDabloons,
 		description: value.description ?? '',
 		unlockMessage: value.unlockMessage,

@@ -17,6 +17,10 @@ public final class FeatureToggles {
         return values.getOrDefault(key, false);
     }
 
+    public static boolean isValidKey(String key) {
+        return key.matches("[a-z0-9._-]+(?:/[a-z0-9._-]+)*");
+    }
+
     public static void apply(FeatureTogglesSnapshot snapshot) {
         Map<String, Boolean> updated = new HashMap<>();
         snapshot.getTogglesList().forEach(toggle -> updated.put(toggle.getKey(), toggle.getEnabled()));

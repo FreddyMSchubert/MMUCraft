@@ -7,6 +7,7 @@ import { DatabaseService, knowledgeReads, knowledgeUnlocks } from '../../databas
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service';
 import { PlayerMoneyHistoryService } from '../../players/player-money-history.service';
 import { CachedSearchIndex } from '../../search/cached-search-index';
+import { FeatureTogglesService } from '../../toggles/feature-toggles.service';
 import { KnowledgeDocumentCatalogService } from './knowledge-document-catalog.service';
 import type {
 	KnowledgePage,
@@ -67,6 +68,7 @@ export class KnowledgeService implements OnModuleInit {
 		private readonly documents: KnowledgeDocumentCatalogService,
 		private readonly identities: MinecraftIdentityService,
 		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
+		private readonly featureToggles: FeatureTogglesService,
 	) {}
 
 	onModuleInit() {
@@ -224,13 +226,13 @@ export class KnowledgeService implements OnModuleInit {
 	}
 
 	hasRemainingForUser(userId: number): boolean {
-		const document = this.documents.loadDocument();
-		if (document.unlockable.length === 0) {
+		const unlockable = this.enabledUnlockablePages();
+		if (unlockable.length === 0) {
 			return false;
 		}
 
 		const unlockedIds = this.getUnlockedIds(userId);
-		return document.unlockable.some((page) => !unlockedIds.has(page.id));
+		return unlockable.some((page) => !unlockedIds.has(page.id));
 	}
 
 	unlockNextForMinecraftUsername(
@@ -251,9 +253,9 @@ export class KnowledgeService implements OnModuleInit {
 			return this.noUnlock('No website account is linked to this Minecraft username yet.');
 		}
 
-		const document = this.documents.loadDocument();
+		const unlockable = this.enabledUnlockablePages();
 
-		if (document.unlockable.length === 0) {
+		if (unlockable.length === 0) {
 			return {
 				unlocked: false,
 				all_unlocked: true,
@@ -267,7 +269,7 @@ export class KnowledgeService implements OnModuleInit {
 		for (let attempt = 0; attempt < 5; attempt++) {
 			const picked = this.database.connection.transaction((tx) => {
 				const unlockedIds = this.getUnlockedIds(user.id);
-				const remaining = document.unlockable.filter((page) => !unlockedIds.has(page.id));
+				const remaining = unlockable.filter((page) => !unlockedIds.has(page.id));
 
 				if (remaining.length === 0) {
 					return 'all-unlocked' as const;
@@ -362,6 +364,13 @@ export class KnowledgeService implements OnModuleInit {
 		const selected = candidates[randomInt(candidates.length)];
 		if (!selected) throw new Error('No knowledge page is available.');
 		return selected;
+	}
+
+	private enabledUnlockablePages(): KnowledgePage[] {
+		const enabled = this.featureToggles.enabledKeys();
+		return this.documents
+			.loadDocument()
+			.unlockable.filter((page) => !page.gameplayToggle || enabled.has(page.gameplayToggle));
 	}
 
 	private getLastUnlockedKnowledgeId(userId: number, unlockable: KnowledgePage[]): string | null {

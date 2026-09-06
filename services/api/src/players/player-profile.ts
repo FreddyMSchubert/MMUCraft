@@ -24,6 +24,7 @@ export interface PlayerProfile {
 	color: string;
 	defaultColor: string;
 	customColor: string | null;
+	emojiOverrideJson: string | null;
 	showDeathCounter: boolean;
 	updatedAtUnixMs: number;
 }
@@ -71,6 +72,7 @@ export function normalizeProfileInput(
 		color: '',
 		defaultColor: '',
 		customColor: normalizeOptionalColor(input.color),
+		emojiOverrideJson: null,
 		showDeathCounter: input.showDeathCounter ?? currentShowDeathCounter,
 		updatedAtUnixMs: Date.now(),
 	};

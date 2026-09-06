@@ -4,6 +4,7 @@ import { DatabaseService, playerProfiles } from '../database/database.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { effectivePlayerColor } from './player-color';
+import { playerEmojis } from './player-emojis';
 
 const ONLINE_PLAYERS_RECONCILE_MS = 5 * 60 * 1000;
 
@@ -38,6 +39,7 @@ export class OnlinePlayerPresenceService {
 							presentation.minecraftUsername || player.minecraft_username,
 						color: presentation.colorHex,
 						role: presentation.role,
+						emojis: presentation.emojis,
 					};
 				}),
 		};
@@ -52,6 +54,7 @@ export class OnlinePlayerPresenceService {
 				nickname: '',
 				pronouns: '',
 				colorHex: effectivePlayerColor(minecraftUuid),
+				emojis: [],
 			};
 		const profile = this.database.connection
 			.select()
@@ -71,6 +74,11 @@ export class OnlinePlayerPresenceService {
 			nickname: profile?.preferred_name ?? '',
 			pronouns: profile?.pronouns ?? '',
 			colorHex: effectivePlayerColor(minecraftUuid, profile?.color_hex),
+			emojis: playerEmojis(
+				user.is_member === 1,
+				user.is_super_admin === 1 || user.is_committee === 1,
+				profile?.emoji_override_json,
+			),
 		};
 	}
 

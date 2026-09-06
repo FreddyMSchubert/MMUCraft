@@ -133,6 +133,16 @@ export class AdminController {
 		return this.playerRoles.setCommittee(userId, body?.isCommittee);
 	}
 
+	@Patch('players/:userId/emojis')
+	setPlayerEmojis(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('userId') userId: string,
+		@Body() body: { emojis?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.playerRoles.setEmojis(userId, body?.emojis);
+	}
+
 	@Get('gift-codes')
 	listGiftCodes(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader);

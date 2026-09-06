@@ -2,6 +2,7 @@
 
 import { type SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
+import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 import { apiBody, apiMessage, errorMessage, fetchAdmin, formatDateTime } from './admin-api';
 
 interface VelocityServer {
@@ -19,6 +20,8 @@ interface VelocityPlayer {
 	uuid: string;
 	username: string;
 	serverName: string;
+	color: string;
+	emojis: PlayerEmoji[];
 }
 
 interface VelocitySchedule {
@@ -435,7 +438,13 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 						<tbody>
 							{snapshot.players.map((player) => (
 								<tr key={player.uuid}>
-									<td>{player.username}</td>
+									<td>
+										<PlayerName
+											name={player.username}
+											color={player.color}
+											emojis={player.emojis}
+										/>
+									</td>
 									<td>{player.serverName}</td>
 									<td>
 										<select

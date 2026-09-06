@@ -172,6 +172,7 @@ export function PlayersTab({
 					name: player.minecraftUsername,
 					color: player.profile.color,
 					pronouns: player.profile.pronouns,
+					emojis: player.emojis,
 					value: value ?? 0,
 					displayValue: formatColumnValue(player, leaderboardOption),
 					avatarUrl: player.avatarUrl,
@@ -379,6 +380,7 @@ export function PlayersTab({
 											<PlayerName
 												name={player.minecraftUsername}
 												color={player.profile.color}
+												emojis={player.emojis}
 											/>
 										) : (
 											formatColumnValue(player, column)

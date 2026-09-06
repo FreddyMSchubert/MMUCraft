@@ -2,13 +2,14 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { PlayerName } from '@/components/player-name';
+import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 
 export interface PodiumEntry {
 	id: number;
 	name: string;
 	color: string;
 	pronouns: string;
+	emojis: PlayerEmoji[];
 	value: number | string | null;
 	displayValue: string;
 	avatarUrl?: string | null;
@@ -78,7 +79,11 @@ export function LeaderboardPodium({
 					>
 						<div className="podiumIdentity">
 							<strong>
-								<PlayerName name={entry.name} color={entry.color} />
+								<PlayerName
+									name={entry.name}
+									color={entry.color}
+									emojis={entry.emojis}
+								/>
 							</strong>
 							{entry.pronouns && <span> ({entry.pronouns})</span>}
 						</div>
@@ -105,7 +110,11 @@ export function LeaderboardPodium({
 							>
 								<PodiumHead entry={entry} />
 								<strong>
-									<PlayerName name={entry.name} color={entry.color} />
+									<PlayerName
+										name={entry.name}
+										color={entry.color}
+										emojis={entry.emojis}
+									/>
 								</strong>
 							</Link>
 						))}

@@ -303,7 +303,11 @@ function CommandActor({ entry, players }: { entry: CommandLogEntry; players: Adm
 	if (!player) return entry.actorName;
 	return (
 		<Link href={`/play/players/${encodeURIComponent(player.minecraftUsername)}`}>
-			<PlayerName name={player.minecraftUsername} color={player.color} />
+			<PlayerName
+				name={player.minecraftUsername}
+				color={player.color}
+				emojis={player.emojis}
+			/>
 		</Link>
 	);
 }

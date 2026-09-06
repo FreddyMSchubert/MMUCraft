@@ -13,6 +13,7 @@ import { PlayerBansService } from '../auth/player-bans.service';
 import { signupFlows } from '../auth/signup-flow';
 import {
 	DatabaseService,
+	playerProfiles,
 	velocitySchedules,
 	velocityServers,
 	velocitySettings,
@@ -21,6 +22,8 @@ import {
 	MinecraftIdentityService,
 	normalizeMinecraftUuid,
 } from '../database/minecraft-identity.service';
+import { effectivePlayerColor } from '../players/player-color';
+import { playerEmojis } from '../players/player-emojis';
 
 const PROXY_STALE_AFTER_MS = 10_000;
 const COMMAND_TTL_MS = 60_000;
@@ -203,7 +206,32 @@ export class VelocityService {
 			.all();
 		const serversById = new Map(servers.map((server) => [server.id, server]));
 		const active = this.activeSchedule(now);
-		const players = proxyOnline ? this.livePlayers : [];
+		const players = proxyOnline
+			? this.livePlayers.map((player) => {
+					const user = this.identities.findByUuid(player.uuid);
+					const profile = user
+						? this.database.connection
+								.select()
+								.from(playerProfiles)
+								.where(eq(playerProfiles.user_id, user.id))
+								.get()
+						: null;
+					return {
+						...player,
+						color: effectivePlayerColor(
+							user?.minecraft_uuid ?? player.uuid,
+							profile?.color_hex,
+						),
+						emojis: user
+							? playerEmojis(
+									user.is_member === 1,
+									user.is_super_admin === 1 || user.is_committee === 1,
+									profile?.emoji_override_json,
+								)
+							: [],
+					};
+				})
+			: [];
 
 		return {
 			nowUnixMs: now,

@@ -82,6 +82,7 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 											<PlayerName
 												name={claim.minecraftUsername}
 												color={claim.color}
+												emojis={claim.emojis}
 											/>
 										</td>
 										<td>{claim.name}</td>

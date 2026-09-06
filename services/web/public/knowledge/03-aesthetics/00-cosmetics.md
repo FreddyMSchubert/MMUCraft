@@ -13,8 +13,6 @@ tips:
 - Cosmetics can also make for nice decorations if you place them in an item frame (and optionally make the item frame invisible using Invisi-Carrots).
 ====
 
-TODO: note that as a member perk dyeable stuff and animated stuff is members-only
-
 ## Fashion Books
 
 TODO: (image of book in loot chest)
@@ -22,6 +20,10 @@ TODO: (image of book in loot chest)
 You may have noticed the "Fashion Books" in loot chests, when right clicking these books you will unlock a cosmetic at random that you can then purchase from the shop. 
 
 These hats don't do anything but make you look extra fashionable, so don't worry about trying to min-max for the best one!
+
+:::perk
+Members are able to purchace animated and dyeable cosmetics in the shop, as well as getting an increased chance for unlocking them when using fashion books.
+:::
 
 ## Equipping
 
@@ -52,7 +54,7 @@ You can wash it in a cauldron by just right clicking!
 
 ## As Decoration
 
-Some cosmetics can be placed in item frames to look like props, combine this with [invisible item frames](/play/knowledge/invisicarrot) and you can make a nice, cozy base.
+Some cosmetics can be placed directly on the ground or in item frames to look like props - combine this with [invisible item frames](/play/knowledge/invisicarrot) and you can make a nice, cozy base!
 
 ![Road-Works](/assets/knowledge/items/cosmetics/road-works.png)
 ![Dark Forest](/assets/knowledge/items/cosmetics/mushroom.png)

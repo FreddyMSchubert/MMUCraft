@@ -58,10 +58,8 @@ export function MemberAccessAdminSection({ controller }: { controller: AdminTabC
 											<PlayerName
 												name={player.minecraftUsername}
 												color={player.color}
+												emojis={player.emojis}
 											/>
-											{player.isCommittee && (
-												<span className="committeeBadge">Committee</span>
-											)}
 										</td>
 										<td>
 											{player.discordUsername || (

@@ -52,8 +52,18 @@ export function PlayerProfilePanel({
 								<PlayerName
 									name={player.minecraftUsername}
 									color={player.profile.color}
+									emojis={player.emojis}
 								/>
 							</h4>
+							{player.emojis.length > 0 && (
+								<ul className="playerEmojiDetails">
+									{player.emojis.map(({ emoji, explanation }) => (
+										<li key={`${emoji}:${explanation}`}>
+											<span>{emoji}</span> {explanation}
+										</li>
+									))}
+								</ul>
+							)}
 							<ProfileFacts player={player} />
 						</div>
 						{player.canEditProfile && (
@@ -90,14 +100,13 @@ export function ProfileFacts({ player }: { player: PlayerSummary }) {
 							<PlayerName
 								name={player.responsibleMinecraftUsername}
 								color={player.responsiblePlayerColor}
+								emojis={player.responsiblePlayerEmojis}
 							/>
 						) : (
 							'Unknown player'
 						),
 				}
 			: null,
-		{ label: 'Society member', value: player.isMember ? 'Yes' : 'No' },
-		{ label: 'Committee', value: player.isCommittee ? 'Yes' : 'No' },
 		profile.preferredName ? { label: 'Nickname', value: profile.preferredName } : null,
 		profile.pronouns ? { label: 'Pronouns', value: profile.pronouns } : null,
 		profile.courseYear ? { label: 'Course / Year', value: profile.courseYear } : null,
@@ -220,7 +229,13 @@ export function PlayerProfileForm({
 			<div className="playerProfileFormHeader">
 				<div>
 					<h4>Edit profile</h4>
-					<p>{player.minecraftUsername}</p>
+					<p>
+						<PlayerName
+							name={player.minecraftUsername}
+							color={player.profile.color}
+							emojis={player.emojis}
+						/>
+					</p>
 				</div>
 				<div className="playerProfileActions">
 					<button type="button" onClick={onCancel} disabled={saving}>

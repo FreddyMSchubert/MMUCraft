@@ -14,7 +14,7 @@ import { ShopTab } from '@/components/shop-tab';
 import { FishingTab } from '@/components/fishing-tab';
 import { ClaimsTab } from '@/components/claims-tab';
 import { CharmsTab } from '@/components/charms-tab';
-import { PlayerName } from '@/components/player-name';
+import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 import { DynamicCountdowns } from '@/components/dynamic-countdowns';
 import { normalizeAdminSection } from '@/components/admin/admin-data.types';
 
@@ -26,11 +26,13 @@ interface SessionUser {
 	isMember: boolean;
 	isCommittee: boolean;
 	isSuperAdmin: boolean;
+	emojis: PlayerEmoji[];
 }
 
 interface OnlinePlayer {
 	minecraftUsername: string;
 	color: string;
+	emojis: PlayerEmoji[];
 }
 
 type TabId =
@@ -296,6 +298,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 										<PlayerName
 											name={user.minecraftUsername}
 											color={user.color}
+											emojis={user.emojis}
 										/>
 									</Link>
 									{' - '}
@@ -331,6 +334,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 											<PlayerName
 												name={player.minecraftUsername}
 												color={player.color}
+												emojis={player.emojis}
 											/>
 										</Link>
 									))}
@@ -359,6 +363,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 										<PlayerName
 											name={user.minecraftUsername}
 											color={user.color}
+											emojis={user.emojis}
 										/>
 									</Link>
 								</p>
@@ -393,6 +398,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 											<PlayerName
 												name={player.minecraftUsername}
 												color={player.color}
+												emojis={player.emojis}
 											/>
 										</Link>
 									))}

@@ -20,6 +20,7 @@ import {
 import { KnowledgeDocumentCatalogService } from '../gameplay/knowledge/knowledge-document-catalog.service';
 import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
 import { playerAvatarUrl } from './player-color';
+import { playerEmojis, type PlayerEmoji } from './player-emojis';
 import {
 	normalizeProfileInput,
 	type PlayerProfile,
@@ -45,9 +46,11 @@ export interface PlayerSummary {
 	canEditProfile: boolean;
 	isMember: boolean;
 	isCommittee: boolean;
+	emojis: PlayerEmoji[];
 	isExternal: boolean;
 	responsibleMinecraftUsername: string | null;
 	responsiblePlayerColor: string | null;
+	responsiblePlayerEmojis: PlayerEmoji[];
 	profile: PlayerProfile;
 	fishing: Record<string, number>;
 	stats: PlayerStats;
@@ -215,9 +218,21 @@ export class PlayersService {
 			canEditProfile: user.id === viewer.id || viewer.isCommittee,
 			isMember: user.is_member === 1,
 			isCommittee: user.is_committee === 1,
+			emojis: playerEmojis(
+				user.is_member === 1,
+				user.is_super_admin === 1 || user.is_committee === 1,
+				profile.emojiOverrideJson,
+			),
 			isExternal: user.responsible_user_id !== null,
 			responsibleMinecraftUsername: responsible?.minecraft_username ?? null,
 			responsiblePlayerColor: responsible ? this.profiles.get(responsible.id).color : null,
+			responsiblePlayerEmojis: responsible
+				? playerEmojis(
+						responsible.is_member === 1,
+						responsible.is_super_admin === 1 || responsible.is_committee === 1,
+						this.profiles.get(responsible.id).emojiOverrideJson,
+					)
+				: [],
 			profile,
 			fishing,
 			stats: statsContext.stats.get(user.id) ?? this.playerStatistics.getForUser(user.id),
@@ -370,14 +385,15 @@ function rankPlayers(values: Map<number, Record<string, number>>) {
 	const ranks = new Map<number, Record<string, number>>([...values.keys()].map((id) => [id, {}]));
 	for (const [key, entries] of byStat) {
 		entries.sort((left, right) => right.value - left.value);
-		let previousRank = 0;
-		entries.forEach((entry, index) => {
-			const rank =
-				index > 0 && entry.value === entries[index - 1]?.value ? previousRank : index + 1;
-			previousRank = rank;
+		let nextRank = entries.length;
+		for (let index = entries.length - 1; index >= 0; index--) {
+			const entry = entries[index];
+			if (!entry) continue;
+			const rank = entry.value === entries[index + 1]?.value ? nextRank : index + 1;
+			nextRank = rank;
 			const playerRanks = ranks.get(entry.id);
 			if (rank <= 10 && playerRanks) playerRanks[key] = rank;
-		});
+		}
 	}
 	return ranks;
 }

@@ -172,6 +172,7 @@ export function PlayersTab({
 					name: player.minecraftUsername,
 					color: player.profile.color,
 					pronouns: player.profile.pronouns,
+					emojis: player.emojis,
 					value: value ?? 0,
 					displayValue: formatColumnValue(player, leaderboardOption),
 					avatarUrl: player.avatarUrl,
@@ -233,16 +234,11 @@ export function PlayersTab({
 	}, [data, load, loadingMore, showAlert]);
 
 	useEffect(() => {
-		if (
-			search.trim() &&
-			data?.hasMore &&
-			!loadingMore &&
-			autoLoadedPage.current !== data.page
-		) {
+		if (data?.hasMore && !loadingMore && autoLoadedPage.current !== data.page) {
 			autoLoadedPage.current = data.page;
 			void loadMore();
 		}
-	}, [data?.hasMore, data?.page, loadMore, loadingMore, search]);
+	}, [data?.hasMore, data?.page, loadMore, loadingMore]);
 
 	if (error && !data) {
 		return <p className="authError">{error}</p>;
@@ -384,6 +380,7 @@ export function PlayersTab({
 											<PlayerName
 												name={player.minecraftUsername}
 												color={player.profile.color}
+												emojis={player.emojis}
 											/>
 										) : (
 											formatColumnValue(player, column)

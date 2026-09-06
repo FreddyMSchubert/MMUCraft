@@ -1,0 +1,1 @@
+ALTER TABLE `player_profiles` ADD `emoji_override_json` text;

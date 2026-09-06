@@ -310,8 +310,12 @@ export function ServerRecordLine({
 				<Image unoptimized src={record.player.avatarUrl} alt="" width={21} height={21} />
 			)}
 			<b>{label}:</b>{' '}
-			<PlayerName name={record.player.minecraftUsername} color={record.player.color} /> ·{' '}
-			{formatLength(record.lengthCm)}
+			<PlayerName
+				name={record.player.minecraftUsername}
+				color={record.player.color}
+				emojis={record.player.emojis}
+			/>{' '}
+			· {formatLength(record.lengthCm)}
 		</span>
 	);
 }

@@ -64,9 +64,11 @@ export interface PlayerSummary {
 	canEditProfile: boolean;
 	isMember: boolean;
 	isCommittee: boolean;
+	emojis: PlayerEmoji[];
 	isExternal: boolean;
 	responsibleMinecraftUsername: string | null;
 	responsiblePlayerColor: string | null;
+	responsiblePlayerEmojis: PlayerEmoji[];
 	profile: PlayerProfile;
 	fishing: Record<string, number>;
 	stats: PlayerStats;
@@ -100,3 +102,4 @@ export const PROFILE_TEXT_LIMITS = {
 	discordUsername: 40,
 	bio: 280,
 } as const;
+import type { PlayerEmoji } from '@/components/player-name';

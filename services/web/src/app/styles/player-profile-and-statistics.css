@@ -147,6 +147,20 @@
 	overflow-wrap: anywhere;
 }
 
+.playerEmojiDetails {
+	display: grid;
+	gap: 3px;
+	margin: 8px 0 0;
+	padding: 0;
+	list-style: none;
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.playerEmojiDetails span {
+	display: inline-block;
+	min-width: 1.8em;
+}
+
 .playerFacts {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

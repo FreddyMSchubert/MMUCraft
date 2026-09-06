@@ -11,6 +11,7 @@ import {
 } from '../database/database.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color';
+import { playerEmojis } from '../players/player-emojis';
 import { FishCatalogService } from './fish-catalog.service';
 
 interface RecordCatchInput {
@@ -202,6 +203,11 @@ export class FishingService {
 					color,
 					avatarUrl: playerAvatarUrl(player.minecraft_uuid),
 					caughtTotal: catchCountByUserId.get(player.id) ?? 0,
+					emojis: playerEmojis(
+						player.is_member === 1,
+						player.is_super_admin === 1 || player.is_committee === 1,
+						profilesById.get(player.id)?.emoji_override_json,
+					),
 				};
 			}),
 			fish: this.fishCatalog.definitions().map((definition) => {
@@ -312,8 +318,18 @@ function emptyCatchCounts(): Record<string, number> {
 
 function serializeServerRecord(
 	rows: FishCatchRow[],
-	players: Map<number, { id: number; minecraft_username: string; minecraft_uuid: string | null }>,
-	profiles: Map<number, { color_hex: string | null }>,
+	players: Map<
+		number,
+		{
+			id: number;
+			minecraft_username: string;
+			minecraft_uuid: string | null;
+			is_member: number;
+			is_committee: number;
+			is_super_admin: number;
+		}
+	>,
+	profiles: Map<number, { color_hex: string | null; emoji_override_json: string | null }>,
 	kind: 'largest' | 'smallest',
 ) {
 	const row = rows.reduce<FishCatchRow | null>((record, candidate) => {
@@ -330,6 +346,7 @@ function serializeServerRecord(
 	const player = players.get(row.user_id);
 	if (!player) return null;
 	const color = effectivePlayerColor(player.minecraft_uuid, profiles.get(player.id)?.color_hex);
+	const profile = profiles.get(player.id);
 	return {
 		lengthCm: kind === 'largest' ? row.largest_length_cm : row.smallest_length_cm,
 		caughtAtUnixMs:
@@ -339,6 +356,11 @@ function serializeServerRecord(
 			minecraftUsername: player.minecraft_username,
 			color,
 			avatarUrl: playerAvatarUrl(player.minecraft_uuid),
+			emojis: playerEmojis(
+				player.is_member === 1,
+				player.is_super_admin === 1 || player.is_committee === 1,
+				profile?.emoji_override_json,
+			),
 		},
 	};
 }

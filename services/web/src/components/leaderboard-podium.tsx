@@ -42,16 +42,26 @@ export function LeaderboardPodium({
 	onSelectPlayer: (playerName: string) => void;
 	compact?: boolean;
 }) {
-	const ranked = entries
+	const sorted = entries
 		.filter((entry) => Number.isFinite(Number(entry.value)) && Number(entry.value) > 0)
 		.sort(
 			(left, right) =>
 				Number(right.value) - Number(left.value) ||
 				left.name.localeCompare(right.name, 'en'),
-		)
-		.slice(0, 3)
-		.map((entry, index) => ({ ...entry, rank: index + 1 }));
-	const podiumOrder = [2, 1, 3].flatMap((rank) => ranked.filter((entry) => entry.rank === rank));
+		);
+	const lowestRankByValue = new Map<number, number>();
+	sorted.forEach((entry, index) => lowestRankByValue.set(Number(entry.value), index + 1));
+	const ranked = sorted.map((entry) => {
+		const rank = lowestRankByValue.get(Number(entry.value)) ?? 0;
+		return { ...entry, rank, visualRank: Math.min(rank, 3) };
+	});
+	const podium = ranked.slice(0, 3);
+	const winner = podium.find((entry) => entry.visualRank === 1);
+	const otherPlaces = podium.filter((entry) => entry !== winner);
+	const podiumOrder = winner
+		? [...otherPlaces.slice(0, 1), winner, ...otherPlaces.slice(1)]
+		: podium;
+	const overflow = ranked.slice(3).filter((entry) => entry.rank === podium.at(-1)?.rank);
 
 	return (
 		<section className={`leaderboardPodium${compact ? ' compact' : ''}`}>
@@ -59,7 +69,7 @@ export function LeaderboardPodium({
 				{podiumOrder.map((entry) => (
 					<Link
 						key={entry.id}
-						className={`podiumPlace podiumPlace-${entry.rank}`}
+						className={`podiumPlace podiumPlace-${entry.visualRank}`}
 						href={`/play/players/${encodeURIComponent(entry.name)}`}
 						onNavigate={(event) => {
 							event.preventDefault();
@@ -80,6 +90,28 @@ export function LeaderboardPodium({
 					</Link>
 				))}
 			</div>
+			{overflow.length > 0 && (
+				<div className="podiumOverflow">
+					<p>Also tied for #{overflow[0]?.rank}</p>
+					<div>
+						{overflow.map((entry) => (
+							<Link
+								key={entry.id}
+								href={`/play/players/${encodeURIComponent(entry.name)}`}
+								onNavigate={(event) => {
+									event.preventDefault();
+									onSelectPlayer(entry.name);
+								}}
+							>
+								<PodiumHead entry={entry} />
+								<strong>
+									<PlayerName name={entry.name} color={entry.color} />
+								</strong>
+							</Link>
+						))}
+					</div>
+				</div>
+			)}
 			{optionGroups && selectedKey && onChange ? (
 				<select
 					className="podiumMetric"

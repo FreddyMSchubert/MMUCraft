@@ -370,14 +370,15 @@ function rankPlayers(values: Map<number, Record<string, number>>) {
 	const ranks = new Map<number, Record<string, number>>([...values.keys()].map((id) => [id, {}]));
 	for (const [key, entries] of byStat) {
 		entries.sort((left, right) => right.value - left.value);
-		let previousRank = 0;
-		entries.forEach((entry, index) => {
-			const rank =
-				index > 0 && entry.value === entries[index - 1]?.value ? previousRank : index + 1;
-			previousRank = rank;
+		let nextRank = entries.length;
+		for (let index = entries.length - 1; index >= 0; index--) {
+			const entry = entries[index];
+			if (!entry) continue;
+			const rank = entry.value === entries[index + 1]?.value ? nextRank : index + 1;
+			nextRank = rank;
 			const playerRanks = ranks.get(entry.id);
 			if (rank <= 10 && playerRanks) playerRanks[key] = rank;
-		});
+		}
 	}
 	return ranks;
 }

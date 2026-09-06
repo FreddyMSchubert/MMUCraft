@@ -9,6 +9,7 @@ export interface PlayerOption {
 	pronouns: string;
 	avatarUrl: string | null;
 	caughtTotal: number;
+	emojis: PlayerEmoji[];
 }
 
 export interface CatchPoint {
@@ -94,3 +95,4 @@ export const GROUP_LABELS: Record<TagGroup, string> = {
 	weather: 'Weather',
 	moon: 'Moon phase',
 };
+import type { PlayerEmoji } from '@/components/player-name';

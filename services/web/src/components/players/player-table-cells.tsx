@@ -7,7 +7,11 @@ export function PlayerCell({ player }: { player: PlayerSummary }) {
 		<div className="playerCell">
 			<PlayerHead player={player} size="small" />
 			<span className="playerCellName">
-				<PlayerName name={player.minecraftUsername} color={player.profile.color} />
+				<PlayerName
+					name={player.minecraftUsername}
+					color={player.profile.color}
+					emojis={player.emojis}
+				/>
 				{player.profile.pronouns && (
 					<span className="playerCellPronouns"> ({player.profile.pronouns})</span>
 				)}

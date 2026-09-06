@@ -104,6 +104,7 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 												<PlayerName
 													name={entry.responsibleMinecraftUsername}
 													color={entry.responsiblePlayerColor}
+													emojis={entry.responsiblePlayerEmojis}
 												/>
 											) : (
 												<span className="adminMissing">Not assigned</span>
@@ -113,6 +114,7 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 											<PlayerName
 												name={entry.addedByMinecraftUsername}
 												color={entry.addedByColor}
+												emojis={entry.addedByEmojis}
 											/>
 										</td>
 										<td>{formatDateTime(entry.createdAtUnixMs)}</td>

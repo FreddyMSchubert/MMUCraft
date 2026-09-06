@@ -233,16 +233,11 @@ export function PlayersTab({
 	}, [data, load, loadingMore, showAlert]);
 
 	useEffect(() => {
-		if (
-			search.trim() &&
-			data?.hasMore &&
-			!loadingMore &&
-			autoLoadedPage.current !== data.page
-		) {
+		if (data?.hasMore && !loadingMore && autoLoadedPage.current !== data.page) {
 			autoLoadedPage.current = data.page;
 			void loadMore();
 		}
-	}, [data?.hasMore, data?.page, loadMore, loadingMore, search]);
+	}, [data?.hasMore, data?.page, loadMore, loadingMore]);
 
 	if (error && !data) {
 		return <p className="authError">{error}</p>;

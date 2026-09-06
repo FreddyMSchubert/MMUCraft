@@ -55,6 +55,9 @@
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
+				"gameplayToggle": {
+					"$ref": "#/$defs/resourceIdentifier"
+				},
 				"priceDabloons": {
 					"type": "integer",
 					"minimum": 1

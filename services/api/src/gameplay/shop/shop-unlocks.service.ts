@@ -4,6 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { DatabaseService, shopUnlocks } from '../../database/database.service';
 import { MinecraftIdentityService } from '../../database/minecraft-identity.service';
 import { KnowledgeService } from '../knowledge/knowledge.service';
+import { FeatureTogglesService } from '../../toggles/feature-toggles.service';
 import {
 	type CatalogItem,
 	ShopItemCatalogService,
@@ -33,6 +34,7 @@ export class ShopUnlocksService {
 		private readonly minecraftIdentities: MinecraftIdentityService,
 		private readonly itemCatalog: ShopItemCatalogService,
 		private readonly knowledge: KnowledgeService,
+		private readonly featureToggles: FeatureTogglesService,
 	) {}
 
 	unlockNextForMinecraftPlayer(
@@ -52,7 +54,7 @@ export class ShopUnlocksService {
 			return noUnlock('No website account is linked to this Minecraft username yet.');
 		}
 
-		const candidates = this.itemCatalog.load().items.filter((item) => item.type === unlockType);
+		const candidates = this.unlockableItems(unlockType);
 		if (!candidates.length) {
 			return {
 				...noUnlock(`There are no unlockable ${unlockType}s configured yet.`),
@@ -139,10 +141,21 @@ export class ShopUnlocksService {
 	}
 
 	private hasRemainingForUser(userId: number, type: 'charm' | 'cosmetic'): boolean {
-		const items = this.itemCatalog.load().items.filter((item) => item.type === type);
+		const items = this.unlockableItems(type);
 		if (!items.length) return false;
 		const unlockedIds = this.unlockedItemIdsForUser(userId, type);
 		return items.some((item) => !unlockedIds.has(item.id));
+	}
+
+	private unlockableItems(type: 'charm' | 'cosmetic'): CatalogItem[] {
+		const enabled = this.featureToggles.enabledKeys();
+		return this.itemCatalog
+			.load()
+			.items.filter(
+				(item) =>
+					item.type === type &&
+					(!item.gameplayToggle || enabled.has(item.gameplayToggle)),
+			);
 	}
 }
 

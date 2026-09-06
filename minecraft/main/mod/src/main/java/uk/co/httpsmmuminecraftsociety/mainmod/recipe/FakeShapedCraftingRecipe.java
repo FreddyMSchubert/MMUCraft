@@ -14,6 +14,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDef;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDefs;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.RecipeUtil;
 
 import java.util.HashSet;
@@ -39,12 +40,14 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
             RecordCodecBuilder.mapCodec(instance -> instance.group(
                     PATTERN_CODEC.fieldOf("pattern").forGetter(r -> r.pattern),
                     KEY_CODEC.fieldOf("key").forGetter(r -> r.key),
-                    RESULT_CODEC.fieldOf("result").forGetter(r -> r.result)
+                    RESULT_CODEC.fieldOf("result").forGetter(r -> r.result),
+                    Codec.STRING.optionalFieldOf("gameplayToggle", "").forGetter(r -> r.gameplayToggle)
             ).apply(instance, FakeShapedCraftingRecipe::new));
 
     private final List<String> pattern;
     private final Map<String, StackDef> key;
     private final ResultSpec result;
+    private final String gameplayToggle;
 
     private final int width;
     private final int height;
@@ -52,9 +55,13 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
 
     public FakeShapedCraftingRecipe(List<String> pattern,
                                     Map<String, StackDef> key,
-                                    ResultSpec result) {
+                                    ResultSpec result,
+                                    String gameplayToggle) {
         if (!result.stack().canCreateStack()) {
             throw new IllegalArgumentException("shaped recipe result cannot be a tag");
+        }
+        if (!gameplayToggle.isEmpty() && !FeatureToggles.isValidKey(gameplayToggle)) {
+            throw new IllegalArgumentException("invalid gameplay toggle id: " + gameplayToggle);
         }
 
         List<String> trimmed = RecipeUtil.trimPattern(pattern);
@@ -108,6 +115,7 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
         this.pattern = List.copyOf(trimmed);
         this.key = Map.copyOf(key);
         this.result = result;
+        this.gameplayToggle = gameplayToggle;
         this.width = rowWidth;
         this.height = trimmed.size();
         this.cells = flat;
@@ -115,6 +123,9 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
+        if (!gameplayToggle.isEmpty() && !FeatureToggles.isEnabled(gameplayToggle)) {
+            return false;
+        }
         if (input.width() < width || input.height() < height) {
             return false;
         }

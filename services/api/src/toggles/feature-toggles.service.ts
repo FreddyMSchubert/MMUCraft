@@ -41,6 +41,17 @@ export class FeatureTogglesService implements OnModuleDestroy {
 		};
 	}
 
+	enabledKeys(): Set<string> {
+		return new Set(
+			this.database.connection
+				.select({ key: featureToggles.key })
+				.from(featureToggles)
+				.where(eq(featureToggles.enabled, 1))
+				.all()
+				.map((toggle) => toggle.key),
+		);
+	}
+
 	async set(key: string, enabledInput: unknown) {
 		if (typeof enabledInput !== 'boolean')
 			throw new BadRequestException('enabled must be a boolean');

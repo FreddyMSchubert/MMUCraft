@@ -107,9 +107,13 @@ export class KnowledgeDocumentCatalogService {
 		}
 
 		const id = values.get('id');
+		const gameplayToggle = values.get('gameplayToggle') ?? null;
 		const unlockOrderValue = values.get('unlockOrder');
 		const sidebarTitle = values.get('sidebarTitle');
 		if (!id) throw new Error(`Knowledge markdown file is missing id: ${filePath}`);
+		if (gameplayToggle && !/^[a-z0-9._-]+(?:\/[a-z0-9._-]+)*$/.test(gameplayToggle)) {
+			throw new Error(`Knowledge gameplayToggle is invalid: ${filePath}`);
+		}
 		if (!unlockOrderValue) {
 			throw new Error(`Knowledge markdown file is missing unlockOrder: ${filePath}`);
 		}
@@ -128,6 +132,7 @@ export class KnowledgeDocumentCatalogService {
 
 		return {
 			id,
+			gameplayToggle,
 			unlockOrder,
 			chatMessage:
 				values.get('chatMessage') ??

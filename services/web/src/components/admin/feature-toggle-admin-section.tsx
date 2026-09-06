@@ -9,19 +9,26 @@ interface FeatureToggle {
 	enabled: boolean;
 }
 
-const TOGGLES = [
-	{
-		key: 'nether',
-		title: 'Nether access',
-		description: 'Allow Nether portal creation and travel, and Nether-dependent dailies.',
-	},
-	{
-		key: 'end',
-		title: 'End access',
-		description:
-			'Allow Eyes of Ender in portal frames, travel to the End, and End-dependent dailies.',
-	},
+const TOGGLE_ORDER = [
+	'nether',
+	'end',
+	'welcoming',
+	'soaring',
+	'imaginative',
+	'hellish',
+	'humorous',
+	'efficient',
+	'overpowered',
 ] as const;
+
+function toggleTitle(key: string) {
+	return key.replace(/[-_]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function togglePosition(key: string) {
+	const position = TOGGLE_ORDER.indexOf(key as (typeof TOGGLE_ORDER)[number]);
+	return position < 0 ? TOGGLE_ORDER.length : position;
+}
 
 export function FeatureToggleAdminSection() {
 	const { showAlert } = useSiteAlert();
@@ -91,28 +98,33 @@ export function FeatureToggleAdminSection() {
 			</div>
 			{toggles ? (
 				<div className="settingsList">
-					{TOGGLES.map((definition) => {
-						const toggle = toggles.find(
-							(candidate) => candidate.key === definition.key,
-						);
-						return (
-							<label className="settingToggle" key={definition.key}>
-								<span>
-									<strong>{definition.title}</strong>
-									<small>{definition.description}</small>
-								</span>
-								<input
-									type="checkbox"
-									checked={toggle?.enabled ?? false}
-									disabled={!toggle || busyKey !== null}
-									onChange={(event) =>
-										void setToggle(definition.key, event.target.checked)
-									}
-								/>
-								<i aria-hidden="true" />
-							</label>
-						);
-					})}
+					{toggles
+						.toSorted(
+							(left, right) =>
+								togglePosition(left.key) - togglePosition(right.key) ||
+								left.key.localeCompare(right.key),
+						)
+						.map((toggle) => {
+							return (
+								<label className="settingToggle" key={toggle.key}>
+									<span>
+										<strong>{toggleTitle(toggle.key)}</strong>
+										<small>
+											Allow gameplay and unlocks linked to this toggle.
+										</small>
+									</span>
+									<input
+										type="checkbox"
+										checked={toggle.enabled}
+										disabled={busyKey !== null}
+										onChange={(event) =>
+											void setToggle(toggle.key, event.target.checked)
+										}
+									/>
+									<i aria-hidden="true" />
+								</label>
+							);
+						})}
 				</div>
 			) : (
 				<p>{error || 'Loading gameplay toggles...'}</p>

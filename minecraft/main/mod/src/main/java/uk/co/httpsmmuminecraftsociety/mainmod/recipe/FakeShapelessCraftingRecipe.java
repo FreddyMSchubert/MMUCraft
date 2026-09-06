@@ -14,6 +14,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDef;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.StackDefs;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,14 +34,17 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
     public static final MapCodec<FakeShapelessCraftingRecipe> CODEC =
             RecordCodecBuilder.mapCodec(instance -> instance.group(
                     INGREDIENTS_CODEC.fieldOf("ingredients").forGetter(r -> r.ingredients),
-                    RESULT_CODEC.fieldOf("result").forGetter(r -> r.result)
+                    RESULT_CODEC.fieldOf("result").forGetter(r -> r.result),
+                    Codec.STRING.optionalFieldOf("gameplayToggle", "").forGetter(r -> r.gameplayToggle)
             ).apply(instance, FakeShapelessCraftingRecipe::new));
 
     private final List<StackDef> ingredients;
     private final ResultSpec result;
+    private final String gameplayToggle;
 
     public FakeShapelessCraftingRecipe(List<StackDef> ingredients,
-                                       ResultSpec result) {
+                                       ResultSpec result,
+                                       String gameplayToggle) {
         if (!result.stack().canCreateStack()) {
             throw new IllegalArgumentException("shapeless recipe result cannot be a tag");
         }
@@ -50,13 +54,20 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
         if (ingredients.size() > 9) {
             throw new IllegalArgumentException("shapeless recipe can have at most 9 ingredients");
         }
+        if (!gameplayToggle.isEmpty() && !FeatureToggles.isValidKey(gameplayToggle)) {
+            throw new IllegalArgumentException("invalid gameplay toggle id: " + gameplayToggle);
+        }
 
         this.ingredients = List.copyOf(ingredients);
         this.result = result;
+        this.gameplayToggle = gameplayToggle;
     }
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
+        if (!gameplayToggle.isEmpty() && !FeatureToggles.isEnabled(gameplayToggle)) {
+            return false;
+        }
         List<ItemStack> presentStacks = new ArrayList<>();
         for (ItemStack stack : input.items()) {
             if (!stack.isEmpty()) {

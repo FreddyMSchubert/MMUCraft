@@ -3,6 +3,7 @@ import { AuthModule } from '../../auth/auth.module';
 import { DatabaseModule } from '../../database/database.module';
 import { GrpcModule } from '../../grpc/grpc.module';
 import { KnowledgeModule } from '../knowledge/knowledge.module';
+import { FeatureTogglesModule } from '../../toggles/feature-toggles.module';
 import { ShopCharmInventoryService } from './shop-charm-inventory.service';
 import { ShopController } from './shop.controller';
 import { ShopItemCatalogService } from './shop-item-catalog.service';
@@ -10,7 +11,7 @@ import { ShopPurchasesService } from './shop-purchases.service';
 import { ShopUnlocksService } from './shop-unlocks.service';
 
 @Module({
-	imports: [AuthModule, DatabaseModule, GrpcModule, KnowledgeModule],
+	imports: [AuthModule, DatabaseModule, GrpcModule, KnowledgeModule, FeatureTogglesModule],
 	controllers: [ShopController],
 	providers: [
 		ShopCharmInventoryService,

@@ -11,7 +11,8 @@
 	"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Ice Cream Hat."
+		"unlockMessage": "Unlocked cosmetic: Ice Cream Hat.",
+		"gameplayToggle": "humorous"
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

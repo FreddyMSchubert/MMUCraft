@@ -8,10 +8,11 @@
 		"Come out of your shell at bit more"
 	],
 	"shopPurchasable": {
-	"priceDabloons": 75,
+		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Shulker Hat."
+		"unlockMessage": "Unlocked cosmetic: Shulker Hat.",
+		"gameplayToggle": "end"
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

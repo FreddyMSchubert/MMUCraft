@@ -19,8 +19,12 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GetKnowledgeTipResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +100,97 @@ public final class KnowledgeTips {
             message(14, "Happy Thursday!", context -> context.day() == DayOfWeek.THURSDAY),
             message(14, "Happy Friday!", context -> context.day() == DayOfWeek.FRIDAY),
             message(20, "Happy Surprising Saturday!", context -> context.day() == DayOfWeek.SATURDAY),
-            message(20, "Happy Sunday Funday!", context -> context.day() == DayOfWeek.SUNDAY)
+            message(20, "Happy Sunday Funday!", context -> context.day() == DayOfWeek.SUNDAY),
+
+            // New Year
+            message(100_000, "Happy New Year! It's lovely to have you back.", context -> context.dateIs(Month.JANUARY, 1)),
+            message(100_000, "New year, same wonderful you. Welcome back!", context -> context.dateIs(Month.JANUARY, 1)),
+            message(100_000, "Welcome back! Let's make this year a blocky one.", context -> context.dateIs(Month.JANUARY, 1)),
+            message(10, "Welcome back! Fancy one last adventure before the year ends?", context -> context.withinDaysBefore(LocalDate.of(context.year() + 1, Month.JANUARY, 1), 3)),
+            message(10, "Good to see you! Ready to build your way into the New Year?", context -> context.withinDaysBefore(LocalDate.of(context.year() + 1, Month.JANUARY, 1), 3)),
+            message(100_000, "Happy New Year's Eve! Lovely to see you before the clock strikes twelve.", context -> context.dateIs(Month.DECEMBER, 31)),
+            message(100_000, "Welcome back! One last Minecraft session for the year?", context -> context.dateIs(Month.DECEMBER, 31)),
+
+            // Valentine's Day
+            message(100_000, "Happy Valentine's Day! The server is better with you here.", context -> context.dateIs(Month.FEBRUARY, 14)),
+            message(100_000, "Welcome back, Valentine! We saved you a spot.", context -> context.dateIs(Month.FEBRUARY, 14)),
+            message(100_000, "Roses are red, diamonds are blue. Welcome back! We missed you.", context -> context.dateIs(Month.FEBRUARY, 14)),
+            message(10, "Love is in the air, and look who's back!", context -> context.withinDaysBefore(LocalDate.of(context.year(), Month.FEBRUARY, 14), 3)),
+
+            // Pancake Day and the patron saints
+            message(100_000, "Happy Pancake Day! Stack them high, then stack some blocks.", context -> context.dateIs(easterSunday(context.year()).minusDays(47))),
+            message(100_000, "Welcome back! Hope your pancakes are less square than everything here.", context -> context.dateIs(easterSunday(context.year()).minusDays(47))),
+            message(10, "Welcome back! The villagers are practising their pancake flips.", context -> context.withinDaysBefore(easterSunday(context.year()).minusDays(47), 2)),
+            message(100_000, "Happy St David's Day! Lovely to see you back.", context -> context.dateIs(Month.MARCH, 1)),
+            message(100_000, "Croeso'n ôl! Have a brilliant St David's Day.", context -> context.dateIs(Month.MARCH, 1)),
+            message(100_000, "Happy St Patrick's Day! May your mining be lucky.", context -> context.dateIs(Month.MARCH, 17)),
+            message(100_000, "Welcome back! The luck of the Irish brought you our way.", context -> context.dateIs(Month.MARCH, 17)),
+            message(100_000, "No joke: we're glad you're back. Happy April Fools' Day!", context -> context.dateIs(Month.APRIL, 1)),
+            message(100_000, "Welcome back! Everything is completely normal today. Probably.", context -> context.dateIs(Month.APRIL, 1)),
+            message(100_000, "Happy St George's Day! Welcome back, dragon slayer.", context -> context.dateIs(Month.APRIL, 23)),
+            message(100_000, "Welcome back! Keep an eye out for dragons today.", context -> context.dateIs(Month.APRIL, 23)),
+            message(100_000, "Happy St Andrew's Day! A warm welcome back to you.", context -> context.dateIs(Month.NOVEMBER, 30)),
+            message(100_000, "Welcome back! Have a brilliant St Andrew's Day.", context -> context.dateIs(Month.NOVEMBER, 30)),
+
+            // Mother's Day, Easter, and Father's Day
+            message(100_000, "Happy Mother's Day! Take it easy and enjoy the server.", context -> context.dateIs(easterSunday(context.year()).minusWeeks(3))),
+            message(100_000, "Welcome back! Here's to all the brilliant mums and mother figures.", context -> context.dateIs(easterSunday(context.year()).minusWeeks(3))),
+            message(100_000, "Welcome back! Have a peaceful Good Friday.", context -> context.dateIs(easterSunday(context.year()).minusDays(2))),
+            message(100_000, "Lovely to see you. Hope you're having a good Good Friday.", context -> context.dateIs(easterSunday(context.year()).minusDays(2))),
+            message(100_000, "Happy Easter! Welcome back, you good egg.", context -> context.dateIs(easterSunday(context.year()))),
+            message(100_000, "Welcome back! Hope the Easter bunny brought diamonds.", context -> context.dateIs(easterSunday(context.year()))),
+            message(100_000, "Happy Easter! Time for eggs, adventures, and suspiciously square rabbits.", context -> context.dateIs(easterSunday(context.year()))),
+            message(10, "Welcome back! Easter's nearly here. Save room for chocolate.", context -> context.withinDaysBefore(easterSunday(context.year()), 3)),
+            message(10, "The Easter bunny has not found the server yet. Good to see you, though!", context -> context.withinDaysBefore(easterSunday(context.year()), 3)),
+            message(100_000, "Happy Easter Monday! Welcome back for one more day of chocolate.", context -> context.dateIs(easterSunday(context.year()).plusDays(1))),
+            message(100_000, "Welcome back! Bank holiday Minecraft is the best kind.", context -> context.dateIs(easterSunday(context.year()).plusDays(1))),
+            message(100_000, "Happy Father's Day! Welcome back.", context -> context.dateIs(firstWeekday(context.year(), Month.JUNE, DayOfWeek.SUNDAY).plusWeeks(2))),
+            message(100_000, "Welcome back! Here's to all the brilliant dads and father figures.", context -> context.dateIs(firstWeekday(context.year(), Month.JUNE, DayOfWeek.SUNDAY).plusWeeks(2))),
+
+            // Spring and summer bank holidays
+            message(100_000, "Happy early May bank holiday! Glad you're spending a bit of it with us.", context -> context.dateIs(firstWeekday(context.year(), Month.MAY, DayOfWeek.MONDAY))),
+            message(100_000, "No alarms, no lectures, just blocks. Welcome back!", context -> context.dateIs(firstWeekday(context.year(), Month.MAY, DayOfWeek.MONDAY))),
+            message(100_000, "Welcome back. On VE Day, we remember those who gave us peace.", context -> context.dateIs(Month.MAY, 8)),
+            message(100_000, "It's good to have you here. Wishing everyone a thoughtful VE Day.", context -> context.dateIs(Month.MAY, 8)),
+            message(100_000, "Happy spring bank holiday! Lovely to see you.", context -> context.dateIs(lastWeekday(context.year(), Month.MAY, DayOfWeek.MONDAY))),
+            message(100_000, "Welcome back! Long weekend, long mining session?", context -> context.dateIs(lastWeekday(context.year(), Month.MAY, DayOfWeek.MONDAY))),
+            message(100_000, "Happy summer bank holiday! Welcome back.", context -> context.dateIs(lastWeekday(context.year(), Month.AUGUST, DayOfWeek.MONDAY))),
+            message(100_000, "Long weekend, big builds. Lovely to see you!", context -> context.dateIs(lastWeekday(context.year(), Month.AUGUST, DayOfWeek.MONDAY))),
+
+            // Manchester Pride weekend
+            message(100_000, "Happy Manchester Pride! Be loud, be proud, be yourself.", Context::isManchesterPrideWeekend),
+            message(100_000, "Welcome back! The server is brighter with every colour of you.", Context::isManchesterPrideWeekend),
+            message(100_000, "Pride weekend in Manchester! Lovely to have you here.", Context::isManchesterPrideWeekend),
+            message(10, "Welcome back! Manchester is getting ready to glow for Pride.", context -> context.withinDaysBefore(context.manchesterPrideWeekendStart(), 3)),
+            message(10, "Good to see you! The bees are polishing their rainbow stripes.", context -> context.withinDaysBefore(context.manchesterPrideWeekendStart(), 3)),
+
+            // Autumn
+            message(100_000, "Happy Halloween! Welcome back, you absolute creeper.", context -> context.dateIs(Month.OCTOBER, 31)),
+            message(100_000, "Welcome back! Do not turn around. Just kidding. Probably.", context -> context.dateIs(Month.OCTOBER, 31)),
+            message(100_000, "Happy Halloween! Come in. We've been expecting you.", context -> context.dateIs(Month.OCTOBER, 31)),
+            message(10, "Welcome back! Things are getting spooky around here.", context -> context.withinDaysBefore(LocalDate.of(context.year(), Month.OCTOBER, 31), 3)),
+            message(10, "Good to see you! The pumpkins have been asking about you.", context -> context.withinDaysBefore(LocalDate.of(context.year(), Month.OCTOBER, 31), 3)),
+            message(100_000, "Happy Bonfire Night! Welcome back. Mind the sparks.", context -> context.dateIs(Month.NOVEMBER, 5)),
+            message(100_000, "Welcome back! The creepers are feeling festive tonight.", context -> context.dateIs(Month.NOVEMBER, 5)),
+            message(10, "Welcome back! The sky will be sparkling soon.", context -> context.withinDaysBefore(LocalDate.of(context.year(), Month.NOVEMBER, 5), 2)),
+            message(100_000, "Welcome back. Today, we remember those who served.", Context::isRemembranceSunday),
+            message(100_000, "It's good to have you here. We will remember them.", Context::isRemembranceSunday),
+            message(100_000, "Welcome back. Today, we remember those who served.", context -> context.dateIs(Month.NOVEMBER, 11)),
+            message(100_000, "It's good to have you here. We will remember them.", context -> context.dateIs(Month.NOVEMBER, 11)),
+
+            // Christmas
+            message(6, "It's beginning to look a lot like Christmas. Welcome back!", Context::isChristmasSeason),
+            message(6, "Welcome back! Time to make the world a little more festive.", Context::isChristmasSeason),
+            message(6, "Lovely to see you! The server is getting cosy for Christmas.", Context::isChristmasSeason),
+            message(10, "Welcome back! Is your Christmas build finished yet?", Context::isChristmasWeek),
+            message(10, "Good to see you! Even the creepers are feeling festive.", Context::isChristmasWeek),
+            message(100_000, "Merry Christmas Eve! Lovely to have you here.", context -> context.dateIs(Month.DECEMBER, 24)),
+            message(100_000, "Welcome back! One more sleep. Make yourself cosy.", context -> context.dateIs(Month.DECEMBER, 24)),
+            message(100_000, "Merry Christmas! It's wonderful to see you.", context -> context.dateIs(Month.DECEMBER, 25)),
+            message(100_000, "Welcome back, and Merry Christmas from all of MMUCraft!", context -> context.dateIs(Month.DECEMBER, 25)),
+            message(100_000, "Merry Christmas! Come in, get cosy, and stay awhile.", context -> context.dateIs(Month.DECEMBER, 25)),
+            message(100_000, "Happy Boxing Day! Welcome back for leftovers and blocks.", context -> context.dateIs(Month.DECEMBER, 26)),
+            message(100_000, "Welcome back! Perfect day for doing absolutely nothing but Minecraft.", context -> context.dateIs(Month.DECEMBER, 26))
     );
 
     private static final List<WeightedMessage> FLAVOURS = List.of(
@@ -317,6 +411,32 @@ public final class KnowledgeTips {
         }
     }
 
+    private static LocalDate firstWeekday(int year, Month month, DayOfWeek day) {
+        return LocalDate.of(year, month, 1).with(TemporalAdjusters.nextOrSame(day));
+    }
+
+    private static LocalDate lastWeekday(int year, Month month, DayOfWeek day) {
+        return LocalDate.of(year, month, 1).with(TemporalAdjusters.lastInMonth(day));
+    }
+
+    private static LocalDate easterSunday(int year) {
+        int a = year % 19;
+        int b = year / 100;
+        int c = year % 100;
+        int d = b / 4;
+        int e = b % 4;
+        int f = (b + 8) / 25;
+        int g = (b - f + 1) / 3;
+        int h = (19 * a + b - d - g + 15) % 30;
+        int i = c / 4;
+        int k = c % 4;
+        int l = (32 + 2 * e + 2 * i - h - k) % 7;
+        int m = (a + 11 * h + 22 * l) / 451;
+        int month = (h + l - 7 * m + 114) / 31;
+        int day = (h + l - 7 * m + 114) % 31 + 1;
+        return LocalDate.of(year, month, day);
+    }
+
     private record Context(
             ServerPlayer player,
             ServerLevel level,
@@ -331,6 +451,47 @@ public final class KnowledgeTips {
 
         DayOfWeek day() {
             return now.getDayOfWeek();
+        }
+
+        int year() {
+            return now.getYear();
+        }
+
+        boolean dateIs(Month month, int day) {
+            return dateIs(LocalDate.of(year(), month, day));
+        }
+
+        boolean dateIs(LocalDate date) {
+            return now.toLocalDate().equals(date);
+        }
+
+        boolean withinDaysBefore(LocalDate date, int days) {
+            long daysUntil = ChronoUnit.DAYS.between(now.toLocalDate(), date);
+            return daysUntil > 0 && daysUntil <= days;
+        }
+
+        LocalDate manchesterPrideWeekendStart() {
+            return lastWeekday(year(), Month.AUGUST, DayOfWeek.MONDAY).minusDays(3);
+        }
+
+        boolean isManchesterPrideWeekend() {
+            LocalDate today = now.toLocalDate();
+            LocalDate start = manchesterPrideWeekendStart();
+            return !today.isBefore(start) && !today.isAfter(start.plusDays(3));
+        }
+
+        boolean isRemembranceSunday() {
+            return dateIs(firstWeekday(year(), Month.NOVEMBER, DayOfWeek.SUNDAY).plusWeeks(1));
+        }
+
+        boolean isChristmasSeason() {
+            return now.getMonth() == Month.DECEMBER && now.getDayOfMonth() < 25;
+        }
+
+        boolean isChristmasWeek() {
+            return now.getMonth() == Month.DECEMBER
+                    && now.getDayOfMonth() >= 18
+                    && now.getDayOfMonth() < 25;
         }
 
         long worldTime() {

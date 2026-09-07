@@ -20,7 +20,7 @@ import {
 import { KnowledgeDocumentCatalogService } from '../gameplay/knowledge/knowledge-document-catalog.service';
 import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
 import { playerAvatarUrl } from './player-color';
-import { playerEmojis, type PlayerEmoji } from './player-emojis';
+import { customPlayerEmojis, type PlayerEmoji } from './player-emojis';
 import {
 	normalizeProfileInput,
 	type PlayerProfile,
@@ -46,11 +46,12 @@ export interface PlayerSummary {
 	canEditProfile: boolean;
 	isMember: boolean;
 	isCommittee: boolean;
-	emojis: PlayerEmoji[];
+	customEmojis: PlayerEmoji[];
 	isExternal: boolean;
 	responsibleMinecraftUsername: string | null;
 	responsiblePlayerColor: string | null;
-	responsiblePlayerEmojis: PlayerEmoji[];
+	responsibleIsCommittee: boolean;
+	responsibleCustomEmojis: PlayerEmoji[];
 	profile: PlayerProfile;
 	fishing: Record<string, number>;
 	stats: PlayerStats;
@@ -217,21 +218,16 @@ export class PlayersService {
 			isCurrentUser: user.id === viewer.id,
 			canEditProfile: user.id === viewer.id || viewer.isCommittee,
 			isMember: user.is_member === 1,
-			isCommittee: user.is_committee === 1,
-			emojis: playerEmojis(
-				user.is_member === 1,
-				user.is_super_admin === 1 || user.is_committee === 1,
-				profile.emojiOverrideJson,
-			),
+			isCommittee: user.is_super_admin === 1 || user.is_committee === 1,
+			customEmojis: customPlayerEmojis(profile.customEmojisJson),
 			isExternal: user.responsible_user_id !== null,
 			responsibleMinecraftUsername: responsible?.minecraft_username ?? null,
 			responsiblePlayerColor: responsible ? this.profiles.get(responsible.id).color : null,
-			responsiblePlayerEmojis: responsible
-				? playerEmojis(
-						responsible.is_member === 1,
-						responsible.is_super_admin === 1 || responsible.is_committee === 1,
-						this.profiles.get(responsible.id).emojiOverrideJson,
-					)
+			responsibleIsCommittee: Boolean(
+				responsible && (responsible.is_super_admin === 1 || responsible.is_committee === 1),
+			),
+			responsibleCustomEmojis: responsible
+				? customPlayerEmojis(this.profiles.get(responsible.id).customEmojisJson)
 				: [],
 			profile,
 			fishing,

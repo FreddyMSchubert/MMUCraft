@@ -1,3 +1,5 @@
+import type { PlayerEmoji } from '@/components/player-name';
+
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical';
 export type TagGroup = 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon';
 export type FishSort = 'rarity' | 'location';
@@ -9,7 +11,8 @@ export interface PlayerOption {
 	pronouns: string;
 	avatarUrl: string | null;
 	caughtTotal: number;
-	emojis: PlayerEmoji[];
+	isCommittee: boolean;
+	customEmojis: PlayerEmoji[];
 }
 
 export interface CatchPoint {
@@ -95,4 +98,3 @@ export const GROUP_LABELS: Record<TagGroup, string> = {
 	weather: 'Weather',
 	moon: 'Moon phase',
 };
-import type { PlayerEmoji } from '@/components/player-name';

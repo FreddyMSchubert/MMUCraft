@@ -52,18 +52,9 @@ export function PlayerProfilePanel({
 								<PlayerName
 									name={player.minecraftUsername}
 									color={player.profile.color}
-									emojis={player.emojis}
 								/>
 							</h4>
-							{player.emojis.length > 0 && (
-								<ul className="playerEmojiDetails">
-									{player.emojis.map(({ emoji, explanation }) => (
-										<li key={`${emoji}:${explanation}`}>
-											<span>{emoji}</span> {explanation}
-										</li>
-									))}
-								</ul>
-							)}
+							<PlayerEmojiDetails player={player} />
 							<ProfileFacts player={player} />
 						</div>
 						{player.canEditProfile && (
@@ -86,12 +77,27 @@ export function PlayerProfilePanel({
 	);
 }
 
+function PlayerEmojiDetails({ player }: { player: PlayerSummary }) {
+	const emojis = [
+		player.isCommittee ? { emoji: '🛠️', explanation: 'Committee' } : null,
+		player.isMember ? { emoji: '⭐', explanation: 'Society member' } : null,
+		player.isExternal ? { emoji: '💼', explanation: 'External player' } : null,
+		...player.customEmojis,
+	].filter((entry): entry is { emoji: string; explanation: string } => entry !== null);
+	return emojis.length > 0 ? (
+		<ul className="playerEmojiDetails">
+			{emojis.map(({ emoji, explanation }) => (
+				<li key={`${emoji}:${explanation}`}>
+					<span>{emoji}</span> {explanation}
+				</li>
+			))}
+		</ul>
+	) : null;
+}
+
 export function ProfileFacts({ player }: { player: PlayerSummary }) {
 	const profile = player.profile;
 	const facts = [
-		player.isExternal
-			? { label: 'MMU affiliation', value: 'External player (not at MMU)' }
-			: null,
 		player.isExternal
 			? {
 					label: 'Responsible player',
@@ -100,7 +106,8 @@ export function ProfileFacts({ player }: { player: PlayerSummary }) {
 							<PlayerName
 								name={player.responsibleMinecraftUsername}
 								color={player.responsiblePlayerColor}
-								emojis={player.responsiblePlayerEmojis}
+								isCommittee={player.responsibleIsCommittee}
+								customEmojis={player.responsibleCustomEmojis}
 							/>
 						) : (
 							'Unknown player'
@@ -230,11 +237,7 @@ export function PlayerProfileForm({
 				<div>
 					<h4>Edit profile</h4>
 					<p>
-						<PlayerName
-							name={player.minecraftUsername}
-							color={player.profile.color}
-							emojis={player.emojis}
-						/>
+						<PlayerName name={player.minecraftUsername} color={player.profile.color} />
 					</p>
 				</div>
 				<div className="playerProfileActions">

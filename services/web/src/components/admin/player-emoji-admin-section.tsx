@@ -29,7 +29,7 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 				body: JSON.stringify({ emojis }),
 			});
 			const body = (await response.json().catch(() => null)) as {
-				emojis?: PlayerEmoji[];
+				customEmojis?: PlayerEmoji[];
 			} | null;
 			if (!response.ok) throw new Error(apiMessage(body, 'Failed to update emojis'));
 			setPlayers((current) =>
@@ -37,7 +37,7 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 					candidate.id === player.id
 						? {
 								...candidate,
-								emojis: body?.emojis ?? [],
+								customEmojis: body?.customEmojis ?? [],
 							}
 						: candidate,
 				),
@@ -59,7 +59,10 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 		<section className="adminSection">
 			<div className="adminSectionHeader">
 				<h3>Player emojis</h3>
-				<p>Override the role emoji and explain each custom emoji on the player profile.</p>
+				<p>
+					Add optional emojis. Committee, member and external badges stay controlled by
+					player status.
+				</p>
 			</div>
 			<PlayerSelector
 				datalistId="emoji-list-players"
@@ -86,7 +89,8 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 									<PlayerName
 										name={player.minecraftUsername}
 										color={player.color}
-										emojis={player.emojis}
+										isCommittee={player.isCommittee}
+										customEmojis={player.customEmojis}
 									/>
 								</td>
 								<td>{player.discordUsername || 'Not provided'}</td>
@@ -160,7 +164,7 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 											)}
 										</div>
 									) : (
-										player.emojis.map(({ emoji, explanation }) => (
+										player.customEmojis.map(({ emoji, explanation }) => (
 											<span
 												key={`${emoji}:${explanation}`}
 												className="emojiSummary"
@@ -194,7 +198,7 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 											<button
 												type="button"
 												onClick={() => {
-													setDraft(player.emojis);
+													setDraft(player.customEmojis);
 													setEditingId(player.id);
 												}}
 											>

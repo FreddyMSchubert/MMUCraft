@@ -8,7 +8,7 @@ import {
 	users,
 } from '../database/database.service';
 import { effectivePlayerColor } from '../players/player-color';
-import { playerEmojis } from '../players/player-emojis';
+import { customPlayerEmojis } from '../players/player-emojis';
 
 export interface PlayerBanState {
 	active: boolean;
@@ -47,19 +47,19 @@ export class PlayerBansService {
 							player?.minecraft_uuid ?? null,
 							profilesById.get(ban.user_id)?.color_hex,
 						),
-						emojis: player
-							? playerEmojis(
-									player.is_member === 1,
-									player.is_super_admin === 1 || player.is_committee === 1,
-									profilesById.get(ban.user_id)?.emoji_override_json,
-								)
+						isCommittee: Boolean(
+							player && (player.is_super_admin === 1 || player.is_committee === 1),
+						),
+						customEmojis: player
+							? customPlayerEmojis(profilesById.get(ban.user_id)?.custom_emojis_json)
 							: [],
 						bannedByMinecraftUsername: admin?.minecraft_username ?? 'Unknown user',
-						bannedByEmojis: admin
-							? playerEmojis(
-									admin.is_member === 1,
-									admin.is_super_admin === 1 || admin.is_committee === 1,
-									profilesById.get(ban.banned_by_user_id)?.emoji_override_json,
+						bannedByIsCommittee: Boolean(
+							admin && (admin.is_super_admin === 1 || admin.is_committee === 1),
+						),
+						bannedByCustomEmojis: admin
+							? customPlayerEmojis(
+									profilesById.get(ban.banned_by_user_id)?.custom_emojis_json,
 								)
 							: [],
 						expiresAtUnixMs: ban.expires_at_unix_ms,

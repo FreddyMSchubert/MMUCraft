@@ -26,13 +26,14 @@ interface SessionUser {
 	isMember: boolean;
 	isCommittee: boolean;
 	isSuperAdmin: boolean;
-	emojis: PlayerEmoji[];
+	customEmojis: PlayerEmoji[];
 }
 
 interface OnlinePlayer {
 	minecraftUsername: string;
 	color: string;
-	emojis: PlayerEmoji[];
+	isCommittee: boolean;
+	customEmojis: PlayerEmoji[];
 }
 
 type TabId =
@@ -298,7 +299,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 										<PlayerName
 											name={user.minecraftUsername}
 											color={user.color}
-											emojis={user.emojis}
+											isCommittee={user.isCommittee}
+											customEmojis={user.customEmojis}
 										/>
 									</Link>
 									{' - '}
@@ -334,7 +336,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 											<PlayerName
 												name={player.minecraftUsername}
 												color={player.color}
-												emojis={player.emojis}
+												isCommittee={player.isCommittee}
+												customEmojis={player.customEmojis}
 											/>
 										</Link>
 									))}
@@ -363,7 +366,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 										<PlayerName
 											name={user.minecraftUsername}
 											color={user.color}
-											emojis={user.emojis}
+											isCommittee={user.isCommittee}
+											customEmojis={user.customEmojis}
 										/>
 									</Link>
 								</p>
@@ -398,7 +402,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 											<PlayerName
 												name={player.minecraftUsername}
 												color={player.color}
-												emojis={player.emojis}
+												isCommittee={player.isCommittee}
+												customEmojis={player.customEmojis}
 											/>
 										</Link>
 									))}

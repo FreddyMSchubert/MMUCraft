@@ -11,7 +11,8 @@
 		"priceDabloons": 100,
 		"description": "Reduces hunger drain from movement and mining.",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked charm: Iron Stomach Charm. Reduces hunger drain."
+		"unlockMessage": "Unlocked charm: Iron Stomach Charm. Reduces hunger drain.",
+		"gameplayToggle": "overpowered"
 	},
 	"charm": {
 		"charmId": 39,

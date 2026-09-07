@@ -3,6 +3,7 @@ id: bow-trails
 unlockOrder: 5
 chatMessage: You unlocked Particle Trails. Add awesome particles to your weapons and elytra.
 sidebarTitle: Particle Trails
+gameplayToggle: soaring
 tags:
 - bowtrails
 - bow trails
@@ -20,7 +21,7 @@ tips:
 
 ![War-Horse](/assets/knowledge/items/bow-trails/war-horse.png)
 
-It's super easy to add awesome particle trails to many different tools: your bow, crossbow, elytra, tridents, or mace!
+It's super easy to add awesome particle trails to many different tools: your bow, crossbow, glider, elytra, tridents, or mace!
 
 ![Elytra Example](/assets/knowledge/items/bow-trails/elytra-example.png)
  

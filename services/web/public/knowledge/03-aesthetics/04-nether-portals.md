@@ -3,6 +3,7 @@ id: nether-portals
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on a secret and incredibly cool feature about Nether Portals on this server. Trust me, it's cool, please check it out.
 sidebarTitle: Nether Portals
+gameplayToggle: nether
 tags:
 - netherportal
 - nether portel

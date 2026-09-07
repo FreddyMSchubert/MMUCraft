@@ -9,7 +9,8 @@
 		"priceDabloons": 100,
 		"description": "Uses collected XP to restore health.",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked charm: Vitality Mending Charm. Uses XP to restore health."
+		"unlockMessage": "Unlocked charm: Vitality Mending Charm. Uses XP to restore health.",
+		"gameplayToggle": "overpowered"
 	},
 	"charm": {
 		"charmId": 32,

@@ -11,7 +11,8 @@
 		"priceDabloons": 125,
 		"description": "Increases step height, allowing you to walk up blocks like they're stairs. (Note this is different to auto-jump, which slows you down. This doesn't!)",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked charm: Hiking Boots Charm. It allows you to walk up blocks like they're stairs, without slowing you down!"
+		"unlockMessage": "Unlocked charm: Hiking Boots Charm. It allows you to walk up blocks like they're stairs, without slowing you down!",
+		"gameplayToggle": "welcoming"
 	},
 	"charm": {
 		"charmId": 9,

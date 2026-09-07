@@ -11,7 +11,8 @@
 		"priceDabloons": 25,
 		"description": "Scares away creepers.",
 		"unlockWeight": 150,
-		"unlockMessage": "Unlocked charm: Kitty Pajamas Charm. Scares away creepers."
+		"unlockMessage": "Unlocked charm: Kitty Pajamas Charm. Scares away creepers.",
+		"gameplayToggle": "welcoming"
 	},
 	"charm": {
 		"charmId": 18,

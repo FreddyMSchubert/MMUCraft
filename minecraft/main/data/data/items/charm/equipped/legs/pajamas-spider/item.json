@@ -11,7 +11,8 @@
 		"priceDabloons": 200,
 		"description": "Lets you climb walls.",
 		"unlockWeight": 20,
-		"unlockMessage": "Unlocked charm: Spider Pajamas Charm. Climbs walls."
+		"unlockMessage": "Unlocked charm: Spider Pajamas Charm. Climbs walls.",
+		"gameplayToggle": "imaginative"
 	},
 	"charm": {
 		"charmId": 19,

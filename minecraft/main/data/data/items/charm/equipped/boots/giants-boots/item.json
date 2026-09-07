@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "Grants the power of the ancient giants while equipped.",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked charm: Giants Boots Charm. It does... peculiar things."
+		"unlockMessage": "Unlocked charm: Giants Boots Charm. It does... peculiar things.",
+		"gameplayToggle": "humorous"
 	},
 	"charm": {
 		"charmId": 12,

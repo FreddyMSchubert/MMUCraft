@@ -1,5 +1,6 @@
 {
   "type": "mainmod:fake_crafting_shapeless",
+  "gameplayToggle": "imaginative",
   "ingredients": [
     "minecraft:potion[minecraft:potion_contents=invisibility]=Potion of Invisibility",
     "minecraft:carrot",

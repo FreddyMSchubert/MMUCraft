@@ -11,7 +11,8 @@
 		"priceDabloons": 225,
 		"description": "Lets you jump in mid-air once.",
 		"unlockWeight": 10,
-		"unlockMessage": "Unlocked charm: Winged Shoes Charm."
+		"unlockMessage": "Unlocked charm: Winged Shoes Charm.",
+		"gameplayToggle": "soaring"
 	},
 	"charm": {
 		"charmId": 22,

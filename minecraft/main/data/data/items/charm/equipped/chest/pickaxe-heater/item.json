@@ -11,7 +11,8 @@
 		"priceDabloons": 75,
 		"description": "Smelts mined blocks automatically.",
 		"unlockWeight": 150,
-		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm. It can smelt items immediately as you mine them. Smelts mined blocks."
+		"unlockMessage": "Unlocked charm: Pickaxe Heater Charm. It can smelt items immediately as you mine them. Smelts mined blocks.",
+		"gameplayToggle": "welcoming"
 	},
 	"charm": {
 		"charmId": 43,

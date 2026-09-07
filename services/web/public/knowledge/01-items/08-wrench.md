@@ -3,6 +3,7 @@ id: wrench
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on the wrench - a way to freely manipulate blockstates, which is great for redstone and decorating.
 sidebarTitle: Wrench
+gameplayToggle: imaginative
 tags:
 - tool
 - twist

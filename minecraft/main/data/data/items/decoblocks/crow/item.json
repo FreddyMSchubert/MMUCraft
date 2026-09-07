@@ -1,0 +1,17 @@
+{
+	"title": "Crow",
+	"id": "deco-crow",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Caw! Caw!"
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	}
+}

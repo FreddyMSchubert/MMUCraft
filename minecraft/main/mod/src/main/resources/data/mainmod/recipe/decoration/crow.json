@@ -1,0 +1,13 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    "minecraft:feather",
+    "minecraft:feather",
+    "minecraft:black-dye",
+    "mainmod:soul"
+  ],
+  "result": {
+    "stack": "mainmod:crow",
+    "count": 1
+  }
+}

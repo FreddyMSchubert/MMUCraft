@@ -1,0 +1,17 @@
+{
+	"title": "Scarecrow",
+	"id": "deco-scarecrow",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"He's not very good at his job, but it's okay because he's cute"
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	}
+}

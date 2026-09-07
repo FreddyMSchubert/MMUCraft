@@ -217,7 +217,7 @@ function optionalImageUrl(input: string | null | undefined) {
 	}
 }
 
-function parseLondonDateTime(input: string | undefined) {
+export function parseLondonDateTime(input: string | undefined) {
 	if (typeof input !== 'string')
 		throw new BadRequestException('Enter a valid British date and time');
 	const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(input);

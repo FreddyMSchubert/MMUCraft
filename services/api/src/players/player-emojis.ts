@@ -3,6 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 export interface PlayerEmoji {
 	emoji: string;
 	explanation: string;
+	showInName: boolean;
 }
 
 const MAX_EMOJIS = 8;
@@ -30,8 +31,12 @@ export function normalizeCustomEmojis(input: unknown): string | null {
 	const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 	const emojis = input.map((entry, index) => {
 		if (!entry || typeof entry !== 'object') throw invalidEntry(index);
-		const { emoji, explanation } = entry as Record<string, unknown>;
-		if (typeof emoji !== 'string' || typeof explanation !== 'string') {
+		const { emoji, explanation, showInName } = entry as Record<string, unknown>;
+		if (
+			typeof emoji !== 'string' ||
+			typeof explanation !== 'string' ||
+			typeof showInName !== 'boolean'
+		) {
 			throw invalidEntry(index);
 		}
 		const symbol = emoji.trim();
@@ -51,7 +56,7 @@ export function normalizeCustomEmojis(input: unknown): string | null {
 		) {
 			throw invalidEntry(index);
 		}
-		return { emoji: symbol, explanation: text };
+		return { emoji: symbol, explanation: text, showInName };
 	});
 	return JSON.stringify(emojis);
 }
@@ -66,6 +71,6 @@ function hasControlCharacter(value: string) {
 
 function invalidEntry(index: number) {
 	return new BadRequestException(
-		`Emoji ${index + 1} must contain one emoji and a 1-${MAX_EXPLANATION_LENGTH} character explanation.`,
+		`Emoji ${index + 1} must contain one emoji, a 1-${MAX_EXPLANATION_LENGTH} character explanation and a name visibility setting.`,
 	);
 }

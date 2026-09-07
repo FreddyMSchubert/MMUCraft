@@ -41,6 +41,18 @@
 	align-items: end;
 }
 
+.announcementAddButton {
+	width: 100%;
+	padding: 18px;
+	border: 2px dashed rgba(255, 209, 102, 0.65);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.1);
+	color: #ffd166;
+	font: inherit;
+	font-size: 1.05rem;
+	font-weight: 700;
+}
+
 .countdownForm label {
 	display: grid;
 	gap: 6px;
@@ -493,17 +505,30 @@
 
 .emojiEditorRow {
 	display: grid;
-	grid-template-columns: 4rem minmax(12rem, 1fr) auto;
+	grid-template-columns: 4rem minmax(12rem, 1fr) auto auto;
 	gap: 6px;
 }
 
-.emojiEditorRow input {
+.emojiEditorRow > input {
 	min-width: 0;
 	padding: 8px;
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 7px;
 	background: rgba(255, 255, 255, 0.08);
 	color: #fff;
+}
+
+.emojiVisibilityToggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	white-space: nowrap;
+}
+
+.emojiVisibilityToggle input {
+	width: 20px;
+	height: 20px;
+	accent-color: #ffd166;
 }
 
 .emojiSummary {

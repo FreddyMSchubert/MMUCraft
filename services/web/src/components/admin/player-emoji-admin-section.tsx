@@ -134,6 +134,29 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 															);
 														}}
 													/>
+													<label className="emojiVisibilityToggle">
+														<input
+															type="checkbox"
+															checked={entry.showInName}
+															onChange={(event) => {
+																setDraft((current) =>
+																	current.map(
+																		(item, itemIndex) =>
+																			itemIndex === index
+																				? {
+																						...item,
+																						showInName:
+																							event
+																								.target
+																								.checked,
+																					}
+																				: item,
+																	),
+																);
+															}}
+														/>
+														<span>Show next to name</span>
+													</label>
 													<button
 														type="button"
 														onClick={() => {
@@ -155,7 +178,11 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 													onClick={() => {
 														setDraft((current) => [
 															...current,
-															{ emoji: '', explanation: '' },
+															{
+																emoji: '',
+																explanation: '',
+																showInName: true,
+															},
 														]);
 													}}
 												>
@@ -164,14 +191,19 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 											)}
 										</div>
 									) : (
-										player.customEmojis.map(({ emoji, explanation }) => (
-											<span
-												key={`${emoji}:${explanation}`}
-												className="emojiSummary"
-											>
-												{emoji} {explanation}
-											</span>
-										))
+										player.customEmojis.map(
+											({ emoji, explanation, showInName }) => (
+												<span
+													key={`${emoji}:${explanation}`}
+													className="emojiSummary"
+												>
+													{emoji} {explanation} ·{' '}
+													{showInName
+														? 'Shown next to name'
+														: 'Profile only'}
+												</span>
+											),
+										)
 									)}
 								</td>
 								<td>

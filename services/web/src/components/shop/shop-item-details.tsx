@@ -152,7 +152,11 @@ export function ShopDetails({
 	onClose: () => void;
 	onBuy: (item: ShopItem) => Promise<void>;
 }) {
-	const effectivePreviewView = previewView === 'player' && !skinUrl ? 'cosmetic' : previewView;
+	const effectivePreviewView =
+		(previewView === 'player' && (item.type !== 'cosmetic' || !skinUrl)) ||
+		(previewView === 'item-frame' && !item.decoBlock)
+			? 'cosmetic'
+			: previewView;
 
 	useEffect(() => {
 		const close = (event: KeyboardEvent) => {
@@ -204,11 +208,13 @@ export function ShopDetails({
 								<span>Hover to pause · drag to rotate</span>
 							)}
 						</div>
-						{item.type === 'cosmetic' &&
+						{(item.type === 'cosmetic' || item.decoBlock) &&
 							item.renderMode === 'model' &&
 							!hidePreview && (
 								<CosmeticViewControl
 									selected={effectivePreviewView}
+									cosmetic={item.type === 'cosmetic'}
+									decoBlock={item.decoBlock}
 									skinAvailable={Boolean(skinUrl)}
 									onSelect={onSelectPreviewView}
 								/>
@@ -280,23 +286,31 @@ const COSMETIC_VIEW_OPTIONS: {
 	label: string;
 	icon: string;
 }[] = [
-	{ value: 'cosmetic', label: 'Cosmetic', icon: '◇' },
-	{ value: 'player', label: 'Player', icon: '👤' },
-	{ value: 'item-frame', label: 'Item frame', icon: '▣' },
+	{ value: 'cosmetic', label: 'Detail', icon: '🔍' },
+	{ value: 'player', label: 'Cosmetic', icon: '👒' },
+	{ value: 'item-frame', label: 'Block', icon: '🧊' },
 ];
 
 function CosmeticViewControl({
 	selected,
+	cosmetic,
+	decoBlock,
 	skinAvailable,
 	onSelect,
 }: {
 	selected: CosmeticPreviewView;
+	cosmetic: boolean;
+	decoBlock: boolean;
 	skinAvailable: boolean;
 	onSelect: (view: CosmeticPreviewView) => void;
 }) {
 	return (
-		<div className="shopCosmeticViewControl" role="group" aria-label="Cosmetic preview view">
-			{COSMETIC_VIEW_OPTIONS.map((option) => (
+		<div className="shopCosmeticViewControl" role="group" aria-label="Preview view">
+			{COSMETIC_VIEW_OPTIONS.filter(
+				(option) =>
+					(option.value !== 'player' || cosmetic) &&
+					(option.value !== 'item-frame' || decoBlock),
+			).map((option) => (
 				<button
 					type="button"
 					key={option.value}

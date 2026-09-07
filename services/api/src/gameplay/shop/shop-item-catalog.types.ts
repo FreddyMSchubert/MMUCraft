@@ -19,6 +19,7 @@ export interface RawItemDefinition {
 	tooltips?: unknown;
 	shopPurchasable?: unknown;
 	dyeable?: unknown;
+	decoBlock?: unknown;
 	charm?: unknown;
 	equippableCharm?: unknown;
 	equippableCosmetic?: unknown;
@@ -66,6 +67,7 @@ export interface CatalogItem extends ItemRenderAsset {
 	renderMode: 'texture' | 'model';
 	animated: boolean;
 	dyeable: boolean;
+	decoBlock: boolean;
 	deliveryKind: ShopDeliveryKind;
 	deliveryItemId: string;
 	bookUnlockType: BookUnlockType | null;

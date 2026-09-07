@@ -81,6 +81,7 @@ export class ShopPurchasesService {
 						textureUrl: item.textureUrl,
 						animated: item.animated,
 						dyeable: item.dyeable,
+						decoBlock: item.decoBlock,
 						membersOnly: isMembersOnly(item),
 						membershipLocked: isMembersOnly(item) && !user.isMember,
 						animation: item.animation,

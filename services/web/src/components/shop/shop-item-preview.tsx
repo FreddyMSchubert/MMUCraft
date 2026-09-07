@@ -94,8 +94,8 @@ export function ShopPreview({
 				hovered={hovered}
 				interactive={interactive}
 				view={
-					interactive && item.type === 'cosmetic'
-						? (view ?? 'cosmetic')
+					interactive
+						? (view ?? (item.type === 'cosmetic' ? 'cosmetic' : 'basic3d'))
 						: item.type === 'cosmetic'
 							? 'cosmetic'
 							: 'basic3d'

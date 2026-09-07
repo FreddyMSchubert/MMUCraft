@@ -88,26 +88,26 @@ export function readTextureAnimation(textureFilePath: string): TextureAnimationD
 				? Math.max(1, parsed.animation.frametime)
 				: 1;
 		const frames = Array.isArray(parsed.animation?.frames)
-			? parsed.animation.frames
-					.flatMap((frame) => {
-						const index =
-							typeof frame === 'number'
-								? frame
-								: frame && typeof frame === 'object' && 'index' in frame
-									? (frame as { index: unknown }).index
-									: null;
-						if (typeof index !== 'number' || !Number.isInteger(index) || index < 0) return [];
-
-						const explicitTime =
-							frame && typeof frame === 'object' && 'time' in frame
-								? (frame as { time: unknown }).time
+			? parsed.animation.frames.flatMap((frame) => {
+					const index =
+						typeof frame === 'number'
+							? frame
+							: frame && typeof frame === 'object' && 'index' in frame
+								? (frame as { index: unknown }).index
 								: null;
-						const durationTicks =
-							typeof explicitTime === 'number' && Number.isFinite(explicitTime)
-								? Math.max(1, Math.floor(explicitTime))
-								: frameTimeTicks;
-						return Array.from({ length: durationTicks }, () => index);
-					})
+					if (typeof index !== 'number' || !Number.isInteger(index) || index < 0)
+						return [];
+
+					const explicitTime =
+						frame && typeof frame === 'object' && 'time' in frame
+							? (frame as { time: unknown }).time
+							: null;
+					const durationTicks =
+						typeof explicitTime === 'number' && Number.isFinite(explicitTime)
+							? Math.max(1, Math.floor(explicitTime))
+							: frameTimeTicks;
+					return Array.from({ length: durationTicks }, () => index);
+				})
 			: null;
 		return {
 			frameDelayMs: frames?.length ? 50 : frameTimeTicks * 50,

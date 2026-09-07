@@ -306,7 +306,8 @@ function CommandActor({ entry, players }: { entry: CommandLogEntry; players: Adm
 			<PlayerName
 				name={player.minecraftUsername}
 				color={player.color}
-				emojis={player.emojis}
+				isCommittee={player.isCommittee}
+				customEmojis={player.customEmojis}
 			/>
 		</Link>
 	);

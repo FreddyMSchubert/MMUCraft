@@ -21,7 +21,8 @@ interface ClaimPerson {
 	pronouns: string;
 	color: string;
 	avatarUrl: string | null;
-	emojis: PlayerEmoji[];
+	isCommittee: boolean;
+	customEmojis: PlayerEmoji[];
 	isOwner?: boolean;
 }
 
@@ -270,7 +271,8 @@ export function ClaimsTab() {
 												<PlayerName
 													name={person.minecraftUsername}
 													color={person.color}
-													emojis={person.emojis}
+													isCommittee={person.isCommittee}
+													customEmojis={person.customEmojis}
 												/>
 											</strong>
 											{person.pronouns && <span>{person.pronouns}</span>}
@@ -383,7 +385,8 @@ function ClaimMembersSummary({ members }: { members: ClaimPerson[] }) {
 						<PlayerName
 							name={person.minecraftUsername}
 							color={person.color}
-							emojis={person.emojis}
+							isCommittee={person.isCommittee}
+							customEmojis={person.customEmojis}
 						/>
 					</span>
 				))}

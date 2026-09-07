@@ -118,7 +118,8 @@ export function PlayerBanAdminSection({ controller }: { controller: AdminTabCont
 											<PlayerName
 												name={ban.minecraftUsername}
 												color={ban.color}
-												emojis={ban.emojis}
+												isCommittee={ban.isCommittee}
+												customEmojis={ban.customEmojis}
 											/>
 										</td>
 										<td>
@@ -130,7 +131,8 @@ export function PlayerBanAdminSection({ controller }: { controller: AdminTabCont
 											<PlayerName
 												name={ban.bannedByMinecraftUsername}
 												color="#E6E6E6"
-												emojis={ban.bannedByEmojis}
+												isCommittee={ban.bannedByIsCommittee}
+												customEmojis={ban.bannedByCustomEmojis}
 											/>
 										</td>
 										<td>{formatDateTime(ban.createdAtUnixMs)}</td>

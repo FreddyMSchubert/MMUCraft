@@ -10,7 +10,8 @@ export function PlayerCell({ player }: { player: PlayerSummary }) {
 				<PlayerName
 					name={player.minecraftUsername}
 					color={player.profile.color}
-					emojis={player.emojis}
+					isCommittee={player.isCommittee}
+					customEmojis={player.customEmojis}
 				/>
 				{player.profile.pronouns && (
 					<span className="playerCellPronouns"> ({player.profile.pronouns})</span>

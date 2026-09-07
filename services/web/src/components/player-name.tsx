@@ -8,17 +8,24 @@ export interface PlayerEmoji {
 export function PlayerName({
 	name,
 	color,
-	emojis = [],
+	isCommittee = false,
+	customEmojis = [],
 	children,
 }: {
 	name: string;
 	color: string;
-	emojis?: readonly PlayerEmoji[];
+	isCommittee?: boolean;
+	customEmojis?: readonly PlayerEmoji[];
 	children?: ReactNode;
 }) {
 	return (
 		<span className="playerName" style={playerNameStyle(color)}>
-			{emojis.length > 0 && <>{emojis.map(({ emoji }) => emoji).join('')} </>}
+			{(isCommittee || customEmojis.length > 0) && (
+				<>
+					{isCommittee ? '🛠️' : ''}
+					{customEmojis.map(({ emoji }) => emoji).join('')}{' '}
+				</>
+			)}
 			{children ?? name}
 		</span>
 	);

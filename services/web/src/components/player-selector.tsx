@@ -7,7 +7,8 @@ export interface PlayerSelectorOption {
 	id: number;
 	minecraftUsername: string;
 	color: string;
-	emojis?: { emoji: string }[];
+	isCommittee?: boolean;
+	customEmojis?: { emoji: string }[];
 }
 
 export function PlayerSelector({
@@ -55,9 +56,9 @@ export function PlayerSelector({
 							value={player.minecraftUsername}
 							label={
 								value.trim()
-									? `${value.trim()} → ${player.emojis?.map(({ emoji }) => emoji).join('') ?? ''} ${player.minecraftUsername}`.trim()
-									: player.emojis?.length
-										? `${player.emojis.map(({ emoji }) => emoji).join('')} ${player.minecraftUsername}`
+									? `${value.trim()} → ${player.isCommittee ? '🛠️' : ''}${player.customEmojis?.map(({ emoji }) => emoji).join('') ?? ''} ${player.minecraftUsername}`.trim()
+									: player.isCommittee || player.customEmojis?.length
+										? `${player.isCommittee ? '🛠️' : ''}${player.customEmojis?.map(({ emoji }) => emoji).join('') ?? ''} ${player.minecraftUsername}`
 										: undefined
 							}
 						/>

@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { DatabaseService, playerProfiles, users } from '../database/database.service';
 import { ClaimMinecraftSynchronizationService } from '../claims/claim-minecraft-synchronization.service';
 import { effectivePlayerColor } from '../players/player-color';
-import { normalizeEmojiOverride, playerEmojis } from '../players/player-emojis';
+import { customPlayerEmojis, normalizeCustomEmojis } from '../players/player-emojis';
 import { PlayersService } from '../players/players.service';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class PlayerRoleAdministrationService {
 				minecraft_uuid: users.minecraft_uuid,
 				discord_username: playerProfiles.discord_username,
 				color_hex: playerProfiles.color_hex,
-				emoji_override_json: playerProfiles.emoji_override_json,
+				custom_emojis_json: playerProfiles.custom_emojis_json,
 			})
 			.from(users)
 			.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
@@ -48,11 +48,7 @@ export class PlayerRoleAdministrationService {
 				isMember: row.is_member === 1,
 				isCommittee: row.is_super_admin === 1 || row.is_committee === 1,
 				isExternal: row.responsible_user_id !== null,
-				emojis: playerEmojis(
-					row.is_member === 1,
-					row.is_super_admin === 1 || row.is_committee === 1,
-					row.emoji_override_json,
-				),
+				customEmojis: customPlayerEmojis(row.custom_emojis_json),
 			})),
 		};
 	}
@@ -108,7 +104,7 @@ export class PlayerRoleAdministrationService {
 
 	setEmojis(userIdInput: string, input: unknown) {
 		const userId = parseUserId(userIdInput);
-		const emojiOverrideJson = normalizeEmojiOverride(input);
+		const customEmojisJson = normalizeCustomEmojis(input);
 		const target = this.database.connection
 			.select()
 			.from(users)
@@ -120,22 +116,18 @@ export class PlayerRoleAdministrationService {
 			.insert(playerProfiles)
 			.values({
 				user_id: userId,
-				emoji_override_json: emojiOverrideJson,
+				custom_emojis_json: customEmojisJson,
 				updated_at_unix_ms: Date.now(),
 			})
 			.onConflictDoUpdate({
 				target: playerProfiles.user_id,
-				set: { emoji_override_json: emojiOverrideJson, updated_at_unix_ms: Date.now() },
+				set: { custom_emojis_json: customEmojisJson, updated_at_unix_ms: Date.now() },
 			})
 			.run();
 		return {
 			ok: true,
 			userId,
-			emojis: playerEmojis(
-				target.is_member === 1,
-				target.is_super_admin === 1 || target.is_committee === 1,
-				emojiOverrideJson,
-			),
+			customEmojis: customPlayerEmojis(customEmojisJson),
 		};
 	}
 }

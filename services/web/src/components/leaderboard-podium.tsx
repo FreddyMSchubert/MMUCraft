@@ -9,7 +9,8 @@ export interface PodiumEntry {
 	name: string;
 	color: string;
 	pronouns: string;
-	emojis: PlayerEmoji[];
+	isCommittee: boolean;
+	customEmojis: PlayerEmoji[];
 	value: number | string | null;
 	displayValue: string;
 	avatarUrl?: string | null;
@@ -82,7 +83,8 @@ export function LeaderboardPodium({
 								<PlayerName
 									name={entry.name}
 									color={entry.color}
-									emojis={entry.emojis}
+									isCommittee={entry.isCommittee}
+									customEmojis={entry.customEmojis}
 								/>
 							</strong>
 							{entry.pronouns && <span> ({entry.pronouns})</span>}
@@ -113,7 +115,8 @@ export function LeaderboardPodium({
 									<PlayerName
 										name={entry.name}
 										color={entry.color}
-										emojis={entry.emojis}
+										isCommittee={entry.isCommittee}
+										customEmojis={entry.customEmojis}
 									/>
 								</strong>
 							</Link>

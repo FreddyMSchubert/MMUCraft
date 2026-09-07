@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { and, eq, gt } from 'drizzle-orm';
 import { DatabaseService, playerProfiles, sessions, users } from '../database/database.service';
 import { effectivePlayerColor, playerSkinUrl } from '../players/player-color';
-import { playerEmojis, type PlayerEmoji } from '../players/player-emojis';
+import { customPlayerEmojis, type PlayerEmoji } from '../players/player-emojis';
 import { createOpaqueToken, hashSecret } from './auth.util';
 
 const SESSION_TTL_MS = 60 * 24 * 60 * 60 * 1000;
@@ -16,7 +16,7 @@ export interface AuthenticatedUser {
 	isMember: boolean;
 	isCommittee: boolean;
 	isSuperAdmin: boolean;
-	emojis: PlayerEmoji[];
+	customEmojis: PlayerEmoji[];
 }
 
 @Injectable()
@@ -87,11 +87,7 @@ export class AuthSessionService {
 			isMember: row.is_member === 1,
 			isCommittee: isSuperAdmin || row.is_committee === 1,
 			isSuperAdmin,
-			emojis: playerEmojis(
-				row.is_member === 1,
-				isSuperAdmin || row.is_committee === 1,
-				profile?.emoji_override_json,
-			),
+			customEmojis: customPlayerEmojis(profile?.custom_emojis_json),
 		};
 	}
 

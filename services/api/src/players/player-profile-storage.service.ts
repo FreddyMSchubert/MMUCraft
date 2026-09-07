@@ -31,7 +31,7 @@ export class PlayerProfileStorageService {
 				color: effectivePlayerColor(minecraftUuid),
 				defaultColor: effectivePlayerColor(minecraftUuid),
 				customColor: null,
-				emojiOverrideJson: null,
+				customEmojisJson: null,
 				showDeathCounter: true,
 				updatedAtUnixMs: 0,
 			};
@@ -45,7 +45,7 @@ export class PlayerProfileStorageService {
 			color: effectivePlayerColor(minecraftUuid, row.color_hex),
 			defaultColor: effectivePlayerColor(minecraftUuid),
 			customColor: row.color_hex,
-			emojiOverrideJson: row.emoji_override_json,
+			customEmojisJson: row.custom_emojis_json,
 			showDeathCounter: row.show_death_counter === 1,
 			updatedAtUnixMs: row.updated_at_unix_ms,
 		};

@@ -9,27 +9,19 @@ const MAX_EMOJIS = 8;
 const MAX_EMOJI_LENGTH = 16;
 const MAX_EXPLANATION_LENGTH = 80;
 
-export function playerEmojis(
-	isMember: boolean,
-	isCommittee: boolean,
-	overrideJson?: string | null,
-): PlayerEmoji[] {
-	if (overrideJson !== null && overrideJson !== undefined) {
+export function customPlayerEmojis(customJson?: string | null): PlayerEmoji[] {
+	if (customJson !== null && customJson !== undefined) {
 		try {
-			const parsed: unknown = JSON.parse(overrideJson);
+			const parsed: unknown = JSON.parse(customJson);
 			if (Array.isArray(parsed)) return parsed as PlayerEmoji[];
 		} catch {
-			// Invalid stored data falls back to role-derived emojis.
+			// Ignore invalid stored data.
 		}
 	}
-	return isCommittee
-		? [{ emoji: '🛠️', explanation: 'Committee' }]
-		: isMember
-			? [{ emoji: '⭐', explanation: 'Society member' }]
-			: [];
+	return [];
 }
 
-export function normalizeEmojiOverride(input: unknown): string | null {
+export function normalizeCustomEmojis(input: unknown): string | null {
 	if (input === null) return null;
 	if (!Array.isArray(input) || input.length > MAX_EMOJIS) {
 		throw new BadRequestException(`Emojis must be a list of at most ${MAX_EMOJIS} entries.`);

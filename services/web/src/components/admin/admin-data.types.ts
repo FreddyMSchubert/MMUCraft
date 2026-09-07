@@ -25,7 +25,7 @@ export interface AdminPlayer {
 	isMember: boolean;
 	isCommittee: boolean;
 	isExternal: boolean;
-	emojis: PlayerEmoji[];
+	customEmojis: PlayerEmoji[];
 }
 
 export interface GiftCode {
@@ -44,8 +44,10 @@ export interface WhitelistedEmail {
 	addedByColor: string;
 	responsibleMinecraftUsername: string | null;
 	responsiblePlayerColor: string | null;
-	responsiblePlayerEmojis: PlayerEmoji[];
-	addedByEmojis: PlayerEmoji[];
+	responsibleIsCommittee: boolean;
+	responsibleCustomEmojis: PlayerEmoji[];
+	addedByIsCommittee: boolean;
+	addedByCustomEmojis: PlayerEmoji[];
 	createdAtUnixMs: number;
 }
 
@@ -57,16 +59,19 @@ export interface AdminClaim {
 	chunkZ: number;
 	minecraftUsername: string;
 	color: string;
-	emojis: PlayerEmoji[];
+	isCommittee: boolean;
+	customEmojis: PlayerEmoji[];
 }
 
 export interface ActivePlayerBan {
 	userId: number;
 	minecraftUsername: string;
 	color: string;
-	emojis: PlayerEmoji[];
+	isCommittee: boolean;
+	customEmojis: PlayerEmoji[];
 	bannedByMinecraftUsername: string;
-	bannedByEmojis: PlayerEmoji[];
+	bannedByIsCommittee: boolean;
+	bannedByCustomEmojis: PlayerEmoji[];
 	expiresAtUnixMs: number | null;
 	createdAtUnixMs: number;
 }

@@ -58,7 +58,8 @@ export function MemberAccessAdminSection({ controller }: { controller: AdminTabC
 											<PlayerName
 												name={player.minecraftUsername}
 												color={player.color}
-												emojis={player.emojis}
+												isCommittee={player.isCommittee}
+												customEmojis={player.customEmojis}
 											/>
 										</td>
 										<td>

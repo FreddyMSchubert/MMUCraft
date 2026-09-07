@@ -23,7 +23,7 @@ import {
 	normalizeMinecraftUuid,
 } from '../database/minecraft-identity.service';
 import { effectivePlayerColor } from '../players/player-color';
-import { playerEmojis } from '../players/player-emojis';
+import { customPlayerEmojis } from '../players/player-emojis';
 
 const PROXY_STALE_AFTER_MS = 10_000;
 const COMMAND_TTL_MS = 60_000;
@@ -222,13 +222,10 @@ export class VelocityService {
 							user?.minecraft_uuid ?? player.uuid,
 							profile?.color_hex,
 						),
-						emojis: user
-							? playerEmojis(
-									user.is_member === 1,
-									user.is_super_admin === 1 || user.is_committee === 1,
-									profile?.emoji_override_json,
-								)
-							: [],
+						isCommittee: Boolean(
+							user && (user.is_super_admin === 1 || user.is_committee === 1),
+						),
+						customEmojis: user ? customPlayerEmojis(profile?.custom_emojis_json) : [],
 					};
 				})
 			: [];

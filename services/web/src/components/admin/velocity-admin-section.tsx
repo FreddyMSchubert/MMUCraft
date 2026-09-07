@@ -21,7 +21,8 @@ interface VelocityPlayer {
 	username: string;
 	serverName: string;
 	color: string;
-	emojis: PlayerEmoji[];
+	isCommittee: boolean;
+	customEmojis: PlayerEmoji[];
 }
 
 interface VelocitySchedule {
@@ -442,7 +443,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 										<PlayerName
 											name={player.username}
 											color={player.color}
-											emojis={player.emojis}
+											isCommittee={player.isCommittee}
+											customEmojis={player.customEmojis}
 										/>
 									</td>
 									<td>{player.serverName}</td>

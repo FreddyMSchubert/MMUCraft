@@ -11,7 +11,7 @@ import {
 } from '../database/database.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color';
-import { playerEmojis } from '../players/player-emojis';
+import { customPlayerEmojis } from '../players/player-emojis';
 import { FishCatalogService } from './fish-catalog.service';
 
 interface RecordCatchInput {
@@ -203,10 +203,9 @@ export class FishingService {
 					color,
 					avatarUrl: playerAvatarUrl(player.minecraft_uuid),
 					caughtTotal: catchCountByUserId.get(player.id) ?? 0,
-					emojis: playerEmojis(
-						player.is_member === 1,
-						player.is_super_admin === 1 || player.is_committee === 1,
-						profilesById.get(player.id)?.emoji_override_json,
+					isCommittee: player.is_super_admin === 1 || player.is_committee === 1,
+					customEmojis: customPlayerEmojis(
+						profilesById.get(player.id)?.custom_emojis_json,
 					),
 				};
 			}),
@@ -329,7 +328,7 @@ function serializeServerRecord(
 			is_super_admin: number;
 		}
 	>,
-	profiles: Map<number, { color_hex: string | null; emoji_override_json: string | null }>,
+	profiles: Map<number, { color_hex: string | null; custom_emojis_json: string | null }>,
 	kind: 'largest' | 'smallest',
 ) {
 	const row = rows.reduce<FishCatchRow | null>((record, candidate) => {
@@ -356,11 +355,8 @@ function serializeServerRecord(
 			minecraftUsername: player.minecraft_username,
 			color,
 			avatarUrl: playerAvatarUrl(player.minecraft_uuid),
-			emojis: playerEmojis(
-				player.is_member === 1,
-				player.is_super_admin === 1 || player.is_committee === 1,
-				profile?.emoji_override_json,
-			),
+			isCommittee: player.is_super_admin === 1 || player.is_committee === 1,
+			customEmojis: customPlayerEmojis(profile?.custom_emojis_json),
 		},
 	};
 }

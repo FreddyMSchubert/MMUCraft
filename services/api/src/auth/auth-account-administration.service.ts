@@ -12,7 +12,7 @@ import {
 	users,
 } from '../database/database.service';
 import { effectivePlayerColor } from '../players/player-color';
-import { playerEmojis } from '../players/player-emojis';
+import { customPlayerEmojis } from '../players/player-emojis';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import type { AuthenticatedUser } from './auth-session.service';
 import { isAllowedEmail, isValidEmail, normalizeEmail } from './auth.util';
@@ -115,10 +115,9 @@ export class AuthAccountAdministrationService {
 							user.minecraftUuid,
 							profilesById.get(user.id)?.color_hex,
 						),
-						emojis: playerEmojis(
-							user.isMember === 1,
-							user.isSuperAdmin === 1 || user.isCommittee === 1,
-							profilesById.get(user.id)?.emoji_override_json,
+						isCommittee: user.isSuperAdmin === 1 || user.isCommittee === 1,
+						customEmojis: customPlayerEmojis(
+							profilesById.get(user.id)?.custom_emojis_json,
 						),
 					},
 				]),
@@ -134,7 +133,10 @@ export class AuthAccountAdministrationService {
 					addedByMinecraftUsername:
 						usernamesById.get(entry.added_by_user_id)?.name ?? 'Unknown user',
 					addedByColor: usernamesById.get(entry.added_by_user_id)?.color ?? '#E6E6E6',
-					addedByEmojis: usernamesById.get(entry.added_by_user_id)?.emojis ?? [],
+					addedByIsCommittee:
+						usernamesById.get(entry.added_by_user_id)?.isCommittee ?? false,
+					addedByCustomEmojis:
+						usernamesById.get(entry.added_by_user_id)?.customEmojis ?? [],
 					responsibleMinecraftUsername:
 						entry.responsible_user_id === null
 							? null
@@ -144,10 +146,14 @@ export class AuthAccountAdministrationService {
 						entry.responsible_user_id === null
 							? null
 							: (usernamesById.get(entry.responsible_user_id)?.color ?? '#E6E6E6'),
-					responsiblePlayerEmojis:
+					responsibleIsCommittee:
+						entry.responsible_user_id === null
+							? false
+							: (usernamesById.get(entry.responsible_user_id)?.isCommittee ?? false),
+					responsibleCustomEmojis:
 						entry.responsible_user_id === null
 							? []
-							: (usernamesById.get(entry.responsible_user_id)?.emojis ?? []),
+							: (usernamesById.get(entry.responsible_user_id)?.customEmojis ?? []),
 					createdAtUnixMs: entry.created_at_unix_ms,
 				})),
 		};

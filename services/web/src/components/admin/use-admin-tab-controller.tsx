@@ -237,7 +237,8 @@ export function useAdminTabController({
 							<PlayerName
 								name={responsiblePlayer.minecraftUsername}
 								color={responsiblePlayer.color}
-								emojis={responsiblePlayer.emojis}
+								isCommittee={responsiblePlayer.isCommittee}
+								customEmojis={responsiblePlayer.customEmojis}
 							/>{' '}
 							paid <DabloonAmount amount={result.priceDabloons} /> and has{' '}
 							<DabloonAmount amount={result.balanceDabloons} /> left.
@@ -352,7 +353,8 @@ export function useAdminTabController({
 							<PlayerName
 								name={player.minecraftUsername}
 								color={player.color}
-								emojis={player.emojis}
+								isCommittee={player.isCommittee}
+								customEmojis={player.customEmojis}
 							/>{' '}
 							was {banMode === 'permanent' ? 'permanently banned' : 'put in timeout'}.
 						</>
@@ -400,7 +402,8 @@ export function useAdminTabController({
 						<PlayerName
 							name={ban.minecraftUsername}
 							color={ban.color}
-							emojis={ban.emojis}
+							isCommittee={ban.isCommittee}
+							customEmojis={ban.customEmojis}
 						/>{' '}
 						can sign in and join again.
 					</>

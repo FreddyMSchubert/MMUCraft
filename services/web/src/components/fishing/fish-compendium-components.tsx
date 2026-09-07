@@ -313,7 +313,8 @@ export function ServerRecordLine({
 			<PlayerName
 				name={record.player.minecraftUsername}
 				color={record.player.color}
-				emojis={record.player.emojis}
+				isCommittee={record.player.isCommittee}
+				customEmojis={record.player.customEmojis}
 			/>{' '}
 			· {formatLength(record.lengthCm)}
 		</span>

@@ -1,0 +1,15 @@
+{
+	"title": "Half Rim Glasses",
+	"id": "cosmetic-half-rim-glasses",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Half Rim Glasses."
+	},
+	"equippableCosmetic": {}
+}

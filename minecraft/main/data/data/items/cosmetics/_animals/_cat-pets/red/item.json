@@ -1,0 +1,15 @@
+{
+	"title": "Red Cat Pet Hat",
+	"id": "cosmetic-red-cat-pet-hat",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 60,
+		"unlockMessage": "Unlocked cosmetic: Red Cat Pet Hat."
+	},
+	"equippableCosmetic": {}
+}

@@ -1,0 +1,15 @@
+{
+	"title": "Tuxedo Cat Pet Hat",
+	"id": "cosmetic-tuxedo-cat-pet-hat",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 40,
+		"unlockMessage": "Unlocked cosmetic: Tuxedo Cat Pet Hat."
+	},
+	"equippableCosmetic": {}
+}

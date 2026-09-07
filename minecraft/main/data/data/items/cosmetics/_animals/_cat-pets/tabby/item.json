@@ -1,0 +1,15 @@
+{
+	"title": "Tabby Cat Pet Hat",
+	"id": "cosmetic-tabby-cat-pet-hat",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 60,
+		"unlockMessage": "Unlocked cosmetic: Tabby Cat Pet Hat."
+	},
+	"equippableCosmetic": {}
+}

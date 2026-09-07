@@ -1,0 +1,15 @@
+{
+	"title": "White Cat Pet Hat",
+	"id": "cosmetic-white-cat-pet-hat",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [""],
+	"shopPurchasable": {
+		"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 55,
+		"unlockMessage": "Unlocked cosmetic: White Cat Pet Hat."
+	},
+	"equippableCosmetic": {}
+}

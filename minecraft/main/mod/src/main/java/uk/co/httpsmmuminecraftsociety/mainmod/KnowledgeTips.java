@@ -272,7 +272,8 @@ public final class KnowledgeTips {
             message(2, "Creepers like their personal space.", context -> true),
             message(6, "Have you read all your knowledge books?", context -> true),
             message(6, "Have you signed up for the next society events?", context -> true),
-            message(6, "Have you checked out your dailies?", context -> true)
+            message(6, "Have you checked out your dailies?", context -> true),
+            message(6, "Why not try on a different hat today?", context -> true)
     );
 
     private KnowledgeTips() {}

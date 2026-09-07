@@ -1,0 +1,15 @@
+{
+	"title": "Feather Headband",
+	"id": "cosmetic-feather-headband",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 75,
+		"description": "",
+		"unlockWeight": 65,
+		"unlockMessage": "Unlocked cosmetic: Feather Headband."
+	},
+	"equippableCosmetic": {}
+}

@@ -1,0 +1,64 @@
+{
+	"__comment": "Created by Oran9eUtan",
+	"textures": {
+		"particle": "item/hats/accessories/sunglasses",
+		"accessory": "item/hats/accessories/alex_mask"
+	},
+	"elements": [
+		{
+			"__comment": "front",
+			"from": [4, 4.25, 4],
+			"to": [12, 12.25, 4.005],
+			"faces": {
+				"north": { "uv": [4, 4, 8, 8], "texture": "#accessory" },
+				"south": { "uv": [8, 4, 4, 8], "texture": "#accessory" }
+			}
+		},
+		{
+			"__comment": "back",
+			"from": [4, 4.25, 12],
+			"to": [12, 12.25, 12.001],
+			"faces": {
+				"north": { "uv": [16, 4, 12, 8], "texture": "#accessory" },
+				"south": { "uv": [12, 4, 16, 8], "texture": "#accessory" }
+			}
+		},
+		{
+			"__comment": "right",
+			"from": [4, 4.25, 4],
+			"to": [4.001, 12.25, 12],
+			"faces": {
+				"west": { "uv": [8, 4, 12, 8], "texture": "#accessory" },
+				"east": { "uv": [12, 4, 8, 8], "texture": "#accessory" }
+			}
+		},
+		{
+			"__comment": "left",
+			"from": [12, 4.25, 4],
+			"to": [12.001, 12.25, 12],
+			"faces": {
+				"west": { "uv": [4, 4, 0, 8], "texture": "#accessory" },
+				"east": { "uv": [0, 4, 4, 8], "texture": "#accessory" }
+			}
+		},
+		{
+			"__comment": "top",
+			"from": [4, 12.25, 4],
+			"to": [12, 12.251, 12],
+			"faces": {
+				"down": { "uv": [8, 0, 4, 4], "texture": "#accessory" },
+				"up": { "uv": [4, 0, 8, 4], "texture": "#accessory", "rotation": 180 }
+			}
+		},
+		{
+			"__comment": "bottom",
+			"from": [4, 4.25, 4],
+			"to": [12, 4.251, 12],
+			"faces": {
+				"down": { "uv": [4, 8, 8, 12], "texture": "#accessory", "rotation": 180 },
+				"up": { "uv": [8, 8, 4, 12], "texture": "#accessory" }
+			}
+		}
+	],
+	"display": { "gui": { "rotation": [0, 180, 0] }, "head": { "scale": [1.81, 1.81, 1.81] } }
+}

@@ -8,7 +8,7 @@ export interface PlayerSelectorOption {
 	minecraftUsername: string;
 	color: string;
 	isCommittee?: boolean;
-	customEmojis?: { emoji: string }[];
+	customEmojis?: { emoji: string; showInName: boolean }[];
 }
 
 export function PlayerSelector({
@@ -33,6 +33,11 @@ export function PlayerSelector({
 	required?: boolean;
 }) {
 	const suggestions = fuzzyFilter(options, value, ['minecraftUsername']);
+	const nameEmojis = (player: PlayerSelectorOption) =>
+		player.customEmojis
+			?.filter(({ showInName }) => showInName)
+			.map(({ emoji }) => emoji)
+			.join('') ?? '';
 	return (
 		<>
 			<input
@@ -56,9 +61,9 @@ export function PlayerSelector({
 							value={player.minecraftUsername}
 							label={
 								value.trim()
-									? `${value.trim()} → ${player.isCommittee ? '🛠️' : ''}${player.customEmojis?.map(({ emoji }) => emoji).join('') ?? ''} ${player.minecraftUsername}`.trim()
-									: player.isCommittee || player.customEmojis?.length
-										? `${player.isCommittee ? '🛠️' : ''}${player.customEmojis?.map(({ emoji }) => emoji).join('') ?? ''} ${player.minecraftUsername}`
+									? `${value.trim()} → ${player.isCommittee ? '🛠️' : ''}${nameEmojis(player)} ${player.minecraftUsername}`.trim()
+									: player.isCommittee || nameEmojis(player)
+										? `${player.isCommittee ? '🛠️' : ''}${nameEmojis(player)} ${player.minecraftUsername}`
 										: undefined
 							}
 						/>

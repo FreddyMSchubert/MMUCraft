@@ -3,6 +3,7 @@ id: invisicarrot
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on Invisi-Carrots, which can be used to turn item frames invisible!
 sidebarTitle: Invisi-Carrots
+gameplayToggle: imaginative
 tags:
 - invisicarot
 - invisable carrot

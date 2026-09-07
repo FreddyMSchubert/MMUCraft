@@ -11,7 +11,8 @@
 		"priceDabloons": 175,
 		"description": "Gives you permanent night vision.",
 		"unlockWeight": 10,
-		"unlockMessage": "Unlocked charm: Candle of the Deep Charm. It gives permanent night vision."
+		"unlockMessage": "Unlocked charm: Candle of the Deep Charm. It gives permanent night vision.",
+		"gameplayToggle": "overpowered"
 	},
 	"charm": {
 		"charmId": 8,

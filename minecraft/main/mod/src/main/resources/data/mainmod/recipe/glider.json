@@ -1,10 +1,13 @@
 {
   "type": "mainmod:fake_crafting_shaped",
+  "gameplayToggle": "soaring",
   "pattern": [
+    "LLL",
     "MMM",
     "S S"
   ],
   "key": {
+    "L": "minecraft:leather",
     "M": "minecraft:phantom_membrane",
     "S": "minecraft:stick"
   },

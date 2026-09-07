@@ -11,7 +11,8 @@
 		"priceDabloons": 100,
 		"description": "Reduces underwater air consumption while stationary.",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked charm: Scuba Tank Charm. Reduces underwater air use."
+		"unlockMessage": "Unlocked charm: Scuba Tank Charm. Reduces underwater air use.",
+		"gameplayToggle": "overpowered"
 	},
 	"charm": {
 		"charmId": 38,

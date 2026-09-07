@@ -11,7 +11,8 @@
 		"priceDabloons": 200,
 		"description": "Lets you crawl across ceilings.",
 		"unlockWeight": 20,
-		"unlockMessage": "Unlocked charm: Cave Spider Pajamas Charm. Crawls across ceilings."
+		"unlockMessage": "Unlocked charm: Cave Spider Pajamas Charm. Crawls across ceilings.",
+		"gameplayToggle": "imaginative"
 	},
 	"charm": {
 		"charmId": 20,

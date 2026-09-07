@@ -12,7 +12,8 @@
 		"priceDabloons": 175,
 		"description": "Increases jump height and can make rabbits share carrots.",
 		"unlockWeight": 10,
-		"unlockMessage": "Unlocked charm: Bunny Pajamas Charm. Increases jump height."
+		"unlockMessage": "Unlocked charm: Bunny Pajamas Charm. Increases jump height.",
+		"gameplayToggle": "soaring"
 	},
 	"charm": {
 		"charmId": 17,

@@ -11,7 +11,8 @@
 		"priceDabloons": 25,
 		"description": "Does nothing in particular. Nothing else don\u0027t worry bout it.",
 		"unlockWeight": 200,
-		"unlockMessage": "Unlocked charm: Leprechaun Boots Charm. It does nothing in particular, don't worry about it. Move along. Go on. Nothing to see here."
+		"unlockMessage": "Unlocked charm: Leprechaun Boots Charm. It does nothing in particular, don't worry about it. Move along. Go on. Nothing to see here.",
+		"gameplayToggle": "humorous"
 	},
 	"charm": {
 		"charmId": 13,

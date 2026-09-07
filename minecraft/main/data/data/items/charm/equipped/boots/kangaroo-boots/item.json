@@ -11,7 +11,8 @@
 		"priceDabloons": 100,
 		"description": "Makes you very bouncy. It's fun.",
 		"unlockWeight": 150,
-		"unlockMessage": "Unlocked charm: Kangaroo Boots Charm. It makes you very bouncy."
+		"unlockMessage": "Unlocked charm: Kangaroo Boots Charm. It makes you very bouncy.",
+		"gameplayToggle": "humorous"
 	},
 	"charm": {
 		"charmId": 50,

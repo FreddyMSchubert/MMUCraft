@@ -2,7 +2,7 @@
 id: glider
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on gliders, so you can fly even when you've never been to the Nether or End.
-sidebarTitle: Backpacks
+sidebarTitle: Gliders
 tags:
 - paraglider
 - float
@@ -20,3 +20,5 @@ tips:
 - Gliders are really useful in the Nether, because there is lava to create an updraft for the glider all around the place.
 - Expert glider users don't ever touch the ground - they can just place another campfire, and keep flying from the new updraft.
 ====
+
+Idk gliders info here

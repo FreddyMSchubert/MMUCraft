@@ -204,6 +204,13 @@
       "when": 1788722898912,
       "tag": "0028_busy_mauler",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "6",
+      "when": 1788792825792,
+      "tag": "0029_demonic_magma",
+      "breakpoints": true
     }
   ]
 }

@@ -101,6 +101,7 @@ public class MainMod implements ModInitializer {
         MoneyCommand.init();
         WebsiteCommand.init();
         KnowledgeTips.init();
+        Announcements.init();
         PlayerStatsSync.init();
         MetricsServer.init();
         DiscordBridge.init();

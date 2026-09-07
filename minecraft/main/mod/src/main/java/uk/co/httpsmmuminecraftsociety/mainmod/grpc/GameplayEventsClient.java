@@ -67,6 +67,25 @@ final class GameplayEventsClient {
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).getKnowledgeTip(request));
     }
 
+    CompletableFuture<GetAnnouncementsResponse> getAnnouncements(String minecraftUuid, boolean includeRead) {
+        GetAnnouncementsRequest request = GetAnnouncementsRequest.newBuilder()
+                .setMinecraftUuid(minecraftUuid)
+                .setIncludeRead(includeRead)
+                .build();
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).getAnnouncements(request));
+    }
+
+    CompletableFuture<MarkAnnouncementsReadResponse> markAnnouncementsRead(
+            String minecraftUuid,
+            List<Integer> announcementIds
+    ) {
+        MarkAnnouncementsReadRequest request = MarkAnnouncementsReadRequest.newBuilder()
+                .setMinecraftUuid(minecraftUuid)
+                .addAllAnnouncementIds(announcementIds)
+                .build();
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).markAnnouncementsRead(request));
+    }
+
     CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
             ServerPlayer player,
             List<MinecraftStatEntry> stats

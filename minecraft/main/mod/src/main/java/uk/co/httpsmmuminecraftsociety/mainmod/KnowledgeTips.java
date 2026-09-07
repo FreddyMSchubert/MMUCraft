@@ -292,6 +292,7 @@ public final class KnowledgeTips {
             if (player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME)) <= 1) {
                 player.sendSystemMessage(Component.literal("Welcome to the MMU Minecraft Society!")
                         .withStyle(ChatFormatting.WHITE));
+                Announcements.sendUnread(player);
                 return;
             }
             PlayerStatsSync.syncNow(player).thenRun(() -> requestTip(
@@ -319,6 +320,7 @@ public final class KnowledgeTips {
                         if (greet) player.sendSystemMessage(greeting(player, previousLastPlayedAtUnixMs));
                         else player.sendSystemMessage(Component.literal("Tips are taking a nap. Try again.")
                                 .withStyle(ChatFormatting.RED));
+                        if (greet) Announcements.sendUnread(player);
                     });
                     return null;
                 });
@@ -341,16 +343,18 @@ public final class KnowledgeTips {
                         .append(WebsiteCommand.takeMeThere("knowledge", "here", ChatFormatting.RED))
                         .append(Component.literal(".").withStyle(ChatFormatting.GOLD)));
             }
-            if (!response.getFound()) return;
-            player.sendSystemMessage(Component.literal("Tip: ")
-                    .withStyle(ChatFormatting.AQUA)
-                    .append(Component.literal(response.getTip()).withStyle(ChatFormatting.WHITE))
-                    .append(" ")
-                    .append(WebsiteCommand.takeMeThere(
-                            "knowledge/" + response.getKnowledgeId(),
-                            "[Read more]",
-                            ChatFormatting.GOLD
-                    )));
+            if (response.getFound()) {
+                player.sendSystemMessage(Component.literal("Tip: ")
+                        .withStyle(ChatFormatting.AQUA)
+                        .append(Component.literal(response.getTip()).withStyle(ChatFormatting.WHITE))
+                        .append(" ")
+                        .append(WebsiteCommand.takeMeThere(
+                                "knowledge/" + response.getKnowledgeId(),
+                                "[Read more]",
+                                ChatFormatting.GOLD
+                        )));
+            }
+            if (greet) Announcements.sendUnread(player);
         });
     }
 

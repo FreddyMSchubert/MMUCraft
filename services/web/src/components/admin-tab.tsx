@@ -15,6 +15,7 @@ import { ServerClaimAdministrationSection } from './admin/server-claim-administr
 import { useAdminTabController } from './admin/use-admin-tab-controller';
 import { VelocityAdminSection } from './admin/velocity-admin-section';
 import { FeatureToggleAdminSection } from './admin/feature-toggle-admin-section';
+import { AnnouncementAdminSection } from './admin/announcement-admin-section';
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
 	const controller = useAdminTabController({ isSuperAdmin, section });
@@ -22,6 +23,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 	return (
 		<div className="adminPanel">
 			<AdminSectionNavigation activeSection={controller.activeSection} />
+			<AnnouncementAdminSection activeSection={controller.activeSection} />
 			<DailyRefreshAdminSection controller={controller} />
 			<CountdownAdminSection controller={controller} />
 			<CommandHistoryAdminSection controller={controller} />

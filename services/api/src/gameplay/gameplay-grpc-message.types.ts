@@ -58,6 +58,16 @@ export interface KnowledgeTipResponse {
 	tip: string;
 }
 
+export interface AnnouncementsRequest {
+	minecraft_uuid?: string;
+	include_read?: boolean;
+}
+
+export interface MarkAnnouncementsReadRequest {
+	minecraft_uuid?: string;
+	announcement_ids?: number[];
+}
+
 export interface UnlockAvailabilityRequest {
 	minecraft_username?: string;
 	minecraft_uuid?: string;

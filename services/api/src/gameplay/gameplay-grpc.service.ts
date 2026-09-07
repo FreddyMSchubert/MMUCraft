@@ -12,6 +12,7 @@ import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service';
 import { DailiesService } from './dailies/dailies.service';
 import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.service';
 import { CommandLogsService } from '../database/command-logs.service';
+import { AnnouncementsService } from '../announcements/announcements.service';
 import {
 	FeatureTogglesService,
 	type FeatureTogglesSnapshot,
@@ -33,6 +34,8 @@ import type {
 	PlayerStatisticsSyncResponse,
 	UnlockAvailabilityRequest,
 	UnlockAvailabilityResponse,
+	AnnouncementsRequest,
+	MarkAnnouncementsReadRequest,
 } from './gameplay-grpc-message.types';
 
 interface GameplayProtoRoot {
@@ -62,6 +65,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly discord: DiscordService,
 		private readonly commandLogs: CommandLogsService,
 		private readonly featureToggles: FeatureTogglesService,
+		private readonly announcements: AnnouncementsService,
 	) {}
 
 	onModuleInit() {
@@ -80,7 +84,38 @@ export class GameplayGrpcService implements OnModuleInit {
 			UpdateDailyTask: this.updateDailyTask.bind(this),
 			PublishDiscordEvent: this.publishDiscordEvent.bind(this),
 			RecordCommandExecution: this.recordCommandExecution.bind(this),
+			GetAnnouncements: this.getAnnouncements.bind(this),
+			MarkAnnouncementsRead: this.markAnnouncementsRead.bind(this),
 		});
+	}
+
+	private getAnnouncements(
+		call: grpc.ServerUnaryCall<
+			AnnouncementsRequest,
+			ReturnType<AnnouncementsService['getActiveForPlayer']>
+		>,
+		callback: UnaryCallback<ReturnType<AnnouncementsService['getActiveForPlayer']>>,
+	) {
+		callback(
+			null,
+			this.announcements.getActiveForPlayer(
+				call.request.minecraft_uuid ?? '',
+				call.request.include_read === true,
+			),
+		);
+	}
+
+	private markAnnouncementsRead(
+		call: grpc.ServerUnaryCall<MarkAnnouncementsReadRequest, { marked: number }>,
+		callback: UnaryCallback<{ marked: number }>,
+	) {
+		callback(
+			null,
+			this.announcements.markRead(
+				call.request.minecraft_uuid ?? '',
+				call.request.announcement_ids ?? [],
+			),
+		);
 	}
 
 	private recordCommandExecution(

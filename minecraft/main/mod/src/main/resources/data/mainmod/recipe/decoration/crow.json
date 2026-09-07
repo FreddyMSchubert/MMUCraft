@@ -3,7 +3,7 @@
   "ingredients": [
     "minecraft:feather",
     "minecraft:feather",
-    "minecraft:black-dye",
+    "minecraft:black_dye",
     "mainmod:soul"
   ],
   "result": {

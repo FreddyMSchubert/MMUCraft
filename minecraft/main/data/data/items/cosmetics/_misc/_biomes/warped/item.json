@@ -1,0 +1,16 @@
+{
+	"title": "Warped Biotope Hat",
+	"id": "cosmetic-warped-biotope-hat",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+	],
+	"shopPurchasable": {
+	    "priceDabloons": 100,
+		"description": "",
+		"unlockWeight": 20,
+		"unlockMessage": "Unlocked cosmetic: Warped Biotope Hat."
+	},
+	"equippableCosmetic": {}
+}

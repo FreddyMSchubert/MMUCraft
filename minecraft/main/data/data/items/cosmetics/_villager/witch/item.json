@@ -1,0 +1,17 @@
+{
+	"title": "Witch Hat",
+	"id": "cosmetic-witch-hat",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"It's quite heavy, so wearing it can be kinda Hex-hausting."
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Witch Hat."
+	},
+	"equippableCosmetic": {}
+}

@@ -1,0 +1,17 @@
+{
+	"title": "Popout Eyes",
+	"id": "cosmetic-popout-eyes",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"They look eye-palling."
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Popout Eyes (very freaky)."
+	},
+	"equippableCosmetic": {}
+}

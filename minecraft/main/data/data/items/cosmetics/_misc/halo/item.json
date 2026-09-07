@@ -1,0 +1,17 @@
+{
+	"title": "Halo Hat",
+	"id": "cosmetic-halo-hat",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Celestial Ring Light on your head"
+	],
+	"shopPurchasable": {
+	    "priceDabloons": 85,
+		"description": "",
+		"unlockWeight": 25,
+		"unlockMessage": "Unlocked cosmetic: Halo."
+	},
+	"equippableCosmetic": {}
+}

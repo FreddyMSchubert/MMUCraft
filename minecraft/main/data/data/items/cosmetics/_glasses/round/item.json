@@ -1,0 +1,17 @@
+{
+	"title": "Round Glasses",
+	"id": "cosmetic-round-glasses",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Eye see what you did there."
+	],
+	"shopPurchasable": {
+	"priceDabloons": 25,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Round Glasses."
+	},
+	"equippableCosmetic": {}
+}

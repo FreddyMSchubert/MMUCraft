@@ -1,0 +1,16 @@
+{
+	"title": "Bowler Hat",
+	"id": "cosmetic-bowler-hat",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+	],
+	"shopPurchasable": {
+	    "priceDabloons": 35,
+		"description": "",
+		"unlockWeight": 68,
+		"unlockMessage": "Unlocked cosmetic: Bowler Hat."
+	},
+	"equippableCosmetic": {}
+}

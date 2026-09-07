@@ -1,0 +1,38 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "paraxs_hats:item/template_cap",
+	"texture_size": [32, 16],
+	"textures": {
+		"0": "paraxs_hats:item/plumbing_cap_red",
+		"particle": "paraxs_hats:item/plumbing_cap_red"
+	},
+	"elements": [
+		{
+			"name": "Hat",
+			"from": [4, 7, 4],
+			"to": [12, 11, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 7, 4]},
+			"faces": {
+				"north": {"uv": [12, 5, 16, 9], "texture": "#0", "tintindex": 0},
+				"east": {"uv": [8, 5, 12, 9], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [12, 9, 16, 13], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [8, 9, 12, 13], "texture": "#0", "tintindex": 0},
+				"up": {"uv": [4, 13, 0, 5], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [8, 5, 4, 13], "texture": "#0", "tintindex": 0}
+			}
+		},
+		{
+			"name": "Stick Out Part IDK What Its Called",
+			"from": [4, 7, -1],
+			"to": [12, 8, 4],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 7, -1]},
+			"faces": {
+				"north": {"uv": [12, 1, 16, 2], "texture": "#0"},
+				"east": {"uv": [13.5, 2, 16, 3], "texture": "#0"},
+				"west": {"uv": [16, 0, 13.5, 1], "texture": "#0"},
+				"up": {"uv": [4, 5, 0, 0], "texture": "#0"},
+				"down": {"uv": [8, 0, 4, 5], "texture": "#0"}
+			}
+		}
+	]
+}

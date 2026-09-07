@@ -31,6 +31,9 @@ Fish of Thieves code:
 Copyright (c) 2022-2026 Wasinthorn Suksri
 https://github.com/SteveKunG/FishOfThieves
 
+Copyright (c) Parax342
+https://modrinth.com/datapack/mad-hatter
+
 MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

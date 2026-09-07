@@ -92,6 +92,6 @@
 		"gui": { "rotation": [90, -45, 180], "scale": [0.8, 0.0001, 0.8] },
 		"head": { "rotation": [-3, 0, -2], "translation": [0, 7, 0], "scale": [2, 2, 2] },
 		"ground": { "rotation": [0, 0, 180] },
-		"fixed": { "rotation": [90, 45, 0], "translation": [0, 1, 0], "scale": [1, 0.0001, 1] }
+		"fixed": { "rotation": [-90, 45, 0], "translation": [0, 1, 0], "scale": [1, 1, 1] }
 	}
 }

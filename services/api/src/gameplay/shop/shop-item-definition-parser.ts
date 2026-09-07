@@ -67,6 +67,7 @@ export function parseShopItemDefinition(
 		textureUrl,
 		animated: Boolean(animation),
 		dyeable: Boolean(json.dyeable && typeof json.dyeable === 'object'),
+		decoBlock: Boolean(json.decoBlock && typeof json.decoBlock === 'object'),
 		animation,
 		textureFilePath,
 		modelFilePath: canRenderModel ? modelFilePath : null,

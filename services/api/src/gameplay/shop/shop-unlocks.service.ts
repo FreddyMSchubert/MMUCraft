@@ -91,6 +91,9 @@ export class ShopUnlocksService {
 				};
 			}
 			if (picked) {
+				const unlockMessage =
+					picked.unlockMessage ??
+					`You've unlocked ${picked.title}. Visit the website shop to see it.`;
 				return {
 					unlocked: true,
 					all_unlocked: false,
@@ -99,8 +102,11 @@ export class ShopUnlocksService {
 					priority: picked.unlockWeight,
 					topic: picked.title,
 					message:
-						picked.unlockMessage ??
-						`You've unlocked ${picked.title}. Visit the website shop to see it.`,
+						picked.type === 'cosmetic' &&
+						(picked.animated || picked.dyeable) &&
+						user.is_member !== 1
+							? `${unlockMessage} (Warning: Members-only)`
+							: unlockMessage,
 				};
 			}
 		}

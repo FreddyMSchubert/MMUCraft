@@ -55,6 +55,7 @@ final class Messages {
         return heading("Server update in progress", GOLD)
                 .append(Component.text("The update started " + elapsed + " seconds ago.\n", TEXT))
                 .append(Component.text("Please allow about 200–300 seconds in total.\n", TEXT))
+                .append(Component.text("If it takes more than 10 minutes (600 seconds), please contact the committee.\n", TEXT))
                 .append(Component.text("Join again in a few minutes. Thank you for waiting!", MUTED));
     }
 

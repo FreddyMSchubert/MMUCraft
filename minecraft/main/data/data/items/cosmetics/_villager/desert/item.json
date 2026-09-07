@@ -1,0 +1,15 @@
+{
+	"title": "Desert Villager Hat",
+	"id": "cosmetic-villager-desert",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": ["Larp being employed"],
+	"shopPurchasable": {
+		"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Desert Villager Hat."
+	},
+	"equippableCosmetic": {}
+}

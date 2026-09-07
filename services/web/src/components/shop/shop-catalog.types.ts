@@ -39,6 +39,7 @@ export interface ShopItem {
 	textureUrl: string | null;
 	animated: boolean;
 	dyeable: boolean;
+	decoBlock: boolean;
 	membersOnly: boolean;
 	membershipLocked: boolean;
 	animation: { frameDelayMs: number; frames: number[] | null } | null;

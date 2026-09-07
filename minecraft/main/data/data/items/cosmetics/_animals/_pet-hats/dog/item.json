@@ -1,0 +1,15 @@
+{
+	"title": "Dog Pet Hat",
+	"id": "cosmetic-dog-pet-hat",
+	"modelType": "cosmetic",
+	"rarity": "legendary",
+	"maxStackSize": 1,
+	"tooltips": ["A very good dreamer."],
+	"shopPurchasable": {
+		"priceDabloons": 750,
+		"description": "",
+		"unlockWeight": 4,
+		"unlockMessage": "Unlocked cosmetic: Dog Pet Hat."
+	},
+	"equippableCosmetic": {}
+}

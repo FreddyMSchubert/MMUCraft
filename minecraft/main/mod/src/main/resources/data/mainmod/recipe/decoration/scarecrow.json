@@ -1,0 +1,17 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " P ",
+    "SHS",
+    " S "
+  ],
+  "key": {
+    "P": "minecraft:pumpkin",
+    "S": "minecraft:stick",
+    "H": "minecraft:hay_block"
+  },
+  "result": {
+    "stack": "mainmod:scarecrow",
+    "count": 1
+  }
+}

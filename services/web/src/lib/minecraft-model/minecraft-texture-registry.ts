@@ -164,7 +164,10 @@ export class ManagedTexture {
 	frameSequence: number[] | null;
 	failed = false;
 
-	constructor(frameSequence: number[] | null) {
+	constructor(
+		frameSequence: number[] | null,
+		private readonly animated: boolean,
+	) {
 		this.frameSequence = frameSequence;
 		this.drawMissing();
 	}
@@ -182,7 +185,7 @@ export class ManagedTexture {
 		this.failed = false;
 		const sourceWidth = image.naturalWidth || image.width || MISSING_TEXTURE_SIZE;
 		const sourceHeight = image.naturalHeight || image.height || sourceWidth;
-		const isAnimatedVerticalStrip = sourceHeight > sourceWidth;
+		const isAnimatedVerticalStrip = this.animated && sourceHeight > sourceWidth;
 
 		this.sourceImage = image;
 		this.frameWidth = sourceWidth;
@@ -260,7 +263,10 @@ export class ManagedTexture {
 export class TextureRegistry {
 	private readonly handles = new Map<string, ManagedTexture>();
 
-	constructor(private readonly frameSequence: number[] | null) {}
+	constructor(
+		private readonly frameSequence: number[] | null,
+		private readonly animated: boolean,
+	) {}
 
 	async get(source: string | null) {
 		return (await this.getHandle(source)).texture;
@@ -271,7 +277,7 @@ export class TextureRegistry {
 		const existing = this.handles.get(key);
 		if (existing) return existing;
 
-		const handle = new ManagedTexture(this.frameSequence);
+		const handle = new ManagedTexture(this.frameSequence, this.animated);
 		if (source) {
 			try {
 				handle.setImage(await loadImageFromSource(source));

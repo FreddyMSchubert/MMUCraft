@@ -1,23 +1,26 @@
 {
+	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
 	"texture_size": [8, 16],
 	"textures": {
-		"0": "paraxs_hats:item/axolotl_pink",
-		"particle": "paraxs_hats:item/axolotl_pink"
+		"0": "paraxs_hats:model",
+		"particle": "paraxs_hats:model"
 	},
 	"elements": [
 		{
 			"from": [0, 4, 8],
-			"to": [8, 20, 8],
+			"to": [8, 20, 8.1],
 			"faces": {
-				"north": {"uv": [16, 0, 0, 16], "texture": "#0"}
+				"north": {"uv": [16, 0, 0, 16], "texture": "#0"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#0"}
 			}
 		},
 		{
 			"from": [8, 4, 8],
-			"to": [16, 20, 8],
+			"to": [16, 20, 8.1],
 			"faces": {
-				"north": {"uv": [0, 0, 16, 16], "texture": "#0"}
+				"north": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"south": {"uv": [16, 0, 0, 16], "texture": "#0"}
 			}
 		}
 	],

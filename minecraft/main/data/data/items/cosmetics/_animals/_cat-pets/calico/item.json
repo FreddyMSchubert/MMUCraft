@@ -1,0 +1,15 @@
+{
+	"title": "Calico Cat Pet Hat",
+	"id": "cosmetic-calico-cat-pet-hat",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 40,
+		"unlockMessage": "Unlocked cosmetic: Calico Cat Pet Hat."
+	},
+	"equippableCosmetic": {}
+}

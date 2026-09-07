@@ -1,0 +1,15 @@
+{
+	"title": "Steve Mask",
+	"id": "cosmetic-steve-mask",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 80,
+		"description": "",
+		"unlockWeight": 70,
+		"unlockMessage": "Unlocked cosmetic: Steve Mask."
+	},
+	"equippableCosmetic": {}
+}

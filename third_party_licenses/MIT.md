@@ -34,6 +34,9 @@ https://github.com/SteveKunG/FishOfThieves
 Copyright (c) Parax342
 https://modrinth.com/datapack/mad-hatter
 
+Copyright (c) 2022 OrangeUtan
+https://github.com/OrangeUtan/Hats
+
 MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

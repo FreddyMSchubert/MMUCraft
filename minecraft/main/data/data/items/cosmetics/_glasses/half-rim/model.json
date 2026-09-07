@@ -1,0 +1,61 @@
+{
+	"__comment": "Created by Oran9eUtan",
+	"textures": {
+		"particle": "item/hats/glasses/sunglasses",
+		"accessory": "item/hats/glasses/sunglasses"
+	},
+	"elements": [
+		{
+			"__comment": "front",
+			"from": [4, 4.25, 4],
+			"to": [12, 12.25, 4.005],
+			"faces": {
+				"north": { "uv": [0, 0, 8, 8], "texture": "#accessory" },
+				"south": { "uv": [8, 0, 0, 8], "texture": "#accessory" }
+			}
+		},
+		{
+			"__comment": "back",
+			"from": [4, 4.25, 12],
+			"to": [12, 12.25, 12.001],
+			"faces": {
+				"north": { "uv": [16, 0, 8, 8], "texture": "#accessory" },
+				"south": { "uv": [8, 0, 16, 8], "texture": "#accessory" }
+			}
+		},
+		{
+			"__comment": "right",
+			"from": [4, 4.25, 4],
+			"to": [4.001, 12.25, 12],
+			"faces": {
+				"west": { "uv": [8, 8, 16, 16], "texture": "#accessory" },
+				"east": { "uv": [16, 8, 8, 16], "texture": "#accessory" }
+			}
+		},
+		{
+			"__comment": "left",
+			"from": [12, 4.25, 4],
+			"to": [12.001, 12.25, 12],
+			"faces": {
+				"west": { "uv": [8, 8, 0, 16], "texture": "#accessory" },
+				"east": { "uv": [0, 8, 8, 16], "texture": "#accessory" }
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [58, 0, -85],
+			"translation": [0, -1.39, 2.6091],
+			"scale": [0.8, 0.8, 0.8]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [58, 0, -85],
+			"translation": [0, -1.39, 2.6091],
+			"scale": [0.8, 0.8, 0.8]
+		},
+		"firstperson_righthand": { "rotation": [15, 0, -83], "translation": [1, 0, 3] },
+		"firstperson_lefthand": { "rotation": [15, 0, -83], "translation": [1, 0, 3] },
+		"gui": { "rotation": [45, 135, 0], "translation": [0.5, 1, 0], "scale": [1, 1.1, 1] },
+		"head": { "scale": [1.79, 1.79, 1.79] }
+	}
+}

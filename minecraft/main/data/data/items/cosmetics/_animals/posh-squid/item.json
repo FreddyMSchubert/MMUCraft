@@ -1,0 +1,15 @@
+{
+	"title": "Posh Squid",
+	"id": "cosmetic-posh-squid",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": ["Eight arms, impeccable manners, zero respect for personal space."],
+	"shopPurchasable": {
+		"priceDabloons": 125,
+		"description": "",
+		"unlockWeight": 5,
+		"unlockMessage": "Unlocked cosmetic: Posh Squid."
+	},
+	"equippableCosmetic": {}
+}

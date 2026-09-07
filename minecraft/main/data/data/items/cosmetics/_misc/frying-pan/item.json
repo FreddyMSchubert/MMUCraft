@@ -1,0 +1,15 @@
+{
+	"title": "Frying Pan",
+	"id": "cosmetic-frying-pan",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 150,
+		"description": "",
+		"unlockWeight": 40,
+		"unlockMessage": "Unlocked cosmetic: Frying Pan."
+	},
+	"equippableCosmetic": {}
+}

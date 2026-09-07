@@ -1,0 +1,15 @@
+{
+	"title": "Rainbow Glasses",
+	"id": "cosmetic-rainbow-glasses",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"priceDabloons": 125,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Rainbow Glasses."
+	},
+	"equippableCosmetic": {}
+}

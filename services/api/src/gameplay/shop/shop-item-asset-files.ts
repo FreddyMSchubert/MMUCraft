@@ -88,20 +88,31 @@ export function readTextureAnimation(textureFilePath: string): TextureAnimationD
 				? Math.max(1, parsed.animation.frametime)
 				: 1;
 		const frames = Array.isArray(parsed.animation?.frames)
-			? parsed.animation.frames
-					.map((frame) => {
-						if (typeof frame === 'number') return frame;
-						if (frame && typeof frame === 'object' && 'index' in frame) {
-							return (frame as { index: unknown }).index;
-						}
-						return null;
-					})
-					.filter(
-						(frame): frame is number =>
-							typeof frame === 'number' && Number.isInteger(frame) && frame >= 0,
-					)
+			? parsed.animation.frames.flatMap((frame) => {
+					const index =
+						typeof frame === 'number'
+							? frame
+							: frame && typeof frame === 'object' && 'index' in frame
+								? (frame as { index: unknown }).index
+								: null;
+					if (typeof index !== 'number' || !Number.isInteger(index) || index < 0)
+						return [];
+
+					const explicitTime =
+						frame && typeof frame === 'object' && 'time' in frame
+							? (frame as { time: unknown }).time
+							: null;
+					const durationTicks =
+						typeof explicitTime === 'number' && Number.isFinite(explicitTime)
+							? Math.max(1, Math.floor(explicitTime))
+							: frameTimeTicks;
+					return Array.from({ length: durationTicks }, () => index);
+				})
 			: null;
-		return { frameDelayMs: frameTimeTicks * 50, frames: frames?.length ? frames : null };
+		return {
+			frameDelayMs: frames?.length ? 50 : frameTimeTicks * 50,
+			frames: frames?.length ? frames : null,
+		};
 	} catch {
 		return null;
 	}

@@ -308,14 +308,13 @@ function CosmeticViewControl({
 		<div className="shopCosmeticViewControl" role="group" aria-label="Preview view">
 			{COSMETIC_VIEW_OPTIONS.filter(
 				(option) =>
-					(option.value !== 'player' || cosmetic) &&
+					(option.value !== 'player' || (cosmetic && skinAvailable)) &&
 					(option.value !== 'item-frame' || decoBlock),
 			).map((option) => (
 				<button
 					type="button"
 					key={option.value}
 					aria-pressed={selected === option.value}
-					disabled={option.value === 'player' && !skinAvailable}
 					title={option.label}
 					onClick={() => {
 						onSelect(option.value);

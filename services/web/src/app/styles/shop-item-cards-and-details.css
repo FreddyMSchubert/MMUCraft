@@ -423,7 +423,7 @@
 	position: relative;
 	z-index: 3;
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 	gap: 1px;
 	padding: 1px;
 	border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -453,10 +453,6 @@
 	background: color-mix(in srgb, var(--card-accent) 18%, #101722);
 	color: color-mix(in srgb, var(--card-accent) 68%, white);
 	box-shadow: inset 0 -2px var(--card-accent);
-}
-
-.shopCosmeticViewControl button:disabled {
-	opacity: 0.38;
 }
 
 .shopCosmeticViewControl span {

@@ -45,7 +45,8 @@ public final class DiscordBridge {
         });
         ServerMessageEvents.COMMAND_MESSAGE.register((message, source, type) -> {
             commandMessages.add(message);
-            publish("server", null, message.decoratedContent().getString());
+            String content = message.decoratedContent().getString();
+            if (!content.startsWith("Server update starting now.")) publish("server", null, content);
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayer player = handler.player;

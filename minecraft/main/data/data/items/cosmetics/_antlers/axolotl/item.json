@@ -1,0 +1,17 @@
+{
+	"title": "Axolotl Gills",
+	"id": "cosmetic-axolotl-gills",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"A fin-e cosmetic for your aquatic adventures."
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Axolotl Gills."
+	},
+	"equippableCosmetic": {}
+}

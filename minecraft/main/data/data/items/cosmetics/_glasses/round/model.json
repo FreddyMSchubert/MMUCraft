@@ -1,0 +1,33 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "paraxs_hats:item/template_glasses",
+	"textures": {
+		"0": "paraxs_hats:item/glasses",
+		"particle": "paraxs_hats:item/glasses"
+	},
+	"elements": [
+		{
+			"name": "GlassesInner",
+			"from": [4, 8.8, 10],
+			"to": [12, 12.8, 4],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 8.8, 10]},
+			"faces": {
+				"east": {"uv": [0, 4, 6, 8], "texture": "#0"},
+				"south": {"uv": [8, 0, 0, 4], "texture": "#0"},
+				"west": {"uv": [6, 8, 0, 12], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Glasses",
+			"from": [4, 8.8, 4],
+			"to": [12, 12.8, 10],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 8.8, 4]},
+			"faces": {
+				"north": {"uv": [0, 0, 8, 4], "texture": "#0"},
+				"east": {"uv": [6, 4, 0, 8], "texture": "#0"},
+				"west": {"uv": [0, 8, 6, 12], "texture": "#0"}
+			}
+		}
+	],
+	"display": {}
+}

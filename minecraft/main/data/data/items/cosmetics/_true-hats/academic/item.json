@@ -1,0 +1,17 @@
+{
+	"title": "Academic Hat",
+	"id": "cosmetic-academic-hat",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Your Degree."
+	],
+	"shopPurchasable": {
+	    "priceDabloons": 50,
+		"description": "",
+		"unlockWeight": 68,
+		"unlockMessage": "Unlocked cosmetic: Academic Hat."
+	},
+	"equippableCosmetic": {}
+}

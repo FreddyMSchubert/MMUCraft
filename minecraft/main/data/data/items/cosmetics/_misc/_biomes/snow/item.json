@@ -1,0 +1,16 @@
+{
+	"title": "Snow Biotope Hat",
+	"id": "cosmetic-snow-biotope-hat",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+	],
+	"shopPurchasable": {
+	    "priceDabloons": 100,
+		"description": "",
+		"unlockWeight": 20,
+		"unlockMessage": "Unlocked cosmetic: Snow Biotope Hat."
+	},
+	"equippableCosmetic": {}
+}

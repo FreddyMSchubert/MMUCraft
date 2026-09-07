@@ -1,0 +1,17 @@
+{
+	"title": "Googly Eyes",
+	"id": "cosmetic-googly-eyes",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Become a walking earthquake detection kit!"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Googly Eyes."
+	},
+	"equippableCosmetic": {}
+}

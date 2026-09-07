@@ -1,0 +1,18 @@
+{
+	"title": "Frankenstein Screws",
+	"id": "cosmetic-frankenstein-screws",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Electrifying looks!"
+	],
+	"shopPurchasable": {
+	"priceDabloons": 75,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Frankenstein Screws - very spooky.",
+        "gameplayToggle": "imaginative"
+	},
+	"equippableCosmetic": {}
+}

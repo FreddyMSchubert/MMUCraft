@@ -1,0 +1,17 @@
+{
+	"title": "Deer Antlers",
+	"id": "cosmetic-deer-antlers",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Oh deer, you look amazing!"
+	],
+	"shopPurchasable": {
+	    "priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Deer Antlers."
+	},
+	"equippableCosmetic": {}
+}

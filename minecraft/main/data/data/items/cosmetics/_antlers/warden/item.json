@@ -1,0 +1,17 @@
+{
+	"title": "Warden Antlers",
+	"id": "cosmetic-warden-antlers",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [
+		"An A-Ward for your hard work."
+	],
+	"shopPurchasable": {
+	"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Warden Antlers - very spooky."
+	},
+	"equippableCosmetic": {}
+}

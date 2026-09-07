@@ -1,0 +1,15 @@
+{
+	"title": "Swamp Villager Hat",
+	"id": "cosmetic-villager-swamp",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": ["Larp being employed"],
+	"shopPurchasable": {
+		"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 100,
+		"unlockMessage": "Unlocked cosmetic: Swamp Villager Hat."
+	},
+	"equippableCosmetic": {}
+}

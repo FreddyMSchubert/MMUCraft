@@ -188,7 +188,7 @@ export function createFaceMaterial(
 		color: tintColor,
 		transparent: true,
 		alphaTest: 0.05,
-		side: THREE.DoubleSide,
+		side: THREE.FrontSide,
 		toneMapped: false,
 	};
 	return shade && !unlit

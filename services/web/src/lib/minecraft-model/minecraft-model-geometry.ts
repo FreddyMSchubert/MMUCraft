@@ -51,21 +51,6 @@ export function normalizeVector3(values: unknown, fallback = [0, 0, 0]) {
 	);
 }
 
-export function normalizeMinMax(from: THREE.Vector3, to: THREE.Vector3) {
-	return {
-		from: new THREE.Vector3(
-			Math.min(from.x, to.x),
-			Math.min(from.y, to.y),
-			Math.min(from.z, to.z),
-		),
-		to: new THREE.Vector3(
-			Math.max(from.x, to.x),
-			Math.max(from.y, to.y),
-			Math.max(from.z, to.z),
-		),
-	};
-}
-
 export function deepClone<T>(value: T): T {
 	return value == null ? value : (JSON.parse(JSON.stringify(value)) as T);
 }

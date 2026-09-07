@@ -9,7 +9,6 @@ import {
 	getUvCorners,
 	inferDefaultUv,
 	modelSpaceToWorld,
-	normalizeMinMax,
 	normalizeVector3,
 	quadHasArea,
 } from './minecraft-model-geometry';
@@ -45,8 +44,9 @@ export class MinecraftModelObject {
 		frameSequence: number[] | null = null,
 		defaultTint: RgbColor = { r: 255, g: 0, b: 0 },
 		private readonly unlit = false,
+		animated = frameSequence !== null,
 	) {
-		this.textureRegistry = new TextureRegistry(frameSequence);
+		this.textureRegistry = new TextureRegistry(frameSequence, animated);
 		this.tintPalette.set(0, defaultTint);
 	}
 
@@ -129,9 +129,8 @@ export class MinecraftModelObject {
 	}
 
 	private async buildElement(element: MinecraftElement, textures: Record<string, string>) {
-		const fromVector = normalizeVector3(element.from);
-		const toVector = normalizeVector3(element.to);
-		const { from, to } = normalizeMinMax(fromVector, toVector);
+		const from = normalizeVector3(element.from);
+		const to = normalizeVector3(element.to);
 		const collapsedAxis = getCollapsedAxis(from, to);
 		const shade = element.shade !== false;
 		const lightEmission = clamp(Number(element.light_emission) || 0, 0, 15);

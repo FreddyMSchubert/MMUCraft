@@ -70,6 +70,7 @@ export class MinecraftModelRenderer {
 			options.frameSequence ?? null,
 			parseColorValue(options.defaultTint, { r: 255, g: 0, b: 0 }),
 			this.view === 'icon',
+			options.frameDelayMs !== undefined,
 		);
 
 		if (options.background) {

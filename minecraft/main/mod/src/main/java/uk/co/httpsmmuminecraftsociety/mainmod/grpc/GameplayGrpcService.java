@@ -39,6 +39,20 @@ public final class GameplayGrpcService extends GrpcHandler {
         return INSTANCE.eventsClient.getKnowledgeTip(minecraftUsername, minecraftUuid);
     }
 
+    public static CompletableFuture<GetAnnouncementsResponse> getAnnouncements(
+            String minecraftUuid,
+            boolean includeRead
+    ) {
+        return INSTANCE.eventsClient.getAnnouncements(minecraftUuid, includeRead);
+    }
+
+    public static CompletableFuture<MarkAnnouncementsReadResponse> markAnnouncementsRead(
+            String minecraftUuid,
+            List<Integer> announcementIds
+    ) {
+        return INSTANCE.eventsClient.markAnnouncementsRead(minecraftUuid, announcementIds);
+    }
+
     public static CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
             net.minecraft.server.level.ServerPlayer player, List<MinecraftStatEntry> stats
     ) {
@@ -284,6 +298,15 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
                 StreamObserver<RunServerCommandResponse> responseObserver
         ) {
             callOnMainThread(() -> GameplayDiscordOperations.runServerCommandOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void broadcastAnnouncement(
+                BroadcastAnnouncementRequest request,
+                StreamObserver<BroadcastAnnouncementResponse> responseObserver
+        ) {
+            callOnMainThread(() -> GameplayAnnouncementOperations.broadcastOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

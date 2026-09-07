@@ -439,6 +439,42 @@ export const countdowns = sqliteTable(
 	],
 );
 
+export const announcements = sqliteTable(
+	'announcements',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		text: text('text').notNull(),
+		link_url: text('link_url'),
+		starts_at_unix_ms: integer('starts_at_unix_ms').notNull(),
+		ends_at_unix_ms: integer('ends_at_unix_ms').notNull(),
+		position: integer('position').notNull(),
+		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+	},
+	(table) => [
+		index('announcements_window_idx').on(table.starts_at_unix_ms, table.ends_at_unix_ms),
+		check(
+			'announcements_window_check',
+			sql`${table.ends_at_unix_ms} > ${table.starts_at_unix_ms}`,
+		),
+		check('announcements_position_check', sql`${table.position} >= 0`),
+	],
+);
+
+export const announcementReads = sqliteTable(
+	'announcement_reads',
+	{
+		announcement_id: integer('announcement_id')
+			.notNull()
+			.references(() => announcements.id, { onDelete: 'cascade' }),
+		minecraft_uuid: text('minecraft_uuid').notNull(),
+		read_at_unix_ms: integer('read_at_unix_ms').notNull(),
+	},
+	(table) => [
+		primaryKey({ columns: [table.announcement_id, table.minecraft_uuid] }),
+		index('announcement_reads_player_idx').on(table.minecraft_uuid),
+	],
+);
+
 export const featureToggles = sqliteTable(
 	'feature_toggles',
 	{
@@ -518,6 +554,8 @@ export type GiftCodeRow = typeof giftCodes.$inferSelect;
 export type CommandLogRow = typeof commandLogs.$inferSelect;
 export type SigninAttemptLogRow = typeof signinAttemptLogs.$inferSelect;
 export type CountdownRow = typeof countdowns.$inferSelect;
+export type AnnouncementRow = typeof announcements.$inferSelect;
+export type AnnouncementReadRow = typeof announcementReads.$inferSelect;
 export type FeatureToggleRow = typeof featureToggles.$inferSelect;
 export type VelocitySettingsRow = typeof velocitySettings.$inferSelect;
 export type VelocityServerRow = typeof velocityServers.$inferSelect;
@@ -546,6 +584,8 @@ export const schema = {
 	commandLogs,
 	signinAttemptLogs,
 	countdowns,
+	announcements,
+	announcementReads,
 	featureToggles,
 	velocitySettings,
 	velocityServers,

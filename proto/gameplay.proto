@@ -19,6 +19,8 @@ service GameplayEvents {
   rpc UpdateDailyTask(UpdateDailyTaskRequest) returns (UpdateDailyTaskResponse);
   rpc PublishDiscordEvent(PublishDiscordEventRequest) returns (PublishDiscordEventResponse);
   rpc RecordCommandExecution(RecordCommandExecutionRequest) returns (RecordCommandExecutionResponse);
+  rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsResponse);
+  rpc MarkAnnouncementsRead(MarkAnnouncementsReadRequest) returns (MarkAnnouncementsReadResponse);
 }
 
 service GameplayControl {
@@ -43,6 +45,39 @@ service GameplayControl {
   rpc UpgradeCharm(UpgradeCharmRequest) returns (UpgradeCharmResponse);
   rpc BroadcastDiscordMessage(BroadcastDiscordMessageRequest) returns (BroadcastDiscordMessageResponse);
   rpc RunServerCommand(RunServerCommandRequest) returns (RunServerCommandResponse);
+  rpc BroadcastAnnouncement(BroadcastAnnouncementRequest) returns (BroadcastAnnouncementResponse);
+}
+
+message Announcement {
+  int32 id = 1;
+  string text = 2;
+  string link_url = 3;
+}
+
+message GetAnnouncementsRequest {
+  string minecraft_uuid = 1;
+  bool include_read = 2;
+}
+
+message GetAnnouncementsResponse {
+  repeated Announcement announcements = 1;
+}
+
+message MarkAnnouncementsReadRequest {
+  string minecraft_uuid = 1;
+  repeated int32 announcement_ids = 2;
+}
+
+message MarkAnnouncementsReadResponse {
+  int32 marked = 1;
+}
+
+message BroadcastAnnouncementRequest {
+  Announcement announcement = 1;
+}
+
+message BroadcastAnnouncementResponse {
+  repeated string minecraft_uuids = 1;
 }
 
 message GetOnlinePlayersRequest {}

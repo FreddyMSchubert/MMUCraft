@@ -9,6 +9,7 @@ import { ClaimsModule } from '../claims/claims.module';
 import { DiscordModule } from '../discord/discord.module';
 import { FeatureTogglesModule } from '../toggles/feature-toggles.module';
 import { DatabaseModule } from '../database/database.module';
+import { AnnouncementsModule } from '../announcements/announcements.module';
 
 @Module({
 	imports: [
@@ -21,6 +22,7 @@ import { DatabaseModule } from '../database/database.module';
 		DiscordModule,
 		FeatureTogglesModule,
 		DatabaseModule,
+		AnnouncementsModule,
 	],
 	providers: [GameplayGrpcService],
 })

@@ -302,7 +302,7 @@
 		},
 		"head": {
 			"translation": [0, -2, 0],
-			"scale": [2, 2, 2]
+			"scale": [1.79, 1.79, 1.79]
 		},
 		"fixed": {
 			"translation": [0, -8.75, 0],

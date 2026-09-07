@@ -6,30 +6,6 @@
 	},
 	"elements": [
 		{
-			"name": "GlassesInner",
-			"from": [4, 9, 10],
-			"to": [12, 12, 4],
-			"rotation": {
-				"angle": 0,
-				"axis": "y",
-				"origin": [4, 9, 10]
-			},
-			"faces": {
-				"east": {
-					"uv": [0, 3, 6, 6],
-					"texture": "#0"
-				},
-				"south": {
-					"uv": [8, 0, 0, 3],
-					"texture": "#0"
-				},
-				"west": {
-					"uv": [6, 6, 0, 9],
-					"texture": "#0"
-				}
-			}
-		},
-		{
 			"name": "Glasses",
 			"from": [4, 9, 4],
 			"to": [12, 12, 10],

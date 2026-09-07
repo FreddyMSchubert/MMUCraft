@@ -1,5 +1,5 @@
 {
-	"title": "Blue Snorkel",
+	"title": "Snorkel",
 	"id": "cosmetic-blue-snorkel",
 	"modelType": "cosmetic",
 	"rarity": "common",
@@ -9,7 +9,7 @@
 		"priceDabloons": 30,
 		"description": "",
 		"unlockWeight": 90,
-		"unlockMessage": "Unlocked cosmetic: Blue Snorkel."
+		"unlockMessage": "Unlocked cosmetic: Snorkel."
 	},
 	"equippableCosmetic": {}
 }

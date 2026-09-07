@@ -5,6 +5,13 @@
 	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
 	"shopPurchasable": {
 		"priceDabloons": 150,
 		"description": "",

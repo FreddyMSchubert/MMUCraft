@@ -1,0 +1,28 @@
+{
+	"model": {
+		"type": "minecraft:select",
+		"property": "minecraft:custom_model_data",
+		"index": 0,
+		"cases": [
+			{
+				"when": "charm-glider",
+				"model": {
+					"type": "minecraft:model",
+					"model": "mmu_pack:item/charm/held/glider"
+				}
+			}
+		],
+		"fallback": {
+			"type": "minecraft:condition",
+			"property": "minecraft:broken",
+			"on_true": {
+				"type": "minecraft:model",
+				"model": "minecraft:item/elytra_broken"
+			},
+			"on_false": {
+				"type": "minecraft:model",
+				"model": "minecraft:item/elytra"
+			}
+		}
+	}
+}

@@ -29,6 +29,7 @@ concurrency:
 
 jobs:
     deploy:
+        if: github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert'
         runs-on: ubuntu-24.04
         environment: production
         steps:

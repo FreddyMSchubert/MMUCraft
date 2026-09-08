@@ -42,7 +42,7 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
 
         ItemStack key = player.getOffhandItem();
         if (key.isEmpty()) {
-            player.sendSystemMessage(Component.literal("Hold the item to resonate with in your offhand."));
+            player.sendSystemMessage(Component.literal("Hold an item to resonate with in your offhand."));
             return false;
         }
 

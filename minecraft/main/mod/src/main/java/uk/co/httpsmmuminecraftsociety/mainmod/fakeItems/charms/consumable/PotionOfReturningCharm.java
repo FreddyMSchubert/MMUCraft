@@ -15,11 +15,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
 public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
 {
-    public static final int DRINK_DURATION_TICKS = 8 * 20;
+    public static final int DRINK_DURATION_TICKS = 5 * 20;
     public static final int POST_DRINK_BAD_EFFECT_DURATION = 3 * 20;
     public static final int POST_DRINK_GOOD_EFFECT_DURATION = 15 * 20;
-    public static final int DARKNESS_START_TICKS = DRINK_DURATION_TICKS / 100 * 50;
-    public static final int LEVITATION_START_TICKS = DRINK_DURATION_TICKS / 100 * 75;
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
@@ -46,12 +44,6 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
 
         if (elapsedTicks == 0) {
             applyEffectIfNotYetApplied(player, MobEffects.INSTANT_DAMAGE, 1, 1);
-        }
-        if (elapsedTicks >= DARKNESS_START_TICKS) {
-            applyEffectIfNotYetApplied(player, MobEffects.DARKNESS, effectDuration + 60, 0);
-        }
-        if (elapsedTicks >= LEVITATION_START_TICKS) {
-            applyEffectIfNotYetApplied(player, MobEffects.LEVITATION, effectDuration - POST_DRINK_BAD_EFFECT_DURATION, 1);
         }
     }
 

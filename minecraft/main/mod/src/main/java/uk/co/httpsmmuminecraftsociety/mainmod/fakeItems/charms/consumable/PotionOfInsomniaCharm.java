@@ -49,6 +49,18 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
             "raz"
     );
 
+    List<String> titles = List.of(
+        "Sleep Demon",
+        "Nightmare",
+        "Sleepless",
+        "Insomniac",
+        "Dream Eater",
+        "Dream Reaper",
+        "Dreadwing",
+        "Nightfall Stalker",
+        "Moonlit Menace"
+    );
+
     @Override
     public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
@@ -71,8 +83,8 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
 
             phantom.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
 
-            // 1 in 5 chance to spawn invisible
-            boolean isInvisible = Math.floor(Math.random() * 5) == 0;
+            // 1 in 8 chance to spawn invisible
+            boolean isInvisible = Math.floor(Math.random() * 8) == 0;
             if (isInvisible) {
                 phantom.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, Integer.MAX_VALUE, 1));
             }
@@ -90,7 +102,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
 
         boss.setTarget(player);
         boss.setPersistenceRequired();
-        boss.setCustomName(Component.literal("Boss Phantom (" + names.get((int)Math.floor(Math.random() * names.size()))));
+        boss.setCustomName(Component.literal(names.get((int)Math.floor(Math.random() * names.size())) + " the " + titles.get((int)Math.floor(Math.random() * titles.size())) + " (Boss Phantom)"));
         boss.setCustomNameVisible(true);
 
         // Health

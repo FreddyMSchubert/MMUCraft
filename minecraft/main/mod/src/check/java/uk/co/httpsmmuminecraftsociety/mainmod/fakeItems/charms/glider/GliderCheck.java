@@ -30,9 +30,13 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmLevelDefinit
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureToggle;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureTogglesSnapshot;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes.RepairMaterial;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes.RepairSameItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.CombineCharmorRecipe;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.FakeShapedCraftingRecipe;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,7 +54,7 @@ public final class GliderCheck {
         registryField.set(null, registries);
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries).forEach(components -> components.apply());
         Path project = Path.of(args[0]);
-        var definition = JsonParser.parseString(Files.readString(project.resolve("../data/data/items/charm/glider/item.json"))).getAsJsonObject();
+        var definition = JsonParser.parseString(Files.readString(project.resolve("../data/data/items/charm/held/glider/item.json"))).getAsJsonObject();
         var charm = definition.remove("charm").getAsJsonObject();
         var feature = new CharmItemFeature(new GliderCharm(), charm.get("charmId").getAsInt(),
                 charm.get("minLevel").getAsInt(), charm.get("maxLevel").getAsInt(), definition.get("title").getAsString(),
@@ -76,6 +80,15 @@ public final class GliderCheck {
         var repair = new RepairSameItem();
         assert repair.matches(glider, glider.copy());
         assert !repair.matches(glider, elytra) && !repair.matches(elytra, glider);
+        var materialRepair = new RepairMaterial();
+        glider.setDamageValue(200);
+        ItemStack leather = new ItemStack(Items.LEATHER, 2);
+        assert materialRepair.matches(glider, leather);
+        assert !materialRepair.matches(elytra, leather);
+        var repaired = materialRepair.apply(null, glider, leather, null);
+        assert repaired.result().getDamageValue() == 0;
+        assert repaired.leftRemainder().isEmpty();
+        assert repaired.rightRemainder().is(Items.LEATHER) && repaired.rightRemainder().getCount() == 1;
         assert !new CombineCharmorRecipe().matches(CraftingInput.of(2, 1,
                 List.of(new ItemStack(Items.DIAMOND_CHESTPLATE), glider)), null);
         var enchantments = registries.lookupOrThrow(Registries.ENCHANTMENT);
@@ -85,7 +98,11 @@ public final class GliderCheck {
         assert GliderCharm.allowEnchanting(enchantments.getOrThrow(Enchantments.UNBREAKING), elytra, EnchantingContext.ACCEPTABLE) == TriState.DEFAULT;
         var recipe = FakeShapedCraftingRecipe.CODEC.codec().parse(JsonOps.INSTANCE, JsonParser.parseString(
                 Files.readString(project.resolve("src/main/resources/data/mainmod/recipe/glider.json")))).getOrThrow();
-        var grid = CraftingInput.of(3, 2, List.of(new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.PHANTOM_MEMBRANE),
+        FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
+                .addToggles(FeatureToggle.newBuilder().setKey("soaring").setEnabled(true))
+                .build());
+        var grid = CraftingInput.of(3, 3, List.of(new ItemStack(Items.LEATHER), new ItemStack(Items.LEATHER),
+                new ItemStack(Items.LEATHER), new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.PHANTOM_MEMBRANE),
                 new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.STICK), ItemStack.EMPTY, new ItemStack(Items.STICK)));
         assert recipe.matches(grid, null) && GliderCharm.isGlider(recipe.assemble(grid));
         double limit = 20;

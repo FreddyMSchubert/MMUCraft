@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Repairable;
 import org.jspecify.annotations.Nullable;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Tuple;
@@ -32,7 +33,7 @@ public final class RepairMaterial implements AnvilRecipe
             return true;
         }
 
-        return isNetheriteGear(left) && right.is(Items.DIAMOND);
+        return isGliderLeatherRepair(left, right) || isNetheriteGear(left) && right.is(Items.DIAMOND);
     }
 
     @Override
@@ -100,11 +101,18 @@ public final class RepairMaterial implements AnvilRecipe
     }
 
     private static int getRepairAmountPerUnit(ItemStack target, ItemStack ingredient) {
+        if (isGliderLeatherRepair(target, ingredient)) {
+            return target.getMaxDamage();
+        }
         if (isNetheriteGear(target) && ingredient.is(Items.DIAMOND)) {
             int perIngot = getRepairAmountPerUnit(target, Items.NETHERITE_INGOT.getDefaultInstance());
             return Math.max(1, perIngot / NETHERITE_REPAIRS_NEEDED_WITH_DIAMOND_INCREASE_DIVISOR);
         }
         return Math.max(1, target.getMaxDamage() / Math.max(1, countRepairUnitsForItem(target.getItem())));
+    }
+
+    private static boolean isGliderLeatherRepair(ItemStack target, ItemStack ingredient) {
+        return GliderCharm.isGlider(target) && ingredient.is(Items.LEATHER);
     }
 
     private static final List<Tuple<Integer, Tuple<List<TagKey<Item>>, List<Item>>>> repairCounts = List.of(

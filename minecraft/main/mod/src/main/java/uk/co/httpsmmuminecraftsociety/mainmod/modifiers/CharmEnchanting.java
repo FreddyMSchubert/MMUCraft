@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.apache.commons.lang3.tuple.Triple;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -21,7 +22,9 @@ import java.util.Objects;
 public class CharmEnchanting
 {
     public static final List<Triple<String, Boolean, ResourceKey<Enchantment>>> fakeItemEnchantModifications = List.of(
-        Triple.of("charm-wallet", true, ModEnchantments.SOULBOUND)
+        Triple.of("charm-wallet", true, ModEnchantments.SOULBOUND),
+        Triple.of("charm-glider", true, ModEnchantments.SOULBOUND),
+        Triple.of("charm-glider", false, Enchantments.MENDING)
     );
     public static final List<Triple<Item, Boolean, ResourceKey<Enchantment>>> vanillaEnchantModifications = List.of(
             Triple.of(Items.RECOVERY_COMPASS, true, ModEnchantments.SOULBOUND)

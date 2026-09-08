@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:experience_bottle",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 0.5,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "✨",
+	"name": "Submit Bottles o' Enchanting",
+	"description": "Submit {count} bottles o' enchanting. Have the items in your inventory when you click Claim."
+}

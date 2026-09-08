@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:andesite_stairs",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.1,
+	"minimum": 30,
+	"maximum": 45,
+	"emoji": "🪨",
+	"name": "Submit Andesite Stairs",
+	"description": "Submit {count} andesite stairs. Have the items in your inventory when you click Claim."
+}

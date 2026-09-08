@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:wither_skeleton",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 10,
+	"emoji": "☠️",
+	"name": "Hunt Wither Skeletons",
+	"description": "Defeat {count} wither skeletons."
+}

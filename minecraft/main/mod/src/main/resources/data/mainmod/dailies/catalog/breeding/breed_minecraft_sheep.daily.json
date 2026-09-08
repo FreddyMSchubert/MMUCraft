@@ -1,0 +1,13 @@
+{
+	"type": "breed_entity",
+	"entity": "minecraft:sheep",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 1,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🐑",
+	"name": "Breed Sheep",
+	"description": "Breed {count} sheep."
+}

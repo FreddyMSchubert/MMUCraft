@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:sea_lantern",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "💡",
+	"name": "Submit Sea Lanterns",
+	"description": "Submit {count} sea lanterns. Have the items in your inventory when you click Claim."
+}

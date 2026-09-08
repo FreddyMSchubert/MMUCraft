@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:cornflower",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🪻",
+	"name": "Submit Cornflowers",
+	"description": "Submit {count} cornflowers. Have the items in your inventory when you click Claim."
+}

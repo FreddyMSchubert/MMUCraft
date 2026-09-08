@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:beetroot_seeds",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.2,
+	"minimum": 20,
+	"maximum": 32,
+	"emoji": "🌱",
+	"name": "Plant Beetroot",
+	"description": "Plant {count} beetroot seeds. Finding the first seeds is half the job."
+}

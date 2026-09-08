@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:skeleton",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.4,
+	"minimum": 12,
+	"maximum": 20,
+	"emoji": "💀",
+	"name": "Hunt Skeletons",
+	"description": "Defeat {count} skeletons."
+}

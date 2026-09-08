@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:goat_horn",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "📯",
+	"name": "Submit a Goat Horn",
+	"description": "Submit one goat horn. Have the items in your inventory when you click Claim."
+}

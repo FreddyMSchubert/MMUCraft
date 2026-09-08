@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:target",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.5,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "🎯",
+	"name": "Craft Target Blocks",
+	"description": "Craft {count} target blocks. Comparators can score how close the arrow lands."
+}

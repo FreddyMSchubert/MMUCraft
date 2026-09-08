@@ -1,0 +1,13 @@
+{
+	"type": "break_block",
+	"block": "minecraft:ancient_debris",
+	"nether": true,
+	"end": false,
+	"baseCost": 8,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 4,
+	"emoji": "🟫",
+	"name": "Mine Ancient Debris",
+	"description": "Mine {count} ancient debris. One block can save a tool. Four means you live in the Nether."
+}

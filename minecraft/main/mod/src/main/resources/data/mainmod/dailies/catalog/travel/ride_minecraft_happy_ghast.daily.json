@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:happy_ghast",
+	"nether": true,
+	"end": false,
+	"baseCost": 10,
+	"rewardPerIteration": 0.006,
+	"minimum": 400,
+	"maximum": 1000,
+	"emoji": "😊",
+	"name": "Ride a Happy Ghast",
+	"description": "Ride a happy ghast for {count} blocks. Four seats. Fill them."
+}

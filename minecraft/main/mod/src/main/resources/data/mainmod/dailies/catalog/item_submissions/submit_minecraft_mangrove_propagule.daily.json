@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:mangrove_propagule",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.15,
+	"minimum": 10,
+	"maximum": 20,
+	"emoji": "🌱",
+	"name": "Submit Mangrove Propagules",
+	"description": "Submit {count} mangrove propagules. Have the items in your inventory when you click Claim."
+}

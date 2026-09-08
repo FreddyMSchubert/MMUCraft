@@ -1,0 +1,13 @@
+{
+	"type": "feed_entity",
+	"entity": "minecraft:wolf",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🐺",
+	"name": "Feed Wolves",
+	"description": "Feed {count} wolves."
+}

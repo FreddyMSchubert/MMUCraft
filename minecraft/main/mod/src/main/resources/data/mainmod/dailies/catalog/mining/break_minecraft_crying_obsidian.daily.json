@@ -1,0 +1,13 @@
+{
+	"type": "break_block",
+	"block": "minecraft:crying_obsidian",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🟪",
+	"name": "Mine Crying Obsidian",
+	"description": "Mine {count} crying obsidian."
+}

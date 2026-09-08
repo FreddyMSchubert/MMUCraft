@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:chiseled_resin_bricks",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 0.5,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "🟠",
+	"name": "Submit Chiseled Resin Bricks",
+	"description": "Submit {count} chiseled resin bricks. Have the items in your inventory when you click Claim."
+}

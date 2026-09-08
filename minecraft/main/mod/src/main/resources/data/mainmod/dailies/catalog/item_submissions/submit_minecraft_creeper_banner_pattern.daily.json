@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:creeper_banner_pattern",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "💥",
+	"name": "Submit a Creeper Banner Pattern",
+	"description": "Submit one creeper banner pattern. Have the items in your inventory when you click Claim."
+}

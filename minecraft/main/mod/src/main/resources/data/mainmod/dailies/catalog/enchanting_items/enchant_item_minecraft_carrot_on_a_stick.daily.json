@@ -1,0 +1,13 @@
+{
+	"type": "enchant_item",
+	"itemType": "minecraft:carrot_on_a_stick",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🥕",
+	"name": "Enchant a Carrot on a Stick",
+	"description": "Enchant a carrot on a stick. Put Unbreaking on a vegetable. Fine."
+}

@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "receive_item",
+	"target": "minecraft:name_tag",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 2,
+	"emoji": "🏷️",
+	"name": "Buy Name Tags",
+	"description": "Receive {count} name tags from villagers."
+}

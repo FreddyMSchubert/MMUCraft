@@ -1,0 +1,13 @@
+{
+	"type": "eat_item",
+	"item": "minecraft:pufferfish",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 3.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🐡",
+	"name": "Pufferfish Challenge",
+	"description": "Eat one pufferfish and survive. Milk afterward is allowed."
+}

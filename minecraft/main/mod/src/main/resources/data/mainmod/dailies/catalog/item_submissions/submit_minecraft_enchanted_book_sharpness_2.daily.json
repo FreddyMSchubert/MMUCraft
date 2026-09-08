@@ -1,0 +1,15 @@
+{
+	"type": "submit_enchanted_item",
+	"item": "minecraft:enchanted_book",
+	"enchantment": "minecraft:sharpness",
+	"minimumEnchantmentLevel": 2,
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 4,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "📕",
+	"name": "Submit a Sharpness II Book",
+	"description": "Submit one Sharpness II book. Have the items in your inventory when you click Claim."
+}

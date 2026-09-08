@@ -7,8 +7,12 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 public final class UseCharmTask extends CountedTask {
     private final String charm;
     public UseCharmTask(DailyCharm charm) {
-        super("use:" + charm.id(), "Used", "potion");
-        this.charm = charm.id();
+        this(charm.id());
+    }
+
+    public UseCharmTask(String charm) {
+        super("use:" + charm, "Used", "potion");
+        this.charm = charm;
     }
 
     @Override protected boolean matches(JsonObject task, DailyTaskEvent event) {

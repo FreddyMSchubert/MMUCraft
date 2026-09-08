@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:mushroom_stem",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.4,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "🍄",
+	"name": "Submit Mushroom Stems",
+	"description": "Submit {count} mushroom stems. Have the items in your inventory when you click Claim."
+}

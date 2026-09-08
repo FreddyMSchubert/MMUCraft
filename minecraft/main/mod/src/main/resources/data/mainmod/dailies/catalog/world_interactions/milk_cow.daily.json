@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "milk_cow",
+	"progressLabel": "Milked",
+	"progressUnit": "cows",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.3,
+	"minimum": 8,
+	"maximum": 16,
+	"emoji": "🥛",
+	"name": "Milk Cows",
+	"description": "Milk {count} cows."
+}

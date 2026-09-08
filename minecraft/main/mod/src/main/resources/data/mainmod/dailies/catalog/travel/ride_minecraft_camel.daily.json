@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:camel",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.0125,
+	"minimum": 200,
+	"maximum": 600,
+	"emoji": "🐫",
+	"name": "Ride a Camel",
+	"description": "Ride a camel for {count} blocks. Bring a passenger. Their distance is free."
+}

@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:quartz",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.35,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "🪨",
+	"name": "Sell Nether Quartz",
+	"description": "Give villagers {count} Nether quartz."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_entity",
+	"entity": "minecraft:witch",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🧙",
+	"name": "Get Hurt by a Witch's Harming Potion",
+	"description": "Take damage from a witch's harming potion without dying. The witch has to land the throw. Be cooperative."
+}

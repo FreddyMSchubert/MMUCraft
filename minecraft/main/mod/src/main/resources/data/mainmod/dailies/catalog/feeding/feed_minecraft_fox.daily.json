@@ -1,0 +1,13 @@
+{
+	"type": "feed_entity",
+	"entity": "minecraft:fox",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🦊",
+	"name": "Feed Foxes",
+	"description": "Feed {count} foxes."
+}

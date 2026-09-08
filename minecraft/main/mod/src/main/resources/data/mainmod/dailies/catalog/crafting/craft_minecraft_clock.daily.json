@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:clock",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.75,
+	"minimum": 2,
+	"maximum": 3,
+	"emoji": "🕰️",
+	"name": "Craft Clocks",
+	"description": "Craft {count} clocks. Hang one in a room, or build a grandfather clock around it."
+}

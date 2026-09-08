@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:oxidized_copper_golem_statue",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 2,
+	"emoji": "🗿",
+	"name": "Submit Oxidized Copper Golem Statues",
+	"description": "Submit {count} oxidized copper golem statues. Leave the axe alone. These are already done. Have the items in your inventory when you click Claim."
+}

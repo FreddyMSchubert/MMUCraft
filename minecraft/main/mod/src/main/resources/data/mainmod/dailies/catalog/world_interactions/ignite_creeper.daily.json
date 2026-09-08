@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "ignite_creeper",
+	"progressLabel": "Ignited",
+	"progressUnit": "creepers",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🧨",
+	"name": "Please stand back.",
+	"description": "Ignite {count} creepers. FLINT AND STEEEELLLL."
+}

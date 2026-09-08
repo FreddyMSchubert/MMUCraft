@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:tinted_glass",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 1,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🪟",
+	"name": "Submit Tinted Glass",
+	"description": "Submit {count} tinted glass. The mob farm has windows now. Probably a mistake. Have the items in your inventory when you click Claim."
+}

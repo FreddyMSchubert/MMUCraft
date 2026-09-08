@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_type",
+	"damageType": "minecraft:cactus",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🌵",
+	"name": "Get Hurt by a Cactus",
+	"description": "Take damage from a cactus without dying."
+}

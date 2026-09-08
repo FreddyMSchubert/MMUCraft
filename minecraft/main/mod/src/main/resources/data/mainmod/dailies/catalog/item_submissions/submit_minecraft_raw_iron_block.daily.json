@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:raw_iron_block",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 3,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "⬜",
+	"name": "Submit Blocks of Raw Iron",
+	"description": "Submit {count} blocks of raw iron. Have the items in your inventory when you click Claim."
+}

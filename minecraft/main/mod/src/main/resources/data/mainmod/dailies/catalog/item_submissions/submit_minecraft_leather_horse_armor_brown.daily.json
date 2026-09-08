@@ -1,0 +1,14 @@
+{
+	"type": "submit_dyed_item",
+	"item": "minecraft:leather_horse_armor",
+	"color": "brown",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 2,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🐴",
+	"name": "Submit Brown Leather Horse Armor",
+	"description": "Submit {count} sets of brown leather horse armour. Have the items in your inventory when you click Claim."
+}

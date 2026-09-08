@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:waxed_weathered_copper_golem_statue",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 2.25,
+	"minimum": 1,
+	"maximum": 2,
+	"emoji": "🗿",
+	"name": "Submit Waxed Weathered Copper Golem Statues",
+	"description": "Submit {count} waxed weathered copper golem statues. Get the green right before adding honeycomb. Have the items in your inventory when you click Claim."
+}

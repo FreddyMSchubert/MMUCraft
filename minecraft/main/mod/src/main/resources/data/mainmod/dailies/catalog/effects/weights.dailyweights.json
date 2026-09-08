@@ -1,0 +1,22 @@
+{
+	"effect_minecraft_speed.daily.json": 2,
+	"effect_minecraft_darkness.daily.json": 5,
+	"effect_minecraft_levitation.daily.json": 5,
+	"effect_minecraft_glowing.daily.json": 5,
+	"effect_minecraft_nausea.daily.json": 3,
+	"effect_minecraft_dolphins_grace.daily.json": 2,
+	"effect_minecraft_breath_of_the_nautilus.daily.json": 1,
+	"effect_minecraft_bad_omen.daily.json": 2,
+	"effect_minecraft_raid_omen.daily.json": 4,
+	"effect_minecraft_trial_omen.daily.json": 4,
+	"effect_minecraft_haste.daily.json": 2,
+	"effect_minecraft_invisibility.daily.json": 4,
+	"effect_minecraft_water_breathing.daily.json": 2,
+	"effect_minecraft_wind_charged.daily.json": 2,
+	"effect_minecraft_wither.daily.json": 2,
+	"effect_minecraft_infested.daily.json": 2,
+	"effect_minecraft_oozing.daily.json": 2,
+	"effect_minecraft_weaving.daily.json": 2,
+	"effect_minecraft_conduit_power.daily.json": 2,
+	"effect_minecraft_night_vision.daily.json": 2
+}

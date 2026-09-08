@@ -1,0 +1,13 @@
+{
+	"type": "enchant_item",
+	"itemType": "minecraft:crossbow",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.25,
+	"minimum": 2,
+	"maximum": 3,
+	"emoji": "🎯",
+	"name": "Enchant Crossbows",
+	"description": "Enchant {count} crossbows."
+}

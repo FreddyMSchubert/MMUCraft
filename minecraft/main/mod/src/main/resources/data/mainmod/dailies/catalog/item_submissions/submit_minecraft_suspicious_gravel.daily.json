@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:suspicious_gravel",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🪨",
+	"name": "Submit Suspicious Gravel",
+	"description": "Submit one suspicious gravel block. We have no idea how you kept the whole block. Have the items in your inventory when you click Claim."
+}

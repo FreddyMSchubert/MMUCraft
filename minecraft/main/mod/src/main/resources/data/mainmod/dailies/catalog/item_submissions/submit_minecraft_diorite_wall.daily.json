@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:diorite_wall",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.1,
+	"minimum": 30,
+	"maximum": 45,
+	"emoji": "🧱",
+	"name": "Submit Diorite Walls",
+	"description": "Submit {count} diorite walls. Have the items in your inventory when you click Claim."
+}

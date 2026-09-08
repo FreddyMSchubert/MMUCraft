@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:glow_ink_sac",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.5,
+	"minimum": 4,
+	"maximum": 10,
+	"emoji": "🦑",
+	"name": "Submit Glow Ink Sacs",
+	"description": "Submit {count} glow ink sacs. If the signs are still unreadable, blame the font. Have the items in your inventory when you click Claim."
+}

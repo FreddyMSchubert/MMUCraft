@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:diamond",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 2.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "💎",
+	"name": "Sell Diamonds",
+	"description": "Give villagers {count} diamonds. The toolsmith sends thanks."
+}

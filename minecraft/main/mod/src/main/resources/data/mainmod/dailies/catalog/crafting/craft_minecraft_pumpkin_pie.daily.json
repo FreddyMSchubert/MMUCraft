@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:pumpkin_pie",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.5,
+	"minimum": 6,
+	"maximum": 12,
+	"emoji": "🥧",
+	"name": "Craft Pumpkin Pies",
+	"description": "Craft {count} pumpkin pies. The stack will disappear faster than the task took."
+}

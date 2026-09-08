@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_type",
+	"damageType": "minecraft:magic",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🪄",
+	"name": "Get Hurt by Magic",
+	"description": "Take damage from magic without dying."
+}

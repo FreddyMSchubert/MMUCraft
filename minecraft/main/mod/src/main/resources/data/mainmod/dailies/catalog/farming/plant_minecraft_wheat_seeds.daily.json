@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:wheat_seeds",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.175,
+	"minimum": 30,
+	"maximum": 50,
+	"emoji": "🌾",
+	"name": "Plant Wheat",
+	"description": "Plant {count} wheat seeds. One field. No bonemeal required."
+}

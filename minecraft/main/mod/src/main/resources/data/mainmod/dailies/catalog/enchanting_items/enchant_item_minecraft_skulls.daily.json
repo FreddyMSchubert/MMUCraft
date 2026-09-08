@@ -1,0 +1,13 @@
+{
+	"type": "enchant_item",
+	"itemType": "#minecraft:skulls",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "💀",
+	"name": "Enchant a Wearable Skull",
+	"description": "Enchant a wearable skull. Protection cannot save your fashion sense."
+}

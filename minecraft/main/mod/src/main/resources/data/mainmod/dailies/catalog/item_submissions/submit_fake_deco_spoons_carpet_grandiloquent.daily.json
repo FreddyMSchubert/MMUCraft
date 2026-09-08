@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "deco-spoons-carpet-grandiloquent",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 0.5,
+	"minimum": 8,
+	"maximum": 16,
+	"emoji": "🥄",
+	"name": "Submit Grandiloquent Spoons Carpets",
+	"description": "Submit {count} grandiloquent spoons carpets. Have the items in your inventory when you click Claim."
+}

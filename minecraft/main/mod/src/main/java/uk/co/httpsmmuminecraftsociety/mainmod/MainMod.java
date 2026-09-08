@@ -94,7 +94,6 @@ public class MainMod implements ModInitializer {
 
         DataLoader.init();
         LOGGER.info("Loaded {} mini block definitions", MiniBlockCatalog.definitions().size());
-        DailyTaskRegistry.validate();
 
         FakeItemsCommand.init();
         MiniBlockCommand.init();
@@ -136,6 +135,13 @@ public class MainMod implements ModInitializer {
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> ClaimsManager.reset());
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            registries = server.overworld().registryAccess();
+            DailyTaskRegistry.load(registries);
+            EnchantmentSettingsManager.validateLoottables(server.reloadableRegistries().lookup());
+            PickaxeHeaterCharm.rebuildSmeltedDropMap(server);
+            FakeItems.validate();
+        });
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
         ServerLifecycleEvents.SERVER_STARTED.register(MetricsServer::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
@@ -150,15 +156,10 @@ public class MainMod implements ModInitializer {
             DailyTaskManager.tick(server);
         });
 
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            registries = server.overworld().registryAccess();
-            EnchantmentSettingsManager.validateLoottables(server.reloadableRegistries().lookup());
-            PickaxeHeaterCharm.rebuildSmeltedDropMap(server);
-            FakeItems.validate();
-        });
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
                 registries = server.overworld().registryAccess();
+                DailyTaskRegistry.load(registries);
                 EnchantmentSettingsManager.validateLoottables(server.reloadableRegistries().lookup());
                 PickaxeHeaterCharm.rebuildSmeltedDropMap(server);
             }

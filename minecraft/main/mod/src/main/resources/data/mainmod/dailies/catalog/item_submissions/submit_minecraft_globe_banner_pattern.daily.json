@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:globe_banner_pattern",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🌍",
+	"name": "Submit a Globe Banner Pattern",
+	"description": "Submit one globe banner pattern. Have the items in your inventory when you click Claim."
+}

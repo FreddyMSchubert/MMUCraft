@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:cartography_table",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 7,
+	"emoji": "🗺️",
+	"name": "Craft Cartography Tables",
+	"description": "Craft {count} cartography tables."
+}

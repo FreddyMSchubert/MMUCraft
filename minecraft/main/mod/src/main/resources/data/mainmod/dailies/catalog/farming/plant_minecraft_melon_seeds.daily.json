@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:melon_seeds",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.25,
+	"minimum": 12,
+	"maximum": 24,
+	"emoji": "🍉",
+	"name": "Plant Melons",
+	"description": "Plant {count} melon seeds. Every stem needs somewhere to put the melon."
+}

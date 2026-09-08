@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "sushi",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🍣",
+	"name": "Submit Sushi",
+	"description": "Submit {count} pieces of sushi. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:nautilus_shell",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 4,
+	"emoji": "🐚",
+	"name": "Submit Nautilus Shells",
+	"description": "Submit {count} nautilus shells. Have the items in your inventory when you click Claim."
+}

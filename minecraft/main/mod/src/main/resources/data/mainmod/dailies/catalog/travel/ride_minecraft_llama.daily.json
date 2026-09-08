@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:llama",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.025,
+	"minimum": 100,
+	"maximum": 300,
+	"emoji": "🦙",
+	"name": "Ride a Llama",
+	"description": "Ride a llama for {count} blocks. You cannot steer it. Good luck."
+}

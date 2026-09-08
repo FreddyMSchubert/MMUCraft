@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:spruce_trapdoor",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.2,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🪵",
+	"name": "Submit Spruce Trapdoors",
+	"description": "Submit {count} spruce trapdoors. Have the items in your inventory when you click Claim."
+}

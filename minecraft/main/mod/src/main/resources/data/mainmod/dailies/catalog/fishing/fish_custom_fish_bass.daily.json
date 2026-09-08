@@ -1,0 +1,13 @@
+{
+	"type": "fish_fake_item",
+	"fakeItem": "fish-bass",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 2.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🎣",
+	"name": "Catch Bass",
+	"description": "Catch one bass."
+}

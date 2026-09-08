@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:copper_hoe",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1,
+	"minimum": 3,
+	"maximum": 5,
+	"emoji": "🟠",
+	"name": "Submit Copper Hoes",
+	"description": "Submit {count} copper hoes. Have the items in your inventory when you click Claim."
+}

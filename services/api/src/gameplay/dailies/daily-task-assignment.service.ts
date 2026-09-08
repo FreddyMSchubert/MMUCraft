@@ -10,6 +10,7 @@ import {
 	dailyAdvancementBonus,
 	type DailyAdvancementTarget,
 	GENERATED_TASK_COUNT,
+	GENERATED_TASK_REPEAT_LOOKBACK_DAYS,
 	parseDailyTaskJson,
 } from './daily-task-rules';
 import { DailyTaskStorageService } from './daily-task-storage.service';
@@ -25,12 +26,20 @@ export class DailyTaskAssignmentService {
 	async tasksForPeriod(user: AuthenticatedUser, periodKey: string) {
 		let tasks = this.dailyStorage.storedTasks(user.id, periodKey);
 		if (tasks.length === GENERATED_TASK_COUNT) return tasks;
+		const excludedTaskIds = new Set(tasks.map((task) => task.id));
+		for (const id of this.dailyStorage.recentTaskIds(
+			user.id,
+			periodKey,
+			GENERATED_TASK_REPEAT_LOOKBACK_DAYS,
+		))
+			excludedTaskIds.add(id);
 
 		const generated = await this.dailyMinecraft.generateTasks(
 			user,
 			periodKey,
 			GENERATED_TASK_COUNT,
 			Date.now(),
+			[...excludedTaskIds],
 		);
 		if (!generated.generated || generated.task_json.length !== GENERATED_TASK_COUNT)
 			throw new BadRequestException(

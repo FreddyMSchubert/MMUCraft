@@ -1,0 +1,13 @@
+{
+	"type": "use_item",
+	"item": "minecraft:spyglass",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.1,
+	"minimum": 15,
+	"maximum": 25,
+	"emoji": "🔭",
+	"name": "Use a Spyglass",
+	"description": "Use a spyglass {count} times."
+}

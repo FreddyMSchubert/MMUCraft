@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:glow_squid",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.5,
+	"minimum": 6,
+	"maximum": 12,
+	"emoji": "🦑",
+	"name": "Hunt Glow Squid",
+	"description": "Defeat {count} glow squid. They had it coming. Probably."
+}

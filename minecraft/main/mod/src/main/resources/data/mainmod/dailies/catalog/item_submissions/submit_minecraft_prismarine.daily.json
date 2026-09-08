@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:prismarine",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.35,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "🌊",
+	"name": "Submit Prismarine",
+	"description": "Submit {count} prismarine. Have the items in your inventory when you click Claim."
+}

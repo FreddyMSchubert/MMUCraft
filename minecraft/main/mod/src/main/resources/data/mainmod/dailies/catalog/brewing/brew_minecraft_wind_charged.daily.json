@@ -1,0 +1,13 @@
+{
+	"type": "brew_potion",
+	"potion": "minecraft:wind_charged",
+	"nether": true,
+	"end": false,
+	"baseCost": 7,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🌬️",
+	"name": "Brew Wind Charging",
+	"description": "Brew {count} potions of Wind Charging. Use one somewhere with a high ceiling."
+}

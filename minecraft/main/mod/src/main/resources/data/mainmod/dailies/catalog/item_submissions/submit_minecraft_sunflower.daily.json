@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:sunflower",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.15,
+	"minimum": 12,
+	"maximum": 24,
+	"emoji": "🌻",
+	"name": "Submit Sunflowers",
+	"description": "Submit {count} sunflowers. Bonemeal makes this less impressive than it sounds. Have the items in your inventory when you click Claim."
+}

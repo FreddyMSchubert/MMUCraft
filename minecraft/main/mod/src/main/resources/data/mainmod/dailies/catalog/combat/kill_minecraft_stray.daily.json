@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:stray",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🏹",
+	"name": "Hunt Strays",
+	"description": "Defeat {count} strays."
+}

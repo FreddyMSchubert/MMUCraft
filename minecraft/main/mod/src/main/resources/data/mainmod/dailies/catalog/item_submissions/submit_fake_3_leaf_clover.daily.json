@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "3-leaf-clover",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "☘️",
+	"name": "Submit Three-Leaf Clovers",
+	"description": "Submit {count} three-leaf clovers. Have the items in your inventory when you click Claim."
+}

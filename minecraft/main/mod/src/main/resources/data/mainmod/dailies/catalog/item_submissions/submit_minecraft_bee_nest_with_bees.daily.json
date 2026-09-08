@@ -1,0 +1,13 @@
+{
+	"type": "submit_bee_nest_with_bees",
+	"item": "minecraft:bee_nest",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 4,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🐝",
+	"name": "Submit a Bee Nest with Bees",
+	"description": "Submit one bee nest with bees inside. The bees must still be inside. Be nice. Have the items in your inventory when you click Claim."
+}

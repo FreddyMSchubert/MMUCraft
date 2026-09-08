@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:raw_copper_block",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 2,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "🟧",
+	"name": "Submit Blocks of Raw Copper",
+	"description": "Submit {count} blocks of raw copper. Have the items in your inventory when you click Claim."
+}

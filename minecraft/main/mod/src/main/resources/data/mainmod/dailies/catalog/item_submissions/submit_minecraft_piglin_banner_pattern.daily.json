@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:piglin_banner_pattern",
+	"nether": true,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🐽",
+	"name": "Submit a Snout Banner Pattern",
+	"description": "Submit one snout banner pattern. Have the items in your inventory when you click Claim."
+}

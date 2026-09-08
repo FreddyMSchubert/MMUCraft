@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:spider",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.5,
+	"minimum": 8,
+	"maximum": 16,
+	"emoji": "🕷️",
+	"name": "Hunt Spiders",
+	"description": "Defeat {count} spiders."
+}

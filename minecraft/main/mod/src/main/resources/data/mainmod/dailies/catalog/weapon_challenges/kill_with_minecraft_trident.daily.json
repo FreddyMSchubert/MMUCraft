@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "minecraft:trident",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "🔱",
+	"name": "Trident Kills",
+	"description": "Defeat {count} mobs with a trident."
+}

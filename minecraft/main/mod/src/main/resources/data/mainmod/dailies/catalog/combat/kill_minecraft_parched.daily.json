@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:parched",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 1.25,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "🏜️",
+	"name": "Hunt Parched",
+	"description": "Defeat {count} parched."
+}

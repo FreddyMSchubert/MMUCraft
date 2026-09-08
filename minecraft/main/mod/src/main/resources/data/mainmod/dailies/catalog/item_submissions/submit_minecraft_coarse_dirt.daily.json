@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:coarse_dirt",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.1,
+	"minimum": 30,
+	"maximum": 40,
+	"emoji": "🟫",
+	"name": "Submit Coarse Dirt",
+	"description": "Submit {count} coarse dirt. Have the items in your inventory when you click Claim."
+}

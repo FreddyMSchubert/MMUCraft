@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:hanging_roots",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.2,
+	"minimum": 10,
+	"maximum": 20,
+	"emoji": "🌱",
+	"name": "Submit Hanging Roots",
+	"description": "Submit {count} hanging roots. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:oak_chest_boat",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.006,
+	"minimum": 750,
+	"maximum": 1250,
+	"emoji": "🛶",
+	"name": "Sail a Chest Boat",
+	"description": "Sail a chest boat for {count} blocks. Put something in the chest. It feels wrong otherwise."
+}

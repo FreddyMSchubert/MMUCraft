@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:shroomlight",
+	"nether": true,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.35,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "🍄",
+	"name": "Submit Shroomlights",
+	"description": "Submit {count} shroomlights. Have the items in your inventory when you click Claim."
+}

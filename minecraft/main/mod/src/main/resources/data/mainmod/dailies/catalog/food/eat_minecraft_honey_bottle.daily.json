@@ -1,0 +1,13 @@
+{
+	"type": "eat_item",
+	"item": "minecraft:honey_bottle",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "🍯",
+	"name": "Drink Honey",
+	"description": "Drink {count} honey bottles."
+}

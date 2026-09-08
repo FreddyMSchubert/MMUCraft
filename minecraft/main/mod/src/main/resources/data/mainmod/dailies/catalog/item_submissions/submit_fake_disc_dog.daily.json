@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "disc-dog",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🐕",
+	"name": "Submit Dog Disc",
+	"description": "Submit one Dog disc. Good dog. Bad exchange rate. Have the items in your inventory when you click Claim."
+}

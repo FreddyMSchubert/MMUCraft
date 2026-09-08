@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:sugar_cane",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.125,
+	"minimum": 30,
+	"maximum": 50,
+	"emoji": "🎋",
+	"name": "Plant Sugar Cane",
+	"description": "Plant {count} sugar cane. Water, dirt, and an unreasonable amount of clicking."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "receive_effect",
+	"effect": "minecraft:weaving",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🕸️",
+	"name": "Get Weaving",
+	"description": "Get Weaving. Free cobwebs, awkward delivery."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_entity",
+	"entity": "minecraft:warden",
+	"nether": false,
+	"end": false,
+	"baseCost": 8,
+	"rewardPerIteration": 4,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "📡",
+	"name": "Survive a Warden Hit",
+	"description": "Take damage from a warden and survive. Survive is the important word."
+}

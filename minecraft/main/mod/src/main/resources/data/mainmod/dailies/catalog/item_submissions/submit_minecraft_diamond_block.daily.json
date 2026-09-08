@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:diamond_block",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 8.5,
+	"minimum": 1,
+	"maximum": 2,
+	"emoji": "💎",
+	"name": "Submit Diamond Blocks",
+	"description": "Convert {count} diamond blocks into Dabloons. Yes, whole blocks. This one is supposed to hurt. Have the items in your inventory when you click Claim."
+}

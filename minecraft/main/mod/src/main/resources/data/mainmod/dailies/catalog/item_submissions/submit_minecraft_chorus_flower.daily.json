@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:chorus_flower",
+	"nether": false,
+	"end": true,
+	"baseCost": 5,
+	"rewardPerIteration": 0.5,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🟪",
+	"name": "Submit Chorus Flowers",
+	"description": "Submit {count} chorus flowers. The End keeps its weirdest crop. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_entity",
+	"entity": "minecraft:vex",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🪽",
+	"name": "Get Hurt by a Vex",
+	"description": "Take damage from a vex without dying."
+}

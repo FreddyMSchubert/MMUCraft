@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "ring_bell",
+	"progressLabel": "Rang",
+	"progressUnit": "times",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.15,
+	"minimum": 20,
+	"maximum": 40,
+	"emoji": "🔔",
+	"name": "Ring a Bell",
+	"description": "Ring a bell {count} times. This is not an emergency. It will sound like one."
+}

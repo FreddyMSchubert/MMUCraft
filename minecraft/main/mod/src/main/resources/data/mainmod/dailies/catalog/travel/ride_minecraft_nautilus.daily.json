@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:nautilus",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 0.015,
+	"minimum": 150,
+	"maximum": 500,
+	"emoji": "🐚",
+	"name": "Ride a Nautilus",
+	"description": "Ride a nautilus for {count} blocks."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "feed_entity",
+	"entity": "minecraft:camel",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🐫",
+	"name": "Feed Camels",
+	"description": "Feed {count} camels."
+}

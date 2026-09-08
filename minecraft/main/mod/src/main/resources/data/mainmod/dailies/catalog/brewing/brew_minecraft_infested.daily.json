@@ -1,0 +1,13 @@
+{
+	"type": "brew_potion",
+	"potion": "minecraft:infested",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🪲",
+	"name": "Brew Infestation",
+	"description": "Brew {count} potions of Infestation. For when a normal silverfish problem is not enough."
+}

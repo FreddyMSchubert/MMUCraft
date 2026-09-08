@@ -1,0 +1,13 @@
+{
+	"type": "enchant_item",
+	"itemType": "minecraft:enchanted_book",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "📖",
+	"name": "Enchant Books",
+	"description": "Enchant {count} books."
+}

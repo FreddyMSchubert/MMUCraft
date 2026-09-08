@@ -1,0 +1,13 @@
+{
+	"type": "receive_effect",
+	"effect": "minecraft:nausea",
+	"nether": true,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🌀",
+	"name": "Get Nausea",
+	"description": "Get Nausea. Portals are the cheap option."
+}

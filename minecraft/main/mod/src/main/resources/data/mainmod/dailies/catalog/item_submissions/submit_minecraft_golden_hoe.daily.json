@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:golden_hoe",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.5,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "🔑",
+	"name": "Submit Golden Hoes",
+	"description": "Submit {count} golden hoes. Have the items in your inventory when you click Claim."
+}

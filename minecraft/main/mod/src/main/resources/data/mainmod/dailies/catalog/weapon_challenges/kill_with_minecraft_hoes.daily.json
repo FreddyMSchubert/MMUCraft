@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "#minecraft:hoes",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.85,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "🪏",
+	"name": "Hoe Kills",
+	"description": "Defeat {count} mobs with a hoe. This is why villagers do not lend tools."
+}

@@ -13,6 +13,7 @@ import {
 	dailyAdvancementBonus,
 	type DailyAdvancementTarget,
 	GENERATED_TASK_COUNT,
+	GENERATED_TASK_REPEAT_LOOKBACK_DAYS,
 	parseDailyTaskJson,
 } from './daily-task-rules';
 import { DailyTaskStorageService } from './daily-task-storage.service';
@@ -83,7 +84,16 @@ export class DailyAdminRefreshService {
 						periodKey,
 						refreshedSlots.length,
 						now,
-						currentTasks.map((task) => task.task_id),
+						[
+							...new Set([
+								...currentTasks.map((task) => task.task_id),
+								...this.dailyStorage.recentTaskIds(
+									userId,
+									periodKey,
+									GENERATED_TASK_REPEAT_LOOKBACK_DAYS,
+								),
+							]),
+						],
 					);
 		if (!generated.generated || generated.task_json.length !== refreshedSlots.length)
 			throw new BadRequestException(

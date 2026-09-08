@@ -1,0 +1,12 @@
+{
+	"type": "gain_levels",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.75,
+	"minimum": 6,
+	"maximum": 12,
+	"emoji": "🟢",
+	"name": "Gain Experience Levels",
+	"description": "Gain {count} experience levels."
+}

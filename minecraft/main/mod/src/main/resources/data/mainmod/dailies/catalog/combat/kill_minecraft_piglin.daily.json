@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:piglin",
+	"nether": true,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 3,
+	"maximum": 8,
+	"emoji": "🐽",
+	"name": "Hunt Piglins",
+	"description": "Defeat {count} piglins."
+}

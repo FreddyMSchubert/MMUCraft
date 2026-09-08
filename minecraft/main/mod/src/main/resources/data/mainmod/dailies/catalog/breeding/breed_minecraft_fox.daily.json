@@ -1,0 +1,13 @@
+{
+	"type": "breed_entity",
+	"entity": "minecraft:fox",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🦊",
+	"name": "Breed Foxes",
+	"description": "Breed {count} foxes. The baby trusts you. The parents still do not."
+}

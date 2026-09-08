@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:piglin_brute",
+	"nether": true,
+	"end": false,
+	"baseCost": 7,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🪓",
+	"name": "Clear Piglin Brutes",
+	"description": "Defeat {count} piglin brutes. Gold armour will not charm these ones."
+}

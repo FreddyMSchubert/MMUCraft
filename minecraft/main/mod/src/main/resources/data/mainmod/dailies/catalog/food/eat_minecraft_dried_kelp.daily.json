@@ -1,0 +1,13 @@
+{
+	"type": "eat_item",
+	"item": "minecraft:dried_kelp",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.2,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🌿",
+	"name": "Eat Dried Kelp",
+	"description": "Eat {count} dried kelp."
+}

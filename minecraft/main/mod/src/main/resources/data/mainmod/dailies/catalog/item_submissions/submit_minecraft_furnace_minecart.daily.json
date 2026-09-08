@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:furnace_minecart",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 2.5,
+	"minimum": 2,
+	"maximum": 3,
+	"emoji": "🚂",
+	"name": "Submit Minecarts with Furnaces",
+	"description": "Submit {count} minecarts with furnaces. Have the items in your inventory when you click Claim."
+}

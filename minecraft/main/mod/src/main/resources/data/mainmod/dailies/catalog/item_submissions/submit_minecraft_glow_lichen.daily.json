@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:glow_lichen",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.1,
+	"minimum": 20,
+	"maximum": 40,
+	"emoji": "✨",
+	"name": "Submit Glow Lichen",
+	"description": "Submit {count} glow lichen. Have the items in your inventory when you click Claim."
+}

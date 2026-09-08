@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:bogged",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 1,
+	"minimum": 3,
+	"maximum": 7,
+	"emoji": "🏹",
+	"name": "Hunt Bogged",
+	"description": "Defeat {count} bogged."
+}

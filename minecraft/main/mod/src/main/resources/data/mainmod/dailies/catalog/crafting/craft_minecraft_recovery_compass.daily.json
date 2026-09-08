@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:recovery_compass",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 20,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🧭",
+	"name": "Craft a Recovery Compass",
+	"description": "Craft one recovery compass. Eight echo shards. Twenty Dabloons. Fair."
+}

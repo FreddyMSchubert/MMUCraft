@@ -1,0 +1,13 @@
+{
+	"type": "fish_item",
+	"item": "minecraft:pufferfish",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🐡",
+	"name": "Catch a Pufferfish",
+	"description": "Catch one pufferfish. Do not eat this one. There is another daily for bad decisions."
+}

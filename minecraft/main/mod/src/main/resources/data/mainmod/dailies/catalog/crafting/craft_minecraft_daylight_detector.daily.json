@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:daylight_detector",
+	"nether": true,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 2,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "☀️",
+	"name": "Craft Daylight Detectors",
+	"description": "Craft {count} daylight detectors."
+}

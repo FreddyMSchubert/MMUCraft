@@ -1,0 +1,13 @@
+{
+	"type": "feed_entity",
+	"entity": "minecraft:hoglin",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1,
+	"minimum": 1,
+	"maximum": 4,
+	"emoji": "🐗",
+	"name": "Feed Hoglins",
+	"description": "Feed {count} hoglins. Stay behind the fence."
+}

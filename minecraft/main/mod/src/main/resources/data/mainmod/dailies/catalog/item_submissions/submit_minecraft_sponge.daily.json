@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:sponge",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 4,
+	"emoji": "🧽",
+	"name": "Submit Sponges",
+	"description": "Submit {count} dry sponges. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "beer",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.5,
+	"minimum": 3,
+	"maximum": 3,
+	"emoji": "🍺",
+	"name": "Submit Beer",
+	"description": "Submit three beers. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "enchant_item",
+	"itemType": "#minecraft:shovels",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 0.75,
+	"minimum": 3,
+	"maximum": 5,
+	"emoji": "🪏",
+	"name": "Enchant Shovels",
+	"description": "Enchant {count} shovels."
+}

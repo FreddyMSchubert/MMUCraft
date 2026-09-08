@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:scaffolding",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 48,
+	"emoji": "🏗️",
+	"name": "Craft Scaffolding",
+	"description": "Craft {count} scaffolding. Bamboo has finally become useful."
+}

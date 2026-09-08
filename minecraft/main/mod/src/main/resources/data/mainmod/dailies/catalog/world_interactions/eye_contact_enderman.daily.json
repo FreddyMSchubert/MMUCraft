@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "eye_contact_enderman",
+	"progressLabel": "Made",
+	"progressUnit": "eye contact",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "👁️",
+	"name": "Look at an Enderman",
+	"description": "Make eye contact with an Enderman. Eye contact. The universal greeting."
+}

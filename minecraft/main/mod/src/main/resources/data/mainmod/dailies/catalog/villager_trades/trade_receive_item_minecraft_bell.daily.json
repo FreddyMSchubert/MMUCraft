@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "receive_item",
+	"target": "minecraft:bell",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🔔",
+	"name": "Buy a Bell",
+	"description": "Receive a bell from a villager. Found a village and bought its noisiest block."
+}

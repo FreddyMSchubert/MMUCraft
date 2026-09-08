@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:cookie",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🍪",
+	"name": "Submit Cookies",
+	"description": "Submit {count} cookies. Cocoa beans are doing the heavy lifting again. Have the items in your inventory when you click Claim."
+}

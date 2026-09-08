@@ -1,0 +1,13 @@
+{
+	"type": "villager_trade",
+	"tradeMode": "receive_emeralds",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.15,
+	"minimum": 20,
+	"maximum": 40,
+	"emoji": "💚",
+	"name": "Earn Emeralds",
+	"description": "Receive {count} emeralds from trades. The economy demands movement."
+}

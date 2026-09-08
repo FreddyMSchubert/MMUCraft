@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "minecraft:feather",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 3.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🪶",
+	"name": "Featherweight Champion",
+	"description": "Defeat one mob with a feather. The feather retires undefeated."
+}

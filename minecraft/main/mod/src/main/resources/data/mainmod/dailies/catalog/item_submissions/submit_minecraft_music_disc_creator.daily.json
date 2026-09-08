@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:music_disc_creator",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🛠️",
+	"name": "Submit Music Disc Creator",
+	"description": "Submit one Music Disc Creator. Have the items in your inventory when you click Claim."
+}

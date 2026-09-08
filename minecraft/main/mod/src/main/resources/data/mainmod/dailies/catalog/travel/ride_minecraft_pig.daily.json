@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:pig",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.02,
+	"minimum": 100,
+	"maximum": 300,
+	"emoji": "🐖",
+	"name": "Ride a Pig",
+	"description": "Ride a pig for {count} blocks. The pig did not agree to this."
+}

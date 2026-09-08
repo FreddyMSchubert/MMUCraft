@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "read_new_joke",
+	"progressLabel": "Read",
+	"progressUnit": "joke",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 1,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "😂",
+	"name": "Read a New Joke",
+	"description": "Read a joke book you haven't read before. Fresh jokes only. The server remembers."
+}

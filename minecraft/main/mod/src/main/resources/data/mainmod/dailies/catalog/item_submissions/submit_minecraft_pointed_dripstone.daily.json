@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:pointed_dripstone",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.15,
+	"minimum": 16,
+	"maximum": 32,
+	"emoji": "🪨",
+	"name": "Submit Pointed Dripstone",
+	"description": "Submit {count} pointed dripstone. Have the items in your inventory when you click Claim."
+}

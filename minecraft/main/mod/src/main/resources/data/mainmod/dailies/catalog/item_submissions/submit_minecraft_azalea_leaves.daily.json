@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:azalea_leaves",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.1,
+	"minimum": 20,
+	"maximum": 40,
+	"emoji": "🍃",
+	"name": "Submit Azalea Leaves",
+	"description": "Submit {count} azalea leaves. Have the items in your inventory when you click Claim."
+}

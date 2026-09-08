@@ -1,0 +1,14 @@
+{
+	"type": "submit_potion",
+	"item": "minecraft:potion",
+	"potion": "minecraft:infested",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🧪",
+	"name": "Submit Infestation Potions",
+	"description": "Submit {count} potions of infestation. Renewable silverfish. What could go wrong? Have the items in your inventory when you click Claim."
+}

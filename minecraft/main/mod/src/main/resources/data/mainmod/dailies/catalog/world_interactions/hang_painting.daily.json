@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "hang_painting",
+	"progressLabel": "Hung",
+	"progressUnit": "paintings",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.75,
+	"minimum": 3,
+	"maximum": 5,
+	"emoji": "🖼️",
+	"name": "Hang Paintings",
+	"description": "Hang {count} paintings."
+}

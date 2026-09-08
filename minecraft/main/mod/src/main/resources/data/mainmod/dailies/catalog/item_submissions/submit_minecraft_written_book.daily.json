@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:written_book",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "📖",
+	"name": "Submit a Written Book",
+	"description": "Submit one written book. Please write more than the word daily. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:mojang_banner_pattern",
+	"nether": false,
+	"end": false,
+	"baseCost": 14,
+	"rewardPerIteration": 8,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🍎",
+	"name": "Submit a Thing Banner Pattern",
+	"description": "Submit one Thing banner pattern. Yes, that recipe eats an enchanted golden apple. The payout knows. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "defeat_raid",
+	"progressLabel": "Defeated",
+	"progressUnit": "raid",
+	"nether": false,
+	"end": false,
+	"baseCost": 10,
+	"rewardPerIteration": 12,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🏰",
+	"name": "Defeat a Raid",
+	"description": "Help a village survive a raid. The village gets to keep the Hero."
+}

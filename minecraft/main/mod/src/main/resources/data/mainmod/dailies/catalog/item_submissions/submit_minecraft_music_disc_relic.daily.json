@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:music_disc_relic",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🏺",
+	"name": "Submit Music Disc Relic",
+	"description": "Submit one Music Disc Relic. Have the items in your inventory when you click Claim."
+}

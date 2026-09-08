@@ -1,0 +1,13 @@
+{
+	"type": "brew_potion",
+	"potion": "minecraft:regeneration",
+	"nether": true,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 2.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "💞",
+	"name": "Brew Regeneration",
+	"description": "Brew {count} potions of Regeneration."
+}

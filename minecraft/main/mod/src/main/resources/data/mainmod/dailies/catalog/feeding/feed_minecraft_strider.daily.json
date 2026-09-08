@@ -1,0 +1,13 @@
+{
+	"type": "feed_entity",
+	"entity": "minecraft:strider",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1,
+	"minimum": 1,
+	"maximum": 5,
+	"emoji": "🟥",
+	"name": "Feed Striders",
+	"description": "Feed {count} striders."
+}

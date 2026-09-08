@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:music_disc_otherside",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🚪",
+	"name": "Submit Music Disc Otherside",
+	"description": "Submit one Music Disc Otherside. Have the items in your inventory when you click Claim."
+}

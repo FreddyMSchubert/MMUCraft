@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_type",
+	"damageType": "minecraft:lightning_bolt",
+	"nether": false,
+	"end": false,
+	"baseCost": 7,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "⚡",
+	"name": "Get Hurt by Lightning",
+	"description": "Take damage from lightning without dying. A Channeling trident is less patient than the weather."
+}

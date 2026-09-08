@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:rabbit_hide",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.4,
+	"minimum": 8,
+	"maximum": 16,
+	"emoji": "🧶",
+	"name": "Sell Rabbit Hides",
+	"description": "Give villagers {count} rabbit hides."
+}

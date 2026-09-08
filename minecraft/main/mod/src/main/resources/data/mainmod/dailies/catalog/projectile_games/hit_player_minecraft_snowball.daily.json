@@ -1,0 +1,13 @@
+{
+	"type": "hit_player_with_projectile",
+	"projectile": "minecraft:snowball",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.15,
+	"minimum": 30,
+	"maximum": 50,
+	"emoji": "⛄",
+	"name": "Snowball Fight",
+	"description": "Hit another player with {count} snowballs. Pick somebody who throws back."
+}

@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:ink_sac",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.3,
+	"minimum": 8,
+	"maximum": 16,
+	"emoji": "🦑",
+	"name": "Sell Ink Sacs",
+	"description": "Give villagers {count} ink sacs."
+}

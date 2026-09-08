@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:strider",
+	"nether": true,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 0.01,
+	"minimum": 200,
+	"maximum": 600,
+	"emoji": "🟥",
+	"name": "Ride a Strider",
+	"description": "Ride a strider for {count} blocks. Cold striders look miserable. Stay on lava."
+}

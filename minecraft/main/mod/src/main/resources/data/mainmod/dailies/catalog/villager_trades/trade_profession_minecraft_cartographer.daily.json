@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_profession",
+	"tradeMode": "profession",
+	"profession": "minecraft:cartographer",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.75,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "🧑‍🌾",
+	"name": "Trade with a Cartographer",
+	"description": "Complete {count} trades with a cartographer."
+}

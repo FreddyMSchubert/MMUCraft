@@ -1,0 +1,13 @@
+{
+	"type": "break_block",
+	"block": "minecraft:gilded_blackstone",
+	"nether": true,
+	"end": false,
+	"baseCost": 7,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🟨",
+	"name": "Mine Gilded Blackstone",
+	"description": "Mine {count} gilded blackstone. Fortune changes the gold, not the Dabloons."
+}

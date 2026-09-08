@@ -1,739 +1,451 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.dailies;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry.Option;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry.CatalogDirectory;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry.CatalogEntry;
+import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry.Weighted;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.tasks.*;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-
-import static uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 final class DailyTaskCatalog {
-    private DailyTaskCatalog() {}
+    static final String RESOURCE_PATH = "data/mainmod/dailies/catalog";
+    private static final String WEIGHTS_FILE = "weights.dailyweights.json";
+    private static final String TASK_SUFFIX = ".daily.json";
+    private static final Set<String> COMMON_FIELDS = Set.of(
+            "type", "nether", "end", "baseCost", "rewardPerIteration", "minimum", "maximum",
+            "emoji", "name", "description"
+    );
 
-    static List<Weighted<List<Weighted<Option>>>> taskFamilies() {
-        return List.of(
-            // Item submissions
-            weighted(20, List.of(
-                    option(10, false, false, new ItemSubmissionTask(Items.POISONOUS_POTATO), 2, 0.75D, 4, 8, "🥔", "Submit Poisonous Potatoes", "Submit {count} poisonous potatoes. At last, a use for the stupid things. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.DEAD_BUSH), 2, 0.4D, 4, 10, "🌵", "Submit Dead Bushes", "Submit {count} dead bushes. The least alive block in Minecraft finally has a buyer. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.TINTED_GLASS), 2, 1, 4, 8, "🪟", "Submit Tinted Glass", "Submit {count} tinted glass. The mob farm has windows now. Probably a mistake. Have the items in your inventory when you click Claim."),
-                    option(3, false, false, new ItemSubmissionTask(Items.SUNFLOWER), 2, 0.15D, 12, 24, "🌻", "Submit Sunflowers", "Submit {count} sunflowers. Bonemeal makes this less impressive than it sounds. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.GLOW_INK_SAC), 1, 0.5D, 4, 10, "🦑", "Submit Glow Ink Sacs", "Submit {count} glow ink sacs. If the signs are still unreadable, blame the font. Have the items in your inventory when you click Claim."),
-                    option(14, false, false, new ItemSubmissionTask(Items.HONEYCOMB), 3, 0.25D, 8, 20, "🍯", "Submit Honeycomb", "Submit {count} honeycomb. Copper roofs do not wax themselves. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, new ItemSubmissionTask(Items.BLAZE_ROD), 5, 0.75D, 2, 5, "🔥", "Submit Blaze Rods", "Submit {count} blaze rods. Brewing has overheads. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.CANDLE), 1, 0.5D, 6, 12, "🕯️", "Submit Candles", "Submit {count} candles. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.DYED_CANDLE.blue()), 1, 0.6D, 4, 8, "🔵", "Submit Blue Candles", "Submit {count} blue candles. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, new ItemSubmissionTask(Items.TURTLE_EGG), 5, 3, 1, 1, "🐢", "Submit a Turtle Egg", "Submit one turtle egg. Silk Touch, patience, and one nervous trip home. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.SPYGLASS), 2, 2, 1, 1, "🔭", "Submit a Spyglass", "Submit one spyglass. Zoom mods do not count. Have the items in your inventory when you click Claim."),
-                    option(14, false, false, new ItemSubmissionTask(Items.AMETHYST_SHARD), 3, 0.125D, 16, 40, "💎", "Submit Amethyst Shards", "Submit {count} amethyst shards. The geode will grow more. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, new ItemSubmissionTask(Items.ECHO_SHARD), 7, 3, 1, 3, "📡", "Submit Echo Shards", "Submit {count} echo shards from the deep dark. Deep Dark tax. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.ANGLER_POTTERY_SHERD), 5, 3, 1, 1, "🏺", "Submit Angler Sherd", "Submit one angler sherd. One quarter of a fishing story. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_13), 2, 5, 1, 1, "💿", "Submit Music Disc 13", "Submit one Music Disc 13. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_CAT), 2, 5, 1, 1, "🐈", "Submit Music Disc Cat", "Submit one Music Disc Cat. The good one. There, I said it. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE), 3, 7, 1, 1, "🏴", "Submit Sentry Trim", "Submit one sentry trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE), 7, 7, 1, 1, "🤫", "Submit Silence Trim", "Submit one silence trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.ARCHER_POTTERY_SHERD), 4, 3, 1, 1, "🏹", "Submit Archer Sherd", "Submit one archer sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.ARMS_UP_POTTERY_SHERD), 4, 3, 1, 1, "🙌", "Submit Arms Up Sherd", "Submit one arms up sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.BLADE_POTTERY_SHERD), 5, 3, 1, 1, "🗡️", "Submit Blade Sherd", "Submit one blade sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.BREWER_POTTERY_SHERD), 4, 3, 1, 1, "🧪", "Submit Brewer Sherd", "Submit one brewer sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.BURN_POTTERY_SHERD), 5, 3, 1, 1, "🔥", "Submit Burn Sherd", "Submit one burn sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.DANGER_POTTERY_SHERD), 5, 3, 1, 1, "⚠️", "Submit Danger Sherd", "Submit one danger sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.EXPLORER_POTTERY_SHERD), 5, 3, 1, 1, "🧭", "Submit Explorer Sherd", "Submit one explorer sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.FLOW_POTTERY_SHERD), 6, 3, 1, 1, "🌊", "Submit Flow Sherd", "Submit one flow sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.FRIEND_POTTERY_SHERD), 5, 3, 1, 1, "🤝", "Submit Friend Sherd", "Submit one friend sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.GUSTER_POTTERY_SHERD), 6, 3, 1, 1, "🌬️", "Submit Guster Sherd", "Submit one guster sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.HEART_POTTERY_SHERD), 5, 3, 1, 1, "❤️", "Submit Heart Sherd", "Submit one heart sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.HEARTBREAK_POTTERY_SHERD), 5, 3, 1, 1, "💔", "Submit Heartbreak Sherd", "Submit one heartbreak sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.HOWL_POTTERY_SHERD), 5, 3, 1, 1, "🐺", "Submit Howl Sherd", "Submit one howl sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MINER_POTTERY_SHERD), 4, 3, 1, 1, "⛏️", "Submit Miner Sherd", "Submit one miner sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MOURNER_POTTERY_SHERD), 5, 3, 1, 1, "😢", "Submit Mourner Sherd", "Submit one mourner sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.PLENTY_POTTERY_SHERD), 5, 3, 1, 1, "🌾", "Submit Plenty Sherd", "Submit one plenty sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.PRIZE_POTTERY_SHERD), 4, 3, 1, 1, "🏆", "Submit Prize Sherd", "Submit one prize sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SCRAPE_POTTERY_SHERD), 6, 3, 1, 1, "🖌️", "Submit Scrape Sherd", "Submit one scrape sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SHEAF_POTTERY_SHERD), 5, 3, 1, 1, "🌾", "Submit Sheaf Sherd", "Submit one sheaf sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SHELTER_POTTERY_SHERD), 5, 3, 1, 1, "🏠", "Submit Shelter Sherd", "Submit one shelter sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SKULL_POTTERY_SHERD), 4, 3, 1, 1, "💀", "Submit Skull Sherd", "Submit one skull sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SNORT_POTTERY_SHERD), 5, 3, 1, 1, "🐽", "Submit Snort Sherd", "Submit one snort sherd. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_BLOCKS), 3, 5, 1, 1, "🧱", "Submit Music Disc Blocks", "Submit one Music Disc Blocks. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_BOUNCE), 4, 5, 1, 1, "🏀", "Submit Music Disc Bounce", "Submit one Music Disc Bounce. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_CHIRP), 3, 5, 1, 1, "🐦", "Submit Music Disc Chirp", "Submit one Music Disc Chirp. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_CREATOR), 6, 5, 1, 1, "🛠️", "Submit Music Disc Creator", "Submit one Music Disc Creator. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_CREATOR_MUSIC_BOX), 6, 5, 1, 1, "🎶", "Submit Creator Music Box", "Submit one Creator Music Box. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_FAR), 3, 5, 1, 1, "🏞️", "Submit Music Disc Far", "Submit one Music Disc Far. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_LAVA_CHICKEN), 6, 5, 1, 1, "🐔", "Submit Lava Chicken Disc", "Submit one Lava Chicken Disc. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_MALL), 3, 5, 1, 1, "🛍️", "Submit Music Disc Mall", "Submit one Music Disc Mall. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_MELLOHI), 3, 5, 1, 1, "🎼", "Submit Music Disc Mellohi", "Submit one Music Disc Mellohi. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_STAL), 3, 5, 1, 1, "🪨", "Submit Music Disc Stal", "Submit one Music Disc Stal. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_STRAD), 3, 5, 1, 1, "🎻", "Submit Music Disc Strad", "Submit one Music Disc Strad. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_WARD), 3, 5, 1, 1, "🛡️", "Submit Music Disc Ward", "Submit one Music Disc Ward. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_11), 2, 5, 1, 1, "🔢", "Submit Music Disc 11", "Submit one Music Disc 11. You do not have to listen to the end. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_WAIT), 3, 5, 1, 1, "⏳", "Submit Music Disc Wait", "Submit one Music Disc Wait. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_OTHERSIDE), 5, 5, 1, 1, "🚪", "Submit Music Disc Otherside", "Submit one Music Disc Otherside. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_RELIC), 6, 5, 1, 1, "🏺", "Submit Music Disc Relic", "Submit one Music Disc Relic. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_5), 8, 7, 1, 1, "5️⃣", "Submit Music Disc 5", "Submit one Music Disc 5. Have the items in your inventory when you click Claim."),
-                    option(1, true, false, new ItemSubmissionTask(Items.MUSIC_DISC_PIGSTEP), 7, 6, 1, 1, "🐽", "Submit Music Disc Pigstep", "Submit one Music Disc Pigstep. The bastion finally paid out. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_PRECIPICE), 6, 5, 1, 1, "⛰️", "Submit Music Disc Precipice", "Submit one Music Disc Precipice. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MUSIC_DISC_TEARS), 5, 5, 1, 1, "😭", "Submit Music Disc Tears", "Submit one Music Disc Tears. Play it once. We paid for the whole disc. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE), 4, 7, 1, 1, "🏜️", "Submit Dune Trim", "Submit one dune trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.COAST_ARMOR_TRIM_SMITHING_TEMPLATE), 4, 7, 1, 1, "🌊", "Submit Coast Trim", "Submit one coast trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.WILD_ARMOR_TRIM_SMITHING_TEMPLATE), 4, 7, 1, 1, "🌿", "Submit Wild Trim", "Submit one wild trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE), 6, 7, 1, 1, "📡", "Submit Ward Trim", "Submit one ward trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.EYE_ARMOR_TRIM_SMITHING_TEMPLATE), 6, 7, 1, 1, "👁️", "Submit Eye Trim", "Submit one eye trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.VEX_ARMOR_TRIM_SMITHING_TEMPLATE), 6, 7, 1, 1, "🪽", "Submit Vex Trim", "Submit one vex trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE), 6, 7, 1, 1, "🔱", "Submit Tide Trim", "Submit one tide trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, true, false, new ItemSubmissionTask(Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE), 6, 7, 1, 1, "🐽", "Submit Snout Trim", "Submit one snout trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, true, false, new ItemSubmissionTask(Items.RIB_ARMOR_TRIM_SMITHING_TEMPLATE), 5, 7, 1, 1, "🦴", "Submit Rib Trim", "Submit one rib trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, true, new ItemSubmissionTask(Items.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE), 7, 7, 1, 1, "🏙️", "Submit Spire Trim", "Submit one spire trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE), 5, 7, 1, 1, "🧭", "Submit Wayfinder Trim", "Submit one wayfinder trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE), 5, 7, 1, 1, "🏺", "Submit Shaper Trim", "Submit one shaper trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.RAISER_ARMOR_TRIM_SMITHING_TEMPLATE), 5, 7, 1, 1, "🙌", "Submit Raiser Trim", "Submit one raiser trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.HOST_ARMOR_TRIM_SMITHING_TEMPLATE), 5, 7, 1, 1, "🏠", "Submit Host Trim", "Submit one host trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE), 6, 7, 1, 1, "🌬️", "Submit Flow Trim", "Submit one flow trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE), 6, 7, 1, 1, "⚡", "Submit Bolt Trim", "Submit one bolt trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.ZOMBIE_HEAD), 0, 1.25D, 3, 6, "🧟", "Submit Zombie Heads", "Submit {count} zombie heads. Server loot tables have done terrible things to head rarity. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.CREEPER_HEAD), 0, 5, 1, 1, "💥", "Submit a Creeper Head", "Submit one creeper head. Charged creepers can relax. The server hands these out. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, new ItemSubmissionTask(Items.PIGLIN_HEAD), 2, 4, 1, 1, "🐽", "Submit a Piglin Head", "Submit one piglin head. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, new ItemSubmissionTask(Items.WITHER_SKELETON_SKULL), 5, 4, 1, 1, "💀", "Submit a Wither Skeleton Skull", "Submit one wither skeleton skull. Count your skulls before selling one. A Wither needs three. Have the items in your inventory when you click Claim."),
-                    option(10, false, true, new ItemSubmissionTask(Items.DRAGON_HEAD), 8, 5, 1, 1, "🐉", "Submit a Dragon Head", "Submit one dragon head. End ship tax. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, new ItemSubmissionTask(Items.OCHRE_FROGLIGHT), 6, 2, 1, 3, "🟡", "Submit Ochre Froglights", "Submit {count} ochre froglights. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, new ItemSubmissionTask(Items.VERDANT_FROGLIGHT), 6, 2, 1, 3, "🟢", "Submit Verdant Froglights", "Submit {count} verdant froglights. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, new ItemSubmissionTask(Items.PEARLESCENT_FROGLIGHT), 6, 2, 1, 3, "🟣", "Submit Pearlescent Froglights", "Submit {count} pearlescent froglights. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.DANDELION), 0, 0.125D, 24, 32, "🌼", "Submit Dandelions", "Submit {count} dandelions. They are everywhere until the daily asks for them. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.POPPY), 0, 0.125D, 24, 32, "🌹", "Submit Poppies", "Submit {count} poppies. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.BLUE_ORCHID), 1, 0.125D, 24, 32, "🪻", "Submit Blue Orchids", "Submit {count} blue orchids. Enjoy the swamp trip. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.ALLIUM), 2, 0.125D, 24, 32, "🟣", "Submit Alliums", "Submit {count} alliums. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.AZURE_BLUET), 0, 0.125D, 24, 32, "🌼", "Submit Azure Bluets", "Submit {count} azure bluets. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.RED_TULIP), 0, 0.125D, 24, 32, "🌷", "Submit Red Tulips", "Submit {count} red tulips. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.ORANGE_TULIP), 0, 0.125D, 24, 32, "🌷", "Submit Orange Tulips", "Submit {count} orange tulips. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.WHITE_TULIP), 0, 0.125D, 24, 32, "🌷", "Submit White Tulips", "Submit {count} white tulips. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.PINK_TULIP), 0, 0.125D, 24, 32, "🌷", "Submit Pink Tulips", "Submit {count} pink tulips. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.OXEYE_DAISY), 0, 0.125D, 24, 32, "🌼", "Submit Oxeye Daisies", "Submit {count} oxeye daisies. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.CORNFLOWER), 0, 0.125D, 24, 32, "🪻", "Submit Cornflowers", "Submit {count} cornflowers. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.LILY_OF_THE_VALLEY), 1, 0.125D, 24, 32, "🤍", "Submit Lilies of the Valley", "Submit {count} lilies of the valley. Pretty flower. Poisonous dye. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.LILAC), 1, 0.125D, 24, 32, "🪻", "Submit Lilacs", "Submit {count} lilacs. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.ROSE_BUSH), 1, 0.125D, 24, 32, "🌹", "Submit Rose Bushes", "Submit {count} rose bushes. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.PEONY), 1, 0.125D, 24, 32, "🌸", "Submit Peonies", "Submit {count} peonies. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.WILDFLOWERS), 1, 0.125D, 24, 32, "💐", "Submit Wildflowers", "Submit {count} wildflowers. The sheep can wait. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.PINK_PETALS), 2, 0.125D, 24, 32, "🌸", "Submit Pink Petals", "Submit {count} pink petals. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.CACTUS_FLOWER), 2, 0.15D, 24, 32, "🌵", "Submit Cactus Flowers", "Submit {count} cactus flowers. The desert was stingy. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.SPORE_BLOSSOM), 3, 1, 3, 6, "🌺", "Submit Spore Blossoms", "Submit {count} spore blossoms. Have the items in your inventory when you click Claim."),
-                    option(1, true, false, new ItemSubmissionTask(Items.WITHER_ROSE), 8, 1.5D, 1, 3, "🥀", "Submit Wither Roses", "Submit {count} wither roses. Try not to make these by accident. Have the items in your inventory when you click Claim."),
-                    option(1, false, true, new ItemSubmissionTask(Items.CHORUS_FLOWER), 5, 0.5D, 2, 6, "🟪", "Submit Chorus Flowers", "Submit {count} chorus flowers. The End keeps its weirdest crop. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.TORCHFLOWER), 5, 1.5D, 1, 3, "🏵️", "Submit Torchflowers", "Submit {count} torchflowers. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.PITCHER_PLANT), 5, 1.5D, 1, 3, "🪻", "Submit Pitcher Plants", "Submit {count} pitcher plants. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.OPEN_EYEBLOSSOM), 4, 0.3D, 4, 10, "👁️", "Submit Open Eyeblossoms", "Submit {count} open eyeblossoms. Check the time. Closed ones do not count. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.CLOSED_EYEBLOSSOM), 4, 0.3D, 4, 10, "😴", "Submit Closed Eyeblossoms", "Submit {count} closed eyeblossoms. Check the time. Open ones do not count. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.GOLDEN_DANDELION), 0, 3.5D, 1, 1, "🌟", "Submit a Golden Dandelion", "Submit one golden dandelion. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.AMETHYST_CLUSTER), 3, 1, 2, 4, "🔮", "Submit Amethyst Clusters", "Submit {count} amethyst clusters. Silk Touch. Do not ask how we know. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.ARMADILLO_SCUTE), 2, 0.5D, 4, 10, "🛡️", "Submit Armadillo Scutes", "Submit {count} armadillo scutes. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.AXOLOTL_BUCKET), 4, 2, 1, 1, "🪣", "Submit an Axolotl Bucket", "Submit one axolotl bucket. The axolotl comes with the bucket. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.AZALEA), 1, 0.15D, 16, 24, "🌿", "Submit Azaleas", "Submit {count} azaleas. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.FLOWERING_AZALEA), 1, 0.25D, 10, 20, "🌺", "Submit Flowering Azaleas", "Submit {count} flowering azaleas. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.AZALEA_LEAVES), 1, 0.1D, 20, 40, "🍃", "Submit Azalea Leaves", "Submit {count} azalea leaves. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.FLOWERING_AZALEA_LEAVES), 1, 0.15D, 16, 32, "🌸", "Submit Flowering Azalea Leaves", "Submit {count} flowering azalea leaves. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.BLUE_EGG), 3, 0.5D, 3, 5, "🔵", "Submit Blue Eggs", "Submit {count} blue eggs. The shell colour matters. White eggs do not count. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.BROWN_EGG), 3, 0.5D, 3, 5, "🟤", "Submit Brown Eggs", "Submit {count} brown eggs. The shell colour matters. White eggs do not count. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.BLUE_ICE), 4, 1.5D, 2, 5, "🧊", "Submit Blue Ice", "Submit {count} blue ice. It will not melt. Still do not lose it. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.TUBE_CORAL_BLOCK), 3, 0.75D, 2, 6, "🪸", "Submit Tube Coral Blocks", "Submit {count} living tube coral blocks. Dead coral does not count. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.BRAIN_CORAL_FAN), 3, 0.75D, 2, 6, "🧠", "Submit Brain Coral Fans", "Submit {count} living brain coral fans. Dead coral does not count. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.BUBBLE_CORAL_BLOCK), 3, 0.75D, 2, 6, "🫧", "Submit Bubble Coral Blocks", "Submit {count} living bubble coral blocks. Dead coral does not count. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.FIRE_CORAL_FAN), 3, 0.75D, 2, 6, "🔥", "Submit Fire Coral Fans", "Submit {count} living fire coral fans. Dead coral does not count. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.HORN_CORAL_BLOCK), 3, 0.75D, 2, 6, "📯", "Submit Horn Coral Blocks", "Submit {count} living horn coral blocks. Dead coral does not count. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.CALCITE), 2, 0.125D, 20, 40, "⬜", "Submit Calcite", "Submit {count} calcite. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, new ItemSubmissionTask(Items.CUT_COPPER_STAIRS.waxed().oxidized()), 3, 1, 2, 5, "🟦", "Submit Waxed Oxidized Cut Copper Stairs", "Submit {count} waxed oxidized cut copper stairs. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.CHISELED_RED_SANDSTONE), 2, 0.125D, 16, 32, "🧱", "Submit Chiseled Red Sandstone", "Submit {count} chiseled red sandstone. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.CHISELED_RESIN_BRICKS), 4, 0.5D, 4, 12, "🟠", "Submit Chiseled Resin Bricks", "Submit {count} chiseled resin bricks. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.CHISELED_SULFUR), 2, 0.75D, 4, 8, "🟡", "Submit Chiseled Sulfur", "Submit {count} chiseled sulfur. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.COARSE_DIRT), 0, 0.1D, 30, 40, "🟫", "Submit Coarse Dirt", "Submit {count} coarse dirt. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.COPPER_HOE), 0, 1, 3, 5, "🟠", "Submit Copper Hoes", "Submit {count} copper hoes. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.COPPER_TORCH), 0, 0.125D, 24, 40, "🟢", "Submit Copper Torches", "Submit {count} copper torches. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, new ItemSubmissionTask(Items.CREAKING_HEART), 6, 2, 1, 3, "🫀", "Submit Creaking Hearts", "Submit {count} creaking hearts. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.COPPER_GOLEM_STATUE.weathering().unaffected()), 4, 2, 1, 2, "🗿", "Submit Copper Golem Statues", "Submit {count} copper golem statues. Scrape them clean before handing them over. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.COPPER_GOLEM_STATUE.weathering().exposed()), 4, 2, 1, 2, "🗿", "Submit Exposed Copper Golem Statues", "Submit {count} exposed copper golem statues. Stop scraping when the first spots appear. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.COPPER_GOLEM_STATUE.weathering().weathered()), 4, 2, 1, 2, "🗿", "Submit Weathered Copper Golem Statues", "Submit {count} weathered copper golem statues. Check the green before swinging the axe again. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.COPPER_GOLEM_STATUE.weathering().oxidized()), 4, 2, 1, 2, "🗿", "Submit Oxidized Copper Golem Statues", "Submit {count} oxidized copper golem statues. Leave the axe alone. These are already done. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.COPPER_GOLEM_STATUE.waxed().unaffected()), 5, 2.25D, 1, 2, "🗿", "Submit Waxed Copper Golem Statues", "Submit {count} waxed copper golem statues. Scrape them clean, then lock the shine in with honeycomb. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.COPPER_GOLEM_STATUE.waxed().exposed()), 5, 2.25D, 1, 2, "🗿", "Submit Waxed Exposed Copper Golem Statues", "Submit {count} waxed exposed copper golem statues. Wax them while the first spots are showing. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.COPPER_GOLEM_STATUE.waxed().weathered()), 5, 2.25D, 1, 2, "🗿", "Submit Waxed Weathered Copper Golem Statues", "Submit {count} waxed weathered copper golem statues. Get the green right before adding honeycomb. Have the items in your inventory when you click Claim."),
-                    option(2, false, false, new ItemSubmissionTask(Items.COPPER_GOLEM_STATUE.waxed().oxidized()), 5, 2.25D, 1, 2, "🗿", "Submit Waxed Oxidized Copper Golem Statues", "Submit {count} waxed oxidized copper golem statues. Honeycomb keeps the full patina where it is. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.DEEPSLATE_COAL_ORE), 5, 1.5D, 1, 3, "⬛", "Submit Deepslate Coal Ore", "Submit {count} deepslate coal ore. Silk Touch keeps the evidence intact. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.DEEPSLATE_IRON_ORE), 2, 0.75D, 4, 8, "⛏️", "Submit Deepslate Iron Ore", "Submit {count} deepslate iron ore. Silk Touch keeps the evidence intact. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.DEEPSLATE_GOLD_ORE), 2, 1, 3, 6, "🟨", "Submit Deepslate Gold Ore", "Submit {count} deepslate gold ore. Silk Touch keeps the evidence intact. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.DEEPSLATE_LAPIS_ORE), 2, 0.75D, 3, 7, "🔵", "Submit Deepslate Lapis Ore", "Submit {count} deepslate lapis ore. Silk Touch keeps the evidence intact. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.DEEPSLATE_DIAMOND_ORE), 2, 2, 1, 3, "💎", "Submit Deepslate Diamond Ore", "Submit {count} deepslate diamond ore. Silk Touch keeps the evidence intact. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.DIORITE_WALL), 0, 0.1D, 30, 45, "🧱", "Submit Diorite Walls", "Submit {count} diorite walls. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.ANDESITE_STAIRS), 0, 0.1D, 30, 45, "🪨", "Submit Andesite Stairs", "Submit {count} andesite stairs. Have the items in your inventory when you click Claim."),
-                    option(80, false, false, new ItemSubmissionTask(Items.EMERALD), 0, 0.25D, 24, 48, "💚", "Submit Emeralds", "Convert {count} emeralds into Dabloons. Villagers are about to get richer. Have the items in your inventory when you click Claim."),
-                    option(80, false, false, new ItemSubmissionTask(Items.EMERALD_BLOCK), 0, 3, 2, 4, "🟩", "Submit Emerald Blocks", "Convert {count} emerald blocks into Dabloons. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.GLOW_LICHEN), 1, 0.1D, 20, 40, "✨", "Submit Glow Lichen", "Submit {count} glow lichen. Have the items in your inventory when you click Claim."),
-                    option(12, true, false, new ItemSubmissionTask(Items.GLOWSTONE), 2, 0.35D, 4, 12, "🌟", "Submit Glowstone", "Submit {count} glowstone. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.HANGING_ROOTS), 2, 0.2D, 10, 20, "🌱", "Submit Hanging Roots", "Submit {count} hanging roots. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.JACK_O_LANTERN), 1, 0.5D, 6, 10, "🎃", "Submit Jack o'Lanterns", "Submit {count} jack o'lanterns. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.LIGHT_WEIGHTED_PRESSURE_PLATE), 0, 1.75D, 2, 4, "🟨", "Submit Light Weighted Pressure Plates", "Submit {count} light weighted pressure plates. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.MANGROVE_CHEST_BOAT), 1, 2, 2, 3, "🛶", "Submit Mangrove Chest Boats", "Submit {count} mangrove chest boats. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.MANGROVE_PROPAGULE), 2, 0.15D, 10, 20, "🌱", "Submit Mangrove Propagules", "Submit {count} mangrove propagules. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.MUSHROOM_STEM), 3, 0.4D, 4, 12, "🍄", "Submit Mushroom Stems", "Submit {count} mushroom stems. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.POTENT_SULFUR), 3, 1, 2, 6, "⚗️", "Submit Potent Sulfur", "Submit {count} potent sulfur. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.PRISMARINE), 5, 0.35D, 4, 12, "🌊", "Submit Prismarine", "Submit {count} prismarine. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.PRISMARINE_SHARD), 5, 0.2D, 8, 24, "🔱", "Submit Prismarine Shards", "Submit {count} prismarine shards. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.PRISMARINE_CRYSTALS), 5, 0.35D, 4, 12, "💠", "Submit Prismarine Crystals", "Submit {count} prismarine crystals. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.PUFFERFISH), 1, 1.5D, 2, 4, "🐡", "Submit Pufferfish", "Submit {count} pufferfish. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.RAW_GOLD_BLOCK), 0, 4, 1, 3, "🟨", "Submit Blocks of Raw Gold", "Submit {count} blocks of raw gold. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.RAW_IRON_BLOCK), 0, 3, 2, 4, "⬜", "Submit Blocks of Raw Iron", "Submit {count} blocks of raw iron. Have the items in your inventory when you click Claim."),
-                    option(20, false, false, new ItemSubmissionTask(Items.DIAMOND_BLOCK), 0, 8.5D, 1, 2, "💎", "Submit Diamond Blocks", "Convert {count} diamond blocks into Dabloons. Yes, whole blocks. This one is supposed to hurt. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.SLIME_BLOCK), 3, 1.5D, 2, 6, "🟩", "Submit Slime Blocks", "Submit {count} slime blocks. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.SLIME_BALL), 3, 0.25D, 10, 30, "🟢", "Submit Slimeballs", "Submit {count} slimeballs. Slime chunks suddenly matter. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, new ItemSubmissionTask(Items.SPECTRAL_ARROW), 2, 0.25D, 12, 24, "🏹", "Submit Spectral Arrows", "Submit {count} spectral arrows. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.SPONGE), 6, 2, 1, 4, "🧽", "Submit Sponges", "Submit {count} dry sponges. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.WET_SPONGE), 6, 2, 1, 4, "💧", "Submit Wet Sponges", "Submit {count} wet sponges. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.SPRUCE_TRAPDOOR), 0, 0.2D, 24, 32, "🪵", "Submit Spruce Trapdoors", "Submit {count} spruce trapdoors. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.SUSPICIOUS_SAND), 6, 2, 1, 1, "🏜️", "Submit Suspicious Sand", "Submit one suspicious sand block. We have no idea how you kept the whole block. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.SUSPICIOUS_GRAVEL), 6, 2, 1, 1, "🪨", "Submit Suspicious Gravel", "Submit one suspicious gravel block. We have no idea how you kept the whole block. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.TADPOLE_BUCKET), 4, 2, 1, 1, "🪣", "Submit a Tadpole Bucket", "Submit one tadpole bucket. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.TNT_MINECART), 0, 3, 2, 3, "💣", "Submit Minecarts with TNT", "Submit {count} minecarts with TNT. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.FURNACE_MINECART), 0, 2.5D, 2, 3, "🚂", "Submit Minecarts with Furnaces", "Submit {count} minecarts with furnaces. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.TURTLE_HELMET), 8, 6, 1, 1, "🐢", "Submit a Turtle Shell", "Submit one turtle shell. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.VINE), 1, 0.1D, 20, 40, "🌿", "Submit Vines", "Submit {count} vines. Have the items in your inventory when you click Claim."),
-                    option(5, false, false, new ItemSubmissionTask(Items.GOLDEN_HOE), 0, 1.5D, 3, 6, "\uD83D\uDD11", "Submit Golden Hoes", "Submit {count} golden hoes. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.GLOW_BERRIES), 2, 0.2D, 10, 20, "✨", "Submit Glow Berries", "Submit {count} glow berries. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, new ItemSubmissionTask(Items.COPPER_HORSE_ARMOR), 0, 2, 2, 4, "🐴", "Submit Copper Horse Armor", "Submit {count} copper horse armour. Have the items in your inventory when you click Claim."),
-                    option(5, false, false, ItemSubmissionTask.matching("brown", Items.LEATHER_HORSE_ARMOR, (player, stack) -> stack.getOrDefault(DataComponents.DYED_COLOR, null) != null && stack.get(DataComponents.DYED_COLOR).rgb() == DyeColor.BROWN.getTextureDiffuseColor()), 0, 2, 2, 4, "🐴", "Submit Brown Leather Horse Armor", "Submit {count} sets of brown leather horse armour. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, new ItemSubmissionTask(Items.HARNESS.gray()), 0, 2, 2, 4, "🐴", "Submit Grey Harnesses", "Submit {count} grey harnesses. Have the items in your inventory when you click Claim."),
-                    option(5, false, false, ItemSubmissionTask.matching("mending", Items.WOODEN_SHOVEL, (player, stack) -> hasEnchantment(player, stack, Enchantments.MENDING, 1)), 4, 6, 1, 1, "🪏", "Submit a Mending Wooden Shovel", "Submit one wooden shovel with Mending. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.TURTLE_SCUTE), 7, 2, 1, 4, "🐢", "Submit Turtle Scutes", "Submit {count} turtle scutes. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, ItemSubmissionTask.matching("one-durability", Items.BRUSH, (player, stack) -> stack.getMaxDamage() - stack.getDamageValue() == 1), 1, 3, 1, 1, "🖌️", "Submit a Worn Brush", "Submit one brush with one use left. One durability. Check twice. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, ItemSubmissionTask.matching("under-half-durability", Items.CARROT_ON_A_STICK, (player, stack) -> stack.getDamageValue() * 2 > stack.getMaxDamage()), 2, 3, 1, 1, "🥕", "Submit a Worn Carrot on a Stick", "Submit one carrot on a stick below half durability. The pig has done enough. Have the items in your inventory when you click Claim."),
-                    option(5, false, false, new ItemSubmissionTask(Items.COPPER_NAUTILUS_ARMOR), 0, 3.5D, 1, 3, "🐚", "Submit Copper Nautilus Armor", "Submit {count} sets of copper nautilus armour. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, ItemSubmissionTask.matching("with-bees", Items.BEE_NEST, (player, stack) -> stack.has(DataComponents.BLOCK_ENTITY_DATA) && !stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTagWithoutId().getListOrEmpty("Bees").isEmpty()), 6, 4, 1, 1, "🐝", "Submit a Bee Nest with Bees", "Submit one bee nest with bees inside. The bees must still be inside. Be nice. Have the items in your inventory when you click Claim."),
-                    option(12, false, true, new ItemSubmissionTask(Items.END_ROD), 5, 0.25D, 4, 12, "💡", "Submit End Rods", "Submit {count} end rods. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.RED_SANDSTONE_STAIRS), 2, 0.1D, 20, 40, "🪜", "Submit Red Sandstone Stairs", "Submit {count} red sandstone stairs. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.CARPET.cyan()), 1, 0.15D, 24, 32, "🟦", "Submit Cyan Carpets", "Submit {count} cyan carpets. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.RAW_COPPER_BLOCK), 0, 2, 3, 6, "🟧", "Submit Blocks of Raw Copper", "Submit {count} blocks of raw copper. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, ItemSubmissionTask.matching("ominous", Items.BANNER.white(), (player, stack) -> ItemStack.isSameItemSameComponents(stack, Raid.getOminousBannerInstance(player.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN)))), 2, 3, 1, 1, "🏴", "Submit an Ominous Banner", "Submit one ominous banner. The captain will not need it anymore. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.CHISELED_COPPER.waxed().weathered()), 3, 1, 2, 5, "🟩", "Submit Waxed Weathered Chiseled Copper", "Submit {count} waxed weathered chiseled copper blocks. Have the items in your inventory when you click Claim."),
-                    option(16, false, false, new ItemSubmissionTask(Items.COOKIE), 1, 0.125D, 24, 32, "🍪", "Submit Cookies", "Submit {count} cookies. Cocoa beans are doing the heavy lifting again. Have the items in your inventory when you click Claim."),
-                    option(5, false, false, ItemSubmissionTask.matching("sharpness-2", Items.ENCHANTED_BOOK, (player, stack) -> hasEnchantment(player, stack, Enchantments.SHARPNESS, 2)), 2, 4, 1, 1, "📕", "Submit a Sharpness II Book", "Submit one Sharpness II book. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.GLOW_ITEM_FRAME), 1, 0.75D, 4, 8, "🖼️", "Submit Glow Item Frames", "Submit {count} glow item frames. Have the items in your inventory when you click Claim."),
-                    option(12, true, false, new ItemSubmissionTask(Items.SHROOMLIGHT), 3, 0.35D, 4, 12, "🍄", "Submit Shroomlights", "Submit {count} shroomlights. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.POINTED_DRIPSTONE), 2, 0.15D, 16, 32, "🪨", "Submit Pointed Dripstone", "Submit {count} pointed dripstone. Have the items in your inventory when you click Claim."),
-                    option(6, true, false, ItemSubmissionTask.matching("slow-falling", Items.POTION, (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, net.minecraft.world.item.alchemy.PotionContents.EMPTY).is(Potions.SLOW_FALLING)), 6, 1, 1, 3, "🧪", "Submit Slow Falling Potions", "Submit {count} potions of slow falling. Have the items in your inventory when you click Claim."),
-                    option(6, true, false, ItemSubmissionTask.matching("oozing", Items.POTION, (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, net.minecraft.world.item.alchemy.PotionContents.EMPTY).is(Potions.OOZING)), 4, 1.5D, 1, 3, "🧪", "Submit Oozing Potions", "Submit {count} potions of oozing. Have the items in your inventory when you click Claim."),
-                    option(6, true, false, ItemSubmissionTask.matching("weaving", Items.POTION, (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, net.minecraft.world.item.alchemy.PotionContents.EMPTY).is(Potions.WEAVING)), 4, 1.5D, 1, 3, "🧪", "Submit Weaving Potions", "Submit {count} potions of weaving. Have the items in your inventory when you click Claim."),
-                    option(6, true, false, ItemSubmissionTask.matching("infestation", Items.POTION, (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, net.minecraft.world.item.alchemy.PotionContents.EMPTY).is(Potions.INFESTED)), 4, 1.5D, 1, 3, "🧪", "Submit Infestation Potions", "Submit {count} potions of infestation. Renewable silverfish. What could go wrong? Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.WRITTEN_BOOK), 0, 5, 1, 1, "📖", "Submit a Written Book", "Submit one written book. Please write more than the word daily. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.PLAYER_HEAD), 0, 5, 1, 1, "🗿", "Submit a Player Head", "Submit one player head. No questions asked. Have the items in your inventory when you click Claim."),
-                    option(12, false, false, new ItemSubmissionTask(Items.EXPERIENCE_BOTTLE), 4, 0.5D, 4, 8, "✨", "Submit Bottles o' Enchanting", "Submit {count} bottles o' enchanting. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.FIREFLY_BUSH), 2, 0.5D, 4, 8, "✨", "Submit Firefly Bushes", "Submit {count} firefly bushes. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, new ItemSubmissionTask(Items.GOAT_HORN), 4, 2, 1, 1, "📯", "Submit a Goat Horn", "Submit one goat horn. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, new ItemSubmissionTask(Items.NAUTILUS_SHELL), 3, 2, 1, 4, "🐚", "Submit Nautilus Shells", "Submit {count} nautilus shells. Have the items in your inventory when you click Claim."),
-                    option(5, false, false, new ItemSubmissionTask(Items.SNIFFER_EGG), 10, 7, 1, 1, "🥚", "Submit a Sniffer Egg", "Submit one sniffer egg. The sniffer economy claims another victim. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, new ItemSubmissionTask(Items.OMINOUS_BOTTLE), 3, 2, 1, 4, "🍾", "Submit Ominous Bottles", "Submit {count} ominous bottles. Have the items in your inventory when you click Claim."),
-                    option(5, false, false, new ItemSubmissionTask(Items.HEART_OF_THE_SEA), 5, 5, 1, 1, "💙", "Submit a Heart of the Sea", "Submit one heart of the sea. Buried treasure in, Dabloons out. Have the items in your inventory when you click Claim."),
-                    option(5, false, false, new ItemSubmissionTask(Items.SEA_LANTERN), 5, 1.5D, 1, 3, "💡", "Submit Sea Lanterns", "Submit {count} sea lanterns. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.TUBE_CORAL), 3, 0.5D, 3, 8, "\uD83E\uDEB8", "Submit Tube Coral", "Submit {count} tube coral. Dead coral does not count. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.BRAIN_CORAL), 3, 0.5D, 3, 8, "\uD83E\uDDE0", "Submit Brain Coral", "Submit {count} brain coral. Dead coral does not count. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, new ItemSubmissionTask(Items.MYCELIUM), 5, 0.5D, 2, 6, "\uD83C\uDF44", "Submit Mycelium", "Submit {count} mycelium. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.FLOWER_BANNER_PATTERN), 0, 1.5D, 2, 4, "🌼", "Submit Flower Banner Patterns", "Submit {count} flower banner patterns. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.CREEPER_BANNER_PATTERN), 0, 5, 1, 1, "💥", "Submit a Creeper Banner Pattern", "Submit one creeper banner pattern. Have the items in your inventory when you click Claim."),
-                    option(1, true, false, new ItemSubmissionTask(Items.SKULL_BANNER_PATTERN), 5, 3, 1, 1, "💀", "Submit a Skull Banner Pattern", "Submit one skull banner pattern. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.MOJANG_BANNER_PATTERN), 14, 8, 1, 1, "🍎", "Submit a Thing Banner Pattern", "Submit one Thing banner pattern. Yes, that recipe eats an enchanted golden apple. The payout knows. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.GLOBE_BANNER_PATTERN), 5, 2, 1, 1, "🌍", "Submit a Globe Banner Pattern", "Submit one globe banner pattern. Have the items in your inventory when you click Claim."),
-                    option(1, true, false, new ItemSubmissionTask(Items.PIGLIN_BANNER_PATTERN), 6, 3, 1, 1, "🐽", "Submit a Snout Banner Pattern", "Submit one snout banner pattern. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.FLOW_BANNER_PATTERN), 6, 3, 1, 1, "🌊", "Submit a Flow Banner Pattern", "Submit one flow banner pattern. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.GUSTER_BANNER_PATTERN), 6, 3, 1, 1, "🌬️", "Submit a Guster Banner Pattern", "Submit one guster banner pattern. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.FIELD_MASONED_BANNER_PATTERN), 0, 1.5D, 2, 4, "🧱", "Submit Field Masoned Banner Patterns", "Submit {count} field masoned banner patterns. Have the items in your inventory when you click Claim."),
-                    option(1, false, false, new ItemSubmissionTask(Items.BORDURE_INDENTED_BANNER_PATTERN), 0, 1.5D, 2, 4, "🚩", "Submit Bordure Indented Banner Patterns", "Submit {count} bordure indented banner patterns. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, ItemSubmissionTask.custom("1-leaf-clover"), 5, 1, 3, 8, "☘️", "Submit One-Leaf Clovers", "Submit {count} one-leaf clovers. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, ItemSubmissionTask.custom("2-leaf-clover"), 5, 2, 2, 5, "☘️", "Submit Two-Leaf Clovers", "Submit {count} two-leaf clovers. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, ItemSubmissionTask.custom("3-leaf-clover"), 5, 3, 1, 3, "☘️", "Submit Three-Leaf Clovers", "Submit {count} three-leaf clovers. Have the items in your inventory when you click Claim."),
-                    option(3, false, false, ItemSubmissionTask.custom("4-leaf-clover"), 5, 5, 1, 1, "🍀", "Submit a Four-Leaf Clover", "Submit one four-leaf clover. Four one-leaf clovers make one. The maths is not lucky. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, ItemSubmissionTask.custom("beer"), 4, 1.5D, 3, 3, "🍺", "Submit Beer", "Submit three beers. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, ItemSubmissionTask.custom("golden-nutritional-paste"), 6, 4, 1, 1, "🟨", "Submit Golden Nutritional Paste", "Submit one portion of golden nutritional paste. Have the items in your inventory when you click Claim."),
-                    option(8, false, false, ItemSubmissionTask.custom("soul"), 1, 1.75D, 3, 6, "👻", "Submit Souls", "Submit {count} souls. Names and causes of death are included. Best not to dwell on that. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, ItemSubmissionTask.custom("sushi"), 1, 1.5D, 2, 6, "🍣", "Submit Sushi", "Submit {count} pieces of sushi. Have the items in your inventory when you click Claim."),
-                    option(6, false, false, ItemSubmissionTask.custom("charm-sculk-phial"), 7, 5, 1, 1, "🧪", "Submit an Empty Sculk Phial", "Submit one empty sculk phial. Filled phials do not count. Spend the XP first. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, ItemSubmissionTask.custom("disc-9am"), 2, 5, 1, 1, "🌅", "Submit 9AM Disc", "Submit one 9AM disc. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, ItemSubmissionTask.custom("disc-death"), 3, 5, 1, 1, "💀", "Submit Death Disc", "Submit one Death disc. The title is not an instruction. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, ItemSubmissionTask.custom("disc-dog"), 2, 5, 1, 1, "🐕", "Submit Dog Disc", "Submit one Dog disc. Good dog. Bad exchange rate. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, ItemSubmissionTask.custom("disc-droopy-likes-ricochet"), 3, 5, 1, 1, "💿", "Submit Droopy Likes Ricochet Disc", "Submit one Droopy Likes Ricochet disc. Have the items in your inventory when you click Claim."),
-                    option(4, false, false, ItemSubmissionTask.custom("disc-droopy-likes-your-face"), 3, 5, 1, 1, "💿", "Submit Droopy Likes Your Face Disc", "Submit one Droopy Likes Your Face disc. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, ItemSubmissionTask.custom("deco-cookie-jar"), 0, 1, 3, 6, "🍪", "Submit Cookie Jars", "Submit {count} cookie jars. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, ItemSubmissionTask.custom("deco-firefly-jar"), 2, 1, 1, 1, "✨", "Submit a Firefly Jar", "Submit one firefly jar. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, ItemSubmissionTask.custom("deco-fruit-bowl"), 2, 3, 1, 1, "🍎", "Submit a Fruit Bowl", "Submit one fruit bowl. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, ItemSubmissionTask.custom("deco-kettle"), 0, 0.75D, 4, 8, "🫖", "Submit Kettles", "Submit {count} kettles. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, ItemSubmissionTask.custom("deco-spoons-carpet-grandiloquent"), 4, 0.5D, 8, 16, "🥄", "Submit Grandiloquent Spoons Carpets", "Submit {count} grandiloquent spoons carpets. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, ItemSubmissionTask.custom("deco-spoons-carpet-junoesque"), 4, 0.5D, 8, 16, "🥄", "Submit Junoesque Spoons Carpets", "Submit {count} junoesque spoons carpets. Have the items in your inventory when you click Claim."),
-                    option(10, true, false, ItemSubmissionTask.custom("deco-spoons-carpet-meretricious"), 4, 0.5D, 8, 16, "🥄", "Submit Meretricious Spoons Carpets", "Submit {count} meretricious spoons carpets. Have the items in your inventory when you click Claim."),
-                    option(10, false, false, ItemSubmissionTask.custom("deco-vinyl-player"), 3, 6, 1, 1, "📻", "Submit a Vinyl Player", "Submit one vinyl player. The music disc inside is part of the price. Have the items in your inventory when you click Claim.")
-            )),
-            // Food
-            weighted(5, List.of(
-                    option(2, false, false, new EatItemTask(Items.BREAD), 0, 0.75D, 6, 10, "🍞", "Eat Bread", "Eat {count} loaves. This is either lunch or a cry for help."),
-                    option(5, false, false, new EatItemTask(Items.BEETROOT), 2, 0.5D, 8, 14, "🫜", "Eat Beetroot", "Eat {count} beetroot."),
-                    option(3, false, false, new EatItemTask(Items.COOKIE), 0, 0.4D, 10, 20, "🍪", "Eat Cookies", "Eat {count} cookies. No milk required."),
-                    option(2, false, false, new EatItemTask(Items.BAKED_POTATO), 0, 0.75D, 6, 10, "🥔", "Eat Baked Potatoes", "Eat {count} baked potatoes."),
-                    option(2, false, true, new EatItemTask(Items.CHORUS_FRUIT), 5, 0.5D, 2, 6, "🟣", "Chorus Fruit Roulette", "Eat {count} chorus fruit. Let the fruit decide where lunch ends."),
-                    option(2, false, false, new EatItemTask(Items.CAKE), 1, 0.5D, 6, 12, "🎂", "Share a Cake", "Eat {count} cake slices. Every slice counts. Sharing is optional."),
-                    option(6, false, false, new EatItemTask(Items.SUSPICIOUS_STEW), 2, 2, 1, 4, "🥣", "Sample Suspicious Stew", "Eat {count} suspicious stew. The effects are part of the fun."),
-                    option(3, false, false, new EatItemTask(Items.RABBIT_STEW), 3, 2, 1, 3, "🐇", "Eat Rabbit Stew", "Eat {count} rabbit stew."),
-                    option(4, false, false, new EatItemTask(Items.PUMPKIN_PIE), 1, 0.75D, 4, 8, "🥧", "Eat Pumpkin Pie", "Eat {count} pumpkin pies."),
-                    option(3, false, false, new EatItemTask(Items.BEETROOT_SOUP), 2, 1.5D, 2, 4, "🥣", "Eat Beetroot Soup", "Eat {count} beetroot soups."),
-                    option(3, false, false, new EatItemTask(Items.HONEY_BOTTLE), 3, 1, 2, 5, "🍯", "Drink Honey", "Drink {count} honey bottles."),
-                    option(2, false, false, new EatItemTask(Items.MUSHROOM_STEW), 1, 1.25D, 2, 5, "🍄", "Eat Mushroom Stew", "Eat {count} mushroom stews."),
-                    option(2, false, false, new EatItemTask(Items.DRIED_KELP), 1, 0.2D, 24, 32, "🌿", "Eat Dried Kelp", "Eat {count} dried kelp."),
-                    option(3, false, false, new EatItemTask(Items.PUFFERFISH), 1, 3.5D, 1, 1, "🐡", "Pufferfish Challenge", "Eat one pufferfish and survive. Milk afterward is allowed."),
-                    option(3, false, false, new EatItemTask(Items.TROPICAL_FISH), 1, 1.75D, 2, 5, "🐠", "Eat Tropical Fish", "Eat {count} tropical fish. The aquarium community condemns this daily."),
-                    option(3, false, false, new EatItemTask(Items.POISONOUS_POTATO), 2, 1, 3, 6, "🥔", "Eat Poisonous Potatoes", "Eat {count} poisonous potatoes. A terrible meal and a worse farming strategy.")
-            )),
-            // Enchanting table
-            weighted(2, List.of(
-                    option(3, false, false, new EnchantAtTableTask(), 5, 1, 1, 3, "✨", "Use an Enchanting Table", "Enchant {count} items at a table. Any level counts. Yes, level one is legal.")
-            )),
-            // Enchanting items
-            weighted(2, List.of(
-                    option(4, false, false, new EnchantItemTask(ItemTags.SWORDS), 4, 1, 2, 4, "⚔️", "Enchant Swords", "Enchant {count} swords. A wooden sword counts. Your pride is separate."),
-                    option(4, false, false, new EnchantItemTask(ItemTags.AXES), 4, 1, 2, 4, "🪓", "Enchant Axes", "Enchant {count} axes."),
-                    option(4, false, false, new EnchantItemTask(ItemTags.PICKAXES), 4, 1, 2, 4, "⛏️", "Enchant Pickaxes", "Enchant {count} pickaxes."),
-                    option(4, false, false, new EnchantItemTask(ItemTags.SHOVELS), 4, 0.75D, 3, 5, "🪏", "Enchant Shovels", "Enchant {count} shovels."),
-                    option(3, false, false, new EnchantItemTask(ItemTags.HOES), 4, 0.75D, 3, 5, "🌾", "Enchant Hoes", "Enchant {count} hoes."),
-                    option(3, false, false, new EnchantItemTask(ItemTags.SPEARS), 5, 2, 1, 3, "🔱", "Enchant Spears", "Enchant {count} spears."),
-                    option(4, false, false, new EnchantItemTask(ItemTags.HEAD_ARMOR), 4, 1.25D, 2, 4, "⛑️", "Enchant Helmets", "Enchant {count} helmets."),
-                    option(4, false, false, new EnchantItemTask(ItemTags.CHEST_ARMOR), 4, 2, 1, 3, "🦺", "Enchant Chestplates", "Enchant {count} chestplates."),
-                    option(4, false, false, new EnchantItemTask(ItemTags.LEG_ARMOR), 4, 1.5D, 2, 4, "👖", "Enchant Leggings", "Enchant {count} leggings."),
-                    option(4, false, false, new EnchantItemTask(ItemTags.FOOT_ARMOR), 4, 1.25D, 2, 4, "🥾", "Enchant Boots", "Enchant {count} pairs of boots."),
-                    option(1, false, false, new EnchantItemTask(ItemTags.SKULLS), 3, 3, 1, 1, "💀", "Enchant a Wearable Skull", "Enchant a wearable skull. Protection cannot save your fashion sense."),
-                    option(4, false, false, new EnchantItemTask(Items.BOW), 4, 1, 2, 4, "🏹", "Enchant Bows", "Enchant {count} bows."),
-                    option(2, false, false, new EnchantItemTask(Items.CROSSBOW), 4, 1.25D, 2, 3, "🎯", "Enchant Crossbows", "Enchant {count} crossbows."),
-                    option(2, false, false, new EnchantItemTask(Items.TRIDENT), 6, 2, 1, 2, "🔱", "Enchant Tridents", "Enchant {count} tridents."),
-                    option(2, false, false, new EnchantItemTask(Items.FISHING_ROD), 4, 1, 2, 4, "🎣", "Enchant Fishing Rods", "Enchant {count} fishing rods."),
-                    option(2, false, false, new EnchantItemTask(Items.MACE), 10, 3, 1, 2, "🔨", "Enchant Maces", "Enchant {count} maces."),
-                    option(2, false, false, new EnchantItemTask(Items.SHIELD), 4, 1.25D, 2, 4, "🛡️", "Enchant Shields", "Enchant {count} shields."),
-                    option(2, false, false, new EnchantItemTask(Items.SHEARS), 4, 0.75D, 3, 5, "✂️", "Enchant Shears", "Enchant {count} pairs of shears."),
-                    option(2, false, false, new EnchantItemTask(Items.BRUSH), 4, 1, 2, 4, "🖌️", "Enchant Brushes", "Enchant {count} brushes."),
-                    option(2, false, false, new EnchantItemTask(Items.FLINT_AND_STEEL), 4, 0.75D, 3, 5, "🔥", "Enchant Flint and Steel", "Enchant {count} flint and steels."),
-                    option(4, false, true, new EnchantItemTask(Items.ELYTRA), 10, 3, 1, 1, "🪽", "Enchant an Elytra", "Enchant an elytra. Check for Curse of Vanishing before you get attached."),
-                    option(1, false, false, new EnchantItemTask(Items.CARROT_ON_A_STICK), 2, 3, 1, 1, "🥕", "Enchant a Carrot on a Stick", "Enchant a carrot on a stick. Put Unbreaking on a vegetable. Fine."),
-                    option(1, true, false, new EnchantItemTask(Items.WARPED_FUNGUS_ON_A_STICK), 4, 2, 1, 1, "🍄", "Enchant Warped Fungus on a Stick", "Enchant a warped fungus on a stick."),
-                    option(1, false, false, new EnchantItemTask(Items.COMPASS), 2, 3, 1, 1, "🧭", "Enchant a Compass", "Enchant a compass."),
-                    option(3, false, false, new EnchantItemTask(Items.CARVED_PUMPKIN), 2, 3, 1, 1, "🎃", "Enchant a Carved Pumpkin", "Enchant a carved pumpkin. No, enchanting it does not make it less annoying."),
-                    option(3, false, false, new EnchantItemTask(Items.ENCHANTED_BOOK), 4, 1, 2, 4, "📖", "Enchant Books", "Enchant {count} books.")
-            )),
-            // Combat
-            weighted(7, List.of(
-                    option(1, false, false, new KillEntityTask(EntityTypes.GLOW_SQUID), 2, 0.5D, 6, 12, "🦑", "Hunt Glow Squid", "Defeat {count} glow squid. They had it coming. Probably."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.ZOMBIE_NAUTILUS), 6, 3, 1, 1, "🧟", "Hunt a Zombie Nautilus", "Defeat a zombie nautilus."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.BLAZE), 5, 0.75D, 4, 10, "🔥", "Hunt Blazes", "Defeat {count} blazes. Bring fire resistance unless you enjoy being on fire."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.BOGGED), 2, 1, 3, 7, "🏹", "Hunt Bogged", "Defeat {count} bogged."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.BREEZE), 6, 1.5D, 2, 5, "🌬️", "Clear Breezes", "Defeat {count} breezes. Trial chamber cardio."),
-                    option(2, false, false, new KillEntityTask(EntityTypes.CREEPER), 0, 0.75D, 6, 12, "💥", "Hunt Creepers", "Defeat {count} creepers."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.GUARDIAN), 5, 1, 2, 8, "🔱", "Hunt Guardians", "Defeat {count} guardians."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.MAGMA_CUBE), 3, 0.5D, 4, 10, "🟧", "Hunt Magma Cubes", "Defeat {count} magma cubes."),
-                    option(2, false, false, new KillEntityTask(EntityTypes.PARCHED), 2, 1.25D, 2, 5, "🏜️", "Hunt Parched", "Defeat {count} parched."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.PIGLIN), 3, 0.75D, 3, 8, "🐽", "Hunt Piglins", "Defeat {count} piglins."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.PIGLIN_BRUTE), 7, 3, 1, 3, "🪓", "Clear Piglin Brutes", "Defeat {count} piglin brutes. Gold armour will not charm these ones."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.PILLAGER), 3, 0.75D, 4, 10, "🏴", "Hunt Pillagers", "Defeat {count} pillagers."),
-                    option(2, false, false, new KillEntityTask(EntityTypes.SKELETON), 0, 0.4D, 12, 20, "💀", "Hunt Skeletons", "Defeat {count} skeletons."),
-                    option(2, false, false, new KillEntityTask(EntityTypes.SLIME), 3, 0.35D, 5, 15, "🟩", "Hunt Slimes", "Defeat {count} slimes. The small ones count too. Enjoy the multiplication."),
-                    option(2, false, false, new KillEntityTask(EntityTypes.SPIDER), 0, 0.5D, 8, 16, "🕷️", "Hunt Spiders", "Defeat {count} spiders."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.SULFUR_CUBE), 3, 1, 3, 7, "🟨", "Hunt Sulfur Cubes", "Defeat {count} sulfur cubes."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.VEX), 6, 2, 1, 4, "🪽", "Hunt Vexes", "Defeat {count} vexes. Good luck. Genuinely."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.VINDICATOR), 5, 1.5D, 2, 6, "🪓", "Hunt Vindicators", "Defeat {count} vindicators."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.WARDEN), 24, 18, 1, 1, "📡", "Defeat the Warden", "Defeat the Warden. This is a daily, not sensible advice."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.WITHER_SKELETON), 5, 0.75D, 4, 10, "☠️", "Hunt Wither Skeletons", "Defeat {count} wither skeletons."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.ZOGLIN), 6, 1.5D, 1, 4, "🐗", "Hunt Zoglins", "Defeat {count} zoglins. Overworld relocation is one way to find them."),
-                    option(2, false, false, new KillEntityTask(EntityTypes.ZOMBIE), 0, 0.3D, 15, 25, "🧟", "Hunt Zombies", "Defeat {count} zombies. Try not to call it population control."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.ZOMBIE_VILLAGER), 2, 1.25D, 2, 5, "🧟", "Hunt Zombie Villagers", "Defeat {count} zombie villagers."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.ZOMBIFIED_PIGLIN), 3, 0.5D, 4, 12, "🧟", "Hunt Zombified Piglins", "Defeat {count} zombified piglins."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.HUSK), 2, 0.6D, 4, 10, "🏜️", "Hunt Husks", "Defeat {count} husks."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.STRAY), 3, 1, 2, 6, "🏹", "Hunt Strays", "Defeat {count} strays."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.DROWNED), 2, 0.75D, 4, 10, "🔱", "Hunt Drowned", "Defeat {count} drowned."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.WITCH), 3, 1.5D, 1, 4, "🧙", "Hunt Witches", "Defeat {count} witches."),
-                    option(3, false, false, new KillEntityTask(EntityTypes.PHANTOM), 3, 1, 2, 6, "🌙", "Hunt Phantoms", "Defeat {count} phantoms."),
-                    option(2, false, false, new KillEntityTask(EntityTypes.SILVERFISH), 6, 0.25D, 4, 12, "🪲", "Hunt Silverfish", "Defeat {count} silverfish. Stronghold or Infestation potion. Pick your poison."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.CAVE_SPIDER), 5, 0.75D, 2, 8, "🕷️", "Hunt Cave Spiders", "Defeat {count} cave spiders."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.ELDER_GUARDIAN), 5, 2, 1, 1, "🐟", "Defeat an Elder Guardian", "Defeat an elder guardian. Mining Fatigue comes free."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.RAVAGER), 4, 2, 1, 3, "🐂", "Hunt Ravagers", "Defeat {count} ravagers."),
-                    option(1, false, false, new KillEntityTask(EntityTypes.EVOKER), 4, 2, 1, 1, "🪄", "Defeat an Evoker", "Defeat an evoker."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.GHAST), 3, 1.25D, 2, 5, "👻", "Hunt Ghasts", "Defeat {count} ghasts."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.HOGLIN), 3, 0.75D, 3, 7, "🐗", "Hunt Hoglins", "Defeat {count} hoglins."),
-                    option(1, true, false, new KillEntityTask(EntityTypes.WITHER), 15, 10, 1, 1, "💀", "Defeat the Wither", "Defeat the Wither. The Nether Star is not part of the submission."),
-                    option(2, false, false, new KillEntityTask(EntityTypes.ENDERMITE), 2, 2, 1, 3, "🟣", "Hunt Endermites", "Defeat {count} endermites. Ender pearls can spawn them in any dimension."),
-                    option(1, false, true, new KillEntityTask(EntityTypes.SHULKER), 8, 1.5D, 2, 6, "📦", "Hunt Shulkers", "Defeat {count} shulkers."),
-                    option(1, false, true, new KillEntityTask(EntityTypes.ENDER_DRAGON), 18, 20, 1, 1, "🐉", "Defeat the Ender Dragon", "Defeat the Ender Dragon. Crystals first. Pride later.")
-            )),
-            // Effects
-            weighted(4, List.of(
-                    option(2, false, false, new ReceiveEffectTask(MobEffects.SPEED), 0, 3, 1, 1, "💨", "Get Speed", "Get Speed. Race somebody."),
-                    option(5, false, false, new ReceiveEffectTask(MobEffects.DARKNESS), 4, 1, 1, 1, "🌑", "Get Darkness", "Get Darkness. Turning up the brightness is between you and your conscience."),
-                    option(5, false, true, new ReceiveEffectTask(MobEffects.LEVITATION), 8, 2, 1, 1, "🎈", "Get Levitation", "Get Levitation. The landing is your problem."),
-                    option(5, false, false, new ReceiveEffectTask(MobEffects.GLOWING), 1, 2.5D, 1, 1, "✨", "Get Glowing", "Get Glowing. At least everyone can find you now."),
-                    option(3, true, false, new ReceiveEffectTask(MobEffects.NAUSEA), 1, 2, 1, 1, "🌀", "Get Nausea", "Get Nausea. Portals are the cheap option."),
-                    option(2, false, false, new ReceiveEffectTask(MobEffects.DOLPHINS_GRACE), 2, 2.5D, 1, 1, "🐬", "Get Dolphin's Grace", "Get Dolphin's Grace. See how far one dolphin can carry you."),
-                    option(1, false, false, new ReceiveEffectTask(MobEffects.BREATH_OF_THE_NAUTILUS), 4, 3, 1, 1, "🐚", "Get Breath of the Nautilus", "Get Breath of the Nautilus. A nautilus is involved, unsurprisingly."),
-                    option(2, false, false, new ReceiveEffectTask(MobEffects.BAD_OMEN), 2, 2.5D, 1, 1, "🏴", "Get Bad Omen", "Get Bad Omen. Do not walk into a village unless you mean it."),
-                    option(4, false, false, new ReceiveEffectTask(MobEffects.RAID_OMEN), 4, 2, 1, 1, "🏰", "Get Raid Omen", "Get Raid Omen. The village should probably know."),
-                    option(4, false, false, new ReceiveEffectTask(MobEffects.TRIAL_OMEN), 6, 2, 1, 1, "🔑", "Get Trial Omen", "Get Trial Omen. Now the chamber is properly angry."),
-                    option(2, false, false, new ReceiveEffectTask(MobEffects.HASTE), 5, 2, 1, 1, "⛏️", "Get Haste", "Get Haste. Mine something big before it wears off."),
-                    option(4, true, false, new ReceiveEffectTask(MobEffects.INVISIBILITY), 3, 1.5D, 1, 1, "👻", "Get Invisibility", "Get Invisibility. Armour ruins the effect, but not the daily."),
-                    option(2, true, false, new ReceiveEffectTask(MobEffects.WATER_BREATHING), 3, 1.5D, 1, 1, "🌊", "Get Water Breathing", "Get Water Breathing. Use the full duration for once."),
-                    option(2, true, false, new ReceiveEffectTask(MobEffects.WIND_CHARGED), 3, 1.5D, 1, 1, "🌬️", "Get Wind Charged", "Get Wind Charged. Keep some headroom."),
-                    option(2, true, false, new ReceiveEffectTask(MobEffects.WITHER), 3, 2, 1, 1, "☠️", "Get Wither", "Get Wither and survive it."),
-                    option(2, true, false, new ReceiveEffectTask(MobEffects.INFESTED), 4, 1.5D, 1, 1, "🪲", "Get Infested", "Get Infested. Find out how many silverfish one player can contain."),
-                    option(2, true, false, new ReceiveEffectTask(MobEffects.OOZING), 4, 1.5D, 1, 1, "🟢", "Get Oozing", "Get Oozing. Find out how many slimes one player can contain."),
-                    option(2, true, false, new ReceiveEffectTask(MobEffects.WEAVING), 4, 1.5D, 1, 1, "🕸️", "Get Weaving", "Get Weaving. Free cobwebs, awkward delivery."),
-                    option(2, false, false, new ReceiveEffectTask(MobEffects.CONDUIT_POWER), 9, 3, 1, 1, "🔱", "Get Conduit Power", "Get Conduit Power. Eight shells and a Heart of the Sea should buy more than bubbles."),
-                    option(2, true, false, new ReceiveEffectTask(MobEffects.NIGHT_VISION), 3, 1.5D, 1, 1, "👁️", "Get Night Vision", "Get Night Vision. Go somewhere that was actually dark.")
-            )),
-            // Experience
-            weighted(5, List.of(
-                    option(3, false, false, new GainLevelsTask(), 0, 0.75D, 6, 12, "🟢", "Gain Experience Levels", "Gain {count} experience levels.")
-            )),
-            // Breeding
-            weighted(3, List.of(
-                    option(2, false, false, new BreedEntityTask(EntityTypes.RABBIT), 2, 1.25D, 2, 6, "🐇", "Breed Rabbits", "Breed {count} rabbits. Try not to finish with two hundred."),
-                    option(3, false, false, new BreedEntityTask(EntityTypes.COW), 1, 1, 4, 8, "🐄", "Breed Cows", "Breed {count} cows."),
-                    option(3, false, false, new BreedEntityTask(EntityTypes.SHEEP), 1, 1, 4, 8, "🐑", "Breed Sheep", "Breed {count} sheep."),
-                    option(3, false, false, new BreedEntityTask(EntityTypes.PIG), 1, 1, 4, 8, "🐖", "Breed Pigs", "Breed {count} pigs."),
-                    option(3, false, false, new BreedEntityTask(EntityTypes.CHICKEN), 1, 1, 4, 8, "🐔", "Breed Chickens", "Breed {count} chickens."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.GOAT), 3, 1.5D, 1, 4, "🐐", "Breed Goats", "Breed {count} goats. Regular and screaming goats both count."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.DONKEY), 4, 3, 1, 1, "🫏", "Breed Donkeys", "Breed one donkey. Mules do not count."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.WOLF), 3, 1.5D, 1, 4, "🐺", "Breed Wolves", "Breed {count} wolves. Armour is optional. Snacks are not."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.CAT), 3, 1.5D, 1, 4, "🐈", "Breed Cats", "Breed {count} cats."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.AXOLOTL), 5, 2, 1, 1, "🦎", "Breed Axolotls", "Breed one axolotl. Use tropical fish buckets, not loose fish."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.TURTLE), 4, 2, 1, 1, "🐢", "Breed Turtles", "Breed one turtle. They only lay eggs on their home beach."),
-                    option(1, false, false, new BreedEntityTask(EntityTypes.PANDA), 6, 2, 1, 1, "🐼", "Breed Pandas", "Breed one panda. They need bamboo nearby and enough room to stop sulking."),
-                    option(3, false, false, new BreedEntityTask(EntityTypes.BEE), 2, 0.75D, 4, 8, "🐝", "Breed Bees", "Breed {count} bees."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.FOX), 4, 1.5D, 1, 3, "🦊", "Breed Foxes", "Breed {count} foxes. The baby trusts you. The parents still do not."),
-                    option(1, true, false, new BreedEntityTask(EntityTypes.STRIDER), 5, 1.5D, 1, 4, "🟥", "Breed Striders", "Breed {count} striders. Warped fungus is romantic now."),
-                    option(1, true, false, new BreedEntityTask(EntityTypes.HOGLIN), 5, 1.5D, 1, 3, "🐗", "Breed Hoglins", "Breed {count} hoglins."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.SNIFFER), 15, 5, 1, 1, "🐽", "Breed Sniffers", "Breed one sniffer. The egg was only the start of the grind."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.FROG), 3, 1.5D, 1, 4, "🐸", "Breed Frogs", "Breed {count} frogs."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.CAMEL), 5, 3, 1, 1, "🐫", "Breed Camels", "Breed one camel. Two camels, one cactus each. Romance is thriving."),
-                    option(2, false, false, new BreedEntityTask(EntityTypes.ARMADILLO), 3, 2, 1, 4, "🦔", "Breed Armadillos", "Breed {count} armadillos. Spider eyes. Do not question it.")
-            )),
-            // Feeding
-            weighted(3, List.of(
-                    option(2, false, false, new FeedEntityTask(EntityTypes.GOAT), 2, 0.5D, 4, 8, "🐐", "Feed Goats", "Feed {count} goats."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.DONKEY), 2, 0.75D, 2, 6, "🫏", "Feed Donkeys", "Feed {count} donkeys."),
-                    option(3, false, false, new FeedEntityTask(EntityTypes.WOLF), 2, 0.75D, 4, 8, "🐺", "Feed Wolves", "Feed {count} wolves."),
-                    option(3, false, false, new FeedEntityTask(EntityTypes.CAT), 3, 0.75D, 2, 6, "🐈", "Feed Cats", "Feed {count} cats."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.AXOLOTL), 4, 2, 1, 3, "🦎", "Feed Axolotls", "Feed {count} axolotls."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.RABBIT), 2, 0.5D, 4, 8, "🐇", "Feed Rabbits", "Feed {count} rabbits."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.TURTLE), 3, 0.75D, 2, 6, "🐢", "Feed Turtles", "Feed {count} turtles."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.PANDA), 4, 1, 1, 5, "🐼", "Feed Pandas", "Feed {count} pandas. Bamboo solves most panda problems."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.BEE), 2, 0.5D, 4, 8, "🐝", "Feed Bees", "Feed {count} bees."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.FOX), 3, 0.75D, 2, 6, "🦊", "Feed Foxes", "Feed {count} foxes."),
-                    option(1, true, false, new FeedEntityTask(EntityTypes.STRIDER), 4, 1, 1, 5, "🟥", "Feed Striders", "Feed {count} striders."),
-                    option(1, true, false, new FeedEntityTask(EntityTypes.HOGLIN), 4, 1, 1, 4, "🐗", "Feed Hoglins", "Feed {count} hoglins. Stay behind the fence."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.SNIFFER), 6, 2, 1, 3, "🐽", "Feed Sniffers", "Feed {count} sniffers."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.FROG), 3, 0.75D, 2, 6, "🐸", "Feed Frogs", "Feed {count} frogs. The slimeball disappears alarmingly fast."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.CAMEL), 4, 0.75D, 2, 6, "🐫", "Feed Camels", "Feed {count} camels."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.ARMADILLO), 3, 1, 2, 6, "🦔", "Feed Armadillos", "Feed {count} armadillos."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.COW), 1, 0.5D, 6, 10, "🐄", "Feed Cows", "Feed {count} cows."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.SHEEP), 1, 0.5D, 6, 10, "🐑", "Feed Sheep", "Feed {count} sheep."),
-                    option(2, false, false, new FeedEntityTask(EntityTypes.NAUTILUS), 6, 2, 1, 4, "🐚", "Feed Nautiluses", "Feed {count} nautiluses.")
-            )),
-            // Villager trades
-            weighted(5, List.of(
-                    option(1, false, false, new VillagerTradeTask(Items.STONE_HOE), 3, 1, 2, 3, "🪏", "Buy Stone Hoes", "Receive {count} stone hoes from villagers."),
-                    option(1, false, false, new VillagerTradeTask(Items.SUSPICIOUS_STEW), 4, 2, 1, 3, "🥣", "Buy Suspicious Stew", "Receive {count} suspicious stews from villagers."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.MASON), 2, 0.75D, 4, 8, "🧱", "Trade with a Mason", "Complete {count} trades with a mason."),
-                    option(10, false, false, new VillagerTradeTask(VillagerTradeTask.Mode.RECEIVE_EMERALDS), 2, 0.15D, 20, 40, "💚", "Earn Emeralds", "Receive {count} emeralds from trades. The economy demands movement."),
-                    option(10, false, false, new VillagerTradeTask(VillagerTradeTask.Mode.SPEND_EMERALDS), 2, 0.2D, 16, 32, "🛒", "Spend Emeralds", "Spend {count} emeralds in trades. The economy demands sacrifice."),
-                    option(2, false, false, new VillagerTradeTask(Items.GLISTERING_MELON_SLICE), 5, 1, 2, 6, "🍉", "Buy Glistering Melon", "Receive {count} glistering melon slices from villagers."),
-                    option(2, false, false, new VillagerTradeTask(Items.RABBIT_STEW), 3, 1.5D, 1, 4, "🥣", "Buy Rabbit Stew", "Receive {count} rabbit stews from villagers."),
-                    option(2, false, false, VillagerTradeTask.give(Items.DRIED_KELP_BLOCK), 3, 0.75D, 2, 6, "🌿", "Sell Dried Kelp Blocks", "Give villagers {count} dried kelp blocks."),
-                    option(2, false, false, new VillagerTradeTask(Items.FISHING_ROD), 4, 2, 1, 1, "🎣", "Buy a Fishing Rod", "Receive a fishing rod from a villager."),
-                    option(2, false, false, new VillagerTradeTask(Items.NAME_TAG), 6, 3, 1, 2, "🏷️", "Buy Name Tags", "Receive {count} name tags from villagers."),
-                    option(2, false, false, new VillagerTradeTask(Items.LANTERN), 3, 0.75D, 4, 8, "🏮", "Buy Lanterns", "Receive {count} lanterns from villagers."),
-                    option(2, false, false, new VillagerTradeTask(Items.BELL), 6, 3, 1, 1, "🔔", "Buy a Bell", "Receive a bell from a villager. Found a village and bought its noisiest block."),
-                    option(2, false, false, new VillagerTradeTask(Items.CROSSBOW), 4, 1.5D, 1, 4, "🎯", "Buy Crossbows", "Receive {count} crossbows from villagers."),
-                    option(2, false, false, new VillagerTradeTask(Items.TIPPED_ARROW), 6, 0.3D, 4, 12, "🏹", "Buy Tipped Arrows", "Receive {count} tipped arrows from villagers."),
-                    option(3, false, false, new VillagerTradeTask(Items.FILLED_MAP), 4, 2, 1, 1, "🗺️", "Buy an Explorer Map", "Receive an explorer map from a villager."),
-                    option(2, false, false, new VillagerTradeTask(Items.EXPERIENCE_BOTTLE), 6, 0.75D, 1, 6, "✨", "Buy Bottles o' Enchanting", "Receive {count} bottles o' enchanting from villagers."),
-                    option(2, false, false, new VillagerTradeTask(Items.GLOWSTONE), 4, 0.75D, 4, 12, "💡", "Buy Glowstone", "Receive {count} glowstone from villagers."),
-                    option(2, false, false, new VillagerTradeTask(Items.LEATHER_HORSE_ARMOR), 5, 2, 1, 1, "🐴", "Buy Leather Horse Armour", "Receive leather horse armour from a villager."),
-                    option(2, false, false, new VillagerTradeTask(Items.PAINTING), 5, 1, 2, 5, "🖼️", "Buy Paintings", "Receive {count} paintings from villagers."),
-                    option(2, false, false, VillagerTradeTask.give(Items.INK_SAC), 3, 0.3D, 8, 16, "🦑", "Sell Ink Sacs", "Give villagers {count} ink sacs."),
-                    option(2, false, false, VillagerTradeTask.give(Items.DIAMOND), 5, 2.5D, 1, 3, "💎", "Sell Diamonds", "Give villagers {count} diamonds. The toolsmith sends thanks."),
-                    option(2, false, false, VillagerTradeTask.give(Items.FLINT), 2, 0.15D, 16, 32, "🪨", "Sell Flint", "Give villagers {count} flint. Fletchers are keeping gravel useful."),
-                    option(2, false, false, VillagerTradeTask.give(Items.FEATHER), 2, 0.125D, 20, 40, "🪶", "Sell Feathers", "Give villagers {count} feathers."),
-                    option(2, false, false, VillagerTradeTask.give(Items.TRIPWIRE_HOOK), 5, 0.5D, 8, 16, "🪝", "Sell Tripwire Hooks", "Give villagers {count} tripwire hooks."),
-                    option(2, false, false, VillagerTradeTask.give(Items.ROTTEN_FLESH), 2, 0.125D, 20, 40, "🧟", "Sell Rotten Flesh", "Give villagers {count} rotten flesh. Clerics will buy anything."),
-                    option(2, false, false, VillagerTradeTask.give(Items.RABBIT_FOOT), 4, 1, 2, 5, "🐇", "Sell Rabbit's Feet", "Give villagers {count} rabbit's feet."),
-                    option(2, false, false, VillagerTradeTask.give(Items.RABBIT_HIDE), 3, 0.4D, 8, 16, "🧶", "Sell Rabbit Hides", "Give villagers {count} rabbit hides."),
-                    option(2, true, false, VillagerTradeTask.give(Items.QUARTZ), 5, 0.35D, 4, 12, "🪨", "Sell Nether Quartz", "Give villagers {count} Nether quartz."),
-                    option(2, false, false, VillagerTradeTask.give(Items.GRANITE), 3, 0.125D, 20, 40, "🧱", "Sell Granite", "Give villagers {count} granite."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.ARMORER), 2, 0.75D, 2, 5, "🧑‍🌾", "Trade with an Armorer", "Complete {count} trades with an armorer."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.BUTCHER), 2, 0.75D, 4, 8, "🧑‍🌾", "Trade with a Butcher", "Complete {count} trades with a butcher."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.CARTOGRAPHER), 2, 0.75D, 3, 6, "🧑‍🌾", "Trade with a Cartographer", "Complete {count} trades with a cartographer."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.CLERIC), 2, 0.75D, 3, 6, "🧑‍🌾", "Trade with a Cleric", "Complete {count} trades with a cleric."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.FARMER), 1, 0.75D, 4, 8, "🧑‍🌾", "Trade with a Farmer", "Complete {count} trades with a farmer."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.FISHERMAN), 2, 0.75D, 4, 8, "🧑‍🌾", "Trade with a Fisherman", "Complete {count} trades with a fisherman."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.FLETCHER), 1, 0.75D, 4, 8, "🧑‍🌾", "Trade with a Fletcher", "Complete {count} trades with a fletcher."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.LEATHERWORKER), 2, 0.75D, 3, 6, "🧑‍🌾", "Trade with a Leatherworker", "Complete {count} trades with a leatherworker."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.LIBRARIAN), 2, 0.75D, 2, 5, "🧑‍🌾", "Trade with a Librarian", "Complete {count} trades with a librarian. Maybe this one sells Mending. Probably not."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.SHEPHERD), 2, 0.75D, 4, 8, "🧑‍🌾", "Trade with a Shepherd", "Complete {count} trades with a shepherd."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.TOOLSMITH), 2, 0.75D, 2, 5, "🧑‍🌾", "Trade with a Toolsmith", "Complete {count} trades with a toolsmith."),
-                    option(2, false, false, new VillagerTradeTask(VillagerProfession.WEAPONSMITH), 2, 0.75D, 2, 5, "🧑‍🌾", "Trade with a Weaponsmith", "Complete {count} trades with a weaponsmith.")
-            )),
-            // Brewing
-            weighted(3, List.of(
-                    option(2, true, false, new BrewPotionTask(Potions.NIGHT_VISION), 5, 1.5D, 1, 3, "🌙", "Brew Night Vision", "Brew {count} potions of Night Vision. A fermented spider eye turns this into Invisibility."),
-                    option(2, true, false, new BrewPotionTask(Potions.INVISIBILITY), 5, 2, 1, 3, "👻", "Brew Invisibility", "Brew {count} potions of Invisibility."),
-                    option(2, true, false, new BrewPotionTask(Potions.LEAPING), 6, 2, 1, 3, "🐇", "Brew Leaping", "Brew {count} potions of Leaping."),
-                    option(2, true, false, new BrewPotionTask(Potions.FIRE_RESISTANCE), 5, 1.5D, 1, 3, "🔥", "Brew Fire Resistance", "Brew {count} potions of Fire Resistance."),
-                    option(2, true, false, new BrewPotionTask(Potions.SWIFTNESS), 4, 1.25D, 1, 3, "💨", "Brew Swiftness", "Brew {count} potions of Swiftness."),
-                    option(2, true, false, new BrewPotionTask(Potions.SLOWNESS), 5, 1.5D, 1, 3, "🐌", "Brew Slowness", "Brew {count} potions of Slowness."),
-                    option(2, true, false, new BrewPotionTask(Potions.HEALING), 5, 1.5D, 1, 3, "❤️", "Brew Healing", "Brew {count} potions of Healing."),
-                    option(2, true, false, new BrewPotionTask(Potions.HARMING), 5, 2, 1, 3, "💔", "Brew Harming", "Brew {count} potions of Harming. Healing plus fermented spider eye. Alchemy has jokes."),
-                    option(2, true, false, new BrewPotionTask(Potions.POISON), 4, 1.25D, 1, 3, "☠️", "Brew Poison", "Brew {count} potions of Poison."),
-                    option(2, true, false, new BrewPotionTask(Potions.REGENERATION), 6, 2.5D, 1, 3, "💞", "Brew Regeneration", "Brew {count} potions of Regeneration."),
-                    option(2, true, false, new BrewPotionTask(Potions.STRENGTH), 5, 1.5D, 1, 3, "💪", "Brew Strength", "Brew {count} potions of Strength."),
-                    option(2, true, false, new BrewPotionTask(Potions.WIND_CHARGED), 7, 2, 1, 3, "🌬️", "Brew Wind Charging", "Brew {count} potions of Wind Charging. Use one somewhere with a high ceiling."),
-                    option(2, true, false, new BrewPotionTask(Potions.WEAVING), 6, 1.5D, 1, 3, "🕸️", "Brew Weaving", "Brew {count} potions of Weaving. Cobweb production has become needlessly complicated."),
-                    option(2, true, false, new BrewPotionTask(Potions.OOZING), 5, 2, 1, 3, "🟢", "Brew Oozing", "Brew {count} potions of Oozing. One mob goes in. Several slimes come out."),
-                    option(2, true, false, new BrewPotionTask(Potions.INFESTED), 5, 1.5D, 1, 3, "🪲", "Brew Infestation", "Brew {count} potions of Infestation. For when a normal silverfish problem is not enough."),
-                    option(2, true, false, new BrewPotionTask(Potions.SLOW_FALLING), 6, 2, 1, 3, "🪂", "Brew Slow Falling", "Brew {count} potions of Slow Falling."),
-                    option(2, true, false, new BrewPotionTask(Potions.TURTLE_MASTER), 8, 3, 1, 2, "🐢", "Brew the Turtle Master", "Brew {count} potions of the Turtle Master. Slow, tough, and expensive. Accurate name."),
-                    option(2, true, false, new BrewPotionTask(Potions.WEAKNESS), 4, 1.25D, 1, 3, "🧟", "Brew Weakness", "Brew {count} potions of Weakness."),
-                    option(2, true, false, new BrewPotionTask(Potions.WATER_BREATHING), 5, 1.5D, 1, 3, "🌊", "Brew Water Breathing", "Brew {count} potions of Water Breathing.")
-            )),
-            // Archaeology
-            weighted(2, List.of(
-                    option(4, false, false, new BrushBlockTask(Blocks.SUSPICIOUS_SAND), 4, 1.5D, 2, 6, "🖌️", "Brush Suspicious Sand", "Brush suspicious sand {count} times. Brush slowly. Breaking the block gets you nothing."),
-                    option(4, false, false, new BrushBlockTask(Blocks.SUSPICIOUS_GRAVEL), 5, 1.25D, 2, 6, "🖌️", "Brush Suspicious Gravel", "Brush suspicious gravel {count} times. Brush slowly. Breaking the block gets you nothing.")
-            )),
-            // Fishing
-            weighted(6, List.of(
-                    option(10, false, false, new FishTask(), 1, 0.75D, 4, 10, "🎣", "Go Fishing", "Catch something {count} times. Treasure counts. Junk also counts. The rod does not judge."),
-                    option(1, false, false, new FishTask(Items.COD), 1, 3, 1, 1, "🐟", "Catch Cod", "Catch one cod."),
-                    option(1, false, false, new FishTask(Items.SALMON), 1, 3, 1, 1, "🐟", "Catch Salmon", "Catch one salmon."),
-                    option(1, false, false, new FishTask(Items.PUFFERFISH), 2, 3, 1, 1, "🐡", "Catch a Pufferfish", "Catch one pufferfish. Do not eat this one. There is another daily for bad decisions."),
-                    option(1, false, false, new FishTask(Items.TROPICAL_FISH), 2, 3, 1, 1, "🐠", "Catch a Tropical Fish", "Catch one tropical fish."),
-                    option(1, false, false, FishTask.custom("fish-albacore"), 3, 3, 1, 1, "🎣", "Catch Albacore", "Catch one albacore."),
-                    option(1, false, false, FishTask.custom("fish-bass"), 2, 2.5D, 1, 1, "🎣", "Catch Bass", "Catch one bass."),
-                    option(1, false, false, FishTask.custom("fish-carp"), 2, 2.5D, 1, 1, "🎣", "Catch Carp", "Catch one carp. Finally, something to blame for the empty hook."),
-                    option(1, false, false, FishTask.custom("fish-anchovy"), 2, 2.5D, 1, 1, "🎣", "Catch Anchovy", "Catch one anchovy."),
-                    option(1, false, false, FishTask.custom("fish-herring"), 2, 2.5D, 1, 1, "🎣", "Catch Herring", "Catch one herring."),
-                    option(1, false, false, FishTask.custom("fish-perch"), 2, 2.5D, 1, 1, "🎣", "Catch Perch", "Catch one perch."),
-                    option(1, false, false, FishTask.custom("fish-pike"), 2, 2.5D, 1, 1, "🎣", "Catch Pike", "Catch one pike."),
-                    option(1, false, false, FishTask.custom("fish-tuna"), 2, 2.5D, 1, 1, "🎣", "Catch Tuna", "Catch one tuna. That is a lot of fish for one inventory slot."),
-                    option(1, false, false, FishTask.custom("fish-red_snapper"), 2, 2.5D, 1, 1, "🎣", "Catch Red Snapper", "Catch one red snapper.")
-            )),
-            // Mining
-            weighted(2, List.of(
-                    option(3, false, false, new BreakBlockTask(Blocks.INFESTED_STONE), 6, 0.25D, 4, 12, "🪲", "Mine Infested Stone", "Mine {count} infested stone. Finding the first block is the hard part. The silverfish make the rest annoying."),
-                    option(3, true, false, new BreakBlockTask(Blocks.GILDED_BLACKSTONE), 7, 1, 2, 6, "🟨", "Mine Gilded Blackstone", "Mine {count} gilded blackstone. Fortune changes the gold, not the Dabloons."),
-                    option(3, true, false, new BreakBlockTask(Blocks.CRYING_OBSIDIAN), 4, 1, 2, 6, "🟪", "Mine Crying Obsidian", "Mine {count} crying obsidian."),
-                    option(4, true, false, new BreakBlockTask(Blocks.ANCIENT_DEBRIS), 8, 3, 1, 4, "🟫", "Mine Ancient Debris", "Mine {count} ancient debris. One block can save a tool. Four means you live in the Nether.")
-            )),
-            // World interactions
-            weighted(15, List.of(
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.SHEAR_SHEEP, "Sheared", "sheep"), 2, 0.4D, 2, 16, "🐑", "Shear Sheep", "Shear {count} sheep. They grow it back. Your conscience is clear."),
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.IGNITE_CREEPER, "Ignited", "creepers"), 1, 1.5D, 2, 6, "🧨", "Please stand back.", "Ignite {count} creepers. FLINT AND STEEEELLLL."),
-                    option(3, true, false, new SimpleEventTask(DailySimpleEvent.REFLECT_GHAST_FIREBALL, "Reflected", "fireball"), 4, 2, 1, 3, "🔥", "Return to Sender", "Reflect {count} ghast fireballs."),
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.JUMP_SLIME_BLOCK, "Bounced", "times"), 5, 0.1D, 5, 42, "🟩", "Trampoline Time!", "Bounce on a slime block {count} times."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.DEFEAT_RAID, "Defeated", "raid"), 10, 12, 1, 1, "🏰", "Defeat a Raid", "Help a village survive a raid. The village gets to keep the Hero."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.LIGHT_TNT, "Lit", "TNT"), 0, 2.3D, 2, 5, "💥", "Light TNT", "Light {count} TNT with flint and steel. Point it away from anything with a name."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.RENAME_TOOL, "Renamed", "tool"), 2, 1, 1, 1, "🏷️", "Name a Tool", "Give one of your tools a nice name."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.LIGHT_CANDLE, "Lit", "candles"), 1, 0.2D, 12, 20, "🕯️", "Light Candles", "Light {count} candles with flint and steel."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.MILK_COW, "Milked", "cows"), 1, 0.3D, 8, 16, "🥛", "Milk Cows", "Milk {count} cows."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.BRUSH_ARMADILLO, "Brushed", "armadillos"), 3, 0.5D, 4, 12, "🪥", "Brush Armadillos", "Brush {count} armadillos. The scutes are yours. The armadillo keeps its pride."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.PLAY_MUSIC_DISC, "Played", "discs"), 3, 0.25D, 4, 12, "💿", "Play Music Discs", "Play {count} music discs."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.RING_BELL, "Rang", "times"), 0, 0.15D, 20, 40, "🔔", "Ring a Bell", "Ring a bell {count} times. This is not an emergency. It will sound like one."),
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.FILL_FLOWER_POT, "Potted", "flowers"), 1, 0.5D, 6, 10, "🌷", "Pot Flowers", "Put {count} flowers in flower pots."),
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.HANG_PAINTING, "Hung", "paintings"), 1, 0.75D, 3, 5, "🖼️", "Hang Paintings", "Hang {count} paintings."),
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.FILL_BOOKSHELF, "Stored", "books"), 2, 0.3D, 8, 16, "📚", "Fill a Chiseled Bookshelf", "Put {count} books in chiseled bookshelves."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.READ_NEW_JOKE, "Read", "joke"), 2, 1, 1, 1, "😂", "Read a New Joke", "Read a joke book you haven't read before. Fresh jokes only. The server remembers."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.KICK_SULFUR_CUBE, "Kicked", "cube"), 2, 1, 1, 1, "🟨", "Kick a Sulfur Cube", "Kick a sulfur cube. Kick first, questions later."),
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.CUSTOMIZE_BANNER, "Applied", "patterns"), 2, 0.5D, 4, 10, "🚩", "Design Banners", "Apply {count} patterns to banners."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.EYE_CONTACT_ENDERMAN, "Made", "eye contact"), 0, 3, 1, 1, "👁️", "Look at an Enderman", "Make eye contact with an Enderman. Eye contact. The universal greeting."),
-                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.MODIFY_ITEM_FRAME, "Improved", "frame"), 1, 2.5D, 1, 1, "🖼️", "Improve an Item Frame", "Make one item frame invisible or glowing.")
-            )),
-            // Using items
-            weighted(2, List.of(
-                    option(3, false, false, new UseItemTask(Items.ENDER_PEARL), 1, 0.75D, 4, 8, "🟢", "Throw Ender Pearls", "Throw {count} ender pearls. Fall damage is included in the experience."),
-                    option(3, false, false, new UseItemTask(Items.WIND_CHARGE), 5, 0.75D, 2, 8, "💨", "Use Wind Charges", "Use {count} wind charges. Misfires still count."),
-                    option(3, false, false, new UseItemTask(Items.SPYGLASS), 2, 0.1D, 15, 25, "🔭", "Use a Spyglass", "Use a spyglass {count} times."),
-                    option(2, false, false, new UseItemTask(Items.GOAT_HORN), 4, 0.25D, 6, 12, "📯", "Sound a Goat Horn", "Sound a goat horn {count} times. The cooldown is included at no extra charge.")
-            )),
-            // Charms
-            weighted(4, List.of(
-                    option(1, false, false, new UseCharmTask(DailyCharm.DISPLACEMENT), 1, 3, 1, 1, "🧪", "Use a Potion of Displacement", "Use a Potion of Displacement. Drink it somewhere you do not mind leaving."),
-                    option(1, false, false, new UseCharmTask(DailyCharm.RETURNING), 2, 2, 1, 1, "🏠", "Use a Potion of Returning", "Use a Potion of Returning. A home button with a bottle cork."),
-                    option(1, false, false, new UseCharmTask(DailyCharm.RESONANCE), 3, 2, 1, 1, "📡", "Use a Potion of Resonance", "Use a Potion of Resonance. Follow what it reveals. That is the point."),
-                    option(1, true, false, new UseCharmTask(DailyCharm.INSOMNIA), 5, 2, 1, 1, "🦇", "Use a Potion of Insomnia", "Use a Potion of Insomnia. Sleep is banned. Phantoms are not.")
-            )),
-            // Travel
-            weighted(6, List.of(
-                    option(7, false, false, new RideDistanceTask(EntityTypes.MINECART), 4, 0.01D, 200, 600, "🛤️", "Ride a Minecart", "Ride a minecart for {count} blocks. A loop works. A railway somewhere useful is less depressing."),
-                    option(4, false, false, new RideDistanceTask(EntityTypes.PIG), 3, 0.02D, 100, 300, "🐖", "Ride a Pig", "Ride a pig for {count} blocks. The pig did not agree to this."),
-                    option(4, false, false, new RideDistanceTask(EntityTypes.HORSE), 3, 0.006D, 500, 1000, "🐎", "Ride a Horse", "Ride a horse for {count} blocks. Circles around spawn count, but you can do better."),
-                    option(3, false, false, new RideDistanceTask(EntityTypes.DONKEY), 3, 0.0125D, 200, 600, "🫏", "Ride a Donkey", "Ride a donkey for {count} blocks. Chest optional. Stubbornness included."),
-                    option(2, false, false, new RideDistanceTask(EntityTypes.LLAMA), 5, 0.025D, 100, 300, "🦙", "Ride a Llama", "Ride a llama for {count} blocks. You cannot steer it. Good luck."),
-                    option(1, false, false, new RideDistanceTask(EntityTypes.SKELETON_HORSE), 7, 0.01D, 200, 500, "💀", "Ride a Skeleton Horse", "Ride a skeleton horse for {count} blocks. No feeding required."),
-                    option(4, false, false, new RideDistanceTask(EntityTypes.CAMEL), 5, 0.0125D, 200, 600, "🐫", "Ride a Camel", "Ride a camel for {count} blocks. Bring a passenger. Their distance is free."),
-                    option(2, false, false, new RideDistanceTask(EntityTypes.CAMEL_HUSK), 8, 0.015D, 100, 300, "🏜️", "Ride a Camel Husk", "Ride a camel husk for {count} blocks."),
-                    option(3, false, false, new RideDistanceTask(EntityTypes.NAUTILUS), 6, 0.015D, 150, 500, "🐚", "Ride a Nautilus", "Ride a nautilus for {count} blocks."),
-                    option(3, false, false, new RideDistanceTask(EntityTypes.ZOMBIE_NAUTILUS), 9, 0.01D, 100, 300, "🧟", "Ride a Zombie Nautilus", "Ride a zombie nautilus for {count} blocks. Undead public transport. Sure."),
-                    option(3, false, false, new RideDistanceTask(EntityTypes.OAK_CHEST_BOAT), 1, 0.006D, 750, 1250, "🛶", "Sail a Chest Boat", "Sail a chest boat for {count} blocks. Put something in the chest. It feels wrong otherwise."),
-                    option(4, true, false, new RideDistanceTask(EntityTypes.STRIDER), 6, 0.01D, 200, 600, "🟥", "Ride a Strider", "Ride a strider for {count} blocks. Cold striders look miserable. Stay on lava."),
-                    option(3, true, false, new RideDistanceTask(EntityTypes.HAPPY_GHAST), 10, 0.006D, 400, 1000, "😊", "Ride a Happy Ghast", "Ride a happy ghast for {count} blocks. Four seats. Fill them.")
-            )),
-            // Weapon challenges
-            weighted(5, List.of(
-                    option(2, false, false, new KillWithItemTask(Items.CROSSBOW), 2, 0.9D, 4, 8, "🎯", "Crossbow Kills", "Defeat {count} mobs with a crossbow. Multishot looks cooler. That is reason enough."),
-                    option(2, false, false, new KillWithItemTask(ItemTags.SPEARS), 3, 1.5D, 2, 6, "🔱", "Spear Kills", "Defeat {count} mobs with a spear. Keep some distance or it is just a pointy stick."),
-                    option(2, false, false, new KillWithItemTask(ItemTags.AXES), 0, 1.2D, 4, 8, "🪓", "Axe Kills", "Defeat {count} mobs with an axe."),
-                    option(2, false, false, new KillWithItemTask(ItemTags.SWORDS), 0, 0.75D, 6, 12, "⚔️", "Sword Kills", "Defeat {count} mobs with a sword."),
-                    option(2, false, false, new KillWithItemTask(Items.BOW), 1, 0.9D, 4, 8, "🏹", "Bow Kills", "Defeat {count} mobs with a bow."),
-                    option(2, false, false, new KillWithItemTask(Items.MACE), 10, 1.5D, 1, 3, "🔨", "Mace Kills", "Defeat {count} mobs with a mace. Gravity is doing most of the work."),
-                    option(2, false, false, new KillWithItemTask(Items.STICK), 1, 4.5D, 1, 1, "🪵", "Defeat a Mob with a Stick", "Defeat one mob with a stick. Frame the stick. It peaked today."),
-                    option(2, true, false, new KillWithItemTask(Items.SNOWBALL), 4, 3, 1, 1, "⛄", "Defeat a Mob with Snowballs", "Defeat one mob with snowballs. Blazes are the obvious victims."),
-                    option(2, false, false, new KillWithItemTask(Items.EGG), 2, 3.5D, 1, 1, "🥚", "Defeat a Mob with Eggs", "Defeat one mob with eggs. The chicken takes no legal responsibility."),
-                    option(2, false, false, new KillWithItemTask(Items.FEATHER), 2, 3.5D, 1, 1, "🪶", "Featherweight Champion", "Defeat one mob with a feather. The feather retires undefeated."),
-                    option(2, false, false, new KillWithItemTask(ItemTags.HOES), 0, 1.85D, 3, 6, "🪏", "Hoe Kills", "Defeat {count} mobs with a hoe. This is why villagers do not lend tools."),
-                    option(2, false, false, new KillWithItemTask(ItemTags.PICKAXES), 0, 1.4D, 4, 8, "⛏️", "Pickaxe Kills", "Defeat {count} mobs with a pickaxe."),
-                    option(2, false, false, new KillWithItemTask(Items.TRIDENT), 6, 1.5D, 2, 5, "🔱", "Trident Kills", "Defeat {count} mobs with a trident."),
-                    option(2, false, false, new KillWithItemTask(Items.FIREWORK_ROCKET), 4, 2.5D, 1, 3, "🎆", "Firework Kills", "Defeat {count} mobs with fireworks. Load the crossbow and stand back.")
-            )),
-            // Projectile games
-            weighted(2, List.of(
-                    option(2, false, false, new HitPlayerWithProjectileTask(EntityTypes.SNOWBALL), 3, 0.15D, 30, 50, "⛄", "Snowball Fight", "Hit another player with {count} snowballs. Pick somebody who throws back."),
-                    option(1, false, false, new HitPlayerWithProjectileTask(EntityTypes.EGG), 3, 0.3D, 15, 30, "🥚", "Egg Toss", "Hit another player with {count} eggs. Any chickens spawned during the fight are neutral.")
-            )),
-            // Farming
-            weighted(3, List.of(
-                    option(3, false, false, new PlantCropTask(Items.BEETROOT_SEEDS), 3, 0.2D, 20, 32, "🌱", "Plant Beetroot", "Plant {count} beetroot seeds. Finding the first seeds is half the job."),
-                    option(2, false, false, new PlantCropTask(Items.WHEAT_SEEDS), 0, 0.175D, 30, 50, "🌾", "Plant Wheat", "Plant {count} wheat seeds. One field. No bonemeal required."),
-                    option(3, false, false, new PlantCropTask(Items.CARROT), 2, 0.15D, 24, 40, "🥕", "Plant Carrots", "Plant {count} carrots. Villages, zombies, and shipwrecks can supply the first carrot."),
-                    option(3, false, false, new PlantCropTask(Items.POTATO), 1, 0.15D, 24, 40, "🥔", "Plant Potatoes", "Plant {count} potatoes. Do not plant the poisonous ones. They have other work today."),
-                    option(3, false, false, new PlantCropTask(Items.PUMPKIN_SEEDS), 2, 0.25D, 12, 24, "🎃", "Plant Pumpkins", "Plant {count} pumpkin seeds. Leave room for the stems."),
-                    option(3, false, false, new PlantCropTask(Items.MELON_SEEDS), 3, 0.25D, 12, 24, "🍉", "Plant Melons", "Plant {count} melon seeds. Every stem needs somewhere to put the melon."),
-                    option(3, false, false, new PlantCropTask(Items.TORCHFLOWER_SEEDS), 6, 1, 2, 6, "🌼", "Plant Torchflowers", "Plant {count} torchflower seeds. The sniffer did the searching. You do the farming."),
-                    option(3, false, false, new PlantCropTask(Items.PITCHER_POD), 6, 1, 2, 6, "🪻", "Plant Pitcher Pods", "Plant {count} pitcher pods. Another seed the sniffer refuses to plant itself."),
-                    option(4, false, false, new PlantCropTask(Items.COCOA_BEANS), 3, 0.25D, 8, 20, "🍫", "Plant Cocoa", "Plant {count} cocoa beans. Jungle wood is not optional."),
-                    option(2, false, false, new PlantCropTask(Items.SUGAR_CANE), 1, 0.125D, 30, 50, "🎋", "Plant Sugar Cane", "Plant {count} sugar cane. Water, dirt, and an unreasonable amount of clicking."),
-                    option(3, true, false, new PlantCropTask(Items.NETHER_WART), 5, 0.25D, 5, 20, "🔴", "Plant Nether Wart", "Plant {count} nether wart. A fortress supplies the first wart. After that, it is farming.")
-            )),
-            // Golems
-            weighted(3, List.of(
-                    option(3, false, false, new CreateGolemTask(EntityTypes.COPPER_GOLEM), 2, 4, 1, 1, "🟠", "Build a Copper Golem", "Create a copper golem. The button pressing is somebody else's problem now."),
-                    option(2, false, false, new CreateGolemTask(EntityTypes.IRON_GOLEM), 0, 15, 1, 1, "🤖", "Build an Iron Golem", "Create an iron golem. Four iron blocks. The payout matches the receipt."),
-                    option(3, false, false, new CreateGolemTask(EntityTypes.SNOW_GOLEM), 0, 3, 1, 1, "⛄", "Build a Snow Golem", "Create a snow golem. Two snow blocks and a pumpkin. Inflation spared this one.")
-            )),
-            // Danger
-            weighted(8, List.of(
-                    option(2, false, false, new TakeDamageTask(DamageTypes.MAGIC), 2, 2, 1, 1, "🪄", "Get Hurt by Magic", "Take damage from magic without dying."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.FALLING_ANVIL), 1, 2.5D, 1, 1, "⚒️", "Get Hurt by a Falling Anvil", "Take damage from a falling anvil without dying. The anvil takes damage too. Nobody wins."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.SWEET_BERRY_BUSH), 0, 3, 1, 1, "🫐", "Get Hurt by a Sweet Berry Bush", "Take damage from a sweet berry bush without dying."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.CACTUS), 0, 3, 1, 1, "🌵", "Get Hurt by a Cactus", "Take damage from a cactus without dying."),
-                    option(1, false, false, new TakeDamageTask(DamageTypes.LIGHTNING_BOLT), 7, 3, 1, 1, "⚡", "Get Hurt by Lightning", "Take damage from lightning without dying. A Channeling trident is less patient than the weather."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.WITCH), 3, 3, 1, 1, "🧙", "Get Hurt by a Witch's Harming Potion", "Take damage from a witch's harming potion without dying. The witch has to land the throw. Be cooperative."),
-                    option(1, false, false, new TakeDamageTask(DamageTypes.DROWN), 0, 3, 1, 1, "🌊", "Get Hurt by Drowning", "Take damage from drowning without dying."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.ENDER_PEARL), 0, 3, 1, 1, "🟢", "Get Hurt by an Ender Pearl", "Take damage from an ender pearl without dying."),
-                    option(1, false, false, new TakeDamageTask(DamageTypes.FALL), 0, 3, 1, 1, "🪂", "Get Hurt by a Fall", "Take damage from a fall without dying."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.FIREWORKS), 1, 2.5D, 1, 1, "🎆", "Get Hurt by Fireworks", "Take damage from fireworks without dying."),
-                    option(3, false, false, new TakeDamageTask(DamageTypes.FALLING_STALACTITE), 2, 2, 1, 1, "🪨", "Get Hurt by a Stalactite", "Take damage from a falling stalactite without dying."),
-                    option(3, false, false, new TakeDamageTask(DamageTypes.STALAGMITE), 1, 2, 1, 1, "📍", "Get Hurt by a Stalagmite", "Take damage from a stalagmite without dying."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.IN_WALL), 0, 3, 1, 1, "🧱", "Get Hurt by Suffocation", "Take damage from suffocation without dying."),
-                    option(3, false, false, new TakeDamageTask(DamageTypes.STARVE), 2, 2, 1, 1, "🍽️", "Get Hurt by Starvation", "Take damage from starvation without dying. This takes longer than it deserves."),
-                    option(3, false, false, new TakeDamageTask(DamageTypes.STING), 2, 2, 1, 1, "🐝", "Get Hurt by a Bee Sting", "Take damage from a bee sting without dying."),
-                    option(3, false, false, new TakeDamageTask(DamageTypes.SPIT), 2, 1.5D, 1, 1, "🦙", "Get Hurt by Llama Spit", "Take damage from llama spit without dying. You had to annoy it first."),
-                    option(4, false, false, new TakeDamageTask(DamageTypes.SONIC_BOOM), 8, 3, 1, 1, "📡", "Get Hurt by a Sonic Boom", "Take damage from a sonic boom without dying. Armour helps less than you hope."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.MACE_SMASH), 8, 3, 1, 1, "🔨", "Get Hurt by a Mace Smash", "Take damage from a mace smash without dying."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.SPEAR), 2, 2, 1, 1, "🗡️", "Get Hurt by a Spear", "Take damage from a spear without dying."),
-                    option(3, false, false, new TakeDamageTask(DamageTypes.FREEZE), 3, 2, 1, 1, "🥶", "Get Hurt by Freezing", "Take damage from freezing without dying."),
-                    option(2, true, false, new TakeDamageTask(DamageTypes.HOT_FLOOR), 0, 3, 1, 1, "🔥", "Get Hurt by a Magma Block", "Take damage from a magma block without dying."),
-                    option(1, false, false, new TakeDamageTask(DamageTypes.CAMPFIRE), 0, 3, 1, 1, "🏕️", "Get Hurt by a Campfire", "Take damage from a campfire without dying."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.THORNS), 3, 2, 1, 1, "🌹", "Get Hurt by the Thorns enchantment", "Take damage from Thorns without dying."),
-                    option(2, false, false, new TakeDamageTask(DamageTypes.WIND_CHARGE), 5, 2, 1, 1, "🌬️", "Get Hurt by a Wind Charge", "Take damage from a wind charge without dying."),
-                    option(2, true, false, new TakeDamageTask(DamageTypes.FIREBALL), 4, 2, 1, 1, "🔥", "Get Hurt by a Fireball", "Take damage from a fireball without dying."),
-                    option(4, false, false, new TakeDamageTask(DamageTypes.SULFUR_CUBE_HOT), 3, 2, 1, 1, "🟨", "Get Hurt by a Hot Sulfur Cube", "Take damage from a hot sulfur cube without dying."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.WARDEN), 8, 4, 1, 1, "📡", "Survive a Warden Hit", "Take damage from a warden and survive. Survive is the important word."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.GOAT), 4, 3, 1, 1, "🐐", "Get Hurt by a Goat's Ram", "Take damage from a goat's ram without dying. Stand still and let the goat reconsider you."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.PUFFERFISH), 2, 2, 1, 1, "🐡", "Get Hurt by a Pufferfish", "Take damage from a pufferfish without dying."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.GUARDIAN), 4, 2, 1, 1, "🔱", "Get Hurt by a Guardian", "Take damage from a guardian without dying."),
-                    option(1, false, false, new TakeDamageTask(EntityTypes.ELDER_GUARDIAN), 6, 2, 1, 1, "🐟", "Get Hurt by an Elder Guardian", "Take damage from an elder guardian without dying."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.EVOKER), 6, 2, 1, 1, "🪄", "Get Hurt by an Evoker", "Take damage from an evoker without dying."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.RAVAGER), 5, 2, 1, 1, "🐂", "Get Hurt by a Ravager", "Take damage from a ravager without dying."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.BREEZE), 6, 2, 1, 1, "🌬️", "Get Hurt by a Breeze", "Take damage from a breeze without dying."),
-                    option(2, false, true, new TakeDamageTask(EntityTypes.SHULKER), 9, 2, 1, 1, "📦", "Get Hurt by a Shulker", "Take damage from a shulker without dying."),
-                    option(4, false, false, new TakeDamageTask(EntityTypes.PHANTOM), 3, 2, 1, 1, "🌙", "Get Hurt by a Phantom", "Take damage from a phantom without dying."),
-                    option(3, false, false, new TakeDamageTask(EntityTypes.DOLPHIN), 2, 2, 1, 1, "🐬", "Get Hurt by an Angry Dolphin", "Take damage from an angry dolphin without dying. You probably deserved this."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.POLAR_BEAR), 3, 2, 1, 1, "🐻‍❄️", "Get Hurt by a Polar Bear", "Take damage from a polar bear without dying."),
-                    option(2, false, false, new TakeDamageTask(EntityTypes.TRADER_LLAMA), 3, 2, 1, 1, "🦙", "Get Hurt by a Trader Llama", "Take damage from a trader llama without dying. The trader saw nothing."),
-                    option(4, false, false, new TakeDamageTask(EntityTypes.VEX), 6, 2, 1, 1, "🪽", "Get Hurt by a Vex", "Take damage from a vex without dying."),
-                    option(3, false, false, new TakeDamageTask(EntityTypes.ENDERMAN), 1, 2, 1, 1, "👁️", "Get Hurt by an Angry Enderman", "Take damage from an angry enderman without dying."),
-                    option(3, false, false, new TakeDamageTask(EntityTypes.PARCHED), 2, 2, 1, 1, "🏜️", "Get Hurt by a Parched", "Take damage from a parched without dying."),
-                    option(4, true, false, new TakeDamageTask(EntityTypes.PIGLIN_BRUTE), 7, 2, 1, 1, "🪓", "Get Hurt by a Piglin Brute", "Take damage from a piglin brute without dying."),
-                    option(2, true, false, new TakeDamageTask(EntityTypes.HOGLIN), 4, 2, 1, 1, "🐗", "Get Hurt by a Hoglin", "Take damage from a hoglin without dying."),
-                    option(3, true, false, new TakeDamageTask(EntityTypes.WITHER), 12, 3, 1, 1, "☠️", "Get Hurt by the Wither", "Take damage from the Wither without dying. Wither damage after the fight does not care about victory."),
-                    option(3, false, true, new TakeDamageTask(EntityTypes.ENDER_DRAGON), 12, 3, 1, 1, "🐉", "Get Hurt by the Ender Dragon", "Take damage from the Ender Dragon without dying. Being launched also counts as travel. Briefly.")
-            )),
-            // Music
-            weighted(2, List.of(
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.BASEDRUM), 1, 0.05D, 40, 80, "🥁", "Bass Drum Notes", "Play {count} bass-drum notes. A rhythm would be nice, but it is not required."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.HARP), 0, 0.075D, 40, 80, "🎼", "Harp Notes", "Play {count} harp notes. Try an actual tune. Four notes will do."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.SNARE), 0, 0.075D, 40, 80, "🥁", "Snare Notes", "Play {count} snare notes. Your neighbours have been warned."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.FLUTE), 1, 0.05D, 40, 80, "🪈", "Flute Notes", "Play {count} flute notes. One melody. Take your time."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.BELL), 3, 0.05D, 20, 60, "🔔", "Bell Notes", "Play {count} bell notes. Make the world's worst clock chime."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.GUITAR), 1, 0.05D, 40, 80, "🎸", "Guitar Notes", "Play {count} guitar notes. Anyway, here is Wonderwall."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.XYLOPHONE), 1, 0.05D, 40, 80, "🎶", "Xylophone Notes", "Play {count} xylophone notes. Bonus points if you can play Sweden."),
-                    option(3, false, false, new PlayNoteBlockTask(NoteBlockInstrument.COW_BELL), 1, 0.05D, 40, 80, "🔔", "More Cowbell", "Play {count} cow-bell notes. The only cure is more cow bell."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.DIDGERIDOO), 1, 0.05D, 40, 80, "🎶", "Didgeridoo Notes", "Play {count} didgeridoo notes. One note is traditional, so you are in luck."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.BANJO), 1, 0.05D, 40, 80, "🪕", "Banjo Notes", "Play {count} banjo notes. The server has entered its country phase."),
-                    option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.TRUMPET), 2, 0.05D, 40, 80, "🎺", "Copper Trumpet Notes", "Play {count} copper-trumpet notes. Wake spawn up.")
-            )),
-            // Crafting
-            weighted(6, List.of(
-                    option(2, false, false, new CraftItemTask(Items.CLOCK), 0, 1.75D, 2, 3, "🕰️", "Craft Clocks", "Craft {count} clocks. Hang one in a room, or build a grandfather clock around it."),
-                    option(3, false, false, new CraftItemTask(Items.GOLDEN_DANDELION), 0, 2, 2, 4, "🌼", "Craft Golden Dandelions", "Craft {count} golden dandelions. Gold flower. Zero nutritional value."),
-                    option(3, false, false, new CraftItemTask(Items.SPYGLASS), 0, 1.5D, 2, 4, "🔭", "Craft Spyglasses", "Craft {count} spyglasses. Hand them out before an expedition."),
-                    option(2, false, false, new CraftItemTask(Items.CONCRETE_POWDER.blue()), 0, 0.125D, 24, 48, "🔵", "Craft Blue Concrete Powder", "Craft {count} blue concrete powder. Remember the water before calling it concrete."),
-                    option(3, true, false, new CraftItemTask(Items.DAYLIGHT_DETECTOR), 0, 2, 2, 4, "☀️", "Craft Daylight Detectors", "Craft {count} daylight detectors."),
-                    option(3, false, false, new CraftItemTask(Items.STICKY_PISTON), 0, 1.5D, 3, 5, "🟩", "Craft Sticky Pistons", "Craft {count} sticky pistons. Someone needs a hidden door."),
-                    option(3, false, false, new CraftItemTask(Items.PUMPKIN_PIE), 0, 0.5D, 6, 12, "🥧", "Craft Pumpkin Pies", "Craft {count} pumpkin pies. The stack will disappear faster than the task took."),
-                    option(3, false, false, new CraftItemTask(Items.NOTE_BLOCK), 0, 1, 3, 6, "🎵", "Craft Note Blocks", "Craft {count} note blocks. One note is noise. A few can be a doorbell."),
-                    option(3, false, false, new CraftItemTask(Items.TRAPPED_CHEST), 0, 1.25D, 3, 6, "📦", "Craft Trapped Chests", "Craft {count} trapped chests. A prank is only funny if the victim survives."),
-                    option(3, false, false, new CraftItemTask(Items.BANNER.blue()), 0, 1.5D, 2, 5, "🚩", "Craft Blue Banners", "Craft {count} blue banners. Blue is a start, not a design."),
-                    option(3, false, false, new CraftItemTask(Items.DECORATED_POT), 0, 1.25D, 3, 5, "🏺", "Craft Decorated Pots", "Craft {count} decorated pots. Use sherds if you have them. Bricks are the boring option."),
-                    option(3, false, false, new CraftItemTask(Items.TARGET), 0, 1.5D, 3, 6, "🎯", "Craft Target Blocks", "Craft {count} target blocks. Comparators can score how close the arrow lands."),
-                    option(3, true, false, new CraftItemTask(Items.COMPARATOR), 0, 1.75D, 2, 4, "🔴", "Craft Comparators", "Craft {count} comparators. Sorting systems eventually eat all of these."),
-                    option(3, true, false, new CraftItemTask(Items.OBSERVER), 0, 1.25D, 3, 6, "👁️", "Craft Observers", "Craft {count} observers. Every farm starts with one observer facing the wrong way."),
-                    option(3, false, false, new CraftItemTask(Items.DISPENSER), 0, 2, 2, 4, "🏹", "Craft Dispensers", "Craft {count} dispensers. Droppers do not count. Check the face."),
-                    option(3, false, false, new CraftItemTask(Items.ARMOR_STAND), 0, 1, 3, 6, "🛡️", "Craft Armour Stands", "Craft {count} armour stands. Poses are free."),
-                    option(3, false, false, new CraftItemTask(Items.LOOM), 0, 0.75D, 4, 7, "🧶", "Craft Looms", "Craft {count} looms."),
-                    option(3, false, false, new CraftItemTask(Items.CARTOGRAPHY_TABLE), 0, 0.75D, 4, 7, "🗺️", "Craft Cartography Tables", "Craft {count} cartography tables."),
-                    option(3, false, false, new CraftItemTask(Items.CAMPFIRE), 0, 1, 3, 6, "🏕️", "Craft Campfires", "Craft {count} campfires. Smoke signals count as infrastructure."),
-                    option(3, false, false, new CraftItemTask(Items.SCAFFOLDING), 0, 0.125D, 24, 48, "🏗️", "Craft Scaffolding", "Craft {count} scaffolding. Bamboo has finally become useful."),
-                    option(3, false, false, new CraftItemTask(Items.FIREWORK_STAR), 0, 1, 3, 8, "🎆", "Craft Firework Stars", "Craft {count} firework stars. Colour mixing is encouraged."),
-                    option(2, false, false, new CraftItemTask(Items.RECOVERY_COMPASS), 0, 20, 1, 1, "🧭", "Craft a Recovery Compass", "Craft one recovery compass. Eight echo shards. Twenty Dabloons. Fair."),
-                    option(3, false, false, new CraftItemTask(Items.BRUSH), 0, 1, 3, 6, "🖌️", "Craft Brushes", "Craft {count} brushes. One for every suspicious block you plan to break by accident.")
-            )),
-            // Activity
-            weighted(5, List.of(
-                    option(3, false, false, new PlayTimeTask(), 0, 0.15D, 30, 60, "⏰", "Stay a While", "Play for {count} minutes today. Go bother somebody you have not seen in a while.")
-            )),
-            // Zombie curing
-            weighted(2, List.of(
-                    option(1, true, false, new CureZombieVillagerTask(), 5, 5, 1, 1, "🧟", "Cure a Zombie Villager", "Cure one zombie villager. The discount is yours. We only pay the finder's fee.")
-            ))
+    private final HolderLookup.Provider registries;
+    private final Set<String> fakeItemIds;
+
+    private DailyTaskCatalog(HolderLookup.Provider registries, Set<String> fakeItemIds) {
+        this.registries = registries;
+        this.fakeItemIds = Set.copyOf(fakeItemIds);
+    }
+
+    static List<Weighted<CatalogDirectory>> load(
+            Path root,
+            HolderLookup.Provider registries,
+            Set<String> fakeItemIds
+    ) {
+        return new DailyTaskCatalog(registries, fakeItemIds).loadRoot(root);
+    }
+
+    private List<Weighted<CatalogDirectory>> loadRoot(Path root) {
+        Map<String, Integer> weights = readWeights(root);
+        List<Weighted<CatalogDirectory>> families = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : weights.entrySet()) {
+            Path family = root.resolve(entry.getKey());
+            if (!Files.isDirectory(family)) {
+                throw invalid(root, "Root weight '" + entry.getKey() + "' must name a directory");
+            }
+            families.add(DailyTaskRegistry.weighted(entry.getValue(), loadDirectory(family)));
+        }
+        if (families.isEmpty()) throw invalid(root, "Daily task catalogue must not be empty");
+        return List.copyOf(families);
+    }
+
+    private CatalogDirectory loadDirectory(Path directory) {
+        List<Weighted<CatalogEntry>> result = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : readWeights(directory).entrySet()) {
+            Path child = directory.resolve(entry.getKey());
+            if (Files.isDirectory(child)) {
+                result.add(DailyTaskRegistry.weighted(entry.getValue(), loadDirectory(child)));
+            } else if (Files.isRegularFile(child) && entry.getKey().endsWith(TASK_SUFFIX)) {
+                result.add(DailyTaskRegistry.weighted(entry.getValue(), readOption(child)));
+            } else {
+                throw invalid(child, "A weight must name a directory or *" + TASK_SUFFIX + " file");
+            }
+        }
+        return new CatalogDirectory(result);
+    }
+
+    private Map<String, Integer> readWeights(Path directory) {
+        if (!Files.isDirectory(directory)) throw invalid(directory, "Daily task catalogue directory does not exist");
+        JsonObject json = readObject(directory.resolve(WEIGHTS_FILE));
+        Map<String, Integer> result = new LinkedHashMap<>();
+        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+            String name = entry.getKey();
+            if (!name.matches("[a-z0-9][a-z0-9_.-]*") || name.equals(WEIGHTS_FILE)) {
+                throw invalid(directory, "Invalid weight key '" + name + "'");
+            }
+            result.put(name, positiveInteger(entry.getValue(), directory, name));
+        }
+        Set<String> children = new HashSet<>();
+        try (var paths = Files.list(directory)) {
+            paths.map(path -> path.getFileName().toString())
+                    .filter(name -> !name.equals(WEIGHTS_FILE))
+                    .forEach(children::add);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Could not list daily task directory " + directory, exception);
+        }
+        if (!children.equals(result.keySet())) {
+            Set<String> unweighted = new HashSet<>(children);
+            unweighted.removeAll(result.keySet());
+            Set<String> missing = new HashSet<>(result.keySet());
+            missing.removeAll(children);
+            throw invalid(directory, "Weights and children differ; unweighted=" + unweighted + ", missing=" + missing);
+        }
+        if (result.isEmpty()) throw invalid(directory, "Weights must not be empty");
+        return result;
+    }
+
+    private Option readOption(Path path) {
+        JsonObject json = readObject(path);
+        String type = string(json, "type", path);
+        Set<String> expected = new HashSet<>(COMMON_FIELDS);
+        expected.addAll(typeFields(type, path));
+        if (!json.keySet().equals(expected)) {
+            Set<String> missing = new HashSet<>(expected);
+            missing.removeAll(json.keySet());
+            Set<String> unknown = new HashSet<>(json.keySet());
+            unknown.removeAll(expected);
+            throw invalid(path, "Fields differ for type '" + type + "'; missing=" + missing + ", unknown=" + unknown);
+        }
+
+        DailyTaskDefinition definition = definition(type, json, path);
+        return DailyTaskRegistry.option(
+                bool(json, "nether", path),
+                bool(json, "end", path),
+                definition,
+                nonNegativeInteger(json.get("baseCost"), path, "baseCost"),
+                nonNegativeDouble(json.get("rewardPerIteration"), path, "rewardPerIteration"),
+                positiveInteger(json.get("minimum"), path, "minimum"),
+                positiveInteger(json.get("maximum"), path, "maximum"),
+                string(json, "emoji", path),
+                string(json, "name", path),
+                string(json, "description", path)
         );
+    }
+
+    private DailyTaskDefinition definition(String type, JsonObject json, Path path) {
+        return switch (type) {
+            case "submit_item" -> new ItemSubmissionTask(item(json, "item", path));
+            case "submit_fake_item" -> ItemSubmissionTask.custom(fakeItem(json, "fakeItem", path));
+            case "submit_dyed_item" -> {
+                Item item = item(json, "item", path);
+                DyeColor color = enumValue(DyeColor.class, string(json, "color", path), path, "color");
+                yield ItemSubmissionTask.matching(color.getName(), item, (player, stack) ->
+                        stack.get(DataComponents.DYED_COLOR) != null
+                                && stack.get(DataComponents.DYED_COLOR).rgb() == color.getTextureDiffuseColor());
+            }
+            case "submit_enchanted_item" -> {
+                Item item = item(json, "item", path);
+                ResourceKey<Enchantment> enchantment = registryKey(Registries.ENCHANTMENT, json, "enchantment", path);
+                registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment);
+                int level = positiveInteger(json.get("minimumEnchantmentLevel"), path, "minimumEnchantmentLevel");
+                String suffix = enchantment.identifier().getPath().replace('_', '-') + (level == 1 ? "" : "-" + level);
+                yield ItemSubmissionTask.matching(suffix, item,
+                        (player, stack) -> DailyTaskRegistry.hasEnchantment(player, stack, enchantment, level));
+            }
+            case "submit_remaining_durability_item" -> {
+                Item item = item(json, "item", path);
+                int remaining = positiveInteger(json.get("remainingDurability"), path, "remainingDurability");
+                yield ItemSubmissionTask.matching(remaining == 1 ? "one-durability" : remaining + "-durability", item,
+                        (player, stack) -> stack.getMaxDamage() - stack.getDamageValue() == remaining);
+            }
+            case "submit_below_half_durability_item" -> ItemSubmissionTask.matching(
+                    "under-half-durability", item(json, "item", path),
+                    (player, stack) -> stack.getDamageValue() * 2 > stack.getMaxDamage());
+            case "submit_bee_nest_with_bees" -> ItemSubmissionTask.matching(
+                    "with-bees", item(json, "item", path),
+                    (player, stack) -> stack.has(DataComponents.BLOCK_ENTITY_DATA)
+                            && !stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTagWithoutId().getListOrEmpty("Bees").isEmpty());
+            case "submit_ominous_banner" -> ItemSubmissionTask.matching(
+                    "ominous", item(json, "item", path),
+                    (player, stack) -> ItemStack.isSameItemSameComponents(
+                            stack,
+                            Raid.getOminousBannerInstance(player.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN))));
+            case "submit_potion" -> {
+                Holder<Potion> potion = holder(Registries.POTION, json, "potion", path);
+                yield ItemSubmissionTask.matching(
+                        potion.unwrapKey().orElseThrow().identifier().getPath().replace('_', '-'),
+                        item(json, "item", path),
+                        (player, stack) -> stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(potion));
+            }
+            case "break_block" -> new BreakBlockTask(block(json, "block", path));
+            case "breed_entity" -> new BreedEntityTask(entity(json, "entity", path));
+            case "brew_potion" -> new BrewPotionTask(holder(Registries.POTION, json, "potion", path));
+            case "brush_block" -> new BrushBlockTask(block(json, "block", path));
+            case "craft_item" -> new CraftItemTask(item(json, "item", path));
+            case "create_golem" -> new CreateGolemTask(entity(json, "golem", path));
+            case "cure_zombie_villager" -> new CureZombieVillagerTask();
+            case "eat_item" -> new EatItemTask(item(json, "item", path));
+            case "enchant_at_table" -> new EnchantAtTableTask();
+            case "enchant_item" -> enchantItem(itemOrTag(json, "itemType", path));
+            case "feed_entity" -> new FeedEntityTask(entity(json, "entity", path));
+            case "fish_anything" -> new FishTask();
+            case "fish_item" -> new FishTask(item(json, "item", path));
+            case "fish_fake_item" -> FishTask.custom(fakeItem(json, "fakeItem", path));
+            case "gain_levels" -> new GainLevelsTask();
+            case "hit_player_with_projectile" -> new HitPlayerWithProjectileTask(entity(json, "projectile", path));
+            case "kill_entity" -> new KillEntityTask(entity(json, "entity", path));
+            case "kill_with_item" -> killWithItem(itemOrTag(json, "item", path));
+            case "plant_crop" -> new PlantCropTask(item(json, "seed", path));
+            case "play_note_block" -> new PlayNoteBlockTask(enumValue(
+                    NoteBlockInstrument.class, string(json, "instrument", path), path, "instrument"));
+            case "play_time" -> new PlayTimeTask();
+            case "receive_effect" -> new ReceiveEffectTask(holder(Registries.MOB_EFFECT, json, "effect", path));
+            case "ride_distance" -> new RideDistanceTask(entity(json, "vehicle", path));
+            case "simple_event" -> new SimpleEventTask(
+                    enumValue(DailySimpleEvent.class, string(json, "event", path), path, "event"),
+                    string(json, "progressLabel", path),
+                    string(json, "progressUnit", path));
+            case "take_damage_type" -> {
+                ResourceKey<DamageType> damageType = registryKey(Registries.DAMAGE_TYPE, json, "damageType", path);
+                registries.lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(damageType);
+                yield new TakeDamageTask(damageType);
+            }
+            case "take_damage_entity" -> new TakeDamageTask(entity(json, "entity", path));
+            case "use_charm" -> new UseCharmTask(namespacedFakeItem(json, "charm", path));
+            case "use_item" -> new UseItemTask(item(json, "item", path));
+            case "villager_trade" -> new VillagerTradeTask(enumValue(
+                    VillagerTradeTask.Mode.class, string(json, "tradeMode", path), path, "tradeMode"));
+            case "villager_trade_item" -> villagerTradeItem(json, path);
+            case "villager_trade_profession" -> {
+                ResourceKey<VillagerProfession> profession = registryKey(
+                        Registries.VILLAGER_PROFESSION, json, "profession", path);
+                registries.lookupOrThrow(Registries.VILLAGER_PROFESSION).getOrThrow(profession);
+                yield new VillagerTradeTask(profession);
+            }
+            default -> throw invalid(path, "Unknown daily task type '" + type + "'");
+        };
+    }
+
+    private static DailyTaskDefinition enchantItem(ItemTarget target) {
+        return target.tag() == null ? new EnchantItemTask(target.item()) : new EnchantItemTask(target.tag());
+    }
+
+    private static DailyTaskDefinition killWithItem(ItemTarget target) {
+        return target.tag() == null ? new KillWithItemTask(target.item()) : new KillWithItemTask(target.tag());
+    }
+
+    private DailyTaskDefinition villagerTradeItem(JsonObject json, Path path) {
+        VillagerTradeTask.Mode mode = enumValue(
+                VillagerTradeTask.Mode.class, string(json, "tradeMode", path), path, "tradeMode");
+        Item item = item(json, "target", path);
+        if (mode == VillagerTradeTask.Mode.GIVE_ITEM) return VillagerTradeTask.give(item);
+        if (mode == VillagerTradeTask.Mode.RECEIVE_ITEM) return new VillagerTradeTask(item);
+        throw invalid(path, "villager_trade_item requires give_item or receive_item mode");
+    }
+
+    private static Set<String> typeFields(String type, Path path) {
+        return switch (type) {
+            case "submit_item", "eat_item", "craft_item", "use_item", "fish_item" -> Set.of("item");
+            case "submit_fake_item", "fish_fake_item" -> Set.of("fakeItem");
+            case "submit_dyed_item" -> Set.of("item", "color");
+            case "submit_enchanted_item" -> Set.of("item", "enchantment", "minimumEnchantmentLevel");
+            case "submit_remaining_durability_item" -> Set.of("item", "remainingDurability");
+            case "submit_below_half_durability_item", "submit_bee_nest_with_bees", "submit_ominous_banner" -> Set.of("item");
+            case "submit_potion" -> Set.of("item", "potion");
+            case "break_block", "brush_block" -> Set.of("block");
+            case "breed_entity", "feed_entity", "kill_entity", "take_damage_entity" -> Set.of("entity");
+            case "brew_potion" -> Set.of("potion");
+            case "create_golem" -> Set.of("golem");
+            case "enchant_item" -> Set.of("itemType");
+            case "hit_player_with_projectile" -> Set.of("projectile");
+            case "kill_with_item" -> Set.of("item");
+            case "plant_crop" -> Set.of("seed");
+            case "play_note_block" -> Set.of("instrument");
+            case "receive_effect" -> Set.of("effect");
+            case "ride_distance" -> Set.of("vehicle");
+            case "simple_event" -> Set.of("event", "progressLabel", "progressUnit");
+            case "take_damage_type" -> Set.of("damageType");
+            case "use_charm" -> Set.of("charm");
+            case "villager_trade" -> Set.of("tradeMode");
+            case "villager_trade_item" -> Set.of("tradeMode", "target");
+            case "villager_trade_profession" -> Set.of("tradeMode", "profession");
+            case "cure_zombie_villager", "enchant_at_table", "fish_anything", "gain_levels", "play_time" -> Set.of();
+            default -> throw invalid(path, "Unknown daily task type '" + type + "'");
+        };
+    }
+
+    private Item item(JsonObject json, String field, Path path) {
+        Identifier id = identifier(string(json, field, path), path, field);
+        return BuiltInRegistries.ITEM.getOptional(id)
+                .orElseThrow(() -> invalid(path, "Unknown Minecraft item id '" + id + "' in '" + field + "'"));
+    }
+
+    private Block block(JsonObject json, String field, Path path) {
+        Identifier id = identifier(string(json, field, path), path, field);
+        return BuiltInRegistries.BLOCK.getOptional(id)
+                .orElseThrow(() -> invalid(path, "Unknown Minecraft block id '" + id + "' in '" + field + "'"));
+    }
+
+    private EntityType<?> entity(JsonObject json, String field, Path path) {
+        Identifier id = identifier(string(json, field, path), path, field);
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(id)
+                .orElseThrow(() -> invalid(path, "Unknown Minecraft entity id '" + id + "' in '" + field + "'"));
+    }
+
+    private ItemTarget itemOrTag(JsonObject json, String field, Path path) {
+        String value = string(json, field, path);
+        if (!value.startsWith("#")) return new ItemTarget(item(json, field, path), null);
+        TagKey<Item> tag = TagKey.create(Registries.ITEM, identifier(value.substring(1), path, field));
+        registries.lookupOrThrow(Registries.ITEM).get(tag)
+                .orElseThrow(() -> invalid(path, "Unknown Minecraft item tag '" + value + "' in '" + field + "'"));
+        return new ItemTarget(null, tag);
+    }
+
+    private <T> Holder<T> holder(
+            ResourceKey<? extends net.minecraft.core.Registry<T>> registry,
+            JsonObject json,
+            String field,
+            Path path
+    ) {
+        return registries.lookupOrThrow(registry).getOrThrow(registryKey(registry, json, field, path));
+    }
+
+    private static <T> ResourceKey<T> registryKey(
+            ResourceKey<? extends net.minecraft.core.Registry<T>> registry,
+            JsonObject json,
+            String field,
+            Path path
+    ) {
+        return ResourceKey.create(registry, identifier(string(json, field, path), path, field));
+    }
+
+    private String fakeItem(JsonObject json, String field, Path path) {
+        String id = string(json, field, path);
+        if (!fakeItemIds.contains(id)) throw invalid(path, "Unknown fake item id '" + id + "' in '" + field + "'");
+        return id;
+    }
+
+    private String namespacedFakeItem(JsonObject json, String field, Path path) {
+        Identifier id = identifier(string(json, field, path), path, field);
+        if (!id.getNamespace().equals("mainmod") || !fakeItemIds.contains(id.getPath())) {
+            throw invalid(path, "Unknown fake item id '" + id + "' in '" + field + "'");
+        }
+        return id.toString();
+    }
+
+    private static JsonObject readObject(Path path) {
+        try (Reader input = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+             JsonReader reader = new JsonReader(input)) {
+            JsonObject result = new JsonObject();
+            reader.beginObject();
+            while (reader.hasNext()) {
+                String name = reader.nextName();
+                if (result.has(name)) throw invalid(path, "Duplicate JSON field '" + name + "'");
+                result.add(name, JsonParser.parseReader(reader));
+            }
+            reader.endObject();
+            if (reader.peek() != com.google.gson.stream.JsonToken.END_DOCUMENT) {
+                throw invalid(path, "JSON must contain exactly one object");
+            }
+            return result;
+        } catch (IOException | RuntimeException exception) {
+            if (exception instanceof IllegalStateException illegalState) throw illegalState;
+            throw new IllegalStateException("Could not read daily task JSON " + path, exception);
+        }
+    }
+
+    private static boolean bool(JsonObject json, String field, Path path) {
+        JsonElement value = json.get(field);
+        if (value == null || !value.isJsonPrimitive() || !value.getAsJsonPrimitive().isBoolean()) {
+            throw invalid(path, "'" + field + "' must be a boolean");
+        }
+        return value.getAsBoolean();
+    }
+
+    private static String string(JsonObject json, String field, Path path) {
+        JsonElement value = json.get(field);
+        if (value == null || !value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString()
+                || value.getAsString().isBlank()) {
+            throw invalid(path, "'" + field + "' must be a non-blank string");
+        }
+        return value.getAsString();
+    }
+
+    private static int positiveInteger(JsonElement value, Path path, String field) {
+        int result = integer(value, path, field);
+        if (result < 1) throw invalid(path, "'" + field + "' must be a positive integer");
+        return result;
+    }
+
+    private static int nonNegativeInteger(JsonElement value, Path path, String field) {
+        int result = integer(value, path, field);
+        if (result < 0) throw invalid(path, "'" + field + "' must be a non-negative integer");
+        return result;
+    }
+
+    private static int integer(JsonElement value, Path path, String field) {
+        try {
+            if (value == null || !value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber()) throw new ArithmeticException();
+            return value.getAsBigDecimal().intValueExact();
+        } catch (ArithmeticException exception) {
+            throw invalid(path, "'" + field + "' must be an integer");
+        }
+    }
+
+    private static double nonNegativeDouble(JsonElement value, Path path, String field) {
+        if (value == null || !value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber()) {
+            throw invalid(path, "'" + field + "' must be a number");
+        }
+        double result = value.getAsDouble();
+        if (!Double.isFinite(result) || result < 0) throw invalid(path, "'" + field + "' must be a finite non-negative number");
+        return result;
+    }
+
+    private static Identifier identifier(String value, Path path, String field) {
+        if (!value.contains(":")) throw invalid(path, "'" + field + "' must be a namespaced id");
+        try {
+            return Identifier.parse(value);
+        } catch (RuntimeException exception) {
+            throw invalid(path, "'" + field + "' is not a valid id: '" + value + "'");
+        }
+    }
+
+    private static <E extends Enum<E>> E enumValue(Class<E> type, String value, Path path, String field) {
+        try {
+            return Enum.valueOf(type, value.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException exception) {
+            throw invalid(path, "Unknown " + field + " id '" + value + "'");
+        }
+    }
+
+    private static IllegalStateException invalid(Path path, String message) {
+        return new IllegalStateException(path + ": " + message);
+    }
+
+    private record ItemTarget(Item item, TagKey<Item> tag) {
     }
 }

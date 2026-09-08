@@ -1,0 +1,13 @@
+{
+	"type": "play_note_block",
+	"instrument": "xylophone",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.05,
+	"minimum": 40,
+	"maximum": 80,
+	"emoji": "🎶",
+	"name": "Xylophone Notes",
+	"description": "Play {count} xylophone notes. Bonus points if you can play Sweden."
+}

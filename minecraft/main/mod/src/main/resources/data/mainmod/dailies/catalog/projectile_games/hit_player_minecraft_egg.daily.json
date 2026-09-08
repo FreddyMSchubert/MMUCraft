@@ -1,0 +1,13 @@
+{
+	"type": "hit_player_with_projectile",
+	"projectile": "minecraft:egg",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.3,
+	"minimum": 15,
+	"maximum": 30,
+	"emoji": "🥚",
+	"name": "Egg Toss",
+	"description": "Hit another player with {count} eggs. Any chickens spawned during the fight are neutral."
+}

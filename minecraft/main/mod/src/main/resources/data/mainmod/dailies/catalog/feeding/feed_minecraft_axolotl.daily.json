@@ -1,0 +1,13 @@
+{
+	"type": "feed_entity",
+	"entity": "minecraft:axolotl",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🦎",
+	"name": "Feed Axolotls",
+	"description": "Feed {count} axolotls."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:axolotl_bucket",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🪣",
+	"name": "Submit an Axolotl Bucket",
+	"description": "Submit one axolotl bucket. The axolotl comes with the bucket. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:plenty_pottery_sherd",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🌾",
+	"name": "Submit Plenty Sherd",
+	"description": "Submit one plenty sherd. Have the items in your inventory when you click Claim."
+}

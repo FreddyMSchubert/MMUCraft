@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:dragon_head",
+	"nether": false,
+	"end": true,
+	"baseCost": 8,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🐉",
+	"name": "Submit a Dragon Head",
+	"description": "Submit one dragon head. End ship tax. Have the items in your inventory when you click Claim."
+}

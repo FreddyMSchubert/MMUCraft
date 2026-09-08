@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:sulfur_cube",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1,
+	"minimum": 3,
+	"maximum": 7,
+	"emoji": "🟨",
+	"name": "Hunt Sulfur Cubes",
+	"description": "Defeat {count} sulfur cubes."
+}

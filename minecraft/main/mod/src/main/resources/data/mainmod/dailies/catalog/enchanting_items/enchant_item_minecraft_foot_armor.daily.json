@@ -1,0 +1,13 @@
+{
+	"type": "enchant_item",
+	"itemType": "#minecraft:foot_armor",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.25,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🥾",
+	"name": "Enchant Boots",
+	"description": "Enchant {count} pairs of boots."
+}

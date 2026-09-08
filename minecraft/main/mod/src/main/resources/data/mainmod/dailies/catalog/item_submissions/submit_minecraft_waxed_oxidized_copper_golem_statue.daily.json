@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:waxed_oxidized_copper_golem_statue",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 2.25,
+	"minimum": 1,
+	"maximum": 2,
+	"emoji": "🗿",
+	"name": "Submit Waxed Oxidized Copper Golem Statues",
+	"description": "Submit {count} waxed oxidized copper golem statues. Honeycomb keeps the full patina where it is. Have the items in your inventory when you click Claim."
+}

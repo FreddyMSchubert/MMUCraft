@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "#minecraft:spears",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🔱",
+	"name": "Spear Kills",
+	"description": "Defeat {count} mobs with a spear. Keep some distance or it is just a pointy stick."
+}

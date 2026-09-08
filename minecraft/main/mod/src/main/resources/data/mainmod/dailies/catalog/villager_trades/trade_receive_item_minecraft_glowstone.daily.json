@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "receive_item",
+	"target": "minecraft:glowstone",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "💡",
+	"name": "Buy Glowstone",
+	"description": "Receive {count} glowstone from villagers."
+}

@@ -75,7 +75,7 @@ Members get a permanent boost to how much money they get from completing advance
 
 Every day you can get Dabloons just for logging into the server. You can claim this reward on the [Dailies Tab](/play/dailies).
 
-Every consecutive day you log into the server, this reward increases. There is ***NO CAP*** to the amount of Dabloons you can earn from this.
+On day 1 this gives you 3 Dabloons, then 5 Dabloons on day 2, and so on.
 
 When you miss a day, your streak gets reset to 0.
 

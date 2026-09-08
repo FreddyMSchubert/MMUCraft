@@ -1,0 +1,10 @@
+{
+	"layers": {
+		"wings": [
+			{
+				"texture": "mmu_pack:glider",
+				"use_player_texture": false
+			}
+		]
+	}
+}

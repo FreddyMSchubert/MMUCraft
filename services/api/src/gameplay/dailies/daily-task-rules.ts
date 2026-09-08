@@ -118,7 +118,7 @@ export function calculateLoginStreak(
 }
 
 export function rewardForStreak(streak: number) {
-	return streak <= 1 ? 3 : streak + 3;
+	return streak <= 1 ? 3 : Math.min(streak + 3, 10);
 }
 
 export function dailyAdvancementBonus(baseRewardDabloons: number) {

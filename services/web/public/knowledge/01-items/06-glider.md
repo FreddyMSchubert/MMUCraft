@@ -27,6 +27,8 @@ Gliders are kinda like elytra - with some critical upsides and downsides to them
 
 ### Updrafts
 
+![Updrafts Example](/assets/knowledge/items/glider/updrafts.png)
+
 When you fly with a Glider over an updraft, your wings will catch the hot air moving up and you'll find yourself soaring to the skies.
 
 | 🔥 Heat Source | ⬆️ Updraft Height in Blocks |
@@ -37,12 +39,62 @@ When you fly with a Glider over an updraft, your wings will catch the hot air mo
 | Soul Fire | 50 |
 | Soul Campfire | 50 |
 
+(You can craft a Soul Campfire before entering the Nether using [Souls](/play/knowledge/soulbound).)
+
 :::tip
 You can place these blocks while flying in the air with a glider, then fly over them to catch the updraft. This allows you to stay in the air indefinitely. (It can be tricky to pull off at the start though.)
 :::
 
 :::tip
-You can craft a Soul Campfire before entering the Nether using [Souls](/play/knowledge/soulbound).
+Using a glider in the Nether is incredibly powerful, because the lava (which is all over the place) creates updrafts (which are therefore all over the place). You can fly basically forever!
 :::
 
+### Boost Frames
+
+![Boost Frames Example](/assets/knowledge/items/glider/boost_frames.png)
+
+Boost Frames boost you to max speed immediately when you fly through them.
+
+:::tip
+Boost Frames work in all directions, including upwards, making them an eccelent launchpad.
+:::
+
+Boost Frames are Amethyst Blocks arranged in a square shape. You can build them wherever you want!
+
+:::tip
+You can even build multiple boost frames directly behind each other to create a max-transportation-speed Glider highway!
+:::
+
+:::tip
+Boost Frames also work for Elytras!
+:::
+
+### Easy to get
+
+Gliders are a great way of getting around in the early and mid-game. They can be crafted without much hassle, see the recipe below.
+
+## The Downsides
+
+Gliders are cool, but not quite as awesome as Elytras.
+
+### No Fireworks
+
+Fireworks only work with the Elytra. Sorry.
+
+### No Mending
+
+You can't apply Mending to Gliders. Instead, you can repair them using leather in an anvil. (See below.)
+
+### Less upward velocity
+
+The Glider isn't as effective as the Elytra at converting horizontal momentum into upward velocity when you look up. You will likely find yourself reaching the ground sooner than with an Elytra.
+
 ## Recipe
+
+:::note
+Since phantoms no longer spawn, you'll need to get your hands on the phantom membranes using a [potion of insomnia](/play/knowledge/potion-of-insomnia).
+:::
+
+### Repairing the Glider
+
+You can repair gliders in an anvil. One leather fully repairs the glider.

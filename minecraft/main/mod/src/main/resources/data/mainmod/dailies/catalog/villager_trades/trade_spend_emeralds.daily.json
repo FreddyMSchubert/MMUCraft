@@ -1,0 +1,13 @@
+{
+	"type": "villager_trade",
+	"tradeMode": "spend_emeralds",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.2,
+	"minimum": 16,
+	"maximum": 32,
+	"emoji": "🛒",
+	"name": "Spend Emeralds",
+	"description": "Spend {count} emeralds in trades. The economy demands sacrifice."
+}

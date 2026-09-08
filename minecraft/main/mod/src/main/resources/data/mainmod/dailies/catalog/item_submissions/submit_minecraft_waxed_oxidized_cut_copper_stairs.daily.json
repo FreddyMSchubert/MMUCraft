@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:waxed_oxidized_cut_copper_stairs",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "🟦",
+	"name": "Submit Waxed Oxidized Cut Copper Stairs",
+	"description": "Submit {count} waxed oxidized cut copper stairs. Have the items in your inventory when you click Claim."
+}

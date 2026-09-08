@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:shulker",
+	"nether": false,
+	"end": true,
+	"baseCost": 8,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "📦",
+	"name": "Hunt Shulkers",
+	"description": "Defeat {count} shulkers."
+}

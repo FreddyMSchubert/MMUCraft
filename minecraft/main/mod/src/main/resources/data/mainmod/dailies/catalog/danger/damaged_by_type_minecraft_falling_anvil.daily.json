@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_type",
+	"damageType": "minecraft:falling_anvil",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 2.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "⚒️",
+	"name": "Get Hurt by a Falling Anvil",
+	"description": "Take damage from a falling anvil without dying. The anvil takes damage too. Nobody wins."
+}

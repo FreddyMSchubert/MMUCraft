@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:decorated_pot",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.25,
+	"minimum": 3,
+	"maximum": 5,
+	"emoji": "🏺",
+	"name": "Craft Decorated Pots",
+	"description": "Craft {count} decorated pots. Use sherds if you have them. Bricks are the boring option."
+}

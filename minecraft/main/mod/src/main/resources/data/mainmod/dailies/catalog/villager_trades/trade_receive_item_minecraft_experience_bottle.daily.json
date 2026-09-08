@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "receive_item",
+	"target": "minecraft:experience_bottle",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 0.75,
+	"minimum": 1,
+	"maximum": 6,
+	"emoji": "✨",
+	"name": "Buy Bottles o' Enchanting",
+	"description": "Receive {count} bottles o' enchanting from villagers."
+}

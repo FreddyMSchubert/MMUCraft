@@ -1,0 +1,13 @@
+{
+	"type": "enchant_item",
+	"itemType": "minecraft:warped_fungus_on_a_stick",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🍄",
+	"name": "Enchant Warped Fungus on a Stick",
+	"description": "Enchant a warped fungus on a stick."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "disc-death",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "💀",
+	"name": "Submit Death Disc",
+	"description": "Submit one Death disc. The title is not an instruction. Have the items in your inventory when you click Claim."
+}

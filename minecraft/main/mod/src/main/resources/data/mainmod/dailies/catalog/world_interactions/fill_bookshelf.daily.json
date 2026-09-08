@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "fill_bookshelf",
+	"progressLabel": "Stored",
+	"progressUnit": "books",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.3,
+	"minimum": 8,
+	"maximum": 16,
+	"emoji": "📚",
+	"name": "Fill a Chiseled Bookshelf",
+	"description": "Put {count} books in chiseled bookshelves."
+}

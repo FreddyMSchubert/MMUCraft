@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:torchflower",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🏵️",
+	"name": "Submit Torchflowers",
+	"description": "Submit {count} torchflowers. Have the items in your inventory when you click Claim."
+}

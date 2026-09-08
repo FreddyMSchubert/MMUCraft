@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:horn_coral_block",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "📯",
+	"name": "Submit Horn Coral Blocks",
+	"description": "Submit {count} living horn coral blocks. Dead coral does not count. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:blaze_rod",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "🔥",
+	"name": "Submit Blaze Rods",
+	"description": "Submit {count} blaze rods. Brewing has overheads. Have the items in your inventory when you click Claim."
+}

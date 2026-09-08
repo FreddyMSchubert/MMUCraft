@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:pumpkin_seeds",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.25,
+	"minimum": 12,
+	"maximum": 24,
+	"emoji": "🎃",
+	"name": "Plant Pumpkins",
+	"description": "Plant {count} pumpkin seeds. Leave room for the stems."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "deco-vinyl-player",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 6,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "📻",
+	"name": "Submit a Vinyl Player",
+	"description": "Submit one vinyl player. The music disc inside is part of the price. Have the items in your inventory when you click Claim."
+}

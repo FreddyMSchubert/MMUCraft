@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "receive_item",
+	"target": "minecraft:stone_hoe",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 3,
+	"emoji": "🪏",
+	"name": "Buy Stone Hoes",
+	"description": "Receive {count} stone hoes from villagers."
+}

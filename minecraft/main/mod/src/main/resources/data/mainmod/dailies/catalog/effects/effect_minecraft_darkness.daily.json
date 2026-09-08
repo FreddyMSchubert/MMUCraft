@@ -1,0 +1,13 @@
+{
+	"type": "receive_effect",
+	"effect": "minecraft:darkness",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🌑",
+	"name": "Get Darkness",
+	"description": "Get Darkness. Turning up the brightness is between you and your conscience."
+}

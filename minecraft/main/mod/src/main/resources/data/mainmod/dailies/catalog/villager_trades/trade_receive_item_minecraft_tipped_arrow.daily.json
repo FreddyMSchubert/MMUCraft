@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "receive_item",
+	"target": "minecraft:tipped_arrow",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 0.3,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "🏹",
+	"name": "Buy Tipped Arrows",
+	"description": "Receive {count} tipped arrows from villagers."
+}

@@ -25,7 +25,6 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
     }
 
     public static ItemSubmissionTask custom(String fakeItemId) {
-        FakeItems.requireFakeItem(fakeItemId);
         return new ItemSubmissionTask(
                 "submit:fake:" + fakeItemId,
                 null,

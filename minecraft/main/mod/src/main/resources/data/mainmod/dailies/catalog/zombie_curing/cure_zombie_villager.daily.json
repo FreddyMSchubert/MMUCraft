@@ -1,0 +1,12 @@
+{
+	"type": "cure_zombie_villager",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🧟",
+	"name": "Cure a Zombie Villager",
+	"description": "Cure one zombie villager. The discount is yours. We only pay the finder's fee."
+}

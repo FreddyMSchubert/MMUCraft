@@ -1,0 +1,13 @@
+{
+	"type": "break_block",
+	"block": "minecraft:infested_stone",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 0.25,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "🪲",
+	"name": "Mine Infested Stone",
+	"description": "Mine {count} infested stone. Finding the first block is the hard part. The silverfish make the rest annoying."
+}

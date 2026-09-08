@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:brain_coral_fan",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🧠",
+	"name": "Submit Brain Coral Fans",
+	"description": "Submit {count} living brain coral fans. Dead coral does not count. Have the items in your inventory when you click Claim."
+}

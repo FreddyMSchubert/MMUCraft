@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:gray_harness",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 2,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🐴",
+	"name": "Submit Grey Harnesses",
+	"description": "Submit {count} grey harnesses. Have the items in your inventory when you click Claim."
+}

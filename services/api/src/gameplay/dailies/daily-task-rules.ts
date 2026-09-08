@@ -3,6 +3,7 @@ export const ADVANCEMENT_BONUS_TASK_ID = 'advancement_bonus';
 export const DAILY_COMPLETION_TASK_ID = 'daily_completion';
 export const STATIC_DAILY_TASK_IDS = [LOGIN_BONUS_TASK_ID, ADVANCEMENT_BONUS_TASK_ID] as const;
 export const GENERATED_TASK_COUNT = 3;
+export const GENERATED_TASK_REPEAT_LOOKBACK_DAYS = 14;
 export const DAILY_COMPLETION_BASE_REWARD = 20;
 export const DAILY_COMPLETION_SUNDAY_BONUS = 12;
 export const DAILY_COMPLETION_MEMBER_BONUS = 10;

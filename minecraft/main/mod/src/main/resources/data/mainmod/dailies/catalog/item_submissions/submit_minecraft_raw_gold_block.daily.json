@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:raw_gold_block",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 4,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🟨",
+	"name": "Submit Blocks of Raw Gold",
+	"description": "Submit {count} blocks of raw gold. Have the items in your inventory when you click Claim."
+}

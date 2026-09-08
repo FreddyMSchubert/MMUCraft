@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:blue_banner",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "🚩",
+	"name": "Craft Blue Banners",
+	"description": "Craft {count} blue banners. Blue is a start, not a design."
+}

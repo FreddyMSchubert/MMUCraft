@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:jack_o_lantern",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.5,
+	"minimum": 6,
+	"maximum": 10,
+	"emoji": "🎃",
+	"name": "Submit Jack o'Lanterns",
+	"description": "Submit {count} jack o'lanterns. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:poisonous_potato",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🥔",
+	"name": "Submit Poisonous Potatoes",
+	"description": "Submit {count} poisonous potatoes. At last, a use for the stupid things. Have the items in your inventory when you click Claim."
+}

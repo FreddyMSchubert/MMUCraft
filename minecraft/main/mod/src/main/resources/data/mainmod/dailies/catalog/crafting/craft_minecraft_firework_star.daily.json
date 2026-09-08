@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:firework_star",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1,
+	"minimum": 3,
+	"maximum": 8,
+	"emoji": "🎆",
+	"name": "Craft Firework Stars",
+	"description": "Craft {count} firework stars. Colour mixing is encouraged."
+}

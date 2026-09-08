@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.item.Item;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 public final class FishTask extends CountedTask {
     private final String item;
@@ -22,7 +21,6 @@ public final class FishTask extends CountedTask {
     }
 
     public static FishTask custom(String fakeItemId) {
-        FakeItems.requireFakeItem(fakeItemId);
         return new FishTask("fish:custom:" + fakeItemId, fakeItemId);
     }
 

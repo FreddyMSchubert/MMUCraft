@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:golden_dandelion",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 2,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🌼",
+	"name": "Craft Golden Dandelions",
+	"description": "Craft {count} golden dandelions. Gold flower. Zero nutritional value."
+}

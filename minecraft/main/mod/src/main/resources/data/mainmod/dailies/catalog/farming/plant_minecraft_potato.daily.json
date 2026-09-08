@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:potato",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.15,
+	"minimum": 24,
+	"maximum": 40,
+	"emoji": "🥔",
+	"name": "Plant Potatoes",
+	"description": "Plant {count} potatoes. Do not plant the poisonous ones. They have other work today."
+}

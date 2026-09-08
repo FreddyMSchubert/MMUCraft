@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:angler_pottery_sherd",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🏺",
+	"name": "Submit Angler Sherd",
+	"description": "Submit one angler sherd. One quarter of a fishing story. Have the items in your inventory when you click Claim."
+}

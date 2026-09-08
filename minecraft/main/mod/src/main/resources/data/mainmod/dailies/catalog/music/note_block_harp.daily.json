@@ -1,0 +1,13 @@
+{
+	"type": "play_note_block",
+	"instrument": "harp",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.075,
+	"minimum": 40,
+	"maximum": 80,
+	"emoji": "🎼",
+	"name": "Harp Notes",
+	"description": "Play {count} harp notes. Try an actual tune. Four notes will do."
+}

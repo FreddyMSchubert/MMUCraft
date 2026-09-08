@@ -1,0 +1,13 @@
+{
+	"type": "play_note_block",
+	"instrument": "bell",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.05,
+	"minimum": 20,
+	"maximum": 60,
+	"emoji": "🔔",
+	"name": "Bell Notes",
+	"description": "Play {count} bell notes. Make the world's worst clock chime."
+}

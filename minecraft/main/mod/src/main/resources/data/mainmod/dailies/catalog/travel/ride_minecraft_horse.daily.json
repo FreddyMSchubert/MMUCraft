@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:horse",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.006,
+	"minimum": 500,
+	"maximum": 1000,
+	"emoji": "🐎",
+	"name": "Ride a Horse",
+	"description": "Ride a horse for {count} blocks. Circles around spawn count, but you can do better."
+}

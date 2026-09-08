@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:lilac",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🪻",
+	"name": "Submit Lilacs",
+	"description": "Submit {count} lilacs. Have the items in your inventory when you click Claim."
+}

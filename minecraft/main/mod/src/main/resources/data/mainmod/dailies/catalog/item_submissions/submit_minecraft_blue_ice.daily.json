@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:blue_ice",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "🧊",
+	"name": "Submit Blue Ice",
+	"description": "Submit {count} blue ice. It will not melt. Still do not lose it. Have the items in your inventory when you click Claim."
+}

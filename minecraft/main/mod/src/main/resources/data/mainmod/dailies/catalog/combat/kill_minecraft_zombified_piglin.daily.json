@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:zombified_piglin",
+	"nether": true,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.5,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "🧟",
+	"name": "Hunt Zombified Piglins",
+	"description": "Defeat {count} zombified piglins."
+}

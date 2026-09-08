@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:magma_cube",
+	"nether": true,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.5,
+	"minimum": 4,
+	"maximum": 10,
+	"emoji": "🟧",
+	"name": "Hunt Magma Cubes",
+	"description": "Defeat {count} magma cubes."
+}

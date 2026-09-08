@@ -124,6 +124,16 @@ tasks.register('checkGlider', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkDailyCatalog', JavaExec) {
+    group = 'verification'
+    description = 'Check daily task JSON structure, weights, identifiers, and generated definitions.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskCatalogCheck'
+    args projectDir.absolutePath
+    workingDir = layout.buildDirectory.dir('dailyCatalogCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
 processResources {
     dependsOn "generateMiniBlockRecipes"
     inputs.property "version", project.version
@@ -235,4 +245,5 @@ tasks.named("sourcesJar") {
 
 tasks.named("build") {
     dependsOn tasks.named("runDatagen")
+    dependsOn tasks.named("checkDailyCatalog")
 }

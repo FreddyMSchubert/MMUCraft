@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:pearlescent_froglight",
+	"nether": true,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🟣",
+	"name": "Submit Pearlescent Froglights",
+	"description": "Submit {count} pearlescent froglights. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "brew_potion",
+	"potion": "minecraft:fire_resistance",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🔥",
+	"name": "Brew Fire Resistance",
+	"description": "Brew {count} potions of Fire Resistance."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:dandelion",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🌼",
+	"name": "Submit Dandelions",
+	"description": "Submit {count} dandelions. They are everywhere until the daily asks for them. Have the items in your inventory when you click Claim."
+}

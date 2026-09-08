@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:drowned",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 10,
+	"emoji": "🔱",
+	"name": "Hunt Drowned",
+	"description": "Defeat {count} drowned."
+}

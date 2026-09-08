@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:blue_concrete_powder",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 48,
+	"emoji": "🔵",
+	"name": "Craft Blue Concrete Powder",
+	"description": "Craft {count} blue concrete powder. Remember the water before calling it concrete."
+}

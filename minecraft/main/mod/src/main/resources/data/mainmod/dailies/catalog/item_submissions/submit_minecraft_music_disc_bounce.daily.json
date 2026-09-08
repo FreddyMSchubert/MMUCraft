@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:music_disc_bounce",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🏀",
+	"name": "Submit Music Disc Bounce",
+	"description": "Submit one Music Disc Bounce. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "minecraft:snowball",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "⛄",
+	"name": "Defeat a Mob with Snowballs",
+	"description": "Defeat one mob with snowballs. Blazes are the obvious victims."
+}

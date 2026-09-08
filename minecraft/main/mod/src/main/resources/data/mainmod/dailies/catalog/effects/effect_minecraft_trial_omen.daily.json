@@ -1,0 +1,13 @@
+{
+	"type": "receive_effect",
+	"effect": "minecraft:trial_omen",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🔑",
+	"name": "Get Trial Omen",
+	"description": "Get Trial Omen. Now the chamber is properly angry."
+}

@@ -1,0 +1,12 @@
+{
+	"type": "enchant_at_table",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 1,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "✨",
+	"name": "Use an Enchanting Table",
+	"description": "Enchant {count} items at a table. Any level counts. Yes, level one is legal."
+}

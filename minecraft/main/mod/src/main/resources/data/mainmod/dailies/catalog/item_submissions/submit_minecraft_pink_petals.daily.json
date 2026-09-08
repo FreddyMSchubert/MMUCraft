@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:pink_petals",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🌸",
+	"name": "Submit Pink Petals",
+	"description": "Submit {count} pink petals. Have the items in your inventory when you click Claim."
+}

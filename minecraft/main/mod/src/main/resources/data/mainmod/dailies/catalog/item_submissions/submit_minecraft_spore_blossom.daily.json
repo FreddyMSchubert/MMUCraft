@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:spore_blossom",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "🌺",
+	"name": "Submit Spore Blossoms",
+	"description": "Submit {count} spore blossoms. Have the items in your inventory when you click Claim."
+}

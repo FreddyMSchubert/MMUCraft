@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:music_disc_pigstep",
+	"nether": true,
+	"end": false,
+	"baseCost": 7,
+	"rewardPerIteration": 6,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🐽",
+	"name": "Submit Music Disc Pigstep",
+	"description": "Submit one Music Disc Pigstep. The bastion finally paid out. Have the items in your inventory when you click Claim."
+}

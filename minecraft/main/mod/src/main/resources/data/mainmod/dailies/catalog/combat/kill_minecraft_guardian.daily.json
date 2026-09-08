@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:guardian",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 8,
+	"emoji": "🔱",
+	"name": "Hunt Guardians",
+	"description": "Defeat {count} guardians."
+}

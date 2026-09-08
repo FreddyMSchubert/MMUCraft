@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:tnt_minecart",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 3,
+	"minimum": 2,
+	"maximum": 3,
+	"emoji": "💣",
+	"name": "Submit Minecarts with TNT",
+	"description": "Submit {count} minecarts with TNT. Have the items in your inventory when you click Claim."
+}

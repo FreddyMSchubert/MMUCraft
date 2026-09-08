@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:dried_kelp_block",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🌿",
+	"name": "Sell Dried Kelp Blocks",
+	"description": "Give villagers {count} dried kelp blocks."
+}

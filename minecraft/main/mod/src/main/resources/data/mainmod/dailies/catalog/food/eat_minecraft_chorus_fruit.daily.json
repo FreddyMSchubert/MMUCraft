@@ -1,0 +1,13 @@
+{
+	"type": "eat_item",
+	"item": "minecraft:chorus_fruit",
+	"nether": false,
+	"end": true,
+	"baseCost": 5,
+	"rewardPerIteration": 0.5,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🟣",
+	"name": "Chorus Fruit Roulette",
+	"description": "Eat {count} chorus fruit. Let the fruit decide where lunch ends."
+}

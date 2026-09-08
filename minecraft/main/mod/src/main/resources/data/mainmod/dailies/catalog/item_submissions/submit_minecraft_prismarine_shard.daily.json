@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:prismarine_shard",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.2,
+	"minimum": 8,
+	"maximum": 24,
+	"emoji": "🔱",
+	"name": "Submit Prismarine Shards",
+	"description": "Submit {count} prismarine shards. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,15 @@
+{
+	"type": "simple_event",
+	"event": "shear_sheep",
+	"progressLabel": "Sheared",
+	"progressUnit": "sheep",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.4,
+	"minimum": 2,
+	"maximum": 16,
+	"emoji": "🐑",
+	"name": "Shear Sheep",
+	"description": "Shear {count} sheep. They grow it back. Your conscience is clear."
+}

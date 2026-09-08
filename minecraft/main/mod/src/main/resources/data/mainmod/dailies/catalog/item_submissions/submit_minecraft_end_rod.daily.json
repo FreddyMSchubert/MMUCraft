@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:end_rod",
+	"nether": false,
+	"end": true,
+	"baseCost": 5,
+	"rewardPerIteration": 0.25,
+	"minimum": 4,
+	"maximum": 12,
+	"emoji": "💡",
+	"name": "Submit End Rods",
+	"description": "Submit {count} end rods. Have the items in your inventory when you click Claim."
+}

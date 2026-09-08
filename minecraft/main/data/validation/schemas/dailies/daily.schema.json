@@ -1,0 +1,1208 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "MMUCraft daily task",
+	"oneOf": [
+		{
+			"$ref": "#/$defs/submit_item"
+		},
+		{
+			"$ref": "#/$defs/submit_fake_item"
+		},
+		{
+			"$ref": "#/$defs/submit_dyed_item"
+		},
+		{
+			"$ref": "#/$defs/submit_enchanted_item"
+		},
+		{
+			"$ref": "#/$defs/submit_remaining_durability_item"
+		},
+		{
+			"$ref": "#/$defs/submit_below_half_durability_item"
+		},
+		{
+			"$ref": "#/$defs/submit_bee_nest_with_bees"
+		},
+		{
+			"$ref": "#/$defs/submit_ominous_banner"
+		},
+		{
+			"$ref": "#/$defs/submit_potion"
+		},
+		{
+			"$ref": "#/$defs/break_block"
+		},
+		{
+			"$ref": "#/$defs/breed_entity"
+		},
+		{
+			"$ref": "#/$defs/brew_potion"
+		},
+		{
+			"$ref": "#/$defs/brush_block"
+		},
+		{
+			"$ref": "#/$defs/craft_item"
+		},
+		{
+			"$ref": "#/$defs/create_golem"
+		},
+		{
+			"$ref": "#/$defs/cure_zombie_villager"
+		},
+		{
+			"$ref": "#/$defs/eat_item"
+		},
+		{
+			"$ref": "#/$defs/enchant_at_table"
+		},
+		{
+			"$ref": "#/$defs/enchant_item"
+		},
+		{
+			"$ref": "#/$defs/feed_entity"
+		},
+		{
+			"$ref": "#/$defs/fish_anything"
+		},
+		{
+			"$ref": "#/$defs/fish_item"
+		},
+		{
+			"$ref": "#/$defs/fish_fake_item"
+		},
+		{
+			"$ref": "#/$defs/gain_levels"
+		},
+		{
+			"$ref": "#/$defs/hit_player_with_projectile"
+		},
+		{
+			"$ref": "#/$defs/kill_entity"
+		},
+		{
+			"$ref": "#/$defs/kill_with_item"
+		},
+		{
+			"$ref": "#/$defs/plant_crop"
+		},
+		{
+			"$ref": "#/$defs/play_note_block"
+		},
+		{
+			"$ref": "#/$defs/play_time"
+		},
+		{
+			"$ref": "#/$defs/receive_effect"
+		},
+		{
+			"$ref": "#/$defs/ride_distance"
+		},
+		{
+			"$ref": "#/$defs/simple_event"
+		},
+		{
+			"$ref": "#/$defs/take_damage_type"
+		},
+		{
+			"$ref": "#/$defs/take_damage_entity"
+		},
+		{
+			"$ref": "#/$defs/use_charm"
+		},
+		{
+			"$ref": "#/$defs/use_item"
+		},
+		{
+			"$ref": "#/$defs/villager_trade"
+		},
+		{
+			"$ref": "#/$defs/villager_trade_item"
+		},
+		{
+			"$ref": "#/$defs/villager_trade_profession"
+		}
+	],
+	"$defs": {
+		"common": {
+			"type": "object",
+			"required": [
+				"type",
+				"nether",
+				"end",
+				"baseCost",
+				"rewardPerIteration",
+				"minimum",
+				"maximum",
+				"emoji",
+				"name",
+				"description"
+			],
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"nether": {
+					"type": "boolean"
+				},
+				"end": {
+					"type": "boolean"
+				},
+				"baseCost": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"rewardPerIteration": {
+					"type": "number",
+					"minimum": 0
+				},
+				"minimum": {
+					"type": "integer",
+					"minimum": 1
+				},
+				"maximum": {
+					"type": "integer",
+					"minimum": 1
+				},
+				"emoji": {
+					"type": "string",
+					"minLength": 1
+				},
+				"name": {
+					"type": "string",
+					"minLength": 1
+				},
+				"description": {
+					"type": "string",
+					"minLength": 1
+				}
+			}
+		},
+		"submit_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"submit_fake_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"fakeItem"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_fake_item"
+						},
+						"fakeItem": {
+							"type": "string",
+							"pattern": "^[a-z0-9][a-z0-9._-]*$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"submit_dyed_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item",
+						"color"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_dyed_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						},
+						"color": {
+							"enum": [
+								"black",
+								"blue",
+								"brown",
+								"cyan",
+								"gray",
+								"green",
+								"light_blue",
+								"light_gray",
+								"lime",
+								"magenta",
+								"orange",
+								"pink",
+								"purple",
+								"red",
+								"white",
+								"yellow"
+							]
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"submit_enchanted_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item",
+						"enchantment",
+						"minimumEnchantmentLevel"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_enchanted_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						},
+						"enchantment": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						},
+						"minimumEnchantmentLevel": {
+							"type": "integer",
+							"minimum": 1
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"submit_remaining_durability_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item",
+						"remainingDurability"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_remaining_durability_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						},
+						"remainingDurability": {
+							"type": "integer",
+							"minimum": 1
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"submit_below_half_durability_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_below_half_durability_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"submit_bee_nest_with_bees": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_bee_nest_with_bees"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"submit_ominous_banner": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_ominous_banner"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"submit_potion": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item",
+						"potion"
+					],
+					"properties": {
+						"type": {
+							"const": "submit_potion"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						},
+						"potion": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"break_block": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"block"
+					],
+					"properties": {
+						"type": {
+							"const": "break_block"
+						},
+						"block": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"breed_entity": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"entity"
+					],
+					"properties": {
+						"type": {
+							"const": "breed_entity"
+						},
+						"entity": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"brew_potion": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"potion"
+					],
+					"properties": {
+						"type": {
+							"const": "brew_potion"
+						},
+						"potion": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"brush_block": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"block"
+					],
+					"properties": {
+						"type": {
+							"const": "brush_block"
+						},
+						"block": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"craft_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "craft_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"create_golem": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"golem"
+					],
+					"properties": {
+						"type": {
+							"const": "create_golem"
+						},
+						"golem": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"cure_zombie_villager": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [],
+					"properties": {
+						"type": {
+							"const": "cure_zombie_villager"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"eat_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "eat_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"enchant_at_table": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [],
+					"properties": {
+						"type": {
+							"const": "enchant_at_table"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"enchant_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"itemType"
+					],
+					"properties": {
+						"type": {
+							"const": "enchant_item"
+						},
+						"itemType": {
+							"type": "string",
+							"pattern": "^#?[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"feed_entity": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"entity"
+					],
+					"properties": {
+						"type": {
+							"const": "feed_entity"
+						},
+						"entity": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"fish_anything": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [],
+					"properties": {
+						"type": {
+							"const": "fish_anything"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"fish_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "fish_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"fish_fake_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"fakeItem"
+					],
+					"properties": {
+						"type": {
+							"const": "fish_fake_item"
+						},
+						"fakeItem": {
+							"type": "string",
+							"pattern": "^[a-z0-9][a-z0-9._-]*$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"gain_levels": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [],
+					"properties": {
+						"type": {
+							"const": "gain_levels"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"hit_player_with_projectile": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"projectile"
+					],
+					"properties": {
+						"type": {
+							"const": "hit_player_with_projectile"
+						},
+						"projectile": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"kill_entity": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"entity"
+					],
+					"properties": {
+						"type": {
+							"const": "kill_entity"
+						},
+						"entity": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"kill_with_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "kill_with_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^#?[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"plant_crop": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"seed"
+					],
+					"properties": {
+						"type": {
+							"const": "plant_crop"
+						},
+						"seed": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"play_note_block": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"instrument"
+					],
+					"properties": {
+						"type": {
+							"const": "play_note_block"
+						},
+						"instrument": {
+							"enum": [
+								"banjo",
+								"basedrum",
+								"bell",
+								"cow_bell",
+								"didgeridoo",
+								"flute",
+								"guitar",
+								"harp",
+								"snare",
+								"trumpet",
+								"xylophone"
+							]
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"play_time": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [],
+					"properties": {
+						"type": {
+							"const": "play_time"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"receive_effect": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"effect"
+					],
+					"properties": {
+						"type": {
+							"const": "receive_effect"
+						},
+						"effect": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"ride_distance": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"vehicle"
+					],
+					"properties": {
+						"type": {
+							"const": "ride_distance"
+						},
+						"vehicle": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"simple_event": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"event",
+						"progressLabel",
+						"progressUnit"
+					],
+					"properties": {
+						"type": {
+							"const": "simple_event"
+						},
+						"event": {
+							"enum": [
+								"brush_armadillo",
+								"customize_banner",
+								"defeat_raid",
+								"eye_contact_enderman",
+								"fill_bookshelf",
+								"fill_flower_pot",
+								"hang_painting",
+								"ignite_creeper",
+								"jump_slime_block",
+								"kick_sulfur_cube",
+								"light_candle",
+								"light_tnt",
+								"milk_cow",
+								"modify_item_frame",
+								"play_music_disc",
+								"read_new_joke",
+								"reflect_ghast_fireball",
+								"rename_tool",
+								"ring_bell",
+								"shear_sheep"
+							]
+						},
+						"progressLabel": {
+							"type": "string",
+							"minLength": 1
+						},
+						"progressUnit": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"take_damage_type": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"damageType"
+					],
+					"properties": {
+						"type": {
+							"const": "take_damage_type"
+						},
+						"damageType": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"take_damage_entity": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"entity"
+					],
+					"properties": {
+						"type": {
+							"const": "take_damage_entity"
+						},
+						"entity": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"use_charm": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"charm"
+					],
+					"properties": {
+						"type": {
+							"const": "use_charm"
+						},
+						"charm": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"use_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"item"
+					],
+					"properties": {
+						"type": {
+							"const": "use_item"
+						},
+						"item": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"villager_trade": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"tradeMode"
+					],
+					"properties": {
+						"type": {
+							"const": "villager_trade"
+						},
+						"tradeMode": {
+							"enum": [
+								"receive_emeralds",
+								"spend_emeralds",
+								"wandering_trader"
+							]
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"villager_trade_item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"tradeMode",
+						"target"
+					],
+					"properties": {
+						"type": {
+							"const": "villager_trade_item"
+						},
+						"tradeMode": {
+							"enum": [
+								"give_item",
+								"receive_item"
+							]
+						},
+						"target": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"villager_trade_profession": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"tradeMode",
+						"profession"
+					],
+					"properties": {
+						"type": {
+							"const": "villager_trade_profession"
+						},
+						"tradeMode": {
+							"const": "profession"
+						},
+						"profession": {
+							"type": "string",
+							"pattern": "^[a-z0-9_.-]+:[a-z0-9/._-]+$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		}
+	}
+}

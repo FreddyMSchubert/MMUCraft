@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:zombie_nautilus",
+	"nether": false,
+	"end": false,
+	"baseCost": 9,
+	"rewardPerIteration": 0.01,
+	"minimum": 100,
+	"maximum": 300,
+	"emoji": "🧟",
+	"name": "Ride a Zombie Nautilus",
+	"description": "Ride a zombie nautilus for {count} blocks. Undead public transport. Sure."
+}

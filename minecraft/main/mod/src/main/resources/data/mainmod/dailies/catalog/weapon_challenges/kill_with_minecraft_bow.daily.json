@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "minecraft:bow",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.9,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🏹",
+	"name": "Bow Kills",
+	"description": "Defeat {count} mobs with a bow."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:ghast",
+	"nether": true,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1.25,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "👻",
+	"name": "Hunt Ghasts",
+	"description": "Defeat {count} ghasts."
+}

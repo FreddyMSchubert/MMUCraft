@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:copper_horse_armor",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 2,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🐴",
+	"name": "Submit Copper Horse Armor",
+	"description": "Submit {count} copper horse armour. Have the items in your inventory when you click Claim."
+}

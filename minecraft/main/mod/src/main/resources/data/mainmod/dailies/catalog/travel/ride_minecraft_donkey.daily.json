@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:donkey",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.0125,
+	"minimum": 200,
+	"maximum": 600,
+	"emoji": "🫏",
+	"name": "Ride a Donkey",
+	"description": "Ride a donkey for {count} blocks. Chest optional. Stubbornness included."
+}

@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:rotten_flesh",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.125,
+	"minimum": 20,
+	"maximum": 40,
+	"emoji": "🧟",
+	"name": "Sell Rotten Flesh",
+	"description": "Give villagers {count} rotten flesh. Clerics will buy anything."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:nether_wart",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.25,
+	"minimum": 5,
+	"maximum": 20,
+	"emoji": "🔴",
+	"name": "Plant Nether Wart",
+	"description": "Plant {count} nether wart. A fortress supplies the first wart. After that, it is farming."
+}

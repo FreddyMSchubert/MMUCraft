@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:brain_coral",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.5,
+	"minimum": 3,
+	"maximum": 8,
+	"emoji": "🧠",
+	"name": "Submit Brain Coral",
+	"description": "Submit {count} brain coral. Dead coral does not count. Have the items in your inventory when you click Claim."
+}

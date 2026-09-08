@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:turtle_scute",
+	"nether": false,
+	"end": false,
+	"baseCost": 7,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 4,
+	"emoji": "🐢",
+	"name": "Submit Turtle Scutes",
+	"description": "Submit {count} turtle scutes. Have the items in your inventory when you click Claim."
+}

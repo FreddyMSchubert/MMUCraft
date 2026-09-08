@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:echo_shard",
+	"nether": false,
+	"end": false,
+	"baseCost": 7,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "📡",
+	"name": "Submit Echo Shards",
+	"description": "Submit {count} echo shards from the deep dark. Deep Dark tax. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "receive_item",
+	"target": "minecraft:lantern",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🏮",
+	"name": "Buy Lanterns",
+	"description": "Receive {count} lanterns from villagers."
+}

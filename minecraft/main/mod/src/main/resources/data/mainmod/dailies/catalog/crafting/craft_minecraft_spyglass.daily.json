@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:spyglass",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🔭",
+	"name": "Craft Spyglasses",
+	"description": "Craft {count} spyglasses. Hand them out before an expedition."
+}

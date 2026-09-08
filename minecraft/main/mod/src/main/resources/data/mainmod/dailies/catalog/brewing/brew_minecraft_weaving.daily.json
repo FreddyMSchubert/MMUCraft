@@ -1,0 +1,13 @@
+{
+	"type": "brew_potion",
+	"potion": "minecraft:weaving",
+	"nether": true,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🕸️",
+	"name": "Brew Weaving",
+	"description": "Brew {count} potions of Weaving. Cobweb production has become needlessly complicated."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:open_eyeblossom",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 0.3,
+	"minimum": 4,
+	"maximum": 10,
+	"emoji": "👁️",
+	"name": "Submit Open Eyeblossoms",
+	"description": "Submit {count} open eyeblossoms. Check the time. Closed ones do not count. Have the items in your inventory when you click Claim."
+}

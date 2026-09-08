@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "deco-cookie-jar",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "🍪",
+	"name": "Submit Cookie Jars",
+	"description": "Submit {count} cookie jars. Have the items in your inventory when you click Claim."
+}

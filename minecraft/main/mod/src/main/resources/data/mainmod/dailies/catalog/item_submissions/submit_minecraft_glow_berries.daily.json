@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:glow_berries",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.2,
+	"minimum": 10,
+	"maximum": 20,
+	"emoji": "✨",
+	"name": "Submit Glow Berries",
+	"description": "Submit {count} glow berries. Have the items in your inventory when you click Claim."
+}

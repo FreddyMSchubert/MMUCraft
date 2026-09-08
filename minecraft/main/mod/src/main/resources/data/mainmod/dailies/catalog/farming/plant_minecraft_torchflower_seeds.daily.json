@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:torchflower_seeds",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🌼",
+	"name": "Plant Torchflowers",
+	"description": "Plant {count} torchflower seeds. The sniffer did the searching. You do the farming."
+}

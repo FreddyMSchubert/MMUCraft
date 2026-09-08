@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "soul",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 1.75,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "👻",
+	"name": "Submit Souls",
+	"description": "Submit {count} souls. Names and causes of death are included. Best not to dwell on that. Have the items in your inventory when you click Claim."
+}

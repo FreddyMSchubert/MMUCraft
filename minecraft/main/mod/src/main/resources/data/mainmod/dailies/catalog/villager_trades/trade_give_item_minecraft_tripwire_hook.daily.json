@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:tripwire_hook",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.5,
+	"minimum": 8,
+	"maximum": 16,
+	"emoji": "🪝",
+	"name": "Sell Tripwire Hooks",
+	"description": "Give villagers {count} tripwire hooks."
+}

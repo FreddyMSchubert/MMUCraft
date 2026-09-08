@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_type",
+	"damageType": "minecraft:wind_charge",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🌬️",
+	"name": "Get Hurt by a Wind Charge",
+	"description": "Take damage from a wind charge without dying."
+}

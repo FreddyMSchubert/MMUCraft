@@ -1,0 +1,13 @@
+{
+	"type": "receive_effect",
+	"effect": "minecraft:oozing",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🟢",
+	"name": "Get Oozing",
+	"description": "Get Oozing. Find out how many slimes one player can contain."
+}

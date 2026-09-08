@@ -1,0 +1,13 @@
+{
+	"type": "brew_potion",
+	"potion": "minecraft:oozing",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🟢",
+	"name": "Brew Oozing",
+	"description": "Brew {count} potions of Oozing. One mob goes in. Several slimes come out."
+}

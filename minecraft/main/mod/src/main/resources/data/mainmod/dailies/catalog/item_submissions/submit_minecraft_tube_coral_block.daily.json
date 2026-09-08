@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:tube_coral_block",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🪸",
+	"name": "Submit Tube Coral Blocks",
+	"description": "Submit {count} living tube coral blocks. Dead coral does not count. Have the items in your inventory when you click Claim."
+}

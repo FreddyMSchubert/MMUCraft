@@ -1,0 +1,13 @@
+{
+	"type": "submit_ominous_banner",
+	"item": "minecraft:white_banner",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🏴",
+	"name": "Submit an Ominous Banner",
+	"description": "Submit one ominous banner. The captain will not need it anymore. Have the items in your inventory when you click Claim."
+}

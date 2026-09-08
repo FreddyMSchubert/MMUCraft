@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:copper_torch",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 40,
+	"emoji": "🟢",
+	"name": "Submit Copper Torches",
+	"description": "Submit {count} copper torches. Have the items in your inventory when you click Claim."
+}

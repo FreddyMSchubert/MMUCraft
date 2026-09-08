@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:camel_husk",
+	"nether": false,
+	"end": false,
+	"baseCost": 8,
+	"rewardPerIteration": 0.015,
+	"minimum": 100,
+	"maximum": 300,
+	"emoji": "🏜️",
+	"name": "Ride a Camel Husk",
+	"description": "Ride a camel husk for {count} blocks."
+}

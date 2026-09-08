@@ -1,0 +1,13 @@
+{
+	"type": "plant_crop",
+	"seed": "minecraft:pitcher_pod",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🪻",
+	"name": "Plant Pitcher Pods",
+	"description": "Plant {count} pitcher pods. Another seed the sniffer refuses to plant itself."
+}

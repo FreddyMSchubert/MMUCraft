@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:red_sandstone_stairs",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.1,
+	"minimum": 20,
+	"maximum": 40,
+	"emoji": "🪜",
+	"name": "Submit Red Sandstone Stairs",
+	"description": "Submit {count} red sandstone stairs. Have the items in your inventory when you click Claim."
+}

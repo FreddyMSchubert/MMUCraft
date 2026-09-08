@@ -1,0 +1,13 @@
+{
+	"type": "eat_item",
+	"item": "minecraft:rabbit_stew",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🐇",
+	"name": "Eat Rabbit Stew",
+	"description": "Eat {count} rabbit stew."
+}

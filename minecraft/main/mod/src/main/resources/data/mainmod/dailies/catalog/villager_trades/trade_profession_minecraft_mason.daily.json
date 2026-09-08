@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_profession",
+	"tradeMode": "profession",
+	"profession": "minecraft:mason",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🧱",
+	"name": "Trade with a Mason",
+	"description": "Complete {count} trades with a mason."
+}

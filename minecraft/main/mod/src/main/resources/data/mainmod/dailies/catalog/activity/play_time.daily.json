@@ -1,0 +1,12 @@
+{
+	"type": "play_time",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.15,
+	"minimum": 30,
+	"maximum": 60,
+	"emoji": "⏰",
+	"name": "Stay a While",
+	"description": "Play for {count} minutes today. Go bother somebody you have not seen in a while."
+}

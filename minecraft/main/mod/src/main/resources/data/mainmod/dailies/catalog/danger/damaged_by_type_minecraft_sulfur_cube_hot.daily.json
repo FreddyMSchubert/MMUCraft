@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_type",
+	"damageType": "minecraft:sulfur_cube_hot",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🟨",
+	"name": "Get Hurt by a Hot Sulfur Cube",
+	"description": "Take damage from a hot sulfur cube without dying."
+}

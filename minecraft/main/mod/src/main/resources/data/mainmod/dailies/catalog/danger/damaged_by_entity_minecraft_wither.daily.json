@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_entity",
+	"entity": "minecraft:wither",
+	"nether": true,
+	"end": false,
+	"baseCost": 12,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "☠️",
+	"name": "Get Hurt by the Wither",
+	"description": "Take damage from the Wither without dying. Wither damage after the fight does not care about victory."
+}

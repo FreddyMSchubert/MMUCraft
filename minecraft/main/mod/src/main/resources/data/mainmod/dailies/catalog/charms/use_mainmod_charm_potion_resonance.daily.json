@@ -1,0 +1,13 @@
+{
+	"type": "use_charm",
+	"charm": "mainmod:charm-potion-resonance",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "📡",
+	"name": "Use a Potion of Resonance",
+	"description": "Use a Potion of Resonance. Follow what it reveals. That is the point."
+}

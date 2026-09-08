@@ -1,0 +1,13 @@
+{
+	"type": "breed_entity",
+	"entity": "minecraft:sniffer",
+	"nether": false,
+	"end": false,
+	"baseCost": 15,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🐽",
+	"name": "Breed Sniffers",
+	"description": "Breed one sniffer. The egg was only the start of the grind."
+}

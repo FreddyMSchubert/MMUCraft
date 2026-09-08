@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:flint",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.15,
+	"minimum": 16,
+	"maximum": 32,
+	"emoji": "🪨",
+	"name": "Sell Flint",
+	"description": "Give villagers {count} flint. Fletchers are keeping gravel useful."
+}

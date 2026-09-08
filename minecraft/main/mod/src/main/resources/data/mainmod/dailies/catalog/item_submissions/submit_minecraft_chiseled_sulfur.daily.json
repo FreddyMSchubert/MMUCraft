@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:chiseled_sulfur",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🟡",
+	"name": "Submit Chiseled Sulfur",
+	"description": "Submit {count} chiseled sulfur. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "receive_effect",
+	"effect": "minecraft:water_breathing",
+	"nether": true,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🌊",
+	"name": "Get Water Breathing",
+	"description": "Get Water Breathing. Use the full duration for once."
+}

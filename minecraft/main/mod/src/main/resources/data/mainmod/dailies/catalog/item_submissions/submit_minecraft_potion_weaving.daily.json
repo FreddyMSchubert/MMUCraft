@@ -1,0 +1,14 @@
+{
+	"type": "submit_potion",
+	"item": "minecraft:potion",
+	"potion": "minecraft:weaving",
+	"nether": true,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 3,
+	"emoji": "🧪",
+	"name": "Submit Weaving Potions",
+	"description": "Submit {count} potions of weaving. Have the items in your inventory when you click Claim."
+}

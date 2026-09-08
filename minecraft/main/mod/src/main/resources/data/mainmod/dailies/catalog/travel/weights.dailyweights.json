@@ -1,0 +1,15 @@
+{
+	"ride_minecraft_minecart.daily.json": 7,
+	"ride_minecraft_pig.daily.json": 4,
+	"ride_minecraft_horse.daily.json": 4,
+	"ride_minecraft_donkey.daily.json": 3,
+	"ride_minecraft_llama.daily.json": 2,
+	"ride_minecraft_skeleton_horse.daily.json": 1,
+	"ride_minecraft_camel.daily.json": 4,
+	"ride_minecraft_camel_husk.daily.json": 2,
+	"ride_minecraft_nautilus.daily.json": 3,
+	"ride_minecraft_zombie_nautilus.daily.json": 3,
+	"ride_minecraft_oak_chest_boat.daily.json": 3,
+	"ride_minecraft_strider.daily.json": 4,
+	"ride_minecraft_happy_ghast.daily.json": 3
+}

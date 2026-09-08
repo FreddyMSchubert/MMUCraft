@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:vine",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.1,
+	"minimum": 20,
+	"maximum": 40,
+	"emoji": "🌿",
+	"name": "Submit Vines",
+	"description": "Submit {count} vines. Have the items in your inventory when you click Claim."
+}

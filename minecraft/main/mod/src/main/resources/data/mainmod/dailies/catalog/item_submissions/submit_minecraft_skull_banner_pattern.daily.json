@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:skull_banner_pattern",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "💀",
+	"name": "Submit a Skull Banner Pattern",
+	"description": "Submit one skull banner pattern. Have the items in your inventory when you click Claim."
+}

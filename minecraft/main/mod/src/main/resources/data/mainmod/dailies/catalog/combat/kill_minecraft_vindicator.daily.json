@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:vindicator",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🪓",
+	"name": "Hunt Vindicators",
+	"description": "Defeat {count} vindicators."
+}

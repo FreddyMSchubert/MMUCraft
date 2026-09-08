@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:spire_armor_trim_smithing_template",
+	"nether": false,
+	"end": true,
+	"baseCost": 7,
+	"rewardPerIteration": 7,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🏙️",
+	"name": "Submit Spire Trim",
+	"description": "Submit one spire trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."
+}

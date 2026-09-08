@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "minecraft:stick",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 4.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🪵",
+	"name": "Defeat a Mob with a Stick",
+	"description": "Defeat one mob with a stick. Frame the stick. It peaked today."
+}

@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "receive_item",
+	"target": "minecraft:filled_map",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🗺️",
+	"name": "Buy an Explorer Map",
+	"description": "Receive an explorer map from a villager."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "disc-droopy-likes-ricochet",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "💿",
+	"name": "Submit Droopy Likes Ricochet Disc",
+	"description": "Submit one Droopy Likes Ricochet disc. Have the items in your inventory when you click Claim."
+}

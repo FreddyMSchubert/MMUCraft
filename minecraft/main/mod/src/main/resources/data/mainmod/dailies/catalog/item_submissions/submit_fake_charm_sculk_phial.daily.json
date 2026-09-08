@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "charm-sculk-phial",
+	"nether": false,
+	"end": false,
+	"baseCost": 7,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🧪",
+	"name": "Submit an Empty Sculk Phial",
+	"description": "Submit one empty sculk phial. Filled phials do not count. Spend the XP first. Have the items in your inventory when you click Claim."
+}

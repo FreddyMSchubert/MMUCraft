@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:copper_golem_statue",
+	"nether": false,
+	"end": false,
+	"baseCost": 4,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 2,
+	"emoji": "🗿",
+	"name": "Submit Copper Golem Statues",
+	"description": "Submit {count} copper golem statues. Scrape them clean before handing them over. Have the items in your inventory when you click Claim."
+}

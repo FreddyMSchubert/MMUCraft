@@ -1,0 +1,13 @@
+{
+	"type": "receive_effect",
+	"effect": "minecraft:night_vision",
+	"nether": true,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "👁️",
+	"name": "Get Night Vision",
+	"description": "Get Night Vision. Go somewhere that was actually dark."
+}

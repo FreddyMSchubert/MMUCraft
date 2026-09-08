@@ -1,0 +1,14 @@
+{
+	"type": "villager_trade_item",
+	"tradeMode": "give_item",
+	"target": "minecraft:granite",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.125,
+	"minimum": 20,
+	"maximum": 40,
+	"emoji": "🧱",
+	"name": "Sell Granite",
+	"description": "Give villagers {count} granite."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:honeycomb",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.25,
+	"minimum": 8,
+	"maximum": 20,
+	"emoji": "🍯",
+	"name": "Submit Honeycomb",
+	"description": "Submit {count} honeycomb. Copper roofs do not wax themselves. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:waxed_weathered_chiseled_copper",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1,
+	"minimum": 2,
+	"maximum": 5,
+	"emoji": "🟩",
+	"name": "Submit Waxed Weathered Chiseled Copper",
+	"description": "Submit {count} waxed weathered chiseled copper blocks. Have the items in your inventory when you click Claim."
+}

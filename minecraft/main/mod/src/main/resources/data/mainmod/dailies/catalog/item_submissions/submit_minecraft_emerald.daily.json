@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:emerald",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.25,
+	"minimum": 24,
+	"maximum": 48,
+	"emoji": "💚",
+	"name": "Submit Emeralds",
+	"description": "Convert {count} emeralds into Dabloons. Villagers are about to get richer. Have the items in your inventory when you click Claim."
+}

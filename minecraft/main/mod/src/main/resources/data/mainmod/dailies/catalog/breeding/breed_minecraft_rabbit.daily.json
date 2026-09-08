@@ -1,0 +1,13 @@
+{
+	"type": "breed_entity",
+	"entity": "minecraft:rabbit",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 1.25,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🐇",
+	"name": "Breed Rabbits",
+	"description": "Breed {count} rabbits. Try not to finish with two hundred."
+}

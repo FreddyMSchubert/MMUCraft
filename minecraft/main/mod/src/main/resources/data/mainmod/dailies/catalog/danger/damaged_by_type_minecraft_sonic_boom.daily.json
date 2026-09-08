@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_type",
+	"damageType": "minecraft:sonic_boom",
+	"nether": false,
+	"end": false,
+	"baseCost": 8,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "📡",
+	"name": "Get Hurt by a Sonic Boom",
+	"description": "Take damage from a sonic boom without dying. Armour helps less than you hope."
+}

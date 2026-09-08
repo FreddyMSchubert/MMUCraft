@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:waxed_copper_golem_statue",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 2.25,
+	"minimum": 1,
+	"maximum": 2,
+	"emoji": "🗿",
+	"name": "Submit Waxed Copper Golem Statues",
+	"description": "Submit {count} waxed copper golem statues. Scrape them clean, then lock the shine in with honeycomb. Have the items in your inventory when you click Claim."
+}

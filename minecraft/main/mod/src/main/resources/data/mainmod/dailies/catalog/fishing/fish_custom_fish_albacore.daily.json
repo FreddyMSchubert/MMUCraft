@@ -1,0 +1,13 @@
+{
+	"type": "fish_fake_item",
+	"fakeItem": "fish-albacore",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🎣",
+	"name": "Catch Albacore",
+	"description": "Catch one albacore."
+}

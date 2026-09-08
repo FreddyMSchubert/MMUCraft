@@ -5,6 +5,18 @@
 				"**/item.json"
 			],
 			"url": "./minecraft/main/data/validation/schemas/item/item.schema.json"
+		},
+		{
+			"fileMatch": [
+				"**/*.daily.json"
+			],
+			"url": "./minecraft/main/data/validation/schemas/dailies/daily.schema.json"
+		},
+		{
+			"fileMatch": [
+				"**/*.dailyweights.json"
+			],
+			"url": "./minecraft/main/data/validation/schemas/dailies/dailyweights.schema.json"
 		}
 	]
 }

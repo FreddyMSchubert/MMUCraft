@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:chiseled_red_sandstone",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.125,
+	"minimum": 16,
+	"maximum": 32,
+	"emoji": "🧱",
+	"name": "Submit Chiseled Red Sandstone",
+	"description": "Submit {count} chiseled red sandstone. Have the items in your inventory when you click Claim."
+}

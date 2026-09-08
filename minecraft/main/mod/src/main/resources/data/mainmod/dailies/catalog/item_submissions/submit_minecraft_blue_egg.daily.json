@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:blue_egg",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.5,
+	"minimum": 3,
+	"maximum": 5,
+	"emoji": "🔵",
+	"name": "Submit Blue Eggs",
+	"description": "Submit {count} blue eggs. The shell colour matters. White eggs do not count. Have the items in your inventory when you click Claim."
+}

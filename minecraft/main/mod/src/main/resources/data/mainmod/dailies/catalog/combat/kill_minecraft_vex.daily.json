@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:vex",
+	"nether": false,
+	"end": false,
+	"baseCost": 6,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 4,
+	"emoji": "🪽",
+	"name": "Hunt Vexes",
+	"description": "Defeat {count} vexes. Good luck. Genuinely."
+}

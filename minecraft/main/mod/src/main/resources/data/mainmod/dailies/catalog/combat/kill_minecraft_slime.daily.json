@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:slime",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.35,
+	"minimum": 5,
+	"maximum": 15,
+	"emoji": "🟩",
+	"name": "Hunt Slimes",
+	"description": "Defeat {count} slimes. The small ones count too. Enjoy the multiplication."
+}

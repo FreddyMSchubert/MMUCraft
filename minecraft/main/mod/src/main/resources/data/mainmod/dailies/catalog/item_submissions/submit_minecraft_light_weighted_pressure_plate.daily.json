@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:light_weighted_pressure_plate",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.75,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🟨",
+	"name": "Submit Light Weighted Pressure Plates",
+	"description": "Submit {count} light weighted pressure plates. Have the items in your inventory when you click Claim."
+}

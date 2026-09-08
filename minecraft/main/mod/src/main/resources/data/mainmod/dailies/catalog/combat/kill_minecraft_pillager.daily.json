@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:pillager",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 4,
+	"maximum": 10,
+	"emoji": "🏴",
+	"name": "Hunt Pillagers",
+	"description": "Defeat {count} pillagers."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "submit_fake_item",
+	"fakeItem": "disc-droopy-likes-your-face",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "💿",
+	"name": "Submit Droopy Likes Your Face Disc",
+	"description": "Submit one Droopy Likes Your Face disc. Have the items in your inventory when you click Claim."
+}

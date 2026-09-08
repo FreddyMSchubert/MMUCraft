@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:comparator",
+	"nether": true,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.75,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🔴",
+	"name": "Craft Comparators",
+	"description": "Craft {count} comparators. Sorting systems eventually eat all of these."
+}

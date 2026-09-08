@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:hoglin",
+	"nether": true,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 3,
+	"maximum": 7,
+	"emoji": "🐗",
+	"name": "Hunt Hoglins",
+	"description": "Defeat {count} hoglins."
+}

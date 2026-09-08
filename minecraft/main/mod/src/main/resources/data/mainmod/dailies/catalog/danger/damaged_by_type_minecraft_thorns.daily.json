@@ -1,0 +1,13 @@
+{
+	"type": "take_damage_type",
+	"damageType": "minecraft:thorns",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🌹",
+	"name": "Get Hurt by the Thorns enchantment",
+	"description": "Take damage from Thorns without dying."
+}

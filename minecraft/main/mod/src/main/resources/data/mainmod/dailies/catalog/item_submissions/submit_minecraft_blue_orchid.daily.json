@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:blue_orchid",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🪻",
+	"name": "Submit Blue Orchids",
+	"description": "Submit {count} blue orchids. Enjoy the swamp trip. Have the items in your inventory when you click Claim."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "craft_item",
+	"item": "minecraft:observer",
+	"nether": true,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.25,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "👁️",
+	"name": "Craft Observers",
+	"description": "Craft {count} observers. Every farm starts with one observer facing the wrong way."
+}

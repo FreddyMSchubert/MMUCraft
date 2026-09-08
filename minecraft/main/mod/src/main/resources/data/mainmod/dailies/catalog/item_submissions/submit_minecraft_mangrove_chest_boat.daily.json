@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:mangrove_chest_boat",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 2,
+	"minimum": 2,
+	"maximum": 3,
+	"emoji": "🛶",
+	"name": "Submit Mangrove Chest Boats",
+	"description": "Submit {count} mangrove chest boats. Have the items in your inventory when you click Claim."
+}

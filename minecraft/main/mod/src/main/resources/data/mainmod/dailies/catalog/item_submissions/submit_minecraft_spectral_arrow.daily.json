@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:spectral_arrow",
+	"nether": true,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.25,
+	"minimum": 12,
+	"maximum": 24,
+	"emoji": "🏹",
+	"name": "Submit Spectral Arrows",
+	"description": "Submit {count} spectral arrows. Have the items in your inventory when you click Claim."
+}

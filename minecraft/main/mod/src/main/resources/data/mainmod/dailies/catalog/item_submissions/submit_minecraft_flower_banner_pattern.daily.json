@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:flower_banner_pattern",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🌼",
+	"name": "Submit Flower Banner Patterns",
+	"description": "Submit {count} flower banner patterns. Have the items in your inventory when you click Claim."
+}

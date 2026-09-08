@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:music_disc_ward",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 5,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🛡️",
+	"name": "Submit Music Disc Ward",
+	"description": "Submit one Music Disc Ward. Have the items in your inventory when you click Claim."
+}

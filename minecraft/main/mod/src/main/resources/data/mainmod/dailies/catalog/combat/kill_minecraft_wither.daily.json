@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:wither",
+	"nether": true,
+	"end": false,
+	"baseCost": 15,
+	"rewardPerIteration": 10,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "💀",
+	"name": "Defeat the Wither",
+	"description": "Defeat the Wither. The Nether Star is not part of the submission."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "brew_potion",
+	"potion": "minecraft:turtle_master",
+	"nether": true,
+	"end": false,
+	"baseCost": 8,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 2,
+	"emoji": "🐢",
+	"name": "Brew the Turtle Master",
+	"description": "Brew {count} potions of the Turtle Master. Slow, tough, and expensive. Accurate name."
+}

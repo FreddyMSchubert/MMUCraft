@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:dead_bush",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.4,
+	"minimum": 4,
+	"maximum": 10,
+	"emoji": "🌵",
+	"name": "Submit Dead Bushes",
+	"description": "Submit {count} dead bushes. The least alive block in Minecraft finally has a buyer. Have the items in your inventory when you click Claim."
+}

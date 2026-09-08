@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:sniffer_egg",
+	"nether": false,
+	"end": false,
+	"baseCost": 10,
+	"rewardPerIteration": 7,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🥚",
+	"name": "Submit a Sniffer Egg",
+	"description": "Submit one sniffer egg. The sniffer economy claims another victim. Have the items in your inventory when you click Claim."
+}

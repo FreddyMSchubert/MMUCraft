@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { and, eq, gte, or } from 'drizzle-orm';
+import { and, eq, gte, lt, or } from 'drizzle-orm';
 import {
 	DatabaseService,
 	dailyAdvancementTargets,
@@ -94,6 +94,23 @@ export class DailyTaskStorageService {
 			.all()
 			.sort((left, right) => left.slot - right.slot)
 			.map((row) => parseDailyTaskJson(row.task_json));
+	}
+
+	recentTaskIds(userId: number, periodKey: string, lookbackDays: number) {
+		const firstPeriod = new Date(`${periodKey}T00:00:00Z`);
+		firstPeriod.setUTCDate(firstPeriod.getUTCDate() - lookbackDays);
+		return this.database.connection
+			.selectDistinct({ taskId: dailyTasks.task_id })
+			.from(dailyTasks)
+			.where(
+				and(
+					eq(dailyTasks.user_id, userId),
+					gte(dailyTasks.period_key, firstPeriod.toISOString().slice(0, 10)),
+					lt(dailyTasks.period_key, periodKey),
+				),
+			)
+			.all()
+			.map((task) => task.taskId);
 	}
 
 	storeTaskUpdate(userId: number, periodKey: string, taskJson: string, unixMs: number) {

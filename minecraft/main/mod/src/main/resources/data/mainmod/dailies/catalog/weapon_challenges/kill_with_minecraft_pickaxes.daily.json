@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "#minecraft:pickaxes",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 1.4,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "⛏️",
+	"name": "Pickaxe Kills",
+	"description": "Defeat {count} mobs with a pickaxe."
+}

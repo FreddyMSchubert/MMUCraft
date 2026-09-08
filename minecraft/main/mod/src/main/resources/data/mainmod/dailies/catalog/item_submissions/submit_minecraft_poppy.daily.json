@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:poppy",
+	"nether": false,
+	"end": false,
+	"baseCost": 0,
+	"rewardPerIteration": 0.125,
+	"minimum": 24,
+	"maximum": 32,
+	"emoji": "🌹",
+	"name": "Submit Poppies",
+	"description": "Submit {count} poppies. Have the items in your inventory when you click Claim."
+}

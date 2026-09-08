@@ -1,0 +1,13 @@
+{
+	"type": "receive_effect",
+	"effect": "minecraft:conduit_power",
+	"nether": false,
+	"end": false,
+	"baseCost": 9,
+	"rewardPerIteration": 3,
+	"minimum": 1,
+	"maximum": 1,
+	"emoji": "🔱",
+	"name": "Get Conduit Power",
+	"description": "Get Conduit Power. Eight shells and a Heart of the Sea should buy more than bubbles."
+}

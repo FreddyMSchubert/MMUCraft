@@ -1,0 +1,13 @@
+{
+	"type": "use_item",
+	"item": "minecraft:wind_charge",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 8,
+	"emoji": "💨",
+	"name": "Use Wind Charges",
+	"description": "Use {count} wind charges. Misfires still count."
+}

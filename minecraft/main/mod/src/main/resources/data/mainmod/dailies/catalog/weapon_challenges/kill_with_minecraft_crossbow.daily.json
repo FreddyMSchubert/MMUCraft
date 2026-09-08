@@ -1,0 +1,13 @@
+{
+	"type": "kill_with_item",
+	"item": "minecraft:crossbow",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 0.9,
+	"minimum": 4,
+	"maximum": 8,
+	"emoji": "🎯",
+	"name": "Crossbow Kills",
+	"description": "Defeat {count} mobs with a crossbow. Multishot looks cooler. That is reason enough."
+}

@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:witch",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 1.5,
+	"minimum": 1,
+	"maximum": 4,
+	"emoji": "🧙",
+	"name": "Hunt Witches",
+	"description": "Defeat {count} witches."
+}

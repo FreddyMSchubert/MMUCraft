@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:amethyst_shard",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.125,
+	"minimum": 16,
+	"maximum": 40,
+	"emoji": "💎",
+	"name": "Submit Amethyst Shards",
+	"description": "Submit {count} amethyst shards. The geode will grow more. Have the items in your inventory when you click Claim."
+}

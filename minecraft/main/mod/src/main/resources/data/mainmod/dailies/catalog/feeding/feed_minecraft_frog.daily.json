@@ -1,0 +1,13 @@
+{
+	"type": "feed_entity",
+	"entity": "minecraft:frog",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.75,
+	"minimum": 2,
+	"maximum": 6,
+	"emoji": "🐸",
+	"name": "Feed Frogs",
+	"description": "Feed {count} frogs. The slimeball disappears alarmingly fast."
+}

@@ -44,6 +44,7 @@ public final class PlayerStatsSync {
     private static final long STAGGER_WINDOW_TICKS = 5L * 60L * 20L;
     private static final long SYNC_RETRY_TICKS = 5L * 20L;
     private static final String PROFILE_OBJECTIVE = "mmu_profile";
+    private static final String PING_OBJECTIVE = "mmu_ping";
     private static final Map<UUID, Long> nextSyncTickByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, CompletableFuture<SyncPlayerStatsResponse>> activeSyncByPlayer = new ConcurrentHashMap<>();
     private static final Set<UUID> joinRefreshPending = ConcurrentHashMap.newKeySet();
@@ -95,6 +96,7 @@ public final class PlayerStatsSync {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (serverTicks % 20L == 0L) {
                 updateBelowName(player);
+                updatePlayerListPing(player);
             }
 
             UUID playerId = player.getUUID();
@@ -386,6 +388,29 @@ public final class PlayerStatsSync {
         ScoreAccess score = scoreboard.getOrCreatePlayerScore(player, objective);
         score.set(0);
         score.numberFormatOverride(new FixedFormat(Component.literal(text)));
+    }
+
+    private static void updatePlayerListPing(ServerPlayer player) {
+        ServerScoreboard scoreboard = player.level().getServer().getScoreboard();
+        Objective objective = scoreboard.getObjective(PING_OBJECTIVE);
+        if (objective == null) {
+            objective = scoreboard.addObjective(
+                    PING_OBJECTIVE,
+                    ObjectiveCriteria.DUMMY,
+                    Component.literal("Ping"),
+                    ObjectiveCriteria.RenderType.INTEGER,
+                    false,
+                    null
+            );
+        }
+        if (scoreboard.getDisplayObjective(DisplaySlot.LIST) != objective) {
+            scoreboard.setDisplayObjective(DisplaySlot.LIST, objective);
+        }
+
+        int latency = player.connection.latency();
+        ScoreAccess score = scoreboard.getOrCreatePlayerScore(player, objective);
+        score.set(latency);
+        score.numberFormatOverride(new FixedFormat(Component.literal(latency + " ms")));
     }
 
     private static void refreshAdvancementTooltips(ServerPlayer player) {

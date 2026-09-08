@@ -544,10 +544,10 @@ final class DailyTaskCatalog {
             )),
             // World interactions
             weighted(15, List.of(
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.SHEAR_SHEEP, "Sheared", "sheep"), 2, 0.4D, 8, 16, "🐑", "Shear Sheep", "Shear {count} sheep. They grow it back. Your conscience is clear."),
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.IGNITE_CREEPER, "Ignited", "creepers"), 1, 1.5D, 3, 6, "🧨", "Ignite Creepers", "Ignite {count} creepers. Flint and steel. Standing nearby is optional."),
-                    option(3, true, false, new SimpleEventTask(DailySimpleEvent.REFLECT_GHAST_FIREBALL, "Reflected", "fireball"), 3, 3, 1, 1, "🔥", "Return to Sender", "Reflect a ghast fireball. A shield will not send it back. Hit it."),
-                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.JUMP_SLIME_BLOCK, "Bounced", "times"), 2, 0.1D, 30, 50, "🟩", "Bounce on Slime Blocks", "Bounce on a slime block {count} times. Landing on the same block repeatedly is finally productive."),
+                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.SHEAR_SHEEP, "Sheared", "sheep"), 2, 0.4D, 2, 16, "🐑", "Shear Sheep", "Shear {count} sheep. They grow it back. Your conscience is clear."),
+                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.IGNITE_CREEPER, "Ignited", "creepers"), 1, 1.5D, 2, 6, "🧨", "Please stand back.", "Ignite {count} creepers. FLINT AND STEEEELLLL."),
+                    option(3, true, false, new SimpleEventTask(DailySimpleEvent.REFLECT_GHAST_FIREBALL, "Reflected", "fireball"), 4, 2, 1, 3, "🔥", "Return to Sender", "Reflect {count} ghast fireballs."),
+                    option(4, false, false, new SimpleEventTask(DailySimpleEvent.JUMP_SLIME_BLOCK, "Bounced", "times"), 5, 0.1D, 5, 42, "🟩", "Trampoline Time!", "Bounce on a slime block {count} times."),
                     option(3, false, false, new SimpleEventTask(DailySimpleEvent.DEFEAT_RAID, "Defeated", "raid"), 10, 12, 1, 1, "🏰", "Defeat a Raid", "Help a village survive a raid. The village gets to keep the Hero."),
                     option(3, false, false, new SimpleEventTask(DailySimpleEvent.LIGHT_TNT, "Lit", "TNT"), 0, 2.3D, 2, 5, "💥", "Light TNT", "Light {count} TNT with flint and steel. Point it away from anything with a name."),
                     option(3, false, false, new SimpleEventTask(DailySimpleEvent.RENAME_TOOL, "Renamed", "tool"), 2, 1, 1, 1, "🏷️", "Name a Tool", "Give one of your tools a nice name."),
@@ -555,7 +555,7 @@ final class DailyTaskCatalog {
                     option(3, false, false, new SimpleEventTask(DailySimpleEvent.MILK_COW, "Milked", "cows"), 1, 0.3D, 8, 16, "🥛", "Milk Cows", "Milk {count} cows."),
                     option(3, false, false, new SimpleEventTask(DailySimpleEvent.BRUSH_ARMADILLO, "Brushed", "armadillos"), 3, 0.5D, 4, 12, "🪥", "Brush Armadillos", "Brush {count} armadillos. The scutes are yours. The armadillo keeps its pride."),
                     option(3, false, false, new SimpleEventTask(DailySimpleEvent.PLAY_MUSIC_DISC, "Played", "discs"), 3, 0.25D, 4, 12, "💿", "Play Music Discs", "Play {count} music discs."),
-                    option(5, false, false, new SimpleEventTask(DailySimpleEvent.RING_BELL, "Rang", "times"), 0, 0.15D, 20, 40, "🔔", "Ring a Bell", "Ring a bell {count} times. This is not an emergency. It will sound like one."),
+                    option(3, false, false, new SimpleEventTask(DailySimpleEvent.RING_BELL, "Rang", "times"), 0, 0.15D, 20, 40, "🔔", "Ring a Bell", "Ring a bell {count} times. This is not an emergency. It will sound like one."),
                     option(4, false, false, new SimpleEventTask(DailySimpleEvent.FILL_FLOWER_POT, "Potted", "flowers"), 1, 0.5D, 6, 10, "🌷", "Pot Flowers", "Put {count} flowers in flower pots."),
                     option(4, false, false, new SimpleEventTask(DailySimpleEvent.HANG_PAINTING, "Hung", "paintings"), 1, 0.75D, 3, 5, "🖼️", "Hang Paintings", "Hang {count} paintings."),
                     option(4, false, false, new SimpleEventTask(DailySimpleEvent.FILL_BOOKSHELF, "Stored", "books"), 2, 0.3D, 8, 16, "📚", "Fill a Chiseled Bookshelf", "Put {count} books in chiseled bookshelves."),
@@ -699,10 +699,6 @@ final class DailyTaskCatalog {
                     option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.DIDGERIDOO), 1, 0.05D, 40, 80, "🎶", "Didgeridoo Notes", "Play {count} didgeridoo notes. One note is traditional, so you are in luck."),
                     option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.BANJO), 1, 0.05D, 40, 80, "🪕", "Banjo Notes", "Play {count} banjo notes. The server has entered its country phase."),
                     option(2, false, false, new PlayNoteBlockTask(NoteBlockInstrument.TRUMPET), 2, 0.05D, 40, 80, "🎺", "Copper Trumpet Notes", "Play {count} copper-trumpet notes. Wake spawn up.")
-            )),
-            // Blocks
-            weighted(2, List.of(
-                    option(3, false, false, new UseBlockTask(Blocks.FLETCHING_TABLE), 0, 0.1D, 30, 42, "🏹", "Investigate a Fletching Table", "Right-click a fletching table {count} times. Surely click forty-two will reveal its purpose.")
             )),
             // Crafting
             weighted(6, List.of(

@@ -1,18 +1,14 @@
 {
-  "type": "mainmod:fake_crafting_shaped",
-  "gameplayToggle": "soaring",
-  "pattern": [
-    "LLL",
-    "MMM",
-    "S S"
-  ],
-  "key": {
-    "L": "minecraft:leather",
-    "M": "minecraft:phantom_membrane",
-    "S": "minecraft:stick"
-  },
-  "result": {
-    "stack": "mainmod:charm-glider",
-    "count": 1
-  }
+	"type": "mainmod:fake_crafting_shaped",
+	"gameplayToggle": "soaring",
+	"pattern": ["LLL", "MMM", "S S"],
+	"key": {
+		"L": "minecraft:leather",
+		"M": "minecraft:phantom_membrane",
+		"S": "minecraft:stick"
+	},
+	"result": {
+		"stack": "mainmod:charm-glider[minecraft:equippable={slot:'chest',equip_sound:'minecraft:item.armor.equip_elytra',asset_id:'mmu_pack:glider'}]",
+		"count": 1
+	}
 }

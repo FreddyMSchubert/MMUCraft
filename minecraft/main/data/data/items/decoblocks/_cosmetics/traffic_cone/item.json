@@ -1,6 +1,6 @@
 {
 	"title": "Traffic Cone Hat",
-	"id": "deco-traffic-cone",
+	"id": "cosmetic-traffic-cone",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

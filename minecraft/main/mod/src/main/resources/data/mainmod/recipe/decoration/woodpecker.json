@@ -12,7 +12,7 @@
     "W": "minecraft:white_dye"
   },
   "result": {
-    "stack": "mainmod:deco-woodpecker",
+    "stack": "mainmod:cosmetic-woodpecker",
     "count": 1
   }
 }

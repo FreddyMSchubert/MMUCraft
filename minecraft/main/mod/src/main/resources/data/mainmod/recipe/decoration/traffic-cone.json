@@ -10,7 +10,7 @@
     "W": "minecraft:white_wool"
   },
   "result": {
-    "stack": "mainmod:deco-traffic-cone",
+    "stack": "mainmod:cosmetic-traffic-cone",
     "count": 1
   }
 }

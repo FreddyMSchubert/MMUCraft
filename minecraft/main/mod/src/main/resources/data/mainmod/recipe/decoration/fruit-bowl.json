@@ -10,7 +10,7 @@
     "minecraft:sweet_berries"
   ],
   "result": {
-    "stack": "mainmod:fruit-bowl",
+    "stack": "mainmod:deco-fruit-bowl",
     "count": 1
   }
 }

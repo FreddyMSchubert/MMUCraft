@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " O ",
+    " W ",
+    " O "
+  ],
+  "key": {
+    "O": "minecraft:orange_wool",
+    "W": "minecraft:white_wool"
+  },
+  "result": {
+    "stack": "mainmod:deco-traffic-cone",
+    "count": 1
+  }
+}

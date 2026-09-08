@@ -1,6 +1,6 @@
 {
 	"title": "Kettle",
-	"id": "kettle",
+	"id": "deco-kettle",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,

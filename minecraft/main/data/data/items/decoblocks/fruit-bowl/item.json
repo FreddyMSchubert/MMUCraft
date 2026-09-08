@@ -1,6 +1,6 @@
 {
 	"title": "Fruit Bowl",
-	"id": "fruit-bowl",
+	"id": "deco-fruit-bowl",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,

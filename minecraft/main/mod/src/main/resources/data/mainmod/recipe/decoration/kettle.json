@@ -9,7 +9,7 @@
     "N": "minecraft:copper_nugget"
   },
   "result": {
-    "stack": "mainmod:kettle",
+    "stack": "mainmod:deco-kettle",
     "count": 1
   }
 }

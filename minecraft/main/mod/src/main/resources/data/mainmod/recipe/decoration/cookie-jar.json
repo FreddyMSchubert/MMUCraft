@@ -5,7 +5,7 @@
     "minecraft:glass_bottle"
   ],
   "result": {
-    "stack": "mainmod:cookie-jar",
+    "stack": "mainmod:deco-cookie-jar",
     "count": 1
   }
 }

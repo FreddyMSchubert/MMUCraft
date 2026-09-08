@@ -96,7 +96,12 @@ export class AnnouncementsService {
 				.all()
 				.map(({ id }) => id),
 		);
-		return { announcements: rows.filter(({ id }) => !readIds.has(id)).map(toGrpcAnnouncement) };
+		return {
+			announcements: rows
+				.filter(({ id }) => !readIds.has(id))
+				.slice(0, 1)
+				.map(toGrpcAnnouncement),
+		};
 	}
 
 	markRead(uuidInput: string, ids: number[]) {

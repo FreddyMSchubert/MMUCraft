@@ -5,7 +5,7 @@
     "minecraft:glass_bottle"
   ],
   "result": {
-    "stack": "mainmod:firefly-jar",
+    "stack": "mainmod:deco-firefly-jar",
     "count": 1
   }
 }

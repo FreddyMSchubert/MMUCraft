@@ -1,17 +1,18 @@
 {
   "type": "mainmod:fake_crafting_shaped",
   "pattern": [
-    " B ",
+    " R ",
     "FSF",
-    " B "
+    " W "
   ],
   "key": {
     "F": "minecraft:feather",
     "S": "mainmod:soul",
-    "B": "minecraft:black_dye"
+    "D": "minecraft:red_dye",
+    "W": "minecraft:white_dye"
   },
   "result": {
-    "stack": "mainmod:deco-crow",
+    "stack": "mainmod:deco-woodpecker",
     "count": 1
   }
 }

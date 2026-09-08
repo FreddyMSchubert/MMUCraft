@@ -11,7 +11,7 @@
     "H": "minecraft:hay_block"
   },
   "result": {
-    "stack": "mainmod:scarecrow",
+    "stack": "mainmod:deco-scarecrow",
     "count": 1
   }
 }

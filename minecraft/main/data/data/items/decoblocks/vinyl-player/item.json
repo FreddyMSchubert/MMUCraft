@@ -1,6 +1,6 @@
 {
 	"title": "Vinyl Player",
-	"id": "vinyl-player",
+	"id": "deco-vinyl-player",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,

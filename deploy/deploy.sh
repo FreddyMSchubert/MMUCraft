@@ -5,6 +5,7 @@ tag=${1:-}
 image_prefix=${2:-}
 warning_minutes=${3:-3}
 force=${4:-false}
+target=${5:-}
 notify_update_complete=false
 update_started=false
 shutdown_attempted=false
@@ -29,6 +30,11 @@ esac
 case "$force" in
 	true|false) ;;
 	*) echo "Force must be true or false" >&2; exit 2 ;;
+esac
+case "$target" in
+	dev) compose_file=compose.yaml:compose.dev.yaml ;;
+	production) compose_file=compose.yaml:compose.prod.yaml ;;
+	*) echo "Target must be dev or production" >&2; exit 2 ;;
 esac
 
 if [ ! -f .env ]; then
@@ -68,7 +74,7 @@ esac
 
 # Prepare release configuration and persistent data.
 umask 077
-printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\n' "$image_prefix" "$tag" "$public_host" > .release.env
+printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\nCOMPOSE_FILE=%s\n' "$image_prefix" "$tag" "$public_host" "$compose_file" > .release.env
 mkdir -p data/api data/minecraft data/velocity
 [ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 printf '%s\n' "$VELOCITY_FORWARDING_SECRET" > data/velocity/forwarding.secret

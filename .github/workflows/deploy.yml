@@ -1,8 +1,17 @@
 name: deploy
+run-name: Deploy ${{ inputs.version }} to ${{ inputs.target }}
 
 on:
     workflow_dispatch:
         inputs:
+            target:
+                description: Server to deploy to
+                required: true
+                default: dev
+                type: choice
+                options:
+                    - dev
+                    - production
             version:
                 description: dev or an exact release tag
                 required: true
@@ -24,14 +33,14 @@ permissions:
     packages: read
 
 concurrency:
-    group: production
+    group: deploy-${{ inputs.target }}
     cancel-in-progress: false
 
 jobs:
     deploy:
-        if: github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert'
+        if: inputs.target == 'dev' || (github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert')
         runs-on: ubuntu-24.04
-        environment: production
+        environment: ${{ inputs.target }}
         steps:
             - name: Validate requested version
               id: version
@@ -128,6 +137,7 @@ jobs:
                   GHCR_USER: ${{ github.actor }}
                   IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
                   IMAGE_TAG: ${{ steps.version.outputs.tag }}
+                  DEPLOY_TARGET: ${{ inputs.target }}
                   WARNING_MINUTES: ${{ inputs.warning_minutes }}
                   FORCE_DEPLOY: ${{ inputs.force }}
               run: |
@@ -137,8 +147,8 @@ jobs:
                   [[ "$DEPLOY_PATH" =~ ^/[A-Za-z0-9._/-]+$ ]]
                   [[ "$DEPLOY_PATH" != / && "$DEPLOY_PATH" != *..* ]]
 
-                  archive="$RUNNER_TEMP/kubecraft-prod.tgz"
-                  tar -czf "$archive" -C prod . -C .. monitoring .env.example
+                  archive="$RUNNER_TEMP/mmucraft-deploy.tgz"
+                  tar -czf "$archive" -C deploy . -C .. monitoring .env.example
 
                   ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH'"
                   scp -i ~/.ssh/deploy_key -P "$DEPLOY_PORT" "$archive" "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.deploy.tgz"
@@ -146,6 +156,6 @@ jobs:
 
                   printf '%s' "$GHCR_TOKEN" | ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker login ghcr.io --username '$GHCR_USER' --password-stdin"
                   status=0
-                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o ServerAliveInterval=30 -o ServerAliveCountMax=3 "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && ./deploy.sh '$IMAGE_TAG' '$IMAGE_PREFIX' '$WARNING_MINUTES' '$FORCE_DEPLOY'" || status=$?
+                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o ServerAliveInterval=30 -o ServerAliveCountMax=3 "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && ./deploy.sh '$IMAGE_TAG' '$IMAGE_PREFIX' '$WARNING_MINUTES' '$FORCE_DEPLOY' '$DEPLOY_TARGET'" || status=$?
                   ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker logout ghcr.io" || true
                   exit "$status"

@@ -11,6 +11,7 @@ interface MinecraftHomeProps {
 	panorama: { id: string; label: string };
 	splash: string;
 	imageVersion: string;
+	imageReleaseUrl: string;
 	discordUrl: string;
 	instagramUrl: string;
 }
@@ -63,7 +64,14 @@ export function MinecraftHome(props: MinecraftHomeProps) {
 				</nav>
 			</section>
 
-			<p className="minecraftVersion">{props.imageVersion}</p>
+			<a
+				className="minecraftVersion"
+				href={props.imageReleaseUrl || undefined}
+				target={props.imageReleaseUrl ? '_blank' : undefined}
+				rel={props.imageReleaseUrl ? 'noreferrer' : undefined}
+			>
+				{props.imageVersion}
+			</a>
 			<p className="minecraftLegal">
 				Not an official Minecraft product. Not approved by or associated with Mojang or
 				Microsoft.

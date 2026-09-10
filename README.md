@@ -18,7 +18,7 @@ The API uses port `8080`. The website uses port `3000`. Velocity uses port `2556
 
 Grafana uses `http://localhost:3000/grafana/` with username `admin` and the `GRAFANA_ADMIN_PASSWORD` from the root `.env`. If `.env` does not set the password, local development uses `admin`. Anonymous access and Grafana account creation are disabled. The instance contains the Statistics, Gameplay Admin, and Technical dashboards.
 
-Prometheus retains 90 days of history. It scrapes MainMod runtime and JVM metrics, API application and Node.js metrics, and its own health. Production also runs cAdvisor for container metrics and node_exporter for VPS metrics. Monitoring configuration and all three password-gated dashboards are in `monitoring/`.
+Prometheus retains one day of history in local development and on the development server. Production retains one year. It scrapes MainMod runtime and JVM metrics, API application and Node.js metrics, and its own health. Production also runs cAdvisor for container metrics and node_exporter for VPS metrics. Monitoring configuration and all three password-gated dashboards are in `monitoring/`.
 
 | Command | Result |
 | --- | --- |

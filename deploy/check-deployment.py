@@ -69,7 +69,7 @@ def check(mode, force, succeeds, stays_updating):
             ))
         )
         result = subprocess.run(
-            ['sh', str(DEPLOY), 'dev', 'ghcr.io/example/server', '0', str(force).lower()],
+            ['sh', str(DEPLOY), 'dev', 'ghcr.io/example/server', '0', str(force).lower(), 'dev'],
             cwd=root,
             env={**os.environ, 'PATH': str(bin_dir) + os.pathsep + os.environ['PATH'], 'CHECK_MODE': mode},
             capture_output=True, text=True, timeout=15,

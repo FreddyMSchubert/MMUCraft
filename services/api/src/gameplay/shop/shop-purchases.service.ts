@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, count, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/auth-session.service';
-import { DatabaseService, users } from '../../database/database.service';
+import { DatabaseService, limitedShopPurchases, users } from '../../database/database.service';
 import { MinecraftGrpcClientService } from '../../grpc/minecraft-grpc-client.service';
 import {
 	currentShopDealDate,
@@ -23,6 +23,11 @@ interface PurchaseShopItemResponse {
 	message: string;
 }
 
+const KNOWLEDGE_BOOK_ID = 'charm-knowledge-book';
+const KNOWLEDGE_BOOK_DAILY_LIMIT = 3;
+const FASHION_BOOK_ID = 'charm-fashion-book';
+const FASHION_BOOK_DAILY_LIMIT = 1;
+
 @Injectable()
 export class ShopPurchasesService {
 	constructor(
@@ -37,6 +42,7 @@ export class ShopPurchasesService {
 		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
 		const availability = this.unlocks.availabilityForUser(user.id);
 		const dealDate = currentShopDealDate();
+		const limitedPurchaseCounts = this.limitedPurchaseCounts(user.id, dealDate);
 		const dailyDealIds = dailyDealItemIds(items, dealDate);
 		const signupAnniversary = this.isSignupAnniversary(user.id);
 
@@ -87,7 +93,13 @@ export class ShopPurchasesService {
 						animation: item.animation,
 						charmDetails: item.charmDetails,
 						unlocked: isUnlocked(item, unlockedIds),
-						available: isAvailableForPurchase(user, item, availability, unlockedIds),
+						available: isAvailableForPurchase(
+							user,
+							item,
+							availability,
+							unlockedIds,
+							limitedPurchaseCounts.get(item.id) ?? 0,
+						),
 					};
 				}),
 		};
@@ -120,11 +132,13 @@ export class ShopPurchasesService {
 
 		const availability = this.unlocks.availabilityForUser(user.id);
 		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
-		if (!isAvailableForPurchase(user, item, availability, unlockedIds)) {
+		const dealDate = currentShopDealDate();
+		const limitedPurchaseCount =
+			this.limitedPurchaseCounts(user.id, dealDate).get(item.id) ?? 0;
+		if (!isAvailableForPurchase(user, item, availability, unlockedIds, limitedPurchaseCount)) {
 			throw new BadRequestException(unavailablePurchaseMessage(user, item));
 		}
 
-		const dealDate = currentShopDealDate();
 		const dailyDiscount = dailyDealItemIds(this.itemCatalog.load().items, dealDate).has(item.id)
 			? dailyDealDiscountPercent(item.id, dealDate)
 			: 0;
@@ -134,6 +148,7 @@ export class ShopPurchasesService {
 			dailyDiscount,
 		);
 		const price = discountedShopPrice(item.priceDabloons, discountPercent);
+		const reservedSlot = this.reserveLimitedPurchase(user.id, item, dealDate);
 
 		let purchase: PurchaseShopItemResponse;
 		try {
@@ -148,12 +163,14 @@ export class ShopPurchasesService {
 				rarity: item.rarity,
 			});
 		} catch {
+			this.releaseLimitedPurchase(user.id, item, dealDate, reservedSlot);
 			throw new BadRequestException(
 				'Join the Minecraft server, then try this purchase again while you are online.',
 			);
 		}
 
 		if (!purchase.purchased) {
+			this.releaseLimitedPurchase(user.id, item, dealDate, reservedSlot);
 			throw new BadRequestException(
 				purchase.message ||
 					(purchase.online
@@ -190,6 +207,69 @@ export class ShopPurchasesService {
 			.get()?.value;
 		return createdAt !== undefined && isBritishAnniversary(createdAt, Date.now());
 	}
+
+	private limitedPurchaseCounts(userId: number, periodKey: string): Map<string, number> {
+		return new Map(
+			this.database.connection
+				.select({ itemId: limitedShopPurchases.item_id, count: count() })
+				.from(limitedShopPurchases)
+				.where(
+					and(
+						eq(limitedShopPurchases.user_id, userId),
+						eq(limitedShopPurchases.period_key, periodKey),
+					),
+				)
+				.groupBy(limitedShopPurchases.item_id)
+				.all()
+				.map((row) => [row.itemId, row.count]),
+		);
+	}
+
+	private reserveLimitedPurchase(
+		userId: number,
+		item: CatalogItem,
+		periodKey: string,
+	): number | null {
+		const dailyLimit = limitedPurchaseDailyLimit(item.id);
+		if (dailyLimit === null) return null;
+
+		for (let slot = 1; slot <= dailyLimit; slot += 1) {
+			const inserted = this.database.connection
+				.insert(limitedShopPurchases)
+				.values({
+					user_id: userId,
+					item_id: item.id,
+					period_key: periodKey,
+					slot,
+					purchased_at_unix_ms: Date.now(),
+				})
+				.onConflictDoNothing()
+				.run();
+			if (inserted.changes === 1) return slot;
+		}
+
+		throw new BadRequestException('This item is not available right now.');
+	}
+
+	private releaseLimitedPurchase(
+		userId: number,
+		item: CatalogItem,
+		periodKey: string,
+		slot: number | null,
+	) {
+		if (slot === null) return;
+		this.database.connection
+			.delete(limitedShopPurchases)
+			.where(
+				and(
+					eq(limitedShopPurchases.user_id, userId),
+					eq(limitedShopPurchases.item_id, item.id),
+					eq(limitedShopPurchases.period_key, periodKey),
+					eq(limitedShopPurchases.slot, slot),
+				),
+			)
+			.run();
+	}
 }
 
 function isAvailableForPurchase(
@@ -197,13 +277,22 @@ function isAvailableForPurchase(
 	item: CatalogItem,
 	availability: ShopUnlockAvailability,
 	unlockedIds: Set<string>,
+	limitedPurchaseCount = 0,
 ): boolean {
 	if (isMembersOnly(item) && !user.isMember) return false;
+	const dailyLimit = limitedPurchaseDailyLimit(item.id);
+	if (dailyLimit !== null && limitedPurchaseCount >= dailyLimit) return false;
 	if (item.type === 'charm' || item.type === 'cosmetic') return unlockedIds.has(item.id);
 	if (item.bookUnlockType === 'knowledge') return availability.knowledge;
 	if (item.bookUnlockType === 'charm') return availability.charms;
 	if (item.bookUnlockType === 'cosmetic') return availability.cosmetics;
 	return user.id > 0;
+}
+
+function limitedPurchaseDailyLimit(itemId: string): number | null {
+	if (itemId === KNOWLEDGE_BOOK_ID) return KNOWLEDGE_BOOK_DAILY_LIMIT;
+	if (itemId === FASHION_BOOK_ID) return FASHION_BOOK_DAILY_LIMIT;
+	return null;
 }
 
 function isVisibleInShop(item: CatalogItem, unlockedIds: Set<string>): boolean {

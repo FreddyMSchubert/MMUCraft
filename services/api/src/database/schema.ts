@@ -232,6 +232,23 @@ export const shopUnlocks = sqliteTable(
 	],
 );
 
+export const limitedShopPurchases = sqliteTable(
+	'limited_shop_purchases',
+	{
+		user_id: integer('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		item_id: text('item_id').notNull(),
+		period_key: text('period_key').notNull(),
+		slot: integer('slot').notNull(),
+		purchased_at_unix_ms: integer('purchased_at_unix_ms').notNull(),
+	},
+	(table) => [
+		primaryKey({ columns: [table.user_id, table.item_id, table.period_key, table.slot] }),
+		index('limited_shop_purchases_user_period_idx').on(table.user_id, table.period_key),
+	],
+);
+
 export const dailyClaims = sqliteTable(
 	'daily_claims',
 	{
@@ -547,6 +564,7 @@ export type FishCatchRow = typeof fishCatches.$inferSelect;
 export type KnowledgeUnlockRow = typeof knowledgeUnlocks.$inferSelect;
 export type KnowledgeReadRow = typeof knowledgeReads.$inferSelect;
 export type ShopUnlockRow = typeof shopUnlocks.$inferSelect;
+export type LimitedShopPurchaseRow = typeof limitedShopPurchases.$inferSelect;
 export type DailyClaimRow = typeof dailyClaims.$inferSelect;
 export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSelect;
 export type DailyTaskRow = typeof dailyTasks.$inferSelect;
@@ -576,6 +594,7 @@ export const schema = {
 	knowledgeUnlocks,
 	knowledgeReads,
 	shopUnlocks,
+	limitedShopPurchases,
 	dailyClaims,
 	dailyAdvancementTargets,
 	dailyTasks,

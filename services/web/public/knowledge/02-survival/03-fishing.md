@@ -50,7 +50,7 @@ Each cast rolls either a **fish** or an **item**. There are modifiers that can c
 
 ![Fishing Worms Example](/assets/knowledge/survival/fishing/worms_example.png)
 
-Worms and Magnets can be found hidden in suspicious sand and suspicious gravel respectively. They somewhere after you fished in that area for a while. Use a brush to get them out.
+Worms and Magnets can be found hidden in suspicious sand and suspicious gravel respectively. **They appear somewhere after you fished in that area for a while.** Use a brush to get them out.
 
 To get the golden versions, either get lucky when brushing, or upgrade them:
 

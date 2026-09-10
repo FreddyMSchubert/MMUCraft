@@ -124,6 +124,17 @@ tasks.register('checkGlider', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkSlimeDetector', JavaExec) {
+    group = 'verification'
+    description = 'Check the Slime Detector signal, timing, definition, recipe, knowledge, and textures.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.SlimeDetectorCheck'
+    enableAssertions = true
+    args projectDir.absolutePath
+    workingDir = layout.buildDirectory.dir('slimeDetectorCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
 tasks.register('checkDailyCatalog', JavaExec) {
     group = 'verification'
     description = 'Check daily task JSON structure, weights, identifiers, and generated definitions.'

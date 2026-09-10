@@ -13,6 +13,8 @@ FAKE_RECIPE_TYPES = {
 	"mainmod:fake_crafting_shaped",
 	"mainmod:fake_crafting_shapeless",
 }
+SOURCE_DATA_ROOT = Path("data/data")
+STAGED_DATA_ROOT = Path("mod/src/main/resources/data/mainmod")
 
 
 def validate_gameplay_toggle_references(root: Path) -> None:
@@ -101,22 +103,39 @@ def sync_tree(source: Path, destination: Path) -> tuple[int, int]:
 	return copied, removed
 
 
+def stage_data(root: Path, *, validate_references: bool = True) -> tuple[Path, Path, int, int]:
+	source = root / SOURCE_DATA_ROOT
+	destination = root / STAGED_DATA_ROOT
+
+	if not source.is_dir():
+		raise FileNotFoundError(f"Source data directory does not exist: {source}")
+
+	if validate_references:
+		validate_gameplay_toggle_references(root)
+	copied = 0
+	removed = 0
+	for source_directory in sorted(path for path in source.iterdir() if path.is_dir()):
+		directory_copied, directory_removed = sync_tree(
+			source_directory,
+			destination / source_directory.name,
+		)
+		copied += directory_copied
+		removed += directory_removed
+	return source, destination, copied, removed
+
+
 def main() -> None:
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--root", required=True)
 	args = parser.parse_args()
 
 	root = Path(args.root).resolve()
-	source = root / "data" / "data" / "items"
-	destination = root / "mod" / "src" / "main" / "resources" / "data" / "mainmod" / "items"
-
-	if not source.is_dir():
-		raise SystemExit(f"Source items directory does not exist: {source}")
-
-	validate_gameplay_toggle_references(root)
-	copied, removed = sync_tree(source, destination)
+	try:
+		source, destination, copied, removed = stage_data(root)
+	except FileNotFoundError as exc:
+		raise SystemExit(str(exc)) from exc
 	print(
-		f"Staged item data: {source} -> {destination} "
+		f"Staged data: {source} -> {destination} "
 		f"({copied} copied, {removed} removed)"
 	)
 

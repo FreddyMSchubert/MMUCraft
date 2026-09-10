@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.waypoints.Waypoint;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
@@ -80,6 +82,10 @@ public final class CosmeticsManager {
                 : helmet.getItem().getName(helmet).getString();
         replica.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Cosmetic reskin of " + helmetName + "."))));
         replica.set(DataComponents.EQUIPPABLE, Items.CARVED_PUMPKIN.components().get(DataComponents.EQUIPPABLE));
+        Utils.removeItemAttrModifier(
+                replica,
+                Waypoint.WAYPOINT_TRANSMIT_RANGE_HIDE_MODIFIER.id(),
+                Attributes.WAYPOINT_TRANSMIT_RANGE);
 
         replica.set(DataComponents.MAX_DAMAGE, helmet.getMaxDamage());
         replica.set(DataComponents.DAMAGE, helmet.getDamageValue());

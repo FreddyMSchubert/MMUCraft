@@ -107,7 +107,7 @@ final class Messages {
                 ? "https://mmuminecraftsociety.co.uk"
                 : websiteUrl;
         return heading("Welcome, " + username + "!", GOLD)
-                .append(Component.text("This network checks every player to keep hackers, demons and the ", TEXT))
+                .append(Component.text("Before you can play, we need to keep hackers, demons and the ", TEXT))
                 .append(Component.text("chupacabra").decorate(TextDecoration.OBFUSCATED))
                 .append(Component.text(" at bay.\n\n", TEXT))
                 .append(Component.text("Your Minecraft account is not linked yet.\n", RED)

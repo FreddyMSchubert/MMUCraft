@@ -13,7 +13,8 @@
 		"priceDabloons": 100,
 		"description": "Finds the nearest slime chunk within four chunks.",
 		"unlockMessage": "Unlocked charm: Slime Detector. Right-click it to find nearby slime chunks.",
-		"unlockWeight": 100
+		"unlockWeight": 100,
+		"tags": ["compass", "device", "find", "search", "cube", "detect", "distance", "chunk"]
 	},
 	"charm": {
 		"charmId": 55,

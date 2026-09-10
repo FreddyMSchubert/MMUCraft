@@ -1,0 +1,12 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "gameplayToggle": "welcoming",
+  "ingredients": [
+    "minecraft:compass",
+    "minecraft:slime_ball"
+  ],
+  "result": {
+    "stack": "mainmod:charm-slime-detector",
+    "count": 1
+  }
+}

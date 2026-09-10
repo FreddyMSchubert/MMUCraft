@@ -249,6 +249,8 @@ export function ShopDetails({
 										/>
 									</>
 								)
+							) : item.dailyLimitReached ? (
+								'Sold out for the day'
 							) : (
 								'Sold out'
 							)}

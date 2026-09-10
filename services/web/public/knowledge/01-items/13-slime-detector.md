@@ -14,11 +14,11 @@ tips:
 - The detector does not load chunks. It checks chunk coordinates only when you use it.
 ====
 
-The Slime Detector shows how close you are to a slime chunk.
+The Slime Detector shows how close you are to a slime chunk. This is a great Vanilla way of finding slimes without relying on chunkbase.
 
 ## How to make it
 
-Combine one compass and one slime ball. The recipe is shapeless, so you can put the two items in any crafting slots.
+Combine one compass and one slime ball in a crafting table.
 
 :::recipe-items
 [Compass](https://minecraft.wiki/w/Compass) + [Slime Ball](https://minecraft.wiki/w/Slimeball) → Slime Detector
@@ -26,17 +26,19 @@ Combine one compass and one slime ball. The recipe is shapeless, so you can put 
 
 ## How to use it
 
-Hold the detector and right-click. The bars move while the detector scans. After 0.5 to 2 seconds, the detector shows the result.
+Hold the detector and right-click to take a measurement.
 
-The detector keeps all five bars visible. An active bar has a bright color. An inactive bar is gray.
+The amount of active bars indicate how close you are to a slime chunk.
 
 | Active bars | Distance to the nearest slime chunk |
 | - | - |
 | 5 | Your current chunk is a slime chunk. |
-| 4 | 1 chunk |
-| 3 | 2 chunks |
-| 2 | 3 chunks |
-| 1 | 4 chunks |
-| 0 | More than 4 chunks |
+| 4 | Nearest slime chunk is 1 chunk away. |
+| 3 | Nearest slime chunk is 2 chunks away. |
+| 2 | Nearest slime chunk is 3 chunks away. |
+| 1 | Nearest slime chunk is 4 chunks away. |
+| 0 | Nearest slime chunk is 5 or more chunks away. |
 
-The detector uses Manhattan distance. It adds the east-west distance and the north-south distance. For example, a chunk that is one chunk east and one chunk north has a distance of two.
+:::note
+This is probably unnecessary to know for usage (no need to learn about this if you don't feel like), but if you want to do precise measurements: The detector uses [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) to indicate distance (non-euclidian).
+:::

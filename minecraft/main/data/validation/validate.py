@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -10,13 +9,12 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from stage_item_data import validate_gameplay_toggle_references
+from stage_item_data import stage_data, validate_gameplay_toggle_references
 
 
 ITEMS_ROOT = Path("data/data/items")
 SCHEMA_ROOT = Path("data/validation/schemas/item")
 ROOT_SCHEMA = SCHEMA_ROOT / "item.schema.json"
-STAGED_ITEMS_ROOT = Path("mod/src/main/resources/data/mainmod/items")
 
 
 class ItemDataError(RuntimeError):
@@ -49,7 +47,7 @@ def discover_item_jsons(items_root: Path) -> list[tuple[Path, Path]]:
 
 		if not item_json.exists():
 			raise ItemDataError(
-				f"{directory}: every leaf folder under data/items must contain item.json"
+				f"{directory}: every leaf folder under data/data/items must contain item.json"
 			)
 
 		found.append((item_json, directory.relative_to(items_root)))
@@ -92,16 +90,6 @@ def validate_item(schema_path: Path, registry: Registry, item_path: Path) -> Non
 		)
 
 
-def stage_items(staged_root: Path, item_jsons: list[tuple[Path, Path]]) -> None:
-	if staged_root.exists():
-		shutil.rmtree(staged_root)
-	staged_root.mkdir(parents=True, exist_ok=True)
-
-	for source, relative_dir in item_jsons:
-		dest = staged_root / relative_dir
-		shutil.copytree(source.parent, dest)
-
-
 def main() -> int:
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--root", required=True, help="Path to minecraft/main")
@@ -111,7 +99,6 @@ def main() -> int:
 	items_root = root / ITEMS_ROOT
 	schema_root = root / SCHEMA_ROOT
 	root_schema = root / ROOT_SCHEMA
-	staged_root = root / STAGED_ITEMS_ROOT
 
 	if not root_schema.exists():
 		raise ItemDataError(f"Root schema does not exist: {root_schema}")
@@ -126,8 +113,11 @@ def main() -> int:
 	for item_json, _ in item_jsons:
 		validate_item(root_schema, registry, item_json)
 
-	stage_items(staged_root, item_jsons)
-	print(f"Validated and staged {len(item_jsons)} item definition(s).")
+	_, _, copied, removed = stage_data(root, validate_references=False)
+	print(
+		f"Validated {len(item_jsons)} item definition(s) and staged data "
+		f"({copied} copied, {removed} removed)."
+	)
 	return 0
 
 

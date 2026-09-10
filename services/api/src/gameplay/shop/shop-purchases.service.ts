@@ -27,6 +27,8 @@ const KNOWLEDGE_BOOK_ID = 'charm-knowledge-book';
 const KNOWLEDGE_BOOK_DAILY_LIMIT = 3;
 const FASHION_BOOK_ID = 'charm-fashion-book';
 const FASHION_BOOK_DAILY_LIMIT = 1;
+const JOKE_BOOK_ID = 'charm-joke-book';
+const JOKE_BOOK_DAILY_LIMIT = 3;
 
 @Injectable()
 export class ShopPurchasesService {
@@ -54,6 +56,7 @@ export class ShopPurchasesService {
 			items: items
 				.filter((item) => isVisibleInShop(item, unlockedIds))
 				.map((item) => {
+					const limitedPurchaseCount = limitedPurchaseCounts.get(item.id) ?? 0;
 					const dailyDiscount = dailyDealIds.has(item.id)
 						? dailyDealDiscountPercent(item.id, dealDate)
 						: 0;
@@ -93,12 +96,16 @@ export class ShopPurchasesService {
 						animation: item.animation,
 						charmDetails: item.charmDetails,
 						unlocked: isUnlocked(item, unlockedIds),
+						dailyLimitReached: hasReachedLimitedPurchaseDailyLimit(
+							item.id,
+							limitedPurchaseCount,
+						),
 						available: isAvailableForPurchase(
 							user,
 							item,
 							availability,
 							unlockedIds,
-							limitedPurchaseCounts.get(item.id) ?? 0,
+							limitedPurchaseCount,
 						),
 					};
 				}),
@@ -292,7 +299,13 @@ function isAvailableForPurchase(
 function limitedPurchaseDailyLimit(itemId: string): number | null {
 	if (itemId === KNOWLEDGE_BOOK_ID) return KNOWLEDGE_BOOK_DAILY_LIMIT;
 	if (itemId === FASHION_BOOK_ID) return FASHION_BOOK_DAILY_LIMIT;
+	if (itemId === JOKE_BOOK_ID) return JOKE_BOOK_DAILY_LIMIT;
 	return null;
+}
+
+function hasReachedLimitedPurchaseDailyLimit(itemId: string, purchaseCount: number): boolean {
+	const dailyLimit = limitedPurchaseDailyLimit(itemId);
+	return dailyLimit !== null && purchaseCount >= dailyLimit;
 }
 
 function isVisibleInShop(item: CatalogItem, unlockedIds: Set<string>): boolean {

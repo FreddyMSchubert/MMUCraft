@@ -31,12 +31,16 @@ COPY src ./src
 RUN npm run build
 
 FROM node:${NODE_VERSION}-bookworm-slim AS runner
+ARG SITE_RELEASE_NAME
+ARG SITE_RELEASE_URL
 WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
     PORT=3000 \
-    NODE_OPTIONS=--max-old-space-size=512
+    NODE_OPTIONS=--max-old-space-size=512 \
+    SITE_RELEASE_NAME=$SITE_RELEASE_NAME \
+    SITE_RELEASE_URL=$SITE_RELEASE_URL
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 --ingroup nodejs nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public

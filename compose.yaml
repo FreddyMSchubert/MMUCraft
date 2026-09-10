@@ -142,7 +142,7 @@ services:
     image: prom/prometheus:v3.14.0
     command:
       - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.retention.time=90d
+      - --storage.tsdb.retention.time=1d
       - --log.level=warn
     volumes:
       - ./monitoring/prometheus-dev.yml:/etc/prometheus/prometheus.yml:ro
@@ -182,7 +182,11 @@ services:
   loki:
     profiles: [minecraft]
     image: grafana/loki:3.7.6
-    command: -config.file=/etc/loki/loki.yml
+    command:
+      - -config.expand-env=true
+      - -config.file=/etc/loki/loki.yml
+    environment:
+      LOKI_RETENTION_PERIOD: 24h
     volumes:
       - ./monitoring/loki.yml:/etc/loki/loki.yml:ro
       - loki-data:/loki

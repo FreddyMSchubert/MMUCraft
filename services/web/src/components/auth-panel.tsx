@@ -17,7 +17,7 @@ import {
 export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 	const [step, setAuthenticationStep] = useState<AuthenticationStep>('email');
 	const [isSigningIn, setIsSigningIn] = useState(false);
-	const [studentSignup, setStudentSignup] = useState(true);
+	const [useStudentId, setUseStudentId] = useState(true);
 	const [studentId, setStudentId] = useState('');
 	const [email, setEmail] = useState('');
 	const [flowId, setFlowId] = useState('');
@@ -79,7 +79,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault();
 
 		void run(async () => {
-			const signupEmail = studentSignup ? `${studentId}@stu.mmu.ac.uk` : email.trim();
+			const signupEmail = useStudentId ? `${studentId}@stu.mmu.ac.uk` : email.trim();
 			const result = await postJson<{ flowId: string }>('/api/auth/signup', {
 				email: signupEmail,
 			});
@@ -148,10 +148,12 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 		event.preventDefault();
 
 		void run(async () => {
+			const signinEmail = useStudentId ? `${studentId}@stu.mmu.ac.uk` : email.trim();
 			const result = await postJson<{ flowId: string; timeoutEnded: boolean }>(
 				'/api/auth/signin',
-				{ email },
+				{ email: signinEmail },
 			);
+			setEmail(signinEmail);
 			setFlowId(result.flowId);
 			setDeliveryMessage(
 				`${result.timeoutEnded ? 'Your timeout has ended and Minecraft server access was restored. Rejoin the server now. ' : ''}${verificationMessage()}`,
@@ -205,11 +207,11 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			)}
 			{step === 'email' && (
 				<form onSubmit={submitEmail} className="authForm">
-					<h2>{studentSignup ? 'Hello' : 'Join the server'}</h2>
+					<h2>{useStudentId ? 'Hello' : 'Join the server'}</h2>
 					<div className="authSignupPrompt">
 						<p>
-							{studentSignup ? (
-								'Please enter your eight-digit student ID.'
+							{useStudentId ? (
+								'Please enter your eight-digit MMU student ID.'
 							) : (
 								<>
 									Manually enter another email address. MMU staff can use their{' '}
@@ -222,14 +224,14 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 							type="button"
 							disabled={busy}
 							onClick={() => {
-								setStudentSignup((current) => !current);
+								setUseStudentId((current) => !current);
 								setError('');
 							}}
 						>
-							{studentSignup ? "I'm not an MMU student" : "I'm an MMU student"}
+							{useStudentId ? "I'm not an MMU student" : "I'm an MMU student"}
 						</button>
 					</div>
-					{studentSignup ? (
+					{useStudentId ? (
 						<input
 							aria-label="Student ID"
 							value={studentId}
@@ -258,7 +260,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 							required
 						/>
 					)}
-					{!studentSignup && (
+					{!useStudentId && (
 						<p className="authGuestNote">
 							Not from MMU? You&apos;re welcome to join too. Ask someone you know at
 							MMU to contact the committee and help arrange access.
@@ -278,6 +280,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						type="button"
 						disabled={busy}
 						onClick={() => {
+							setUseStudentId(true);
 							setIsSigningIn(true);
 							setAuthenticationStep('signin');
 						}}
@@ -290,20 +293,57 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			{step === 'signin' && (
 				<form onSubmit={submitSignIn} className="authForm">
 					<h2>Sign in</h2>
+					<div className="authSignupPrompt">
+						<p>
+							{useStudentId
+								? 'Enter your eight-digit student ID.'
+								: 'Manually enter the email address you signed up with.'}
+						</p>
+						<button
+							className="authTextButton"
+							type="button"
+							disabled={busy}
+							onClick={() => {
+								setUseStudentId((current) => !current);
+								setError('');
+							}}
+						>
+							{useStudentId ? 'Use my email instead' : 'Use my student ID'}
+						</button>
+					</div>
+					{useStudentId ? (
+						<input
+							aria-label="Student ID"
+							value={studentId}
+							onChange={(event) => {
+								setStudentId(event.target.value.replace(/\D/g, '').slice(0, 8));
+							}}
+							placeholder="12345678"
+							type="text"
+							inputMode="numeric"
+							pattern="\d{8}"
+							minLength={8}
+							maxLength={8}
+							autoComplete="username"
+							required
+						/>
+					) : (
+						<input
+							aria-label="Email address"
+							value={email}
+							onChange={(event) => {
+								setEmail(event.target.value);
+							}}
+							placeholder="you@example.com"
+							type="email"
+							autoComplete="email"
+							required
+						/>
+					)}
 					<p>
 						We&apos;ll send a verification code to your signup email. Please input the
 						minecraft items in order.
 					</p>
-					<input
-						value={email}
-						onChange={(event) => {
-							setEmail(event.target.value);
-						}}
-						placeholder="12345678@stu.mmu.ac.uk"
-						type="email"
-						autoComplete="email"
-						required
-					/>
 					<button disabled={busy || resendSeconds > 0}>
 						{resendSeconds > 0
 							? `Try again in ${formatCountdown(resendSeconds)}`
@@ -314,6 +354,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 						type="button"
 						disabled={busy}
 						onClick={() => {
+							setUseStudentId(true);
 							setIsSigningIn(false);
 							setAuthenticationStep('email');
 						}}

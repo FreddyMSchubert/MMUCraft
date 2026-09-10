@@ -48,16 +48,10 @@ services:
       - ./data/api:/app/data
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=32m,mode=1777
-    mem_limit: 800m
-    mem_reservation: 384m
-    memswap_limit: 800m
     deploy:
       resources:
         limits:
-          memory: 800m
           pids: 256
-        reservations:
-          memory: 384m
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 15s
@@ -79,16 +73,10 @@ services:
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=32m,mode=1777
       - /app/.next/cache:rw,noexec,nosuid,size=64m,mode=1777
-    mem_limit: 800m
-    mem_reservation: 256m
-    memswap_limit: 800m
     deploy:
       resources:
         limits:
-          memory: 800m
           pids: 256
-        reservations:
-          memory: 256m
     depends_on:
       api:
         condition: service_healthy
@@ -123,9 +111,8 @@ services:
         zfastnoise?
         fabricproxy-lite:2.12.0
         simple-voice-chat:JDkcoyAy
+        sparsestructures
       MODRINTH_DOWNLOAD_DEPENDENCIES: required
-      MEMORY: 1536M
-      INIT_MEMORY: 1G
       STOP_DURATION: "110"
       USE_MEOWICE_FLAGS: "true"
       ENABLE_ROLLING_LOGS: "false"
@@ -144,17 +131,11 @@ services:
       FABRIC_PROXY_SECRET: ${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}
     volumes:
       - ./data/minecraft:/data
-    mem_limit: 2g
-    mem_reservation: 1g
-    memswap_limit: 2g
     pids_limit: 512
     deploy:
       resources:
         limits:
-          memory: 2g
           pids: 512
-        reservations:
-          memory: 1g
     depends_on:
       api:
         condition: service_healthy
@@ -188,17 +169,11 @@ services:
       - "${MINECRAFT_BIND:-0.0.0.0}:24454:24454/udp"
     volumes:
       - ./data/velocity:/server
-    mem_limit: 768m
-    mem_reservation: 256m
-    memswap_limit: 768m
     pids_limit: 256
     deploy:
       resources:
         limits:
-          memory: 768m
           pids: 256
-        reservations:
-          memory: 256m
     security_opt:
       - no-new-privileges:true
     logging: *logging
@@ -209,7 +184,6 @@ services:
     image: prom/prometheus:v3.14.0
     command:
       - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.retention.time=90d
       - --log.level=warn
     read_only: true
     security_opt:
@@ -221,9 +195,6 @@ services:
       - prometheus-data:/prometheus
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=16m,mode=1777
-    mem_limit: 512m
-    mem_reservation: 128m
-    memswap_limit: 512m
     depends_on:
       minecraft:
         condition: service_started
@@ -260,9 +231,6 @@ services:
       - ${MONITORING_CONFIG_PATH:-../monitoring}/grafana/dashboards/admin:/etc/grafana/dashboards:ro
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=32m,mode=1777
-    mem_limit: 384m
-    mem_reservation: 128m
-    memswap_limit: 384m
     depends_on:
       prometheus:
         condition: service_started
@@ -283,9 +251,6 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
       - /dev/disk:/dev/disk:ro
-    mem_limit: 256m
-    mem_reservation: 64m
-    memswap_limit: 256m
     logging: *logging
     restart: unless-stopped
     networks: [app]
@@ -303,16 +268,15 @@ services:
       - ALL
     volumes:
       - /:/host:ro,rslave
-    mem_limit: 128m
-    mem_reservation: 32m
-    memswap_limit: 128m
     logging: *logging
     restart: unless-stopped
     networks: [app]
 
   loki:
     image: grafana/loki:3.7.6
-    command: -config.file=/etc/loki/loki.yml
+    command:
+      - -config.expand-env=true
+      - -config.file=/etc/loki/loki.yml
     read_only: true
     security_opt:
       - no-new-privileges:true
@@ -321,9 +285,6 @@ services:
     volumes:
       - ${MONITORING_CONFIG_PATH:-../monitoring}/loki.yml:/etc/loki/loki.yml:ro
       - loki-data:/loki
-    mem_limit: 512m
-    mem_reservation: 128m
-    memswap_limit: 512m
     logging: *logging
     restart: unless-stopped
     networks: [app]
@@ -347,9 +308,6 @@ services:
       - alloy-data:/var/lib/alloy/data
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=16m,mode=1777
-    mem_limit: 256m
-    mem_reservation: 64m
-    memswap_limit: 256m
     depends_on:
       loki:
         condition: service_started

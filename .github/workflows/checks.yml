@@ -187,6 +187,9 @@ jobs:
                   pull: true
                   push: true
                   tags: ${{ steps.image.outputs.prefix }}-web:${{ steps.image.outputs.tag }}
+                  build-args: |
+                      SITE_RELEASE_NAME=${{ github.event.release.name }}
+                      SITE_RELEASE_URL=${{ github.event.release.html_url }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.revision=${{ github.sha }}

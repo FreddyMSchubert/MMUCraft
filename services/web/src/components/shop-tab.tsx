@@ -517,7 +517,10 @@ export function ShopTab({
 				<div ref={loadMoreRef} className="shopLoadMoreSentinel" aria-hidden="true" />
 			)}
 			{visibleItems.length === 0 && (
-				<p className="shopEmptyState">No items match those filters.</p>
+				<p className="shopEmptyState">
+					Nothing found matching those filters - yet. Keep playing on the server to unlock
+					more of the catalogue. :D
+				</p>
 			)}
 
 			{selectedItem && (

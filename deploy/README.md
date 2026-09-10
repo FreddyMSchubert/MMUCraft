@@ -1,6 +1,8 @@
-# Production deployment
+# Deployment operations
 
-The GitHub `deploy` workflow copies this directory, the root `.env.example`, and the monitoring configuration to the VPS. It then runs `deploy.sh`. Runtime state stays under `data/`, which is not present in the deployment archive, and Docker volumes are never pruned.
+For a new server, follow the [complete setup and cutover guide](SETUP.md).
+
+The GitHub `deploy` workflow copies this directory, the root `.env.example`, and the monitoring configuration to the selected server. It then runs `deploy.sh` with the `dev` or `production` target. Runtime state stays under `data/`, which is not present in the deployment archive, and Docker volumes are never pruned.
 
 The API applies pending Drizzle migrations before it starts listening. The image contains them at `/app/drizzle`, while `/app/data/app.sqlite` is the mounted production database; a failed migration makes the API fail instead of serving against the wrong schema.
 
@@ -12,7 +14,7 @@ Generate separate values for `VELOCITY_API_SECRET` and `VELOCITY_FORWARDING_SECR
 
 Velocity owns the public Minecraft port. Backend servers have no published port. They use offline mode because Velocity authenticates the Mojang account. FabricProxy-Lite verifies the forwarding secret and restores the authenticated UUID, username, skin, and client address on each Fabric backend.
 
-Simple Voice Chat uses UDP port `24454` on Velocity. The production Compose file publishes this port on `MINECRAFT_BIND`. Allow inbound UDP `24454` in the VPS firewall and hosting panel. Keep the Minecraft backend ports private. Voice packets go from the client to Velocity, then to the backend over the Docker network. HTTP proxies do not carry this UDP traffic.
+Simple Voice Chat uses UDP port `24454` on Velocity. The shared Compose file publishes this port on `MINECRAFT_BIND`. Allow inbound UDP `24454` in UFW and any provider firewall. Keep the Minecraft backend ports private. Voice packets go from the client to Velocity, then to the backend over the Docker network. HTTP proxies do not carry this UDP traffic.
 
 The images include the voice configuration. The backend enables 48-block proximity audio, 24-block whispers, and group chat. Players must install the client mod to use audio. See the root README for client setup. Deploy the updated Minecraft and Velocity images with the normal deployment workflow. After deployment, use `/voicechat test <player>` and two modded clients to check audio. Container health checks do not verify voice traffic.
 
@@ -36,7 +38,7 @@ The homepage defaults to the society Discord invite and Instagram account. Overr
 
 Grafana is available at `https://grafana.PUBLIC_HOST/`. Requests to the old `/grafana/` path redirect to this host. Sign in as `admin` with `GRAFANA_ADMIN_PASSWORD` from `.env`. Anonymous access and Grafana account creation are disabled. Website accounts are not affected.
 
-Grafana contains the Statistics, Gameplay Admin, and Technical dashboards. The Technical dashboard shows container logs and lets you filter them by service. Prometheus retains 90 days of metrics, and Loki retains 14 days of logs. Both services store their data in Docker volumes.
+Grafana contains the Statistics, Gameplay Admin, and Technical dashboards. The Technical dashboard shows container logs and lets you filter them by service. Production Prometheus retains one year of metrics, and production Loki retains 14 days of logs. Development keeps one day in each service. Both services store their data in Docker volumes.
 
 ## Update sequence
 
@@ -57,7 +59,7 @@ The first deployment of this change requires `force=true` because the old Veloci
 Run the local deployment check with:
 
 ```sh
-python3 prod/check-deployment.py
+python3 deploy/check-deployment.py
 ```
 
 This check uses temporary command substitutes. It does not start Docker or contact a server.

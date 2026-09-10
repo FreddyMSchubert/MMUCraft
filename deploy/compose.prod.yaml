@@ -1,0 +1,83 @@
+services:
+  api:
+    mem_limit: 1g
+    mem_reservation: 512m
+    memswap_limit: 1g
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 512m
+
+  web:
+    mem_limit: 1g
+    mem_reservation: 384m
+    memswap_limit: 1g
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 384m
+
+  minecraft:
+    environment:
+      MEMORY: 6G
+      INIT_MEMORY: 2G
+    mem_limit: 7g
+    mem_reservation: 4g
+    memswap_limit: 7g
+    deploy:
+      resources:
+        limits:
+          memory: 7g
+        reservations:
+          memory: 4g
+
+  velocity:
+    mem_limit: 1g
+    mem_reservation: 384m
+    memswap_limit: 1g
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 384m
+
+  prometheus:
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=1y
+      - --log.level=warn
+    mem_limit: 1g
+    mem_reservation: 256m
+    memswap_limit: 1g
+
+  grafana:
+    mem_limit: 512m
+    mem_reservation: 128m
+    memswap_limit: 512m
+
+  loki:
+    environment:
+      LOKI_RETENTION_PERIOD: 336h
+    mem_limit: 1g
+    mem_reservation: 256m
+    memswap_limit: 1g
+
+  alloy:
+    mem_limit: 512m
+    mem_reservation: 128m
+    memswap_limit: 512m
+
+  cadvisor:
+    mem_limit: 256m
+    mem_reservation: 64m
+    memswap_limit: 256m
+
+  node-exporter:
+    mem_limit: 128m
+    mem_reservation: 32m
+    memswap_limit: 128m

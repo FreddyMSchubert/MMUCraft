@@ -221,6 +221,7 @@
 
 .minecraftVersion {
 	left: 9px;
+	text-decoration: none;
 }
 
 .minecraftLegal {

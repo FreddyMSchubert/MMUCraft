@@ -211,7 +211,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 					<div className="authSignupPrompt">
 						<p>
 							{useStudentId ? (
-								'Please enter your eight-digit student ID.'
+								'Please enter your eight-digit MMU student ID.'
 							) : (
 								<>
 									Manually enter another email address. MMU staff can use their{' '}

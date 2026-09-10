@@ -173,6 +173,10 @@
 	--alert-button-text: #fff;
 }
 
+.siteAlertButton-primary .dabloonAmount {
+	color: inherit;
+}
+
 body:has(.siteAlert[open]) {
 	overflow: hidden;
 }

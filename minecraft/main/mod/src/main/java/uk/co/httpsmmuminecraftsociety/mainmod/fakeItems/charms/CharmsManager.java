@@ -88,7 +88,8 @@ public class CharmsManager
             Map.entry(51, new ObamiumPyramidCharm()),
             Map.entry(52, new PotionOfResonanceCharm()),
             Map.entry(53, new WrenchCharm()),
-            Map.entry(GliderCharm.CHARM_ID, new GliderCharm())
+            Map.entry(GliderCharm.CHARM_ID, new GliderCharm()),
+            Map.entry(SlimeDetectorCharm.CHARM_ID, new SlimeDetectorCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

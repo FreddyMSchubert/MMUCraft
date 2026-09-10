@@ -59,12 +59,16 @@ public class Utils
     }
 
     public static ItemStack removeItemAttrModifier(ItemStack stack, String id, Holder<Attribute> attributeType) {
-        ItemAttributeModifiers mods = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
         Identifier toRemoveId = Identifier.fromNamespaceAndPath(MainMod.MOD_ID, id);
+        return removeItemAttrModifier(stack, toRemoveId, attributeType);
+    }
+
+    public static ItemStack removeItemAttrModifier(ItemStack stack, Identifier id, Holder<Attribute> attributeType) {
+        ItemAttributeModifiers mods = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
         for (ItemAttributeModifiers.Entry mod : mods.modifiers()) {
-            if (mod.matches(attributeType, toRemoveId)) continue; // skip the attr to remove, then reassemble
-            builder.add(mod.attribute(), mod.modifier(), mod.slot());
+            if (mod.matches(attributeType, id)) continue; // skip the attr to remove, then reassemble
+            builder.add(mod.attribute(), mod.modifier(), mod.slot(), mod.display());
         }
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
 

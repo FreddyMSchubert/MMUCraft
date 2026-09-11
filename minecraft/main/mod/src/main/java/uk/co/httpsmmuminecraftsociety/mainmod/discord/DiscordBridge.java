@@ -11,9 +11,11 @@ import net.minecraft.stats.Stats;
 import uk.co.httpsmmuminecraftsociety.mainmod.BedrockFormatting;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.OnlinePlayer;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PublishDiscordEventRequest;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -52,19 +54,27 @@ public final class DiscordBridge {
             ServerPlayer player = handler.player;
             boolean firstJoin = player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME)) <= 1;
             PlayerStatsSync.syncNow(player).thenRun(() -> server.execute(() -> {
-                if (!player.hasDisconnected()) publish(
-                        firstJoin ? "first_join" : "join",
-                        player,
-                        firstJoin ? "joined the server for the first time. (Players online: " + onlinePlayers(server, null) + ")"
-                                : "joined the server. (Players online: " + onlinePlayers(server, null) + ")"
-                );
+                if (!player.hasDisconnected()) {
+                    List<ServerPlayer> onlinePlayers = onlinePlayers(server, null);
+                    publish(
+                            firstJoin ? "first_join" : "join",
+                            player,
+                            firstJoin ? "joined the server for the first time. (Players online: " + formatOnlinePlayers(onlinePlayers) + ")"
+                                    : "joined the server. (Players online: " + formatOnlinePlayers(onlinePlayers) + ")",
+                            onlinePlayers
+                    );
+                }
             }));
         });
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> publish(
-                "leave",
-                handler.player,
-                "left the server. (Players online: " + onlinePlayers(server, handler.player) + ")"
-        ));
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            List<ServerPlayer> onlinePlayers = onlinePlayers(server, handler.player);
+            publish(
+                    "leave",
+                    handler.player,
+                    "left the server. (Players online: " + formatOnlinePlayers(onlinePlayers) + ")",
+                    onlinePlayers
+            );
+        });
     }
 
     public static void advancement(ServerPlayer player, String action, String title, int dabloons) {
@@ -97,6 +107,10 @@ public final class DiscordBridge {
 	}
 
     private static void publish(String type, ServerPlayer player, String content) {
+        publish(type, player, content, List.of());
+    }
+
+    private static void publish(String type, ServerPlayer player, String content, List<ServerPlayer> onlinePlayers) {
         PlayerStatsSync.DiscordPresentation profile = player == null
                 ? new PlayerStatsSync.DiscordPresentation("", "", "", "")
                 : PlayerStatsSync.discordPresentation(player);
@@ -107,6 +121,12 @@ public final class DiscordBridge {
                 .setNickname(profile.nickname())
                 .setPronouns(profile.pronouns())
                 .setColorHex(profile.colorHex());
+        request.addAllOnlinePlayers(onlinePlayers.stream()
+                .map(onlinePlayer -> OnlinePlayer.newBuilder()
+                        .setMinecraftUsername(onlinePlayer.getName().getString())
+                        .setMinecraftUuid(onlinePlayer.getUUID().toString())
+                        .build())
+                .toList());
         if (player != null) request
                 .setMinecraftUsername(player.getName().getString())
                 .setMinecraftUuid(player.getUUID().toString());
@@ -116,9 +136,14 @@ public final class DiscordBridge {
         });
     }
 
-    private static String onlinePlayers(MinecraftServer server, ServerPlayer excluded) {
-        String players = server.getPlayerList().getPlayers().stream()
+    private static List<ServerPlayer> onlinePlayers(MinecraftServer server, ServerPlayer excluded) {
+        return server.getPlayerList().getPlayers().stream()
                 .filter(player -> player != excluded && !player.hasDisconnected())
+                .toList();
+    }
+
+    private static String formatOnlinePlayers(List<ServerPlayer> onlinePlayers) {
+        String players = onlinePlayers.stream()
                 .map(DiscordBridge::coloredOnlinePlayer)
                 .collect(Collectors.joining(", "));
         return players.isEmpty() ? "none" : players;

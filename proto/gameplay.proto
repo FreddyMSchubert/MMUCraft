@@ -100,6 +100,7 @@ message PublishDiscordEventRequest {
   string nickname = 6;
   string pronouns = 7;
   string color_hex = 8;
+  repeated OnlinePlayer online_players = 9;
 }
 
 message PublishDiscordEventResponse {

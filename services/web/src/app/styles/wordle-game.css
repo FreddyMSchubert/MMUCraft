@@ -249,7 +249,8 @@
 	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22);
 }
 
-.copyPlaythrough {
+.copyPlaythrough,
+.wordleHintButton {
 	display: block;
 	width: min(100%, var(--wordle-board-width));
 	min-height: 46px;
@@ -259,6 +260,10 @@
 	background: #ffd166;
 	color: #111;
 	font-weight: 800;
+}
+
+.wordleHintButton:hover {
+	background: #ffe09a;
 }
 
 .copyPlaythrough:disabled {

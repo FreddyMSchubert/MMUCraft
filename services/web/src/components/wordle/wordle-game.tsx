@@ -17,6 +17,8 @@ import {
 	scoreGuess,
 	type TileResult,
 	type WordleGuess,
+	type WordleHintCell,
+	type WordleHintRow,
 } from '@/lib/wordle';
 
 const KEYBOARD = [
@@ -65,11 +67,13 @@ export function WordleGame({
 	);
 	const saved = useMemo(() => parseStoredGame(savedRaw, puzzle), [puzzle, savedRaw]);
 	const [sessionGuesses, setGuesses] = useState<WordleGuess[] | null>(null);
+	const [sessionHints, setHints] = useState<WordleHintRow[] | null>(null);
 	const [sessionGameOver, setGameOver] = useState<boolean | null>(null);
 	const guesses = useMemo(
 		() => sessionGuesses ?? saved?.guesses ?? [],
 		[saved?.guesses, sessionGuesses],
 	);
+	const hints = useMemo(() => sessionHints ?? saved?.hints ?? [], [saved?.hints, sessionHints]);
 	const savedGameOver = Boolean(
 		saved?.gameOver &&
 		(guesses.at(-1)?.word === puzzle.answer || guesses.length >= puzzle.maxGuesses),
@@ -81,6 +85,7 @@ export function WordleGame({
 	const [winningRow, setWinningRow] = useState<number | null>(null);
 	const [shakeToken, setShakeToken] = useState(0);
 	const [copyLabel, setCopyLabel] = useState('Copy playthrough');
+	const [hintMessage, setHintMessage] = useState('');
 	const [nextWordle, setNextWordle] = useState('00:00:00');
 
 	useEffect(() => {
@@ -137,25 +142,26 @@ export function WordleGame({
 		const nextGuesses = [...guesses, { word: currentGuess, result }];
 		setGuesses(nextGuesses);
 		setGameOver(false);
-		persistGame(puzzle, nextGuesses, false);
+		persistGame(puzzle, nextGuesses, hints, false);
 		setCurrentGuess('');
-		setRevealingRow(row);
+		setHintMessage('');
+		setRevealingRow(row + hints.length);
 
 		window.setTimeout(
 			() => {
 				busy.current = false;
 				setRevealingRow(null);
 				setGameOver(finished);
-				persistGame(puzzle, nextGuesses, finished);
+				persistGame(puzzle, nextGuesses, hints, finished);
 				if (won) {
-					setWinningRow(row);
+					setWinningRow(row + hints.length);
 					if (fireworksStage.current)
 						launchFireworks(fireworksStage.current, row + 1, puzzle.maxGuesses);
 				}
 			},
 			puzzle.answer.length * 120 + 260,
 		);
-	}, [currentGuess, gameOver, guesses, puzzle, showAlert]);
+	}, [currentGuess, gameOver, guesses, hints, puzzle, showAlert]);
 
 	const handleKey = useCallback(
 		(key: string) => {
@@ -194,17 +200,35 @@ export function WordleGame({
 		'--wordle-board-width': layout.boardWidth,
 		'--wordle-shell-width': layout.shellWidth,
 	} as CSSProperties;
-	const keyClasses = getKeyboardClasses(guesses);
+	const keyClasses = getKeyboardClasses(guesses, hints);
+	const boardRows = getBoardRows(guesses, hints, puzzle.maxGuesses);
+
+	function useHint() {
+		if (gameOver || busy.current) return;
+		const next = createHint(puzzle.answer, guesses, hints);
+		if (!next) {
+			void showAlert({
+				title: 'No more hints available',
+				message: 'Every letter position has already been revealed.',
+			});
+			return;
+		}
+		setHints(next.hints);
+		setHintMessage(next.message);
+		persistGame(puzzle, guesses, next.hints, false);
+	}
 
 	async function copyPlaythrough() {
 		if (!canCopy) return;
 		const score = won ? guesses.length : 'X';
-		const rows = guesses.map((guess) =>
-			guess.result.map((result) => SHARE_TILES[result]).join(''),
-		);
+		const sharedRows = getSharedRows(guesses, hints, puzzle.answer.length);
+		const hintCount = hints.reduce((total, hint) => total + hint.cells.length, 0);
+		const hintSummary = hintCount
+			? ` + ${hintCount} ${hintCount === 1 ? 'hint' : 'hints'} 💡`
+			: '';
 		const text = [
-			`MMU Minecraft Society Wordle ${formatDisplayDate(puzzle.dateKey)} — ${difficulty.emoji} ${difficulty.label} (${puzzle.answer.length} letters) ${score}/${puzzle.maxGuesses} (➡️ https://mmuminecraftsociety.co.uk/wordle/)`,
-			...rows,
+			`MMU Minecraft Society Wordle ${formatDisplayDate(puzzle.dateKey)} — ${difficulty.emoji} ${difficulty.label} (${puzzle.answer.length} letters) ${score}/${puzzle.maxGuesses}${hintSummary} (➡️ https://mmuminecraftsociety.co.uk/wordle/)`,
+			...sharedRows,
 		].join('\n');
 		try {
 			await copyText(text);
@@ -250,6 +274,7 @@ export function WordleGame({
 							{puzzle.answer.length}-letter word.
 						</li>
 						<li>Green is correct, gold is in the wrong place, and grey is absent.</li>
+						<li>Hints reveal a useful gold or green letter without using a guess.</li>
 						<li>
 							The solution is Minecraft-related, but any English or listed Minecraft
 							word can be guessed.
@@ -268,14 +293,27 @@ export function WordleGame({
 				{lost && <p className="wordleSolution">Solution: {puzzle.answer.toUpperCase()}</p>}
 
 				<div className="wordleBoard" aria-label="Daily word puzzle">
-					{Array.from({ length: puzzle.maxGuesses }, (_, row) =>
+					{boardRows.map((boardRow, row) =>
 						Array.from({ length: puzzle.answer.length }, (_, column) => {
-							const saved = guesses.at(row);
+							const hintCell =
+								boardRow.type === 'hint'
+									? boardRow.hint.cells.find((cell) => cell.column === column)
+									: undefined;
 							const letter =
-								saved?.word.at(column) ??
-								(row === guesses.length ? (currentGuess.at(column) ?? '') : '');
-							const result = saved?.result.at(column);
-							const isCurrent = row === guesses.length;
+								boardRow.type === 'guess'
+									? boardRow.guess.word.at(column)
+									: boardRow.type === 'hint'
+										? hintCell?.letter
+										: boardRow.type === 'current'
+											? currentGuess.at(column)
+											: '';
+							const result =
+								boardRow.type === 'guess'
+									? boardRow.guess.result.at(column)
+									: boardRow.type === 'hint'
+										? (hintCell?.result ?? 'skipped')
+										: undefined;
+							const isCurrent = boardRow.type === 'current';
 							const className = [
 								'wordleTile',
 								letter && 'filled',
@@ -298,7 +336,7 @@ export function WordleGame({
 													? `${column * 80}ms`
 													: undefined,
 									}}
-									aria-label={`Row ${row + 1}, letter ${column + 1}`}
+									aria-label={`${boardRow.type === 'hint' ? 'Hint row' : `Row ${row + 1}`}, letter ${column + 1}`}
 								>
 									{letter}
 								</div>
@@ -308,7 +346,7 @@ export function WordleGame({
 				</div>
 
 				<p className="wordleChecking" role="status" aria-live="polite">
-					{checkingWord ? 'Checking word...' : '\u00a0'}
+					{checkingWord ? 'Checking word...' : hintMessage || '\u00a0'}
 				</p>
 
 				<div className="wordleKeyboard" aria-label="On-screen keyboard">
@@ -337,14 +375,19 @@ export function WordleGame({
 					))}
 				</div>
 
-				<button
-					className="copyPlaythrough"
-					type="button"
-					disabled={!canCopy}
-					onClick={() => void copyPlaythrough()}
-				>
-					{copyLabel}
-				</button>
+				{canCopy ? (
+					<button
+						className="copyPlaythrough"
+						type="button"
+						onClick={() => void copyPlaythrough()}
+					>
+						{copyLabel}
+					</button>
+				) : (
+					<button className="wordleHintButton" type="button" onClick={useHint}>
+						💡 Hint
+					</button>
+				)}
 			</section>
 
 			<footer className="wordleFooter">
@@ -362,7 +405,7 @@ function getWordleLayout(wordLength: number) {
 	};
 }
 
-function getKeyboardClasses(guesses: WordleGuess[]) {
+function getKeyboardClasses(guesses: WordleGuess[], hints: WordleHintRow[]) {
 	const rank: Record<string, number> = { absent: 1, present: 2, correct: 3 };
 	const classes: Partial<Record<string, TileResult>> = {};
 	for (const guess of guesses)
@@ -372,7 +415,124 @@ function getKeyboardClasses(guesses: WordleGuess[]) {
 			const current = classes[letter];
 			if (!current || rank[result] > rank[current]) classes[letter] = result;
 		});
+	for (const hint of hints)
+		for (const cell of hint.cells) {
+			const current = classes[cell.letter];
+			if (!current || rank[cell.result] > rank[current]) classes[cell.letter] = cell.result;
+		}
 	return classes;
+}
+
+type BoardRow =
+	| { type: 'guess'; guess: WordleGuess }
+	| { type: 'hint'; hint: WordleHintRow }
+	| { type: 'current' }
+	| { type: 'empty' };
+
+function getBoardRows(
+	guesses: WordleGuess[],
+	hints: WordleHintRow[],
+	maxGuesses: number,
+): BoardRow[] {
+	const rows: BoardRow[] = [];
+	const appendHints = (afterGuess: number) => {
+		for (const hint of hints)
+			if (hint.afterGuess === afterGuess) rows.push({ type: 'hint', hint });
+	};
+	appendHints(0);
+	guesses.forEach((guess, index) => {
+		rows.push({ type: 'guess', guess });
+		appendHints(index + 1);
+	});
+	for (let index = guesses.length; index < maxGuesses; index += 1)
+		rows.push(index === guesses.length ? { type: 'current' } : { type: 'empty' });
+	return rows;
+}
+
+function createHint(
+	answer: string,
+	guesses: WordleGuess[],
+	hints: WordleHintRow[],
+): { hints: WordleHintRow[]; message: string } | null {
+	const knownPositions = new Set<number>();
+	const yellowLetters = new Set<string>();
+	for (const guess of guesses)
+		guess.result.forEach((result, column) => {
+			if (result === 'correct') knownPositions.add(column);
+			if (result === 'present') yellowLetters.add(guess.word[column]);
+		});
+	for (const row of hints)
+		for (const cell of row.cells) {
+			if (cell.result === 'correct') knownPositions.add(cell.column);
+			else yellowLetters.add(cell.letter);
+		}
+
+	const unresolvedYellow = answer
+		.split('')
+		.map((letter, column) => ({ letter, column }))
+		.filter(({ letter, column }) => yellowLetters.has(letter) && !knownPositions.has(column));
+	if (unresolvedYellow.length > 0) {
+		const reveal = pickRandom(unresolvedYellow);
+		const cell: WordleHintCell = { ...reveal, result: 'correct' };
+		return {
+			hints: appendHintCell(hints, guesses.length, cell),
+			message: `Hint: ${cell.letter.toUpperCase()} is correct in position ${cell.column + 1}.`,
+		};
+	}
+
+	const latest = hints.at(-1);
+	const occupiedColumns = new Set(
+		latest?.afterGuess === guesses.length ? latest.cells.map((cell) => cell.column) : [],
+	);
+	const yellowOptions = answer.split('').flatMap((letter, answerColumn) => {
+		if (knownPositions.has(answerColumn)) return [];
+		return answer
+			.split('')
+			.map((_, column) => ({ letter, answerColumn, column }))
+			.filter(({ column }) => column !== answerColumn && answer[column] !== letter);
+	});
+	if (yellowOptions.length === 0) return null;
+	const mergeableOptions = yellowOptions.filter(({ column }) => !occupiedColumns.has(column));
+	const reveal = pickRandom(mergeableOptions.length > 0 ? mergeableOptions : yellowOptions);
+	const cell: WordleHintCell = {
+		column: reveal.column,
+		letter: reveal.letter,
+		result: 'present',
+	};
+	return {
+		hints: appendHintCell(hints, guesses.length, cell),
+		message: `Hint: ${cell.letter.toUpperCase()} is in the word, but not in position ${cell.column + 1}.`,
+	};
+}
+
+function appendHintCell(hints: WordleHintRow[], afterGuess: number, cell: WordleHintCell) {
+	const latest = hints.at(-1);
+	if (
+		latest?.afterGuess === afterGuess &&
+		!latest.cells.some(({ column }) => column === cell.column)
+	) {
+		return [
+			...hints.slice(0, -1),
+			{ ...latest, cells: [...latest.cells, cell].sort((a, b) => a.column - b.column) },
+		];
+	}
+	return [...hints, { afterGuess, cells: [cell] }];
+}
+
+function getSharedRows(guesses: WordleGuess[], hints: WordleHintRow[], wordLength: number) {
+	return getBoardRows(guesses, hints, guesses.length)
+		.filter((row) => row.type === 'guess' || row.type === 'hint')
+		.map((row) => {
+			if (row.type === 'guess')
+				return row.guess.result.map((result) => SHARE_TILES[result]).join('');
+			const tiles = Array<TileResult>(wordLength).fill('skipped');
+			for (const cell of row.hint.cells) tiles[cell.column] = cell.result;
+			return `${tiles.map((result) => SHARE_TILES[result]).join('')} - ${'💡'.repeat(row.hint.cells.length)}`;
+		});
+}
+
+function pickRandom<T>(items: T[]) {
+	return items[Math.floor(Math.random() * items.length)];
 }
 
 async function validateGuess(guess: string) {
@@ -414,7 +574,7 @@ function readStoredGame(puzzle: Puzzle) {
 function parseStoredGame(
 	raw: string,
 	puzzle: Puzzle,
-): { guesses: WordleGuess[]; gameOver: boolean } | null {
+): { guesses: WordleGuess[]; hints: WordleHintRow[]; gameOver: boolean } | null {
 	try {
 		const saved = JSON.parse(raw || 'null') as unknown;
 		if (!saved || typeof saved !== 'object') return null;
@@ -422,6 +582,10 @@ function parseStoredGame(
 			if (Array.isArray(saved.guesses)) {
 				return {
 					guesses: saved.guesses as WordleGuess[],
+					hints:
+						'hints' in saved && Array.isArray(saved.hints)
+							? (saved.hints as WordleHintRow[])
+							: [],
 					gameOver: Boolean('gameOver' in saved && saved.gameOver),
 				};
 			}
@@ -432,11 +596,16 @@ function parseStoredGame(
 	return null;
 }
 
-function persistGame(puzzle: Puzzle, guesses: WordleGuess[], gameOver: boolean) {
+function persistGame(
+	puzzle: Puzzle,
+	guesses: WordleGuess[],
+	hints: WordleHintRow[],
+	gameOver: boolean,
+) {
 	try {
 		localStorage.setItem(
 			getStorageKey(puzzle.dateKey, puzzle.answer),
-			JSON.stringify({ answer: puzzle.answer, guesses, gameOver }),
+			JSON.stringify({ answer: puzzle.answer, guesses, hints, gameOver }),
 		);
 	} catch {
 		/* Local storage is optional. */

@@ -113,6 +113,20 @@ tasks.register('checkParticleTrails', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkPlayerColors', JavaExec) {
+    group = 'verification'
+    description = 'Check player RGB formatting, vanilla team colors, and persisted join colors.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerColorsCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('playerColorsCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('checkPlayerColors')
+}
+
 tasks.register('checkGlider', JavaExec) {
     group = 'verification'
     description = 'Check the glider item, recipe, repairs, enchantments, speed, and heat sources.'

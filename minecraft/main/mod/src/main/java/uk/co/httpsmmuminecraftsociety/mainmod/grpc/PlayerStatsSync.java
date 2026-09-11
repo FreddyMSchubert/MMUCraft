@@ -1,11 +1,13 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.numbers.FixedFormat;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
@@ -22,7 +24,6 @@ import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.ScoreAccess;
-import net.minecraft.world.scores.TeamColor;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
@@ -30,6 +31,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons.PlayerAd
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,8 +42,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class PlayerStatsSync {
-    private static final long BASE_SYNC_INTERVAL_TICKS = 20L * 60L * 20L;
-    private static final long STAGGER_WINDOW_TICKS = 5L * 60L * 20L;
+    private static final long BASE_SYNC_INTERVAL_TICKS = 60L * 20L;
+    private static final long STAGGER_WINDOW_TICKS = 15L * 20L;
     private static final long SYNC_RETRY_TICKS = 5L * 20L;
     private static final String PROFILE_OBJECTIVE = "mmu_profile";
     private static final String PING_OBJECTIVE = "mmu_ping";
@@ -52,6 +54,7 @@ public final class PlayerStatsSync {
     private static final Map<UUID, SyncPlayerStatsResponse> presentationByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, String> renderedProfileByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, Integer> colorByPlayer = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> presentationRevisionByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> previousLastPlayedAtByPlayer = new ConcurrentHashMap<>();
     private static final List<Block> NOTABLE_MINED_BLOCKS = List.of(
             Blocks.STONE,
@@ -71,6 +74,8 @@ public final class PlayerStatsSync {
 
     public static void init() {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            applyColor(handler.player, colorFor(handler.player));
+            refreshPlayerList(server);
             joinRefreshPending.add(handler.player.getUUID());
             scheduleRetry(handler.player);
             syncNow(handler.player);
@@ -78,7 +83,14 @@ public final class PlayerStatsSync {
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             syncNow(handler.player, true);
-            server.execute(() -> clearPlayer(handler.player.getUUID()));
+            clearPlayer(handler.player.getUUID());
+            refreshPlayerList(server);
+        });
+
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+            applyColor(newPlayer, colorFor(newPlayer));
+            renderedProfileByPlayer.remove(newPlayer.getUUID());
+            updateBelowName(newPlayer);
         });
     }
 
@@ -99,6 +111,10 @@ public final class PlayerStatsSync {
                 updatePlayerListPing(player);
             }
 
+            if (serverTicks % (20L * 30L) == 0L) {
+                applyColor(player, colorFor(player));
+            }
+
             UUID playerId = player.getUUID();
             long nextSyncTick = nextSyncTickByPlayer.computeIfAbsent(
                     playerId,
@@ -111,7 +127,7 @@ public final class PlayerStatsSync {
 
             // Keep a short retry scheduled until a successful response replaces it with the
             // normal interval. In particular, a failed first-join request must not leave the
-            // player with vanilla presentation colors until the next 20-minute sync.
+            // player with stale presentation colors until the next normal sync.
             scheduleRetry(player);
             syncNow(player);
         }
@@ -156,7 +172,7 @@ public final class PlayerStatsSync {
             if (!allowDisconnectedPlayer) {
                 previousLastPlayedAtByPlayer.put(player.getUUID(), response.getPreviousLastPlayedAtUnixMs());
             }
-            return response.getAccountLinked() && response.getIsMember();
+            return allowDisconnectedPlayer ? response.getAccountLinked() && response.getIsMember() : isMember(player);
         });
 
         if (allowDisconnectedPlayer) {
@@ -174,28 +190,41 @@ public final class PlayerStatsSync {
         CompletableFuture<SyncPlayerStatsResponse> current = activeSyncByPlayer.get(playerId);
         if (current != null) return current;
 
-        CompletableFuture<SyncPlayerStatsResponse> started = GameplayGrpcService.syncPlayerStats(player, collectStats(player));
-        current = activeSyncByPlayer.putIfAbsent(playerId, started);
-        if (current != null) return current;
-        started.whenComplete((response, error) -> activeSyncByPlayer.remove(playerId, started));
-        started.thenAccept(response -> {
-            if (player.hasDisconnected()) return;
-            MinecraftServer server = player.level().getServer();
-            if (server == null) return;
-            server.execute(() -> {
-                if (player.hasDisconnected()) return;
-                updatePresentation(player, response);
-                if (joinRefreshPending.remove(playerId)) {
-                    scheduleRetry(player);
+        long revision = presentationRevisionByPlayer.getOrDefault(playerId, 0L);
+        MinecraftServer server = player.level().getServer();
+        CompletableFuture<SyncPlayerStatsResponse> applied = new CompletableFuture<>();
+        activeSyncByPlayer.put(playerId, applied);
+        GameplayGrpcService.syncPlayerStats(player, collectStats(player)).whenComplete((response, error) -> server.execute(() -> {
+            ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(playerId);
+            if (!activeSyncByPlayer.remove(playerId, applied)
+                    || onlinePlayer == null || onlinePlayer.connection != player.connection) {
+                applied.cancel(false);
+                return;
+            }
+            if (error != null) {
+                scheduleRetry(onlinePlayer);
+                applied.completeExceptionally(error);
+                MainMod.LOGGER.warn("Failed to sync player presentation for {}", player.getScoreboardName(), error);
+                return;
+            }
+            try {
+                // A website push that arrived during this request owns the newer presentation.
+                boolean superseded = revision != presentationRevisionByPlayer.getOrDefault(playerId, 0L);
+                if (!superseded) updatePresentation(onlinePlayer, response);
+                if (joinRefreshPending.remove(playerId) || superseded) {
+                    scheduleRetry(onlinePlayer);
                 } else {
-                    scheduleNext(player);
+                    scheduleNext(onlinePlayer);
                 }
-            });
-        }).exceptionally(error -> {
-            MainMod.LOGGER.debug("Failed to sync player stats for {}", player.getName().getString(), error);
-            return null;
-        });
-        return started;
+                // Join listeners must see the applied profile, not just a completed network request.
+                applied.complete(response);
+            } catch (RuntimeException failure) {
+                scheduleRetry(onlinePlayer);
+                applied.completeExceptionally(failure);
+                MainMod.LOGGER.error("Failed to apply player presentation for {}", player.getScoreboardName(), failure);
+            }
+        }));
+        return applied;
     }
 
     private static void updatePresentation(ServerPlayer player, SyncPlayerStatsResponse response) {
@@ -204,11 +233,11 @@ public final class PlayerStatsSync {
         boolean isMember = response.getAccountLinked() && response.getIsMember();
         Boolean previous = membershipByPlayer.put(player.getUUID(), isMember);
         presentationByPlayer.put(player.getUUID(), response);
-        int color = parseColor(response.getColorHex());
+        int color = PlayerColors.parse(response.getColorHex());
+        updateTeam(player, response);
         applyColor(player, color);
         ClaimsManager.updateOwnerColor(player.getUUID(), color);
         renderedProfileByPlayer.remove(player.getUUID());
-        updateTeam(player, response);
         updateBelowName(player);
 
         if (previous == null || previous != isMember) {
@@ -217,7 +246,14 @@ public final class PlayerStatsSync {
     }
 
     public static int colorFor(net.minecraft.world.entity.player.Player player) {
-        return colorByPlayer.getOrDefault(player.getUUID(), -1);
+        Integer color = colorByPlayer.get(player.getUUID());
+        if (color != null) return color;
+        PlayerTeam team = player.getTeam();
+        if (team != null && team.getName().equals(teamName(player.getUUID()))) {
+            var savedColor = team.getDisplayName().getStyle().getColor();
+            if (savedColor != null) return savedColor.getValue();
+        }
+        return PlayerColors.defaultColor(player.getUUID());
     }
 
     public static DiscordPresentation discordPresentation(ServerPlayer player) {
@@ -237,24 +273,49 @@ public final class PlayerStatsSync {
         presentationByPlayer.remove(playerId);
         renderedProfileByPlayer.remove(playerId);
         colorByPlayer.remove(playerId);
+        presentationRevisionByPlayer.remove(playerId);
         previousLastPlayedAtByPlayer.remove(playerId);
     }
 
     public record DiscordPresentation(String role, String nickname, String pronouns, String colorHex) { }
 
     public static void applyColor(ServerPlayer player, int color) {
-        color = withMinimumLightness(color);
+        color = PlayerColors.withMinimumLightness(color);
         colorByPlayer.put(player.getUUID(), color);
         var waypoints = player.level().getWaypointManager();
         waypoints.untrackWaypoint(player);
         player.waypointIcon().color = Optional.of(color);
         waypoints.trackWaypoint(player);
-        updateTeamColor(player, color);
+        PlayerTeam team = playerTeam(player);
+        team.setDisplayName(Component.literal(player.getScoreboardName()).withColor(color));
+        team.setColor(Optional.of(PlayerColors.closestTeamColor(color)));
+        player.level().getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(
+                ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, player
+        ));
+    }
+
+    private static void refreshPlayerList(MinecraftServer server) {
+        server.getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(
+                EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME),
+                server.getPlayerList().getPlayers()
+        ));
+    }
+
+    public static void applyWebsiteColor(ServerPlayer player, int color) {
+        presentationRevisionByPlayer.merge(player.getUUID(), 1L, Long::sum);
+        SyncPlayerStatsResponse presentation = presentationByPlayer.get(player.getUUID());
+        if (presentation != null) {
+            presentationByPlayer.put(player.getUUID(), presentation.toBuilder()
+                    .setColorHex(String.format(Locale.ROOT, "#%06X", color))
+                    .build());
+        }
+        applyColor(player, color);
     }
 
     public static void applyShowDeathCounter(ServerPlayer player, boolean showDeathCounter) {
         SyncPlayerStatsResponse presentation = presentationByPlayer.get(player.getUUID());
         if (presentation == null) return;
+        presentationRevisionByPlayer.merge(player.getUUID(), 1L, Long::sum);
         presentationByPlayer.put(player.getUUID(), presentation.toBuilder()
                 .setShowDeathCounter(showDeathCounter)
                 .build());
@@ -272,6 +333,7 @@ public final class PlayerStatsSync {
             boolean isCommittee,
             boolean isExternal
     ) {
+        presentationRevisionByPlayer.merge(player.getUUID(), 1L, Long::sum);
         SyncPlayerStatsResponse response = SyncPlayerStatsResponse.newBuilder()
                 .setAccepted(true)
                 .setAccountLinked(true)
@@ -287,71 +349,32 @@ public final class PlayerStatsSync {
         updatePresentation(player, response);
     }
 
-    private static int parseColor(String color) {
-        if (color.length() != 7 || color.charAt(0) != '#') return 0xE6E6E6;
-        try {
-            return withMinimumLightness(Integer.parseInt(color.substring(1), 16));
-        } catch (NumberFormatException ignored) {
-            return 0xE6E6E6;
-        }
+    private static String teamName(UUID playerId) {
+        return "mmu" + playerId.toString().replace("-", "").substring(0, 13);
     }
 
-    private static int withMinimumLightness(int rgb) {
-        int red = rgb >> 16 & 0xFF;
-        int green = rgb >> 8 & 0xFF;
-        int blue = rgb & 0xFF;
-        double lightness = (Math.max(red, Math.max(green, blue)) + Math.min(red, Math.min(green, blue))) / 510.0;
-        if (lightness >= 0.6) return rgb;
-        double whiteBlend = (0.6 - lightness) / (1 - lightness);
-        red = (int) Math.round(red + (255 - red) * whiteBlend);
-        green = (int) Math.round(green + (255 - green) * whiteBlend);
-        blue = (int) Math.round(blue + (255 - blue) * whiteBlend);
-        return red << 16 | green << 8 | blue;
-    }
-
-    private static void updateTeam(ServerPlayer player, SyncPlayerStatsResponse response) {
+    private static PlayerTeam playerTeam(ServerPlayer player) {
         ServerScoreboard scoreboard = player.level().getServer().getScoreboard();
         String playerName = player.getScoreboardName();
-        String teamName = "mmu" + player.getUUID().toString().replace("-", "").substring(0, 13);
-        PlayerTeam currentTeam = scoreboard.getPlayersTeam(playerName);
-
+        String teamName = teamName(player.getUUID());
         PlayerTeam team = scoreboard.getPlayerTeam(teamName);
         if (team == null) {
             team = scoreboard.addPlayerTeam(teamName);
         }
+        if (player.getTeam() != team) {
+            scoreboard.addPlayerToTeam(playerName, team);
+        }
+        return team;
+    }
+
+    private static void updateTeam(ServerPlayer player, SyncPlayerStatsResponse response) {
+        PlayerTeam team = playerTeam(player);
         String label = response.getAccountLinked() && response.getIsCommittee() ? " [Committee]"
                 : response.getAccountLinked() && response.getIsExternal() ? " [External]"
                 : response.getAccountLinked() && response.getIsMember() ? " [Member]" : "";
         ChatFormatting labelColor = response.getIsCommittee() ? ChatFormatting.AQUA
                 : response.getIsExternal() ? ChatFormatting.GRAY : ChatFormatting.GREEN;
         team.setPlayerSuffix(Component.literal(label).withStyle(labelColor));
-        team.setColor(Optional.of(closestTeamColor(parseColor(response.getColorHex()))));
-        if (currentTeam != team) {
-            scoreboard.addPlayerToTeam(playerName, team);
-        }
-    }
-
-    private static void updateTeamColor(ServerPlayer player, int color) {
-        PlayerTeam team = player.getTeam();
-        if (team != null && team.getName().startsWith("mmu")) {
-            team.setColor(Optional.of(closestTeamColor(color)));
-        }
-    }
-
-    private static TeamColor closestTeamColor(int rgb) {
-        TeamColor closest = TeamColor.WHITE;
-        int shortestDistance = Integer.MAX_VALUE;
-        for (TeamColor candidate : TeamColor.VALUES) {
-            int red = (rgb >> 16 & 0xFF) - (candidate.rgb() >> 16 & 0xFF);
-            int green = (rgb >> 8 & 0xFF) - (candidate.rgb() >> 8 & 0xFF);
-            int blue = (rgb & 0xFF) - (candidate.rgb() & 0xFF);
-            int distance = red * red + green * green + blue * blue;
-            if (distance < shortestDistance) {
-                closest = candidate;
-                shortestDistance = distance;
-            }
-        }
-        return closest;
     }
 
     private static void updateBelowName(ServerPlayer player) {

@@ -16,6 +16,6 @@ public abstract class PlayerDisplayNameMixin {
     )
     private Component mainmod$colorPlayerName(Component name) {
         int color = PlayerStatsSync.colorFor((Player) (Object) this);
-        return color < 0 ? name : name.copy().withColor(color);
+        return name.copy().withColor(color);
     }
 }

@@ -5,6 +5,7 @@
 		"node": ">=24.0.0 <25"
 	},
 	"scripts": {
+		"prepare": "husky",
 		"format": "prettier --write .github/workflows services/api services/web minecraft/main/respack/items-respack-generator tests",
 		"format:check": "prettier --check .github/workflows services/api services/web minecraft/main/respack/items-respack-generator tests",
 		"lint": "eslint --no-config-lookup --config eslint.config.mjs --max-warnings=0 services/api services/web minecraft/main/respack/items-respack-generator tests",
@@ -18,7 +19,20 @@
 		"@playwright/test": "^1.62.1",
 		"eslint": "^9.39.5",
 		"globals": "^17.11.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^17.5.1",
 		"prettier": "3.9.6",
 		"typescript-eslint": "^8.67.0"
+	},
+	"lint-staged": {
+		"eslint.config.mjs": [
+			"prettier --write",
+			"eslint --no-config-lookup --config eslint.config.mjs --max-warnings=0 --fix"
+		],
+		"{services/api,services/web,minecraft/main/respack/items-respack-generator,tests}/**/*.{js,mjs,cjs,jsx,ts,tsx}": [
+			"prettier --write",
+			"eslint --no-config-lookup --config eslint.config.mjs --max-warnings=0 --fix"
+		],
+		"*.{json,jsonc,yaml,yml,css,scss,html}": "prettier --write"
 	}
 }

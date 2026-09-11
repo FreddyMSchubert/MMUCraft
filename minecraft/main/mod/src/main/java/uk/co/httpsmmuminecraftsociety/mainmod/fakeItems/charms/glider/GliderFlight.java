@@ -18,10 +18,12 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public final class GliderFlight {
-    public static final double GLIDER_SPEED_BPS = 17.0;
+    public static final double GLIDER_SPEED_BPS = 14.2;
     public static final double ELYTRA_SPEED_BPS = 20.0;
     public static final double BOOST_SPEED_BPS = 20.0;
     public static final double SPEED_DECAY_BPS_PER_TICK = 0.02;
+    public static final double GRAVITY_STEP_DISTANCE = 16.0;
+    public static final double GRAVITY_PER_STEP = 0.0001;
     public static final double UPWARD_DAMPING = 0.95;
     public static final int ASCENT_GRACE_TICKS = 50;
 
@@ -32,6 +34,7 @@ public final class GliderFlight {
         int ascentGraceUntil;
         int impulseTick = Integer.MIN_VALUE;
         Vec3 previousPosition;
+        double distanceSinceUpdraft;
         ResourceKey<Level> dimension;
         Updrafts.Updraft updraft;
     }
@@ -47,6 +50,7 @@ public final class GliderFlight {
         FlightState state = STATES.computeIfAbsent(player, ignored -> new FlightState());
         state.ascentGraceUntil = player.tickCount + ASCENT_GRACE_TICKS;
         state.impulseTick = player.tickCount;
+        state.distanceSinceUpdraft = 0;
     }
 
     public static boolean touchesFluid(LivingEntity entity) {
@@ -75,12 +79,14 @@ public final class GliderFlight {
         if (state.dimension != player.level().dimension()) {
             state.updraft = null;
             state.speedLimit = GLIDER_SPEED_BPS;
+            state.distanceSinceUpdraft = 0;
             state.previousPosition = null;
             state.dimension = player.level().dimension();
         }
         if (!player.isFallFlying()) {
             state.updraft = null;
             state.speedLimit = GLIDER_SPEED_BPS;
+            state.distanceSinceUpdraft = 0;
             state.previousPosition = position;
             if (player.tickCount >= state.ascentGraceUntil) STATES.remove(player);
             return;
@@ -104,11 +110,16 @@ public final class GliderFlight {
             double extra = BOOST_SPEED_BPS / 20.0 - velocity.dot(frameNormal);
             if (extra > 0) velocity = velocity.add(frameNormal.scale(extra));
             state.speedLimit = BOOST_SPEED_BPS;
+            state.distanceSinceUpdraft = 0;
             state.ascentGraceUntil = player.tickCount + ASCENT_GRACE_TICKS;
         }
 
         if (glider) {
-            velocity = applyUpdraft(state, Updrafts.findAt(player), velocity, player.getBoundingBox().minY, player.tickCount);
+            Updrafts.Updraft caught = Updrafts.findAt(player);
+            if (caught != null) state.distanceSinceUpdraft = 0;
+            else state.distanceSinceUpdraft += Math.hypot(position.x - previous.x, position.z - previous.z);
+            velocity = applyUpdraft(state, caught, velocity, player.getBoundingBox().minY, player.tickCount);
+            velocity = velocity.add(0, -extraGravity(state.distanceSinceUpdraft), 0);
         }
 
         velocity = clampSpeed(velocity, glider ? state.speedLimit : ELYTRA_SPEED_BPS);
@@ -124,7 +135,6 @@ public final class GliderFlight {
         double upwardSpeed = velocity.y;
         if (lift > 0) {
             upwardSpeed = Math.min(Updrafts.MAX_UPWARD_SPEED, upwardSpeed + lift);
-            state.speedLimit = BOOST_SPEED_BPS;
         }
         if (state.updraft != null && tick >= state.ascentGraceUntil) {
             // Stop heat-driven ascent at the source ceiling. Other boosts can pass it.
@@ -139,6 +149,10 @@ public final class GliderFlight {
 
     public static double decaySpeedLimit(double speedLimit) {
         return Math.max(GLIDER_SPEED_BPS, speedLimit - SPEED_DECAY_BPS_PER_TICK);
+    }
+
+    static double extraGravity(double distanceSinceUpdraft) {
+        return Math.floor(distanceSinceUpdraft / GRAVITY_STEP_DISTANCE) * GRAVITY_PER_STEP;
     }
 
     public static Vec3 clampSpeed(Vec3 velocity, double speedBps) {

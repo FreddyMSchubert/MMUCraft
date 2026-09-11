@@ -26,7 +26,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"averageLengthCm": {
-					"description": "The fish's average collectible length in centimeters.",
+					"description": "The fish's average collectible length in centimeters. Each catch's rolled length also determines its physically scaled shadow.",
 					"type": "number",
 					"exclusiveMinimum": 0
 				},
@@ -45,11 +45,6 @@
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
-				"shadowScale": {
-					"description": "Visual scale and bobber contact size used while catching the fish.",
-					"type": "number",
-					"minimum": 0.1
-				},
 				"struggleSeconds": {
 					"type": "number",
 					"minimum": 0

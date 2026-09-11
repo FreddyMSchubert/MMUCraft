@@ -23,7 +23,7 @@ tips:
 ## How to catch a fish
 
 1. Hold a fishing rod and right-click water to cast.
-2. When the bobber is pulled down in a large splash, right-click once.
+2. When the fish makes a large splash with a stronger sound, right-click once.
 3. The catch flies back to you. Cast again.
 
 ![Fishing bite](/assets/knowledge/survival/fishing/catching_example.png)

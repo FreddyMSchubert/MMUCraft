@@ -26,9 +26,7 @@ public final class AnimalCrossingFishShadowDisplay {
 			double orbitDegrees,
 			double fishDistance,
 			int arrivalTicks,
-			int pauseTicks,
-			int animationTicks,
-			int catchAnimationTicks
+			int pauseTicks
 	) {}
 
     public static Display.ItemDisplay create(ServerLevel level, FishingPersonality personality) {
@@ -75,16 +73,11 @@ public final class AnimalCrossingFishShadowDisplay {
 		display.setYRot(0.0F);
 		display.setXRot(0.0F);
 
-		float pulse = animation.phase() == AnimalCrossingFishingPhase.APPROACHING
-				&& animation.pauseTicks() <= 0
-				? 1.0F
-				: 1.0F + (float) Math.sin(animation.animationTicks() * 0.24D) * 0.035F;
+		float appearanceScale = 1.0F;
 		if (animation.phase() == AnimalCrossingFishingPhase.ARRIVING) {
-			pulse *= Math.max(0.08F, (ARRIVAL_TICKS - animation.arrivalTicks()) / (float) ARRIVAL_TICKS);
+			appearanceScale = Math.max(0.08F, (ARRIVAL_TICKS - animation.arrivalTicks()) / (float) ARRIVAL_TICKS);
 		} else if (animation.phase() == AnimalCrossingFishingPhase.SCURRYING) {
-			pulse *= Math.max(0.08F, animation.pauseTicks() / (float) SCURRY_TICKS);
-		} else if (animation.phase() == AnimalCrossingFishingPhase.CATCH_ANIMATING) {
-			pulse *= 1.0F + (float) Math.sin(animation.catchAnimationTicks() * 0.8D) * 0.09F;
+			appearanceScale = Math.max(0.08F, animation.pauseTicks() / (float) SCURRY_TICKS);
 		}
 
 		double dx = hook.getX() - display.getX();
@@ -93,11 +86,11 @@ public final class AnimalCrossingFishShadowDisplay {
         Quaternionf rotation = new Quaternionf()
                 .rotateY(-yaw)
                 .rotateX((float) Math.toRadians(90.0D));
-		float size = personality.size();
+		float size = appearanceScale * personality.size();
 		Transformation transformation = new Transformation(
 				new Vector3f(-0.5F, -0.5F, 0.0F),
                 rotation,
-                new Vector3f(1.22F * pulse * size, 0.72F * pulse * size, size),
+				new Vector3f(size, size, size),
 				new Quaternionf()
 		);
 		((DisplayEntityAccessor) display).mainmod$setTransformation(transformation);

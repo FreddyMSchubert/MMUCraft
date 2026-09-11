@@ -39,6 +39,7 @@
       "particleTrails.TrailTooltip",
       "EntityDisplayNameMixin",
       "PlayerDisplayNameMixin",
+      "PlayerTabListNameMixin",
       "GrindstoneRemoveEnchantmentLock",
       "LibrarianEnchantedBookTradesMixin",
       "MiniBlockWanderingTraderMixin",

@@ -1,20 +1,21 @@
 {
-    "title":  "Ancient Arowana",
-    "id":  "fish-arowana",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Male arowanas protect eggs and young inside their mouths."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  80
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Ancient Arowana",
+	"id": "fish-arowana",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Male arowanas protect eggs and young inside their mouths."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 80,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -174,8 +174,7 @@ public final class FishingCatches {
         }
         FishingPersonality personality = selected.personality();
         if (!Double.isNaN(lengthCm)) {
-            float shadowScale = FishShapes.fromJsonValue(personality.fishShape()).shadowScale(lengthCm);
-            personality = personality.withSize(shadowScale);
+            personality = personality.withSize(FishSize.blocks(lengthCm));
         }
         return Pair.of(stack, personality);
     }
@@ -386,7 +385,8 @@ public final class FishingCatches {
         return new FishingPersonality(
                 rarity,
                 treasure ? 1.0F : 1.5F,
-                (treasure ? FishShapes.OBJECT : FishShapes.DEFAULT).value(),
+				treasure ? 90.0F : 270.0F,
+				16.0F,
                 treasure ? 0.8F : 1.0F,
                 treasure ? approachSeconds : 0.2F,
                 approachSeconds,

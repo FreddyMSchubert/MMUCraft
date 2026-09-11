@@ -1,20 +1,21 @@
 {
-    "title":  "Albacore",
-    "id":  "fish-albacore",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Albacore are distinguished by pectoral fins that can reach beyond the tail base."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  100
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Albacore",
+	"id": "fish-albacore",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Albacore are distinguished by pectoral fins that can reach beyond the tail base."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 100,
+			"textureLengthPixels": 17.67767
+		},
+		"furnaceResult": "white_meat"
+	}
 }

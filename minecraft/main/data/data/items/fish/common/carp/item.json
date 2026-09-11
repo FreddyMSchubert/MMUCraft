@@ -1,20 +1,21 @@
 {
-    "title":  "Carp",
-    "id":  "fish-carp",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Carp use sensitive barbels to locate food hidden in muddy bottoms."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  60
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Carp",
+	"id": "fish-carp",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Carp use sensitive barbels to locate food hidden in muddy bottoms."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 60,
+			"textureLengthPixels": 13
+		},
+		"furnaceResult": "white_meat"
+	}
 }

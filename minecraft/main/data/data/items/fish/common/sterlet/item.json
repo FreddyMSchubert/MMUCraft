@@ -1,20 +1,21 @@
 {
-    "title":  "Sterlet",
-    "id":  "fish-sterlet",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Five rows of bony scutes armor this small relative of the sturgeon."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  80
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Sterlet",
+	"id": "fish-sterlet",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Five rows of bony scutes armor this small relative of the sturgeon."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 80,
+			"textureLengthPixels": 21.92031
+		},
+		"furnaceResult": "white_meat"
+	}
 }

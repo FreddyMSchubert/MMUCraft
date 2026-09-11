@@ -1,20 +1,21 @@
 {
-    "title":  "Octopus",
-    "id":  "fish-octopus",
-    "modelType":  "basic",
-    "rarity":  "epic",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Octopuses have three hearts, blue blood, and remarkable problem-solving ability."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_squid",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  90
-                          },
-                 "furnaceResult":  "tentacle"
-             }
+	"title": "Octopus",
+	"id": "fish-octopus",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Octopuses have three hearts, blue blood, and remarkable problem-solving ability."
+	],
+	"fish": {
+		"angle": "T",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 90,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "tentacle"
+	}
 }

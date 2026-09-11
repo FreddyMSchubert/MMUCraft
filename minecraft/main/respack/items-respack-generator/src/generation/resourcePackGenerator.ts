@@ -206,6 +206,7 @@ async function generateBasicItem(
 	return {
 		when: item.id,
 		modelId,
+		shadowModelId: modelId,
 	};
 }
 

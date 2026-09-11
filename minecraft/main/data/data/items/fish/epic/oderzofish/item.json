@@ -1,20 +1,21 @@
 {
-    "title":  "Oderzo Fish",
-    "id":  "fish-oderzofish",
-    "modelType":  "basic",
-    "rarity":  "epic",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "It remembers every shortcut through a reef and never shares the route."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  55
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Oderzo Fish",
+	"id": "fish-oderzofish",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"It remembers every shortcut through a reef and never shares the route."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 55,
+			"textureLengthPixels": 19.79899
+		},
+		"furnaceResult": "white_meat"
+	}
 }

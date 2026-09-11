@@ -1,20 +1,21 @@
 {
-    "title":  "Flowerfish",
-    "id":  "fish-flowerfish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Petal-shaped fins open at dawn to collect warmth from the surface."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_small",
-                 "tags":  [
-                              "day"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  25
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Flowerfish",
+	"id": "fish-flowerfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Petal-shaped fins open at dawn to collect warmth from the surface."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"day"
+		],
+		"size": {
+			"averageLengthCm": 25,
+			"textureLengthPixels": 19.79899
+		},
+		"furnaceResult": "white_meat"
+	}
 }

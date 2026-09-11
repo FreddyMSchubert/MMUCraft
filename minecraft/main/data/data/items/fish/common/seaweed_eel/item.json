@@ -1,20 +1,21 @@
 {
-    "title":  "Seaweed Eel",
-    "id":  "fish-seaweed_eel",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Frond-shaped fins let it disappear completely inside a kelp bed."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_snake",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  120
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Seaweed Eel",
+	"id": "fish-seaweed_eel",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Frond-shaped fins let it disappear completely inside a kelp bed."
+	],
+	"fish": {
+		"angle": 195,
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 120,
+			"textureLengthPixels": 15.404045
+		},
+		"furnaceResult": "white_meat"
+	}
 }

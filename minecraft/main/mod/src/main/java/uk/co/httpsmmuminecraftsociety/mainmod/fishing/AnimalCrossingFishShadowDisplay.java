@@ -4,12 +4,14 @@ import com.mojang.math.Transformation;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Brightness;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomModelData;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.DisplayEntityAccessor;
@@ -18,6 +20,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.ItemDisplayEntityAcc
 public final class AnimalCrossingFishShadowDisplay {
 	public static final int ARRIVAL_TICKS = 18;
 	public static final int SCURRY_TICKS = 16;
+	private static final float ITEM_TEXTURE_PIXELS = 16.0F;
+	private static final String SHADOW_MODEL_MARKER = "mainmod:fishing_shadow";
 
 	private AnimalCrossingFishShadowDisplay() {}
 
@@ -25,19 +29,44 @@ public final class AnimalCrossingFishShadowDisplay {
 			AnimalCrossingFishingPhase phase,
 			double orbitDegrees,
 			double fishDistance,
+			float textureAngleDegrees,
+			float textureLengthPixels,
 			int arrivalTicks,
 			int pauseTicks
 	) {}
 
-    public static Display.ItemDisplay create(ServerLevel level, FishingPersonality personality) {
+    public static Display.ItemDisplay create(
+			ServerLevel level,
+			ItemStack catchResult,
+			boolean genericShadow
+	) {
         Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         display.setNoGravity(true);
         display.setSilent(true);
         display.setInvulnerable(true);
         display.setInvisible(false);
 
-        ItemStack shadowStack = new ItemStack(Items.PAPER);
-        shadowStack.set(DataComponents.ITEM_MODEL, Identifier.parse(personality.fishShape()));
+		ItemStack shadowStack;
+		if (genericShadow) {
+			FishShapes[] shapes = FishShapes.values();
+			shadowStack = new ItemStack(Items.PAPER);
+			shadowStack.set(DataComponents.ITEM_MODEL, Identifier.parse(
+					shapes[level.getRandom().nextInt(shapes.length)].value()
+			));
+		} else {
+			shadowStack = catchResult.copyWithCount(1);
+			shadowStack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, false);
+			CustomModelData modelData = shadowStack.getOrDefault(
+					DataComponents.CUSTOM_MODEL_DATA,
+					CustomModelData.EMPTY
+			);
+			shadowStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
+					modelData.floats(),
+					modelData.flags(),
+					append(modelData.strings(), SHADOW_MODEL_MARKER),
+					modelData.colors()
+			));
+		}
         ((ItemDisplayEntityAccessor) display).mainmod$setItemStack(shadowStack);
         ((ItemDisplayEntityAccessor) display).mainmod$setItemTransform(ItemDisplayContext.FIXED);
 
@@ -46,12 +75,19 @@ public final class AnimalCrossingFishShadowDisplay {
         accessor.mainmod$setTransformationInterpolationDuration(0);
         accessor.mainmod$setTransformationInterpolationDelay(0);
         accessor.mainmod$setViewRange(32.0F);
+		accessor.mainmod$setBrightnessOverride(new Brightness(0, 0));
         accessor.mainmod$setShadowRadius(0.0F);
         accessor.mainmod$setShadowStrength(0.0F);
         accessor.mainmod$setWidth(1.6F);
         accessor.mainmod$setHeight(1.6F);
         return display;
     }
+
+	private static <T> java.util.List<T> append(java.util.List<T> values, T value) {
+		java.util.ArrayList<T> copy = new java.util.ArrayList<>(values);
+		copy.add(value);
+		return java.util.List.copyOf(copy);
+	}
 
 	public static void position(
 			FishingHook hook,
@@ -82,11 +118,12 @@ public final class AnimalCrossingFishShadowDisplay {
 
 		double dx = hook.getX() - display.getX();
         double dz = hook.getZ() - display.getZ();
-        float yaw = (float) Math.atan2(dz, dx);
+		float yaw = (float) Math.atan2(dz, dx);
         Quaternionf rotation = new Quaternionf()
-                .rotateY(-yaw)
+				.rotateY(-yaw + (float) Math.toRadians(90.0F - animation.textureAngleDegrees()))
                 .rotateX((float) Math.toRadians(90.0D));
-		float size = appearanceScale * personality.size();
+		float size = appearanceScale * personality.size()
+				* ITEM_TEXTURE_PIXELS / animation.textureLengthPixels();
 		Transformation transformation = new Transformation(
 				new Vector3f(-0.5F, -0.5F, 0.0F),
                 rotation,

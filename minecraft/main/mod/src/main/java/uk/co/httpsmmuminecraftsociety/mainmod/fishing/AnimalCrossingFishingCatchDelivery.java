@@ -18,9 +18,10 @@ public final class AnimalCrossingFishingCatchDelivery {
             FishingHook hook,
             ServerPlayer player,
             ItemStack fishingRod,
-            ItemStack catchResult
+			ItemStack catchResult,
+			boolean jumpScare
     ) {
-        if (FishingJumpScares.shouldTrigger(hook.getRandom())) {
+		if (jumpScare) {
             FishingJumpScares.spawn(level, hook, player);
             return;
         }

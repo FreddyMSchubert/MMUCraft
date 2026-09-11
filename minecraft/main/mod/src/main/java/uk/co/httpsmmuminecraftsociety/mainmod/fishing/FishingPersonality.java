@@ -5,7 +5,8 @@ import net.minecraft.util.Mth;
 public record FishingPersonality(
         FishRarity rarity,
         float struggleSeconds,
-        String fishShape,
+		float textureAngleDegrees,
+		float textureLengthPixels,
         float size,
         float secondsAwayFromBobber,
         float approachSeconds,
@@ -43,7 +44,8 @@ public record FishingPersonality(
         return new FishingPersonality(
                 rarity,
                 struggleSeconds,
-                fishShape,
+				textureAngleDegrees,
+				textureLengthPixels,
                 newSize,
                 secondsAwayFromBobber,
                 approachSeconds,

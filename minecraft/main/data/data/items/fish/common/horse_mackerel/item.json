@@ -1,20 +1,21 @@
 {
-    "title":  "Horse Mackerel",
-    "id":  "fish-horse_mackerel",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Hard scutes along its lateral line form a protective ridge."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  30
-                          },
-                 "furnaceResult":  "red_meat"
-             }
+	"title": "Horse Mackerel",
+	"id": "fish-horse_mackerel",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Hard scutes along its lateral line form a protective ridge."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "red_meat"
+	}
 }

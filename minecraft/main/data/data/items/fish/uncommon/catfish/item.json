@@ -1,20 +1,21 @@
 {
-    "title":  "Catfish",
-    "id":  "fish-catfish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Catfish carry taste receptors across much of their skin."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  70
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Catfish",
+	"id": "fish-catfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Catfish carry taste receptors across much of their skin."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 70,
+			"textureLengthPixels": 18.384776
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -1,20 +1,21 @@
 {
-    "title":  "Angelfish",
-    "id":  "fish-angelfish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its thin body slips easily between dense stems and submerged roots."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_small",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  15
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Angelfish",
+	"id": "fish-angelfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its thin body slips easily between dense stems and submerged roots."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 15,
+			"textureLengthPixels": 12
+		},
+		"furnaceResult": "white_meat"
+	}
 }

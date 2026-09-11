@@ -1,20 +1,21 @@
 {
-    "title":  "Rainy Bass",
-    "id":  "fish-rainy_bass",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Raindrops mask its approach, so it hunts closest to shore during storms."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "rainy"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  45
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Rainy Bass",
+	"id": "fish-rainy_bass",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Raindrops mask its approach, so it hunts closest to shore during storms."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"rainy"
+		],
+		"size": {
+			"averageLengthCm": 45,
+			"textureLengthPixels": 18.384776
+		},
+		"furnaceResult": "white_meat"
+	}
 }

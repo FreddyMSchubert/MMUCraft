@@ -1,20 +1,21 @@
 {
-    "title":  "Squigglyfish",
-    "id":  "fish-squigglyfish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "No two turns in its swimming trail ever repeat the same curve."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  45
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Squigglyfish",
+	"id": "fish-squigglyfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"No two turns in its swimming trail ever repeat the same curve."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 45,
+			"textureLengthPixels": 13
+		},
+		"furnaceResult": "white_meat"
+	}
 }

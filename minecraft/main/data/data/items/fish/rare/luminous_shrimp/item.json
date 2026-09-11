@@ -1,20 +1,21 @@
 {
-    "title":  "Luminous Shrimp",
-    "id":  "fish-luminous_shrimp",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "It spits a cloud of glowing fluid to startle deep-water hunters."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_object",
-                 "tags":  [
-                              "fullmoon"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  10
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Luminous Shrimp",
+	"id": "fish-luminous_shrimp",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"It spits a cloud of glowing fluid to startle deep-water hunters."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"fullmoon"
+		],
+		"size": {
+			"averageLengthCm": 10,
+			"textureLengthPixels": 13
+		},
+		"furnaceResult": "white_meat"
+	}
 }

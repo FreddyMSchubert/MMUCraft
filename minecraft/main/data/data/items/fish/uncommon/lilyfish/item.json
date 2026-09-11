@@ -1,20 +1,21 @@
 {
-    "title":  "Lilyfish",
-    "id":  "fish-lilyfish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its fins mimic lily roots, hiding it beneath quiet pond leaves."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_small",
-                 "tags":  [
-                              "rainy"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  25
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Lilyfish",
+	"id": "fish-lilyfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its fins mimic lily roots, hiding it beneath quiet pond leaves."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"rainy"
+		],
+		"size": {
+			"averageLengthCm": 25,
+			"textureLengthPixels": 12.727922
+		},
+		"furnaceResult": "white_meat"
+	}
 }

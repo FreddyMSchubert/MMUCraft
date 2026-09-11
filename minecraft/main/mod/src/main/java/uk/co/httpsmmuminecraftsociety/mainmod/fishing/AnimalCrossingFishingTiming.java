@@ -29,9 +29,7 @@ public final class AnimalCrossingFishingTiming {
 	}
 
     public static double bobberContactDistance(FishingPersonality personality) {
-        double shadowLengthBlocks = FishShapes.fromJsonValue(personality.fishShape())
-                .shadowLengthBlocks(personality.size());
-        return shadowLengthBlocks * 0.5D
+        return personality.size() * 0.5D
                 + BOBBER_TOUCH_PADDING_BLOCKS;
     }
 

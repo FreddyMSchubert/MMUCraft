@@ -14,5 +14,12 @@
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Skull Hat."
 	},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
 	"equippableCosmetic": {}
 }

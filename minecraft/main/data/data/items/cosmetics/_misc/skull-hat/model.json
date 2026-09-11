@@ -1,0 +1,97 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"2": "skull texture"
+	},
+	"elements": [
+		{
+			"name": "teeth",
+			"from": [5.5, 4, 4],
+			"to": [10.5, 5, 4],
+			"rotation": {"angle": 0, "axis": "y", "origin": [2.5, -2, 2]},
+			"faces": {
+				"north": {"uv": [8, 9, 10.5, 9.5], "texture": "#2"},
+				"east": {"uv": [0, 0, 0, 0.5], "texture": "#2"},
+				"south": {"uv": [8, 9.5, 10.5, 10], "texture": "#2"},
+				"west": {"uv": [0, 0, 0, 0.5], "texture": "#2"},
+				"up": {"uv": [2.5, 0, 0, 0], "texture": "#2"},
+				"down": {"uv": [2.5, 0, 0, 0], "texture": "#2"}
+			}
+		},
+		{
+			"from": [4, 5, 4],
+			"to": [12, 11, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 5, 4]},
+			"faces": {
+				"north": {"uv": [4, 0, 8, 3], "texture": "#2"},
+				"east": {"uv": [8, 0, 12, 3], "texture": "#2"},
+				"south": {"uv": [4, 6, 8, 9], "texture": "#2"},
+				"west": {"uv": [8, 6, 12, 9], "texture": "#2"},
+				"up": {"uv": [0, 0, 4, 4], "texture": "#2"},
+				"down": {"uv": [0, 11, 4, 15], "texture": "#2"}
+			}
+		},
+		{
+			"from": [4, 11, 4],
+			"to": [12, 5, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 11, 4]},
+			"faces": {
+				"north": {"uv": [4, 3, 8, 6], "texture": "#2"},
+				"east": {"uv": [8, 3, 12, 6], "texture": "#2"},
+				"south": {"uv": [0, 8, 4, 11], "texture": "#2"},
+				"west": {"uv": [4, 9, 8, 12], "texture": "#2"},
+				"up": {"uv": [0, 11, 4, 15], "texture": "#2"},
+				"down": {"uv": [0, 4, 4, 8], "texture": "#2"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [67.5, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [67.5, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 135, 0],
+			"translation": [2.75, 4, 0],
+			"scale": [0.6, 0.6, 0.6]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 135, 0],
+			"translation": [2.75, 4, 0],
+			"scale": [0.6, 0.6, 0.6]
+		},
+		"ground": {
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"gui": {
+			"rotation": [22.5, 135, 0]
+		},
+		"head": {
+			"translation": [0, 1.75, 0],
+			"scale": [1.8, 1.8, 1.8]
+		},
+		"fixed": {
+			"rotation": [-64, 0, 0],
+			"translation": [0, 0, -5.25],
+			"scale": [2, 2, 2]
+		},
+		"on_shelf": {
+			"rotation": [0, -180, 0]
+		}
+	},
+	"groups": [
+		{
+			"name": "skull",
+			"origin": [8, 8, 8],
+			"scope": 0,
+			"color": 0,
+			"children": [0, 1, 2]
+		}
+	]
+}

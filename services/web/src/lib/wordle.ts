@@ -4,6 +4,17 @@ export interface WordleGuess {
 	result: TileResult[];
 }
 
+export interface WordleHintCell {
+	column: number;
+	letter: string;
+	result: 'correct' | 'present';
+}
+
+export interface WordleHintRow {
+	afterGuess: number;
+	cells: WordleHintCell[];
+}
+
 export const MIN_WORD_LENGTH = 3;
 export const BASE_GUESS_COUNT = 6;
 export const WORDLE_STORAGE_PREFIX = 'mmu-mcsoc-wordle';

@@ -140,10 +140,20 @@ export function SiteAlertProvider({ children }: { children: ReactNode }) {
 						event.preventDefault();
 						choose(buttons.find((button) => button.value === 'cancel') ?? buttons[0]);
 					}}
-					onKeyDown={(event) => {
-						if (event.key !== 'Escape') return;
+					onKeyDownCapture={(event) => {
+						event.stopPropagation();
+						if (event.key !== 'Escape' && event.key !== 'Enter') return;
 						event.preventDefault();
-						choose(buttons.find((button) => button.value === 'cancel') ?? buttons[0]);
+						if (event.key === 'Escape') {
+							choose(
+								buttons.find((button) => button.value === 'cancel') ?? buttons[0],
+							);
+							return;
+						}
+						const buttonIndex = Number(
+							(event.target as HTMLElement).dataset.siteAlertButtonIndex ?? 0,
+						);
+						choose(buttons[buttonIndex] ?? buttons[0]);
 					}}
 				>
 					<div className="siteAlertGlow" aria-hidden="true" />
@@ -163,6 +173,7 @@ export function SiteAlertProvider({ children }: { children: ReactNode }) {
 							<button
 								key={index}
 								type="button"
+								data-site-alert-button-index={index}
 								className={`siteAlertButton siteAlertButton-${button.tone ?? 'primary'}`}
 								style={buttonStyle(button)}
 								autoFocus={index === 0}

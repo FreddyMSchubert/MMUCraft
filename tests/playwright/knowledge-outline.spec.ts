@@ -123,13 +123,13 @@ test('long knowledge pages get nested, scroll-aware section links on desktop', a
 	await expect(page.locator('h3#knowledge-beer')).toBeInViewport();
 	await expect(outline).toHaveCSS('position', 'sticky');
 
-	const authoredHeadingSize = await page
+	const [authoredHeadingSize, articleFontSize] = await page
 		.getByRole('heading', { name: 'Decorative Blocks Guide' })
-		.evaluate((heading) => Number.parseFloat(getComputedStyle(heading).fontSize));
-	const knowledgeHeadingSize = await page
-		.getByRole('heading', { name: 'Knowledge', exact: true })
-		.evaluate((heading) => Number.parseFloat(getComputedStyle(heading).fontSize));
-	expect(authoredHeadingSize).toBeLessThanOrEqual(knowledgeHeadingSize);
+		.evaluate((heading) => [
+			Number.parseFloat(getComputedStyle(heading).fontSize),
+			Number.parseFloat(getComputedStyle(heading.closest('article')!).fontSize),
+		]);
+	expect(authoredHeadingSize).toBeLessThanOrEqual(articleFontSize * 1.55);
 });
 
 test('knowledge outlines stay out of the mobile layout', async ({ page }) => {

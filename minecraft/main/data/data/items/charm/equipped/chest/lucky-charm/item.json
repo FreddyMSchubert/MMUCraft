@@ -8,6 +8,7 @@
 		"Luck favours the prepared."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Increases fishing luck.",
 		"unlockWeight": 25,

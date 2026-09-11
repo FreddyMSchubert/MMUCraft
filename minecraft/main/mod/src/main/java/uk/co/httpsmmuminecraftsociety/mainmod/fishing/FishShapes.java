@@ -23,13 +23,4 @@ public enum FishShapes {
         return value;
     }
 
-    public static FishShapes fromJsonValue(String value) {
-        String normalized = value.contains(":") ? value : "mainmod:" + value;
-        for (FishShapes shape : values()) {
-            if (shape.value.equals(normalized) || shape.name().equalsIgnoreCase(value)) {
-                return shape;
-            }
-        }
-        throw new IllegalArgumentException("Unknown fish shape: " + value);
-    }
 }

@@ -1,5 +1,12 @@
 import path from 'path';
-import { CHARM_ARMOR_MATERIALS, LEATHER_UNDYED_COLOR, PACK_MCMETA } from '../config';
+import {
+	CHARM_ARMOR_MATERIALS,
+	FISHING_SHADOW_MODEL_OVERRIDES,
+	FISHING_SHADOW_TEXTURE_OVERRIDES,
+	FISHING_SHADOW_VANILLA_ITEMS,
+	LEATHER_UNDYED_COLOR,
+	PACK_MCMETA,
+} from '../config';
 import type {
 	ArmorMaterial,
 	Basic3dItemDefinition,
@@ -66,6 +73,26 @@ function equipmentTexturePngPath(
 
 function minecraftItemDefinitionPath(outputDir: string, itemId: string): string {
 	return path.join(outputDir, 'assets', 'minecraft', 'items', `${itemId}.json`);
+}
+
+function fishingShadowItemDefinitionPath(outputDir: string, itemId: string): string {
+	return path.join(outputDir, 'assets', 'mainmod', 'items', 'fishing_shadow', `${itemId}.json`);
+}
+
+function createFishingShadowItemDefinition(itemId: string): Record<string, unknown> {
+	const modelId = FISHING_SHADOW_TEXTURE_OVERRIDES[itemId]
+		? `mainmod:item/fishing_shadow/${itemId}`
+		: (FISHING_SHADOW_MODEL_OVERRIDES[itemId] ?? `minecraft:item/${itemId}`);
+	return {
+		model: {
+			type: 'minecraft:model',
+			model: modelId,
+			tints: Array.from({ length: 5 }, () => ({
+				type: 'minecraft:constant',
+				value: 0,
+			})),
+		},
+	};
 }
 
 function errorMessage(error: unknown): string {
@@ -206,6 +233,7 @@ async function generateBasicItem(
 	return {
 		when: item.id,
 		modelId,
+		shadowModelId: modelId,
 	};
 }
 
@@ -391,6 +419,21 @@ export async function generateResourcePack(
 		createCarvedPumpkinItemDefinition(carvedPumpkinCases),
 		context,
 	);
+	for (const itemId of FISHING_SHADOW_VANILLA_ITEMS) {
+		const textureOverride = FISHING_SHADOW_TEXTURE_OVERRIDES[itemId];
+		if (textureOverride) {
+			await writeJson(
+				itemModelJsonPath(options.outputDir, 'mainmod', `fishing_shadow/${itemId}`),
+				createGeneratedItemModel(textureOverride),
+				context,
+			);
+		}
+		await writeJson(
+			fishingShadowItemDefinitionPath(options.outputDir, itemId),
+			createFishingShadowItemDefinition(itemId),
+			context,
+		);
+	}
 
 	return {
 		discoveredItems: items.length,

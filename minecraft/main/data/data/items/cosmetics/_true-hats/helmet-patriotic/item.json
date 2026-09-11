@@ -8,6 +8,7 @@
 		"ODIO le vespe, insetti INUTILI!!!!"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 40,

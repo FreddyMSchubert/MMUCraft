@@ -8,6 +8,7 @@
 		"Boioioing."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Makes you very bouncy. It's fun.",
 		"unlockWeight": 150,

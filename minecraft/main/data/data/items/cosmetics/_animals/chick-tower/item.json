@@ -8,6 +8,7 @@
 		"A brood of chicken siblings named: Shellton John, Scarlet Johenson, Jenna Ortegga, Meryl Peep, Timothee Chalomlette,  Egg Sheeran, Eggatha Christie, Yolko Ono, Jeffrey Eggstein, Mishell Obama, Freggy Mercury"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 250,
 		"description": "Nobody knows how they're stuck together, but they're happy to stay that way.",
 		"unlockWeight": 4,

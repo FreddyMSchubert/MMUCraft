@@ -1,20 +1,21 @@
 {
-    "title":  "Olive Flounder",
-    "id":  "fish-olive_flounder",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "The olive flounder is left-eyed, unlike many other flatfish."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_weird",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  50
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Olive Flounder",
+	"id": "fish-olive_flounder",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"The olive flounder is left-eyed, unlike many other flatfish."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 50,
+			"textureLengthPixels": 13
+		},
+		"furnaceResult": "white_meat"
+	}
 }

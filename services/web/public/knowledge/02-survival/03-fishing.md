@@ -11,6 +11,8 @@ tips:
 - Annoyed by how slow fishing is? Make sure you fish without blocks above your head and with Lure applied to your fishing rod. Fishing in rain will make things even quicker.
 ====
 
+# Fishing
+
 :::tldr
 - Cast into water. Wait for the **BIG** splash, then quickly right-click once to reel it in.
 - Some fish only spawn in specific conditions. Check the [fishing tab](/play/fishing) for a full fish compendium & conditions overview.
@@ -21,7 +23,7 @@ tips:
 ## How to catch a fish
 
 1. Hold a fishing rod and right-click water to cast.
-2. When the bobber is pulled down in a large splash, right-click once.
+2. When the fish makes a large splash with a stronger sound, right-click once.
 3. The catch flies back to you. Cast again.
 
 ![Fishing bite](/assets/knowledge/survival/fishing/catching_example.png)
@@ -50,7 +52,7 @@ Each cast rolls either a **fish** or an **item**. There are modifiers that can c
 
 ![Fishing Worms Example](/assets/knowledge/survival/fishing/worms_example.png)
 
-Worms and Magnets can be found hidden in suspicious sand and suspicious gravel respectively. They somewhere after you fished in that area for a while. Use a brush to get them out.
+Worms and Magnets can be found hidden in suspicious sand and suspicious gravel respectively. **They appear somewhere after you fished in that area for a while.** Use a brush to get them out.
 
 To get the golden versions, either get lucky when brushing, or upgrade them:
 

@@ -8,6 +8,7 @@
 		"Come out of your shell at bit more"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,

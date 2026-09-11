@@ -1,20 +1,21 @@
 {
-    "title":  "Walleye",
-    "id":  "fish-walleye",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "A reflective layer in its eyes gives walleye excellent night vision."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  45
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Walleye",
+	"id": "fish-walleye",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"A reflective layer in its eyes gives walleye excellent night vision."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 45,
+			"textureLengthPixels": 20.506097
+		},
+		"furnaceResult": "white_meat"
+	}
 }

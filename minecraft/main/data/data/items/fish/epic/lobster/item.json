@@ -1,20 +1,21 @@
 {
-    "title":  "Lobster",
-    "id":  "fish-lobster",
-    "modelType":  "basic",
-    "rarity":  "epic",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Lobsters taste with their legs and grind food using teeth in the stomach."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_object",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  35
-                          },
-                 "furnaceResult":  "crab_claw"
-             }
+	"title": "Lobster",
+	"id": "fish-lobster",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Lobsters taste with their legs and grind food using teeth in the stomach."
+	],
+	"fish": {
+		"angle": "T",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 35,
+			"textureLengthPixels": 16
+		},
+		"furnaceResult": "crab_claw"
+	}
 }

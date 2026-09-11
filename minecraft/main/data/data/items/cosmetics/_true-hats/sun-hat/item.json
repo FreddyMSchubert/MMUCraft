@@ -4,13 +4,12 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Perfect for vampires"
-	],
+	"tooltips": ["Perfect for vampires"],
 	"shopPurchasable": {
-	"priceDabloons": 42,
+		"membersOnly": false,
+		"priceDabloons": 42,
 		"description": "",
-		"unlockWeight": 100,
+		"unlockWeight": 10000,
 		"unlockMessage": "Unlocked cosmetic: Sun Hat."
 	},
 	"equippableCosmetic": {},

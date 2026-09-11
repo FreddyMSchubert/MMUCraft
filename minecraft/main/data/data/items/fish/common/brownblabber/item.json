@@ -1,20 +1,21 @@
 {
-    "title":  "Brownblabber",
-    "id":  "fish-brownblabber",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "It chatters by rattling pebbles in a chamber beneath its gills."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "snowy"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  45
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Brownblabber",
+	"id": "fish-brownblabber",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"It chatters by rattling pebbles in a chamber beneath its gills."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"snowy"
+		],
+		"size": {
+			"averageLengthCm": 45,
+			"textureLengthPixels": 17.67767
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -14,6 +14,8 @@ tips:
 - Soul Soil can be gotten before entering the Nether by crafting 8 dirt and 1 soul together.
 ====
 
+# Soulbound Enchantment
+
 An item enchanted with ***SOULBOUND*** will attach to your soul, not your physical form. This allows it to stay affixed to your innermost being as it travels the afterlife in search of a new body to inhabit.
 
 That is to say, you won't lose ***SOULBOUND*** items under the server's [death and respawning rules](/play/knowledge/death-and-respawning). They'll stay in your inventory.

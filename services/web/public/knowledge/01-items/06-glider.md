@@ -21,6 +21,8 @@ tips:
 - Expert glider users don't ever touch the ground - they can just place another campfire, and keep flying from the new updraft.
 ====
 
+# Gliders
+
 Gliders are kinda like elytra - with some critical upsides and downsides to them. (Don't worry, you can still get a normal elytra item once you're in the end.).
 
 ## The Upsides

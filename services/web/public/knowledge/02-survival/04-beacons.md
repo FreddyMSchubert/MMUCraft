@@ -11,6 +11,8 @@ tips:
 - Using Diamond Blocks to power a Beacon will increase the Beacons range drastically, way more than the normal Vanilla maximum Beacon range.
 ====
 
+# Beacon Ranges
+
 The range of blocks that an activated beacon affects (so the max distance you can be from the beacon while still gaining its effects) has been changed.
 
 It is now based on what blocks the beacon is made out of.

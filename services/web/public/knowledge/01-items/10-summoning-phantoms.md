@@ -12,6 +12,8 @@ tips:
 - On this server, bats and the ender dragon drop phantom membranes in addition to phantoms.
 ====
 
+# Phantom Summon Potion
+
 :::context
 Since they are incredibly annoying, natural phantom spawns have been disabled on the server.
 :::

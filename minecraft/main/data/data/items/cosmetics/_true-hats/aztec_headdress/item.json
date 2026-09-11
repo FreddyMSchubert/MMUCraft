@@ -8,6 +8,7 @@
 		"Although I like to call it quetzalapanecayotl"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 300,
 		"description": "",
 		"unlockWeight": 15,

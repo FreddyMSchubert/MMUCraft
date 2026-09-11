@@ -6,6 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": ["A very good boy."],
 	"shopPurchasable": {
+		"membersOnly": true,
 		"priceDabloons": 300,
 		"description": "",
 		"unlockWeight": 4,

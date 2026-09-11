@@ -7,12 +7,12 @@ import net.minecraft.world.entity.projectile.FishingHook;
 
 public final class AnimalCrossingFishingTiming {
     private static final int MAX_LATENCY_COMPENSATION_TICKS = 20;
-    private static final int WAIT_CENTER_TICKS_WITHOUT_LURE = 20 * 30;
+    private static final int WAIT_CENTER_TICKS_WITHOUT_LURE = 20 * 24;
     private static final int WAIT_CENTER_TICKS_WITH_LURE_3 = 20 * 5;
-    private static final int WAIT_SPREAD_TICKS_WITHOUT_LURE = 20 * 5;
+    private static final int WAIT_SPREAD_TICKS_WITHOUT_LURE = 20 * 4;
     private static final int WAIT_SPREAD_TICKS_WITH_LURE_3 = 20 * 3;
+    private static final int LURE_3_EXTRA_RANDOM_WAIT_TICKS = 20 * 2;
     private static final double BOUNCE_GAUSSIAN_SIGMA = 1.0D;
-    private static final double BASE_FISH_DISPLAY_WIDTH_BLOCKS = 1.22D;
     private static final double BOBBER_TOUCH_PADDING_BLOCKS = 0.10D;
 
 	private AnimalCrossingFishingTiming() {}
@@ -30,7 +30,7 @@ public final class AnimalCrossingFishingTiming {
 	}
 
     public static double bobberContactDistance(FishingPersonality personality) {
-        return BASE_FISH_DISPLAY_WIDTH_BLOCKS * personality.size() * 0.5D
+        return personality.size() * 0.5D
                 + BOBBER_TOUCH_PADDING_BLOCKS;
     }
 
@@ -55,7 +55,10 @@ public final class AnimalCrossingFishingTiming {
                 WAIT_SPREAD_TICKS_WITH_LURE_3,
                 lureLevel
         );
-        return Mth.nextInt(random, Math.max(20, centerTicks - spreadTicks), centerTicks + spreadTicks);
+        int waitTicks = Mth.nextInt(random, Math.max(20, centerTicks - spreadTicks), centerTicks + spreadTicks);
+        return lureLevel == 3
+                ? waitTicks + Mth.nextInt(random, 0, LURE_3_EXTRA_RANDOM_WAIT_TICKS)
+                : waitTicks;
     }
 
     public static int lureLevel(int lureSpeed) {
@@ -63,8 +66,25 @@ public final class AnimalCrossingFishingTiming {
         return Mth.clamp(Math.round(lureSpeed / 100.0F), 0, 3);
     }
 
+    public static double lureBookShortcutChance(int lureLevel) {
+        return switch (Mth.clamp(lureLevel, 0, 3)) {
+            case 0 -> 0.25D;
+            case 1 -> 0.125D;
+            case 2 -> 0.05D;
+            default -> 0.0D;
+        };
+    }
+
     public static int rollBounceCount(RandomSource random, FishingPersonality personality) {
-        double averageBounces = personality.averageBounces();
+        if (personality.averageCatchSeconds() < 5.0F) {
+            return random.nextBoolean()
+                    ? 1
+                    : Math.max(2, rollGeneratedBounceCount(random, personality.averageBounces()));
+        }
+        return rollGeneratedBounceCount(random, personality.averageBounces());
+    }
+
+    private static int rollGeneratedBounceCount(RandomSource random, double averageBounces) {
         int rightEdge = Math.max(1, Mth.ceil(averageBounces * 2.0D - 1.0D));
         if (rightEdge <= 1) return 1;
 

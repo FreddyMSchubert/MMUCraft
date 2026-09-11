@@ -17,6 +17,7 @@ export interface BaseDiscoveredItem {
 }
 
 export interface ShopPurchasableDefinition {
+	readonly membersOnly: boolean;
 	readonly gameplayToggle?: string;
 	readonly priceDabloons: number;
 	readonly description: string;
@@ -74,6 +75,7 @@ export interface SelectorCase {
 	readonly when: string;
 	readonly modelId: string;
 	readonly isTinted?: boolean;
+	readonly shadowModelId?: string;
 }
 
 export interface CosmeticWeightEntry {

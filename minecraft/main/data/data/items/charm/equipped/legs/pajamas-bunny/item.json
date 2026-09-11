@@ -9,6 +9,7 @@
 		"The bunnies might also get a bit snacky."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 175,
 		"description": "Increases jump height and can make rabbits share carrots.",
 		"unlockWeight": 10,

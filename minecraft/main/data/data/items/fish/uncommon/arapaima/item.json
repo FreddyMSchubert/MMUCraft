@@ -1,20 +1,21 @@
 {
-    "title":  "Arapaima",
-    "id":  "fish-arapaima",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Arapaima must surface regularly because a modified swim bladder acts like a lung."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_shark",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  230
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Arapaima",
+	"id": "fish-arapaima",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Arapaima must surface regularly because a modified swim bladder acts like a lung."
+	],
+	"fish": {
+		"angle": 280,
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 230,
+			"textureLengthPixels": 12.685934
+		},
+		"furnaceResult": "white_meat"
+	}
 }

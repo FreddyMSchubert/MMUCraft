@@ -6,6 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
+		"membersOnly": true,
 		"priceDabloons": 80,
 		"description": "",
 		"unlockWeight": 70,

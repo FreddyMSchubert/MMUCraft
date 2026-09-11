@@ -127,6 +127,7 @@ export class FishingService {
 			server_smallest_record: result.serverSmallestRecord,
 			announce,
 			first_server_catch_announcement: firstServerCatchAnnouncement,
+			first_server_catch: result.firstServerCatch,
 			message: 'Fish catch recorded.',
 		};
 		if (Object.values(result).some(Boolean)) {
@@ -286,6 +287,7 @@ export class FishingService {
 			server_smallest_record: false,
 			announce: false,
 			first_server_catch_announcement: false,
+			first_server_catch: false,
 			message,
 		};
 	}

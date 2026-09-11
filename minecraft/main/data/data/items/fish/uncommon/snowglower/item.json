@@ -1,20 +1,21 @@
 {
-    "title":  "Snowglower",
-    "id":  "fish-snowglower",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Cold water triggers a gentle blue glow beneath its scales."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_small",
-                 "tags":  [
-                              "snowy"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  25
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Snowglower",
+	"id": "fish-snowglower",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Cold water triggers a gentle blue glow beneath its scales."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"snowy"
+		],
+		"size": {
+			"averageLengthCm": 25,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "white_meat"
+	}
 }

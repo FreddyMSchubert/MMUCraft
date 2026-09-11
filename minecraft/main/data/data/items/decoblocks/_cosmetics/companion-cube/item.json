@@ -15,6 +15,7 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 40,

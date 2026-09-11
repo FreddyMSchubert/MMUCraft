@@ -12,7 +12,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishFurnaceResult;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishRarity;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishSize;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishSpawnTag;
-import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishShapes;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishTextureAngle;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
 
 import java.util.ArrayList;
@@ -46,13 +46,13 @@ public record FishItemFeature(
         int rarityLevel = rarity.ordinal();
 
         // Roll every default first, so one JSON override cannot change the other generated values.
-        float shadowScale = override(catching, "shadowScale", between(random, 0.5F, 1.5F));
+        random.nextFloat(); // Preserve the former shadow-scale roll and every species' existing catch behavior.
         float secondsAwayFromBobber = override(catching, "secondsAwayFromBobber", between(random, 0.1F, 0.5F));
         float approachSeconds = override(catching, "approachSeconds", between(random, 0.15F, 0.5F));
         float retreatSeconds = override(catching, "retreatSeconds", between(random, 0.2F, 1.5F));
         float retreatDistance = override(catching, "retreatDistance", between(random, 0.5F, 1.75F));
         float averageCatchSeconds = override(catching, "averageCatchSeconds",
-                between(random, 0.0F, 15.0F + 3.0F * rarityLevel));
+                between(random, 0.0F, 10.0F + 3.0F * rarityLevel));
         float struggleSeconds = override(catching, "struggleSeconds",
                 between(random, 1.0F + 0.5F * rarityLevel, 2.5F + 1.5F * rarityLevel));
         float averageBounces = calculateAverageBounces(averageCatchSeconds, approachSeconds, retreatSeconds, secondsAwayFromBobber);
@@ -64,14 +64,17 @@ public record FishItemFeature(
         return new FishItemFeature(
                 new FishingPersonality(
                         rarity,
-                        struggleSeconds,
-                        FishShapes.fromJsonValue(json.get("shape").getAsString()).value(),
-                        shadowScale,
+						struggleSeconds,
+						FishTextureAngle.parse(json.get("angle")),
+						false,
+						size.get("textureLengthPixels").getAsFloat(),
+                        FishSize.blocks(averageLengthCm),
                         secondsAwayFromBobber,
                         approachSeconds,
                         retreatSeconds,
                         retreatDistance,
-                        averageBounces
+                        averageBounces,
+                        averageCatchSeconds
                 ),
                 new FishSize(
                         averageLengthCm,

@@ -16,7 +16,7 @@ final class GameplayPlayerOperations {
         int color = Integer.parseInt(request.getColorHex().replace("#", ""), 16);
         ClaimsManager.updateOwnerColor(playerId, color);
         ServerPlayer player = GrpcBridge.minecraftServer().getPlayerList().getPlayer(playerId);
-        if (player != null && !player.hasDisconnected()) PlayerStatsSync.applyColor(player, color);
+        if (player != null && !player.hasDisconnected()) PlayerStatsSync.applyWebsiteColor(player, color);
         return ApplyPlayerColorResponse.newBuilder().setApplied(true).build();
     }
 

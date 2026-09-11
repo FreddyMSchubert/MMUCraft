@@ -1,20 +1,21 @@
 {
-    "title":  "Sunsetfish",
-    "id":  "fish-sunsetfish",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its colors flare brightest during the final minutes before dusk."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "day"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  35
-                          },
-                 "furnaceResult":  "red_meat"
-             }
+	"title": "Sunsetfish",
+	"id": "fish-sunsetfish",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its colors flare brightest during the final minutes before dusk."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"day"
+		],
+		"size": {
+			"averageLengthCm": 35,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "red_meat"
+	}
 }

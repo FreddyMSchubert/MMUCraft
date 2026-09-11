@@ -8,6 +8,7 @@
 		"Nice to wear in an Ice Spikes biome"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 85,
 		"description": "",
 		"unlockWeight": 65,

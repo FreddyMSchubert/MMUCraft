@@ -17,6 +17,8 @@ tips:
 - You can get your hands on mud blocks way way easier than usual by throwing dirt blocks into a cauldron filled with water. The dirt blocks will turn into mud blocks instantly!
 ====
 
+# Crafting Tweaks
+
 ![Fun Rails example image](/assets/knowledge/survival/crafting-tweaks/minecarts-example.png)
 
 ## Minecart Rails

@@ -1,20 +1,21 @@
 {
-    "title":  "Ghostfish",
-    "id":  "fish-ghostfish",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its translucent organs fade whenever it enters another creature\u0027s shadow."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "newmoon"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  30
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Ghostfish",
+	"id": "fish-ghostfish",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its translucent organs fade whenever it enters another creature's shadow."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"newmoon"
+		],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
 }

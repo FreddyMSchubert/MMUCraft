@@ -100,6 +100,7 @@ message PublishDiscordEventRequest {
   string nickname = 6;
   string pronouns = 7;
   string color_hex = 8;
+  repeated OnlinePlayer online_players = 9;
 }
 
 message PublishDiscordEventResponse {
@@ -433,6 +434,7 @@ message RecordFishCatchResponse {
   bool personal_smallest_record = 8;
   bool announce = 9;
   bool first_server_catch_announcement = 10;
+  bool first_server_catch = 11;
 }
 
 message GrantDailyLoginBonusRequest {

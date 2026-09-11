@@ -1,21 +1,22 @@
 {
-    "title":  "Midnight Squid",
-    "id":  "fish-midnight_squid",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "It flashes blue points to coordinate hunts in total darkness."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_squid",
-                 "tags":  [
-                              "ocean",
-                              "night"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  50
-                          },
-                 "furnaceResult":  "tentacle"
-             }
+	"title": "Midnight Squid",
+	"id": "fish-midnight_squid",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"It flashes blue points to coordinate hunts in total darkness."
+	],
+	"fish": {
+		"angle": "T",
+		"tags": [
+			"ocean",
+			"night"
+		],
+		"size": {
+			"averageLengthCm": 50,
+			"textureLengthPixels": 16
+		},
+		"furnaceResult": "tentacle"
+	}
 }

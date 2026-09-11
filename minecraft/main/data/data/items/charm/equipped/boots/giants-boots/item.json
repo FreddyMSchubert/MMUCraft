@@ -9,6 +9,7 @@
 		"Grants the user the lost power of the ancient giants."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Grants the power of the ancient giants while equipped.",
 		"unlockWeight": 75,

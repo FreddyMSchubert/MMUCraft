@@ -8,6 +8,7 @@
 		"I cat think of a good pun at the moment..."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 51,

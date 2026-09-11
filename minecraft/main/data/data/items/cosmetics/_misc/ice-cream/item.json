@@ -8,6 +8,7 @@
 		"Sorry, we ran out of flakes"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 75,

@@ -8,6 +8,7 @@
 		"Made from 100% real Sniffer"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 42,

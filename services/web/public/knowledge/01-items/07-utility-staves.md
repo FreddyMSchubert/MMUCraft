@@ -18,6 +18,8 @@ tips:
 - You can get a trident much easier than usual by crafting it using Trident Shafts and Trident Prongs.
 ====
 
+# Utility Staves
+
 Here's a few other fun things you may consider crafting.
 
 ## Staff of [Soulbound](/play/knowledge/soulbound) Storage

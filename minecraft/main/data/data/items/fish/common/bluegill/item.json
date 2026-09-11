@@ -1,20 +1,21 @@
 {
-    "title":  "Bluegill",
-    "id":  "fish-bluegill",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "The dark flap behind its gill resembles a small external ear."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_small",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  20
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Bluegill",
+	"id": "fish-bluegill",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"The dark flap behind its gill resembles a small external ear."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 20,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -8,6 +8,7 @@
 		"It tickles a bit"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,

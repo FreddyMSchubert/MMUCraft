@@ -1,20 +1,21 @@
 {
-    "title":  "Stonefish",
-    "id":  "fish-stonefish",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Stonefish carry potent venom in spines along the back."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  35
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Stonefish",
+	"id": "fish-stonefish",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Stonefish carry potent venom in spines along the back."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 35,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -8,6 +8,7 @@
 		"Reality called - I ignored it for magic!!!"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 267,
 		"description": "",
 		"unlockWeight": 10,

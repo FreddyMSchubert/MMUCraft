@@ -8,6 +8,7 @@
 		"Not the most fez-tive of hats"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 80,
 		"description": "",
 		"unlockWeight": 75,

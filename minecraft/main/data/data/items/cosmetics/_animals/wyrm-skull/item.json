@@ -8,6 +8,7 @@
 		"I would write a joke here, but it would just drag-on"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 50,

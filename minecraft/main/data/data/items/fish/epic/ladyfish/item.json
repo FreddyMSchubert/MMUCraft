@@ -1,20 +1,21 @@
 {
-    "title":  "Ladyfish",
-    "id":  "fish-ladyfish",
-    "modelType":  "basic",
-    "rarity":  "epic",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Ladyfish larvae pass through a transparent, ribbon-like stage."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  70
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Ladyfish",
+	"id": "fish-ladyfish",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Ladyfish larvae pass through a transparent, ribbon-like stage."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 70,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "white_meat"
+	}
 }

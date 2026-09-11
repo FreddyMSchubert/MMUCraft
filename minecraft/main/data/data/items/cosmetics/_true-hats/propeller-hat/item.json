@@ -8,6 +8,7 @@
 		"Whimsy not included"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 37,

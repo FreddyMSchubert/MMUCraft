@@ -8,6 +8,7 @@
 		"2016 called, they want their skins back"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 80,

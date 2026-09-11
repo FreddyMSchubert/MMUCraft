@@ -8,6 +8,7 @@
 		"Don't get cold feet."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 225,
 		"description": "Lets you jump in mid-air once.",
 		"unlockWeight": 10,

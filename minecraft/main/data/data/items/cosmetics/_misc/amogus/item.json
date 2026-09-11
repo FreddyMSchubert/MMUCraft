@@ -8,6 +8,7 @@
 		"When the impostor is sus"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 		"priceDabloons": 67,
 		"description": "",
 		"unlockWeight": 100,

@@ -15,7 +15,26 @@ function createModelReference(selectorCase: SelectorCase): Record<string, unknow
 		];
 	}
 
-	return model;
+	if (!selectorCase.shadowModelId) {
+		return model;
+	}
+
+	return {
+		type: 'minecraft:select',
+		property: 'minecraft:custom_model_data',
+		index: 1,
+		cases: [
+			{
+				when: 'mainmod:fishing_shadow',
+				model: {
+					type: 'minecraft:model',
+					model: selectorCase.shadowModelId,
+					tints: [{ type: 'minecraft:constant', value: 0 }],
+				},
+			},
+		],
+		fallback: model,
+	};
 }
 
 export function createCommandBlockItemDefinition(

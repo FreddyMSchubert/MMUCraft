@@ -106,24 +106,27 @@ public final class GliderCheck {
                 new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.STICK), ItemStack.EMPTY, new ItemStack(Items.STICK)));
         assert recipe.matches(grid, null) && GliderCharm.isGlider(recipe.assemble(grid));
         double limit = 20;
-        for (int tick = 0; tick < 200; tick++) {
-            assert Math.abs(limit - Math.max(17, 20 - tick * 0.02)) < 1.0E-9;
+        for (int tick = 0; tick < 350; tick++) {
+            assert Math.abs(limit - Math.max(14, 20 - tick * 0.02)) < 1.0E-9;
             limit = GliderFlight.decaySpeedLimit(limit);
         }
-        assert Math.abs(GliderFlight.clampSpeed(new Vec3(2, 3, 4), 17).length() * 20 - 17) < 1.0E-9;
-        assert GliderFlight.clampSpeed(Vec3.ZERO, 17).equals(Vec3.ZERO);
+        assert Math.abs(GliderFlight.clampSpeed(new Vec3(2, 3, 4), 14).length() * 20 - 14) < 1.0E-9;
+        assert GliderFlight.clampSpeed(Vec3.ZERO, 14).equals(Vec3.ZERO);
+        assert GliderFlight.extraGravity(15.999) == 0;
+        assert GliderFlight.extraGravity(16) == 0.0001;
+        assert GliderFlight.extraGravity(80) == 0.0005;
         assert Updrafts.heatRange(Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, false)) == 0;
         assert Updrafts.heatRange(Blocks.FIRE.defaultBlockState()) == 20;
         assert Updrafts.heatRange(Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true)) == 50;
         assert Updrafts.LAVA_RANGE == 35;
         var caught = new Updrafts.Updraft(64, 84, 100 + Updrafts.CARRY_TICKS);
-        assert Math.abs(caught.liftAt(64, 100) - 0.15) < 1.0E-9;
-        assert Math.abs(caught.liftAt(74, 100) - 0.0275) < 1.0E-9;
-        assert Math.abs(caught.liftAt(82, 100) - 0.01014) < 1.0E-9;
-        assert Math.abs(caught.liftAt(83.999, 100) - 0.01) < 1.0E-9;
+        assert Math.abs(caught.liftAt(64, 100) - Updrafts.SOURCE_ACCELERATION) < 1.0E-9;
+        assert Math.abs(caught.liftAt(74, 100) - 0.039375) < 1.0E-9;
+        assert Math.abs(caught.liftAt(82, 100) - 0.020155) < 1.0E-9;
+        assert Math.abs(caught.liftAt(83.999, 100) - Updrafts.TOP_ACCELERATION) < 1.0E-9;
         assert caught.liftAt(63, 100) <= Updrafts.SOURCE_ACCELERATION;
-        assert caught.liftAt(74, 119) > 0;
-        assert caught.liftAt(74, 120) == 0;
+        assert caught.liftAt(74, caught.expiresAt() - 1) > 0;
+        assert caught.liftAt(74, caught.expiresAt()) == 0;
         assert caught.liftAt(84, 101) == 0;
         assert caught.liftAt(85, 101) == 0;
         assert caught.liftAt(80, 101) < caught.liftAt(74, 100);
@@ -145,7 +148,7 @@ public final class GliderCheck {
                 var high = Updrafts.findAt(level, new Vec3(0.5, ceilingY - 0.2, 0.5), 0.6, 110);
                 assert low != null && high != null;
                 assert low.sourceY() == sourceY && low.ceilingY() == ceilingY && high.ceilingY() == ceilingY;
-                assert high.expiresAt() == 130;
+                assert high.expiresAt() == 110 + Updrafts.CARRY_TICKS;
                 assert Updrafts.findAt(level, new Vec3(0.5, ceilingY, 0.5), 0.6, 110) == null;
                 assert Updrafts.findAt(level, new Vec3(1.5, sourceY + 1, 0.5), 0.6, 110) == null;
                 blocks.put(new BlockPos(0, sourceY + 10, 0), Blocks.STONE.defaultBlockState());
@@ -155,9 +158,9 @@ public final class GliderCheck {
         var state = new GliderFlight.FlightState();
         Vec3 rising = new Vec3(0.3, 0.8, 0.4);
         GliderFlight.applyUpdraft(state, caught, rising, 74, 100);
-        assert state.ascentGraceUntil == 0;
-        assert GliderFlight.applyUpdraft(state, null, rising, 74, 119).y > rising.y;
-        assert Math.abs(GliderFlight.applyUpdraft(state, null, rising, 74, 120).y - rising.y * GliderFlight.UPWARD_DAMPING) < 1.0E-9;
+        assert state.speedLimit == GliderFlight.GLIDER_SPEED_BPS && state.ascentGraceUntil == 0;
+        assert GliderFlight.applyUpdraft(state, null, rising, 74, caught.expiresAt() - 1).y > rising.y;
+        assert Math.abs(GliderFlight.applyUpdraft(state, null, rising, 74, caught.expiresAt()).y - rising.y * GliderFlight.UPWARD_DAMPING) < 1.0E-9;
         assert state.updraft == null;
         Vec3 nearTop = GliderFlight.applyUpdraft(state, caught, rising, 83.8, 101);
         assert Math.abs(nearTop.y - 0.2) < 1.0E-9 && nearTop.x == rising.x && nearTop.z == rising.z;

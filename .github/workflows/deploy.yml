@@ -1,7 +1,11 @@
 name: deploy
-run-name: Deploy ${{ inputs.version }} to ${{ inputs.target }}
+run-name: Deploy ${{ github.event_name == 'workflow_run' && 'dev to dev' || format('{0} to {1}', inputs.version, inputs.target) }}
 
 on:
+    workflow_run:
+        workflows: [checks-tests-images]
+        types: [completed]
+        branches: [main]
     workflow_dispatch:
         inputs:
             target:
@@ -33,26 +37,38 @@ permissions:
     packages: read
 
 concurrency:
-    group: deploy-${{ inputs.target }}
+    group: deploy-${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
     cancel-in-progress: false
 
 jobs:
     deploy:
-        if: inputs.target == 'dev' || (github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert')
+        if: >-
+            (github.event_name == 'workflow_run' &&
+             github.event.workflow_run.conclusion == 'success' &&
+             github.event.workflow_run.event == 'push') ||
+            (github.event_name == 'workflow_dispatch' &&
+             (inputs.target == 'dev' ||
+              (github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert')))
         runs-on: ubuntu-24.04
-        environment: ${{ inputs.target }}
+        environment: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
+        env:
+            DEPLOY_TARGET: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
+            DEPLOY_VERSION: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.version }}
+            WARNING_MINUTES: ${{ github.event_name == 'workflow_run' && '1' || inputs.warning_minutes }}
+            FORCE_DEPLOY: ${{ github.event_name == 'workflow_run' && 'false' || inputs.force }}
         steps:
             - name: Validate requested version
               id: version
               shell: bash
               env:
-                  REQUESTED_VERSION: ${{ inputs.version }}
+                  REQUESTED_VERSION: ${{ env.DEPLOY_VERSION }}
+                  REQUESTED_REF: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
               run: |
                   tag="$REQUESTED_VERSION"
                   ref="$REQUESTED_VERSION"
                   if [[ "${tag,,}" == dev ]]; then
                     tag=dev
-                    ref="$GITHUB_REF"
+                    ref="$REQUESTED_REF"
                   fi
                   if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
                     echo "'$tag' is not a valid image tag" >&2
@@ -137,9 +153,6 @@ jobs:
                   GHCR_USER: ${{ github.actor }}
                   IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
                   IMAGE_TAG: ${{ steps.version.outputs.tag }}
-                  DEPLOY_TARGET: ${{ inputs.target }}
-                  WARNING_MINUTES: ${{ inputs.warning_minutes }}
-                  FORCE_DEPLOY: ${{ inputs.force }}
               run: |
                   test -n "$DEPLOY_HOST"
                   test -n "$DEPLOY_USER"

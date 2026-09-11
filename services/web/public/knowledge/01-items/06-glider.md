@@ -108,3 +108,5 @@ Since phantoms no longer spawn, you'll need to get your hands on the phantom mem
 ### Repairing the Glider
 
 You can repair gliders in an anvil. One leather fully repairs the glider.
+
+![Glider Repairing Recipe](/assets/knowledge/items/glider/repair_recipe.png)

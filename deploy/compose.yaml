@@ -114,6 +114,7 @@ services:
         sparsestructures
         invview
         ledger
+        fabric-language-kotlin
       MODRINTH_DOWNLOAD_DEPENDENCIES: required
       STOP_DURATION: "110"
       USE_MEOWICE_FLAGS: "true"

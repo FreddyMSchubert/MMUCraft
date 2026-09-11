@@ -14,6 +14,8 @@ tips:
 - You can turn any grassy area into a snow build by using a wrench to turn the grass snowy.
 ====
 
+# Wrench
+
 The wrench works in a similar way to the debug stick. Right click a block using the wrench to modify its blockstates.
 
 ![Wrench Crafting Recipe](/assets/knowledge/items/wrench/example.png)

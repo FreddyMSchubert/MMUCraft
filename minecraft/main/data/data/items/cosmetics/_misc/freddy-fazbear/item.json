@@ -8,6 +8,7 @@
 		"Ar ar ar ar"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 25,

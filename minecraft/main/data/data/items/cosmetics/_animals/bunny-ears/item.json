@@ -8,6 +8,7 @@
 		"Lets you become ear-resistable"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 40	,
 		"description": "",
 		"unlockWeight": 80,

@@ -11,6 +11,8 @@ tips:
 - If you don't want to lose all of your levels in case you die, store your experience in a Sculk Phial instead.
 ====
 
+# Sculk Phial
+
 Sculk Phials are powerful items, but only if used correctly. They suck the life force / experience levels out of your body (in a very whole wholesome, non-objectionable and totally PG sort of way), allowing you to store, transfer, and sell experience.
 
 Sculk Phials store exactly 30 experience levels.

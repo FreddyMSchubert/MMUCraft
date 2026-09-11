@@ -14,6 +14,8 @@ tips:
 - The detector does not load chunks. It checks chunk coordinates only when you use it.
 ====
 
+# Slime Detector
+
 The Slime Detector shows how close you are to a slime chunk. This is a great Vanilla way of finding slimes without relying on chunkbase.
 
 ## How to make it

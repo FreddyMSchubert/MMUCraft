@@ -55,6 +55,9 @@
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
+				"membersOnly": {
+					"type": "boolean"
+				},
 				"gameplayToggle": {
 					"$ref": "#/$defs/resourceIdentifier"
 				},
@@ -82,7 +85,7 @@
 					"uniqueItems": true
 				}
 			},
-			"required": ["priceDabloons", "unlockWeight"]
+			"required": ["membersOnly", "priceDabloons", "unlockWeight"]
 		},
 		"charm": {
 			"$ref": "./components/charm.schema.json"

@@ -8,6 +8,7 @@
 		"The MMU Students yearn for the mines."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 125,
 		"description": "Mines connected ore blocks.",
 		"unlockWeight": 175,

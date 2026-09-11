@@ -16,6 +16,8 @@ tips:
 - Text formatting works in chat, signs, books, item names, name tags, and other text.
 ====
 
+# Text Coloring
+
 You can make text colorful and add cool formatting to it!
 
 When you put `&` and another character anywhere in text (chat, signs, books, item names, name tags, ...), all text following the & will start having a different color, formatting, ...

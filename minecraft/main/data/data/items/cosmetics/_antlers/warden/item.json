@@ -8,6 +8,7 @@
 		"An A-Ward for your hard work."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,

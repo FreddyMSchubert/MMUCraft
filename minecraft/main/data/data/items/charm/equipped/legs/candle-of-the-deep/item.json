@@ -8,6 +8,7 @@
 		"Light on your feet."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 175,
 		"description": "Gives you permanent night vision.",
 		"unlockWeight": 10,

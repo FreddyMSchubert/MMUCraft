@@ -8,6 +8,7 @@
 		"Big fish, little fish"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 1,
 		"description": "",
 		"unlockWeight": 75,

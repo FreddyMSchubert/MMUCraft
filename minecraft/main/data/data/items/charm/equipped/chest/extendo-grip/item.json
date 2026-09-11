@@ -8,6 +8,7 @@
 		"Saves you a round trip to turkey."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Increases block reach.",
 		"unlockWeight": 150,

@@ -6,7 +6,8 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"priceDabloons": 10,
+		"membersOnly": false,
+		"priceDabloons": 42,
 		"description": "Use to unlock a random cosmetic on the website.",
 		"unlockWeight": 100
 	},

@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 const longKnowledgePage = `
+# Decorative Blocks Guide
+
+An authored page heading belongs in both the article and its outline.
+
 ## Kettle
 
 ${'Kettles are decorative copper blocks with a detailed crafting recipe. '.repeat(30)}
@@ -87,19 +91,30 @@ test.beforeEach(async ({ page }) => {
 
 test('long knowledge pages get nested, scroll-aware section links on desktop', async ({ page }) => {
 	await page.goto('/play/knowledge/decorative-blocks');
+	await expect(page.getByRole('heading', { name: 'Decorative Blocks', exact: true })).toHaveCount(
+		0,
+	);
 	await expect(
-		page.getByRole('heading', { name: 'Decorative Blocks', exact: true }),
+		page.getByRole('heading', { name: 'Decorative Blocks Guide', exact: true }),
 	).toBeVisible();
 
 	const outline = page.getByRole('complementary', { name: 'On this page' });
 	await expect(outline).toBeVisible();
+	await expect(outline.getByRole('link', { name: 'Decorative Blocks Guide' })).toHaveAttribute(
+		'href',
+		'#knowledge-decorative-blocks-guide',
+	);
 	const kettleLink = outline.getByRole('link', { name: 'Kettle' });
 	const beerLink = outline.getByRole('link', { name: 'Beer' });
 	await expect(kettleLink).toHaveAttribute('href', '#knowledge-kettle');
 	await expect(beerLink).toHaveAttribute('href', '#knowledge-beer');
 
+	const pageHeadingIndent = await outline
+		.getByRole('link', { name: 'Decorative Blocks Guide' })
+		.evaluate((link) => getComputedStyle(link).paddingLeft);
 	const kettleIndent = await kettleLink.evaluate((link) => getComputedStyle(link).paddingLeft);
 	const beerIndent = await beerLink.evaluate((link) => getComputedStyle(link).paddingLeft);
+	expect(Number.parseFloat(kettleIndent)).toBeGreaterThan(Number.parseFloat(pageHeadingIndent));
 	expect(Number.parseFloat(beerIndent)).toBeGreaterThan(Number.parseFloat(kettleIndent));
 
 	await beerLink.click();
@@ -107,13 +122,24 @@ test('long knowledge pages get nested, scroll-aware section links on desktop', a
 	await expect(beerLink).toHaveClass(/\bactive\b/);
 	await expect(page.locator('h3#knowledge-beer')).toBeInViewport();
 	await expect(outline).toHaveCSS('position', 'sticky');
+
+	const authoredHeadingSize = await page
+		.getByRole('heading', { name: 'Decorative Blocks Guide' })
+		.evaluate((heading) => Number.parseFloat(getComputedStyle(heading).fontSize));
+	const knowledgeHeadingSize = await page
+		.getByRole('heading', { name: 'Knowledge', exact: true })
+		.evaluate((heading) => Number.parseFloat(getComputedStyle(heading).fontSize));
+	expect(authoredHeadingSize).toBeLessThanOrEqual(knowledgeHeadingSize);
 });
 
 test('knowledge outlines stay out of the mobile layout', async ({ page }) => {
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto('/play/knowledge/decorative-blocks');
+	await expect(page.getByRole('heading', { name: 'Decorative Blocks', exact: true })).toHaveCount(
+		0,
+	);
 	await expect(
-		page.getByRole('heading', { name: 'Decorative Blocks', exact: true }),
+		page.getByRole('heading', { name: 'Decorative Blocks Guide', exact: true }),
 	).toBeVisible();
 	await expect(page.locator('.knowledgeOutline')).toBeHidden();
 	await expect(page.locator('#knowledge-page-select')).toBeVisible();

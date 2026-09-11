@@ -8,6 +8,7 @@
 		"Eye see what you did there."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,

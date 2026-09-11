@@ -8,6 +8,7 @@
 		"A very cheap cheap cosmetic"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,

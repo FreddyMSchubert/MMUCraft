@@ -11,6 +11,8 @@ tips:
 - Annoyed by how slow fishing is? Make sure you fish without blocks above your head and with Lure applied to your fishing rod. Fishing in rain will make things even quicker.
 ====
 
+# Fishing
+
 :::tldr
 - Cast into water. Wait for the **BIG** splash, then quickly right-click once to reel it in.
 - Some fish only spawn in specific conditions. Check the [fishing tab](/play/fishing) for a full fish compendium & conditions overview.

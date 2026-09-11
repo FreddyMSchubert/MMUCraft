@@ -8,6 +8,7 @@
 		"Nevermind, this may be too big O.o"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 300,
 		"description": "",
 		"unlockWeight": 10,

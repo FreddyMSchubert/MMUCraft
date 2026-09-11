@@ -60,6 +60,7 @@ export function parseShopItemDefinition(
 			: [],
 		unlockMessage: shop.unlockMessage,
 		unlockWeight: shop.unlockWeight,
+		membersOnly: shop.membersOnly,
 		gameplayToggle: shop.gameplayToggle,
 		iconUrl: textureUrl,
 		renderMode: canRenderModel ? 'model' : 'texture',
@@ -89,6 +90,7 @@ function parseShopPurchasable(value: unknown): ShopPurchasableDefinition | null 
 	if (!value || typeof value !== 'object') return null;
 	const candidate = value as Partial<Record<keyof ShopPurchasableDefinition, unknown>>;
 	if (
+		typeof candidate.membersOnly !== 'boolean' ||
 		typeof candidate.priceDabloons !== 'number' ||
 		!Number.isInteger(candidate.priceDabloons) ||
 		(candidate.description !== undefined && typeof candidate.description !== 'string') ||
@@ -107,6 +109,7 @@ function parseShopPurchasable(value: unknown): ShopPurchasableDefinition | null 
 	)
 		return null;
 	return {
+		membersOnly: candidate.membersOnly,
 		gameplayToggle: candidate.gameplayToggle ?? null,
 		priceDabloons: candidate.priceDabloons,
 		description: candidate.description ?? '',

@@ -6,6 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": ["Eight arms, impeccable manners, zero respect for personal space."],
 	"shopPurchasable": {
+		"membersOnly": true,
 		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 5,

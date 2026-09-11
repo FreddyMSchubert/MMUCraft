@@ -9,6 +9,7 @@
 		"No, that's a legend."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 5000,
 		"description": "",
 		"unlockWeight": 25,

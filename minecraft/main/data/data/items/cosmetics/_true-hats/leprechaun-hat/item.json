@@ -8,6 +8,7 @@
 		"Follow the rainbow"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 140,
 		"description": "",
 		"unlockWeight": 40,

@@ -8,6 +8,7 @@
 		""
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 65,

@@ -8,6 +8,7 @@
 		"Oh deer, you look amazing!"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	    "priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,

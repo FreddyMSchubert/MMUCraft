@@ -8,6 +8,7 @@
 		"Stolen from the statue in Satan's Hollow"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 90,
 		"description": "",
 		"unlockWeight": 65,

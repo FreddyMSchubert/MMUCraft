@@ -12,6 +12,8 @@ tips:
 - Care for a pint? You can get beer in-game, we've added it!
 ====
 
+# Decorative Blocks
+
 Ever thought there aren't enough decorations in game? Why not give these a try! Just craft them and place them down like blocks - you can even right click to rotate them.
 
 ## Kettle

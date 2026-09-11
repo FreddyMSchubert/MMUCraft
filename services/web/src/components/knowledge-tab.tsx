@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
+import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import { dabloonizeWords } from '@/lib/dabloons';
@@ -422,14 +422,6 @@ export function KnowledgeTab({
 									{error}
 								</p>
 							)}
-							<h1 className="knowledgePageTitle">
-								{activePage?.id === 'money-basics' ? (
-									activePage.sidebarTitle
-								) : (
-									<DabloonText>{activePage?.sidebarTitle ?? ''}</DabloonText>
-								)}
-							</h1>
-
 							{activePage && activePageUnlocked ? (
 								<>
 									<article

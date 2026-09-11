@@ -12,6 +12,8 @@ tips:
 - Wandering Traders sell tiny versions of normal blocks, which are great for decoration.
 ====
 
+# Mini Blocks
+
 **Mini blocks are mini versions of blocks. 👍**
 
 They can be great for decorating:

@@ -13,6 +13,8 @@ tips:
 - Cosmetics can also make for nice decorations if you place them in an item frame (and optionally make the item frame invisible using Invisi-Carrots).
 ====
 
+# Cosmetics
+
 ## Fashion Books
 
 TODO: (image of book in loot chest)

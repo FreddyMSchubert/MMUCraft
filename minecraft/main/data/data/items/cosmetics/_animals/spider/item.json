@@ -9,6 +9,7 @@
 		"A spiiiiiiiiiiiiiiiiiiiider."
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,

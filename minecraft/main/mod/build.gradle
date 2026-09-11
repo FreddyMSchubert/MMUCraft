@@ -125,6 +125,7 @@ tasks.register('checkPlayerColors', JavaExec) {
 
 tasks.named('check') {
     dependsOn tasks.named('checkPlayerColors')
+    dependsOn 'checkFishing'
 }
 
 tasks.register('checkGlider', JavaExec) {
@@ -146,6 +147,16 @@ tasks.register('checkSlimeDetector', JavaExec) {
     enableAssertions = true
     args projectDir.absolutePath
     workingDir = layout.buildDirectory.dir('slimeDetectorCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.register('checkFishing', JavaExec) {
+    group = 'verification'
+    description = 'Check fishing wait timing, approach speed, first-bob chance, and physical shadow scale.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('fishingCheck').get().asFile
     doFirst { workingDir.mkdirs() }
 }
 

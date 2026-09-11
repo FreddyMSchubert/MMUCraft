@@ -56,7 +56,6 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique private int mainmod$shadowAge;
     @Unique private int mainmod$arrivalTicks;
     @Unique private int mainmod$movementTicksRemaining;
-    @Unique private int mainmod$bobberBopRecoveryTicks;
     @Unique private int mainmod$catchAnimationTicks;
     @Unique private ItemStack mainmod$catchingRod = ItemStack.EMPTY;
     @Unique private double mainmod$itemChance = FishingModifiers.DEFAULT_ITEM_CHANCE;
@@ -192,7 +191,6 @@ public abstract class AnimalCrossingFishingHookMixin {
         }
 
         this.mainmod$animationTicks++;
-        mainmod$tickBobberBopRecovery(hook);
         if (mainmod$shouldScurry(level, hook)) {
             mainmod$startScurry(level, hook, 55, 120);
         }
@@ -207,7 +205,7 @@ public abstract class AnimalCrossingFishingHookMixin {
             this.mainmod$arrivalTicks--;
             mainmod$positionFish(hook);
             if (this.mainmod$arrivalTicks <= 0) {
-                mainmod$beginInitialApproach();
+                mainmod$beginApproach();
             }
             return;
         }
@@ -250,7 +248,6 @@ public abstract class AnimalCrossingFishingHookMixin {
 
         this.mainmod$completedBounces++;
         mainmod$beginRetreat();
-        mainmod$bopBobber(hook);
 		AnimalCrossingFishingBobberEffects.playBounce(level, hook);
     }
 
@@ -258,7 +255,8 @@ public abstract class AnimalCrossingFishingHookMixin {
     private void mainmod$beginApproach() {
         this.mainmod$phase = AnimalCrossingFishingPhase.APPROACHING;
         this.mainmod$targetDistance = mainmod$bobberContactDistance();
-        this.mainmod$movementTicksRemaining = mainmod$personality().approachTicks();
+        double distance = Math.max(0.0D, this.mainmod$fishDistance - this.mainmod$targetDistance);
+        this.mainmod$movementTicksRemaining = mainmod$personality().approachTicks(distance);
     }
 
     @Unique
@@ -271,14 +269,6 @@ public abstract class AnimalCrossingFishingHookMixin {
 
         this.mainmod$phase = AnimalCrossingFishingPhase.APPROACHING;
         this.mainmod$movementTicksRemaining = 0;
-    }
-
-    @Unique
-    private void mainmod$beginInitialApproach() {
-        this.mainmod$phase = AnimalCrossingFishingPhase.APPROACHING;
-        this.mainmod$targetDistance = mainmod$bobberContactDistance();
-        double distance = Math.max(0.0D, this.mainmod$fishDistance - this.mainmod$targetDistance);
-        this.mainmod$movementTicksRemaining = mainmod$personality().initialApproachTicks(distance);
     }
 
     @Unique
@@ -306,19 +296,6 @@ public abstract class AnimalCrossingFishingHookMixin {
 		this.mainmod$movementTicksRemaining = movement.remainingTicks();
 		return movement.reachedTarget();
 	}
-
-    @Unique
-	private void mainmod$bopBobber(FishingHook hook) {
-		this.mainmod$bobberBopRecoveryTicks = AnimalCrossingFishingBobberEffects.bop(hook);
-    }
-
-    @Unique
-	private void mainmod$tickBobberBopRecovery(FishingHook hook) {
-		this.mainmod$bobberBopRecoveryTicks = AnimalCrossingFishingBobberEffects.recoverFromBop(
-				hook,
-				this.mainmod$bobberBopRecoveryTicks
-		);
-    }
 
     @Unique
     private void mainmod$bite(ServerLevel level, FishingHook hook) {
@@ -421,9 +398,7 @@ public abstract class AnimalCrossingFishingHookMixin {
 						this.mainmod$orbitDegrees,
 						this.mainmod$fishDistance,
 						this.mainmod$arrivalTicks,
-						this.mainmod$pauseTicks,
-						this.mainmod$animationTicks,
-						this.mainmod$catchAnimationTicks
+						this.mainmod$pauseTicks
 				)
 		);
 	}
@@ -498,7 +473,6 @@ public abstract class AnimalCrossingFishingHookMixin {
         }
         this.mainmod$catchResult = null;
         this.mainmod$catchPersonality = null;
-        this.mainmod$bobberBopRecoveryTicks = 0;
     }
 
 }

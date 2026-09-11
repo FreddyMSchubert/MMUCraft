@@ -11,7 +11,8 @@ public record FishingPersonality(
         float approachSeconds,
         float retreatSeconds,
         float retreatDistance,
-        float averageBounces
+        float averageBounces,
+        float averageCatchSeconds
 ) {
     public int struggleTicks() {
         return Mth.ceil(struggleSeconds * 20.0F);
@@ -30,11 +31,26 @@ public record FishingPersonality(
         return Mth.ceil(approachSeconds * 20.0F);
     }
 
-    public int initialApproachTicks(double distance) {
+    public int approachTicks(double distance) {
         return Math.max(1, Mth.ceil(distance / retreatDistance * approachTicks()));
     }
 
     public int retreatTicks() {
         return Mth.ceil(retreatSeconds * 20.0F);
+    }
+
+    public FishingPersonality withSize(float newSize) {
+        return new FishingPersonality(
+                rarity,
+                struggleSeconds,
+                fishShape,
+                newSize,
+                secondsAwayFromBobber,
+                approachSeconds,
+                retreatSeconds,
+                retreatDistance,
+                averageBounces,
+                averageCatchSeconds
+        );
     }
 }

@@ -166,12 +166,18 @@ public final class FishingCatches {
         List<CatchEntry> entries = entriesFor(treasure, rarity, hook);
         CatchEntry selected = entries.get(hook.getRandom().nextInt(entries.size()));
         ItemStack stack = selected.stack().copy();
-        decorateFish(stack, hook.getPlayerOwner(), selected.length(), hook.getRandom());
+        double lengthCm = rollFishLength(selected.length(), hook.getRandom());
+        decorateFish(stack, hook.getPlayerOwner(), lengthCm);
         if (selected.length() != null) {
             CustomData.update(DataComponents.CUSTOM_DATA, stack,
                     tag -> tag.putInt(RARITY_TAG, selected.personality().rarity().ordinal()));
         }
-        return Pair.of(stack, selected.personality());
+        FishingPersonality personality = selected.personality();
+        if (!Double.isNaN(lengthCm)) {
+            float shadowScale = FishShapes.fromJsonValue(personality.fishShape()).shadowScale(lengthCm);
+            personality = personality.withSize(shadowScale);
+        }
+        return Pair.of(stack, personality);
     }
 
     public static void addFish(FishRarity rarity, ItemStack stack, double averageLengthCm, double deviationCm) {
@@ -355,12 +361,15 @@ public final class FishingCatches {
         );
     }
 
-    private static void decorateFish(ItemStack stack, Player catcher, FishSize size, RandomSource random) {
-        if (catcher == null || size == null) {
+    private static double rollFishLength(FishSize size, RandomSource random) {
+        return size == null ? Double.NaN : size.roll(random);
+    }
+
+    private static void decorateFish(ItemStack stack, Player catcher, double length) {
+        if (catcher == null || Double.isNaN(length)) {
             return;
         }
 
-        double length = size.roll(random);
         List<Component> lore = new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
         lore.add(Component.literal("Caught by: " + catcher.getPlainTextName()).withStyle(ChatFormatting.GRAY));
         lore.add(Component.literal("Length: " + formatLength(length)).withStyle(ChatFormatting.GRAY));
@@ -383,7 +392,8 @@ public final class FishingCatches {
                 approachSeconds,
                 treasure ? approachSeconds : 1.5F,
                 treasure ? 0.6F : 0.75F,
-                3.0F
+                3.0F,
+                8.0F
         );
     }
 

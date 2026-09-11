@@ -46,7 +46,7 @@ public record FishItemFeature(
         int rarityLevel = rarity.ordinal();
 
         // Roll every default first, so one JSON override cannot change the other generated values.
-        float shadowScale = override(catching, "shadowScale", between(random, 0.5F, 1.5F));
+        random.nextFloat(); // Preserve the former shadow-scale roll and every species' existing catch behavior.
         float secondsAwayFromBobber = override(catching, "secondsAwayFromBobber", between(random, 0.1F, 0.5F));
         float approachSeconds = override(catching, "approachSeconds", between(random, 0.15F, 0.5F));
         float retreatSeconds = override(catching, "retreatSeconds", between(random, 0.2F, 1.5F));
@@ -57,6 +57,7 @@ public record FishItemFeature(
                 between(random, 1.0F + 0.5F * rarityLevel, 2.5F + 1.5F * rarityLevel));
         float averageBounces = calculateAverageBounces(averageCatchSeconds, approachSeconds, retreatSeconds, secondsAwayFromBobber);
         double averageLengthCm = size.get("averageLengthCm").getAsDouble();
+        FishShapes fishShape = FishShapes.fromJsonValue(json.get("shape").getAsString());
         EnumSet<FishSpawnTag> spawnTags = EnumSet.noneOf(FishSpawnTag.class);
         for (JsonElement tag : json.getAsJsonArray("tags")) {
             spawnTags.add(FishSpawnTag.fromJsonValue(tag.getAsString()));
@@ -65,13 +66,14 @@ public record FishItemFeature(
                 new FishingPersonality(
                         rarity,
                         struggleSeconds,
-                        FishShapes.fromJsonValue(json.get("shape").getAsString()).value(),
-                        shadowScale,
+                        fishShape.value(),
+                        fishShape.shadowScale(averageLengthCm),
                         secondsAwayFromBobber,
                         approachSeconds,
                         retreatSeconds,
                         retreatDistance,
-                        averageBounces
+                        averageBounces,
+                        averageCatchSeconds
                 ),
                 new FishSize(
                         averageLengthCm,

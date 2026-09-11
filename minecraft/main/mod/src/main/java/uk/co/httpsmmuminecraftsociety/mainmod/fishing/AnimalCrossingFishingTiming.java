@@ -7,12 +7,11 @@ import net.minecraft.world.entity.projectile.FishingHook;
 
 public final class AnimalCrossingFishingTiming {
     private static final int MAX_LATENCY_COMPENSATION_TICKS = 20;
-    private static final int WAIT_CENTER_TICKS_WITHOUT_LURE = 20 * 30;
+    private static final int WAIT_CENTER_TICKS_WITHOUT_LURE = 20 * 24;
     private static final int WAIT_CENTER_TICKS_WITH_LURE_3 = 20 * 5;
-    private static final int WAIT_SPREAD_TICKS_WITHOUT_LURE = 20 * 5;
+    private static final int WAIT_SPREAD_TICKS_WITHOUT_LURE = 20 * 4;
     private static final int WAIT_SPREAD_TICKS_WITH_LURE_3 = 20 * 3;
     private static final double BOUNCE_GAUSSIAN_SIGMA = 1.0D;
-    private static final double BASE_FISH_DISPLAY_WIDTH_BLOCKS = 1.22D;
     private static final double BOBBER_TOUCH_PADDING_BLOCKS = 0.10D;
 
 	private AnimalCrossingFishingTiming() {}
@@ -30,7 +29,9 @@ public final class AnimalCrossingFishingTiming {
 	}
 
     public static double bobberContactDistance(FishingPersonality personality) {
-        return BASE_FISH_DISPLAY_WIDTH_BLOCKS * personality.size() * 0.5D
+        double shadowLengthBlocks = FishShapes.fromJsonValue(personality.fishShape())
+                .shadowLengthBlocks(personality.size());
+        return shadowLengthBlocks * 0.5D
                 + BOBBER_TOUCH_PADDING_BLOCKS;
     }
 
@@ -64,7 +65,15 @@ public final class AnimalCrossingFishingTiming {
     }
 
     public static int rollBounceCount(RandomSource random, FishingPersonality personality) {
-        double averageBounces = personality.averageBounces();
+        if (personality.averageCatchSeconds() < 5.0F) {
+            return random.nextBoolean()
+                    ? 1
+                    : Math.max(2, rollGeneratedBounceCount(random, personality.averageBounces()));
+        }
+        return rollGeneratedBounceCount(random, personality.averageBounces());
+    }
+
+    private static int rollGeneratedBounceCount(RandomSource random, double averageBounces) {
         int rightEdge = Math.max(1, Mth.ceil(averageBounces * 2.0D - 1.0D));
         if (rightEdge <= 1) return 1;
 

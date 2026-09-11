@@ -91,8 +91,8 @@ export class ShopPurchasesService {
 						animated: item.animated,
 						dyeable: item.dyeable,
 						decoBlock: item.decoBlock,
-						membersOnly: isMembersOnly(item),
-						membershipLocked: isMembersOnly(item) && !user.isMember,
+						membersOnly: item.membersOnly,
+						membershipLocked: item.membersOnly && !user.isMember,
 						animation: item.animation,
 						charmDetails: item.charmDetails,
 						unlocked: isUnlocked(item, unlockedIds),
@@ -286,7 +286,7 @@ function isAvailableForPurchase(
 	unlockedIds: Set<string>,
 	limitedPurchaseCount = 0,
 ): boolean {
-	if (isMembersOnly(item) && !user.isMember) return false;
+	if (item.membersOnly && !user.isMember) return false;
 	const dailyLimit = limitedPurchaseDailyLimit(item.id);
 	if (dailyLimit !== null && limitedPurchaseCount >= dailyLimit) return false;
 	if (item.type === 'charm' || item.type === 'cosmetic') return unlockedIds.has(item.id);
@@ -316,12 +316,8 @@ function isUnlocked(item: CatalogItem, unlockedIds: Set<string>): boolean {
 	return isVisibleInShop(item, unlockedIds);
 }
 
-function isMembersOnly(item: CatalogItem): boolean {
-	return item.dyeable || item.animated;
-}
-
 function unavailablePurchaseMessage(user: AuthenticatedUser, item: CatalogItem): string {
-	if (isMembersOnly(item) && !user.isMember) return 'This item is for members only.';
+	if (item.membersOnly && !user.isMember) return 'This item is for members only.';
 	if (item.type === 'charm') return 'Unlock this charm with a magic book before buying it.';
 	if (item.type === 'cosmetic')
 		return 'Unlock this cosmetic with a fashion book before buying it.';

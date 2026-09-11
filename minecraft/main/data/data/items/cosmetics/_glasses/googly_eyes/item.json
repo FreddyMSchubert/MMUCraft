@@ -8,6 +8,7 @@
 		"Become a walking earthquake detection kit!"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,

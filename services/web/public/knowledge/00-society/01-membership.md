@@ -11,6 +11,8 @@ tips:
 - The committee is made up of volunteers; we do not profit from running this server. Please consider becoming a society member so we can recoup the costs.
 ====
 
+# Membership
+
 ***A membership costs 5£ once for the whole year.*** Thank you for your support! 🫶 We hope you enjoy your perks.
 
 ---

@@ -8,6 +8,7 @@
 	"fireproof": true,
 	"tooltips": [],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 50,
 		"description": "Stores dabloons by crafting.",
 		"unlockWeight": 100

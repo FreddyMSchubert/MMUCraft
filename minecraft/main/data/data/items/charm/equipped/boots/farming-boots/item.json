@@ -8,6 +8,7 @@
 		"Stardew Valley is fine I guess."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 25,
 		"description": "Right-click crops to harvest & replant them in one click! Upgrade to increase the area of effect.",
 		"unlockWeight": 200,

@@ -8,6 +8,7 @@
 		"Might be a bit late to toss it back"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 90,

@@ -12,6 +12,8 @@ tips:
 - If you apply the Soulbound enchantment to a Wallet, you can never lose your hard-earned Dabloons if you die.
 ====
 
+# Wallets
+
 Dealing with [dabloons](/play/knowledge/money-basics) manually in your inventory can become annoying quite quickly. The bundle is here to solve all your problems: It can hold an unlimited amount of dabloons!
 
 You can get it by **[buying it from the shop](/play/shop/charm-wallet)** or by crafting it like this:

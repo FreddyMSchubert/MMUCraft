@@ -8,6 +8,7 @@
 		"As seen in 480 million BC!"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 42,

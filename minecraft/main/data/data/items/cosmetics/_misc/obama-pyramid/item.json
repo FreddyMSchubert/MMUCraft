@@ -9,6 +9,7 @@
 		"Comes with 68ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â± unique voicelines!"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 320,
 		"description": "Plays a random Obama sound when used.",
 		"unlockWeight": 5,

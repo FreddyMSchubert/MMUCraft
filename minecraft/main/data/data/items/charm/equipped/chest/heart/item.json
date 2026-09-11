@@ -8,6 +8,7 @@
 		"Blessed be the pacemakers"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 50,
 		"description": "Grants you extra hearts while equipped.",
 		"unlockWeight": 100000,

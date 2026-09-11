@@ -8,6 +8,7 @@
 		"You're a wanted cosmetic, Cowboy Hat"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,

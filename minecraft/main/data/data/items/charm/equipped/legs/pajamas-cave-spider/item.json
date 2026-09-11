@@ -8,6 +8,7 @@
 		"Poison not included."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 200,
 		"description": "Lets you crawl across ceilings.",
 		"unlockWeight": 20,

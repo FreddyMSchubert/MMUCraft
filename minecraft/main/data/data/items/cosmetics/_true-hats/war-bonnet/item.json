@@ -8,6 +8,7 @@
 		"Calling it a feather in your cap would really be under-plume-ing its significance"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 150,
 		"description": "Unlock the War Bonnet cosmetic.",
 		"unlockWeight": 40,

@@ -8,6 +8,7 @@
 		"Larp being employed"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,

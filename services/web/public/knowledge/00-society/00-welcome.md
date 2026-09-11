@@ -25,6 +25,8 @@ tips:
 - You can find and buy jokes filled with Minecraft Jokes! Please tell us about Minecraft Jokes you like, and we will add them as well.
 ====
 
+# Welcome!
+
 <div class="welcomeWaves">
 <figure><img src="/assets/knowledge/basics/welcome/wave_freddy.gif" alt="Waving Freddy skin"><figcaption><strong><a href="/play/players/Freddy">Freddy</a></strong><span>(Chair)</span></figcaption></figure>
 <figure><img src="/assets/knowledge/basics/welcome/wave_oderzo.gif" alt="Waving oderzo skin"><figcaption><strong><a href="/play/players/oderzo">oderzo</a></strong><span>(Secretary)</span></figcaption></figure>

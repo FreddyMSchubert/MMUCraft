@@ -8,6 +8,7 @@
 		"Celestial Ring Light on your head"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	    "priceDabloons": 85,
 		"description": "",
 		"unlockWeight": 25,

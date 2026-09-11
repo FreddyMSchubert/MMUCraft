@@ -8,6 +8,7 @@
 		"Calums patented formula."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Increases attack knockback.",
 		"unlockWeight": 150,

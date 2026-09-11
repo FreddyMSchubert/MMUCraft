@@ -381,6 +381,7 @@
 	overflow-wrap: anywhere;
 }
 
+.knowledgePage h1,
 .knowledgePage h2,
 .knowledgePage h3,
 .knowledgePage p,
@@ -391,6 +392,7 @@
 	margin-top: 0;
 }
 
+.knowledgePage h1,
 .knowledgePage h2,
 .knowledgePage h3,
 .knowledgePage h4,
@@ -398,6 +400,11 @@
 .knowledgePage h6 {
 	margin-bottom: 10px;
 	scroll-margin-top: 16px;
+}
+
+.knowledgePage h1 {
+	font-size: clamp(1.35rem, 2.5vw, 1.55rem);
+	line-height: 1.1;
 }
 
 .knowledgePage p,

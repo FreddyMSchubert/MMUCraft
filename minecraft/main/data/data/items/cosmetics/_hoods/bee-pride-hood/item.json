@@ -8,6 +8,7 @@
 		"The Bee in LGBTQ+"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 50,

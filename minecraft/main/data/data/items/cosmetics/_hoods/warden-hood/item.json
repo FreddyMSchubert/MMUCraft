@@ -8,6 +8,7 @@
 		"Not as dangerous as the real thing"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 250,
 		"description": "",
 		"unlockWeight": 20,

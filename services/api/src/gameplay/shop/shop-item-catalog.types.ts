@@ -3,6 +3,7 @@ export type ShopDeliveryKind = 'fake_item' | 'vanilla_item';
 export type BookUnlockType = 'knowledge' | 'charm' | 'cosmetic';
 
 export interface ShopPurchasableDefinition {
+	membersOnly: boolean;
 	gameplayToggle: string | null;
 	priceDabloons: number;
 	description: string;
@@ -62,6 +63,7 @@ export interface CatalogItem extends ItemRenderAsset {
 	tooltips: string[];
 	unlockMessage: string | null;
 	unlockWeight: number;
+	membersOnly: boolean;
 	gameplayToggle: string | null;
 	iconUrl: string | null;
 	renderMode: 'texture' | 'model';

@@ -10,6 +10,8 @@ tips:
 - You can play with external players that aren't from MMU.
 ====
 
+# Non-MMU Players
+
 You may wish to play on this server with people that aren't MMU. This is **entirely possible**!
 
 :::warning

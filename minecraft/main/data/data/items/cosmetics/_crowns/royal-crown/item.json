@@ -8,6 +8,7 @@
 		"Made from solid gold leaf!"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 		"priceDabloons": 10000,
 		"description": "",
 		"unlockWeight": 10,

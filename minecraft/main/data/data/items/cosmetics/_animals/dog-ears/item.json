@@ -8,6 +8,7 @@
 		"Man's best friend!"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	    "priceDabloons": 74,
 		"description": "",
 		"unlockWeight": 50,

@@ -8,6 +8,7 @@
 		"A royal waste of Dabloons"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 50000,
 		"description": "",
 		"unlockWeight": 3,

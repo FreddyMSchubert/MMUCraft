@@ -8,6 +8,7 @@
 		"Take it slow down there."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Reduces underwater air consumption while stationary.",
 		"unlockWeight": 50,

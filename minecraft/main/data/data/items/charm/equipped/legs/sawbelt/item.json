@@ -8,6 +8,7 @@
 		"Timber without the climb."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Chops connected logs while sneaking with an axe.",
 		"unlockWeight": 175,

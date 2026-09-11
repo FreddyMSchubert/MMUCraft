@@ -11,6 +11,8 @@ tips:
 - On this server, Nether Portals can be built in any shape or size.
 ====
 
+# Nether Portals
+
 ![Heart-Shaped Nether Portal](/assets/knowledge/survival/nether-portals/heart.png)
 
 On this server, you can make Nether Portals in **ANY SHAPE AND SIZE**!

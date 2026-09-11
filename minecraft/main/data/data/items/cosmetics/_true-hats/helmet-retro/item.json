@@ -8,6 +8,7 @@
 		"Perfect for a Vespa ride"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 40,

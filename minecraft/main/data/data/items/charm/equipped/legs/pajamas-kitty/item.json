@@ -8,6 +8,7 @@
 		"They look nice and purrple."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 25,
 		"description": "Scares away creepers.",
 		"unlockWeight": 150,

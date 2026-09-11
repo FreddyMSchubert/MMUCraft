@@ -8,6 +8,7 @@
 		"Become part of the hive-mind"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 50,

@@ -8,6 +8,7 @@
 		"The cheapest item in our mexican collection"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 95,

@@ -77,6 +77,7 @@ function parseShopPurchasableComponent(
 	}
 
 	return {
+		membersOnly: value.membersOnly,
 		gameplayToggle: value.gameplayToggle,
 		priceDabloons: value.priceDabloons,
 		description: value.description ?? '',

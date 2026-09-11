@@ -173,6 +173,7 @@ export function KnowledgeOutline({
 	}, [articleRef, entries]);
 
 	if (entries.length <= 1) return null;
+	const rootLevel = Math.min(...entries.map((entry) => entry.level));
 
 	return (
 		<aside
@@ -188,7 +189,9 @@ export function KnowledgeOutline({
 						key={entry.id}
 						className={entry.id === activeId ? 'active' : undefined}
 						href={`#${entry.id}`}
-						style={{ paddingLeft: `${12 + Math.max(0, entry.level - 2) * 16}px` }}
+						style={{
+							paddingLeft: `${12 + Math.max(0, entry.level - rootLevel) * 16}px`,
+						}}
 						onClick={() => {
 							setActiveId(entry.id);
 						}}

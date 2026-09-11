@@ -1,20 +1,21 @@
 {
-    "title":  "Yellow Koi",
-    "id":  "fish-yellow_koi",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its golden scales contain reflective crystals called guanine."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  60
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Yellow Koi",
+	"id": "fish-yellow_koi",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its golden scales contain reflective crystals called guanine."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 60,
+			"textureLengthPixels": 19.79899
+		},
+		"furnaceResult": "white_meat"
+	}
 }

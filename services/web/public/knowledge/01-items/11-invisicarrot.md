@@ -12,6 +12,8 @@ tips:
 - You can turn cosmetics into decorations by putting them in an item frame and hiding the frame with an Invisi-Carrot.
 ====
 
+# Invisi-Carrots
+
 Invisible item frames are great, because they can turn any item into awesome decorations!
 
 Using invisi-carrots, you can create invisible item frames yourself. To craft the carrots:

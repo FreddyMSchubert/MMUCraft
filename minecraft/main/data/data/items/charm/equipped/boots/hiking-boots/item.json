@@ -8,6 +8,7 @@
 		"That's one pretty big step for man."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 125,
 		"description": "Increases step height, allowing you to walk up blocks like they're stairs. (Note this is different to auto-jump, which slows you down. This doesn't!)",
 		"unlockWeight": 100,

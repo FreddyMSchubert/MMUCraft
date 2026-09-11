@@ -1,20 +1,21 @@
 {
-    "title":  "Ghost Jellyfish",
-    "id":  "fish-ghostjellyfish",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its bell becomes visible only when it pulses through moonlight."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_squid",
-                 "tags":  [
-                              "newmoon"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  50
-                          },
-                 "furnaceResult":  "tentacle"
-             }
+	"title": "Ghost Jellyfish",
+	"id": "fish-ghostjellyfish",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its bell becomes visible only when it pulses through moonlight."
+	],
+	"fish": {
+		"angle": 345,
+		"tags": [
+			"newmoon"
+		],
+		"size": {
+			"averageLengthCm": 50,
+			"textureLengthPixels": 15.593514
+		},
+		"furnaceResult": "tentacle"
+	}
 }

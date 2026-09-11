@@ -1,24 +1,25 @@
 {
-    "title":  "Vampire Carp",
-    "id":  "fish-vampirecarp",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its hollow fangs steal mineral-rich mucus without seriously harming prey."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "cold",
-                              "night",
-                              "deep",
-                              "snowy",
-                              "newmoon"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  70
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Vampire Carp",
+	"id": "fish-vampirecarp",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its hollow fangs steal mineral-rich mucus without seriously harming prey."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"cold",
+			"night",
+			"deep",
+			"snowy",
+			"newmoon"
+		],
+		"size": {
+			"averageLengthCm": 70,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "white_meat"
+	}
 }

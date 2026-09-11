@@ -8,6 +8,7 @@
 		"Why did the chicken cross the road?"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,

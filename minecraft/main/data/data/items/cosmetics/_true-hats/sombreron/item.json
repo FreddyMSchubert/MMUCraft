@@ -8,6 +8,7 @@
 		"Still too small..."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 37,

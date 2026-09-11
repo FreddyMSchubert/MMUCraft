@@ -8,6 +8,7 @@
 		"Look at the bright side, at least you got to eat the apple."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 55,
 		"description": "",
 		"unlockWeight": 50,

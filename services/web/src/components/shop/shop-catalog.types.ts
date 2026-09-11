@@ -45,6 +45,7 @@ export interface ShopItem {
 	animation: { frameDelayMs: number; frames: number[] | null } | null;
 	charmDetails: { minLevel: number; maxLevel: number; levels: CharmLevel[] } | null;
 	unlocked: boolean;
+	dailyLimitReached: boolean;
 	available: boolean;
 }
 

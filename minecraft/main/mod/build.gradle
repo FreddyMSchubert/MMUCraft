@@ -113,6 +113,21 @@ tasks.register('checkParticleTrails', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkPlayerColors', JavaExec) {
+    group = 'verification'
+    description = 'Check player RGB formatting, vanilla team colors, and persisted join colors.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerColorsCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('playerColorsCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('checkPlayerColors')
+    dependsOn 'checkFishing'
+}
+
 tasks.register('checkGlider', JavaExec) {
     group = 'verification'
     description = 'Check the glider item, recipe, repairs, enchantments, speed, and heat sources.'
@@ -121,6 +136,27 @@ tasks.register('checkGlider', JavaExec) {
     enableAssertions = true
     args projectDir.absolutePath
     workingDir = layout.buildDirectory.dir('gliderCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.register('checkSlimeDetector', JavaExec) {
+    group = 'verification'
+    description = 'Check the Slime Detector signal, timing, definition, recipe, knowledge, and textures.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.SlimeDetectorCheck'
+    enableAssertions = true
+    args projectDir.absolutePath
+    workingDir = layout.buildDirectory.dir('slimeDetectorCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.register('checkFishing', JavaExec) {
+    group = 'verification'
+    description = 'Check fishing wait timing, approach speed, first-bob chance, and physical shadow scale.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('fishingCheck').get().asFile
     doFirst { workingDir.mkdirs() }
 }
 

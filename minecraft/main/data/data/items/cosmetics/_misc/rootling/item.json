@@ -8,6 +8,7 @@
 		"It came to me in a dream"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 75,

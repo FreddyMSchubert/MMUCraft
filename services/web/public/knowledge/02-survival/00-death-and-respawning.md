@@ -13,6 +13,8 @@ tips:
 - When players die on the server, they drop their head. The head will have a note saying what they died from (including who did it). How about a hunting trophy?
 ====
 
+# Death & Respawning
+
 Of course, since Minecraft is a childrens game, youd never get killed. Right? 👀
 
 Anyways, for those of you that are experiencing occasional skill issues, here's what we changed about dying on the server:

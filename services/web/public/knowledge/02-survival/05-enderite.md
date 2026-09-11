@@ -13,6 +13,8 @@ tips:
 - Enderite armor is more magical than other armor sets, which makes it possible to apply higher levels of normal enchantments to it.
 ====
 
+# Enderite
+
 *I mean, if Mojang won't do it...*
 
 Enderite tools and armor are powerful because they are able to hold significantly more magic than Netherite equipment. That means:

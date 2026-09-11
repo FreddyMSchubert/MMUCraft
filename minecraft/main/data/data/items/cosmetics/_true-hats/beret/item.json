@@ -8,6 +8,7 @@
 		"The sign of a true fashionista"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 90,

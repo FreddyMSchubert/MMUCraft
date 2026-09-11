@@ -8,6 +8,7 @@
 		"It is said that it's used to store soap and sponge."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 10,

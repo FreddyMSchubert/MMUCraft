@@ -1,20 +1,21 @@
 {
-    "title":  "Pale Bass",
-    "id":  "fish-pale_bass",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "It loses nearly all pigment while resting over bright limestone beds."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "snowy"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  35
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Pale Bass",
+	"id": "fish-pale_bass",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"It loses nearly all pigment while resting over bright limestone beds."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"snowy"
+		],
+		"size": {
+			"averageLengthCm": 35,
+			"textureLengthPixels": 18.384776
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -4,6 +4,7 @@ import net.minecraft.util.RandomSource;
 
 public record FishSize(double averageCm, double deviationCm) {
     private static final double NINETY_NINE_PERCENT_Z_SCORE = 2.58;
+	private static final double CENTIMETERS_PER_BLOCK = 50.0D;
 
     public FishSize {
         if (averageCm <= 0.0 || deviationCm <= 0.0) {
@@ -16,4 +17,8 @@ public record FishSize(double averageCm, double deviationCm) {
         double length = averageCm + random.nextGaussian() * deviationCm / NINETY_NINE_PERCENT_Z_SCORE;
         return Math.max(0.1, Math.round(length * 10.0) / 10.0);
     }
+
+	public static float blocks(double centimeters) {
+		return (float) (centimeters / CENTIMETERS_PER_BLOCK);
+	}
 }

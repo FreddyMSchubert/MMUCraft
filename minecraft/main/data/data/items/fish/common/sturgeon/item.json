@@ -1,20 +1,21 @@
 {
-    "title":  "Sturgeon",
-    "id":  "fish-sturgeon",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "A toothless sturgeon vacuums prey from the bottom with a protrusible mouth."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_shark",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  180
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Sturgeon",
+	"id": "fish-sturgeon",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"A toothless sturgeon vacuums prey from the bottom with a protrusible mouth."
+	],
+	"fish": {
+		"angle": "TR",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 180,
+			"textureLengthPixels": 20.506097
+		},
+		"furnaceResult": "white_meat"
+	}
 }

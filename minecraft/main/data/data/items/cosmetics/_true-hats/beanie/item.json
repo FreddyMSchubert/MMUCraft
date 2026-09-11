@@ -8,6 +8,7 @@
 		"Two guys with a dream"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 100,

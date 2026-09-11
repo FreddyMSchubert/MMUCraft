@@ -1,20 +1,19 @@
 {
-    "title":  "Windfish",
-    "id":  "fish-windfish",
-    "modelType":  "basic",
-    "rarity":  "legendary",
-    "maxStackSize":  1,
-    "tooltips":  [
-                     "Its vast fins steer the wind above the sea as easily as water below it."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_shark",
-                 "tags":  [
-
-                          ],
-                 "size":  {
-                              "averageLengthCm":  400
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Windfish",
+	"id": "fish-windfish",
+	"modelType": "basic",
+	"rarity": "legendary",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Its vast fins steer the wind above the sea as easily as water below it."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 400,
+			"textureLengthPixels": 15
+		},
+		"furnaceResult": "white_meat"
+	}
 }

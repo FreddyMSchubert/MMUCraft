@@ -1,20 +1,21 @@
 {
-    "title":  "Lionfish",
-    "id":  "fish-lionfish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Lionfish defend themselves with venomous dorsal spines."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  30
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Lionfish",
+	"id": "fish-lionfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Lionfish defend themselves with venomous dorsal spines."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 17.67767
+		},
+		"furnaceResult": "white_meat"
+	}
 }

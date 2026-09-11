@@ -8,6 +8,7 @@
 		"I'm feeling lucky."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 25,
 		"description": "Does nothing in particular. Nothing else don\u0027t worry bout it.",
 		"unlockWeight": 200,

@@ -15,6 +15,8 @@ tips:
 - If you find a bug, we may decide to reward you some Dabloons when you report it, although this is not guaranteed. If you intentionally exploit a bug you will get banned.
 ====
 
+# Coins (Currency)
+
 Money makes the world go round, including the Minecraft world, which is neither round nor rotating. (I assume...)
 
 The currency used on this server is called dabloons. (<span class="dabloonAmount dabloonTone-inherit" aria-label="Dabloon symbol">&#xF0DAB;</span>) They come in the forms of actual Minecraft Coin Items, in your inventory. (So, you know, dying with a bunch of money is probably a bad idea.)

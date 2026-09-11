@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
 
 import com.mojang.math.Transformation;
 import net.minecraft.world.entity.Display;
+import net.minecraft.util.Brightness;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
@@ -21,6 +22,9 @@ public interface DisplayEntityAccessor {
 
     @Invoker("setViewRange")
     void mainmod$setViewRange(float range);
+
+	@Invoker("setBrightnessOverride")
+	void mainmod$setBrightnessOverride(Brightness brightness);
 
     @Invoker("setShadowRadius")
     void mainmod$setShadowRadius(float radius);

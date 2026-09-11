@@ -8,6 +8,7 @@
 		"For when the journey keeps chewing, but you don't."
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Reduces hunger drain from movement and mining.",
 		"unlockWeight": 75,

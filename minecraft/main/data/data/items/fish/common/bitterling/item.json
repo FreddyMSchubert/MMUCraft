@@ -1,20 +1,21 @@
 {
-    "title":  "Bitterling",
-    "id":  "fish-bitterling",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Bitterling shelter their eggs inside living freshwater mussels."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_tiny",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  7
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Bitterling",
+	"id": "fish-bitterling",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Bitterling shelter their eggs inside living freshwater mussels."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 7,
+			"textureLengthPixels": 12
+		},
+		"furnaceResult": "white_meat"
+	}
 }

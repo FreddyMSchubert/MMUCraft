@@ -20,6 +20,8 @@ tips:
 - To get the fortune enchantment easily, you can now craft fortune enchanted books.
 ====
 
+# Enchanting & Anvils
+
 If you want to, you still can treat enchanting and anvils just as usual. The default behaviour is still supported. But you'd be making a mistake!
 
 :::tldr

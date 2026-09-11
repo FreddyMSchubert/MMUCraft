@@ -1,20 +1,21 @@
 {
-    "title":  "Pond Smelt",
-    "id":  "fish-pond_smelt",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "This small cold-water fish gathers in dense schools beneath winter ice."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_tiny",
-                 "tags":  [
-                              "cold"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  10
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Pond Smelt",
+	"id": "fish-pond_smelt",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"This small cold-water fish gathers in dense schools beneath winter ice."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"cold"
+		],
+		"size": {
+			"averageLengthCm": 10,
+			"textureLengthPixels": 13
+		},
+		"furnaceResult": "white_meat"
+	}
 }

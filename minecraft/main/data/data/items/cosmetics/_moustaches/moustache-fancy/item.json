@@ -8,6 +8,7 @@
 		"It's really quite simple"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 50,

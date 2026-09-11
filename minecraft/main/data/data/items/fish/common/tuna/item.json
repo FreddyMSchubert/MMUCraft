@@ -1,20 +1,21 @@
 {
-    "title":  "Tuna",
-    "id":  "fish-tuna",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Tuna keep parts of their swimming muscles warmer than the surrounding sea."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_large",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  150
-                          },
-                 "furnaceResult":  "red_meat"
-             }
+	"title": "Tuna",
+	"id": "fish-tuna",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Tuna keep parts of their swimming muscles warmer than the surrounding sea."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 150,
+			"textureLengthPixels": 18.384776
+		},
+		"furnaceResult": "red_meat"
+	}
 }

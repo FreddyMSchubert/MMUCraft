@@ -124,7 +124,7 @@ export function ShopCard({
 						Members only
 					</>
 				) : isSoldOut(item) ? (
-					'Sold out'
+					soldOutLabel(item)
 				) : (
 					'Buy now'
 				)}
@@ -250,7 +250,7 @@ export function ShopDetails({
 									</>
 								)
 							) : (
-								'Sold out'
+								soldOutLabel(item)
 							)}
 						</button>
 						{item.description && (
@@ -431,7 +431,7 @@ function ItemBadges({ item }: { item: ShopItem }) {
 		) : null,
 		isSoldOut(item) ? (
 			<span key="sold-out" className="shopTag soldOut">
-				Sold out
+				{soldOutLabel(item)}
 			</span>
 		) : null,
 	].filter(Boolean);
@@ -444,6 +444,10 @@ function ItemBadges({ item }: { item: ShopItem }) {
 			{tags.length > 0 && <div className="shopTagBadges">{tags}</div>}
 		</div>
 	);
+}
+
+function soldOutLabel(item: ShopItem) {
+	return item.dailyLimitReached ? 'Sold out for the day' : 'Sold out';
 }
 
 function ShopLock() {

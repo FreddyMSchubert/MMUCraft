@@ -4,11 +4,10 @@
 	"modelType": "basic-3d",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Use to hear a \"funny\" joke"
-	],
+	"tooltips": ["Use to hear a \"funny\" joke"],
 	"shopPurchasable": {
-		"priceDabloons": 42,
+		"membersOnly": false,
+		"priceDabloons": 20,
 		"description": "Use to read your joke.",
 		"unlockWeight": 100
 	},

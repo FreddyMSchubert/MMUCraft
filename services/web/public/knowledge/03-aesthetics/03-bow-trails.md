@@ -19,6 +19,8 @@ tips:
 - If you combine a bow or an elytra with some colored dyes in a crafting table, they will create an awesome particle trail behind them next time you shoot an arrow or fly the elytra.
 ====
 
+# Particle Trails
+
 ![War-Horse](/assets/knowledge/items/bow-trails/war-horse.png)
 
 It's super easy to add awesome particle trails to many different tools: your bow, crossbow, glider, elytra, tridents, or mace!

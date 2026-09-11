@@ -8,6 +8,7 @@
 		"This is Sparta!"
 	],
 	"shopPurchasable": {
+		"membersOnly": true,
 	"priceDabloons": 225,
 		"description": "",
 		"unlockWeight": 25,

@@ -13,13 +13,17 @@ tips:
 - Backpacks are opened without needing to be placed first.
 ====
 
+# Backpacks
+
 Backpacks allow you to carry more items with you, very similar to Shulker Boxes, but you don't need to place them down to access their contents.
 
 They are quite powerful because you can upgrade them to store as many items as a double chest, and you can carry multiple with you at once.
 
 ![Leather Backpack Usage Example](/assets/knowledge/items/backpacks/usage_example.png)
 
-You cannot put backpacks, Shulkers, or bundles inside backpacks. You also cannot put backpacks inside bundles.
+To open a backpack, hold it in either hand and right-click.
+
+## Leather Backpack
 
 Backpacks are crafted and come in 6 different levels, each with one more row of inventory space.
 
@@ -35,6 +39,8 @@ The Leather Backpack has 1 row / 9 slots and is crafted like this:
 You can also [cook rotten flesh in a furnace to get leather](/play/knowledge/tweaks#knowledge-easier-leather).
 :::
 
+## Ingot Backpack
+
 The Ingot Backpack has 2 rows / 18 slots and is crafted like this:
 
 ![Ingot Backpack Crafting Recipe](/assets/knowledge/items/backpacks/ingot.png)
@@ -42,6 +48,8 @@ The Ingot Backpack has 2 rows / 18 slots and is crafted like this:
 :::recipe-items
 [Iron Ingot](https://minecraft.wiki/w/Iron_Ingot) (TL, TR, BL, BR) · [Block of Copper](https://minecraft.wiki/w/Block_of_Copper) (TC, CL, CR, BC) · Leather Backpack (C) → Ingot Backpack
 :::
+
+## Magic Backpack
 
 The Magic Backpack (not actually magic in any way, sorry about that) has 3 rows / 27 slots and is crafted like this:
 
@@ -51,6 +59,8 @@ The Magic Backpack (not actually magic in any way, sorry about that) has 3 rows 
 [Block of Raw Gold](https://minecraft.wiki/w/Block_of_Raw_Gold) (TL, TR, BL, BR) · [Deepslate Lapis Lazuli Ore](https://minecraft.wiki/w/Lapis_Lazuli_Ore) (TC, CL, CR, BC) · Ingot Backpack (C) → Magic Backpack
 :::
 
+## Bejeweled Backpack
+
 The Bejeweled Backpack has 4 rows / 36 slots and is crafted like this:
 
 ![Bejeweled Backpack Crafting Recipe](/assets/knowledge/items/backpacks/bejeweled.png)
@@ -59,6 +69,8 @@ The Bejeweled Backpack has 4 rows / 36 slots and is crafted like this:
 [Diamond](https://minecraft.wiki/w/Diamond) (TL, TR, BL, BR) · [Block of Emerald](https://minecraft.wiki/w/Block_of_Emerald) (TC, CL, CR, BC) · Magic Backpack (C) → Bejeweled Backpack
 :::
 
+## Withered Backpack
+
 The Withered Backpack has 5 rows / 45 slots and is crafted like this:
 
 ![Withered Backpack Crafting Recipe](/assets/knowledge/items/backpacks/withered.png)
@@ -66,6 +78,8 @@ The Withered Backpack has 5 rows / 45 slots and is crafted like this:
 :::recipe-items
 [Soul Sand](https://minecraft.wiki/w/Soul_Sand) (TL, TR, BL, BR) · [Nether Star](https://minecraft.wiki/w/Nether_Star) (TC) · [Netherite Scrap](https://minecraft.wiki/w/Netherite_Scrap) (CL, CR, BC) · Bejeweled Backpack (C) → Withered Backpack
 :::
+
+## Endless Backpack
 
 The Endless Backpack (not actually endless at all, sorry about that) has 6 rows / 54 slots and is crafted like this:
 

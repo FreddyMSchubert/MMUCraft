@@ -17,6 +17,8 @@ tips:
 - To teleport to another player using a Potion of Resonance, make sure that you hold one of the items they are holding in either hand in your offhand while you drink the potion.
 ====
 
+# Teleportation Potions
+
 There are 3 teleportation potions available on the server, all of which are **supremely useful** for getting around quickly.
 
 :::note

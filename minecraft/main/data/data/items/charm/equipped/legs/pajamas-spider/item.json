@@ -8,6 +8,7 @@
 		"Oohhhh how emo... /s"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 		"priceDabloons": 200,
 		"description": "Lets you climb walls.",
 		"unlockWeight": 20,

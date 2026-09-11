@@ -6,6 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": ["Mohawk-tuah!"],
 	"shopPurchasable": {
+		"membersOnly": true,
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 75,

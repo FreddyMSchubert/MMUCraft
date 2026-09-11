@@ -8,6 +8,7 @@
 		"An un-bee-lievably comfy place to sleep"
 	],
 	"shopPurchasable": {
+		"membersOnly": false,
 	"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,

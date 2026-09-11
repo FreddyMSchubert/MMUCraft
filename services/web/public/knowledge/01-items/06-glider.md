@@ -43,6 +43,8 @@ When you fly with a Glider over an updraft, your wings will catch the hot air mo
 
 (You can craft a Soul Campfire before entering the Nether using [Souls](/play/knowledge/soulbound).)
 
+The closer you fly to the heat source, the stronger a boost you will get upwards. If you're less than a block away, you will get a super strong boost, but be careful about dipping your feet into lava or fire.
+
 :::tip
 You can place these blocks while flying in the air with a glider, then fly over them to catch the updraft. This allows you to stay in the air indefinitely. (It can be tricky to pull off at the start though.)
 :::
@@ -92,6 +94,12 @@ You can't apply Mending to Gliders. Instead, you can repair them using leather i
 The Glider isn't as effective as the Elytra at converting horizontal momentum into upward velocity when you look up. You will likely find yourself reaching the ground sooner than with an Elytra.
 
 ## Recipe
+
+![Glider Crafting Recipe](/assets/knowledge/items/glider/recipe.png)
+
+:::recipe-items
+[Leather](https://minecraft.wiki/w/Leather) (TL, TC, TR) · [Phantom Membrane](https://minecraft.wiki/w/Phantom_Membrane) (CL, C, CR) · [Stick](https://minecraft.wiki/w/Stick) (BL, BR) → Glider
+:::
 
 :::note
 Since phantoms no longer spawn, you'll need to get your hands on the phantom membranes using a [potion of insomnia](/play/knowledge/potion-of-insomnia).

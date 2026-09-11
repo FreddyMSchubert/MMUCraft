@@ -68,7 +68,7 @@ public final class GliderCheck {
         ItemStack elytra = new ItemStack(Items.ELYTRA);
         assert GliderCharm.isGlider(glider) && !GliderCharm.isGlider(elytra);
         assert glider.getMaxDamage() == 432 && glider.getMaxDamage() == elytra.getMaxDamage();
-        assert glider.get(DataComponents.EQUIPPABLE).equals(elytra.get(DataComponents.EQUIPPABLE));
+        assert glider.get(DataComponents.EQUIPPABLE).assetId().orElseThrow().identifier().toString().equals("mmu_pack:glider");
         assert glider.get(DataComponents.EQUIPPABLE).swappable();
         assert glider.get(DataComponents.REPAIRABLE).isValidRepairItem(new ItemStack(Items.PHANTOM_MEMBRANE));
         assert item.getFeature(EquippableCharmItemFeature.class) == null;

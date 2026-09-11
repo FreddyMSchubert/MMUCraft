@@ -14,17 +14,22 @@ final class Updrafts {
     static final int FIRE_RANGE = 20;
     static final int LAVA_RANGE = 35;
     static final int SOUL_FIRE_RANGE = 50;
-    static final double SOURCE_ACCELERATION = 0.15;
-    static final double TOP_ACCELERATION = 0.01;
+    static final double SOURCE_ACCELERATION = 0.175;
+    static final double TOP_ACCELERATION = 0.02;
     static final double MAX_UPWARD_SPEED = 1.0;
-    static final int CARRY_TICKS = 20;
+    static final int CARRY_TICKS = 42;
+    static final double NEAR_MISS_ACCEL_BOOST = 2.25;
 
     record Updraft(int sourceY, double ceilingY, int expiresAt) {
         double liftAt(double feetY, int tick) {
             if (tick >= expiresAt || feetY >= ceilingY || ceilingY <= sourceY) return 0;
             double remainingFraction = Math.min(1.0, (ceilingY - feetY) / (ceilingY - sourceY));
-            return TOP_ACCELERATION
+            double accel = TOP_ACCELERATION
                     + (SOURCE_ACCELERATION - TOP_ACCELERATION) * remainingFraction * remainingFraction * remainingFraction;
+            if (feetY >= sourceY + 1 && feetY < sourceY + 2) {
+                accel *= NEAR_MISS_ACCEL_BOOST;
+            }
+            return accel;
         }
     }
 

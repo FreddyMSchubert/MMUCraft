@@ -24,7 +24,7 @@ You may have noticed the "Fashion Books" in loot chests, when right clicking the
 These hats don't do anything but make you look extra fashionable, so don't worry about trying to min-max for the best one!
 
 :::perk
-Members are able to purchace animated and dyeable cosmetics in the shop, as well as getting an increased chance for unlocking them when using fashion books.
+There are cosmetics and other shop items that can't be purchased by non-members, many of which are animated and dyeable.
 :::
 
 ## Equipping

@@ -46,11 +46,11 @@ In no particular order:
 - More dabloons earned when claiming the full daily completion reward on a given day.
 - The price increase of buying more than one claim is less steep for members.
 - Respawn at half the distance from your death location as normal players.
+- Ability to buy all of the items from the shop. (Many animated & dyeable ones are otherwise unavailable)
 - Way more cool particles for particle trails than just the colored dust for your elytra, glider, bow, crossbow, trident and mace.
 - When not logging a day on the login streaks, for non-member the streak resets, where for members it is only cut in half.
 - Travel up to 15,000 blocks instead of only 7,500 blocks when using a Potion of Displacement to find what you're looking for easier.
 - Bring animals & mobs with you when using teleportation potions.
-- Ability to buy dyeable & animated items from the shop.
 - We will add any new [mini blocks](/play/knowledge/mini-blocks) you want to the game for you. Infinite decorations!
 - Inviting a [Non-MMU Player](/play/knowledge/externalplayers) less for members.
 - Exclusive other servers (e.g. modded) are planned.

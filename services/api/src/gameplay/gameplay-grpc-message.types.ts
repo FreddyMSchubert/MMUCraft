@@ -138,5 +138,8 @@ export interface FishCatchResponse {
 	server_size_record: boolean;
 	server_smallest_record: boolean;
 	personal_smallest_record: boolean;
+	announce: boolean;
+	first_server_catch_announcement: boolean;
+	first_server_catch: boolean;
 	message: string;
 }

@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import com.mojang.math.Transformation;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Brightness;
@@ -14,6 +15,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.DisplayEntityAccessor;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.ItemDisplayEntityAccessor;
 
@@ -56,16 +59,24 @@ public final class AnimalCrossingFishShadowDisplay {
 		} else {
 			shadowStack = catchResult.copyWithCount(1);
 			shadowStack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, false);
-			CustomModelData modelData = shadowStack.getOrDefault(
-					DataComponents.CUSTOM_MODEL_DATA,
-					CustomModelData.EMPTY
-			);
-			shadowStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
-					modelData.floats(),
-					modelData.flags(),
-					append(modelData.strings(), SHADOW_MODEL_MARKER),
-					modelData.colors()
-			));
+			if (FakeItems.getFakeItemFromStack(shadowStack) == null) {
+				Identifier itemId = BuiltInRegistries.ITEM.getKey(shadowStack.getItem());
+				shadowStack.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(
+						MainMod.MOD_ID,
+						"fishing_shadow/" + itemId.getPath()
+				));
+			} else {
+				CustomModelData modelData = shadowStack.getOrDefault(
+						DataComponents.CUSTOM_MODEL_DATA,
+						CustomModelData.EMPTY
+				);
+				shadowStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
+						modelData.floats(),
+						modelData.flags(),
+						append(modelData.strings(), SHADOW_MODEL_MARKER),
+						modelData.colors()
+				));
+			}
 		}
         ((ItemDisplayEntityAccessor) display).mainmod$setItemStack(shadowStack);
         ((ItemDisplayEntityAccessor) display).mainmod$setItemTransform(ItemDisplayContext.FIXED);

@@ -1,0 +1,8 @@
+{
+	"type": "mainmod:fake_crafting_shapeless",
+	"ingredients": ["mainmod:boot"],
+	"result": {
+		"stack": "minecraft:leather",
+		"count": 3
+	}
+}

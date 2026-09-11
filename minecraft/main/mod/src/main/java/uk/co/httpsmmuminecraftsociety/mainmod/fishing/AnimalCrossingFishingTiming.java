@@ -11,6 +11,7 @@ public final class AnimalCrossingFishingTiming {
     private static final int WAIT_CENTER_TICKS_WITH_LURE_3 = 20 * 5;
     private static final int WAIT_SPREAD_TICKS_WITHOUT_LURE = 20 * 4;
     private static final int WAIT_SPREAD_TICKS_WITH_LURE_3 = 20 * 3;
+    private static final int LURE_3_EXTRA_RANDOM_WAIT_TICKS = 20 * 2;
     private static final double BOUNCE_GAUSSIAN_SIGMA = 1.0D;
     private static final double BOBBER_TOUCH_PADDING_BLOCKS = 0.10D;
 
@@ -54,12 +55,24 @@ public final class AnimalCrossingFishingTiming {
                 WAIT_SPREAD_TICKS_WITH_LURE_3,
                 lureLevel
         );
-        return Mth.nextInt(random, Math.max(20, centerTicks - spreadTicks), centerTicks + spreadTicks);
+        int waitTicks = Mth.nextInt(random, Math.max(20, centerTicks - spreadTicks), centerTicks + spreadTicks);
+        return lureLevel == 3
+                ? waitTicks + Mth.nextInt(random, 0, LURE_3_EXTRA_RANDOM_WAIT_TICKS)
+                : waitTicks;
     }
 
     public static int lureLevel(int lureSpeed) {
         if (lureSpeed <= 3) return Mth.clamp(lureSpeed, 0, 3);
         return Mth.clamp(Math.round(lureSpeed / 100.0F), 0, 3);
+    }
+
+    public static double lureBookShortcutChance(int lureLevel) {
+        return switch (Mth.clamp(lureLevel, 0, 3)) {
+            case 0 -> 0.25D;
+            case 1 -> 0.125D;
+            case 2 -> 0.05D;
+            default -> 0.0D;
+        };
     }
 
     public static int rollBounceCount(RandomSource random, FishingPersonality personality) {

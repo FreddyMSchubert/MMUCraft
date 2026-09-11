@@ -6,6 +6,7 @@ public record FishingPersonality(
         FishRarity rarity,
         float struggleSeconds,
 		float textureAngleDegrees,
+		boolean randomTextureAngle,
 		float textureLengthPixels,
         float size,
         float secondsAwayFromBobber,
@@ -45,6 +46,7 @@ public record FishingPersonality(
                 rarity,
                 struggleSeconds,
 				textureAngleDegrees,
+				randomTextureAngle,
 				textureLengthPixels,
                 newSize,
                 secondsAwayFromBobber,
@@ -55,4 +57,22 @@ public record FishingPersonality(
                 averageCatchSeconds
         );
     }
+
+	public FishingPersonality resolveTextureAngle(net.minecraft.util.RandomSource random) {
+		if (!randomTextureAngle) return this;
+		return new FishingPersonality(
+				rarity,
+				struggleSeconds,
+				random.nextFloat() * 360.0F,
+				false,
+				textureLengthPixels,
+				size,
+				secondsAwayFromBobber,
+				approachSeconds,
+				retreatSeconds,
+				retreatDistance,
+				averageBounces,
+				averageCatchSeconds
+		);
+	}
 }

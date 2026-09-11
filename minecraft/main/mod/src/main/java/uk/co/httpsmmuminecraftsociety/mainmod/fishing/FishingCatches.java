@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.UnlockBookAnimation;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
@@ -44,17 +46,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public final class FishingCatches {
-    private static final double LURE_BOOK_CHANCE = 0.10D;
+    static final float FISH_SHADOW_BASE_SCALE = 1.0F;
+    static final float ITEM_SHADOW_SCALE = 0.64F;
     private static final String LENGTH_TAG = "mainmod_fish_length_cm";
     private static final String RARITY_TAG = "mainmod_fish_rarity";
     private static final Map<FishRarity, List<FishLoot>> FISH_LOOT = emptyLootTable();
     private static final Map<FishRarity, List<ItemStack>> TREASURE_LOOT = emptyLootTable();
+    private static final Map<String, String> FIXED_TREASURE_ANGLES = Map.of("fish-bones", "BL");
 
     static {
-        addFish(FishRarity.COMMON, new ItemStack(Items.COD), 53.0, 25.0);
-        addFish(FishRarity.COMMON, new ItemStack(Items.SALMON), 75.0, 35.0);
-        addFish(FishRarity.COMMON, new ItemStack(Items.TROPICAL_FISH), 15.0, 7.0);
-        addFish(FishRarity.COMMON, new ItemStack(Items.PUFFERFISH), 30.0, 12.0);
+        addFish(FishRarity.COMMON, new ItemStack(Items.COD), 53.0, 25.0, "BL");
+        addFish(FishRarity.COMMON, new ItemStack(Items.SALMON), 75.0, 35.0, "BL");
+        addFish(FishRarity.COMMON, new ItemStack(Items.TROPICAL_FISH), 15.0, 7.0, "BL");
+        addFish(FishRarity.COMMON, new ItemStack(Items.PUFFERFISH), 30.0, 12.0, "TR");
 
         addTreasure(FishRarity.COMMON, new ItemStack(Items.SUGAR_CANE));
         addTreasure(FishRarity.COMMON, new ItemStack(Items.ROTTEN_FLESH));
@@ -147,8 +151,9 @@ public final class FishingCatches {
     }
 
     public static Pair<ItemStack, FishingPersonality> random(FishingHook hook, double itemChance, int fishingLuckBonus, int lureLevel) {
-        if (lureLevel == 0 && hook.getRandom().nextDouble() < LURE_BOOK_CHANCE) {
-            return Pair.of(enchantedBook(hook, Enchantments.LURE), defaultPersonality(FishRarity.UNCOMMON, true));
+        if (hook.getRandom().nextDouble() < AnimalCrossingFishingTiming.lureBookShortcutChance(lureLevel)) {
+            ItemStack lureBook = enchantedBook(hook, Enchantments.LURE);
+            return Pair.of(lureBook, treasurePersonality(FishRarity.UNCOMMON, lureBook).resolveTextureAngle(hook.getRandom()));
         }
 
         double luck = hook.getPlayerOwner() == null
@@ -157,7 +162,7 @@ public final class FishingCatches {
         if (hook.getPlayerOwner() instanceof ServerPlayer player) {
             ItemStack unlockBook = UnlockBookLoot.rollFishingBook(player, hook.getRandom(), luck);
             if (!unlockBook.isEmpty()) {
-                return Pair.of(unlockBook, defaultPersonality(FishRarity.COMMON, true));
+                return Pair.of(unlockBook, treasurePersonality(FishRarity.COMMON, unlockBook).resolveTextureAngle(hook.getRandom()));
             }
         }
 
@@ -176,11 +181,21 @@ public final class FishingCatches {
         if (!Double.isNaN(lengthCm)) {
             personality = personality.withSize(FishSize.blocks(lengthCm));
         }
-        return Pair.of(stack, personality);
+        return Pair.of(stack, personality.resolveTextureAngle(hook.getRandom()));
     }
 
-    public static void addFish(FishRarity rarity, ItemStack stack, double averageLengthCm, double deviationCm) {
-        FISH_LOOT.get(rarity).add(new FishLoot(stack.copy(), new FishSize(averageLengthCm, deviationCm)));
+    public static void addFish(
+            FishRarity rarity,
+            ItemStack stack,
+            double averageLengthCm,
+            double deviationCm,
+            String textureAngle
+    ) {
+        FISH_LOOT.get(rarity).add(new FishLoot(
+                stack.copy(),
+                new FishSize(averageLengthCm, deviationCm),
+                FishTextureAngle.parse(textureAngle)
+        ));
     }
 
     public static void addTreasure(FishRarity rarity, ItemStack stack) {
@@ -196,11 +211,10 @@ public final class FishingCatches {
         int rarityIndex = Math.max(0, Math.min(FishRarity.values().length - 1, tag.getIntOr(RARITY_TAG, 0)));
         FishRarity rarity = FishRarity.values()[rarityIndex];
 
-        return Optional.of(Component.empty()
-                .append(Component.literal(stack.getHoverName().getString() + " [" + rarity.displayName() + "]")
-                        .withStyle(Style.EMPTY.withColor(rarity.colorRgb())))
-                .append(Component.literal(" • " + formatLength(tag.getDoubleOr(LENGTH_TAG, 0.0)))
-                        .withStyle(ChatFormatting.WHITE)));
+        return Optional.of(Component.literal(stack.getHoverName().getString()
+                        + " [" + rarity.displayName() + "]"
+                        + " • " + formatLength(tag.getDoubleOr(LENGTH_TAG, 0.0)))
+                .withStyle(Style.EMPTY.withColor(rarity.colorRgb())));
     }
 
     public static void trackCatch(ServerPlayer player, ItemStack stack) {
@@ -213,6 +227,9 @@ public final class FishingCatches {
         double lengthCm = tag.getDoubleOr(LENGTH_TAG, 0.0);
         int rarityIndex = Math.max(0, Math.min(FishRarity.values().length - 1, tag.getIntOr(RARITY_TAG, 0)));
         FishRarity rarity = FishRarity.values()[rarityIndex];
+        if (rarity.ordinal() >= FishRarity.LEGENDARY.ordinal()) {
+            UnlockBookAnimation.play(player, stack);
+        }
         String fishId = fakeItem == null
                 ? BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()
                 : fakeItem.id();
@@ -221,7 +238,10 @@ public final class FishingCatches {
                 fishId,
                 lengthCm,
                 rarity.name().toLowerCase(Locale.ROOT)
-        ).thenAccept(response -> showRecordMessages(player, stack.getHoverName().getString(), rarity, lengthCm, response))
+        ).thenAccept(response -> {
+            MinecraftServer server = player.level().getServer();
+            server.execute(() -> showRecordMessages(player, stack, rarity, lengthCm, response));
+        })
                 .exceptionally(error -> {
                     MainMod.LOGGER.warn("Could not record fish catch for {}", player.getName().getString(), error);
                     return null;
@@ -236,49 +256,91 @@ public final class FishingCatches {
 
     private static void showRecordMessages(
             ServerPlayer player,
-            String fishName,
+            ItemStack fish,
             FishRarity rarity,
             double lengthCm,
             RecordFishCatchResponse response
-    ) {
+	) {
 		if (!response.getRecorded()) return;
+		String fishName = fish.getHoverName().getString();
 		if (response.getAnnounce()) {
 			MinecraftServer server = player.level().getServer();
-			server.execute(() -> {
-				DiscordBridge.fishAnnouncement(server, player,
-						"caught " + fishName + "!", response.getFirstServerCatchAnnouncement());
-			});
+			DiscordBridge.fishAnnouncement(server, player,
+					"caught " + fishName + "!", response.getFirstServerCatchAnnouncement());
+		}
+		if (shouldShowFirstCatchAnimation(rarity, response.getFirstCatch())) {
+			UnlockBookAnimation.play(player, fish);
 		}
         List<Component> messages = new ArrayList<>();
+        if (response.getFirstServerCatch()) {
+            messages.add(serverRecordMessage("Server First Catch", fishName, lengthCm, true));
+        }
         if (response.getFirstCatch()) {
-            messages.add(recordMessage("First Catch", fishName, rarity, lengthCm));
+            messages.add(personalRecordMessage("Personal First Catch", fishName, rarity, lengthCm, true));
         } else {
-            if (response.getPersonalSizeRecord()) {
-                messages.add(recordMessage("Personal Size Record", fishName, rarity, lengthCm));
-            } else if (response.getPersonalSmallestRecord()) {
-                messages.add(recordMessage("Personal Smallest Record", fishName, rarity, lengthCm));
-            }
             if (response.getServerSizeRecord()) {
-                messages.add(recordMessage("Server Size Record", fishName, rarity, lengthCm));
+                messages.add(serverRecordMessage("Server Largest Size Record", fishName, lengthCm, true));
             } else if (response.getServerSmallestRecord()) {
-                messages.add(recordMessage("Server Smallest Record", fishName, rarity, lengthCm));
+                messages.add(serverRecordMessage("Server Smallest Size Record", fishName, lengthCm, false));
+            }
+            if (response.getPersonalSizeRecord()) {
+                messages.add(personalRecordMessage("Personal Largest Size Record", fishName, rarity, lengthCm, true));
+            } else if (response.getPersonalSmallestRecord()) {
+                messages.add(personalRecordMessage("Personal Smallest Size Record", fishName, rarity, lengthCm, false));
             }
         }
 
+        if (messages.isEmpty()) return;
+        Component message = joinMessages(messages);
         MinecraftServer server = player.level().getServer();
-        for (int index = 0; index < messages.size(); index++) {
-            Component message = messages.get(index);
-            CompletableFuture.delayedExecutor(3_200L + index * 2_000L, TimeUnit.MILLISECONDS).execute(() ->
-                    server.execute(() -> {
-                        if (!player.hasDisconnected()) player.sendOverlayMessage(message);
-                    })
-            );
-        }
+        CompletableFuture.delayedExecutor(3_200L, TimeUnit.MILLISECONDS).execute(() ->
+                server.execute(() -> {
+                    if (!player.hasDisconnected()) player.sendOverlayMessage(message);
+                })
+        );
     }
 
-    private static Component recordMessage(String label, String fishName, FishRarity rarity, double lengthCm) {
+    private static boolean shouldShowFirstCatchAnimation(FishRarity rarity, boolean firstCatch) {
+        return firstCatch
+                && rarity.ordinal() >= FishRarity.RARE.ordinal()
+                && rarity.ordinal() < FishRarity.LEGENDARY.ordinal();
+    }
+
+    private static Component personalRecordMessage(
+            String label,
+            String fishName,
+            FishRarity rarity,
+            double lengthCm,
+            boolean bold
+    ) {
         return Component.literal("★ " + label + " — " + fishName + " • " + formatLength(lengthCm))
-                .withStyle(Style.EMPTY.withColor(rarity.colorRgb()).withBold(true));
+                .withStyle(Style.EMPTY.withColor(rarity.colorRgb()).withBold(bold));
+    }
+
+    private static Component serverRecordMessage(
+            String label,
+            String fishName,
+            double lengthCm,
+            boolean bold
+    ) {
+        String text = "★ " + label + " — " + fishName + " • " + formatLength(lengthCm);
+        var result = Component.empty();
+        int[] codePoints = text.codePoints().toArray();
+        for (int index = 0; index < codePoints.length; index++) {
+            int color = Mth.hsvToRgb(index / (float) Math.max(1, codePoints.length), 0.85F, 1.0F);
+            result.append(Component.literal(new String(Character.toChars(codePoints[index])))
+                    .withStyle(Style.EMPTY.withColor(color).withBold(bold)));
+        }
+        return result;
+    }
+
+    private static Component joinMessages(List<Component> messages) {
+        var result = Component.empty();
+        for (int index = 0; index < messages.size(); index++) {
+            if (index > 0) result.append(Component.literal("  ◆  ").withStyle(ChatFormatting.WHITE));
+            result.append(messages.get(index));
+        }
+        return result;
     }
 
     private static FishRarity randomRarity(RandomSource random, double luck) {
@@ -310,23 +372,28 @@ public final class FishingCatches {
 
         ItemStack fallback = new ItemStack(treasure ? Items.STICK : Items.SALMON);
         FishSize length = treasure ? null : new FishSize(75.0, 35.0);
-        return List.of(new CatchEntry(fallback, defaultPersonality(FishRarity.COMMON, treasure), length));
+        FishingPersonality personality = treasure
+                ? treasurePersonality(FishRarity.COMMON, fallback)
+                : fishPersonality(FishRarity.COMMON, 225.0F);
+        return List.of(new CatchEntry(fallback, personality, length));
     }
 
     private static List<CatchEntry> entriesAt(boolean treasure, FishRarity rarity, FishingHook hook) {
         List<CatchEntry> entries = new ArrayList<>();
         if (treasure) {
             for (ItemStack stack : TREASURE_LOOT.get(rarity)) {
-                entries.add(new CatchEntry(stack, defaultPersonality(rarity, true), null));
+                entries.add(new CatchEntry(stack, treasurePersonality(rarity, stack), null));
             }
             if (rarity == FishRarity.UNCOMMON) {
-                entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LURE), defaultPersonality(rarity, true), null));
+                ItemStack stack = enchantedBook(hook, Enchantments.LURE);
+                entries.add(new CatchEntry(stack, treasurePersonality(rarity, stack), null));
             } else if (rarity == FishRarity.EPIC) {
-                entries.add(new CatchEntry(enchantedBook(hook, Enchantments.LUCK_OF_THE_SEA), defaultPersonality(rarity, true), null));
+                ItemStack stack = enchantedBook(hook, Enchantments.LUCK_OF_THE_SEA);
+                entries.add(new CatchEntry(stack, treasurePersonality(rarity, stack), null));
             }
         } else {
             for (FishLoot fish : FISH_LOOT.get(rarity)) {
-                entries.add(new CatchEntry(fish.stack(), defaultPersonality(rarity, false), fish.length()));
+                entries.add(new CatchEntry(fish.stack(), fishPersonality(rarity, fish.textureAngleDegrees()), fish.length()));
             }
         }
 
@@ -380,18 +447,37 @@ public final class FishingCatches {
         return String.format(Locale.ROOT, "%.1f cm", length);
     }
 
-    private static FishingPersonality defaultPersonality(FishRarity rarity, boolean treasure) {
-        float approachSeconds = treasure ? 1.5F : 0.5F;
+    private static FishingPersonality fishPersonality(FishRarity rarity, float textureAngleDegrees) {
         return new FishingPersonality(
                 rarity,
-                treasure ? 1.0F : 1.5F,
-				treasure ? 90.0F : 270.0F,
+                1.5F,
+				textureAngleDegrees,
+				false,
 				16.0F,
-                treasure ? 0.8F : 1.0F,
-                treasure ? approachSeconds : 0.2F,
-                approachSeconds,
-                treasure ? approachSeconds : 1.5F,
-                treasure ? 0.6F : 0.75F,
+                FISH_SHADOW_BASE_SCALE,
+                0.2F,
+                0.5F,
+                1.5F,
+                0.75F,
+                3.0F,
+                8.0F
+        );
+    }
+
+    private static FishingPersonality treasurePersonality(FishRarity rarity, ItemStack stack) {
+        FakeItem fakeItem = FakeItems.getFakeItemFromStack(stack);
+        String fixedAngle = fakeItem == null ? null : FIXED_TREASURE_ANGLES.get(fakeItem.id());
+        return new FishingPersonality(
+                rarity,
+                1.0F,
+                fixedAngle == null ? 0.0F : FishTextureAngle.parse(fixedAngle),
+                fixedAngle == null,
+                16.0F,
+                ITEM_SHADOW_SCALE,
+                0.5F,
+                0.5F,
+                1.5F,
+                0.75F,
                 3.0F,
                 8.0F
         );
@@ -405,7 +491,7 @@ public final class FishingCatches {
         return table;
     }
 
-    private record FishLoot(ItemStack stack, FishSize length) {
+    private record FishLoot(ItemStack stack, FishSize length, float textureAngleDegrees) {
     }
 
     private record CatchEntry(ItemStack stack, FishingPersonality personality, FishSize length) {

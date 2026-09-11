@@ -291,13 +291,15 @@ public final class FishingCatches {
         }
 
         if (messages.isEmpty()) return;
-        Component message = joinMessages(messages);
         MinecraftServer server = player.level().getServer();
-        CompletableFuture.delayedExecutor(3_200L, TimeUnit.MILLISECONDS).execute(() ->
-                server.execute(() -> {
-                    if (!player.hasDisconnected()) player.sendOverlayMessage(message);
-                })
-        );
+        for (int index = 0; index < messages.size(); index++) {
+            Component message = messages.get(index);
+            CompletableFuture.delayedExecutor(3_200L + index * 2_000L, TimeUnit.MILLISECONDS).execute(() ->
+                    server.execute(() -> {
+                        if (!player.hasDisconnected()) player.sendOverlayMessage(message);
+                    })
+            );
+        }
     }
 
     private static boolean shouldShowFirstCatchAnimation(FishRarity rarity, boolean firstCatch) {
@@ -330,15 +332,6 @@ public final class FishingCatches {
             int color = Mth.hsvToRgb(index / (float) Math.max(1, codePoints.length), 0.85F, 1.0F);
             result.append(Component.literal(new String(Character.toChars(codePoints[index])))
                     .withStyle(Style.EMPTY.withColor(color).withBold(bold)));
-        }
-        return result;
-    }
-
-    private static Component joinMessages(List<Component> messages) {
-        var result = Component.empty();
-        for (int index = 0; index < messages.size(); index++) {
-            if (index > 0) result.append(Component.literal("  ◆  ").withStyle(ChatFormatting.WHITE));
-            result.append(messages.get(index));
         }
         return result;
     }

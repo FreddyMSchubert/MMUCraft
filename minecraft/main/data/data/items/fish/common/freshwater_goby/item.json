@@ -1,20 +1,21 @@
 {
-    "title":  "Freshwater Goby",
-    "id":  "fish-freshwater_goby",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Many gobies fuse their pelvic fins into a suction cup for gripping rocks."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_tiny",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  10
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Freshwater Goby",
+	"id": "fish-freshwater_goby",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Many gobies fuse their pelvic fins into a suction cup for gripping rocks."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 10,
+			"textureLengthPixels": 12
+		},
+		"furnaceResult": "white_meat"
+	}
 }

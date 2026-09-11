@@ -5,20 +5,18 @@
 	"type": "object",
 	"additionalProperties": false,
 	"properties": {
-		"shape": {
-			"type": "string",
-			"enum": [
-				"fish_shadow_default",
-				"fish_shadow_default_alt",
-				"fish_shadow_default_alt_2",
-				"fish_shadow_small",
-				"fish_shadow_tiny",
-				"fish_shadow_large",
-				"fish_shadow_weird",
-				"fish_shadow_object",
-				"fish_shadow_snake",
-				"fish_shadow_squid",
-				"fish_shadow_shark"
+		"angle": {
+			"description": "Direction the fish faces in its texture. Compass strings and degrees run clockwise from the top.",
+			"oneOf": [
+				{
+					"type": "string",
+					"enum": ["T", "TR", "R", "BR", "B", "BL", "L", "TL"]
+				},
+				{
+					"type": "number",
+					"minimum": 0,
+					"exclusiveMaximum": 360
+				}
 			]
 		},
 		"size": {
@@ -34,10 +32,16 @@
 					"description": "Optional override for the distance from the average that fewer than 1% of catches exceed. Defaults to one third of averageLengthCm.",
 					"type": "number",
 					"exclusiveMinimum": 0
+				},
+				"textureLengthPixels": {
+					"description": "The fish's opaque length projected onto its facing direction and normalized to a 16-pixel item frame. Generate this value from texture.png and angle.",
+					"type": "number",
+					"exclusiveMinimum": 0
 				}
 			},
 			"required": [
-				"averageLengthCm"
+				"averageLengthCm",
+				"textureLengthPixels"
 			]
 		},
 		"catching": {
@@ -110,7 +114,7 @@
 		}
 	},
 	"required": [
-		"shape",
+		"angle",
 		"size",
 		"tags",
 		"furnaceResult"

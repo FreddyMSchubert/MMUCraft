@@ -1,20 +1,21 @@
 {
-    "title":  "Herring",
-    "id":  "fish-herring",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Herring schools can contain millions of fish moving almost as one."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_small",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  25
-                          },
-                 "furnaceResult":  "red_meat"
-             }
+	"title": "Herring",
+	"id": "fish-herring",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Herring schools can contain millions of fish moving almost as one."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 25,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "red_meat"
+	}
 }

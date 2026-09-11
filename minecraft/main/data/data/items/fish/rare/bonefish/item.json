@@ -1,20 +1,21 @@
 {
-    "title":  "Bonefish",
-    "id":  "fish-bonefish",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Mirror-bright scales make bonefish surprisingly difficult to see over shallow flats."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  60
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Bonefish",
+	"id": "fish-bonefish",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Mirror-bright scales make bonefish surprisingly difficult to see over shallow flats."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 60,
+			"textureLengthPixels": 15.556349
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -1,20 +1,19 @@
 {
-    "title":  "Bass",
-    "id":  "fish-bass",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "A bass senses distant vibrations through the lateral line along its body."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-
-                          ],
-                 "size":  {
-                              "averageLengthCm":  40
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Bass",
+	"id": "fish-bass",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"A bass senses distant vibrations through the lateral line along its body."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 40,
+			"textureLengthPixels": 12
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -1,20 +1,21 @@
 {
-    "title":  "Sea Cucumber",
-    "id":  "fish-sea_cucumber",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Some sea cucumbers eject internal organs and later regenerate them."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_object",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  30
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Sea Cucumber",
+	"id": "fish-sea_cucumber",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Some sea cucumbers eject internal organs and later regenerate them."
+	],
+	"fish": {
+		"angle": 238,
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 19.609672
+		},
+		"furnaceResult": "white_meat"
+	}
 }

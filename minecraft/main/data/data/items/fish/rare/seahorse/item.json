@@ -1,20 +1,21 @@
 {
-    "title":  "Seahorse",
-    "id":  "fish-seahorse",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Male seahorses carry developing young in a brood pouch."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_weird",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  15
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Seahorse",
+	"id": "fish-seahorse",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Male seahorses carry developing young in a brood pouch."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 15,
+			"textureLengthPixels": 8
+		},
+		"furnaceResult": "white_meat"
+	}
 }

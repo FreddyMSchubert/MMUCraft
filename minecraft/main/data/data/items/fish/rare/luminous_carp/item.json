@@ -1,22 +1,23 @@
 {
-    "title":  "Luminous Carp",
-    "id":  "fish-luminous_carp",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Symbiotic bacteria trace glowing lines along every scale."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "river",
-                              "night",
-                              "fullmoon"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  60
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Luminous Carp",
+	"id": "fish-luminous_carp",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Symbiotic bacteria trace glowing lines along every scale."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"river",
+			"night",
+			"fullmoon"
+		],
+		"size": {
+			"averageLengthCm": 60,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
 }

@@ -1,21 +1,22 @@
 {
-    "title":  "Goldfish",
-    "id":  "fish-goldfish",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Goldfish have no true stomach, so food passes steadily through the gut.",
-                     "The tiny goldfish seen in bowls are usually young or stunted by cramped, poor conditions; healthy adults can grow much larger."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_small",
-                 "tags":  [
-                              "river"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  15
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Goldfish",
+	"id": "fish-goldfish",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Goldfish have no true stomach, so food passes steadily through the gut.",
+		"The tiny goldfish seen in bowls are usually young or stunted by cramped, poor conditions; healthy adults can grow much larger."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"river"
+		],
+		"size": {
+			"averageLengthCm": 15,
+			"textureLengthPixels": 13
+		},
+		"furnaceResult": "white_meat"
+	}
 }

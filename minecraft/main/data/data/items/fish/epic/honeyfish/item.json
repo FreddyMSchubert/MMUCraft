@@ -1,21 +1,22 @@
 {
-    "title":  "Honeyfish",
-    "id":  "fish-honeyfish",
-    "modelType":  "basic",
-    "rarity":  "epic",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "It stores sweet nectar in waxy chambers beside its gills."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "warm",
-                              "day"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  30
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Honeyfish",
+	"id": "fish-honeyfish",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"It stores sweet nectar in waxy chambers beside its gills."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"warm",
+			"day"
+		],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
 }

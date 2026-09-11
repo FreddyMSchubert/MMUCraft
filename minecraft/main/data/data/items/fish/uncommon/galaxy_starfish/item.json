@@ -1,22 +1,23 @@
 {
-    "title":  "Galaxy Starfish",
-    "id":  "fish-galaxy_starfish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Each arm carries a shifting pattern that resembles a tiny night sky."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_object",
-                 "tags":  [
-                              "ocean",
-                              "night",
-                              "newmoon"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  30
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Galaxy Starfish",
+	"id": "fish-galaxy_starfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Each arm carries a shifting pattern that resembles a tiny night sky."
+	],
+	"fish": {
+		"angle": "T",
+		"tags": [
+			"ocean",
+			"night",
+			"newmoon"
+		],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "white_meat"
+	}
 }

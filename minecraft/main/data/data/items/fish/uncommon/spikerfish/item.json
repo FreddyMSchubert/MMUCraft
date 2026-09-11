@@ -1,20 +1,21 @@
 {
-    "title":  "Spikerfish",
-    "id":  "fish-spikerfish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its folding spines lock upright the instant a shadow passes overhead."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  30
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Spikerfish",
+	"id": "fish-spikerfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its folding spines lock upright the instant a shadow passes overhead."
+	],
+	"fish": {
+		"angle": "TR",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 21.213203
+		},
+		"furnaceResult": "white_meat"
+	}
 }

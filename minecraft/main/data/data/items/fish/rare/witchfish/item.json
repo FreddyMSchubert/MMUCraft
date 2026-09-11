@@ -1,20 +1,21 @@
 {
-    "title":  "Witchfish",
-    "id":  "fish-witchfish",
-    "modelType":  "basic",
-    "rarity":  "rare",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Witchfish produce defensive slime and tie their bodies into knots."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_snake",
-                 "tags":  [
-                              "newmoon"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  45
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Witchfish",
+	"id": "fish-witchfish",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Witchfish produce defensive slime and tie their bodies into knots."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"newmoon"
+		],
+		"size": {
+			"averageLengthCm": 45,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "white_meat"
+	}
 }

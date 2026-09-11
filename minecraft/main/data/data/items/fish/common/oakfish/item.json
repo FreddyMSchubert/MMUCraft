@@ -1,20 +1,19 @@
 {
-    "title":  "Oakfish",
-    "id":  "fish-oakfish",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Growth rings appear on its woody scales after every long winter."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt",
-                 "tags":  [
-
-                          ],
-                 "size":  {
-                              "averageLengthCm":  55
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Oakfish",
+	"id": "fish-oakfish",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Growth rings appear on its woody scales after every long winter."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 55,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
 }

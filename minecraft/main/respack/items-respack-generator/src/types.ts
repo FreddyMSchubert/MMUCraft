@@ -75,6 +75,7 @@ export interface SelectorCase {
 	readonly when: string;
 	readonly modelId: string;
 	readonly isTinted?: boolean;
+	readonly shadowModelId?: string;
 }
 
 export interface CosmeticWeightEntry {

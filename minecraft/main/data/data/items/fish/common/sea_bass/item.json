@@ -1,20 +1,21 @@
 {
-    "title":  "Sea Bass",
-    "id":  "fish-sea_bass",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Its lateral line remains sensitive even in rough coastal surf."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  45
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Sea Bass",
+	"id": "fish-sea_bass",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its lateral line remains sensitive even in rough coastal surf."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 45,
+			"textureLengthPixels": 12
+		},
+		"furnaceResult": "white_meat"
+	}
 }

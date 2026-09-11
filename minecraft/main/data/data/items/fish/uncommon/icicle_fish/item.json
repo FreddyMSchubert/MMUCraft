@@ -1,20 +1,21 @@
 {
-    "title":  "Icicle Fish",
-    "id":  "fish-icicle_fish",
-    "modelType":  "basic",
-    "rarity":  "uncommon",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Clear fin rays grow downward like icicles without ever becoming brittle."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default",
-                 "tags":  [
-                              "cold"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  30
-                          },
-                 "furnaceResult":  "white_meat"
-             }
+	"title": "Icicle Fish",
+	"id": "fish-icicle_fish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Clear fin rays grow downward like icicles without ever becoming brittle."
+	],
+	"fish": {
+		"angle": "BL",
+		"tags": [
+			"cold"
+		],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 15.556349
+		},
+		"furnaceResult": "white_meat"
+	}
 }

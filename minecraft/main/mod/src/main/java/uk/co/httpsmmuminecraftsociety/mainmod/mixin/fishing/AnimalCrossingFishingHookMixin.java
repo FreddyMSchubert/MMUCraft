@@ -26,6 +26,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fishing.AnimalCrossingFishingEnvir
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.AnimalCrossingFishingPhase;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.AnimalCrossingFishingTiming;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingJumpScares;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
 
@@ -59,6 +60,7 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique private int mainmod$catchAnimationTicks;
     @Unique private ItemStack mainmod$catchingRod = ItemStack.EMPTY;
     @Unique private double mainmod$itemChance = FishingModifiers.DEFAULT_ITEM_CHANCE;
+	@Unique private boolean mainmod$jumpScare;
 
     @Inject(method = "<init>(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;II)V", at = @At("RETURN"))
     private void mainmod$applyCastModifier(Player player, Level level, int luck, int lureSpeed, CallbackInfo ci) {
@@ -155,6 +157,7 @@ public abstract class AnimalCrossingFishingHookMixin {
 		);
         this.mainmod$catchResult = fish.getFirst();
         this.mainmod$catchPersonality = fish.getSecond();
+		this.mainmod$jumpScare = FishingJumpScares.shouldTrigger(hook.getRandom());
 
         this.fishAngle = Mth.nextFloat(hook.getRandom(), 0.0F, 360.0F);
         this.mainmod$orbitDegrees = this.fishAngle;
@@ -175,7 +178,8 @@ public abstract class AnimalCrossingFishingHookMixin {
 
 		Display.ItemDisplay display = AnimalCrossingFishShadowDisplay.create(
 				level,
-				mainmod$personality()
+				mainmod$catchResult(),
+				this.mainmod$jumpScare
 		);
         this.mainmod$fishShadow = display;
         mainmod$positionFish(hook);
@@ -375,7 +379,8 @@ public abstract class AnimalCrossingFishingHookMixin {
 					hook,
 					player,
 					this.mainmod$catchingRod,
-					mainmod$catchResult()
+					mainmod$catchResult(),
+					this.mainmod$jumpScare
 			);
         }
 
@@ -397,6 +402,8 @@ public abstract class AnimalCrossingFishingHookMixin {
 						this.mainmod$phase,
 						this.mainmod$orbitDegrees,
 						this.mainmod$fishDistance,
+						this.mainmod$jumpScare ? 270.0F : mainmod$personality().textureAngleDegrees(),
+						this.mainmod$jumpScare ? 16.0F : mainmod$personality().textureLengthPixels(),
 						this.mainmod$arrivalTicks,
 						this.mainmod$pauseTicks
 				)
@@ -473,6 +480,7 @@ public abstract class AnimalCrossingFishingHookMixin {
         }
         this.mainmod$catchResult = null;
         this.mainmod$catchPersonality = null;
+		this.mainmod$jumpScare = false;
     }
 
 }

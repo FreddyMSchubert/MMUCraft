@@ -12,7 +12,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishFurnaceResult;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishRarity;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishSize;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishSpawnTag;
-import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishShapes;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
 
 import java.util.ArrayList;
@@ -57,7 +56,6 @@ public record FishItemFeature(
                 between(random, 1.0F + 0.5F * rarityLevel, 2.5F + 1.5F * rarityLevel));
         float averageBounces = calculateAverageBounces(averageCatchSeconds, approachSeconds, retreatSeconds, secondsAwayFromBobber);
         double averageLengthCm = size.get("averageLengthCm").getAsDouble();
-        FishShapes fishShape = FishShapes.fromJsonValue(json.get("shape").getAsString());
         EnumSet<FishSpawnTag> spawnTags = EnumSet.noneOf(FishSpawnTag.class);
         for (JsonElement tag : json.getAsJsonArray("tags")) {
             spawnTags.add(FishSpawnTag.fromJsonValue(tag.getAsString()));
@@ -66,8 +64,9 @@ public record FishItemFeature(
                 new FishingPersonality(
                         rarity,
                         struggleSeconds,
-                        fishShape.value(),
-                        fishShape.shadowScale(averageLengthCm),
+						parseAngle(json.get("angle")),
+						size.get("textureLengthPixels").getAsFloat(),
+                        FishSize.blocks(averageLengthCm),
                         secondsAwayFromBobber,
                         approachSeconds,
                         retreatSeconds,
@@ -87,6 +86,26 @@ public record FishItemFeature(
     private static float between(RandomSource random, float minimum, float maximum) {
         return minimum + random.nextFloat() * (maximum - minimum);
     }
+
+	private static float parseAngle(JsonElement angle) {
+		if (angle.isJsonPrimitive() && angle.getAsJsonPrimitive().isNumber()) {
+			float degrees = angle.getAsFloat();
+			if (degrees >= 0.0F && degrees < 360.0F) return degrees;
+			throw new IllegalArgumentException("Fish angle degrees must be at least 0 and less than 360");
+		}
+
+		return switch (angle.getAsString()) {
+			case "T" -> 0.0F;
+			case "TR" -> 45.0F;
+			case "R" -> 90.0F;
+			case "BR" -> 135.0F;
+			case "B" -> 180.0F;
+			case "BL" -> 225.0F;
+			case "L" -> 270.0F;
+			case "TL" -> 315.0F;
+			default -> throw new IllegalArgumentException("Unknown fish angle: " + angle);
+		};
+	}
 
     private static float override(JsonObject json, String name, float generatedValue) {
         return json.has(name) ? json.get(name).getAsFloat() : generatedValue;

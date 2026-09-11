@@ -19,9 +19,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.TickTask;
 
 public final class FishingJumpScares {
-    public static final float CHANCE = 0.02F;
+    public static final float CHANCE = 0.01F;
+	private static final double HORIZONTAL_DRAG = 0.91D;
+	private static final double VERTICAL_DRAG = 0.98D;
     private static final int PEACEFUL_CHOICES = 9;
     private static final int VIOLENT_CHOICES = 8;
 
@@ -53,13 +56,34 @@ public final class FishingJumpScares {
             mob.setTarget(player);
         }
 
-        double startY = hook.getY() + 0.25D;
+		double startY = hook.getY() + 0.75D;
         mob.setPos(hook.getX(), startY, hook.getZ());
+		int flightTicks = Mth.clamp(
+				Mth.ceil(Math.hypot(player.getX() - hook.getX(), player.getZ() - hook.getZ()) / 0.55D),
+				8,
+				16
+		);
+		Vec3 playerMovement = player.getDeltaMovement().multiply(flightTicks, 0.0D, flightTicks);
+		if (playerMovement.horizontalDistanceSqr() > 4.0D) {
+			playerMovement = playerMovement.normalize().scale(2.0D);
+		}
+		double targetY = player.getY() + (player.getBbHeight() - mob.getBbHeight()) * 0.5D;
+		mob.setNoAi(true);
         mob.setDeltaMovement(launchVelocity(
                 hook.getX(), startY, hook.getZ(),
-                player.getX(), player.getY() + player.getBbHeight() * 0.65D, player.getZ()
+				player.getX() + playerMovement.x,
+				targetY,
+				player.getZ() + playerMovement.z,
+				mob.getGravity(),
+				flightTicks
         ));
         level.addFreshEntity(mob);
+		level.getServer().schedule(new TickTask(
+				level.getServer().getTickCount() + flightTicks,
+				() -> {
+					if (mob.isAlive()) mob.setNoAi(false);
+				}
+		));
     }
 
     private static EntityType<? extends Mob> peacefulType(int choice) {
@@ -133,13 +157,24 @@ public final class FishingJumpScares {
 
     static Vec3 launchVelocity(
             double startX, double startY, double startZ,
-            double targetX, double targetY, double targetZ
+			double targetX, double targetY, double targetZ,
+			double gravity,
+			int flightTicks
     ) {
         double dx = targetX - startX;
         double dz = targetZ - startZ;
-        double flightTicks = Mth.clamp(Math.hypot(dx, dz) / 0.65D, 8.0D, 24.0D);
-        // Compensate for ordinary entity gravity so the arc meets the player's torso.
-        double vy = (targetY - startY) / flightTicks + 0.04D * flightTicks;
-        return new Vec3(dx / flightTicks, vy, dz / flightTicks);
+		double horizontalTravel = travelFactor(HORIZONTAL_DRAG, flightTicks);
+		double verticalTravel = travelFactor(VERTICAL_DRAG, flightTicks);
+		double gravityDrop = gravity * VERTICAL_DRAG / (1.0D - VERTICAL_DRAG)
+				* (flightTicks - verticalTravel);
+		return new Vec3(
+				dx / horizontalTravel,
+				(targetY - startY + gravityDrop) / verticalTravel,
+				dz / horizontalTravel
+		);
     }
+
+	private static double travelFactor(double drag, int ticks) {
+		return (1.0D - Math.pow(drag, ticks)) / (1.0D - drag);
+	}
 }

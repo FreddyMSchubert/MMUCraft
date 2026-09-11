@@ -1,20 +1,21 @@
 {
-    "title":  "Red Snapper",
-    "id":  "fish-red_snapper",
-    "modelType":  "basic",
-    "rarity":  "common",
-    "maxStackSize":  64,
-    "tooltips":  [
-                     "Red snapper can live for more than half a century."
-                 ],
-    "fish":  {
-                 "shape":  "fish_shadow_default_alt_2",
-                 "tags":  [
-                              "ocean"
-                          ],
-                 "size":  {
-                              "averageLengthCm":  50
-                          },
-                 "furnaceResult":  "red_meat"
-             }
+	"title": "Red Snapper",
+	"id": "fish-red_snapper",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Red snapper can live for more than half a century."
+	],
+	"fish": {
+		"angle": "L",
+		"tags": [
+			"ocean"
+		],
+		"size": {
+			"averageLengthCm": 50,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "red_meat"
+	}
 }

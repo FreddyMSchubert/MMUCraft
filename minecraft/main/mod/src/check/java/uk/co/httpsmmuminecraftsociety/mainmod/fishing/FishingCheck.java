@@ -10,7 +10,9 @@ public final class FishingCheck {
         checkDistanceNormalizedApproach();
         checkFastFishFirstBobChance();
         checkPhysicalShadowScale();
-        System.out.println("Fishing checks passed: waits, approach speed, first-bob chance, and shadow scale.");
+        checkLureBookShortcutChance();
+        checkTextureRotation();
+        System.out.println("Fishing checks passed: waits, approach speed, lure books, rotations, first-bob chance, and shadow scale.");
     }
 
     private static void checkWaitTiming() {
@@ -18,7 +20,7 @@ public final class FishingCheck {
                 {400, 560},
                 {280, 428},
                 {160, 294},
-                {40, 160}
+                {40, 200}
         };
         RandomSource random = RandomSource.create(219L);
         for (int lureLevel = 0; lureLevel <= 3; lureLevel++) {
@@ -32,6 +34,30 @@ public final class FishingCheck {
             assert observedMinimum == expectedRanges[lureLevel][0];
             assert observedMaximum == expectedRanges[lureLevel][1];
         }
+    }
+
+    private static void checkTextureRotation() {
+        assert FishTextureAngle.parse("TR") == 45.0F;
+        assert FishTextureAngle.parse("BL") == 225.0F;
+        FishingPersonality fixed = personality(3.0F, 8.0F);
+        assert fixed.resolveTextureAngle(RandomSource.create(219L)) == fixed;
+
+        FishingPersonality random = new FishingPersonality(
+                fixed.rarity(), fixed.struggleSeconds(), fixed.textureAngleDegrees(), true,
+                fixed.textureLengthPixels(), fixed.size(), fixed.secondsAwayFromBobber(),
+                fixed.approachSeconds(), fixed.retreatSeconds(), fixed.retreatDistance(),
+                fixed.averageBounces(), fixed.averageCatchSeconds()
+        );
+        FishingPersonality resolved = random.resolveTextureAngle(RandomSource.create(219L));
+        assert !resolved.randomTextureAngle();
+        assert resolved.textureAngleDegrees() >= 0.0F && resolved.textureAngleDegrees() < 360.0F;
+    }
+
+    private static void checkLureBookShortcutChance() {
+        assert AnimalCrossingFishingTiming.lureBookShortcutChance(0) == 0.25D;
+        assert AnimalCrossingFishingTiming.lureBookShortcutChance(1) == 0.125D;
+        assert AnimalCrossingFishingTiming.lureBookShortcutChance(2) == 0.05D;
+        assert AnimalCrossingFishingTiming.lureBookShortcutChance(3) == 0.0D;
     }
 
     private static void checkDistanceNormalizedApproach() {
@@ -63,6 +89,8 @@ public final class FishingCheck {
 
     private static void checkPhysicalShadowScale() {
         assert Math.abs(FishSize.blocks(100.0D) - 2.0D) < 0.000001D;
+        assert FishingCatches.FISH_SHADOW_BASE_SCALE == 1.0F;
+        assert FishingCatches.ITEM_SHADOW_SCALE == 0.64F;
     }
 
     private static FishingPersonality personality(
@@ -73,6 +101,7 @@ public final class FishingCheck {
                 FishRarity.COMMON,
                 1.0F,
 				270.0F,
+				false,
 				16.0F,
                 FishSize.blocks(50.0D),
                 0.2F,

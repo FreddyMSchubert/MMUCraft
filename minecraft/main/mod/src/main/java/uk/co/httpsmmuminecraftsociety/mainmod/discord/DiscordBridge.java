@@ -98,8 +98,10 @@ public final class DiscordBridge {
 	public static void fishAnnouncement(MinecraftServer server, ServerPlayer player, String content, boolean firstServerCatch) {
 		broadcastingFishAnnouncement = true;
 		try {
-			server.getPlayerList().broadcastSystemMessage(Component.literal((firstServerCatch ? "🐟 👶 " : "🐟 ")
-					+ player.getName().getString() + " " + content), false);
+			server.getPlayerList().broadcastSystemMessage(Component.empty()
+					.append(Component.literal("🐟 "))
+					.append(player.getDisplayName())
+					.append(Component.literal(" " + content)), false);
 		} finally {
 			broadcastingFishAnnouncement = false;
 		}

@@ -7,13 +7,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DeathProtection;
 
-final class UnlockBookAnimation {
+public final class UnlockBookAnimation {
     private static final byte TOTEM_ANIMATION_EVENT = 35;
 
     private UnlockBookAnimation() {
     }
 
-    static void play(ServerPlayer player, ItemStack displayedItem) {
+    public static void play(ServerPlayer player, ItemStack displayedItem) {
         int selectedSlot = player.getInventory().getSelectedSlot();
         ItemStack serverItem = player.getInventory().getSelectedItem().copy();
         ItemStack animationItem = displayedItem.copy();

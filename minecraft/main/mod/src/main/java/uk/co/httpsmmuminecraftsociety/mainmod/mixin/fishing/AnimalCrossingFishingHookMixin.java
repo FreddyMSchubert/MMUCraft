@@ -11,12 +11,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.AnimalCrossingFishShadowDisplay;
@@ -61,6 +63,29 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique private ItemStack mainmod$catchingRod = ItemStack.EMPTY;
     @Unique private double mainmod$itemChance = FishingModifiers.DEFAULT_ITEM_CHANCE;
 	@Unique private boolean mainmod$jumpScare;
+
+    @Redirect(
+            method = "onSyncedDataUpdated",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/projectile/FishingHook;setDeltaMovement(DDD)V"
+            )
+    )
+    private void mainmod$preventSyncedBiteDip(FishingHook hook, double x, double y, double z) {
+        hook.setDeltaMovement(x, hook.getDeltaMovement().y, z);
+    }
+
+    @Redirect(
+            method = "tick",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/phys/Vec3;add(DDD)Lnet/minecraft/world/phys/Vec3;",
+                    ordinal = 0
+            )
+    )
+    private Vec3 mainmod$preventTickingBiteDip(Vec3 velocity, double x, double y, double z) {
+        return velocity;
+    }
 
     @Inject(method = "<init>(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;II)V", at = @At("RETURN"))
     private void mainmod$applyCastModifier(Player player, Level level, int luck, int lureSpeed, CallbackInfo ci) {

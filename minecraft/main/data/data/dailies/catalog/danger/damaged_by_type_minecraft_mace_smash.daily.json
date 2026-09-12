@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 8,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 4,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🔨",
 	"name": "Get Hurt by a Mace Smash",
-	"description": "Take damage from a mace smash without dying."
+	"description": "Spear? Pass. Axe? Pass. Mace? Smash. Hulk? SMASH! Trident? Pass."
 }

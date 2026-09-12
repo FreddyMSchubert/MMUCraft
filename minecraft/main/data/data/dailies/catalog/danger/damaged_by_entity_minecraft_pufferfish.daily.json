@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 2,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 8,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐡",
 	"name": "Get Hurt by a Pufferfish",
-	"description": "Take damage from a pufferfish without dying."
+	"description": "irl you can eat them but they're super difficult to prepare. and you don't wanna get the positon effect irl i assume"
 }

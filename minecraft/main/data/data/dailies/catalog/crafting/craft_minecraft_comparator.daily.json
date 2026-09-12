@@ -9,5 +9,5 @@
 	"maximum": 4,
 	"emoji": "🔴",
 	"name": "Craft Comparators",
-	"description": "Craft {count} comparators. Sorting systems eventually eat all of these."
+	"description": "Craft {count} comparators. You could use one to build a little letterbox and have a redstone lamp light up when there's a letter inside."
 }

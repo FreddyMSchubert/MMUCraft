@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 5,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 4,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "⛏️",
-	"name": "Get Haste",
-	"description": "Get Haste. Mine something big before it wears off."
+	"name": "Get the Haste effect",
+	"description": "Get Haste. Best if placed close to your base."
 }

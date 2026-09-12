@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 8,
-	"rewardPerIteration": 4,
+	"rewardPerIteration": 8,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "📡",
 	"name": "Survive a Warden Hit",
-	"description": "Take damage from a warden and survive. Survive is the important word."
+	"description": "Hahahahahahahahaha yeah sorry about this one good luck tho"
 }

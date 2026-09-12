@@ -3,11 +3,11 @@
 	"effect": "minecraft:invisibility",
 	"nether": true,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 6,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "👻",
-	"name": "Get Invisibility",
-	"description": "Get Invisibility. Armour ruins the effect, but not the daily."
+	"name": "Get the Invisibility effect",
+	"description": "Get Invisibility. Spooky stuff! Time to go prank your friends."
 }

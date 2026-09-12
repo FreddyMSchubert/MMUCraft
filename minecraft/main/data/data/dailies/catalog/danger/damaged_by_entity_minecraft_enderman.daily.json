@@ -3,11 +3,11 @@
 	"entity": "minecraft:enderman",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
-	"rewardPerIteration": 2,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "👁️",
-	"name": "Get Hurt by an Angry Enderman",
-	"description": "Take damage from an angry enderman without dying."
+	"name": "STARING CONTEST!",
+	"description": "Get Hurt by an Angry Enderman"
 }

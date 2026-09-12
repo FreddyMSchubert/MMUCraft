@@ -1,0 +1,141 @@
+{
+	"title": "Happy Ghast Speedup Charm",
+	"id": "charm-happy-ghast-speedup",
+	"modelType": "charm",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": ["White cloud, blue ice, can't lose."],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 125,
+		"description": "Makes a Happy Ghast fly faster while its controlling rider wears this charm.",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked charm: Happy Ghast Speedup Charm. Your fluffy taxi has a new top gear.",
+		"gameplayToggle": "circus"
+	},
+	"charm": {
+		"charmId": 56,
+		"minLevel": 0,
+		"maxLevel": 7,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 4 blocks per second.",
+				"abilityStatusRelative": "Sets ridden Happy Ghast speed to 4 blocks per second.",
+				"dabloons": 50,
+				"upgradeIngredients": [
+					"minecraft:powder_snow_bucket",
+					"minecraft:snow_block",
+					"minecraft:snow_block",
+					"minecraft:sugar",
+					"minecraft:sugar"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 5 blocks per second.",
+				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
+				"dabloons": 75,
+				"upgradeIngredients": [
+					"minecraft:blue_ice",
+					"minecraft:blue_ice",
+					"minecraft:rabbit_foot",
+					"minecraft:potion[minecraft:potion_contents=swiftness]=Potion of Swiftness",
+					"minecraft:sugar",
+					"minecraft:sugar",
+					"minecraft:sugar",
+					"minecraft:sugar"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 6 blocks per second.",
+				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
+				"dabloons": 100,
+				"upgradeIngredients": [
+					"minecraft:ghast_tear",
+					"minecraft:ghast_tear",
+					"minecraft:magma_cream",
+					"minecraft:blaze_powder",
+					"minecraft:soul_soil",
+					"minecraft:splash_potion[minecraft:potion_contents=strong_swiftness]=Splash Potion of Swiftness II"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 7 blocks per second.",
+				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
+				"dabloons": 150,
+				"upgradeIngredients": [
+					"minecraft:popped_chorus_fruit",
+					"minecraft:popped_chorus_fruit",
+					"minecraft:end_rod",
+					"minecraft:end_rod",
+					"minecraft:shulker_shell",
+					"minecraft:dragon_breath",
+					"minecraft:lingering_potion[minecraft:potion_contents=strong_swiftness]=Lingering Potion of Swiftness II"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 8 blocks per second.",
+				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
+				"dabloons": 500,
+				"upgradeIngredients": [
+					"minecraft:blue_ice",
+					"minecraft:blue_ice",
+					"minecraft:blue_ice",
+					"minecraft:blue_ice",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
+					"minecraft:nether_star",
+					"minecraft:elytra"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 9 blocks per second.",
+				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
+				"dabloons": 750,
+				"upgradeIngredients": [
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"minecraft:netherite_block",
+					"minecraft:nether_star",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 10 blocks per second.",
+				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
+				"dabloons": 1000,
+				"upgradeIngredients": [
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"mainmod:enderite-ingot",
+					"minecraft:netherite_block",
+					"minecraft:netherite_block",
+					"minecraft:beacon",
+					"minecraft:end_crystal",
+					"minecraft:enchanted_golden_apple",
+					"mainmod:enderite-upgrade-smithing-template"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "happy_ghast_speedup__charm"
+	}
+}

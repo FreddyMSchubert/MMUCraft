@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 5,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 7,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐂",
 	"name": "Get Hurt by a Ravager",
-	"description": "Take damage from a ravager without dying."
+	"description": "It's interesting that the ravager has the same eyebrows and eyecolors as the villagers... And their sounds are just the villager sounds pitched down... You don't think... Oh god, what did the illagers do?"
 }

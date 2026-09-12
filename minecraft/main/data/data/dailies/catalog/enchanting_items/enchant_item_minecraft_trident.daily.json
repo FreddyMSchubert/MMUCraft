@@ -3,11 +3,11 @@
 	"itemType": "minecraft:trident",
 	"nether": false,
 	"end": false,
-	"baseCost": 6,
-	"rewardPerIteration": 2,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 2,
+	"maximum": 1,
 	"emoji": "🔱",
-	"name": "Enchant Tridents",
-	"description": "Enchant {count} tridents."
+	"name": "Magic Tridents",
+	"description": "Enchant a trident."
 }

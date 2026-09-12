@@ -3,11 +3,11 @@
 	"item": "minecraft:observer",
 	"nether": true,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 1.25,
+	"baseCost": 2,
+	"rewardPerIteration": 0.75,
 	"minimum": 3,
 	"maximum": 6,
 	"emoji": "👁️",
 	"name": "Craft Observers",
-	"description": "Craft {count} observers. Every farm starts with one observer facing the wrong way."
+	"description": "Craft {count} observers. Always watching... bamboo, pumpkins, melons, or sugar cane for example! All great farms that will make for tons of emeralds when trading with villagers."
 }

@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 3,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 6,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🌙",
 	"name": "Get Hurt by a Phantom",
-	"description": "Take damage from a phantom without dying."
+	"description": "You might have to brew a potion of insomnia to be able to summon one."
 }

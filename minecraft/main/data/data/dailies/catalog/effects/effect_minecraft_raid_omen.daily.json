@@ -3,11 +3,11 @@
 	"effect": "minecraft:raid_omen",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
+	"baseCost": 10,
 	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🏰",
-	"name": "Get Raid Omen",
-	"description": "Get Raid Omen. The village should probably know."
+	"name": "Get the Raid Omen effect",
+	"description": "Get Raid Omen. Maybe do it in a village you don't care about, then bolt, if your conscience can handle it."
 }

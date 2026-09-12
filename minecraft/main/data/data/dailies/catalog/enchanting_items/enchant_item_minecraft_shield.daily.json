@@ -3,11 +3,11 @@
 	"itemType": "minecraft:shield",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
-	"rewardPerIteration": 1.25,
-	"minimum": 2,
-	"maximum": 4,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "🛡️",
-	"name": "Enchant Shields",
-	"description": "Enchant {count} shields."
+	"name": "Magic Shields",
+	"description": "Enchant a shield."
 }

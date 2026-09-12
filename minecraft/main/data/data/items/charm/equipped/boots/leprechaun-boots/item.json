@@ -4,16 +4,14 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"I'm feeling lucky."
-	],
+	"tooltips": ["I'm feeling lucky."],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 25,
 		"description": "Does nothing in particular. Nothing else don\u0027t worry bout it.",
 		"unlockWeight": 200,
 		"unlockMessage": "Unlocked charm: Leprechaun Boots Charm. It does nothing in particular, don't worry about it. Move along. Go on. Nothing to see here.",
-		"gameplayToggle": "humorous"
+		"gameplayToggle": "circus"
 	},
 	"charm": {
 		"charmId": 13,

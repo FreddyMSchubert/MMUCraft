@@ -58,7 +58,6 @@ Sunday (Hellish Drop):
 - 16x16 maps feature TODO
 - Buncha Halloween Cosmetics
 
-
 ## Week 5
 
 * **Last year:** 20.10.25 – 26.10.25
@@ -68,7 +67,7 @@ End Halloween Event
 
 Surprising Saturday: Manhunt - Split everyone randomly into hunters and runners
 
-Sunday (Humorous Drop):
+Sunday (Circus Drop):
 - Charms: Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots
 
 ## Week 6

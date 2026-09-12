@@ -3,11 +3,11 @@
 	"item": "minecraft:cartography_table",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 0.75,
-	"minimum": 4,
-	"maximum": 7,
+	"baseCost": 4,
+	"rewardPerIteration": 0,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "🗺️",
-	"name": "Craft Cartography Tables",
-	"description": "Craft {count} cartography tables."
+	"name": "Craft a Cartography Table",
+	"description": "Craft a cartography table. While you're at it, why not make a little map of the surrounding area? You can place them in an item frame to connect multiple together nicely."
 }

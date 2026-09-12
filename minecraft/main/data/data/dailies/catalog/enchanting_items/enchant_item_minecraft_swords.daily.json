@@ -3,11 +3,11 @@
 	"itemType": "#minecraft:swords",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
-	"rewardPerIteration": 1,
-	"minimum": 2,
-	"maximum": 4,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "⚔️",
-	"name": "Enchant Swords",
-	"description": "Enchant {count} swords. A wooden sword counts. Your pride is separate."
+	"name": "Magic Swords",
+	"description": "Enchant a sword."
 }

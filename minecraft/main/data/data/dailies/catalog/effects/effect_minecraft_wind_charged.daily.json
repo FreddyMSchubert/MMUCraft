@@ -3,11 +3,11 @@
 	"effect": "minecraft:wind_charged",
 	"nether": true,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 9,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🌬️",
 	"name": "Get Wind Charged",
-	"description": "Get Wind Charged. Keep some headroom."
+	"description": "Get Wind Charged. When you die, you'll now send out a shockwave!"
 }

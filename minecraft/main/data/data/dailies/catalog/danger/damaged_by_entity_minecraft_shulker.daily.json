@@ -3,11 +3,11 @@
 	"entity": "minecraft:shulker",
 	"nether": false,
 	"end": true,
-	"baseCost": 9,
+	"baseCost": 5,
 	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "📦",
 	"name": "Get Hurt by a Shulker",
-	"description": "Take damage from a shulker without dying."
+	"description": "And then enjoy the ride into the sky."
 }

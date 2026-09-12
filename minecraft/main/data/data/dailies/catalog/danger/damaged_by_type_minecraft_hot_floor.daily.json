@@ -4,10 +4,10 @@
 	"nether": true,
 	"end": false,
 	"baseCost": 0,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🔥",
 	"name": "Get Hurt by a Magma Block",
-	"description": "Take damage from a magma block without dying."
+	"description": "ouchie! thats even worse than legos!"
 }

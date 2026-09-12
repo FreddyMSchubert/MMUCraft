@@ -3,11 +3,11 @@
 	"damageType": "minecraft:sweet_berry_bush",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 3,
-	"minimum": 1,
-	"maximum": 1,
+	"baseCost": 5,
+	"rewardPerIteration": 0.1,
+	"minimum": 5,
+	"maximum": 42,
 	"emoji": "🫐",
-	"name": "Get Hurt by a Sweet Berry Bush",
-	"description": "Take damage from a sweet berry bush without dying."
+	"name": "It tickles.",
+	"description": "Get Hurt by a Sweet Berry Bush {count} times. lol."
 }

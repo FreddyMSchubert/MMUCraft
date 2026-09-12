@@ -3,11 +3,11 @@
 	"item": "minecraft:sticky_piston",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 1.5,
-	"minimum": 3,
-	"maximum": 5,
+	"baseCost": 8,
+	"rewardPerIteration": 0,
+	"minimum": 4,
+	"maximum": 4,
 	"emoji": "🟩",
 	"name": "Craft Sticky Pistons",
-	"description": "Craft {count} sticky pistons. Someone needs a hidden door."
+	"description": "Craft {count} sticky pistons. Building a hidden door with them could be fun..."
 }

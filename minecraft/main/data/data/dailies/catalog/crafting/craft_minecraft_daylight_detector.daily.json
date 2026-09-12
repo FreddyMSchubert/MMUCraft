@@ -3,11 +3,11 @@
 	"item": "minecraft:daylight_detector",
 	"nether": true,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 2,
-	"minimum": 2,
-	"maximum": 4,
+	"baseCost": 5,
+	"rewardPerIteration": 0,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "☀️",
-	"name": "Craft Daylight Detectors",
-	"description": "Craft {count} daylight detectors."
+	"name": "Craft a Daylight Detector",
+	"description": "You could use one to build automatic doors that shut at night to keep the mobs out, or have street lanterns turn on when it gets dark."
 }

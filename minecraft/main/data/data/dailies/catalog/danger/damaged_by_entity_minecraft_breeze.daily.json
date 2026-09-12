@@ -3,11 +3,11 @@
 	"entity": "minecraft:breeze",
 	"nether": false,
 	"end": false,
-	"baseCost": 6,
-	"rewardPerIteration": 2,
+	"baseCost": 4,
+	"rewardPerIteration": 1,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 8,
 	"emoji": "🌬️",
 	"name": "Get Hurt by a Breeze",
-	"description": "Take damage from a breeze without dying."
+	"description": "The task isn't to get hurt because of a breeze (because it hurls you around the place), but to get hurt directly by a breeze {count} times."
 }

@@ -3,11 +3,11 @@
 	"item": "minecraft:campfire",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 1,
-	"minimum": 3,
-	"maximum": 6,
+	"baseCost": 5,
+	"rewardPerIteration": 0,
+	"minimum": 4,
+	"maximum": 4,
 	"emoji": "🏕️",
 	"name": "Craft Campfires",
-	"description": "Craft {count} campfires. Smoke signals count as infrastructure."
+	"description": "Craft {count} campfires. You could build a chimney, or use it as a heat source for a glider launch pad."
 }

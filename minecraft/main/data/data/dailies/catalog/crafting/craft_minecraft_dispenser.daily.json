@@ -9,5 +9,5 @@
 	"maximum": 4,
 	"emoji": "🏹",
 	"name": "Craft Dispensers",
-	"description": "Craft {count} dispensers. Droppers do not count. Check the face."
+	"description": "Craft {count} dispensers. You can level up your chicken farm by collecting the laid eggs with a hopper and automatically shooting them back into the pen with a dispenser, for infinitely increasing chicken! Chicken Mania!"
 }

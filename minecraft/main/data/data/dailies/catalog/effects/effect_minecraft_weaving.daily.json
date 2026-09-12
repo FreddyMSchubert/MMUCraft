@@ -3,11 +3,11 @@
 	"effect": "minecraft:weaving",
 	"nether": true,
 	"end": false,
-	"baseCost": 4,
+	"baseCost": 7,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🕸️",
-	"name": "Get Weaving",
-	"description": "Get Weaving. Free cobwebs, awkward delivery."
+	"name": "Get the Weaving effect",
+	"description": "Weav found you a fun daily to do: Get Weaving."
 }

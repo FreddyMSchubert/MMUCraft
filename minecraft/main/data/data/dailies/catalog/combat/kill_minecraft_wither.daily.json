@@ -3,11 +3,11 @@
 	"entity": "minecraft:wither",
 	"nether": true,
 	"end": false,
-	"baseCost": 15,
-	"rewardPerIteration": 10,
+	"baseCost": 32,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "💀",
 	"name": "Defeat the Wither",
-	"description": "Defeat the Wither. The Nether Star is not part of the submission."
+	"description": "Defeat the Wither. Please do it somewhere it won't blow up anyones builds. I don't think it has a canonical name, but I like to call it Bartholomew."
 }

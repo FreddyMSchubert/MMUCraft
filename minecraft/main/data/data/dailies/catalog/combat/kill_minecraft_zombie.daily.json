@@ -3,11 +3,11 @@
 	"entity": "minecraft:zombie",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
+	"baseCost": 4,
 	"rewardPerIteration": 0.3,
-	"minimum": 15,
-	"maximum": 25,
+	"minimum": 3,
+	"maximum": 20,
 	"emoji": "🧟",
 	"name": "Hunt Zombies",
-	"description": "Defeat {count} zombies. Try not to call it population control."
+	"description": "Defeat {count} zombies. Why do the pillagers have wool lying around in their mansions that is the same color as the zombie garments? Peculiar..."
 }

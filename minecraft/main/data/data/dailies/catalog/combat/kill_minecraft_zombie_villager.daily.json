@@ -3,11 +3,11 @@
 	"entity": "minecraft:zombie_villager",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
-	"rewardPerIteration": 1.25,
+	"baseCost": 5,
+	"rewardPerIteration": 1,
 	"minimum": 2,
 	"maximum": 5,
 	"emoji": "🧟",
 	"name": "Hunt Zombie Villagers",
-	"description": "Defeat {count} zombie villagers."
+	"description": "Defeat {count} zombie villagers. If you can't find any, I guess you'll have to create some. Only slightly amoral I reckon."
 }

@@ -3,11 +3,11 @@
 	"entity": "minecraft:zombie_nautilus",
 	"nether": false,
 	"end": false,
-	"baseCost": 6,
-	"rewardPerIteration": 3,
+	"baseCost": 9,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🧟",
 	"name": "Hunt a Zombie Nautilus",
-	"description": "Defeat a zombie nautilus."
+	"description": "Defeat a zombie nautilus. HEY, they're endangered. Why would you do that?"
 }

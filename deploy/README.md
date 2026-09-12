@@ -36,6 +36,8 @@ The local repository is at `backups/restic`. A backup proceeds only while that f
 
 Restic applies all retention rules as a union, so longer-lived daily, weekly, monthly, and yearly snapshots remain after the denser snapshots expire. The manager runs `restic check` weekly.
 
+Grafana provisions an **MMUCraft Backups** dashboard in the Admin folder. It shows the last successful backup age, the next eligibility check, manager health and activity, retained snapshots, recent failure reasons, repository size, free disk space, attempt history, and backup logs. These metrics are exposed only by the production backup container on the private Compose network; the dev stack has neither the service nor the Prometheus scrape target.
+
 Useful production commands, run from the deployment directory, are:
 
 ```sh

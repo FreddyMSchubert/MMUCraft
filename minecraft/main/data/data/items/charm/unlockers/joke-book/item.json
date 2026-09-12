@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 20,
-		"description": "Use to read your joke.",
+		"description": "Read to hear a random Minecraft joke. (Also obtainable in game as loot.)",
 		"unlockWeight": 100
 	},
 	"charm": {
@@ -18,7 +18,7 @@
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Use to read your joke.",
+				"abilityStatusCurrent": "Read to hear a random Minecraft joke.",
 				"abilityStatusRelative": "",
 				"dabloons": 0,
 				"upgradeIngredients": []

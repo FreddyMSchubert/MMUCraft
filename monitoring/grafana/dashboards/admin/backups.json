@@ -1,0 +1,654 @@
+{
+	"annotations": { "list": [] },
+	"editable": false,
+	"graphTooltip": 1,
+	"panels": [
+		{
+			"id": 1,
+			"type": "stat",
+			"title": "Last Backup",
+			"description": "Time elapsed since the newest successful Restic snapshot.",
+			"gridPos": { "h": 5, "w": 4, "x": 0, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "time() - mmucraft_backup_last_success_timestamp_seconds",
+					"instant": true,
+					"legendFormat": "Ago",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"noValue": "No backup yet",
+					"unit": "dtdurations",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "orange", "value": 10800 },
+							{ "color": "red", "value": 21600 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 2,
+			"type": "stat",
+			"title": "Next Backup Attempt",
+			"description": "Countdown to the next scheduled eligibility check. A due backup can still wait for players to leave until the six-hour maximum age.",
+			"gridPos": { "h": 5, "w": 4, "x": 4, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "clamp_min(mmucraft_backup_next_attempt_timestamp_seconds - time(), 0)",
+					"instant": true,
+					"legendFormat": "In",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "fixed", "fixedColor": "blue" },
+					"decimals": 0,
+					"min": 0,
+					"noValue": "Unknown",
+					"unit": "dtdurations"
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "none",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 3,
+			"type": "stat",
+			"title": "Backup Repository Size",
+			"description": "Actual disk space occupied by the encrypted, deduplicated Restic repository.",
+			"gridPos": { "h": 5, "w": 4, "x": 8, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_repository_size_bytes",
+					"instant": true,
+					"legendFormat": "Stored",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"color": { "mode": "fixed", "fixedColor": "purple" },
+					"min": 0,
+					"unit": "bytes"
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 4,
+			"type": "stat",
+			"title": "Free Backup Space",
+			"description": "Backups are refused below 50 GiB or 15% free, whichever is stricter.",
+			"gridPos": { "h": 5, "w": 4, "x": 12, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_filesystem_free_bytes",
+					"instant": true,
+					"legendFormat": "Available",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"min": 0,
+					"unit": "bytes",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "red", "value": null },
+							{ "color": "orange", "value": 53687091200 },
+							{ "color": "green", "value": 80530636800 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 5,
+			"type": "stat",
+			"title": "Free Backup Space %",
+			"gridPos": { "h": 5, "w": 4, "x": 16, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "100 * mmucraft_backup_filesystem_free_bytes / mmucraft_backup_filesystem_size_bytes",
+					"instant": true,
+					"legendFormat": "Available",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"max": 100,
+					"min": 0,
+					"unit": "percent",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "red", "value": null },
+							{ "color": "orange", "value": 15 },
+							{ "color": "green", "value": 20 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 6,
+			"type": "stat",
+			"title": "Retained Backups",
+			"gridPos": { "h": 5, "w": 4, "x": 20, "y": 0 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_snapshot_count",
+					"instant": true,
+					"legendFormat": "Snapshots",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 7,
+			"type": "stat",
+			"title": "Metrics Health",
+			"gridPos": { "h": 5, "w": 4, "x": 0, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "up{job=\"backup\"}",
+					"instant": true,
+					"legendFormat": "Manager",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"mappings": [
+						{
+							"type": "value",
+							"options": {
+								"0": { "color": "red", "index": 0, "text": "Offline" },
+								"1": { "color": "green", "index": 1, "text": "Healthy" }
+							}
+						}
+					],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "red", "value": null },
+							{ "color": "green", "value": 1 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "none",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 8,
+			"type": "stat",
+			"title": "Backup Running",
+			"gridPos": { "h": 5, "w": 4, "x": 4, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_in_progress",
+					"instant": true,
+					"legendFormat": "State",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"mappings": [
+						{
+							"type": "value",
+							"options": {
+								"0": { "color": "green", "index": 0, "text": "Idle" },
+								"1": { "color": "blue", "index": 1, "text": "Running" }
+							}
+						}
+					],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "blue", "value": 1 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "none",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 9,
+			"type": "stat",
+			"title": "Last Attempt Result",
+			"gridPos": { "h": 5, "w": 4, "x": 8, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_last_attempt_success",
+					"instant": true,
+					"legendFormat": "Result",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"mappings": [
+						{
+							"type": "value",
+							"options": {
+								"-1": { "color": "gray", "index": 0, "text": "Never" },
+								"0": { "color": "red", "index": 1, "text": "Failed" },
+								"1": { "color": "green", "index": 2, "text": "Successful" }
+							}
+						}
+					],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "red", "value": null },
+							{ "color": "green", "value": 1 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "none",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 10,
+			"type": "stat",
+			"title": "Last Attempt Duration",
+			"gridPos": { "h": 5, "w": 4, "x": 12, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_last_attempt_duration_seconds",
+					"instant": true,
+					"legendFormat": "Duration",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": { "decimals": 0, "min": 0, "unit": "dtdurations" },
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 11,
+			"type": "stat",
+			"title": "Attempts in Range",
+			"gridPos": { "h": 5, "w": 4, "x": 16, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(increase(mmucraft_backup_attempts_total[$__range]))",
+					"instant": true,
+					"legendFormat": "Attempts",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": { "decimals": 0, "min": 0 }, "overrides": [] },
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 12,
+			"type": "stat",
+			"title": "Failures in Range",
+			"gridPos": { "h": 5, "w": 4, "x": 20, "y": 5 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "sum(increase(mmucraft_backup_failures_total[$__range]))",
+					"instant": true,
+					"legendFormat": "Failures",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "red", "value": 1 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"colorMode": "background",
+				"graphMode": "area",
+				"justifyMode": "center",
+				"orientation": "auto",
+				"reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+				"textMode": "value_and_name",
+				"wideLayout": true
+			}
+		},
+		{
+			"id": 13,
+			"type": "timeseries",
+			"title": "Backup Attempts and Failures",
+			"description": "Events over the selected dashboard range. Increase the range to inspect longer history.",
+			"gridPos": { "h": 8, "w": 16, "x": 0, "y": 10 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "increase(mmucraft_backup_attempts_total[$__rate_interval])",
+					"legendFormat": "Attempts",
+					"refId": "A"
+				},
+				{
+					"expr": "increase(mmucraft_backup_failures_total[$__rate_interval])",
+					"legendFormat": "Failures",
+					"refId": "B"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 0,
+					"min": 0,
+					"custom": {
+						"drawStyle": "bars",
+						"fillOpacity": 70,
+						"lineWidth": 1,
+						"showPoints": "never",
+						"stacking": { "group": "A", "mode": "none" }
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["sum"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 14,
+			"type": "timeseries",
+			"title": "Backup Storage",
+			"gridPos": { "h": 8, "w": 8, "x": 16, "y": 10 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_repository_size_bytes",
+					"legendFormat": "Repository",
+					"refId": "A"
+				},
+				{
+					"expr": "mmucraft_backup_filesystem_free_bytes",
+					"legendFormat": "Free",
+					"refId": "B"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"min": 0,
+					"unit": "bytes",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 15,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
+			"id": 15,
+			"type": "table",
+			"title": "Retained Backup History",
+			"description": "Every snapshot currently retained by Restic. Rows disappear when the configured retention policy prunes them.",
+			"gridPos": { "h": 12, "w": 14, "x": 0, "y": 18 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_snapshot_size_bytes",
+					"format": "table",
+					"instant": true,
+					"legendFormat": "{{snapshot}}",
+					"refId": "A"
+				}
+			],
+			"transformations": [
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": { "Time": true, "__name__": true },
+						"indexByName": { "snapshot": 0, "created_at": 1, "Value": 2 },
+						"renameByName": {
+							"snapshot": "Snapshot",
+							"created_at": "Created",
+							"Value": "Logical size"
+						}
+					}
+				}
+			],
+			"fieldConfig": {
+				"defaults": {},
+				"overrides": [
+					{
+						"matcher": { "id": "byName", "options": "Logical size" },
+						"properties": [{ "id": "unit", "value": "bytes" }]
+					}
+				]
+			},
+			"options": {
+				"cellHeight": "sm",
+				"showHeader": true,
+				"sortBy": [{ "desc": true, "displayName": "Created" }]
+			}
+		},
+		{
+			"id": 16,
+			"type": "table",
+			"title": "Recent Failed Attempts",
+			"description": "The newest 200 failures retained by the backup manager, including failures caused by low space, preparation, Restic, or save resumption.",
+			"gridPos": { "h": 12, "w": 10, "x": 14, "y": 18 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mmucraft_backup_failure_info",
+					"format": "table",
+					"instant": true,
+					"legendFormat": "{{reason}}",
+					"refId": "A"
+				}
+			],
+			"transformations": [
+				{
+					"id": "organize",
+					"options": {
+						"excludeByName": { "Time": true, "Value": true, "__name__": true },
+						"indexByName": { "attempt": 0, "failed_at": 1, "reason": 2 },
+						"renameByName": {
+							"attempt": "Failure",
+							"failed_at": "When",
+							"reason": "Reason"
+						}
+					}
+				}
+			],
+			"fieldConfig": { "defaults": {}, "overrides": [] },
+			"options": {
+				"cellHeight": "sm",
+				"showHeader": true,
+				"sortBy": [{ "desc": true, "displayName": "When" }]
+			}
+		},
+		{
+			"id": 17,
+			"type": "logs",
+			"title": "Backup Attempt Logs",
+			"description": "Structured start and finish events plus the surrounding Restic output. Production Loki retains these logs for 14 days.",
+			"gridPos": { "h": 14, "w": 24, "x": 0, "y": 30 },
+			"datasource": { "type": "loki", "uid": "loki" },
+			"targets": [
+				{
+					"datasource": { "type": "loki", "uid": "loki" },
+					"editorMode": "code",
+					"expr": "{service=\"backup\"}",
+					"queryType": "range",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": {}, "overrides": [] },
+			"options": {
+				"dedupStrategy": "none",
+				"enableLogDetails": true,
+				"prettifyLogMessage": false,
+				"showCommonLabels": false,
+				"showLabels": false,
+				"showTime": true,
+				"sortOrder": "Descending",
+				"wrapLogMessage": true
+			}
+		}
+	],
+	"refresh": "30s",
+	"schemaVersion": 42,
+	"tags": ["admin", "backups", "mmucraft"],
+	"templating": { "list": [] },
+	"time": { "from": "now-30d", "to": "now" },
+	"timepicker": {},
+	"timezone": "browser",
+	"title": "MMUCraft Backups",
+	"uid": "mmucraft-backups",
+	"version": 1
+}

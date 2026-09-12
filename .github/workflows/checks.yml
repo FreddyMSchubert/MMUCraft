@@ -75,6 +75,13 @@ jobs:
                   fi
                   docker compose -f deploy/compose.yaml -f deploy/compose.prod.yaml --env-file .env.example config --services | grep -qx backup
 
+            - name: Validate backup monitoring configuration
+              run: |
+                  python3 -m json.tool monitoring/grafana/dashboards/admin/backups.json >/dev/null
+                  docker run --rm --entrypoint /bin/promtool \
+                    -v "$PWD/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro" \
+                    prom/prometheus:v3.14.0 check config /etc/prometheus/prometheus.yml
+
             - name: Audit dependencies
               env:
                   npm_config_loglevel: http

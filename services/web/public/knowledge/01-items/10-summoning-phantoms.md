@@ -3,6 +3,7 @@ id: potion-of-insomnia
 unlockOrder: 4
 chatMessage: You've unlocked knowledge on Summoning Phantoms and the Potion of Insomnia.
 sidebarTitle: Phantom Summon Potion
+gameplayToggle: soaring
 tags:
 - summoning fantoms
 - insomia potion

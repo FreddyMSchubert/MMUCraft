@@ -1,5 +1,6 @@
 {
   "type": "mainmod:fake_crafting_shaped",
+  "gameplayToggle": "soaring",
   "pattern": [
     " M ",
     "MPM",

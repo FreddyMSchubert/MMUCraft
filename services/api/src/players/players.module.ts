@@ -5,6 +5,7 @@ import { FishingModule } from '../fishing/fishing.module';
 import { GrpcModule } from '../grpc/grpc.module';
 import { KnowledgeDocumentCatalogService } from '../gameplay/knowledge/knowledge-document-catalog.service';
 import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
+import { FeatureTogglesModule } from '../toggles/feature-toggles.module';
 import { PlayerAvatarController } from './player-avatar.controller';
 import { OnlinePlayerPresenceService } from './online-player-presence.service';
 import { PlayersController } from './players.controller';
@@ -14,7 +15,7 @@ import { PlayerStatisticsSynchronizationService } from './player-statistics-sync
 import { PlayersService } from './players.service';
 
 @Module({
-	imports: [AuthModule, DatabaseModule, FishingModule, GrpcModule],
+	imports: [AuthModule, DatabaseModule, FeatureTogglesModule, FishingModule, GrpcModule],
 	controllers: [PlayersController, PlayerAvatarController],
 	providers: [
 		PlayersService,

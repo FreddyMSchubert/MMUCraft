@@ -3,7 +3,7 @@
 	"id": "charm-potion-insomnia",
 	"modelType": "basic",
 	"rarity": "common",
-	"maxStackSize": 1,
+	"maxStackSize": 4,
 	"tooltips": ["maybe try asmr i dunno"],
 	"charm": {
 		"charmId": 29,

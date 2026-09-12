@@ -134,6 +134,31 @@ const seed = database.transaction(() => {
 		)
 		.run(now);
 
+	// These unlocks are gated by the disabled "welcoming" toggle. Player progress
+	// should include them only while that gameplay is accessible.
+	database
+		.prepare(
+			`INSERT INTO shop_unlocks (
+				user_id, item_id, unlock_type, unlocked_at_unix_ms, source
+			) VALUES (2, 'charm-slime-detector', 'charm', ?, 'playwright-fixture')
+			ON CONFLICT(user_id, item_id) DO UPDATE SET
+				unlock_type = excluded.unlock_type,
+				unlocked_at_unix_ms = excluded.unlocked_at_unix_ms,
+				source = excluded.source`,
+		)
+		.run(now);
+
+	database
+		.prepare(
+			`INSERT INTO knowledge_unlocks (
+				user_id, knowledge_id, unlocked_at_unix_ms, source
+			) VALUES (2, 'slime-detector', ?, 'playwright-fixture')
+			ON CONFLICT(user_id, knowledge_id) DO UPDATE SET
+				unlocked_at_unix_ms = excluded.unlocked_at_unix_ms,
+				source = excluded.source`,
+		)
+		.run(now);
+
 	database
 		.prepare(
 			`INSERT INTO countdowns (

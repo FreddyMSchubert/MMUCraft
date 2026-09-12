@@ -12,7 +12,7 @@ Charms
 
 Surprising Saturday: Killswitch
 Sunday (Welcoming Drop):
-- Charms: Kitty Pajamas Charm, Hiking Boots Charm, Pickaxe Heather Charm
+- Charms: Kitty Pajamas Charm, Hiking Boots Charm, Pickaxe Heater Charm
 - Note on Charm Boost to have many charms on some armor
 
 ## Week 2
@@ -25,6 +25,7 @@ Surprising Saturday: lifesteal, most hearts wins
 Sunday (Soaring Drop):
 - Glider
 - Particle Trails
+- Phantom Summon Potions
 - Charms: Winged Shoes Charm, Bunny Pajamas Charm
 
 ## Week 3

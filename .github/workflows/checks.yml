@@ -55,6 +55,26 @@ jobs:
             - name: Check source
               run: npm run check
 
+            - name: Lint backup shell script
+              run: shellcheck services/backup/backup-manager.sh
+
+            - name: Check production deployment control flow
+              run: python3 deploy/check-deployment.py
+
+            - name: Verify backups are production-only
+              env:
+                  IMAGE_PREFIX: ghcr.io/example/server
+                  IMAGE_TAG: dev
+                  PUBLIC_HOST: example.org
+                  MONITORING_CONFIG_PATH: ./monitoring
+              run: |
+                  dev_services=$(docker compose -f deploy/compose.yaml -f deploy/compose.dev.yaml --env-file .env.example config --services)
+                  if printf '%s\n' "$dev_services" | grep -qx backup; then
+                    echo 'The backup service must not be present in the dev Compose configuration.' >&2
+                    exit 1
+                  fi
+                  docker compose -f deploy/compose.yaml -f deploy/compose.prod.yaml --env-file .env.example config --services | grep -qx backup
+
             - name: Audit dependencies
               env:
                   npm_config_loglevel: http
@@ -232,5 +252,23 @@ jobs:
                       org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=velocity
                   cache-to: type=gha,mode=max,scope=velocity
+                  provenance: mode=max
+                  sbom: true
+
+            - name: Build and push backup manager
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/build-push-action@v7
+              with:
+                  context: services/backup
+                  platforms: linux/amd64
+                  pull: true
+                  push: true
+                  tags: ${{ steps.image.outputs.prefix }}-backup:${{ steps.image.outputs.tag }}
+                  labels: |
+                      org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
+                  cache-from: type=gha,scope=backup
+                  cache-to: type=gha,mode=max,scope=backup
                   provenance: mode=max
                   sbom: true

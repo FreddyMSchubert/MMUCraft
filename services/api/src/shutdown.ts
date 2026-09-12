@@ -1,6 +1,7 @@
 import {
 	Controller,
 	ForbiddenException,
+	Headers,
 	Injectable,
 	Module,
 	OnModuleDestroy,
@@ -9,10 +10,13 @@ import {
 	ServiceUnavailableException,
 } from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
+import { DatabaseModule } from './database/database.module';
+import { DatabaseService } from './database/database.service';
 import { DiscordService } from './discord/discord.service';
 import { DiscordModule } from './discord/discord.module';
 import { GrpcServerService } from './grpc/grpc-server.service';
 import { MinecraftGrpcClientService } from './grpc/minecraft-grpc-client.service';
+import { requireInternalAuthorization } from './internal-authorization';
 
 const DEPLOYMENT_START_MESSAGE =
 	'A server update is starting. Please allow about 200–300 seconds, then join again. If it takes more than 10 minutes, contact the committee.';
@@ -24,11 +28,14 @@ export class ShutdownService implements OnModuleDestroy {
 	private activeRequests = 0;
 	private drained: (() => void) | null = null;
 	private draining: Promise<void> | null = null;
+	private backupOperation: Promise<void> = Promise.resolve();
+	private backupPrepared = false;
 
 	constructor(
 		private readonly grpcServer: GrpcServerService,
 		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly discord: DiscordService,
+		private readonly database: DatabaseService,
 	) {}
 
 	beginRequest() {
@@ -45,6 +52,39 @@ export class ShutdownService implements OnModuleDestroy {
 	async prepare() {
 		await (this.draining ??= this.drain());
 		await this.saveMinecraft();
+	}
+
+	async backupStatus() {
+		const response = await this.minecraft.gameplay<{ players: unknown[] }>(
+			'GetOnlinePlayers',
+			{},
+			{ deadline: Date.now() + 5_000 },
+		);
+		return { playerCount: response.players.length };
+	}
+
+	async prepareBackup() {
+		await this.queueBackupOperation(async () => {
+			if (this.backupPrepared) return;
+			await this.runMinecraftCommand('save-off', 'backup');
+			try {
+				await this.runMinecraftCommand('save-all flush', 'backup');
+				await this.database.createBackup();
+				this.backupPrepared = true;
+			} catch (error) {
+				await this.runMinecraftCommand('save-on', 'backup').catch(() => undefined);
+				throw error;
+			}
+		});
+		return { ready: true };
+	}
+
+	async completeBackup() {
+		await this.queueBackupOperation(async () => {
+			await this.runMinecraftCommand('save-on', 'backup');
+			this.backupPrepared = false;
+		});
+		return { ready: true };
 	}
 
 	startDeployment() {
@@ -76,17 +116,23 @@ export class ShutdownService implements OnModuleDestroy {
 	}
 
 	private async saveMinecraft() {
-		await this.runMinecraftCommand('save-all flush');
+		await this.runMinecraftCommand('save-all flush', 'deployment');
 	}
 
-	private async runMinecraftCommand(command: string) {
+	private async runMinecraftCommand(command: string, actor: 'backup' | 'deployment') {
 		const response = await this.minecraft.gameplay<{
 			succeeded: boolean;
 			output: string;
-		}>('RunServerCommand', { command, discord_user: 'deployment' });
+		}>('RunServerCommand', { command, discord_user: actor });
 		if (!response.succeeded) {
 			throw new ServiceUnavailableException(response.output || 'Minecraft command failed');
 		}
+	}
+
+	private async queueBackupOperation(operation: () => Promise<void>) {
+		const pending = this.backupOperation.then(operation, operation);
+		this.backupOperation = pending.catch(() => undefined);
+		await pending;
 	}
 
 	private async sendDeploymentNotice(type: string, content: string) {
@@ -131,13 +177,36 @@ class ShutdownController {
 	}
 }
 
+@Controller('api/internal/backup')
+class BackupController {
+	constructor(private readonly shutdown: ShutdownService) {}
+
+	@Post('status')
+	status(@Headers('authorization') authorization: string | undefined) {
+		requireInternalAuthorization(authorization);
+		return this.shutdown.backupStatus();
+	}
+
+	@Post('prepare')
+	prepare(@Headers('authorization') authorization: string | undefined) {
+		requireInternalAuthorization(authorization);
+		return this.shutdown.prepareBackup();
+	}
+
+	@Post('complete')
+	complete(@Headers('authorization') authorization: string | undefined) {
+		requireInternalAuthorization(authorization);
+		return this.shutdown.completeBackup();
+	}
+}
+
 function requireLoopback(request: FastifyRequest) {
 	if (request.ip !== '127.0.0.1' && request.ip !== '::1') throw new ForbiddenException();
 }
 
 @Module({
-	imports: [DiscordModule],
-	controllers: [DeploymentController, ShutdownController],
+	imports: [DatabaseModule, DiscordModule],
+	controllers: [BackupController, DeploymentController, ShutdownController],
 	providers: [ShutdownService],
 	exports: [ShutdownService],
 })

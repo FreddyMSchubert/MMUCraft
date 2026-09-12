@@ -4,9 +4,7 @@ import {
 	Injectable,
 	NotFoundException,
 	ServiceUnavailableException,
-	UnauthorizedException,
 } from '@nestjs/common';
-import { createHash, timingSafeEqual } from 'node:crypto';
 import { and, asc, eq, gt, lt, lte } from 'drizzle-orm';
 import { isValidMinecraftUsername } from '../auth/auth.util';
 import { PlayerBansService } from '../auth/player-bans.service';
@@ -22,6 +20,7 @@ import {
 	MinecraftIdentityService,
 	normalizeMinecraftUuid,
 } from '../database/minecraft-identity.service';
+import { requireInternalAuthorization } from '../internal-authorization';
 import { effectivePlayerColor } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
 
@@ -73,10 +72,7 @@ export class VelocityService {
 	) {}
 
 	verifyInternalAuthorization(authorization: string | undefined) {
-		const expected = process.env.VELOCITY_API_SECRET ?? '';
-		const supplied = authorization?.startsWith('Bearer ') ? authorization.slice(7) : '';
-		if (!expected || !constantTimeEquals(supplied, expected))
-			throw new UnauthorizedException('Invalid Velocity API credentials');
+		requireInternalAuthorization(authorization, 'Invalid Velocity API credentials');
 	}
 
 	authorizePlayer(uuidInput: unknown, usernameInput: unknown) {
@@ -582,10 +578,4 @@ function parseSafeInteger(value: unknown, message: string) {
 	if (typeof value !== 'number' || !Number.isSafeInteger(value) || value <= 0)
 		throw new BadRequestException(message);
 	return value;
-}
-
-function constantTimeEquals(left: string, right: string) {
-	const leftHash = createHash('sha256').update(left).digest();
-	const rightHash = createHash('sha256').update(right).digest();
-	return timingSafeEqual(leftHash, rightHash);
 }

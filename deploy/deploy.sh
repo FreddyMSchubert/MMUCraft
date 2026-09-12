@@ -53,6 +53,9 @@ set +a
 : "${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}"
 : "${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}"
 : "${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}"
+if [ "$target" = production ]; then
+	: "${BACKUP_RESTIC_PASSWORD:?set BACKUP_RESTIC_PASSWORD in .env}"
+fi
 case "$PUBLIC_URL" in
 	https://*) ;;
 	*) echo "PUBLIC_URL must use HTTPS" >&2; exit 2 ;;
@@ -65,17 +68,32 @@ esac
 [ "${#GRAFANA_ADMIN_PASSWORD}" -ge 24 ] || { echo "GRAFANA_ADMIN_PASSWORD must be at least 24 characters" >&2; exit 2; }
 [ "${#VELOCITY_API_SECRET}" -ge 32 ] || { echo "VELOCITY_API_SECRET must be at least 32 characters" >&2; exit 2; }
 [ "${#VELOCITY_FORWARDING_SECRET}" -ge 32 ] || { echo "VELOCITY_FORWARDING_SECRET must be at least 32 characters" >&2; exit 2; }
+[ "$target" != production ] || [ "${#BACKUP_RESTIC_PASSWORD}" -ge 32 ] || { echo "BACKUP_RESTIC_PASSWORD must be at least 32 characters" >&2; exit 2; }
 case "$AUTH_CODE_SECRET:$VELOCITY_API_SECRET:$VELOCITY_FORWARDING_SECRET:$RESEND_API_KEY" in
 	*replace*) echo "Replace the placeholder secrets in .env" >&2; exit 2 ;;
 esac
 case "$GRAFANA_ADMIN_PASSWORD" in
 	*replace*) echo "Replace the placeholder Grafana password in .env" >&2; exit 2 ;;
 esac
+if [ "$target" = production ]; then
+	case "$BACKUP_RESTIC_PASSWORD" in
+		*replace*) echo "Replace the placeholder backup secrets in .env" >&2; exit 2 ;;
+	esac
+fi
 
 # Prepare release configuration and persistent data.
 umask 077
-printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\nCOMPOSE_FILE=%s\n' "$image_prefix" "$tag" "$public_host" "$compose_file" > .release.env
 mkdir -p data/api data/minecraft data/velocity
+if [ "$target" = production ]; then
+	mkdir -p data/locks backups
+	chmod 770 data/locks backups
+	command -v flock >/dev/null 2>&1 || { echo "flock is required for deployment/backup locking" >&2; exit 2; }
+	exec 9>data/locks/maintenance.lock
+	chmod 660 data/locks/maintenance.lock
+	flock -n 9 || { echo "A backup or deployment is already active; retry this deployment later." >&2; exit 1; }
+fi
+
+printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\nCOMPOSE_FILE=%s\n' "$image_prefix" "$tag" "$public_host" "$compose_file" > .release.env
 [ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 printf '%s\n' "$VELOCITY_FORWARDING_SECRET" > data/velocity/forwarding.secret
 chmod 775 data/api data/minecraft data/velocity

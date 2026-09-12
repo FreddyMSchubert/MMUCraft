@@ -67,6 +67,10 @@ server {
         return 404;
     }
 
+    location ^~ /api/internal/backup/ {
+        return 404;
+    }
+
     location ^~ /api/auth/ {
         limit_req zone=auth_per_ip burst=10 nodelay;
         limit_conn connections_per_ip 10;

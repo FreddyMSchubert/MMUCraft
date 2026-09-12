@@ -8,7 +8,61 @@ The API applies pending Drizzle migrations before it starts listening. The image
 
 On the VPS, copy `.env.example` to `.env`, fill every value, and keep the file readable only by the deployment user. The deployment user must be in the `docker` group and its numeric UID/GID should match `PUID`/`PGID`.
 
-Generate separate values for `VELOCITY_API_SECRET` and `VELOCITY_FORWARDING_SECRET`. The API secret authenticates private Velocity control requests. The forwarding secret proves that a backend connection came through Velocity. Do not publish either secret.
+Generate separate values for `VELOCITY_API_SECRET` and `VELOCITY_FORWARDING_SECRET`. The API secret authenticates private internal control requests from Velocity and the backup manager. The forwarding secret proves that a backend connection came through Velocity. Do not publish either secret.
+
+## Automatic backups
+
+Production runs an encrypted, deduplicated Restic backup sidecar. Before the first deployment, add an independently generated repository password to the server's existing `.env`:
+
+```sh
+BACKUP_RESTIC_PASSWORD=<output of: openssl rand -hex 32>
+```
+
+Keep `BACKUP_RESTIC_PASSWORD` in a password manager outside this server. A copied Restic repository cannot be restored without it.
+
+The dev Compose overlay does not define or run the backup service, does not require this password, and does not create a local backup repository.
+
+The manager checks every five minutes. Once the newest successful snapshot is three hours old, it backs up as soon as the Minecraft server is empty. At six hours it takes a live backup even if players remain online. It asks the existing authenticated API and Minecraft mod command path to run `save-off` and `save-all flush`; the API also creates and verifies a logical SQLite snapshot. It always asks that same path to run `save-on` before it finishes. RCON is not enabled or used. Deployments and backups use `data/locks/maintenance.lock`, so they cannot modify the server at the same time.
+
+Snapshots contain `data/minecraft`, non-database files in `data/api`, `data/velocity`, `.env`, and the consistent SQLite snapshot at `data/api/backup-staging/app.sqlite`. Reconstructable Minecraft downloads, logs, caches, the live WAL database files, temporary staging files, and monitoring history are excluded. Prometheus and Loki retention remains independent of disaster-recovery backups.
+
+The local repository is at `backups/restic`. A backup proceeds only while that filesystem has at least 50 GiB and 15% available. Before each new snapshot, expired snapshots are pruned using this policy:
+
+- all snapshots from the last 48 hours;
+- one snapshot per day through the last 7 days;
+- one snapshot per week through the last 2 months;
+- one snapshot per month for 24 months;
+- one snapshot per year for 5 years.
+
+Restic applies all retention rules as a union, so longer-lived daily, weekly, monthly, and yearly snapshots remain after the denser snapshots expire. The manager runs `restic check` weekly.
+
+Useful production commands, run from the deployment directory, are:
+
+```sh
+# Status and recent logs
+docker compose --env-file .env --env-file .release.env ps backup
+docker compose --env-file .env --env-file .release.env logs --tail 100 backup
+
+# List snapshots or request an immediate safe snapshot
+docker compose --env-file .env --env-file .release.env exec backup restic snapshots
+docker compose --env-file .env --env-file .release.env exec backup backup-manager once
+
+# Run an integrity check now
+docker compose --env-file .env --env-file .release.env exec backup backup-manager check
+```
+
+For a restore drill, do not write directly over the live server. Restore into a new host directory and inspect it first:
+
+```sh
+mkdir -p restore-test
+docker compose --env-file .env --env-file .release.env run --rm --no-deps \
+  -v "$PWD/restore-test:/restore" --entrypoint restic backup \
+  restore latest --tag mmucraft --host mmucraft-production --target /restore
+```
+
+The restored tree contains the original absolute container paths beneath `restore/source/...`, including the database snapshot at `restore/source/data/api/backup-staging/app.sqlite`. Stop the game, API, Velocity, and backup services before copying selected restored files into `data/`. Replace `data/api/app.sqlite` with the restored backup-staging copy; do not restore stale `app.sqlite-wal` or `app.sqlite-shm` files. Perform a restore drill at least quarterly.
+
+When manually copying the on-device repository elsewhere, stop the backup service first, copy the complete `backups/restic` directory, and then start the service again. Minecraft can remain online during that repository copy. This prevents the external copy from observing a Restic write halfway through.
 
 ## Minecraft network
 

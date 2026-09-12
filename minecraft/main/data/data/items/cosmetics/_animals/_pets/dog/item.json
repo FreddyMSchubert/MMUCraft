@@ -10,7 +10,8 @@
 		"priceDabloons": 300,
 		"description": "",
 		"unlockWeight": 4,
-		"unlockMessage": "Unlocked cosmetic: Dog Pet Hat."
+		"unlockMessage": "Unlocked cosmetic: Dog Pet Hat.",
+		"tags": ["dog","cute","pet","animated","wolf","gray","grey"]
 	},
 	"equippableCosmetic": {}
 }

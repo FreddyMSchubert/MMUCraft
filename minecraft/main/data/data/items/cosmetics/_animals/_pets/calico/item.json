@@ -10,7 +10,8 @@
 		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Calico Cat Pet Hat."
+		"unlockMessage": "Unlocked cosmetic: Calico Cat Pet Hat.",
+		"tags": ["cat","cute","pet","white","orange","calico","animated"]
 	},
 	"equippableCosmetic": {}
 }

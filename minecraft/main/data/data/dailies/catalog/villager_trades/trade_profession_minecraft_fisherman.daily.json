@@ -5,10 +5,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 2,
-	"rewardPerIteration": 0.75,
+	"rewardPerIteration": 2,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "🧑‍🌾",
 	"name": "Trade with a Fisherman",
-	"description": "Complete {count} trades with a fisherman."
+	"description": "Complete {count} trades with a fisherman. Smells a bit fishy..."
 }

@@ -12,7 +12,8 @@
 	"priceDabloons": 40	,
 		"description": "",
 		"unlockWeight": 80,
-		"unlockMessage": "Unlocked cosmetic: Bunny Ears."
+		"unlockMessage": "Unlocked cosmetic: Bunny Ears.",
+		"tags": ["cute","bunny","rabbit","bnuy","bnnuy","hare","ears","white","pink","bun"]
 	},
 	"equippableCosmetic": {}
 }

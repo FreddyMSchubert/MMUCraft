@@ -1,6 +1,6 @@
 {
-	"title": "Tuxedo Cat Pet Hat",
-	"id": "cosmetic-tuxedo-cat-pet-hat",
+	"title": "Siamese Cat Pet Hat",
+	"id": "cosmetic-siamese-cat-pet-hat",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
@@ -10,7 +10,8 @@
 		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Tuxedo Cat Pet Hat."
+		"unlockMessage": "Unlocked cosmetic: Siamese Cat Pet Hat.",
+		"tags": ["cat","cute","pet","white","gray","grey","black","siamese","animated"]
 	},
 	"equippableCosmetic": {}
 }

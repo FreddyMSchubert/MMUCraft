@@ -10,9 +10,10 @@ import { CountdownsService } from './countdowns.service';
 import { GiftCodeAdministrationService } from './gift-code-administration.service';
 import { GiftCodeRedemptionService } from './gift-code-redemption.service';
 import { PlayerRoleAdministrationService } from './player-role-administration.service';
+import { LaunchModule } from '../launch/launch.module';
 
 @Module({
-	imports: [AuthModule, ClaimsModule, DatabaseModule, PlayersModule],
+	imports: [AuthModule, ClaimsModule, DatabaseModule, LaunchModule, PlayersModule],
 	controllers: [AdminController, CountdownsController, GiftsController],
 	providers: [
 		CountdownsService,

@@ -75,10 +75,6 @@
 	font-weight: 700;
 }
 
-.launchGateCard .launchFairNote {
-	color: #ffd166;
-}
-
 .launchGateActions {
 	display: flex;
 	flex-wrap: wrap;

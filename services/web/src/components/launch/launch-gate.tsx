@@ -4,10 +4,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { Fireworks } from 'fireworks-js';
-import { LaunchCountdown, useLaunchLive } from '@/components/launch/launch-countdown';
+import {
+	LaunchCountdown,
+	useLaunchLive,
+	useLaunchTime,
+} from '@/components/launch/launch-countdown';
 import { SitePage } from '@/components/site-page';
 import { useSiteAlert } from '@/components/site-alert';
-import { LAUNCH_TIME_LABEL } from '@/lib/launch';
+import { formatLaunchTimeLabel } from '@/lib/launch';
 
 export function LaunchGate({
 	discordUrl,
@@ -23,6 +27,7 @@ export function LaunchGate({
 	const clicks = useRef<number[]>([]);
 	const fireworksStage = useRef<HTMLDivElement>(null);
 	const launchLive = useLaunchLive();
+	const launchTime = useLaunchTime();
 	const router = useRouter();
 	const { showAlert } = useSiteAlert();
 
@@ -82,10 +87,7 @@ export function LaunchGate({
 							with us.
 						</p>
 						<LaunchCountdown />
-						<p className="launchTimeLabel">{LAUNCH_TIME_LABEL}</p>
-						<p className="launchFairNote">
-							That&apos;s the evening of the first day of Freshers&apos; Fair.
-						</p>
+						<p className="launchTimeLabel">{formatLaunchTimeLabel(launchTime)}</p>
 						<p>
 							While you wait, join us on Discord or Instagram, or have a go at
 							today&apos;s Wordle.

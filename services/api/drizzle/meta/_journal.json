@@ -218,6 +218,13 @@
       "when": 1789052041947,
       "tag": "0030_wise_master_mold",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "6",
+      "when": 1789200735186,
+      "tag": "0031_sparkling_jackal",
+      "breakpoints": true
     }
   ]
 }

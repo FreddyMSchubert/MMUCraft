@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
+import { LaunchSettingsService } from '../launch/launch-settings.service';
 import {
 	createAuthCode,
 	hashSecret,
@@ -19,33 +19,19 @@ const EMAIL_CODE_TTL_MS = 10 * 60 * 1000;
 const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000;
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000;
 const MAX_AUTH_CODE_ATTEMPTS = 5;
-const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signup-allowlist.txt';
-
 @Injectable()
 export class AuthSignupService {
 	constructor(
 		private readonly userLookup: AuthUserLookupService,
 		private readonly verificationEmails: AuthVerificationEmailService,
 		private readonly accountRegistration: AuthSignupAccountRegistrationService,
+		private readonly launch: LaunchSettingsService,
 	) {}
 
 	async createSignup(emailInput: string, sourceIp: string) {
 		const email = normalizeEmail(emailInput);
-		let signupAllowlist = new Set<string>();
-		try {
-			signupAllowlist = new Set(
-				readFileSync(SIGNUP_ALLOWLIST_PATH, 'utf8')
-					.split(/\r?\n/)
-					.map(normalizeEmail)
-					.filter(Boolean),
-			);
-		} catch {
-			/* A missing or unreadable allowlist closes signup. */
-		}
-
-		if (!signupAllowlist.has('*') && !signupAllowlist.has(email)) {
-			throw new ForbiddenException('Signups are not currently open for this email');
-		}
+		if (!this.launch.hasLaunched())
+			throw new ForbiddenException('Signups will open when the server launches');
 
 		if (!isAllowedEmail(email) && !this.userLookup.isEmailWhitelisted(email)) {
 			throw new BadRequestException(

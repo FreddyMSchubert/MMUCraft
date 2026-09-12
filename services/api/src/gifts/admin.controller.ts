@@ -7,6 +7,7 @@ import { CountdownInput, CountdownsService } from './countdowns.service';
 import { GiftCodeAdministrationService } from './gift-code-administration.service';
 import { GiftCodeInput } from './gift-code-validation';
 import { PlayerRoleAdministrationService } from './player-role-administration.service';
+import { LaunchSettingsService } from '../launch/launch-settings.service';
 
 @Controller('api/admin')
 export class AdminController {
@@ -18,7 +19,23 @@ export class AdminController {
 		private readonly commandLogs: CommandLogsService,
 		private readonly signinAttempts: SigninAttemptLogsService,
 		private readonly countdowns: CountdownsService,
+		private readonly launch: LaunchSettingsService,
 	) {}
+
+	@Get('launch')
+	getLaunch(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.launch.get();
+	}
+
+	@Patch('launch')
+	updateLaunch(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { target?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.launch.update(body?.target);
+	}
 
 	@Get('countdowns')
 	listCountdowns(@Headers('cookie') cookieHeader: string | undefined) {

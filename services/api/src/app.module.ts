@@ -12,6 +12,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
 import { VelocityModule } from './velocity/velocity.module';
 import { FeatureTogglesModule } from './toggles/feature-toggles.module';
 import { AnnouncementsModule } from './announcements/announcements.module';
+import { LaunchModule } from './launch/launch.module';
 
 @Module({
 	imports: [
@@ -27,6 +28,7 @@ import { AnnouncementsModule } from './announcements/announcements.module';
 		VelocityModule,
 		FeatureTogglesModule,
 		AnnouncementsModule,
+		LaunchModule,
 	],
 	controllers: [HealthController],
 })

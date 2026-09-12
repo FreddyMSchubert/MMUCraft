@@ -88,7 +88,7 @@ Use the Admin **Servers** page to add one temporary or event server. Start that 
 
 The Servers page also shows online players and backend health. A manual move lasts until the player disconnects or the active route changes. A schedule temporarily replaces the default route. At its start, connected players move to the scheduled server. At its end, they move to the current default server. Players who join during the schedule also use its server. The system does not fall back to the default server if the scheduled server is offline. The Maintenance page disconnects current players and rejects new logins during the next control sync.
 
-Signups are closed by default. Add one permitted email address per line to `data/api/signup-allowlist.txt`. Email matching is case-insensitive. Put `*` on its own line to permit all valid signup addresses. The API reads the file for each signup attempt, so you do not have to restart it. Sign-in is not affected.
+Signups open automatically at the launch time configured on the Admin **Launch** page. Before that time, new signup attempts are rejected; existing accounts can still sign in. Changing the launch time immediately updates the signup gate; open public website pages refresh the countdown setting within 30 seconds. Normal MMU-address and sponsored external-player eligibility rules still apply after launch.
 
 The homepage defaults to the society Discord invite and Instagram account. Override `DISCORD_URL` or `INSTAGRAM_URL` in the deployment `.env` if either link changes. The homepage version label uses the deployed `IMAGE_TAG`. Release images also show the release name and link to the GitHub release.
 

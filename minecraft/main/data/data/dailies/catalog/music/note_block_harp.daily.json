@@ -5,9 +5,9 @@
 	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.075,
-	"minimum": 40,
+	"minimum": 20,
 	"maximum": 80,
 	"emoji": "🎼",
 	"name": "Harp Notes",
-	"description": "Play {count} harp notes. Try an actual tune. Four notes will do."
+	"description": "Play {count} harp notes. Lyre, Lyre, leggings on fire."
 }

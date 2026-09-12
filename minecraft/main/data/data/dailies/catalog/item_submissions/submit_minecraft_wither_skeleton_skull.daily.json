@@ -4,10 +4,10 @@
 	"nether": true,
 	"end": false,
 	"baseCost": 5,
-	"rewardPerIteration": 4,
-	"minimum": 1,
-	"maximum": 1,
+	"rewardPerIteration": 5,
+	"minimum": 2,
+	"maximum": 4,
 	"emoji": "💀",
 	"name": "Submit a Wither Skeleton Skull",
-	"description": "Submit one wither skeleton skull. Count your skulls before selling one. A Wither needs three. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} wither skeleton skulls. Hope you don't need this anytime soon"
 }

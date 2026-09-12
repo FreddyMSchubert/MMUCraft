@@ -5,9 +5,9 @@
 	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 0.05,
-	"minimum": 40,
+	"minimum": 20,
 	"maximum": 80,
 	"emoji": "🎶",
 	"name": "Didgeridoo Notes",
-	"description": "Play {count} didgeridoo notes. One note is traditional, so you are in luck."
+	"description": "Play {count} didgeridoo notes. I think its funny."
 }

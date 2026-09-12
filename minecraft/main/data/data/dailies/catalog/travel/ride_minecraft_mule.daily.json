@@ -1,6 +1,6 @@
 {
 	"type": "ride_distance",
-	"vehicle": "minecraft:donkey",
+	"vehicle": "minecraft:mule",
 	"nether": false,
 	"end": false,
 	"baseCost": 3,
@@ -8,6 +8,6 @@
 	"minimum": 200,
 	"maximum": 600,
 	"emoji": "🫏",
-	"name": "Ride a Donkey",
-	"description": "Ride a donkey for {count} blocks. Something something shrek."
+	"name": "Ride a Mule",
+	"description": "Ride a mule for {count} blocks. Might wanna breed one if you haven't already."
 }

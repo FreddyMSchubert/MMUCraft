@@ -3,11 +3,11 @@
 	"item": "minecraft:zombie_head",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 1.25,
+	"baseCost": 5,
+	"rewardPerIteration": 5,
 	"minimum": 3,
 	"maximum": 6,
 	"emoji": "🧟",
 	"name": "Submit Zombie Heads",
-	"description": "Submit {count} zombie heads. Server loot tables have done terrible things to head rarity. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} zombie heads. Let's hope it starts storming soon."
 }

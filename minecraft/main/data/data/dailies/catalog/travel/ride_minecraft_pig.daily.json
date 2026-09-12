@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 3,
-	"rewardPerIteration": 0.02,
-	"minimum": 100,
-	"maximum": 300,
+	"rewardPerIteration": 0.4,
+	"minimum": 50,
+	"maximum": 200,
 	"emoji": "🐖",
 	"name": "Ride a Pig",
-	"description": "Ride a pig for {count} blocks. The pig did not agree to this."
+	"description": "Ride a pig for {count} blocks. It'll become a lot easier once pigs fly."
 }

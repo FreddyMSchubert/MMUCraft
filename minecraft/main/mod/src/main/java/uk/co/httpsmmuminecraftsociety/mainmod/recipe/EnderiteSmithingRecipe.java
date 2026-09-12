@@ -74,7 +74,7 @@ public final class EnderiteSmithingRecipe extends SimpleSmithingRecipe {
         if (equippable != null) {
             result.set(
                     DataComponents.EQUIPPABLE,
-                    EquippableCharmItemFeature.createEquippableSettings("enderite", equippable.slot())
+                    EquippableCharmItemFeature.withAsset(equippable, "enderite")
             );
         }
 

@@ -150,7 +150,7 @@ public final class CosmeticsManager {
             Equippable equippable = helmet.get(DataComponents.EQUIPPABLE);
             if (equippable != null) {
                 helmet.set(DataComponents.EQUIPPABLE,
-                        EquippableCharmItemFeature.createEquippableSettings("enderite", equippable.slot()));
+                        EquippableCharmItemFeature.withAsset(equippable, "enderite"));
             }
         }
         CharmorManager.updateArmorTooltip(helmet);

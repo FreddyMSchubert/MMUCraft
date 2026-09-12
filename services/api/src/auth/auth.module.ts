@@ -9,9 +9,10 @@ import { AuthUserLookupService } from './auth-user-lookup.service';
 import { AuthSignupService } from './auth-signup.service';
 import { AuthSignupAccountRegistrationService } from './auth-signup-account-registration.service';
 import { PlayerBansService } from './player-bans.service';
+import { LaunchModule } from '../launch/launch.module';
 
 @Module({
-	imports: [DatabaseModule],
+	imports: [DatabaseModule, LaunchModule],
 	controllers: [AuthController],
 	providers: [
 		AuthSignupService,

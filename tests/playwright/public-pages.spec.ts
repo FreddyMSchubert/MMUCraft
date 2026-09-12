@@ -28,6 +28,12 @@ test('public pages and the API proxy are available', async ({ page, request }) =
 		expect(await response.json()).toEqual({ ok: true });
 	});
 
+	await test.step('Return the configured public launch time', async () => {
+		const response = await request.get('/api/launch');
+		await expect(response).toBeOK();
+		expect(await response.json()).toEqual({ launchAtUnixMs: 1_790_708_400_000 });
+	});
+
 	await test.step('Return public countdown data from the fixture', async () => {
 		const response = await request.get('/api/countdowns');
 		await expect(response).toBeOK();

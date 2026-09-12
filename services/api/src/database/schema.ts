@@ -501,6 +501,15 @@ export const featureToggles = sqliteTable(
 	(table) => [check('feature_toggles_enabled_check', sql`${table.enabled} in (0, 1)`)],
 );
 
+export const launchSettings = sqliteTable(
+	'launch_settings',
+	{
+		id: integer('id').primaryKey(),
+		launch_at_unix_ms: integer('launch_at_unix_ms').notNull(),
+	},
+	(table) => [check('launch_settings_singleton_check', sql`${table.id} = 1`)],
+);
+
 export const velocitySettings = sqliteTable(
 	'velocity_settings',
 	{
@@ -575,6 +584,7 @@ export type CountdownRow = typeof countdowns.$inferSelect;
 export type AnnouncementRow = typeof announcements.$inferSelect;
 export type AnnouncementReadRow = typeof announcementReads.$inferSelect;
 export type FeatureToggleRow = typeof featureToggles.$inferSelect;
+export type LaunchSettingsRow = typeof launchSettings.$inferSelect;
 export type VelocitySettingsRow = typeof velocitySettings.$inferSelect;
 export type VelocityServerRow = typeof velocityServers.$inferSelect;
 export type VelocityScheduleRow = typeof velocitySchedules.$inferSelect;
@@ -606,6 +616,7 @@ export const schema = {
 	announcements,
 	announcementReads,
 	featureToggles,
+	launchSettings,
 	velocitySettings,
 	velocityServers,
 	velocitySchedules,

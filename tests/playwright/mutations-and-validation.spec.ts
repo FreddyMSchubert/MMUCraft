@@ -3,6 +3,37 @@ import { expect, test } from '@playwright/test';
 const memberCookie = { Cookie: 'mcstack_session=playwright-member' };
 const adminCookie = { Cookie: 'mcstack_session=playwright-admin' };
 
+test('committee can configure the shared launch time', async ({ request }) => {
+	const updatedTarget = '2030-01-02T12:34';
+	const defaultTarget = '2026-09-29T20:00';
+
+	const anonymous = await request.patch('/api/admin/launch', {
+		data: { target: updatedTarget },
+	});
+	expect(anonymous.status()).toBe(401);
+
+	const updated = await request.patch('/api/admin/launch', {
+		headers: adminCookie,
+		data: { target: updatedTarget },
+	});
+	await expect(updated).toBeOK();
+	expect(await updated.json()).toEqual({
+		launchAtUnixMs: Date.parse('2030-01-02T12:34:00Z'),
+	});
+
+	const publicSetting = await request.get('/api/launch');
+	await expect(publicSetting).toBeOK();
+	expect(await publicSetting.json()).toEqual({
+		launchAtUnixMs: Date.parse('2030-01-02T12:34:00Z'),
+	});
+
+	const restored = await request.patch('/api/admin/launch', {
+		headers: adminCookie,
+		data: { target: defaultTarget },
+	});
+	await expect(restored).toBeOK();
+});
+
 test('committee can create, move, update, and remove a countdown', async ({ request }) => {
 	let countdownId = 0;
 	const target = '2100-01-02T12:00';
@@ -68,7 +99,7 @@ test('committee can create, move, update, and remove a countdown', async ({ requ
 });
 
 test('trust boundaries reject invalid input and insufficient privilege', async ({ request }) => {
-	await test.step('Reject a signup outside the configured allowlist', async () => {
+	await test.step('Reject a signup before launch', async () => {
 		const response = await request.post('/api/auth/signup', {
 			data: { email: 'attacker@example.com' },
 		});

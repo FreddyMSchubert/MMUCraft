@@ -1,7 +1,11 @@
 'use client';
 
 import { useEffect, useSyncExternalStore } from 'react';
-import { LAUNCH_TIME } from '@/lib/launch';
+import { DEFAULT_LAUNCH_TIME } from '@/lib/launch';
+
+let launchTime = DEFAULT_LAUNCH_TIME;
+let launchRequest: Promise<void> | null = null;
+const launchListeners = new Set<() => void>();
 
 function splitDuration(milliseconds: number) {
 	const seconds = Math.max(0, Math.floor(milliseconds / 1000));
@@ -59,6 +63,10 @@ export function LaunchCountdown({
 	);
 }
 
+export function useLaunchTime() {
+	return useSyncExternalStore(subscribeToClock, readLaunchTime, () => DEFAULT_LAUNCH_TIME);
+}
+
 export function useLaunchLive() {
 	const remainingSeconds = useLaunchRemainingSeconds();
 	return remainingSeconds !== null && remainingSeconds <= 0;
@@ -69,12 +77,44 @@ function useLaunchRemainingSeconds() {
 }
 
 function subscribeToClock(callback: () => void) {
+	launchListeners.add(callback);
+	void refreshLaunchTime();
 	const timer = window.setInterval(callback, 1000);
+	const refreshTimer = window.setInterval(() => void refreshLaunchTime(), 30_000);
+	window.addEventListener('launch-settings-change', refreshLaunchTime);
 	return () => {
+		launchListeners.delete(callback);
 		window.clearInterval(timer);
+		window.clearInterval(refreshTimer);
+		window.removeEventListener('launch-settings-change', refreshLaunchTime);
 	};
 }
 
 function readRemainingSeconds() {
-	return Math.max(0, Math.ceil((LAUNCH_TIME - Date.now()) / 1000));
+	return Math.max(0, Math.ceil((launchTime - Date.now()) / 1000));
+}
+
+function readLaunchTime() {
+	return launchTime;
+}
+
+function refreshLaunchTime() {
+	if (launchRequest) return launchRequest;
+	launchRequest = fetch('/api/launch', { cache: 'no-store' })
+		.then(async (response) => {
+			if (!response.ok) return;
+			const body = (await response.json()) as { launchAtUnixMs?: unknown };
+			if (typeof body.launchAtUnixMs !== 'number' || !Number.isFinite(body.launchAtUnixMs))
+				return;
+			if (launchTime === body.launchAtUnixMs) return;
+			launchTime = body.launchAtUnixMs;
+			launchListeners.forEach((listener) => {
+				listener();
+			});
+		})
+		.catch(() => undefined)
+		.finally(() => {
+			launchRequest = null;
+		});
+	return launchRequest;
 }

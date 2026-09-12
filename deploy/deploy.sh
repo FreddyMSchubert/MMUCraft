@@ -94,10 +94,8 @@ if [ "$target" = production ]; then
 fi
 
 printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\nCOMPOSE_FILE=%s\n' "$image_prefix" "$tag" "$public_host" "$compose_file" > .release.env
-[ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 printf '%s\n' "$VELOCITY_FORWARDING_SECRET" > data/velocity/forwarding.secret
 chmod 775 data/api data/minecraft data/velocity
-chmod 664 data/api/signup-allowlist.txt
 chmod 600 data/velocity/forwarding.secret
 
 dc() {

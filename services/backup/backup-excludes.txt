@@ -1,0 +1,13 @@
+/source/data/api/app.sqlite
+/source/data/api/app.sqlite-shm
+/source/data/api/app.sqlite-wal
+/source/data/api/backup-staging/*.tmp
+/source/data/minecraft/.console-input
+/source/data/minecraft/cache
+/source/data/minecraft/crash-reports
+/source/data/minecraft/libraries
+/source/data/minecraft/logs
+/source/data/minecraft/mods
+/source/data/minecraft/server.jar
+/source/data/minecraft/versions
+/source/data/velocity/logs

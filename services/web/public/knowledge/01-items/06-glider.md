@@ -23,7 +23,7 @@ tips:
 
 # Gliders
 
-Gliders are kinda like elytra - with some critical upsides and downsides to them. (Don't worry, you can still get a normal elytra item once you're in the end.).
+Gliders are kinda like elytra - with some critical upsides and downsides to them. (Don't worry, they're still super useful.). (Don't worry, you can still get a normal elytra item once you're in the end.).
 
 ## The Upsides
 
@@ -85,9 +85,13 @@ Gliders are cool, but not quite as awesome as Elytras.
 
 Fireworks only work with the Elytra. Sorry.
 
-### No Mending
+### Speed
 
-You can't apply Mending to Gliders. Instead, you can repair them using leather in an anvil. (See below.)
+While elytras and minecarts are the highest speed transportation options in the game (20 blocks / sec), the glider is less speedy, having the same speed as decent horses (14 blocks / sec). The glider is only able to reach the same speed as elytra for a short duration when flying through a boost frame.
+
+### No Mending or Unbreaking
+
+You can't apply Mending or Unbreaking to Gliders. Instead, you can repair them using leather in an anvil. (See below.)
 
 ### Less upward velocity
 

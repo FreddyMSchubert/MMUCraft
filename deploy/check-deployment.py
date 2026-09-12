@@ -52,29 +52,36 @@ else:
 '''
 
 
-def check(mode, force, succeeds, stays_updating):
+def check(mode, force, succeeds, stays_updating, target='production'):
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         bin_dir = root / 'bin'
         bin_dir.mkdir()
-        for name in ('docker', 'sleep', 'date'):
+        for name in ('docker', 'sleep', 'date', 'flock'):
             command = bin_dir / name
-            command.write_text(FAKE)
+            command.write_text('#!/bin/sh\nexit 0\n' if name == 'flock' else FAKE)
             command.chmod(0o755)
+        secrets = [
+            'AUTH_CODE_SECRET', 'GRAFANA_ADMIN_PASSWORD',
+            'VELOCITY_API_SECRET', 'VELOCITY_FORWARDING_SECRET',
+        ]
+        if target == 'production':
+            secrets.append('BACKUP_RESTIC_PASSWORD')
         (root / '.env').write_text(
             'PUBLIC_URL=https://example.org\nRESEND_API_KEY=check\nRESEND_FROM=check\n'
-            + ''.join(f'{key}={"x" * 32}\n' for key in (
-                'AUTH_CODE_SECRET', 'GRAFANA_ADMIN_PASSWORD',
-                'VELOCITY_API_SECRET', 'VELOCITY_FORWARDING_SECRET',
-            ))
+            + ''.join(f'{key}={"x" * 32}\n' for key in secrets)
         )
         result = subprocess.run(
-            ['sh', str(DEPLOY), 'dev', 'ghcr.io/example/server', '0', str(force).lower(), 'dev'],
+            ['sh', str(DEPLOY), 'dev', 'ghcr.io/example/server', '0', str(force).lower(), target],
             cwd=root,
             env={**os.environ, 'PATH': str(bin_dir) + os.pathsep + os.environ['PATH'], 'CHECK_MODE': mode},
             capture_output=True, text=True, timeout=15,
         )
         assert (result.returncode == 0) == succeeds, (mode, force, result.stdout, result.stderr)
+        release = (root / '.release.env').read_text()
+        overlay = 'prod' if target == 'production' else 'dev'
+        assert f'COMPOSE_FILE=compose.yaml:compose.{overlay}.yaml' in release
+        assert (root / 'backups').exists() == (target == 'production')
         state = (root / 'data/velocity/deployment.properties').read_text()
         assert ('updating=true' in state) == stays_updating, (mode, force, state)
         commands = (root / 'commands').read_text()
@@ -105,4 +112,5 @@ for check_mode in ('players', 'empty', 'no_ack', 'legacy_empty', 'notice_failure
             forced and check_mode in ('no_ack', 'legacy_empty', 'notice_failure', 'save_failure')
         )
         check(check_mode, forced, success, check_mode in ('unhealthy', 'not_ready'))
-print('Deployment checks passed (16 scenarios).')
+check('empty', False, True, False, 'dev')
+print('Deployment checks passed (17 scenarios, including backup-free dev).')

@@ -1,4 +1,4 @@
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, renameSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import Database from 'better-sqlite3';
@@ -15,10 +15,12 @@ export const SUPER_ADMIN_MINECRAFT_UUID = '8580f9f830c44b83a66cac52ac6d5b0b';
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
 	private readonly client: Database.Database;
+	private readonly databaseUrl: string;
 	readonly connection: BetterSQLite3Database<typeof schema>;
 
 	constructor() {
 		const databaseUrl = process.env.DATABASE_URL ?? join(process.cwd(), 'data', 'app.sqlite');
+		this.databaseUrl = databaseUrl;
 		const migrationsFolder =
 			process.env.DATABASE_MIGRATIONS_PATH ?? join(process.cwd(), 'drizzle');
 
@@ -38,6 +40,31 @@ export class DatabaseService implements OnModuleDestroy {
 
 	onModuleDestroy() {
 		this.client.close();
+	}
+
+	async createBackup() {
+		if (this.databaseUrl === ':memory:')
+			throw new Error('Cannot persist an in-memory database');
+		const backupDirectory = join(dirname(this.databaseUrl), 'backup-staging');
+		const backupPath = join(backupDirectory, 'app.sqlite');
+		const temporaryPath = `${backupPath}.tmp`;
+		mkdirSync(backupDirectory, { recursive: true });
+		rmSync(temporaryPath, { force: true });
+		try {
+			await this.client.backup(temporaryPath);
+			const snapshot = new Database(temporaryPath, { readonly: true, fileMustExist: true });
+			try {
+				if (snapshot.pragma('quick_check', { simple: true }) !== 'ok') {
+					throw new Error('SQLite quick_check rejected the backup');
+				}
+			} finally {
+				snapshot.close();
+			}
+			renameSync(temporaryPath, backupPath);
+		} catch (error) {
+			if (existsSync(temporaryPath)) rmSync(temporaryPath, { force: true });
+			throw error;
+		}
 	}
 
 	private promoteSuperAdmin() {

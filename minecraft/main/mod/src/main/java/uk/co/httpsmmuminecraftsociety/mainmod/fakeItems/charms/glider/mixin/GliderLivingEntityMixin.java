@@ -16,7 +16,7 @@ public abstract class GliderLivingEntityMixin {
     @Inject(method = "canGlide", at = @At("HEAD"), cancellable = true)
     private void mainmod$stopGliderInFluids(CallbackInfoReturnable<Boolean> cir) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (GliderCharm.isGlider(entity.getItemBySlot(EquipmentSlot.CHEST)) && GliderFlight.touchesFluid(entity)) {
+        if (GliderCharm.isGlider(entity.getItemBySlot(EquipmentSlot.CHEST)) && GliderFlight.isWet(entity)) {
             cir.setReturnValue(false);
         }
     }

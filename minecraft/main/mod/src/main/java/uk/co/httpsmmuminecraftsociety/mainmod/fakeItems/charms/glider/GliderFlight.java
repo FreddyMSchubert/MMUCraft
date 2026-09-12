@@ -53,9 +53,10 @@ public final class GliderFlight {
         state.distanceSinceUpdraft = 0;
     }
 
-    public static boolean touchesFluid(LivingEntity entity) {
+    public static boolean isWet(LivingEntity entity) {
         var box = entity.getBoundingBox().deflate(0.001);
         var level = entity.level();
+        if (level.isRainingAt(entity.blockPosition())) return true;
         for (BlockPos pos : BlockPos.betweenClosed(BlockPos.containing(box.minX, box.minY, box.minZ),
                 BlockPos.containing(box.maxX, box.maxY, box.maxZ))) {
             var fluid = level.getFluidState(pos);
@@ -91,7 +92,7 @@ public final class GliderFlight {
             if (player.tickCount >= state.ascentGraceUntil) STATES.remove(player);
             return;
         }
-        if (glider && touchesFluid(player)) {
+        if (glider && isWet(player)) {
             player.stopFallFlying();
             STATES.remove(player);
             return;

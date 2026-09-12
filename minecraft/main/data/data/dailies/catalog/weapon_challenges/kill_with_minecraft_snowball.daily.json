@@ -3,11 +3,11 @@
 	"item": "minecraft:snowball",
 	"nether": true,
 	"end": false,
-	"baseCost": 4,
-	"rewardPerIteration": 3,
+	"baseCost": 3,
+	"rewardPerIteration": 6,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 5,
 	"emoji": "⛄",
 	"name": "Defeat a Mob with Snowballs",
-	"description": "Defeat one mob with snowballs. Blazes are the obvious victims."
+	"description": "Defeat one mob with snowballs. Does this even work on anything BUT the blaze?"
 }

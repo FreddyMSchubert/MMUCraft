@@ -8,8 +8,8 @@
 	"baseCost": 3,
 	"rewardPerIteration": 0.5,
 	"minimum": 4,
-	"maximum": 12,
+	"maximum": 120,
 	"emoji": "🪥",
 	"name": "Brush Armadillos",
-	"description": "Brush {count} armadillos. The scutes are yours. The armadillo keeps its pride."
+	"description": "Brush {count} armadillos. Kinda useless tbh."
 }

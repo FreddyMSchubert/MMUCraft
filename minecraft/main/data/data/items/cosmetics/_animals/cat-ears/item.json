@@ -12,7 +12,8 @@
 	"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 51,
-		"unlockMessage": "Unlocked cosmetic: Cat Ears."
+		"unlockMessage": "Unlocked cosmetic: Cat Ears.",
+		"tags": ["cat","ears","car","white","cute","kitty","kitten"]
 	},
 	"equippableCosmetic": {}
 }

@@ -5,10 +5,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 3,
-	"rewardPerIteration": 0.75,
+	"rewardPerIteration": 1,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "🏮",
 	"name": "Buy Lanterns",
-	"description": "Receive {count} lanterns from villagers."
+	"description": "Receive {count} lanterns from villagers. Better than crafting them yourself"
 }

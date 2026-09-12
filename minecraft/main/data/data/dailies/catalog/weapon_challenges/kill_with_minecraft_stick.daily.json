@@ -6,8 +6,8 @@
 	"baseCost": 1,
 	"rewardPerIteration": 4.5,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 3,
 	"emoji": "🪵",
 	"name": "Defeat a Mob with a Stick",
-	"description": "Defeat one mob with a stick. Frame the stick. It peaked today."
+	"description": "Defeat one mob with a stick. Tung Tung Tung Sahur reference???"
 }

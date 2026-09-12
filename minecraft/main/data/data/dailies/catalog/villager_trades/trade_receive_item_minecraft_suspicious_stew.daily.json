@@ -5,10 +5,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 4,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 4,
 	"minimum": 1,
 	"maximum": 3,
 	"emoji": "🥣",
 	"name": "Buy Suspicious Stew",
-	"description": "Receive {count} suspicious stews from villagers."
+	"description": "Receive {count} suspicious stews from villagers. Yummers(?)"
 }

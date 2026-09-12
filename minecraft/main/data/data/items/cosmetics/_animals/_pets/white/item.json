@@ -10,7 +10,8 @@
 		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 55,
-		"unlockMessage": "Unlocked cosmetic: White Cat Pet Hat."
+		"unlockMessage": "Unlocked cosmetic: White Cat Pet Hat.",
+		"tags": ["cat","cute","pet","white","snow","animated"]
 	},
 	"equippableCosmetic": {}
 }

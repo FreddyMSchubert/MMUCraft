@@ -5,11 +5,11 @@
 	"progressUnit": "candles",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
-	"rewardPerIteration": 0.2,
-	"minimum": 12,
+	"baseCost": 4,
+	"rewardPerIteration": 0.25,
+	"minimum": 4,
 	"maximum": 20,
 	"emoji": "🕯️",
 	"name": "Light Candles",
-	"description": "Light {count} candles with flint and steel."
+	"description": "Light {count} candles with flint and steel. #aesthetic amirite"
 }

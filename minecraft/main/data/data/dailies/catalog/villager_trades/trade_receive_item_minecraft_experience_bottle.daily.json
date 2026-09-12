@@ -10,5 +10,5 @@
 	"maximum": 6,
 	"emoji": "✨",
 	"name": "Buy Bottles o' Enchanting",
-	"description": "Receive {count} bottles o' enchanting from villagers."
+	"description": "Receive {count} bottles o' enchanting from villagers. If you use these near a Warden it can't sniff you for a minute!"
 }

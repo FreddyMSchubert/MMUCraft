@@ -5,11 +5,11 @@
 	"progressUnit": "sheep",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
-	"rewardPerIteration": 0.4,
+	"baseCost": 0,
+	"rewardPerIteration": 0.6,
 	"minimum": 2,
 	"maximum": 16,
 	"emoji": "🐑",
 	"name": "Shear Sheep",
-	"description": "Shear {count} sheep. They grow it back. Your conscience is clear."
+	"description": "Shear {count} sheep. Give them a real baaaaaah-d haircute #lol"
 }

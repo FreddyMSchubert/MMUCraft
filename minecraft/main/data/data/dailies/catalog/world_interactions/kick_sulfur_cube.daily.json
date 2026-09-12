@@ -5,11 +5,11 @@
 	"progressUnit": "cube",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 1,
 	"rewardPerIteration": 1,
-	"minimum": 1,
-	"maximum": 1,
+	"minimum": 4,
+	"maximum": 32,
 	"emoji": "🟨",
 	"name": "Kick a Sulfur Cube",
-	"description": "Kick a sulfur cube. Kick first, questions later."
+	"description": "Hit a sulfur cube {count} times. Though I bet you wouldn't like it if I hit YOU {count} times, huh?"
 }

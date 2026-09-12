@@ -12,7 +12,8 @@
 	"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Chick Hat."
+		"unlockMessage": "Unlocked cosmetic: Chick Hat.",
+		"tags": ["chicken","yellow"]
 	},
 	"equippableCosmetic": {}
 }

@@ -6,10 +6,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 0,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 6,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 4,
 	"emoji": "👁️",
 	"name": "Look at an Enderman",
-	"description": "Make eye contact with an Enderman. Eye contact. The universal greeting."
+	"description": "Make eye contact with an Enderman. Very bad idea."
 }

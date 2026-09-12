@@ -5,11 +5,11 @@
 	"progressUnit": "discs",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
-	"rewardPerIteration": 0.25,
-	"minimum": 4,
-	"maximum": 12,
+	"baseCost": 5,
+	"rewardPerIteration": 0.6,
+	"minimum": 1,
+	"maximum": 4,
 	"emoji": "💿",
 	"name": "Play Music Discs",
-	"description": "Play {count} music discs."
+	"description": "Play {count} music discs. I heard Mia say she wants Pigstep removed..."
 }

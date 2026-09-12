@@ -5,11 +5,11 @@
 	"progressUnit": "frame",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
-	"rewardPerIteration": 2.5,
+	"baseCost": 4,
+	"rewardPerIteration": 1,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🖼️",
 	"name": "Improve an Item Frame",
-	"description": "Make one item frame invisible or glowing."
+	"description": "Make one item frame invisible or glowing. I hope you read the knowledge"
 }

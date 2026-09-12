@@ -5,10 +5,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 5,
-	"rewardPerIteration": 1,
+	"rewardPerIteration": 3,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🍉",
 	"name": "Buy Glistering Melon",
-	"description": "Receive {count} glistering melon slices from villagers."
+	"description": "Receive {count} glistering melon slices from villagers. Tasty!"
 }

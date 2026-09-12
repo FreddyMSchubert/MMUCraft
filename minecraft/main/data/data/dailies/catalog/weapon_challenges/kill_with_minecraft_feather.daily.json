@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 2,
-	"rewardPerIteration": 3.5,
+	"rewardPerIteration": 3.6,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 2,
 	"emoji": "🪶",
 	"name": "Featherweight Champion",
-	"description": "Defeat one mob with a feather. The feather retires undefeated."
+	"description": "Defeat one mob with a feather. Something something tickle monster"
 }

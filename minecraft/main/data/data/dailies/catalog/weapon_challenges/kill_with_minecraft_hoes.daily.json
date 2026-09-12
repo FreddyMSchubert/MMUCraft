@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 0,
-	"rewardPerIteration": 1.85,
-	"minimum": 3,
-	"maximum": 6,
+	"rewardPerIteration": 5,
+	"minimum": 2,
+	"maximum": 4,
 	"emoji": "🪏",
 	"name": "Hoe Kills",
-	"description": "Defeat {count} mobs with a hoe. This is why villagers do not lend tools."
+	"description": "Defeat {count} mobs with a hoe. If this worked in real life I'd already be dead lol, like, too many hoes lol, like, get it lol?."
 }

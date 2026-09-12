@@ -6,10 +6,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 1,
-	"rewardPerIteration": 0.3,
-	"minimum": 8,
+	"rewardPerIteration": 1,
+	"minimum": 4,
 	"maximum": 16,
 	"emoji": "🥛",
 	"name": "Milk Cows",
-	"description": "Milk {count} cows."
+	"description": "Milk {count} cows. Mmmmm I loooove milk 🤤"
 }

@@ -10,5 +10,5 @@
 	"maximum": 40,
 	"emoji": "🧱",
 	"name": "Sell Granite",
-	"description": "Give villagers {count} granite."
+	"description": "Give villagers {count} granite. Don't take the dabloons you get for granite!"
 }

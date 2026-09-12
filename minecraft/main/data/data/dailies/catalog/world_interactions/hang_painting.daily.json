@@ -8,8 +8,8 @@
 	"baseCost": 1,
 	"rewardPerIteration": 0.75,
 	"minimum": 3,
-	"maximum": 5,
+	"maximum": 8,
 	"emoji": "🖼️",
 	"name": "Hang Paintings",
-	"description": "Hang {count} paintings."
+	"description": "Hang {count} paintings. You can get this one by just cycling through to your desired one anyways"
 }

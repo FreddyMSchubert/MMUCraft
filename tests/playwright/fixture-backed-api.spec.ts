@@ -126,3 +126,34 @@ test('committee endpoints expose seeded administration data', async ({ request }
 		expect(body.hasMore).toBe(false);
 	});
 });
+
+test('player unlock progress follows gameplay toggles', async ({ request }) => {
+	const disabled = await getJson(request, '/api/players/2');
+
+	try {
+		const response = await request.patch('/api/admin/toggles/welcoming', {
+			headers: adminCookie,
+			data: { enabled: true },
+		});
+		await expect(response).toBeOK();
+
+		const enabled = await getJson(request, '/api/players/2');
+		expect(enabled.player.unlocks.charms.unlocked).toBe(
+			disabled.player.unlocks.charms.unlocked + 1,
+		);
+		expect(enabled.player.unlocks.charms.total).toBeGreaterThan(
+			disabled.player.unlocks.charms.total,
+		);
+		expect(enabled.player.unlocks.knowledge.unlocked).toBe(
+			disabled.player.unlocks.knowledge.unlocked + 1,
+		);
+		expect(enabled.player.unlocks.knowledge.total).toBeGreaterThan(
+			disabled.player.unlocks.knowledge.total,
+		);
+	} finally {
+		await request.patch('/api/admin/toggles/welcoming', {
+			headers: adminCookie,
+			data: { enabled: false },
+		});
+	}
+});

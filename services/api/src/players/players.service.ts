@@ -19,6 +19,7 @@ import {
 } from '../database/database.service';
 import { KnowledgeDocumentCatalogService } from '../gameplay/knowledge/knowledge-document-catalog.service';
 import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
+import { FeatureTogglesService } from '../toggles/feature-toggles.service';
 import { playerAvatarUrl } from './player-color';
 import { customPlayerEmojis, type PlayerEmoji } from './player-emojis';
 import {
@@ -64,6 +65,7 @@ export class PlayersService {
 	private readonly logger = new Logger(PlayersService.name);
 	constructor(
 		private readonly database: DatabaseService,
+		private readonly featureToggles: FeatureTogglesService,
 		private readonly fishing: FishingService,
 		private readonly knowledgeCatalog: KnowledgeDocumentCatalogService,
 		private readonly minecraft: MinecraftGrpcClientService,
@@ -269,7 +271,12 @@ export class PlayersService {
 	}
 
 	private getUnlockProgress(userIds: number[]) {
-		const shopItems = this.shopCatalog.load().items;
+		const enabledToggles = this.featureToggles.enabledKeys();
+		const shopItems = this.shopCatalog
+			.load()
+			.items.filter(
+				(item) => !item.gameplayToggle || enabledToggles.has(item.gameplayToggle),
+			);
 		const charmIds = new Set(
 			shopItems.filter((item) => item.type === 'charm').map((item) => item.id),
 		);
@@ -277,7 +284,11 @@ export class PlayersService {
 			shopItems.filter((item) => item.type === 'cosmetic').map((item) => item.id),
 		);
 		const knowledge = this.knowledgeCatalog.loadDocument();
-		const knowledgeIds = new Set(knowledge.unlockable.map((page) => page.id));
+		const knowledgeIds = new Set(
+			knowledge.unlockable
+				.filter((page) => !page.gameplayToggle || enabledToggles.has(page.gameplayToggle))
+				.map((page) => page.id),
+		);
 		const publicKnowledge = knowledge.pages.length - knowledge.unlockable.length;
 		const unlocked = new Map(userIds.map((id) => [id, emptyUnlockProgress()]));
 
@@ -304,7 +315,7 @@ export class PlayersService {
 			progress.charms.total = charmIds.size;
 			progress.cosmetics.total = cosmeticIds.size;
 			progress.knowledge.unlocked += publicKnowledge;
-			progress.knowledge.total = knowledge.pages.length;
+			progress.knowledge.total = publicKnowledge + knowledgeIds.size;
 		}
 		return unlocked;
 	}

@@ -61,6 +61,7 @@ In no particular order:
 - At some pubs we go to, showing you MMU Minecraft Society Keychain when you order drinks will get you a discount.
 - Discounts to ticketed society events.
 - Exclusive members-only events are planned.
+- When many suggestions are coming in, we will prioritize the suggestions from members first.
 - Access to exclusive & private members-only channels on the discord server.
 - Free bonus raffle entries if we do society raffles.
 

@@ -6,7 +6,7 @@
 	"baseCost": 6,
 	"rewardPerIteration": 0.25,
 	"minimum": 4,
-	"maximum": 12,
+	"maximum": 32,
 	"emoji": "🪲",
 	"name": "Hunt Silverfish",
 	"description": "Defeat {count} silverfish. Stronghold or Infestation potion. Pick your poison."

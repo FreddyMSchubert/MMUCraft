@@ -3,11 +3,11 @@
 	"entity": "minecraft:spider",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
+	"baseCost": 4,
 	"rewardPerIteration": 0.5,
-	"minimum": 8,
-	"maximum": 16,
+	"minimum": 3,
+	"maximum": 12,
 	"emoji": "🕷️",
 	"name": "Hunt Spiders",
-	"description": "Defeat {count} spiders."
+	"description": "Defeat {count} spiders. They give me the ick. And their bites itch. They give me the icktch."
 }

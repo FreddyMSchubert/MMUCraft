@@ -9,5 +9,5 @@
 	"maximum": 6,
 	"emoji": "🏹",
 	"name": "Hunt Strays",
-	"description": "Defeat {count} strays."
+	"description": "Defeat {count} strays. Don't leave any stray arrows behind, but do stray far from their scope."
 }

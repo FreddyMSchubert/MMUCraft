@@ -3,11 +3,11 @@
 	"entity": "minecraft:witch",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 5,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,
 	"maximum": 4,
 	"emoji": "🧙",
 	"name": "Hunt Witches",
-	"description": "Defeat {count} witches."
+	"description": "Defeat {count} witches. Something something that doesn't include the word bitches."
 }

@@ -24,7 +24,7 @@ Inviting an external player costs 250 [Dabloons](/play/knowledge/money-basics).
 For members, inviting an external player only costs 150 [Dabloons](/play/knowledge/money-basics).
 :::
 
-You can invite any amount of external players.
+You can invite any amount of external players. External players must be adults.
 
 :::info
 None of this is needed to play with people from MMU, they can just sign up for free like you did.

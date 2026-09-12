@@ -3,11 +3,11 @@
 	"entity": "minecraft:wither_skeleton",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 0.75,
-	"minimum": 4,
-	"maximum": 10,
+	"baseCost": 10,
+	"rewardPerIteration": 2,
+	"minimum": 1,
+	"maximum": 3,
 	"emoji": "☠️",
 	"name": "Hunt Wither Skeletons",
-	"description": "Defeat {count} wither skeletons."
+	"description": "Defeat {count} wither skeletons. I really love bacon. No wait what's the spelling?"
 }

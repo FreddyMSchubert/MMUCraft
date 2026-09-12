@@ -3,11 +3,11 @@
 	"entity": "minecraft:zombified_piglin",
 	"nether": true,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 7,
 	"rewardPerIteration": 0.5,
 	"minimum": 4,
 	"maximum": 12,
 	"emoji": "🧟",
 	"name": "Hunt Zombified Piglins",
-	"description": "Defeat {count} zombified piglins."
+	"description": "Defeat {count} zombified piglins. This is a fun one, because once you kill the first zombified piglin, the others will all come rushing in for a big group hug!"
 }

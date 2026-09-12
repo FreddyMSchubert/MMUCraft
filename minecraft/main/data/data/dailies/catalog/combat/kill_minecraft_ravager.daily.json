@@ -3,11 +3,11 @@
 	"entity": "minecraft:ravager",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
+	"baseCost": 8,
 	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 3,
 	"emoji": "🐂",
 	"name": "Hunt Ravagers",
-	"description": "Defeat {count} ravagers."
+	"description": "Defeat {count} ravagers. Careful, they are not known for being delicate when dealing with player spines."
 }

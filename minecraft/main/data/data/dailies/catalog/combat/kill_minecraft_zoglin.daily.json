@@ -3,11 +3,11 @@
 	"entity": "minecraft:zoglin",
 	"nether": true,
 	"end": false,
-	"baseCost": 6,
-	"rewardPerIteration": 1.5,
+	"baseCost": 10,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 4,
+	"maximum": 1,
 	"emoji": "🐗",
-	"name": "Hunt Zoglins",
-	"description": "Defeat {count} zoglins. Overworld relocation is one way to find them."
+	"name": "Hunt down a Zoglin",
+	"description": "Defeat a zoglin. You may wonder, 'what's a zoglin?'. Well, killing them is the easy part."
 }

@@ -6,8 +6,8 @@
 	"baseCost": 3,
 	"rewardPerIteration": 0.35,
 	"minimum": 5,
-	"maximum": 15,
+	"maximum": 22,
 	"emoji": "🟩",
 	"name": "Hunt Slimes",
-	"description": "Defeat {count} slimes. The small ones count too. Enjoy the multiplication."
+	"description": "Defeat {count} slimes. If you can't find any, get a slime chunk detector!"
 }

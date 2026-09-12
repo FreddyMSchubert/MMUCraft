@@ -9,5 +9,5 @@
 	"maximum": 6,
 	"emoji": "📦",
 	"name": "Hunt Shulkers",
-	"description": "Defeat {count} shulkers."
+	"description": "Defeat {count} shulkers. I hope they don't teleport away..."
 }

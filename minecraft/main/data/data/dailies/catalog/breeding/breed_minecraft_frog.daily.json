@@ -3,11 +3,11 @@
 	"entity": "minecraft:frog",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 5,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,
 	"maximum": 4,
 	"emoji": "🐸",
 	"name": "Breed Frogs",
-	"description": "Breed {count} frogs."
+	"description": "Breed {count} frogs. Fun fact did you know frogs where at one point able to swallow up players? They should bring that back."
 }

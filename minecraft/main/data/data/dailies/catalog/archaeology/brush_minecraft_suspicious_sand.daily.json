@@ -3,11 +3,11 @@
 	"block": "minecraft:suspicious_sand",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
-	"rewardPerIteration": 1.5,
+	"baseCost": 6,
+	"rewardPerIteration": 0.5,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🖌️",
 	"name": "Brush Suspicious Sand",
-	"description": "Brush suspicious sand {count} times. Brush slowly. Breaking the block gets you nothing."
+	"description": "Brush suspicious sand {count} times. If you do it in a warm ocean ruin, you may even get a sniffer egg!"
 }

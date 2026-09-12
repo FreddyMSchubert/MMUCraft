@@ -3,11 +3,11 @@
 	"block": "minecraft:suspicious_gravel",
 	"nether": false,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 1.25,
+	"baseCost": 7,
+	"rewardPerIteration": 0.5,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🖌️",
 	"name": "Brush Suspicious Gravel",
-	"description": "Brush suspicious gravel {count} times. Brush slowly. Breaking the block gets you nothing."
+	"description": "Brush suspicious gravel {count} times. Maybe you even get a charm boost book."
 }

@@ -45,6 +45,7 @@ export interface KnowledgeUnlockResponse {
 	has_knowledge_to_unlock: boolean;
 	has_charms_to_unlock: boolean;
 	has_cosmetics_to_unlock: boolean;
+	read_reward_dabloons: number;
 }
 
 export interface KnowledgeTipRequest {

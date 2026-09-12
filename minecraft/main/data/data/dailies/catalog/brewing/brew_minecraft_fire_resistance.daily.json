@@ -3,11 +3,11 @@
 	"potion": "minecraft:fire_resistance",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 1.5,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🔥",
 	"name": "Brew Fire Resistance",
-	"description": "Brew {count} potions of Fire Resistance."
+	"description": "Brew a potion of Fire Resistance. Theyre great for exploring the Nether, and for using a Glider without catching on fire when cutting the distance to a heat source a little bit too close."
 }

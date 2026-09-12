@@ -3,11 +3,11 @@
 	"potion": "minecraft:infested",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 1.5,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🪲",
 	"name": "Brew Infestation",
-	"description": "Brew {count} potions of Infestation. For when a normal silverfish problem is not enough."
+	"description": "Brew a potion of Infestation. This is a great potion to drink, to annoy the hell out of your friends that keep hitting you."
 }

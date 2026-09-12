@@ -109,7 +109,7 @@ Stealing from players is not allowed. Trading is. Good luck, try not to get scam
 
 Reading knowledge is supremely useful.
 
-Beyond that, it is also a great monetary choice, because each read knowledge book gives you 3 dabloons.
+Beyond that, it is also a great monetary choice, because each unlocked knowledge book gives you 2 dabloons when you mark it as read.
 
 ### 6. **Gift Codes**
 

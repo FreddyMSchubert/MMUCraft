@@ -6,8 +6,8 @@
 	"baseCost": 4,
 	"rewardPerIteration": 2,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 4,
 	"emoji": "🐢",
 	"name": "Breed Turtles",
-	"description": "Breed one turtle. They only lay eggs on their home beach."
+	"description": "Breed {count} turtles. They're just the cutest, aren't they? I love them."
 }

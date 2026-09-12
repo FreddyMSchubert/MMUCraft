@@ -168,7 +168,7 @@ export function KnowledgeTab({
 	}, [searchQuery, showingSearch]);
 
 	const markRead = useCallback(async () => {
-		if (!activePage?.unlocked || markingRead) return;
+		if (!activePage?.unlocked || activePage.unlockedByDefault || markingRead) return;
 		setMarkingRead(true);
 		setError('');
 		try {
@@ -429,27 +429,29 @@ export function KnowledgeTab({
 										className="knowledgePage"
 										dangerouslySetInnerHTML={{ __html: renderedHtml }}
 									/>
-									<button
-										type="button"
-										className="knowledgeReadButton"
-										onClick={() => void markRead()}
-										disabled={readPageIds.has(activePage.id) || markingRead}
-									>
-										{readPageIds.has(activePage.id) ? (
-											'Read'
-										) : markingRead ? (
-											'Marking…'
-										) : (
-											<>
-												Mark as read{' '}
-												<DabloonAmount
-													amount={3}
-													format="delta"
-													tone="inherit"
-												/>
-											</>
-										)}
-									</button>
+									{!activePage.unlockedByDefault && (
+										<button
+											type="button"
+											className="knowledgeReadButton"
+											onClick={() => void markRead()}
+											disabled={readPageIds.has(activePage.id) || markingRead}
+										>
+											{readPageIds.has(activePage.id) ? (
+												'Read'
+											) : markingRead ? (
+												'Marking…'
+											) : (
+												<>
+													Mark as read{' '}
+													<DabloonAmount
+														amount={data.readRewardDabloons}
+														format="delta"
+														tone="inherit"
+													/>
+												</>
+											)}
+										</button>
+									)}
 								</>
 							) : (
 								<div className="knowledgeLocked" role="status">
@@ -650,7 +652,7 @@ function KnowledgeSelectOptions({
 
 		return (
 			<option key={entry.id} value={entry.id}>
-				{`${indent}${entry.id === 'money-basics' ? entry.sidebarTitle : dabloonizeWords(entry.sidebarTitle)}${readPageIds.has(entry.id) ? '' : ' ❗'}`}
+				{`${indent}${entry.id === 'money-basics' ? entry.sidebarTitle : dabloonizeWords(entry.sidebarTitle)}${entry.unlockedByDefault || readPageIds.has(entry.id) ? '' : ' ❗'}`}
 			</option>
 		);
 	});

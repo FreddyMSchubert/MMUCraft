@@ -152,6 +152,17 @@ test('trust boundaries reject invalid input and insufficient privilege', async (
 		expect(gift.status()).toBe(400);
 	});
 
+	await test.step('Reject marking public knowledge as read', async () => {
+		const response = await request.post('/api/knowledge/read', {
+			headers: memberCookie,
+			data: { knowledgeId: 'money-basics' },
+		});
+		expect(response.status()).toBe(400);
+		expect(await response.json()).toMatchObject({
+			message: 'Public knowledge pages cannot be marked as read.',
+		});
+	});
+
 	await test.step('Reject committee endpoints for a regular member', async () => {
 		const committee = await request.get('/api/admin/players', { headers: memberCookie });
 		const superAdmin = await request.patch('/api/admin/players/3/committee', {

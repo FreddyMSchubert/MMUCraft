@@ -9,5 +9,5 @@
 	"maximum": 8,
 	"emoji": "🐄",
 	"name": "Breed Cows",
-	"description": "Breed {count} cows."
+	"description": "Breed {count} cows. And enthusiastically say 'Moo' out loud as you do it, that is required, it won't work otherwise."
 }

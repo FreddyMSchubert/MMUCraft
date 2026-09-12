@@ -3,11 +3,11 @@
 	"entity": "minecraft:bee",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 0.75,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "🐝",
 	"name": "Breed Bees",
-	"description": "Breed {count} bees."
+	"description": "Breed {count} bees. The manchester bee looks like a wasp tho."
 }

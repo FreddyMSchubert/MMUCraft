@@ -47,9 +47,9 @@ public class KnowledgeBookCharm implements Charm, UseCallbackCharm {
             if (response.getUnlocked()) {
                 message = message.copy()
 						.append(Component.literal(" "))
-						.append(WebsiteCommand.takeMeThere("knowledge/" + response.getKnowledgeId(), "Read it", ChatFormatting.GOLD))
+                        .append(WebsiteCommand.takeMeThere("knowledge/" + response.getKnowledgeId(), "Read it", ChatFormatting.GOLD))
                         .append(Component.literal(" for "))
-                        .append(MoneyHelper.FormatDabloons(3).withStyle(ChatFormatting.GREEN))
+                        .append(MoneyHelper.FormatDabloons(response.getReadRewardDabloons()).withStyle(ChatFormatting.GREEN))
                         .append(Component.literal(". "));
             }
             player.sendSystemMessage(message);

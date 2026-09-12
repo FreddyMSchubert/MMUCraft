@@ -3,11 +3,11 @@
 	"entity": "minecraft:rabbit",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 1.25,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🐇",
 	"name": "Breed Rabbits",
-	"description": "Breed {count} rabbits. Try not to finish with two hundred."
+	"description": "Breed {count} rabbits. On an unrelated note, ubisoft sucks."
 }

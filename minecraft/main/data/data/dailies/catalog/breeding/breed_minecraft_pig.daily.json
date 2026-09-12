@@ -3,11 +3,11 @@
 	"entity": "minecraft:pig",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
+	"baseCost": 2,
 	"rewardPerIteration": 1,
-	"minimum": 4,
-	"maximum": 8,
+	"minimum": 3,
+	"maximum": 10,
 	"emoji": "🐖",
 	"name": "Breed Pigs",
-	"description": "Breed {count} pigs."
+	"description": "Breed {count} pigs. Pigs are known for their intelligence and social behavior, being more intelligent than dogs and cats."
 }

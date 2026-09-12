@@ -233,6 +233,8 @@ export class GameplayGrpcService implements OnModuleInit {
 			has_knowledge_to_unlock: availability.knowledge,
 			has_charms_to_unlock: availability.charms,
 			has_cosmetics_to_unlock: availability.cosmetics,
+			read_reward_dabloons:
+				unlockType === 'knowledge' ? this.knowledge.readRewardDabloons : 0,
 		});
 	}
 

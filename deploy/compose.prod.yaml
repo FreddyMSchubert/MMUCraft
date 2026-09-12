@@ -58,11 +58,19 @@ services:
       - ./backups:/backups
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=256m,mode=1777
+    expose:
+      - "8080"
     depends_on:
       api:
         condition: service_healthy
       minecraft:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8080/metrics.txt"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 1m
     mem_limit: 512m
     mem_reservation: 128m
     memswap_limit: 512m
@@ -99,6 +107,9 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=1y
       - --log.level=warn
+    depends_on:
+      backup:
+        condition: service_healthy
     mem_limit: 1g
     mem_reservation: 256m
     memswap_limit: 1g

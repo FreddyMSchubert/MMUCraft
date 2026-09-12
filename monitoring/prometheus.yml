@@ -13,6 +13,12 @@ scrape_configs:
     static_configs:
       - targets: ["api:8080"]
 
+  - job_name: backup
+    scrape_interval: 30s
+    metrics_path: /metrics.txt
+    static_configs:
+      - targets: ["backup:8080"]
+
   - job_name: cadvisor
     static_configs:
       - targets: ["cadvisor:8080"]

@@ -140,7 +140,7 @@ const seed = database.transaction(() => {
 		.prepare(
 			`INSERT INTO shop_unlocks (
 				user_id, item_id, unlock_type, unlocked_at_unix_ms, source
-			) VALUES (2, 'charm-slime-detector', 'charm', ?, 'playwright-fixture')
+			) VALUES (2, 'charm-kitty-pajamas', 'charm', ?, 'playwright-fixture')
 			ON CONFLICT(user_id, item_id) DO UPDATE SET
 				unlock_type = excluded.unlock_type,
 				unlocked_at_unix_ms = excluded.unlocked_at_unix_ms,

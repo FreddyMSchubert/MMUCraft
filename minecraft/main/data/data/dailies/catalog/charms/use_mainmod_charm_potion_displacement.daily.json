@@ -3,11 +3,11 @@
 	"charm": "mainmod:charm-potion-displacement",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
-	"rewardPerIteration": 3,
+	"baseCost": 5,
+	"rewardPerIteration": 0.75,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 8,
 	"emoji": "🧪",
-	"name": "Use a Potion of Displacement",
-	"description": "Use a Potion of Displacement. Drink it somewhere you do not mind leaving."
+	"name": "Drink a Potion of Displacement",
+	"description": "Let's go visit the world! Drink {{count}} potions of Displacement. I'm sure you'll find all sorts of fun stuff beyond the horizon!"
 }

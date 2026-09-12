@@ -3,11 +3,11 @@
 	"potion": "minecraft:turtle_master",
 	"nether": true,
 	"end": false,
-	"baseCost": 8,
-	"rewardPerIteration": 3,
+	"baseCost": 10,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 2,
+	"maximum": 1,
 	"emoji": "🐢",
-	"name": "Brew the Turtle Master",
-	"description": "Brew {count} potions of the Turtle Master. Slow, tough, and expensive. Accurate name."
+	"name": "Brew of the Turtle Master",
+	"description": "Brew a potion of the Turtle Master. Who is the turtle master? What does mastering turtles even mean? Is there a turtle mistress? Am I attracted to turtles? So many questions."
 }

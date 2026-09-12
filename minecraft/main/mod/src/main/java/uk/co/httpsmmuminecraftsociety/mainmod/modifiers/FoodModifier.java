@@ -48,7 +48,7 @@ public class FoodModifier
         put(Items.GLOW_BERRIES,      1.5F, 1.5F, 0, 64);
         put(Items.POTATO,            1.0F, 1.0F, 0, 64);
         put(Items.APPLE,             1.5F, 1.5F, 0, 64);
-        put(Items.CARROT,            1.5F, 1.5F, 0, 69);
+        put(Items.CARROT,            1.5F, 1.5F, 0, 64);
         put(Items.BREAD,             2.0F, 2.0F, 0, 64);
 
         // raw meats / fish
@@ -62,9 +62,9 @@ public class FoodModifier
         put(Items.RABBIT,            1.5F, 1.5F, 0, 64);
 
         // cooked singles: solid staples, not premium
-        put(Items.BAKED_POTATO,      2.5F, 2.0F, 0, 64);
+        put(Items.BAKED_POTATO,      2.5F, 2.0F, 0, 69);
         put(Items.COOKED_COD,        2.5F, 2.0F, 0, 64);
-        put(Items.COOKED_CHICKEN,    3.0F, 2.5F, 0, 64);
+        put(Items.COOKED_CHICKEN,    3.0F, 2.5F, 0, 46);
         put(Items.COOKED_RABBIT,     3.5F, 3.0F, 0, 64);
         put(Items.COOKED_SALMON,     2.5F, 3.0F, 0, 64);
         put(Items.COOKED_MUTTON,     3.0F, 3.0F, 0, 64);

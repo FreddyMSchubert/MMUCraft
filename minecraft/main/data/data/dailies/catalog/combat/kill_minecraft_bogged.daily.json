@@ -3,11 +3,11 @@
 	"entity": "minecraft:bogged",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 5,
 	"rewardPerIteration": 1,
 	"minimum": 3,
 	"maximum": 7,
 	"emoji": "🏹",
 	"name": "Hunt Bogged",
-	"description": "Defeat {count} bogged."
+	"description": "Defeat {count} bogged. Shear them before you kill them for free mushrooms."
 }

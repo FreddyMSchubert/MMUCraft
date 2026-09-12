@@ -19,6 +19,8 @@ tips:
 
 # Society Rules
 
+*... yeah it does*
+
 These are the rules every player reads and accepts when creating their account. They apply throughout the MMU Minecraft Society, including the Minecraft server, Discord, events, and other Society spaces.
 
 1. 👿 **Hate and prejudice, NSFW content, criminal behaviour and discussion are prohibited.**

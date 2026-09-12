@@ -3,11 +3,11 @@
 	"potion": "minecraft:poison",
 	"nether": true,
 	"end": false,
-	"baseCost": 4,
-	"rewardPerIteration": 1.25,
+	"baseCost": 8,
+	"rewardPerIteration": 1,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "☠️",
 	"name": "Brew Poison",
-	"description": "Brew {count} potions of Poison."
+	"description": "Brew a potion of Poison. Totally don't mix some gun powder into it and throw it at people. That would be a terrible idea, and you should never do that.......... 👀"
 }

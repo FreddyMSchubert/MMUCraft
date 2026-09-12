@@ -24,7 +24,8 @@ public class CharmEnchanting
     public static final List<Triple<String, Boolean, ResourceKey<Enchantment>>> fakeItemEnchantModifications = List.of(
         Triple.of("charm-wallet", true, ModEnchantments.SOULBOUND),
         Triple.of("charm-glider", true, ModEnchantments.SOULBOUND),
-        Triple.of("charm-glider", false, Enchantments.MENDING)
+        Triple.of("charm-glider", false, Enchantments.MENDING),
+        Triple.of("charm-glider", false, Enchantments.UNBREAKING)
     );
     public static final List<Triple<Item, Boolean, ResourceKey<Enchantment>>> vanillaEnchantModifications = List.of(
             Triple.of(Items.RECOVERY_COMPASS, true, ModEnchantments.SOULBOUND)

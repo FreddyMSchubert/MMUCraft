@@ -3,11 +3,11 @@
 	"potion": "minecraft:regeneration",
 	"nether": true,
 	"end": false,
-	"baseCost": 6,
-	"rewardPerIteration": 2.5,
+	"baseCost": 9,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "💞",
 	"name": "Brew Regeneration",
-	"description": "Brew {count} potions of Regeneration."
+	"description": "Brew a potion of Regeneration. Do not think about the sad creature living out their life in agony drained of water you killed to get it. Ethically not concerning at all."
 }

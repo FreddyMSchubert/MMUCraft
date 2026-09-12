@@ -3,11 +3,11 @@
 	"entity": "minecraft:creeper",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
+	"baseCost": 2,
 	"rewardPerIteration": 0.75,
-	"minimum": 6,
+	"minimum": 8,
 	"maximum": 12,
 	"emoji": "💥",
 	"name": "Hunt Creepers",
-	"description": "Defeat {count} creepers."
+	"description": "Defeat {count} creepers. All they ever wanted was a hug. Stab them."
 }

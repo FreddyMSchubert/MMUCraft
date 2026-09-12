@@ -23,7 +23,7 @@ tips:
 
 # Gliders
 
-Gliders are kinda like elytra - with some critical upsides and downsides to them. (Don't worry, they're still super useful.). (Don't worry, you can still get a normal elytra item once you're in the end.).
+Gliders are kinda like elytra - with some critical upsides and downsides to them, because gliders are lighter but less stable. (Don't worry, they're still super useful.). (Don't worry, you can still get a normal elytra item once you're in the end.).
 
 ## The Upsides
 

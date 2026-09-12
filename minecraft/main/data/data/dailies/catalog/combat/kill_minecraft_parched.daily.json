@@ -3,11 +3,11 @@
 	"entity": "minecraft:parched",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 1.25,
 	"minimum": 2,
 	"maximum": 5,
 	"emoji": "🏜️",
 	"name": "Hunt Parched",
-	"description": "Defeat {count} parched."
+	"description": "Defeat {count} parched. These are quite nasty, skeletons did not need an upgrade imo."
 }

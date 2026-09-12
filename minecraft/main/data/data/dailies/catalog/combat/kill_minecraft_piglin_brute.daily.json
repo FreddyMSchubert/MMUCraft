@@ -4,10 +4,10 @@
 	"nether": true,
 	"end": false,
 	"baseCost": 7,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 3,
 	"emoji": "🪓",
 	"name": "Clear Piglin Brutes",
-	"description": "Defeat {count} piglin brutes. Gold armour will not charm these ones."
+	"description": "Defeat {count} piglin brutes. I don't think bling bling from some gold armor will help you much with these fellas."
 }

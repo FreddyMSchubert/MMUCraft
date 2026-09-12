@@ -10,23 +10,28 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FishMeatFishermanTrades;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LecternLibrarianTrades;
 
 @Mixin(Villager.class)
-public abstract class LibrarianEnchantedBookTradesMixin extends AbstractVillager {
-    protected LibrarianEnchantedBookTradesMixin(EntityType<? extends AbstractVillager> entityType, Level level) {
+public abstract class VillagerTradesMixin extends AbstractVillager {
+    protected VillagerTradesMixin(EntityType<? extends AbstractVillager> entityType, Level level) {
         super(entityType, level);
     }
 
     @Inject(method = "updateTrades", at = @At("RETURN"))
-    private void removeGeneratedEnchantedBookTrades(ServerLevel level, CallbackInfo ci) {
-        LecternLibrarianTrades.syncOffers((Villager) (Object) this, level);
+    private void modifyGeneratedTrades(ServerLevel level, CallbackInfo ci) {
+        Villager villager = (Villager) (Object) this;
+        LecternLibrarianTrades.syncOffers(villager, level);
+        FishMeatFishermanTrades.appendOffers(villager);
     }
 
     @Inject(method = "startTrading", at = @At("HEAD"))
     private void refreshLecternBookTrade(Player player, CallbackInfo ci) {
         if (this.level() instanceof ServerLevel serverLevel) {
-            LecternLibrarianTrades.syncOffers((Villager) (Object) this, serverLevel);
+            Villager villager = (Villager) (Object) this;
+            LecternLibrarianTrades.syncOffers(villager, serverLevel);
+            FishMeatFishermanTrades.appendOffers(villager);
         }
     }
 }

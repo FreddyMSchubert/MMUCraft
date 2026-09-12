@@ -3,11 +3,11 @@
 	"entity": "minecraft:ghast",
 	"nether": true,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 6,
 	"rewardPerIteration": 1.25,
 	"minimum": 2,
 	"maximum": 5,
 	"emoji": "👻",
 	"name": "Hunt Ghasts",
-	"description": "Defeat {count} ghasts."
+	"description": "Defeat {count} ghasts. These poor creatures from the nether, you really have to relieve them of their misery."
 }

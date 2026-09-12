@@ -3,11 +3,11 @@
 	"entity": "minecraft:hoglin",
 	"nether": true,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 5,
 	"rewardPerIteration": 0.75,
 	"minimum": 3,
 	"maximum": 7,
 	"emoji": "🐗",
 	"name": "Hunt Hoglins",
-	"description": "Defeat {count} hoglins."
+	"description": "Defeat {count} hoglins. Did the pigs get into the nether somehow, then mutate? Why? Someone call matpat i need THE LORE."
 }

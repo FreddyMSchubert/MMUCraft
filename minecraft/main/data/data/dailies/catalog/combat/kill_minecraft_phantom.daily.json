@@ -3,11 +3,11 @@
 	"entity": "minecraft:phantom",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
-	"rewardPerIteration": 1,
-	"minimum": 2,
-	"maximum": 6,
+	"baseCost": 13,
+	"rewardPerIteration": 0,
+	"minimum": 4,
+	"maximum": 4,
 	"emoji": "🌙",
 	"name": "Hunt Phantoms",
-	"description": "Defeat {count} phantoms."
+	"description": "Defeat {count} phantoms. If you're waiting for some to appear after you haven't slept for a while, you'll be waiting forever. Better get back to reading your knowledge pages."
 }

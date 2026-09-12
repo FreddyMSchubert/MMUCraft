@@ -204,7 +204,7 @@ write_metrics() {
 
 start_metrics_server() {
 	write_metrics
-	busybox httpd -f -p 8080 -h "$metrics_dir" &
+	httpd -f -p 8080 -h "$metrics_dir" &
 	metrics_server_pid=$!
 }
 

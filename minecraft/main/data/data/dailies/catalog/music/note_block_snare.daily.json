@@ -5,9 +5,9 @@
 	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.075,
-	"minimum": 40,
+	"minimum": 20,
 	"maximum": 80,
 	"emoji": "🥁",
 	"name": "Snare Notes",
-	"description": "Play {count} snare notes. Your neighbours have been warned."
+	"description": "Play {count} snare notes. Ready for a drum solo?"
 }

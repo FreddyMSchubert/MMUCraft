@@ -5,9 +5,9 @@
 	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 0.05,
-	"minimum": 40,
+	"minimum": 20,
 	"maximum": 80,
 	"emoji": "🎺",
 	"name": "Copper Trumpet Notes",
-	"description": "Play {count} copper-trumpet notes. Wake spawn up."
+	"description": "Play {count} copper-trumpet notes. Sounds like a fart #lol #epic."
 }

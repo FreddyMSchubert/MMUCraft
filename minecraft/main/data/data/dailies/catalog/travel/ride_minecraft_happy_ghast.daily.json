@@ -3,11 +3,11 @@
 	"vehicle": "minecraft:happy_ghast",
 	"nether": true,
 	"end": false,
-	"baseCost": 10,
-	"rewardPerIteration": 0.006,
-	"minimum": 400,
-	"maximum": 1000,
+	"baseCost": 0,
+	"rewardPerIteration": 0.1,
+	"minimum": 50,
+	"maximum": 250,
 	"emoji": "😊",
 	"name": "Ride a Happy Ghast",
-	"description": "Ride a happy ghast for {count} blocks. Four seats. Fill them."
+	"description": "Ride a happy ghast for {count} blocks. Yeah man, I love moving at like 3 blocks per second"
 }

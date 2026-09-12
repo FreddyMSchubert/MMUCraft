@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:minecart",
+	"nether": false,
+	"end": false,
+	"baseCost": 100,
+	"rewardPerIteration": 0,
+	"minimum": 72000,
+	"maximum": 72000,
+	"emoji": "🛤️",
+	"name": "Ride a Minecart around the world",
+	"description": "Ride a minecart for 72,000 blocks (riding in a circle counts). Riding at max speed, that's one whole hour of minecart riding fun! - Getting this daily is super duper rare, if you got this, please send it on the discord :3"
+}

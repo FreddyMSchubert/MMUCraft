@@ -5,9 +5,9 @@
 	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 0.05,
-	"minimum": 40,
+	"minimum": 20,
 	"maximum": 80,
 	"emoji": "🪕",
 	"name": "Banjo Notes",
-	"description": "Play {count} banjo notes. The server has entered its country phase."
+	"description": "Play {count} banjo notes. gadagadigadagado, amirite fellow kids?"
 }

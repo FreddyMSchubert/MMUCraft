@@ -9,5 +9,5 @@
 	"maximum": 8,
 	"emoji": "💨",
 	"name": "Use Wind Charges",
-	"description": "Use {count} wind charges. Misfires still count."
+	"description": "Pass wind {count} times."
 }

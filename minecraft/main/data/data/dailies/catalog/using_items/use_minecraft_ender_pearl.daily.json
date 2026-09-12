@@ -3,11 +3,11 @@
 	"item": "minecraft:ender_pearl",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
-	"rewardPerIteration": 0.75,
-	"minimum": 4,
-	"maximum": 8,
+	"baseCost": 5,
+	"rewardPerIteration": 0.5,
+	"minimum": 3,
+	"maximum": 16,
 	"emoji": "🟢",
 	"name": "Throw Ender Pearls",
-	"description": "Throw {count} ender pearls. Fall damage is included in the experience."
+	"description": "Throw {count} ender pearls. You might just get a mite #minecraftjokes."
 }

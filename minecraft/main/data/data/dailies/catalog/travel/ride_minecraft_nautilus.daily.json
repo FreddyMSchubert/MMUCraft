@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 6,
-	"rewardPerIteration": 0.015,
-	"minimum": 150,
+	"rewardPerIteration": 0.02,
+	"minimum": 100,
 	"maximum": 500,
 	"emoji": "🐚",
 	"name": "Ride a Nautilus",
-	"description": "Ride a nautilus for {count} blocks."
+	"description": "Ride a nautilus for {count} blocks. A bit friendlier than its zombified relative."
 }

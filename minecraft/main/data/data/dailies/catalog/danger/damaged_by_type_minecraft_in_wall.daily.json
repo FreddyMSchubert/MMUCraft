@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 0,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 6,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🧱",
 	"name": "Get Hurt by Suffocation",
-	"description": "Take damage from suffocation without dying."
+	"description": "Mhmmm so this is what gravel tastes like, quite delicious."
 }

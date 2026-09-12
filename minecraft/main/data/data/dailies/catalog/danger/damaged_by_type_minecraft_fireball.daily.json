@@ -3,11 +3,11 @@
 	"damageType": "minecraft:fireball",
 	"nether": true,
 	"end": false,
-	"baseCost": 4,
+	"baseCost": 5,
 	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🔥",
 	"name": "Get Hurt by a Fireball",
-	"description": "Take damage from a fireball without dying."
+	"description": "I CAME IN LIKE A FIRE BALLLLLLLL... I NEVER HIT SO HARD IN LOVE!!!!! 📣📣📣📣📣📣"
 }

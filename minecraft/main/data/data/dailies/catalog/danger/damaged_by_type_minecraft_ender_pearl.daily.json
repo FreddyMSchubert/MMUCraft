@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 0,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🟢",
 	"name": "Get Hurt by an Ender Pearl",
-	"description": "Take damage from an ender pearl without dying."
+	"description": "How can ender pearls hurt you you ask? Good luck."
 }

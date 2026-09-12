@@ -3,11 +3,11 @@
 	"damageType": "minecraft:fall",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 3,
+	"baseCost": 3,
+	"rewardPerIteration": 1,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 5,
 	"emoji": "🪂",
 	"name": "Get Hurt by a Fall",
-	"description": "Take damage from a fall without dying."
+	"description": "Take fall damage but do not die. You can basically become a minecraft stuntman. How high can you drop from without dying?"
 }

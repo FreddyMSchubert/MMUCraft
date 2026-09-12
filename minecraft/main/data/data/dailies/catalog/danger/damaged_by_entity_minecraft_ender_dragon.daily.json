@@ -3,11 +3,11 @@
 	"entity": "minecraft:ender_dragon",
 	"nether": false,
 	"end": true,
-	"baseCost": 12,
+	"baseCost": 5,
 	"rewardPerIteration": 3,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐉",
 	"name": "Get Hurt by the Ender Dragon",
-	"description": "Take damage from the Ender Dragon without dying. Being launched also counts as travel. Briefly."
+	"description": "If you can, get damaged by being launched, which is the best way to take ender dragon damage. Wheeeeeeee!"
 }

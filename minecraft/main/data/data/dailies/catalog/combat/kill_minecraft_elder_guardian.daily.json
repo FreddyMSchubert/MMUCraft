@@ -9,5 +9,5 @@
 	"maximum": 3,
 	"emoji": "🐟",
 	"name": "Defeat Elder Guardians",
-	"description": "Defeat {{count}} elder guardians. Once they're dead, they'll even drop a trident prongue - with three of them you can make yourself a trident."
+	"description": "Defeat {count} elder guardians. Once they're dead, they'll even drop a trident prongue - with three of them you can make yourself a trident."
 }

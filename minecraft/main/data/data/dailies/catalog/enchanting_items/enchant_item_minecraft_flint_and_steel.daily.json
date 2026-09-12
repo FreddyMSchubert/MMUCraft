@@ -3,11 +3,11 @@
 	"itemType": "minecraft:flint_and_steel",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
-	"rewardPerIteration": 0.75,
-	"minimum": 3,
-	"maximum": 5,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "🔥",
-	"name": "Enchant Flint and Steel",
-	"description": "Enchant {count} flint and steels."
+	"name": "Magic Flint and Steel",
+	"description": "Enchant a flint and steel."
 }

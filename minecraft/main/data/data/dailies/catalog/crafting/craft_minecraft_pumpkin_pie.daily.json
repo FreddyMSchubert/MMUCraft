@@ -3,11 +3,11 @@
 	"item": "minecraft:pumpkin_pie",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
+	"baseCost": 2,
 	"rewardPerIteration": 0.5,
 	"minimum": 6,
 	"maximum": 12,
 	"emoji": "🥧",
 	"name": "Craft Pumpkin Pies",
-	"description": "Craft {count} pumpkin pies. The stack will disappear faster than the task took."
+	"description": "Craft {count} pumpkin pies. They actually make for better food sources on this server, they're a lot more filling. They make for great compost."
 }

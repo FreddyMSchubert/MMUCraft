@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 6,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 4,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🪄",
-	"name": "Get Hurt by an Evoker",
-	"description": "Take damage from an evoker without dying."
+	"name": "Wololo!",
+	"description": "Get Hurt by an Evoker"
 }

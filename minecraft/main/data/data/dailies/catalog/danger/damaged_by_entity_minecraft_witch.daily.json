@@ -8,6 +8,6 @@
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🧙",
-	"name": "Get Hurt by a Witch's Harming Potion",
-	"description": "Take damage from a witch's harming potion without dying. The witch has to land the throw. Be cooperative."
+	"name": "Get Hurt by a Witch",
+	"description": "It doesn't need to hit you with a melee attack, getting hit by one of its harming potions will also suffice."
 }

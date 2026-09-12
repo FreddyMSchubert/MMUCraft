@@ -3,11 +3,11 @@
 	"item": "minecraft:note_block",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 1,
+	"baseCost": 3,
+	"rewardPerIteration": 0.5,
 	"minimum": 3,
 	"maximum": 6,
 	"emoji": "🎵",
 	"name": "Craft Note Blocks",
-	"description": "Craft {count} note blocks. One note is noise. A few can be a doorbell."
+	"description": "Craft {count} note blocks. Great for jumpscares if you place a head on it. Placing a copper block below it will get it to make fart sounds. Or you could design a little tune that plays whenever you enter your home."
 }

@@ -3,11 +3,11 @@
 	"effect": "minecraft:water_breathing",
 	"nether": true,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 7,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🌊",
-	"name": "Get Water Breathing",
-	"description": "Get Water Breathing. Use the full duration for once."
+	"name": "Get the Water Breathing effect",
+	"description": "Get Water Breathing. You're perfectly prepared to take on ocean monuments, or find a sniffer egg in a warm ocean ruin."
 }

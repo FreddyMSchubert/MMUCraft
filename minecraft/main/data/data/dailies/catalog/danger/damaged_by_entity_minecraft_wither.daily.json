@@ -4,10 +4,10 @@
 	"nether": true,
 	"end": false,
 	"baseCost": 12,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "☠️",
 	"name": "Get Hurt by the Wither",
-	"description": "Take damage from the Wither without dying. Wither damage after the fight does not care about victory."
+	"description": "Try not to wither away."
 }

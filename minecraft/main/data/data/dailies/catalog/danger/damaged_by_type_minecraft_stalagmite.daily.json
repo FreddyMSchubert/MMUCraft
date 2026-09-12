@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 1,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 6,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "📍",
 	"name": "Get Hurt by a Stalagmite",
-	"description": "Take damage from a stalagmite without dying."
+	"description": "If you're unsure which is which, just try both..."
 }

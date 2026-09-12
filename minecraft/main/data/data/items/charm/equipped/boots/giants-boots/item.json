@@ -14,7 +14,7 @@
 		"description": "Grants the power of the ancient giants while equipped.",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked charm: Giants Boots Charm. It does... peculiar things.",
-		"gameplayToggle": "humorous"
+		"gameplayToggle": "circus"
 	},
 	"charm": {
 		"charmId": 12,

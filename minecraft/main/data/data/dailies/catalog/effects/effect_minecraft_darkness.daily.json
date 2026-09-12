@@ -3,11 +3,11 @@
 	"effect": "minecraft:darkness",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
+	"baseCost": 8,
 	"rewardPerIteration": 1,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🌑",
-	"name": "Get Darkness",
-	"description": "Get Darkness. Turning up the brightness is between you and your conscience."
+	"name": "Get the Darkness effect",
+	"description": "Get Darkness. Annoyingly, the only way to get darkness is a bit murder-y."
 }

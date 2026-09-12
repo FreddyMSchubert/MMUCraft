@@ -3,11 +3,11 @@
 	"item": "minecraft:blue_banner",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 1.5,
-	"minimum": 2,
-	"maximum": 5,
+	"baseCost": 5,
+	"rewardPerIteration": 0,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "🚩",
-	"name": "Craft Blue Banners",
-	"description": "Craft {count} blue banners. Blue is a start, not a design."
+	"name": "Craft a Blue Banner",
+	"description": "Craft a blue banner. Why not keep playing around with more layers you could add while you're at it?"
 }

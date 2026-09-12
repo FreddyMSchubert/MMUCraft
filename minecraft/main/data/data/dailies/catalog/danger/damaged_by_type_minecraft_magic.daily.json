@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 2,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🪄",
 	"name": "Get Hurt by Magic",
-	"description": "Take damage from magic without dying."
+	"description": "What a mystifyingly unclear"
 }

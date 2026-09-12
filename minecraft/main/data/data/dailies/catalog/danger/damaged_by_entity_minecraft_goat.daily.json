@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 4,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐐",
 	"name": "Get Hurt by a Goat's Ram",
-	"description": "Take damage from a goat's ram without dying. Stand still and let the goat reconsider you."
+	"description": "Get rammed."
 }

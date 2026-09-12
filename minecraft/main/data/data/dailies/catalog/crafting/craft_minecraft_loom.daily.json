@@ -3,11 +3,11 @@
 	"item": "minecraft:loom",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
+	"baseCost": 1,
 	"rewardPerIteration": 0.75,
 	"minimum": 4,
-	"maximum": 7,
+	"maximum": 6,
 	"emoji": "🧶",
 	"name": "Craft Looms",
-	"description": "Craft {count} looms."
+	"description": "Craft {count} looms. If you spend some time coming up with a cool banner design, it can be your flag! You can put it around your base and wear it on your shield."
 }

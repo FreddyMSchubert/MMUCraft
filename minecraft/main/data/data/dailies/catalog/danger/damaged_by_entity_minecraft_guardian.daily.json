@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 4,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 4,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🔱",
-	"name": "Get Hurt by a Guardian",
-	"description": "Take damage from a guardian without dying."
+	"name": "Breath of the Wild Guardian Music still gives me nightmares",
+	"description": "Get Hurt by a Guardian"
 }

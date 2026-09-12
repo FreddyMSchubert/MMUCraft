@@ -4,16 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Sorry, we ran out of flakes"
-	],
+	"tooltips": ["Sorry, we ran out of flakes"],
 	"shopPurchasable": {
 		"membersOnly": true,
-	"priceDabloons": 100,
+		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Ice Cream Hat.",
-		"gameplayToggle": "humorous"
+		"gameplayToggle": "circus"
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

@@ -3,11 +3,11 @@
 	"itemType": "#minecraft:spears",
 	"nether": false,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 2,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🔱",
-	"name": "Enchant Spears",
-	"description": "Enchant {count} spears."
+	"name": "Magic Spears",
+	"description": "Enchant a spear."
 }

@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 3,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐻‍❄️",
 	"name": "Get Hurt by a Polar Bear",
-	"description": "Take damage from a polar bear without dying."
+	"description": "Polar Bears were added after a request from Jeb's wife. I don't like Jeb's wife."
 }

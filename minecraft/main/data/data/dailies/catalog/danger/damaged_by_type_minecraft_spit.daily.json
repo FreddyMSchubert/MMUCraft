@@ -3,11 +3,11 @@
 	"damageType": "minecraft:spit",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 5,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🦙",
 	"name": "Get Hurt by Llama Spit",
-	"description": "Take damage from llama spit without dying. You had to annoy it first."
+	"description": "Disgusting."
 }

@@ -3,11 +3,11 @@
 	"item": "minecraft:trapped_chest",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
+	"baseCost": 2,
 	"rewardPerIteration": 1.25,
 	"minimum": 3,
 	"maximum": 6,
 	"emoji": "📦",
 	"name": "Craft Trapped Chests",
-	"description": "Craft {count} trapped chests. A prank is only funny if the victim survives."
+	"description": "Craft {count} trapped chests. ITS A TRAP!"
 }

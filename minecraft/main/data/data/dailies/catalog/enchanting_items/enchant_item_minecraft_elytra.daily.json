@@ -3,11 +3,11 @@
 	"itemType": "minecraft:elytra",
 	"nether": false,
 	"end": true,
-	"baseCost": 10,
-	"rewardPerIteration": 3,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🪽",
-	"name": "Enchant an Elytra",
-	"description": "Enchant an elytra. Check for Curse of Vanishing before you get attached."
+	"name": "Magic Elytra",
+	"description": "Enchant an elytra."
 }

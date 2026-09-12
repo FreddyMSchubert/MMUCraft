@@ -3,11 +3,11 @@
 	"entity": "minecraft:parched",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
-	"rewardPerIteration": 2,
+	"baseCost": 4,
+	"rewardPerIteration": 1,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 10,
 	"emoji": "🏜️",
 	"name": "Get Hurt by a Parched",
-	"description": "Take damage from a parched without dying."
+	"description": "Parched are wretched creatures born from hell and yes im salty cause they just killed me 5 times in a row yesterday sdofjas;odfjh oa;ijfl;mzasof"
 }

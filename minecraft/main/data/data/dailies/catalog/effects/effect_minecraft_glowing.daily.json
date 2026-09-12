@@ -3,11 +3,11 @@
 	"effect": "minecraft:glowing",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
+	"baseCost": 5,
 	"rewardPerIteration": 2.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "✨",
-	"name": "Get Glowing",
-	"description": "Get Glowing. At least everyone can find you now."
+	"name": "Get the Glowing effect",
+	"description": "Get Glowing. Fun fact, this effect isn't even in Bedrock Edition."
 }

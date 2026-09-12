@@ -3,11 +3,11 @@
 	"effect": "minecraft:night_vision",
 	"nether": true,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 53,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "👁️",
-	"name": "Get Night Vision",
-	"description": "Get Night Vision. Go somewhere that was actually dark."
+	"name": "Get the Night Vision effect",
+	"description": "Get Night Vision. See no difference? Then turn off fullbright, you cheater!"
 }

@@ -3,11 +3,11 @@
 	"effect": "minecraft:wither",
 	"nether": true,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 8,
 	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "☠️",
-	"name": "Get Wither",
-	"description": "Get Wither and survive it."
+	"name": "Get the Wither effect",
+	"description": "But don't wither away..."
 }

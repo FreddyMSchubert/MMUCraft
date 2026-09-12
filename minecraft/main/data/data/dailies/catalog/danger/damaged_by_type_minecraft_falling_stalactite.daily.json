@@ -3,11 +3,11 @@
 	"damageType": "minecraft:falling_stalactite",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 5,
 	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🪨",
 	"name": "Get Hurt by a Stalactite",
-	"description": "Take damage from a falling stalactite without dying."
+	"description": "If you're unsure which is which, just try both..."
 }

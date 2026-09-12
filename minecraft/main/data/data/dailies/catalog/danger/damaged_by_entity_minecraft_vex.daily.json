@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 6,
-	"rewardPerIteration": 2,
+	"rewardPerIteration": 3,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🪽",
-	"name": "Get Hurt by a Vex",
-	"description": "Take damage from a vex without dying."
+	"name": "What a vexing situation",
+	"description": "Get Hurt by a Vex"
 }

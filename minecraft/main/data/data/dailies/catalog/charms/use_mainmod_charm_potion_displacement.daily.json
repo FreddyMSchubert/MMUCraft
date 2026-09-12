@@ -9,5 +9,5 @@
 	"maximum": 8,
 	"emoji": "🧪",
 	"name": "Drink a Potion of Displacement",
-	"description": "Let's go visit the world! Drink {{count}} potions of Displacement. I'm sure you'll find all sorts of fun stuff beyond the horizon!"
+	"description": "Let's go visit the world! Drink {count} potions of Displacement. I'm sure you'll find all sorts of fun stuff beyond the horizon!"
 }

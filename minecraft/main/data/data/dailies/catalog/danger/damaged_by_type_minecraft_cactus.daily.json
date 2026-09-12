@@ -3,11 +3,11 @@
 	"damageType": "minecraft:cactus",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 3,
-	"minimum": 1,
-	"maximum": 1,
+	"baseCost": 6,
+	"rewardPerIteration": 0.1,
+	"minimum": 5,
+	"maximum": 20,
 	"emoji": "🌵",
 	"name": "Get Hurt by a Cactus",
-	"description": "Take damage from a cactus without dying."
+	"description": "Get cactus damage {count} times. And yes we think were very funny by making you walk into a cactus {{times}}."
 }

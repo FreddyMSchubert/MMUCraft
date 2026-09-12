@@ -3,11 +3,11 @@
 	"damageType": "minecraft:fireworks",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
+	"baseCost": 4,
 	"rewardPerIteration": 2.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🎆",
 	"name": "Get Hurt by Fireworks",
-	"description": "Take damage from fireworks without dying."
+	"description": "Take damage from fireworks - loading some fireworks into a crossbow can actually be surprisingly deadly."
 }

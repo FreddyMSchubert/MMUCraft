@@ -89,7 +89,8 @@ public class CharmsManager
             Map.entry(52, new PotionOfResonanceCharm()),
             Map.entry(53, new WrenchCharm()),
             Map.entry(GliderCharm.CHARM_ID, new GliderCharm()),
-            Map.entry(SlimeDetectorCharm.CHARM_ID, new SlimeDetectorCharm())
+            Map.entry(SlimeDetectorCharm.CHARM_ID, new SlimeDetectorCharm()),
+            Map.entry(HappyGhastSpeedCharm.CHARM_ID, new HappyGhastSpeedCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);
@@ -180,8 +181,16 @@ public class CharmsManager
         return false;
     }
     public static int getPlayerCharmLevel(ServerPlayer player, Class<? extends Charm> charmClass) {
-        for (Tuple<ItemStack, CharmInstance> ability : getPlayerCharmInstances(player)) {
-            if (ability.getB().feature().charm().getClass() == charmClass) return ability.getB().level();
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack stack = player.getItemBySlot(slot);
+            if (stack.isEmpty()) continue;
+
+            for (CharmInstance instance : getCharmInstances(stack)) {
+                if (instance.isBroken() || instance.charm().getClass() != charmClass) continue;
+
+                EquippableCharmItemFeature equippable = instance.fakeItem().getFeature(EquippableCharmItemFeature.class);
+                if (equippable == null || equippable.equippable().slot() == slot) return instance.level();
+            }
         }
         return 0;
     }

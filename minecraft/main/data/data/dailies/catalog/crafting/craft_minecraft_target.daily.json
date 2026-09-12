@@ -9,5 +9,5 @@
 	"maximum": 6,
 	"emoji": "🎯",
 	"name": "Craft Target Blocks",
-	"description": "Craft {count} target blocks. Comparators can score how close the arrow lands."
+	"description": "Craft {count} target blocks. You could build an awesome shooting range. If you use repeatedly extending pistons, you could even add a timing element to the practice."
 }

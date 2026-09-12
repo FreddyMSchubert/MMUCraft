@@ -6,8 +6,8 @@
 	"baseCost": 0,
 	"rewardPerIteration": 1,
 	"minimum": 3,
-	"maximum": 6,
+	"maximum": 4,
 	"emoji": "🛡️",
 	"name": "Craft Armour Stands",
-	"description": "Craft {count} armour stands. Poses are free."
+	"description": "Craft {count} armour stands. You can use them to show off all your cool cosmetics and charms, or build a little wardrobe."
 }

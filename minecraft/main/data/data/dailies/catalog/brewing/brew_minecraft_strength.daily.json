@@ -3,11 +3,11 @@
 	"potion": "minecraft:strength",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 1.5,
+	"baseCost": 8,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "💪",
 	"name": "Brew Strength",
-	"description": "Brew {count} potions of Strength."
+	"description": "Brew a potion of Strength. I need this for my emotional state irl."
 }

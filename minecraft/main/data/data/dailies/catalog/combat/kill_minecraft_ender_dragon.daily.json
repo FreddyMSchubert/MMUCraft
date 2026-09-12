@@ -3,11 +3,11 @@
 	"entity": "minecraft:ender_dragon",
 	"nether": false,
 	"end": true,
-	"baseCost": 18,
-	"rewardPerIteration": 20,
+	"baseCost": 20,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐉",
 	"name": "Defeat the Ender Dragon",
-	"description": "Defeat the Ender Dragon. Crystals first. Pride later."
+	"description": "Fun Fact, her name is canonically Jean."
 }

@@ -3,11 +3,11 @@
 	"potion": "minecraft:oozing",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 2,
+	"baseCost": 8,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🟢",
 	"name": "Brew Oozing",
-	"description": "Brew {count} potions of Oozing. One mob goes in. Several slimes come out."
+	"description": "Brew a potion of Oozing. Calum's actually got a patent for this one, he calls the goo his special sauce."
 }

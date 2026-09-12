@@ -3,11 +3,11 @@
 	"potion": "minecraft:weaving",
 	"nether": true,
 	"end": false,
-	"baseCost": 6,
-	"rewardPerIteration": 1.5,
+	"baseCost": 9,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🕸️",
 	"name": "Brew Weaving",
-	"description": "Brew {count} potions of Weaving. Cobweb production has become needlessly complicated."
+	"description": "Brew a potion of Weaving. Fun fact, you also walk faster through cobwebs while under this effect. You could say this potion makes you a spider... person."
 }

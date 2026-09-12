@@ -3,11 +3,11 @@
 	"entity": "minecraft:elder_guardian",
 	"nether": false,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 2,
+	"baseCost": 7,
+	"rewardPerIteration": 1.5,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 3,
 	"emoji": "🐟",
-	"name": "Defeat an Elder Guardian",
-	"description": "Defeat an elder guardian. Mining Fatigue comes free."
+	"name": "Defeat Elder Guardians",
+	"description": "Defeat {{count}} elder guardians. Once they're dead, they'll even drop a trident prongue - with three of them you can make yourself a trident."
 }

@@ -3,11 +3,11 @@
 	"potion": "minecraft:water_breathing",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 1.5,
+	"baseCost": 9,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🌊",
 	"name": "Brew Water Breathing",
-	"description": "Brew {count} potions of Water Breathing."
+	"description": "Brew a potion of Water Breathing. Perfect for an ocean monument adventure! Just gotta bring some milk against the mining fatigue, and you're good. Obviously we all know milk only removes negative effects when drunk..."
 }

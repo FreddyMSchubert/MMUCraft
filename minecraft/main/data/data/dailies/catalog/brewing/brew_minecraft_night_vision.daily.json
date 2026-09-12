@@ -3,11 +3,11 @@
 	"potion": "minecraft:night_vision",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 1.5,
+	"baseCost": 8,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🌙",
 	"name": "Brew Night Vision",
-	"description": "Brew {count} potions of Night Vision. A fermented spider eye turns this into Invisibility."
+	"description": "Brew a potion of Night Vision. Man, if only there was a charm that would allow you to have night vision permanently... (cough, cough)"
 }

@@ -1,0 +1,13 @@
+{
+	"type": "kill_entity",
+	"entity": "minecraft:sniffer",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 0.75,
+	"minimum": 8,
+	"maximum": 20,
+	"emoji": "🦖",
+	"name": "Hunt Sniffers",
+	"description": "Defeat {count} sniffers. Absolutely annihilate the sniffer population. Don't kill somebody elses though, that's mean."
+}

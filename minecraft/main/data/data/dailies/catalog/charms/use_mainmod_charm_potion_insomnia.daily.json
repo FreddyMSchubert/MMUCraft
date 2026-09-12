@@ -3,11 +3,11 @@
 	"charm": "mainmod:charm-potion-insomnia",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 2,
+	"baseCost": 10,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🦇",
 	"name": "Use a Potion of Insomnia",
-	"description": "Use a Potion of Insomnia. Sleep is banned. Phantoms are not."
+	"description": "Use a Potion of Insomnia. Careful though - even though the daily might be completed once you're done drinking the potion, that doesn't mean you're safe."
 }

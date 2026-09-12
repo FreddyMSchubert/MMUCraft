@@ -3,11 +3,11 @@
 	"entity": "minecraft:cave_spider",
 	"nether": false,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 0.75,
+	"baseCost": 6,
+	"rewardPerIteration": 0.5,
 	"minimum": 2,
-	"maximum": 8,
+	"maximum": 12,
 	"emoji": "🕷️",
 	"name": "Hunt Cave Spiders",
-	"description": "Defeat {count} cave spiders."
+	"description": "Defeat {count} cave spiders. As seen on the trendy pajama charm design."
 }

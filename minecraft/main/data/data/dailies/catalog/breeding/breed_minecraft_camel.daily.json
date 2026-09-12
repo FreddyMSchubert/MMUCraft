@@ -3,11 +3,11 @@
 	"entity": "minecraft:camel",
 	"nether": false,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 3,
+	"baseCost": 8,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐫",
 	"name": "Breed Camels",
-	"description": "Breed one camel. Two camels, one cactus each. Romance is thriving."
+	"description": "Breed one camel. And maybe take the special passenger princess in your life for a ride on it."
 }

@@ -15,7 +15,7 @@ import type {
 	KnowledgeTreeEntry,
 } from './knowledge-document.types';
 
-const KNOWLEDGE_READ_REWARD_DABLOONS = 3;
+const KNOWLEDGE_READ_REWARD_DABLOONS = 2;
 
 interface KnowledgeUnlockResponse {
 	unlocked: boolean;
@@ -50,6 +50,8 @@ type UnlockedKnowledgeSearchResult = Extract<KnowledgeSearchResult, { locked: fa
 
 @Injectable()
 export class KnowledgeService implements OnModuleInit {
+	readonly readRewardDabloons = KNOWLEDGE_READ_REWARD_DABLOONS;
+
 	private readonly searchIndex = new CachedSearchIndex<KnowledgeSearchPage>(
 		{
 			fields: ['title', 'folders', 'tags', 'content'],
@@ -87,6 +89,7 @@ export class KnowledgeService implements OnModuleInit {
 
 		return {
 			contentVersion: document.mtimeMs,
+			readRewardDabloons: this.readRewardDabloons,
 			lastUnlockedKnowledgeId,
 			unlockedKnowledgeIds: [...unlockedIds].filter((id) =>
 				document.unlockable.some((page) => page.id === id),
@@ -147,9 +150,8 @@ export class KnowledgeService implements OnModuleInit {
 		const readIds = user ? this.getReadIds(user.id) : new Set<string>();
 		const hasUnreadKnowledge = Boolean(
 			user &&
-			document.pages.some(
-				(page) =>
-					(page.unlockedByDefault || unlockedIds.has(page.id)) && !readIds.has(page.id),
+			this.enabledUnlockablePages().some(
+				(page) => unlockedIds.has(page.id) && !readIds.has(page.id),
 			),
 		);
 		const tips = document.pages
@@ -173,7 +175,10 @@ export class KnowledgeService implements OnModuleInit {
 			.loadDocument()
 			.pages.find((candidate) => candidate.id === knowledgeId);
 		if (!page) throw new BadRequestException('Knowledge page not found.');
-		if (!page.unlockedByDefault && !this.getUnlockedIds(user.id).has(page.id)) {
+		if (page.unlockedByDefault) {
+			throw new BadRequestException('Public knowledge pages cannot be marked as read.');
+		}
+		if (!this.getUnlockedIds(user.id).has(page.id)) {
 			throw new BadRequestException('That knowledge page is locked.');
 		}
 
@@ -193,7 +198,7 @@ export class KnowledgeService implements OnModuleInit {
 		try {
 			const result = await this.playerMoneyHistory.grantKnowledgeReadMoney(
 				user.minecraftUsername,
-				KNOWLEDGE_READ_REWARD_DABLOONS,
+				this.readRewardDabloons,
 			);
 			if (!result.granted)
 				throw new BadRequestException(
@@ -203,12 +208,12 @@ export class KnowledgeService implements OnModuleInit {
 			this.playerMoneyHistory.recordForUser(
 				user.id,
 				'knowledge_read',
-				KNOWLEDGE_READ_REWARD_DABLOONS,
+				this.readRewardDabloons,
 				result.balance_dabloons,
 				`knowledge-read:${user.id}:${page.id}`,
 				now,
 			);
-			return { read: true, rewarded: true, amountDabloons: KNOWLEDGE_READ_REWARD_DABLOONS };
+			return { read: true, rewarded: true, amountDabloons: this.readRewardDabloons };
 		} catch (error) {
 			if (!moneyGranted) {
 				this.database.connection

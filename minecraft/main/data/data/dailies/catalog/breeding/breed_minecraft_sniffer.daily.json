@@ -6,8 +6,8 @@
 	"baseCost": 15,
 	"rewardPerIteration": 5,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 20,
 	"emoji": "🐽",
 	"name": "Breed Sniffers",
-	"description": "Breed one sniffer. The egg was only the start of the grind."
+	"description": "Breed {count} sniffers. And don't stop there! Keep breeding! Then bow before your new gods. We need to increase the population! They are endangered! Once humans are gone, the sniffers will inherit the earth. Breed them to ensure their survival."
 }

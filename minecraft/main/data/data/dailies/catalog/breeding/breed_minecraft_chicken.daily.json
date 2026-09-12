@@ -5,8 +5,8 @@
 	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 1,
-	"minimum": 4,
-	"maximum": 8,
+	"minimum": 3,
+	"maximum": 10,
 	"emoji": "🐔",
 	"name": "Breed Chickens",
 	"description": "Breed {count} chickens."

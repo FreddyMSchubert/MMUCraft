@@ -3,11 +3,11 @@
 	"entity": "minecraft:axolotl",
 	"nether": false,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 2,
+	"baseCost": 9,
+	"rewardPerIteration": 1,
 	"minimum": 1,
-	"maximum": 1,
+	"maximum": 3,
 	"emoji": "🦎",
 	"name": "Breed Axolotls",
-	"description": "Breed one axolotl. Use tropical fish buckets, not loose fish."
+	"description": "Breed {count} axolotls. You may even get a rare blue one! They are super-duper rare though, getting one is a crazy feat."
 }

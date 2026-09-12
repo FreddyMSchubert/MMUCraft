@@ -73,6 +73,7 @@ test('member endpoints serialize the seeded database', async ({ request }) => {
 		const body = await getJson(request, '/api/knowledge');
 		expect(body.tree).toBeInstanceOf(Array);
 		expect(body.contentVersion).toEqual(expect.any(Number));
+		expect(body.readRewardDabloons).toBe(2);
 	});
 
 	await test.step('Load the fixture-aware shop catalog', async () => {

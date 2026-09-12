@@ -21,6 +21,7 @@ export interface KnowledgePage {
 
 export interface KnowledgeResponse {
 	contentVersion: number;
+	readRewardDabloons: number;
 	lastUnlockedKnowledgeId: string | null;
 	unlockedKnowledgeIds: string[];
 	readKnowledgeIds: string[];
@@ -86,7 +87,7 @@ export function KnowledgeTreeNode({
 					<DabloonText>{entry.sidebarTitle}</DabloonText>
 				)}
 			</span>
-			{!readPageIds.has(entry.id) && (
+			{!entry.unlockedByDefault && !readPageIds.has(entry.id) && (
 				<span className="knowledgeTreeNew" aria-label="Not read yet">
 					!
 				</span>

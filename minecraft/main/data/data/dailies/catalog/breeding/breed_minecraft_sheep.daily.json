@@ -5,9 +5,9 @@
 	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 1,
-	"minimum": 4,
-	"maximum": 8,
+	"minimum": 3,
+	"maximum": 10,
 	"emoji": "🐑",
 	"name": "Breed Sheep",
-	"description": "Breed {count} sheep."
+	"description": "Breed {count} sheep. Wake up, sheeple! Or stay asleep on one of them nice new cushions that were just added."
 }

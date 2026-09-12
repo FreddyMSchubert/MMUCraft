@@ -3,11 +3,11 @@
 	"entity": "minecraft:hoglin",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 1.5,
+	"baseCost": 6,
+	"rewardPerIteration": 1,
 	"minimum": 1,
 	"maximum": 3,
 	"emoji": "🐗",
 	"name": "Breed Hoglins",
-	"description": "Breed {count} hoglins."
+	"description": "Breed {count} hoglins. They remind me of your mother. (This is calums opinion, our social media manager. If you disagree feel free to let him know.)"
 }

@@ -3,11 +3,11 @@
 	"potion": "minecraft:healing",
 	"nether": true,
 	"end": false,
-	"baseCost": 5,
-	"rewardPerIteration": 1.5,
+	"baseCost": 7,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "❤️",
 	"name": "Brew Healing",
-	"description": "Brew {count} potions of Healing."
+	"description": "Brew a potion of Healing. After you drink it, you'll be glistening with vitality!"
 }

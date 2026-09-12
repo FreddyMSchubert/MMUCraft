@@ -337,6 +337,7 @@ message UnlockNextKnowledgeResponse {
   bool has_knowledge_to_unlock = 9;
   bool has_charms_to_unlock = 10;
   bool has_cosmetics_to_unlock = 11;
+  int32 read_reward_dabloons = 12;
 }
 
 message GetKnowledgeTipRequest {

@@ -3,11 +3,11 @@
 	"potion": "minecraft:leaping",
 	"nether": true,
 	"end": false,
-	"baseCost": 6,
-	"rewardPerIteration": 2,
+	"baseCost": 8,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🐇",
 	"name": "Brew Leaping",
-	"description": "Brew {count} potions of Leaping."
+	"description": "Brew a potion of Leaping. This is a bad excuse for a bunny charm, isn't it?"
 }

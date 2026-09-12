@@ -6,10 +6,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.Equippable;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
+
+import java.util.Optional;
 
 public record EquippableCharmItemFeature(
         Equippable equippable
@@ -36,6 +39,27 @@ public record EquippableCharmItemFeature(
                 .setDispensable(false)
                 .setDamageOnHurt(false)
                 .build();
+    }
+
+    public static Equippable withAsset(Equippable base, String assetId)
+    {
+        ResourceKey<EquipmentAsset> asset = ResourceKey.create(
+                EquipmentAssets.ROOT_ID,
+                Identifier.fromNamespaceAndPath(MainMod.RESOURCE_PACK_ID, assetId)
+        );
+        return new Equippable(
+                base.slot(),
+                base.equipSound(),
+                Optional.of(asset),
+                base.cameraOverlay(),
+                base.allowedEntities(),
+                base.dispensable(),
+                base.swappable(),
+                base.damageOnHurt(),
+                base.equipOnInteract(),
+                base.canBeSheared(),
+                base.shearingSound()
+        );
     }
 
     @Override

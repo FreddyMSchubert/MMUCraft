@@ -102,13 +102,13 @@ public class CharmorManager
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return;
 
         List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
+        Equippable itemDefaultEquippable = stack.getItem().components().get(DataComponents.EQUIPPABLE);
+        if (itemDefaultEquippable == null) return;
+
         if (storedCharms.isEmpty()) {
-            Equippable itemDefaultEquippable = stack.getItem().components().get(DataComponents.EQUIPPABLE);
-            if (itemDefaultEquippable != null) {
-                stack.set(DataComponents.EQUIPPABLE, isEnderite(stack)
-                        ? EquippableCharmItemFeature.createEquippableSettings("enderite", itemDefaultEquippable.slot())
-                        : itemDefaultEquippable);
-            }
+            stack.set(DataComponents.EQUIPPABLE, isEnderite(stack)
+                    ? EquippableCharmItemFeature.withAsset(itemDefaultEquippable, "enderite")
+                    : itemDefaultEquippable);
             return;
         }
 
@@ -129,9 +129,9 @@ public class CharmorManager
         String withoutCharmSuffix = charmResourcePath.substring(0, suffixIndex);
         String newResourcePath = withoutCharmSuffix + "__" + materialString;
 
-        Equippable newEquippableSettings = EquippableCharmItemFeature.createEquippableSettings(
-                newResourcePath,
-                eqcif.equippable().slot()
+        Equippable newEquippableSettings = EquippableCharmItemFeature.withAsset(
+                itemDefaultEquippable,
+                newResourcePath
         );
 
         stack.set(DataComponents.EQUIPPABLE, newEquippableSettings);

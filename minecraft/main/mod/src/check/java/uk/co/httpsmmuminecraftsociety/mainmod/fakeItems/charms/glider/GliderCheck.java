@@ -72,6 +72,10 @@ public final class GliderCheck {
         assert glider.get(DataComponents.EQUIPPABLE).swappable();
         assert glider.get(DataComponents.REPAIRABLE).isValidRepairItem(new ItemStack(Items.PHANTOM_MEMBRANE));
         assert item.getFeature(EquippableCharmItemFeature.class) == null;
+        var chestplateSettings = Items.DIAMOND_CHESTPLATE.components().get(DataComponents.EQUIPPABLE);
+        assert chestplateSettings != null && chestplateSettings.swappable();
+        assert EquippableCharmItemFeature.withAsset(chestplateSettings, "test_charm_armor").swappable();
+        assert !EquippableCharmItemFeature.createEquippableSettings("test_charm", EquipmentSlot.CHEST).swappable();
         assert !item.getFeature(CharmItemFeature.class).hasNextLevel(1);
         assert LivingEntity.canGlideUsing(glider, EquipmentSlot.CHEST);
         glider.setDamageValue(431);
@@ -105,13 +109,17 @@ public final class GliderCheck {
                 new ItemStack(Items.LEATHER), new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.PHANTOM_MEMBRANE),
                 new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.STICK), ItemStack.EMPTY, new ItemStack(Items.STICK)));
         assert recipe.matches(grid, null) && GliderCharm.isGlider(recipe.assemble(grid));
-        double limit = 20;
+        double limit = GliderFlight.ELYTRA_SPEED_BPS;
         for (int tick = 0; tick < 350; tick++) {
-            assert Math.abs(limit - Math.max(14, 20 - tick * 0.02)) < 1.0E-9;
+            assert Math.abs(limit - Math.max(
+                    GliderFlight.GLIDER_SPEED_BPS,
+                    GliderFlight.ELYTRA_SPEED_BPS - tick * GliderFlight.SPEED_DECAY_BPS_PER_TICK
+            )) < 1.0E-9;
             limit = GliderFlight.decaySpeedLimit(limit);
         }
-        assert Math.abs(GliderFlight.clampSpeed(new Vec3(2, 3, 4), 14).length() * 20 - 14) < 1.0E-9;
-        assert GliderFlight.clampSpeed(Vec3.ZERO, 14).equals(Vec3.ZERO);
+        assert Math.abs(GliderFlight.clampSpeed(new Vec3(2, 3, 4), GliderFlight.GLIDER_SPEED_BPS).length() * 20
+                - GliderFlight.GLIDER_SPEED_BPS) < 1.0E-9;
+        assert GliderFlight.clampSpeed(Vec3.ZERO, GliderFlight.GLIDER_SPEED_BPS).equals(Vec3.ZERO);
         assert GliderFlight.extraGravity(15.999) == 0;
         assert GliderFlight.extraGravity(16) == 0.0001;
         assert GliderFlight.extraGravity(80) == 0.0005;

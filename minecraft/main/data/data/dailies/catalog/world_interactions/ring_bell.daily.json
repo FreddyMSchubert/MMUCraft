@@ -8,8 +8,8 @@
 	"baseCost": 0,
 	"rewardPerIteration": 0.15,
 	"minimum": 20,
-	"maximum": 40,
+	"maximum": 100,
 	"emoji": "🔔",
 	"name": "Ring a Bell",
-	"description": "Ring a bell {count} times. This is not an emergency. It will sound like one."
+	"description": "Ring a bell {count} times. Ding ding ding!!"
 }

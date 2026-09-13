@@ -3,11 +3,11 @@
 	"item": "minecraft:firework_rocket",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
-	"rewardPerIteration": 2.5,
+	"baseCost": 2,
+	"rewardPerIteration": 4,
 	"minimum": 1,
 	"maximum": 3,
 	"emoji": "🎆",
 	"name": "Firework Kills",
-	"description": "Defeat {count} mobs with fireworks. Load the crossbow and stand back."
+	"description": "Defeat {count} mobs with fireworks. Add multishot and you've basically got a shotgun in Minecraft™."
 }

@@ -4,10 +4,10 @@
 	"nether": true,
 	"end": false,
 	"baseCost": 6,
-	"rewardPerIteration": 0.01,
+	"rewardPerIteration": 0.02,
 	"minimum": 200,
 	"maximum": 600,
 	"emoji": "🟥",
 	"name": "Ride a Strider",
-	"description": "Ride a strider for {count} blocks. Cold striders look miserable. Stay on lava."
+	"description": "Ride a strider for {count} blocks. Might wanna bring a spare warped fungus or two."
 }

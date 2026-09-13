@@ -3,11 +3,11 @@
 	"vehicle": "minecraft:skeleton_horse",
 	"nether": false,
 	"end": false,
-	"baseCost": 7,
+	"baseCost": 5,
 	"rewardPerIteration": 0.01,
 	"minimum": 200,
-	"maximum": 500,
+	"maximum": 1000,
 	"emoji": "💀",
 	"name": "Ride a Skeleton Horse",
-	"description": "Ride a skeleton horse for {count} blocks. No feeding required."
+	"description": "Ride a skeleton horse for {count} blocks. Good luck finding one in the first place."
 }

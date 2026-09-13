@@ -9,5 +9,5 @@
 	"maximum": 8,
 	"emoji": "⛏️",
 	"name": "Pickaxe Kills",
-	"description": "Defeat {count} mobs with a pickaxe."
+	"description": "Defeat {count} mobs with a pickaxe. Project zomboid reference?"
 }

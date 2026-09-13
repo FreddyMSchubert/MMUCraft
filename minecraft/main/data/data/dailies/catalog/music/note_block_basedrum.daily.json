@@ -5,9 +5,9 @@
 	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 0.05,
-	"minimum": 40,
+	"minimum": 20,
 	"maximum": 80,
 	"emoji": "🥁",
 	"name": "Bass Drum Notes",
-	"description": "Play {count} bass-drum notes. A rhythm would be nice, but it is not required."
+	"description": "Play {count} bass-drum notes. Like the fish I think?."
 }

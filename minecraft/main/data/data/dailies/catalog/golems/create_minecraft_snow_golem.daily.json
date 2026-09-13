@@ -4,10 +4,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 0,
-	"rewardPerIteration": 3,
+	"rewardPerIteration": 6,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "⛄",
 	"name": "Build a Snow Golem",
-	"description": "Create a snow golem. Two snow blocks and a pumpkin. Inflation spared this one."
+	"description": "Create a snow golem. I hope you checked the forecast first."
 }

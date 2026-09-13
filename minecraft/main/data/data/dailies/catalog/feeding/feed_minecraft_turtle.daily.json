@@ -1,13 +1,11 @@
 {
 	"type": "feed_entity",
 	"entity": "minecraft:turtle",
-	"nether": false,
-	"end": false,
-	"baseCost": 3,
+	"baseCost": 6,
 	"rewardPerIteration": 0.75,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🐢",
 	"name": "Feed Turtles",
-	"description": "Feed {count} turtles."
+	"description": "Feed {count} turtles. How are they different to a tortoise again? I always forget."
 }

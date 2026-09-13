@@ -1,8 +1,6 @@
 {
 	"type": "create_golem",
 	"golem": "minecraft:copper_golem",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 4,
 	"minimum": 1,

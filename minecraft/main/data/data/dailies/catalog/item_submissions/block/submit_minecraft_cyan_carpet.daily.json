@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:cyan_carpet",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 0.15,
 	"minimum": 24,

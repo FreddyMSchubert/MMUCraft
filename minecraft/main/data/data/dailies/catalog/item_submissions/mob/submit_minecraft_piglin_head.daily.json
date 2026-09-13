@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:piglin_head",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 2,
 	"rewardPerIteration": 4,
 	"minimum": 1,

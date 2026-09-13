@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_type",
 	"damageType": "minecraft:falling_stalactite",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 2,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "use_item",
 	"item": "minecraft:ender_pearl",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.5,
 	"minimum": 3,

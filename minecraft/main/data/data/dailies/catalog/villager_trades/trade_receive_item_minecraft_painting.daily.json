@@ -2,8 +2,6 @@
 	"type": "villager_trade_item",
 	"tradeMode": "receive_item",
 	"target": "minecraft:painting",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 1,
 	"minimum": 2,

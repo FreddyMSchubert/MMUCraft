@@ -3,8 +3,6 @@
 	"event": "ignite_creeper",
 	"progressLabel": "Ignited",
 	"progressUnit": "creepers",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 1.5,
 	"minimum": 2,

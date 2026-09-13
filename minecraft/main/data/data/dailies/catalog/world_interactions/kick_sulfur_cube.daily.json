@@ -3,8 +3,6 @@
 	"event": "kick_sulfur_cube",
 	"progressLabel": "Kicked",
 	"progressUnit": "cube",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 1,
 	"minimum": 4,

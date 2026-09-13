@@ -2,8 +2,6 @@
 	"type": "villager_trade_item",
 	"tradeMode": "give_item",
 	"target": "minecraft:rabbit_foot",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 1,
 	"minimum": 2,

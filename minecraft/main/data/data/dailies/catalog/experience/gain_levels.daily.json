@@ -1,7 +1,5 @@
 {
 	"type": "gain_levels",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 0.5,
 	"minimum": 6,

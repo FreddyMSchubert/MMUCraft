@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:golden_dandelion",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 3.5,
 	"minimum": 1,

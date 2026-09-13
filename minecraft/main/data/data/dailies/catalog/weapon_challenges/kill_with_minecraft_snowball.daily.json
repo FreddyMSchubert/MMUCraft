@@ -1,8 +1,7 @@
 {
 	"type": "kill_with_item",
 	"item": "minecraft:snowball",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 3,
 	"rewardPerIteration": 6,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:waxed_exposed_copper_golem_statue",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 2.25,
 	"minimum": 1,

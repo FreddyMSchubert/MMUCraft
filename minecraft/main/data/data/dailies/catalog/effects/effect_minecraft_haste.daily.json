@@ -1,8 +1,6 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:haste",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 4,
 	"minimum": 1,

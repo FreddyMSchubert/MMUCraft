@@ -2,8 +2,6 @@
 	"type": "villager_trade_item",
 	"tradeMode": "receive_item",
 	"target": "minecraft:fishing_rod",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 4,
 	"minimum": 1,

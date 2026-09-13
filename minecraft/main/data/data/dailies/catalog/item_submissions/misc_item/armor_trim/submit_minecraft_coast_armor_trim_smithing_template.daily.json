@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:coast_armor_trim_smithing_template",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 7,
 	"minimum": 1,

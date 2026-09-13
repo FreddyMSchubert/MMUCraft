@@ -1,8 +1,7 @@
 {
 	"type": "plant_crop",
 	"seed": "minecraft:nether_wart",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 5,
 	"rewardPerIteration": 0.25,
 	"minimum": 5,

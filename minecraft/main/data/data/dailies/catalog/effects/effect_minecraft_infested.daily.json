@@ -1,8 +1,7 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:infested",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 4,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,

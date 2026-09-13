@@ -1,8 +1,6 @@
 {
 	"type": "use_charm",
 	"charm": "mainmod:charm-potion-returning",
-	"nether": false,
-	"end": false,
 	"baseCost": 8,
 	"rewardPerIteration": 0,
 	"minimum": 1,

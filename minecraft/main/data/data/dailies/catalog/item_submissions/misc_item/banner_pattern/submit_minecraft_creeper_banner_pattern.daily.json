@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:creeper_banner_pattern",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 5,
 	"minimum": 1,

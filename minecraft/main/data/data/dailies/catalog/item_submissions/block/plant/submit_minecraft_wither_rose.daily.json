@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:wither_rose",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 8,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,

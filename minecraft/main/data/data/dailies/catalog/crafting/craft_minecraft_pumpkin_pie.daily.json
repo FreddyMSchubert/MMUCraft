@@ -1,8 +1,6 @@
 {
 	"type": "craft_item",
 	"item": "minecraft:pumpkin_pie",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 0.5,
 	"minimum": 6,

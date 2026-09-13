@@ -3,8 +3,6 @@
 	"event": "light_tnt",
 	"progressLabel": "Lit",
 	"progressUnit": "TNT",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 6,
 	"minimum": 1,

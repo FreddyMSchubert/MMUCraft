@@ -3,8 +3,6 @@
 	"event": "rename_tool",
 	"progressLabel": "Renamed",
 	"progressUnit": "tool",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 4,
 	"minimum": 1,

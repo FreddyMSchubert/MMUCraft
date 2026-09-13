@@ -1,8 +1,7 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:shulker",
-	"nether": false,
-	"end": true,
+	"drop": "end",
 	"baseCost": 5,
 	"rewardPerIteration": 2,
 	"minimum": 1,

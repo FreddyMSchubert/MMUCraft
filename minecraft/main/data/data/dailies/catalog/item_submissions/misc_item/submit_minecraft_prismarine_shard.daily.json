@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:prismarine_shard",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.2,
 	"minimum": 8,

@@ -1,8 +1,6 @@
 {
 	"type": "use_item",
 	"item": "minecraft:spyglass",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 0.1,
 	"minimum": 15,

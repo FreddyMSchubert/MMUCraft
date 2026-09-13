@@ -1,8 +1,7 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:piglin_brute",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 7,
 	"rewardPerIteration": 2,
 	"minimum": 1,

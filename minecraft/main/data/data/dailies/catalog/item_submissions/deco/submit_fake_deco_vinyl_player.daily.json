@@ -1,8 +1,6 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-vinyl-player",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 6,
 	"minimum": 1,

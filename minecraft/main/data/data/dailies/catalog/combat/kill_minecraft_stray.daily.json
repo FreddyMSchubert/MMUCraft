@@ -1,8 +1,6 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:stray",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 1,
 	"minimum": 2,

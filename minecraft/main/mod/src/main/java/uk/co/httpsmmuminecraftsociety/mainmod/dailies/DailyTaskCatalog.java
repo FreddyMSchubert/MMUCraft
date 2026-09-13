@@ -50,24 +50,27 @@ final class DailyTaskCatalog {
     private static final String WEIGHTS_FILE = "weights.dailyweights.json";
     private static final String TASK_SUFFIX = ".daily.json";
     private static final Set<String> COMMON_FIELDS = Set.of(
-            "type", "nether", "end", "baseCost", "rewardPerIteration", "minimum", "maximum",
+            "type", "baseCost", "rewardPerIteration", "minimum", "maximum",
             "emoji", "name", "description"
     );
 
     private final HolderLookup.Provider registries;
     private final Set<String> fakeItemIds;
+    private final Set<String> dropIds;
 
-    private DailyTaskCatalog(HolderLookup.Provider registries, Set<String> fakeItemIds) {
+    private DailyTaskCatalog(HolderLookup.Provider registries, Set<String> fakeItemIds, Set<String> dropIds) {
         this.registries = registries;
         this.fakeItemIds = Set.copyOf(fakeItemIds);
+        this.dropIds = Set.copyOf(dropIds);
     }
 
     static List<Weighted<CatalogDirectory>> load(
             Path root,
             HolderLookup.Provider registries,
-            Set<String> fakeItemIds
+            Set<String> fakeItemIds,
+            Set<String> dropIds
     ) {
-        return new DailyTaskCatalog(registries, fakeItemIds).loadRoot(root);
+        return new DailyTaskCatalog(registries, fakeItemIds, dropIds).loadRoot(root);
     }
 
     private List<Weighted<CatalogDirectory>> loadRoot(Path root) {
@@ -133,6 +136,7 @@ final class DailyTaskCatalog {
         JsonObject json = readObject(path);
         String type = string(json, "type", path);
         Set<String> expected = new HashSet<>(COMMON_FIELDS);
+        if (json.has("drop")) expected.add("drop");
         expected.addAll(typeFields(type, path));
         if (!json.keySet().equals(expected)) {
             Set<String> missing = new HashSet<>(expected);
@@ -144,8 +148,7 @@ final class DailyTaskCatalog {
 
         DailyTaskDefinition definition = definition(type, json, path);
         return DailyTaskRegistry.option(
-                bool(json, "nether", path),
-                bool(json, "end", path),
+                optionalDrop(json, path),
                 definition,
                 nonNegativeInteger(json.get("baseCost"), path, "baseCost"),
                 nonNegativeDouble(json.get("rewardPerIteration"), path, "rewardPerIteration"),
@@ -155,6 +158,13 @@ final class DailyTaskCatalog {
                 string(json, "name", path),
                 string(json, "description", path)
         );
+    }
+
+    private String optionalDrop(JsonObject json, Path path) {
+        if (!json.has("drop")) return null;
+        String drop = string(json, "drop", path);
+        if (!dropIds.contains(drop)) throw invalid(path, "Unknown drop id '" + drop + "'");
+        return drop;
     }
 
     private DailyTaskDefinition definition(String type, JsonObject json, Path path) {
@@ -380,14 +390,6 @@ final class DailyTaskCatalog {
             if (exception instanceof IllegalStateException illegalState) throw illegalState;
             throw new IllegalStateException("Could not read daily task JSON " + path, exception);
         }
-    }
-
-    private static boolean bool(JsonObject json, String field, Path path) {
-        JsonElement value = json.get(field);
-        if (value == null || !value.isJsonPrimitive() || !value.getAsJsonPrimitive().isBoolean()) {
-            throw invalid(path, "'" + field + "' must be a boolean");
-        }
-        return value.getAsBoolean();
     }
 
     private static String string(JsonObject json, String field, Path path) {

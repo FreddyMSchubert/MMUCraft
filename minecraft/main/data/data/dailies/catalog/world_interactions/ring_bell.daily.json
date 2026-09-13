@@ -3,8 +3,6 @@
 	"event": "ring_bell",
 	"progressLabel": "Rang",
 	"progressUnit": "times",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.15,
 	"minimum": 20,

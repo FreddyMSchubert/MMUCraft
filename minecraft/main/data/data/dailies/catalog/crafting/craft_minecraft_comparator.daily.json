@@ -1,8 +1,7 @@
 {
 	"type": "craft_item",
 	"item": "minecraft:comparator",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 0,
 	"rewardPerIteration": 1.75,
 	"minimum": 2,

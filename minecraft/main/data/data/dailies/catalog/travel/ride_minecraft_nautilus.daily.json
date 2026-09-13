@@ -1,8 +1,6 @@
 {
 	"type": "ride_distance",
 	"vehicle": "minecraft:nautilus",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 0.02,
 	"minimum": 100,

@@ -1,8 +1,6 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "2-leaf-clover",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 2,
 	"minimum": 2,

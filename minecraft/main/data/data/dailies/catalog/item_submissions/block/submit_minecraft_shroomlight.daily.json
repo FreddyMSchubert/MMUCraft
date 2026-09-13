@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:shroomlight",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 3,
 	"rewardPerIteration": 0.35,
 	"minimum": 4,

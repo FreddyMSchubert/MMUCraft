@@ -1,8 +1,6 @@
 {
 	"type": "breed_entity",
 	"entity": "minecraft:cow",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 1,
 	"minimum": 4,

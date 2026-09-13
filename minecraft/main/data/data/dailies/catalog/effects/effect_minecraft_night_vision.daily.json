@@ -1,8 +1,7 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:night_vision",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 53,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,

@@ -2,8 +2,6 @@
 	"type": "villager_trade_item",
 	"tradeMode": "receive_item",
 	"target": "minecraft:bell",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 3,
 	"minimum": 1,

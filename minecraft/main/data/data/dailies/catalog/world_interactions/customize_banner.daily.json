@@ -3,8 +3,6 @@
 	"event": "customize_banner",
 	"progressLabel": "Applied",
 	"progressUnit": "patterns",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 4,
 	"minimum": 4,

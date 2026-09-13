@@ -1,8 +1,6 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "soul",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 1.75,
 	"minimum": 3,

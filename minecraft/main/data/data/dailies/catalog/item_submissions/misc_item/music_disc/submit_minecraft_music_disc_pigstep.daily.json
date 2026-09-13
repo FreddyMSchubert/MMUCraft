@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:music_disc_pigstep",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 7,
 	"rewardPerIteration": 6,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_type",
 	"damageType": "minecraft:sonic_boom",
-	"nether": false,
-	"end": false,
 	"baseCost": 8,
 	"rewardPerIteration": 5,
 	"minimum": 1,

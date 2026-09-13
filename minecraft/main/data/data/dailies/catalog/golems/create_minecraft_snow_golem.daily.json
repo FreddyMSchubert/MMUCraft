@@ -1,8 +1,6 @@
 {
 	"type": "create_golem",
 	"golem": "minecraft:snow_golem",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 3,
 	"minimum": 1,

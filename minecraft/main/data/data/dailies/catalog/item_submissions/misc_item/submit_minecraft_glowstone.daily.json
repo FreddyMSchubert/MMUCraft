@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:glowstone",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 2,
 	"rewardPerIteration": 0.35,
 	"minimum": 4,

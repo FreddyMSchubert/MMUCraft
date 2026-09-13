@@ -1,8 +1,6 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:skeleton",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 1,
 	"minimum": 3,

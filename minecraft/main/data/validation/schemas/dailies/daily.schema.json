@@ -131,8 +131,6 @@
 			"type": "object",
 			"required": [
 				"type",
-				"nether",
-				"end",
 				"baseCost",
 				"rewardPerIteration",
 				"minimum",
@@ -145,11 +143,9 @@
 				"type": {
 					"type": "string"
 				},
-				"nether": {
-					"type": "boolean"
-				},
-				"end": {
-					"type": "boolean"
+				"drop": {
+					"type": "string",
+					"pattern": "^[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
 				},
 				"baseCost": {
 					"type": "integer",

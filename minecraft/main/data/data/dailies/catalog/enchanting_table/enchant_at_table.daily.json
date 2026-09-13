@@ -1,7 +1,5 @@
 {
 	"type": "enchant_at_table",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 1,
 	"minimum": 1,

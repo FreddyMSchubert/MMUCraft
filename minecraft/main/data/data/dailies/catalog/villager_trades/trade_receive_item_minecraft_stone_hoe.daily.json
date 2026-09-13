@@ -2,8 +2,6 @@
 	"type": "villager_trade_item",
 	"tradeMode": "receive_item",
 	"target": "minecraft:stone_hoe",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 3,
 	"minimum": 2,

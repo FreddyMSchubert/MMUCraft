@@ -1,8 +1,7 @@
 {
 	"type": "break_block",
 	"block": "minecraft:gilded_blackstone",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 7,
 	"rewardPerIteration": 1,
 	"minimum": 2,

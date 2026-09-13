@@ -1,8 +1,7 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:zombified_piglin",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 7,
 	"rewardPerIteration": 0.5,
 	"minimum": 4,

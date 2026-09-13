@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:rib_armor_trim_smithing_template",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 5,
 	"rewardPerIteration": 7,
 	"minimum": 1,

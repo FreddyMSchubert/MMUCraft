@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:pufferfish",
-	"baseCost": 1,
+	"baseCost": 4,
 	"rewardPerIteration": 3.5,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐡",
 	"name": "Pufferfish Challenge",
-	"description": "Eat one pufferfish and survive. Milk afterward is allowed."
+	"description": "Eat one pufferfish and survive. Do not try this with tide pods."
 }

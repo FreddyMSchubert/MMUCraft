@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:poisonous_potato",
-	"baseCost": 2,
-	"rewardPerIteration": 1,
-	"minimum": 3,
-	"maximum": 6,
+	"baseCost": 3,
+	"rewardPerIteration": 0.3,
+	"minimum": 2,
+	"maximum": 20,
 	"emoji": "🥔",
 	"name": "Eat Poisonous Potatoes",
-	"description": "Eat {count} poisonous potatoes. A terrible meal and a worse farming strategy."
+	"description": "Eat {count} poisonous potatoes. They are great for your gut bacteria!"
 }

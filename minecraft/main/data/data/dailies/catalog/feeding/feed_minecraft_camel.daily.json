@@ -3,11 +3,11 @@
 	"entity": "minecraft:camel",
 	"nether": false,
 	"end": false,
-	"baseCost": 4,
+	"baseCost": 3,
 	"rewardPerIteration": 0.75,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🐫",
 	"name": "Feed Camels",
-	"description": "Feed {count} camels."
+	"description": "Feed {count} camels. Irl their whole mouth is specifically adapted to be able to handle tough, thorny vegetation. Fascinating!"
 }

@@ -3,11 +3,11 @@
 	"seed": "minecraft:pitcher_pod",
 	"nether": false,
 	"end": false,
-	"baseCost": 6,
+	"baseCost": 12,
 	"rewardPerIteration": 1,
-	"minimum": 2,
-	"maximum": 6,
+	"minimum": 1,
+	"maximum": 5,
 	"emoji": "🪻",
 	"name": "Plant Pitcher Pods",
-	"description": "Plant {count} pitcher pods. Another seed the sniffer refuses to plant itself."
+	"description": "Plant {count} pitcher pods. Hear ye hear ye there's finally a reason to get a sniffer, this specific daily. (Also it's a cool dinosaur)"
 }

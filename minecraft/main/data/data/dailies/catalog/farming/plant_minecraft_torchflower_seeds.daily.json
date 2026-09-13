@@ -3,11 +3,11 @@
 	"seed": "minecraft:torchflower_seeds",
 	"nether": false,
 	"end": false,
-	"baseCost": 6,
+	"baseCost": 12,
 	"rewardPerIteration": 1,
-	"minimum": 2,
-	"maximum": 6,
+	"minimum": 1,
+	"maximum": 5,
 	"emoji": "🌼",
 	"name": "Plant Torchflowers",
-	"description": "Plant {count} torchflower seeds. The sniffer did the searching. You do the farming."
+	"description": "Plant {count} torchflower seeds. What is it with minecraft and adding things that should obviously emit light but weirdly don't? Looking at you, glow squid."
 }

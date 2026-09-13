@@ -3,11 +3,11 @@
 	"seed": "minecraft:wheat_seeds",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 0.175,
-	"minimum": 30,
+	"baseCost": 4,
+	"rewardPerIteration": 0.05,
+	"minimum": 10,
 	"maximum": 50,
 	"emoji": "🌾",
 	"name": "Plant Wheat",
-	"description": "Plant {count} wheat seeds. One field. No bonemeal required."
+	"description": "Plant {count} wheat seeds. You can never have enough wheat. That's a good mantra to live by."
 }

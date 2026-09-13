@@ -12,5 +12,8 @@
 	"fish_custom_fish_perch.daily.json": 1,
 	"fish_custom_fish_pike.daily.json": 1,
 	"fish_custom_fish_tuna.daily.json": 1,
-	"fish_custom_fish_red_snapper.daily.json": 1
+	"fish_custom_fish_red_snapper.daily.json": 1,
+	"fish_rarity_common.daily.json": 12,
+	"fish_rarity_uncommon.daily.json": 10,
+	"fish_rarity_rare.daily.json": 8
 }

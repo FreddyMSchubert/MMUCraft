@@ -3,11 +3,11 @@
 	"entity": "minecraft:cat",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 4,
 	"rewardPerIteration": 0.75,
-	"minimum": 2,
-	"maximum": 6,
+	"minimum": 3,
+	"maximum": 15,
 	"emoji": "🐈",
 	"name": "Feed Cats",
-	"description": "Feed {count} cats."
+	"description": "Feed {count} cats. Meow. This daily has been added by a tall lenky can opener being, not a cat. Feed your cats."
 }

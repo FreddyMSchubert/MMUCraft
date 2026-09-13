@@ -3,11 +3,11 @@
 	"seed": "minecraft:beetroot_seeds",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
-	"rewardPerIteration": 0.2,
-	"minimum": 20,
+	"baseCost": 5,
+	"rewardPerIteration": 0.02,
+	"minimum": 5,
 	"maximum": 32,
 	"emoji": "🌱",
 	"name": "Plant Beetroot",
-	"description": "Plant {count} beetroot seeds. Finding the first seeds is half the job."
+	"description": "Plant {count} beetroot seeds. Beetroot are terribly underrated by the way, especially because on this server beetroot stew is more nutritious."
 }

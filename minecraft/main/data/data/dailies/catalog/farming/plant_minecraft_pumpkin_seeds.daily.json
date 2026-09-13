@@ -3,11 +3,11 @@
 	"seed": "minecraft:pumpkin_seeds",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 0.25,
-	"minimum": 12,
-	"maximum": 24,
+	"minimum": 4,
+	"maximum": 20,
 	"emoji": "🎃",
 	"name": "Plant Pumpkins",
-	"description": "Plant {count} pumpkin seeds. Leave room for the stems."
+	"description": "Plant {count} pumpkin seeds. Are carved pumpkins where the magic that is reponsible for golems originates?"
 }

@@ -1,0 +1,13 @@
+{
+	"type": "fish_rarity",
+	"rarity": "common",
+	"nether": false,
+	"end": false,
+	"baseCost": 1,
+	"rewardPerIteration": 0.5,
+	"minimum": 5,
+	"maximum": 10,
+	"emoji": "🐟",
+	"name": "Common Catch",
+	"description": "Catch {count} common fish. Nothing fancy, just a dependable haul."
+}

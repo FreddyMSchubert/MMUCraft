@@ -15,7 +15,6 @@ const TOGGLE_ORDER = [
 	'welcoming',
 	'soaring',
 	'imaginative',
-	'hellish',
 	'circus',
 	'efficient',
 	'overpowered',

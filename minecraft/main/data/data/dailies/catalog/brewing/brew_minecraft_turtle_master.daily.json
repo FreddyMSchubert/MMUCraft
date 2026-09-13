@@ -1,8 +1,7 @@
 {
 	"type": "brew_potion",
 	"potion": "minecraft:turtle_master",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 10,
 	"rewardPerIteration": 0,
 	"minimum": 1,

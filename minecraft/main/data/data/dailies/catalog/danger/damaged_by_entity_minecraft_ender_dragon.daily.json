@@ -1,8 +1,7 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:ender_dragon",
-	"nether": false,
-	"end": true,
+	"drop": "end",
 	"baseCost": 5,
 	"rewardPerIteration": 3,
 	"minimum": 1,

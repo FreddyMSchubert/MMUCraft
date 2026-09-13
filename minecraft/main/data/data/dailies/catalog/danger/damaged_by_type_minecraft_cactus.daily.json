@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_type",
 	"damageType": "minecraft:cactus",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 0.1,
 	"minimum": 5,

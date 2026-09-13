@@ -1,8 +1,7 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:chorus_fruit",
-	"nether": false,
-	"end": true,
+	"drop": "end",
 	"baseCost": 5,
 	"rewardPerIteration": 0.5,
 	"minimum": 2,

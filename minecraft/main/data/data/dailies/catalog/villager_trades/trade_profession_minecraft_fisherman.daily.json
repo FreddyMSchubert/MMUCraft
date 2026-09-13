@@ -2,8 +2,6 @@
 	"type": "villager_trade_profession",
 	"tradeMode": "profession",
 	"profession": "minecraft:fisherman",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 2,
 	"minimum": 4,

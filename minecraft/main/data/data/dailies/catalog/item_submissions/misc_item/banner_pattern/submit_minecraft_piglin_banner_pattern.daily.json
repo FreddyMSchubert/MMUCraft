@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:piglin_banner_pattern",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 6,
 	"rewardPerIteration": 3,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:tadpole_bucket",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 2,
 	"minimum": 1,

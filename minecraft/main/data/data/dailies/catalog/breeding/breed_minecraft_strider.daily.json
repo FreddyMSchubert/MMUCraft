@@ -1,8 +1,7 @@
 {
 	"type": "breed_entity",
 	"entity": "minecraft:strider",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 5,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,

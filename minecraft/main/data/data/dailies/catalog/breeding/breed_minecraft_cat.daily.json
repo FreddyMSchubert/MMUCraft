@@ -1,8 +1,6 @@
 {
 	"type": "breed_entity",
 	"entity": "minecraft:cat",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "brush_block",
 	"block": "minecraft:suspicious_gravel",
-	"nether": false,
-	"end": false,
 	"baseCost": 7,
 	"rewardPerIteration": 0.5,
 	"minimum": 2,

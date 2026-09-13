@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:waxed_oxidized_cut_copper_stairs",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 1,
 	"minimum": 2,

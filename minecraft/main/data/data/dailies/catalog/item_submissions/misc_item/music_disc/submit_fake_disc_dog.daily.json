@@ -1,8 +1,6 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "disc-dog",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 5,
 	"minimum": 1,

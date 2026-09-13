@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:burn_pottery_sherd",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 3,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:parched",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 1,
 	"minimum": 1,

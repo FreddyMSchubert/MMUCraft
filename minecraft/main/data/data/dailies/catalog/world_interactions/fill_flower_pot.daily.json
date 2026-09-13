@@ -3,8 +3,6 @@
 	"event": "fill_flower_pot",
 	"progressLabel": "Potted",
 	"progressUnit": "flowers",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 0.5,
 	"minimum": 6,

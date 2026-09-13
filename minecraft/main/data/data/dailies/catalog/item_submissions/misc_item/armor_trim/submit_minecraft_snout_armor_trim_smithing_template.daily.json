@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:snout_armor_trim_smithing_template",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 6,
 	"rewardPerIteration": 7,
 	"minimum": 1,

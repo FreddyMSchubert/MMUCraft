@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:blaze_rod",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 5,
 	"rewardPerIteration": 0.75,
 	"minimum": 2,

@@ -1,8 +1,6 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:cookie",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.4,
 	"minimum": 10,

@@ -3,8 +3,6 @@
 	"event": "play_music_disc",
 	"progressLabel": "Played",
 	"progressUnit": "discs",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.6,
 	"minimum": 1,

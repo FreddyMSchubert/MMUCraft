@@ -1,8 +1,6 @@
 {
 	"type": "plant_crop",
 	"seed": "minecraft:wheat_seeds",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 0.05,
 	"minimum": 10,

@@ -1,8 +1,6 @@
 {
 	"type": "fish_item",
 	"item": "minecraft:pufferfish",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 3,
 	"minimum": 1,

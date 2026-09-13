@@ -1,8 +1,7 @@
 {
 	"type": "feed_entity",
 	"entity": "minecraft:hoglin",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 5,
 	"rewardPerIteration": 1,
 	"minimum": 1,

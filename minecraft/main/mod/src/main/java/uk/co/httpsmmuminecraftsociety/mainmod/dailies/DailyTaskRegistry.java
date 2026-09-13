@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,11 +38,19 @@ public final class DailyTaskRegistry {
                 .findPath(DailyTaskCatalog.RESOURCE_PATH)
                 .orElseThrow(() -> new IllegalStateException("Daily task catalogue is missing"));
         List<Weighted<CatalogDirectory>> loaded = DailyTaskCatalog.load(
-                root, registries, FakeItems.ID_MAP.keySet());
+                root, registries, FakeItems.ID_MAP.keySet(), DropCatalog.load(resourcePath(DropCatalog.RESOURCE_PATH)));
         validate(loaded);
         definitions = options(loaded).stream().collect(java.util.stream.Collectors.toUnmodifiableMap(
                 option -> option.definition().getId(), Option::definition));
         tasks = loaded;
+    }
+
+    private static Path resourcePath(String path) {
+        return FabricLoader.getInstance()
+                .getModContainer(MainMod.MOD_ID)
+                .orElseThrow()
+                .findPath(path)
+                .orElseThrow(() -> new IllegalStateException("Drop catalogue is missing"));
     }
 
     public static void validate() {
@@ -196,8 +205,7 @@ public final class DailyTaskRegistry {
     }
 
     static Option option(
-            boolean nether,
-            boolean end,
+            String drop,
             DailyTaskDefinition definition,
             int baseCost,
             double rewardPerIteration,
@@ -208,7 +216,7 @@ public final class DailyTaskRegistry {
             String description
     ) {
         return new Option(
-                nether, end, definition, baseCost, rewardPerIteration,
+                drop, definition, baseCost, rewardPerIteration,
                 minimum, maximum, emoji, name, description
         );
     }
@@ -230,8 +238,7 @@ public final class DailyTaskRegistry {
     }
 
     record Option(
-            boolean nether,
-            boolean end,
+            String drop,
             DailyTaskDefinition definition,
             int baseCost,
             double rewardPerIteration,
@@ -255,8 +262,7 @@ public final class DailyTaskRegistry {
         }
 
         private boolean available() {
-            return (!nether || FeatureToggles.isEnabled(FeatureToggles.NETHER))
-                    && (!end || FeatureToggles.isEnabled(FeatureToggles.END));
+            return drop == null || FeatureToggles.isEnabled(drop);
         }
 
         private JsonObject create(Random random) {

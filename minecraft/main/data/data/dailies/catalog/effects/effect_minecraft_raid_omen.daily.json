@@ -1,8 +1,6 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:raid_omen",
-	"nether": false,
-	"end": false,
 	"baseCost": 10,
 	"rewardPerIteration": 2,
 	"minimum": 1,

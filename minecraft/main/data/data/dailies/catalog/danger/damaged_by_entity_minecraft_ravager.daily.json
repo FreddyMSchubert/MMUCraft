@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:ravager",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 7,
 	"minimum": 1,

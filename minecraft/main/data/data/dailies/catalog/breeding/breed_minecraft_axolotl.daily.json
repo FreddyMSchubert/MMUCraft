@@ -1,8 +1,6 @@
 {
 	"type": "breed_entity",
 	"entity": "minecraft:axolotl",
-	"nether": false,
-	"end": false,
 	"baseCost": 9,
 	"rewardPerIteration": 1,
 	"minimum": 1,

@@ -2,8 +2,6 @@
 	"type": "villager_trade_profession",
 	"tradeMode": "profession",
 	"profession": "minecraft:toolsmith",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 3,
 	"minimum": 2,

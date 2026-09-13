@@ -1,8 +1,6 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:conduit_power",
-	"nether": false,
-	"end": false,
 	"baseCost": 14,
 	"rewardPerIteration": 0,
 	"minimum": 1,

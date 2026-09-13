@@ -1,8 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "beer",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 4,
 	"rewardPerIteration": 1.5,
 	"minimum": 3,

@@ -1,8 +1,6 @@
 {
 	"type": "kill_with_item",
 	"item": "minecraft:bow",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 2,
 	"minimum": 4,

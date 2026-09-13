@@ -2,8 +2,6 @@
 	"type": "villager_trade_item",
 	"tradeMode": "receive_item",
 	"target": "minecraft:glistering_melon_slice",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 3,
 	"minimum": 2,

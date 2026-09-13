@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:polar_bear",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 5,
 	"minimum": 1,

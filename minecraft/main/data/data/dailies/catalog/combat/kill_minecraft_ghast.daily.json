@@ -1,8 +1,7 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:ghast",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 6,
 	"rewardPerIteration": 1.25,
 	"minimum": 2,

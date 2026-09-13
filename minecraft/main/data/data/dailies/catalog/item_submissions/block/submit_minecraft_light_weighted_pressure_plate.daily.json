@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:light_weighted_pressure_plate",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 1.75,
 	"minimum": 2,

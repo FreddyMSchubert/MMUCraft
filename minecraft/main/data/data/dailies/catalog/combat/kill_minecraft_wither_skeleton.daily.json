@@ -1,8 +1,7 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:wither_skeleton",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 10,
 	"rewardPerIteration": 2,
 	"minimum": 1,

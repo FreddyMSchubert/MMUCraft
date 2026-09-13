@@ -1,8 +1,6 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:speed",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 3,
 	"minimum": 1,

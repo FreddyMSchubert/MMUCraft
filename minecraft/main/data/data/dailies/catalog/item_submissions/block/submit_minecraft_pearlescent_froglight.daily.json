@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:pearlescent_froglight",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 6,
 	"rewardPerIteration": 2,
 	"minimum": 1,

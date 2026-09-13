@@ -1,13 +1,11 @@
 {
 	"type": "feed_entity",
 	"entity": "minecraft:panda",
-	"nether": false,
-	"end": false,
-	"baseCost": 4,
-	"rewardPerIteration": 1,
+	"baseCost": 5,
+	"rewardPerIteration": 0.5,
 	"minimum": 1,
 	"maximum": 5,
 	"emoji": "🐼",
 	"name": "Feed Pandas",
-	"description": "Feed {count} pandas. Bamboo solves most panda problems."
+	"description": "Feed {count} pandas. Irl pandas actually eat other things than bamboo, such as eggs and small animals.."
 }

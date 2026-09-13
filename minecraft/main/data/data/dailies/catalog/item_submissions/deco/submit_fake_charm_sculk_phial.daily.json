@@ -1,8 +1,6 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "charm-sculk-phial",
-	"nether": false,
-	"end": false,
 	"baseCost": 7,
 	"rewardPerIteration": 5,
 	"minimum": 1,

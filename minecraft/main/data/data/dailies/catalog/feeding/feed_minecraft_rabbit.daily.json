@@ -1,13 +1,11 @@
 {
 	"type": "feed_entity",
 	"entity": "minecraft:rabbit",
-	"nether": false,
-	"end": false,
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 0.5,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "🐇",
 	"name": "Feed Rabbits",
-	"description": "Feed {count} rabbits."
+	"description": "Feed {count} rabbits. If doing good deeds gets you Santas sympathies, maybe doing this will put you in the good graces of the easter bunny."
 }

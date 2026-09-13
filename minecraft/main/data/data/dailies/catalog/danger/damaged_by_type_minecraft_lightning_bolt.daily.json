@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_type",
 	"damageType": "minecraft:lightning_bolt",
-	"nether": false,
-	"end": false,
 	"baseCost": 10,
 	"rewardPerIteration": 3,
 	"minimum": 1,

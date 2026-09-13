@@ -1,8 +1,6 @@
 {
 	"type": "craft_item",
 	"item": "minecraft:recovery_compass",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 20,
 	"minimum": 1,

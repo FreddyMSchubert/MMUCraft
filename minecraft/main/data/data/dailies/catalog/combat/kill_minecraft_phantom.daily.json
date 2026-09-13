@@ -1,8 +1,6 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:phantom",
-	"nether": false,
-	"end": false,
 	"baseCost": 13,
 	"rewardPerIteration": 0,
 	"minimum": 4,

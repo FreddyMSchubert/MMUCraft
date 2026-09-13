@@ -3,8 +3,6 @@
 	"event": "jump_slime_block",
 	"progressLabel": "Bounced",
 	"progressUnit": "times",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.1,
 	"minimum": 5,

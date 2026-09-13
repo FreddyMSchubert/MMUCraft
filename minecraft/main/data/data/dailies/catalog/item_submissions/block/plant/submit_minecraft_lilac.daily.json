@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:lilac",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 0.125,
 	"minimum": 24,

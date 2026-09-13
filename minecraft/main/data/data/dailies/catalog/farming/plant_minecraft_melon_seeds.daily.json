@@ -1,8 +1,6 @@
 {
 	"type": "plant_crop",
 	"seed": "minecraft:melon_seeds",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.02,
 	"minimum": 2,

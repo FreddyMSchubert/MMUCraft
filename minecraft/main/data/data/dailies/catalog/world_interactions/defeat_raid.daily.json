@@ -3,8 +3,6 @@
 	"event": "defeat_raid",
 	"progressLabel": "Defeated",
 	"progressUnit": "raid",
-	"nether": false,
-	"end": false,
 	"baseCost": 10,
 	"rewardPerIteration": 12,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:tnt_minecart",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 3,
 	"minimum": 2,

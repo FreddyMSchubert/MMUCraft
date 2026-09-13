@@ -1,8 +1,6 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:elder_guardian",
-	"nether": false,
-	"end": false,
 	"baseCost": 7,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "kill_with_item",
 	"item": "minecraft:crossbow",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 1,
 	"minimum": 4,

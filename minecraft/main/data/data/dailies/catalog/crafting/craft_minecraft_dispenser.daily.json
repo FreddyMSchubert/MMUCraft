@@ -1,8 +1,6 @@
 {
 	"type": "craft_item",
 	"item": "minecraft:dispenser",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 2,
 	"minimum": 2,

@@ -1,8 +1,6 @@
 {
 	"type": "villager_trade",
 	"tradeMode": "spend_emeralds",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 0.1,
 	"minimum": 16,

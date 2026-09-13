@@ -3,8 +3,6 @@
 	"event": "eye_contact_enderman",
 	"progressLabel": "Made",
 	"progressUnit": "eye contact",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 6,
 	"minimum": 1,

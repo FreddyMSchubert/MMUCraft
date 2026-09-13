@@ -1,8 +1,6 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:zombie_nautilus",
-	"nether": false,
-	"end": false,
 	"baseCost": 9,
 	"rewardPerIteration": 0,
 	"minimum": 1,

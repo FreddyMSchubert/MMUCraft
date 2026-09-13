@@ -1,8 +1,6 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:dolphins_grace",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 2.5,
 	"minimum": 1,

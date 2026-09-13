@@ -1,8 +1,6 @@
 {
 	"type": "feed_entity",
 	"entity": "minecraft:nautilus",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 2,
 	"minimum": 1,

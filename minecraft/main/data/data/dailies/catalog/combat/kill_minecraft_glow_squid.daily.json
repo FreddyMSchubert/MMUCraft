@@ -1,8 +1,6 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:glow_squid",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 0.59,
 	"minimum": 2,

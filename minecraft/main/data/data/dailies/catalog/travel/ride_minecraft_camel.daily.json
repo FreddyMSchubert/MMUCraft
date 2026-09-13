@@ -1,8 +1,6 @@
 {
 	"type": "ride_distance",
 	"vehicle": "minecraft:camel",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.0125,
 	"minimum": 200,

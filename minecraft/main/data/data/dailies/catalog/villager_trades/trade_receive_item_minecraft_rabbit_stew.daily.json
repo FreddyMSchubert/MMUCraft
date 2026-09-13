@@ -2,8 +2,6 @@
 	"type": "villager_trade_item",
 	"tradeMode": "receive_item",
 	"target": "minecraft:rabbit_stew",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,

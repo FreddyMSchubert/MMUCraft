@@ -1,8 +1,6 @@
 {
 	"type": "craft_item",
 	"item": "minecraft:decorated_pot",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 1.25,
 	"minimum": 3,

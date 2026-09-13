@@ -1,8 +1,7 @@
 {
 	"type": "break_block",
 	"block": "minecraft:crying_obsidian",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 4,
 	"rewardPerIteration": 1,
 	"minimum": 2,

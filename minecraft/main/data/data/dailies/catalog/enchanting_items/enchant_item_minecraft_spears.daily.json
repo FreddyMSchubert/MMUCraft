@@ -1,8 +1,6 @@
 {
 	"type": "enchant_item",
 	"itemType": "#minecraft:spears",
-	"nether": false,
-	"end": false,
 	"baseCost": 7,
 	"rewardPerIteration": 0,
 	"minimum": 1,

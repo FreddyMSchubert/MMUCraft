@@ -1,8 +1,6 @@
 {
 	"type": "craft_item",
 	"item": "minecraft:black_concrete_powder",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.125,
 	"minimum": 24,

@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_type",
 	"damageType": "minecraft:stalagmite",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 6,
 	"minimum": 1,

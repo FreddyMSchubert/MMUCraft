@@ -1,8 +1,6 @@
 {
 	"type": "use_charm",
 	"charm": "mainmod:charm-potion-displacement",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.75,
 	"minimum": 1,

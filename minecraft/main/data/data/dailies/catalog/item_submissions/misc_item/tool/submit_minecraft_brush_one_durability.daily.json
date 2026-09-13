@@ -2,8 +2,6 @@
 	"type": "submit_remaining_durability_item",
 	"item": "minecraft:brush",
 	"remainingDurability": 1,
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 3,
 	"minimum": 1,

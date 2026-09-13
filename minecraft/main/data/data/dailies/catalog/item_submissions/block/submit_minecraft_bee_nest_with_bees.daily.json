@@ -1,8 +1,6 @@
 {
 	"type": "submit_bee_nest_with_bees",
 	"item": "minecraft:bee_nest",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 4,
 	"minimum": 1,

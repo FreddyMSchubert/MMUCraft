@@ -3,8 +3,6 @@
 	"event": "modify_item_frame",
 	"progressLabel": "Improved",
 	"progressUnit": "frame",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 1,
 	"minimum": 1,

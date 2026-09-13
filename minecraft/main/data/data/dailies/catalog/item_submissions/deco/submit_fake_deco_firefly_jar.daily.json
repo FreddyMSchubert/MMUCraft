@@ -1,8 +1,6 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-firefly-jar",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 1,
 	"minimum": 1,

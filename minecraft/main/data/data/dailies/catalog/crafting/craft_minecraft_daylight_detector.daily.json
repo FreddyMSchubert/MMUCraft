@@ -1,8 +1,7 @@
 {
 	"type": "craft_item",
 	"item": "minecraft:daylight_detector",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 5,
 	"rewardPerIteration": 0,
 	"minimum": 1,

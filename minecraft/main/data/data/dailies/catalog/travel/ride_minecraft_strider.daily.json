@@ -1,8 +1,7 @@
 {
 	"type": "ride_distance",
 	"vehicle": "minecraft:strider",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 6,
 	"rewardPerIteration": 0.02,
 	"minimum": 200,

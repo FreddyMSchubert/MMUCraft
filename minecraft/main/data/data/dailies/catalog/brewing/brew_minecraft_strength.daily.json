@@ -1,8 +1,7 @@
 {
 	"type": "brew_potion",
 	"potion": "minecraft:strength",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 8,
 	"rewardPerIteration": 0,
 	"minimum": 1,

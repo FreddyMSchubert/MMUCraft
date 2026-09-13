@@ -1,13 +1,11 @@
 {
 	"type": "feed_entity",
 	"entity": "minecraft:sheep",
-	"nether": false,
-	"end": false,
-	"baseCost": 1,
+	"baseCost": 3,
 	"rewardPerIteration": 0.5,
 	"minimum": 6,
 	"maximum": 10,
 	"emoji": "🐑",
 	"name": "Feed Sheep",
-	"description": "Feed {count} sheep."
+	"description": "Feed {count} sheep. Escape the matrix, sheeple! Or don't that sounds kinda stressful tbh..."
 }

@@ -1,8 +1,7 @@
 {
 	"type": "breed_entity",
 	"entity": "minecraft:hoglin",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 6,
 	"rewardPerIteration": 1,
 	"minimum": 1,

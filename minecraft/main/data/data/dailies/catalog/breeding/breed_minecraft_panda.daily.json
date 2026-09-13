@@ -1,8 +1,6 @@
 {
 	"type": "breed_entity",
 	"entity": "minecraft:panda",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 2,
 	"minimum": 1,

@@ -1,8 +1,7 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:hoglin",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 4,
 	"rewardPerIteration": 2,
 	"minimum": 1,

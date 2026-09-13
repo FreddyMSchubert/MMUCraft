@@ -2,8 +2,6 @@
 	"type": "villager_trade_profession",
 	"tradeMode": "profession",
 	"profession": "minecraft:librarian",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 0.75,
 	"minimum": 2,

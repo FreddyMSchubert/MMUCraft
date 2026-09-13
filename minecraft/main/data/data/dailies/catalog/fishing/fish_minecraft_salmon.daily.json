@@ -1,8 +1,6 @@
 {
 	"type": "fish_item",
 	"item": "minecraft:salmon",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 3,
 	"minimum": 1,

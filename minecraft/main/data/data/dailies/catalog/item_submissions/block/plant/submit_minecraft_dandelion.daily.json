@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:dandelion",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.125,
 	"minimum": 24,

@@ -1,8 +1,6 @@
 {
 	"type": "plant_crop",
 	"seed": "minecraft:beetroot_seeds",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.02,
 	"minimum": 5,

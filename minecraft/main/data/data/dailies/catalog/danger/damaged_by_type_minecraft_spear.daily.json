@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_type",
 	"damageType": "minecraft:spear",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 5,
 	"minimum": 1,

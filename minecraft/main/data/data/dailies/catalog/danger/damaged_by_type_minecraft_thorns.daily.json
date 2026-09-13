@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_type",
 	"damageType": "minecraft:thorns",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 4,
 	"minimum": 1,

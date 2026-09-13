@@ -1,8 +1,6 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:breeze",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 1.5,
 	"minimum": 2,

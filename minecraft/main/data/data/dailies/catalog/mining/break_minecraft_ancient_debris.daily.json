@@ -1,8 +1,7 @@
 {
 	"type": "break_block",
 	"block": "minecraft:ancient_debris",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 8,
 	"rewardPerIteration": 3,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "create_golem",
 	"golem": "minecraft:iron_golem",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 15,
 	"minimum": 1,

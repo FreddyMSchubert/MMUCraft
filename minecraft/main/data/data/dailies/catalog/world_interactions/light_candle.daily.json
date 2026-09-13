@@ -3,8 +3,6 @@
 	"event": "light_candle",
 	"progressLabel": "Lit",
 	"progressUnit": "candles",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 0.25,
 	"minimum": 4,

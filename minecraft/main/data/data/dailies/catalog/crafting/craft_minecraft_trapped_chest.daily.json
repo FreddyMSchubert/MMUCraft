@@ -1,8 +1,6 @@
 {
 	"type": "craft_item",
 	"item": "minecraft:trapped_chest",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 1.25,
 	"minimum": 3,

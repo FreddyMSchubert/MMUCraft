@@ -41,6 +41,10 @@ def validate_gameplay_toggle_references(root: Path) -> None:
 		if isinstance(shop, dict):
 			_validate_toggle(shop.get("gameplayToggle"), known, path)
 
+	for path in sorted((root / "data" / "data" / "dailies" / "catalog").rglob("*.daily.json")):
+		daily = json.loads(path.read_text(encoding="utf-8"))
+		_validate_toggle(daily.get("drop"), known, path)
+
 	for path in sorted((root / "mod" / "src" / "main" / "resources" / "data" / "mainmod" / "recipe").rglob("*.json")):
 		recipe = json.loads(path.read_text(encoding="utf-8"))
 		if recipe.get("type") in FAKE_RECIPE_TYPES:

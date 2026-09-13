@@ -1,8 +1,7 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:piglin",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 3,
 	"rewardPerIteration": 0.75,
 	"minimum": 3,

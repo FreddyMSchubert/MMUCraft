@@ -7,5 +7,5 @@
 	"maximum": 32,
 	"emoji": "🌹",
 	"name": "Submit Rose Bushes",
-	"description": "Submit {count} rose bushes. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} rose bushes. Roses are thorny, so why don't you take damage when walking through them?"
 }

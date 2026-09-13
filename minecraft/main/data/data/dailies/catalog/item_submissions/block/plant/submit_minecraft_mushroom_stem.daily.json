@@ -7,5 +7,5 @@
 	"maximum": 12,
 	"emoji": "🍄",
 	"name": "Submit Mushroom Stems",
-	"description": "Submit {count} mushroom stems. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} mushroom stems. Before 1.13, its item ID was 99:15."
 }

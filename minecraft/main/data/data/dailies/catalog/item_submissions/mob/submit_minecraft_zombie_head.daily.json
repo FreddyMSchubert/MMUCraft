@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:zombie_head",
+	"nether": false,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 5,
+	"minimum": 3,
+	"maximum": 6,
+	"emoji": "🧟",
+	"name": "Submit Zombie Heads",
+	"description": "Submit {count} zombie heads. Let's hope it starts storming soon."
+}

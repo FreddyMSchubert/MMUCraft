@@ -1,0 +1,13 @@
+{
+	"type": "ride_distance",
+	"vehicle": "minecraft:mule",
+	"nether": false,
+	"end": false,
+	"baseCost": 3,
+	"rewardPerIteration": 0.0125,
+	"minimum": 200,
+	"maximum": 600,
+	"emoji": "🫏",
+	"name": "Ride a Mule",
+	"description": "Ride a mule for {count} blocks. Might wanna breed one if you haven't already."
+}

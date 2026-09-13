@@ -1,0 +1,13 @@
+{
+	"type": "submit_item",
+	"item": "minecraft:wither_skeleton_skull",
+	"nether": true,
+	"end": false,
+	"baseCost": 5,
+	"rewardPerIteration": 5,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "💀",
+	"name": "Submit a Wither Skeleton Skull",
+	"description": "Submit {count} wither skeleton skulls. Hope you don't need this anytime soon"
+}

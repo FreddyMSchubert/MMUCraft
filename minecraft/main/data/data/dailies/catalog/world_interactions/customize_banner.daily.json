@@ -6,10 +6,10 @@
 	"nether": false,
 	"end": false,
 	"baseCost": 2,
-	"rewardPerIteration": 0.5,
+	"rewardPerIteration": 4,
 	"minimum": 4,
 	"maximum": 10,
 	"emoji": "🚩",
 	"name": "Design Banners",
-	"description": "Apply {count} patterns to banners."
+	"description": "Apply {count} patterns to banners. Have fun!"
 }

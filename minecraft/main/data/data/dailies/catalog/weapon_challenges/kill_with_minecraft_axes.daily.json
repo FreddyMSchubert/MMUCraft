@@ -3,11 +3,11 @@
 	"item": "#minecraft:axes",
 	"nether": false,
 	"end": false,
-	"baseCost": 0,
-	"rewardPerIteration": 1.2,
+	"baseCost": 2,
+	"rewardPerIteration": 3,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "🪓",
 	"name": "Axe Kills",
-	"description": "Defeat {count} mobs with an axe."
+	"description": "Defeat {count} mobs with an axe. Yeah I've played Assassin's Creed Valhallah before, how did you know? 🤓🤓🤓"
 }

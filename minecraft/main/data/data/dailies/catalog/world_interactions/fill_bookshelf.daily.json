@@ -5,11 +5,11 @@
 	"progressUnit": "books",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 0.3,
-	"minimum": 8,
-	"maximum": 16,
+	"minimum": 6,
+	"maximum": 24,
 	"emoji": "📚",
 	"name": "Fill a Chiseled Bookshelf",
-	"description": "Put {count} books in chiseled bookshelves."
+	"description": "Put {count} books in chiseled bookshelves. I personally wouldn't do this because I'm not a nerd, but you do you I guess"
 }

@@ -5,9 +5,9 @@
 	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 0.01,
-	"minimum": 200,
-	"maximum": 600,
+	"minimum": 500,
+	"maximum": 3000,
 	"emoji": "🛤️",
 	"name": "Ride a Minecart",
-	"description": "Ride a minecart for {count} blocks. A loop works. A railway somewhere useful is less depressing."
+	"description": "Ride a minecart for {count} blocks. Take the night train, explore the world!"
 }

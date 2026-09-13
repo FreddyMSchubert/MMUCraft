@@ -3,11 +3,11 @@
 	"entity": "minecraft:goat",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
+	"baseCost": 5,
 	"rewardPerIteration": 0.5,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "🐐",
 	"name": "Feed Goats",
-	"description": "Feed {count} goats."
+	"description": "Feed {count} goats. Awwww the baby goat is so adorable please breed them if you can wow that thing is cute."
 }

@@ -3,11 +3,11 @@
 	"seed": "minecraft:cocoa_beans",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
-	"rewardPerIteration": 0.25,
+	"baseCost": 5,
+	"rewardPerIteration": 0.15,
 	"minimum": 8,
 	"maximum": 20,
 	"emoji": "🍫",
 	"name": "Plant Cocoa",
-	"description": "Plant {count} cocoa beans. Jungle wood is not optional."
+	"description": "Plant {count} cocoa beans. Watch out for the cookie monster!"
 }

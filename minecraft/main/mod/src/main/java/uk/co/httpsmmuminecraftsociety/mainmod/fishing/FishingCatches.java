@@ -217,6 +217,13 @@ public final class FishingCatches {
                 .withStyle(Style.EMPTY.withColor(rarity.colorRgb())));
     }
 
+    public static Optional<FishRarity> fishRarity(ItemStack stack) {
+        var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (!tag.contains(RARITY_TAG)) return Optional.empty();
+        int rarityIndex = Math.max(0, Math.min(FishRarity.values().length - 1, tag.getIntOr(RARITY_TAG, 0)));
+        return Optional.of(FishRarity.values()[rarityIndex]);
+    }
+
     public static void trackCatch(ServerPlayer player, ItemStack stack) {
         FakeItem fakeItem = FakeItems.getFakeItemFromStack(stack);
         var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();

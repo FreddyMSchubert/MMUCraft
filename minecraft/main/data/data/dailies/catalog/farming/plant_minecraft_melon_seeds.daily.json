@@ -3,11 +3,11 @@
 	"seed": "minecraft:melon_seeds",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
-	"rewardPerIteration": 0.25,
-	"minimum": 12,
-	"maximum": 24,
+	"baseCost": 5,
+	"rewardPerIteration": 0.02,
+	"minimum": 2,
+	"maximum": 18,
 	"emoji": "🍉",
 	"name": "Plant Melons",
-	"description": "Plant {count} melon seeds. Every stem needs somewhere to put the melon."
+	"description": "Plant {count} melon seeds. Selling melons to villagers can be very profitable."
 }

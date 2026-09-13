@@ -3,11 +3,11 @@
 	"seed": "minecraft:carrot",
 	"nether": false,
 	"end": false,
-	"baseCost": 2,
-	"rewardPerIteration": 0.15,
-	"minimum": 24,
+	"baseCost": 5,
+	"rewardPerIteration": 0.02,
+	"minimum": 4,
 	"maximum": 40,
 	"emoji": "🥕",
 	"name": "Plant Carrots",
-	"description": "Plant {count} carrots. Villages, zombies, and shipwrecks can supply the first carrot."
+	"description": "Plant {count} carrots. Your eyesight will thank you!"
 }

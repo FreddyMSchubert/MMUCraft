@@ -3,11 +3,11 @@
 	"seed": "minecraft:potato",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
+	"baseCost": 3,
 	"rewardPerIteration": 0.15,
 	"minimum": 24,
 	"maximum": 40,
 	"emoji": "🥔",
 	"name": "Plant Potatoes",
-	"description": "Plant {count} potatoes. Do not plant the poisonous ones. They have other work today."
+	"description": "Plant {count} potatoes. Rest in peace poisonous potato update, your features were too goated for the main game. You will be missed."
 }

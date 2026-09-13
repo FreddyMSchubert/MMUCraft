@@ -1,0 +1,13 @@
+{
+	"type": "fish_rarity",
+	"rarity": "uncommon",
+	"nether": false,
+	"end": false,
+	"baseCost": 2,
+	"rewardPerIteration": 1.5,
+	"minimum": 2,
+	"maximum": 4,
+	"emoji": "🎣",
+	"name": "Uncommon Catch",
+	"description": "Catch {count} uncommon fish. The pond is starting to show off."
+}

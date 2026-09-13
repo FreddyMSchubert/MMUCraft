@@ -3,11 +3,11 @@
 	"entity": "minecraft:frog",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 5,
 	"rewardPerIteration": 0.75,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🐸",
 	"name": "Feed Frogs",
-	"description": "Feed {count} frogs. The slimeball disappears alarmingly fast."
+	"description": "Feed {count} frogs. JUSTICE FOR FIREFLIES! (they kinda got justice already with the firefly bush, gotta give credit where credit is due)"
 }

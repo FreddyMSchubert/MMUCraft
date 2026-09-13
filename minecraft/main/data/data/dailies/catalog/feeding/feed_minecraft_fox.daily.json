@@ -3,11 +3,11 @@
 	"entity": "minecraft:fox",
 	"nether": false,
 	"end": false,
-	"baseCost": 3,
+	"baseCost": 5,
 	"rewardPerIteration": 0.75,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🦊",
 	"name": "Feed Foxes",
-	"description": "Feed {count} foxes."
+	"description": "Feed {count} foxes. WHAT DOES THE FOX SAY? ding ding dign ding dindndingindigndignidgnidngiidngidgnidgn... That song is a legendary banger."
 }

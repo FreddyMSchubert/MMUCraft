@@ -3,11 +3,11 @@
 	"seed": "minecraft:sugar_cane",
 	"nether": false,
 	"end": false,
-	"baseCost": 1,
-	"rewardPerIteration": 0.125,
-	"minimum": 30,
-	"maximum": 50,
+	"baseCost": 5,
+	"rewardPerIteration": 0.05,
+	"minimum": 10,
+	"maximum": 42,
 	"emoji": "🎋",
 	"name": "Plant Sugar Cane",
-	"description": "Plant {count} sugar cane. Water, dirt, and an unreasonable amount of clicking."
+	"description": "Plant {count} sugar cane. If you keep placing sugar canes on top of each other, you can make unnaturally tall sugar canes."
 }

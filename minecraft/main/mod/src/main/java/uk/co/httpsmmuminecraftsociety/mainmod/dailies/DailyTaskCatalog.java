@@ -30,6 +30,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry.CatalogD
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry.CatalogEntry;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry.Weighted;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.tasks.*;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishRarity;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -215,6 +216,8 @@ final class DailyTaskCatalog {
             case "fish_anything" -> new FishTask();
             case "fish_item" -> new FishTask(item(json, "item", path));
             case "fish_fake_item" -> FishTask.custom(fakeItem(json, "fakeItem", path));
+            case "fish_rarity" -> new FishRarityTask(enumValue(
+                    FishRarity.class, string(json, "rarity", path), path, "rarity"));
             case "gain_levels" -> new GainLevelsTask();
             case "hit_player_with_projectile" -> new HitPlayerWithProjectileTask(entity(json, "projectile", path));
             case "kill_entity" -> new KillEntityTask(entity(json, "entity", path));
@@ -271,6 +274,7 @@ final class DailyTaskCatalog {
         return switch (type) {
             case "submit_item", "eat_item", "craft_item", "use_item", "fish_item" -> Set.of("item");
             case "submit_fake_item", "fish_fake_item" -> Set.of("fakeItem");
+            case "fish_rarity" -> Set.of("rarity");
             case "submit_dyed_item" -> Set.of("item", "color");
             case "submit_enchanted_item" -> Set.of("item", "enchantment", "minimumEnchantmentLevel");
             case "submit_remaining_durability_item" -> Set.of("item", "remainingDurability");

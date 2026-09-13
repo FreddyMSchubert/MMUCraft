@@ -72,6 +72,9 @@
 			"$ref": "#/$defs/fish_fake_item"
 		},
 		{
+			"$ref": "#/$defs/fish_rarity"
+		},
+		{
 			"$ref": "#/$defs/gain_levels"
 		},
 		{
@@ -746,6 +749,36 @@
 						"fakeItem": {
 							"type": "string",
 							"pattern": "^[a-z0-9][a-z0-9._-]*$"
+						}
+					}
+				}
+			],
+			"unevaluatedProperties": false,
+			"type": "object"
+		},
+		"fish_rarity": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/common"
+				},
+				{
+					"type": "object",
+					"required": [
+						"rarity"
+					],
+					"properties": {
+						"type": {
+							"const": "fish_rarity"
+						},
+						"rarity": {
+							"enum": [
+								"common",
+								"uncommon",
+								"rare",
+								"epic",
+								"legendary",
+								"mythical"
+							]
 						}
 					}
 				}

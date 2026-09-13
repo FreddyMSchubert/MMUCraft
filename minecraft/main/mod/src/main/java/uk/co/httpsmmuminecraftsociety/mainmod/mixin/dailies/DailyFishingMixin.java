@@ -13,8 +13,10 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
 
 import java.util.Collection;
+import java.util.Locale;
 
 @Mixin(FishingRodHookedTrigger.class)
 public abstract class DailyFishingMixin {
@@ -34,7 +36,9 @@ public abstract class DailyFishingMixin {
                 DailyTaskManager.record(player, new DailyTaskEvent(
                         DailyTaskEvent.Type.FISH,
                         fakeItem == null ? BuiltInRegistries.ITEM.getKey(stack.getItem()).toString() : fakeItem.id(),
-                        "",
+                        FishingCatches.fishRarity(stack)
+                                .map(rarity -> rarity.name().toLowerCase(Locale.ROOT))
+                                .orElse(""),
                         stack.getCount()
                 ));
             }

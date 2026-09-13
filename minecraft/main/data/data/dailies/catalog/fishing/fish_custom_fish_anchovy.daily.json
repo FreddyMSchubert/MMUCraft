@@ -1,8 +1,6 @@
 {
 	"type": "fish_fake_item",
 	"fakeItem": "fish-anchovy",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 2.5,
 	"minimum": 1,

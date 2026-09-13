@@ -1,8 +1,6 @@
 {
 	"type": "hit_player_with_projectile",
 	"projectile": "minecraft:egg",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 0.3,
 	"minimum": 15,

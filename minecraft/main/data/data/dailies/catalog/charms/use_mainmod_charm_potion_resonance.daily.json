@@ -1,8 +1,6 @@
 {
 	"type": "use_charm",
 	"charm": "mainmod:charm-potion-resonance",
-	"nether": false,
-	"end": false,
 	"baseCost": 10,
 	"rewardPerIteration": 0,
 	"minimum": 1,

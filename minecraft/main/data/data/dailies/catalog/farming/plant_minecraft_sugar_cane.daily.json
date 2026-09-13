@@ -1,8 +1,6 @@
 {
 	"type": "plant_crop",
 	"seed": "minecraft:sugar_cane",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.05,
 	"minimum": 10,

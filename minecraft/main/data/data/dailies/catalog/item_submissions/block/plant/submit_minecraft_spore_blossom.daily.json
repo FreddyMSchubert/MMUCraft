@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:spore_blossom",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 1,
 	"minimum": 3,

@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:zombie_head",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 5,
 	"minimum": 3,

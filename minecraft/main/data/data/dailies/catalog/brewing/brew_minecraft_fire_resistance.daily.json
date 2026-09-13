@@ -1,8 +1,7 @@
 {
 	"type": "brew_potion",
 	"potion": "minecraft:fire_resistance",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 7,
 	"rewardPerIteration": 0,
 	"minimum": 1,

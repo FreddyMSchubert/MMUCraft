@@ -1,8 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-spoons-carpet-grandiloquent",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 4,
 	"rewardPerIteration": 0.5,
 	"minimum": 8,

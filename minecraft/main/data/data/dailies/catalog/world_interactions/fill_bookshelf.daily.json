@@ -3,8 +3,6 @@
 	"event": "fill_bookshelf",
 	"progressLabel": "Stored",
 	"progressUnit": "books",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 0.3,
 	"minimum": 6,

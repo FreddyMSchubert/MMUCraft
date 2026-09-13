@@ -2,8 +2,6 @@
 	"type": "submit_dyed_item",
 	"item": "minecraft:leather_horse_armor",
 	"color": "brown",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 2,
 	"minimum": 2,

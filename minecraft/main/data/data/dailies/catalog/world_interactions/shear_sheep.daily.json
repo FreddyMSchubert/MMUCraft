@@ -3,8 +3,6 @@
 	"event": "shear_sheep",
 	"progressLabel": "Sheared",
 	"progressUnit": "sheep",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.6,
 	"minimum": 2,

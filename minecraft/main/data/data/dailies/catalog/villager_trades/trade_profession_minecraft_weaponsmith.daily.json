@@ -2,8 +2,6 @@
 	"type": "villager_trade_profession",
 	"tradeMode": "profession",
 	"profession": "minecraft:weaponsmith",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 4,
 	"minimum": 2,

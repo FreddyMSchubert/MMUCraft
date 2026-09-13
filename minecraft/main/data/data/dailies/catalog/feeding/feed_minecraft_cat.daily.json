@@ -1,8 +1,6 @@
 {
 	"type": "feed_entity",
 	"entity": "minecraft:cat",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 0.75,
 	"minimum": 3,

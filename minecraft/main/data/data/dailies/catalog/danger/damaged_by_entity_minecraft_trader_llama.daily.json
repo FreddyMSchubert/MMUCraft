@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:trader_llama",
-	"nether": false,
-	"end": false,
 	"baseCost": 3,
 	"rewardPerIteration": 6,
 	"minimum": 1,

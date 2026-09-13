@@ -1,7 +1,6 @@
 {
 	"type": "cure_zombie_villager",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 10,
 	"rewardPerIteration": 5,
 	"minimum": 1,

@@ -1,8 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:dragon_head",
-	"nether": false,
-	"end": true,
+	"drop": "end",
 	"baseCost": 8,
 	"rewardPerIteration": 5,
 	"minimum": 1,

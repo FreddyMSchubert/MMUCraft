@@ -1,8 +1,7 @@
 {
 	"type": "use_charm",
 	"charm": "mainmod:charm-potion-insomnia",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 10,
 	"rewardPerIteration": 0,
 	"minimum": 1,

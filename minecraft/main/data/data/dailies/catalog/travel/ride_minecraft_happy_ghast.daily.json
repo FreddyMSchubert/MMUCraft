@@ -1,8 +1,7 @@
 {
 	"type": "ride_distance",
 	"vehicle": "minecraft:happy_ghast",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 0,
 	"rewardPerIteration": 0.1,
 	"minimum": 50,

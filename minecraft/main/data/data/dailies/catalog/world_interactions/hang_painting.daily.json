@@ -3,8 +3,6 @@
 	"event": "hang_painting",
 	"progressLabel": "Hung",
 	"progressUnit": "paintings",
-	"nether": false,
-	"end": false,
 	"baseCost": 1,
 	"rewardPerIteration": 0.75,
 	"minimum": 3,

@@ -1,8 +1,7 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:magma_cube",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 5,
 	"rewardPerIteration": 0.5,
 	"minimum": 4,

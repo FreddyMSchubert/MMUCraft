@@ -1,8 +1,7 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:wither",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 8,
 	"rewardPerIteration": 2,
 	"minimum": 1,

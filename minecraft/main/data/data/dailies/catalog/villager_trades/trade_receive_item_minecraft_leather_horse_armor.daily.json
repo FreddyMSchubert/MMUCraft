@@ -2,8 +2,6 @@
 	"type": "villager_trade_item",
 	"tradeMode": "receive_item",
 	"target": "minecraft:leather_horse_armor",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 2,
 	"minimum": 1,

@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:copper_golem_statue",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 2,
 	"minimum": 1,

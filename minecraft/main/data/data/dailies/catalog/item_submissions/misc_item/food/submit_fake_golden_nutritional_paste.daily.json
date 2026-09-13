@@ -1,8 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "golden-nutritional-paste",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 6,
 	"rewardPerIteration": 4,
 	"minimum": 1,

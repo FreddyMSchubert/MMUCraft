@@ -1,8 +1,6 @@
 {
 	"type": "break_block",
 	"block": "minecraft:infested_stone",
-	"nether": false,
-	"end": false,
 	"baseCost": 6,
 	"rewardPerIteration": 0.25,
 	"minimum": 4,

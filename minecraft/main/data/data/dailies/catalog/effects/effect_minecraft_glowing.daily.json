@@ -1,8 +1,6 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:glowing",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 2.5,
 	"minimum": 1,

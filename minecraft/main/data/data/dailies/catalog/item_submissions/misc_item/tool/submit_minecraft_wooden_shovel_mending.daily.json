@@ -3,8 +3,6 @@
 	"item": "minecraft:wooden_shovel",
 	"enchantment": "minecraft:mending",
 	"minimumEnchantmentLevel": 1,
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 6,
 	"minimum": 1,

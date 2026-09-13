@@ -1,8 +1,6 @@
 {
 	"type": "plant_crop",
 	"seed": "minecraft:cocoa_beans",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.15,
 	"minimum": 8,

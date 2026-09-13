@@ -1,8 +1,6 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:zombie",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 0.3,
 	"minimum": 3,

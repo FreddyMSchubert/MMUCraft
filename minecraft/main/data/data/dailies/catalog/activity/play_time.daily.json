@@ -1,7 +1,5 @@
 {
 	"type": "play_time",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.15,
 	"minimum": 30,

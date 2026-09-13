@@ -1,8 +1,7 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:wind_charged",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 9,
 	"rewardPerIteration": 1.5,
 	"minimum": 1,

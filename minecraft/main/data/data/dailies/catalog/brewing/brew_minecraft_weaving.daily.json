@@ -1,8 +1,7 @@
 {
 	"type": "brew_potion",
 	"potion": "minecraft:weaving",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 9,
 	"rewardPerIteration": 0,
 	"minimum": 1,

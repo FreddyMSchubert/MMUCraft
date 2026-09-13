@@ -3,8 +3,6 @@
 	"item": "minecraft:enchanted_book",
 	"enchantment": "minecraft:sharpness",
 	"minimumEnchantmentLevel": 2,
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 4,
 	"minimum": 1,

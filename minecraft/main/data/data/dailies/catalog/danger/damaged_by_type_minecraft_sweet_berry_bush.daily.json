@@ -1,8 +1,6 @@
 {
 	"type": "take_damage_type",
 	"damageType": "minecraft:sweet_berry_bush",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.1,
 	"minimum": 5,

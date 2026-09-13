@@ -1,8 +1,7 @@
 {
 	"type": "brew_potion",
 	"potion": "minecraft:poison",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 8,
 	"rewardPerIteration": 1,
 	"minimum": 1,

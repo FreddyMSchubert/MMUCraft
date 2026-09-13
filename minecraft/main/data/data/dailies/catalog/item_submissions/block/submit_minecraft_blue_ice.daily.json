@@ -1,8 +1,6 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:blue_ice",
-	"nether": false,
-	"end": false,
 	"baseCost": 4,
 	"rewardPerIteration": 1.5,
 	"minimum": 2,

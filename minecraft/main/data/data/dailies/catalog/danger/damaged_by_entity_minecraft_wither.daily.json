@@ -1,8 +1,7 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:wither",
-	"nether": true,
-	"end": false,
+	"drop": "nether",
 	"baseCost": 12,
 	"rewardPerIteration": 5,
 	"minimum": 1,

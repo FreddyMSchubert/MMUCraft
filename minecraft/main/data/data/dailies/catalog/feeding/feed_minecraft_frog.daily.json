@@ -1,8 +1,6 @@
 {
 	"type": "feed_entity",
 	"entity": "minecraft:frog",
-	"nether": false,
-	"end": false,
 	"baseCost": 5,
 	"rewardPerIteration": 0.75,
 	"minimum": 2,

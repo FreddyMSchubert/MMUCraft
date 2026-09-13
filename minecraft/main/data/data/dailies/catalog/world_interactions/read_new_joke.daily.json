@@ -3,8 +3,6 @@
 	"event": "read_new_joke",
 	"progressLabel": "Read",
 	"progressUnit": "joke",
-	"nether": false,
-	"end": false,
 	"baseCost": 2,
 	"rewardPerIteration": 1,
 	"minimum": 1,

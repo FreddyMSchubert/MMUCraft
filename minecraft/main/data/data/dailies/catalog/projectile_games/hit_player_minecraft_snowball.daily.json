@@ -1,8 +1,6 @@
 {
 	"type": "hit_player_with_projectile",
 	"projectile": "minecraft:snowball",
-	"nether": false,
-	"end": false,
 	"baseCost": 0,
 	"rewardPerIteration": 0.15,
 	"minimum": 30,

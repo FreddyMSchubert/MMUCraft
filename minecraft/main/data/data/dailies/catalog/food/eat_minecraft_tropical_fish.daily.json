@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:tropical_fish",
-	"baseCost": 1,
+	"baseCost": 8,
 	"rewardPerIteration": 1.75,
-	"minimum": 2,
-	"maximum": 5,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "🐠",
-	"name": "Eat Tropical Fish",
-	"description": "Eat {count} tropical fish. The aquarium community condemns this daily."
+	"name": "Eat a Tropical Fish",
+	"description": "So that's why Marlin can't find Nemo... YOU ATE HIM? YOU MONSTER!"
 }

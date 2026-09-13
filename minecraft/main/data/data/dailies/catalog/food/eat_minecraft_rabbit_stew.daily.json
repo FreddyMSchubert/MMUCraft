@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:rabbit_stew",
-	"baseCost": 3,
+	"baseCost": 4,
 	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 3,
 	"emoji": "🐇",
 	"name": "Eat Rabbit Stew",
-	"description": "Eat {count} rabbit stew."
+	"description": "Eat {count} rabbit stew. This is the best food item in the game, besides the golden nutritional paste! It is incredibly filling."
 }

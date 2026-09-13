@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:baked_potato",
-	"baseCost": 0,
-	"rewardPerIteration": 0.75,
+	"baseCost": 3,
+	"rewardPerIteration": 0.33,
 	"minimum": 6,
 	"maximum": 10,
 	"emoji": "🥔",
 	"name": "Eat Baked Potatoes",
-	"description": "Eat {count} baked potatoes."
+	"description": "Eat {count} jacket potatoes."
 }

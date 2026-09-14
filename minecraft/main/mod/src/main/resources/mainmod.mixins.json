@@ -11,6 +11,7 @@
 		"CommandExecutionMixin",
 		"ArmorAddToolTipFirstTick",
 		"RefreshCharmOnArmorEquip",
+		"RecoverArmorContentsOnBreak",
 		"decoBlocks.PlaceFakeItemsAsFrames",
 		"decoBlocks.NoDecoBlockFrameItemDrops",
 		"decoBlocks.RemoveEmptyDecoBlockFrames",

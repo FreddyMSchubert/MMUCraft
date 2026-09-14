@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:pumpkin_pie",
-	"baseCost": 1,
+	"baseCost": 3,
 	"rewardPerIteration": 0.75,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "🥧",
 	"name": "Eat Pumpkin Pie",
-	"description": "Eat {count} pumpkin pies."
+	"description": "Eat {count} pumpkin pies. Doughn't overthink it."
 }

@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:beetroot",
-	"baseCost": 2,
-	"rewardPerIteration": 0.5,
+	"baseCost": 4,
+	"rewardPerIteration": 0.2,
 	"minimum": 8,
 	"maximum": 14,
 	"emoji": "🫜",
 	"name": "Eat Beetroot",
-	"description": "Eat {count} beetroot."
+	"description": "Eat {count} beetroot. Beetroots are like Hawkeye."
 }

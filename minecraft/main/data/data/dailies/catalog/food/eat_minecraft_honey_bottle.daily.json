@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:honey_bottle",
-	"baseCost": 3,
+	"baseCost": 4,
 	"rewardPerIteration": 1,
 	"minimum": 2,
 	"maximum": 5,
 	"emoji": "🍯",
 	"name": "Drink Honey",
-	"description": "Drink {count} honey bottles."
+	"description": "Drink {count} honey bottles. Not irl, dowing 5 litres of honey sounds like a bad idea."
 }

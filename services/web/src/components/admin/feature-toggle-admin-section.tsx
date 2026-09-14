@@ -16,7 +16,7 @@ const TOGGLE_ORDER = [
 	'soaring',
 	'imaginative',
 	'circus',
-	'efficient',
+	'inventors',
 	'overpowered',
 ] as const;
 

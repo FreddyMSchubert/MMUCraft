@@ -30,7 +30,8 @@ public class RefreshCharmOnArmorEquip
     private void recoverArmorCharms(Item item, EquipmentSlot slot, CallbackInfo info) {
         if (!slot.isArmor() || !((Object) this instanceof ServerPlayer player)) return;
 
-        ItemStack brokenStack = player.getItemBySlot(slot);
+        ItemStack brokenStack = new ItemStack(item);
+        brokenStack.applyComponents(player.getItemBySlot(slot).getComponentsPatch());
         ItemStack cosmetic = CosmeticsManager.cosmeticFromHelmetReplica(brokenStack);
         if (!cosmetic.isEmpty()) {
             player.setItemSlot(EquipmentSlot.HEAD, cosmetic);

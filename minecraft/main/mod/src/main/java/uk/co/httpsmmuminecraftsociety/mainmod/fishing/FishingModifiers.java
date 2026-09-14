@@ -19,12 +19,13 @@ public final class FishingModifiers {
     public static final double DEFAULT_ITEM_CHANCE = 0.35;
     private static final int SEARCH_RADIUS = 8;
     private static final int SEARCH_HEIGHT = 4;
+    private static final double CREATE_MODIFIER_CHANCE = 0.2;
 
     private static final Map<String, Modifier> MODIFIERS = Map.of(
             "item-magnet", new Modifier(0.50, 20),
-            "golden-item-magnet", new Modifier(0.70, 20),
+            "golden-item-magnet", new Modifier(0.70, 30),
             "worms", new Modifier(0.15, 20),
-            "golden-worms", new Modifier(0.0, 20)
+            "golden-worms", new Modifier(0.0, 30)
     );
 
     private FishingModifiers() {
@@ -50,6 +51,7 @@ public final class FishingModifiers {
 
     private static void seedNearbyBrushables(Player player) {
         if (!(player.level() instanceof ServerLevel level)) return;
+        if (Math.random() > CREATE_MODIFIER_CHANCE) return;
 
         RandomSource random = level.getRandom();
         BlockPos origin = player.blockPosition();
@@ -72,11 +74,11 @@ public final class FishingModifiers {
 
         if (sand != null) {
             placeBrushable(level, sand, Blocks.SUSPICIOUS_SAND,
-                    random.nextFloat() < 0.9F ? "worms" : "golden-worms");
+                    random.nextFloat() < 0.95F ? "worms" : "golden-worms");
         }
         if (gravel != null) {
             placeBrushable(level, gravel, Blocks.SUSPICIOUS_GRAVEL,
-                    random.nextFloat() < 0.9F ? "item-magnet" : "golden-item-magnet");
+                    random.nextFloat() < 0.95F ? "item-magnet" : "golden-item-magnet");
         }
     }
 

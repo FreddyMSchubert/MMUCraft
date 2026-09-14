@@ -3,7 +3,7 @@
 	"event": "shear_sheep",
 	"progressLabel": "Sheared",
 	"progressUnit": "sheep",
-	"baseCost": 0,
+	"baseCost": 2,
 	"rewardPerIteration": 0.6,
 	"minimum": 2,
 	"maximum": 16,

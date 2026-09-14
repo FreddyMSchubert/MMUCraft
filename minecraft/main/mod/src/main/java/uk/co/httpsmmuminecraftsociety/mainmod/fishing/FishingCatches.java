@@ -111,6 +111,7 @@ public final class FishingCatches {
         addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.WHEAT_SEEDS));
         addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.BEETROOT_SEEDS));
         addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.EMERALD));
+        addTreasure(FishRarity.UNCOMMON, FakeItems.createFakeItemStack("charm-lucky-charm", 1));
 
         addTreasure(FishRarity.RARE, new ItemStack(Items.RAW_IRON));
         addTreasure(FishRarity.RARE, new ItemStack(Items.RAW_GOLD));

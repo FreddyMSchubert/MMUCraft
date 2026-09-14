@@ -1,8 +1,8 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:copper_golem_statue",
-	"baseCost": 4,
-	"rewardPerIteration": 2,
+	"baseCost": 2,
+	"rewardPerIteration": 4,
 	"minimum": 1,
 	"maximum": 2,
 	"emoji": "🗿",

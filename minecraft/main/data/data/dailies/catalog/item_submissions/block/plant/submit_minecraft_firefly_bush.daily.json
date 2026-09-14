@@ -1,7 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:firefly_bush",
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 0.5,
 	"minimum": 4,
 	"maximum": 8,

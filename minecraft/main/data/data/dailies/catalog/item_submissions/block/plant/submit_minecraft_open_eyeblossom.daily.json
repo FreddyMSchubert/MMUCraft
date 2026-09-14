@@ -1,7 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:open_eyeblossom",
-	"baseCost": 4,
+	"baseCost": 5,
 	"rewardPerIteration": 0.3,
 	"minimum": 4,
 	"maximum": 10,

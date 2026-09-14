@@ -1,7 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:azure_bluet",
-	"baseCost": 0,
+	"baseCost": 2,
 	"rewardPerIteration": 0.125,
 	"minimum": 24,
 	"maximum": 32,

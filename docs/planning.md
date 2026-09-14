@@ -14,6 +14,7 @@ Surprising Saturday: Killswitch
 Sunday (Welcoming Drop):
 - Charms: Kitty Pajamas Charm, Hiking Boots Charm, Pickaxe Heater Charm
 - Note on Charm Boost to have many charms on some armor
+- Screenshot: kitty pajamas, bunny ears (baby mobs nearby)
 
 ## Week 2
 
@@ -27,6 +28,7 @@ Sunday (Soaring Drop):
 - Particle Trails
 - Phantom Summon Potions
 - Charms: Winged Shoes Charm, Bunny Pajamas Charm
+- Screenshot: glider, aviator helmet (flying over campfire + trail)
 
 ## Week 3
 
@@ -41,6 +43,7 @@ Sunday (Imaginative Drop):
 - Begin Halloween Event, frame everything this drop as helpful for building
 - Wrench & InvisiCarrot
 - Charms: Spider Pajamas & Cave Spider Pajamas
+- Screenshot: wrench, builder helmet (build under construction, maybe toolbench deco block?)
 
 ## Week 4
 
@@ -57,6 +60,7 @@ Sunday (Hellish Drop):
 - Note that Halloween Build Event ends next saturday
 - 16x16 maps feature TODO
 - Buncha Halloween Cosmetics
+- Screenshot: player in netherite, devil horns (maybe player falling through a portal in the ground)
 
 ## Week 5
 
@@ -69,6 +73,7 @@ Surprising Saturday: Manhunt - Split everyone randomly into hunters and runners
 
 Sunday (Circus Drop):
 - Charms: Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots
+- Screenshot: one player in giant's boots + skull, looking down at normal size player
 
 ## Week 6
 
@@ -80,6 +85,7 @@ End HalloWeen event on the 31st
 Surprising Saturday: Totally normal world (Herobrine & spooky server side mods), insane mob difficulty, points based on killed mobs (1 for zombie, 50 for dragon, 100 for wither or smth)
 Sunday (Efficient Drop):
 - Easy sorting systems with a special hopper filter item
+- Screenshot: player messing with storage system wearing inventor's tophat
 
 ## Week 7
 
@@ -91,6 +97,7 @@ Surprising Saturday: Long Puzzle (like bac advancements pirate puzzle), more hin
 Sunday (OP Drop):
 - Tease End opening next week
 - Charms: Iron Stomach Charm, Scuba Tank Charm, Candle of the Deep Charm, Vitality Mending Charm
+- Screenshot: player in halo + many god rays
 
 ## Week 8
 
@@ -103,6 +110,7 @@ Sunday Update:
 - End
 - Enderite
 - Note to get into particle trails if you haven't checked them out yet
+- Screenshot: enderite, shulker hat (raiding end city, shulker shots floating nearby)
 
 ## Week 9
 

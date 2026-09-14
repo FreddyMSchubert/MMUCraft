@@ -1,7 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:mushroom_stem",
-	"baseCost": 3,
+	"baseCost": 5,
 	"rewardPerIteration": 0.4,
 	"minimum": 4,
 	"maximum": 12,

@@ -1,7 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:hanging_roots",
-	"baseCost": 2,
+	"baseCost": 3,
 	"rewardPerIteration": 0.2,
 	"minimum": 10,
 	"maximum": 20,

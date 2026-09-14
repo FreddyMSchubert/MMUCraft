@@ -1,8 +1,8 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:azalea",
-	"baseCost": 1,
-	"rewardPerIteration": 0.15,
+	"baseCost": 2,
+	"rewardPerIteration": 0.2,
 	"minimum": 16,
 	"maximum": 24,
 	"emoji": "🌿",

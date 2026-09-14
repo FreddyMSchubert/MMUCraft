@@ -2,7 +2,7 @@
 	"type": "submit_item",
 	"item": "minecraft:pitcher_plant",
 	"baseCost": 5,
-	"rewardPerIteration": 1.5,
+	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 3,
 	"emoji": "🪻",

@@ -14,6 +14,7 @@ Surprising Saturday: Killswitch
 Sunday (Welcoming Drop):
 - Charms: Kitty Pajamas Charm, Hiking Boots Charm, Pickaxe Heater Charm
 - Note on Charm Boost to have many charms on some armor
+- Cosmetics theme - animal stuff, pets, crows, cats, dogs, hoods including eeyore
 
 ## Week 2
 
@@ -27,6 +28,7 @@ Sunday (Soaring Drop):
 - Particle Trails
 - Phantom Summon Potions
 - Charms: Winged Shoes Charm, Bunny Pajamas Charm
+- bunny ears cosmetic to announce with bunny pajamas
 
 ## Week 3
 
@@ -35,11 +37,12 @@ Sunday (Soaring Drop):
 * 10.10.25 — Freddy first joined
 * 12.10.25 — Calum first joined
 
-Surprising Saturday: Chunklocked
+Surprising Saturday: Chunklocked with a bunch of custom advancements
 Sunday (Imaginative Drop):
 - Tease that Nether unlocks next week
 - Begin Halloween Event, frame everything this drop as helpful for building
 - Wrench & InvisiCarrot
+- 16x16 maps feature TODO
 - Charms: Spider Pajamas & Cave Spider Pajamas
 
 ## Week 4
@@ -55,7 +58,6 @@ Sunday (Hellish Drop):
 - Nether
 - Nether Portals Any Shape
 - Note that Halloween Build Event ends next saturday
-- 16x16 maps feature TODO
 - Buncha Halloween Cosmetics
 
 ## Week 5
@@ -65,21 +67,21 @@ Sunday (Hellish Drop):
 
 End Halloween Event
 
-Surprising Saturday: Manhunt - Split everyone randomly into hunters and runners
+Surprising Saturday: Totally normal world (Herobrine & spooky server side mods), insane mob difficulty, points based on killed mobs (1 for zombie, 50 for dragon, 100 for wither or smth)
 
 Sunday (Circus Drop):
-- Charms: Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots
+- Charms: Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots, Happy Ghast Speedup
+- Popcorn (next jump you do is really high - more like hopcorn) traded from farmers
 
 ## Week 6
 
 * **Last year:** 27.10.25 – 02.11.25
 * **This year:** 02.11.26 – 08.11.26
 
-End HalloWeen event on the 31st
-
-Surprising Saturday: Totally normal world (Herobrine & spooky server side mods), insane mob difficulty, points based on killed mobs (1 for zombie, 50 for dragon, 100 for wither or smth)
-Sunday (Efficient Drop):
+Surprising Saturday: Manhunt - Split everyone randomly into hunters and runners
+Sunday (Inventors Drop):
 - Easy sorting systems with a special hopper filter item
+- bow system - hold stuff in offhand to attach
 
 ## Week 7
 
@@ -114,10 +116,14 @@ Sunday Update:
 * **Last year:** 24.11.25 – 30.11.25
 * **This year:** 30.11.26 – 06.12.26
 
+Christmas event start
+
 ## Week 11
 
 * **Last year:** 01.12.25 – 07.12.25
 * **This year:** 07.12.26 – 13.12.26
+
+Advent Calendar start
 
 ## Week 12
 
@@ -125,3 +131,9 @@ Sunday Update:
 * **This year:** 14.12.26 – 20.12.26
 
 Suprising Saturday: Pack as many of the previous surprising saturdays together into one big mashup
+
+Christmas things!
+- Gifts
+- Christmas Decorations
+
+end christmas event on the 20th

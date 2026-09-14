@@ -29,7 +29,6 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
             "Mia",
             "Hannah",
             "Cahlum",
-            "Iman",
             "Adam",
             "Samuel",
             "Josh",
@@ -37,7 +36,6 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
             "Alex",
             "Spencer",
             "Tosb",
-            "Your mother the sleep demon",
             "Dobbo",
             "Necro",
             "Abigail",
@@ -83,8 +81,8 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
 
             phantom.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
 
-            // 1 in 8 chance to spawn invisible
-            boolean isInvisible = Math.floor(Math.random() * 8) == 0;
+            // 1 in 16 chance to spawn invisible
+            boolean isInvisible = Math.floor(Math.random() * 16) == 0;
             if (isInvisible) {
                 phantom.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, Integer.MAX_VALUE, 1));
             }
@@ -117,7 +115,7 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
         var attackDamage = boss.getAttribute(Attributes.ATTACK_DAMAGE);
         if (attackDamage != null)
         {
-            attackDamage.setBaseValue(12.0D);
+            attackDamage.setBaseValue(9.0D);
         }
 
         // Speed
@@ -146,7 +144,6 @@ public class PotionOfInsomniaCharm implements Charm, ConsumableCallbacksCharm
             scale.setBaseValue(2.5D);
         }
 
-        boss.addEffect(new MobEffectInstance(MobEffects.STRENGTH, Integer.MAX_VALUE, 1));
         boss.addEffect(new MobEffectInstance(MobEffects.SPEED, Integer.MAX_VALUE, 1));
         boss.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
 

@@ -99,6 +99,8 @@ Well first of all, you gotta catch them all.
 
 Beyond that, you can cook fish for food.
 
+Fishermen also give you emeralds for fish meat.
+
 And you can make sushi, because yayy sushi:
 
 ![Sushi Crafting Recipe](/assets/knowledge/survival/fishing/sushi_recipe.png)

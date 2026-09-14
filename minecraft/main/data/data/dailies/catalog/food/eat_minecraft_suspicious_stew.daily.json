@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:suspicious_stew",
-	"baseCost": 2,
-	"rewardPerIteration": 2,
-	"minimum": 1,
-	"maximum": 4,
+	"baseCost": 4,
+	"rewardPerIteration": 0.5,
+	"minimum": 2,
+	"maximum": 10,
 	"emoji": "🥣",
 	"name": "Sample Suspicious Stew",
-	"description": "Eat {count} suspicious stew. The effects are part of the fun."
+	"description": "Eat {count} suspicious stews. Its more fun if you put in a buncha random flowers and see what effects come out!"
 }

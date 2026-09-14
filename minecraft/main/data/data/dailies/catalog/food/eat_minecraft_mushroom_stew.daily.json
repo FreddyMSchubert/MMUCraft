@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:mushroom_stew",
-	"baseCost": 1,
+	"baseCost": 4,
 	"rewardPerIteration": 1.25,
 	"minimum": 2,
 	"maximum": 5,
 	"emoji": "🍄",
 	"name": "Eat Mushroom Stew",
-	"description": "Eat {count} mushroom stews."
+	"description": "Eat {count} mushroom stews. These are incredibly filling!"
 }

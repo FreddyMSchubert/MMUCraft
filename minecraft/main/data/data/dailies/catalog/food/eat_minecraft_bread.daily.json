@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:bread",
-	"baseCost": 0,
+	"baseCost": 3,
 	"rewardPerIteration": 0.75,
 	"minimum": 6,
 	"maximum": 10,
 	"emoji": "🍞",
 	"name": "Eat Bread",
-	"description": "Eat {count} loaves. This is either lunch or a cry for help."
+	"description": "Eat {count} loaves of bread. Kitties everywhere dream of a crisp round shape like this."
 }

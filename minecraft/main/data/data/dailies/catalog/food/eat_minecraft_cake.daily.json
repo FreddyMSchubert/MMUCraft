@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:cake",
-	"baseCost": 1,
+	"baseCost": 3,
 	"rewardPerIteration": 0.5,
 	"minimum": 6,
 	"maximum": 12,
 	"emoji": "🎂",
 	"name": "Share a Cake",
-	"description": "Eat {count} cake slices. Every slice counts. Sharing is optional."
+	"description": "Eat {count} cake slices. Cake is better together!"
 }

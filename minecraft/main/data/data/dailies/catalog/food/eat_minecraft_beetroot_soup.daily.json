@@ -1,11 +1,11 @@
 {
 	"type": "eat_item",
 	"item": "minecraft:beetroot_soup",
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 1.5,
 	"minimum": 2,
 	"maximum": 4,
 	"emoji": "🥣",
 	"name": "Eat Beetroot Soup",
-	"description": "Eat {count} beetroot soups."
+	"description": "Eat {count} beetroot soups. Very underrated imo! Especially cause its values have been boosted on this server."
 }

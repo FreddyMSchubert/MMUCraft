@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:lilac",
-	"baseCost": 1,
+	"baseCost": 2,
 	"rewardPerIteration": 0.125,
 	"minimum": 24,
 	"maximum": 32,
 	"emoji": "🪻",
 	"name": "Submit Lilacs",
-	"description": "Submit {count} lilacs. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} lilacs. I need them for suspicious stew, not for the effect, but for the flavour."
 }

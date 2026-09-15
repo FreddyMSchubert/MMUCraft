@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:cactus_flower",
-	"baseCost": 2,
-	"rewardPerIteration": 0.15,
+	"baseCost": 3,
+	"rewardPerIteration": 0.2,
 	"minimum": 24,
 	"maximum": 32,
 	"emoji": "🌵",
 	"name": "Submit Cactus Flowers",
-	"description": "Submit {count} cactus flowers. The desert was stingy. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} cactus flowers. Hurry up, Linus is on 9 hearts."
 }

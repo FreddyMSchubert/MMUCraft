@@ -2,7 +2,7 @@
 	"type": "submit_item",
 	"item": "minecraft:sunflower",
 	"baseCost": 2,
-	"rewardPerIteration": 0.15,
+	"rewardPerIteration": 0.25,
 	"minimum": 12,
 	"maximum": 24,
 	"emoji": "🌻",

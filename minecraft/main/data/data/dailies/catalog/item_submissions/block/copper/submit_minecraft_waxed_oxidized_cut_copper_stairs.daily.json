@@ -2,7 +2,7 @@
 	"type": "submit_item",
 	"item": "minecraft:waxed_oxidized_cut_copper_stairs",
 	"baseCost": 3,
-	"rewardPerIteration": 1,
+	"rewardPerIteration": 4,
 	"minimum": 2,
 	"maximum": 5,
 	"emoji": "🟦",

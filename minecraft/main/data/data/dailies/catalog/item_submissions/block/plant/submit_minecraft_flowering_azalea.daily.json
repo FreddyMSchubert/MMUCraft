@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:flowering_azalea",
-	"baseCost": 1,
+	"baseCost": 2,
 	"rewardPerIteration": 0.25,
 	"minimum": 10,
 	"maximum": 20,
 	"emoji": "🌺",
 	"name": "Submit Flowering Azaleas",
-	"description": "Submit {count} flowering azaleas. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} flowering azaleas. Click claim once youre rhododendrone. 😼"
 }

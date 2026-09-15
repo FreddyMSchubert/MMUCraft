@@ -1,0 +1,18 @@
+{
+	"title": "Tophat",
+	"id": "cosmetic-toohat",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"It seems quite worn, was probably worn by a tycoon or vampire hunter"
+	],
+	"shopPurchasable": {
+		"membersOnly": false,
+	    "priceDabloons": 95,
+		"description": "",
+		"unlockWeight": 68,
+		"unlockMessage": "Unlocked cosmetic: Tophat."
+	},
+	"equippableCosmetic": {}
+}

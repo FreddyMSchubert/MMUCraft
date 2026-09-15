@@ -260,6 +260,7 @@ public final class HopperFilter {
     }
 
     private static void addList(List<Component> lines, String heading, Set<String> entries, ChatFormatting color) {
+        if (entries.isEmpty()) return;
         lines.add(Component.literal(heading + ":").withStyle(color));
         entries.stream()
                 .sorted(Comparator.comparing((String entry) -> !entry.startsWith("#"))

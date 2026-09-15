@@ -1,0 +1,9 @@
+{
+	"name": "Trident-Exclusive Enchantments",
+	"enchantments": [
+		"minecraft:channeling",
+		"minecraft:impaling",
+		"minecraft:loyalty",
+		"minecraft:riptide"
+	]
+}

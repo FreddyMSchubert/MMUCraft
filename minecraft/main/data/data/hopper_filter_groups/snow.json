@@ -1,0 +1,9 @@
+{
+	"name": "Snow",
+	"items": [
+		"minecraft:powder_snow_bucket",
+		"minecraft:snow",
+		"minecraft:snow_block",
+		"minecraft:snowball"
+	]
+}

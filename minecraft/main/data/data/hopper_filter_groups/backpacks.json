@@ -1,0 +1,11 @@
+{
+	"name": "Backpacks",
+	"items": [
+		"mainmod:charm-bejeweled-backpack",
+		"mainmod:charm-endless-backpack",
+		"mainmod:charm-ingot-backpack",
+		"mainmod:charm-leather-backpack",
+		"mainmod:charm-magic-backpack",
+		"mainmod:charm-withered-backpack"
+	]
+}

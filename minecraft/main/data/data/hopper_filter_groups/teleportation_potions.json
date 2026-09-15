@@ -1,0 +1,9 @@
+{
+	"name": "Teleportation Potions",
+	"items": [
+		"mainmod:charm-potion-displacement",
+		"mainmod:charm-potion-insomnia",
+		"mainmod:charm-potion-resonance",
+		"mainmod:charm-potion-returning"
+	]
+}

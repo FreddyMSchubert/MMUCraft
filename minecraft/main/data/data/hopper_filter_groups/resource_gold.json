@@ -1,0 +1,13 @@
+{
+	"name": "Gold Resources",
+	"items": [
+		"minecraft:deepslate_gold_ore",
+		"minecraft:gold_block",
+		"minecraft:gold_ingot",
+		"minecraft:gold_nugget",
+		"minecraft:gold_ore",
+		"minecraft:nether_gold_ore",
+		"minecraft:raw_gold",
+		"minecraft:raw_gold_block"
+	]
+}

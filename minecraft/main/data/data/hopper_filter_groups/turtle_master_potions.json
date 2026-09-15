@@ -1,0 +1,8 @@
+{
+	"name": "Turtle Master Potions",
+	"potions": [
+		"minecraft:long_turtle_master",
+		"minecraft:strong_turtle_master",
+		"minecraft:turtle_master"
+	]
+}

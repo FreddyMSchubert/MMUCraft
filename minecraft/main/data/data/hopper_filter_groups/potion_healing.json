@@ -1,0 +1,4 @@
+{
+	"name": "Healing Potions",
+	"potions": ["minecraft:healing", "minecraft:strong_healing"]
+}

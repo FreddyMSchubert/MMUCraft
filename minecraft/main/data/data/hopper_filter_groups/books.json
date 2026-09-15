@@ -1,0 +1,14 @@
+{
+	"name": "Books",
+	"items": [
+		"mainmod:charm-fashion-book",
+		"mainmod:charm-joke-book",
+		"mainmod:charm-knowledge-book",
+		"mainmod:charm-magic-book",
+		"minecraft:book",
+		"minecraft:enchanted_book",
+		"minecraft:knowledge_book",
+		"minecraft:writable_book",
+		"minecraft:written_book"
+	]
+}

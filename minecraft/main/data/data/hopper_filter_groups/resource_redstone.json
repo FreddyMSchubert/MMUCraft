@@ -1,0 +1,9 @@
+{
+	"name": "Redstone Resources",
+	"items": [
+		"minecraft:deepslate_redstone_ore",
+		"minecraft:redstone",
+		"minecraft:redstone_block",
+		"minecraft:redstone_ore"
+	]
+}

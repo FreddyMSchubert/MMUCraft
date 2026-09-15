@@ -1,0 +1,8 @@
+{
+	"name": "Utility Staves",
+	"items": [
+		"mainmod:charm-crafting-staff",
+		"mainmod:charm-ender-chest-staff",
+		"mainmod:charm-umbrella-staff"
+	]
+}

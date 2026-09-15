@@ -1,0 +1,14 @@
+{
+	"name": "Chestplate Enchantments",
+	"enchantments": [
+		"minecraft:binding_curse",
+		"minecraft:blast_protection",
+		"minecraft:fire_protection",
+		"minecraft:mending",
+		"minecraft:projectile_protection",
+		"minecraft:protection",
+		"minecraft:thorns",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

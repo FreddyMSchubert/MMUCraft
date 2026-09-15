@@ -1,0 +1,8 @@
+{
+	"name": "Regeneration Potions",
+	"potions": [
+		"minecraft:long_regeneration",
+		"minecraft:regeneration",
+		"minecraft:strong_regeneration"
+	]
+}

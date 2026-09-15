@@ -1,0 +1,13 @@
+{
+	"name": "Resource Blocks",
+	"items": [
+		"minecraft:diamond_block",
+		"minecraft:emerald_block",
+		"minecraft:gold_block",
+		"minecraft:iron_block",
+		"minecraft:netherite_block",
+		"minecraft:raw_copper_block",
+		"minecraft:raw_gold_block",
+		"minecraft:raw_iron_block"
+	]
+}

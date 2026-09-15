@@ -1,0 +1,22 @@
+{
+	"name": "Sulfur",
+	"items": [
+		"minecraft:chiseled_sulfur",
+		"minecraft:polished_sulfur",
+		"minecraft:polished_sulfur_slab",
+		"minecraft:polished_sulfur_stairs",
+		"minecraft:polished_sulfur_wall",
+		"minecraft:potent_sulfur",
+		"minecraft:sulfur",
+		"minecraft:sulfur_brick_slab",
+		"minecraft:sulfur_brick_stairs",
+		"minecraft:sulfur_brick_wall",
+		"minecraft:sulfur_bricks",
+		"minecraft:sulfur_cube_bucket",
+		"minecraft:sulfur_cube_spawn_egg",
+		"minecraft:sulfur_slab",
+		"minecraft:sulfur_spike",
+		"minecraft:sulfur_stairs",
+		"minecraft:sulfur_wall"
+	]
+}

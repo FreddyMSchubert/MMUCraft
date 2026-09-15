@@ -1,0 +1,16 @@
+{
+	"name": "Helmet Enchantments",
+	"enchantments": [
+		"minecraft:aqua_affinity",
+		"minecraft:binding_curse",
+		"minecraft:blast_protection",
+		"minecraft:fire_protection",
+		"minecraft:mending",
+		"minecraft:projectile_protection",
+		"minecraft:protection",
+		"minecraft:respiration",
+		"minecraft:thorns",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

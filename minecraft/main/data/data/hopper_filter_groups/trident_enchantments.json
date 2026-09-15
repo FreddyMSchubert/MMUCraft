@@ -1,0 +1,12 @@
+{
+	"name": "Trident Enchantments",
+	"enchantments": [
+		"minecraft:channeling",
+		"minecraft:impaling",
+		"minecraft:loyalty",
+		"minecraft:mending",
+		"minecraft:riptide",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

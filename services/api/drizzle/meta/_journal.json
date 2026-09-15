@@ -232,6 +232,13 @@
       "when": 1789241131755,
       "tag": "0032_rename_humorous_to_circus",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "6",
+      "when": 1789471437629,
+      "tag": "0033_seed_missing_gameplay_toggles",
+      "breakpoints": true
     }
   ]
 }

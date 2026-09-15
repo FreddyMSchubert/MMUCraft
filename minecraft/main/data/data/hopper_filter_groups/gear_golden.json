@@ -1,0 +1,15 @@
+{
+	"name": "Golden Gear",
+	"items": [
+		"minecraft:golden_axe",
+		"minecraft:golden_boots",
+		"minecraft:golden_chestplate",
+		"minecraft:golden_helmet",
+		"minecraft:golden_hoe",
+		"minecraft:golden_leggings",
+		"minecraft:golden_pickaxe",
+		"minecraft:golden_shovel",
+		"minecraft:golden_spear",
+		"minecraft:golden_sword"
+	]
+}

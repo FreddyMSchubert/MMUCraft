@@ -1,0 +1,9 @@
+{
+	"name": "Boot-Exclusive Enchantments",
+	"enchantments": [
+		"minecraft:depth_strider",
+		"minecraft:feather_falling",
+		"minecraft:frost_walker",
+		"minecraft:soul_speed"
+	]
+}

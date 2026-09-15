@@ -1,0 +1,4 @@
+{
+	"name": "Invisibility Potions",
+	"potions": ["minecraft:invisibility", "minecraft:long_invisibility"]
+}

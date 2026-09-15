@@ -1,0 +1,4 @@
+{
+	"name": "Harming Potions",
+	"potions": ["minecraft:harming", "minecraft:strong_harming"]
+}

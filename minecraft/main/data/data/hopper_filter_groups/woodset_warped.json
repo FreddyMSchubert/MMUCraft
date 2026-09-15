@@ -1,0 +1,24 @@
+{
+	"name": "Warped Wood Set",
+	"items": [
+		"minecraft:stripped_warped_hyphae",
+		"minecraft:stripped_warped_stem",
+		"minecraft:warped_button",
+		"minecraft:warped_door",
+		"minecraft:warped_fence",
+		"minecraft:warped_fence_gate",
+		"minecraft:warped_fungus",
+		"minecraft:warped_hanging_sign",
+		"minecraft:warped_hyphae",
+		"minecraft:warped_planks",
+		"minecraft:warped_pressure_plate",
+		"minecraft:warped_roots",
+		"minecraft:warped_shelf",
+		"minecraft:warped_sign",
+		"minecraft:warped_slab",
+		"minecraft:warped_stairs",
+		"minecraft:warped_stem",
+		"minecraft:warped_trapdoor",
+		"minecraft:warped_wart_block"
+	]
+}

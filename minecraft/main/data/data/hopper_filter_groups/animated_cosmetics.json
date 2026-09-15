@@ -1,0 +1,26 @@
+{
+	"name": "Animated Cosmetics",
+	"items": [
+		"mainmod:cosmetic-butterflies",
+		"mainmod:cosmetic-calico-cat-pet-hat",
+		"mainmod:cosmetic-crown-2526",
+		"mainmod:cosmetic-crown-royal",
+		"mainmod:cosmetic-dog-pet-hat",
+		"mainmod:cosmetic-fire-hat",
+		"mainmod:cosmetic-fishbowl",
+		"mainmod:cosmetic-frog-small",
+		"mainmod:cosmetic-googly-eyes",
+		"mainmod:cosmetic-microwave",
+		"mainmod:cosmetic-posh-squid",
+		"mainmod:cosmetic-propeller",
+		"mainmod:cosmetic-red-cat-pet-hat",
+		"mainmod:cosmetic-siamese-cat-pet-hat",
+		"mainmod:cosmetic-steve-mask",
+		"mainmod:cosmetic-tabby-cat-pet-hat",
+		"mainmod:cosmetic-tuxedo-cat-pet-hat",
+		"mainmod:cosmetic-ufo",
+		"mainmod:cosmetic-unicorn-horn",
+		"mainmod:cosmetic-white-cat-pet-hat",
+		"mainmod:cosmetic-woodpecker"
+	]
+}

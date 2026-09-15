@@ -1,0 +1,4 @@
+{
+	"name": "Slow Falling Potions",
+	"potions": ["minecraft:long_slow_falling", "minecraft:slow_falling"]
+}

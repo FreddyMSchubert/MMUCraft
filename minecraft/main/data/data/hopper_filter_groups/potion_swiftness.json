@@ -1,0 +1,4 @@
+{
+	"name": "Swiftness Potions",
+	"potions": ["minecraft:long_swiftness", "minecraft:strong_swiftness", "minecraft:swiftness"]
+}

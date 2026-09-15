@@ -1,0 +1,18 @@
+{
+	"name": "Long Potions",
+	"potions": [
+		"minecraft:long_fire_resistance",
+		"minecraft:long_invisibility",
+		"minecraft:long_leaping",
+		"minecraft:long_night_vision",
+		"minecraft:long_poison",
+		"minecraft:long_regeneration",
+		"minecraft:long_slow_falling",
+		"minecraft:long_slowness",
+		"minecraft:long_strength",
+		"minecraft:long_swiftness",
+		"minecraft:long_turtle_master",
+		"minecraft:long_water_breathing",
+		"minecraft:long_weakness"
+	]
+}

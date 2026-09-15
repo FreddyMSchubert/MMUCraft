@@ -1,0 +1,19 @@
+{
+	"name": "Held Charms",
+	"items": [
+		"mainmod:charm-bejeweled-backpack",
+		"mainmod:charm-crafting-staff",
+		"mainmod:charm-ender-chest-staff",
+		"mainmod:charm-endless-backpack",
+		"mainmod:charm-glider",
+		"mainmod:charm-ingot-backpack",
+		"mainmod:charm-leather-backpack",
+		"mainmod:charm-magic-backpack",
+		"mainmod:charm-sculk-phial",
+		"mainmod:charm-slime-detector",
+		"mainmod:charm-umbrella-staff",
+		"mainmod:charm-wallet",
+		"mainmod:charm-withered-backpack",
+		"mainmod:charm-wrench"
+	]
+}

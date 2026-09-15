@@ -1,0 +1,19 @@
+{
+	"name": "Moss",
+	"items": [
+		"minecraft:infested_mossy_stone_bricks",
+		"minecraft:moss_block",
+		"minecraft:moss_carpet",
+		"minecraft:mossy_cobblestone",
+		"minecraft:mossy_cobblestone_slab",
+		"minecraft:mossy_cobblestone_stairs",
+		"minecraft:mossy_cobblestone_wall",
+		"minecraft:mossy_stone_brick_slab",
+		"minecraft:mossy_stone_brick_stairs",
+		"minecraft:mossy_stone_brick_wall",
+		"minecraft:mossy_stone_bricks",
+		"minecraft:pale_hanging_moss",
+		"minecraft:pale_moss_block",
+		"minecraft:pale_moss_carpet"
+	]
+}

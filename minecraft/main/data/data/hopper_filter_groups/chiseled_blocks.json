@@ -1,0 +1,19 @@
+{
+	"name": "Chiseled Blocks",
+	"items": [
+		"minecraft:chiseled_bookshelf",
+		"minecraft:chiseled_cinnabar",
+		"minecraft:chiseled_copper",
+		"minecraft:chiseled_deepslate",
+		"minecraft:chiseled_nether_bricks",
+		"minecraft:chiseled_polished_blackstone",
+		"minecraft:chiseled_quartz_block",
+		"minecraft:chiseled_red_sandstone",
+		"minecraft:chiseled_resin_bricks",
+		"minecraft:chiseled_sandstone",
+		"minecraft:chiseled_stone_bricks",
+		"minecraft:chiseled_sulfur",
+		"minecraft:chiseled_tuff",
+		"minecraft:chiseled_tuff_bricks"
+	]
+}

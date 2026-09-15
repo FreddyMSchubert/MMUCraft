@@ -1,0 +1,11 @@
+{
+	"name": "Stone Gear",
+	"items": [
+		"minecraft:stone_axe",
+		"minecraft:stone_hoe",
+		"minecraft:stone_pickaxe",
+		"minecraft:stone_shovel",
+		"minecraft:stone_spear",
+		"minecraft:stone_sword"
+	]
+}

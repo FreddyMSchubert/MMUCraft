@@ -1,0 +1,9 @@
+{
+	"name": "Iron Armor",
+	"items": [
+		"minecraft:iron_boots",
+		"minecraft:iron_chestplate",
+		"minecraft:iron_helmet",
+		"minecraft:iron_leggings"
+	]
+}

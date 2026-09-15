@@ -960,7 +960,7 @@
 	"templating": { "list": [] },
 	"time": { "from": "now-24h", "to": "now" },
 	"timepicker": {},
-	"timezone": "browser",
+	"timezone": "Europe/London",
 	"title": "MMUCraft Technical",
 	"uid": "mmucraft-technical",
 	"version": 1

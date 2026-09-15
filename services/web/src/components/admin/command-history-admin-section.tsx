@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useState, type SyntheticEvent } from 'react';
 import { PlayerName } from '@/components/player-name';
 import { PlayerSelector } from '@/components/player-selector';
-import { apiBody, apiMessage } from './admin-api';
+import { apiBody, apiMessage, formatPreciseDateTime, parseManchesterInput } from './admin-api';
 import type { AdminPlayer, CommandLogEntry } from './admin-data.types';
 import type { AdminTabController } from './use-admin-tab-controller';
 
@@ -169,14 +169,14 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 					/>
 				</label>
 				<DateFilter
-					label="From (your local time)"
+					label="From"
 					value={draft.from}
 					onChange={(from) => {
 						setDraft({ ...draft, from });
 					}}
 				/>
 				<DateFilter
-					label="To (your local time)"
+					label="To"
 					value={draft.to}
 					onChange={(to) => {
 						setDraft({ ...draft, to });
@@ -215,7 +215,7 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 							<th>Source</th>
 							<th>Outcome</th>
 							<th>Access</th>
-							<th>Created (with time zone)</th>
+							<th>Created</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -232,7 +232,7 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 									<CommandOutcome entry={entry} />
 								</td>
 								<td>{entry.isOperator ? 'Operator' : 'Non-operator'}</td>
-								<td>{formatZonedDateTime(entry.createdAtUnixMs)}</td>
+								<td>{formatPreciseDateTime(entry.createdAtUnixMs)}</td>
 							</tr>
 						))}
 						{commands.length === 0 && !loading && (
@@ -346,19 +346,7 @@ function findPlayer(players: AdminPlayer[], value: string) {
 	);
 }
 
-function formatZonedDateTime(timestamp: number) {
-	return new Intl.DateTimeFormat(undefined, {
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-		hour: '2-digit',
-		minute: '2-digit',
-		second: '2-digit',
-		timeZoneName: 'short',
-	}).format(new Date(timestamp));
-}
-
 function localDateTimeToUnixMs(value: string, endOfMinute: boolean) {
-	const timestamp = new Date(value).getTime();
+	const timestamp = parseManchesterInput(value);
 	return endOfMinute && value.length === 16 ? timestamp + 59_999 : timestamp;
 }

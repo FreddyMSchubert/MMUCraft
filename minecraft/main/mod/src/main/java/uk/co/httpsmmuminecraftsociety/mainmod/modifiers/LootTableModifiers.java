@@ -26,6 +26,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonChestLoot;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -33,7 +34,8 @@ import java.util.Map;
 
 public class LootTableModifiers {
     private static final Identifier SNIFFER_DIGGING = Identifier.fromNamespaceAndPath("minecraft", "gameplay/sniffer_digging");
-    private static final DateTimeFormatter SOUL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
+    private static final ZoneId MANCHESTER_TIME_ZONE = ZoneId.of("Europe/London");
+    private static final DateTimeFormatter SOUL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private record LootAddition(
             Identifier tableId,
             String fakeItemId,
@@ -184,7 +186,7 @@ public class LootTableModifiers {
 
                 stack.set(DataComponents.LORE, new ItemLore(List.of(
                         Component.literal("This soul belonged to " + owner + ", who " + death + "."),
-                        Component.literal("[RIP - " + ZonedDateTime.now().format(SOUL_DATE_FORMAT) + "]")
+                        Component.literal("[RIP - " + ZonedDateTime.now(MANCHESTER_TIME_ZONE).format(SOUL_DATE_FORMAT) + "]")
                 )));
                 stack.set(DataComponents.PROFILE, ResolvableProfile.createResolved(player.getGameProfile()));
             }

@@ -647,7 +647,7 @@
 	"templating": { "list": [] },
 	"time": { "from": "now-30d", "to": "now" },
 	"timepicker": {},
-	"timezone": "browser",
+	"timezone": "Europe/London",
 	"title": "MMUCraft Backups",
 	"uid": "mmucraft-backups",
 	"version": 1

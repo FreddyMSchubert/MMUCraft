@@ -72,12 +72,12 @@ export function LaunchAdminSection({ activeSection }: { activeSection: AdminSect
 				<h3>Server launch</h3>
 				<p>
 					The public countdown and signup gate share this date. Signups open automatically
-					when it passes. Enter the date and time in British time.
+					when it passes.
 				</p>
 			</div>
 			<form className="adminForm" onSubmit={save}>
 				<label>
-					Launch date and time (UK)
+					Launch date and time
 					<input
 						type="datetime-local"
 						value={target}

@@ -641,7 +641,7 @@
 	},
 	"time": { "from": "now-7d", "to": "now" },
 	"timepicker": {},
-	"timezone": "browser",
+	"timezone": "Europe/London",
 	"title": "MMUCraft Statistics",
 	"uid": "mmucraft-statistics",
 	"version": 1

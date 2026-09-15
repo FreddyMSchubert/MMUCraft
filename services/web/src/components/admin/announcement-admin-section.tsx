@@ -123,7 +123,7 @@ export function AnnouncementAdminSection({ activeSection }: { activeSection: Adm
 		<section className="adminSection">
 			<div className="adminSectionHeader">
 				<h3>Announcements</h3>
-				<p>Schedule server-chat messages. Enter dates and times in British time.</p>
+				<p>Schedule server-chat messages.</p>
 			</div>
 			{!formOpen && (
 				<button className="announcementAddButton" type="button" onClick={openForm}>
@@ -145,7 +145,7 @@ export function AnnouncementAdminSection({ activeSection }: { activeSection: Adm
 						/>
 					</label>
 					<label>
-						Start (UK)
+						Start
 						<input
 							type="datetime-local"
 							value={startsAt}
@@ -156,7 +156,7 @@ export function AnnouncementAdminSection({ activeSection }: { activeSection: Adm
 						/>
 					</label>
 					<label>
-						End (UK)
+						End
 						<input
 							type="datetime-local"
 							value={endsAt}

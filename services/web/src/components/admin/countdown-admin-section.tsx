@@ -38,9 +38,7 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 				<section className="adminSection">
 					<div className="adminSectionHeader">
 						<h3>Countdowns</h3>
-						<p>
-							Create up to four countdowns. Enter the date and time in British time.
-						</p>
+						<p>Create up to four countdowns.</p>
 					</div>
 					<form className="countdownForm" onSubmit={saveCountdown}>
 						<label>
@@ -55,7 +53,7 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 							/>
 						</label>
 						<label>
-							Date and time (UK)
+							Date and time
 							<input
 								type="datetime-local"
 								value={countdownTarget}

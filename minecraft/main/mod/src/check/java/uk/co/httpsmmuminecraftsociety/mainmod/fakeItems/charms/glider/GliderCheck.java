@@ -32,6 +32,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableC
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureToggle;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureTogglesSnapshot;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes.RepairMaterial;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes.RepairSameItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.CombineCharmorRecipe;
@@ -89,6 +90,9 @@ public final class GliderCheck {
         ItemStack leather = new ItemStack(Items.LEATHER, 2);
         assert materialRepair.matches(glider, leather);
         assert !materialRepair.matches(elytra, leather);
+        ItemStack membranes = new ItemStack(Items.PHANTOM_MEMBRANE, 2);
+        assert !materialRepair.matches(glider, membranes);
+        assert materialRepair.apply(null, glider, membranes, null) == AnvilLogic.Outcome.EMPTY;
         var repaired = materialRepair.apply(null, glider, leather, null);
         assert repaired.result().getDamageValue() == 0;
         assert repaired.leftRemainder().isEmpty();
@@ -107,7 +111,8 @@ public final class GliderCheck {
                 .build());
         var grid = CraftingInput.of(3, 3, List.of(new ItemStack(Items.LEATHER), new ItemStack(Items.LEATHER),
                 new ItemStack(Items.LEATHER), new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.PHANTOM_MEMBRANE),
-                new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.STICK), ItemStack.EMPTY, new ItemStack(Items.STICK)));
+                new ItemStack(Items.PHANTOM_MEMBRANE), new ItemStack(Items.BREEZE_ROD), ItemStack.EMPTY,
+                new ItemStack(Items.BREEZE_ROD)));
         assert recipe.matches(grid, null) && GliderCharm.isGlider(recipe.assemble(grid));
         double limit = GliderFlight.ELYTRA_SPEED_BPS;
         for (int tick = 0; tick < 350; tick++) {

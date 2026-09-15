@@ -15,7 +15,8 @@ final class Messages {
     private static final TextColor RED = TextColor.color(0xFF6B6B);
     private static final TextColor TEXT = TextColor.color(0xE8EDF2);
     private static final TextColor MUTED = TextColor.color(0xAAB4BE);
-    private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("d MMM uuuu, HH:mm z");
+    private static final ZoneId MANCHESTER_TIME_ZONE = ZoneId.of("Europe/London");
+    private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("d MMM uuuu, HH:mm");
 
     private Messages() { }
 
@@ -176,6 +177,6 @@ final class Messages {
 
     private static String formatDate(Long unixMs) {
         if (unixMs == null) return "an unknown time";
-        return DATE.format(Instant.ofEpochMilli(unixMs).atZone(ZoneId.systemDefault()));
+        return DATE.format(Instant.ofEpochMilli(unixMs).atZone(MANCHESTER_TIME_ZONE));
     }
 }

@@ -218,18 +218,17 @@ function optionalImageUrl(input: string | null | undefined) {
 }
 
 export function parseLondonDateTime(input: string | undefined) {
-	if (typeof input !== 'string')
-		throw new BadRequestException('Enter a valid British date and time');
+	if (typeof input !== 'string') throw new BadRequestException('Enter a valid date and time');
 	const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(input);
-	if (!match) throw new BadRequestException('Enter a valid British date and time');
+	if (!match) throw new BadRequestException('Enter a valid date and time');
 	const [, year, month, day, hour, minute] = match;
 	if (!year || !month || !day || !hour || !minute)
-		throw new BadRequestException('Enter a valid British date and time');
+		throw new BadRequestException('Enter a valid date and time');
 	const localUnixMs = Date.UTC(+year, +month - 1, +day, +hour, +minute);
 	let targetUnixMs = localUnixMs - londonOffsetAt(localUnixMs);
 	targetUnixMs = localUnixMs - londonOffsetAt(targetUnixMs);
 	if (formatLondon(targetUnixMs) !== input)
-		throw new BadRequestException('That time does not exist in British time');
+		throw new BadRequestException('That date and time does not exist');
 	return targetUnixMs;
 }
 

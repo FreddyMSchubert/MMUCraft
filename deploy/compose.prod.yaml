@@ -44,7 +44,7 @@ services:
     cap_drop:
       - ALL
     environment:
-      TZ: ${TZ:-Europe/London}
+      TZ: Europe/London
       API_BASE_URL: http://api:8080
       INTERNAL_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
       RESTIC_REPOSITORY: /backups/restic

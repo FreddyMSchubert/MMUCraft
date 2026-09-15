@@ -43,7 +43,7 @@ services:
             COOKIE_SECURE: 'true'
             PUBLIC_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}
             VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
-            TZ: ${TZ:-Europe/London}
+            TZ: Europe/London
         volumes:
             - ./data/api:/app/data
         tmpfs:
@@ -75,7 +75,7 @@ services:
             SITE_IMAGE_TAG: ${IMAGE_TAG}
             DISCORD_URL: ${DISCORD_URL:-https://discord.gg/pPgZqRS5b2}
             INSTAGRAM_URL: ${INSTAGRAM_URL:-https://www.instagram.com/mmuminecraftsociety/}
-            TZ: ${TZ:-Europe/London}
+            TZ: Europe/London
         tmpfs:
             - /tmp:rw,noexec,nosuid,size=32m,mode=1777
             - /app/.next/cache:rw,noexec,nosuid,size=64m,mode=1777
@@ -139,7 +139,7 @@ services:
             SYNC_SKIP_NEWER_IN_DESTINATION: 'false'
             UID: ${PUID:-1000}
             GID: ${PGID:-1000}
-            TZ: ${TZ:-Europe/London}
+            TZ: Europe/London
             MOD_GRPC_HOST: 0.0.0.0
             MOD_GRPC_PORT: '50052'
             API_GRPC_TARGET: api:50051
@@ -178,7 +178,7 @@ services:
             MMU_API_BASE_URL: http://api:8080
             PUID: ${PUID:-1000}
             PGID: ${PGID:-1000}
-            TZ: ${TZ:-Europe/London}
+            TZ: Europe/London
         ports:
             - '${MINECRAFT_BIND:-0.0.0.0}:${MINECRAFT_PORT:-25565}:25565/tcp'
             - '${MINECRAFT_BIND:-0.0.0.0}:24454:24454/udp'

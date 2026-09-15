@@ -5,7 +5,13 @@ import { PlayerName } from '@/components/player-name';
 import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
-import { apiBody, apiMessage, errorMessage, formatDateTime } from './admin-api';
+import {
+	apiBody,
+	apiMessage,
+	errorMessage,
+	formatDateTime,
+	parseManchesterInput,
+} from './admin-api';
 import {
 	ADMIN_PAGE_SIZE,
 	normalizeAdminSection,
@@ -302,7 +308,8 @@ export function useAdminTabController({
 			});
 			return;
 		}
-		const expiresAtUnixMs = banMode === 'temporary' ? new Date(timeoutEndsAt).getTime() : null;
+		const expiresAtUnixMs =
+			banMode === 'temporary' ? parseManchesterInput(timeoutEndsAt) : null;
 		if (
 			expiresAtUnixMs !== null &&
 			(!Number.isFinite(expiresAtUnixMs) || expiresAtUnixMs <= Date.now())

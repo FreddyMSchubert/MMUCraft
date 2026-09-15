@@ -6,6 +6,7 @@ import type {
 	StatOption,
 } from './player-data.types';
 import { dabloonizeWords, formatDabloons } from '@/lib/dabloons';
+import { formatManchesterDateTime } from '@/lib/date-time';
 
 export function formatColumnValue(player: PlayerSummary, option: StatOption) {
 	if (option.key === 'profile.playerName') return player.minecraftUsername;
@@ -122,10 +123,7 @@ export function formatTicks(value: number) {
 export function formatTimestamp(value: number | null) {
 	if (!value) return 'Never';
 
-	return new Intl.DateTimeFormat(undefined, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	}).format(new Date(value));
+	return formatManchesterDateTime(value);
 }
 
 export function formatNumber(value: number) {

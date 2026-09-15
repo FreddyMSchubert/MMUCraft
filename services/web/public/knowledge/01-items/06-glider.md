@@ -102,7 +102,7 @@ The Glider isn't as effective as the Elytra at converting horizontal momentum in
 ![Glider Crafting Recipe](/assets/knowledge/items/glider/recipe.png)
 
 :::recipe-items
-[Leather](https://minecraft.wiki/w/Leather) (TL, TC, TR) · [Phantom Membrane](https://minecraft.wiki/w/Phantom_Membrane) (CL, C, CR) · [Stick](https://minecraft.wiki/w/Stick) (BL, BR) → Glider
+[Leather](https://minecraft.wiki/w/Leather) (TL, TC, TR) · [Phantom Membrane](https://minecraft.wiki/w/Phantom_Membrane) (CL, C, CR) · [Breeze Rod](https://minecraft.wiki/w/Breeze_Rod) (BL, BR) → Glider
 :::
 
 :::note

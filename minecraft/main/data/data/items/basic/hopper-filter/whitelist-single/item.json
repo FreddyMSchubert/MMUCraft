@@ -3,6 +3,6 @@
 	"id": "hopper-filter-whitelist-single",
 	"modelType": "basic",
 	"rarity": "common",
-	"maxStackSize": 1,
+	"maxStackSize": 64,
 	"tooltips": []
 }

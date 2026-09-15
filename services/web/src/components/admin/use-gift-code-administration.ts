@@ -2,7 +2,7 @@
 
 import { type SyntheticEvent, useEffect, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
-import { apiBody, apiMessage, errorMessage } from './admin-api';
+import { apiBody, apiMessage, errorMessage, parseManchesterInput } from './admin-api';
 import { formatDabloonWord } from '@/lib/dabloons';
 import type { AdminSection } from './admin-data.types';
 import { makeDifferentGiftCodeSuggestion, makeGiftCodeSuggestion } from './gift-code-suggestions';
@@ -39,6 +39,15 @@ export function useGiftCodeAdministration({
 
 	function createGiftCode(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
+		const expiresAtUnixMs = expiresAt ? parseManchesterInput(expiresAt) : null;
+		if (expiresAt && !Number.isFinite(expiresAtUnixMs)) {
+			void showAlert({
+				title: 'Choose a valid expiry',
+				message: 'That date and time does not exist.',
+				tone: 'danger',
+			});
+			return;
+		}
 		setSavingGiftCode(true);
 
 		void (async () => {
@@ -51,7 +60,7 @@ export function useGiftCodeAdministration({
 						amountDabloons: Number(amount),
 						redemptionMode,
 						membersOnly,
-						expiresAtUnixMs: expiresAt ? new Date(expiresAt).getTime() : null,
+						expiresAtUnixMs,
 					}),
 				});
 				const body = await response.json().catch(() => null);

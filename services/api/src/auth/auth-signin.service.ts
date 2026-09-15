@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type { UserRow } from '../database/database.service';
+import { formatManchesterDateTime } from '../date-time';
 import { AuthSessionService } from './auth-session.service';
 import { AuthUserLookupService } from './auth-user-lookup.service';
 import { createAuthCode, hashSecret, normalizeEmail, safeSecretEquals } from './auth.util';
@@ -83,7 +84,7 @@ export class AuthSigninService {
 			throw new ForbiddenException(
 				ban.expiresAtUnixMs === null
 					? 'You are permanently banned from the MMU Minecraft Society server'
-					: `Your timeout continues until ${new Date(ban.expiresAtUnixMs).toUTCString()}`,
+					: `Your timeout continues until ${formatManchesterDateTime(ban.expiresAtUnixMs)}`,
 			);
 		return ban.expired;
 	}

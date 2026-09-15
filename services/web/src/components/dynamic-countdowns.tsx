@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { formatManchesterDateTime } from '@/lib/date-time';
 
 export interface Countdown {
 	id: number;
@@ -89,11 +90,10 @@ export function DynamicCountdowns({ className = '' }: { className?: string }) {
 }
 
 function formatEndTime(timestamp: number) {
-	return new Intl.DateTimeFormat('en-GB', {
+	return formatManchesterDateTime(timestamp, {
 		dateStyle: 'full',
 		timeStyle: 'short',
-		timeZone: 'Europe/London',
-	}).format(timestamp);
+	});
 }
 
 function hexWithAlpha(hex: string, alpha: number) {

@@ -5,7 +5,7 @@
 	"key": {
 		"L": "minecraft:leather",
 		"M": "minecraft:phantom_membrane",
-		"S": "minecraft:stick"
+		"S": "minecraft:breeze_rod"
 	},
 	"result": {
 		"stack": "mainmod:charm-glider[minecraft:equippable={slot:'chest',equip_sound:'minecraft:item.armor.equip_elytra',asset_id:'mmu_pack:glider'}]",

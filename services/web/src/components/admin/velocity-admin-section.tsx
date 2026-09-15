@@ -3,7 +3,14 @@
 import { type SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { PlayerName, type PlayerEmoji } from '@/components/player-name';
-import { apiBody, apiMessage, errorMessage, fetchAdmin, formatDateTime } from './admin-api';
+import {
+	apiBody,
+	apiMessage,
+	errorMessage,
+	fetchAdmin,
+	formatDateTime,
+	parseManchesterInput,
+} from './admin-api';
 
 interface VelocityServer {
 	id: number;
@@ -173,8 +180,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					body: JSON.stringify({
 						name: scheduleName,
 						serverId: Number(scheduleServerId),
-						startsAtUnixMs: new Date(scheduleStartsAt).getTime(),
-						endsAtUnixMs: new Date(scheduleEndsAt).getTime(),
+						startsAtUnixMs: parseManchesterInput(scheduleStartsAt),
+						endsAtUnixMs: parseManchesterInput(scheduleEndsAt),
 					}),
 				},
 				'Failed to create the schedule',

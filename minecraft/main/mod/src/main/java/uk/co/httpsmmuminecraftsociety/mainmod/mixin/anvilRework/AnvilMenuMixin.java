@@ -113,6 +113,7 @@ public abstract class AnvilMenuMixin {
         Container inputSlots = combiner.mainmod$getInputSlots();
         ResultContainer resultSlots = combiner.mainmod$getResultSlots();
         ContainerLevelAccess access = combiner.mainmod$getAccess();
+        AnvilLogic.Outcome outcome = this.mainmod$lastOutcome;
 
         ItemStack original = inputSlots.getItem(0);
         if (player instanceof ServerPlayer serverPlayer
@@ -128,13 +129,13 @@ public abstract class AnvilMenuMixin {
             DailyTaskManager.record(serverPlayer, DailyTaskEvent.simple(DailySimpleEvent.RENAME_TOOL));
         }
 
-        int chargedCost = clampCost(this.mainmod$lastOutcome.xpLevelsConsumed());
+        int chargedCost = clampCost(outcome.xpLevelsConsumed());
         if (!player.hasInfiniteMaterials() && chargedCost > 0) {
             player.giveExperienceLevels(-chargedCost);
         }
 
-        inputSlots.setItem(0, this.mainmod$lastOutcome.leftRemainder().copy());
-        inputSlots.setItem(1, this.mainmod$lastOutcome.rightRemainder().copy());
+        inputSlots.setItem(0, outcome.leftRemainder().copy());
+        inputSlots.setItem(1, outcome.rightRemainder().copy());
         resultSlots.setItem(0, ItemStack.EMPTY);
 
         this.onlyRenaming = false;

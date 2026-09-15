@@ -7,6 +7,7 @@ services:
             dockerfile: services/api/Dockerfile
             target: runner
         environment:
+            TZ: Europe/London
             AUTH_CODE_SECRET: playwright-only-secret
             DATABASE_URL: /app/data/playwright.sqlite
             DATABASE_MIGRATIONS_PATH: /app/drizzle
@@ -35,6 +36,7 @@ services:
             context: ../services/web
             target: runner
         environment:
+            TZ: Europe/London
             API_BASE_URL: http://api:8080
             SITE_IMAGE_TAG: playwright
             DISCORD_URL: https://discord.gg/test

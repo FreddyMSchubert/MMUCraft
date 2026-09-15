@@ -1,5 +1,6 @@
 import type { Fireworks } from 'fireworks-js';
 import type React from 'react';
+import { formatManchesterDateTime } from '@/lib/date-time';
 import {
 	GROUPS,
 	RARITIES,
@@ -124,13 +125,11 @@ export function formatLength(lengthCm: number) {
 }
 
 export function formatDate(unixMs: number) {
-	return new Intl.DateTimeFormat('en-GB', {
+	return formatManchesterDateTime(unixMs, {
 		day: '2-digit',
 		month: '2-digit',
 		year: '2-digit',
-	})
-		.format(new Date(unixMs))
-		.replaceAll('/', '.');
+	}).replaceAll('/', '.');
 }
 
 export function errorMessage(error: unknown) {

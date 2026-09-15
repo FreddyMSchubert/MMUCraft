@@ -1,3 +1,11 @@
+import {
+	formatManchesterDateTime,
+	formatManchesterInput,
+	parseManchesterInput,
+} from '@/lib/date-time';
+
+export { parseManchesterInput };
+
 export function apiMessage(body: unknown, fallback: string) {
 	if (!body || typeof body !== 'object' || !('message' in body)) return fallback;
 	const message = (body as { message?: unknown }).message;
@@ -26,40 +34,28 @@ export function errorMessage(error: unknown, fallback: string) {
 }
 
 export function formatExpiry(expiresAtUnixMs: number) {
-	return new Intl.DateTimeFormat(undefined, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	}).format(new Date(expiresAtUnixMs));
+	return formatManchesterDateTime(expiresAtUnixMs);
 }
 
 export function formatDateTime(timestamp: number) {
-	return new Intl.DateTimeFormat(undefined, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	}).format(new Date(timestamp));
+	return formatManchesterDateTime(timestamp);
+}
+
+export function formatPreciseDateTime(timestamp: number) {
+	return formatManchesterDateTime(timestamp, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit',
+	});
 }
 
 export function formatLondonDateTime(timestamp: number) {
-	return new Intl.DateTimeFormat('en-GB', {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-		timeZone: 'Europe/London',
-	}).format(new Date(timestamp));
+	return formatManchesterDateTime(timestamp);
 }
 
 export function formatLondonInput(timestamp: number) {
-	const values = Object.fromEntries(
-		new Intl.DateTimeFormat('en-GB', {
-			timeZone: 'Europe/London',
-			year: 'numeric',
-			month: '2-digit',
-			day: '2-digit',
-			hour: '2-digit',
-			minute: '2-digit',
-			hourCycle: 'h23',
-		})
-			.formatToParts(new Date(timestamp))
-			.map((part) => [part.type, part.value]),
-	);
-	return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}`;
+	return formatManchesterInput(timestamp);
 }

@@ -23,7 +23,7 @@ import java.util.Set;
 
 public final class DiscordBridge {
     private static boolean broadcastingDiscordMessage;
-	private static boolean broadcastingFishAnnouncement;
+    private static boolean broadcastingPlayerAnnouncement;
     private static final Set<PlayerChatMessage> commandMessages = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private DiscordBridge() { }
@@ -33,7 +33,7 @@ public final class DiscordBridge {
             if (!commandMessages.remove(message)) publish("chat", sender, message.signedContent());
         });
         ServerMessageEvents.GAME_MESSAGE.register((server, message, overlay) -> {
-            if (broadcastingDiscordMessage || broadcastingFishAnnouncement || overlay) return;
+            if (broadcastingDiscordMessage || broadcastingPlayerAnnouncement || overlay) return;
             ServerPlayer deadPlayer = deathPlayer(server, message);
             if (deadPlayer != null) {
                 String deathMessage = message.getString();
@@ -95,18 +95,32 @@ public final class DiscordBridge {
         }
     }
 
-	public static void fishAnnouncement(MinecraftServer server, ServerPlayer player, String content, boolean firstServerCatch) {
-		broadcastingFishAnnouncement = true;
-		try {
-			server.getPlayerList().broadcastSystemMessage(Component.empty()
-					.append(Component.literal("🐟 "))
-					.append(player.getDisplayName())
-					.append(Component.literal(" " + content)), false);
-		} finally {
-			broadcastingFishAnnouncement = false;
-		}
-		playerEvent(firstServerCatch ? "fish_first" : "fish", player, content);
-	}
+    public static void fishAnnouncement(MinecraftServer server, ServerPlayer player, String content, boolean firstServerCatch) {
+        playerAnnouncement(server, firstServerCatch ? "fish_first" : "fish", "🐟", player, content);
+    }
+
+    public static void shopAnnouncement(MinecraftServer server, ServerPlayer player, String content) {
+        playerAnnouncement(server, "shop", "🛒", player, content);
+    }
+
+    private static void playerAnnouncement(
+            MinecraftServer server,
+            String type,
+            String icon,
+            ServerPlayer player,
+            String content
+    ) {
+        broadcastingPlayerAnnouncement = true;
+        try {
+            server.getPlayerList().broadcastSystemMessage(Component.empty()
+                    .append(Component.literal(icon + " "))
+                    .append(player.getDisplayName())
+                    .append(Component.literal(" " + content)), false);
+        } finally {
+            broadcastingPlayerAnnouncement = false;
+        }
+        playerEvent(type, player, content);
+    }
 
     private static void publish(String type, ServerPlayer player, String content) {
         publish(type, player, content, List.of());

@@ -274,7 +274,8 @@ public final class FishingCatches {
 		if (response.getAnnounce()) {
 			MinecraftServer server = player.level().getServer();
 			DiscordBridge.fishAnnouncement(server, player,
-					"caught " + fishName + "!", response.getFirstServerCatchAnnouncement());
+					"caught " + fishName + " [" + rarity.displayName() + "]!",
+					response.getFirstServerCatchAnnouncement());
 		}
 		if (shouldShowFirstCatchAnimation(rarity, response.getFirstCatch())) {
 			UnlockBookAnimation.play(player, fish);

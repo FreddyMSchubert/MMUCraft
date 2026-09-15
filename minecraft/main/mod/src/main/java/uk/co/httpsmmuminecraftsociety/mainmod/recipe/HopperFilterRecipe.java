@@ -58,11 +58,8 @@ public final class HopperFilterRecipe extends CustomRecipe {
     }
 
     private static boolean isCreation(CraftingInput input) {
-        if (input.width() != 3 || input.height() != 3 || input.ingredientCount() != 6) return false;
-        for (int slot : new int[]{0, 2, 3, 5, 7}) {
-            if (!input.getItem(slot).is(Items.COPPER_INGOT)) return false;
-        }
-        return input.getItem(4).is(Items.PAPER) && input.getItem(1).isEmpty()
-                && input.getItem(6).isEmpty() && input.getItem(8).isEmpty();
+        return input.ingredientCount() == 2
+                && input.items().stream().anyMatch(stack -> stack.is(Items.COPPER_GRATE.weathering().unaffected()))
+                && input.items().stream().anyMatch(stack -> stack.is(Items.PAPER));
     }
 }

@@ -13,8 +13,10 @@ from stage_item_data import stage_data, validate_gameplay_toggle_references
 
 
 ITEMS_ROOT = Path("data/data/items")
+HOPPER_FILTER_GROUPS_ROOT = Path("data/data/hopper_filter_groups")
 SCHEMA_ROOT = Path("data/validation/schemas/item")
 ROOT_SCHEMA = SCHEMA_ROOT / "item.schema.json"
+HOPPER_FILTER_GROUP_SCHEMA = Path("data/validation/schemas/hopper-filter-group.schema.json")
 
 
 class ItemDataError(RuntimeError):
@@ -78,16 +80,28 @@ def format_error_path(error) -> str:
 	return path
 
 
-def validate_item(schema_path: Path, registry: Registry, item_path: Path) -> None:
+def build_validator(schema_path: Path, registry: Registry) -> Draft202012Validator:
 	schema = load_json(schema_path)
-	item = load_json(item_path)
-	validator = Draft202012Validator(schema, registry=registry)
-	errors = sorted(validator.iter_errors(item), key=lambda e: list(e.absolute_path))
+	Draft202012Validator.check_schema(schema)
+	return Draft202012Validator(schema, registry=registry)
+
+
+def validate_document(validator: Draft202012Validator, document_path: Path) -> None:
+	document = load_json(document_path)
+	errors = sorted(validator.iter_errors(document), key=lambda e: list(e.absolute_path))
 
 	if errors:
 		raise ItemDataError(
-			"\n".join(f"{item_path}: {format_error_path(e)}: {e.message}" for e in errors)
+			"\n".join(f"{document_path}: {format_error_path(e)}: {e.message}" for e in errors)
 		)
+
+
+def validate_hopper_filter_groups(root: Path, validator: Draft202012Validator) -> int:
+	groups_root = root / HOPPER_FILTER_GROUPS_ROOT
+	group_paths = sorted(groups_root.glob("**/*.json"))
+	for path in group_paths:
+		validate_document(validator, path)
+	return len(group_paths)
 
 
 def main() -> int:
@@ -99,23 +113,29 @@ def main() -> int:
 	items_root = root / ITEMS_ROOT
 	schema_root = root / SCHEMA_ROOT
 	root_schema = root / ROOT_SCHEMA
+	hopper_filter_group_schema = root / HOPPER_FILTER_GROUP_SCHEMA
 
-	if not root_schema.exists():
-		raise ItemDataError(f"Root schema does not exist: {root_schema}")
+	for schema_path in (root_schema, hopper_filter_group_schema):
+		if not schema_path.exists():
+			raise ItemDataError(f"Schema does not exist: {schema_path}")
 
 	item_jsons = discover_item_jsons(items_root)
 	registry = build_schema_registry(schema_root)
+	item_validator = build_validator(root_schema, registry)
+	hopper_filter_group_validator = build_validator(hopper_filter_group_schema, registry)
 	try:
 		validate_gameplay_toggle_references(root)
 	except (OSError, ValueError, json.JSONDecodeError) as exc:
 		raise ItemDataError(str(exc)) from exc
 
 	for item_json, _ in item_jsons:
-		validate_item(root_schema, registry, item_json)
+		validate_document(item_validator, item_json)
+	hopper_filter_group_count = validate_hopper_filter_groups(root, hopper_filter_group_validator)
 
 	_, _, copied, removed = stage_data(root, validate_references=False)
 	print(
-		f"Validated {len(item_jsons)} item definition(s) and staged data "
+		f"Validated {len(item_jsons)} item definition(s), "
+		f"{hopper_filter_group_count} hopper filter group(s), and staged data "
 		f"({copied} copied, {removed} removed)."
 	)
 	return 0

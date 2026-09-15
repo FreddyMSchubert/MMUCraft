@@ -1,0 +1,4 @@
+{
+	"name": "Water Breathing Potions",
+	"potions": ["minecraft:long_water_breathing", "minecraft:water_breathing"]
+}

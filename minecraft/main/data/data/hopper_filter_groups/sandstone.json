@@ -1,0 +1,15 @@
+{
+	"name": "Sandstone",
+	"items": [
+		"minecraft:chiseled_sandstone",
+		"minecraft:cut_sandstone",
+		"minecraft:cut_sandstone_slab",
+		"minecraft:sandstone",
+		"minecraft:sandstone_slab",
+		"minecraft:sandstone_stairs",
+		"minecraft:sandstone_wall",
+		"minecraft:smooth_sandstone",
+		"minecraft:smooth_sandstone_slab",
+		"minecraft:smooth_sandstone_stairs"
+	]
+}

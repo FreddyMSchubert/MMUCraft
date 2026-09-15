@@ -1,0 +1,4 @@
+{
+	"name": "Crossbow-Exclusive Enchantments",
+	"enchantments": ["minecraft:multishot", "minecraft:piercing", "minecraft:quick_charge"]
+}

@@ -1,0 +1,9 @@
+{
+	"name": "Wooden Tools",
+	"items": [
+		"minecraft:wooden_axe",
+		"minecraft:wooden_hoe",
+		"minecraft:wooden_pickaxe",
+		"minecraft:wooden_shovel"
+	]
+}

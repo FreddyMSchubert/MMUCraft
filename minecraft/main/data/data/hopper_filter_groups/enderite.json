@@ -1,0 +1,8 @@
+{
+	"name": "Enderite",
+	"items": [
+		"mainmod:enderite-ingot",
+		"mainmod:enderite-scrap",
+		"mainmod:enderite-upgrade-smithing-template"
+	]
+}

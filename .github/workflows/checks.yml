@@ -28,10 +28,10 @@ jobs:
               with:
                   python-version: '3.12'
 
-            - name: Install item-schema validator
+            - name: Install data-schema validator
               run: python3 -m pip install --requirement minecraft/main/data/validation/requirements.txt
 
-            - name: Validate item definitions
+            - name: Validate data definitions
               run: python3 minecraft/main/data/validation/validate.py --root minecraft/main
 
             - name: Set up Node

@@ -1,0 +1,25 @@
+{
+	"name": "Dyeable Cosmetics",
+	"items": [
+		"mainmod:cosmetic-amogus",
+		"mainmod:cosmetic-beanie",
+		"mainmod:cosmetic-beret",
+		"mainmod:cosmetic-candle",
+		"mainmod:cosmetic-devil-horns",
+		"mainmod:cosmetic-headband",
+		"mainmod:cosmetic-headphones",
+		"mainmod:cosmetic-ice-cream",
+		"mainmod:cosmetic-mohawk",
+		"mainmod:cosmetic-mousetache-bushy",
+		"mainmod:cosmetic-mousetache-fancy",
+		"mainmod:cosmetic-mousetache-square",
+		"mainmod:cosmetic-mushroom-big",
+		"mainmod:cosmetic-plunger",
+		"mainmod:cosmetic-rootling",
+		"mainmod:cosmetic-shulker",
+		"mainmod:cosmetic-spartan-helmet",
+		"mainmod:cosmetic-spider",
+		"mainmod:cosmetic-sun-hat",
+		"mainmod:cosmetic-ushanka"
+	]
+}

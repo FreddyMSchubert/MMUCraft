@@ -1,0 +1,12 @@
+{
+	"name": "Iron Resources",
+	"items": [
+		"minecraft:deepslate_iron_ore",
+		"minecraft:iron_block",
+		"minecraft:iron_ingot",
+		"minecraft:iron_nugget",
+		"minecraft:iron_ore",
+		"minecraft:raw_iron",
+		"minecraft:raw_iron_block"
+	]
+}

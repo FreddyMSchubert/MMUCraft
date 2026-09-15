@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class HopperFilter {
+    private static final String FILTER_KEY = "mainmod.hopper_filter";
     private static final String WHITELIST_KEY = "mainmod.hopper_filter_whitelist";
     private static final String BLACKLIST_KEY = "mainmod.hopper_filter_blacklist";
     private static final int MAX_SAVED_ENTRIES = 256;
@@ -78,7 +79,8 @@ public final class HopperFilter {
     }
 
     public static boolean isFilter(ItemStack stack) {
-        return mode(stack) != null;
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag()
+                .getBooleanOr(FILTER_KEY, false) || mode(stack) != null;
     }
 
     public static boolean canConfigure(List<ItemStack> stacks) {
@@ -249,6 +251,9 @@ public final class HopperFilter {
     private static void refreshTooltip(ItemStack stack) {
         Mode mode = mode(stack);
         if (mode == null) return;
+        CompoundTag data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        data.putBoolean(FILTER_KEY, true);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
         List<Component> lines = new ArrayList<>();
         lines.add(Component.literal(mode.label).withStyle(mode.color));
         addList(lines, "Whitelist", entries(stack, WHITELIST_KEY), ChatFormatting.GREEN);

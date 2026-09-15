@@ -1,7 +1,7 @@
 {
 	"type": "fish_fake_item",
 	"fakeItem": "fish-albacore",
-	"baseCost": 3,
+	"baseCost": 10,
 	"rewardPerIteration": 3,
 	"minimum": 1,
 	"maximum": 1,

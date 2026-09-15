@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:flowering_azalea_leaves",
-	"baseCost": 1,
-	"rewardPerIteration": 0.15,
+	"baseCost": 2,
+	"rewardPerIteration": 0.2,
 	"minimum": 16,
 	"maximum": 32,
 	"emoji": "🌸",
 	"name": "Submit Flowering Azalea Leaves",
-	"description": "Submit {count} flowering azalea leaves. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} flowering azalea leaves. Herobrine deniers must be like 'hmm, must be autumn'"
 }

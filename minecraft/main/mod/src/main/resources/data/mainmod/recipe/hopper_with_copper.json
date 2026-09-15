@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "C": "minecraft:copper_block",
+    "C": "minecraft:copper_ingot",
     "c": "minecraft:chest"
   },
   "pattern": [

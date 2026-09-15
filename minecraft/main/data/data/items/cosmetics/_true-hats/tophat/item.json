@@ -1,18 +1,18 @@
 {
-	"title": "Bowler Hat",
-	"id": "cosmetic-bowler-hat",
+	"title": "Tophat",
+	"id": "cosmetic-toohat",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
-		"I still don't get it, does this hat make you better at bowling?"
+		"It seems quite worn, was probably worn by a tycoon or vampire hunter"
 	],
 	"shopPurchasable": {
 		"membersOnly": false,
-	    "priceDabloons": 75,
+	    "priceDabloons": 95,
 		"description": "",
 		"unlockWeight": 68,
-		"unlockMessage": "Unlocked cosmetic: Bowler Hat."
+		"unlockMessage": "Unlocked cosmetic: Tophat."
 	},
 	"equippableCosmetic": {}
 }

@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyAdvancementPolicy;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilterGroups;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementAnnouncements;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 
@@ -81,6 +82,7 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
         fakeItems = loadFromResourceManager(manager);
         reloadSeen = true;
         FakeItems.reloadFromJson();
+        HopperFilterGroups.load(manager);
     }
 
     private static void bootstrapFromModResources() {

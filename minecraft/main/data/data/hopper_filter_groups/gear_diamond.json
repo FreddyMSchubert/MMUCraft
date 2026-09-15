@@ -1,0 +1,15 @@
+{
+	"name": "Diamond Gear",
+	"items": [
+		"minecraft:diamond_axe",
+		"minecraft:diamond_boots",
+		"minecraft:diamond_chestplate",
+		"minecraft:diamond_helmet",
+		"minecraft:diamond_hoe",
+		"minecraft:diamond_leggings",
+		"minecraft:diamond_pickaxe",
+		"minecraft:diamond_shovel",
+		"minecraft:diamond_spear",
+		"minecraft:diamond_sword"
+	]
+}

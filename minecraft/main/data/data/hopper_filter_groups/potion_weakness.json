@@ -1,0 +1,4 @@
+{
+	"name": "Weakness Potions",
+	"potions": ["minecraft:long_weakness", "minecraft:weakness"]
+}

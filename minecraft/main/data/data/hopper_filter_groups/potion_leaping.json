@@ -1,0 +1,4 @@
+{
+	"name": "Leaping Potions",
+	"potions": ["minecraft:leaping", "minecraft:long_leaping", "minecraft:strong_leaping"]
+}

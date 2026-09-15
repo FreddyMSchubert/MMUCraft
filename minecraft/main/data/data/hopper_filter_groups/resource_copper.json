@@ -1,0 +1,12 @@
+{
+	"name": "Copper Resources",
+	"items": [
+		"minecraft:copper_block",
+		"minecraft:copper_ingot",
+		"minecraft:copper_nugget",
+		"minecraft:copper_ore",
+		"minecraft:deepslate_copper_ore",
+		"minecraft:raw_copper",
+		"minecraft:raw_copper_block"
+	]
+}

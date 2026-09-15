@@ -1,0 +1,9 @@
+{
+	"name": "Netherite Armor",
+	"items": [
+		"minecraft:netherite_boots",
+		"minecraft:netherite_chestplate",
+		"minecraft:netherite_helmet",
+		"minecraft:netherite_leggings"
+	]
+}

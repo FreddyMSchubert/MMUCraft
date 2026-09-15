@@ -1,0 +1,15 @@
+{
+	"name": "Copper Gear",
+	"items": [
+		"minecraft:copper_axe",
+		"minecraft:copper_boots",
+		"minecraft:copper_chestplate",
+		"minecraft:copper_helmet",
+		"minecraft:copper_hoe",
+		"minecraft:copper_leggings",
+		"minecraft:copper_pickaxe",
+		"minecraft:copper_shovel",
+		"minecraft:copper_spear",
+		"minecraft:copper_sword"
+	]
+}

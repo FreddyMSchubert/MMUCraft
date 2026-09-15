@@ -1,20 +1,34 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 
 @Mixin(HopperBlockEntity.class)
-public abstract class HopperFilterMixin {
+public abstract class HopperFilterMixin implements WorldlyContainer {
+    private static final int[] MAINMOD$SLOTS = {0, 1, 2, 3, 4};
+    private static final ThreadLocal<Hopper> MAINMOD$SUCKING_HOPPER = new ThreadLocal<>();
+
+    @WrapMethod(method = "suckInItems")
+    private static boolean mainmod$trackSuction(Level level, Hopper hopper, Operation<Boolean> original) {
+        MAINMOD$SUCKING_HOPPER.set(hopper);
+        try {
+            return original.call(level, hopper);
+        } finally {
+            MAINMOD$SUCKING_HOPPER.remove();
+        }
+    }
+
     @Redirect(
             method = "ejectItems",
             at = @At(
@@ -27,19 +41,20 @@ public abstract class HopperFilterMixin {
         return HopperFilter.isFilter(stack) ? ItemStack.EMPTY : stack;
     }
 
-    @Inject(method = "tryTakeInItemFromSlot", at = @At("HEAD"), cancellable = true)
-    private static void mainmod$filterContainerSuction(Hopper hopper, Container source, int slot,
-                                                       Direction direction, CallbackInfoReturnable<Boolean> cir) {
-        ItemStack stack = source.getItem(slot);
-        if (HopperFilter.isFilter(stack) || !HopperFilter.allows(hopper, stack)) cir.setReturnValue(false);
+    @Override
+    public int[] getSlotsForFace(Direction direction) {
+        return MAINMOD$SLOTS;
     }
 
-    @Inject(method = "addItem(Lnet/minecraft/world/Container;Lnet/minecraft/world/entity/item/ItemEntity;)Z",
-            at = @At("HEAD"), cancellable = true)
-    private static void mainmod$filterLooseItemSuction(Container hopper, ItemEntity entity,
-                                                        CallbackInfoReturnable<Boolean> cir) {
-        if (HopperFilter.isFilter(entity.getItem()) || !HopperFilter.allows(hopper, entity.getItem())) {
-            cir.setReturnValue(false);
-        }
+    @Override
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction direction) {
+        return !HopperFilter.isFilter(stack)
+                && (MAINMOD$SUCKING_HOPPER.get() != this
+                || HopperFilter.allows((Container) (Object) this, stack));
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
+        return !HopperFilter.isFilter(stack);
     }
 }

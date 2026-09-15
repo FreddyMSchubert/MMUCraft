@@ -52,9 +52,9 @@ final class Messages {
         }
         return heading("Server update in progress", GOLD)
                 .append(Component.text("The update started " + formatDuration(elapsed) + " ago.\n", TEXT))
-                .append(Component.text("Please allow about 3 minutes 20 seconds to 5 minutes in total.\n", TEXT))
+                .append(Component.text("Please allow 3 to 5 minutes in total.\n", TEXT))
                 .append(Component.text("If it takes more than 10 minutes, please contact the committee.\n", TEXT))
-                .append(Component.text("Join again in a few minutes. Thank you for waiting!", MUTED));
+                .append(Component.text("Rejoin to refresh this screen. Thank you for waiting!", MUTED));
     }
 
     static Component updateStateUnavailable() {
@@ -167,6 +167,7 @@ final class Messages {
     }
 
     private static String formatDuration(long totalSeconds) {
+        if (totalSeconds < 60) return totalSeconds + (totalSeconds == 1 ? " second" : " seconds");
         long minutes = totalSeconds / 60;
         long seconds = totalSeconds % 60;
         return minutes + (minutes == 1 ? " minute " : " minutes ")

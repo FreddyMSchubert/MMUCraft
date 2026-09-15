@@ -1,0 +1,21 @@
+{
+	"name": "Armor Enchantments",
+	"enchantments": [
+		"minecraft:aqua_affinity",
+		"minecraft:binding_curse",
+		"minecraft:blast_protection",
+		"minecraft:depth_strider",
+		"minecraft:feather_falling",
+		"minecraft:fire_protection",
+		"minecraft:frost_walker",
+		"minecraft:mending",
+		"minecraft:projectile_protection",
+		"minecraft:protection",
+		"minecraft:respiration",
+		"minecraft:soul_speed",
+		"minecraft:swift_sneak",
+		"minecraft:thorns",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

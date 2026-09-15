@@ -1,0 +1,9 @@
+{
+	"name": "Emerald Resources",
+	"items": [
+		"minecraft:deepslate_emerald_ore",
+		"minecraft:emerald",
+		"minecraft:emerald_block",
+		"minecraft:emerald_ore"
+	]
+}

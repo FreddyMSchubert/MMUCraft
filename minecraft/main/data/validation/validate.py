@@ -13,8 +13,10 @@ from stage_item_data import stage_data, validate_gameplay_toggle_references
 
 
 ITEMS_ROOT = Path("data/data/items")
+HOPPER_FILTER_GROUPS_ROOT = Path("data/data/hopper_filter_groups")
 SCHEMA_ROOT = Path("data/validation/schemas/item")
 ROOT_SCHEMA = SCHEMA_ROOT / "item.schema.json"
+ITEM_ID = re.compile(r"^(?:minecraft|mainmod):[a-z0-9._-]+(?:/[a-z0-9._-]+)*$")
 
 
 class ItemDataError(RuntimeError):
@@ -90,6 +92,29 @@ def validate_item(schema_path: Path, registry: Registry, item_path: Path) -> Non
 		)
 
 
+def validate_hopper_filter_groups(root: Path) -> None:
+	groups_root = root / HOPPER_FILTER_GROUPS_ROOT
+	for path in sorted(groups_root.glob("**/*.json")):
+		group = load_json(path)
+		allowed_keys = {"name", "items", "potions", "enchantments"}
+		if not isinstance(group, dict) or "name" not in group or not set(group) <= allowed_keys:
+			raise ItemDataError(f"{path}: expected 'name' and optional membership arrays")
+		if not isinstance(group["name"], str) or not group["name"].strip():
+			raise ItemDataError(f"{path}: name must be a non-empty string")
+		memberships = [group.get(key, []) for key in ("items", "potions", "enchantments")]
+		if not any(memberships):
+			raise ItemDataError(f"{path}: a group must contain items, potions, or enchantments")
+		for key, values in zip(("items", "potions", "enchantments"), memberships):
+			if not isinstance(values, list) or not all(
+				isinstance(value, str) and ITEM_ID.fullmatch(value) for value in values
+			):
+				raise ItemDataError(f"{path}: membership values must use minecraft: or mainmod: IDs")
+			if key != "items" and any(not value.startswith("minecraft:") for value in values):
+				raise ItemDataError(f"{path}: {key} values must use minecraft: IDs")
+			if len(values) != len(set(values)):
+				raise ItemDataError(f"{path}: duplicate membership ID")
+
+
 def main() -> int:
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--root", required=True, help="Path to minecraft/main")
@@ -112,6 +137,7 @@ def main() -> int:
 
 	for item_json, _ in item_jsons:
 		validate_item(root_schema, registry, item_json)
+	validate_hopper_filter_groups(root)
 
 	_, _, copied, removed = stage_data(root, validate_references=False)
 	print(

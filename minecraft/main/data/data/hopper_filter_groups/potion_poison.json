@@ -1,0 +1,4 @@
+{
+	"name": "Poison Potions",
+	"potions": ["minecraft:long_poison", "minecraft:poison", "minecraft:strong_poison"]
+}

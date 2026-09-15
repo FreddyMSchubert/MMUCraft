@@ -1,0 +1,27 @@
+{
+	"name": "Equipped Charms",
+	"items": [
+		"mainmod:charm-bunny-pajamas",
+		"mainmod:charm-candle-of-the-deep",
+		"mainmod:charm-cave-spider-pajamas",
+		"mainmod:charm-endurance",
+		"mainmod:charm-extendo-grip",
+		"mainmod:charm-farming-boots",
+		"mainmod:charm-giants-boots",
+		"mainmod:charm-goop-hand",
+		"mainmod:charm-happy-ghast-speedup",
+		"mainmod:charm-heart",
+		"mainmod:charm-hiking-boots",
+		"mainmod:charm-kangaroo-boots",
+		"mainmod:charm-kitty-pajamas",
+		"mainmod:charm-leprechaun-boots",
+		"mainmod:charm-lucky-charm",
+		"mainmod:charm-pickaxe-heater",
+		"mainmod:charm-saw-belt",
+		"mainmod:charm-scuba-tank",
+		"mainmod:charm-spider-pajamas",
+		"mainmod:charm-veinminer",
+		"mainmod:charm-vitality-mending",
+		"mainmod:charm-winged-shoes"
+	]
+}

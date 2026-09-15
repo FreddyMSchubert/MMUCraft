@@ -1,0 +1,11 @@
+{
+	"name": "Shovel Enchantments",
+	"enchantments": [
+		"minecraft:efficiency",
+		"minecraft:fortune",
+		"minecraft:mending",
+		"minecraft:silk_touch",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

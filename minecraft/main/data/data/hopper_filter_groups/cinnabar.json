@@ -1,0 +1,18 @@
+{
+	"name": "Cinnabar",
+	"items": [
+		"minecraft:chiseled_cinnabar",
+		"minecraft:cinnabar",
+		"minecraft:cinnabar_brick_slab",
+		"minecraft:cinnabar_brick_stairs",
+		"minecraft:cinnabar_brick_wall",
+		"minecraft:cinnabar_bricks",
+		"minecraft:cinnabar_slab",
+		"minecraft:cinnabar_stairs",
+		"minecraft:cinnabar_wall",
+		"minecraft:polished_cinnabar",
+		"minecraft:polished_cinnabar_slab",
+		"minecraft:polished_cinnabar_stairs",
+		"minecraft:polished_cinnabar_wall"
+	]
+}

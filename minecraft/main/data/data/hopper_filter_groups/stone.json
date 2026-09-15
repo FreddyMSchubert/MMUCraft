@@ -1,0 +1,27 @@
+{
+	"name": "Stone",
+	"items": [
+		"minecraft:andesite",
+		"minecraft:diorite",
+		"minecraft:end_stone",
+		"minecraft:granite",
+		"minecraft:infested_stone",
+		"minecraft:smooth_stone",
+		"minecraft:smooth_stone_slab",
+		"minecraft:stone",
+		"minecraft:stone_axe",
+		"minecraft:stone_brick_slab",
+		"minecraft:stone_brick_stairs",
+		"minecraft:stone_brick_wall",
+		"minecraft:stone_bricks",
+		"minecraft:stone_button",
+		"minecraft:stone_hoe",
+		"minecraft:stone_pickaxe",
+		"minecraft:stone_pressure_plate",
+		"minecraft:stone_shovel",
+		"minecraft:stone_slab",
+		"minecraft:stone_spear",
+		"minecraft:stone_stairs",
+		"minecraft:stone_sword"
+	]
+}

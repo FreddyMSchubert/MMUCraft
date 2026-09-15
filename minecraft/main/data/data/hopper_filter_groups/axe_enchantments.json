@@ -1,0 +1,14 @@
+{
+	"name": "Axe Enchantments",
+	"enchantments": [
+		"minecraft:bane_of_arthropods",
+		"minecraft:efficiency",
+		"minecraft:fortune",
+		"minecraft:mending",
+		"minecraft:sharpness",
+		"minecraft:silk_touch",
+		"minecraft:smite",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

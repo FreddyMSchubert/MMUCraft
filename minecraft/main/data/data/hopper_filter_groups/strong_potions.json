@@ -1,0 +1,14 @@
+{
+	"name": "Strong Potions",
+	"potions": [
+		"minecraft:strong_harming",
+		"minecraft:strong_healing",
+		"minecraft:strong_leaping",
+		"minecraft:strong_poison",
+		"minecraft:strong_regeneration",
+		"minecraft:strong_slowness",
+		"minecraft:strong_strength",
+		"minecraft:strong_swiftness",
+		"minecraft:strong_turtle_master"
+	]
+}

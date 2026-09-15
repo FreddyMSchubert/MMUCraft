@@ -1,0 +1,4 @@
+{
+	"name": "Night Vision Potions",
+	"potions": ["minecraft:long_night_vision", "minecraft:night_vision"]
+}

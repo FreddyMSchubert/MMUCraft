@@ -32,7 +32,6 @@ public final class FishingModifiers {
     }
 
     public static double onCast(Player player) {
-        seedNearbyBrushables(player);
         ItemStack stack = player.getOffhandItem();
         Modifier modifier = MODIFIERS.entrySet().stream()
                 .filter(entry -> FakeItems.isSpecificFakeItem(stack, entry.getKey()))
@@ -49,7 +48,7 @@ public final class FishingModifiers {
         return modifier.itemChance();
     }
 
-    private static void seedNearbyBrushables(Player player) {
+    public static void onSuccessfulCatch(Player player) {
         if (!(player.level() instanceof ServerLevel level)) return;
         if (Math.random() > CREATE_MODIFIER_CHANCE) return;
 

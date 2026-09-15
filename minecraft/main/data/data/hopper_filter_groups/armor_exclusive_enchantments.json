@@ -1,0 +1,17 @@
+{
+	"name": "Armor-Exclusive Enchantments",
+	"enchantments": [
+		"minecraft:aqua_affinity",
+		"minecraft:blast_protection",
+		"minecraft:depth_strider",
+		"minecraft:feather_falling",
+		"minecraft:fire_protection",
+		"minecraft:frost_walker",
+		"minecraft:projectile_protection",
+		"minecraft:protection",
+		"minecraft:respiration",
+		"minecraft:soul_speed",
+		"minecraft:swift_sneak",
+		"minecraft:thorns"
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"name": "Harmful Potions",
+	"potions": [
+		"minecraft:harming",
+		"minecraft:infested",
+		"minecraft:long_poison",
+		"minecraft:long_slowness",
+		"minecraft:long_weakness",
+		"minecraft:oozing",
+		"minecraft:poison",
+		"minecraft:slowness",
+		"minecraft:strong_harming",
+		"minecraft:strong_poison",
+		"minecraft:strong_slowness",
+		"minecraft:weakness",
+		"minecraft:weaving",
+		"minecraft:wind_charged"
+	]
+}

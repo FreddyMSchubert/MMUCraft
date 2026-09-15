@@ -1,0 +1,9 @@
+{
+	"name": "Diamond Resources",
+	"items": [
+		"minecraft:deepslate_diamond_ore",
+		"minecraft:diamond",
+		"minecraft:diamond_block",
+		"minecraft:diamond_ore"
+	]
+}

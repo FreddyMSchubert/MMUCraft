@@ -1,0 +1,9 @@
+{
+	"name": "Copper Tools",
+	"items": [
+		"minecraft:copper_axe",
+		"minecraft:copper_hoe",
+		"minecraft:copper_pickaxe",
+		"minecraft:copper_shovel"
+	]
+}

@@ -1,0 +1,15 @@
+{
+	"name": "Leggings Enchantments",
+	"enchantments": [
+		"minecraft:binding_curse",
+		"minecraft:blast_protection",
+		"minecraft:fire_protection",
+		"minecraft:mending",
+		"minecraft:projectile_protection",
+		"minecraft:protection",
+		"minecraft:swift_sneak",
+		"minecraft:thorns",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

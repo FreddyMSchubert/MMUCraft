@@ -1,0 +1,15 @@
+{
+	"name": "Iron Gear",
+	"items": [
+		"minecraft:iron_axe",
+		"minecraft:iron_boots",
+		"minecraft:iron_chestplate",
+		"minecraft:iron_helmet",
+		"minecraft:iron_hoe",
+		"minecraft:iron_leggings",
+		"minecraft:iron_pickaxe",
+		"minecraft:iron_shovel",
+		"minecraft:iron_spear",
+		"minecraft:iron_sword"
+	]
+}

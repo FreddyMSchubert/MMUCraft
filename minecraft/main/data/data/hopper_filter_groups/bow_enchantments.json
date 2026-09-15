@@ -1,0 +1,12 @@
+{
+	"name": "Bow Enchantments",
+	"enchantments": [
+		"minecraft:flame",
+		"minecraft:infinity",
+		"minecraft:mending",
+		"minecraft:power",
+		"minecraft:punch",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

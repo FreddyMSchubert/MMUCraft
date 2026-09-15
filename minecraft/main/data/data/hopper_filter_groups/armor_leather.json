@@ -1,0 +1,9 @@
+{
+	"name": "Leather Armor",
+	"items": [
+		"minecraft:leather_boots",
+		"minecraft:leather_chestplate",
+		"minecraft:leather_helmet",
+		"minecraft:leather_leggings"
+	]
+}

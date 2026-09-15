@@ -1,0 +1,9 @@
+{
+	"name": "Golden Armor",
+	"items": [
+		"minecraft:golden_boots",
+		"minecraft:golden_chestplate",
+		"minecraft:golden_helmet",
+		"minecraft:golden_leggings"
+	]
+}

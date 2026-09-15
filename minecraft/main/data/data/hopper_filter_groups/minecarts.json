@@ -1,0 +1,11 @@
+{
+	"name": "Minecarts",
+	"items": [
+		"minecraft:chest_minecart",
+		"minecraft:command_block_minecart",
+		"minecraft:furnace_minecart",
+		"minecraft:hopper_minecart",
+		"minecraft:minecart",
+		"minecraft:tnt_minecart"
+	]
+}

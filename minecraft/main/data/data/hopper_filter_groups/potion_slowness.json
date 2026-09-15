@@ -1,0 +1,4 @@
+{
+	"name": "Slowness Potions",
+	"potions": ["minecraft:long_slowness", "minecraft:slowness", "minecraft:strong_slowness"]
+}

@@ -1,0 +1,4 @@
+{
+	"name": "Curse Enchantments",
+	"enchantments": ["minecraft:binding_curse", "minecraft:vanishing_curse"]
+}

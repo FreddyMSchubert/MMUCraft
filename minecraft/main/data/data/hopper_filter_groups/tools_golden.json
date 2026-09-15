@@ -1,0 +1,9 @@
+{
+	"name": "Golden Tools",
+	"items": [
+		"minecraft:golden_axe",
+		"minecraft:golden_hoe",
+		"minecraft:golden_pickaxe",
+		"minecraft:golden_shovel"
+	]
+}

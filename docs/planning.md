@@ -78,7 +78,7 @@ Sunday (Circus Drop):
 * **Last year:** 27.10.25 – 02.11.25
 * **This year:** 02.11.26 – 08.11.26
 
-Surprising Saturday: Manhunt - Split everyone randomly into hunters and runners
+Surprising Saturday: Long Puzzle (like bac advancements pirate puzzle), more hints released hourly
 Sunday (Inventors Drop):
 - Easy sorting systems with a special hopper filter item
 - bow system - hold stuff in offhand to attach
@@ -88,7 +88,7 @@ Sunday (Inventors Drop):
 * **Last year:** 03.11.25 – 09.11.25
 * **This year:** 09.11.26 – 15.11.26
 
-Surprising Saturday: Long Puzzle (like bac advancements pirate puzzle), more hints released hourly
+Surprising Saturday: Manhunt - Split everyone randomly into hunters and runners
 
 Sunday (OP Drop):
 - Tease End opening next week

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "minecraft:copper_block",
+    "c": "minecraft:chest"
+  },
+  "pattern": [
+    "C C",
+    "CcC",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:hopper"
+  }
+}

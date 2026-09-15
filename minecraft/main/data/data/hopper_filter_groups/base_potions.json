@@ -1,0 +1,4 @@
+{
+	"name": "Base Potions",
+	"potions": ["minecraft:awkward", "minecraft:mundane", "minecraft:thick", "minecraft:water"]
+}

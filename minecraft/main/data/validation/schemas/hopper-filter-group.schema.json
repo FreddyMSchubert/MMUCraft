@@ -1,0 +1,60 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "hopper-filter-group.schema.json",
+	"title": "Hopper filter group",
+	"$defs": {
+		"itemId": {
+			"type": "string",
+			"pattern": "^(?:minecraft|mainmod):[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
+		},
+		"minecraftId": {
+			"type": "string",
+			"pattern": "^minecraft:[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
+		},
+		"itemIds": {
+			"type": "array",
+			"minItems": 1,
+			"uniqueItems": true,
+			"items": {
+				"$ref": "#/$defs/itemId"
+			}
+		},
+		"minecraftIds": {
+			"type": "array",
+			"minItems": 1,
+			"uniqueItems": true,
+			"items": {
+				"$ref": "#/$defs/minecraftId"
+			}
+		}
+	},
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"name": {
+			"type": "string",
+			"pattern": "\\S"
+		},
+		"items": {
+			"$ref": "#/$defs/itemIds"
+		},
+		"potions": {
+			"$ref": "#/$defs/minecraftIds"
+		},
+		"enchantments": {
+			"$ref": "#/$defs/minecraftIds"
+		}
+	},
+	"required": ["name"],
+	"anyOf": [
+		{
+			"required": ["items"]
+		},
+		{
+			"required": ["potions"]
+		},
+		{
+			"required": ["enchantments"]
+		}
+	]
+}

@@ -1,0 +1,10 @@
+{
+	"name": "Fishing Rod Enchantments",
+	"enchantments": [
+		"minecraft:luck_of_the_sea",
+		"minecraft:lure",
+		"minecraft:mending",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

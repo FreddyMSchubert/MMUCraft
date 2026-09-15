@@ -28,6 +28,7 @@
 		"PotionBrewingMixin",
 		"LuckMobEffectMixin",
 		"InsertMultipleCoinsAtOnce",
+		"HopperFilterMixin",
 		"SoundEventRedirect",
 		"advancementDabloons.AdvancementMoneyTooltip",
 		"advancementDabloons.PlayerAdvancementsAccessor",

@@ -1,0 +1,16 @@
+{
+	"name": "Redstone",
+	"items": [
+		"minecraft:comparator",
+		"minecraft:deepslate_redstone_ore",
+		"minecraft:lever",
+		"minecraft:observer",
+		"minecraft:redstone",
+		"minecraft:redstone_block",
+		"minecraft:redstone_lamp",
+		"minecraft:redstone_ore",
+		"minecraft:redstone_torch",
+		"minecraft:repeater",
+		"minecraft:target"
+	]
+}

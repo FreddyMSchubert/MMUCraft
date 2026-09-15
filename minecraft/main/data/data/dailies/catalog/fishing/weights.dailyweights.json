@@ -1,5 +1,5 @@
 {
-	"fish_anything.daily.json": 10,
+	"fish_anything.daily.json": 20,
 	"fish_minecraft_cod.daily.json": 1,
 	"fish_minecraft_salmon.daily.json": 1,
 	"fish_minecraft_pufferfish.daily.json": 1,
@@ -13,7 +13,7 @@
 	"fish_custom_fish_pike.daily.json": 1,
 	"fish_custom_fish_tuna.daily.json": 1,
 	"fish_custom_fish_red_snapper.daily.json": 1,
-	"fish_rarity_common.daily.json": 12,
-	"fish_rarity_uncommon.daily.json": 10,
-	"fish_rarity_rare.daily.json": 8
+	"fish_rarity_common.daily.json": 17,
+	"fish_rarity_uncommon.daily.json": 15,
+	"fish_rarity_rare.daily.json": 3
 }

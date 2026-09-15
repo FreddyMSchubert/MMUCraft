@@ -1,0 +1,15 @@
+{
+	"name": "Sword Enchantments",
+	"enchantments": [
+		"minecraft:bane_of_arthropods",
+		"minecraft:fire_aspect",
+		"minecraft:knockback",
+		"minecraft:looting",
+		"minecraft:mending",
+		"minecraft:sharpness",
+		"minecraft:smite",
+		"minecraft:sweeping_edge",
+		"minecraft:unbreaking",
+		"minecraft:vanishing_curse"
+	]
+}

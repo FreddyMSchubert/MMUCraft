@@ -11,6 +11,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 final class GameplayShopOperations {
+    private static final int PUBLIC_ANNOUNCEMENT_PRICE_DABLOONS = 70;
+
     private GameplayShopOperations() {}
 
     static PurchaseShopItemResponse purchaseShopItemOnMainThread(PurchaseShopItemRequest request) {
@@ -75,9 +77,11 @@ final class GameplayShopOperations {
         int remaining = MoneyHelper.GetBalance(player);
         MoneyHelper.SendBalanceMessage(player, -price,
                 "Purchased " + request.getDisplayName());
-        DiscordBridge.playerEvent("shop", player,
-                "bought the " + request.getRarity() + " " + request.getDisplayName() + " "
-                        + request.getItemType() + " from the shop for " + price + " Dabloons.");
+        if (price >= PUBLIC_ANNOUNCEMENT_PRICE_DABLOONS) {
+            DiscordBridge.shopAnnouncement(server, player,
+                    "bought the " + request.getRarity() + " " + request.getDisplayName() + " "
+                            + request.getItemType() + " from the shop for " + price + " Dabloons.");
+        }
         return PurchaseShopItemResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)

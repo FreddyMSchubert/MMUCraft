@@ -5,10 +5,11 @@
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
+		"I still don't get it, does this hat make you better at bowling?"
 	],
 	"shopPurchasable": {
 		"membersOnly": false,
-	    "priceDabloons": 35,
+	    "priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 68,
 		"unlockMessage": "Unlocked cosmetic: Bowler Hat."

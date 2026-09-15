@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:firefly_bush",
-	"baseCost": 2,
+	"baseCost": 4,
 	"rewardPerIteration": 0.5,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "✨",
 	"name": "Submit Firefly Bushes",
-	"description": "Submit {count} firefly bushes. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} firefly bushes. What's that buzzing sound?"
 }

@@ -7,5 +7,5 @@
 	"maximum": 6,
 	"emoji": "🌺",
 	"name": "Submit Spore Blossoms",
-	"description": "Submit {count} spore blossoms. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} spore blossoms. These are non renewable, are you sure you want to give these away?"
 }

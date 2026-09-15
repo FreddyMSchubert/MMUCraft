@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:exposed_copper_golem_statue",
-	"baseCost": 4,
-	"rewardPerIteration": 2,
+	"baseCost": 2,
+	"rewardPerIteration": 4,
 	"minimum": 1,
 	"maximum": 2,
 	"emoji": "🗿",
 	"name": "Submit Exposed Copper Golem Statues",
-	"description": "Submit {count} exposed copper golem statues. Stop scraping when the first spots appear. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} exposed copper golem statues. Cut copper golem when?"
 }

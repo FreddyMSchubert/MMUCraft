@@ -14,6 +14,7 @@ Surprising Saturday: Killswitch
 Sunday (Welcoming Drop):
 - Charms: Kitty Pajamas Charm, Hiking Boots Charm, Pickaxe Heater Charm
 - Note on Charm Boost to have many charms on some armor
+- Screenshot: kitty pajamas, bunny ears (baby mobs nearby)
 - Cosmetics theme - animal stuff, pets, crows, cats, dogs, hoods including eeyore
 
 ## Week 2
@@ -28,6 +29,7 @@ Sunday (Soaring Drop):
 - Particle Trails
 - Phantom Summon Potions
 - Charms: Winged Shoes Charm, Bunny Pajamas Charm
+- Screenshot: glider, aviator helmet (flying over campfire + trail)
 - bunny ears cosmetic to announce with bunny pajamas
 
 ## Week 3
@@ -44,6 +46,7 @@ Sunday (Imaginative Drop):
 - Wrench & InvisiCarrot
 - 16x16 maps feature TODO
 - Charms: Spider Pajamas & Cave Spider Pajamas
+- Screenshot: wrench, builder helmet (build under construction, maybe toolbench deco block?)
 
 ## Week 4
 
@@ -59,6 +62,7 @@ Sunday (Hellish Drop):
 - Nether Portals Any Shape
 - Note that Halloween Build Event ends next saturday
 - Buncha Halloween Cosmetics
+- Screenshot: player in netherite, devil horns (maybe player falling through a portal in the ground)
 
 ## Week 5
 
@@ -70,6 +74,8 @@ End Halloween Event
 Surprising Saturday: Totally normal world (Herobrine & spooky server side mods), insane mob difficulty, points based on killed mobs (1 for zombie, 50 for dragon, 100 for wither or smth)
 
 Sunday (Circus Drop):
+- Charms: Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots
+- Screenshot: one player in giant's boots + skull, looking down at normal size player
 - Charms: Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots, Happy Ghast Speedup
 - Popcorn (next jump you do is really high - more like hopcorn) traded from farmers
 
@@ -81,6 +87,7 @@ Sunday (Circus Drop):
 Surprising Saturday: Long Puzzle (like bac advancements pirate puzzle), more hints released hourly
 Sunday (Inventors Drop):
 - Easy sorting systems with a special hopper filter item
+- Screenshot: player messing with storage system wearing inventor's tophat
 - bow system - hold stuff in offhand to attach
 
 ## Week 7
@@ -93,6 +100,7 @@ Surprising Saturday: Manhunt - Split everyone randomly into hunters and runners
 Sunday (OP Drop):
 - Tease End opening next week
 - Charms: Iron Stomach Charm, Scuba Tank Charm, Candle of the Deep Charm, Vitality Mending Charm
+- Screenshot: player in halo + many god rays
 
 ## Week 8
 
@@ -105,6 +113,7 @@ Sunday Update:
 - End
 - Enderite
 - Note to get into particle trails if you haven't checked them out yet
+- Screenshot: enderite, shulker hat (raiding end city, shulker shots floating nearby)
 
 ## Week 9
 

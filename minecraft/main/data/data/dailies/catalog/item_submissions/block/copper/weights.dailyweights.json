@@ -1,6 +1,6 @@
 {
-	"submit_minecraft_waxed_oxidized_cut_copper_stairs.daily.json": 6,
-	"submit_minecraft_copper_torch.daily.json": 12,
+	"submit_minecraft_waxed_oxidized_cut_copper_stairs.daily.json": 2,
+	"submit_minecraft_copper_torch.daily.json": 6,
 	"submit_minecraft_copper_golem_statue.daily.json": 2,
 	"submit_minecraft_exposed_copper_golem_statue.daily.json": 2,
 	"submit_minecraft_weathered_copper_golem_statue.daily.json": 2,
@@ -9,5 +9,5 @@
 	"submit_minecraft_waxed_exposed_copper_golem_statue.daily.json": 2,
 	"submit_minecraft_waxed_weathered_copper_golem_statue.daily.json": 2,
 	"submit_minecraft_waxed_oxidized_copper_golem_statue.daily.json": 2,
-	"submit_minecraft_waxed_weathered_chiseled_copper.daily.json": 8
+	"submit_minecraft_waxed_weathered_chiseled_copper.daily.json": 2
 }

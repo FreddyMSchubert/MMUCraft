@@ -2,10 +2,10 @@
 	"type": "submit_item",
 	"item": "minecraft:amethyst_cluster",
 	"baseCost": 3,
-	"rewardPerIteration": 1,
+	"rewardPerIteration": 2,
 	"minimum": 2,
 	"maximum": 4,
 	"emoji": "🔮",
 	"name": "Submit Amethyst Clusters",
-	"description": "Submit {count} amethyst clusters. Silk Touch. Do not ask how we know. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} amethyst clusters. Just crack open a geode, easy peasy."
 }

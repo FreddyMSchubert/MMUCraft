@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:lily_of_the_valley",
-	"baseCost": 1,
+	"baseCost": 2,
 	"rewardPerIteration": 0.125,
 	"minimum": 24,
 	"maximum": 32,
 	"emoji": "🤍",
 	"name": "Submit Lilies of the Valley",
-	"description": "Submit {count} lilies of the valley. Pretty flower. Poisonous dye. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} lilies of the valley. Ayo Mr White!"
 }

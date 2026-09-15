@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:pink_petals",
-	"baseCost": 2,
+	"baseCost": 3,
 	"rewardPerIteration": 0.125,
 	"minimum": 24,
 	"maximum": 32,
 	"emoji": "🌸",
 	"name": "Submit Pink Petals",
-	"description": "Submit {count} pink petals. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} pink petals. Can't be used for fuel!"
 }

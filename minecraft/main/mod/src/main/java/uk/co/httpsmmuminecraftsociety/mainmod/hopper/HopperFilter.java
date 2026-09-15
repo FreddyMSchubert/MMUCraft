@@ -46,10 +46,10 @@ public final class HopperFilter {
     private static final int MAX_SAVED_ENTRIES = 256;
 
     public enum Mode {
-        WHITELIST_SINGLE("hopper-filter-whitelist-single", "Whitelist Single (+)", ChatFormatting.GREEN, false, false),
-        WHITELIST_GROUP("hopper-filter-whitelist-group", "Whitelist Group (#)", ChatFormatting.GREEN, true, false),
-        BLACKLIST_SINGLE("hopper-filter-blacklist-single", "Blacklist Single (+)", ChatFormatting.RED, false, true),
-        BLACKLIST_GROUP("hopper-filter-blacklist-group", "Blacklist Group (#)", ChatFormatting.RED, true, true);
+        WHITELIST_SINGLE("hopper-filter-whitelist-single", "Whitelist Single", ChatFormatting.GREEN, false, false),
+        WHITELIST_GROUP("hopper-filter-whitelist-group", "Whitelist Group", ChatFormatting.GREEN, true, false),
+        BLACKLIST_SINGLE("hopper-filter-blacklist-single", "Blacklist Single", ChatFormatting.RED, false, true),
+        BLACKLIST_GROUP("hopper-filter-blacklist-group", "Blacklist Group", ChatFormatting.RED, true, true);
 
         private final String itemId;
         private final String label;
@@ -73,9 +73,11 @@ public final class HopperFilter {
     private HopperFilter() {}
 
     public static ItemStack create() {
-        ItemStack stack = FakeItems.createFakeItemStack(Mode.WHITELIST_SINGLE.itemId, 1);
+        return FakeItems.createFakeItemStack(Mode.WHITELIST_SINGLE.itemId, 1);
+    }
+
+    public static void initialize(ItemStack stack) {
         refreshTooltip(stack);
-        return stack;
     }
 
     public static boolean isFilter(ItemStack stack) {
@@ -255,7 +257,8 @@ public final class HopperFilter {
         data.putBoolean(FILTER_KEY, true);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
         List<Component> lines = new ArrayList<>();
-        lines.add(Component.literal(mode.label).withStyle(mode.color));
+        lines.add(Component.literal("Mode: ").withStyle(ChatFormatting.WHITE)
+                .append(Component.literal(mode.label).withStyle(mode.color)));
         addList(lines, "Whitelist", entries(stack, WHITELIST_KEY), ChatFormatting.GREEN);
         addList(lines, "Blacklist", entries(stack, BLACKLIST_KEY), ChatFormatting.RED);
         stack.set(DataComponents.LORE, new ItemLore(lines.stream()

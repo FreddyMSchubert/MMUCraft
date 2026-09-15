@@ -11,6 +11,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
 
@@ -87,6 +88,7 @@ public record FakeItem(
             }
         }
 
+        HopperFilter.initialize(stack);
         FakeItems.wrapTooltip(stack);
 
         return stack;

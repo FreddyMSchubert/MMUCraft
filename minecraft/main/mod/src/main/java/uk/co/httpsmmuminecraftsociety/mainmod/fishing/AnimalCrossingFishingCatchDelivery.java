@@ -49,5 +49,6 @@ public final class AnimalCrossingFishingCatchDelivery {
                 hook.getRandom().nextInt(6) + 1
         ));
         player.awardStat(Stats.FISH_CAUGHT, 1);
+        FishingModifiers.onSuccessfulCatch(player);
     }
 }

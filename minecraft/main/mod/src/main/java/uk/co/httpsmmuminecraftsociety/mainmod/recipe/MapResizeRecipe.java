@@ -11,6 +11,8 @@ import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
 
 public final class MapResizeRecipe extends CustomRecipe {
+    private static final int SHEARS_DAMAGE = 16;
+
     @Override
     public boolean matches(CraftingInput input, Level level) {
         ItemStack map = ItemStack.EMPTY;
@@ -41,7 +43,7 @@ public final class MapResizeRecipe extends CustomRecipe {
             ItemStack ingredient = input.getItem(index);
             if (!ingredient.is(Items.SHEARS)) continue;
             ItemStack shears = ingredient.copyWithCount(1);
-            shears.setDamageValue(shears.getDamageValue() + 1);
+            shears.setDamageValue(shears.getDamageValue() + SHEARS_DAMAGE);
             if (shears.getDamageValue() < shears.getMaxDamage()) remaining.set(index, shears);
         }
         return remaining;

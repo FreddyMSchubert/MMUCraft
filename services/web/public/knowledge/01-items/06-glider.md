@@ -3,6 +3,7 @@ id: glider
 unlockOrder: 2
 chatMessage: You've unlocked knowledge on gliders, so you can fly even when you've never been to the Nether or End.
 sidebarTitle: Gliders
+gameplayToggle: soaring
 tags:
 - paraglider
 - float

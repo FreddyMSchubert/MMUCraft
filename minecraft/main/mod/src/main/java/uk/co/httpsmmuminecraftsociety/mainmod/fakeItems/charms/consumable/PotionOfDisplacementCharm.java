@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
@@ -144,13 +145,24 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         Candidate candidate = session.candidate;
         if (!candidate.loading().isDone()) return;
 
-        LevelChunk chunk = candidate.loading().isCompletedExceptionally()
-                ? null
-                : session.level.getChunkSource().getChunkNow(candidate.chunkPos().x(), candidate.chunkPos().z());
-        if (chunk != null) {
-            session.destination = possibleSpawnPos(candidate.x(), candidate.z(), session.level, chunk);
+        if (candidate.loading().isCompletedExceptionally()) {
+            releaseCandidate(session);
+            return;
         }
 
+        Object loadingResult = candidate.loading().getNow(null);
+        if (loadingResult instanceof ChunkResult<?> chunkResult && !chunkResult.isSuccess()) {
+            releaseCandidate(session);
+            return;
+        }
+
+        // Generation completes against the updating chunk map. Keep the ticket until the chunk reaches the
+        // visible map instead of treating this brief gap as a failed candidate.
+        LevelChunk chunk = session.level.getChunkSource()
+                .getChunkNow(candidate.chunkPos().x(), candidate.chunkPos().z());
+        if (chunk == null) return;
+
+        session.destination = possibleSpawnPos(candidate.x(), candidate.z(), session.level, chunk);
         if (session.destination == null) {
             releaseCandidate(session);
         }

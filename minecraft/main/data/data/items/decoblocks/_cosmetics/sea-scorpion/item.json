@@ -7,6 +7,13 @@
 	"tooltips": [
 		"As seen in 480 million BC!"
 	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
 	"shopPurchasable": {
 		"membersOnly": false,
 	"priceDabloons": 150,

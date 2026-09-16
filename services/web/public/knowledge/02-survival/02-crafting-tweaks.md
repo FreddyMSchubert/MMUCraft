@@ -10,11 +10,13 @@ tips:
 - All of the minecart rail recipes now give way more output items than usual. Instead of 16, crafting the normal rail recipe now gives 64 rails at once!
 - Minecart rails go wayyyy faster on this server - over 2.5 times the normal speed!
 - Powered rails are significantly easier to craft now, because you can make them using copper instead of gold.
+- Minecarts are the fastest transportation method on this server! They're super quick!
 - You can get different wooden items more efficiently by using a Stonecutter! (I know, the naming is unintuitive).
 - Instead of breaking and placing a painting dozens of times to get the one you want, just put a painting in a Stonecutter. This will allow you to select the exact painting you want.
 - This server has some additional crafting recipes, such as crafting wool into string, crafting nether wart blocks into nether wart, and crafting compressed ice into uncompressed ice.
 - You can turn concrete powder into concrete way quicker now by throwing concrete powder items into a cauldron filled with water. This will convert them in an instant!
 - You can get your hands on mud blocks way way easier than usual by throwing dirt blocks into a cauldron filled with water. The dirt blocks will turn into mud blocks instantly!
+- Hoppers can be crafted more easily by using copper ingots instead of iron ingots as well.
 ====
 
 # Crafting Tweaks
@@ -84,6 +86,18 @@ Throw concrete powder blocks of any color into a water-filled cauldron to quickl
 Similarly, throw dirt blocks in a water-filled cauldron to turn the dirt into mud! Wayyy easier:
 
 ![Throw dirt in a water-filled cauldron to turn it into mud](/assets/knowledge/survival/crafting-tweaks/easier-mud.png)
+
+## Easier Hoppers
+
+Hoppers take ungodly amounts of iron, and i really don't like iron farms (the poor villagers man), so you can make them like this instead:
+
+![Hopper Alternative crafting using copper ingots instead of iron ingots](/assets/knowledge/survival/crafting-tweaks/hopper_alternative.png)
+
+:::recipe-items
+[Copper Ingot](https://minecraft.wiki/w/Copper_Ingot) (TL, TR, CL, CR, BC) · [Chest](https://minecraft.wiki/w/Chest) (C) → [Hopper](https://minecraft.wiki/w/Hopper) ×1
+:::
+
+(The old recipe still works.)
 
 ## Early Glowstone
 

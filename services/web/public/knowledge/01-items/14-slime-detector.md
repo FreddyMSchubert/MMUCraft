@@ -21,6 +21,7 @@ tips:
 The Slime Detector shows how close you are to a slime chunk. This is a great Vanilla way of finding slimes without relying on chunkbase.
 
 ## How to get it
+
 You can either buy it from [the shop](https://mmuminecraftsociety.co.uk/play/shop/charm-slime-detector), or you can craft it with one compass and one slime ball.
 
 ![Recipe](/assets/knowledge/items/slime-detector/recipe.png)
@@ -37,12 +38,12 @@ The amount of active bars indicate how close you are to a slime chunk.
 
 | | Active bar | Distance to the nearest slime chunk |
 | - | - | - |
-| <![5th bar](/assets/knowledge/items/slime-detector/sd5.png)  width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 5th | Your current chunk is a slime chunk. |
-| <![4th bar](/assets/knowledge/items/slime-detector/sd4.png)  width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 4th | Nearest slime chunk is 1 chunk away. |
-| <![3rd bar](/assets/knowledge/items/slime-detector/sd3.png)  width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 3rd | Nearest slime chunk is 2 chunks away. |
-| <![2nd bar](/assets/knowledge/items/slime-detector/sd2.png)  width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 2nd | Nearest slime chunk is 3 chunks away. |
-| <![1st bar](/assets/knowledge/items/slime-detector/sd1.png)  width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 1st | Nearest slime chunk is 4 chunks away. |
-| <![No bars](/assets/knowledge/items/slime-detector/sd0.png)  width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | None | Nearest slime chunk is at least 5 chunks away. |
+| </assets/knowledge/items/slime-detector/sd5.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 5th | You are currently stood in a slime chunk. |
+| </assets/knowledge/items/slime-detector/sd4.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 4th | The nearest slime chunk is bordering the chunk you are stood in. |
+| </assets/knowledge/items/slime-detector/sd3.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 3rd | The nearest slime chunk is 2 chunks away. |
+| </assets/knowledge/items/slime-detector/sd2.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 2nd | The nearest slime chunk is 3 chunks away. |
+| </assets/knowledge/items/slime-detector/sd1.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 1st | The nearest slime chunk is 4 chunks away. |
+| </assets/knowledge/items/slime-detector/sd0.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | None | The nearest slime chunk is at least 5 chunks away. |
 
 
 :::note

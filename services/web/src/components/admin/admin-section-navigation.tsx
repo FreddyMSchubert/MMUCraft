@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import type { AdminSection } from './admin-data.types';
 
 const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
@@ -22,9 +22,12 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 ];
 
 export function AdminSectionNavigation({ activeSection }: { activeSection: AdminSection }) {
-	const [isDev, setIsDev] = useState<boolean>();
-
-	useEffect(() => setIsDev(window.location.hostname.startsWith('dev.')), []);
+	const hostname = useSyncExternalStore(
+		() => () => undefined,
+		() => window.location.hostname,
+		() => '',
+	);
+	const isDev = hostname.startsWith('dev.');
 
 	return (
 		<nav className="adminSubTabs" aria-label="Admin sections">
@@ -40,19 +43,17 @@ export function AdminSectionNavigation({ activeSection }: { activeSection: Admin
 			<a href="/grafana/" target="_blank" rel="noopener noreferrer">
 				Statistics
 			</a>
-			{isDev !== undefined && (
-				<a
-					href={
-						isDev
-							? 'https://mmuminecraftsociety.co.uk'
-							: 'https://dev.mmuminecraftsociety.co.uk'
-					}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{isDev ? 'go to prod' : 'go to dev'}
-				</a>
-			)}
+			<a
+				href={
+					isDev
+						? 'https://mmuminecraftsociety.co.uk'
+						: 'https://dev.mmuminecraftsociety.co.uk'
+				}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{isDev ? 'go to prod' : 'go to dev'}
+			</a>
 		</nav>
 	);
 }

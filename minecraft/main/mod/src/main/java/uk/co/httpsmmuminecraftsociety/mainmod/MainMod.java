@@ -41,6 +41,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderFlight;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
@@ -117,6 +118,8 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> CharmsManager.refreshInventory(handler.player));
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
+                PotionOfDisplacementCharm.onPlayerDisconnect(handler.player));
         ItemEvents.USE.register(CharmsManager::onItemUse);
         ItemEvents.USE_ON.register(CharmsManager::onItemUseOn);
         ItemEvents.USE_ON.register(DecoBlocksManager::onUseItemOn);
@@ -154,6 +157,7 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
         ServerLifecycleEvents.SERVER_STARTED.register(MetricsServer::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            PotionOfDisplacementCharm.clearSearches();
             MetricsServer.stop();
             GrpcBridge.stop();
         });

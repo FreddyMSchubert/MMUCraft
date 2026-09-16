@@ -16,6 +16,7 @@ Sunday (Welcoming Drop):
 - Note on Charm Boost to have many charms on some armor
 - Screenshot: kitty pajamas, bunny ears (baby mobs nearby)
 - Cosmetics theme - animal stuff, pets, crows, cats, dogs, hoods including eeyore
+- slime detector
 
 ## Week 2
 

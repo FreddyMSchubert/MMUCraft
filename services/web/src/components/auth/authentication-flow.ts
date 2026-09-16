@@ -28,7 +28,7 @@ export const SERVER_RULES = [
 	'👿 Hate and prejudice, NSFW content, criminal behaviour and discussion are prohibited.',
 	'🗯️ Discuss sensitive topics, including politics and religion, respectfully.',
 	'☢️ General toxicity is prohibited.',
-	'💥 Griefing and exploiting loopholes are prohibited.',
+	'💥 Griefing, cheating (e.g. X-Raying) and exploiting loopholes are prohibited.',
 	'🤝 Cooperate with committee members at all times.',
 	'🚫 No impersonation, scams, deliberate spam, or disruptive advertising.',
 ] as const;

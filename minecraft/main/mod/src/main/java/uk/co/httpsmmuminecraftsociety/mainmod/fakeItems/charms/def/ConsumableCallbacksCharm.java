@@ -7,5 +7,14 @@ import net.minecraft.world.item.ItemStack;
 public interface ConsumableCallbacksCharm extends Charm
 {
     void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel);
+    default boolean shouldFinishConsumptionEarly(
+            ItemStack stack,
+            ServerPlayer player,
+            ServerLevel level,
+            int elapsedTicks,
+            int charmLevel
+    ) {
+        return false;
+    }
     boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel);
 }

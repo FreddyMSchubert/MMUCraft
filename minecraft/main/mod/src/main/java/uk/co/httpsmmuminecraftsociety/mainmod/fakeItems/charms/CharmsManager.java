@@ -217,25 +217,32 @@ public class CharmsManager
         ConsumableCallbacksCharm callbacksCharm = (ConsumableCallbacksCharm) activeCharm.charm();
         int elapsedTicks = consumable.consumeTicks() - player.getUseItemRemainingTicks();
 
-        if (player.getUseItemRemainingTicks() <= 1) {
-            boolean completed = callbacksCharm.onConsumeFinished(
+        if (player.getUseItemRemainingTicks() > 1) {
+            callbacksCharm.onConsumeTick(activeStack, player, level, elapsedTicks, activeCharm.level());
+            if (!player.isUsingItem()) return;
+            if (!callbacksCharm.shouldFinishConsumptionEarly(
                     activeStack,
                     player,
                     level,
                     elapsedTicks,
                     activeCharm.level()
-            );
-            DailyCharm dailyCharm = DailyCharm.from(activeCharm.charm());
-            if (completed && dailyCharm != null) {
-                MetricsServer.recordPotionUse(dailyCharm);
-                DailyTaskManager.record(player, DailyTaskEvent.charm(dailyCharm));
-            }
-
-            player.stopUsingItem();
-            return;
+            )) return;
         }
 
-        callbacksCharm.onConsumeTick(activeStack, player, level, elapsedTicks, activeCharm.level());
+        boolean completed = callbacksCharm.onConsumeFinished(
+                activeStack,
+                player,
+                level,
+                elapsedTicks,
+                activeCharm.level()
+        );
+        DailyCharm dailyCharm = DailyCharm.from(activeCharm.charm());
+        if (completed && dailyCharm != null) {
+            MetricsServer.recordPotionUse(dailyCharm);
+            DailyTaskManager.record(player, DailyTaskEvent.charm(dailyCharm));
+        }
+
+        player.stopUsingItem();
     }
     public static void onPlayerTick(ServerLevel server) {
         for (ServerPlayer player : server.players()) {

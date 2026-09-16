@@ -67,7 +67,7 @@ But that's not all for the [Stonecutter](https://minecraft.wiki/w/Stonecutter)! 
 
 ## Unpacking Stuff
 
-You can now unpack (reverse-compact) wool, all the ice blocks, and nether wart blocks. TODO links
+You can now unpack (reverse-compact) wool, all the ice blocks, and nether wart blocks.
 
 ![Unpacking Wool Example Image](/assets/knowledge/survival/crafting-tweaks/unpack-wool.png)
 

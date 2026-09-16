@@ -26,6 +26,8 @@ public final class MainModRecipes {
     public static final RecipeSerializer<EnderiteScrapSmeltingRecipe> ENDERITE_SCRAP_SMELTING_SERIALIZER = unit(new EnderiteScrapSmeltingRecipe());
     public static final RecipeSerializer<FishCookingRecipe> FISH_COOKING_SERIALIZER = unit(new FishCookingRecipe());
     public static final RecipeSerializer<HopperFilterRecipe> HOPPER_FILTER_SERIALIZER = unit(new HopperFilterRecipe());
+    public static final RecipeSerializer<MapResizeRecipe> MAP_RESIZE_SERIALIZER = unit(new MapResizeRecipe());
+    public static final RecipeSerializer<MapInvisibilityRecipe> MAP_INVISIBILITY_SERIALIZER = unit(new MapInvisibilityRecipe());
 
     public static final RecipeSerializer<FakeShapedCraftingRecipe> FAKE_CRAFTING_SHAPED_SERIALIZER = codecBacked(FakeShapedCraftingRecipe.CODEC);
     public static final RecipeSerializer<FakeShapelessCraftingRecipe> FAKE_CRAFTING_SHAPELESS_SERIALIZER = codecBacked(FakeShapelessCraftingRecipe.CODEC);
@@ -46,6 +48,8 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "enderite_scrap_smelting"), ENDERITE_SCRAP_SMELTING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fish_cooking"), FISH_COOKING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "hopper_filter"), HOPPER_FILTER_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "map_resize"), MAP_RESIZE_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "map_invisibility"), MAP_INVISIBILITY_SERIALIZER);
 
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shaped"), FAKE_CRAFTING_SHAPED_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_crafting_shapeless"), FAKE_CRAFTING_SHAPELESS_SERIALIZER);

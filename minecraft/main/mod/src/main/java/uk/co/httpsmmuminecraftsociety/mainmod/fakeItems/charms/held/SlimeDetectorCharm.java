@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -13,8 +14,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public final class SlimeDetectorCharm implements Charm, UseCallbackCharm {
     public static final int CHARM_ID = 55;
@@ -28,19 +27,17 @@ public final class SlimeDetectorCharm implements Charm, UseCallbackCharm {
 
     @Override
     public InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
-        if (isLoading(stack)) return InteractionResult.SUCCESS_SERVER;
-
         int bars = signalBars(level.getSeed(), player.chunkPosition());
-        setModel(stack, LOADING_MODEL);
-
         int delayTicks = randomScanDelayTicks(level.getRandom());
-        CompletableFuture.delayedExecutor(delayTicks * 50L, TimeUnit.MILLISECONDS).execute(() ->
-                level.getServer().execute(() -> {
+        setModel(stack, LOADING_MODEL);
+        level.getServer().schedule(new TickTask(
+                level.getServer().getTickCount() + delayTicks,
+                () -> {
                     if (!isLoading(stack)) return;
                     setModel(stack, bars);
                     player.getInventory().setChanged();
-                })
-        );
+                }
+        ));
         return InteractionResult.SUCCESS_SERVER;
     }
 

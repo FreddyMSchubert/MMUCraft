@@ -105,7 +105,13 @@
 		"dailies.DailyLoomResultMixin",
 		"dailies.DailyEndermanMixin",
 		"dailies.DailySulfurCubeMixin",
-		"worldgen.SparseStructuresMixin"
+		"worldgen.SparseStructuresMixin",
+		"maps.MapItemSavedDataInvoker",
+		"maps.MapTooltipAndCraftingMixin",
+		"maps.FilledMapCraftingMixin",
+		"maps.SmallEmptyMapUseMixin",
+		"maps.MapInvisibilityUpdateMixin",
+		"maps.TaggedFilledMapUseMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

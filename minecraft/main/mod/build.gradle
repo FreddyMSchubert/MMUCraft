@@ -160,6 +160,20 @@ tasks.register('checkFishing', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkSparseStructures', JavaExec) {
+    group = 'verification'
+    description = 'Check non-vanilla structure spacing and vanilla exclusions.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.worldgen.SparseStructuresCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('sparseStructuresCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('checkSparseStructures')
+}
+
 tasks.register('checkDailyCatalog', JavaExec) {
     group = 'verification'
     description = 'Check daily task JSON structure, weights, identifiers, and generated definitions.'

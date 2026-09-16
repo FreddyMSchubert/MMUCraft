@@ -104,7 +104,8 @@
 		"dailies.DailyCropPlacementMixin",
 		"dailies.DailyLoomResultMixin",
 		"dailies.DailyEndermanMixin",
-		"dailies.DailySulfurCubeMixin"
+		"dailies.DailySulfurCubeMixin",
+		"worldgen.SparseStructuresMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

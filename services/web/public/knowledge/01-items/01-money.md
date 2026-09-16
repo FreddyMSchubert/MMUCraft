@@ -57,7 +57,7 @@ You can earn dabloons through a variety of methods:
 
 Advancements give you Dabloons for completing them.
 
-TODO: image of an advancement that gives dabloons, preferably a vanilla one that isnt too hard but gives a good amount.
+![Money from advancement](/assets/knowledge/basics/money/advancement.png)
 
 You can see how many dabloons a given advancement will earn you before completing it by looking at it in the advancements menu. The server has over 1000 additional advancements beyond the Vanilla Minecraft ones. ([All advancements overview](https://docs.google.com/spreadsheets/d/1_DwKEZ0vqCOp2POhiOVSoMVeVNpU1WNPzk0L8qR_y2s))
 

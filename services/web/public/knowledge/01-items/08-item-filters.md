@@ -1,5 +1,5 @@
 ====
-id: utility-staves
+id: item-filters
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on item filters, which are great for things like sorting systems.
 sidebarTitle: Item Filters
@@ -18,7 +18,7 @@ tips:
 - Item filters allow you to easily specify whole groups of items (e.g. all oak woodset items), rather than needing to add each item individually.
 ====
 
-# Item filters
+# Item filters / Hopper Filters
 
 Can be made as follows:
 
@@ -28,9 +28,15 @@ Can be made as follows:
 [Paper](https://minecraft.wiki/w/Paper) · [Copper Grate](https://minecraft.wiki/w/Copper_Grate) → Item filter
 :::
 
-## How to use item filters
+## Video
+
+Here's a video, if you don't feel like reading the rest of this page. The content is the same:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/yu8jYpu6lrY?si=3U4gmtBjaqoMvaxo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+You can find a list of all groups here: https://github.com/FreddyMSchubert/MMUCraft/tree/main/minecraft/main/data/data/hopper_filter_groups
+
+## How to use item filters
 
 When placed in a hopper, an item file stops the hopper from sucking in certain items. For example:
 

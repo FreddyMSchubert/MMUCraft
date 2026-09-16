@@ -17,7 +17,7 @@ tips:
 
 ## Fashion Books
 
-TODO: (image of book in loot chest)
+![Book as loot](/assets/knowledge/items/cosmetics/loot.png)
 
 You may have noticed the "Fashion Books" in loot chests, when right clicking these books you will unlock a cosmetic at random that you can then purchase from the shop. 
 

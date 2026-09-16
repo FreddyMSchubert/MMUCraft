@@ -85,7 +85,7 @@ public final class SlimeDetectorCheck {
         assert item.get("id").getAsString().equals("charm-slime-detector");
         assert item.get("maxStackSize").getAsInt() == 1;
         JsonObject shop = item.getAsJsonObject("shopPurchasable");
-        assert shop.get("priceDabloons").getAsInt() == 100;
+        assert shop.get("priceDabloons").getAsInt() == 68;
         assert shop.get("gameplayToggle").getAsString().equals("welcoming");
         assert item.getAsJsonObject("charm").get("charmId").getAsInt() == SlimeDetectorCharm.CHARM_ID;
     }
@@ -102,7 +102,7 @@ public final class SlimeDetectorCheck {
     }
 
     private static void checkKnowledgePage(Path project) throws Exception {
-        String page = Files.readString(project.resolve("../../../services/web/public/knowledge/01-items/13-slime-detector.md"));
+        String page = Files.readString(project.resolve("../../../services/web/public/knowledge/01-items/14-slime-detector.md"));
         assert page.contains("id: slime-detector");
         assert page.contains("gameplayToggle: welcoming");
         assert page.contains("Compass");

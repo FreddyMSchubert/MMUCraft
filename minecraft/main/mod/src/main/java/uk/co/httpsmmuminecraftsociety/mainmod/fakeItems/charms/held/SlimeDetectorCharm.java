@@ -1,7 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -14,12 +13,14 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public final class SlimeDetectorCharm implements Charm, UseCallbackCharm {
     public static final int CHARM_ID = 55;
     private static final float LOADING_MODEL = 6.0F;
-    private static final int MIN_SCAN_TICKS = 10;
-    private static final int MAX_SCAN_TICKS = 40;
+    private static final int MIN_SCAN_TICKS = 8;
+    private static final int MAX_SCAN_TICKS = 42;
 
     // Vanilla combines this fixed salt with the current world's seed and the chunk coordinates.
     // It is not a replacement for the world seed; changing worlds still changes the result.
@@ -28,16 +29,16 @@ public final class SlimeDetectorCharm implements Charm, UseCallbackCharm {
     @Override
     public InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
         int bars = signalBars(level.getSeed(), player.chunkPosition());
-        int delayTicks = randomScanDelayTicks(level.getRandom());
         setModel(stack, LOADING_MODEL);
-        level.getServer().schedule(new TickTask(
-                level.getServer().getTickCount() + delayTicks,
-                () -> {
+
+        int delayTicks = randomScanDelayTicks(level.getRandom());
+        CompletableFuture.delayedExecutor(delayTicks * 50L, TimeUnit.MILLISECONDS).execute(() ->
+                level.getServer().execute(() -> {
                     if (!isLoading(stack)) return;
                     setModel(stack, bars);
                     player.getInventory().setChanged();
-                }
-        ));
+                })
+        );
         return InteractionResult.SUCCESS_SERVER;
     }
 

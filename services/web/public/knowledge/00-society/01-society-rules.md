@@ -26,7 +26,7 @@ These are the rules every player reads and accepts when creating their account. 
 1. 👿 **Hate and prejudice, NSFW content, criminal behaviour and discussion are prohibited.**
 2. 🗯️ **Discuss sensitive topics, including politics and religion, respectfully.**
 3. ☢️ **General toxicity is prohibited.**
-4. 💥 **Griefing and exploiting loopholes are prohibited.**
+4. 💥 **Griefing, cheating (e.g. X-Raying) and exploiting loopholes are prohibited.**
 5. 🤝 **Cooperate with committee members at all times.**
 6. 🚫 **No impersonation, scams, deliberate spam, or disruptive advertising.**
 

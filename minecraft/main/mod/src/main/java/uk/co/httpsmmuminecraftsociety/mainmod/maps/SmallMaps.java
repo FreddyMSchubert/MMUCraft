@@ -11,11 +11,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,7 +25,8 @@ import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.maps.MapItemSavedDataInvoker;
 
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Server-side small maps backed by the vanilla 128x128 map image. */
 public final class SmallMaps {
@@ -36,6 +37,8 @@ public final class SmallMaps {
     private static final String OPERATION_TAG = "mainmod_map_operation";
     private static final String ZOOM_IN = "zoom_in";
     private static final String ZOOM_OUT = "zoom_out";
+    private static final String SIZE_TOOLTIP_PREFIX = "Map size: ";
+    private static final String INVISIBLE_TOOLTIP_PREFIX = "Invisible block: ";
 
     private SmallMaps() {}
 
@@ -55,32 +58,17 @@ public final class SmallMaps {
         return data == null ? VANILLA_SIZE : VANILLA_SIZE << data.scale;
     }
 
-    public static int size(ItemStack stack, Item.TooltipContext context) {
-        int customSize = customSize(stack);
-        int size;
-        if (customSize != VANILLA_SIZE) {
-            size = customSize;
-        } else {
-            MapId mapId = stack.get(DataComponents.MAP_ID);
-            MapItemSavedData data = mapId == null ? null : context.mapData(mapId);
-            size = data == null ? VANILLA_SIZE : VANILLA_SIZE << data.scale;
-        }
-        String operation = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag().getString(OPERATION_TAG).orElse("");
-        if (ZOOM_IN.equals(operation)) return size / 2;
-        return ZOOM_OUT.equals(operation) ? size * 2 : size;
+    public static ItemLore defaultLore() {
+        return new ItemLore(List.of(sizeLine(VANILLA_SIZE)));
     }
 
-    public static void appendSizeTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> tooltip) {
+    public static void refreshTooltip(ItemStack stack, Level level) {
         if (!isMap(stack)) return;
-        int size = size(stack, context);
-        tooltip.accept(Component.literal("Map size: " + size + "x" + size + " blocks").withStyle(ChatFormatting.GRAY));
-        net.minecraft.world.level.block.Block invisibleBlock = MapInvisibility.target(stack);
-        if (invisibleBlock != null) {
-            tooltip.accept(Component.literal("Invisible block: ")
-                    .append(invisibleBlock.getName())
-                    .withStyle(ChatFormatting.GRAY));
-        }
+        refreshStoredTooltip(stack, size(stack, level));
+    }
+
+    public static void refreshTooltipFromStoredSize(ItemStack stack) {
+        refreshStoredTooltip(stack, storedTooltipSize(stack));
     }
 
     public static boolean canZoomIn(ItemStack stack, Level level) {
@@ -95,6 +83,8 @@ public final class SmallMaps {
         ItemStack result = source.copyWithCount(1);
         CustomData.update(DataComponents.CUSTOM_DATA, result,
                 tag -> tag.putString(OPERATION_TAG, zoomIn ? ZOOM_IN : ZOOM_OUT));
+        int oldSize = storedTooltipSize(source);
+        refreshStoredTooltip(result, zoomIn ? oldSize / 2 : oldSize * 2);
         return result;
     }
 
@@ -111,6 +101,7 @@ public final class SmallMaps {
 
         if (stack.is(Items.MAP)) {
             setCustomSize(stack, newSize);
+            refreshStoredTooltip(stack, newSize);
             return;
         }
         if (!(level instanceof ServerLevel serverLevel)) return;
@@ -122,6 +113,7 @@ public final class SmallMaps {
         } else {
             zoomFilledMapOut(stack, serverLevel, source, newSize);
         }
+        refreshStoredTooltip(stack, newSize);
     }
 
     public static InteractionResult useSmallEmptyMap(Level level, Player player, ItemStack emptyMap) {
@@ -137,9 +129,11 @@ public final class SmallMaps {
         ItemStack filled = new ItemStack(Items.FILLED_MAP);
         if (!customData.isEmpty()) filled.set(DataComponents.CUSTOM_DATA, CustomData.of(customData));
         setCustomSize(filled, size);
-        MapItemSavedData sampled = sample(
-                serverLevel, player.getBlockX(), player.getBlockZ(), size, MapInvisibility.target(filled));
+        int centerX = alignedCenter(player.getBlockX(), size);
+        int centerZ = alignedCenter(player.getBlockZ(), size);
+        MapItemSavedData sampled = sample(serverLevel, centerX, centerZ, size, MapInvisibility.target(filled));
         setMapData(filled, serverLevel, sampled.locked());
+        refreshStoredTooltip(filled, size);
 
         if (emptyMap.isEmpty()) return InteractionResult.SUCCESS.heldItemTransformedTo(filled);
         if (!player.getInventory().add(filled.copy())) player.drop(filled, false);
@@ -153,9 +147,12 @@ public final class SmallMaps {
         if (current == null) return;
         ServerLevel mapLevel = level.getServer().getLevel(current.dimension);
         if (mapLevel == null) return;
+        int centerX = alignedCenter(current.centerX, size);
+        int centerZ = alignedCenter(current.centerZ, size);
         MapItemSavedData refreshed = sample(
-                mapLevel, current.centerX, current.centerZ, size, MapInvisibility.target(stack)).locked();
+                mapLevel, centerX, centerZ, size, MapInvisibility.target(stack)).locked();
         setMapData(stack, level, refreshed);
+        refreshStoredTooltip(stack, size);
     }
 
     private static void zoomFilledMapIn(ItemStack stack, ServerLevel level, MapItemSavedData source,
@@ -174,8 +171,8 @@ public final class SmallMaps {
     }
 
     private static void zoomFilledMapOut(ItemStack stack, ServerLevel level, MapItemSavedData source, int newSize) {
-        int centerX = source.centerX + newSize / 4;
-        int centerZ = source.centerZ + newSize / 4;
+        int centerX = alignedCenter(source.centerX, newSize);
+        int centerZ = alignedCenter(source.centerZ, newSize);
         MapItemSavedData target;
         if (newSize < VANILLA_SIZE) {
             ServerLevel mapLevel = level.getServer().getLevel(source.dimension);
@@ -277,6 +274,47 @@ public final class SmallMaps {
 
     private static byte scaleFor(int size) {
         return (byte) (size <= VANILLA_SIZE ? 0 : Integer.numberOfTrailingZeros(size / VANILLA_SIZE));
+    }
+
+    private static int alignedCenter(int coordinate, int size) {
+        return Math.floorDiv(coordinate, size) * size + size / 2;
+    }
+
+    private static void refreshStoredTooltip(ItemStack stack, int size) {
+        ItemLore oldLore = stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY);
+        List<Component> lines = new ArrayList<>(oldLore.lines().stream()
+                .filter(line -> !line.getString().startsWith(SIZE_TOOLTIP_PREFIX))
+                .filter(line -> !line.getString().startsWith(INVISIBLE_TOOLTIP_PREFIX))
+                .toList());
+        lines.add(sizeLine(size));
+        net.minecraft.world.level.block.Block invisibleBlock = MapInvisibility.target(stack);
+        if (invisibleBlock != null) {
+            lines.add(Component.literal(INVISIBLE_TOOLTIP_PREFIX)
+                    .append(invisibleBlock.getName())
+                    .withStyle(style -> style.withColor(ChatFormatting.GRAY).withItalic(false)));
+        }
+        ItemLore newLore = new ItemLore(lines);
+        if (!newLore.equals(oldLore)) stack.set(DataComponents.LORE, newLore);
+    }
+
+    private static Component sizeLine(int size) {
+        return Component.literal(SIZE_TOOLTIP_PREFIX + size + "x" + size + " blocks")
+                .withStyle(style -> style.withColor(ChatFormatting.GRAY).withItalic(false));
+    }
+
+    private static int storedTooltipSize(ItemStack stack) {
+        for (Component line : stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines()) {
+            String text = line.getString();
+            if (!text.startsWith(SIZE_TOOLTIP_PREFIX)) continue;
+            int separator = text.indexOf('x', SIZE_TOOLTIP_PREFIX.length());
+            if (separator < 0) continue;
+            try {
+                return Integer.parseInt(text.substring(SIZE_TOOLTIP_PREFIX.length(), separator));
+            } catch (NumberFormatException ignored) {
+                // Fall through to component data.
+            }
+        }
+        return customSize(stack);
     }
 
     private static int customSize(ItemStack stack) {

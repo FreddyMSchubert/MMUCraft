@@ -22,6 +22,7 @@ public final class MapInvisibilityRecipe extends CustomRecipe {
         if (ingredients == null) return ItemStack.EMPTY;
         ItemStack result = ingredients.map().copyWithCount(1);
         MapInvisibility.setTarget(result, ingredients.block().getBlock());
+        SmallMaps.refreshTooltipFromStoredSize(result);
         return result;
     }
 

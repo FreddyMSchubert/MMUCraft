@@ -111,7 +111,8 @@
 		"maps.FilledMapCraftingMixin",
 		"maps.SmallEmptyMapUseMixin",
 		"maps.MapInvisibilityUpdateMixin",
-		"maps.TaggedFilledMapUseMixin"
+		"maps.TaggedFilledMapUseMixin",
+		"maps.MapStoredTooltipMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

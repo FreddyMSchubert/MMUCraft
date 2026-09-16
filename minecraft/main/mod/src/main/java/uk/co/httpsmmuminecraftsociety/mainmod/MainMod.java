@@ -60,6 +60,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.metrics.MetricsServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
+import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
@@ -130,6 +131,10 @@ public class MainMod implements ModInitializer {
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
         DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);
+        DefaultItemComponentEvents.MODIFY.register(context -> context.modify(
+                List.of(Items.MAP, Items.FILLED_MAP),
+                (builder, item) -> builder.set(DataComponents.LORE, SmallMaps.defaultLore())
+        ));
         DefaultItemComponentEvents.MODIFY.register(context -> context.modify(
                 List.of(Items.MINECART, Items.CHEST_MINECART, Items.FURNACE_MINECART, Items.TNT_MINECART, Items.HOPPER_MINECART),
                 (builder, item) -> builder.set(DataComponents.MAX_STACK_SIZE, 64)

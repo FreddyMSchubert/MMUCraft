@@ -89,6 +89,7 @@ public final class MapInvisibility {
                 null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
         ItemStack filled = MapItem.create(level, player.getBlockX(), player.getBlockZ(), (byte) 0, true, false);
         filled.set(DataComponents.CUSTOM_DATA, CustomData.of(customData));
+        SmallMaps.refreshTooltip(filled, level);
         if (emptyMap.isEmpty()) return InteractionResult.SUCCESS.heldItemTransformedTo(filled);
         if (!player.getInventory().add(filled.copy())) player.drop(filled, false);
         return InteractionResult.SUCCESS;

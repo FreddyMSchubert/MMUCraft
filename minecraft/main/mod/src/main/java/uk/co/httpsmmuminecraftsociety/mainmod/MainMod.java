@@ -50,6 +50,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
+import uk.co.httpsmmuminecraftsociety.mainmod.inventoryview.InventoryViewCommands;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
@@ -98,6 +99,7 @@ public class MainMod implements ModInitializer {
 
         FakeItemsCommand.init();
         MiniBlockCommand.init();
+        InventoryViewCommands.init();
         MoneyCommand.init();
         WebsiteCommand.init();
         KnowledgeTips.init();

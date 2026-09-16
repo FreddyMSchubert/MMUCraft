@@ -120,19 +120,23 @@ Sunday Update:
 * **Last year:** 17.11.25 – 23.11.25
 * **This year:** 23.11.26 – 29.11.26
 
+Sunday: The drop where we didnt come up with a proper theme oh hey its christmas soon
+
 ## Week 10
 
 * **Last year:** 24.11.25 – 30.11.25
 * **This year:** 30.11.26 – 06.12.26
 
-Christmas event start
+Sunday: Jolly Drop
+- Christmas event start
+- Advent Calendar start
 
 ## Week 11
 
 * **Last year:** 01.12.25 – 07.12.25
 * **This year:** 07.12.26 – 13.12.26
 
-Advent Calendar start
+Sunday: Joyful Drop
 
 ## Week 12
 
@@ -141,7 +145,8 @@ Advent Calendar start
 
 Suprising Saturday: Pack as many of the previous surprising saturdays together into one big mashup
 
-Christmas things!
+Sunday: Christmas drop
+- Christmas things!
 - Gifts
 - Christmas Decorations
 

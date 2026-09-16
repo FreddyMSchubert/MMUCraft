@@ -128,22 +128,28 @@ public final class GliderCheck {
         assert GliderFlight.extraGravity(15.999) == 0;
         assert GliderFlight.extraGravity(16) == 0.0001;
         assert GliderFlight.extraGravity(80) == 0.0005;
-        assert Updrafts.heatRange(Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, false)) == 0;
-        assert Updrafts.heatRange(Blocks.FIRE.defaultBlockState()) == 20;
-        assert Updrafts.heatRange(Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true)) == 50;
-        assert Updrafts.LAVA_RANGE == 35;
-        var caught = new Updrafts.Updraft(64, 84, 100 + Updrafts.CARRY_TICKS);
-        assert Math.abs(caught.liftAt(64, 100) - Updrafts.SOURCE_ACCELERATION) < 1.0E-9;
+        assert Updrafts.heatSource(Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, false)) == null;
+        assert Updrafts.heatSource(Blocks.FIRE.defaultBlockState()) == Updrafts.FIRE;
+        assert Updrafts.heatSource(Blocks.SOUL_CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true))
+                == Updrafts.SOUL_CAMPFIRE;
+        assert Updrafts.FIRE.equals(new Updrafts.HeatSource(16, 0.12, 0.55, 32, 1.75));
+        assert Updrafts.CAMPFIRE.equals(new Updrafts.HeatSource(18, 0.145, 0.65, 38, 2.0));
+        assert Updrafts.LAVA.equals(new Updrafts.HeatSource(32, 0.16, 0.68, 40, 2.1));
+        assert Updrafts.SOUL_FIRE.equals(new Updrafts.HeatSource(45, 0.165, 0.9, 40, 2.15));
+        assert Updrafts.SOUL_CAMPFIRE.equals(new Updrafts.HeatSource(50, 0.175, 1.0, 42, 2.25));
+        var caught = new Updrafts.Updraft(64, 84, 100 + Updrafts.SOUL_CAMPFIRE.carryTicks(),
+                Updrafts.SOUL_CAMPFIRE);
+        assert Math.abs(caught.liftAt(64, 100) - Updrafts.SOUL_CAMPFIRE.sourceAcceleration()) < 1.0E-9;
         assert Math.abs(caught.liftAt(74, 100) - 0.039375) < 1.0E-9;
         assert Math.abs(caught.liftAt(82, 100) - 0.020155) < 1.0E-9;
         assert Math.abs(caught.liftAt(83.999, 100) - Updrafts.TOP_ACCELERATION) < 1.0E-9;
-        assert caught.liftAt(63, 100) <= Updrafts.SOURCE_ACCELERATION;
+        assert caught.liftAt(63, 100) <= Updrafts.SOUL_CAMPFIRE.sourceAcceleration();
         assert caught.liftAt(74, caught.expiresAt() - 1) > 0;
         assert caught.liftAt(74, caught.expiresAt()) == 0;
         assert caught.liftAt(84, 101) == 0;
         assert caught.liftAt(85, 101) == 0;
         assert caught.liftAt(80, 101) < caught.liftAt(74, 100);
-        assert new Updrafts.Updraft(64, 80, 120).liftAt(80, 101) == 0;
+        assert new Updrafts.Updraft(64, 80, 120, Updrafts.CAMPFIRE).liftAt(80, 101) == 0;
         var blocks = new HashMap<BlockPos, BlockState>();
         BlockGetter level = new BlockGetter() {
             public BlockEntity getBlockEntity(BlockPos pos) { return null; }
@@ -152,16 +158,18 @@ public final class GliderCheck {
             public int getHeight() { return 384; }
             public int getMinY() { return -64; }
         };
-        for (var source : Map.of(Blocks.FIRE, 20, Blocks.CAMPFIRE, 20, Blocks.SOUL_FIRE, 50, Blocks.SOUL_CAMPFIRE, 50).entrySet()) {
+        for (var source : Map.of(Blocks.FIRE, Updrafts.FIRE, Blocks.CAMPFIRE, Updrafts.CAMPFIRE,
+                Blocks.SOUL_FIRE, Updrafts.SOUL_FIRE, Blocks.SOUL_CAMPFIRE, Updrafts.SOUL_CAMPFIRE).entrySet()) {
             for (int sourceY : new int[]{-32, 64}) {
                 blocks.clear();
                 blocks.put(new BlockPos(0, sourceY, 0), source.getKey().defaultBlockState());
-                double ceilingY = sourceY + source.getValue();
+                double ceilingY = sourceY + source.getValue().range();
                 var low = Updrafts.findAt(level, new Vec3(0.5, sourceY + 1, 0.5), 0.6, 100);
                 var high = Updrafts.findAt(level, new Vec3(0.5, ceilingY - 0.2, 0.5), 0.6, 110);
                 assert low != null && high != null;
                 assert low.sourceY() == sourceY && low.ceilingY() == ceilingY && high.ceilingY() == ceilingY;
-                assert high.expiresAt() == 110 + Updrafts.CARRY_TICKS;
+                assert high.expiresAt() == 110 + source.getValue().carryTicks();
+                assert high.heatSource() == source.getValue();
                 assert Updrafts.findAt(level, new Vec3(0.5, ceilingY, 0.5), 0.6, 110) == null;
                 assert Updrafts.findAt(level, new Vec3(1.5, sourceY + 1, 0.5), 0.6, 110) == null;
                 blocks.put(new BlockPos(0, sourceY + 10, 0), Blocks.STONE.defaultBlockState());

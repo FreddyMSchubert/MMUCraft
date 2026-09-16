@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:golden_dandelion",
-	"baseCost": 4,
-	"rewardPerIteration": 4,
-	"minimum": 1,
-	"maximum": 1,
+	"baseCost": 3,
+	"rewardPerIteration": 2,
+	"minimum": 2,
+	"maximum": 5,
 	"emoji": "🌟",
-	"name": "Submit a Golden Dandelion",
-	"description": "Submit one golden dandelion. The flower of youth."
+	"name": "Submit Golden Dandelions",
+	"description": "Submit {count} golden dandelions. The flower of youth."
 }

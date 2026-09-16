@@ -7,6 +7,13 @@
 	"tooltips": [
 		"It came to me in a dream"
 	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 0
+	},
 	"shopPurchasable": {
 		"membersOnly": true,
 	"priceDabloons": 50,

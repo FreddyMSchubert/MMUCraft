@@ -35,10 +35,10 @@ When you fly with a Glider over an updraft, your wings will catch the hot air mo
 
 | 🔥 Heat Source | ⬆️ Updraft Height in Blocks |
 | - | - |
-| Fire | 20 |
-| Campfire | 20 |
-| Lava | 35 |
-| Soul Fire | 50 |
+| Fire | 16 |
+| Campfire | 18 |
+| Lava | 32 |
+| Soul Fire | 45 |
 | Soul Campfire | 50 |
 
 (You can craft a Soul Campfire before entering the Nether using [Souls](/play/knowledge/soulbound).)

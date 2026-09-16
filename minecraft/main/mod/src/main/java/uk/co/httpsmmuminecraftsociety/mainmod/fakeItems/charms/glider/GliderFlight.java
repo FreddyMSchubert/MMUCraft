@@ -135,7 +135,7 @@ public final class GliderFlight {
         double lift = state.updraft == null ? 0 : state.updraft.liftAt(feetY, tick);
         double upwardSpeed = velocity.y;
         if (lift > 0) {
-            upwardSpeed = Math.min(Updrafts.MAX_UPWARD_SPEED, upwardSpeed + lift);
+            upwardSpeed = Math.min(state.updraft.heatSource().maxUpwardSpeed(), upwardSpeed + lift);
         }
         if (state.updraft != null && tick >= state.ascentGraceUntil) {
             // Stop heat-driven ascent at the source ceiling. Other boosts can pass it.

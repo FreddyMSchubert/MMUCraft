@@ -17,7 +17,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm
 {
-    private static final int MAX_ATTEMPTS = 128;
+    private static final int MAX_ATTEMPTS = 32;
+    private static final int MAX_NO_WATER_ATTEMPTS = 5;
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {
@@ -55,7 +56,8 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     {
         for (int i = 0; i < MAX_ATTEMPTS; i++)
         {
-            BlockPos pos = tryFindPosOnce(level, fallback, radius);
+            boolean allowWater = i > MAX_NO_WATER_ATTEMPTS;
+            BlockPos pos = tryFindPosOnce(level, fallback, radius, allowWater);
             if (pos != null)
             {
                 return pos;
@@ -65,7 +67,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         return fallback;
     }
 
-    private BlockPos tryFindPosOnce(Level level, BlockPos origin, int radius)
+    private BlockPos tryFindPosOnce(Level level, BlockPos origin, int radius, boolean allowWater)
     {
         WorldBorder border = level.getWorldBorder();
 
@@ -86,7 +88,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         long dz = (long) z - origin.getZ();
         if (dx * dx + dz * dz > (long) radius * radius) return null;
 
-        return possibleSpawnPos(x, z, level);
+        return possibleSpawnPos(x, z, level, allowWater);
     }
 
     private int radiusMin(int origin, int radius) {
@@ -96,7 +98,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         return (int)Math.min(Integer.MAX_VALUE, (long)origin + radius);
     }
 
-    private BlockPos possibleSpawnPos(int x, int z, Level level)
+    private BlockPos possibleSpawnPos(int x, int z, Level level, boolean allowWater)
     {
         int minY = level.getMinY();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(x, level.getMaxY(), z);
@@ -124,6 +126,10 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
 
         BlockState groundState = level.getBlockState(cursor);
         if (groundState.getFluidState().is(FluidTags.LAVA))
+        {
+            return null;
+        }
+        if (groundState.getFluidState().is(FluidTags.WATER) && !allowWater)
         {
             return null;
         }

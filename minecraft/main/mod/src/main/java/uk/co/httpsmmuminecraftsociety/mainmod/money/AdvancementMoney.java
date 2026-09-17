@@ -82,7 +82,9 @@ public final class AdvancementMoney {
     private static Map<String, Integer> loadAdvancementRewardsFromResource(ResourceManager resourceManager) {
         try {
             Resource resource = resourceManager.getResource(REWARD_RESOURCE).orElse(null);
-            if (resource == null) return Map.of();
+            if (resource == null) {
+                throw new IllegalStateException("Missing advancement Dabloon reward resource " + REWARD_RESOURCE);
+            }
 
             try (var inputStream = resource.open()) {
                 String jsonc = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
@@ -98,8 +100,8 @@ public final class AdvancementMoney {
 
                 return Map.copyOf(rewards);
             }
-        } catch (IOException | JsonParseException | IllegalStateException ignored) {
-            return Map.of();
+        } catch (IOException | JsonParseException | IllegalStateException error) {
+            throw new IllegalStateException("Could not load advancement Dabloon rewards from " + REWARD_RESOURCE, error);
         }
     }
 

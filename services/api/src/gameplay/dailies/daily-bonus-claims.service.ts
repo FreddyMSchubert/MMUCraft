@@ -210,7 +210,9 @@ export class DailyBonusClaimsService {
 			);
 			this.taskUpdates.notifyUser(user.id);
 			const completionCount = this.dailyStorage.fullCompletionCount(user.id);
-			for (const milestone of [1, 3, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365]) {
+			for (const milestone of [
+				1, 3, 5, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365,
+			]) {
 				if (completionCount >= milestone) {
 					void this.dailyMinecraft
 						.grantMastery(user.minecraftUsername, `social/full_dailies_${milestone}`)

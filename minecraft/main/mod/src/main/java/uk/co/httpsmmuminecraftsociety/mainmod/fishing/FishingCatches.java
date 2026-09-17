@@ -253,6 +253,25 @@ public final class FishingCatches {
         String fishId = fakeItem == null
                 ? BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()
                 : fakeItem.id();
+        switch (fishId) {
+            case "fish-acousticbass" -> MasteryAdvancements.grant(player, "fishing/acoustic_bass");
+            case "fish-goldfish" -> MasteryAdvancements.grant(player, "fishing/goldfish");
+            case "fish-vampirecarp" -> MasteryAdvancements.grant(player, "fishing/vampire_carp");
+            case "fish-thundering_bass" -> MasteryAdvancements.grant(player, "fishing/thundering_bass");
+            case "fish-swordfish" -> MasteryAdvancements.grant(player, "fishing/swordfish");
+            case "fish-rainbow_trout" -> MasteryAdvancements.grant(player, "fishing/rainbow_trout");
+            case "fish-galaxy_starfish" -> MasteryAdvancements.grant(player, "fishing/galaxy_starfish");
+            case "fish-thunderfin" -> MasteryAdvancements.grant(player, "fishing/thunderfin");
+            case "fish-skyfish" -> MasteryAdvancements.grant(player, "fishing/skyfish");
+            case "fish-baguettefish" -> MasteryAdvancements.grant(player, "fishing/baguette_fish");
+            case "fish-nebula_swordfish" -> MasteryAdvancements.grant(player, "fishing/nebula_swordfish");
+            case "fish-witchfish" -> MasteryAdvancements.grant(player, "fishing/witchfish");
+            case "fish-freddyfish" -> MasteryAdvancements.grant(player, "fishing/freddy_fish");
+            case "fish-charged_thunderfin" -> MasteryAdvancements.grant(player, "fishing/charged_thunderfin");
+            case "fish-matrix_fish" -> MasteryAdvancements.grant(player, "fishing/matrix_fish");
+            case "fish-spook_fish" -> MasteryAdvancements.grant(player, "fishing/spook_fish");
+            default -> { }
+        }
         GameplayGrpcService.recordFishCatch(
                 player,
                 fishId,

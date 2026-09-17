@@ -12,13 +12,13 @@ tips:
 - If you find a broken Charm, you have to repair it by upgrading it once before it will start working.
 ====
 
-# Charms
+# Charms 
 
 Charms are powerful magical artifacts of divine origins. Their powers range from the **simple but effective** (such as granting extra hearts), the **helpful** (such as insta-mining ore veins and trees), to the **strange** (such as climbing on walls and ceilings, or jumping in mid-air).
 
 You can find charms by looking for rare magic books, sometimes spawning in treasure chests. Look out for the dark teal cover:
 
-![A buried treasure chest with a magic book spawned](/assets/knowledge/items/util_staves/buried_treasure.png)
+![A buried treasure chest with a magic book spawned](/assets/knowledge/basics/charms/loot.png)
 
 Read the magic book to learn about a powerful charm. You will then receive the charm as well as being able to buy more copies in the shop from that point onwards.
 

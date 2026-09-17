@@ -1,0 +1,21 @@
+{
+	"title": "Bow",
+	"id": "cosmetic-bow",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Based on pixel count, the player is just over two apples tall."
+	],
+	"shopPurchasable": {
+		"membersOnly": true,
+	"priceDabloons": 80,
+		"description": "",
+		"unlockWeight": 130,
+		"unlockMessage": "Unlocked cosmetic: Bow."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#a80434"
+	}
+}

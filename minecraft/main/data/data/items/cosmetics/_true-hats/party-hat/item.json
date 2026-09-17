@@ -1,0 +1,21 @@
+{
+	"title": "Party Hat",
+	"id": "cosmetic-party-hat",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [
+		"No, no, no, can't be. I distinctly remember your birthday was LAST year."
+	],
+	"shopPurchasable": {
+		"membersOnly": true,
+	"priceDabloons": 25,
+		"description": "",
+		"unlockWeight": 130,
+		"unlockMessage": "Unlocked cosmetic: Birthday Hat."
+	},
+	"equippableCosmetic": {},
+	"dyeable": {
+		"tintColor": "#ff5ae5"
+	}
+}

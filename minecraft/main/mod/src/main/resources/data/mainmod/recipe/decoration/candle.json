@@ -1,0 +1,17 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " C ",
+    " N ",
+    " P "
+  ],
+  "key": {
+    "C": "#minecraft:candles",
+    "N": "minecraft:iron_nugget",
+    "P": "minecraft:heavy_weighted_pressure_plate"
+  },
+  "result": {
+    "stack": "mainmod:cosmetic-candle",
+    "count": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " N ",
+    "HSH",
+    " B "
+  ],
+  "key": {
+    "N": "minecraft:nautilus_shell",
+    "S": "mainmod:soul",
+    "H": "minecraft:shears",
+    "B": "minecraft:bone"
+  },
+  "result": {
+    "stack": "mainmod:cosmetic-sea-scorpion",
+    "count": 1
+  }
+}

@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
@@ -19,6 +20,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableC
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.GiantsBootsCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.ParticleTrailData;
 
@@ -96,7 +98,8 @@ public final class MasteryAdvancements {
             case "cosmetic-dog-pet-hat" -> grant(player, "cosmetics/good_boy");
             case "cosmetic-academic-hat" -> grant(player, "cosmetics/academic_hat");
             case "cosmetic-villager-nose" -> grant(player, "cosmetics/villager_nose");
-            case "cosmetic-villager-farmer" -> grant(player, "cosmetics/straw_hats");
+            case "cosmetic-villager-farmer" -> grant(player, "cosmetics/straw_hat_farmer");
+            case "cosmetic-sun-hat" -> grant(player, "cosmetics/straw_hat_sun");
             case "cosmetic-villager-fletcher" -> grant(player, "cosmetics/fletcher_hat");
             case "cosmetic-posh-squid" -> grant(player, "cosmetics/posh_squid");
             case "cosmetic-helmet-retro" -> grant(player, "cosmetics/retro_helmet");
@@ -109,6 +112,12 @@ public final class MasteryAdvancements {
             case "cosmetic-crown-ornate" -> grant(player, "cosmetics/crown_ornate");
             default -> { }
         }
+        grantIfAll(player, "cosmetics/all_straw_hats",
+                "cosmetics/straw_hat_farmer",
+                "cosmetics/straw_hat_sun",
+                "cosmetics/sombrero",
+                "cosmetics/sombreron",
+                "cosmetics/sombreronn");
         long cosmeticTotal = FakeItems.ALL.stream()
                 .filter(item -> item.getFeature(EquippableCosmeticItemFeature.class) != null)
                 .count();
@@ -210,8 +219,15 @@ public final class MasteryAdvancements {
         }
         if (isCatCosmetic(player.getMainHandItem())
                 && isCatCosmetic(player.getOffhandItem())
-                && isCatCosmetic(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD))) {
+                && isCatCosmetic(player.getItemBySlot(EquipmentSlot.HEAD))) {
             grant(player, "cosmetics/cat_stack");
+        }
+        if (CharmsManager.hasAbility(player.getItemBySlot(EquipmentSlot.FEET), GiantsBootsCharm.class)
+                && FakeItems.isSpecificFakeItem(
+                        player.getItemBySlot(EquipmentSlot.HEAD),
+                        "cosmetic-sombreronn"
+                )) {
+            grant(player, "cosmetics/solar_eclipse");
         }
     }
 

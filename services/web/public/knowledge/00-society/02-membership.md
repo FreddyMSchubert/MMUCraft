@@ -42,7 +42,7 @@ In no particular order:
 
 ### Gameplay Benefits
 
-- Permanent multiplier to dabloons payout earned from completing advancements.
+- Permanent multiplier to dabloons payout earned from completing advancements. You also receive a one-time 100 Dabloons reward for becoming a member (which, with the added membership multiplier, is actually 120 Dabloons).
 - More dabloons earned when claiming the full daily completion reward on a given day.
 - The price increase of buying more than one claim is less steep for members.
 - Respawn at half the distance from your death location as normal players.

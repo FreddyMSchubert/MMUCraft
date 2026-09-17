@@ -1340,6 +1340,17 @@
 	"mainmod:mastery/fishing/full_compendium": 100, // Complete the full fish compendium: major varied completion goal.
 	"mainmod:mastery/fishing/legendary": 10, // Catch a legendary fish: exciting low-probability catch.
 	"mainmod:mastery/fishing/mythical": 25, // Catch a mythical fish: exceptional low-probability catch.
+	"mainmod:mastery/fishing/rainbow_trout": 3, // Catch the selected uncommon Rainbow Trout: a small targeted fishing reward.
+	"mainmod:mastery/fishing/galaxy_starfish": 3, // Catch the selected uncommon Galaxy Starfish: a small targeted fishing reward.
+	"mainmod:mastery/fishing/thunderfin": 3, // Catch the selected uncommon Thunderfin: a small targeted fishing reward.
+	"mainmod:mastery/fishing/skyfish": 3, // Catch the selected uncommon Skyfish: a small targeted fishing reward.
+	"mainmod:mastery/fishing/baguette_fish": 7, // Catch the selected rare Baguette Fish: uncommon and entertaining, but not a grind.
+	"mainmod:mastery/fishing/nebula_swordfish": 7, // Catch the selected rare Nebula Swordfish: uncommon and entertaining, but not a grind.
+	"mainmod:mastery/fishing/witchfish": 7, // Catch the selected rare Witchfish: uncommon and entertaining, but not a grind.
+	"mainmod:mastery/fishing/freddy_fish": 15, // Catch the selected epic Freddy Fish: an exciting low-probability catch.
+	"mainmod:mastery/fishing/charged_thunderfin": 15, // Catch the selected epic Charged Thunderfin: an exciting low-probability catch.
+	"mainmod:mastery/fishing/matrix_fish": 30, // Catch the selected legendary Matrix Fish: a difficult and memorable catch.
+	"mainmod:mastery/fishing/spook_fish": 50, // Catch the selected mythical Spook Fish: an exceptional catch.
 	"mainmod:mastery/fishing/golden_magnet": 10, // Catch with the best fishing utility: deliberate setup and play.
 	"mainmod:mastery/fishing/luck_3": 5, // Catch with three fishing luck: moderate charm progression.
 	"mainmod:mastery/fishing/lucky_charm_5": 20, // Max the Lucky Charm: expensive focused upgrade path.
@@ -1367,27 +1378,45 @@
 	"mainmod:mastery/enderite/armor": 60, // Complete Enderite armour: expensive late-game equipment goal.
 	"mainmod:mastery/enderite/hoe": 25, // Make an Enderite hoe: costly optional dedication.
 	"mainmod:mastery/social/unreasonable_hours": 20, // Visit every unreasonable-hour window: quirky multi-session challenge.
-	"mainmod:mastery/social/streak_30": 5, // Maintain one month: meaningful habit without overpaying attendance.
-	"mainmod:mastery/social/streak_100": 15, // Maintain one hundred days: long-term consistency.
-	"mainmod:mastery/social/streak_150": 20, // Maintain one hundred and fifty days: long-term consistency.
-	"mainmod:mastery/social/streak_200": 25, // Maintain two hundred days: difficult but passive progression.
-	"mainmod:mastery/social/streak_250": 30, // Maintain two hundred and fifty days: difficult but passive progression.
-	"mainmod:mastery/social/streak_300": 40, // Maintain three hundred days: near-complete server-year consistency.
-	"mainmod:mastery/social/streak_365": 50, // Maintain the full server-year streak: maximum feasible consistency.
-	"mainmod:mastery/social/full_dailies_30": 10, // Complete a month of full daily sets: varied sustained play.
-	"mainmod:mastery/social/full_dailies_50": 15, // Complete fifty full daily sets: varied sustained play.
-	"mainmod:mastery/social/full_dailies_75": 20, // Complete seventy-five full daily sets: varied sustained play.
-	"mainmod:mastery/social/full_dailies_100": 25, // Complete one hundred full daily sets: major sustained play.
-	"mainmod:mastery/social/full_dailies_150": 35, // Complete one hundred and fifty full daily sets: major sustained play.
-	"mainmod:mastery/social/full_dailies_200": 45, // Complete two hundred full daily sets: major sustained play.
-	"mainmod:mastery/social/full_dailies_250": 55, // Complete two hundred and fifty full daily sets: major sustained play.
-	"mainmod:mastery/social/full_dailies_300": 65, // Complete three hundred full daily sets: near-complete server-year devotion.
-	"mainmod:mastery/social/full_dailies_365": 75, // Complete a full server year of daily sets: extreme varied completion.
+	"mainmod:mastery/social/streak_7": 5, // Maintain one week: the first meaningful consistency milestone.
+	"mainmod:mastery/social/streak_14": 10, // Maintain two weeks: sustained attendance without active task completion.
+	"mainmod:mastery/social/streak_30": 25, // Maintain one month: substantial consistency, even though the action is passive.
+	"mainmod:mastery/social/streak_50": 40, // Maintain fifty days: long-term consistency.
+	"mainmod:mastery/social/streak_75": 60, // Maintain seventy-five days: long-term consistency.
+	"mainmod:mastery/social/streak_100": 75, // Maintain one hundred days: major long-term consistency.
+	"mainmod:mastery/social/streak_150": 100, // Maintain one hundred and fifty days: major long-term consistency.
+	"mainmod:mastery/social/streak_200": 125, // Maintain two hundred days: difficult but passive progression.
+	"mainmod:mastery/social/streak_250": 150, // Maintain two hundred and fifty days: difficult but passive progression.
+	"mainmod:mastery/social/streak_300": 200, // Maintain three hundred days: near-complete server-year consistency.
+	"mainmod:mastery/social/streak_365": 250, // Maintain the full server year: maximum feasible consistency.
+	"mainmod:mastery/social/full_dailies_5": 5, // Complete five full daily sets: the first rewarded active milestone.
+	"mainmod:mastery/social/full_dailies_7": 10, // Complete one week of full daily sets: sustained varied play.
+	"mainmod:mastery/social/full_dailies_10": 15, // Complete ten full daily sets: sustained varied play.
+	"mainmod:mastery/social/full_dailies_14": 25, // Complete two weeks of full daily sets: sustained varied play.
+	"mainmod:mastery/social/full_dailies_30": 50, // Complete one month of full daily sets: demanding, varied sustained play.
+	"mainmod:mastery/social/full_dailies_50": 75, // Complete fifty full daily sets: major varied sustained play.
+	"mainmod:mastery/social/full_dailies_75": 100, // Complete seventy-five full daily sets: major varied sustained play.
+	"mainmod:mastery/social/full_dailies_100": 150, // Complete one hundred full daily sets: major varied sustained play.
+	"mainmod:mastery/social/full_dailies_150": 200, // Complete one hundred and fifty full daily sets: exceptional sustained play.
+	"mainmod:mastery/social/full_dailies_200": 250, // Complete two hundred full daily sets: exceptional sustained play.
+	"mainmod:mastery/social/full_dailies_250": 300, // Complete two hundred and fifty full daily sets: exceptional sustained play.
+	"mainmod:mastery/social/full_dailies_300": 400, // Complete three hundred full daily sets: near-complete server-year devotion.
+	"mainmod:mastery/social/full_dailies_365": 500, // Complete a full server year of daily sets: the maximum active consistency goal.
 	"mainmod:mastery/social/claim_10": 5, // Own ten chunks: costly but mostly economic progression.
 	"mainmod:mastery/social/claim_12": 5, // Own twelve chunks: costly but mostly economic progression.
 	"mainmod:mastery/social/claim_15": 10, // Own the practical maximum of fifteen chunks.
-	"mainmod:mastery/sniffers/bred_1000": 5, // Breed one thousand sniffers: small acknowledgement for a tedious goal.
-	"mainmod:mastery/sniffers/bred_5000": 10, // Breed five thousand sniffers: capped reward for an extreme grind.
-	"mainmod:mastery/sniffers/bred_10000": 15, // Breed ten thousand sniffers: capped reward to avoid encouraging the grind.
+	"mainmod:mastery/sniffers/bred_1": 10, // Breed the first Sniffer: archaeology, hatching, and a breeding pair make this meaningful.
+	"mainmod:mastery/sniffers/bred_3": 3, // Breed three Sniffers: early population growth after the initial setup.
+	"mainmod:mastery/sniffers/bred_5": 3, // Breed five Sniffers: early population growth after the initial setup.
+	"mainmod:mastery/sniffers/bred_10": 5, // Breed ten Sniffers: a small deliberate breeding project.
+	"mainmod:mastery/sniffers/bred_20": 7, // Breed twenty Sniffers: sustained breeding, but mostly repetition.
+	"mainmod:mastery/sniffers/bred_30": 10, // Breed thirty Sniffers: sustained breeding, but mostly repetition.
+	"mainmod:mastery/sniffers/bred_50": 15, // Breed fifty Sniffers: a substantial population project.
+	"mainmod:mastery/sniffers/bred_100": 20, // Breed one hundred Sniffers: a large but repetitive population project.
+	"mainmod:mastery/sniffers/bred_200": 25, // Breed two hundred Sniffers: an extreme repetitive population project.
+	"mainmod:mastery/sniffers/bred_500": 30, // Breed five hundred Sniffers: a capped reward for a severe grind.
+	"mainmod:mastery/sniffers/bred_1000": 35, // Breed one thousand Sniffers: a capped reward for an extreme grind.
+	"mainmod:mastery/sniffers/bred_5000": 40, // Breed five thousand Sniffers: the reward stays capped to avoid encouraging the grind.
+	"mainmod:mastery/sniffers/bred_10000": 50, // Breed ten thousand Sniffers: final acknowledgement without making the grind optimal.
 	"mainmod:mastery/social/pay_to_win": 100, // Pay to Win: become a society member and receive the advertised reward.
 }

@@ -318,6 +318,22 @@ tasks.register("generateMasteryAdvancements") {
                 ["fishing/epic", "Epic Catch", "Catch an epic fish.", "fake:fish-freddyfish", "fishing/rare", "goal"],
                 ["fishing/legendary", "Legendary Catch", "Catch a legendary fish.", "fake:fish-nullfin", "fishing/epic", "challenge"],
                 ["fishing/mythical", "Mythical Catch", "Catch a mythical fish.", "fake:fish-spook_fish", "fishing/legendary", "challenge"],
+                ["fishing/acoustic_bass", "Unplugged", "Catch an Acoustic Bass.", "fake:fish-acousticbass", "fishing/common", "task"],
+                ["fishing/goldfish", "Worth Its Weight", "Catch a Goldfish.", "fake:fish-goldfish", "fishing/common", "task"],
+                ["fishing/vampire_carp", "Love at First Bite", "Catch a Vampire Carp.", "fake:fish-vampirecarp", "fishing/common", "task"],
+                ["fishing/thundering_bass", "Drop the Bass", "Catch a Thundering Bass.", "fake:fish-thundering_bass", "fishing/common", "task"],
+                ["fishing/swordfish", "Mightier Than the Pen", "Catch a Swordfish.", "fake:fish-swordfish", "fishing/common", "task"],
+                ["fishing/rainbow_trout", "Over the Rainbow", "Catch a Rainbow Trout.", "fake:fish-rainbow_trout", "fishing/uncommon", "task"],
+                ["fishing/galaxy_starfish", "A Whole Galaxy", "Catch a Galaxy Starfish.", "fake:fish-galaxy_starfish", "fishing/uncommon", "task"],
+                ["fishing/thunderfin", "Greased Lightning", "Catch a Thunderfin.", "fake:fish-thunderfin", "fishing/uncommon", "task"],
+                ["fishing/skyfish", "The Sky's the Limit", "Catch a Skyfish.", "fake:fish-skyfish", "fishing/uncommon", "task"],
+                ["fishing/baguette_fish", "Baguette About It", "Catch a Baguette Fish.", "fake:fish-baguettefish", "fishing/rare", "goal"],
+                ["fishing/nebula_swordfish", "Written in the Stars", "Catch a Nebula Swordfish.", "fake:fish-nebula_swordfish", "fishing/rare", "goal"],
+                ["fishing/witchfish", "Something Wicked", "Catch a Witchfish.", "fake:fish-witchfish", "fishing/rare", "goal"],
+                ["fishing/freddy_fish", "Five Nights at Fishing", "Catch a Freddy Fish.", "fake:fish-freddyfish", "fishing/epic", "goal"],
+                ["fishing/charged_thunderfin", "Fully Charged", "Catch a Charged Thunderfin.", "fake:fish-charged_thunderfin", "fishing/epic", "goal"],
+                ["fishing/matrix_fish", "There Is No Spoon", "Catch a Matrix Fish.", "fake:fish-matrix_fish", "fishing/legendary", "challenge"],
+                ["fishing/spook_fish", "Ghost in the Water", "Catch a Spook Fish.", "fake:fish-spook_fish", "fishing/mythical", "challenge"],
                 ["fishing/all_common", "Common Knowledge", "Catch every common fish.", "fake:fish-bluegill", "fishing/common", "goal"],
                 ["fishing/all_uncommon", "Uncommonly Thorough", "Catch every uncommon fish.", "fake:fish-thunderfin", "fishing/uncommon", "goal"],
                 ["fishing/all_rare", "Rare Completionist", "Catch every rare fish.", "fake:fish-seahorse", "fishing/rare", "challenge"],
@@ -337,7 +353,9 @@ tasks.register("generateMasteryAdvancements") {
                 ["cosmetics/all_villager_hats", "The Entire Workforce", "Unlock every villager profession hat and the Witch Hat.", "fake:cosmetic-witch-hat", "cosmetics/villager_nose", "challenge"],
                 ["cosmetics/good_boy", "Good Boy", "Buy the Dog Pet Hat.", "fake:cosmetic-dog-pet-hat", "cosmetics/buy_1", "goal"],
                 ["cosmetics/academic_hat", "Eventually Graduating", "Buy the Academic Hat. Minecraft is excellent revision, probably.", "fake:cosmetic-academic-hat", "cosmetics/buy_1", "goal"],
-                ["cosmetics/straw_hats", "Straw Hat Collection", "Buy every Straw Hat currently in the shop.", "fake:cosmetic-villager-farmer", "cosmetics/buy_1", "goal"],
+                ["cosmetics/straw_hat_farmer", "Working in the Sun", "Buy the Farmer Straw Hat.", "fake:cosmetic-villager-farmer", "cosmetics/buy_1", "task"],
+                ["cosmetics/straw_hat_sun", "Here Comes the Sun", "Buy the Sun Hat.", "fake:cosmetic-sun-hat", "cosmetics/straw_hat_farmer", "task"],
+                ["cosmetics/all_straw_hats", "Straw Hat Collection", "Buy the Farmer Straw Hat, Sun Hat, Sombrero, Sombreron, and Sombreronn.", "fake:cosmetic-sombreronn", "cosmetics/sombreronn", "goal"],
                 ["cosmetics/fletcher_hat", "Straight and Arrow", "Buy the Fletcher Hat.", "fake:cosmetic-villager-fletcher", "cosmetics/villager_nose", "task"],
                 ["cosmetics/posh_squid", "Poor Squid", "Buy the Posh Squid.", "fake:cosmetic-posh-squid", "cosmetics/buy_1", "goal"],
                 ["cosmetics/retro_helmet", "Retrofuturism", "Buy the Retro Helmet.", "fake:cosmetic-helmet-retro", "cosmetics/buy_1", "task"],
@@ -346,6 +364,7 @@ tasks.register("generateMasteryAdvancements") {
                 ["cosmetics/sombrero", "Reasonably Sized", "Buy the Sombrero.", "fake:cosmetic-sombrero", "cosmetics/buy_1", "task"],
                 ["cosmetics/sombreron", "Compensating for Something", "Buy the Sombreron.", "fake:cosmetic-sombreron", "cosmetics/sombrero", "goal"],
                 ["cosmetics/sombreronn", "Personal Weather System", "Buy the largest Sombreronn.", "fake:cosmetic-sombreronn", "cosmetics/sombreron", "challenge"],
+                ["cosmetics/solar_eclipse", "Solar Eclipse", "Wear Giant's Boots and the largest Sombreronn at the same time.", "fake:cosmetic-sombreronn", "cosmetics/sombreronn", "goal"],
                 ["cosmetics/crown_techno", "Technically Royal", "Buy the Techno Crown.", "fake:cosmetic-crown-techno", "cosmetics/buy_1", "goal"],
                 ["cosmetics/crown_royal", "Royalty", "Buy the Royal Crown.", "fake:cosmetic-crown-royal", "cosmetics/crown_techno", "challenge"],
                 ["cosmetics/crown_ornate", "Heavy Is the Head", "Buy the Ornate Crown.", "fake:cosmetic-crown-ornate", "cosmetics/crown_royal", "challenge"],
@@ -432,7 +451,7 @@ tasks.register("generateMasteryAdvancements") {
         chain("knowledge/read", [1, 3, 5, 10, 15, 20], "Well Read", "Read %s knowledge pages.", "fake:charm-knowledge-book", "root")
         chain("social/claim", [1, 3, 5, 7, 10, 12, 15], "Landowner", "Reach %s claimed chunks.", "minecraft:map", "root")
         chain("social/streak", [1, 2, 3, 5, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365], "Login Streak", "Reach a %s-day login streak.", "minecraft:fire_charge", "root")
-        chain("social/full_dailies", [1, 3, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365], "Daily Devotion", "Fully complete dailies on %s days.", "minecraft:clock", "root")
+        chain("social/full_dailies", [1, 3, 5, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365], "Daily Devotion", "Fully complete dailies on %s days.", "minecraft:clock", "root")
         chain("sniffers/bred", [1, 3, 5, 10, 20, 30, 50, 100, 200, 500, 1000, 5000, 10000], "Sniffer Population", "Breed %s sniffers.", "minecraft:sniffer_egg", "root")
         chain("utility/jokes", [1, 3, 5], "Critic", "Review Joke Books: %s completed.", "fake:charm-joke-book", "root")
         [1, 10, 100, 1000, 10000, 100000, 1000000].eachWithIndex { value, index ->

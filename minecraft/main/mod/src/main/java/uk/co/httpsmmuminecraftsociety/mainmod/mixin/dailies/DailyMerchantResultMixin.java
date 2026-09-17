@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LecternLibrarianTrades;
 
 @Mixin(MerchantResultSlot.class)
 public abstract class DailyMerchantResultMixin {
@@ -30,6 +32,9 @@ public abstract class DailyMerchantResultMixin {
         MerchantOffer offer = slots.getActiveOffer();
         if (offer == null) return;
         ItemStack traded = offer.getResult();
+        if (LecternLibrarianTrades.isLecternCopyOffer(offer)) {
+            MasteryAdvancements.grant(serverPlayer, "utility/duplicate_book");
+        }
 
         if (traded.is(Items.EMERALD)) {
             record(serverPlayer, "receive_emeralds", "", traded.getCount());

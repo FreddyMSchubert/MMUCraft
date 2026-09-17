@@ -200,6 +200,7 @@ processResources {
 
 def miniBlockCatalog = file("src/main/resources/data/mainmod/miniblocks.json")
 def generatedMiniBlockResources = layout.buildDirectory.dir("generated/miniblockResources")
+def generatedMasteryResources = layout.buildDirectory.dir("generated/masteryResources")
 
 tasks.register("generateMiniBlockRecipes") {
     inputs.file(miniBlockCatalog)
@@ -247,6 +248,157 @@ tasks.register("generateMiniBlockRecipes") {
 }
 
 sourceSets.main.resources.srcDir(generatedMiniBlockResources)
+sourceSets.main.resources.srcDir(generatedMasteryResources)
+
+tasks.register("generateMasteryAdvancements") {
+    outputs.dir(generatedMasteryResources)
+
+    doLast {
+        File directory = new File(generatedMasteryResources.get().asFile, "data/mainmod/advancement/mastery")
+        delete(directory)
+        directory.mkdirs()
+
+        def writeAdvancement = { String path, String title, String description, String icon, String parent, String frame ->
+            Map<String, Object> display = [
+                    icon       : [id: icon],
+                    title      : title,
+                    description: description,
+                    frame      : frame,
+                    show_toast : path != "root",
+                    announce_to_chat: path != "root",
+                    hidden     : false
+            ]
+            if (path == "root") display.background = "minecraft:textures/gui/advancements/backgrounds/stone.png"
+            Map<String, Object> advancement = [
+                    display: display,
+                    criteria: [done: [trigger: "minecraft:impossible"]],
+                    requirements: [["done"]],
+                    sends_telemetry_event: false
+            ]
+            if (parent != null) advancement.parent = "mainmod:mastery/${parent}"
+
+            File output = new File(directory, "${path}.json")
+            output.parentFile.mkdirs()
+            output.text = JsonOutput.prettyPrint(JsonOutput.toJson(advancement)) + System.lineSeparator()
+        }
+
+        writeAdvancement("root", "MMU Mastery", "Master every corner of MMUCraft.", "minecraft:nether_star", null, "task")
+
+        List<List<String>> advancements = [
+                ["fishing/first_catch", "Something's Fishy", "Catch a fish.", "minecraft:fishing_rod", "root", "task"],
+                ["fishing/common", "Common Catch", "Catch a common fish.", "minecraft:cod", "fishing/first_catch", "task"],
+                ["fishing/uncommon", "Uncommon Catch", "Catch an uncommon fish.", "minecraft:tropical_fish", "fishing/common", "task"],
+                ["fishing/rare", "Rare Catch", "Catch a rare fish.", "minecraft:nautilus_shell", "fishing/uncommon", "goal"],
+                ["fishing/epic", "Epic Catch", "Catch an epic fish.", "minecraft:heart_of_the_sea", "fishing/rare", "goal"],
+                ["fishing/legendary", "Legendary Catch", "Catch a legendary fish.", "minecraft:trident", "fishing/epic", "challenge"],
+                ["fishing/mythical", "Mythical Catch", "Catch a mythical fish.", "minecraft:dragon_egg", "fishing/legendary", "challenge"],
+                ["fishing/all_common", "Common Knowledge", "Catch every common fish.", "minecraft:cod", "fishing/common", "goal"],
+                ["fishing/all_uncommon", "Uncommonly Thorough", "Catch every uncommon fish.", "minecraft:tropical_fish", "fishing/uncommon", "goal"],
+                ["fishing/all_rare", "Rare Completionist", "Catch every rare fish.", "minecraft:nautilus_shell", "fishing/rare", "challenge"],
+                ["fishing/all_epic", "An Epic Catalogue", "Catch every epic fish.", "minecraft:heart_of_the_sea", "fishing/epic", "challenge"],
+                ["fishing/all_legendary", "Legends Collected", "Catch every legendary fish.", "minecraft:trident", "fishing/legendary", "challenge"],
+                ["fishing/all_mythical", "Myths Made Real", "Catch every mythical fish.", "minecraft:dragon_egg", "fishing/mythical", "challenge"],
+                ["fishing/full_compendium", "The Full Compendium", "Catch every fish in MMUCraft.", "minecraft:enchanted_book", "fishing/all_mythical", "challenge"],
+                ["cosmetics/find_common", "Wardrobe Starter", "Find a common cosmetic.", "minecraft:leather_helmet", "root", "task"],
+                ["cosmetics/find_uncommon", "Uncommon Style", "Find an uncommon cosmetic.", "minecraft:chainmail_helmet", "cosmetics/find_common", "task"],
+                ["cosmetics/find_rare", "Rare Style", "Find a rare cosmetic.", "minecraft:golden_helmet", "cosmetics/find_uncommon", "goal"],
+                ["cosmetics/find_epic", "Epic Style", "Find an epic cosmetic.", "minecraft:diamond_helmet", "cosmetics/find_rare", "goal"],
+                ["cosmetics/find_legendary", "Legendary Style", "Find a legendary cosmetic.", "minecraft:netherite_helmet", "cosmetics/find_epic", "challenge"],
+                ["cosmetics/find_mythical", "Mythical Style", "Find a mythical cosmetic.", "minecraft:dragon_head", "cosmetics/find_legendary", "challenge"],
+                ["cosmetics/royal_crown", "Royalty", "Collect the Royal Crown.", "minecraft:golden_helmet", "cosmetics/find_rare", "goal"],
+                ["cosmetics/amogus", "Suspiciously Stylish", "Collect the Amogus cosmetic.", "minecraft:red_wool", "cosmetics/find_uncommon", "goal"],
+                ["cosmetics/all_villager_hats", "The Entire Workforce", "Collect every villager hat.", "minecraft:emerald", "cosmetics/find_rare", "challenge"],
+                ["cosmetics/collect_all", "Complete Wardrobe", "Collect every cosmetic at once.", "minecraft:dragon_head", "cosmetics/collect_200", "challenge"],
+                ["cosmetics/buy_all", "Buy the Shop", "Buy as many cosmetics as the full catalogue contains.", "minecraft:emerald_block", "cosmetics/buy_100", "challenge"],
+                ["cosmetics/buy_common", "Common Purchase", "Buy a common cosmetic.", "minecraft:emerald", "cosmetics/buy_1", "task"],
+                ["cosmetics/buy_uncommon", "Uncommon Purchase", "Buy an uncommon cosmetic.", "minecraft:emerald", "cosmetics/buy_1", "task"],
+                ["cosmetics/buy_rare", "Rare Purchase", "Buy a rare cosmetic.", "minecraft:emerald", "cosmetics/buy_1", "goal"],
+                ["cosmetics/buy_epic", "Epic Purchase", "Buy an epic cosmetic.", "minecraft:diamond", "cosmetics/buy_1", "goal"],
+                ["charms/apply_boost", "Charmed, I'm Sure", "Apply Charm Boost to an item.", "minecraft:enchanted_book", "charms/get_1", "goal"],
+                ["charms/upgrade_once", "Potential Unlocked", "Upgrade a charm once.", "minecraft:anvil", "charms/get_1", "task"],
+                ["charms/upgrade_max", "Maximum Charm", "Upgrade one charm to its maximum level.", "minecraft:nether_star", "charms/upgrade_once", "challenge"],
+                ["charms/upgrade_all_max", "Perfectly Charming", "Upgrade every charm to its maximum level.", "minecraft:beacon", "charms/upgrade_max", "challenge"],
+                ["charms/get_all", "Every Charm", "Own every charm at once.", "minecraft:nether_star", "charms/get_40", "challenge"],
+                ["utility/wallet", "Cash Container", "Get a wallet.", "minecraft:bundle", "root", "task"],
+                ["utility/soulbound", "Till Death Doesn't Part Us", "Apply Soulbound to an item.", "minecraft:totem_of_undying", "root", "goal"],
+                ["utility/all_potions", "MMU Mixologist", "Use every custom potion.", "minecraft:potion", "root", "challenge"],
+                ["utility/all_staves", "Utility Wizard", "Use every utility staff.", "minecraft:blaze_rod", "root", "goal"],
+                ["utility/staff_crafting", "Pocket Workbench", "Use the Staff of Crafting.", "minecraft:crafting_table", "root", "task"],
+                ["utility/staff_ender_chest", "Pocket Storage", "Use the Staff of Soulbound Storage.", "minecraft:ender_chest", "utility/staff_crafting", "task"],
+                ["utility/wrench", "Be a Mensch", "Use a wrench.", "minecraft:iron_ingot", "root", "task"],
+                ["utility/sculk_phial_full", "Bottled Wisdom", "Fill a sculk phial completely.", "minecraft:experience_bottle", "root", "goal"],
+                ["utility/invisible_frame", "Now You See It", "Use an Invisi-Carrot on an item frame.", "minecraft:item_frame", "root", "goal"],
+                ["utility/golden_paste", "A Balanced Diet", "Drink golden nutritional paste.", "minecraft:golden_carrot", "root", "task"],
+                ["utility/slime_detector", "Slime Surveyor", "Use a slime detector.", "minecraft:slime_ball", "root", "task"],
+                ["utility/slime_chunk", "Standing on Slime", "Use a slime detector inside a slime chunk.", "minecraft:slime_block", "utility/slime_detector", "goal"],
+                ["utility/no_slime_bars", "Nothing to Report", "Use a slime detector while no bars appear.", "minecraft:barrier", "utility/slime_detector", "goal"],
+                ["utility/duplicate_book", "Copy Paste", "Duplicate an enchanted book.", "minecraft:enchanted_book", "root", "goal"],
+                ["utility/sniffer_slayer", "The Sniffer Slayer", "Name a sword “the sniffer slayer” in an anvil.", "minecraft:iron_sword", "root", "challenge"],
+                ["utility/full_speed_minecart", "Twenty Metres Per Second", "Travel at full speed in a minecart.", "minecraft:minecart", "root", "challenge"],
+                ["utility/max_reach_beacon", "Long-Distance Service", "Create a beacon with 200 blocks of reach.", "minecraft:beacon", "root", "challenge"],
+                ["utility/decoblock", "Interior Designer", "Place a deco block.", "minecraft:flower_pot", "root", "task"],
+                ["utility/particle_trail", "Leave a Mark", "Apply a particle trail to a tool.", "minecraft:firework_star", "root", "goal"],
+                ["glider/craft", "Learning to Soar", "Make a glider.", "minecraft:elytra", "root", "task"],
+                ["glider/fly", "Cheap Flight", "Fly with a glider.", "minecraft:elytra", "glider/craft", "goal"],
+                ["glider/updraft", "Hot Air Rises", "Glide over a heat source.", "minecraft:campfire", "glider/fly", "goal"],
+                ["glider/firework_fail", "Nice Try", "Try and fail to boost a glider with a firework.", "minecraft:firework_rocket", "glider/fly", "goal"],
+                ["glider/amethyst_ring", "Thread the Needle", "Glide through an amethyst ring.", "minecraft:amethyst_block", "glider/fly", "challenge"],
+                ["enderite/scrap", "Into the Void", "Obtain Enderite Scrap.", "minecraft:netherite_scrap", "root", "task"],
+                ["enderite/ingot", "Ender Upgrade", "Obtain an Enderite Ingot.", "minecraft:netherite_ingot", "enderite/scrap", "goal"],
+                ["enderite/template", "Serious Dedication, Again", "Obtain an Enderite Upgrade template.", "minecraft:netherite_upgrade_smithing_template", "enderite/ingot", "goal"],
+                ["enderite/armor", "Cover Me in the End", "Wear a full suit of Enderite armour.", "minecraft:netherite_chestplate", "enderite/ingot", "challenge"],
+                ["enderite/hoe", "Serious Dedication: Ender Edition", "Obtain an Enderite hoe.", "minecraft:netherite_hoe", "enderite/ingot", "challenge"],
+                ["social/pay_to_win", "Pay to Win", "Become a member for 100 Dabloons.", "minecraft:diamond", "root", "goal"],
+                ["social/add_claim_member", "Good Fences, Good Friends", "Add a member to one of your claims.", "minecraft:player_head", "social/claim_1", "goal"],
+                ["social/statistic_first", "Number One", "Become first in any statistic.", "minecraft:gold_block", "root", "challenge"],
+                ["social/gift_code", "The Secret Word", "Receive Dabloons from a gift code.", "minecraft:paper", "root", "task"],
+                ["social/daily_1", "A Job Well Done", "Complete a daily task.", "minecraft:clock", "root", "task"],
+                ["knowledge/read_all", "Omniscient", "Read every knowledge page.", "minecraft:enchanted_book", "knowledge/read_100", "challenge"],
+                ["social/unreasonable_hours", "What Is Sleep?", "Join during every unreasonable hour from 02:00 to 08:59.", "minecraft:clock", "root", "challenge"],
+                ["food/beer", "Cheers!", "Drink beer.", "minecraft:honey_bottle", "root", "task"],
+                ["food/beer_again", "Hair of the Dog", "Drink beer while already under its effects.", "minecraft:honey_bottle", "food/beer", "goal"]
+        ]
+        advancements.each { writeAdvancement(*it) }
+
+        def chain = { String prefix, List<Integer> values, String title, String description, String icon, String parent ->
+            String previous = parent
+            values.each { value ->
+                String path = "${prefix}_${value}"
+                writeAdvancement(path, "${title} ${value}", description.replace("%s", value.toString()), icon, previous,
+                        value >= 100 ? "challenge" : value >= 10 ? "goal" : "task")
+                previous = path
+            }
+        }
+
+        chain("charms/get", [1, 3, 5, 10, 20, 40], "Charm Collector", "Own %s distinct charms at once.", "minecraft:emerald", "root")
+        chain("charms/upgrade", [3, 10, 25, 50], "Charm Tinkerer", "Upgrade charms %s times.", "minecraft:anvil", "charms/upgrade_once")
+        chain("cosmetics/collect", [5, 10, 20, 50, 100, 200], "Wardrobe", "Collect %s distinct cosmetics.", "minecraft:leather_helmet", "cosmetics/find_common")
+        chain("cosmetics/buy", [1, 5, 10, 20, 50, 100], "Retail Therapy", "Buy %s cosmetics.", "minecraft:emerald", "cosmetics/find_common")
+        chain("knowledge/read", [1, 3, 5, 10, 25, 50, 100], "Well Read", "Read %s knowledge pages.", "minecraft:book", "root")
+        chain("social/claim", [1, 5, 10, 25, 50, 100], "Landowner", "Claim %s chunks.", "minecraft:map", "root")
+        chain("social/streak", [1, 2, 3, 5, 7, 14, 30, 100, 365, 1000], "Login Streak", "Reach a %s-day login streak.", "minecraft:fire_charge", "root")
+        chain("social/full_dailies", [1, 3, 7, 14, 30, 100, 365, 1000], "Daily Devotion", "Fully complete dailies on %s days.", "minecraft:clock", "root")
+        chain("sniffers/bred", [1, 3, 5, 10, 20, 30, 50, 100, 200, 500, 1000, 5000, 10000], "Sniffer Population", "Breed %s sniffers.", "minecraft:sniffer_egg", "root")
+        chain("coins/hold", [1000, 10000, 100000, 1000000], "Deep Pockets", "Hold a %s-Dabloon coin.", "minecraft:gold_nugget", "utility/wallet")
+
+        ["leather", "ingot", "magic", "bejeweled", "withered", "endless"].eachWithIndex { tier, index ->
+            writeAdvancement("backpacks/${tier}", "${tier.capitalize()} Backpack", "Craft a ${tier} backpack.",
+                    "minecraft:bundle", index == 0 ? "root" : "backpacks/${["leather", "ingot", "magic", "bejeweled", "withered"][index - 1]}", index >= 4 ? "goal" : "task")
+        }
+        (2..8).each { hour ->
+            writeAdvancement("social/join_${hour}", "${String.format('%02d', hour)}:00 Club", "Join between ${String.format('%02d', hour)}:00 and ${String.format('%02d', hour)}:59.",
+                    "minecraft:clock", "root", "goal")
+        }
+        ["returning", "displacement", "insomnia", "resonance"].each { potion ->
+            writeAdvancement("potions/${potion}", "Potion of ${potion.capitalize()}", "Use the Potion of ${potion.capitalize()}.",
+                    "minecraft:potion", "root", "task")
+        }
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn tasks.named("generateMasteryAdvancements")
+}
 
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 25

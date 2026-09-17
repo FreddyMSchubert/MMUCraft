@@ -71,6 +71,13 @@ export class DailyBonusClaimsService {
 				now,
 			);
 			this.taskUpdates.notifyUser(user.id);
+			for (const milestone of [1, 2, 3, 5, 7, 14, 30, 100, 365, 1000]) {
+				if (loginStreak + 1 >= milestone) {
+					void this.dailyMinecraft
+						.grantMastery(user.minecraftUsername, `social/streak_${milestone}`)
+						.catch(() => undefined);
+				}
+			}
 			return {
 				claimed: true,
 				granted: true,
@@ -200,6 +207,14 @@ export class DailyBonusClaimsService {
 				now,
 			);
 			this.taskUpdates.notifyUser(user.id);
+			const completionCount = this.dailyStorage.fullCompletionCount(user.id);
+			for (const milestone of [1, 3, 7, 14, 30, 100, 365, 1000]) {
+				if (completionCount >= milestone) {
+					void this.dailyMinecraft
+						.grantMastery(user.minecraftUsername, `social/full_dailies_${milestone}`)
+						.catch(() => undefined);
+				}
+			}
 			return {
 				claimed: true,
 				granted: true,

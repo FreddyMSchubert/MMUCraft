@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import net.minecraft.server.level.ServerPlayer;
 
 @Mixin(FireworkRocketItem.class)
 public abstract class GliderFireworkItemMixin {
@@ -18,6 +20,9 @@ public abstract class GliderFireworkItemMixin {
     private void mainmod$blockGliderRockets(Level level, Player player, InteractionHand hand,
                                            CallbackInfoReturnable<InteractionResult> cir) {
         if (player.isFallFlying() && GliderCharm.isGlider(player.getItemBySlot(EquipmentSlot.CHEST))) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                MasteryAdvancements.grant(serverPlayer, "glider/firework_fail");
+            }
             cir.setReturnValue(InteractionResult.FAIL);
         }
     }

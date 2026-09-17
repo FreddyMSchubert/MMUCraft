@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCal
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
 {
@@ -56,6 +57,7 @@ public class SculkPhialCharm implements Charm, ConsumableCallbacksCharm
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
 
         updateStoredXpVisuals(stack, xpStored);
+        if (xpStored >= MAX_XP_STORABLE) MasteryAdvancements.grant(player, "utility/sculk_phial_full");
         return true;
     }
 

@@ -259,7 +259,7 @@
 	"blazeandcave:bacap/time_to_dig": 0, // Time to Dig!: craft a wooden shovel; normal starter tool, no handout.
 	"blazeandcave:bacap/time_to_farm": 0, // Time to Farm!: craft a wooden hoe; normal starter tool, no handout.
 	"blazeandcave:bacap/time_to_mine": 0, // Time to Mine!: craft a wooden pickaxe; normal starter tool, no handout.
-	"blazeandcave:bacap/time_to_strike": 0, // Time to Strike!: craft a wooden sword; normal starter weapon, no handout. 
+	"blazeandcave:bacap/time_to_strike": 0, // Time to Strike!: craft a wooden sword; normal starter weapon, no handout.
 	"blazeandcave:bacap/weaponry_milestone": 55, // Weaponry Milestone: finish the Weaponry tab; cumulative reward for weapon collections, projectile tricks, and combat challenges. MARKED
 	"blazeandcave:biomes/20_leagues_under_the_sea": 25, // 20 Leagues Under the Sea: tame/ride a Nautilus and take it below y -20; custom mount handling plus depth target.
 	"blazeandcave:biomes/a_scute_off_the_old_shell": 14, // A Scute Off the Old Shell: find two Nautiluses and breed them with fish; uncommon mob setup.
@@ -1332,5 +1332,6 @@
 	"minecraft:story/root": 0, // Benchmarking: story tab root only; no reward.
 	"minecraft:story/shiny_gear": 15, // Cover Me With Diamonds: obtain diamond armor; deliberate gear investment beyond normal iron survival.
 	"minecraft:story/smelt_iron": 3, // Acquire Hardware: smelt an iron ingot; normal progression, so no reward.
-	"minecraft:story/upgrade_tools": 0 // Getting an Upgrade: craft a stone pickaxe; starter progression, so no reward.
+	"minecraft:story/upgrade_tools": 0, // Getting an Upgrade: craft a stone pickaxe; starter progression, so no reward.
+	"mainmod:mastery/social/pay_to_win": 100, // Pay to Win: become a society member.
 }

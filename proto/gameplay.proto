@@ -46,6 +46,20 @@ service GameplayControl {
   rpc BroadcastDiscordMessage(BroadcastDiscordMessageRequest) returns (BroadcastDiscordMessageResponse);
   rpc RunServerCommand(RunServerCommandRequest) returns (RunServerCommandResponse);
   rpc BroadcastAnnouncement(BroadcastAnnouncementRequest) returns (BroadcastAnnouncementResponse);
+  rpc TryGrantAdvancement(TryGrantAdvancementRequest) returns (TryGrantAdvancementResponse);
+}
+
+message TryGrantAdvancementRequest {
+  string minecraft_uuid = 1;
+  string minecraft_username = 2;
+  string advancement_id = 3;
+}
+
+message TryGrantAdvancementResponse {
+  bool online = 1;
+  bool found = 2;
+  bool granted = 3;
+  bool already_granted = 4;
 }
 
 message Announcement {
@@ -395,6 +409,7 @@ message SyncPlayerStatsResponse {
   string color_hex = 9;
   optional bool show_death_counter = 10;
   int64 previous_last_played_at_unix_ms = 11;
+  bool first_in_any_statistic = 12;
 }
 
 message RecordMoneyEventRequest {
@@ -436,6 +451,7 @@ message RecordFishCatchResponse {
   bool announce = 9;
   bool first_server_catch_announcement = 10;
   bool first_server_catch = 11;
+  repeated string mastery_advancement_paths = 12;
 }
 
 message GrantDailyLoginBonusRequest {

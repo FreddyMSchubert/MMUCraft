@@ -95,6 +95,13 @@ export class ClaimPurchasingService {
 		}
 
 		await this.minecraftSynchronization.synchronize();
+		for (const milestone of [1, 5, 10, 25, 50, 100]) {
+			if (nextClaimNumber >= milestone) {
+				void this.minecraft
+					.tryGrantAdvancement(null, user.minecraftUsername, `social/claim_${milestone}`)
+					.catch(() => undefined);
+			}
+		}
 		return {
 			created: true,
 			claimId: claim.id,

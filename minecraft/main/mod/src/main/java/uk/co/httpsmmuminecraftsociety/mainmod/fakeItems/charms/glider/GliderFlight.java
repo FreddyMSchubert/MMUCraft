@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
 import java.util.WeakHashMap;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 public final class GliderFlight {
     public static final double GLIDER_SPEED_BPS = 14.2;
@@ -92,6 +93,7 @@ public final class GliderFlight {
             if (player.tickCount >= state.ascentGraceUntil) STATES.remove(player);
             return;
         }
+        if (glider) MasteryAdvancements.grant(player, "glider/fly");
         if (glider && isWet(player)) {
             player.stopFallFlying();
             STATES.remove(player);
@@ -108,6 +110,7 @@ public final class GliderFlight {
         Vec3 original = velocity;
         Vec3 frameNormal = BoostFrames.crossedFrame(player.level(), previous, position);
         if (frameNormal != null) {
+            if (glider) MasteryAdvancements.grant(player, "glider/amethyst_ring");
             double extra = BOOST_SPEED_BPS / 20.0 - velocity.dot(frameNormal);
             if (extra > 0) velocity = velocity.add(frameNormal.scale(extra));
             state.speedLimit = BOOST_SPEED_BPS;
@@ -117,7 +120,10 @@ public final class GliderFlight {
 
         if (glider) {
             Updrafts.Updraft caught = Updrafts.findAt(player);
-            if (caught != null) state.distanceSinceUpdraft = 0;
+            if (caught != null) {
+                state.distanceSinceUpdraft = 0;
+                MasteryAdvancements.grant(player, "glider/updraft");
+            }
             else state.distanceSinceUpdraft += Math.hypot(position.x - previous.x, position.z - previous.z);
             velocity = applyUpdraft(state, caught, velocity, player.getBoundingBox().minY, player.tickCount);
             velocity = velocity.add(0, -extraGravity(state.distanceSinceUpdraft), 0);

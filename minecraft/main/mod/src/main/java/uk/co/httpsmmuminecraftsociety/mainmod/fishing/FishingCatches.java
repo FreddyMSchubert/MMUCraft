@@ -31,6 +31,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.RecordFishCatchResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
@@ -248,7 +249,10 @@ public final class FishingCatches {
                 rarity.name().toLowerCase(Locale.ROOT)
         ).thenAccept(response -> {
             MinecraftServer server = player.level().getServer();
-            server.execute(() -> showRecordMessages(player, stack, rarity, lengthCm, response));
+            server.execute(() -> {
+                response.getMasteryAdvancementPathsList().forEach(path -> MasteryAdvancements.grant(player, path));
+                showRecordMessages(player, stack, rarity, lengthCm, response);
+            });
         })
                 .exceptionally(error -> {
                     MainMod.LOGGER.warn("Could not record fish catch for {}", player.getName().getString(), error);

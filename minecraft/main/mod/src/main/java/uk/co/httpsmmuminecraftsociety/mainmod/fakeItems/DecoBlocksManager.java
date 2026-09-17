@@ -28,6 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DecoBlockItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 public final class DecoBlocksManager {
     private DecoBlocksManager() {}
@@ -131,6 +132,7 @@ public final class DecoBlocksManager {
         frame.playPlacementSound();
         level.gameEvent(player, GameEvent.ENTITY_PLACE, frame.position());
         stack.shrink(1);
+        if (player instanceof ServerPlayer serverPlayer) MasteryAdvancements.grant(serverPlayer, "utility/decoblock");
         return InteractionResult.SUCCESS_SERVER;
     }
 

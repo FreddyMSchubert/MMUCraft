@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.Locale;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 public final class DynamicBeaconRange {
     public static final long RECALCULATE_INTERVAL_TICKS = 80L;
@@ -44,6 +45,8 @@ public final class DynamicBeaconRange {
         double range = blockEntity instanceof DynamicBeaconRangeHolder holder
                 ? recalculate(serverLevel, pos, holder)
                 : computeRange(serverLevel, pos);
+
+        if (range >= MAX_DYNAMIC_RANGE) MasteryAdvancements.grant(serverPlayer, "utility/max_reach_beacon");
 
         serverPlayer.sendSystemMessage(Component.literal("Beacon range: " + formatRange(range) + " blocks."));
         return InteractionResult.SUCCESS;

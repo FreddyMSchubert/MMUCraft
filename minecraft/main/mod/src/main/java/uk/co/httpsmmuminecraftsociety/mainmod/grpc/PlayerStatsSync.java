@@ -29,6 +29,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons.PlayerAdvancementsAccessor;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -208,6 +209,9 @@ public final class PlayerStatsSync {
                 return;
             }
             try {
+                if (response.getFirstInAnyStatistic()) {
+                    MasteryAdvancements.grant(onlinePlayer, "social/statistic_first");
+                }
                 // A website push that arrived during this request owns the newer presentation.
                 boolean superseded = revision != presentationRevisionByPlayer.getOrDefault(playerId, 0L);
                 if (!superseded) updatePresentation(onlinePlayer, response);
@@ -239,6 +243,7 @@ public final class PlayerStatsSync {
         ClaimsManager.updateOwnerColor(player.getUUID(), color);
         renderedProfileByPlayer.remove(player.getUUID());
         updateBelowName(player);
+        if (isMember) MasteryAdvancements.grant(player, "social/pay_to_win");
 
         if (previous == null || previous != isMember) {
             refreshAdvancementTooltips(player);

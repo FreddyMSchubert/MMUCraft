@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { and, eq, gte, lt, or } from 'drizzle-orm';
+import { and, count, eq, gte, lt, or } from 'drizzle-orm';
 import {
 	DatabaseService,
 	dailyAdvancementTargets,
@@ -46,6 +46,21 @@ export class DailyTaskStorageService {
 			.all()
 			.map((claim) => claim.period_key);
 		return calculateLoginStreak(claimedPeriodKeys, periodKey, isMember);
+	}
+
+	fullCompletionCount(userId: number) {
+		return (
+			this.database.connection
+				.select({ value: count() })
+				.from(dailyClaims)
+				.where(
+					and(
+						eq(dailyClaims.user_id, userId),
+						eq(dailyClaims.task_id, 'daily_completion'),
+					),
+				)
+				.get()?.value ?? 0
+		);
 	}
 
 	completedTaskCount(userId: number, periodKey: string) {

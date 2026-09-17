@@ -20,6 +20,18 @@ export class MinecraftGrpcClientService implements OnModuleDestroy {
 		);
 	}
 
+	tryGrantAdvancement(
+		minecraftUuid: string | null | undefined,
+		minecraftUsername: string,
+		path: string,
+	) {
+		return this.gameplay('TryGrantAdvancement', {
+			minecraft_uuid: minecraftUuid ?? '',
+			minecraft_username: minecraftUsername,
+			advancement_id: `mainmod:mastery/${path}`,
+		});
+	}
+
 	onModuleDestroy() {
 		this.gameplayClient?.close();
 	}

@@ -44,6 +44,7 @@ export class PlayerStatisticsSynchronizationService {
 				color: effectivePlayerColor(minecraftUuidInput),
 				showDeathCounter: true,
 				previousLastPlayedAtUnixMs: 0,
+				firstInAnyStatistic: false,
 				message: 'No website account is linked to this Minecraft username yet.',
 			};
 		}
@@ -88,8 +89,23 @@ export class PlayerStatisticsSynchronizationService {
 			color: profile.color,
 			showDeathCounter: profile.showDeathCounter,
 			previousLastPlayedAtUnixMs,
+			firstInAnyStatistic: this.isFirstInAnyStatistic(user.id, stats),
 			message: 'Stats synced.',
 		};
+	}
+
+	private isFirstInAnyStatistic(userId: number, stats: PlayerStats) {
+		const others = this.database.connection
+			.select({ userId: playerStats.user_id, json: playerStats.stats_json })
+			.from(playerStats)
+			.all()
+			.filter((row) => row.userId !== userId)
+			.map((row) => normalizeStatsJson(row.json).minecraft.stats);
+		return Object.entries(stats.minecraft.stats).some(
+			([key, stat]) =>
+				stat.value > 0 &&
+				others.every((candidate) => (candidate[key]?.value ?? 0) < stat.value),
+		);
 	}
 
 	getForUser(userId: number): PlayerStats {

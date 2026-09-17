@@ -1,6 +1,9 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 
 import java.util.Comparator;
@@ -62,5 +65,37 @@ final class GameplayPlayerOperations {
                         .setMinecraftUsername(player.getName().getString())
                         .setMinecraftUuid(player.getUUID().toString())));
         return response.build();
+    }
+
+    static TryGrantAdvancementResponse tryGrantAdvancementOnMainThread(TryGrantAdvancementRequest request) {
+        ServerPlayer player = null;
+        if (!request.getMinecraftUuid().isBlank()) {
+            try {
+                player = GrpcBridge.minecraftServer().getPlayerList().getPlayer(UUID.fromString(request.getMinecraftUuid()));
+            } catch (IllegalArgumentException ignored) {
+                // Fall back to the username for callers with stale identity data.
+            }
+        }
+        if (player == null && !request.getMinecraftUsername().isBlank()) {
+            player = GrpcBridge.minecraftServer().getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        }
+        if (player == null || player.hasDisconnected()) {
+            return TryGrantAdvancementResponse.newBuilder().setOnline(false).build();
+        }
+
+        Identifier id = Identifier.tryParse(request.getAdvancementId());
+        AdvancementHolder holder = id == null ? null : GrpcBridge.minecraftServer().getAdvancements().get(id);
+        if (holder == null) {
+            return TryGrantAdvancementResponse.newBuilder().setOnline(true).setFound(false).build();
+        }
+
+        boolean alreadyGranted = player.getAdvancements().getOrStartProgress(holder).isDone();
+        boolean granted = !alreadyGranted && MasteryAdvancements.grantId(player, id);
+        return TryGrantAdvancementResponse.newBuilder()
+                .setOnline(true)
+                .setFound(true)
+                .setGranted(granted)
+                .setAlreadyGranted(alreadyGranted)
+                .build();
     }
 }

@@ -76,6 +76,9 @@ export class GiftCodeRedemptionService {
 				`gift:${giftCode.code.toLowerCase()}:${user.id}`,
 				now,
 			);
+			void this.minecraft
+				.tryGrantAdvancement(null, user.minecraftUsername, 'social/gift_code')
+				.catch(() => undefined);
 
 			return {
 				redeemed: true,

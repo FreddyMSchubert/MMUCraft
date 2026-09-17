@@ -88,7 +88,7 @@ public final class AdvancementMoney {
 
             try (var inputStream = resource.open()) {
                 String jsonc = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                JsonObject json = JsonParser.parseString(stripJsonComments(jsonc)).getAsJsonObject();
+                JsonObject json = JsonParser.parseString(stripTrailingCommas(stripJsonComments(jsonc))).getAsJsonObject();
 
                 Map<String, Integer> rewards = new HashMap<>();
                 for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
@@ -150,6 +150,38 @@ public final class AdvancementMoney {
                 continue;
             }
 
+            json.append(current);
+        }
+
+        return json.toString();
+    }
+
+    private static String stripTrailingCommas(String jsonc) {
+        StringBuilder json = new StringBuilder(jsonc.length());
+        boolean inString = false;
+        boolean escaped = false;
+
+        for (int i = 0; i < jsonc.length(); i++) {
+            char current = jsonc.charAt(i);
+            if (inString) {
+                json.append(current);
+                if (escaped) {
+                    escaped = false;
+                } else if (current == '\\') {
+                    escaped = true;
+                } else if (current == '"') {
+                    inString = false;
+                }
+                continue;
+            }
+
+            if (current == '"') {
+                inString = true;
+            } else if (current == ',') {
+                int next = i + 1;
+                while (next < jsonc.length() && Character.isWhitespace(jsonc.charAt(next))) next++;
+                if (next < jsonc.length() && (jsonc.charAt(next) == '}' || jsonc.charAt(next) == ']')) continue;
+            }
             json.append(current);
         }
 

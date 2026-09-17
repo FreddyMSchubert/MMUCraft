@@ -110,4 +110,8 @@ export class DailyMinecraftClientService {
 			check_only: checkOnly,
 		});
 	}
+
+	grantMastery(minecraftUsername: string, path: string) {
+		return this.minecraft.tryGrantAdvancement(null, minecraftUsername, path);
+	}
 }

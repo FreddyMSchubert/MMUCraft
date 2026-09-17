@@ -8,6 +8,7 @@ import { MinecraftIdentityService } from '../../database/minecraft-identity.serv
 import { PlayerMoneyHistoryService } from '../../players/player-money-history.service';
 import { CachedSearchIndex } from '../../search/cached-search-index';
 import { FeatureTogglesService } from '../../toggles/feature-toggles.service';
+import { MinecraftGrpcClientService } from '../../grpc/minecraft-grpc-client.service';
 import { KnowledgeDocumentCatalogService } from './knowledge-document-catalog.service';
 import type {
 	KnowledgePage,
@@ -71,6 +72,7 @@ export class KnowledgeService implements OnModuleInit {
 		private readonly identities: MinecraftIdentityService,
 		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
 		private readonly featureToggles: FeatureTogglesService,
+		private readonly minecraft: MinecraftGrpcClientService,
 	) {}
 
 	onModuleInit() {
@@ -213,6 +215,23 @@ export class KnowledgeService implements OnModuleInit {
 				`knowledge-read:${user.id}:${page.id}`,
 				now,
 			);
+			const readCount = this.getReadIds(user.id).size;
+			for (const milestone of [1, 3, 5, 10, 25, 50, 100]) {
+				if (readCount >= milestone) {
+					void this.minecraft
+						.tryGrantAdvancement(
+							null,
+							user.minecraftUsername,
+							`knowledge/read_${milestone}`,
+						)
+						.catch(() => undefined);
+				}
+			}
+			if (readCount >= this.enabledUnlockablePages().length) {
+				void this.minecraft
+					.tryGrantAdvancement(null, user.minecraftUsername, 'knowledge/read_all')
+					.catch(() => undefined);
+			}
 			return { read: true, rewarded: true, amountDabloons: this.readRewardDabloons };
 		} catch (error) {
 			if (!moneyGranted) {

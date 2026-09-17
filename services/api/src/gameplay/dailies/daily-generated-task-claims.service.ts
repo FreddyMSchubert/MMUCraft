@@ -69,6 +69,9 @@ export class DailyGeneratedTaskClaimsService {
 				now,
 			);
 			this.taskUpdates.notifyUser(user.id);
+			void this.dailyMinecraft
+				.grantMastery(user.minecraftUsername, 'social/daily_1')
+				.catch(() => undefined);
 			return {
 				claimed: true,
 				granted: true,

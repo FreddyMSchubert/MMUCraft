@@ -116,6 +116,17 @@ export class FishingService {
 			result.firstServerCatch && ['rare', 'epic'].includes(definition.rarity);
 		const announce =
 			firstServerCatchAnnouncement || ['legendary', 'mythical'].includes(definition.rarity);
+		const counts = this.getCatchCounts(user.id);
+		const rarityTotal = this.fishCatalog
+			.definitions()
+			.filter((fish) => fish.rarity === definition.rarity).length;
+		const masteryAdvancementPaths = ['fishing/first_catch', `fishing/${definition.rarity}`];
+		if ((counts[definition.rarity] ?? 0) >= rarityTotal) {
+			masteryAdvancementPaths.push(`fishing/all_${definition.rarity}`);
+		}
+		if ((counts.total ?? 0) >= this.fishCatalog.definitions().length) {
+			masteryAdvancementPaths.push('fishing/full_compendium');
+		}
 
 		const response = {
 			recorded: true,
@@ -129,6 +140,7 @@ export class FishingService {
 			first_server_catch_announcement: firstServerCatchAnnouncement,
 			first_server_catch: result.firstServerCatch,
 			message: 'Fish catch recorded.',
+			mastery_advancement_paths: masteryAdvancementPaths,
 		};
 		if (Object.values(result).some(Boolean)) {
 			this.catchEvents.next({
@@ -289,6 +301,7 @@ export class FishingService {
 			first_server_catch_announcement: false,
 			first_server_catch: false,
 			message,
+			mastery_advancement_paths: [],
 		};
 	}
 }

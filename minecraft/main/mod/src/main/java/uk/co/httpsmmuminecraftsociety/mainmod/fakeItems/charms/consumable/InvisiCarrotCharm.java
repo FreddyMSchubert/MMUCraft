@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseEntityCall
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailySimpleEvent;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 public class InvisiCarrotCharm implements Charm, UseEntityCallbackCharm
 {
@@ -35,6 +36,7 @@ public class InvisiCarrotCharm implements Charm, UseEntityCallbackCharm
 
         if (player instanceof ServerPlayer serverPlayer) {
             DailyTaskManager.record(serverPlayer, DailyTaskEvent.simple(DailySimpleEvent.MODIFY_ITEM_FRAME));
+            MasteryAdvancements.grant(serverPlayer, "utility/invisible_frame");
         }
 
         return InteractionResult.SUCCESS_SERVER;

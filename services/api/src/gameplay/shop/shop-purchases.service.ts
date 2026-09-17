@@ -185,6 +185,23 @@ export class ShopPurchasesService {
 						: 'Join the Minecraft server, then try this purchase again while you are online.'),
 			);
 		}
+		if (item.type === 'cosmetic') {
+			for (const path of ['cosmetics/buy_1', `cosmetics/buy_${item.rarity}`]) {
+				void this.minecraft
+					.tryGrantAdvancement(null, user.minecraftUsername, path)
+					.catch(() => undefined);
+			}
+			if (item.deliveryItemId === 'cosmetic-crown-royal') {
+				void this.minecraft
+					.tryGrantAdvancement(null, user.minecraftUsername, 'cosmetics/royal_crown')
+					.catch(() => undefined);
+			}
+			if (item.deliveryItemId === 'cosmetic-amogus') {
+				void this.minecraft
+					.tryGrantAdvancement(null, user.minecraftUsername, 'cosmetics/amogus')
+					.catch(() => undefined);
+			}
+		}
 		return {
 			purchased: true,
 			itemId: item.id,

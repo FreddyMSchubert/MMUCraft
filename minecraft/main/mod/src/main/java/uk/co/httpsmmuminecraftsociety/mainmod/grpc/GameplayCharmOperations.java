@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderChar
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -180,6 +181,9 @@ final class GameplayCharmOperations {
             MoneyHelper.SendBalanceMessage(player, -target.dabloons(),
                     item.title() + " reached level " + targetLevel);
         }
+        MasteryAdvancements.grant(player, "charms/upgrade_once");
+        MasteryAdvancements.recordCharmUpgrade(player);
+        if (targetLevel >= feature.maxLevel()) MasteryAdvancements.grant(player, "charms/upgrade_max");
 
         return UpgradeCharmResponse.newBuilder()
                 .setUpgraded(true)

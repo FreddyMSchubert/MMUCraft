@@ -34,6 +34,7 @@ import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyEvents;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry;
@@ -117,7 +118,10 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> CharmsManager.refreshInventory(handler.player));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            CharmsManager.refreshInventory(handler.player);
+            MasteryAdvancements.onJoin(handler.player);
+        });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 PotionOfDisplacementCharm.onPlayerDisconnect(handler.player));
         ItemEvents.USE.register(CharmsManager::onItemUse);
@@ -167,6 +171,7 @@ public class MainMod implements ModInitializer {
             PlayerStatsSync.onServerTick(server);
             ClaimsManager.tickBossBars(server);
             DailyTaskManager.tick(server);
+            server.getPlayerList().getPlayers().forEach(MasteryAdvancements::tick);
         });
 
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {

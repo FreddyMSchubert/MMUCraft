@@ -27,6 +27,10 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailySimpleEvent;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.ItemTags;
 
 import java.util.Objects;
 
@@ -127,6 +131,18 @@ public abstract class AnvilMenuMixin {
                 && carried.get(DataComponents.CUSTOM_NAME) != null
                 && !Objects.equals(original.get(DataComponents.CUSTOM_NAME), carried.get(DataComponents.CUSTOM_NAME))) {
             DailyTaskManager.record(serverPlayer, DailyTaskEvent.simple(DailySimpleEvent.RENAME_TOOL));
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            var enchantments = serverPlayer.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            if (EnchantmentHelper.getItemEnchantmentLevel(enchantments.getOrThrow(ModEnchantments.SOULBOUND), carried) > 0) {
+                MasteryAdvancements.grant(serverPlayer, "utility/soulbound");
+            }
+            if (EnchantmentHelper.getItemEnchantmentLevel(enchantments.getOrThrow(ModEnchantments.CHARM_BOOST), carried) > 0) {
+                MasteryAdvancements.grant(serverPlayer, "charms/apply_boost");
+            }
+            if (carried.is(ItemTags.SWORDS) && carried.getHoverName().getString().equalsIgnoreCase("the sniffer slayer")) {
+                MasteryAdvancements.grant(serverPlayer, "utility/sniffer_slayer");
+            }
         }
 
         int chargedCost = clampCost(outcome.xpLevelsConsumed());

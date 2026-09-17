@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCh
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 public final class SlimeDetectorCharm implements Charm, UseCallbackCharm {
     public static final int CHARM_ID = 55;
@@ -29,6 +30,11 @@ public final class SlimeDetectorCharm implements Charm, UseCallbackCharm {
     @Override
     public InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
         int bars = signalBars(level.getSeed(), player.chunkPosition());
+        MasteryAdvancements.grant(player, "utility/slime_detector");
+        if (isSlimeChunk(level.getSeed(), player.chunkPosition().x(), player.chunkPosition().z())) {
+            MasteryAdvancements.grant(player, "utility/slime_chunk");
+        }
+        if (bars == 0) MasteryAdvancements.grant(player, "utility/no_slime_bars");
         setModel(stack, LOADING_MODEL);
 
         int delayTicks = randomScanDelayTicks(level.getRandom());

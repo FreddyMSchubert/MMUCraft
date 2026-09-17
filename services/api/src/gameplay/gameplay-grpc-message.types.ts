@@ -102,6 +102,7 @@ export interface PlayerStatisticsSyncResponse {
 	color_hex: string;
 	show_death_counter: boolean;
 	previous_last_played_at_unix_ms: number;
+	first_in_any_statistic: boolean;
 	message: string;
 }
 
@@ -143,4 +144,5 @@ export interface FishCatchResponse {
 	first_server_catch_announcement: boolean;
 	first_server_catch: boolean;
 	message: string;
+	mastery_advancement_paths: string[];
 }

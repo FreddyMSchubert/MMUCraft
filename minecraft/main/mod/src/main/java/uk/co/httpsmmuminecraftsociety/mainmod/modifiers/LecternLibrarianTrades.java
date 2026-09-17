@@ -41,7 +41,7 @@ public final class LecternLibrarianTrades {
                 .ifPresent(offer -> offers.add(0, offer));
     }
 
-    private static boolean isLecternCopyOffer(MerchantOffer offer) {
+    public static boolean isLecternCopyOffer(MerchantOffer offer) {
         return offer.getResult().is(Items.ENCHANTED_BOOK)
                 && offer.getMaxUses() == LECTERN_COPY_MAX_USES;
     }

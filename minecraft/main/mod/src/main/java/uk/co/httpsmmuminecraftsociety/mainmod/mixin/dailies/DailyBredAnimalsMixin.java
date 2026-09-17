@@ -11,14 +11,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 @Mixin(BredAnimalsTrigger.class)
 public abstract class DailyBredAnimalsMixin {
     @Inject(method = "trigger", at = @At("HEAD"))
     private void mainmod$recordBreeding(ServerPlayer player, Animal parent, Animal partner, AgeableMob child, CallbackInfo ci) {
+        String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(child.getType()).toString();
         DailyTaskManager.record(player, DailyTaskEvent.of(
                 DailyTaskEvent.Type.BREED_ENTITY,
-                BuiltInRegistries.ENTITY_TYPE.getKey(child.getType()).toString()
+                entityId
         ));
+        if (entityId.equals("minecraft:sniffer")) MasteryAdvancements.recordSnifferBreed(player);
     }
 }

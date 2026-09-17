@@ -310,6 +310,15 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 
+        @Override
+        public void tryGrantAdvancement(
+                TryGrantAdvancementRequest request,
+                StreamObserver<TryGrantAdvancementResponse> responseObserver
+        ) {
+            callOnMainThread(() -> GameplayPlayerOperations.tryGrantAdvancementOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
         private <T> void complete(StreamObserver<T> responseObserver, T response, Throwable error) {
             if (error != null) {
                 responseObserver.onError(error);

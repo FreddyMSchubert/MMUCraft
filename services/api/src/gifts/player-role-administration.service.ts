@@ -5,6 +5,7 @@ import { ClaimMinecraftSynchronizationService } from '../claims/claim-minecraft-
 import { effectivePlayerColor } from '../players/player-color';
 import { customPlayerEmojis, normalizeCustomEmojis } from '../players/player-emojis';
 import { PlayersService } from '../players/players.service';
+import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 
 @Injectable()
 export class PlayerRoleAdministrationService {
@@ -12,6 +13,7 @@ export class PlayerRoleAdministrationService {
 		private readonly database: DatabaseService,
 		private readonly claims: ClaimMinecraftSynchronizationService,
 		private readonly players: PlayersService,
+		private readonly minecraft: MinecraftGrpcClientService,
 	) {}
 
 	listPlayers() {
@@ -69,6 +71,18 @@ export class PlayerRoleAdministrationService {
 			throw new NotFoundException('Player not found');
 		}
 		await this.players.synchronizePlayerPresentation(userId);
+		if (isMember) {
+			const player = this.database.connection
+				.select({ uuid: users.minecraft_uuid, username: users.minecraft_username })
+				.from(users)
+				.where(eq(users.id, userId))
+				.get();
+			if (player) {
+				void this.minecraft
+					.tryGrantAdvancement(player.uuid, player.username, 'social/pay_to_win')
+					.catch(() => undefined);
+			}
+		}
 		return { ok: true, userId, isMember };
 	}
 

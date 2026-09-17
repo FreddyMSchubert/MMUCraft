@@ -39,6 +39,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.metrics.MetricsServer;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Tuple;
 
 import java.util.*;
@@ -253,6 +254,21 @@ public class CharmsManager
                 elapsedTicks,
                 activeCharm.level()
         );
+        if (completed) {
+            String id = activeCharm.fakeItem().id();
+            String potion = switch (id) {
+                case "charm-potion-returning" -> "returning";
+                case "charm-potion-displacement" -> "displacement";
+                case "charm-potion-insomnia" -> "insomnia";
+                case "charm-potion-resonance" -> "resonance";
+                default -> null;
+            };
+            if (potion != null) {
+                MasteryAdvancements.grant(player, "potions/" + potion);
+                MasteryAdvancements.grantIfAll(player, "utility/all_potions",
+                        "potions/returning", "potions/displacement", "potions/insomnia", "potions/resonance");
+            }
+        }
         DailyCharm dailyCharm = DailyCharm.from(activeCharm.charm());
         if (completed && dailyCharm != null) {
             MetricsServer.recordPotionUse(dailyCharm);
@@ -308,12 +324,20 @@ public class CharmsManager
             if (instance.isBroken()) continue;
             if (!(instance.charm() instanceof UseCallbackCharm useCallbackCharm)) continue;
 
-            return useCallbackCharm.onUse(
+            InteractionResult result = useCallbackCharm.onUse(
                     stack,
                     (ServerPlayer) player,
                     (ServerLevel) level,
                     instance.level()
             );
+            if (result != null && result != InteractionResult.PASS) {
+                if (instance.charm() instanceof CraftingStaffCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/staff_crafting");
+                if (instance.charm() instanceof EnderChestStaffCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/staff_ender_chest");
+                if (instance.charm() instanceof WrenchCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/wrench");
+                MasteryAdvancements.grantIfAll((ServerPlayer) player, "utility/all_staves",
+                        "utility/staff_crafting", "utility/staff_ender_chest");
+            }
+            return result;
         }
         return null;
     }

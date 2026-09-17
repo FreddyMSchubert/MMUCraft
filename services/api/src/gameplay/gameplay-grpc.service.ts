@@ -281,6 +281,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			color_hex: result.color,
 			show_death_counter: result.showDeathCounter,
 			previous_last_played_at_unix_ms: result.previousLastPlayedAtUnixMs,
+			first_in_any_statistic: result.firstInAnyStatistic,
 			message: result.message,
 		});
 	}

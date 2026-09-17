@@ -24,6 +24,7 @@ import {
 	type ClaimsSnapshot,
 } from './claim-minecraft-synchronization.service';
 import { ClaimPurchasingService } from './claim-purchasing.service';
+import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 
 const CLAIM_NAME_MAX_LENGTH = 20;
 
@@ -40,6 +41,7 @@ export class ClaimsService {
 		private readonly database: DatabaseService,
 		private readonly claimPurchasing: ClaimPurchasingService,
 		private readonly minecraftSynchronization: ClaimMinecraftSynchronizationService,
+		private readonly minecraft: MinecraftGrpcClientService,
 	) {}
 
 	list(user: AuthenticatedUser) {
@@ -163,6 +165,9 @@ export class ClaimsService {
 		}
 
 		await this.minecraftSynchronization.synchronize();
+		void this.minecraft
+			.tryGrantAdvancement(null, user.minecraftUsername, 'social/add_claim_member')
+			.catch(() => undefined);
 		return { ok: true };
 	}
 

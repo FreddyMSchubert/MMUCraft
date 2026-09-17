@@ -2,27 +2,18 @@
 	"title": "Candle",
 	"id": "cosmetic-candle",
 	"modelType": "cosmetic",
-	"rarity": "common",
+	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [
-		"Nobody showed up for my birthday :("
+		"Perfect for night-time walks around your manor."
 	],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
 		"glowing": true,
-		"lightLevel": 8
+		"lightLevel": 5
 	},
-	"shopPurchasable": {
-		"membersOnly": true,
-		"priceDabloons": 25,
-		"description": "",
-		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Candle."
-	},
-	"equippableCosmetic": {},
-	"dyeable": {
-		"tintColor": "#d8d29d"
-	}
+	"equippableCosmetic": {}
 }
+ 

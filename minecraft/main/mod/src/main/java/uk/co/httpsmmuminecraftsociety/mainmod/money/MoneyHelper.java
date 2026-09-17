@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WalletCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -116,6 +117,7 @@ public final class MoneyHelper {
         }
 
         replaceMoney(player, GetBalance(player) + amount);
+        MasteryAdvancements.checkBalance(player, GetBalance(player));
         return true;
     }
 
@@ -125,6 +127,7 @@ public final class MoneyHelper {
         }
 
         replaceMoney(player, amount);
+        MasteryAdvancements.checkBalance(player, GetBalance(player));
         return true;
     }
 

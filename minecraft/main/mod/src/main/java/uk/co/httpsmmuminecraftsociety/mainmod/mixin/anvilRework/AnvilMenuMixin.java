@@ -136,9 +136,17 @@ public abstract class AnvilMenuMixin {
             var enchantments = serverPlayer.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
             if (EnchantmentHelper.getItemEnchantmentLevel(enchantments.getOrThrow(ModEnchantments.SOULBOUND), carried) > 0) {
                 MasteryAdvancements.grant(serverPlayer, "utility/soulbound");
+                if (carried.is(net.minecraft.world.item.Items.RECOVERY_COMPASS)) {
+                    MasteryAdvancements.grant(serverPlayer, "utility/soulbound_recovery_compass");
+                }
             }
             if (EnchantmentHelper.getItemEnchantmentLevel(enchantments.getOrThrow(ModEnchantments.CHARM_BOOST), carried) > 0) {
-                MasteryAdvancements.grant(serverPlayer, "charms/apply_boost");
+                if (carried.is(ItemTags.HEAD_ARMOR)
+                        || carried.is(ItemTags.CHEST_ARMOR)
+                        || carried.is(ItemTags.LEG_ARMOR)
+                        || carried.is(ItemTags.FOOT_ARMOR)) {
+                    MasteryAdvancements.grant(serverPlayer, "charms/apply_boost");
+                }
             }
             if (carried.is(ItemTags.SWORDS) && carried.getHoverName().getString().equalsIgnoreCase("the sniffer slayer")) {
                 MasteryAdvancements.grant(serverPlayer, "utility/sniffer_slayer");

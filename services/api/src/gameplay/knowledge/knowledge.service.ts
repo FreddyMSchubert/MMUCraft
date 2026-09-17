@@ -216,7 +216,7 @@ export class KnowledgeService implements OnModuleInit {
 				now,
 			);
 			const readCount = this.getReadIds(user.id).size;
-			for (const milestone of [1, 3, 5, 10, 25, 50, 100]) {
+			for (const milestone of [1, 3, 5, 10, 15, 20]) {
 				if (readCount >= milestone) {
 					void this.minecraft
 						.tryGrantAdvancement(

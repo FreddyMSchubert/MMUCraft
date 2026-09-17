@@ -1,9 +1,12 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin.dailies;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.SculkPhialCharm;
 
 @Mixin(ResultSlot.class)
 public abstract class DailyCraftingResultMixin {
@@ -27,6 +32,11 @@ public abstract class DailyCraftingResultMixin {
                     "",
                     Math.max(1, removeCount)
             ));
+            if (stack.is(Items.EXPERIENCE_BOTTLE)
+                    && stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                    .copyTag().getIntOr(SculkPhialCharm.XP_STORED_ID, 0) > 0) {
+                MasteryAdvancements.grant(serverPlayer, "utility/sculk_phial_extract");
+            }
         }
     }
 }

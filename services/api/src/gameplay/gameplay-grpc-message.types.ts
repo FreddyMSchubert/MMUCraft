@@ -46,6 +46,9 @@ export interface KnowledgeUnlockResponse {
 	has_charms_to_unlock: boolean;
 	has_cosmetics_to_unlock: boolean;
 	read_reward_dabloons: number;
+	unlocked_count: number;
+	unlock_total: number;
+	mastery_advancement_paths: string[];
 }
 
 export interface KnowledgeTipRequest {

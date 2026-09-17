@@ -6,7 +6,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
@@ -17,17 +16,20 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCosmeticItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.ParticleTrailData;
 
 import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.Set;
 
 public final class MasteryAdvancements {
-    private static final int[] COLLECTION_MILESTONES = {1, 3, 5, 10, 20, 40};
+    private static final ZoneId BRITISH_TIME = ZoneId.of("Europe/London");
+    private static final int[] COLLECTION_MILESTONES = {1, 3, 5, 10, 15, 20};
     private static final Set<String> BACKPACKS = Set.of("leather", "ingot", "magic", "bejeweled", "withered", "endless");
     private static final int[] SNIFFER_MILESTONES = {1, 3, 5, 10, 20, 30, 50, 100, 200, 500, 1000, 5000, 10000};
     private MasteryAdvancements() {}
@@ -50,9 +52,12 @@ public final class MasteryAdvancements {
 
     public static void onJoin(ServerPlayer player) {
         grant(player, "root");
-        int hour = ZonedDateTime.now().getHour();
-        if (hour >= 2 && hour <= 8) grant(player, "social/join_" + hour);
-        if (allDone(player, "social/join_", 2, 8)) grant(player, "social/unreasonable_hours");
+        int hour = ZonedDateTime.now(BRITISH_TIME).getHour();
+        if (hour >= 2 && hour <= 6) {
+            grant(player, "social/join_insane_hour");
+            grant(player, "social/join_" + hour);
+        }
+        if (allDone(player, "social/join_", 2, 6)) grant(player, "social/unreasonable_hours");
         scanInventory(player);
     }
 
@@ -81,12 +86,29 @@ public final class MasteryAdvancements {
     }
 
     public static void recordCharmUpgrade(ServerPlayer player) {
-        grantMilestones(player, "mmuCharmUpgrades", "charms/upgrade_", new int[]{3, 10, 25, 50});
+        grantMilestones(player, "mmuCharmUpgrades", "charms/upgrade_", new int[]{3, 5, 10, 15, 20});
     }
 
-    public static void recordCosmeticPurchase(ServerPlayer player, String rarity) {
+    public static void recordCosmeticPurchase(ServerPlayer player, String rarity, String itemId) {
         grant(player, "cosmetics/buy_" + rarity.toLowerCase(java.util.Locale.ROOT));
         grantMilestones(player, "mmuCosmeticsBought", "cosmetics/buy_", new int[]{1, 5, 10, 20, 50, 100});
+        switch (itemId) {
+            case "cosmetic-dog-pet-hat" -> grant(player, "cosmetics/good_boy");
+            case "cosmetic-academic-hat" -> grant(player, "cosmetics/academic_hat");
+            case "cosmetic-villager-nose" -> grant(player, "cosmetics/villager_nose");
+            case "cosmetic-villager-farmer" -> grant(player, "cosmetics/straw_hats");
+            case "cosmetic-villager-fletcher" -> grant(player, "cosmetics/fletcher_hat");
+            case "cosmetic-posh-squid" -> grant(player, "cosmetics/posh_squid");
+            case "cosmetic-helmet-retro" -> grant(player, "cosmetics/retro_helmet");
+            case "cosmetic-hood-bee-trans" -> grant(player, "cosmetics/trans_bee_hood");
+            case "cosmetic-sombrero" -> grant(player, "cosmetics/sombrero");
+            case "cosmetic-sombreron" -> grant(player, "cosmetics/sombreron");
+            case "cosmetic-sombreronn" -> grant(player, "cosmetics/sombreronn");
+            case "cosmetic-crown-techno" -> grant(player, "cosmetics/crown_techno");
+            case "cosmetic-crown-royal" -> grant(player, "cosmetics/crown_royal");
+            case "cosmetic-crown-ornate" -> grant(player, "cosmetics/crown_ornate");
+            default -> { }
+        }
         long cosmeticTotal = FakeItems.ALL.stream()
                 .filter(item -> item.getFeature(EquippableCosmeticItemFeature.class) != null)
                 .count();
@@ -95,6 +117,16 @@ public final class MasteryAdvancements {
                 .getOrCreatePlayerScore(player, objective).get() >= cosmeticTotal) {
             grant(player, "cosmetics/buy_all");
         }
+    }
+
+    public static void checkBalance(ServerPlayer player, int balance) {
+        for (int value : new int[]{100, 1000, 10000, 100000, 1000000}) {
+            if (balance >= value) grant(player, "money/balance_" + value);
+        }
+    }
+
+    public static void recordNewJoke(ServerPlayer player) {
+        grantMilestones(player, "mmuJokesRead", "utility/jokes_", new int[]{1, 3, 5});
     }
 
     private static void grantMilestones(ServerPlayer player, String objectiveName, String pathPrefix, int[] milestones) {
@@ -119,7 +151,6 @@ public final class MasteryAdvancements {
     private static void scanInventory(ServerPlayer player) {
         Set<String> fakeIds = new HashSet<>();
         Set<Integer> charmIds = new HashSet<>();
-        Set<String> cosmetics = new HashSet<>();
         Set<String> maxedCharmIds = new HashSet<>();
         boolean enderiteHelmet = false;
         boolean enderiteChestplate = false;
@@ -146,55 +177,47 @@ public final class MasteryAdvancements {
             FakeItem fakeItem = FakeItems.ID_MAP.get(id);
             if (fakeItem == null) continue;
             fakeIds.add(id);
-            CharmsManager.getCharmInstances(stack).forEach(charm -> {
-                charmIds.add(charm.charmId());
-                if (charm.level() >= charm.feature().maxLevel()) maxedCharmIds.add(charm.fakeItem().id());
-            });
-            if (fakeItem.getFeature(EquippableCosmeticItemFeature.class) != null) {
-                cosmetics.add(id);
-                grant(player, "cosmetics/find_" + rarityName(fakeItem.rarity()));
+            if (fakeItem.getFeature(EquippableCharmItemFeature.class) != null) {
+                CharmsManager.getCharmInstances(stack).forEach(charm -> {
+                    charmIds.add(charm.charmId());
+                    if (charm.level() >= charm.feature().maxLevel()) maxedCharmIds.add(charm.fakeItem().id());
+                });
             }
         }
 
         for (int milestone : COLLECTION_MILESTONES) {
             if (charmIds.size() >= milestone) grant(player, "charms/get_" + milestone);
         }
-        if (charmIds.size() >= FakeItems.CHARM_ID_MAP.size()) grant(player, "charms/get_all");
-        if (maxedCharmIds.size() >= FakeItems.CHARM_ID_MAP.size()) grant(player, "charms/upgrade_all_max");
-        for (int milestone : new int[]{5, 10, 20, 50, 100, 200}) {
-            if (cosmetics.size() >= milestone) grant(player, "cosmetics/collect_" + milestone);
-        }
-        long cosmeticTotal = FakeItems.ALL.stream()
-                .filter(item -> item.getFeature(EquippableCosmeticItemFeature.class) != null)
+        long equippableCharmTotal = FakeItems.ALL.stream()
+                .filter(item -> item.getFeature(EquippableCharmItemFeature.class) != null)
                 .count();
-        if (cosmetics.size() >= cosmeticTotal) grant(player, "cosmetics/collect_all");
+        if (charmIds.size() >= equippableCharmTotal) grant(player, "charms/get_all");
+        if (maxedCharmIds.size() >= equippableCharmTotal) grant(player, "charms/upgrade_all_max");
         if (enderiteHelmet && enderiteChestplate && enderiteLeggings && enderiteBoots) {
             grant(player, "enderite/armor");
         }
 
         if (fakeIds.contains("charm-wallet")) grant(player, "utility/wallet");
         if (fakeIds.contains("charm-glider")) grant(player, "glider/craft");
-        if (fakeIds.contains("cosmetic-crown-royal")) grant(player, "cosmetics/royal_crown");
-        if (fakeIds.contains("cosmetic-amogus")) grant(player, "cosmetics/amogus");
-        if (cosmetics.stream().filter(id -> id.startsWith("cosmetic-villager-") || id.equals("cosmetic-witch-hat")).count() >= 15) {
-            grant(player, "cosmetics/all_villager_hats");
-        }
         for (String tier : BACKPACKS) {
             if (fakeIds.contains("charm-" + tier + "-backpack")) grant(player, "backpacks/" + tier);
         }
         if (fakeIds.contains("enderite-scrap")) grant(player, "enderite/scrap");
         if (fakeIds.contains("enderite-ingot")) grant(player, "enderite/ingot");
         if (fakeIds.contains("enderite-upgrade-smithing-template")) grant(player, "enderite/template");
-        for (int value : new int[]{1000, 10000, 100000, 1000000}) {
+        for (int value : new int[]{1, 10, 100, 1000, 10000, 100000, 1000000}) {
             if (fakeIds.contains("coin-" + value)) grant(player, "coins/hold_" + value);
+        }
+        if (isCatCosmetic(player.getMainHandItem())
+                && isCatCosmetic(player.getOffhandItem())
+                && isCatCosmetic(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD))) {
+            grant(player, "cosmetics/cat_stack");
         }
     }
 
-    private static String rarityName(Rarity rarity) {
-        if (rarity == Rarity.UNCOMMON) return "uncommon";
-        if (rarity == Rarity.RARE) return "rare";
-        if (rarity == Rarity.EPIC) return "epic";
-        return "common";
+    private static boolean isCatCosmetic(ItemStack stack) {
+        FakeItem item = FakeItems.getFakeItemFromStack(stack);
+        return item != null && item.id().matches("cosmetic-(calico|red|siamese|tabby|tuxedo|white)-cat-pet-hat");
     }
 
     private static boolean allDone(ServerPlayer player, String prefix, int first, int last) {

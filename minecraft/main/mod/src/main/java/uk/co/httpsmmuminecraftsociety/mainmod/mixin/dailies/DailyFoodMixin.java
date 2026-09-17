@@ -28,6 +28,9 @@ public abstract class DailyFoodMixin {
             if (FakeItems.isSpecificFakeItem(stack, "golden-nutritional-paste")) {
                 MasteryAdvancements.grant(player, "utility/golden_paste");
             }
+            if (FakeItems.isSpecificFakeItem(stack, "sushi")) {
+                MasteryAdvancements.grant(player, "food/sushi");
+            }
             if (FakeItems.isSpecificFakeItem(stack, "beer")) {
                 if (player.hasEffect(MobEffects.NAUSEA)) MasteryAdvancements.grant(player, "food/beer_again");
                 MasteryAdvancements.grant(player, "food/beer");

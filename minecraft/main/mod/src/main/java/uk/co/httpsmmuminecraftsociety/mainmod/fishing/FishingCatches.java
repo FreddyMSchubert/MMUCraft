@@ -239,6 +239,17 @@ public final class FishingCatches {
         if (rarity.ordinal() >= FishRarity.LEGENDARY.ordinal()) {
             UnlockBookAnimation.play(player, stack);
         }
+        String offhandId = fakeItemId(player.getOffhandItem());
+        switch (offhandId) {
+            case "worms" -> MasteryAdvancements.grant(player, "fishing/worm");
+            case "golden-worms" -> MasteryAdvancements.grant(player, "fishing/golden_worm");
+            case "item-magnet" -> MasteryAdvancements.grant(player, "fishing/magnet");
+            case "golden-item-magnet" -> MasteryAdvancements.grant(player, "fishing/golden_magnet");
+            default -> { }
+        }
+        if (player.getAttributeValue(Attributes.LUCK) >= 3.0) {
+            MasteryAdvancements.grant(player, "fishing/luck_3");
+        }
         String fishId = fakeItem == null
                 ? BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()
                 : fakeItem.id();
@@ -258,6 +269,11 @@ public final class FishingCatches {
                     MainMod.LOGGER.warn("Could not record fish catch for {}", player.getName().getString(), error);
                     return null;
                 });
+    }
+
+    private static String fakeItemId(ItemStack stack) {
+        FakeItem item = FakeItems.getFakeItemFromStack(stack);
+        return item == null ? "" : item.id();
     }
 
     public static ItemStack claimDrop(ServerPlayer player, ItemStack stack, RandomSource random) {

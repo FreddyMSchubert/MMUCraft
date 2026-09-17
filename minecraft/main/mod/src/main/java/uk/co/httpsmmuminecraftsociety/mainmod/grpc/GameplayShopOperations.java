@@ -84,7 +84,7 @@ final class GameplayShopOperations {
                             + request.getItemType() + " from the shop for " + price + " Dabloons.");
         }
         if ("Cosmetic".equalsIgnoreCase(request.getItemType())) {
-            MasteryAdvancements.recordCosmeticPurchase(player, request.getRarity());
+            MasteryAdvancements.recordCosmeticPurchase(player, request.getRarity(), request.getItemId());
         }
         return PurchaseShopItemResponse.newBuilder()
                 .setPurchased(true)

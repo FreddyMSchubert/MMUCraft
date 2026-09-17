@@ -25,6 +25,9 @@ interface ShopUnlockResponse {
 	priority: number;
 	topic: string;
 	message: string;
+	unlocked_count: number;
+	unlock_total: number;
+	mastery_advancement_paths: string[];
 }
 
 @Injectable()
@@ -88,9 +91,12 @@ export class ShopUnlocksService {
 				return {
 					...noUnlock(`You have already unlocked all available ${unlockType}s.`),
 					all_unlocked: true,
+					unlocked_count: candidates.length,
+					unlock_total: candidates.length,
 				};
 			}
 			if (picked) {
+				const unlockedIds = this.unlockedItemIdsForUser(user.id, unlockType);
 				const unlockMessage =
 					picked.unlockMessage ??
 					`You've unlocked ${picked.title}. Visit the website shop to see it.`;
@@ -107,6 +113,12 @@ export class ShopUnlocksService {
 						user.is_member !== 1
 							? `${unlockMessage} (Warning: Members-only)`
 							: unlockMessage,
+					unlocked_count: unlockedIds.size,
+					unlock_total: candidates.length,
+					mastery_advancement_paths:
+						unlockType === 'cosmetic'
+							? cosmeticMasteryPaths(picked, unlockedIds, candidates)
+							: [],
 				};
 			}
 		}
@@ -192,7 +204,32 @@ function noUnlock(message: string): ShopUnlockResponse {
 		priority: 0,
 		topic: '',
 		message,
+		unlocked_count: 0,
+		unlock_total: 0,
+		mastery_advancement_paths: [],
 	};
+}
+
+function cosmeticMasteryPaths(
+	item: CatalogItem,
+	unlockedIds: Set<string>,
+	catalog: CatalogItem[],
+): string[] {
+	const paths = [`cosmetics/unlock_${item.rarity}`];
+	for (const milestone of [1, 5, 10, 20, 50, 100]) {
+		if (unlockedIds.size >= milestone) paths.push(`cosmetics/unlock_${milestone}`);
+	}
+	if (unlockedIds.size >= catalog.length) paths.push('cosmetics/unlock_all');
+	if (item.id === 'cosmetic-amogus') paths.push('cosmetics/amogus');
+	const villagerIds = catalog
+		.map((candidate) => candidate.id)
+		.filter(
+			(id) =>
+				(id.startsWith('cosmetic-villager-') && id !== 'cosmetic-villager-nose') ||
+				id === 'cosmetic-witch-hat',
+		);
+	if (villagerIds.every((id) => unlockedIds.has(id))) paths.push('cosmetics/all_villager_hats');
+	return paths;
 }
 
 function unavailableAccount(message: string) {

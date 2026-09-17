@@ -121,6 +121,9 @@ export class FishingService {
 			.definitions()
 			.filter((fish) => fish.rarity === definition.rarity).length;
 		const masteryAdvancementPaths = ['fishing/first_catch', `fishing/${definition.rarity}`];
+		if (result.serverSizeRecord) masteryAdvancementPaths.push('fishing/server_largest_record');
+		if (result.serverSmallestRecord)
+			masteryAdvancementPaths.push('fishing/server_smallest_record');
 		if ((counts[definition.rarity] ?? 0) >= rarityTotal) {
 			masteryAdvancementPaths.push(`fishing/all_${definition.rarity}`);
 		}

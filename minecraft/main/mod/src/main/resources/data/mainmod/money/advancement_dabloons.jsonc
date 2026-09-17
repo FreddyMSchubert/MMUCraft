@@ -1333,5 +1333,61 @@
 	"minecraft:story/shiny_gear": 15, // Cover Me With Diamonds: obtain diamond armor; deliberate gear investment beyond normal iron survival.
 	"minecraft:story/smelt_iron": 3, // Acquire Hardware: smelt an iron ingot; normal progression, so no reward.
 	"minecraft:story/upgrade_tools": 0, // Getting an Upgrade: craft a stone pickaxe; starter progression, so no reward.
-	"mainmod:mastery/social/pay_to_win": 100, // Pay to Win: become a society member.
+	"mainmod:mastery/*": 0, // Mastery default: trivial, automatic, purchase-only, and purely tedious actions do not pay.
+	"mainmod:mastery/fishing/all_*": 15, // Complete one fish rarity: sustained collection with varied fishing play.
+	"mainmod:mastery/fishing/all_legendary": 30, // Complete the legendary fish set: rare and engaging collection.
+	"mainmod:mastery/fishing/all_mythical": 50, // Complete the mythical fish set: the hardest rarity collection.
+	"mainmod:mastery/fishing/full_compendium": 100, // Complete the full fish compendium: major varied completion goal.
+	"mainmod:mastery/fishing/legendary": 10, // Catch a legendary fish: exciting low-probability catch.
+	"mainmod:mastery/fishing/mythical": 25, // Catch a mythical fish: exceptional low-probability catch.
+	"mainmod:mastery/fishing/golden_magnet": 10, // Catch with the best fishing utility: deliberate setup and play.
+	"mainmod:mastery/fishing/luck_3": 5, // Catch with three fishing luck: moderate charm progression.
+	"mainmod:mastery/fishing/lucky_charm_5": 20, // Max the Lucky Charm: expensive focused upgrade path.
+	"mainmod:mastery/cosmetics/unlock_all": 100, // Unlock the full cosmetic catalogue: major long-term collection.
+	"mainmod:mastery/cosmetics/unlock_100": 25, // Unlock one hundred cosmetics: difficult but largely time-gated progression.
+	"mainmod:mastery/cosmetics/buy_100": 15, // Buy one hundred cosmetics: costly and tedious, so the reward stays moderate.
+	"mainmod:mastery/cosmetics/all_villager_hats": 35, // Unlock the complete villager workforce: themed collection goal.
+	"mainmod:mastery/cosmetics/cat_stack": 15, // Wear and hold three cat cosmetics: playful coordinated setup.
+	"mainmod:mastery/charms/get_all": 35, // Hold every upgradeable equippable charm: substantial collection.
+	"mainmod:mastery/charms/upgrade_max": 25, // Max one charm: meaningful material and Dabloon investment.
+	"mainmod:mastery/charms/upgrade_20": 15, // Perform twenty upgrades: substantial but repetitive investment.
+	"mainmod:mastery/charms/upgrade_all_max": 150, // Max every equippable charm: extreme end-game completion.
+	"mainmod:mastery/charms/apply_boost": 5, // Boost armour: deliberate useful enhancement.
+	"mainmod:mastery/utility/all_potions": 15, // Use every custom potion: varied mechanics rather than raw grind.
+	"mainmod:mastery/utility/all_staves": 10, // Use all three utility staffs: small themed collection challenge.
+	"mainmod:mastery/utility/sculk_phial_full": 10, // Fill a Sculk Phial: moderate XP investment.
+	"mainmod:mastery/utility/soulbound_recovery_compass": 5, // Soulbind a Recovery Compass: deliberate useful combination.
+	"mainmod:mastery/utility/full_speed_minecart": 10, // Reach full minecart speed: build and execute a track setup.
+	"mainmod:mastery/utility/max_reach_beacon": 25, // Build a 200-block beacon: expensive construction challenge.
+	"mainmod:mastery/glider/updraft": 5, // Ride a heat updraft: deliberate glider technique.
+	"mainmod:mastery/glider/amethyst_ring": 20, // Thread an amethyst ring: skill-based flight challenge.
+	"mainmod:mastery/enderite/scrap": 5, // Obtain Enderite Scrap: uncommon End progression.
+	"mainmod:mastery/enderite/ingot": 10, // Make an Enderite Ingot: meaningful material milestone.
+	"mainmod:mastery/enderite/template": 10, // Obtain the Enderite template: deliberate progression gate.
+	"mainmod:mastery/enderite/armor": 60, // Complete Enderite armour: expensive late-game equipment goal.
+	"mainmod:mastery/enderite/hoe": 25, // Make an Enderite hoe: costly optional dedication.
+	"mainmod:mastery/social/unreasonable_hours": 20, // Visit every unreasonable-hour window: quirky multi-session challenge.
+	"mainmod:mastery/social/streak_30": 5, // Maintain one month: meaningful habit without overpaying attendance.
+	"mainmod:mastery/social/streak_100": 15, // Maintain one hundred days: long-term consistency.
+	"mainmod:mastery/social/streak_150": 20, // Maintain one hundred and fifty days: long-term consistency.
+	"mainmod:mastery/social/streak_200": 25, // Maintain two hundred days: difficult but passive progression.
+	"mainmod:mastery/social/streak_250": 30, // Maintain two hundred and fifty days: difficult but passive progression.
+	"mainmod:mastery/social/streak_300": 40, // Maintain three hundred days: near-complete server-year consistency.
+	"mainmod:mastery/social/streak_365": 50, // Maintain the full server-year streak: maximum feasible consistency.
+	"mainmod:mastery/social/full_dailies_30": 10, // Complete a month of full daily sets: varied sustained play.
+	"mainmod:mastery/social/full_dailies_50": 15, // Complete fifty full daily sets: varied sustained play.
+	"mainmod:mastery/social/full_dailies_75": 20, // Complete seventy-five full daily sets: varied sustained play.
+	"mainmod:mastery/social/full_dailies_100": 25, // Complete one hundred full daily sets: major sustained play.
+	"mainmod:mastery/social/full_dailies_150": 35, // Complete one hundred and fifty full daily sets: major sustained play.
+	"mainmod:mastery/social/full_dailies_200": 45, // Complete two hundred full daily sets: major sustained play.
+	"mainmod:mastery/social/full_dailies_250": 55, // Complete two hundred and fifty full daily sets: major sustained play.
+	"mainmod:mastery/social/full_dailies_300": 65, // Complete three hundred full daily sets: near-complete server-year devotion.
+	"mainmod:mastery/social/full_dailies_365": 75, // Complete a full server year of daily sets: extreme varied completion.
+	"mainmod:mastery/social/claim_10": 5, // Own ten chunks: costly but mostly economic progression.
+	"mainmod:mastery/social/claim_12": 5, // Own twelve chunks: costly but mostly economic progression.
+	"mainmod:mastery/social/claim_15": 10, // Own the practical maximum of fifteen chunks.
+	"mainmod:mastery/sniffers/bred_1000": 5, // Breed one thousand sniffers: small acknowledgement for a tedious goal.
+	"mainmod:mastery/sniffers/bred_5000": 10, // Breed five thousand sniffers: capped reward for an extreme grind.
+	"mainmod:mastery/sniffers/bred_10000": 15, // Breed ten thousand sniffers: capped reward to avoid encouraging the grind.
+	"mainmod:mastery/social/pay_to_win": 100, // Pay to Win: become a society member and receive the advertised reward.
 }

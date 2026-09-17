@@ -105,6 +105,8 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
             player.sendSystemMessage(message);
 
             if (response.getUnlocked()) {
+                response.getMasteryAdvancementPathsList()
+                        .forEach(path -> uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements.grant(player, path));
                 FakeItem unlockedItem = FakeItems.ID_MAP.get(response.getUnlockedId());
                 ItemStack animationItem = unlockedItem != null ? unlockedItem.createItemStack() : stack;
                 UnlockBookAnimation.play(player, animationItem);

@@ -197,6 +197,24 @@ export class PlayersService {
 
 		const savedProfile = this.profiles.get(target.id);
 		await this.synchronizePlayerPresentation(target.id);
+		if (
+			savedProfile.preferredName &&
+			savedProfile.pronouns &&
+			savedProfile.courseYear &&
+			savedProfile.discordUsername &&
+			savedProfile.bio &&
+			savedProfile.base.x !== null &&
+			savedProfile.base.y !== null &&
+			savedProfile.base.z !== null
+		) {
+			void this.minecraft
+				.tryGrantAdvancement(
+					target.minecraft_uuid,
+					target.minecraft_username,
+					'social/full_profile',
+				)
+				.catch(() => undefined);
+		}
 
 		return {
 			ok: true,

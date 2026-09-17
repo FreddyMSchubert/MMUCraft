@@ -235,6 +235,21 @@ export class GameplayGrpcService implements OnModuleInit {
 			has_cosmetics_to_unlock: availability.cosmetics,
 			read_reward_dabloons:
 				unlockType === 'knowledge' ? this.knowledge.readRewardDabloons : 0,
+			unlocked_count:
+				'unlocked_count' in result && typeof result.unlocked_count === 'number'
+					? result.unlocked_count
+					: 0,
+			unlock_total:
+				'unlock_total' in result && typeof result.unlock_total === 'number'
+					? result.unlock_total
+					: 0,
+			mastery_advancement_paths:
+				'mastery_advancement_paths' in result &&
+				Array.isArray(result.mastery_advancement_paths)
+					? result.mastery_advancement_paths.filter(
+							(path): path is string => typeof path === 'string',
+						)
+					: [],
 		});
 	}
 

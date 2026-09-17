@@ -264,6 +264,7 @@ public class CharmsManager
                 default -> null;
             };
             if (potion != null) {
+                MasteryAdvancements.grant(player, "utility/use_potion");
                 MasteryAdvancements.grant(player, "potions/" + potion);
                 MasteryAdvancements.grantIfAll(player, "utility/all_potions",
                         "potions/returning", "potions/displacement", "potions/insomnia", "potions/resonance");
@@ -335,7 +336,7 @@ public class CharmsManager
                 if (instance.charm() instanceof EnderChestStaffCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/staff_ender_chest");
                 if (instance.charm() instanceof WrenchCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/wrench");
                 MasteryAdvancements.grantIfAll((ServerPlayer) player, "utility/all_staves",
-                        "utility/staff_crafting", "utility/staff_ender_chest");
+                        "utility/staff_crafting", "utility/staff_ender_chest", "utility/staff_brolly");
             }
             return result;
         }

@@ -23,6 +23,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailySimpleEvent;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 
@@ -104,6 +105,7 @@ public final class JokeCharm implements Charm, UseCallbackCharm {
         open(player, "Joke Book", getOrCreateJoke(stack));
         if (generated) {
             DailyTaskManager.record(player, DailyTaskEvent.simple(DailySimpleEvent.READ_NEW_JOKE));
+            MasteryAdvancements.recordNewJoke(player);
         }
         return InteractionResult.SUCCESS;
     }

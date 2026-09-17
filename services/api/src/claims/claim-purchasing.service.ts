@@ -95,7 +95,7 @@ export class ClaimPurchasingService {
 		}
 
 		await this.minecraftSynchronization.synchronize();
-		for (const milestone of [1, 5, 10, 25, 50, 100]) {
+		for (const milestone of [1, 3, 5, 7, 10, 12, 15]) {
 			if (nextClaimNumber >= milestone) {
 				void this.minecraft
 					.tryGrantAdvancement(null, user.minecraftUsername, `social/claim_${milestone}`)

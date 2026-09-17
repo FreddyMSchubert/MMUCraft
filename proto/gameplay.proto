@@ -352,6 +352,9 @@ message UnlockNextKnowledgeResponse {
   bool has_charms_to_unlock = 10;
   bool has_cosmetics_to_unlock = 11;
   int32 read_reward_dabloons = 12;
+  int32 unlocked_count = 13;
+  int32 unlock_total = 14;
+  repeated string mastery_advancement_paths = 15;
 }
 
 message GetKnowledgeTipRequest {

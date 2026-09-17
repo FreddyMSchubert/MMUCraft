@@ -38,6 +38,19 @@ public final class AdvancementMoney {
         if (advancementId != null) {
             Integer mappedReward = advancementRewards.get(advancementId.toString());
             if (mappedReward != null) return mappedReward;
+            String id = advancementId.toString();
+            String longestPrefix = "";
+            int wildcardReward = 0;
+            for (Map.Entry<String, Integer> entry : advancementRewards.entrySet()) {
+                String key = entry.getKey();
+                if (!key.endsWith("*")) continue;
+                String prefix = key.substring(0, key.length() - 1);
+                if (prefix.length() > longestPrefix.length() && id.startsWith(prefix)) {
+                    longestPrefix = prefix;
+                    wildcardReward = entry.getValue();
+                }
+            }
+            if (!longestPrefix.isEmpty()) return wildcardReward;
         }
 
         return 0;

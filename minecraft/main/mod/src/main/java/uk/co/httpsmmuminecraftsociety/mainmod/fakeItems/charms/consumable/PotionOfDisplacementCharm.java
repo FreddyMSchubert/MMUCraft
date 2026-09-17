@@ -14,7 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
@@ -30,14 +29,17 @@ import java.util.concurrent.CompletableFuture;
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm, TickCallbackCharm
 {
     private static final int MIN_SEARCH_TICKS = 5 * 20;
-    private static final int MAX_SEARCH_TICKS = 20 * 20;
+    private static final int MAX_SEARCH_TICKS = 10 * 20;
     private static final TicketType SEARCH_TICKET = new TicketType(MAX_SEARCH_TICKS + 20L, TicketType.FLAG_LOADING);
     private static final Map<UUID, SearchSession> SEARCHES = new HashMap<>();
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {
         SearchSession session = SEARCHES.get(player.getUUID());
-        if (session != null && (session.level != level || elapsedTicks <= session.lastElapsedTicks)) {
+        if (session != null && (
+                session.level != level
+                        || player.getUseItemRemainingTicks() > session.lastRemainingUseTicks
+        )) {
             stopSearch(player.getUUID());
             session = null;
         }
@@ -55,7 +57,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             SEARCHES.put(player.getUUID(), session);
         }
 
-        session.lastElapsedTicks = elapsedTicks;
+        session.lastRemainingUseTicks = player.getUseItemRemainingTicks();
         advanceSearch(session);
     }
 
@@ -68,7 +70,11 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             int charmLevel
     ) {
         SearchSession session = SEARCHES.get(player.getUUID());
-        return elapsedTicks >= MIN_SEARCH_TICKS && session != null && session.destination != null;
+        if (session == null) return false;
+
+        int searchTicks = searchTicks(session);
+        return searchTicks >= MAX_SEARCH_TICKS
+                || (searchTicks >= MIN_SEARCH_TICKS && session.destination != null);
     }
 
     @Override
@@ -80,9 +86,6 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         }
 
         if (session == null || session.destination == null) {
-            player.sendSystemMessage(Component.literal(
-                    "The Potion of Displacement could not find a safe, dry destination within 20 seconds."
-            ));
             stopSearch(player.getUUID());
             return false;
         }
@@ -177,9 +180,8 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             CompletableFuture<?> loading = session.level.getChunkSource()
                     .addTicketAndLoadWithRadius(SEARCH_TICKET, chunkPos, 0);
             return new Candidate(candidatePos.getX(), candidatePos.getZ(), chunkPos, loading);
-        } catch (RuntimeException exception) {
+        } catch (RuntimeException ignored) {
             session.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, chunkPos, 0);
-            MainMod.LOGGER.warn("Could not schedule a displacement-potion destination chunk", exception);
             return null;
         }
     }
@@ -258,13 +260,19 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         session.candidate = null;
     }
 
+    private static int searchTicks(SearchSession session) {
+        long ticks = session.level.getGameTime() - session.startedAtGameTime + 1L;
+        return (int) Math.max(0L, Math.min(Integer.MAX_VALUE, ticks));
+    }
+
     private record Candidate(int x, int z, ChunkPos chunkPos, CompletableFuture<?> loading) {}
 
     private static final class SearchSession {
         private final ServerLevel level;
         private final BlockPos origin;
         private final int radius;
-        private int lastElapsedTicks = -1;
+        private final long startedAtGameTime;
+        private int lastRemainingUseTicks;
         private Candidate candidate;
         private BlockPos destination;
 
@@ -272,6 +280,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             this.level = level;
             this.origin = origin;
             this.radius = radius;
+            this.startedAtGameTime = level.getGameTime();
         }
     }
 }

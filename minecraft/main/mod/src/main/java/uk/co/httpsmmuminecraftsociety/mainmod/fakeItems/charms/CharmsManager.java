@@ -32,6 +32,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderChar
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.KnowledgeBookCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.ShopUnlockBookCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.ConsumableItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyCharm;
@@ -127,6 +128,7 @@ public class CharmsManager
         List<CharmInstance> charms = getCharmInstances(stack);
         if (charms.isEmpty()) return false;
 
+        refreshDisplacementConsumable(stack, charms);
         CharmorManager.refreshArmorCharmAppearance(stack);
 
         for (CharmInstance instance : charms) {
@@ -140,6 +142,21 @@ public class CharmsManager
             }
         }
         return true;
+    }
+
+    private static void refreshDisplacementConsumable(ItemStack stack, List<CharmInstance> charms) {
+        for (CharmInstance charm : charms) {
+            if (!(charm.charm() instanceof PotionOfDisplacementCharm)) continue;
+
+            ConsumableItemFeature expected = charm.fakeItem().getFeature(ConsumableItemFeature.class);
+            if (expected == null) continue;
+
+            Consumable current = stack.get(DataComponents.CONSUMABLE);
+            if (current == null || Float.compare(current.consumeSeconds(), expected.consumeSeconds()) != 0) {
+                expected.apply(stack);
+            }
+            return;
+        }
     }
 
     public static void refreshInventory(ServerPlayer player) {
@@ -283,6 +300,9 @@ public class CharmsManager
         ItemStack stack = player.getItemInHand(interactionHand);
         List<CharmInstance> instances = getCharmInstances(stack);
         if (instances.isEmpty()) return null;
+
+        // Item stacks persist their components, so migrate old consumable durations before vanilla starts using one.
+        refreshDisplacementConsumable(stack, instances);
 
         for (CharmInstance instance : instances) {
             if (instance.isBroken()) continue;

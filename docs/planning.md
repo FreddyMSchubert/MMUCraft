@@ -17,6 +17,7 @@ Sunday (Welcoming Drop):
 - Screenshot: kitty pajamas, bunny ears (baby mobs nearby)
 - Cosmetics theme - animal stuff, pets, crows, cats, dogs, hoods including eeyore
 - slime detector
+- mini blocks
 
 ## Week 2
 
@@ -45,7 +46,7 @@ Sunday (Imaginative Drop):
 - Tease that Nether unlocks next week
 - Begin Halloween Event, frame everything this drop as helpful for building
 - Wrench & InvisiCarrot
-- 16x16 maps feature TODO
+- 16x16 maps feature
 - Charms: Spider Pajamas & Cave Spider Pajamas
 - Screenshot: wrench, builder helmet (build under construction, maybe toolbench deco block?)
 

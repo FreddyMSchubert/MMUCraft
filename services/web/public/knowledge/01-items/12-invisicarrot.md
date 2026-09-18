@@ -30,6 +30,10 @@ Using invisi-carrots, you can create invisible item frames yourself. To craft th
 [Golden Carrot](https://minecraft.wiki/w/Golden_Carrot) x8 · [Fermented Spider Eye](https://minecraft.wiki/w/Fermented_Spider_Eye) → Invisi-Carrot x8
 :::
 
+## Usage
+
 Just right-click them on an item frame, and it will turn invisible!
+
+![Application example](/assets/knowledge/items/invisicarrots/apply_example.png)
 
 To undo the spell, just break the item frame.

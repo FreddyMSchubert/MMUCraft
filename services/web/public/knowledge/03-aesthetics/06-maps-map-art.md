@@ -3,6 +3,7 @@ id: maps-map-art
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on how to make smaller maps than usual, and how to make them transparent (great for map art).
 sidebarTitle: Maps & Map Art
+gameplayToggle: imaginative
 tags:
 - pixel
 - 16

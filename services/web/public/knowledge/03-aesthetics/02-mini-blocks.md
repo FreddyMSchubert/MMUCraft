@@ -3,6 +3,7 @@ id: mini-blocks
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on Mini Blocks - a cute and super versatile decoration option.
 sidebarTitle: Mini Blocks
+gameplayToggle: welcoming
 tags:
 - miniblocks
 - mini bloks

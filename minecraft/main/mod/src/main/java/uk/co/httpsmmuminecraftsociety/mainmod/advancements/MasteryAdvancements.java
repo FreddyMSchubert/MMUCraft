@@ -96,6 +96,7 @@ public final class MasteryAdvancements {
         grantMilestones(player, "mmuCosmeticsBought", "cosmetics/buy_", new int[]{1, 5, 10, 20, 30, 40, 50, 75, 100});
         if (itemId.startsWith("cosmetic-")) grant(player, "cosmetics/item/" + itemId.substring(9));
         switch (itemId) {
+            case "cosmetic-amogus" -> grant(player, "cosmetics/amogus");
             case "cosmetic-dog-pet-hat" -> grant(player, "cosmetics/good_boy");
             case "cosmetic-academic-hat" -> grant(player, "cosmetics/academic_hat");
             case "cosmetic-villager-nose" -> grant(player, "cosmetics/villager_nose");
@@ -120,7 +121,8 @@ public final class MasteryAdvancements {
                 "cosmetics/sombreron",
                 "cosmetics/sombreronn");
         long cosmeticTotal = FakeItems.ALL.stream()
-                .filter(item -> item.getFeature(EquippableCosmeticItemFeature.class) != null)
+                .filter(item -> item.shopPurchasable()
+                        && item.getFeature(EquippableCosmeticItemFeature.class) != null)
                 .count();
         Objective objective = player.level().getServer().getScoreboard().getObjective("mmuCosmeticsBought");
         if (objective != null && player.level().getServer().getScoreboard()

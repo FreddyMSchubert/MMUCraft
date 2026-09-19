@@ -41,7 +41,14 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
     @Override
     public void generateAdvancement(HolderLookup.Provider registries, Consumer<AdvancementHolder> consumer) {
         defineAdvancements();
-        for (String path : definitions.keySet()) save(path, consumer);
+        for (String path : definitions.keySet()) {
+            int depth = 0;
+            for (String current = path; current != null; current = definitions.get(current).parent) {
+                if (++depth > 12) throw new IllegalStateException("Mastery branch exceeds 12 levels: " + path);
+                if (!definitions.containsKey(current)) throw new IllegalStateException("Unknown mastery parent: " + current);
+            }
+            save(path, consumer);
+        }
     }
 
     private AdvancementHolder save(String path, Consumer<AdvancementHolder> consumer) {
@@ -108,6 +115,18 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
             add(path, title + " " + value, description.replace("%s", Integer.toString(value)), icon,
                     previous, value >= 100 ? "challenge" : value >= 10 ? "goal" : "task");
             previous = path;
+        }
+    }
+
+    private void reparent(String path, String parent) {
+        Definition definition = definitions.get(path);
+        definitions.put(path, new Definition(parent, definition.title, definition.description, definition.icon, definition.frame));
+    }
+
+    private void line(String parent, String... paths) {
+        for (String path : paths) {
+            reparent(path, parent);
+            parent = path;
         }
     }
 
@@ -226,7 +245,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("social/full_profile", "Known Quantity", "Fill in every field on your player profile.", "minecraft:name_tag", "root", "goal");
         add("knowledge/read_all", "Omniscient", "Read every knowledge page.", "fake:charm-knowledge-book", "knowledge/read_20", "challenge");
         add("social/join_insane_hour", "The Ungodly Hour", "Join at an ungodly hour (between 2 a.m. and 7 a.m. British time).", "minecraft:clock", "root", "task");
-        add("social/unreasonable_hours", "What Is Sleep?", "Join during every one-hour window from 2 a.m. to 7 a.m. British time.", "minecraft:clock:glint", "social/join_insane_hour", "challenge");
+        add("social/unreasonable_hours", "What Is Sleep?", "Join during every one-hour window from 2 a.m. to 7 a.m. British time.", "minecraft:clock:glint", "social/join_6", "challenge");
         add("food/sushi", "Freshly Rolled", "Eat Sushi (craft it with any fish and kelp).", "fake:sushi", "fishing/first_catch", "task");
         add("food/beer", "Cheers!", "Drink beer.", "fake:beer", "root", "task");
         add("food/beer_again", "Hair of the Dog", "Drink beer while already under its effects.", "fake:beer", "food/beer", "goal");
@@ -261,11 +280,13 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         }
         chain("knowledge/read", new int[]{1, 3, 5, 10, 15, 20}, "Well Read", "Read %s knowledge pages.", "fake:charm-knowledge-book", "root");
         chain("social/claim", new int[]{1, 3, 5, 7, 10, 12, 15}, "Landowner", "Reach %s claimed chunks.", "minecraft:map", "root");
-        chain("social/streak", new int[]{1, 2, 3, 5, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365}, "Login Streak", "Reach a %s-day login streak.", "minecraft:fire_charge", "root");
-        chain("social/full_dailies", new int[]{1, 3, 5, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365}, "Daily Devotion", "Fully complete dailies on %s days.", "minecraft:clock", "social/daily_1");
-        chain("sniffers/bred", new int[]{1, 3, 5, 10, 20, 30, 50, 100, 200, 500, 1000, 5000, 10000}, "Sniffer Population", "Breed %s sniffers.", "minecraft:sniffer_egg", "root");
+        chain("social/streak", new int[]{1, 2, 3, 5, 7, 10, 14, 30, 50, 75, 100}, "Login Streak", "Reach a %s-day login streak.", "minecraft:fire_charge", "root");
+        chain("social/full_dailies", new int[]{1, 3, 5, 7, 10, 14, 30, 50, 75, 100}, "Daily Devotion", "Fully complete dailies on %s days.", "minecraft:clock", "social/daily_1");
+        chain("sniffers/bred", new int[]{1, 3, 5, 10, 20, 50, 100, 200, 500, 1000, 10000}, "Sniffer Population", "Breed %s sniffers.", "minecraft:sniffer_egg", "root");
+        add("sniffers/control_1", "Population Control", "Kill one sniffer.", "minecraft:iron_sword", "sniffers/bred_1", "task");
+        add("sniffers/control_3", "Population Control 3", "Kill three sniffers.", "minecraft:iron_sword", "sniffers/bred_3", "goal");
         chain("utility/jokes", new int[]{1, 3, 5}, "Critic", "Review Joke Books: %s completed.", "fake:charm-joke-book", "root");
-        int[] coinValues = {1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000};
+        int[] coinValues = {1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000};
         String coinParent = "utility/wallet";
         for (int value : coinValues) {
             String path = "coins/hold_" + value;
@@ -273,9 +294,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     coinParent, value >= 100000 ? "challenge" : "task");
             coinParent = path;
         }
-        chain("money/balance", new int[]{50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
-                1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000,
-                7500, 8000, 8500, 9000, 9500, 10000, 100000, 1000000},
+        chain("money/balance", new int[]{100, 500, 1000, 5000, 10000, 100000, 1000000},
                 "Liquid Assets", "Hold %s Dabloons at once.", "fake:charm-wallet", "utility/wallet");
         String[] backpacks = {"leather", "ingot", "magic", "bejeweled", "withered", "endless"};
         String backpackParent = "root";
@@ -286,10 +305,12 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     i >= 4 ? "goal" : "task");
             backpackParent = "backpacks/" + tier;
         }
+        String hourParent = "social/join_insane_hour";
         for (int hour = 2; hour <= 6; hour++) {
             add("social/join_" + hour, hour + " a.m. Club",
                     "Join between " + hour + " a.m. and " + (hour + 1) + " a.m. British time.",
-                    "minecraft:clock", "social/join_insane_hour", "goal");
+                    "minecraft:clock", hourParent, "goal");
+            hourParent = "social/join_" + hour;
         }
         for (String potion : new String[]{"returning", "displacement", "insomnia", "resonance"}) {
             add("potions/" + potion, "Potion of " + Character.toUpperCase(potion.charAt(0)) + potion.substring(1),
@@ -303,12 +324,21 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         }
         add("fishing/special_condition", "There's a Time and a Plaice", "Catch a fish that needs a special condition to spawn.",
                 "minecraft:compass", "fishing/first_catch", "goal");
-        for (FishSpawnTag tag : FishSpawnTag.values()) {
+        String conditionParent = "fishing/special_condition";
+        for (FishSpawnTag tag : new FishSpawnTag[]{FishSpawnTag.RIVER, FishSpawnTag.OCEAN, FishSpawnTag.DAY,
+                FishSpawnTag.NIGHT, FishSpawnTag.DEEP, FishSpawnTag.RAINY, FishSpawnTag.THUNDERSTORM,
+                FishSpawnTag.FULLMOON, FishSpawnTag.NEWMOON}) {
             String name = tag.name().toLowerCase(java.util.Locale.ROOT);
             add("fishing/condition/" + name, conditionTitle(tag),
                     "Catch a fish that requires the " + name + " condition.", "minecraft:compass",
-                    "fishing/special_condition", "goal");
+                    conditionParent, "goal");
+            conditionParent = "fishing/condition/" + name;
         }
+        line("fishing/common", "fishing/acoustic_bass", "fishing/goldfish", "fishing/vampire_carp",
+                "fishing/thundering_bass", "fishing/swordfish");
+        line("fishing/uncommon", "fishing/rainbow_trout", "fishing/galaxy_starfish", "fishing/thunderfin", "fishing/skyfish");
+        line("fishing/rare", "fishing/baguette_fish", "fishing/nebula_swordfish", "fishing/witchfish");
+        line("fishing/epic", "fishing/freddy_fish", "fishing/charged_thunderfin");
         FakeItems.FISH.entrySet().stream().filter(entry ->
                 entry.getValue().personality().rarity().ordinal() >= FishRarity.LEGENDARY.ordinal()
                         && !entry.getKey().id().equals("fish-matrix_fish")
@@ -319,6 +349,12 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     "Catch a " + entry.getKey().title() + ".", "fake:" + entry.getKey().id(),
                     "fishing/" + rarity, "challenge");
         });
+        line("fishing/legendary", "fishing/matrix_fish", "fishing/species/legendary/divine_catfish",
+                "fishing/species/legendary/divine_jellyfish", "fishing/species/legendary/golden_swordfish",
+                "fishing/species/legendary/nullfin");
+        line("fishing/legendary", "fishing/species/legendary/pandafish", "fishing/species/legendary/windfish");
+        line("fishing/mythical", "fishing/spook_fish", "fishing/species/mythical/coelacanth",
+                "fishing/species/mythical/golden_fish");
         FakeItems.ALL.stream().filter(item -> item.shopPurchasable()
                         && item.getFeature(EquippableCosmeticItemFeature.class) != null)
                 .sorted(java.util.Comparator.comparing(item -> item.id())).forEach(item -> {
@@ -328,6 +364,20 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                                 "Buy the " + item.title() + ".", "fake:" + item.id(), "cosmetics/buy_1", "task");
                     }
                 });
+        line("cosmetics/buy_1", "cosmetics/amogus", "cosmetics/villager_nose", "cosmetics/fletcher_hat",
+                "cosmetics/good_boy", "cosmetics/academic_hat", "cosmetics/straw_hat_farmer",
+                "cosmetics/straw_hat_sun", "cosmetics/posh_squid");
+        line("cosmetics/buy_1", "cosmetics/retro_helmet", "cosmetics/trans_bee_hood", "cosmetics/sombrero",
+                "cosmetics/sombreron", "cosmetics/sombreronn", "cosmetics/crown_techno",
+                "cosmetics/crown_royal", "cosmetics/crown_ornate");
+        String cosmeticParent = "cosmetics/buy_1";
+        int cosmeticCount = 0;
+        for (String path : List.copyOf(definitions.keySet())) {
+            if (!path.startsWith("cosmetics/item/")) continue;
+            reparent(path, cosmeticParent);
+            cosmeticParent = path;
+            if (++cosmeticCount % 8 == 0) cosmeticParent = "cosmetics/buy_1";
+        }
     }
 
     private static String cosmeticTitle(String id) {

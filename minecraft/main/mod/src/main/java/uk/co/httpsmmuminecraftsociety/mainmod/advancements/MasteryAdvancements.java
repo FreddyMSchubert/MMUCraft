@@ -33,7 +33,7 @@ public final class MasteryAdvancements {
     private static final ZoneId BRITISH_TIME = ZoneId.of("Europe/London");
     private static final int[] COLLECTION_MILESTONES = {1, 3, 5, 10, 15, 20};
     private static final Set<String> BACKPACKS = Set.of("leather", "ingot", "magic", "bejeweled", "withered", "endless");
-    private static final int[] SNIFFER_MILESTONES = {1, 3, 5, 10, 20, 30, 50, 100, 200, 500, 1000, 5000, 10000};
+    private static final int[] SNIFFER_MILESTONES = {1, 3, 5, 10, 20, 50, 100, 200, 500, 1000, 10000};
     private MasteryAdvancements() {}
 
     public static boolean grant(ServerPlayer player, String path) {
@@ -87,6 +87,10 @@ public final class MasteryAdvancements {
         grantMilestones(player, "mmuSniffers", "sniffers/bred_", SNIFFER_MILESTONES);
     }
 
+    public static void recordSnifferKill(ServerPlayer player) {
+        grantMilestones(player, "mmuSnifferKills", "sniffers/control_", new int[]{1, 3});
+    }
+
     public static void recordCharmUpgrade(ServerPlayer player) {
         grantMilestones(player, "mmuCharmUpgrades", "charms/upgrade_", new int[]{3, 5, 10, 15, 20});
     }
@@ -132,9 +136,7 @@ public final class MasteryAdvancements {
     }
 
     public static void checkBalance(ServerPlayer player, int balance) {
-        for (int value : new int[]{50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
-                1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000,
-                7500, 8000, 8500, 9000, 9500, 10000, 100000, 1000000}) {
+        for (int value : new int[]{100, 500, 1000, 5000, 10000, 100000, 1000000}) {
             if (balance >= value) grant(player, "money/balance_" + value);
         }
     }
@@ -222,7 +224,7 @@ public final class MasteryAdvancements {
         if (enderiteScrap >= 4) grant(player, "enderite/scrap_4");
         if (fakeIds.contains("enderite-ingot")) grant(player, "enderite/ingot");
         if (fakeIds.contains("enderite-upgrade-smithing-template")) grant(player, "enderite/template");
-        for (int value : new int[]{1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000}) {
+        for (int value : new int[]{1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000}) {
             if (fakeIds.contains("coin-" + value)) grant(player, "coins/hold_" + value);
         }
         if (isCatCosmetic(player.getMainHandItem())

@@ -1,19 +1,19 @@
 {
 	"title": "Bunny Ears",
 	"id": "cosmetic-bunny-ears",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Lets you become ear-resistable"
-	],
+	"tooltips": ["Lets you become ear-resistable"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": false,
-	"priceDabloons": 40	,
+		"priceDabloons": 40,
 		"description": "",
 		"unlockWeight": 80,
 		"unlockMessage": "Unlocked cosmetic: Bunny Ears.",
-		"tags": ["cute","bunny","rabbit","bnuy","bnnuy","hare","ears","white","pink","bun"]
+		"tags": ["cute", "bunny", "rabbit", "bnuy", "bnnuy", "hare", "ears", "white", "pink", "bun"]
 	},
 	"equippableCosmetic": {}
 }

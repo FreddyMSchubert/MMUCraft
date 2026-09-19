@@ -22,6 +22,9 @@
 		"id": {
 			"$ref": "#/$defs/resourceIdentifier"
 		},
+		"drop": {
+			"$ref": "#/$defs/resourceIdentifier"
+		},
 		"baseItemOverride": {
 			"$ref": "#/$defs/namespacedResourceIdentifier"
 		},

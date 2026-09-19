@@ -1,15 +1,15 @@
 {
 	"title": "Skull Hat",
 	"id": "cosmetic-skull",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Sourced from last the committe"
-	],
+	"tooltips": ["Sourced from last the committe"],
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
-	"priceDabloons": 125,
+		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Skull Hat."

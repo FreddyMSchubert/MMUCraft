@@ -1,6 +1,7 @@
 import type { PlayerEmoji } from '@/components/player-name';
 
 export type AdminSection =
+	| 'drops'
 	| 'members'
 	| 'announcements'
 	| 'emojis'
@@ -109,7 +110,8 @@ export interface SigninAttemptLogEntry {
 export const ADMIN_PAGE_SIZE = 42;
 
 export function normalizeAdminSection(section: string | undefined): AdminSection {
-	return section === 'emojis' ||
+	return section === 'drops' ||
+		section === 'emojis' ||
 		section === 'announcements' ||
 		section === 'claims' ||
 		section === 'server-claims' ||

@@ -17,7 +17,10 @@ const TOGGLE_ORDER = [
 	'imaginative',
 	'circus',
 	'inventors',
-	'overpowered',
+	'beach-party',
+	'cold',
+	'jolly',
+	'christmas',
 ] as const;
 
 function toggleTitle(key: string) {

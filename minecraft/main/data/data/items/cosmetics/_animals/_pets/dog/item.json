@@ -1,17 +1,19 @@
 {
 	"title": "Dog Pet Hat",
 	"id": "cosmetic-dog-pet-hat",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,
 	"tooltips": ["A very good boy."],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": true,
 		"priceDabloons": 300,
 		"description": "",
 		"unlockWeight": 4,
 		"unlockMessage": "Unlocked cosmetic: Dog Pet Hat.",
-		"tags": ["dog","cute","pet","animated","wolf","gray","grey"]
+		"tags": ["dog", "cute", "pet", "animated", "wolf", "gray", "grey"]
 	},
 	"equippableCosmetic": {}
 }

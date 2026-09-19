@@ -1,6 +1,7 @@
 {
 	"title": "Aviator Hat",
 	"id": "cosmetic-aviator-hat",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
@@ -8,8 +9,9 @@
 		"Unfortunately, the goggles are glued to the top - you'll just have to close your eyes while flying I suppose."
 	],
 	"shopPurchasable": {
+		"gameplayToggle": "soaring",
 		"membersOnly": false,
-	    "priceDabloons": 142,
+		"priceDabloons": 142,
 		"description": "",
 		"unlockWeight": 42,
 		"unlockMessage": "Unlocked cosmetic: Aviator Hat."

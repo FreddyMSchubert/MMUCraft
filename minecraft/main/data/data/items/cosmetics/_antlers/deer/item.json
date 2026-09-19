@@ -1,13 +1,11 @@
 {
 	"title": "Deer Antlers",
 	"id": "cosmetic-deer-antlers",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Oh deer, you look amazing!"],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
 		"membersOnly": false,
 		"priceDabloons": 42,
 		"description": "",

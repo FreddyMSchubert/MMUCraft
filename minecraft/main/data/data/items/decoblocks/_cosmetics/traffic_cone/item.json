@@ -1,7 +1,7 @@
 {
 	"title": "Traffic Cone Hat",
 	"id": "cosmetic-traffic-cone",
-	"drop": "imaginative",
+	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

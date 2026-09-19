@@ -1,15 +1,15 @@
 {
 	"title": "Cardboard Box",
 	"id": "cosmetic-cardboard-box",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 16,
-	"tooltips": [
-		"Big fish, little fish"
-	],
+	"tooltips": ["Big fish, little fish"],
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
-	"priceDabloons": 1,
+		"priceDabloons": 1,
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "If I could have given it away any cheaper - I would have."

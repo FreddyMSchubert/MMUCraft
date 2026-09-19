@@ -1,12 +1,11 @@
 {
 	"title": "Kettle",
 	"id": "deco-kettle",
+	"drop": "imaginative",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"I think these just spawn in british houses"
-	],
+	"tooltips": ["I think these just spawn in british houses"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,

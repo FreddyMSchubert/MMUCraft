@@ -1,13 +1,13 @@
 {
 	"title": "Small Frog",
 	"id": "cosmetic-frog-small",
-	"drop": "welcoming",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": ["Why did the frog go to the hospital?", "He needed a hop-eration!"],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
+		"gameplayToggle": "imaginative",
 		"membersOnly": true,
 		"priceDabloons": 175,
 		"description": "",

@@ -1,13 +1,13 @@
 {
 	"title": "Snow Biotope Hat",
 	"id": "cosmetic-snow-biotope-hat",
-	"drop": "cold",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"gameplayToggle": "cold",
+		"gameplayToggle": "soaring",
 		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "",

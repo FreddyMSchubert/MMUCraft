@@ -1,13 +1,11 @@
 {
 	"title": "Chicken Hat",
 	"id": "cosmetic-chicken",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Why did the chicken cross the road?"],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
 		"membersOnly": false,
 		"priceDabloons": 25,
 		"description": "",

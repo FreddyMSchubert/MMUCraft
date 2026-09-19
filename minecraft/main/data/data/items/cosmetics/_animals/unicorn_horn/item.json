@@ -1,13 +1,13 @@
 {
 	"title": "Unicorn Horn",
 	"id": "cosmetic-unicorn-horn",
-	"drop": "welcoming",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,
 	"tooltips": ["Reality called - I ignored it for magic!!!"],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
+		"gameplayToggle": "soaring",
 		"membersOnly": true,
 		"priceDabloons": 267,
 		"description": "",

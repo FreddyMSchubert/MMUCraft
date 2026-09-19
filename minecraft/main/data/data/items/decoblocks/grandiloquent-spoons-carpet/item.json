@@ -1,12 +1,11 @@
 {
 	"title": "Grandiloquent Spoons Carpet",
 	"id": "deco-spoons-carpet-grandiloquent",
+	"drop": "nether",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"An unassailable monument of textile supremacy."
-	],
+	"tooltips": ["An unassailable monument of textile supremacy."],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,

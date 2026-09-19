@@ -1,15 +1,15 @@
 {
 	"title": "Cowboy Hat",
 	"id": "cosmetic-cowboy-hat",
+	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"You're a wanted cosmetic, Cowboy Hat"
-	],
+	"tooltips": ["You're a wanted cosmetic, Cowboy Hat"],
 	"shopPurchasable": {
+		"gameplayToggle": "circus",
 		"membersOnly": false,
-	"priceDabloons": 75,
+		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Cowboy Hat."

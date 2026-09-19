@@ -1,6 +1,6 @@
 {
 	"type": "mainmod:fake_crafting_shapeless",
-	"gameplayToggle": "christmas",
+	"gameplayToggle": "imaginative",
 	"ingredients": ["minecraft:firefly_bush", "minecraft:glass_bottle"],
 	"result": {
 		"stack": "mainmod:deco-firefly-jar",

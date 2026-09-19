@@ -1,12 +1,11 @@
 {
 	"title": "Cheese Hat",
 	"id": "cosmetic-cheese",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Religious cheese"
-	],
+	"tooltips": ["Religious cheese"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,6 +14,7 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
 		"priceDabloons": 35,
 		"description": "",

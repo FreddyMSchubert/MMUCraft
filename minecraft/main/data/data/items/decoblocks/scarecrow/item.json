@@ -1,7 +1,7 @@
 {
 	"title": "Scarecrow",
 	"id": "deco-scarecrow",
-	"drop": "imaginative",
+	"drop": "soaring",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,

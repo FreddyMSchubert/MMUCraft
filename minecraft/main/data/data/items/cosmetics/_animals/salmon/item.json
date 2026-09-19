@@ -1,13 +1,13 @@
 {
 	"title": "Salmon Hat",
 	"id": "cosmetic-salmon",
-	"drop": "welcoming",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Might be a bit late to toss it back"],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
 		"priceDabloons": 42,
 		"description": "",

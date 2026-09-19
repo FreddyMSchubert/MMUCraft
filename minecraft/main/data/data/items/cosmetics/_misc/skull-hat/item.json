@@ -1,13 +1,13 @@
 {
 	"title": "Skull Hat",
 	"id": "cosmetic-skull",
-	"drop": "nether",
+	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": ["Sourced from last the committe"],
 	"shopPurchasable": {
-		"gameplayToggle": "nether",
+		"gameplayToggle": "circus",
 		"membersOnly": false,
 		"priceDabloons": 125,
 		"description": "",

@@ -1,13 +1,13 @@
 {
 	"title": "Wyrm Skull",
 	"id": "cosmetic-wyrm-skull",
-	"drop": "welcoming",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": ["I would write a joke here, but it would just drag-on"],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
+		"gameplayToggle": "nether",
 		"membersOnly": false,
 		"priceDabloons": 125,
 		"description": "",

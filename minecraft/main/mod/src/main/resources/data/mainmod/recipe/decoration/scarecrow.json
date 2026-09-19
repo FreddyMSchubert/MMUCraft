@@ -1,6 +1,6 @@
 {
 	"type": "mainmod:fake_crafting_shaped",
-	"gameplayToggle": "imaginative",
+	"gameplayToggle": "soaring",
 	"pattern": [" P ", "SHS", " S "],
 	"key": {
 		"P": "minecraft:pumpkin",

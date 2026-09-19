@@ -1,19 +1,18 @@
 {
 	"title": "Frankenstein Screws",
 	"id": "cosmetic-frankenstein-screws",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Electrifying looks!"
-	],
+	"tooltips": ["Electrifying looks!"],
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
-	"priceDabloons": 75,
+		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Frankenstein Screws - very spooky.",
-        "gameplayToggle": "imaginative"
+		"unlockMessage": "Unlocked cosmetic: Frankenstein Screws - very spooky."
 	},
 	"equippableCosmetic": {}
 }

@@ -1,6 +1,6 @@
 {
 	"type": "mainmod:fake_crafting_shaped",
-	"gameplayToggle": "welcoming",
+	"gameplayToggle": "imaginative",
 	"pattern": [" B ", "FSF", " B "],
 	"key": {
 		"F": "minecraft:feather",

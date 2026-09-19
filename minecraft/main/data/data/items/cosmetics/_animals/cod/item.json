@@ -1,13 +1,13 @@
 {
 	"title": "Cod Hat",
 	"id": "cosmetic-cod",
-	"drop": "welcoming",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Actually makes you smell better"],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
 		"priceDabloons": 42,
 		"description": "",

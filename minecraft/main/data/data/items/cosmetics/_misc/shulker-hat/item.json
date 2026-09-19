@@ -7,12 +7,12 @@
 	"maxStackSize": 1,
 	"tooltips": ["Come out of your shell at bit more"],
 	"shopPurchasable": {
+		"gameplayToggle": "void",
 		"membersOnly": true,
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Shulker Hat.",
-		"gameplayToggle": "void"
+		"unlockMessage": "Unlocked cosmetic: Shulker Hat."
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

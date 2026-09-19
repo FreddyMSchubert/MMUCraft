@@ -111,7 +111,7 @@ Sunday (Beach Party Drop):
 
 Surprising Saturday: Skyblock
 
-Sunday Update:
+Sunday Update (Void Drop):
 - End
 - Enderite
 - Note to get into particle trails if you haven't checked them out yet

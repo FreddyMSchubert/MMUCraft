@@ -11,7 +11,7 @@ interface FeatureToggle {
 
 const TOGGLE_ORDER = [
 	'nether',
-	'end',
+	'void',
 	'welcoming',
 	'soaring',
 	'imaginative',

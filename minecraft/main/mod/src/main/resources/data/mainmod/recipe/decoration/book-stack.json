@@ -1,0 +1,13 @@
+{
+  "type": "mainmod:fake_crafting_shapeless",
+  "ingredients": [
+    "minecraft:book",
+    "minecraft:book",
+    "minecraft:book",
+    "minecraft:book"
+  ],
+  "result": {
+    "stack": "mainmod:cosmetic-book-stack",
+    "count": 1
+  }
+}

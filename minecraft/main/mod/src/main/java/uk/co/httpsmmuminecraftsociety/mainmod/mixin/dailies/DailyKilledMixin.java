@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 @Mixin(KilledTrigger.class)
 public abstract class DailyKilledMixin {
@@ -25,6 +26,7 @@ public abstract class DailyKilledMixin {
 
         String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(victim.getType()).toString();
         DailyTaskManager.record(player, DailyTaskEvent.of(DailyTaskEvent.Type.KILL_ENTITY, entityId));
+        if (entityId.equals("minecraft:sniffer")) MasteryAdvancements.recordSnifferKill(player);
 
         if (source.getDirectEntity() != null && source.getDirectEntity().getType() == net.minecraft.world.entity.EntityTypes.FIREWORK_ROCKET) {
             DailyTaskManager.record(player, new DailyTaskEvent(

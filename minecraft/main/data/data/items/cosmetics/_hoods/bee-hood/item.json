@@ -1,15 +1,15 @@
 {
 	"title": "Bee hood",
 	"id": "cosmetic-hood-bee",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Become part of the hive-mind"
-	],
+	"tooltips": ["Become part of the hive-mind"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": false,
-	"priceDabloons": 150,
+		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Bee hood."

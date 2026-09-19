@@ -1,12 +1,11 @@
 {
 	"title": "Crow",
 	"id": "deco-crow",
+	"drop": "welcoming",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"Caw! Caw!"
-	],
+	"tooltips": ["Caw! Caw!"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,

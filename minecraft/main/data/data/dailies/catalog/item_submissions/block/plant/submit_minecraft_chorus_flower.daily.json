@@ -1,7 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:chorus_flower",
-	"drop": "end",
+	"drop": "void",
 	"baseCost": 5,
 	"rewardPerIteration": 0.5,
 	"minimum": 2,

@@ -1,15 +1,15 @@
 {
 	"title": "Unicorn Horn",
 	"id": "cosmetic-unicorn-horn",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Reality called - I ignored it for magic!!!"
-	],
+	"tooltips": ["Reality called - I ignored it for magic!!!"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": true,
-	"priceDabloons": 267,
+		"priceDabloons": 267,
 		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Unicorn Horn."

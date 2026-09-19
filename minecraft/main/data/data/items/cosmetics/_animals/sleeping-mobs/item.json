@@ -1,15 +1,15 @@
 {
 	"title": "Sleeping Mobs",
 	"id": "cosmetic-sleeping-mobs",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"An un-bee-lievably comfy place to sleep"
-	],
+	"tooltips": ["An un-bee-lievably comfy place to sleep"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": false,
-	"priceDabloons": 100,
+		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,
 		"unlockMessage": "Unlocked cosmetic: Sleeping Mobs."

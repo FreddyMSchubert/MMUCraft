@@ -1,17 +1,19 @@
 {
 	"title": "Siamese Cat Pet Hat",
 	"id": "cosmetic-siamese-cat-pet-hat",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": true,
 		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Siamese Cat Pet Hat.",
-		"tags": ["cat","cute","pet","white","gray","grey","black","siamese","animated"]
+		"tags": ["cat", "cute", "pet", "white", "gray", "grey", "black", "siamese", "animated"]
 	},
 	"equippableCosmetic": {}
 }

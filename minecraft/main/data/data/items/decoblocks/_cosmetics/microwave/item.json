@@ -1,12 +1,11 @@
 {
 	"title": "Microwave",
 	"id": "cosmetic-microwave",
+	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"You spin me right round"
-	],
+	"tooltips": ["You spin me right round"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,6 +14,7 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "inventors",
 		"membersOnly": true,
 		"priceDabloons": 35,
 		"description": "",

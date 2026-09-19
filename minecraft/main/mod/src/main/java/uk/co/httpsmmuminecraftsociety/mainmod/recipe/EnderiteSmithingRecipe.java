@@ -25,7 +25,7 @@ public final class EnderiteSmithingRecipe extends SimpleSmithingRecipe {
     private static final String TEMPLATE_FAKE_ITEM_ID = "enderite-upgrade-smithing-template";
     private static final String INGOT_FAKE_ITEM_ID = "enderite-ingot";
 
-    private static final Ingredient TEMPLATE_INGREDIENT = Ingredient.of(Items.COMMAND_BLOCK);
+    private static final Ingredient TEMPLATE_INGREDIENT = Ingredient.of(Items.HEART_OF_THE_SEA, Items.COMMAND_BLOCK);
     private static final Ingredient BASE_INGREDIENT = Ingredient.of(
             Items.NETHERITE_HELMET,
             Items.NETHERITE_CHESTPLATE,
@@ -38,7 +38,7 @@ public final class EnderiteSmithingRecipe extends SimpleSmithingRecipe {
             Items.NETHERITE_SHOVEL,
             Items.NETHERITE_HOE
     );
-    private static final Ingredient ADDITION_INGREDIENT = Ingredient.of(Items.COMMAND_BLOCK);
+    private static final Ingredient ADDITION_INGREDIENT = Ingredient.of(Items.HEART_OF_THE_SEA, Items.COMMAND_BLOCK);
 
     public EnderiteSmithingRecipe() {
         super(new Recipe.CommonInfo(false));

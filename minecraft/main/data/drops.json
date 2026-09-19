@@ -1,0 +1,74 @@
+[
+	{
+		"id": "welcoming",
+		"name": "Welcoming",
+		"date": "2026-10-04",
+		"description": "Animal cosmetics, pets, slime detector and mini blocks."
+	},
+	{
+		"id": "soaring",
+		"name": "Soaring",
+		"date": "2026-10-11",
+		"description": "Gliders, particle trails, phantom summoning and airborne adventures."
+	},
+	{
+		"id": "imaginative",
+		"name": "Imaginative",
+		"date": "2026-10-18",
+		"description": "Building tools, map art and the start of the Halloween building event."
+	},
+	{
+		"id": "nether",
+		"name": "Hellish",
+		"date": "2026-10-25",
+		"description": "The Nether, flexible portals and Halloween cosmetics."
+	},
+	{
+		"id": "circus",
+		"name": "Circus",
+		"date": "2026-11-01",
+		"description": "Playful charms, costumes and hopcorn."
+	},
+	{
+		"id": "inventors",
+		"name": "Inventors",
+		"date": "2026-11-08",
+		"description": "Item filters, storage systems and bow attachments."
+	},
+	{
+		"id": "beach-party",
+		"name": "Beach Party",
+		"date": "2026-11-15",
+		"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms."
+	},
+	{
+		"id": "void",
+		"name": "Void",
+		"date": "2026-11-22",
+		"description": "The End opens with Enderite and End City exploration."
+	},
+	{
+		"id": "unthemed",
+		"name": "Unthemed",
+		"date": "2026-11-29",
+		"description": "A week without a fixed theme, ahead of the Christmas season."
+	},
+	{
+		"id": "cold",
+		"name": "Cold",
+		"date": "2026-12-06",
+		"description": "The Christmas event and Advent Calendar begin."
+	},
+	{
+		"id": "jolly",
+		"name": "Jolly",
+		"date": "2026-12-13",
+		"description": "The second week of the Christmas event."
+	},
+	{
+		"id": "christmas",
+		"name": "Christmas",
+		"date": "2026-12-20",
+		"description": "Christmas gifts and decorations; the event ends this week."
+	}
+]

@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Two guys with a dream"
-	],
+	"tooltips": ["Two guys with a dream"],
 	"shopPurchasable": {
 		"membersOnly": true,
-	"priceDabloons": 50,
+		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Beanie."
+		"unlockMessage": "Unlocked cosmetic: Beanie.",
+		"tags": ["knit", "woolly"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

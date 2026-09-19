@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Deer Antlers."
+		"unlockMessage": "Unlocked cosmetic: Deer Antlers.",
+		"tags": ["reindeer", "stag"]
 	},
 	"equippableCosmetic": {}
 }

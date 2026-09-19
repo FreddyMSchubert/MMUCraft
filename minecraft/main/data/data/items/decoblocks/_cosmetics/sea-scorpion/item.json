@@ -19,7 +19,8 @@
 		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 42,
-		"unlockMessage": "Unlocked cosmetic: Sea Scorpion."
+		"unlockMessage": "Unlocked cosmetic: Sea Scorpion.",
+		"tags": ["eurypterid", "fossil"]
 	},
 	"equippableCosmetic": {}
 }

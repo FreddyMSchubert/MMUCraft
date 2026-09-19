@@ -19,7 +19,8 @@
 		"priceDabloons": 15,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Big Mushroom."
+		"unlockMessage": "Unlocked cosmetic: Big Mushroom.",
+		"tags": ["fungus", "toadstool"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

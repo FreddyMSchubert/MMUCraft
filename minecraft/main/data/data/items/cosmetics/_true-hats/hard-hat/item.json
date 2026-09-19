@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 69,
-		"unlockMessage": "Unlocked cosmetic: Hard Hat."
+		"unlockMessage": "Unlocked cosmetic: Hard Hat.",
+		"tags": ["construction", "builder"]
 	},
 	"equippableCosmetic": {}
 }

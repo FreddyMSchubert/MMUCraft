@@ -12,7 +12,8 @@
 		"priceDabloons": 85,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Unlocked cosmetic: Halo."
+		"unlockMessage": "Unlocked cosmetic: Halo.",
+		"tags": ["angel"]
 	},
 	"equippableCosmetic": {}
 }

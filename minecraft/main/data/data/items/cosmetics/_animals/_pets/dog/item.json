@@ -13,7 +13,7 @@
 		"description": "",
 		"unlockWeight": 4,
 		"unlockMessage": "Unlocked cosmetic: Dog Pet Hat.",
-		"tags": ["dog", "cute", "pet", "animated", "wolf", "gray", "grey"]
+		"tags": ["dog", "cute", "pet", "animated", "wolf", "gray", "grey", "puppy"]
 	},
 	"equippableCosmetic": {}
 }

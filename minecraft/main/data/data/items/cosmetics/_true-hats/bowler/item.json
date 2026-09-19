@@ -12,7 +12,8 @@
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 68,
-		"unlockMessage": "Unlocked cosmetic: Bowler Hat."
+		"unlockMessage": "Unlocked cosmetic: Bowler Hat.",
+		"tags": ["derby"]
 	},
 	"equippableCosmetic": {}
 }

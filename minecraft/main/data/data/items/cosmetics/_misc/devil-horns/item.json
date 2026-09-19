@@ -12,7 +12,8 @@
 		"priceDabloons": 90,
 		"description": "",
 		"unlockWeight": 65,
-		"unlockMessage": "Unlocked cosmetic: Devil Horns."
+		"unlockMessage": "Unlocked cosmetic: Devil Horns.",
+		"tags": ["demon"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

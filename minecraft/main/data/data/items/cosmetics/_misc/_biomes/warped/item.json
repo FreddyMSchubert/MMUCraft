@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 20,
-		"unlockMessage": "Unlocked cosmetic: Warped Biotope Hat."
+		"unlockMessage": "Unlocked cosmetic: Warped Biotope Hat.",
+		"tags": ["warped forest", "nether"]
 	},
 	"equippableCosmetic": {}
 }

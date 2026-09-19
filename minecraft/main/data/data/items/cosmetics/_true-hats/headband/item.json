@@ -4,17 +4,17 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-	],
+	"tooltips": [],
 	"shopPurchasable": {
 		"membersOnly": true,
-	    "priceDabloons": 30,
+		"priceDabloons": 30,
 		"description": "",
 		"unlockWeight": 60,
-		"unlockMessage": "Unlocked cosmetic: Headband."
+		"unlockMessage": "Unlocked cosmetic: Headband.",
+		"tags": ["hairband"]
 	},
 	"equippableCosmetic": {},
-    "dyeable": {
+	"dyeable": {
 		"tintColor": "#ff0000"
 	}
 }

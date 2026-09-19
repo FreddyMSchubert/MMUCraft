@@ -19,7 +19,8 @@
 		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Pumpkin Hat."
+		"unlockMessage": "Unlocked cosmetic: Pumpkin Hat.",
+		"tags": ["jack o lantern", "halloween"]
 	},
 	"equippableCosmetic": {}
 }

@@ -10,7 +10,8 @@
 		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 70,
-		"unlockMessage": "Unlocked cosmetic: Camel hood."
+		"unlockMessage": "Unlocked cosmetic: Camel hood.",
+		"tags": ["desert"]
 	},
 	"equippableCosmetic": {}
 }

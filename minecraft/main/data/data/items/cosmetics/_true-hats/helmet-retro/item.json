@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Retro Helmet."
+		"unlockMessage": "Unlocked cosmetic: Retro Helmet.",
+		"tags": ["vintage", "scooter"]
 	},
 	"equippableCosmetic": {}
 }

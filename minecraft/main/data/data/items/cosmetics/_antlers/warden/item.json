@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Warden Antlers - very spooky."
+		"unlockMessage": "Unlocked cosmetic: Warden Antlers - very spooky.",
+		"tags": ["sculk", "deep dark"]
 	},
 	"equippableCosmetic": {}
 }

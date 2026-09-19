@@ -19,7 +19,8 @@
 		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Book Stack."
+		"unlockMessage": "Unlocked cosmetic: Book Stack.",
+		"tags": ["reading", "library"]
 	},
 	"equippableCosmetic": {}
 }

@@ -12,7 +12,8 @@
 		"priceDabloons": 350,
 		"description": "",
 		"unlockWeight": 1,
-		"unlockMessage": "Unlocked cosmetic: Inventor's Tophat."
+		"unlockMessage": "Unlocked cosmetic: Inventor's Tophat.",
+		"tags": ["top hat", "scientist"]
 	},
 	"equippableCosmetic": {}
 }

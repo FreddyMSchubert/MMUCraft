@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Witch Hat."
+		"unlockMessage": "Unlocked cosmetic: Witch Hat.",
+		"tags": ["wizard", "magic"]
 	},
 	"equippableCosmetic": {}
 }

@@ -12,7 +12,8 @@
 		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Unlocked cosmetic: Fazbear Head."
+		"unlockMessage": "Unlocked cosmetic: Fazbear Head.",
+		"tags": ["freddy", "fnaf"]
 	},
 	"equippableCosmetic": {}
 }

@@ -19,7 +19,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,
-		"unlockMessage": "Unlocked cosmetic: Fishbowl."
+		"unlockMessage": "Unlocked cosmetic: Fishbowl.",
+		"tags": ["aquarium"]
 	},
 	"equippableCosmetic": {}
 }

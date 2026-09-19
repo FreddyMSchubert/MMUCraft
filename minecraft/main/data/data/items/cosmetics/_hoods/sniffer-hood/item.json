@@ -12,7 +12,8 @@
 		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 42,
-		"unlockMessage": "Unlocked cosmetic: Sniffer Hood."
+		"unlockMessage": "Unlocked cosmetic: Sniffer Hood.",
+		"tags": ["ancient mob"]
 	},
 	"equippableCosmetic": {}
 }

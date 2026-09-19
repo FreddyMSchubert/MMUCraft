@@ -12,7 +12,8 @@
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 65,
-		"unlockMessage": "Unlocked cosmetic: Chick Stack."
+		"unlockMessage": "Unlocked cosmetic: Chick Stack.",
+		"tags": ["chicks", "chicken"]
 	},
 	"equippableCosmetic": {}
 }

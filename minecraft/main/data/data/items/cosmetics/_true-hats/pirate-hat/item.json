@@ -12,7 +12,8 @@
 		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Pirate Hat."
+		"unlockMessage": "Unlocked cosmetic: Pirate Hat.",
+		"tags": ["buccaneer", "corsair"]
 	},
 	"equippableCosmetic": {}
 }

@@ -19,7 +19,8 @@
 		"priceDabloons": 20,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Unlocked cosmetic: Fire."
+		"unlockMessage": "Unlocked cosmetic: Fire.",
+		"tags": ["flames", "burning"]
 	},
 	"equippableCosmetic": {}
 }

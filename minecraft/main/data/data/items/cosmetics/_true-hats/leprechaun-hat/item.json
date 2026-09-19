@@ -12,7 +12,8 @@
 		"priceDabloons": 140,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Leprechaun Hat."
+		"unlockMessage": "Unlocked cosmetic: Leprechaun Hat.",
+		"tags": ["leprichaun", "shamrock"]
 	},
 	"equippableCosmetic": {}
 }

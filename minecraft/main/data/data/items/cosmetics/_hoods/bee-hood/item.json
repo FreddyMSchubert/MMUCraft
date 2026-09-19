@@ -12,7 +12,8 @@
 		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Bee hood."
+		"unlockMessage": "Unlocked cosmetic: Bee hood.",
+		"tags": ["bee costume", "insect"]
 	},
 	"equippableCosmetic": {}
 }

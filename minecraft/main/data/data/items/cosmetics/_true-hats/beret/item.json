@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"The sign of a true fashionista"
-	],
+	"tooltips": ["The sign of a true fashionista"],
 	"shopPurchasable": {
 		"membersOnly": true,
-	"priceDabloons": 50,
+		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 90,
-		"unlockMessage": "Unlocked cosmetic: Beret."
+		"unlockMessage": "Unlocked cosmetic: Beret.",
+		"tags": ["french", "artist"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

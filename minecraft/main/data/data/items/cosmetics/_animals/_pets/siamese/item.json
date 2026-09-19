@@ -13,7 +13,19 @@
 		"description": "",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Siamese Cat Pet Hat.",
-		"tags": ["cat", "cute", "pet", "white", "gray", "grey", "black", "siamese", "animated"]
+		"tags": [
+			"cat",
+			"cute",
+			"pet",
+			"white",
+			"gray",
+			"grey",
+			"black",
+			"siamese",
+			"animated",
+			"kitten",
+			"kitty"
+		]
 	},
 	"equippableCosmetic": {}
 }

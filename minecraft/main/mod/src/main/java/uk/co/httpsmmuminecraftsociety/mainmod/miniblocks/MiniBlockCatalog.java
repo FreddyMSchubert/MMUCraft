@@ -4,8 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +33,14 @@ public final class MiniBlockCatalog {
 
     public static List<MiniBlockDefinition> definitions() {
         return DEFINITIONS;
+    }
+
+    public static boolean isMiniBlockOutput(ItemStack stack) {
+        var name = stack.get(DataComponents.ITEM_NAME);
+        return stack.is(Items.PLAYER_HEAD)
+                && stack.getCount() == MiniBlockDefinition.OUTPUT_COUNT
+                && name != null
+                && DEFINITIONS.stream().anyMatch(definition -> definition.name().equals(name.getString()));
     }
 
     public static Optional<MiniBlockDefinition> find(String id) {

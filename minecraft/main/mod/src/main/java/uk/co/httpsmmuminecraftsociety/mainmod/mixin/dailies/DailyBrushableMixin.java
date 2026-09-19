@@ -15,12 +15,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 @Mixin(BrushableBlockEntity.class)
 public abstract class DailyBrushableMixin {
     @Shadow private int brushCount;
+    @Shadow private ItemStack item;
     @Unique private int mainmod$previousBrushCount;
     @Unique private String mainmod$brushedBlock = "";
+    @Unique private boolean mainmod$fishingModifier;
 
     @Inject(method = "brush", at = @At("HEAD"))
     private void mainmod$captureBrush(
@@ -33,6 +37,10 @@ public abstract class DailyBrushableMixin {
     ) {
         mainmod$previousBrushCount = brushCount;
         mainmod$brushedBlock = BuiltInRegistries.BLOCK.getKey(((BrushableBlockEntity)(Object)this).getBlockState().getBlock()).toString();
+        mainmod$fishingModifier = FakeItems.isSpecificFakeItem(item, "worms")
+                || FakeItems.isSpecificFakeItem(item, "golden-worms")
+                || FakeItems.isSpecificFakeItem(item, "item-magnet")
+                || FakeItems.isSpecificFakeItem(item, "golden-item-magnet");
     }
 
     @Inject(method = "brush", at = @At("RETURN"))
@@ -46,6 +54,9 @@ public abstract class DailyBrushableMixin {
     ) {
         if (user instanceof ServerPlayer player && brushCount > mainmod$previousBrushCount) {
             DailyTaskManager.record(player, DailyTaskEvent.of(DailyTaskEvent.Type.BRUSH_BLOCK, mainmod$brushedBlock));
+        }
+        if (user instanceof ServerPlayer player && Boolean.TRUE.equals(cir.getReturnValue()) && mainmod$fishingModifier) {
+            MasteryAdvancements.grant(player, "fishing/brush_modifier");
         }
     }
 }

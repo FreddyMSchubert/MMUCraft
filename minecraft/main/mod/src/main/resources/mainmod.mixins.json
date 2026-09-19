@@ -45,6 +45,8 @@
 		"GrindstoneRemoveEnchantmentLock",
 		"VillagerTradesMixin",
 		"MiniBlockWanderingTraderMixin",
+		"MiniBlockStonecutterMixin",
+		"MiniBlockMerchantContainerMixin",
 		"anvilRework.AnvilMenuMixin",
 		"anvilRework.AbstractContainerMenuInvoker",
 		"anvilRework.ItemCombinerMenuAccessor",

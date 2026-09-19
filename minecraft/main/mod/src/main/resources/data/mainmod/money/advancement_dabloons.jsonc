@@ -1340,6 +1340,8 @@
 	"mainmod:mastery/fishing/full_compendium": 100, // Complete the full fish compendium: major varied completion goal.
 	"mainmod:mastery/fishing/legendary": 10, // Catch a legendary fish: exciting low-probability catch.
 	"mainmod:mastery/fishing/mythical": 25, // Catch a mythical fish: exceptional low-probability catch.
+	"mainmod:mastery/fishing/species/legendary/*": 20, // Catch one specific legendary fish.
+	"mainmod:mastery/fishing/species/mythical/*": 35, // Catch one specific mythical fish.
 	"mainmod:mastery/fishing/rainbow_trout": 3, // Catch the selected uncommon Rainbow Trout: a small targeted fishing reward.
 	"mainmod:mastery/fishing/galaxy_starfish": 3, // Catch the selected uncommon Galaxy Starfish: a small targeted fishing reward.
 	"mainmod:mastery/fishing/thunderfin": 3, // Catch the selected uncommon Thunderfin: a small targeted fishing reward.
@@ -1367,12 +1369,14 @@
 	"mainmod:mastery/utility/all_potions": 15, // Use every custom potion: varied mechanics rather than raw grind.
 	"mainmod:mastery/utility/all_staves": 10, // Use all three utility staffs: small themed collection challenge.
 	"mainmod:mastery/utility/sculk_phial_full": 10, // Fill a Sculk Phial: moderate XP investment.
+	"mainmod:mastery/utility/no_slime_bars": 5, // Find a location with no slime signal.
 	"mainmod:mastery/utility/soulbound_recovery_compass": 5, // Soulbind a Recovery Compass: deliberate useful combination.
 	"mainmod:mastery/utility/full_speed_minecart": 10, // Reach full minecart speed: build and execute a track setup.
 	"mainmod:mastery/utility/max_reach_beacon": 25, // Build a 200-block beacon: expensive construction challenge.
 	"mainmod:mastery/glider/updraft": 5, // Ride a heat updraft: deliberate glider technique.
 	"mainmod:mastery/glider/amethyst_ring": 20, // Thread an amethyst ring: skill-based flight challenge.
 	"mainmod:mastery/enderite/scrap": 5, // Obtain Enderite Scrap: uncommon End progression.
+	"mainmod:mastery/enderite/scrap_4": 5, // Gather enough Enderite Scrap for one ingot.
 	"mainmod:mastery/enderite/ingot": 10, // Make an Enderite Ingot: meaningful material milestone.
 	"mainmod:mastery/enderite/template": 10, // Obtain the Enderite template: deliberate progression gate.
 	"mainmod:mastery/enderite/armor": 60, // Complete Enderite armour: expensive late-game equipment goal.
@@ -1389,11 +1393,13 @@
 	"mainmod:mastery/social/streak_250": 150, // Maintain two hundred and fifty days: difficult but passive progression.
 	"mainmod:mastery/social/streak_300": 200, // Maintain three hundred days: near-complete server-year consistency.
 	"mainmod:mastery/social/streak_365": 250, // Maintain the full server year: maximum feasible consistency.
-	"mainmod:mastery/social/full_dailies_5": 5, // Complete five full daily sets: the first rewarded active milestone.
-	"mainmod:mastery/social/full_dailies_7": 10, // Complete one week of full daily sets: sustained varied play.
-	"mainmod:mastery/social/full_dailies_10": 15, // Complete ten full daily sets: sustained varied play.
-	"mainmod:mastery/social/full_dailies_14": 25, // Complete two weeks of full daily sets: sustained varied play.
-	"mainmod:mastery/social/full_dailies_30": 50, // Complete one month of full daily sets: demanding, varied sustained play.
+	"mainmod:mastery/social/full_dailies_1": 10, // Complete all daily tasks for one day.
+	"mainmod:mastery/social/full_dailies_3": 15, // Complete all daily tasks on three days.
+	"mainmod:mastery/social/full_dailies_5": 20, // Complete all daily tasks on five days.
+	"mainmod:mastery/social/full_dailies_7": 30, // Complete all daily tasks on seven days.
+	"mainmod:mastery/social/full_dailies_10": 35, // Complete all daily tasks on ten days.
+	"mainmod:mastery/social/full_dailies_14": 45, // Complete all daily tasks on fourteen days.
+	"mainmod:mastery/social/full_dailies_30": 75, // Complete all daily tasks on thirty days.
 	"mainmod:mastery/social/full_dailies_50": 75, // Complete fifty full daily sets: major varied sustained play.
 	"mainmod:mastery/social/full_dailies_75": 100, // Complete seventy-five full daily sets: major varied sustained play.
 	"mainmod:mastery/social/full_dailies_100": 150, // Complete one hundred full daily sets: major varied sustained play.
@@ -1418,5 +1424,7 @@
 	"mainmod:mastery/sniffers/bred_1000": 35, // Breed one thousand Sniffers: a capped reward for an extreme grind.
 	"mainmod:mastery/sniffers/bred_5000": 40, // Breed five thousand Sniffers: the reward stays capped to avoid encouraging the grind.
 	"mainmod:mastery/sniffers/bred_10000": 50, // Breed ten thousand Sniffers: final acknowledgement without making the grind optimal.
-	"mainmod:mastery/social/pay_to_win": 100, // Pay to Win: become a society member and receive the advertised reward.
+	"mainmod:mastery/backpacks/withered": 10, // Craft a Withered Backpack.
+	"mainmod:mastery/backpacks/endless": 20, // Craft an Endless Backpack.
+	"mainmod:mastery/social/pay_to_win": 100, // Become a member and receive the advertised reward.
 }

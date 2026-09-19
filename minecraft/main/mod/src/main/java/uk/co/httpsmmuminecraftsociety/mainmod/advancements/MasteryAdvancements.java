@@ -93,7 +93,8 @@ public final class MasteryAdvancements {
 
     public static void recordCosmeticPurchase(ServerPlayer player, String rarity, String itemId) {
         grant(player, "cosmetics/buy_" + rarity.toLowerCase(java.util.Locale.ROOT));
-        grantMilestones(player, "mmuCosmeticsBought", "cosmetics/buy_", new int[]{1, 5, 10, 20, 50, 100});
+        grantMilestones(player, "mmuCosmeticsBought", "cosmetics/buy_", new int[]{1, 5, 10, 20, 30, 40, 50, 75, 100});
+        if (itemId.startsWith("cosmetic-")) grant(player, "cosmetics/item/" + itemId.substring(9));
         switch (itemId) {
             case "cosmetic-dog-pet-hat" -> grant(player, "cosmetics/good_boy");
             case "cosmetic-academic-hat" -> grant(player, "cosmetics/academic_hat");
@@ -129,7 +130,9 @@ public final class MasteryAdvancements {
     }
 
     public static void checkBalance(ServerPlayer player, int balance) {
-        for (int value : new int[]{100, 1000, 10000, 100000, 1000000}) {
+        for (int value : new int[]{50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
+                1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000,
+                7500, 8000, 8500, 9000, 9500, 10000, 100000, 1000000}) {
             if (balance >= value) grant(player, "money/balance_" + value);
         }
     }
@@ -165,6 +168,7 @@ public final class MasteryAdvancements {
         boolean enderiteChestplate = false;
         boolean enderiteLeggings = false;
         boolean enderiteBoots = false;
+        int enderiteScrap = 0;
 
         for (ItemStack stack : player.getInventory()) {
             if (stack.is(Items.ELYTRA) && !GliderCharm.isGlider(stack)) {
@@ -186,6 +190,7 @@ public final class MasteryAdvancements {
             FakeItem fakeItem = FakeItems.ID_MAP.get(id);
             if (fakeItem == null) continue;
             fakeIds.add(id);
+            if (id.equals("enderite-scrap")) enderiteScrap += stack.getCount();
             if (fakeItem.getFeature(EquippableCharmItemFeature.class) != null) {
                 CharmsManager.getCharmInstances(stack).forEach(charm -> {
                     charmIds.add(charm.charmId());
@@ -212,9 +217,10 @@ public final class MasteryAdvancements {
             if (fakeIds.contains("charm-" + tier + "-backpack")) grant(player, "backpacks/" + tier);
         }
         if (fakeIds.contains("enderite-scrap")) grant(player, "enderite/scrap");
+        if (enderiteScrap >= 4) grant(player, "enderite/scrap_4");
         if (fakeIds.contains("enderite-ingot")) grant(player, "enderite/ingot");
         if (fakeIds.contains("enderite-upgrade-smithing-template")) grant(player, "enderite/template");
-        for (int value : new int[]{1, 10, 100, 1000, 10000, 100000, 1000000}) {
+        for (int value : new int[]{1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000}) {
             if (fakeIds.contains("coin-" + value)) grant(player, "coins/hold_" + value);
         }
         if (isCatCosmetic(player.getMainHandItem())

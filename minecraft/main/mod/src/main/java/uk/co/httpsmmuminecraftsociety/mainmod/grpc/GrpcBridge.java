@@ -89,7 +89,7 @@ public final class GrpcBridge {
         }
     }
 
-    static MinecraftServer minecraftServer() {
+    public static MinecraftServer minecraftServer() {
         return minecraftServer;
     }
 

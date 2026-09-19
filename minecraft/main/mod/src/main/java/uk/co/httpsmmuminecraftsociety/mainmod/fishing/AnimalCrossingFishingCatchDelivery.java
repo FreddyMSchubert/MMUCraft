@@ -29,7 +29,7 @@ public final class AnimalCrossingFishingCatchDelivery {
         ItemStack result = FishingCatches.claimDrop(player, catchResult, hook.getRandom());
         CriteriaTriggers.FISHING_ROD_HOOKED.trigger(player, fishingRod, hook, List.of(result));
         FishingCatches.catchMessage(result).ifPresent(player::sendOverlayMessage);
-        FishingCatches.trackCatch(player, result);
+        FishingCatches.trackCatch(player, result, hook.blockPosition());
 
         ItemEntity itemEntity = new ItemEntity(level, hook.getX(), hook.getY(), hook.getZ(), result.copy());
         double dx = player.getX() - hook.getX();

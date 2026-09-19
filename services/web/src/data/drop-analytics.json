@@ -43,8 +43,8 @@
 			"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms."
 		},
 		{
-			"id": "end",
-			"name": "The End",
+			"id": "void",
+			"name": "Void",
 			"date": "2026-11-22",
 			"description": "The End opens with Enderite and End City exploration."
 		},
@@ -526,7 +526,7 @@
 			"id": "cosmetic-shulker",
 			"name": "Shulker Hat",
 			"type": "cosmetic",
-			"drop": "end",
+			"drop": "void",
 			"shopPurchasable": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/shulker-hat/item.json"
 		},
@@ -1424,7 +1424,7 @@
 			"id": "enderite",
 			"name": "Enderite",
 			"type": "knowledge",
-			"drop": "end",
+			"drop": "void",
 			"public": false,
 			"source": "services/web/public/knowledge/02-survival/05-enderite.md"
 		},

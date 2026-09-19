@@ -1,7 +1,7 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:shulker",
-	"drop": "end",
+	"drop": "void",
 	"baseCost": 8,
 	"rewardPerIteration": 1.5,
 	"minimum": 2,

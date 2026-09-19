@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 public final class FeatureToggles {
     public static final String NETHER = "nether";
-    public static final String END = "end";
+    public static final String VOID = "void";
     public static final String WELCOMING = "welcoming";
 
     private static volatile Map<String, Boolean> values = Map.of();

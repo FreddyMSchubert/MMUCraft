@@ -1,7 +1,7 @@
 {
 	"type": "receive_effect",
 	"effect": "minecraft:levitation",
-	"drop": "end",
+	"drop": "void",
 	"baseCost": 8,
 	"rewardPerIteration": 2,
 	"minimum": 1,

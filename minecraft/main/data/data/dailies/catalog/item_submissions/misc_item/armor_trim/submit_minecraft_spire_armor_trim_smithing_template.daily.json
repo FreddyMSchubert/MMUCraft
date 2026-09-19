@@ -1,7 +1,7 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:spire_armor_trim_smithing_template",
-	"drop": "end",
+	"drop": "void",
 	"baseCost": 7,
 	"rewardPerIteration": 7,
 	"minimum": 1,

@@ -15,8 +15,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.DyedItemColor;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DyeableItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCosmeticItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishRarity;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishSpawnTag;
@@ -68,10 +70,13 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
             String fakeId = spec.substring(5);
             boolean fullPhial = fakeId.equals("charm-sculk-phial-full");
             if (fullPhial) fakeId = "charm-sculk-phial";
+            var fakeItem = FakeItems.requireFakeItem(fakeId);
             components.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
                     fullPhial ? List.of(1395.0F) : List.of(), List.of(), List.of(fakeId), List.of()));
+            DyeableItemFeature dyeable = fakeItem.getFeature(DyeableItemFeature.class);
+            if (dyeable != null) components.set(DataComponents.DYED_COLOR, new DyedItemColor(dyeable.dyeColor()));
             if (glint) components.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
-            return new ItemStackTemplate(FakeItems.requireFakeItem(fakeId).baseItem(), components.build());
+            return new ItemStackTemplate(fakeItem.baseItem(), components.build());
         }
         String vanillaId = spec.startsWith("enderite:") ? "minecraft:" + spec.substring(9) : spec;
         if (spec.startsWith("enderite:")) {
@@ -110,11 +115,11 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("root", "MMU Mastery", "Master every corner of MMUCraft.", "fake:deco-mmu-dirt", null, "task");
         add("fishing/first_catch", "Something's Fishy", "Catch a fish.", "minecraft:fishing_rod", "root", "task");
         add("fishing/common", "Common Catch", "Catch a common fish.", "minecraft:fishing_rod", "fishing/first_catch", "task");
-        add("fishing/uncommon", "Uncommon Catch", "Catch an uncommon fish.", "minecraft:fishing_rod", "fishing/first_catch", "task");
-        add("fishing/rare", "Rare Catch", "Catch a rare fish.", "minecraft:fishing_rod", "fishing/first_catch", "goal");
-        add("fishing/epic", "Epic Catch", "Catch an epic fish.", "minecraft:fishing_rod", "fishing/first_catch", "goal");
-        add("fishing/legendary", "Legendary Catch", "Catch a legendary fish.", "minecraft:fishing_rod", "fishing/first_catch", "challenge");
-        add("fishing/mythical", "Mythical Catch", "Catch a mythical fish.", "minecraft:fishing_rod", "fishing/first_catch", "challenge");
+        add("fishing/uncommon", "Uncommon Catch", "Catch an uncommon fish.", "minecraft:fishing_rod", "fishing/common", "task");
+        add("fishing/rare", "Rare Catch", "Catch a rare fish.", "minecraft:fishing_rod", "fishing/uncommon", "goal");
+        add("fishing/epic", "Epic Catch", "Catch an epic fish.", "minecraft:fishing_rod", "fishing/rare", "goal");
+        add("fishing/legendary", "Legendary Catch", "Catch a legendary fish.", "minecraft:fishing_rod", "fishing/epic", "challenge");
+        add("fishing/mythical", "Mythical Catch", "Catch a mythical fish.", "minecraft:fishing_rod", "fishing/legendary", "challenge");
         add("fishing/acoustic_bass", "Unplugged", "Catch an Acoustic Bass.", "fake:fish-acousticbass", "fishing/common", "task");
         add("fishing/goldfish", "Worth Its Weight", "Catch a Goldfish.", "fake:fish-goldfish", "fishing/common", "task");
         add("fishing/vampire_carp", "Love at First Bite", "Catch a Vampire Carp.", "fake:fish-vampirecarp", "fishing/common", "task");
@@ -146,9 +151,9 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("fishing/luck_3", "Luck of the Sea III", "Catch a fish with at least three points of fishing luck.", "fake:charm-lucky-charm", "fishing/first_catch", "goal");
         add("fishing/server_smallest_record", "Small Fry", "Set a server record for the smallest specimen of a fish.", "fake:fish-bluegill", "fishing/first_catch", "goal");
         add("fishing/server_largest_record", "The One That Was This Big", "Set a server record for the largest specimen of a fish.", "fake:fish-bluegill", "fishing/server_smallest_record", "goal");
-        add("cosmetics/amogus", "Suspiciously Stylish", "Unlock the Amogus Hat in the shop.", "fake:cosmetic-amogus", "cosmetics/unlock_1", "goal");
+        add("cosmetics/amogus", "Suspiciously Stylish", "Buy the Amogus Hat.", "fake:cosmetic-amogus", "cosmetics/buy_1", "goal");
         add("cosmetics/villager_nose", "Hrrrm", "Buy the Villager Nose.", "fake:cosmetic-villager-nose", "cosmetics/buy_1", "task");
-        add("cosmetics/all_villager_hats", "The Entire Workforce", "Unlock every villager profession hat and the Witch Hat.", "fake:cosmetic-witch-hat", "cosmetics/villager_nose", "challenge");
+        add("cosmetics/all_villager_hats", "The Entire Workforce", "Unlock every villager profession hat and the Witch Hat.", "fake:cosmetic-witch-hat", "cosmetics/unlock_1", "challenge");
         add("cosmetics/good_boy", "Good Boy", "Buy the Dog Pet Hat.", "fake:cosmetic-dog-pet-hat", "cosmetics/buy_1", "goal");
         add("cosmetics/academic_hat", "Eventually Graduating", "Buy the Academic Hat. Minecraft is excellent revision, probably.", "fake:cosmetic-academic-hat", "cosmetics/buy_1", "goal");
         add("cosmetics/straw_hat_farmer", "Working in the Sun", "Buy the Farmer Straw Hat.", "fake:cosmetic-villager-farmer", "cosmetics/buy_1", "task");
@@ -158,7 +163,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("cosmetics/posh_squid", "Poor Squid", "Buy the Posh Squid.", "fake:cosmetic-posh-squid", "cosmetics/buy_1", "goal");
         add("cosmetics/retro_helmet", "Retrofuturism", "Buy the Retro Helmet.", "fake:cosmetic-helmet-retro", "cosmetics/buy_1", "task");
         add("cosmetics/trans_bee_hood", "Bee Yourself", "Buy the Trans Bee Hood.", "fake:cosmetic-hood-bee-trans", "cosmetics/buy_1", "task");
-        add("cosmetics/cat_stack", "Cat Person", "Wear a cat, hold a cat, and hold another cat in your off hand.", "fake:cosmetic-calico-cat-pet-hat", "cosmetics/unlock_5", "challenge");
+        add("cosmetics/cat_stack", "Cat Person", "Wear a cat, hold a cat, and hold another cat in your off hand.", "fake:cosmetic-calico-cat-pet-hat", "cosmetics/buy_1", "challenge");
         add("cosmetics/sombrero", "Reasonably Sized", "Buy the Sombrero.", "fake:cosmetic-sombrero", "cosmetics/buy_1", "task");
         add("cosmetics/sombreron", "Compensating for Something", "Buy the Sombreron.", "fake:cosmetic-sombreron", "cosmetics/sombrero", "goal");
         add("cosmetics/sombreronn", "Personal Weather System", "Buy the largest Sombreronn.", "fake:cosmetic-sombreronn", "cosmetics/sombreron", "challenge");
@@ -232,7 +237,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                 "cosmetic-academic-hat", "cosmetic-propeller", "cosmetic-posh-squid", "cosmetic-crown-royal",
                 "cosmetic-halo-hat", "cosmetic-crown-techno"};
         String unlockParent = "root";
-        String buyParent = "root";
+        String buyParent = "cosmetics/unlock_1";
         for (int i = 0; i < cosmeticMilestones.length; i++) {
             int count = cosmeticMilestones[i];
             String icon = "fake:" + cosmeticMilestoneIcons[i];
@@ -316,12 +321,16 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         });
         FakeItems.ALL.stream().filter(item -> item.shopPurchasable()
                         && item.getFeature(EquippableCosmeticItemFeature.class) != null)
-                .sorted(java.util.Comparator.comparing(item -> item.id())).forEach(item ->
-                        add("cosmetics/item/" + item.id().substring(9), cosmeticTitle(item.id(), item.title()),
-                                "Buy the " + item.title() + ".", "fake:" + item.id(), "cosmetics/buy_1", "task"));
+                .sorted(java.util.Comparator.comparing(item -> item.id())).forEach(item -> {
+                    String title = cosmeticTitle(item.id());
+                    if (title != null) {
+                        add("cosmetics/item/" + item.id().substring(9), title,
+                                "Buy the " + item.title() + ".", "fake:" + item.id(), "cosmetics/buy_1", "task");
+                    }
+                });
     }
 
-    private static String cosmeticTitle(String id, String fallback) {
+    private static String cosmeticTitle(String id) {
         return switch (id) {
             case "cosmetic-arrow" -> "I Think You've Got Something There";
             case "cosmetic-ice-cream" -> "Brain Freeze";
@@ -335,6 +344,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
             case "cosmetic-salmon" -> "Salmon Chanted Evening";
             case "cosmetic-chick-tower" -> "Pecking Order";
             case "cosmetic-frog-small" -> "Croak Couture";
+            case "cosmetic-frying-pan" -> "Out of the Frying Pan";
             case "cosmetic-aviator-hat" -> "Head in the Clouds";
             case "cosmetic-propeller" -> "Ready for Takeoff";
             case "cosmetic-pirate" -> "Arr You Serious?";
@@ -348,7 +358,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
             case "cosmetic-sleeping-mobs" -> "Let Sleeping Mobs Lie";
             case "cosmetic-warden-antlers" -> "Can You Hear Me Now?";
             case "cosmetic-obamium-pyramid" -> "Yes We Can";
-            default -> fallback;
+            default -> null;
         };
     }
 

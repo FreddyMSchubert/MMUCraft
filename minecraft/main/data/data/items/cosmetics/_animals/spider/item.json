@@ -12,7 +12,8 @@
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Spider Hat."
+		"unlockMessage": "Unlocked cosmetic: Spider Hat.",
+		"tags": ["arachnid"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

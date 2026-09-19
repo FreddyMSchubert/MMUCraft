@@ -12,7 +12,8 @@
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Shulker Hat."
+		"unlockMessage": "Unlocked cosmetic: Shulker Hat.",
+		"tags": ["end", "shell"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

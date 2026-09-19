@@ -12,7 +12,8 @@
 		"priceDabloons": 30,
 		"description": "",
 		"unlockWeight": 90,
-		"unlockMessage": "Unlocked cosmetic: Snorkel."
+		"unlockMessage": "Unlocked cosmetic: Snorkel.",
+		"tags": ["diving", "scuba"]
 	},
 	"equippableCosmetic": {}
 }

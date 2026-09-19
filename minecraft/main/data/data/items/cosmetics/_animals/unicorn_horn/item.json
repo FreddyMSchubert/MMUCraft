@@ -12,7 +12,8 @@
 		"priceDabloons": 267,
 		"description": "",
 		"unlockWeight": 10,
-		"unlockMessage": "Unlocked cosmetic: Unicorn Horn."
+		"unlockMessage": "Unlocked cosmetic: Unicorn Horn.",
+		"tags": ["magic", "horse"]
 	},
 	"equippableCosmetic": {}
 }

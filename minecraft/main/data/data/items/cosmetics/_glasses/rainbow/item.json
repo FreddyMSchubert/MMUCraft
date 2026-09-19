@@ -10,7 +10,8 @@
 		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Rainbow Glasses."
+		"unlockMessage": "Unlocked cosmetic: Rainbow Glasses.",
+		"tags": ["pride", "colorful"]
 	},
 	"equippableCosmetic": {}
 }

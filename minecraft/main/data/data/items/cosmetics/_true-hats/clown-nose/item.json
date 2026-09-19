@@ -12,7 +12,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Clown Nose."
+		"unlockMessage": "Unlocked cosmetic: Clown Nose.",
+		"tags": ["red nose", "circus"]
 	},
 	"equippableCosmetic": {}
 }

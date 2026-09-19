@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,
-		"unlockMessage": "Unlocked cosmetic: Sleeping Mobs."
+		"unlockMessage": "Unlocked cosmetic: Sleeping Mobs.",
+		"tags": ["nap", "bed"]
 	},
 	"equippableCosmetic": {}
 }

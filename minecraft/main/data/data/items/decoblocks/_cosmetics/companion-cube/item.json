@@ -19,7 +19,8 @@
 		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Companion Cube."
+		"unlockMessage": "Unlocked cosmetic: Companion Cube.",
+		"tags": ["portal", "weighted cube"]
 	},
 	"equippableCosmetic": {}
 }

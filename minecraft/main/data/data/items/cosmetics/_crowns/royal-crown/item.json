@@ -12,7 +12,8 @@
 		"priceDabloons": 10000,
 		"description": "",
 		"unlockWeight": 10,
-		"unlockMessage": "Unlocked cosmetic: Royal Crown."
+		"unlockMessage": "Unlocked cosmetic: Royal Crown.",
+		"tags": ["king", "queen"]
 	},
 	"equippableCosmetic": {}
 }

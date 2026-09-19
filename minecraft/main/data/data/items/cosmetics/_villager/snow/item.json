@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Frosty Villager Hat."
+		"unlockMessage": "Unlocked cosmetic: Frosty Villager Hat.",
+		"tags": ["winter", "icy"]
 	},
 	"equippableCosmetic": {}
 }

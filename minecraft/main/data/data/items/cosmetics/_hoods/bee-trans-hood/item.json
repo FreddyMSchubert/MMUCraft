@@ -12,7 +12,8 @@
 		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Trans Bee hood."
+		"unlockMessage": "Unlocked cosmetic: Trans Bee hood.",
+		"tags": ["transgender", "trans pride"]
 	},
 	"equippableCosmetic": {}
 }

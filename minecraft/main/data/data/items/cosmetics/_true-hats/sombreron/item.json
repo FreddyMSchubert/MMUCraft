@@ -12,7 +12,8 @@
 		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 37,
-		"unlockMessage": "Unlocked cosmetic: Sombreron."
+		"unlockMessage": "Unlocked cosmetic: Sombreron.",
+		"tags": ["mexican", "large hat"]
 	},
 	"equippableCosmetic": {}
 }

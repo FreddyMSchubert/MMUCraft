@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,
-		"unlockMessage": "Unlocked cosmetic: Bushy Moustache."
+		"unlockMessage": "Unlocked cosmetic: Bushy Moustache.",
+		"tags": ["mustache", "facial hair"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

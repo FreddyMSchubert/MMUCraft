@@ -12,7 +12,8 @@
 		"priceDabloons": 85,
 		"description": "",
 		"unlockWeight": 65,
-		"unlockMessage": "Unlocked cosmetic: Ushanka."
+		"unlockMessage": "Unlocked cosmetic: Ushanka.",
+		"tags": ["winter", "fur hat"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

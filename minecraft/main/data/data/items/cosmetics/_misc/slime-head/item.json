@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Bit gooey, innit"
-	],
+	"tooltips": ["Bit gooey, innit"],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 75,
+		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 60,
-		"unlockMessage": "Unlocked cosmetic: Slime head."
+		"unlockMessage": "Unlocked cosmetic: Slime head.",
+		"tags": ["slimeball", "goo"]
 	},
 	"equippableCosmetic": {}
 }

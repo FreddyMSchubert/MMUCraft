@@ -19,7 +19,8 @@
 		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Frying Pan."
+		"unlockMessage": "Unlocked cosmetic: Frying Pan.",
+		"tags": ["skillet"]
 	},
 	"equippableCosmetic": {}
 }

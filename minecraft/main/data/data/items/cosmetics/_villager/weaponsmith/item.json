@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Weaponsmith Eyepatch."
+		"unlockMessage": "Unlocked cosmetic: Weaponsmith Eyepatch.",
+		"tags": ["blacksmith", "forge"]
 	},
 	"equippableCosmetic": {}
 }

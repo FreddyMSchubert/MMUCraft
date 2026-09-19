@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Fancy Moustache."
+		"unlockMessage": "Unlocked cosmetic: Fancy Moustache.",
+		"tags": ["mustache", "facial hair"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

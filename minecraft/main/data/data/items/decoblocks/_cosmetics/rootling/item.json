@@ -19,7 +19,8 @@
 		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Rootling."
+		"unlockMessage": "Unlocked cosmetic: Rootling.",
+		"tags": ["plant", "roots"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

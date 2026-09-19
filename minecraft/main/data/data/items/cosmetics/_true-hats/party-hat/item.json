@@ -10,7 +10,8 @@
 		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 130,
-		"unlockMessage": "Unlocked cosmetic: Birthday Hat."
+		"unlockMessage": "Unlocked cosmetic: Birthday Hat.",
+		"tags": ["birthday"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

@@ -12,7 +12,8 @@
 		"priceDabloons": 1,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "If I could have given it away any cheaper - I would have."
+		"unlockMessage": "If I could have given it away any cheaper - I would have.",
+		"tags": ["carton"]
 	},
 	"equippableCosmetic": {},
 	"decoBlock": {

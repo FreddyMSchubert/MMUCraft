@@ -12,7 +12,8 @@
 		"priceDabloons": 300,
 		"description": "",
 		"unlockWeight": 15,
-		"unlockMessage": "Unlocked cosmetic: Moctezuma's Headdress."
+		"unlockMessage": "Unlocked cosmetic: Moctezuma's Headdress.",
+		"tags": ["aztec", "quetzal"]
 	},
 	"equippableCosmetic": {}
 }

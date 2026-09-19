@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"2016 called, they want their skins back"
-	],
+	"tooltips": ["2016 called, they want their skins back"],
 	"shopPurchasable": {
 		"membersOnly": true,
-	"priceDabloons": 50,
+		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 80,
-		"unlockMessage": "Unlocked cosmetic: Headphones."
+		"unlockMessage": "Unlocked cosmetic: Headphones.",
+		"tags": ["headset"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

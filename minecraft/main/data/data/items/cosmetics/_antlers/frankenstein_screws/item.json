@@ -12,7 +12,8 @@
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Frankenstein Screws - very spooky."
+		"unlockMessage": "Unlocked cosmetic: Frankenstein Screws - very spooky.",
+		"tags": ["bolts", "halloween"]
 	},
 	"equippableCosmetic": {}
 }

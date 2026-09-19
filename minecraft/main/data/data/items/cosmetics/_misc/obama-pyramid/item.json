@@ -12,7 +12,8 @@
 		"priceDabloons": 320,
 		"description": "Plays a random Obama sound when used.",
 		"unlockWeight": 5,
-		"unlockMessage": "Unlocked relic: Obamium Pyramid."
+		"unlockMessage": "Unlocked relic: Obamium Pyramid.",
+		"tags": ["obama", "meme"]
 	},
 	"charm": {
 		"charmId": 51,

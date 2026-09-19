@@ -12,7 +12,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Square Moustache."
+		"unlockMessage": "Unlocked cosmetic: Square Moustache.",
+		"tags": ["mustache", "facial hair"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

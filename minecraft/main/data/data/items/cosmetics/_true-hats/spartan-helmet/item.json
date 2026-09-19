@@ -12,7 +12,8 @@
 		"priceDabloons": 225,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Unlocked cosmetic: Spartan Helmet."
+		"unlockMessage": "Unlocked cosmetic: Spartan Helmet.",
+		"tags": ["warrior", "greek"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

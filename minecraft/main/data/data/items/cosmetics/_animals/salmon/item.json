@@ -12,7 +12,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 90,
-		"unlockMessage": "Unlocked cosmetic: Salmon Hat."
+		"unlockMessage": "Unlocked cosmetic: Salmon Hat.",
+		"tags": ["fish"]
 	},
 	"equippableCosmetic": {}
 }

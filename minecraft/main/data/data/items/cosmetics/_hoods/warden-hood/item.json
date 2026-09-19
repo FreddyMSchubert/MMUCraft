@@ -10,7 +10,8 @@
 		"priceDabloons": 250,
 		"description": "",
 		"unlockWeight": 20,
-		"unlockMessage": "Unlocked cosmetic: Warden Head."
+		"unlockMessage": "Unlocked cosmetic: Warden Head.",
+		"tags": ["sculk", "deep dark"]
 	},
 	"equippableCosmetic": {}
 }

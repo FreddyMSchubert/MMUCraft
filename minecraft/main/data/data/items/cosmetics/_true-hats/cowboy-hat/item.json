@@ -12,7 +12,8 @@
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Cowboy Hat."
+		"unlockMessage": "Unlocked cosmetic: Cowboy Hat.",
+		"tags": ["western"]
 	},
 	"equippableCosmetic": {}
 }

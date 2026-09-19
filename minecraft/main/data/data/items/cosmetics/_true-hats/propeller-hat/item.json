@@ -12,7 +12,8 @@
 		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 37,
-		"unlockMessage": "Unlocked cosmetic: Propeller Hat."
+		"unlockMessage": "Unlocked cosmetic: Propeller Hat.",
+		"tags": ["helicopter", "spinning"]
 	},
 	"equippableCosmetic": {}
 }

@@ -14,7 +14,8 @@
 		"priceDabloons": 142,
 		"description": "",
 		"unlockWeight": 42,
-		"unlockMessage": "Unlocked cosmetic: Aviator Hat."
+		"unlockMessage": "Unlocked cosmetic: Aviator Hat.",
+		"tags": ["pilot", "goggles"]
 	},
 	"equippableCosmetic": {}
 }

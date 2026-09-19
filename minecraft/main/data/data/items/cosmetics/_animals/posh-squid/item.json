@@ -12,7 +12,8 @@
 		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 5,
-		"unlockMessage": "Unlocked cosmetic: Posh Squid."
+		"unlockMessage": "Unlocked cosmetic: Posh Squid.",
+		"tags": ["octopus", "tentacles"]
 	},
 	"equippableCosmetic": {}
 }

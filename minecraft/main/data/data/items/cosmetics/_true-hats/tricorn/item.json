@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Tricorn."
+		"unlockMessage": "Unlocked cosmetic: Tricorn.",
+		"tags": ["tricorne", "three cornered"]
 	},
 	"equippableCosmetic": {}
 }

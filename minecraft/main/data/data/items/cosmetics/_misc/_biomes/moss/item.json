@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 20,
-		"unlockMessage": "Unlocked cosmetic: Moss Biotope Hat."
+		"unlockMessage": "Unlocked cosmetic: Moss Biotope Hat.",
+		"tags": ["moss", "sniffer"]
 	},
 	"equippableCosmetic": {}
 }

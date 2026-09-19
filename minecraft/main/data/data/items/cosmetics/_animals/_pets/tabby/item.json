@@ -13,7 +13,7 @@
 		"description": "",
 		"unlockWeight": 60,
 		"unlockMessage": "Unlocked cosmetic: Tabby Cat Pet Hat.",
-		"tags": ["cat", "cute", "pet", "brown", "tabby", "animated"]
+		"tags": ["cat", "cute", "pet", "brown", "tabby", "animated", "kitten", "kitty"]
 	},
 	"equippableCosmetic": {}
 }

@@ -12,7 +12,8 @@
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Patriotic Helmet."
+		"unlockMessage": "Unlocked cosmetic: Patriotic Helmet.",
+		"tags": ["flag", "red white blue"]
 	},
 	"equippableCosmetic": {}
 }

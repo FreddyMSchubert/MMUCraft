@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Swamp Villager Hat."
+		"unlockMessage": "Unlocked cosmetic: Swamp Villager Hat.",
+		"tags": ["marsh"]
 	},
 	"equippableCosmetic": {}
 }

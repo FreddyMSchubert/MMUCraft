@@ -19,7 +19,8 @@
 		"priceDabloons": 35,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Plunger Hat."
+		"unlockMessage": "Unlocked cosmetic: Plunger Hat.",
+		"tags": ["toilet"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:andesite_stairs",
-	"baseCost": 0,
+	"baseCost": 2,
 	"rewardPerIteration": 0.1,
 	"minimum": 30,
 	"maximum": 45,
 	"emoji": "🪨",
 	"name": "Submit Andesite Stairs",
-	"description": "Submit {count} andesite stairs. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} andesite stairs. Theyre tasty, okay? Don't judge me (Calum)."
 }

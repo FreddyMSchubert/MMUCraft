@@ -1,11 +1,13 @@
 {
 	"title": "Posh Squid",
 	"id": "cosmetic-posh-squid",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": ["Eight arms, impeccable manners, zero respect for personal space."],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": true,
 		"priceDabloons": 125,
 		"description": "",

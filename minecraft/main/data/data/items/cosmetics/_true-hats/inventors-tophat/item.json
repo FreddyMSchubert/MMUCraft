@@ -1,15 +1,15 @@
 {
 	"title": "Inventor's Tophat",
 	"id": "cosmetic-inventors-hat",
+	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,
-	"tooltips": [
-		"It took a lot of experimenting to make"
-	],
+	"tooltips": ["It took a lot of experimenting to make"],
 	"shopPurchasable": {
+		"gameplayToggle": "inventors",
 		"membersOnly": false,
-	    "priceDabloons": 350,
+		"priceDabloons": 350,
 		"description": "",
 		"unlockWeight": 1,
 		"unlockMessage": "Unlocked cosmetic: Inventor's Tophat."

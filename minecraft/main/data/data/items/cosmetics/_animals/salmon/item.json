@@ -1,15 +1,15 @@
 {
 	"title": "Salmon Hat",
 	"id": "cosmetic-salmon",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Might be a bit late to toss it back"
-	],
+	"tooltips": ["Might be a bit late to toss it back"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": false,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 90,
 		"unlockMessage": "Unlocked cosmetic: Salmon Hat."

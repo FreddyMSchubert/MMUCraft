@@ -1,15 +1,15 @@
 {
 	"title": "Ushanka",
 	"id": "cosmetic-ushanka",
+	"drop": "cold",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Nice to wear in an Ice Spikes biome"
-	],
+	"tooltips": ["Nice to wear in an Ice Spikes biome"],
 	"shopPurchasable": {
+		"gameplayToggle": "cold",
 		"membersOnly": true,
-	"priceDabloons": 85,
+		"priceDabloons": 85,
 		"description": "",
 		"unlockWeight": 65,
 		"unlockMessage": "Unlocked cosmetic: Ushanka."

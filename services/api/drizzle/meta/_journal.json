@@ -239,6 +239,13 @@
       "when": 1789471437629,
       "tag": "0033_seed_missing_gameplay_toggles",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "6",
+      "when": 1789795200000,
+      "tag": "0034_rename_and_seed_seasonal_drops",
+      "breakpoints": true
     }
   ]
 }

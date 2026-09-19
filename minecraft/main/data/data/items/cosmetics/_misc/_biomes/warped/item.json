@@ -1,14 +1,15 @@
 {
 	"title": "Warped Biotope Hat",
 	"id": "cosmetic-warped-biotope-hat",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
-	"tooltips": [
-	],
+	"tooltips": [],
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
-	    "priceDabloons": 100,
+		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 20,
 		"unlockMessage": "Unlocked cosmetic: Warped Biotope Hat."

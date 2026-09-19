@@ -1,15 +1,15 @@
 {
 	"title": "Fazbear Head",
 	"id": "cosmetic-freddy-fazbear",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Ar ar ar ar"
-	],
+	"tooltips": ["Ar ar ar ar"],
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
-	"priceDabloons": 150,
+		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Fazbear Head."

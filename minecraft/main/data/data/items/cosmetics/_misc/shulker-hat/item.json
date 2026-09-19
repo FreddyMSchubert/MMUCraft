@@ -1,12 +1,11 @@
 {
 	"title": "Shulker Hat",
 	"id": "cosmetic-shulker",
+	"drop": "end",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Come out of your shell at bit more"
-	],
+	"tooltips": ["Come out of your shell at bit more"],
 	"shopPurchasable": {
 		"membersOnly": true,
 		"priceDabloons": 75,

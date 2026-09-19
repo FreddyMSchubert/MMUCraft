@@ -1,12 +1,11 @@
 {
 	"title": "Traffic Cone Hat",
 	"id": "cosmetic-traffic-cone",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Staple of scottish culture."
-	],
+	"tooltips": ["Staple of scottish culture."],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,

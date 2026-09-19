@@ -1,11 +1,13 @@
 {
 	"title": "Sun Hat",
 	"id": "cosmetic-sun-hat",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Perfect for vampires"],
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
 		"priceDabloons": 42,
 		"description": "",

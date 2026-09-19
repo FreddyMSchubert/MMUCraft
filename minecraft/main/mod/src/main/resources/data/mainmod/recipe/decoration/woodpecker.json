@@ -1,18 +1,15 @@
 {
-  "type": "mainmod:fake_crafting_shaped",
-  "pattern": [
-    " R ",
-    "FSF",
-    " W "
-  ],
-  "key": {
-    "F": "minecraft:feather",
-    "S": "mainmod:soul",
-    "R": "minecraft:red_dye",
-    "W": "minecraft:white_dye"
-  },
-  "result": {
-    "stack": "mainmod:cosmetic-woodpecker",
-    "count": 1
-  }
+	"type": "mainmod:fake_crafting_shaped",
+	"gameplayToggle": "welcoming",
+	"pattern": [" R ", "FSF", " W "],
+	"key": {
+		"F": "minecraft:feather",
+		"S": "mainmod:soul",
+		"R": "minecraft:red_dye",
+		"W": "minecraft:white_dye"
+	},
+	"result": {
+		"stack": "mainmod:cosmetic-woodpecker",
+		"count": 1
+	}
 }

@@ -1,15 +1,15 @@
 {
 	"title": "Hard Hat",
 	"id": "cosmetic-hard-hat",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Still a good idea to combine it with a helmet for extra protection"
-	],
+	"tooltips": ["Still a good idea to combine it with a helmet for extra protection"],
 	"shopPurchasable": {
+		"gameplayToggle": "imaginative",
 		"membersOnly": false,
-	    "priceDabloons": 100,
+		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 69,
 		"unlockMessage": "Unlocked cosmetic: Hard Hat."

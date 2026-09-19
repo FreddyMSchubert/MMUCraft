@@ -199,16 +199,24 @@ final class GameplayEventsClient {
         GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
         if (client == null) return;
 
+        long revision = FeatureToggles.revision();
         ListenableFuture<FeatureTogglesSnapshot> rpc = client.withDeadlineAfter(5, TimeUnit.SECONDS)
                 .getFeatureToggles(GetFeatureTogglesRequest.getDefaultInstance());
         rpc.addListener(() -> {
             try {
                 FeatureTogglesSnapshot snapshot = rpc.get();
-                GrpcBridge.runOnMainThread(() -> FeatureToggles.apply(snapshot));
+                GrpcBridge.runOnMainThread(() -> {
+                    if (gameplayEvents == client && FeatureToggles.revision() == revision) FeatureToggles.apply(snapshot);
+                });
                 MainMod.LOGGER.info("Loaded {} feature toggles", snapshot.getTogglesCount());
+                CompletableFuture.delayedExecutor(30, TimeUnit.SECONDS).execute(() -> {
+                    if (gameplayEvents == client) requestFeatureToggles();
+                });
             } catch (Exception exception) {
                 MainMod.LOGGER.warn("Could not load feature toggles; retrying in 5 seconds", exception);
-                CompletableFuture.delayedExecutor(5, TimeUnit.SECONDS).execute(this::requestFeatureToggles);
+                CompletableFuture.delayedExecutor(5, TimeUnit.SECONDS).execute(() -> {
+                    if (gameplayEvents == client) requestFeatureToggles();
+                });
             }
         }, Runnable::run);
     }

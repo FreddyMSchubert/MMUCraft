@@ -27,6 +27,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.inventory.MerchantMenu;
+import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
@@ -64,6 +66,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 
@@ -102,6 +105,14 @@ public class MainMod implements ModInitializer {
 
         FakeItemsCommand.init();
         MiniBlockCommand.init();
+        FeatureToggles.listen(FeatureToggles.WELCOMING, enabled -> {
+            MinecraftServer server = GrpcBridge.minecraftServer();
+            if (server != null) server.getPlayerList().getPlayers().forEach(player -> {
+                if (player.containerMenu instanceof StonecutterMenu || player.containerMenu instanceof MerchantMenu) {
+                    player.closeContainer();
+                }
+            });
+        });
         InventoryViewCommands.init();
         MoneyCommand.init();
         WebsiteCommand.init();

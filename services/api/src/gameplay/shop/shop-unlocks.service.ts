@@ -216,7 +216,7 @@ function cosmeticMasteryPaths(
 	catalog: CatalogItem[],
 ): string[] {
 	const paths = [`cosmetics/unlock_${item.rarity}`];
-	for (const milestone of [1, 5, 10, 20, 50, 100]) {
+	for (const milestone of [1, 5, 10, 20, 30, 40, 50, 75, 100]) {
 		if (unlockedIds.size >= milestone) paths.push(`cosmetics/unlock_${milestone}`);
 	}
 	if (unlockedIds.size >= catalog.length) paths.push('cosmetics/unlock_all');

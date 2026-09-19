@@ -16,6 +16,7 @@ public class UmbrellaCharm implements Charm, EquippedTickCallbackCharm
     {
         if (level.getGameTime() % 19 != 0) return;
 
+        MasteryAdvancements.grant(player, "utility/use_staff");
         MasteryAdvancements.grant(player, "utility/staff_brolly");
         MasteryAdvancements.grantIfAll(player, "utility/all_staves",
                 "utility/staff_crafting", "utility/staff_ender_chest", "utility/staff_brolly");

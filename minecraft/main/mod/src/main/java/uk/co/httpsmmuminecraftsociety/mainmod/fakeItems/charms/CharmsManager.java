@@ -332,6 +332,9 @@ public class CharmsManager
                     instance.level()
             );
             if (result != null && result != InteractionResult.PASS) {
+                if (instance.charm() instanceof CraftingStaffCharm || instance.charm() instanceof EnderChestStaffCharm) {
+                    MasteryAdvancements.grant((ServerPlayer) player, "utility/use_staff");
+                }
                 if (instance.charm() instanceof CraftingStaffCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/staff_crafting");
                 if (instance.charm() instanceof EnderChestStaffCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/staff_ender_chest");
                 if (instance.charm() instanceof WrenchCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/wrench");

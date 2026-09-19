@@ -186,6 +186,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 
 processResources {
     dependsOn "generateMiniBlockRecipes"
+    exclude "data/mainmod/advancement/mastery/**"
     inputs.property "version", project.version
     inputs.file("../data/gameplay-toggles.json")
 
@@ -200,7 +201,6 @@ processResources {
 
 def miniBlockCatalog = file("src/main/resources/data/mainmod/miniblocks.json")
 def generatedMiniBlockResources = layout.buildDirectory.dir("generated/miniblockResources")
-def generatedMasteryResources = layout.buildDirectory.dir("generated/masteryResources")
 
 tasks.register("generateMiniBlockRecipes") {
     inputs.file(miniBlockCatalog)
@@ -248,240 +248,6 @@ tasks.register("generateMiniBlockRecipes") {
 }
 
 sourceSets.main.resources.srcDir(generatedMiniBlockResources)
-sourceSets.main.resources.srcDir(generatedMasteryResources)
-
-tasks.register("generateMasteryAdvancements") {
-    inputs.dir(file("../data/data/items"))
-    outputs.dir(generatedMasteryResources)
-
-    doLast {
-        File directory = new File(generatedMasteryResources.get().asFile, "data/mainmod/advancement/mastery")
-        delete(directory)
-        directory.mkdirs()
-
-        Map<String, Map<String, Object>> itemDefinitions = [:]
-        fileTree("../data/data/items").matching { include "**/item.json" }.files.each { itemFile ->
-            Map<String, Object> definition = new JsonSlurper().parse(itemFile) as Map<String, Object>
-            if (definition.id instanceof String) itemDefinitions[definition.id] = definition
-        }
-        def iconFor = { String icon ->
-            if (icon.startsWith("fake:")) {
-                String itemId = icon.substring(5)
-                Map<String, Object> definition = itemDefinitions[itemId]
-                if (definition == null) throw new GradleException("Unknown advancement icon item: ${itemId}")
-                String baseItem = definition.baseItemOverride ?: (definition.equippableCosmetic != null
-                        ? "minecraft:carved_pumpkin" : "minecraft:command_block")
-                return [
-                        id: baseItem,
-                        components: ["minecraft:custom_model_data": [strings: [itemId]]]
-                ]
-            }
-            if (icon.startsWith("enderite:")) {
-                return [
-                        id: "minecraft:${icon.substring(9)}",
-                        components: ["minecraft:custom_model_data": [flags: [true]]]
-                ]
-            }
-            return [id: icon]
-        }
-        def writeAdvancement = { String path, String title, String description, String icon, String parent, String frame ->
-            Map<String, Object> display = [
-                    icon       : iconFor(icon),
-                    title      : title,
-                    description: description,
-                    frame      : frame,
-                    show_toast : path != "root",
-                    announce_to_chat: path != "root",
-                    hidden     : false
-            ]
-            if (path == "root") display.background = "minecraft:block/enderite_block"
-            Map<String, Object> advancement = [
-                    display: display,
-                    criteria: [done: [trigger: "minecraft:impossible"]],
-                    requirements: [["done"]],
-                    sends_telemetry_event: false
-            ]
-            if (parent != null) advancement.parent = "mainmod:mastery/${parent}"
-
-            File output = new File(directory, "${path}.json")
-            output.parentFile.mkdirs()
-            output.text = JsonOutput.prettyPrint(JsonOutput.toJson(advancement)) + System.lineSeparator()
-        }
-
-        writeAdvancement("root", "MMU Mastery", "Master every corner of MMUCraft.", "fake:coin-100", null, "task")
-
-        List<List<String>> advancements = [
-                ["fishing/first_catch", "Something's Fishy", "Catch a fish.", "minecraft:fishing_rod", "root", "task"],
-                ["fishing/common", "Common Catch", "Catch a common fish.", "fake:fish-bluegill", "fishing/first_catch", "task"],
-                ["fishing/uncommon", "Uncommon Catch", "Catch an uncommon fish.", "fake:fish-thunderfin", "fishing/common", "task"],
-                ["fishing/rare", "Rare Catch", "Catch a rare fish.", "fake:fish-seahorse", "fishing/uncommon", "goal"],
-                ["fishing/epic", "Epic Catch", "Catch an epic fish.", "fake:fish-freddyfish", "fishing/rare", "goal"],
-                ["fishing/legendary", "Legendary Catch", "Catch a legendary fish.", "fake:fish-nullfin", "fishing/epic", "challenge"],
-                ["fishing/mythical", "Mythical Catch", "Catch a mythical fish.", "fake:fish-spook_fish", "fishing/legendary", "challenge"],
-                ["fishing/acoustic_bass", "Unplugged", "Catch an Acoustic Bass.", "fake:fish-acousticbass", "fishing/common", "task"],
-                ["fishing/goldfish", "Worth Its Weight", "Catch a Goldfish.", "fake:fish-goldfish", "fishing/common", "task"],
-                ["fishing/vampire_carp", "Love at First Bite", "Catch a Vampire Carp.", "fake:fish-vampirecarp", "fishing/common", "task"],
-                ["fishing/thundering_bass", "Drop the Bass", "Catch a Thundering Bass.", "fake:fish-thundering_bass", "fishing/common", "task"],
-                ["fishing/swordfish", "Mightier Than the Pen", "Catch a Swordfish.", "fake:fish-swordfish", "fishing/common", "task"],
-                ["fishing/rainbow_trout", "Over the Rainbow", "Catch a Rainbow Trout.", "fake:fish-rainbow_trout", "fishing/uncommon", "task"],
-                ["fishing/galaxy_starfish", "A Whole Galaxy", "Catch a Galaxy Starfish.", "fake:fish-galaxy_starfish", "fishing/uncommon", "task"],
-                ["fishing/thunderfin", "Greased Lightning", "Catch a Thunderfin.", "fake:fish-thunderfin", "fishing/uncommon", "task"],
-                ["fishing/skyfish", "The Sky's the Limit", "Catch a Skyfish.", "fake:fish-skyfish", "fishing/uncommon", "task"],
-                ["fishing/baguette_fish", "Baguette About It", "Catch a Baguette Fish.", "fake:fish-baguettefish", "fishing/rare", "goal"],
-                ["fishing/nebula_swordfish", "Written in the Stars", "Catch a Nebula Swordfish.", "fake:fish-nebula_swordfish", "fishing/rare", "goal"],
-                ["fishing/witchfish", "Something Wicked", "Catch a Witchfish.", "fake:fish-witchfish", "fishing/rare", "goal"],
-                ["fishing/freddy_fish", "Five Nights at Fishing", "Catch a Freddy Fish.", "fake:fish-freddyfish", "fishing/epic", "goal"],
-                ["fishing/charged_thunderfin", "Fully Charged", "Catch a Charged Thunderfin.", "fake:fish-charged_thunderfin", "fishing/epic", "goal"],
-                ["fishing/matrix_fish", "There Is No Spoon", "Catch a Matrix Fish.", "fake:fish-matrix_fish", "fishing/legendary", "challenge"],
-                ["fishing/spook_fish", "Ghost in the Water", "Catch a Spook Fish.", "fake:fish-spook_fish", "fishing/mythical", "challenge"],
-                ["fishing/all_common", "Common Knowledge", "Catch every common fish.", "fake:fish-bluegill", "fishing/common", "goal"],
-                ["fishing/all_uncommon", "Uncommonly Thorough", "Catch every uncommon fish.", "fake:fish-thunderfin", "fishing/uncommon", "goal"],
-                ["fishing/all_rare", "Rare Completionist", "Catch every rare fish.", "fake:fish-seahorse", "fishing/rare", "challenge"],
-                ["fishing/all_epic", "An Epic Catalogue", "Catch every epic fish.", "fake:fish-freddyfish", "fishing/epic", "challenge"],
-                ["fishing/all_legendary", "Legends Collected", "Catch every legendary fish.", "fake:fish-nullfin", "fishing/legendary", "challenge"],
-                ["fishing/all_mythical", "Myths Made Real", "Catch every mythical fish.", "fake:fish-spook_fish", "fishing/mythical", "challenge"],
-                ["fishing/full_compendium", "The Full Compendium", "Catch every fish in MMUCraft.", "fake:charm-knowledge-book", "fishing/all_mythical", "challenge"],
-                ["fishing/worm", "Hook, Line and Worm", "Catch a fish with a Worm in your off hand.", "fake:worms", "fishing/first_catch", "task"],
-                ["fishing/golden_worm", "Golden Bait", "Catch a fish with a Golden Worm in your off hand.", "fake:golden-worms", "fishing/worm", "goal"],
-                ["fishing/magnet", "Magnetic Personality", "Catch a fish with an Item Magnet in your off hand.", "fake:item-magnet", "fishing/golden_worm", "goal"],
-                ["fishing/golden_magnet", "Attractive Prospect", "Catch a fish with a Golden Item Magnet in your off hand.", "fake:golden-item-magnet", "fishing/magnet", "challenge"],
-                ["fishing/luck_3", "Luck of the Sea III", "Catch a fish with at least three points of fishing luck.", "fake:charm-lucky-charm", "fishing/first_catch", "goal"],
-                ["fishing/server_smallest_record", "Small Fry", "Set a server record for the smallest specimen of a fish.", "fake:fish-bluegill", "fishing/first_catch", "goal"],
-                ["fishing/server_largest_record", "The One That Was This Big", "Set a server record for the largest specimen of a fish.", "fake:fish-bluegill", "fishing/server_smallest_record", "goal"],
-                ["cosmetics/amogus", "Suspiciously Stylish", "Unlock the Amogus Hat in the shop.", "fake:cosmetic-amogus", "cosmetics/unlock_1", "goal"],
-                ["cosmetics/villager_nose", "Hrrrm", "Buy the Villager Nose.", "fake:cosmetic-villager-nose", "cosmetics/buy_1", "task"],
-                ["cosmetics/all_villager_hats", "The Entire Workforce", "Unlock every villager profession hat and the Witch Hat.", "fake:cosmetic-witch-hat", "cosmetics/villager_nose", "challenge"],
-                ["cosmetics/good_boy", "Good Boy", "Buy the Dog Pet Hat.", "fake:cosmetic-dog-pet-hat", "cosmetics/buy_1", "goal"],
-                ["cosmetics/academic_hat", "Eventually Graduating", "Buy the Academic Hat. Minecraft is excellent revision, probably.", "fake:cosmetic-academic-hat", "cosmetics/buy_1", "goal"],
-                ["cosmetics/straw_hat_farmer", "Working in the Sun", "Buy the Farmer Straw Hat.", "fake:cosmetic-villager-farmer", "cosmetics/buy_1", "task"],
-                ["cosmetics/straw_hat_sun", "Here Comes the Sun", "Buy the Sun Hat.", "fake:cosmetic-sun-hat", "cosmetics/straw_hat_farmer", "task"],
-                ["cosmetics/all_straw_hats", "Straw Hat Collection", "Buy the Farmer Straw Hat, Sun Hat, Sombrero, Sombreron, and Sombreronn.", "fake:cosmetic-sombreronn", "cosmetics/sombreronn", "goal"],
-                ["cosmetics/fletcher_hat", "Straight and Arrow", "Buy the Fletcher Hat.", "fake:cosmetic-villager-fletcher", "cosmetics/villager_nose", "task"],
-                ["cosmetics/posh_squid", "Poor Squid", "Buy the Posh Squid.", "fake:cosmetic-posh-squid", "cosmetics/buy_1", "goal"],
-                ["cosmetics/retro_helmet", "Retrofuturism", "Buy the Retro Helmet.", "fake:cosmetic-helmet-retro", "cosmetics/buy_1", "task"],
-                ["cosmetics/trans_bee_hood", "Bee Yourself", "Buy the Trans Bee Hood.", "fake:cosmetic-hood-bee-trans", "cosmetics/buy_1", "task"],
-                ["cosmetics/cat_stack", "Cat Person", "Wear a cat, hold a cat, and hold another cat in your off hand.", "fake:cosmetic-calico-cat-pet-hat", "cosmetics/unlock_5", "challenge"],
-                ["cosmetics/sombrero", "Reasonably Sized", "Buy the Sombrero.", "fake:cosmetic-sombrero", "cosmetics/buy_1", "task"],
-                ["cosmetics/sombreron", "Compensating for Something", "Buy the Sombreron.", "fake:cosmetic-sombreron", "cosmetics/sombrero", "goal"],
-                ["cosmetics/sombreronn", "Personal Weather System", "Buy the largest Sombreronn.", "fake:cosmetic-sombreronn", "cosmetics/sombreron", "challenge"],
-                ["cosmetics/solar_eclipse", "Solar Eclipse", "Wear Giant's Boots and the largest Sombreronn at the same time.", "fake:cosmetic-sombreronn", "cosmetics/sombreronn", "goal"],
-                ["cosmetics/crown_techno", "Technically Royal", "Buy the Techno Crown.", "fake:cosmetic-crown-techno", "cosmetics/buy_1", "goal"],
-                ["cosmetics/crown_royal", "Royalty", "Buy the Royal Crown.", "fake:cosmetic-crown-royal", "cosmetics/crown_techno", "challenge"],
-                ["cosmetics/crown_ornate", "Heavy Is the Head", "Buy the Ornate Crown.", "fake:cosmetic-crown-ornate", "cosmetics/crown_royal", "challenge"],
-                ["cosmetics/buy_all", "Buy the Shop", "Buy as many cosmetics as the full catalogue contains.", "minecraft:emerald_block", "cosmetics/buy_100", "challenge"],
-                ["cosmetics/buy_common", "Common Purchase", "Buy a common cosmetic.", "fake:cosmetic-amogus", "cosmetics/buy_1", "task"],
-                ["cosmetics/buy_uncommon", "Uncommon Purchase", "Buy an uncommon cosmetic.", "fake:cosmetic-academic-hat", "cosmetics/buy_common", "task"],
-                ["cosmetics/buy_rare", "Rare Purchase", "Buy a rare cosmetic.", "fake:cosmetic-calico-cat-pet-hat", "cosmetics/buy_uncommon", "goal"],
-                ["cosmetics/buy_epic", "Epic Purchase", "Buy an epic cosmetic.", "fake:cosmetic-posh-squid", "cosmetics/buy_rare", "goal"],
-                ["cosmetics/buy_legendary", "Legendary Purchase", "Buy a legendary cosmetic.", "fake:cosmetic-crown-royal", "cosmetics/buy_epic", "challenge"],
-                ["cosmetics/buy_mythical", "Mythical Purchase", "Buy a mythical cosmetic.", "fake:cosmetic-crown-ornate", "cosmetics/buy_legendary", "challenge"],
-                ["charms/apply_boost", "Armoured and Charmed", "Apply Charm Boost to a piece of armour.", "minecraft:diamond_chestplate", "charms/get_1", "goal"],
-                ["charms/upgrade_once", "Potential Unlocked", "Upgrade a charm once.", "minecraft:anvil", "charms/get_1", "task"],
-                ["charms/upgrade_max", "Maximum Charm", "Upgrade one charm to its maximum level.", "fake:charm-lucky-charm", "charms/upgrade_3", "challenge"],
-                ["charms/upgrade_all_max", "Perfectly Charming", "Upgrade every charm to its maximum level.", "minecraft:beacon", "charms/upgrade_max", "challenge"],
-                ["charms/get_all", "Every Charm", "Hold every upgradeable equippable charm at once.", "fake:charm-lucky-charm", "charms/get_20", "challenge"],
-                ["utility/wallet", "Cash Container", "Get a wallet.", "fake:charm-wallet", "root", "task"],
-                ["utility/soulbound", "Till Death Doesn't Part Us", "Apply Soulbound to an item. It will no longer leave you, even after death.", "minecraft:recovery_compass", "root", "goal"],
-                ["utility/soulbound_recovery_compass", "Well, This Is Handy", "Apply Soulbound to a Recovery Compass.", "minecraft:recovery_compass", "utility/soulbound", "goal"],
-                ["utility/use_potion", "Experimental Medicine", "Use one custom potion.", "fake:charm-potion-returning", "root", "task"],
-                ["utility/all_potions", "MMU Mixologist", "Use every custom potion.", "fake:charm-potion-resonance", "potions/resonance", "challenge"],
-                ["utility/all_staves", "Utility Wizard", "Use every utility staff.", "fake:charm-umbrella-staff", "utility/staff_brolly", "goal"],
-                ["utility/staff_crafting", "Pocket Workbench", "Use the Staff of Crafting.", "fake:charm-crafting-staff", "root", "task"],
-                ["utility/staff_ender_chest", "Pocket Storage", "Use the Staff of Soulbound Storage.", "fake:charm-ender-chest-staff", "utility/staff_crafting", "task"],
-                ["utility/staff_brolly", "Practically Perfect", "Use the Staff of Brolly to slow your fall.", "fake:charm-umbrella-staff", "utility/staff_ender_chest", "task"],
-                ["utility/wrench", "Be a Mensch", "Use a wrench.", "fake:charm-wrench", "root", "task"],
-                ["utility/sculk_phial_extract", "Experience on Tap", "Extract XP from a Sculk Phial into a bottle.", "fake:charm-sculk-phial", "root", "task"],
-                ["utility/sculk_phial_full", "Bottled Wisdom", "Fill a Sculk Phial completely.", "fake:charm-sculk-phial", "utility/sculk_phial_extract", "goal"],
-                ["utility/invisible_frame", "Now You See It", "Use an Invisi-Carrot on an item frame.", "fake:charm-invisi-carrot", "root", "goal"],
-                ["utility/golden_paste", "Premium Nutrition", "Drink Golden Nutritional Paste.", "fake:golden-nutritional-paste", "root", "task"],
-                ["utility/slime_detector", "Slime Surveyor", "Use a slime detector.", "minecraft:slime_ball", "root", "task"],
-                ["utility/slime_chunk", "Standing on Slime", "Use a slime detector inside a slime chunk.", "minecraft:slime_block", "utility/slime_detector", "goal"],
-                ["utility/no_slime_bars", "Nothing to Report", "Use a slime detector while no bars appear.", "minecraft:barrier", "utility/slime_detector", "goal"],
-                ["utility/duplicate_book", "Copy Paste", "Duplicate an enchanted book by placing it on a librarian's lectern.", "minecraft:enchanted_book", "root", "goal"],
-                ["utility/sniffer_slayer", "The Sniffer Slayer", "Name a sword “the sniffer slayer” in an anvil.", "minecraft:iron_sword", "root", "challenge"],
-                ["utility/full_speed_minecart", "Twenty Metres Per Second", "Travel at full speed in a minecart.", "minecraft:minecart", "root", "challenge"],
-                ["utility/max_reach_beacon", "Long-Distance Service", "Create a beacon with 200 blocks of reach.", "minecraft:beacon", "root", "challenge"],
-                ["utility/decoblock", "Interior Designer", "Place a deco block.", "minecraft:flower_pot", "root", "task"],
-                ["utility/particle_trail", "Leave a Mark", "Apply a particle trail to a tool.", "minecraft:firework_star", "root", "goal"],
-                ["glider/craft", "Learning to Soar", "Make a glider.", "fake:charm-glider", "root", "task"],
-                ["glider/fly", "Cheap Flight", "Fly with a glider.", "fake:charm-glider", "glider/craft", "goal"],
-                ["glider/updraft", "Hot Air Rises", "Glide over a heat source.", "minecraft:campfire", "glider/fly", "goal"],
-                ["glider/firework_fail", "Nice Try", "Try and fail to boost a glider with a firework.", "minecraft:firework_rocket", "glider/fly", "goal"],
-                ["glider/amethyst_ring", "Thread the Needle", "Glide through an amethyst ring.", "minecraft:amethyst_block", "glider/fly", "challenge"],
-                ["enderite/scrap", "Into the Void", "Obtain Enderite Scrap.", "fake:enderite-scrap", "root", "task"],
-                ["enderite/ingot", "Ender Upgrade", "Obtain an Enderite Ingot.", "fake:enderite-ingot", "enderite/scrap", "goal"],
-                ["enderite/template", "Serious Dedication, Again", "Obtain an Enderite Upgrade template.", "fake:enderite-upgrade-smithing-template", "enderite/ingot", "goal"],
-                ["enderite/armor", "Cover Me in the End", "Wear a full suit of Enderite armour.", "enderite:netherite_chestplate", "enderite/template", "challenge"],
-                ["enderite/hoe", "Serious Dedication: Ender Edition", "Obtain an Enderite hoe.", "enderite:netherite_hoe", "enderite/ingot", "challenge"],
-                ["social/pay_to_win", "Pay to Win", "Become a member for 100 Dabloons.", "minecraft:diamond", "root", "goal"],
-                ["social/add_claim_member", "Good Fences, Good Friends", "Add another player to one of your claims.", "minecraft:player_head", "social/claim_1", "goal"],
-                ["social/statistic_first", "Number One", "Become first in any statistic.", "minecraft:gold_block", "root", "challenge"],
-                ["social/gift_code", "The Secret Word", "Receive Dabloons from a gift code.", "minecraft:paper", "root", "task"],
-                ["social/daily_1", "A Job Well Done", "Complete a daily task.", "minecraft:clock", "root", "task"],
-                ["social/full_profile", "Known Quantity", "Fill in every field on your player profile.", "minecraft:name_tag", "root", "goal"],
-                ["knowledge/read_all", "Omniscient", "Read every knowledge page.", "fake:charm-knowledge-book", "knowledge/read_20", "challenge"],
-                ["social/join_insane_hour", "The Insane Hour", "Join between 2 a.m. and 7 a.m. British time.", "minecraft:clock", "root", "task"],
-                ["social/unreasonable_hours", "What Is Sleep?", "Join during every one-hour window from 2 a.m. to 7 a.m. British time.", "minecraft:clock", "social/join_6", "challenge"],
-                ["food/sushi", "Freshly Rolled", "Eat Sushi.", "fake:sushi", "utility/golden_paste", "task"],
-                ["food/beer", "Cheers!", "Drink beer.", "fake:beer", "root", "task"],
-                ["food/beer_again", "Hair of the Dog", "Drink beer while already under its effects.", "fake:beer", "food/beer", "goal"]
-        ]
-        advancements.each { writeAdvancement(*it) }
-
-        def chain = { String prefix, List<Integer> values, String title, String description, String icon, String parent ->
-            String previous = parent
-            values.each { value ->
-                String path = "${prefix}_${value}"
-                writeAdvancement(path, "${title} ${value}", description.replace("%s", value.toString()), icon, previous,
-                        value >= 100 ? "challenge" : value >= 10 ? "goal" : "task")
-                previous = path
-            }
-        }
-
-        chain("charms/get", [1, 3, 5, 10, 15, 20], "Charm Collector", "Hold %s distinct upgradeable charms at once.", "fake:charm-lucky-charm", "root")
-        chain("charms/upgrade", [3, 5, 10, 15, 20], "Charm Tinkerer", "Upgrade charms %s times.", "fake:charm-lucky-charm", "charms/upgrade_once")
-        chain("cosmetics/unlock", [1, 5, 10, 20, 50, 100], "Wardrobe", "Unlock %s distinct cosmetics in the shop.", "fake:cosmetic-amogus", "root")
-        writeAdvancement("cosmetics/unlock_all", "Complete Wardrobe", "Unlock every cosmetic in the shop.", "fake:cosmetic-crown-ornate", "cosmetics/unlock_100", "challenge")
-        ["common", "uncommon", "rare", "epic", "legendary", "mythical"].eachWithIndex { rarity, index ->
-            String previous = index == 0 ? "cosmetics/unlock_1" : "cosmetics/unlock_${["common", "uncommon", "rare", "epic", "legendary"][index - 1]}"
-            writeAdvancement("cosmetics/unlock_${rarity}", "${rarity.capitalize()} Style", "Unlock a ${rarity} cosmetic in the shop.",
-                    "fake:${["cosmetic-amogus", "cosmetic-academic-hat", "cosmetic-calico-cat-pet-hat", "cosmetic-posh-squid", "cosmetic-crown-royal", "cosmetic-crown-ornate"][index]}", previous, index >= 4 ? "challenge" : "task")
-        }
-        chain("cosmetics/buy", [1, 5, 10, 20, 50, 100], "Retail Therapy", "Buy %s cosmetics.", "fake:coin-100", "root")
-        chain("knowledge/read", [1, 3, 5, 10, 15, 20], "Well Read", "Read %s knowledge pages.", "fake:charm-knowledge-book", "root")
-        chain("social/claim", [1, 3, 5, 7, 10, 12, 15], "Landowner", "Reach %s claimed chunks.", "minecraft:map", "root")
-        chain("social/streak", [1, 2, 3, 5, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365], "Login Streak", "Reach a %s-day login streak.", "minecraft:fire_charge", "root")
-        chain("social/full_dailies", [1, 3, 5, 7, 10, 14, 30, 50, 75, 100, 150, 200, 250, 300, 365], "Daily Devotion", "Fully complete dailies on %s days.", "minecraft:clock", "root")
-        chain("sniffers/bred", [1, 3, 5, 10, 20, 30, 50, 100, 200, 500, 1000, 5000, 10000], "Sniffer Population", "Breed %s sniffers.", "minecraft:sniffer_egg", "root")
-        chain("utility/jokes", [1, 3, 5], "Critic", "Review Joke Books: %s completed.", "fake:charm-joke-book", "root")
-        [1, 10, 100, 1000, 10000, 100000, 1000000].eachWithIndex { value, index ->
-            writeAdvancement("coins/hold_${value}", "${value} Dabloons", "Hold a ${value}-Dabloon coin.", "fake:coin-${value}",
-                    index == 0 ? "utility/wallet" : "coins/hold_${[1, 10, 100, 1000, 10000, 100000][index - 1]}", value >= 100000 ? "challenge" : "task")
-        }
-        chain("money/balance", [100, 1000, 10000, 100000, 1000000], "Liquid Assets", "Hold %s Dabloons at once.", "fake:charm-wallet", "utility/wallet")
-
-        ["leather", "ingot", "magic", "bejeweled", "withered", "endless"].eachWithIndex { tier, index ->
-            writeAdvancement("backpacks/${tier}", "${tier.capitalize()} Backpack", "Craft a ${tier} backpack.",
-                    "fake:charm-${tier}-backpack", index == 0 ? "root" : "backpacks/${["leather", "ingot", "magic", "bejeweled", "withered"][index - 1]}", index >= 4 ? "goal" : "task")
-        }
-        (2..6).each { hour ->
-            writeAdvancement("social/join_${hour}", "${hour} a.m. Club", "Join between ${hour} a.m. and ${hour + 1} a.m. British time.",
-                    "minecraft:clock", hour == 2 ? "social/join_insane_hour" : "social/join_${hour - 1}", "goal")
-        }
-        ["returning", "displacement", "insomnia", "resonance"].eachWithIndex { potion, index ->
-            writeAdvancement("potions/${potion}", "Potion of ${potion.capitalize()}", "Use the Potion of ${potion.capitalize()}.",
-                    "fake:charm-potion-${potion}", index == 0 ? "utility/use_potion" : "potions/${["returning", "displacement", "insomnia"][index - 1]}", "task")
-        }
-        (1..5).each { level ->
-            writeAdvancement("fishing/lucky_charm_${level}", "Lucky Charm ${level}", "Upgrade the Lucky Charm to level ${level}.",
-                    "fake:charm-lucky-charm", level == 1 ? "fishing/luck_3" : "fishing/lucky_charm_${level - 1}", level == 5 ? "challenge" : "task")
-        }
-    }
-}
-
-tasks.named("processResources") {
-    dependsOn tasks.named("generateMasteryAdvancements")
-}
 
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 25
@@ -498,6 +264,10 @@ java {
 }
 
 jar {
+    dependsOn "runDatagen"
+    from("src/main/generated/data/mainmod/advancement/mastery") {
+        into "data/mainmod/advancement/mastery"
+    }
     inputs.property "archivesName", project.base.archivesName
 
     from("LICENSE") {

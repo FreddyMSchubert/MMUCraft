@@ -25,6 +25,7 @@ public record FakeItem(
         Rarity rarity,
         int maxStackSize,
         boolean fireproof,
+        boolean shopPurchasable,
         List<Component> tooltip,
         Item baseItem,
         List<ItemFeature> features
@@ -57,6 +58,7 @@ public record FakeItem(
                     rarity,
                     maxStackSize,
                     fireproof,
+                    json.has("shopPurchasable"),
                     tooltip,
                     baseItem,
                     features);

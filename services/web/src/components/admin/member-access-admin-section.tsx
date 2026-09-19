@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { PlayerName } from '@/components/player-name';
 import { fuzzyFilter, PlayerSelector } from '@/components/player-selector';
 import type { AdminTabController } from './use-admin-tab-controller';
+import { MembershipImportAdmin } from './membership-import-admin';
 
 export function MemberAccessAdminSection({ controller }: { controller: AdminTabController }) {
 	const { activeSection, isSuperAdmin, players, busyPlayerId, setMembership, setCommittee } =
@@ -17,6 +18,7 @@ export function MemberAccessAdminSection({ controller }: { controller: AdminTabC
 		<>
 			{activeSection === 'members' && (
 				<section className="adminSection">
+					<MembershipImportAdmin onApplied={controller.load} />
 					<div className="adminSectionHeader">
 						<h3>Member list</h3>
 						<p>

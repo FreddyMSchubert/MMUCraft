@@ -121,6 +121,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private readonly client = new Client({
 		intents: [
 			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMembers,
 			GatewayIntentBits.GuildMessages,
 			GatewayIntentBits.MessageContent,
 		],
@@ -306,6 +307,25 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			for (const command of commands) await this.client.application?.commands.create(command);
 		}
 		this.logger.log('Discord bridge connected');
+	}
+
+	async membershipRoleContext() {
+		const guildId = process.env.DISCORD_GUILD_ID?.trim();
+		if (!guildId || !this.client.isReady())
+			throw new Error('Discord bot is offline or DISCORD_GUILD_ID is missing');
+		const guild = await this.client.guilds.fetch(guildId);
+		const role = await guild.roles.fetch('1500897435206287552');
+		if (!role) throw new Error('The 26/27 Member role was not found');
+		const bot = await guild.members.fetchMe();
+		if (
+			!bot.permissions.has(PermissionFlagsBits.ManageRoles) ||
+			bot.roles.highest.comparePositionTo(role) <= 0
+		)
+			throw new Error(
+				'Give the bot Manage Roles and move its highest role above 26/27 Member',
+			);
+		const members = await guild.members.fetch();
+		return { guild, role, members };
 	}
 
 	private async listPlayers(interaction: ChatInputCommandInteraction) {

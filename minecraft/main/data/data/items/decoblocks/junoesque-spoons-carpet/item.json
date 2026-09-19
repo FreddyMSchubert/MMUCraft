@@ -1,6 +1,7 @@
 {
 	"title": "Junoeqsue Spoons Carpet",
 	"id": "deco-spoons-carpet-junoesque",
+	"drop": "nether",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,

@@ -1,12 +1,11 @@
 {
 	"title": "Butterflies Flower",
 	"id": "cosmetic-butterflies",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Prettier than their moth cousins"
-	],
+	"tooltips": ["Prettier than their moth cousins"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,6 +14,7 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "soaring",
 		"membersOnly": true,
 		"priceDabloons": 25,
 		"description": "",

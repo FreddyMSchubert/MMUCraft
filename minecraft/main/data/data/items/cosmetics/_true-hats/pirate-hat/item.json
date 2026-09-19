@@ -1,15 +1,15 @@
 {
 	"title": "Pirate Hat",
 	"id": "cosmetic-pirate",
+	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Ahoy, matey"
-	],
+	"tooltips": ["Ahoy, matey"],
 	"shopPurchasable": {
+		"gameplayToggle": "circus",
 		"membersOnly": false,
-	"priceDabloons": 125,
+		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Pirate Hat."

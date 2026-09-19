@@ -1,13 +1,13 @@
 {
 	"title": "Chick Stack",
 	"id": "cosmetic-chick-stack",
-	"drop": "welcoming",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [""],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
+		"gameplayToggle": "soaring",
 		"membersOnly": false,
 		"priceDabloons": 75,
 		"description": "",

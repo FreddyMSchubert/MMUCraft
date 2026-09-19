@@ -1,13 +1,13 @@
 {
 	"title": "Ushanka",
 	"id": "cosmetic-ushanka",
-	"drop": "cold",
+	"drop": "void",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": ["Nice to wear in an Ice Spikes biome"],
 	"shopPurchasable": {
-		"gameplayToggle": "cold",
+		"gameplayToggle": "void",
 		"membersOnly": true,
 		"priceDabloons": 85,
 		"description": "",

@@ -1,13 +1,13 @@
 {
 	"title": "Royal Crown",
 	"id": "cosmetic-crown-royal",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Made from solid gold leaf!"
-	],
+	"tooltips": ["Made from solid gold leaf!"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": true,
 		"priceDabloons": 10000,
 		"description": "",

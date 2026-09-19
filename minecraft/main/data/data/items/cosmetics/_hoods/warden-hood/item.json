@@ -1,13 +1,11 @@
 {
 	"title": "Warden Head",
 	"id": "cosmetic-head-warden",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": ["Not as dangerous as the real thing"],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
 		"membersOnly": false,
 		"priceDabloons": 250,
 		"description": "",

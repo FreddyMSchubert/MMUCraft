@@ -1,15 +1,15 @@
 {
 	"title": "Moctezuma's Headdress",
 	"id": "cosmetic-aztec-headdress",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Although I like to call it quetzalapanecayotl"
-	],
+	"tooltips": ["Although I like to call it quetzalapanecayotl"],
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
-	"priceDabloons": 300,
+		"priceDabloons": 300,
 		"description": "",
 		"unlockWeight": 15,
 		"unlockMessage": "Unlocked cosmetic: Moctezuma's Headdress."

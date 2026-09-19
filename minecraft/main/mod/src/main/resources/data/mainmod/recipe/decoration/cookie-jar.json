@@ -1,11 +1,9 @@
 {
-  "type": "mainmod:fake_crafting_shapeless",
-  "ingredients": [
-    "minecraft:cookie",
-    "minecraft:glass_bottle"
-  ],
-  "result": {
-    "stack": "mainmod:deco-cookie-jar",
-    "count": 1
-  }
+	"type": "mainmod:fake_crafting_shapeless",
+	"gameplayToggle": "imaginative",
+	"ingredients": ["minecraft:cookie", "minecraft:glass_bottle"],
+	"result": {
+		"stack": "mainmod:deco-cookie-jar",
+		"count": 1
+	}
 }

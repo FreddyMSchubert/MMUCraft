@@ -1,13 +1,11 @@
 {
 	"title": "Witch Hat",
 	"id": "cosmetic-witch-hat",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": ["It's quite heavy, so wearing it can be kinda Hex-hausting."],
 	"shopPurchasable": {
-		"gameplayToggle": "nether",
 		"membersOnly": false,
 		"priceDabloons": 42,
 		"description": "",

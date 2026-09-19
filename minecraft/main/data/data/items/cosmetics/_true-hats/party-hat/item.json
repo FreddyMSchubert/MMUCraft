@@ -1,13 +1,11 @@
 {
 	"title": "Party Hat",
 	"id": "cosmetic-party-hat",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["No, no, no, can't be. I distinctly remember your birthday was LAST year."],
 	"shopPurchasable": {
-		"gameplayToggle": "circus",
 		"membersOnly": true,
 		"priceDabloons": 25,
 		"description": "",

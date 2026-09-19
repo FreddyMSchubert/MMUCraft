@@ -1,11 +1,13 @@
 {
 	"title": "Mohawk",
 	"id": "cosmetic-mohawk",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": ["Mohawk-tuah!"],
 	"shopPurchasable": {
+		"gameplayToggle": "soaring",
 		"membersOnly": true,
 		"priceDabloons": 100,
 		"description": "",

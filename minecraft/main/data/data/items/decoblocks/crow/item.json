@@ -1,7 +1,7 @@
 {
 	"title": "Crow",
 	"id": "deco-crow",
-	"drop": "welcoming",
+	"drop": "imaginative",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,

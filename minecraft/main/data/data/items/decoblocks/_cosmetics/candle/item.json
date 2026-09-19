@@ -1,12 +1,11 @@
 {
 	"title": "Candle",
 	"id": "cosmetic-candle",
+	"drop": "soaring",
 	"modelType": "cosmetic",
-	"rarity": "uncommon",
+	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Perfect for night-time walks around your manor."
-	],
+	"tooltips": ["Perfect for night-time walks around your manor."],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -16,4 +15,3 @@
 	},
 	"equippableCosmetic": {}
 }
- 

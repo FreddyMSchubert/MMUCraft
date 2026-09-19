@@ -1,15 +1,15 @@
 {
 	"title": "Googly Eyes",
 	"id": "cosmetic-googly-eyes",
+	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Become a walking earthquake detection kit!"
-	],
+	"tooltips": ["Become a walking earthquake detection kit!"],
 	"shopPurchasable": {
+		"gameplayToggle": "inventors",
 		"membersOnly": true,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Googly Eyes."

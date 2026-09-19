@@ -1,6 +1,7 @@
 {
 	"title": "Frying Pan",
 	"id": "cosmetic-frying-pan",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
@@ -13,6 +14,7 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "imaginative",
 		"membersOnly": false,
 		"priceDabloons": 150,
 		"description": "",

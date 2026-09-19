@@ -1,7 +1,7 @@
 {
 	"title": "Pumpkin Hat",
 	"id": "cosmetic-pumpkin",
-	"drop": "nether",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
@@ -14,7 +14,7 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
-		"gameplayToggle": "nether",
+		"gameplayToggle": "imaginative",
 		"membersOnly": false,
 		"priceDabloons": 25,
 		"description": "",

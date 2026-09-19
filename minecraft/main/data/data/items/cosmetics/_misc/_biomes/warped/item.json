@@ -1,13 +1,13 @@
 {
 	"title": "Warped Biotope Hat",
 	"id": "cosmetic-warped-biotope-hat",
-	"drop": "nether",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"gameplayToggle": "nether",
+		"gameplayToggle": "soaring",
 		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "",

@@ -1,13 +1,13 @@
 {
 	"title": "Axolotl Gills",
 	"id": "cosmetic-axolotl-gills",
-	"drop": "welcoming",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": ["A fin-e cosmetic for your aquatic adventures."],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
 		"priceDabloons": 42,
 		"description": "",

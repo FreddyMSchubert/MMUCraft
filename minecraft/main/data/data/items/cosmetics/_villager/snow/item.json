@@ -1,13 +1,11 @@
 {
 	"title": "Frosty Villager Hat",
 	"id": "cosmetic-villager-snow",
-	"drop": "cold",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": ["Larp being employed"],
 	"shopPurchasable": {
-		"gameplayToggle": "cold",
 		"membersOnly": false,
 		"priceDabloons": 42,
 		"description": "",

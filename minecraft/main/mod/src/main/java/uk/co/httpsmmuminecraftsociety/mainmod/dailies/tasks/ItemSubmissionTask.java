@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -115,6 +116,7 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
     }
 
     private boolean matches(ServerPlayer player, ItemStack stack, ItemStack customTemplate) {
+        if (item == Items.HEART_OF_THE_SEA && FakeItems.hasKnownFakeItemId(stack)) return false;
         return (item != null ? stack.is(item) : ItemStack.isSameItemSameComponents(stack, customTemplate))
                 && matcher.test(player, stack);
     }

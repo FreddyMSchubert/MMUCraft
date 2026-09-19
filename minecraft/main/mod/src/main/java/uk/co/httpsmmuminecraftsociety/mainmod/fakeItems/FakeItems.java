@@ -92,6 +92,13 @@ public final class FakeItems {
         return FakeItems.ID_MAP.containsKey(fakeItemId);
     }
 
+    public static boolean hasKnownFakeItemId(ItemStack stack) {
+        CustomModelData modelData = stack.get(DataComponents.CUSTOM_MODEL_DATA);
+        return modelData != null
+                && !modelData.strings().isEmpty()
+                && isKnownFakeItem(modelData.strings().getFirst());
+    }
+
     public static FakeItem requireFakeItem(String fakeItemId) {
         FakeItem fakeItem = FakeItems.ID_MAP.get(fakeItemId);
         if (fakeItem == null) {

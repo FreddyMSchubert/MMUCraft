@@ -25,6 +25,7 @@ import { replaceTrailingVariant } from '../utils/paths';
 import {
 	createCarvedPumpkinItemDefinition,
 	createCommandBlockItemDefinition,
+	createHeartOfTheSeaItemDefinition,
 } from './selectorDefinitions';
 import { buildGeneratedSingleTextureModel } from './singleTextureModel';
 
@@ -412,6 +413,11 @@ export async function generateResourcePack(
 	await writeJson(
 		minecraftItemDefinitionPath(options.outputDir, 'command_block'),
 		createCommandBlockItemDefinition(commandBlockCases),
+		context,
+	);
+	await writeJson(
+		minecraftItemDefinitionPath(options.outputDir, 'heart_of_the_sea'),
+		createHeartOfTheSeaItemDefinition(commandBlockCases),
 		context,
 	);
 	await writeJson(

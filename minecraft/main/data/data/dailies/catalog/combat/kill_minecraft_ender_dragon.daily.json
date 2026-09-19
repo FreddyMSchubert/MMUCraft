@@ -1,7 +1,7 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:ender_dragon",
-	"drop": "end",
+	"drop": "void",
 	"baseCost": 20,
 	"rewardPerIteration": 0,
 	"minimum": 1,

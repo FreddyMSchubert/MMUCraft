@@ -99,7 +99,7 @@ Sunday (Inventors Drop):
 
 Surprising Saturday: Manhunt - Split everyone randomly into hunters and runners
 
-Sunday (OP Drop):
+Sunday (Beach Party Drop):
 - Tease End opening next week
 - Charms: Iron Stomach Charm, Scuba Tank Charm, Candle of the Deep Charm, Vitality Mending Charm
 - Screenshot: player in halo + many god rays
@@ -111,7 +111,7 @@ Sunday (OP Drop):
 
 Surprising Saturday: Skyblock
 
-Sunday Update:
+Sunday Update (Void Drop):
 - End
 - Enderite
 - Note to get into particle trails if you haven't checked them out yet
@@ -129,7 +129,7 @@ Sunday: The drop where we didnt come up with a proper theme oh hey its christmas
 * **Last year:** 24.11.25 – 30.11.25
 * **This year:** 30.11.26 – 06.12.26
 
-Sunday: Jolly Drop
+Sunday: Cold Drop
 - Christmas event start
 - Advent Calendar start
 
@@ -138,7 +138,7 @@ Sunday: Jolly Drop
 * **Last year:** 01.12.25 – 07.12.25
 * **This year:** 07.12.26 – 13.12.26
 
-Sunday: Joyful Drop
+Sunday: Jolly Drop
 
 ## Week 12
 

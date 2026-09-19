@@ -1,19 +1,19 @@
 {
 	"title": "Cat Ears",
 	"id": "cosmetic-cat-ears",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"I cat think of a good pun at the moment..."
-	],
+	"tooltips": ["I cat think of a good pun at the moment..."],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": false,
-	"priceDabloons": 75,
+		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 51,
 		"unlockMessage": "Unlocked cosmetic: Cat Ears.",
-		"tags": ["cat","ears","car","white","cute","kitty","kitten"]
+		"tags": ["cat", "ears", "car", "white", "cute", "kitty", "kitten"]
 	},
 	"equippableCosmetic": {}
 }

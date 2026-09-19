@@ -3,6 +3,7 @@ import { useSyncExternalStore } from 'react';
 import type { AdminSection } from './admin-data.types';
 
 const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
+	{ section: 'drops', label: 'Drops' },
 	{ section: 'members', label: 'Member list' },
 	{ section: 'launch', label: 'Launch' },
 	{ section: 'announcements', label: 'Announcements' },

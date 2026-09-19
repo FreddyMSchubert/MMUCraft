@@ -1,16 +1,15 @@
 {
 	"title": "Small Frog",
 	"id": "cosmetic-frog-small",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Why did the frog go to the hospital?",
-		"He needed a hop-eration!"
-	],
+	"tooltips": ["Why did the frog go to the hospital?", "He needed a hop-eration!"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": true,
-	"priceDabloons": 175,
+		"priceDabloons": 175,
 		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Small Frog."

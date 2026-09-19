@@ -46,7 +46,7 @@ public record FakeItem(
                     .toList();
             List<ItemFeature> features = ItemFeature.of(json);
 
-            Item baseItem = Items.COMMAND_BLOCK;
+            Item baseItem = Items.HEART_OF_THE_SEA;
             if (features.stream().anyMatch(EquippableCosmeticItemFeature.class::isInstance))
                 baseItem = Items.CARVED_PUMPKIN;
             if (json.has("baseItemOverride"))
@@ -70,6 +70,7 @@ public record FakeItem(
 
     public ItemStack createItemStackAtLevel(int charmLevel) {
         ItemStack stack = new ItemStack(baseItem, 1);
+
 
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(id), List.of()));
         stack.set(DataComponents.CUSTOM_NAME, MoneyHelper.ReplaceDabloonWords(title));

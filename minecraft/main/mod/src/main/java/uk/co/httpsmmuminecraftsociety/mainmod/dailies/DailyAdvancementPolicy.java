@@ -43,7 +43,7 @@ public final class DailyAdvancementPolicy {
         if (matches(policy.excluded(), advancementId, rootId)) return false;
         if (!FeatureToggles.isEnabled(FeatureToggles.NETHER)
                 && matches(policy.requiresNether(), advancementId, rootId)) return false;
-        return FeatureToggles.isEnabled(FeatureToggles.END)
+        return FeatureToggles.isEnabled(FeatureToggles.VOID)
                 || !matches(policy.requiresEnd(), advancementId, rootId);
     }
 

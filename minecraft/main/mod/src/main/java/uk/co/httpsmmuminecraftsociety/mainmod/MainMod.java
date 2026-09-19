@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -43,6 +44,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry;
 import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.LegacyFakeItemMigration;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderFlight;
@@ -129,7 +131,9 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
+        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            LegacyFakeItemMigration.migratePlayer(handler.player);
             CharmsManager.refreshInventory(handler.player);
             MasteryAdvancements.onJoin(handler.player);
         });
@@ -177,6 +181,7 @@ public class MainMod implements ModInitializer {
             GrpcBridge.stop();
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            LegacyFakeItemMigration.tick(server);
             MetricsServer.update(server);
             GrpcBridge.onServerTick();
             PlayerStatsSync.onServerTick(server);

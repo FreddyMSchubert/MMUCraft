@@ -1,19 +1,18 @@
 {
 	"title": "Shulker Hat",
 	"id": "cosmetic-shulker",
+	"drop": "void",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Come out of your shell at bit more"
-	],
+	"tooltips": ["Come out of your shell at bit more"],
 	"shopPurchasable": {
 		"membersOnly": true,
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Shulker Hat.",
-		"gameplayToggle": "end"
+		"gameplayToggle": "void"
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

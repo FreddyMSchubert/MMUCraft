@@ -1,12 +1,11 @@
 {
 	"title": "Woodpecker",
 	"id": "cosmetic-woodpecker",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Can become a bit of a headache after a while..."
-	],
+	"tooltips": ["Can become a bit of a headache after a while..."],
 	"decoBlock": {
 		"ground": false,
 		"wall": true,

@@ -37,24 +37,94 @@ function createModelReference(selectorCase: SelectorCase): Record<string, unknow
 	};
 }
 
-export function createCommandBlockItemDefinition(
+function createBaseItemDefinition(
 	cases: readonly SelectorCase[],
+	baseModel: string,
+	includeAnimatedCharms = false,
 ): Record<string, unknown> {
+	const modelCases = cases.map((selectorCase) => ({
+		when: selectorCase.when,
+		model: createModelReference(selectorCase),
+	}));
+	if (includeAnimatedCharms) {
+		const range = (
+			folder: string,
+			names: readonly string[],
+			thresholds: readonly number[],
+		) => ({
+			type: 'minecraft:range_dispatch',
+			property: 'minecraft:custom_model_data',
+			index: 0,
+			fallback: { type: 'minecraft:model', model: `general-pack:item/${folder}/${names[0]}` },
+			entries: thresholds.map((threshold, index) => ({
+				threshold,
+				model: {
+					type: 'minecraft:model',
+					model: `general-pack:item/${folder}/${names[index + 1]}`,
+				},
+			})),
+		});
+		modelCases.push({
+			when: 'charm-slime-detector',
+			model: range(
+				'slime-detector',
+				Array.from({ length: 7 }, (_, n) =>
+					n === 6 ? 'slime-detector-loading' : `slime-detector-${n}`,
+				),
+				[1, 2, 3, 4, 5, 6],
+			),
+		});
+		modelCases.push({
+			when: 'charm-wallet',
+			model: range(
+				'wallet',
+				[0, 1, 10, 100, 1000, 10000, 100000, 1000000].map((n) => `wallet-${n}`),
+				[1, 10, 100, 1000, 10000, 100000, 1000000],
+			),
+		});
+		modelCases.push({
+			when: 'charm-sculk-phial',
+			model: range(
+				'sculk-phial',
+				Array.from({ length: 22 }, (_, n) => `sculk-phial_${n}`),
+				[
+					1, 71, 140, 210, 280, 349, 419, 489, 559, 628, 698, 768, 837, 907, 977, 1047,
+					1116, 1186, 1256, 1325, 1395,
+				],
+			),
+		});
+	}
 	return {
 		model: {
 			type: 'minecraft:select',
 			property: 'minecraft:custom_model_data',
 			index: 0,
-			cases: cases.map((selectorCase) => ({
-				when: selectorCase.when,
-				model: createModelReference(selectorCase),
-			})),
+			cases: modelCases,
 			fallback: {
 				type: 'minecraft:model',
-				model: 'minecraft:item/command_block',
+				model: baseModel,
 			},
 		},
 	};
+}
+
+export function createCommandBlockItemDefinition(
+	cases: readonly SelectorCase[],
+): Record<string, unknown> {
+	return createBaseItemDefinition(cases, 'minecraft:item/command_block');
+}
+
+export function createHeartOfTheSeaItemDefinition(
+	cases: readonly SelectorCase[],
+): Record<string, unknown> {
+	return createBaseItemDefinition(
+		cases.filter(
+			(item) =>
+				!['charm-slime-detector', 'charm-wallet', 'charm-sculk-phial'].includes(item.when),
+		),
+		'minecraft:item/heart_of_the_sea',
+		true,
+	);
 }
 
 export function createCarvedPumpkinItemDefinition(

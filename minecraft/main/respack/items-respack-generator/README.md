@@ -17,7 +17,8 @@ new schema shape:
 ```
 
 The generator uses the item `id` as the selector value written into the generated
-`command_block` / `carved_pumpkin` item definitions.
+`heart_of_the_sea` / `carved_pumpkin` item definitions. It also writes the
+`command_block` selector for older stacks until the server migrates them.
 
 Item definitions may include gameplay metadata such as `shopPurchasable`. The generator
 validates that known metadata shape and uses `shopPurchasable.unlockWeight` for the

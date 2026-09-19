@@ -11,7 +11,8 @@
 		"description": "",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Calico Cat Pet Hat.",
-		"tags": ["cat","cute","pet","white","orange","calico","animated"]
+		"tags": ["cat","cute","pet","white","orange","calico","animated"],
+		"gameplayToggle": "welcoming"
 	},
 	"equippableCosmetic": {}
 }

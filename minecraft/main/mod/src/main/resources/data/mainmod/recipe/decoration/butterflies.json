@@ -1,0 +1,19 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    " B ",
+    "WSP",
+    " D "
+  ],
+  "key": {
+    "D": "minecraft:dandelion",
+    "S": "mainmod:soul",
+    "B": "mineraft:blue_dye",
+    "W": "minecraft:white_dye",
+    "P": "minecraft:pink_dye"
+  },
+  "result": {
+    "stack": "mainmod:cosmetic-butterflies",
+    "count": 1
+  }
+}

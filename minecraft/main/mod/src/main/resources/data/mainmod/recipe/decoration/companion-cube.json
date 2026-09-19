@@ -1,0 +1,16 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "NNN",
+    "NRN",
+    "NNN"
+  ],
+  "key": {
+    "R": "minecraft:rotten_flesh",
+    "N": "minecraft:iron_nugget"
+  },
+  "result": {
+    "stack": "mainmod:cosmetic-companion-cube",
+    "count": 1
+  }
+}

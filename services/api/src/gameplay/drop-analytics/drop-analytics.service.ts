@@ -3,20 +3,26 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { findItemDefinitionFiles } from '../shop/shop-item-asset-files';
 
+const applicationRoot = join(__dirname, '..', '..', '..', '..', '..');
 const defaultContentRoot = join(process.cwd(), 'content');
 const contentRoots = [
 	defaultContentRoot,
+	join(applicationRoot, 'content'),
 	join(process.cwd(), '..', '..', 'minecraft', 'main', 'data'),
+	join(applicationRoot, 'minecraft', 'main', 'data'),
 ];
 const defaultKnowledgeRoot = join(process.cwd(), 'content', 'knowledge');
 const knowledgeRoots = [
 	defaultKnowledgeRoot,
+	join(applicationRoot, 'services', 'web', 'public', 'knowledge'),
 	join(process.cwd(), '..', 'web', 'public', 'knowledge'),
 ];
 const defaultItemRoot = join(process.cwd(), 'content', 'items');
 const itemRoots = [
 	defaultItemRoot,
+	join(applicationRoot, 'content', 'items'),
 	join(process.cwd(), '..', '..', 'minecraft', 'main', 'data', 'data', 'items'),
+	join(applicationRoot, 'minecraft', 'main', 'data', 'data', 'items'),
 ];
 
 function contentRoot() {

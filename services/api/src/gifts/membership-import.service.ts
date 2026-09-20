@@ -135,10 +135,12 @@ export class MembershipImportService {
 		const preview = await this.preview(input);
 		let context: Awaited<ReturnType<DiscordService['membershipRoleContext']>> | null = null;
 		let discordIssue = preview.discordIssue;
-		try {
-			context = await this.discord.membershipRoleContext();
-		} catch {
-			/* API membership can still be imported. */
+		if (!preview.discordIssue) {
+			try {
+				context = await this.discord.membershipRoleContext();
+			} catch {
+				/* API membership can still be imported. */
+			}
 		}
 		const results = [];
 		for (const row of preview.rows) {

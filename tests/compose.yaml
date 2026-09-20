@@ -11,6 +11,7 @@ services:
             AUTH_CODE_SECRET: playwright-only-secret
             DATABASE_URL: /app/data/playwright.sqlite
             DATABASE_MIGRATIONS_PATH: /app/drizzle
+            SIGNUP_ALLOWLIST_PATH: /tests/fixtures/signup-allowlist.txt
             DISCORD_BOT_TOKEN: ''
             DISCORD_WEBHOOK_URL: ''
             MOD_GRPC_TARGET: minecraft-not-present:50052

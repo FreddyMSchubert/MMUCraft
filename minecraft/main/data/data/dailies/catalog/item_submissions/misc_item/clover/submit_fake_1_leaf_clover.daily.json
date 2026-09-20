@@ -1,11 +1,11 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "1-leaf-clover",
-	"baseCost": 5,
-	"rewardPerIteration": 1,
-	"minimum": 3,
-	"maximum": 8,
+	"baseCost": 15,
+	"rewardPerIteration": 0,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "☘️",
 	"name": "Submit One-Leaf Clovers",
-	"description": "Submit {count} one-leaf clovers. Have the items in your inventory when you click Claim."
+	"description": "Submit a one-leaf clover. That's not even bad luck pretty sure somebody just ripped out a few leaves there."
 }

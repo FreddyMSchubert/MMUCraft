@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:music_disc_bounce",
-	"baseCost": 4,
-	"rewardPerIteration": 5,
+	"baseCost": 17,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🏀",
 	"name": "Submit Music Disc Bounce",
-	"description": "Submit one Music Disc Bounce. Have the items in your inventory when you click Claim."
+	"description": "Before you trade in this artistic masterpiece for soulless dabloons and submit to the greedy claws of capitalism, why not give it one last spin and enjoy the playful sounds of a bouncing sulfur cube?"
 }

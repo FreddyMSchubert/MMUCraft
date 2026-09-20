@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:guster_pottery_sherd",
-	"baseCost": 6,
-	"rewardPerIteration": 3,
+	"baseCost": 13,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
-	"emoji": "🌬️",
+	"emoji": "🏁",
 	"name": "Submit Guster Sherd",
-	"description": "Submit one guster sherd. Have the items in your inventory when you click Claim."
+	"description": "Submit one guster sherd. Archaeologists call pottery fragments sherds; glass, metal, and mineral fragments are shards."
 }

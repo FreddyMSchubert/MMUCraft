@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:tide_armor_trim_smithing_template",
-	"baseCost": 6,
-	"rewardPerIteration": 7,
+	"baseCost": 15,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🔱",
 	"name": "Submit Tide Trim",
-	"description": "Submit one tide trim template. Might wanna duplicate it first if this is your only copy."
+	"description": "Submit a tide trim template. Might wanna duplicate it first if this is your only copy."
 }

@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
@@ -48,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOnBlockCallbackCharm,
         AttackBlockCallbackCharm, AttackEntityCallbackCharm, AttackSwingCallbackCharm, BaseItemChangeCallbackCharm {
@@ -58,10 +60,14 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     private static final String POSITION_KEY = "position";
     private static final Map<ServerLevel, PriorityQueue<Delivery>> DELIVERIES = new HashMap<>();
     private static final Map<ServerLevel, Set<BlockPos>> POWERED_CHESTS = new HashMap<>();
+    private static final Map<ServerPlayer, PendingAttackSwing> ATTACK_SWINGS = new WeakHashMap<>();
+    private static final Map<ServerPlayer, PendingBlockUse> BLOCK_USES = new WeakHashMap<>();
 
     private record Link(String dimension, BlockPos pos) {}
     private record Delivery(long dueTick, BlockPos pos, int frequency, ItemStack remote,
                             @Nullable ServerPlayer sender) {}
+    private record PendingAttackSwing(long tick, InteractionHand hand) {}
+    private record PendingBlockUse(long tick, ItemStack stack) {}
     private enum LinkStatus { READY, UNLINKED, OTHER_DIMENSION, UNLOADED, MISSING }
 
     @Override
@@ -76,6 +82,15 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
 
     @Override
     public InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
+        // A server-only item is reported as PASS by the client prediction. For a block
+        // target the client then sends a second UseItem packet as a fallback. The block
+        // callback already handled that click, so consume exactly that paired packet.
+        PendingBlockUse blockUse = BLOCK_USES.get(player);
+        if (blockUse != null) {
+            long age = level.getGameTime() - blockUse.tick();
+            BLOCK_USES.remove(player);
+            if (age >= 0 && age <= 2 && blockUse.stack() == stack) return InteractionResult.SUCCESS_SERVER;
+        }
         if (player.isShiftKeyDown()) tune(stack, player, 1);
         else transmit(stack, level, player.blockPosition(), 0, player);
         return InteractionResult.SUCCESS_SERVER;
@@ -88,6 +103,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         if (player.isShiftKeyDown()) tune(stack, player, 1);
         else if (isSensor(level.getBlockState(hit.getBlockPos()))) link(stack, player, hit.getBlockPos());
         else transmit(stack, level, player.blockPosition(), 0, player);
+        BLOCK_USES.put(player, new PendingBlockUse(level.getGameTime(), stack));
         return InteractionResult.SUCCESS_SERVER;
     }
 
@@ -95,12 +111,18 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     public InteractionResult onAttackBlock(ItemStack stack, ServerPlayer player, ServerLevel level,
                                            InteractionHand hand, BlockPos pos, Direction direction, int charmLevel) {
         if (stack != player.getItemInHand(hand)) return InteractionResult.PASS;
+        if (hand == InteractionHand.MAIN_HAND && player.isShiftKeyDown()) tune(stack, player, -1);
+        ATTACK_SWINGS.put(player, new PendingAttackSwing(level.getGameTime(), hand));
         return InteractionResult.SUCCESS_SERVER;
     }
 
     @Override
     public void onAttackSwing(ItemStack stack, ServerPlayer player, ServerLevel level,
                               InteractionHand hand, int charmLevel) {
+        PendingAttackSwing attack = ATTACK_SWINGS.remove(player);
+        if (attack != null && attack.hand() == hand && level.getGameTime() - attack.tick() <= 2) return;
+        // A successful vanilla block interaction can also send a swing packet on right-click.
+        if (player.pick(player.blockInteractionRange(), 1.0F, false).getType() != HitResult.Type.MISS) return;
         if (hand == InteractionHand.MAIN_HAND && player.isShiftKeyDown()) tune(stack, player, -1);
     }
 
@@ -108,7 +130,10 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     public InteractionResult onAttackEntity(ItemStack stack, ServerPlayer player, ServerLevel level,
                                             InteractionHand hand, Entity entity, @Nullable EntityHitResult hit,
                                             int charmLevel) {
-        return stack == player.getItemInHand(hand) ? InteractionResult.SUCCESS_SERVER : InteractionResult.PASS;
+        if (stack != player.getItemInHand(hand)) return InteractionResult.PASS;
+        if (hand == InteractionHand.MAIN_HAND && player.isShiftKeyDown()) tune(stack, player, -1);
+        ATTACK_SWINGS.put(player, new PendingAttackSwing(level.getGameTime(), hand));
+        return InteractionResult.SUCCESS_SERVER;
     }
 
     public static boolean isRemote(ItemStack stack) {
@@ -341,5 +366,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     public static void clear() {
         DELIVERIES.clear();
         POWERED_CHESTS.clear();
+        ATTACK_SWINGS.clear();
+        BLOCK_USES.clear();
     }
 }

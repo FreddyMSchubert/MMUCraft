@@ -4,73 +4,131 @@
 			"id": "welcoming",
 			"name": "Welcoming",
 			"date": "2026-10-04",
-			"description": "Animal cosmetics, pets, slime detector and mini blocks."
+			"description": "Animal cosmetics, pets, slime detector and mini blocks.",
+			"weekStart": "2026-09-28",
+			"lastYear": "2025-09-22 to 2025-09-28",
+			"availableDayOne": "Saw Belt Charm\nVeinminer Charm\nHeart of Gold Charm",
+			"surprisingSaturday": "Killswitch",
+			"releaseNotes": "Kitty Pajamas Charm, Hiking Boots Charm and Pickaxe Heater Charm\nNote that Charm Boost allows many charms on some armor\nAnimal cosmetics, pets, crows, cats, dogs and hoods, including Eeyore\nSlime detector\nMini blocks",
+			"screenshot": "Kitty pajamas and bunny ears, with baby mobs nearby"
 		},
 		{
 			"id": "soaring",
 			"name": "Soaring",
 			"date": "2026-10-11",
-			"description": "Gliders, particle trails, phantom summoning and airborne adventures."
+			"description": "Gliders, particle trails, phantom summoning and airborne adventures.",
+			"weekStart": "2026-10-05",
+			"lastYear": "2025-09-29 to 2025-10-05",
+			"lastYearNotes": "2025-09-29: Oderzo first joined",
+			"surprisingSaturday": "Lifesteal; the player with the most hearts wins",
+			"releaseNotes": "Glider\nParticle trails\nPhantom Summon Potions\nWinged Shoes Charm and Bunny Pajamas Charm\nAnnounce the bunny ears cosmetic with Bunny Pajamas",
+			"screenshot": "Glider and aviator helmet while flying over a campfire with a trail"
 		},
 		{
 			"id": "imaginative",
 			"name": "Imaginative",
 			"date": "2026-10-18",
-			"description": "Building tools, map art and the start of the Halloween building event."
+			"description": "Building tools, map art and the start of the Halloween building event.",
+			"weekStart": "2026-10-12",
+			"lastYear": "2025-10-06 to 2025-10-12",
+			"lastYearNotes": "2025-10-10: Freddy first joined\n2025-10-12: Calum first joined",
+			"surprisingSaturday": "Chunklocked with many custom advancements",
+			"releaseNotes": "Tease the Nether unlock for next week\nBegin the Halloween event and frame this drop as helpful for building\nWrench and InvisiCarrot\n16x16 maps feature\nSpider Pajamas and Cave Spider Pajamas charms",
+			"screenshot": "Wrench and builder helmet on a build under construction, perhaps with a toolbench decoration block"
 		},
 		{
 			"id": "nether",
 			"name": "Hellish",
 			"date": "2026-10-25",
-			"description": "The Nether, flexible portals and Halloween cosmetics."
+			"description": "The Nether, flexible portals and Halloween cosmetics.",
+			"weekStart": "2026-10-19",
+			"lastYear": "2025-10-13 to 2025-10-19",
+			"lastYearNotes": "2025-10-15: Mia first joined\n2025-10-16: Hannah first joined",
+			"surprisingSaturday": "One Block, with one block per person who joins",
+			"releaseNotes": "Unlock the Nether\nNether portals of any shape\nNote that the Halloween build event ends next Saturday\nHalloween cosmetics",
+			"screenshot": "Player in netherite with devil horns, perhaps falling through a portal in the ground"
 		},
 		{
 			"id": "circus",
 			"name": "Circus",
 			"date": "2026-11-01",
-			"description": "Playful charms, costumes and hopcorn."
+			"description": "Playful charms, costumes and hopcorn.",
+			"weekStart": "2026-10-26",
+			"lastYear": "2025-10-20 to 2025-10-26",
+			"surprisingSaturday": "A seemingly normal world with Herobrine and spooky server-side mods; extreme mob difficulty and points for kills (for example, zombie 1, dragon 50, wither 100)",
+			"notes": "End the Halloween event",
+			"releaseNotes": "Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots and Happy Ghast Speedup charms\nFarmer-traded popcorn (hopcorn) makes the next jump very high",
+			"screenshot": "Player wearing Giant's Boots and a skull, looking down at a normal-size player"
 		},
 		{
 			"id": "inventors",
 			"name": "Inventors",
 			"date": "2026-11-08",
-			"description": "Item filters, storage systems and bow attachments."
+			"description": "Item filters, storage systems and bow attachments.",
+			"weekStart": "2026-11-02",
+			"lastYear": "2025-10-27 to 2025-11-02",
+			"surprisingSaturday": "A long puzzle like the BAC advancements pirate puzzle, with more hints released each hour",
+			"releaseNotes": "Easy sorting systems with a special hopper filter item\nBow system that attaches items held in the offhand",
+			"screenshot": "Player working on a storage system while wearing an inventor's top hat"
 		},
 		{
 			"id": "beach-party",
 			"name": "Beach Party",
 			"date": "2026-11-15",
-			"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms."
+			"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms.",
+			"weekStart": "2026-11-09",
+			"lastYear": "2025-11-03 to 2025-11-09",
+			"surprisingSaturday": "Manhunt: split everyone randomly into hunters and runners",
+			"releaseNotes": "Tease the End opening next week\nIron Stomach Charm, Scuba Tank Charm, Candle of the Deep Charm and Vitality Mending Charm",
+			"screenshot": "Player in a halo with many god rays"
 		},
 		{
 			"id": "void",
 			"name": "Void",
 			"date": "2026-11-22",
-			"description": "The End opens with Enderite and End City exploration."
+			"description": "The End opens with Enderite and End City exploration.",
+			"weekStart": "2026-11-16",
+			"lastYear": "2025-11-10 to 2025-11-16",
+			"surprisingSaturday": "Skyblock",
+			"releaseNotes": "Unlock the End\nEnderite\nRemind players to check out particle trails",
+			"screenshot": "Enderite and shulker hat while raiding an End City, with shulker shots nearby"
 		},
 		{
 			"id": "unthemed",
 			"name": "Unthemed",
 			"date": "2026-11-29",
-			"description": "A week without a fixed theme, ahead of the Christmas season."
+			"description": "A week without a fixed theme, ahead of the Christmas season.",
+			"weekStart": "2026-11-23",
+			"lastYear": "2025-11-17 to 2025-11-23",
+			"releaseNotes": "No fixed theme; Christmas is coming soon"
 		},
 		{
 			"id": "cold",
 			"name": "Cold",
 			"date": "2026-12-06",
-			"description": "The Christmas event and Advent Calendar begin."
+			"description": "The Christmas event and Advent Calendar begin.",
+			"weekStart": "2026-11-30",
+			"lastYear": "2025-11-24 to 2025-11-30",
+			"releaseNotes": "Start the Christmas event\nStart the Advent Calendar"
 		},
 		{
 			"id": "jolly",
 			"name": "Jolly",
 			"date": "2026-12-13",
-			"description": "The second week of the Christmas event."
+			"description": "The second week of the Christmas event.",
+			"weekStart": "2026-12-07",
+			"lastYear": "2025-12-01 to 2025-12-07"
 		},
 		{
 			"id": "christmas",
 			"name": "Christmas",
 			"date": "2026-12-20",
-			"description": "Christmas gifts and decorations; the event ends this week."
+			"description": "Christmas gifts and decorations; the event ends this week.",
+			"weekStart": "2026-12-14",
+			"lastYear": "2025-12-08 to 2025-12-14",
+			"surprisingSaturday": "Combine as many previous Surprising Saturdays as possible into one mashup",
+			"releaseNotes": "Christmas activities\nGifts\nChristmas decorations",
+			"notes": "End the Christmas event on 2026-12-20"
 		}
 	],
 	"items": [
@@ -80,127 +138,8 @@
 			"type": "decoblock",
 			"drop": null,
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/basic/food/beer/item.json"
-		},
-		{
-			"id": "cosmetic-bunny-ears",
-			"name": "Bunny Ears",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/bunny-ears/item.json"
-		},
-		{
-			"id": "cosmetic-cat-ears",
-			"name": "Cat Ears",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/cat-ears/item.json"
-		},
-		{
-			"id": "cosmetic-chick-basic",
-			"name": "Chick Hat",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/chick-basic/item.json"
-		},
-		{
-			"id": "cosmetic-chick-stack",
-			"name": "Chick Stack",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/chick-stack/item.json"
-		},
-		{
-			"id": "cosmetic-chick-tower",
-			"name": "Chick Tower",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/chick-tower/item.json"
-		},
-		{
-			"id": "cosmetic-chicken",
-			"name": "Chicken Hat",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/chicken/item.json"
-		},
-		{
-			"id": "cosmetic-cod",
-			"name": "Cod Hat",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/cod/item.json"
-		},
-		{
-			"id": "cosmetic-dog-ears",
-			"name": "Dog Ears",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/dog-ears/item.json"
-		},
-		{
-			"id": "cosmetic-frog-small",
-			"name": "Small Frog",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/frog-small/item.json"
-		},
-		{
-			"id": "cosmetic-posh-squid",
-			"name": "Posh Squid",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/posh-squid/item.json"
-		},
-		{
-			"id": "cosmetic-salmon",
-			"name": "Salmon Hat",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/salmon/item.json"
-		},
-		{
-			"id": "cosmetic-sleeping-mobs",
-			"name": "Sleeping Mobs",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/sleeping-mobs/item.json"
-		},
-		{
-			"id": "cosmetic-spider",
-			"name": "Spider Hat",
-			"type": "cosmetic",
-			"drop": "nether",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/spider/item.json"
-		},
-		{
-			"id": "cosmetic-unicorn-horn",
-			"name": "Unicorn Horn",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/unicorn_horn/item.json"
-		},
-		{
-			"id": "cosmetic-wyrm-skull",
-			"name": "Wyrm Skull",
-			"type": "cosmetic",
-			"drop": "welcoming",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_animals/wyrm-skull/item.json"
 		},
 		{
 			"id": "cosmetic-calico-cat-pet-hat",
@@ -208,6 +147,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_animals/_pets/calico/item.json"
 		},
 		{
@@ -216,6 +156,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_animals/_pets/dog/item.json"
 		},
 		{
@@ -224,6 +165,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_animals/_pets/red/item.json"
 		},
 		{
@@ -232,6 +174,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_animals/_pets/siamese/item.json"
 		},
 		{
@@ -240,6 +183,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_animals/_pets/tabby/item.json"
 		},
 		{
@@ -248,6 +192,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_animals/_pets/tuxedo/item.json"
 		},
 		{
@@ -256,46 +201,187 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_animals/_pets/white/item.json"
+		},
+		{
+			"id": "cosmetic-bunny-ears",
+			"name": "Bunny Ears",
+			"type": "cosmetic",
+			"drop": "welcoming",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/bunny-ears/item.json"
+		},
+		{
+			"id": "cosmetic-cat-ears",
+			"name": "Cat Ears",
+			"type": "cosmetic",
+			"drop": "welcoming",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/cat-ears/item.json"
+		},
+		{
+			"id": "cosmetic-chick-basic",
+			"name": "Chick Hat",
+			"type": "cosmetic",
+			"drop": "welcoming",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/chick-basic/item.json"
+		},
+		{
+			"id": "cosmetic-chick-stack",
+			"name": "Chick Stack",
+			"type": "cosmetic",
+			"drop": "soaring",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/chick-stack/item.json"
+		},
+		{
+			"id": "cosmetic-chick-tower",
+			"name": "Chick Tower",
+			"type": "cosmetic",
+			"drop": "imaginative",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/chick-tower/item.json"
+		},
+		{
+			"id": "cosmetic-chicken",
+			"name": "Chicken Hat",
+			"type": "cosmetic",
+			"drop": null,
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/chicken/item.json"
+		},
+		{
+			"id": "cosmetic-cod",
+			"name": "Cod Hat",
+			"type": "cosmetic",
+			"drop": "beach-party",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/cod/item.json"
+		},
+		{
+			"id": "cosmetic-dog-ears",
+			"name": "Dog Ears",
+			"type": "cosmetic",
+			"drop": "welcoming",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/dog-ears/item.json"
+		},
+		{
+			"id": "cosmetic-frog-small",
+			"name": "Small Frog",
+			"type": "cosmetic",
+			"drop": "imaginative",
+			"shopPurchasable": true,
+			"membersOnly": true,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/frog-small/item.json"
+		},
+		{
+			"id": "cosmetic-posh-squid",
+			"name": "Posh Squid",
+			"type": "cosmetic",
+			"drop": "beach-party",
+			"shopPurchasable": true,
+			"membersOnly": true,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/posh-squid/item.json"
+		},
+		{
+			"id": "cosmetic-salmon",
+			"name": "Salmon Hat",
+			"type": "cosmetic",
+			"drop": "beach-party",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/salmon/item.json"
+		},
+		{
+			"id": "cosmetic-sleeping-mobs",
+			"name": "Sleeping Mobs",
+			"type": "cosmetic",
+			"drop": "welcoming",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/sleeping-mobs/item.json"
+		},
+		{
+			"id": "cosmetic-spider",
+			"name": "Spider Hat",
+			"type": "cosmetic",
+			"drop": "nether",
+			"shopPurchasable": true,
+			"membersOnly": true,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/spider/item.json"
+		},
+		{
+			"id": "cosmetic-unicorn-horn",
+			"name": "Unicorn Horn",
+			"type": "cosmetic",
+			"drop": "soaring",
+			"shopPurchasable": true,
+			"membersOnly": true,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/unicorn_horn/item.json"
+		},
+		{
+			"id": "cosmetic-wyrm-skull",
+			"name": "Wyrm Skull",
+			"type": "cosmetic",
+			"drop": "nether",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_animals/wyrm-skull/item.json"
 		},
 		{
 			"id": "cosmetic-arrow",
 			"name": "Arrow through Head (Hat)",
 			"type": "cosmetic",
-			"drop": "imaginative",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_antlers/arrow/item.json"
 		},
 		{
 			"id": "cosmetic-axolotl-gills",
 			"name": "Axolotl Gills",
 			"type": "cosmetic",
-			"drop": "welcoming",
+			"drop": "beach-party",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_antlers/axolotl/item.json"
 		},
 		{
 			"id": "cosmetic-deer-antlers",
 			"name": "Deer Antlers",
 			"type": "cosmetic",
-			"drop": "welcoming",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_antlers/deer/item.json"
 		},
 		{
 			"id": "cosmetic-frankenstein-screws",
 			"name": "Frankenstein Screws",
 			"type": "cosmetic",
-			"drop": "imaginative",
+			"drop": "nether",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_antlers/frankenstein_screws/item.json"
 		},
 		{
 			"id": "cosmetic-warden-antlers",
 			"name": "Warden Antlers",
 			"type": "cosmetic",
-			"drop": "welcoming",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_antlers/warden/item.json"
 		},
 		{
@@ -304,6 +390,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_crowns/2526-crown/item.json"
 		},
 		{
@@ -312,14 +399,16 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_crowns/ornate-crown/item.json"
 		},
 		{
 			"id": "cosmetic-crown-royal",
 			"name": "Royal Crown",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_crowns/royal-crown/item.json"
 		},
 		{
@@ -328,6 +417,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_crowns/techno_crown/item.json"
 		},
 		{
@@ -336,14 +426,16 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_glasses/3d/item.json"
 		},
 		{
 			"id": "cosmetic-googly-eyes",
 			"name": "Googly Eyes",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "inventors",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_glasses/googly_eyes/item.json"
 		},
 		{
@@ -352,6 +444,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_glasses/half-rim/item.json"
 		},
 		{
@@ -360,6 +453,7 @@
 			"type": "cosmetic",
 			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_glasses/popout_eyes/item.json"
 		},
 		{
@@ -368,6 +462,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_glasses/rainbow/item.json"
 		},
 		{
@@ -376,6 +471,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_glasses/round/item.json"
 		},
 		{
@@ -384,6 +480,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_hoods/bee-hood/item.json"
 		},
 		{
@@ -392,6 +489,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_hoods/bee-pride-hood/item.json"
 		},
 		{
@@ -400,14 +498,16 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_hoods/bee-trans-hood/item.json"
 		},
 		{
 			"id": "cosmetic-hood-camel",
 			"name": "Camel hood",
 			"type": "cosmetic",
-			"drop": "welcoming",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_hoods/camel-hood/item.json"
 		},
 		{
@@ -416,6 +516,7 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_hoods/eeyore-hood/item.json"
 		},
 		{
@@ -424,14 +525,16 @@
 			"type": "cosmetic",
 			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_hoods/sniffer-hood/item.json"
 		},
 		{
 			"id": "cosmetic-head-warden",
 			"name": "Warden Head",
 			"type": "cosmetic",
-			"drop": "welcoming",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_hoods/warden-hood/item.json"
 		},
 		{
@@ -440,6 +543,7 @@
 			"type": "cosmetic",
 			"drop": "beach-party",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_masks/blue-snorkel-mask/item.json"
 		},
 		{
@@ -448,22 +552,52 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_masks/steve-mask/item.json"
+		},
+		{
+			"id": "cosmetic-moss-biotope-hat",
+			"name": "Sniffer Biotope Hat",
+			"type": "cosmetic",
+			"drop": "beach-party",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_misc/_biomes/moss/item.json"
+		},
+		{
+			"id": "cosmetic-snow-biotope-hat",
+			"name": "Snow Biotope Hat",
+			"type": "cosmetic",
+			"drop": "soaring",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_misc/_biomes/snow/item.json"
+		},
+		{
+			"id": "cosmetic-warped-biotope-hat",
+			"name": "Warped Biotope Hat",
+			"type": "cosmetic",
+			"drop": "soaring",
+			"shopPurchasable": true,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/cosmetics/_misc/_biomes/warped/item.json"
 		},
 		{
 			"id": "cosmetic-amogus",
 			"name": "Amogus Hat",
 			"type": "cosmetic",
-			"drop": "circus",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/amogus/item.json"
 		},
 		{
 			"id": "cosmetic-copper-golem-antenna",
 			"name": "Copper Golem Antenna",
 			"type": "cosmetic",
-			"drop": "inventors",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/copper-golem-antenna/item.json"
 		},
 		{
@@ -472,6 +606,7 @@
 			"type": "cosmetic",
 			"drop": "nether",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/devil-horns/item.json"
 		},
 		{
@@ -480,6 +615,7 @@
 			"type": "cosmetic",
 			"drop": "nether",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/freddy-fazbear/item.json"
 		},
 		{
@@ -488,14 +624,16 @@
 			"type": "cosmetic",
 			"drop": "beach-party",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/halo/item.json"
 		},
 		{
 			"id": "cosmetic-ice-cream",
 			"name": "Ice Cream Hat",
 			"type": "cosmetic",
-			"drop": "circus",
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/ice-cream/item.json"
 		},
 		{
@@ -504,22 +642,25 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/makka_pakka/item.json"
 		},
 		{
 			"id": "cosmetic-mohawk",
 			"name": "Mohawk",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "soaring",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/mohawk/item.json"
 		},
 		{
 			"id": "cosmetic-obamium-pyramid",
 			"name": "Obamium Pyramid",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "void",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/obama-pyramid/item.json"
 		},
 		{
@@ -528,14 +669,16 @@
 			"type": "cosmetic",
 			"drop": "void",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/shulker-hat/item.json"
 		},
 		{
 			"id": "cosmetic-skull",
 			"name": "Skull Hat",
 			"type": "cosmetic",
-			"drop": "nether",
+			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/skull-hat/item.json"
 		},
 		{
@@ -544,54 +687,34 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_misc/slime-head/item.json"
-		},
-		{
-			"id": "cosmetic-moss-biotope-hat",
-			"name": "Sniffer Biotope Hat",
-			"type": "cosmetic",
-			"drop": null,
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_misc/_biomes/moss/item.json"
-		},
-		{
-			"id": "cosmetic-snow-biotope-hat",
-			"name": "Snow Biotope Hat",
-			"type": "cosmetic",
-			"drop": "cold",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_misc/_biomes/snow/item.json"
-		},
-		{
-			"id": "cosmetic-warped-biotope-hat",
-			"name": "Warped Biotope Hat",
-			"type": "cosmetic",
-			"drop": "nether",
-			"shopPurchasable": true,
-			"source": "minecraft/main/data/data/items/cosmetics/_misc/_biomes/warped/item.json"
 		},
 		{
 			"id": "cosmetic-mousetache-bushy",
 			"name": "Bushy Moustache",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_moustaches/moustache-bushy/item.json"
 		},
 		{
 			"id": "cosmetic-mousetache-fancy",
 			"name": "Fancy Moustache",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "inventors",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_moustaches/moustache-fancy/item.json"
 		},
 		{
 			"id": "cosmetic-mousetache-square",
 			"name": "Square Moustache",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "soaring",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_moustaches/moustache-square/item.json"
 		},
 		{
@@ -600,6 +723,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_teletubbies/dipsy/item.json"
 		},
 		{
@@ -608,6 +732,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_teletubbies/laa_laa/item.json"
 		},
 		{
@@ -616,6 +741,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_teletubbies/po/item.json"
 		},
 		{
@@ -624,6 +750,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_teletubbies/sun/item.json"
 		},
 		{
@@ -632,6 +759,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_teletubbies/tinky_winky/item.json"
 		},
 		{
@@ -640,6 +768,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/academic/item.json"
 		},
 		{
@@ -648,14 +777,16 @@
 			"type": "cosmetic",
 			"drop": "soaring",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/aviator-hat/item.json"
 		},
 		{
 			"id": "cosmetic-aztec-headdress",
 			"name": "Moctezuma's Headdress",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "beach-party",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/aztec_headdress/item.json"
 		},
 		{
@@ -664,6 +795,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/beanie/item.json"
 		},
 		{
@@ -672,6 +804,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/beret/item.json"
 		},
 		{
@@ -680,14 +813,16 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/bow/item.json"
 		},
 		{
 			"id": "cosmetic-bowler-hat",
 			"name": "Bowler Hat",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "inventors",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/bowler/item.json"
 		},
 		{
@@ -696,14 +831,16 @@
 			"type": "cosmetic",
 			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/clown-nose/item.json"
 		},
 		{
 			"id": "cosmetic-cowboy-hat",
 			"name": "Cowboy Hat",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/cowboy-hat/item.json"
 		},
 		{
@@ -712,6 +849,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/feather-headband/item.json"
 		},
 		{
@@ -720,6 +858,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/fez/item.json"
 		},
 		{
@@ -728,6 +867,7 @@
 			"type": "cosmetic",
 			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/hard-hat/item.json"
 		},
 		{
@@ -736,6 +876,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/headband/item.json"
 		},
 		{
@@ -744,22 +885,25 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/headphones/item.json"
 		},
 		{
 			"id": "cosmetic-helmet-patriotic",
 			"name": "Patriotic Helmet",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "soaring",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/helmet-patriotic/item.json"
 		},
 		{
 			"id": "cosmetic-helmet-retro",
 			"name": "Retro Helmet",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "soaring",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/helmet-retro/item.json"
 		},
 		{
@@ -768,6 +912,7 @@
 			"type": "cosmetic",
 			"drop": "inventors",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/inventors-tophat/item.json"
 		},
 		{
@@ -776,94 +921,106 @@
 			"type": "cosmetic",
 			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/leprechaun-hat/item.json"
 		},
 		{
 			"id": "cosmetic-party-hat",
 			"name": "Party Hat",
 			"type": "cosmetic",
-			"drop": "circus",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/party-hat/item.json"
 		},
 		{
 			"id": "cosmetic-pirate",
 			"name": "Pirate Hat",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/pirate-hat/item.json"
 		},
 		{
 			"id": "cosmetic-propeller",
 			"name": "Propeller Hat",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/propeller-hat/item.json"
 		},
 		{
 			"id": "cosmetic-sombrero",
 			"name": "Sombrero",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "nether",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/sombrero/item.json"
 		},
 		{
 			"id": "cosmetic-sombreron",
 			"name": "Sombreron",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/sombreron/item.json"
 		},
 		{
 			"id": "cosmetic-sombreronn",
 			"name": "Sombreronn",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "inventors",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/sombreronn/item.json"
 		},
 		{
 			"id": "cosmetic-spartan-helmet",
 			"name": "Spartan Helmet",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "welcoming",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/spartan-helmet/item.json"
 		},
 		{
 			"id": "cosmetic-sun-hat",
 			"name": "Sun Hat",
 			"type": "cosmetic",
-			"drop": "beach-party",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/sun-hat/item.json"
 		},
 		{
 			"id": "cosmetic-toohat",
 			"name": "Tophat",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "inventors",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/tophat/item.json"
 		},
 		{
 			"id": "cosmetic-tricorn",
 			"name": "Tricorn",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "circus",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/tricorn/item.json"
 		},
 		{
 			"id": "cosmetic-ushanka",
 			"name": "Ushanka",
 			"type": "cosmetic",
-			"drop": "cold",
+			"drop": "void",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/ushanka/item.json"
 		},
 		{
@@ -872,6 +1029,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_true-hats/war-bonnet/item.json"
 		},
 		{
@@ -880,6 +1038,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/armorer/item.json"
 		},
 		{
@@ -888,6 +1047,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/butcher/item.json"
 		},
 		{
@@ -896,6 +1056,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/cartographer/item.json"
 		},
 		{
@@ -904,6 +1065,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/desert/item.json"
 		},
 		{
@@ -912,6 +1074,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/farmer/item.json"
 		},
 		{
@@ -920,6 +1083,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/fisherman/item.json"
 		},
 		{
@@ -928,6 +1092,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/fletcher/item.json"
 		},
 		{
@@ -936,6 +1101,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/librarian/item.json"
 		},
 		{
@@ -944,6 +1110,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/savanna/item.json"
 		},
 		{
@@ -952,14 +1119,16 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/sheperd/item.json"
 		},
 		{
 			"id": "cosmetic-villager-snow",
 			"name": "Frosty Villager Hat",
 			"type": "cosmetic",
-			"drop": "cold",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/snow/item.json"
 		},
 		{
@@ -968,6 +1137,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/swamp/item.json"
 		},
 		{
@@ -976,6 +1146,7 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/villager-nose/item.json"
 		},
 		{
@@ -984,222 +1155,151 @@
 			"type": "cosmetic",
 			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/weaponsmith/item.json"
 		},
 		{
 			"id": "cosmetic-witch-hat",
 			"name": "Witch Hat",
 			"type": "cosmetic",
-			"drop": "nether",
+			"drop": null,
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/cosmetics/_villager/witch/item.json"
-		},
-		{
-			"id": "deco-cookie-jar",
-			"name": "Cookie Jar",
-			"type": "decoblock",
-			"drop": null,
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/cookie-jar/item.json"
-		},
-		{
-			"id": "deco-crow",
-			"name": "Crow",
-			"type": "decoblock",
-			"drop": "welcoming",
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/crow/item.json"
-		},
-		{
-			"id": "deco-firefly-jar",
-			"name": "Firefly Jar",
-			"type": "decoblock",
-			"drop": "christmas",
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/firefly-jar/item.json"
-		},
-		{
-			"id": "deco-fruit-bowl",
-			"name": "Fruit Bowl",
-			"type": "decoblock",
-			"drop": null,
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/fruit-bowl/item.json"
-		},
-		{
-			"id": "deco-spoons-carpet-grandiloquent",
-			"name": "Grandiloquent Spoons Carpet",
-			"type": "decoblock",
-			"drop": null,
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/grandiloquent-spoons-carpet/item.json"
-		},
-		{
-			"id": "deco-spoons-carpet-junoesque",
-			"name": "Junoeqsue Spoons Carpet",
-			"type": "decoblock",
-			"drop": null,
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/junoesque-spoons-carpet/item.json"
-		},
-		{
-			"id": "deco-kettle",
-			"name": "Kettle",
-			"type": "decoblock",
-			"drop": null,
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/kettle/item.json"
-		},
-		{
-			"id": "deco-spoons-carpet-meretricious",
-			"name": "Meretricious Spoons Carpet",
-			"type": "decoblock",
-			"drop": null,
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/meretricious-spoons-carpet/item.json"
-		},
-		{
-			"id": "deco-mmu-dirt",
-			"name": "Logo Dirt",
-			"type": "decoblock",
-			"drop": null,
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/mmu-dirt/item.json"
-		},
-		{
-			"id": "deco-scarecrow",
-			"name": "Scarecrow",
-			"type": "decoblock",
-			"drop": "imaginative",
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/scarecrow/item.json"
-		},
-		{
-			"id": "deco-vinyl-player",
-			"name": "Vinyl Player",
-			"type": "decoblock",
-			"drop": null,
-			"shopPurchasable": false,
-			"source": "minecraft/main/data/data/items/decoblocks/vinyl-player/item.json"
 		},
 		{
 			"id": "cosmetic-book-stack",
 			"name": "Book Stack",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "nether",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/book-stack/item.json"
 		},
 		{
 			"id": "cosmetic-butterflies",
 			"name": "Butterflies Flower",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "soaring",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/butterflies-flower/item.json"
 		},
 		{
 			"id": "cosmetic-candle",
 			"name": "Candle",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "soaring",
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/candle/item.json"
 		},
 		{
 			"id": "cosmetic-cardboard-box",
 			"name": "Cardboard Box",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "nether",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/carboard-box/item.json"
 		},
 		{
 			"id": "cosmetic-cheese",
 			"name": "Cheese Hat",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "nether",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/cheese/item.json"
 		},
 		{
 			"id": "cosmetic-companion-cube",
 			"name": "Companion Cube",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "inventors",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/companion-cube/item.json"
 		},
 		{
 			"id": "cosmetic-fire-hat",
 			"name": "Fire",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/fire-hat/item.json"
 		},
 		{
 			"id": "cosmetic-fishbowl",
 			"name": "Fishbowl",
 			"type": "cosmetic",
-			"drop": "beach-party",
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/fishbowl/item.json"
 		},
 		{
 			"id": "cosmetic-ufo",
 			"name": "Flying Saucer",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/flying-saucer/item.json"
 		},
 		{
 			"id": "cosmetic-frying-pan",
 			"name": "Frying Pan",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/frying-pan/item.json"
 		},
 		{
 			"id": "cosmetic-microwave",
 			"name": "Microwave",
 			"type": "cosmetic",
-			"drop": "inventors",
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/microwave/item.json"
 		},
 		{
 			"id": "cosmetic-mushroom-big",
 			"name": "Big Mushroom",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/mushroom/item.json"
 		},
 		{
 			"id": "cosmetic-plunger",
 			"name": "Plunger Hat",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/plunger/item.json"
 		},
 		{
 			"id": "cosmetic-pumpkin",
 			"name": "Pumpkin Hat",
 			"type": "cosmetic",
-			"drop": "nether",
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/pumpkin/item.json"
 		},
 		{
 			"id": "cosmetic-rootling",
 			"name": "Rootling",
 			"type": "cosmetic",
-			"drop": null,
+			"drop": "imaginative",
 			"shopPurchasable": true,
+			"membersOnly": true,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/rootling/item.json"
 		},
 		{
@@ -1208,23 +1308,125 @@
 			"type": "cosmetic",
 			"drop": "beach-party",
 			"shopPurchasable": true,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/sea-scorpion/item.json"
 		},
 		{
 			"id": "cosmetic-traffic-cone",
 			"name": "Traffic Cone Hat",
 			"type": "cosmetic",
-			"drop": "imaginative",
+			"drop": "inventors",
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/traffic_cone/item.json"
 		},
 		{
 			"id": "cosmetic-woodpecker",
 			"name": "Woodpecker",
 			"type": "cosmetic",
-			"drop": "welcoming",
+			"drop": "imaginative",
 			"shopPurchasable": false,
+			"membersOnly": false,
 			"source": "minecraft/main/data/data/items/decoblocks/_cosmetics/woodpecker/item.json"
+		},
+		{
+			"id": "deco-cookie-jar",
+			"name": "Cookie Jar",
+			"type": "decoblock",
+			"drop": "imaginative",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/cookie-jar/item.json"
+		},
+		{
+			"id": "deco-crow",
+			"name": "Crow",
+			"type": "decoblock",
+			"drop": "imaginative",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/crow/item.json"
+		},
+		{
+			"id": "deco-firefly-jar",
+			"name": "Firefly Jar",
+			"type": "decoblock",
+			"drop": "imaginative",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/firefly-jar/item.json"
+		},
+		{
+			"id": "deco-fruit-bowl",
+			"name": "Fruit Bowl",
+			"type": "decoblock",
+			"drop": "imaginative",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/fruit-bowl/item.json"
+		},
+		{
+			"id": "deco-spoons-carpet-grandiloquent",
+			"name": "Grandiloquent Spoons Carpet",
+			"type": "decoblock",
+			"drop": "nether",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/grandiloquent-spoons-carpet/item.json"
+		},
+		{
+			"id": "deco-spoons-carpet-junoesque",
+			"name": "Junoeqsue Spoons Carpet",
+			"type": "decoblock",
+			"drop": "nether",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/junoesque-spoons-carpet/item.json"
+		},
+		{
+			"id": "deco-kettle",
+			"name": "Kettle",
+			"type": "decoblock",
+			"drop": "imaginative",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/kettle/item.json"
+		},
+		{
+			"id": "deco-spoons-carpet-meretricious",
+			"name": "Meretricious Spoons Carpet",
+			"type": "decoblock",
+			"drop": "nether",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/meretricious-spoons-carpet/item.json"
+		},
+		{
+			"id": "deco-mmu-dirt",
+			"name": "Logo Dirt",
+			"type": "decoblock",
+			"drop": null,
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/mmu-dirt/item.json"
+		},
+		{
+			"id": "deco-scarecrow",
+			"name": "Scarecrow",
+			"type": "decoblock",
+			"drop": "soaring",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/scarecrow/item.json"
+		},
+		{
+			"id": "deco-vinyl-player",
+			"name": "Vinyl Player",
+			"type": "decoblock",
+			"drop": "imaginative",
+			"shopPurchasable": false,
+			"membersOnly": false,
+			"source": "minecraft/main/data/data/items/decoblocks/vinyl-player/item.json"
 		}
 	],
 	"knowledge": [

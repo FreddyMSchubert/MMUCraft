@@ -1,11 +1,17 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
-import { DatabaseService, playerProfiles, users } from '../database/database.service';
+import { and, eq } from 'drizzle-orm';
+import {
+	DatabaseService,
+	playerProfiles,
+	referralLinks,
+	users,
+} from '../database/database.service';
 import { ClaimMinecraftSynchronizationService } from '../claims/claim-minecraft-synchronization.service';
 import { effectivePlayerColor } from '../players/player-color';
 import { customPlayerEmojis, normalizeCustomEmojis } from '../players/player-emojis';
 import { PlayersService } from '../players/players.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
+import { REFERRAL_MEMBER_DABLOONS } from '../database/referrals.service';
 
 @Injectable()
 export class PlayerRoleAdministrationService {
@@ -61,11 +67,24 @@ export class PlayerRoleAdministrationService {
 			throw new BadRequestException('isMember must be a boolean');
 		}
 
-		const updated = this.database.connection
-			.update(users)
-			.set({ is_member: isMember ? 1 : 0 })
-			.where(eq(users.id, userId))
-			.run();
+		const updated = this.database.connection.transaction((tx) => {
+			const result = tx
+				.update(users)
+				.set({ is_member: isMember ? 1 : 0 })
+				.where(eq(users.id, userId))
+				.run();
+			if (result.changes === 1 && isMember)
+				tx.update(referralLinks)
+					.set({ membership_reward_dabloons: REFERRAL_MEMBER_DABLOONS })
+					.where(
+						and(
+							eq(referralLinks.referred_user_id, userId),
+							eq(referralLinks.membership_reward_dabloons, 0),
+						),
+					)
+					.run();
+			return result;
+		});
 
 		if (updated.changes !== 1) {
 			throw new NotFoundException('Player not found');

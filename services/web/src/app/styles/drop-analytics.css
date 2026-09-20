@@ -10,6 +10,43 @@
 .dropAnalytics h4 {
 	font-size: 1.1rem;
 }
+.dropViewTabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+.dropViewTabs button {
+	padding: 9px 13px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+	font: inherit;
+	cursor: pointer;
+}
+.dropViewTabs button.active {
+	border-color: #ffd166;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+.dropItemsHeading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+.dropItemsHeading select {
+	margin-left: 6px;
+	padding: 6px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 7px;
+	background: #252a34;
+	color: #fff;
+}
 .dropTableScroll,
 .dropChartScroll {
 	overflow-x: auto;
@@ -36,11 +73,11 @@
 .dropTable tfoot {
 	font-weight: 750;
 }
-.dropCosmeticTable td,
-.dropCosmeticTable th {
+.dropItemTable td,
+.dropItemTable th {
 	text-align: left !important;
 }
-.dropCosmeticTable thead button {
+.dropItemTable thead button {
 	padding: 2px 0;
 	border: 0;
 	background: none;
@@ -49,7 +86,7 @@
 	font-weight: 750;
 	cursor: pointer;
 }
-.dropCosmeticTable tbody tr:hover,
+.dropItemTable tbody tr:hover,
 .dropTable tbody tr:hover {
 	background: rgba(255, 255, 255, 0.045);
 }
@@ -174,6 +211,15 @@
 .dropWeek header strong {
 	white-space: nowrap;
 	font-size: 0.84rem;
+}
+.dropWeekPlan {
+	display: grid;
+	gap: 10px;
+	margin-top: 18px;
+}
+.dropWeekPlan p,
+.dropWeekPlan h6 {
+	margin: 0;
 }
 .dropWeekGroups {
 	display: grid;

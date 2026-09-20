@@ -29,6 +29,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons.PlayerAdvancementsAccessor;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public final class PlayerStatsSync {
     private static final long SYNC_RETRY_TICKS = 5L * 20L;
     private static final String PROFILE_OBJECTIVE = "mmu_profile";
     private static final String PING_OBJECTIVE = "mmu_ping";
+    private static final String REFERRAL_PAID_OBJECTIVE = "mmu_referral_paid";
     private static final Map<UUID, Long> nextSyncTickByPlayer = new ConcurrentHashMap<>();
     private static final Map<UUID, CompletableFuture<SyncPlayerStatsResponse>> activeSyncByPlayer = new ConcurrentHashMap<>();
     private static final Set<UUID> joinRefreshPending = ConcurrentHashMap.newKeySet();
@@ -215,6 +217,7 @@ public final class PlayerStatsSync {
                 // A website push that arrived during this request owns the newer presentation.
                 boolean superseded = revision != presentationRevisionByPlayer.getOrDefault(playerId, 0L);
                 if (!superseded) updatePresentation(onlinePlayer, response);
+                applyReferralReward(onlinePlayer, response);
                 if (joinRefreshPending.remove(playerId) || superseded) {
                     scheduleRetry(onlinePlayer);
                 } else {
@@ -248,6 +251,30 @@ public final class PlayerStatsSync {
         if (previous == null || previous != isMember) {
             refreshAdvancementTooltips(player);
         }
+    }
+
+    private static void applyReferralReward(ServerPlayer player, SyncPlayerStatsResponse response) {
+        if (!response.getAccountLinked() || player.hasDisconnected()) return;
+        int total = response.getReferralRewardDabloons();
+        if (total <= 0) return;
+        ServerScoreboard scoreboard = player.level().getServer().getScoreboard();
+        Objective objective = scoreboard.getObjective(REFERRAL_PAID_OBJECTIVE);
+        if (objective == null) objective = scoreboard.addObjective(
+                REFERRAL_PAID_OBJECTIVE, ObjectiveCriteria.DUMMY, Component.empty(),
+                ObjectiveCriteria.RenderType.INTEGER, false, null);
+        ScoreAccess paid = scoreboard.getOrCreatePlayerScore(player, objective);
+        int amount = total - paid.get();
+        if (amount <= 0 || !MoneyHelper.GainMoney(player, amount)) return;
+        paid.set(total);
+        MasteryAdvancements.grant(player, "social/referral");
+        MoneyHelper.SendBalanceMessage(player, amount, "Thanks for inviting someone to the society");
+        GameplayGrpcService.recordMoneyEvent(
+                player.getName().getString(), player.getUUID().toString(), amount,
+                "referral", Integer.toString(total), MoneyHelper.GetBalance(player)
+        ).exceptionally(error -> {
+            MainMod.LOGGER.warn("Failed to record referral reward for {}", player.getScoreboardName(), error);
+            return null;
+        });
     }
 
     public static int colorFor(net.minecraft.world.entity.player.Player player) {

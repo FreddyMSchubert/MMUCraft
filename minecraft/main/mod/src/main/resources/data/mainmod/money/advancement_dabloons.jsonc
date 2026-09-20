@@ -1389,7 +1389,9 @@
 	"mainmod:mastery/utility/full_speed_minecart": 10, // Reach full minecart speed: build and execute a track setup.
 	"mainmod:mastery/utility/max_reach_beacon": 25, // Build a 200-block beacon: expensive construction challenge.
 	"mainmod:mastery/glider/updraft": 5, // Ride a heat updraft: deliberate glider technique.
+	"mainmod:mastery/glider/craft": 20, // Make a glider from Phantom Membranes and Breeze Rods.
 	"mainmod:mastery/glider/amethyst_ring": 20, // Thread an amethyst ring: skill-based flight challenge.
+	"mainmod:mastery/food/beer_again": 5, // Drink beer while already under its effects.
 	"mainmod:mastery/enderite/scrap": 5, // Obtain Enderite Scrap: uncommon End progression.
 	"mainmod:mastery/enderite/scrap_4": 5, // Gather enough Enderite Scrap for one ingot.
 	"mainmod:mastery/enderite/ingot": 10, // Make an Enderite Ingot: meaningful material milestone.

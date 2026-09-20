@@ -3,9 +3,9 @@
 	"item": "minecraft:emerald",
 	"baseCost": 0,
 	"rewardPerIteration": 0.25,
-	"minimum": 24,
-	"maximum": 48,
+	"minimum": 16,
+	"maximum": 64,
 	"emoji": "💚",
-	"name": "Submit Emeralds",
-	"description": "Convert {count} emeralds into Dabloons. Villagers are about to get richer. Have the items in your inventory when you click Claim."
+	"name": "Currency Exchange",
+	"description": "Submit {count} emeralds. Still better than the diamond to emerald trade."
 }

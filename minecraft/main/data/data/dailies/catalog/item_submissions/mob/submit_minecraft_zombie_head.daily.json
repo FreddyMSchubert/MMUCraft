@@ -1,8 +1,8 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:zombie_head",
-	"baseCost": 5,
-	"rewardPerIteration": 5,
+	"baseCost": 0,
+	"rewardPerIteration": 25,
 	"minimum": 3,
 	"maximum": 6,
 	"emoji": "🧟",

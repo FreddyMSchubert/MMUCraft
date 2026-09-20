@@ -1,6 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-fruit-bowl",
+	"drop": "imaginative",
 	"baseCost": 2,
 	"rewardPerIteration": 3,
 	"minimum": 1,

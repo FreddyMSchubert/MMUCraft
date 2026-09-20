@@ -1,6 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-kettle",
+	"drop": "imaginative",
 	"baseCost": 0,
 	"rewardPerIteration": 0.75,
 	"minimum": 4,

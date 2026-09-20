@@ -1,6 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-vinyl-player",
+	"drop": "imaginative",
 	"baseCost": 3,
 	"rewardPerIteration": 6,
 	"minimum": 1,

@@ -1,6 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-cookie-jar",
+	"drop": "imaginative",
 	"baseCost": 0,
 	"rewardPerIteration": 2,
 	"minimum": 2,

@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:dune_armor_trim_smithing_template",
-	"baseCost": 4,
-	"rewardPerIteration": 7,
+	"baseCost": 8,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🏜️",
 	"name": "Submit Dune Trim",
-	"description": "Submit one dune trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."
+	"description": "Submit a dune trim template. Might wanna duplicate it first if this is your only copy."
 }

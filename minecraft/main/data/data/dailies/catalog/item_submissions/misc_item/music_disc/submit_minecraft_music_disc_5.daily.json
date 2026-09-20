@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:music_disc_5",
-	"baseCost": 8,
-	"rewardPerIteration": 7,
+	"baseCost": 17,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "5️⃣",
 	"name": "Submit Music Disc 5",
-	"description": "Submit one Music Disc 5. Have the items in your inventory when you click Claim."
+	"description": "Before you trade in this artistic masterpiece for soulless dabloons and submit to the greedy claws of capitalism, why not give it one last spin and enjoy the ominous sounds of the deep dark?"
 }

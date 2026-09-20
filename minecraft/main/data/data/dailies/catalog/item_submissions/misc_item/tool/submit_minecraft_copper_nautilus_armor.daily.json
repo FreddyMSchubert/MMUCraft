@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:copper_nautilus_armor",
-	"baseCost": 0,
-	"rewardPerIteration": 3.5,
+	"baseCost": 18,
+	"rewardPerIteration": 0,
 	"minimum": 1,
-	"maximum": 3,
+	"maximum": 1,
 	"emoji": "🐚",
 	"name": "Submit Copper Nautilus Armor",
-	"description": "Submit {count} sets of copper nautilus armour. Have the items in your inventory when you click Claim."
+	"description": "Submit a set of copper nautilus armour. Congrats, you found it. You found the one daily where we gave up writing interesting things in the descriptions. We have been suffering (mainly oderzo) for a week now trying to come up with something creative to say about over 400 of these dailies. It has been agonizing. Hannah, Mia, and Calum, contributed NOTHING. Thanks for the help guys. It's good to know we can always rely on you. Anyways, this is probably not the first and not the last daily you'll see. There are many interesting tasks waiting for you! For now get copper nautilus armor i dont think its craftable im sorry. good luck 👍. If you found this please tell us on Discord! This daily is super rare if someone actually got this itd be epic. This is the last daily. Were finally done. It's 2:51 am. I want to sleep. My eyes hurt. urgh"
 }

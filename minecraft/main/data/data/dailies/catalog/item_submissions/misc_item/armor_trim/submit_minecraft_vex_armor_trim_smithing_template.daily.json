@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:vex_armor_trim_smithing_template",
-	"baseCost": 6,
-	"rewardPerIteration": 7,
+	"baseCost": 15,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🪽",
 	"name": "Submit Vex Trim",
-	"description": "Submit one vex trim template. Might wanna duplicate it first if this is your only copy."
+	"description": "Submit a vex trim template. Might wanna duplicate it first if this is your only copy."
 }

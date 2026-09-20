@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:bolt_armor_trim_smithing_template",
-	"baseCost": 6,
-	"rewardPerIteration": 7,
+	"baseCost": 13,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "⚡",
 	"name": "Submit Bolt Trim",
-	"description": "Submit one bolt trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."
+	"description": "Submit a bolt trim template. Might wanna duplicate it first if this is your only copy."
 }

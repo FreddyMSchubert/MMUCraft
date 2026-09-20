@@ -5,7 +5,7 @@
 	"rewardPerIteration": 2,
 	"minimum": 1,
 	"maximum": 1,
-	"emoji": "🌍",
+	"emoji": "🏁",
 	"name": "Submit a Globe Banner Pattern",
-	"description": "Submit one globe banner pattern. Have the items in your inventory when you click Claim."
+	"description": "Submitting {count} globe banner pattern seam like a good idea."
 }

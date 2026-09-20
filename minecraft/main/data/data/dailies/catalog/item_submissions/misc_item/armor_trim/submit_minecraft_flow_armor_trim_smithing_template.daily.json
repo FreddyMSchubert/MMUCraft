@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:flow_armor_trim_smithing_template",
-	"baseCost": 6,
-	"rewardPerIteration": 7,
+	"baseCost": 17,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🌬️",
 	"name": "Submit Flow Trim",
-	"description": "Submit one flow trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."
+	"description": "Submit a flow trim template. Might wanna duplicate it first if this is your only copy."
 }

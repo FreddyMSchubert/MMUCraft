@@ -26,6 +26,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.ParticleT
 
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
+import java.time.DayOfWeek;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -88,7 +89,19 @@ public final class MasteryAdvancements {
     }
 
     public static void recordSnifferKill(ServerPlayer player) {
-        grantMilestones(player, "mmuSnifferKills", "sniffers/control_", new int[]{1, 3});
+        grantMilestones(player, "mmuSnifferKills", "sniffers/control_", SNIFFER_MILESTONES);
+    }
+
+    public static void recordCommitteeKill(ServerPlayer killer, ServerPlayer victim) {
+        if (ZonedDateTime.now(BRITISH_TIME).getDayOfWeek() != DayOfWeek.SUNDAY) return;
+        for (CommitteeMembers.Member member : CommitteeMembers.ALL) {
+            if (!member.username().equalsIgnoreCase(victim.getGameProfile().name())) continue;
+            grant(killer, "social/committee_any");
+            grant(killer, member.advancementPath());
+            grantIfAll(killer, "social/committee_all",
+                    CommitteeMembers.ALL.stream().map(CommitteeMembers.Member::advancementPath).toArray(String[]::new));
+            return;
+        }
     }
 
     public static void recordCharmUpgrade(ServerPlayer player) {
@@ -175,7 +188,7 @@ public final class MasteryAdvancements {
         int enderiteScrap = 0;
 
         for (ItemStack stack : player.getInventory()) {
-            if (stack.is(Items.ELYTRA) && !GliderCharm.isGlider(stack)) {
+            if (GliderCharm.isRealElytra(stack)) {
                 grantId(player, Identifier.parse("minecraft:end/elytra"));
             }
             if (CharmorManager.isEnderite(stack)) {

@@ -27,6 +27,7 @@ public abstract class DailyKilledMixin {
         String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(victim.getType()).toString();
         DailyTaskManager.record(player, DailyTaskEvent.of(DailyTaskEvent.Type.KILL_ENTITY, entityId));
         if (entityId.equals("minecraft:sniffer")) MasteryAdvancements.recordSnifferKill(player);
+        if (victim instanceof ServerPlayer committeeVictim) MasteryAdvancements.recordCommitteeKill(player, committeeVictim);
 
         if (source.getDirectEntity() != null && source.getDirectEntity().getType() == net.minecraft.world.entity.EntityTypes.FIREWORK_ROCKET) {
             DailyTaskManager.record(player, new DailyTaskEvent(

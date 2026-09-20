@@ -21,11 +21,20 @@ import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementAnnouncements;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 
 @Mixin(PlayerAdvancements.class)
 public class PlayerAdvancementMoney {
     @Shadow
     private ServerPlayer player;
+
+    @Inject(method = "award", at = @At("HEAD"), cancellable = true)
+    private void mainmod$excludeGlidersFromElytra(AdvancementHolder holder, String criterionName, CallbackInfoReturnable<Boolean> cir) {
+        if (holder.id().toString().equals("minecraft:end/elytra")
+                && !this.player.getInventory().contains(GliderCharm::isRealElytra)) {
+            cir.setReturnValue(false);
+        }
+    }
 
     @Inject(method = "lambda$award$0", at = @At("HEAD"), cancellable = true)
     private void mainmod$deferAdvancementAnnouncement(

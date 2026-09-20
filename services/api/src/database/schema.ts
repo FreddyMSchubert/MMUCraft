@@ -378,6 +378,24 @@ export const giftCodeRedemptions = sqliteTable(
 	],
 );
 
+export const referralLinks = sqliteTable(
+	'referral_links',
+	{
+		code: text('code').primaryKey(),
+		referrer_user_id: integer('referrer_user_id')
+			.notNull()
+			.references(() => users.id),
+		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+		referred_user_id: integer('referred_user_id')
+			.unique()
+			.references(() => users.id),
+		joined_at_unix_ms: integer('joined_at_unix_ms'),
+		join_reward_dabloons: integer('join_reward_dabloons').notNull().default(0),
+		membership_reward_dabloons: integer('membership_reward_dabloons').notNull().default(0),
+	},
+	(table) => [index('referral_links_referrer_idx').on(table.referrer_user_id)],
+);
+
 export const commandLogs = sqliteTable(
 	'command_logs',
 	{
@@ -610,6 +628,7 @@ export const schema = {
 	dailyTasks,
 	giftCodes,
 	giftCodeRedemptions,
+	referralLinks,
 	commandLogs,
 	signinAttemptLogs,
 	countdowns,

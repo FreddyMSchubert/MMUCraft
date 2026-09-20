@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:mycelium",
-	"baseCost": 5,
+	"baseCost": 7,
 	"rewardPerIteration": 0.5,
 	"minimum": 2,
 	"maximum": 6,
 	"emoji": "🍄",
 	"name": "Submit Mycelium",
-	"description": "Submit {count} mycelium. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} mycelium. Mycelia? Myceliums? Myceliuses? Myceliopodes?? iudrjgoidrngkjdr"
 }

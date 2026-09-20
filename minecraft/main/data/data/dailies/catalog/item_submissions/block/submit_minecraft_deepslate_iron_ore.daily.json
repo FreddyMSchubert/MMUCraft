@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:deepslate_iron_ore",
-	"baseCost": 2,
-	"rewardPerIteration": 0.75,
+	"baseCost": 3,
+	"rewardPerIteration": 0.5,
 	"minimum": 4,
-	"maximum": 8,
+	"maximum": 32,
 	"emoji": "⛏️",
 	"name": "Submit Deepslate Iron Ore",
-	"description": "Submit {count} deepslate iron ore. Silk Touch keeps the evidence intact. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} deepslate iron ore. Hope you get lucky and find one of those massive veins."
 }

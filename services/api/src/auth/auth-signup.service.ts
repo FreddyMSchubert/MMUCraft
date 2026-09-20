@@ -28,8 +28,14 @@ export class AuthSignupService {
 		private readonly launch: LaunchSettingsService,
 	) {}
 
-	async createSignup(emailInput: string, sourceIp: string) {
+	async createSignup(emailInput: string, sourceIp: string, referralCodeInput?: unknown) {
 		const email = normalizeEmail(emailInput);
+		if (
+			referralCodeInput !== undefined &&
+			(typeof referralCodeInput !== 'string' || !/^[a-f0-9]{32}$/.test(referralCodeInput))
+		) {
+			throw new BadRequestException('Invalid referral link');
+		}
 		if (!this.launch.hasLaunched())
 			throw new ForbiddenException('Signups will open when the server launches');
 
@@ -53,6 +59,7 @@ export class AuthSignupService {
 
 		signupFlows.set(flowId, {
 			email,
+			referralCode: referralCodeInput,
 			step: 'email',
 			emailCodeHash: hashSecret(code),
 			emailCodeExpiresAt: now + EMAIL_CODE_TTL_MS,

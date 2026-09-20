@@ -3,6 +3,7 @@ import { DatabaseService } from './database.service';
 import { CommandLogsService } from './command-logs.service';
 import { MinecraftIdentityService } from './minecraft-identity.service';
 import { SigninAttemptLogsService } from './signin-attempt-logs.service';
+import { ReferralsService } from './referrals.service';
 
 @Module({
 	providers: [
@@ -10,12 +11,14 @@ import { SigninAttemptLogsService } from './signin-attempt-logs.service';
 		MinecraftIdentityService,
 		CommandLogsService,
 		SigninAttemptLogsService,
+		ReferralsService,
 	],
 	exports: [
 		DatabaseService,
 		MinecraftIdentityService,
 		CommandLogsService,
 		SigninAttemptLogsService,
+		ReferralsService,
 	],
 })
 export class DatabaseModule {}

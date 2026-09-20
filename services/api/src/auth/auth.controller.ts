@@ -31,12 +31,12 @@ export class AuthController {
 
 	@Post('signup')
 	createSignup(
-		@Body() body: { email?: string; resend?: boolean },
+		@Body() body: { email?: string; resend?: boolean; referral?: string },
 		@Req() request: FastifyRequest,
 	) {
 		const email = normalizeEmail(body.email ?? '');
 		return this.track('signup', body.resend ? 'email_resend' : 'email_send', email, () =>
-			this.signup.createSignup(email, clientIp(request)),
+			this.signup.createSignup(email, clientIp(request), body.referral),
 		);
 	}
 

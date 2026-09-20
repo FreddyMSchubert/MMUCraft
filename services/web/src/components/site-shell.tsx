@@ -58,7 +58,7 @@ const TAB_IDS = new Set<TabId>([
 	'admin',
 	'misc',
 ]);
-const MISC_SECTIONS = new Set(['settings', 'gift-codes']);
+const MISC_SECTIONS = new Set(['settings', 'gift-codes', 'referrals']);
 const SERVER_IP = 'mmuminecraftsociety.co.uk';
 const TAB_LINKS: { id: TabId; label: string; emoji: string; href: string }[] = [
 	{ id: 'knowledge', label: 'Knowledge', emoji: '📖', href: '/play/knowledge' },

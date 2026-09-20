@@ -297,6 +297,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			show_death_counter: result.showDeathCounter,
 			previous_last_played_at_unix_ms: result.previousLastPlayedAtUnixMs,
 			first_in_any_statistic: result.firstInAnyStatistic,
+			referral_reward_dabloons: result.referralRewardDabloons,
 			message: result.message,
 		});
 	}

@@ -1,16 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { type SyntheticEvent, useState } from 'react';
+import { type SyntheticEvent, useEffect, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { DabloonText } from '@/components/dabloon-amount';
 import { apiMessage } from '@/lib/api-response';
 import { useSiteSettings } from '@/lib/site-settings';
 
-type MiscSection = 'settings' | 'gift-codes';
+type MiscSection = 'settings' | 'gift-codes' | 'referrals';
 
 export function MiscTab({ section }: { section?: string }) {
-	const activeSection: MiscSection = section === 'gift-codes' ? 'gift-codes' : 'settings';
+	const activeSection: MiscSection =
+		section === 'gift-codes' || section === 'referrals' ? section : 'settings';
 	return (
 		<div className="miscPanel">
 			<nav className="miscSubTabs" aria-label="Miscellaneous sections">
@@ -26,9 +27,116 @@ export function MiscTab({ section }: { section?: string }) {
 				>
 					Redeem gift code
 				</Link>
+				<Link
+					className={activeSection === 'referrals' ? 'active' : ''}
+					href="/play/misc/referrals"
+				>
+					Referral links
+				</Link>
 			</nav>
-			{activeSection === 'settings' ? <SettingsSection /> : <GiftCodeSection />}
+			{activeSection === 'settings' ? (
+				<SettingsSection />
+			) : activeSection === 'gift-codes' ? (
+				<GiftCodeSection />
+			) : (
+				<ReferralSection />
+			)}
 		</div>
+	);
+}
+
+function ReferralSection() {
+	const [links, setLinks] = useState<{ code: string }[]>([]);
+	const origin = typeof window === 'undefined' ? '' : window.location.origin;
+	const [busy, setBusy] = useState(false);
+	const [error, setError] = useState('');
+	const [copied, setCopied] = useState('');
+
+	useEffect(() => {
+		void fetch('/api/referrals', { cache: 'no-store' })
+			.then(async (response) => {
+				const body = (await response.json()) as { links: { code: string }[] };
+				if (!response.ok)
+					throw new Error(apiMessage(body, 'Could not load referral links'));
+				setLinks(body.links);
+			})
+			.catch((caught: unknown) => {
+				setError(
+					caught instanceof Error ? caught.message : 'Could not load referral links',
+				);
+			});
+	}, []);
+
+	async function create() {
+		setBusy(true);
+		setError('');
+		try {
+			const response = await fetch('/api/referrals', { method: 'POST' });
+			const body = (await response.json()) as { code: string };
+			if (!response.ok) throw new Error(apiMessage(body, 'Could not create a referral link'));
+			setLinks((current) => [...current, { code: body.code }]);
+		} catch (caught) {
+			setError(caught instanceof Error ? caught.message : 'Could not create a referral link');
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	return (
+		<section className="referralSection">
+			<h3>Referral links</h3>
+			<p>
+				Know someone who would enjoy the society? Send them a link. When they join,
+				we&apos;ll thank you with 25 <DabloonText>Dabloons</DabloonText>, then another 100
+				if they become a member.
+			</p>
+			<button
+				type="button"
+				disabled={busy || links.length >= 3}
+				onClick={() => {
+					void create();
+				}}
+			>
+				{busy ? 'Creating...' : 'Create one-use link'}
+			</button>
+			{error && (
+				<p role="alert" className="authError">
+					{error}
+				</p>
+			)}
+			<h4>Unused links ({links.length}/3)</h4>
+			{links.length === 0 ? (
+				<p>No unused links yet.</p>
+			) : (
+				<ul className="referralLinks">
+					{links.map(({ code }) => {
+						const url = `${origin}/?referral=${code}`;
+						return (
+							<li key={code}>
+								<input
+									aria-label="Referral link"
+									readOnly
+									value={url}
+									onFocus={(event) => {
+										event.target.select();
+									}}
+								/>
+								<button
+									type="button"
+									onClick={() => {
+										void navigator.clipboard.writeText(url).then(() => {
+											setCopied(code);
+										});
+									}}
+								>
+									{copied === code ? 'Copied' : 'Copy'}
+								</button>
+							</li>
+						);
+					})}
+				</ul>
+			)}
+		</section>
 	);
 }
 

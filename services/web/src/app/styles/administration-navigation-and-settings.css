@@ -10,6 +10,7 @@
 
 .miscSubTabs {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 8px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
@@ -32,7 +33,8 @@
 }
 
 .settingsSection,
-.giftCodeSection {
+.giftCodeSection,
+.referralSection {
 	display: grid;
 	gap: 18px;
 }
@@ -40,6 +42,50 @@
 .settingsSection > div:first-child > p,
 .giftCodeSection > div:first-child > p {
 	color: rgba(255, 255, 255, 0.7);
+}
+
+.referralSection p {
+	color: rgba(255, 255, 255, 0.76);
+}
+
+.referralSection > button {
+	justify-self: start;
+}
+
+.referralSection button {
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+}
+
+.referralSection button:disabled {
+	opacity: 0.5;
+}
+
+.referralLinks {
+	display: grid;
+	gap: 10px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.referralLinks li {
+	display: flex;
+	gap: 8px;
+}
+
+.referralLinks input {
+	min-width: 0;
+	flex: 1;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.09);
+	color: #fff;
 }
 
 .settingsList {

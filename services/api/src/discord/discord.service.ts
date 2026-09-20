@@ -6,6 +6,11 @@ import {
 	PermissionFlagsBits,
 	SlashCommandBuilder,
 	WebhookClient,
+	type Collection,
+	type Guild,
+	type GuildMember,
+	type Role,
+	type Snowflake,
 } from 'discord.js';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { OnlinePlayerPresenceService } from '../players/online-player-presence.service';
@@ -128,6 +133,12 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	});
 	private webhook: WebhookClient | null = null;
 	private connectionIssue: string | null = null;
+	private membershipContextCache: {
+		fetchedAtUnixMs: number;
+		guild: Guild;
+		role: Role;
+		members: Collection<Snowflake, GuildMember>;
+	} | null = null;
 	private draining = false;
 	private drainPromise: Promise<void> | null = null;
 	private readonly pending = new Set<Promise<unknown>>();
@@ -335,7 +346,16 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			throw new Error('The bot does not have Manage Roles in this Discord server');
 		if (bot.roles.highest.comparePositionTo(role) <= 0)
 			throw new Error('Move the bot role above 26/27 Member in Server Settings → Roles');
+		const cached = this.membershipContextCache;
+		if (cached && Date.now() - cached.fetchedAtUnixMs < 60_000)
+			return { guild, role, members: cached.members };
 		const members = await guild.members.fetch();
+		this.membershipContextCache = {
+			fetchedAtUnixMs: Date.now(),
+			guild,
+			role,
+			members,
+		};
 		return { guild, role, members };
 	}
 

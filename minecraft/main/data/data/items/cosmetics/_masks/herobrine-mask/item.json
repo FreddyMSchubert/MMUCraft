@@ -7,12 +7,21 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"membersOnly": true,
-		"gameplayToggle": "hellish",
+		"gameplayToggle": "nether",
 		"priceDabloons": 222,
 		"description": "Only god can help you now.",
 		"unlockWeight": 1,
 		"unlockMessage": "Unlocked... something.",
-		"tags": ["minecraft player"]
+		"tags": [
+			"minecraft player",
+			"creepy",
+			"creepypasta",
+			"spooky",
+			"scary",
+			"haunted",
+			"notch",
+			"brian"
+		]
 	},
 	"equippableCosmetic": {}
 }

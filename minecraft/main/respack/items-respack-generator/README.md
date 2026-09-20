@@ -2,6 +2,37 @@
 
 Generates the resource-pack side of the composable fake-item system.
 
+## Emissive model elements
+
+Set `light_emission` on each exported model element that should remain visible in darkness:
+`0` (or absent) uses normal lighting, `1`–`14` sets an intermediate minimum, and `15` is fully
+bright. Blockbench groups must export this property on their constituent elements.
+`shade` is preserved in generated models but is not used to identify emission.
+
+The generator writes OptiFine `_e.png` overlays beside generated textures using the UVs
+of elements with positive `light_emission`. Unselected pixels are transparent; selected
+pixels retain the source color and alpha, with reduced RGB for intermediate emission.
+Implicit, reversed, and rotated UVs and animation frames are supported. UV coordinates
+use Minecraft's 0–16 space, regardless of the atlas resolution or `texture_size` metadata.
+
+A source companion such as `model_e.png` or `texture_e.png` takes precedence and is copied
+unchanged. Its own `.png.mcmeta` takes precedence over the base texture's animation metadata.
+This also works for manually authored item and charm equipment overlays. The generated
+pack includes `assets/minecraft/optifine/emissive.properties` with `suffix.emissive=_e`.
+Source files are never written; source/output directory overlap is rejected.
+
+OptiFine overlays operate on texture pixels: if ordinary and emissive faces share the same
+UV region, both sample the emissive pixels. Use separate UV regions for exact separation.
+Intermediate emission is an approximation in the overlay; shader-pack bloom and lighting
+remain controlled by the shader pack. Emissive surfaces do not cast light onto nearby blocks.
+
+The shop preview uses `light_emission` directly, never `_e` images or `shade`. Its day/night
+button preserves the model rotation, uses a Bright-style night lightmap approximation, and
+retains each element's emission as a minimum brightness. Block previews use the landing
+page's Trails & Tales and 26.2 panoramas for day and night respectively.
+
+Run generator regression tests with `npm test` in this directory.
+
 Each item lives in its own leaf directory and must contain an `item.json` that follows the
 new schema shape:
 

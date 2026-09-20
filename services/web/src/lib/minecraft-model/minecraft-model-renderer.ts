@@ -48,6 +48,8 @@ export class MinecraftModelRenderer {
 	private animateDye: boolean;
 	private animateTextures: boolean;
 	private tintHue = Math.random() * 360;
+	private nightMode = false;
+	private readonly panoramas = new Map<string, Promise<THREE.CubeTexture>>();
 
 	constructor(
 		private readonly container: HTMLElement,
@@ -142,6 +144,13 @@ export class MinecraftModelRenderer {
 		this.renderer.domElement.removeEventListener('pointercancel', this.handlePointerUp);
 		this.modelObject.dispose();
 		for (const object of this.previewObjects) object.dispose();
+		for (const panorama of this.panoramas.values())
+			void panorama.then(
+				(texture) => {
+					texture.dispose();
+				},
+				() => undefined,
+			);
 		this.renderer.dispose();
 		this.renderer.forceContextLoss();
 		this.renderer.domElement.remove();
@@ -155,6 +164,42 @@ export class MinecraftModelRenderer {
 	setDyeAnimation(enabled: boolean) {
 		this.animateDye = this.dyeable && enabled;
 		this.ensureAnimating();
+	}
+
+	setNightMode(enabled: boolean) {
+		// Flat icons have no model lighting to preview.
+		this.nightMode = enabled && Boolean(this.currentResolvedModel?.elements?.length);
+		this.modelObject.setNightMode(this.nightMode);
+		for (const object of this.previewObjects) object.setNightMode(this.nightMode);
+		void this.updatePanorama();
+		this.ensureAnimating();
+	}
+
+	private async updatePanorama() {
+		if (this.view !== 'item-frame' || this.destroyed) return;
+		const id = this.nightMode ? '26.2' : 'trails-and-tales';
+		let loading = this.panoramas.get(id);
+		if (!loading) {
+			loading = new THREE.CubeTextureLoader().loadAsync(
+				[1, 3, 4, 5, 2, 0].map(
+					(face) => `/assets/landing/panoramas/${id}/panorama_${face}.webp`,
+				),
+			);
+			this.panoramas.set(id, loading);
+		}
+		try {
+			const texture = await loading;
+			texture.colorSpace = THREE.SRGBColorSpace;
+			if (
+				!this.container.contains(this.renderer.domElement) ||
+				id !== (this.nightMode ? '26.2' : 'trails-and-tales')
+			)
+				return;
+			this.scene.background = texture;
+			this.ensureAnimating();
+		} catch {
+			this.panoramas.delete(id);
+		}
 	}
 
 	getPreviewState(): MinecraftModelPreviewState {
@@ -279,6 +324,7 @@ export class MinecraftModelRenderer {
 		}
 
 		if (this.view === 'item-frame' && this.assetRoot) {
+			await this.updatePanorama();
 			const floor = new MinecraftModelObject(null, { r: 111, g: 167, b: 65 });
 			await floor.load({ model: createGrassFloorModel(this.assetRoot) });
 			this.previewObjects.push(floor);
@@ -305,6 +351,7 @@ export class MinecraftModelRenderer {
 		if (this.autoRotate) {
 			this.spinRoot.rotation.y += (deltaMs / 1000) * this.rotationSpeed;
 		}
+		this.scene.backgroundRotation.set(-this.spinRoot.rotation.x, -this.spinRoot.rotation.y, 0);
 		if (this.dyeable) {
 			if (this.animateDye)
 				this.tintHue = (this.tintHue + (deltaMs * 360) / DYE_CYCLE_MS) % 360;

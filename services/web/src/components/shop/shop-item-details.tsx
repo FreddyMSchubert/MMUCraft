@@ -1,6 +1,6 @@
 'use client';
 
-import { type CSSProperties, useEffect } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import type { CosmeticPreviewView } from '@/lib/site-settings';
@@ -152,6 +152,7 @@ export function ShopDetails({
 	onClose: () => void;
 	onBuy: (item: ShopItem) => Promise<void>;
 }) {
+	const [nightMode, setNightMode] = useState(false);
 	const effectivePreviewView =
 		(previewView === 'player' && (item.type !== 'cosmetic' || !skinUrl)) ||
 		(previewView === 'item-frame' && !item.decoBlock)
@@ -194,7 +195,9 @@ export function ShopDetails({
 				</button>
 				<div className="shopDetailsHero">
 					<div className="shopDetailsPreview">
-						<div className="shopDetailsPreviewEmbed">
+						<div
+							className={`shopDetailsPreviewEmbed ${nightMode && item.renderMode === 'model' ? 'night' : ''}`}
+						>
 							<ShopPreview
 								key={effectivePreviewView}
 								item={item}
@@ -203,22 +206,37 @@ export function ShopDetails({
 								hidden={hidePreview}
 								view={effectivePreviewView}
 								skinUrl={skinUrl}
+								nightMode={nightMode}
 							/>
 							{item.renderMode === 'model' && !hidePreview && (
 								<span>Hover to pause · drag to rotate</span>
 							)}
 						</div>
-						{(item.type === 'cosmetic' || item.decoBlock) &&
-							item.renderMode === 'model' &&
-							!hidePreview && (
-								<CosmeticViewControl
-									selected={effectivePreviewView}
-									cosmetic={item.type === 'cosmetic'}
-									decoBlock={item.decoBlock}
-									skinAvailable={Boolean(skinUrl)}
-									onSelect={onSelectPreviewView}
-								/>
-							)}
+						{item.renderMode === 'model' && !hidePreview && (
+							<div className="shopPreviewControls">
+								{(item.type === 'cosmetic' || item.decoBlock) && (
+									<CosmeticViewControl
+										selected={effectivePreviewView}
+										cosmetic={item.type === 'cosmetic'}
+										decoBlock={item.decoBlock}
+										skinAvailable={Boolean(skinUrl)}
+										onSelect={onSelectPreviewView}
+									/>
+								)}
+								<button
+									type="button"
+									className="shopNightToggle"
+									aria-label="Night preview"
+									aria-pressed={nightMode}
+									title={nightMode ? 'Switch to day' : 'Switch to night'}
+									onClick={() => {
+										setNightMode((night) => !night);
+									}}
+								>
+									<span aria-hidden="true">{nightMode ? '☾' : '☀'}</span>
+								</button>
+							</div>
+						)}
 					</div>
 					<div className="shopDetailsSummary">
 						<ItemBadges item={item} />

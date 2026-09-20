@@ -388,10 +388,39 @@
 		#0d131d;
 }
 
-.shopDetailsPreviewEmbed:has(.view-item-frame) {
-	background:
-		linear-gradient(rgba(12, 20, 29, 0.18), rgba(12, 20, 29, 0.42)),
-		center / cover no-repeat url('/assets/landing/panoramas/classic/panorama_0.webp');
+.shopDetailsPreviewEmbed.night {
+	background: radial-gradient(circle at center, #151c2b, #080d16 70%);
+}
+.shopPreviewControls {
+	display: flex;
+	align-items: stretch;
+	background: #101722;
+}
+.shopPreviewControls .shopCosmeticViewControl {
+	flex: 1;
+	min-width: 0;
+}
+.shopNightToggle {
+	flex: 0 0 56px;
+	width: 56px;
+	height: 56px;
+	margin-left: auto;
+	border: 1px solid #ffffff20;
+	background: #101722;
+	color: #ffe2a3;
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+.shopNightToggle[aria-pressed='true'] {
+	color: #c2d6ff;
+	background: #192438;
+}
+.shopNightToggle:hover {
+	background: #253148;
+}
+.shopNightToggle:focus-visible {
+	outline: 2px solid #c2d6ff;
+	outline-offset: -4px;
 }
 
 .shopDetailsPreviewEmbed .shopModelHost,

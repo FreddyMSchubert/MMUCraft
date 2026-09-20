@@ -113,11 +113,11 @@ Beyond that, it is also a great monetary choice, because each unlocked knowledge
 
 ### 6. **Gift Codes**
 
-Are occasionally handed out at events such as freshers fair. They are time limited codes, which pay you out some money if you type it into the website. Check the "*Misc*" tab for all infos.
+Are occasionally handed out at events such as freshers fair. They are time limited codes, which pay you out some money if you type it into the website. Check the "[Misc](/play/misc/gift-codes)" tab for all infos.
 
 ### 7. **Invite a friend**
 
-Want more people to share the server with? Open [Referral links](/play/misc/referrals) in the Misc tab and send a one-use link to someone who can join. We give you 25 Dabloons when they sign up and another 100 if they become a member. Your reward arrives in Minecraft when you are online, even if they joined while you were away.
+Want more people to share the server with? Open [Referral links](/play/misc/referrals) in the Misc tab and send a one-use link to someone who can join. We give you 25 Dabloons when they sign up and another 100 if they become a member.
 
 ### 8. **The secret method** - (we colloquially call it corruption)
 

@@ -14,8 +14,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.ResolvableProfile;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.CommitteeMembers;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DyeableItemFeature;
@@ -73,6 +76,10 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         boolean glint = spec.endsWith(":glint");
         if (glint) spec = spec.substring(0, spec.length() - 6);
         DataComponentPatch.Builder components = DataComponentPatch.builder();
+        if (spec.startsWith("head:")) {
+            components.set(DataComponents.PROFILE, ResolvableProfile.createUnresolved(spec.substring(5)));
+            return new ItemStackTemplate(Items.PLAYER_HEAD, components.build());
+        }
         if (spec.startsWith("fake:")) {
             String fakeId = spec.substring(5);
             boolean fullPhial = fakeId.equals("charm-sculk-phial-full");
@@ -240,6 +247,14 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("social/pay_to_win", "Pay to Win", "Become a member. Thank you for supporting the society!", "minecraft:diamond", "root", "goal");
         add("social/add_claim_member", "Good Fences, Good Friends", "Add another player to one of your claims.", "minecraft:player_head", "social/claim_1", "goal");
         add("social/statistic_first", "Number One", "Become first in any statistic.", "minecraft:gold_block", "root", "challenge");
+        add("social/committee_any", "Sunday Committee Meeting", "Kill any committee member on a Sunday (British time).", "enderite:netherite_sword", "root", "goal");
+        for (CommitteeMembers.Member member : CommitteeMembers.ALL) {
+            add(member.advancementPath(), "Sunday Visit: " + member.name(),
+                    "Kill " + member.name() + " (" + member.username() + "), " + member.role() + ", on a Sunday.",
+                    "head:" + member.username(), "social/committee_any", "goal");
+        }
+        add("social/committee_all", "The Whole Committee", "Kill every committee member on a Sunday (British time).",
+                "enderite:netherite_sword:glint", CommitteeMembers.ALL.getLast().advancementPath(), "challenge");
         add("social/gift_code", "The Secret Word", "Receive Dabloons from a gift code.", "minecraft:paper", "root", "task");
         add("social/referral", "Bring a Friend", "Invite someone who joins the society server.", "minecraft:player_head", "root", "task");
         add("social/daily_1", "A Job Well Done", "Complete a daily task.", "minecraft:clock", "root", "task");
@@ -279,13 +294,19 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     "Unlock a " + rarity + " cosmetic in the shop.", "fake:" + rarityIcons[i],
                     "cosmetics/unlock_1", i >= 4 ? "challenge" : "task");
         }
-        chain("knowledge/read", new int[]{1, 3, 5, 10, 15, 20}, "Well Read", "Read %s knowledge pages.", "fake:charm-knowledge-book", "root");
+        add("knowledge/read_1", "Well Read 1", "Read a knowledge page.", "fake:charm-knowledge-book", "root", "task");
+        chain("knowledge/read", new int[]{3, 5, 10, 15, 20}, "Well Read", "Read %s knowledge pages.", "fake:charm-knowledge-book", "knowledge/read_1");
         chain("social/claim", new int[]{1, 3, 5, 7, 10, 12, 15}, "Landowner", "Reach %s claimed chunks.", "minecraft:map", "root");
         chain("social/streak", new int[]{1, 2, 3, 5, 7, 10, 14, 30, 50, 75, 100}, "Login Streak", "Reach a %s-day login streak.", "minecraft:fire_charge", "root");
         chain("social/full_dailies", new int[]{1, 3, 5, 7, 10, 14, 30, 50, 75, 100}, "Daily Devotion", "Fully complete dailies on %s days.", "minecraft:clock", "social/daily_1");
-        chain("sniffers/bred", new int[]{1, 3, 5, 10, 20, 50, 100, 200, 500, 1000, 10000}, "Sniffer Population", "Breed %s sniffers.", "minecraft:sniffer_egg", "root");
-        add("sniffers/control_1", "Population Control", "Kill one sniffer.", "minecraft:iron_sword", "sniffers/bred_1", "task");
-        add("sniffers/control_3", "Population Control 3", "Kill three sniffers.", "minecraft:iron_sword", "sniffers/bred_3", "goal");
+        int[] snifferMilestones = {1, 3, 5, 10, 20, 50, 100, 200, 500, 1000, 10000};
+        chain("sniffers/bred", snifferMilestones, "Sniffer Population", "Breed %s sniffers.", "minecraft:sniffer_egg", "root");
+        reparent("sniffers/bred_10000", "sniffers/bred_500");
+        for (int count : snifferMilestones) {
+            add("sniffers/control_" + count, "Sniffer Population Control " + count,
+                    "Kill " + count + (count == 1 ? " sniffer." : " sniffers."), "minecraft:iron_sword",
+                    "sniffers/bred_" + count, count >= 100 ? "challenge" : count == 1 ? "task" : "goal");
+        }
         chain("utility/jokes", new int[]{1, 3, 5}, "Critic", "Review Joke Books: %s completed.", "fake:charm-joke-book", "root");
         int[] coinValues = {1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000};
         String coinParent = "utility/wallet";

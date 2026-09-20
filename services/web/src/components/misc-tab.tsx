@@ -88,12 +88,7 @@ function ReferralSection() {
 			<p>
 				Know someone who would enjoy the society? Send them a link. When they join,
 				we&apos;ll thank you with 25 <DabloonText>Dabloons</DabloonText>, then another 100
-				if they become a member. Rewards reach you in Minecraft, even if you were offline
-				when they joined.
-			</p>
-			<p>
-				Each link works for one new account. You can keep up to three unused links ready.
-				New players still need an MMU email address or an approved external invitation.
+				if they become a member.
 			</p>
 			<button
 				type="button"

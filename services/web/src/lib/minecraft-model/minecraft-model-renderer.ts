@@ -175,6 +175,16 @@ export class MinecraftModelRenderer {
 		this.ensureAnimating();
 	}
 
+	hasEmissiveElements() {
+		return (
+			this.currentResolvedModel?.elements?.some(
+				(element) =>
+					Number(element.light_emission) > 0 &&
+					Object.values(element.faces ?? {}).some(Boolean),
+			) ?? false
+		);
+	}
+
 	private async updatePanorama() {
 		if (this.view !== 'item-frame' || this.destroyed) return;
 		const id = this.nightMode ? '26.2' : 'trails-and-tales';
@@ -351,7 +361,6 @@ export class MinecraftModelRenderer {
 		if (this.autoRotate) {
 			this.spinRoot.rotation.y += (deltaMs / 1000) * this.rotationSpeed;
 		}
-		this.scene.backgroundRotation.set(-this.spinRoot.rotation.x, -this.spinRoot.rotation.y, 0);
 		if (this.dyeable) {
 			if (this.animateDye)
 				this.tintHue = (this.tintHue + (deltaMs * 360) / DYE_CYCLE_MS) % 360;

@@ -1,6 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-firefly-jar",
+	"drop": "imaginative",
 	"baseCost": 4,
 	"rewardPerIteration": 1,
 	"minimum": 1,

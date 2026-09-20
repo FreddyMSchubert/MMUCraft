@@ -2,11 +2,11 @@
 	"type": "submit_item",
 	"item": "minecraft:piglin_head",
 	"drop": "nether",
-	"baseCost": 2,
-	"rewardPerIteration": 4,
+	"baseCost": 0,
+	"rewardPerIteration": 35,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐽",
 	"name": "Submit a Piglin Head",
-	"description": "Submit one piglin head. Have the items in your inventory when you click Claim."
+	"description": "Submit one piglin head. Now THIS takes a lot of setting up."
 }

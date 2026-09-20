@@ -2,10 +2,10 @@
 	"type": "submit_item",
 	"item": "minecraft:player_head",
 	"baseCost": 0,
-	"rewardPerIteration": 5,
-	"minimum": 1,
-	"maximum": 1,
+	"rewardPerIteration": 1,
+	"minimum": 4,
+	"maximum": 16,
 	"emoji": "🗿",
-	"name": "Submit a Player Head",
-	"description": "Submit one player head. No questions asked. Have the items in your inventory when you click Claim."
+	"name": "Submit Player Heads",
+	"description": "Submit {count} player head. Time to go on a killing spree."
 }

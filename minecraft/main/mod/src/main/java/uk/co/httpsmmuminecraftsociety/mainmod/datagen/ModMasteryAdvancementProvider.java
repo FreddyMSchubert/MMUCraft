@@ -138,7 +138,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
     }
 
     private void defineAdvancements() {
-        add("root", "MMU Mastery", "Master every corner of MMUCraft.", "fake:deco-mmu-dirt", null, "task");
+        add("root", "Welcome! Your journey starts now.", "Master every corner of MMUCraft.", "fake:deco-mmu-dirt", null, "task");
         add("fishing/first_catch", "Something's Fishy", "Catch a fish.", "minecraft:fishing_rod", "root", "task");
         add("fishing/common", "Common Catch", "Catch a common fish.", "minecraft:fishing_rod", "fishing/first_catch", "task");
         add("fishing/uncommon", "Uncommon Catch", "Catch an uncommon fish.", "minecraft:fishing_rod", "fishing/common", "task");
@@ -312,7 +312,8 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         String coinParent = "utility/wallet";
         for (int value : coinValues) {
             String path = "coins/hold_" + value;
-            add(path, value + " Dabloons", "Hold a " + value + "-Dabloon coin.", "fake:coin-" + value,
+            add(path, FakeItems.requireFakeItem("coin-" + value).tooltip().getFirst().getString(),
+                    "Hold a " + value + "-Dabloon coin.", "fake:coin-" + value,
                     coinParent, value >= 100000 ? "challenge" : "task");
             coinParent = path;
         }

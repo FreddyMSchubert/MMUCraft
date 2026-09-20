@@ -22,6 +22,7 @@ export default tseslint.config(
 			'**/dist/**',
 			'**/node_modules/**',
 			'**/output/**',
+			'tests/test-results/**',
 			'services/web/next-env.d.ts',
 		],
 	},

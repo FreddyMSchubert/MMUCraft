@@ -112,7 +112,7 @@ export class MembershipImportService {
 					discordId,
 					discordLabel: member ? `${member.user.username} (${member.id})` : null,
 					discordStatus: !context
-						? 'Discord unavailable'
+						? (discordIssue ?? 'Discord unavailable')
 						: !account || emailCounts.get(row.email) !== 1
 							? 'email unmatched'
 							: !discordName

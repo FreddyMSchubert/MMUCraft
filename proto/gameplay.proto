@@ -413,6 +413,7 @@ message SyncPlayerStatsResponse {
   optional bool show_death_counter = 10;
   int64 previous_last_played_at_unix_ms = 11;
   bool first_in_any_statistic = 12;
+  int32 referral_reward_dabloons = 13;
 }
 
 message RecordMoneyEventRequest {

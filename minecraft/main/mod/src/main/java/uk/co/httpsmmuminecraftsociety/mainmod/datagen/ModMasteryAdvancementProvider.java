@@ -241,6 +241,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("social/add_claim_member", "Good Fences, Good Friends", "Add another player to one of your claims.", "minecraft:player_head", "social/claim_1", "goal");
         add("social/statistic_first", "Number One", "Become first in any statistic.", "minecraft:gold_block", "root", "challenge");
         add("social/gift_code", "The Secret Word", "Receive Dabloons from a gift code.", "minecraft:paper", "root", "task");
+        add("social/referral", "Bring a Friend", "Invite someone who joins the society server.", "minecraft:player_head", "root", "task");
         add("social/daily_1", "A Job Well Done", "Complete a daily task.", "minecraft:clock", "root", "task");
         add("social/full_profile", "Known Quantity", "Fill in every field on your player profile.", "minecraft:name_tag", "root", "goal");
         add("knowledge/read_all", "Omniscient", "Read every knowledge page.", "fake:charm-knowledge-book", "knowledge/read_20", "challenge");

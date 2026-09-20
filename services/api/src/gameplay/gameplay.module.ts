@@ -10,6 +10,7 @@ import { DiscordModule } from '../discord/discord.module';
 import { FeatureTogglesModule } from '../toggles/feature-toggles.module';
 import { DatabaseModule } from '../database/database.module';
 import { AnnouncementsModule } from '../announcements/announcements.module';
+import { DropAnalyticsModule } from './drop-analytics/drop-analytics.module';
 
 @Module({
 	imports: [
@@ -23,6 +24,7 @@ import { AnnouncementsModule } from '../announcements/announcements.module';
 		FeatureTogglesModule,
 		DatabaseModule,
 		AnnouncementsModule,
+		DropAnalyticsModule,
 	],
 	providers: [GameplayGrpcService],
 })

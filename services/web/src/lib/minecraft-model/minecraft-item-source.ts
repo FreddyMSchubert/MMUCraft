@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { emissionBrightness, previewBrightness } from './minecraft-model-lighting';
 import { AssetResponseError, loadAssetJson } from '@/lib/asset-fetch-cache';
 import { deepClone, resolveTextureReference } from './minecraft-model-geometry';
 import type {
@@ -179,7 +180,6 @@ export function resolveModelTexture(
 export function createFaceMaterial(
 	texture: THREE.Texture,
 	tintColor: THREE.Color,
-	shade: boolean,
 	lightEmission: number,
 	unlit: boolean,
 ) {
@@ -191,14 +191,39 @@ export function createFaceMaterial(
 		side: THREE.FrontSide,
 		toneMapped: false,
 	};
-	return shade && !unlit
-		? new THREE.MeshStandardMaterial({
-				...options,
-				roughness: 1,
-				metalness: 0,
-				emissive: tintColor.clone(),
-				emissiveMap: texture,
-				emissiveIntensity: lightEmission / 15,
-			})
-		: new THREE.MeshBasicMaterial(options);
+	if (unlit || lightEmission === 15) return new THREE.MeshBasicMaterial(options);
+	const material = new THREE.MeshStandardMaterial({
+		...options,
+		roughness: 1,
+		metalness: 0,
+	});
+	const lighting = {
+		ambient: { value: 1 },
+		emission: { value: linearBrightness(emissionBrightness(lightEmission)) },
+	};
+	materialLighting.set(material, lighting);
+	material.onBeforeCompile = (shader) => {
+		shader.uniforms.previewAmbient = lighting.ambient;
+		shader.uniforms.previewEmission = lighting.emission;
+		shader.fragmentShader =
+			`uniform float previewAmbient;\nuniform float previewEmission;\n${shader.fragmentShader}`.replace(
+				'#include <opaque_fragment>',
+				'outgoingLight = max(outgoingLight * previewAmbient, diffuseColor.rgb * previewEmission);\n#include <opaque_fragment>',
+			);
+	};
+	return material;
+}
+
+const materialLighting = new WeakMap<
+	THREE.Material,
+	{ ambient: { value: number }; emission: { value: number } }
+>();
+
+function linearBrightness(value: number) {
+	return new THREE.Color().setRGB(value, value, value, THREE.SRGBColorSpace).r;
+}
+
+export function setMaterialNightMode(material: THREE.Material, night: boolean) {
+	const lighting = materialLighting.get(material);
+	if (lighting) lighting.ambient.value = linearBrightness(previewBrightness(night));
 }

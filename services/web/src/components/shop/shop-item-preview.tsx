@@ -75,6 +75,7 @@ export function ShopPreview({
 	allow3d = true,
 	view,
 	skinUrl,
+	nightMode = false,
 }: {
 	item: ShopItem;
 	hovered: boolean;
@@ -83,6 +84,7 @@ export function ShopPreview({
 	allow3d?: boolean;
 	view?: PreviewView;
 	skinUrl?: string | null;
+	nightMode?: boolean;
 }) {
 	if (hidden) return <div className="shopHiddenPreview" />;
 	if (!allow3d && item.renderMode === 'model')
@@ -101,6 +103,7 @@ export function ShopPreview({
 							: 'basic3d'
 				}
 				skinUrl={skinUrl}
+				nightMode={nightMode}
 			/>
 		);
 	if (item.iconUrl && item.animation)
@@ -183,12 +186,14 @@ function ShopModelPreview({
 	interactive,
 	view,
 	skinUrl,
+	nightMode = false,
 }: {
 	item: ShopItem;
 	hovered: boolean;
 	interactive: boolean;
 	view: PreviewView;
 	skinUrl?: string | null;
+	nightMode?: boolean;
 }) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -198,6 +203,11 @@ function ShopModelPreview({
 	const [ready, setReady] = useState(false);
 	const [liveReady, setLiveReady] = useState(false);
 	const [failed, setFailed] = useState(false);
+	const nightModeRef = useRef(nightMode);
+	useEffect(() => {
+		nightModeRef.current = nightMode;
+		rendererRef.current?.setNightMode(nightMode);
+	}, [nightMode]);
 
 	useEffect(() => {
 		const host = hostRef.current;
@@ -305,6 +315,7 @@ function ShopModelPreview({
 				});
 				rendererRef.current = renderer;
 				await renderer.loadModel(model);
+				renderer.setNightMode(nightModeRef.current);
 				if (isAborted(abortController.signal)) return;
 				const savedState = previewStateRef.current;
 				if (savedState) renderer.setPreviewState(savedState);

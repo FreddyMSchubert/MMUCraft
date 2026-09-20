@@ -27,9 +27,9 @@ Intermediate emission is an approximation in the overlay; shader-pack bloom and 
 remain controlled by the shader pack. Emissive surfaces do not cast light onto nearby blocks.
 
 The shop preview uses `light_emission` directly, never `_e` images or `shade`. Its day/night
-button preserves the model rotation, uses a Bright-style night lightmap approximation, and
-retains each element's emission as a minimum brightness. Block previews use the landing
-page's Trails & Tales and 26.2 panoramas for day and night respectively.
+button appears for emissive models and preserves the model rotation. It uses a Bright-style
+night lightmap approximation and retains each element's emission as a minimum brightness.
+Block previews use static Trails & Tales and 26.2 panoramas for day and night respectively.
 
 Run generator regression tests with `npm test` in this directory.
 

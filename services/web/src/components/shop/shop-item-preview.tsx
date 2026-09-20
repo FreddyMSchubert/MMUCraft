@@ -76,6 +76,7 @@ export function ShopPreview({
 	view,
 	skinUrl,
 	nightMode = false,
+	onEmissionSupport,
 }: {
 	item: ShopItem;
 	hovered: boolean;
@@ -85,6 +86,7 @@ export function ShopPreview({
 	view?: PreviewView;
 	skinUrl?: string | null;
 	nightMode?: boolean;
+	onEmissionSupport?: (modelUrl: string, supported: boolean) => void;
 }) {
 	if (hidden) return <div className="shopHiddenPreview" />;
 	if (!allow3d && item.renderMode === 'model')
@@ -104,6 +106,7 @@ export function ShopPreview({
 				}
 				skinUrl={skinUrl}
 				nightMode={nightMode}
+				onEmissionSupport={onEmissionSupport}
 			/>
 		);
 	if (item.iconUrl && item.animation)
@@ -187,6 +190,7 @@ function ShopModelPreview({
 	view,
 	skinUrl,
 	nightMode = false,
+	onEmissionSupport,
 }: {
 	item: ShopItem;
 	hovered: boolean;
@@ -194,6 +198,7 @@ function ShopModelPreview({
 	view: PreviewView;
 	skinUrl?: string | null;
 	nightMode?: boolean;
+	onEmissionSupport?: (modelUrl: string, supported: boolean) => void;
 }) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -293,11 +298,12 @@ function ShopModelPreview({
 			return;
 		}
 		const textureUrl = item.textureUrl;
+		const modelUrl = item.modelUrl;
 		let renderer: MinecraftModelRenderer | null = null;
 		const abortController = new AbortController();
 		setLiveReady(false);
 		setFailed(false);
-		const modelPromise = loadModel(item.modelUrl);
+		const modelPromise = loadModel(modelUrl);
 		void modelPromise
 			.then(async (model) => {
 				if (isAborted(abortController.signal) || !host.isConnected) return;
@@ -317,6 +323,7 @@ function ShopModelPreview({
 				await renderer.loadModel(model);
 				renderer.setNightMode(nightModeRef.current);
 				if (isAborted(abortController.signal)) return;
+				onEmissionSupport?.(modelUrl, renderer.hasEmissiveElements());
 				const savedState = previewStateRef.current;
 				if (savedState) renderer.setPreviewState(savedState);
 				if (isConnected(host)) {
@@ -346,6 +353,7 @@ function ShopModelPreview({
 		item.id,
 		item.modelUrl,
 		item.textureUrl,
+		onEmissionSupport,
 		rendererActive,
 		skinUrl,
 		view,

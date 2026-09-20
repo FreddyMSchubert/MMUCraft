@@ -237,6 +237,25 @@ async function generateBasicItem(
 		createGeneratedItemModel(modelId),
 		context,
 	);
+	if (item.id === 'charm-redstone-remote') {
+		for (let frequency = 1; frequency <= 16; frequency++) {
+			for (const lamp of ['off', 'on']) {
+				if (frequency === 1 && lamp === 'off') continue;
+				const name = `texture-${frequency}-${lamp}.png`;
+				const variantPath = `${item.resourcePath}-${frequency}-${lamp}`;
+				await copyFile(
+					path.join(item.sourceDirectory, name),
+					itemTexturePngPath(outputDir, namespace, variantPath),
+					context,
+				);
+				await writeJson(
+					itemModelJsonPath(outputDir, namespace, variantPath),
+					createGeneratedItemModel(itemModelId(namespace, variantPath)),
+					context,
+				);
+			}
+		}
+	}
 
 	return {
 		when: item.id,

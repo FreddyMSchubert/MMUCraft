@@ -42,11 +42,46 @@ function createBaseItemDefinition(
 	baseModel: string,
 	includeAnimatedCharms = false,
 ): Record<string, unknown> {
-	const modelCases = cases.map((selectorCase) => ({
-		when: selectorCase.when,
-		model: createModelReference(selectorCase),
-	}));
+	const modelCases = cases
+		.filter(
+			(selectorCase) =>
+				!includeAnimatedCharms || selectorCase.when !== 'charm-redstone-remote',
+		)
+		.map((selectorCase) => ({
+			when: selectorCase.when,
+			model: createModelReference(selectorCase),
+		}));
 	if (includeAnimatedCharms) {
+		const remote = cases.find((item) => item.when === 'charm-redstone-remote');
+		if (remote) {
+			const model = (frequency: number, lit: boolean) => ({
+				type: 'minecraft:model',
+				model:
+					frequency === 1 && !lit
+						? remote.modelId
+						: `${remote.modelId}-${frequency}-${lit ? 'on' : 'off'}`,
+			});
+			const lamp = (frequency: number) => ({
+				type: 'minecraft:condition',
+				property: 'minecraft:custom_model_data',
+				index: 0,
+				on_true: model(frequency, true),
+				on_false: model(frequency, false),
+			});
+			modelCases.push({
+				when: remote.when,
+				model: {
+					type: 'minecraft:range_dispatch',
+					property: 'minecraft:custom_model_data',
+					index: 0,
+					fallback: lamp(1),
+					entries: Array.from({ length: 15 }, (_, index) => ({
+						threshold: index + 2,
+						model: lamp(index + 2),
+					})),
+				},
+			});
+		}
 		const range = (
 			folder: string,
 			names: readonly string[],

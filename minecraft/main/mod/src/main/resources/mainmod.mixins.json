@@ -32,6 +32,7 @@
 		"InsertMultipleCoinsAtOnce",
 		"HopperFilterMixin",
 		"RedstoneRemoteChestMixin",
+		"AttackSwingCharmMixin",
 		"SoundEventRedirect",
 		"advancementDabloons.AdvancementMoneyTooltip",
 		"advancementDabloons.PlayerAdvancementsAccessor",

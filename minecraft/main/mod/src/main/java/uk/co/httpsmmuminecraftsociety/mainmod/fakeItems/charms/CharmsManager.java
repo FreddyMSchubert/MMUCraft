@@ -460,6 +460,16 @@ public class CharmsManager
         return InteractionResult.PASS;
     }
 
+    public static void onAttackSwing(ServerPlayer player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        for (CharmInstance instance : getCharmInstances(stack)) {
+            if (instance.isBroken()) continue;
+            if (instance.charm() instanceof AttackSwingCallbackCharm callback) {
+                callback.onAttackSwing(stack, player, player.level(), hand, instance.level());
+            }
+        }
+    }
+
     public static InteractionResult onAttackEntity(Player player, Level level, InteractionHand hand,
                                                    Entity entity, @Nullable EntityHitResult hit) {
         if (!(player instanceof ServerPlayer serverPlayer) || !(level instanceof ServerLevel serverLevel)) {

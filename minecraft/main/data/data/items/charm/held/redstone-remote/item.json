@@ -6,7 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": [
 		"Right-click a sculk sensor to link it; right-click elsewhere to transmit.",
-		"Sneak + right-click: increase. Sneak + left-click a block: decrease.",
+		"Sneak + right-click: increase. Sneak + left-click: decrease.",
 		"Craft by itself to clear its sensor link."
 	],
 	"charm": {

@@ -1399,6 +1399,13 @@
 	"mainmod:mastery/enderite/armor": 60, // Complete Enderite armour: expensive late-game equipment goal.
 	"mainmod:mastery/enderite/hoe": 25, // Make an Enderite hoe: costly optional dedication.
 	"mainmod:mastery/social/unreasonable_hours": 20, // Visit every unreasonable-hour window: quirky multi-session challenge.
+	"mainmod:mastery/social/committee_any": 10, // Defeat a committee member on Sunday.
+	"mainmod:mastery/social/committee/merlinspace": 15, // Defeat this committee member on Sunday.
+	"mainmod:mastery/social/committee/oderzo": 20, // Defeat this committee member on Sunday.
+	"mainmod:mastery/social/committee/hannahlucyyy": 15, // Defeat this committee member on Sunday.
+	"mainmod:mastery/social/committee/miaalicexoxo": 15, // Defeat this committee member on Sunday.
+	"mainmod:mastery/social/committee/calray2": 15, // Defeat this committee member on Sunday.
+	"mainmod:mastery/social/committee_all": 60, // Defeat every committee member on Sundays.
 	"mainmod:mastery/social/streak_7": 5, // Maintain one week: the first meaningful consistency milestone.
 	"mainmod:mastery/social/streak_14": 10, // Maintain two weeks: sustained attendance without active task completion.
 	"mainmod:mastery/social/streak_30": 25, // Maintain one month: substantial consistency, even though the action is passive.
@@ -1430,6 +1437,17 @@
 	"mainmod:mastery/sniffers/bred_500": 30, // Breed five hundred Sniffers: a capped reward for a severe grind.
 	"mainmod:mastery/sniffers/bred_1000": 35, // Breed one thousand Sniffers: a capped reward for an extreme grind.
 	"mainmod:mastery/sniffers/bred_10000": 50, // Breed ten thousand Sniffers: final acknowledgement without making the grind optimal.
+	"mainmod:mastery/sniffers/control_1": 0, // One kill is too easy to reward.
+	"mainmod:mastery/sniffers/control_3": 3, // Control a small Sniffer population.
+	"mainmod:mastery/sniffers/control_5": 3, // Control a small Sniffer population.
+	"mainmod:mastery/sniffers/control_10": 5, // Control a growing Sniffer population.
+	"mainmod:mastery/sniffers/control_20": 7, // Control a growing Sniffer population.
+	"mainmod:mastery/sniffers/control_50": 10, // Control a large Sniffer population.
+	"mainmod:mastery/sniffers/control_100": 15, // Control a large Sniffer population.
+	"mainmod:mastery/sniffers/control_200": 20, // Control an extreme Sniffer population.
+	"mainmod:mastery/sniffers/control_500": 25, // Keep the severe grind reward modest.
+	"mainmod:mastery/sniffers/control_1000": 30, // Keep the severe grind reward modest.
+	"mainmod:mastery/sniffers/control_10000": 50, // Cap the final grind reward.
 	"mainmod:mastery/backpacks/withered": 10, // Craft a Withered Backpack.
 	"mainmod:mastery/backpacks/magic": 5, // Craft a Magic Backpack.
 	"mainmod:mastery/knowledge/read_10": 5, // Read ten knowledge pages.

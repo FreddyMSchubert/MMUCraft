@@ -36,6 +36,7 @@ const items = walk(itemRoot, 'item.json')
 			type,
 			drop: checkDrop(item.drop ?? shopDrop, path),
 			shopPurchasable: Boolean(item.shopPurchasable),
+			membersOnly: Boolean(item.shopPurchasable?.membersOnly),
 			source: relative(root, path).replaceAll('\\', '/'),
 		};
 	})

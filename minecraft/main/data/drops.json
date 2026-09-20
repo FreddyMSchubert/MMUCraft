@@ -3,72 +3,130 @@
 		"id": "welcoming",
 		"name": "Welcoming",
 		"date": "2026-10-04",
-		"description": "Animal cosmetics, pets, slime detector and mini blocks."
+		"description": "Animal cosmetics, pets, slime detector and mini blocks.",
+		"weekStart": "2026-09-28",
+		"lastYear": "2025-09-22 to 2025-09-28",
+		"availableDayOne": "Saw Belt Charm\nVeinminer Charm\nHeart of Gold Charm",
+		"surprisingSaturday": "Killswitch",
+		"releaseNotes": "Kitty Pajamas Charm, Hiking Boots Charm and Pickaxe Heater Charm\nNote that Charm Boost allows many charms on some armor\nAnimal cosmetics, pets, crows, cats, dogs and hoods, including Eeyore\nSlime detector\nMini blocks",
+		"screenshot": "Kitty pajamas and bunny ears, with baby mobs nearby"
 	},
 	{
 		"id": "soaring",
 		"name": "Soaring",
 		"date": "2026-10-11",
-		"description": "Gliders, particle trails, phantom summoning and airborne adventures."
+		"description": "Gliders, particle trails, phantom summoning and airborne adventures.",
+		"weekStart": "2026-10-05",
+		"lastYear": "2025-09-29 to 2025-10-05",
+		"lastYearNotes": "2025-09-29: Oderzo first joined",
+		"surprisingSaturday": "Lifesteal; the player with the most hearts wins",
+		"releaseNotes": "Glider\nParticle trails\nPhantom Summon Potions\nWinged Shoes Charm and Bunny Pajamas Charm\nAnnounce the bunny ears cosmetic with Bunny Pajamas",
+		"screenshot": "Glider and aviator helmet while flying over a campfire with a trail"
 	},
 	{
 		"id": "imaginative",
 		"name": "Imaginative",
 		"date": "2026-10-18",
-		"description": "Building tools, map art and the start of the Halloween building event."
+		"description": "Building tools, map art and the start of the Halloween building event.",
+		"weekStart": "2026-10-12",
+		"lastYear": "2025-10-06 to 2025-10-12",
+		"lastYearNotes": "2025-10-10: Freddy first joined\n2025-10-12: Calum first joined",
+		"surprisingSaturday": "Chunklocked with many custom advancements",
+		"releaseNotes": "Tease the Nether unlock for next week\nBegin the Halloween event and frame this drop as helpful for building\nWrench and InvisiCarrot\n16x16 maps feature\nSpider Pajamas and Cave Spider Pajamas charms",
+		"screenshot": "Wrench and builder helmet on a build under construction, perhaps with a toolbench decoration block"
 	},
 	{
 		"id": "nether",
 		"name": "Hellish",
 		"date": "2026-10-25",
-		"description": "The Nether, flexible portals and Halloween cosmetics."
+		"description": "The Nether, flexible portals and Halloween cosmetics.",
+		"weekStart": "2026-10-19",
+		"lastYear": "2025-10-13 to 2025-10-19",
+		"lastYearNotes": "2025-10-15: Mia first joined\n2025-10-16: Hannah first joined",
+		"surprisingSaturday": "One Block, with one block per person who joins",
+		"releaseNotes": "Unlock the Nether\nNether portals of any shape\nNote that the Halloween build event ends next Saturday\nHalloween cosmetics",
+		"screenshot": "Player in netherite with devil horns, perhaps falling through a portal in the ground"
 	},
 	{
 		"id": "circus",
 		"name": "Circus",
 		"date": "2026-11-01",
-		"description": "Playful charms, costumes and hopcorn."
+		"description": "Playful charms, costumes and hopcorn.",
+		"weekStart": "2026-10-26",
+		"lastYear": "2025-10-20 to 2025-10-26",
+		"surprisingSaturday": "A seemingly normal world with Herobrine and spooky server-side mods; extreme mob difficulty and points for kills (for example, zombie 1, dragon 50, wither 100)",
+		"notes": "End the Halloween event",
+		"releaseNotes": "Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots and Happy Ghast Speedup charms\nFarmer-traded popcorn (hopcorn) makes the next jump very high",
+		"screenshot": "Player wearing Giant's Boots and a skull, looking down at a normal-size player"
 	},
 	{
 		"id": "inventors",
 		"name": "Inventors",
 		"date": "2026-11-08",
-		"description": "Item filters, storage systems and bow attachments."
+		"description": "Item filters, storage systems and bow attachments.",
+		"weekStart": "2026-11-02",
+		"lastYear": "2025-10-27 to 2025-11-02",
+		"surprisingSaturday": "A long puzzle like the BAC advancements pirate puzzle, with more hints released each hour",
+		"releaseNotes": "Easy sorting systems with a special hopper filter item\nBow system that attaches items held in the offhand",
+		"screenshot": "Player working on a storage system while wearing an inventor's top hat"
 	},
 	{
 		"id": "beach-party",
 		"name": "Beach Party",
 		"date": "2026-11-15",
-		"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms."
+		"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms.",
+		"weekStart": "2026-11-09",
+		"lastYear": "2025-11-03 to 2025-11-09",
+		"surprisingSaturday": "Manhunt: split everyone randomly into hunters and runners",
+		"releaseNotes": "Tease the End opening next week\nIron Stomach Charm, Scuba Tank Charm, Candle of the Deep Charm and Vitality Mending Charm",
+		"screenshot": "Player in a halo with many god rays"
 	},
 	{
 		"id": "void",
 		"name": "Void",
 		"date": "2026-11-22",
-		"description": "The End opens with Enderite and End City exploration."
+		"description": "The End opens with Enderite and End City exploration.",
+		"weekStart": "2026-11-16",
+		"lastYear": "2025-11-10 to 2025-11-16",
+		"surprisingSaturday": "Skyblock",
+		"releaseNotes": "Unlock the End\nEnderite\nRemind players to check out particle trails",
+		"screenshot": "Enderite and shulker hat while raiding an End City, with shulker shots nearby"
 	},
 	{
 		"id": "unthemed",
 		"name": "Unthemed",
 		"date": "2026-11-29",
-		"description": "A week without a fixed theme, ahead of the Christmas season."
+		"description": "A week without a fixed theme, ahead of the Christmas season.",
+		"weekStart": "2026-11-23",
+		"lastYear": "2025-11-17 to 2025-11-23",
+		"releaseNotes": "No fixed theme; Christmas is coming soon"
 	},
 	{
 		"id": "cold",
 		"name": "Cold",
 		"date": "2026-12-06",
-		"description": "The Christmas event and Advent Calendar begin."
+		"description": "The Christmas event and Advent Calendar begin.",
+		"weekStart": "2026-11-30",
+		"lastYear": "2025-11-24 to 2025-11-30",
+		"releaseNotes": "Start the Christmas event\nStart the Advent Calendar"
 	},
 	{
 		"id": "jolly",
 		"name": "Jolly",
 		"date": "2026-12-13",
-		"description": "The second week of the Christmas event."
+		"description": "The second week of the Christmas event.",
+		"weekStart": "2026-12-07",
+		"lastYear": "2025-12-01 to 2025-12-07"
 	},
 	{
 		"id": "christmas",
 		"name": "Christmas",
 		"date": "2026-12-20",
-		"description": "Christmas gifts and decorations; the event ends this week."
+		"description": "Christmas gifts and decorations; the event ends this week.",
+		"weekStart": "2026-12-14",
+		"lastYear": "2025-12-08 to 2025-12-14",
+		"surprisingSaturday": "Combine as many previous Surprising Saturdays as possible into one mashup",
+		"releaseNotes": "Christmas activities\nGifts\nChristmas decorations",
+		"notes": "End the Christmas event on 2026-12-20"
 	}
 ]

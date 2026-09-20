@@ -1,16 +1,45 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import catalog from '@/data/drop-analytics.json';
+import { useEffect, useState } from 'react';
+import { errorMessage, fetchAdmin } from './admin-api';
 
-type Item = (typeof catalog.items)[number];
-type Knowledge = (typeof catalog.knowledge)[number];
+interface Drop {
+	id: string;
+	name: string;
+	date: string;
+	description: string;
+	weekStart: string;
+	lastYear: string;
+	availableDayOne?: string;
+	lastYearNotes?: string;
+	surprisingSaturday?: string;
+	releaseNotes?: string;
+	screenshot?: string;
+	notes?: string;
+}
+interface Item {
+	id: string;
+	name: string;
+	type: 'cosmetic' | 'decoblock';
+	drop: string | null;
+	shopPurchasable: boolean;
+	membersOnly: boolean;
+}
+interface Knowledge {
+	id: string;
+	name: string;
+	drop: string | null;
+	public: boolean;
+}
+interface Catalog {
+	drops: Drop[];
+	items: Item[];
+	knowledge: Knowledge[];
+}
 type Sort = 'drop' | 'name' | 'availability';
 type View = 'summary' | 'chart' | 'items' | 'weekly';
 type MembershipFilter = 'all' | 'members' | 'everyone';
 
-const allDrops = [{ id: null, name: 'Unassigned', date: null, description: '' }, ...catalog.drops];
-const releaseOrder = new Map(allDrops.map((drop, index) => [drop.id, index]));
 const niceDate = (date: string) =>
 	new Intl.DateTimeFormat('en-GB', {
 		day: 'numeric',
@@ -19,7 +48,11 @@ const niceDate = (date: string) =>
 		timeZone: 'UTC',
 	}).format(new Date(`${date}T12:00:00Z`));
 
-function countFor(drop: string | null, type: 'cosmetic' | 'decoblock' | 'knowledge') {
+function countFor(
+	catalog: Catalog,
+	drop: string | null,
+	type: 'cosmetic' | 'decoblock' | 'knowledge',
+) {
 	return type === 'knowledge'
 		? catalog.knowledge.filter((entry) => entry.drop === drop).length
 		: catalog.items.filter((entry) => entry.drop === drop && entry.type === type).length;
@@ -67,46 +100,90 @@ function PlanList({ title, text }: { title: string; text: string }) {
 }
 
 export function DropAnalyticsAdminSection() {
+	const [catalog, setCatalog] = useState<Catalog | null>(null);
+	const [error, setError] = useState('');
+	const [loading, setLoading] = useState(true);
+
+	async function refresh() {
+		setLoading(true);
+		setError('');
+		try {
+			setCatalog(
+				await fetchAdmin<Catalog>('/api/admin/drops', 'Failed to load drop analytics'),
+			);
+		} catch (caught) {
+			setError(errorMessage(caught, 'Failed to load drop analytics'));
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	useEffect(() => {
+		let active = true;
+		void fetchAdmin<Catalog>('/api/admin/drops', 'Failed to load drop analytics')
+			.then((result) => {
+				if (active) setCatalog(result);
+			})
+			.catch((caught: unknown) => {
+				if (active) setError(errorMessage(caught, 'Failed to load drop analytics'));
+			})
+			.finally(() => {
+				if (active) setLoading(false);
+			});
+		return () => {
+			active = false;
+		};
+	}, []);
+
+	return (
+		<section className="adminSection dropAnalytics">
+			{catalog && <DropAnalyticsContent catalog={catalog} />}
+			{!catalog && !error && <p>Loading drop analytics…</p>}
+			{error && (
+				<p className="authError" role="alert">
+					{error}
+				</p>
+			)}
+			<button type="button" onClick={() => void refresh()} disabled={loading}>
+				{loading ? 'Loading…' : 'Refresh drops'}
+			</button>
+		</section>
+	);
+}
+
+function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 	const [view, setView] = useState<View>('summary');
 	const [membershipFilter, setMembershipFilter] = useState<MembershipFilter>('all');
 	const [sort, setSort] = useState<Sort>('drop');
 	const [descending, setDescending] = useState(false);
-	const rows = useMemo(
-		() =>
-			allDrops.map((drop) => ({
-				...drop,
-				cosmetics: countFor(drop.id, 'cosmetic'),
-				decoblocks: countFor(drop.id, 'decoblock'),
-				knowledge: countFor(drop.id, 'knowledge'),
-			})),
-		[],
-	);
+	const allDrops = [{ id: null, name: 'Unassigned' }, ...catalog.drops];
+	const releaseOrder = new Map(allDrops.map((drop, index) => [drop.id, index]));
+	const rows = allDrops.map((drop) => ({
+		...drop,
+		cosmetics: countFor(catalog, drop.id, 'cosmetic'),
+		decoblocks: countFor(catalog, drop.id, 'decoblock'),
+		knowledge: countFor(catalog, drop.id, 'knowledge'),
+	}));
 	const maximum = Math.max(
 		1,
 		...rows.map((row) => row.cosmetics + row.decoblocks + row.knowledge),
 	);
 	const scale = Math.ceil(maximum / 5) * 5;
 	const ticks = Array.from({ length: 6 }, (_, index) => scale - (index * scale) / 5);
-	const items = useMemo(
-		() =>
-			catalog.items
-				.filter(
-					(item) =>
-						membershipFilter === 'all' ||
-						item.membersOnly === (membershipFilter === 'members'),
-				)
-				.toSorted((a, b) => {
-					let comparison = 0;
-					if (sort === 'drop')
-						comparison =
-							(releaseOrder.get(a.drop) ?? 0) - (releaseOrder.get(b.drop) ?? 0);
-					if (sort === 'name') comparison = a.name.localeCompare(b.name);
-					if (sort === 'availability')
-						comparison = Number(a.shopPurchasable) - Number(b.shopPurchasable);
-					return (descending ? -comparison : comparison) || a.name.localeCompare(b.name);
-				}),
-		[sort, descending, membershipFilter],
-	);
+	const items = catalog.items
+		.filter(
+			(item) =>
+				membershipFilter === 'all' || item.membersOnly === (membershipFilter === 'members'),
+		)
+		.toSorted((a, b) => {
+			let comparison = 0;
+			if (sort === 'drop')
+				comparison = (releaseOrder.get(a.drop) ?? 0) - (releaseOrder.get(b.drop) ?? 0);
+			if (sort === 'name') comparison = a.name.localeCompare(b.name);
+			if (sort === 'availability')
+				comparison = Number(a.shopPurchasable) - Number(b.shopPurchasable);
+			return (descending ? -comparison : comparison) || a.name.localeCompare(b.name);
+		});
 	const total = (key: 'cosmetics' | 'decoblocks' | 'knowledge') =>
 		rows.reduce((sum, row) => sum + row[key], 0);
 
@@ -119,7 +196,7 @@ export function DropAnalyticsAdminSection() {
 	}
 
 	return (
-		<section className="adminSection dropAnalytics">
+		<>
 			<header className="adminSectionHeader">
 				<h3>Drop analytics</h3>
 				<p>
@@ -455,6 +532,6 @@ export function DropAnalyticsAdminSection() {
 					</div>
 				</>
 			)}
-		</section>
+		</>
 	);
 }

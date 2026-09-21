@@ -16,10 +16,10 @@ import uk.co.httpsmmuminecraftsociety.mainmod.maps.MapInvisibility;
 @Mixin(EmptyMapItem.class)
 public abstract class SmallEmptyMapUseMixin {
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    private void mainmod$fillSmallMap(Level level, Player player, InteractionHand hand,
+    private void mainmod$fillResizedMap(Level level, Player player, InteractionHand hand,
                                       CallbackInfoReturnable<InteractionResult> cir) {
         ItemStack stack = player.getItemInHand(hand);
-        InteractionResult result = SmallMaps.useSmallEmptyMap(level, player, stack);
+        InteractionResult result = SmallMaps.useResizedEmptyMap(level, player, stack);
         if (result == null && level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             result = MapInvisibility.useTaggedEmptyMap(serverLevel, player, stack);
         }

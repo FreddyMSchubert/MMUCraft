@@ -113,6 +113,16 @@ tasks.register('checkParticleTrails', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkMapResize', JavaExec) {
+    group = 'verification'
+    description = 'Check crafting map sizes from 16 through 2048 blocks.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.maps.MapResizeCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('mapResizeCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
 tasks.register('checkPlayerColors', JavaExec) {
     group = 'verification'
     description = 'Check player RGB formatting, vanilla team colors, and persisted join colors.'
@@ -126,6 +136,7 @@ tasks.register('checkPlayerColors', JavaExec) {
 tasks.named('check') {
     dependsOn tasks.named('checkPlayerColors')
     dependsOn 'checkFishing'
+    dependsOn 'checkMapResize'
 }
 
 tasks.register('checkGlider', JavaExec) {

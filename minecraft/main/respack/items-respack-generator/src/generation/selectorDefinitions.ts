@@ -74,10 +74,10 @@ function createBaseItemDefinition(
 					type: 'minecraft:range_dispatch',
 					property: 'minecraft:custom_model_data',
 					index: 0,
-					fallback: lamp(1),
+					fallback: lamp(16),
 					entries: Array.from({ length: 15 }, (_, index) => ({
-						threshold: index + 2,
-						model: lamp(index + 2),
+						threshold: index + 1,
+						model: lamp(index + 1),
 					})),
 				},
 			});

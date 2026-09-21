@@ -63,7 +63,7 @@ Advancements give you Dabloons for completing them.
 You can see how many dabloons a given advancement will earn you before completing it by looking at it in the advancements menu. The server has over 1000 additional advancements beyond the Vanilla Minecraft ones. ([All advancements overview](https://docs.google.com/spreadsheets/d/1_DwKEZ0vqCOp2POhiOVSoMVeVNpU1WNPzk0L8qR_y2s))
 
 :::tip
-The vanilla advancements menu is really mid and very cramped, so it's recommended you use some [client side mod to improve the advancements menu](https://modrinth.com/discover/mods?q=advancement&v=26.2&e=client) if you know how to mod your game.
+The vanilla advancements menu is really mid and very cramped, so it's recommended you use some [client side mod to improve the advancements menu](https://modrinth.com/discover/mods?q=advancement&v=26.3&e=client) if you know how to mod your game.
 :::
 
 :::tip

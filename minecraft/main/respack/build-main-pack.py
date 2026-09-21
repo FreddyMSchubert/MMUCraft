@@ -351,6 +351,8 @@ def build_merger_jar():
 			)
 		run(mvn, "-q", "-DskipTests", "package", cwd=MERGER)
 
+	(MERGER / "dependency-reduced-pom.xml").unlink(missing_ok=True)
+
 	jars = sorted(
 		[
 			p
@@ -461,9 +463,10 @@ def main():
 		print("==> Merging packs")
 		for p in inputs:
 			print(" -", p)
-		run("java", "-jar", str(jar), *map(str, inputs), str(MERGED))
+		run("java", "-Djava.awt.headless=true", "-jar", str(jar), *map(str, inputs), str(MERGED))
 
 	remove_pack_metadata()
+	shutil.copy2(GENERATED / "pack.mcmeta", MERGED / "pack.mcmeta")
 	print("==> Creating zip archive")
 	shutil.make_archive(str(FINAL_ZIP.with_suffix("")), "zip", MERGED)
 

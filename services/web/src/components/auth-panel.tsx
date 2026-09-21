@@ -441,7 +441,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 					<h2>Join the server</h2>
 					<p>
 						Join the Minecraft server at <strong>mmuminecraftsociety.co.uk</strong>{' '}
-						using <strong>Java Edition 26.2</strong>.
+						using <strong>Java Edition 26.3</strong>.
 					</p>
 					<button
 						className="authHelpButton"

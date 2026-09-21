@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 
+import net.minecraft.util.Prediction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -69,7 +70,7 @@ final class GameplayShopOperations {
         if (!grantStack.isEmpty()) {
             player.getInventory().add(grantStack);
             if (!grantStack.isEmpty()) {
-                player.drop(grantStack, false);
+                player.drop(grantStack, false, Prediction.SERVER_ONLY);
             }
             player.getInventory().setChanged();
             player.containerMenu.broadcastChanges();

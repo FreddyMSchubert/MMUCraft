@@ -1,0 +1,20 @@
+{
+	"type": "mainmod:luck_brewing",
+	"input": {
+		"item": "minecraft:potion",
+		"potion_contents": {
+			"potions": "minecraft:awkward"
+		}
+	},
+	"reagent": {
+		"item": "minecraft:heart_of_the_sea"
+	},
+	"output": {
+		"id": "minecraft:potion",
+		"components": {
+			"minecraft:potion_contents": {
+				"potion": "minecraft:luck"
+			}
+		}
+	}
+}

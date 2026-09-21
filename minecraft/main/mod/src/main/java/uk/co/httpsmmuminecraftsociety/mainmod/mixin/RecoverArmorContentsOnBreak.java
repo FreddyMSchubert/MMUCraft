@@ -1,11 +1,11 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
 
+import net.minecraft.util.Prediction;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +25,7 @@ public class RecoverArmorContentsOnBreak {
     private void rememberArmorContents(
             int damage,
             ServerPlayer player,
-            Consumer<Item> breakCallback,
+            Consumer<ItemStack> breakCallback,
             CallbackInfo info,
             @Share("brokenArmor") LocalRef<ItemStack> brokenArmor
     ) {
@@ -41,7 +41,7 @@ public class RecoverArmorContentsOnBreak {
     private void recoverArmorContents(
             int damage,
             ServerPlayer player,
-            Consumer<Item> breakCallback,
+            Consumer<ItemStack> breakCallback,
             CallbackInfo info,
             @Share("brokenArmor") LocalRef<ItemStack> brokenArmor
     ) {
@@ -62,7 +62,7 @@ public class RecoverArmorContentsOnBreak {
                 player.setItemSlot(slot, charm);
                 slotIsEmpty = false;
             } else if (!player.getInventory().add(charm)) {
-                player.drop(charm, false);
+                player.drop(charm, false, Prediction.SERVER_ONLY);
             }
         }
     }

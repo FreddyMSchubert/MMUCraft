@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.HoeItem;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
@@ -25,7 +25,7 @@ public final class FarmingBootsCharm implements Charm, UseOnBlockCallbackCharm
         BlockPos originPos = blockHitResult.getBlockPos();
         BlockState originState = level.getBlockState(originPos);
         ItemStack heldStack = player.getItemInHand(interactionHand);
-        if (!(heldStack.getItem() instanceof HoeItem)) return InteractionResult.PASS;
+        if (!heldStack.is(ItemTags.HOES)) return InteractionResult.PASS;
         if (!isHarvestableCrop(originState)) return InteractionResult.PASS;
 
         boolean harvestedAny = false;

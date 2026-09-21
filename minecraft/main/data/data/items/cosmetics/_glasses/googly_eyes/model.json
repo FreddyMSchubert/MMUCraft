@@ -9,7 +9,7 @@
 			"name": "EyeR",
 			"from": [4.3, 9.5, 4],
 			"to": [7.3, 12.5, 4],
-			"shade": false,
+			"shade_direction_override": "up",
 			"rotation": {
 				"angle": 0,
 				"axis": "y",
@@ -30,7 +30,7 @@
 			"name": "EyeL",
 			"from": [8.7, 9.5, 4],
 			"to": [11.7, 12.5, 4],
-			"shade": false,
+			"shade_direction_override": "up",
 			"rotation": {
 				"angle": 0,
 				"axis": "y",

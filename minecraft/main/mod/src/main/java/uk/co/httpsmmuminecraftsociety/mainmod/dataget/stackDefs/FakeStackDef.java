@@ -5,15 +5,11 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
-
-import java.util.Map;
-import java.util.Optional;
 
 public record FakeStackDef(String raw, String fakeItemId, String suffix, String displayNameOverride) implements StackDef
 {
@@ -96,12 +92,12 @@ public record FakeStackDef(String raw, String fakeItemId, String suffix, String 
     }
 
     private void rejectCustomModelDataPatch(DataComponentPatch patch) {
-        for (Map.Entry<DataComponentType<?>, Optional<?>> entry : patch.entrySet()) {
-            if (entry.getKey() == DataComponents.CUSTOM_MODEL_DATA) {
-                throw new IllegalArgumentException(
-                        "Fake item stack descriptions must not override or remove minecraft:custom_model_data: '" + raw + "'"
-                );
-            }
+        var split = patch.split();
+        if (split.added().has(DataComponents.CUSTOM_MODEL_DATA)
+                || split.removed().contains(DataComponents.CUSTOM_MODEL_DATA)) {
+            throw new IllegalArgumentException(
+                    "Fake item stack descriptions must not override or remove minecraft:custom_model_data: '" + raw + "'"
+            );
         }
     }
 }

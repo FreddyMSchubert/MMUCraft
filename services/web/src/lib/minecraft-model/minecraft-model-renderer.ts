@@ -194,7 +194,7 @@ export class MinecraftModelRenderer {
 
 	private async updatePanorama() {
 		if (this.view !== 'item-frame' || this.destroyed) return;
-		const id = this.nightMode ? '26.2' : 'trails-and-tales';
+		const id = this.nightMode ? 'chaos-cubed' : 'trails-and-tales';
 		let loading = this.panoramas.get(id);
 		if (!loading) {
 			loading = new THREE.CubeTextureLoader().loadAsync(
@@ -209,7 +209,7 @@ export class MinecraftModelRenderer {
 			texture.colorSpace = THREE.SRGBColorSpace;
 			if (
 				!this.container.contains(this.renderer.domElement) ||
-				id !== (this.nightMode ? '26.2' : 'trails-and-tales')
+				id !== (this.nightMode ? 'chaos-cubed' : 'trails-and-tales')
 			)
 				return;
 			this.scene.background = texture;

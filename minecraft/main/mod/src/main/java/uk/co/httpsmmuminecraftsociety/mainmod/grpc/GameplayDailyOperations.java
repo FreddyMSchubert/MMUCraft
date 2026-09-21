@@ -131,7 +131,7 @@ final class GameplayDailyOperations {
         String tabTitle = root == null
                 ? selected.id().getNamespace()
                 : root.holder().value().display()
-                        .map(rootDisplay -> rootDisplay.getTitle().getString())
+                        .map(rootDisplay -> rootDisplay.title().getString())
                         .orElse(root.holder().id().toString());
 
         int baseReward = AdvancementMoney.moneyForAdvancement(selected.id(), selected.value().rewards().experience());
@@ -141,10 +141,10 @@ final class GameplayDailyOperations {
                 .setSelected(true)
                 .setOnline(true)
                 .setAdvancementId(selected.id().toString())
-                .setTitle(display.getTitle().getString())
-                .setDescription(display.getDescription().getString())
+                .setTitle(display.title().getString())
+                .setDescription(display.description().getString())
                 .setTabTitle(tabTitle)
-				.setIconItem(MinecraftItemIdentifier.forStack(display.getIcon().create()))
+				.setIconItem(MinecraftItemIdentifier.forStack(display.icon().create()))
                 .setBaseRewardDabloons(baseReward)
                 .setBonusRewardDabloons(bonusReward)
                 .setMessage("Daily advancement target selected.")
@@ -181,7 +181,7 @@ final class GameplayDailyOperations {
         AdvancementProgress progress = player.getAdvancements().getOrStartProgress(holder);
         if (!progress.isDone()) {
             String title = holder.value().display()
-                    .map(display -> display.getTitle().getString())
+                    .map(display -> display.title().getString())
                     .orElse(request.getAdvancementId());
             return ClaimDailyAdvancementResponse.newBuilder()
                     .setClaimed(false)

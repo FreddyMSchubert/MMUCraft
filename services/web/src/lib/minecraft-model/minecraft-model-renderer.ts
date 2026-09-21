@@ -7,6 +7,7 @@ import {
 	toRadians,
 } from './minecraft-model-geometry';
 import { MinecraftModelObject } from './minecraft-model-object';
+import { MinecraftParticleRenderer } from './minecraft-particle-renderer';
 import { createGrassFloorModel, loadPlayerModel } from './minecraft-preview-scenes';
 import { hsvToRgb, parseColorValue } from './minecraft-texture-registry';
 import type {
@@ -27,6 +28,7 @@ export class MinecraftModelRenderer {
 	private readonly modelMount = new THREE.Group();
 	private readonly modelRoot = new THREE.Group();
 	private readonly modelObject: MinecraftModelObject;
+	private readonly particleRenderer: MinecraftParticleRenderer;
 	private readonly previewObjects: MinecraftModelObject[] = [];
 	private readonly assetRoot: string | undefined;
 	private readonly fallbackTextureSource: string | undefined;
@@ -73,6 +75,10 @@ export class MinecraftModelRenderer {
 			parseColorValue(options.defaultTint, { r: 255, g: 0, b: 0 }),
 			this.view === 'icon',
 			options.frameDelayMs !== undefined,
+		);
+		this.particleRenderer = new MinecraftParticleRenderer(
+			this.modelObject.group,
+			options.particleEmission,
 		);
 
 		if (options.background) {
@@ -142,6 +148,7 @@ export class MinecraftModelRenderer {
 		this.renderer.domElement.removeEventListener('pointermove', this.handlePointerMove);
 		this.renderer.domElement.removeEventListener('pointerup', this.handlePointerUp);
 		this.renderer.domElement.removeEventListener('pointercancel', this.handlePointerUp);
+		this.particleRenderer.dispose();
 		this.modelObject.dispose();
 		for (const object of this.previewObjects) object.dispose();
 		for (const panorama of this.panoramas.values())
@@ -242,7 +249,10 @@ export class MinecraftModelRenderer {
 
 	renderFrame(deltaMs = 0) {
 		if (this.destroyed || this.contextLost) return;
-		if (deltaMs > 0) this.modelObject.update(deltaMs, this.frameDelayMs);
+		if (deltaMs > 0) {
+			this.modelObject.update(deltaMs, this.frameDelayMs);
+			this.particleRenderer.update(deltaMs);
+		}
 		this.renderer.render(this.scene, this.camera);
 	}
 
@@ -368,6 +378,7 @@ export class MinecraftModelRenderer {
 		}
 
 		if (this.animateTextures) this.modelObject.update(deltaMs, this.frameDelayMs);
+		this.particleRenderer.update(deltaMs);
 		try {
 			this.renderer.render(this.scene, this.camera);
 		} catch {
@@ -377,6 +388,7 @@ export class MinecraftModelRenderer {
 		this.animationFrame =
 			this.autoRotate ||
 			this.animateDye ||
+			this.particleRenderer.active ||
 			(this.animateTextures && this.modelObject.isAnimated())
 				? requestAnimationFrame(this.animate)
 				: null;

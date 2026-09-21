@@ -217,7 +217,15 @@ function ShopModelPreview({
 	useEffect(() => {
 		const host = hostRef.current;
 		const canvas = canvasRef.current;
-		if (interactive || item.animated || !host || !canvas || !item.modelUrl || !item.textureUrl)
+		if (
+			interactive ||
+			item.animated ||
+			item.emissive ||
+			!host ||
+			!canvas ||
+			!item.modelUrl ||
+			!item.textureUrl
+		)
 			return;
 		const textureUrl = item.textureUrl;
 		const cacheKey = snapshotKey(item.modelUrl, item.textureUrl, view, skinUrl);
@@ -266,6 +274,7 @@ function ShopModelPreview({
 	}, [
 		interactive,
 		item.animated,
+		item.emissive,
 		item.animation?.frameDelayMs,
 		item.animation?.frames,
 		item.dyeable,
@@ -278,7 +287,7 @@ function ShopModelPreview({
 
 	const shouldAutoRotate = interactive ? !interactiveHover : hovered;
 	const shouldAnimateDye = interactive ? liveReady && !interactiveHover : hovered;
-	const rendererActive = interactive || hovered || item.animated;
+	const rendererActive = interactive || hovered || item.animated || item.emissive;
 	const autoRotateRef = useRef(shouldAutoRotate);
 	const animateDyeRef = useRef(shouldAnimateDye);
 	useEffect(() => {
@@ -312,6 +321,7 @@ function ShopModelPreview({
 					animateDye: animateDyeRef.current,
 					autoRotate: autoRotateRef.current,
 					dyeable: item.dyeable,
+					particleEmission: item.particleEmission,
 					enableDrag: interactive,
 					frameDelayMs: item.animation?.frameDelayMs,
 					frameSequence: item.animation?.frames ?? null,
@@ -339,7 +349,8 @@ function ShopModelPreview({
 		return () => {
 			abortController.abort();
 			if (renderer) previewStateRef.current = renderer.getPreviewState();
-			if (!interactive && !item.animated && canvas) renderer?.copyFrameTo(canvas);
+			if (!interactive && !item.animated && !item.emissive && canvas)
+				renderer?.copyFrameTo(canvas);
 			renderer?.destroy();
 			if (rendererRef.current === renderer) rendererRef.current = null;
 			renderer = null;
@@ -350,6 +361,8 @@ function ShopModelPreview({
 		item.animation?.frameDelayMs,
 		item.animation?.frames,
 		item.dyeable,
+		item.emissive,
+		item.particleEmission,
 		item.id,
 		item.modelUrl,
 		item.textureUrl,

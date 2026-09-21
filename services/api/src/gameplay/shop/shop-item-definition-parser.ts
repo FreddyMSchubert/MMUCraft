@@ -12,6 +12,7 @@ import type {
 	CatalogItem,
 	CharmDetailsDefinition,
 	CharmLevelDefinition,
+	ParticleEmissionDefinition,
 	RawItemDefinition,
 	ShopItemType,
 	ShopPurchasableDefinition,
@@ -72,6 +73,7 @@ export function parseShopItemDefinition(
 			modelFilePath && /"light_emission"\s*:/.test(readFileSync(modelFilePath, 'utf8')),
 		),
 		emissive: Boolean(json.particleEmission && typeof json.particleEmission === 'object'),
+		particleEmission: parseParticleEmission(json.particleEmission),
 		dyeable: Boolean(json.dyeable && typeof json.dyeable === 'object'),
 		decoBlock: Boolean(json.decoBlock && typeof json.decoBlock === 'object'),
 		animation,
@@ -89,6 +91,46 @@ export function unlistedItemRenderAsset(itemId: string, directory: string, root:
 	const textureFilePath =
 		modelTextureFile(directory) ?? flatItemTextureFile(itemId, directory, root);
 	return itemRenderAsset(itemId, modelFilePath, textureFilePath);
+}
+
+function parseParticleEmission(value: unknown): ParticleEmissionDefinition | null {
+	if (!value || typeof value !== 'object' || !('particles' in value)) return null;
+	const entries = value.particles;
+	if (!Array.isArray(entries)) return null;
+	const particles: ParticleEmissionDefinition['particles'] = [];
+	for (const raw of entries) {
+		if (!raw || typeof raw !== 'object') continue;
+		const entry = raw as Record<string, unknown>;
+		if (
+			typeof entry.particle !== 'string' ||
+			!point(entry.from) ||
+			!point(entry.to) ||
+			!Number.isInteger(entry.minTicks) ||
+			!Number.isInteger(entry.maxTicks) ||
+			Number(entry.minTicks) < 1 ||
+			Number(entry.maxTicks) < Number(entry.minTicks)
+		)
+			continue;
+		particles.push({
+			particle: entry.particle,
+			from: entry.from,
+			to: entry.to,
+			minTicks: Number(entry.minTicks),
+			maxTicks: Number(entry.maxTicks),
+			...(typeof entry.color === 'string' ? { color: entry.color } : {}),
+			...(typeof entry.scale === 'number' ? { scale: entry.scale } : {}),
+			...(typeof entry.arguments === 'string' ? { arguments: entry.arguments } : {}),
+		});
+	}
+	return particles.length ? { particles } : null;
+}
+
+function point(value: unknown): value is [number, number, number] {
+	return (
+		Array.isArray(value) &&
+		value.length === 3 &&
+		value.every((number) => typeof number === 'number' && Number.isFinite(number))
+	);
 }
 
 function parseShopPurchasable(value: unknown): ShopPurchasableDefinition | null {

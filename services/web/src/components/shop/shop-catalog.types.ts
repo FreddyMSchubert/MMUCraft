@@ -47,6 +47,7 @@ export interface ShopItem {
 	animated: boolean;
 	luminous: boolean;
 	emissive: boolean;
+	particleEmission: ParticleEmissionDefinition | null;
 	dyeable: boolean;
 	decoBlock: boolean;
 	membersOnly: boolean;
@@ -153,3 +154,4 @@ export function seededRank(value: string) {
 	}
 	return hash >>> 0;
 }
+import type { ParticleEmissionDefinition } from '@/lib/minecraft-model/minecraft-model.types';

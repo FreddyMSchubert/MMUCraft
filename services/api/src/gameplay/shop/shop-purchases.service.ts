@@ -94,6 +94,7 @@ export class ShopPurchasesService {
 						animated: item.animated,
 						luminous: item.luminous,
 						emissive: item.emissive,
+						particleEmission: item.particleEmission,
 						dyeable: item.dyeable,
 						decoBlock: item.decoBlock,
 						membersOnly: item.membersOnly,

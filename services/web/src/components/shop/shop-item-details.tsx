@@ -45,6 +45,7 @@ export function FilterRow({
 								<ShopLock />
 							)}
 						{option.value === 'animated' ? <AnimatedLabel /> : option.label}
+						{option.value === 'emissive' && <EmissiveSparks />}
 					</button>
 				))}
 			</div>
@@ -470,6 +471,7 @@ function ItemBadges({ item }: { item: ShopItem }) {
 			>
 				{item.membershipLocked && <ShopLock />}
 				Emissive
+				<EmissiveSparks />
 			</span>
 		) : null,
 		item.membersOnly ? (
@@ -506,6 +508,44 @@ function soldOutLabel(item: ShopItem) {
 
 function ShopLock() {
 	return <span aria-hidden="true">🔒 </span>;
+}
+
+const EMISSIVE_SPARKS = Array.from({ length: 14 }, (_, index) => {
+	const offset = 9 + ((index * 47 + 19) % 82);
+	const side = index % 4;
+	return {
+		left: side === 0 ? `${offset}%` : side === 1 ? '100%' : side === 2 ? `${offset}%` : '0%',
+		top: side === 0 ? '0%' : side === 1 ? `${offset}%` : side === 2 ? '100%' : `${offset}%`,
+		color: `hsl(${162 + ((index * 31) % 46)} 95% ${62 + ((index * 17) % 21)}%)`,
+		delay: `${-((index * 0.37) % 2.8)}s`,
+		duration: `${1.5 + ((index * 7) % 9) / 10}s`,
+		driftX: `${((index * 13) % 7) - 3}px`,
+		driftY: `${((index * 11) % 7) - 3}px`,
+	};
+});
+
+function EmissiveSparks() {
+	return (
+		<span className="emissiveSparks" aria-hidden="true">
+			{EMISSIVE_SPARKS.map((spark, index) => (
+				<span
+					key={index}
+					className="emissiveSpark"
+					style={
+						{
+							'--spark-left': spark.left,
+							'--spark-top': spark.top,
+							'--spark-color': spark.color,
+							'--spark-delay': spark.delay,
+							'--spark-duration': spark.duration,
+							'--spark-drift-x': spark.driftX,
+							'--spark-drift-y': spark.driftY,
+						} as CSSProperties
+					}
+				/>
+			))}
+		</span>
+	);
 }
 
 function AnimatedLabel() {

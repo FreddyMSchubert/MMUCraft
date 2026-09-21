@@ -181,17 +181,25 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
 
     private static int frequency(ItemStack stack) {
         return Math.floorMod(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag().getIntOr(FREQUENCY_KEY, 0), 15);
+                .copyTag().getIntOr(FREQUENCY_KEY, 15), 16);
+    }
+
+    private static int selectedFrequency(ItemStack stack) {
+        return (frequency(stack) + 1) % 16;
+    }
+
+    private static String frequencyLabel(int selectedFrequency) {
+        return selectedFrequency == 0 ? "/" : Integer.toString(selectedFrequency);
     }
 
     private static void tune(ItemStack stack, ServerPlayer player, ServerLevel level, int step) {
-        int next = Math.floorMod(frequency(stack) + step, 15);
+        int next = Math.floorMod(frequency(stack) + step, 16);
         CompoundTag data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         data.putInt(FREQUENCY_KEY, next);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
         updateLore(stack);
         refreshRemote(stack, level);
-        player.sendSystemMessage(Component.literal("Remote frequency: " + (next + 1)), true);
+        player.sendSystemMessage(Component.literal("Remote frequency: " + frequencyLabel((next + 1) % 16)), true);
     }
 
     private static String dimension(ServerLevel level) {
@@ -204,7 +212,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         if (entries == null) return Map.of();
 
         Map<Integer, Link> links = new HashMap<>();
-        for (int selectedFrequency = 1; selectedFrequency <= 15; selectedFrequency++) {
+        for (int selectedFrequency = 0; selectedFrequency <= 15; selectedFrequency++) {
             CompoundTag entry = entries.getCompound(Integer.toString(selectedFrequency)).orElse(null);
             if (entry == null) continue;
             String dimension = entry.getStringOr(DIMENSION_KEY, "");
@@ -253,7 +261,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
 
     private static void setModel(ItemStack stack, boolean lit) {
         CustomModelData data = stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
-        float selectedFrequency = frequency(stack) + 1;
+        float selectedFrequency = selectedFrequency(stack);
         if (!data.floats().isEmpty() && data.floats().getFirst() == selectedFrequency
                 && !data.flags().isEmpty() && data.flags().getFirst() == lit) return;
         List<Float> floats = new ArrayList<>(data.floats());
@@ -274,17 +282,19 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
             if (feature != null) lore.addAll(feature.buildTooltip(1));
         }
         if (lore.isEmpty()) lore.addAll(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
-        int selectedFrequency = frequency(stack) + 1;
-        lore.add(Component.literal("Frequency: " + selectedFrequency)
+        int selectedFrequency = selectedFrequency(stack);
+        lore.add(Component.literal("Frequency: " + frequencyLabel(selectedFrequency)
+                        + (selectedFrequency == 0 ? " (none)" : ""))
                 .withStyle(ChatFormatting.AQUA));
         Map<Integer, Link> links = linkedSensors(stack);
         if (links.isEmpty()) {
             lore.add(Component.literal("Linked sensors: none").withStyle(ChatFormatting.AQUA));
         } else {
-            for (int linkedFrequency = 1; linkedFrequency <= 15; linkedFrequency++) {
+            for (int linkedFrequency = 0; linkedFrequency <= 15; linkedFrequency++) {
                 Link linked = links.get(linkedFrequency);
                 if (linked == null) continue;
-                lore.add(Component.literal("Sensor " + linkedFrequency + ": "
+                lore.add(Component.literal("Sensor " + frequencyLabel(linkedFrequency)
+                                + (linkedFrequency == 0 ? " (none)" : "") + ": "
                                 + linked.pos().getX() + ", " + linked.pos().getY() + ", "
                                 + linked.pos().getZ() + " (" + linked.dimension() + ")")
                         .withStyle(ChatFormatting.AQUA));
@@ -301,7 +311,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     }
 
     private static void link(ItemStack stack, ServerPlayer player, ServerLevel level, BlockPos pos) {
-        int selectedFrequency = frequency(stack) + 1;
+        int selectedFrequency = selectedFrequency(stack);
         BlockState state = level.getBlockState(pos);
         if (sensorFrequency(level, pos, state) != selectedFrequency) {
             player.sendSystemMessage(Component.literal("Failed to pair, frequencies don't match."), true);
@@ -350,7 +360,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
 
     private static void refreshRemote(ItemStack stack, ServerLevel level) {
         pruneDestroyedLinks(stack, level);
-        setModel(stack, linkStatus(stack, level, frequency(stack) + 1) == LinkStatus.READY);
+        setModel(stack, linkStatus(stack, level, selectedFrequency(stack)) == LinkStatus.READY);
     }
 
     private static void reportUnavailable(@Nullable ServerPlayer player, LinkStatus status) {
@@ -377,7 +387,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
 
     private static void transmit(ItemStack stack, ServerLevel level, BlockPos source, int extraDelay,
                                  @Nullable ServerPlayer sender) {
-        int selectedFrequency = frequency(stack) + 1;
+        int selectedFrequency = selectedFrequency(stack);
         refreshRemote(stack, level);
         LinkStatus status = linkStatus(stack, level, selectedFrequency);
         setModel(stack, status == LinkStatus.READY);
@@ -385,7 +395,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
             reportUnavailable(sender, status);
             return;
         }
-        int frequency = selectedFrequency - 1;
+        int frequency = Math.max(selectedFrequency - 1, 0);
         float pitch = NoteBlock.getPitchFromNote(frequency);
         level.playSound(null, source, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS, 0.8F, pitch);
         int sourceX = source.getX() >> 4;
@@ -428,7 +438,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
                 int selected = level.getSignal(pos.relative(back), back);
                 if (selected != 0 && selected != delivery.frequency()) continue;
             }
-            // Vanilla resonance supports only frequencies 1-15.
+            // An uncalibrated sensor uses 0; vanilla resonance uses 1-15.
             int vibrationFrequency = Math.min(delivery.frequency(), 15);
             sensor.setLastVibrationFrequency(vibrationFrequency);
             ((SculkSensorBlock) state.getBlock()).activate(null, level, pos, state, 15, vibrationFrequency);

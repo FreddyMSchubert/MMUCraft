@@ -26,7 +26,7 @@ public final class MapResizeRecipe extends CustomRecipe {
         if (map.isEmpty() || resizingItem.isEmpty()) return false;
         return resizingItem.is(Items.SHEARS)
                 ? SmallMaps.canZoomIn(map, level)
-                : SmallMaps.canZoomOut(map);
+                : SmallMaps.canZoomOut(map, level);
     }
 
     @Override

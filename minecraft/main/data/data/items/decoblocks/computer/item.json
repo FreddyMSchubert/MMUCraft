@@ -1,0 +1,17 @@
+{
+	"title": "Computer",
+	"id": "deco-computer",
+	"modelType": "basic-3d",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Loaded with 3 full programs! Oh the wonders of modern techonology."
+	],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"glowing": false,
+		"lightLevel": 2
+	}
+}

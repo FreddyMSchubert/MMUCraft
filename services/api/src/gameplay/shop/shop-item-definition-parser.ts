@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import {
 	flatItemTextureFile,
 	itemRenderAsset,
@@ -67,6 +68,10 @@ export function parseShopItemDefinition(
 		modelUrl: canRenderModel ? shopAssetUrl('model', id) : null,
 		textureUrl,
 		animated: Boolean(animation),
+		luminous: Boolean(
+			modelFilePath && /"light_emission"\s*:/.test(readFileSync(modelFilePath, 'utf8')),
+		),
+		emissive: Boolean(json.particleEmission && typeof json.particleEmission === 'object'),
 		dyeable: Boolean(json.dyeable && typeof json.dyeable === 'object'),
 		decoBlock: Boolean(json.decoBlock && typeof json.decoBlock === 'object'),
 		animation,

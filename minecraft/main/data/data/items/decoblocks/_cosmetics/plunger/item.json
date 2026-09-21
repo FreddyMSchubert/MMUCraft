@@ -1,12 +1,11 @@
 {
 	"title": "Plunger Hat",
 	"id": "cosmetic-plunger",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Personally - I wouldn't put that on my head"
-	],
+	"tooltips": ["Personally - I wouldn't put that on my head"],
 	"decoBlock": {
 		"ground": true,
 		"wall": true,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "imaginative",
 		"membersOnly": true,
 		"priceDabloons": 35,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Plunger Hat."
+		"unlockMessage": "Unlocked cosmetic: Plunger Hat.",
+		"tags": ["toilet"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

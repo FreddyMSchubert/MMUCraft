@@ -1,6 +1,6 @@
 ====
 id: dynamic-beacons
-unlockOrder: 5
+unlockOrder: 6
 chatMessage: You've unlocked knowledge on material-based beacon ranges.
 sidebarTitle: Beacon Ranges
 tags:

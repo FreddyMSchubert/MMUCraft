@@ -1,12 +1,11 @@
 {
 	"title": "Pumpkin Hat",
 	"id": "cosmetic-pumpkin",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Is it halloween already?"
-	],
+	"tooltips": ["Is it halloween already?"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "imaginative",
 		"membersOnly": false,
-	"priceDabloons": 25,
+		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Pumpkin Hat."
+		"unlockMessage": "Unlocked cosmetic: Pumpkin Hat.",
+		"tags": ["jack o lantern", "halloween"]
 	},
 	"equippableCosmetic": {}
 }

@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Savanna Villager Hat."
+		"unlockMessage": "Unlocked cosmetic: Savanna Villager Hat.",
+		"tags": ["acacia"]
 	},
 	"equippableCosmetic": {}
 }

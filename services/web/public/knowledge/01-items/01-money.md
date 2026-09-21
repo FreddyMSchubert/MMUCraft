@@ -13,6 +13,7 @@ tips:
 - Don't forget to read the knowledge books you unlock! Once you're done reading, you'll even get some Dabloons as a reward!
 - Dailies give especially large amounts of Dabloons if you manage to complete all of them on a given day.
 - If you find a bug, we may decide to reward you some Dabloons when you report it, although this is not guaranteed. If you intentionally exploit a bug you will get banned.
+- You can earn dabloons by inviting your friends! You can get a referral link on the website, and if they use that to sign up, you'll get dabloons! Help us grow the society!
 ====
 
 # Coins (Currency)
@@ -113,9 +114,13 @@ Beyond that, it is also a great monetary choice, because each unlocked knowledge
 
 ### 6. **Gift Codes**
 
-Are occasionally handed out at events such as freshers fair. They are time limited codes, which pay you out some money if you type it into the website. Check the "*Misc*" tab for all infos.
+Are occasionally handed out at events such as freshers fair. They are time limited codes, which pay you out some money if you type it into the website. Check the "[Misc](/play/misc/gift-codes)" tab for all infos.
 
-### 7. **The secret method** - (we colloquially call it corruption)
+### 7. **Invite a friend**
+
+Want more people to share the server with? Open [Referral links](/play/misc/referrals) in the Misc tab and send a one-use link to someone who can join. We give you 25 Dabloons when they sign up and another 100 if they become a member.
+
+### 8. **The secret method** - (we colloquially call it corruption)
 
 Buy the committee a drink (for legal reasons, this is a joke, and will not work.)
 

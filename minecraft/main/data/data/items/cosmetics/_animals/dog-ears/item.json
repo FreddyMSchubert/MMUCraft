@@ -1,18 +1,19 @@
 {
 	"title": "Dog Ears",
 	"id": "cosmetic-dog-ears",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Man's best friend!"
-	],
+	"tooltips": ["Man's best friend!"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": false,
-	    "priceDabloons": 74,
+		"priceDabloons": 74,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Dog Ears."
+		"unlockMessage": "Unlocked cosmetic: Dog Ears.",
+		"tags": ["puppy", "canine"]
 	},
 	"equippableCosmetic": {}
 }

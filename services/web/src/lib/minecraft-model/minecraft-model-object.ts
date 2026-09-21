@@ -16,10 +16,10 @@ import {
 	createFaceMaterial,
 	resolveItemSource,
 	resolveModelTexture,
+	setMaterialNightMode,
 } from './minecraft-item-source';
 import {
 	hasMaterialColor,
-	hasMaterialEmissive,
 	parseColorValue,
 	rgbToThreeColor,
 	TextureRegistry,
@@ -39,6 +39,7 @@ export class MinecraftModelObject {
 	private readonly meshes: THREE.Mesh[] = [];
 	private resolvedModel: MinecraftModel | null = null;
 	private fallbackTexture: string | null = null;
+	private nightMode = false;
 
 	constructor(
 		frameSequence: number[] | null = null,
@@ -102,9 +103,14 @@ export class MinecraftModelObject {
 			const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
 			for (const material of materials) {
 				if (hasMaterialColor(material)) material.color.copy(nextColor);
-				if (hasMaterialEmissive(material)) material.emissive.copy(nextColor);
+				setMaterialNightMode(material, this.nightMode);
 			}
 		}
+	}
+
+	setNightMode(enabled: boolean) {
+		this.nightMode = enabled && Boolean(this.resolvedModel?.elements?.length);
+		this.setTint(0, this.tintPalette.get(0) ?? { r: 255, g: 255, b: 255 });
 	}
 
 	dispose() {
@@ -132,7 +138,6 @@ export class MinecraftModelObject {
 		const from = normalizeVector3(element.from);
 		const to = normalizeVector3(element.to);
 		const collapsedAxis = getCollapsedAxis(from, to);
-		const shade = element.shade !== false;
 		const lightEmission = clamp(Number(element.light_emission) || 0, 0, 15);
 
 		for (const faceName of FACE_ORDER) {
@@ -183,9 +188,9 @@ export class MinecraftModelObject {
 			this.addMesh(
 				new THREE.Mesh(
 					geometry,
-					createFaceMaterial(texture, tintColor, shade, lightEmission, this.unlit),
+					createFaceMaterial(texture, tintColor, lightEmission, this.unlit),
 				),
-				{ tintIndex, faceName, shade, lightEmission },
+				{ tintIndex, faceName, lightEmission },
 			);
 		}
 	}
@@ -315,7 +320,7 @@ export class MinecraftModelObject {
 		this.addMesh(
 			new THREE.Mesh(
 				geometry,
-				createFaceMaterial(handle.texture, new THREE.Color(1, 1, 1), true, 0, this.unlit),
+				createFaceMaterial(handle.texture, new THREE.Color(1, 1, 1), 0, this.unlit),
 			),
 			{ tintIndex: FACE_TINT_DEFAULT, generatedLayer: layerIndex },
 		);

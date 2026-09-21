@@ -32,6 +32,7 @@ import java.util.List;
 public final class SmallMaps {
     public static final int VANILLA_SIZE = 128;
     public static final int MIN_SIZE = 16;
+    public static final int MAX_SIZE = 2048;
 
     private static final String SIZE_TAG = "mainmod_map_size";
     private static final String OPERATION_TAG = "mainmod_map_operation";
@@ -68,15 +69,16 @@ public final class SmallMaps {
     }
 
     public static void refreshTooltipFromStoredSize(ItemStack stack) {
-        refreshStoredTooltip(stack, storedTooltipSize(stack));
+        int storedSize = storedTooltipSize(stack);
+        if (storedSize > 0) refreshStoredTooltip(stack, storedSize);
     }
 
     public static boolean canZoomIn(ItemStack stack, Level level) {
         return isMap(stack) && size(stack, level) > MIN_SIZE;
     }
 
-    public static boolean canZoomOut(ItemStack stack) {
-        return isMap(stack) && customSize(stack) < VANILLA_SIZE;
+    public static boolean canZoomOut(ItemStack stack, Level level) {
+        return isMap(stack) && size(stack, level) < MAX_SIZE;
     }
 
     public static ItemStack craftingResult(ItemStack source, boolean zoomIn) {
@@ -84,7 +86,7 @@ public final class SmallMaps {
         CustomData.update(DataComponents.CUSTOM_DATA, result,
                 tag -> tag.putString(OPERATION_TAG, zoomIn ? ZOOM_IN : ZOOM_OUT));
         int oldSize = storedTooltipSize(source);
-        refreshStoredTooltip(result, zoomIn ? oldSize / 2 : oldSize * 2);
+        if (oldSize > 0) refreshStoredTooltip(result, zoomIn ? oldSize / 2 : oldSize * 2);
         return result;
     }
 
@@ -97,7 +99,7 @@ public final class SmallMaps {
 
         int oldSize = size(stack, level);
         int newSize = ZOOM_IN.equals(operation) ? oldSize / 2 : oldSize * 2;
-        if (newSize < MIN_SIZE || newSize > VANILLA_SIZE && ZOOM_OUT.equals(operation)) return;
+        if (newSize < MIN_SIZE || newSize > MAX_SIZE) return;
 
         if (stack.is(Items.MAP)) {
             setCustomSize(stack, newSize);
@@ -116,9 +118,9 @@ public final class SmallMaps {
         refreshStoredTooltip(stack, newSize);
     }
 
-    public static InteractionResult useSmallEmptyMap(Level level, Player player, ItemStack emptyMap) {
+    public static InteractionResult useResizedEmptyMap(Level level, Player player, ItemStack emptyMap) {
         int size = customSize(emptyMap);
-        if (size >= VANILLA_SIZE) return null;
+        if (size == VANILLA_SIZE) return null;
         if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.SUCCESS;
 
         emptyMap.consume(1, player);
@@ -126,13 +128,17 @@ public final class SmallMaps {
         serverLevel.playSound(
                 null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
         CompoundTag customData = emptyMap.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        ItemStack filled = new ItemStack(Items.FILLED_MAP);
+        ItemStack filled = size < VANILLA_SIZE
+                ? new ItemStack(Items.FILLED_MAP)
+                : MapItem.create(serverLevel, player.getBlockX(), player.getBlockZ(), scaleFor(size), true, false);
         if (!customData.isEmpty()) filled.set(DataComponents.CUSTOM_DATA, CustomData.of(customData));
         setCustomSize(filled, size);
-        int centerX = alignedCenter(player.getBlockX(), size);
-        int centerZ = alignedCenter(player.getBlockZ(), size);
-        MapItemSavedData sampled = sample(serverLevel, centerX, centerZ, size, MapInvisibility.target(filled));
-        setMapData(filled, serverLevel, sampled.locked());
+        if (size < VANILLA_SIZE) {
+            int centerX = alignedCenter(player.getBlockX(), size);
+            int centerZ = alignedCenter(player.getBlockZ(), size);
+            MapItemSavedData sampled = sample(serverLevel, centerX, centerZ, size, MapInvisibility.target(filled));
+            setMapData(filled, serverLevel, sampled.locked());
+        }
         refreshStoredTooltip(filled, size);
 
         if (emptyMap.isEmpty()) return InteractionResult.SUCCESS.heldItemTransformedTo(filled);
@@ -180,7 +186,7 @@ public final class SmallMaps {
                     ? createData(centerX, centerZ, (byte) 0, source.dimension, false).locked()
                     : sample(mapLevel, centerX, centerZ, newSize, MapInvisibility.target(stack)).locked();
         } else {
-            target = createData(centerX, centerZ, (byte) 0, source.dimension, true);
+            target = createData(centerX, centerZ, scaleFor(newSize), source.dimension, true);
         }
         setCustomSize(stack, newSize);
         setMapData(stack, level, target);
@@ -314,18 +320,19 @@ public final class SmallMaps {
                 // Fall through to component data.
             }
         }
-        return customSize(stack);
+        return stack.is(Items.MAP) || customSize(stack) != VANILLA_SIZE ? customSize(stack) : 0;
     }
 
     private static int customSize(ItemStack stack) {
         int value = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                 .copyTag().getIntOr(SIZE_TAG, VANILLA_SIZE);
-        return value == 16 || value == 32 || value == 64 ? value : VANILLA_SIZE;
+        return value == 16 || value == 32 || value == 64 || value == 256
+                || value == 512 || value == 1024 || value == MAX_SIZE ? value : VANILLA_SIZE;
     }
 
     private static void setCustomSize(ItemStack stack, int size) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (size < VANILLA_SIZE) tag.putInt(SIZE_TAG, size);
+        if (size < VANILLA_SIZE || stack.is(Items.MAP) && size > VANILLA_SIZE) tag.putInt(SIZE_TAG, size);
         else tag.remove(SIZE_TAG);
         writeCustomData(stack, tag);
     }

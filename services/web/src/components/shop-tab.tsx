@@ -160,6 +160,8 @@ export function ShopTab({
 			if (rarityFilter !== 'all' && item.rarity !== rarityFilter) return false;
 			if (tagFilter === 'dyeable' && !item.dyeable) return false;
 			if (tagFilter === 'animated' && !item.animated) return false;
+			if (tagFilter === 'luminous' && !item.luminous) return false;
+			if (tagFilter === 'emissive' && !item.emissive) return false;
 			if (tagFilter === 'members-only' && !item.membersOnly) return false;
 			if (tagFilter === 'discounted' && !item.isDailyDeal) return false;
 			if (tagFilter === 'sold-out' && !isSoldOut(item)) return false;

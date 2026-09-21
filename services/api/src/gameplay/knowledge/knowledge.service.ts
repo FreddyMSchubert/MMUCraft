@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import type { SearchResult } from 'minisearch';
 import { randomInt } from 'node:crypto';
 import { and, desc, eq } from 'drizzle-orm';
@@ -9,7 +9,11 @@ import { PlayerMoneyHistoryService } from '../../players/player-money-history.se
 import { CachedSearchIndex } from '../../search/cached-search-index';
 import { FeatureTogglesService } from '../../toggles/feature-toggles.service';
 import { MinecraftGrpcClientService } from '../../grpc/minecraft-grpc-client.service';
-import { KnowledgeDocumentCatalogService } from './knowledge-document-catalog.service';
+import {
+	KnowledgeDocumentCatalogService,
+	toSearchContent,
+} from './knowledge-document-catalog.service';
+import { filterDropGuards } from './knowledge-drop-guards';
 import type {
 	KnowledgePage,
 	KnowledgeSearchPage,
@@ -50,8 +54,10 @@ type UnlockedKnowledgeSearchResult = Extract<KnowledgeSearchResult, { locked: fa
 };
 
 @Injectable()
-export class KnowledgeService implements OnModuleInit {
+export class KnowledgeService {
 	readonly readRewardDabloons = KNOWLEDGE_READ_REWARD_DABLOONS;
+	private searchIndexKey = '';
+	private searchIndexVersion = 0;
 
 	private readonly searchIndex = new CachedSearchIndex<KnowledgeSearchPage>(
 		{
@@ -75,11 +81,6 @@ export class KnowledgeService implements OnModuleInit {
 		private readonly minecraft: MinecraftGrpcClientService,
 	) {}
 
-	onModuleInit() {
-		const document = this.documents.loadDocument();
-		this.searchIndex.build(document.mtimeMs, document.searchPages);
-	}
-
 	getKnowledgeForUser(userId: number) {
 		const document = this.documents.loadDocument();
 		const unlockedIds = this.getUnlockedIds(userId);
@@ -91,6 +92,7 @@ export class KnowledgeService implements OnModuleInit {
 
 		return {
 			contentVersion: document.mtimeMs,
+			enabledDropIds: [...this.featureToggles.enabledKeys()],
 			readRewardDabloons: this.readRewardDabloons,
 			lastUnlockedKnowledgeId,
 			unlockedKnowledgeIds: [...unlockedIds].filter((id) =>
@@ -107,13 +109,19 @@ export class KnowledgeService implements OnModuleInit {
 		if (!query) return { query, results: [] };
 
 		const document = this.documents.loadDocument();
-		const matches = this.searchIndex.searchResults(
-			document.mtimeMs,
-			document.searchPages,
-			query,
-		);
+		const enabledDrops = this.featureToggles.enabledKeys();
+		const indexKey = `${document.mtimeMs}:${[...enabledDrops].sort().join(',')}`;
+		if (indexKey !== this.searchIndexKey) {
+			this.searchIndexKey = indexKey;
+			this.searchIndexVersion += 1;
+		}
+		const searchPages = document.searchPages.map((page) => ({
+			...page,
+			content: toSearchContent(filterDropGuards(page.markdown, enabledDrops)),
+		}));
+		const matches = this.searchIndex.searchResults(this.searchIndexVersion, searchPages, query);
 		const pagesById = new Map(document.pages.map((page) => [page.id, page]));
-		const searchPagesById = new Map(document.searchPages.map((page) => [page.id, page]));
+		const searchPagesById = new Map(searchPages.map((page) => [page.id, page]));
 		const unlockedIds = this.getUnlockedIds(userId);
 		return {
 			query,

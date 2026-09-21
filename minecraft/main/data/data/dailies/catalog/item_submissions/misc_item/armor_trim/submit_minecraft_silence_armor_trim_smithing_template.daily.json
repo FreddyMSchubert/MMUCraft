@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:silence_armor_trim_smithing_template",
-	"baseCost": 7,
-	"rewardPerIteration": 7,
+	"baseCost": 25,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🤫",
 	"name": "Submit Silence Trim",
-	"description": "Submit one silence trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."
+	"description": "Submit a silence trim template. Might wanna duplicate it first if this is your only copy."
 }

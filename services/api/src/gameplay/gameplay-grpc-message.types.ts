@@ -106,6 +106,7 @@ export interface PlayerStatisticsSyncResponse {
 	show_death_counter: boolean;
 	previous_last_played_at_unix_ms: number;
 	first_in_any_statistic: boolean;
+	referral_reward_dabloons: number;
 	message: string;
 }
 

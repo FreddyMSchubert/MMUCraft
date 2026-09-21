@@ -6,7 +6,7 @@
 	"rewardPerIteration": 3,
 	"minimum": 1,
 	"maximum": 1,
-	"emoji": "💀",
+	"emoji": "🏁",
 	"name": "Submit a Skull Banner Pattern",
-	"description": "Submit one skull banner pattern. Have the items in your inventory when you click Claim."
+	"description": "Submitting {count} skull banner pattern seam like a good idea."
 }

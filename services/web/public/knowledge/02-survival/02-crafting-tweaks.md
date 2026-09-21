@@ -17,6 +17,7 @@ tips:
 - You can turn concrete powder into concrete way quicker now by throwing concrete powder items into a cauldron filled with water. This will convert them in an instant!
 - You can get your hands on mud blocks way way easier than usual by throwing dirt blocks into a cauldron filled with water. The dirt blocks will turn into mud blocks instantly!
 - Hoppers can be crafted more easily by using copper ingots instead of iron ingots as well.
+- You can always look forwards in a minecart by going to settings -> Accessibility Settings -> Rotate with Minecarts, which is really fun! Your head will rotate whenever the minecart rotates.
 ====
 
 # Crafting Tweaks

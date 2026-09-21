@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"No, no, no, can't be. I distinctly remember your birthday was LAST year."
-	],
+	"tooltips": ["No, no, no, can't be. I distinctly remember your birthday was LAST year."],
 	"shopPurchasable": {
 		"membersOnly": true,
-	"priceDabloons": 25,
+		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 130,
-		"unlockMessage": "Unlocked cosmetic: Birthday Hat."
+		"unlockMessage": "Unlocked cosmetic: Birthday Hat.",
+		"tags": ["birthday"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

@@ -1,12 +1,11 @@
 {
 	"title": "Big Mushroom",
 	"id": "cosmetic-mushroom-big",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Big enough for a year's supply of mushroom stew"
-	],
+	"tooltips": ["Big enough for a year's supply of mushroom stew"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "imaginative",
 		"membersOnly": true,
-	"priceDabloons": 15,
+		"priceDabloons": 15,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Big Mushroom."
+		"unlockMessage": "Unlocked cosmetic: Big Mushroom.",
+		"tags": ["fungus", "toadstool"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

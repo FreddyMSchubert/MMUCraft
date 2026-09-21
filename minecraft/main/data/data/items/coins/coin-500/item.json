@@ -4,8 +4,5 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"\"It's a crime.\"",
-		"Official MMU Minecraft Society Mint Issue"
-	]
+	"tooltips": ["\"Must be funny\"", "Official MMU Minecraft Society Mint Issue"]
 }

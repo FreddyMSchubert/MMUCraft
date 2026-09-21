@@ -1,13 +1,11 @@
 {
 	"title": "Sculk Phial",
 	"id": "charm-sculk-phial",
-	"baseItemOverride": "minecraft:chain_command_block",
+	"baseItemOverride": "minecraft:heart_of_the_sea",
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Currently stored: 0xp / 0 levels."
-	],
+	"tooltips": ["Currently stored: 0xp / 0 levels."],
 	"charm": {
 		"charmId": 28,
 		"minLevel": 1,

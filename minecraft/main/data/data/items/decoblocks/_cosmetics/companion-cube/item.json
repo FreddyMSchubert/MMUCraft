@@ -1,12 +1,11 @@
 {
 	"title": "Companion Cube",
 	"id": "cosmetic-companion-cube",
+	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"When you're dying I'll be still alive"
-	],
+	"tooltips": ["When you're dying I'll be still alive"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "inventors",
 		"membersOnly": false,
-	"priceDabloons": 150,
+		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Companion Cube."
+		"unlockMessage": "Unlocked cosmetic: Companion Cube.",
+		"tags": ["portal", "weighted cube"]
 	},
 	"equippableCosmetic": {}
 }

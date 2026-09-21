@@ -1,16 +1,19 @@
 {
 	"title": "Posh Squid",
 	"id": "cosmetic-posh-squid",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": ["Eight arms, impeccable manners, zero respect for personal space."],
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": true,
 		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 5,
-		"unlockMessage": "Unlocked cosmetic: Posh Squid."
+		"unlockMessage": "Unlocked cosmetic: Posh Squid.",
+		"tags": ["octopus", "tentacles"]
 	},
 	"equippableCosmetic": {}
 }

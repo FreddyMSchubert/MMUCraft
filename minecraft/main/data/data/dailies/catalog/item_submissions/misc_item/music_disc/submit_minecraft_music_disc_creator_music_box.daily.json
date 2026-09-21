@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:music_disc_creator_music_box",
-	"baseCost": 6,
-	"rewardPerIteration": 5,
+	"baseCost": 13,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🎶",
 	"name": "Submit Creator Music Box",
-	"description": "Submit one Creator Music Box. Have the items in your inventory when you click Claim."
+	"description": "Before you trade in this artistic masterpiece for soulless dabloons and submit to the greedy claws of capitalism, why not give it one last spin and enjoy the delicate sounds of a winding music box?"
 }

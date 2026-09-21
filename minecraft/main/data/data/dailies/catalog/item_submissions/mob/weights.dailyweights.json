@@ -1,6 +1,6 @@
 {
 	"submit_minecraft_blaze_rod.daily.json": 10,
-	"submit_minecraft_turtle_egg.daily.json": 6,
+	"submit_minecraft_turtle_egg.daily.json": 10,
 	"submit_minecraft_zombie_head.daily.json": 12,
 	"submit_minecraft_creeper_head.daily.json": 10,
 	"submit_minecraft_piglin_head.daily.json": 10,
@@ -8,8 +8,8 @@
 	"submit_minecraft_dragon_head.daily.json": 10,
 	"submit_minecraft_armadillo_scute.daily.json": 12,
 	"submit_minecraft_axolotl_bucket.daily.json": 8,
-	"submit_minecraft_blue_egg.daily.json": 4,
-	"submit_minecraft_brown_egg.daily.json": 4,
+	"submit_minecraft_blue_egg.daily.json": 10,
+	"submit_minecraft_brown_egg.daily.json": 10,
 	"submit_minecraft_pufferfish.daily.json": 12,
 	"submit_minecraft_slime_ball.daily.json": 12,
 	"submit_minecraft_tadpole_bucket.daily.json": 8,

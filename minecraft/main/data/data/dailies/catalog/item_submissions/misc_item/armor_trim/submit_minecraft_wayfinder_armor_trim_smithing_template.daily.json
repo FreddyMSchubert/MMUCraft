@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:wayfinder_armor_trim_smithing_template",
-	"baseCost": 5,
-	"rewardPerIteration": 7,
+	"baseCost": 12,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🧭",
 	"name": "Submit Wayfinder Trim",
-	"description": "Submit one wayfinder trim template. Might wanna duplicate it first if this is your only copy."
+	"description": "Submit a wayfinder trim template. Might wanna duplicate it first if this is your only copy."
 }

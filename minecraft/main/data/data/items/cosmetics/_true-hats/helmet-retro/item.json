@@ -1,18 +1,19 @@
 {
 	"title": "Retro Helmet",
 	"id": "cosmetic-helmet-retro",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Perfect for a Vespa ride"
-	],
+	"tooltips": ["Perfect for a Vespa ride"],
 	"shopPurchasable": {
+		"gameplayToggle": "soaring",
 		"membersOnly": false,
-	"priceDabloons": 100,
+		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Retro Helmet."
+		"unlockMessage": "Unlocked cosmetic: Retro Helmet.",
+		"tags": ["vintage", "scooter"]
 	},
 	"equippableCosmetic": {}
 }

@@ -4,16 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Look at the bright side, at least you got to eat the apple."
-	],
+	"tooltips": ["Look at the bright side, at least you got to eat the apple."],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 55,
+		"priceDabloons": 55,
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Arrow through Head (Hat) - very spooky.",
-        "gameplayToggle": "imaginative"
+		"tags": ["headshot", "pierced"]
 	},
 	"equippableCosmetic": {}
 }

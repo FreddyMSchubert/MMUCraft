@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"It's quite heavy, so wearing it can be kinda Hex-hausting."
-	],
+	"tooltips": ["It's quite heavy, so wearing it can be kinda Hex-hausting."],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Witch Hat."
+		"unlockMessage": "Unlocked cosmetic: Witch Hat.",
+		"tags": ["wizard", "magic"]
 	},
 	"equippableCosmetic": {}
 }

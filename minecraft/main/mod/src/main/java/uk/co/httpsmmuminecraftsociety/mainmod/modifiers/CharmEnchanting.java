@@ -25,7 +25,8 @@ public class CharmEnchanting
         Triple.of("charm-wallet", true, ModEnchantments.SOULBOUND),
         Triple.of("charm-glider", true, ModEnchantments.SOULBOUND),
         Triple.of("charm-glider", false, Enchantments.MENDING),
-        Triple.of("charm-glider", false, Enchantments.UNBREAKING)
+        Triple.of("charm-glider", false, Enchantments.UNBREAKING),
+        Triple.of("charm-redstone-remote", true, ModEnchantments.SOULBOUND)
     );
     public static final List<Triple<Item, Boolean, ResourceKey<Enchantment>>> vanillaEnchantModifications = List.of(
             Triple.of(Items.RECOVERY_COMPASS, true, ModEnchantments.SOULBOUND)

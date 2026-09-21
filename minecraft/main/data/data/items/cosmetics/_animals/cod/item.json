@@ -1,18 +1,19 @@
 {
 	"title": "Cod Hat",
 	"id": "cosmetic-cod",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Actually makes you smell better"
-	],
+	"tooltips": ["Actually makes you smell better"],
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 90,
-		"unlockMessage": "Unlocked cosmetic: Cod Hat."
+		"unlockMessage": "Unlocked cosmetic: Cod Hat.",
+		"tags": ["fish"]
 	},
 	"equippableCosmetic": {}
 }

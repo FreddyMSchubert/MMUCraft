@@ -15,6 +15,6 @@ public final class DimensionAccess {
         }
         return !destination.equals(Level.END)
                 || origin.equals(Level.END)
-                || FeatureToggles.isEnabled(FeatureToggles.END);
+                || FeatureToggles.isEnabled(FeatureToggles.VOID);
     }
 }

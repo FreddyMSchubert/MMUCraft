@@ -1,6 +1,6 @@
 'use client';
 
-import { type CSSProperties, useEffect } from 'react';
+import { type CSSProperties, useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import type { CosmeticPreviewView } from '@/lib/site-settings';
@@ -152,6 +152,19 @@ export function ShopDetails({
 	onClose: () => void;
 	onBuy: (item: ShopItem) => Promise<void>;
 }) {
+	const [nightSelection, setNightSelection] = useState({ itemId: item.id, enabled: false });
+	const nightMode = nightSelection.itemId === item.id && nightSelection.enabled;
+	const [emissionSupport, setEmissionSupport] = useState<{
+		modelUrl: string;
+		supported: boolean;
+	} | null>(null);
+	const supportsEmission =
+		emissionSupport?.modelUrl === item.modelUrl && emissionSupport.supported;
+	const effectiveNightMode = supportsEmission && nightMode;
+	const hasViewControls = item.type === 'cosmetic' || item.decoBlock;
+	const onEmissionSupport = useCallback((modelUrl: string, supported: boolean) => {
+		setEmissionSupport({ modelUrl, supported });
+	}, []);
 	const effectivePreviewView =
 		(previewView === 'player' && (item.type !== 'cosmetic' || !skinUrl)) ||
 		(previewView === 'item-frame' && !item.decoBlock)
@@ -194,7 +207,9 @@ export function ShopDetails({
 				</button>
 				<div className="shopDetailsHero">
 					<div className="shopDetailsPreview">
-						<div className="shopDetailsPreviewEmbed">
+						<div
+							className={`shopDetailsPreviewEmbed ${effectiveNightMode ? 'night' : ''}`}
+						>
 							<ShopPreview
 								key={effectivePreviewView}
 								item={item}
@@ -203,21 +218,44 @@ export function ShopDetails({
 								hidden={hidePreview}
 								view={effectivePreviewView}
 								skinUrl={skinUrl}
+								nightMode={effectiveNightMode}
+								onEmissionSupport={onEmissionSupport}
 							/>
 							{item.renderMode === 'model' && !hidePreview && (
 								<span>Hover to pause · drag to rotate</span>
 							)}
 						</div>
-						{(item.type === 'cosmetic' || item.decoBlock) &&
-							item.renderMode === 'model' &&
-							!hidePreview && (
-								<CosmeticViewControl
-									selected={effectivePreviewView}
-									cosmetic={item.type === 'cosmetic'}
-									decoBlock={item.decoBlock}
-									skinAvailable={Boolean(skinUrl)}
-									onSelect={onSelectPreviewView}
-								/>
+						{item.renderMode === 'model' &&
+							!hidePreview &&
+							(hasViewControls || supportsEmission) && (
+								<div className="shopPreviewControls">
+									{hasViewControls && (
+										<CosmeticViewControl
+											selected={effectivePreviewView}
+											cosmetic={item.type === 'cosmetic'}
+											decoBlock={item.decoBlock}
+											skinAvailable={Boolean(skinUrl)}
+											onSelect={onSelectPreviewView}
+										/>
+									)}
+									{supportsEmission && (
+										<button
+											type="button"
+											className="shopNightToggle"
+											aria-label="Night preview"
+											aria-pressed={nightMode}
+											title={nightMode ? 'Switch to day' : 'Switch to night'}
+											onClick={() => {
+												setNightSelection({
+													itemId: item.id,
+													enabled: !nightMode,
+												});
+											}}
+										>
+											<span aria-hidden="true">{nightMode ? '☾' : '☀'}</span>
+										</button>
+									)}
+								</div>
 							)}
 					</div>
 					<div className="shopDetailsSummary">
@@ -416,6 +454,22 @@ function ItemBadges({ item }: { item: ShopItem }) {
 			<span key="animated" className="shopTag animated">
 				{item.membershipLocked && <ShopLock />}
 				<AnimatedLabel />
+			</span>
+		) : null,
+		item.luminous ? (
+			<span key="luminous" className="shopTag luminous">
+				{item.membershipLocked && <ShopLock />}
+				Luminous
+			</span>
+		) : null,
+		item.emissive ? (
+			<span
+				key="emissive"
+				className="shopTag emissive"
+				title="Emits particles when worn or placed"
+			>
+				{item.membershipLocked && <ShopLock />}
+				Emissive
 			</span>
 		) : null,
 		item.membersOnly ? (

@@ -1,18 +1,19 @@
 {
 	"title": "Salmon Hat",
 	"id": "cosmetic-salmon",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Might be a bit late to toss it back"
-	],
+	"tooltips": ["Might be a bit late to toss it back"],
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 90,
-		"unlockMessage": "Unlocked cosmetic: Salmon Hat."
+		"unlockMessage": "Unlocked cosmetic: Salmon Hat.",
+		"tags": ["fish"]
 	},
 	"equippableCosmetic": {}
 }

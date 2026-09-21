@@ -1,18 +1,30 @@
 {
 	"title": "Unicorn Horn",
 	"id": "cosmetic-unicorn-horn",
+	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Reality called - I ignored it for magic!!!"
-	],
+	"tooltips": ["Reality called - I ignored it for magic!!!"],
 	"shopPurchasable": {
+		"gameplayToggle": "soaring",
 		"membersOnly": true,
-	"priceDabloons": 267,
+		"priceDabloons": 267,
 		"description": "",
 		"unlockWeight": 10,
-		"unlockMessage": "Unlocked cosmetic: Unicorn Horn."
+		"unlockMessage": "Unlocked cosmetic: Unicorn Horn.",
+		"tags": ["magic", "horse"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:glow_squid_ink",
+				"from": [7, 7, 7],
+				"to": [9, 11, 9],
+				"minTicks": 35,
+				"maxTicks": 80
+			}
+		]
+	}
 }

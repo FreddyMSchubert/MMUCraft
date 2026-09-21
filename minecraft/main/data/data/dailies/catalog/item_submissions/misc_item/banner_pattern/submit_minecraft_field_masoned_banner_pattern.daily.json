@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:field_masoned_banner_pattern",
-	"baseCost": 0,
+	"baseCost": 3,
 	"rewardPerIteration": 1.5,
 	"minimum": 2,
 	"maximum": 4,
-	"emoji": "🧱",
+	"emoji": "🏁",
 	"name": "Submit Field Masoned Banner Patterns",
-	"description": "Submit {count} field masoned banner patterns. Have the items in your inventory when you click Claim."
+	"description": "Submitting {count} field masoned banner patterns seam like a good idea."
 }

@@ -1,12 +1,11 @@
 {
 	"title": "Book Stack",
 	"id": "cosmetic-book-stack",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"A stack of some nostalgic, iconic books."
-	],
+	"tooltips": ["A stack of some nostalgic, iconic books."],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
 		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Book Stack."
+		"unlockMessage": "Unlocked cosmetic: Book Stack.",
+		"tags": ["reading", "library"]
 	},
 	"equippableCosmetic": {}
 }

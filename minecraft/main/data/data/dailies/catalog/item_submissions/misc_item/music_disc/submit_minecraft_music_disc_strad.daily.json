@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:music_disc_strad",
-	"baseCost": 3,
-	"rewardPerIteration": 5,
+	"baseCost": 11,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🎻",
 	"name": "Submit Music Disc Strad",
-	"description": "Submit one Music Disc Strad. Have the items in your inventory when you click Claim."
+	"description": "Before you trade in this artistic masterpiece for soulless dabloons and submit to the greedy claws of capitalism, why not give it one last spin and enjoy the gentle sounds of a seaside sunset?"
 }

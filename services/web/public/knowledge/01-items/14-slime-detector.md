@@ -9,9 +9,7 @@ tags:
 - slime finder
 - chunk detector
 tips:
-- Use the Slime Detector before you dig a slime farm.
-- A diagonal chunk is two chunks away because the detector uses Manhattan distance.
-- The detector does not load chunks. It checks chunk coordinates only when you use it.
+- Slime Detectors can be useful to figure out where slimes commonly spawn.
 ====
 
 # Slime Detector
@@ -38,12 +36,12 @@ The amount of active bars indicate how close you are to a slime chunk.
 
 | | Active bar | Distance to the nearest slime chunk |
 | - | - | - |
-| </assets/knowledge/items/slime-detector/sd5.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 5th | You are currently stood in a slime chunk. |
-| </assets/knowledge/items/slime-detector/sd4.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 4th | The nearest slime chunk is bordering the chunk you are stood in. |
-| </assets/knowledge/items/slime-detector/sd3.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 3rd | The nearest slime chunk is 2 chunks away. |
-| </assets/knowledge/items/slime-detector/sd2.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 2nd | The nearest slime chunk is 3 chunks away. |
-| </assets/knowledge/items/slime-detector/sd1.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 1st | The nearest slime chunk is 4 chunks away. |
-| </assets/knowledge/items/slime-detector/sd0.png width="150" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | None | The nearest slime chunk is at least 5 chunks away. |
+| <img src="/assets/knowledge/items/slime-detector/sd5.png" width="150px" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 5th | You are currently stood in a slime chunk. |
+| <img src="/assets/knowledge/items/slime-detector/sd4.png" width="150px" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 4th | The nearest slime chunk is bordering the chunk you are stood in. |
+| <img src="/assets/knowledge/items/slime-detector/sd3.png" width="150px" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 3rd | The nearest slime chunk is 2 chunks away. |
+| <img src="/assets/knowledge/items/slime-detector/sd2.png" width="150px" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 2nd | The nearest slime chunk is 3 chunks away. |
+| <img src="/assets/knowledge/items/slime-detector/sd1.png" width="150px" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | 1st | The nearest slime chunk is 4 chunks away. |
+| <img src="/assets/knowledge/items/slime-detector/sd0.png" width="150px" style="image-rendering: pixelated; image-rendering: crisp-edge;"> | None | The nearest slime chunk is at least 5 chunks away. |
 
 
 :::note

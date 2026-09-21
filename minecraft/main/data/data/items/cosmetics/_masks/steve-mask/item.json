@@ -10,7 +10,8 @@
 		"priceDabloons": 80,
 		"description": "",
 		"unlockWeight": 70,
-		"unlockMessage": "Unlocked cosmetic: Steve Mask."
+		"unlockMessage": "Unlocked cosmetic: Steve Mask.",
+		"tags": ["minecraft player"]
 	},
 	"equippableCosmetic": {}
 }

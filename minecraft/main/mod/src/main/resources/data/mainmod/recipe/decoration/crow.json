@@ -1,17 +1,14 @@
 {
-  "type": "mainmod:fake_crafting_shaped",
-  "pattern": [
-    " B ",
-    "FSF",
-    " B "
-  ],
-  "key": {
-    "F": "minecraft:feather",
-    "S": "mainmod:soul",
-    "B": "minecraft:black_dye"
-  },
-  "result": {
-    "stack": "mainmod:deco-crow",
-    "count": 1
-  }
+	"type": "mainmod:fake_crafting_shaped",
+	"gameplayToggle": "imaginative",
+	"pattern": [" B ", "FSF", " B "],
+	"key": {
+		"F": "minecraft:feather",
+		"S": "mainmod:soul",
+		"B": "minecraft:black_dye"
+	},
+	"result": {
+		"stack": "mainmod:deco-crow",
+		"count": 1
+	}
 }

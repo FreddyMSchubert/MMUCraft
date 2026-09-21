@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Why did the chicken cross the road?"
-	],
+	"tooltips": ["Why did the chicken cross the road?"],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 25,
+		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Chicken Hat."
+		"unlockMessage": "Unlocked cosmetic: Chicken Hat.",
+		"tags": ["hen", "poultry"]
 	},
 	"equippableCosmetic": {}
 }

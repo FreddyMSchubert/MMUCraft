@@ -1,5 +1,6 @@
 export interface SignupFlow {
 	email: string;
+	referralCode?: string;
 	step: 'email' | 'minecraft-username' | 'minecraft-code' | 'rules';
 	emailCodeHash: string;
 	emailCodeExpiresAt: number;

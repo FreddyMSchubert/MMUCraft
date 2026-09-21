@@ -1,18 +1,19 @@
 {
 	"title": "Tophat",
 	"id": "cosmetic-toohat",
+	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"It seems quite worn, was probably worn by a tycoon or vampire hunter"
-	],
+	"tooltips": ["It seems quite worn, was probably worn by a tycoon or vampire hunter"],
 	"shopPurchasable": {
+		"gameplayToggle": "inventors",
 		"membersOnly": false,
-	    "priceDabloons": 95,
+		"priceDabloons": 95,
 		"description": "",
 		"unlockWeight": 68,
-		"unlockMessage": "Unlocked cosmetic: Tophat."
+		"unlockMessage": "Unlocked cosmetic: Tophat.",
+		"tags": ["top hat", "tycoon"]
 	},
 	"equippableCosmetic": {}
 }

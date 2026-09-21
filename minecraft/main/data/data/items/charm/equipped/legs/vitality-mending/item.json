@@ -11,7 +11,7 @@
 		"description": "Uses collected XP to restore health.",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked charm: Vitality Mending Charm. Uses XP to restore health.",
-		"gameplayToggle": "overpowered"
+		"gameplayToggle": "beach-party"
 	},
 	"charm": {
 		"charmId": 32,

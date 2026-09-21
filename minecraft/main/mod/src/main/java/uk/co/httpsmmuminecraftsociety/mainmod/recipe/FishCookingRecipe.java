@@ -23,7 +23,7 @@ public final class FishCookingRecipe extends AbstractCookingRecipe {
         super(
                 new Recipe.CommonInfo(false),
                 new CookingBookInfo(CookingBookCategory.FOOD, ""),
-                Ingredient.of(Items.COMMAND_BLOCK),
+                Ingredient.of(Items.HEART_OF_THE_SEA, Items.COMMAND_BLOCK),
                 new ItemStackTemplate(Items.COOKED_COD),
                 0.35F,
                 200

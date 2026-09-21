@@ -1,19 +1,19 @@
 {
 	"title": "Spider Hat",
 	"id": "cosmetic-spider",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"What do you call a spider with 20 eyes?",
-		"A spiiiiiiiiiiiiiiiiiiiider."
-	],
+	"tooltips": ["What do you call a spider with 20 eyes?", "A spiiiiiiiiiiiiiiiiiiiider."],
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": true,
-	"priceDabloons": 75,
+		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Spider Hat."
+		"unlockMessage": "Unlocked cosmetic: Spider Hat.",
+		"tags": ["arachnid"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

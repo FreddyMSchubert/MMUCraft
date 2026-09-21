@@ -1,18 +1,19 @@
 {
 	"title": "Leprechaun Hat",
 	"id": "cosmetic-leprichaun",
+	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Follow the rainbow"
-	],
+	"tooltips": ["Follow the rainbow"],
 	"shopPurchasable": {
+		"gameplayToggle": "circus",
 		"membersOnly": false,
-	"priceDabloons": 140,
+		"priceDabloons": 140,
 		"description": "",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: Leprechaun Hat."
+		"unlockMessage": "Unlocked cosmetic: Leprechaun Hat.",
+		"tags": ["leprichaun", "shamrock"]
 	},
 	"equippableCosmetic": {}
 }

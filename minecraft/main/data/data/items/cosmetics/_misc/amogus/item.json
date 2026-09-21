@@ -11,8 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Amogus Hat.",
-		"tags": ["amongus", "among us"],
-		"gameplayToggle": "circus"
+		"tags": ["amongus", "among us"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

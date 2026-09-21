@@ -10,7 +10,8 @@
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 65,
-		"unlockMessage": "Unlocked cosmetic: Feather Headband."
+		"unlockMessage": "Unlocked cosmetic: Feather Headband.",
+		"tags": ["plume"]
 	},
 	"equippableCosmetic": {}
 }

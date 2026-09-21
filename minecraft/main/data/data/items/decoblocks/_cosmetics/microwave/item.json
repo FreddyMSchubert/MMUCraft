@@ -1,12 +1,11 @@
 {
 	"title": "Microwave",
 	"id": "cosmetic-microwave",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"You spin me right round"
-	],
+	"tooltips": ["You spin me right round"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "imaginative",
 		"membersOnly": true,
 		"priceDabloons": 35,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Unlocked cosmetic: Microwave."
+		"unlockMessage": "Unlocked cosmetic: Microwave.",
+		"tags": ["oven", "kitchen"]
 	},
 	"equippableCosmetic": {}
 }

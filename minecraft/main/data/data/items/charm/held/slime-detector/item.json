@@ -1,12 +1,11 @@
 {
 	"title": "Slime Detector",
 	"id": "charm-slime-detector",
-	"baseItemOverride": "minecraft:repeating_command_block",
+	"baseItemOverride": "minecraft:heart_of_the_sea",
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-	],
+	"tooltips": [],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"gameplayToggle": "welcoming",
@@ -31,4 +30,3 @@
 		]
 	}
 }
- 

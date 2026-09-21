@@ -22,7 +22,7 @@ public final class EnderiteScrapSmeltingRecipe extends AbstractCookingRecipe {
                 new Recipe.CommonInfo(false),
                 new CookingBookInfo(CookingBookCategory.BLOCKS, ""),
                 Ingredient.of(Items.TEST_BLOCK),
-                new ItemStackTemplate(Items.COMMAND_BLOCK),
+                new ItemStackTemplate(Items.HEART_OF_THE_SEA),
                 2.0F,
                 200
         );

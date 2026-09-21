@@ -20,11 +20,19 @@ import type {
 	GeneratorOptions,
 	SelectorCase,
 } from '../types';
-import { copyFileWithDirectory, resetDirectory, writeJsonFile } from '../utils/fs';
+import {
+	copyFileWithDirectory,
+	readJsonFile,
+	resetDirectory,
+	writeJsonFile,
+	writeTextFile,
+} from '../utils/fs';
+import { generateEmissiveTexture } from './emissiveTexture';
 import { replaceTrailingVariant } from '../utils/paths';
 import {
 	createCarvedPumpkinItemDefinition,
 	createCommandBlockItemDefinition,
+	createHeartOfTheSeaItemDefinition,
 } from './selectorDefinitions';
 import { buildGeneratedSingleTextureModel } from './singleTextureModel';
 
@@ -229,6 +237,25 @@ async function generateBasicItem(
 		createGeneratedItemModel(modelId),
 		context,
 	);
+	if (item.id === 'charm-redstone-remote') {
+		for (let frequency = 1; frequency <= 16; frequency++) {
+			for (const lamp of ['off', 'on']) {
+				if (frequency === 1 && lamp === 'off') continue;
+				const name = `texture-${frequency}-${lamp}.png`;
+				const variantPath = `${item.resourcePath}-${frequency}-${lamp}`;
+				await copyFile(
+					path.join(item.sourceDirectory, name),
+					itemTexturePngPath(outputDir, namespace, variantPath),
+					context,
+				);
+				await writeJson(
+					itemModelJsonPath(outputDir, namespace, variantPath),
+					createGeneratedItemModel(itemModelId(namespace, variantPath)),
+					context,
+				);
+			}
+		}
+	}
 
 	return {
 		when: item.id,
@@ -360,6 +387,19 @@ export async function generateResourcePack(
 	items: readonly DiscoveredItem[],
 	options: GeneratorOptions,
 ): Promise<GenerationSummary> {
+	const sourceRoot = path.resolve(options.sourceDir);
+	const outputRoot = path.resolve(options.outputDir);
+	const overlaps = (parent: string, child: string) => {
+		const relative = path.relative(parent, child);
+		return (
+			relative === '' ||
+			(!relative.startsWith(`..${path.sep}`) &&
+				relative !== '..' &&
+				!path.isAbsolute(relative))
+		);
+	};
+	if (overlaps(sourceRoot, outputRoot) || overlaps(outputRoot, sourceRoot))
+		throw new Error('Resource pack output must be separate from source data.');
 	const context: GenerationContext = {
 		options,
 		generatedFiles: 0,
@@ -368,6 +408,11 @@ export async function generateResourcePack(
 	let skippedItems = 0;
 
 	await resetDirectory(options.outputDir);
+	await writeTextFile(
+		path.join(options.outputDir, 'assets/minecraft/optifine/emissive.properties'),
+		'suffix.emissive=_e\n',
+	);
+	context.generatedFiles += 1;
 
 	await writeJson(
 		path.join(options.outputDir, 'pack.mcmeta'),
@@ -400,6 +445,24 @@ export async function generateResourcePack(
 					commandBlockCases.push(await generateCharm(item, context));
 					break;
 			}
+			const isModel = item.type === 'basic-3d' || item.type === 'cosmetic';
+			context.generatedFiles += await generateEmissiveTexture(
+				isModel ? item.modelTexturePngPath : item.texturePngPath,
+				itemTexturePngPath(options.outputDir, options.namespace, item.resourcePath),
+				isModel
+					? await readJsonFile<Record<string, unknown>>(item.modelJsonPath)
+					: undefined,
+			);
+			if (item.type === 'charm')
+				context.generatedFiles += await generateEmissiveTexture(
+					item.equippablePngPath,
+					equipmentTexturePngPath(
+						options.outputDir,
+						options.namespace,
+						getCharmLayerType(item),
+						item.equippableAssetId,
+					),
+				);
 		} catch (error) {
 			skippedItems += 1;
 			logRecoverableGenerationSkip(item, error);
@@ -412,6 +475,11 @@ export async function generateResourcePack(
 	await writeJson(
 		minecraftItemDefinitionPath(options.outputDir, 'command_block'),
 		createCommandBlockItemDefinition(commandBlockCases),
+		context,
+	);
+	await writeJson(
+		minecraftItemDefinitionPath(options.outputDir, 'heart_of_the_sea'),
+		createHeartOfTheSeaItemDefinition(commandBlockCases),
 		context,
 	);
 	await writeJson(

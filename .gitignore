@@ -13,3 +13,4 @@ __pycache__/
 minecraft/minigames/
 minecraft/main/respack/items-respack-generator/output/
 minecraft/main/respack/packs/general-pack/assets/mainmod/sounds/**/*.ogg
+services/web/public/assets/mc_respack/

@@ -75,6 +75,8 @@ export function ShopPreview({
 	allow3d = true,
 	view,
 	skinUrl,
+	nightMode = false,
+	onEmissionSupport,
 }: {
 	item: ShopItem;
 	hovered: boolean;
@@ -83,6 +85,8 @@ export function ShopPreview({
 	allow3d?: boolean;
 	view?: PreviewView;
 	skinUrl?: string | null;
+	nightMode?: boolean;
+	onEmissionSupport?: (modelUrl: string, supported: boolean) => void;
 }) {
 	if (hidden) return <div className="shopHiddenPreview" />;
 	if (!allow3d && item.renderMode === 'model')
@@ -101,6 +105,8 @@ export function ShopPreview({
 							: 'basic3d'
 				}
 				skinUrl={skinUrl}
+				nightMode={nightMode}
+				onEmissionSupport={onEmissionSupport}
 			/>
 		);
 	if (item.iconUrl && item.animation)
@@ -183,12 +189,16 @@ function ShopModelPreview({
 	interactive,
 	view,
 	skinUrl,
+	nightMode = false,
+	onEmissionSupport,
 }: {
 	item: ShopItem;
 	hovered: boolean;
 	interactive: boolean;
 	view: PreviewView;
 	skinUrl?: string | null;
+	nightMode?: boolean;
+	onEmissionSupport?: (modelUrl: string, supported: boolean) => void;
 }) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -198,6 +208,11 @@ function ShopModelPreview({
 	const [ready, setReady] = useState(false);
 	const [liveReady, setLiveReady] = useState(false);
 	const [failed, setFailed] = useState(false);
+	const nightModeRef = useRef(nightMode);
+	useEffect(() => {
+		nightModeRef.current = nightMode;
+		rendererRef.current?.setNightMode(nightMode);
+	}, [nightMode]);
 
 	useEffect(() => {
 		const host = hostRef.current;
@@ -283,11 +298,12 @@ function ShopModelPreview({
 			return;
 		}
 		const textureUrl = item.textureUrl;
+		const modelUrl = item.modelUrl;
 		let renderer: MinecraftModelRenderer | null = null;
 		const abortController = new AbortController();
 		setLiveReady(false);
 		setFailed(false);
-		const modelPromise = loadModel(item.modelUrl);
+		const modelPromise = loadModel(modelUrl);
 		void modelPromise
 			.then(async (model) => {
 				if (isAborted(abortController.signal) || !host.isConnected) return;
@@ -305,7 +321,9 @@ function ShopModelPreview({
 				});
 				rendererRef.current = renderer;
 				await renderer.loadModel(model);
+				renderer.setNightMode(nightModeRef.current);
 				if (isAborted(abortController.signal)) return;
+				onEmissionSupport?.(modelUrl, renderer.hasEmissiveElements());
 				const savedState = previewStateRef.current;
 				if (savedState) renderer.setPreviewState(savedState);
 				if (isConnected(host)) {
@@ -335,6 +353,7 @@ function ShopModelPreview({
 		item.id,
 		item.modelUrl,
 		item.textureUrl,
+		onEmissionSupport,
 		rendererActive,
 		skinUrl,
 		view,

@@ -71,8 +71,8 @@ export function LaunchAdminSection({ activeSection }: { activeSection: AdminSect
 			<div className="adminSectionHeader">
 				<h3>Server launch</h3>
 				<p>
-					The public countdown and signup gate share this date. Signups open automatically
-					when it passes.
+					The public countdown and signup gate share this date. Public signups open
+					automatically when it passes; listed emails can sign up earlier.
 				</p>
 			</div>
 			<form className="adminForm" onSubmit={save}>

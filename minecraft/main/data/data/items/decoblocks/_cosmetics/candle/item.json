@@ -1,12 +1,11 @@
 {
 	"title": "Candle",
 	"id": "cosmetic-candle",
+	"drop": "soaring",
 	"modelType": "cosmetic",
-	"rarity": "uncommon",
+	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Perfect for night-time walks around your manor."
-	],
+	"tooltips": ["Perfect for night-time walks around your manor."],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -14,6 +13,23 @@
 		"glowing": true,
 		"lightLevel": 5
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:flame",
+				"from": [7.8, 11.8, 7.8],
+				"to": [8.2, 12.2, 8.2],
+				"minTicks": 2,
+				"maxTicks": 4
+			},
+			{
+				"particle": "minecraft:smoke",
+				"from": [7.8, 13, 7.8],
+				"to": [8.2, 14, 8.2],
+				"minTicks": 14,
+				"maxTicks": 30
+			}
+		]
+	}
 }
- 

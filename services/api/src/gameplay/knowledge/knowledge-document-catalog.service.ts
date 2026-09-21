@@ -148,17 +148,11 @@ export class KnowledgeDocumentCatalogService {
 		const content = source.replace(/^====\r?\n[\s\S]*?\r?\n====\r?\n?/, '');
 		return {
 			id: page.id,
+			markdown: content,
 			title: page.sidebarTitle,
 			folders: page.folders.join(' '),
 			tags: this.parseList(metadata, 'tags').join(' '),
-			content: content
-				.replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
-				.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-				.replace(/<[^>]+>/g, ' ')
-				.replace(/:::[A-Za-z-]*/g, ' ')
-				.replace(/[`*_>#|~]/g, ' ')
-				.replace(/\s+/g, ' ')
-				.trim(),
+			content: toSearchContent(content),
 		};
 	}
 
@@ -197,4 +191,15 @@ export class KnowledgeDocumentCatalogService {
 			.replace(/[-_]+/g, ' ')
 			.replace(/\b\w/g, (letter) => letter.toUpperCase());
 	}
+}
+
+export function toSearchContent(content: string) {
+	return content
+		.replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+		.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+		.replace(/<[^>]+>/g, ' ')
+		.replace(/:::[A-Za-z-]*/g, ' ')
+		.replace(/[`*_>#|~]/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
 }

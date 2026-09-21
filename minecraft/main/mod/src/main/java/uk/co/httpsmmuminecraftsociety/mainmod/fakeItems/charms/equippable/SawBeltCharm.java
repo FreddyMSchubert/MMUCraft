@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.item.AxeItem;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.AfterBlockBreakCallbackCharm;
@@ -38,7 +38,7 @@ public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm
 
         ItemStack heldTool = player.getMainHandItem();
         if (heldTool.isEmpty()) return;
-        if (!(heldTool.getItem() instanceof AxeItem)) return;
+        if (!heldTool.is(ItemTags.AXES)) return;
 
         if (!isTreeLog(brokenState)) return;
 
@@ -72,7 +72,7 @@ public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm
         while (!queue.isEmpty() && remaining > 0) {
             ItemStack heldTool = player.getMainHandItem();
             if (heldTool.isEmpty()) break;
-            if (!(heldTool.getItem() instanceof AxeItem)) break;
+            if (!heldTool.is(ItemTags.AXES)) break;
 
             BlockPos current = queue.removeFirst();
 

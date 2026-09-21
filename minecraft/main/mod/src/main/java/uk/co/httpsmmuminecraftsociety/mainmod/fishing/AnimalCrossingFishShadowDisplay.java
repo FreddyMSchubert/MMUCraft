@@ -46,7 +46,7 @@ public final class AnimalCrossingFishShadowDisplay {
         Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         display.setNoGravity(true);
         display.setSilent(true);
-        display.setInvulnerable(true);
+        display.setPermanentlyInvulnerable(true);
         display.setInvisible(false);
 
 		ItemStack shadowStack;

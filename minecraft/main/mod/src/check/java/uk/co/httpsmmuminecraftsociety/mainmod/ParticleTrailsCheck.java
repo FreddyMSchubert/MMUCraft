@@ -29,7 +29,7 @@ public final class ParticleTrailsCheck {
     public static void main(String[] args) {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
-        var registries = VanillaRegistries.createLookup();
+        var registries = VanillaRegistries.createWorldLookup();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries).forEach(components -> components.apply());
         SetParticleTrailRecipe recipe = new SetParticleTrailRecipe();
         for (var item : List.of(Items.BOW, Items.ELYTRA, Items.TRIDENT, Items.CROSSBOW, Items.MACE)) {

@@ -73,9 +73,9 @@ public final class SlimeDetectorCheck {
         boolean sawMaximum = false;
         for (int attempt = 0; attempt < 10_000; attempt++) {
             int ticks = SlimeDetectorCharm.randomScanDelayTicks(random);
-            assert ticks >= 10 && ticks <= 40;
-            sawMinimum |= ticks == 10;
-            sawMaximum |= ticks == 40;
+            assert ticks >= 8 && ticks <= 42;
+            sawMinimum |= ticks == 8;
+            sawMaximum |= ticks == 42;
         }
         assert sawMinimum && sawMaximum;
     }
@@ -114,11 +114,13 @@ public final class SlimeDetectorCheck {
         Path textures = project.resolve("../respack/packs/general-pack/assets/general-pack/textures/item/slime-detector");
         for (int bars = 0; bars <= 5; bars++) {
             BufferedImage image = ImageIO.read(textures.resolve("slime-detector-" + bars + ".png").toFile());
-            assert image != null && image.getWidth() == 16 && image.getHeight() == 16;
+            int frames = bars == 5 ? 8 : bars == 4 ? 4 : 1;
+            assert image != null && image.getWidth() == 18 && image.getHeight() == 18 * frames;
+            if (frames > 1) assert Files.exists(textures.resolve("slime-detector-" + bars + ".png.mcmeta"));
         }
         BufferedImage loading = ImageIO.read(textures.resolve("slime-detector-loading.png").toFile());
-        assert loading != null && loading.getWidth() == 16;
-        assert loading.getHeight() > 16 && loading.getHeight() % 16 == 0;
+        assert loading != null && loading.getWidth() == 18;
+        assert loading.getHeight() == 18 * 8;
         assert Files.exists(textures.resolve("slime-detector-loading.png.mcmeta"));
     }
 

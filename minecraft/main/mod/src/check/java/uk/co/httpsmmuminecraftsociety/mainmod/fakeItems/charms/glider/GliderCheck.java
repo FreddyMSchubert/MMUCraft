@@ -49,7 +49,7 @@ public final class GliderCheck {
     public static void main(String[] args) throws Exception {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
-        var registries = VanillaRegistries.createLookup();
+        var registries = VanillaRegistries.createWorldLookup();
         var registryField = MainMod.class.getDeclaredField("registries");
         registryField.setAccessible(true);
         registryField.set(null, registries);

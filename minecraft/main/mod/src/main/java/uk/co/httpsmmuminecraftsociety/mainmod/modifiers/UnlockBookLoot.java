@@ -47,7 +47,7 @@ public final class UnlockBookLoot {
         if (!isEligibleLootTable(tableId)) {
             return;
         }
-        Entity entity = lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY);
+        Entity entity = lootContext.getOptional(LootContextParams.THIS_ENTITY);
         if (!(entity instanceof ServerPlayer player)) {
             return;
         }

@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems;
 
+import net.minecraft.util.Prediction;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -132,7 +133,7 @@ public final class FakeItemsCommand {
             stack.setCount(giveNow);
 
             if (!player.getInventory().add(stack)) {
-                player.drop(stack, false);
+                player.drop(stack, false, Prediction.SERVER_ONLY);
             }
 
             remaining -= giveNow;

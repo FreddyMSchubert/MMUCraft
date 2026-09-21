@@ -26,6 +26,7 @@ public abstract class DailyProjectileMixin {
             Entity deflector,
             EntityReference<Entity> previousOwner,
             boolean fromAttack,
+            net.minecraft.world.phys.Vec3 hitPosition,
             CallbackInfoReturnable<Boolean> cir
     ) {
         if (cir.getReturnValue() && (Object)this instanceof LargeFireball && deflector instanceof ServerPlayer player) {

@@ -448,6 +448,8 @@ def main():
 			print(" -", p)
 		run("java", "-jar", str(jar), *map(str, inputs), str(MERGED))
 
+	shutil.copy2(GENERATED / "pack.mcmeta", MERGED / "pack.mcmeta")
+
 	print("==> Creating zip archive")
 	shutil.make_archive(str(FINAL_ZIP.with_suffix("")), "zip", MERGED)
 

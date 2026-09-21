@@ -108,7 +108,7 @@ public class BackpackCharm implements Charm, UseCallbackCharm {
         }
 
         BundleContents bundleContents = stack.get(DataComponents.BUNDLE_CONTENTS);
-        return bundleContents != null && bundleContents.itemCopyStream().anyMatch(BackpackCharm::containsBackpack);
+        return bundleContents != null && bundleContents.itemCopies().anyMatch(BackpackCharm::containsBackpack);
     }
 
     public static boolean containsItemDisallowedInBackpack(ItemStack stack) {
@@ -125,7 +125,7 @@ public class BackpackCharm implements Charm, UseCallbackCharm {
         }
 
         BundleContents bundleContents = stack.get(DataComponents.BUNDLE_CONTENTS);
-        return bundleContents != null && bundleContents.itemCopyStream().anyMatch(BackpackCharm::containsItemDisallowedInBackpack);
+        return bundleContents != null && bundleContents.itemCopies().anyMatch(BackpackCharm::containsItemDisallowedInBackpack);
     }
 
     private static boolean isBundle(ItemStack stack) {

@@ -28,7 +28,7 @@ public final class DailyTaskCatalogCheck {
 
         var catalog = DailyTaskCatalog.load(
                 project.resolve("src/main/resources").resolve(DailyTaskCatalog.RESOURCE_PATH),
-                VanillaRegistries.createLookup(),
+                VanillaRegistries.createWorldLookup(),
                 fakeItemIds,
                 DropCatalog.load(project.resolve("../data/gameplay-toggles.json"))
         );

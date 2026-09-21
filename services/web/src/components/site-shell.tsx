@@ -309,7 +309,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 									</button>
 								</p>
 								<p className="serverDetails">
-									Java Edition 26.2 - IP: <strong>{SERVER_IP}</strong> -{' '}
+									Java Edition 26.3 - IP: <strong>{SERVER_IP}</strong> -{' '}
 									<button
 										className="textAction"
 										type="button"
@@ -379,7 +379,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							<div className="mobileMenuBlock">
 								<p>Server:</p>
 								<p>
-									Version: <strong>Java Edition 26.2</strong>
+									Version: <strong>Java Edition 26.3</strong>
 								</p>
 								<p>
 									IP: <strong>{SERVER_IP}</strong>

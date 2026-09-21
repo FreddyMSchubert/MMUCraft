@@ -9,9 +9,7 @@ tags:
 - slime finder
 - chunk detector
 tips:
-- Use the Slime Detector before you dig a slime farm.
-- A diagonal chunk is two chunks away because the detector uses Manhattan distance.
-- The detector does not load chunks. It checks chunk coordinates only when you use it.
+- Slime Detectors can be useful to figure out where slimes commonly spawn.
 ====
 
 # Slime Detector

@@ -113,8 +113,8 @@ function createBaseItemDefinition(
 			when: 'charm-wallet',
 			model: range(
 				'wallet',
-				[0, 1, 10, 100, 1000, 10000, 100000, 1000000].map((n) => `wallet-${n}`),
-				[1, 10, 100, 1000, 10000, 100000, 1000000],
+				[0, 1, 5, 10, 50, 100, 500, 1000, 5000, 10000].map((n) => `wallet-${n}`),
+				[1, 5, 10, 50, 100, 500, 1000, 5000, 10000],
 			),
 		});
 		modelCases.push({

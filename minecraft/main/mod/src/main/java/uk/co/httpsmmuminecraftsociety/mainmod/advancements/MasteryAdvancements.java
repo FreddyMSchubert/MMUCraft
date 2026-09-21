@@ -237,7 +237,7 @@ public final class MasteryAdvancements {
         if (enderiteScrap >= 4) grant(player, "enderite/scrap_4");
         if (fakeIds.contains("enderite-ingot")) grant(player, "enderite/ingot");
         if (fakeIds.contains("enderite-upgrade-smithing-template")) grant(player, "enderite/template");
-        for (int value : new int[]{1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000}) {
+        for (int value : new int[]{1, 5, 10, 50, 100, 500, 1000, 5000, 10000}) {
             if (fakeIds.contains("coin-" + value)) grant(player, "coins/hold_" + value);
         }
         if (isCatCosmetic(player.getMainHandItem())

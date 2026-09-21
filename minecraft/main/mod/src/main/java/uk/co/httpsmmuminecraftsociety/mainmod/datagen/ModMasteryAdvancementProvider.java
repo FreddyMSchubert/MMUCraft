@@ -308,7 +308,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     "sniffers/bred_" + count, count >= 100 ? "challenge" : count == 1 ? "task" : "goal");
         }
         chain("utility/jokes", new int[]{1, 3, 5}, "Critic", "Review Joke Books: %s completed.", "fake:charm-joke-book", "root");
-        int[] coinValues = {1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000};
+        int[] coinValues = {1, 5, 10, 50, 100, 500, 1000, 5000, 10000};
         String coinParent = "utility/wallet";
         for (int value : coinValues) {
             String path = "coins/hold_" + value;

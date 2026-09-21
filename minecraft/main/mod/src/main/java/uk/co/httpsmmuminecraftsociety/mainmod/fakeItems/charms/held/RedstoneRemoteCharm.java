@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.core.particles.VibrationParticleOption;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.gameevent.BlockPositionSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CalibratedSculkSensorBlock;
 import net.minecraft.world.level.block.NoteBlock;
@@ -494,6 +496,16 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         BlockPos pos = link.pos();
         int distance = Math.abs(sourceX - (pos.getX() >> 4))
                 + Math.abs(sourceZ - (pos.getZ() >> 4));
+        double particleX = sender == null ? source.getX() + 0.5 : sender.getX();
+        double particleY = sender == null ? source.getY() + 0.5 : sender.getEyeY() - 0.2;
+        double particleZ = sender == null ? source.getZ() + 0.5 : sender.getZ();
+        double deltaX = pos.getX() + 0.5 - particleX;
+        double deltaY = pos.getY() + 0.5 - particleY;
+        double deltaZ = pos.getZ() + 0.5 - particleZ;
+        int travelTicks = Math.max(1, (int) Math.ceil(Math.sqrt(
+                deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ)));
+        level.sendParticles(new VibrationParticleOption(new BlockPositionSource(pos), travelTicks),
+                particleX, particleY, particleZ, 1, 0, 0, 0, 0);
         DELIVERIES.computeIfAbsent(level,
                 ignored -> new PriorityQueue<>(Comparator.comparingLong(Delivery::dueTick)))
                 .add(new Delivery(level.getGameTime() + 1L + distance + extraDelay, source.immutable(), pos,

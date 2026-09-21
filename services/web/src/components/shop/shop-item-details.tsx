@@ -462,6 +462,16 @@ function ItemBadges({ item }: { item: ShopItem }) {
 				Luminous
 			</span>
 		) : null,
+		item.emissive ? (
+			<span
+				key="emissive"
+				className="shopTag emissive"
+				title="Emits particles when worn or placed"
+			>
+				{item.membershipLocked && <ShopLock />}
+				Emissive
+			</span>
+		) : null,
 		item.membersOnly ? (
 			<span key="members-only" className="shopTag membersOnly">
 				{item.membershipLocked && <ShopLock />}

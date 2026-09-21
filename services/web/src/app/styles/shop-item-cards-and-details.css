@@ -172,10 +172,16 @@
 }
 
 .shopTag.luminous {
-	border-color: rgba(105, 224, 255, 0.48);
-	background: rgba(105, 224, 255, 0.14);
-	color: #b8f2ff;
-	box-shadow: 0 0 10px rgba(105, 224, 255, 0.18);
+	border-color: rgba(128, 231, 255, 0.7);
+	background: rgba(92, 215, 255, 0.2);
+	color: #d8f8ff;
+	animation: shopLuminousPulse 2.2s ease-in-out infinite;
+}
+
+.shopTag.emissive {
+	border-color: rgba(255, 166, 102, 0.48);
+	background: rgba(255, 166, 102, 0.14);
+	color: #ffd2ae;
 }
 
 .shopTag.membersOnly,
@@ -208,6 +214,30 @@
 	}
 	50% {
 		box-shadow: 0 0 12px rgba(195, 122, 255, 0.28);
+	}
+}
+
+@keyframes shopLuminousPulse {
+	0%,
+	100% {
+		border-color: rgba(128, 231, 255, 0.58);
+		box-shadow: 0 0 5px rgba(105, 224, 255, 0.3);
+		text-shadow: 0 0 3px rgba(105, 224, 255, 0.35);
+	}
+	50% {
+		border-color: #d8f8ff;
+		box-shadow:
+			0 0 12px rgba(105, 224, 255, 0.8),
+			0 0 24px rgba(105, 224, 255, 0.48);
+		text-shadow: 0 0 9px rgba(216, 248, 255, 0.9);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.shopTag.luminous,
+	.shopFilterRow button.filter-luminous {
+		animation: none;
+		box-shadow: 0 0 10px rgba(105, 224, 255, 0.55);
 	}
 }
 

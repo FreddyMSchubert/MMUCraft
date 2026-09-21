@@ -24,6 +24,7 @@ export interface RawItemDefinition {
 	charm?: unknown;
 	equippableCharm?: unknown;
 	equippableCosmetic?: unknown;
+	particleEmission?: unknown;
 }
 
 export interface CharmLevelDefinition {
@@ -69,6 +70,7 @@ export interface CatalogItem extends ItemRenderAsset {
 	renderMode: 'texture' | 'model';
 	animated: boolean;
 	luminous: boolean;
+	emissive: boolean;
 	dyeable: boolean;
 	decoBlock: boolean;
 	deliveryKind: ShopDeliveryKind;

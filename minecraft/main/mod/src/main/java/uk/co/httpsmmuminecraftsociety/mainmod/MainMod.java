@@ -45,6 +45,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry;
 import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.ParticleEmission;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.LegacyFakeItemMigration;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
@@ -134,6 +135,7 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
+        ServerTickEvents.END_LEVEL_TICK.register(ParticleEmission::tick);
         ServerChunkEvents.CHUNK_UNLOAD.register(RedstoneRemoteCharm::onChunkUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

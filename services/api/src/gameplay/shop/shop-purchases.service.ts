@@ -93,6 +93,7 @@ export class ShopPurchasesService {
 						textureUrl: item.textureUrl,
 						animated: item.animated,
 						luminous: item.luminous,
+						emissive: item.emissive,
 						dyeable: item.dyeable,
 						decoBlock: item.decoBlock,
 						membersOnly: item.membersOnly,

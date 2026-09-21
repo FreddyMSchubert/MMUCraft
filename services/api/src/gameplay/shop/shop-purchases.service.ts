@@ -92,6 +92,7 @@ export class ShopPurchasesService {
 						modelUrl: item.modelUrl,
 						textureUrl: item.textureUrl,
 						animated: item.animated,
+						luminous: item.luminous,
 						dyeable: item.dyeable,
 						decoBlock: item.decoBlock,
 						membersOnly: item.membersOnly,

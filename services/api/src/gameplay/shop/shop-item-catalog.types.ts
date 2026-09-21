@@ -68,6 +68,7 @@ export interface CatalogItem extends ItemRenderAsset {
 	iconUrl: string | null;
 	renderMode: 'texture' | 'model';
 	animated: boolean;
+	luminous: boolean;
 	dyeable: boolean;
 	decoBlock: boolean;
 	deliveryKind: ShopDeliveryKind;

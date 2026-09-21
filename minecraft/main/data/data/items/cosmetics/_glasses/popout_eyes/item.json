@@ -1,18 +1,19 @@
 {
 	"title": "Popout Eyes",
 	"id": "cosmetic-popout-eyes",
+	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"They look eye-palling."
-	],
+	"tooltips": ["They look eye-palling."],
 	"shopPurchasable": {
+		"gameplayToggle": "circus",
 		"membersOnly": false,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Popout Eyes (very freaky)."
+		"unlockMessage": "Unlocked cosmetic: Popout Eyes (very freaky).",
+		"tags": ["bulging eyes"]
 	},
 	"equippableCosmetic": {}
 }

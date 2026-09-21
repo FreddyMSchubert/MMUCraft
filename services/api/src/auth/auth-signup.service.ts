@@ -1,5 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { LaunchSettingsService } from '../launch/launch-settings.service';
 import {
@@ -19,6 +20,19 @@ const EMAIL_CODE_TTL_MS = 10 * 60 * 1000;
 const MINECRAFT_CODE_TTL_MS = 15 * 60 * 1000;
 const SIGNUP_FLOW_IDLE_TTL_MS = 60 * 60 * 1000;
 const MAX_AUTH_CODE_ATTEMPTS = 5;
+const SIGNUP_ALLOWLIST_PATH = process.env.SIGNUP_ALLOWLIST_PATH ?? './data/signup-allowlist.txt';
+
+function isPrelaunchSignupAllowed(email: string): boolean {
+	try {
+		const entries = readFileSync(SIGNUP_ALLOWLIST_PATH, 'utf8')
+			.split(/\r?\n/)
+			.map(normalizeEmail);
+		return entries.includes(email);
+	} catch {
+		return false;
+	}
+}
+
 @Injectable()
 export class AuthSignupService {
 	constructor(
@@ -28,9 +42,15 @@ export class AuthSignupService {
 		private readonly launch: LaunchSettingsService,
 	) {}
 
-	async createSignup(emailInput: string, sourceIp: string) {
+	async createSignup(emailInput: string, sourceIp: string, referralCodeInput?: unknown) {
 		const email = normalizeEmail(emailInput);
-		if (!this.launch.hasLaunched())
+		if (
+			referralCodeInput !== undefined &&
+			(typeof referralCodeInput !== 'string' || !/^[a-f0-9]{32}$/.test(referralCodeInput))
+		) {
+			throw new BadRequestException('Invalid referral link');
+		}
+		if (!this.launch.hasLaunched() && !isPrelaunchSignupAllowed(email))
 			throw new ForbiddenException('Signups will open when the server launches');
 
 		if (!isAllowedEmail(email) && !this.userLookup.isEmailWhitelisted(email)) {
@@ -53,6 +73,7 @@ export class AuthSignupService {
 
 		signupFlows.set(flowId, {
 			email,
+			referralCode: referralCodeInput,
 			step: 'email',
 			emailCodeHash: hashSecret(code),
 			emailCodeExpiresAt: now + EMAIL_CODE_TTL_MS,

@@ -10,16 +10,20 @@ import { CountdownsService } from './countdowns.service';
 import { GiftCodeAdministrationService } from './gift-code-administration.service';
 import { GiftCodeRedemptionService } from './gift-code-redemption.service';
 import { PlayerRoleAdministrationService } from './player-role-administration.service';
+import { MembershipImportService } from './membership-import.service';
+import { DiscordModule } from '../discord/discord.module';
 import { LaunchModule } from '../launch/launch.module';
+import { ReferralsController } from './referrals.controller';
 
 @Module({
-	imports: [AuthModule, ClaimsModule, DatabaseModule, LaunchModule, PlayersModule],
-	controllers: [AdminController, CountdownsController, GiftsController],
+	imports: [AuthModule, ClaimsModule, DatabaseModule, DiscordModule, LaunchModule, PlayersModule],
+	controllers: [AdminController, CountdownsController, GiftsController, ReferralsController],
 	providers: [
 		CountdownsService,
 		GiftCodeAdministrationService,
 		GiftCodeRedemptionService,
 		PlayerRoleAdministrationService,
+		MembershipImportService,
 	],
 })
 export class GiftsModule {}

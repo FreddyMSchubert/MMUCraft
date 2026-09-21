@@ -1,12 +1,11 @@
 {
 	"title": "Cheese Hat",
 	"id": "cosmetic-cheese",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Religious cheese"
-	],
+	"tooltips": ["Religious cheese"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
 		"priceDabloons": 35,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Cheese Hat."
+		"unlockMessage": "Unlocked cosmetic: Cheese Hat.",
+		"tags": ["cheddar", "dairy"]
 	},
 	"equippableCosmetic": {}
 }

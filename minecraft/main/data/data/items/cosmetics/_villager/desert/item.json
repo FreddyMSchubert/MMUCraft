@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Desert Villager Hat."
+		"unlockMessage": "Unlocked cosmetic: Desert Villager Hat.",
+		"tags": ["sandy"]
 	},
 	"equippableCosmetic": {}
 }

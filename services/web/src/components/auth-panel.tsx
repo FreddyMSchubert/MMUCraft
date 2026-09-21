@@ -82,6 +82,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 			const signupEmail = useStudentId ? `${studentId}@stu.mmu.ac.uk` : email.trim();
 			const result = await postJson<{ flowId: string }>('/api/auth/signup', {
 				email: signupEmail,
+				referral: window.sessionStorage.getItem('referral') ?? undefined,
 			});
 			setEmail(signupEmail);
 			setFlowId(result.flowId);
@@ -132,6 +133,10 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 
 		void run(async () => {
 			await postJson('/api/auth/accept-rules', { flowId });
+			window.sessionStorage.removeItem('referral');
+			const url = new URL(window.location.href);
+			url.searchParams.delete('referral');
+			window.history.replaceState(null, '', url);
 			setAuthenticationStep('done');
 			onSignedIn?.();
 		});
@@ -186,6 +191,7 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 					: await postJson<{ flowId: string }>('/api/auth/signup', {
 							email,
 							resend: true,
+							referral: window.sessionStorage.getItem('referral') ?? undefined,
 						});
 			setFlowId(result.flowId);
 			setAuthCode(emptyAuthCode());

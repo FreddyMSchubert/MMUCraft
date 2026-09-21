@@ -99,9 +99,19 @@ test('committee can create, move, update, and remove a countdown', async ({ requ
 });
 
 test('trust boundaries reject invalid input and insufficient privilege', async ({ request }) => {
+	await test.step('Allow a listed email through the prelaunch gate', async () => {
+		const response = await request.post('/api/auth/signup', {
+			data: { email: 'invited@mmu.ac.uk' },
+		});
+		expect(response.status()).toBe(503);
+		expect(await response.json()).toMatchObject({
+			message: 'Verification email could not be sent',
+		});
+	});
+
 	await test.step('Reject a signup before launch', async () => {
 		const response = await request.post('/api/auth/signup', {
-			data: { email: 'attacker@example.com' },
+			data: { email: 'unlisted@mmu.ac.uk' },
 		});
 		expect(response.status()).toBe(403);
 	});

@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 10000,
-		"unlockMessage": "Unlocked cosmetic: Sun Hat."
+		"unlockMessage": "Unlocked cosmetic: Sun Hat.",
+		"tags": ["beach", "straw hat"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

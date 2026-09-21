@@ -1,16 +1,19 @@
 {
 	"title": "Snorkel",
 	"id": "cosmetic-blue-snorkel",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
 		"priceDabloons": 30,
 		"description": "",
 		"unlockWeight": 90,
-		"unlockMessage": "Unlocked cosmetic: Snorkel."
+		"unlockMessage": "Unlocked cosmetic: Snorkel.",
+		"tags": ["diving", "scuba"]
 	},
 	"equippableCosmetic": {}
 }

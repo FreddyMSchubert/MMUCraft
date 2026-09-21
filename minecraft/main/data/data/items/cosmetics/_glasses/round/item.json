@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Eye see what you did there."
-	],
+	"tooltips": ["Eye see what you did there."],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 25,
+		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Round Glasses."
+		"unlockMessage": "Unlocked cosmetic: Round Glasses.",
+		"tags": ["circular", "spectacles"]
 	},
 	"equippableCosmetic": {}
 }

@@ -4,16 +4,14 @@
 	"modelType": "charm",
 	"rarity": "legendary",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Light on your feet."
-	],
+	"tooltips": ["Light on your feet."],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 175,
 		"description": "Gives you permanent night vision.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked charm: Candle of the Deep Charm. It gives permanent night vision.",
-		"gameplayToggle": "overpowered"
+		"gameplayToggle": "beach-party"
 	},
 	"charm": {
 		"charmId": 8,

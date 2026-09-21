@@ -1,18 +1,19 @@
 {
 	"title": "Sniffer Hood",
 	"id": "cosmetic-hood-sniffer",
+	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Made from 100% real Sniffer"
-	],
+	"tooltips": ["Made from 100% real Sniffer"],
 	"shopPurchasable": {
+		"gameplayToggle": "welcoming",
 		"membersOnly": false,
-	"priceDabloons": 150,
+		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 42,
-		"unlockMessage": "Unlocked cosmetic: Sniffer Hood."
+		"unlockMessage": "Unlocked cosmetic: Sniffer Hood.",
+		"tags": ["ancient mob"]
 	},
 	"equippableCosmetic": {}
 }

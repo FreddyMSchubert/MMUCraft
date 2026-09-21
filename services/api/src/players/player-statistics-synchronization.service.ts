@@ -5,6 +5,7 @@ import { MinecraftIdentityService } from '../database/minecraft-identity.service
 import { effectivePlayerColor } from './player-color';
 import { PlayerProfileStorageService } from './player-profile-storage.service';
 import { PROFILE_TEXT_LIMITS } from './player-profile';
+import { ReferralsService } from '../database/referrals.service';
 import {
 	defaultStats,
 	normalizeMinecraftStat,
@@ -22,6 +23,7 @@ export class PlayerStatisticsSynchronizationService {
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
 		private readonly profiles: PlayerProfileStorageService,
+		private readonly referrals: ReferralsService,
 	) {}
 
 	synchronizeFromMinecraft(
@@ -45,6 +47,7 @@ export class PlayerStatisticsSynchronizationService {
 				showDeathCounter: true,
 				previousLastPlayedAtUnixMs: 0,
 				firstInAnyStatistic: false,
+				referralRewardDabloons: 0,
 				message: 'No website account is linked to this Minecraft username yet.',
 			};
 		}
@@ -90,6 +93,7 @@ export class PlayerStatisticsSynchronizationService {
 			showDeathCounter: profile.showDeathCounter,
 			previousLastPlayedAtUnixMs,
 			firstInAnyStatistic: this.isFirstInAnyStatistic(user.id, stats),
+			referralRewardDabloons: this.referrals.totalReward(user.id),
 			message: 'Stats synced.',
 		};
 	}

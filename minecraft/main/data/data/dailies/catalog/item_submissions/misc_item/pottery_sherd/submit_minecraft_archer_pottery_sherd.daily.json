@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:archer_pottery_sherd",
-	"baseCost": 4,
-	"rewardPerIteration": 3,
+	"baseCost": 10,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🏹",
 	"name": "Submit Archer Sherd",
-	"description": "Submit one archer sherd. Have the items in your inventory when you click Claim."
+	"description": "Submit one archer sherd. Archaeologists call pottery fragments sherds; glass, metal, and mineral fragments are shards."
 }

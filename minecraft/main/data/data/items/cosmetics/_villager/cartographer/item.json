@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Cartographer Monocle."
+		"unlockMessage": "Unlocked cosmetic: Cartographer Monocle.",
+		"tags": ["mapmaker", "maps"]
 	},
 	"equippableCosmetic": {}
 }

@@ -220,7 +220,6 @@ function cosmeticMasteryPaths(
 		if (unlockedIds.size >= milestone) paths.push(`cosmetics/unlock_${milestone}`);
 	}
 	if (unlockedIds.size >= catalog.length) paths.push('cosmetics/unlock_all');
-	if (item.id === 'cosmetic-amogus') paths.push('cosmetics/amogus');
 	const villagerIds = catalog
 		.map((candidate) => candidate.id)
 		.filter(

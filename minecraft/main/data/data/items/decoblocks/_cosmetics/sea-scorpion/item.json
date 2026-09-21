@@ -1,12 +1,11 @@
 {
 	"title": "Sea Scorpion",
 	"id": "cosmetic-sea-scorpion",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"As seen in 480 million BC!"
-	],
+	"tooltips": ["As seen in 480 million BC!"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
-	"priceDabloons": 150,
+		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 42,
-		"unlockMessage": "Unlocked cosmetic: Sea Scorpion."
+		"unlockMessage": "Unlocked cosmetic: Sea Scorpion.",
+		"tags": ["eurypterid", "fossil"]
 	},
 	"equippableCosmetic": {}
 }

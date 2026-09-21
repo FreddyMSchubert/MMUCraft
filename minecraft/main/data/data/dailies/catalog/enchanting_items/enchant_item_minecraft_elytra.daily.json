@@ -1,7 +1,7 @@
 {
 	"type": "enchant_item",
 	"itemType": "minecraft:elytra",
-	"drop": "end",
+	"drop": "void",
 	"baseCost": 7,
 	"rewardPerIteration": 0,
 	"minimum": 1,

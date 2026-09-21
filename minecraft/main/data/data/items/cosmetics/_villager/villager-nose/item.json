@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Bigger than the sniffer's"
-	],
+	"tooltips": ["Bigger than the sniffer's"],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Villager Nose."
+		"unlockMessage": "Unlocked cosmetic: Villager Nose.",
+		"tags": ["big nose"]
 	},
 	"equippableCosmetic": {}
 }

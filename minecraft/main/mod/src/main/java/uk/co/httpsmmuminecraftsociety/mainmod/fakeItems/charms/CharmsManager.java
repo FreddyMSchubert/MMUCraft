@@ -90,6 +90,7 @@ public class CharmsManager
             Map.entry(51, new ObamiumPyramidCharm()),
             Map.entry(52, new PotionOfResonanceCharm()),
             Map.entry(53, new WrenchCharm()),
+            Map.entry(RedstoneRemoteCharm.CHARM_ID, new RedstoneRemoteCharm()),
             Map.entry(GliderCharm.CHARM_ID, new GliderCharm()),
             Map.entry(SlimeDetectorCharm.CHARM_ID, new SlimeDetectorCharm()),
             Map.entry(HappyGhastSpeedCharm.CHARM_ID, new HappyGhastSpeedCharm())
@@ -309,6 +310,7 @@ public class CharmsManager
             // actively used tick
             tickActiveUseCharms(player, server);
         }
+        RedstoneRemoteCharm.tick(server);
     }
 
     // redirect buncha callbacks into charms
@@ -453,6 +455,31 @@ public class CharmsManager
                     direction,
                     instance.getB().level()
             );
+            if (result != null && result != InteractionResult.PASS) return result;
+        }
+        return InteractionResult.PASS;
+    }
+
+    public static void onAttackSwing(ServerPlayer player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        for (CharmInstance instance : getCharmInstances(stack)) {
+            if (instance.isBroken()) continue;
+            if (instance.charm() instanceof AttackSwingCallbackCharm callback) {
+                callback.onAttackSwing(stack, player, player.level(), hand, instance.level());
+            }
+        }
+    }
+
+    public static InteractionResult onAttackEntity(Player player, Level level, InteractionHand hand,
+                                                   Entity entity, @Nullable EntityHitResult hit) {
+        if (!(player instanceof ServerPlayer serverPlayer) || !(level instanceof ServerLevel serverLevel)) {
+            return InteractionResult.PASS;
+        }
+        for (Tuple<ItemStack, CharmInstance> instance : getPlayerCharmInstances(serverPlayer)) {
+            if (instance.getB().isBroken()) continue;
+            if (!(instance.getB().charm() instanceof AttackEntityCallbackCharm callback)) continue;
+            InteractionResult result = callback.onAttackEntity(instance.getA(), serverPlayer, serverLevel,
+                    hand, entity, hit, instance.getB().level());
             if (result != null && result != InteractionResult.PASS) return result;
         }
         return InteractionResult.PASS;

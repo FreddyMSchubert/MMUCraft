@@ -1,18 +1,19 @@
 {
 	"title": "Wyrm Skull",
 	"id": "cosmetic-wyrm-skull",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"I would write a joke here, but it would just drag-on"
-	],
+	"tooltips": ["I would write a joke here, but it would just drag-on"],
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": false,
-	"priceDabloons": 125,
+		"priceDabloons": 125,
 		"description": "",
 		"unlockWeight": 50,
-		"unlockMessage": "Unlocked cosmetic: Wyrm Skull."
+		"unlockMessage": "Unlocked cosmetic: Wyrm Skull.",
+		"tags": ["dragon"]
 	},
 	"equippableCosmetic": {}
 }

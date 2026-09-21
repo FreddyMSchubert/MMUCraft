@@ -1,12 +1,11 @@
 {
 	"title": "Rootling",
 	"id": "cosmetic-rootling",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"It came to me in a dream"
-	],
+	"tooltips": ["It came to me in a dream"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "imaginative",
 		"membersOnly": true,
-	"priceDabloons": 50,
+		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked cosmetic: Rootling."
+		"unlockMessage": "Unlocked cosmetic: Rootling.",
+		"tags": ["plant", "roots"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

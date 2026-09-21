@@ -1,11 +1,11 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "2-leaf-clover",
-	"baseCost": 5,
-	"rewardPerIteration": 2,
-	"minimum": 2,
-	"maximum": 5,
+	"baseCost": 15,
+	"rewardPerIteration": 0,
+	"minimum": 1,
+	"maximum": 1,
 	"emoji": "☘️",
 	"name": "Submit Two-Leaf Clovers",
-	"description": "Submit {count} two-leaf clovers. Have the items in your inventory when you click Claim."
+	"description": "Submit a two-leaf clover. When life gives you two leaf clovers, craft two of them together to make a 4 leaf clover. Lemondade stnad.wpoijdnspx"
 }

@@ -1,17 +1,19 @@
 {
 	"title": "Sniffer Biotope Hat",
 	"id": "cosmetic-moss-biotope-hat",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
-	"tooltips": [
-	],
+	"tooltips": [],
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
-	    "priceDabloons": 100,
+		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 20,
-		"unlockMessage": "Unlocked cosmetic: Moss Biotope Hat."
+		"unlockMessage": "Unlocked cosmetic: Moss Biotope Hat.",
+		"tags": ["moss", "sniffer"]
 	},
 	"equippableCosmetic": {}
 }

@@ -1,18 +1,19 @@
 {
 	"title": "Bushy Moustache",
 	"id": "cosmetic-mousetache-bushy",
+	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"It tickles a bit"
-	],
+	"tooltips": ["It tickles a bit"],
 	"shopPurchasable": {
+		"gameplayToggle": "circus",
 		"membersOnly": true,
-	"priceDabloons": 100,
+		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,
-		"unlockMessage": "Unlocked cosmetic: Bushy Moustache."
+		"unlockMessage": "Unlocked cosmetic: Bushy Moustache.",
+		"tags": ["mustache", "facial hair"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

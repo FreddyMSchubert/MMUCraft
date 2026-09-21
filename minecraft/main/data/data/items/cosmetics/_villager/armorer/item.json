@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Larp being employed"
-	],
+	"tooltips": ["Larp being employed"],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Armorer Goggles."
+		"unlockMessage": "Unlocked cosmetic: Armorer Goggles.",
+		"tags": ["blacksmith", "armor"]
 	},
 	"equippableCosmetic": {}
 }

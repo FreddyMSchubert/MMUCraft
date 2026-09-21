@@ -1,11 +1,13 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull, ne } from 'drizzle-orm';
 import {
 	DatabaseService,
 	SUPER_ADMIN_MINECRAFT_UUID,
 	emailWhitelist,
+	referralLinks,
 	users,
 } from '../database/database.service';
+import { REFERRAL_JOIN_DABLOONS } from '../database/referrals.service';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { AuthSessionService } from './auth-session.service';
 import { AuthUserLookupService } from './auth-user-lookup.service';
@@ -51,24 +53,41 @@ export class AuthSignupAccountRegistrationService {
 			throw new ForbiddenException('This external player invitation is no longer active');
 		}
 
-		const userId = this.database.connection.transaction(
-			(transaction) =>
+		const userId = this.database.connection.transaction((transaction) => {
+			const id = transaction
+				.insert(users)
+				.values({
+					email: flow.email,
+					minecraft_uuid: minecraftUuid,
+					minecraft_username: minecraftUsername,
+					responsible_user_id: externalInvitation?.responsibleUserId ?? null,
+					is_committee: minecraftUuid === SUPER_ADMIN_MINECRAFT_UUID ? 1 : 0,
+					is_super_admin: minecraftUuid === SUPER_ADMIN_MINECRAFT_UUID ? 1 : 0,
+					whitelisted_at_unix_ms: now,
+					rules_accepted_at_unix_ms: now,
+					created_at_unix_ms: now,
+				})
+				.returning({ id: users.id })
+				.get().id;
+			if (flow.referralCode) {
 				transaction
-					.insert(users)
-					.values({
-						email: flow.email,
-						minecraft_uuid: minecraftUuid,
-						minecraft_username: minecraftUsername,
-						responsible_user_id: externalInvitation?.responsibleUserId ?? null,
-						is_committee: minecraftUuid === SUPER_ADMIN_MINECRAFT_UUID ? 1 : 0,
-						is_super_admin: minecraftUuid === SUPER_ADMIN_MINECRAFT_UUID ? 1 : 0,
-						whitelisted_at_unix_ms: now,
-						rules_accepted_at_unix_ms: now,
-						created_at_unix_ms: now,
+					.update(referralLinks)
+					.set({
+						referred_user_id: id,
+						joined_at_unix_ms: now,
+						join_reward_dabloons: REFERRAL_JOIN_DABLOONS,
 					})
-					.returning({ id: users.id })
-					.get().id,
-		);
+					.where(
+						and(
+							eq(referralLinks.code, flow.referralCode),
+							isNull(referralLinks.referred_user_id),
+							ne(referralLinks.referrer_user_id, id),
+						),
+					)
+					.run();
+			}
+			return id;
+		});
 		signupFlows.delete(flowId);
 		return this.sessions.createForUser(userId);
 	}

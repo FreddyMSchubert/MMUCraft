@@ -2,11 +2,11 @@
 	"type": "submit_item",
 	"item": "minecraft:snout_armor_trim_smithing_template",
 	"drop": "nether",
-	"baseCost": 6,
-	"rewardPerIteration": 7,
+	"baseCost": 13,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "🐽",
 	"name": "Submit Snout Trim",
-	"description": "Submit one snout trim template. Duplicate it first if this is your only copy. Have the items in your inventory when you click Claim."
+	"description": "Submit a snout trim template. Might wanna duplicate it first if this is your only copy."
 }

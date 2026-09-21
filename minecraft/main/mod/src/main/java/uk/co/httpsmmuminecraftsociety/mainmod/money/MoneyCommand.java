@@ -2,34 +2,17 @@ package uk.co.httpsmmuminecraftsociety.mainmod.money;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 
-import java.util.stream.Stream;
-
 public final class MoneyCommand {
     private MoneyCommand() {}
-
-    private static final SimpleCommandExceptionType PLAYER_NOT_FOUND =
-            new SimpleCommandExceptionType(Component.literal("Only @s or a single online player username is allowed."));
-
-    private static final SuggestionProvider<CommandSourceStack> PLAYER_SUGGESTIONS = (ctx, builder) ->
-            SharedSuggestionProvider.suggest(
-                    Stream.concat(
-                            Stream.of("@s"),
-                            ctx.getSource().getOnlinePlayerNames().stream()
-                    ),
-                    builder
-            );
 
     public static void init() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> register(dispatcher));
@@ -40,11 +23,10 @@ public final class MoneyCommand {
                 Commands.literal("dabloons")
                         .requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
                         .then(Commands.literal("get")
-                                .then(Commands.argument("target", StringArgumentType.word())
-                                        .suggests(PLAYER_SUGGESTIONS)
+                                .then(Commands.argument("target", EntityArgument.player())
                                         .executes(ctx -> get(
                                                 ctx.getSource(),
-                                                getTarget(ctx.getSource(), StringArgumentType.getString(ctx, "target"))
+                                                EntityArgument.getPlayer(ctx, "target")
                                         ))
                                 )
                         )
@@ -59,33 +41,15 @@ public final class MoneyCommand {
             MoneyOperation operation
     ) {
         return Commands.literal(name)
-                .then(Commands.argument("target", StringArgumentType.word())
-                        .suggests(PLAYER_SUGGESTIONS)
+                .then(Commands.argument("target", EntityArgument.player())
                         .then(Commands.argument("amount", IntegerArgumentType.integer(0))
                                 .executes(ctx -> operation.run(
                                         ctx.getSource(),
-                                        getTarget(ctx.getSource(), StringArgumentType.getString(ctx, "target")),
+                                        EntityArgument.getPlayer(ctx, "target"),
                                         IntegerArgumentType.getInteger(ctx, "amount")
                                 ))
                         )
                 );
-    }
-
-    private static ServerPlayer getTarget(CommandSourceStack source, String target) throws CommandSyntaxException {
-        if (target.equals("@s")) {
-            return source.getPlayerOrException();
-        }
-
-        if (target.startsWith("@")) {
-            throw PLAYER_NOT_FOUND.create();
-        }
-
-        ServerPlayer player = source.getServer().getPlayerList().getPlayerByName(target);
-        if (player == null || player.hasDisconnected()) {
-            throw PLAYER_NOT_FOUND.create();
-        }
-
-        return player;
     }
 
     private static int get(CommandSourceStack source, ServerPlayer player) {

@@ -5,12 +5,15 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -42,12 +45,15 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry;
 import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.ParticleEmission;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.LegacyFakeItemMigration;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderFlight;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.RedstoneRemoteCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
@@ -129,7 +135,11 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
+        ServerTickEvents.END_LEVEL_TICK.register(ParticleEmission::tick);
+        ServerChunkEvents.CHUNK_UNLOAD.register(RedstoneRemoteCharm::onChunkUnload);
+        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            LegacyFakeItemMigration.migratePlayer(handler.player);
             CharmsManager.refreshInventory(handler.player);
             MasteryAdvancements.onJoin(handler.player);
         });
@@ -146,6 +156,7 @@ public class MainMod implements ModInitializer {
         UseBlockCallback.EVENT.register(CharmsManager::onUseBlock);
         UseBlockCallback.EVENT.register(HopperFilter::onUseBlock);
         AttackBlockCallback.EVENT.register(CharmsManager::onAttackBlock);
+        AttackEntityCallback.EVENT.register(CharmsManager::onAttackEntity);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
         DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);
@@ -172,11 +183,13 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
         ServerLifecycleEvents.SERVER_STARTED.register(MetricsServer::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            RedstoneRemoteCharm.clear();
             PotionOfDisplacementCharm.clearSearches();
             MetricsServer.stop();
             GrpcBridge.stop();
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            LegacyFakeItemMigration.tick(server);
             MetricsServer.update(server);
             GrpcBridge.onServerTick();
             PlayerStatsSync.onServerTick(server);
@@ -201,6 +214,7 @@ public class MainMod implements ModInitializer {
             level.getGameRules().set(GameRules.MAX_MINECART_SPEED, 20, server);
             // level.getGameRules().set(GameRules.REDUCED_DEBUG_INFO, true, server);
             level.getGameRules().set(GameRules.SPAWN_PHANTOMS, false, server);
+            level.getGameRules().set(GameRules.MAX_ENTITY_CRAMMING, 11, server);
         }
     }
 

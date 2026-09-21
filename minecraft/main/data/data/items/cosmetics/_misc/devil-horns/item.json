@@ -1,18 +1,19 @@
 {
 	"title": "Devil Horns",
 	"id": "cosmetic-devil-horns",
+	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Stolen from the statue in Satan's Hollow"
-	],
+	"tooltips": ["Stolen from the statue in Satan's Hollow"],
 	"shopPurchasable": {
+		"gameplayToggle": "nether",
 		"membersOnly": true,
-	"priceDabloons": 90,
+		"priceDabloons": 90,
 		"description": "",
 		"unlockWeight": 65,
-		"unlockMessage": "Unlocked cosmetic: Devil Horns."
+		"unlockMessage": "Unlocked cosmetic: Devil Horns.",
+		"tags": ["demon"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

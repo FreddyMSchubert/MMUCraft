@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Oh deer, you look amazing!"
-	],
+	"tooltips": ["Oh deer, you look amazing!"],
 	"shopPurchasable": {
 		"membersOnly": false,
-	    "priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Deer Antlers."
+		"unlockMessage": "Unlocked cosmetic: Deer Antlers.",
+		"tags": ["reindeer", "stag"]
 	},
 	"equippableCosmetic": {}
 }

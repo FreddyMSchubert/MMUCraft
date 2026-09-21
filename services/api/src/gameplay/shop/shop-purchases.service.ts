@@ -3,6 +3,7 @@ import { and, count, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/auth-session.service';
 import { DatabaseService, limitedShopPurchases, users } from '../../database/database.service';
 import { MinecraftGrpcClientService } from '../../grpc/minecraft-grpc-client.service';
+import { FeatureTogglesService } from '../../toggles/feature-toggles.service';
 import {
 	currentShopDealDate,
 	dailyDealDiscountPercent,
@@ -37,11 +38,13 @@ export class ShopPurchasesService {
 		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly itemCatalog: ShopItemCatalogService,
 		private readonly unlocks: ShopUnlocksService,
+		private readonly featureToggles: FeatureTogglesService,
 	) {}
 
 	getShopForUser(user: AuthenticatedUser) {
 		const items = this.itemCatalog.load().items;
 		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
+		const enabledToggles = this.featureToggles.enabledKeys();
 		const availability = this.unlocks.availabilityForUser(user.id);
 		const dealDate = currentShopDealDate();
 		const limitedPurchaseCounts = this.limitedPurchaseCounts(user.id, dealDate);
@@ -89,6 +92,8 @@ export class ShopPurchasesService {
 						modelUrl: item.modelUrl,
 						textureUrl: item.textureUrl,
 						animated: item.animated,
+						luminous: item.luminous,
+						emissive: item.emissive,
 						dyeable: item.dyeable,
 						decoBlock: item.decoBlock,
 						membersOnly: item.membersOnly,
@@ -106,6 +111,7 @@ export class ShopPurchasesService {
 							availability,
 							unlockedIds,
 							limitedPurchaseCount,
+							enabledToggles,
 						),
 					};
 				}),
@@ -139,11 +145,21 @@ export class ShopPurchasesService {
 
 		const availability = this.unlocks.availabilityForUser(user.id);
 		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
+		const enabledToggles = this.featureToggles.enabledKeys();
 		const dealDate = currentShopDealDate();
 		const limitedPurchaseCount =
 			this.limitedPurchaseCounts(user.id, dealDate).get(item.id) ?? 0;
-		if (!isAvailableForPurchase(user, item, availability, unlockedIds, limitedPurchaseCount)) {
-			throw new BadRequestException(unavailablePurchaseMessage(user, item));
+		if (
+			!isAvailableForPurchase(
+				user,
+				item,
+				availability,
+				unlockedIds,
+				limitedPurchaseCount,
+				enabledToggles,
+			)
+		) {
+			throw new BadRequestException(unavailablePurchaseMessage(user, item, enabledToggles));
 		}
 
 		const dailyDiscount = dailyDealItemIds(this.itemCatalog.load().items, dealDate).has(item.id)
@@ -284,8 +300,10 @@ function isAvailableForPurchase(
 	item: CatalogItem,
 	availability: ShopUnlockAvailability,
 	unlockedIds: Set<string>,
-	limitedPurchaseCount = 0,
+	limitedPurchaseCount: number,
+	enabledToggles: Set<string>,
 ): boolean {
+	if (item.gameplayToggle && !enabledToggles.has(item.gameplayToggle)) return false;
 	if (item.membersOnly && !user.isMember) return false;
 	const dailyLimit = limitedPurchaseDailyLimit(item.id);
 	if (dailyLimit !== null && limitedPurchaseCount >= dailyLimit) return false;
@@ -316,7 +334,13 @@ function isUnlocked(item: CatalogItem, unlockedIds: Set<string>): boolean {
 	return isVisibleInShop(item, unlockedIds);
 }
 
-function unavailablePurchaseMessage(user: AuthenticatedUser, item: CatalogItem): string {
+function unavailablePurchaseMessage(
+	user: AuthenticatedUser,
+	item: CatalogItem,
+	enabledToggles: Set<string>,
+): string {
+	if (item.gameplayToggle && !enabledToggles.has(item.gameplayToggle))
+		return 'This item is not available until its drop is enabled.';
 	if (item.membersOnly && !user.isMember) return 'This item is for members only.';
 	if (item.type === 'charm') return 'Unlock this charm with a magic book before buying it.';
 	if (item.type === 'cosmetic')

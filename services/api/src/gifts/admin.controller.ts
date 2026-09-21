@@ -7,6 +7,7 @@ import { CountdownInput, CountdownsService } from './countdowns.service';
 import { GiftCodeAdministrationService } from './gift-code-administration.service';
 import { GiftCodeInput } from './gift-code-validation';
 import { PlayerRoleAdministrationService } from './player-role-administration.service';
+import { MembershipImportService } from './membership-import.service';
 import { LaunchSettingsService } from '../launch/launch-settings.service';
 
 @Controller('api/admin')
@@ -16,6 +17,7 @@ export class AdminController {
 		private readonly authAdministration: AuthAccountAdministrationService,
 		private readonly giftCodes: GiftCodeAdministrationService,
 		private readonly playerRoles: PlayerRoleAdministrationService,
+		private readonly membershipImport: MembershipImportService,
 		private readonly commandLogs: CommandLogsService,
 		private readonly signinAttempts: SigninAttemptLogsService,
 		private readonly countdowns: CountdownsService,
@@ -105,6 +107,24 @@ export class AdminController {
 	listPlayers(@Headers('cookie') cookieHeader: string | undefined) {
 		this.auth.requireCommitteeSession(cookieHeader);
 		return this.playerRoles.listPlayers();
+	}
+
+	@Post('membership-import/preview')
+	previewMembershipImport(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { rows?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.membershipImport.preview(body?.rows);
+	}
+
+	@Post('membership-import/apply')
+	applyMembershipImport(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { rows?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.membershipImport.apply(body?.rows);
 	}
 
 	@Get('command-logs')

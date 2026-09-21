@@ -1,18 +1,19 @@
 {
 	"title": "Sombreron",
 	"id": "cosmetic-sombreron",
+	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Still too small..."
-	],
+	"tooltips": ["Still too small..."],
 	"shopPurchasable": {
+		"gameplayToggle": "circus",
 		"membersOnly": false,
-	"priceDabloons": 150,
+		"priceDabloons": 150,
 		"description": "",
 		"unlockWeight": 37,
-		"unlockMessage": "Unlocked cosmetic: Sombreron."
+		"unlockMessage": "Unlocked cosmetic: Sombreron.",
+		"tags": ["mexican", "large hat"]
 	},
 	"equippableCosmetic": {}
 }

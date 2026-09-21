@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Not as dangerous as the real thing"
-	],
+	"tooltips": ["Not as dangerous as the real thing"],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 250,
+		"priceDabloons": 250,
 		"description": "",
 		"unlockWeight": 20,
-		"unlockMessage": "Unlocked cosmetic: Warden Head."
+		"unlockMessage": "Unlocked cosmetic: Warden Head.",
+		"tags": ["sculk", "deep dark"]
 	},
 	"equippableCosmetic": {}
 }

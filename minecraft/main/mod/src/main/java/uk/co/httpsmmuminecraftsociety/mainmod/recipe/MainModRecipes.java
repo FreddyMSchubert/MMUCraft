@@ -26,6 +26,8 @@ public final class MainModRecipes {
     public static final RecipeSerializer<EnderiteScrapSmeltingRecipe> ENDERITE_SCRAP_SMELTING_SERIALIZER = unit(new EnderiteScrapSmeltingRecipe());
     public static final RecipeSerializer<FishCookingRecipe> FISH_COOKING_SERIALIZER = unit(new FishCookingRecipe());
     public static final RecipeSerializer<HopperFilterRecipe> HOPPER_FILTER_SERIALIZER = unit(new HopperFilterRecipe());
+    public static final RecipeSerializer<RedstoneRemoteResetRecipe> REDSTONE_REMOTE_RESET_SERIALIZER = unit(new RedstoneRemoteResetRecipe());
+    public static final RecipeSerializer<RedstoneRemoteLabelRecipe> REDSTONE_REMOTE_LABEL_SERIALIZER = unit(new RedstoneRemoteLabelRecipe());
     public static final RecipeSerializer<MapResizeRecipe> MAP_RESIZE_SERIALIZER = unit(new MapResizeRecipe());
     public static final RecipeSerializer<MapInvisibilityRecipe> MAP_INVISIBILITY_SERIALIZER = unit(new MapInvisibilityRecipe());
 
@@ -48,6 +50,8 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "enderite_scrap_smelting"), ENDERITE_SCRAP_SMELTING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fish_cooking"), FISH_COOKING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "hopper_filter"), HOPPER_FILTER_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "redstone_remote_reset"), REDSTONE_REMOTE_RESET_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "redstone_remote_label"), REDSTONE_REMOTE_LABEL_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "map_resize"), MAP_RESIZE_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "map_invisibility"), MAP_INVISIBILITY_SERIALIZER);
 

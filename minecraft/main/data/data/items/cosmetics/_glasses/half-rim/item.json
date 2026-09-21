@@ -10,7 +10,8 @@
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: Half Rim Glasses."
+		"unlockMessage": "Unlocked cosmetic: Half Rim Glasses.",
+		"tags": ["spectacles", "reading glasses"]
 	},
 	"equippableCosmetic": {}
 }

@@ -8,6 +8,7 @@
 		{
 			"name": "AntlerR",
 			"shade": false,
+			"light_emission": 15,
 			"from": [-5.3, 7.5, 8],
 			"to": [4.7, 17.5, 8],
 			"rotation": {
@@ -29,6 +30,7 @@
 		{
 			"name": "AntlerL",
 			"shade": false,
+			"light_emission": 15,
 			"from": [11.3, 7.5, 8],
 			"to": [21.3, 17.5, 8],
 			"rotation": {

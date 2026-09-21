@@ -1,12 +1,11 @@
 {
 	"title": "Firefly Jar",
 	"id": "deco-firefly-jar",
+	"drop": "imaginative",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"Personally, I like my fireflies trimmed"
-	],
+	"tooltips": ["Personally, I like my fireflies trimmed"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,

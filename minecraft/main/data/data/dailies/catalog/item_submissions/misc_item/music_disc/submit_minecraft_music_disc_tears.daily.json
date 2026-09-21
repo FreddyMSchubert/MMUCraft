@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:music_disc_tears",
-	"baseCost": 5,
-	"rewardPerIteration": 5,
+	"baseCost": 15,
+	"rewardPerIteration": 0,
 	"minimum": 1,
 	"maximum": 1,
 	"emoji": "😭",
 	"name": "Submit Music Disc Tears",
-	"description": "Submit one Music Disc Tears. Play it once. We paid for the whole disc. Have the items in your inventory when you click Claim."
+	"description": "Before you trade in this artistic masterpiece for soulless dabloons and submit to the greedy claws of capitalism, why not give it one last spin and enjoy the haunting sounds of a ghast's farewell?"
 }

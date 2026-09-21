@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:creeper_banner_pattern",
-	"baseCost": 0,
+	"baseCost": 1,
 	"rewardPerIteration": 5,
 	"minimum": 1,
 	"maximum": 1,
-	"emoji": "💥",
+	"emoji": "🏁",
 	"name": "Submit a Creeper Banner Pattern",
-	"description": "Submit one creeper banner pattern. Have the items in your inventory when you click Claim."
+	"description": "Submitting {count} creeper banner pattern seam like a good idea."
 }

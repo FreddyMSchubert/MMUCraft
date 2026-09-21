@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Spectacular Spectacles!"
-	],
+	"tooltips": ["Spectacular Spectacles!"],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 42,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
-		"unlockMessage": "Unlocked cosmetic: 3D Glasses."
+		"unlockMessage": "Unlocked cosmetic: 3D Glasses.",
+		"tags": ["stereoscopic", "movie"]
 	},
 	"equippableCosmetic": {}
 }

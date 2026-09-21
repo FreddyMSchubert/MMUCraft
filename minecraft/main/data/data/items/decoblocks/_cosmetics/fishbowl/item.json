@@ -1,12 +1,11 @@
 {
 	"title": "Fishbowl",
 	"id": "cosmetic-fishbowl",
+	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Bubble-teamed"
-	],
+	"tooltips": ["Bubble-teamed"],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -15,11 +14,13 @@
 		"lightLevel": 0
 	},
 	"shopPurchasable": {
+		"gameplayToggle": "imaginative",
 		"membersOnly": true,
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,
-		"unlockMessage": "Unlocked cosmetic: Fishbowl."
+		"unlockMessage": "Unlocked cosmetic: Fishbowl.",
+		"tags": ["aquarium"]
 	},
 	"equippableCosmetic": {}
 }

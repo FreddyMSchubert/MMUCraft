@@ -6,6 +6,11 @@ import {
 	PermissionFlagsBits,
 	SlashCommandBuilder,
 	WebhookClient,
+	type Collection,
+	type Guild,
+	type GuildMember,
+	type Role,
+	type Snowflake,
 } from 'discord.js';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { OnlinePlayerPresenceService } from '../players/online-player-presence.service';
@@ -121,11 +126,19 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private readonly client = new Client({
 		intents: [
 			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMembers,
 			GatewayIntentBits.GuildMessages,
 			GatewayIntentBits.MessageContent,
 		],
 	});
 	private webhook: WebhookClient | null = null;
+	private connectionIssue: string | null = null;
+	private membershipContextCache: {
+		fetchedAtUnixMs: number;
+		guild: Guild;
+		role: Role;
+		members: Collection<Snowflake, GuildMember>;
+	} | null = null;
 	private draining = false;
 	private drainPromise: Promise<void> | null = null;
 	private readonly pending = new Set<Promise<unknown>>();
@@ -142,10 +155,9 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	onApplicationBootstrap() {
 		const token = process.env.DISCORD_BOT_TOKEN?.trim();
 		const webhookUrl = process.env.DISCORD_WEBHOOK_URL?.trim();
-		if (!token || !webhookUrl || !this.channelId) {
-			this.logger.log(
-				'Discord bridge disabled; set DISCORD_BOT_TOKEN, DISCORD_WEBHOOK_URL, and DISCORD_CHANNEL_ID',
-			);
+		if (!token) {
+			this.connectionIssue = 'DISCORD_BOT_TOKEN is missing from the API environment';
+			this.logger.log('Discord bot disabled; set DISCORD_BOT_TOKEN');
 			return;
 		}
 		if (!this.avatarBaseUrl) {
@@ -154,14 +166,23 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			);
 		}
 
-		this.webhook = new WebhookClient({ url: webhookUrl });
-		this.client.once(
-			'ready',
-			() =>
-				void this.registerCommands().catch((error: unknown) => {
-					this.logger.error('Could not register the Discord commands', error);
-				}),
-		);
+		if (webhookUrl && this.channelId) this.webhook = new WebhookClient({ url: webhookUrl });
+		else
+			this.logger.log(
+				'Discord chat bridge disabled; set DISCORD_WEBHOOK_URL and DISCORD_CHANNEL_ID',
+			);
+		this.client.once('ready', () => {
+			this.connectionIssue = null;
+			void this.registerCommands().catch((error: unknown) => {
+				this.logger.error('Could not register the Discord commands', error);
+			});
+		});
+		this.client.on('shardDisconnect', (event) => {
+			this.connectionIssue =
+				event.code === 4014
+					? 'Guild Members Intent is not enabled for this bot in the Discord Developer Portal'
+					: `Discord gateway disconnected (code ${event.code})`;
+		});
 		this.client.on('messageCreate', (message) => {
 			if (
 				this.draining ||
@@ -191,6 +212,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 				this.track(this.listPlayers(interaction), 'Could not handle the Discord command');
 		});
 		void this.client.login(token).catch((error: unknown) => {
+			this.connectionIssue = error instanceof Error ? error.message : 'Discord login failed';
 			this.logger.error('Could not connect the Discord bot', error);
 		});
 	}
@@ -306,6 +328,35 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			for (const command of commands) await this.client.application?.commands.create(command);
 		}
 		this.logger.log('Discord bridge connected');
+	}
+
+	async membershipRoleContext() {
+		const guildId = process.env.DISCORD_GUILD_ID?.trim();
+		if (!guildId) throw new Error('DISCORD_GUILD_ID is missing from the API environment');
+		if (!this.client.isReady())
+			throw new Error(
+				this.connectionIssue ??
+					'Discord bot is offline; check its API logs and Guild Members Intent',
+			);
+		const guild = await this.client.guilds.fetch(guildId);
+		const role = await guild.roles.fetch('1500897435206287552');
+		if (!role) throw new Error('The 26/27 Member role was not found');
+		const bot = await guild.members.fetchMe();
+		if (!bot.permissions.has(PermissionFlagsBits.ManageRoles))
+			throw new Error('The bot does not have Manage Roles in this Discord server');
+		if (bot.roles.highest.comparePositionTo(role) <= 0)
+			throw new Error('Move the bot role above 26/27 Member in Server Settings → Roles');
+		const cached = this.membershipContextCache;
+		if (cached && Date.now() - cached.fetchedAtUnixMs < 60_000)
+			return { guild, role, members: cached.members };
+		const members = await guild.members.fetch();
+		this.membershipContextCache = {
+			fetchedAtUnixMs: Date.now(),
+			guild,
+			role,
+			members,
+		};
+		return { guild, role, members };
 	}
 
 	private async listPlayers(interaction: ChatInputCommandInteraction) {

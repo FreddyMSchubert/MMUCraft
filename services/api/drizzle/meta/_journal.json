@@ -239,6 +239,27 @@
       "when": 1789471437629,
       "tag": "0033_seed_missing_gameplay_toggles",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "6",
+      "when": 1789795200000,
+      "tag": "0034_rename_and_seed_seasonal_drops",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "6",
+      "when": 1789795200001,
+      "tag": "0035_rename_end_drop_to_void",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "6",
+      "when": 1789884135074,
+      "tag": "0036_spicy_molly_hayes",
+      "breakpoints": true
     }
   ]
 }

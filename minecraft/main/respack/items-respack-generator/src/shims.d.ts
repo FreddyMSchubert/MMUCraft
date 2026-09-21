@@ -67,6 +67,12 @@ declare module 'sharp' {
 	}
 
 	export interface SharpInstance {
+		ensureAlpha(): SharpInstance;
+		raw(): SharpInstance;
+		toBuffer(): Promise<Buffer>;
+		toBuffer(options: {
+			resolveWithObject: true;
+		}): Promise<{ data: Buffer; info: { width: number; height: number; channels: number } }>;
 		metadata(): Promise<Metadata>;
 		resize(options: {
 			width: number;
@@ -75,13 +81,15 @@ declare module 'sharp' {
 			fit: 'fill';
 		}): SharpInstance;
 		png(): SharpInstance;
-		toBuffer(): Promise<Buffer>;
 		composite(inputs: { input: string }[]): SharpInstance;
 		toFile(path: string): Promise<void>;
 	}
 
 	export interface SharpStatic {
-		(input: string | Buffer): SharpInstance;
+		(
+			input: string | Buffer,
+			options?: { raw: { width: number; height: number; channels: 4 } },
+		): SharpInstance;
 		kernel: {
 			nearest: unknown;
 		};

@@ -1,18 +1,19 @@
 {
 	"title": "Halo Hat",
 	"id": "cosmetic-halo-hat",
+	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Celestial Ring Light on your head"
-	],
+	"tooltips": ["Celestial Ring Light on your head"],
 	"shopPurchasable": {
+		"gameplayToggle": "beach-party",
 		"membersOnly": false,
-	    "priceDabloons": 85,
+		"priceDabloons": 85,
 		"description": "",
 		"unlockWeight": 25,
-		"unlockMessage": "Unlocked cosmetic: Halo."
+		"unlockMessage": "Unlocked cosmetic: Halo.",
+		"tags": ["angel"]
 	},
 	"equippableCosmetic": {}
 }

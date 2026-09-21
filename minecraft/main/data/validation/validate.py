@@ -94,6 +94,12 @@ def validate_document(validator: Draft202012Validator, document_path: Path) -> N
 		raise ItemDataError(
 			"\n".join(f"{document_path}: {format_error_path(e)}: {e.message}" for e in errors)
 		)
+	if document_path.name == "item.json" and "particleEmission" in document:
+		for index, emission in enumerate(document["particleEmission"]["particles"]):
+			if emission["minTicks"] > emission["maxTicks"]:
+				raise ItemDataError(f"{document_path}: particleEmission.particles[{index}]: minTicks exceeds maxTicks")
+			if any(start > end for start, end in zip(emission["from"], emission["to"])):
+				raise ItemDataError(f"{document_path}: particleEmission.particles[{index}]: from exceeds to")
 
 
 def validate_hopper_filter_groups(root: Path, validator: Draft202012Validator) -> int:

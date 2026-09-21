@@ -4,15 +4,14 @@
 	"modelType": "cosmetic",
 	"rarity": "mythical",
 	"maxStackSize": 1,
-	"tooltips": [
-		"A royal waste of Dabloons"
-	],
+	"tooltips": ["A royal waste of Dabloons"],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 50000,
 		"description": "",
 		"unlockWeight": 3,
-		"unlockMessage": "You have been crowned Biggest Moneywaster."
+		"unlockMessage": "You have been crowned Biggest Moneywaster.",
+		"tags": ["king", "queen"]
 	},
 	"equippableCosmetic": {}
 }

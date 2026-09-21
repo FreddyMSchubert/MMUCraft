@@ -9,10 +9,11 @@
 	],
 	"shopPurchasable": {
 		"membersOnly": false,
-	"priceDabloons": 150,
+		"priceDabloons": 150,
 		"description": "Unlock the War Bonnet cosmetic.",
 		"unlockWeight": 40,
-		"unlockMessage": "Unlocked cosmetic: War Bonnet."
+		"unlockMessage": "Unlocked cosmetic: War Bonnet.",
+		"tags": ["headdress", "feathers"]
 	},
 	"equippableCosmetic": {}
 }

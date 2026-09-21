@@ -4,9 +4,11 @@
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
 		"BedrockFormattingMixin",
+		"ConduitRecipeMixin",
 		"FormattedChatMessageMixin",
 		"BacapMessageFilterMixin",
 		"VanillaAdvancementAnnouncementMixin",
+		"MasteryAdvancementVisibilityMixin",
 		"CommandNodeAccessor",
 		"CommandExecutionMixin",
 		"ArmorAddToolTipFirstTick",
@@ -29,6 +31,8 @@
 		"LuckMobEffectMixin",
 		"InsertMultipleCoinsAtOnce",
 		"HopperFilterMixin",
+		"RedstoneRemoteChestMixin",
+		"AttackSwingCharmMixin",
 		"SoundEventRedirect",
 		"advancementDabloons.AdvancementMoneyTooltip",
 		"advancementDabloons.PlayerAdvancementsAccessor",
@@ -114,7 +118,15 @@
 		"maps.SmallEmptyMapUseMixin",
 		"maps.MapInvisibilityUpdateMixin",
 		"maps.TaggedFilledMapUseMixin",
-		"maps.MapStoredTooltipMixin"
+		"maps.MapStoredTooltipMixin",
+		"instancedloot.AbstractMinecartContainerMixin",
+		"instancedloot.BarrelBlockEntityMixin",
+		"instancedloot.BarrelOpenersCounterMixin",
+		"instancedloot.ChestBlockEntityMixin",
+		"instancedloot.ChestBlockMixin",
+		"instancedloot.ContainerEntityMixin",
+		"instancedloot.RandomizableContainerBlockEntityMixin",
+		"instancedloot.RandomizableContainerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

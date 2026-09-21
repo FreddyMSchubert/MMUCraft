@@ -171,6 +171,19 @@
 	animation: shopAnimatedTagPulse 1.8s ease-in-out infinite;
 }
 
+.shopTag.luminous {
+	border-color: rgba(128, 231, 255, 0.7);
+	background: rgba(92, 215, 255, 0.2);
+	color: #d8f8ff;
+	animation: shopLuminousPulse 2.2s ease-in-out infinite;
+}
+
+.shopTag.emissive {
+	border-color: rgba(255, 166, 102, 0.48);
+	background: rgba(255, 166, 102, 0.14);
+	color: #ffd2ae;
+}
+
 .shopTag.membersOnly,
 .shopFilterRow button.filter-members-only {
 	border-color: rgba(255, 209, 102, 0.42);
@@ -201,6 +214,30 @@
 	}
 	50% {
 		box-shadow: 0 0 12px rgba(195, 122, 255, 0.28);
+	}
+}
+
+@keyframes shopLuminousPulse {
+	0%,
+	100% {
+		border-color: rgba(128, 231, 255, 0.58);
+		box-shadow: 0 0 5px rgba(105, 224, 255, 0.3);
+		text-shadow: 0 0 3px rgba(105, 224, 255, 0.35);
+	}
+	50% {
+		border-color: #d8f8ff;
+		box-shadow:
+			0 0 12px rgba(105, 224, 255, 0.8),
+			0 0 24px rgba(105, 224, 255, 0.48);
+		text-shadow: 0 0 9px rgba(216, 248, 255, 0.9);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.shopTag.luminous,
+	.shopFilterRow button.filter-luminous {
+		animation: none;
+		box-shadow: 0 0 10px rgba(105, 224, 255, 0.55);
 	}
 }
 
@@ -388,10 +425,39 @@
 		#0d131d;
 }
 
-.shopDetailsPreviewEmbed:has(.view-item-frame) {
-	background:
-		linear-gradient(rgba(12, 20, 29, 0.18), rgba(12, 20, 29, 0.42)),
-		center / cover no-repeat url('/assets/landing/panoramas/classic/panorama_0.webp');
+.shopDetailsPreviewEmbed.night {
+	background: radial-gradient(circle at center, #151c2b, #080d16 70%);
+}
+.shopPreviewControls {
+	display: flex;
+	align-items: stretch;
+	background: #101722;
+}
+.shopPreviewControls .shopCosmeticViewControl {
+	flex: 1;
+	min-width: 0;
+}
+.shopNightToggle {
+	flex: 0 0 56px;
+	width: 56px;
+	height: 56px;
+	margin-left: auto;
+	border: 1px solid #ffffff20;
+	background: #101722;
+	color: #ffe2a3;
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+.shopNightToggle[aria-pressed='true'] {
+	color: #c2d6ff;
+	background: #192438;
+}
+.shopNightToggle:hover {
+	background: #253148;
+}
+.shopNightToggle:focus-visible {
+	outline: 2px solid #c2d6ff;
+	outline-offset: -4px;
 }
 
 .shopDetailsPreviewEmbed .shopModelHost,

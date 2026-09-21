@@ -31,10 +31,6 @@ public class WalletCharm implements Charm, UseCallbackCharm
 
     public record CoinDef(String id, int value) {}
     public static final List<CoinDef> COINS = List.of(
-            new CoinDef("coin-1000000", 1_000_000),
-            new CoinDef("coin-500000",   500_000),
-            new CoinDef("coin-100000",   100_000),
-            new CoinDef("coin-50000",     50_000),
             new CoinDef("coin-10000",     10_000),
             new CoinDef("coin-5000",       5_000),
             new CoinDef("coin-1000",       1_000),

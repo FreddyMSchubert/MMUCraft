@@ -15,5 +15,16 @@
 		"unlockMessage": "Unlocked cosmetic: Unicorn Horn.",
 		"tags": ["magic", "horse"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:glow_squid_ink",
+				"from": [7, 7, 7],
+				"to": [9, 11, 9],
+				"minTicks": 35,
+				"maxTicks": 80
+			}
+		]
+	}
 }

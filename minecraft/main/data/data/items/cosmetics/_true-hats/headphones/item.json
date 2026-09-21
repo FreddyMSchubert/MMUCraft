@@ -14,6 +14,17 @@
 		"tags": ["headset"]
 	},
 	"equippableCosmetic": {},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:note",
+				"from": [0, 5, 3],
+				"to": [16, 14, 13],
+				"minTicks": 12,
+				"maxTicks": 28
+			}
+		]
+	},
 	"dyeable": {
 		"tintColor": "#FFFFFF"
 	}

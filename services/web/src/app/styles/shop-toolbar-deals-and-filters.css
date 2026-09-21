@@ -415,15 +415,17 @@
 }
 
 .shopFilterRow button.filter-luminous:not(.active) {
-	border-color: rgba(105, 224, 255, 0.42);
-	color: #b8f2ff;
+	border-color: rgba(128, 231, 255, 0.7);
+	background: rgba(92, 215, 255, 0.12);
+	color: #d8f8ff;
+	animation: shopLuminousPulse 2.2s ease-in-out infinite;
 }
 
 .shopFilterRow button.filter-luminous.active {
 	border-color: #b8f2ff;
-	background: rgba(105, 224, 255, 0.22);
+	background: rgba(92, 215, 255, 0.26);
 	color: #e5fbff;
-	box-shadow: 0 0 16px rgba(105, 224, 255, 0.28);
+	animation: shopLuminousPulse 2.2s ease-in-out infinite;
 }
 
 .shopResultLine {

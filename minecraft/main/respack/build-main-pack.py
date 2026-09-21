@@ -415,6 +415,21 @@ def sync_project_sounds_into_general_pack():
 					directory.rmdir()
 
 
+def remove_pack_metadata():
+	removed = 0
+	for path in sorted(MERGED.rglob("*"), key=lambda p: len(p.parts), reverse=True):
+		if path.is_file() and (
+			"__MACOSX" in path.relative_to(MERGED).parts
+			or path.name == ".DS_Store"
+			or path.name.startswith("._")
+		):
+			path.unlink()
+			removed += 1
+		elif path.is_dir() and not any(path.iterdir()):
+			path.rmdir()
+	print(f"==> Removed {removed} archive metadata files")
+
+
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--force", action="store_true", help="Rebuild the resource pack even when inputs are unchanged.")
@@ -448,6 +463,7 @@ def main():
 			print(" -", p)
 		run("java", "-jar", str(jar), *map(str, inputs), str(MERGED))
 
+	remove_pack_metadata()
 	print("==> Creating zip archive")
 	shutil.make_archive(str(FINAL_ZIP.with_suffix("")), "zip", MERGED)
 

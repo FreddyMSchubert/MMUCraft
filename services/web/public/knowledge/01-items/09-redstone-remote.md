@@ -13,3 +13,10 @@ tips:
 - You can remotely trigger explosions using a Redstone Remote.
 ====
 
+# Redstone Remote
+
+Redstone remotes allow you to send redstone signals over vast distances.
+
+To create one, craft it like this:
+
+![Redstone Remote recipe](/assets/knowledge/items/redstone-remote/recipe.png)

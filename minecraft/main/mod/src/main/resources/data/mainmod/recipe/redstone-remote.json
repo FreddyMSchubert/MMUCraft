@@ -1,7 +1,7 @@
 {
 	"type": "mainmod:fake_crafting_shaped",
 	"gameplayToggle": "inventors",
-	"pattern": ["BRB", "BAB", "BCB"],
+	"pattern": ["BAB", "BRB", "BCB"],
 	"key": {
 		"B": "minecraft:blackstone",
 		"R": "minecraft:redstone",

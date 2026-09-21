@@ -12,6 +12,7 @@ import {
 	decorateDabloonHtml,
 	stripDangerousHtml,
 	stripMetadataBlock,
+	filterDropGuards,
 } from './knowledge/knowledge-markdown-renderer';
 import {
 	filterUnlockedTree,
@@ -277,9 +278,10 @@ export function KnowledgeTab({
 	}, [activePagePath, contentVersion]);
 
 	const renderedHtml = useMemo(() => {
-		const html = stripDangerousHtml(knowledgeMarkdown.parse(pageMarkdown, { async: false }));
+		const visibleMarkdown = filterDropGuards(pageMarkdown, new Set(data?.enabledDropIds ?? []));
+		const html = stripDangerousHtml(knowledgeMarkdown.parse(visibleMarkdown, { async: false }));
 		return activePage?.id === 'money-basics' ? html : decorateDabloonHtml(html);
-	}, [activePage?.id, pageMarkdown]);
+	}, [activePage?.id, data?.enabledDropIds, pageMarkdown]);
 
 	useEffect(() => {
 		const article = articleRef.current;

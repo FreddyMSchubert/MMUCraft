@@ -7,5 +7,5 @@
 	"maximum": 40,
 	"emoji": "💎",
 	"name": "Submit Amethyst Shards",
-	"description": "Submit {count} amethyst shards. The geode will grow more. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} amethyst shards. It's actually 'amethyst sherd'."
 }

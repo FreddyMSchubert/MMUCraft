@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:coarse_dirt",
-	"baseCost": 0,
+	"baseCost": 1,
 	"rewardPerIteration": 0.1,
 	"minimum": 30,
 	"maximum": 40,
 	"emoji": "🟫",
 	"name": "Submit Coarse Dirt",
-	"description": "Submit {count} coarse dirt. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} coarse dirt. - What's your favourite minecraft block? - Of course dirt! - I didn't know you could turn off coarse dirt."
 }

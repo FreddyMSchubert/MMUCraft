@@ -1,11 +1,12 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "deco-kettle",
+	"drop": "imaginative",
 	"baseCost": 0,
 	"rewardPerIteration": 0.75,
 	"minimum": 4,
 	"maximum": 8,
 	"emoji": "🫖",
 	"name": "Submit Kettles",
-	"description": "Submit {count} kettles. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} kettles. Place it on a bell to get jacked."
 }

@@ -2,10 +2,10 @@
 	"type": "submit_item",
 	"item": "minecraft:emerald_block",
 	"baseCost": 0,
-	"rewardPerIteration": 3,
-	"minimum": 2,
-	"maximum": 4,
+	"rewardPerIteration": 2.5,
+	"minimum": 8,
+	"maximum": 64,
 	"emoji": "🟩",
-	"name": "Submit Emerald Blocks",
-	"description": "Convert {count} emerald blocks into Dabloons. Have the items in your inventory when you click Claim."
+	"name": "Currency exchange",
+	"description": "Submit {count} emerald blocks. Still better than the Diamond -> Emerald trade."
 }

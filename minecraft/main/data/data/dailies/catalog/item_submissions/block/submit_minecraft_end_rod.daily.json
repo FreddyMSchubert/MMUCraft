@@ -8,5 +8,5 @@
 	"maximum": 12,
 	"emoji": "💡",
 	"name": "Submit End Rods",
-	"description": "Submit {count} end rods. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} end rods. If someone else gets a redstone item submission today, that was not me."
 }

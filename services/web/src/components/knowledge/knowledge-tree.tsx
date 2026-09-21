@@ -21,6 +21,7 @@ export interface KnowledgePage {
 
 export interface KnowledgeResponse {
 	contentVersion: number;
+	enabledDropIds: string[];
 	readRewardDabloons: number;
 	lastUnlockedKnowledgeId: string | null;
 	unlockedKnowledgeIds: string[];

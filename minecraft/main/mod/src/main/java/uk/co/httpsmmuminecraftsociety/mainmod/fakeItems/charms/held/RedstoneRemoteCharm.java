@@ -436,8 +436,12 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     private static boolean refreshRemote(ItemStack stack, ServerLevel level, BlockPos source) {
         boolean linksChanged = pruneDestroyedLinks(stack, level, source);
         boolean modelChanged = setModel(stack,
-                linkStatus(stack, level, source, selectedFrequency(stack)) == LinkStatus.READY);
+                sensorReachable(linkStatus(stack, level, source, selectedFrequency(stack))));
         return linksChanged || modelChanged;
+    }
+
+    private static boolean sensorReachable(LinkStatus status) {
+        return status == LinkStatus.READY || status == LinkStatus.BUSY || status == LinkStatus.MISMATCH;
     }
 
     private static void reportUnavailable(@Nullable ServerPlayer player, ItemStack stack,
@@ -451,7 +455,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
             case OTHER_DIMENSION, OUT_OF_RANGE, UNLOADED, MISSING -> "Unable to reach sensor"
                     + (label == null ? "" : " (" + label + ")") + " on frequency " + frequency + ".";
             case BUSY -> "Sensor" + (label == null ? "" : " (" + label + ")")
-                    + " is busy on frequency " + frequency + ".";
+                    + " is already active on frequency " + frequency + ".";
             case MISMATCH -> "Sensor" + (label == null ? "" : " (" + label + ")")
                     + " no longer matches frequency " + frequency + ".";
             case READY -> null;
@@ -466,7 +470,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         boolean changed = sameLink && status == LinkStatus.MISSING
                 && removeLink(delivery.remote(), delivery.frequency(), delivery.pos());
         if ((sameLink || current == null) && selectedFrequency(delivery.remote()) == delivery.frequency()) {
-            changed |= setModel(delivery.remote(), false);
+            changed |= setModel(delivery.remote(), sameLink && sensorReachable(status));
         }
         if (changed && delivery.sender() != null) syncInventory(delivery.sender());
         reportUnavailable(delivery.sender(), delivery.remote(), delivery.frequency(), status);
@@ -563,12 +567,6 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
             int vibrationFrequency = Math.min(delivery.frequency(), 15);
             sensor.setLastVibrationFrequency(vibrationFrequency);
             ((SculkSensorBlock) state.getBlock()).activate(null, level, pos, state, 15, vibrationFrequency);
-            if (selectedFrequency(delivery.remote()) == delivery.frequency()) {
-                Link current = linkedSensor(delivery.remote(), delivery.frequency());
-                if (current != null && current.dimension().equals(dimension(level))
-                        && current.pos().equals(pos) && setModel(delivery.remote(), false)
-                        && delivery.sender() != null) syncInventory(delivery.sender());
-            }
         }
         if (queue.isEmpty()) DELIVERIES.remove(level);
     }

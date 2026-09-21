@@ -34,6 +34,7 @@ export interface KnowledgeDocument {
 
 export interface KnowledgeSearchPage {
 	id: string;
+	markdown: string;
 	title: string;
 	folders: string;
 	tags: string;

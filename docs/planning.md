@@ -90,7 +90,7 @@ Surprising Saturday: Long Puzzle (like bac advancements pirate puzzle), more hin
 Sunday (Inventors Drop):
 - Easy sorting systems with a special hopper filter item
 - Screenshot: player messing with storage system wearing inventor's tophat
-- bow system - hold stuff in offhand to attach
+- redstone remotes
 
 ## Week 7
 

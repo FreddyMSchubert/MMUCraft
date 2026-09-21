@@ -9,8 +9,8 @@
 	"armor_trim": 18,
 	"submit_minecraft_emerald.daily.json": 69,
 	"submit_minecraft_glowstone.daily.json": 12,
-	"submit_minecraft_prismarine_shard.daily.json": 12,
-	"submit_minecraft_prismarine_crystals.daily.json": 12,
+	"submit_minecraft_prismarine_shard.daily.json": 8,
+	"submit_minecraft_prismarine_crystals.daily.json": 8,
 	"submit_minecraft_tnt_minecart.daily.json": 10,
 	"submit_minecraft_enchanted_book_sharpness_2.daily.json": 8,
 	"submit_minecraft_potion_slow_falling.daily.json": 6,
@@ -23,6 +23,6 @@
 	"submit_minecraft_ominous_bottle.daily.json": 6,
 	"submit_minecraft_heart_of_the_sea.daily.json": 5,
 	"banner_pattern": 10,
-	"clover": 14,
-	"submit_fake_soul.daily.json": 8
+	"clover": 4,
+	"submit_fake_soul.daily.json": 20
 }

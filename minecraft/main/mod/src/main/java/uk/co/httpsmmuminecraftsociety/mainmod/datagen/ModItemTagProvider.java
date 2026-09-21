@@ -208,6 +208,7 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(key(Items.DARK_OAK_LOG))
                 .add(key(Items.MANGROVE_LOG))
                 .add(key(Items.CHERRY_LOG))
+                .add(key(Items.POPLAR_LOG))
                 .add(key(Items.PALE_OAK_LOG))
 
                 // Stripped logs
@@ -219,6 +220,7 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(key(Items.STRIPPED_DARK_OAK_LOG))
                 .add(key(Items.STRIPPED_MANGROVE_LOG))
                 .add(key(Items.STRIPPED_CHERRY_LOG))
+                .add(key(Items.STRIPPED_POPLAR_LOG))
                 .add(key(Items.STRIPPED_PALE_OAK_LOG))
 
                 // Wood
@@ -230,6 +232,7 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(key(Items.DARK_OAK_WOOD))
                 .add(key(Items.MANGROVE_WOOD))
                 .add(key(Items.CHERRY_WOOD))
+                .add(key(Items.POPLAR_WOOD))
                 .add(key(Items.PALE_OAK_WOOD))
 
                 // Stripped wood
@@ -241,6 +244,7 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(key(Items.STRIPPED_DARK_OAK_WOOD))
                 .add(key(Items.STRIPPED_MANGROVE_WOOD))
                 .add(key(Items.STRIPPED_CHERRY_WOOD))
+                .add(key(Items.STRIPPED_POPLAR_WOOD))
                 .add(key(Items.STRIPPED_PALE_OAK_WOOD));
 
         // single: leather, copper, chainmail, iron, everything else unless they have charm boost enchantment
@@ -321,6 +325,7 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(key(Items.TROPICAL_FISH))
                 .add(key(Items.PUFFERFISH));
         builder(MUSHROOMS)
+                .add(key(Items.SHELF_MUSHROOM))
                 .add(key(Items.BROWN_MUSHROOM))
                 .add(key(Items.RED_MUSHROOM));
         builder(FUNGI)

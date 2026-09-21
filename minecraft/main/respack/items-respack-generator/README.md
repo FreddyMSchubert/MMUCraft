@@ -7,7 +7,7 @@ Generates the resource-pack side of the composable fake-item system.
 Set `light_emission` on each exported model element that should remain visible in darkness:
 `0` (or absent) uses normal lighting, `1`–`14` sets an intermediate minimum, and `15` is fully
 bright. Blockbench groups must export this property on their constituent elements.
-`shade` is preserved in generated models but is not used to identify emission.
+Use `shade_direction_override` for fixed directional shading. It does not set emission.
 
 The generator writes OptiFine `_e.png` overlays beside generated textures using the UVs
 of elements with positive `light_emission`. Unselected pixels are transparent; selected
@@ -26,10 +26,10 @@ UV region, both sample the emissive pixels. Use separate UV regions for exact se
 Intermediate emission is an approximation in the overlay; shader-pack bloom and lighting
 remain controlled by the shader pack. Emissive surfaces do not cast light onto nearby blocks.
 
-The shop preview uses `light_emission` directly, never `_e` images or `shade`. Its day/night
+The shop preview uses `light_emission` directly, never `_e` images or `shade_direction_override`. Its day/night
 button appears for emissive models and preserves the model rotation. It uses a Bright-style
 night lightmap approximation and retains each element's emission as a minimum brightness.
-Block previews use static Trails & Tales and 26.2 panoramas for day and night respectively.
+Block previews use static Trails & Tales and Chaos Cubed panoramas for day and night respectively.
 
 Run generator regression tests with `npm test` in this directory.
 

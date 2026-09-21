@@ -115,7 +115,7 @@ public class LootTableModifiers {
             return;
         }
 
-        Entity entity = lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY);
+        Entity entity = lootContext.getOptional(LootContextParams.THIS_ENTITY);
 
         if (!(entity instanceof Player player)) {
             return;
@@ -176,7 +176,7 @@ public class LootTableModifiers {
 
             if (stack.is(Items.PLAYER_HEAD)
                     && Identifier.fromNamespaceAndPath("minecraft", "entities/player").equals(tableId)
-                    && lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof Player player) {
+                    && lootContext.getOptional(LootContextParams.THIS_ENTITY) instanceof Player player) {
                 String deathMessage = player.getCombatTracker().getDeathMessage().getString();
                 String owner = player.getDisplayName().getString();
 

@@ -94,7 +94,7 @@ public final class PickaxeHeaterCharm implements Charm
     private static ServerPlayer getMiningPlayer(LootContext lootContext)
     {
         if (!lootContext.hasParameter(LootContextParams.THIS_ENTITY)) return null;
-        if (!(lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof ServerPlayer player)) return null;
+        if (!(lootContext.getOptional(LootContextParams.THIS_ENTITY) instanceof ServerPlayer player)) return null;
         return player;
     }
 
@@ -102,7 +102,7 @@ public final class PickaxeHeaterCharm implements Charm
     {
         if (!lootContext.hasParameter(LootContextParams.TOOL)) return ItemStack.EMPTY;
 
-        ItemInstance tool = lootContext.getOptionalParameter(LootContextParams.TOOL);
+        ItemInstance tool = lootContext.getOptional(LootContextParams.TOOL);
         if (!(tool instanceof ItemStack stack)) return ItemStack.EMPTY;
 
         return stack;

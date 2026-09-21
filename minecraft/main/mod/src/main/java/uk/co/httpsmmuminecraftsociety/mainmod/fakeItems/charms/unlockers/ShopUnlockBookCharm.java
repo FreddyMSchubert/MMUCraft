@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers;
 
+import net.minecraft.util.Prediction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -138,7 +139,7 @@ public class ShopUnlockBookCharm implements Charm, UseCallbackCharm {
         book.shrink(1);
         player.getInventory().add(charm);
         if (!charm.isEmpty()) {
-            player.drop(charm, false);
+            player.drop(charm, false, Prediction.SERVER_ONLY);
         }
     }
 }

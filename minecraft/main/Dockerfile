@@ -3,7 +3,8 @@ FROM itzg/minecraft-server:java25
 # https://docker-minecraft-server.readthedocs.io/en/latest/variables/
 ENV EULA=TRUE
 ENV TYPE=FABRIC
-ENV VERSION=26.2
+ENV VERSION=26.3
+ENV FABRIC_LOADER_VERSION=0.19.5
 ENV ICON=/server-icon.jpg
 ENV OVERRIDE_ICON=TRUE
 

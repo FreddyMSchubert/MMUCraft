@@ -6,8 +6,8 @@ export const DEFAULT_PACK_DESCRIPTION = 'Official MMU MC Soc Server Resource Pac
 
 export const PACK_MCMETA = {
 	pack: {
-		min_format: [75, 0],
-		max_format: 75,
+		min_format: [97, 1],
+		max_format: [97, 1],
 		description: DEFAULT_PACK_DESCRIPTION,
 	},
 } as const;

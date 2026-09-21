@@ -196,12 +196,12 @@ public final class AdvancementMoney {
     ) {
         RewardCalculation reward = rewardForAdvancement(advancementId, experience, isMember);
         if (reward.baseReward() == 0) {
-            return displayInfo.getDescription()
+            return displayInfo.description()
                     .copy()
                     .append(MoneyHelper.ReplaceDabloonWords("\n\nNo Dabloon reward")
                             .withStyle(ChatFormatting.DARK_GRAY));
         }
-        return displayInfo.getDescription()
+        return displayInfo.description()
                 .copy()
                 .append(Component.literal("\nBase reward: ").withStyle(ChatFormatting.GRAY))
                 .append(MoneyHelper.FormatDabloonWord(reward.baseReward()).withStyle(ChatFormatting.GREEN))

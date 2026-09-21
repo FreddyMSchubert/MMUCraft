@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.maps;
 
+import net.minecraft.util.Prediction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -136,7 +137,7 @@ public final class SmallMaps {
         refreshStoredTooltip(filled, size);
 
         if (emptyMap.isEmpty()) return InteractionResult.SUCCESS.heldItemTransformedTo(filled);
-        if (!player.getInventory().add(filled.copy())) player.drop(filled, false);
+        if (!player.getInventory().add(filled.copy())) player.drop(filled, false, Prediction.SERVER_ONLY);
         return InteractionResult.SUCCESS;
     }
 

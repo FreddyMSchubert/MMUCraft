@@ -125,8 +125,9 @@ services:
             TZ: Europe/London
             EULA: 'TRUE'
             TYPE: FABRIC
-            VERSION: '26.2'
-            MODRINTH_PROJECTS: fabric-api,fabricproxy-lite:2.12.0,simple-voice-chat:JDkcoyAy
+            VERSION: '26.3'
+            FABRIC_LOADER_VERSION: '0.19.5'
+            MODRINTH_PROJECTS: fabric-api:0.161.0+26.3,fabricproxy-lite:2.12.0,simple-voice-chat:OLnMVWXy
             MEMORY: 2G
             INIT_MEMORY: 1G
             STOP_DURATION: '110'

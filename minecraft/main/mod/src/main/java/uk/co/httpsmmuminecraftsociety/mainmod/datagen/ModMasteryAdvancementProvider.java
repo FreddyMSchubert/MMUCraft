@@ -5,9 +5,11 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricAdvancementProvider;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementType;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.advancements.triggers.ImpossibleTrigger;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.ClientAsset;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -30,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -61,13 +64,13 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         if (definition == null) throw new IllegalStateException("Unknown mastery parent: " + path);
         Advancement.Builder builder = new Advancement.Builder();
         if (definition.parent != null) builder.parent(save(definition.parent, consumer));
-        builder.display(icon(definition.icon), Component.literal(definition.title),
+        builder.display(new DisplayInfo(icon(definition.icon), Component.literal(definition.title),
                 Component.literal(definition.description),
-                path.equals("root") ? Identifier.parse("minecraft:block/enderite_block") : null,
+                path.equals("root") ? Optional.of(new ClientAsset.ResourceTexture(Identifier.parse("minecraft:block/enderite_block"))) : Optional.empty(),
                 AdvancementType.valueOf(definition.frame.toUpperCase(java.util.Locale.ROOT)),
-                !path.equals("root"), !path.equals("root"), hidden(path));
+                !path.equals("root"), !path.equals("root"), hidden(path)));
         builder.addCriterion("done", CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()));
-        AdvancementHolder holder = builder.save(consumer, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "mastery/" + path).toString());
+        AdvancementHolder holder = builder.save(consumer, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "mastery/" + path));
         saved.put(path, holder);
         return holder;
     }

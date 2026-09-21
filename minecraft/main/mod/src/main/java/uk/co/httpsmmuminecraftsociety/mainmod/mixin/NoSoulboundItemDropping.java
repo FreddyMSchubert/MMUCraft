@@ -48,8 +48,9 @@ public abstract class NoSoulboundItemDropping {
                 continue;
             }
 
-            ItemEntity drop = this.player.drop(stack, true, false);
+            ItemEntity drop = this.player.createItemStackToDrop(stack, true, false);
             if (drop != null) {
+                this.player.level().addFreshEntity(drop);
                 ((ItemEntityAgeAccessor) drop).mainmod$setAge(DEATH_DROP_AGE);
             }
             this.setItem(slot, ItemStack.EMPTY);

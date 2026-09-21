@@ -150,6 +150,21 @@ tasks.register('checkSlimeDetector', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkMigration', JavaExec) {
+    group = 'verification'
+    description = 'Check brewing inputs and component patches after the Minecraft update.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.MigrationCheck'
+    enableAssertions = true
+    args projectDir.absolutePath
+    workingDir = layout.buildDirectory.dir('migrationCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('checkMigration')
+}
+
 tasks.register('checkFishing', JavaExec) {
     group = 'verification'
     description = 'Check fishing wait timing, approach speed, first-bob chance, and physical shadow scale.'

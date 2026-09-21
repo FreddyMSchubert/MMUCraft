@@ -2,17 +2,13 @@
 	"name": "Coins",
 	"items": [
 		"mainmod:coin-1",
-		"mainmod:coin-10",
-		"mainmod:coin-100",
-		"mainmod:coin-1000",
-		"mainmod:coin-10000",
-		"mainmod:coin-100000",
-		"mainmod:coin-1000000",
 		"mainmod:coin-5",
+		"mainmod:coin-10",
 		"mainmod:coin-50",
+		"mainmod:coin-100",
 		"mainmod:coin-500",
+		"mainmod:coin-1000",
 		"mainmod:coin-5000",
-		"mainmod:coin-50000",
-		"mainmod:coin-500000"
+		"mainmod:coin-10000"
 	]
 }

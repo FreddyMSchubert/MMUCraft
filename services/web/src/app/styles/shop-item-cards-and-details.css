@@ -171,6 +171,13 @@
 	animation: shopAnimatedTagPulse 1.8s ease-in-out infinite;
 }
 
+.shopTag.luminous {
+	border-color: rgba(105, 224, 255, 0.48);
+	background: rgba(105, 224, 255, 0.14);
+	color: #b8f2ff;
+	box-shadow: 0 0 10px rgba(105, 224, 255, 0.18);
+}
+
 .shopTag.membersOnly,
 .shopFilterRow button.filter-members-only {
 	border-color: rgba(255, 209, 102, 0.42);

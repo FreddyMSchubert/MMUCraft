@@ -456,6 +456,12 @@ function ItemBadges({ item }: { item: ShopItem }) {
 				<AnimatedLabel />
 			</span>
 		) : null,
+		item.luminous ? (
+			<span key="luminous" className="shopTag luminous">
+				{item.membershipLocked && <ShopLock />}
+				Luminous
+			</span>
+		) : null,
 		item.membersOnly ? (
 			<span key="members-only" className="shopTag membersOnly">
 				{item.membershipLocked && <ShopLock />}

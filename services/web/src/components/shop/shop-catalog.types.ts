@@ -8,7 +8,7 @@ export type ShopOrder =
 	| 'price-desc'
 	| 'price-asc';
 export type ShopTagFilter =
-	'all' | 'dyeable' | 'animated' | 'discounted' | 'sold-out' | 'members-only';
+	'all' | 'dyeable' | 'animated' | 'luminous' | 'discounted' | 'sold-out' | 'members-only';
 
 interface CharmLevel {
 	level: number;
@@ -38,6 +38,7 @@ export interface ShopItem {
 	modelUrl: string | null;
 	textureUrl: string | null;
 	animated: boolean;
+	luminous: boolean;
 	dyeable: boolean;
 	decoBlock: boolean;
 	membersOnly: boolean;
@@ -78,6 +79,7 @@ export const TAG_OPTIONS: { value: ShopTagFilter; label: string }[] = [
 	{ value: 'all', label: 'All' },
 	{ value: 'dyeable', label: 'Dyeable' },
 	{ value: 'animated', label: 'Animated' },
+	{ value: 'luminous', label: 'Luminous' },
 	{ value: 'members-only', label: 'Members-only' },
 	{ value: 'discounted', label: 'Discounted' },
 	{ value: 'sold-out', label: 'Sold out' },

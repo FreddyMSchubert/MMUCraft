@@ -414,6 +414,18 @@
 	box-shadow: 0 0 16px rgba(195, 122, 255, 0.32);
 }
 
+.shopFilterRow button.filter-luminous:not(.active) {
+	border-color: rgba(105, 224, 255, 0.42);
+	color: #b8f2ff;
+}
+
+.shopFilterRow button.filter-luminous.active {
+	border-color: #b8f2ff;
+	background: rgba(105, 224, 255, 0.22);
+	color: #e5fbff;
+	box-shadow: 0 0 16px rgba(105, 224, 255, 0.28);
+}
+
 .shopResultLine {
 	display: flex;
 	justify-content: space-between;

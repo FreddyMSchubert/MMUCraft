@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CalibratedSculkSensorBlock;
 import net.minecraft.world.level.block.NoteBlock;
@@ -387,6 +388,10 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
                 && Math.abs((source.getZ() >> 4) - (target.getZ() >> 4)) <= distance;
     }
 
+    private static boolean sensorChunkIsTicking(ServerLevel level, BlockPos pos) {
+        return level.shouldTickBlocksAt(ChunkPos.pack(pos.getX() >> 4, pos.getZ() >> 4));
+    }
+
     private static LinkStatus linkStatus(ItemStack stack, ServerLevel level, BlockPos source,
                                          int selectedFrequency) {
         Link link = linkedSensor(stack, selectedFrequency);
@@ -395,7 +400,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         BlockPos pos = link.pos();
         if (!level.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return LinkStatus.UNLOADED;
         if (!withinSimulationDistance(level, source, pos)
-                || !level.shouldTickBlocksAt(pos.asLong())) return LinkStatus.OUT_OF_RANGE;
+                || !sensorChunkIsTicking(level, pos)) return LinkStatus.OUT_OF_RANGE;
         BlockState state = level.getBlockState(pos);
         if (!isSensor(state)
                 || !(level.getBlockEntity(pos) instanceof SculkSensorBlockEntity)) return LinkStatus.MISSING;
@@ -416,7 +421,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
             BlockPos pos = link.pos();
             if (!level.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) continue;
             if (!withinSimulationDistance(level, source, pos)
-                    || !level.shouldTickBlocksAt(pos.asLong())) continue;
+                    || !sensorChunkIsTicking(level, pos)) continue;
             BlockState state = level.getBlockState(pos);
             if (!isSensor(state) || !(level.getBlockEntity(pos) instanceof SculkSensorBlockEntity)) {
                 removed.add(entry.getKey());
@@ -521,7 +526,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
             }
             BlockPos source = sender == null ? delivery.source() : sender.blockPosition();
             if (!withinSimulationDistance(level, source, pos)
-                    || !level.shouldTickBlocksAt(pos.asLong())) {
+                    || !sensorChunkIsTicking(level, pos)) {
                 deliveryUnavailable(delivery, level, LinkStatus.OUT_OF_RANGE);
                 continue;
             }

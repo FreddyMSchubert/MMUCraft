@@ -12,15 +12,15 @@ const CHANNELS = 16;
 const HUE_START = 0;
 const COLOR = {
   off: {
-    screenHighlight: { lightness: 0.72, chroma: 0.08 },
-    screen: { lightness: 0.58, chroma: 0.09 },
-    button: { lightness: 0.72, chroma: 0.08 },
+    screenHighlight: { lightness: 0.73, chroma: 0.22 },
+    screen: { lightness: 0.60, chroma: 0.28 },
+    button: { lightness: 0.73, chroma: 0.24 },
     antenna: { lightness: 0.38, chroma: 0 },
   },
   on: {
-    screenHighlight: { lightness: 0.88, chroma: 0.10 },
-    screen: { lightness: 0.71, chroma: 0.12 },
-    button: { lightness: 0.82, chroma: 0.12 },
+    screenHighlight: { lightness: 0.82, chroma: 0.22 },
+    screen: { lightness: 0.68, chroma: 0.28 },
+    button: { lightness: 0.82, chroma: 0.24 },
     antenna: { lightness: 0.92, chroma: 0.13 },
   },
 };

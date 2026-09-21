@@ -22,7 +22,7 @@ public abstract class MasteryAdvancementVisibilityMixin {
     @Shadow public abstract AdvancementProgress getOrStartProgress(AdvancementHolder holder);
 
     @Inject(method = "lambda$updateTreeVisibility$1", at = @At("HEAD"), cancellable = true)
-    private void mainmod$revealMasteryMilestonesInOrder(Set<AdvancementHolder> additions,
+    private void mainmod$revealMasteryMilestonesInOrder(Set<AdvancementNode> additions,
             Set<Identifier> removals, AdvancementNode node, boolean shouldShow, CallbackInfo ci) {
         String id = node.holder().id().toString();
         if (!id.startsWith("mainmod:mastery/")) return;
@@ -40,7 +40,7 @@ public abstract class MasteryAdvancementVisibilityMixin {
         if (prerequisite != null && getOrStartProgress(prerequisite).isDone()) {
             if (hour) {
                 if (visible.add(node.holder())) {
-                    additions.add(node.holder());
+                    additions.add(node);
                     if (getOrStartProgress(node.holder()).isDone()) progressChanged.add(node.holder());
                 }
                 ci.cancel();

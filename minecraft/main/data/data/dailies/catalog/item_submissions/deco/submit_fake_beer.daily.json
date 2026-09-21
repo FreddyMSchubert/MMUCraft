@@ -4,9 +4,9 @@
 	"drop": "nether",
 	"baseCost": 4,
 	"rewardPerIteration": 1.5,
-	"minimum": 3,
-	"maximum": 3,
+	"minimum": 2,
+	"maximum": 8,
 	"emoji": "🍺",
 	"name": "Submit Beer",
-	"description": "Submit three beers. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} beers. I Hope you enjoy a few pints with the lads tonight!"
 }

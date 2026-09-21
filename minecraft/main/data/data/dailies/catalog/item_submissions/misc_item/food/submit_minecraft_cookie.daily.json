@@ -4,8 +4,8 @@
 	"baseCost": 1,
 	"rewardPerIteration": 0.125,
 	"minimum": 24,
-	"maximum": 32,
+	"maximum": 64,
 	"emoji": "🍪",
 	"name": "Submit Cookies",
-	"description": "Submit {count} cookies. Cocoa beans are doing the heavy lifting again. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} cockies. Should be called bakie instead - get it? Because you bake a cookie instead of cooking it. You see if it were cooked then it would make a lot of sense for it to be called a cookie, but since it is baked then a bakie would make more sense - don't you think? I mean, you could also call it a biscuit but that comes from the latin biscocktus I mean biscocktus I mean biscuctus, which comes from Bis meaning twice, and Cocktus I mean Coctus meaning to cook. But if it is baked? So who is it not called a bakie??? Thank you for cocking I mean coming to my TED Talk, I feel like I cocked I mean cooked here. PS: You can feed these to parrots for a fun advancement BTW!"
 }

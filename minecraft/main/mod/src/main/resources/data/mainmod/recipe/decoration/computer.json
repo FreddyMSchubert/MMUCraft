@@ -1,0 +1,19 @@
+{
+  "type": "mainmod:fake_crafting_shaped",
+  "pattern": [
+    "CLC",
+    "GRG",
+    "SSS"
+  ],
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "L": "mainmod:redstone_lamp",
+    "G": "minecraft:gold_block",
+    "R": "minecraft:redstone",
+    "S": "minecraft:stripped_birch_log"
+  },
+  "result": {
+    "stack": "mainmod:deco-computer",
+    "count": 1
+  }
+}

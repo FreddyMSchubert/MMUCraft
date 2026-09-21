@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:diamond_block",
-	"baseCost": 0,
-	"rewardPerIteration": 8.5,
+	"baseCost": 10,
+	"rewardPerIteration": 10,
 	"minimum": 1,
-	"maximum": 2,
+	"maximum": 3,
 	"emoji": "💎",
 	"name": "Submit Diamond Blocks",
-	"description": "Convert {count} diamond blocks into Dabloons. Yes, whole blocks. This one is supposed to hurt. Have the items in your inventory when you click Claim."
+	"description": "Convert {count} diamond blocks into Dabloons. Yes, whole blocks. This one is supposed to hurt."
 }

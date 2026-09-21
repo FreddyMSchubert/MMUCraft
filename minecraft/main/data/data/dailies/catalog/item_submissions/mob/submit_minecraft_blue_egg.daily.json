@@ -4,8 +4,8 @@
 	"baseCost": 3,
 	"rewardPerIteration": 0.5,
 	"minimum": 3,
-	"maximum": 5,
+	"maximum": 16,
 	"emoji": "🔵",
 	"name": "Submit Blue Eggs",
-	"description": "Submit {count} blue eggs. The shell colour matters. White eggs do not count. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} blue eggs. These guys would've grown up to become amazing hairdressers had I not been craving omlettes - yum yum!"
 }

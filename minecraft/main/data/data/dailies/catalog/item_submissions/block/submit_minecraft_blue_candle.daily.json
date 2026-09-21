@@ -1,11 +1,11 @@
 {
 	"type": "submit_item",
 	"item": "minecraft:blue_candle",
-	"baseCost": 1,
+	"baseCost": 2,
 	"rewardPerIteration": 0.6,
-	"minimum": 4,
-	"maximum": 8,
+	"minimum": 6,
+	"maximum": 12,
 	"emoji": "🔵",
 	"name": "Submit Blue Candles",
-	"description": "Submit {count} blue candles. Have the items in your inventory when you click Claim."
+	"description": "Submit {count} blue candles. Crunch crunch crunch - Mia"
 }

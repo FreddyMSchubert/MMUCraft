@@ -3,7 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket.PositionedAdvancement;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Mixin(PlayerAdvancements.class)
@@ -25,13 +25,13 @@ public class AdvancementMoneyTooltip {
             method = "flushDirty",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/network/protocol/game/ClientboundUpdateAdvancementsPacket;<init>(ZLjava/util/Collection;Ljava/util/Set;Ljava/util/Map;Z)V"
+                    target = "Lnet/minecraft/network/protocol/game/ClientboundUpdateAdvancementsPacket;<init>(ZLjava/util/List;Ljava/util/Set;Ljava/util/Map;Z)V"
             ),
             index = 1
     )
-    private Collection<AdvancementHolder> mainmod$addMoneyTooltips(Collection<AdvancementHolder> added) {
+    private List<PositionedAdvancement> mainmod$addMoneyTooltips(List<PositionedAdvancement> added) {
         return added.stream()
-                .map(this::withAugmentedDisplay)
+                .map(entry -> new PositionedAdvancement(withAugmentedDisplay(entry.advancement()), entry.x(), entry.y()))
                 .toList();
     }
 
@@ -58,21 +58,20 @@ public class AdvancementMoneyTooltip {
     private Optional<DisplayInfo> augmentedDisplay(AdvancementHolder holder, Advancement advancement) {
         return advancement.display().map(displayInfo -> {
             DisplayInfo copy = new DisplayInfo(
-                    displayInfo.getIcon(),
-                    displayInfo.getTitle(),
+                    displayInfo.icon(),
+                    displayInfo.title(),
                     AdvancementMoney.appendMoneyReward(
                             holder.id(),
                             displayInfo,
                             advancement.rewards().experience(),
                             PlayerStatsSync.isMember(this.player)
                     ),
-                    displayInfo.getBackground(),
-                    displayInfo.getType(),
-                    displayInfo.shouldShowToast(),
-                    displayInfo.shouldAnnounceChat(),
-                    displayInfo.isHidden()
+                    displayInfo.background(),
+                    displayInfo.type(),
+                    displayInfo.showToast(),
+                    displayInfo.announceToChat(),
+                    displayInfo.hidden()
             );
-            copy.setLocation(displayInfo.getX(), displayInfo.getY());
             return copy;
         });
     }

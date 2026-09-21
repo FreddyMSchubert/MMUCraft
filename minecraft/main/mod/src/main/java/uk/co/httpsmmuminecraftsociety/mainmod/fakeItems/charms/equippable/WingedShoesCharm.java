@@ -85,7 +85,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
                 player.setOnGround(false);
                 player.resetFallDistance();
 
-                player.hurtMarked = true;
+                player.syncVelocity = true;
                 player.connection.send(new ClientboundSetEntityMotionPacket(player));
 
                 usedJumps++;

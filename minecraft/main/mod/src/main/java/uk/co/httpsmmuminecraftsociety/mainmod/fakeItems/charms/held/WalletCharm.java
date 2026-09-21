@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
+import net.minecraft.util.Prediction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -73,7 +74,7 @@ public class WalletCharm implements Charm, UseCallbackCharm
         if (isWallet(wallet) < 1) return InteractionResult.SUCCESS;
 
         setBalance(wallet, -1, true);
-        ItemEntity coin = player.drop(FakeItems.ID_MAP.get("coin-1").createItemStack(), false);
+        ItemEntity coin = player.drop(FakeItems.ID_MAP.get("coin-1").createItemStack(), false, Prediction.SERVER_ONLY);
         if (coin != null) {
             var random = level.getRandom();
             double speed = 0.35 + random.nextDouble() * 0.4;

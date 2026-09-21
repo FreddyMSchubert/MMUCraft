@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
+import net.minecraft.util.Prediction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -95,7 +96,7 @@ public final class FishingModifiers {
                 ItemStack remainder = stack.copyWithCount(stack.getCount() - 1);
                 stack.setCount(1);
                 if (!player.getInventory().add(remainder) && !remainder.isEmpty()) {
-                    player.drop(remainder, false);
+                    player.drop(remainder, false, Prediction.SERVER_ONLY);
                 }
             }
 
@@ -107,7 +108,7 @@ public final class FishingModifiers {
 
         int nextDamage = stack.getDamageValue() + 1;
         if (nextDamage >= maxUses) {
-            player.onEquippedItemBroken(stack.getItem(), EquipmentSlot.OFFHAND);
+            player.onEquippedItemBroken(stack, EquipmentSlot.OFFHAND);
             stack.shrink(1);
         } else {
             stack.setDamageValue(nextDamage);

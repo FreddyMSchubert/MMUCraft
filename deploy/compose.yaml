@@ -110,21 +110,20 @@ services:
         environment:
             EULA: 'TRUE'
             TYPE: FABRIC
-            VERSION: '26.2'
+            VERSION: '26.3'
             FABRIC_LOADER_VERSION: '0.19.5'
             MODRINTH_PROJECTS: |-
-                fabric-api
-                lithium?
-                ferrite-core?
-                krypton?
-                c2me-fabric?
-                scalablelux?
-                servercore?
-                zfastnoise?
+                fabric-api:0.161.0+26.3
+                lithium?:WXHRsMRl
+                ferrite-core?:d5ddUdiB
+                c2me-fabric?:XgxQ7H1c
+                scalablelux?:g4eqNSKd
+                servercore?:LCG1Bm84
+                zfastnoise?:bjeF0iDC
                 fabricproxy-lite:2.12.0
-                simple-voice-chat:JDkcoyAy
-                ledger
-                fabric-language-kotlin
+                simple-voice-chat:OLnMVWXy
+                ledger:f72cP4Ni
+                fabric-language-kotlin:eRRZzGMc
             MODRINTH_DOWNLOAD_DEPENDENCIES: required
             STOP_DURATION: '110'
             USE_MEOWICE_FLAGS: 'true'

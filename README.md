@@ -2,6 +2,8 @@
 
 MMUCraft has four main parts. `services/web` is the Next.js website. `services/api` is the NestJS API and owns authentication, application rules, routing, and SQLite data. `services/velocity` is the public Minecraft entry point. It authenticates players and routes them to backend servers. `minecraft/main/mod` is the Fabric server mod. The mod connects gameplay events and commands to the API through gRPC.
 
+The server targets Minecraft Java `26.3`. See the [migration report](docs/minecraft-26.3-migration.md) for dependency versions, fixes, verification results, and the staging checklist.
+
 ## Development
 
 Install Docker Compose, Git, GNU Make, Python 3.10 or later, JDK 25, and Node.js 24.14.0.
@@ -37,9 +39,9 @@ Use `make db-generate`, `make db-check`, and `make db-studio` for database work.
 
 Simple Voice Chat provides proximity audio up to 48 blocks and whisper audio up to 24 blocks. Players can also create groups for distance-independent chat. Players without the client mod can still join, but cannot send or receive voice audio.
 
-The setup installs Simple Voice Chat Fabric `2.6.23` for Minecraft `26.2` and the Velocity plugin `2.6.18`. Velocity publishes UDP port `24454` and forwards voice packets to the private backend. The containers have separate network addresses, so they can use the same internal port. See the [official proxy setup](https://modrepo.de/minecraft/voicechat/wiki/proxy_setup).
+The setup installs Simple Voice Chat Fabric `2.6.24` for Minecraft `26.3` and the Velocity plugin `2.6.18`. Velocity publishes UDP port `24454` and forwards voice packets to the private backend. The containers have separate network addresses, so they can use the same internal port. See the [official proxy setup](https://modrepo.de/minecraft/voicechat/wiki/proxy_setup).
 
-Install [Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat) for Minecraft `26.2` and your client mod loader. Join the server, press `V`, and complete the microphone setup. Use push-to-talk or voice activation. Leave your group to use proximity chat.
+Install [Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat) for Minecraft `26.3` and your client mod loader. Join the server, press `V`, and complete the microphone setup. Use push-to-talk or voice activation. Leave your group to use proximity chat.
 
 Run `make` to build the images and start the updated local setup. Allow inbound UDP `24454` in the host firewall and hosting panel. For a home server, forward this UDP port through the router. TCP port `25565` alone does not carry voice audio.
 

@@ -108,7 +108,7 @@ public class PlayerAdvancementMoney {
                 DiscordBridge.advancement(
                         rewardedPlayer,
                         discordAction(display),
-                        display.getTitle().getString(),
+                        display.title().getString(),
                         reward
                 );
             }
@@ -138,7 +138,7 @@ public class PlayerAdvancementMoney {
         }
 
         if ("minecraft".equals(advancementHolder.id().getNamespace())) {
-            return display.shouldAnnounceChat();
+            return display.announceToChat();
         }
 
         return reward >= 30;
@@ -151,7 +151,7 @@ public class PlayerAdvancementMoney {
             int reward,
             boolean announcePublicly
     ) {
-        String action = switch (display.getType()) {
+        String action = switch (display.type()) {
             case TASK -> "achieved";
             case GOAL -> "reached the goal";
             case CHALLENGE -> "completed the challenge";
@@ -182,7 +182,7 @@ public class PlayerAdvancementMoney {
     }
 
     private String discordAction(DisplayInfo display) {
-        return switch (display.getType()) {
+        return switch (display.type()) {
             case TASK -> "achieved";
             case GOAL -> "reached the goal";
             case CHALLENGE -> "completed the challenge";

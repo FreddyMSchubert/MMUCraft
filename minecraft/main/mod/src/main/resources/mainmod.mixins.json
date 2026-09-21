@@ -27,7 +27,6 @@
 		"respawn.EndPortalExitToWorldSpawn",
 		"respawn.KeepItemsOnVoidDeath",
 		"XPBottlesDropMoreXPFromPhials",
-		"PotionBrewingMixin",
 		"LuckMobEffectMixin",
 		"InsertMultipleCoinsAtOnce",
 		"HopperFilterMixin",

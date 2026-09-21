@@ -1,36 +1,27 @@
 {
-  "schemaVersion": 1,
-  "id": "mainmod",
-  "version": "${version}",
-  "name": "Main Mod",
-  "description": "Main Mod driving the custom content for MMU Minecraft Society.",
-  "authors": [
-    "Frederick Schubert"
-  ],
-  "contact": {
-    "homepage": "https://mmuminecraftsociety.co.uk/",
-    "sources": "https://github.com/FreddyMSchubert/MMU_MCSoc_kubecraft"
-  },
-  "license": "CC0-1.0",
-  "icon": "assets/mainmod/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "uk.co.httpsmmuminecraftsociety.mainmod.MainMod"
-    ],
-    "fabric-datagen": [
-      "uk.co.httpsmmuminecraftsociety.mainmod.MainModDatagen"
-    ]
-  },
-  "mixins": [
-    "mainmod.mixins.json",
-    "mainmod.glider.mixins.json"
-  ],
-  "accessWidener": "mainmod.accesswidener",
-  "depends": {
-    "fabricloader": ">=0.19.3",
-    "minecraft": ">=26.2-",
-    "java": ">=25",
-    "fabric-api": "*"
-  }
+	"schemaVersion": 1,
+	"id": "mainmod",
+	"version": "${version}",
+	"name": "Main Mod",
+	"description": "Main Mod driving the custom content for MMU Minecraft Society.",
+	"authors": ["Frederick Schubert"],
+	"contact": {
+		"homepage": "https://mmuminecraftsociety.co.uk/",
+		"sources": "https://github.com/FreddyMSchubert/MMU_MCSoc_kubecraft"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/mainmod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["uk.co.httpsmmuminecraftsociety.mainmod.MainMod"],
+		"fabric-datagen": ["uk.co.httpsmmuminecraftsociety.mainmod.MainModDatagen"]
+	},
+	"mixins": ["mainmod.mixins.json", "mainmod.glider.mixins.json"],
+	"accessWidener": "mainmod.accesswidener",
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
 }

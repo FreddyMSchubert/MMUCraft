@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.money;
 
+import net.minecraft.util.Prediction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -184,7 +185,7 @@ public final class MoneyHelper {
     private static void addCoins(ServerPlayer player, int amount) {
         for (ItemStack stack : createCoinStacks(amount)) {
             player.getInventory().add(stack);
-            if (!stack.isEmpty()) player.drop(stack, false);
+            if (!stack.isEmpty()) player.drop(stack, false, Prediction.SERVER_ONLY);
         }
     }
 }

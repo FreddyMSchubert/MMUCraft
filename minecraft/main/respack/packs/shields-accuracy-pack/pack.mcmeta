@@ -1,7 +1,13 @@
 {
-    "pack": {
-    "min_format": 84,
-    "max_format": 96,
-        "description": "shields pack"
-    }
+  "pack": {
+    "min_format": [
+      97,
+      1
+    ],
+    "max_format": [
+      97,
+      1
+    ],
+    "description": "shields pack"
+  }
 }

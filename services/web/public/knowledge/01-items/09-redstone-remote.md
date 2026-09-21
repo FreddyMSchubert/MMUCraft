@@ -67,9 +67,9 @@ That is because both the calibrated sculk sensor and the redstone remote work in
 
 To set the calibrated sculk sensor to a certain frequency, power the side of it that is marked in pink with amethyst with a redstone signal as strong as you want the frequency to be. So, since a redstone block creates a redstone power of strength 15, placing it right next to the amethyst side of a calibrated sculk sensor will put it into frequency 15.
 
-To set the redstone remote to a certain frequency, hold shift then left click with the remote in hand to decrease the frequency, and press right click to increase it.
+To set the redstone remote to a certain frequency, hold shift then left click with the remote in hand to decrease the frequency, and hold shift then right click to increase it.
 
-Redstone remotes can only pair one calibrated sculk sensor per frequency, but they do not the sculk sensors paired on other frequencies, so you can pair up to 16 different calibrated sculk sensors to one remote.
+Redstone remotes can only pair one calibrated sculk sensor per frequency, but they do not forget about the sculk sensors paired on other frequencies, so you can pair up to 16 different calibrated sculk sensors to one remote.
 
 A calibrated sculk sensor is in frequency 0 / off when it is not powered by redstone at all.
 

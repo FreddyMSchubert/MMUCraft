@@ -161,7 +161,7 @@
 	);
 	color: #fff;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.72);
-	animation: shopRainbowHue 4.4s linear infinite;
+	animation: shopRainbowHue 2.1s linear infinite;
 }
 
 .shopTag.animated {
@@ -179,9 +179,53 @@
 }
 
 .shopTag.emissive {
-	border-color: rgba(255, 166, 102, 0.48);
-	background: rgba(255, 166, 102, 0.14);
-	color: #ffd2ae;
+	border-color: rgba(81, 238, 213, 0.65);
+	background: rgba(28, 124, 131, 0.22);
+	color: #baffef;
+}
+
+.shopTag.emissive,
+.shopFilterRow button.filter-emissive {
+	position: relative;
+	isolation: isolate;
+	overflow: visible;
+}
+
+.emissiveSparks {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.emissiveSpark {
+	position: absolute;
+	left: var(--spark-left);
+	top: var(--spark-top);
+	width: 3px;
+	height: 3px;
+	background: var(--spark-color);
+	box-shadow: 0 0 6px var(--spark-color);
+	opacity: 0;
+	animation: emissiveSparkFloat var(--spark-duration) ease-in-out var(--spark-delay) infinite;
+}
+
+@keyframes emissiveSparkFloat {
+	0%,
+	100% {
+		opacity: 0;
+		transform: translate(-50%, -50%) scale(0.6);
+	}
+	30% {
+		opacity: 1;
+		transform: translate(calc(-50% + var(--spark-drift-x)), calc(-50% + var(--spark-drift-y)))
+			scale(1);
+	}
+	70% {
+		opacity: 0.68;
+		transform: translate(calc(-50% - var(--spark-drift-x)), calc(-50% - var(--spark-drift-y)))
+			scale(0.7);
+	}
 }
 
 .shopTag.membersOnly,
@@ -238,6 +282,11 @@
 	.shopFilterRow button.filter-luminous {
 		animation: none;
 		box-shadow: 0 0 10px rgba(105, 224, 255, 0.55);
+	}
+	.emissiveSpark {
+		animation: none;
+		opacity: 0.8;
+		transform: translate(-50%, -50%);
 	}
 }
 

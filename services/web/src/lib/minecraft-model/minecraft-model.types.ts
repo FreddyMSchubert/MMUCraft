@@ -6,6 +6,18 @@ export interface TextureAnimationOptions {
 	frames: number[] | null;
 }
 
+export interface ParticleEmissionSpec {
+	particle: string;
+	from: [number, number, number];
+	to: [number, number, number];
+	minTicks: number;
+	maxTicks: number;
+}
+
+export interface ParticleEmissionDefinition {
+	particles: ParticleEmissionSpec[];
+}
+
 export interface MinecraftModelRendererOptions {
 	assetRoot?: string;
 	antialias?: boolean;
@@ -19,6 +31,7 @@ export interface MinecraftModelRendererOptions {
 	enableDrag?: boolean;
 	frameDelayMs?: number;
 	frameSequence?: number[] | null;
+	particleEmission?: ParticleEmissionDefinition | null;
 	pixelRatio?: number;
 	preserveDrawingBuffer?: boolean;
 	rotationSpeed?: number;

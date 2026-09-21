@@ -45,6 +45,19 @@ export interface TextureAnimationDefinition {
 	frames: number[] | null;
 }
 
+export interface ParticleEmissionDefinition {
+	particles: {
+		particle: string;
+		from: [number, number, number];
+		to: [number, number, number];
+		minTicks: number;
+		maxTicks: number;
+		color?: string;
+		scale?: number;
+		arguments?: string;
+	}[];
+}
+
 export interface ItemRenderAsset {
 	animation: TextureAnimationDefinition | null;
 	modelFilePath: string | null;
@@ -71,6 +84,7 @@ export interface CatalogItem extends ItemRenderAsset {
 	animated: boolean;
 	luminous: boolean;
 	emissive: boolean;
+	particleEmission: ParticleEmissionDefinition | null;
 	dyeable: boolean;
 	decoBlock: boolean;
 	deliveryKind: ShopDeliveryKind;

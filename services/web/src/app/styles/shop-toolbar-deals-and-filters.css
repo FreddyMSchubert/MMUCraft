@@ -390,7 +390,7 @@
 		rgba(190, 80, 255, 0.28)
 	);
 	color: #fff;
-	animation: shopRainbowHue 4.8s linear infinite;
+	animation: shopRainbowHue 2.3s linear infinite;
 }
 
 .shopFilterRow button.filter-dyeable.active {
@@ -398,7 +398,7 @@
 	background: linear-gradient(105deg, #ff3d70, #ffbe3d, #42e297, #34b3ff, #be50ff, #ff3d70);
 	color: #10141d;
 	box-shadow: 0 0 18px rgba(96, 210, 255, 0.32);
-	animation: shopRainbowHue 4s linear infinite;
+	animation: shopRainbowHue 1.9s linear infinite;
 }
 
 .shopFilterRow button.filter-animated:not(.active) {
@@ -422,10 +422,24 @@
 }
 
 .shopFilterRow button.filter-luminous.active {
-	border-color: #b8f2ff;
-	background: rgba(92, 215, 255, 0.26);
-	color: #e5fbff;
+	border-color: #d8f8ff;
+	background: #83dbff;
+	color: #073145;
+	box-shadow: 0 0 18px rgba(90, 213, 255, 0.7);
 	animation: shopLuminousPulse 2.2s ease-in-out infinite;
+}
+
+.shopFilterRow button.filter-emissive:not(.active) {
+	border-color: rgba(81, 238, 213, 0.65);
+	background: rgba(28, 124, 131, 0.17);
+	color: #baffef;
+}
+
+.shopFilterRow button.filter-emissive.active {
+	border-color: #94ffe6;
+	background: rgba(44, 189, 191, 0.38);
+	color: #effff9;
+	box-shadow: 0 0 15px rgba(55, 225, 203, 0.35);
 }
 
 .shopResultLine {

@@ -7,13 +7,12 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"gameplayToggle": "welcoming",
 		"membersOnly": true,
 		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Calico Cat Pet Hat.",
-		"tags": ["cat", "cute", "pet", "white", "orange", "calico", "animated", "kitten", "kitty"]
+		"tags": ["cat", "cute", "pet", "white", "orange", "calico", "animated", "kitten", "kitty"],
 		"gameplayToggle": "welcoming"
 	},
 	"equippableCosmetic": {}

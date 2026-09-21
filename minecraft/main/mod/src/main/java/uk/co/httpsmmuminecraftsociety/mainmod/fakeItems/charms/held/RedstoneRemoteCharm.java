@@ -6,6 +6,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -56,6 +58,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     public static final int CHARM_ID = 57;
     private static final String FREQUENCY_KEY = "mainmod_remote_frequency";
     private static final String SENSORS_KEY = "mainmod_remote_sensors";
+    private static final String LABELS_KEY = "mainmod_remote_labels";
     private static final String DIMENSION_KEY = "dimension";
     private static final String POSITION_KEY = "position";
     private static final Map<ServerLevel, PriorityQueue<Delivery>> DELIVERIES = new HashMap<>();
@@ -192,6 +195,27 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         return selectedFrequency == 0 ? "/" : Integer.toString(selectedFrequency);
     }
 
+    public static void labelSelectedFrequency(ItemStack stack, String label) {
+        CompoundTag data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        CompoundTag labels = data.getCompound(LABELS_KEY).orElseGet(CompoundTag::new);
+        labels.putString(Integer.toString(selectedFrequency(stack)), label);
+        data.put(LABELS_KEY, labels);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
+        updateLore(stack);
+    }
+
+    private static Map<Integer, String> frequencyLabels(ItemStack stack) {
+        CompoundTag data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        CompoundTag entries = data.getCompound(LABELS_KEY).orElse(null);
+        if (entries == null) return Map.of();
+        Map<Integer, String> labels = new HashMap<>();
+        for (int frequency = 0; frequency <= 15; frequency++) {
+            String label = entries.getStringOr(Integer.toString(frequency), "");
+            if (!label.isBlank()) labels.put(frequency, label);
+        }
+        return labels;
+    }
+
     private static void tune(ItemStack stack, ServerPlayer player, ServerLevel level, int step) {
         int next = Math.floorMod(frequency(stack) + step, 16);
         CompoundTag data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
@@ -199,7 +223,10 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
         updateLore(stack);
         refreshRemote(stack, level);
-        player.sendSystemMessage(Component.literal("Remote frequency: " + frequencyLabel((next + 1) % 16)), true);
+        int selected = (next + 1) % 16;
+        String label = frequencyLabels(stack).get(selected);
+        player.sendSystemMessage(Component.literal("Remote frequency: " + frequencyLabel(selected)
+                + (label == null ? "" : ": " + label)), true);
     }
 
     private static String dimension(ServerLevel level) {
@@ -283,25 +310,41 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         }
         if (lore.isEmpty()) lore.addAll(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
         int selectedFrequency = selectedFrequency(stack);
-        lore.add(Component.literal("Frequency: " + frequencyLabel(selectedFrequency)
-                        + (selectedFrequency == 0 ? " (none)" : ""))
-                .withStyle(ChatFormatting.AQUA));
         Map<Integer, Link> links = linkedSensors(stack);
-        if (links.isEmpty()) {
-            lore.add(Component.literal("Linked sensors: none").withStyle(ChatFormatting.AQUA));
-        } else {
-            for (int linkedFrequency = 0; linkedFrequency <= 15; linkedFrequency++) {
-                Link linked = links.get(linkedFrequency);
-                if (linked == null) continue;
-                lore.add(Component.literal("Sensor " + frequencyLabel(linkedFrequency)
-                                + (linkedFrequency == 0 ? " (none)" : "") + ": "
-                                + linked.pos().getX() + ", " + linked.pos().getY() + ", "
-                                + linked.pos().getZ() + " (" + linked.dimension() + ")")
-                        .withStyle(ChatFormatting.AQUA));
+        Map<Integer, String> labels = frequencyLabels(stack);
+        lore.add(Component.literal("Frequencies:").withStyle(ChatFormatting.WHITE));
+        for (int frequency = 0; frequency <= 15; frequency++) {
+            Link linked = links.get(frequency);
+            String label = labels.get(frequency);
+            if (linked == null && label == null) continue;
+            boolean selected = frequency == selectedFrequency;
+            MutableComponent line = Component.literal(selected ? "> " : "  ")
+                    .withStyle(ChatFormatting.WHITE)
+                    .append(Component.literal(frequencyLabel(frequency) + (frequency < 10 ? "  : " : " : "))
+                            .withStyle(style -> style.withColor(TextColor.fromRgb(selected ? 0xFF4444 : 0xFF9999))));
+            if (linked != null) {
+                line.append(Component.literal(formatPosition(linked))
+                        .withStyle(style -> style.withColor(TextColor.fromRgb(selected ? 0x55AAFF : 0xA9D8FF))));
             }
+            if (label != null) {
+                line.append(Component.literal(linked == null ? label : ": " + label)
+                        .withStyle(style -> style.withColor(TextColor.fromRgb(selected ? 0xFFFFFF : 0xBBBBBB))));
+            }
+            lore.add(line);
         }
         stack.set(DataComponents.LORE, new ItemLore(lore));
         FakeItems.wrapTooltip(stack);
+    }
+
+    private static String formatPosition(Link link) {
+        BlockPos pos = link.pos();
+        String dimension = switch (link.dimension()) {
+            case "minecraft:overworld" -> "";
+            case "minecraft:the_nether" -> "|Nether";
+            case "minecraft:the_end" -> "|End";
+            default -> "|" + link.dimension();
+        };
+        return "[" + pos.getX() + "," + pos.getY() + "," + pos.getZ() + dimension + "]";
     }
 
     private static int sensorFrequency(ServerLevel level, BlockPos pos, BlockState state) {

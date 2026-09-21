@@ -13,6 +13,7 @@ tips:
 - Don't forget to read the knowledge books you unlock! Once you're done reading, you'll even get some Dabloons as a reward!
 - Dailies give especially large amounts of Dabloons if you manage to complete all of them on a given day.
 - If you find a bug, we may decide to reward you some Dabloons when you report it, although this is not guaranteed. If you intentionally exploit a bug you will get banned.
+- You can earn dabloons by inviting your friends! You can get a referral link on the website, and if they use that to sign up, you'll get dabloons! Help us grow the society!
 ====
 
 # Coins (Currency)

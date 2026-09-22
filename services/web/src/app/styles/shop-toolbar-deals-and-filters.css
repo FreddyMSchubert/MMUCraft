@@ -383,11 +383,11 @@
 	border-color: rgba(120, 240, 221, 0.62);
 	background: linear-gradient(
 		105deg,
-		rgba(255, 61, 112, 0.28),
-		rgba(255, 190, 61, 0.25),
-		rgba(66, 226, 151, 0.25),
-		rgba(52, 179, 255, 0.27),
-		rgba(190, 80, 255, 0.28)
+		rgba(255, 61, 112, 0.42),
+		rgba(255, 190, 61, 0.38),
+		rgba(66, 226, 151, 0.38),
+		rgba(52, 179, 255, 0.4),
+		rgba(190, 80, 255, 0.42)
 	);
 	color: #fff;
 	animation: shopRainbowHue 2.3s linear infinite;
@@ -422,24 +422,24 @@
 }
 
 .shopFilterRow button.filter-luminous.active {
-	border-color: #d8f8ff;
-	background: #83dbff;
-	color: #073145;
-	box-shadow: 0 0 18px rgba(90, 213, 255, 0.7);
+	border-color: #9aeaff;
+	background: rgba(64, 179, 225, 0.36);
+	color: #e0faff;
+	box-shadow: 0 0 15px rgba(90, 213, 255, 0.45);
 	animation: shopLuminousPulse 2.2s ease-in-out infinite;
 }
 
 .shopFilterRow button.filter-emissive:not(.active) {
-	border-color: rgba(81, 238, 213, 0.65);
-	background: rgba(28, 124, 131, 0.17);
-	color: #baffef;
+	border-color: rgba(97, 230, 118, 0.6);
+	background: rgba(31, 119, 48, 0.18);
+	color: #c4ffcb;
 }
 
 .shopFilterRow button.filter-emissive.active {
-	border-color: #94ffe6;
-	background: rgba(44, 189, 191, 0.38);
-	color: #effff9;
-	box-shadow: 0 0 15px rgba(55, 225, 203, 0.35);
+	border-color: #a4f5b0;
+	background: rgba(57, 163, 70, 0.34);
+	color: #effff0;
+	box-shadow: 0 0 15px rgba(75, 218, 93, 0.35);
 }
 
 .shopResultLine {

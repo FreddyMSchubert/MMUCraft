@@ -8,7 +8,7 @@
 	"tooltips": ["Perfect for a motorcycle ride"],
 	"shopPurchasable": {
 		"gameplayToggle": "soaring",
-		"membersOnly": true,
+		"membersOnly": false,
 		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 75,

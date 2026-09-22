@@ -6,7 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": ["The sign of a true fashionista"],
 	"shopPurchasable": {
-		"membersOnly": true,
+		"membersOnly": false,
 		"priceDabloons": 50,
 		"description": "",
 		"unlockWeight": 90,

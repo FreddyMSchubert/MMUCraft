@@ -8,7 +8,7 @@
 	"tooltips": ["It tickles a bit"],
 	"shopPurchasable": {
 		"gameplayToggle": "circus",
-		"membersOnly": true,
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 60,

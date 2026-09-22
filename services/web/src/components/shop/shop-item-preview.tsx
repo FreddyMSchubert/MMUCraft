@@ -406,15 +406,3 @@ function isConnected(element: Element) {
 function isAborted(signal: AbortSignal) {
 	return signal.aborted;
 }
-
-export function ShopMetaIcons({ item }: { item: ShopItem }) {
-	if (!item.animated && !item.dyeable) return null;
-	return (
-		<div className="shopMetaIcons">
-			{item.animated && (
-				<span className="shopMetaIcon shopMetaIcon-animated" title="Animated texture" />
-			)}
-			{item.dyeable && <span className="shopMetaIcon shopMetaIcon-dyeable" title="Dyeable" />}
-		</div>
-	);
-}

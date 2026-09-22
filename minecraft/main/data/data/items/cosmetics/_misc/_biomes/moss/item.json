@@ -8,7 +8,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"gameplayToggle": "beach-party",
-		"membersOnly": false,
+		"membersOnly": true,
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 20,

@@ -1,6 +1,9 @@
 import * as THREE from 'three';
+import { ASSETS } from '@/lib/assets';
 import { modelSpaceToWorld, TICK_MS } from './minecraft-model-geometry';
+import { loadImageFromSource } from './minecraft-texture-registry';
 import {
+	NoteParticle,
 	PARTICLE_TYPES,
 	type MinecraftParticle,
 	type MinecraftParticleConstructor,
@@ -25,9 +28,14 @@ export class MinecraftParticleRenderer {
 	private readonly group = new THREE.Group();
 	private readonly emitters: Emitter[];
 	private readonly particles: VisibleParticle[] = [];
-	private readonly textures = new Map<ParticleTexture, THREE.CanvasTexture>();
+	private readonly textures = new Map<ParticleTexture, THREE.Texture>();
+	private disposed = false;
 
-	constructor(parent: THREE.Group, definition: ParticleEmissionDefinition | null | undefined) {
+	constructor(
+		parent: THREE.Group,
+		definition: ParticleEmissionDefinition | null | undefined,
+		assetRoot: string = ASSETS.minecraft.root,
+	) {
 		this.emitters = (definition?.particles ?? []).flatMap((spec): Emitter[] => {
 			const type = PARTICLE_TYPES.get(spec.particle);
 			if (!type) return [];
@@ -37,6 +45,8 @@ export class MinecraftParticleRenderer {
 			return [{ spec, type, remainingMs: Math.random() * randomInterval(min, max) }];
 		});
 		parent.add(this.group);
+		if (this.emitters.some((emitter) => emitter.type.id === NoteParticle.id))
+			void this.loadNoteTexture(assetRoot);
 	}
 
 	get active() {
@@ -69,6 +79,7 @@ export class MinecraftParticleRenderer {
 	}
 
 	dispose() {
+		this.disposed = true;
 		for (const visible of this.particles) {
 			this.group.remove(visible.sprite);
 			visible.sprite.material.dispose();
@@ -89,9 +100,11 @@ export class MinecraftParticleRenderer {
 			),
 		);
 		const particle = new emitter.type(position);
+		const texture = this.texture(particle.texture);
+		if (!texture) return;
 		const sprite = new THREE.Sprite(
 			new THREE.SpriteMaterial({
-				map: this.texture(particle.texture),
+				map: texture,
 				color: particle.color,
 				transparent: true,
 				depthWrite: false,
@@ -112,9 +125,34 @@ export class MinecraftParticleRenderer {
 		sprite.material.opacity = particle.opacity;
 	}
 
+	private async loadNoteTexture(assetRoot: string) {
+		try {
+			const root = assetRoot.replace(/\/$/, '');
+			const image = await loadImageFromSource(`${root}/minecraft/textures/particle/note.png`);
+			if (this.disposed) return;
+			const texture = new THREE.Texture(image);
+			texture.colorSpace = THREE.SRGBColorSpace;
+			texture.magFilter = THREE.NearestFilter;
+			texture.minFilter = THREE.NearestFilter;
+			texture.generateMipmaps = false;
+			texture.needsUpdate = true;
+			this.textures.set('note', texture);
+		} catch {
+			if (!this.disposed) this.createCanvasTexture('note');
+		}
+		for (const emitter of this.emitters) {
+			if (emitter.type.id === NoteParticle.id) emitter.remainingMs = 0;
+		}
+	}
+
 	private texture(kind: ParticleTexture) {
 		const cached = this.textures.get(kind);
 		if (cached) return cached;
+		if (kind === 'note') return undefined;
+		return this.createCanvasTexture(kind);
+	}
+
+	private createCanvasTexture(kind: ParticleTexture) {
 		const canvas = document.createElement('canvas');
 		canvas.width = 16;
 		canvas.height = 16;

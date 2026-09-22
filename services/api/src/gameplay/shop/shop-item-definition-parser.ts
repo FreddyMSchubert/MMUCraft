@@ -69,9 +69,7 @@ export function parseShopItemDefinition(
 		modelUrl: canRenderModel ? shopAssetUrl('model', id) : null,
 		textureUrl,
 		animated: Boolean(animation),
-		luminous: Boolean(
-			modelFilePath && /"light_emission"\s*:/.test(readFileSync(modelFilePath, 'utf8')),
-		),
+		luminous: modelFilePath ? modelHasLightEmission(modelFilePath) : false,
 		emissive: Boolean(json.particleEmission && typeof json.particleEmission === 'object'),
 		particleEmission: parseParticleEmission(json.particleEmission),
 		dyeable: Boolean(json.dyeable && typeof json.dyeable === 'object'),
@@ -91,6 +89,20 @@ export function unlistedItemRenderAsset(itemId: string, directory: string, root:
 	const textureFilePath =
 		modelTextureFile(directory) ?? flatItemTextureFile(itemId, directory, root);
 	return itemRenderAsset(itemId, modelFilePath, textureFilePath);
+}
+
+function modelHasLightEmission(modelFilePath: string) {
+	const model = JSON.parse(readFileSync(modelFilePath, 'utf8')) as unknown;
+	if (!model || typeof model !== 'object' || !('elements' in model)) return false;
+	if (!Array.isArray(model.elements)) return false;
+	return model.elements.some(
+		(element: unknown) =>
+			element !== null &&
+			typeof element === 'object' &&
+			'light_emission' in element &&
+			typeof element.light_emission === 'number' &&
+			element.light_emission > 0,
+	);
 }
 
 function parseParticleEmission(value: unknown): ParticleEmissionDefinition | null {

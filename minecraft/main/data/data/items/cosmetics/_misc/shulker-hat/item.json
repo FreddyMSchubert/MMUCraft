@@ -8,7 +8,7 @@
 	"tooltips": ["Come out of your shell at bit more"],
 	"shopPurchasable": {
 		"gameplayToggle": "void",
-		"membersOnly": true,
+		"membersOnly": false,
 		"priceDabloons": 75,
 		"description": "",
 		"unlockWeight": 75,

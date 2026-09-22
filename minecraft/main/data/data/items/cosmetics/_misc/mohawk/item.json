@@ -8,7 +8,7 @@
 	"tooltips": ["Mohawk-tuah!"],
 	"shopPurchasable": {
 		"gameplayToggle": "soaring",
-		"membersOnly": true,
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 75,

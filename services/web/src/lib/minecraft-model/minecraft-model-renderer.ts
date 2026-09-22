@@ -79,6 +79,7 @@ export class MinecraftModelRenderer {
 		this.particleRenderer = new MinecraftParticleRenderer(
 			this.modelObject.group,
 			options.particleEmission,
+			this.assetRoot,
 		);
 
 		if (options.background) {
@@ -178,6 +179,7 @@ export class MinecraftModelRenderer {
 		this.nightMode = enabled && Boolean(this.currentResolvedModel?.elements?.length);
 		this.modelObject.setNightMode(this.nightMode);
 		for (const object of this.previewObjects) object.setNightMode(this.nightMode);
+		this.scene.backgroundIntensity = this.nightMode ? 0.18 : 1;
 		void this.updatePanorama();
 		this.ensureAnimating();
 	}

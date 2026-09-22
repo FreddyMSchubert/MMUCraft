@@ -9,7 +9,7 @@
 	"shopPurchasable": {
 		"gameplayToggle": "nether",
 		"membersOnly": false,
-		"priceDabloons": 75,
+		"priceDabloons": 42,
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Frankenstein Screws - very spooky.",

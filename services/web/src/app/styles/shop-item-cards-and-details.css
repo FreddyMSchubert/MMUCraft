@@ -81,15 +81,6 @@
 	filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.38));
 }
 
-.shopMetaIcon {
-	border-color: rgba(255, 255, 255, 0.2);
-	background-color: rgba(18, 24, 35, 0.88);
-}
-
-.shopMetaIcon-animated::before {
-	border-left-color: #fff;
-}
-
 .shopDealBadge {
 	position: absolute;
 	bottom: 7px;
@@ -179,9 +170,9 @@
 }
 
 .shopTag.emissive {
-	border-color: rgba(81, 238, 213, 0.65);
-	background: rgba(28, 124, 131, 0.22);
-	color: #baffef;
+	border-color: rgba(97, 230, 118, 0.66);
+	background: rgba(31, 119, 48, 0.22);
+	color: #c4ffcb;
 }
 
 .shopTag.emissive,
@@ -475,7 +466,7 @@
 }
 
 .shopDetailsPreviewEmbed.night {
-	background: radial-gradient(circle at center, #151c2b, #080d16 70%);
+	background: radial-gradient(circle at center, #0b111b, #04070d 70%);
 }
 .shopPreviewControls {
 	display: flex;

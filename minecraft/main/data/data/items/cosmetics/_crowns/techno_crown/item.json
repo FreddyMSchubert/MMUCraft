@@ -7,7 +7,7 @@
 	"tooltips": ["Woah, is he some kind of king?", "No, that's a legend."],
 	"shopPurchasable": {
 		"membersOnly": false,
-		"priceDabloons": 5000,
+		"priceDabloons": 500,
 		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Techno Crown.",

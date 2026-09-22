@@ -8,7 +8,7 @@
 	"tooltips": ["It's really quite simple"],
 	"shopPurchasable": {
 		"gameplayToggle": "inventors",
-		"membersOnly": true,
+		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 50,

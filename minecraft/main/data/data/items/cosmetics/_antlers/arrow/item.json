@@ -7,7 +7,7 @@
 	"tooltips": ["Look at the bright side, at least you got to eat the apple."],
 	"shopPurchasable": {
 		"membersOnly": false,
-		"priceDabloons": 55,
+		"priceDabloons": 35,
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Arrow through Head (Hat) - very spooky.",

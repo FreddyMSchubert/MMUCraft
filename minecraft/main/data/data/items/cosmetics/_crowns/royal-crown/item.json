@@ -8,8 +8,8 @@
 	"tooltips": ["Made from solid gold leaf!"],
 	"shopPurchasable": {
 		"gameplayToggle": "welcoming",
-		"membersOnly": true,
-		"priceDabloons": 10000,
+		"membersOnly": false,
+		"priceDabloons": 2345,
 		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Royal Crown.",

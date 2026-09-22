@@ -4,7 +4,7 @@ import { type CSSProperties, useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import type { CosmeticPreviewView } from '@/lib/site-settings';
-import { ShopMetaIcons, ShopPreview } from './shop-item-preview';
+import { ShopPreview } from './shop-item-preview';
 import {
 	effectivePrice,
 	formatIngredient,
@@ -98,7 +98,6 @@ export function ShopCard({
 		>
 			<div className="shopImageFrame" aria-hidden="true">
 				<ShopPreview item={item} hovered={hovered} hidden={hidePreview} allow3d={allow3d} />
-				<ShopMetaIcons item={item} />
 				{item.isDailyDeal && (
 					<span className="shopDealBadge">−{item.discountPercent}% today</span>
 				)}
@@ -516,7 +515,7 @@ const EMISSIVE_SPARKS = Array.from({ length: 14 }, (_, index) => {
 	return {
 		left: side === 0 ? `${offset}%` : side === 1 ? '100%' : side === 2 ? `${offset}%` : '0%',
 		top: side === 0 ? '0%' : side === 1 ? `${offset}%` : side === 2 ? '100%' : `${offset}%`,
-		color: `hsl(${162 + ((index * 31) % 46)} 95% ${62 + ((index * 17) % 21)}%)`,
+		color: `hsl(${126 + ((index * 31) % 34)} 95% ${60 + ((index * 17) % 21)}%)`,
 		delay: `${-((index * 0.37) % 2.8)}s`,
 		duration: `${1.5 + ((index * 7) % 9) / 10}s`,
 		driftX: `${((index * 13) % 7) - 3}px`,

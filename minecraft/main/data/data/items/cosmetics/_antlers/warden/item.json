@@ -7,7 +7,7 @@
 	"tooltips": ["An A-Ward for your hard work."],
 	"shopPurchasable": {
 		"membersOnly": false,
-		"priceDabloons": 42,
+		"priceDabloons": 55,
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Warden Antlers - very spooky.",

@@ -191,7 +191,7 @@ export function createFaceMaterial(
 		side: THREE.FrontSide,
 		toneMapped: false,
 	};
-	if (unlit || lightEmission === 15) return new THREE.MeshBasicMaterial(options);
+	if (unlit) return new THREE.MeshBasicMaterial(options);
 	const material = new THREE.MeshStandardMaterial({
 		...options,
 		roughness: 1,
@@ -199,7 +199,7 @@ export function createFaceMaterial(
 	});
 	const lighting = {
 		ambient: { value: 1 },
-		emission: { value: linearBrightness(emissionBrightness(lightEmission)) },
+		emission: { value: emissionBrightness(lightEmission) },
 	};
 	materialLighting.set(material, lighting);
 	material.onBeforeCompile = (shader) => {
@@ -219,11 +219,7 @@ const materialLighting = new WeakMap<
 	{ ambient: { value: number }; emission: { value: number } }
 >();
 
-function linearBrightness(value: number) {
-	return new THREE.Color().setRGB(value, value, value, THREE.SRGBColorSpace).r;
-}
-
 export function setMaterialNightMode(material: THREE.Material, night: boolean) {
 	const lighting = materialLighting.get(material);
-	if (lighting) lighting.ambient.value = linearBrightness(previewBrightness(night));
+	if (lighting) lighting.ambient.value = previewBrightness(night);
 }

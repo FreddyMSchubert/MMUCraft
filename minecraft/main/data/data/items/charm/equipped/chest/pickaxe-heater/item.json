@@ -4,11 +4,9 @@
 	"modelType": "charm",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Hot enough to skip the furnace."
-	],
+	"tooltips": ["Hot enough to skip the furnace."],
 	"shopPurchasable": {
-		"membersOnly": true,
+		"membersOnly": false,
 		"priceDabloons": 75,
 		"description": "Smelts mined blocks automatically.",
 		"unlockWeight": 150,

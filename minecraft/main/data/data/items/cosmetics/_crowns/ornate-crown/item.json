@@ -7,7 +7,7 @@
 	"tooltips": ["A royal waste of Dabloons"],
 	"shopPurchasable": {
 		"membersOnly": false,
-		"priceDabloons": 50000,
+		"priceDabloons": 23456,
 		"description": "",
 		"unlockWeight": 3,
 		"unlockMessage": "You have been crowned Biggest Moneywaster.",

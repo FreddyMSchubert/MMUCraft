@@ -6,7 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": ["No, no, no, can't be. I distinctly remember your birthday was LAST year."],
 	"shopPurchasable": {
-		"membersOnly": true,
+		"membersOnly": false,
 		"priceDabloons": 25,
 		"description": "",
 		"unlockWeight": 130,

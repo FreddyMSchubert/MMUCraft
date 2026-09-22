@@ -39,12 +39,26 @@
 	flex-wrap: wrap;
 	gap: 12px;
 }
-.dropItemsHeading select {
-	margin-left: 6px;
+.dropFilterRow select {
+	max-width: 100%;
 	padding: 6px;
 	border: 1px solid rgba(255, 255, 255, 0.24);
 	border-radius: 7px;
 	background: #252a34;
+	color: #fff;
+}
+.dropTextButton {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: #ffd166;
+	font: inherit;
+	text-align: left;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	cursor: pointer;
+}
+.dropTextButton:hover {
 	color: #fff;
 }
 .dropTableScroll,
@@ -118,6 +132,10 @@
 .dropBarCosmetic {
 	background: #f49a43;
 }
+.dropLegendMemberCosmetic,
+.dropBarMemberCosmetic {
+	background: #bd571c;
+}
 .dropLegendDeco,
 .dropBarDeco {
 	background: #a875e1;
@@ -190,36 +208,38 @@
 	border-radius: 10px;
 	background: rgba(255, 255, 255, 0.035);
 }
-.dropWeek header {
+.dropWeek summary {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	gap: 15px;
+	cursor: pointer;
 }
-.dropWeek header small,
+.dropWeek summary::before {
+	content: '▸';
+	color: #ffd166;
+}
+.dropWeek[open] summary::before {
+	content: '▾';
+}
+.dropWeek summary small,
 .dropEmpty,
 .dropItemNote {
 	color: rgba(255, 255, 255, 0.62);
 }
-.dropWeek header h5 {
-	margin: 4px 0 8px;
+.dropWeek summary strong {
+	display: block;
+	margin-top: 4px;
 	font-size: 1.15rem;
 }
-.dropWeek header p {
-	margin: 0;
+.dropWeekDescription {
+	margin: 18px 0 0;
 	line-height: 1.45;
+	white-space: pre-line;
 }
-.dropWeek header strong {
+.dropWeek summary > span:last-child {
 	white-space: nowrap;
 	font-size: 0.84rem;
-}
-.dropWeekPlan {
-	display: grid;
-	gap: 10px;
-	margin-top: 18px;
-}
-.dropWeekPlan p,
-.dropWeekPlan h6 {
-	margin: 0;
 }
 .dropWeekGroups {
 	display: grid;
@@ -248,10 +268,10 @@
 		grid-template-columns: 1fr;
 		gap: 14px;
 	}
-	.dropWeek header {
+	.dropWeek summary {
 		display: block;
 	}
-	.dropWeek header strong {
+	.dropWeek summary > span:last-child {
 		display: block;
 		margin-top: 8px;
 	}

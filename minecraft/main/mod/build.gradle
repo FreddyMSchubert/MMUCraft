@@ -214,9 +214,9 @@ processResources {
     dependsOn "generateMiniBlockRecipes"
     exclude "data/mainmod/advancement/mastery/**"
     inputs.property "version", project.version
-    inputs.file("../data/gameplay-toggles.json")
+    inputs.file("../data/drops.json")
 
-    from("../data/gameplay-toggles.json") {
+    from("../data/drops.json") {
         into "data/mainmod"
     }
 

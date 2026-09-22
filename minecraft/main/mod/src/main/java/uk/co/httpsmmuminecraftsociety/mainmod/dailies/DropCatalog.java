@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 final class DropCatalog {
-    static final String RESOURCE_PATH = "data/mainmod/gameplay-toggles.json";
+    static final String RESOURCE_PATH = "data/mainmod/drops.json";
 
     private DropCatalog() {
     }
@@ -21,8 +21,8 @@ final class DropCatalog {
             if (!json.isJsonArray()) throw invalid(path);
             Set<String> drops = new HashSet<>();
             for (JsonElement element : json.getAsJsonArray()) {
-                if (!element.isJsonPrimitive() || !element.getAsJsonPrimitive().isString()) throw invalid(path);
-                String drop = element.getAsString();
+                if (!element.isJsonObject() || !element.getAsJsonObject().has("id")) throw invalid(path);
+                String drop = element.getAsJsonObject().get("id").getAsString();
                 if (!drop.matches("[a-z0-9._-]+(?:/[a-z0-9._-]+)*") || !drops.add(drop)) throw invalid(path);
             }
             if (drops.isEmpty()) throw invalid(path);

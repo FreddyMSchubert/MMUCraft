@@ -32,7 +32,8 @@ public final class ParticleEmission {
             if (!player.isSpectator() && player.isAlive()) {
                 FakeItem item = FakeItems.getFakeItemFromStack(player.getItemBySlot(EquipmentSlot.HEAD));
                 if (item != null && item.getFeature(EquippableCosmeticItemFeature.class) != null) {
-                    emit(level, player.getUUID(), item, tick, point -> wornPosition(player, point));
+                    emit(level, player.getUUID(), item, tick,
+                            (feature, point) -> wornPosition(player, feature.transform("head"), point));
                 }
             }
             for (ItemFrame frame : level.getEntitiesOfClass(ItemFrame.class,
@@ -41,7 +42,8 @@ public final class ParticleEmission {
                 if (!seenFrames.add(frame.getUUID())) continue;
                 FakeItem item = FakeItems.getFakeItemFromStack(frame.getItem());
                 if (item != null) {
-                    emit(level, frame.getUUID(), item, tick, point -> placedPosition(frame, point));
+                    emit(level, frame.getUUID(), item, tick,
+                            (feature, point) -> placedPosition(frame, feature.transform("fixed"), point));
                 }
             }
         }
@@ -67,7 +69,7 @@ public final class ParticleEmission {
                     between(level, spec.from().x, spec.to().x),
                     between(level, spec.from().y, spec.to().y),
                     between(level, spec.from().z, spec.to().z));
-            Vec3 worldPoint = positioner.at(modelPoint);
+            Vec3 worldPoint = positioner.at(feature, modelPoint);
             // With a count of zero, the first speed argument selects note colour.
             double noteColor = options.getType() == ParticleTypes.NOTE ? level.getRandom().nextDouble() : 0;
             level.sendParticles(options, worldPoint.x, worldPoint.y, worldPoint.z,
@@ -83,35 +85,42 @@ public final class ParticleEmission {
         return low + level.getRandom().nextDouble() * (high - low);
     }
 
-    private static Vec3 wornPosition(ServerPlayer player, Vec3 point) {
-        double x = (point.x - 8) * 1.5 / 16;
-        double y = (point.y - 8) * 1.5 / 16;
-        double z = (point.z - 8) * 1.5 / 16;
-        double yaw = Math.toRadians(player.getYRot());
+    private static Vec3 displayPoint(Vec3 point, ParticleEmissionItemFeature.DisplayTransform transform) {
+        Vec3 rotation = transform.rotation();
+        Vec3 offset = transform.translation();
+        return point.subtract(8, 8, 8).scale(1.0 / 16)
+                .zRot((float) Math.toRadians(rotation.z))
+                .yRot((float) Math.toRadians(rotation.y))
+                .xRot((float) Math.toRadians(rotation.x))
+                .add(offset.scale(1.0 / 16));
+    }
+
+    private static Vec3 wornPosition(ServerPlayer player, ParticleEmissionItemFeature.DisplayTransform transform, Vec3 point) {
+        Vec3 local = displayPoint(point, transform).xRot((float) Math.toRadians(player.getXRot()));
+        double x = local.x;
+        double y = local.y;
+        double z = local.z;
+        double yaw = Math.toRadians(player.getYHeadRot());
         return player.getEyePosition().add(x * Math.cos(yaw) - z * Math.sin(yaw), y + 0.25,
                 x * Math.sin(yaw) + z * Math.cos(yaw));
     }
 
-    private static Vec3 placedPosition(ItemFrame frame, Vec3 point) {
-        double x = (point.x - 8) * 2 / 16;
-        double y = (point.y - 8) * 2 / 16;
-        double z = (point.z - 8) * 2 / 16;
+    private static Vec3 placedPosition(ItemFrame frame, ParticleEmissionItemFeature.DisplayTransform transform, Vec3 point) {
+        Vec3 local = displayPoint(point, transform);
         Direction direction = frame.getDirection();
         Vec3 normal = Vec3.atLowerCornerOf(direction.getUnitVec3i());
         double angle = Math.toRadians(frame.getRotation() * 45.0);
         double cosine = Math.cos(angle);
         double sine = Math.sin(angle);
+        double rotatedX = local.x * cosine - local.y * sine;
+        double rotatedY = local.x * sine + local.y * cosine;
         if (direction == Direction.UP || direction == Direction.DOWN) {
-            double rotatedX = x * cosine - z * sine;
-            double rotatedZ = x * sine + z * cosine;
             return direction == Direction.UP
-                    ? frame.position().add(rotatedX, y, rotatedZ)
-                    : frame.position().add(rotatedX, -y, -rotatedZ);
+                    ? frame.position().add(rotatedX, -local.z, rotatedY)
+                    : frame.position().add(rotatedX, local.z, -rotatedY);
         }
-        double rotatedX = x * cosine - y * sine;
-        double rotatedY = x * sine + y * cosine;
         Vec3 right = new Vec3(normal.z, 0, -normal.x);
-        return frame.position().add(right.scale(rotatedX)).add(0, rotatedY, 0).add(normal.scale(z));
+        return frame.position().add(right.scale(rotatedX)).add(0, rotatedY, 0).add(normal.scale(local.z));
     }
 
     private record Key(String dimension, UUID source, String item, int index) {}
@@ -123,5 +132,5 @@ public final class ParticleEmission {
             this.lastSeen = lastSeen;
         }
     }
-    private interface Positioner { Vec3 at(Vec3 point); }
+    private interface Positioner { Vec3 at(ParticleEmissionItemFeature feature, Vec3 point); }
 }

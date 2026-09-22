@@ -105,7 +105,9 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
                             .filter(path -> isFakeItemDefinitionPath(path.toString().replace("\\", "/")))
                             .forEach(path -> {
                                 String logicalPath = root + "/" + resourceRoot.relativize(path).toString().replace("\\", "/");
-                                entries.add(new ResourceEntry(logicalPath, () -> Files.newInputStream(path)));
+                                Path modelPath = path.resolveSibling("model.json");
+                                entries.add(new ResourceEntry(logicalPath, () -> Files.newInputStream(path),
+                                        () -> Files.exists(modelPath) ? Files.newInputStream(modelPath) : null));
                             });
                 }
             }
@@ -134,7 +136,12 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
             lastReloadResources = ids.stream().map(Identifier::toString).toList();
 
             List<ResourceEntry> entries = ids.stream()
-                    .map(id -> new ResourceEntry(id.toString(), () -> resources.get(id).open()))
+                    .map(id -> new ResourceEntry(id.toString(), () -> resources.get(id).open(), () -> {
+                        Identifier modelId = Identifier.fromNamespaceAndPath(id.getNamespace(),
+                                id.getPath().substring(0, id.getPath().length() - "item.json".length()) + "model.json");
+                        Resource model = manager.getResource(modelId).orElse(null);
+                        return model == null ? null : model.open();
+                    }))
                     .toList();
 
             List<FakeItem> loaded = parseEntries(entries);
@@ -157,6 +164,14 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
 
         for (ResourceEntry entry : entries) {
             JsonObject root = parseJsonObject(entry);
+            if (root.has("particleEmission")) {
+                try (InputStream modelStream = entry.openModel()) {
+                    if (modelStream != null) {
+                        JsonObject model = JsonParser.parseReader(new InputStreamReader(modelStream, StandardCharsets.UTF_8)).getAsJsonObject();
+                        if (model.has("display")) root.getAsJsonObject("particleEmission").add("display", model.get("display"));
+                    }
+                }
+            }
 
             validateFakeItemJson(root, entry.logicalPath());
 
@@ -213,9 +228,10 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
         InputStream open() throws IOException;
     }
 
-    private record ResourceEntry(String logicalPath, InputStreamSupplier supplier) {
+    private record ResourceEntry(String logicalPath, InputStreamSupplier supplier, InputStreamSupplier modelSupplier) {
         InputStream openStream() throws IOException {
             return supplier.open();
         }
+        InputStream openModel() throws IOException { return modelSupplier.open(); }
     }
 }

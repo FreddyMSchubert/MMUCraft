@@ -3,6 +3,7 @@ id: dynamic-beacons
 unlockOrder: 6
 chatMessage: You've unlocked knowledge on material-based beacon ranges.
 sidebarTitle: Beacon Ranges
+gameplayToggle: nether
 tags:
 - becaons
 - becon range

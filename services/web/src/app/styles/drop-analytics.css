@@ -140,6 +140,10 @@
 .dropBarDeco {
 	background: #a875e1;
 }
+.dropLegendCharm,
+.dropBarCharm {
+	background: #8fcb61;
+}
 .dropLegendKnowledge,
 .dropBarKnowledge {
 	background: #55b9b4;
@@ -161,7 +165,7 @@
 	font-size: 0.78rem;
 }
 .dropPlot {
-	height: 340px;
+	height: 370px;
 	display: grid;
 	gap: 8px;
 	align-items: start;
@@ -169,9 +173,9 @@
 	background-repeat: repeat-y;
 }
 .dropBarColumn {
-	height: 340px;
+	height: 370px;
 	display: grid;
-	grid-template-rows: 290px 50px;
+	grid-template-rows: 290px 80px;
 	justify-items: center;
 	min-width: 0;
 }
@@ -243,7 +247,7 @@
 }
 .dropWeekGroups {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 18px;
 	margin-top: 18px;
 }

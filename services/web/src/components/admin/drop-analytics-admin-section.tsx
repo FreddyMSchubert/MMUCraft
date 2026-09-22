@@ -12,7 +12,7 @@ interface Drop {
 interface Item {
 	id: string;
 	name: string;
-	type: 'cosmetic' | 'decoblock';
+	type: 'cosmetic' | 'decoblock' | 'charm';
 	drop: string | null;
 	shopPurchasable: boolean;
 	membersOnly: boolean;
@@ -42,11 +42,7 @@ const niceDate = (date: string) =>
 		timeZone: 'UTC',
 	}).format(new Date(`${date}T12:00:00Z`));
 
-function countFor(
-	catalog: Catalog,
-	drop: string | null,
-	type: 'cosmetic' | 'decoblock' | 'knowledge',
-) {
+function countFor(catalog: Catalog, drop: string | null, type: Item['type'] | 'knowledge') {
 	return type === 'knowledge'
 		? catalog.knowledge.filter((entry) => entry.drop === drop).length
 		: catalog.items.filter((entry) => entry.drop === drop && entry.type === type).length;
@@ -119,7 +115,7 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all');
 	const [sort, setSort] = useState<Sort>('drop');
 	const [descending, setDescending] = useState(false);
-	const allDrops = [{ id: null, name: 'Unassigned' }, ...catalog.drops];
+	const allDrops = [{ id: null, name: 'Unassigned', date: '' }, ...catalog.drops];
 	const releaseOrder = new Map(allDrops.map((drop, index) => [drop.id, index]));
 	const rows = allDrops.map((drop) => ({
 		...drop,
@@ -128,11 +124,12 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 			(item) => item.drop === drop.id && item.type === 'cosmetic' && item.membersOnly,
 		).length,
 		decoblocks: countFor(catalog, drop.id, 'decoblock'),
+		charms: countFor(catalog, drop.id, 'charm'),
 		knowledge: countFor(catalog, drop.id, 'knowledge'),
 	}));
 	const maximum = Math.max(
 		1,
-		...rows.map((row) => row.cosmetics + row.decoblocks + row.knowledge),
+		...rows.map((row) => row.cosmetics + row.decoblocks + row.charms + row.knowledge),
 	);
 	const scale = Math.ceil(maximum / 5) * 5;
 	const ticks = Array.from({ length: 6 }, (_, index) => scale - (index * scale) / 5);
@@ -156,7 +153,7 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 				comparison = Number(a.shopPurchasable) - Number(b.shopPurchasable);
 			return (descending ? -comparison : comparison) || a.name.localeCompare(b.name);
 		});
-	const total = (key: 'cosmetics' | 'decoblocks' | 'knowledge') =>
+	const total = (key: 'cosmetics' | 'decoblocks' | 'charms' | 'knowledge') =>
 		rows.reduce((sum, row) => sum + row[key], 0);
 
 	function changeSort(next: Sort) {
@@ -216,8 +213,10 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 						<thead>
 							<tr>
 								<th scope="col">Drop</th>
+								<th scope="col">Release</th>
 								<th scope="col">Cosmetics</th>
 								<th scope="col">Decoblocks</th>
+								<th scope="col">Charms</th>
 								<th scope="col">Knowledge</th>
 								<th scope="col">Total</th>
 							</tr>
@@ -236,18 +235,27 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 											{row.name}
 										</button>
 									</th>
+									<td>{row.date ? niceDate(row.date) : '—'}</td>
 									<td>{row.cosmetics}</td>
 									<td>{row.decoblocks}</td>
+									<td>{row.charms}</td>
 									<td>{row.knowledge}</td>
-									<td>{row.cosmetics + row.decoblocks + row.knowledge}</td>
+									<td>
+										{row.cosmetics +
+											row.decoblocks +
+											row.charms +
+											row.knowledge}
+									</td>
 								</tr>
 							))}
 						</tbody>
 						<tfoot>
 							<tr>
 								<th scope="row">Total</th>
+								<td>—</td>
 								<td>{total('cosmetics')}</td>
 								<td>{total('decoblocks')}</td>
+								<td>{total('charms')}</td>
 								<td>{total('knowledge')}</td>
 								<td>{catalog.items.length + catalog.knowledge.length}</td>
 							</tr>
@@ -270,6 +278,9 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 								<i className="dropLegendDeco" /> Decoblocks
 							</span>
 							<span>
+								<i className="dropLegendCharm" /> Charms
+							</span>
+							<span>
 								<i className="dropLegendKnowledge" /> Knowledge
 							</span>
 						</div>
@@ -277,7 +288,7 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 					<div
 						className="dropChartScroll"
 						role="img"
-						aria-label="Stacked bar chart of cosmetics, members only cosmetics, decoblocks and knowledge by drop, in release order"
+						aria-label="Stacked bar chart of cosmetics, members only cosmetics, decoblocks, charms and knowledge by drop, in release order"
 					>
 						<div className="dropChart">
 							<div className="dropYAxis">
@@ -296,12 +307,18 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 									<div className="dropBarColumn" key={row.id ?? 'unassigned'}>
 										<div
 											className="dropBar"
-											title={`${row.name}: ${row.cosmetics - row.memberCosmetics} other cosmetics, ${row.memberCosmetics} members only cosmetics, ${row.decoblocks} decoblocks, ${row.knowledge} knowledge`}
+											title={`${row.name}${row.date ? ` (${niceDate(row.date)})` : ''}: ${row.cosmetics - row.memberCosmetics} other cosmetics, ${row.memberCosmetics} members only cosmetics, ${row.decoblocks} decoblocks, ${row.charms} charms, ${row.knowledge} knowledge`}
 										>
 											<span
 												className="dropBarDeco"
 												style={{
 													height: `${(row.decoblocks / scale) * 100}%`,
+												}}
+											/>
+											<span
+												className="dropBarCharm"
+												style={{
+													height: `${(row.charms / scale) * 100}%`,
 												}}
 											/>
 											<span
@@ -323,7 +340,15 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 												}}
 											/>
 										</div>
-										<small>{row.name}</small>
+										<small>
+											{row.name}
+											{row.date && (
+												<>
+													<br />
+													{niceDate(row.date)}
+												</>
+											)}
+										</small>
 									</div>
 								))}
 							</div>
@@ -391,6 +416,7 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 											<option value="all">All types</option>
 											<option value="cosmetic">Cosmetic</option>
 											<option value="decoblock">Decoblock</option>
+											<option value="charm">Charm</option>
 										</select>
 									</th>
 									<th scope="col">
@@ -449,7 +475,11 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 									<tr key={item.id}>
 										<th scope="row">{item.name}</th>
 										<td>
-											{item.type === 'cosmetic' ? 'Cosmetic' : 'Decoblock'}
+											{item.type === 'cosmetic'
+												? 'Cosmetic'
+												: item.type === 'decoblock'
+													? 'Decoblock'
+													: 'Charm'}
 										</td>
 										<td>
 											<button
@@ -544,6 +574,22 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 											<ContentList
 												entries={itemEntries.filter(
 													(item) => item.type === 'decoblock',
+												)}
+											/>
+										</div>
+										<div>
+											<h6>
+												Charms (
+												{
+													itemEntries.filter(
+														(item) => item.type === 'charm',
+													).length
+												}
+												)
+											</h6>
+											<ContentList
+												entries={itemEntries.filter(
+													(item) => item.type === 'charm',
 												)}
 											/>
 										</div>

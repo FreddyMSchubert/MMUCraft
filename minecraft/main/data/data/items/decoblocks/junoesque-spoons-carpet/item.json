@@ -12,7 +12,6 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": true,
-		"glowing": false,
 		"lightLevel": 0
 	}
 }

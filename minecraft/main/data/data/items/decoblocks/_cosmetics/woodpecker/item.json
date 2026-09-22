@@ -10,7 +10,6 @@
 		"ground": false,
 		"wall": true,
 		"ceiling": false,
-		"glowing": false,
 		"lightLevel": 0
 	},
 	"equippableCosmetic": {}

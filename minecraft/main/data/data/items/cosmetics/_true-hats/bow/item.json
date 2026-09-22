@@ -16,5 +16,16 @@
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#a80434"
+	},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:heart",
+				"from": [0, 8, 0],
+				"to": [16, 16, 16],
+				"minTicks": 35,
+				"maxTicks": 80
+			}
+		]
 	}
 }

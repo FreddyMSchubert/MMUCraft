@@ -15,5 +15,16 @@
 		"ceiling": false,
 		"glowing": false,
 		"lightLevel": 0
+	},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:note",
+				"from": [1, 7, 1],
+				"to": [15, 15, 15],
+				"minTicks": 35,
+				"maxTicks": 80
+			}
+		]
 	}
 }

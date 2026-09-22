@@ -13,5 +13,16 @@
 		"unlockMessage": "Unlocked cosmetic: Slime head.",
 		"tags": ["slimeball", "goo"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:item_slime",
+				"from": [4, 4, 4],
+				"to": [12, 12, 12],
+				"minTicks": 20,
+				"maxTicks": 80
+			}
+		]
+	}
 }

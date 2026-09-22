@@ -11,7 +11,8 @@
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Arrow through Head (Hat) - very spooky.",
-		"tags": ["headshot", "pierced"]
+		"tags": ["headshot", "pierced"],
+		"gameplayToggle": "hellish"
 	},
 	"equippableCosmetic": {}
 }

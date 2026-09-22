@@ -6,6 +6,7 @@ import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -29,17 +30,15 @@ import java.util.concurrent.CompletableFuture;
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm, TickCallbackCharm
 {
     private static final int MIN_SEARCH_TICKS = 5 * 20;
-    private static final int MAX_SEARCH_TICKS = 10 * 20;
+    private static final int MAX_SEARCH_TICKS = 15 * 20;
+    private static final String SEARCH_FAILED = "The Potion of Displacement could not find a safe destination. Try again.";
     private static final TicketType SEARCH_TICKET = new TicketType(MAX_SEARCH_TICKS + 20L, TicketType.FLAG_LOADING);
     private static final Map<UUID, SearchSession> SEARCHES = new HashMap<>();
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {
         SearchSession session = SEARCHES.get(player.getUUID());
-        if (session != null && (
-                session.level != level
-                        || player.getUseItemRemainingTicks() > session.lastRemainingUseTicks
-        )) {
+        if (session != null && session.level != level) {
             stopSearch(player.getUUID());
             session = null;
         }
@@ -57,7 +56,6 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             SEARCHES.put(player.getUUID(), session);
         }
 
-        session.lastRemainingUseTicks = player.getUseItemRemainingTicks();
         advanceSearch(session);
     }
 
@@ -86,6 +84,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         }
 
         if (session == null || session.destination == null) {
+            player.sendSystemMessage(Component.literal(SEARCH_FAILED));
             stopSearch(player.getUUID());
             return false;
         }
@@ -98,7 +97,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         }
 
         BlockPos destination = session.destination;
-        TeleportPotionUtils.teleportWithCompanions(
+        boolean teleported = TeleportPotionUtils.teleportWithCompanions(
                 "displacement",
                 player,
                 level,
@@ -108,6 +107,12 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
                 player.getYRot(),
                 player.getXRot()
         );
+
+        if (!teleported) {
+            player.sendSystemMessage(Component.literal("The Potion of Displacement could not teleport you. Try again."));
+            stopSearch(player.getUUID());
+            return false;
+        }
 
         player.fallDistance = 0.0F;
         stack.consume(1, player);
@@ -123,6 +128,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         boolean stillDrinkingDisplacementPotion = player.isUsingItem()
                 && CharmsManager.hasAbility(player.getUseItem(), PotionOfDisplacementCharm.class);
         if (session.level != level || !stillDrinkingDisplacementPotion) {
+            player.sendSystemMessage(Component.literal("The Potion of Displacement was interrupted. Try again."));
             stopSearch(player.getUUID());
         }
     }
@@ -195,14 +201,19 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
 
         if (minX > maxX || minZ > maxZ) return null;
 
+        var chunks = level.getChunkSource();
+        var generator = chunks.getGenerator();
+        var biomes = generator.getBiomeSource().createUncachedResolver(chunks.randomState());
+        int biomeY = generator.getSeaLevel() >> 2;
         for (int attempt = 0; attempt < 32; attempt++) {
             int x = Mth.nextInt(level.getRandom(), minX, maxX);
             int z = Mth.nextInt(level.getRandom(), minZ, maxZ);
             long dx = (long) x - origin.getX();
             long dz = (long) z - origin.getZ();
-            if (dx * dx + dz * dz <= (long) radius * radius) {
-                return new BlockPos(x, origin.getY(), z);
-            }
+            if (dx * dx + dz * dz > (long) radius * radius) continue;
+            var biome = biomes.getNoiseBiome(x >> 2, biomeY, z >> 2);
+            if (biome.is(BiomeTags.IS_OCEAN) || biome.is(BiomeTags.IS_RIVER)) continue;
+            return new BlockPos(x, origin.getY(), z);
         }
 
         return null;
@@ -261,7 +272,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     }
 
     private static int searchTicks(SearchSession session) {
-        long ticks = session.level.getGameTime() - session.startedAtGameTime + 1L;
+        long ticks = (System.nanoTime() - session.startedAtNanos) / 50_000_000L + 1L;
         return (int) Math.max(0L, Math.min(Integer.MAX_VALUE, ticks));
     }
 
@@ -271,8 +282,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         private final ServerLevel level;
         private final BlockPos origin;
         private final int radius;
-        private final long startedAtGameTime;
-        private int lastRemainingUseTicks;
+        private final long startedAtNanos;
         private Candidate candidate;
         private BlockPos destination;
 
@@ -280,7 +290,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             this.level = level;
             this.origin = origin;
             this.radius = radius;
-            this.startedAtGameTime = level.getGameTime();
+            this.startedAtNanos = System.nanoTime();
         }
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import org.apache.commons.lang3.tuple.Triple;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.DisabledDnTEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
@@ -34,6 +35,8 @@ public class CharmEnchanting
 
     public static TriState onAllowEnchanting(Holder<Enchantment> enchantmentHolder, ItemStack itemStack, EnchantingContext enchantingContext)
     {
+        if (DisabledDnTEnchantments.contains(enchantmentHolder)) return TriState.FALSE;
+
         for (Triple<Item, Boolean, ResourceKey<Enchantment>> ench : vanillaEnchantModifications) {
             if (!itemStack.getItem().equals(ench.getLeft())) continue;
             if (!enchantmentHolder.is(ench.getRight())) continue;

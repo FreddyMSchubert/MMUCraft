@@ -155,6 +155,15 @@ export function CharmsTab() {
 						: {
 								assetRoot: ASSETS.minecraft.root,
 								itemId: ingredient.itemId,
+								...(ingredient.itemId === 'mainmod:alien-debris' ||
+								ingredient.itemId === 'mainmod:enderite-block'
+									? {
+											model: {
+												parent: 'minecraft:block/cube_all',
+												textures: { all: ingredient.iconUrl ?? '' },
+											},
+										}
+									: {}),
 								modelUrl: ingredient.modelUrl,
 								textureUrl: ingredient.iconUrl,
 							},

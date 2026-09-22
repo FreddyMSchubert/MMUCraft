@@ -47,6 +47,8 @@
 		"PlayerTabListNameMixin",
 		"GrindstoneRemoveEnchantmentLock",
 		"VillagerTradesMixin",
+		"DnTEnchantRandomlyMixin",
+		"DnTEnchantmentApplicationMixin",
 		"MiniBlockWanderingTraderMixin",
 		"MiniBlockStonecutterMixin",
 		"MiniBlockMerchantContainerMixin",

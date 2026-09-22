@@ -124,7 +124,17 @@ services:
                 simple-voice-chat:OLnMVWXy
                 ledger:f72cP4Ni
                 fabric-language-kotlin:eRRZzGMc
+                datapack:dungeons-and-taverns?
+                datapack:explorify?
+                datapack:qraftyfied?
+                datapack:qraftys-mangrove-villages?
+                datapack:qraftys-dappled-villages?
+                datapack:structory?
+                datapack:structory-towers?
+                datapack:nullscape?
+                datapack:geophilic?
             MODRINTH_DOWNLOAD_DEPENDENCIES: required
+            SERVER_RUNNER: /image/vanillatweaks/run-server
             STOP_DURATION: '110'
             USE_MEOWICE_FLAGS: 'true'
             ENABLE_ROLLING_LOGS: 'false'

@@ -478,6 +478,10 @@ export function AuthPanel({ onSignedIn }: { onSignedIn?: () => void }) {
 								</label>
 							))}
 						</div>
+						<p>
+							Any communication through a society-based medium may be proofread for
+							moderation, to ensure everybody&apos;s wellbeing.
+						</p>
 						<p className="authRulesSupport">
 							If you think any of these rules are being broken or feel unwell/unsafe
 							on the server in any way,

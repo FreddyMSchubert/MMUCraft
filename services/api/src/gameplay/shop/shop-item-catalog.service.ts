@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { CachedSearchIndex } from '../../search/cached-search-index';
-import { findItemDefinitionFiles } from './shop-item-asset-files';
+import { findItemDefinitionFiles, itemRenderAsset } from './shop-item-asset-files';
 import { parseShopItemDefinition, unlistedItemRenderAsset } from './shop-item-definition-parser';
 import type {
 	CatalogItem,
@@ -87,6 +87,62 @@ function readCatalog(root: string) {
 		} else if (typeof json.id === 'string') {
 			assets.set(json.id, unlistedItemRenderAsset(json.id, directory, root));
 		}
+	}
+	// Enderite equipment and the two repurposed blocks have vanilla item IDs in-game.
+	// Keep explicit preview assets for each variant without fake-item definitions.
+	const enderiteTextures = existsSync(join(root, 'enderite-textures'))
+		? join(root, 'enderite-textures')
+		: join(
+				root,
+				'..',
+				'..',
+				'..',
+				'respack',
+				'packs',
+				'general-pack',
+				'assets',
+				'general-pack',
+				'textures',
+				'item',
+				'enderite',
+			);
+	for (const kind of [
+		'helmet',
+		'chestplate',
+		'leggings',
+		'boots',
+		'sword',
+		'pickaxe',
+		'axe',
+		'shovel',
+		'hoe',
+		'spear',
+	]) {
+		const texture = join(enderiteTextures, `${kind}.png`);
+		if (existsSync(texture))
+			assets.set(`enderite-${kind}`, itemRenderAsset(`enderite-${kind}`, null, texture));
+	}
+	const blockTextures = existsSync(join(root, 'enderite-block-textures'))
+		? join(root, 'enderite-block-textures')
+		: join(
+				root,
+				'..',
+				'..',
+				'..',
+				'respack',
+				'packs',
+				'general-pack',
+				'assets',
+				'minecraft',
+				'textures',
+				'block',
+			);
+	for (const [id, filename] of [
+		['alien-debris', 'alien_debris.png'],
+		['enderite-block', 'enderite_block.png'],
+	] as const) {
+		const texture = join(blockTextures, filename);
+		if (existsSync(texture)) assets.set(id, itemRenderAsset(id, null, texture));
 	}
 	return { items, assets, searchDocuments };
 }

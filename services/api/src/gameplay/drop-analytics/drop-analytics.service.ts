@@ -66,15 +66,8 @@ export class DropAnalyticsService {
 			name: string;
 			date: string;
 			description: string;
-			weekStart: string;
-			lastYear: string;
-			availableDayOne?: string;
-			lastYearNotes?: string;
-			surprisingSaturday?: string;
-			releaseNotes?: string;
-			screenshot?: string;
-			notes?: string;
 		}[];
+		drops.sort((a, b) => a.date.localeCompare(b.date));
 		const dropIds = new Set(drops.map((drop) => drop.id));
 		if (dropIds.size !== drops.length) throw new Error('Duplicate drop id');
 		const items = findItemDefinitionFiles(itemRoot()).flatMap((path) => {
@@ -88,18 +81,12 @@ export class DropAnalyticsService {
 			};
 			const type = item.equippableCosmetic ? 'cosmetic' : item.decoBlock ? 'decoblock' : null;
 			if (!type || !item.id || !item.title) return [];
-			if (
-				item.drop &&
-				item.shopPurchasable?.gameplayToggle &&
-				item.drop !== item.shopPurchasable.gameplayToggle
-			)
-				throw new Error(`Conflicting item drop: ${path}`);
 			return [
 				{
 					id: item.id,
 					name: item.title,
 					type,
-					drop: item.drop ?? item.shopPurchasable?.gameplayToggle ?? null,
+					drop: item.shopPurchasable?.gameplayToggle ?? item.drop ?? null,
 					shopPurchasable: Boolean(item.shopPurchasable),
 					membersOnly: Boolean(item.shopPurchasable?.membersOnly),
 				},

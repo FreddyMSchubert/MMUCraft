@@ -8,14 +8,6 @@ interface Drop {
 	name: string;
 	date: string;
 	description: string;
-	weekStart: string;
-	lastYear: string;
-	availableDayOne?: string;
-	lastYearNotes?: string;
-	surprisingSaturday?: string;
-	releaseNotes?: string;
-	screenshot?: string;
-	notes?: string;
 }
 interface Item {
 	id: string;
@@ -39,6 +31,8 @@ interface Catalog {
 type Sort = 'drop' | 'name' | 'availability';
 type View = 'summary' | 'chart' | 'items' | 'weekly';
 type MembershipFilter = 'all' | 'members' | 'everyone';
+type TypeFilter = 'all' | Item['type'];
+type AvailabilityFilter = 'all' | 'shop' | 'outside';
 
 const niceDate = (date: string) =>
 	new Intl.DateTimeFormat('en-GB', {
@@ -86,37 +80,9 @@ function ContentList({ entries }: { entries: (Item | Knowledge)[] }) {
 	);
 }
 
-function PlanList({ title, text }: { title: string; text: string }) {
-	return (
-		<div>
-			<h6>{title}</h6>
-			<ul className="dropContentList">
-				{text.split('\n').map((entry) => (
-					<li key={entry}>{entry}</li>
-				))}
-			</ul>
-		</div>
-	);
-}
-
 export function DropAnalyticsAdminSection() {
 	const [catalog, setCatalog] = useState<Catalog | null>(null);
 	const [error, setError] = useState('');
-	const [loading, setLoading] = useState(true);
-
-	async function refresh() {
-		setLoading(true);
-		setError('');
-		try {
-			setCatalog(
-				await fetchAdmin<Catalog>('/api/admin/drops', 'Failed to load drop analytics'),
-			);
-		} catch (caught) {
-			setError(errorMessage(caught, 'Failed to load drop analytics'));
-		} finally {
-			setLoading(false);
-		}
-	}
 
 	useEffect(() => {
 		let active = true;
@@ -126,9 +92,6 @@ export function DropAnalyticsAdminSection() {
 			})
 			.catch((caught: unknown) => {
 				if (active) setError(errorMessage(caught, 'Failed to load drop analytics'));
-			})
-			.finally(() => {
-				if (active) setLoading(false);
 			});
 		return () => {
 			active = false;
@@ -144,9 +107,6 @@ export function DropAnalyticsAdminSection() {
 					{error}
 				</p>
 			)}
-			<button type="button" onClick={() => void refresh()} disabled={loading}>
-				{loading ? 'Loading…' : 'Refresh drops'}
-			</button>
 		</section>
 	);
 }
@@ -154,6 +114,9 @@ export function DropAnalyticsAdminSection() {
 function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 	const [view, setView] = useState<View>('summary');
 	const [membershipFilter, setMembershipFilter] = useState<MembershipFilter>('all');
+	const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
+	const [dropFilter, setDropFilter] = useState('all');
+	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all');
 	const [sort, setSort] = useState<Sort>('drop');
 	const [descending, setDescending] = useState(false);
 	const allDrops = [{ id: null, name: 'Unassigned' }, ...catalog.drops];
@@ -161,6 +124,9 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 	const rows = allDrops.map((drop) => ({
 		...drop,
 		cosmetics: countFor(catalog, drop.id, 'cosmetic'),
+		memberCosmetics: catalog.items.filter(
+			(item) => item.drop === drop.id && item.type === 'cosmetic' && item.membersOnly,
+		).length,
 		decoblocks: countFor(catalog, drop.id, 'decoblock'),
 		knowledge: countFor(catalog, drop.id, 'knowledge'),
 	}));
@@ -173,7 +139,13 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 	const items = catalog.items
 		.filter(
 			(item) =>
-				membershipFilter === 'all' || item.membersOnly === (membershipFilter === 'members'),
+				(membershipFilter === 'all' ||
+					item.membersOnly === (membershipFilter === 'members')) &&
+				(typeFilter === 'all' || item.type === typeFilter) &&
+				(dropFilter === 'all' ||
+					item.drop === (dropFilter === 'unassigned' ? null : dropFilter)) &&
+				(availabilityFilter === 'all' ||
+					item.shopPurchasable === (availabilityFilter === 'shop')),
 		)
 		.toSorted((a, b) => {
 			let comparison = 0;
@@ -193,6 +165,18 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 			setSort(next);
 			setDescending(false);
 		}
+	}
+
+	function showDrop(id: string | null) {
+		setView('weekly');
+		requestAnimationFrame(() => {
+			const details = document.getElementById(
+				`drop-${id ?? 'unassigned'}`,
+			) as HTMLDetailsElement | null;
+			if (!details) return;
+			details.open = true;
+			details.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		});
 	}
 
 	return (
@@ -241,7 +225,17 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 						<tbody>
 							{rows.map((row) => (
 								<tr key={row.id ?? 'unassigned'}>
-									<th scope="row">{row.name}</th>
+									<th scope="row">
+										<button
+											className="dropTextButton"
+											type="button"
+											onClick={() => {
+												showDrop(row.id);
+											}}
+										>
+											{row.name}
+										</button>
+									</th>
 									<td>{row.cosmetics}</td>
 									<td>{row.decoblocks}</td>
 									<td>{row.knowledge}</td>
@@ -267,7 +261,10 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 						<h4>Content by drop</h4>
 						<div className="dropLegend">
 							<span>
-								<i className="dropLegendCosmetic" /> Cosmetics
+								<i className="dropLegendCosmetic" /> Other cosmetics
+							</span>
+							<span>
+								<i className="dropLegendMemberCosmetic" /> Members only cosmetics
 							</span>
 							<span>
 								<i className="dropLegendDeco" /> Decoblocks
@@ -280,7 +277,7 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 					<div
 						className="dropChartScroll"
 						role="img"
-						aria-label="Stacked bar chart of cosmetics, decoblocks and knowledge by drop, in release order"
+						aria-label="Stacked bar chart of cosmetics, members only cosmetics, decoblocks and knowledge by drop, in release order"
 					>
 						<div className="dropChart">
 							<div className="dropYAxis">
@@ -299,7 +296,7 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 									<div className="dropBarColumn" key={row.id ?? 'unassigned'}>
 										<div
 											className="dropBar"
-											title={`${row.name}: ${row.cosmetics} cosmetics, ${row.decoblocks} decoblocks, ${row.knowledge} knowledge`}
+											title={`${row.name}: ${row.cosmetics - row.memberCosmetics} other cosmetics, ${row.memberCosmetics} members only cosmetics, ${row.decoblocks} decoblocks, ${row.knowledge} knowledge`}
 										>
 											<span
 												className="dropBarDeco"
@@ -316,7 +313,13 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 											<span
 												className="dropBarCosmetic"
 												style={{
-													height: `${(row.cosmetics / scale) * 100}%`,
+													height: `${((row.cosmetics - row.memberCosmetics) / scale) * 100}%`,
+												}}
+											/>
+											<span
+												className="dropBarMemberCosmetic"
+												style={{
+													height: `${(row.memberCosmetics / scale) * 100}%`,
 												}}
 											/>
 										</div>
@@ -331,20 +334,7 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 			{view === 'items' && (
 				<>
 					<div className="dropItemsHeading">
-						<h4>Items ({items.length}) · ⭐ Membership required</h4>
-						<label>
-							Membership{' '}
-							<select
-								value={membershipFilter}
-								onChange={(event) => {
-									setMembershipFilter(event.target.value as MembershipFilter);
-								}}
-							>
-								<option value="all">All items</option>
-								<option value="members">Members only ⭐</option>
-								<option value="everyone">Available to everyone</option>
-							</select>
-						</label>
+						<h4>Items ({items.length})</h4>
 					</div>
 					<div className="dropTableScroll">
 						<table className="dropTable dropItemTable">
@@ -386,34 +376,101 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 												: ''}
 										</button>
 									</th>
+									<th scope="col">Membership</th>
+								</tr>
+								<tr className="dropFilterRow">
+									<th scope="col" aria-label="Name" />
+									<th scope="col">
+										<select
+											aria-label="Filter type"
+											value={typeFilter}
+											onChange={(event) => {
+												setTypeFilter(event.target.value as TypeFilter);
+											}}
+										>
+											<option value="all">All types</option>
+											<option value="cosmetic">Cosmetic</option>
+											<option value="decoblock">Decoblock</option>
+										</select>
+									</th>
+									<th scope="col">
+										<select
+											aria-label="Filter drop"
+											value={dropFilter}
+											onChange={(event) => {
+												setDropFilter(event.target.value);
+											}}
+										>
+											<option value="all">All drops</option>
+											{allDrops.map((drop) => (
+												<option
+													key={drop.id ?? 'unassigned'}
+													value={drop.id ?? 'unassigned'}
+												>
+													{drop.name}
+												</option>
+											))}
+										</select>
+									</th>
+									<th scope="col">
+										<select
+											aria-label="Filter availability"
+											value={availabilityFilter}
+											onChange={(event) => {
+												setAvailabilityFilter(
+													event.target.value as AvailabilityFilter,
+												);
+											}}
+										>
+											<option value="all">All availability</option>
+											<option value="shop">Shop</option>
+											<option value="outside">Outside the shop</option>
+										</select>
+									</th>
+									<th scope="col">
+										<select
+											aria-label="Filter membership"
+											value={membershipFilter}
+											onChange={(event) => {
+												setMembershipFilter(
+													event.target.value as MembershipFilter,
+												);
+											}}
+										>
+											<option value="all">All items</option>
+											<option value="members">Members only ⭐</option>
+											<option value="everyone">Everyone</option>
+										</select>
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								{items.map((item) => (
 									<tr key={item.id}>
-										<th scope="row">
-											{item.name}
-											{item.membersOnly && (
-												<span
-													title="Membership required"
-													aria-label="Membership required"
-												>
-													{' '}
-													⭐
-												</span>
-											)}
-										</th>
+										<th scope="row">{item.name}</th>
 										<td>
 											{item.type === 'cosmetic' ? 'Cosmetic' : 'Decoblock'}
 										</td>
 										<td>
-											{allDrops.find((drop) => drop.id === item.drop)?.name}
+											<button
+												className="dropTextButton"
+												type="button"
+												onClick={() => {
+													showDrop(item.drop);
+												}}
+											>
+												{
+													allDrops.find((drop) => drop.id === item.drop)
+														?.name
+												}
+											</button>
 										</td>
 										<td>
 											{item.shopPurchasable
 												? 'Shop'
 												: 'Included outside the shop'}
 										</td>
+										<td>{item.membersOnly ? 'Members only ⭐' : 'Everyone'}</td>
 									</tr>
 								))}
 							</tbody>
@@ -425,69 +482,38 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 				<>
 					<h4>Weekly drops</h4>
 					<div className="dropWeekList">
-						{catalog.drops.map((drop, index) => {
+						{[
+							{ id: 'unassigned', name: 'Unassigned', date: '', description: '' },
+							...catalog.drops,
+						].map((drop, index) => {
+							const dropId = drop.id === 'unassigned' ? null : drop.id;
 							const itemEntries = catalog.items.filter(
-								(item) => item.drop === drop.id,
+								(item) => item.drop === dropId,
 							);
 							const knowledgeEntries = catalog.knowledge.filter(
-								(entry) => entry.drop === drop.id,
+								(entry) => entry.drop === dropId,
 							);
 							return (
-								<article className="dropWeek" key={drop.id}>
-									<header>
-										<div>
-											<small>
-												Week {index + 1} · {niceDate(drop.date)}
-											</small>
-											<h5>{drop.name} Drop</h5>
-											<p>{drop.description}</p>
-										</div>
-										<strong>
-											{itemEntries.length + knowledgeEntries.length} entries
-										</strong>
-									</header>
-									<div className="dropWeekPlan">
-										<p>
-											<strong>This year:</strong> {niceDate(drop.weekStart)} –{' '}
-											{niceDate(drop.date)}
-										</p>
-										<p>
-											<strong>Last year:</strong> {drop.lastYear}
-										</p>
-										{'availableDayOne' in drop && drop.availableDayOne && (
-											<PlanList
-												title="Available Day 1"
-												text={drop.availableDayOne}
-											/>
-										)}
-										{'lastYearNotes' in drop && drop.lastYearNotes && (
-											<PlanList
-												title="Last year notes"
-												text={drop.lastYearNotes}
-											/>
-										)}
-										{'surprisingSaturday' in drop &&
-											drop.surprisingSaturday && (
-												<p>
-													<strong>Surprising Saturday:</strong>{' '}
-													{drop.surprisingSaturday}
-												</p>
+								<details className="dropWeek" id={`drop-${drop.id}`} key={drop.id}>
+									<summary>
+										<span>
+											{dropId && (
+												<small>
+													Week {index} · {niceDate(drop.date)}
+												</small>
 											)}
-										{'releaseNotes' in drop && drop.releaseNotes && (
-											<PlanList
-												title="Sunday plan"
-												text={drop.releaseNotes}
-											/>
-										)}
-										{'screenshot' in drop && drop.screenshot && (
-											<p>
-												<strong>Screenshot:</strong> {drop.screenshot}
-											</p>
-										)}
-										{'notes' in drop && drop.notes && (
-											<PlanList title="Other notes" text={drop.notes} />
-										)}
-									</div>
+											<strong>
+												{drop.name}
+												{dropId && ' Drop'}
+											</strong>
+										</span>
+										<span>
+											{itemEntries.length + knowledgeEntries.length} entries
+										</span>
+									</summary>
+									{drop.description && (
+										<p className="dropWeekDescription">{drop.description}</p>
+									)}
 									<div className="dropWeekGroups">
 										<div>
 											<h6>
@@ -526,7 +552,7 @@ function DropAnalyticsContent({ catalog }: { catalog: Catalog }) {
 											<ContentList entries={knowledgeEntries} />
 										</div>
 									</div>
-								</article>
+								</details>
 							);
 						})}
 					</div>

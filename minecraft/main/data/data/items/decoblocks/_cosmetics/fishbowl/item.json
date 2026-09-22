@@ -34,8 +34,8 @@
 			},
 			{
 				"particle": "minecraft:bubble_pop",
-				"from": [3.5, 11.5, 3.5],
-				"to": [12.5, 10.5, 12.5],
+				"from": [3.5, 10.5, 3.5],
+				"to": [12.5, 11.5, 12.5],
 				"minTicks": 80,
 				"maxTicks": 160
 			}

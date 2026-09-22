@@ -9,7 +9,6 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"glowing": false,
 		"lightLevel": 0
 	},
 	"consumable": {

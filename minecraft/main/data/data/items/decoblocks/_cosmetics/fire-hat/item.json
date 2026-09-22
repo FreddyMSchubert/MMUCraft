@@ -27,10 +27,10 @@
 		"particles": [
 			{
 				"particle": "minecraft:large_smoke",
-				"from": [7, 7, 7],
-				"to": [9, 11, 9],
-				"minTicks": 35,
-				"maxTicks": 80
+				"from": [0, 16, 0],
+				"to": [16, 32, 16],
+				"minTicks": 15,
+				"maxTicks": 40
 			}
 		]
 	}

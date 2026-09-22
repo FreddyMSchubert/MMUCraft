@@ -8,9 +8,9 @@
 		"You shouldn't have this..."
 	],
 	"decoBlock": {
-		"ground": true,
+		"ground": false,
 		"wall": false,
-		"ceiling": false,
+		"ceiling": true,
 		"glowing": true,
 		"lightLevel": 15
 	}

@@ -30,6 +30,8 @@ These are the rules every player reads and accepts when creating their account. 
 5. 🤝 **Cooperate with committee members at all times.**
 6. 🚫 **No impersonation, scams, deliberate spam, or disruptive advertising.**
 
+Any communication through a society-based medium may be proofread for moderation, to ensure everybody's wellbeing.
+
 :::warning Need help?
 If you think any of these rules are being broken or feel unwell or unsafe within the Society in any way, please reach out to our Wellbeing Officer Mia or [open a ticket on our Discord server](https://discord.com/channels/1396896170751692931/1415746294659551384/1415753985561854043).
 :::

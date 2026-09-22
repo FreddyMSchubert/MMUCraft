@@ -4,66 +4,133 @@
 	"modelType": "charm",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Timber without the climb."
-	],
+	"tooltips": ["Timber without the climb."],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 100,
-		"description": "Chops connected logs while sneaking with an axe.",
-		"unlockWeight": 175,
-		"unlockMessage": "Unlocked charm: Saw Belt Charm. Chops connected logs."
+		"description": "Chops down a whole tree while sneaking and using an axe.",
+		"unlockWeight": 100000,
+		"unlockMessage": "Unlocked charm: Saw Belt Charm. Use it to chop down whole trees by breaking one block."
 	},
 	"charm": {
 		"charmId": 35,
-		"minLevel": 0,
-		"maxLevel": 8,
+		"minLevel": 1,
+		"maxLevel": 14,
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "Breaks up to 2 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Sneak with an axe to chop 2 extra logs.",
-				"dabloons": 50,
-				"upgradeIngredients": [
-					"minecraft:wooden_axe",
-					"minecraft:oak_log",
-					"minecraft:oak_log",
-					"minecraft:stick"
-				]
+				"abilityStatusCurrent": "Breaks up to 1 extra log while sneaking with an axe.",
+				"abilityStatusRelative": "Sneak with an axe to chop 1 extra log.",
+				"dabloons": 0,
+				"upgradeIngredients": []
 			},
 			{
 				"level": 2,
-				"abilityStatusCurrent": "Breaks up to 4 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 75,
+				"abilityStatusCurrent": "Breaks up to 2 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 1 more log.",
+				"dabloons": 30,
 				"upgradeIngredients": [
-					"minecraft:birch_log",
-					"minecraft:acacia_log",
-					"minecraft:apple",
-					"minecraft:honeycomb",
-					"minecraft:honeycomb"
+					"minecraft:wooden_axe",
+					"minecraft:oak_planks",
+					"minecraft:oak_planks",
+					"minecraft:apple"
 				]
 			},
 			{
 				"level": 3,
-				"abilityStatusCurrent": "Breaks up to 8 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
-				"dabloons": 100,
+				"abilityStatusCurrent": "Breaks up to 3 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 1 more log.",
+				"dabloons": 35,
 				"upgradeIngredients": [
-					"minecraft:dark_oak_log",
+					"minecraft:wooden_axe",
+					"minecraft:birch_log",
+					"minecraft:birch_planks",
+					"minecraft:birch_sapling"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Breaks up to 4 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 1 more log.",
+				"dabloons": 40,
+				"upgradeIngredients": [
+					"minecraft:wooden_axe",
+					"minecraft:spruce_log",
+					"minecraft:spruce_sapling",
+					"minecraft:sweet_berries"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Breaks up to 5 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 1 more log.",
+				"dabloons": 45,
+				"upgradeIngredients": [
+					"minecraft:wooden_axe",
+					"minecraft:acacia_log",
+					"minecraft:acacia_planks",
+					"minecraft:acacia_sapling"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Breaks up to 6 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 1 more log.",
+				"dabloons": 50,
+				"upgradeIngredients": [
+					"minecraft:stone_axe",
+					"minecraft:poplar_log",
+					"minecraft:poplar_sapling",
+					"minecraft:poplar_planks"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Breaks up to 8 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 2 more logs.",
+				"dabloons": 65,
+				"upgradeIngredients": [
+					"minecraft:copper_axe",
 					"minecraft:jungle_log",
+					"minecraft:jungle_sapling",
 					"minecraft:cocoa_beans",
 					"minecraft:cocoa_beans",
 					"minecraft:vine"
 				]
 			},
 			{
-				"level": 4,
-				"abilityStatusCurrent": "Breaks up to 16 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"level": 8,
+				"abilityStatusCurrent": "Breaks up to 12 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 4 more logs.",
+				"dabloons": 80,
+				"upgradeIngredients": [
+					"minecraft:iron_axe",
+					"minecraft:bamboo_block",
+					"minecraft:bamboo_planks",
+					"minecraft:bamboo",
+					"minecraft:bamboo_mosaic"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Breaks up to 18 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 6 more logs.",
+				"dabloons": 100,
+				"upgradeIngredients": [
+					"minecraft:iron_axe",
+					"minecraft:dark_oak_log",
+					"minecraft:dark_oak_sapling",
+					"minecraft:red_mushroom",
+					"minecraft:brown_mushroom"
+				]
+			},
+			{
+				"level": 10,
+				"abilityStatusCurrent": "Breaks up to 32 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 14 more logs.",
 				"dabloons": 125,
 				"upgradeIngredients": [
-					"minecraft:spruce_log",
+					"minecraft:golden_axe",
 					"minecraft:mangrove_log",
 					"minecraft:mangrove_propagule",
 					"minecraft:mud",
@@ -71,61 +138,57 @@
 				]
 			},
 			{
-				"level": 5,
-				"abilityStatusCurrent": "Breaks up to 32 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"level": 11,
+				"abilityStatusCurrent": "Breaks up to 64 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 32 more logs.",
 				"dabloons": 150,
 				"upgradeIngredients": [
+					"minecraft:diamond_axe",
 					"minecraft:cherry_log",
 					"minecraft:pink_petals",
 					"minecraft:bee_nest",
 					"minecraft:honeycomb",
-					"minecraft:azalea",
-					"minecraft:diamond"
+					"minecraft:azalea"
 				]
 			},
 			{
-				"level": 6,
-				"abilityStatusCurrent": "Breaks up to 64 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"level": 12,
+				"abilityStatusCurrent": "Breaks up to 128 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 64 more logs.",
 				"dabloons": 175,
 				"upgradeIngredients": [
+					"minecraft:diamond_axe",
 					"minecraft:pale_oak_log",
 					"minecraft:resin_clump",
 					"minecraft:resin_clump",
 					"minecraft:open_eyeblossom",
-					"minecraft:closed_eyeblossom",
-					"minecraft:creaking_heart",
-					"minecraft:diamond_block"
+					"minecraft:creaking_heart"
 				]
 			},
 			{
-				"level": 7,
-				"abilityStatusCurrent": "Breaks up to 128 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"level": 13,
+				"abilityStatusCurrent": "Breaks up to 192 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 64 more logs.",
 				"dabloons": 200,
 				"upgradeIngredients": [
+					"minecraft:netherite_axe",
 					"minecraft:crimson_stem",
-					"minecraft:warped_stem",
 					"minecraft:crimson_fungus",
-					"minecraft:warped_fungus",
-					"minecraft:shroomlight",
 					"minecraft:weeping_vines",
-					"minecraft:twisting_vines",
-					"minecraft:diamond_block"
+					"minecraft:shroomlight"
 				]
 			},
 			{
-				"level": 8,
-				"abilityStatusCurrent": "Breaks up to 256 extra logs while using axe and sneaking.",
-				"abilityStatusRelative": "Doubles amount of extra logs chopped.",
+				"level": 14,
+				"abilityStatusCurrent": "Breaks up to 256 extra logs while sneaking with an axe.",
+				"abilityStatusRelative": "Chops 64 more logs.",
 				"dabloons": 225,
 				"upgradeIngredients": [
-					"minecraft:chorus_flower",
-					"minecraft:chorus_flower",
-					"minecraft:shulker_shell",
-					"minecraft:shulker_shell",
-					"minecraft:diamond_block"
+					"minecraft:netherite_axe[minecraft:custom_data={is_enderite:1b}]=Enderite Axe",
+					"minecraft:warped_stem",
+					"minecraft:warped_fungus",
+					"minecraft:twisting_vines",
+					"minecraft:shroomlight"
 				]
 			}
 		]

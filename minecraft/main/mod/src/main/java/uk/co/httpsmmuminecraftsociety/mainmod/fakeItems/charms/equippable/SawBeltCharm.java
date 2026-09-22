@@ -19,10 +19,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm
 {
     private static final Set<UUID> ACTIVE_PLAYERS = ConcurrentHashMap.newKeySet();
+    // One progression step per wood set; the final step retains the old 256-log cap.
+    private static final int[] EXTRA_LOGS_BY_LEVEL = {0, 1, 2, 3, 4, 5, 6, 8, 12, 18, 32, 64, 128, 192, 256};
 
     private static int getMaxExtraBlocksForLevel(int level)
     {
-        return (int)Math.pow(2, level);
+        return EXTRA_LOGS_BY_LEVEL[Math.clamp(level, 0, EXTRA_LOGS_BY_LEVEL.length - 1)];
     }
 
     @Override

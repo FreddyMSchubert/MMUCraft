@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.decoration.GlowItemFrame;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -102,9 +101,7 @@ public final class DecoBlocksManager {
             return rejectPlacement(player, hand);
         }
 
-        ItemFrame frame = decoBlock.glowing()
-                ? new GlowItemFrame(level, placePos, face)
-                : new ItemFrame(level, placePos, face);
+        ItemFrame frame = new ItemFrame(level, placePos, face);
         frame.setInvisible(true);
         frame.addTag(DECO_BLOCK_FRAME_TAG);
         if (hasLight) {

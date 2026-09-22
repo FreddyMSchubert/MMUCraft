@@ -8,7 +8,6 @@ public record DecoBlockItemFeature(
         boolean ground,
         boolean wall,
         boolean ceiling,
-        boolean glowing,
         int lightLevel
 ) implements ItemFeature
 {
@@ -18,7 +17,6 @@ public record DecoBlockItemFeature(
                 json.get("ground").getAsBoolean(),
                 json.get("wall").getAsBoolean(),
                 json.get("ceiling").getAsBoolean(),
-                json.get("glowing").getAsBoolean(),
                 json.get("lightLevel").getAsInt()
         );
     }

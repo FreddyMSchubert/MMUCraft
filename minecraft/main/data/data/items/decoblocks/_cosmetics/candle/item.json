@@ -18,15 +18,15 @@
 		"particles": [
 			{
 				"particle": "minecraft:flame",
-				"from": [8, 11, 7.5],
-				"to": [8, 12, 8.5],
+				"from": [8, 19, 7.5],
+				"to": [8, 20, 8.5],
 				"minTicks": 2,
 				"maxTicks": 4
 			},
 			{
 				"particle": "minecraft:smoke",
-				"from": [8, 11, 7.5],
-				"to": [8, 12, 8.5],
+				"from": [8, 21, 7.5],
+				"to": [8, 22, 8.5],
 				"minTicks": 14,
 				"maxTicks": 30
 			}

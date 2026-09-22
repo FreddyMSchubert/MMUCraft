@@ -15,5 +15,12 @@
 		"unlockMessage": "Unlocked cosmetic: Small Frog.",
 		"tags": ["toad"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true,
+		"glowing": true,
+		"lightLevel": 12
+	}
 }

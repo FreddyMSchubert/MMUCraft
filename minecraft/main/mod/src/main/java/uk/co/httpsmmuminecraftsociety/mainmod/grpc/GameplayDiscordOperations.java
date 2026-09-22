@@ -20,9 +20,9 @@ final class GameplayDiscordOperations {
         if (server == null) throw new IllegalStateException("Minecraft server is not available");
         String name = request.getDiscordName().strip().replaceAll("[\\r\\n]", " ");
         String content = request.getContent().strip().replaceAll("[\\r\\n]+", " ");
-        Component message = Component.literal("[Discord] ").withStyle(ChatFormatting.BLUE)
+        Component message = Component.literal("[Discord] ").withStyle(ChatFormatting.AQUA)
                 .append(Component.literal(name + ": ").withStyle(ChatFormatting.AQUA))
-                .append(Component.literal(content));
+                .append(Component.literal(content).withStyle(ChatFormatting.WHITE));
         DiscordBridge.broadcastFromDiscord(server, message);
         return BroadcastDiscordMessageResponse.newBuilder().setBroadcast(true).build();
     }

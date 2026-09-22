@@ -23,7 +23,7 @@ public final class VeinminerCharm implements Charm, AfterBlockBreakCallbackCharm
 
     private static int getMaxExtraBlocksForLevel(int level)
     {
-        return level;
+        return level == 11 ? 30 : level;
     }
 
     @Override

@@ -26,6 +26,8 @@ COPY services/api/src ./src
 COPY services/api/drizzle ./drizzle
 COPY services/web/public/knowledge ./content/knowledge
 COPY minecraft/main/data/data/items ./content/items
+COPY minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/enderite ./content/items/enderite-textures
+COPY minecraft/main/respack/packs/general-pack/assets/minecraft/textures/block/alien_debris.png minecraft/main/respack/packs/general-pack/assets/minecraft/textures/block/enderite_block.png ./content/items/enderite-block-textures/
 COPY minecraft/main/data/drops.json ./content/drops.json
 COPY minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/wallet/wallet-0.png ./content/items/charm/held/wallet/texture.png
 COPY proto ./proto
@@ -46,6 +48,8 @@ COPY --from=build --chown=node:node /app/dist ./dist
 COPY --chown=node:node services/api/drizzle ./drizzle
 COPY --chown=node:node services/web/public/knowledge ./content/knowledge
 COPY --chown=node:node minecraft/main/data/data/items ./content/items
+COPY --chown=node:node minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/enderite ./content/items/enderite-textures
+COPY --chown=node:node minecraft/main/respack/packs/general-pack/assets/minecraft/textures/block/alien_debris.png minecraft/main/respack/packs/general-pack/assets/minecraft/textures/block/enderite_block.png ./content/items/enderite-block-textures/
 COPY --chown=node:node minecraft/main/data/drops.json ./content/drops.json
 COPY --chown=node:node minecraft/main/respack/packs/general-pack/assets/general-pack/textures/item/wallet/wallet-0.png ./content/items/charm/held/wallet/texture.png
 COPY --chown=node:node proto ./proto

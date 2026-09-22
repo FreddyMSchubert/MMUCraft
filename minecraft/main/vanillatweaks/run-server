@@ -1,0 +1,17 @@
+#!/bin/bash
+set -u
+
+# SERVER_RUNNER is called after itzg has downloaded Modrinth projects and
+# before mc-server-runner launches Java.
+for selection in crafting datapacks; do
+  spec="/tmp/mmu-vanillatweaks-${selection}.json"
+  sed "s/\"version\": \"26.3\"/\"version\": \"${VERSION:-26.3}\"/" \
+    "/image/vanillatweaks/vanillatweaks-${selection}.json" > "$spec"
+  if ! mc-image-helper vanillatweaks --pack-files "$spec" \
+    --output-directory /data --world-subdir "${LEVEL:-world}"; then
+    echo "[vanillatweaks] ${selection} unavailable for ${VERSION:-unknown}; continuing." >&2
+  fi
+  rm -f "$spec"
+done
+
+exec mc-server-runner "$@"

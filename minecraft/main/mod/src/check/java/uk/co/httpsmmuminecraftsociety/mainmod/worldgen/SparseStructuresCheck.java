@@ -16,6 +16,11 @@ public final class SparseStructuresCheck {
         assert modded.getAsJsonObject("placement").get("spacing").getAsInt() == 96;
         assert modded.getAsJsonObject("placement").get("separation").getAsInt() == 24;
 
+        checkFactor("explorify", 3);
+        checkFactor("qrafty", 4);
+        checkFactor("structory", 2);
+        checkFactor("structory_towers", 5);
+
         JsonObject vanilla = randomSpreadPlacement(32, 8);
         SparseStructures.apply(structureSet("minecraft", "villages"), vanilla);
         assert vanilla.getAsJsonObject("placement").get("spacing").getAsInt() == 32;
@@ -37,6 +42,13 @@ public final class SparseStructuresCheck {
         placement.addProperty("separation", separation);
         root.add("placement", placement);
         return root;
+    }
+
+    private static void checkFactor(String namespace, int factor) {
+        JsonObject structure = randomSpreadPlacement(32, 8);
+        SparseStructures.apply(structureSet(namespace, "example"), structure);
+        assert structure.getAsJsonObject("placement").get("spacing").getAsInt() == 32 * factor;
+        assert structure.getAsJsonObject("placement").get("separation").getAsInt() == 8 * factor;
     }
 
     private static ResourceKey<StructureSet> structureSet(String namespace, String path) {

@@ -72,7 +72,7 @@ public class TeleportPotionUtils
         return "";
     }
 
-    public static void teleportWithCompanions(
+    public static boolean teleportWithCompanions(
             String potion,
             ServerPlayer player,
             ServerLevel destination,
@@ -140,15 +140,18 @@ public class TeleportPotionUtils
                     .forEach((playerMoved ? movedCompanions : failedCompanions)::add);
         }
 
-        companionRoles.forEach((entity, roles) -> {
-            if (!vehicleTree.contains(entity)) {
-                    Entity moved = teleportEntity(entity, destination, new Vec3(x, y, z));
-                    if (moved instanceof Leashable movedLeashable && leashed.contains(entity)) {
-                        movedLeashable.setLeashedTo(player, true);
-                    }
-                    (moved == null ? failedCompanions : movedCompanions).add(describeEntity(entity, roles));
-            }
-        });
+        if (playerMoved) {
+            companionRoles.forEach((entity, roles) -> {
+                if (vehicleTree.contains(entity)) return;
+                Entity moved = teleportEntity(entity, destination, new Vec3(x, y, z));
+                if (moved instanceof Leashable movedLeashable && leashed.contains(entity)) {
+                    movedLeashable.setLeashedTo(player, true);
+                }
+                (moved == null ? failedCompanions : movedCompanions).add(describeEntity(entity, roles));
+            });
+        } else {
+            companionRoles.forEach((entity, roles) -> failedCompanions.add(describeEntity(entity, roles)));
+        }
 
         MainMod.LOGGER.info(
                 "Teleport potion={} gameTime={} player=\"{}\" playerUuid={} from={} ({}, {}, {}) requestedDestination={} ({}, {}, {}) actualDestination={} ({}, {}, {}) success={} companionsMoved={} companionsFailed={}",
@@ -172,6 +175,7 @@ public class TeleportPotionUtils
                 movedCompanions,
                 failedCompanions
         );
+        return playerMoved;
     }
 
     private static void addRole(Map<Entity, Set<String>> roles, Entity entity, String role) {

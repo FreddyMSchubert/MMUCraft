@@ -20,6 +20,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettings;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -217,6 +218,11 @@ public class LootTableModifiers {
                 enchantments.set(enchantmentHolder, Mth.nextInt(lootContext.getRandom(), 1, enchType.maxNormalGearLevel));
                 stack.set(DataComponents.STORED_ENCHANTMENTS, enchantments.toImmutable());
 
+                // Brushing keeps only the first archaeology loot result. Replace it instead of
+                // appending a second stack that BrushableBlockEntity would discard.
+                if (enchType.enchantment.equals(ModEnchantments.CHARM_BOOST)) {
+                    itemStacks.clear();
+                }
                 itemStacks.add(stack);
             }
         }

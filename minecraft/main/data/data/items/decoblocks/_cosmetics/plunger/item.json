@@ -10,7 +10,6 @@
 		"ground": true,
 		"wall": true,
 		"ceiling": true,
-		"glowing": false,
 		"lightLevel": 0
 	},
 	"shopPurchasable": {

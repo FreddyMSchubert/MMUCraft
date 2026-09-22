@@ -26,13 +26,22 @@ public final class SparseStructures {
             return;
         }
 
+        int factor = switch (elementKey.identifier().getNamespace()) {
+            case "explorify" -> 3;
+            case "qrafty" -> 4;
+            case "structory" -> 2;
+            case "structory_towers" -> 5;
+            case "nova_structures" -> 2;
+            default -> NON_VANILLA_SPREAD_FACTOR;
+        };
+
         placement.addProperty(
                 "spacing",
-                Math.multiplyExact(placement.get("spacing").getAsInt(), NON_VANILLA_SPREAD_FACTOR)
+                Math.multiplyExact(placement.get("spacing").getAsInt(), factor)
         );
         placement.addProperty(
                 "separation",
-                Math.multiplyExact(placement.get("separation").getAsInt(), NON_VANILLA_SPREAD_FACTOR)
+                Math.multiplyExact(placement.get("separation").getAsInt(), factor)
         );
     }
 }

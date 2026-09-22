@@ -30,7 +30,7 @@ public final class DailyTaskCatalogCheck {
                 project.resolve("src/main/resources").resolve(DailyTaskCatalog.RESOURCE_PATH),
                 VanillaRegistries.createWorldLookup(),
                 fakeItemIds,
-                DropCatalog.load(project.resolve("../data/gameplay-toggles.json"))
+                DropCatalog.load(project.resolve("../data/drops.json"))
         );
         DailyTaskRegistry.validate(catalog);
         int taskCount = DailyTaskRegistry.optionCount(catalog);

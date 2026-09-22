@@ -1,0 +1,13 @@
+{
+	"type": "datapacks",
+	"version": "26.3",
+	"packs": {
+		"survival": [
+			"custom nether portals",
+			"cauldron concrete",
+			"cauldron mud",
+			"fast leaf decay"
+		],
+		"convenience": ["painting picker"]
+	}
+}

@@ -9,7 +9,7 @@ it is useful to document this here to have an exact list of features that need d
 https://modrinth.com/datapack/mastercutter but gotta remove the amethyst recipe
 https://modrinth.com/datapack/more-mobs
 
-## Vanilla Tweaks
+## Vanilla Tweaks (tho all of this stuff is handled automatically by the itzg image)
 
 ### Crafting Changes
 

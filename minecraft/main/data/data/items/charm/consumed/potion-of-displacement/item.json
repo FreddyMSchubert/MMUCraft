@@ -4,10 +4,7 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 16,
-	"tooltips": [
-		"Let's go gambling!",
-		"Awww, dang it..."
-	],
+	"tooltips": ["Let's go gambling!", "Awww, dang it..."],
 	"charm": {
 		"charmId": 27,
 		"minLevel": 1,
@@ -25,7 +22,7 @@
 	"consumable": {
 		"isDrink": true,
 		"canAlwaysEat": true,
-		"consumeSeconds": 10,
+		"consumeSeconds": 15,
 		"directHearts": 0,
 		"effects": [
 			{

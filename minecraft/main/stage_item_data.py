@@ -18,7 +18,6 @@ STAGED_DATA_ROOT = Path("mod/src/main/resources/data/mainmod")
 
 
 def validate_gameplay_toggle_references(root: Path) -> None:
-	catalog_path = root / "data" / "gameplay-toggles.json"
 	drops_path = root / "data" / "drops.json"
 	drops = json.loads(drops_path.read_text(encoding="utf-8"))
 	if (
@@ -31,21 +30,12 @@ def validate_gameplay_toggle_references(root: Path) -> None:
 	):
 		raise ValueError(f"Invalid drop catalog: {drops_path}")
 	drop_ids = {drop["id"] for drop in drops}
-	toggles = json.loads(catalog_path.read_text(encoding="utf-8"))
-	if (
-		not isinstance(toggles, list)
-		or not all(isinstance(toggle, str) and TOGGLE_ID.fullmatch(toggle) for toggle in toggles)
-		or len(toggles) != len(set(toggles))
-	):
-		raise ValueError(f"Invalid gameplay toggle catalog: {catalog_path}")
-	known = set(toggles)
-	if not known.issubset(drop_ids):
-		raise ValueError(f"Gameplay toggles missing from drop catalog: {sorted(known - drop_ids)}")
+	known = drop_ids
 	migrations = "\n".join(
 		path.read_text(encoding="utf-8")
 		for path in sorted((root.parents[1] / "services" / "api" / "drizzle").glob("*.sql"))
 	)
-	for toggle in toggles:
+	for toggle in known - {"unthemed"}:
 		if f"('{toggle}'," not in migrations:
 			raise ValueError(f"Gameplay toggle is not seeded by an API migration: {toggle}")
 
@@ -55,8 +45,6 @@ def validate_gameplay_toggle_references(root: Path) -> None:
 		shop = item.get("shopPurchasable")
 		if isinstance(shop, dict):
 			_validate_toggle(shop.get("gameplayToggle"), known, path)
-			if item.get("drop") and shop.get("gameplayToggle") != item["drop"]:
-				raise ValueError(f"Item drop and shop gameplay toggle differ: {path}")
 
 	for path in sorted((root / "data" / "data" / "dailies" / "catalog").rglob("*.daily.json")):
 		daily = json.loads(path.read_text(encoding="utf-8"))

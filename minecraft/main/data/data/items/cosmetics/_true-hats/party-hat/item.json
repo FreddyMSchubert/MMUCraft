@@ -16,5 +16,16 @@
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#ff5ae5"
+	},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:totem_of_undying",
+				"from": [-8, 16, 8],
+				"to": [24, 26.5, 24],
+				"minTicks": 160,
+				"maxTicks": 320
+			}
+		]
 	}
 }

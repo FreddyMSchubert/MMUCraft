@@ -6,9 +6,9 @@
 	"maxStackSize": 1,
 	"tooltips": ["You shouldn't have this..."],
 	"decoBlock": {
-		"ground": true,
+		"ground": false,
 		"wall": false,
-		"ceiling": false,
+		"ceiling": true,
 		"lightLevel": 15
 	}
 }

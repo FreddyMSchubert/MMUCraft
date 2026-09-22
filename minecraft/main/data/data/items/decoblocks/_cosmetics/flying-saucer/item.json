@@ -21,5 +21,16 @@
 		"unlockMessage": "Unlocked cosmetic: Flying Saucer.",
 		"tags": ["alien", "spaceship"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:spore_blossom_air",
+				"from": [4, 1, 12],
+				"to": [12, 1, 12],
+				"minTicks": 80,
+				"maxTicks": 160
+			}
+		]
+	}
 }

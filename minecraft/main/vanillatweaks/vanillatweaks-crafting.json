@@ -1,0 +1,9 @@
+{
+	"type": "craftingtweaks",
+	"version": "26.3",
+	"packs": {
+		"quality of life": ["straight to shapeless"],
+		"more blocks": ["more bark", "more bricks", "more stairs", "more trapdoors"],
+		"unpackables": ["unpackable ice", "unpackable nether wart", "unpackable wool"]
+	}
+}

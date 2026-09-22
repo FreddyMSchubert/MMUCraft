@@ -24,7 +24,9 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -72,6 +74,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
+import uk.co.httpsmmuminecraftsociety.mainmod.worldgen.BottomEndStoneFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
@@ -92,6 +95,9 @@ public class MainMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Hello MMU!");
+		Registry.register(BuiltInRegistries.FEATURE_TYPE,
+				Identifier.fromNamespaceAndPath(MOD_ID, "bottom_end_stone"),
+				BottomEndStoneFeature.CODEC);
 		if (!ResourceLoader.registerBuiltinPack(
 				Identifier.fromNamespaceAndPath(MOD_ID, "hide_vanillatweaks_advancements"),
 				FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(),

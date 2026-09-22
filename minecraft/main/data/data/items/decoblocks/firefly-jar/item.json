@@ -11,5 +11,16 @@
 		"wall": false,
 		"ceiling": false,
 		"lightLevel": 5
+	},
+	"particleEmission": {
+		"particles": [
+			{
+				"particle": "minecraft:firefly",
+				"from": [5, 13, 5],
+				"to": [11, 14, 11],
+				"minTicks": 35,
+				"maxTicks": 80
+			}
+		]
 	}
 }

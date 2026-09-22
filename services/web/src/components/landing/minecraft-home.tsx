@@ -5,7 +5,7 @@ import { LaunchCountdown, useLaunchLive } from '@/components/launch/launch-count
 import { MinecraftTitle } from '@/components/landing/minecraft-title';
 import { useSiteAlert } from '@/components/site-alert';
 
-const MEMBERSHIP_URL = 'https://www.theunionmmu.org/groups/26-2-minecraft-society';
+const MEMBERSHIP_URL = 'https://www.theunionmmu.org/groups/26-3-minecraft-society';
 
 interface MinecraftHomeProps {
 	panorama: { id: string; label: string };

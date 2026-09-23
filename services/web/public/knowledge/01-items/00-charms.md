@@ -16,6 +16,14 @@ tips:
 
 Charms are powerful magical artifacts of divine origins. Their powers range from the **simple but effective** (such as granting extra hearts), the **helpful** (such as insta-mining ore veins and trees), to the **strange** (such as climbing on walls and ceilings, or jumping in mid-air).
 
+## Video
+
+Here's a video, if you don't feel liek reading the rest of this page. The content is the same:
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/IIE-leowi0s?si=tx3QeEn1G3ZPi5OF" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## How to find charms
+
 You can find charms by looking for rare magic books, sometimes spawning in treasure chests. Look out for the dark teal cover:
 
 ![A buried treasure chest with a magic book spawned](/assets/knowledge/basics/charms/loot.png)

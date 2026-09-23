@@ -32,7 +32,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ![Fruit-Bowl Recipe](/assets/knowledge/items/decorative-blocks/fruit-bowl-recipe.png)
 :::recipe-items
-[Apple](https://minecraft.wiki/w/Apple) · [Melon Slice](https://minecraft.wiki/w/Melon_Slice) · [Pumpkin](https://minecraft.wiki/w/Pumpkin) · [Glistering Melon Slice](https://minecraft.wiki/w/Glistering_Melon_Slice) · [Glow Berries](https://minecraft.wiki/w/Glow_Berries) · [Sweet Berries](https://minecraft.wiki/w/Sweet Berries) · [Bowl](https://minecraft.wiki/w/Bowl) → Fruit Bowl
+[Apple](https://minecraft.wiki/w/Apple) · [Melon Slice](https://minecraft.wiki/w/Melon_Slice) · [Pumpkin](https://minecraft.wiki/w/Pumpkin) · [Glistering Melon Slice](https://minecraft.wiki/w/Glistering_Melon_Slice) · [Glow Berries](https://minecraft.wiki/w/Glow_Berries) · [Sweet Berries](https://minecraft.wiki/w/Sweet_Berries) · [Bowl](https://minecraft.wiki/w/Bowl) → Fruit Bowl
 :::
 ![Fruit-Bowl Placed](/assets/knowledge/items/decorative-blocks/fruit-bowl-deco.png)
 :::end-drop

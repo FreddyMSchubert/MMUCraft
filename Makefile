@@ -29,7 +29,7 @@ start:
 	$(PYTHON) $(MC)/respack/build-main-pack.py
 	$(COMPOSE) --profile event build surprising-saturday
 	$(COMPOSE) --profile minecraft up --build -d
-	$(COMPOSE) --profile event create --no-deps surprising-saturday
+	$(COMPOSE) --profile event create surprising-saturday
 	$(COMPOSE) --profile minecraft logs --follow
 
 restart:

@@ -325,7 +325,7 @@ fi
 
 # Start the release and wait for every health check.
 dc up -d --remove-orphans --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
-dc --profile event create --no-deps surprising-saturday
+dc --profile event create surprising-saturday
 # Compose cannot detect changes inside configuration bind mounts.
 dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" prometheus grafana loki alloy nginx
 wait_for_proxy ready || { echo "Velocity has not confirmed that main is ready." >&2; exit 1; }

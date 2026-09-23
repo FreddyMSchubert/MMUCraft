@@ -19,13 +19,14 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.waypoints.Waypoint;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.Utils;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
@@ -41,6 +42,44 @@ public final class CosmeticsManager {
     private static final String ORIGINAL_ITEM_ID = "original_item_id";
     private static final String HELMET_DYED_COLOR_ID = "helmet_dyed_color";
     public static final String COLOR_CYCLING_BOOLEAN = "color_cycling_boolean";
+
+    private static ItemStack storedItem(ItemStack replica, int index) {
+        ItemContainerContents contents = replica.get(DataComponents.CONTAINER);
+        if (contents == null) return ItemStack.EMPTY;
+        return contents.itemCopies().skip(index).findFirst().orElse(ItemStack.EMPTY);
+    }
+
+    public static boolean isReskinnedTurtleHelmet(ItemStack stack) {
+        return determineCosmeticType(stack).isHelmet()
+                && BuiltInRegistries.ITEM.getKey(Items.TURTLE_HELMET).toString().equals(
+                        stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                                .copyTag().getString(ORIGINAL_ITEM_ID).orElse(""));
+    }
+
+    private static void copyHelmetEquipRules(ItemStack replica, ItemStack helmet) {
+        Equippable original = helmet.get(DataComponents.EQUIPPABLE);
+        if (original == null) return;
+        replica.set(DataComponents.EQUIPPABLE, new Equippable(
+                original.slot(), original.equipSound(), Optional.empty(), Optional.empty(),
+                original.allowedEntities(), original.dispensable(), original.swappable(),
+                original.damageOnHurt(), original.equipOnInteract(), original.canBeSheared(),
+                original.shearingSound()));
+    }
+
+    public static void restoreHelmetProperties(ItemStack replica) {
+        if (!determineCosmeticType(replica).isHelmet()) return;
+        ItemAttributeModifiers modifiers = replica.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
+        if (modifiers.modifiers().stream().anyMatch(entry -> entry.attribute().equals(Attributes.ARMOR))) return;
+        ItemStack helmet = pumpkinReplicaToHelmet(replica);
+        if (!helmet.isEmpty()) {
+            replica.set(DataComponents.ATTRIBUTE_MODIFIERS,
+                    helmet.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY));
+            replica.set(DataComponents.ENCHANTABLE, helmet.get(DataComponents.ENCHANTABLE));
+            replica.set(DataComponents.REPAIRABLE, helmet.get(DataComponents.REPAIRABLE));
+            replica.set(DataComponents.DAMAGE_RESISTANT, helmet.get(DataComponents.DAMAGE_RESISTANT));
+            copyHelmetEquipRules(replica, helmet);
+        }
+    }
 
     public record CosmeticsInfo(boolean isCosmetic, boolean isDyeable, boolean isHelmet, boolean isColorCycling) {}
     public static CosmeticsInfo determineCosmeticType(ItemStack stack) {
@@ -81,11 +120,13 @@ public final class CosmeticsManager {
                 ? "Enderite Helmet"
                 : helmet.getItem().getName(helmet).getString();
         replica.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Cosmetic reskin of " + helmetName + "."))));
-        replica.set(DataComponents.EQUIPPABLE, Items.CARVED_PUMPKIN.components().get(DataComponents.EQUIPPABLE));
-        Utils.removeItemAttrModifier(
-                replica,
-                Waypoint.WAYPOINT_TRANSMIT_RANGE_HIDE_MODIFIER.id(),
-                Attributes.WAYPOINT_TRANSMIT_RANGE);
+        copyHelmetEquipRules(replica, helmet);
+        replica.set(DataComponents.ATTRIBUTE_MODIFIERS,
+                helmet.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY));
+        replica.set(DataComponents.ENCHANTABLE, helmet.get(DataComponents.ENCHANTABLE));
+        replica.set(DataComponents.REPAIRABLE, helmet.get(DataComponents.REPAIRABLE));
+        replica.set(DataComponents.DAMAGE_RESISTANT, helmet.get(DataComponents.DAMAGE_RESISTANT));
+        replica.set(DataComponents.RARITY, helmet.get(DataComponents.RARITY));
 
         replica.set(DataComponents.MAX_DAMAGE, helmet.getMaxDamage());
         replica.set(DataComponents.DAMAGE, helmet.getDamageValue());
@@ -108,6 +149,14 @@ public final class CosmeticsManager {
             return ItemStack.EMPTY;
         }
 
+        ItemStack stored = storedItem(replica, 0);
+        if (!stored.isEmpty() && stored.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS)) {
+            stored.set(DataComponents.DAMAGE, replica.get(DataComponents.DAMAGE));
+            stored.set(DataComponents.ENCHANTMENTS, replica.get(DataComponents.ENCHANTMENTS));
+            stored.set(DataComponents.CUSTOM_NAME, replica.get(DataComponents.CUSTOM_NAME));
+            return stored;
+        }
+
         // reconstruct original helmet item
         CompoundTag nbt = replica.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         Optional<String> originalId = nbt.getString(ORIGINAL_ITEM_ID);
@@ -123,7 +172,12 @@ public final class CosmeticsManager {
             return ItemStack.EMPTY;
         }
         Item originalItem = originalItemOpt.get();
-        ItemStack helmet = new ItemStack(originalItem);
+        ItemStack helmet = replica.transmuteCopy(originalItem);
+        helmet.set(DataComponents.ATTRIBUTE_MODIFIERS, originalItem.components().get(DataComponents.ATTRIBUTE_MODIFIERS));
+        helmet.set(DataComponents.EQUIPPABLE, originalItem.components().get(DataComponents.EQUIPPABLE));
+        helmet.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, originalItem.components().get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE));
+        helmet.set(DataComponents.MAX_STACK_SIZE, originalItem.components().get(DataComponents.MAX_STACK_SIZE));
+        helmet.set(DataComponents.LORE, originalItem.components().get(DataComponents.LORE));
 
         // copy relevant fields back again
         helmet.set(DataComponents.DAMAGE, replica.get(DataComponents.DAMAGE));
@@ -166,9 +220,12 @@ public final class CosmeticsManager {
         FakeItem cosmetic = FakeItems.ID_MAP.get(modelData.strings().getFirst());
         if (cosmetic == null) return ItemStack.EMPTY;
 
-        ItemStack result = cosmetic.createItemStack();
+        ItemStack stored = storedItem(replica, 1);
+        ItemStack result = !stored.isEmpty() && stored.is(Items.CARVED_PUMPKIN)
+                ? stored : cosmetic.createItemStack();
         DyedItemColor color = replica.get(DataComponents.DYED_COLOR);
         if (color != null) result.set(DataComponents.DYED_COLOR, color);
+        else result.remove(DataComponents.DYED_COLOR);
 
         CompoundTag replicaData = replica.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (replicaData.contains(COLOR_CYCLING_BOOLEAN)) {

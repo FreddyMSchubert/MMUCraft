@@ -2,16 +2,21 @@ package uk.co.httpsmmuminecraftsociety.mainmod.recipe;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CombineCosmeticRecipe extends CustomRecipe
@@ -35,7 +40,8 @@ public class CombineCosmeticRecipe extends CustomRecipe
                 continue;
             }
 
-            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-") && stack.getItem().equals(Items.CARVED_PUMPKIN)) {
+            if (!cmd.strings().isEmpty() && cmd.strings().getFirst().startsWith("cosmetic-")
+                    && stack.is(Items.CARVED_PUMPKIN) && !CosmeticsManager.determineCosmeticType(stack).isHelmet()) {
                 if (cosmetic != null) continue;
                 cosmetic = stack;
                 continue;
@@ -58,6 +64,16 @@ public class CombineCosmeticRecipe extends CustomRecipe
         craftingInfo cinfo = getCraftingInfo(input);
 
         ItemStack pumpkin = CosmeticsManager.helmetToPumpkinReplica(cinfo.armor);
+        List<Component> lore = new ArrayList<>(pumpkin.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
+        lore.add(Component.literal("Cosmetic: ").append(cinfo.cosmetic.getHoverName()));
+        lore.addAll(cinfo.armor.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
+        lore.addAll(cinfo.cosmetic.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
+        pumpkin.set(DataComponents.LORE, new ItemLore(lore.subList(0, Math.min(lore.size(), ItemLore.MAX_LINES))));
+        pumpkin.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.of(
+                cinfo.armor.copyWithCount(1), cinfo.cosmetic.copyWithCount(1))));
+        pumpkin.set(DataComponents.TOOLTIP_DISPLAY,
+                pumpkin.getOrDefault(DataComponents.TOOLTIP_DISPLAY, TooltipDisplay.DEFAULT)
+                        .withHidden(DataComponents.CONTAINER, true));
         CustomModelData armorModelData = cinfo.armor.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
         pumpkin.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
                 armorModelData.floats(), armorModelData.flags(),
@@ -66,10 +82,14 @@ public class CombineCosmeticRecipe extends CustomRecipe
         DyedItemColor cosmeticColor = cinfo.cosmetic.get(DataComponents.DYED_COLOR);
         if (cosmeticColor != null) {
             pumpkin.set(DataComponents.DYED_COLOR, cosmeticColor);
-
-            CompoundTag newNbt = pumpkin.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-            CompoundTag cosmeticNbt = cinfo.cosmetic.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-            newNbt.putBoolean(CosmeticsManager.COLOR_CYCLING_BOOLEAN, cosmeticNbt.getBooleanOr(CosmeticsManager.COLOR_CYCLING_BOOLEAN, false));
+        } else {
+            pumpkin.remove(DataComponents.DYED_COLOR);
+        }
+        CompoundTag newNbt = pumpkin.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        CompoundTag cosmeticNbt = cinfo.cosmetic.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (cosmeticNbt.contains(CosmeticsManager.COLOR_CYCLING_BOOLEAN)) {
+            newNbt.putBoolean(CosmeticsManager.COLOR_CYCLING_BOOLEAN,
+                    cosmeticNbt.getBooleanOr(CosmeticsManager.COLOR_CYCLING_BOOLEAN, false));
             pumpkin.set(DataComponents.CUSTOM_DATA, CustomData.of(newNbt));
         }
 

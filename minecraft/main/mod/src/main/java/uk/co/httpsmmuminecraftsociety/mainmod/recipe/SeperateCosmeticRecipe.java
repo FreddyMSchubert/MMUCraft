@@ -11,7 +11,7 @@ public class SeperateCosmeticRecipe extends CustomRecipe
     @Override
     public boolean matches(CraftingInput recipeInput, Level level)
     {
-        if (recipeInput.ingredientCount() > 1) return false;
+        if (recipeInput.ingredientCount() != 1) return false;
 
         ItemStack stack = recipeInput.items().getFirst();
         CosmeticsManager.CosmeticsInfo cinfo = CosmeticsManager.determineCosmeticType(stack);
@@ -27,8 +27,8 @@ public class SeperateCosmeticRecipe extends CustomRecipe
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInput craftingInput)
     {
-        NonNullList<ItemStack> list = NonNullList.withSize(craftingInput.ingredientCount(), ItemStack.EMPTY);
-        for (int i = 0; i < craftingInput.ingredientCount(); i++) {
+        NonNullList<ItemStack> list = NonNullList.withSize(craftingInput.size(), ItemStack.EMPTY);
+        for (int i = 0; i < craftingInput.size(); i++) {
             ItemStack stack = craftingInput.items().get(i).copy();
             if (!stack.isEmpty()) {
                 list.set(i, CosmeticsManager.pumpkinReplicaToHelmet(stack));

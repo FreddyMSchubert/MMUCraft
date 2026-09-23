@@ -131,21 +131,32 @@ export class MembershipImportService {
 		};
 	}
 
-	async apply(input: unknown) {
+	async apply(input: unknown, indicesInput: unknown, retryDiscord: unknown) {
+		if (
+			!Array.isArray(indicesInput) ||
+			!indicesInput.length ||
+			indicesInput.length > 5 ||
+			indicesInput.some((index) => !Number.isInteger(index) || index < 0) ||
+			new Set(indicesInput).size !== indicesInput.length ||
+			typeof retryDiscord !== 'boolean'
+		)
+			throw new BadRequestException('Apply between 1 and 5 distinct row indices');
 		const preview = await this.preview(input);
-		let context: Awaited<ReturnType<DiscordService['membershipRoleContext']>> | null = null;
-		let discordIssue = preview.discordIssue;
-		if (!preview.discordIssue) {
-			try {
-				context = await this.discord.membershipRoleContext();
-			} catch {
-				/* API membership can still be imported. */
-			}
-		}
-		const results = [];
-		for (const row of preview.rows) {
+		if (indicesInput.some((index) => index >= preview.rows.length))
+			throw new BadRequestException('Row index is outside the report');
+		const context = preview.discordIssue
+			? null
+			: await this.discord.membershipRoleContext().catch(() => null);
+		const results = [...preview.rows];
+		for (const index of indicesInput as number[]) {
+			const row = preview.rows[index];
+			if (!row) throw new BadRequestException('Row index is outside the report');
 			let apiStatus = row.apiStatus;
-			let discordStatus = row.discordStatus;
+			if (retryDiscord && apiStatus === 'already member') apiStatus = 'updated';
+			let discordStatus =
+				row.apiStatus === 'already member' && !retryDiscord
+					? 'assumed member'
+					: row.discordStatus;
 			if (!context && discordStatus === 'ready') discordStatus = 'Discord unavailable';
 			if (row.apiStatus === 'ready' && row.userId) {
 				try {
@@ -156,28 +167,36 @@ export class MembershipImportService {
 				}
 			}
 			if (
-				row.discordStatus === 'ready' &&
+				(row.discordStatus === 'ready' || row.discordStatus === 'already has role') &&
+				(row.apiStatus !== 'already member' || retryDiscord) &&
 				row.discordId &&
 				context &&
 				row.userId &&
 				apiStatus !== 'update failed'
 			) {
 				try {
-					const member = await context.guild.members.fetch(row.discordId);
+					const member = context.members.get(row.discordId);
+					if (!member) throw new Error('Discord member disappeared');
 					if (
 						member.user.username.trim().toLocaleLowerCase('en') !==
 						row.discordName.trim().toLocaleLowerCase('en')
 					)
 						throw new Error('Discord username changed');
-					await member.roles.add(context.role, '26/27 society membership import');
+					if (!member.roles.cache.has(context.role.id))
+						await member.roles.add(context.role, '26/27 society membership import');
 					discordStatus = 'role added';
-				} catch {
-					discordStatus = 'role update failed';
+				} catch (error) {
+					discordStatus =
+						error &&
+						typeof error === 'object' &&
+						'status' in error &&
+						(error.status === 403 || error.status === 404)
+							? 'role update blocked'
+							: 'role update failed';
 				}
 			}
-			results.push({ ...row, apiStatus, discordStatus });
+			results[index] = { ...row, apiStatus, discordStatus };
 		}
-		if (!context && !discordIssue) discordIssue = 'The bot disconnected during import';
-		return { rows: results, discordIssue };
+		return { rows: results, discordIssue: preview.discordIssue };
 	}
 }

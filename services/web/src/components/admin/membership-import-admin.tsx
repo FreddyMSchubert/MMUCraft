@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useSiteAlert } from '@/components/site-alert';
+import { useRef, useState } from 'react';
 import { apiMessage, errorMessage } from './admin-api';
 
 interface Row {
@@ -79,147 +78,232 @@ function membershipRows(text: string) {
 }
 
 export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<void> }) {
-	const { confirm } = useSiteAlert();
-	const [rows, setRows] = useState<Row[]>([]);
+	const run = useRef(0);
+	const controller = useRef<AbortController | null>(null);
 	const [results, setResults] = useState<Result[]>([]);
 	const [excluded, setExcluded] = useState(0);
 	const [busy, setBusy] = useState(false);
-	const [applied, setApplied] = useState(false);
+	const [remaining, setRemaining] = useState(0);
+	const [retryIn, setRetryIn] = useState(0);
 	const [error, setError] = useState('');
-	const [discordIssue, setDiscordIssue] = useState<string | null>(null);
-
-	async function request(path: string, input: Row[]) {
-		const response = await fetch(path, {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ rows: input }),
-		});
-		const body = await response.json().catch(() => null);
-		if (!response.ok) throw new Error(apiMessage(body, 'Membership import failed'));
-		return body as { rows: Result[]; discordIssue: string | null };
+	function cancel(message: string) {
+		run.current++;
+		controller.current?.abort();
+		setBusy(false);
+		setRetryIn(0);
+		setError(message);
+		void onApplied().catch(() => undefined);
 	}
 
 	async function chooseFile(file: File | undefined) {
 		setResults([]);
-		setRows([]);
-		setApplied(false);
+		setRemaining(0);
 		setError('');
-		setDiscordIssue(null);
 		if (!file) return;
 		if (!file.name.toLowerCase().endsWith('.csv') || file.size > 1_000_000) {
 			setError('Choose a CSV report smaller than 1 MB.');
 			return;
 		}
+		const currentRun = ++run.current;
+		const isCancelled = () => run.current !== currentRun;
 		setBusy(true);
 		try {
 			const parsed = membershipRows(await file.text());
 			if (!parsed.rows.length)
 				throw new Error('No approved, paid, unexpired members were found.');
+			if (parsed.rows.length > 500)
+				throw new Error('The report has more than 500 eligible rows.');
 			setExcluded(parsed.excluded);
-			setRows(parsed.rows);
-			const preview = await request('/api/admin/membership-import/preview', parsed.rows);
-			setResults(preview.rows);
-			setDiscordIssue(preview.discordIssue);
+			setRemaining(parsed.rows.length);
+			setResults(
+				parsed.rows.map((row) => ({
+					...row,
+					minecraftUsername: null,
+					userId: null,
+					discordNameSource: null,
+					discordLabel: null,
+					apiStatus: 'pending',
+					discordStatus: 'pending',
+				})),
+			);
+			let pending = parsed.rows.map((_, index) => index);
+			const finished = new Set<number>();
+			let retryDiscord = false;
+			while (pending.length && !isCancelled()) {
+				const failed: number[] = [];
+				for (let start = 0; start < pending.length && !isCancelled(); start += 5) {
+					const indices = pending.slice(start, start + 5);
+					const requestController = new AbortController();
+					controller.current = requestController;
+					try {
+						const response = await fetch('/api/admin/membership-import/apply', {
+							method: 'POST',
+							headers: { 'content-type': 'application/json' },
+							body: JSON.stringify({ rows: parsed.rows, indices, retryDiscord }),
+							signal: requestController.signal,
+						});
+						const body = await response.json().catch(() => null);
+						if (
+							!response.ok &&
+							response.status >= 400 &&
+							response.status < 500 &&
+							response.status !== 429
+						) {
+							cancel(apiMessage(body, 'Membership import was rejected.'));
+							break;
+						}
+						if (!response.ok)
+							throw new Error(apiMessage(body, 'Membership import failed'));
+						if (isCancelled()) break;
+						const result = body as { rows: Result[]; discordIssue: string | null };
+						const updated = result.rows;
+						if (!Array.isArray(updated) || updated.length !== parsed.rows.length)
+							throw new Error('The API returned an incomplete import result.');
+						setResults((current) =>
+							current.map((row, index) =>
+								(current[index].apiStatus === 'pending' && !retryDiscord) ||
+								indices.includes(index)
+									? updated[index]
+									: row,
+							),
+						);
+						for (const index of indices) {
+							if (
+								updated[index].apiStatus === 'update failed' ||
+								['role update failed', 'Discord unavailable'].includes(
+									updated[index].discordStatus,
+								) ||
+								(result.discordIssue &&
+									updated[index].userId &&
+									updated[index].discordName &&
+									updated[index].apiStatus !== 'already member')
+							)
+								failed.push(index);
+							else finished.add(index);
+						}
+						setRemaining(parsed.rows.length - finished.size);
+					} catch (caught) {
+						if (isCancelled()) break;
+						failed.push(...indices);
+						setError(errorMessage(caught, 'Import request failed. Retrying.'));
+					} finally {
+						if (controller.current === requestController) controller.current = null;
+					}
+				}
+				pending = failed;
+				if (!pending.length || isCancelled()) break;
+				retryDiscord = true;
+				for (let seconds = 30; seconds > 0 && !isCancelled(); seconds--) {
+					setRetryIn(seconds);
+					await new Promise((resolve) => setTimeout(resolve, 1000));
+				}
+				setRetryIn(0);
+				setError('');
+			}
+			if (!isCancelled()) await onApplied();
 		} catch (caught) {
-			setError(errorMessage(caught, 'Could not read the report.'));
+			if (!isCancelled()) setError(errorMessage(caught, 'Could not read the report.'));
 		} finally {
-			setBusy(false);
+			if (!isCancelled()) {
+				setBusy(false);
+				setRetryIn(0);
+			}
 		}
 	}
 
-	async function apply() {
-		if (
-			!(await confirm({
-				title: 'Apply reviewed memberships?',
-				message: `Grant API membership for matching emails and the 26/27 Member Discord role for uniquely matched names in these ${rows.length} report rows. Check the matches below first.`,
-				confirmLabel: 'Apply memberships',
-				confirmTone: 'primary',
-				tone: 'info',
-			}))
-		)
-			return;
-		setBusy(true);
-		setError('');
-		try {
-			const applied = await request('/api/admin/membership-import/apply', rows);
-			setResults(applied.rows);
-			setDiscordIssue(applied.discordIssue);
-			setApplied(true);
-			await onApplied();
-		} catch (caught) {
-			setError(errorMessage(caught, 'Could not apply memberships.'));
-		} finally {
-			setBusy(false);
-		}
-	}
-
+	const visible = results.filter((row) => row.apiStatus !== 'already member');
+	const complete = results.length - remaining;
 	return (
 		<div className="adminSection">
 			<h3>Import society membership report</h3>
 			<p>
-				Upload the Union CSV. Approved, paid, unexpired entries are matched by email.
-				Discord usernames are matched exactly to server accounts; the player profile name is
-				used when the report has no Discord name. Review every match before applying.
+				Upload the Union CSV to apply approved, paid, unexpired memberships. Discord names
+				match server usernames exactly.
 			</p>
 			<input
 				type="file"
 				accept=".csv,text/csv"
 				disabled={busy}
-				onChange={(event) => void chooseFile(event.target.files?.[0])}
+				onChange={(event) => {
+					const file = event.target.files?.[0];
+					event.target.value = '';
+					void chooseFile(file);
+				}}
 				aria-label="Society membership CSV"
 			/>
-			{busy && <p>Checking membership report…</p>}
-			{error && <p role="alert">{error}</p>}
-			{discordIssue && (
-				<p role="alert">
-					Discord roles are unavailable: {discordIssue}. API memberships can still be
-					applied.
-				</p>
-			)}
 			{results.length > 0 && (
 				<>
-					<p>
-						{results.length} eligible entries; {excluded} excluded.{' '}
-						{applied
-							? 'Import completed; inspect each result below.'
-							: 'No changes made yet.'}
+					<progress
+						className="membershipImportProgress"
+						value={complete}
+						max={results.length}
+					>
+						{complete} of {results.length}
+					</progress>
+					<p role="status">
+						{complete} of {results.length} rows finished; {excluded} excluded.
 					</p>
+					{retryIn > 0 && (
+						<p role="status">
+							<span className="membershipImportSpinner" aria-hidden="true" />
+							Retrying remaining rows in {retryIn}s…
+						</p>
+					)}
+					{busy && (
+						<button
+							type="button"
+							onClick={() => {
+								cancel('Import stopped. The current batch may have finished.');
+							}}
+						>
+							Cancel import
+						</button>
+					)}
 					<div className="adminTableWrap">
 						<table className="adminTable">
 							<thead>
 								<tr>
 									<th>Email</th>
-									<th>API account</th>
-									<th>API status</th>
+									<th>Minecraft name</th>
 									<th>Discord name</th>
-									<th>Discord match</th>
-									<th>Discord status</th>
+									<th>Minecraft applied</th>
+									<th>Discord applied</th>
 								</tr>
 							</thead>
 							<tbody>
-								{results.map((row, index) => (
+								{visible.map((row, index) => (
 									<tr key={`${row.email}-${index}`}>
 										<td>{row.email}</td>
-										<td>{row.minecraftUsername ?? 'None'}</td>
-										<td>{row.apiStatus}</td>
-										<td>
-											{row.discordName || 'None'}
-											{row.discordNameSource && ` (${row.discordNameSource})`}
+										<td>{row.minecraftUsername ?? '—'}</td>
+										<td>{row.discordName || '—'}</td>
+										<td
+											title={row.apiStatus}
+											aria-label={`Minecraft: ${row.apiStatus}`}
+										>
+											{['updated', 'already member'].includes(row.apiStatus)
+												? '✅'
+												: '❌'}
 										</td>
-										<td>{row.discordLabel ?? 'None'}</td>
-										<td>{row.discordStatus}</td>
+										<td
+											title={row.discordStatus}
+											aria-label={`Discord: ${row.discordStatus}`}
+										>
+											{[
+												'role added',
+												'already has role',
+												'assumed member',
+											].includes(row.discordStatus)
+												? '✅'
+												: '❌'}
+										</td>
 									</tr>
 								))}
 							</tbody>
 						</table>
 					</div>
-					{!applied && (
-						<button type="button" disabled={busy} onClick={() => void apply()}>
-							Apply reviewed matches
-						</button>
-					)}
 				</>
 			)}
+			{error && <p role="alert">{error}</p>}
 		</div>
 	);
 }

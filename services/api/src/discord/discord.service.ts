@@ -338,6 +338,9 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 				this.connectionIssue ??
 					'Discord bot is offline; check its API logs and Guild Members Intent',
 			);
+		const cached = this.membershipContextCache;
+		if (cached && Date.now() - cached.fetchedAtUnixMs < 60_000)
+			return { guild: cached.guild, role: cached.role, members: cached.members };
 		const guild = await this.client.guilds.fetch(guildId);
 		const role = await guild.roles.fetch('1500897435206287552');
 		if (!role) throw new Error('The 26/27 Member role was not found');
@@ -346,9 +349,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			throw new Error('The bot does not have Manage Roles in this Discord server');
 		if (bot.roles.highest.comparePositionTo(role) <= 0)
 			throw new Error('Move the bot role above 26/27 Member in Server Settings → Roles');
-		const cached = this.membershipContextCache;
-		if (cached && Date.now() - cached.fetchedAtUnixMs < 60_000)
-			return { guild, role, members: cached.members };
 		const members = await guild.members.fetch();
 		this.membershipContextCache = {
 			fetchedAtUnixMs: Date.now(),

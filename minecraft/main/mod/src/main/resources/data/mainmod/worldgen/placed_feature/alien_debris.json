@@ -3,10 +3,14 @@
 	"placement": [
 		{
 			"type": "minecraft:count",
-			"count": 3
+			"count": 4
 		},
 		{
 			"type": "minecraft:in_square"
+		},
+		{
+			"type": "minecraft:rarity_filter",
+			"chance": 5
 		},
 		{
 			"type": "minecraft:biome"

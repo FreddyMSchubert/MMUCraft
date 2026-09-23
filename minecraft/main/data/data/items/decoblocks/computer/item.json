@@ -1,6 +1,7 @@
 {
 	"title": "Computer",
 	"id": "deco-computer",
+	"drop": "inventors",
 	"modelType": "basic-3d",
 	"rarity": "epic",
 	"maxStackSize": 64,

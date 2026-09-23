@@ -3,6 +3,7 @@ id: text-coloring
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on coloring and formatting text.
 sidebarTitle: Text Coloring
+gameplayToggle: nether
 tags:
 - colored text
 - coloured text

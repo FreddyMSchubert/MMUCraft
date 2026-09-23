@@ -57,6 +57,11 @@ export class MinecraftModelObject {
 
 	async load(source: MinecraftItemSource) {
 		this.disposeMeshes();
+		this.textureRegistry.setGlint(
+			source.glint ??
+				(source.itemId === 'minecraft:enchanted_golden_apple' ||
+					source.itemId === 'minecraft:enchanted_book'),
+		);
 		const resolved = await resolveItemSource(source);
 		this.resolvedModel = resolved.model;
 		this.fallbackTexture = resolved.fallbackTexture;
@@ -219,11 +224,15 @@ export class MinecraftModelObject {
 		const depth = 1 / 32 + layerIndex / 1024;
 		const opaque = (x: number, y: number) =>
 			x >= 0 && y >= 0 && x < width && y < height && alpha[(y * width + x) * 4 + 3] > 0;
-		const addQuad = (vertices: number[][], textureUvs: number[][]) => {
+		const addQuad = (vertices: number[][], textureUvs: number[][], reverse = false) => {
 			const start = positions.length / 3;
 			for (const vertex of vertices) positions.push(vertex[0], vertex[1], vertex[2]);
 			for (const uv of textureUvs) uvs.push(uv[0], uv[1]);
-			indices.push(start, start + 1, start + 2, start, start + 2, start + 3);
+			indices.push(
+				...(reverse
+					? [start, start + 2, start + 1, start, start + 3, start + 2]
+					: [start, start + 1, start + 2, start, start + 2, start + 3]),
+			);
 		};
 
 		addQuad(
@@ -239,6 +248,7 @@ export class MinecraftModelObject {
 				[1, 1],
 				[0, 1],
 			],
+			true,
 		);
 		addQuad(
 			[
@@ -253,6 +263,7 @@ export class MinecraftModelObject {
 				[0, 1],
 				[1, 1],
 			],
+			true,
 		);
 
 		for (let y = 0; y < height; y += 1) {
@@ -275,6 +286,7 @@ export class MinecraftModelObject {
 							[left, bottom, -depth],
 						],
 						pixelUv,
+						true,
 					);
 				if (!opaque(x + 1, y))
 					addQuad(
@@ -285,6 +297,7 @@ export class MinecraftModelObject {
 							[right, bottom, depth],
 						],
 						pixelUv,
+						true,
 					);
 				if (!opaque(x, y - 1))
 					addQuad(

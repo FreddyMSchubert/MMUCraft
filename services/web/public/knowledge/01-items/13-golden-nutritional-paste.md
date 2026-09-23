@@ -3,6 +3,7 @@ id: golden-nutritional-paste
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on Golden Nutritional Paste, the best food in the game.
 sidebarTitle: Golden Nutritional Paste
+gameplayToggle: circus
 tags:
 - golden nutrition paste
 - nutriotional paste

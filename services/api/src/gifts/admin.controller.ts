@@ -121,10 +121,10 @@ export class AdminController {
 	@Post('membership-import/apply')
 	applyMembershipImport(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: { rows?: unknown } | undefined,
+		@Body() body: { rows?: unknown; indices?: unknown; retryDiscord?: unknown } | undefined,
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
-		return this.membershipImport.apply(body?.rows);
+		return this.membershipImport.apply(body?.rows, body?.indices, body?.retryDiscord);
 	}
 
 	@Get('command-logs')

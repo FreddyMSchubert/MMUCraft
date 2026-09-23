@@ -27,6 +27,7 @@ export class MinecraftModelRenderer {
 	private readonly spinRoot = new THREE.Group();
 	private readonly modelMount = new THREE.Group();
 	private readonly modelRoot = new THREE.Group();
+	private readonly particleRoot = new THREE.Group();
 	private readonly modelObject: MinecraftModelObject;
 	private readonly particleRenderer: MinecraftParticleRenderer;
 	private readonly previewObjects: MinecraftModelObject[] = [];
@@ -77,7 +78,7 @@ export class MinecraftModelRenderer {
 			options.frameDelayMs !== undefined,
 		);
 		this.particleRenderer = new MinecraftParticleRenderer(
-			this.modelObject.group,
+			this.particleRoot,
 			options.particleEmission,
 			this.assetRoot,
 		);
@@ -121,6 +122,7 @@ export class MinecraftModelRenderer {
 
 		this.modelRoot.add(this.modelObject.group);
 		this.modelMount.add(this.modelRoot);
+		this.modelMount.add(this.particleRoot);
 		this.spinRoot.add(this.modelMount);
 		this.displayRoot.add(this.spinRoot);
 		this.scene.add(this.displayRoot);
@@ -291,6 +293,7 @@ export class MinecraftModelRenderer {
 		if (this.destroyed) return;
 		this.currentResolvedModel = await this.modelObject.load({
 			assetRoot: source.assetRoot ?? this.assetRoot,
+			glint: source.glint,
 			itemId: source.itemId,
 			model: source.model,
 			modelUrl: source.modelUrl,
@@ -327,6 +330,8 @@ export class MinecraftModelRenderer {
 			toRadians(rotation.z),
 		);
 		this.modelRoot.scale.copy(scale);
+		this.particleRoot.position.copy(translation);
+		this.particleRoot.rotation.copy(this.modelRoot.rotation);
 	}
 
 	private async loadPreviewScene() {

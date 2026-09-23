@@ -48,6 +48,7 @@ export interface MinecraftModelPreviewState {
 
 export interface MinecraftItemSource {
 	assetRoot?: string;
+	glint?: boolean;
 	itemId?: string;
 	model?: MinecraftModel;
 	modelUrl?: string | null;

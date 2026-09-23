@@ -409,7 +409,7 @@
 
 .shopFilterRow button.filter-animated.active {
 	border-color: #d5a4ff;
-	background: rgba(195, 122, 255, 0.22);
+	background: rgba(195, 122, 255, 0.42);
 	color: #f2e4ff;
 	box-shadow: 0 0 16px rgba(195, 122, 255, 0.32);
 }
@@ -423,7 +423,7 @@
 
 .shopFilterRow button.filter-luminous.active {
 	border-color: #9aeaff;
-	background: rgba(64, 179, 225, 0.36);
+	background: rgba(64, 179, 225, 0.5);
 	color: #e0faff;
 	box-shadow: 0 0 15px rgba(90, 213, 255, 0.45);
 	animation: shopLuminousPulse 2.2s ease-in-out infinite;
@@ -437,7 +437,7 @@
 
 .shopFilterRow button.filter-emissive.active {
 	border-color: #a4f5b0;
-	background: rgba(57, 163, 70, 0.34);
+	background: rgba(57, 163, 70, 0.5);
 	color: #effff0;
 	box-shadow: 0 0 15px rgba(75, 218, 93, 0.35);
 }

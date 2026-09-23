@@ -353,6 +353,37 @@
 	border-radius: 8px;
 }
 
+.membershipImportProgress {
+	width: 100%;
+	height: 28px;
+	margin-top: 18px;
+	accent-color: #8ff0a4;
+}
+
+.membershipImportSpinner {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	margin-right: 8px;
+	vertical-align: middle;
+	border: 3px solid rgba(255, 255, 255, 0.25);
+	border-top-color: #8ff0a4;
+	border-radius: 50%;
+	animation: membershipImportSpin 0.8s linear infinite;
+}
+
+@keyframes membershipImportSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.membershipImportSpinner {
+		animation: none;
+	}
+}
+
 .adminTable {
 	width: 100%;
 	min-width: 760px;

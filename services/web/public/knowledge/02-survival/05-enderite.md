@@ -4,7 +4,6 @@ unlockOrder: 6
 chatMessage: You've unlocked knowledge on Enderite equipment, the final equipment tier post-Netherite.
 sidebarTitle: Enderite
 gameplayToggle: void
-gameplayToggles: void
 tags:
 - enderight
 - endrite

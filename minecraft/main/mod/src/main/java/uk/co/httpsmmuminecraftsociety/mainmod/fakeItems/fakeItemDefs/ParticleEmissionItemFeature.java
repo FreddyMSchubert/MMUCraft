@@ -17,9 +17,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public record ParticleEmissionItemFeature(List<Emission> particles) implements ItemFeature {
+public record ParticleEmissionItemFeature(List<Emission> particles, Map<String, DisplayTransform> display) implements ItemFeature {
+    public record DisplayTransform(Vec3 rotation, Vec3 translation) {
+        public static final DisplayTransform IDENTITY = new DisplayTransform(Vec3.ZERO, Vec3.ZERO);
+    }
+
     public record Emission(String particle, Vec3 from, Vec3 to, int minTicks, int maxTicks,
                            String color, float scale, String arguments) {
         public ParticleOptions options(HolderLookup.Provider registries) {
@@ -56,13 +62,27 @@ public record ParticleEmissionItemFeature(List<Emission> particles) implements I
                     entry.has("arguments") ? entry.get("arguments").getAsString() : null
             ));
         }
-        ParticleEmissionItemFeature feature = new ParticleEmissionItemFeature(List.copyOf(particles));
+        Map<String, DisplayTransform> display = new HashMap<>();
+        JsonObject displays = json.getAsJsonObject("display");
+        if (displays != null) {
+            for (String mode : List.of("head", "fixed")) {
+                JsonObject transform = displays.getAsJsonObject(mode);
+                if (transform != null) display.put(mode, new DisplayTransform(
+                        transform.has("rotation") ? point(transform.getAsJsonArray("rotation")) : Vec3.ZERO,
+                        transform.has("translation") ? point(transform.getAsJsonArray("translation")) : Vec3.ZERO));
+            }
+        }
+        ParticleEmissionItemFeature feature = new ParticleEmissionItemFeature(List.copyOf(particles), Map.copyOf(display));
         feature.validate();
         return feature;
     }
 
     private static Vec3 point(JsonArray array) {
         return new Vec3(array.get(0).getAsDouble(), array.get(1).getAsDouble(), array.get(2).getAsDouble());
+    }
+
+    public DisplayTransform transform(String mode) {
+        return display.getOrDefault(mode, DisplayTransform.IDENTITY);
     }
 
     @Override public void apply(ItemStack stack) {}

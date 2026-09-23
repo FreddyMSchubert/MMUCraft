@@ -8,12 +8,14 @@ interface CharmUpgradeIngredientResponse {
 	raw: string;
 	display_name: string;
 	icon_item_id: string;
+	icon_glint: boolean;
 	required_count: number;
 	inventory_count: number;
 }
 
 interface InventoryCharmResponse {
 	item_id: string;
+	glint: boolean;
 	title: string;
 	current_level: number;
 	max_level: number;
@@ -74,6 +76,7 @@ export class ShopCharmInventoryService {
 				const itemAsset = this.itemCatalog.itemAsset(charm.item_id);
 				return {
 					itemId: charm.item_id,
+					glint: charm.glint,
 					title: charm.title,
 					currentLevel: charm.current_level,
 					maxLevel: charm.max_level,
@@ -94,6 +97,7 @@ export class ShopCharmInventoryService {
 							requiredCount: ingredient.required_count,
 							inventoryCount: ingredient.inventory_count,
 							itemId: ingredient.icon_item_id,
+							glint: ingredient.icon_glint,
 							iconUrl: ingredient.icon_item_id.startsWith('minecraft:')
 								? null
 								: (ingredientAsset?.textureUrl ?? null),

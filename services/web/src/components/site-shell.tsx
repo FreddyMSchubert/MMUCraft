@@ -16,6 +16,7 @@ import { ClaimsTab } from '@/components/claims-tab';
 import { CharmsTab } from '@/components/charms-tab';
 import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 import { DynamicCountdowns } from '@/components/dynamic-countdowns';
+import { SurprisingSaturdayTab, type EventSummary } from '@/components/surprising-saturday-tab';
 import { normalizeAdminSection } from '@/components/admin/admin-data.types';
 
 interface SessionUser {
@@ -45,6 +46,7 @@ type TabId =
 	| 'fishing'
 	| 'players'
 	| 'admin'
+	| 'event'
 	| 'misc';
 
 const TAB_IDS = new Set<TabId>([
@@ -56,6 +58,7 @@ const TAB_IDS = new Set<TabId>([
 	'fishing',
 	'players',
 	'admin',
+	'event',
 	'misc',
 ]);
 const MISC_SECTIONS = new Set(['settings', 'gift-codes', 'referrals']);
@@ -71,6 +74,12 @@ const TAB_LINKS: { id: TabId; label: string; emoji: string; href: string }[] = [
 	{ id: 'admin', label: 'Admin', emoji: '👨‍💻', href: '/play/admin/members' },
 	{ id: 'misc', label: 'Misc', emoji: '⚙️', href: '/play/misc/settings' },
 ];
+const EVENT_LINK: { id: TabId; label: string; emoji: string; href: string } = {
+	id: 'event',
+	label: 'Surprising Saturday',
+	emoji: '🎉',
+	href: '/play/event',
+};
 
 async function fetchMe(): Promise<SessionUser | null> {
 	const response = await fetch('/api/auth/me', {
@@ -90,12 +99,37 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const router = useRouter();
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
+	const [events, setEvents] = useState<EventSummary[]>([]);
 	const [copyLabel, setCopyLabel] = useState('Copy IP');
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [headerHidden, setHeaderHidden] = useState(false);
 	const route = useMemo(() => pathname.split('/').slice(2).map(decodePathSegment), [pathname]);
 	const activeTab = TAB_IDS.has(route[0] as TabId) ? (route[0] as TabId) : 'knowledge';
 	const routeDetail = route.at(1);
+	const liveEvent = events.find((event) => event.status === 'live');
+	const tabs = liveEvent
+		? [EVENT_LINK, ...TAB_LINKS]
+		: [...TAB_LINKS.slice(0, -1), EVENT_LINK, TAB_LINKS[TAB_LINKS.length - 1]];
+
+	useEffect(() => {
+		let cancelled = false;
+		let timer: number | undefined;
+		async function refreshEvents() {
+			try {
+				const response = await fetch('/api/surprising-saturday', { cache: 'no-store' });
+				if (response.ok && !cancelled) setEvents((await response.json()) as EventSummary[]);
+			} catch {
+				// The next poll retries when the API is unavailable.
+			} finally {
+				if (!cancelled) timer = window.setTimeout(refreshEvents, 15_000);
+			}
+		}
+		void refreshEvents();
+		return () => {
+			cancelled = true;
+			window.clearTimeout(timer);
+		};
+	}, []);
 
 	const reloadUser = useCallback(async () => {
 		setUser(await fetchMe());
@@ -270,6 +304,12 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			}
 		>
 			<DynamicCountdowns className="desktopCountdowns" />
+			{user && liveEvent && (
+				<a className="eventBanner" href={`/play/event/${liveEvent.id}`}>
+					<strong>🔴 LIVE NOW · {liveEvent.title}</strong>
+					<span>Open Surprising Saturday →</span>
+				</a>
+			)}
 			{user === undefined && (
 				<section className="authCard">
 					<div className="authForm">
@@ -417,8 +457,9 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						</div>
 
 						<nav className="dashboardTabs" aria-label="Dashboard sections">
-							{TAB_LINKS.filter((tab) => tab.id !== 'admin' || user.isCommittee).map(
-								(tab) => (
+							{tabs
+								.filter((tab) => tab.id !== 'admin' || user.isCommittee)
+								.map((tab) => (
 									<Link
 										key={tab.id}
 										href={tab.href}
@@ -435,8 +476,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 										</span>
 										<span>{tab.label}</span>
 									</Link>
-								),
-							)}
+								))}
 						</nav>
 
 						<DynamicCountdowns className="mobileCountdowns" />
@@ -444,6 +484,9 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 					<div className="dashboardPanel">
 						{activeTab === 'dailies' && <DailiesTab />}
+						{activeTab === 'event' && (
+							<SurprisingSaturdayTab events={events} selectedId={routeDetail} />
+						)}
 						{activeTab === 'knowledge' && (
 							<KnowledgeTab
 								pageId={routeDetail}

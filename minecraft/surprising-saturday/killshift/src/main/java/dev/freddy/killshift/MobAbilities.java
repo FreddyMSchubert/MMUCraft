@@ -1,0 +1,241 @@
+package dev.freddy.killshift;
+
+import java.util.Comparator;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.component.SwingAnimation;
+import net.minecraft.world.entity.projectile.LlamaSpit;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.WitherSkull;
+import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.WindCharge;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+
+final class MobAbilities {
+    private MobAbilities() {
+    }
+
+    static InteractionResult onUseItem(
+            net.minecraft.world.entity.player.Player user,
+            Level level,
+            InteractionHand hand
+    ) {
+        if (!(user instanceof ServerPlayer player)
+                || !(level instanceof ServerLevel serverLevel)
+                || !player.getItemInHand(hand).isEmpty()) {
+            return InteractionResult.PASS;
+        }
+
+        ShapeState state = ShapeManager.get(player);
+        if (state == null || state.abilityCooldown > 0 || !activate(serverLevel, player, state)) {
+            return InteractionResult.PASS;
+        }
+        return InteractionResult.SUCCESS_SERVER.withoutItem();
+    }
+
+    static InteractionResult onUseBlock(
+            net.minecraft.world.entity.player.Player user,
+            Level level,
+            InteractionHand hand,
+            BlockHitResult hit
+    ) {
+        if (!(user instanceof ServerPlayer player)
+                || !(level instanceof ServerLevel)
+                || !player.getItemInHand(hand).isEmpty()) {
+            return InteractionResult.PASS;
+        }
+        ShapeState state = ShapeManager.get(player);
+        if (state == null
+                || state.form.type() != EntityTypes.SNIFFER
+                || state.abilityCooldown > 0
+                || !level.getBlockState(hit.getBlockPos()).is(Blocks.GRASS_BLOCK)) {
+            return InteractionResult.PASS;
+        }
+        giveAncientSeed(player);
+        state.abilityCooldown = 200;
+        return InteractionResult.SUCCESS_SERVER.withoutItem();
+    }
+
+    static void onDamage(
+            LivingEntity victim,
+            DamageSource source,
+            float baseDamage,
+            float damageTaken,
+            boolean blocked
+    ) {
+        if (victim instanceof ServerPlayer hurtPlayer) {
+            ShapeState hurtState = ShapeManager.get(hurtPlayer);
+            if (hurtState != null && hurtState.form.type() == EntityTypes.BEE && damageTaken > 0.0F) {
+                hurtState.angryTicks = 200;
+            }
+        }
+
+        if (!(source.getEntity() instanceof ServerPlayer attacker) || blocked || damageTaken <= 0.0F) {
+            return;
+        }
+        ShapeState state = ShapeManager.get(attacker);
+        if (state == null) {
+            return;
+        }
+
+        EntityType<?> type = state.form.type();
+        if (type == EntityTypes.CAVE_SPIDER || type == EntityTypes.BEE) {
+            victim.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0), attacker);
+        } else if (type == EntityTypes.GUARDIAN || type == EntityTypes.ELDER_GUARDIAN) {
+            victim.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 200, 0), attacker);
+        } else if (type == EntityTypes.WITHER_SKELETON || type == EntityTypes.WITHER) {
+            victim.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0), attacker);
+        }
+    }
+
+    private static boolean activate(ServerLevel level, ServerPlayer player, ShapeState state) {
+        EntityType<?> type = state.form.type();
+        Vec3 direction = player.getLookAngle().normalize();
+        state.abilityCooldown = 20;
+
+        if (type == EntityTypes.GHAST) {
+            level.addFreshEntity(new LargeFireball(level, player, direction, 1));
+        } else if (type == EntityTypes.BLAZE) {
+            level.addFreshEntity(new SmallFireball(level, player, direction));
+        } else if (type == EntityTypes.BREEZE) {
+            WindCharge charge = new WindCharge(player, level, player.getX(), player.getEyeY(), player.getZ());
+            charge.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);
+            level.addFreshEntity(charge);
+        } else if (type == EntityTypes.WITHER) {
+            level.addFreshEntity(new WitherSkull(level, player, direction));
+        } else if (type == EntityTypes.ENDER_DRAGON) {
+            level.addFreshEntity(new DragonFireball(level, player, direction));
+        } else if (type == EntityTypes.ENDERMAN) {
+            ItemStack pearl = new ItemStack(Items.ENDER_PEARL);
+            Projectile.spawnProjectileFromRotation(ThrownEnderpearl::new, level, pearl, player, 0.0F, 1.5F, 1.0F);
+        } else if (type == EntityTypes.SHULKER) {
+            teleport(player);
+        } else if (type == EntityTypes.WITCH) {
+            ItemStack potion = PotionContents.createItemStack(Items.SPLASH_POTION, Potions.POISON);
+            Projectile.spawnProjectileFromRotation(ThrownSplashPotion::new, level, potion, player, -20.0F, 0.75F, 8.0F);
+        } else if (type == EntityTypes.CREEPER) {
+            state.abilityCooldown = 100;
+            level.explode(player, player.getX(), player.getY(), player.getZ(), 3.0F, false, Level.ExplosionInteraction.MOB);
+        } else if (type == EntityTypes.WARDEN) {
+            state.abilityCooldown = 80;
+            sonicBoom(level, player);
+        } else if (type == EntityTypes.LLAMA || type == EntityTypes.TRADER_LLAMA) {
+            LlamaSpit spit = new LlamaSpit(EntityTypes.LLAMA_SPIT, level);
+            spit.setOwner(player);
+            spit.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
+            spit.shoot(direction.x, direction.y, direction.z, 1.5F, 4.0F);
+            level.addFreshEntity(spit);
+        } else if (type == EntityTypes.SQUID || type == EntityTypes.GLOW_SQUID) {
+            level.sendParticles(ParticleTypes.SQUID_INK, player.getX(), player.getEyeY(), player.getZ(),
+                    80, 1.2, 0.8, 1.2, 0.08);
+        } else if (type == EntityTypes.SNIFFER) {
+            if (!digSeed(player)) {
+                state.abilityCooldown = 0;
+                return false;
+            }
+            state.abilityCooldown = 200;
+        } else if (type == EntityTypes.MOOSHROOM) {
+            player.getFoodData().setFoodLevel(Math.min(20, player.getFoodData().getFoodLevel() + 6));
+            player.getFoodData().setSaturation(Math.min(20.0F, player.getFoodData().getSaturationLevel() + 7.2F));
+            player.getInventory().add(new ItemStack(Items.BOWL));
+        } else {
+            state.abilityCooldown = 0;
+            return false;
+        }
+
+        if (state.view != null) {
+            state.view.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
+        }
+        return true;
+    }
+
+    private static boolean digSeed(ServerPlayer player) {
+        if (!player.level().getBlockState(player.blockPosition().below()).is(Blocks.GRASS_BLOCK)) {
+            return false;
+        }
+        giveAncientSeed(player);
+        return true;
+    }
+
+    private static void giveAncientSeed(ServerPlayer player) {
+        ItemStack seed = new ItemStack(player.getRandom().nextBoolean() ? Items.TORCHFLOWER_SEEDS : Items.PITCHER_POD);
+        if (!player.getInventory().add(seed)) {
+            player.spawnAtLocation(player.level(), seed);
+        }
+    }
+
+    private static void teleport(ServerPlayer player) {
+        for (int attempt = 0; attempt < 16; attempt++) {
+            double x = player.getX() + (player.getRandom().nextDouble() - 0.5) * 32.0;
+            double y = player.getY() + player.getRandom().nextInt(-8, 9);
+            double z = player.getZ() + (player.getRandom().nextDouble() - 0.5) * 32.0;
+            if (player.randomTeleport(x, y, z, true, blockState -> false)) {
+                return;
+            }
+        }
+    }
+
+    private static void sonicBoom(ServerLevel level, ServerPlayer player) {
+        LivingEntity target = targetInSight(player, 20.0);
+        if (target == null) {
+            return;
+        }
+        Vec3 source = player.getEyePosition();
+        Vec3 delta = target.getEyePosition().subtract(source);
+        Vec3 direction = delta.normalize();
+        for (int step = 1; step < (int) delta.length() + 7; step++) {
+            Vec3 particle = source.add(direction.scale(step));
+            level.sendParticles(ParticleTypes.SONIC_BOOM, particle.x, particle.y, particle.z,
+                    1, 0.0, 0.0, 0.0, 0.0);
+        }
+        level.playSound(null, player.blockPosition(), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 3.0F, 1.0F);
+        if (target.hurtServer(level, level.damageSources().sonicBoom(player), 10.0F)) {
+            target.push(direction.x * 2.5, direction.y * 0.5, direction.z * 2.5);
+        }
+    }
+
+    private static LivingEntity targetInSight(ServerPlayer player, double range) {
+        Vec3 eye = player.getEyePosition();
+        Vec3 look = player.getLookAngle().normalize();
+        AABB search = player.getBoundingBox().expandTowards(look.scale(range)).inflate(2.0);
+        return player.level().getEntitiesOfClass(
+                        LivingEntity.class,
+                        search,
+                        entity -> entity != player && entity.isAlive() && !(entity == ShapeManager.get(player).view)
+                ).stream()
+                .filter(entity -> {
+                    Vec3 delta = entity.getEyePosition().subtract(eye);
+                    double projection = delta.dot(look);
+                    if (projection <= 0.0 || projection > range) {
+                        return false;
+                    }
+                    double miss = delta.subtract(look.scale(projection)).length();
+                    return miss <= Math.max(1.0, entity.getBbWidth()) && player.hasLineOfSight(entity);
+                })
+                .min(Comparator.comparingDouble(player::distanceToSqr))
+                .orElse(null);
+    }
+}

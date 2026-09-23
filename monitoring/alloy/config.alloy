@@ -49,7 +49,7 @@ loki.process "containers" {
 	}
 
 	stage.match {
-		selector = "{service=~\"minecraft|velocity\"}"
+		selector = "{service=~\"minecraft|surprising-saturday|velocity\"}"
 
 		stage.multiline {
 			firstline     = `^(?:\[[^]]+\](?: \[[^]]+\])?|WARNING:|OpenJDK )`

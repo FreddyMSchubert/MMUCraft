@@ -18,6 +18,7 @@ import { FeatureToggleAdminSection } from './admin/feature-toggle-admin-section'
 import { AnnouncementAdminSection } from './admin/announcement-admin-section';
 import { LaunchAdminSection } from './admin/launch-admin-section';
 import { DropAnalyticsAdminSection } from './admin/drop-analytics-admin-section';
+import { SurprisingSaturdayAdminSection } from './admin/surprising-saturday-admin-section';
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
 	const controller = useAdminTabController({ isSuperAdmin, section });
@@ -26,6 +27,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 		<div className="adminPanel">
 			<AdminSectionNavigation activeSection={controller.activeSection} />
 			{controller.activeSection === 'drops' && <DropAnalyticsAdminSection />}
+			{controller.activeSection === 'events' && <SurprisingSaturdayAdminSection />}
 			<AnnouncementAdminSection activeSection={controller.activeSection} />
 			<LaunchAdminSection activeSection={controller.activeSection} />
 			<DailyRefreshAdminSection controller={controller} />

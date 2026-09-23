@@ -176,6 +176,61 @@ services:
             start_period: 2m
         networks: [app]
 
+    surprising-saturday:
+        profiles: [event]
+        image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-event:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
+        init: true
+        stdin_open: true
+        tty: true
+        environment:
+            EULA: 'TRUE'
+            TYPE: FABRIC
+            VERSION: '26.3'
+            FABRIC_LOADER_VERSION: '0.19.5'
+            COPY_CONFIG_DEST: /data
+            SYNC_SKIP_NEWER_IN_DESTINATION: 'false'
+            SKIP_SERVER_PROPERTIES: 'true'
+            FABRIC_PROXY_SECRET: ${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}
+            SURPRISING_SATURDAY_API_URL: http://api:8080
+            SURPRISING_SATURDAY_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
+            MEMORY: 4G
+            STOP_DURATION: '110'
+            UID: ${PUID:-1000}
+            GID: ${PGID:-1000}
+        volumes:
+            - ./data/surprising-saturday:/data
+        logging: *logging
+        restart: 'no'
+        stop_grace_period: 2m
+        healthcheck:
+            test: ['CMD', 'mc-health']
+            interval: 10s
+            timeout: 5s
+            retries: 12
+            start_period: 2m
+        networks: [app]
+
+    event-controller:
+        image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-event-controller:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
+        read_only: true
+        security_opt:
+            - no-new-privileges:true
+        cap_drop:
+            - ALL
+        pids_limit: 64
+        environment:
+            API_BASE_URL: http://api:8080
+            INTERNAL_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
+            EVENT_CONTAINER_NAME: kubecraft-surprising-saturday-1
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        depends_on:
+            api:
+                condition: service_healthy
+        logging: *logging
+        restart: unless-stopped
+        networks: [app]
+
     velocity:
         image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-velocity:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
         init: true

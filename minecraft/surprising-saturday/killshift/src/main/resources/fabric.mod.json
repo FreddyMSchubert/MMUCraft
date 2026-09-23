@@ -1,0 +1,19 @@
+{
+	"schemaVersion": 1,
+	"id": "killshift",
+	"version": "${version}",
+	"name": "Killshift",
+	"description": "Become the last mob that you kill.",
+	"authors": ["@FreddyMSchubert"],
+	"environment": "*",
+	"entrypoints": {
+		"main": ["dev.freddy.killshift.Killshift"]
+	},
+	"mixins": ["killshift.mixins.json"],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

@@ -929,14 +929,68 @@
 			"id": 26,
 			"type": "logs",
 			"title": "Misc Logs",
-			"description": "Logs from every current or future Compose service except Minecraft, API, Web, Alloy, and Loki.",
+			"description": "Logs from other Compose services.",
 			"gridPos": { "h": 14, "w": 12, "x": 12, "y": 79 },
 			"datasource": { "type": "loki", "uid": "loki" },
 			"targets": [
 				{
 					"datasource": { "type": "loki", "uid": "loki" },
 					"editorMode": "code",
-					"expr": "{service=~\".+\", service!~\"minecraft|api|web|alloy|loki\"}",
+					"expr": "{service=~\".+\", service!~\"minecraft|surprising-saturday|event-controller|api|web|alloy|loki\"}",
+					"queryType": "range",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": {}, "overrides": [] },
+			"options": {
+				"dedupStrategy": "none",
+				"enableLogDetails": true,
+				"prettifyLogMessage": false,
+				"showCommonLabels": false,
+				"showLabels": false,
+				"showTime": true,
+				"sortOrder": "Descending",
+				"wrapLogMessage": true
+			}
+		},
+		{
+			"id": 27,
+			"type": "logs",
+			"title": "Surprising Saturday Logs",
+			"gridPos": { "h": 14, "w": 12, "x": 0, "y": 93 },
+			"datasource": { "type": "loki", "uid": "loki" },
+			"targets": [
+				{
+					"datasource": { "type": "loki", "uid": "loki" },
+					"editorMode": "code",
+					"expr": "{service=\"surprising-saturday\"}",
+					"queryType": "range",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": { "defaults": {}, "overrides": [] },
+			"options": {
+				"dedupStrategy": "none",
+				"enableLogDetails": true,
+				"prettifyLogMessage": false,
+				"showCommonLabels": false,
+				"showLabels": false,
+				"showTime": true,
+				"sortOrder": "Descending",
+				"wrapLogMessage": true
+			}
+		},
+		{
+			"id": 28,
+			"type": "logs",
+			"title": "Event Controller Logs",
+			"gridPos": { "h": 14, "w": 12, "x": 12, "y": 93 },
+			"datasource": { "type": "loki", "uid": "loki" },
+			"targets": [
+				{
+					"datasource": { "type": "loki", "uid": "loki" },
+					"editorMode": "code",
+					"expr": "{service=\"event-controller\"}",
 					"queryType": "range",
 					"refId": "A"
 				}

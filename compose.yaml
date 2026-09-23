@@ -172,6 +172,58 @@ services:
             retries: 12
             start_period: 2m
 
+    surprising-saturday:
+        profiles: [event]
+        image: mcstack/surprising-saturday:dev
+        build:
+            context: .
+            dockerfile: minecraft/surprising-saturday/Dockerfile
+        environment:
+            TZ: Europe/London
+            EULA: 'TRUE'
+            TYPE: FABRIC
+            VERSION: '26.3'
+            FABRIC_LOADER_VERSION: '0.19.5'
+            COPY_CONFIG_DEST: /data
+            SYNC_SKIP_NEWER_IN_DESTINATION: 'false'
+            SKIP_SERVER_PROPERTIES: 'true'
+            FABRIC_PROXY_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
+            SURPRISING_SATURDAY_API_URL: http://api:8080
+            SURPRISING_SATURDAY_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
+            MEMORY: 2G
+            STOP_DURATION: '110'
+        volumes:
+            - ./.dev/surprising-saturday:/data
+        logging: *logging
+        restart: 'no'
+        stop_grace_period: 2m
+        healthcheck:
+            test: ['CMD', 'mc-health']
+            interval: 10s
+            timeout: 5s
+            retries: 12
+            start_period: 2m
+
+    event-controller:
+        build:
+            context: services/event-controller
+        read_only: true
+        security_opt:
+            - no-new-privileges:true
+        cap_drop:
+            - ALL
+        environment:
+            API_BASE_URL: http://api:8080
+            INTERNAL_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
+            EVENT_CONTAINER_NAME: kubecraft-surprising-saturday-1
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        depends_on:
+            api:
+                condition: service_healthy
+        logging: *logging
+        restart: unless-stopped
+
     prometheus:
         profiles: [minecraft]
         image: prom/prometheus:v3.14.0

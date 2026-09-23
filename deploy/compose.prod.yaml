@@ -1,142 +1,152 @@
 services:
-  api:
-    mem_limit: 1g
-    mem_reservation: 512m
-    memswap_limit: 1g
-    deploy:
-      resources:
-        limits:
-          memory: 1g
-        reservations:
-          memory: 512m
+    api:
+        mem_limit: 1g
+        mem_reservation: 512m
+        memswap_limit: 1g
+        deploy:
+            resources:
+                limits:
+                    memory: 1g
+                reservations:
+                    memory: 512m
 
-  web:
-    mem_limit: 1g
-    mem_reservation: 384m
-    memswap_limit: 1g
-    deploy:
-      resources:
-        limits:
-          memory: 1g
-        reservations:
-          memory: 384m
+    web:
+        mem_limit: 1g
+        mem_reservation: 384m
+        memswap_limit: 1g
+        deploy:
+            resources:
+                limits:
+                    memory: 1g
+                reservations:
+                    memory: 384m
 
-  minecraft:
-    environment:
-      MEMORY: 6G
-      INIT_MEMORY: 2G
-    mem_limit: 7g
-    mem_reservation: 4g
-    memswap_limit: 7g
-    deploy:
-      resources:
-        limits:
-          memory: 7g
-        reservations:
-          memory: 4g
+    minecraft:
+        environment:
+            MEMORY: 6G
+            INIT_MEMORY: 2G
+        mem_limit: 7g
+        mem_reservation: 4g
+        memswap_limit: 7g
+        deploy:
+            resources:
+                limits:
+                    memory: 7g
+                reservations:
+                    memory: 4g
 
-  backup:
-    image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-backup:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
-    user: ${PUID:-1000}:${PGID:-1000}
-    read_only: true
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    environment:
-      TZ: Europe/London
-      API_BASE_URL: http://api:8080
-      INTERNAL_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
-      RESTIC_REPOSITORY: /backups/restic
-      RESTIC_PASSWORD: ${BACKUP_RESTIC_PASSWORD:?set BACKUP_RESTIC_PASSWORD in .env}
-      RESTIC_HOST: mmucraft-production
-      RESTIC_CACHE_DIR: /tmp/restic-cache
-    volumes:
-      - ./data:/source/data:ro
-      - ./.env:/source/config/.env:ro
-      - ./data/locks:/locks
-      - ./backups:/backups
-    tmpfs:
-      - /tmp:rw,noexec,nosuid,size=256m,mode=1777
-    expose:
-      - "8080"
-    depends_on:
-      api:
-        condition: service_healthy
-      minecraft:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8080/metrics.txt"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 1m
-    mem_limit: 512m
-    mem_reservation: 128m
-    memswap_limit: 512m
-    pids_limit: 128
-    deploy:
-      resources:
-        limits:
-          memory: 512m
-          pids: 128
-        reservations:
-          memory: 128m
-    restart: unless-stopped
-    stop_grace_period: 1m
-    logging:
-      driver: local
-      options:
-        max-size: 10m
-        max-file: "3"
-    networks: [app]
+    surprising-saturday:
+        mem_limit: 5g
+        mem_reservation: 2g
+        memswap_limit: 5g
 
-  velocity:
-    mem_limit: 1g
-    mem_reservation: 384m
-    memswap_limit: 1g
-    deploy:
-      resources:
-        limits:
-          memory: 1g
-        reservations:
-          memory: 384m
+    event-controller:
+        mem_limit: 128m
+        mem_reservation: 32m
+        memswap_limit: 128m
 
-  prometheus:
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.retention.time=1y
-      - --log.level=warn
-    depends_on:
-      backup:
-        condition: service_healthy
-    mem_limit: 1g
-    mem_reservation: 256m
-    memswap_limit: 1g
+    backup:
+        image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-backup:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
+        user: ${PUID:-1000}:${PGID:-1000}
+        read_only: true
+        security_opt:
+            - no-new-privileges:true
+        cap_drop:
+            - ALL
+        environment:
+            TZ: Europe/London
+            API_BASE_URL: http://api:8080
+            INTERNAL_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
+            RESTIC_REPOSITORY: /backups/restic
+            RESTIC_PASSWORD: ${BACKUP_RESTIC_PASSWORD:?set BACKUP_RESTIC_PASSWORD in .env}
+            RESTIC_HOST: mmucraft-production
+            RESTIC_CACHE_DIR: /tmp/restic-cache
+        volumes:
+            - ./data:/source/data:ro
+            - ./.env:/source/config/.env:ro
+            - ./data/locks:/locks
+            - ./backups:/backups
+        tmpfs:
+            - /tmp:rw,noexec,nosuid,size=256m,mode=1777
+        expose:
+            - '8080'
+        depends_on:
+            api:
+                condition: service_healthy
+            minecraft:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD', 'curl', '--fail', '--silent', 'http://127.0.0.1:8080/metrics.txt']
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 1m
+        mem_limit: 512m
+        mem_reservation: 128m
+        memswap_limit: 512m
+        pids_limit: 128
+        deploy:
+            resources:
+                limits:
+                    memory: 512m
+                    pids: 128
+                reservations:
+                    memory: 128m
+        restart: unless-stopped
+        stop_grace_period: 1m
+        logging:
+            driver: local
+            options:
+                max-size: 10m
+                max-file: '3'
+        networks: [app]
 
-  grafana:
-    mem_limit: 512m
-    mem_reservation: 128m
-    memswap_limit: 512m
+    velocity:
+        mem_limit: 1g
+        mem_reservation: 384m
+        memswap_limit: 1g
+        deploy:
+            resources:
+                limits:
+                    memory: 1g
+                reservations:
+                    memory: 384m
 
-  loki:
-    environment:
-      LOKI_RETENTION_PERIOD: 336h
-    mem_limit: 1g
-    mem_reservation: 256m
-    memswap_limit: 1g
+    prometheus:
+        command:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.retention.time=1y
+            - --log.level=warn
+        depends_on:
+            backup:
+                condition: service_healthy
+        mem_limit: 1g
+        mem_reservation: 256m
+        memswap_limit: 1g
 
-  alloy:
-    mem_limit: 512m
-    mem_reservation: 128m
-    memswap_limit: 512m
+    grafana:
+        mem_limit: 512m
+        mem_reservation: 128m
+        memswap_limit: 512m
 
-  cadvisor:
-    mem_limit: 256m
-    mem_reservation: 64m
-    memswap_limit: 256m
+    loki:
+        environment:
+            LOKI_RETENTION_PERIOD: 336h
+        mem_limit: 1g
+        mem_reservation: 256m
+        memswap_limit: 1g
 
-  node-exporter:
-    mem_limit: 128m
-    mem_reservation: 32m
-    memswap_limit: 128m
+    alloy:
+        mem_limit: 512m
+        mem_reservation: 128m
+        memswap_limit: 512m
+
+    cadvisor:
+        mem_limit: 256m
+        mem_reservation: 64m
+        memswap_limit: 256m
+
+    node-exporter:
+        mem_limit: 128m
+        mem_reservation: 32m
+        memswap_limit: 128m

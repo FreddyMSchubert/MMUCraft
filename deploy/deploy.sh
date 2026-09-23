@@ -83,7 +83,7 @@ fi
 
 # Prepare release configuration and persistent data.
 umask 077
-mkdir -p data/api data/minecraft data/velocity
+mkdir -p data/api data/minecraft data/velocity data/surprising-saturday
 if [ "$target" = production ]; then
 	mkdir -p data/locks backups
 	chmod 770 data/locks backups
@@ -96,7 +96,7 @@ fi
 printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\nCOMPOSE_FILE=%s\n' "$image_prefix" "$tag" "$public_host" "$compose_file" > .release.env
 [ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 printf '%s\n' "$VELOCITY_FORWARDING_SECRET" > data/velocity/forwarding.secret
-chmod 775 data/api data/minecraft data/velocity
+chmod 775 data/api data/minecraft data/velocity data/surprising-saturday
 chmod 664 data/api/signup-allowlist.txt
 chmod 600 data/velocity/forwarding.secret
 
@@ -196,6 +196,7 @@ set_property() {
 # Pull and validate images before player downtime starts.
 dc config --quiet
 dc pull --quiet
+dc --profile event pull --quiet surprising-saturday
 dc run --rm --no-deps alloy validate /etc/alloy/config.alloy
 
 api_image="${image_prefix}-api:${tag}"
@@ -266,6 +267,11 @@ if [ "$had_players" = true ]; then
 fi
 [ "$proxy_drained" = true ] || graceful_failure "Velocity did not confirm that all players disconnected"
 
+# Keep the event controller from restarting the old event image during the update.
+dc stop event-controller || true
+dc --profile event stop surprising-saturday || true
+dc --profile event rm -f surprising-saturday || true
+
 # Update the proxy first so it can show progress while the API and main server restart.
 shutdown_attempted=true
 rm -f data/velocity/deployment-drained
@@ -319,6 +325,7 @@ fi
 
 # Start the release and wait for every health check.
 dc up -d --remove-orphans --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
+dc --profile event create --no-deps surprising-saturday
 # Compose cannot detect changes inside configuration bind mounts.
 dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" prometheus grafana loki alloy nginx
 wait_for_proxy ready || { echo "Velocity has not confirmed that main is ready." >&2; exit 1; }
@@ -326,7 +333,6 @@ clear_update
 announce_update_complete || graceful_failure "Could not send the update completion notice"
 
 # Remove unused Docker artifacts. Never prune persistent volumes.
-docker container prune -f >/dev/null
 docker image prune -f --filter until=168h >/dev/null
 docker builder prune -f --filter until=168h >/dev/null
 

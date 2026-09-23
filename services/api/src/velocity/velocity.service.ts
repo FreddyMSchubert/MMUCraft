@@ -5,16 +5,16 @@ import {
 	NotFoundException,
 	ServiceUnavailableException,
 } from '@nestjs/common';
-import { and, asc, eq, gt, lt, lte } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { isValidMinecraftUsername } from '../auth/auth.util';
 import { PlayerBansService } from '../auth/player-bans.service';
 import { signupFlows } from '../auth/signup-flow';
 import {
 	DatabaseService,
 	playerProfiles,
-	velocitySchedules,
 	velocityServers,
 	velocitySettings,
+	users,
 } from '../database/database.service';
 import {
 	MinecraftIdentityService,
@@ -23,11 +23,12 @@ import {
 import { requireInternalAuthorization } from '../internal-authorization';
 import { effectivePlayerColor } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
+import { SurprisingSaturdayService } from './surprising-saturday.service';
 
 const PROXY_STALE_AFTER_MS = 10_000;
 const COMMAND_TTL_MS = 60_000;
 const SERVER_NAME_PATTERN = /^[a-z0-9][a-z0-9_-]{0,31}$/;
-const BACKEND_ADDRESS_PATTERN = /^([a-z0-9](?:[a-z0-9._-]{0,251}[a-z0-9])?):([1-9][0-9]{0,4})$/i;
+const EVENT_SERVER = 'surprising-saturday';
 
 interface LiveServer {
 	name: string;
@@ -69,6 +70,7 @@ export class VelocityService {
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
 		private readonly bans: PlayerBansService,
+		private readonly events: SurprisingSaturdayService,
 	) {}
 
 	verifyInternalAuthorization(authorization: string | undefined) {
@@ -139,26 +141,23 @@ export class VelocityService {
 		this.lastHeartbeatUnixMs = now;
 
 		const settings = this.settings();
-		const servers = this.database.connection
-			.select()
-			.from(velocityServers)
-			.orderBy(asc(velocityServers.id))
-			.all();
-		const activeSchedule = this.activeSchedule(now);
-		const defaultServer = servers.find((server) => server.is_default === 1) ?? null;
-		const targetServer = activeSchedule
-			? (servers.find((server) => server.id === activeSchedule.server_id) ?? null)
-			: defaultServer;
-		const route = targetServer
-			? {
-					revision: activeSchedule
-						? `schedule:${activeSchedule.id}`
-						: `default:${targetServer.id}`,
-					targetServerName: targetServer.name,
-				}
-			: null;
+		const servers = this.servers();
+		const activeEvent = settings.event_override === 0 ? null : this.events.active(now);
+		if (activeEvent)
+			this.events.recordParticipants(
+				this.livePlayers
+					.filter((player) => player.serverName === EVENT_SERVER)
+					.map((player) => player.uuid),
+				activeEvent.id,
+				now,
+			);
+		const eventReady = activeEvent && this.liveServers.get(EVENT_SERVER)?.online;
+		const route = {
+			revision: eventReady ? `event:${activeEvent.id}` : 'main',
+			targetServerName: eventReady ? EVENT_SERVER : 'main',
+		};
 		for (const [id, command] of this.commands)
-			if (command.routeRevision !== route?.revision) this.commands.delete(id);
+			if (command.routeRevision !== route.revision) this.commands.delete(id);
 
 		const disconnects = this.livePlayers.flatMap((player) => {
 			const user = this.identities.findByUuid(player.uuid);
@@ -190,18 +189,7 @@ export class VelocityService {
 	adminSnapshot() {
 		const now = Date.now();
 		const proxyOnline = this.proxyIsOnline(now);
-		const servers = this.database.connection
-			.select()
-			.from(velocityServers)
-			.orderBy(asc(velocityServers.id))
-			.all();
-		const schedules = this.database.connection
-			.select()
-			.from(velocitySchedules)
-			.orderBy(asc(velocitySchedules.starts_at_unix_ms))
-			.all();
-		const serversById = new Map(servers.map((server) => [server.id, server]));
-		const active = this.activeSchedule(now);
+		const servers = this.servers();
 		const players = proxyOnline
 			? this.livePlayers.map((player) => {
 					const user = this.identities.findByUuid(player.uuid);
@@ -231,7 +219,8 @@ export class VelocityService {
 			proxyOnline,
 			lastHeartbeatUnixMs: this.lastHeartbeatUnixMs,
 			maintenanceMode: this.settings().maintenance_mode === 1,
-			activeScheduleId: active?.id ?? null,
+			eventOverride: this.settings().event_override,
+			eventActive: Boolean(this.events.active(now)),
 			servers: servers.map((server) => {
 				const live = proxyOnline ? this.liveServers.get(server.name) : undefined;
 				return {
@@ -244,164 +233,7 @@ export class VelocityService {
 				};
 			}),
 			players,
-			schedules: schedules.map((schedule) => ({
-				id: schedule.id,
-				name: schedule.name,
-				serverId: schedule.server_id,
-				serverName: serversById.get(schedule.server_id)?.name ?? 'Deleted server',
-				startsAtUnixMs: schedule.starts_at_unix_ms,
-				endsAtUnixMs: schedule.ends_at_unix_ms,
-			})),
 		};
-	}
-
-	createServer(nameInput: unknown, addressInput: unknown) {
-		const name = typeof nameInput === 'string' ? nameInput.trim().toLowerCase() : '';
-		if (!SERVER_NAME_PATTERN.test(name))
-			throw new BadRequestException(
-				'Server name must use 1-32 lowercase letters, numbers, underscores, or hyphens',
-			);
-		const address = parseBackendAddress(addressInput);
-		if (
-			this.database.connection.select({ id: velocityServers.id }).from(velocityServers).all()
-				.length >= 2
-		)
-			throw new ConflictException('Only one additional server is supported');
-
-		try {
-			const server = this.database.connection
-				.insert(velocityServers)
-				.values({
-					name,
-					address,
-					is_default: 0,
-				})
-				.returning()
-				.get();
-			return { ok: true, server: this.publicServer(server) };
-		} catch (error) {
-			if (String(error).includes('UNIQUE constraint failed'))
-				throw new ConflictException('A server already uses this name or address');
-			throw error;
-		}
-	}
-
-	setDefaultServer(idInput: string) {
-		const id = parseId(idInput, 'Server not found');
-		const server = this.database.connection
-			.select()
-			.from(velocityServers)
-			.where(eq(velocityServers.id, id))
-			.get();
-		if (!server) throw new NotFoundException('Server not found');
-
-		this.database.connection.transaction((transaction) => {
-			transaction.update(velocityServers).set({ is_default: 0 }).run();
-			transaction
-				.update(velocityServers)
-				.set({ is_default: 1 })
-				.where(eq(velocityServers.id, id))
-				.run();
-		});
-		return { ok: true, serverId: id };
-	}
-
-	removeServer(idInput: string) {
-		const id = parseId(idInput, 'Server not found');
-		const server = this.database.connection
-			.select()
-			.from(velocityServers)
-			.where(eq(velocityServers.id, id))
-			.get();
-		if (!server) throw new NotFoundException('Server not found');
-		if (server.name === 'main')
-			throw new ConflictException('The main server cannot be removed');
-		if (server.is_default === 1)
-			throw new ConflictException('Choose another default server before removing this one');
-		if (
-			this.database.connection
-				.select({ id: velocitySchedules.id })
-				.from(velocitySchedules)
-				.where(eq(velocitySchedules.server_id, id))
-				.get()
-		)
-			throw new ConflictException(
-				"Remove this server's schedules before removing the server",
-			);
-		if (
-			this.proxyIsOnline() &&
-			this.livePlayers.some((player) => player.serverName === server.name)
-		)
-			throw new ConflictException('Move all players off this server before removing it');
-
-		this.database.connection.delete(velocityServers).where(eq(velocityServers.id, id)).run();
-		for (const [commandId, command] of this.commands)
-			if (command.targetServerName === server.name) this.commands.delete(commandId);
-		return { ok: true, serverId: id };
-	}
-
-	createSchedule(
-		body:
-			| {
-					name?: unknown;
-					serverId?: unknown;
-					startsAtUnixMs?: unknown;
-					endsAtUnixMs?: unknown;
-			  }
-			| undefined,
-	) {
-		const name = typeof body?.name === 'string' ? body.name.trim() : '';
-		if (!name || name.length > 80)
-			throw new BadRequestException('Schedule name must use 1-80 characters');
-		const serverId = parseSafeInteger(body?.serverId, 'Select a server');
-		const startsAtUnixMs = parseSafeInteger(body?.startsAtUnixMs, 'Select a valid start time');
-		const endsAtUnixMs = parseSafeInteger(body?.endsAtUnixMs, 'Select a valid end time');
-		if (endsAtUnixMs <= startsAtUnixMs)
-			throw new BadRequestException('Schedule end must be after its start');
-		if (endsAtUnixMs <= Date.now())
-			throw new BadRequestException('Schedule end must be in the future');
-		if (
-			!this.database.connection
-				.select({ id: velocityServers.id })
-				.from(velocityServers)
-				.where(eq(velocityServers.id, serverId))
-				.get()
-		)
-			throw new NotFoundException('Server not found');
-
-		const overlap = this.database.connection
-			.select({ id: velocitySchedules.id })
-			.from(velocitySchedules)
-			.where(
-				and(
-					lt(velocitySchedules.starts_at_unix_ms, endsAtUnixMs),
-					gt(velocitySchedules.ends_at_unix_ms, startsAtUnixMs),
-				),
-			)
-			.get();
-		if (overlap) throw new ConflictException('This schedule overlaps another routing schedule');
-
-		const schedule = this.database.connection
-			.insert(velocitySchedules)
-			.values({
-				name,
-				server_id: serverId,
-				starts_at_unix_ms: startsAtUnixMs,
-				ends_at_unix_ms: endsAtUnixMs,
-			})
-			.returning()
-			.get();
-		return { ok: true, scheduleId: schedule.id };
-	}
-
-	removeSchedule(idInput: string) {
-		const id = parseId(idInput, 'Schedule not found');
-		const removed = this.database.connection
-			.delete(velocitySchedules)
-			.where(eq(velocitySchedules.id, id))
-			.run().changes;
-		if (removed !== 1) throw new NotFoundException('Schedule not found');
-		return { ok: true, scheduleId: id };
 	}
 
 	setMaintenanceMode(enabledInput: unknown) {
@@ -425,7 +257,10 @@ export class VelocityService {
 			.from(velocityServers)
 			.where(eq(velocityServers.id, serverId))
 			.get();
-		if (!server) throw new NotFoundException('Server not found');
+		if (!server || !['main', EVENT_SERVER].includes(server.name))
+			throw new NotFoundException('Server not found');
+		if (server.name === EVENT_SERVER && this.settings().event_override === 0)
+			throw new ConflictException('Surprising Saturday is stopped');
 		if (!this.proxyIsOnline())
 			throw new ServiceUnavailableException('Velocity is not reporting live state');
 
@@ -449,6 +284,42 @@ export class VelocityService {
 		return { ok: true, commandId: command.id };
 	}
 
+	moveSelf(userId: number, target: unknown) {
+		if (target !== 'main' && target !== EVENT_SERVER)
+			throw new BadRequestException('Choose main or Surprising Saturday');
+		if (target === EVENT_SERVER && !this.events.active())
+			throw new ConflictException('No Surprising Saturday event is live');
+		const user = this.database.connection
+			.select()
+			.from(users)
+			.where(eq(users.id, userId))
+			.get();
+		if (!user?.minecraft_uuid) throw new NotFoundException('Minecraft account not found');
+		const server = this.servers().find((candidate) => candidate.name === target);
+		if (!server) throw new NotFoundException('Server not found');
+		return this.movePlayer(user.minecraft_uuid, server.id);
+	}
+
+	myServer(userId: number) {
+		const user = this.database.connection
+			.select()
+			.from(users)
+			.where(eq(users.id, userId))
+			.get();
+		const uuid = normalizeMinecraftUuid(user?.minecraft_uuid ?? '');
+		return {
+			uuid,
+			serverName:
+				this.proxyIsOnline() && uuid
+					? (this.livePlayers.find((player) => player.uuid === uuid)?.serverName ?? null)
+					: null,
+			eventOnline:
+				this.settings().event_override !== 0 &&
+				this.proxyIsOnline() &&
+				this.liveServers.get(EVENT_SERVER)?.online === true,
+		};
+	}
+
 	private settings() {
 		const settings = this.database.connection
 			.select()
@@ -459,30 +330,41 @@ export class VelocityService {
 		return settings;
 	}
 
-	private activeSchedule(now: number) {
-		return (
-			this.database.connection
-				.select()
-				.from(velocitySchedules)
-				.where(
-					and(
-						lte(velocitySchedules.starts_at_unix_ms, now),
-						gt(velocitySchedules.ends_at_unix_ms, now),
-					),
-				)
-				.get() ?? null
-		);
+	private servers() {
+		return this.database.connection
+			.select()
+			.from(velocityServers)
+			.where(inArray(velocityServers.name, ['main', EVENT_SERVER]))
+			.all();
 	}
 
 	private currentRouteRevision(now = Date.now()) {
-		const active = this.activeSchedule(now);
-		if (active) return `schedule:${active.id}`;
-		const fallback = this.database.connection
-			.select({ id: velocityServers.id })
-			.from(velocityServers)
-			.where(eq(velocityServers.is_default, 1))
-			.get();
-		return fallback ? `default:${fallback.id}` : null;
+		const active = this.settings().event_override === 0 ? null : this.events.active(now);
+		return active && this.liveServers.get(EVENT_SERVER)?.online ? `event:${active.id}` : 'main';
+	}
+
+	eventControlState() {
+		const override = this.settings().event_override;
+		const desiredRunning = override === null ? Boolean(this.events.active()) : override === 1;
+		return {
+			desiredRunning,
+			canStop:
+				this.proxyIsOnline() &&
+				this.livePlayers.every((player) => player.serverName !== EVENT_SERVER),
+		};
+	}
+
+	setEventOverride(value: unknown) {
+		if (value !== null && typeof value !== 'boolean')
+			throw new BadRequestException(
+				'enabled must be true, false, or null for automatic operation',
+			);
+		this.database.connection
+			.update(velocitySettings)
+			.set({ event_override: value === null ? null : value ? 1 : 0 })
+			.where(eq(velocitySettings.id, 1))
+			.run();
+		return { ok: true, eventOverride: value };
 	}
 
 	private proxyIsOnline(now = Date.now()) {
@@ -504,16 +386,6 @@ export class VelocityService {
 			isDefault: server.is_default === 1,
 		};
 	}
-}
-
-function parseBackendAddress(value: unknown) {
-	const address = typeof value === 'string' ? value.trim().toLowerCase() : '';
-	const match = BACKEND_ADDRESS_PATTERN.exec(address);
-	if (!match || Number(match[2]) > 65_535)
-		throw new BadRequestException(
-			'Address must use the Docker host and port format, for example event-server:25565',
-		);
-	return address;
 }
 
 function parseLiveServers(value: unknown): LiveServer[] {
@@ -566,12 +438,6 @@ function parseAcknowledgedCommandIds(value: unknown) {
 	return value
 		.slice(0, 1_000)
 		.filter((id): id is number => Number.isSafeInteger(id) && Number(id) > 0);
-}
-
-function parseId(value: string, message: string) {
-	const id = Number(value);
-	if (!Number.isSafeInteger(id) || id <= 0) throw new NotFoundException(message);
-	return id;
 }
 
 function parseSafeInteger(value: unknown, message: string) {

@@ -1,22 +1,14 @@
 'use client';
 
-import { type SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { PlayerName, type PlayerEmoji } from '@/components/player-name';
-import {
-	apiBody,
-	apiMessage,
-	errorMessage,
-	fetchAdmin,
-	formatDateTime,
-	parseManchesterInput,
-} from './admin-api';
+import { apiBody, apiMessage, errorMessage, fetchAdmin } from './admin-api';
 
 interface VelocityServer {
 	id: number;
 	name: string;
 	address: string;
-	isDefault: boolean;
 	health: 'online' | 'offline' | 'unknown';
 	latencyMs: number | null;
 	error: string | null;
@@ -32,34 +24,18 @@ interface VelocityPlayer {
 	customEmojis: PlayerEmoji[];
 }
 
-interface VelocitySchedule {
-	id: number;
-	name: string;
-	serverId: number;
-	serverName: string;
-	startsAtUnixMs: number;
-	endsAtUnixMs: number;
-}
-
 interface VelocitySnapshot {
-	nowUnixMs: number;
 	proxyOnline: boolean;
 	maintenanceMode: boolean;
-	activeScheduleId: number | null;
+	eventOverride: number | null;
+	eventActive: boolean;
 	servers: VelocityServer[];
 	players: VelocityPlayer[];
-	schedules: VelocitySchedule[];
 }
 
 export function VelocityAdminSection({ section }: { section: 'servers' | 'maintenance' }) {
 	const { confirm, showAlert } = useSiteAlert();
 	const [snapshot, setSnapshot] = useState<VelocitySnapshot | null>(null);
-	const [serverName, setServerName] = useState('');
-	const [serverAddress, setServerAddress] = useState('');
-	const [scheduleName, setScheduleName] = useState('');
-	const [scheduleServerId, setScheduleServerId] = useState('');
-	const [scheduleStartsAt, setScheduleStartsAt] = useState('');
-	const [scheduleEndsAt, setScheduleEndsAt] = useState('');
 	const [moveTargets, setMoveTargets] = useState<Record<string, string>>({});
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState('');
@@ -93,17 +69,16 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 		};
 	}, [load]);
 
-	async function mutate(title: string, action: () => Promise<string>) {
+	async function mutate(title: string, action: () => Promise<void>) {
 		setBusy(true);
-		setError('');
 		try {
-			const message = await action();
+			await action();
 			await load();
-			await showAlert({ title, message, tone: 'success' });
+			await showAlert({ title, message: 'The change is being applied.', tone: 'success' });
 		} catch (caught) {
 			await showAlert({
-				title: 'Velocity operation failed',
-				message: errorMessage(caught, 'The Velocity operation failed'),
+				title: 'Server operation failed',
+				message: errorMessage(caught, 'The operation failed'),
 				tone: 'danger',
 			});
 		} finally {
@@ -111,120 +86,39 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 		}
 	}
 
-	async function addServer(event: SyntheticEvent<HTMLFormElement>) {
-		event.preventDefault();
-		await mutate('Server added', async () => {
-			const result = await velocityRequest<{ server: VelocityServer }>(
-				'/api/admin/velocity/servers',
-				{
-					method: 'POST',
-					headers: { 'content-type': 'application/json' },
-					body: JSON.stringify({ name: serverName, address: serverAddress }),
-				},
-				'Failed to add server',
-			);
-			setServerName('');
-			setServerAddress('');
-			return `${result.server.name} was added. Velocity will check it within a few seconds.`;
-		});
-	}
-
-	async function setDefault(server: VelocityServer) {
+	async function setEventOverride(enabled: boolean | null) {
 		if (
-			!(await confirm({
-				title: 'Change the default server?',
-				message: `${server.name} will be used whenever no routing schedule is active. If no schedule is active now, connected players will move there within a few seconds. During an active schedule, players stay on its server and move to ${server.name} when it ends.`,
-				confirmLabel: 'Change default',
-			}))
-		)
-			return;
-		await mutate('Default server changed', async () => {
-			await velocityRequest(
-				`/api/admin/velocity/servers/${server.id}/default`,
-				{ method: 'PATCH' },
-				'Failed to set the default server',
-			);
-			return `${server.name} is now the default server used outside routing schedules.`;
-		});
-	}
-
-	async function removeServer(server: VelocityServer) {
-		if (
-			!(await confirm({
-				title: 'Remove this server from Velocity?',
-				message: `This removes ${server.name} from routing. It does not stop or delete its container.`,
-				confirmLabel: 'Remove server',
+			enabled === false &&
+			snapshot?.servers.some(
+				(server) => server.name === 'surprising-saturday' && server.playerCount > 0,
+			)
+		) {
+			const accepted = await confirm({
+				title: 'Stop Surprising Saturday?',
+				message:
+					'Players on the event server will move to main before the event server stops.',
+				confirmLabel: 'Stop server',
 				confirmTone: 'danger',
 				tone: 'danger',
-			}))
-		)
-			return;
-		await mutate('Server removed', async () => {
+			});
+			if (!accepted) return;
+		}
+		await mutate('Surprising Saturday control updated', async () => {
 			await velocityRequest(
-				`/api/admin/velocity/servers/${server.id}`,
-				{ method: 'DELETE' },
-				'Failed to remove the server',
-			);
-			return `${server.name} was removed from Velocity.`;
-		});
-	}
-
-	async function addSchedule(event: SyntheticEvent<HTMLFormElement>) {
-		event.preventDefault();
-		await mutate('Routing schedule created', async () => {
-			await velocityRequest(
-				'/api/admin/velocity/schedules',
+				'/api/admin/velocity/event-override',
 				{
-					method: 'POST',
+					method: 'PATCH',
 					headers: { 'content-type': 'application/json' },
-					body: JSON.stringify({
-						name: scheduleName,
-						serverId: Number(scheduleServerId),
-						startsAtUnixMs: parseManchesterInput(scheduleStartsAt),
-						endsAtUnixMs: parseManchesterInput(scheduleEndsAt),
-					}),
+					body: JSON.stringify({ enabled }),
 				},
-				'Failed to create the schedule',
+				'Failed to update the event server',
 			);
-			setScheduleName('');
-			setScheduleServerId('');
-			setScheduleStartsAt('');
-			setScheduleEndsAt('');
-			return 'At the start, connected players will move to the scheduled server. At the end, they will move to the default server.';
-		});
-	}
-
-	async function removeSchedule(schedule: VelocitySchedule) {
-		if (
-			!(await confirm({
-				title: 'Remove this routing schedule?',
-				message: `The schedule “${schedule.name}” will stop controlling the route. If it is active, connected players will return to the default server within a few seconds.`,
-				confirmLabel: 'Remove schedule',
-				confirmTone: 'danger',
-				tone: 'danger',
-			}))
-		)
-			return;
-		await mutate('Routing schedule removed', async () => {
-			await velocityRequest(
-				`/api/admin/velocity/schedules/${schedule.id}`,
-				{ method: 'DELETE' },
-				'Failed to remove the schedule',
-			);
-			return `The schedule “${schedule.name}” was removed.`;
 		});
 	}
 
 	async function movePlayer(player: VelocityPlayer) {
 		const serverId = Number(moveTargets[player.uuid]);
-		if (!serverId) {
-			await showAlert({
-				title: 'Select a target server',
-				message: 'Choose one of the healthy servers before you move this player.',
-				tone: 'danger',
-			});
-			return;
-		}
+		if (!serverId) return;
 		await mutate('Player move requested', async () => {
 			await velocityRequest(
 				`/api/admin/velocity/players/${encodeURIComponent(player.uuid)}/move`,
@@ -235,7 +129,6 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				},
 				'Failed to move the player',
 			);
-			return `${player.username} will move within a few seconds. This choice lasts until the player disconnects or the default or scheduled route changes.`;
 		});
 	}
 
@@ -244,15 +137,14 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 			enabled &&
 			!(await confirm({
 				title: 'Enable maintenance mode?',
-				message:
-					'Every online player will disconnect. Velocity will reject all new logins until you turn maintenance mode off.',
+				message: 'Every online player will disconnect. New logins will be rejected.',
 				confirmLabel: 'Enable maintenance',
 				confirmTone: 'danger',
 				tone: 'danger',
 			}))
 		)
 			return;
-		await mutate(enabled ? 'Maintenance enabled' : 'Maintenance disabled', async () => {
+		await mutate('Maintenance updated', async () => {
 			await velocityRequest(
 				'/api/admin/velocity/maintenance',
 				{
@@ -262,25 +154,21 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				},
 				'Failed to change maintenance mode',
 			);
-			return enabled
-				? 'Velocity will disconnect current players and reject new logins within a few seconds.'
-				: 'Players can join again.';
 		});
 	}
 
 	if (!snapshot)
 		return (
 			<section className="adminSection">
-				<p>{error || 'Loading Velocity state...'}</p>
+				<p>{error || 'Loading server state...'}</p>
 			</section>
 		);
-
-	if (section === 'maintenance') {
+	if (section === 'maintenance')
 		return (
 			<section className="adminSection maintenanceSection">
 				<div className="adminSectionHeader">
 					<h3>Maintenance mode</h3>
-					<p>Velocity applies this gate before a player reaches any backend server.</p>
+					<p>Velocity blocks entry before a player reaches a backend server.</p>
 				</div>
 				<label className="maintenanceToggle">
 					<input
@@ -295,9 +183,6 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 							: 'Maintenance mode is off'}
 					</span>
 				</label>
-				<p className="velocityHint">
-					A change reaches Velocity during its next three-second control sync.
-				</p>
 				<p
 					className={`velocityStatus velocityStatus-${snapshot.proxyOnline ? 'online' : 'offline'}`}
 				>
@@ -306,18 +191,18 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				{error && <p className="authError">{error}</p>}
 			</section>
 		);
-	}
 
+	const eventEnabled =
+		snapshot.eventOverride === 1 || (snapshot.eventOverride === null && snapshot.eventActive);
 	return (
 		<div className="velocityAdmin">
 			<section className="adminSection">
 				<div className="adminSectionHeader velocityHeading">
 					<div>
-						<h3>Server monitor</h3>
+						<h3>Servers</h3>
 						<p>
-							Velocity reports backend health and player locations every three
-							seconds. The default server receives players whenever no schedule is
-							active.
+							Main stays online. Surprising Saturday starts during a scheduled event.
+							You can override it here for testing.
 						</p>
 					</div>
 					<span
@@ -326,59 +211,52 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 						Proxy {snapshot.proxyOnline ? 'online' : 'offline'}
 					</span>
 				</div>
-
-				<form className="velocityForm" onSubmit={addServer}>
-					<label>
-						Velocity name
-						<input
-							value={serverName}
-							onChange={(event) => {
-								setServerName(event.target.value);
-							}}
-							placeholder="event"
-							pattern="[a-z0-9][a-z0-9_-]{0,31}"
-							required
-						/>
-					</label>
-					<label>
-						Docker address
-						<input
-							value={serverAddress}
-							onChange={(event) => {
-								setServerAddress(event.target.value);
-							}}
-							placeholder="event-server:25565"
-							required
-						/>
-					</label>
-					<button disabled={busy || snapshot.servers.length >= 2}>Add server</button>
-				</form>
+				<label className="maintenanceToggle">
+					<input
+						type="checkbox"
+						checked={eventEnabled}
+						disabled={busy}
+						onChange={(event) => void setEventOverride(event.target.checked)}
+					/>
+					<span>
+						{eventEnabled
+							? 'Surprising Saturday is requested to run'
+							: 'Surprising Saturday is requested to stop'}
+					</span>
+				</label>
+				{snapshot.eventOverride !== null && (
+					<button
+						type="button"
+						disabled={busy}
+						onClick={() => void setEventOverride(null)}
+					>
+						Follow event schedule
+					</button>
+				)}
 				<p className="velocityHint">
-					{snapshot.servers.length >= 2
-						? 'The current setup supports the main server and one additional server.'
-						: 'Start the backend without a public port, attach it to the kubecraft_app Docker network, and give it the shared forwarding secret. Then enter its Docker name and internal port here.'}
+					{snapshot.eventOverride === null
+						? 'Following the event schedule.'
+						: 'Committee override is active.'}{' '}
+					The health below shows when startup or shutdown finishes.
 				</p>
-
 				<div className="adminTableWrap">
 					<table className="adminTable">
 						<thead>
 							<tr>
 								<th>Server</th>
-								<th>Address</th>
 								<th>Health</th>
 								<th>Players</th>
-								<th>Routing</th>
-								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							{snapshot.servers.map((server) => (
 								<tr key={server.id}>
 									<td>
-										<strong>{server.name}</strong>
-									</td>
-									<td>
-										<code>{server.address}</code>
+										<strong>
+											{server.name === 'main'
+												? 'Main'
+												: 'Surprising Saturday'}
+										</strong>
 									</td>
 									<td>
 										<span
@@ -394,43 +272,18 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 										)}
 									</td>
 									<td>{server.playerCount}</td>
-									<td>
-										{server.isDefault ? (
-											<strong>Default</strong>
-										) : (
-											<button
-												type="button"
-												disabled={busy}
-												onClick={() => void setDefault(server)}
-											>
-												Make default
-											</button>
-										)}
-									</td>
-									<td>
-										<button
-											type="button"
-											disabled={
-												busy || server.isDefault || server.name === 'main'
-											}
-											onClick={() => void removeServer(server)}
-										>
-											Remove
-										</button>
-									</td>
 								</tr>
 							))}
 						</tbody>
 					</table>
 				</div>
 			</section>
-
 			<section className="adminSection">
 				<div className="adminSectionHeader">
 					<h3>Online players</h3>
 					<p>
-						A manual move overrides the default or scheduled route for one player. It
-						ends when the player disconnects or that route changes.
+						Move an online player to a healthy server. The move lasts until the next
+						route change or disconnect.
 					</p>
 				</div>
 				<div className="adminTableWrap">
@@ -482,7 +335,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 									<td>
 										<button
 											type="button"
-											disabled={busy}
+											disabled={busy || !moveTargets[player.uuid]}
 											onClick={() => void movePlayer(player)}
 										>
 											Move
@@ -499,129 +352,14 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					</table>
 				</div>
 			</section>
-
-			<section className="adminSection">
-				<div className="adminSectionHeader">
-					<h3>Routing schedules</h3>
-					<p>
-						While a schedule is active, new players join its server instead of the
-						default server. At its start, connected players move to the scheduled
-						server. At its end, they move to the current default server. Only one
-						scheduled route can be active, so schedules cannot overlap. There is no
-						automatic fallback if the scheduled server is offline.
-					</p>
-				</div>
-				<form className="velocityScheduleForm" onSubmit={addSchedule}>
-					<label>
-						Event name
-						<input
-							value={scheduleName}
-							onChange={(event) => {
-								setScheduleName(event.target.value);
-							}}
-							maxLength={80}
-							required
-						/>
-					</label>
-					<label>
-						Server
-						<select
-							value={scheduleServerId}
-							onChange={(event) => {
-								setScheduleServerId(event.target.value);
-							}}
-							required
-						>
-							<option value="">Select a server</option>
-							{snapshot.servers.map((server) => (
-								<option key={server.id} value={server.id}>
-									{server.name}
-								</option>
-							))}
-						</select>
-					</label>
-					<label>
-						Starts
-						<input
-							type="datetime-local"
-							value={scheduleStartsAt}
-							onChange={(event) => {
-								setScheduleStartsAt(event.target.value);
-							}}
-							required
-						/>
-					</label>
-					<label>
-						Ends
-						<input
-							type="datetime-local"
-							value={scheduleEndsAt}
-							onChange={(event) => {
-								setScheduleEndsAt(event.target.value);
-							}}
-							required
-						/>
-					</label>
-					<button disabled={busy}>Create schedule</button>
-				</form>
-				<div className="adminTableWrap">
-					<table className="adminTable">
-						<thead>
-							<tr>
-								<th>Event</th>
-								<th>Server</th>
-								<th>Starts</th>
-								<th>Ends</th>
-								<th>Status</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							{snapshot.schedules.map((schedule) => (
-								<tr key={schedule.id}>
-									<td>{schedule.name}</td>
-									<td>{schedule.serverName}</td>
-									<td>{formatDateTime(schedule.startsAtUnixMs)}</td>
-									<td>{formatDateTime(schedule.endsAtUnixMs)}</td>
-									<td>
-										{schedule.id === snapshot.activeScheduleId
-											? 'Active'
-											: schedule.endsAtUnixMs <= snapshot.nowUnixMs
-												? 'Ended'
-												: 'Upcoming'}
-									</td>
-									<td>
-										<button
-											type="button"
-											disabled={busy}
-											onClick={() => void removeSchedule(schedule)}
-										>
-											Remove
-										</button>
-									</td>
-								</tr>
-							))}
-							{snapshot.schedules.length === 0 && (
-								<tr>
-									<td colSpan={6}>No routing schedules.</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
-			</section>
 			{error && <p className="authError">{error}</p>}
 		</div>
 	);
 }
 
-async function velocityRequest<T extends object = { ok: boolean }>(
-	path: string,
-	init: RequestInit,
-	fallback: string,
-) {
+async function velocityRequest(path: string, init: RequestInit, fallback: string) {
 	const response = await fetch(path, init);
 	const body = await response.json().catch(() => null);
 	if (!response.ok) throw new Error(apiMessage(body, fallback));
-	return apiBody<T>(body);
+	return apiBody<{ ok: boolean }>(body);
 }

@@ -150,6 +150,11 @@ public final class MmuCraftVelocity {
         Component update = deploymentMessage();
         if (update != null) {
             event.setResult(KickedFromServerEvent.DisconnectPlayer.create(update));
+        } else if (event.getServer().getServerInfo().getName().equals("surprising-saturday")
+                && managedServers.containsKey("main")
+                && health.getOrDefault("main", new ApiClient.ServerHealth("main", false, null, null)).online()) {
+            manualDestinations.remove(event.getPlayer().getUniqueId());
+            event.setResult(KickedFromServerEvent.RedirectPlayer.create(managedServers.get("main")));
         } else if (event.getPlayer().getCurrentServer().isEmpty()) {
             event.setResult(KickedFromServerEvent.DisconnectPlayer.create(Messages.unavailable()));
         } else if (event.kickedDuringServerConnect()) {
@@ -386,6 +391,10 @@ public final class MmuCraftVelocity {
         if (maintenanceMode) return null;
         String name = manualDestinations.get(player.getUniqueId());
         if (name == null && route != null) name = route.targetServerName();
+        if (name != null && !health.getOrDefault(
+                name,
+                new ApiClient.ServerHealth(name, false, null, null)
+        ).online()) name = "main";
         if (name == null || !health.getOrDefault(
                 name,
                 new ApiClient.ServerHealth(name, false, null, null)

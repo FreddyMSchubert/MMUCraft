@@ -533,10 +533,12 @@ export const velocitySettings = sqliteTable(
 	{
 		id: integer('id').primaryKey(),
 		maintenance_mode: integer('maintenance_mode').notNull().default(0),
+		event_override: integer('event_override'),
 	},
 	(table) => [
 		check('velocity_settings_singleton_check', sql`${table.id} = 1`),
 		check('velocity_settings_maintenance_check', sql`${table.maintenance_mode} in (0, 1)`),
+		check('velocity_settings_event_override_check', sql`${table.event_override} in (0, 1)`),
 	],
 );
 
@@ -577,6 +579,54 @@ export const velocitySchedules = sqliteTable(
 	],
 );
 
+export const surprisingSaturdayEvents = sqliteTable(
+	'surprising_saturday_events',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		title: text('title').notNull(),
+		description: text('description').notNull(),
+		starts_at_unix_ms: integer('starts_at_unix_ms').notNull(),
+		ends_at_unix_ms: integer('ends_at_unix_ms').notNull(),
+		criteria_type: text('criteria_type').notNull(),
+		criteria_json: text('criteria_json').notNull(),
+	},
+	(table) => [
+		index('surprising_saturday_events_window_idx').on(
+			table.starts_at_unix_ms,
+			table.ends_at_unix_ms,
+		),
+		check(
+			'surprising_saturday_events_window_check',
+			sql`${table.ends_at_unix_ms} > ${table.starts_at_unix_ms}`,
+		),
+	],
+);
+
+export const surprisingSaturdayCompletions = sqliteTable(
+	'surprising_saturday_completions',
+	{
+		event_id: integer('event_id')
+			.notNull()
+			.references(() => surprisingSaturdayEvents.id),
+		player_uuid: text('player_uuid').notNull(),
+		item_id: text('item_id').notNull(),
+		completed_at_unix_ms: integer('completed_at_unix_ms').notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.event_id, table.player_uuid, table.item_id] })],
+);
+
+export const surprisingSaturdayParticipants = sqliteTable(
+	'surprising_saturday_participants',
+	{
+		event_id: integer('event_id')
+			.notNull()
+			.references(() => surprisingSaturdayEvents.id),
+		player_uuid: text('player_uuid').notNull(),
+		joined_at_unix_ms: integer('joined_at_unix_ms').notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.event_id, table.player_uuid] })],
+);
+
 export type UserRow = typeof users.$inferSelect;
 export type SessionRow = typeof sessions.$inferSelect;
 export type PlayerBanRow = typeof playerBans.$inferSelect;
@@ -606,6 +656,7 @@ export type LaunchSettingsRow = typeof launchSettings.$inferSelect;
 export type VelocitySettingsRow = typeof velocitySettings.$inferSelect;
 export type VelocityServerRow = typeof velocityServers.$inferSelect;
 export type VelocityScheduleRow = typeof velocitySchedules.$inferSelect;
+export type SurprisingSaturdayEventRow = typeof surprisingSaturdayEvents.$inferSelect;
 
 export const schema = {
 	users,
@@ -639,4 +690,7 @@ export const schema = {
 	velocitySettings,
 	velocityServers,
 	velocitySchedules,
+	surprisingSaturdayEvents,
+	surprisingSaturdayCompletions,
+	surprisingSaturdayParticipants,
 };

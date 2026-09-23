@@ -10,6 +10,9 @@ third_party_licenses
 **/.next
 **/.gradle
 **/build
+!minecraft/surprising-saturday/killshift/build/
+!minecraft/surprising-saturday/killshift/build/libs/
+!minecraft/surprising-saturday/killshift/build/libs/killshift-0.1.0.jar
 **/dist
 minecraft/main/mod
 minecraft/main/respack/**

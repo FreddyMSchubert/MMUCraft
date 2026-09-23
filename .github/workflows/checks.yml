@@ -156,6 +156,12 @@ jobs:
                   ./gradlew build --no-daemon
                   ./gradlew -p ../../../services/velocity/plugin build --no-daemon
 
+            - name: Build Killshift and stage event mods
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              run: |
+                  ./minecraft/surprising-saturday/killshift/gradlew -p minecraft/surprising-saturday/killshift build --no-daemon
+                  python3 minecraft/surprising-saturday/download-mods.py
+
             - name: Resolve image names and tag
               if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
               id: image
@@ -259,6 +265,35 @@ jobs:
                       org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=velocity
                   cache-to: type=gha,mode=max,scope=velocity
+                  provenance: mode=max
+                  sbom: true
+
+            - name: Build and push Surprising Saturday
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/build-push-action@v7
+              with:
+                  context: .
+                  file: minecraft/surprising-saturday/Dockerfile
+                  platforms: linux/amd64
+                  pull: true
+                  push: true
+                  tags: ${{ steps.image.outputs.prefix }}-event:${{ steps.image.outputs.tag }}
+                  cache-from: type=gha,scope=event
+                  cache-to: type=gha,mode=max,scope=event
+                  provenance: mode=max
+                  sbom: true
+
+            - name: Build and push event controller
+              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              uses: docker/build-push-action@v7
+              with:
+                  context: services/event-controller
+                  platforms: linux/amd64
+                  pull: true
+                  push: true
+                  tags: ${{ steps.image.outputs.prefix }}-event-controller:${{ steps.image.outputs.tag }}
+                  cache-from: type=gha,scope=event-controller
+                  cache-to: type=gha,mode=max,scope=event-controller
                   provenance: mode=max
                   sbom: true
 

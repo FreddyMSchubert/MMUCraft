@@ -24,15 +24,20 @@ start:
 	$(PYTHON) $(MC)/stage_item_data.py --root $(MC)
 	cd $(MC)/mod && $(GRADLEW) generateProto runDatagen build
 	cd $(MC)/mod && $(GRADLEW) -p ../../../services/velocity/plugin build
+	cd minecraft/surprising-saturday/killshift && $(GRADLEW) build
+	$(PYTHON) minecraft/surprising-saturday/download-mods.py
 	$(PYTHON) $(MC)/respack/build-main-pack.py
-	$(COMPOSE) --profile minecraft up --build
+	$(COMPOSE) --profile event build surprising-saturday
+	$(COMPOSE) --profile minecraft up --build -d
+	$(COMPOSE) --profile event create --no-deps surprising-saturday
+	$(COMPOSE) --profile minecraft logs --follow
 
 restart:
 	$(check-stack)
 	$(COMPOSE) --profile minecraft restart
 
 stop:
-	$(COMPOSE) down
+	$(COMPOSE) --profile minecraft --profile event down
 
 logs:
 	$(check-service)

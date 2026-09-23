@@ -159,6 +159,7 @@
 					"minecraft:test_instance_block[minecraft:damage_resistant={types:\"#minecraft:is_fire\"}]=Enderite Block",
 					"minecraft:raw_gold_block",
 					"minecraft:diamond_block",
+					"minecraft:netherite_block",
 					"minecraft:enchanted_golden_apple",
 					"minecraft:enchanted_golden_apple"
 				]

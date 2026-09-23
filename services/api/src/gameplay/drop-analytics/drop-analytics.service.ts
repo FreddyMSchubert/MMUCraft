@@ -77,14 +77,14 @@ export class DropAnalyticsService {
 				drop?: string;
 				equippableCosmetic?: object;
 				decoBlock?: object;
-				charm?: object;
+				equippableCharm?: object;
 				shopPurchasable?: { gameplayToggle?: string; membersOnly?: boolean };
 			};
 			const type = item.equippableCosmetic
 				? 'cosmetic'
 				: item.decoBlock
 					? 'decoblock'
-					: item.charm
+					: item.equippableCharm && item.shopPurchasable
 						? 'charm'
 						: null;
 			if (!type || !item.id || !item.title) return [];

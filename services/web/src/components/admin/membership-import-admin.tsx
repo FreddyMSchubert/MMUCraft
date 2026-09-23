@@ -14,6 +14,8 @@ interface Result extends Row {
 	discordLabel: string | null;
 	apiStatus: string;
 	discordStatus: string;
+	apiError: string | null;
+	discordError: string | null;
 }
 
 function parseCsv(text: string): string[][] {
@@ -77,10 +79,22 @@ function membershipRows(text: string) {
 	};
 }
 
+function statusReason(status: string, error: string | null) {
+	if (status === 'ready' || status === 'pending') return 'Pending';
+	if (status === 'updated' || status === 'role added') return 'Applied';
+	if (status === 'already has role') return 'Already has role';
+	if (status === 'no account for email') return 'No API account for this email';
+	if (status === 'no server member found')
+		return 'No member with this username is in the Discord server';
+	return error ? `${status}: ${error}` : status;
+}
+
 export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<void> }) {
 	const run = useRef(0);
 	const controller = useRef<AbortController | null>(null);
 	const [results, setResults] = useState<Result[]>([]);
+	const [existingIndices, setExistingIndices] = useState<Set<number>>(new Set());
+	const [total, setTotal] = useState(0);
 	const [excluded, setExcluded] = useState(0);
 	const [busy, setBusy] = useState(false);
 	const [remaining, setRemaining] = useState(0);
@@ -97,6 +111,8 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 
 	async function chooseFile(file: File | undefined) {
 		setResults([]);
+		setExistingIndices(new Set());
+		setTotal(0);
 		setRemaining(0);
 		setError('');
 		if (!file) return;
@@ -114,25 +130,16 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 			if (parsed.rows.length > 500)
 				throw new Error('The report has more than 500 eligible rows.');
 			setExcluded(parsed.excluded);
+			setTotal(parsed.rows.length);
 			setRemaining(parsed.rows.length);
-			setResults(
-				parsed.rows.map((row) => ({
-					...row,
-					minecraftUsername: null,
-					userId: null,
-					discordNameSource: null,
-					discordLabel: null,
-					apiStatus: 'pending',
-					discordStatus: 'pending',
-				})),
-			);
 			let pending = parsed.rows.map((_, index) => index);
 			const finished = new Set<number>();
+			let existing: Set<number> | null = null;
 			let retryDiscord = false;
 			while (pending.length && !isCancelled()) {
 				const failed: number[] = [];
-				for (let start = 0; start < pending.length && !isCancelled(); start += 5) {
-					const indices = pending.slice(start, start + 5);
+				while (pending.length && !isCancelled()) {
+					const indices = pending.splice(0, 5);
 					const requestController = new AbortController();
 					controller.current = requestController;
 					try {
@@ -159,29 +166,46 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 						const updated = result.rows;
 						if (!Array.isArray(updated) || updated.length !== parsed.rows.length)
 							throw new Error('The API returned an incomplete import result.');
+						if (!existing) {
+							existing = new Set(
+								updated.flatMap((row, index) =>
+									row.apiStatus === 'already member' ? [index] : [],
+								),
+							);
+							setExistingIndices(existing);
+							setTotal(parsed.rows.length - existing.size);
+							pending = pending.filter((index) => !existing?.has(index));
+						}
 						setResults((current) =>
-							current.map((row, index) =>
-								(current[index].apiStatus === 'pending' && !retryDiscord) ||
-								indices.includes(index)
-									? updated[index]
-									: row,
-							),
+							current.length
+								? current.map((row, index) =>
+										indices.includes(index)
+											? {
+													...updated[index],
+													apiStatus:
+														row.apiStatus === 'updated' &&
+														updated[index].apiStatus ===
+															'already member'
+															? 'updated'
+															: updated[index].apiStatus,
+												}
+											: row,
+									)
+								: updated,
 						);
 						for (const index of indices) {
+							if (existing.has(index)) continue;
 							if (
 								updated[index].apiStatus === 'update failed' ||
 								['role update failed', 'Discord unavailable'].includes(
 									updated[index].discordStatus,
 								) ||
-								(result.discordIssue &&
-									updated[index].userId &&
-									updated[index].discordName &&
-									updated[index].apiStatus !== 'already member')
+								(result.discordIssue && updated[index].discordName)
 							)
 								failed.push(index);
 							else finished.add(index);
 						}
-						setRemaining(parsed.rows.length - finished.size);
+						setRemaining(parsed.rows.length - existing.size - finished.size);
 					} catch (caught) {
 						if (isCancelled()) break;
 						failed.push(...indices);
@@ -190,7 +214,7 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 						if (controller.current === requestController) controller.current = null;
 					}
 				}
-				pending = failed;
+				pending = failed.filter((index) => !existing?.has(index));
 				if (!pending.length || isCancelled()) break;
 				retryDiscord = true;
 				for (let seconds = 30; seconds > 0 && !isCancelled(); seconds--) {
@@ -211,8 +235,8 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 		}
 	}
 
-	const visible = results.filter((row) => row.apiStatus !== 'already member');
-	const complete = results.length - remaining;
+	const visible = results.filter((_, index) => !existingIndices.has(index));
+	const complete = total - remaining;
 	return (
 		<div className="adminSection">
 			<h3>Import society membership report</h3>
@@ -231,17 +255,14 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 				}}
 				aria-label="Society membership CSV"
 			/>
-			{results.length > 0 && (
+			{total > 0 && (
 				<>
-					<progress
-						className="membershipImportProgress"
-						value={complete}
-						max={results.length}
-					>
-						{complete} of {results.length}
+					<progress className="membershipImportProgress" value={complete} max={total}>
+						{complete} of {total}
 					</progress>
 					<p role="status">
-						{complete} of {results.length} rows finished; {excluded} excluded.
+						{complete} of {total} new rows finished; {existingIndices.size} already
+						members; {excluded} excluded.
 					</p>
 					{retryIn > 0 && (
 						<p role="status">
@@ -276,25 +297,19 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 										<td>{row.email}</td>
 										<td>{row.minecraftUsername ?? '—'}</td>
 										<td>{row.discordName || '—'}</td>
-										<td
-											title={row.apiStatus}
-											aria-label={`Minecraft: ${row.apiStatus}`}
-										>
-											{['updated', 'already member'].includes(row.apiStatus)
-												? '✅'
-												: '❌'}
+										<td>
+											{row.apiStatus === 'updated' ? '✅' : '❌'}{' '}
+											{statusReason(row.apiStatus, row.apiError)}
 										</td>
-										<td
-											title={row.discordStatus}
-											aria-label={`Discord: ${row.discordStatus}`}
-										>
+										<td>
 											{[
 												'role added',
 												'already has role',
 												'assumed member',
 											].includes(row.discordStatus)
 												? '✅'
-												: '❌'}
+												: '❌'}{' '}
+											{statusReason(row.discordStatus, row.discordError)}
 										</td>
 									</tr>
 								))}
@@ -302,6 +317,11 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 						</table>
 					</div>
 				</>
+			)}
+			{results.length > 0 && total === 0 && (
+				<p role="status">
+					No new members to apply; {existingIndices.size} already have API membership.
+				</p>
 			)}
 			{error && <p role="alert">{error}</p>}
 		</div>

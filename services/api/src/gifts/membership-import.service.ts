@@ -35,7 +35,7 @@ export class MembershipImportService {
 		});
 	}
 
-	async preview(input: unknown) {
+	async preview(input: unknown, retryIndices = new Set<number>()) {
 		const rows = this.validate(input);
 		const accounts = this.database.connection
 			.select({
@@ -51,11 +51,15 @@ export class MembershipImportService {
 		const byEmail = new Map(accounts.map((account) => [account.email.toLowerCase(), account]));
 		let context: Awaited<ReturnType<DiscordService['membershipRoleContext']>> | null = null;
 		let discordIssue: string | null = null;
-		try {
-			context = await this.discord.membershipRoleContext();
-		} catch (error) {
-			discordIssue =
-				error instanceof Error ? error.message : 'Discord members are unavailable';
+		if (
+			rows.some((row, index) => !byEmail.get(row.email)?.isMember || retryIndices.has(index))
+		) {
+			try {
+				context = await this.discord.membershipRoleContext();
+			} catch (error) {
+				discordIssue =
+					error instanceof Error ? error.message : 'Discord members are unavailable';
+			}
 		}
 		const normalize = (name: string) => name.trim().toLocaleLowerCase('en');
 		const byName = new Map<string, string[]>();
@@ -76,7 +80,7 @@ export class MembershipImportService {
 		}
 		return {
 			discordIssue,
-			rows: rows.map((row) => {
+			rows: rows.map((row, index) => {
 				const account = byEmail.get(row.email);
 				const discordName = row.discordName.length
 					? row.discordName
@@ -86,8 +90,7 @@ export class MembershipImportService {
 					discordName &&
 					ids.length === 1 &&
 					nameCounts.get(normalize(discordName)) === 1 &&
-					emailCounts.get(row.email) === 1 &&
-					account
+					emailCounts.get(row.email) === 1
 						? ids[0]
 						: null;
 				const member = discordId ? context?.members.get(discordId) : null;
@@ -111,21 +114,26 @@ export class MembershipImportService {
 									: 'ready',
 					discordId,
 					discordLabel: member ? `${member.user.username} (${member.id})` : null,
-					discordStatus: !context
-						? (discordIssue ?? 'Discord unavailable')
-						: !account || emailCounts.get(row.email) !== 1
-							? 'email unmatched'
-							: !discordName
-								? 'no Discord name'
-								: nameCounts.get(normalize(discordName)) !== 1
-									? 'duplicate name in file'
-									: ids.length === 0
-										? 'no server member found'
-										: ids.length > 1
-											? 'ambiguous server name'
-											: member?.roles.cache.has(context.role.id)
-												? 'already has role'
-												: 'ready',
+					apiError: null as string | null,
+					discordError: null as string | null,
+					discordStatus:
+						account?.isMember && !retryIndices.has(index)
+							? 'assumed member'
+							: !context
+								? (discordIssue ?? 'Discord unavailable')
+								: emailCounts.get(row.email) !== 1
+									? 'duplicate email in file'
+									: !discordName
+										? 'no Discord name'
+										: nameCounts.get(normalize(discordName)) !== 1
+											? 'duplicate name in file'
+											: ids.length === 0
+												? 'no server member found'
+												: ids.length > 1
+													? 'ambiguous server name'
+													: member?.roles.cache.has(context.role.id)
+														? 'already has role'
+														: 'ready',
 				};
 			}),
 		};
@@ -141,29 +149,46 @@ export class MembershipImportService {
 			typeof retryDiscord !== 'boolean'
 		)
 			throw new BadRequestException('Apply between 1 and 5 distinct row indices');
-		const preview = await this.preview(input);
+		const preview = await this.preview(
+			input,
+			retryDiscord ? new Set(indicesInput as number[]) : undefined,
+		);
 		if (indicesInput.some((index) => index >= preview.rows.length))
 			throw new BadRequestException('Row index is outside the report');
-		const context = preview.discordIssue
-			? null
-			: await this.discord.membershipRoleContext().catch(() => null);
+		let discordIssue = preview.discordIssue;
+		let context: Awaited<ReturnType<DiscordService['membershipRoleContext']>> | null = null;
+		if (
+			!discordIssue &&
+			(indicesInput as number[]).some((index) =>
+				['ready', 'already has role'].includes(preview.rows[index]?.discordStatus ?? ''),
+			)
+		) {
+			try {
+				context = await this.discord.membershipRoleContext();
+			} catch (error) {
+				discordIssue =
+					error instanceof Error ? error.message : 'Discord became unavailable';
+			}
+		}
 		const results = [...preview.rows];
 		for (const index of indicesInput as number[]) {
 			const row = preview.rows[index];
 			if (!row) throw new BadRequestException('Row index is outside the report');
 			let apiStatus = row.apiStatus;
-			if (retryDiscord && apiStatus === 'already member') apiStatus = 'updated';
-			let discordStatus =
-				row.apiStatus === 'already member' && !retryDiscord
-					? 'assumed member'
-					: row.discordStatus;
-			if (!context && discordStatus === 'ready') discordStatus = 'Discord unavailable';
+			let apiError: string | null = null;
+			let discordError: string | null = null;
+			let discordStatus = row.discordStatus;
+			if (!context && discordStatus === 'ready') {
+				discordStatus = 'Discord unavailable';
+				discordError = discordIssue;
+			}
 			if (row.apiStatus === 'ready' && row.userId) {
 				try {
 					await this.roles.setMembership(String(row.userId), true);
 					apiStatus = 'updated';
-				} catch {
+				} catch (error) {
 					apiStatus = 'update failed';
+					apiError = error instanceof Error ? error.message : 'Unknown API error';
 				}
 			}
 			if (
@@ -171,8 +196,7 @@ export class MembershipImportService {
 				(row.apiStatus !== 'already member' || retryDiscord) &&
 				row.discordId &&
 				context &&
-				row.userId &&
-				apiStatus !== 'update failed'
+				row.discordName
 			) {
 				try {
 					const member = context.members.get(row.discordId);
@@ -186,6 +210,7 @@ export class MembershipImportService {
 						await member.roles.add(context.role, '26/27 society membership import');
 					discordStatus = 'role added';
 				} catch (error) {
+					discordError = error instanceof Error ? error.message : 'Unknown Discord error';
 					discordStatus =
 						error &&
 						typeof error === 'object' &&
@@ -195,8 +220,8 @@ export class MembershipImportService {
 							: 'role update failed';
 				}
 			}
-			results[index] = { ...row, apiStatus, discordStatus };
+			results[index] = { ...row, apiStatus, discordStatus, apiError, discordError };
 		}
-		return { rows: results, discordIssue: preview.discordIssue };
+		return { rows: results, discordIssue };
 	}
 }

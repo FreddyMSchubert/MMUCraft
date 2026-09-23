@@ -207,6 +207,39 @@
 	gap: 9px;
 	margin-top: 8px;
 }
+
+.minecraftButtonRow.communityButtonRow {
+	margin-top: 0;
+}
+
+.communityButtonRow .minecraftButton:first-child {
+	animation: communitySplitLeft 220ms ease-out both;
+}
+
+.communityButtonRow .minecraftButton:last-child {
+	animation: communitySplitRight 220ms ease-out both;
+}
+
+@keyframes communitySplitLeft {
+	from {
+		opacity: 0;
+		transform: translateX(50%);
+	}
+}
+
+@keyframes communitySplitRight {
+	from {
+		opacity: 0;
+		transform: translateX(-50%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.communityButtonRow .minecraftButton {
+		animation: none;
+	}
+}
+
 .minecraftVersion,
 .minecraftLegal {
 	position: fixed;

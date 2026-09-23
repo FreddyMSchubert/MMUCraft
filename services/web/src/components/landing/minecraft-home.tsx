@@ -1,11 +1,13 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { LaunchCountdown, useLaunchLive } from '@/components/launch/launch-countdown';
 import { MinecraftTitle } from '@/components/landing/minecraft-title';
 import { useSiteAlert } from '@/components/site-alert';
 
 const MEMBERSHIP_URL = 'https://www.theunionmmu.org/groups/26-3-minecraft-society';
+const WHATSAPP_URL = 'https://chat.whatsapp.com/KgWzk2WBbIYLVkSrfVuwcz';
 
 interface MinecraftHomeProps {
 	panorama: { id: string; label: string };
@@ -19,6 +21,8 @@ interface MinecraftHomeProps {
 export function MinecraftHome(props: MinecraftHomeProps) {
 	const launchLive = useLaunchLive();
 	const { showAlert } = useSiteAlert();
+	const [communityExpanded, setCommunityExpanded] = useState(false);
+	const communityLinks = useRef<HTMLDivElement>(null);
 
 	return (
 		<main className="minecraftHome">
@@ -36,12 +40,42 @@ export function MinecraftHome(props: MinecraftHomeProps) {
 						<span>Play Now</span>
 						<LaunchCountdown compact />
 					</Link>
-					<ExternalMenuLink
-						href={props.discordUrl}
-						label="Discord"
-						missingMessage="The Discord portal is still being enchanted. Check back soon!"
-						onMissing={showAlert}
-					/>
+					{communityExpanded ? (
+						<div className="minecraftButtonRow communityButtonRow" ref={communityLinks}>
+							<ExternalMenuLink
+								href={props.discordUrl}
+								label="Discord"
+								missingMessage="The Discord portal is still being enchanted. Check back soon!"
+								onMissing={showAlert}
+							/>
+							<a
+								className="minecraftButton"
+								href={WHATSAPP_URL}
+								target="_blank"
+								rel="noreferrer"
+							>
+								WhatsApp
+							</a>
+						</div>
+					) : (
+						<button
+							className="minecraftButton"
+							type="button"
+							onMouseEnter={() => {
+								setCommunityExpanded(true);
+							}}
+							onClick={() => {
+								setCommunityExpanded(true);
+								requestAnimationFrame(() => {
+									communityLinks.current
+										?.querySelector<HTMLElement>('a, button')
+										?.focus();
+								});
+							}}
+						>
+							Join the Community
+						</button>
+					)}
 					<ExternalMenuLink
 						href={props.instagramUrl}
 						label="Instagram"

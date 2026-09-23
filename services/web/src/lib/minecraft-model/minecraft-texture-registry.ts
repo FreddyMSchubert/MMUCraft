@@ -163,13 +163,20 @@ export class ManagedTexture {
 	frameSequenceIndex = 0;
 	frameSequence: number[] | null;
 	failed = false;
+	private glintElapsedMs = 0;
 
 	constructor(
 		frameSequence: number[] | null,
 		private readonly animated: boolean,
+		private glint: boolean,
 	) {
 		this.frameSequence = frameSequence;
 		this.drawMissing();
+	}
+
+	setGlint(enabled: boolean) {
+		this.glint = enabled;
+		if (this.sourceImage) this.drawFrame(this.currentFrame);
 	}
 
 	drawMissing() {
@@ -231,12 +238,39 @@ export class ManagedTexture {
 			this.canvas.width,
 			this.canvas.height,
 		);
+		if (this.glint) {
+			const period = Math.max(4, this.canvas.width / 2);
+			const offset = ((this.glintElapsedMs * this.canvas.width) / 1800) % period;
+			this.context.save();
+			this.context.globalCompositeOperation = 'source-atop';
+			this.context.fillStyle = 'rgba(135, 70, 220, 0.12)';
+			this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+			this.context.fillStyle = 'rgba(190, 150, 255, 0.48)';
+			for (
+				let x = -this.canvas.height - period;
+				x < this.canvas.width + this.canvas.height;
+				x += period
+			) {
+				const left = x + offset;
+				const slope = this.canvas.height * 0.6;
+				const stripeWidth = Math.max(1, this.canvas.width / 10);
+				this.context.beginPath();
+				this.context.moveTo(left, 0);
+				this.context.lineTo(left + stripeWidth, 0);
+				this.context.lineTo(left + stripeWidth - slope, this.canvas.height);
+				this.context.lineTo(left - slope, this.canvas.height);
+				this.context.fill();
+			}
+			this.context.restore();
+		}
 
 		this.currentFrame = frame;
 		this.texture.needsUpdate = true;
 	}
 
 	update(deltaMs: number, frameDelayMs: number) {
+		this.glintElapsedMs += deltaMs;
+		if (this.glint) this.drawFrame(this.currentFrame);
 		if (this.frameCount <= 1) return;
 		const safeDelay = Math.max(TICK_MS, frameDelayMs);
 		this.frameElapsedMs += deltaMs;
@@ -262,11 +296,17 @@ export class ManagedTexture {
 
 export class TextureRegistry {
 	private readonly handles = new Map<string, ManagedTexture>();
+	private glint = false;
 
 	constructor(
 		private readonly frameSequence: number[] | null,
 		private readonly animated: boolean,
 	) {}
+
+	setGlint(enabled: boolean) {
+		this.glint = enabled;
+		for (const handle of this.handles.values()) handle.setGlint(enabled);
+	}
 
 	async get(source: string | null) {
 		return (await this.getHandle(source)).texture;
@@ -277,7 +317,7 @@ export class TextureRegistry {
 		const existing = this.handles.get(key);
 		if (existing) return existing;
 
-		const handle = new ManagedTexture(this.frameSequence, this.animated);
+		const handle = new ManagedTexture(this.frameSequence, this.animated, this.glint);
 		if (source) {
 			try {
 				handle.setImage(await loadImageFromSource(source));
@@ -295,7 +335,7 @@ export class TextureRegistry {
 	}
 
 	isAnimated() {
-		return [...this.handles.values()].some((handle) => handle.frameCount > 1);
+		return this.glint || [...this.handles.values()].some((handle) => handle.frameCount > 1);
 	}
 
 	hasFailed() {

@@ -57,6 +57,11 @@ export class MinecraftModelObject {
 
 	async load(source: MinecraftItemSource) {
 		this.disposeMeshes();
+		this.textureRegistry.setGlint(
+			source.glint ??
+				(source.itemId === 'minecraft:enchanted_golden_apple' ||
+					source.itemId === 'minecraft:enchanted_book'),
+		);
 		const resolved = await resolveItemSource(source);
 		this.resolvedModel = resolved.model;
 		this.fallbackTexture = resolved.fallbackTexture;

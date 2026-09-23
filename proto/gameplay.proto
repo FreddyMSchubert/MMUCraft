@@ -166,6 +166,7 @@ message CharmUpgradeIngredient {
   string icon_item_id = 3;
   int32 required_count = 4;
   int32 inventory_count = 5;
+  bool icon_glint = 6;
 }
 
 message InventoryCharm {
@@ -178,6 +179,7 @@ message InventoryCharm {
   string current_ability = 8;
   string next_ability = 9;
   repeated CharmUpgradeIngredient ingredients = 10;
+  bool glint = 11;
 }
 
 message GetCharmInventoryResponse {

@@ -14,12 +14,14 @@ interface CharmIngredient {
 	requiredCount: number;
 	inventoryCount: number;
 	itemId: string;
+	glint: boolean;
 	iconUrl: string | null;
 	modelUrl: string | null;
 }
 
 interface HeldCharm {
 	itemId: string;
+	glint: boolean;
 	title: string;
 	currentLevel: number;
 	maxLevel: number;
@@ -62,12 +64,14 @@ export function CharmsTab() {
 	const forgeKey = charm
 		? JSON.stringify({
 				itemId: charm.itemId,
+				glint: charm.glint,
 				currentLevel: charm.currentLevel,
 				modelUrl: charm.modelUrl,
 				textureUrl: charm.textureUrl,
 				ingredients: charm.ingredients.map(
-					({ itemId, modelUrl, iconUrl, requiredCount }) => ({
+					({ itemId, modelUrl, iconUrl, requiredCount, glint }) => ({
 						itemId,
+						glint,
 						modelUrl,
 						iconUrl,
 						requiredCount,
@@ -145,16 +149,22 @@ export function CharmsTab() {
 			charm: {
 				assetRoot: ASSETS.minecraft.root,
 				itemId: `mainmod:${renderedCharm.itemId}`,
+				glint: renderedCharm.glint,
 				modelUrl: renderedCharm.modelUrl,
 				textureUrl: renderedCharm.textureUrl,
 			},
 			ingredients: renderedCharm.ingredients.flatMap((ingredient) =>
 				Array.from({ length: ingredient.requiredCount }, () =>
 					ingredient.itemId.startsWith('minecraft:')
-						? { assetRoot: ASSETS.minecraft.root, itemId: ingredient.itemId }
+						? {
+								assetRoot: ASSETS.minecraft.root,
+								itemId: ingredient.itemId,
+								glint: ingredient.glint,
+							}
 						: {
 								assetRoot: ASSETS.minecraft.root,
 								itemId: ingredient.itemId,
+								glint: ingredient.glint,
 								...(ingredient.itemId === 'mainmod:alien-debris' ||
 								ingredient.itemId === 'mainmod:enderite-block'
 									? {

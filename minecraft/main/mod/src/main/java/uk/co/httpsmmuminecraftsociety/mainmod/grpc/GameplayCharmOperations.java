@@ -51,7 +51,7 @@ final class GameplayCharmOperations {
         FakeItem item = stored == null ? null : FakeItems.CHARM_ID_MAP.get(stored.charmId());
         CharmItemFeature feature = item == null ? null : item.getFeature(CharmItemFeature.class);
         if (feature != null && !GliderCharm.isGlider(stack)) {
-            response.addCharms(buildInventoryCharm(player, slot, item, feature, stored.level()));
+            response.addCharms(buildInventoryCharm(player, slot, stack, item, feature, stored.level()));
         } else {
             response.setMessage("Hold one charm in your main hand, then refresh the forge.");
         }
@@ -59,15 +59,17 @@ final class GameplayCharmOperations {
         return response.build();
     }
 
-	private static InventoryCharm buildInventoryCharm(
+    private static InventoryCharm buildInventoryCharm(
             ServerPlayer player,
             int slot,
+            ItemStack stack,
             FakeItem item,
             CharmItemFeature feature,
             int currentLevel
     ) {
         InventoryCharm.Builder charm = InventoryCharm.newBuilder()
                 .setItemId(item.id())
+                .setGlint(stack.hasFoil())
                 .setTitle(item.title())
                 .setCurrentLevel(currentLevel)
                 .setMaxLevel(feature.maxLevel())
@@ -106,6 +108,7 @@ final class GameplayCharmOperations {
                     .setRaw(ingredient.raw())
                     .setDisplayName(displayName)
                     .setIconItemId(iconStack.isEmpty() ? "" : MinecraftItemIdentifier.forStack(iconStack))
+                    .setIconGlint(!iconStack.isEmpty() && iconStack.hasFoil())
                     .setRequiredCount(counted.count())
                     .setInventoryCount(countMatchingItems(player, slot, ingredient))
                     .build());

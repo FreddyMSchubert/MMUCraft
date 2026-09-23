@@ -293,6 +293,7 @@ export class MinecraftModelRenderer {
 		if (this.destroyed) return;
 		this.currentResolvedModel = await this.modelObject.load({
 			assetRoot: source.assetRoot ?? this.assetRoot,
+			glint: source.glint,
 			itemId: source.itemId,
 			model: source.model,
 			modelUrl: source.modelUrl,

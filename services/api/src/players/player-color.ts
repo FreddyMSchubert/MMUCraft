@@ -27,7 +27,7 @@ export function effectivePlayerColor(
 export function playerAvatarUrl(minecraftUuid: string | null): string | null {
 	const uuid = minecraftUuid?.replaceAll('-', '').toLowerCase() ?? '';
 	if (!/^[0-9a-f]{32}$/.test(uuid)) return null;
-	return `/api/players/avatar/${uuid}.png`;
+	return `/api/players/avatar/${uuid}.png?v=2`;
 }
 
 export function playerSkinUrl(minecraftUuid: string | null): string | null {

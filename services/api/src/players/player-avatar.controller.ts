@@ -181,11 +181,11 @@ export class PlayerAvatarController {
 			.extract({ left: 40, top: 8, width: 8, height: 8 })
 			.png()
 			.toBuffer();
-		return sharp(face)
+		const head = await sharp(face)
 			.composite([{ input: hat }])
-			.resize(128, 128, { kernel: 'nearest' })
 			.png()
 			.toBuffer();
+		return sharp(head).resize(128, 128, { kernel: 'nearest' }).png().toBuffer();
 	}
 
 	private async addDiscordRing(head: Buffer, color: string) {

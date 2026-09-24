@@ -4,7 +4,7 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 ## Behavior that applies to every mob
 
-Every mob can become a form. Killshift copies the source mob appearance into the display entity when possible. It copies the mob health, armor, scale, and attack damage. Attack damage never falls below one. Most forms use normal player speed on land.
+Every mob can become a form. Killshift copies the source mob appearance into the display entity when possible. It copies the mob health, armor, eye height, and attack damage. The player scale follows the mob eye height. The owner's display is smaller, while other players see the full-size mob. Attack damage never falls below one. Most forms use normal player speed on land.
 
 Sneak to play the form's ambient sound. The display entity copies the player pose, rotation, sprint state, swim state, and held equipment. A player returns to normal after death or after killing a player.
 

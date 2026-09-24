@@ -38,7 +38,7 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 
 ## Movement and combat
 
-Killshift reads health, attack damage, armor, and width from the killed mob. It does not copy the mob movement-speed value. A mob and a player use that value in different movement systems. A direct copy makes common mobs much too fast or much too slow.
+Killshift reads health, attack damage, armor, and eye height from the killed mob. It scales the player so the camera reaches the mob's eye height. This also changes the player hitbox. Killshift does not copy the mob movement-speed value. A mob and a player use that value in different movement systems. A direct copy makes common mobs much too fast or much too slow.
 
 Most land forms use normal player speed. Naturally quick forms use a small speed multiplier. Aquatic forms use normal player speed on land and receive full water movement efficiency.
 
@@ -48,9 +48,9 @@ Killshift keeps attack damage at one or more. A weak form can therefore kill ano
 
 ## Visual disguise
 
-Killshift makes the real player invisible. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player.
+Killshift makes the real player invisible. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients.
 
-Other players see the copy at the real player position. The owner receives a separate puppet position behind the first-person camera. This placement keeps the model out of the first-person view and keeps it visible in third-person view. The server does not receive the client's camera mode, so it cannot test for first-person or third-person mode directly.
+Other players see the full-size copy at the player position. The owner receives a smaller scale for the copy. The smaller model stays below the first-person camera and remains visible in third-person view. Killshift sends the copy position to tracking players each tick. The server does not receive the client's camera mode.
 
 Attacks against the visible copy are redirected to its owner. The copy cannot push the player and cannot change player movement.
 
@@ -60,7 +60,7 @@ Attacks against the visible copy are redirected to its owner. The copy cannot pu
 - `ShapeManager` owns transform, reset, combat redirection, equipment copy, and attribute lifecycle.
 - `MobRegistry` assigns passive traits and form statistics.
 - `ShapeRuntime` applies passive behavior on each server tick.
-- `ShapeView` owns the world model and the owner's camera-safe puppet.
+- `ShapeView` owns the world model, collision rule, and owner-only scale.
 - `MobAbilities` owns active right-click actions and on-hit effects.
 - `MobMixin` stops friendly mob families from targeting matching player forms.
 

@@ -1,26 +1,25 @@
 package dev.freddy.killshift;
 
-import com.mojang.datafixers.util.Pair;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PositionMoveRotation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
 
 final class ShapeView {
+    private static final String VIEW_TEAM = "killshift_views";
+
     private ShapeView() {
     }
 
@@ -35,9 +34,15 @@ final class ShapeView {
             view.setUUID(UUID.randomUUID());
         }
         prepare(view, player);
+        Scoreboard scoreboard = player.level().getScoreboard();
+        PlayerTeam team = scoreboard.getPlayerTeam(VIEW_TEAM);
+        if (team == null) {
+            team = scoreboard.addPlayerTeam(VIEW_TEAM);
+        }
+        team.setCollisionRule(Team.CollisionRule.NEVER);
+        scoreboard.addPlayerToTeam(view.getScoreboardName(), team);
         state.view = view;
         player.level().addFreshEntity(view);
-        spawnSelfPuppet(player, view);
     }
 
     static void tick(ServerPlayer player, ShapeState state) {
@@ -59,12 +64,32 @@ final class ShapeView {
         view.setShiftKeyDown(player.isShiftKeyDown());
         view.setSprinting(player.isSprinting());
         view.setSwimming(player.isSwimming());
-        moveSelfPuppet(player, view);
+
+        PositionMoveRotation movement = new PositionMoveRotation(
+                view.position(), view.getDeltaMovement(), view.getYRot(), view.getXRot());
+        var packet = ClientboundTeleportEntityPacket.teleport(view.getId(), movement, Set.of(), player.onGround());
+        for (ServerPlayer observer : PlayerLookup.tracking(view)) {
+            observer.connection.send(packet);
+        }
+        // ponytail: Vanilla can overwrite this scale. Filter attribute packets if traffic grows.
+        sendSelfScale(player, view);
+    }
+
+    static void onStartTracking(Entity entity, ServerPlayer player) {
+        ShapeState state = ShapeManager.get(player);
+        if (state != null && entity == state.view) {
+            sendSelfScale(player, state.view);
+        }
     }
 
     static void remove(ShapeState state) {
         if (state.view != null) {
-            state.view.remove(Entity.RemovalReason.DISCARDED);
+            Mob view = state.view;
+            Scoreboard scoreboard = view.level().getScoreboard();
+            if (scoreboard.getPlayersTeam(view.getScoreboardName()) == scoreboard.getPlayerTeam(VIEW_TEAM)) {
+                scoreboard.removePlayerFromTeam(view.getScoreboardName());
+            }
+            view.remove(Entity.RemovalReason.DISCARDED);
             state.view = null;
         }
     }
@@ -91,66 +116,19 @@ final class ShapeView {
         view.snapTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
     }
 
-    private static void spawnSelfPuppet(ServerPlayer player, Mob view) {
+    private static void sendSelfScale(ServerPlayer player, Mob view) {
         if (player.hasDisconnected()) {
             return;
         }
-
-        Vec3 pos = selfPosition(player, view);
-        player.connection.send(new ClientboundRemoveEntitiesPacket(view.getId()));
-        player.connection.send(new ClientboundAddEntityPacket(
-                view.getId(),
-                view.getUUID(),
-                pos.x,
-                pos.y,
-                pos.z,
-                player.getXRot(),
-                player.getYRot(),
-                view.getType(),
-                0,
-                player.getDeltaMovement(),
-                player.getYHeadRot()
-        ));
-
-        var metadata = view.getEntityData().getNonDefaultValues();
-        if (metadata != null) {
-            player.connection.send(new ClientboundSetEntityDataPacket(view.getId(), metadata));
-        }
-
-        List<Pair<EquipmentSlot, ItemStack>> equipment = new ArrayList<>();
-        for (EquipmentSlot slot : EquipmentSlot.VALUES) {
-            ItemStack stack = view.getItemBySlot(slot);
-            if (!stack.isEmpty()) {
-                equipment.add(Pair.of(slot, stack.copy()));
-            }
-        }
-        if (!equipment.isEmpty()) {
-            player.connection.send(new ClientboundSetEquipmentPacket(view.getId(), equipment));
-        }
-    }
-
-    private static void moveSelfPuppet(ServerPlayer player, Mob view) {
-        if (player.hasDisconnected()) {
+        AttributeInstance original = view.getAttribute(Attributes.SCALE);
+        if (original == null) {
             return;
         }
-        PositionMoveRotation movement = new PositionMoveRotation(
-                selfPosition(player, view),
-                player.getDeltaMovement(),
-                player.getYRot(),
-                player.getXRot()
-        );
-        player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(), movement, Set.of(), player.onGround()));
-    }
-
-    private static Vec3 selfPosition(ServerPlayer player, Mob view) {
-        Vec3 look = player.getLookAngle();
-        Vec3 horizontal = new Vec3(look.x, 0.0, look.z);
-        if (horizontal.lengthSqr() < 0.001) {
-            horizontal = new Vec3(0.0, 0.0, 1.0);
-        } else {
-            horizontal = horizontal.normalize();
-        }
-        double offset = Math.max(0.9, view.getBbWidth() * 0.55 + 0.35);
-        return player.position().subtract(horizontal.scale(offset));
+        AttributeInstance self = new AttributeInstance(Attributes.SCALE, ignored -> {});
+        self.replaceFrom(original);
+        self.removeModifiers();
+        double factor = Math.min(0.5, player.getEyeHeight() * 0.75 / view.getBbHeight());
+        self.setBaseValue(Math.max(0.0625, original.getValue() * factor));
+        player.connection.send(new ClientboundUpdateAttributesPacket(view.getId(), List.of(self)));
     }
 }

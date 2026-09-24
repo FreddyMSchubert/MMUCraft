@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
 public final class Killshift implements ModInitializer {
@@ -27,5 +28,6 @@ public final class Killshift implements ModInitializer {
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> EventApi.playerJoined(handler.getPlayer()));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> EventApi.playerLeft(handler.getPlayer()));
+        EntityTrackingEvents.START_TRACKING.register(ShapeView::onStartTracking);
     }
 }

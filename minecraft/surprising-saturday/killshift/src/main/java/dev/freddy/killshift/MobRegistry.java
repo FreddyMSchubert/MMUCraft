@@ -83,7 +83,8 @@ final class MobRegistry {
         double armor = mob.getAttribute(Attributes.ARMOR) == null
                 ? 0.0
                 : mob.getAttributeValue(Attributes.ARMOR);
-        double scale = Math.clamp(mob.getBbWidth() / 0.6, 0.35, 4.0);
+        double scale = Math.clamp(
+                mob.getEyeHeight() / EntityTypes.PLAYER.getDimensions().eyeHeight(), 0.0625, 16.0);
 
         return new MobForm(
                 (EntityType<? extends Mob>) type,

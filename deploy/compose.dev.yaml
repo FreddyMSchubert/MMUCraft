@@ -1,30 +1,34 @@
 services:
     api:
-        mem_limit: 512m
-        mem_reservation: 256m
-        memswap_limit: 512m
-        deploy:
-            resources:
-                limits:
-                    memory: 512m
-                reservations:
-                    memory: 256m
-
-    web:
-        mem_limit: 512m
+        environment:
+            NODE_OPTIONS: --max-old-space-size=192
+        mem_limit: 384m
         mem_reservation: 128m
         memswap_limit: 512m
         deploy:
             resources:
                 limits:
-                    memory: 512m
+                    memory: 384m
+                reservations:
+                    memory: 128m
+
+    web:
+        environment:
+            NODE_OPTIONS: --max-old-space-size=192
+        mem_limit: 384m
+        mem_reservation: 128m
+        memswap_limit: 512m
+        deploy:
+            resources:
+                limits:
+                    memory: 384m
                 reservations:
                     memory: 128m
 
     minecraft:
         environment:
             MEMORY: 1G
-            INIT_MEMORY: 512M
+            INIT_MEMORY: 256M
         mem_limit: 1536m
         mem_reservation: 512m
         memswap_limit: 2g
@@ -44,28 +48,30 @@ services:
         memswap_limit: 2g
 
     event-controller:
-        mem_limit: 128m
-        mem_reservation: 32m
+        mem_limit: 96m
+        mem_reservation: 24m
         memswap_limit: 128m
 
     velocity:
-        mem_limit: 512m
-        mem_reservation: 128m
+        environment:
+            MEMORY: 192M
+        mem_limit: 384m
+        mem_reservation: 96m
         memswap_limit: 512m
         deploy:
             resources:
                 limits:
-                    memory: 512m
+                    memory: 384m
                 reservations:
-                    memory: 128m
+                    memory: 96m
 
     prometheus:
         command:
             - --config.file=/etc/prometheus/prometheus.yml
             - --storage.tsdb.retention.time=1d
             - --log.level=warn
-        mem_limit: 256m
-        mem_reservation: 64m
+        mem_limit: 192m
+        mem_reservation: 48m
         memswap_limit: 256m
 
     grafana:
@@ -81,16 +87,16 @@ services:
         memswap_limit: 256m
 
     alloy:
-        mem_limit: 128m
-        mem_reservation: 32m
+        mem_limit: 96m
+        mem_reservation: 24m
         memswap_limit: 128m
 
     cadvisor:
-        mem_limit: 128m
-        mem_reservation: 32m
+        mem_limit: 96m
+        mem_reservation: 24m
         memswap_limit: 128m
 
     node-exporter:
-        mem_limit: 64m
+        mem_limit: 48m
         mem_reservation: 16m
         memswap_limit: 64m

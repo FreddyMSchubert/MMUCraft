@@ -208,35 +208,50 @@
 	margin-top: 8px;
 }
 
+.communityButtons {
+	position: relative;
+}
+
+.communityButtons > .minecraftButton {
+	transition: opacity 140ms ease;
+}
+
+.communityButtons > .minecraftButton span {
+	transition: opacity 70ms ease;
+}
+
+.communityButtons.expanded > .minecraftButton {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.communityButtons.expanded > .minecraftButton span {
+	opacity: 0;
+}
+
 .minecraftButtonRow.communityButtonRow {
+	position: absolute;
+	inset: 0;
+	gap: 0;
 	margin-top: 0;
+	visibility: hidden;
+	opacity: 0;
+	transition:
+		gap 300ms ease-out,
+		opacity 140ms ease;
 }
 
-.communityButtonRow .minecraftButton:first-child {
-	animation: communitySplitLeft 220ms ease-out both;
-}
-
-.communityButtonRow .minecraftButton:last-child {
-	animation: communitySplitRight 220ms ease-out both;
-}
-
-@keyframes communitySplitLeft {
-	from {
-		opacity: 0;
-		transform: translateX(50%);
-	}
-}
-
-@keyframes communitySplitRight {
-	from {
-		opacity: 0;
-		transform: translateX(-50%);
-	}
+.communityButtons.expanded .communityButtonRow {
+	gap: 9px;
+	visibility: visible;
+	opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.communityButtonRow .minecraftButton {
-		animation: none;
+	.communityButtons > .minecraftButton,
+	.communityButtons > .minecraftButton span,
+	.communityButtonRow {
+		transition: none;
 	}
 }
 

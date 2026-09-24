@@ -30,7 +30,9 @@ On a mob kill, Killshift writes the killer UUID, mob ID, and event time to an ou
 
 Docker sends the event server and controller logs to its local log driver. Alloy discovers their Compose service labels and forwards both streams to Loki. The Technical Grafana dashboard has one log panel for each service. The event server uses the Minecraft multiline rule. Loki keeps production logs for 14 days; event results remain in SQLite.
 
-The dev Compose overlay sets a 1 GiB maximum Java heap for each Minecraft server. It starts the main heap at 512 MiB and the event heap at 256 MiB. Each server has a 1.5 GiB container memory limit. Production keeps a 6 GiB main heap and a 4 GiB event heap for its 16 GiB VM.
+The dev Compose overlay sets a 1 GiB maximum Java heap for each Minecraft server. It starts each heap at 256 MiB. Each server has a 1.5 GiB container memory limit. Dev Velocity uses a 192 MiB heap inside a 384 MiB container limit. The dev API and website each have a 192 MiB Node heap inside a 384 MiB container limit. Production keeps a 6 GiB main heap and a 4 GiB event heap for its 16 GiB VM.
+
+The dev container limits can add up to more than the VM's 4 GiB of RAM. These limits do not reserve RAM. Configure swap on the dev host before you run both Minecraft servers. The Compose swap limits permit use of host swap but do not create it. Check host RAM and swap with `free -h` and `swapon --show` after deployment.
 
 ## Limits in this draft
 

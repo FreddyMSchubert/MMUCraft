@@ -40,7 +40,26 @@ export function MinecraftHome(props: MinecraftHomeProps) {
 						<span>Play Now</span>
 						<LaunchCountdown compact />
 					</Link>
-					{communityExpanded ? (
+					<div className={`communityButtons${communityExpanded ? ' expanded' : ''}`}>
+						<button
+							className="minecraftButton"
+							type="button"
+							aria-hidden={communityExpanded}
+							tabIndex={communityExpanded ? -1 : 0}
+							onMouseEnter={() => {
+								setCommunityExpanded(true);
+							}}
+							onClick={() => {
+								setCommunityExpanded(true);
+								requestAnimationFrame(() => {
+									communityLinks.current
+										?.querySelector<HTMLElement>('a, button')
+										?.focus();
+								});
+							}}
+						>
+							<span>Join the Community</span>
+						</button>
 						<div className="minecraftButtonRow communityButtonRow" ref={communityLinks}>
 							<ExternalMenuLink
 								href={props.discordUrl}
@@ -57,25 +76,7 @@ export function MinecraftHome(props: MinecraftHomeProps) {
 								WhatsApp
 							</a>
 						</div>
-					) : (
-						<button
-							className="minecraftButton"
-							type="button"
-							onMouseEnter={() => {
-								setCommunityExpanded(true);
-							}}
-							onClick={() => {
-								setCommunityExpanded(true);
-								requestAnimationFrame(() => {
-									communityLinks.current
-										?.querySelector<HTMLElement>('a, button')
-										?.focus();
-								});
-							}}
-						>
-							Join the Community
-						</button>
-					)}
+					</div>
 					<ExternalMenuLink
 						href={props.instagramUrl}
 						label="Instagram"

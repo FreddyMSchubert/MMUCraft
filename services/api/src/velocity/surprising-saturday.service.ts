@@ -43,6 +43,19 @@ export class SurprisingSaturdayService {
 			.get();
 	}
 
+	warmingUp(now = Date.now()) {
+		return this.database.connection
+			.select()
+			.from(surprisingSaturdayEvents)
+			.where(
+				and(
+					gt(surprisingSaturdayEvents.starts_at_unix_ms, now),
+					lte(surprisingSaturdayEvents.starts_at_unix_ms, now + 15 * 60_000),
+				),
+			)
+			.get();
+	}
+
 	list(revealUpcoming = false) {
 		const now = Date.now();
 		return this.database.connection
@@ -274,7 +287,7 @@ export class SurprisingSaturdayService {
 				.run();
 	}
 
-	setCompletion(body: Record<string, unknown> | undefined) {
+	recordCompletion(body: Record<string, unknown> | undefined) {
 		const uuid = normalizeMinecraftUuid(
 			typeof body?.playerUuid === 'string' ? body.playerUuid : '',
 		);
@@ -284,7 +297,7 @@ export class SurprisingSaturdayService {
 			!uuid ||
 			typeof itemId !== 'string' ||
 			!ITEM_ID.test(itemId) ||
-			typeof body?.completed !== 'boolean' ||
+			(body?.completed !== undefined && body.completed !== true) ||
 			!Number.isSafeInteger(at)
 		)
 			throw new BadRequestException('Invalid completion');
@@ -297,29 +310,16 @@ export class SurprisingSaturdayService {
 		if (!(JSON.parse(event.criteria_json) as string[]).includes(itemId))
 			throw new BadRequestException('This item is not in the event list');
 		this.recordParticipants([uuid], event.id, at as number);
-		if (body.completed) {
-			this.database.connection
-				.insert(surprisingSaturdayCompletions)
-				.values({
-					event_id: event.id,
-					player_uuid: uuid,
-					item_id: itemId,
-					completed_at_unix_ms: at as number,
-				})
-				.onConflictDoNothing()
-				.run();
-		} else {
-			this.database.connection
-				.delete(surprisingSaturdayCompletions)
-				.where(
-					and(
-						eq(surprisingSaturdayCompletions.event_id, event.id),
-						eq(surprisingSaturdayCompletions.player_uuid, uuid),
-						eq(surprisingSaturdayCompletions.item_id, itemId),
-					),
-				)
-				.run();
-		}
+		this.database.connection
+			.insert(surprisingSaturdayCompletions)
+			.values({
+				event_id: event.id,
+				player_uuid: uuid,
+				item_id: itemId,
+				completed_at_unix_ms: at as number,
+			})
+			.onConflictDoNothing()
+			.run();
 		return { ok: true };
 	}
 

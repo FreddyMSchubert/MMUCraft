@@ -2,7 +2,7 @@
 
 MMUCraft has four main parts. `services/web` is the Next.js website. `services/api` is the NestJS API and owns authentication, application rules, routing, and SQLite data. `services/velocity` is the public Minecraft entry point. It authenticates players and routes them to backend servers. `minecraft/main/mod` is the Fabric server mod. The mod connects gameplay events and commands to the API through gRPC.
 
-Surprising Saturday uses a second Minecraft container with the Killshift mod. It starts for a live event or when committee members turn it on for testing. See [the implementation guide](docs/surprising-saturday-implementation.md) for the route, score, image, and log paths.
+Surprising Saturday uses a second Minecraft container with the Killshift mod. It starts 15 minutes before a scheduled event or when committee members turn it on for testing. Players can enter when the event starts. See [the implementation guide](docs/surprising-saturday-implementation.md) for the route, score, image, and log paths.
 
 The server targets Minecraft Java `26.3`. See the [migration report](docs/minecraft-26.3-migration.md) for dependency versions, fixes, verification results, and the staging checklist.
 

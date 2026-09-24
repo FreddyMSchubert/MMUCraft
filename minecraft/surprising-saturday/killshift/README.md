@@ -82,4 +82,4 @@ This project does not declare a code license. No license is granted by default.
 
 ## MMUCraft event API
 
-The Surprising Saturday image sets `SURPRISING_SATURDAY_API_URL` and `SURPRISING_SATURDAY_API_SECRET`. Killshift saves a completed mob ID to `/data/killshift-score-outbox.jsonl` after a player kill. It sends saved IDs to the API and retries after a failure. It also reads player presentation data when a player joins. The mod works without these variables, but it does not send event data.
+The Surprising Saturday image sets `SURPRISING_SATURDAY_API_URL` and `SURPRISING_SATURDAY_API_SECRET`. Killshift saves each pending kill to `/data/killshift-score-outbox.jsonl` and sends it to the API. It retries after a failure. The API stores the completion list and calculates the score. The mod also reads player presentation data when a player joins. The mod works without these variables, but it does not send event data.

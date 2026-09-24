@@ -69,7 +69,9 @@ services:
             RESTIC_HOST: mmucraft-production
             RESTIC_CACHE_DIR: /tmp/restic-cache
         volumes:
-            - ./data:/source/data:ro
+            - ./data/minecraft:/source/data/minecraft:ro
+            - ./data/api:/source/data/api:ro
+            - ./data/velocity:/source/data/velocity:ro
             - ./.env:/source/config/.env:ro
             - ./data/locks:/locks
             - ./backups:/backups

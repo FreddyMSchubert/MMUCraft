@@ -182,6 +182,6 @@ export class SurprisingSaturdayInternalController {
 		@Body() body: Record<string, unknown> | undefined,
 	) {
 		this.velocity.verifyInternalAuthorization(authorization);
-		return this.events.setCompletion(body);
+		return this.events.recordCompletion(body);
 	}
 }

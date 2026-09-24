@@ -82,7 +82,6 @@ public final class EventApi {
         JsonObject payload = new JsonObject();
         payload.addProperty("playerUuid", player.getUUID().toString());
         payload.addProperty("itemId", BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()).toString());
-        payload.addProperty("completed", true);
         payload.addProperty("occurredAtUnixMs", System.currentTimeMillis());
         synchronized (OUTBOX_LOCK) {
             try {
@@ -195,8 +194,8 @@ public final class EventApi {
         var playerList = player.level().getServer().getPlayerList();
         var op = playerList.getOps().get(player.nameAndId());
         if (role.equals("Committee")) {
-            if (op == null || op.permissions().level() != PermissionLevel.MODERATORS) {
-                playerList.op(player.nameAndId(), Optional.of(LevelBasedPermissionSet.MODERATOR), Optional.of(false));
+            if (op == null || op.permissions().level() != PermissionLevel.GAMEMASTERS) {
+                playerList.op(player.nameAndId(), Optional.of(LevelBasedPermissionSet.GAMEMASTER), Optional.of(false));
             }
         } else if (op != null) {
             playerList.deop(player.nameAndId());

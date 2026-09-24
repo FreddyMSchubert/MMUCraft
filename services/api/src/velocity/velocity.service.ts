@@ -143,8 +143,8 @@ export class VelocityService {
 
 		const settings = this.settings();
 		const servers = this.servers();
-		const activeEvent = settings.event_override === 0 ? null : this.events.active(now);
-		if (activeEvent)
+		const { activeEvent, ...route } = this.eventRoute(now, settings.event_override);
+		if (activeEvent && settings.event_override !== 0)
 			this.events.recordParticipants(
 				this.livePlayers
 					.filter((player) => player.serverName === EVENT_SERVER)
@@ -152,11 +152,6 @@ export class VelocityService {
 				activeEvent.id,
 				now,
 			);
-		const eventReady = activeEvent && this.liveServers.get(EVENT_SERVER)?.online;
-		const route = {
-			revision: eventReady ? `event:${activeEvent.id}` : 'main',
-			targetServerName: eventReady ? EVENT_SERVER : 'main',
-		};
 		for (const [id, command] of this.commands)
 			if (command.routeRevision !== route.revision) this.commands.delete(id);
 
@@ -262,6 +257,8 @@ export class VelocityService {
 			throw new NotFoundException('Server not found');
 		if (server.name === EVENT_SERVER && this.settings().event_override === 0)
 			throw new ConflictException('Surprising Saturday is stopped');
+		if (server.name === EVENT_SERVER && this.events.warmingUp())
+			throw new ConflictException('Surprising Saturday opens at the event start time');
 		if (!this.proxyIsOnline())
 			throw new ServiceUnavailableException('Velocity is not reporting live state');
 
@@ -344,13 +341,30 @@ export class VelocityService {
 	}
 
 	private currentRouteRevision(now = Date.now()) {
-		const active = this.settings().event_override === 0 ? null : this.events.active(now);
-		return active && this.liveServers.get(EVENT_SERVER)?.online ? `event:${active.id}` : 'main';
+		return this.eventRoute(now, this.settings().event_override).revision;
+	}
+
+	private eventRoute(now: number, override: number | null) {
+		const activeEvent = this.events.active(now);
+		const warmingUp = activeEvent ? null : this.events.warmingUp(now);
+		return {
+			activeEvent,
+			revision: activeEvent
+				? `event:${activeEvent.id}`
+				: warmingUp
+					? `warmup:${warmingUp.id}`
+					: 'main',
+			targetServerName: activeEvent && override !== 0 ? EVENT_SERVER : 'main',
+		};
 	}
 
 	eventControlState() {
+		const now = Date.now();
 		const override = this.settings().event_override;
-		const desiredRunning = override === null ? Boolean(this.events.active()) : override === 1;
+		const desiredRunning =
+			override === null
+				? Boolean(this.events.active(now) ?? this.events.warmingUp(now))
+				: override === 1;
 		return {
 			desiredRunning,
 			canStop:

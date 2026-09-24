@@ -153,7 +153,7 @@ public final class MmuCraftVelocity {
         } else if (event.getServer().getServerInfo().getName().equals("surprising-saturday")
                 && managedServers.containsKey("main")
                 && health.getOrDefault("main", new ApiClient.ServerHealth("main", false, null, null)).online()) {
-            manualDestinations.remove(event.getPlayer().getUniqueId());
+            manualDestinations.put(event.getPlayer().getUniqueId(), "main");
             event.setResult(KickedFromServerEvent.RedirectPlayer.create(managedServers.get("main")));
         } else if (event.getPlayer().getCurrentServer().isEmpty()) {
             event.setResult(KickedFromServerEvent.DisconnectPlayer.create(Messages.unavailable()));
@@ -262,8 +262,11 @@ public final class MmuCraftVelocity {
         ApiClient.Route nextRoute = response.route();
         String oldRevision = route == null ? null : route.revision();
         String nextRevision = nextRoute == null ? null : nextRoute.revision();
+        String oldTarget = route == null ? null : route.targetServerName();
+        String nextTarget = nextRoute == null ? null : nextRoute.targetServerName();
         route = nextRoute;
-        if (!Objects.equals(oldRevision, nextRevision) || wasInMaintenance) {
+        if (!Objects.equals(oldRevision, nextRevision) || wasInMaintenance
+                || ("surprising-saturday".equals(oldTarget) && "main".equals(nextTarget))) {
             manualDestinations.clear();
             moveAllToAssignedServer();
         }

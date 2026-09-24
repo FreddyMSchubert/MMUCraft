@@ -18,7 +18,9 @@ public final class Killshift implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DAMAGE.register(MobAbilities::onDamage);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(ShapeManager::allowDamage);
         AttackEntityCallback.EVENT.register(ShapeManager::onAttack);
+        UseItemCallback.EVENT.register(MobFood::onUseItem);
         UseItemCallback.EVENT.register(MobAbilities::onUseItem);
+        UseBlockCallback.EVENT.register(MobFood::onUseBlock);
         UseBlockCallback.EVENT.register(MobAbilities::onUseBlock);
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             ShapeManager.tick(server);
@@ -26,7 +28,10 @@ public final class Killshift implements ModInitializer {
                 server.getPlayerList().getPlayers().forEach(EventApi::refreshPresentation);
             }
         });
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> EventApi.playerJoined(handler.getPlayer()));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            ShapeManager.playerJoined(handler.getPlayer());
+            EventApi.playerJoined(handler.getPlayer());
+        });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> EventApi.playerLeft(handler.getPlayer()));
         EntityTrackingEvents.START_TRACKING.register(ShapeView::onStartTracking);
     }

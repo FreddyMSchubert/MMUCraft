@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { SurprisingSaturdayService } from './surprising-saturday.service';
 import { VelocityService } from './velocity.service';
@@ -174,6 +174,16 @@ export class SurprisingSaturdayInternalController {
 	) {
 		this.velocity.verifyInternalAuthorization(authorization);
 		return this.events.playerData(uuid);
+	}
+
+	@Get('score/:uuid')
+	score(
+		@Headers('authorization') authorization: string | undefined,
+		@Param('uuid') uuid: string,
+		@Query('atUnixMs') atUnixMs: string | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		return this.events.score(uuid, atUnixMs);
 	}
 
 	@Post('list-completion')

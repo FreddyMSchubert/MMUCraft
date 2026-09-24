@@ -2,7 +2,7 @@
 
 Killshift is a server-side Fabric mod for Minecraft Java Edition 26.3.
 
-When a player kills a mob, the player becomes that mob. The player returns to normal after death or after killing another player.
+When a player kills a mob, the player becomes that mob. A player kill gives the killer a mannequin with the dead player's skin. Death restores the killer's normal form.
 
 Author: @FreddyMSchubert
 
@@ -30,7 +30,8 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - A direct mob kill changes the killer into the dead mob.
 - A projectile kill counts when Minecraft reports the player as the projectile owner.
 - A transformed player returns to normal on death.
-- A transformed player returns to normal after killing a player.
+- A player kill gives the killer a player form with the dead player's skin.
+- A form stays active when the player leaves and rejoins.
 - A mob still creates its normal loot.
 - Mob equipment is copied into the killer's inventory.
 - Every form has at least one point of attack damage.
@@ -38,21 +39,21 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 
 ## Movement and combat
 
-Killshift reads health, attack damage, armor, and eye height from the killed mob. It scales the player so the camera reaches the mob's eye height. This also changes the player hitbox. Killshift does not copy the mob movement-speed value. A mob and a player use that value in different movement systems. A direct copy makes common mobs much too fast or much too slow.
+Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. The player scale sets the camera near the source eye height. It also changes the player hitbox. A mob's movement attribute and a player's movement attribute can produce different travel speeds.
 
-Most land forms use normal player speed. Naturally quick forms use a small speed multiplier. Aquatic forms use normal player speed on land and receive full water movement efficiency.
-
-Flying forms use creative flight. Killshift forces flight on forms that cannot normally walk, such as allays. Horse forms and other strong jumpers receive a jump-strength multiplier.
+Aquatic forms gain full water movement efficiency. Fish and bees have no land movement speed. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly.
 
 Killshift keeps attack damage at one or more. A weak form can therefore kill another mob and change form again.
 
 ## Visual disguise
 
-Killshift makes the real player invisible. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients.
+Killshift makes the real player invisible. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients. The form retains the source entity's saved visual data, such as its variant.
 
-Other players see the full-size copy at the player position. The owner receives a smaller scale for the copy. The smaller model stays below the first-person camera and remains visible in third-person view. Killshift sends the copy position to tracking players each tick. The server does not receive the client's camera mode.
+Other players see the full-size copy at the player position. The owner receives a smaller scale for the copy. The smaller model stays below the first-person camera and remains visible in third-person view. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
 
 Attacks against the visible copy are redirected to its owner. The copy cannot push the player and cannot change player movement.
+
+The server adds creeper, spider, and invert post effects to matching forms. It removes a form's effect when the form ends. A vanilla 26.3 client can display these effects.
 
 ## Code structure
 
@@ -62,6 +63,8 @@ Attacks against the visible copy are redirected to its owner. The copy cannot pu
 - `ShapeRuntime` applies passive behavior on each server tick.
 - `ShapeView` owns the world model, collision rule, and owner-only scale.
 - `MobAbilities` owns active right-click actions and on-hit effects.
+- `MobFood` limits food use to the form's diet.
+- `ShapeEffects` manages post effects.
 - `MobMixin` stops friendly mob families from targeting matching player forms.
 
 This split keeps entity display code out of movement code. It also keeps temporary attributes in one lifecycle. A reset can therefore remove every Killshift modifier without changing unrelated modifiers from other mods.
@@ -71,8 +74,8 @@ See [docs/MOBS.md](docs/MOBS.md) for the complete behavior list.
 ## Current limits
 
 - Right-click abilities run only when the used hand is empty. This rule lets normal item use run first.
-- The current build stores forms in memory. A server restart clears all forms.
-- A view that must be recreated after a dimension change keeps its mob type but may lose source-specific variant data.
+- Vex movement uses server no-physics mode. Vanilla client movement can still stop the player at a wall. Full spectator movement also grants other spectator powers.
+- The display entity follows the player each tick. Network interpolation can still cause visual delay.
 - Some mobs have only the common form behavior. The mob list marks these cases.
 - Skeleton arrow refill keeps one arrow in the inventory. A player can remove that arrow, so this is not an anti-duplication system.
 
@@ -82,4 +85,4 @@ This project does not declare a code license. No license is granted by default.
 
 ## MMUCraft event API
 
-The Surprising Saturday image sets `SURPRISING_SATURDAY_API_URL` and `SURPRISING_SATURDAY_API_SECRET`. Killshift saves each pending kill to `/data/killshift-score-outbox.jsonl` and sends it to the API. It retries after a failure. The API stores the completion list and calculates the score. The mod also reads player presentation data when a player joins. The mod works without these variables, but it does not send event data.
+The Surprising Saturday image sets `SURPRISING_SATURDAY_API_URL` and `SURPRISING_SATURDAY_API_SECRET`. Killshift saves each pending kill to `/data/killshift-score-outbox.jsonl` and sends it to the API. It retries after a failure. The API stores the completion list and calculates the score. After the API replies, Killshift reads `GET /api/internal/surprising-saturday/score/:uuid` and tells the killer their score and scored mobs. It tells all players when the official top three change. These messages show player colors, role labels, and colored places. Committee members do not count in the official top three. The mod also reads player presentation data when a player joins. The mod works without these variables, but it does not send event data.

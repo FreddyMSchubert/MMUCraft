@@ -1,5 +1,6 @@
 package dev.freddy.killshift;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.net.URI;
@@ -14,14 +15,17 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.numbers.FixedFormat;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,15 +46,18 @@ public final class EventApi {
     private static final Path OUTBOX = Path.of("/data/killshift-score-outbox.jsonl");
     private static final Object OUTBOX_LOCK = new Object();
     private static final Map<UUID, Component> CHAT_NAMES = new ConcurrentHashMap<>();
+    private static final Map<String, KillNotice> KILL_NOTICES = new ConcurrentHashMap<>();
+    private static final ScheduledExecutorService WORKER = Executors.newSingleThreadScheduledExecutor(task -> {
+        Thread thread = new Thread(task, "killshift-score-outbox");
+        thread.setDaemon(true);
+        return thread;
+    });
+
+    private record KillNotice(ServerPlayer player, Component mobName) { }
 
     static {
         if (BASE_URL != null && SECRET != null) {
-            var worker = Executors.newSingleThreadScheduledExecutor(task -> {
-                Thread thread = new Thread(task, "killshift-score-outbox");
-                thread.setDaemon(true);
-                return thread;
-            });
-            worker.scheduleWithFixedDelay(EventApi::flushScores, 0, 5, TimeUnit.SECONDS);
+            WORKER.scheduleWithFixedDelay(EventApi::flushScores, 0, 5, TimeUnit.SECONDS);
         }
     }
 
@@ -78,18 +85,30 @@ public final class EventApi {
     }
 
     static void completed(ServerPlayer player, Mob mob) {
-        if (BASE_URL == null || SECRET == null) return;
+        Component mobName = mob.getType().getDescription();
+        if (BASE_URL == null || SECRET == null) {
+            player.sendSystemMessage(Component.literal("Killed ").append(mobName)
+                    .append(Component.literal(". Event score unavailable.")));
+            return;
+        }
         JsonObject payload = new JsonObject();
         payload.addProperty("playerUuid", player.getUUID().toString());
         payload.addProperty("itemId", BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()).toString());
         payload.addProperty("occurredAtUnixMs", System.currentTimeMillis());
+        payload.addProperty("notificationId", UUID.randomUUID().toString());
+        String line = payload.toString();
         synchronized (OUTBOX_LOCK) {
             try {
-                Files.writeString(OUTBOX, payload + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                Files.writeString(OUTBOX, line + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                KILL_NOTICES.put(line, new KillNotice(player, mobName));
             } catch (Exception error) {
                 System.err.println("Could not save Surprising Saturday score: " + error);
+                player.sendSystemMessage(Component.literal("Killed ").append(mobName)
+                        .append(Component.literal(". Event score could not be saved.")));
+                return;
             }
         }
+        WORKER.execute(EventApi::flushScores);
     }
 
     private static void flushScores() {
@@ -108,22 +127,173 @@ public final class EventApi {
                         .header("content-type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(line))
                         .build();
-                int status = HTTP.send(request, HttpResponse.BodyHandlers.discarding()).statusCode();
+                HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
+                int status = response.statusCode();
                 if (status != 400 && status != 404 && (status < 200 || status >= 300)) {
                     System.err.println("Surprising Saturday score API returned " + status);
                     return;
                 }
+                JsonObject receipt = status >= 200 && status < 300
+                        ? JsonParser.parseString(response.body()).getAsJsonObject() : null;
+                KillNotice notice;
                 synchronized (OUTBOX_LOCK) {
                     List<String> lines = Files.readAllLines(OUTBOX);
                     if (lines.isEmpty() || !lines.get(0).equals(line)) continue;
                     Path next = OUTBOX.resolveSibling(OUTBOX.getFileName() + ".tmp");
                     Files.write(next, lines.subList(1, lines.size()));
                     Files.move(next, OUTBOX, StandardCopyOption.REPLACE_EXISTING);
+                    notice = KILL_NOTICES.remove(line);
                 }
+                if (notice != null) announceKill(notice, line, receipt);
             }
         } catch (Exception error) {
             System.err.println("Surprising Saturday score replay paused: " + error);
         }
+    }
+
+    private static void announceKill(KillNotice notice, String line, JsonObject receipt) {
+        JsonObject officialScore = null;
+        try {
+            JsonObject report = JsonParser.parseString(line).getAsJsonObject();
+            String uuid = report.get("playerUuid").getAsString();
+            long at = report.get("occurredAtUnixMs").getAsLong();
+            HttpRequest request = HttpRequest.newBuilder(URI.create(BASE_URL
+                            + "/api/internal/surprising-saturday/score/" + uuid + "?atUnixMs=" + at))
+                    .timeout(Duration.ofSeconds(5))
+                    .header("authorization", "Bearer " + SECRET)
+                    .GET().build();
+            HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                officialScore = JsonParser.parseString(response.body()).getAsJsonObject();
+            } else if (response.statusCode() != 404) {
+                System.err.println("Surprising Saturday score lookup returned " + response.statusCode());
+            }
+        } catch (Exception error) {
+            System.err.println("Surprising Saturday score lookup failed: " + error);
+        }
+
+        JsonObject score = officialScore;
+        Component podiumResult;
+        try {
+            podiumResult = podiumMessage(receipt);
+        } catch (Exception error) {
+            System.err.println("Surprising Saturday podium announcement failed: " + error);
+            podiumResult = null;
+        }
+        Component podium = podiumResult;
+        var server = notice.player().level().getServer();
+        server.execute(() -> {
+            ServerPlayer player = notice.player();
+            if (server.getPlayerList().getPlayer(player.getUUID()) == player) {
+                player.sendSystemMessage(killMessage(notice.mobName(), score));
+            }
+            if (podium != null) {
+                for (ServerPlayer recipient : server.getPlayerList().getPlayers()) {
+                    recipient.sendSystemMessage(podium);
+                }
+            }
+        });
+    }
+
+    private static Component killMessage(Component mobName, JsonObject score) {
+        var message = Component.literal("You killed ").append(mobName);
+        if (score == null) {
+            return message.append(Component.literal(". Event score unavailable."));
+        }
+        StringJoiner animals = new StringJoiner(", ");
+        for (var item : score.getAsJsonArray("completed")) {
+            animals.add(item.getAsJsonObject().get("name").getAsString());
+        }
+        return message.append(Component.literal(". Score: " + score.get("score").getAsInt()
+                + ". Scored mobs: " + (animals.length() == 0 ? "none" : animals.toString()) + "."));
+    }
+
+    private static Component podiumMessage(JsonObject receipt) {
+        if (receipt == null || !receipt.has("podiumChange") || receipt.get("podiumChange").isJsonNull()) {
+            return null;
+        }
+        JsonObject change = receipt.getAsJsonObject("podiumChange");
+        JsonArray before = change.getAsJsonArray("before");
+        JsonArray after = change.getAsJsonArray("after");
+        String uuid = change.get("playerUuid").getAsString();
+        int oldRank = rankOf(before, uuid);
+        int newRank = rankOf(after, uuid);
+        MutableComponent message = Component.empty();
+        if (newRank == 0) {
+            message.append(Component.literal("The podium changes!"));
+        } else {
+            message.append(coloredName(after.get(newRank - 1).getAsJsonObject()));
+            if (before.isEmpty()) {
+                message.append(Component.literal(" opens the leaderboard!"));
+            } else if (newRank == 1) {
+                message.append(Component.literal(" takes ")).append(rankPlace(1))
+                        .append(Component.literal(" from "))
+                        .append(coloredName(before.get(0).getAsJsonObject()))
+                        .append(Component.literal("!"));
+            } else if (oldRank == 0) {
+                message.append(Component.literal(" breaks into ")).append(rankPlace(newRank));
+                if (newRank <= before.size()) {
+                    message.append(Component.literal(" ahead of "))
+                            .append(coloredName(before.get(newRank - 1).getAsJsonObject()));
+                }
+                message.append(Component.literal("!"));
+            } else if (newRank < oldRank) {
+                message.append(Component.literal(" climbs from ")).append(rankPlace(oldRank))
+                        .append(Component.literal(" to ")).append(rankPlace(newRank))
+                        .append(Component.literal(" ahead of "))
+                        .append(coloredName(before.get(newRank - 1).getAsJsonObject()))
+                        .append(Component.literal("!"));
+            } else {
+                message.append(Component.literal(" changes the podium!"));
+            }
+        }
+        message.append(Component.literal(" Podium: "));
+        for (int i = 0; i < 3; i++) {
+            if (i > 0) message.append(Component.literal(", "));
+            message.append(rankPlace(i + 1)).append(Component.literal(": "));
+            if (i < after.size()) {
+                JsonObject entry = after.get(i).getAsJsonObject();
+                message.append(coloredName(entry))
+                        .append(Component.literal(" (" + entry.get("score").getAsInt() + ")"));
+            } else {
+                message.append(Component.literal("open"));
+            }
+        }
+        return message.append(Component.literal("."));
+    }
+
+    private static int rankOf(JsonArray podium, String uuid) {
+        for (int i = 0; i < podium.size(); i++) {
+            if (podium.get(i).getAsJsonObject().get("uuid").getAsString().equals(uuid)) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
+
+    private static String ordinal(int rank) {
+        return rank == 1 ? "1st" : rank == 2 ? "2nd" : "3rd";
+    }
+
+    private static Component rankPlace(int rank) {
+        int color = rank == 1 ? 0xFFD700 : rank == 2 ? 0xC0C0C0 : 0xCD7F32;
+        return Component.literal(ordinal(rank) + " place").withColor(color);
+    }
+
+    private static Component coloredName(JsonObject player) {
+        return coloredName(player.get("name").getAsString(), player.get("color").getAsString(),
+                player.get("role").getAsString());
+    }
+
+    private static Component coloredName(String name, String colorHex, String role) {
+        int color = Integer.parseInt(colorHex.substring(1), 16);
+        MutableComponent result = Component.literal(name).withColor(color);
+        if (!role.equals("Player")) {
+            ChatFormatting labelColor = role.equals("Committee") ? ChatFormatting.AQUA
+                    : role.equals("External") ? ChatFormatting.GRAY : ChatFormatting.GREEN;
+            result.append(Component.literal(" [" + role + "]").withStyle(labelColor));
+        }
+        return result;
     }
 
     static void refreshPresentation(ServerPlayer player) {
@@ -156,13 +326,8 @@ public final class EventApi {
         String pronouns = profile.get("pronouns").getAsString();
         String role = profile.get("role").getAsString();
         int color = Integer.parseInt(profile.get("color").getAsString().substring(1), 16);
-        ChatFormatting labelColor = role.equals("Committee") ? ChatFormatting.AQUA
-                : role.equals("External") ? ChatFormatting.GRAY : ChatFormatting.GREEN;
-        Component chatName = Component.literal(player.getScoreboardName()).withColor(color);
-        if (!role.equals("Player")) {
-            chatName = chatName.copy().append(Component.literal(" [" + role + "]").withStyle(labelColor));
-        }
-        CHAT_NAMES.put(player.getUUID(), chatName);
+        CHAT_NAMES.put(player.getUUID(), coloredName(player.getScoreboardName(),
+                profile.get("color").getAsString(), role));
         TeamColor nearest = TeamColor.WHITE;
         int nearestDistance = Integer.MAX_VALUE;
         for (TeamColor candidate : TeamColor.VALUES) {

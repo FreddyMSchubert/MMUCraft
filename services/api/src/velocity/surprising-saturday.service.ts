@@ -8,6 +8,8 @@ import { and, asc, eq, gt, lte, ne } from 'drizzle-orm';
 import {
 	DatabaseService,
 	playerProfiles,
+	SurprisingSaturdayEventRow,
+	UserRow,
 	surprisingSaturdayCompletions,
 	surprisingSaturdayEvents,
 	surprisingSaturdayParticipants,
@@ -78,6 +80,16 @@ function titleWordLengths(title: string) {
 		.trim()
 		.split(/\s+/u)
 		.map((word) => [...TITLE_GRAPHEMES.segment(word)].length);
+}
+
+function playerRole(user: UserRow | undefined) {
+	return user?.is_committee || user?.is_super_admin
+		? 'Committee'
+		: user?.responsible_user_id != null
+			? 'External'
+			: user?.is_member
+				? 'Member'
+				: 'Player';
 }
 
 @Injectable()
@@ -162,16 +174,32 @@ export class SurprisingSaturdayService {
 			};
 
 		const items = eventTargets(event.criteria_json);
+		const players = this.rankedPlayers(event, items);
+		return {
+			id,
+			status: event.ends_at_unix_ms > now ? 'live' : 'ended',
+			title: event.title,
+			shortDescription: event.short_description,
+			description: event.description,
+			startsAtUnixMs: event.starts_at_unix_ms,
+			endsAtUnixMs: event.ends_at_unix_ms,
+			criteriaType: event.criteria_type,
+			items,
+			players,
+		};
+	}
+
+	private rankedPlayers(event: SurprisingSaturdayEventRow, items: CompletionTarget[]) {
 		const pointsById = new Map(items.map((item) => [item.id, item.points]));
 		const participants = this.database.connection
 			.select()
 			.from(surprisingSaturdayParticipants)
-			.where(eq(surprisingSaturdayParticipants.event_id, id))
+			.where(eq(surprisingSaturdayParticipants.event_id, event.id))
 			.all();
 		const completions = this.database.connection
 			.select()
 			.from(surprisingSaturdayCompletions)
-			.where(eq(surprisingSaturdayCompletions.event_id, id))
+			.where(eq(surprisingSaturdayCompletions.event_id, event.id))
 			.all()
 			.filter(
 				(entry) =>
@@ -202,6 +230,7 @@ export class SurprisingSaturdayService {
 				uuid: participant.player_uuid,
 				name: user?.minecraft_username ?? 'Unknown player',
 				color: effectivePlayerColor(participant.player_uuid, profile?.color_hex),
+				role: playerRole(user),
 				pronouns: profile?.pronouns ?? '',
 				isCommittee: Boolean(user && (user.is_committee || user.is_super_admin)),
 				customEmojis: customPlayerEmojis(profile?.custom_emojis_json),
@@ -217,20 +246,10 @@ export class SurprisingSaturdayService {
 			(a, b) =>
 				b.points - a.points ||
 				a.lastCompletionAtUnixMs - b.lastCompletionAtUnixMs ||
-				a.name.localeCompare(b.name),
+				a.name.localeCompare(b.name) ||
+				a.uuid.localeCompare(b.uuid),
 		);
-		return {
-			id,
-			status: event.ends_at_unix_ms > now ? 'live' : 'ended',
-			title: event.title,
-			shortDescription: event.short_description,
-			description: event.description,
-			startsAtUnixMs: event.starts_at_unix_ms,
-			endsAtUnixMs: event.ends_at_unix_ms,
-			criteriaType: event.criteria_type,
-			items,
-			players,
-		};
+		return players;
 	}
 
 	create(body: Record<string, unknown> | undefined) {
@@ -380,20 +399,92 @@ export class SurprisingSaturdayService {
 		const event = this.active(at as number);
 		if (event?.criteria_type !== 'list_completion')
 			throw new NotFoundException('No list completion event accepts scores now');
-		if (!eventTargets(event.criteria_json).some((item) => item.id === itemId))
+		const targets = eventTargets(event.criteria_json);
+		if (!targets.some((item) => item.id === itemId))
 			throw new BadRequestException('This item is not in the event list');
-		this.recordParticipants([uuid], event.id, at as number);
-		this.database.connection
-			.insert(surprisingSaturdayCompletions)
-			.values({
-				event_id: event.id,
-				player_uuid: uuid,
-				item_id: itemId,
-				completed_at_unix_ms: at as number,
-			})
-			.onConflictDoNothing()
-			.run();
-		return { ok: true };
+		return this.database.connection.transaction(() => {
+			// ponytail: Read the podium twice per kill. Batch participant reads if event size makes this slow.
+			const before = this.podium(event, targets);
+			this.recordParticipants([uuid], event.id, at as number);
+			const inserted =
+				this.database.connection
+					.insert(surprisingSaturdayCompletions)
+					.values({
+						event_id: event.id,
+						player_uuid: uuid,
+						item_id: itemId,
+						completed_at_unix_ms: at as number,
+					})
+					.onConflictDoNothing()
+					.returning({ itemId: surprisingSaturdayCompletions.item_id })
+					.all().length > 0;
+			const after = inserted ? this.podium(event, targets) : before;
+			const changed =
+				inserted &&
+				(before.length !== after.length ||
+					before.some((entry, index) => entry.uuid !== after[index]?.uuid));
+			return {
+				ok: true,
+				accepted: inserted,
+				podiumChange: changed ? { playerUuid: uuid, before, after } : null,
+			};
+		});
+	}
+
+	score(uuidInput: string, atUnixMsInput?: string) {
+		const uuid = normalizeMinecraftUuid(uuidInput);
+		if (!uuid) throw new NotFoundException('Player not found');
+		const at = atUnixMsInput === undefined ? Date.now() : Number(atUnixMsInput);
+		if (
+			(atUnixMsInput !== undefined && !/^\d+$/.test(atUnixMsInput)) ||
+			!Number.isSafeInteger(at)
+		)
+			throw new BadRequestException('Invalid score time');
+		const event = this.active(at);
+		if (event?.criteria_type !== 'list_completion')
+			throw new NotFoundException('No list completion event accepts scores at this time');
+		const targets = new Map(eventTargets(event.criteria_json).map((item) => [item.id, item]));
+		const completed = this.database.connection
+			.select()
+			.from(surprisingSaturdayCompletions)
+			.where(
+				and(
+					eq(surprisingSaturdayCompletions.event_id, event.id),
+					eq(surprisingSaturdayCompletions.player_uuid, uuid),
+				),
+			)
+			.orderBy(asc(surprisingSaturdayCompletions.completed_at_unix_ms))
+			.all()
+			.flatMap((entry) => {
+				const target = targets.get(entry.item_id);
+				return target &&
+					entry.completed_at_unix_ms >= event.starts_at_unix_ms &&
+					entry.completed_at_unix_ms < event.ends_at_unix_ms
+					? [target]
+					: [];
+			});
+		return {
+			eventId: event.id,
+			score: completed.reduce((total, item) => total + item.points, 0),
+			completed: completed.map((item) => ({
+				id: item.id,
+				name: item.name,
+				points: item.points,
+			})),
+		};
+	}
+
+	private podium(event: SurprisingSaturdayEventRow, targets: CompletionTarget[]) {
+		return this.rankedPlayers(event, targets)
+			.filter((player) => !player.isCommittee)
+			.slice(0, 3)
+			.map((player) => ({
+				uuid: player.uuid,
+				name: player.name,
+				color: player.color,
+				role: player.role,
+				score: player.points,
+			}));
 	}
 
 	playerData(uuidInput: string) {
@@ -416,14 +507,7 @@ export class SurprisingSaturdayService {
 			nickname: profile?.preferred_name ?? '',
 			pronouns: profile?.pronouns ?? '',
 			color: effectivePlayerColor(uuid, profile?.color_hex),
-			role:
-				user.is_committee || user.is_super_admin
-					? 'Committee'
-					: user.responsible_user_id !== null
-						? 'External'
-						: user.is_member
-							? 'Member'
-							: 'Player',
+			role: playerRole(user),
 		};
 	}
 }

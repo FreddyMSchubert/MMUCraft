@@ -24,7 +24,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 final class ShapeRuntime {
-    private static final Identifier ANGRY_SPEED = id("angry_speed");
     private static final Identifier STARED_SPEED = id("stared_speed");
     private static final double CEILING_INSET = 0.08;
     private static final double CEILING_PROBE = 0.5;
@@ -51,6 +50,12 @@ final class ShapeRuntime {
         tickEnvironment(player, state);
         tickLookReactions(player, state);
         tickInfiniteArrows(player, type);
+        if (type == EntityTypes.CHICKEN && !player.onGround()
+                && player.getDeltaMovement().y < -0.1) {
+            Vec3 movement = player.getDeltaMovement();
+            player.setDeltaMovement(movement.x, -0.1, movement.z);
+            syncMotion(player);
+        }
 
         if (type == EntityTypes.VEX) {
             player.noPhysics = true;
@@ -67,31 +72,29 @@ final class ShapeRuntime {
     }
 
     static void clear(ServerPlayer player) {
-        remove(player, Attributes.MOVEMENT_SPEED, ANGRY_SPEED);
         remove(player, Attributes.MOVEMENT_SPEED, STARED_SPEED);
     }
 
     private static void tickFlight(ServerPlayer player, ShapeState state) {
         MobTraits traits = state.form.traits();
+        EntityType<?> type = state.form.type();
         boolean mayFly = traits.flying() || player.isCreative() || player.isSpectator();
         boolean oldMayFly = player.getAbilities().mayfly;
         boolean oldFlying = player.getAbilities().flying;
         float oldSpeed = player.getAbilities().getFlyingSpeed();
         player.getAbilities().mayfly = mayFly;
-        if (traits.forcedFlight()) {
+        if (traits.flying()) {
             player.getAbilities().flying = true;
         }
 
-        float speed = traits.flightSpeed();
+        double nativeSpeed = state.form.attributes().getOrDefault(Attributes.FLYING_SPEED, 0.4);
+        float speed = traits.flying() ? (float) Math.clamp(nativeSpeed * 0.125, 0.01, 0.15) : 0.05F;
+        if (type == EntityTypes.GHAST || type == EntityTypes.HAPPY_GHAST) speed = 0.035F;
         if (state.form.type() == EntityTypes.BEE && state.angryTicks > 0) {
             speed *= 1.8F;
-            add(player, Attributes.MOVEMENT_SPEED, ANGRY_SPEED, 0.5,
-                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             if (state.view instanceof Bee bee) {
                 bee.setPersistentAngerEndTime(bee.level().getGameTime() + state.angryTicks);
             }
-        } else {
-            remove(player, Attributes.MOVEMENT_SPEED, ANGRY_SPEED);
         }
 
         player.getAbilities().setFlyingSpeed(speed);
@@ -158,7 +161,7 @@ final class ShapeRuntime {
             player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 10, 0, false, false, false));
         }
 
-        if (traits.undead()
+        if (traits.sunSensitive()
                 && player.getItemBySlot(EquipmentSlot.HEAD).isEmpty()
                 && player.level().isBrightOutside()
                 && player.level().canSeeSky(BlockPos.containing(player.getEyePosition()))) {

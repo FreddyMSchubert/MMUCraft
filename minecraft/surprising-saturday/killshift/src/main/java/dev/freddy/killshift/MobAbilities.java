@@ -1,6 +1,8 @@
 package dev.freddy.killshift;
 
 import java.util.Comparator;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,9 +15,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.entity.projectile.LlamaSpit;
+import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
@@ -30,6 +34,8 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.InfestedBlock;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -68,15 +74,32 @@ final class MobAbilities {
             return InteractionResult.PASS;
         }
         ShapeState state = ShapeManager.get(player);
-        if (state == null
-                || state.form.type() != EntityTypes.SNIFFER
-                || state.abilityCooldown > 0
-                || !level.getBlockState(hit.getBlockPos()).is(Blocks.GRASS_BLOCK)) {
-            return InteractionResult.PASS;
+        if (state == null || state.abilityCooldown > 0) return InteractionResult.PASS;
+        EntityType<?> type = state.form.type();
+        BlockPos pos = hit.getBlockPos();
+        if (type == EntityTypes.SNIFFER && level.getBlockState(pos).is(Blocks.GRASS_BLOCK)) {
+            giveAncientSeed(player);
+            state.abilityCooldown = 200;
+            return InteractionResult.SUCCESS_SERVER.withoutItem();
         }
-        giveAncientSeed(player);
-        state.abilityCooldown = 200;
-        return InteractionResult.SUCCESS_SERVER.withoutItem();
+        if (type == EntityTypes.BEE && level.getBlockState(pos).is(BlockTags.FLOWERS)
+                && player.getHealth() < player.getMaxHealth()) {
+            player.heal(4.0F);
+            state.abilityCooldown = 20;
+            return InteractionResult.SUCCESS_SERVER.withoutItem();
+        }
+        if (type == EntityTypes.SILVERFISH
+                && level.mayInteract(player, pos)
+                && InfestedBlock.isCompatibleHostBlock(level.getBlockState(pos))) {
+            var ally = EntityTypes.SILVERFISH.create(level, EntitySpawnReason.MOB_SUMMONED);
+            if (ally == null || !level.removeBlock(pos, false)) return InteractionResult.PASS;
+            ally.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0);
+            ally.addTag("killshift_ally_" + player.getUUID());
+            level.addFreshEntity(ally);
+            state.abilityCooldown = 100;
+            return InteractionResult.SUCCESS_SERVER.withoutItem();
+        }
+        return InteractionResult.PASS;
     }
 
     static void onDamage(
@@ -102,7 +125,7 @@ final class MobAbilities {
         }
 
         EntityType<?> type = state.form.type();
-        if (type == EntityTypes.CAVE_SPIDER || type == EntityTypes.BEE) {
+        if (type == EntityTypes.CAVE_SPIDER || type == EntityTypes.BEE || type == EntityTypes.PUFFERFISH) {
             victim.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0), attacker);
         } else if (type == EntityTypes.GUARDIAN || type == EntityTypes.ELDER_GUARDIAN) {
             victim.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 200, 0), attacker);
@@ -134,8 +157,16 @@ final class MobAbilities {
         } else if (type == EntityTypes.SHULKER) {
             teleport(player);
         } else if (type == EntityTypes.WITCH) {
-            ItemStack potion = PotionContents.createItemStack(Items.SPLASH_POTION, Potions.POISON);
+            var potionType = switch (player.getRandom().nextInt(4)) {
+                case 0 -> Potions.POISON;
+                case 1 -> Potions.SLOWNESS;
+                case 2 -> Potions.WEAKNESS;
+                default -> Potions.HARMING;
+            };
+            ItemStack potion = PotionContents.createItemStack(Items.SPLASH_POTION, potionType);
             Projectile.spawnProjectileFromRotation(ThrownSplashPotion::new, level, potion, player, -20.0F, 0.75F, 8.0F);
+        } else if (type == EntityTypes.EVOKER) {
+            summonFangs(level, player, direction);
         } else if (type == EntityTypes.CREEPER) {
             state.abilityCooldown = 100;
             level.explode(player, player.getX(), player.getY(), player.getZ(), 3.0F, false, Level.ExplosionInteraction.MOB);
@@ -194,6 +225,26 @@ final class MobAbilities {
             double z = player.getZ() + (player.getRandom().nextDouble() - 0.5) * 32.0;
             if (player.randomTeleport(x, y, z, true, blockState -> false)) {
                 return;
+            }
+        }
+    }
+
+    private static void summonFangs(ServerLevel level, ServerPlayer player, Vec3 direction) {
+        Vec3 forward = new Vec3(direction.x, 0.0, direction.z).normalize();
+        if (forward.lengthSqr() < 0.01) forward = Vec3.directionFromRotation(0.0F, player.getYRot());
+        for (int distance = 1; distance <= 8; distance++) {
+            double x = player.getX() + forward.x * distance;
+            double z = player.getZ() + forward.z * distance;
+            BlockPos at = BlockPos.containing(x, player.getY(), z);
+            for (int shift = 2; shift >= -2; shift--) {
+                BlockPos floor = at.offset(0, shift - 1, 0);
+                BlockPos space = floor.above();
+                if (level.getBlockState(floor).isFaceSturdy(level, floor, Direction.UP)
+                        && level.getBlockState(space).getCollisionShape(level, space).isEmpty()) {
+                    level.addFreshEntity(new EvokerFangs(level, x, space.getY(), z,
+                            (float) Math.atan2(forward.z, forward.x), distance, player));
+                    break;
+                }
             }
         }
     }

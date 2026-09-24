@@ -1,18 +1,23 @@
 package dev.freddy.killshift;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.decoration.Mannequin;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
@@ -23,16 +28,33 @@ final class ShapeView {
     private ShapeView() {
     }
 
-    static void create(ServerPlayer player, ShapeState state, Mob source) {
-        Mob view = state.form.type().create(player.level(), EntitySpawnReason.COMMAND);
-        if (view == null) {
-            return;
+    static CompoundTag snapshot(LivingEntity source) {
+        LivingEntity original = source;
+        if (source instanceof ServerPlayer player) {
+            Mannequin mannequin = new Mannequin(EntityTypes.MANNEQUIN, player.level());
+            mannequin.setComponent(DataComponents.PROFILE, player.getProfile());
+            for (EquipmentSlot slot : EquipmentSlot.VALUES) {
+                mannequin.setItemSlot(slot, player.getItemBySlot(slot).copy());
+            }
+            original = mannequin;
         }
+        TagValueOutput output = TagValueOutput.createWithContext(
+                ProblemReporter.DISCARDING, source.level().registryAccess());
+        original.saveWithoutId(output);
+        return output.buildResult();
+    }
 
-        if (source != null) {
-            view.restoreFrom(source);
-            view.setUUID(UUID.randomUUID());
+    static boolean create(ServerPlayer player, ShapeState state) {
+        Entity entity = state.form.type() == EntityTypes.PLAYER
+                ? new Mannequin(EntityTypes.MANNEQUIN, player.level())
+                : state.form.type().create(player.level(), EntitySpawnReason.COMMAND);
+        if (!(entity instanceof LivingEntity view)) return false;
+
+        if (!state.viewData.isEmpty()) {
+            view.load(TagValueInput.create(ProblemReporter.DISCARDING,
+                    player.level().registryAccess(), state.viewData.copy()));
         }
+        view.setUUID(UUID.randomUUID());
         prepare(view, player);
         Scoreboard scoreboard = player.level().getScoreboard();
         PlayerTeam team = scoreboard.getPlayerTeam(VIEW_TEAM);
@@ -43,13 +65,14 @@ final class ShapeView {
         scoreboard.addPlayerToTeam(view.getScoreboardName(), team);
         state.view = view;
         player.level().addFreshEntity(view);
+        return true;
     }
 
     static void tick(ServerPlayer player, ShapeState state) {
-        Mob view = state.view;
+        LivingEntity view = state.view;
         if (view == null || view.isRemoved() || view.level() != player.level()) {
             remove(state);
-            create(player, state, null);
+            create(player, state);
             view = state.view;
         }
         if (view == null) {
@@ -65,12 +88,6 @@ final class ShapeView {
         view.setSprinting(player.isSprinting());
         view.setSwimming(player.isSwimming());
 
-        PositionMoveRotation movement = new PositionMoveRotation(
-                view.position(), view.getDeltaMovement(), view.getYRot(), view.getXRot());
-        var packet = ClientboundTeleportEntityPacket.teleport(view.getId(), movement, Set.of(), player.onGround());
-        for (ServerPlayer observer : PlayerLookup.tracking(view)) {
-            observer.connection.send(packet);
-        }
         // ponytail: Vanilla can overwrite this scale. Filter attribute packets if traffic grows.
         sendSelfScale(player, view);
     }
@@ -84,7 +101,7 @@ final class ShapeView {
 
     static void remove(ShapeState state) {
         if (state.view != null) {
-            Mob view = state.view;
+            LivingEntity view = state.view;
             Scoreboard scoreboard = view.level().getScoreboard();
             if (scoreboard.getPlayersTeam(view.getScoreboardName()) == scoreboard.getPlayerTeam(VIEW_TEAM)) {
                 scoreboard.removePlayerFromTeam(view.getScoreboardName());
@@ -98,25 +115,29 @@ final class ShapeView {
         if (state.view == null) {
             return;
         }
-        state.view.setSilent(false);
-        state.view.playAmbientSound();
-        state.view.setSilent(true);
+        if (state.view instanceof Mob mob) {
+            mob.setSilent(false);
+            mob.playAmbientSound();
+            mob.setSilent(true);
+        }
     }
 
-    private static void prepare(Mob view, ServerPlayer player) {
+    private static void prepare(LivingEntity view, ServerPlayer player) {
         view.deathTime = 0;
         view.setHealth(view.getMaxHealth());
-        view.setNoAi(true);
+        if (view instanceof Mob mob) {
+            mob.setNoAi(true);
+            mob.setCanPickUpLoot(false);
+            mob.setPersistenceRequired();
+        }
         view.setNoGravity(true);
         view.setPermanentlyInvulnerable(true);
-        view.setCanPickUpLoot(false);
-        view.setPersistenceRequired();
         view.setSilent(true);
         view.noPhysics = true;
         view.snapTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
     }
 
-    private static void sendSelfScale(ServerPlayer player, Mob view) {
+    private static void sendSelfScale(ServerPlayer player, LivingEntity view) {
         if (player.hasDisconnected()) {
             return;
         }

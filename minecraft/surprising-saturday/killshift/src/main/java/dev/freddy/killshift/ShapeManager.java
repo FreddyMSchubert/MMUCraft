@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.Holder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,6 +15,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -25,14 +29,9 @@ import net.minecraft.world.phys.EntityHitResult;
 
 public final class ShapeManager {
     private static final Map<UUID, ShapeState> SHAPES = new HashMap<>();
-    private static final Identifier HEALTH = id("health");
-    private static final Identifier ATTACK = id("attack");
-    private static final Identifier ARMOR = id("armor");
+    private static final Map<UUID, CompoundTag> PENDING = new HashMap<>();
+    private static final Identifier FORM = id("form");
     private static final Identifier SCALE = id("scale");
-    private static final Identifier SPEED = id("speed");
-    private static final Identifier JUMP = id("jump");
-    private static final Identifier WATER = id("water");
-    private static final Identifier FALL = id("fall");
 
     private ShapeManager() {
     }
@@ -46,16 +45,17 @@ public final class ShapeManager {
         if (!(attacker instanceof ServerPlayer killer)) {
             return;
         }
-        if (dead instanceof ServerPlayer) {
-            clear(killer);
+        if (dead instanceof ServerPlayer player) {
+            if (killer != player) transform(killer, player);
         } else if (dead instanceof Mob mob) {
+            if (!MobRegistry.supports(mob.getType())) return;
             EventApi.completed(killer, mob);
             transform(killer, mob);
         }
     }
 
     static boolean allowDamage(LivingEntity target, DamageSource source, float amount) {
-        return !(target instanceof Mob mob) || ownerOf(mob) == null;
+        return ownerOf(target) == null;
     }
 
     static InteractionResult onAttack(
@@ -69,7 +69,7 @@ public final class ShapeManager {
             return InteractionResult.PASS;
         }
 
-        if (target instanceof Mob view) {
+        if (target instanceof LivingEntity view) {
             ServerPlayer owner = ownerOf(view);
             if (owner != null) {
                 if (owner != player) {
@@ -113,22 +113,54 @@ public final class ShapeManager {
         return get(player) != null;
     }
 
-    public static boolean isFriendly(Mob mob, ServerPlayer player) {
-        ShapeState state = get(player);
-        return state != null && MobRegistry.isFriendly(mob.getType(), state.form.type());
+    public static void readSaved(ServerPlayer player, ValueInput input) {
+        input.read("killshift_form", CompoundTag.CODEC)
+                .ifPresent(data -> PENDING.put(player.getUUID(), data));
     }
 
-    private static void transform(ServerPlayer player, Mob source) {
+    public static void writeSaved(ServerPlayer player, ValueOutput output) {
+        ShapeState state = get(player);
+        if (state != null) output.store("killshift_form", CompoundTag.CODEC, state.save());
+    }
+
+    static void playerJoined(ServerPlayer player) {
+        ShapeState old = SHAPES.remove(player.getUUID());
+        if (old != null) ShapeView.remove(old);
+        CompoundTag saved = PENDING.remove(player.getUUID());
+        ShapeState state = saved == null ? null : ShapeState.load(saved);
+        if (state == null) return;
+        SHAPES.put(player.getUUID(), state);
+        applyAttributes(player, state.form);
+        player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
+        ShapeEffects.apply(player, state);
+        if (!ShapeView.create(player, state)) clear(player);
+    }
+
+    public static boolean isFriendly(Mob mob, ServerPlayer player) {
+        ShapeState state = get(player);
+        return mob.entityTags().contains("killshift_ally_" + player.getUUID())
+                || state != null && MobRegistry.isFriendly(mob.getType(), state.form.type());
+    }
+
+    public static boolean isGolemEnemy(ServerPlayer player) {
+        ShapeState state = get(player);
+        return state != null && state.form.type().getCategory() == MobCategory.MONSTER
+                && state.form.type() != EntityTypes.CREEPER;
+    }
+
+    private static void transform(ServerPlayer player, LivingEntity source) {
         float health = player.getHealth();
+        CompoundTag viewData = ShapeView.snapshot(source);
         clear(player);
         MobForm form = MobRegistry.createForm(source);
-        ShapeState state = new ShapeState(form);
+        ShapeState state = new ShapeState(form, viewData);
         SHAPES.put(player.getUUID(), state);
 
         applyAttributes(player, form);
         player.setHealth(Math.min(health, player.getMaxHealth()));
-        copyEquipment(player, source);
-        ShapeView.create(player, state, source);
+        if (source instanceof Mob mob) copyEquipment(player, mob);
+        ShapeEffects.apply(player, state);
+        if (!ShapeView.create(player, state)) clear(player);
     }
 
     static void clear(ServerPlayer player) {
@@ -138,6 +170,7 @@ public final class ShapeManager {
         }
 
         ShapeView.remove(state);
+        ShapeEffects.clear(player, state);
         ShapeRuntime.clear(player);
         removeAttributes(player);
         player.setInvisible(false);
@@ -150,7 +183,7 @@ public final class ShapeManager {
         player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
     }
 
-    private static ServerPlayer ownerOf(Mob view) {
+    private static ServerPlayer ownerOf(LivingEntity view) {
         for (Map.Entry<UUID, ShapeState> entry : SHAPES.entrySet()) {
             if (entry.getValue().view == view && view.level().getServer() != null) {
                 return view.level().getServer().getPlayerList().getPlayer(entry.getKey());
@@ -160,40 +193,18 @@ public final class ShapeManager {
     }
 
     private static void applyAttributes(ServerPlayer player, MobForm form) {
-        add(player, Attributes.MAX_HEALTH, HEALTH,
-                form.maxHealth() - player.getAttributeBaseValue(Attributes.MAX_HEALTH),
-                AttributeModifier.Operation.ADD_VALUE);
-        add(player, Attributes.ATTACK_DAMAGE, ATTACK,
-                form.attackDamage() - player.getAttributeBaseValue(Attributes.ATTACK_DAMAGE),
-                AttributeModifier.Operation.ADD_VALUE);
-        add(player, Attributes.ARMOR, ARMOR,
-                form.armor() - player.getAttributeBaseValue(Attributes.ARMOR),
-                AttributeModifier.Operation.ADD_VALUE);
+        form.attributes().forEach((attribute, value) -> {
+            AttributeInstance instance = player.getAttribute(attribute);
+            if (instance != null) add(player, attribute, FORM,
+                    value - instance.getBaseValue(), AttributeModifier.Operation.ADD_VALUE);
+        });
         add(player, Attributes.SCALE, SCALE, form.scale() - 1.0,
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
-        add(player, Attributes.MOVEMENT_SPEED, SPEED, form.traits().speedMultiplier() - 1.0,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        add(player, Attributes.JUMP_STRENGTH, JUMP, form.traits().jumpMultiplier() - 1.0,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        if (form.traits().aquatic()) {
-            add(player, Attributes.WATER_MOVEMENT_EFFICIENCY, WATER, 1.0,
-                    AttributeModifier.Operation.ADD_VALUE);
-        }
-        if (form.traits().noFallDamage()) {
-            add(player, Attributes.SAFE_FALL_DISTANCE, FALL, 1024.0,
-                    AttributeModifier.Operation.ADD_VALUE);
-        }
     }
 
     private static void removeAttributes(ServerPlayer player) {
-        remove(player, Attributes.MAX_HEALTH, HEALTH);
-        remove(player, Attributes.ATTACK_DAMAGE, ATTACK);
-        remove(player, Attributes.ARMOR, ARMOR);
+        for (Holder<Attribute> attribute : MobRegistry.COPIED_ATTRIBUTES) remove(player, attribute, FORM);
         remove(player, Attributes.SCALE, SCALE);
-        remove(player, Attributes.MOVEMENT_SPEED, SPEED);
-        remove(player, Attributes.JUMP_STRENGTH, JUMP);
-        remove(player, Attributes.WATER_MOVEMENT_EFFICIENCY, WATER);
-        remove(player, Attributes.SAFE_FALL_DISTANCE, FALL);
     }
 
     private static void add(
@@ -204,8 +215,11 @@ public final class ShapeManager {
             AttributeModifier.Operation operation
     ) {
         AttributeInstance instance = player.getAttribute(attribute);
-        if (instance != null && amount != 0.0) {
-            instance.addTransientModifier(new AttributeModifier(id, amount, operation));
+        if (instance != null) {
+            instance.removeModifier(id);
+            if (amount != 0.0) {
+                instance.addTransientModifier(new AttributeModifier(id, amount, operation));
+            }
         }
     }
 

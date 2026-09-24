@@ -1,14 +1,48 @@
 package dev.freddy.killshift;
 
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 
 record MobForm(
-        EntityType<? extends Mob> type,
+        EntityType<?> type,
         MobTraits traits,
-        float maxHealth,
-        double attackDamage,
-        double armor,
+        Map<Holder<Attribute>, Double> attributes,
         double scale
 ) {
+    MobForm {
+        attributes = Map.copyOf(attributes);
+    }
+
+    CompoundTag save() {
+        CompoundTag result = new CompoundTag();
+        result.putString("type", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+        result.putDouble("scale", scale);
+        CompoundTag values = new CompoundTag();
+        attributes.forEach((attribute, value) ->
+                values.putDouble(BuiltInRegistries.ATTRIBUTE.getKey(attribute.value()).toString(), value));
+        result.put("attributes", values);
+        return result;
+    }
+
+    static MobForm load(CompoundTag data) {
+        Identifier id = Identifier.tryParse(data.getStringOr("type", ""));
+        if (id == null) return null;
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
+        if (type == null || (!MobRegistry.supports(type) && type != EntityTypes.PLAYER)) return null;
+        CompoundTag values = data.getCompoundOrEmpty("attributes");
+        Map<Holder<Attribute>, Double> attributes = new HashMap<>();
+        for (Holder<Attribute> attribute : MobRegistry.COPIED_ATTRIBUTES) {
+            String key = BuiltInRegistries.ATTRIBUTE.getKey(attribute.value()).toString();
+            values.getDouble(key).ifPresent(value -> attributes.put(attribute, value));
+        }
+        return new MobForm(type, MobRegistry.traits(type), attributes,
+                Math.clamp(data.getDoubleOr("scale", 1.0), 0.0625, 16.0));
+    }
 }

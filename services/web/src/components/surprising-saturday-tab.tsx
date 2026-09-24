@@ -31,6 +31,8 @@ interface EventDetail extends EventSummary {
 
 interface MyServer {
 	uuid: string | null;
+	serverName: string | null;
+	eventReady: boolean;
 }
 
 const GLYPHS =
@@ -97,6 +99,8 @@ export function SurprisingSaturdayTab({
 	const [detail, setDetail] = useState<EventDetail | null>(null);
 	const [me, setMe] = useState<MyServer | null>(null);
 	const [error, setError] = useState('');
+	const [moving, setMoving] = useState(false);
+	const [moveFeedback, setMoveFeedback] = useState('');
 
 	useEffect(() => {
 		let cancelled = false;
@@ -140,7 +144,36 @@ export function SurprisingSaturdayTab({
 
 	const currentDetail = detail?.id === selectedEventId ? detail : null;
 	const own = currentDetail?.players?.find((player) => player.uuid === me?.uuid);
+	const completedItems = new Set(own?.completed.map((entry) => entry.itemId));
 	const otherUpcoming = upcoming.filter((event) => event.id !== selectedEventId);
+	const onEventServer = me?.serverName === 'surprising-saturday';
+
+	async function switchServer() {
+		setMoving(true);
+		setMoveFeedback('');
+		try {
+			const response = await fetch('/api/surprising-saturday/me/server', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					serverName: onEventServer ? 'main' : 'surprising-saturday',
+				}),
+			});
+			if (!response.ok) {
+				const body = (await response.json()) as { message?: string | string[] };
+				throw new Error(
+					Array.isArray(body.message)
+						? body.message.join(', ')
+						: (body.message ?? 'Switch failed'),
+				);
+			}
+			setMoveFeedback('Switch requested. You will move in a few seconds.');
+		} catch (caught) {
+			setMoveFeedback(caught instanceof Error ? caught.message : 'Switch failed');
+		} finally {
+			setMoving(false);
+		}
+	}
 
 	return (
 		<div className="eventPage">
@@ -183,6 +216,26 @@ export function SurprisingSaturdayTab({
 					<EventDescription
 						description={currentDetail?.description ?? selected.description ?? ''}
 					/>
+					{selected.status === 'live' && (
+						<div className="eventJoin">
+							<button
+								type="button"
+								disabled={!me?.serverName || !me.eventReady || moving}
+								onClick={() => void switchServer()}
+							>
+								{moving
+									? 'Switching…'
+									: onEventServer
+										? 'Return to main server'
+										: 'Join event server'}
+							</button>
+							{!me?.serverName && <span>Join Minecraft to switch servers.</span>}
+							{me?.serverName && !me.eventReady && (
+								<span>The event server is starting.</span>
+							)}
+							{moveFeedback && <span role="status">{moveFeedback}</span>}
+						</div>
+					)}
 				</section>
 			)}
 			{isDetailPage && !selected && (
@@ -206,10 +259,20 @@ export function SurprisingSaturdayTab({
 							</summary>
 							<ul>
 								{currentDetail.items?.map((item) => (
-									<li key={item}>
-										{own?.completed.some((entry) => entry.itemId === item)
-											? '✓'
-											: '○'}{' '}
+									<li
+										key={item}
+										aria-label={`${item}: ${completedItems.has(item) ? 'complete' : 'incomplete'}`}
+									>
+										<span
+											className={
+												completedItems.has(item)
+													? 'eventComplete'
+													: 'eventIncomplete'
+											}
+											aria-hidden="true"
+										>
+											{completedItems.has(item) ? '✓' : '○'}
+										</span>{' '}
 										{item}
 									</li>
 								))}

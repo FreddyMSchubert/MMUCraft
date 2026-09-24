@@ -19,7 +19,13 @@ public final class Killshift implements ModInitializer {
         AttackEntityCallback.EVENT.register(ShapeManager::onAttack);
         UseItemCallback.EVENT.register(MobAbilities::onUseItem);
         UseBlockCallback.EVENT.register(MobAbilities::onUseBlock);
-        ServerTickEvents.END_SERVER_TICK.register(ShapeManager::tick);
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> EventApi.refreshPresentation(handler.getPlayer()));
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            ShapeManager.tick(server);
+            if (server.getTickCount() % (20 * 60) == 0) {
+                server.getPlayerList().getPlayers().forEach(EventApi::refreshPresentation);
+            }
+        });
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> EventApi.playerJoined(handler.getPlayer()));
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> EventApi.playerLeft(handler.getPlayer()));
     }
 }

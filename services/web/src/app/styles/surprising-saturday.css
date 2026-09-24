@@ -135,6 +135,33 @@
 	margin-bottom: 0;
 }
 
+.eventJoin {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+}
+
+.eventJoin button {
+	padding: 9px 14px;
+	border: 0;
+	border-radius: 7px;
+	background: #ffd166;
+	color: #111;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.eventJoin button:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.eventJoin span {
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 0.86rem;
+}
+
 .eventSectionHeading {
 	display: grid;
 	gap: 3px;
@@ -167,6 +194,14 @@
 	padding-left: 18px;
 	list-style: none;
 	font-size: 0.85rem;
+}
+
+.eventComplete {
+	color: #71e39c;
+}
+
+.eventIncomplete {
+	color: #ff7777;
 }
 
 .eventPodium {

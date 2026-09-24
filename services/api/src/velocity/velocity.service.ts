@@ -1,6 +1,7 @@
 import {
 	BadRequestException,
 	ConflictException,
+	ForbiddenException,
 	Injectable,
 	NotFoundException,
 	ServiceUnavailableException,
@@ -291,7 +292,37 @@ export class VelocityService {
 			.where(eq(users.id, userId))
 			.get();
 		const uuid = normalizeMinecraftUuid(user?.minecraft_uuid ?? '');
-		return { uuid };
+		const now = Date.now();
+		return {
+			uuid,
+			serverName: this.proxyIsOnline(now)
+				? (this.livePlayers.find((player) => player.uuid === uuid)?.serverName ?? null)
+				: null,
+			eventReady:
+				Boolean(this.events.active(now)) &&
+				this.settings().event_override !== 0 &&
+				this.proxyIsOnline(now) &&
+				this.liveServers.get(EVENT_SERVER)?.online === true,
+		};
+	}
+
+	moveSelf(userId: number, serverName: unknown) {
+		if (serverName !== 'main' && serverName !== EVENT_SERVER)
+			throw new BadRequestException('Select main or Surprising Saturday');
+		if (!this.events.active() || this.settings().event_override === 0)
+			throw new ConflictException('Player switching is available during a live event');
+		if (this.bans.resolve(userId).active)
+			throw new ForbiddenException('Your Minecraft access is restricted');
+		const user = this.database.connection
+			.select()
+			.from(users)
+			.where(eq(users.id, userId))
+			.get();
+		const uuid = normalizeMinecraftUuid(user?.minecraft_uuid ?? '');
+		if (!uuid) throw new NotFoundException('Minecraft account not linked');
+		const server = this.servers().find((candidate) => candidate.name === serverName);
+		if (!server) throw new NotFoundException('Server not found');
+		return this.movePlayer(uuid, server.id);
 	}
 
 	private settings() {

@@ -211,6 +211,9 @@ server_properties=data/minecraft/server.properties
 cp "$defaults" "$server_properties"
 
 set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
+if [ "$target" = dev ]; then
+	set_property "$server_properties" max-tick-time 300000
+fi
 chmod 664 "$server_properties"
 
 # Warn players before the update starts.

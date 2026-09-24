@@ -100,6 +100,15 @@ export class SurprisingSaturdayController {
 		return this.velocity.myServer(user.id);
 	}
 
+	@Post('me/server')
+	moveSelf(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { serverName?: unknown } | undefined,
+	) {
+		const user = this.sessions.requireSession(cookieHeader);
+		return this.velocity.moveSelf(user.id, body?.serverName);
+	}
+
 	@Get(':id')
 	detail(@Param('id') id: string) {
 		return this.events.detail(id);

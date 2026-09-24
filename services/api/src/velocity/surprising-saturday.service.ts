@@ -118,9 +118,7 @@ export class SurprisingSaturdayService {
 				.map((entry) => ({ itemId: entry.item_id, atUnixMs: entry.completed_at_unix_ms }));
 			return {
 				uuid: participant.player_uuid,
-				name: profile?.preferred_name.trim()
-					? profile.preferred_name
-					: (user?.minecraft_username ?? 'Unknown player'),
+				name: user?.minecraft_username ?? 'Unknown player',
 				color: effectivePlayerColor(participant.player_uuid, profile?.color_hex),
 				completed,
 				lastCompletionAtUnixMs: Math.max(0, ...completed.map((entry) => entry.atUnixMs)),
@@ -342,17 +340,17 @@ export class SurprisingSaturdayService {
 		return {
 			uuid,
 			minecraftUsername: user.minecraft_username,
-			nickname: profile?.preferred_name.trim()
-				? profile.preferred_name
-				: user.minecraft_username,
+			nickname: profile?.preferred_name ?? '',
 			pronouns: profile?.pronouns ?? '',
 			color: effectivePlayerColor(uuid, profile?.color_hex),
 			role:
 				user.is_committee || user.is_super_admin
-					? 'committee'
-					: user.is_member
-						? 'member'
-						: 'external',
+					? 'Committee'
+					: user.responsible_user_id !== null
+						? 'External'
+						: user.is_member
+							? 'Member'
+							: 'Player',
 		};
 	}
 }

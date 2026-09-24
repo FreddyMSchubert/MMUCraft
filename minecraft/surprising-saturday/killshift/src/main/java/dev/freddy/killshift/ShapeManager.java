@@ -119,12 +119,14 @@ public final class ShapeManager {
     }
 
     private static void transform(ServerPlayer player, Mob source) {
+        float health = player.getHealth();
         clear(player);
         MobForm form = MobRegistry.createForm(source);
         ShapeState state = new ShapeState(form);
         SHAPES.put(player.getUUID(), state);
 
         applyAttributes(player, form);
+        player.setHealth(Math.min(health, player.getMaxHealth()));
         copyEquipment(player, source);
         ShapeView.create(player, state, source);
     }
@@ -181,7 +183,6 @@ public final class ShapeManager {
             add(player, Attributes.SAFE_FALL_DISTANCE, FALL, 1024.0,
                     AttributeModifier.Operation.ADD_VALUE);
         }
-        player.setHealth(player.getMaxHealth());
     }
 
     private static void removeAttributes(ServerPlayer player) {

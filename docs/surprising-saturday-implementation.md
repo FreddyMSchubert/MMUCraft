@@ -10,6 +10,8 @@ The API tells Velocity to route to the event server only when a live event exist
 
 When a committee member turns the server on for testing, the committee can move any online player between the two servers from Admin → Servers. Players cannot request their own moves. During a live event, Velocity routes players to the event server. The API checks committee access, the player's online Minecraft UUID, and server health before a manual move. Velocity sends each command during its next three-second sync. A route change clears old manual moves.
 
+Velocity checks website accounts, bans, and timeouts before it connects players to either Minecraft server. The event server has no local whitelist. Its backend port stays private, and FabricProxy-Lite checks the forwarding secret.
+
 ## Event data
 
 `surprising_saturday_events` stores the title, two Markdown descriptions, start and end times, scoring type, and scoring options as JSON. The public page shows the first description before the event starts. It shows the second description when the event starts. This draft accepts `list_completion`. The JSON value is an array of namespaced mob IDs, such as `minecraft:creeper`. The schema leaves room for other scoring types. Add validation and rendering for each new type before use.

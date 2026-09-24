@@ -194,6 +194,9 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 
 	const eventEnabled =
 		snapshot.eventOverride === 1 || (snapshot.eventOverride === null && snapshot.eventActive);
+	const eventHealth = snapshot.servers.find(
+		(server) => server.name === 'surprising-saturday',
+	)?.health;
 	return (
 		<div className="velocityAdmin">
 			<section className="adminSection">
@@ -237,7 +240,9 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					{snapshot.eventOverride === null
 						? 'Following the event schedule.'
 						: 'Committee override is active.'}{' '}
-					The health below shows when startup or shutdown finishes.
+					{eventEnabled && eventHealth !== 'online'
+						? 'The event server is not ready yet. Check its health and logs if it stays offline.'
+						: 'The health below shows when startup or shutdown finishes.'}
 				</p>
 				<div className="adminTableWrap">
 					<table className="adminTable">

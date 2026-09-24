@@ -15,6 +15,7 @@ export function SurprisingSaturdayAdminSection() {
 	const { confirm, showAlert } = useSiteAlert();
 	const [events, setEvents] = useState<EventSummary[]>([]);
 	const [title, setTitle] = useState('');
+	const [preDescription, setPreDescription] = useState('');
 	const [description, setDescription] = useState('');
 	const [startsAt, setStartsAt] = useState('');
 	const [endsAt, setEndsAt] = useState('');
@@ -24,6 +25,7 @@ export function SurprisingSaturdayAdminSection() {
 	const [error, setError] = useState('');
 	function clearForm() {
 		setTitle('');
+		setPreDescription('');
 		setDescription('');
 		setStartsAt('');
 		setEndsAt('');
@@ -59,6 +61,7 @@ export function SurprisingSaturdayAdminSection() {
 					headers: { 'content-type': 'application/json' },
 					body: JSON.stringify({
 						title,
+						preDescription,
 						description,
 						startsAtUnixMs: parseManchesterInput(startsAt),
 						endsAtUnixMs: parseManchesterInput(endsAt),
@@ -78,7 +81,7 @@ export function SurprisingSaturdayAdminSection() {
 			await showAlert({
 				title: editingId === null ? 'Event created' : 'Event updated',
 				message:
-					'The event is scheduled. Its title and description stay hidden until it starts.',
+					'The event is scheduled. Its title and full description stay hidden until it starts.',
 				tone: 'success',
 			});
 		} catch (caught) {
@@ -98,6 +101,7 @@ export function SurprisingSaturdayAdminSection() {
 			if (!response.ok) throw new Error(apiMessage(body, 'Could not load the event'));
 			const detail = body as {
 				title: string;
+				preDescription: string;
 				description: string;
 				startsAtUnixMs: number;
 				endsAtUnixMs: number;
@@ -105,6 +109,7 @@ export function SurprisingSaturdayAdminSection() {
 			};
 			setEditingId(event.id);
 			setTitle(detail.title);
+			setPreDescription(detail.preDescription);
 			setDescription(detail.description);
 			setStartsAt(formatLondonInput(detail.startsAtUnixMs));
 			setEndsAt(formatLondonInput(detail.endsAtUnixMs));
@@ -164,6 +169,9 @@ export function SurprisingSaturdayAdminSection() {
 					disabled={busy}
 					onClick={() => {
 						setTitle('Kill Shift');
+						setPreDescription(
+							'A new challenge begins this Saturday. How you win is revealed when the event starts.',
+						);
 						setDescription(
 							'Kill as many unique mobs as you can. Each kill changes you into the mob you killed. Different forms have different abilities. The player with the most unique kills wins. When scores tie, the player who reached that score first wins.',
 						);
@@ -216,7 +224,18 @@ export function SurprisingSaturdayAdminSection() {
 						</select>
 					</label>
 					<label>
-						Description (Markdown and HTML)
+						Before the event starts (Markdown and HTML)
+						<textarea
+							value={preDescription}
+							maxLength={20_000}
+							rows={5}
+							onChange={(event) => {
+								setPreDescription(event.target.value);
+							}}
+						/>
+					</label>
+					<label>
+						After the event starts (Markdown and HTML)
 						<textarea
 							value={description}
 							maxLength={20_000}

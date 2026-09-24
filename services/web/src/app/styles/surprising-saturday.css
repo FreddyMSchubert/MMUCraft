@@ -1,8 +1,8 @@
 .eventBanner {
 	display: flex;
 	justify-content: space-between;
-	gap: 1rem;
 	align-items: center;
+	gap: 1rem;
 	width: 100%;
 	margin: 0 auto 1rem;
 	padding: 1rem 1.4rem;
@@ -12,91 +12,260 @@
 	color: white;
 	text-decoration: none;
 }
-.eventBanner strong,
-.eventLiveLabel {
+
+.eventBanner strong {
 	color: #ff7777;
 }
+
 .eventPage {
 	display: grid;
-	gap: 1rem;
+	gap: 12px;
 }
+
+.eventTop {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 12px;
+	margin-bottom: 2px;
+}
+
+.eventTop h3 {
+	margin: 0;
+}
+
+.playPage .eventTop h3 {
+	font-size: clamp(1.55rem, 3vw, 1.8rem);
+	line-height: 1.15;
+}
+
+.playPage .eventTop h3::before {
+	content: '🎉';
+	margin-right: 0.35em;
+}
+
+.eventBack {
+	flex: none;
+	padding: 8px 11px;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 8px;
+	color: #fff;
+	font-size: 0.85rem;
+	text-decoration: none;
+}
+
+.eventBack:hover,
+.eventBack:focus-visible,
+.eventHistory > a:hover,
+.eventHistory > a:focus-visible,
+.eventHistory > a.active {
+	border-color: #ffd166;
+	color: #ffd166;
+}
+
+.eventFeature,
+.eventSwitchCard,
+.eventScores,
+.eventListSection {
+	gap: 12px;
+	padding: 16px;
+}
+
 .eventFeature {
-	display: grid;
-	gap: 1rem;
+	border-color: rgba(255, 209, 102, 0.32);
+	background: linear-gradient(135deg, rgba(255, 209, 102, 0.11), rgba(123, 235, 255, 0.05));
 }
+
+.eventFeatureMeta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.82rem;
+}
+
+.eventStatus {
+	padding: 4px 8px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.13);
+	color: #fff;
+	font-size: 0.76rem;
+	font-weight: 700;
+}
+
+.eventStatus-live {
+	background: rgba(255, 119, 119, 0.2);
+	color: #ff9292;
+}
+
+.eventStatus-upcoming {
+	background: rgba(255, 209, 102, 0.2);
+	color: #ffd166;
+}
+
+.eventTitle {
+	min-width: 0;
+	margin: 0;
+	font-size: clamp(1.25rem, 2.7vw, 1.6rem);
+	line-height: 1.25;
+	overflow-wrap: anywhere;
+}
+
 .eventObfuscated {
 	font-family: 'Minecraft UI', monospace;
 	font-weight: 400;
 	font-synthesis: none;
 	letter-spacing: 0;
-	white-space: nowrap;
+	white-space: normal;
 	color: #fff;
 	text-shadow: 0.075em 0.075em #3f3f3f;
 }
-.eventSwitch {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 1rem;
-	padding: 1rem;
-	border: 1px solid currentColor;
-	border-radius: 12px;
-	text-align: center;
+
+.eventDescriptionWrap {
+	display: grid;
+	gap: 7px;
 }
-.eventSwitch button {
-	min-width: 12rem;
+
+.eventDescriptionWrap h5,
+.eventSectionHeading h4,
+.eventSectionHeading p,
+.eventListSection h4 {
+	margin: 0;
 }
-.eventSwitch small {
-	opacity: 0.7;
+
+.eventDescriptionWrap h5 {
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.78);
 }
+
 .eventDescription {
 	display: block;
 	width: 100%;
-	min-height: 300px;
-	border: 0;
-	border-radius: 10px;
+	height: 220px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 8px;
+	background: #17171b;
 }
+
+.eventDescriptionShort {
+	height: 130px;
+}
+
+.eventSectionHeading {
+	display: grid;
+	gap: 3px;
+}
+
+.eventSectionHeading h4,
+.eventListSection h4 {
+	font-size: 1.05rem;
+}
+
+.eventSectionHeading p {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.86rem;
+}
+
+.eventSwitch {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	align-items: stretch;
+	gap: 8px;
+}
+
+.eventSwitch > span {
+	display: grid;
+	align-content: center;
+	gap: 2px;
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 8px;
+}
+
+.eventSwitch > span:last-child {
+	border-color: rgba(255, 209, 102, 0.36);
+}
+
+.eventSwitch small,
+.eventPodium > div span,
+.eventPodium > div small {
+	color: rgba(255, 255, 255, 0.65);
+}
+
+.eventSwitch button {
+	min-width: 11rem;
+}
+
+.eventChecklist summary {
+	cursor: pointer;
+}
+
 .eventChecklist ul {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	gap: 4px 12px;
+	margin: 10px 0 0;
+	padding-left: 18px;
 	list-style: none;
-	padding-left: 1rem;
+	font-size: 0.85rem;
 }
+
 .eventPodium {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 0.8rem;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
 }
+
 .eventPodium > div {
-	padding: 1rem;
-	border: 1px solid #6c6577;
-	border-radius: 10px;
+	display: grid;
+	gap: 3px;
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 209, 102, 0.3);
+	border-radius: 8px;
 }
+
 .eventHistory {
 	display: grid;
-	gap: 0.6rem;
+	gap: 8px;
 }
+
 .eventHistory > a,
 .eventHistory > div {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: 0.5rem;
-	padding: 0.8rem;
-	border: 1px solid #6c6577;
-	border-radius: 10px;
+	gap: 6px 12px;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 8px;
 	color: inherit;
 	text-decoration: none;
 }
-.eventHistory > a.active {
-	border-color: #ff7777;
+
+.eventHistory time,
+.eventHistory > p {
+	color: rgba(255, 255, 255, 0.68);
+	font-size: 0.85rem;
 }
-.eventHistory small {
-	width: 100%;
-	opacity: 0.75;
+
+.eventHistory > p {
+	margin: 0;
 }
+
+.eventNotice {
+	margin: 0;
+	color: #b8e5bc;
+	font-size: 0.88rem;
+}
+
 .eventForm label:nth-of-type(n + 5) {
 	grid-column: 1 / -1;
 }
+
 .eventForm textarea {
 	width: 100%;
 	min-width: 0;
@@ -106,12 +275,19 @@
 	background: rgba(255, 255, 255, 0.09);
 	color: #fff;
 }
+
 @media (max-width: 700px) {
 	.eventBanner,
-	.eventSwitch {
+	.eventTop {
 		flex-direction: column;
 	}
+
+	.eventSwitch,
 	.eventPodium {
 		grid-template-columns: 1fr;
+	}
+
+	.eventSwitch button {
+		min-height: 42px;
 	}
 }

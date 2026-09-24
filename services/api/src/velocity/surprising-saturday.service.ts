@@ -63,7 +63,9 @@ export class SurprisingSaturdayService {
 				title: revealUpcoming || event.starts_at_unix_ms <= now ? event.title : null,
 				titleWordLengths: titleWordLengths(event.title),
 				description:
-					revealUpcoming || event.starts_at_unix_ms <= now ? event.description : null,
+					revealUpcoming || event.starts_at_unix_ms <= now
+						? event.description
+						: event.pre_description,
 			}));
 	}
 
@@ -84,6 +86,7 @@ export class SurprisingSaturdayService {
 				endsAtUnixMs: event.ends_at_unix_ms,
 				status: 'upcoming',
 				titleWordLengths: titleWordLengths(event.title),
+				description: event.pre_description,
 			};
 
 		const items = JSON.parse(event.criteria_json) as string[];
@@ -158,6 +161,7 @@ export class SurprisingSaturdayService {
 		return {
 			id,
 			title: event.title,
+			preDescription: event.pre_description,
 			description: event.description,
 			startsAtUnixMs: event.starts_at_unix_ms,
 			endsAtUnixMs: event.ends_at_unix_ms,
@@ -175,13 +179,20 @@ export class SurprisingSaturdayService {
 
 	private save(body: Record<string, unknown> | undefined, id?: number) {
 		const title = typeof body?.title === 'string' ? body.title.trim() : '';
+		const preDescription =
+			typeof body?.preDescription === 'string' ? body.preDescription.trim() : '';
 		const description = typeof body?.description === 'string' ? body.description.trim() : '';
 		const start = body?.startsAtUnixMs;
 		const end = body?.endsAtUnixMs;
 		const items = body?.items;
-		if (!title || title.length > 120 || description.length > 20_000)
+		if (
+			!title ||
+			title.length > 120 ||
+			preDescription.length > 20_000 ||
+			description.length > 20_000
+		)
 			throw new BadRequestException(
-				'Enter a title of up to 120 characters and a description of up to 20,000 characters',
+				'Enter a title of up to 120 characters and descriptions of up to 20,000 characters each',
 			);
 		if (
 			!Number.isSafeInteger(start) ||
@@ -213,6 +224,7 @@ export class SurprisingSaturdayService {
 		if (overlap) throw new ConflictException('This event overlaps another event');
 		const values = {
 			title,
+			pre_description: preDescription,
 			description,
 			starts_at_unix_ms: start as number,
 			ends_at_unix_ms: end as number,

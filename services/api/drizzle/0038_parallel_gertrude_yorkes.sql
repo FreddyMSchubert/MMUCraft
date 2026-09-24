@@ -1,0 +1,1 @@
+ALTER TABLE `surprising_saturday_events` ADD `pre_description` text DEFAULT '' NOT NULL;

@@ -287,14 +287,14 @@ export class VelocityService {
 	moveSelf(userId: number, target: unknown) {
 		if (target !== 'main' && target !== EVENT_SERVER)
 			throw new BadRequestException('Choose main or Surprising Saturday');
-		if (target === EVENT_SERVER && !this.events.active())
-			throw new ConflictException('No Surprising Saturday event is live');
 		const user = this.database.connection
 			.select()
 			.from(users)
 			.where(eq(users.id, userId))
 			.get();
 		if (!user?.minecraft_uuid) throw new NotFoundException('Minecraft account not found');
+		if (target === EVENT_SERVER && !this.canJoinEvent())
+			throw new ConflictException('No Surprising Saturday event is available');
 		const server = this.servers().find((candidate) => candidate.name === target);
 		if (!server) throw new NotFoundException('Server not found');
 		return this.movePlayer(user.minecraft_uuid, server.id);
@@ -309,6 +309,7 @@ export class VelocityService {
 		const uuid = normalizeMinecraftUuid(user?.minecraft_uuid ?? '');
 		return {
 			uuid,
+			canJoinEvent: this.canJoinEvent(),
 			serverName:
 				this.proxyIsOnline() && uuid
 					? (this.livePlayers.find((player) => player.uuid === uuid)?.serverName ?? null)
@@ -318,6 +319,11 @@ export class VelocityService {
 				this.proxyIsOnline() &&
 				this.liveServers.get(EVENT_SERVER)?.online === true,
 		};
+	}
+
+	private canJoinEvent() {
+		const override = this.settings().event_override;
+		return override === 1 || (override !== 0 && Boolean(this.events.active()));
 	}
 
 	private settings() {

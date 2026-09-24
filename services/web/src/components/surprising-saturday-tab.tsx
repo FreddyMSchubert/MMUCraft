@@ -4,7 +4,15 @@ import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import sanitizeHtml from 'sanitize-html';
 import { formatManchesterDateTime } from '@/lib/date-time';
+import { PlayerName, type PlayerEmoji } from './player-name';
 import { knowledgeMarkdown } from './knowledge/knowledge-markdown-renderer';
+
+export interface CompletionTarget {
+	id: string;
+	name: string;
+	url: string;
+	points: number;
+}
 
 export interface EventSummary {
 	id: number;
@@ -12,6 +20,7 @@ export interface EventSummary {
 	title: string | null;
 	titleWordLengths: number[];
 	description: string | null;
+	shortDescription: string | null;
 	startsAtUnixMs: number;
 	endsAtUnixMs: number;
 }
@@ -20,12 +29,16 @@ interface EventPlayer {
 	uuid: string;
 	name: string;
 	color: string;
+	pronouns: string;
+	isCommittee: boolean;
+	customEmojis: PlayerEmoji[];
+	points: number;
 	completed: { itemId: string; atUnixMs: number }[];
 }
 
 interface EventDetail extends EventSummary {
 	criteriaType?: string;
-	items?: string[];
+	items?: CompletionTarget[];
 	players?: EventPlayer[];
 }
 
@@ -82,6 +95,26 @@ function EventDescription({ description }: { description: string }) {
 	);
 }
 
+function EventPlayerLink({ player }: { player: EventPlayer }) {
+	const content = (
+		<>
+			<PlayerName
+				name={player.name}
+				color={player.color}
+				isCommittee={player.isCommittee}
+				customEmojis={player.customEmojis}
+			/>
+			{player.pronouns && <span className="eventPlayerPronouns"> ({player.pronouns})</span>}
+		</>
+	);
+	if (player.name === 'Unknown player') return <span>{content}</span>;
+	return (
+		<Link className="eventPlayerLink" href={`/play/players/${encodeURIComponent(player.name)}`}>
+			{content}
+		</Link>
+	);
+}
+
 export function SurprisingSaturdayTab({
 	events,
 	selectedId,
@@ -101,6 +134,8 @@ export function SurprisingSaturdayTab({
 	const [error, setError] = useState('');
 	const [moving, setMoving] = useState(false);
 	const [moveFeedback, setMoveFeedback] = useState('');
+	const [committeeVisibleFor, setCommitteeVisibleFor] = useState<number | null>(null);
+	const showCommittee = committeeVisibleFor !== null && committeeVisibleFor === selectedEventId;
 
 	useEffect(() => {
 		let cancelled = false;
@@ -145,6 +180,9 @@ export function SurprisingSaturdayTab({
 	const currentDetail = detail?.id === selectedEventId ? detail : null;
 	const own = currentDetail?.players?.find((player) => player.uuid === me?.uuid);
 	const completedItems = new Set(own?.completed.map((entry) => entry.itemId));
+	const shownPlayers =
+		currentDetail?.players?.filter((player) => showCommittee || !player.isCommittee) ?? [];
+	const totalPoints = currentDetail?.items?.reduce((sum, item) => sum + item.points, 0) ?? 0;
 	const otherUpcoming = upcoming.filter((event) => event.id !== selectedEventId);
 	const onEventServer = me?.serverName === 'surprising-saturday';
 
@@ -177,6 +215,11 @@ export function SurprisingSaturdayTab({
 
 	return (
 		<div className="eventPage">
+			{isDetailPage && (
+				<Link className="eventBack" href="/play/event">
+					← All events
+				</Link>
+			)}
 			<header className="eventTop">
 				<div>
 					<h3>Surprising Saturday</h3>
@@ -186,11 +229,6 @@ export function SurprisingSaturdayTab({
 							: 'Play the event and follow the scores.'}
 					</p>
 				</div>
-				{isDetailPage && (
-					<Link className="eventBack" href="/play/event">
-						← All events
-					</Link>
-				)}
 			</header>
 
 			{selected && (
@@ -213,9 +251,13 @@ export function SurprisingSaturdayTab({
 							<ObfuscatedEventName wordLengths={selected.titleWordLengths} />
 						)}
 					</h4>
-					<EventDescription
-						description={currentDetail?.description ?? selected.description ?? ''}
-					/>
+					{selected.status === 'upcoming' || isDetailPage ? (
+						<EventDescription
+							description={currentDetail?.description ?? selected.description ?? ''}
+						/>
+					) : (
+						<p className="eventShortDescription">{selected.shortDescription}</p>
+					)}
 					{selected.status === 'live' && (
 						<div className="eventJoin">
 							<button
@@ -248,45 +290,81 @@ export function SurprisingSaturdayTab({
 						<div className="eventSectionHeading">
 							<h4>Leaderboard</h4>
 							<p>
-								Most unique kills wins. Ties go to the player who reached that score
+								Most points wins. Ties go to the player who reached that score
 								first.
 							</p>
 						</div>
+						<label className="eventCommitteeToggle">
+							<input
+								type="checkbox"
+								checked={showCommittee}
+								onChange={(event) => {
+									setCommitteeVisibleFor(
+										event.target.checked ? (selectedEventId ?? null) : null,
+									);
+								}}
+							/>
+							Show committee players
+						</label>
+						{showCommittee && (
+							<p className="eventUnofficial" role="alert">
+								These are not the official results. Committee members play for fun
+								and cannot win.
+							</p>
+						)}
 						<details className="eventChecklist">
 							<summary>
 								Your completion list ({own?.completed.length ?? 0}/
-								{currentDetail.items?.length ?? 0})
+								{currentDetail.items?.length ?? 0} targets · {own?.points ?? 0}/
+								{totalPoints} points)
 							</summary>
 							<ul>
 								{currentDetail.items?.map((item) => (
 									<li
-										key={item}
-										aria-label={`${item}: ${completedItems.has(item) ? 'complete' : 'incomplete'}`}
+										key={item.id}
+										aria-label={`${item.name}: ${completedItems.has(item.id) ? 'complete' : 'incomplete'}, ${item.points} points`}
 									>
 										<span
 											className={
-												completedItems.has(item)
+												completedItems.has(item.id)
 													? 'eventComplete'
 													: 'eventIncomplete'
 											}
 											aria-hidden="true"
 										>
-											{completedItems.has(item) ? '✓' : '○'}
+											{completedItems.has(item.id) ? '✓' : '○'}
 										</span>{' '}
-										{item}
+										{item.url ? (
+											<a
+												href={item.url}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												{item.name}
+											</a>
+										) : (
+											<span>{item.name}</span>
+										)}
+										<span className="eventTargetPoints">
+											{item.points} {item.points === 1 ? 'pt' : 'pts'}
+										</span>
 									</li>
 								))}
 							</ul>
 						</details>
-						{currentDetail.players && currentDetail.players.length > 0 && (
+						{shownPlayers.length > 0 && (
 							<div className="eventPodium">
-								{currentDetail.players.slice(0, 3).map((player, index) => (
+								{shownPlayers.slice(0, 3).map((player, index) => (
 									<div key={player.uuid}>
 										<small>#{index + 1}</small>
-										<strong style={{ color: player.color }}>
-											{player.name}
+										<strong>
+											<EventPlayerLink player={player} />
 										</strong>
-										<span>{player.completed.length} unique kills</span>
+										<span>
+											{player.points}{' '}
+											{player.points === 1 ? 'point' : 'points'}
+											{player.isCommittee && ' · for fun'}
+										</span>
 									</div>
 								))}
 							</div>
@@ -297,28 +375,37 @@ export function SurprisingSaturdayTab({
 									<tr>
 										<th>Place</th>
 										<th>Player</th>
-										<th>Progress</th>
+										<th>Score</th>
 									</tr>
 								</thead>
 								<tbody>
-									{currentDetail.players?.map((player, index) => (
+									{shownPlayers.map((player, index) => (
 										<tr key={player.uuid}>
 											<td>{index + 1}</td>
-											<td style={{ color: player.color }}>{player.name}</td>
+											<td>
+												<EventPlayerLink player={player} />
+												{player.isCommittee && (
+													<span className="eventForFun"> · for fun</span>
+												)}
+											</td>
 											<td>
 												<progress
-													value={player.completed.length}
-													max={currentDetail.items?.length ?? 1}
+													aria-label={`${player.name} score`}
+													value={player.points}
+													max={totalPoints || 1}
 												/>{' '}
+												{player.points}/{totalPoints} pts ·{' '}
 												{player.completed.length}/
-												{currentDetail.items?.length}
+												{currentDetail.items?.length} targets
 											</td>
 										</tr>
 									))}
-									{currentDetail.players?.length === 0 && (
+									{shownPlayers.length === 0 && (
 										<tr>
 											<td colSpan={3}>
-												No players have joined this event yet.
+												{currentDetail.players?.length
+													? 'No eligible players have joined this event yet.'
+													: 'No players have joined this event yet.'}
 											</td>
 										</tr>
 									)}
@@ -344,19 +431,18 @@ export function SurprisingSaturdayTab({
 					</div>
 				</section>
 			)}
-			{history.length > 0 && (
+			{history.length > 0 && !isDetailPage && (
 				<section className="adminSection eventListSection">
 					<h4>Past events</h4>
 					<div className="eventHistory">
 						{history.map((event) => (
-							<Link
-								key={event.id}
-								href={`/play/event/${event.id}`}
-								className={
-									event.id === selected?.id && isDetailPage ? 'active' : ''
-								}
-							>
+							<Link key={event.id} href={`/play/event/${event.id}`}>
 								<strong>{event.title}</strong>
+								{event.shortDescription && (
+									<span className="eventHistoryDescription">
+										{event.shortDescription}
+									</span>
+								)}
 								<time>{formatManchesterDateTime(event.startsAtUnixMs)}</time>
 							</Link>
 						))}

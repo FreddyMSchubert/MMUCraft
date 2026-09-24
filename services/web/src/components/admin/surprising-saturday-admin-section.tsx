@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type SyntheticEvent } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
-import type { EventSummary } from '@/components/surprising-saturday-tab';
+import type { CompletionTarget, EventSummary } from '@/components/surprising-saturday-tab';
 import {
 	apiMessage,
 	formatLondonDateTime,
@@ -11,26 +11,51 @@ import {
 } from './admin-api';
 import killShiftItems from './kill-shift-items.json';
 
+type EditableTarget = Omit<CompletionTarget, 'points'> & { key: string; points: string };
+
+function targetFromId(id: string): EditableTarget {
+	return {
+		key: crypto.randomUUID(),
+		id,
+		name:
+			id
+				.split(':')
+				.at(-1)
+				?.replaceAll('_', ' ')
+				.replace(/\b\w/g, (letter) => letter.toUpperCase()) ?? id,
+		url: '',
+		points: '1',
+	};
+}
+
 export function SurprisingSaturdayAdminSection() {
 	const { confirm, showAlert } = useSiteAlert();
 	const [events, setEvents] = useState<EventSummary[]>([]);
 	const [title, setTitle] = useState('');
+	const [shortDescription, setShortDescription] = useState('');
 	const [preDescription, setPreDescription] = useState('');
 	const [description, setDescription] = useState('');
 	const [startsAt, setStartsAt] = useState('');
 	const [endsAt, setEndsAt] = useState('');
-	const [items, setItems] = useState('');
-	const [editingId, setEditingId] = useState<number | null>(null);
+	const [items, setItems] = useState<EditableTarget[]>([]);
+	const [editingEvent, setEditingEvent] = useState<EventSummary | null>(null);
+	const editingId = editingEvent?.id ?? null;
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState('');
 	function clearForm() {
 		setTitle('');
+		setShortDescription('');
 		setPreDescription('');
 		setDescription('');
 		setStartsAt('');
 		setEndsAt('');
-		setItems('');
-		setEditingId(null);
+		setItems([]);
+		setEditingEvent(null);
+	}
+	function updateTarget(key: string, changes: Partial<EditableTarget>) {
+		setItems((current) =>
+			current.map((target) => (target.key === key ? { ...target, ...changes } : target)),
+		);
 	}
 	const load = useCallback(async () => {
 		const response = await fetch('/api/admin/surprising-saturday', { cache: 'no-store' });
@@ -50,26 +75,52 @@ export function SurprisingSaturdayAdminSection() {
 
 	async function save(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
+		if (editingEvent && editingEvent.startsAtUnixMs <= Date.now()) {
+			if (
+				!(await confirm({
+					title: 'Change a started event?',
+					message:
+						'Changing targets, points, or times can change the leaderboard and live server routing.',
+					confirmLabel: 'Review final warning',
+					tone: 'danger',
+				}))
+			)
+				return;
+			if (
+				!(await confirm({
+					title: 'Final confirmation',
+					message: `Save changes to “${editingEvent.title}”? Players may see different results immediately.`,
+					confirmLabel: 'Save started event',
+					confirmTone: 'danger',
+					tone: 'danger',
+				}))
+			)
+				return;
+		}
+		const creating = editingId === null;
 		setBusy(true);
 		try {
 			const response = await fetch(
-				editingId === null
+				creating
 					? '/api/admin/surprising-saturday'
 					: `/api/admin/surprising-saturday/${editingId}`,
 				{
-					method: editingId === null ? 'POST' : 'PATCH',
+					method: creating ? 'POST' : 'PATCH',
 					headers: { 'content-type': 'application/json' },
 					body: JSON.stringify({
 						title,
+						shortDescription,
 						preDescription,
 						description,
 						startsAtUnixMs: parseManchesterInput(startsAt),
 						endsAtUnixMs: parseManchesterInput(endsAt),
 						criteriaType: 'list_completion',
-						items: items
-							.split(/[,\n]/)
-							.map((item) => item.trim())
-							.filter(Boolean),
+						items: items.map(({ id, name, url, points }) => ({
+							id: id.trim(),
+							name: name.trim(),
+							url: url.trim(),
+							points: Number(points),
+						})),
 					}),
 				},
 			);
@@ -79,9 +130,10 @@ export function SurprisingSaturdayAdminSection() {
 			setError('');
 			await load();
 			await showAlert({
-				title: editingId === null ? 'Event created' : 'Event updated',
-				message:
-					'The event is scheduled. Its title and full description stay hidden until it starts.',
+				title: creating ? 'Event created' : 'Event updated',
+				message: creating
+					? 'The event is scheduled. Its title and full description stay hidden until it starts.'
+					: 'The changes are now visible to players.',
 				tone: 'success',
 			});
 		} catch (caught) {
@@ -101,19 +153,27 @@ export function SurprisingSaturdayAdminSection() {
 			if (!response.ok) throw new Error(apiMessage(body, 'Could not load the event'));
 			const detail = body as {
 				title: string;
+				shortDescription: string;
 				preDescription: string;
 				description: string;
 				startsAtUnixMs: number;
 				endsAtUnixMs: number;
-				items: string[];
+				items: CompletionTarget[];
 			};
-			setEditingId(event.id);
+			setEditingEvent(event);
 			setTitle(detail.title);
+			setShortDescription(detail.shortDescription);
 			setPreDescription(detail.preDescription);
 			setDescription(detail.description);
 			setStartsAt(formatLondonInput(detail.startsAtUnixMs));
 			setEndsAt(formatLondonInput(detail.endsAtUnixMs));
-			setItems(detail.items.join('\n'));
+			setItems(
+				detail.items.map((item) => ({
+					...item,
+					key: crypto.randomUUID(),
+					points: String(item.points),
+				})),
+			);
 			setError('');
 		} catch (caught) {
 			setError(caught instanceof Error ? caught.message : 'Could not load the event');
@@ -125,9 +185,22 @@ export function SurprisingSaturdayAdminSection() {
 	async function remove(event: EventSummary) {
 		if (
 			!(await confirm({
-				title: 'Remove upcoming event?',
-				message: 'This removes the scheduled event.',
-				confirmLabel: 'Remove event',
+				title: 'Delete this event?',
+				message: `Deleting “${event.title}” permanently removes the event, its participants, and all recorded completions.`,
+				confirmLabel: 'Continue to final warning',
+				confirmTone: 'danger',
+				tone: 'danger',
+			}))
+		)
+			return;
+		if (
+			!(await confirm({
+				title: 'Final confirmation',
+				message:
+					event.startsAtUnixMs <= Date.now()
+						? 'This event has started. Deleting it removes its results and can send players back to main. This cannot be undone.'
+						: 'This scheduled event and its data will be deleted. This cannot be undone.',
+				confirmLabel: 'Permanently delete event',
 				confirmTone: 'danger',
 				tone: 'danger',
 			}))
@@ -160,8 +233,8 @@ export function SurprisingSaturdayAdminSection() {
 							: 'Edit Surprising Saturday'}
 					</h3>
 					<p>
-						The first scoring type is list completion. Use namespaced mob IDs such as
-						minecraft:creeper. Killshift records the first kill of each listed mob.
+						Use namespaced mob IDs such as minecraft:creeper. Killshift records the
+						first kill of each listed mob. Set the points for each target below.
 					</p>
 				</div>
 				<button
@@ -169,13 +242,16 @@ export function SurprisingSaturdayAdminSection() {
 					disabled={busy}
 					onClick={() => {
 						setTitle('Kill Shift');
+						setShortDescription(
+							'Kill unique mobs, change shape, and earn points for each new form.',
+						);
 						setPreDescription(
 							'A new challenge begins this Saturday. How you win is revealed when the event starts.',
 						);
 						setDescription(
-							'Kill as many unique mobs as you can. Each kill changes you into the mob you killed. Different forms have different abilities. The player with the most unique kills wins. When scores tie, the player who reached that score first wins.',
+							'Kill as many unique mobs as you can. Each kill changes you into the mob you killed. Different forms have different abilities. The player with the most points wins. When scores tie, the player who reached that score first wins.',
 						);
-						setItems(killShiftItems.join('\n'));
+						setItems(killShiftItems.map(targetFromId));
 					}}
 				>
 					Use Kill Shift template
@@ -224,6 +300,18 @@ export function SurprisingSaturdayAdminSection() {
 						</select>
 					</label>
 					<label>
+						Short description (plain text)
+						<textarea
+							value={shortDescription}
+							maxLength={280}
+							rows={2}
+							required
+							onChange={(event) => {
+								setShortDescription(event.target.value);
+							}}
+						/>
+					</label>
+					<label>
 						Before the event starts (Markdown and HTML)
 						<textarea
 							value={preDescription}
@@ -245,18 +333,82 @@ export function SurprisingSaturdayAdminSection() {
 							}}
 						/>
 					</label>
-					<label>
-						Completion list (one mob ID per line)
-						<textarea
-							value={items}
-							rows={8}
-							required
-							placeholder={'minecraft:creeper\nminecraft:zombie'}
-							onChange={(event) => {
-								setItems(event.target.value);
+					<div className="eventTargetEditor">
+						<h4>Completion targets</h4>
+						{items.map((item) => (
+							<div className="eventTargetRow" key={item.key}>
+								<label>
+									Mob ID
+									<input
+										value={item.id}
+										required
+										placeholder="minecraft:creeper"
+										onChange={(event) => {
+											updateTarget(item.key, { id: event.target.value });
+										}}
+									/>
+								</label>
+								<label>
+									Display name
+									<input
+										value={item.name}
+										maxLength={120}
+										required
+										placeholder="Creeper"
+										onChange={(event) => {
+											updateTarget(item.key, { name: event.target.value });
+										}}
+									/>
+								</label>
+								<label>
+									Link (optional)
+									<input
+										type="url"
+										value={item.url}
+										maxLength={2048}
+										placeholder="https://..."
+										onChange={(event) => {
+											updateTarget(item.key, { url: event.target.value });
+										}}
+									/>
+								</label>
+								<label>
+									Points
+									<input
+										type="number"
+										min={1}
+										max={1000}
+										step={1}
+										value={item.points}
+										required
+										onChange={(event) => {
+											updateTarget(item.key, { points: event.target.value });
+										}}
+									/>
+								</label>
+								<button
+									type="button"
+									aria-label={`Delete ${item.name || item.id || 'target'}`}
+									onClick={() => {
+										setItems((current) =>
+											current.filter((target) => target.key !== item.key),
+										);
+									}}
+								>
+									Delete
+								</button>
+							</div>
+						))}
+						<button
+							type="button"
+							disabled={items.length >= 256}
+							onClick={() => {
+								setItems((current) => [...current, targetFromId('')]);
 							}}
-						/>
-					</label>
+						>
+							Add new completion target
+						</button>
+					</div>
 					<button type="submit" disabled={busy}>
 						{editingId === null ? 'Create event' : 'Save changes'}
 					</button>
@@ -268,7 +420,7 @@ export function SurprisingSaturdayAdminSection() {
 				</form>
 			</section>
 			<section className="adminSection">
-				<h3>Scheduled and past events</h3>
+				<h3>All events</h3>
 				<div className="eventHistory">
 					{events.map((event) => (
 						<div key={event.id}>
@@ -277,24 +429,16 @@ export function SurprisingSaturdayAdminSection() {
 								{formatLondonDateTime(event.startsAtUnixMs)} · {event.status}
 							</span>
 							<a href={`/play/event/${event.id}`}>View event</a>
-							{event.status === 'upcoming' && (
-								<button
-									type="button"
-									disabled={busy}
-									onClick={() => void edit(event)}
-								>
-									Edit
-								</button>
-							)}
-							{event.status === 'upcoming' && (
-								<button
-									type="button"
-									disabled={busy}
-									onClick={() => void remove(event)}
-								>
-									Remove
-								</button>
-							)}
+							<button type="button" disabled={busy} onClick={() => void edit(event)}>
+								Edit
+							</button>
+							<button
+								type="button"
+								disabled={busy}
+								onClick={() => void remove(event)}
+							>
+								Delete
+							</button>
 						</div>
 					))}
 				</div>

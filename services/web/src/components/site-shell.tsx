@@ -306,8 +306,14 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			<DynamicCountdowns className="desktopCountdowns" />
 			{user && liveEvent && (
 				<a className="eventBanner" href={`/play/event/${liveEvent.id}`}>
-					<strong>🔴 LIVE NOW · {liveEvent.title}</strong>
-					<span>Open Surprising Saturday →</span>
+					<span className="eventBannerPulse" aria-hidden="true">
+						🔴
+					</span>
+					<span className="eventBannerContent">
+						<strong>LIVE NOW · {liveEvent.title}</strong>
+						{liveEvent.shortDescription && <span>{liveEvent.shortDescription}</span>}
+					</span>
+					<span className="eventBannerAction">Open event →</span>
 				</a>
 			)}
 			{user === undefined && (
@@ -485,7 +491,11 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 					<div className="dashboardPanel">
 						{activeTab === 'dailies' && <DailiesTab />}
 						{activeTab === 'event' && (
-							<SurprisingSaturdayTab events={events} selectedId={routeDetail} />
+							<SurprisingSaturdayTab
+								key={routeDetail ?? 'overview'}
+								events={events}
+								selectedId={routeDetail}
+							/>
 						)}
 						{activeTab === 'knowledge' && (
 							<KnowledgeTab

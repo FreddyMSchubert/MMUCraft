@@ -585,6 +585,7 @@ export const surprisingSaturdayEvents = sqliteTable(
 		id: integer('id').primaryKey({ autoIncrement: true }),
 		title: text('title').notNull(),
 		pre_description: text('pre_description').notNull().default(''),
+		short_description: text('short_description').notNull().default(''),
 		description: text('description').notNull(),
 		starts_at_unix_ms: integer('starts_at_unix_ms').notNull(),
 		ends_at_unix_ms: integer('ends_at_unix_ms').notNull(),

@@ -1,20 +1,54 @@
 .eventBanner {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	gap: 1rem;
 	width: 100%;
 	margin: 0 auto 1rem;
 	padding: 1rem 1.4rem;
-	border: 1px solid #ef6464;
+	border: 1px solid rgba(255, 209, 102, 0.35);
 	border-radius: 12px;
-	background: #491b25;
+	background:
+		radial-gradient(circle at 0 0, rgba(255, 209, 102, 0.17), transparent 48%),
+		linear-gradient(120deg, rgba(255, 255, 255, 0.11), rgba(123, 235, 255, 0.06));
+	box-shadow:
+		0 10px 30px rgba(0, 0, 0, 0.2),
+		inset 0 1px rgba(255, 255, 255, 0.16);
 	color: white;
 	text-decoration: none;
 }
 
 .eventBanner strong {
-	color: #ff7777;
+	color: #fff;
+}
+
+.eventBannerPulse {
+	flex: none;
+	font-size: 1.25rem;
+	animation: eventPulse 1.7s ease-in-out infinite;
+}
+
+.eventBannerContent {
+	display: grid;
+	gap: 4px;
+	min-width: 0;
+}
+
+.eventBannerContent > span,
+.eventBannerAction {
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 0.88rem;
+}
+
+.eventBannerAction {
+	margin-left: auto;
+	white-space: nowrap;
+}
+
+@keyframes eventPulse {
+	50% {
+		opacity: 0.45;
+		transform: scale(0.82);
+	}
 }
 
 .eventPage {
@@ -45,7 +79,7 @@
 }
 
 .eventBack {
-	flex: none;
+	justify-self: start;
 	padding: 8px 11px;
 	border: 1px solid rgba(255, 255, 255, 0.25);
 	border-radius: 8px;
@@ -57,8 +91,7 @@
 .eventBack:hover,
 .eventBack:focus-visible,
 .eventHistory > a:hover,
-.eventHistory > a:focus-visible,
-.eventHistory > a.active {
+.eventHistory > a:focus-visible {
 	border-color: #ffd166;
 	color: #ffd166;
 }
@@ -131,6 +164,11 @@
 	font-size: 0.95rem;
 }
 
+.eventShortDescription {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.82);
+}
+
 .eventDescription > :last-child {
 	margin-bottom: 0;
 }
@@ -177,6 +215,23 @@
 	font-size: 0.86rem;
 }
 
+.eventCommitteeToggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	width: fit-content;
+	cursor: pointer;
+}
+
+.eventUnofficial {
+	margin: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 209, 102, 0.4);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.11);
+	color: #ffe3a4;
+}
+
 .eventPodium > div span,
 .eventPodium > div small {
 	color: rgba(255, 255, 255, 0.65);
@@ -188,12 +243,39 @@
 
 .eventChecklist ul {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 	gap: 4px 12px;
 	margin: 10px 0 0;
-	padding-left: 18px;
+	padding: 0;
 	list-style: none;
 	font-size: 0.85rem;
+}
+
+.eventChecklist li {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: baseline;
+	gap: 6px;
+}
+
+.eventChecklist a,
+.eventPlayerLink {
+	color: inherit;
+	text-decoration: none;
+}
+
+.eventChecklist a:hover,
+.eventChecklist a:focus-visible,
+.eventPlayerLink:hover,
+.eventPlayerLink:focus-visible {
+	text-decoration: underline;
+}
+
+.eventTargetPoints,
+.eventPlayerPronouns,
+.eventForFun {
+	color: rgba(255, 255, 255, 0.63);
+	font-size: 0.82rem;
 }
 
 .eventComplete {
@@ -248,7 +330,18 @@
 	margin: 0;
 }
 
-.eventForm label:nth-of-type(n + 5) {
+.eventListSection .eventHistory > a {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.eventHistoryDescription {
+	grid-column: 1 / -1;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.86rem;
+}
+
+.eventForm > label:nth-of-type(n + 5) {
 	grid-column: 1 / -1;
 }
 
@@ -262,13 +355,54 @@
 	color: #fff;
 }
 
+.eventTargetEditor {
+	display: grid;
+	grid-column: 1 / -1;
+	gap: 10px;
+}
+
+.eventTargetEditor h4 {
+	margin: 0;
+}
+
+.eventTargetRow {
+	display: grid;
+	grid-template-columns: minmax(130px, 1.3fr) minmax(130px, 1.2fr) minmax(150px, 1.6fr) 80px auto;
+	align-items: end;
+	gap: 8px;
+	padding: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.eventTargetRow button {
+	grid-column: auto;
+	background: rgba(255, 119, 119, 0.16);
+	color: #ffb3b3;
+}
+
 @media (max-width: 700px) {
 	.eventBanner,
 	.eventTop {
 		flex-direction: column;
 	}
 
+	.eventBannerAction {
+		margin-left: 0;
+	}
+
+	.eventTargetRow {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
 	.eventPodium {
 		grid-template-columns: 1fr;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.eventBannerPulse {
+		animation: none;
 	}
 }

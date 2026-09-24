@@ -15,9 +15,63 @@ import {
 } from '../database/database.service';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { effectivePlayerColor } from '../players/player-color';
+import { customPlayerEmojis } from '../players/player-emojis';
 
 const ITEM_ID = /^[a-z0-9_.-]+:[a-z0-9_./-]+$/;
 const TITLE_GRAPHEMES = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+
+interface CompletionTarget {
+	id: string;
+	name: string;
+	url: string;
+	points: number;
+}
+
+function completionTargets(value: unknown): CompletionTarget[] | null {
+	if (!Array.isArray(value) || value.length < 1 || value.length > 256) return null;
+	const targets: CompletionTarget[] = [];
+	for (const item of value) {
+		const input =
+			typeof item === 'object' && item !== null ? (item as Record<string, unknown>) : null;
+		const id = typeof item === 'string' ? item : input?.id;
+		const name =
+			typeof item === 'string'
+				? item
+						.split(':')
+						.at(-1)
+						?.replaceAll('_', ' ')
+						.replace(/\b\w/g, (letter) => letter.toUpperCase())
+				: input?.name;
+		const url = typeof item === 'string' ? '' : (input?.url ?? '');
+		const points = typeof item === 'string' ? 1 : input?.points;
+		if (
+			typeof id !== 'string' ||
+			!ITEM_ID.test(id) ||
+			typeof name !== 'string' ||
+			!name.trim() ||
+			name.length > 120 ||
+			typeof url !== 'string' ||
+			url.length > 2048 ||
+			!Number.isSafeInteger(points) ||
+			(points as number) < 1 ||
+			(points as number) > 1000
+		)
+			return null;
+		if (url) {
+			try {
+				if (!['http:', 'https:'].includes(new URL(url).protocol)) return null;
+			} catch {
+				return null;
+			}
+		}
+		targets.push({ id, name: name.trim(), url: url.trim(), points: points as number });
+	}
+	return new Set(targets.map((target) => target.id)).size === targets.length ? targets : null;
+}
+
+function eventTargets(json: string) {
+	return completionTargets(JSON.parse(json)) ?? [];
+}
 
 function titleWordLengths(title: string) {
 	return title
@@ -74,6 +128,10 @@ export class SurprisingSaturdayService {
 							? 'live'
 							: 'ended',
 				title: revealUpcoming || event.starts_at_unix_ms <= now ? event.title : null,
+				shortDescription:
+					revealUpcoming || event.starts_at_unix_ms <= now
+						? event.short_description
+						: null,
 				titleWordLengths: titleWordLengths(event.title),
 				description:
 					revealUpcoming || event.starts_at_unix_ms <= now
@@ -100,9 +158,11 @@ export class SurprisingSaturdayService {
 				status: 'upcoming',
 				titleWordLengths: titleWordLengths(event.title),
 				description: event.pre_description,
+				shortDescription: null,
 			};
 
-		const items = JSON.parse(event.criteria_json) as string[];
+		const items = eventTargets(event.criteria_json);
+		const pointsById = new Map(items.map((item) => [item.id, item.points]));
 		const participants = this.database.connection
 			.select()
 			.from(surprisingSaturdayParticipants)
@@ -112,7 +172,12 @@ export class SurprisingSaturdayService {
 			.select()
 			.from(surprisingSaturdayCompletions)
 			.where(eq(surprisingSaturdayCompletions.event_id, id))
-			.all();
+			.all()
+			.filter(
+				(entry) =>
+					entry.completed_at_unix_ms >= event.starts_at_unix_ms &&
+					entry.completed_at_unix_ms < event.ends_at_unix_ms,
+			);
 		const players = participants.map((participant) => {
 			const user = this.database.connection
 				.select()
@@ -127,19 +192,30 @@ export class SurprisingSaturdayService {
 						.get()
 				: null;
 			const completed = completions
-				.filter((entry) => entry.player_uuid === participant.player_uuid)
+				.filter(
+					(entry) =>
+						entry.player_uuid === participant.player_uuid &&
+						pointsById.has(entry.item_id),
+				)
 				.map((entry) => ({ itemId: entry.item_id, atUnixMs: entry.completed_at_unix_ms }));
 			return {
 				uuid: participant.player_uuid,
 				name: user?.minecraft_username ?? 'Unknown player',
 				color: effectivePlayerColor(participant.player_uuid, profile?.color_hex),
+				pronouns: profile?.pronouns ?? '',
+				isCommittee: Boolean(user && (user.is_committee || user.is_super_admin)),
+				customEmojis: customPlayerEmojis(profile?.custom_emojis_json),
 				completed,
+				points: completed.reduce(
+					(score, entry) => score + (pointsById.get(entry.itemId) ?? 0),
+					0,
+				),
 				lastCompletionAtUnixMs: Math.max(0, ...completed.map((entry) => entry.atUnixMs)),
 			};
 		});
 		players.sort(
 			(a, b) =>
-				b.completed.length - a.completed.length ||
+				b.points - a.points ||
 				a.lastCompletionAtUnixMs - b.lastCompletionAtUnixMs ||
 				a.name.localeCompare(b.name),
 		);
@@ -147,6 +223,7 @@ export class SurprisingSaturdayService {
 			id,
 			status: event.ends_at_unix_ms > now ? 'live' : 'ended',
 			title: event.title,
+			shortDescription: event.short_description,
 			description: event.description,
 			startsAtUnixMs: event.starts_at_unix_ms,
 			endsAtUnixMs: event.ends_at_unix_ms,
@@ -173,54 +250,52 @@ export class SurprisingSaturdayService {
 			id,
 			title: event.title,
 			preDescription: event.pre_description,
+			shortDescription: event.short_description,
 			description: event.description,
 			startsAtUnixMs: event.starts_at_unix_ms,
 			endsAtUnixMs: event.ends_at_unix_ms,
 			criteriaType: event.criteria_type,
-			items: JSON.parse(event.criteria_json) as string[],
+			items: eventTargets(event.criteria_json),
 		};
 	}
 
 	update(idInput: string, body: Record<string, unknown> | undefined) {
 		const event = this.adminDetail(idInput);
-		if (event.startsAtUnixMs <= Date.now())
-			throw new ConflictException('Started events cannot be edited');
 		return this.save(body, event.id);
 	}
 
 	private save(body: Record<string, unknown> | undefined, id?: number) {
 		const title = typeof body?.title === 'string' ? body.title.trim() : '';
+		const shortDescription =
+			typeof body?.shortDescription === 'string' ? body.shortDescription.trim() : '';
 		const preDescription =
 			typeof body?.preDescription === 'string' ? body.preDescription.trim() : '';
 		const description = typeof body?.description === 'string' ? body.description.trim() : '';
 		const start = body?.startsAtUnixMs;
 		const end = body?.endsAtUnixMs;
-		const items = body?.items;
+		const items = completionTargets(body?.items);
 		if (
 			!title ||
 			title.length > 120 ||
+			!shortDescription ||
+			shortDescription.length > 280 ||
 			preDescription.length > 20_000 ||
 			description.length > 20_000
 		)
 			throw new BadRequestException(
-				'Enter a title of up to 120 characters and descriptions of up to 20,000 characters each',
+				'Enter a title, a short description of up to 280 characters, and full descriptions of up to 20,000 characters each',
 			);
 		if (
 			!Number.isSafeInteger(start) ||
 			!Number.isSafeInteger(end) ||
-			(start as number) < Date.now() ||
+			(id === undefined && (start as number) < Date.now()) ||
 			(end as number) <= (start as number)
 		)
-			throw new BadRequestException('Choose a future start and an end after it');
-		if (
-			body?.criteriaType !== 'list_completion' ||
-			!Array.isArray(items) ||
-			items.length === 0 ||
-			items.length > 256 ||
-			!items.every((item) => typeof item === 'string' && ITEM_ID.test(item)) ||
-			new Set(items).size !== items.length
-		)
-			throw new BadRequestException('List completion needs 1-256 unique namespaced item IDs');
+			throw new BadRequestException('Choose a valid start and an end after it');
+		if (body?.criteriaType !== 'list_completion' || !items)
+			throw new BadRequestException(
+				'Add 1-256 unique targets with valid IDs, names, links, and points',
+			);
 		const overlap = this.database.connection
 			.select({ id: surprisingSaturdayEvents.id })
 			.from(surprisingSaturdayEvents)
@@ -236,6 +311,7 @@ export class SurprisingSaturdayService {
 		const values = {
 			title,
 			pre_description: preDescription,
+			short_description: shortDescription,
 			description,
 			starts_at_unix_ms: start as number,
 			ends_at_unix_ms: end as number,
@@ -258,19 +334,16 @@ export class SurprisingSaturdayService {
 	}
 
 	remove(idInput: string) {
-		const id = Number(idInput);
-		const event = this.database.connection
-			.select()
-			.from(surprisingSaturdayEvents)
-			.where(eq(surprisingSaturdayEvents.id, id))
-			.get();
-		if (!event) throw new NotFoundException('Event not found');
-		if (event.starts_at_unix_ms <= Date.now())
-			throw new ConflictException('Started events remain in history');
-		this.database.connection
-			.delete(surprisingSaturdayEvents)
-			.where(eq(surprisingSaturdayEvents.id, id))
-			.run();
+		const id = this.adminDetail(idInput).id;
+		this.database.connection.transaction((tx) => {
+			tx.delete(surprisingSaturdayCompletions)
+				.where(eq(surprisingSaturdayCompletions.event_id, id))
+				.run();
+			tx.delete(surprisingSaturdayParticipants)
+				.where(eq(surprisingSaturdayParticipants.event_id, id))
+				.run();
+			tx.delete(surprisingSaturdayEvents).where(eq(surprisingSaturdayEvents.id, id)).run();
+		});
 		return { ok: true };
 	}
 
@@ -307,7 +380,7 @@ export class SurprisingSaturdayService {
 		const event = this.active(at as number);
 		if (event?.criteria_type !== 'list_completion')
 			throw new NotFoundException('No list completion event accepts scores now');
-		if (!(JSON.parse(event.criteria_json) as string[]).includes(itemId))
+		if (!eventTargets(event.criteria_json).some((item) => item.id === itemId))
 			throw new BadRequestException('This item is not in the event list');
 		this.recordParticipants([uuid], event.id, at as number);
 		this.database.connection

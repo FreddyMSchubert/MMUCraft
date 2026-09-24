@@ -64,7 +64,6 @@
 }
 
 .eventFeature,
-.eventSwitchCard,
 .eventScores,
 .eventListSection {
 	gap: 12px;
@@ -122,34 +121,18 @@
 	text-shadow: 0.075em 0.075em #3f3f3f;
 }
 
-.eventDescriptionWrap {
-	display: grid;
-	gap: 7px;
-}
-
-.eventDescriptionWrap h5,
 .eventSectionHeading h4,
 .eventSectionHeading p,
 .eventListSection h4 {
 	margin: 0;
 }
 
-.eventDescriptionWrap h5 {
-	font-size: 0.9rem;
-	color: rgba(255, 255, 255, 0.78);
-}
-
 .eventDescription {
-	display: block;
-	width: 100%;
-	height: 220px;
-	border: 1px solid rgba(255, 255, 255, 0.14);
-	border-radius: 8px;
-	background: #17171b;
+	font-size: 0.95rem;
 }
 
-.eventDescriptionShort {
-	height: 130px;
+.eventDescription > :last-child {
+	margin-bottom: 0;
 }
 
 .eventSectionHeading {
@@ -167,35 +150,9 @@
 	font-size: 0.86rem;
 }
 
-.eventSwitch {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-	align-items: stretch;
-	gap: 8px;
-}
-
-.eventSwitch > span {
-	display: grid;
-	align-content: center;
-	gap: 2px;
-	min-width: 0;
-	padding: 10px 12px;
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	border-radius: 8px;
-}
-
-.eventSwitch > span:last-child {
-	border-color: rgba(255, 209, 102, 0.36);
-}
-
-.eventSwitch small,
 .eventPodium > div span,
 .eventPodium > div small {
 	color: rgba(255, 255, 255, 0.65);
-}
-
-.eventSwitch button {
-	min-width: 11rem;
 }
 
 .eventChecklist summary {
@@ -256,12 +213,6 @@
 	margin: 0;
 }
 
-.eventNotice {
-	margin: 0;
-	color: #b8e5bc;
-	font-size: 0.88rem;
-}
-
 .eventForm label:nth-of-type(n + 5) {
 	grid-column: 1 / -1;
 }
@@ -282,12 +233,7 @@
 		flex-direction: column;
 	}
 
-	.eventSwitch,
 	.eventPodium {
 		grid-template-columns: 1fr;
-	}
-
-	.eventSwitch button {
-		min-height: 42px;
 	}
 }

@@ -1,10 +1,10 @@
 'use client';
 
-import { marked } from 'marked';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import sanitizeHtml from 'sanitize-html';
 import { formatManchesterDateTime } from '@/lib/date-time';
-import { apiMessage } from './admin/admin-api';
+import { knowledgeMarkdown } from './knowledge/knowledge-markdown-renderer';
 
 export interface EventSummary {
 	id: number;
@@ -31,12 +31,8 @@ interface EventDetail extends EventSummary {
 
 interface MyServer {
 	uuid: string | null;
-	serverName: string | null;
-	eventOnline: boolean;
-	canJoinEvent: boolean;
 }
 
-const EVENT_SERVER = 'surprising-saturday';
 const GLYPHS =
 	'ABCDEFGHJKLMNOPQRSTUVWXYZabcdeghjmnopqrsuvwxyz0123456789?#$%&+-=/\\^_' +
 	'¢£¥§¬¯±µ¿ÀÁÂÃÄÅÇÈÉÊËÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåçèéêëðñòóôõö÷øùúûüý';
@@ -66,18 +62,21 @@ function ObfuscatedEventName({ wordLengths }: { wordLengths: number[] }) {
 	);
 }
 
-function EventDescription({ description, upcoming }: { description: string; upcoming: boolean }) {
+function EventDescription({ description }: { description: string }) {
+	const html = useMemo(
+		() =>
+			sanitizeHtml(knowledgeMarkdown.parse(description, { async: false }), {
+				allowedTags: [...sanitizeHtml.defaults.allowedTags, 'img'],
+				allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, '*': ['class'] },
+			}),
+		[description],
+	);
 	if (!description) return null;
 	return (
-		<div className="eventDescriptionWrap">
-			<h5>{upcoming ? 'Before it begins' : 'How it works'}</h5>
-			<iframe
-				title={upcoming ? 'Event preview' : 'Event description'}
-				sandbox="allow-popups"
-				className={`eventDescription${upcoming ? ' eventDescriptionShort' : ''}`}
-				srcDoc={`<meta name="viewport" content="width=device-width, initial-scale=1"><style>body{font:15px/1.55 system-ui;color:#eee;background:#17171b;margin:0;padding:14px}a{color:#9dcfff}img{max-width:100%}p:first-child{margin-top:0}</style>${marked.parse(description, { async: false })}`}
-			/>
-		</div>
+		<div
+			className="knowledgePage eventDescription"
+			dangerouslySetInnerHTML={{ __html: html }}
+		/>
 	);
 }
 
@@ -97,9 +96,7 @@ export function SurprisingSaturdayTab({
 	const selectedEventId = selected?.id;
 	const [detail, setDetail] = useState<EventDetail | null>(null);
 	const [me, setMe] = useState<MyServer | null>(null);
-	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState('');
-	const [notice, setNotice] = useState('');
 
 	useEffect(() => {
 		let cancelled = false;
@@ -141,33 +138,7 @@ export function SurprisingSaturdayTab({
 		};
 	}, [selectedEventId]);
 
-	async function switchServer() {
-		if (!me) return;
-		const target = me.serverName === EVENT_SERVER ? 'main' : EVENT_SERVER;
-		setBusy(true);
-		try {
-			const response = await fetch('/api/surprising-saturday/move', {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ target }),
-			});
-			const body = await response.json().catch(() => null);
-			if (!response.ok) throw new Error(apiMessage(body, 'Could not switch servers'));
-			setError('');
-			setNotice(`Move to ${target === 'main' ? 'Main' : 'Surprising Saturday'} requested.`);
-		} catch (caught) {
-			setNotice('');
-			setError(caught instanceof Error ? caught.message : 'Could not switch servers');
-		} finally {
-			setBusy(false);
-		}
-	}
-
 	const currentDetail = detail?.id === selectedEventId ? detail : null;
-	const showSwitch =
-		currentDetail?.status === 'live' ||
-		me?.canJoinEvent === true ||
-		me?.serverName === EVENT_SERVER;
 	const own = currentDetail?.players?.find((player) => player.uuid === me?.uuid);
 	const otherUpcoming = upcoming.filter((event) => event.id !== selectedEventId);
 
@@ -211,50 +182,11 @@ export function SurprisingSaturdayTab({
 					</h4>
 					<EventDescription
 						description={currentDetail?.description ?? selected.description ?? ''}
-						upcoming={selected.status === 'upcoming'}
 					/>
 				</section>
 			)}
 			{isDetailPage && !selected && (
 				<section className="adminSection">This event could not be found.</section>
-			)}
-
-			{showSwitch && (
-				<section className="adminSection eventSwitchCard">
-					<div className="eventSectionHeading">
-						<h4>Choose your server</h4>
-						<p>
-							{currentDetail?.status === 'live'
-								? 'Move between the main world and this event.'
-								: 'The committee has opened the event server for testing.'}
-						</p>
-					</div>
-					<div className="eventSwitch">
-						<span>
-							<strong>Main server</strong>
-							<small>Your normal world</small>
-						</span>
-						<button
-							type="button"
-							disabled={
-								busy ||
-								!me?.serverName ||
-								(!me.eventOnline && me.serverName !== EVENT_SERVER)
-							}
-							onClick={() => void switchServer()}
-						>
-							{me?.serverName === EVENT_SERVER
-								? '← Switch to Main'
-								: 'Switch to event →'}
-						</button>
-						<span>
-							<strong>Event server</strong>
-							<small>
-								{me?.eventOnline ? 'Ready to join' : 'Offline or starting'}
-							</small>
-						</span>
-					</div>
-				</section>
 			)}
 
 			{selected?.status !== 'upcoming' &&
@@ -332,11 +264,6 @@ export function SurprisingSaturdayTab({
 						</div>
 					</section>
 				)}
-			{notice && (
-				<p className="eventNotice" role="status">
-					{notice}
-				</p>
-			)}
 			{error && <p className="authError">{error}</p>}
 
 			{otherUpcoming.length > 0 && !isDetailPage && (
@@ -354,22 +281,25 @@ export function SurprisingSaturdayTab({
 					</div>
 				</section>
 			)}
-			<section className="adminSection eventListSection">
-				<h4>Past events</h4>
-				<div className="eventHistory">
-					{history.map((event) => (
-						<Link
-							key={event.id}
-							href={`/play/event/${event.id}`}
-							className={event.id === selected?.id && isDetailPage ? 'active' : ''}
-						>
-							<strong>{event.title}</strong>
-							<time>{formatManchesterDateTime(event.startsAtUnixMs)}</time>
-						</Link>
-					))}
-					{history.length === 0 && <p>No past events yet.</p>}
-				</div>
-			</section>
+			{history.length > 0 && (
+				<section className="adminSection eventListSection">
+					<h4>Past events</h4>
+					<div className="eventHistory">
+						{history.map((event) => (
+							<Link
+								key={event.id}
+								href={`/play/event/${event.id}`}
+								className={
+									event.id === selected?.id && isDetailPage ? 'active' : ''
+								}
+							>
+								<strong>{event.title}</strong>
+								<time>{formatManchesterDateTime(event.startsAtUnixMs)}</time>
+							</Link>
+						))}
+					</div>
+				</section>
+			)}
 		</div>
 	);
 }

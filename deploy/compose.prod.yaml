@@ -1,49 +1,56 @@
 services:
     api:
-        mem_limit: 1g
-        mem_reservation: 512m
-        memswap_limit: 1g
+        environment:
+            NODE_OPTIONS: --max-old-space-size=384
+        mem_limit: 640m
+        mem_reservation: 256m
+        memswap_limit: 640m
         deploy:
             resources:
                 limits:
-                    memory: 1g
+                    memory: 640m
                 reservations:
-                    memory: 512m
+                    memory: 256m
 
     web:
-        mem_limit: 1g
-        mem_reservation: 384m
-        memswap_limit: 1g
+        environment:
+            NODE_OPTIONS: --max-old-space-size=256
+        mem_limit: 512m
+        mem_reservation: 128m
+        memswap_limit: 512m
         deploy:
             resources:
                 limits:
-                    memory: 1g
+                    memory: 512m
                 reservations:
-                    memory: 384m
+                    memory: 128m
 
     minecraft:
         environment:
-            MEMORY: 6G
+            MEMORY: 8G
             INIT_MEMORY: 2G
-        mem_limit: 7g
-        mem_reservation: 4g
-        memswap_limit: 7g
+        mem_limit: 9g
+        mem_reservation: 6g
+        memswap_limit: 9g
         deploy:
             resources:
                 limits:
-                    memory: 7g
+                    memory: 9g
                 reservations:
-                    memory: 4g
+                    memory: 6g
 
     surprising-saturday:
-        mem_limit: 5g
-        mem_reservation: 2g
-        memswap_limit: 5g
+        environment:
+            MEMORY: 3G
+            INIT_MEMORY: 1G
+        mem_limit: 4g
+        mem_reservation: 1g
+        memswap_limit: 4g
 
     event-controller:
-        mem_limit: 128m
-        mem_reservation: 32m
-        memswap_limit: 128m
+        mem_limit: 96m
+        mem_reservation: 24m
+        memswap_limit: 96m
 
     backup:
         image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-backup:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
@@ -82,7 +89,7 @@ services:
             retries: 5
             start_period: 1m
         mem_limit: 512m
-        mem_reservation: 128m
+        mem_reservation: 32m
         memswap_limit: 512m
         pids_limit: 128
         deploy:
@@ -91,7 +98,7 @@ services:
                     memory: 512m
                     pids: 128
                 reservations:
-                    memory: 128m
+                    memory: 32m
         restart: unless-stopped
         stop_grace_period: 1m
         logging:
@@ -102,15 +109,17 @@ services:
         networks: [app]
 
     velocity:
-        mem_limit: 1g
-        mem_reservation: 384m
-        memswap_limit: 1g
+        environment:
+            MEMORY: 256M
+        mem_limit: 512m
+        mem_reservation: 128m
+        memswap_limit: 512m
         deploy:
             resources:
                 limits:
-                    memory: 1g
+                    memory: 512m
                 reservations:
-                    memory: 384m
+                    memory: 128m
 
     prometheus:
         command:
@@ -120,9 +129,9 @@ services:
         depends_on:
             backup:
                 condition: service_healthy
-        mem_limit: 1g
-        mem_reservation: 256m
-        memswap_limit: 1g
+        mem_limit: 512m
+        mem_reservation: 128m
+        memswap_limit: 512m
 
     grafana:
         mem_limit: 512m
@@ -132,21 +141,21 @@ services:
     loki:
         environment:
             LOKI_RETENTION_PERIOD: 336h
-        mem_limit: 1g
-        mem_reservation: 256m
-        memswap_limit: 1g
-
-    alloy:
         mem_limit: 512m
         mem_reservation: 128m
         memswap_limit: 512m
 
-    cadvisor:
+    alloy:
         mem_limit: 256m
         mem_reservation: 64m
         memswap_limit: 256m
 
-    node-exporter:
+    cadvisor:
         mem_limit: 128m
         mem_reservation: 32m
         memswap_limit: 128m
+
+    node-exporter:
+        mem_limit: 64m
+        mem_reservation: 16m
+        memswap_limit: 64m

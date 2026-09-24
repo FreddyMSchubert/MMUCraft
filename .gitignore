@@ -16,3 +16,4 @@ minecraft/minigames/
 minecraft/main/respack/items-respack-generator/output/
 minecraft/main/respack/packs/general-pack/assets/mainmod/sounds/**/*.ogg
 services/web/public/assets/mc_respack/
+services/web/next-env.d.ts

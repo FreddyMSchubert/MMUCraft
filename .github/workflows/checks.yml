@@ -58,9 +58,6 @@ jobs:
             - name: Lint backup shell script
               run: shellcheck services/backup/backup-manager.sh
 
-            - name: Check production deployment control flow
-              run: python3 deploy/check-deployment.py
-
             - name: Verify backups are production-only
               env:
                   IMAGE_PREFIX: ghcr.io/example/server

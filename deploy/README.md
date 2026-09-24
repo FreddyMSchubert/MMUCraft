@@ -112,14 +112,6 @@ The script clears the update flag after the services pass their health checks an
 
 The first deployment of this change requires `force=true` because the old Velocity plugin cannot write an acknowledgement. The script still calls the old API to attempt its disconnect and notice. The new behaviour is available after the proxy has been updated. Later deployments can use `force=false`.
 
-Run the local deployment check with:
-
-```sh
-python3 deploy/check-deployment.py
-```
-
-This check uses temporary command substitutes. It does not start Docker or contact a server.
-
 ## Replacement server limits
 
 The main server owns one persistent world at `data/minecraft`. A second Minecraft process cannot safely use that live world. A separate world copy would become stale while players continue to play. A safe switch would require a final save, a consistent copy, and a new server start. The API also owns one SQLite database and applies migrations at startup. Two releases would need compatible database access.

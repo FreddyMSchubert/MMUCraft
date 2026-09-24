@@ -104,15 +104,6 @@ export class SurprisingSaturdayController {
 	detail(@Param('id') id: string) {
 		return this.events.detail(id);
 	}
-
-	@Post('move')
-	move(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: { target?: unknown } | undefined,
-	) {
-		const user = this.sessions.requireSession(cookieHeader);
-		return this.velocity.moveSelf(user.id, body?.target);
-	}
 }
 
 @Controller('api/admin/surprising-saturday')

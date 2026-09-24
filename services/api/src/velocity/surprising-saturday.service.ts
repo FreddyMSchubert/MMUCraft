@@ -17,6 +17,14 @@ import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { effectivePlayerColor } from '../players/player-color';
 
 const ITEM_ID = /^[a-z0-9_.-]+:[a-z0-9_./-]+$/;
+const TITLE_GRAPHEMES = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+
+function titleWordLengths(title: string) {
+	return title
+		.trim()
+		.split(/\s+/u)
+		.map((word) => [...TITLE_GRAPHEMES.segment(word)].length);
+}
 
 @Injectable()
 export class SurprisingSaturdayService {
@@ -53,6 +61,7 @@ export class SurprisingSaturdayService {
 							? 'live'
 							: 'ended',
 				title: revealUpcoming || event.starts_at_unix_ms <= now ? event.title : null,
+				titleWordLengths: titleWordLengths(event.title),
 				description:
 					revealUpcoming || event.starts_at_unix_ms <= now ? event.description : null,
 			}));
@@ -74,6 +83,7 @@ export class SurprisingSaturdayService {
 				startsAtUnixMs: event.starts_at_unix_ms,
 				endsAtUnixMs: event.ends_at_unix_ms,
 				status: 'upcoming',
+				titleWordLengths: titleWordLengths(event.title),
 			};
 
 		const items = JSON.parse(event.criteria_json) as string[];

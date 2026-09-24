@@ -1,7 +1,7 @@
 'use client';
 
 import { marked } from 'marked';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { formatManchesterDateTime } from '@/lib/date-time';
 import { apiMessage } from './admin/admin-api';
 
@@ -9,6 +9,7 @@ export interface EventSummary {
 	id: number;
 	status: 'upcoming' | 'live' | 'ended';
 	title: string | null;
+	titleWordLengths: number[];
 	description: string | null;
 	startsAtUnixMs: number;
 	endsAtUnixMs: number;
@@ -31,6 +32,39 @@ interface MyServer {
 	uuid: string | null;
 	serverName: string | null;
 	eventOnline: boolean;
+}
+
+const OBFUSCATED_GLYPHS =
+	'ABCDEFGHJKLMNOPQRSTUVWXYZabcdeghjmnopqrsuvwxyz0123456789?#$%&+-=/\\^_' +
+	'¢£¥§¬¯±µ¿ÀÁÂÃÄÅÇÈÉÊËÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåçèéêëðñòóôõö÷øùúûüý';
+
+function ObfuscatedEventName({ wordLengths }: { wordLengths: number[] }) {
+	const text = useRef<HTMLSpanElement>(null);
+	const mask = wordLengths.map((length) => 'X'.repeat(length)).join(' ');
+
+	useEffect(() => {
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		let frame: number;
+		function shuffle() {
+			if (text.current)
+				text.current.textContent = Array.from(mask, (character) =>
+					character === ' '
+						? ' '
+						: OBFUSCATED_GLYPHS[Math.floor(Math.random() * OBFUSCATED_GLYPHS.length)],
+				).join('');
+			frame = window.requestAnimationFrame(shuffle);
+		}
+		frame = window.requestAnimationFrame(shuffle);
+		return () => {
+			window.cancelAnimationFrame(frame);
+		};
+	}, [mask]);
+
+	return (
+		<span ref={text} role="img" aria-label="Surprise hidden" className="eventObfuscated">
+			{mask}
+		</span>
+	);
 }
 
 export function SurprisingSaturdayTab({
@@ -119,8 +153,8 @@ export function SurprisingSaturdayTab({
 							<p className="eventLiveLabel">
 								Upcoming · {formatManchesterDateTime(selected.startsAtUnixMs)}
 							</p>
-							<h3 aria-label="Surprise hidden" className="eventObfuscated">
-								▒▓▒▓▒▓▒▓▒▓▒
+							<h3>
+								<ObfuscatedEventName wordLengths={selected.titleWordLengths} />
 							</h3>
 							<p>Find out the surprise on Saturday.</p>
 						</>
@@ -259,7 +293,11 @@ export function SurprisingSaturdayTab({
 							href={`/play/event/${event.id}`}
 							className={event.id === selected?.id ? 'active' : ''}
 						>
-							<strong>{event.title ?? '▒▓▒▓▒▓▒▓▒▓▒'}</strong>
+							<strong>
+								{event.title ?? (
+									<ObfuscatedEventName wordLengths={event.titleWordLengths} />
+								)}
+							</strong>
 							<span>
 								{event.status === 'live'
 									? '🔴 Live now'

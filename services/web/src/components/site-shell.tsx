@@ -76,7 +76,7 @@ const TAB_LINKS: { id: TabId; label: string; emoji: string; href: string }[] = [
 ];
 const EVENT_LINK: { id: TabId; label: string; emoji: string; href: string } = {
 	id: 'event',
-	label: 'Surprising Saturday',
+	label: 'Events',
 	emoji: '🎉',
 	href: '/play/event',
 };

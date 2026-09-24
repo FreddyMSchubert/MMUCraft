@@ -25,8 +25,13 @@
 	gap: 1rem;
 }
 .eventObfuscated {
-	letter-spacing: 0.3rem;
-	opacity: 0.7;
+	font-family: 'Minecraft UI', monospace;
+	font-weight: 400;
+	font-synthesis: none;
+	letter-spacing: 0;
+	white-space: nowrap;
+	color: #fff;
+	text-shadow: 0.075em 0.075em #3f3f3f;
 }
 .eventSwitch {
 	display: flex;

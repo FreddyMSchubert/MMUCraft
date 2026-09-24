@@ -326,14 +326,19 @@ if [ -s "$legacy_bans" ]; then
 		'
 fi
 
-# Start the release and wait for every health check.
-dc up -d --remove-orphans --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
+# Start the release and wait for the services players need.
+dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web minecraft velocity
 dc --profile event create surprising-saturday
+dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" event-controller
 # Compose cannot detect changes inside configuration bind mounts.
-dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" prometheus grafana loki alloy nginx
+dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" nginx
 wait_for_proxy ready || { echo "Velocity has not confirmed that main is ready." >&2; exit 1; }
 clear_update
 announce_update_complete || graceful_failure "Could not send the update completion notice"
+
+# Report monitoring failures after players can join again.
+dc up -d --no-deps --force-recreate prometheus grafana loki alloy
+dc up -d --remove-orphans --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}"
 
 # Remove unused Docker artifacts. Never prune persistent volumes.
 docker image prune -f --filter until=168h >/dev/null

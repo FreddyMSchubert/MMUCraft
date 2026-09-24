@@ -319,6 +319,7 @@ services:
 
     cadvisor:
         image: ghcr.io/google/cadvisor:v0.60.2
+        command: ['--enable_metrics=cpu,memory']
         privileged: true
         devices:
             - /dev/kmsg:/dev/kmsg
@@ -328,6 +329,12 @@ services:
             - /sys:/sys:ro
             - /var/lib/docker:/var/lib/docker:ro
             - /dev/disk:/dev/disk:ro
+        healthcheck:
+            test: ['CMD', '/usr/bin/healthcheck.sh']
+            interval: 30s
+            timeout: 4m
+            retries: 2
+            start_period: 30s
         logging: *logging
         restart: unless-stopped
         networks: [app]

@@ -18,7 +18,7 @@ abstract class ChargedCreeperSpawnMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void killshift$chargeSomeNewCreepers(EntityType<? extends Creeper> type, Level level, CallbackInfo callback) {
-        if (level instanceof ServerLevel && level.getRandom().nextDouble() < 0.20) {
+        if (level instanceof ServerLevel && level.getRandom().nextDouble() < 0.05) {
             ((Creeper) (Object) this).getEntityData().set(DATA_IS_POWERED, true);
         }
     }

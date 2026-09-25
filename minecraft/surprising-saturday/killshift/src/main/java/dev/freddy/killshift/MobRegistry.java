@@ -92,11 +92,11 @@ final class MobRegistry {
         }
         values.put(Attributes.MAX_HEALTH, Math.max(1.0, source.getMaxHealth()));
         values.put(Attributes.ATTACK_DAMAGE, Math.max(1.0, values.getOrDefault(Attributes.ATTACK_DAMAGE, 1.0)));
-        if (type != EntityTypes.PLAYER) {
+        if (type != EntityTypes.PLAYER && !traits.landImmobile()) {
             values.computeIfPresent(Attributes.MOVEMENT_SPEED,
                     (attribute, speed) -> speed * PLAYER_MOVEMENT_FACTOR);
         }
-        if (traits.landImmobile()) values.put(Attributes.MOVEMENT_SPEED, 0.0);
+        if (traits.aquatic()) values.merge(Attributes.MOVEMENT_SPEED, 0.1, Math::max);
         if (traits.aquatic()) values.put(Attributes.WATER_MOVEMENT_EFFICIENCY, 1.0);
         if (traits.flying() || type == EntityTypes.CHICKEN || type == EntityTypes.CAT) {
             values.put(Attributes.FALL_DAMAGE_MULTIPLIER, 0.0);

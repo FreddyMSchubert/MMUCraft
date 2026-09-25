@@ -4,9 +4,9 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 ## Behavior that applies to every mob
 
-All listed mobs except the giant can become forms. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. The `/shift` command always uses a named player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. It converts mob movement speed for player controls. The player camera stands above the source model. The owner's display is tiny. Other players see the full-size display. Attack damage never falls below one.
+All listed mobs except the giant can become forms. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. `/shift` with your own name returns you to normal; shifting to another player uses that player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. It converts land mob movement speed for player controls. The player camera stands above the displayed model. The owner sees the display at 50% scale. Other players see the full-size display. Attack damage never falls below one.
 
-Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. A mob form cannot use player sprint or swim movement. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A killed mob drops no items or experience when the kill causes a shift. The killer moves to the dead entity's position.
+Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. Aquatic forms can sprint and swim in water; other mob forms cannot use player sprint or swim movement. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A killed mob drops no items or experience when the kill causes a shift. The killer moves to the dead entity's position.
 
 Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
 
@@ -17,7 +17,7 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 | Trait | Forms | Behavior |
 | --- | --- | --- |
 | Forced flight | Allay, bat, bee, blaze, ender dragon, ghast, happy ghast, parrot, phantom, vex, wither | Player flight stays active. |
-| Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is full. Fish and other water-only forms have no land movement speed. |
+| Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is full. Sprint and swim controls work in water. Fish and other water-only forms have land movement suppressed. |
 | Water breathing | Axolotl, cod, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, zombie nautilus | Air stays full underwater. Air falls on land. The player takes drowning damage after the air supply ends. |
 | Sun-sensitive forms | Types in the game's `burn_in_daylight` tag | Sunlight ignites the player when the head slot is empty. |
 | Wall climbing | Spider, cave spider | Movement input near a wall gives a steady upward climb. |
@@ -62,7 +62,7 @@ The ninth hotbar slot holds a marked item that matches the active ability. For e
 | Stray | A bow receives a replacement arrow when no arrow remains. |
 | Trader llama | Right-click spits in the look direction. |
 | Vex | The server gives the player no-physics movement and forced flight. The vanilla client can still block movement through walls. |
-| Warden | Right-click fires a sonic boom at the entity in the look direction. |
+| Warden | Right-click fires a sonic boom in the look direction, with or without an entity target. |
 | Witch | Right-click throws a random poison, slowness, weakness, or harming splash potion. |
 | Wither | Right-click shoots a wither skull. A melee hit gives Wither to the target. |
 | Wither skeleton | A melee hit gives Wither to the target. |

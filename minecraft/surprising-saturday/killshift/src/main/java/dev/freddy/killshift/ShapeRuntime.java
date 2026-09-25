@@ -34,7 +34,7 @@ final class ShapeRuntime {
         MobTraits traits = state.form.traits();
         EntityType<?> type = state.form.type();
 
-        player.setInvisible(true);
+        ShapeManager.hidePlayer(player);
         if (state.abilityCooldown > 0) {
             state.abilityCooldown--;
         }
@@ -43,7 +43,7 @@ final class ShapeRuntime {
         }
         if (state.squidFleeTicks > 0) state.squidFleeTicks--;
 
-        if (type != EntityTypes.PLAYER) {
+        if (type != EntityTypes.PLAYER && !(traits.aquatic() && player.isInWater())) {
             player.setSprinting(false);
             player.setSwimming(false);
         }

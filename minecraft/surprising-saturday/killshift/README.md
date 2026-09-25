@@ -36,18 +36,18 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - A form stays active when the player leaves and rejoins.
 - On a form change, the old display stays in the world. It receives the player's health and effects, and its mob AI resumes.
 - A mob killed for a shift drops no items or experience.
-- Each new creeper has a 20% chance to be charged. Each spawned zombie has a 1% chance to become a giant.
+- Each new creeper has a 5% chance to be charged. Each spawned zombie has a 1% chance to become a giant.
 - Giants use zombie pursuit and target goals. They keep giant health, speed, and attack damage.
 - The display keeps the source mob's equipment. The kill does not add that equipment to the killer's inventory.
 - Every form has at least one point of attack damage.
 - Each new sneak press plays the form's ambient sound. Holding sneak plays it once.
-- A player respawns near the death location in the same dimension. Members and Committee have a 100-block radius. Other players have a 200-block radius.
+- A player respawns at a random safe surface spot near the death location in the same dimension. Members and Committee have a 100-block radius. Other players have a 200-block radius.
 
 ## Movement and combat
 
-Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. It converts mob movement speed for player controls. The player scale places the camera above the source model. It also changes the player hitbox.
+Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. It converts land mob movement speed for player controls. The player's scale places the camera above the half-size model seen by the owner. It also changes the player hitbox.
 
-Aquatic forms gain full water movement efficiency. Fish and bees have no land movement speed. Water-only forms can jump on land but gain little horizontal motion while airborne. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly. Mob forms cannot use player sprint or swim movement. Iron golems sink in water and keep their air supply.
+Aquatic forms gain full water movement efficiency and can sprint and swim in water. Fish and bees have their land movement suppressed. Water-only forms can jump on land but gain little horizontal motion while airborne. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly. Other mob forms cannot use player sprint or swim movement. Iron golems sink in water and keep their air supply.
 
 Killshift keeps attack damage at one or more. A weak form can therefore kill another mob and change form again.
 
@@ -55,9 +55,9 @@ Every form can eat beetroot and beetroot soup. If a player tries to eat another 
 
 ## Visual disguise
 
-Killshift makes the real player invisible. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients. The form retains the source entity's saved visual data, such as its variant.
+Killshift makes the real player invisible. Its presentation team does not reveal invisible teammates. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients. The form retains the source entity's saved visual data, such as its variant.
 
-Other players see the full-size copy at the player position. The owner receives a tiny copy. Killshift keeps the source cube size and baby age. The model stays below the first-person camera and remains visible in third-person view. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
+Other players see the full-size copy at the player position. The owner sees it at 50% scale. Killshift keeps the source cube size and baby age. The model stays below the first-person camera and remains visible in third-person view. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
 
 Attacks against the visible copy are redirected to its owner. The copy cannot push the player and cannot change player movement.
 

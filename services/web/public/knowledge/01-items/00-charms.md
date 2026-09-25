@@ -18,7 +18,7 @@ Charms are powerful magical artifacts of divine origins. Their powers range from
 
 ## Video
 
-Here's a video, if you don't feel liek reading the rest of this page. The content is the same:
+Here's a video, if you don't feel like reading the rest of this page. The content is the same:
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/IIE-leowi0s?si=tx3QeEn1G3ZPi5OF" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 

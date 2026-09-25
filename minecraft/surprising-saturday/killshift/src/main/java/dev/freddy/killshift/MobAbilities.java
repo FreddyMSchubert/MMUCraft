@@ -60,13 +60,13 @@ final class MobAbilities {
             Map.entry(EntityTypes.GLOW_SQUID, Items.GLOW_INK_SAC),
             Map.entry(EntityTypes.GUARDIAN, Items.PRISMARINE_SHARD),
             Map.entry(EntityTypes.ELDER_GUARDIAN, Items.PRISMARINE_CRYSTALS),
-            Map.entry(EntityTypes.LLAMA, Items.SNOWBALL),
+            Map.entry(EntityTypes.LLAMA, Items.HAY_BLOCK),
             Map.entry(EntityTypes.MOOSHROOM, Items.BOWL),
             Map.entry(EntityTypes.SHULKER, Items.CHORUS_FRUIT),
             Map.entry(EntityTypes.SILVERFISH, Items.INFESTED_STONE_BRICKS),
             Map.entry(EntityTypes.SNIFFER, Items.TORCHFLOWER_SEEDS),
             Map.entry(EntityTypes.SQUID, Items.INK_SAC),
-            Map.entry(EntityTypes.TRADER_LLAMA, Items.SNOWBALL),
+            Map.entry(EntityTypes.TRADER_LLAMA, Items.HAY_BLOCK),
             Map.entry(EntityTypes.WARDEN, Items.ECHO_SHARD),
             Map.entry(EntityTypes.WITCH, Items.GLASS_BOTTLE),
             Map.entry(EntityTypes.WITHER, Items.WITHER_SKELETON_SKULL)
@@ -360,20 +360,18 @@ final class MobAbilities {
 
     private static void sonicBoom(ServerLevel level, ServerPlayer player) {
         LivingEntity target = targetInSight(player, 20.0);
-        if (target == null) {
-            return;
-        }
         Vec3 source = player.getEyePosition();
-        Vec3 delta = target.getEyePosition().subtract(source);
-        Vec3 direction = delta.normalize();
-        for (int step = 1; step < (int) delta.length() + 7; step++) {
+        Vec3 direction = player.getLookAngle().normalize();
+        for (int step = 1; step <= 20; step++) {
             Vec3 particle = source.add(direction.scale(step));
             level.sendParticles(ParticleTypes.SONIC_BOOM, particle.x, particle.y, particle.z,
                     1, 0.0, 0.0, 0.0, 0.0);
         }
         level.playSound(null, player.blockPosition(), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 3.0F, 1.0F);
-        if (target.hurtServer(level, level.damageSources().sonicBoom(player), 10.0F)) {
-            target.push(direction.x * 2.5, direction.y * 0.5, direction.z * 2.5);
+        if (target == null) return;
+        LivingEntity victim = ShapeManager.combatTarget(target);
+        if (victim.hurtServer(level, level.damageSources().sonicBoom(player), 10.0F)) {
+            victim.push(direction.x * 2.5, direction.y * 0.5, direction.z * 2.5);
         }
     }
 

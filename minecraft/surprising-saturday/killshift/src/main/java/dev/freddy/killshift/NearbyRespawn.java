@@ -22,27 +22,26 @@ final class NearbyRespawn {
 
         for (int attempt = 0; attempt < ATTEMPTS; attempt++) {
             double angle = player.getRandom().nextDouble() * Math.TAU;
-            double distance = Math.sqrt(player.getRandom().nextDouble()) * radius;
-            int x = attempt == 0 ? oldPlayer.blockPosition().getX()
-                    : (int) Math.floor(oldPlayer.getX() + Math.cos(angle) * distance);
-            int z = attempt == 0 ? oldPlayer.blockPosition().getZ()
-                    : (int) Math.floor(oldPlayer.getZ() + Math.sin(angle) * distance);
+            double distance = Math.sqrt(player.getRandom().nextDouble()
+                    * (radius * radius - 16 * 16) + 16 * 16);
+            int x = (int) Math.floor(oldPlayer.getX() + Math.cos(angle) * distance);
+            int z = (int) Math.floor(oldPlayer.getZ() + Math.sin(angle) * distance);
             double dx = x + 0.5 - oldPlayer.getX();
             double dz = z + 0.5 - oldPlayer.getZ();
             if (dx * dx + dz * dz > radius * radius) continue;
-            int startY = oldPlayer.blockPosition().getY() + 16;
-            if (!level.dimensionType().hasCeiling()) {
-                startY = Math.max(startY, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) + 2);
-            }
-            startY = Math.clamp(startY, level.getMinY() + 2, level.getMaxY() - 2);
-            for (int y = startY; y > level.getMinY(); y--) {
+            int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            int lowestY = level.dimensionType().hasCeiling() ? level.getMinY() + 1 : surfaceY - 1;
+            for (int y = surfaceY + 1; y >= lowestY; y--) {
                 BlockPos feet = new BlockPos(x, y, z);
                 BlockPos floor = feet.below();
                 if (!level.getWorldBorder().isWithinBounds(feet)
+                        || y <= level.getMinY() || y + 1 >= level.getMaxY()
+                        || (!level.dimensionType().hasCeiling() && !level.canSeeSky(feet))
                         || !level.getBlockState(feet).isAir()
                         || !level.getBlockState(feet.above()).isAir()
                         || !level.getBlockState(floor).isFaceSturdy(level, floor, Direction.UP)
-                        || level.getBlockState(floor).is(Blocks.MAGMA_BLOCK)) continue;
+                        || level.getBlockState(floor).is(Blocks.MAGMA_BLOCK)
+                        || level.getBlockState(floor).is(Blocks.BEDROCK)) continue;
                 AABB box = player.getDimensions(player.getPose()).makeBoundingBox(
                         x + 0.5, y, z + 0.5);
                 if (level.getWorldBorder().isWithinBounds(box) && level.noCollision(box)

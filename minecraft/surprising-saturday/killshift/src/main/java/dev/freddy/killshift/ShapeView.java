@@ -4,9 +4,14 @@ import java.util.List;
 import java.util.UUID;
 import dev.freddy.killshift.mixin.AgeableMobAgeAccessor;
 import dev.freddy.killshift.mixin.TadpoleAgeAccessor;
+import dev.freddy.killshift.mixin.MobFlagsAccessor;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +21,7 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
 import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -31,6 +37,7 @@ import net.minecraft.world.scores.Team;
 public final class ShapeView {
     private static final String VIEW_TEAM = "killshift_views";
     public static final String VIEW_TAG = "killshift_view";
+    static final double SELF_VIEW_SCALE = 0.5;
 
     private ShapeView() {
     }
@@ -104,6 +111,8 @@ public final class ShapeView {
         view.noPhysics = true;
         view.setDeltaMovement(player.getDeltaMovement());
         view.snapTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
+        view.yBodyRotO = view.yBodyRot;
+        view.setYBodyRot(player.getYRot());
         view.setYHeadRot(player.getYHeadRot());
         if (state.form.type() == EntityTypes.PLAYER) view.setPose(player.getPose());
         view.setShiftKeyDown(player.isShiftKeyDown());
@@ -116,6 +125,12 @@ public final class ShapeView {
 
         // ponytail: Vanilla can overwrite this scale. Filter attribute packets if traffic grows.
         sendSelfScale(player, view);
+        if (view instanceof EnderDragon dragon) {
+            sendAnimatedDragon(dragon, player);
+            for (ServerPlayer observer : PlayerLookup.tracking(dragon)) {
+                if (observer != player) sendAnimatedDragon(dragon, observer);
+            }
+        }
     }
 
     static void onStartTracking(Entity entity, ServerPlayer player) {
@@ -222,8 +237,16 @@ public final class ShapeView {
         AttributeInstance self = new AttributeInstance(Attributes.SCALE, ignored -> {});
         self.replaceFrom(original);
         self.removeModifiers();
-        double factor = Math.min(0.1, 0.12 / Math.max(0.01, view.getBbHeight()));
-        self.setBaseValue(Math.max(0.0625, original.getValue() * factor));
+        self.setBaseValue(Math.max(0.0625, original.getValue() * SELF_VIEW_SCALE));
         player.connection.send(new ClientboundUpdateAttributesPacket(view.getId(), List.of(self)));
     }
+
+    private static void sendAnimatedDragon(EnderDragon dragon, ServerPlayer observer) {
+        if (observer.hasDisconnected()) return;
+        EntityDataAccessor<Byte> flags = MobFlagsAccessor.killshift$mobFlags();
+        byte animated = (byte) (dragon.getEntityData().get(flags) & ~1);
+        observer.connection.send(new ClientboundSetEntityDataPacket(dragon.getId(),
+                List.of(SynchedEntityData.DataValue.create(flags, animated))));
+    }
+
 }

@@ -112,7 +112,10 @@ public final class ShapeManager {
             ShapeState state = get(player);
             if (state != null) {
                 ShapeRuntime.tick(player, state);
-                ShapeView.tick(player, state);
+                // Breathing and other form effects can kill the player and clear the form.
+                if (get(player) == state) {
+                    ShapeView.tick(player, state);
+                }
             }
             AbilitySlot.sync(player);
         }
@@ -136,6 +139,11 @@ public final class ShapeManager {
     public static boolean restrictPlayerMovement(ServerPlayer player) {
         ShapeState state = get(player);
         return state != null && state.form.type() != EntityTypes.PLAYER;
+    }
+
+    public static boolean canSwimAsMob(ServerPlayer player) {
+        ShapeState state = get(player);
+        return state != null && state.form.traits().aquatic() && player.isInWater();
     }
 
     public static void onSneakInput(ServerPlayer player, boolean sneaking) {
@@ -163,6 +171,7 @@ public final class ShapeManager {
         if (state == null) return;
         SHAPES.put(player.getUUID(), state);
         applyAttributes(player, state.form);
+        hidePlayer(player);
         player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
@@ -193,6 +202,10 @@ public final class ShapeManager {
     }
 
     static void shiftTo(ServerPlayer target, ServerPlayer source) {
+        if (target == source) {
+            clear(target);
+            return;
+        }
         transform(target, new MobForm(EntityTypes.PLAYER, MobRegistry.traits(EntityTypes.PLAYER), Map.of(), 1.0),
                 ShapeView.snapshot(source), null);
     }
@@ -209,6 +222,7 @@ public final class ShapeManager {
         SHAPES.put(player.getUUID(), state);
 
         applyAttributes(player, form);
+        hidePlayer(player);
         player.setHealth(Math.min(health, player.getMaxHealth()));
         if (location != null) player.teleportTo(location.x, location.y, location.z);
         ShapeEffects.apply(player, state);
@@ -238,6 +252,14 @@ public final class ShapeManager {
         player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
     }
 
+    static void hidePlayer(ServerPlayer player) {
+        var team = player.getTeam();
+        if (team != null && team.canSeeFriendlyInvisibles()) {
+            team.setSeeFriendlyInvisibles(false);
+        }
+        player.setInvisible(true);
+    }
+
     private static ServerPlayer ownerOf(LivingEntity view) {
         for (Map.Entry<UUID, ShapeState> entry : SHAPES.entrySet()) {
             if (entry.getValue().view == view && view.level().getServer() != null) {
@@ -258,14 +280,15 @@ public final class ShapeManager {
             if (instance != null) add(player, attribute, FORM,
                     value - instance.getBaseValue(), AttributeModifier.Operation.ADD_VALUE);
         });
-        add(player, Attributes.SCALE, SCALE, form.scale() - 1.0,
-                AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+        // Camera clearance depends on the rendered view, which is created afterwards.
     }
 
     static void fitCameraAboveView(ServerPlayer player, LivingEntity view) {
-        if (view == null || get(player).form.type() == EntityTypes.PLAYER) return;
+        ShapeState state = get(player);
+        if (view == null || state == null || state.form.type() == EntityTypes.PLAYER) return;
         double eyeHeight = EntityTypes.PLAYER.getDimensions().eyeHeight();
-        double target = Math.max(view.getEyeHeight() * 1.1, view.getBbHeight() * 1.25);
+        double renderedHeight = view.getBbHeight() * ShapeView.SELF_VIEW_SCALE;
+        double target = renderedHeight * 1.5 + 0.3;
         double scale = Math.clamp(target / eyeHeight, 0.0625, 16.0);
         add(player, Attributes.SCALE, SCALE, scale - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     }

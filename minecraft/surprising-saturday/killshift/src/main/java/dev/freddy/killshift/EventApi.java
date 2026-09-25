@@ -339,6 +339,7 @@ public final class EventApi {
         PlayerTeam team = scoreboard.getPlayerTeam(teamName);
         if (team == null) team = scoreboard.addPlayerTeam(teamName);
         scoreboard.addPlayerToTeam(player.getScoreboardName(), team);
+        if (team.canSeeFriendlyInvisibles()) team.setSeeFriendlyInvisibles(false);
         String nickname = profile.get("nickname").getAsString();
         String pronouns = profile.get("pronouns").getAsString();
         String role = profile.get("role").getAsString();

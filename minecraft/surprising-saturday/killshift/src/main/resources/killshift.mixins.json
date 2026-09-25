@@ -11,7 +11,9 @@
 		"AbilitySwapMixin",
 		"FoxAlertableMixin",
 		"PlayerMovementMixin",
-		"GuardianAttackAccessor"
+		"GuardianAttackAccessor",
+		"UnsavedViewMixin",
+		"LocatorPlayerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

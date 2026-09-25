@@ -104,6 +104,7 @@ public final class ShapeManager {
         });
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            LocatorVisibility.tick(server, player);
             ShapeState state = get(player);
             if (state != null) {
                 ShapeRuntime.tick(player, state);
@@ -117,6 +118,13 @@ public final class ShapeManager {
         return SHAPES.get(player.getUUID());
     }
 
+    static boolean isActiveView(LivingEntity view) {
+        for (ShapeState state : SHAPES.values()) {
+            if (state.view == view) return true;
+        }
+        return false;
+    }
+
     static boolean hasShape(ServerPlayer player) {
         return get(player) != null;
     }
@@ -124,6 +132,13 @@ public final class ShapeManager {
     public static boolean restrictPlayerMovement(ServerPlayer player) {
         ShapeState state = get(player);
         return state != null && state.form.type() != EntityTypes.PLAYER;
+    }
+
+    public static void onSneakInput(ServerPlayer player, boolean sneaking) {
+        ShapeState state = get(player);
+        if (state == null) return;
+        if (sneaking && !state.wasSneaking) ShapeView.playAmbientSound(state);
+        state.wasSneaking = sneaking;
     }
 
     public static void readSaved(ServerPlayer player, ValueInput input) {
@@ -170,6 +185,16 @@ public final class ShapeManager {
     private static void transform(ServerPlayer player, LivingEntity source) {
         transform(player, MobRegistry.createForm(source), ShapeView.snapshot(source),
                 source instanceof Mob mob ? mob : null);
+    }
+
+    static void shiftTo(ServerPlayer target, ServerPlayer source) {
+        ShapeState sourceForm = get(source);
+        if (sourceForm == null) transform(target, source);
+        else transform(target, sourceForm.form, sourceForm.viewData, null);
+    }
+
+    static void shiftTo(ServerPlayer target, Mob source) {
+        transform(target, source);
     }
 
     private static void transform(ServerPlayer player, MobForm form, CompoundTag viewData, Mob source) {

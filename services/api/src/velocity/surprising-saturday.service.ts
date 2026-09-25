@@ -508,6 +508,7 @@ export class SurprisingSaturdayService {
 			pronouns: profile?.pronouns ?? '',
 			color: effectivePlayerColor(uuid, profile?.color_hex),
 			role: playerRole(user),
+			isMember: Boolean(user.is_member || user.is_committee || user.is_super_admin),
 		};
 	}
 }

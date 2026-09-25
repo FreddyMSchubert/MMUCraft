@@ -1,6 +1,9 @@
 package dev.freddy.killshift;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,6 +16,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CakeBlock;
 import net.minecraft.world.level.block.CandleCakeBlock;
 import net.minecraft.world.phys.BlockHitResult;
+import java.util.ArrayList;
+import java.util.List;
 
 final class MobFood {
     private MobFood() { }
@@ -25,7 +30,10 @@ final class MobFood {
         ItemStack stack = player.getItemInHand(hand);
         boolean allowed = canEat(state, stack);
         if (!stack.has(DataComponents.FOOD) && !allowed) return InteractionResult.PASS;
-        if (!allowed) return InteractionResult.FAIL;
+        if (!allowed) {
+            explainDiet(player, state, stack);
+            return InteractionResult.FAIL;
+        }
         if (stack.has(DataComponents.FOOD)) return InteractionResult.PASS;
 
         stack.consume(1, player);
@@ -38,12 +46,32 @@ final class MobFood {
         ShapeState state = ShapeManager.get(player);
         if (state == null || state.form.type() == EntityTypes.PLAYER) return InteractionResult.PASS;
         var block = level.getBlockState(hit.getBlockPos()).getBlock();
-        return block instanceof CakeBlock || block instanceof CandleCakeBlock
-                ? InteractionResult.FAIL : InteractionResult.PASS;
+        if (block instanceof CakeBlock || block instanceof CandleCakeBlock) {
+            explainDiet(player, state, new ItemStack(Items.CAKE));
+            return InteractionResult.FAIL;
+        }
+        return InteractionResult.PASS;
+    }
+
+    private static void explainDiet(ServerPlayer player, ShapeState state, ItemStack attempted) {
+        List<Component> foods = new ArrayList<>();
+        for (var item : BuiltInRegistries.ITEM) {
+            ItemStack stack = new ItemStack(item);
+            if (canEat(state, stack)) foods.add(stack.getHoverName());
+        }
+        MutableComponent message = Component.literal("You can't eat ").append(attempted.getHoverName())
+                .append(Component.literal(" while transformed as ")).append(state.form.type().getDescription())
+                .append(Component.literal(". This form can only eat "));
+        for (int i = 0; i < foods.size(); i++) {
+            if (i > 0) message.append(Component.literal(i == foods.size() - 1 ? " or " : ", "));
+            message.append(foods.get(i));
+        }
+        player.sendSystemMessage(message.append(Component.literal(".")));
     }
 
     private static boolean canEat(ShapeState state, ItemStack stack) {
         var type = state.form.type();
+        if (stack.is(Items.BEETROOT) || stack.is(Items.BEETROOT_SOUP)) return true;
         if (type == EntityTypes.PANDA) return stack.is(Items.BAMBOO);
         if (type == EntityTypes.BEE) return false;
         if (type == EntityTypes.VILLAGER) {

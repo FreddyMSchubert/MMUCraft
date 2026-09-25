@@ -37,7 +37,8 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - A mob still creates its normal loot.
 - Mob equipment is copied into the killer's inventory.
 - Every form has at least one point of attack damage.
-- Sneak once to play the form's ambient sound.
+- Each new sneak press plays the form's ambient sound. Holding sneak plays it once.
+- A player respawns near the death location in the same dimension. Members and Committee have a 100-block radius. Other players have a 200-block radius.
 
 ## Movement and combat
 
@@ -47,6 +48,8 @@ Aquatic forms gain full water movement efficiency. Fish and bees have no land mo
 
 Killshift keeps attack damage at one or more. A weak form can therefore kill another mob and change form again.
 
+Every form can eat beetroot and beetroot soup. If a player tries to eat another forbidden food, Killshift names the food and lists the form's allowed foods.
+
 ## Visual disguise
 
 Killshift makes the real player invisible. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients. The form retains the source entity's saved visual data, such as its variant.
@@ -54,6 +57,10 @@ Killshift makes the real player invisible. It creates a silent, invulnerable, no
 Other players see the full-size copy at the player position. The owner receives a smaller scale for the copy. The smaller model stays below the first-person camera and remains visible in third-person view. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
 
 Attacks against the visible copy are redirected to its owner. The copy cannot push the player and cannot change player movement.
+
+Killshift does not save active display entities with the world. It removes old orphan displays when their chunks load. This prevents stationary no-AI copies after a restart.
+
+The locator bar shows players in the same dimension at any distance. Sneaking, invisibility, equipment, spectator mode, and transformation do not hide their icons.
 
 The ninth hotbar slot always contains a marked item. It holds a blaze rod for forms with an active ability and a barrier for all other forms, including the normal player. Right-click with the rod to use the ability while aiming at air, a block, or an entity. The item stays in that slot.
 
@@ -68,6 +75,9 @@ The server adds creeper, spider, and invert post effects to matching forms. It r
 - `ShapeView` owns the world model, collision rule, and owner-only scale.
 - `MobAbilities` owns active right-click actions and on-hit effects. `AbilitySlot` reserves the ninth hotbar slot.
 - `MobFood` limits food use to the form's diet.
+- `NearbyRespawn` finds a safe position near the death location.
+- `ShiftCommand` lets an administrator set a player or mob form.
+- `LocatorVisibility` keeps player locator icons visible.
 - `ShapeEffects` manages post effects.
 - `MobMixin` stops friendly mob families from targeting matching player forms.
 
@@ -82,6 +92,20 @@ See [docs/MOBS.md](docs/MOBS.md) for the complete behavior list.
 - The display entity follows the player each tick. Network interpolation can still cause visual delay.
 - Some mobs have only the common form behavior. The mob list marks these cases.
 - Skeleton arrow refill keeps one arrow in the inventory. A player can remove that arrow, so this is not an anti-duplication system.
+- If no safe location exists in the allowed respawn area, Minecraft keeps its normal respawn position.
+
+## Admin shift command
+
+Players with gamemaster permission can use these forms:
+
+```text
+/shift creeper
+/shift Alice creeper
+/shift Alice
+/shift Bob Alice
+```
+
+The first form shifts the administrator into a mob. The second shifts Alice into a mob. The third copies Alice's current form to the administrator. The fourth copies Alice's current form to Bob. Names must refer to online players. These commands do not record a kill or change event score.
 
 ## Licensing
 

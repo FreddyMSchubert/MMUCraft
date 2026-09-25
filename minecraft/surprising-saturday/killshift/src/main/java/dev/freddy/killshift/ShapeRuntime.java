@@ -79,11 +79,6 @@ final class ShapeRuntime {
             repelCreepers(player);
         }
 
-        boolean sneaking = player.isShiftKeyDown();
-        if (sneaking && !state.wasSneaking) {
-            ShapeView.playAmbientSound(state);
-        }
-        state.wasSneaking = sneaking;
     }
 
     static void clear(ServerPlayer player) {

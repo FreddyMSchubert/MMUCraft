@@ -23,8 +23,9 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
 
-final class ShapeView {
+public final class ShapeView {
     private static final String VIEW_TEAM = "killshift_views";
+    public static final String VIEW_TAG = "killshift_view";
 
     private ShapeView() {
     }
@@ -100,6 +101,15 @@ final class ShapeView {
         }
     }
 
+    static void onEntityLoad(Entity entity, net.minecraft.server.level.ServerLevel level) {
+        if (!(entity instanceof LivingEntity view)) return;
+        PlayerTeam team = level.getScoreboard().getPlayerTeam(VIEW_TEAM);
+        boolean legacy = team != null && level.getScoreboard().getPlayersTeam(view.getScoreboardName()) == team;
+        if ((view.entityTags().contains(VIEW_TAG) || legacy) && !ShapeManager.isActiveView(view)) {
+            view.discard();
+        }
+    }
+
     static void remove(ShapeState state) {
         if (state.view != null) {
             LivingEntity view = state.view;
@@ -114,6 +124,7 @@ final class ShapeView {
         LivingEntity view = state.view;
         state.view = null;
         removeFromTeam(view);
+        view.removeTag(VIEW_TAG);
         view.noPhysics = false;
         view.setNoGravity(false);
         view.setPermanentlyInvulnerable(false);
@@ -154,11 +165,11 @@ final class ShapeView {
     }
 
     private static void prepare(LivingEntity view, ServerPlayer player) {
+        view.addTag(VIEW_TAG);
         view.deathTime = 0;
         view.setHealth(view.getMaxHealth());
         if (view instanceof Mob mob) {
             mob.setNoAi(true);
-            mob.setCanPickUpLoot(false);
             mob.setPersistenceRequired();
         }
         view.setNoGravity(true);

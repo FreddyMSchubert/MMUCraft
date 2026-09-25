@@ -2,7 +2,9 @@ package dev.freddy.killshift;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -15,6 +17,8 @@ public final class Killshift implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ShiftCommand.register();
+        ServerPlayerEvents.AFTER_RESPAWN.register(NearbyRespawn::afterRespawn);
         ServerLivingEntityEvents.AFTER_DEATH.register(ShapeManager::onDeath);
         ServerLivingEntityEvents.AFTER_DAMAGE.register(MobAbilities::onDamage);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(ShapeManager::allowDamage);
@@ -37,5 +41,6 @@ public final class Killshift implements ModInitializer {
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> EventApi.playerLeft(handler.getPlayer()));
         EntityTrackingEvents.START_TRACKING.register(ShapeView::onStartTracking);
+        ServerEntityEvents.ENTITY_LOAD.register(ShapeView::onEntityLoad);
     }
 }

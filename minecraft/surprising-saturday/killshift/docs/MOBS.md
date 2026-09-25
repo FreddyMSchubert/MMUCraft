@@ -6,11 +6,11 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 All listed mobs except the giant can become forms. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, movement, safe fall distance, and step height. The player scale follows the source eye height. The owner's display is smaller. Other players see the full-size display. Attack damage never falls below one.
 
-Sneak to play the form's ambient sound. The display entity copies the player pose and rotation. It keeps the source entity's equipment. A mob form cannot use player sprint or swim movement. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes.
+Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity copies the player pose and rotation. It keeps the source entity's equipment. A mob form cannot use player sprint or swim movement. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes.
 
 Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
 
-Forms can eat only food in their natural diet. Forms with no natural food cannot eat. Panda forms eat bamboo. Animal forms use the game's food check. Player forms use normal player food rules.
+All forms can eat beetroot and beetroot soup. Other foods follow the form's natural diet. Panda forms eat bamboo. Animal forms use the game's food check. Player forms use normal player food rules. A rejected food use shows the attempted food and the full allowed-food list.
 
 ## Shared trait groups
 

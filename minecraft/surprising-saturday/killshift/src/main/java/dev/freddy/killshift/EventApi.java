@@ -46,6 +46,7 @@ public final class EventApi {
     private static final Path OUTBOX = Path.of("/data/killshift-score-outbox.jsonl");
     private static final Object OUTBOX_LOCK = new Object();
     private static final Map<UUID, Component> CHAT_NAMES = new ConcurrentHashMap<>();
+    private static final Map<UUID, Boolean> MEMBERS = new ConcurrentHashMap<>();
     private static final Map<String, KillNotice> KILL_NOTICES = new ConcurrentHashMap<>();
     private static final ScheduledExecutorService WORKER = Executors.newSingleThreadScheduledExecutor(task -> {
         Thread thread = new Thread(task, "killshift-score-outbox");
@@ -65,6 +66,7 @@ public final class EventApi {
 
     static void playerJoined(ServerPlayer player) {
         CHAT_NAMES.remove(player.getUUID());
+        MEMBERS.remove(player.getUUID());
         PlayerTeam team = player.getTeam();
         if (team != null && team.getName().startsWith("ss")) {
             team.setPlayerPrefix(Component.empty());
@@ -77,6 +79,11 @@ public final class EventApi {
 
     static void playerLeft(ServerPlayer player) {
         CHAT_NAMES.remove(player.getUUID());
+        MEMBERS.remove(player.getUUID());
+    }
+
+    static boolean isMember(ServerPlayer player) {
+        return MEMBERS.getOrDefault(player.getUUID(), false);
     }
 
     public static ChatType.Bound chatName(ServerPlayer player, ChatType.Bound bound) {
@@ -325,6 +332,9 @@ public final class EventApi {
         String nickname = profile.get("nickname").getAsString();
         String pronouns = profile.get("pronouns").getAsString();
         String role = profile.get("role").getAsString();
+        MEMBERS.put(player.getUUID(), profile.has("isMember")
+                ? profile.get("isMember").getAsBoolean()
+                : role.equals("Member") || role.equals("Committee"));
         int color = Integer.parseInt(profile.get("color").getAsString().substring(1), 16);
         CHAT_NAMES.put(player.getUUID(), coloredName(player.getScoreboardName(),
                 profile.get("color").getAsString(), role));

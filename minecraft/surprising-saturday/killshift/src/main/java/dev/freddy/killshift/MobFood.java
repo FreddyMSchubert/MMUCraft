@@ -28,6 +28,7 @@ final class MobFood {
         if (state == null || state.form.type() == EntityTypes.PLAYER) return InteractionResult.PASS;
 
         ItemStack stack = player.getItemInHand(hand);
+        if (AbilitySlot.trigger(stack)) return InteractionResult.PASS;
         boolean allowed = canEat(state, stack);
         if (!stack.has(DataComponents.FOOD) && !allowed) return InteractionResult.PASS;
         if (!allowed) {
@@ -45,6 +46,7 @@ final class MobFood {
         if (!(user instanceof ServerPlayer player)) return InteractionResult.PASS;
         ShapeState state = ShapeManager.get(player);
         if (state == null || state.form.type() == EntityTypes.PLAYER) return InteractionResult.PASS;
+        if (AbilitySlot.trigger(player.getItemInHand(hand))) return InteractionResult.PASS;
         var block = level.getBlockState(hit.getBlockPos()).getBlock();
         if (block instanceof CakeBlock || block instanceof CandleCakeBlock) {
             explainDiet(player, state, new ItemStack(Items.CAKE));

@@ -26,8 +26,6 @@ import net.minecraft.world.phys.Vec3;
 final class ShapeRuntime {
     private static final Identifier STARED_SPEED = id("stared_speed");
     private static final Identifier SQUID_FLEE_SPEED = id("squid_flee_speed");
-    private static final double CEILING_INSET = 0.08;
-    private static final double CEILING_PROBE = 0.5;
 
     private ShapeRuntime() {
     }
@@ -51,6 +49,7 @@ final class ShapeRuntime {
         }
 
         tickFlight(player, state);
+        tickLandMovement(player, traits);
         MobAbilities.tick(player, state);
         tickBreathing(player, state);
         tickClimbing(player, traits);
@@ -110,8 +109,8 @@ final class ShapeRuntime {
         }
 
         double nativeSpeed = state.form.attributes().getOrDefault(Attributes.FLYING_SPEED, 0.4);
-        float speed = traits.flying() ? (float) Math.clamp(nativeSpeed * 0.125, 0.01, 0.15) : 0.05F;
-        if (type == EntityTypes.GHAST || type == EntityTypes.HAPPY_GHAST) speed = 0.035F;
+        float speed = traits.flying() ? (float) Math.clamp(nativeSpeed * 0.0625, 0.01, 0.08) : 0.05F;
+        if (type == EntityTypes.GHAST || type == EntityTypes.HAPPY_GHAST) speed = 0.025F;
         if (state.form.type() == EntityTypes.BEE && state.angryTicks > 0) {
             speed *= 1.8F;
             if (state.view instanceof Bee bee) {
@@ -125,6 +124,17 @@ final class ShapeRuntime {
                 || oldSpeed != speed) {
             player.onUpdateAbilities();
         }
+    }
+
+    private static void tickLandMovement(ServerPlayer player, MobTraits traits) {
+        if (!traits.landImmobile() || traits.flying() || player.isInWater()) return;
+        Vec3 movement = player.getDeltaMovement();
+        double max = player.onGround() ? 0.0 : 0.025;
+        double horizontal = Math.hypot(movement.x, movement.z);
+        if (horizontal <= max) return;
+        double factor = max / horizontal;
+        player.setDeltaMovement(movement.x * factor, movement.y, movement.z * factor);
+        syncMotion(player);
     }
 
     private static void tickBreathing(ServerPlayer player, ShapeState state) {
@@ -154,22 +164,20 @@ final class ShapeRuntime {
             return;
         }
 
-        Vec3 movement = player.getDeltaMovement();
-        if (player.horizontalCollision) {
-            double climb = Math.min(0.22, Math.max(movement.y, 0.0) + 0.08);
-            player.setDeltaMovement(movement.x * 0.96, climb, movement.z * 0.96);
-            player.resetFallDistance();
-            syncMotion(player);
+        var input = player.getLastClientInput();
+        boolean moving = input.forward() || input.backward() || input.left() || input.right() || input.jump();
+        double inset = Math.min(0.2, player.getBbHeight() * 0.2);
+        AABB wallProbe = player.getBoundingBox().deflate(0.0, inset, 0.0).inflate(0.08, 0.0, 0.08);
+        if (!moving || (!player.horizontalCollision && player.level().noBlockCollision(player, wallProbe))) {
+            return;
         }
 
-        AABB ceilingProbe = player.getBoundingBox()
-                .deflate(CEILING_INSET, 0.0, CEILING_INSET)
-                .setMinY(player.getBoundingBox().maxY)
-                .setMaxY(player.getBoundingBox().maxY + CEILING_PROBE);
-        if (player.getLastClientInput().jump() && !player.level().noBlockCollision(player, ceilingProbe)) {
-            player.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 2, 1, false, false, false));
-            player.resetFallDistance();
-        }
+        Vec3 movement = player.getDeltaMovement();
+        double climb = Math.min(0.22, Math.max(movement.y, 0.0) + 0.08);
+        player.setDeltaMovement(movement.x * 0.96, climb, movement.z * 0.96);
+        player.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 2, 1, false, false, false));
+        player.resetFallDistance();
+        syncMotion(player);
     }
 
     private static void tickBouncing(ServerPlayer player, MobTraits traits) {

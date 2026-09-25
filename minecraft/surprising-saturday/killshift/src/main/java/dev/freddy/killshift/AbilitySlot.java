@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 
@@ -37,13 +38,16 @@ public final class AbilitySlot {
             }
         }
         ShapeState state = ShapeManager.get(player);
-        boolean hasAbility = state != null && MobAbilities.hasAbility(state.form.type());
+        Item ability = state == null ? null : MobAbilities.abilityItem(state.form.type());
+        boolean hasAbility = ability != null;
         ItemStack current = inventory.getItem(SLOT);
-        if (hasAbility ? trigger(current) : barrier(current)) return;
+        if (hasAbility ? trigger(current) && current.is(ability)
+                : barrier(current) && current.is(Items.BARRIER)) return;
 
-        ItemStack replacement = new ItemStack(hasAbility ? Items.BLAZE_ROD : Items.BARRIER);
-        replacement.set(DataComponents.CUSTOM_NAME, Component.literal(hasAbility
-                ? "Mob Ability - Right Click" : "No Mob Ability"));
+        ItemStack replacement = new ItemStack(hasAbility ? ability : Items.BARRIER);
+        replacement.set(DataComponents.CUSTOM_NAME, hasAbility
+                ? state.form.type().getDescription().copy().append(" Ability - Right Click")
+                : Component.literal("No Mob Ability"));
         CompoundTag tag = new CompoundTag();
         tag.putString(MARKER, hasAbility ? "killshift:ability" : "killshift:barrier");
         replacement.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));

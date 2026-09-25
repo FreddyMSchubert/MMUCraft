@@ -4,9 +4,9 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 ## Behavior that applies to every mob
 
-All listed mobs except the giant can become forms. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, movement, safe fall distance, and step height. The player scale follows the source eye height. The owner's display is smaller. Other players see the full-size display. Attack damage never falls below one.
+All listed mobs except the giant can become forms. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. The `/shift` command always uses a named player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. It converts mob movement speed for player controls. The player camera stands above the source model. The owner's display is tiny. Other players see the full-size display. Attack damage never falls below one.
 
-Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity copies the player pose and rotation. It keeps the source entity's equipment. A mob form cannot use player sprint or swim movement. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes.
+Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. A mob form cannot use player sprint or swim movement. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A killed mob drops no items or experience when the kill causes a shift. The killer moves to the dead entity's position.
 
 Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
 
@@ -20,31 +20,31 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 | Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is full. Fish and other water-only forms have no land movement speed. |
 | Water breathing | Axolotl, cod, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, zombie nautilus | Air stays full underwater. Air falls on land. The player takes drowning damage after the air supply ends. |
 | Sun-sensitive forms | Types in the game's `burn_in_daylight` tag | Sunlight ignites the player when the head slot is empty. |
-| Wall climbing | Spider, cave spider | Horizontal contact climbs a wall. Jump under a ceiling holds the player against it. |
+| Wall climbing | Spider, cave spider | Movement input near a wall gives a steady upward climb. |
 | Bounce movement | Slime, magma cube, sulfur cube | Ground movement has no horizontal speed. Air movement works, so the player must jump to travel. |
 | Lava-safe | Blaze, magma cube, strider, wither, wither skeleton | Fire is cleared. The form receives fire resistance. |
-| Jump and movement | Every form | Killshift copies the source attribute values. |
+| Jump and movement | Every form | Killshift copies jump strength and converts mob movement speed for player controls. Water-only forms can make a small horizontal nudge while jumping on land. |
 | No fall damage | Cat, chicken, and all forced-flight forms | Fall damage multiplier is zero. Chicken descent is also limited to a slow speed. |
 | Screen effect | Creeper, spider, cave spider, enderman, endermite, shulker | The server applies the creeper, spider, or invert post effect. It removes its effect when the form ends. |
 | Iron golem water movement | Iron golem | The form sinks in water, moves slowly, and keeps its air supply. |
 
 ## Active and reactive behavior
 
-The ninth hotbar slot holds a marked blaze rod when the form has an active ability. Right-click with it while aiming at air, a block, or an entity. The slot holds a marked barrier for all other forms, including the normal player. The item stays in that slot.
+The ninth hotbar slot holds a marked item that matches the active ability. For example, a creeper holds TNT. Right-click with it while aiming at air, a block, or an entity. The slot holds a marked barrier for all other forms, including the normal player. The item stays in that slot.
 
 | Form | Behavior |
 | --- | --- |
-| Bee | Damage makes the bee angry for 10 seconds. Anger increases flight speed. A melee hit poisons the target. Right-click a flower with an empty hand to heal. |
+| Bee | Damage makes the bee angry for 10 seconds. Anger increases flight speed. A melee hit poisons the target. Right-click a flower with the marked honeycomb to heal. |
 | Blaze | Right-click shoots a small fireball. |
 | Bogged | A bow receives a replacement arrow when no arrow remains. |
 | Breeze | Right-click shoots a wind charge. |
 | Cat | Nearby creepers lose their target and move away. |
 | Cave spider | A melee hit poisons the target. The form can climb walls and ceilings. |
 | Creaking | The player cannot move horizontally while another player looks directly at the form. |
-| Creeper | Right-click creates a mob explosion. A charged creeper has twice the blast radius. A player killed by this explosion still becomes the next form. |
+| Creeper | Right-click with the marked TNT to explode and die. A charged creeper has twice the blast radius. |
 | Elder guardian | A melee hit gives mining fatigue to the target. Right-click charges a stronger laser on a living target in sight. |
 | Ender dragon | Right-click shoots a dragon fireball. |
-| Enderman | Right-click throws an ender pearl without an item. Water and rain cause damage. Direct observation gives a large speed increase. |
+| Enderman | Right-click with the marked ender pearl to throw a pearl. Water and rain cause damage. Direct observation gives a large speed increase. |
 | Evoker | Right-click raises a line of evoker fangs. |
 | Ghast | Right-click shoots an explosive fireball. |
 | Glow squid | Right-click releases squid ink particles. |

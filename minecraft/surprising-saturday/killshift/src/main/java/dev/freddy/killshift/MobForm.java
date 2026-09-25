@@ -24,6 +24,7 @@ record MobForm(
         CompoundTag result = new CompoundTag();
         result.putString("type", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
         result.putDouble("scale", scale);
+        result.putInt("movementVersion", 1);
         CompoundTag values = new CompoundTag();
         attributes.forEach((attribute, value) ->
                 values.putDouble(BuiltInRegistries.ATTRIBUTE.getKey(attribute.value()).toString(), value));
@@ -41,6 +42,10 @@ record MobForm(
         for (Holder<Attribute> attribute : MobRegistry.COPIED_ATTRIBUTES) {
             String key = BuiltInRegistries.ATTRIBUTE.getKey(attribute.value()).toString();
             values.getDouble(key).ifPresent(value -> attributes.put(attribute, value));
+        }
+        if (type != EntityTypes.PLAYER && data.getIntOr("movementVersion", 0) == 0) {
+            attributes.computeIfPresent(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED,
+                    (attribute, speed) -> speed * MobRegistry.PLAYER_MOVEMENT_FACTOR);
         }
         return new MobForm(type, MobRegistry.traits(type), attributes,
                 Math.clamp(data.getDoubleOr("scale", 1.0), 0.0625, 16.0));

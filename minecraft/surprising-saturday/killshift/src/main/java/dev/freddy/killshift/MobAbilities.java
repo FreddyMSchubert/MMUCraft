@@ -1,7 +1,7 @@
 package dev.freddy.killshift;
 
 import java.util.Comparator;
-import java.util.Set;
+import java.util.Map;
 import dev.freddy.killshift.mixin.GuardianAttackAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,6 +34,7 @@ import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.WindCh
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
@@ -47,21 +48,35 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 final class MobAbilities {
-    private static final Set<EntityType<?>> ACTIVE = Set.of(
-            EntityTypes.BEE, EntityTypes.BLAZE, EntityTypes.BREEZE, EntityTypes.CREEPER,
-            EntityTypes.ENDER_DRAGON, EntityTypes.ENDERMAN, EntityTypes.EVOKER,
-            EntityTypes.GHAST, EntityTypes.GLOW_SQUID, EntityTypes.GUARDIAN,
-            EntityTypes.ELDER_GUARDIAN, EntityTypes.LLAMA, EntityTypes.MOOSHROOM,
-            EntityTypes.SHULKER, EntityTypes.SILVERFISH, EntityTypes.SNIFFER,
-            EntityTypes.SQUID, EntityTypes.TRADER_LLAMA, EntityTypes.WARDEN,
-            EntityTypes.WITCH, EntityTypes.WITHER
+    private static final Map<EntityType<?>, Item> ABILITY_ITEMS = Map.ofEntries(
+            Map.entry(EntityTypes.BEE, Items.HONEYCOMB),
+            Map.entry(EntityTypes.BLAZE, Items.FIRE_CHARGE),
+            Map.entry(EntityTypes.BREEZE, Items.WIND_CHARGE),
+            Map.entry(EntityTypes.CREEPER, Items.TNT),
+            Map.entry(EntityTypes.ENDER_DRAGON, Items.DRAGON_BREATH),
+            Map.entry(EntityTypes.ENDERMAN, Items.ENDER_PEARL),
+            Map.entry(EntityTypes.EVOKER, Items.TOTEM_OF_UNDYING),
+            Map.entry(EntityTypes.GHAST, Items.GHAST_TEAR),
+            Map.entry(EntityTypes.GLOW_SQUID, Items.GLOW_INK_SAC),
+            Map.entry(EntityTypes.GUARDIAN, Items.PRISMARINE_SHARD),
+            Map.entry(EntityTypes.ELDER_GUARDIAN, Items.PRISMARINE_CRYSTALS),
+            Map.entry(EntityTypes.LLAMA, Items.SNOWBALL),
+            Map.entry(EntityTypes.MOOSHROOM, Items.BOWL),
+            Map.entry(EntityTypes.SHULKER, Items.CHORUS_FRUIT),
+            Map.entry(EntityTypes.SILVERFISH, Items.INFESTED_STONE_BRICKS),
+            Map.entry(EntityTypes.SNIFFER, Items.TORCHFLOWER_SEEDS),
+            Map.entry(EntityTypes.SQUID, Items.INK_SAC),
+            Map.entry(EntityTypes.TRADER_LLAMA, Items.SNOWBALL),
+            Map.entry(EntityTypes.WARDEN, Items.ECHO_SHARD),
+            Map.entry(EntityTypes.WITCH, Items.GLASS_BOTTLE),
+            Map.entry(EntityTypes.WITHER, Items.WITHER_SKELETON_SKULL)
     );
 
     private MobAbilities() {
     }
 
-    static boolean hasAbility(EntityType<?> type) {
-        return ACTIVE.contains(type);
+    static Item abilityItem(EntityType<?> type) {
+        return ABILITY_ITEMS.get(type);
     }
 
     static void tick(ServerPlayer player, ShapeState state) {
@@ -103,11 +118,11 @@ final class MobAbilities {
 
         ItemStack held = player.getItemInHand(hand);
         if (AbilitySlot.barrier(held)) return InteractionResult.FAIL;
-        if (!AbilitySlot.trigger(held) && !held.isEmpty()) return InteractionResult.PASS;
+        if (!AbilitySlot.trigger(held)) return InteractionResult.PASS;
 
         ShapeState state = ShapeManager.get(player);
         if (state == null || state.abilityCooldown > 0 || !activate(serverLevel, player, state)) {
-            return InteractionResult.PASS;
+            return InteractionResult.FAIL;
         }
         return InteractionResult.SUCCESS_SERVER.withoutItem();
     }
@@ -123,9 +138,9 @@ final class MobAbilities {
         }
         ItemStack held = player.getItemInHand(hand);
         if (AbilitySlot.barrier(held)) return InteractionResult.FAIL;
-        if (!held.isEmpty() && !AbilitySlot.trigger(held)) return InteractionResult.PASS;
+        if (!AbilitySlot.trigger(held)) return InteractionResult.PASS;
         ShapeState state = ShapeManager.get(player);
-        if (state == null || state.abilityCooldown > 0) return InteractionResult.PASS;
+        if (state == null || state.abilityCooldown > 0) return InteractionResult.FAIL;
         EntityType<?> type = state.form.type();
         BlockPos pos = hit.getBlockPos();
         if (type == EntityTypes.SNIFFER && level.getBlockState(pos).is(Blocks.GRASS_BLOCK)) {
@@ -151,7 +166,7 @@ final class MobAbilities {
             return InteractionResult.SUCCESS_SERVER.withoutItem();
         }
         return activate(serverLevel, player, state)
-                ? InteractionResult.SUCCESS_SERVER.withoutItem() : InteractionResult.PASS;
+                ? InteractionResult.SUCCESS_SERVER.withoutItem() : InteractionResult.FAIL;
     }
 
     static InteractionResult onUseEntity(
@@ -166,11 +181,11 @@ final class MobAbilities {
         }
         ItemStack held = player.getItemInHand(hand);
         if (AbilitySlot.barrier(held)) return InteractionResult.FAIL;
-        if (!held.isEmpty() && !AbilitySlot.trigger(held)) return InteractionResult.PASS;
+        if (!AbilitySlot.trigger(held)) return InteractionResult.PASS;
         ShapeState state = ShapeManager.get(player);
-        if (state == null || state.abilityCooldown > 0) return InteractionResult.PASS;
+        if (state == null || state.abilityCooldown > 0) return InteractionResult.FAIL;
         return activate(serverLevel, player, state)
-                ? InteractionResult.SUCCESS_SERVER.withoutItem() : InteractionResult.PASS;
+                ? InteractionResult.SUCCESS_SERVER.withoutItem() : InteractionResult.FAIL;
     }
 
     static void onDamage(
@@ -257,11 +272,12 @@ final class MobAbilities {
         } else if (type == EntityTypes.EVOKER) {
             summonFangs(level, player, direction);
         } else if (type == EntityTypes.CREEPER) {
-            state.abilityCooldown = 100;
             float radius = state.view instanceof net.minecraft.world.entity.monster.Creeper creeper
                     && creeper.isPowered() ? 6.0F : 3.0F;
+            AbilitySlot.clear(player);
             level.explode(player, player.getX(), player.getY(), player.getZ(), radius,
                     false, Level.ExplosionInteraction.MOB);
+            if (player.isAlive()) player.kill(level);
         } else if (type == EntityTypes.WARDEN) {
             state.abilityCooldown = 80;
             sonicBoom(level, player);

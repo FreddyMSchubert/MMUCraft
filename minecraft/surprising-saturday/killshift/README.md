@@ -29,22 +29,23 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 
 - A direct mob kill changes the killer into the dead mob.
 - A projectile kill counts when Minecraft reports the player as the projectile owner.
+- The killer moves to the dead entity's position.
 - A transformed player returns to normal on death.
 - A player kill gives the killer a player form with the dead player's skin.
 - If the dead player has a mob form, the killer gets that mob form and its appearance.
 - A form stays active when the player leaves and rejoins.
 - On a form change, the old display stays in the world. It receives the player's health and effects, and its mob AI resumes.
-- A mob still creates its normal loot.
-- Mob equipment is copied into the killer's inventory.
+- A mob killed for a shift drops no items or experience.
+- The display keeps the source mob's equipment. The kill does not add that equipment to the killer's inventory.
 - Every form has at least one point of attack damage.
 - Each new sneak press plays the form's ambient sound. Holding sneak plays it once.
 - A player respawns near the death location in the same dimension. Members and Committee have a 100-block radius. Other players have a 200-block radius.
 
 ## Movement and combat
 
-Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. The player scale sets the camera near the source eye height. It also changes the player hitbox. A mob's movement attribute and a player's movement attribute can produce different travel speeds.
+Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. It converts mob movement speed for player controls. The player scale places the camera above the source model. It also changes the player hitbox.
 
-Aquatic forms gain full water movement efficiency. Fish and bees have no land movement speed. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly. Mob forms cannot use player sprint or swim movement. Iron golems sink in water and keep their air supply.
+Aquatic forms gain full water movement efficiency. Fish and bees have no land movement speed. Water-only forms can jump on land but gain little horizontal motion while airborne. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly. Mob forms cannot use player sprint or swim movement. Iron golems sink in water and keep their air supply.
 
 Killshift keeps attack damage at one or more. A weak form can therefore kill another mob and change form again.
 
@@ -54,7 +55,7 @@ Every form can eat beetroot and beetroot soup. If a player tries to eat another 
 
 Killshift makes the real player invisible. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients. The form retains the source entity's saved visual data, such as its variant.
 
-Other players see the full-size copy at the player position. The owner receives a smaller scale for the copy. The smaller model stays below the first-person camera and remains visible in third-person view. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
+Other players see the full-size copy at the player position. The owner receives a tiny copy. Killshift keeps the source cube size and baby age. The model stays below the first-person camera and remains visible in third-person view. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
 
 Attacks against the visible copy are redirected to its owner. The copy cannot push the player and cannot change player movement.
 
@@ -62,14 +63,14 @@ Killshift does not save active display entities with the world. It removes old o
 
 The locator bar shows players in the same dimension at any distance. Sneaking, invisibility, equipment, spectator mode, and transformation do not hide their icons.
 
-The ninth hotbar slot always contains a marked item. It holds a blaze rod for forms with an active ability and a barrier for all other forms, including the normal player. Right-click with the rod to use the ability while aiming at air, a block, or an entity. The item stays in that slot.
+The ninth hotbar slot always contains a marked item. Each active ability has a matching item, such as TNT for creepers and an ender pearl for endermen. Other forms hold a barrier. Right-click with the marked item while aiming at air, a block, or an entity. The item stays in that slot. A creeper dies after its explosion.
 
 The server adds creeper, spider, and invert post effects to matching forms. It removes a form's effect when the form ends. A vanilla 26.3 client can display these effects.
 
 ## Code structure
 
 - `Killshift` registers Fabric events.
-- `ShapeManager` owns transform, reset, combat redirection, equipment copy, and attribute lifecycle.
+- `ShapeManager` owns transform, reset, combat redirection, and attribute lifecycle.
 - `MobRegistry` assigns passive traits and form statistics.
 - `ShapeRuntime` applies passive behavior on each server tick.
 - `ShapeView` owns the world model, collision rule, and owner-only scale.
@@ -105,7 +106,7 @@ Players with gamemaster permission can use these forms:
 /shift Bob Alice
 ```
 
-The first form shifts the administrator into a mob. The second shifts Alice into a mob. The third copies Alice's current form to the administrator. The fourth copies Alice's current form to Bob. Names must refer to online players. These commands do not record a kill or change event score.
+The first form shifts the administrator into a mob. The second shifts Alice into a mob. The third gives the administrator a mannequin with Alice's skin. The fourth gives Bob a mannequin with Alice's skin. Alice's current mob form does not affect these commands. Names must refer to online players. These commands do not record a kill or change event score.
 
 ## Licensing
 

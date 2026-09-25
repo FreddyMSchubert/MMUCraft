@@ -2,6 +2,8 @@ package dev.freddy.killshift;
 
 import java.util.List;
 import java.util.UUID;
+import dev.freddy.killshift.mixin.AgeableMobAgeAccessor;
+import dev.freddy.killshift.mixin.TadpoleAgeAccessor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
@@ -10,9 +12,12 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
+import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.decoration.Mannequin;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -43,7 +48,10 @@ public final class ShapeView {
         TagValueOutput output = TagValueOutput.createWithContext(
                 ProblemReporter.DISCARDING, source.level().registryAccess());
         original.saveWithoutId(output);
-        return output.buildResult();
+        CompoundTag data = output.buildResult();
+        if (source instanceof AbstractCubeMob cube) data.putInt("killshiftCubeSize", cube.getSize());
+        if (source instanceof AgeableMob ageable) data.putInt("killshiftAge", ageable.getAge());
+        return data;
     }
 
     static boolean create(ServerPlayer player, ShapeState state) {
@@ -55,6 +63,17 @@ public final class ShapeView {
         if (!state.viewData.isEmpty()) {
             view.load(TagValueInput.create(ProblemReporter.DISCARDING,
                     player.level().registryAccess(), state.viewData.copy()));
+        }
+        if (view instanceof AbstractCubeMob cube) {
+            int size = state.viewData.getIntOr("killshiftCubeSize", cube.getSize());
+            cube.setSize(Math.max(1, size), true);
+        }
+        if (view instanceof AgeableMob ageable) {
+            ageable.setAge(state.viewData.getIntOr("killshiftAge", ageable.getAge()));
+            ((AgeableMobAgeAccessor) ageable).killshift$setAgeLocked(true);
+        }
+        if (view instanceof Tadpole tadpole) {
+            ((TadpoleAgeAccessor) tadpole).killshift$setAgeLocked(true);
         }
         view.setUUID(UUID.randomUUID());
         prepare(view, player);
@@ -76,6 +95,7 @@ public final class ShapeView {
             remove(state);
             create(player, state);
             view = state.view;
+            if (view != null) ShapeManager.fitCameraAboveView(player, view);
         }
         if (view == null) {
             return;
@@ -85,10 +105,14 @@ public final class ShapeView {
         view.setDeltaMovement(player.getDeltaMovement());
         view.snapTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
         view.setYHeadRot(player.getYHeadRot());
-        view.setPose(player.getPose());
+        if (state.form.type() == EntityTypes.PLAYER) view.setPose(player.getPose());
         view.setShiftKeyDown(player.isShiftKeyDown());
         view.setSprinting(player.isSprinting());
         view.setSwimming(player.isSwimming());
+        if (view instanceof AgeableMob ageable) {
+            int age = state.viewData.getIntOr("killshiftAge", state.viewData.getIntOr("Age", 0));
+            if (ageable.getAge() != age) ageable.setAge(age);
+        }
 
         // ponytail: Vanilla can overwrite this scale. Filter attribute packets if traffic grows.
         sendSelfScale(player, view);
@@ -129,6 +153,14 @@ public final class ShapeView {
         view.setNoGravity(false);
         view.setPermanentlyInvulnerable(false);
         view.setSilent(false);
+        if (view instanceof Tadpole tadpole) {
+            ((TadpoleAgeAccessor) tadpole).killshift$setAgeLocked(
+                    state.viewData.getBooleanOr("AgeLocked", false));
+        }
+        if (view instanceof AgeableMob ageable) {
+            ((AgeableMobAgeAccessor) ageable).killshift$setAgeLocked(
+                    state.viewData.getBooleanOr("AgeLocked", false));
+        }
         view.setDeltaMovement(player.getDeltaMovement());
         view.removeAllEffects();
         for (MobEffectInstance effect : player.getActiveEffects()) {
@@ -190,7 +222,7 @@ public final class ShapeView {
         AttributeInstance self = new AttributeInstance(Attributes.SCALE, ignored -> {});
         self.replaceFrom(original);
         self.removeModifiers();
-        double factor = Math.min(0.5, player.getEyeHeight() * 0.75 / view.getBbHeight());
+        double factor = Math.min(0.1, 0.12 / Math.max(0.01, view.getBbHeight()));
         self.setBaseValue(Math.max(0.0625, original.getValue() * factor));
         player.connection.send(new ClientboundUpdateAttributesPacket(view.getId(), List.of(self)));
     }

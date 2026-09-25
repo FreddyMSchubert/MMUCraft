@@ -3,7 +3,10 @@
 	"package": "dev.freddy.killshift.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
+		"AgeableMobAgeAccessor",
 		"MobMixin",
+		"LivingEntityLootMixin",
+		"TadpoleAgeAccessor",
 		"EventChatNameMixin",
 		"ServerPlayerShapeMixin",
 		"AbilitySlotMixin",

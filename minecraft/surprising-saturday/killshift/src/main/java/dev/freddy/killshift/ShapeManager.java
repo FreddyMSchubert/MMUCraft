@@ -12,7 +12,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityType;
@@ -25,8 +24,8 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public final class ShapeManager {
     private static final Map<UUID, ShapeState> SHAPES = new HashMap<>();
@@ -51,18 +50,23 @@ public final class ShapeManager {
         if (dead instanceof ServerPlayer player) {
             if (killer != player) {
                 EventApi.completed(killer, player);
-                if (victimForm == null) transform(killer, player);
-                else transform(killer, victimForm.form, victimForm.viewData, null);
+                if (victimForm == null) transform(killer, player, true);
+                else transform(killer, victimForm.form, victimForm.viewData, player.position());
             }
         } else if (dead instanceof Mob mob) {
             if (!MobRegistry.supports(mob.getType())) return;
             EventApi.completed(killer, mob);
-            transform(killer, mob);
+            transform(killer, mob, true);
         }
     }
 
     static boolean allowDamage(LivingEntity target, DamageSource source, float amount) {
         return ownerOf(target) == null;
+    }
+
+    public static boolean consumesDeathLoot(LivingEntity dead, DamageSource source) {
+        return dead instanceof Mob mob && MobRegistry.supports(mob.getType())
+                && source.getEntity() instanceof ServerPlayer;
     }
 
     static InteractionResult onAttack(
@@ -162,6 +166,7 @@ public final class ShapeManager {
         player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
+        else fitCameraAboveView(player, state.view);
         AbilitySlot.sync(player);
     }
 
@@ -182,22 +187,21 @@ public final class ShapeManager {
         return state != null && state.form.type() == type;
     }
 
-    private static void transform(ServerPlayer player, LivingEntity source) {
+    private static void transform(ServerPlayer player, LivingEntity source, boolean moveToSource) {
         transform(player, MobRegistry.createForm(source), ShapeView.snapshot(source),
-                source instanceof Mob mob ? mob : null);
+                moveToSource ? source.position() : null);
     }
 
     static void shiftTo(ServerPlayer target, ServerPlayer source) {
-        ShapeState sourceForm = get(source);
-        if (sourceForm == null) transform(target, source);
-        else transform(target, sourceForm.form, sourceForm.viewData, null);
+        transform(target, new MobForm(EntityTypes.PLAYER, MobRegistry.traits(EntityTypes.PLAYER), Map.of(), 1.0),
+                ShapeView.snapshot(source), null);
     }
 
     static void shiftTo(ServerPlayer target, Mob source) {
-        transform(target, source);
+        transform(target, source, false);
     }
 
-    private static void transform(ServerPlayer player, MobForm form, CompoundTag viewData, Mob source) {
+    private static void transform(ServerPlayer player, MobForm form, CompoundTag viewData, Vec3 location) {
         float health = player.getHealth();
         ShapeView.release(player, get(player));
         clear(player);
@@ -206,9 +210,10 @@ public final class ShapeManager {
 
         applyAttributes(player, form);
         player.setHealth(Math.min(health, player.getMaxHealth()));
-        if (source != null) copyEquipment(player, source);
+        if (location != null) player.teleportTo(location.x, location.y, location.z);
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
+        else fitCameraAboveView(player, state.view);
         AbilitySlot.sync(player);
     }
 
@@ -257,6 +262,14 @@ public final class ShapeManager {
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     }
 
+    static void fitCameraAboveView(ServerPlayer player, LivingEntity view) {
+        if (view == null || get(player).form.type() == EntityTypes.PLAYER) return;
+        double eyeHeight = EntityTypes.PLAYER.getDimensions().eyeHeight();
+        double target = Math.max(view.getEyeHeight() * 1.1, view.getBbHeight() * 1.25);
+        double scale = Math.clamp(target / eyeHeight, 0.0625, 16.0);
+        add(player, Attributes.SCALE, SCALE, scale - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+    }
+
     private static void removeAttributes(ServerPlayer player) {
         for (Holder<Attribute> attribute : MobRegistry.COPIED_ATTRIBUTES) remove(player, attribute, FORM);
         remove(player, Attributes.SCALE, SCALE);
@@ -282,15 +295,6 @@ public final class ShapeManager {
         AttributeInstance instance = player.getAttribute(attribute);
         if (instance != null) {
             instance.removeModifier(id);
-        }
-    }
-
-    private static void copyEquipment(ServerPlayer player, Mob source) {
-        for (EquipmentSlot slot : EquipmentSlot.VALUES) {
-            ItemStack stack = source.getItemBySlot(slot);
-            if (!stack.isEmpty()) {
-                player.getInventory().add(stack.copy());
-            }
         }
     }
 

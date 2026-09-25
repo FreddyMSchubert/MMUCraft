@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
 final class MobRegistry {
+    static final double PLAYER_MOVEMENT_FACTOR = 0.4;
     static final List<Holder<Attribute>> COPIED_ATTRIBUTES = List.of(
             Attributes.MAX_HEALTH, Attributes.ARMOR, Attributes.ARMOR_TOUGHNESS,
             Attributes.ATTACK_DAMAGE, Attributes.ATTACK_KNOCKBACK, Attributes.ATTACK_SPEED,
@@ -91,13 +92,18 @@ final class MobRegistry {
         }
         values.put(Attributes.MAX_HEALTH, Math.max(1.0, source.getMaxHealth()));
         values.put(Attributes.ATTACK_DAMAGE, Math.max(1.0, values.getOrDefault(Attributes.ATTACK_DAMAGE, 1.0)));
+        if (type != EntityTypes.PLAYER) {
+            values.computeIfPresent(Attributes.MOVEMENT_SPEED,
+                    (attribute, speed) -> speed * PLAYER_MOVEMENT_FACTOR);
+        }
         if (traits.landImmobile()) values.put(Attributes.MOVEMENT_SPEED, 0.0);
         if (traits.aquatic()) values.put(Attributes.WATER_MOVEMENT_EFFICIENCY, 1.0);
         if (traits.flying() || type == EntityTypes.CHICKEN || type == EntityTypes.CAT) {
             values.put(Attributes.FALL_DAMAGE_MULTIPLIER, 0.0);
         }
         double scale = type == EntityTypes.PLAYER ? 1.0 : Math.clamp(
-                source.getEyeHeight() / EntityTypes.PLAYER.getDimensions().eyeHeight(), 0.0625, 16.0);
+                Math.max(source.getEyeHeight() * 1.1, source.getBbHeight() * 1.25)
+                        / EntityTypes.PLAYER.getDimensions().eyeHeight(), 0.0625, 16.0);
         return new MobForm(type, traits, values, scale);
     }
 

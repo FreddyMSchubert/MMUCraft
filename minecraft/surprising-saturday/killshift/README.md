@@ -36,6 +36,8 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - A form stays active when the player leaves and rejoins.
 - On a form change, the old display stays in the world. It receives the player's health and effects, and its mob AI resumes.
 - A mob killed for a shift drops no items or experience.
+- Each new creeper has a 20% chance to be charged. Each spawned zombie has a 1% chance to become a giant.
+- Giants use zombie pursuit and target goals. They keep giant health, speed, and attack damage.
 - The display keeps the source mob's equipment. The kill does not add that equipment to the killer's inventory.
 - Every form has at least one point of attack damage.
 - Each new sneak press plays the form's ambient sound. Holding sneak plays it once.

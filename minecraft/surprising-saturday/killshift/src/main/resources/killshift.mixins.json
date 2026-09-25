@@ -5,6 +5,9 @@
 	"mixins": [
 		"AgeableMobAgeAccessor",
 		"MobMixin",
+		"ChargedCreeperSpawnMixin",
+		"GiantZombieSpawnMixin",
+		"GiantZombieAiMixin",
 		"LivingEntityLootMixin",
 		"TadpoleAgeAccessor",
 		"EventChatNameMixin",

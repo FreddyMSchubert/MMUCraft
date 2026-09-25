@@ -42,5 +42,6 @@ public final class Killshift implements ModInitializer {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> EventApi.playerLeft(handler.getPlayer()));
         EntityTrackingEvents.START_TRACKING.register(ShapeView::onStartTracking);
         ServerEntityEvents.ENTITY_LOAD.register(ShapeView::onEntityLoad);
+        ServerEntityEvents.ENTITY_LOAD.register(GiantSpawns::onEntityLoad);
     }
 }

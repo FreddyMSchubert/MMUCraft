@@ -175,7 +175,7 @@ public final class ShapeManager {
         player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
-        else fitCameraAboveView(player, state.view);
+        else fitCameraToViewEyes(player, state.view);
         AbilitySlot.sync(player);
     }
 
@@ -227,7 +227,7 @@ public final class ShapeManager {
         if (location != null) player.teleportTo(location.x, location.y, location.z);
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
-        else fitCameraAboveView(player, state.view);
+        else fitCameraToViewEyes(player, state.view);
         AbilitySlot.sync(player);
     }
 
@@ -280,16 +280,14 @@ public final class ShapeManager {
             if (instance != null) add(player, attribute, FORM,
                     value - instance.getBaseValue(), AttributeModifier.Operation.ADD_VALUE);
         });
-        // Camera clearance depends on the rendered view, which is created afterwards.
+        // The view's actual eye height is available after it is created.
     }
 
-    static void fitCameraAboveView(ServerPlayer player, LivingEntity view) {
+    static void fitCameraToViewEyes(ServerPlayer player, LivingEntity view) {
         ShapeState state = get(player);
         if (view == null || state == null || state.form.type() == EntityTypes.PLAYER) return;
         double eyeHeight = EntityTypes.PLAYER.getDimensions().eyeHeight();
-        double renderedHeight = view.getBbHeight() * ShapeView.SELF_VIEW_SCALE;
-        double target = renderedHeight * 1.5 + 0.3;
-        double scale = Math.clamp(target / eyeHeight, 0.0625, 16.0);
+        double scale = Math.clamp(view.getEyeHeight() / eyeHeight, 0.0625, 16.0);
         add(player, Attributes.SCALE, SCALE, scale - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     }
 

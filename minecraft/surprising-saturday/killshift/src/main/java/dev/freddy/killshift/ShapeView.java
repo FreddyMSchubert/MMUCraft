@@ -102,7 +102,7 @@ public final class ShapeView {
             remove(state);
             create(player, state);
             view = state.view;
-            if (view != null) ShapeManager.fitCameraAboveView(player, view);
+            if (view != null) ShapeManager.fitCameraToViewEyes(player, view);
         }
         if (view == null) {
             return;

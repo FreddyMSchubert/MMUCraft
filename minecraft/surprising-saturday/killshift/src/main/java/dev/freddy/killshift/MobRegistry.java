@@ -102,8 +102,7 @@ final class MobRegistry {
             values.put(Attributes.FALL_DAMAGE_MULTIPLIER, 0.0);
         }
         double scale = type == EntityTypes.PLAYER ? 1.0 : Math.clamp(
-                Math.max(source.getEyeHeight() * 1.1, source.getBbHeight() * 1.25)
-                        / EntityTypes.PLAYER.getDimensions().eyeHeight(), 0.0625, 16.0);
+                source.getEyeHeight() / EntityTypes.PLAYER.getDimensions().eyeHeight(), 0.0625, 16.0);
         return new MobForm(type, traits, values, scale);
     }
 

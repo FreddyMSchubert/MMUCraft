@@ -161,7 +161,11 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 wait_for_proxy() {
-	deadline=$(( $(date +%s) + 30 ))
+	if [ "$1" = ready ]; then
+		deadline=$(( $(date +%s) + ${DEPLOY_WAIT_TIMEOUT:-600} ))
+	else
+		deadline=$(( $(date +%s) + 30 ))
+	fi
 	while [ "$(date +%s)" -lt "$deadline" ]; do
 		ack=$(cat data/velocity/deployment-drained 2>/dev/null || true)
 		case "$ack" in
@@ -270,10 +274,40 @@ if [ "$had_players" = true ]; then
 fi
 [ "$proxy_drained" = true ] || graceful_failure "Velocity did not confirm that all players disconnected"
 
+# Seed the state file when upgrading from a release that did not write one.
+if [ ! -f data/api/event-control.json ] && printf '%s\n' "$running_services" | grep -qx api; then
+	old_event_state=$(dc exec -T api node -e '
+		fetch("http://127.0.0.1:8080/api/internal/velocity/event-control", {
+			headers: { authorization: "Bearer " + process.env.VELOCITY_API_SECRET },
+			signal: AbortSignal.timeout(5000),
+		}).then(async response => {
+			if (!response.ok) throw new Error(String(response.status));
+			process.stdout.write((await response.json()).desiredRunning ? "true" : "false");
+		}).catch(() => process.exit(1));
+	' 2>/dev/null || true)
+	case "$old_event_state" in
+		true|false)
+			printf '{"desiredRunning":%s}\n' "$old_event_state" > data/api/event-control.json.tmp
+			chmod 644 data/api/event-control.json.tmp
+			mv data/api/event-control.json.tmp data/api/event-control.json ;;
+	esac
+fi
+
+# Carry the old proxy's event choices into the API database on the first upgrade.
+if [ -f data/velocity/event-players.txt ]; then
+	cp data/velocity/event-players.txt data/api/event-players-legacy.txt
+	chmod 664 data/api/event-players-legacy.txt
+fi
+
 # Keep the event controller from restarting the old event image during the update.
 dc stop event-controller || true
 dc --profile event stop surprising-saturday || true
 dc --profile event rm -f surprising-saturday || true
+dc --profile event create surprising-saturday
+if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
+	dc --profile event start surprising-saturday
+fi
+dc up -d --no-deps event-controller
 
 # Update the proxy first so it can show progress while the API and main server restart.
 shutdown_attempted=true
@@ -327,12 +361,15 @@ if [ -s "$legacy_bans" ]; then
 fi
 
 # Start the release and wait for the services players need.
-dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web minecraft velocity
-dc --profile event create surprising-saturday
-dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" event-controller
+if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
+	dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web velocity
+	dc up -d --no-deps minecraft || echo "Main server could not start; checking the active route." >&2
+else
+	dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web minecraft velocity
+fi
 # Compose cannot detect changes inside configuration bind mounts.
 dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" nginx
-wait_for_proxy ready || { echo "Velocity has not confirmed that main is ready." >&2; exit 1; }
+wait_for_proxy ready || { echo "Velocity has not confirmed that the active route is ready." >&2; exit 1; }
 clear_update
 announce_update_complete || graceful_failure "Could not send the update completion notice"
 

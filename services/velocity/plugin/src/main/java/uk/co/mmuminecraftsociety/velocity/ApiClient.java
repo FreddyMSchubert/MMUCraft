@@ -32,6 +32,10 @@ final class ApiClient {
         return post("/api/internal/velocity/sync", request, SyncResponse.class);
     }
 
+    CompletableFuture<ConnectedResponse> connected(String uuid, String serverName) {
+        return post("/api/internal/velocity/connected", new ConnectedRequest(uuid, serverName), ConnectedResponse.class);
+    }
+
     private <T> CompletableFuture<T> post(String path, Object body, Class<T> responseType) {
         HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(4))
@@ -55,7 +59,12 @@ final class ApiClient {
 
     record AccessRequest(String uuid, String username) { }
 
-    record AccessDecision(String status, String code, Long expiresAtUnixMs, String websiteUrl) { }
+    record ConnectedRequest(String uuid, String serverName) { }
+
+    record ConnectedResponse(boolean ok) { }
+
+    record AccessDecision(String status, String code, Long expiresAtUnixMs, String websiteUrl,
+                          String preferredServerName) { }
 
     record SyncRequest(
             List<ServerHealth> servers,
@@ -77,7 +86,7 @@ final class ApiClient {
 
     record BackendServer(String name, String address) { }
 
-    record Route(String revision, String targetServerName) { }
+    record Route(String revision, String targetServerName, boolean eventOpen) { }
 
     record MoveCommand(long id, String playerUuid, String targetServerName) { }
 

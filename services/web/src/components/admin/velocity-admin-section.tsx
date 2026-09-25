@@ -287,8 +287,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				<div className="adminSectionHeader">
 					<h3>Online players</h3>
 					<p>
-						Move an online player to a healthy server. The move lasts until the next
-						route change or disconnect.
+						Save an online player’s server choice in the API. The choice stays after
+						disconnect. A server that is starting receives the player when it is ready.
 					</p>
 				</div>
 				<div className="adminTableWrap">

@@ -558,6 +558,25 @@ export const velocityServers = sqliteTable(
 	],
 );
 
+export const velocityPlayerServers = sqliteTable(
+	'velocity_player_servers',
+	{
+		player_uuid: text('player_uuid').primaryKey(),
+		preferred_server: text('preferred_server').notNull(),
+		last_connected_server: text('last_connected_server'),
+	},
+	(table) => [
+		check(
+			'velocity_player_servers_preferred_check',
+			sql`${table.preferred_server} in ('main', 'surprising-saturday')`,
+		),
+		check(
+			'velocity_player_servers_last_check',
+			sql`${table.last_connected_server} in ('main', 'surprising-saturday')`,
+		),
+	],
+);
+
 export const velocitySchedules = sqliteTable(
 	'velocity_schedules',
 	{
@@ -691,6 +710,7 @@ export const schema = {
 	launchSettings,
 	velocitySettings,
 	velocityServers,
+	velocityPlayerServers,
 	velocitySchedules,
 	surprisingSaturdayEvents,
 	surprisingSaturdayCompletions,

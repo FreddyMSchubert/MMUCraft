@@ -281,6 +281,13 @@
       "when": 1790264754316,
       "tag": "0039_real_baron_strucker",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "6",
+      "when": 1790364526794,
+      "tag": "0040_white_norman_osborn",
+      "breakpoints": true
     }
   ]
 }

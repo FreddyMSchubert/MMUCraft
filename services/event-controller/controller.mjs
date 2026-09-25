@@ -1,8 +1,10 @@
 import http from 'node:http';
+import { readFile } from 'node:fs/promises';
 
 const name = process.env.EVENT_CONTAINER_NAME || 'kubecraft-surprising-saturday-1';
 const api = process.env.API_BASE_URL || 'http://api:8080';
 const secret = process.env.INTERNAL_API_SECRET;
+const statePath = process.env.EVENT_CONTROL_STATE_PATH || '/state/event-control.json';
 let lastError = '';
 let busy = false;
 let emptySince = 0;
@@ -28,21 +30,28 @@ async function reconcile() {
 	if (busy) return;
 	busy = true;
 	try {
+		const path = `/containers/${encodeURIComponent(name)}`;
+		const container = await docker('GET', `${path}/json`);
+		const labels = container.Config.Labels;
+		if (labels['com.docker.compose.project'] !== 'kubecraft' || labels['com.docker.compose.service'] !== 'surprising-saturday')
+			throw new Error('Event container labels do not match the expected Compose service');
+		const cached = await readFile(statePath, 'utf8').then((text) => JSON.parse(text).desiredRunning).catch(() => null);
+		let running = container.State.Running;
+		if (cached === true && !running) {
+			await docker('POST', `${path}/start`);
+			console.log('Started Surprising Saturday');
+			running = true;
+		}
 		const response = await fetch(`${api}/api/internal/velocity/event-control`, {
 			headers: { authorization: `Bearer ${secret}` }, signal: AbortSignal.timeout(5_000),
 		});
 		if (!response.ok) throw new Error(`Event control API returned ${response.status}`);
 		const state = await response.json();
 		emptySince = !state.desiredRunning && state.canStop ? emptySince || Date.now() : 0;
-		const path = `/containers/${encodeURIComponent(name)}`;
-		const container = await docker('GET', `${path}/json`);
-		const labels = container.Config.Labels;
-		if (labels['com.docker.compose.project'] !== 'kubecraft' || labels['com.docker.compose.service'] !== 'surprising-saturday')
-			throw new Error('Event container labels do not match the expected Compose service');
-		if (state.desiredRunning && !container.State.Running) {
+		if (state.desiredRunning && !running) {
 			await docker('POST', `${path}/start`);
 			console.log('Started Surprising Saturday');
-		} else if (emptySince && Date.now() - emptySince >= 5_000 && container.State.Running) {
+		} else if (emptySince && Date.now() - emptySince >= 5_000 && running) {
 			await docker('POST', `${path}/stop?t=120`);
 			console.log('Stopped Surprising Saturday after player transfer');
 		}

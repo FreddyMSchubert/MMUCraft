@@ -4,7 +4,7 @@
 	"progressLabel": "Renamed",
 	"progressUnit": "tool",
 	"baseCost": 6,
-	"rewardPerIteration": 4,
+	"rewardPerIteration": 0.3,
 	"minimum": 1,
 	"maximum": 4,
 	"emoji": "🏷️",

@@ -23,10 +23,6 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,7 +43,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
         description = "API-controlled authentication and backend routing for MMUcraft"
 )
 public final class MmuCraftVelocity {
-    private static final Path EVENT_PLAYERS = Path.of("/server/event-players.txt");
     private final ProxyServer proxy;
     private final Logger logger;
     private final ApiClient api;
@@ -56,7 +51,7 @@ public final class MmuCraftVelocity {
     private final Map<String, RegisteredServer> managedServers = new ConcurrentHashMap<>();
     private final Map<String, ApiClient.ServerHealth> health = new ConcurrentHashMap<>();
     private final Map<UUID, String> manualDestinations = new ConcurrentHashMap<>();
-    private final Set<UUID> eventPlayers = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, String> loginDestinations = new ConcurrentHashMap<>();
     private final Set<Long> acknowledgedCommands = ConcurrentHashMap.newKeySet();
     private volatile ApiClient.Route route;
     private volatile boolean maintenanceMode;
@@ -75,7 +70,6 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent ignored) {
-        loadEventPlayers();
         for (String command : List.of("glist", "send", "server", "shutdown", "velocity")) {
             proxy.getCommandManager().unregister(command);
         }
@@ -117,6 +111,10 @@ public final class MmuCraftVelocity {
                         event.setResult(ResultedEvent.ComponentResult.denied(
                                 Messages.access(access, event.getPlayer().getUsername())
                         ));
+                    } else {
+                        loginDestinations.put(event.getPlayer().getUniqueId(),
+                                "surprising-saturday".equals(access.preferredServerName())
+                                        ? "surprising-saturday" : "main");
                     }
                     return null;
                 });
@@ -176,12 +174,18 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
-        rememberServer(event.getPlayer().getUniqueId(), event.getServer().getServerInfo().getName());
+        loginDestinations.put(event.getPlayer().getUniqueId(), event.getServer().getServerInfo().getName());
+        api.connected(event.getPlayer().getUniqueId().toString(), event.getServer().getServerInfo().getName())
+                .exceptionally(error -> {
+                    logger.warn("Could not save {}'s server: {}", event.getPlayer().getUsername(), errorMessage(error));
+                    return null;
+                });
     }
 
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
         manualDestinations.remove(event.getPlayer().getUniqueId());
+        loginDestinations.remove(event.getPlayer().getUniqueId());
     }
 
     @Subscribe
@@ -222,7 +226,7 @@ public final class MmuCraftVelocity {
             if (message == null) return;
             players.forEach(player -> player.disconnect(message));
             if (proxy.getPlayerCount() == 0) state.acknowledge(deploymentHadPlayers,
-                    configured && route != null && mainOnline());
+                    configured && route != null && routeTargetOnline());
         } catch (IOException error) {
             logger.error("Could not read or acknowledge deployment state", error);
         }
@@ -365,12 +369,9 @@ public final class MmuCraftVelocity {
         }
 
         Player targetPlayer = player.get();
+        RegisteredServer target = managedServers.get(command.targetServerName());
+        if (target == null || !serverOnline(command.targetServerName())) return;
         manualDestinations.put(targetPlayer.getUniqueId(), command.targetServerName());
-        RegisteredServer target = targetFor(targetPlayer);
-        if (target == null) {
-            manualDestinations.remove(targetPlayer.getUniqueId(), command.targetServerName());
-            return;
-        }
         if (targetPlayer.getCurrentServer()
                 .map(connection -> connection.getServerInfo().equals(target.getServerInfo()))
                 .orElse(false)) {
@@ -408,14 +409,15 @@ public final class MmuCraftVelocity {
         UUID uuid = player.getUniqueId();
         String name = manualDestinations.get(uuid);
         if (name == null && player.getCurrentServer().isEmpty()) {
-            boolean eventOpen = route != null && !route.revision().startsWith("warmup:");
-            name = eventPlayers.contains(uuid) && eventOpen ? "surprising-saturday" : "main";
+            name = loginDestinations.getOrDefault(uuid, "main");
+            if ("surprising-saturday".equals(name) && (route == null || !route.eventOpen())) name = "main";
         }
         if (name == null && route != null) name = route.targetServerName();
-        if (name != null && !health.getOrDefault(
-                name,
-                new ApiClient.ServerHealth(name, false, null, null)
-        ).online()) name = "main";
+        if (name != null && !serverOnline(name)) {
+            String alternative = "main".equals(name) ? "surprising-saturday" : "main";
+            boolean eventOpen = route != null && route.eventOpen();
+            if ("main".equals(alternative) || eventOpen) name = alternative;
+        }
         if (name == null || !health.getOrDefault(
                 name,
                 new ApiClient.ServerHealth(name, false, null, null)
@@ -423,31 +425,14 @@ public final class MmuCraftVelocity {
         return managedServers.get(name);
     }
 
-    private void loadEventPlayers() {
-        try {
-            for (String line : Files.readAllLines(EVENT_PLAYERS)) {
-                parseUuid(line).ifPresent(eventPlayers::add);
-            }
-        } catch (NoSuchFileException ignored) {
-        } catch (IOException error) {
-            logger.error("Could not read saved event server choices", error);
-        }
+    private boolean serverOnline(String name) {
+        ApiClient.ServerHealth server = health.get(name);
+        return server != null && server.online();
     }
 
-    private void rememberServer(UUID uuid, String serverName) {
-        synchronized (eventPlayers) {
-            boolean changed = "surprising-saturday".equals(serverName)
-                    ? eventPlayers.add(uuid) : eventPlayers.remove(uuid);
-            if (!changed) return;
-            Path temporary = EVENT_PLAYERS.resolveSibling("event-players.tmp");
-            try {
-                Files.write(temporary, eventPlayers.stream().map(UUID::toString).sorted().toList());
-                Files.move(temporary, EVENT_PLAYERS,
-                        StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException error) {
-                logger.error("Could not save event server choices", error);
-            }
-        }
+    private boolean routeTargetOnline() {
+        return route != null && (serverOnline(route.targetServerName())
+                || route.eventOpen() && serverOnline("surprising-saturday"));
     }
 
     private boolean sameAddress(RegisteredServer server, HostPort desired) {

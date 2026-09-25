@@ -45,7 +45,9 @@ interface EventDetail extends EventSummary {
 interface MyServer {
 	uuid: string | null;
 	serverName: string | null;
+	preferredServerName: string;
 	eventReady: boolean;
+	eventOnline: boolean;
 }
 
 const GLYPHS =
@@ -184,9 +186,10 @@ export function SurprisingSaturdayTab({
 		currentDetail?.players?.filter((player) => showCommittee || !player.isCommittee) ?? [];
 	const totalPoints = currentDetail?.items?.reduce((sum, item) => sum + item.points, 0) ?? 0;
 	const otherUpcoming = upcoming.filter((event) => event.id !== selectedEventId);
-	const onEventServer = me?.serverName === 'surprising-saturday';
+	const onEventServer = me?.preferredServerName === 'surprising-saturday';
 
 	async function switchServer() {
+		const destination = onEventServer ? 'main' : 'surprising-saturday';
 		setMoving(true);
 		setMoveFeedback('');
 		try {
@@ -194,7 +197,7 @@ export function SurprisingSaturdayTab({
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					serverName: onEventServer ? 'main' : 'surprising-saturday',
+					serverName: destination,
 				}),
 			});
 			if (!response.ok) {
@@ -205,7 +208,14 @@ export function SurprisingSaturdayTab({
 						: (body.message ?? 'Switch failed'),
 				);
 			}
-			setMoveFeedback('Switch requested. You will move in a few seconds.');
+			setMe((current) =>
+				current ? { ...current, preferredServerName: destination } : current,
+			);
+			setMoveFeedback(
+				me?.serverName
+					? 'Choice saved. You will move when that server is available.'
+					: 'Choice saved. You will join that server next time you connect.',
+			);
 		} catch (caught) {
 			setMoveFeedback(caught instanceof Error ? caught.message : 'Switch failed');
 		} finally {
@@ -262,7 +272,7 @@ export function SurprisingSaturdayTab({
 						<div className="eventJoin">
 							<button
 								type="button"
-								disabled={!me?.serverName || !me.eventReady || moving}
+								disabled={!me?.uuid || !me.eventReady || moving}
 								onClick={() => void switchServer()}
 							>
 								{moving
@@ -271,8 +281,7 @@ export function SurprisingSaturdayTab({
 										? 'Return to main server'
 										: 'Join event server'}
 							</button>
-							{!me?.serverName && <span>Join Minecraft to switch servers.</span>}
-							{me?.serverName && !me.eventReady && (
+							{me?.eventReady && !me.eventOnline && (
 								<span>The event server is starting.</span>
 							)}
 							{moveFeedback && <span role="status">{moveFeedback}</span>}

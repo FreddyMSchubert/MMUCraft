@@ -218,9 +218,7 @@ services:
             EVENT_CONTAINER_NAME: kubecraft-surprising-saturday-1
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro
-        depends_on:
-            api:
-                condition: service_healthy
+            - ./.dev/api:/state:ro
         logging: *logging
         restart: unless-stopped
 

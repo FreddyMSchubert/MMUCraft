@@ -74,6 +74,15 @@ export class VelocityInternalController {
 		return this.velocity.synchronize(body);
 	}
 
+	@Post('connected')
+	connected(
+		@Headers('authorization') authorization: string | undefined,
+		@Body() body: { uuid?: unknown; serverName?: unknown } | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		return this.velocity.connectedPlayer(body?.uuid, body?.serverName);
+	}
+
 	@Get('event-control')
 	eventControl(@Headers('authorization') authorization: string | undefined) {
 		this.velocity.verifyInternalAuthorization(authorization);
@@ -120,6 +129,7 @@ export class SurprisingSaturdayAdminController {
 	constructor(
 		private readonly sessions: AuthSessionService,
 		private readonly events: SurprisingSaturdayService,
+		private readonly velocity: VelocityService,
 	) {}
 
 	@Get()
@@ -140,7 +150,9 @@ export class SurprisingSaturdayAdminController {
 		@Body() body: Record<string, unknown> | undefined,
 	) {
 		this.sessions.requireCommitteeSession(cookieHeader);
-		return this.events.create(body);
+		const result = this.events.create(body);
+		this.velocity.refreshEventState();
+		return result;
 	}
 
 	@Patch(':id')
@@ -150,13 +162,17 @@ export class SurprisingSaturdayAdminController {
 		@Body() body: Record<string, unknown> | undefined,
 	) {
 		this.sessions.requireCommitteeSession(cookieHeader);
-		return this.events.update(id, body);
+		const result = this.events.update(id, body);
+		this.velocity.refreshEventState();
+		return result;
 	}
 
 	@Delete(':id')
 	remove(@Headers('cookie') cookieHeader: string | undefined, @Param('id') id: string) {
 		this.sessions.requireCommitteeSession(cookieHeader);
-		return this.events.remove(id);
+		const result = this.events.remove(id);
+		this.velocity.refreshEventState();
+		return result;
 	}
 }
 

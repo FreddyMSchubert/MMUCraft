@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -22,6 +23,7 @@ public final class Killshift implements ModInitializer {
         UseItemCallback.EVENT.register(MobAbilities::onUseItem);
         UseBlockCallback.EVENT.register(MobFood::onUseBlock);
         UseBlockCallback.EVENT.register(MobAbilities::onUseBlock);
+        UseEntityCallback.EVENT.register(MobAbilities::onUseEntity);
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             ShapeManager.tick(server);
             if (server.getTickCount() % (20 * 60) == 0) {
@@ -30,6 +32,7 @@ public final class Killshift implements ModInitializer {
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ShapeManager.playerJoined(handler.getPlayer());
+            AbilitySlot.sync(handler.getPlayer());
             EventApi.playerJoined(handler.getPlayer());
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> EventApi.playerLeft(handler.getPlayer()));

@@ -25,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
 
 final class ShapeRuntime {
     private static final Identifier STARED_SPEED = id("stared_speed");
+    private static final Identifier SQUID_FLEE_SPEED = id("squid_flee_speed");
     private static final double CEILING_INSET = 0.08;
     private static final double CEILING_PROBE = 0.5;
 
@@ -42,14 +43,28 @@ final class ShapeRuntime {
         if (state.angryTicks > 0) {
             state.angryTicks--;
         }
+        if (state.squidFleeTicks > 0) state.squidFleeTicks--;
+
+        if (type != EntityTypes.PLAYER) {
+            player.setSprinting(false);
+            player.setSwimming(false);
+        }
 
         tickFlight(player, state);
+        MobAbilities.tick(player, state);
         tickBreathing(player, state);
         tickClimbing(player, traits);
         tickBouncing(player, traits);
         tickEnvironment(player, state);
         tickLookReactions(player, state);
         tickInfiniteArrows(player, type);
+        tickSquidFlee(player, state);
+        if (type == EntityTypes.IRON_GOLEM && player.isInWater()) {
+            Vec3 movement = player.getDeltaMovement();
+            player.setDeltaMovement(movement.x * 0.8,
+                    Math.min(-0.06, Math.max(-0.12, movement.y)), movement.z * 0.8);
+            syncMotion(player);
+        }
         if (type == EntityTypes.CHICKEN && !player.onGround()
                 && player.getDeltaMovement().y < -0.1) {
             Vec3 movement = player.getDeltaMovement();
@@ -73,6 +88,18 @@ final class ShapeRuntime {
 
     static void clear(ServerPlayer player) {
         remove(player, Attributes.MOVEMENT_SPEED, STARED_SPEED);
+        remove(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED);
+    }
+
+    private static void tickSquidFlee(ServerPlayer player, ShapeState state) {
+        boolean squid = state.form.type() == EntityTypes.SQUID
+                || state.form.type() == EntityTypes.GLOW_SQUID;
+        if (squid && state.squidFleeTicks > 0 && player.isInWater()) {
+            add(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED, 0.2,
+                    AttributeModifier.Operation.ADD_VALUE);
+        } else {
+            remove(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED);
+        }
     }
 
     private static void tickFlight(ServerPlayer player, ShapeState state) {
@@ -106,6 +133,10 @@ final class ShapeRuntime {
     }
 
     private static void tickBreathing(ServerPlayer player, ShapeState state) {
+        if (state.form.type() == EntityTypes.IRON_GOLEM) {
+            player.setAirSupply(player.getMaxAirSupply());
+            return;
+        }
         if (!state.form.traits().waterBreathing()) {
             return;
         }
@@ -130,7 +161,8 @@ final class ShapeRuntime {
 
         Vec3 movement = player.getDeltaMovement();
         if (player.horizontalCollision) {
-            player.setDeltaMovement(movement.x * 0.96, Math.max(movement.y, 0.22), movement.z * 0.96);
+            double climb = Math.min(0.22, Math.max(movement.y, 0.0) + 0.08);
+            player.setDeltaMovement(movement.x * 0.96, climb, movement.z * 0.96);
             player.resetFallDistance();
             syncMotion(player);
         }

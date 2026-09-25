@@ -4,11 +4,11 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 ## Behavior that applies to every mob
 
-All listed mobs except the giant can become forms. A player kill gives the killer a player form with the dead player's skin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, movement, safe fall distance, and step height. The player scale follows the source eye height. The owner's display is smaller. Other players see the full-size display. Attack damage never falls below one.
+All listed mobs except the giant can become forms. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, movement, safe fall distance, and step height. The player scale follows the source eye height. The owner's display is smaller. Other players see the full-size display. Attack damage never falls below one.
 
-Sneak to play the form's ambient sound. The display entity copies the player pose, rotation, sprint state, swim state, and held equipment. A player returns to normal after death. A form and its visual data stay active after a player rejoins.
+Sneak to play the form's ambient sound. The display entity copies the player pose and rotation. It keeps the source entity's equipment. A mob form cannot use player sprint or swim movement. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes.
 
-Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms. Iron golems target hostile monster forms, except creepers.
+Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
 
 Forms can eat only food in their natural diet. Forms with no natural food cannot eat. Panda forms eat bamboo. Animal forms use the game's food check. Player forms use normal player food rules.
 
@@ -26,10 +26,11 @@ Forms can eat only food in their natural diet. Forms with no natural food cannot
 | Jump and movement | Every form | Killshift copies the source attribute values. |
 | No fall damage | Cat, chicken, and all forced-flight forms | Fall damage multiplier is zero. Chicken descent is also limited to a slow speed. |
 | Screen effect | Creeper, spider, cave spider, enderman, endermite, shulker | The server applies the creeper, spider, or invert post effect. It removes its effect when the form ends. |
+| Iron golem water movement | Iron golem | The form sinks in water, moves slowly, and keeps its air supply. |
 
 ## Active and reactive behavior
 
-Use an empty hand to activate a right-click ability.
+The ninth hotbar slot holds a marked blaze rod when the form has an active ability. Right-click with it while aiming at air, a block, or an entity. The slot holds a marked barrier for all other forms, including the normal player. The item stays in that slot.
 
 | Form | Behavior |
 | --- | --- |
@@ -40,22 +41,24 @@ Use an empty hand to activate a right-click ability.
 | Cat | Nearby creepers lose their target and move away. |
 | Cave spider | A melee hit poisons the target. The form can climb walls and ceilings. |
 | Creaking | The player cannot move horizontally while another player looks directly at the form. |
-| Creeper | Right-click creates a mob explosion. A player killed by this explosion still becomes the next form. |
-| Elder guardian | A melee hit gives mining fatigue to the target. |
+| Creeper | Right-click creates a mob explosion. A charged creeper has twice the blast radius. A player killed by this explosion still becomes the next form. |
+| Elder guardian | A melee hit gives mining fatigue to the target. Right-click charges a stronger laser on a living target in sight. |
 | Ender dragon | Right-click shoots a dragon fireball. |
 | Enderman | Right-click throws an ender pearl without an item. Water and rain cause damage. Direct observation gives a large speed increase. |
 | Evoker | Right-click raises a line of evoker fangs. |
 | Ghast | Right-click shoots an explosive fireball. |
 | Glow squid | Right-click releases squid ink particles. |
-| Guardian | A melee hit gives mining fatigue to the target. |
+| Guardian | A melee hit gives mining fatigue to the target. Right-click charges a laser on a living target in sight, then damages the target. |
+| Iron golem | The form sinks in water and cannot use player swim movement. |
 | Llama | Right-click spits in the look direction. |
 | Mooshroom | Right-click restores six hunger points and adds a bowl. |
 | Parched | A bow receives a replacement arrow when no arrow remains. |
-| Shulker | Right-click teleports to a random valid position. |
+| Shulker | Right-click searches for a safe random position and teleports there. |
 | Silverfish | Right-click an infestable block to remove it and summon an allied silverfish. |
 | Skeleton | A bow receives a replacement arrow when no arrow remains. |
 | Sniffer | Right-click on a grass block finds torchflower seeds or a pitcher pod. |
-| Squid | Right-click releases squid ink particles. |
+| Squid | Right-click releases squid ink particles. Damage gives a short water speed boost. |
+| Glow squid | Right-click releases squid ink particles. Damage gives a short water speed boost. |
 | Stray | A bow receives a replacement arrow when no arrow remains. |
 | Trader llama | Right-click spits in the look direction. |
 | Vex | The server gives the player no-physics movement and forced flight. The vanilla client can still block movement through walls. |
@@ -82,16 +85,16 @@ The following table lists the supported forms in this build. `Common` means that
 | Camel husk | Source jump strength |
 | Cat | Creeper repulsion and no fall damage |
 | Cave spider | Climbing, poison hit, and spider post effect |
-| Chicken | Slow falling and no fall damage |
+| Chicken | Slow falling, no fall damage, and fox pursuit |
 | Cod | Aquatic movement and water breathing |
 | Copper golem | Common |
 | Cow | Common |
 | Creaking | Freeze while watched |
-| Creeper | Explosion, skeleton peace, and creeper post effect |
+| Creeper | Explosion (larger while charged), skeleton peace, and creeper post effect |
 | Dolphin | Aquatic movement |
 | Donkey | Source jump strength |
 | Drowned | Aquatic movement and sunlight rule |
-| Elder guardian | Aquatic movement, water breathing, and mining-fatigue hit |
+| Elder guardian | Aquatic movement, water breathing, mining-fatigue hit, and stronger laser |
 | Enderman | Pearl, wet damage, watched speed, and invert post effect |
 | Endermite | Invert post effect |
 | Ender dragon | Forced flight, dragon fireball, and no fall damage |
@@ -100,14 +103,14 @@ The following table lists the supported forms in this build. `Common` means that
 | Frog | Common |
 | Ghast | Forced flight, explosive fireball, and no fall damage |
 | Happy ghast | Forced flight and no fall damage |
-| Glow squid | Aquatic movement, water breathing, and ink |
+| Glow squid | Aquatic movement, water breathing, ink, and damage speed boost |
 | Goat | Source jump strength |
-| Guardian | Aquatic movement, water breathing, and mining-fatigue hit |
+| Guardian | Aquatic movement, water breathing, mining-fatigue hit, and laser |
 | Hoglin | Common |
 | Horse | Source jump strength |
 | Husk | Common |
 | Illusioner | Common |
-| Iron golem | Common |
+| Iron golem | Sinks in water and keeps air supply |
 | Llama | Spit |
 | Magma cube | Bounce movement and lava safety |
 | Mooshroom | Stew hunger restoration |
@@ -127,7 +130,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Rabbit | Source jump strength |
 | Ravager | Common |
 | Salmon | Aquatic movement and water breathing |
-| Sheep | Common |
+| Sheep | Wild wolves pursue this form |
 | Shulker | Random teleport and invert post effect |
 | Silverfish | Infest a block to summon an ally |
 | Skeleton | Sunlight rule, arrow refill, and creeper peace |
@@ -136,7 +139,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Sniffer | Ancient seed digging |
 | Snow golem | Common |
 | Spider | Climbing and spider post effect |
-| Squid | Aquatic movement, water breathing, and ink |
+| Squid | Aquatic movement, water breathing, ink, and damage speed boost |
 | Stray | Sunlight rule and arrow refill |
 | Strider | Lava safety |
 | Sulfur cube | Bounce movement |
@@ -159,4 +162,4 @@ The following table lists the supported forms in this build. `Common` means that
 | Zombie nautilus | Aquatic movement, water breathing, and sunlight rule |
 | Zombie villager | Sunlight rule |
 | Zombified piglin | Common |
-| Player | Dead player's skin on a mannequin; normal player food rules |
+| Player | Dead player's skin on a mannequin if the victim has no mob form; normal player food rules |

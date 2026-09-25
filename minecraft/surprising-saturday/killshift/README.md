@@ -2,7 +2,7 @@
 
 Killshift is a server-side Fabric mod for Minecraft Java Edition 26.3.
 
-When a player kills a mob, the player becomes that mob. A player kill gives the killer a mannequin with the dead player's skin. Death restores the killer's normal form.
+When a player kills a mob, the player becomes that mob. A player kill copies the victim's form. If the victim has no mob form, the killer gets a mannequin with the victim's skin. Death restores the player's normal form.
 
 Author: @FreddyMSchubert
 
@@ -31,7 +31,9 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - A projectile kill counts when Minecraft reports the player as the projectile owner.
 - A transformed player returns to normal on death.
 - A player kill gives the killer a player form with the dead player's skin.
+- If the dead player has a mob form, the killer gets that mob form and its appearance.
 - A form stays active when the player leaves and rejoins.
+- On a form change, the old display stays in the world. It receives the player's health and effects, and its mob AI resumes.
 - A mob still creates its normal loot.
 - Mob equipment is copied into the killer's inventory.
 - Every form has at least one point of attack damage.
@@ -41,7 +43,7 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 
 Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. The player scale sets the camera near the source eye height. It also changes the player hitbox. A mob's movement attribute and a player's movement attribute can produce different travel speeds.
 
-Aquatic forms gain full water movement efficiency. Fish and bees have no land movement speed. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly.
+Aquatic forms gain full water movement efficiency. Fish and bees have no land movement speed. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly. Mob forms cannot use player sprint or swim movement. Iron golems sink in water and keep their air supply.
 
 Killshift keeps attack damage at one or more. A weak form can therefore kill another mob and change form again.
 
@@ -53,6 +55,8 @@ Other players see the full-size copy at the player position. The owner receives 
 
 Attacks against the visible copy are redirected to its owner. The copy cannot push the player and cannot change player movement.
 
+The ninth hotbar slot always contains a marked item. It holds a blaze rod for forms with an active ability and a barrier for all other forms, including the normal player. Right-click with the rod to use the ability while aiming at air, a block, or an entity. The item stays in that slot.
+
 The server adds creeper, spider, and invert post effects to matching forms. It removes a form's effect when the form ends. A vanilla 26.3 client can display these effects.
 
 ## Code structure
@@ -62,7 +66,7 @@ The server adds creeper, spider, and invert post effects to matching forms. It r
 - `MobRegistry` assigns passive traits and form statistics.
 - `ShapeRuntime` applies passive behavior on each server tick.
 - `ShapeView` owns the world model, collision rule, and owner-only scale.
-- `MobAbilities` owns active right-click actions and on-hit effects.
+- `MobAbilities` owns active right-click actions and on-hit effects. `AbilitySlot` reserves the ninth hotbar slot.
 - `MobFood` limits food use to the form's diet.
 - `ShapeEffects` manages post effects.
 - `MobMixin` stops friendly mob families from targeting matching player forms.
@@ -73,7 +77,7 @@ See [docs/MOBS.md](docs/MOBS.md) for the complete behavior list.
 
 ## Current limits
 
-- Right-click abilities run only when the used hand is empty. This rule lets normal item use run first.
+- Some abilities need a target or valid terrain. For example, the guardian beam needs a living target in sight, and the shulker needs a safe teleport location.
 - Vex movement uses server no-physics mode. Vanilla client movement can still stop the player at a wall. Full spectator movement also grants other spectator powers.
 - The display entity follows the player each tick. Network interpolation can still cause visual delay.
 - Some mobs have only the common form behavior. The mob list marks these cases.

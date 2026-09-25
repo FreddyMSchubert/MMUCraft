@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.storage.ValueInput;
@@ -37,7 +38,9 @@ public final class ShapeManager {
     }
 
     static void onDeath(LivingEntity dead, DamageSource source) {
+        ShapeState victimForm = dead instanceof ServerPlayer victim ? get(victim) : null;
         if (dead instanceof ServerPlayer player) {
+            AbilitySlot.clear(player);
             clear(player);
         }
 
@@ -46,7 +49,11 @@ public final class ShapeManager {
             return;
         }
         if (dead instanceof ServerPlayer player) {
-            if (killer != player) transform(killer, player);
+            if (killer != player) {
+                EventApi.completed(killer, player);
+                if (victimForm == null) transform(killer, player);
+                else transform(killer, victimForm.form, victimForm.viewData, null);
+            }
         } else if (dead instanceof Mob mob) {
             if (!MobRegistry.supports(mob.getType())) return;
             EventApi.completed(killer, mob);
@@ -102,6 +109,7 @@ public final class ShapeManager {
                 ShapeRuntime.tick(player, state);
                 ShapeView.tick(player, state);
             }
+            AbilitySlot.sync(player);
         }
     }
 
@@ -111,6 +119,11 @@ public final class ShapeManager {
 
     static boolean hasShape(ServerPlayer player) {
         return get(player) != null;
+    }
+
+    public static boolean restrictPlayerMovement(ServerPlayer player) {
+        ShapeState state = get(player);
+        return state != null && state.form.type() != EntityTypes.PLAYER;
     }
 
     public static void readSaved(ServerPlayer player, ValueInput input) {
@@ -134,6 +147,7 @@ public final class ShapeManager {
         player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
+        AbilitySlot.sync(player);
     }
 
     public static boolean isFriendly(Mob mob, ServerPlayer player) {
@@ -148,19 +162,29 @@ public final class ShapeManager {
                 && state.form.type() != EntityTypes.CREEPER;
     }
 
+    public static boolean isForm(ServerPlayer player, EntityType<?> type) {
+        ShapeState state = get(player);
+        return state != null && state.form.type() == type;
+    }
+
     private static void transform(ServerPlayer player, LivingEntity source) {
+        transform(player, MobRegistry.createForm(source), ShapeView.snapshot(source),
+                source instanceof Mob mob ? mob : null);
+    }
+
+    private static void transform(ServerPlayer player, MobForm form, CompoundTag viewData, Mob source) {
         float health = player.getHealth();
-        CompoundTag viewData = ShapeView.snapshot(source);
+        ShapeView.release(player, get(player));
         clear(player);
-        MobForm form = MobRegistry.createForm(source);
         ShapeState state = new ShapeState(form, viewData);
         SHAPES.put(player.getUUID(), state);
 
         applyAttributes(player, form);
         player.setHealth(Math.min(health, player.getMaxHealth()));
-        if (source instanceof Mob mob) copyEquipment(player, mob);
+        if (source != null) copyEquipment(player, source);
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
+        AbilitySlot.sync(player);
     }
 
     static void clear(ServerPlayer player) {
@@ -169,6 +193,7 @@ public final class ShapeManager {
             return;
         }
 
+        AbilitySlot.clear(player);
         ShapeView.remove(state);
         ShapeEffects.clear(player, state);
         ShapeRuntime.clear(player);
@@ -190,6 +215,11 @@ public final class ShapeManager {
             }
         }
         return null;
+    }
+
+    static LivingEntity combatTarget(LivingEntity target) {
+        ServerPlayer owner = ownerOf(target);
+        return owner == null ? target : owner;
     }
 
     private static void applyAttributes(ServerPlayer player, MobForm form) {

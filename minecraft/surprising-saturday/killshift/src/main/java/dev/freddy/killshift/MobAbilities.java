@@ -1,6 +1,8 @@
 package dev.freddy.killshift;
 
 import java.util.Comparator;
+import java.util.Set;
+import dev.freddy.killshift.mixin.GuardianAttackAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,9 +16,12 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.entity.projectile.LlamaSpit;
 import net.minecraft.world.entity.projectile.EvokerFangs;
@@ -38,10 +43,53 @@ import net.minecraft.world.level.block.InfestedBlock;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 final class MobAbilities {
+    private static final Set<EntityType<?>> ACTIVE = Set.of(
+            EntityTypes.BEE, EntityTypes.BLAZE, EntityTypes.BREEZE, EntityTypes.CREEPER,
+            EntityTypes.ENDER_DRAGON, EntityTypes.ENDERMAN, EntityTypes.EVOKER,
+            EntityTypes.GHAST, EntityTypes.GLOW_SQUID, EntityTypes.GUARDIAN,
+            EntityTypes.ELDER_GUARDIAN, EntityTypes.LLAMA, EntityTypes.MOOSHROOM,
+            EntityTypes.SHULKER, EntityTypes.SILVERFISH, EntityTypes.SNIFFER,
+            EntityTypes.SQUID, EntityTypes.TRADER_LLAMA, EntityTypes.WARDEN,
+            EntityTypes.WITCH, EntityTypes.WITHER
+    );
+
     private MobAbilities() {
+    }
+
+    static boolean hasAbility(EntityType<?> type) {
+        return ACTIVE.contains(type);
+    }
+
+    static void tick(ServerPlayer player, ShapeState state) {
+        if (state.guardianChargeTicks <= 0) return;
+        LivingEntity target = state.guardianTarget;
+        if (!(state.view instanceof Guardian guardian) || target == null || !target.isAlive()
+                || target.level() != player.level() || player.distanceToSqr(target) > 256.0
+                || !player.hasLineOfSight(target)) {
+            stopGuardianBeam(state);
+            return;
+        }
+        if (--state.guardianChargeTicks == 0) {
+            LivingEntity victim = ShapeManager.combatTarget(target);
+            float magic = 1.0F + (player.level().getDifficulty() == Difficulty.HARD ? 2.0F : 0.0F)
+                    + (state.form.type() == EntityTypes.ELDER_GUARDIAN ? 2.0F : 0.0F);
+            float damage = magic + (float) guardian.getAttributeValue(
+                    net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE);
+            victim.hurtServer(player.level(), player.damageSources().indirectMagic(player, player), damage);
+            stopGuardianBeam(state);
+        }
+    }
+
+    private static void stopGuardianBeam(ShapeState state) {
+        state.guardianChargeTicks = 0;
+        state.guardianTarget = null;
+        if (state.view instanceof Guardian guardian) {
+            ((GuardianAttackAccessor) guardian).killshift$setActiveAttackTarget(0);
+        }
     }
 
     static InteractionResult onUseItem(
@@ -49,11 +97,13 @@ final class MobAbilities {
             Level level,
             InteractionHand hand
     ) {
-        if (!(user instanceof ServerPlayer player)
-                || !(level instanceof ServerLevel serverLevel)
-                || !player.getItemInHand(hand).isEmpty()) {
+        if (!(user instanceof ServerPlayer player) || !(level instanceof ServerLevel serverLevel)) {
             return InteractionResult.PASS;
         }
+
+        ItemStack held = player.getItemInHand(hand);
+        if (AbilitySlot.barrier(held)) return InteractionResult.FAIL;
+        if (!AbilitySlot.trigger(held) && !held.isEmpty()) return InteractionResult.PASS;
 
         ShapeState state = ShapeManager.get(player);
         if (state == null || state.abilityCooldown > 0 || !activate(serverLevel, player, state)) {
@@ -68,11 +118,12 @@ final class MobAbilities {
             InteractionHand hand,
             BlockHitResult hit
     ) {
-        if (!(user instanceof ServerPlayer player)
-                || !(level instanceof ServerLevel)
-                || !player.getItemInHand(hand).isEmpty()) {
+        if (!(user instanceof ServerPlayer player) || !(level instanceof ServerLevel serverLevel)) {
             return InteractionResult.PASS;
         }
+        ItemStack held = player.getItemInHand(hand);
+        if (AbilitySlot.barrier(held)) return InteractionResult.FAIL;
+        if (!held.isEmpty() && !AbilitySlot.trigger(held)) return InteractionResult.PASS;
         ShapeState state = ShapeManager.get(player);
         if (state == null || state.abilityCooldown > 0) return InteractionResult.PASS;
         EntityType<?> type = state.form.type();
@@ -99,7 +150,27 @@ final class MobAbilities {
             state.abilityCooldown = 100;
             return InteractionResult.SUCCESS_SERVER.withoutItem();
         }
-        return InteractionResult.PASS;
+        return activate(serverLevel, player, state)
+                ? InteractionResult.SUCCESS_SERVER.withoutItem() : InteractionResult.PASS;
+    }
+
+    static InteractionResult onUseEntity(
+            net.minecraft.world.entity.player.Player user,
+            Level level,
+            InteractionHand hand,
+            Entity target,
+            EntityHitResult hit
+    ) {
+        if (!(user instanceof ServerPlayer player) || !(level instanceof ServerLevel serverLevel)) {
+            return InteractionResult.PASS;
+        }
+        ItemStack held = player.getItemInHand(hand);
+        if (AbilitySlot.barrier(held)) return InteractionResult.FAIL;
+        if (!held.isEmpty() && !AbilitySlot.trigger(held)) return InteractionResult.PASS;
+        ShapeState state = ShapeManager.get(player);
+        if (state == null || state.abilityCooldown > 0) return InteractionResult.PASS;
+        return activate(serverLevel, player, state)
+                ? InteractionResult.SUCCESS_SERVER.withoutItem() : InteractionResult.PASS;
     }
 
     static void onDamage(
@@ -113,6 +184,11 @@ final class MobAbilities {
             ShapeState hurtState = ShapeManager.get(hurtPlayer);
             if (hurtState != null && hurtState.form.type() == EntityTypes.BEE && damageTaken > 0.0F) {
                 hurtState.angryTicks = 200;
+            }
+            if (hurtState != null && damageTaken > 0.0F
+                    && (hurtState.form.type() == EntityTypes.SQUID
+                    || hurtState.form.type() == EntityTypes.GLOW_SQUID)) {
+                hurtState.squidFleeTicks = 100;
             }
         }
 
@@ -154,8 +230,21 @@ final class MobAbilities {
         } else if (type == EntityTypes.ENDERMAN) {
             ItemStack pearl = new ItemStack(Items.ENDER_PEARL);
             Projectile.spawnProjectileFromRotation(ThrownEnderpearl::new, level, pearl, player, 0.0F, 1.5F, 1.0F);
+        } else if (type == EntityTypes.GUARDIAN || type == EntityTypes.ELDER_GUARDIAN) {
+            LivingEntity target = targetInSight(player, 15.0);
+            if (target == null || !(state.view instanceof Guardian guardian)) {
+                state.abilityCooldown = 0;
+                return false;
+            }
+            state.guardianTarget = target;
+            state.guardianChargeTicks = guardian.getAttackDuration();
+            state.abilityCooldown = state.guardianChargeTicks + 20;
+            ((GuardianAttackAccessor) guardian).killshift$setActiveAttackTarget(target.getId());
         } else if (type == EntityTypes.SHULKER) {
-            teleport(player);
+            if (!teleport(player)) {
+                state.abilityCooldown = 0;
+                return false;
+            }
         } else if (type == EntityTypes.WITCH) {
             var potionType = switch (player.getRandom().nextInt(4)) {
                 case 0 -> Potions.POISON;
@@ -169,7 +258,10 @@ final class MobAbilities {
             summonFangs(level, player, direction);
         } else if (type == EntityTypes.CREEPER) {
             state.abilityCooldown = 100;
-            level.explode(player, player.getX(), player.getY(), player.getZ(), 3.0F, false, Level.ExplosionInteraction.MOB);
+            float radius = state.view instanceof net.minecraft.world.entity.monster.Creeper creeper
+                    && creeper.isPowered() ? 6.0F : 3.0F;
+            level.explode(player, player.getX(), player.getY(), player.getZ(), radius,
+                    false, Level.ExplosionInteraction.MOB);
         } else if (type == EntityTypes.WARDEN) {
             state.abilityCooldown = 80;
             sonicBoom(level, player);
@@ -218,15 +310,16 @@ final class MobAbilities {
         }
     }
 
-    private static void teleport(ServerPlayer player) {
-        for (int attempt = 0; attempt < 16; attempt++) {
+    private static boolean teleport(ServerPlayer player) {
+        for (int attempt = 0; attempt < 32; attempt++) {
             double x = player.getX() + (player.getRandom().nextDouble() - 0.5) * 32.0;
             double y = player.getY() + player.getRandom().nextInt(-8, 9);
             double z = player.getZ() + (player.getRandom().nextDouble() - 0.5) * 32.0;
             if (player.randomTeleport(x, y, z, true, blockState -> false)) {
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     private static void summonFangs(ServerLevel level, ServerPlayer player, Vec3 direction) {

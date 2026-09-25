@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.decoration.Mannequin;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -102,12 +103,42 @@ final class ShapeView {
     static void remove(ShapeState state) {
         if (state.view != null) {
             LivingEntity view = state.view;
-            Scoreboard scoreboard = view.level().getScoreboard();
-            if (scoreboard.getPlayersTeam(view.getScoreboardName()) == scoreboard.getPlayerTeam(VIEW_TEAM)) {
-                scoreboard.removePlayerFromTeam(view.getScoreboardName());
-            }
+            removeFromTeam(view);
             view.remove(Entity.RemovalReason.DISCARDED);
             state.view = null;
+        }
+    }
+
+    static void release(ServerPlayer player, ShapeState state) {
+        if (state == null || state.view == null || state.view.isRemoved()) return;
+        LivingEntity view = state.view;
+        state.view = null;
+        removeFromTeam(view);
+        view.noPhysics = false;
+        view.setNoGravity(false);
+        view.setPermanentlyInvulnerable(false);
+        view.setSilent(false);
+        view.setDeltaMovement(player.getDeltaMovement());
+        view.removeAllEffects();
+        for (MobEffectInstance effect : player.getActiveEffects()) {
+            view.addEffect(new MobEffectInstance(effect));
+        }
+        AttributeInstance health = view.getAttribute(Attributes.MAX_HEALTH);
+        if (health != null) {
+            health.setBaseValue(health.getBaseValue() + player.getMaxHealth() - view.getMaxHealth());
+        }
+        view.setHealth(Math.min(player.getHealth(), view.getMaxHealth()));
+        if (view instanceof Mob mob) mob.setNoAi(false);
+        AttributeInstance scale = view.getAttribute(Attributes.SCALE);
+        if (scale != null && !player.hasDisconnected()) {
+            player.connection.send(new ClientboundUpdateAttributesPacket(view.getId(), List.of(scale)));
+        }
+    }
+
+    private static void removeFromTeam(LivingEntity view) {
+        Scoreboard scoreboard = view.level().getScoreboard();
+        if (scoreboard.getPlayersTeam(view.getScoreboardName()) == scoreboard.getPlayerTeam(VIEW_TEAM)) {
+            scoreboard.removePlayerFromTeam(view.getScoreboardName());
         }
     }
 

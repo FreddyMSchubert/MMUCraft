@@ -31,7 +31,7 @@ import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.server.permissions.PermissionLevel;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.PlayerTeam;
@@ -84,7 +84,7 @@ public final class EventApi {
         return name == null ? bound : new ChatType.Bound(bound.chatType(), name, bound.targetName());
     }
 
-    static void completed(ServerPlayer player, Mob mob) {
+    static void completed(ServerPlayer player, LivingEntity mob) {
         Component mobName = mob.getType().getDescription();
         if (BASE_URL == null || SECRET == null) {
             player.sendSystemMessage(Component.literal("Killed ").append(mobName)

@@ -8,6 +8,7 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
@@ -22,6 +23,10 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,6 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
         description = "API-controlled authentication and backend routing for MMUcraft"
 )
 public final class MmuCraftVelocity {
+    private static final Path EVENT_PLAYERS = Path.of("/server/event-players.txt");
     private final ProxyServer proxy;
     private final Logger logger;
     private final ApiClient api;
@@ -50,6 +56,7 @@ public final class MmuCraftVelocity {
     private final Map<String, RegisteredServer> managedServers = new ConcurrentHashMap<>();
     private final Map<String, ApiClient.ServerHealth> health = new ConcurrentHashMap<>();
     private final Map<UUID, String> manualDestinations = new ConcurrentHashMap<>();
+    private final Set<UUID> eventPlayers = ConcurrentHashMap.newKeySet();
     private final Set<Long> acknowledgedCommands = ConcurrentHashMap.newKeySet();
     private volatile ApiClient.Route route;
     private volatile boolean maintenanceMode;
@@ -68,6 +75,7 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent ignored) {
+        loadEventPlayers();
         for (String command : List.of("glist", "send", "server", "shutdown", "velocity")) {
             proxy.getCommandManager().unregister(command);
         }
@@ -164,6 +172,11 @@ public final class MmuCraftVelocity {
                     Messages.disconnected(event.getServerKickReason().orElse(null))
             ));
         }
+    }
+
+    @Subscribe
+    public void onServerConnected(ServerConnectedEvent event) {
+        rememberServer(event.getPlayer().getUniqueId(), event.getServer().getServerInfo().getName());
     }
 
     @Subscribe
@@ -392,7 +405,12 @@ public final class MmuCraftVelocity {
 
     private RegisteredServer targetFor(Player player) {
         if (maintenanceMode) return null;
-        String name = manualDestinations.get(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        String name = manualDestinations.get(uuid);
+        if (name == null && player.getCurrentServer().isEmpty()) {
+            boolean eventOpen = route != null && !route.revision().startsWith("warmup:");
+            name = eventPlayers.contains(uuid) && eventOpen ? "surprising-saturday" : "main";
+        }
         if (name == null && route != null) name = route.targetServerName();
         if (name != null && !health.getOrDefault(
                 name,
@@ -403,6 +421,33 @@ public final class MmuCraftVelocity {
                 new ApiClient.ServerHealth(name, false, null, null)
         ).online()) return null;
         return managedServers.get(name);
+    }
+
+    private void loadEventPlayers() {
+        try {
+            for (String line : Files.readAllLines(EVENT_PLAYERS)) {
+                parseUuid(line).ifPresent(eventPlayers::add);
+            }
+        } catch (NoSuchFileException ignored) {
+        } catch (IOException error) {
+            logger.error("Could not read saved event server choices", error);
+        }
+    }
+
+    private void rememberServer(UUID uuid, String serverName) {
+        synchronized (eventPlayers) {
+            boolean changed = "surprising-saturday".equals(serverName)
+                    ? eventPlayers.add(uuid) : eventPlayers.remove(uuid);
+            if (!changed) return;
+            Path temporary = EVENT_PLAYERS.resolveSibling("event-players.tmp");
+            try {
+                Files.write(temporary, eventPlayers.stream().map(UUID::toString).sorted().toList());
+                Files.move(temporary, EVENT_PLAYERS,
+                        StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException error) {
+                logger.error("Could not save event server choices", error);
+            }
+        }
     }
 
     private boolean sameAddress(RegisteredServer server, HostPort desired) {

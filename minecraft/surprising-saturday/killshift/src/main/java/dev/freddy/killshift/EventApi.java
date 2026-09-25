@@ -140,6 +140,9 @@ public final class EventApi {
                     System.err.println("Surprising Saturday score API returned " + status);
                     return;
                 }
+                if (status == 400 || status == 404) {
+                    System.err.println("Surprising Saturday completion returned " + status + ": " + response.body());
+                }
                 JsonObject receipt = status >= 200 && status < 300
                         ? JsonParser.parseString(response.body()).getAsJsonObject() : null;
                 KillNotice notice;
@@ -151,32 +154,37 @@ public final class EventApi {
                     Files.move(next, OUTBOX, StandardCopyOption.REPLACE_EXISTING);
                     notice = KILL_NOTICES.remove(line);
                 }
-                if (notice != null) announceKill(notice, line, receipt);
+                if (notice != null) announceKill(notice, line, receipt,
+                        status == 404 && response.body().contains("No list completion event accepts scores now"));
             }
         } catch (Exception error) {
             System.err.println("Surprising Saturday score replay paused: " + error);
         }
     }
 
-    private static void announceKill(KillNotice notice, String line, JsonObject receipt) {
-        JsonObject officialScore = null;
-        try {
-            JsonObject report = JsonParser.parseString(line).getAsJsonObject();
-            String uuid = report.get("playerUuid").getAsString();
-            long at = report.get("occurredAtUnixMs").getAsLong();
-            HttpRequest request = HttpRequest.newBuilder(URI.create(BASE_URL
-                            + "/api/internal/surprising-saturday/score/" + uuid + "?atUnixMs=" + at))
-                    .timeout(Duration.ofSeconds(5))
-                    .header("authorization", "Bearer " + SECRET)
-                    .GET().build();
-            HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                officialScore = JsonParser.parseString(response.body()).getAsJsonObject();
-            } else if (response.statusCode() != 404) {
-                System.err.println("Surprising Saturday score lookup returned " + response.statusCode());
+    private static void announceKill(KillNotice notice, String line, JsonObject receipt, boolean noLiveEvent) {
+        JsonObject officialScore = receipt != null && receipt.has("score")
+                ? receipt.getAsJsonObject("score") : null;
+        if (officialScore == null && !noLiveEvent) {
+            try {
+                JsonObject report = JsonParser.parseString(line).getAsJsonObject();
+                String uuid = report.get("playerUuid").getAsString();
+                long at = report.get("occurredAtUnixMs").getAsLong();
+                HttpRequest request = HttpRequest.newBuilder(URI.create(BASE_URL
+                                + "/api/internal/surprising-saturday/score/" + uuid + "?atUnixMs=" + at))
+                        .timeout(Duration.ofSeconds(5))
+                        .header("authorization", "Bearer " + SECRET)
+                        .GET().build();
+                HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() == 200) {
+                    officialScore = JsonParser.parseString(response.body()).getAsJsonObject();
+                } else {
+                    System.err.println("Surprising Saturday score lookup returned " + response.statusCode()
+                            + ": " + response.body());
+                }
+            } catch (Exception error) {
+                System.err.println("Surprising Saturday score lookup failed: " + error);
             }
-        } catch (Exception error) {
-            System.err.println("Surprising Saturday score lookup failed: " + error);
         }
 
         JsonObject score = officialScore;
@@ -192,7 +200,7 @@ public final class EventApi {
         server.execute(() -> {
             ServerPlayer player = notice.player();
             if (server.getPlayerList().getPlayer(player.getUUID()) == player) {
-                player.sendSystemMessage(killMessage(notice.mobName(), score));
+                player.sendSystemMessage(killMessage(notice.mobName(), score, noLiveEvent));
             }
             if (podium != null) {
                 for (ServerPlayer recipient : server.getPlayerList().getPlayers()) {
@@ -202,10 +210,12 @@ public final class EventApi {
         });
     }
 
-    private static Component killMessage(Component mobName, JsonObject score) {
+    private static Component killMessage(Component mobName, JsonObject score, boolean noLiveEvent) {
         var message = Component.literal("You killed ").append(mobName);
         if (score == null) {
-            return message.append(Component.literal(". Event score unavailable."));
+            return message.append(Component.literal(noLiveEvent
+                    ? ". No live scoring event was active for this kill."
+                    : ". Event score unavailable."));
         }
         StringJoiner animals = new StringJoiner(", ");
         for (var item : score.getAsJsonArray("completed")) {

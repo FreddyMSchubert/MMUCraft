@@ -401,7 +401,12 @@ export class SurprisingSaturdayService {
 			throw new NotFoundException('No list completion event accepts scores now');
 		const targets = eventTargets(event.criteria_json);
 		if (!targets.some((item) => item.id === itemId))
-			throw new BadRequestException('This item is not in the event list');
+			return {
+				ok: true,
+				accepted: false,
+				podiumChange: null,
+				score: this.score(uuid, String(at)),
+			};
 		return this.database.connection.transaction(() => {
 			// ponytail: Read the podium twice per kill. Batch participant reads if event size makes this slow.
 			const before = this.podium(event, targets);
@@ -427,6 +432,7 @@ export class SurprisingSaturdayService {
 				ok: true,
 				accepted: inserted,
 				podiumChange: changed ? { playerUuid: uuid, before, after } : null,
+				score: this.score(uuid, String(at)),
 			};
 		});
 	}

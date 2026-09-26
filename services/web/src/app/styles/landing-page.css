@@ -27,7 +27,8 @@
 
 .panoramaBackground {
 	overflow: hidden;
-	background: center / cover no-repeat url('/assets/landing/panoramas/classic/panorama_0.webp');
+	background: center / cover no-repeat
+		url('/assets/landing/panoramas/nether-update/panorama_0.webp');
 	cursor: grab;
 	perspective: 42vmax;
 	perspective-origin: 50% 50%;

@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Clown Nose.",
-		"tags": ["red nose", "circus"]
+		"tags": ["red nose", "circus", "silly", "small", "minimal"]
 	},
 	"equippableCosmetic": {}
 }

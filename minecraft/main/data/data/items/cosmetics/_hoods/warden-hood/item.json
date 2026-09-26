@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 20,
 		"unlockMessage": "Unlocked cosmetic: Warden Head.",
-		"tags": ["sculk", "deep dark"]
+		"tags": ["sculk", "deep dark", "mob", "monster", "hood"]
 	},
 	"equippableCosmetic": {}
 }

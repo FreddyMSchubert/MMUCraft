@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Patriotic Helmet.",
-		"tags": ["flag", "red white blue"]
+		"tags": ["flag", "red", "white", "green", "italy", "vespa", "scooter", "pizza", "pasta", "mandolino", "vintage", "scooter"]
 	},
 	"equippableCosmetic": {}
 }

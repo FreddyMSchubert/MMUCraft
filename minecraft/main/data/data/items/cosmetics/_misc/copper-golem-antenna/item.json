@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Copper Golem Antenna.",
-		"tags": ["robot"]
+		"tags": ["robot", "mob", "orange"]
 	},
 	"equippableCosmetic": {}
 }

@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 95,
 		"unlockMessage": "Unlocked cosmetic: Sombrero.",
-		"tags": ["mexican"]
+		"tags": ["mexican", "mexico", "sun hat"]
 	},
 	"equippableCosmetic": {}
 }

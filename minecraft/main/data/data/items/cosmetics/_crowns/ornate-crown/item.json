@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 3,
 		"unlockMessage": "You have been crowned Biggest Moneywaster.",
-		"tags": ["king", "queen"]
+		"tags": ["king", "queen", "royalty", "large", "complex", "expensive"]
 	},
 	"equippableCosmetic": {}
 }

@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Skull Hat.",
-		"tags": ["skeleton"]
+		"tags": ["skeleton", "bones", "sans"]
 	},
 	"decoBlock": {
 		"ground": true,

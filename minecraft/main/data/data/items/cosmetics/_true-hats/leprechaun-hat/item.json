@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Leprechaun Hat.",
-		"tags": ["leprichaun", "shamrock"]
+		"tags": ["leprichaun", "shamrock", "irish", "ireland"]
 	},
 	"equippableCosmetic": {}
 }

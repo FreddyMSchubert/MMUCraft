@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 70,
 		"unlockMessage": "Unlocked cosmetic: Steve Mask.",
-		"tags": ["minecraft player"]
+		"tags": ["minecraft player", "face"]
 	},
 	"equippableCosmetic": {}
 }

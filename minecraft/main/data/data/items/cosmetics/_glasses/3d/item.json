@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: 3D Glasses.",
-		"tags": ["stereoscopic", "movie"]
+		"tags": ["stereoscopic", "movie", "simple"]
 	},
 	"equippableCosmetic": {}
 }

@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Royal Crown.",
-		"tags": ["king", "queen"]
+		"tags": ["king", "queen", "expensive", "gold"]
 	},
 	"equippableCosmetic": {}
 }

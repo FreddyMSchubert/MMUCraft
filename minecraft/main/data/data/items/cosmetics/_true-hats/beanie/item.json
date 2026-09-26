@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Beanie.",
-		"tags": ["knit", "woolly"]
+		"tags": ["knit", "woolly", "hispter"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

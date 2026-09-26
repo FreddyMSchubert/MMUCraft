@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 65,
 		"unlockMessage": "Unlocked cosmetic: Feather Headband.",
-		"tags": ["plume"]
+		"tags": ["plume", "native"]
 	},
 	"equippableCosmetic": {}
 }

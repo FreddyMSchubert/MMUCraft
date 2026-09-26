@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Cowboy Hat.",
-		"tags": ["western"]
+		"tags": ["western", "ranch", "rodeo", "sombrero"]
 	},
 	"equippableCosmetic": {}
 }

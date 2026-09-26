@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Half Rim Glasses.",
-		"tags": ["spectacles", "reading glasses"]
+		"tags": ["spectacles", "reading glasses", "librarian", "nerd"]
 	},
 	"equippableCosmetic": {}
 }

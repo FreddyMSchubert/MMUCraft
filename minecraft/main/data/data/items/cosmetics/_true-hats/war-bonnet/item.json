@@ -13,7 +13,7 @@
 		"description": "Unlock the War Bonnet cosmetic.",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: War Bonnet.",
-		"tags": ["headdress", "feathers"]
+		"tags": ["headdress", "feathers", "native"]
 	},
 	"equippableCosmetic": {}
 }

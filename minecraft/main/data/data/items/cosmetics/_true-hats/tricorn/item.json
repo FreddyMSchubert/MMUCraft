@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Tricorn.",
-		"tags": ["tricorne", "three cornered"]
+		"tags": ["tricorne", "three cornered", "carnevale", "navy"]
 	},
 	"equippableCosmetic": {}
 }

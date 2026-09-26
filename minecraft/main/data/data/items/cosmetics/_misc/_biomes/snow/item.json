@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 20,
 		"unlockMessage": "Unlocked cosmetic: Snow Biotope Hat.",
-		"tags": ["winter", "snowy"]
+		"tags": ["winter", "snowy", "cold"]
 	},
 	"equippableCosmetic": {}
 }

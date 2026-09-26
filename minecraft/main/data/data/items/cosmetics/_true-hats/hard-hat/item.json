@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 69,
 		"unlockMessage": "Unlocked cosmetic: Hard Hat.",
-		"tags": ["construction", "builder"]
+		"tags": ["construction", "builder", "yellow", "safety"]
 	},
 	"equippableCosmetic": {}
 }

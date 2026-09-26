@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 80,
 		"unlockMessage": "Unlocked cosmetic: Tiara.",
-		"tags": ["princess"]
+		"tags": ["princess", "fairy", "silver"]
 	},
 	"equippableCosmetic": {}
 }

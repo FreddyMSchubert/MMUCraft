@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 42,
 		"unlockMessage": "Unlocked cosmetic: Sniffer Hood.",
-		"tags": ["ancient mob"]
+		"tags": ["ancient", "mob", "cute", "green", "red"]
 	},
 	"equippableCosmetic": {}
 }

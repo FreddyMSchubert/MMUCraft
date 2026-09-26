@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 30,
 		"unlockMessage": "Unlocked cosmetic: Eeyore.",
-		"tags": ["donkey"]
+		"tags": ["donkey", "winnie the pooh", "blue", "cute"]
 	},
 	"equippableCosmetic": {}
 }

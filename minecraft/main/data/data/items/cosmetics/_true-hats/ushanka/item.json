@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 65,
 		"unlockMessage": "Unlocked cosmetic: Ushanka.",
-		"tags": ["winter", "fur hat"]
+		"tags": ["winter", "fur hat", "soviet", "cossak"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

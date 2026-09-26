@@ -12,6 +12,7 @@ public final class FeatureToggles {
     public static final String NETHER = "nether";
     public static final String VOID = "void";
     public static final String WELCOMING = "welcoming";
+    public static final String CIRCUS = "circus";
 
     private static volatile Map<String, Boolean> values = Map.of();
     private static volatile long revision;

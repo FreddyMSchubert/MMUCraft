@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
@@ -74,6 +75,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
+import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
+import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.SkinColors;
 import uk.co.httpsmmuminecraftsociety.mainmod.worldgen.BottomEndStoneFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
@@ -145,17 +148,28 @@ public class MainMod implements ModInitializer {
         ServerChunkEvents.CHUNK_UNLOAD.register(RedstoneRemoteCharm::onChunkUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            if (FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) {
+                SkinColors.prefetch(handler.player.getGameProfile());
+            }
+            PlayerDisguises.joined(handler.player);
             LegacyFakeItemMigration.migratePlayer(handler.player);
             CharmsManager.refreshInventory(handler.player);
             MasteryAdvancements.onJoin(handler.player);
         });
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
-                PotionOfDisplacementCharm.onPlayerDisconnect(handler.player));
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            PlayerDisguises.disconnected(handler.player);
+            PotionOfDisplacementCharm.onPlayerDisconnect(handler.player);
+        });
+        EntityTrackingEvents.START_TRACKING.register(PlayerDisguises::tracked);
+        ServerEntityEvents.ENTITY_LOAD.register(PlayerDisguises::loaded);
+        ServerPlayerEvents.AFTER_RESPAWN.register(PlayerDisguises::respawned);
+        ServerLivingEntityEvents.AFTER_DEATH.register(PlayerDisguises::died);
         ItemEvents.USE.register(CharmsManager::onItemUse);
         ItemEvents.USE_ON.register(CharmsManager::onItemUseOn);
         ItemEvents.USE_ON.register(DecoBlocksManager::onUseItemOn);
         ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
+        UseEntityCallback.EVENT.register(PlayerDisguises::use);
         UseBlockCallback.EVENT.register(DynamicBeaconRange::onUseBlock);
         UseBlockCallback.EVENT.register(DecoBlocksManager::onUseBlock);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
@@ -163,6 +177,7 @@ public class MainMod implements ModInitializer {
         UseBlockCallback.EVENT.register(HopperFilter::onUseBlock);
         AttackBlockCallback.EVENT.register(CharmsManager::onAttackBlock);
         AttackEntityCallback.EVENT.register(CharmsManager::onAttackEntity);
+        AttackEntityCallback.EVENT.register(PlayerDisguises::attack);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
         DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);
@@ -189,12 +204,14 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
         ServerLifecycleEvents.SERVER_STARTED.register(MetricsServer::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            PlayerDisguises.stopping();
             RedstoneRemoteCharm.clear();
             PotionOfDisplacementCharm.clearSearches();
             MetricsServer.stop();
             GrpcBridge.stop();
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            PlayerDisguises.tick(server);
             LegacyFakeItemMigration.tick(server);
             MetricsServer.update(server);
             GrpcBridge.onServerTick();

@@ -9,6 +9,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerBrewingRecipe;
 
 public final class MainModRecipes {
     public static final RecipeSerializer<CombineCharmorRecipe> COMBINE_CHARMOR_SERIALIZER = unit(new CombineCharmorRecipe());
@@ -34,6 +35,7 @@ public final class MainModRecipes {
     public static final RecipeSerializer<FakeShapelessCraftingRecipe> FAKE_CRAFTING_SHAPELESS_SERIALIZER = codecBacked(FakeShapelessCraftingRecipe.CODEC);
 
     public static void register() {
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "player_brewing"), PlayerBrewingRecipe.SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "luck_brewing"), LuckBrewingRecipe.SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_charmor"), COMBINE_CHARMOR_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_charmor"), SEPERATE_CHARMOR_SERIALIZER);

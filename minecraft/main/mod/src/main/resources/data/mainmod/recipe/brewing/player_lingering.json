@@ -1,0 +1,6 @@
+{
+	"type": "mainmod:player_brewing",
+	"input": { "item": "minecraft:splash_potion" },
+	"reagent": { "item": "minecraft:dragon_breath" },
+	"output": { "id": "minecraft:lingering_potion" }
+}

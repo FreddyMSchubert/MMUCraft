@@ -1,0 +1,6 @@
+{
+	"type": "mainmod:player_brewing",
+	"input": { "item": "minecraft:splash_potion" },
+	"reagent": { "item": "minecraft:redstone" },
+	"output": { "id": "minecraft:splash_potion" }
+}

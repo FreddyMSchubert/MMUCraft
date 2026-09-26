@@ -89,6 +89,15 @@ public final class UnlockBookLoot {
         putAvailability(player, UnlockAvailability.from(response));
     }
 
+    public static void restartDropTimer(ServerPlayer player, String itemId) {
+        switch (itemId) {
+            case CHARM_BOOK_ID -> CHARM_DROP_COOLDOWN.restart(player.getUUID());
+            case "charm-fashion-book" -> COSMETIC_DROP_COOLDOWN.restart(player.getUUID());
+            case "charm-knowledge-book" -> KNOWLEDGE_DROP_COOLDOWN.restart(player.getUUID());
+            default -> { }
+        }
+    }
+
     public static boolean claimFishingDrop(ServerPlayer player, ItemStack stack) {
         if (FakeItems.isSpecificFakeItem(stack, CHARM_BOOK_ID))
             return CHARM_DROP_COOLDOWN.tryStart(player.getUUID());

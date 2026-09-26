@@ -24,4 +24,8 @@ public final class PlayerCooldown {
         readyAtNanos.put(playerId, now + durationNanos);
         return true;
     }
+
+    public synchronized void restart(UUID playerId) {
+        readyAtNanos.put(playerId, System.nanoTime() + durationNanos);
+    }
 }

@@ -1,0 +1,6 @@
+{
+	"type": "mainmod:player_brewing",
+	"input": { "item": "minecraft:lingering_potion" },
+	"reagent": { "item": "minecraft:redstone" },
+	"output": { "id": "minecraft:lingering_potion" }
+}

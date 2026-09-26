@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -26,6 +27,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonChestLoot;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -190,6 +192,10 @@ public class LootTableModifiers {
                         Component.literal("[RIP - " + ZonedDateTime.now(MANCHESTER_TIME_ZONE).format(SOUL_DATE_FORMAT) + "]")
                 )));
                 stack.set(DataComponents.PROFILE, ResolvableProfile.createResolved(player.getGameProfile()));
+                if (FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) {
+                    CustomData.update(DataComponents.CUSTOM_DATA, stack,
+                            tag -> tag.putBoolean("mainmod_death_head", true));
+                }
             }
 
             stack.setCount(rolls);

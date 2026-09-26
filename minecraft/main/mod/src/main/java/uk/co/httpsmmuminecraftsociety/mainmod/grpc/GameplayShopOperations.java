@@ -12,6 +12,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 final class GameplayShopOperations {
     private static final int PUBLIC_ANNOUNCEMENT_PRICE_DABLOONS = 70;
 
@@ -75,6 +76,8 @@ final class GameplayShopOperations {
             player.getInventory().setChanged();
             player.containerMenu.broadcastChanges();
         }
+
+        UnlockBookLoot.restartDropTimer(player, request.getItemId());
 
         int remaining = MoneyHelper.GetBalance(player);
         MoneyHelper.SendBalanceMessage(player, -price,

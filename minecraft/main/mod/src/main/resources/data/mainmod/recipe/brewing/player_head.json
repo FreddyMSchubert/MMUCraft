@@ -1,0 +1,6 @@
+{
+	"type": "mainmod:player_brewing",
+	"input": { "item": "minecraft:potion", "potion_contents": { "potions": "minecraft:awkward" } },
+	"reagent": { "item": "minecraft:player_head" },
+	"output": { "id": "minecraft:potion" }
+}

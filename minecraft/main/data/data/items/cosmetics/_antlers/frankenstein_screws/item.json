@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Frankenstein Screws - very spooky.",
-		"tags": ["bolts", "halloween"]
+		"tags": ["bolts", "halloween", "costume"]
 	},
 	"equippableCosmetic": {}
 }

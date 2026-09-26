@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Chicken Hat.",
-		"tags": ["hen", "poultry"]
+		"tags": ["hen", "poultry", "chick", "white", "egg", "simmple"]
 	},
 	"equippableCosmetic": {}
 }

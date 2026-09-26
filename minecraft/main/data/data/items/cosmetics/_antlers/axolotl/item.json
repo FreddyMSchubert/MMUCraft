@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Axolotl Gills.",
-		"tags": ["salamander", "aquatic"]
+		"tags": ["salamander", "aquatic", "cute", "mexico", "amphibian"]
 	},
 	"equippableCosmetic": {}
 }

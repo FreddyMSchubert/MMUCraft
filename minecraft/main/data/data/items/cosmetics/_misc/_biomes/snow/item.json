@@ -6,7 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"gameplayToggle": "soaring",
+		"gameplayToggle": "cold",
 		"membersOnly": true,
 		"priceDabloons": 100,
 		"description": "",

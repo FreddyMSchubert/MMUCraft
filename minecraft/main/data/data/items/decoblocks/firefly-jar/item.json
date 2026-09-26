@@ -9,8 +9,7 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 5,
-		"gameplayToggle": "imaginative"
+		"lightLevel": 5
 	},
 	"particleEmission": {
 		"particles": [

@@ -25,6 +25,7 @@ export interface KnowledgeResponse {
 	contentVersion: number;
 	enabledDropIds: string[];
 	drops: DropInfo[];
+	itemDrops: Record<string, string | null>;
 	readRewardDabloons: number;
 	lastUnlockedKnowledgeId: string | null;
 	unlockedKnowledgeIds: string[];

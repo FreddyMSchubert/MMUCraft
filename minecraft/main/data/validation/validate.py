@@ -66,9 +66,10 @@ def build_schema_registry(schema_root: Path) -> Registry:
 
 	for path in sorted(schema_root.rglob("*.json")):
 		schema = load_json(path)
-		schema_id = schema.get("$id")
-		if not isinstance(schema_id, str) or not schema_id:
-			raise ItemDataError(f"{path}: every schema file must have a string $id")
+		schema_id = path.relative_to(schema_root).as_posix()
+		declared_id = schema.get("$id")
+		if declared_id is not None and declared_id != schema_id:
+			raise ItemDataError(f"{path}: $id must match its path relative to {schema_root}")
 		registry = registry.with_resource(schema_id, Resource.from_contents(schema))
 
 	return registry
@@ -134,7 +135,6 @@ def main() -> int:
 	drop_ids = sorted(drop["id"] for drop in load_json(root / "data" / "drops.json"))
 	(root / DROP_ID_SCHEMA).write_text(json.dumps({
 		"$schema": "https://json-schema.org/draft/2020-12/schema",
-		"$id": "components/drop-id.schema.json",
 		"type": "string",
 		"enum": ["", *drop_ids],
 	}, indent=2) + "\n", encoding="utf-8")

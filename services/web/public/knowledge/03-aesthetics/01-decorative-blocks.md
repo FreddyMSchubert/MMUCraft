@@ -16,7 +16,7 @@ tips:
 
 Ever thought there aren't enough decorations in game? Why not give these a try! Just craft them and place them down like blocks - you can even right click to rotate them.
 
-:::drop imaginative
+:::drop-item deco-kettle
 ## Kettle
 
 :::drop-indicator
@@ -29,7 +29,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::end-drop
 
 
-:::drop imaginative
+:::drop-item deco-fruit-bowl
 ## Fruit Bowl
 
 :::drop-indicator
@@ -42,7 +42,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::end-drop
 
 
-:::drop imaginative
+:::drop-item deco-cookie-jar
 ## Cookie Jar
 
 :::drop-indicator
@@ -55,7 +55,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::end-drop
 
 
-:::drop imaginative
+:::drop-item deco-firefly-jar
 ## Firefly Jar
 
 :::drop-indicator
@@ -90,7 +90,7 @@ Beer can also be used to craft Spoons Carpets.
 All types of Spoons Carpets can be placed either on the floor or on the ceiling, this allows for features that normal minecraft carpets cant do - form a seamless carpet even through tables and chairs!
 :::end-drop
 
-:::drop nether
+:::drop-item deco-spoons-carpet-grandiloquent
 ### Grandiloquent Spoons Carpet
 
 :::drop-indicator
@@ -102,7 +102,7 @@ Beer · [Blue Carpet](https://minecraft.wiki/w/Carpets) → Grandiloquent Spoons
 ![Blue Carpet Placed](/assets/knowledge/items/decorative-blocks/sc-blue-deco.png) 
 :::end-drop
 
-:::drop nether
+:::drop-item deco-spoons-carpet-junoesque
 ### Junoesque Spoons Carpet
 
 :::drop-indicator
@@ -114,7 +114,7 @@ Beer · [Brown Carpet](https://minecraft.wiki/w/Carpets) → Junoesque Spoons Ca
 ![Brown Carpet Placed](/assets/knowledge/items/decorative-blocks/sc-brown-deco.png)
 :::end-drop
 
-:::drop nether
+:::drop-item deco-spoons-carpet-meretricious
 ### Meretricious Spoons Carpet
 
 :::drop-indicator

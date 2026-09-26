@@ -22,7 +22,7 @@ export function FilterRow({
 	onSelect,
 }: {
 	label: string;
-	options: { value: string; label: string }[];
+	options: { value: string; label: string; gradient?: string }[];
 	selected: string;
 	membershipLocked?: boolean;
 	onSelect: (value: string) => void;
@@ -35,7 +35,12 @@ export function FilterRow({
 					<button
 						type="button"
 						key={option.value}
-						className={`${selected === option.value ? 'active' : ''} filter-${option.value}`}
+						className={`${selected === option.value ? 'active' : ''} filter-${option.value} ${option.gradient ? 'dropFilter' : ''}`}
+						style={
+							option.gradient
+								? ({ '--drop-gradient': option.gradient } as CSSProperties)
+								: undefined
+						}
 						aria-pressed={selected === option.value}
 						onClick={() => {
 							onSelect(option.value);

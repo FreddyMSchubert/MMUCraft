@@ -104,6 +104,17 @@ dc() {
 	docker compose --env-file .env --env-file .release.env "$@"
 }
 
+show_startup_diagnostics() {
+	echo "Service startup failed. Container state and recent logs:" >&2
+	dc ps -a >&2 || true
+	for service in api web minecraft nginx; do
+		container=$(dc ps -a -q "$service" 2>/dev/null || true)
+		[ -n "$container" ] || continue
+		docker inspect --format '{{.Name}} status={{.State.Status}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} restarts={{.RestartCount}}' "$container" >&2 || true
+	done
+	dc logs --no-color --timestamps --tail=200 api web minecraft nginx >&2 || true
+}
+
 api_post() {
 	dc exec -T api node -e '
 		fetch("http://127.0.0.1:8080" + process.argv[1], {
@@ -362,14 +373,32 @@ fi
 
 # Start the release and wait for the services players need.
 if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
-	dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web velocity
+	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web velocity; then
+		:
+	else
+		status=$?
+		show_startup_diagnostics
+		exit "$status"
+	fi
 	dc up -d --no-deps minecraft || echo "Main server could not start; checking the active route." >&2
 else
-	dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web minecraft velocity
+	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web minecraft velocity; then
+		:
+	else
+		status=$?
+		show_startup_diagnostics
+		exit "$status"
+	fi
 fi
 # Compose cannot detect changes inside configuration bind mounts.
-dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" nginx
-wait_for_proxy ready || { echo "Velocity has not confirmed that the active route is ready." >&2; exit 1; }
+if dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" nginx; then
+	:
+else
+	status=$?
+	show_startup_diagnostics
+	exit "$status"
+fi
+wait_for_proxy ready || { echo "Velocity has not confirmed that the active route is ready." >&2; show_startup_diagnostics; exit 1; }
 clear_update
 announce_update_complete || graceful_failure "Could not send the update completion notice"
 

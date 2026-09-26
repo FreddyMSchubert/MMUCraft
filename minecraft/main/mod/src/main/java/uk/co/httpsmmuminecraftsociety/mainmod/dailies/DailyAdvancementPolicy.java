@@ -17,8 +17,9 @@ import java.util.Set;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 public final class DailyAdvancementPolicy {
+    static final String RESOURCE_PATH = "dont_edit_auto_generated/dailies/advancement_policy.json";
     private static final Identifier RESOURCE =
-            Identifier.fromNamespaceAndPath("mainmod", "dailies/advancement_policy.json");
+            Identifier.fromNamespaceAndPath("mainmod", RESOURCE_PATH);
 
     private static Policy policy = new Policy(Set.of(), Set.of(), Set.of());
 

@@ -19,14 +19,14 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0,
-		"gameplayToggle": "nether"
+		"lightLevel": 0
 	},
 	"craftable": {
 		"recipes": [
 			{
 				"id": "decoration/cardboard-box",
 				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "nether",
 				"pattern": ["PPP", "P P", "PPP"],
 				"key": {
 					"P": "minecraft:paper"

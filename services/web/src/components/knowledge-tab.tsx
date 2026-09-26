@@ -283,6 +283,7 @@ export function KnowledgeTab({
 			new Set(data?.enabledDropIds ?? []),
 			data?.drops ?? [],
 			activePage?.gameplayToggle ?? null,
+			data?.itemDrops ?? {},
 		);
 		const html = stripDangerousHtml(knowledgeMarkdown.parse(visibleMarkdown, { async: false }));
 		return activePage?.id === 'money-basics' ? html : decorateDabloonHtml(html);
@@ -291,6 +292,7 @@ export function KnowledgeTab({
 		activePage?.gameplayToggle,
 		data?.enabledDropIds,
 		data?.drops,
+		data?.itemDrops,
 		pageMarkdown,
 	]);
 

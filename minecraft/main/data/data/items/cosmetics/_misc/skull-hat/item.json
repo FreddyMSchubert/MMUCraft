@@ -18,8 +18,7 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0,
-		"gameplayToggle": "circus"
+		"lightLevel": 0
 	},
 	"equippableCosmetic": {}
 }

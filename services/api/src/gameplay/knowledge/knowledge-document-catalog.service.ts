@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, join, relative, sep } from 'node:path';
+import { itemDropId, loadDrops } from '../drop-catalog';
+import { findItemDefinitionFiles } from '../shop/shop-item-asset-files';
 import type {
 	KnowledgeDocument,
 	KnowledgePage,
@@ -12,6 +14,11 @@ import type {
 const DEFAULT_KNOWLEDGE_ROOTS = [
 	join(process.cwd(), 'content', 'knowledge'),
 	join(process.cwd(), '..', 'web', 'public', 'knowledge'),
+] as const;
+const DEFAULT_ITEM_ROOTS = [
+	join(process.cwd(), 'content', 'items'),
+	join(process.cwd(), '..', '..', 'minecraft', 'main', 'data', 'data', 'items'),
+	join(process.cwd(), 'minecraft', 'main', 'data', 'data', 'items'),
 ] as const;
 
 @Injectable()
@@ -30,6 +37,7 @@ export class KnowledgeDocumentCatalogService {
 			return (this.cached = {
 				root,
 				mtimeMs: 0,
+				itemDrops: {},
 				pages: [],
 				tree: [],
 				unlockable: [],
@@ -46,12 +54,44 @@ export class KnowledgeDocumentCatalogService {
 		const pages = this.flattenPages(tree);
 		const unlockable = pages.filter((page) => !page.unlockedByDefault);
 		const searchPages = pages.map((page) => this.toSearchPage(root, page));
+		const itemDrops = this.loadReferencedItemDrops(searchPages);
 		const seen = new Set<string>();
 		for (const page of pages) {
 			if (seen.has(page.id)) throw new Error(`Duplicate knowledge id: ${page.id}`);
 			seen.add(page.id);
 		}
-		return { root, mtimeMs, pages, tree, unlockable, searchPages };
+		return { root, mtimeMs, itemDrops, pages, tree, unlockable, searchPages };
+	}
+
+	private loadReferencedItemDrops(pages: KnowledgeSearchPage[]): Record<string, string | null> {
+		const referencedIds = new Set(
+			pages.flatMap((page) =>
+				[...page.markdown.matchAll(/^:::drop-item[ \t]+([a-z0-9._-]+)[ \t]*$/gm)].flatMap(
+					(match) => (match[1] ? [match[1]] : []),
+				),
+			),
+		);
+		if (referencedIds.size === 0) return {};
+		const root =
+			process.env.SHOP_ITEM_ROOT ??
+			DEFAULT_ITEM_ROOTS.find((candidate) => existsSync(candidate)) ??
+			DEFAULT_ITEM_ROOTS[0];
+		if (!existsSync(root)) throw new Error(`Item definitions were not found: ${root}`);
+		const drops = loadDrops();
+		const itemDrops: Record<string, string | null> = {};
+		for (const path of findItemDefinitionFiles(root)) {
+			const item = JSON.parse(readFileSync(path, 'utf8')) as {
+				id?: string;
+				craftable?: unknown;
+				shopPurchasable?: unknown;
+			};
+			if (item.id && referencedIds.has(item.id)) itemDrops[item.id] = itemDropId(item, drops);
+		}
+		for (const id of referencedIds) {
+			if (!Object.hasOwn(itemDrops, id))
+				throw new Error(`Unknown knowledge drop item: ${id}`);
+		}
+		return itemDrops;
 	}
 
 	private readDirectory(root: string, directory: string): KnowledgeTreeEntry[] {

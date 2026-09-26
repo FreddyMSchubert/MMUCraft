@@ -18,6 +18,11 @@ public final class DailyTaskCatalogCheck {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
         Path project = Path.of(args[0]);
+        Path advancementPolicy = project.resolve("build/resources/main/data/mainmod")
+                .resolve(DailyAdvancementPolicy.RESOURCE_PATH);
+        if (!Files.isRegularFile(advancementPolicy)) {
+            throw new IllegalStateException("Missing packaged daily advancement policy: " + advancementPolicy);
+        }
         Set<String> fakeItemIds = new HashSet<>();
         try (var paths = Files.walk(project.resolve("../data/data/items"))) {
             for (Path path : paths.filter(file -> file.getFileName().toString().equals("item.json")).toList()) {

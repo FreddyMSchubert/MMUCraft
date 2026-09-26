@@ -46,6 +46,10 @@ export class ShopPurchasesService {
 		const items = this.itemCatalog.load().items;
 		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
 		const enabledToggles = this.featureToggles.enabledKeys();
+		const unlockedDrops = loadDrops()
+			.filter((drop) => enabledToggles.has(drop.id))
+			.map(({ id, name, emoji, colors }) => ({ id, name, emoji, colors }));
+		const unlockedDropIds = new Set(unlockedDrops.map((drop) => drop.id));
 		const availability = this.unlocks.availabilityForUser(user.id);
 		const dealDate = currentShopDealDate();
 		const limitedPurchaseCounts = this.limitedPurchaseCounts(user.id, dealDate);
@@ -54,7 +58,7 @@ export class ShopPurchasesService {
 
 		return {
 			isMember: user.isMember,
-			drops: loadDrops().map(({ id, name, emoji, colors }) => ({ id, name, emoji, colors })),
+			drops: unlockedDrops,
 			availability,
 			dealDate,
 			shoppingSunday: isShoppingSunday(dealDate),
@@ -72,7 +76,7 @@ export class ShopPurchasesService {
 					);
 					return {
 						id: item.id,
-						drop: item.drop,
+						drop: item.drop && unlockedDropIds.has(item.drop) ? item.drop : null,
 						title: item.title,
 						type: item.type,
 						modelType: item.modelType,

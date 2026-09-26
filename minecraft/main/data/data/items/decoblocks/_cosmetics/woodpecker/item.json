@@ -9,8 +9,7 @@
 		"ground": false,
 		"wall": true,
 		"ceiling": false,
-		"lightLevel": 0,
-		"gameplayToggle": "imaginative"
+		"lightLevel": 0
 	},
 	"equippableCosmetic": {},
 	"craftable": {

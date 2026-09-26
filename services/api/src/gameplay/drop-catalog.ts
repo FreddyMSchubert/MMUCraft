@@ -45,14 +45,16 @@ export function loadDrops(): DropDefinition[] {
 }
 
 export function itemDropId(
-	item: { craftable?: unknown; shopPurchasable?: unknown; decoBlock?: unknown },
+	item: { craftable?: unknown; shopPurchasable?: unknown },
 	drops: readonly DropDefinition[],
 ): string | null {
 	const candidates: unknown[] = [];
-	for (const component of [item.shopPurchasable, item.decoBlock]) {
-		if (component && typeof component === 'object' && 'gameplayToggle' in component)
-			candidates.push(component.gameplayToggle);
-	}
+	if (
+		item.shopPurchasable &&
+		typeof item.shopPurchasable === 'object' &&
+		'gameplayToggle' in item.shopPurchasable
+	)
+		candidates.push(item.shopPurchasable.gameplayToggle);
 	if (item.craftable && typeof item.craftable === 'object' && 'recipes' in item.craftable) {
 		const recipes = item.craftable.recipes;
 		if (Array.isArray(recipes)) {

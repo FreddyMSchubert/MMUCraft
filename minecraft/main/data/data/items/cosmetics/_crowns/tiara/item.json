@@ -1,0 +1,17 @@
+{
+	"title": "Tiara",
+	"id": "cosmetic-tiara",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": ["A must have for any princess"],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 100,
+		"description": "",
+		"unlockWeight": 80,
+		"unlockMessage": "Unlocked cosmetic: Tiara.",
+		"tags": ["princess"]
+	},
+	"equippableCosmetic": {}
+}

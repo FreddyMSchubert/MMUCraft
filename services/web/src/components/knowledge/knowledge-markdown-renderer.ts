@@ -1,4 +1,5 @@
 import { Marked, type Tokens } from 'marked';
+import { dropPillHtml, type DropInfo } from '../drop-pill';
 
 type AdmonitionType =
 	'info' | 'warning' | 'error' | 'hint' | 'tip' | 'note' | 'tldr' | 'context' | 'perk';
@@ -105,21 +106,34 @@ export function stripMetadataBlock(markdown: string) {
 }
 
 /** Keep only Markdown inside enabled drop blocks. Guards must occupy whole lines. */
-export function filterDropGuards(markdown: string, enabledDrops: ReadonlySet<string>) {
-	const stack: boolean[] = [];
+export function filterDropGuards(
+	markdown: string,
+	enabledDrops: ReadonlySet<string>,
+	drops: DropInfo[] = [],
+	pageDrop: string | null = null,
+) {
+	const stack: { enabled: boolean; id: string }[] = [];
 	return markdown
 		.split(/\r?\n/)
-		.filter((line) => {
+		.flatMap((line) => {
 			const start = /^:::drop[ \t]+([a-z0-9._-]+(?:\/[a-z0-9._-]+)*)[ \t]*$/.exec(line);
 			if (start) {
-				stack.push(enabledDrops.has(start[1]));
-				return false;
+				stack.push({ enabled: enabledDrops.has(start[1]), id: start[1] });
+				return [];
 			}
 			if (/^:::end-drop[ \t]*$/.test(line)) {
 				stack.pop();
-				return false;
+				return [];
 			}
-			return stack.every(Boolean);
+			if (!stack.every((guard) => guard.enabled)) return [];
+			if (/^:::drop-indicator[ \t]*$/.test(line)) {
+				const id = stack.at(-1)?.id ?? pageDrop;
+				const drop = drops.find((candidate) => candidate.id === id);
+				return drop
+					? [`<div class="knowledgeDropIndicator">${dropPillHtml(drop)}</div>`]
+					: [];
+			}
+			return [line];
 		})
 		.join('\n');
 }

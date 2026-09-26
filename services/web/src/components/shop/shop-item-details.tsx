@@ -3,6 +3,7 @@
 import { type CSSProperties, useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
+import { DropPill, type DropInfo } from '@/components/drop-pill';
 import type { CosmeticPreviewView } from '@/lib/site-settings';
 import { ShopPreview } from './shop-item-preview';
 import {
@@ -55,6 +56,7 @@ export function FilterRow({
 
 export function ShopCard({
 	item,
+	drop,
 	hovered,
 	hidePreview,
 	allow3d,
@@ -62,6 +64,7 @@ export function ShopCard({
 	onOpen,
 }: {
 	item: ShopItem;
+	drop: DropInfo | null;
 	hovered: boolean;
 	hidePreview: boolean;
 	allow3d: boolean;
@@ -103,7 +106,7 @@ export function ShopCard({
 				)}
 			</div>
 			<div className="shopCardBody">
-				<ItemBadges item={item} />
+				<ItemBadges item={item} drop={drop} />
 				<h4>
 					<DabloonText>{item.title}</DabloonText>
 				</h4>
@@ -135,6 +138,7 @@ export function ShopCard({
 
 export function ShopDetails({
 	item,
+	drop,
 	buying,
 	hidePreview,
 	previewView,
@@ -144,6 +148,7 @@ export function ShopDetails({
 	onBuy,
 }: {
 	item: ShopItem;
+	drop: DropInfo | null;
 	buying: boolean;
 	hidePreview: boolean;
 	previewView: CosmeticPreviewView;
@@ -259,7 +264,7 @@ export function ShopDetails({
 							)}
 					</div>
 					<div className="shopDetailsSummary">
-						<ItemBadges item={item} />
+						<ItemBadges item={item} drop={drop} />
 						<h2 id="shop-detail-title">
 							<DabloonText>{item.title}</DabloonText>
 						</h2>
@@ -442,7 +447,7 @@ function CharmProgression({ details }: { details: NonNullable<ShopItem['charmDet
 	);
 }
 
-function ItemBadges({ item }: { item: ShopItem }) {
+function ItemBadges({ item, drop }: { item: ShopItem; drop: DropInfo | null }) {
 	const tags = [
 		item.dyeable ? (
 			<span key="dyeable" className="shopTag dyeable">
@@ -497,6 +502,11 @@ function ItemBadges({ item }: { item: ShopItem }) {
 				<span>{formatOption(item.rarity)}</span>
 			</div>
 			{tags.length > 0 && <div className="shopTagBadges">{tags}</div>}
+			{drop && (
+				<div className="shopDropBadge">
+					<DropPill drop={drop} />
+				</div>
+			)}
 		</div>
 	);
 }

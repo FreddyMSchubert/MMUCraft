@@ -25,6 +25,8 @@ tips:
 
 # Maps & Map Art
 
+:::drop-indicator
+
 With map art, you can make absolutely any texture you want and place it in-game. If you combine that with [invisi-carrots](/play/knowledge/invisicarrot), you can even make parts of the map see-through.
 
 ![Map Art Result](/assets/knowledge/aesthetics/maps-map-art/result.png)

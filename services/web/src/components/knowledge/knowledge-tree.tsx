@@ -1,4 +1,5 @@
 import { DabloonText } from '@/components/dabloon-amount';
+import type { DropInfo } from '../drop-pill';
 
 export type KnowledgeTreeEntry = KnowledgeFolder | KnowledgePage;
 
@@ -13,6 +14,7 @@ export interface KnowledgePage {
 	id: string;
 	path: string;
 	sidebarTitle: string;
+	gameplayToggle: string | null;
 	unlockOrder: number | null;
 	chatMessage: string;
 	unlockedByDefault: boolean;
@@ -22,6 +24,7 @@ export interface KnowledgePage {
 export interface KnowledgeResponse {
 	contentVersion: number;
 	enabledDropIds: string[];
+	drops: DropInfo[];
 	readRewardDabloons: number;
 	lastUnlockedKnowledgeId: string | null;
 	unlockedKnowledgeIds: string[];

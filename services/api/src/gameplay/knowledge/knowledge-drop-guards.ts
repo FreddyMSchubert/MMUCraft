@@ -13,6 +13,7 @@ export function filterDropGuards(markdown: string, enabledDrops: ReadonlySet<str
 				stack.pop();
 				return false;
 			}
+			if (/^:::drop-indicator[ \t]*$/.test(line)) return false;
 			return stack.every(Boolean);
 		})
 		.join('\n');

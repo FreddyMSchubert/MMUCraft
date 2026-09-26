@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { loadDrops } from '../drop-catalog';
 import { and, count, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/auth-session.service';
 import { DatabaseService, limitedShopPurchases, users } from '../../database/database.service';
@@ -53,6 +54,7 @@ export class ShopPurchasesService {
 
 		return {
 			isMember: user.isMember,
+			drops: loadDrops().map(({ id, name, emoji, colors }) => ({ id, name, emoji, colors })),
 			availability,
 			dealDate,
 			shoppingSunday: isShoppingSunday(dealDate),
@@ -70,6 +72,7 @@ export class ShopPurchasesService {
 					);
 					return {
 						id: item.id,
+						drop: item.drop,
 						title: item.title,
 						type: item.type,
 						modelType: item.modelType,

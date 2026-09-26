@@ -278,10 +278,21 @@ export function KnowledgeTab({
 	}, [activePagePath, contentVersion]);
 
 	const renderedHtml = useMemo(() => {
-		const visibleMarkdown = filterDropGuards(pageMarkdown, new Set(data?.enabledDropIds ?? []));
+		const visibleMarkdown = filterDropGuards(
+			pageMarkdown,
+			new Set(data?.enabledDropIds ?? []),
+			data?.drops ?? [],
+			activePage?.gameplayToggle ?? null,
+		);
 		const html = stripDangerousHtml(knowledgeMarkdown.parse(visibleMarkdown, { async: false }));
 		return activePage?.id === 'money-basics' ? html : decorateDabloonHtml(html);
-	}, [activePage?.id, data?.enabledDropIds, pageMarkdown]);
+	}, [
+		activePage?.id,
+		activePage?.gameplayToggle,
+		data?.enabledDropIds,
+		data?.drops,
+		pageMarkdown,
+	]);
 
 	useEffect(() => {
 		const article = articleRef.current;

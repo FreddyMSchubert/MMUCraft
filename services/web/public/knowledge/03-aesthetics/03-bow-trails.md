@@ -21,6 +21,8 @@ tips:
 
 # Particle Trails
 
+:::drop-indicator
+
 ![War-Horse](/assets/knowledge/items/bow-trails/war-horse.png)
 
 It's super easy to add awesome particle trails to many different tools: your bow, crossbow, glider, elytra, tridents, or mace!

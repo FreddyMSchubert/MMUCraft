@@ -222,6 +222,7 @@ message ClaimData {
 
 message ClaimsSnapshot {
   repeated ClaimData claims = 1;
+  repeated string committee_uuids = 2;
 }
 
 message GetCurrentClaimChunkRequest {

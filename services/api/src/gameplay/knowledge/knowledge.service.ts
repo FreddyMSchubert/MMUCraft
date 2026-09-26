@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { loadDrops } from '../drop-catalog';
 import type { SearchResult } from 'minisearch';
 import { randomInt } from 'node:crypto';
 import { and, desc, eq } from 'drizzle-orm';
@@ -92,6 +93,7 @@ export class KnowledgeService {
 
 		return {
 			contentVersion: document.mtimeMs,
+			drops: loadDrops().map(({ id, name, emoji, colors }) => ({ id, name, emoji, colors })),
 			enabledDropIds: [...this.featureToggles.enabledKeys()],
 			readRewardDabloons: this.readRewardDabloons,
 			lastUnlockedKnowledgeId,

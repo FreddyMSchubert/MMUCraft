@@ -14,6 +14,8 @@ tips:
 
 # Invisi-Carrots
 
+:::drop-indicator
+
 Invisible item frames are great, because they can turn any item into awesome decorations!
 
 Using invisi-carrots, you can create invisible item frames yourself. To craft the carrots, use either of these two recipes:

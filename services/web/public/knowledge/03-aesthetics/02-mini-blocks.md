@@ -15,6 +15,8 @@ tips:
 
 # Mini Blocks
 
+:::drop-indicator
+
 **Mini blocks are mini versions of blocks. 👍**
 
 They can be great for decorating:

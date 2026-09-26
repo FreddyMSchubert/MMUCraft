@@ -15,6 +15,8 @@ tips:
 
 # Phantom Summon Potion
 
+:::drop-indicator
+
 :::context
 Since they are incredibly annoying, natural phantom spawns have been disabled on the server.
 :::

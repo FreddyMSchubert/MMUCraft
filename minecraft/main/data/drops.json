@@ -3,72 +3,204 @@
 		"id": "welcoming",
 		"name": "Welcoming",
 		"date": "2026-10-04",
-		"description": "Animal cosmetics, pets, slime detector and mini blocks.\n\nThis year starts: 2026-09-28\n\nLast year: 2025-09-22 to 2025-09-28\n\nAvailable day one: Saw Belt Charm\nVeinminer Charm\nHeart of Gold Charm\n\nSurprising Saturday: Killswitch\n\nSunday plan: Kitty Pajamas Charm, Hiking Boots Charm and Pickaxe Heater Charm\nNote that Charm Boost allows many charms on some armor\nAnimal cosmetics, pets, crows, cats, dogs and hoods, including Eeyore\nSlime detector\nMini blocks\n\nScreenshot: Kitty pajamas and bunny ears, with baby mobs nearby"
+		"description": "Animal cosmetics, pets, slime detector and mini blocks.\n\nThis year starts: 2026-09-28\n\nLast year: 2025-09-22 to 2025-09-28\n\nAvailable day one: Saw Belt Charm\nVeinminer Charm\nHeart of Gold Charm\n\nSurprising Saturday: Killswitch\n\nSunday plan: Kitty Pajamas Charm, Hiking Boots Charm and Pickaxe Heater Charm\nNote that Charm Boost allows many charms on some armor\nAnimal cosmetics, pets, crows, cats, dogs and hoods, including Eeyore\nSlime detector\nMini blocks\n\nScreenshot: Kitty pajamas and bunny ears, with baby mobs nearby",
+		"emoji": "👋",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#276749"
+			},
+			{
+				"percentage": 100,
+				"color": "#79C66B"
+			}
+		]
 	},
 	{
 		"id": "soaring",
 		"name": "Soaring",
 		"date": "2026-10-11",
-		"description": "Gliders, particle trails, phantom summoning and airborne adventures.\n\nThis year starts: 2026-10-05\n\nLast year: 2025-09-29 to 2025-10-05\n\nLast year notes: 2025-09-29: Oderzo first joined\n\nSurprising Saturday: Lifesteal; the player with the most hearts wins\n\nSunday plan: Glider\nParticle trails\nPhantom Summon Potions\nWinged Shoes Charm and Bunny Pajamas Charm\nAnnounce the bunny ears cosmetic with Bunny Pajamas\n\nScreenshot: Glider and aviator helmet while flying over a campfire with a trail"
+		"description": "Gliders, particle trails, phantom summoning and airborne adventures.\n\nThis year starts: 2026-10-05\n\nLast year: 2025-09-29 to 2025-10-05\n\nLast year notes: 2025-09-29: Oderzo first joined\n\nSurprising Saturday: Lifesteal; the player with the most hearts wins\n\nSunday plan: Glider\nParticle trails\nPhantom Summon Potions\nWinged Shoes Charm and Bunny Pajamas Charm\nAnnounce the bunny ears cosmetic with Bunny Pajamas\n\nScreenshot: Glider and aviator helmet while flying over a campfire with a trail",
+		"emoji": "🪽",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#246DAB"
+			},
+			{
+				"percentage": 100,
+				"color": "#90DAFF"
+			}
+		]
 	},
 	{
 		"id": "imaginative",
 		"name": "Imaginative",
 		"date": "2026-10-18",
-		"description": "Building tools, map art and the start of the Halloween building event.\n\nThis year starts: 2026-10-12\n\nLast year: 2025-10-06 to 2025-10-12\n\nLast year notes: 2025-10-10: Freddy first joined\n2025-10-12: Calum first joined\n\nSurprising Saturday: Chunklocked with many custom advancements\n\nSunday plan: Tease the Nether unlock for next week\nBegin the Halloween event and frame this drop as helpful for building\nWrench and InvisiCarrot\n16x16 maps feature\nSpider Pajamas and Cave Spider Pajamas charms\n\nScreenshot: Wrench and builder helmet on a build under construction, perhaps with a toolbench decoration block"
+		"description": "Building tools, map art and the start of the Halloween building event.\n\nThis year starts: 2026-10-12\n\nLast year: 2025-10-06 to 2025-10-12\n\nLast year notes: 2025-10-10: Freddy first joined\n2025-10-12: Calum first joined\n\nSurprising Saturday: Chunklocked with many custom advancements\n\nSunday plan: Tease the Nether unlock for next week\nBegin the Halloween event and frame this drop as helpful for building\nWrench and InvisiCarrot\n16x16 maps feature\nSpider Pajamas and Cave Spider Pajamas charms\n\nScreenshot: Wrench and builder helmet on a build under construction, perhaps with a toolbench decoration block",
+		"emoji": "🎨",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#8039B8"
+			},
+			{
+				"percentage": 100,
+				"color": "#FF91D4"
+			}
+		]
 	},
 	{
 		"id": "nether",
 		"name": "Hellish",
 		"date": "2026-10-25",
-		"description": "The Nether, flexible portals and Halloween cosmetics.\n\nThis year starts: 2026-10-19\n\nLast year: 2025-10-13 to 2025-10-19\n\nLast year notes: 2025-10-15: Mia first joined\n2025-10-16: Hannah first joined\n\nSurprising Saturday: One Block, with one block per person who joins\n\nSunday plan: Unlock the Nether\nNether portals of any shape\nNote that the Halloween build event ends next Saturday\nHalloween cosmetics\n\nScreenshot: Player in netherite with devil horns, perhaps falling through a portal in the ground"
+		"description": "The Nether, flexible portals and Halloween cosmetics.\n\nThis year starts: 2026-10-19\n\nLast year: 2025-10-13 to 2025-10-19\n\nLast year notes: 2025-10-15: Mia first joined\n2025-10-16: Hannah first joined\n\nSurprising Saturday: One Block, with one block per person who joins\n\nSunday plan: Unlock the Nether\nNether portals of any shape\nNote that the Halloween build event ends next Saturday\nHalloween cosmetics\n\nScreenshot: Player in netherite with devil horns, perhaps falling through a portal in the ground",
+		"emoji": "🔥",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#8C2424"
+			},
+			{
+				"percentage": 100,
+				"color": "#FF843D"
+			}
+		]
 	},
 	{
 		"id": "circus",
 		"name": "Circus",
 		"date": "2026-11-01",
-		"description": "Playful charms, costumes and hopcorn.\n\nThis year starts: 2026-10-26\n\nLast year: 2025-10-20 to 2025-10-26\n\nSurprising Saturday: A seemingly normal world with Herobrine and spooky server-side mods; extreme mob difficulty and points for kills (for example, zombie 1, dragon 50, wither 100)\n\nSunday plan: Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots and Happy Ghast Speedup charms\nFarmer-traded popcorn (hopcorn) makes the next jump very high\n\nScreenshot: Player wearing Giant's Boots and a skull, looking down at a normal-size player\n\nOther notes: End the Halloween event"
+		"description": "Playful charms, costumes and hopcorn.\n\nThis year starts: 2026-10-26\n\nLast year: 2025-10-20 to 2025-10-26\n\nSurprising Saturday: A seemingly normal world with Herobrine and spooky server-side mods; extreme mob difficulty and points for kills (for example, zombie 1, dragon 50, wither 100)\n\nSunday plan: Giants Boots, Leprechaun Boots, Cinnabar Kangaroo Boots and Happy Ghast Speedup charms\nFarmer-traded popcorn (hopcorn) makes the next jump very high\n\nScreenshot: Player wearing Giant's Boots and a skull, looking down at a normal-size player\n\nOther notes: End the Halloween event",
+		"emoji": "🎪",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#9A2C67"
+			},
+			{
+				"percentage": 100,
+				"color": "#F6B64B"
+			}
+		]
 	},
 	{
 		"id": "inventors",
 		"name": "Inventors",
 		"date": "2026-11-08",
-		"description": "Item filters, storage systems and bow attachments.\n\nThis year starts: 2026-11-02\n\nLast year: 2025-10-27 to 2025-11-02\n\nSurprising Saturday: A long puzzle like the BAC advancements pirate puzzle, with more hints released each hour\n\nSunday plan: Easy sorting systems with a special hopper filter item\nBow system that attaches items held in the offhand\n\nScreenshot: Player working on a storage system while wearing an inventor's top hat"
+		"description": "Item filters, storage systems and bow attachments.\n\nThis year starts: 2026-11-02\n\nLast year: 2025-10-27 to 2025-11-02\n\nSurprising Saturday: A long puzzle like the BAC advancements pirate puzzle, with more hints released each hour\n\nSunday plan: Easy sorting systems with a special hopper filter item\nBow system that attaches items held in the offhand\n\nScreenshot: Player working on a storage system while wearing an inventor's top hat",
+		"emoji": "⚙️",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#285C72"
+			},
+			{
+				"percentage": 100,
+				"color": "#73C7C4"
+			}
+		]
 	},
 	{
 		"id": "beach-party",
 		"name": "Beach Party",
 		"date": "2026-11-15",
-		"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms.\n\nThis year starts: 2026-11-09\n\nLast year: 2025-11-03 to 2025-11-09\n\nSurprising Saturday: Manhunt: split everyone randomly into hunters and runners\n\nSunday plan: Tease the End opening next week\nIron Stomach Charm, Scuba Tank Charm, Candle of the Deep Charm and Vitality Mending Charm\n\nScreenshot: Player in a halo with many god rays"
+		"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms.\n\nThis year starts: 2026-11-09\n\nLast year: 2025-11-03 to 2025-11-09\n\nSurprising Saturday: Manhunt: split everyone randomly into hunters and runners\n\nSunday plan: Tease the End opening next week\nIron Stomach Charm, Scuba Tank Charm, Candle of the Deep Charm and Vitality Mending Charm\n\nScreenshot: Player in a halo with many god rays",
+		"emoji": "🏖️",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#087B9A"
+			},
+			{
+				"percentage": 100,
+				"color": "#F2D574"
+			}
+		]
 	},
 	{
 		"id": "void",
 		"name": "Void",
 		"date": "2026-11-22",
-		"description": "The End opens with Enderite and End City exploration.\n\nThis year starts: 2026-11-16\n\nLast year: 2025-11-10 to 2025-11-16\n\nSurprising Saturday: Skyblock\n\nSunday plan: Unlock the End\nEnderite\nRemind players to check out particle trails\n\nScreenshot: Enderite and shulker hat while raiding an End City, with shulker shots nearby"
+		"description": "The End opens with Enderite and End City exploration.\n\nThis year starts: 2026-11-16\n\nLast year: 2025-11-10 to 2025-11-16\n\nSurprising Saturday: Skyblock\n\nSunday plan: Unlock the End\nEnderite\nRemind players to check out particle trails\n\nScreenshot: Enderite and shulker hat while raiding an End City, with shulker shots nearby",
+		"emoji": "🌌",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#30245D"
+			},
+			{
+				"percentage": 100,
+				"color": "#9785DF"
+			}
+		]
 	},
 	{
 		"id": "unthemed",
 		"name": "Unthemed",
 		"date": "2026-11-29",
-		"description": "A week without a fixed theme, ahead of the Christmas season.\n\nThis year starts: 2026-11-23\n\nLast year: 2025-11-17 to 2025-11-23\n\nSunday plan: No fixed theme; Christmas is coming soon"
+		"description": "A week without a fixed theme, ahead of the Christmas season.\n\nThis year starts: 2026-11-23\n\nLast year: 2025-11-17 to 2025-11-23\n\nSunday plan: No fixed theme; Christmas is coming soon",
+		"emoji": "❔",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#485362"
+			},
+			{
+				"percentage": 100,
+				"color": "#9EA9B9"
+			}
+		]
 	},
 	{
 		"id": "cold",
 		"name": "Cold",
 		"date": "2026-12-06",
-		"description": "The Christmas event and Advent Calendar begin.\n\nThis year starts: 2026-11-30\n\nLast year: 2025-11-24 to 2025-11-30\n\nSunday plan: Start the Christmas event\nStart the Advent Calendar"
+		"description": "The Christmas event and Advent Calendar begin.\n\nThis year starts: 2026-11-30\n\nLast year: 2025-11-24 to 2025-11-30\n\nSunday plan: Start the Christmas event\nStart the Advent Calendar",
+		"emoji": "❄️",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#347AA1"
+			},
+			{
+				"percentage": 100,
+				"color": "#B8ECFF"
+			}
+		]
 	},
 	{
 		"id": "jolly",
 		"name": "Jolly",
 		"date": "2026-12-13",
-		"description": "The second week of the Christmas event.\n\nThis year starts: 2026-12-07\n\nLast year: 2025-12-01 to 2025-12-07"
+		"description": "The second week of the Christmas event.\n\nThis year starts: 2026-12-07\n\nLast year: 2025-12-01 to 2025-12-07",
+		"emoji": "🎄",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#267447"
+			},
+			{
+				"percentage": 100,
+				"color": "#D8BD62"
+			}
+		]
 	},
 	{
 		"id": "christmas",
 		"name": "Christmas",
 		"date": "2026-12-20",
-		"description": "Christmas gifts and decorations; the event ends this week.\n\nThis year starts: 2026-12-14\n\nLast year: 2025-12-08 to 2025-12-14\n\nSurprising Saturday: Combine as many previous Surprising Saturdays as possible into one mashup\n\nSunday plan: Christmas activities\nGifts\nChristmas decorations\n\nOther notes: End the Christmas event on 2026-12-20"
+		"description": "Christmas gifts and decorations; the event ends this week.\n\nThis year starts: 2026-12-14\n\nLast year: 2025-12-08 to 2025-12-14\n\nSurprising Saturday: Combine as many previous Surprising Saturdays as possible into one mashup\n\nSunday plan: Christmas activities\nGifts\nChristmas decorations\n\nOther notes: End the Christmas event on 2026-12-20",
+		"emoji": "🎁",
+		"colors": [
+			{
+				"percentage": 0,
+				"color": "#9B2D3A"
+			},
+			{
+				"percentage": 100,
+				"color": "#53A76F"
+			}
+		]
 	}
 ]

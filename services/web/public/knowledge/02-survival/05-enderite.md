@@ -15,6 +15,8 @@ tips:
 
 # Enderite
 
+:::drop-indicator
+
 *I mean, if Mojang won't do it...*
 
 Enderite tools and armor are powerful because they are able to hold significantly more magic than Netherite equipment. That means:

@@ -1,3 +1,5 @@
+import type { DropInfo } from '../drop-pill';
+
 export type ShopItemType = 'charm' | 'cosmetic' | 'generic';
 export type ShopOrder =
 	| 'random'
@@ -26,6 +28,7 @@ interface CharmLevel {
 
 export interface ShopItem {
 	id: string;
+	drop: string | null;
 	title: string;
 	type: ShopItemType;
 	modelType: string;
@@ -61,6 +64,7 @@ export interface ShopItem {
 
 export interface ShopResponse {
 	isMember: boolean;
+	drops: DropInfo[];
 	dealDate: string;
 	shoppingSunday: boolean;
 	availability: { knowledge: boolean; charms: boolean; cosmetics: boolean };

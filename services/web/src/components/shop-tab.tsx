@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
+import { DropPill } from '@/components/drop-pill';
 import { apiMessage } from '@/lib/api-response';
 import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
 import { useSiteSettings } from '@/lib/site-settings';
@@ -43,6 +44,7 @@ export function ShopTab({
 	const [typeFilter, setTypeFilter] = useState<'all' | ShopItemType>('all');
 	const [rarityFilter, setRarityFilter] = useState<(typeof RARITY_OPTIONS)[number]>('all');
 	const [tagFilter, setTagFilter] = useState<ShopTagFilter>('all');
+	const [dropFilter, setDropFilter] = useState('all');
 	const [searchQuery, setSearchQuery] = useState('');
 	const [searchFocused, setSearchFocused] = useState(false);
 	const [searchResponse, setSearchResponse] = useState<{
@@ -165,6 +167,7 @@ export function ShopTab({
 			if (tagFilter === 'members-only' && !item.membersOnly) return false;
 			if (tagFilter === 'discounted' && !item.isDailyDeal) return false;
 			if (tagFilter === 'sold-out' && !isSoldOut(item)) return false;
+			if (dropFilter !== 'all' && item.drop !== dropFilter) return false;
 			return true;
 		});
 
@@ -191,6 +194,7 @@ export function ShopTab({
 		});
 	}, [
 		data?.items,
+		dropFilter,
 		matchingItemIds,
 		normalizedSearchQuery,
 		order,
@@ -221,7 +225,7 @@ export function ShopTab({
 
 	useEffect(() => {
 		setVisibleItemCount(gridRef.current ? gridColumnCount(gridRef.current) * 4 : 16);
-	}, [normalizedSearchQuery, order, randomSeed, rarityFilter, tagFilter, typeFilter]);
+	}, [dropFilter, normalizedSearchQuery, order, randomSeed, rarityFilter, tagFilter, typeFilter]);
 
 	useEffect(() => {
 		const target = loadMoreRef.current;
@@ -287,6 +291,7 @@ export function ShopTab({
 
 	const safeFeaturedIndex = dailyDeals.length ? featuredIndex % dailyDeals.length : 0;
 	const featured = dailyDeals.at(safeFeaturedIndex);
+	const featuredDrop = data.drops.find((drop) => drop.id === featured?.drop);
 	return (
 		<div className="shopPanel">
 			<div className="shopTop">
@@ -337,6 +342,7 @@ export function ShopTab({
 								<h4>
 									<DabloonText>{featured.title}</DabloonText>
 								</h4>
+								{featuredDrop && <DropPill drop={featuredDrop} />}
 							</div>
 							<strong>−{featured.discountPercent}%</strong>
 						</div>
@@ -493,6 +499,18 @@ export function ShopTab({
 						setTagFilter(value as ShopTagFilter);
 					}}
 				/>
+				<FilterRow
+					label="Drop"
+					options={[
+						{ value: 'all', label: 'All' },
+						...data.drops.map((drop) => ({
+							value: drop.id,
+							label: `${drop.emoji} ${drop.name}`,
+						})),
+					]}
+					selected={dropFilter}
+					onSelect={setDropFilter}
+				/>
 			</div>
 			{searchError && (
 				<p className="authError" role="alert">
@@ -505,6 +523,7 @@ export function ShopTab({
 					<ShopCard
 						key={item.id}
 						item={item}
+						drop={data.drops.find((drop) => drop.id === item.drop) ?? null}
 						hovered={hoveredItemId === item.id}
 						hidePreview={shouldHidePreview(item, settings.arachnophobiaMode)}
 						allow3d={!settings.reduce3dRendering}
@@ -528,6 +547,7 @@ export function ShopTab({
 			{selectedItem && (
 				<ShopDetails
 					item={selectedItem}
+					drop={data.drops.find((drop) => drop.id === selectedItem.drop) ?? null}
 					buying={buyingItemId === selectedItem.id}
 					hidePreview={shouldHidePreview(selectedItem, settings.arachnophobiaMode)}
 					previewView={settings.cosmeticPreviewView}

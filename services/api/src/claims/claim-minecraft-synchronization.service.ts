@@ -28,6 +28,7 @@ interface ClaimData {
 
 export interface ClaimsSnapshot {
 	claims: ClaimData[];
+	committee_uuids: string[];
 }
 
 @Injectable()
@@ -70,6 +71,7 @@ export class ClaimMinecraftSynchronizationService implements OnModuleDestroy {
 			memberUuidsByClaim.set(membership.claim_id, memberUuids);
 		}
 		return {
+			committee_uuids: committeeUuids,
 			claims: this.database.connection
 				.select()
 				.from(claims)

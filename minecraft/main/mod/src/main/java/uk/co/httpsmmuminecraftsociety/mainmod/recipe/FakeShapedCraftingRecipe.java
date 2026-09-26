@@ -123,7 +123,8 @@ public final class FakeShapedCraftingRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        if (!gameplayToggle.isEmpty() && !FeatureToggles.isEnabled(gameplayToggle)) {
+        if (!gameplayToggle.isEmpty() && !FeatureToggles.isEnabled(gameplayToggle)
+                && !CraftingPlayerContext.isCommitteeCrafting()) {
             return false;
         }
         if (input.width() < width || input.height() < height) {

@@ -48,6 +48,7 @@ export function parseShopItemDefinition(
 
 	return {
 		id,
+		drop: typeof json.drop === 'string' ? json.drop : shop.gameplayToggle,
 		title,
 		type,
 		modelType,

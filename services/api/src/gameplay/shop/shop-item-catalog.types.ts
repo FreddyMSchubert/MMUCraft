@@ -13,6 +13,7 @@ export interface ShopPurchasableDefinition {
 }
 
 export interface RawItemDefinition {
+	drop?: unknown;
 	title?: unknown;
 	id?: unknown;
 	modelType?: unknown;
@@ -67,6 +68,7 @@ export interface ItemRenderAsset {
 }
 
 export interface CatalogItem extends ItemRenderAsset {
+	drop: string | null;
 	id: string;
 	title: string;
 	type: ShopItemType;

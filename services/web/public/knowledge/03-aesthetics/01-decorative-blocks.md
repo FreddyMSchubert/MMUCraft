@@ -19,6 +19,8 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop imaginative
 ## Kettle
 
+:::drop-indicator
+
 ![Kettle Recipe](/assets/knowledge/items/decorative-blocks/kettle-recipe.png)
 :::recipe-items
 [Copper Nugget](https://minecraft.wiki/w/Copper_Nugget) (TL, TC, TR, CL, CR, BL, BC, BR) → Kettle
@@ -29,6 +31,8 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop imaginative
 ## Fruit Bowl
+
+:::drop-indicator
 
 ![Fruit-Bowl Recipe](/assets/knowledge/items/decorative-blocks/fruit-bowl-recipe.png)
 :::recipe-items
@@ -41,6 +45,8 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop imaginative
 ## Cookie Jar
 
+:::drop-indicator
+
 ![Cookie-Jar Recipe](/assets/knowledge/items/decorative-blocks/cookie-jar-recipe.png)
 :::recipe-items
 [Cookie](https://minecraft.wiki/w/Cookie) · [Glass Bottle](https://minecraft.wiki/w/Glass_Bottle) → Cookie Jar
@@ -51,6 +57,8 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop imaginative
 ## Firefly Jar
+
+:::drop-indicator
 
 ![Firefly-Jar Recipe](/assets/knowledge/items/decorative-blocks/firefly-jar-recipe.png)
 :::recipe-items
@@ -75,6 +83,8 @@ Its primary use is drinking.
 :::drop nether
 ## Spoons Carpets
 
+:::drop-indicator
+
 Beer can also be used to craft Spoons Carpets.
 
 All types of Spoons Carpets can be placed either on the floor or on the ceiling, this allows for features that normal minecraft carpets cant do - form a seamless carpet even through tables and chairs!
@@ -82,6 +92,8 @@ All types of Spoons Carpets can be placed either on the floor or on the ceiling,
 
 :::drop nether
 ### Grandiloquent Spoons Carpet
+
+:::drop-indicator
 
 ![Blue Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-blue-recipe.png)
 :::recipe-items
@@ -93,6 +105,8 @@ Beer · [Blue Carpet](https://minecraft.wiki/w/Carpets) → Grandiloquent Spoons
 :::drop nether
 ### Junoesque Spoons Carpet
 
+:::drop-indicator
+
 ![Brown Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-brown-recipe.png)
 :::recipe-items
 Beer · [Brown Carpet](https://minecraft.wiki/w/Carpets) → Junoesque Spoons Carpet
@@ -102,6 +116,8 @@ Beer · [Brown Carpet](https://minecraft.wiki/w/Carpets) → Junoesque Spoons Ca
 
 :::drop nether
 ### Meretricious Spoons Carpet
+
+:::drop-indicator
 
 COMING SOON...
 

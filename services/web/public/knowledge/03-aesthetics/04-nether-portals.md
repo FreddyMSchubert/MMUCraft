@@ -13,6 +13,8 @@ tips:
 
 # Nether Portals
 
+:::drop-indicator
+
 ![Heart-Shaped Nether Portal](/assets/knowledge/survival/nether-portals/heart.png)
 
 On this server, you can make Nether Portals in **ANY SHAPE AND SIZE**!

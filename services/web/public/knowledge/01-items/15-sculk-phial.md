@@ -14,6 +14,8 @@ tips:
 
 # Sculk Phial
 
+:::drop-indicator
+
 Sculk Phials are powerful items, but only if used correctly. They suck the life force / experience levels out of your body (in a very whole wholesome, non-objectionable and totally PG sort of way), allowing you to store, transfer, and sell experience.
 
 Sculk Phials store exactly 30 experience levels.

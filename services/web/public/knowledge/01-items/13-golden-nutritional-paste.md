@@ -14,6 +14,8 @@ tips:
 
 # Golden Nutritional Paste
 
+:::drop-indicator
+
 Golden Nutritional Paste is the best food in the game. Drink one to restore 10 hunger bars, fill your saturation, and heal 16 hearts. You can drink it even when your hunger bar is full.
 
 ## Crafting Golden Nutritional Paste

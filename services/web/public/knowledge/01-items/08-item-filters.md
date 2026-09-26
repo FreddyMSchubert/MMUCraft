@@ -20,6 +20,8 @@ tips:
 
 # Item filters / Hopper Filters
 
+:::drop-indicator
+
 Can be made as follows:
 
 ![Item filter recipe](/assets/knowledge/items/item-filters/recipe.png)

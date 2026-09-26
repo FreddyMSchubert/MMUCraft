@@ -1,0 +1,28 @@
+.dropPill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.48em;
+	width: fit-content;
+	max-width: 100%;
+	padding: 0.34em 0.85em 0.34em 0.52em;
+	border: 1px solid rgba(255, 255, 255, 0.32);
+	border-radius: 999px;
+	background: var(--drop-gradient);
+	color: #fff;
+	font-size: 0.76rem;
+	font-weight: 800;
+	line-height: 1.2;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	white-space: nowrap;
+}
+
+.dropPillEmoji {
+	font-size: 1.12em;
+	line-height: 1;
+	text-shadow: none;
+}
+
+.knowledgeDropIndicator {
+	margin: 0.65rem 0 1rem;
+}

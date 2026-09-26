@@ -14,6 +14,8 @@ tips:
 
 # Slime Detector
 
+:::drop-indicator
+
 ![Slime detector in use](/assets/knowledge/items/slime-detector/in-use.png)
 
 The Slime Detector shows how close you are to a slime chunk. This is a great Vanilla way of finding slimes without relying on chunkbase.

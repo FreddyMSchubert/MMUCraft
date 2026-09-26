@@ -16,6 +16,8 @@ tips:
 
 # Redstone Remote
 
+:::drop-indicator
+
 Redstone remotes allow you to send redstone signals over the air for vast distances.
 
 To create one, craft it like this:

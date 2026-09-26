@@ -49,6 +49,7 @@ public final class ClaimsManager {
     private static final Map<UUID, String> BOSS_BAR_STATES = new HashMap<>();
     private static final Map<UUID, Long> LAST_DENIED_MESSAGE = new HashMap<>();
     private static volatile Map<ClaimKey, Claim> claims = Map.of();
+    private static volatile Set<UUID> committeeUuids = Set.of();
     private static volatile boolean ready;
 
     private ClaimsManager() {
@@ -71,6 +72,7 @@ public final class ClaimsManager {
 
     public static void reset() {
         claims = Map.of();
+        committeeUuids = Set.of();
         ready = false;
         BOSS_BARS.values().forEach(ServerBossEvent::removeAllPlayers);
         BOSS_BARS.clear();
@@ -81,6 +83,12 @@ public final class ClaimsManager {
     }
 
     public static void apply(ClaimsSnapshot snapshot) {
+        Set<UUID> nextCommittee = new HashSet<>();
+        for (String uuid : snapshot.getCommitteeUuidsList()) {
+            try { nextCommittee.add(parseUuid(uuid)); }
+            catch (IllegalArgumentException ignored) { MainMod.LOGGER.warn("Ignored invalid committee UUID"); }
+        }
+        committeeUuids = Set.copyOf(nextCommittee);
         Map<ClaimKey, Claim> next = new HashMap<>();
         for (ClaimData data : snapshot.getClaimsList()) {
             try {
@@ -108,6 +116,10 @@ public final class ClaimsManager {
         claims = Map.copyOf(next);
         ready = true;
         BOSS_BAR_STATES.clear();
+    }
+
+    public static boolean isCommittee(UUID playerUuid) {
+        return committeeUuids.contains(playerUuid);
     }
 
     public static void updateOwnerColor(UUID ownerUuid, int color) {

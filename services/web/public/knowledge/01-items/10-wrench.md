@@ -16,6 +16,8 @@ tips:
 
 # Wrench
 
+:::drop-indicator
+
 The wrench works in a similar way to the debug stick. Right click a block using the wrench to modify its blockstates.
 
 ![Wrench Crafting Recipe](/assets/knowledge/items/wrench/example.png)

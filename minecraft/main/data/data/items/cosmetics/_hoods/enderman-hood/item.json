@@ -1,0 +1,18 @@
+{
+	"title": "Enderman Head",
+	"id": "cosmetic-head-enderman",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": ["The exonym for a group of endermen is a 'haunting of endermen'"],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"gameplayToggle": "void",
+		"priceDabloons": 250,
+		"description": "",
+		"unlockWeight": 20,
+		"unlockMessage": "Unlocked cosmetic: Enderman Head.",
+		"tags": ["pearl", "end"]
+	},
+	"equippableCosmetic": {}
+}

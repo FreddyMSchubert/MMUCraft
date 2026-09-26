@@ -28,8 +28,14 @@
 .panoramaBackground {
 	overflow: hidden;
 	background: center / cover no-repeat url('/assets/landing/panoramas/classic/panorama_0.webp');
+	cursor: grab;
 	perspective: 42vmax;
 	perspective-origin: 50% 50%;
+	touch-action: none;
+}
+
+.panoramaBackground:active {
+	cursor: grabbing;
 }
 
 .panoramaCube {
@@ -40,7 +46,7 @@
 	height: 200vmax;
 	margin: -100vmax 0 0 -100vmax;
 	transform-style: preserve-3d;
-	animation: panoramaRotate 120s linear infinite;
+	transform: rotateX(-6deg);
 	will-change: transform;
 }
 
@@ -72,15 +78,6 @@
 }
 .panoramaFace5 {
 	transform: translateY(100vmax) rotateX(90deg);
-}
-
-@keyframes panoramaRotate {
-	from {
-		transform: rotateX(-6deg) rotateY(0deg);
-	}
-	to {
-		transform: rotateX(-6deg) rotateY(360deg);
-	}
 }
 
 .minecraftShade {

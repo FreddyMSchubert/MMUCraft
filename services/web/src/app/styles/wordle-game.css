@@ -408,10 +408,6 @@
 	.minecraftSplash {
 		animation: none;
 	}
-	.panoramaCube {
-		animation: none;
-		transform: rotateX(-6deg) rotateY(20deg);
-	}
 }
 
 html,

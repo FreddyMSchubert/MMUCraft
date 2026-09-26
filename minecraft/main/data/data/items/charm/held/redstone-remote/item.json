@@ -18,5 +18,25 @@
 				"upgradeIngredients": []
 			}
 		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "redstone-remote",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "inventors",
+				"pattern": ["BAB", "BRB", "BCB"],
+				"key": {
+					"B": "minecraft:blackstone",
+					"R": "minecraft:redstone",
+					"A": "minecraft:amethyst_shard",
+					"C": "minecraft:copper_ingot"
+				},
+				"result": {
+					"stack": "mainmod:charm-redstone-remote",
+					"count": 1
+				}
+			}
+		]
 	}
 }

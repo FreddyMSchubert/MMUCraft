@@ -1,7 +1,6 @@
 {
 	"title": "Bushy Moustache",
 	"id": "cosmetic-mousetache-bushy",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

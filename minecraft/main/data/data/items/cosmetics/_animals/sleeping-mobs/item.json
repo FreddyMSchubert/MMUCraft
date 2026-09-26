@@ -1,7 +1,6 @@
 {
 	"title": "Sleeping Mobs",
 	"id": "cosmetic-sleeping-mobs",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

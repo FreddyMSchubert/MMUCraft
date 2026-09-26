@@ -1,7 +1,6 @@
 {
 	"title": "Grandiloquent Spoons Carpet",
 	"id": "deco-spoons-carpet-grandiloquent",
-	"drop": "nether",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
@@ -10,6 +9,21 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": true,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "nether"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/spoons-carpet-grandiloquent",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "nether",
+				"ingredients": ["mainmod:beer", "minecraft:blue_carpet"],
+				"result": {
+					"stack": "mainmod:deco-spoons-carpet-grandiloquent",
+					"count": 8
+				}
+			}
+		]
 	}
 }

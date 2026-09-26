@@ -1,7 +1,6 @@
 {
 	"title": "Frankenstein Screws",
 	"id": "cosmetic-frankenstein-screws",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

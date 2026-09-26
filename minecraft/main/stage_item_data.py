@@ -5,6 +5,8 @@ import filecmp
 import json
 import re
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -14,7 +16,7 @@ FAKE_RECIPE_TYPES = {
 	"mainmod:fake_crafting_shapeless",
 }
 SOURCE_DATA_ROOT = Path("data/data")
-STAGED_DATA_ROOT = Path("mod/src/main/resources/data/mainmod")
+STAGED_DATA_ROOT = Path("mod/src/main/resources/data/mainmod/dont_edit_auto_generated")
 
 
 def validate_gameplay_toggle_references(root: Path) -> None:
@@ -41,10 +43,16 @@ def validate_gameplay_toggle_references(root: Path) -> None:
 
 	for path in sorted((root / "data" / "data" / "items").rglob("item.json")):
 		item = json.loads(path.read_text(encoding="utf-8"))
-		_validate_toggle(item.get("drop"), drop_ids, path)
+		if "drop" in item:
+			raise ValueError(f"Root item drop is obsolete: {path}")
 		shop = item.get("shopPurchasable")
 		if isinstance(shop, dict):
 			_validate_toggle(shop.get("gameplayToggle"), known, path)
+		deco = item.get("decoBlock")
+		if isinstance(deco, dict):
+			_validate_toggle(deco.get("gameplayToggle"), known, path)
+		for recipe in item.get("craftable", {}).get("recipes", []):
+			_validate_toggle(recipe.get("gameplayToggle"), known, path)
 
 	for path in sorted((root / "data" / "data" / "dailies" / "catalog").rglob("*.daily.json")):
 		daily = json.loads(path.read_text(encoding="utf-8"))
@@ -65,7 +73,7 @@ def validate_gameplay_toggle_references(root: Path) -> None:
 
 
 def _validate_toggle(toggle: object, known: set[str], path: Path) -> None:
-	if toggle is None:
+	if toggle is None or toggle == "":
 		return
 	if not isinstance(toggle, str) or toggle not in known:
 		raise ValueError(f"Unknown gameplay toggle {toggle!r}: {path}")
@@ -130,6 +138,18 @@ def stage_data(root: Path, *, validate_references: bool = True) -> tuple[Path, P
 		)
 		copied += directory_copied
 		removed += directory_removed
+		legacy = root / STAGED_DATA_ROOT.parent / source_directory.name
+		if legacy.exists():
+			if not legacy.resolve().is_relative_to((root / STAGED_DATA_ROOT.parent).resolve()):
+				raise ValueError(f"Unsafe legacy staged path: {legacy}")
+			shutil.rmtree(legacy)
+
+	subprocess.run([
+		sys.executable,
+		str(root / "respack" / "items-respack-generator" / "generate_recipes.py"),
+		"--source", str(source / "items"),
+		"--output", str(root / "mod" / "src" / "main" / "resources" / "data" / "mainmod" / "recipe" / "dont_edit_auto_generated"),
+	], check=True)
 	return source, destination, copied, removed
 
 

@@ -7,5 +7,33 @@
 	"tooltips": [
 		"\"Might turn to a million and we all rich\"",
 		"Official MMU Minecraft Society Mint Issue"
-	]
+	],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_10_to_50",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:coin-10",
+					"mainmod:coin-10",
+					"mainmod:coin-10",
+					"mainmod:coin-10",
+					"mainmod:coin-10"
+				],
+				"result": {
+					"stack": "mainmod:coin-50",
+					"count": 1
+				}
+			},
+			{
+				"id": "coin/convert_coin_100_to_50",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-100"],
+				"result": {
+					"stack": "mainmod:coin-50",
+					"count": 2
+				}
+			}
+		]
+	}
 }

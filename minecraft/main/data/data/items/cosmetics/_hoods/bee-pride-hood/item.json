@@ -1,7 +1,6 @@
 {
 	"title": "Pride Bee hood",
 	"id": "cosmetic-hood-bee-pride",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

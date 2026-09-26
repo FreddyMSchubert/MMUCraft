@@ -1,7 +1,6 @@
 {
 	"title": "Popout Eyes",
 	"id": "cosmetic-popout-eyes",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

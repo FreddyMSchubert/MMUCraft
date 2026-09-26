@@ -1,7 +1,6 @@
 {
 	"title": "Siamese Cat Pet Hat",
 	"id": "cosmetic-siamese-cat-pet-hat",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

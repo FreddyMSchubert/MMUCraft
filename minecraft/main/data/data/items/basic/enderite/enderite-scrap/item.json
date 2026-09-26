@@ -5,5 +5,17 @@
 	"rarity": "epic",
 	"maxStackSize": 64,
 	"fireproof": true,
-	"tooltips": []
+	"tooltips": [],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "enderite/alien_debris_smelting",
+				"type": "mainmod:fake_smelting",
+				"ingredient": "minecraft:test_block",
+				"result": "mainmod:enderite-scrap",
+				"experience": 2.0,
+				"cookingtime": 200
+			}
+		]
+	}
 }

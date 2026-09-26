@@ -4,9 +4,7 @@
 	"modelType": "basic",
 	"rarity": "rare",
 	"maxStackSize": 16,
-	"tooltips": [
-		"Find someone on your wavelength."
-	],
+	"tooltips": ["Find someone on your wavelength."],
 	"charm": {
 		"charmId": 52,
 		"minLevel": 1,
@@ -39,5 +37,24 @@
 		"hungerBars": 0,
 		"saturationBars": 0,
 		"useRemainderItem": "minecraft:glass_bottle"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "potions/potion_of_resonance",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": [" C ", "MPM", " E "],
+				"key": {
+					"C": "minecraft:compass",
+					"M": "minecraft:amethyst_shard",
+					"P": "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
+					"E": "minecraft:ender_pearl"
+				},
+				"result": {
+					"stack": "mainmod:charm-potion-resonance",
+					"count": 4
+				}
+			}
+		]
 	}
 }

@@ -1,7 +1,6 @@
 {
 	"title": "Sniffer Biotope Hat",
 	"id": "cosmetic-moss-biotope-hat",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

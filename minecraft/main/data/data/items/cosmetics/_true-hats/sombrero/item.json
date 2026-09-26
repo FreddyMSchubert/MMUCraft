@@ -1,7 +1,6 @@
 {
 	"title": "Sombrero",
 	"id": "cosmetic-sombrero",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

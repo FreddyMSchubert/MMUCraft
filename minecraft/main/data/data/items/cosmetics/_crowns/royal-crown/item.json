@@ -1,7 +1,6 @@
 {
 	"title": "Royal Crown",
 	"id": "cosmetic-crown-royal",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,

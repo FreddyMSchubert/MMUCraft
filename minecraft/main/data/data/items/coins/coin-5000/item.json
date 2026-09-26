@@ -7,5 +7,33 @@
 	"tooltips": [
 		"\"'Cause we are living in a material world\"",
 		"Official MMU Minecraft Society Mint Issue"
-	]
+	],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_1000_to_5000",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:coin-1000",
+					"mainmod:coin-1000",
+					"mainmod:coin-1000",
+					"mainmod:coin-1000",
+					"mainmod:coin-1000"
+				],
+				"result": {
+					"stack": "mainmod:coin-5000",
+					"count": 1
+				}
+			},
+			{
+				"id": "coin/convert_coin_10000_to_5000",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-10000"],
+				"result": {
+					"stack": "mainmod:coin-5000",
+					"count": 2
+				}
+			}
+		]
+	}
 }

@@ -4,8 +4,27 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"\"Mo Dabloons, mo problems.\"",
-		"Official MMU Minecraft Society Mint Issue"
-	]
+	"tooltips": ["\"Mo Dabloons, mo problems.\"", "Official MMU Minecraft Society Mint Issue"],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_50_to_100",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-50", "mainmod:coin-50"],
+				"result": {
+					"stack": "mainmod:coin-100",
+					"count": 1
+				}
+			},
+			{
+				"id": "coin/convert_coin_500_to_100",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-500"],
+				"result": {
+					"stack": "mainmod:coin-100",
+					"count": 5
+				}
+			}
+		]
+	}
 }

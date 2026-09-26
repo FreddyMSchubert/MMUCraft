@@ -7,5 +7,18 @@
 	"tooltips": [
 		"\"I want to buy you somethin' - But I don't have any Dabloons\"",
 		"Official MMU Minecraft Society Mint Issue"
-	]
+	],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_5_to_1",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-5"],
+				"result": {
+					"stack": "mainmod:coin-1",
+					"count": 5
+				}
+			}
+		]
+	}
 }

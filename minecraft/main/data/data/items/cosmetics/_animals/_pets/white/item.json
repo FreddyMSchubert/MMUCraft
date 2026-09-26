@@ -1,7 +1,6 @@
 {
 	"title": "White Cat Pet Hat",
 	"id": "cosmetic-white-cat-pet-hat",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

@@ -1,7 +1,6 @@
 {
 	"title": "Cardboard Box",
 	"id": "cosmetic-cardboard-box",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 16,
@@ -20,6 +19,23 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "nether"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/cardboard-box",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["PPP", "P P", "PPP"],
+				"key": {
+					"P": "minecraft:paper"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-cardboard-box",
+					"count": 1
+				}
+			}
+		]
 	}
 }

@@ -1,7 +1,6 @@
 {
 	"title": "Candle",
 	"id": "cosmetic-candle",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
@@ -10,7 +9,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 5
+		"lightLevel": 5,
+		"gameplayToggle": "soaring"
 	},
 	"equippableCosmetic": {},
 	"particleEmission": {
@@ -28,6 +28,25 @@
 				"to": [8, 22, 8.5],
 				"minTicks": 14,
 				"maxTicks": 30
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/candle",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "soaring",
+				"pattern": [" C ", " N ", " P "],
+				"key": {
+					"C": "#minecraft:candles",
+					"N": "minecraft:iron_nugget",
+					"P": "minecraft:heavy_weighted_pressure_plate"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-candle",
+					"count": 1
+				}
 			}
 		]
 	}

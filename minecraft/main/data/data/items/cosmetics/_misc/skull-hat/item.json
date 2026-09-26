@@ -1,7 +1,6 @@
 {
 	"title": "Skull Hat",
 	"id": "cosmetic-skull",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
@@ -19,7 +18,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "circus"
 	},
 	"equippableCosmetic": {}
 }

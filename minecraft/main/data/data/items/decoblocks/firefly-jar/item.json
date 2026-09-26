@@ -1,7 +1,6 @@
 {
 	"title": "Firefly Jar",
 	"id": "deco-firefly-jar",
-	"drop": "imaginative",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
@@ -10,7 +9,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 5
+		"lightLevel": 5,
+		"gameplayToggle": "imaginative"
 	},
 	"particleEmission": {
 		"particles": [
@@ -20,6 +20,20 @@
 				"to": [11, 14, 11],
 				"minTicks": 35,
 				"maxTicks": 80
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/firefly-jar",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": ["minecraft:firefly_bush", "minecraft:glass_bottle"],
+				"result": {
+					"stack": "mainmod:deco-firefly-jar",
+					"count": 1
+				}
 			}
 		]
 	}

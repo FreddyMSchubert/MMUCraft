@@ -1,7 +1,6 @@
 {
 	"title": "Chick Tower",
 	"id": "cosmetic-chick-tower",
-	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,

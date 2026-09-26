@@ -1,7 +1,6 @@
 {
 	"title": "Sea Scorpion",
 	"id": "cosmetic-sea-scorpion",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
@@ -10,7 +9,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "beach-party"
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "beach-party",
@@ -21,5 +21,25 @@
 		"unlockMessage": "Unlocked cosmetic: Sea Scorpion.",
 		"tags": ["eurypterid", "fossil"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/sea-scorpion",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "beach-party",
+				"pattern": [" N ", "HSH", " B "],
+				"key": {
+					"N": "minecraft:nautilus_shell",
+					"S": "mainmod:soul",
+					"H": "minecraft:shears",
+					"B": "minecraft:bone"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-sea-scorpion",
+					"count": 1
+				}
+			}
+		]
+	}
 }

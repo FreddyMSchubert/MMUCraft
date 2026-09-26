@@ -1,7 +1,6 @@
 {
 	"title": "Warped Biotope Hat",
 	"id": "cosmetic-warped-biotope-hat",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

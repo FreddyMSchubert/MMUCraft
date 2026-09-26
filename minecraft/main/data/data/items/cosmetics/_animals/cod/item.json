@@ -1,7 +1,6 @@
 {
 	"title": "Cod Hat",
 	"id": "cosmetic-cod",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

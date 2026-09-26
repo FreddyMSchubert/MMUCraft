@@ -24,10 +24,28 @@
 		"isDrink": true,
 		"consumeSeconds": 0.05,
 		"canAlwaysEat": true,
-		"hungerBars": 0.0,
-		"saturationBars": 0.0,
+		"hungerBars": 0,
+		"saturationBars": 0,
 		"directHearts": 0,
 		"effects": [],
 		"useRemainderItem": ""
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "sculk_phial",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "beach-party",
+				"pattern": [" S ", "SBS", " S "],
+				"key": {
+					"S": "minecraft:echo_shard",
+					"B": "minecraft:experience_bottle"
+				},
+				"result": {
+					"stack": "mainmod:charm-sculk-phial",
+					"count": 1
+				}
+			}
+		]
 	}
 }

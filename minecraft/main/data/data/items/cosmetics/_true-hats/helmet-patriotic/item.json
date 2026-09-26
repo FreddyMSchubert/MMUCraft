@@ -1,7 +1,6 @@
 {
 	"title": "Patriotic Helmet",
 	"id": "cosmetic-helmet-patriotic",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

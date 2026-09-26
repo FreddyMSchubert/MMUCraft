@@ -1,7 +1,6 @@
 {
 	"title": "Retro Helmet",
 	"id": "cosmetic-helmet-retro",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

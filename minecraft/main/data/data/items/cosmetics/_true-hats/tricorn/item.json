@@ -1,7 +1,6 @@
 {
 	"title": "Tricorn",
 	"id": "cosmetic-tricorn",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

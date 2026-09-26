@@ -1,7 +1,6 @@
 {
 	"title": "Computer",
 	"id": "deco-computer",
-	"drop": "inventors",
 	"modelType": "basic-3d",
 	"rarity": "epic",
 	"maxStackSize": 64,
@@ -10,6 +9,27 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 2
+		"lightLevel": 2,
+		"gameplayToggle": "inventors"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/computer",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["CLC", "GRG", "SSS"],
+				"key": {
+					"C": "minecraft:copper_ingot",
+					"L": "mainmod:redstone_lamp",
+					"G": "minecraft:gold_block",
+					"R": "minecraft:redstone",
+					"S": "minecraft:stripped_birch_log"
+				},
+				"result": {
+					"stack": "mainmod:deco-computer",
+					"count": 1
+				}
+			}
+		]
 	}
 }

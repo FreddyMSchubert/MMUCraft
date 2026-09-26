@@ -1,7 +1,6 @@
 {
 	"title": "Axolotl Gills",
 	"id": "cosmetic-axolotl-gills",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

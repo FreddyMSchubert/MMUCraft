@@ -13,7 +13,7 @@ export interface ShopPurchasableDefinition {
 }
 
 export interface RawItemDefinition {
-	drop?: unknown;
+	craftable?: unknown;
 	title?: unknown;
 	id?: unknown;
 	modelType?: unknown;

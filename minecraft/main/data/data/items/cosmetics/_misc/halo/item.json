@@ -1,7 +1,6 @@
 {
 	"title": "Halo Hat",
 	"id": "cosmetic-halo-hat",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

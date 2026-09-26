@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 final class DropCatalog {
-    static final String RESOURCE_PATH = "data/mainmod/drops.json";
+    static final String RESOURCE_PATH = "data/mainmod/dont_edit_auto_generated/drops.json";
 
     private DropCatalog() {
     }

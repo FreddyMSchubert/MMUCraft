@@ -4,8 +4,22 @@
 	"modelType": "basic",
 	"rarity": "rare",
 	"maxStackSize": 16,
-	"tooltips": [
-		"Raises the fishing item chance to 75%",
-		"20 casts"
-	]
+	"tooltips": ["Raises the fishing item chance to 75%", "20 casts"],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "fishing/golden_item_magnet",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GMG", "GGG"],
+				"key": {
+					"G": "minecraft:gold_ingot",
+					"M": "mainmod:item-magnet"
+				},
+				"result": {
+					"stack": "mainmod:golden-item-magnet",
+					"count": 1
+				}
+			}
+		]
+	}
 }

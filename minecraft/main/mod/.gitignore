@@ -1,7 +1,6 @@
 # ignore generated
-src/main/resources/data/mainmod/items/
-src/main/resources/data/mainmod/dailies/
-src/main/resources/data/mainmod/hopper_filter_groups/
+src/main/resources/data/mainmod/dont_edit_auto_generated/
+src/main/resources/data/mainmod/recipe/dont_edit_auto_generated/
 src/main/generated/
 
 # proto

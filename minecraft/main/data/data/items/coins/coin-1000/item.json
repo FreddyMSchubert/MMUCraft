@@ -4,8 +4,27 @@
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 64,
-	"tooltips": [
-		"\"If I was a rich girl\"",
-		"Official MMU Minecraft Society Mint Issue"
-	]
+	"tooltips": ["\"If I was a rich girl\"", "Official MMU Minecraft Society Mint Issue"],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_500_to_1000",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-500", "mainmod:coin-500"],
+				"result": {
+					"stack": "mainmod:coin-1000",
+					"count": 1
+				}
+			},
+			{
+				"id": "coin/convert_coin_5000_to_1000",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-5000"],
+				"result": {
+					"stack": "mainmod:coin-1000",
+					"count": 5
+				}
+			}
+		]
+	}
 }

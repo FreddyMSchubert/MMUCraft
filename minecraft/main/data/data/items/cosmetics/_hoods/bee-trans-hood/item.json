@@ -1,7 +1,6 @@
 {
 	"title": "Trans Bee hood",
 	"id": "cosmetic-hood-bee-trans",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

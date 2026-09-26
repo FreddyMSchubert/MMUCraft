@@ -1,7 +1,6 @@
 {
 	"title": "Shulker Hat",
 	"id": "cosmetic-shulker",
-	"drop": "void",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

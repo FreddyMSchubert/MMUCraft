@@ -4,9 +4,7 @@
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Be a Mensch, use a wrench!"
-	],
+	"tooltips": ["Be a Mensch, use a wrench!"],
 	"charm": {
 		"charmId": 53,
 		"minLevel": 1,
@@ -18,6 +16,24 @@
 				"abilityStatusRelative": "",
 				"dabloons": 0,
 				"upgradeIngredients": []
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrench",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": [" I ", " CI", "C  "],
+				"key": {
+					"C": "minecraft:copper_ingot",
+					"I": "minecraft:iron_nugget"
+				},
+				"result": {
+					"stack": "mainmod:charm-wrench",
+					"count": 1
+				}
 			}
 		]
 	}

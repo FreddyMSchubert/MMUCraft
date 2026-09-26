@@ -22,8 +22,8 @@
 		"id": {
 			"$ref": "#/$defs/resourceIdentifier"
 		},
-		"drop": {
-			"$ref": "#/$defs/resourceIdentifier"
+		"craftable": {
+			"$ref": "./components/craftable.schema.json"
 		},
 		"baseItemOverride": {
 			"$ref": "#/$defs/namespacedResourceIdentifier"

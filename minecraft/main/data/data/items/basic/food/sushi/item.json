@@ -10,9 +10,22 @@
 		"consumeSeconds": 1.6,
 		"canAlwaysEat": false,
 		"hungerBars": 3.5,
-		"saturationBars": 4.0,
+		"saturationBars": 4,
 		"directHearts": 0,
 		"useRemainderItem": "",
 		"effects": []
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "sushi",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["#mainmod:fishes", "minecraft:kelp"],
+				"result": {
+					"stack": "mainmod:sushi",
+					"count": 1
+				}
+			}
+		]
 	}
 }

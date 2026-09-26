@@ -1,7 +1,6 @@
 {
 	"title": "Bowler Hat",
 	"id": "cosmetic-bowler-hat",
-	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

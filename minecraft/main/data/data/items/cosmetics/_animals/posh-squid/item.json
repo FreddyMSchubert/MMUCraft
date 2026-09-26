@@ -1,7 +1,6 @@
 {
 	"title": "Posh Squid",
 	"id": "cosmetic-posh-squid",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

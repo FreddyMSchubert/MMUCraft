@@ -1,7 +1,6 @@
 {
 	"title": "Small Frog",
 	"id": "cosmetic-frog-small",
-	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
@@ -20,6 +19,7 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": true,
-		"lightLevel": 12
+		"lightLevel": 12,
+		"gameplayToggle": "imaginative"
 	}
 }

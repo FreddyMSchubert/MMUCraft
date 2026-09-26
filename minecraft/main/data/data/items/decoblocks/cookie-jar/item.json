@@ -1,7 +1,6 @@
 {
 	"title": "Cookie Jar",
 	"id": "deco-cookie-jar",
-	"drop": "imaginative",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
@@ -10,6 +9,21 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "imaginative"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/cookie-jar",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": ["minecraft:cookie", "minecraft:glass_bottle"],
+				"result": {
+					"stack": "mainmod:deco-cookie-jar",
+					"count": 1
+				}
+			}
+		]
 	}
 }

@@ -4,5 +4,54 @@
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 16,
-	"tooltips": []
+	"tooltips": [],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "clover/combine_1_1_1_1",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:1-leaf-clover",
+					"mainmod:1-leaf-clover",
+					"mainmod:1-leaf-clover",
+					"mainmod:1-leaf-clover"
+				],
+				"result": {
+					"stack": "mainmod:4-leaf-clover",
+					"count": 1
+				}
+			},
+			{
+				"id": "clover/combine_1_1_2",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:1-leaf-clover",
+					"mainmod:1-leaf-clover",
+					"mainmod:2-leaf-clover"
+				],
+				"result": {
+					"stack": "mainmod:4-leaf-clover",
+					"count": 1
+				}
+			},
+			{
+				"id": "clover/combine_1_3",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:1-leaf-clover", "mainmod:3-leaf-clover"],
+				"result": {
+					"stack": "mainmod:4-leaf-clover",
+					"count": 1
+				}
+			},
+			{
+				"id": "clover/combine_2_2",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:2-leaf-clover", "mainmod:2-leaf-clover"],
+				"result": {
+					"stack": "mainmod:4-leaf-clover",
+					"count": 1
+				}
+			}
+		]
+	}
 }

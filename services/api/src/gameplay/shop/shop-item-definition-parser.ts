@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { itemDropId, type DropDefinition } from '../drop-catalog';
 import {
 	flatItemTextureFile,
 	itemRenderAsset,
@@ -22,6 +23,7 @@ export function parseShopItemDefinition(
 	json: RawItemDefinition,
 	directory: string,
 	root: string,
+	drops: readonly DropDefinition[],
 ): CatalogItem | null {
 	const id = typeof json.id === 'string' ? json.id : '';
 	const title = typeof json.title === 'string' ? json.title : '';
@@ -48,7 +50,7 @@ export function parseShopItemDefinition(
 
 	return {
 		id,
-		drop: typeof json.drop === 'string' ? json.drop : shop.gameplayToggle,
+		drop: itemDropId(json, drops),
 		title,
 		type,
 		modelType,

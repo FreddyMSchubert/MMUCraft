@@ -1,7 +1,6 @@
 {
 	"title": "Mohawk",
 	"id": "cosmetic-mohawk",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

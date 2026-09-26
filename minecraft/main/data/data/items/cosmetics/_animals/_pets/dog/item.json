@@ -1,7 +1,6 @@
 {
 	"title": "Dog Pet Hat",
 	"id": "cosmetic-dog-pet-hat",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,

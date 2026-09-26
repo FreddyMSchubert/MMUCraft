@@ -1,7 +1,6 @@
 {
 	"title": "Sombreronn",
 	"id": "cosmetic-sombreronn",
-	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,

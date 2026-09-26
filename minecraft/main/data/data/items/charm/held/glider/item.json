@@ -19,5 +19,24 @@
 				"upgradeIngredients": []
 			}
 		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "glider",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "soaring",
+				"pattern": ["LLL", "MMM", "S S"],
+				"key": {
+					"L": "minecraft:leather",
+					"M": "minecraft:phantom_membrane",
+					"S": "minecraft:breeze_rod"
+				},
+				"result": {
+					"stack": "mainmod:charm-glider",
+					"count": 1
+				}
+			}
+		]
 	}
 }

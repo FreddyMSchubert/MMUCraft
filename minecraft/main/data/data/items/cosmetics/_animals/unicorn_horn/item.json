@@ -1,7 +1,6 @@
 {
 	"title": "Unicorn Horn",
 	"id": "cosmetic-unicorn-horn",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,

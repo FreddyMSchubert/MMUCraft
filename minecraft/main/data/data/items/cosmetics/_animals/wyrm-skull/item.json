@@ -1,7 +1,6 @@
 {
 	"title": "Wyrm Skull",
 	"id": "cosmetic-wyrm-skull",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

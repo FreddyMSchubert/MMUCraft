@@ -16,6 +16,7 @@ ITEMS_ROOT = Path("data/data/items")
 HOPPER_FILTER_GROUPS_ROOT = Path("data/data/hopper_filter_groups")
 SCHEMA_ROOT = Path("data/validation/schemas/item")
 ROOT_SCHEMA = SCHEMA_ROOT / "item.schema.json"
+DROP_ID_SCHEMA = SCHEMA_ROOT / "components/drop-id.schema.json"
 HOPPER_FILTER_GROUP_SCHEMA = Path("data/validation/schemas/hopper-filter-group.schema.json")
 
 
@@ -125,14 +126,22 @@ def main() -> int:
 		if not schema_path.exists():
 			raise ItemDataError(f"Schema does not exist: {schema_path}")
 
-	item_jsons = discover_item_jsons(items_root)
-	registry = build_schema_registry(schema_root)
-	item_validator = build_validator(root_schema, registry)
-	hopper_filter_group_validator = build_validator(hopper_filter_group_schema, registry)
 	try:
 		validate_gameplay_toggle_references(root)
 	except (OSError, ValueError, json.JSONDecodeError) as exc:
 		raise ItemDataError(str(exc)) from exc
+
+	drop_ids = sorted(drop["id"] for drop in load_json(root / "data" / "drops.json"))
+	(root / DROP_ID_SCHEMA).write_text(json.dumps({
+		"$schema": "https://json-schema.org/draft/2020-12/schema",
+		"$id": "components/drop-id.schema.json",
+		"type": "string",
+		"enum": ["", *drop_ids],
+	}, indent=2) + "\n", encoding="utf-8")
+	item_jsons = discover_item_jsons(items_root)
+	registry = build_schema_registry(schema_root)
+	item_validator = build_validator(root_schema, registry)
+	hopper_filter_group_validator = build_validator(hopper_filter_group_schema, registry)
 
 	for item_json, _ in item_jsons:
 		validate_document(item_validator, item_json)

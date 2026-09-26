@@ -1,7 +1,6 @@
 {
 	"title": "Bunny Ears",
 	"id": "cosmetic-bunny-ears",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

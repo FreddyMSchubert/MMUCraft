@@ -1,7 +1,6 @@
 {
 	"title": "Vinyl Player",
 	"id": "deco-vinyl-player",
-	"drop": "imaginative",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
@@ -13,7 +12,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "imaginative"
 	},
 	"particleEmission": {
 		"particles": [
@@ -23,6 +23,100 @@
 				"to": [15, 15, 15],
 				"minTicks": 35,
 				"maxTicks": 80
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/vinyl-player",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "#mainmod:music_discs"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				}
+			},
+			{
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "mainmod:disc-9am"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				},
+				"id": "decoration/vinyl-player/vinyl-player-9am",
+				"gameplayToggle": "imaginative"
+			},
+			{
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "mainmod:disc-death"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				},
+				"id": "decoration/vinyl-player/vinyl-player-death",
+				"gameplayToggle": "imaginative"
+			},
+			{
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "mainmod:disc-dog"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				},
+				"id": "decoration/vinyl-player/vinyl-player-dog",
+				"gameplayToggle": "imaginative"
+			},
+			{
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "mainmod:disc-droopy-likes-your-face"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				},
+				"id": "decoration/vinyl-player/vinyl-player-face",
+				"gameplayToggle": "imaginative"
+			},
+			{
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "mainmod:disc-droopy-likes-ricochet"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				},
+				"id": "decoration/vinyl-player/vinyl-player-ricochet",
+				"gameplayToggle": "imaginative"
 			}
 		]
 	}

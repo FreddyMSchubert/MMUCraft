@@ -1,7 +1,6 @@
 {
 	"title": "Ushanka",
 	"id": "cosmetic-ushanka",
-	"drop": "void",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

@@ -1,7 +1,6 @@
 {
 	"title": "Tuxedo Cat Pet Hat",
 	"id": "cosmetic-tuxedo-cat-pet-hat",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

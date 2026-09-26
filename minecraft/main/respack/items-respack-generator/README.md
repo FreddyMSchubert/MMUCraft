@@ -55,6 +55,37 @@ Item definitions may include gameplay metadata such as `shopPurchasable`. The ge
 validates that known metadata shape and uses `shopPurchasable.unlockWeight` for the
 post-generation cosmetic weight report, but does not write it into resource-pack assets.
 
+Item-producing recipes belong in `craftable.recipes` in the resulting item's `item.json`.
+Each recipe has an `id` (its path under the `mainmod:recipe` namespace) and the usual
+recipe fields. The recipe types and their required fields are defined in
+`data/validation/schemas/item/components/craftable.schema.json`. For example:
+
+```json
+"craftable": {
+  "recipes": [{
+    "id": "glider",
+    "type": "mainmod:fake_crafting_shaped",
+    "gameplayToggle": "soaring",
+    "pattern": ["LLL", "MMM", "S S"],
+    "key": { "L": "minecraft:leather", "M": "minecraft:phantom_membrane", "S": "minecraft:breeze_rod" },
+    "result": { "stack": "mainmod:charm-glider", "count": 1 }
+  }]
+}
+```
+
+`gameplayToggle` may be omitted or empty for recipes that are always available.
+Crafting table toggles do not restrict committee members. The validator checks toggle
+IDs against `data/drops.json`. Item drop labels are inferred from the earliest dated
+toggle among `shopPurchasable`, `decoBlock`, and `craftable.recipes`; there is no root
+`drop` field. The generator writes these recipes into the ignored
+`mod/src/main/resources/data/mainmod/recipe/dont_edit_auto_generated` directory.
+Edit `item.json`, not the generated recipe. Recipes that do not produce an item defined
+by `item.json` remain directly in the mod recipe directory.
+
+Other copied item, daily, and hopper data lives in the ignored
+`mod/src/main/resources/data/mainmod/dont_edit_auto_generated` directory and is staged
+from `data/data` during validation and builds.
+
 ## Supported item layouts
 
 ### 1. Basic 2D item

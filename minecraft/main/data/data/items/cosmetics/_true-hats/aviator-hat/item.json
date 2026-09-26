@@ -1,7 +1,6 @@
 {
 	"title": "Aviator Hat",
 	"id": "cosmetic-aviator-hat",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

@@ -4,8 +4,33 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"\"I ain't no fortunate one, no\"",
-		"Official MMU Minecraft Society Mint Issue"
-	]
+	"tooltips": ["\"I ain't no fortunate one, no\"", "Official MMU Minecraft Society Mint Issue"],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_1_to_5",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:coin-1",
+					"mainmod:coin-1",
+					"mainmod:coin-1",
+					"mainmod:coin-1",
+					"mainmod:coin-1"
+				],
+				"result": {
+					"stack": "mainmod:coin-5",
+					"count": 1
+				}
+			},
+			{
+				"id": "coin/convert_coin_10_to_5",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-10"],
+				"result": {
+					"stack": "mainmod:coin-5",
+					"count": 2
+				}
+			}
+		]
+	}
 }

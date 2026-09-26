@@ -1,9 +1,0 @@
-{
-	"type": "mainmod:fake_crafting_shapeless",
-	"gameplayToggle": "nether",
-	"ingredients": ["mainmod:beer", "minecraft:black_carpet"],
-	"result": {
-		"stack": "mainmod:deco-spoons-carpet-junoesque",
-		"count": 8
-	}
-}

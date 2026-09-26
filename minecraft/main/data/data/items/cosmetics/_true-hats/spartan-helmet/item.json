@@ -1,7 +1,6 @@
 {
 	"title": "Spartan Helmet",
 	"id": "cosmetic-spartan-helmet",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

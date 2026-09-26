@@ -1,7 +1,6 @@
 {
 	"title": "Hard Hat",
 	"id": "cosmetic-hard-hat",
-	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

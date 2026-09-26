@@ -1,7 +1,6 @@
 {
 	"title": "Junoeqsue Spoons Carpet",
 	"id": "deco-spoons-carpet-junoesque",
-	"drop": "nether",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
@@ -12,6 +11,21 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": true,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "nether"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/spoons-carpet-junoesque",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "nether",
+				"ingredients": ["mainmod:beer", "minecraft:black_carpet"],
+				"result": {
+					"stack": "mainmod:deco-spoons-carpet-junoesque",
+					"count": 8
+				}
+			}
+		]
 	}
 }

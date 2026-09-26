@@ -1,7 +1,6 @@
 {
 	"title": "Cat Ears",
 	"id": "cosmetic-cat-ears",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

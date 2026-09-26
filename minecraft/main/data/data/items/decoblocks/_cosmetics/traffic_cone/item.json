@@ -1,7 +1,6 @@
 {
 	"title": "Traffic Cone Hat",
 	"id": "cosmetic-traffic-cone",
-	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
@@ -10,7 +9,26 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "inventors"
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/traffic-cone",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "inventors",
+				"pattern": [" O ", " W ", " O "],
+				"key": {
+					"O": "minecraft:orange_wool",
+					"W": "minecraft:white_wool"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-traffic-cone",
+					"count": 1
+				}
+			}
+		]
+	}
 }

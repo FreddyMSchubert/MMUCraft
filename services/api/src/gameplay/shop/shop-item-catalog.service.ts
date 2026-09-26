@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { CachedSearchIndex } from '../../search/cached-search-index';
+import { loadDrops } from '../drop-catalog';
 import { findItemDefinitionFiles, itemRenderAsset } from './shop-item-asset-files';
 import { parseShopItemDefinition, unlistedItemRenderAsset } from './shop-item-definition-parser';
 import type {
@@ -73,13 +74,14 @@ export class ShopItemCatalogService implements OnModuleInit {
 }
 
 function readCatalog(root: string) {
+	const drops = loadDrops();
 	const items: CatalogItem[] = [];
 	const assets = new Map<string, ItemRenderAsset>();
 	const searchDocuments: ShopSearchDocument[] = [];
 	for (const filePath of findItemDefinitionFiles(root)) {
 		const json = JSON.parse(readFileSync(filePath, 'utf8')) as RawItemDefinition;
 		const directory = dirname(filePath);
-		const item = parseShopItemDefinition(json, directory, root);
+		const item = parseShopItemDefinition(json, directory, root, drops);
 		if (item) {
 			items.push(item);
 			assets.set(item.id, item);

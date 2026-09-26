@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 final class DailyTaskCatalog {
-    static final String RESOURCE_PATH = "data/mainmod/dailies/catalog";
+    static final String RESOURCE_PATH = "data/mainmod/dont_edit_auto_generated/dailies/catalog";
     private static final String WEIGHTS_FILE = "weights.dailyweights.json";
     private static final String TASK_SUFFIX = ".daily.json";
     private static final Set<String> COMMON_FIELDS = Set.of(

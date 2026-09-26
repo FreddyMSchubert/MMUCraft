@@ -4,5 +4,18 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 16,
-	"tooltips": []
+	"tooltips": [],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "clover/combine_1_1",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:1-leaf-clover", "mainmod:1-leaf-clover"],
+				"result": {
+					"stack": "mainmod:2-leaf-clover",
+					"count": 1
+				}
+			}
+		]
+	}
 }

@@ -7,5 +7,27 @@
 	"tooltips": [
 		"\"We just wanna make the world dance\"",
 		"Official MMU Minecraft Society Mint Issue"
-	]
+	],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_5_to_10",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-5", "mainmod:coin-5"],
+				"result": {
+					"stack": "mainmod:coin-10",
+					"count": 1
+				}
+			},
+			{
+				"id": "coin/convert_coin_50_to_10",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-50"],
+				"result": {
+					"stack": "mainmod:coin-10",
+					"count": 5
+				}
+			}
+		]
+	}
 }

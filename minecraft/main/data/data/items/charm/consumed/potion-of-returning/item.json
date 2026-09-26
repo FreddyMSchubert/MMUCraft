@@ -4,14 +4,11 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 16,
-	"tooltips": [
-		"Not for the faint of heart"
-	],
+	"tooltips": ["Not for the faint of heart"],
 	"charm": {
 		"charmId": 25,
 		"minLevel": 1,
 		"maxLevel": 1,
-		
 		"levels": [
 			{
 				"level": 1,
@@ -31,5 +28,24 @@
 		"hungerBars": 0,
 		"saturationBars": 0,
 		"useRemainderItem": "minecraft:glass_bottle"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "potions/potion_of_returning",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": [" C ", "MPM", " E "],
+				"key": {
+					"C": "minecraft:compass",
+					"M": "minecraft:lapis_lazuli",
+					"P": "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
+					"E": "minecraft:ender_pearl"
+				},
+				"result": {
+					"stack": "mainmod:charm-potion-returning",
+					"count": 4
+				}
+			}
+		]
 	}
 }

@@ -1,7 +1,6 @@
 {
 	"title": "Chick Hat",
 	"id": "cosmetic-chick-basic",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

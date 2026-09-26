@@ -1,7 +1,6 @@
 {
 	"title": "Dog Ears",
 	"id": "cosmetic-dog-ears",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

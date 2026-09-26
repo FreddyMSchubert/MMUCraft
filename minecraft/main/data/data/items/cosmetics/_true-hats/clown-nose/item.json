@@ -1,7 +1,6 @@
 {
 	"title": "Clown Nose",
 	"id": "cosmetic-clown-nose",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

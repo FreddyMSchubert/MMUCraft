@@ -1,7 +1,6 @@
 {
 	"title": "Crow",
 	"id": "deco-crow",
-	"drop": "imaginative",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
@@ -10,6 +9,26 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "imaginative"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/crow",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": [" B ", "FSF", " B "],
+				"key": {
+					"F": "minecraft:feather",
+					"S": "mainmod:soul",
+					"B": "minecraft:black_dye"
+				},
+				"result": {
+					"stack": "mainmod:deco-crow",
+					"count": 1
+				}
+			}
+		]
 	}
 }

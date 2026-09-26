@@ -12,6 +12,7 @@ import hashlib
 import re
 import uuid
 import ssl
+import sys
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
@@ -20,6 +21,7 @@ MERGER = HERE / "ResourcePackMerger"
 ITEMS = HERE.parent / "data" / "data" / "items"
 PACKS = HERE / "packs"
 GENERATED = PACKS / "generated"
+GENERATED_RECIPES = HERE.parent / "mod" / "src" / "main" / "resources" / "data" / "mainmod" / "recipe" / "dont_edit_auto_generated"
 MERGED = PACKS / "main-pack"
 FINAL_ZIP = PACKS / "main-pack.zip"
 WEB_ZIP = ROOT / "services" / "web" / "public" / "packs" / "main.zip"
@@ -436,6 +438,7 @@ def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--force", action="store_true", help="Rebuild the resource pack even when inputs are unchanged.")
 	args = parser.parse_args()
+	run(sys.executable, GENERATOR / "generate_recipes.py", "--source", ITEMS, "--output", GENERATED_RECIPES)
 
 	fingerprint = pack_input_fingerprint()
 	if not args.force and pack_outputs_are_reusable(fingerprint):

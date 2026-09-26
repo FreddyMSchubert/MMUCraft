@@ -105,7 +105,7 @@ public final class GliderCheck {
         assert GliderCharm.allowEnchanting(enchantments.getOrThrow(Enchantments.BINDING_CURSE), glider, EnchantingContext.ACCEPTABLE) == TriState.FALSE;
         assert GliderCharm.allowEnchanting(enchantments.getOrThrow(Enchantments.UNBREAKING), elytra, EnchantingContext.ACCEPTABLE) == TriState.DEFAULT;
         var recipe = FakeShapedCraftingRecipe.CODEC.codec().parse(JsonOps.INSTANCE, JsonParser.parseString(
-                Files.readString(project.resolve("src/main/resources/data/mainmod/recipe/glider.json")))).getOrThrow();
+                Files.readString(project.resolve("src/main/resources/data/mainmod/recipe/dont_edit_auto_generated/glider.json")))).getOrThrow();
         FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
                 .addToggles(FeatureToggle.newBuilder().setKey("soaring").setEnabled(true))
                 .build());

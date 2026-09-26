@@ -1,7 +1,6 @@
 {
 	"title": "Obamium Pyramid",
 	"id": "cosmetic-obamium-pyramid",
-	"drop": "void",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,

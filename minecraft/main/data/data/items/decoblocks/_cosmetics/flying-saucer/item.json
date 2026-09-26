@@ -1,7 +1,6 @@
 {
 	"title": "Flying Saucer",
 	"id": "cosmetic-ufo",
-	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
@@ -10,7 +9,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": true,
-		"lightLevel": 12
+		"lightLevel": 12,
+		"gameplayToggle": "imaginative"
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "imaginative",

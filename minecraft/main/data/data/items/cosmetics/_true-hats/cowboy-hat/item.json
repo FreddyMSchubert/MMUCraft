@@ -1,7 +1,6 @@
 {
 	"title": "Cowboy Hat",
 	"id": "cosmetic-cowboy-hat",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

@@ -1,0 +1,20 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "components/drop-id.schema.json",
+	"type": "string",
+	"enum": [
+		"",
+		"beach-party",
+		"christmas",
+		"circus",
+		"cold",
+		"imaginative",
+		"inventors",
+		"jolly",
+		"nether",
+		"soaring",
+		"unthemed",
+		"void",
+		"welcoming"
+	]
+}

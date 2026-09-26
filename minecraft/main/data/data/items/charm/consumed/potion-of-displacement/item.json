@@ -37,5 +37,37 @@
 		"hungerBars": 0,
 		"saturationBars": 0,
 		"useRemainderItem": "minecraft:glass_bottle"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "potions/potion_of_displacement",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": [" M ", "MPM", " E "],
+				"key": {
+					"M": "minecraft:painting",
+					"P": "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
+					"E": "minecraft:ender_pearl"
+				},
+				"result": {
+					"stack": "mainmod:charm-potion-displacement",
+					"count": 4
+				}
+			},
+			{
+				"id": "potions/potion_of_displacement_chorus",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": [" M ", "MPM", " E "],
+				"key": {
+					"M": "minecraft:chorus_fruit",
+					"P": "minecraft:potion[minecraft:potion_contents=water]=Water Bottle",
+					"E": "minecraft:ender_pearl"
+				},
+				"result": {
+					"stack": "mainmod:charm-potion-displacement",
+					"count": 4
+				}
+			}
+		]
 	}
 }

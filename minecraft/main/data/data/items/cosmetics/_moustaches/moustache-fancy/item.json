@@ -1,7 +1,6 @@
 {
 	"title": "Fancy Moustache",
 	"id": "cosmetic-mousetache-fancy",
-	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

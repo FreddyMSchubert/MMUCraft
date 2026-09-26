@@ -1,7 +1,6 @@
 {
 	"title": "Snorkel",
 	"id": "cosmetic-blue-snorkel",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

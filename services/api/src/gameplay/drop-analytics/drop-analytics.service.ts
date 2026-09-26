@@ -2,15 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { findItemDefinitionFiles } from '../shop/shop-item-asset-files';
+import { itemDropId, loadDrops } from '../drop-catalog';
 
 const applicationRoot = join(__dirname, '..', '..', '..', '..', '..');
-const defaultContentRoot = join(process.cwd(), 'content');
-const contentRoots = [
-	defaultContentRoot,
-	join(applicationRoot, 'content'),
-	join(process.cwd(), '..', '..', 'minecraft', 'main', 'data'),
-	join(applicationRoot, 'minecraft', 'main', 'data'),
-];
 const defaultKnowledgeRoot = join(process.cwd(), 'content', 'knowledge');
 const knowledgeRoots = [
 	defaultKnowledgeRoot,
@@ -24,10 +18,6 @@ const itemRoots = [
 	join(process.cwd(), '..', '..', 'minecraft', 'main', 'data', 'data', 'items'),
 	join(applicationRoot, 'minecraft', 'main', 'data', 'data', 'items'),
 ];
-
-function contentRoot() {
-	return contentRoots.find((root) => existsSync(join(root, 'drops.json'))) ?? defaultContentRoot;
-}
 
 function knowledgeRoot() {
 	return (
@@ -61,12 +51,7 @@ function metadataField(metadata: string, key: string) {
 @Injectable()
 export class DropAnalyticsService {
 	load() {
-		const drops = JSON.parse(readFileSync(join(contentRoot(), 'drops.json'), 'utf8')) as {
-			id: string;
-			name: string;
-			date: string;
-			description: string;
-		}[];
+		const drops = loadDrops();
 		drops.sort((a, b) => a.date.localeCompare(b.date));
 		const dropIds = new Set(drops.map((drop) => drop.id));
 		if (dropIds.size !== drops.length) throw new Error('Duplicate drop id');
@@ -74,9 +59,9 @@ export class DropAnalyticsService {
 			const item = JSON.parse(readFileSync(path, 'utf8')) as {
 				id?: string;
 				title?: string;
-				drop?: string;
+				craftable?: unknown;
 				equippableCosmetic?: object;
-				decoBlock?: object;
+				decoBlock?: { gameplayToggle?: string };
 				equippableCharm?: object;
 				shopPurchasable?: { gameplayToggle?: string; membersOnly?: boolean };
 			};
@@ -93,7 +78,7 @@ export class DropAnalyticsService {
 					id: item.id,
 					name: item.title,
 					type,
-					drop: item.shopPurchasable?.gameplayToggle ?? item.drop ?? null,
+					drop: itemDropId(item, drops),
 					shopPurchasable: Boolean(item.shopPurchasable),
 					membersOnly: Boolean(item.shopPurchasable?.membersOnly),
 				},

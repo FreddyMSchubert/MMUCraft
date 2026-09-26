@@ -1,7 +1,6 @@
 {
 	"title": "Inventor's Tophat",
 	"id": "cosmetic-inventors-hat",
-	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,

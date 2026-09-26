@@ -4,5 +4,33 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": ["\"Must be funny\"", "Official MMU Minecraft Society Mint Issue"]
+	"tooltips": ["\"Must be funny\"", "Official MMU Minecraft Society Mint Issue"],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_100_to_500",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:coin-100",
+					"mainmod:coin-100",
+					"mainmod:coin-100",
+					"mainmod:coin-100",
+					"mainmod:coin-100"
+				],
+				"result": {
+					"stack": "mainmod:coin-500",
+					"count": 1
+				}
+			},
+			{
+				"id": "coin/convert_coin_1000_to_500",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-1000"],
+				"result": {
+					"stack": "mainmod:coin-500",
+					"count": 2
+				}
+			}
+		]
+	}
 }

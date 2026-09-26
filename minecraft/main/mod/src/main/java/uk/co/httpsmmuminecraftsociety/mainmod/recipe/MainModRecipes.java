@@ -22,7 +22,7 @@ public final class MainModRecipes {
     public static final RecipeSerializer<BackpackUpgradeRecipe> BACKPACK_UPGRADE_RECIPE = unit(new BackpackUpgradeRecipe());
     public static final RecipeSerializer<SetParticleTrailRecipe> SET_PARTICLE_TRAIL_SERIALIZER = unit(new SetParticleTrailRecipe());
     public static final RecipeSerializer<EnderiteSmithingRecipe> ENDERITE_UPGRADE_SERIALIZER = unit(new EnderiteSmithingRecipe());
-    public static final RecipeSerializer<EnderiteScrapSmeltingRecipe> ENDERITE_SCRAP_SMELTING_SERIALIZER = unit(new EnderiteScrapSmeltingRecipe());
+    public static final RecipeSerializer<FakeSmeltingRecipe> FAKE_SMELTING_SERIALIZER = codecBacked(FakeSmeltingRecipe.CODEC);
     public static final RecipeSerializer<FishCookingRecipe> FISH_COOKING_SERIALIZER = unit(new FishCookingRecipe());
     public static final RecipeSerializer<HopperFilterRecipe> HOPPER_FILTER_SERIALIZER = unit(new HopperFilterRecipe());
     public static final RecipeSerializer<RedstoneRemoteResetRecipe> REDSTONE_REMOTE_RESET_SERIALIZER = unit(new RedstoneRemoteResetRecipe());
@@ -46,7 +46,7 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "dyeing"), DYEING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "bow_trail"), SET_PARTICLE_TRAIL_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "enderite_upgrade"), ENDERITE_UPGRADE_SERIALIZER);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "enderite_scrap_smelting"), ENDERITE_SCRAP_SMELTING_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fake_smelting"), FAKE_SMELTING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "fish_cooking"), FISH_COOKING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "hopper_filter"), HOPPER_FILTER_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "redstone_remote_reset"), REDSTONE_REMOTE_RESET_SERIALIZER);

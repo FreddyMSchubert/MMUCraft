@@ -1,7 +1,6 @@
 {
 	"title": "Bee hood",
 	"id": "cosmetic-hood-bee",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

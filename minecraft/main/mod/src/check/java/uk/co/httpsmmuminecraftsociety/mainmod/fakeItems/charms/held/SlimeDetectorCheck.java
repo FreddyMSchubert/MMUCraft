@@ -91,7 +91,7 @@ public final class SlimeDetectorCheck {
     }
 
     private static void checkRecipe(Path project) throws Exception {
-        JsonObject recipe = readJson(project.resolve("src/main/resources/data/mainmod/recipe/slime_detector.json"));
+        JsonObject recipe = readJson(project.resolve("src/main/resources/data/mainmod/recipe/dont_edit_auto_generated/slime_detector.json"));
         assert recipe.get("type").getAsString().equals("mainmod:fake_crafting_shapeless");
         assert recipe.get("gameplayToggle").getAsString().equals("welcoming");
         JsonArray ingredients = recipe.getAsJsonArray("ingredients");

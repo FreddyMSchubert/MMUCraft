@@ -1,9 +1,0 @@
-{
-	"type": "mainmod:fake_crafting_shapeless",
-	"gameplayToggle": "nether",
-	"ingredients": ["mainmod:beer", "minecraft:blue_carpet"],
-	"result": {
-		"stack": "mainmod:deco-spoons-carpet-grandiloquent",
-		"count": 8
-	}
-}

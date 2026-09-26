@@ -1,7 +1,6 @@
 {
 	"title": "Cheese Hat",
 	"id": "cosmetic-cheese",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
@@ -10,7 +9,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "nether"
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "nether",

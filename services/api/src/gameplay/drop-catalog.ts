@@ -43,3 +43,35 @@ export function loadDrops(): DropDefinition[] {
 	}
 	return drops;
 }
+
+export function itemDropId(
+	item: { craftable?: unknown; shopPurchasable?: unknown; decoBlock?: unknown },
+	drops: readonly DropDefinition[],
+): string | null {
+	const candidates: unknown[] = [];
+	for (const component of [item.shopPurchasable, item.decoBlock]) {
+		if (component && typeof component === 'object' && 'gameplayToggle' in component)
+			candidates.push(component.gameplayToggle);
+	}
+	if (item.craftable && typeof item.craftable === 'object' && 'recipes' in item.craftable) {
+		const recipes = item.craftable.recipes;
+		if (Array.isArray(recipes)) {
+			for (const recipe of recipes) {
+				if (recipe && typeof recipe === 'object' && 'gameplayToggle' in recipe)
+					candidates.push((recipe as { gameplayToggle: unknown }).gameplayToggle);
+			}
+		}
+	}
+	const byId = new Map(drops.map((drop) => [drop.id, drop]));
+	const matches = candidates.filter((candidate): candidate is string => {
+		if (candidate === undefined || candidate === null || candidate === '') return false;
+		if (typeof candidate !== 'string' || !byId.has(candidate))
+			throw new Error('Unknown item drop in item definition');
+		return true;
+	});
+	matches.sort(
+		(a, b) =>
+			(byId.get(a)?.date ?? '').localeCompare(byId.get(b)?.date ?? '') || a.localeCompare(b),
+	);
+	return matches[0] ?? null;
+}

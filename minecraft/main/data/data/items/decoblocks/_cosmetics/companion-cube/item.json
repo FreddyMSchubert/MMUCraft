@@ -1,7 +1,6 @@
 {
 	"title": "Companion Cube",
 	"id": "cosmetic-companion-cube",
-	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,
@@ -10,7 +9,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "inventors"
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "inventors",
@@ -21,5 +21,22 @@
 		"unlockMessage": "Unlocked cosmetic: Companion Cube.",
 		"tags": ["portal", "weighted cube"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/companion-cube",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["NNN", "NRN", "NNN"],
+				"key": {
+					"R": "minecraft:rotten_flesh",
+					"N": "minecraft:iron_nugget"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-companion-cube",
+					"count": 1
+				}
+			}
+		]
+	}
 }

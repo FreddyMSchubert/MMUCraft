@@ -4,5 +4,36 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 16,
-	"tooltips": []
+	"tooltips": [],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "clover/split_2_leaf_clover",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:2-leaf-clover"],
+				"result": {
+					"stack": "mainmod:1-leaf-clover",
+					"count": 2
+				}
+			},
+			{
+				"id": "clover/split_3_leaf_clover",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:3-leaf-clover"],
+				"result": {
+					"stack": "mainmod:1-leaf-clover",
+					"count": 3
+				}
+			},
+			{
+				"id": "clover/split_4_leaf_clover",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:4-leaf-clover"],
+				"result": {
+					"stack": "mainmod:1-leaf-clover",
+					"count": 4
+				}
+			}
+		]
+	}
 }

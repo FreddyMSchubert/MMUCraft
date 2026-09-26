@@ -1,7 +1,6 @@
 {
 	"title": "Scarecrow",
 	"id": "deco-scarecrow",
-	"drop": "soaring",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
@@ -10,6 +9,26 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "soaring"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/scarecrow",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "soaring",
+				"pattern": [" P ", "SHS", " S "],
+				"key": {
+					"P": "minecraft:pumpkin",
+					"S": "minecraft:stick",
+					"H": "minecraft:hay_block"
+				},
+				"result": {
+					"stack": "mainmod:deco-scarecrow",
+					"count": 1
+				}
+			}
+		]
 	}
 }

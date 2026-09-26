@@ -4,10 +4,7 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Yum!",
-		"The best food in the game."
-	],
+	"tooltips": ["Yum!", "The best food in the game."],
 	"consumable": {
 		"isDrink": true,
 		"consumeSeconds": 0.1,
@@ -17,5 +14,28 @@
 		"directHearts": 32,
 		"useRemainderItem": "minecraft:bowl",
 		"effects": []
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "golden_nutritional_paste",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:cookie",
+					"minecraft:beetroot",
+					"minecraft:pumpkin",
+					"minecraft:gold_nugget",
+					"minecraft:bowl",
+					"#mainmod:fishes",
+					"#mainmod:mushrooms",
+					"#mainmod:fungi",
+					"#mainmod:farm_animal_meats_raw"
+				],
+				"result": {
+					"stack": "mainmod:golden-nutritional-paste",
+					"count": 1
+				}
+			}
+		]
 	}
 }

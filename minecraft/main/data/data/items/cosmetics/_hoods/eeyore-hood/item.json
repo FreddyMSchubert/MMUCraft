@@ -1,7 +1,6 @@
 {
 	"title": "Eeyore",
 	"id": "cosmetic-hood-eeyore",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

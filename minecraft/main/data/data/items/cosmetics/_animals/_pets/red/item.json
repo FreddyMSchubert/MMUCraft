@@ -1,7 +1,6 @@
 {
 	"title": "Red Cat Pet Hat",
 	"id": "cosmetic-red-cat-pet-hat",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

@@ -1,7 +1,6 @@
 {
 	"title": "Spider Hat",
 	"id": "cosmetic-spider",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

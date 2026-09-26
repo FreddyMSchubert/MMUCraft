@@ -1,7 +1,6 @@
 {
 	"title": "Fishbowl",
 	"id": "cosmetic-fishbowl",
-	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
@@ -10,7 +9,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "imaginative"
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "imaginative",

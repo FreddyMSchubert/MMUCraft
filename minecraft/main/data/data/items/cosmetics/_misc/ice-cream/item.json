@@ -1,7 +1,6 @@
 {
 	"title": "Ice Cream Hat",
 	"id": "cosmetic-ice-cream",
-	"drop": "imaginative",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

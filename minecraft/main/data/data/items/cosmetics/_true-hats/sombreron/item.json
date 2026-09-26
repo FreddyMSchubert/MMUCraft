@@ -1,7 +1,6 @@
 {
 	"title": "Sombreron",
 	"id": "cosmetic-sombreron",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

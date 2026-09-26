@@ -1,7 +1,6 @@
 {
 	"title": "Sniffer Hood",
 	"id": "cosmetic-hood-sniffer",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

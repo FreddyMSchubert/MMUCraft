@@ -1,7 +1,6 @@
 {
 	"title": "Fazbear Head",
 	"id": "cosmetic-freddy-fazbear",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

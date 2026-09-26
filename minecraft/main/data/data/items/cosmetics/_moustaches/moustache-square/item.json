@@ -1,7 +1,6 @@
 {
 	"title": "Square Moustache",
 	"id": "cosmetic-mousetache-square",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

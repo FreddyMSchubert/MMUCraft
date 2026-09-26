@@ -1,0 +1,162 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "components/craftable.schema.json",
+	"title": "Recipes which produce this item",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"recipes": {
+			"type": "array",
+			"minItems": 1,
+			"items": { "$ref": "#/$defs/recipe" }
+		}
+	},
+	"required": ["recipes"],
+	"$defs": {
+		"recipeId": { "type": "string", "pattern": "^[a-z0-9._-]+(?:/[a-z0-9._-]+)*$" },
+		"ingredient": { "type": "string", "minLength": 1 },
+		"key": {
+			"type": "object",
+			"minProperties": 1,
+			"maxProperties": 9,
+			"patternProperties": { "^[^ ]$": { "$ref": "#/$defs/ingredient" } },
+			"additionalProperties": false
+		},
+		"pattern": {
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 3,
+			"items": { "type": "string", "minLength": 1, "maxLength": 3 }
+		},
+		"fakeResult": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"stack": { "type": "string", "pattern": "^mainmod:[a-z0-9._-]+$" },
+				"count": { "type": "integer", "minimum": 1 }
+			},
+			"required": ["stack"]
+		},
+		"vanillaResult": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"id": { "type": "string", "pattern": "^[a-z0-9._-]+:[a-z0-9._/-]+$" },
+				"count": { "type": "integer", "minimum": 1 }
+			},
+			"required": ["id"]
+		},
+		"recipe": {
+			"oneOf": [
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"id": { "$ref": "#/$defs/recipeId" },
+						"type": { "const": "mainmod:fake_smelting" },
+						"ingredient": { "$ref": "#/$defs/ingredient" },
+						"result": { "type": "string", "pattern": "^mainmod:[a-z0-9._-]+$" },
+						"experience": { "type": "number", "minimum": 0 },
+						"cookingtime": { "type": "integer", "minimum": 1 }
+					},
+					"required": ["id", "type", "ingredient", "result", "experience", "cookingtime"]
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"id": { "$ref": "#/$defs/recipeId" },
+						"type": { "const": "mainmod:fake_crafting_shaped" },
+						"gameplayToggle": { "$ref": "./drop-id.schema.json" },
+						"pattern": { "$ref": "#/$defs/pattern" },
+						"key": { "$ref": "#/$defs/key" },
+						"result": { "$ref": "#/$defs/fakeResult" }
+					},
+					"required": ["id", "type", "pattern", "key", "result"]
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"id": { "$ref": "#/$defs/recipeId" },
+						"type": { "const": "mainmod:fake_crafting_shapeless" },
+						"gameplayToggle": { "$ref": "./drop-id.schema.json" },
+						"ingredients": {
+							"type": "array",
+							"minItems": 1,
+							"maxItems": 9,
+							"items": { "$ref": "#/$defs/ingredient" }
+						},
+						"result": { "$ref": "#/$defs/fakeResult" }
+					},
+					"required": ["id", "type", "ingredients", "result"]
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"id": { "$ref": "#/$defs/recipeId" },
+						"type": { "const": "minecraft:crafting_shaped" },
+						"pattern": { "$ref": "#/$defs/pattern" },
+						"key": { "$ref": "#/$defs/key" },
+						"category": { "enum": ["building", "redstone", "equipment", "misc"] },
+						"group": { "type": "string" },
+						"result": { "$ref": "#/$defs/vanillaResult" }
+					},
+					"required": ["id", "type", "pattern", "key", "result"]
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"id": { "$ref": "#/$defs/recipeId" },
+						"type": { "const": "minecraft:crafting_shapeless" },
+						"ingredients": {
+							"type": "array",
+							"minItems": 1,
+							"maxItems": 9,
+							"items": { "$ref": "#/$defs/ingredient" }
+						},
+						"category": { "enum": ["building", "redstone", "equipment", "misc"] },
+						"group": { "type": "string" },
+						"result": { "$ref": "#/$defs/vanillaResult" }
+					},
+					"required": ["id", "type", "ingredients", "result"]
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"id": { "$ref": "#/$defs/recipeId" },
+						"type": {
+							"enum": [
+								"minecraft:smelting",
+								"minecraft:blasting",
+								"minecraft:smoking",
+								"minecraft:campfire_cooking"
+							]
+						},
+						"ingredient": { "$ref": "#/$defs/ingredient" },
+						"category": { "enum": ["food", "blocks", "misc"] },
+						"group": { "type": "string" },
+						"cookingtime": { "type": "integer", "minimum": 1 },
+						"experience": { "type": "number", "minimum": 0 },
+						"result": { "$ref": "#/$defs/vanillaResult" }
+					},
+					"required": ["id", "type", "ingredient", "cookingtime", "experience", "result"]
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"id": { "$ref": "#/$defs/recipeId" },
+						"type": { "const": "minecraft:stonecutting" },
+						"ingredient": { "$ref": "#/$defs/ingredient" },
+						"result": { "$ref": "#/$defs/vanillaResult" }
+					},
+					"required": ["id", "type", "ingredient", "result"]
+				}
+			]
+		}
+	}
+}

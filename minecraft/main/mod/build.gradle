@@ -217,7 +217,7 @@ processResources {
     inputs.file("../data/drops.json")
 
     from("../data/drops.json") {
-        into "data/mainmod"
+        into "data/mainmod/dont_edit_auto_generated"
     }
 
     filesMatching("fabric.mod.json") {

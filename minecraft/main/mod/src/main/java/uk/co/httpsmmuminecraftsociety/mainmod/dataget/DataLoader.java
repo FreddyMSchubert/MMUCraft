@@ -36,13 +36,12 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public final class DataLoader implements SimpleSynchronousResourceReloadListener {
-    private static final String RESOURCE_ROOT_MAINMOD = "data/mainmod/items";
+    private static final String RESOURCE_ROOT_MAINMOD = "data/mainmod/dont_edit_auto_generated/items";
     private static final String RESOURCE_ROOT_TESTDP = "data/testdp/items";
     private static final List<String> RESOURCE_ROOTS = List.of(
             RESOURCE_ROOT_MAINMOD,
             RESOURCE_ROOT_TESTDP
     );
-    private static final Set<String> SUPPORTED_NAMESPACES = Set.of("mainmod", "testdp");
 
     private static final DataLoader INSTANCE = new DataLoader();
 
@@ -124,11 +123,16 @@ public final class DataLoader implements SimpleSynchronousResourceReloadListener
 
     private static List<FakeItem> loadFromResourceManager(ResourceManager manager) {
         try {
-            Map<Identifier, Resource> resources = manager.listResources(
-                    "items",
-                    id -> SUPPORTED_NAMESPACES.contains(id.getNamespace())
+            Map<Identifier, Resource> resources = new java.util.HashMap<>(manager.listResources(
+                    "dont_edit_auto_generated/items",
+                    id -> id.getNamespace().equals(MainMod.MOD_ID)
                             && isFakeItemDefinitionPath(id.getPath())
-            );
+            ));
+            resources.putAll(manager.listResources(
+                    "items",
+                    id -> id.getNamespace().equals("testdp")
+                            && isFakeItemDefinitionPath(id.getPath())
+            ));
 
             List<Identifier> ids = new ArrayList<>(resources.keySet());
             ids.sort(Comparator.comparing(Identifier::toString));

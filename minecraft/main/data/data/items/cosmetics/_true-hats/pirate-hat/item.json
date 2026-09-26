@@ -1,7 +1,6 @@
 {
 	"title": "Pirate Hat",
 	"id": "cosmetic-pirate",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

@@ -1,7 +1,6 @@
 {
 	"title": "Butterflies Flower",
 	"id": "cosmetic-butterflies",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
@@ -10,7 +9,8 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "soaring"
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "soaring",
@@ -21,5 +21,25 @@
 		"unlockMessage": "Unlocked cosmetic: Butterflies Flower.",
 		"tags": ["butterfly", "flower"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/butterflies",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": [" B ", "WSP", " D "],
+				"key": {
+					"D": "minecraft:dandelion",
+					"S": "mainmod:soul",
+					"B": "minecraft:blue_dye",
+					"W": "minecraft:white_dye",
+					"P": "minecraft:pink_dye"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-butterflies",
+					"count": 1
+				}
+			}
+		]
+	}
 }

@@ -43,7 +43,7 @@ public final class HopperFilterGroups {
 
     public static void load(ResourceManager manager) {
         Map<Identifier, Resource> resources = manager.listResources(
-                "hopper_filter_groups",
+                "dont_edit_auto_generated/hopper_filter_groups",
                 id -> id.getNamespace().equals(MainMod.MOD_ID) && id.getPath().endsWith(".json")
         );
         Map<String, Group> loaded = new LinkedHashMap<>();
@@ -52,7 +52,7 @@ public final class HopperFilterGroups {
                 .sorted(Map.Entry.comparingByKey(Comparator.comparing(Identifier::toString)))
                 .forEach(entry -> {
                     String path = entry.getKey().getPath();
-                    String id = path.substring("hopper_filter_groups/".length(), path.length() - ".json".length());
+                    String id = path.substring("dont_edit_auto_generated/hopper_filter_groups/".length(), path.length() - ".json".length());
                     try (var reader = new InputStreamReader(entry.getValue().open(), StandardCharsets.UTF_8)) {
                         JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
                         String name = json.get("name").getAsString();

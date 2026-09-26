@@ -7,5 +7,18 @@
 	"tooltips": [
 		"\"I want it, I got it, I want it, I got it (baby)\"",
 		"Official MMU Minecraft Society Mint Issue"
-	]
+	],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "coin/convert_coin_5000_to_10000",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:coin-5000", "mainmod:coin-5000"],
+				"result": {
+					"stack": "mainmod:coin-10000",
+					"count": 1
+				}
+			}
+		]
+	}
 }

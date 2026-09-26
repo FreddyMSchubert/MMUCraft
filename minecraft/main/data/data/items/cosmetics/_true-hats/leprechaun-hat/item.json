@@ -1,7 +1,6 @@
 {
 	"title": "Leprechaun Hat",
 	"id": "cosmetic-leprichaun",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

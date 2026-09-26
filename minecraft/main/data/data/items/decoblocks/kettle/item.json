@@ -1,7 +1,6 @@
 {
 	"title": "Kettle",
 	"id": "deco-kettle",
-	"drop": "imaginative",
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
@@ -10,6 +9,24 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0
+		"lightLevel": 0,
+		"gameplayToggle": "imaginative"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/kettle",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": ["NNN", "N N", "NNN"],
+				"key": {
+					"N": "minecraft:copper_nugget"
+				},
+				"result": {
+					"stack": "mainmod:deco-kettle",
+					"count": 1
+				}
+			}
+		]
 	}
 }

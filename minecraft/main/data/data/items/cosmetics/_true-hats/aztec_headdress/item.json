@@ -1,7 +1,6 @@
 {
 	"title": "Moctezuma's Headdress",
 	"id": "cosmetic-aztec-headdress",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "legendary",
 	"maxStackSize": 1,

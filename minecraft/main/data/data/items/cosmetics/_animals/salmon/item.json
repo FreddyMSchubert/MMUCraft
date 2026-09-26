@@ -1,7 +1,6 @@
 {
 	"title": "Salmon Hat",
 	"id": "cosmetic-salmon",
-	"drop": "beach-party",
 	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,

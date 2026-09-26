@@ -1,7 +1,6 @@
 {
 	"title": "Propeller Hat",
 	"id": "cosmetic-propeller",
-	"drop": "circus",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

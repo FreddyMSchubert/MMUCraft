@@ -1,7 +1,6 @@
 {
 	"title": "Googly Eyes",
 	"id": "cosmetic-googly-eyes",
-	"drop": "inventors",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

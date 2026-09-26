@@ -1,7 +1,6 @@
 {
 	"title": "Calico Cat Pet Hat",
 	"id": "cosmetic-calico-cat-pet-hat",
-	"drop": "welcoming",
 	"modelType": "cosmetic",
 	"rarity": "rare",
 	"maxStackSize": 1,

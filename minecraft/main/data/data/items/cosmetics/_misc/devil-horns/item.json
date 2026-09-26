@@ -1,7 +1,6 @@
 {
 	"title": "Devil Horns",
 	"id": "cosmetic-devil-horns",
-	"drop": "nether",
 	"modelType": "cosmetic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,

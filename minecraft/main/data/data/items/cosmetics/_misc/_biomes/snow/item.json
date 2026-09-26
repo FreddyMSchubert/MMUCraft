@@ -1,7 +1,6 @@
 {
 	"title": "Snow Biotope Hat",
 	"id": "cosmetic-snow-biotope-hat",
-	"drop": "soaring",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

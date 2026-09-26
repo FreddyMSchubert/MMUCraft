@@ -53,7 +53,14 @@ export class ShopPurchasesService {
 		const availability = this.unlocks.availabilityForUser(user.id);
 		const dealDate = currentShopDealDate();
 		const limitedPurchaseCounts = this.limitedPurchaseCounts(user.id, dealDate);
-		const dailyDealIds = dailyDealItemIds(items, dealDate);
+		const dailyDealIds = availableDailyDealItemIds(
+			items,
+			dealDate,
+			user,
+			availability,
+			unlockedIds,
+			enabledToggles,
+		);
 		const signupAnniversary = this.isSignupAnniversary(user.id);
 
 		return {
@@ -170,7 +177,14 @@ export class ShopPurchasesService {
 			throw new BadRequestException(unavailablePurchaseMessage(user, item, enabledToggles));
 		}
 
-		const dailyDiscount = dailyDealItemIds(this.itemCatalog.load().items, dealDate).has(item.id)
+		const dailyDiscount = availableDailyDealItemIds(
+			this.itemCatalog.load().items,
+			dealDate,
+			user,
+			availability,
+			unlockedIds,
+			enabledToggles,
+		).has(item.id)
 			? dailyDealDiscountPercent(item.id, dealDate)
 			: 0;
 		const discountPercent = shopDiscountPercent(
@@ -301,6 +315,23 @@ export class ShopPurchasesService {
 			)
 			.run();
 	}
+}
+
+function availableDailyDealItemIds(
+	items: CatalogItem[],
+	dealDate: string,
+	user: AuthenticatedUser,
+	availability: ShopUnlockAvailability,
+	unlockedIds: Set<string>,
+	enabledToggles: Set<string>,
+): Set<string> {
+	// A purchase limit reached today should not reshuffle the remaining deals.
+	return dailyDealItemIds(
+		items.filter((item) =>
+			isAvailableForPurchase(user, item, availability, unlockedIds, 0, enabledToggles),
+		),
+		dealDate,
+	);
 }
 
 function isAvailableForPurchase(

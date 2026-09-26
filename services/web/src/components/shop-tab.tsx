@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
-import { DropPill, dropGradient } from '@/components/drop-pill';
+import { dropGradient } from '@/components/drop-pill';
 import { apiMessage } from '@/lib/api-response';
 import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
 import { useSiteSettings } from '@/lib/site-settings';
@@ -295,7 +295,6 @@ export function ShopTab({
 
 	const safeFeaturedIndex = dailyDeals.length ? featuredIndex % dailyDeals.length : 0;
 	const featured = dailyDeals.at(safeFeaturedIndex);
-	const featuredDrop = data.drops.find((drop) => drop.id === featured?.drop);
 	return (
 		<div className="shopPanel">
 			<div className="shopTop">
@@ -346,7 +345,6 @@ export function ShopTab({
 								<h4>
 									<DabloonText>{featured.title}</DabloonText>
 								</h4>
-								{featuredDrop && <DropPill drop={featuredDrop} />}
 							</div>
 							<strong>−{featured.discountPercent}%</strong>
 						</div>

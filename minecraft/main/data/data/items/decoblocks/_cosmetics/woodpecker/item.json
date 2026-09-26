@@ -21,7 +21,7 @@
 				"pattern": [" R ", "FSF", " W "],
 				"key": {
 					"F": "minecraft:feather",
-					"S": "mainmod:soul",
+					"S": "mainmod:soul-shard",
 					"R": "minecraft:red_dye",
 					"W": "minecraft:white_dye"
 				},

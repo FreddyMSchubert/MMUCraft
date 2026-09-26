@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 90,
 		"unlockMessage": "Unlocked cosmetic: Salmon Hat.",
-		"tags": ["fish"]
+		"tags": ["fish", "water", "sea", "river", "simple", "red"]
 	},
 	"equippableCosmetic": {}
 }

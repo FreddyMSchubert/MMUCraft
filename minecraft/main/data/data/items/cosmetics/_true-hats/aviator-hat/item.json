@@ -14,7 +14,7 @@
 		"description": "",
 		"unlockWeight": 42,
 		"unlockMessage": "Unlocked cosmetic: Aviator Hat.",
-		"tags": ["pilot", "goggles"]
+		"tags": ["pilot", "goggles", "old", "leather", "plane"]
 	},
 	"equippableCosmetic": {}
 }

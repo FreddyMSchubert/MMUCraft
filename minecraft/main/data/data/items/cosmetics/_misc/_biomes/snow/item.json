@@ -6,13 +6,13 @@
 	"maxStackSize": 1,
 	"tooltips": [],
 	"shopPurchasable": {
-		"gameplayToggle": "soaring",
+		"gameplayToggle": "cold",
 		"membersOnly": true,
 		"priceDabloons": 100,
 		"description": "",
 		"unlockWeight": 20,
 		"unlockMessage": "Unlocked cosmetic: Snow Biotope Hat.",
-		"tags": ["winter", "snowy"]
+		"tags": ["winter", "snowy", "cold"]
 	},
 	"equippableCosmetic": {}
 }

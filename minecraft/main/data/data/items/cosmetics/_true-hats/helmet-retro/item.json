@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 40,
 		"unlockMessage": "Unlocked cosmetic: Retro Helmet.",
-		"tags": ["vintage", "scooter"]
+		"tags": ["vintage", "scooter", "vespa", "moped"]
 	},
 	"equippableCosmetic": {}
 }

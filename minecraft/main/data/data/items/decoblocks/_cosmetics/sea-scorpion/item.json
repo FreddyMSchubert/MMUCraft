@@ -30,7 +30,7 @@
 				"pattern": [" N ", "HSH", " B "],
 				"key": {
 					"N": "minecraft:nautilus_shell",
-					"S": "mainmod:soul",
+					"S": "mainmod:soul-shard",
 					"H": "minecraft:shears",
 					"B": "minecraft:bone"
 				},

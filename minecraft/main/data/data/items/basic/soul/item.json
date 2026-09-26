@@ -4,5 +4,29 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": []
+	"tooltips": [],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "soul",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "welcoming",
+				"ingredients": [
+					"mainmod:soul-shard",
+					"mainmod:soul-shard",
+					"mainmod:soul-shard",
+					"mainmod:soul-shard",
+					"mainmod:soul-shard",
+					"mainmod:soul-shard",
+					"mainmod:soul-shard",
+					"mainmod:soul-shard",
+					"mainmod:soul-shard"
+				],
+				"result": {
+					"stack": "mainmod:soul",
+					"count": 1
+				}
+			}
+		]
+	}
 }

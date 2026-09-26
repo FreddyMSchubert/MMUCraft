@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 130,
 		"unlockMessage": "Unlocked cosmetic: Birthday Hat.",
-		"tags": ["birthday"]
+		"tags": ["birthday", "cone"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

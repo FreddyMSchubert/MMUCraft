@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 37,
 		"unlockMessage": "Unlocked cosmetic: Propeller Hat.",
-		"tags": ["helicopter", "spinning"]
+		"tags": ["helicopter", "spinning", "silly", "fun"]
 	},
 	"equippableCosmetic": {}
 }

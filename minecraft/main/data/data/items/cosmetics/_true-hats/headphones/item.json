@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 80,
 		"unlockMessage": "Unlocked cosmetic: Headphones.",
-		"tags": ["headset"]
+		"tags": ["headset", "music", "gaming", "gamer"]
 	},
 	"equippableCosmetic": {},
 	"particleEmission": {

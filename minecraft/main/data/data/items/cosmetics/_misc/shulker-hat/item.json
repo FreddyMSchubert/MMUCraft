@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Shulker Hat.",
-		"tags": ["end", "shell"]
+		"tags": ["end", "shell", "mob"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

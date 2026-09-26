@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 50,
 		"unlockMessage": "Unlocked cosmetic: Fancy Moustache.",
-		"tags": ["mustache", "facial hair"]
+		"tags": ["mustache", "facial hair", "mumbo", "french"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Techno Crown.",
-		"tags": ["technoblade"]
+		"tags": ["technoblade", "youtuber"]
 	},
 	"equippableCosmetic": {}
 }

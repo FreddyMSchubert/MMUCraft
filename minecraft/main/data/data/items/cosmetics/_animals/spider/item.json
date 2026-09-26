@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Spider Hat.",
-		"tags": ["arachnid"]
+		"tags": ["arachnid", "cute", "insect", "bug", "web"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

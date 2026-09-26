@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 60,
 		"unlockMessage": "Unlocked cosmetic: Sleeping Mobs.",
-		"tags": ["nap", "bed"]
+		"tags": ["nap", "bed", "cute", "bee", "allay", "eep"]
 	},
 	"equippableCosmetic": {}
 }

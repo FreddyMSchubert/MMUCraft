@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Spartan Helmet.",
-		"tags": ["warrior", "greek"]
+		"tags": ["warrior", "greek", "gold"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

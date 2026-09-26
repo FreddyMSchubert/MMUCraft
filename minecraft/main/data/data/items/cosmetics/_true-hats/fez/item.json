@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Fez.",
-		"tags": ["tassel"]
+		"tags": ["tassel", "felt", "ottoman", "red"]
 	},
 	"equippableCosmetic": {}
 }

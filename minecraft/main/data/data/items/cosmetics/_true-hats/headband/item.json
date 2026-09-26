@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 60,
 		"unlockMessage": "Unlocked cosmetic: Headband.",
-		"tags": ["hairband"]
+		"tags": ["hairband", "rambo", "sweatband"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

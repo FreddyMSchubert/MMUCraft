@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Chick Hat.",
-		"tags": ["chicken", "yellow"]
+		"tags": ["chicken", "yellow", "cute", "baby"]
 	},
 	"equippableCosmetic": {}
 }

@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Round Glasses.",
-		"tags": ["circular", "spectacles"]
+		"tags": ["circular", "spectacles", "nerd", "reading glasses"]
 	},
 	"equippableCosmetic": {}
 }

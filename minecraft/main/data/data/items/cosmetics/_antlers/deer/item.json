@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Deer Antlers.",
-		"tags": ["reindeer", "stag"]
+		"tags": ["reindeer", "stag", "large", "big"]
 	},
 	"equippableCosmetic": {}
 }

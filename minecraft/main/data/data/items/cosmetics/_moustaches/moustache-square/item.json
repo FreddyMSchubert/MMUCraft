@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Square Moustache.",
-		"tags": ["mustache", "facial hair"]
+		"tags": ["mustache", "facial hair", "biker"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

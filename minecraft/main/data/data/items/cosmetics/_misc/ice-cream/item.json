@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Ice Cream Hat.",
-		"tags": ["icecream", "dessert"]
+		"tags": ["icecream", "dessert", "food"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

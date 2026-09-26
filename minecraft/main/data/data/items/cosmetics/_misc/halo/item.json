@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 25,
 		"unlockMessage": "Unlocked cosmetic: Halo.",
-		"tags": ["angel"]
+		"tags": ["angel", "ring"]
 	},
 	"equippableCosmetic": {}
 }

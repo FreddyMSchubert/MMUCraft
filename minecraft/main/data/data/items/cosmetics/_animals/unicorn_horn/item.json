@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked cosmetic: Unicorn Horn.",
-		"tags": ["magic", "horse"]
+		"tags": ["magic", "horse", "rainbow", "pony"]
 	},
 	"equippableCosmetic": {}
 }

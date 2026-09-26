@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 70,
 		"unlockMessage": "Unlocked cosmetic: Camel hood.",
-		"tags": ["desert"]
+		"tags": ["desert", "cactus", "mob", "animal", "tall"]
 	},
 	"equippableCosmetic": {}
 }

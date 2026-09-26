@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked cosmetic: Mohawk.",
-		"tags": ["hair"]
+		"tags": ["hair", "punk", "fan"]
 	},
 	"equippableCosmetic": {},
 	"dyeable": {

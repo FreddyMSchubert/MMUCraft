@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 100,
 		"unlockMessage": "Unlocked cosmetic: Warden Antlers - very spooky.",
-		"tags": ["sculk", "deep dark"]
+		"tags": ["sculk", "deep dark", "ancient city", "mob"]
 	},
 	"equippableCosmetic": {}
 }

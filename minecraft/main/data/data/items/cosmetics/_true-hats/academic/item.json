@@ -11,7 +11,7 @@
 		"description": "",
 		"unlockWeight": 68,
 		"unlockMessage": "Unlocked cosmetic: Academic Hat.",
-		"tags": ["graduation", "mortarboard"]
+		"tags": ["graduation", "mortarboard", "university"]
 	},
 	"equippableCosmetic": {}
 }

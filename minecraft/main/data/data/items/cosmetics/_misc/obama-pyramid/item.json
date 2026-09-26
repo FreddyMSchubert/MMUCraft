@@ -2,17 +2,17 @@
 	"title": "Obamium Pyramid",
 	"id": "cosmetic-obamium-pyramid",
 	"modelType": "cosmetic",
-	"rarity": "legendary",
+	"rarity": "mythical",
 	"maxStackSize": 1,
 	"tooltips": ["As seen on TV!", "Comes with 68ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â± unique voicelines!"],
 	"shopPurchasable": {
 		"gameplayToggle": "void",
 		"membersOnly": false,
-		"priceDabloons": 320,
+		"priceDabloons": 420,
 		"description": "Plays a random Obama sound when used.",
 		"unlockWeight": 5,
 		"unlockMessage": "Unlocked relic: Obamium Pyramid.",
-		"tags": ["obama", "meme"]
+		"tags": ["obama", "meme", "president", "political"]
 	},
 	"charm": {
 		"charmId": 51,

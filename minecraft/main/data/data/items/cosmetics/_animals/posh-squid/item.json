@@ -12,7 +12,7 @@
 		"description": "",
 		"unlockWeight": 5,
 		"unlockMessage": "Unlocked cosmetic: Posh Squid.",
-		"tags": ["octopus", "tentacles"]
+		"tags": ["octopus", "tentacles", "fancy", "monocle", "fish", "water", "ocean"]
 	},
 	"equippableCosmetic": {}
 }

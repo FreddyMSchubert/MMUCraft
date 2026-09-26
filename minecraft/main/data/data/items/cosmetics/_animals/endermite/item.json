@@ -1,0 +1,18 @@
+{
+	"title": "Endermite Hat",
+	"id": "cosmetic-endermite",
+	"modelType": "cosmetic",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["Buy this cosmetic and errr and uhh and err might uhhh... not kill you?"],
+	"shopPurchasable": {
+		"gameplayToggle": "void",
+		"membersOnly": false,
+		"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 90,
+		"unlockMessage": "Unlocked cosmetic: Endermite Hat.",
+		"tags": ["end", "pearl", "mite", "simple"]
+	},
+	"equippableCosmetic": {}
+}

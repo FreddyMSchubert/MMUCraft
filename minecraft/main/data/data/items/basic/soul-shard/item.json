@@ -1,0 +1,8 @@
+{
+	"title": "Soul Shard",
+	"id": "soul-shard",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": []
+}

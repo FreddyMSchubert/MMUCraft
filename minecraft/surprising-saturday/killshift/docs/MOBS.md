@@ -4,7 +4,7 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 ## Behavior that applies to every mob
 
-All listed mobs except the giant can become forms. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. `/shift` with your own name returns you to normal; shifting to another player uses that player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. It converts land mob movement speed for player controls. The player camera matches the form's actual eye height. The owner sees the display at 50% scale. Other players see the full-size display. Attack damage never falls below one.
+All listed mobs can become forms, including giants. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. `/shift` with your own name returns you to normal; shifting to another player uses that player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. It converts land mob movement speed for player controls. The player camera matches the form's actual eye height. The owner sees the display at 50% scale. Other players see the full-size display. Attack damage never falls below one.
 
 Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. Aquatic forms can sprint and swim in water; other mob forms cannot use player sprint or swim movement. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A killed mob drops no items or experience when the kill causes a shift. The killer moves to the dead entity's position.
 
@@ -17,7 +17,7 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 | Trait | Forms | Behavior |
 | --- | --- | --- |
 | Forced flight | Allay, bat, bee, blaze, ender dragon, ghast, happy ghast, parrot, phantom, vex, wither | Player flight stays active. |
-| Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is full. Sprint and swim controls work in water. Fish and other water-only forms have land movement suppressed. |
+| Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is moderate. Sprint and swim controls work in water. Fish and other water-only forms have land movement suppressed, and their displays sit lower than the player. |
 | Water breathing | Axolotl, cod, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, zombie nautilus | Air stays full underwater. Air falls on land. The player takes drowning damage after the air supply ends. |
 | Sun-sensitive forms | Types in the game's `burn_in_daylight` tag | Sunlight ignites the player when the head slot is empty. |
 | Wall climbing | Spider, cave spider | Movement input near a wall gives a steady upward climb. |
@@ -102,6 +102,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Fox | Common |
 | Frog | Common |
 | Ghast | Forced flight, explosive fireball, and no fall damage |
+| Giant | Zombie-like movement and combat with giant health and size |
 | Happy ghast | Forced flight and no fall damage |
 | Glow squid | Aquatic movement, water breathing, ink, and damage speed boost |
 | Goat | Source jump strength |

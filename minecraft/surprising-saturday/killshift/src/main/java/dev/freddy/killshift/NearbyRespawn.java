@@ -11,24 +11,29 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 
 final class NearbyRespawn {
-    private static final int ATTEMPTS = 96;
+    private static final int ATTEMPTS = 256;
 
     private NearbyRespawn() { }
 
     static void afterRespawn(ServerPlayer oldPlayer, ServerPlayer player, boolean alive) {
         if (alive) return;
         ServerLevel level = oldPlayer.level();
-        int radius = EventApi.isMember(oldPlayer) ? 100 : 200;
+        boolean member = EventApi.isMember(oldPlayer);
+        int innerRadius = member ? 50 : 100;
+        int outerRadius = member ? 100 : 200;
 
         for (int attempt = 0; attempt < ATTEMPTS; attempt++) {
             double angle = player.getRandom().nextDouble() * Math.TAU;
             double distance = Math.sqrt(player.getRandom().nextDouble()
-                    * (radius * radius - 16 * 16) + 16 * 16);
+                    * (outerRadius * outerRadius - innerRadius * innerRadius)
+                    + innerRadius * innerRadius);
             int x = (int) Math.floor(oldPlayer.getX() + Math.cos(angle) * distance);
             int z = (int) Math.floor(oldPlayer.getZ() + Math.sin(angle) * distance);
             double dx = x + 0.5 - oldPlayer.getX();
             double dz = z + 0.5 - oldPlayer.getZ();
-            if (dx * dx + dz * dz > radius * radius) continue;
+            double distanceSquared = dx * dx + dz * dz;
+            if (distanceSquared < innerRadius * innerRadius
+                    || distanceSquared > outerRadius * outerRadius) continue;
             int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
             int lowestY = level.dimensionType().hasCeiling() ? level.getMinY() + 1 : surfaceY - 1;
             for (int y = surfaceY + 1; y >= lowestY; y--) {
@@ -49,7 +54,7 @@ final class NearbyRespawn {
                                 player.getYRot(), player.getXRot(), false)) return;
             }
         }
-        player.sendSystemMessage(Component.literal("No safe respawn spot was found within "
-                + radius + " blocks. Minecraft used your normal spawn."));
+        player.sendSystemMessage(Component.literal("No safe respawn spot was found "
+                + innerRadius + "–" + outerRadius + " blocks away. Minecraft used your normal spawn."));
     }
 }

@@ -89,8 +89,8 @@ final class ShapeRuntime {
         boolean squid = state.form.type() == EntityTypes.SQUID
                 || state.form.type() == EntityTypes.GLOW_SQUID;
         if (squid && state.squidFleeTicks > 0 && player.isInWater()) {
-            add(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED, 0.2,
-                    AttributeModifier.Operation.ADD_VALUE);
+            add(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED, 0.5,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         } else {
             remove(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED);
         }

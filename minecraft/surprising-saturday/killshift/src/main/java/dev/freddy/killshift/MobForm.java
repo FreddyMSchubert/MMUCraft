@@ -9,6 +9,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 record MobForm(
         EntityType<?> type,
@@ -17,7 +18,15 @@ record MobForm(
         double scale
 ) {
     MobForm {
-        attributes = Map.copyOf(attributes);
+        Map<Holder<Attribute>, Double> normalized = new HashMap<>(attributes);
+        if (traits.aquatic()) {
+            normalized.put(Attributes.WATER_MOVEMENT_EFFICIENCY, 0.2);
+            if (traits.landImmobile()) {
+                normalized.put(Attributes.MOVEMENT_SPEED,
+                        Math.clamp(normalized.getOrDefault(Attributes.MOVEMENT_SPEED, 0.1), 0.08, 0.1));
+            }
+        }
+        attributes = Map.copyOf(normalized);
     }
 
     CompoundTag save() {

@@ -66,7 +66,7 @@ final class MobRegistry {
     }
 
     static boolean supports(EntityType<?> type) {
-        return type != EntityTypes.GIANT;
+        return true;
     }
 
     static MobTraits traits(EntityType<?> type) {
@@ -96,8 +96,6 @@ final class MobRegistry {
             values.computeIfPresent(Attributes.MOVEMENT_SPEED,
                     (attribute, speed) -> speed * PLAYER_MOVEMENT_FACTOR);
         }
-        if (traits.aquatic()) values.merge(Attributes.MOVEMENT_SPEED, 0.1, Math::max);
-        if (traits.aquatic()) values.put(Attributes.WATER_MOVEMENT_EFFICIENCY, 1.0);
         if (traits.flying() || type == EntityTypes.CHICKEN || type == EntityTypes.CAT) {
             values.put(Attributes.FALL_DAMAGE_MULTIPLIER, 0.0);
         }

@@ -1222,5 +1222,581 @@
 		"input": "minecraft:yellow_concrete",
 		"name": "Mini Yellow Concrete",
 		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNhNWJmZjMyNWVkNzFkOTdhMmRkZmM4M2FjZjA1ZmU3ZmQ5Y2I3Y2JkYjE1ZWJiNGYwNTYyMTkwN2U5ZjJiIn19fQ=="
+	},
+	{
+		"id": "poplar_planks",
+		"input": "minecraft:poplar_planks",
+		"name": "Mini Poplar Planks",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGM4NmY0YWYzNTRjMzhlNzMyYzMwODkwZGMyMTNiYTg2YTQ5NDE2YWFjZmYwZDQ3MDU3ZWIyMWFlY2NmYjA3NiJ9fX0="
+	},
+	{
+		"id": "stripped_poplar_log",
+		"input": "minecraft:stripped_poplar_log",
+		"name": "Mini Stripped Poplar Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjFiMjA4NjVmOTIzNGYzNjkxYTg0ZjlkYjk0ZjFlNDE2ZDEzOTA3ZWRhYjc4ODA5YTk0NmQ2ODIyNDE3NmFkYSJ9fX0="
+	},
+	{
+		"id": "stripped_poplar_wood",
+		"input": "minecraft:stripped_poplar_wood",
+		"name": "Mini Stripped Poplar Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjIzZGU0MGY0YTcxMDgzZDI0YWE3NjA4ODRlMGEzZmZjODJmODZiN2VjZTg2ZjExZjg5ODVlZjZjNmUxMzhjOCJ9fX0="
+	},
+	{
+		"id": "poplar_log",
+		"input": "minecraft:poplar_log",
+		"name": "Mini Poplar Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODFlODBmYWMwOTIxOWY4MzQ0MDk2OGZkMmI3OWMxODQ3ZGJlZDFjMDhkZTFlZmRjOGI5YzIzNmRkOTQ2MzFiMCJ9fX0="
+	},
+	{
+		"id": "poplar_wood",
+		"input": "minecraft:poplar_wood",
+		"name": "Mini Poplar Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDdkYzhjNzBiOGFkMmRlMjhiMGNlNTdhZWZjNzk1ODZlNDlkODQ1NGZlOTczZmRhYTMzYzVhNjIxYjNlNDY2YiJ9fX0="
+	},
+	{
+		"id": "yellow_poplar_leaves",
+		"input": "minecraft:yellow_poplar_leaves",
+		"name": "Mini Yellow Poplar Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2NjZDIwN2RkOGM3MjQ2MzFmOWU0YmZmYjJkZjAwNGI3MDkyMDIzMDVjMDUyYzJlODA4Mjk3Mzc4ODE2MGNkNiJ9fX0="
+	},
+	{
+		"id": "orange_poplar_leaves",
+		"input": "minecraft:orange_poplar_leaves",
+		"name": "Mini Orange Poplar Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjBmN2U4ZmRhOTQyNjkxZTg5Y2U4YjFmOWNmNWEzYzhmODUzODYxOTNmNDFmYzhjYjJkMzQ2NDcyMTAyZjgwMSJ9fX0="
+	},
+	{
+		"id": "red_poplar_leaves",
+		"input": "minecraft:red_poplar_leaves",
+		"name": "Mini Red Poplar Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA0ZDViODliNmNhMTgyYmRlMjQ0YjdjZWFkOTg1MzBkNDU5MWRlNTU4MWZlNjZiMTFiYWQyNjE3ZGE4NDAzYyJ9fX0="
+	},
+	{
+		"id": "oak_wood",
+		"input": "minecraft:oak_wood",
+		"name": "Mini Oak Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjcxNDAyNWE1NTdlMzMzYTlkOTU1ZWE5YjNiMjExMTExOWE4OWUxM2ViYzFlMjk0ZTMwMDYwOWM2YjMzNjRjIn19fQ=="
+	},
+	{
+		"id": "stripped_oak_wood",
+		"input": "minecraft:stripped_oak_wood",
+		"name": "Mini Stripped Oak Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTk0ZTdkMTZlYTk2MWMyZDAxNTliNDZlYTEwOWZhZGZmYWRkYWNjZjM5ZGFhNDQyMzYzM2I0YTM3YjQzZTJmOCJ9fX0="
+	},
+	{
+		"id": "stripped_oak_log",
+		"input": "minecraft:stripped_oak_log",
+		"name": "Mini Stripped Oak Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWY0ZWE4YTkyNDhlOWQ4M2FlZDdlNjJmNTFlMTZjOWQxMGMxOTczYjMxY2Y0OTM1NjFiNmFkODI4YWUyZGNiMSJ9fX0="
+	},
+	{
+		"id": "oak_leaves",
+		"input": "minecraft:oak_leaves",
+		"name": "Mini Oak Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjI0ODQ4OTI4NWVjOTM3MzVmMjNhOGYzNDU2OGFmMTIxMGU2YjViZDlmYjRlZjgwNzViY2Q5MjBiYTBkNTlmOCJ9fX0="
+	},
+	{
+		"id": "dark_oak_wood",
+		"input": "minecraft:dark_oak_wood",
+		"name": "Mini Dark Oak Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDVhYzZlNmM0MzZkNmUxMzdkODA0ODJiODg4NTY5YjgxODFiOGIzZGFhMDZjMDQ3Zjk3NTFkMzJlYmY4ZTRjMSJ9fX0="
+	},
+	{
+		"id": "stripped_dark_oak_wood",
+		"input": "minecraft:stripped_dark_oak_wood",
+		"name": "Mini Stripped Dark Oak Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGRiN2IxZWYxNTQ5NmZkYjFjYjRjM2VhY2IwYzAzZmZmMTExZGI2ZGFhOWU4NDI0Zjc4YTA3NzVmOTYyY2M3MyJ9fX0="
+	},
+	{
+		"id": "stripped_dark_oak_log",
+		"input": "minecraft:stripped_dark_oak_log",
+		"name": "Mini Stripped Dark Oak Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2JjMDVkOTgwZmY0OTBjOWU1NjcyYjQ5MzM2YjIxZmQzMTgwNzVjNDBmYzdmMTNiMWM3ZDJlYTM2MGE1NmNhOSJ9fX0="
+	},
+	{
+		"id": "dark_oak_leaves",
+		"input": "minecraft:dark_oak_leaves",
+		"name": "Mini Dark Oak Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWQ2NDM2YWIzYmZhNWQyNWM2ZDY2ZGIxZDIzZTI3YmEwODg1OWQwODNmZmEwMDVmNmZkMjQxZDdiZWQ3ZDAyMSJ9fX0="
+	},
+	{
+		"id": "birch_wood",
+		"input": "minecraft:birch_wood",
+		"name": "Mini Birch Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODVjMDIwMjk1Nzg5NGI0YWZjOTcwNzZlYTg0NThmZDQxMzkwMjBkOGQyNGE3YjNjNmRhNDk5YmFkZDU3NTM0MCJ9fX0="
+	},
+	{
+		"id": "stripped_birch_wood",
+		"input": "minecraft:stripped_birch_wood",
+		"name": "Mini Stripped Birch Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODY3NjVkOTk4NWI5YmQ1OWJmM2NhZGVmZGYxODViYWQwM2NlMTZiYmNhNjkzZmVlYTY4NmY5OTcyNTljZjZmZCJ9fX0="
+	},
+	{
+		"id": "stripped_birch_log",
+		"input": "minecraft:stripped_birch_log",
+		"name": "Mini Stripped Birch Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmM5ZjE3Mjg1OGVjMjIxYzk4MDdhZDk1NjcwN2NkMDhiN2EwNTBiN2RkODFjMWM4ODA2MzhiNjQzZTJiZjM0NSJ9fX0="
+	},
+	{
+		"id": "birch_leaves",
+		"input": "minecraft:birch_leaves",
+		"name": "Mini Birch Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTQyNWQxYjIwY2RlYjM0ZmEwNjU0NTRiNzFjMTRkNzk2NDQwZmI5NDVjNDNkYjdkZmVhYTExOGU4ZWM2NjRhYyJ9fX0="
+	},
+	{
+		"id": "jungle_wood",
+		"input": "minecraft:jungle_wood",
+		"name": "Mini Jungle Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2U5ZmU3NmMxMDQyOTVlYTExMWM3YTMzZDcwY2MyY2Y1ODEzOWJlMTc2OWJmNzJhMDliNzA5NzUxMjdmYTg5NiJ9fX0="
+	},
+	{
+		"id": "stripped_jungle_wood",
+		"input": "minecraft:stripped_jungle_wood",
+		"name": "Mini Stripped Jungle Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg5NjM4ZDE2OTkwM2E4YjRhYzBiMmI2Mjk3NDlhNDdlZTUxZWFjNzRjNjdmODNiMzQwNTJmNzFkYzk1NDc4NiJ9fX0="
+	},
+	{
+		"id": "stripped_jungle_log",
+		"input": "minecraft:stripped_jungle_log",
+		"name": "Mini Stripped Jungle Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2E1ZGRjMTdiMGNmYjIwMzk2NTk3MGM1ZmVhMzFlMDgyYTBkNmJiZTVjZTM5MzQzMjM5Nzg1N2I4NTQ3ODE4ZSJ9fX0="
+	},
+	{
+		"id": "jungle_leaves",
+		"input": "minecraft:jungle_leaves",
+		"name": "Mini Jungle Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgzYWRmNDU2MGRlNDc0MTQwNDA5M2FjNjFjMzNmYjU1NmIzZDllZTUxNDBmNjIwMzYyNTg5ZmRkZWRlZmEyZCJ9fX0="
+	},
+	{
+		"id": "acacia_wood",
+		"input": "minecraft:acacia_wood",
+		"name": "Mini Acacia Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDk1ZTdjMDNmNTgzM2FkZGJjZDQxMzg5MjU0ODhmOGVjMGQ5YTBmNDViNTliYmJlNGJkMmFlYzMwNDBjMDQwZiJ9fX0="
+	},
+	{
+		"id": "stripped_acacia_wood",
+		"input": "minecraft:stripped_acacia_wood",
+		"name": "Mini Stripped Acacia Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIxMDBhODNlYjIwNzlmZDY2YmZmZmJkY2U0OTBlZjU1YTQ3ZWMxNjE3OTc5MzlkODZiMTRhYTU1YjYyOWVlYSJ9fX0="
+	},
+	{
+		"id": "stripped_acacia_log",
+		"input": "minecraft:stripped_acacia_log",
+		"name": "Mini Stripped Acacia Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTQ4YzVmMGExZmM5ZWMxYTk1OGQ2NzM4ZmE1M2FhNDI1ZjIyNGNkOTUyYzk4M2RmNzY5OGRhMDkyZDEzMmQ3OCJ9fX0="
+	},
+	{
+		"id": "acacia_leaves",
+		"input": "minecraft:acacia_leaves",
+		"name": "Mini Acacia Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTYxNzMyZmZlOWM2MThiNGNmMGU3Y2ZhY2YxYTUxMTcxM2NjM2FhNTQ5NjQ5OTVhN2Q0NjVlYTVjMTZjZDE1NCJ9fX0="
+	},
+	{
+		"id": "mangrove_wood",
+		"input": "minecraft:mangrove_wood",
+		"name": "Mini Mangrove Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODY2MjZlMWNiNGZiNTk1Y2MwZjZkYzJiMjAzZWI2ZTllMGQyZmU2NjViY2YyNDI1MDVkZDAyYWE4OTkwNTQ5MSJ9fX0="
+	},
+	{
+		"id": "stripped_mangrove_wood",
+		"input": "minecraft:stripped_mangrove_wood",
+		"name": "Mini Stripped Mangrove Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmU5ZDVkNDdlNTE4NGU1NzVjZGEyMTZmNTZiOGJiMTQzNzg3ZWQ2ZTdiZTdlYzhhODFjZTU5NDU0YjIwZGYwMCJ9fX0="
+	},
+	{
+		"id": "stripped_mangrove_log",
+		"input": "minecraft:stripped_mangrove_log",
+		"name": "Mini Stripped Mangrove Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTk5MTE5ZTFkYmNjNGFlM2ZkMzE1ODk4ZjViZTc0MTRjMDUwYTFkNGZkMTM2ZTVjYTEyODQ1YjQxM2E0Njk4NCJ9fX0="
+	},
+	{
+		"id": "mangrove_leaves",
+		"input": "minecraft:mangrove_leaves",
+		"name": "Mini Mangrove Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWZhZjlhYjcwYWQ0MDcxNDhlMmFlMGI0YWY4MWVkODE3YTBiZjk5Y2U2YTA4N2I2OTI4NmVjNmNhYTAzYTM5ZCJ9fX0="
+	},
+	{
+		"id": "cherry_wood",
+		"input": "minecraft:cherry_wood",
+		"name": "Mini Cherry Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmY2NzE4OTkwYmNlNWMyZjVjMjVkYTNmMjkwOGRiZWFiMTMzZjUyMTk1ZGRmMDRmNTI1MWIyNWZkOWVkZDk2MCJ9fX0="
+	},
+	{
+		"id": "stripped_cherry_wood",
+		"input": "minecraft:stripped_cherry_wood",
+		"name": "Mini Stripped Cherry Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODJiZjVjYzkyOTQzNTZlNjE5MGM5OGU3YzU3YWJlNmI1Zjg1ZjFlMGFjYjQ0MzU0NWQzNzBlYmEwOWU3OGEzOCJ9fX0="
+	},
+	{
+		"id": "stripped_cherry_log",
+		"input": "minecraft:stripped_cherry_log",
+		"name": "Mini Stripped Cherry Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzJmOWZhODRhYTNmZDQ1MzUyODdhYmEzYjcyZTVkNmMxNDVmYmNhZGJlZGQ5YjVlOTUzMTY1YzBkOWY3ZWVhNyJ9fX0="
+	},
+	{
+		"id": "pale_oak_leaves",
+		"input": "minecraft:pale_oak_leaves",
+		"name": "Mini Pale Oak Leaves",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTM0ZThmOGI1MWVhMGU3MzYzYmM0NmQxMzhjNmM4MzlhNmIyOGQ3MjhjYmVhZTFmYzk3NWU0ZmVlMTA0N2Y1YiJ9fX0="
+	},
+	{
+		"id": "stripped_pale_oak_log",
+		"input": "minecraft:stripped_pale_oak_log",
+		"name": "Mini Stripped Pale Oak Log",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzZmZmYzMmU2MjExNjhjYWYyNDQ0ZGUwZGE1NzdlN2Y5MmY3OTM3Y2Y0MmM1NTk5ZWZlMTE3ZDZjZDExNDUwOCJ9fX0="
+	},
+	{
+		"id": "stripped_pale_oak_wood",
+		"input": "minecraft:stripped_pale_oak_wood",
+		"name": "Mini Stripped Pale Oak Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmVmNGEyYTgyYzBlMDI1N2M4MmIwYmE4ZTc3YjRlZmYyNmNlZmFhYjc4MDIyZjY5ZGE4MjM0OWM5Mjg3ZDM1NiJ9fX0="
+	},
+	{
+		"id": "pale_oak_wood",
+		"input": "minecraft:pale_oak_wood",
+		"name": "Mini Pale Oak Wood",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2YxNTY0MDNjMDdmZmExYmJlZTU1Njg4NmNiYTQyMGJmYWJmZmNiZTgwOTdiMGY5ZTRjYjA1MWZkMTYzOGNiNyJ9fX0="
+	},
+	{
+		"id": "crimson_hyphae",
+		"input": "minecraft:crimson_hyphae",
+		"name": "Mini Crimson Hyphae",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTJiZjU5ZjAzY2Y0MTIwZmIxNjMxM2M2NDk5ZmJmOTI1MmE0OWI4MzFkZWM2ZTE3NjQ3YWFmY2VlMWJkZTRiZCJ9fX0="
+	},
+	{
+		"id": "stripped_crimson_hyphae",
+		"input": "minecraft:stripped_crimson_hyphae",
+		"name": "Mini Stripped Crimson Hyphae",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjIzOWI1ZDg2MjY1MDZiYzhhNDg2NjU3NWRmODAxZDRjYWRlNmIzNTc4YWZlODRmZjYwMjc2M2ZkOWQxZmM1ZiJ9fX0="
+	},
+	{
+		"id": "stripped_crimson_stem",
+		"input": "minecraft:stripped_crimson_stem",
+		"name": "Mini Stripped Crimson Stem",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDJmZTJiZDVmZTNiNjA2YTE1NjczMGNmNzgxMDg1ZTg5OGJkODZmOGJjZjlkNWY5MGEyYjQyNDkzMTExYzg3NyJ9fX0="
+	},
+	{
+		"id": "stripped_warped_hyphae",
+		"input": "minecraft:stripped_warped_hyphae",
+		"name": "Mini Stripped Warped Hyphae",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjc3Y2M5MWM2YWFlNjQ0NzM2MTNhNWQ3YzgxNTQzZjE4NjM5ZmI4NzllZTVlMjM0ZWRhNmZkYzlhYzZhZTMwZSJ9fX0="
+	},
+	{
+		"id": "stripped_warped_stem",
+		"input": "minecraft:stripped_warped_stem",
+		"name": "Mini Stripped Warped Stem",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGYxODM0YjJkMzQ2ZWRiMjBmZmMwMmY0Mzc3MGQwYjFlY2UzNTJlNzJlMWVkZjc1NWYxYWQ0YzM5YTZkYTJhMyJ9fX0="
+	},
+	{
+		"id": "monitor",
+		"input": "minecraft:redstone_lamp",
+		"name": "Mini Monitor",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTA5Y2RlMWFmYzk1YTQ3NGQyMjI1NTQwOTdlZDZkMzkxZTdjYzdhZTFmMjAyZmRiZmQyZDZkYmM5ODMwOTM3MCJ9fX0="
+	},
+	{
+		"id": "books",
+		"input": "minecraft:book",
+		"name": "Mini Books",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTM0NGQ4M2U3YzZlY2U5MGQzNGM2ODVhOWEzMzg0ZjhlOGQwMTUxNjMzZmMyZWVhZTRkNGI2MzY4NjJkMzMifX19"
+	},
+	{
+		"id": "burger",
+		"input": "minecraft:bread",
+		"name": "Burger",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTZlZjFjMjVmNTE2ZjJlN2Q2Zjc2Njc0MjBlMzNhZGNmM2NkZjkzOGNiMzdmOWE0MWE4YjM1ODY5ZjU2OWIifX19"
+	},
+	{
+		"id": "camera",
+		"input": "minecraft:black_stained_glass_pane",
+		"name": "Camera",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTQ0MjJhODJjODk5YTljMTQ1NDM4NGQzMmNjNTRjNGFlN2ExYzRkNzI0MzBlNmU0NDZkNTNiOGIzODVlMzMwIn19fQ=="
+	},
+	{
+		"id": "rubik_s_cube",
+		"input": "minecraft:orange_glazed_terracotta",
+		"name": "Rubik's Cube",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMThjYzU4OTU4ZTViZTI3MzQ2M2FhNzUxZWFhZjA4YzMxYWE2ZDdhNDlmNDNmZDg4YzIzMjRjM2Q4OThlODhmIn19fQ=="
+	},
+	{
+		"id": "bread_loaf",
+		"input": "minecraft:bread",
+		"name": "Bread Loaf",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTE5OTdkYTY0MDQzYjI4NDgyMjExNTY0M2E2NTRmZGM0ZThhNzIyNjY2NGI0OGE0ZTFkYmI1NTdiNWMwZmUxNCJ9fX0="
+	},
+	{
+		"id": "soccer_ball",
+		"input": "minecraft:white_wool",
+		"name": "Soccer Ball",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGU0YTcwYjdiYmNkN2E4YzMyMmQ1MjI1MjA0OTFhMjdlYTZiODNkNjBlY2Y5NjFkMmI0ZWZiYmY5ZjYwNWQifX19"
+	},
+	{
+		"id": "cake",
+		"input": "minecraft:cake",
+		"name": "Mini Cake",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTIxZDhkOWFlNTI3OGUyNmJjNDM5OTkyM2QyNWNjYjkxNzNlODM3NDhlOWJhZDZkZjc2MzE0YmE5NDM2OWUifX19"
+	},
+	{
+		"id": "nutella_jar",
+		"input": "minecraft:cocoa_beans",
+		"name": "Nutella Jar",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTE1ZGNiMmRhMDJjZjczNDgyOWUxZTI3M2UzMDI1NjE3ZDgwNzE1MTZmOTUzMjUxYjUyNTQ1ZGE4ZDNlOGRiOCJ9fX0="
+	},
+	{
+		"id": "apple",
+		"input": "minecraft:apple",
+		"name": "Apple",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTJiMzViZGE1ZWJkZjEzNWY0ZTcxY2U0OTcyNmZiZWM1NzM5ZjBhZGVkZjAxYzUxOWUyYWVhN2Y1MTk1MWVhMiJ9fX0="
+	},
+	{
+		"id": "globe",
+		"input": "minecraft:dirt",
+		"name": "Globe",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmUyY2M0MjAxNWU2Njc4ZjhmZDQ5Y2NjMDFmYmY3ODdmMWJhMmMzMmJjZjU1OWEwMTUzMzJmYzVkYjUwIn19fQ=="
+	},
+	{
+		"id": "stack_of_clothes",
+		"input": "minecraft:leather_chestplate",
+		"name": "Stack of Clothes",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2MzMDNiZDAxNTA1NWFmZjBmM2FiMmM3NzRmZWRiMTQxM2YyNDQzMTE5MGU2NDZkM2M1NThjNjcxMGQyOTIyMCJ9fX0="
+	},
+	{
+		"id": "black_tv",
+		"input": "minecraft:redstone_lamp",
+		"name": "Black TV",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTNjNjk0YmQxNGQ1NDVjMzFjYzJiOGU0NGQ2OWExZjdjYmQwNTA0MzFiYThmMGViN2ZmZDQ4NGM1YmZlNCJ9fX0="
+	},
+	{
+		"id": "skull",
+		"input": "minecraft:bone",
+		"name": "Skull",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTI0MGYyYjFhNjgxMzY2NDU2YmY5ODkyZDFjMGY0NzMzOTliOTZiYTkwYmNhYjY4ZTc3YjY4NDg0NjllYjU3In19fQ=="
+	},
+	{
+		"id": "bird_house",
+		"input": "minecraft:brown_egg",
+		"name": "Bird House",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTk5MzQ5OGVhYzE5NzE1Mjg1NzEwNjdkNWIxMTBiZmU1MmIyNjkzYjYyMmEzYjY3N2FkNTcxMGYxZmEzMWNlIn19fQ=="
+	},
+	{
+		"id": "paint_bucket",
+		"input": "minecraft:red_dye",
+		"name": "Paint Bucket",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmVjNTk2M2UxZjc4ZjJmMDU5NDNmNGRkMzIyMjQ2NjEzNzRjMjIwZWNmZGUxZTU0NzU0ZjVlZTFlNTU1ZGQifX19"
+	},
+	{
+		"id": "spawner",
+		"input": "minecraft:iron_bars",
+		"name": "Mini Spawner",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjQ3ZTJlNWQ1NWI2ZDA0OTQzNTE5YmVkMjU1N2M2MzI5ZTMzYjYwYjkwOWRlZTg5MjNjZDg4YjExNTIxMCJ9fX0="
+	},
+	{
+		"id": "vase",
+		"input": "minecraft:decorated_pot",
+		"name": "Vase",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzBiNzY5ODdlNDI0NmY4YzdhNTBlMmMxYWMyYjdlNjRlNmE0ODNkZWEwZWE2ZGE5ZDRkMjNjMmU2MWNlYTdlIn19fQ=="
+	},
+	{
+		"id": "bomb",
+		"input": "minecraft:tnt",
+		"name": "Bomb",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2U0ZWNjYjE3YThlOTI2MDFhNTE5MTdjYjVhNmZjMTdlYWYyYWRjMjdlODM3MzIzNmIyMzIzZjQ3NGVmNDhmMSJ9fX0="
+	},
+	{
+		"id": "lucky_cat",
+		"input": "minecraft:white_glazed_terracotta",
+		"name": "Lucky Cat",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmQxNjg2ODY5MjQ4ZTY2YTk4YmJlNGRlMzY4MTNhM2QzNDczZmZmOWU5NWM0MzhhYjcxMzVhYjM1OTMzIn19fQ=="
+	},
+	{
+		"id": "basketball",
+		"input": "minecraft:orange_wool",
+		"name": "Basketball",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWRmODQ3MTVhNjRkYzQ1NTg2ZjdhNjA3OWY4ZTQ5YTk0NzdjMGZlOTY1ODliNGNmZDcxY2JhMzIyNTRhYzgifX19"
+	},
+	{
+		"id": "fries",
+		"input": "minecraft:baked_potato",
+		"name": "Fries",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTBlYWNhYzQxYTllYWYwNTEzNzZlZjJmOTU5NzAxZTFiYmUxYmY0YWE2NzE1YWRjMzRiNmRjMjlhMTNlYTkifX19"
+	},
+	{
+		"id": "love_potion",
+		"input": "minecraft:rose_bush",
+		"name": "Love Potion",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTVkN2I0YjI4YjY1ZTNlM2Q0YWRhNDQ4YmRjYjFiNDc5ZGNlYmY3OTU4NTU5NjE3OGNhZTBjODljMmI2YWY1In19fQ=="
+	},
+	{
+		"id": "pink_tv",
+		"input": "minecraft:redstone_lamp",
+		"name": "Pink TV",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzQ1YmIyNDZlZGE2ODcxMzMwOWYxOTEzMzQzOTY0ZTVkNmNhMjBlNjY0MTRkNDI0OWIzNjc3ZjczOGRhYmU0MSJ9fX0="
+	},
+	{
+		"id": "stack_of_papers",
+		"input": "minecraft:paper",
+		"name": "Stack of Papers",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTgyNTQxOWU0MjlhZmMwNDBjOWU2OGIxMDUyM2I5MTdkN2I4MDg3ZDYzZTc2NDhiMTA4MDdkYThiNzY4ZWUifX19"
+	},
+	{
+		"id": "minecart",
+		"input": "minecraft:minecart",
+		"name": "Mini Minecart",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzQyMDcwYWNjODE0YmM5NDZlNTk4NzllYzdkYTQ1ZGU5ODRkM2VlOWExNTkzOTNkZWZiNTk4NTNhYmUzYjYifX19"
+	},
+	{
+		"id": "minecart_with_chest",
+		"input": "minecraft:chest_minecart",
+		"name": "Mini Minecart with Chest",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNlZDM0MjExZmVkNDAxMGE4Yzg1NzI0YTI3ZmE1ZmIyMDVkNjc2ODRiM2RhNTE3YjY4MjEyNzljNmI2NWQzZiJ9fX0="
+	},
+	{
+		"id": "minecart_with_tnt",
+		"input": "minecraft:tnt_minecart",
+		"name": "Mini Minecart with TNT",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzRkN2ZjOGUzYTk1OWFkZTdkOWNmNjYzZjFlODJkYjc5NzU1NDNlMjg4YWI4ZDExZWIyNTQxODg4MjEzNTI2In19fQ=="
+	},
+	{
+		"id": "minecart_with_furnace",
+		"input": "minecraft:furnace_minecart",
+		"name": "Mini Minecart with Furnace",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTA3OWFiYmFmYjk4MWM3OTVhOWEyZjgyYmFiM2ZiZDlmMTY2YjhjMGRiZjlhMTc1MWQ3NjliZWFjNjY3YjYifX19"
+	},
+	{
+		"id": "minecart_with_command_block",
+		"input": "minecraft:minecart",
+		"name": "Mini Minecart with Command Block",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmE5MDUzZDIxNjNkMGY1NjExNDVkMzNhNTEzMTQ1ZDRhYzFmOGE0NThiYWE3OTZiZTM4M2U3NTI1YTA1ZjQ1In19fQ=="
+	},
+	{
+		"id": "piggy_bank",
+		"input": "minecraft:porkchop",
+		"name": "Piggy Bank",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTk4ZGY0MmY0NzdmMjEzZmY1ZTlkN2ZhNWE0Y2M0YTY5ZjIwZDljZWYyYjkwYzRhZTRmMjliZDE3Mjg3YjUifX19"
+	},
+	{
+		"id": "sack",
+		"input": "minecraft:bundle",
+		"name": "Sack",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNiM2FjZGMxMWNhNzQ3YmY3MTBlNTlmNGM4ZTliM2Q5NDlmZGQzNjRjNjg2OTgzMWNhODc4ZjA3NjNkMTc4NyJ9fX0="
+	},
+	{
+		"id": "speaker",
+		"input": "minecraft:iron_ingot",
+		"name": "Speaker",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTQ2MTUxOGI3NGQ1ZjcwMTZmNzIyOTQ3NTZmYzY4YzU0NzExMTBjYzk3ZjNiYjA5M2UwYzZlZDk0YTllMyJ9fX0="
+	},
+	{
+		"id": "dice_1",
+		"input": "minecraft:white_terracotta",
+		"name": "Dice (1)",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWNmYWRhZWM3NzZlZWRlNDlhNDMzZTA5OTdmZTA0NDJmNzY1OTk4OTI0MTliYWFiODNkMjhlOGJhN2YxZjMifX19"
+	},
+	{
+		"id": "dice_2",
+		"input": "minecraft:white_terracotta",
+		"name": "Dice (2)",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTAzNGYwYmUzNTYxN2ZmMGM3ZDc2MjkyMTY1Zjk3Mzc1ZmRhNDAzM2JjODJkMmVlNjE2NGM2ODc2OTI3ZjM4YyJ9fX0="
+	},
+	{
+		"id": "dice_4",
+		"input": "minecraft:white_terracotta",
+		"name": "Dice (4)",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDQyMDY0YWE0ZGUzNWY2NjliMDRlODdiMWUwNGQ0MmVjZWU4MjliOWJjNTY2MTM4YWEyNzk0Nzk4YWZiZWMifX19"
+	},
+	{
+		"id": "dice_5",
+		"input": "minecraft:white_terracotta",
+		"name": "Dice (5)",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTFlMTJhZDk3NTlhM2QzNjhlNWQ5Njk2ZWQxMjRmNzMzNDA2YzRmNzE2MmJhYzRmYTM4YTk4MjE4YjdkN2M2In19fQ=="
+	},
+	{
+		"id": "dice_6",
+		"input": "minecraft:white_terracotta",
+		"name": "Dice (6)",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWZlMjY3MWU3ZTFhNzUzODI3Y2M0ZTMyZTUwNmYyOWFhMjM4ZTQ5NmFjNWE1NTcyNmFjNWRjZGM5ZDMifX19"
+	},
+	{
+		"id": "dice_3",
+		"input": "minecraft:white_terracotta",
+		"name": "Dice (3)",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzgzMTEzOGMyMDYxMWQzMDJjNDIzZmEzMjM3MWE3NDNkMTc0MzdhMTg5NzNjMzUxOTczNDQ3MGE3YWJiNCJ9fX0="
+	},
+	{
+		"id": "snowglobe",
+		"input": "minecraft:snowball",
+		"name": "Snowglobe",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmRkNjYzMTM2Y2FmYTExODA2ZmRiY2E2YjU5NmFmZDg1MTY2YjRlYzAyMTQyYzhkNWFjODk0MWQ4OWFiNyJ9fX0="
+	},
+	{
+		"id": "dollhouse",
+		"input": "minecraft:stripped_oak_wood",
+		"name": "Dollhouse",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjNkMDJjZGMwNzViYjFjYzVmNmZlM2M3NzExYWU0OTc3ZTM4YjkxMGQ1MGVkNjAyM2RmNzM5MTNlNWU3ZmNmZiJ9fX0="
+	},
+	{
+		"id": "anomaly_buggy_block",
+		"input": "minecraft:pink_concrete",
+		"name": "Anomaly Buggy Block",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2Q0ODdhNzlhMDExNzMzOGZlYWRkYmQyZjJhYzRlODk2NjQzZjliZDk2MTJhZDg2NWE4NGQ0MWVkOGY5ZjAifX19"
+	},
+	{
+		"id": "popcorn",
+		"input": "minecraft:paper",
+		"name": "Popcorn",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTQ5N2IxNDdjZmFlNTIyMDU1OTdmNzJlM2M0ZWY1MjUxMmU5Njc3MDIwZTRiNGZhNzUxMmMzYzZhY2RkOGMxIn19fQ=="
+	},
+	{
+		"id": "taco",
+		"input": "minecraft:cooked_mutton",
+		"name": "Taco",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWFkN2MwYTA0ZjE0ODVjN2EzZWYyNjFhNDhlZTgzYjJmMWFhNzAxYWIxMWYzZmM5MTFlMDM2NmE5Yjk3ZSJ9fX0="
+	},
+	{
+		"id": "jam_jar",
+		"input": "minecraft:red_stained_glass",
+		"name": "Jam Jar",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzBiOGI1ODg5ZWUxYzYzODhkYzZjMmM1ZGJkNzBiNjk4NGFlZmU1NDMxOWEwOTVlNjRkYjc2MzgwOTdiODIxIn19fQ=="
+	},
+	{
+		"id": "pancakes_stack",
+		"input": "minecraft:wheat",
+		"name": "Pancakes Stack",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTU4YzA5ZGEzMmZkM2Y0MTg3ZGY3MzU3ZGFkODdkNjkzMjdlNzIzZGU0ODcxNmM4MDRjYTVkNzM3MTY4YmI2YSJ9fX0="
+	},
+	{
+		"id": "beer_barrel",
+		"input": "minecraft:barrel",
+		"name": "Beer Barrel",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDg0MzdmZWU3NDljYmQ2OGYzNDQzYmIwNmU0NTA1OGE2ODdjMGZjYTk2NDM2Y2FkYjUzOGNhZDU5YjUyMTZjNiJ9fX0="
+	},
+	{
+		"id": "beer_mug",
+		"input": "minecraft:glass_bottle",
+		"name": "Beer Mug",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjJlM2NjZThkY2RjYzFjYmUzZWJmNmRkNDZiZmE3MDFiOTBhYzkwNGFjOGNlNjFmYmJkNjU4MGNjZjg1YWE4ZSJ9fX0="
+	},
+	{
+		"id": "planet",
+		"input": "minecraft:water_bucket",
+		"name": "Planet",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTBlNTU1ZTQyYTFiMmY4NWVmMmQ3NTY2ODI1NzY3NmJjM2I0ZDRmOWFkODhhZjQxODlmMWY1NjJjZDM5MzQzIn19fQ=="
+	},
+	{
+		"id": "beach_ball",
+		"input": "minecraft:blue_glazed_terracotta",
+		"name": "Beach Ball",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWE1YWIwNWVhMjU0YzMyZTNjNDhmM2ZkY2Y5ZmQ5ZDc3ZDNjYmEwNGU2YjVlYzJlNjhiM2NiZGNmYWMzZmQifX19"
+	},
+	{
+		"id": "baseball",
+		"input": "minecraft:white_wool",
+		"name": "Baseball",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzkwMmE1MDNmOWMzN2NjNmM1YjE3MzE3NTg4ZDAzZTFjODNhNjY1MTMyNTgzZWQ5YzY3MTU0ZDE2Yjc4ODUifX19"
+	},
+	{
+		"id": "toaster",
+		"input": "minecraft:iron_ingot",
+		"name": "Toaster",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWVkNmZmNGQwZjJmZDkxODQ3YTgzNmU0NzZhY2Y4ZDRhZmJhZGY0ZDg0MWUwY2Q0ODc0NmY3MzQ3Y2Y0MiJ9fX0="
 	}
 ]

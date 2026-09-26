@@ -50,19 +50,9 @@ Very convenient!
 [Rotten Flesh](https://minecraft.wiki/w/Rotten_Flesh) → [Leather](https://minecraft.wiki/w/Leather)
 :::
 
-## Wood Cutting
-
-Again, supremely useful:
-
-![Wood Cutting Example Image](/assets/knowledge/survival/crafting-tweaks/woodcutter-recipe.png)
-
-:::note
-**Please do not overlook**: These wood cutting recipes reuse the existing [Stonecutter Block](https://minecraft.wiki/w/Stonecutter), we did not add a new block for these.
-:::
-
 ## Painting Picking
 
-But that's not all for the [Stonecutter](https://minecraft.wiki/w/Stonecutter)! You can also pick a specific painting that you want to show without having to refresh it 20 times until you get the right one:
+Cutting Stone is not all the [Stonecutter](https://minecraft.wiki/w/Stonecutter) can do! You can also pick a specific painting that you want to show without having to refresh it 20 times until you get the right one:
 
 ![Wood Cutting Example Image](/assets/knowledge/survival/crafting-tweaks/paintingpicker-recipe.png)
 

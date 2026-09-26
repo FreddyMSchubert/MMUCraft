@@ -170,6 +170,7 @@ public final class ShapeView {
         state.view = null;
         removeFromTeam(view);
         view.removeTag(VIEW_TAG);
+        view.addTag(DropRewards.CLAIMED_TAG);
         if (state.form.traits().aquatic() && state.form.traits().landImmobile()
                 && !player.hasDisconnected()) {
             player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(),

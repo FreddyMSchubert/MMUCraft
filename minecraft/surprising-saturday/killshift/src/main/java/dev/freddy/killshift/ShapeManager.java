@@ -11,12 +11,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
@@ -59,18 +61,28 @@ public final class ShapeManager {
             }
         } else if (dead instanceof Mob mob) {
             if (!MobRegistry.supports(mob.getType())) return;
+            mob.addTag(DropRewards.CLAIMED_TAG);
+            DropRewards.DeathForm deathForm = DropRewards.takeForm(mob);
             EventApi.completed(killer, mob);
-            transform(killer, mob, true);
+            if (deathForm == null) transform(killer, mob, true);
+            else transform(killer, deathForm.form(), deathForm.appearance(), mob.position());
+            mob.discard();
         }
     }
 
     static boolean allowDamage(LivingEntity target, DamageSource source, float amount) {
+        if (target instanceof ServerPlayer player && source.is(DamageTypes.DROWN)
+                && isForm(player, EntityTypes.ZOMBIE)) {
+            ShapeState state = get(player);
+            CompoundTag appearance = state.view == null ? state.viewData.copy() : ShapeView.snapshot(state.view);
+            Mob drowned = EntityTypes.DROWNED.create(player.level(), EntitySpawnReason.CONVERSION);
+            if (drowned != null) {
+                ShapeView.remove(state);
+                transform(player, MobRegistry.createForm(drowned), appearance, null);
+                return false;
+            }
+        }
         return ownerOf(target) == null;
-    }
-
-    public static boolean consumesDeathLoot(LivingEntity dead, DamageSource source) {
-        return dead instanceof Mob mob && MobRegistry.supports(mob.getType())
-                && source.getEntity() instanceof ServerPlayer;
     }
 
     static InteractionResult onAttack(
@@ -160,6 +172,7 @@ public final class ShapeManager {
         });
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            DropRewards.flush(player);
             LocatorVisibility.tick(server, player);
             ShapeState state = get(player);
             if (state != null) {
@@ -206,11 +219,13 @@ public final class ShapeManager {
     }
 
     public static void readSaved(ServerPlayer player, ValueInput input) {
+        DropRewards.readSaved(player, input);
         input.read("killshift_form", CompoundTag.CODEC)
                 .ifPresent(data -> PENDING.put(player.getUUID(), data));
     }
 
     public static void writeSaved(ServerPlayer player, ValueOutput output) {
+        DropRewards.writeSaved(player, output);
         ShapeState state = get(player);
         if (state != null) output.store("killshift_form", CompoundTag.CODEC, state.save());
     }

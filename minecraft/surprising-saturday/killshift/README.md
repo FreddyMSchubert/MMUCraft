@@ -36,10 +36,11 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - A form stays active when the player leaves and rejoins.
 - A form keeps its health, attributes, and saved visual data after the End exit creates a new player object.
 - On a form change, the old display stays in the world. It receives the player's health and effects, and its mob AI resumes.
-- A mob killed for a shift drops no items or experience.
+- A mob killed for a shift gives its normal drops and experience directly to the killer. Drops wait for inventory space if necessary. A previously possessed mob gives no more rewards, while another mob of the same type does.
+- A zombie form turns into a drowned form on drowning damage without killing the player.
 - Each new creeper has a 5% chance to be charged. Each spawned zombie has a 1% chance to become a giant.
 - Giants use zombie pursuit and target goals. They keep giant health, speed, and attack damage.
-- The display keeps the source mob's equipment. The kill does not add that equipment to the killer's inventory.
+- The display keeps the source mob's equipment appearance. Equipment that drops is also added to the killer's inventory.
 - Every form has at least one point of attack damage.
 - Each new sneak press plays the form's ambient sound. Holding sneak plays it once.
 - A creeper ability explodes with a 4.5-block radius. A charged creeper uses a 9-block radius.

@@ -445,6 +445,10 @@ public final class PlayerStatsSync {
         score.numberFormatOverride(new FixedFormat(Component.literal(text)));
     }
 
+    public static String belowNameText(UUID playerId) {
+        return renderedProfileByPlayer.getOrDefault(playerId, "");
+    }
+
     private static void updatePlayerListPing(ServerPlayer player) {
         ServerScoreboard scoreboard = player.level().getServer().getScoreboard();
         Objective objective = scoreboard.getObjective(PING_OBJECTIVE);

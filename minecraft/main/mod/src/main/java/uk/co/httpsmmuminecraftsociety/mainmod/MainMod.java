@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
@@ -160,7 +159,6 @@ public class MainMod implements ModInitializer {
             PlayerDisguises.disconnected(handler.player);
             PotionOfDisplacementCharm.onPlayerDisconnect(handler.player);
         });
-        EntityTrackingEvents.START_TRACKING.register(PlayerDisguises::tracked);
         ServerEntityEvents.ENTITY_LOAD.register(PlayerDisguises::loaded);
         ServerPlayerEvents.AFTER_RESPAWN.register(PlayerDisguises::respawned);
         ServerLivingEntityEvents.AFTER_DEATH.register(PlayerDisguises::died);

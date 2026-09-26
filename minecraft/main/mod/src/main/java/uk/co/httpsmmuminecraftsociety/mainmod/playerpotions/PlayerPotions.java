@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.server.level.ServerPlayer;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,6 +54,22 @@ public final class PlayerPotions {
 
     public static boolean isDisguise(ItemStack stack) {
         return identity(stack) != null;
+    }
+
+    public static void repairColors(ServerPlayer player) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+            if (contents == null) continue;
+            GameProfile profile = decode(contents.customName().orElse(null));
+            if (profile == null) continue;
+            if (stack.get(DataComponents.CUSTOM_NAME) == null) {
+                stack.set(DataComponents.CUSTOM_NAME, Component.literal("Potion of " + profile.name()));
+            }
+            if (contents.customColor().isEmpty() && SkinColors.ready(profile)) {
+                SkinColors.color(profile, stack);
+            }
+        }
     }
 
     public static String identity(ItemStack stack) {
@@ -120,7 +137,7 @@ public final class PlayerPotions {
                 old.customColor(), java.util.List.of(),
                 Optional.of(identity)));
         GameProfile profile = decode(identity);
-        stack.set(DataComponents.ITEM_NAME, Component.literal("Potion of " + profile.name()));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal("Potion of " + profile.name()));
         stack.set(DataComponents.LORE, new ItemLore(java.util.List.of(
                 Component.literal("Disguise: " + duration(identity) / 1200 + " minutes"))));
     }

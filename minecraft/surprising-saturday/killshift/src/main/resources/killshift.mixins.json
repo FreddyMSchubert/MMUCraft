@@ -10,6 +10,7 @@
 		"GiantZombieSpawnMixin",
 		"GiantZombieAiMixin",
 		"LivingEntityLootMixin",
+		"EntityLootMixin",
 		"TadpoleAgeAccessor",
 		"EventChatNameMixin",
 		"ServerPlayerShapeMixin",

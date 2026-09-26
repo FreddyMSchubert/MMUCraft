@@ -262,43 +262,6 @@
       ]
     },
     {
-      "id": "desert",
-      "label": "Desert",
-      "sourceVersion": "custom",
-      "faces": [
-        {
-          "index": 0,
-          "sha1": "a8a919afb3efe2e9235c14eca22ef8877bacd296",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 1,
-          "sha1": "6112922616e37adda3824a02f51b9fe899d2ff67",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 2,
-          "sha1": "4c0fdc60e0debd1531a6c91078884740ccc16424",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 3,
-          "sha1": "6f1d0326d08bcc97c3ea60633957a96f1b4a31e6",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 4,
-          "sha1": "234906575da450e473678bdc30bc48f51c27fc42",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 5,
-          "sha1": "10be0856cbeb23cdd2d119157aa2c570ee4af338",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        }
-      ]
-    },
-    {
       "id": "house",
       "label": "House",
       "sourceVersion": "custom",
@@ -405,43 +368,6 @@
         {
           "index": 5,
           "sha1": "8f47858b2112a32c39733844ae952c7d35932963",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        }
-      ]
-    },
-    {
-      "id": "pumpkins",
-      "label": "Pumpkins",
-      "sourceVersion": "custom",
-      "faces": [
-        {
-          "index": 0,
-          "sha1": "f1c200a3dc810875e538d4ff61c1c6e6b380cb16",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 1,
-          "sha1": "cc81007a28d6cdf154eeacba9a1b6e01d87168c4",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 2,
-          "sha1": "4bcd5f99d72b55e4da04a9882637b7bb22d105fd",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 3,
-          "sha1": "e54f156577e6e5106f723addb14dcce20772d452",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 4,
-          "sha1": "15bfb20c95ee213fa5f70e484065df4f1035249b",
-          "source": "panoramas-20260926T204818Z-1-001.zip"
-        },
-        {
-          "index": 5,
-          "sha1": "e43c94080eefc2578a87a172c4428e8fc4facfd7",
           "source": "panoramas-20260926T204818Z-1-001.zip"
         }
       ]

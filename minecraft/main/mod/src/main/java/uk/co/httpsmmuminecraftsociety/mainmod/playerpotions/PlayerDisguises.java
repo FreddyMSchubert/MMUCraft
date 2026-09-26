@@ -68,9 +68,6 @@ public final class PlayerDisguises {
 
     public static void tick(MinecraftServer server) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (server.getTickCount() % 20 == 0 && FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) {
-                PlayerPotions.repairColors(player);
-            }
             State state = ACTIVE.get(player.getUUID());
             if (state == null && PENDING.containsKey(player.getUUID())
                     && FeatureToggles.revision() > 0) {

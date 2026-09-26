@@ -150,7 +150,22 @@ function ExternalMenuLink({
 
 function PanoramaBackground({ panoramaId }: { panoramaId: string }) {
 	const cube = useRef<HTMLDivElement>(null);
-	const view = useRef({ yaw: 0, pitch: -6, resumeAt: 0, pointerId: -1, x: 0, y: 0 });
+	const view = useRef({
+		yaw: 0,
+		pitch: -Math.PI / 30,
+		grabDirection: { x: 0, y: 0, z: -1 },
+		pointerId: -1,
+		resumeAt: 0,
+	});
+
+	const pointerRay = (event: React.PointerEvent<HTMLDivElement>) => {
+		const bounds = event.currentTarget.getBoundingClientRect();
+		const x = event.clientX - bounds.left - bounds.width / 2;
+		const y = bounds.top + bounds.height / 2 - event.clientY;
+		const z = -Math.max(window.innerWidth, window.innerHeight) * 0.58;
+		const length = Math.hypot(x, y, z);
+		return { x: x / length, y: y / length, z: z / length };
+	};
 
 	useEffect(() => {
 		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -159,9 +174,11 @@ function PanoramaBackground({ panoramaId }: { panoramaId: string }) {
 		const rotate = (now: number) => {
 			const current = view.current;
 			if (current.pointerId === -1 && now >= current.resumeAt && !reducedMotion.matches)
-				current.yaw = (current.yaw + Math.min(now - previous, 100) * 0.003) % 360;
+				current.yaw =
+					(current.yaw - Math.min(now - previous, 100) * (Math.PI / 60000)) %
+					(Math.PI * 2);
 			if (cube.current)
-				cube.current.style.transform = `rotateX(${current.pitch}deg) rotateY(${current.yaw}deg)`;
+				cube.current.style.transform = `translateZ(58vmax) rotateX(${current.pitch}rad) rotateY(${-current.yaw}rad)`;
 			previous = now;
 			frame = requestAnimationFrame(rotate);
 		};
@@ -184,21 +201,33 @@ function PanoramaBackground({ panoramaId }: { panoramaId: string }) {
 			onPointerDown={(event) => {
 				if (!event.isPrimary || event.button !== 0) return;
 				const current = view.current;
+				const ray = pointerRay(event);
+				const sinPitch = Math.sin(current.pitch);
+				const cosPitch = Math.cos(current.pitch);
+				const z = sinPitch * ray.y + cosPitch * ray.z;
+				current.grabDirection = {
+					x: Math.cos(current.yaw) * ray.x + Math.sin(current.yaw) * z,
+					y: cosPitch * ray.y - sinPitch * ray.z,
+					z: -Math.sin(current.yaw) * ray.x + Math.cos(current.yaw) * z,
+				};
 				current.pointerId = event.pointerId;
-				current.x = event.clientX;
-				current.y = event.clientY;
 				event.currentTarget.setPointerCapture(event.pointerId);
 			}}
 			onPointerMove={(event) => {
 				const current = view.current;
 				if (current.pointerId !== event.pointerId) return;
-				current.yaw += (event.clientX - current.x) * 0.12;
-				current.pitch = Math.max(
-					-89,
-					Math.min(89, current.pitch + (event.clientY - current.y) * 0.12),
+				const ray = pointerRay(event);
+				const angle = Math.acos(
+					Math.max(-1, Math.min(1, current.grabDirection.y / Math.hypot(ray.y, ray.z))),
 				);
-				current.x = event.clientX;
-				current.y = event.clientY;
+				current.pitch = Math.max(
+					-Math.PI / 2 + 0.01,
+					Math.min(Math.PI / 2 - 0.01, -angle - Math.atan2(ray.z, ray.y)),
+				);
+				const z = Math.sin(current.pitch) * ray.y + Math.cos(current.pitch) * ray.z;
+				current.yaw =
+					Math.atan2(z, ray.x) -
+					Math.atan2(current.grabDirection.z, current.grabDirection.x);
 			}}
 			onPointerUp={stopDrag}
 			onPointerCancel={stopDrag}

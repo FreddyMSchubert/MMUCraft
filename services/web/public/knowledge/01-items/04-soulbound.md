@@ -40,13 +40,27 @@ That sounds bad, but **don't worry**: Reparing tools in an anvil is way cheaper 
 Soul · [Book](https://minecraft.wiki/w/Book) · [Block of Lapis Lazuli](https://minecraft.wiki/w/Block_of_Lapis_Lazuli) · [Amethyst Shard](https://minecraft.wiki/w/Amethyst_Shard) · [Soul Sand](https://minecraft.wiki/w/Soul_Sand) · [Soul Soil](https://minecraft.wiki/w/Soul_Soil) → Soulbound Enchanted Book
 :::
 
-You may notice that it requires a mysterious blue flame to craft. This is a ***SOUL***. It is dropped by players when they die.
+You may notice that it requires a mysterious blue flame to craft. This is a ***SOUL***. It is dropped by players when another player kills them.
 
 :::note
 *It is left to the discretion and creativity of the reader to obtain souls in a morally unobjectionable manner.*
 :::
 
 ![Souls Example Image](/assets/knowledge/items/soulbound/soul.png)
+
+When a player dies normally, they only drop a soul shard. You can convert soul shards to souls and in reverse like this:
+
+![Soul Shard to Soul Recipe](/assets/knowledge/items/soulbound/shard_to_soul.png)
+
+:::recipe-items
+Soul Shard ×9 → Soul
+:::
+
+![Soul to Soul Shard Recipe](/assets/knowledge/items/soulbound/soul_to_shard.png)
+
+:::recipe-items
+Soul → Soul Shard ×9
+:::
 
 If you are wondering if it's possible to obtain ***SOULBOUND*** if you haven't ventured into the Nether yet, it very much is. You can obtain the ***SOUL***sand and ***SOUL***soil required to craft the book using these recipes:
 

@@ -11,6 +11,8 @@ MODS = (
     ("fabric-api", "0.161.0+26.3"),
     ("fabricproxy-lite", "v2.12.0"),
     ("simple-voice-chat", "fabric-2.6.24+26.3"),
+    ("emotecraft", "y5qOKnGD"),  # 3.5.0-a.build.169 for Minecraft 26.3
+    ("player-animation-library", "kemJXVHZ"),  # 1.2.7 for Minecraft 26.3
 )
 
 

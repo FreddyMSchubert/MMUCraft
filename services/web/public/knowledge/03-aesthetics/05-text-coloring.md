@@ -12,7 +12,7 @@ tags:
 - ampersand codes
 - §
 tips:
-- Put a formatting code such as &c before text to make the following text red.
+- Put a formatting code such as &​c&c before text to make the following text red.
 - Use &r to reset the text color and formatting.
 - Text formatting works in chat, signs, books, item names, name tags, and other text.
 ====

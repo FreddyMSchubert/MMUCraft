@@ -6,6 +6,10 @@ Surprising Saturday uses a second Minecraft container with the Killshift mod. It
 
 The server targets Minecraft Java `26.3`. See the [migration report](docs/minecraft-26.3-migration.md) for dependency versions, fixes, verification results, and the staging checklist.
 
+## Emotes
+
+The main and Surprising Saturday servers install Emotecraft `3.5.0-a.build.169` and Player Animation Library `1.2.7` for Minecraft `26.3`. To play emotes and see other players' emotes, install [Emotecraft](https://modrinth.com/plugin/emotecraft/version/3.5.0-a.build.169) and its required [Player Animation Library](https://modrinth.com/mod/player-animation-library/version/1.2.7) on your client, using builds for Minecraft `26.3` and your mod loader. Press `B` in game to open the emote wheel. Players without the client mods can still join, but cannot see the emotes.
+
 ## Development
 
 Install Docker Compose, Git, GNU Make, Python 3.10 or later, JDK 25, and Node.js 24.14.0.

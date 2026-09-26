@@ -31,7 +31,7 @@ tips:
 <figure><img src="/assets/knowledge/basics/welcome/wave_freddy.gif" alt="Waving Freddy skin"><figcaption><strong><a href="/play/players/MerlinSpace">Freddy</a></strong><span>(Chair)</span></figcaption></figure>
 <figure><img src="/assets/knowledge/basics/welcome/wave_oderzo.gif" alt="Waving oderzo skin"><figcaption><strong><a href="/play/players/oderzo">oderzo</a></strong><span>(Secretary)</span></figcaption></figure>
 <figure><img src="/assets/knowledge/basics/welcome/wave_hannah.gif" alt="Waving Hannah skin"><figcaption><strong><a href="/play/players/HannahLucyyy">Hannah</a></strong><span>(Treasurer)</span></figcaption></figure>
-<figure><img src="/assets/knowledge/basics/welcome/wave_mia.gif" alt="Waving Mia skin"><figcaption><strong><a href="miaalicexoxo">Mia</a></strong><span>(Wellbeing Officer)</span></figcaption></figure>
+<figure><img src="/assets/knowledge/basics/welcome/wave_mia.gif" alt="Waving Mia skin"><figcaption><strong><a href="/play/players/miaalicexoxo">Mia</a></strong><span>(Wellbeing Officer)</span></figcaption></figure>
 <figure><img src="/assets/knowledge/basics/welcome/wave_calum.gif" alt="Waving Calum skin"><figcaption><strong><a href="/play/players/CalRay2">Calum</a></strong><span>(Social Media Manager)</span></figcaption></figure>
 </div>
 

@@ -22,13 +22,14 @@ also manual ideas:
 - [x] kitty ears purrrrrrrr https://mccisland.fandom.com/wiki/Cat_Ears
 - [ ] duck hat
 - [x] cute new chicken
-- [ ] bow ribbon
+- [x] bow ribbon
 - [ ] batman mask (dyeable to be pinkable)
 - [ ] Egg Yolk https://mccisland.fandom.com/wiki/Egg_Yolk
 - [ ] Disguise https://mccisland.fandom.com/wiki/Disguise
 - [x] Cardboard https://mccisland.fandom.com/wiki/Cardboard_Box
+- [ ] Closable Cardboard
 
-- [ ] witch nose (with dyeable pimple)
+- [x] witch nose (with dyeable pimple)
 - [ ] pile of coins
 - [ ] witch hat from vanilla
 - [ ] different hair types

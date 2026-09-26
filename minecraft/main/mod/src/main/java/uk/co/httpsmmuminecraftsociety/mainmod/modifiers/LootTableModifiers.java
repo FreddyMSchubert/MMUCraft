@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -59,7 +60,6 @@ public class LootTableModifiers {
         }
     }
     private static final List<LootAddition> additions = List.of(
-            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), "soul", null, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), null, Items.PLAYER_HEAD, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/enderman"), null, Items.ENDER_PEARL, 1.0F, 3, 10),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), "charm-sculk-phial", null, 0.1F, 1, 1),
@@ -160,6 +160,16 @@ public class LootTableModifiers {
         DabloonChestLoot.addDrops(tableId, lootContext, itemStacks);
         UnlockBookLoot.addBookDrops(tableId, lootContext, itemStacks);
         addSnifferClover(tableId, lootContext, itemStacks);
+
+        if (Identifier.fromNamespaceAndPath("minecraft", "entities/player").equals(tableId)
+                && lootContext.getOptional(LootContextParams.THIS_ENTITY) instanceof Player victim) {
+            DamageSource damageSource = lootContext.getOptional(LootContextParams.DAMAGE_SOURCE);
+            String soulId = damageSource != null
+                    && damageSource.getEntity() instanceof Player killer
+                    && !killer.getUUID().equals(victim.getUUID())
+                    ? "soul" : "soul-shard";
+            itemStacks.add(FakeItems.createFakeItemStack(soulId, 1));
+        }
 
         for (LootAddition addition : additions) {
             if (!addition.tableId().equals(tableId)) continue;

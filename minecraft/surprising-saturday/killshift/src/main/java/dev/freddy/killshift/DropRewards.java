@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -36,7 +37,14 @@ public final class DropRewards {
         boolean reward = !mob.entityTags().contains(CLAIMED_TAG);
         mob.addTag(CLAIMED_TAG);
         DEATH_FORMS.put(mob, new DeathForm(MobRegistry.createForm(mob), ShapeView.snapshot(mob)));
-        ACTIVE.push(new Capture(mob, killer, reward));
+        List<ItemStack> equipment = new ArrayList<>();
+        if (reward) {
+            for (EquipmentSlot slot : EquipmentSlot.VALUES) {
+                ItemStack equipped = mob.getItemBySlot(slot);
+                if (!equipped.isEmpty()) equipment.add(equipped.copy());
+            }
+        }
+        ACTIVE.push(new Capture(mob, killer, reward, equipment));
     }
 
     public static void end(LivingEntity dead) {
@@ -52,6 +60,15 @@ public final class DropRewards {
         if (current == null || current.mob != source) return false;
         if (current.reward && !stack.isEmpty()) {
             give(current.killer, stack.copy());
+        }
+        return true;
+    }
+
+    public static boolean transferEquipment(LivingEntity source) {
+        Capture current = ACTIVE.peek();
+        if (current == null || current.mob != source) return false;
+        if (current.reward) {
+            for (ItemStack equipped : current.equipment) give(current.killer, equipped);
         }
         return true;
     }
@@ -95,7 +112,7 @@ public final class DropRewards {
         }
     }
 
-    private record Capture(Mob mob, ServerPlayer killer, boolean reward) {
+    private record Capture(Mob mob, ServerPlayer killer, boolean reward, List<ItemStack> equipment) {
     }
 
     public record DeathForm(MobForm form, CompoundTag appearance) {

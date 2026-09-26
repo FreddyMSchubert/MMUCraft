@@ -115,7 +115,7 @@ public final class ShapeView {
         }
 
         view.noPhysics = true;
-        view.setDeltaMovement(player.getDeltaMovement());
+        view.setDeltaMovement(isSmallAquatic(view) ? Vec3.ZERO : player.getDeltaMovement());
         positionView(view, player);
         if (state.form.type() == EntityTypes.PLAYER) view.setPose(player.getPose());
         view.setShiftKeyDown(player.isShiftKeyDown());
@@ -171,6 +171,9 @@ public final class ShapeView {
         removeFromTeam(view);
         view.removeTag(VIEW_TAG);
         view.addTag(DropRewards.CLAIMED_TAG);
+        if (isSmallAquatic(view)) {
+            view.snapTo(player.getX(), player.getY(), player.getZ(), view.getYRot(), view.getXRot());
+        }
         if (state.form.traits().aquatic() && state.form.traits().landImmobile()
                 && !player.hasDisconnected()) {
             player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(),
@@ -245,7 +248,17 @@ public final class ShapeView {
 
     private static void positionView(LivingEntity view, ServerPlayer player) {
         float yaw = player.getYRot() + (view instanceof EnderDragon ? 180.0F : 0.0F);
-        view.snapTo(player.getX(), player.getY(), player.getZ(), yaw, player.getXRot());
+        double lower = 0.0;
+        float pitch = player.getXRot();
+        if (isSmallAquatic(view)) {
+            if (player.isInWater()) {
+                lower = view.getType() == EntityTypes.SALMON ? 0.65 : 1.0;
+            } else {
+                pitch = (float) (Math.sin(player.tickCount * 0.7) * 20.0
+                        + (view.getType() == EntityTypes.SALMON ? 0.0 : 65.0));
+            }
+        }
+        view.snapTo(player.getX(), player.getY() - lower, player.getZ(), yaw, pitch);
         view.yBodyRotO = view.yBodyRot;
         view.setYBodyRot(yaw);
         view.setYHeadRot(view instanceof EnderDragon ? yaw : player.getYHeadRot());
@@ -262,12 +275,25 @@ public final class ShapeView {
         AttributeInstance self = new AttributeInstance(Attributes.SCALE, ignored -> {});
         self.replaceFrom(original);
         self.removeModifiers();
-        self.setBaseValue(Math.max(0.0625, original.getValue() * SELF_VIEW_SCALE));
+        double ownerScale = isSmallAquatic(view) ? 0.3 : SELF_VIEW_SCALE;
+        self.setBaseValue(Math.max(0.0625, original.getValue() * ownerScale));
         player.connection.send(new ClientboundUpdateAttributesPacket(view.getId(), List.of(self)));
     }
 
     private static void sendOwnerPosition(ServerPlayer player, ShapeState state, LivingEntity view) {
-        if (player.hasDisconnected() || !state.form.traits().aquatic()
+        if (player.hasDisconnected()) return;
+        if (view.getType() == EntityTypes.SNIFFER) {
+            Vec3 look = player.getLookAngle();
+            Vec3 horizontal = new Vec3(look.x, 0.0, look.z);
+            if (horizontal.lengthSqr() < 0.0001) horizontal = new Vec3(0.0, 0.0, 1.0);
+            double back = view.getBbWidth() * SELF_VIEW_SCALE + 1.5;
+            Vec3 position = view.position().subtract(horizontal.normalize().scale(back));
+            player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(),
+                    new PositionMoveRotation(position, view.getDeltaMovement(), view.getYRot(), view.getXRot()),
+                    Set.of(), view.onGround()));
+            return;
+        }
+        if (isSmallAquatic(view) || !state.form.traits().aquatic()
                 || !state.form.traits().landImmobile()) return;
         double offset = Math.max(0.0, view.getBbHeight() * SELF_VIEW_SCALE + 1.0 - view.getEyeHeight());
         if (offset == 0.0) return;
@@ -275,6 +301,11 @@ public final class ShapeView {
         player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(),
                 new PositionMoveRotation(position, view.getDeltaMovement(), view.getYRot(), view.getXRot()),
                 Set.of(), view.onGround()));
+    }
+
+    private static boolean isSmallAquatic(LivingEntity view) {
+        return view.getType() == EntityTypes.SQUID || view.getType() == EntityTypes.GLOW_SQUID
+                || view.getType() == EntityTypes.SALMON;
     }
 
     private static void sendAnimatedDragon(EnderDragon dragon, ServerPlayer observer) {

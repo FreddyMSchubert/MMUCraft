@@ -13,6 +13,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityType;
@@ -199,6 +200,15 @@ public final class ShapeManager {
 
     static boolean hasShape(ServerPlayer player) {
         return get(player) != null;
+    }
+
+    public static EntityDimensions cameraCollisionDimensions(ServerPlayer player, EntityDimensions original) {
+        if (!hasShape(player)) return original;
+        float scale = player.getScale();
+        float minimumWidth = 0.4F;
+        if (scale <= 0.0F || original.width() * scale >= minimumWidth) return original;
+        return new EntityDimensions(minimumWidth / scale, original.height(), original.eyeHeight(),
+                original.attachments(), original.fixed());
     }
 
     public static boolean restrictPlayerMovement(ServerPlayer player) {

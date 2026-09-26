@@ -36,11 +36,11 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - A form stays active when the player leaves and rejoins.
 - A form keeps its health, attributes, and saved visual data after the End exit creates a new player object.
 - On a form change, the old display stays in the world. It receives the player's health and effects, and its mob AI resumes.
-- A mob killed for a shift gives its normal drops and experience directly to the killer. Drops wait for inventory space if necessary. A previously possessed mob gives no more rewards, while another mob of the same type does.
+- A mob killed for a shift gives its normal non-equipment drops and experience directly to the killer, plus all of its equipped items once. Drops wait for inventory space if necessary. A previously possessed mob gives no more rewards, while another mob of the same type does.
 - A zombie form turns into a drowned form on drowning damage without killing the player.
 - Each new creeper has a 5% chance to be charged. Each spawned zombie has a 1% chance to become a giant.
 - Giants use zombie pursuit and target goals. They keep giant health, speed, and attack damage.
-- The display keeps the source mob's equipment appearance. Equipment that drops is also added to the killer's inventory.
+- The display keeps the source mob's equipment appearance. The source's equipped items transfer to the killer once, regardless of their normal drop chances; vanilla equipment drops are suppressed.
 - Every form has at least one point of attack damage.
 - Each new sneak press plays the form's ambient sound. Holding sneak plays it once.
 - A creeper ability explodes with a 4.5-block radius. A charged creeper uses a 9-block radius.
@@ -60,7 +60,7 @@ Every form can eat beetroot and beetroot soup. If a player tries to eat another 
 
 Killshift makes the real player invisible. Its presentation team does not reveal invisible teammates. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients. The form retains the source entity's saved visual data, such as its variant.
 
-Other players see the full-size copy at the player's position. The owner sees it at 50% scale. The owner sees water-only forms lower when their eye height would put the camera inside the model. Other forms keep their current view position. Killshift keeps the source cube size and baby age. Dragon copies face the player's look direction, use a steady wing pace, and start in a flying phase without the killed dragon's death particles. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
+Other players see the full-size copy at the player's position. The owner sees most forms at 50% scale; squid and salmon appear at 30% scale. Squid and salmon displays sit lower in water, while the owner sees a sniffer display behind the camera. Squid and salmon copies keep their tentacle and tail animations but cannot swim away under their own movement. On land they follow a small flop animation. The player's eye height still follows the form, but small forms retain enough collision width to keep the camera out of walls. Killshift keeps the source cube size and baby age. Dragon copies face the player's look direction, use a steady wing pace, and start in a flying phase without the killed dragon's death particles. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
 
 Attacks against another player's copy are redirected to its owner. When the owner clicks their own copy, Killshift aims past it to the next entity or block. Right-clicks can use a block behind the copy, such as a block used to build a tower. Attack clicks can hit an entity behind the copy. Held block mining still needs the vanilla client to aim at the block.
 

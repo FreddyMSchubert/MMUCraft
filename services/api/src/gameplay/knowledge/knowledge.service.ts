@@ -93,6 +93,7 @@ export class KnowledgeService {
 
 		return {
 			contentVersion: document.mtimeMs,
+			itemDrops: document.itemDrops,
 			drops: loadDrops().map(({ id, name, emoji, colors }) => ({ id, name, emoji, colors })),
 			enabledDropIds: [...this.featureToggles.enabledKeys()],
 			readRewardDabloons: this.readRewardDabloons,
@@ -119,7 +120,9 @@ export class KnowledgeService {
 		}
 		const searchPages = document.searchPages.map((page) => ({
 			...page,
-			content: toSearchContent(filterDropGuards(page.markdown, enabledDrops)),
+			content: toSearchContent(
+				filterDropGuards(page.markdown, enabledDrops, document.itemDrops),
+			),
 		}));
 		const matches = this.searchIndex.searchResults(this.searchIndexVersion, searchPages, query);
 		const pagesById = new Map(document.pages.map((page) => [page.id, page]));

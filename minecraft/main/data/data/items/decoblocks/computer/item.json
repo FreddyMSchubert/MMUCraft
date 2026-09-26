@@ -9,14 +9,14 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 2,
-		"gameplayToggle": "inventors"
+		"lightLevel": 2
 	},
 	"craftable": {
 		"recipes": [
 			{
 				"id": "decoration/computer",
 				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "inventors",
 				"pattern": ["CLC", "GRG", "SSS"],
 				"key": {
 					"C": "minecraft:copper_ingot",

@@ -9,8 +9,7 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0,
-		"gameplayToggle": "inventors"
+		"lightLevel": 0
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "inventors",
@@ -27,6 +26,7 @@
 			{
 				"id": "decoration/companion-cube",
 				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "inventors",
 				"pattern": ["NNN", "NRN", "NNN"],
 				"key": {
 					"R": "minecraft:rotten_flesh",

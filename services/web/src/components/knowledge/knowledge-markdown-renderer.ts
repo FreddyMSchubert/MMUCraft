@@ -111,11 +111,21 @@ export function filterDropGuards(
 	enabledDrops: ReadonlySet<string>,
 	drops: DropInfo[] = [],
 	pageDrop: string | null = null,
+	itemDrops: Readonly<Partial<Record<string, string | null>>> = {},
 ) {
 	const stack: { enabled: boolean; id: string }[] = [];
 	return markdown
 		.split(/\r?\n/)
 		.flatMap((line) => {
+			const itemStart = /^:::drop-item[ \t]+([a-z0-9._-]+)[ \t]*$/.exec(line);
+			if (itemStart) {
+				const id = itemDrops[itemStart[1]];
+				stack.push({
+					enabled: id === null || (id !== undefined && enabledDrops.has(id)),
+					id: id ?? '',
+				});
+				return [];
+			}
 			const start = /^:::drop[ \t]+([a-z0-9._-]+(?:\/[a-z0-9._-]+)*)[ \t]*$/.exec(line);
 			if (start) {
 				stack.push({ enabled: enabledDrops.has(start[1]), id: start[1] });

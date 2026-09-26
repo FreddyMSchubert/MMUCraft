@@ -9,8 +9,7 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0,
-		"gameplayToggle": "nether"
+		"lightLevel": 0
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "nether",
@@ -27,6 +26,7 @@
 			{
 				"id": "decoration/book-stack",
 				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "nether",
 				"ingredients": [
 					"minecraft:book",
 					"minecraft:book",

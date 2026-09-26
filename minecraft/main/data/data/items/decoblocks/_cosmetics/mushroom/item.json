@@ -9,8 +9,7 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0,
-		"gameplayToggle": "imaginative"
+		"lightLevel": 0
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "imaginative",

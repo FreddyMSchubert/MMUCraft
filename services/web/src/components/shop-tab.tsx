@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
-import { DropPill } from '@/components/drop-pill';
+import { DropPill, dropGradient } from '@/components/drop-pill';
 import { apiMessage } from '@/lib/api-response';
 import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
 import { useSiteSettings } from '@/lib/site-settings';
@@ -75,7 +75,11 @@ export function ShopTab({
 		const response = await fetch('/api/shop', { cache: 'no-store' });
 		const body = await response.json().catch(() => null);
 		if (!response.ok) throw new Error(apiMessage(body, 'Failed to load shop'));
-		setData(body as ShopResponse);
+		const shop = body as ShopResponse;
+		setData(shop);
+		setDropFilter((current) =>
+			current === 'all' || shop.drops.some((drop) => drop.id === current) ? current : 'all',
+		);
 	}, []);
 
 	useEffect(() => {
@@ -506,6 +510,7 @@ export function ShopTab({
 						...data.drops.map((drop) => ({
 							value: drop.id,
 							label: `${drop.emoji} ${drop.name}`,
+							gradient: dropGradient(drop),
 						})),
 					]}
 					selected={dropFilter}

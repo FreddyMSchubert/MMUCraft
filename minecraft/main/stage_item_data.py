@@ -11,10 +11,6 @@ from pathlib import Path
 
 
 TOGGLE_ID = re.compile(r"^[a-z0-9._-]+(?:/[a-z0-9._-]+)*$")
-FAKE_RECIPE_TYPES = {
-	"mainmod:fake_crafting_shaped",
-	"mainmod:fake_crafting_shapeless",
-}
 SOURCE_DATA_ROOT = Path("data/data")
 STAGED_DATA_ROOT = Path("mod/src/main/resources/data/mainmod/dont_edit_auto_generated")
 
@@ -49,8 +45,8 @@ def validate_gameplay_toggle_references(root: Path) -> None:
 		if isinstance(shop, dict):
 			_validate_toggle(shop.get("gameplayToggle"), known, path)
 		deco = item.get("decoBlock")
-		if isinstance(deco, dict):
-			_validate_toggle(deco.get("gameplayToggle"), known, path)
+		if isinstance(deco, dict) and "gameplayToggle" in deco:
+			raise ValueError(f"decoBlock gameplayToggle is obsolete; use recipe or shop toggles: {path}")
 		for recipe in item.get("craftable", {}).get("recipes", []):
 			_validate_toggle(recipe.get("gameplayToggle"), known, path)
 
@@ -60,7 +56,7 @@ def validate_gameplay_toggle_references(root: Path) -> None:
 
 	for path in sorted((root / "mod" / "src" / "main" / "resources" / "data" / "mainmod" / "recipe").rglob("*.json")):
 		recipe = json.loads(path.read_text(encoding="utf-8"))
-		if recipe.get("type") in FAKE_RECIPE_TYPES:
+		if "gameplayToggle" in recipe:
 			_validate_toggle(recipe.get("gameplayToggle"), known, path)
 
 	knowledge_root = root.parents[1] / "services" / "web" / "public" / "knowledge"

@@ -61,7 +61,7 @@ export class DropAnalyticsService {
 				title?: string;
 				craftable?: unknown;
 				equippableCosmetic?: object;
-				decoBlock?: { gameplayToggle?: string };
+				decoBlock?: object;
 				equippableCharm?: object;
 				shopPurchasable?: { gameplayToggle?: string; membersOnly?: boolean };
 			};

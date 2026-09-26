@@ -9,8 +9,7 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": true,
-		"lightLevel": 0,
-		"gameplayToggle": "nether"
+		"lightLevel": 0
 	},
 	"craftable": {
 		"recipes": [

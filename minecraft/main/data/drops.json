@@ -76,11 +76,31 @@
 		"colors": [
 			{
 				"percentage": 0,
-				"color": "#9A2C67"
+				"color": "#BF2F4F"
+			},
+			{
+				"percentage": 17,
+				"color": "#D46B28"
+			},
+			{
+				"percentage": 34,
+				"color": "#E5B93F"
+			},
+			{
+				"percentage": 51,
+				"color": "#3DA75A"
+			},
+			{
+				"percentage": 68,
+				"color": "#2C8FC4"
+			},
+			{
+				"percentage": 85,
+				"color": "#7751BB"
 			},
 			{
 				"percentage": 100,
-				"color": "#F6B64B"
+				"color": "#B33F9B"
 			}
 		]
 	},

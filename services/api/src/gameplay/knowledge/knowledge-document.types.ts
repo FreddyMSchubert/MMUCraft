@@ -26,6 +26,7 @@ export type KnowledgeTreeEntry = KnowledgeFolder | KnowledgePage;
 export interface KnowledgeDocument {
 	root: string;
 	mtimeMs: number;
+	itemDrops: Record<string, string | null>;
 	pages: KnowledgePage[];
 	tree: KnowledgeTreeEntry[];
 	unlockable: KnowledgePage[];

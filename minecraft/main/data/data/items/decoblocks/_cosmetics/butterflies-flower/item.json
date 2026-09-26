@@ -9,8 +9,7 @@
 		"ground": true,
 		"wall": false,
 		"ceiling": false,
-		"lightLevel": 0,
-		"gameplayToggle": "soaring"
+		"lightLevel": 0
 	},
 	"shopPurchasable": {
 		"gameplayToggle": "soaring",
@@ -27,6 +26,7 @@
 			{
 				"id": "decoration/butterflies",
 				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "soaring",
 				"pattern": [" B ", "WSP", " D "],
 				"key": {
 					"D": "minecraft:dandelion",

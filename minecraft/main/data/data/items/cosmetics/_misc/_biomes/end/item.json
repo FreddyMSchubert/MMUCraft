@@ -1,7 +1,6 @@
 {
 	"title": "End Biotope Hat",
 	"id": "cosmetic-end-biotope-hat",
-	"drop": "void",
 	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,

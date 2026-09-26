@@ -11,12 +11,10 @@
 				"id": "soul-shard",
 				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "welcoming",
-				"ingredients": [
-					"mainmod:soul"
-				],
+				"ingredients": ["mainmod:soul"],
 				"result": {
 					"stack": "mainmod:soul-shard",
-					"count": 1
+					"count": 9
 				}
 			}
 		]

@@ -19,6 +19,8 @@ tips:
 
 # Potions of Impersonation
 
+:::drop-indicator
+
 ![Potion of Impersonation Example Image](/assets/knowledge/items/potion-of-impersonation/result.png)
 
 You can make yourself temporarily look like another player by drinking an Impersonation Potion.

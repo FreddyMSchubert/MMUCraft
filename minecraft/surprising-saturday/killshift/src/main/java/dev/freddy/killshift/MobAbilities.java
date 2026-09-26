@@ -146,12 +146,14 @@ final class MobAbilities {
         if (type == EntityTypes.SNIFFER && level.getBlockState(pos).is(Blocks.GRASS_BLOCK)) {
             giveAncientSeed(player);
             state.abilityCooldown = 200;
+            AbilitySlot.startCooldown(player, state);
             return InteractionResult.SUCCESS_SERVER.withoutItem();
         }
         if (type == EntityTypes.BEE && level.getBlockState(pos).is(BlockTags.FLOWERS)
                 && player.getHealth() < player.getMaxHealth()) {
             player.heal(4.0F);
             state.abilityCooldown = 20;
+            AbilitySlot.startCooldown(player, state);
             return InteractionResult.SUCCESS_SERVER.withoutItem();
         }
         if (type == EntityTypes.SILVERFISH
@@ -163,6 +165,7 @@ final class MobAbilities {
             ally.addTag("killshift_ally_" + player.getUUID());
             level.addFreshEntity(ally);
             state.abilityCooldown = 100;
+            AbilitySlot.startCooldown(player, state);
             return InteractionResult.SUCCESS_SERVER.withoutItem();
         }
         return activate(serverLevel, player, state)
@@ -273,7 +276,7 @@ final class MobAbilities {
             summonFangs(level, player, direction);
         } else if (type == EntityTypes.CREEPER) {
             float radius = state.view instanceof net.minecraft.world.entity.monster.Creeper creeper
-                    && creeper.isPowered() ? 6.0F : 3.0F;
+                    && creeper.isPowered() ? 9.0F : 4.5F;
             AbilitySlot.clear(player);
             level.explode(player, player.getX(), player.getY(), player.getZ(), radius,
                     false, Level.ExplosionInteraction.MOB);
@@ -308,6 +311,7 @@ final class MobAbilities {
         if (state.view != null) {
             state.view.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
         }
+        AbilitySlot.startCooldown(player, state);
         return true;
     }
 

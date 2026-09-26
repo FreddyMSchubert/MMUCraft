@@ -17,7 +17,7 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 | Trait | Forms | Behavior |
 | --- | --- | --- |
 | Forced flight | Allay, bat, bee, blaze, ender dragon, ghast, happy ghast, parrot, phantom, vex, wither | Player flight stays active. |
-| Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is moderate. Sprint and swim controls work in water. Fish and other water-only forms have land movement suppressed, and their displays sit lower than the player. |
+| Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is moderate. Sprint and swim controls work in water. Fish and other water-only forms have land movement suppressed. Only the owner sees these displays lower when the model would block the camera. |
 | Water breathing | Axolotl, cod, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, zombie nautilus | Air stays full underwater. Air falls on land. The player takes drowning damage after the air supply ends. |
 | Sun-sensitive forms | Types in the game's `burn_in_daylight` tag | Sunlight ignites the player when the head slot is empty. |
 | Wall climbing | Spider, cave spider | Movement input near a wall gives a steady upward climb. |
@@ -30,7 +30,7 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 
 ## Active and reactive behavior
 
-The ninth hotbar slot holds a marked item that matches the active ability. For example, a creeper holds TNT. Right-click with it while aiming at air, a block, or an entity. The slot holds a marked barrier for all other forms, including the normal player. The item stays in that slot.
+The ninth hotbar slot holds a marked item that matches the active ability. For example, a creeper holds TNT. Right-click with it while aiming at air, a block, or an entity. The slot holds a marked barrier for all other forms, including the normal player. The item stays in that slot. Its cooldown overlay shows the remaining ability wait.
 
 | Form | Behavior |
 | --- | --- |
@@ -41,7 +41,7 @@ The ninth hotbar slot holds a marked item that matches the active ability. For e
 | Cat | Nearby creepers lose their target and move away. |
 | Cave spider | A melee hit poisons the target. The form can climb walls and ceilings. |
 | Creaking | The player cannot move horizontally while another player looks directly at the form. |
-| Creeper | Right-click with the marked TNT to explode and die. A charged creeper has twice the blast radius. |
+| Creeper | Right-click with the marked TNT to explode and die. The explosion radius is 4.5 blocks, or 9 blocks when charged. |
 | Elder guardian | A melee hit gives mining fatigue to the target. Right-click charges a stronger laser on a living target in sight. |
 | Ender dragon | Right-click shoots a dragon fireball. |
 | Enderman | Right-click with the marked ender pearl to throw a pearl. Water and rain cause damage. Direct observation gives a large speed increase. |

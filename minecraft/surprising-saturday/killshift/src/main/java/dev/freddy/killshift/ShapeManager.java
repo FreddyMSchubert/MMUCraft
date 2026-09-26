@@ -17,6 +17,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.item.component.SwingAnimation;
@@ -25,6 +27,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public final class ShapeManager {
@@ -85,6 +89,10 @@ public final class ShapeManager {
             if (owner != null) {
                 if (owner != player) {
                     player.attack(owner);
+                } else if (hitBehindView(player, view) instanceof EntityHitResult behind) {
+                    Entity entity = behind.getEntity();
+                    ServerPlayer otherOwner = entity instanceof LivingEntity living ? ownerOf(living) : null;
+                    player.attack(otherOwner == null ? entity : otherOwner);
                 }
                 return InteractionResult.SUCCESS_SERVER;
             }
@@ -95,6 +103,50 @@ public final class ShapeManager {
             state.view.swing(hand, SwingAnimation.DEFAULT, false);
         }
         return InteractionResult.PASS;
+    }
+
+    static InteractionResult onUseEntity(
+            net.minecraft.world.entity.player.Player user,
+            Level level,
+            InteractionHand hand,
+            Entity target,
+            EntityHitResult hit
+    ) {
+        if (!(user instanceof ServerPlayer player) || AbilitySlot.locked(player.getItemInHand(hand))) {
+            return InteractionResult.PASS;
+        }
+        ShapeState state = get(player);
+        if (state == null || target != state.view) return InteractionResult.PASS;
+
+        HitResult behind = hitBehindView(player, state.view);
+        if (behind instanceof EntityHitResult entityHit) {
+            player.interactOn(entityHit.getEntity(), hand,
+                    entityHit.getLocation().subtract(entityHit.getEntity().position()));
+            return InteractionResult.SUCCESS_SERVER;
+        }
+        if (behind instanceof BlockHitResult block && behind.getType() == HitResult.Type.BLOCK
+                && !block.isWorldBorderHit()
+                && player.level().getWorldBorder().isWithinBounds(block.getBlockPos())
+                && player.mayInteract(player.level(), block.getBlockPos())) {
+            player.gameMode.useItemOn(player, player.level(), player.getItemInHand(hand), hand, block);
+            return InteractionResult.SUCCESS_SERVER;
+        }
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    private static HitResult hitBehindView(ServerPlayer player, LivingEntity view) {
+        double blockRange = player.blockInteractionRange();
+        HitResult block = player.pick(blockRange, 1.0F, false);
+        Vec3 eye = player.getEyePosition();
+        double entityRange = Math.min(player.entityInteractionRange(),
+                block.getType() == HitResult.Type.BLOCK
+                        ? eye.distanceTo(block.getLocation()) : player.entityInteractionRange());
+        Vec3 end = eye.add(player.getLookAngle().scale(entityRange));
+        EntityHitResult entity = ProjectileUtil.getEntityHitResult(player, eye, end,
+                player.getBoundingBox().expandTowards(end.subtract(eye)).inflate(1.0),
+                candidate -> candidate != view && candidate.isPickable() && !candidate.isSpectator(),
+                entityRange * entityRange);
+        return entity == null ? block : entity;
     }
 
     static void tick(MinecraftServer server) {
@@ -170,13 +222,27 @@ public final class ShapeManager {
         ShapeState state = saved == null ? null : ShapeState.load(saved);
         if (state == null) return;
         SHAPES.put(player.getUUID(), state);
+        restoreForm(player, state, player.getHealth());
+    }
+
+    static void afterRespawn(ServerPlayer oldPlayer, ServerPlayer player, boolean alive) {
+        if (!alive) return;
+        ShapeState state = get(player);
+        if (state == null) return;
+        float health = oldPlayer.getHealth();
+        ShapeView.remove(state);
+        restoreForm(player, state, health);
+    }
+
+    private static void restoreForm(ServerPlayer player, ShapeState state, float health) {
         applyAttributes(player, state.form);
         hidePlayer(player);
-        player.setHealth(Math.min(player.getHealth(), player.getMaxHealth()));
+        player.setHealth(health);
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
         else fitCameraToViewEyes(player, state.view);
         AbilitySlot.sync(player);
+        AbilitySlot.startCooldown(player, state);
     }
 
     public static boolean isFriendly(Mob mob, ServerPlayer player) {

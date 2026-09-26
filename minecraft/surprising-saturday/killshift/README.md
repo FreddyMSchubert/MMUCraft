@@ -34,6 +34,7 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - A player kill gives the killer a player form with the dead player's skin.
 - If the dead player has a mob form, the killer gets that mob form and its appearance.
 - A form stays active when the player leaves and rejoins.
+- A form keeps its health, attributes, and saved visual data after the End exit creates a new player object.
 - On a form change, the old display stays in the world. It receives the player's health and effects, and its mob AI resumes.
 - A mob killed for a shift drops no items or experience.
 - Each new creeper has a 5% chance to be charged. Each spawned zombie has a 1% chance to become a giant.
@@ -41,6 +42,7 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - The display keeps the source mob's equipment. The kill does not add that equipment to the killer's inventory.
 - Every form has at least one point of attack damage.
 - Each new sneak press plays the form's ambient sound. Holding sneak plays it once.
+- A creeper ability explodes with a 4.5-block radius. A charged creeper uses a 9-block radius.
 - A player respawns at a random safe surface spot in a ring around the death location in the same dimension. Members and Committee spawn 50–100 blocks away; other players spawn 100–200 blocks away.
 
 ## Movement and combat
@@ -57,15 +59,15 @@ Every form can eat beetroot and beetroot soup. If a player tries to eat another 
 
 Killshift makes the real player invisible. Its presentation team does not reveal invisible teammates. It creates a silent, invulnerable, no-AI copy of the killed mob. The copy has no physics and follows the player. A no-collision team stops the copy from pushing players on the server and on clients. The form retains the source entity's saved visual data, such as its variant.
 
-Other players see the full-size copy. The owner sees it at 50% scale. Water-only copies sit lower than the player so the camera stays clear while swimming. Killshift keeps the source cube size and baby age. Dragon copies face the player's look direction, use a steady wing pace, and start in a flying phase without the killed dragon's death particles. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
+Other players see the full-size copy at the player's position. The owner sees it at 50% scale. The owner sees water-only forms lower when their eye height would put the camera inside the model. Other forms keep their current view position. Killshift keeps the source cube size and baby age. Dragon copies face the player's look direction, use a steady wing pace, and start in a flying phase without the killed dragon's death particles. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
 
-Attacks against the visible copy are redirected to its owner. The copy cannot push the player and cannot change player movement.
+Attacks against another player's copy are redirected to its owner. When the owner clicks their own copy, Killshift aims past it to the next entity or block. Right-clicks can use a block behind the copy, such as a block used to build a tower. Attack clicks can hit an entity behind the copy. Held block mining still needs the vanilla client to aim at the block.
 
 Killshift does not save active display entities with the world. It removes old orphan displays when their chunks load. This prevents stationary no-AI copies after a restart.
 
 The locator bar shows players in the same dimension at any distance. Sneaking, invisibility, equipment, spectator mode, and transformation do not hide their icons.
 
-The ninth hotbar slot always contains a marked item. Each active ability has a matching item, such as TNT for creepers and an ender pearl for endermen. Other forms hold a barrier. Right-click with the marked item while aiming at air, a block, or an entity. The item stays in that slot. A creeper dies after its explosion.
+The ninth hotbar slot always contains a marked item. Each active ability has a matching item, such as TNT for creepers and an ender pearl for endermen. Other forms hold a barrier. Right-click with the marked item while aiming at air, a block, or an entity. The item stays in that slot. Its cooldown overlay shows when the ability is ready. A creeper dies after its explosion.
 
 The server adds creeper, spider, and invert post effects to matching forms. It removes a form's effect when the form ends. A vanilla 26.3 client can display these effects.
 

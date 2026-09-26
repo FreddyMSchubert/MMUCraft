@@ -1,6 +1,7 @@
 package dev.freddy.killshift;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import dev.freddy.killshift.mixin.AgeableMobAgeAccessor;
 import dev.freddy.killshift.mixin.TadpoleAgeAccessor;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,6 +20,7 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -113,7 +116,7 @@ public final class ShapeView {
 
         view.noPhysics = true;
         view.setDeltaMovement(player.getDeltaMovement());
-        positionView(view, player, state);
+        positionView(view, player);
         if (state.form.type() == EntityTypes.PLAYER) view.setPose(player.getPose());
         view.setShiftKeyDown(player.isShiftKeyDown());
         view.setSprinting(player.isSprinting());
@@ -125,6 +128,7 @@ public final class ShapeView {
 
         // ponytail: Vanilla can overwrite this scale. Filter attribute packets if traffic grows.
         sendSelfScale(player, view);
+        sendOwnerPosition(player, state, view);
         if (view instanceof EnderDragon dragon) {
             sendAnimatedDragon(dragon, player);
             for (ServerPlayer observer : PlayerLookup.tracking(dragon)) {
@@ -137,6 +141,7 @@ public final class ShapeView {
         ShapeState state = ShapeManager.get(player);
         if (state != null && entity == state.view) {
             sendSelfScale(player, state.view);
+            sendOwnerPosition(player, state, state.view);
             if (state.view instanceof EnderDragon dragon) sendAnimatedDragon(dragon, player);
         }
     }
@@ -165,8 +170,10 @@ public final class ShapeView {
         state.view = null;
         removeFromTeam(view);
         view.removeTag(VIEW_TAG);
-        if (state.form.traits().aquatic() && state.form.traits().landImmobile()) {
-            view.snapTo(player.getX(), player.getY(), player.getZ(), view.getYRot(), view.getXRot());
+        if (state.form.traits().aquatic() && state.form.traits().landImmobile()
+                && !player.hasDisconnected()) {
+            player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(),
+                    PositionMoveRotation.of(view), Set.of(), view.onGround()));
         }
         view.noPhysics = false;
         view.setNoGravity(false);
@@ -232,14 +239,12 @@ public final class ShapeView {
         view.setPermanentlyInvulnerable(true);
         view.setSilent(true);
         view.noPhysics = true;
-        positionView(view, player, state);
+        positionView(view, player);
     }
 
-    private static void positionView(LivingEntity view, ServerPlayer player, ShapeState state) {
-        double yOffset = state.form.traits().aquatic() && state.form.traits().landImmobile()
-                ? view.getBbHeight() * SELF_VIEW_SCALE : 0.0;
+    private static void positionView(LivingEntity view, ServerPlayer player) {
         float yaw = player.getYRot() + (view instanceof EnderDragon ? 180.0F : 0.0F);
-        view.snapTo(player.getX(), player.getY() - yOffset, player.getZ(), yaw, player.getXRot());
+        view.snapTo(player.getX(), player.getY(), player.getZ(), yaw, player.getXRot());
         view.yBodyRotO = view.yBodyRot;
         view.setYBodyRot(yaw);
         view.setYHeadRot(view instanceof EnderDragon ? yaw : player.getYHeadRot());
@@ -258,6 +263,17 @@ public final class ShapeView {
         self.removeModifiers();
         self.setBaseValue(Math.max(0.0625, original.getValue() * SELF_VIEW_SCALE));
         player.connection.send(new ClientboundUpdateAttributesPacket(view.getId(), List.of(self)));
+    }
+
+    private static void sendOwnerPosition(ServerPlayer player, ShapeState state, LivingEntity view) {
+        if (player.hasDisconnected() || !state.form.traits().aquatic()
+                || !state.form.traits().landImmobile()) return;
+        double offset = Math.max(0.0, view.getBbHeight() * SELF_VIEW_SCALE + 1.0 - view.getEyeHeight());
+        if (offset == 0.0) return;
+        Vec3 position = view.position().add(0.0, -offset, 0.0);
+        player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(),
+                new PositionMoveRotation(position, view.getDeltaMovement(), view.getYRot(), view.getXRot()),
+                Set.of(), view.onGround()));
     }
 
     private static void sendAnimatedDragon(EnderDragon dragon, ServerPlayer observer) {

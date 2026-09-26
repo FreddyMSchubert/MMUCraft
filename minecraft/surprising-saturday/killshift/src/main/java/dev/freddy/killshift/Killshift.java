@@ -19,10 +19,12 @@ public final class Killshift implements ModInitializer {
     public void onInitialize() {
         ShiftCommand.register();
         ServerPlayerEvents.AFTER_RESPAWN.register(NearbyRespawn::afterRespawn);
+        ServerPlayerEvents.AFTER_RESPAWN.register(ShapeManager::afterRespawn);
         ServerLivingEntityEvents.AFTER_DEATH.register(ShapeManager::onDeath);
         ServerLivingEntityEvents.AFTER_DAMAGE.register(MobAbilities::onDamage);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(ShapeManager::allowDamage);
         AttackEntityCallback.EVENT.register(ShapeManager::onAttack);
+        UseEntityCallback.EVENT.register(ShapeManager::onUseEntity);
         UseItemCallback.EVENT.register(MobFood::onUseItem);
         UseItemCallback.EVENT.register(MobAbilities::onUseItem);
         UseBlockCallback.EVENT.register(MobFood::onUseBlock);

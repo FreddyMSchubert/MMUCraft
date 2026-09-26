@@ -35,3 +35,20 @@ Any communication through a society-based medium may be proofread for moderation
 :::warning Need help?
 If you think any of these rules are being broken or feel unwell or unsafe within the Society in any way, please reach out to our Wellbeing Officer Mia or [open a ticket on our Discord server](https://discord.com/channels/1396896170751692931/1415746294659551384/1415753985561854043).
 :::
+
+## The 3 golden rules
+
+*... yeah they do... wait, what?*
+
+Following them should be common courtesy, but just making sure:
+
+1. DO talk about the MMU Minecraft Society. Please do it's more fun with more players.
+2. Respect nature.
+	- Fill creeper holes. (Creeper as in the mob plase report irl creepers)
+	- Don't leave trees floating, cut them down fully.
+	- If you've cut down trees, try to replant them.
+	- Try to keep the natural environment looking pleasant where possible.
+3. Respect others.
+	- Do not destroy other people's stuff, even if they didn't claim it. (even if it's ugly.)
+	- Keep other players minecart tracks working (though you may extend them)
+	- Get permission before claiming close to others, as they may have planned to build something there.

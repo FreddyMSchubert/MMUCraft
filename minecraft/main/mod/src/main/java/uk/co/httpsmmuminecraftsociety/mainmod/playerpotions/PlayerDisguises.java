@@ -47,8 +47,14 @@ public final class PlayerDisguises {
     private PlayerDisguises() {}
 
     public static void apply(LivingEntity target, String identity, int ticks) {
-        if (!(target instanceof ServerPlayer player) || PlayerPotions.decode(identity) == null
+        GameProfile profile = PlayerPotions.decode(identity);
+        if (!(target instanceof ServerPlayer player) || profile == null
                 || ticks <= 0 || !FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) return;
+        if (player.getUUID().equals(profile.id())) {
+            player.sendSystemMessage(Component.literal("You are now visible as " + profile.name()
+                    + " to others. I'm sure this will be quite shocking and weird for them, seeing as you're now... way different looking. Totally."));
+            return;
+        }
         State current = ACTIVE.get(player.getUUID());
         if (current != null && current.identity.equals(identity)) {
             current.remaining = Math.max(current.remaining, ticks);
@@ -61,7 +67,7 @@ public final class PlayerDisguises {
         if (state.view != null) {
             broadcastEquipment(player, true);
             player.sendSystemMessage(Component.literal("You are now visible as "
-                    + PlayerPotions.decode(identity).name()
+                    + profile.name()
                     + " to others. Only you can still see your true form."));
         }
     }

@@ -45,7 +45,7 @@ public final class SmallMaps {
     private SmallMaps() {}
 
     public static boolean isMap(ItemStack stack) {
-        return stack.is(Items.MAP) || stack.is(Items.FILLED_MAP);
+        return stack.is(Items.MAP) || stack.is(Items.FILLED_MAP) && stack.has(DataComponents.MAP_ID);
     }
 
     public static boolean isSmall(ItemStack stack) {
@@ -295,7 +295,7 @@ public final class SmallMaps {
                 .toList());
         lines.add(sizeLine(size));
         net.minecraft.world.level.block.Block invisibleBlock = MapInvisibility.target(stack);
-        if (invisibleBlock != null) {
+        if (invisibleBlock != null && invisibleBlock != Blocks.AIR) {
             lines.add(Component.literal(INVISIBLE_TOOLTIP_PREFIX)
                     .append(invisibleBlock.getName())
                     .withStyle(style -> style.withColor(ChatFormatting.GRAY).withItalic(false)));

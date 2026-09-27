@@ -1,12 +1,17 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.maps;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MapResizeRecipe;
 
 import java.util.List;
@@ -19,6 +24,25 @@ public final class MapResizeCheck {
         Bootstrap.bootStrap();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(VanillaRegistries.createWorldLookup())
                 .forEach(components -> components.apply());
+
+        ItemStack ordinaryMap = new ItemStack(Items.FILLED_MAP);
+        assert MapInvisibility.target(ordinaryMap) == null : "Ordinary maps must not be treated as air-tagged maps";
+        CustomData.update(DataComponents.CUSTOM_DATA, ordinaryMap,
+                tag -> tag.putString("structure", "dnt_illager_hideout"));
+        assert MapInvisibility.target(ordinaryMap) == null : "Dungeons and Taverns charts must retain their use action";
+        assert !SmallMaps.isMap(ordinaryMap) : "Charts without map data must not be resized or relabeled";
+        assert !new MapResizeRecipe().matches(grid(ordinaryMap, new ItemStack(Items.PAPER)), null)
+                : "Dungeons and Taverns charts must not match the map resize recipe";
+        ordinaryMap.set(DataComponents.MAP_ID, new MapId(0));
+        assert SmallMaps.isMap(ordinaryMap) : "Filled maps with map data must remain resizable";
+
+        ItemStack airMap = new ItemStack(Items.MAP);
+        MapInvisibility.setTarget(airMap, Blocks.AIR);
+        assert MapInvisibility.target(airMap) == Blocks.AIR : "Explicitly tagged blocks must still resolve";
+        SmallMaps.refreshTooltipFromStoredSize(airMap);
+        assert airMap.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines().stream()
+                .noneMatch(line -> line.getString().startsWith("Invisible block:"))
+                : "Air must not produce an invisible-block tooltip";
 
         MapResizeRecipe recipe = new MapResizeRecipe();
         ItemStack map = new ItemStack(Items.MAP);

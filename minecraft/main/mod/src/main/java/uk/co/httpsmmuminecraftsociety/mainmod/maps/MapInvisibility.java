@@ -36,8 +36,10 @@ public final class MapInvisibility {
     public static Block target(ItemStack map) {
         String id = map.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                 .copyTag().getString(BLOCK_TAG).orElse("");
+        if (id.isBlank()) return null;
         Identifier identifier = Identifier.tryParse(id);
-        return identifier == null ? null : BuiltInRegistries.BLOCK.getValue(identifier);
+        return identifier == null || !BuiltInRegistries.BLOCK.containsKey(identifier)
+                ? null : BuiltInRegistries.BLOCK.getValue(identifier);
     }
 
     public static void copyTarget(ItemStack from, ItemStack to) {

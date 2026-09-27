@@ -17,6 +17,7 @@ public class EnchantmentSettings
 
     public int maxNormalGearLevel = -1;
     public int maxEnderiteLevel = -1;
+    public boolean lecternCopying = true;
 
     public List<Identifier> foundInLoottables = new ArrayList<>();
     public Rarity loottableRarity = Rarity.COMMON;
@@ -30,6 +31,11 @@ public class EnchantmentSettings
     public EnchantmentSettings maxLevels(int maxNormalGearLevel, int maxEnderiteLevel) {
         this.maxNormalGearLevel = maxNormalGearLevel;
         this.maxEnderiteLevel = maxEnderiteLevel;
+        return this;
+    }
+
+    public EnchantmentSettings lecternCopying(boolean enabled) {
+        this.lecternCopying = enabled;
         return this;
     }
 

@@ -16,6 +16,7 @@ import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 
 import java.util.Optional;
 
@@ -68,6 +69,13 @@ public final class LecternLibrarianTrades {
         ItemEnchantments enchantments = sourceBook.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         if (enchantments.isEmpty()) {
             return Optional.empty();
+        }
+
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
+            if (!EnchantmentSettingsManager.getSettingsForEnch(entry.getKey())
+                    .map(settings -> settings.lecternCopying).orElse(true)) {
+                return Optional.empty();
+            }
         }
 
         int emeraldCost = calculateEmeraldCost(enchantments);

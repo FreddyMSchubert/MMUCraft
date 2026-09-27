@@ -7,7 +7,7 @@ tags:
 - enchantng
 - anvilles
 tips:
-- You can copy any enchanted book by placing it on a librarians lectern. The librarian will start offering a copy of the book as one of their trades.
+- You can copy enchanted books at a librarian's lectern. Soulbound books cannot be copied.
 - Combining levels in an anvil uses addition on this server. For example, combining Sharpness I and Sharpness II results in Sharpness III.
 - The "Too Expensive" anvil limit has been fully removed, you can keep upgrading and repairing your gear forever.
 - Anvils work differently in the server. For example, it is possible to copy enchantments that are applied to an item back onto a book.
@@ -25,7 +25,7 @@ tips:
 If you want to, you still can treat enchanting and anvils just as usual. The default behaviour is still supported. But you'd be making a mistake!
 
 :::tldr
-- Find or craft one enchanted book once, then copy it infinitely with a librarian. (No more need to refresh librarians)
+- Find or craft an enchanted book, then copy it with a librarian. Soulbound books cannot be copied.
 - Levels add more liberally in an anvil. `Sharpness I + Sharpness II = Sharpness III`.
 - Anvils never become "Too Expensive", have no prior-work penalty (meaning XP cost doesn't grow larger and larger), and cost at most 30 levels.
 :::
@@ -34,7 +34,12 @@ If you want to, you still can treat enchanting and anvils just as usual. The def
 
 ## Duplicating books
 
-Put an enchanted book on the lectern used by a librarian. The librarian's first trade becomes an exact copy of that book. Replace the lectern book whenever you want a different copy trade.
+Put an enchanted book on the lectern used by a librarian. The librarian's first trade becomes an exact copy of that book if copying is allowed for every enchantment on it. Replace the lectern book whenever you want a different copy trade.
+
+| Enchantments on the book | Lectern copy trade |
+| :-- | :-- |
+| Any enchantments except Soulbound | Available |
+| Soulbound, including books with other enchantments | Unavailable. Craft another Soulbound book. |
 
 The normal random-pick book trades remain.
 

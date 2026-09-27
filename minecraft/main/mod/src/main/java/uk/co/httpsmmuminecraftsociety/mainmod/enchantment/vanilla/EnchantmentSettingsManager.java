@@ -32,7 +32,7 @@ public class EnchantmentSettingsManager
         // general enchantments
         new EnchantmentSettings(Enchantments.UNBREAKING).maxLevels(3, 5).inLoottable("chests/end_city_treasure").rarity(Rarity.RARE),
         new EnchantmentSettings(Enchantments.MENDING).maxLevels(1, 1).inLoottable("chests/ancient_city", "chests/ancient_city_ice_box").rarity(Rarity.RARE),
-        new EnchantmentSettings(ModEnchantments.SOULBOUND).maxLevels(1, 1), // obtainable via crafting
+        new EnchantmentSettings(ModEnchantments.SOULBOUND).maxLevels(1, 1).lecternCopying(false), // obtainable via crafting
 
         // aquatic enchantments
         new EnchantmentSettings(Enchantments.AQUA_AFFINITY).maxLevels(1, 1).inLoottable("entities/guardian").rarity(Rarity.RARE),

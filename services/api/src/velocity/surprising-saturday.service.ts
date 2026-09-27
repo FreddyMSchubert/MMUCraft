@@ -16,6 +16,7 @@ import {
 	users,
 } from '../database/database.service';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
+import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
 import { effectivePlayerColor } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
 
@@ -206,12 +207,13 @@ export class SurprisingSaturdayService {
 					entry.completed_at_unix_ms >= event.starts_at_unix_ms &&
 					entry.completed_at_unix_ms < event.ends_at_unix_ms,
 			);
-		const players = participants.map((participant) => {
+		const players = participants.flatMap((participant) => {
 			const user = this.database.connection
 				.select()
 				.from(users)
 				.where(eq(users.minecraft_uuid, participant.player_uuid))
 				.get();
+			if (user?.email === ADMIN_SIGNUP_EMAIL) return [];
 			const profile = user
 				? this.database.connection
 						.select()
@@ -226,21 +228,26 @@ export class SurprisingSaturdayService {
 						pointsById.has(entry.item_id),
 				)
 				.map((entry) => ({ itemId: entry.item_id, atUnixMs: entry.completed_at_unix_ms }));
-			return {
-				uuid: participant.player_uuid,
-				name: user?.minecraft_username ?? 'Unknown player',
-				color: effectivePlayerColor(participant.player_uuid, profile?.color_hex),
-				role: playerRole(user),
-				pronouns: profile?.pronouns ?? '',
-				isCommittee: Boolean(user && (user.is_committee || user.is_super_admin)),
-				customEmojis: customPlayerEmojis(profile?.custom_emojis_json),
-				completed,
-				points: completed.reduce(
-					(score, entry) => score + (pointsById.get(entry.itemId) ?? 0),
-					0,
-				),
-				lastCompletionAtUnixMs: Math.max(0, ...completed.map((entry) => entry.atUnixMs)),
-			};
+			return [
+				{
+					uuid: participant.player_uuid,
+					name: user?.minecraft_username ?? 'Unknown player',
+					color: effectivePlayerColor(participant.player_uuid, profile?.color_hex),
+					role: playerRole(user),
+					pronouns: profile?.pronouns ?? '',
+					isCommittee: Boolean(user && (user.is_committee || user.is_super_admin)),
+					customEmojis: customPlayerEmojis(profile?.custom_emojis_json),
+					completed,
+					points: completed.reduce(
+						(score, entry) => score + (pointsById.get(entry.itemId) ?? 0),
+						0,
+					),
+					lastCompletionAtUnixMs: Math.max(
+						0,
+						...completed.map((entry) => entry.atUnixMs),
+					),
+				},
+			];
 		});
 		players.sort(
 			(a, b) =>

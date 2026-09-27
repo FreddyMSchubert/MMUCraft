@@ -39,6 +39,11 @@ export function comparePlayers(
 	option: StatOption,
 	direction: SortDirection,
 ) {
+	if (!left.isRanked || !right.isRanked)
+		return (
+			Number(right.isRanked) - Number(left.isRanked) ||
+			left.minecraftUsername.localeCompare(right.minecraftUsername, 'en')
+		);
 	const ordered = compareSortValues(
 		getSortValue(left, option),
 		getSortValue(right, option),

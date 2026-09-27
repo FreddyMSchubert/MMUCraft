@@ -165,20 +165,22 @@ export function PlayersTab({
 		leaderboardOptions.find((option) => option.key === leaderboardKey) ??
 		leaderboardOptions.at(0);
 	const podiumEntries = leaderboardOption
-		? players.map((player) => {
-				const value = getSortValue(player, leaderboardOption);
-				return {
-					id: player.id,
-					name: player.minecraftUsername,
-					color: player.profile.color,
-					pronouns: player.profile.pronouns,
-					isCommittee: player.isCommittee,
-					customEmojis: player.customEmojis,
-					value: value ?? 0,
-					displayValue: formatColumnValue(player, leaderboardOption),
-					avatarUrl: player.avatarUrl,
-				};
-			})
+		? players
+				.filter((player) => player.isRanked)
+				.map((player) => {
+					const value = getSortValue(player, leaderboardOption);
+					return {
+						id: player.id,
+						name: player.minecraftUsername,
+						color: player.profile.color,
+						pronouns: player.profile.pronouns,
+						isCommittee: player.isCommittee,
+						customEmojis: player.customEmojis,
+						value: value ?? 0,
+						displayValue: formatColumnValue(player, leaderboardOption),
+						avatarUrl: player.avatarUrl,
+					};
+				})
 		: [];
 
 	function updateColumn(index: number, key: string) {

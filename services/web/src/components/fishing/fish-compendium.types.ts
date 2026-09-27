@@ -12,6 +12,7 @@ export interface PlayerOption {
 	avatarUrl: string | null;
 	caughtTotal: number;
 	isCommittee: boolean;
+	isRanked: boolean;
 	customEmojis: PlayerEmoji[];
 }
 

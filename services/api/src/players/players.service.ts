@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { asc, eq, sql } from 'drizzle-orm';
 import { AuthenticatedUser } from '../auth/auth-session.service';
+import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
 import { FishingService } from '../fishing/fishing.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import {
@@ -47,6 +48,7 @@ export interface PlayerSummary {
 	canEditProfile: boolean;
 	isMember: boolean;
 	isCommittee: boolean;
+	isRanked: boolean;
 	customEmojis: PlayerEmoji[];
 	isExternal: boolean;
 	responsibleMinecraftUsername: string | null;
@@ -239,6 +241,7 @@ export class PlayersService {
 			canEditProfile: user.id === viewer.id || viewer.isCommittee,
 			isMember: user.is_member === 1,
 			isCommittee: user.is_super_admin === 1 || user.is_committee === 1,
+			isRanked: user.email !== ADMIN_SIGNUP_EMAIL,
 			customEmojis: customPlayerEmojis(profile.customEmojisJson),
 			isExternal: user.responsible_user_id !== null,
 			responsibleMinecraftUsername: responsible?.minecraft_username ?? null,
@@ -258,16 +261,17 @@ export class PlayersService {
 	}
 
 	private getStatsContext() {
-		const userIds = this.database.connection
-			.select({ id: users.id })
+		const userRows = this.database.connection
+			.select({ id: users.id, email: users.email })
 			.from(users)
-			.all()
-			.map((user) => user.id);
+			.all();
+		const userIds = userRows.map((user) => user.id);
 		const stats = new Map(userIds.map((id) => [id, this.playerStatistics.getForUser(id)]));
 		const unlocks = this.getUnlockProgress(userIds);
 		const values = new Map<number, Record<string, number>>();
 
-		for (const id of userIds) {
+		for (const { id, email } of userRows) {
+			if (email === ADMIN_SIGNUP_EMAIL) continue;
 			const playerStats = stats.get(id);
 			const progress = unlocks.get(id);
 			if (!playerStats || !progress) continue;

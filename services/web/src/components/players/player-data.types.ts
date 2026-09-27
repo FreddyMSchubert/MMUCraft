@@ -66,6 +66,7 @@ export interface PlayerSummary {
 	canEditProfile: boolean;
 	isMember: boolean;
 	isCommittee: boolean;
+	isRanked: boolean;
 	customEmojis: PlayerEmoji[];
 	isExternal: boolean;
 	responsibleMinecraftUsername: string | null;

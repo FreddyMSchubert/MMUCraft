@@ -501,19 +501,21 @@ export function ShopTab({
 						setTagFilter(value as ShopTagFilter);
 					}}
 				/>
-				<FilterRow
-					label="Drop"
-					options={[
-						{ value: 'all', label: 'All' },
-						...data.drops.map((drop) => ({
-							value: drop.id,
-							label: `${drop.emoji} ${drop.name}`,
-							gradient: dropGradient(drop),
-						})),
-					]}
-					selected={dropFilter}
-					onSelect={setDropFilter}
-				/>
+				{data.drops.length > 0 && (
+					<FilterRow
+						label="Drop"
+						options={[
+							{ value: 'all', label: 'All' },
+							...data.drops.map((drop) => ({
+								value: drop.id,
+								label: `${drop.emoji} ${drop.name}`,
+								gradient: dropGradient(drop),
+							})),
+						]}
+						selected={dropFilter}
+						onSelect={setDropFilter}
+					/>
+				)}
 			</div>
 			{searchError && (
 				<p className="authError" role="alert">

@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { and, count, eq, inArray, max, min } from 'drizzle-orm';
+import { and, count, eq, inArray, max, min, ne } from 'drizzle-orm';
 import { interval, map, merge, of, Subject } from 'rxjs';
 import { AuthenticatedUser } from '../auth/auth-session.service';
+import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
 import {
 	DatabaseService,
 	FishCatchRow,
@@ -66,7 +67,13 @@ export class FishingService {
 					smallest: min(fishCatches.smallest_length_cm),
 				})
 				.from(fishCatches)
-				.where(eq(fishCatches.fish_id, definition.id))
+				.innerJoin(users, eq(fishCatches.user_id, users.id))
+				.where(
+					and(
+						eq(fishCatches.fish_id, definition.id),
+						ne(users.email, ADMIN_SIGNUP_EMAIL),
+					),
+				)
 				.get();
 
 			const firstCatch = previous === null;
@@ -105,11 +112,11 @@ export class FishingService {
 
 			return {
 				firstCatch,
-				firstServerCatch,
+				firstServerCatch: user.email !== ADMIN_SIGNUP_EMAIL && firstServerCatch,
 				personalSizeRecord,
 				personalSmallestRecord,
-				serverSizeRecord,
-				serverSmallestRecord,
+				serverSizeRecord: user.email !== ADMIN_SIGNUP_EMAIL && serverSizeRecord,
+				serverSmallestRecord: user.email !== ADMIN_SIGNUP_EMAIL && serverSmallestRecord,
 			};
 		});
 		const firstServerCatchAnnouncement =
@@ -190,6 +197,7 @@ export class FishingService {
 		const selectedCatches = new Map<string, FishCatchRow>();
 		const catchCountByUserId = new Map<number, number>();
 		const catchesByFishId = new Map<string, FishCatchRow[]>();
+		const playersById = new Map(playerRows.map((player) => [player.id, player]));
 		for (const fishCatch of allCatches) {
 			if (fishCatch.user_id === selectedUserId) {
 				selectedCatches.set(fishCatch.fish_id, fishCatch);
@@ -198,11 +206,11 @@ export class FishingService {
 				fishCatch.user_id,
 				(catchCountByUserId.get(fishCatch.user_id) ?? 0) + 1,
 			);
+			if (playersById.get(fishCatch.user_id)?.email === ADMIN_SIGNUP_EMAIL) continue;
 			const serverRows = catchesByFishId.get(fishCatch.fish_id) ?? [];
 			serverRows.push(fishCatch);
 			catchesByFishId.set(fishCatch.fish_id, serverRows);
 		}
-		const playersById = new Map(playerRows.map((player) => [player.id, player]));
 
 		return {
 			currentUserId: viewer.id,
@@ -220,6 +228,7 @@ export class FishingService {
 					avatarUrl: playerAvatarUrl(player.minecraft_uuid),
 					caughtTotal: catchCountByUserId.get(player.id) ?? 0,
 					isCommittee: player.is_super_admin === 1 || player.is_committee === 1,
+					isRanked: player.email !== ADMIN_SIGNUP_EMAIL,
 					customEmojis: customPlayerEmojis(
 						profilesById.get(player.id)?.custom_emojis_json,
 					),
@@ -374,6 +383,7 @@ function serializeServerRecord(
 			color,
 			avatarUrl: playerAvatarUrl(player.minecraft_uuid),
 			isCommittee: player.is_super_admin === 1 || player.is_committee === 1,
+			isRanked: true,
 			customEmojis: customPlayerEmojis(profile?.custom_emojis_json),
 		},
 	};

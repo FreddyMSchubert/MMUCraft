@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
 import { Counter, Gauge, Histogram, Registry, collectDefaultMetrics } from 'prom-client';
 import {
 	claims,
@@ -211,6 +212,7 @@ export class MonitoringService {
 		const streaks = userRows.map((user) => {
 			const days = loginDays.get(user.id) ?? [];
 			return {
+				email: user.email,
 				player: user.minecraft_username,
 				current: calculateLoginStreak(days, currentPeriod, user.is_member === 1),
 				allTime: longestConsecutiveRun(days),
@@ -231,6 +233,7 @@ export class MonitoringService {
 		for (const scope of ['current', 'all_time'] as const) {
 			const key = scope === 'current' ? 'current' : 'allTime';
 			[...streaks]
+				.filter((row) => row.email !== ADMIN_SIGNUP_EMAIL)
 				.sort((left, right) => right[key] - left[key])
 				.slice(0, 10)
 				.forEach((row, index) => {
@@ -261,6 +264,7 @@ export class MonitoringService {
 		money.set({ measure: 'median_balance' }, median(balances));
 
 		const richest = userRows
+			.filter((user) => user.email !== ADMIN_SIGNUP_EMAIL)
 			.map((user) => ({
 				player: user.minecraft_username,
 				balance: statsByUser.get(user.id)?.money.balanceDabloons ?? 0,

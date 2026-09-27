@@ -97,17 +97,19 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 		return <p className={error ? 'authError' : ''}>{error || 'Loading fish compendium...'}</p>;
 	const player = data.players.find((candidate) => candidate.id === data.selectedUserId);
 	const caughtTotal = data.fish.filter((fish) => fish.catch).length;
-	const podiumEntries = data.players.map((candidate) => ({
-		id: candidate.id,
-		name: candidate.minecraftUsername,
-		color: candidate.color,
-		pronouns: candidate.pronouns,
-		isCommittee: candidate.isCommittee,
-		customEmojis: candidate.customEmojis,
-		value: candidate.caughtTotal,
-		displayValue: new Intl.NumberFormat().format(candidate.caughtTotal),
-		avatarUrl: candidate.avatarUrl,
-	}));
+	const podiumEntries = data.players
+		.filter((candidate) => candidate.isRanked)
+		.map((candidate) => ({
+			id: candidate.id,
+			name: candidate.minecraftUsername,
+			color: candidate.color,
+			pronouns: candidate.pronouns,
+			isCommittee: candidate.isCommittee,
+			customEmojis: candidate.customEmojis,
+			value: candidate.caughtTotal,
+			displayValue: new Intl.NumberFormat().format(candidate.caughtTotal),
+			avatarUrl: candidate.avatarUrl,
+		}));
 
 	return (
 		<section className="fishCompendium">

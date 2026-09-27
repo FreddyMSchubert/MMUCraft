@@ -31,7 +31,7 @@ Endermen now drop significantly more ender pearls when killed, making many of th
 
 This potion has the same effect that some may know as the `/rtp` command (random teleport) from previous years server.
 
-It teleports you somewhere random in a radius of 7500 blocks. This can be great for finding new biomes & resources.
+It teleports you to a random safe location within 7,500 blocks of world spawn. This can help you find new biomes and resources.
 
 It can be crafted in these two ways:
 
@@ -47,15 +47,15 @@ It can be crafted in these two ways:
 [Chorus Fruit](https://minecraft.wiki/w/Chorus_Fruit) (TC, CL, CR) · [Water Bottle](https://minecraft.wiki/w/Water_Bottle) (C) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (BC) → Potion of Displacement ×4
 :::
 
-Non-Members teleport seomwhere random in a radius of 7500 blocks.
+Non-members teleport to a random location within 7,500 blocks of world spawn.
 
 :::perk
-If you're a member, Potions of Displacement will instead teleport you somewhere within an extended radius of **15000 blocks**, making it easier to find new biomes and stuff.
+If you are a member, a Potion of Displacement can teleport you within **15,000 blocks** of world spawn.
 
 (For context, we decided not to make this available to everybody because it can be degrading for server performance and world file size. Sorry to everyone else, but we need to limit it somehow.)
 :::
 
-But now you're somewhere off 7500, or even 15000, blocks away from your home. That'll be quite the walk! Or, alternatively, you could use the:
+You may now be far from home. To return to world spawn, use a:
 
 ### Potion of Returning
 

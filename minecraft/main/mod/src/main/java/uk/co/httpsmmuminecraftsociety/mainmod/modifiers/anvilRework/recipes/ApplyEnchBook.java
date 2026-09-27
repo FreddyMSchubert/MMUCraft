@@ -4,7 +4,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.EnchantmentLock;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
@@ -29,13 +32,16 @@ public final class ApplyEnchBook implements AnvilRecipe
         ItemStack result = resultIsBook ? new ItemStack(Items.ENCHANTED_BOOK) : left.copy();
 
         AnvilUtils.MergeInfo merge = AnvilUtils.mergeEnchantments(result, left, right, resultIsBook);
-        boolean changed = merge.changed();
-
-        changed |= AnvilUtils.applyRename(result, name);
-
-        if (!changed || result.isEmpty()) {
+        ItemEnchantments resultEnchants = EnchantmentHelper.getEnchantmentsForCrafting(result);
+        ItemEnchantments rightEnchants = EnchantmentHelper.getEnchantmentsForCrafting(right);
+        if (result.isEmpty() || Objects.equals(
+                EnchantmentHelper.getEnchantmentsForCrafting(left),
+                resultEnchants)
+                || rightEnchants.keySet().stream().anyMatch(enchantment -> resultEnchants.getLevel(enchantment) == 0)) {
             return AnvilLogic.Outcome.EMPTY;
         }
+
+        AnvilUtils.applyRename(result, name);
 
         CharmorManager.updateArmorTooltip(result);
 

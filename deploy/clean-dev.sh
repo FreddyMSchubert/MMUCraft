@@ -27,6 +27,17 @@ if [[ ! $view_distance =~ ^(0|[1-9][0-9]*)$ ]] || (( view_distance < 2 || view_d
 	echo 'Refusing cleanup: view-distance must be between 2 and 32.' >&2
 	exit 2
 fi
+for dir in data backups; do
+	[[ -d $dir ]] || continue
+	blocked=$(find "$dir" -type d ! -writable -print -quit) || {
+		echo "Refusing cleanup: cannot inspect $dir permissions." >&2
+		exit 2
+	}
+	if [[ -n $blocked ]]; then
+		echo "Refusing cleanup: the deploy user cannot write to $blocked." >&2
+		exit 2
+	fi
+done
 
 floor_div() {
 	local n=$1 d=$2

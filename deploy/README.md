@@ -68,7 +68,7 @@ When manually copying the on-device repository elsewhere, stop the backup servic
 
 ## Clear development server storage
 
-Run the `clean-dev` GitHub Actions workflow and enter the spawn block coordinates for the main world. The workflow always uses the dev server. You can also run `bash clean-dev.sh SPAWN_X SPAWN_Z` from this deployment directory. The command stops the dev stack and deletes local backups, the event world, old logs, monitoring volumes, and unused Docker images and build cache. It keeps the API database. It keeps each main-world region file that overlaps one configured view distance from spawn. It uses region filenames and does not read world file contents. It also keeps world metadata and player data. The command refuses to run unless `.release.env` selects the dev overlay. Deploy again to start the stack.
+Run the `clean-dev` GitHub Actions workflow to clean the dev server around spawn at X=0, Z=0. The workflow has no inputs. You can also run `bash clean-dev.sh 0 0` from this deployment directory. The command stops the dev stack and deletes local backups, the event world, old logs, monitoring volumes, and unused Docker images and build cache. It keeps the API database. It keeps each main-world region file that overlaps one configured view distance from spawn. It uses region filenames and does not read world file contents. It also keeps world metadata and player data. The command refuses to run unless `.release.env` selects the dev overlay. Deploy again to start the stack.
 
 ## Minecraft network
 

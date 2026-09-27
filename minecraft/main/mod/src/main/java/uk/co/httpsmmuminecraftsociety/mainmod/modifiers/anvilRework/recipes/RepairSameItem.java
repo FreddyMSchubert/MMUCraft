@@ -2,7 +2,6 @@ package uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jspecify.annotations.Nullable;
@@ -31,8 +30,7 @@ public final class RepairSameItem implements AnvilRecipe
 
         ItemEnchantments resultEnchants = EnchantmentHelper.getEnchantmentsForCrafting(result);
         ItemEnchantments.Mutable retained = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(right));
-        retained.removeIf(enchantment -> resultEnchants.getLevel(enchantment) > 0
-                || resultEnchants.keySet().stream().noneMatch(existing -> !Enchantment.areCompatible(existing, enchantment)));
+        retained.removeIf(enchantment -> resultEnchants.getLevel(enchantment) > 0);
         ItemEnchantments retainedEnchants = retained.toImmutable();
         ItemStack rightRemainder = ItemStack.EMPTY;
         if (!retainedEnchants.isEmpty()) {
@@ -57,11 +55,11 @@ public final class RepairSameItem implements AnvilRecipe
             }
         }
 
-        changed |= AnvilUtils.applyRename(result, name);
-
         if (!changed || result.isEmpty()) {
             return AnvilLogic.Outcome.EMPTY;
         }
+
+        AnvilUtils.applyRename(result, name);
 
         CharmorManager.updateArmorTooltip(result);
 

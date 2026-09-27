@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerPotions;
 
@@ -20,6 +21,9 @@ abstract class PlayerPotionSplashMixin {
         String identity = PlayerPotions.identity(stack);
         if (identity == null) return;
         ThrownSplashPotion potion = (ThrownSplashPotion) (Object) this;
+        if (potion.getOwner() instanceof ServerPlayer thrower) {
+            MasteryAdvancements.recordPotionUse(thrower, "impersonation");
+        }
         AABB hitBox = potion.getBoundingBox().move(hit.getLocation().subtract(potion.position()));
         AABB area = hitBox.inflate(4.0, 2.0, 4.0);
         for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, area)) {

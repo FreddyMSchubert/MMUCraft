@@ -126,6 +126,7 @@ services:
                 player-animation-library:kemJXVHZ
                 ledger:f72cP4Ni
                 fabric-language-kotlin:eRRZzGMc
+                datapack:blazeandcaves-advancements-pack
                 datapack:dungeons-and-taverns?
                 datapack:explorify?
                 datapack:qraftyfied?

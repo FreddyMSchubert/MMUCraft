@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerPotions;
 
@@ -36,6 +37,9 @@ abstract class PlayerPotionCloudMixin {
             if (x * x + z * z <= radius * radius && player.isAffectedByPotions()
                     && mainmod$targets.add(player.getUUID())) {
                 PlayerDisguises.apply(player, identity, PlayerPotions.duration(identity));
+                if (cloud.getOwner() instanceof ServerPlayer thrower) {
+                    MasteryAdvancements.recordPotionUse(thrower, "impersonation");
+                }
             }
         }
     }

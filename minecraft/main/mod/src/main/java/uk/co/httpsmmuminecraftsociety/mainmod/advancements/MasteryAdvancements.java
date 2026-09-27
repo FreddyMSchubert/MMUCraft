@@ -84,6 +84,14 @@ public final class MasteryAdvancements {
         grant(player, result);
     }
 
+    public static void recordPotionUse(ServerPlayer player, String potion) {
+        grant(player, "utility/use_potion");
+        grant(player, "potions/" + potion);
+        grantIfAll(player, "utility/all_potions",
+                "potions/returning", "potions/displacement", "potions/insomnia", "potions/resonance",
+                "potions/impersonation");
+    }
+
     public static void recordSnifferBreed(ServerPlayer player) {
         grantMilestones(player, "mmuSniffers", "sniffers/bred_", SNIFFER_MILESTONES);
     }

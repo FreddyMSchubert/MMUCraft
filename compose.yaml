@@ -137,6 +137,7 @@ services:
                 simple-voice-chat:OLnMVWXy
                 emotecraft:y5qOKnGD
                 player-animation-library:kemJXVHZ
+                datapack:blazeandcaves-advancements-pack
                 datapack:dungeons-and-taverns?
                 datapack:explorify?
                 datapack:qraftyfied?

@@ -215,8 +215,8 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("utility/wallet", "Cash Container", "Get a wallet.", "fake:charm-wallet", "root", "task");
         add("utility/soulbound", "Till Death Doesn't Part Us", "Apply Soulbound to an item. It will no longer leave you, even after death.", "minecraft:recovery_compass", "root", "goal");
         add("utility/soulbound_recovery_compass", "Well, This Is Handy", "Apply Soulbound to a Recovery Compass.", "minecraft:recovery_compass", "utility/soulbound", "goal");
-        add("utility/use_potion", "Experimental Medicine", "Use one custom potion.", "fake:charm-potion-returning", "root", "task");
-        add("utility/all_potions", "MMU Mixologist", "Use every custom potion.", "fake:charm-potion-resonance", "utility/use_potion", "challenge");
+        add("utility/use_potion", "Experimental Medicine", "Use a server-exclusive potion.", "fake:charm-potion-returning", "root", "task");
+        add("utility/all_potions", "MMU Mixologist", "Use every server-exclusive potion.", "fake:charm-potion-resonance", "utility/use_potion", "challenge");
         add("utility/use_staff", "Staff Meeting", "Use a utility staff.", "fake:charm-crafting-staff", "root", "task");
         add("utility/all_staves", "Utility Wizard", "Use every utility staff.", "fake:charm-umbrella-staff", "utility/use_staff", "goal");
         add("utility/staff_crafting", "Pocket Workbench", "Use the Staff of Crafting.", "fake:charm-crafting-staff", "utility/use_staff", "task");
@@ -343,6 +343,8 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     "Use the Potion of " + Character.toUpperCase(potion.charAt(0)) + potion.substring(1) + ".",
                     "fake:charm-potion-" + potion, "utility/use_potion", "task");
         }
+        add("potions/impersonation", "Potion of Impersonation", "Use the Potion of Impersonation.",
+                "minecraft:potion", "utility/use_potion", "task");
         for (int level = 1; level <= 5; level++) {
             add("fishing/lucky_charm_" + level, "Lucky Charm " + level,
                     "Upgrade the Lucky Charm to level " + level + ".", "fake:charm-lucky-charm",

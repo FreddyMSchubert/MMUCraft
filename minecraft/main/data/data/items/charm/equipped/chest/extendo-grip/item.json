@@ -4,13 +4,12 @@
 	"modelType": "charm",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Saves you a round trip to turkey."
-	],
+	"tooltips": ["Saves you a round trip to turkey."],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Increases block reach.",
+		"gameplayToggle": "inventors",
 		"unlockWeight": 150,
 		"unlockMessage": "Unlocked charm: Extendo Grip Charm. Increases block reach."
 	},

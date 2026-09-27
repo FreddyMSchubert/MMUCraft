@@ -4,13 +4,12 @@
 	"modelType": "charm",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Calums patented formula."
-	],
+	"tooltips": ["Calums patented formula."],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Increases attack knockback.",
+		"gameplayToggle": "inventors",
 		"unlockWeight": 150,
 		"unlockMessage": "Unlocked charm: Goop Hand Charm. Increases attack knockback."
 	},

@@ -35,10 +35,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm, TickCallbackCharm
 {
-    private static final int MAX_SEARCH_TICKS = 15 * 20;
     private static final int NORMAL_RADIUS = 7_500;
     private static final int MEMBER_RADIUS = 15_000;
-    private static final String SEARCH_FAILED = "The Potion of Displacement could not find a safe destination. Try again.";
+    private static final String SEARCH_FAILED = "The wandering spirits have not found a safe path. Keep your potion and try again in a minute.";
     private static final TicketType SEARCH_TICKET = new TicketType(TicketType.NO_TIMEOUT, TicketType.FLAG_LOADING);
     private static final Map<UUID, SearchSession> SEARCHES = new HashMap<>();
     private static final Map<PoolKey, DestinationPool> POOLS = new HashMap<>();
@@ -69,20 +68,6 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     }
 
     @Override
-    public boolean shouldFinishConsumptionEarly(
-            ItemStack stack,
-            ServerPlayer player,
-            ServerLevel level,
-            int elapsedTicks,
-            int charmLevel
-    ) {
-        SearchSession session = SEARCHES.get(player.getUUID());
-        if (session == null) return false;
-
-        return hasReadyDestination(session.key) || searchTicks(session) >= MAX_SEARCH_TICKS;
-    }
-
-    @Override
     public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         SearchSession session = SEARCHES.get(player.getUUID());
@@ -99,7 +84,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             return false;
         }
 
-        PoolEntry entry = takeReadyDestination(session.key);
+        PoolEntry entry = readyDestination(session.key);
         if (entry == null) {
             player.sendSystemMessage(Component.literal(SEARCH_FAILED));
             stopSearch(player.getUUID());
@@ -234,15 +219,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         }
     }
 
-    private static boolean hasReadyDestination(PoolKey key) {
-        return readyDestination(key, false) != null;
-    }
-
-    private static PoolEntry takeReadyDestination(PoolKey key) {
-        return readyDestination(key, true);
-    }
-
-    private static PoolEntry readyDestination(PoolKey key, boolean reserve) {
+    private static PoolEntry readyDestination(PoolKey key) {
         DestinationPool pool = POOLS.get(key);
         if (pool == null) return null;
         Iterator<PoolEntry> entries = pool.entries.iterator();
@@ -259,7 +236,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
                 continue;
             }
             entry.destination = destination;
-            if (reserve) entry.inUse = true;
+            entry.inUse = true;
             return entry;
         }
         return null;
@@ -420,11 +397,6 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         key.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, entry.chunkPos, 0);
     }
 
-    private static int searchTicks(SearchSession session) {
-        long ticks = (System.nanoTime() - session.startedAtNanos) / 50_000_000L + 1L;
-        return (int) Math.max(0L, Math.min(Integer.MAX_VALUE, ticks));
-    }
-
     private record PoolKey(ServerLevel level, int radius, BlockPos center) {}
 
     private static final class DestinationPool {
@@ -451,11 +423,9 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
 
     private static final class SearchSession {
         private final PoolKey key;
-        private final long startedAtNanos;
 
         private SearchSession(PoolKey key) {
             this.key = key;
-            this.startedAtNanos = System.nanoTime();
         }
     }
 }

@@ -128,6 +128,21 @@ api_post() {
 	' "$1"
 }
 
+online_player_count() {
+	dc exec -T api node -e '
+		fetch("http://127.0.0.1:8080/api/internal/velocity/player-count", {
+			headers: { authorization: "Bearer " + process.env.VELOCITY_API_SECRET },
+			signal: AbortSignal.timeout(5000),
+		}).then(async response => {
+			if (!response.ok) throw new Error(String(response.status));
+			const { playerCount } = await response.json();
+			if (playerCount !== null && (!Number.isSafeInteger(playerCount) || playerCount < 0))
+				throw new Error("Invalid player count");
+			process.stdout.write(String(playerCount));
+		}).catch(() => process.exit(1));
+	' 2>/dev/null
+}
+
 graceful_failure() {
 	if [ "$force" = true ]; then
 		echo "WARNING: $1; forcing deployment after the failed attempt." >&2
@@ -235,10 +250,18 @@ chmod 664 "$server_properties"
 running_services=$(dc ps --status running --services)
 if printf '%s\n' "$running_services" | grep -qx minecraft; then
 	if [ "$warning_minutes" -gt 0 ]; then
-		dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
-			"execute if entity @a run say Server update in $warning_minutes minutes. Please move to a safe place. Allow about 200-300 seconds for the update, then join again." \
-			|| graceful_failure "Could not send the restart warning"
-		sleep "$((warning_minutes * 60))"
+		players=$(online_player_count) || players=unknown
+		if [ "$players" != 0 ]; then
+			dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
+				"execute if entity @a run say Server update in $warning_minutes minutes. Please move to a safe place. Allow about 200-300 seconds for the update, then join again." \
+				|| graceful_failure "Could not send the restart warning"
+			deadline=$(( $(date +%s) + warning_minutes * 60 ))
+			while [ "$(date +%s)" -lt "$deadline" ]; do
+				players=$(online_player_count) || players=unknown
+				[ "$players" != 0 ] || break
+				sleep 1
+			done
+		fi
 	fi
 	dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
 		"execute if entity @a run say Server update starting now. Please join again in about 200-300 seconds. If it takes more than 10 minutes, contact the committee." \

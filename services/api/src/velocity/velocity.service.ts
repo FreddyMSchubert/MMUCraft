@@ -266,6 +266,10 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		};
 	}
 
+	onlinePlayerCount() {
+		return { playerCount: this.proxyIsOnline() ? this.livePlayers.length : null };
+	}
+
 	setMaintenanceMode(enabledInput: unknown) {
 		if (typeof enabledInput !== 'boolean')
 			throw new BadRequestException('enabled must be a boolean');

@@ -49,6 +49,12 @@ export class VelocityAdminController {
 export class VelocityInternalController {
 	constructor(private readonly velocity: VelocityService) {}
 
+	@Get('player-count')
+	playerCount(@Headers('authorization') authorization: string | undefined) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		return this.velocity.onlinePlayerCount();
+	}
+
 	@Post('access')
 	access(
 		@Headers('authorization') authorization: string | undefined,

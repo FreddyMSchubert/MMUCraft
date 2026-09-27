@@ -1,7 +1,10 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,23 +25,29 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.TickCallbackC
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksCharm, TickCallbackCharm
 {
-    private static final int MIN_SEARCH_TICKS = 5 * 20;
     private static final int MAX_SEARCH_TICKS = 15 * 20;
+    private static final int NORMAL_RADIUS = 7_500;
+    private static final int MEMBER_RADIUS = 15_000;
     private static final String SEARCH_FAILED = "The Potion of Displacement could not find a safe destination. Try again.";
-    private static final TicketType SEARCH_TICKET = new TicketType(MAX_SEARCH_TICKS + 20L, TicketType.FLAG_LOADING);
+    private static final TicketType SEARCH_TICKET = new TicketType(TicketType.NO_TIMEOUT, TicketType.FLAG_LOADING);
     private static final Map<UUID, SearchSession> SEARCHES = new HashMap<>();
+    private static final Map<PoolKey, DestinationPool> POOLS = new HashMap<>();
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {
         SearchSession session = SEARCHES.get(player.getUUID());
-        if (session != null && session.level != level) {
+        if (session != null && (session.key.level != level
+                || !session.key.center.equals(level.getRespawnData().globalPos().pos()))) {
             stopSearch(player.getUUID());
             session = null;
         }
@@ -51,12 +60,12 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
                 return;
             }
 
-            int radius = PlayerStatsSync.isMember(player) ? 15_000 : 7_500;
-            session = new SearchSession(level, player.blockPosition(), radius);
+            int radius = PlayerStatsSync.isMember(player) ? MEMBER_RADIUS : NORMAL_RADIUS;
+            PoolKey key = new PoolKey(level, radius, level.getRespawnData().globalPos().pos());
+            POOLS.computeIfAbsent(key, PotionOfDisplacementCharm::loadPool);
+            session = new SearchSession(key);
             SEARCHES.put(player.getUUID(), session);
         }
-
-        advanceSearch(session);
     }
 
     @Override
@@ -70,20 +79,14 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         SearchSession session = SEARCHES.get(player.getUUID());
         if (session == null) return false;
 
-        int searchTicks = searchTicks(session);
-        return searchTicks >= MAX_SEARCH_TICKS
-                || (searchTicks >= MIN_SEARCH_TICKS && session.destination != null);
+        return hasReadyDestination(session.key) || searchTicks(session) >= MAX_SEARCH_TICKS;
     }
 
     @Override
     public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
         SearchSession session = SEARCHES.get(player.getUUID());
-        if (session != null && session.destination == null) {
-            advanceSearch(session);
-        }
-
-        if (session == null || session.destination == null) {
+        if (session == null) {
             player.sendSystemMessage(Component.literal(SEARCH_FAILED));
             stopSearch(player.getUUID());
             return false;
@@ -96,17 +99,34 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             return false;
         }
 
-        BlockPos destination = session.destination;
-        boolean teleported = TeleportPotionUtils.teleportWithCompanions(
-                "displacement",
-                player,
-                level,
-                destination.getX() + 0.5D,
-                destination.getY(),
-                destination.getZ() + 0.5D,
-                player.getYRot(),
-                player.getXRot()
-        );
+        PoolEntry entry = takeReadyDestination(session.key);
+        if (entry == null) {
+            player.sendSystemMessage(Component.literal(SEARCH_FAILED));
+            stopSearch(player.getUUID());
+            return false;
+        }
+
+        BlockPos destination = entry.destination;
+        boolean teleported;
+        try {
+            teleported = TeleportPotionUtils.teleportWithCompanions(
+                    "displacement",
+                    player,
+                    level,
+                    destination.getX() + 0.5D,
+                    destination.getY(),
+                    destination.getZ() + 0.5D,
+                    player.getYRot(),
+                    player.getXRot()
+            );
+        } finally {
+            DestinationPool pool = POOLS.get(session.key);
+            if (pool != null) {
+                pool.entries.remove(entry);
+                persistPool(session.key, pool);
+            }
+            releaseEntry(session.key, entry);
+        }
 
         if (!teleported) {
             player.sendSystemMessage(Component.literal("The Potion of Displacement could not teleport you. Try again."));
@@ -127,8 +147,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
 
         boolean stillDrinkingDisplacementPotion = player.isUsingItem()
                 && CharmsManager.hasAbility(player.getUseItem(), PotionOfDisplacementCharm.class);
-        if (session.level != level || !stillDrinkingDisplacementPotion) {
-            player.sendSystemMessage(Component.literal("The Potion of Displacement was interrupted. Try again."));
+        if (session.key.level != level || !stillDrinkingDisplacementPotion) {
             stopSearch(player.getUUID());
         }
     }
@@ -138,58 +157,191 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     }
 
     public static void clearSearches() {
-        for (UUID playerId : SEARCHES.keySet().toArray(UUID[]::new)) {
-            stopSearch(playerId);
+        SEARCHES.clear();
+        for (Map.Entry<PoolKey, DestinationPool> pool : POOLS.entrySet()) {
+            for (PoolEntry entry : pool.getValue().entries) {
+                releaseEntry(pool.getKey(), entry);
+            }
+        }
+        POOLS.clear();
+    }
+
+    public static void tickPools(ServerLevel level) {
+        BlockPos center = level.getRespawnData().globalPos().pos();
+        POOLS.computeIfAbsent(new PoolKey(level, NORMAL_RADIUS, center), PotionOfDisplacementCharm::loadPool);
+        POOLS.computeIfAbsent(new PoolKey(level, MEMBER_RADIUS, center), PotionOfDisplacementCharm::loadPool);
+        Iterator<Map.Entry<PoolKey, DestinationPool>> pools = POOLS.entrySet().iterator();
+        while (pools.hasNext()) {
+            Map.Entry<PoolKey, DestinationPool> pool = pools.next();
+            PoolKey key = pool.getKey();
+            if (key.level != level) continue;
+            if (!key.center.equals(center)) {
+                for (PoolEntry entry : pool.getValue().entries) releaseEntry(key, entry);
+                pools.remove();
+                continue;
+            }
+            advancePool(key, pool.getValue());
         }
     }
 
-    private static void advanceSearch(SearchSession session) {
-        if (session.destination != null) return;
+    private static void advancePool(PoolKey key, DestinationPool pool) {
+        boolean changed = false;
+        Iterator<PoolEntry> entries = pool.entries.iterator();
+        while (entries.hasNext()) {
+            PoolEntry entry = entries.next();
+            if (entry.destination != null || entry.inUse || !entry.loading.isDone()) continue;
 
-        if (session.candidate == null) {
-            session.candidate = requestCandidate(session);
-            return;
+            if (!entry.loading.isCompletedExceptionally()) {
+                Object result = entry.loading.getNow(null);
+                if (!(result instanceof ChunkResult<?> chunkResult) || chunkResult.isSuccess()) {
+                    LevelChunk chunk = key.level.getChunkSource()
+                            .getChunkNow(entry.chunkPos.x(), entry.chunkPos.z());
+                    if (chunk == null) continue;
+                    entry.destination = possibleSpawnPos(entry.x, entry.z, key.level, chunk);
+                }
+            }
+            if (entry.destination != null) {
+                pool.failures = 0;
+                pool.retryAt = 0;
+            } else {
+                releaseEntry(key, entry);
+                entries.remove();
+                changed = true;
+                failedCandidate(key, pool);
+            }
         }
 
-        Candidate candidate = session.candidate;
-        if (!candidate.loading().isDone()) return;
-
-        if (candidate.loading().isCompletedExceptionally()) {
-            releaseCandidate(session);
+        if (key.level.getGameTime() < pool.retryAt) {
+            if (changed) persistPool(key, pool);
             return;
         }
-
-        Object loadingResult = candidate.loading().getNow(null);
-        if (loadingResult instanceof ChunkResult<?> chunkResult && !chunkResult.isSuccess()) {
-            releaseCandidate(session);
-            return;
+        while (pool.entries.size() < 3) {
+            PoolEntry entry = requestCandidate(key);
+            if (entry == null) {
+                failedCandidate(key, pool);
+                break;
+            }
+            pool.entries.add(entry);
+            changed = true;
         }
+        if (changed) persistPool(key, pool);
+    }
 
-        // Generation completes against the updating chunk map. Keep the ticket until the chunk reaches the
-        // visible map instead of treating this brief gap as a failed candidate.
-        LevelChunk chunk = session.level.getChunkSource()
-                .getChunkNow(candidate.chunkPos().x(), candidate.chunkPos().z());
-        if (chunk == null) return;
-
-        session.destination = possibleSpawnPos(candidate.x(), candidate.z(), session.level, chunk);
-        if (session.destination == null) {
-            releaseCandidate(session);
+    private static void failedCandidate(PoolKey key, DestinationPool pool) {
+        if (++pool.failures >= 16) {
+            pool.failures = 0;
+            pool.retryAt = key.level.getGameTime() + 20 * 60;
         }
     }
 
-    private static Candidate requestCandidate(SearchSession session) {
-        BlockPos candidatePos = randomCandidatePosition(session.level, session.origin, session.radius);
+    private static boolean hasReadyDestination(PoolKey key) {
+        return readyDestination(key, false) != null;
+    }
+
+    private static PoolEntry takeReadyDestination(PoolKey key) {
+        return readyDestination(key, true);
+    }
+
+    private static PoolEntry readyDestination(PoolKey key, boolean reserve) {
+        DestinationPool pool = POOLS.get(key);
+        if (pool == null) return null;
+        Iterator<PoolEntry> entries = pool.entries.iterator();
+        while (entries.hasNext()) {
+            PoolEntry entry = entries.next();
+            if (entry.destination == null || entry.inUse) continue;
+            LevelChunk chunk = key.level.getChunkSource().getChunkNow(entry.chunkPos.x(), entry.chunkPos.z());
+            BlockPos destination = chunk == null ? null : possibleSpawnPos(entry.x, entry.z, key.level, chunk);
+            if (destination == null || !key.level.getWorldBorder().isWithinBounds(destination)) {
+                entries.remove();
+                releaseEntry(key, entry);
+                persistPool(key, pool);
+                failedCandidate(key, pool);
+                continue;
+            }
+            entry.destination = destination;
+            if (reserve) entry.inUse = true;
+            return entry;
+        }
+        return null;
+    }
+
+    private static PoolEntry requestCandidate(PoolKey key) {
+        BlockPos candidatePos = randomCandidatePosition(key.level, key.center, key.radius);
         if (candidatePos == null) return null;
+        return requestAt(key, candidatePos.getX(), candidatePos.getZ());
+    }
 
-        ChunkPos chunkPos = new ChunkPos(candidatePos.getX() >> 4, candidatePos.getZ() >> 4);
+    private static PoolEntry requestAt(PoolKey key, int x, int z) {
+        ChunkPos chunkPos = new ChunkPos(x >> 4, z >> 4);
+        for (Map.Entry<PoolKey, DestinationPool> pool : POOLS.entrySet()) {
+            if (pool.getKey().level != key.level) continue;
+            if (pool.getValue().entries.stream().anyMatch(entry -> entry.chunkPos.equals(chunkPos))) return null;
+        }
         try {
-            CompletableFuture<?> loading = session.level.getChunkSource()
+            CompletableFuture<?> loading = key.level.getChunkSource()
                     .addTicketAndLoadWithRadius(SEARCH_TICKET, chunkPos, 0);
-            return new Candidate(candidatePos.getX(), candidatePos.getZ(), chunkPos, loading);
+            return new PoolEntry(x, z, chunkPos, loading);
         } catch (RuntimeException ignored) {
-            session.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, chunkPos, 0);
+            key.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, chunkPos, 0);
             return null;
         }
+    }
+
+    private static DestinationPool loadPool(PoolKey key) {
+        DestinationPool pool = new DestinationPool();
+        CompoundTag data = key.level.getServer().getCommandStorage().get(storageId(key));
+        if (data.getInt("centerX").orElse(Integer.MIN_VALUE) != key.center.getX()
+                || data.getInt("centerZ").orElse(Integer.MIN_VALUE) != key.center.getZ()) return pool;
+
+        ListTag saved = data.getListOrEmpty("candidates");
+        boolean changed = false;
+        for (int index = 0; index < saved.size() && pool.entries.size() < 3; index++) {
+            CompoundTag candidate = saved.getCompoundOrEmpty(index);
+            Integer x = candidate.getInt("x").orElse(null);
+            Integer z = candidate.getInt("z").orElse(null);
+            if (x == null || z == null) {
+                changed = true;
+                continue;
+            }
+            long dx = (long) x - key.center.getX();
+            long dz = (long) z - key.center.getZ();
+            ChunkPos chunkPos = new ChunkPos(x >> 4, z >> 4);
+            if (dx * dx + dz * dz > (long) key.radius * key.radius
+                    || !key.level.getWorldBorder().isWithinBounds(x + 0.5D, z + 0.5D)
+                    || pool.entries.stream().anyMatch(entry -> entry.chunkPos.equals(chunkPos))) {
+                changed = true;
+                continue;
+            }
+            PoolEntry entry = requestAt(key, x, z);
+            if (entry == null) {
+                changed = true;
+                continue;
+            }
+            pool.entries.add(entry);
+        }
+        if (changed || saved.size() > pool.entries.size()) persistPool(key, pool);
+        return pool;
+    }
+
+    private static void persistPool(PoolKey key, DestinationPool pool) {
+        CompoundTag data = new CompoundTag();
+        data.putInt("centerX", key.center.getX());
+        data.putInt("centerZ", key.center.getZ());
+        ListTag candidates = new ListTag();
+        for (PoolEntry entry : pool.entries) {
+            CompoundTag candidate = new CompoundTag();
+            candidate.putInt("x", entry.x);
+            candidate.putInt("z", entry.z);
+            candidates.add(candidate);
+        }
+        data.put("candidates", candidates);
+        key.level.getServer().getCommandStorage().set(storageId(key), data);
+    }
+
+    private static Identifier storageId(PoolKey key) {
+        Identifier dimension = key.level.dimension().identifier();
+        return Identifier.fromNamespaceAndPath("mainmod",
+                "displacement_pool/" + dimension.getNamespace() + "/" + dimension.getPath() + "/" + key.radius);
     }
 
     private static BlockPos randomCandidatePosition(ServerLevel level, BlockPos origin, int radius) {
@@ -261,14 +413,11 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     }
 
     private static void stopSearch(UUID playerId) {
-        SearchSession session = SEARCHES.remove(playerId);
-        if (session != null) releaseCandidate(session);
+        SEARCHES.remove(playerId);
     }
 
-    private static void releaseCandidate(SearchSession session) {
-        if (session.candidate == null) return;
-        session.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, session.candidate.chunkPos(), 0);
-        session.candidate = null;
+    private static void releaseEntry(PoolKey key, PoolEntry entry) {
+        key.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, entry.chunkPos, 0);
     }
 
     private static int searchTicks(SearchSession session) {
@@ -276,20 +425,36 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         return (int) Math.max(0L, Math.min(Integer.MAX_VALUE, ticks));
     }
 
-    private record Candidate(int x, int z, ChunkPos chunkPos, CompletableFuture<?> loading) {}
+    private record PoolKey(ServerLevel level, int radius, BlockPos center) {}
+
+    private static final class DestinationPool {
+        private final List<PoolEntry> entries = new ArrayList<>();
+        private int failures;
+        private long retryAt;
+    }
+
+    private static final class PoolEntry {
+        private final int x;
+        private final int z;
+        private final ChunkPos chunkPos;
+        private final CompletableFuture<?> loading;
+        private BlockPos destination;
+        private boolean inUse;
+
+        private PoolEntry(int x, int z, ChunkPos chunkPos, CompletableFuture<?> loading) {
+            this.x = x;
+            this.z = z;
+            this.chunkPos = chunkPos;
+            this.loading = loading;
+        }
+    }
 
     private static final class SearchSession {
-        private final ServerLevel level;
-        private final BlockPos origin;
-        private final int radius;
+        private final PoolKey key;
         private final long startedAtNanos;
-        private Candidate candidate;
-        private BlockPos destination;
 
-        private SearchSession(ServerLevel level, BlockPos origin, int radius) {
-            this.level = level;
-            this.origin = origin;
-            this.radius = radius;
+        private SearchSession(PoolKey key) {
+            this.key = key;
             this.startedAtNanos = System.nanoTime();
         }
     }

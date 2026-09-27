@@ -98,7 +98,9 @@ Grafana contains the Statistics, Gameplay Admin, and Technical dashboards. The T
 
 ## Update sequence
 
-Images are pulled and checked before the warning period. The script sends the warning only if the main server has players, then writes `data/velocity/deployment.properties`. The file contains `updating=true`, a start time in Unix seconds, and a unique deployment ID. The script writes a temporary file and renames it so Velocity cannot read a partial update.
+Images are pulled and checked before the warning period. The script checks the player count reported by Velocity. If no players are online, it starts the update at once. If players leave during the warning period, it starts the update when the count reaches zero. If the count is unavailable, it keeps the warning period. The script then writes `data/velocity/deployment.properties`. The file contains `updating=true`, a start time in Unix seconds, and a unique deployment ID. The script writes a temporary file and renames it so Velocity cannot read a partial update.
+
+The first deployment that adds the player count endpoint uses the warning period because the current API does not yet provide the count.
 
 Velocity reads this file without the API. It blocks new joins and disconnects connected players with an update message. It writes `deployment-drained` only after all proxy connections have closed. This file contains the deployment ID, whether players were connected, and whether an open route is ready. The deployment script rejects an acknowledgement from a different deployment.
 

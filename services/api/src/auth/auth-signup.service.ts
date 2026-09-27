@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { LaunchSettingsService } from '../launch/launch-settings.service';
 import {
+	ADMIN_SIGNUP_EMAIL,
 	createAuthCode,
 	hashSecret,
 	isAllowedEmail,
@@ -50,7 +51,11 @@ export class AuthSignupService {
 		) {
 			throw new BadRequestException('Invalid referral link');
 		}
-		if (!this.launch.hasLaunched() && !isPrelaunchSignupAllowed(email))
+		if (
+			!this.launch.hasLaunched() &&
+			email !== ADMIN_SIGNUP_EMAIL &&
+			!isPrelaunchSignupAllowed(email)
+		)
 			throw new ForbiddenException('Signups will open when the server launches');
 
 		if (!isAllowedEmail(email) && !this.userLookup.isEmailWhitelisted(email)) {

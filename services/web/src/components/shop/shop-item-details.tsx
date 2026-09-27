@@ -46,10 +46,7 @@ export function FilterRow({
 							onSelect(option.value);
 						}}
 					>
-						{membershipLocked &&
-							['dyeable', 'animated', 'members-only'].includes(option.value) && (
-								<ShopLock />
-							)}
+						{membershipLocked && option.value === 'members-only' && <ShopLock />}
 						{option.value === 'animated' ? <AnimatedLabel /> : option.label}
 						{option.value === 'emissive' && <EmissiveSparks />}
 					</button>
@@ -456,19 +453,16 @@ function ItemBadges({ item, drop }: { item: ShopItem; drop: DropInfo | null }) {
 	const tags = [
 		item.dyeable ? (
 			<span key="dyeable" className="shopTag dyeable">
-				{item.membershipLocked && <ShopLock />}
 				Dyeable
 			</span>
 		) : null,
 		item.animated ? (
 			<span key="animated" className="shopTag animated">
-				{item.membershipLocked && <ShopLock />}
 				<AnimatedLabel />
 			</span>
 		) : null,
 		item.luminous ? (
 			<span key="luminous" className="shopTag luminous">
-				{item.membershipLocked && <ShopLock />}
 				Luminous
 			</span>
 		) : null,
@@ -478,7 +472,6 @@ function ItemBadges({ item, drop }: { item: ShopItem; drop: DropInfo | null }) {
 				className="shopTag emissive"
 				title="Emits particles when worn or placed"
 			>
-				{item.membershipLocked && <ShopLock />}
 				Emissive
 				<EmissiveSparks />
 			</span>

@@ -70,7 +70,7 @@ export class ShopPurchasesService {
 			dealDate,
 			shoppingSunday: isShoppingSunday(dealDate),
 			items: items
-				.filter((item) => isVisibleInShop(item, unlockedIds))
+				.filter((item) => isVisibleInShop(item, unlockedIds, enabledToggles))
 				.map((item) => {
 					const limitedPurchaseCount = limitedPurchaseCounts.get(item.id) ?? 0;
 					const dailyDiscount = dailyDealIds.has(item.id)
@@ -140,9 +140,10 @@ export class ShopPurchasesService {
 
 		const catalog = this.itemCatalog.load();
 		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
+		const enabledToggles = this.featureToggles.enabledKeys();
 		const visibleIds = new Set(
 			catalog.items
-				.filter((item) => isVisibleInShop(item, unlockedIds))
+				.filter((item) => isVisibleInShop(item, unlockedIds, enabledToggles))
 				.map((item) => item.id),
 		);
 		return {
@@ -365,12 +366,19 @@ function hasReachedLimitedPurchaseDailyLimit(itemId: string, purchaseCount: numb
 	return dailyLimit !== null && purchaseCount >= dailyLimit;
 }
 
-function isVisibleInShop(item: CatalogItem, unlockedIds: Set<string>): boolean {
-	return item.type !== 'charm' && item.type !== 'cosmetic' ? true : unlockedIds.has(item.id);
+function isVisibleInShop(
+	item: CatalogItem,
+	unlockedIds: Set<string>,
+	enabledToggles: Set<string>,
+): boolean {
+	return (
+		(!item.gameplayToggle || enabledToggles.has(item.gameplayToggle)) &&
+		isUnlocked(item, unlockedIds)
+	);
 }
 
 function isUnlocked(item: CatalogItem, unlockedIds: Set<string>): boolean {
-	return isVisibleInShop(item, unlockedIds);
+	return item.type !== 'charm' && item.type !== 'cosmetic' ? true : unlockedIds.has(item.id);
 }
 
 function unavailablePurchaseMessage(

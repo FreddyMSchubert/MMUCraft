@@ -1,6 +1,8 @@
 import { createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
 import { isIP } from 'node:net';
 
+export const ADMIN_SIGNUP_EMAIL = 'mmuminecraftsociety@gmail.com';
+
 export const AUTH_CODE_ITEMS = [
 	'Apple',
 	'Coal',
@@ -22,6 +24,7 @@ export function normalizeEmail(email: string): string {
 
 export function isAllowedEmail(email: string): boolean {
 	const normalized = normalizeEmail(email);
+	if (normalized === ADMIN_SIGNUP_EMAIL) return true;
 	const parts = parseEmailParts(normalized);
 	if (!parts) return false;
 

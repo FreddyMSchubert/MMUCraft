@@ -29,7 +29,7 @@
 	overflow: hidden;
 	background: #000;
 	cursor: grab;
-	perspective: 58vmax;
+	perspective: 42vmax;
 	perspective-origin: 50% 50%;
 	touch-action: none;
 }
@@ -42,11 +42,11 @@
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 80vmax;
-	height: 80vmax;
-	margin: -40vmax 0 0 -40vmax;
+	width: 100vmax;
+	height: 100vmax;
+	margin: -50vmax 0 0 -50vmax;
 	transform-style: preserve-3d;
-	transform: translateZ(58vmax) rotateX(-6deg);
+	transform: translateZ(42vmax) rotateX(-6deg);
 	will-change: transform;
 }
 
@@ -62,22 +62,22 @@
 }
 
 .panoramaFace0 {
-	transform: translateZ(-40vmax);
+	transform: translateZ(-50vmax);
 }
 .panoramaFace1 {
-	transform: translateX(calc(40vmax - 1px)) rotateY(-90deg);
+	transform: translateX(50vmax) rotateY(-90deg);
 }
 .panoramaFace2 {
-	transform: translateZ(40vmax) rotateY(180deg);
+	transform: translateZ(50vmax) rotateY(180deg);
 }
 .panoramaFace3 {
-	transform: translateX(calc(-40vmax + 1px)) rotateY(90deg);
+	transform: translateX(-50vmax) rotateY(90deg);
 }
 .panoramaFace4 {
-	transform: translateY(-40vmax) rotateX(-90deg);
+	transform: translateY(-50vmax) rotateX(-90deg);
 }
 .panoramaFace5 {
-	transform: translateY(40vmax) rotateX(90deg);
+	transform: translateY(50vmax) rotateX(90deg);
 }
 
 .minecraftShade {

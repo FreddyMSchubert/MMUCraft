@@ -162,7 +162,7 @@ function PanoramaBackground({ panoramaId }: { panoramaId: string }) {
 		const bounds = event.currentTarget.getBoundingClientRect();
 		const x = event.clientX - bounds.left - bounds.width / 2;
 		const y = bounds.top + bounds.height / 2 - event.clientY;
-		const z = -Math.max(window.innerWidth, window.innerHeight) * 0.58;
+		const z = -Math.max(window.innerWidth, window.innerHeight) * 0.42;
 		const length = Math.hypot(x, y, z);
 		return { x: x / length, y: y / length, z: z / length };
 	};
@@ -178,7 +178,7 @@ function PanoramaBackground({ panoramaId }: { panoramaId: string }) {
 					(current.yaw - Math.min(now - previous, 100) * (Math.PI / 60000)) %
 					(Math.PI * 2);
 			if (cube.current)
-				cube.current.style.transform = `translateZ(58vmax) rotateX(${current.pitch}rad) rotateY(${-current.yaw}rad)`;
+				cube.current.style.transform = `translateZ(42vmax) rotateX(${current.pitch}rad) rotateY(${-current.yaw}rad)`;
 			previous = now;
 			frame = requestAnimationFrame(rotate);
 		};

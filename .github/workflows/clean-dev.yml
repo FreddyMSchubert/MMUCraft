@@ -1,0 +1,66 @@
+name: clean-dev
+
+on:
+    workflow_dispatch:
+        inputs:
+            spawn_x:
+                description: Main-world spawn X block coordinate
+                required: true
+                type: number
+            spawn_z:
+                description: Main-world spawn Z block coordinate
+                required: true
+                type: number
+
+permissions:
+    contents: read
+
+concurrency:
+    group: deploy-dev
+    cancel-in-progress: false
+
+jobs:
+    clean:
+        runs-on: ubuntu-24.04
+        environment: dev
+        steps:
+            - name: Checkout cleanup script
+              uses: actions/checkout@v6
+              with:
+                  persist-credentials: false
+
+            - name: Configure SSH
+              env:
+                  DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+                  DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+              run: |
+                  test -n "$DEPLOY_SSH_KEY"
+                  test -n "$DEPLOY_KNOWN_HOSTS"
+                  install -d -m 700 ~/.ssh
+                  printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+                  printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+                  chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+
+            - name: Clean dev server
+              shell: bash
+              env:
+                  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+                  DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+                  DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+                  DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/mmucraft' }}
+                  SPAWN_X: ${{ inputs.spawn_x }}
+                  SPAWN_Z: ${{ inputs.spawn_z }}
+              run: |
+                  test -n "$DEPLOY_HOST"
+                  test -n "$DEPLOY_USER"
+                  [[ "$DEPLOY_PORT" =~ ^[0-9]{1,5}$ ]]
+                  [[ "$DEPLOY_PATH" =~ ^/[A-Za-z0-9._/-]+$ ]]
+                  [[ "$DEPLOY_PATH" != / && "$DEPLOY_PATH" != *..* ]]
+                  [[ "$SPAWN_X" =~ ^(0|-?[1-9][0-9]*)$ && "$SPAWN_Z" =~ ^(0|-?[1-9][0-9]*)$ ]]
+                  [[ ${#SPAWN_X} -le 9 && ${#SPAWN_Z} -le 9 ]]
+                  ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null
+                  ssh-keygen -lf ~/.ssh/known_hosts >/dev/null
+                  known_host="$DEPLOY_HOST"
+                  [[ "$DEPLOY_PORT" == 22 ]] || known_host="[$DEPLOY_HOST]:$DEPLOY_PORT"
+                  ssh-keygen -F "$known_host" -f ~/.ssh/known_hosts >/dev/null
+                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && bash -s -- '$SPAWN_X' '$SPAWN_Z'" < deploy/clean-dev.sh

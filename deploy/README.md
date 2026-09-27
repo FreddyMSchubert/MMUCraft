@@ -66,6 +66,10 @@ The restored tree contains the original absolute container paths beneath `restor
 
 When manually copying the on-device repository elsewhere, stop the backup service first, copy the complete `backups/restic` directory, and then start the service again. Minecraft can remain online during that repository copy. This prevents the external copy from observing a Restic write halfway through.
 
+## Clear development server storage
+
+Run the `clean-dev` GitHub Actions workflow and enter the spawn block coordinates for the main world. The workflow always uses the dev server. You can also run `bash clean-dev.sh SPAWN_X SPAWN_Z` from this deployment directory. The command stops the dev stack and deletes local backups, the event world, old logs, monitoring volumes, and unused Docker images and build cache. It keeps the API database. It keeps each main-world region file that overlaps one configured view distance from spawn. It uses region filenames and does not read world file contents. It also keeps world metadata and player data. The command refuses to run unless `.release.env` selects the dev overlay. Deploy again to start the stack.
+
 ## Minecraft network
 
 Velocity owns the public Minecraft port. Backend servers have no published port. They use offline mode because Velocity authenticates the Mojang account. FabricProxy-Lite verifies the forwarding secret and restores the authenticated UUID, username, skin, and client address on each Fabric backend.

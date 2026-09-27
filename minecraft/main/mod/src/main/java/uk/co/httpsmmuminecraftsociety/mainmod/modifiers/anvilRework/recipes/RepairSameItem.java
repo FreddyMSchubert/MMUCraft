@@ -2,6 +2,9 @@ package uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
@@ -23,23 +26,36 @@ public final class RepairSameItem implements AnvilRecipe
     public AnvilLogic.Outcome apply(ServerPlayer player, ItemStack left, ItemStack right, @Nullable String name)
     {
         ItemStack result = left.copy();
-        boolean changed = false;
+        AnvilUtils.MergeInfo merge = AnvilUtils.mergeEnchantments(result, left, right, false);
+        boolean changed = merge.changed();
+
+        ItemEnchantments resultEnchants = EnchantmentHelper.getEnchantmentsForCrafting(result);
+        ItemEnchantments.Mutable retained = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(right));
+        retained.removeIf(enchantment -> resultEnchants.getLevel(enchantment) > 0
+                || resultEnchants.keySet().stream().noneMatch(existing -> !Enchantment.areCompatible(existing, enchantment)));
+        ItemEnchantments retainedEnchants = retained.toImmutable();
+        ItemStack rightRemainder = ItemStack.EMPTY;
+        if (!retainedEnchants.isEmpty()) {
+            rightRemainder = right.copy();
+            EnchantmentHelper.setEnchantments(rightRemainder, retainedEnchants);
+        }
 
         if (result.isDamageableItem()) {
             int max = result.getMaxDamage();
             int leftRemaining = Math.max(0, max - left.getDamageValue());
-            int rightRemaining = Math.max(0, max - right.getDamageValue());
-            int mergedRemaining = Math.min(max, leftRemaining + rightRemaining);
-            int newDamage = max - mergedRemaining;
+            int rightRemaining = Math.max(0, right.getMaxDamage() - right.getDamageValue());
+            int available = rightRemainder.isEmpty() ? rightRemaining : Math.max(0, rightRemaining - 1);
+            int transferred = Math.min(max - leftRemaining, available);
+            int newDamage = max - leftRemaining - transferred;
 
             if (newDamage != result.getDamageValue()) {
                 result.setDamageValue(newDamage);
                 changed = true;
             }
+            if (!rightRemainder.isEmpty() && transferred > 0) {
+                rightRemainder.setDamageValue(right.getDamageValue() + transferred);
+            }
         }
-
-        AnvilUtils.MergeInfo merge = AnvilUtils.mergeEnchantments(result, left, right, false);
-        changed |= merge.changed();
 
         changed |= AnvilUtils.applyRename(result, name);
 
@@ -52,7 +68,7 @@ public final class RepairSameItem implements AnvilRecipe
         return new AnvilLogic.Outcome(
                 merge.cost(),
                 ItemStack.EMPTY,
-                ItemStack.EMPTY,
+                rightRemainder,
                 result
         );
     }

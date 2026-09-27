@@ -91,6 +91,7 @@ public final class RepairMaterial implements AnvilRecipe
                 || stack.is(Items.NETHERITE_LEGGINGS)
                 || stack.is(Items.NETHERITE_BOOTS)
                 || stack.is(Items.NETHERITE_SWORD)
+                || stack.is(Items.NETHERITE_SPEAR)
                 || stack.is(Items.NETHERITE_PICKAXE)
                 || stack.is(Items.NETHERITE_AXE)
                 || stack.is(Items.NETHERITE_SHOVEL)

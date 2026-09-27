@@ -56,19 +56,25 @@ public final class PlayerDisguises {
             return;
         }
         State current = ACTIVE.get(player.getUUID());
-        if (current != null && current.identity.equals(identity)) {
-            current.remaining = Math.max(current.remaining, ticks);
-            return;
+        if (current != null && current.identity.equals(identity) && current.view != null) {
+            current.remaining = ticks;
+        } else {
+            State state = new State(identity, ticks);
+            ACTIVE.put(player.getUUID(), state);
+            PENDING.remove(player.getUUID());
+            if (current != null) {
+                removeView(current);
+                state.team = current.team;
+                releaseTeam(current);
+            }
+            create(player, state);
+            if (state.view != null) broadcastEquipment(player, true);
+            current = state;
         }
-        clear(player);
-        State state = new State(identity, ticks);
-        ACTIVE.put(player.getUUID(), state);
-        create(player, state);
-        if (state.view != null) {
-            broadcastEquipment(player, true);
+        if (current.view != null) {
             player.sendSystemMessage(Component.literal("You are now visible as "
                     + profile.name()
-                    + " to others. Only you can still see your true form."));
+                    + " to others for " + ticks / 1200 + " minutes. Only you can still see your true form."));
         }
     }
 
@@ -81,8 +87,13 @@ public final class PlayerDisguises {
                 state = ACTIVE.get(player.getUUID());
             }
             if (state == null) continue;
-            if (!FeatureToggles.isEnabled(FeatureToggles.CIRCUS) || --state.remaining <= 0) {
+            if (!FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) {
                 clear(player);
+                continue;
+            }
+            if (--state.remaining <= 0) {
+                clear(player);
+                player.sendSystemMessage(Component.literal("Your disguise has worn off. You are visible as yourself again."));
                 continue;
             }
             if (state.view == null || state.view.isRemoved() || state.view.level() != player.level()) {

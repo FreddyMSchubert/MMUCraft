@@ -235,6 +235,9 @@ velocity_image="${image_prefix}-velocity:${tag}"
 defaults=$(mktemp)
 docker run --rm --entrypoint cat "$mc_image" /defaults/server.properties > "$defaults"
 docker run --rm --entrypoint cat "$velocity_image" /config/velocity.toml > data/velocity/velocity.toml
+if [ "$target" = dev ]; then
+	sed -i 's|^motd = "\(.*\)"$|motd = "\1\\n<red><bold>DEVELOPMENT SERVER</bold></red>"|' data/velocity/velocity.toml
+fi
 chmod 600 data/velocity/velocity.toml
 
 server_properties=data/minecraft/server.properties

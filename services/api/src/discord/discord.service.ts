@@ -12,6 +12,8 @@ import {
 	type Role,
 	type Snowflake,
 } from 'discord.js';
+import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
+import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { OnlinePlayerPresenceService } from '../players/online-player-presence.service';
 
@@ -151,6 +153,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	constructor(
 		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly playerPresence: OnlinePlayerPresenceService,
+		private readonly identities: MinecraftIdentityService,
 	) {}
 
 	onApplicationBootstrap() {
@@ -220,6 +223,12 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 
 	async publish(event: MinecraftDiscordEvent) {
 		if (!this.webhook) return false;
+		if (
+			event.type !== 'chat' &&
+			event.minecraft_uuid &&
+			this.identities.findByUuid(event.minecraft_uuid)?.email === ADMIN_SIGNUP_EMAIL
+		)
+			return false;
 		const presentation = event.minecraft_uuid
 			? this.playerPresence.discordPresentation(event.minecraft_uuid)
 			: null;

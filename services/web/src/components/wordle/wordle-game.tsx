@@ -54,7 +54,7 @@ export function WordleGame({
 	splash: string;
 }) {
 	const fireworksStage = useRef<HTMLDivElement>(null);
-	const { showAlert } = useSiteAlert();
+	const { confirm, showAlert } = useSiteAlert();
 	const busy = useRef(false);
 	const puzzle = useMemo(() => {
 		const answer = getDailyAnswer(WORDLE_WORDS, dateKey);
@@ -203,7 +203,7 @@ export function WordleGame({
 	const keyClasses = getKeyboardClasses(guesses, hints);
 	const boardRows = getBoardRows(guesses, hints, puzzle.maxGuesses);
 
-	function useHint() {
+	async function useHint() {
 		if (gameOver || busy.current) return;
 		const next = createHint(puzzle.answer, guesses, hints);
 		if (!next) {
@@ -213,6 +213,15 @@ export function WordleGame({
 			});
 			return;
 		}
+		const hintNumber = hints.reduce((total, row) => total + row.cells.length, 0) + 1;
+		busy.current = true;
+		const confirmed = await confirm({
+			title: 'Use a hint?',
+			message: `This will be the ${formatOrdinal(hintNumber)} hint you've used.`,
+			confirmLabel: 'Use hint',
+		});
+		busy.current = false;
+		if (!confirmed) return;
 		setHints(next.hints);
 		setHintMessage(next.message);
 		persistGame(puzzle, guesses, next.hints, false);
@@ -403,6 +412,14 @@ function getWordleLayout(wordLength: number) {
 		boardWidth: `${boardWidth.toFixed(2)}rem`,
 		shellWidth: `${Math.min(58, Math.max(33.75, boardWidth + 2.25)).toFixed(2)}rem`,
 	};
+}
+
+function formatOrdinal(number: number) {
+	const suffix =
+		number % 100 >= 11 && number % 100 <= 13
+			? 'th'
+			: (({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[number % 10] ?? 'th');
+	return `${number}${suffix}`;
 }
 
 function getKeyboardClasses(guesses: WordleGuess[], hints: WordleHintRow[]) {

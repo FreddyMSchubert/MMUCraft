@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T20:49:18.071Z",
+  "generatedAt": "2026-09-28T22:22:31.459Z",
   "source": "User-provided panorama archive",
   "sets": [
     {
@@ -110,6 +110,43 @@
           "index": 5,
           "sha1": "e19ca39daa53aa6622aaf05a983beccdbf4ae494",
           "source": "panoramas-20260926T204818Z-1-001.zip"
+        }
+      ]
+    },
+    {
+      "id": "spawn",
+      "label": "Spawn",
+      "sourceVersion": "custom",
+      "faces": [
+        {
+          "index": 0,
+          "sha1": "a9512156d0b5dfe0615178a32cc362d5726000e0",
+          "source": "drive-download-20260928T222033Z-1-001.zip"
+        },
+        {
+          "index": 1,
+          "sha1": "e19475b63f198558001889acae7e73e2028caa00",
+          "source": "drive-download-20260928T222033Z-1-001.zip"
+        },
+        {
+          "index": 2,
+          "sha1": "3797401c7c263810ee0c5a3db812801859b0feb3",
+          "source": "drive-download-20260928T222033Z-1-001.zip"
+        },
+        {
+          "index": 3,
+          "sha1": "60404d6bb2b70185148b6224d88328132f7670fd",
+          "source": "drive-download-20260928T222033Z-1-001.zip"
+        },
+        {
+          "index": 4,
+          "sha1": "d6a0395ed0474b299b4fbd749ed7f3bb81423cb3",
+          "source": "drive-download-20260928T222033Z-1-001.zip"
+        },
+        {
+          "index": 5,
+          "sha1": "b0af002a2ea037d8d702b5a3c32f7d04538ea844",
+          "source": "drive-download-20260928T222033Z-1-001.zip"
         }
       ]
     }

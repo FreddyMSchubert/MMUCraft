@@ -98,7 +98,7 @@ export class ClaimMinecraftSynchronizationService implements OnModuleDestroy {
 							is_server_claim: claim.is_server === 1,
 							member_uuids:
 								claim.is_server === 1
-									? committeeUuids
+									? []
 									: (memberUuidsByClaim.get(claim.id) ?? []),
 						},
 					];

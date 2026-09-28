@@ -17,7 +17,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 public final class HopperFilterRecipe extends CustomRecipe {
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        return isCreation(input) || HopperFilter.canConfigure(input.items());
+        return CraftingPlayerContext.isCommitteeCrafting()
+                && (isCreation(input) || HopperFilter.canConfigure(input.items()));
     }
 
     @Override

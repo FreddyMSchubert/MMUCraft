@@ -92,6 +92,7 @@ export function ansiColor(color: string) {
 	const red = (value >> 16) & 0xff;
 	const green = (value >> 8) & 0xff;
 	const blue = value & 0xff;
+	if (Math.max(red, green, blue) < 96) return 37;
 	const choices: [number, number, number, number][] = [
 		[31, 255, 0, 0],
 		[33, 255, 255, 0],

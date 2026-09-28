@@ -65,8 +65,7 @@ public final class FakeShapelessCraftingRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        if (!gameplayToggle.isEmpty() && !FeatureToggles.isEnabled(gameplayToggle)
-                && !CraftingPlayerContext.isCommitteeCrafting()) {
+        if (!gameplayToggle.isEmpty() && !FeatureToggles.isEnabled(gameplayToggle)) {
             return false;
         }
         List<ItemStack> presentStacks = new ArrayList<>();

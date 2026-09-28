@@ -298,8 +298,8 @@ public final class ClaimsManager {
     }
 
     private static boolean canAccessClaim(ServerPlayer player, Claim claim) {
-        return claim.members().contains(player.getUUID())
-                || (!claim.serverClaim() && isOperator(player));
+        return (!claim.serverClaim() && claim.members().contains(player.getUUID()))
+                || isOperator(player);
     }
 
     private static UUID parseUuid(String value) {

@@ -496,7 +496,7 @@ function ItemBadges({ item, drop }: { item: ShopItem; drop: DropInfo | null }) {
 	return (
 		<div className="shopBadgeLines">
 			<div className="shopBadges">
-				<span>{formatOption(item.type)}</span>
+				{item.type !== 'generic' && <span>{formatOption(item.type)}</span>}
 				<span>{formatOption(item.rarity)}</span>
 			</div>
 			{tags.length > 0 && <div className="shopTagBadges">{tags}</div>}

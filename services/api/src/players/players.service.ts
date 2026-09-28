@@ -238,7 +238,7 @@ export class PlayersService {
 			minecraftUsername: user.minecraft_username,
 			avatarUrl: playerAvatarUrl(user.minecraft_uuid),
 			isCurrentUser: user.id === viewer.id,
-			canEditProfile: user.id === viewer.id || viewer.isCommittee,
+			canEditProfile: this.canEditProfile(viewer, user),
 			isMember: user.is_member === 1,
 			isCommittee: user.is_super_admin === 1 || user.is_committee === 1,
 			isRanked: user.email !== ADMIN_SIGNUP_EMAIL,
@@ -383,14 +383,20 @@ export class PlayersService {
 		if (!Number.isInteger(userId) || userId <= 0) {
 			throw new NotFoundException('Player not found');
 		}
-		if (userId !== viewer.id && !viewer.isCommittee) {
-			throw new ForbiddenException(
-				'Committee access is required to edit another player profile',
-			);
-		}
 		const target = this.findUserById(userId);
 		if (!target) throw new NotFoundException('Player not found');
+		if (!this.canEditProfile(viewer, target)) {
+			throw new ForbiddenException('You cannot edit this player profile');
+		}
 		return target;
+	}
+
+	private canEditProfile(viewer: AuthenticatedUser, target: UserRow) {
+		return (
+			target.id === viewer.id ||
+			viewer.isSuperAdmin ||
+			(viewer.isCommittee && target.is_committee !== 1 && target.is_super_admin !== 1)
+		);
 	}
 }
 

@@ -32,6 +32,7 @@ final class GameplayMoneyOperations {
                     .build();
         }
 
+
         if ("daily_completion".equals(request.getSource())) {
             DiscordBridge.playerEvent("dailies", player,
                     "completed all of today's dailies.");
@@ -71,6 +72,7 @@ final class GameplayMoneyOperations {
                     .build();
         }
 
+
         int balance = MoneyHelper.GetBalance(player);
         MoneyHelper.SendBalanceMessage(player, amount, "Redeemed gift code");
         return GrantGiftCodeMoneyResponse.newBuilder()
@@ -96,6 +98,7 @@ final class GameplayMoneyOperations {
             return GrantKnowledgeReadMoneyResponse.newBuilder().setGranted(false)
                     .setBalanceDabloons(MoneyHelper.GetBalance(player)).setMessage("Could not grant the Dabloons.").build();
         }
+
 
         int balance = MoneyHelper.GetBalance(player);
         MoneyHelper.SendBalanceMessage(player, amount, "Read knowledge");
@@ -130,6 +133,7 @@ final class GameplayMoneyOperations {
                     .setMessage("The responsible player needs " + price + " Dabloons for this invitation.")
                     .build();
         }
+
 
         int remaining = MoneyHelper.GetBalance(player);
         MoneyHelper.SendBalanceMessage(player, -price, "Purchased external player invitation");

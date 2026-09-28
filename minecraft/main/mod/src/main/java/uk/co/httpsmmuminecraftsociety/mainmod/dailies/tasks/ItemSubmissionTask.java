@@ -8,6 +8,7 @@ import net.minecraft.world.item.Items;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskDefinition;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTargetId;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 import java.util.function.BiPredicate;
 
@@ -85,6 +86,9 @@ public final class ItemSubmissionTask implements DailyTaskDefinition {
         remove(player, requiredCount);
         player.getInventory().setChanged();
         player.containerMenu.broadcastChanges();
+        MainMod.LOGGER.info("economy_daily_items_consumed at_unix_ms={} player_uuid={} username={} task_id={} item_id={} count={}",
+                System.currentTimeMillis(), player.getUUID(), player.getName().getString(),
+                id, itemId, requiredCount);
         return ClaimResult.success("Submitted " + requiredCount + " × " + itemName(), getReward(task));
     }
 

@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderChar
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 import java.util.ArrayList;
@@ -153,6 +154,7 @@ final class GameplayCharmOperations {
             return failedCharmUpgrade(player, "You need " + target.dabloons() + " Dabloons for this upgrade.");
         }
 
+
         NonNullList<ItemStack> backup = NonNullList.withSize(player.getInventory().getContainerSize(), ItemStack.EMPTY);
         for (int inventorySlot = 0; inventorySlot < backup.size(); inventorySlot++) {
             backup.set(inventorySlot, player.getInventory().getItem(inventorySlot).copy());
@@ -175,6 +177,10 @@ final class GameplayCharmOperations {
             restoreInventory(player, backup);
             throw exception;
         }
+
+        MainMod.LOGGER.info("economy_charm_upgrade at_unix_ms={} player_uuid={} username={} item_id={} level_before={} level_after={} price={}",
+                System.currentTimeMillis(), player.getUUID(), player.getName().getString(),
+                item.id(), stored.level(), targetLevel, target.dabloons());
 
         DiscordBridge.playerEvent("charm", player,
                 "upgraded " + item.title() + " to level " + targetLevel + ". [New effect: "

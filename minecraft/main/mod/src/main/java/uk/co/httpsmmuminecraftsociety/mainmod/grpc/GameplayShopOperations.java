@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 final class GameplayShopOperations {
@@ -68,14 +69,21 @@ final class GameplayShopOperations {
                     .build();
         }
 
+        String delivery = "none";
         if (!grantStack.isEmpty()) {
             player.getInventory().add(grantStack);
+            delivery = "inventory";
             if (!grantStack.isEmpty()) {
-                player.drop(grantStack, false, Prediction.SERVER_ONLY);
+                delivery = player.drop(grantStack, false, Prediction.SERVER_ONLY) == null ? "drop_failed" : "ground";
             }
             player.getInventory().setChanged();
             player.containerMenu.broadcastChanges();
         }
+
+        MainMod.LOGGER.info("economy_item_delivery at_unix_ms={} player_uuid={} username={} item_id={} kind={} delivery={} price={} balance={}",
+                System.currentTimeMillis(), player.getUUID(), player.getName().getString(), request.getItemId(),
+                request.getDeliveryKind(), delivery, price, MoneyHelper.GetBalance(player));
+
 
         UnlockBookLoot.restartDropTimer(player, request.getItemId());
 

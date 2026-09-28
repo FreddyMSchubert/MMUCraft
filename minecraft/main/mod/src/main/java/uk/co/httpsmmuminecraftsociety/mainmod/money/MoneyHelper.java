@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WalletCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
@@ -109,6 +110,7 @@ public final class MoneyHelper {
         }
 
         replaceMoney(player, balance - amount);
+        logMutation(player, "debit", amount, balance);
         return true;
     }
 
@@ -117,7 +119,9 @@ public final class MoneyHelper {
             return false;
         }
 
-        replaceMoney(player, GetBalance(player) + amount);
+        int before = GetBalance(player);
+        replaceMoney(player, before + amount);
+        logMutation(player, "credit", amount, before);
         MasteryAdvancements.checkBalance(player, GetBalance(player));
         return true;
     }
@@ -127,7 +131,9 @@ public final class MoneyHelper {
             return false;
         }
 
+        int before = GetBalance(player);
         replaceMoney(player, amount);
+        logMutation(player, "set", amount, before);
         MasteryAdvancements.checkBalance(player, GetBalance(player));
         return true;
     }
@@ -148,6 +154,14 @@ public final class MoneyHelper {
 
         inventory.setChanged();
         player.containerMenu.broadcastChanges();
+    }
+
+    private static void logMutation(ServerPlayer player, String action, int amount, int before) {
+        String source = StackWalker.getInstance().walk(frames -> frames.skip(2).findFirst()
+                .map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse("unknown"));
+        MainMod.LOGGER.info("economy_mutation at_unix_ms={} player_uuid={} username={} source={} action={} amount={} balance_before={} balance_after={}",
+                System.currentTimeMillis(), player.getUUID(), player.getName().getString(),
+                source, action, amount, before, GetBalance(player));
     }
 
     private static List<ItemStack> collectWalletsAndClearCoins(Inventory inventory) {

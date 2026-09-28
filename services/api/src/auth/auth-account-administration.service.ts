@@ -2,8 +2,10 @@ import {
 	BadRequestException,
 	ConflictException,
 	Injectable,
+	Logger,
 	NotFoundException,
 } from '@nestjs/common';
+import { createHash } from 'node:crypto';
 import { and, asc, eq, isNull } from 'drizzle-orm';
 import {
 	DatabaseService,
@@ -23,6 +25,7 @@ export const NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 250;
 
 @Injectable()
 export class AuthAccountAdministrationService {
+	private readonly economyLogger = new Logger('EconomyInvite');
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly minecraft: MinecraftGrpcClientService,
@@ -194,6 +197,18 @@ export class AuthAccountAdministrationService {
 			.run();
 		if (result.changes !== 1)
 			throw new ConflictException('That email address is already whitelisted');
+		const logInvite = (phase: string) => {
+			this.economyLogger.log(
+				JSON.stringify({
+					at_unix_ms: Date.now(),
+					phase,
+					responsible_user_id: responsibleUserId,
+					minecraft_username: responsibleUser.minecraft_username,
+					email_sha256: createHash('sha256').update(email).digest('hex'),
+				}),
+			);
+		};
+		logInvite('whitelist_inserted');
 
 		try {
 			const priceDabloons =
@@ -218,6 +233,7 @@ export class AuthAccountAdministrationService {
 				.delete(emailWhitelist)
 				.where(eq(emailWhitelist.email, email))
 				.run();
+			logInvite('whitelist_deleted_after_error');
 			if (error instanceof BadRequestException) throw error;
 			throw new BadRequestException(
 				'The responsible player must be online to pay for this invitation',

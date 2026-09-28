@@ -210,6 +210,7 @@ final class GameplayDailyOperations {
                     .build();
         }
 
+
         MoneyHelper.SendBalanceMessage(player, reward, "Completed daily advancement");
         return ClaimDailyAdvancementResponse.newBuilder()
                 .setClaimed(true)

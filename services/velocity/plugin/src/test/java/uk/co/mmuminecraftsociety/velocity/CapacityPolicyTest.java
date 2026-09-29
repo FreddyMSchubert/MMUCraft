@@ -2,9 +2,11 @@ package uk.co.mmuminecraftsociety.velocity;
 
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 public final class CapacityPolicyTest {
-    public static void main(String[] args) {
+    @Test
+    void checksCapacityPolicy() {
         var olderExternal = new CapacityPolicy.Candidate(UUID.randomUUID(), 0, 100, false);
         var newerExternal = new CapacityPolicy.Candidate(UUID.randomUUID(), 0, 200, false);
         var player = new CapacityPolicy.Candidate(UUID.randomUUID(), 1, 50, false);
@@ -29,6 +31,5 @@ public final class CapacityPolicyTest {
         if (CapacityPolicy.canAdmit(7, 6, 1, List.of(olderExternal, player, member))) {
             throw new AssertionError("One lower-priority player cannot cover two extra admissions");
         }
-        System.out.println("Capacity policy checks passed");
     }
 }

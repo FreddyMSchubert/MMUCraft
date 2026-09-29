@@ -101,21 +101,33 @@ test('committee can create, move, update, and remove a countdown', async ({ requ
 test('trust boundaries reject invalid input and insufficient privilege', async ({
 	request,
 }, testInfo) => {
-	await test.step('Allow a listed email through the prelaunch gate', async () => {
-		const response = await request.post('/api/auth/signup', {
-			data: { email: `invited${testInfo.retry}@mmu.ac.uk` },
+	await test.step('Check the prelaunch signup gate', async () => {
+		const prelaunch = await request.patch('/api/admin/launch', {
+			headers: adminCookie,
+			data: { target: '2100-01-02T12:00' },
 		});
-		expect(response.status()).toBe(503);
-		expect(await response.json()).toMatchObject({
-			message: 'Verification email could not be sent',
-		});
-	});
+		await expect(prelaunch).toBeOK();
 
-	await test.step('Reject a signup before launch', async () => {
-		const response = await request.post('/api/auth/signup', {
-			data: { email: 'unlisted@mmu.ac.uk' },
-		});
-		expect(response.status()).toBe(403);
+		try {
+			const listed = await request.post('/api/auth/signup', {
+				data: { email: `invited${testInfo.retry}@mmu.ac.uk` },
+			});
+			expect(listed.status()).toBe(503);
+			expect(await listed.json()).toMatchObject({
+				message: 'Verification email could not be sent',
+			});
+
+			const unlisted = await request.post('/api/auth/signup', {
+				data: { email: 'unlisted@mmu.ac.uk' },
+			});
+			expect(unlisted.status()).toBe(403);
+		} finally {
+			const restored = await request.patch('/api/admin/launch', {
+				headers: adminCookie,
+				data: { target: '2026-09-29T20:00' },
+			});
+			await expect(restored).toBeOK();
+		}
 	});
 
 	await test.step('Reject an unknown sign-in account', async () => {

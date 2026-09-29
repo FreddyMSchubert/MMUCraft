@@ -98,10 +98,12 @@ test('committee can create, move, update, and remove a countdown', async ({ requ
 	});
 });
 
-test('trust boundaries reject invalid input and insufficient privilege', async ({ request }) => {
+test('trust boundaries reject invalid input and insufficient privilege', async ({
+	request,
+}, testInfo) => {
 	await test.step('Allow a listed email through the prelaunch gate', async () => {
 		const response = await request.post('/api/auth/signup', {
-			data: { email: 'invited@mmu.ac.uk' },
+			data: { email: `invited${testInfo.retry}@mmu.ac.uk` },
 		});
 		expect(response.status()).toBe(503);
 		expect(await response.json()).toMatchObject({

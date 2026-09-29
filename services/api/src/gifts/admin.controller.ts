@@ -118,6 +118,30 @@ export class AdminController {
 		return this.membershipImport.preview(body?.rows);
 	}
 
+	@Get('pending-memberships')
+	listPendingMemberships(@Headers('cookie') cookieHeader: string | undefined) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.membershipImport.listPending();
+	}
+
+	@Post('pending-memberships')
+	addPendingMembership(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { email?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.membershipImport.addEmail(body?.email);
+	}
+
+	@Delete('pending-memberships/:email')
+	removePendingMembership(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('email') email: string,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.membershipImport.removeEmail(email);
+	}
+
 	@Post('membership-import/apply')
 	applyMembershipImport(
 		@Headers('cookie') cookieHeader: string | undefined,

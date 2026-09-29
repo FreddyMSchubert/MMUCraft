@@ -4,10 +4,11 @@ import {
 	DatabaseService,
 	SUPER_ADMIN_MINECRAFT_UUID,
 	emailWhitelist,
+	pendingMemberships,
 	referralLinks,
 	users,
 } from '../database/database.service';
-import { REFERRAL_JOIN_DABLOONS } from '../database/referrals.service';
+import { REFERRAL_JOIN_DABLOONS, REFERRAL_MEMBER_DABLOONS } from '../database/referrals.service';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { AuthSessionService } from './auth-session.service';
 import { AuthUserLookupService } from './auth-user-lookup.service';
@@ -54,6 +55,11 @@ export class AuthSignupAccountRegistrationService {
 		}
 
 		const userId = this.database.connection.transaction((transaction) => {
+			const pendingMembership = transaction
+				.select({ email: pendingMemberships.email })
+				.from(pendingMemberships)
+				.where(eq(pendingMemberships.email, flow.email))
+				.get();
 			const id = transaction
 				.insert(users)
 				.values({
@@ -61,6 +67,7 @@ export class AuthSignupAccountRegistrationService {
 					minecraft_uuid: minecraftUuid,
 					minecraft_username: minecraftUsername,
 					responsible_user_id: externalInvitation?.responsibleUserId ?? null,
+					is_member: pendingMembership ? 1 : 0,
 					is_committee: minecraftUuid === SUPER_ADMIN_MINECRAFT_UUID ? 1 : 0,
 					is_super_admin: minecraftUuid === SUPER_ADMIN_MINECRAFT_UUID ? 1 : 0,
 					whitelisted_at_unix_ms: now,
@@ -76,6 +83,9 @@ export class AuthSignupAccountRegistrationService {
 						referred_user_id: id,
 						joined_at_unix_ms: now,
 						join_reward_dabloons: REFERRAL_JOIN_DABLOONS,
+						membership_reward_dabloons: pendingMembership
+							? REFERRAL_MEMBER_DABLOONS
+							: 0,
 					})
 					.where(
 						and(
@@ -86,6 +96,11 @@ export class AuthSignupAccountRegistrationService {
 					)
 					.run();
 			}
+			if (pendingMembership)
+				transaction
+					.delete(pendingMemberships)
+					.where(eq(pendingMemberships.email, flow.email))
+					.run();
 			return id;
 		});
 		signupFlows.delete(flowId);

@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { DatabaseService, users } from '../database/database.service';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { DatabaseService, pendingMemberships, users } from '../database/database.service';
 import { playerProfiles } from '../database/database.service';
 import { eq } from 'drizzle-orm';
 import { DiscordService } from '../discord/discord.service';
 import { PlayerRoleAdministrationService } from './player-role-administration.service';
+import { isValidEmail, normalizeEmail } from '../auth/auth.util';
 
 interface ImportRow {
 	email: string;
@@ -18,6 +19,57 @@ export class MembershipImportService {
 		private readonly roles: PlayerRoleAdministrationService,
 	) {}
 
+	listPending() {
+		return {
+			emails: this.database.connection
+				.select()
+				.from(pendingMemberships)
+				.all()
+				.sort((a, b) => a.email.localeCompare(b.email)),
+		};
+	}
+
+	async addEmail(input: unknown) {
+		const email = this.validEmail(input);
+		const account = this.database.connection
+			.select({ id: users.id, isMember: users.is_member })
+			.from(users)
+			.where(eq(users.email, email))
+			.get();
+		if (account) {
+			if (!account.isMember) await this.roles.setMembership(String(account.id), true);
+			this.database.connection
+				.delete(pendingMemberships)
+				.where(eq(pendingMemberships.email, email))
+				.run();
+			return { email, status: account.isMember ? 'already member' : 'updated' };
+		}
+		this.database.connection
+			.insert(pendingMemberships)
+			.values({ email, created_at_unix_ms: Date.now() })
+			.onConflictDoNothing()
+			.run();
+		return { email, status: 'pending signup' };
+	}
+
+	removeEmail(input: unknown) {
+		const email = this.validEmail(input);
+		const result = this.database.connection
+			.delete(pendingMemberships)
+			.where(eq(pendingMemberships.email, email))
+			.run();
+		if (!result.changes) throw new NotFoundException('Pending membership not found');
+		return { ok: true };
+	}
+
+	private validEmail(input: unknown) {
+		if (typeof input !== 'string') throw new BadRequestException('Valid email required');
+		const email = normalizeEmail(input);
+		if (email.length > 254 || !isValidEmail(email))
+			throw new BadRequestException('Valid email required');
+		return email;
+	}
+
 	private validate(input: unknown): ImportRow[] {
 		if (!Array.isArray(input) || !input.length || input.length > 500)
 			throw new BadRequestException('Upload between 1 and 500 membership rows');
@@ -27,9 +79,9 @@ export class MembershipImportService {
 			const value = row as Record<string, unknown>;
 			if (typeof value.email !== 'string' || typeof value.discordName !== 'string')
 				throw new BadRequestException('Each row needs an email and Discord name');
-			const email = value.email.trim().toLowerCase();
+			const email = normalizeEmail(value.email);
 			const discordName = value.discordName.trim();
-			if (!email.includes('@') || email.length > 254 || discordName.length > 100)
+			if (!isValidEmail(email) || email.length > 254 || discordName.length > 100)
 				throw new BadRequestException('Invalid email or Discord name');
 			return { email, discordName };
 		});
@@ -108,7 +160,7 @@ export class MembershipImportService {
 						emailCounts.get(row.email) !== 1
 							? 'duplicate email in file'
 							: !account
-								? 'no account for email'
+								? 'pending signup'
 								: account.isMember
 									? 'already member'
 									: 'ready',
@@ -186,6 +238,15 @@ export class MembershipImportService {
 				try {
 					await this.roles.setMembership(String(row.userId), true);
 					apiStatus = 'updated';
+				} catch (error) {
+					apiStatus = 'update failed';
+					apiError = error instanceof Error ? error.message : 'Unknown API error';
+				}
+			}
+			if (row.apiStatus === 'pending signup') {
+				try {
+					const added = await this.addEmail(row.email);
+					apiStatus = added.status;
 				} catch (error) {
 					apiStatus = 'update failed';
 					apiError = error instanceof Error ? error.message : 'Unknown API error';

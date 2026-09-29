@@ -79,6 +79,11 @@ export const emailWhitelist = sqliteTable('email_whitelist', {
 	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 });
 
+export const pendingMemberships = sqliteTable('pending_memberships', {
+	email: text('email').primaryKey(),
+	created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+});
+
 export const playerProfiles = sqliteTable('player_profiles', {
 	user_id: integer('user_id')
 		.primaryKey()
@@ -655,6 +660,7 @@ export type SessionRow = typeof sessions.$inferSelect;
 export type PlayerBanRow = typeof playerBans.$inferSelect;
 export type EmailSendEventRow = typeof emailSendEvents.$inferSelect;
 export type EmailWhitelistRow = typeof emailWhitelist.$inferSelect;
+export type PendingMembershipRow = typeof pendingMemberships.$inferSelect;
 export type PlayerProfileRow = typeof playerProfiles.$inferSelect;
 export type ClaimRow = typeof claims.$inferSelect;
 export type ClaimMemberRow = typeof claimMembers.$inferSelect;
@@ -687,6 +693,7 @@ export const schema = {
 	playerBans,
 	emailSendEvents,
 	emailWhitelist,
+	pendingMemberships,
 	playerProfiles,
 	claims,
 	claimMembers,

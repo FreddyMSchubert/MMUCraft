@@ -295,6 +295,13 @@
       "when": 1790697147962,
       "tag": "0041_jittery_synch",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "6",
+      "when": 1790699712626,
+      "tag": "0042_large_cloak",
+      "breakpoints": true
     }
   ]
 }

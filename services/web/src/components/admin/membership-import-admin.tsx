@@ -83,7 +83,7 @@ function statusReason(status: string, error: string | null) {
 	if (status === 'ready' || status === 'pending') return 'Pending';
 	if (status === 'updated' || status === 'role added') return 'Applied';
 	if (status === 'already has role') return 'Already has role';
-	if (status === 'no account for email') return 'No API account for this email';
+	if (status === 'pending signup') return 'Will become a member on signup';
 	if (status === 'no server member found')
 		return 'No member with this username is in the Discord server';
 	return error ? `${status}: ${error}` : status;
@@ -241,8 +241,8 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 		<div className="adminSection">
 			<h3>Import society membership report</h3>
 			<p>
-				Upload the Union CSV to apply approved, paid, unexpired memberships. Discord names
-				match server usernames exactly.
+				Upload the Union CSV to apply approved, paid, unexpired memberships. Emails without
+				accounts wait for signup. Discord names match server usernames exactly.
 			</p>
 			<input
 				type="file"
@@ -298,7 +298,9 @@ export function MembershipImportAdmin({ onApplied }: { onApplied: () => Promise<
 										<td>{row.minecraftUsername ?? '—'}</td>
 										<td>{row.discordName || '—'}</td>
 										<td>
-											{row.apiStatus === 'updated' ? '✅' : '❌'}{' '}
+											{['updated', 'pending signup'].includes(row.apiStatus)
+												? '✅'
+												: '❌'}{' '}
 											{statusReason(row.apiStatus, row.apiError)}
 										</td>
 										<td>

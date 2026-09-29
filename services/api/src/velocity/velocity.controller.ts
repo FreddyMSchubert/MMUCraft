@@ -1,7 +1,34 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Headers,
+	Param,
+	Patch,
+	Post,
+	Query,
+	ServiceUnavailableException,
+} from '@nestjs/common';
 import { AuthSessionService } from '../auth/auth-session.service';
+import { DiscordService } from '../discord/discord.service';
 import { SurprisingSaturdayService } from './surprising-saturday.service';
 import { VelocityService } from './velocity.service';
+
+@Controller('api/velocity')
+export class VelocityPublicController {
+	constructor(
+		private readonly sessions: AuthSessionService,
+		private readonly velocity: VelocityService,
+	) {}
+
+	@Get('capacity')
+	capacity(@Headers('cookie') cookieHeader: string | undefined) {
+		this.sessions.requireSession(cookieHeader);
+		return this.velocity.capacitySnapshot();
+	}
+}
 
 @Controller('api/admin/velocity')
 export class VelocityAdminController {
@@ -34,6 +61,15 @@ export class VelocityAdminController {
 		return this.velocity.setMaintenanceMode(body?.enabled);
 	}
 
+	@Patch('max-players')
+	setMaxPlayers(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Body() body: { maxPlayers?: unknown } | undefined,
+	) {
+		this.sessions.requireCommitteeSession(cookieHeader);
+		return this.velocity.setMaxPlayers(body?.maxPlayers);
+	}
+
 	@Post('players/:uuid/move')
 	movePlayer(
 		@Headers('cookie') cookieHeader: string | undefined,
@@ -47,7 +83,10 @@ export class VelocityAdminController {
 
 @Controller('api/internal/velocity')
 export class VelocityInternalController {
-	constructor(private readonly velocity: VelocityService) {}
+	constructor(
+		private readonly velocity: VelocityService,
+		private readonly discord: DiscordService,
+	) {}
 
 	@Get('player-count')
 	playerCount(@Headers('authorization') authorization: string | undefined) {
@@ -87,6 +126,37 @@ export class VelocityInternalController {
 	) {
 		this.velocity.verifyInternalAuthorization(authorization);
 		return this.velocity.connectedPlayer(body?.uuid, body?.serverName);
+	}
+
+	@Post('capacity-event')
+	async capacityEvent(
+		@Headers('authorization') authorization: string | undefined,
+		@Body() body: { type?: unknown } | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		let content: string;
+		switch (body?.type) {
+			case 'full':
+				content = 'Too many players are on the server right now. Please check back later.';
+				break;
+			case 'space':
+				content =
+					'There is enough room for more players on the server again. You can join now.';
+				break;
+			case 'kick':
+				content =
+					'One or more players were disconnected because the server was over its player limit.';
+				break;
+			case 'cancelled':
+				content =
+					'One or more disconnection warnings were cancelled because they were no longer needed.';
+				break;
+			default:
+				throw new BadRequestException('Invalid capacity event');
+		}
+		if (!(await this.discord.publishServer('capacity', content)))
+			throw new ServiceUnavailableException('Discord webhook is unavailable');
+		return { ok: true };
 	}
 
 	@Get('event-control')

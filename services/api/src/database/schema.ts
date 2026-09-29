@@ -534,11 +534,13 @@ export const velocitySettings = sqliteTable(
 		id: integer('id').primaryKey(),
 		maintenance_mode: integer('maintenance_mode').notNull().default(0),
 		event_override: integer('event_override'),
+		max_players: integer('max_players').notNull().default(42),
 	},
 	(table) => [
 		check('velocity_settings_singleton_check', sql`${table.id} = 1`),
 		check('velocity_settings_maintenance_check', sql`${table.maintenance_mode} in (0, 1)`),
 		check('velocity_settings_event_override_check', sql`${table.event_override} in (0, 1)`),
+		check('velocity_settings_max_players_check', sql`${table.max_players} >= 0`),
 	],
 );
 

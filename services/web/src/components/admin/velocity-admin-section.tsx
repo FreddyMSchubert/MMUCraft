@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSiteAlert } from '@/components/site-alert';
 import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 import { apiBody, apiMessage, errorMessage, fetchAdmin } from './admin-api';
@@ -27,6 +27,8 @@ interface VelocityPlayer {
 interface VelocitySnapshot {
 	proxyOnline: boolean;
 	maintenanceMode: boolean;
+	maxPlayers: number;
+	countedPlayerCount: number;
 	eventOverride: number | null;
 	eventActive: boolean;
 	servers: VelocityServer[];
@@ -38,15 +40,20 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 	const [snapshot, setSnapshot] = useState<VelocitySnapshot | null>(null);
 	const [moveTargets, setMoveTargets] = useState<Record<string, string>>({});
 	const [busy, setBusy] = useState(false);
+	const [maxPlayersInput, setMaxPlayersInput] = useState('');
+	const serverMaxPlayers = useRef<number | null>(null);
 	const [error, setError] = useState('');
 
 	const load = useCallback(async () => {
-		setSnapshot(
-			await fetchAdmin<VelocitySnapshot>(
-				'/api/admin/velocity',
-				'Failed to load Velocity state',
-			),
+		const next = await fetchAdmin<VelocitySnapshot>(
+			'/api/admin/velocity',
+			'Failed to load Velocity state',
 		);
+		if (serverMaxPlayers.current !== next.maxPlayers) {
+			serverMaxPlayers.current = next.maxPlayers;
+			setMaxPlayersInput(String(next.maxPlayers));
+		}
+		setSnapshot(next);
 	}, []);
 
 	useEffect(() => {
@@ -157,6 +164,22 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 		});
 	}
 
+	async function setMaxPlayers() {
+		const maxPlayers = Number(maxPlayersInput);
+		if (!Number.isInteger(maxPlayers) || maxPlayers < 0 || maxPlayers > 99) return;
+		await mutate('Player limit updated', async () => {
+			await velocityRequest(
+				'/api/admin/velocity/max-players',
+				{
+					method: 'PATCH',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({ maxPlayers }),
+				},
+				'Failed to update the player limit',
+			);
+		});
+	}
+
 	if (!snapshot)
 		return (
 			<section className="adminSection">
@@ -199,6 +222,45 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 	)?.health;
 	return (
 		<div className="velocityAdmin">
+			<section className="adminSection">
+				<div className="adminSectionHeader">
+					<h3>Player limit</h3>
+					<p>
+						{snapshot.countedPlayerCount} / {snapshot.maxPlayers} players online.{' '}
+						MMU_Admin does not count. Players selected to leave receive a three-minute
+						warning.
+					</p>
+				</div>
+				<label>
+					Maximum players
+					<input
+						type="number"
+						min="0"
+						max="99"
+						step="1"
+						value={maxPlayersInput}
+						onChange={(event) => {
+							setMaxPlayersInput(event.target.value);
+						}}
+					/>
+				</label>
+				<button
+					type="button"
+					disabled={
+						busy ||
+						maxPlayersInput === '' ||
+						Number(maxPlayersInput) === snapshot.maxPlayers ||
+						!Number.isInteger(Number(maxPlayersInput)) ||
+						Number(maxPlayersInput) < 0 ||
+						Number(maxPlayersInput) > 99
+					}
+					onClick={() => {
+						void setMaxPlayers();
+					}}
+				>
+					Save limit
+				</button>
+			</section>
 			<section className="adminSection">
 				<div className="adminSectionHeader velocityHeading">
 					<div>

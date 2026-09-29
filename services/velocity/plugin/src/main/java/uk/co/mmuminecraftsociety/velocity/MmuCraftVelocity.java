@@ -53,8 +53,15 @@ public final class MmuCraftVelocity {
     private final Map<UUID, String> manualDestinations = new ConcurrentHashMap<>();
     private final Map<UUID, String> loginDestinations = new ConcurrentHashMap<>();
     private final Set<Long> acknowledgedCommands = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, CapacityRole> capacityRoles = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> joinedAt = new ConcurrentHashMap<>();
+    private final Set<UUID> admissions = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, CapacityWarning> capacityWarnings = new ConcurrentHashMap<>();
+    private CompletableFuture<Void> capacityNotifications = CompletableFuture.completedFuture(null);
     private volatile ApiClient.Route route;
     private volatile boolean maintenanceMode;
+    private volatile int maxPlayers = 42;
+    private Boolean wasFull;
     private String deploymentId;
     private boolean deploymentHadPlayers;
 
@@ -80,6 +87,9 @@ public final class MmuCraftVelocity {
                 .repeat(Duration.ofSeconds(3))
                 .schedule();
         proxy.getScheduler().buildTask(this, this::checkDeployment)
+                .repeat(Duration.ofSeconds(1))
+                .schedule();
+        proxy.getScheduler().buildTask(this, this::checkCapacity)
                 .repeat(Duration.ofSeconds(1))
                 .schedule();
     }
@@ -111,6 +121,8 @@ public final class MmuCraftVelocity {
                         event.setResult(ResultedEvent.ComponentResult.denied(
                                 Messages.access(access, event.getPlayer().getUsername())
                         ));
+                    } else if (!admit(event.getPlayer(), new CapacityRole(access.priority(), access.exempt()))) {
+                        event.setResult(ResultedEvent.ComponentResult.denied(Messages.full()));
                     } else {
                         loginDestinations.put(event.getPlayer().getUniqueId(),
                                 "surprising-saturday".equals(access.preferredServerName())
@@ -174,6 +186,8 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
+        admissions.remove(event.getPlayer().getUniqueId());
+        joinedAt.putIfAbsent(event.getPlayer().getUniqueId(), System.currentTimeMillis());
         loginDestinations.put(event.getPlayer().getUniqueId(), event.getServer().getServerInfo().getName());
         api.connected(event.getPlayer().getUniqueId().toString(), event.getServer().getServerInfo().getName())
                 .exceptionally(error -> {
@@ -184,6 +198,10 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
+        capacityRoles.remove(event.getPlayer().getUniqueId());
+        joinedAt.remove(event.getPlayer().getUniqueId());
+        admissions.remove(event.getPlayer().getUniqueId());
+        capacityWarnings.remove(event.getPlayer().getUniqueId());
         manualDestinations.remove(event.getPlayer().getUniqueId());
         loginDestinations.remove(event.getPlayer().getUniqueId());
     }
@@ -191,7 +209,14 @@ public final class MmuCraftVelocity {
     @Subscribe
     public void onPing(ProxyPingEvent event) {
         Component update = deploymentMessage();
-        if (update != null) event.setPing(event.getPing().asBuilder().description(update).build());
+        var ping = event.getPing().asBuilder()
+                .onlinePlayers((int) proxy.getAllPlayers().stream()
+                        .filter(player -> player.getCurrentServer().isPresent())
+                        .filter(player -> !capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST).exempt())
+                        .count())
+                .maximumPlayers(maxPlayers);
+        if (update != null) ping.description(update);
+        event.setPing(ping.build());
     }
 
     private Component deploymentMessage() {
@@ -263,6 +288,13 @@ public final class MmuCraftVelocity {
     }
 
     private void applyControl(ApiClient.SyncResponse response) {
+        maxPlayers = Math.max(0, response.maxPlayers());
+        if (response.playerPriorities() != null) {
+            for (ApiClient.PlayerPriority player : response.playerPriorities()) {
+                parseUuid(player.uuid()).ifPresent(uuid -> capacityRoles.put(uuid,
+                        new CapacityRole(player.priority(), player.exempt())));
+            }
+        }
         if (deploymentMessage() != null) {
             route = response.route();
             maintenanceMode = response.maintenanceMode();
@@ -299,6 +331,127 @@ public final class MmuCraftVelocity {
         if (response.commands() != null) {
             response.commands().forEach(this::execute);
         }
+    }
+
+    private synchronized boolean admit(Player player, CapacityRole role) {
+        UUID uuid = player.getUniqueId();
+        if (!role.exempt()) {
+            Set<UUID> counted = new HashSet<>(admissions);
+            counted.removeIf(id -> capacityRoles.getOrDefault(id, CapacityRole.LOWEST).exempt());
+            List<Player> online = new ArrayList<>(proxy.getAllPlayers());
+            for (Player current : online) {
+                if (current.getCurrentServer().isPresent()
+                        && !capacityRoles.getOrDefault(current.getUniqueId(), CapacityRole.LOWEST).exempt()) {
+                    counted.add(current.getUniqueId());
+                }
+            }
+            counted.remove(uuid);
+            List<CapacityPolicy.Candidate> connected = online.stream()
+                    .filter(current -> !current.getUniqueId().equals(uuid))
+                    .filter(current -> current.getCurrentServer().isPresent())
+                    .map(this::capacityCandidate)
+                    .toList();
+            if (!CapacityPolicy.canAdmit(counted.size(), maxPlayers, role.priority(), connected)) return false;
+        }
+        capacityRoles.put(uuid, role);
+        admissions.add(uuid);
+        return true;
+    }
+
+    private synchronized void checkCapacity() {
+        if (maintenanceMode || deploymentMessage() != null) {
+            capacityWarnings.clear();
+            return;
+        }
+        List<Player> online = new ArrayList<>(proxy.getAllPlayers());
+        Set<UUID> counted = new HashSet<>(admissions);
+        for (Player player : online) {
+            if (player.getCurrentServer().isPresent()
+                    && !capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST).exempt()) {
+                counted.add(player.getUniqueId());
+            }
+        }
+        counted.removeIf(uuid -> capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt());
+        boolean full = counted.size() >= maxPlayers;
+        if (wasFull != null && wasFull != full) {
+            notifyCapacity(full ? "full" : "space");
+        }
+        wasFull = full;
+
+        int excess = Math.max(0, counted.size() - maxPlayers);
+        List<UUID> victims = CapacityPolicy.victims(online.stream()
+                .filter(player -> counted.contains(player.getUniqueId()))
+                .filter(player -> player.getCurrentServer().isPresent())
+                .map(this::capacityCandidate)
+                .toList(), excess);
+        Set<UUID> selected = new HashSet<>();
+        long now = System.currentTimeMillis();
+        boolean kicked = false;
+        for (UUID uuid : victims) {
+            Player victim = proxy.getPlayer(uuid).orElse(null);
+            if (victim == null) continue;
+            selected.add(uuid);
+            CapacityWarning warning = capacityWarnings.computeIfAbsent(uuid, ignored -> {
+                victim.sendMessage(Messages.capacityWarning("3 minutes"));
+                return new CapacityWarning(now + Duration.ofMinutes(3).toMillis());
+            });
+            long remaining = warning.deadline() - now;
+            if (remaining <= 0 && warning.stage() < 4) {
+                warning.setStage(4);
+                victim.disconnect(Messages.capacityKick());
+                kicked = true;
+            } else if (remaining <= 10_000 && warning.stage() < 3) {
+                victim.sendMessage(Messages.capacityWarning("10 seconds"));
+                warning.setStage(3);
+            } else if (remaining <= 60_000 && warning.stage() < 2) {
+                victim.sendMessage(Messages.capacityWarning("1 minute"));
+                warning.setStage(2);
+            } else if (remaining <= 120_000 && warning.stage() < 1) {
+                victim.sendMessage(Messages.capacityWarning("2 minutes"));
+                warning.setStage(1);
+            }
+        }
+        boolean cancelled = false;
+        for (UUID uuid : new HashSet<>(capacityWarnings.keySet())) {
+            if (selected.contains(uuid)) continue;
+            capacityWarnings.remove(uuid);
+            Player player = proxy.getPlayer(uuid).orElse(null);
+            if (player == null) continue;
+            player.sendMessage(Messages.capacityCancelled());
+            cancelled = true;
+        }
+        if (kicked) notifyCapacity("kick");
+        if (cancelled) notifyCapacity("cancelled");
+    }
+
+    private void notifyCapacity(String type) {
+        if (!configured) return;
+        capacityNotifications = capacityNotifications
+                .thenCompose(ignored -> api.capacityEvent(type).thenAccept(response -> { }))
+                .exceptionally(error -> {
+                    logger.warn("Could not publish capacity event {}: {}", type, errorMessage(error));
+                    return null;
+                });
+    }
+
+    private CapacityPolicy.Candidate capacityCandidate(Player player) {
+        CapacityRole role = capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST);
+        return new CapacityPolicy.Candidate(player.getUniqueId(), role.priority(),
+                joinedAt.getOrDefault(player.getUniqueId(), Long.MAX_VALUE), role.exempt());
+    }
+
+    private record CapacityRole(int priority, boolean exempt) {
+        static final CapacityRole LOWEST = new CapacityRole(0, false);
+    }
+
+    private static final class CapacityWarning {
+        private final long deadline;
+        private int stage;
+
+        CapacityWarning(long deadline) { this.deadline = deadline; }
+        long deadline() { return deadline; }
+        int stage() { return stage; }
+        void setStage(int stage) { this.stage = stage; }
     }
 
     private void applyServers(List<ApiClient.BackendServer> desiredServers) {

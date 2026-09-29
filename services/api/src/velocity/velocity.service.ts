@@ -10,11 +10,12 @@ import {
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { eq, inArray } from 'drizzle-orm';
-import { isValidMinecraftUsername } from '../auth/auth.util';
+import { ADMIN_SIGNUP_EMAIL, isValidMinecraftUsername } from '../auth/auth.util';
 import { PlayerBansService } from '../auth/player-bans.service';
 import { signupFlows } from '../auth/signup-flow';
 import {
 	DatabaseService,
+	type UserRow,
 	playerProfiles,
 	velocityServers,
 	velocityPlayerServers,
@@ -127,6 +128,8 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			}
 			return {
 				status: 'ALLOWED',
+				priority: playerPriority(user),
+				exempt: isExemptAdmin(user),
 				websiteUrl: this.websiteUrl(),
 				preferredServerName: this.preferredServer(uuid),
 			};
@@ -205,6 +208,15 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 		return {
 			maintenanceMode: settings.maintenance_mode === 1,
+			maxPlayers: settings.max_players,
+			playerPriorities: this.livePlayers.map((player) => {
+				const user = this.identities.findByUuid(player.uuid);
+				return {
+					uuid: player.uuid,
+					priority: user ? playerPriority(user) : 0,
+					exempt: user ? isExemptAdmin(user) : false,
+				};
+			}),
 			servers: servers.map((server) => ({ name: server.name, address: server.address })),
 			route,
 			commands: [...this.commands.values()].map((command) => ({
@@ -249,6 +261,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			proxyOnline,
 			lastHeartbeatUnixMs: this.lastHeartbeatUnixMs,
 			maintenanceMode: this.settings().maintenance_mode === 1,
+			maxPlayers: this.settings().max_players,
+			countedPlayerCount: players.filter((player) => {
+				const user = this.identities.findByUuid(player.uuid);
+				return !user || !isExemptAdmin(user);
+			}).length,
 			eventOverride: this.settings().event_override,
 			eventActive: Boolean(this.events.active(now)),
 			servers: servers.map((server) => {
@@ -258,8 +275,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 					health: live ? (live.online ? 'online' : 'offline') : 'unknown',
 					latencyMs: live?.latencyMs ?? null,
 					error: live?.error ?? null,
-					playerCount: players.filter((player) => player.serverName === server.name)
-						.length,
+					playerCount: players.filter(
+						(player) =>
+							player.serverName === server.name &&
+							!isExemptAdmin(this.identities.findByUuid(player.uuid)),
+					).length,
 				};
 			}),
 			players,
@@ -268,6 +288,28 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 	onlinePlayerCount() {
 		return { playerCount: this.proxyIsOnline() ? this.livePlayers.length : null };
+	}
+
+	capacitySnapshot() {
+		return {
+			playerCount: this.proxyIsOnline()
+				? this.livePlayers.filter(
+						(player) => !isExemptAdmin(this.identities.findByUuid(player.uuid)),
+					).length
+				: null,
+			maxPlayers: this.settings().max_players,
+		};
+	}
+
+	setMaxPlayers(value: unknown) {
+		if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0 || value > 99)
+			throw new BadRequestException('Maximum players must be a whole number from 0 to 99');
+		this.database.connection
+			.update(velocitySettings)
+			.set({ max_players: value })
+			.where(eq(velocitySettings.id, 1))
+			.run();
+		return { ok: true, maxPlayers: value };
 	}
 
 	setMaintenanceMode(enabledInput: unknown) {
@@ -592,4 +634,19 @@ function parseSafeInteger(value: unknown, message: string) {
 	if (typeof value !== 'number' || !Number.isSafeInteger(value) || value <= 0)
 		throw new BadRequestException(message);
 	return value;
+}
+
+function isExemptAdmin(user: UserRow | null | undefined) {
+	return user?.email.toLowerCase() === ADMIN_SIGNUP_EMAIL;
+}
+
+function playerPriority(user: UserRow) {
+	if (isExemptAdmin(user) || user.is_super_admin === 1) return 4;
+	if (
+		user.is_committee === 1 ||
+		['archiedobbo', 'decomposingdollz'].includes(user.minecraft_username.toLowerCase())
+	)
+		return 3;
+	if (user.is_member === 1) return 2;
+	return user.responsible_user_id === null ? 1 : 0;
 }

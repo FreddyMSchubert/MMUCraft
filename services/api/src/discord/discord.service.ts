@@ -40,6 +40,7 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 		dailies: '✅',
 		shop: '🛒',
 		charm: '✨',
+		capacity: '👥',
 		death: '☠️',
 		fish: '🐟',
 		fish_first: '🐟 👶',

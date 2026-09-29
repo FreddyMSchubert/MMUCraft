@@ -114,6 +114,7 @@ services:
             FABRIC_LOADER_VERSION: '0.19.5'
             MODRINTH_PROJECTS: |-
                 fabric-api:0.161.0+26.3
+                chunky?:4Eotm6ov
                 lithium?:WXHRsMRl
                 ferrite-core?:d5ddUdiB
                 c2me-fabric?:XgxQ7H1c

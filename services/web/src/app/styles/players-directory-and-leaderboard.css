@@ -26,6 +26,18 @@
 	font-size: 1.25rem;
 }
 
+.playerCapacity {
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.playerCapacity-near {
+	color: #ffad57;
+}
+
+.playerCapacity-full {
+	color: #ff6b6b;
+}
+
 .playerDirectorySearch {
 	display: flex;
 	align-items: center;

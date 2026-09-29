@@ -1,6 +1,7 @@
 package uk.co.mmuminecraftsociety.velocity;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -15,6 +16,7 @@ final class Messages {
     private static final TextColor RED = TextColor.color(0xFF6B6B);
     private static final TextColor TEXT = TextColor.color(0xE8EDF2);
     private static final TextColor MUTED = TextColor.color(0xAAB4BE);
+    private static final TextColor LINK = TextColor.color(0x7BEBFF);
     private static final ZoneId MANCHESTER_TIME_ZONE = ZoneId.of("Europe/London");
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("d MMM uuuu, HH:mm");
 
@@ -38,7 +40,35 @@ final class Messages {
     static Component maintenance() {
         return heading("Maintenance in progress", GOLD)
                 .append(Component.text("The server is temporarily unavailable while we work on it.\n", TEXT))
-                .append(Component.text("Please try again later.", MUTED));
+                .append(Component.text("Please try again later.\n", MUTED))
+                .append(discordUpdates());
+    }
+
+    static Component full() {
+        return heading("Server full", GOLD)
+                .append(Component.text("We're very sorry, but the server is full right now.\n", TEXT))
+                .append(Component.text("Please try again later.\n", MUTED))
+                .append(discordUpdates())
+                .append(Component.text("\n\nMembers are prioritised when joining. With a membership, "
+                        + "you can join ahead of normal players. For all membership perks and how "
+                        + "to get a membership, check the Membership page in the Knowledge section "
+                        + "on our website.", TEXT));
+    }
+
+    static Component capacityKick() {
+        return heading("Disconnected to make room", GOLD)
+                .append(Component.text("We're sorry, but the server is over its player limit and your place was needed.\n", TEXT))
+                .append(Component.text("Please try again later.\n", MUTED))
+                .append(discordUpdates());
+    }
+
+    static Component capacityWarning(String remaining) {
+        return Component.text("The server is over its player limit. You will be disconnected in "
+                + remaining + ". Sorry for the interruption.", GOLD);
+    }
+
+    static Component capacityCancelled() {
+        return Component.text("Your disconnection warning is cancelled. You're fine now and can stay.", GOLD);
     }
 
     static Component updating(long startedAt, boolean mainOnline) {
@@ -158,6 +188,12 @@ final class Messages {
                 .append(Component.text("\n"))
                 .append(Component.text(title, color).decorate(TextDecoration.BOLD))
                 .append(Component.text("\n\n"));
+    }
+
+    private static Component discordUpdates() {
+        return Component.text("Check the Discord for updates", LINK)
+                .decorate(TextDecoration.UNDERLINED)
+                .clickEvent(ClickEvent.openUrl(DISCORD_URL));
     }
 
     private static Component support(String introduction) {

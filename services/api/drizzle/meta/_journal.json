@@ -288,6 +288,13 @@
       "when": 1790364526794,
       "tag": "0040_white_norman_osborn",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "6",
+      "when": 1790697147962,
+      "tag": "0041_jittery_synch",
+      "breakpoints": true
     }
   ]
 }

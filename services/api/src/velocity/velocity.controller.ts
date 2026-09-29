@@ -143,10 +143,6 @@ export class VelocityInternalController {
 				content =
 					'There is enough room for more players on the server again. You can join now.';
 				break;
-			case 'cancelled':
-				content =
-					'One or more disconnection warnings were cancelled because they were no longer needed.';
-				break;
 			default:
 				throw new BadRequestException('Invalid capacity event');
 		}

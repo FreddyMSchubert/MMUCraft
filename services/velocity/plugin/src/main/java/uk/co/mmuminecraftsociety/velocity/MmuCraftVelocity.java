@@ -409,16 +409,13 @@ public final class MmuCraftVelocity {
                 warning.setStage(1);
             }
         }
-        boolean cancelled = false;
         for (UUID uuid : new HashSet<>(capacityWarnings.keySet())) {
             if (selected.contains(uuid)) continue;
             capacityWarnings.remove(uuid);
             Player player = proxy.getPlayer(uuid).orElse(null);
             if (player == null) continue;
             player.sendMessage(Messages.capacityCancelled());
-            cancelled = true;
         }
-        if (cancelled) notifyCapacity("cancelled");
     }
 
     private void notifyCapacity(String type) {

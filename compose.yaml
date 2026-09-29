@@ -137,14 +137,20 @@ services:
                 chunky?
                 lithium?
                 ferrite-core?
-                scalablelux?
+                scalablelux?:alpha
                 servercore?
-                zfastnoise?
+                zfastnoise?:beta
                 c2me-fabric?
-                modernfix?
+                modernfix-mvus?
                 krypton?
-                vmp-fabric?
+                vmp-fabric:alpha
                 structure-layout-optimizer?
+                tt20?
+                alternate-current?
+                immersive-optimization?
+                clumps?
+                lazyai?
+                lmd?
                 fabricproxy-lite
                 simple-voice-chat:beta
                 emotecraft:alpha
@@ -160,6 +166,7 @@ services:
                 datapack:structory-towers?
                 datapack:nullscape?
                 datapack:geophilic?
+            MODRINTH_DOWNLOAD_DEPENDENCIES: required
             SERVER_RUNNER: /image/vanillatweaks/run-server
             MEMORY: 2G
             INIT_MEMORY: 1G

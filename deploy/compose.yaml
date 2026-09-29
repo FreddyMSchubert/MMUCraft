@@ -118,14 +118,20 @@ services:
                 chunky?
                 lithium?
                 ferrite-core?
-                scalablelux?
+                scalablelux?:alpha
                 servercore?
-                zfastnoise?
-                c2me-fabric?
-                modernfix?
+                zfastnoise?:beta
+                c2me-fabric:alpha
+                modernfix-mvus?
                 krypton?
-                vmp-fabric?
+                vmp-fabric:alpha
                 structure-layout-optimizer?
+                tt20?
+                alternate-current?
+                immersive-optimization?
+                clumps?
+                lazyai?
+                lmd?
                 fabricproxy-lite
                 simple-voice-chat:beta
                 emotecraft:alpha

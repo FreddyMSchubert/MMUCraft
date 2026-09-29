@@ -386,7 +386,6 @@ public final class MmuCraftVelocity {
                 .toList(), excess);
         Set<UUID> selected = new HashSet<>();
         long now = System.currentTimeMillis();
-        boolean kicked = false;
         for (UUID uuid : victims) {
             Player victim = proxy.getPlayer(uuid).orElse(null);
             if (victim == null) continue;
@@ -399,7 +398,6 @@ public final class MmuCraftVelocity {
             if (remaining <= 0 && warning.stage() < 4) {
                 warning.setStage(4);
                 victim.disconnect(Messages.capacityKick());
-                kicked = true;
             } else if (remaining <= 10_000 && warning.stage() < 3) {
                 victim.sendMessage(Messages.capacityWarning("10 seconds"));
                 warning.setStage(3);
@@ -420,7 +418,6 @@ public final class MmuCraftVelocity {
             player.sendMessage(Messages.capacityCancelled());
             cancelled = true;
         }
-        if (kicked) notifyCapacity("kick");
         if (cancelled) notifyCapacity("cancelled");
     }
 

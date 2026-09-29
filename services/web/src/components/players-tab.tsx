@@ -34,10 +34,6 @@ export function PlayersTab({
 	const { showAlert } = useSiteAlert();
 	const [data, setData] = useState<PlayersResponse | null>(null);
 	const [error, setError] = useState('');
-	const [capacity, setCapacity] = useState<{
-		playerCount: number | null;
-		maxPlayers: number;
-	} | null>(null);
 	const [columnKeys, setColumnKeys] = useState(DEFAULT_COLUMN_KEYS);
 	const [sort, setSort] = useState<{ key: string; direction: SortDirection }>({
 		key: 'minecraft.custom.minecraft:play_time',
@@ -76,29 +72,6 @@ export function PlayersTab({
 		},
 		[playerName],
 	);
-
-	useEffect(() => {
-		let cancelled = false;
-		async function refreshCapacity() {
-			try {
-				const response = await fetch('/api/velocity/capacity', { cache: 'no-store' });
-				if (!response.ok) return;
-				const next = (await response.json()) as {
-					playerCount: number | null;
-					maxPlayers: number;
-				};
-				if (!cancelled) setCapacity(next);
-			} catch {
-				// Keep the last known count while the proxy or API is unavailable.
-			}
-		}
-		void refreshCapacity();
-		const timer = window.setInterval(() => void refreshCapacity(), 5_000);
-		return () => {
-			cancelled = true;
-			window.clearInterval(timer);
-		};
-	}, []);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -306,24 +279,7 @@ export function PlayersTab({
 		<div className="playersPanel">
 			<div className="playersTop">
 				<div>
-					<h3>
-						Players{' '}
-						{capacity && (
-							<span
-								className={`playerCapacity ${
-									capacity.playerCount !== null &&
-									capacity.playerCount >= capacity.maxPlayers
-										? 'playerCapacity-full'
-										: capacity.playerCount !== null &&
-											  capacity.maxPlayers - capacity.playerCount < 3
-											? 'playerCapacity-near'
-											: ''
-								}`}
-							>
-								({capacity.playerCount ?? '?'}/{capacity.maxPlayers})
-							</span>
-						)}
-					</h3>
+					<h3>Players</h3>
 					<p className="tabSubtitle">
 						See who else plays on the server, learn a little about them, find their
 						bases and compare your progress. Fill out your own profile so everyone can

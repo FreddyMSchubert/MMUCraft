@@ -99,6 +99,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const router = useRouter();
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
+	const [capacity, setCapacity] = useState<{
+		playerCount: number | null;
+		maxPlayers: number;
+	} | null>(null);
 	const [events, setEvents] = useState<EventSummary[]>([]);
 	const [copyLabel, setCopyLabel] = useState('Copy IP');
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -179,6 +183,30 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		};
 	}, [user]);
 
+	useEffect(() => {
+		if (!user) return;
+		let cancelled = false;
+		async function refreshCapacity() {
+			try {
+				const response = await fetch('/api/velocity/capacity', { cache: 'no-store' });
+				if (!response.ok) return;
+				const next = (await response.json()) as {
+					playerCount: number | null;
+					maxPlayers: number;
+				};
+				if (!cancelled) setCapacity(next);
+			} catch {
+				// Keep the last known count while the server is unavailable.
+			}
+		}
+		void refreshCapacity();
+		const timer = window.setInterval(() => void refreshCapacity(), 5_000);
+		return () => {
+			cancelled = true;
+			window.clearInterval(timer);
+		};
+	}, [user]);
+
 	async function signOut() {
 		await fetch('/api/auth/signout', {
 			method: 'POST',
@@ -187,6 +215,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		setMenuOpen(false);
 		setUser(null);
 		setOnlinePlayers(null);
+		setCapacity(null);
 	}
 
 	async function copyServerIp() {
@@ -367,7 +396,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							</div>
 
 							<div className="onlinePlayers">
-								<p className="dashboardEyebrow">Online players</p>
+								<p className="dashboardEyebrow">
+									Online players{' '}
+									{capacity && <CapacityCount capacity={capacity} />}
+								</p>
 								<div className="onlinePlayerList">
 									{onlinePlayers?.map((player) => (
 										<Link
@@ -433,7 +465,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							</div>
 
 							<div className="mobileMenuBlock">
-								<p>Online players</p>
+								<p>
+									Online players{' '}
+									{capacity && <CapacityCount capacity={capacity} />}
+								</p>
 								<div className="onlinePlayerList">
 									{onlinePlayers?.map((player) => (
 										<Link
@@ -530,6 +565,27 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 function navigate(href: string, replace = false) {
 	window.history[replace ? 'replaceState' : 'pushState'](null, '', href);
+}
+
+function CapacityCount({
+	capacity,
+}: {
+	capacity: { playerCount: number | null; maxPlayers: number };
+}) {
+	return (
+		<span
+			className={`playerCapacity ${
+				capacity.playerCount !== null && capacity.playerCount >= capacity.maxPlayers
+					? 'playerCapacity-full'
+					: capacity.playerCount !== null &&
+						  capacity.maxPlayers - capacity.playerCount < 3
+						? 'playerCapacity-near'
+						: ''
+			}`}
+		>
+			({capacity.playerCount ?? '?'}/{capacity.maxPlayers})
+		</span>
+	);
 }
 
 function decodePathSegment(value: string) {

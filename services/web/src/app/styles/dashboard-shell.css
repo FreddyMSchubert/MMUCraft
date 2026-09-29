@@ -69,6 +69,14 @@
 	font-size: 0.78rem;
 }
 
+.playerCapacity-near {
+	color: #ffad57;
+}
+
+.playerCapacity-full {
+	color: #ff6b6b;
+}
+
 .serverDetails {
 	color: rgba(255, 255, 255, 0.72);
 	font-size: 0.78rem;

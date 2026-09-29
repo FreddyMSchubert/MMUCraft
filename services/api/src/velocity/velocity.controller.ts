@@ -143,10 +143,6 @@ export class VelocityInternalController {
 				content =
 					'There is enough room for more players on the server again. You can join now.';
 				break;
-			case 'kick':
-				content =
-					'One or more players were disconnected because the server was over its player limit.';
-				break;
 			case 'cancelled':
 				content =
 					'One or more disconnection warnings were cancelled because they were no longer needed.';

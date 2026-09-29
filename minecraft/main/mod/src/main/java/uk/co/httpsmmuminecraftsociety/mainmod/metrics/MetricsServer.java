@@ -15,6 +15,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyCharm;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -30,6 +32,8 @@ public final class MetricsServer {
             "mainmod_ticks_per_second", "Estimated Minecraft server ticks per second.");
     private static final Gauge MILLISECONDS_PER_TICK = gauge(
             "mainmod_milliseconds_per_tick", "Average Minecraft server tick duration in milliseconds.");
+    private static final Gauge SERVER_THREAD_CPU_RATIO = gauge(
+            "mainmod_server_thread_cpu_ratio", "CPU time used by the Minecraft server thread divided by elapsed wall time (one core = 1).");
     private static final Gauge LOADED_CHUNKS = gauge(
             "mainmod_loaded_chunks", "Chunks currently loaded across all dimensions.");
     private static final Gauge ENTITIES = gauge(
@@ -51,6 +55,9 @@ public final class MetricsServer {
     private static int peakOnlinePlayers;
     private static long startedAtNanos;
     private static long nextUpdateNanos;
+    private static final ThreadMXBean THREAD_BEAN = ManagementFactory.getThreadMXBean();
+    private static long previousServerThreadCpuNanos = -1;
+    private static long previousServerThreadWallNanos;
 
     private MetricsServer() {}
 
@@ -66,9 +73,20 @@ public final class MetricsServer {
         JvmMetrics.builder().register();
         startedAtNanos = System.nanoTime();
         nextUpdateNanos = 0;
+        previousServerThreadCpuNanos = -1;
         peakFile = minecraftServer.getWorldPath(LevelResource.ROOT).resolve("mainmod-peak-players.txt");
         peakOnlinePlayers = readPeak();
         update(minecraftServer);
+        if (THREAD_BEAN.isCurrentThreadCpuTimeSupported()) {
+            try {
+                if (!THREAD_BEAN.isThreadCpuTimeEnabled()) THREAD_BEAN.setThreadCpuTimeEnabled(true);
+                previousServerThreadCpuNanos = THREAD_BEAN.getCurrentThreadCpuTime();
+                previousServerThreadWallNanos = System.nanoTime();
+            } catch (SecurityException | UnsupportedOperationException exception) {
+                MainMod.LOGGER.warn("Cannot measure server thread CPU time", exception);
+            }
+        }
+        if (previousServerThreadCpuNanos < 0) SERVER_THREAD_CPU_RATIO.set(Double.NaN);
 
         try {
             server = HTTPServer.builder().port(PORT).buildAndStart();
@@ -82,6 +100,16 @@ public final class MetricsServer {
         long now = System.nanoTime();
         if (now < nextUpdateNanos) return;
         nextUpdateNanos = now + 1_000_000_000L;
+        if (previousServerThreadCpuNanos >= 0) {
+            long cpuNanos = THREAD_BEAN.getCurrentThreadCpuTime();
+            long wallNanos = now - previousServerThreadWallNanos;
+            if (cpuNanos >= previousServerThreadCpuNanos && wallNanos > 0) {
+                SERVER_THREAD_CPU_RATIO.set(Math.min(1.0,
+                        (cpuNanos - previousServerThreadCpuNanos) / (double) wallNanos));
+            }
+            previousServerThreadCpuNanos = cpuNanos;
+            previousServerThreadWallNanos = now;
+        }
 
         int onlinePlayers = minecraftServer.getPlayerList().getPlayerCount();
         ONLINE_PLAYERS.set(onlinePlayers);

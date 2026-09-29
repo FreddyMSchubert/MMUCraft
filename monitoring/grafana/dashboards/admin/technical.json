@@ -605,10 +605,49 @@
 			}
 		},
 		{
+			"id": 29,
+			"type": "timeseries",
+			"title": "Minecraft Server Thread CPU",
+			"description": "CPU time used by Minecraft's server thread as a fraction of one core, sampled once per second. 100% means the thread is computing continuously. Low CPU during high MSPT points to waiting or descheduling. Linux may move the thread between physical cores. Available after deploying the updated Minecraft mod.",
+			"gridPos": { "h": 9, "w": 12, "x": 12, "y": 39 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"targets": [
+				{
+					"expr": "mainmod_server_thread_cpu_ratio{job=\"mainmod\"}",
+					"legendFormat": "Server thread",
+					"refId": "A"
+				}
+			],
+			"fieldConfig": {
+				"defaults": {
+					"decimals": 1,
+					"max": 1,
+					"min": 0,
+					"unit": "percentunit",
+					"custom": {
+						"drawStyle": "line",
+						"fillOpacity": 15,
+						"lineWidth": 2,
+						"showPoints": "never"
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull", "max"],
+					"displayMode": "table",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": { "mode": "multi", "sort": "desc" }
+			}
+		},
+		{
 			"id": 17,
 			"type": "timeseries",
 			"title": "VPS Disk Used",
-			"gridPos": { "h": 9, "w": 12, "x": 12, "y": 39 },
+			"gridPos": { "h": 9, "w": 12, "x": 0, "y": 107 },
 			"datasource": { "type": "prometheus", "uid": "prometheus" },
 			"targets": [
 				{

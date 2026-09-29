@@ -114,6 +114,7 @@ services:
             FABRIC_LOADER_VERSION: '0.19.5'
             MODRINTH_PROJECTS: |-
                 fabric-api
+                spark:e3hsPc1o
                 chunky?
                 lithium?
                 ferrite-core?

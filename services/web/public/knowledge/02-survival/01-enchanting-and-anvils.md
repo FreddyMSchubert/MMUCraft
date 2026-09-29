@@ -92,10 +92,10 @@ Instead of getting them randomly, it's way more reliable (and fun) to get books 
 | Aqua Affinity | Kill a Guardian (25%) | 1 | 1 |
 | Bane of Arthropods | Enchanting table | 100 | 100 |
 | Blast Protection | Enchanting table | 3 | 5 |
-| Breach | Open any Trial Chamber reward vault (100%) | 4 | 4 |
+| Breach | Open any Trial Chamber reward vault (1/16 bonus book chance) | 4 | 4 |
 | Channeling | Open a Shipwreck supply chest (100%) | 1 | 1 |
 | Charm Boost | Brush a suspicious archaeology block. See [Charms](/play/knowledge/charms). | 1 | 1 |
-| Density | Open any Trial Chamber reward vault (100%) | 5 | 5 |
+| Density | Open any Trial Chamber reward vault (1/16 bonus book chance) | 5 | 5 |
 | Depth Strider | Kill a Drowned (12.5%) | 3 | 4 |
 | Efficiency | Open a Stronghold corridor, crossing, or library chest (25%) | 5 | 8 |
 | Feather Falling | Open a Desert Pyramid chest (50%) | 3 | 68 |
@@ -131,7 +131,7 @@ Instead of getting them randomly, it's way more reliable (and fun) to get books 
 | Swift Sneak | Open an Ancient City or Ancient City ice-box chest (12.5%) | 3 | 4 |
 | Thorns | Open a Dungeon chest (50%) | 3 | 5 |
 | Unbreaking | Open an End City treasure chest (25%) | 3 | 5 |
-| Wind Burst | Open any Trial Chamber reward vault (25%) | 3 | 3 |
+| Wind Burst | Open any Trial Chamber reward vault (1/16 bonus book chance) | 3 | 3 |
 
 ### <span id="fortune-footnote">1.</span> Fortune I recipe
 

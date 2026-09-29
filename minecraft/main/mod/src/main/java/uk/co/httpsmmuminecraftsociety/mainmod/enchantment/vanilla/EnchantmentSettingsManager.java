@@ -24,7 +24,7 @@ Epic - 12.5 %
 
 public class EnchantmentSettingsManager
 {
-    private static final List<String> trialChamberRewards = List.of("chests/trial_chambers/reward", "chests/trial_chambers/reward_common", "chests/trial_chambers/reward_ominous", "chests/trial_chambers/reward_ominous_common", "chests/trial_chambers/reward_ominous_rare", "chests/trial_chambers/reward_rare");
+    private static final List<String> trialChamberRewards = List.of("chests/trial_chambers/reward", "chests/trial_chambers/reward_ominous");
     private static final List<String> bastionRewards = List.of("chests/bastion_bridge", "chests/bastion_hoglin_stable", "chests/bastion_other", "chests/bastion_treasure");
     private static final List<String> archaeologyRewards = List.of("archaeology/desert_pyramid", "archaeology/desert_well", "archaeology/ocean_ruin_cold", "archaeology/ocean_ruin_warm", "archaeology/trail_ruins_common", "archaeology/trail_ruins_rare");
 
@@ -49,9 +49,9 @@ public class EnchantmentSettingsManager
         new EnchantmentSettings(Enchantments.PROJECTILE_PROTECTION).maxLevels(3, 5),
 
         // mace enchantments
-        new EnchantmentSettings(Enchantments.BREACH).maxLevels(4, 4).inLoottable(trialChamberRewards).rarity(Rarity.COMMON),
-        new EnchantmentSettings(Enchantments.DENSITY).maxLevels(5, 5).inLoottable(trialChamberRewards).rarity(Rarity.COMMON),
-        new EnchantmentSettings(Enchantments.WIND_BURST).maxLevels(3, 3).inLoottable(trialChamberRewards).rarity(Rarity.RARE),
+        new EnchantmentSettings(Enchantments.BREACH).maxLevels(4, 4).inLoottable(trialChamberRewards).loottableChance(1.0f / 16.0f),
+        new EnchantmentSettings(Enchantments.DENSITY).maxLevels(5, 5).inLoottable(trialChamberRewards).loottableChance(1.0f / 16.0f),
+        new EnchantmentSettings(Enchantments.WIND_BURST).maxLevels(3, 3).inLoottable(trialChamberRewards).loottableChance(1.0f / 16.0f),
 
         // trident enchantments
         new EnchantmentSettings(Enchantments.CHANNELING).maxLevels(1, 1).inLoottable("chests/shipwreck_supply"),

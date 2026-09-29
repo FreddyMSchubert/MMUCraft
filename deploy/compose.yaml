@@ -237,6 +237,18 @@ services:
     velocity:
         image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-velocity:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
         init: true
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'mc-monitor',
+                    'status',
+                    '--host',
+                    '127.0.0.1',
+                    '--port',
+                    '25565',
+                    '--skip-readiness-check',
+                ]
         environment:
             CFG_VELOCITY_FORWARDING_SECRET: ${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}
             VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}

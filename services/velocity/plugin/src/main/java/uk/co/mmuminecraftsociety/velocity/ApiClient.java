@@ -83,7 +83,7 @@ final class ApiClient {
 
     record SyncResponse(
             boolean maintenanceMode,
-            int maxPlayers,
+            Integer maxPlayers,
             List<PlayerPriority> playerPriorities,
             List<BackendServer> servers,
             Route route,

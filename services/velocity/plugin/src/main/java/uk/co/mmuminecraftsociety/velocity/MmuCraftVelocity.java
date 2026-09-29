@@ -288,7 +288,7 @@ public final class MmuCraftVelocity {
     }
 
     private void applyControl(ApiClient.SyncResponse response) {
-        maxPlayers = Math.max(0, response.maxPlayers());
+        if (response.maxPlayers() != null) maxPlayers = Math.max(0, response.maxPlayers());
         if (response.playerPriorities() != null) {
             for (ApiClient.PlayerPriority player : response.playerPriorities()) {
                 parseUuid(player.uuid()).ifPresent(uuid -> capacityRoles.put(uuid,

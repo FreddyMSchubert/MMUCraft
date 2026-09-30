@@ -3,6 +3,7 @@ import {
 	ForbiddenException,
 	Headers,
 	Injectable,
+	Logger,
 	Module,
 	OnModuleDestroy,
 	Post,
@@ -24,6 +25,7 @@ const DEPLOYMENT_COMPLETE_MESSAGE = 'The server update is complete. You can join
 
 @Injectable()
 export class ShutdownService implements OnModuleDestroy {
+	private readonly logger = new Logger(ShutdownService.name);
 	private acceptingRequests = true;
 	private activeRequests = 0;
 	private drained: (() => void) | null = null;
@@ -51,7 +53,9 @@ export class ShutdownService implements OnModuleDestroy {
 
 	async prepare() {
 		await (this.draining ??= this.drain());
+		this.logger.warn('API drained; saving Minecraft world');
 		await this.saveMinecraft();
+		this.logger.warn('Minecraft world saved');
 	}
 
 	async backupStatus() {
@@ -108,11 +112,16 @@ export class ShutdownService implements OnModuleDestroy {
 
 	private async drain() {
 		this.acceptingRequests = false;
+		this.logger.warn(`Draining API with ${this.activeRequests} active HTTP requests`);
 		const httpDrained =
 			this.activeRequests === 0
 				? Promise.resolve()
 				: new Promise<void>((resolve) => (this.drained = resolve));
-		await Promise.all([httpDrained, this.grpcServer.drain(), this.discord.drain()]);
+		await Promise.all([
+			httpDrained.then(() => { this.logger.warn('HTTP requests drained'); }),
+			this.grpcServer.drain().then(() => { this.logger.warn('API gRPC drained'); }),
+			this.discord.drain().then(() => { this.logger.warn('Discord work drained'); }),
+		]);
 	}
 
 	private async saveMinecraft() {

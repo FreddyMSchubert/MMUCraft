@@ -119,13 +119,13 @@ api_post() {
 	dc exec -T api node -e '
 		fetch("http://127.0.0.1:8080" + process.argv[1], {
 			method: "POST",
-			signal: AbortSignal.timeout(30_000),
+			signal: AbortSignal.timeout(Number(process.argv[2])),
 		}).then(async response => {
 			if (response.status === 404) process.exit(42);
 			if (!response.ok) throw new Error(response.status + " " + await response.text());
 			console.log(await response.text());
 		}).catch(error => { console.error(error); process.exit(1); });
-	' "$1"
+	' "$1" "${2:-30000}"
 }
 
 online_player_count() {
@@ -356,7 +356,7 @@ if printf '%s\n' "$running_services" | grep -qx minecraft; then
 	# Drain requests and save the world before replacing containers.
 	shutdown_started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 	status=0
-	api_post /api/internal/shutdown || status=$?
+	api_post /api/internal/shutdown 120000 || status=$?
 	if [ "$status" -ne 0 ]; then
 		echo "API and Minecraft logs from the failed drain/save attempt:" >&2
 		dc logs --no-color --timestamps --since "$shutdown_started_at" api minecraft >&2 || true

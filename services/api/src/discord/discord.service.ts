@@ -295,12 +295,12 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 
 	private async drainOnce() {
 		this.draining = true;
-		await this.client.destroy();
 		await Promise.allSettled(this.pending);
 	}
 
 	async onModuleDestroy() {
 		await this.drain();
+		await this.client.destroy();
 		this.webhook?.destroy();
 	}
 

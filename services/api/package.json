@@ -15,7 +15,7 @@
 		"prod": "npm run build && npm run start"
 	},
 	"dependencies": {
-		"@grpc/grpc-js": "^1.14.0",
+		"@grpc/grpc-js": "^1.14.5",
 		"@grpc/proto-loader": "^0.8.0",
 		"@nestjs/common": "^11.1.18",
 		"@nestjs/core": "^11.1.18",

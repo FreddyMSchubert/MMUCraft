@@ -23,6 +23,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.TickCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
 import java.util.ArrayList;
@@ -44,6 +45,11 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
 
     @Override
     public void onConsumeTick(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel) {
+        if (!isDimensionEnabled(level)) {
+            stopSearch(player.getUUID());
+            player.stopUsingItem();
+            return;
+        }
         SearchSession session = SEARCHES.get(player.getUUID());
         if (session != null && (session.key.level != level
                 || !session.key.center.equals(level.getRespawnData().globalPos().pos()))) {
@@ -70,6 +76,10 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     @Override
     public boolean onConsumeFinished(ItemStack stack, ServerPlayer player, ServerLevel level, int elapsedTicks, int charmLevel)
     {
+        if (!isDimensionEnabled(level)) {
+            stopSearch(player.getUUID());
+            return false;
+        }
         SearchSession session = SEARCHES.get(player.getUUID());
         if (session == null) {
             player.sendSystemMessage(Component.literal(SEARCH_FAILED));
@@ -132,7 +142,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
 
         boolean stillDrinkingDisplacementPotion = player.isUsingItem()
                 && CharmsManager.hasAbility(player.getUseItem(), PotionOfDisplacementCharm.class);
-        if (session.key.level != level || !stillDrinkingDisplacementPotion) {
+        if (session.key.level != level || !stillDrinkingDisplacementPotion || !isDimensionEnabled(level)) {
             stopSearch(player.getUUID());
         }
     }
@@ -152,15 +162,18 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
     }
 
     public static void tickPools(ServerLevel level) {
+        boolean enabled = isDimensionEnabled(level);
         BlockPos center = level.getRespawnData().globalPos().pos();
-        POOLS.computeIfAbsent(new PoolKey(level, NORMAL_RADIUS, center), PotionOfDisplacementCharm::loadPool);
-        POOLS.computeIfAbsent(new PoolKey(level, MEMBER_RADIUS, center), PotionOfDisplacementCharm::loadPool);
+        if (enabled) {
+            POOLS.computeIfAbsent(new PoolKey(level, NORMAL_RADIUS, center), PotionOfDisplacementCharm::loadPool);
+            POOLS.computeIfAbsent(new PoolKey(level, MEMBER_RADIUS, center), PotionOfDisplacementCharm::loadPool);
+        }
         Iterator<Map.Entry<PoolKey, DestinationPool>> pools = POOLS.entrySet().iterator();
         while (pools.hasNext()) {
             Map.Entry<PoolKey, DestinationPool> pool = pools.next();
             PoolKey key = pool.getKey();
             if (key.level != level) continue;
-            if (!key.center.equals(center)) {
+            if (!enabled || !key.center.equals(center)) {
                 for (PoolEntry entry : pool.getValue().entries) releaseEntry(key, entry);
                 pools.remove();
                 continue;
@@ -174,42 +187,41 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         Iterator<PoolEntry> entries = pool.entries.iterator();
         while (entries.hasNext()) {
             PoolEntry entry = entries.next();
-            if (entry.destination != null || entry.inUse || !entry.loading.isDone()) continue;
+            if (entry.destination != null || entry.inUse
+                    || (!entry.loading.isDone() && key.level.getGameTime() - entry.requestedAt < 20 * 60)) continue;
 
             if (!entry.loading.isCompletedExceptionally()) {
                 Object result = entry.loading.getNow(null);
                 if (!(result instanceof ChunkResult<?> chunkResult) || chunkResult.isSuccess()) {
                     LevelChunk chunk = key.level.getChunkSource()
                             .getChunkNow(entry.chunkPos.x(), entry.chunkPos.z());
-                    if (chunk == null) continue;
-                    entry.destination = possibleSpawnPos(entry.x, entry.z, key.level, chunk);
+                    if (chunk != null) entry.destination = possibleSpawnPos(entry.x, entry.z, key.level, chunk);
                 }
             }
+            releaseEntry(key, entry);
             if (entry.destination != null) {
                 pool.failures = 0;
                 pool.retryAt = 0;
-            } else {
-                releaseEntry(key, entry);
-                entries.remove();
                 changed = true;
+            } else {
+                entries.remove();
+                changed |= entry.persisted;
                 failedCandidate(key, pool);
             }
         }
 
+        if (changed) persistPool(key, pool);
         if (key.level.getGameTime() < pool.retryAt) {
-            if (changed) persistPool(key, pool);
             return;
         }
-        while (pool.entries.size() < 3) {
+        if (pool.entries.isEmpty()) {
             PoolEntry entry = requestCandidate(key);
             if (entry == null) {
                 failedCandidate(key, pool);
-                break;
+            } else {
+                pool.entries.add(entry);
             }
-            pool.entries.add(entry);
-            changed = true;
         }
-        if (changed) persistPool(key, pool);
     }
 
     private static void failedCandidate(PoolKey key, DestinationPool pool) {
@@ -226,8 +238,8 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         while (entries.hasNext()) {
             PoolEntry entry = entries.next();
             if (entry.destination == null || entry.inUse) continue;
-            LevelChunk chunk = key.level.getChunkSource().getChunkNow(entry.chunkPos.x(), entry.chunkPos.z());
-            BlockPos destination = chunk == null ? null : possibleSpawnPos(entry.x, entry.z, key.level, chunk);
+            LevelChunk chunk = key.level.getChunk(entry.chunkPos.x(), entry.chunkPos.z());
+            BlockPos destination = possibleSpawnPos(entry.x, entry.z, key.level, chunk);
             if (destination == null || !key.level.getWorldBorder().isWithinBounds(destination)) {
                 entries.remove();
                 releaseEntry(key, entry);
@@ -257,7 +269,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         try {
             CompletableFuture<?> loading = key.level.getChunkSource()
                     .addTicketAndLoadWithRadius(SEARCH_TICKET, chunkPos, 0);
-            return new PoolEntry(x, z, chunkPos, loading);
+            return new PoolEntry(x, z, chunkPos, loading, key.level.getGameTime());
         } catch (RuntimeException ignored) {
             key.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, chunkPos, 0);
             return null;
@@ -272,7 +284,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
 
         ListTag saved = data.getListOrEmpty("candidates");
         boolean changed = false;
-        for (int index = 0; index < saved.size() && pool.entries.size() < 3; index++) {
+        for (int index = 0; index < saved.size() && pool.entries.isEmpty(); index++) {
             CompoundTag candidate = saved.getCompoundOrEmpty(index);
             Integer x = candidate.getInt("x").orElse(null);
             Integer z = candidate.getInt("z").orElse(null);
@@ -294,6 +306,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
                 changed = true;
                 continue;
             }
+            entry.persisted = true;
             pool.entries.add(entry);
         }
         if (changed || saved.size() > pool.entries.size()) persistPool(key, pool);
@@ -310,6 +323,7 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
             candidate.putInt("x", entry.x);
             candidate.putInt("z", entry.z);
             candidates.add(candidate);
+            entry.persisted = true;
         }
         data.put("candidates", candidates);
         key.level.getServer().getCommandStorage().set(storageId(key), data);
@@ -393,8 +407,16 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         SEARCHES.remove(playerId);
     }
 
+    private static boolean isDimensionEnabled(ServerLevel level) {
+        return level.dimension().equals(Level.NETHER) ? FeatureToggles.isEnabled(FeatureToggles.NETHER)
+                : !level.dimension().equals(Level.END) || FeatureToggles.isEnabled(FeatureToggles.VOID);
+    }
+
     private static void releaseEntry(PoolKey key, PoolEntry entry) {
-        key.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, entry.chunkPos, 0);
+        if (entry.ticketHeld) {
+            key.level.getChunkSource().removeTicketWithRadius(SEARCH_TICKET, entry.chunkPos, 0);
+            entry.ticketHeld = false;
+        }
     }
 
     private record PoolKey(ServerLevel level, int radius, BlockPos center) {}
@@ -410,14 +432,18 @@ public class PotionOfDisplacementCharm implements Charm, ConsumableCallbacksChar
         private final int z;
         private final ChunkPos chunkPos;
         private final CompletableFuture<?> loading;
+        private final long requestedAt;
+        private boolean ticketHeld = true;
+        private boolean persisted;
         private BlockPos destination;
         private boolean inUse;
 
-        private PoolEntry(int x, int z, ChunkPos chunkPos, CompletableFuture<?> loading) {
+        private PoolEntry(int x, int z, ChunkPos chunkPos, CompletableFuture<?> loading, long requestedAt) {
             this.x = x;
             this.z = z;
             this.chunkPos = chunkPos;
             this.loading = loading;
+            this.requestedAt = requestedAt;
         }
     }
 

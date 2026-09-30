@@ -1,8 +1,51 @@
-# Reduce entity ticking and growth while keeping fixed view/simulation distances.
+# Reduce entity ticking and growth, then distances if tick time stays high.
 features:
     lobotomize-villagers:
         enabled: true
         tick-interval: 20
+
+dynamic:
+    enabled: true
+    target-mspt: 35
+    default-values:
+        MOBCAP_PERCENTAGE: 100
+        CHUNK_TICK_DISTANCE: 5
+    dynamic-settings:
+        - setting: 'CHUNK_TICK_DISTANCE'
+          max: 5
+          min: 3
+          increment: 1
+          interval: 15
+        - setting: 'MOBCAP_PERCENTAGE'
+          max: 100
+          min: 60
+          increment: 10
+          interval: 15
+        - setting: 'SIMULATION_DISTANCE'
+          max: 5
+          min: 3
+          increment: 1
+          interval: 15
+        - setting: 'CHUNK_TICK_DISTANCE'
+          max: 3
+          min: 2
+          increment: 1
+          interval: 15
+        - setting: 'MOBCAP_PERCENTAGE'
+          max: 60
+          min: 40
+          increment: 10
+          interval: 15
+        - setting: 'SIMULATION_DISTANCE'
+          max: 3
+          min: 2
+          increment: 1
+          interval: 15
+        - setting: 'VIEW_DISTANCE'
+          max: 8
+          min: 5
+          increment: 1
+          interval: 150
 
 breeding-cap:
     enabled: true

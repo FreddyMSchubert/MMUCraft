@@ -1,0 +1,5 @@
+settings:
+    allow-end: false
+worlds:
+    world:
+        generator: WaitingRoom

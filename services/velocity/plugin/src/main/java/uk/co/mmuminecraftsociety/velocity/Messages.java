@@ -57,13 +57,13 @@ final class Messages {
 
     static Component capacityKick() {
         return heading("Disconnected to make room", GOLD)
-                .append(Component.text("We're sorry, but the server is over its player limit and your place was needed.\n", TEXT))
-                .append(Component.text("Please try again later.\n", MUTED))
+                .append(Component.text("Your minimum playtime has passed and your place is needed.\n", TEXT))
+                .append(Component.text("Reconnect to join the waiting room again.\n", MUTED))
                 .append(discordUpdates());
     }
 
     static Component capacityWarning(String remaining) {
-        return Component.text("The server is over its player limit. You will be disconnected in "
+        return Component.text("Your place is needed for the queue or a lower player limit. You will be disconnected in "
                 + remaining + ". Sorry for the interruption.", GOLD);
     }
 
@@ -99,6 +99,12 @@ final class Messages {
                 .append(Component.text("We could not connect you to the selected Minecraft server.\n", TEXT))
                 .append(Component.text("Please try again in a moment.\n\n", MUTED))
                 .append(support("If this continues, tell the committee"));
+    }
+
+    static Component waitingRoomUnavailable() {
+        return heading("Waiting room unavailable", RED)
+                .append(Component.text("The waiting room is full or offline.\n", TEXT))
+                .append(Component.text("Please try again in a moment.\n", MUTED));
     }
 
     static Component transferUnavailable() {

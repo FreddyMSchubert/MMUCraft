@@ -1,0 +1,5 @@
+name: WaitingRoom
+version: '1.0.0'
+main: uk.co.mmuminecraftsociety.waitingroom.WaitingRoomPlugin
+api-version: '26.3'
+load: STARTUP

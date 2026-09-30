@@ -501,6 +501,10 @@ public final class PlayerStatsSync {
                 stats.getValue(customStats, statId)
         ));
 
+        Identifier totemId = BuiltInRegistries.ITEM.getKey(Items.TOTEM_OF_UNDYING);
+        addStat(entries, "used", totemId, "Totems Used",
+                stats.getValue(Stats.ITEM_USED.get(Items.TOTEM_OF_UNDYING)));
+
         for (Block block : NOTABLE_MINED_BLOCKS) {
             Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
             addStat(

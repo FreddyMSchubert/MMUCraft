@@ -26,6 +26,7 @@ import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,6 +36,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Plugin(
         id = "mmucraft-velocity",
@@ -47,6 +49,7 @@ public final class MmuCraftVelocity {
     private final Logger logger;
     private final ApiClient api;
     private final boolean configured;
+    private final int waitingRoomLimit;
     private final AtomicBoolean synchronizing = new AtomicBoolean();
     private final Map<String, RegisteredServer> managedServers = new ConcurrentHashMap<>();
     private final Map<String, ApiClient.ServerHealth> health = new ConcurrentHashMap<>();
@@ -56,6 +59,10 @@ public final class MmuCraftVelocity {
     private final Map<UUID, CapacityRole> capacityRoles = new ConcurrentHashMap<>();
     private final Map<UUID, Long> joinedAt = new ConcurrentHashMap<>();
     private final Set<UUID> admissions = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, QueueEntry> waiting = new ConcurrentHashMap<>();
+    private final AtomicLong queueOrder = new AtomicLong();
+    private int admissionTurn;
+    private final Map<UUID, String> shownPositions = new ConcurrentHashMap<>();
     private final Map<UUID, CapacityWarning> capacityWarnings = new ConcurrentHashMap<>();
     private CompletableFuture<Void> capacityNotifications = CompletableFuture.completedFuture(null);
     private volatile ApiClient.Route route;
@@ -73,6 +80,8 @@ public final class MmuCraftVelocity {
         String secret = System.getenv().getOrDefault("VELOCITY_API_SECRET", "");
         this.api = new ApiClient(baseUrl, secret);
         this.configured = !secret.isBlank();
+        this.waitingRoomLimit = Math.max(1, Math.min(100,
+                Integer.parseInt(System.getenv().getOrDefault("MMU_WAITING_ROOM_LIMIT", "100"))));
     }
 
     @Subscribe
@@ -121,14 +130,28 @@ public final class MmuCraftVelocity {
                         event.setResult(ResultedEvent.ComponentResult.denied(
                                 Messages.access(access, event.getPlayer().getUsername())
                         ));
-                    } else if (!admit(event.getPlayer(), new CapacityRole(access.priority(), access.exempt()))) {
-                        event.setResult(ResultedEvent.ComponentResult.denied(Messages.full()));
+                    } else if (!admit(event.getPlayer(), new CapacityRole(access.member(), access.exempt()),
+                            access.preferredServerName())) {
+                        event.setResult(ResultedEvent.ComponentResult.denied(Messages.waitingRoomUnavailable()));
                     } else {
                         loginDestinations.put(event.getPlayer().getUniqueId(),
-                                "surprising-saturday".equals(access.preferredServerName())
-                                        ? "surprising-saturday" : "main");
+                                waiting.containsKey(event.getPlayer().getUniqueId()) ? "waiting-room"
+                                        : "surprising-saturday".equals(access.preferredServerName())
+                                                ? "surprising-saturday" : "main");
                     }
-                    return null;
+                    return waiting.containsKey(event.getPlayer().getUniqueId());
+                }).thenCompose(queued -> {
+                    if (!queued) return CompletableFuture.completedFuture(null);
+                    return api.markQueued(event.getPlayer().getUniqueId().toString(),
+                            event.getPlayer().getUsername()).handle((response, error) -> {
+                        if (error != null || response == null || !response.ok()) {
+                            logger.warn("Could not mark {} as queued: {}", event.getPlayer().getUsername(),
+                                    errorMessage(error));
+                            clearPlayerState(event.getPlayer().getUniqueId());
+                            event.setResult(ResultedEvent.ComponentResult.denied(Messages.authenticationUnavailable()));
+                        }
+                        return null;
+                    });
                 });
         return EventTask.resumeWhenComplete(decision);
     }
@@ -186,10 +209,13 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
-        admissions.remove(event.getPlayer().getUniqueId());
-        joinedAt.putIfAbsent(event.getPlayer().getUniqueId(), System.currentTimeMillis());
-        loginDestinations.put(event.getPlayer().getUniqueId(), event.getServer().getServerInfo().getName());
-        api.connected(event.getPlayer().getUniqueId().toString(), event.getServer().getServerInfo().getName())
+        UUID uuid = event.getPlayer().getUniqueId();
+        String serverName = event.getServer().getServerInfo().getName();
+        if ("waiting-room".equals(serverName)) return;
+        admissions.add(uuid);
+        joinedAt.putIfAbsent(uuid, System.currentTimeMillis());
+        loginDestinations.put(uuid, serverName);
+        api.connected(uuid.toString(), serverName)
                 .exceptionally(error -> {
                     logger.warn("Could not save {}'s server: {}", event.getPlayer().getUsername(), errorMessage(error));
                     return null;
@@ -198,12 +224,18 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
-        capacityRoles.remove(event.getPlayer().getUniqueId());
-        joinedAt.remove(event.getPlayer().getUniqueId());
-        admissions.remove(event.getPlayer().getUniqueId());
-        capacityWarnings.remove(event.getPlayer().getUniqueId());
-        manualDestinations.remove(event.getPlayer().getUniqueId());
-        loginDestinations.remove(event.getPlayer().getUniqueId());
+        clearPlayerState(event.getPlayer().getUniqueId());
+    }
+
+    private void clearPlayerState(UUID uuid) {
+        capacityRoles.remove(uuid);
+        joinedAt.remove(uuid);
+        admissions.remove(uuid);
+        waiting.remove(uuid);
+        shownPositions.remove(uuid);
+        capacityWarnings.remove(uuid);
+        manualDestinations.remove(uuid);
+        loginDestinations.remove(uuid);
     }
 
     @Subscribe
@@ -211,7 +243,9 @@ public final class MmuCraftVelocity {
         Component update = deploymentMessage();
         var ping = event.getPing().asBuilder()
                 .onlinePlayers((int) proxy.getAllPlayers().stream()
-                        .filter(player -> player.getCurrentServer().isPresent())
+                        .filter(player -> admissions.contains(player.getUniqueId()))
+                        .filter(player -> player.getCurrentServer().stream().noneMatch(connection ->
+                                "waiting-room".equals(connection.getServerInfo().getName())))
                         .filter(player -> !capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST).exempt())
                         .count())
                 .maximumPlayers(maxPlayers);
@@ -289,10 +323,13 @@ public final class MmuCraftVelocity {
 
     private void applyControl(ApiClient.SyncResponse response) {
         if (response.maxPlayers() != null) maxPlayers = Math.max(0, response.maxPlayers());
-        if (response.playerPriorities() != null) {
-            for (ApiClient.PlayerPriority player : response.playerPriorities()) {
-                parseUuid(player.uuid()).ifPresent(uuid -> capacityRoles.put(uuid,
-                        new CapacityRole(player.priority(), player.exempt())));
+        if (response.playerRoles() != null) {
+            for (ApiClient.PlayerRole player : response.playerRoles()) {
+                parseUuid(player.uuid()).ifPresent(uuid -> {
+                    capacityRoles.put(uuid, new CapacityRole(player.member(), player.exempt()));
+                    waiting.computeIfPresent(uuid, (id, entry) ->
+                            new QueueEntry(player.member(), entry.order(), entry.destination()));
+                });
             }
         }
         if (deploymentMessage() != null) {
@@ -333,29 +370,32 @@ public final class MmuCraftVelocity {
         }
     }
 
-    private synchronized boolean admit(Player player, CapacityRole role) {
+    private synchronized boolean admit(Player player, CapacityRole role, String destination) {
         UUID uuid = player.getUniqueId();
-        if (!role.exempt()) {
-            Set<UUID> counted = new HashSet<>(admissions);
-            counted.removeIf(id -> capacityRoles.getOrDefault(id, CapacityRole.LOWEST).exempt());
-            List<Player> online = new ArrayList<>(proxy.getAllPlayers());
-            for (Player current : online) {
-                if (current.getCurrentServer().isPresent()
-                        && !capacityRoles.getOrDefault(current.getUniqueId(), CapacityRole.LOWEST).exempt()) {
-                    counted.add(current.getUniqueId());
-                }
-            }
-            counted.remove(uuid);
-            List<CapacityPolicy.Candidate> connected = online.stream()
-                    .filter(current -> !current.getUniqueId().equals(uuid))
-                    .filter(current -> current.getCurrentServer().isPresent())
-                    .map(this::capacityCandidate)
-                    .toList();
-            if (!CapacityPolicy.canAdmit(counted.size(), maxPlayers, role.priority(), connected)) return false;
+        if (!role.exempt() && (!waiting.isEmpty() || occupied() >= maxPlayers)) {
+            if (!serverOnline("waiting-room") || waitingRoomPopulation() >= waitingRoomLimit) return false;
+            waiting.put(uuid, new QueueEntry(role.member(), queueOrder.incrementAndGet(), destination));
+        } else {
+            admissions.add(uuid);
         }
         capacityRoles.put(uuid, role);
-        admissions.add(uuid);
         return true;
+    }
+
+    private long occupied() {
+        return admissions.stream()
+                .filter(uuid -> !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt())
+                .count();
+    }
+
+    private int waitingRoomPopulation() {
+        Set<UUID> present = new HashSet<>(waiting.keySet());
+        for (Player player : proxy.getAllPlayers()) {
+            if (player.getCurrentServer().stream().anyMatch(connection ->
+                    "waiting-room".equals(connection.getServerInfo().getName())))
+                present.add(player.getUniqueId());
+        }
+        return present.size();
     }
 
     private synchronized void checkCapacity() {
@@ -363,29 +403,26 @@ public final class MmuCraftVelocity {
             capacityWarnings.clear();
             return;
         }
-        List<Player> online = new ArrayList<>(proxy.getAllPlayers());
-        Set<UUID> counted = new HashSet<>(admissions);
-        for (Player player : online) {
-            if (player.getCurrentServer().isPresent()
-                    && !capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST).exempt()) {
-                counted.add(player.getUniqueId());
-            }
-        }
-        counted.removeIf(uuid -> capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt());
-        boolean full = counted.size() >= maxPlayers;
+        long count = occupied();
+        boolean full = count >= maxPlayers;
         if (wasFull != null && wasFull != full) {
             notifyCapacity(full ? "full" : "space");
         }
         wasFull = full;
 
-        int excess = Math.max(0, counted.size() - maxPlayers);
-        List<UUID> victims = CapacityPolicy.victims(online.stream()
-                .filter(player -> counted.contains(player.getUniqueId()))
-                .filter(player -> player.getCurrentServer().isPresent())
-                .map(this::capacityCandidate)
-                .toList(), excess);
+        int needed = (int) Math.max(0, count - maxPlayers);
+        if (!waiting.isEmpty() && count >= maxPlayers) needed++;
         Set<UUID> selected = new HashSet<>();
         long now = System.currentTimeMillis();
+        List<UUID> victims = admissions.stream()
+                .filter(uuid -> !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt())
+                .filter(uuid -> joinedAt.containsKey(uuid))
+                .filter(uuid -> now - joinedAt.get(uuid) >= minimumPlaytime(uuid))
+                .sorted(Comparator.<UUID>comparingLong(uuid ->
+                        now - joinedAt.get(uuid) - minimumPlaytime(uuid)).reversed()
+                        .thenComparing(UUID::toString))
+                .limit(needed)
+                .toList();
         for (UUID uuid : victims) {
             Player victim = proxy.getPlayer(uuid).orElse(null);
             if (victim == null) continue;
@@ -416,6 +453,83 @@ public final class MmuCraftVelocity {
             if (player == null) continue;
             player.sendMessage(Messages.capacityCancelled());
         }
+        fillVacancies();
+        showWaitingPositions();
+    }
+
+    private long minimumPlaytime(UUID uuid) {
+        return Duration.ofMinutes(capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).member() ? 80 : 40)
+                .toMillis();
+    }
+
+    private void fillVacancies() {
+        while (occupied() < maxPlayers && !waiting.isEmpty()) {
+            QueueEntry next = nextQueued();
+            if (next == null) return;
+            UUID uuid = waiting.entrySet().stream()
+                    .filter(entry -> entry.getValue() == next)
+                    .map(Map.Entry::getKey).findFirst().orElse(null);
+            if (uuid == null) return;
+            Player player = proxy.getPlayer(uuid).orElse(null);
+            if (player == null) { waiting.remove(uuid); continue; }
+            String destination = "surprising-saturday".equals(next.destination())
+                    && route != null && route.eventOpen() ? "surprising-saturday" : "main";
+            if (!serverOnline(destination)) {
+                destination = "main".equals(destination) && route != null && route.eventOpen()
+                        && serverOnline("surprising-saturday") ? "surprising-saturday" : destination;
+                if (!serverOnline(destination)) return;
+            }
+            boolean bothQueues = waiting.values().stream().anyMatch(QueueEntry::member)
+                    && waiting.values().stream().anyMatch(entry -> !entry.member());
+            waiting.remove(uuid);
+            shownPositions.remove(uuid);
+            admissions.add(uuid);
+            manualDestinations.put(uuid, destination);
+            RegisteredServer target = managedServers.get(destination);
+            if (target == null) { admissions.remove(uuid); waiting.put(uuid, next); return; }
+            admissionTurn = bothQueues ? (admissionTurn + 1) % 3 : 0;
+            String selectedDestination = destination;
+            player.createConnectionRequest(target).connect().thenAccept(result -> {
+                if (result.isSuccessful()) {
+                    manualDestinations.remove(uuid, selectedDestination);
+                } else {
+                    synchronized (this) {
+                        admissions.remove(uuid);
+                        manualDestinations.remove(uuid, selectedDestination);
+                        if (proxy.getPlayer(uuid).isPresent()) waiting.put(uuid, next);
+                    }
+                }
+            });
+        }
+    }
+
+    private QueueEntry nextQueued() {
+        boolean hasMembers = waiting.values().stream().anyMatch(QueueEntry::member);
+        boolean hasNormal = waiting.values().stream().anyMatch(entry -> !entry.member());
+        boolean chooseMember = hasMembers && (!hasNormal || admissionTurn != 2);
+        return waiting.values().stream()
+                .filter(entry -> entry.member() == chooseMember)
+                .min(Comparator.comparingLong(QueueEntry::order)).orElse(null);
+    }
+
+    private void showWaitingPositions() {
+        for (boolean members : List.of(true, false)) {
+            List<Map.Entry<UUID, QueueEntry>> queue = waiting.entrySet().stream()
+                    .filter(entry -> entry.getValue().member() == members)
+                    .sorted(Comparator.comparingLong(entry -> entry.getValue().order()))
+                    .toList();
+            for (int i = 0; i < queue.size(); i++) {
+                UUID uuid = queue.get(i).getKey();
+                Player player = proxy.getPlayer(uuid).orElse(null);
+                if (player == null) continue;
+                String label = members ? "Members queue" : "Queue";
+                Component status = Component.text(label + ": position " + (i + 1));
+                player.sendActionBar(status);
+                String position = label + ":" + (i + 1);
+                String previous = shownPositions.put(uuid, position);
+                if (!position.equals(previous)) player.sendMessage(status);
+            }
+        }
     }
 
     private void notifyCapacity(String type) {
@@ -428,14 +542,10 @@ public final class MmuCraftVelocity {
                 });
     }
 
-    private CapacityPolicy.Candidate capacityCandidate(Player player) {
-        CapacityRole role = capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST);
-        return new CapacityPolicy.Candidate(player.getUniqueId(), role.priority(),
-                joinedAt.getOrDefault(player.getUniqueId(), Long.MAX_VALUE), role.exempt());
-    }
+    private record QueueEntry(boolean member, long order, String destination) { }
 
-    private record CapacityRole(int priority, boolean exempt) {
-        static final CapacityRole LOWEST = new CapacityRole(0, false);
+    private record CapacityRole(boolean member, boolean exempt) {
+        static final CapacityRole LOWEST = new CapacityRole(false, false);
     }
 
     private static final class CapacityWarning {
@@ -503,7 +613,8 @@ public final class MmuCraftVelocity {
                 player.getCurrentServer().stream().map(connection -> new ApiClient.OnlinePlayer(
                         player.getUniqueId().toString(),
                         player.getUsername(),
-                        connection.getServerInfo().getName()
+                        connection.getServerInfo().getName(),
+                        "waiting-room".equals(connection.getServerInfo().getName()) ? "queued" : "playing"
                 ))
         ).toList();
     }
@@ -516,6 +627,7 @@ public final class MmuCraftVelocity {
         }
 
         Player targetPlayer = player.get();
+        if (waiting.containsKey(targetPlayer.getUniqueId())) return;
         RegisteredServer target = managedServers.get(command.targetServerName());
         if (target == null || !serverOnline(command.targetServerName())) return;
         manualDestinations.put(targetPlayer.getUniqueId(), command.targetServerName());
@@ -554,6 +666,7 @@ public final class MmuCraftVelocity {
     private RegisteredServer targetFor(Player player) {
         if (maintenanceMode) return null;
         UUID uuid = player.getUniqueId();
+        if (waiting.containsKey(uuid)) return managedServers.get("waiting-room");
         String name = manualDestinations.get(uuid);
         if (name == null && player.getCurrentServer().isEmpty()) {
             name = loginDestinations.getOrDefault(uuid, "main");

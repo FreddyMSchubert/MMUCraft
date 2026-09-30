@@ -83,7 +83,7 @@ fi
 
 # Prepare release configuration and persistent data.
 umask 077
-mkdir -p data/api data/minecraft data/velocity data/surprising-saturday
+mkdir -p data/api data/minecraft data/velocity data/waiting-room data/surprising-saturday
 if [ "$target" = production ]; then
 	mkdir -p data/locks backups
 	chmod 770 data/locks backups
@@ -96,7 +96,7 @@ fi
 printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\nCOMPOSE_FILE=%s\n' "$image_prefix" "$tag" "$public_host" "$compose_file" > .release.env
 [ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 printf '%s\n' "$VELOCITY_FORWARDING_SECRET" > data/velocity/forwarding.secret
-chmod 775 data/api data/minecraft data/velocity data/surprising-saturday
+chmod 775 data/api data/minecraft data/velocity data/waiting-room data/surprising-saturday
 chmod 664 data/api/signup-allowlist.txt
 chmod 600 data/velocity/forwarding.secret
 
@@ -107,12 +107,12 @@ dc() {
 show_startup_diagnostics() {
 	echo "Service startup failed. Container state and recent logs:" >&2
 	dc ps -a >&2 || true
-	for service in api web minecraft nginx; do
+	for service in api web minecraft waiting-room nginx; do
 		container=$(dc ps -a -q "$service" 2>/dev/null || true)
 		[ -n "$container" ] || continue
 		docker inspect --format '{{.Name}} status={{.State.Status}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} restarts={{.RestartCount}}' "$container" >&2 || true
 	done
-	dc logs --no-color --timestamps --tail=200 api web minecraft nginx >&2 || true
+	dc logs --no-color --timestamps --tail=200 api web minecraft waiting-room nginx >&2 || true
 }
 
 api_post() {
@@ -399,7 +399,7 @@ fi
 
 # Start the release and wait for the services players need.
 if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
-	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web velocity; then
+	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web waiting-room velocity; then
 		:
 	else
 		status=$?
@@ -408,7 +408,7 @@ if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-contr
 	fi
 	dc up -d --no-deps minecraft || echo "Main server could not start; checking the active route." >&2
 else
-	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web minecraft velocity; then
+	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web minecraft waiting-room velocity; then
 		:
 	else
 		status=$?

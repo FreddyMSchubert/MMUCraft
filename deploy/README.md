@@ -72,6 +72,12 @@ Run the `clean-dev` GitHub Actions workflow to clean the dev server around spawn
 
 ## Minecraft network
 
+Set `DISCORD_WAITING_ROOM_CHANNEL_ID` to the ID of a separate text channel. Create a webhook in that channel and set `DISCORD_WAITING_ROOM_WEBHOOK_URL` to its URL. Keep the URL private. Give the existing bot permission to read messages in the channel. The webhook sends player names and avatars. Administrators can use `/mc` in that channel to run a command on the waiting room. `/mc` in the main bridge channel still runs a command on the main server. The waiting room uses the same bot token and the existing Velocity secrets.
+
+The waiting room runs in a separate Paper container with its own data directory. It uses a void generator and repairs its bedrock box at each start. Its player data does not share the main server's inventory files. The container has no public port. Velocity sends queued players to it and counts only players on game servers toward the main capacity.
+
+The dev waiting room has a 384 MiB Java heap, a 576 MiB container limit, and 16 queue places. Production uses a 768 MiB heap, a 1 GiB container limit, and 100 queue places. The deployment waits for the waiting room health check before it accepts players.
+
 Velocity owns the public Minecraft port. Backend servers have no published port. They use offline mode because Velocity authenticates the Mojang account. FabricProxy-Lite verifies the forwarding secret and restores the authenticated UUID, username, skin, and client address on each Fabric backend.
 
 Simple Voice Chat uses UDP port `24454` on Velocity. The shared Compose file publishes this port on `MINECRAFT_BIND`. Allow inbound UDP `24454` in UFW and any provider firewall. Keep the Minecraft backend ports private. Voice packets go from the client to Velocity, then to the backend over the Docker network. HTTP proxies do not carry this UDP traffic.

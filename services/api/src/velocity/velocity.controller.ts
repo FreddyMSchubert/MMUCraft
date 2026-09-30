@@ -128,6 +128,15 @@ export class VelocityInternalController {
 		return this.velocity.connectedPlayer(body?.uuid, body?.serverName);
 	}
 
+	@Post('waiting-state')
+	waitingState(
+		@Headers('authorization') authorization: string | undefined,
+		@Body() body: { uuid?: unknown; username?: unknown } | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		return this.velocity.markQueued(body?.uuid, body?.username);
+	}
+
 	@Post('capacity-event')
 	async capacityEvent(
 		@Headers('authorization') authorization: string | undefined,
@@ -137,7 +146,8 @@ export class VelocityInternalController {
 		let content: string;
 		switch (body?.type) {
 			case 'full':
-				content = 'Too many players are on the server right now. Please check back later.';
+				content =
+					'The main server is full. You can join the waiting room for the next place.';
 				break;
 			case 'space':
 				content =
@@ -155,6 +165,65 @@ export class VelocityInternalController {
 	eventControl(@Headers('authorization') authorization: string | undefined) {
 		this.velocity.verifyInternalAuthorization(authorization);
 		return this.velocity.eventControlState();
+	}
+
+	@Get('waiting-chat')
+	waitingChat(
+		@Headers('authorization') authorization: string | undefined,
+		@Query('after') after: string | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		if (after !== undefined && !/^(0|[1-9][0-9]{0,14})$/.test(after))
+			throw new BadRequestException('Invalid chat cursor');
+		return this.discord.lobbyChat(after === undefined ? null : Number(after));
+	}
+
+	@Post('waiting-chat')
+	async publishWaitingChat(
+		@Headers('authorization') authorization: string | undefined,
+		@Body() body: { uuid?: unknown; content?: unknown } | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		const player = this.velocity.queuedPlayer(typeof body?.uuid === 'string' ? body.uuid : '');
+		const content = typeof body?.content === 'string' ? body.content.trim() : '';
+		if (!player || !content || content.length > 500)
+			throw new BadRequestException('Invalid waiting room message');
+		const accepted = await this.discord.publish({
+			type: 'waiting_chat',
+			minecraft_username: player.username,
+			minecraft_uuid: player.uuid,
+			content,
+			role: '',
+			nickname: '',
+			pronouns: '',
+			color_hex: '',
+			online_players: [],
+		});
+		if (!accepted)
+			throw new ServiceUnavailableException('Waiting room chat bridge is unavailable');
+		return { accepted: true };
+	}
+
+	@Get('waiting-commands')
+	waitingCommands(@Headers('authorization') authorization: string | undefined) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		return { commands: this.discord.takeWaitingCommands() };
+	}
+
+	@Post('waiting-commands/:id/result')
+	waitingCommandResult(
+		@Headers('authorization') authorization: string | undefined,
+		@Param('id') id: string,
+		@Body() body: { output?: unknown } | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		if (
+			!/^[1-9][0-9]{0,14}$/.test(id) ||
+			typeof body?.output !== 'string' ||
+			body.output.length > 8000
+		)
+			throw new BadRequestException('Invalid command result');
+		return { accepted: this.discord.finishWaitingCommand(Number(id), body.output) };
 	}
 }
 

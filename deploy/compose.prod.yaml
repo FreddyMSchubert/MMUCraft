@@ -39,6 +39,15 @@ services:
                 reservations:
                     memory: 6g
 
+    waiting-room:
+        environment:
+            MEMORY: 768M
+            INIT_MEMORY: 128M
+        cpus: '0.75'
+        mem_limit: 1g
+        mem_reservation: 256m
+        memswap_limit: 1g
+
     surprising-saturday:
         environment:
             MEMORY: 3G

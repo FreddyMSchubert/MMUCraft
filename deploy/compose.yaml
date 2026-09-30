@@ -38,6 +38,8 @@ services:
             DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
             DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
             DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-}
+            DISCORD_WAITING_ROOM_CHANNEL_ID: ${DISCORD_WAITING_ROOM_CHANNEL_ID:-}
+            DISCORD_WAITING_ROOM_WEBHOOK_URL: ${DISCORD_WAITING_ROOM_WEBHOOK_URL:-}
             DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
             DISCORD_AVATAR_BASE_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}/api/discord/avatar
             COOKIE_SECURE: 'true'
@@ -190,6 +192,42 @@ services:
             timeout: 5s
             retries: 12
             start_period: 2m
+        networks: [app]
+
+    waiting-room:
+        image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-waiting-room:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
+        init: true
+        environment:
+            EULA: 'TRUE'
+            TYPE: PAPER
+            VERSION: '26.3'
+            COPY_CONFIG_DEST: /data
+            SKIP_SERVER_PROPERTIES: 'true'
+            SYNC_SKIP_NEWER_IN_DESTINATION: 'false'
+            PAPER_VELOCITY_SECRET: ${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}
+            WAITING_ROOM_API_URL: http://api:8080
+            WAITING_ROOM_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
+            UID: ${PUID:-1000}
+            GID: ${PGID:-1000}
+            TZ: Europe/London
+        volumes:
+            - ./data/waiting-room:/data
+        depends_on:
+            api:
+                condition: service_healthy
+                restart: true
+        pids_limit: 256
+        security_opt:
+            - no-new-privileges:true
+        logging: *logging
+        restart: unless-stopped
+        stop_grace_period: 30s
+        healthcheck:
+            test: ['CMD', 'mc-health']
+            interval: 10s
+            timeout: 5s
+            retries: 12
+            start_period: 1m
         networks: [app]
 
     surprising-saturday:

@@ -5,6 +5,8 @@ import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fa
 import { AppModule } from './app.module';
 import { ShutdownService } from './shutdown';
 import { MonitoringService } from './monitoring/monitoring.service';
+import { AuthSessionService } from './auth/auth-session.service';
+import { VelocityService } from './velocity/velocity.service';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
@@ -15,16 +17,31 @@ async function bootstrap() {
 	const server = app.getHttpAdapter().getInstance();
 	const shutdown = app.get(ShutdownService);
 	const monitoring = app.get(MonitoringService);
+	const sessions = app.get(AuthSessionService);
+	const velocity = app.get(VelocityService);
 	const trackedRequests = new WeakSet();
 	server.addHook('onRequest', async (request, reply) => {
 		monitoring.beginRequest(request);
-		const path = request.url.split('?', 1)[0];
+		const path = request.url.split('?', 1)[0] ?? '';
+		if (
+			path.startsWith('/api/') &&
+			!['/api/auth/', '/api/internal/', '/api/discord/avatar', '/api/health'].some((prefix) =>
+				path.startsWith(prefix),
+			) &&
+			velocity.hasQueuedPlayers() &&
+			velocity.isQueuedUsername(
+				sessions.getSession(request.headers.cookie)?.minecraftUsername ?? '',
+			)
+		) {
+			await reply.code(409).send({ message: 'Wait until you enter the game.' });
+			return;
+		}
 		if (path === '/api/internal/shutdown') return;
 		if (!shutdown.beginRequest()) {
 			await reply.code(503).send({ message: 'Server restart in progress' });
 			return;
 		}
-		if (!path?.endsWith('/events')) trackedRequests.add(request);
+		if (!path.endsWith('/events')) trackedRequests.add(request);
 		else shutdown.endRequest();
 	});
 	server.addHook('onResponse', (request, reply) => {

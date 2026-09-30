@@ -10,6 +10,10 @@ The server targets Minecraft Java `26.3`. See the [migration report](docs/minecr
 
 The main and Surprising Saturday servers install Emotecraft `3.5.0-a.build.169` and Player Animation Library `1.2.7` for Minecraft `26.3`. To play emotes and see other players' emotes, install [Emotecraft](https://modrinth.com/plugin/emotecraft/version/3.5.0-a.build.169) and its required [Player Animation Library](https://modrinth.com/mod/player-animation-library/version/1.2.7) on your client, using builds for Minecraft `26.3` and your mod loader. Press `B` in game to open the emote wheel. Players without the client mods can still join, but cannot see the emotes.
 
+## Chunk Debug
+
+The main server installs [ChunkDebug](https://modrinth.com/mod/chunk-debug). Install the matching Fabric mod on your client to use its `F6` map. The server permits operators to use the map.
+
 ## Development
 
 Install Docker Compose, Git, GNU Make, Python 3.10 or later, JDK 25, and Node.js 24.14.0.

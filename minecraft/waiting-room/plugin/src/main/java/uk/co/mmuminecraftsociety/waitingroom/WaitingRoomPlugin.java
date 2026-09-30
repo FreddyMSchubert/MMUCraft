@@ -14,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
@@ -107,7 +109,8 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         world.setSpawnLocation(new Location(world, 8.5, FLOOR + 1, 8.5));
         WorldBorder border = world.getWorldBorder();
         border.setCenter(7.5, 7.5);
-        border.setSize(46);
+        border.setSize(96);
+        border.setDamageAmount(0);
         try {
             Files.writeString(Path.of("/data/waiting-room.ready"), "ready\n");
         } catch (IOException error) {
@@ -125,7 +128,6 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
                     world.getBlockAt(x, y, z).setType(Material.BEDROCK, false);
             }
         }
-        world.save();
     }
 
     @EventHandler
@@ -135,6 +137,10 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         player.getInventory().clear();
         player.getEnderChest().clear();
         player.setGameMode(GameMode.ADVENTURE);
+        player.setInvulnerable(true);
+        player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
+        player.setFoodLevel(20);
+        player.setSaturation(20);
         player.teleport(player.getWorld().getSpawnLocation());
         Bukkit.getScheduler().runTask(this, () -> sendMode(player));
         refreshProfile(player);
@@ -162,6 +168,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     @EventHandler public void blockBreak(BlockBreakEvent event) { event.setCancelled(true); }
     @EventHandler public void blockPlace(BlockPlaceEvent event) { event.setCancelled(true); }
     @EventHandler public void damage(EntityDamageEvent event) { event.setCancelled(true); }
+    @EventHandler public void hunger(FoodLevelChangeEvent event) { event.setCancelled(true); }
     @EventHandler public void drop(PlayerDropItemEvent event) { event.setCancelled(true); }
     @EventHandler public void pickup(PlayerAttemptPickupItemEvent event) { event.setCancelled(true); }
     @EventHandler public void inventory(InventoryClickEvent event) { event.setCancelled(true); }

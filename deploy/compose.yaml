@@ -118,6 +118,7 @@ services:
                 fabric-api
                 spark:e3hsPc1o
                 chunky?
+                chunk-debug
                 lithium?
                 ferrite-core?
                 scalablelux?:alpha

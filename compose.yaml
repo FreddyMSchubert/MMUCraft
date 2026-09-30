@@ -132,7 +132,7 @@ services:
             PAPER_VELOCITY_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
             WAITING_ROOM_API_URL: http://api:8080
             WAITING_ROOM_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
-            MEMORY: 384M
+            MEMORY: 512M
             INIT_MEMORY: 64M
             JVM_XX_OPTS: -XX:ActiveProcessorCount=1
         volumes:
@@ -145,11 +145,11 @@ services:
             interval: 10s
             timeout: 5s
             retries: 12
-            start_period: 1m
+            start_period: 5m
         cpus: '0.5'
-        mem_limit: 576m
+        mem_limit: 768m
         mem_reservation: 128m
-        memswap_limit: 576m
+        memswap_limit: 768m
         logging: *logging
         restart: unless-stopped
 

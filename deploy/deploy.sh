@@ -111,6 +111,10 @@ show_startup_diagnostics() {
 		container=$(dc ps -a -q "$service" 2>/dev/null || true)
 		[ -n "$container" ] || continue
 		docker inspect --format '{{.Name}} status={{.State.Status}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} restarts={{.RestartCount}}' "$container" >&2 || true
+		if [ "$service" = waiting-room ]; then
+			echo 'Waiting room memory events:' >&2
+			docker exec "$container" cat /sys/fs/cgroup/memory.events >&2 || true
+		fi
 	done
 	dc logs --no-color --timestamps --tail=200 api web minecraft waiting-room nginx >&2 || true
 }
@@ -398,17 +402,17 @@ if [ -s "$legacy_bans" ]; then
 fi
 
 # Start the release and wait for the services players need.
+if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web waiting-room velocity; then
+	:
+else
+	status=$?
+	show_startup_diagnostics
+	exit "$status"
+fi
 if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
-	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web waiting-room velocity; then
-		:
-	else
-		status=$?
-		show_startup_diagnostics
-		exit "$status"
-	fi
 	dc up -d --no-deps minecraft || echo "Main server could not start; checking the active route." >&2
 else
-	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web minecraft waiting-room velocity; then
+	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" minecraft; then
 		:
 	else
 		status=$?

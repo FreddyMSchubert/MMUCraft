@@ -41,13 +41,13 @@ services:
 
     waiting-room:
         environment:
-            MEMORY: 384M
+            MEMORY: 512M
             INIT_MEMORY: 64M
             JVM_XX_OPTS: -XX:ActiveProcessorCount=1
         cpus: '0.5'
-        mem_limit: 576m
+        mem_limit: 768m
         mem_reservation: 128m
-        memswap_limit: 576m
+        memswap_limit: 768m
 
     surprising-saturday:
         environment:

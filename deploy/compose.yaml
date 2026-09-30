@@ -227,7 +227,7 @@ services:
             interval: 10s
             timeout: 5s
             retries: 12
-            start_period: 1m
+            start_period: 5m
         networks: [app]
 
     surprising-saturday:

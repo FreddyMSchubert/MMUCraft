@@ -118,9 +118,15 @@ export class ShutdownService implements OnModuleDestroy {
 				? Promise.resolve()
 				: new Promise<void>((resolve) => (this.drained = resolve));
 		await Promise.all([
-			httpDrained.then(() => { this.logger.warn('HTTP requests drained'); }),
-			this.grpcServer.drain().then(() => { this.logger.warn('API gRPC drained'); }),
-			this.discord.drain().then(() => { this.logger.warn('Discord work drained'); }),
+			httpDrained.then(() => {
+				this.logger.warn('HTTP requests drained');
+			}),
+			this.grpcServer.drain().then(() => {
+				this.logger.warn('API gRPC drained');
+			}),
+			this.discord.drain().then(() => {
+				this.logger.warn('Discord work drained');
+			}),
 		]);
 	}
 

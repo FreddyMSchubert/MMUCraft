@@ -269,7 +269,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		const presentation = event.minecraft_uuid
 			? this.playerPresence.discordPresentation(event.minecraft_uuid)
 			: null;
-		let currentEvent = presentation
+		const currentEvent = presentation
 			? {
 					...event,
 					minecraft_username: presentation.minecraftUsername || event.minecraft_username,
@@ -279,23 +279,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 					color_hex: presentation.colorHex,
 				}
 			: event;
-		if (event.online_players.length > 0) {
-			const players = event.online_players.map((player) => {
-				const onlinePresentation = this.playerPresence.discordPresentation(
-					player.minecraft_uuid,
-				);
-				return {
-					minecraftUsername:
-						onlinePresentation.minecraftUsername || player.minecraft_username,
-					color: onlinePresentation.colorHex,
-					role: onlinePresentation.role,
-				};
-			});
-			currentEvent = {
-				...currentEvent,
-				content: replaceOnlinePlayerList(currentEvent.content, players),
-			};
-		}
 		const message = formatDiscordWebhookMessage(currentEvent);
 		if (!message.content.trim()) return false;
 		const avatarURL =
@@ -504,20 +487,4 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	): Promise<T> {
 		return await this.minecraft.gameplay<T>(methodName, request);
 	}
-}
-
-function replaceOnlinePlayerList(
-	content: string,
-	players: { minecraftUsername: string; color: string; role: string }[],
-) {
-	const formattedPlayers = players
-		.map((player) => {
-			const label = roleLabel(player.role);
-			return `${ansi(ansiColor(player.color))}${player.minecraftUsername}${ansi(0)}${label ? `${ansi(roleColor(player.role))}${label}${ansi(0)}` : ''}`;
-		})
-		.join(', ');
-	return content.replace(
-		/\(Players online: .*\)$/,
-		`(Players online: ${formattedPlayers || 'none'})`,
-	);
 }

@@ -11,12 +11,9 @@ import net.minecraft.stats.Stats;
 import uk.co.httpsmmuminecraftsociety.mainmod.BedrockFormatting;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
-import uk.co.httpsmmuminecraftsociety.mainmod.grpc.OnlinePlayer;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PublishDiscordEventRequest;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
@@ -55,24 +52,20 @@ public final class DiscordBridge {
             boolean firstJoin = player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME)) <= 1;
             PlayerStatsSync.syncNow(player).thenRun(() -> server.execute(() -> {
                 if (!player.hasDisconnected()) {
-                    List<ServerPlayer> onlinePlayers = onlinePlayers(server, null);
                     publish(
                             firstJoin ? "first_join" : "join",
                             player,
-                            firstJoin ? "joined the server for the first time. (Players online: " + formatOnlinePlayers(onlinePlayers) + ")"
-                                    : "joined the server. (Players online: " + formatOnlinePlayers(onlinePlayers) + ")",
-                            onlinePlayers
+                            (firstJoin ? "joined the server for the first time." : "joined the server.")
+                                    + " (" + onlinePlayerCount(server, null) + " online)"
                     );
                 }
             }));
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-            List<ServerPlayer> onlinePlayers = onlinePlayers(server, handler.player);
             publish(
                     "leave",
                     handler.player,
-                    "left the server. (Players online: " + formatOnlinePlayers(onlinePlayers) + ")",
-                    onlinePlayers
+                    "left the server. (" + onlinePlayerCount(server, handler.player) + " online)"
             );
         });
     }
@@ -123,10 +116,6 @@ public final class DiscordBridge {
     }
 
     private static void publish(String type, ServerPlayer player, String content) {
-        publish(type, player, content, List.of());
-    }
-
-    private static void publish(String type, ServerPlayer player, String content, List<ServerPlayer> onlinePlayers) {
         PlayerStatsSync.DiscordPresentation profile = player == null
                 ? new PlayerStatsSync.DiscordPresentation("", "", "", "")
                 : PlayerStatsSync.discordPresentation(player);
@@ -137,12 +126,6 @@ public final class DiscordBridge {
                 .setNickname(profile.nickname())
                 .setPronouns(profile.pronouns())
                 .setColorHex(profile.colorHex());
-        request.addAllOnlinePlayers(onlinePlayers.stream()
-                .map(onlinePlayer -> OnlinePlayer.newBuilder()
-                        .setMinecraftUsername(onlinePlayer.getName().getString())
-                        .setMinecraftUuid(onlinePlayer.getUUID().toString())
-                        .build())
-                .toList());
         if (player != null) request
                 .setMinecraftUsername(player.getName().getString())
                 .setMinecraftUuid(player.getUUID().toString());
@@ -152,52 +135,10 @@ public final class DiscordBridge {
         });
     }
 
-    private static List<ServerPlayer> onlinePlayers(MinecraftServer server, ServerPlayer excluded) {
+    private static long onlinePlayerCount(MinecraftServer server, ServerPlayer excluded) {
         return server.getPlayerList().getPlayers().stream()
                 .filter(player -> player != excluded && !player.hasDisconnected())
-                .toList();
-    }
-
-    private static String formatOnlinePlayers(List<ServerPlayer> onlinePlayers) {
-        String players = onlinePlayers.stream()
-                .map(DiscordBridge::coloredOnlinePlayer)
-                .collect(Collectors.joining(", "));
-        return players.isEmpty() ? "none" : players;
-    }
-
-    private static String coloredOnlinePlayer(ServerPlayer player) {
-        PlayerStatsSync.DiscordPresentation profile = PlayerStatsSync.discordPresentation(player);
-        String label = switch (profile.role()) {
-            case "Committee" -> "\u001B[36m [Committee]";
-            case "Member" -> "\u001B[32m [Member]";
-            case "External" -> "\u001B[30m [External]";
-            default -> "";
-        };
-        return ansiColor(profile.colorHex()) + player.getName().getString() + "\u001B[0m" + label + "\u001B[0m";
-    }
-
-    private static String ansiColor(String color) {
-        int rgb;
-        try {
-            rgb = color.startsWith("#") ? Integer.parseInt(color.substring(1), 16) : 0xE6E6E6;
-        } catch (NumberFormatException ignored) {
-            rgb = 0xE6E6E6;
-        }
-        int[][] choices = {{31, 255, 0, 0}, {33, 255, 255, 0}, {32, 0, 200, 0}, {34, 0, 100, 255},
-                {35, 160, 32, 240}, {30, 128, 128, 128}, {37, 255, 255, 255}};
-        int closest = 37;
-        int shortestDistance = Integer.MAX_VALUE;
-        for (int[] choice : choices) {
-            int red = (rgb >> 16 & 0xFF) - choice[1];
-            int green = (rgb >> 8 & 0xFF) - choice[2];
-            int blue = (rgb & 0xFF) - choice[3];
-            int distance = red * red + green * green + blue * blue;
-            if (distance < shortestDistance) {
-                closest = choice[0];
-                shortestDistance = distance;
-            }
-        }
-        return "\u001B[" + closest + "m";
+                .count();
     }
 
     private static boolean isCoveredPlayerEvent(Component message) {

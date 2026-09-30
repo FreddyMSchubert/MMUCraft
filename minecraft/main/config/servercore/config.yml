@@ -23,7 +23,7 @@ mob-spawning:
     categories:
         - category: 'MONSTER'
           mobcap: 56
-          spawn-interval: 2
+          spawn-interval: 1
           despawn-distance: 128
         - category: 'CREATURE'
           mobcap: 8

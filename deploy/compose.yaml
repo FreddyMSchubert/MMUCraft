@@ -223,7 +223,7 @@ services:
         restart: unless-stopped
         stop_grace_period: 30s
         healthcheck:
-            test: ['CMD', 'mc-health']
+            test: ['CMD-SHELL', 'test -f /data/waiting-room.ready && mc-health']
             interval: 10s
             timeout: 5s
             retries: 12

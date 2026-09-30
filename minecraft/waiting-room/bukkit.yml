@@ -1,5 +1,5 @@
 settings:
     allow-end: false
 worlds:
-    world:
+    waiting-void:
         generator: WaitingRoom

@@ -141,7 +141,7 @@ services:
             api:
                 condition: service_healthy
         healthcheck:
-            test: ['CMD', 'mc-health']
+            test: ['CMD-SHELL', 'test -f /data/waiting-room.ready && mc-health']
             interval: 10s
             timeout: 5s
             retries: 12

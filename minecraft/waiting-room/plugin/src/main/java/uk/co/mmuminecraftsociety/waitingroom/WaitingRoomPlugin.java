@@ -28,6 +28,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Criteria;
@@ -40,6 +41,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -86,18 +90,30 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
             Bukkit.shutdown();
             return;
         }
-        World world = Bukkit.getWorlds().getFirst();
-        repairBox(world);
-        world.setSpawnLocation(new Location(world, 8.5, FLOOR + 1, 8.5));
-        WorldBorder border = world.getWorldBorder();
-        border.setCenter(7.5, 7.5);
-        border.setSize(46);
+        Bukkit.setWhitelist(false);
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, MODE_CHANNEL);
         Bukkit.getScheduler().runTaskTimer(this, () -> Bukkit.getOnlinePlayers().forEach(this::refreshProfile),
                 1, 20 * 60);
         Bukkit.getScheduler().runTaskTimer(this, this::pollDiscord, 1, 40);
         Bukkit.getScheduler().runTaskTimer(this, this::pollCommands, 20, 40);
+    }
+
+    @EventHandler
+    public void worldLoaded(WorldLoadEvent event) {
+        World world = event.getWorld();
+        if (world.getEnvironment() != World.Environment.NORMAL) return;
+        repairBox(world);
+        world.setSpawnLocation(new Location(world, 8.5, FLOOR + 1, 8.5));
+        WorldBorder border = world.getWorldBorder();
+        border.setCenter(7.5, 7.5);
+        border.setSize(46);
+        try {
+            Files.writeString(Path.of("/data/waiting-room.ready"), "ready\n");
+        } catch (IOException error) {
+            getLogger().severe("Could not mark the waiting room ready: " + error);
+            Bukkit.shutdown();
+        }
     }
 
     private void repairBox(World world) {
@@ -119,7 +135,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         player.getInventory().clear();
         player.getEnderChest().clear();
         player.setGameMode(GameMode.ADVENTURE);
-        player.teleport(Bukkit.getWorlds().getFirst().getSpawnLocation());
+        player.teleport(player.getWorld().getSpawnLocation());
         Bukkit.getScheduler().runTask(this, () -> sendMode(player));
         refreshProfile(player);
     }

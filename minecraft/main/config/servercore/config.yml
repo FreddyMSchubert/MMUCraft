@@ -1,0 +1,55 @@
+# Reduce entity ticking and growth while keeping fixed view/simulation distances.
+features:
+    lobotomize-villagers:
+        enabled: true
+        tick-interval: 20
+
+breeding-cap:
+    enabled: true
+    villagers:
+        limit: 24
+        range: 64
+        unlimited-height: false
+    animals:
+        limit: 32
+        range: 64
+        unlimited-height: false
+    happy-ghasts:
+        limit: 32
+        range: 64
+        unlimited-height: false
+
+mob-spawning:
+    categories:
+        - category: 'MONSTER'
+          mobcap: 56
+          spawn-interval: 2
+          despawn-distance: 128
+        - category: 'CREATURE'
+          mobcap: 8
+          spawn-interval: 400
+          despawn-distance: 128
+        - category: 'AMBIENT'
+          mobcap: 12
+          spawn-interval: 1
+          despawn-distance: 128
+        - category: 'AXOLOTLS'
+          mobcap: 4
+          spawn-interval: 1
+          despawn-distance: 128
+        - category: 'UNDERGROUND_WATER_CREATURE'
+          mobcap: 4
+          spawn-interval: 1
+          despawn-distance: 128
+        - category: 'WATER_CREATURE'
+          mobcap: 4
+          spawn-interval: 1
+          despawn-distance: 128
+        - category: 'WATER_AMBIENT'
+          mobcap: 16
+          spawn-interval: 1
+          despawn-distance: 64
+
+activation-range:
+    enabled: true
+    use-vertical-range: true

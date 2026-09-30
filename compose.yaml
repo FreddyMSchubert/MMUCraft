@@ -131,16 +131,16 @@ services:
             # Underground, Mushroom, and Mountain Villages, plus its world structures.
             # Mangrove and Dappled Villages are separate. Oil rigs and industrial
             # structures are intentionally absent.
-            # itzg selects the newest 26.3 Fabric build; optional mods wait for a compatible release.
+            # itzg selects compatible 26.3 Fabric builds; optional mods wait for a matching version.
             MODRINTH_PROJECTS: |-
                 fabric-api
                 chunky?
                 lithium?
                 ferrite-core?
                 scalablelux?:alpha
-                servercore?
+                servercore
                 zfastnoise?:beta
-                c2me-fabric?
+                c2me-fabric?:alpha
                 modernfix-mvus?
                 krypton?
                 vmp-fabric:alpha

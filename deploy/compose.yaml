@@ -119,7 +119,7 @@ services:
                 lithium?
                 ferrite-core?
                 scalablelux?:alpha
-                servercore?
+                servercore
                 zfastnoise?:beta
                 c2me-fabric:alpha
                 modernfix-mvus?

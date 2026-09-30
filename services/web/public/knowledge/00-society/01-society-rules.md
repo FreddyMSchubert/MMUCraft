@@ -50,5 +50,6 @@ Following them should be common courtesy, but just making sure:
 	- Try to keep the natural environment looking pleasant where possible.
 3. Respect others.
 	- Do not destroy other people's stuff, even if they didn't claim it. (even if it's ugly.)
+	- Don't break loot chests, they are player-instanced, meaning other players can still get new loot out when opening them. (Unless you break them)
 	- Keep other players minecart tracks working (though you may extend them)
 	- Get permission before claiming close to others, as they may have planned to build something there.

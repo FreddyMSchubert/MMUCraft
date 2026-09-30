@@ -169,7 +169,12 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				const response = await fetch('/api/players/online', { cache: 'no-store' });
 				if (!response.ok) return;
 				const data = (await response.json()) as { players?: OnlinePlayer[] };
-				if (!cancelled) setOnlinePlayers(data.players ?? []);
+				if (!cancelled)
+					setOnlinePlayers(
+						(data.players ?? []).filter(
+							(player) => player.minecraftUsername.toLowerCase() !== 'mmu_admin',
+						),
+					);
 			} catch {
 				// Keep the last successful roster during a temporary server outage.
 			}

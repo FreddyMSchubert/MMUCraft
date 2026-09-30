@@ -16,12 +16,14 @@ import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
@@ -56,6 +58,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     private static final int MIN = -16;
     private static final int MAX = 31;
     private static final int FLOOR = 64;
+    private static final String MODE_CHANNEL = "mmucraft:waiting_mode";
     private static final String API_URL = System.getenv().getOrDefault("WAITING_ROOM_API_URL", "http://api:8080");
     private static final String SECRET = System.getenv().getOrDefault("WAITING_ROOM_API_SECRET", "");
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
@@ -90,6 +93,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         border.setCenter(7.5, 7.5);
         border.setSize(46);
         Bukkit.getPluginManager().registerEvents(this, this);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, MODE_CHANNEL);
         Bukkit.getScheduler().runTaskTimer(this, () -> Bukkit.getOnlinePlayers().forEach(this::refreshProfile),
                 1, 20 * 60);
         Bukkit.getScheduler().runTaskTimer(this, this::pollDiscord, 1, 40);
@@ -116,7 +120,19 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         player.getEnderChest().clear();
         player.setGameMode(GameMode.ADVENTURE);
         player.teleport(Bukkit.getWorlds().getFirst().getSpawnLocation());
+        Bukkit.getScheduler().runTask(this, () -> sendMode(player));
         refreshProfile(player);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void gameModeChanged(PlayerGameModeChangeEvent event) {
+        Bukkit.getScheduler().runTask(this, () -> sendMode(event.getPlayer()));
+    }
+
+    private void sendMode(Player player) {
+        if (!player.isOnline()) return;
+        boolean visiting = player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR;
+        player.sendPluginMessage(this, MODE_CHANNEL, new byte[] { (byte) (visiting ? 1 : 0) });
     }
 
     @EventHandler public void left(PlayerQuitEvent event) {

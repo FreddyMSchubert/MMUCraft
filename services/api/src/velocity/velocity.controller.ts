@@ -184,7 +184,9 @@ export class VelocityInternalController {
 		@Body() body: { uuid?: unknown; content?: unknown } | undefined,
 	) {
 		this.velocity.verifyInternalAuthorization(authorization);
-		const player = this.velocity.queuedPlayer(typeof body?.uuid === 'string' ? body.uuid : '');
+		const player = this.velocity.waitingRoomPlayer(
+			typeof body?.uuid === 'string' ? body.uuid : '',
+		);
 		const content = typeof body?.content === 'string' ? body.content.trim() : '';
 		if (!player || !content || content.length > 500)
 			throw new BadRequestException('Invalid waiting room message');

@@ -47,7 +47,7 @@ interface LivePlayer {
 	uuid: string;
 	username: string;
 	serverName: string;
-	state: 'queued' | 'playing';
+	state: 'queued' | 'visiting' | 'playing';
 }
 
 interface MoveCommand {
@@ -308,11 +308,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		return { ok: true };
 	}
 
-	queuedPlayer(uuidInput: string) {
+	waitingRoomPlayer(uuidInput: string) {
 		const uuid = normalizeMinecraftUuid(uuidInput);
 		if (!this.proxyIsOnline() || !uuid) return undefined;
 		const connected = this.connectedPlayers.find(
-			(player) => player.uuid === uuid && player.state === 'queued',
+			(player) => player.uuid === uuid && player.serverName === 'waiting-room',
 		);
 		if (connected) return connected;
 		const pending = this.pendingQueued.get(uuid);
@@ -326,12 +326,12 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			: undefined;
 	}
 
-	isQueuedUsername(username: string) {
+	isWaitingRoomUsername(username: string) {
 		if (!this.proxyIsOnline()) return false;
 		return (
 			this.connectedPlayers.some(
 				(player) =>
-					player.state === 'queued' &&
+					player.serverName === 'waiting-room' &&
 					player.username.toLowerCase() === username.toLowerCase(),
 			) ||
 			[...this.pendingQueued.values()].some(
@@ -342,10 +342,10 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		);
 	}
 
-	hasQueuedPlayers() {
+	hasWaitingRoomPlayers() {
 		return (
 			this.proxyIsOnline() &&
-			(this.connectedPlayers.some((player) => player.state === 'queued') ||
+			(this.connectedPlayers.some((player) => player.serverName === 'waiting-room') ||
 				[...this.pendingQueued.values()].some((player) => player.expiresAt > Date.now()))
 		);
 	}
@@ -677,8 +677,8 @@ function parseLivePlayers(value: unknown): LivePlayer[] {
 			seen.has(uuid) ||
 			!isValidMinecraftUsername(username) ||
 			!SERVER_NAME_PATTERN.test(serverName) ||
-			(state !== 'queued' && state !== 'playing') ||
-			(state === 'queued' && serverName !== 'waiting-room') ||
+			(state !== 'queued' && state !== 'visiting' && state !== 'playing') ||
+			((state === 'queued' || state === 'visiting') && serverName !== 'waiting-room') ||
 			(state === 'playing' && serverName === 'waiting-room')
 		)
 			return [];

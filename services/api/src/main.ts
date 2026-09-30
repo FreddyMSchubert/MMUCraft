@@ -28,8 +28,8 @@ async function bootstrap() {
 			!['/api/auth/', '/api/internal/', '/api/discord/avatar', '/api/health'].some((prefix) =>
 				path.startsWith(prefix),
 			) &&
-			velocity.hasQueuedPlayers() &&
-			velocity.isQueuedUsername(
+			velocity.hasWaitingRoomPlayers() &&
+			velocity.isWaitingRoomUsername(
 				sessions.getSession(request.headers.cookie)?.minecraftUsername ?? '',
 			)
 		) {

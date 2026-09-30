@@ -7,6 +7,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
@@ -15,6 +16,8 @@ import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.PingOptions;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
@@ -45,6 +48,7 @@ import java.util.concurrent.atomic.AtomicLong;
         description = "API-controlled authentication and backend routing for MMUcraft"
 )
 public final class MmuCraftVelocity {
+    private static final MinecraftChannelIdentifier MODE_CHANNEL = MinecraftChannelIdentifier.from("mmucraft:waiting_mode");
     private final ProxyServer proxy;
     private final Logger logger;
     private final ApiClient api;
@@ -60,6 +64,7 @@ public final class MmuCraftVelocity {
     private final Map<UUID, Long> joinedAt = new ConcurrentHashMap<>();
     private final Set<UUID> admissions = ConcurrentHashMap.newKeySet();
     private final Map<UUID, QueueEntry> waiting = new ConcurrentHashMap<>();
+    private final Map<UUID, QueueEntry> visitors = new ConcurrentHashMap<>();
     private final AtomicLong queueOrder = new AtomicLong();
     private int admissionTurn;
     private final Map<UUID, String> shownPositions = new ConcurrentHashMap<>();
@@ -86,6 +91,7 @@ public final class MmuCraftVelocity {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent ignored) {
+        proxy.getChannelRegistrar().register(MODE_CHANNEL);
         for (String command : List.of("glist", "send", "server", "shutdown", "velocity")) {
             proxy.getCommandManager().unregister(command);
         }
@@ -212,6 +218,7 @@ public final class MmuCraftVelocity {
         UUID uuid = event.getPlayer().getUniqueId();
         String serverName = event.getServer().getServerInfo().getName();
         if ("waiting-room".equals(serverName)) return;
+        visitors.remove(uuid);
         admissions.add(uuid);
         joinedAt.putIfAbsent(uuid, System.currentTimeMillis());
         loginDestinations.put(uuid, serverName);
@@ -232,10 +239,38 @@ public final class MmuCraftVelocity {
         joinedAt.remove(uuid);
         admissions.remove(uuid);
         waiting.remove(uuid);
+        visitors.remove(uuid);
         shownPositions.remove(uuid);
         capacityWarnings.remove(uuid);
         manualDestinations.remove(uuid);
         loginDestinations.remove(uuid);
+    }
+
+    @Subscribe
+    public void onPluginMessage(PluginMessageEvent event) {
+        if (!MODE_CHANNEL.equals(event.getIdentifier())) return;
+        event.setResult(PluginMessageEvent.ForwardResult.handled());
+        if (!(event.getSource() instanceof ServerConnection backend)
+                || !"waiting-room".equals(backend.getServerInfo().getName())
+                || event.getData().length != 1) return;
+        byte mode = event.getData()[0];
+        if (mode != 0 && mode != 1) return;
+        Player player = backend.getPlayer();
+        UUID uuid = player.getUniqueId();
+        synchronized (this) {
+            if (mode == 1) {
+                QueueEntry entry = waiting.remove(uuid);
+                if (entry == null) return;
+                visitors.put(uuid, entry);
+                shownPositions.remove(uuid);
+                player.sendActionBar(Component.empty());
+            } else {
+                QueueEntry entry = visitors.remove(uuid);
+                if (entry == null) return;
+                CapacityRole role = capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST);
+                waiting.put(uuid, new QueueEntry(role.member(), queueOrder.incrementAndGet(), entry.destination()));
+            }
+        }
     }
 
     @Subscribe
@@ -614,7 +649,9 @@ public final class MmuCraftVelocity {
                         player.getUniqueId().toString(),
                         player.getUsername(),
                         connection.getServerInfo().getName(),
-                        "waiting-room".equals(connection.getServerInfo().getName()) ? "queued" : "playing"
+                        "waiting-room".equals(connection.getServerInfo().getName())
+                                ? visitors.containsKey(player.getUniqueId()) ? "visiting" : "queued"
+                                : "playing"
                 ))
         ).toList();
     }
@@ -666,7 +703,7 @@ public final class MmuCraftVelocity {
     private RegisteredServer targetFor(Player player) {
         if (maintenanceMode) return null;
         UUID uuid = player.getUniqueId();
-        if (waiting.containsKey(uuid)) return managedServers.get("waiting-room");
+        if (waiting.containsKey(uuid) || visitors.containsKey(uuid)) return managedServers.get("waiting-room");
         String name = manualDestinations.get(uuid);
         if (name == null && player.getCurrentServer().isEmpty()) {
             name = loginDestinations.getOrDefault(uuid, "main");

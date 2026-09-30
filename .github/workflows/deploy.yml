@@ -54,7 +54,7 @@ jobs:
         env:
             DEPLOY_TARGET: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
             DEPLOY_VERSION: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.version }}
-            WARNING_MINUTES: ${{ github.event_name == 'workflow_run' && '1' || inputs.warning_minutes }}
+            WARNING_MINUTES: ${{ github.event_name == 'workflow_run' && '0' || inputs.warning_minutes }}
             FORCE_DEPLOY: ${{ github.event_name == 'workflow_run' && 'false' || inputs.force }}
         steps:
             - name: Validate requested version

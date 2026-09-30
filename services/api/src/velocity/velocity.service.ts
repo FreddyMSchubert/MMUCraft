@@ -47,6 +47,7 @@ interface LivePlayer {
 	uuid: string;
 	username: string;
 	serverName: string;
+	state: 'queued' | 'playing';
 }
 
 interface MoveCommand {
@@ -67,6 +68,8 @@ interface SyncBody {
 export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	private liveServers = new Map<string, LiveServer>();
 	private livePlayers: LivePlayer[] = [];
+	private connectedPlayers: LivePlayer[] = [];
+	private readonly pendingQueued = new Map<string, { username: string; expiresAt: number }>();
 	private lastHeartbeatUnixMs: number | null = null;
 	// ponytail: Pending moves live in one API process; persist them if restart-safe delivery is needed.
 	private readonly commands = new Map<number, MoveCommand>();
@@ -128,7 +131,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			}
 			return {
 				status: 'ALLOWED',
-				priority: playerPriority(user),
+				member: user.is_member === 1,
 				exempt: isExemptAdmin(user),
 				websiteUrl: this.websiteUrl(),
 				preferredServerName: this.preferredServer(uuid),
@@ -173,7 +176,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		this.liveServers = new Map(
 			parseLiveServers(body?.servers).map((server) => [server.name, server]),
 		);
-		this.livePlayers = parseLivePlayers(body?.players);
+		this.connectedPlayers = parseLivePlayers(body?.players);
+		for (const player of this.connectedPlayers) this.pendingQueued.delete(player.uuid);
+		for (const [uuid, pending] of this.pendingQueued)
+			if (pending.expiresAt <= Date.now()) this.pendingQueued.delete(uuid);
+		this.livePlayers = this.connectedPlayers.filter((player) => player.state === 'playing');
 		this.lastHeartbeatUnixMs = now;
 		for (const player of this.livePlayers)
 			this.rememberConnectedServer(player.uuid, player.serverName);
@@ -192,7 +199,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		for (const [id, command] of this.commands)
 			if (command.routeRevision !== route.revision) this.commands.delete(id);
 
-		const disconnects = this.livePlayers.flatMap((player) => {
+		const disconnects = this.connectedPlayers.flatMap((player) => {
 			const user = this.identities.findByUuid(player.uuid);
 			if (!user) return [];
 			const ban = this.bans.resolve(user.id, now);
@@ -209,15 +216,18 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		return {
 			maintenanceMode: settings.maintenance_mode === 1,
 			maxPlayers: settings.max_players,
-			playerPriorities: this.livePlayers.map((player) => {
+			playerRoles: this.connectedPlayers.map((player) => {
 				const user = this.identities.findByUuid(player.uuid);
 				return {
 					uuid: player.uuid,
-					priority: user ? playerPriority(user) : 0,
+					member: user?.is_member === 1,
 					exempt: user ? isExemptAdmin(user) : false,
 				};
 			}),
-			servers: servers.map((server) => ({ name: server.name, address: server.address })),
+			servers: [
+				...servers.map((server) => ({ name: server.name, address: server.address })),
+				{ name: 'waiting-room', address: 'waiting-room:25565' },
+			],
 			route,
 			commands: [...this.commands.values()].map((command) => ({
 				id: command.id,
@@ -288,6 +298,56 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 	onlinePlayerCount() {
 		return { playerCount: this.proxyIsOnline() ? this.livePlayers.length : null };
+	}
+
+	markQueued(uuidInput: unknown, usernameInput: unknown) {
+		const uuid = normalizeMinecraftUuid(typeof uuidInput === 'string' ? uuidInput : '');
+		if (!uuid || typeof usernameInput !== 'string' || !isValidMinecraftUsername(usernameInput))
+			throw new BadRequestException('Invalid queued player');
+		this.pendingQueued.set(uuid, { username: usernameInput, expiresAt: Date.now() + 15_000 });
+		return { ok: true };
+	}
+
+	queuedPlayer(uuidInput: string) {
+		const uuid = normalizeMinecraftUuid(uuidInput);
+		if (!this.proxyIsOnline() || !uuid) return undefined;
+		const connected = this.connectedPlayers.find(
+			(player) => player.uuid === uuid && player.state === 'queued',
+		);
+		if (connected) return connected;
+		const pending = this.pendingQueued.get(uuid);
+		return pending && pending.expiresAt > Date.now()
+			? {
+					uuid,
+					username: pending.username,
+					serverName: 'waiting-room',
+					state: 'queued' as const,
+				}
+			: undefined;
+	}
+
+	isQueuedUsername(username: string) {
+		if (!this.proxyIsOnline()) return false;
+		return (
+			this.connectedPlayers.some(
+				(player) =>
+					player.state === 'queued' &&
+					player.username.toLowerCase() === username.toLowerCase(),
+			) ||
+			[...this.pendingQueued.values()].some(
+				(player) =>
+					player.expiresAt > Date.now() &&
+					player.username.toLowerCase() === username.toLowerCase(),
+			)
+		);
+	}
+
+	hasQueuedPlayers() {
+		return (
+			this.proxyIsOnline() &&
+			(this.connectedPlayers.some((player) => player.state === 'queued') ||
+				[...this.pendingQueued.values()].some((player) => player.expiresAt > Date.now()))
+		);
 	}
 
 	capacitySnapshot() {
@@ -611,15 +671,19 @@ function parseLivePlayers(value: unknown): LivePlayer[] {
 		const username = typeof input.username === 'string' ? input.username.trim() : '';
 		const serverName =
 			typeof input.serverName === 'string' ? input.serverName.trim().toLowerCase() : '';
+		const state = input.state;
 		if (
 			!uuid ||
 			seen.has(uuid) ||
 			!isValidMinecraftUsername(username) ||
-			!SERVER_NAME_PATTERN.test(serverName)
+			!SERVER_NAME_PATTERN.test(serverName) ||
+			(state !== 'queued' && state !== 'playing') ||
+			(state === 'queued' && serverName !== 'waiting-room') ||
+			(state === 'playing' && serverName === 'waiting-room')
 		)
 			return [];
 		seen.add(uuid);
-		return [{ uuid, username, serverName }];
+		return [{ uuid, username, serverName, state }];
 	});
 }
 
@@ -638,15 +702,4 @@ function parseSafeInteger(value: unknown, message: string) {
 
 function isExemptAdmin(user: UserRow | null | undefined) {
 	return user?.email.toLowerCase() === ADMIN_SIGNUP_EMAIL;
-}
-
-function playerPriority(user: UserRow) {
-	if (isExemptAdmin(user) || user.is_super_admin === 1) return 4;
-	if (
-		user.is_committee === 1 ||
-		['archiedobbo', 'decomposingdollz'].includes(user.minecraft_username.toLowerCase())
-	)
-		return 3;
-	if (user.is_member === 1) return 2;
-	return user.responsible_user_id === null ? 1 : 0;
 }

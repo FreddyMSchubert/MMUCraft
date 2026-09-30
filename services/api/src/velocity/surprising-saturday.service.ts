@@ -8,6 +8,7 @@ import { and, asc, eq, gt, lte, ne } from 'drizzle-orm';
 import {
 	DatabaseService,
 	playerProfiles,
+	playerStats,
 	SurprisingSaturdayEventRow,
 	UserRow,
 	surprisingSaturdayCompletions,
@@ -19,6 +20,7 @@ import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
 import { effectivePlayerColor } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
+import { normalizeStatsJson } from '../players/player-statistics';
 
 const ITEM_ID = /^[a-z0-9_.-]+:[a-z0-9_./-]+$/;
 const TITLE_GRAPHEMES = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
@@ -514,11 +516,23 @@ export class SurprisingSaturdayService {
 			.from(playerProfiles)
 			.where(eq(playerProfiles.user_id, user.id))
 			.get();
+		const savedStats = this.database.connection
+			.select({ json: playerStats.stats_json })
+			.from(playerStats)
+			.where(eq(playerStats.user_id, user.id))
+			.get();
+		const stats = savedStats ? normalizeStatsJson(savedStats.json).minecraft.stats : {};
+		const dangerCount =
+			(stats['minecraft.custom.minecraft:deaths']?.value ?? 0) +
+			(stats['minecraft.used.minecraft:totem_of_undying']?.value ?? 0);
+		const name = [profile?.preferred_name, profile?.pronouns].filter(Boolean).join(' - ');
+		const dangerText = profile?.show_death_counter === 0 ? '' : `${dangerCount}☠`;
 		return {
 			uuid,
 			minecraftUsername: user.minecraft_username,
 			nickname: profile?.preferred_name ?? '',
 			pronouns: profile?.pronouns ?? '',
+			belowName: [name, dangerText].filter(Boolean).join(' - '),
 			color: effectivePlayerColor(uuid, profile?.color_hex),
 			role: playerRole(user),
 			isMember: Boolean(user.is_member || user.is_committee || user.is_super_admin),

@@ -28,6 +28,8 @@ services:
             DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
             DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
             DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-}
+            DISCORD_WAITING_ROOM_CHANNEL_ID: ${DISCORD_WAITING_ROOM_CHANNEL_ID:-}
+            DISCORD_WAITING_ROOM_WEBHOOK_URL: ${DISCORD_WAITING_ROOM_WEBHOOK_URL:-}
             DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
             DISCORD_AVATAR_BASE_URL: ${DISCORD_AVATAR_BASE_URL:-}
             PUBLIC_URL: ${PUBLIC_URL:-}
@@ -103,6 +105,7 @@ services:
             CFG_VELOCITY_FORWARDING_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
             VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
             MMU_API_BASE_URL: http://api:8080
+            MMU_WAITING_ROOM_LIMIT: '16'
         ports:
             - '25565:25565'
             - '24454:24454/udp'
@@ -111,6 +114,42 @@ services:
         depends_on:
             api:
                 condition: service_healthy
+        logging: *logging
+        restart: unless-stopped
+
+    waiting-room:
+        image: mcstack/waiting-room:dev
+        build:
+            context: .
+            dockerfile: minecraft/waiting-room/Dockerfile
+        environment:
+            EULA: 'TRUE'
+            TYPE: PAPER
+            VERSION: '26.3'
+            COPY_CONFIG_DEST: /data
+            SKIP_SERVER_PROPERTIES: 'true'
+            SYNC_SKIP_NEWER_IN_DESTINATION: 'false'
+            PAPER_VELOCITY_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
+            WAITING_ROOM_API_URL: http://api:8080
+            WAITING_ROOM_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
+            MEMORY: 384M
+            INIT_MEMORY: 64M
+            JVM_XX_OPTS: -XX:ActiveProcessorCount=1
+        volumes:
+            - ./.dev/waiting-room:/data
+        depends_on:
+            api:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD', 'mc-health']
+            interval: 10s
+            timeout: 5s
+            retries: 12
+            start_period: 1m
+        cpus: '0.5'
+        mem_limit: 576m
+        mem_reservation: 128m
+        memswap_limit: 576m
         logging: *logging
         restart: unless-stopped
 

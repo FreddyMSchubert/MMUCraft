@@ -36,6 +36,10 @@ final class ApiClient {
         return post("/api/internal/velocity/connected", new ConnectedRequest(uuid, serverName), ConnectedResponse.class);
     }
 
+    CompletableFuture<ConnectedResponse> markQueued(String uuid, String username) {
+        return post("/api/internal/velocity/waiting-state", new AccessRequest(uuid, username), ConnectedResponse.class);
+    }
+
     CompletableFuture<ConnectedResponse> capacityEvent(String type) {
         return post("/api/internal/velocity/capacity-event", new CapacityEventRequest(type), ConnectedResponse.class);
     }
@@ -69,7 +73,7 @@ final class ApiClient {
     record ConnectedResponse(boolean ok) { }
 
     record AccessDecision(String status, String code, Long expiresAtUnixMs, String websiteUrl,
-                          String preferredServerName, int priority, boolean exempt) { }
+                          String preferredServerName, boolean member, boolean exempt) { }
 
     record SyncRequest(
             List<ServerHealth> servers,
@@ -79,12 +83,12 @@ final class ApiClient {
 
     record ServerHealth(String name, boolean online, Long latencyMs, String error) { }
 
-    record OnlinePlayer(String uuid, String username, String serverName) { }
+    record OnlinePlayer(String uuid, String username, String serverName, String state) { }
 
     record SyncResponse(
             boolean maintenanceMode,
             Integer maxPlayers,
-            List<PlayerPriority> playerPriorities,
+            List<PlayerRole> playerRoles,
             List<BackendServer> servers,
             Route route,
             List<MoveCommand> commands,
@@ -93,7 +97,7 @@ final class ApiClient {
 
     record BackendServer(String name, String address) { }
 
-    record PlayerPriority(String uuid, int priority, boolean exempt) { }
+    record PlayerRole(String uuid, boolean member, boolean exempt) { }
 
     record Route(String revision, String targetServerName, boolean eventOpen) { }
 

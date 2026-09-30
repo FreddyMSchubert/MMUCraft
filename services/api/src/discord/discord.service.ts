@@ -45,7 +45,7 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent) {
 		fish: '🐟',
 		fish_first: '🐟 👶',
 	};
-	const isServer = event.type !== 'chat' || !event.minecraft_username;
+	const isServer = !['chat', 'waiting_chat'].includes(event.type) || !event.minecraft_username;
 	const label = roleLabel(event.role);
 	const player = event.minecraft_username
 		? `${ansi(ansiColor(event.color_hex))}${event.minecraft_username}${ansi(0)}${label ? `${ansi(roleColor(event.role))}${label}${ansi(0)}` : ''}`
@@ -127,6 +127,7 @@ export function formatOnlinePlayers(
 export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private readonly logger = new Logger(DiscordService.name);
 	private readonly channelId = process.env.DISCORD_CHANNEL_ID?.trim() ?? '';
+	private readonly waitingChannelId = process.env.DISCORD_WAITING_ROOM_CHANNEL_ID?.trim() ?? '';
 	private readonly client = new Client({
 		intents: [
 			GatewayIntentBits.Guilds,
@@ -136,6 +137,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		],
 	});
 	private webhook: WebhookClient | null = null;
+	private waitingWebhook: WebhookClient | null = null;
 	private connectionIssue: string | null = null;
 	private membershipContextCache: {
 		fetchedAtUnixMs: number;
@@ -146,6 +148,18 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private draining = false;
 	private drainPromise: Promise<void> | null = null;
 	private readonly pending = new Set<Promise<unknown>>();
+	private lobbyCursor = 0;
+	// ponytail: This buffer can drop chat during outages. Persist it if chat must survive restarts.
+	private readonly lobbyMessages: { id: number; name: string; content: string }[] = [];
+	private nextWaitingCommandId = 0;
+	private readonly waitingCommands = new Map<
+		number,
+		{
+			command: string;
+			dispatched: boolean;
+			resolve: (result: string) => void;
+		}
+	>();
 	private readonly avatarBaseUrl = (
 		process.env.DISCORD_AVATAR_BASE_URL ??
 		(process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/api/discord/avatar` : '')
@@ -160,9 +174,15 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	onApplicationBootstrap() {
 		const token = process.env.DISCORD_BOT_TOKEN?.trim();
 		const webhookUrl = process.env.DISCORD_WEBHOOK_URL?.trim();
+		const waitingWebhookUrl = process.env.DISCORD_WAITING_ROOM_WEBHOOK_URL?.trim();
 		if (!token) {
 			this.connectionIssue = 'DISCORD_BOT_TOKEN is missing from the API environment';
 			this.logger.log('Discord bot disabled; set DISCORD_BOT_TOKEN');
+			return;
+		}
+		if (this.waitingChannelId && this.waitingChannelId === this.channelId) {
+			this.connectionIssue = 'The waiting room and main Discord channels must differ';
+			this.logger.error(this.connectionIssue);
 			return;
 		}
 		if (!this.avatarBaseUrl) {
@@ -175,6 +195,12 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		else
 			this.logger.log(
 				'Discord chat bridge disabled; set DISCORD_WEBHOOK_URL and DISCORD_CHANNEL_ID',
+			);
+		if (waitingWebhookUrl && this.waitingChannelId)
+			this.waitingWebhook = new WebhookClient({ url: waitingWebhookUrl });
+		else
+			this.logger.log(
+				'Waiting room Discord webhook disabled; set DISCORD_WAITING_ROOM_WEBHOOK_URL and DISCORD_WAITING_ROOM_CHANNEL_ID',
 			);
 		this.client.once('ready', () => {
 			this.connectionIssue = null;
@@ -191,7 +217,8 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		this.client.on('messageCreate', (message) => {
 			if (
 				this.draining ||
-				message.channelId !== this.channelId ||
+				(message.channelId !== this.channelId &&
+					message.channelId !== this.waitingChannelId) ||
 				message.author.bot ||
 				message.webhookId
 			)
@@ -201,13 +228,21 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			);
 			const content = [message.content, ...attachments].filter(Boolean).join(' ');
 			if (!content) return;
-			this.track(
-				this.callMinecraft('BroadcastDiscordMessage', {
-					discord_name: message.member?.displayName ?? message.author.displayName,
-					content,
-				}),
-				'Could not send Discord message to Minecraft',
-			);
+			if (message.channelId === this.waitingChannelId) {
+				this.lobbyMessages.push({
+					id: ++this.lobbyCursor,
+					name: message.member?.displayName ?? message.author.displayName,
+					content: content.slice(0, 500),
+				});
+				if (this.lobbyMessages.length > 100) this.lobbyMessages.shift();
+			} else
+				this.track(
+					this.callMinecraft('BroadcastDiscordMessage', {
+						discord_name: message.member?.displayName ?? message.author.displayName,
+						content,
+					}),
+					'Could not send Discord message to Minecraft',
+				);
 		});
 		this.client.on('interactionCreate', (interaction) => {
 			if (this.draining || !interaction.isChatInputCommand()) return;
@@ -223,9 +258,10 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	}
 
 	async publish(event: MinecraftDiscordEvent) {
-		if (!this.webhook) return false;
+		const webhook = event.type === 'waiting_chat' ? this.waitingWebhook : this.webhook;
+		if (!webhook) return false;
 		if (
-			event.type !== 'chat' &&
+			!['chat', 'waiting_chat'].includes(event.type) &&
 			event.minecraft_uuid &&
 			this.identities.findByUuid(event.minecraft_uuid)?.email === ADMIN_SIGNUP_EMAIL
 		)
@@ -266,13 +302,53 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			!message.isServer && currentEvent.minecraft_uuid && this.avatarBaseUrl
 				? `${this.avatarBaseUrl}/${currentEvent.minecraft_uuid}.png?v=${currentEvent.color_hex.replace('#', '').toLowerCase()}`
 				: undefined;
-		await this.webhook.send({
+		await webhook.send({
 			username: message.username,
 			avatarURL,
 			content: message.content,
 			allowedMentions: { parse: [] },
 		});
 		return true;
+	}
+
+	queueWaitingCommand(command: string) {
+		if (!command.trim() || command.length > 512 || /[\r\n]/.test(command))
+			throw new Error('Invalid waiting room command');
+		if (this.waitingCommands.size >= 10) throw new Error('Too many waiting commands');
+		return new Promise<string>((resolve) => {
+			const id = ++this.nextWaitingCommandId;
+			this.waitingCommands.set(id, { command, dispatched: false, resolve });
+			setTimeout(() => {
+				if (this.waitingCommands.delete(id))
+					resolve(
+						'No result within 15 seconds. The command may have run; check before retrying.',
+					);
+			}, 15_000);
+		});
+	}
+
+	takeWaitingCommands() {
+		return [...this.waitingCommands].flatMap(([id, entry]) => {
+			if (entry.dispatched) return [];
+			entry.dispatched = true;
+			return [{ id, command: entry.command }];
+		});
+	}
+
+	finishWaitingCommand(id: number, output: string) {
+		const entry = this.waitingCommands.get(id);
+		if (!entry?.dispatched) return false;
+		this.waitingCommands.delete(id);
+		entry.resolve(output);
+		return true;
+	}
+
+	lobbyChat(after: number | null) {
+		return {
+			cursor: this.lobbyCursor,
+			messages:
+				after === null ? [] : this.lobbyMessages.filter((message) => message.id > after),
+		};
 	}
 
 	publishServer(type: string, content: string) {
@@ -302,6 +378,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		await this.drain();
 		await this.client.destroy();
 		this.webhook?.destroy();
+		this.waitingWebhook?.destroy();
 	}
 
 	private track(task: Promise<unknown>, failureMessage: string) {
@@ -383,12 +460,11 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 
 	private async runCommand(interaction: ChatInputCommandInteraction) {
 		if (
-			interaction.channelId !== this.channelId ||
+			![this.channelId, this.waitingChannelId].includes(interaction.channelId) ||
 			!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)
 		) {
 			await interaction.reply({
-				content:
-					'This command is restricted to server administrators in the bridge channel.',
+				content: 'This command is restricted to server administrators in a bridge channel.',
 				ephemeral: true,
 			});
 			return;
@@ -397,6 +473,13 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		await interaction.deferReply({ ephemeral: true });
 		const command = interaction.options.getString('command', true);
 		try {
+			if (interaction.channelId === this.waitingChannelId) {
+				const output = await this.queueWaitingCommand(command);
+				await interaction.editReply(
+					`\`\`\`\n${output.replaceAll('```', '``\\`').slice(0, 1900)}\n\`\`\``,
+				);
+				return;
+			}
 			const response = await this.callMinecraft<{
 				succeeded: boolean;
 				result: number;

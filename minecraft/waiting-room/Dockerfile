@@ -1,5 +1,6 @@
 FROM itzg/minecraft-server:java25 AS prepared
-ENV EULA=TRUE TYPE=PAPER VERSION=26.3
+ENV EULA=TRUE TYPE=PAPER VERSION=26.3 PAPER_CUSTOM_JAR=/data/paper-26.3-140.jar
+ADD --checksum=sha256:98aabc113a80b9b5e183475e839a17cf99c39c915a1f46b8f35a5e89fd5de0f1 https://fill-data.papermc.io/v1/objects/98aabc113a80b9b5e183475e839a17cf99c39c915a1f46b8f35a5e89fd5de0f1/paper-26.3-140.jar /data/paper-26.3-140.jar
 RUN SETUP_ONLY=true /start \
     && mkdir -p /image/prepared \
     && cp -a /data/. /image/prepared/

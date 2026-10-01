@@ -1,10 +1,6 @@
 FROM itzg/mc-proxy:java25
 
-RUN cd /tmp \
-    && mc-image-helper install-paper --project velocity --version 4.1.2-SNAPSHOT --build 29 --results-file /tmp/velocity.env \
-    && . /tmp/velocity.env \
-    && mkdir -p /image \
-    && cp "$SERVER" /image/velocity.jar
+ADD --checksum=sha256:35a5596a5468a035d8a32c8de5ebb0dc6b8d8f0cc3ff5169d514aca762af8aa8 https://fill-data.papermc.io/v1/objects/35a5596a5468a035d8a32c8de5ebb0dc6b8d8f0cc3ff5169d514aca762af8aa8/velocity-4.2.0-30.jar /image/velocity.jar
 
 ENV TYPE=CUSTOM \
     CUSTOM_FAMILY=velocity \

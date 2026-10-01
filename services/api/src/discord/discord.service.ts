@@ -175,11 +175,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		const token = process.env.DISCORD_BOT_TOKEN?.trim();
 		const webhookUrl = process.env.DISCORD_WEBHOOK_URL?.trim();
 		const waitingWebhookUrl = process.env.DISCORD_WAITING_ROOM_WEBHOOK_URL?.trim();
-		if (!token) {
-			this.connectionIssue = 'DISCORD_BOT_TOKEN is missing from the API environment';
-			this.logger.log('Discord bot disabled; set DISCORD_BOT_TOKEN');
-			return;
-		}
 		if (this.waitingChannelId && this.waitingChannelId === this.channelId) {
 			this.connectionIssue = 'The waiting room and main Discord channels must differ';
 			this.logger.error(this.connectionIssue);
@@ -199,9 +194,14 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		if (waitingWebhookUrl && this.waitingChannelId)
 			this.waitingWebhook = new WebhookClient({ url: waitingWebhookUrl });
 		else
-			this.logger.log(
-				'Waiting room Discord webhook disabled; set DISCORD_WAITING_ROOM_WEBHOOK_URL and DISCORD_WAITING_ROOM_CHANNEL_ID',
+			this.logger.warn(
+				`Waiting room Discord webhook disabled: channel ID ${this.waitingChannelId ? 'set' : 'missing'}, webhook URL ${waitingWebhookUrl ? 'set' : 'missing'}`,
 			);
+		if (!token) {
+			this.connectionIssue = 'DISCORD_BOT_TOKEN is missing from the API environment';
+			this.logger.warn('Discord bot disabled; set DISCORD_BOT_TOKEN');
+			return;
+		}
 		this.client.once('ready', () => {
 			this.connectionIssue = null;
 			void this.registerCommands().catch((error: unknown) => {

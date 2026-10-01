@@ -186,7 +186,6 @@ services:
                 vmp-fabric:alpha
                 structure-layout-optimizer?
                 tt20?
-                alternate-current?
                 immersive-optimization?
                 clumps?
                 lazyai?

@@ -28,13 +28,16 @@ async function bootstrap() {
 			!['/api/auth/', '/api/internal/', '/api/discord/avatar', '/api/health'].some((prefix) =>
 				path.startsWith(prefix),
 			) &&
-			velocity.hasWaitingRoomPlayers() &&
-			velocity.isWaitingRoomUsername(
-				sessions.getSession(request.headers.cookie)?.minecraftUsername ?? '',
-			)
+			velocity.hasWaitingRoomPlayers()
 		) {
-			await reply.code(409).send({ message: 'Wait until you enter the game.' });
-			return;
+			const user = sessions.getSession(request.headers.cookie);
+			if (
+				velocity.isWaitingRoomUsername(user?.minecraftUsername ?? '') &&
+				!(user?.isCommittee && (path === '/api/admin' || path.startsWith('/api/admin/')))
+			) {
+				await reply.code(409).send({ message: 'Wait until you enter the game.' });
+				return;
+			}
 		}
 		if (path === '/api/internal/shutdown') return;
 		if (!shutdown.beginRequest()) {

@@ -1,8 +1,14 @@
 FROM itzg/mc-proxy:java25
 
-ENV TYPE=VELOCITY \
-    VELOCITY_VERSION=4.1.2-SNAPSHOT \
-    VELOCITY_BUILD_ID=29 \
+RUN cd /tmp \
+    && mc-image-helper install-paper --project velocity --version 4.1.2-SNAPSHOT --build 29 --results-file /tmp/velocity.env \
+    && . /tmp/velocity.env \
+    && mkdir -p /image \
+    && cp "$SERVER" /image/velocity.jar
+
+ENV TYPE=CUSTOM \
+    CUSTOM_FAMILY=velocity \
+    BUNGEE_JAR_FILE=/image/velocity.jar \
     MEMORY=512m \
     REPLACE_ENV_VARIABLES=TRUE \
     HEALTH_HOST=127.0.0.1 \

@@ -357,6 +357,9 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 						(player) => !isExemptAdmin(this.identities.findByUuid(player.uuid)),
 					).length
 				: null,
+			waitingCount: this.proxyIsOnline()
+				? this.connectedPlayers.filter((player) => player.state === 'queued').length
+				: 0,
 			maxPlayers: this.settings().max_players,
 		};
 	}

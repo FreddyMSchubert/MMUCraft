@@ -182,7 +182,8 @@ public class LootTableModifiers {
                     && damageSource.getEntity() instanceof Player killer
                     && !killer.getUUID().equals(victim.getUUID())
                     ? "soul" : "soul-shard";
-            itemStacks.add(FakeItems.createFakeItemStack(soulId, 1));
+            int count = soulId.equals("soul-shard") ? Mth.nextInt(lootContext.getRandom(), 1, 4) : 1;
+            itemStacks.add(FakeItems.createFakeItemStack(soulId, count));
         }
 
         for (LootAddition addition : additions) {

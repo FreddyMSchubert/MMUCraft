@@ -21,7 +21,7 @@ public record FishingPersonality(
     }
 
     public int baseCatchWindowTicks() {
-        float seconds = 0.8F - (rarity.catchLevel() - 1) * 0.125F;
+        float seconds = 0.8F - (rarity.catchLevel() - 1) * 0.075F;
         return Math.max(1, Mth.ceil(seconds * 20.0F));
     }
 

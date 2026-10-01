@@ -12,13 +12,7 @@ interface PendingMembership {
 	created_at_unix_ms: number;
 }
 
-function PendingMembershipAdmin({
-	refresh,
-	onApplied,
-}: {
-	refresh: number;
-	onApplied: () => Promise<void>;
-}) {
+function PendingMembershipAdmin({ onApplied }: { onApplied: () => Promise<void> }) {
 	const [emails, setEmails] = useState<PendingMembership[]>([]);
 	const [email, setEmail] = useState('');
 	const [busy, setBusy] = useState(false);
@@ -44,7 +38,7 @@ function PendingMembershipAdmin({
 		return () => {
 			active = false;
 		};
-	}, [refresh, revision]);
+	}, [revision]);
 
 	async function add(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -159,22 +153,20 @@ export function MemberAccessAdminSection({ controller }: { controller: AdminTabC
 	const { activeSection, isSuperAdmin, players, busyPlayerId, setMembership, setCommittee } =
 		controller;
 	const [search, setSearch] = useState('');
-	const [pendingRefresh, setPendingRefresh] = useState(0);
 	const visiblePlayers = useMemo(
 		() => fuzzyFilter(players, search, ['minecraftUsername', 'discordUsername', 'email']),
 		[players, search],
 	);
 	return (
 		<>
+			{activeSection === 'membership-import' && (
+				<MembershipImportAdmin onApplied={controller.load} />
+			)}
+			{activeSection === 'pending-memberships' && (
+				<PendingMembershipAdmin onApplied={controller.load} />
+			)}
 			{activeSection === 'members' && (
 				<section className="adminSection">
-					<MembershipImportAdmin
-						onApplied={async () => {
-							await controller.load();
-							setPendingRefresh((value) => value + 1);
-						}}
-					/>
-					<PendingMembershipAdmin refresh={pendingRefresh} onApplied={controller.load} />
 					<div className="adminSectionHeader">
 						<h3>Member list</h3>
 						<p>

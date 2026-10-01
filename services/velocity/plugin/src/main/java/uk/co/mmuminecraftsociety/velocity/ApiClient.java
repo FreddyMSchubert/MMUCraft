@@ -40,10 +40,6 @@ final class ApiClient {
         return post("/api/internal/velocity/waiting-state", new AccessRequest(uuid, username), ConnectedResponse.class);
     }
 
-    CompletableFuture<ConnectedResponse> capacityEvent(String type) {
-        return post("/api/internal/velocity/capacity-event", new CapacityEventRequest(type), ConnectedResponse.class);
-    }
-
     private <T> CompletableFuture<T> post(String path, Object body, Class<T> responseType) {
         HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(4))
@@ -68,7 +64,6 @@ final class ApiClient {
     record AccessRequest(String uuid, String username) { }
 
     record ConnectedRequest(String uuid, String serverName) { }
-    record CapacityEventRequest(String type) { }
 
     record ConnectedResponse(boolean ok) { }
 

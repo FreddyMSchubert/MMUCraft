@@ -7,12 +7,21 @@ public final class FishingCheck {
 
     public static void main(String[] args) {
         checkWaitTiming();
+        checkCatchWindows();
         checkDistanceNormalizedApproach();
         checkFastFishFirstBobChance();
         checkPhysicalShadowScale();
         checkLureBookShortcutChance();
         checkTextureRotation();
-        System.out.println("Fishing checks passed: waits, approach speed, lure books, rotations, first-bob chance, and shadow scale.");
+        System.out.println("Fishing checks passed: waits, catch windows, approach speed, lure books, rotations, first-bob chance, and shadow scale.");
+    }
+
+    private static void checkCatchWindows() {
+        int[] expectedTicks = {16, 15, 13, 12, 10, 10};
+        FishRarity[] rarities = FishRarity.values();
+        for (int i = 0; i < rarities.length; i++) {
+            assert personality(3.0F, 8.0F, rarities[i]).baseCatchWindowTicks() == expectedTicks[i];
+        }
     }
 
     private static void checkWaitTiming() {
@@ -97,8 +106,16 @@ public final class FishingCheck {
             float averageBounces,
             float averageCatchSeconds
     ) {
+        return personality(averageBounces, averageCatchSeconds, FishRarity.COMMON);
+    }
+
+    private static FishingPersonality personality(
+            float averageBounces,
+            float averageCatchSeconds,
+            FishRarity rarity
+    ) {
         return new FishingPersonality(
-                FishRarity.COMMON,
+                rarity,
                 1.0F,
 				270.0F,
 				false,

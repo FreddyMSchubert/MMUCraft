@@ -137,30 +137,6 @@ export class VelocityInternalController {
 		return this.velocity.markQueued(body?.uuid, body?.username);
 	}
 
-	@Post('capacity-event')
-	async capacityEvent(
-		@Headers('authorization') authorization: string | undefined,
-		@Body() body: { type?: unknown } | undefined,
-	) {
-		this.velocity.verifyInternalAuthorization(authorization);
-		let content: string;
-		switch (body?.type) {
-			case 'full':
-				content =
-					'The main server is full. You can join the waiting room for the next place.';
-				break;
-			case 'space':
-				content =
-					'There is enough room for more players on the server again. You can join now.';
-				break;
-			default:
-				throw new BadRequestException('Invalid capacity event');
-		}
-		if (!(await this.discord.publishServer('capacity', content)))
-			throw new ServiceUnavailableException('Discord webhook is unavailable');
-		return { ok: true };
-	}
-
 	@Get('event-control')
 	eventControl(@Headers('authorization') authorization: string | undefined) {
 		this.velocity.verifyInternalAuthorization(authorization);

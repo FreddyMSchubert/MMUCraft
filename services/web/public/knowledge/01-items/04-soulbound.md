@@ -48,7 +48,7 @@ You may notice that it requires a mysterious blue flame to craft. This is a ***S
 
 ![Souls Example Image](/assets/knowledge/items/soulbound/soul.png)
 
-When a player dies normally, they only drop a soul shard. You can convert soul shards to souls and in reverse like this:
+When a player dies normally, they drop 1 to 4 soul shards at random. You can convert soul shards to souls and in reverse like this:
 
 ![Soul Shard to Soul Recipe](/assets/knowledge/items/soulbound/shard_to_soul.png)
 

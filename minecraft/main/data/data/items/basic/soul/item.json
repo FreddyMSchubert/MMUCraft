@@ -10,7 +10,6 @@
 			{
 				"id": "soul",
 				"type": "mainmod:fake_crafting_shapeless",
-				"gameplayToggle": "welcoming",
 				"ingredients": [
 					"mainmod:soul-shard",
 					"mainmod:soul-shard",

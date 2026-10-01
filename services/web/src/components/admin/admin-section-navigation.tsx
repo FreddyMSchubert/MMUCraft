@@ -4,6 +4,8 @@ import type { AdminSection } from './admin-data.types';
 
 const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'members', label: 'Member list' },
+	{ section: 'pending-memberships', label: 'Pending memberships' },
+	{ section: 'membership-import', label: 'Import memberships' },
 	{ section: 'launch', label: 'Launch' },
 	{ section: 'announcements', label: 'Announcements' },
 	{ section: 'emojis', label: 'Emojis' },

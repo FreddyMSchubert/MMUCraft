@@ -69,11 +69,9 @@ public final class MmuCraftVelocity {
     private int admissionTurn;
     private final Map<UUID, String> shownPositions = new ConcurrentHashMap<>();
     private final Map<UUID, CapacityWarning> capacityWarnings = new ConcurrentHashMap<>();
-    private CompletableFuture<Void> capacityNotifications = CompletableFuture.completedFuture(null);
     private volatile ApiClient.Route route;
     private volatile boolean maintenanceMode;
     private volatile int maxPlayers = 42;
-    private Boolean wasFull;
     private String deploymentId;
     private boolean deploymentHadPlayers;
 
@@ -439,12 +437,6 @@ public final class MmuCraftVelocity {
             return;
         }
         long count = occupied();
-        boolean full = count >= maxPlayers;
-        if (wasFull != null && wasFull != full) {
-            notifyCapacity(full ? "full" : "space");
-        }
-        wasFull = full;
-
         int needed = (int) Math.max(0, count - maxPlayers);
         if (!waiting.isEmpty() && count >= maxPlayers) needed++;
         Set<UUID> selected = new HashSet<>();
@@ -565,16 +557,6 @@ public final class MmuCraftVelocity {
                 if (!position.equals(previous)) player.sendMessage(status);
             }
         }
-    }
-
-    private void notifyCapacity(String type) {
-        if (!configured) return;
-        capacityNotifications = capacityNotifications
-                .thenCompose(ignored -> api.capacityEvent(type).thenAccept(response -> { }))
-                .exceptionally(error -> {
-                    logger.warn("Could not publish capacity event {}: {}", type, errorMessage(error));
-                    return null;
-                });
     }
 
     private record QueueEntry(boolean member, long order, String destination) { }

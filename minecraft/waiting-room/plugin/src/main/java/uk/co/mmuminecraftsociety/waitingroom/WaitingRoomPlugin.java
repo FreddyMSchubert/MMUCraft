@@ -19,17 +19,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,6 +66,13 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     private final AtomicBoolean polling = new AtomicBoolean();
     private final AtomicBoolean pollingCommands = new AtomicBoolean();
     private long chatCursor = -1;
+    private boolean newWorld;
+
+    @Override
+    public void onLoad() {
+        Path world = Path.of("/data/waiting-void");
+        newWorld = Files.notExists(world.resolve("level.dat")) && Files.notExists(world.resolve("region"));
+    }
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
@@ -105,12 +106,13 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     public void worldLoaded(WorldLoadEvent event) {
         World world = event.getWorld();
         if (world.getEnvironment() != World.Environment.NORMAL) return;
-        repairBox(world);
+        if (newWorld) createBox(world);
         world.setSpawnLocation(new Location(world, 8.5, FLOOR + 1, 8.5));
         WorldBorder border = world.getWorldBorder();
         border.setCenter(7.5, 7.5);
         border.setSize(96);
         border.setDamageAmount(0);
+        if (newWorld) world.save();
         try {
             Files.writeString(Path.of("/data/waiting-room.ready"), "ready\n");
         } catch (IOException error) {
@@ -119,7 +121,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         }
     }
 
-    private void repairBox(World world) {
+    private void createBox(World world) {
         for (int x = MIN; x <= MAX; x++) for (int z = MIN; z <= MAX; z++) {
             for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++) {
                 if (x != MIN && x != MAX && z != MIN && z != MAX &&
@@ -166,14 +168,10 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         if (team != null) team.unregister();
         board.resetScores(event.getPlayer().getName());
     }
-    @EventHandler public void blockBreak(BlockBreakEvent event) { event.setCancelled(true); }
-    @EventHandler public void blockPlace(BlockPlaceEvent event) { event.setCancelled(true); }
-    @EventHandler public void damage(EntityDamageEvent event) { event.setCancelled(true); }
+    @EventHandler public void damage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) event.setCancelled(true);
+    }
     @EventHandler public void hunger(FoodLevelChangeEvent event) { event.setCancelled(true); }
-    @EventHandler public void drop(PlayerDropItemEvent event) { event.setCancelled(true); }
-    @EventHandler public void pickup(PlayerAttemptPickupItemEvent event) { event.setCancelled(true); }
-    @EventHandler public void inventory(InventoryClickEvent event) { event.setCancelled(true); }
-    @EventHandler public void command(PlayerCommandPreprocessEvent event) { event.setCancelled(true); }
 
     @EventHandler
     public void chat(AsyncChatEvent event) {

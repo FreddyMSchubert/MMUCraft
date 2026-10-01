@@ -101,6 +101,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
 	const [capacity, setCapacity] = useState<{
 		playerCount: number | null;
+		waitingCount: number;
 		maxPlayers: number;
 	} | null>(null);
 	const [events, setEvents] = useState<EventSummary[]>([]);
@@ -197,6 +198,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				if (!response.ok) return;
 				const next = (await response.json()) as {
 					playerCount: number | null;
+					waitingCount: number;
 					maxPlayers: number;
 				};
 				if (!cancelled) setCapacity(next);
@@ -575,21 +577,21 @@ function navigate(href: string, replace = false) {
 function CapacityCount({
 	capacity,
 }: {
-	capacity: { playerCount: number | null; maxPlayers: number };
+	capacity: { playerCount: number | null; waitingCount: number; maxPlayers: number };
 }) {
 	return (
-		<span
-			className={`playerCapacity ${
-				capacity.playerCount !== null && capacity.playerCount >= capacity.maxPlayers
-					? 'playerCapacity-full'
-					: capacity.playerCount !== null &&
-						  capacity.maxPlayers - capacity.playerCount < 3
-						? 'playerCapacity-near'
-						: ''
-			}`}
-		>
-			({capacity.playerCount ?? '?'}/{capacity.maxPlayers})
-		</span>
+		<>
+			<span
+				className={
+					capacity.playerCount !== null && capacity.playerCount >= capacity.maxPlayers
+						? 'playerCapacity-full'
+						: undefined
+				}
+			>
+				({capacity.playerCount ?? '?'}/{capacity.maxPlayers})
+			</span>
+			{capacity.waitingCount > 0 && <> (waiting: {capacity.waitingCount})</>}
+		</>
 	);
 }
 

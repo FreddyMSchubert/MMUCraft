@@ -58,6 +58,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.RedstoneRemoteCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentSanitizer;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
@@ -147,7 +148,11 @@ public class MainMod implements ModInitializer {
         ServerTickEvents.END_LEVEL_TICK.register(ParticleEmission::tick);
         ServerChunkEvents.CHUNK_UNLOAD.register(RedstoneRemoteCharm::onChunkUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
+        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+            if (entity instanceof net.minecraft.server.level.ServerPlayer player) GearEnchantmentSanitizer.sanitizePlayer(player);
+        });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            GearEnchantmentSanitizer.sanitizePlayer(handler.player);
             if (FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) {
                 SkinColors.prefetch(handler.player.getGameProfile());
             }
@@ -162,6 +167,7 @@ public class MainMod implements ModInitializer {
         });
         ServerEntityEvents.ENTITY_LOAD.register(PlayerDisguises::loaded);
         ServerPlayerEvents.AFTER_RESPAWN.register(PlayerDisguises::respawned);
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> GearEnchantmentSanitizer.sanitizePlayer(newPlayer));
         ServerLivingEntityEvents.AFTER_DEATH.register(PlayerDisguises::died);
         ItemEvents.USE.register(CharmsManager::onItemUse);
         ItemEvents.USE_ON.register(CharmsManager::onItemUseOn);

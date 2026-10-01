@@ -124,8 +124,9 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
             for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++) {
                 if (x != MIN && x != MAX && z != MIN && z != MAX &&
                         y != world.getMinHeight() && y != world.getMaxHeight() - 1 && y != FLOOR) continue;
-                if (world.getBlockAt(x, y, z).getType() != Material.BEDROCK)
-                    world.getBlockAt(x, y, z).setType(Material.BEDROCK, false);
+                Material material = y == world.getMaxHeight() - 1 ? Material.GLASS : Material.BEDROCK;
+                if (world.getBlockAt(x, y, z).getType() != material)
+                    world.getBlockAt(x, y, z).setType(material, false);
             }
         }
     }

@@ -133,8 +133,16 @@ tasks.register('checkPlayerColors', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkGearEnchantments', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentCheck'
+    enableAssertions = true
+}
+
 tasks.named('check') {
     dependsOn tasks.named('checkPlayerColors')
+    dependsOn tasks.named('checkGearEnchantments')
     dependsOn 'checkFishing'
     dependsOn 'checkMapResize'
 }

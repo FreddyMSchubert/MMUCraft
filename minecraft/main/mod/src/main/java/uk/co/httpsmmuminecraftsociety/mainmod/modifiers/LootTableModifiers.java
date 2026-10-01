@@ -29,6 +29,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentSanitizer;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettings;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
@@ -255,6 +256,7 @@ public class LootTableModifiers {
                 itemStacks.add(stack);
             }
         }
+        itemStacks.forEach(GearEnchantmentSanitizer::sanitize);
     }
 
     private static void rerollMusicDiscs(LootTable table, LootContext context, List<ItemStack> drops) {

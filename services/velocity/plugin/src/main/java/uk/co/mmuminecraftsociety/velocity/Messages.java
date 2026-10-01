@@ -63,7 +63,7 @@ final class Messages {
     }
 
     static Component capacityWarning(String remaining) {
-        return Component.text("Your place is needed for the queue or a lower player limit. You will be disconnected in "
+        return Component.text("Sorry but many other players are waiting and you have been playing for a while. To allow everyone to play, you will be disconnected in "
                 + remaining + ". Sorry for the interruption.", GOLD);
     }
 

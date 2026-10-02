@@ -244,8 +244,8 @@ api_image="${image_prefix}-api:${tag}"
 mc_image="${image_prefix}-mc:${tag}"
 velocity_image="${image_prefix}-velocity:${tag}"
 waiting_room_image="${image_prefix}-waiting-room:${tag}"
-docker run --rm --entrypoint sh "$velocity_image" -c 'test -s /image/velocity.jar' \
-	|| { echo 'Velocity image lacks its JAR; deployment has not started.' >&2; exit 1; }
+docker run --rm --user "${PUID:-1000}:${PGID:-1000}" --entrypoint sh "$velocity_image" -c 'test -s /image/velocity.jar && test -r /image/velocity.jar' \
+	|| { echo 'Velocity JAR is missing or unreadable by the runtime user; deployment has not started.' >&2; exit 1; }
 docker run --rm --entrypoint sh "$waiting_room_image" -c 'test -n "$(find /image/prepared -maxdepth 1 -type f -name "paper-*.jar" -size +0c -print -quit)"' \
 	|| { echo 'Waiting-room image lacks its Paper JAR; deployment has not started.' >&2; exit 1; }
 defaults=$(mktemp)

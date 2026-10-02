@@ -22,6 +22,7 @@ import com.velocitypowered.api.proxy.server.PingOptions;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -193,8 +194,12 @@ public final class MmuCraftVelocity {
     @Subscribe
     public void onKickedFromServer(KickedFromServerEvent event) {
         Component update = deploymentMessage();
+        Component reason = event.getServerKickReason().orElse(null);
+        String reasonText = reason == null ? "" : PlainTextComponentSerializer.plainText().serialize(reason);
         if (update != null) {
             event.setResult(KickedFromServerEvent.DisconnectPlayer.create(update));
+        } else if (reasonText.startsWith("Outdated client!") || reasonText.startsWith("Outdated server!")) {
+            event.setResult(KickedFromServerEvent.DisconnectPlayer.create(Messages.wrongVersion(reason)));
         } else if (event.getServer().getServerInfo().getName().equals("surprising-saturday")
                 && managedServers.containsKey("main")
                 && health.getOrDefault("main", new ApiClient.ServerHealth("main", false, null, null)).online()) {
@@ -206,7 +211,7 @@ public final class MmuCraftVelocity {
             event.setResult(KickedFromServerEvent.Notify.create(Messages.transferUnavailable()));
         } else {
             event.setResult(KickedFromServerEvent.DisconnectPlayer.create(
-                    Messages.disconnected(event.getServerKickReason().orElse(null))
+                    Messages.disconnected(reason)
             ));
         }
     }

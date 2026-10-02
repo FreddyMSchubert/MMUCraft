@@ -101,6 +101,12 @@ final class Messages {
                 .append(support("If this continues, tell the committee"));
     }
 
+    static Component wrongVersion(Component reason) {
+        return heading("Wrong Minecraft version", RED)
+                .append(Component.text("Select the version below in the Minecraft launcher, then reconnect.\n\n", TEXT))
+                .append(reason);
+    }
+
     static Component waitingRoomUnavailable() {
         return heading("Waiting room unavailable", RED)
                 .append(Component.text("The waiting room is full or offline.\n", TEXT))

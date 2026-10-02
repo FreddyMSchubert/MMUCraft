@@ -9,7 +9,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,20 +21,25 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Switch;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -63,7 +70,11 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
             NamedTextColor.BLUE, NamedTextColor.GREEN, NamedTextColor.AQUA,
             NamedTextColor.RED, NamedTextColor.LIGHT_PURPLE, NamedTextColor.YELLOW,
             NamedTextColor.WHITE);
-    private static final int FLOOR = 64;
+    private static final int SPAWN_X = 8;
+    private static final int SPAWN_Y = -51;
+    private static final int SPAWN_Z = 2;
+    private static final Material[] MUSIC_DISCS = java.util.Arrays.stream(Material.values())
+            .filter(material -> material.name().startsWith("MUSIC_DISC_")).toArray(Material[]::new);
     private static final String MODE_CHANNEL = "mmucraft:waiting_mode";
     private static final String API_URL = System.getenv().getOrDefault("WAITING_ROOM_API_URL", "http://api:8080");
     private static final String SECRET = System.getenv().getOrDefault("WAITING_ROOM_API_SECRET", "");
@@ -107,7 +118,11 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     public void worldLoaded(WorldLoadEvent event) {
         World world = event.getWorld();
         if (world.getEnvironment() != World.Environment.NORMAL) return;
-        world.setSpawnLocation(new Location(world, 8.5, FLOOR + 1, 8.5));
+        world.setSpawnLocation(spawnLocation(world));
+        world.setDifficulty(Difficulty.PEACEFUL);
+        world.setGameRule(GameRule.KEEP_INVENTORY, true);
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+        world.setGameRule(GameRule.SPAWN_RADIUS, 0);
         WorldBorder border = world.getWorldBorder();
         border.setCenter(7.5, 7.5);
         border.setSize(96);
@@ -124,16 +139,58 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     public void joined(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         event.joinMessage(null);
-        player.getInventory().clear();
-        player.getEnderChest().clear();
+        giveLoadout(player);
         player.setGameMode(GameMode.ADVENTURE);
         player.setInvulnerable(false);
         player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
-        player.teleport(player.getWorld().getSpawnLocation());
+        player.teleport(spawnLocation(Bukkit.getWorlds().getFirst()));
         Bukkit.getScheduler().runTask(this, () -> sendMode(player));
         refreshProfile(player);
+    }
+
+    @EventHandler
+    public void died(PlayerDeathEvent event) {
+        event.setKeepInventory(true);
+        event.getDrops().clear();
+        event.setShouldDropExperience(false);
+    }
+
+    @EventHandler
+    public void respawned(PlayerRespawnEvent event) {
+        event.setRespawnLocation(spawnLocation(Bukkit.getWorlds().getFirst()));
+        Bukkit.getScheduler().runTask(this, () -> giveLoadout(event.getPlayer()));
+    }
+
+    private static Location spawnLocation(World world) {
+        return new Location(world, SPAWN_X, SPAWN_Y, SPAWN_Z);
+    }
+
+    private static void giveLoadout(Player player) {
+        var inventory = player.getInventory();
+        inventory.clear();
+        player.getEnderChest().clear();
+        inventory.setItem(0, new ItemStack(Material.DIAMOND_SWORD));
+        inventory.setItem(1, new ItemStack(Material.SNOWBALL, 64));
+        inventory.setItem(2, maxEnchanted(Material.DIAMOND_SPEAR));
+        inventory.setItem(3, maxEnchanted(Material.MACE));
+        inventory.setItem(4, maxEnchanted(Material.FISHING_ROD));
+        inventory.setItem(5, maxEnchanted(Material.TRIDENT));
+        inventory.setItem(8, new ItemStack(MUSIC_DISCS[ThreadLocalRandom.current().nextInt(MUSIC_DISCS.length)]));
+        for (int slot = 9; slot < 18; slot++) inventory.setItem(slot, new ItemStack(Material.SNOWBALL, 64));
+    }
+
+    private static ItemStack maxEnchanted(Material material) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        for (Enchantment enchantment : Enchantment.values()) {
+            if (enchantment.isCursed() || !enchantment.canEnchantItem(item)
+                    || meta.getEnchants().keySet().stream().anyMatch(enchantment::conflictsWith)) continue;
+            meta.addEnchant(enchantment, enchantment.getMaxLevel(), true);
+        }
+        item.setItemMeta(meta);
+        return item;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

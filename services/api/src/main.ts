@@ -20,6 +20,7 @@ async function bootstrap() {
 	const sessions = app.get(AuthSessionService);
 	const velocity = app.get(VelocityService);
 	const trackedRequests = new WeakSet();
+	const rejectedForDrain = new WeakSet();
 	server.addHook('onRequest', async (request, reply) => {
 		monitoring.beginRequest(request);
 		const path = request.url.split('?', 1)[0] ?? '';
@@ -41,15 +42,23 @@ async function bootstrap() {
 		}
 		if (path === '/api/internal/shutdown') return;
 		if (!shutdown.beginRequest()) {
+			rejectedForDrain.add(request);
 			await reply.code(503).send({ message: 'Server restart in progress' });
 			return;
 		}
-		if (!path.endsWith('/events')) trackedRequests.add(request);
-		else shutdown.endRequest();
+		if (path.endsWith('/events')) shutdown.endRequest();
+		else {
+			trackedRequests.add(request);
+			if (request.method === 'GET' || request.method === 'HEAD') {
+				reply.raw.once('close', () => {
+					if (trackedRequests.delete(request)) shutdown.endRequest();
+				});
+			}
+		}
 	});
 	server.addHook('onResponse', (request, reply) => {
 		monitoring.finishRequest(request, reply.statusCode);
-		if (reply.statusCode >= 500) {
+		if (reply.statusCode >= 500 && !rejectedForDrain.delete(request)) {
 			httpLogger.error(
 				`${request.method} ${request.url.split('?', 1)[0]} -> ${reply.statusCode}`,
 			);

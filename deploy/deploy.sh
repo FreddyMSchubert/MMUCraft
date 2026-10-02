@@ -10,6 +10,7 @@ notify_update_complete=false
 update_started=false
 shutdown_attempted=false
 defaults=''
+server_properties_tmp=''
 
 # Validate deployment inputs before changing server state.
 case "$tag" in
@@ -182,6 +183,7 @@ cleanup() {
 	status=$?
 	trap - EXIT
 	[ -z "$defaults" ] || rm -f "$defaults"
+	[ -z "$server_properties_tmp" ] || rm -f "$server_properties_tmp"
 	if [ "$update_started" = true ]; then
 		if [ "$shutdown_attempted" = false ]; then
 			cancel_update
@@ -263,13 +265,16 @@ fi
 chmod 600 data/velocity/velocity.toml
 
 server_properties=data/minecraft/server.properties
-cp "$defaults" "$server_properties"
+server_properties_tmp=$(mktemp "${server_properties}.tmp.XXXXXX")
+cp "$defaults" "$server_properties_tmp"
 
-set_property "$server_properties" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
+set_property "$server_properties_tmp" resource-pack "${PUBLIC_URL%/}/packs/main.zip"
 if [ "$target" = dev ]; then
-	set_property "$server_properties" max-tick-time 300000
+	set_property "$server_properties_tmp" max-tick-time 300000
 fi
-chmod 664 "$server_properties"
+chmod 664 "$server_properties_tmp"
+mv -f "$server_properties_tmp" "$server_properties"
+server_properties_tmp=''
 
 # Warn players before the update starts.
 running_services=$(dc ps --status running --services)
@@ -388,7 +393,15 @@ if printf '%s\n' "$running_services" | grep -qx minecraft; then
 	status=0
 	api_post /api/internal/shutdown 120000 || status=$?
 	if [ "$status" -ne 0 ]; then
-		echo "API and Minecraft logs from the failed drain/save attempt:" >&2
+		echo "API drain/save failed (exit $status). Restarting the current API and retrying once." >&2
+		dc restart --no-deps api
+		dc start --wait --wait-timeout 60 api
+		status=0
+		api_post /api/internal/shutdown 120000 || status=$?
+		[ "$status" -ne 0 ] || echo 'API drain and Minecraft world save succeeded after retry.' >&2
+	fi
+	if [ "$status" -ne 0 ]; then
+		echo "API and Minecraft logs from the failed drain/save attempts:" >&2
 		dc logs --no-color --timestamps --since "$shutdown_started_at" api minecraft >&2 || true
 		if [ "$force" = true ]; then
 			graceful_failure "API drain/save failed"
@@ -399,6 +412,7 @@ if printf '%s\n' "$running_services" | grep -qx minecraft; then
 			dc start --wait --wait-timeout 60 api
 			wait_for_proxy ready || { echo "The current server has not recovered." >&2; exit 1; }
 			cancel_update
+			echo "Deployment stopped: API drain/save failed (exit $status). The old API and Minecraft remain running; update status is cleared." >&2
 			exit "$status"
 		fi
 	fi

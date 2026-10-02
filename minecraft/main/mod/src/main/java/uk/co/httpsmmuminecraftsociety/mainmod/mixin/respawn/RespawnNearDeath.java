@@ -3,6 +3,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.respawn;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.PlayerSpawnFinder;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.Vec3;
@@ -26,7 +29,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Mixin(ServerPlayer.class)
 public class RespawnNearDeath {
-    private static final int MAX_SEARCHES = 16;
+    private static final int MAX_SEARCHES = 64;
+    private static final int DRY_SEARCHES = 8;
+    private static final int RING_SEARCHES = 12;
     private static final String VOID_DEATH_KEEP_INVENTORY_TAG = "mainmod_void_death_keep_inventory";
 
     @Shadow
@@ -97,7 +102,7 @@ public class RespawnNearDeath {
 
     private BlockPos findRespawnPosition(ServerPlayer player, ServerLevel level) {
         for (int attempt = 0; attempt < MAX_SEARCHES; attempt++) {
-            BlockPos candidate = locateCandidate(player, level);
+            BlockPos candidate = locateCandidate(player, level, attempt < DRY_SEARCHES, attempt < RING_SEARCHES);
             if (candidate != null) {
                 return candidate;
             }
@@ -105,20 +110,32 @@ public class RespawnNearDeath {
         return null;
     }
 
-    private BlockPos locateCandidate(ServerPlayer player, ServerLevel level) {
+    private BlockPos locateCandidate(ServerPlayer player, ServerLevel level, boolean requireDryLand, boolean usePreferredDistance) {
         BlockPos deathPos = player.blockPosition();
         double maxDistance = server.getPlayerList().getViewDistance() * (PlayerStatsSync.isMember(player) ? 8.0 : 16.0);
-        double minDistance = maxDistance * 0.5;
+        double minDistance = usePreferredDistance ? maxDistance * 0.5 : 0.0;
         double angle = ThreadLocalRandom.current().nextDouble(Math.TAU);
         double distance = ThreadLocalRandom.current().nextDouble(minDistance, maxDistance);
         int x = deathPos.getX() + (int) Math.round(Math.cos(angle) * distance);
         int z = deathPos.getZ() + (int) Math.round(Math.sin(angle) * distance);
 
-        BlockPos found = PlayerSpawnFinder.getSpawnPosInChunk(
-                level,
-                new ChunkPos(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z))
-        );
-        if (found == null || !level.getWorldBorder().isWithinBounds(found)) {
+        BlockPos found = requireDryLand || level.dimensionType().hasCeiling()
+                ? PlayerSpawnFinder.getSpawnPosInChunk(
+                        level,
+                        new ChunkPos(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z))
+                )
+                : new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z), z);
+        if (found == null || found.getY() <= level.getMinY() || found.getY() + 1 >= level.getMaxY()
+                || !level.getWorldBorder().isWithinBounds(found)
+                || !level.getBlockState(found).getBlock().isPossibleToRespawnInThis(level.getBlockState(found))
+                || !level.getBlockState(found.above()).getBlock().isPossibleToRespawnInThis(level.getBlockState(found.above()))) {
+            return null;
+        }
+
+        BlockPos floor = found.below();
+        if (level.getFluidState(floor).is(FluidTags.LAVA)
+                || (!level.getFluidState(floor).is(FluidTags.WATER)
+                && !level.getBlockState(floor).isFaceSturdy(level, floor, Direction.UP))) {
             return null;
         }
 

@@ -17,7 +17,7 @@ on:
                     - dev
                     - production
             version:
-                description: dev or an exact release tag
+                description: dev (this workflow commit) or an exact release tag
                 required: true
                 default: dev
                 type: string
@@ -53,7 +53,7 @@ jobs:
         environment: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
         env:
             DEPLOY_TARGET: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
-            DEPLOY_VERSION: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.version }}
+            DEPLOY_VERSION: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.version }}
             WARNING_MINUTES: ${{ github.event_name == 'workflow_run' && '0' || inputs.warning_minutes }}
             FORCE_DEPLOY: ${{ github.event_name == 'workflow_run' && 'false' || inputs.force }}
         steps:
@@ -62,12 +62,12 @@ jobs:
               shell: bash
               env:
                   REQUESTED_VERSION: ${{ env.DEPLOY_VERSION }}
-                  REQUESTED_REF: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
+                  REQUESTED_REF: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
               run: |
                   tag="$REQUESTED_VERSION"
                   ref="$REQUESTED_VERSION"
                   if [[ "${tag,,}" == dev ]]; then
-                    tag=dev
+                    tag="$REQUESTED_REF"
                     ref="$REQUESTED_REF"
                   fi
                   if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
@@ -161,7 +161,7 @@ jobs:
                   [[ "$DEPLOY_PATH" != / && "$DEPLOY_PATH" != *..* ]]
 
                   ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" \
-                    "set -eu; mkdir -p '$DEPLOY_PATH'; df -h '$DEPLOY_PATH'; df -i '$DEPLOY_PATH'; ls -ld '$DEPLOY_PATH'; if [ '$DEPLOY_TARGET' = dev ]; then docker image prune -f >/dev/null; docker builder prune -f >/dev/null; df -h '$DEPLOY_PATH'; df -i '$DEPLOY_PATH'; fi; test -w '$DEPLOY_PATH'"
+                    "set -eu; mkdir -p '$DEPLOY_PATH'; df -h '$DEPLOY_PATH'; df -i '$DEPLOY_PATH'; ls -ld '$DEPLOY_PATH'; if [ '$DEPLOY_TARGET' = dev ]; then docker image prune -a -f --filter until=168h >/dev/null; docker builder prune -f >/dev/null; df -h '$DEPLOY_PATH'; df -i '$DEPLOY_PATH'; fi; test -w '$DEPLOY_PATH'"
                   tar -czf - -C deploy . -C .. monitoring .env.example | \
                     ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o ServerAliveInterval=30 -o ServerAliveCountMax=3 "$DEPLOY_USER@$DEPLOY_HOST" \
                       "tar -xzf - -C '$DEPLOY_PATH' && chmod 700 '$DEPLOY_PATH/deploy.sh'"

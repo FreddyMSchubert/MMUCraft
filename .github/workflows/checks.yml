@@ -167,7 +167,7 @@ jobs:
               env:
                   RELEASE_TAG: ${{ github.event.release.tag_name }}
               run: |
-                  tag=dev
+                  tag="$GITHUB_SHA"
                   if [[ "${GITHUB_EVENT_NAME}" == release ]]; then
                     tag="${RELEASE_TAG}"
                   fi

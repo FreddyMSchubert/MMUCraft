@@ -4,6 +4,8 @@ For a new server, follow the [complete setup and cutover guide](SETUP.md).
 
 The GitHub `deploy` workflow copies this directory, the root `.env.example`, and the monitoring configuration to the selected server. It then runs `deploy.sh` with the `dev` or `production` target. Runtime state stays under `data/`, which is not present in the deployment archive, and Docker volumes are never pruned.
 
+Development images use the commit SHA as their tag. A manual `dev` deployment uses the commit that started the workflow. The workflow checks that all required images exist before it changes the server.
+
 The API applies pending Drizzle migrations before it starts listening. The image contains them at `/app/drizzle`, while `/app/data/app.sqlite` is the mounted production database; a failed migration makes the API fail instead of serving against the wrong schema.
 
 On the VPS, copy `.env.example` to `.env`, fill every value, and keep the file readable only by the deployment user. The deployment user must be in the `docker` group and its numeric UID/GID should match `PUID`/`PGID`.
@@ -100,7 +102,7 @@ The Servers page also shows online players and backend health. The API saves eac
 
 Public signups open automatically at the launch time configured on the Admin **Launch** page. Before then, add one permitted email address per line to `data/api/signup-allowlist.txt` to allow invited signups. Matching is case-insensitive; `*` does not allow everyone before launch. The API reads the file for each attempt without a restart. An unreadable or empty file keeps prelaunch signup closed. Existing accounts can still sign in. Normal MMU-address and sponsored external-player eligibility rules apply both before and after launch; an external address must also be added under Admin **External invites**. Invitees can use `/play` directly before the public launch page links to it. Changing the launch time immediately updates the public signup gate; open public website pages refresh the countdown setting within 30 seconds.
 
-The homepage defaults to the society Discord invite and Instagram account. Override `DISCORD_URL` or `INSTAGRAM_URL` in the deployment `.env` if either link changes. The homepage version label uses the deployed `IMAGE_TAG`. Release images also show the release name and link to the GitHub release.
+The homepage defaults to the society Discord invite and Instagram account. Override `DISCORD_URL` or `INSTAGRAM_URL` in the deployment `.env` if either link changes. The homepage version label shows the first seven characters of a development commit SHA. Release images show the release name and link to the GitHub release.
 
 Grafana is available at `https://grafana.PUBLIC_HOST/`. Requests to the old `/grafana/` path redirect to this host. Sign in as `admin` with `GRAFANA_ADMIN_PASSWORD` from `.env`. Anonymous access and Grafana account creation are disabled. Website accounts are not affected.
 

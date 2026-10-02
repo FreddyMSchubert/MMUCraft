@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 function imageVersion(tag = 'dev', releaseName = '') {
 	const cleanTag = tag.trim() || 'dev';
 	if (cleanTag.toLowerCase() === 'dev') return 'MMU Minecraft dev';
+	if (/^[0-9a-f]{40}$/i.test(cleanTag)) return `MMU Minecraft dev ${cleanTag.slice(0, 7)}`;
 	const displayTag =
 		/^v/i.test(cleanTag) || !/^\d+\.\d+\.\d+/.test(cleanTag) ? cleanTag : `v${cleanTag}`;
 	return `MMU Minecraft ${displayTag}${releaseName.trim() ? ` - ${releaseName.trim()}` : ''}`;

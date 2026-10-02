@@ -108,18 +108,22 @@ dc() {
 }
 
 show_startup_diagnostics() {
-	echo "Service startup failed. Container state and recent logs:" >&2
+	if [ "$#" -eq 0 ]; then
+		set -- api web minecraft waiting-room velocity nginx
+	fi
+	echo "Service startup failed. Container state, health probes, and recent logs:" >&2
 	dc ps -a >&2 || true
-	for service in api web minecraft waiting-room nginx; do
+	for service in "$@"; do
 		container=$(dc ps -a -q "$service" 2>/dev/null || true)
 		[ -n "$container" ] || continue
 		docker inspect --format '{{.Name}} status={{.State.Status}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} restarts={{.RestartCount}}' "$container" >&2 || true
+		docker inspect --format '{{if .State.Health}}{{range .State.Health.Log}}{{printf "  probe ended=%s exit=%d output=%q\n" .End .ExitCode .Output}}{{end}}{{end}}' "$container" >&2 || true
 		if [ "$service" = waiting-room ]; then
 			echo 'Waiting room memory events:' >&2
 			docker exec "$container" cat /sys/fs/cgroup/memory.events >&2 || true
 		fi
 	done
-	dc logs --no-color --timestamps --tail=200 api web minecraft waiting-room nginx >&2 || true
+	dc logs --no-color --timestamps --tail=200 "$@" >&2 || true
 }
 
 api_post() {
@@ -361,7 +365,14 @@ dc up -d --no-deps event-controller
 # Update the proxy first so it can show progress while the API and main server restart.
 shutdown_attempted=true
 rm -f data/velocity/deployment-drained
-dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" velocity
+if dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" velocity; then
+	:
+else
+	status=$?
+	echo "Velocity did not start successfully (docker compose exit $status)." >&2
+	show_startup_diagnostics velocity
+	exit "$status"
+fi
 wait_for_proxy drained || graceful_failure "Velocity did not acknowledge the update after startup"
 
 if printf '%s\n' "$running_services" | grep -qx minecraft; then

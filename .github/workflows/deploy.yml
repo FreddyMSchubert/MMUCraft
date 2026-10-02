@@ -160,12 +160,11 @@ jobs:
                   [[ "$DEPLOY_PATH" =~ ^/[A-Za-z0-9._/-]+$ ]]
                   [[ "$DEPLOY_PATH" != / && "$DEPLOY_PATH" != *..* ]]
 
-                  archive="$RUNNER_TEMP/mmucraft-deploy.tgz"
-                  tar -czf "$archive" -C deploy . -C .. monitoring .env.example
-
-                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH'"
-                  scp -i ~/.ssh/deploy_key -P "$DEPLOY_PORT" "$archive" "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.deploy.tgz"
-                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "tar -xzf '$DEPLOY_PATH/.deploy.tgz' -C '$DEPLOY_PATH' && rm '$DEPLOY_PATH/.deploy.tgz' && chmod 700 '$DEPLOY_PATH/deploy.sh'"
+                  ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" \
+                    "set -eu; mkdir -p '$DEPLOY_PATH'; df -h '$DEPLOY_PATH'; df -i '$DEPLOY_PATH'; ls -ld '$DEPLOY_PATH'; if [ '$DEPLOY_TARGET' = dev ]; then docker image prune -f >/dev/null; docker builder prune -f >/dev/null; df -h '$DEPLOY_PATH'; df -i '$DEPLOY_PATH'; fi; test -w '$DEPLOY_PATH'"
+                  tar -czf - -C deploy . -C .. monitoring .env.example | \
+                    ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" -o ServerAliveInterval=30 -o ServerAliveCountMax=3 "$DEPLOY_USER@$DEPLOY_HOST" \
+                      "tar -xzf - -C '$DEPLOY_PATH' && chmod 700 '$DEPLOY_PATH/deploy.sh'"
 
                   printf '%s' "$GHCR_TOKEN" | ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" "docker login ghcr.io --username '$GHCR_USER' --password-stdin"
                   status=0

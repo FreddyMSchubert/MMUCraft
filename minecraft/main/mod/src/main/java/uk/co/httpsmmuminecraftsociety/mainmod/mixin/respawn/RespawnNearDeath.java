@@ -51,7 +51,8 @@ public class RespawnNearDeath {
         BlockPos spawnPos = findRespawnPosition(player, level);
 
         if (spawnPos == null) {
-            MainMod.LOGGER.info("Could not locate a respawn position within {} tries", MAX_SEARCHES);
+            MainMod.LOGGER.info("Could not locate a respawn position within {} tries; using world spawn", MAX_SEARCHES);
+            player.setRespawnPosition(null, false);
             return;
         }
 

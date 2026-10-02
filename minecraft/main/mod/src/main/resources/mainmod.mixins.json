@@ -83,6 +83,7 @@
 		"serverSideBlocks.ServerSideBlockPlacementMixin",
 		"claims.PlayerActionContextMixin",
 		"claims.LevelMutationMixin",
+		"claims.BlockDropsMixin",
 		"claims.ServerLevelEntityMixin",
 		"claims.ProjectileWallMixin",
 		"claims.ExplosionMixin",

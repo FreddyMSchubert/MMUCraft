@@ -3,3 +3,11 @@ version: '1.0.0'
 main: uk.co.mmuminecraftsociety.waitingroom.WaitingRoomPlugin
 api-version: '26.3'
 load: STARTUP
+commands:
+    joke:
+        description: Get a joke from a waiting room station.
+        usage: /joke <station id>
+        permission: waitingroom.joke
+permissions:
+    waitingroom.joke:
+        default: op

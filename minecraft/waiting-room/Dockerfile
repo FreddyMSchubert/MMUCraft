@@ -7,6 +7,7 @@ RUN SETUP_ONLY=true /start \
 
 FROM itzg/minecraft-server:java25
 ENV EULA=TRUE TYPE=PAPER VERSION=26.3
+ENV PLUGINS=https://cdn.modrinth.com/data/9eGKb6K1/versions/EJth3OAr/voicechat-bukkit-2.6.24.jar
 COPY --from=prepared /image/prepared /image/prepared
 COPY minecraft/waiting-room/plugin/build/libs/mmucraft-waiting-room-1.0.0.jar /plugins/waiting-room.jar
 COPY minecraft/waiting-room/server.properties /config/server.properties

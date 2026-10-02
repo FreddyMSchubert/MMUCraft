@@ -49,7 +49,7 @@ Use `make db-generate`, `make db-check`, and `make db-studio` for database work.
 
 Simple Voice Chat provides proximity audio up to 48 blocks and whisper audio up to 24 blocks. Players can also create groups for distance-independent chat. Players without the client mod can still join, but cannot send or receive voice audio.
 
-The setup installs Simple Voice Chat Fabric `2.6.24` for Minecraft `26.3` and the Velocity plugin `2.6.18`. Velocity publishes UDP port `24454` and forwards voice packets to the private backend. The containers have separate network addresses, so they can use the same internal port. See the [official proxy setup](https://modrepo.de/minecraft/voicechat/wiki/proxy_setup).
+The setup installs Simple Voice Chat Fabric `2.6.24` for Minecraft `26.3`, the Paper plugin `2.6.24` for the waiting room, and the Velocity plugin `2.6.18`. Velocity publishes UDP port `24454` and forwards voice packets to the private backend. The containers have separate network addresses, so they can use the same internal port. See the [official proxy setup](https://modrepo.de/minecraft/voicechat/wiki/proxy_setup).
 
 Install [Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat) for Minecraft `26.3` and your client mod loader. Join the server, press `V`, and complete the microphone setup. Use push-to-talk or voice activation. Leave your group to use proximity chat.
 
@@ -60,6 +60,10 @@ The backend settings are in `minecraft/main/config/voicechat/voicechat-server.pr
 The empty proxy `voice_host` uses the address that the player uses to join. If that address does not reach the same host for UDP, set `voice_host` to a reachable host and port, such as `voice.example.com:24454`. Rebuild and restart Velocity after you change its source configuration.
 
 After startup, run `/voicechat test <player>` as an operator with a connected player. Check proximity audio with two modded clients at different distances. A successful Minecraft health check does not verify UDP audio.
+
+## Waiting room joke stations
+
+Put `/joke <station id>` in an impulse command block with a button attached directly to it. Give each station a distinct ID; the ID may contain spaces. A button press sends a random dad joke only to the player who pressed it. A station used in the last five successful presses across all players must wait until five other stations have been used. The list resets when the waiting room restarts. Operators can also run `/joke <station id>` directly.
 
 ## Tests
 

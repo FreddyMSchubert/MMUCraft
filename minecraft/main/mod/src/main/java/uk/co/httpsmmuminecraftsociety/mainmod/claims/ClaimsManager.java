@@ -24,8 +24,10 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractBedBlock;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -58,8 +60,13 @@ public final class ClaimsManager {
     public static void init() {
         AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) ->
                 checkDirect(player, level, pos) ? InteractionResult.PASS : InteractionResult.FAIL);
-        UseBlockCallback.EVENT.register((player, level, hand, hit) ->
-                checkDirect(player, level, hit.getBlockPos()) ? InteractionResult.PASS : InteractionResult.FAIL);
+        UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+            if (!checkDirect(player, level, hit.getBlockPos())) return InteractionResult.FAIL;
+            if (player instanceof ServerPlayer serverPlayer) {
+                clearStaleOccupiedBed(serverPlayer, level, hit.getBlockPos());
+            }
+            return InteractionResult.PASS;
+        });
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) ->
                 checkDirect(player, level, pos));
         AttackEntityCallback.EVENT.register((player, level, hand, entity, hit) ->
@@ -162,6 +169,10 @@ public final class ClaimsManager {
         }
         if ((!ready || isClaimed(level, pos)) && newState.getBlock() instanceof BaseFireBlock) return false;
         return true;
+    }
+
+    public static boolean allowBlockRemoval(Level level, BlockPos pos) {
+        return allowBlockMutation(level, pos, level.getFluidState(pos).createLegacyBlock());
     }
 
     public static boolean allowEntitySpawn(Level level, Entity entity) {
@@ -272,6 +283,22 @@ public final class ClaimsManager {
         boolean allowed = canAccess(serverPlayer, level, pos);
         if (!allowed) notifyDenied(serverPlayer);
         return allowed;
+    }
+
+    private static void clearStaleOccupiedBed(ServerPlayer player, Level level, BlockPos clickedPos) {
+        BlockState clicked = level.getBlockState(clickedPos);
+        if (!(clicked.getBlock() instanceof AbstractBedBlock)) return;
+        BlockPos headPos = clicked.getValue(AbstractBedBlock.PART) == BedPart.HEAD
+                ? clickedPos : clickedPos.relative(clicked.getValue(AbstractBedBlock.FACING));
+        BlockState head = level.getBlockState(headPos);
+        if (!head.is(clicked.getBlock()) || head.getValue(AbstractBedBlock.PART) != BedPart.HEAD
+                || !head.getValue(AbstractBedBlock.OCCUPIED) || !isClaimed(level, headPos)
+                || !canAccess(player, level, headPos)) return;
+        boolean sleeperPresent = !level.getEntitiesOfClass(LivingEntity.class, new AABB(headPos).inflate(2),
+                entity -> entity.isSleeping() && entity.getSleepingPos().filter(headPos::equals).isPresent()).isEmpty();
+        if (!sleeperPresent) {
+            level.setBlockAndUpdate(headPos, head.setValue(AbstractBedBlock.OCCUPIED, false));
+        }
     }
 
     private static boolean allowPlayerDamage(LivingEntity target, DamageSource source, float amount) {

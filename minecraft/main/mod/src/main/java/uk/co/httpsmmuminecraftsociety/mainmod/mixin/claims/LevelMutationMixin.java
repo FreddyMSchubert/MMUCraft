@@ -18,14 +18,16 @@ abstract class LevelMutationMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private void mainmod$guardBoatHarvestInClaim(
+    private void mainmod$guardClaimedBlockDrops(
             BlockPos pos,
             boolean drop,
             Entity destroyer,
             int recursionLeft,
             CallbackInfoReturnable<Boolean> cir
     ) {
-        if (destroyer instanceof AbstractBoat && ClaimsManager.isClaimed((Level) (Object) this, pos)) {
+        Level level = (Level) (Object) this;
+        if ((destroyer instanceof AbstractBoat && ClaimsManager.isClaimed(level, pos))
+                || !ClaimsManager.allowBlockRemoval(level, pos)) {
             cir.setReturnValue(false);
         }
     }

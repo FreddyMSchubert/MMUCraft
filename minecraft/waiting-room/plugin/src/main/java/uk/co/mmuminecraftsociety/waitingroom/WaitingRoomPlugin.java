@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
@@ -62,8 +63,6 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
             NamedTextColor.BLUE, NamedTextColor.GREEN, NamedTextColor.AQUA,
             NamedTextColor.RED, NamedTextColor.LIGHT_PURPLE, NamedTextColor.YELLOW,
             NamedTextColor.WHITE);
-    private static final int MIN = -16;
-    private static final int MAX = 31;
     private static final int FLOOR = 64;
     private static final String MODE_CHANNEL = "mmucraft:waiting_mode";
     private static final String API_URL = System.getenv().getOrDefault("WAITING_ROOM_API_URL", "http://api:8080");
@@ -76,14 +75,6 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     private final AtomicBoolean polling = new AtomicBoolean();
     private final AtomicBoolean pollingCommands = new AtomicBoolean();
     private long chatCursor = -1;
-    private boolean newWorld;
-
-    @Override
-    public void onLoad() {
-        Path world = Path.of("/data/waiting-void");
-        newWorld = Files.notExists(world.resolve("level.dat")) && Files.notExists(world.resolve("region"));
-    }
-
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return new ChunkGenerator() {
@@ -116,30 +107,16 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     public void worldLoaded(WorldLoadEvent event) {
         World world = event.getWorld();
         if (world.getEnvironment() != World.Environment.NORMAL) return;
-        if (newWorld) createBox(world);
         world.setSpawnLocation(new Location(world, 8.5, FLOOR + 1, 8.5));
         WorldBorder border = world.getWorldBorder();
         border.setCenter(7.5, 7.5);
         border.setSize(96);
         border.setDamageAmount(0);
-        if (newWorld) world.save();
         try {
             Files.writeString(Path.of("/data/waiting-room.ready"), "ready\n");
         } catch (IOException error) {
             getLogger().severe("Could not mark the waiting room ready: " + error);
             Bukkit.shutdown();
-        }
-    }
-
-    private void createBox(World world) {
-        for (int x = MIN; x <= MAX; x++) for (int z = MIN; z <= MAX; z++) {
-            for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++) {
-                if (x != MIN && x != MAX && z != MIN && z != MAX &&
-                        y != world.getMinHeight() && y != world.getMaxHeight() - 1 && y != FLOOR) continue;
-                Material material = y == world.getMaxHeight() - 1 ? Material.GLASS : Material.BEDROCK;
-                if (world.getBlockAt(x, y, z).getType() != material)
-                    world.getBlockAt(x, y, z).setType(material, false);
-            }
         }
     }
 
@@ -150,7 +127,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         player.getInventory().clear();
         player.getEnderChest().clear();
         player.setGameMode(GameMode.ADVENTURE);
-        player.setInvulnerable(true);
+        player.setInvulnerable(false);
         player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -179,7 +156,25 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         board.resetScores(event.getPlayer().getName());
     }
     @EventHandler public void damage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) event.setCancelled(true);
+        if (!(event.getEntity() instanceof Player player)
+                || event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
+        event.setCancelled(true);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (random.nextInt(50) != 0) return;
+
+        World world = player.getWorld();
+        for (int attempt = 0; attempt < 10; attempt++) {
+            int x = random.nextInt(-14, 30);
+            int z = random.nextInt(-12, 12);
+            if (!world.getBlockAt(x, -61, z).getType().isSolid()
+                    || !world.getBlockAt(x, -60, z).isPassable()
+                    || !world.getBlockAt(x, -59, z).isPassable()) continue;
+            Location destination = player.getLocation();
+            destination.setX(x + 0.5);
+            destination.setY(-60);
+            destination.setZ(z + 0.5);
+            if (player.teleport(destination)) return;
+        }
     }
     @EventHandler public void hunger(FoodLevelChangeEvent event) { event.setCancelled(true); }
 

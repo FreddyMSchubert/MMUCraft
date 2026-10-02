@@ -44,9 +44,9 @@ services:
             MEMORY: 768M
             INIT_MEMORY: 128M
         cpus: '0.75'
-        mem_limit: 1g
+        mem_limit: 1536m
         mem_reservation: 256m
-        memswap_limit: 1g
+        memswap_limit: 1536m
 
     surprising-saturday:
         environment:

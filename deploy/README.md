@@ -78,7 +78,7 @@ Set `DISCORD_WAITING_ROOM_CHANNEL_ID` to the ID of a separate text channel. Crea
 
 The waiting room runs in a separate Paper container with its own data directory. It uses a void generator and assumes the `waiting-void` structure is already built; the plugin does not place or verify its blocks. Its player data does not share the main server's inventory files. The container has no public port. Velocity sends queued players to it and counts only players on game servers toward the main capacity. The health check waits for the plugin to prepare the `waiting-void` world. The old `world` directory from the failed first start stays on disk but is not used.
 
-The dev waiting room has a 512 MiB Java heap, a 768 MiB container limit, and 16 queue places. Production uses a 768 MiB heap, a 1 GiB container limit, and 100 queue places. The deployment starts the waiting room before the main server and waits for both health checks before it accepts players. The waiting room health check ignores failed probes for the first five minutes.
+The dev waiting room has a 384 MiB Java heap, a 768 MiB container limit, and 16 queue places. Production uses a 768 MiB heap, a 1.5 GiB container limit, and 100 queue places. The container limit includes Java memory outside the heap. The deployment starts the waiting room before the main server and waits for both health checks before it accepts players. The waiting room health check ignores failed probes for the first five minutes.
 
 Velocity owns the public Minecraft port. Backend servers have no published port. They use offline mode because Velocity authenticates the Mojang account. FabricProxy-Lite verifies the forwarding secret and restores the authenticated UUID, username, skin, and client address on each Fabric backend.
 

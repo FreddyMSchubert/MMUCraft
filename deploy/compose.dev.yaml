@@ -41,7 +41,7 @@ services:
 
     waiting-room:
         environment:
-            MEMORY: 512M
+            MEMORY: 384M
             INIT_MEMORY: 64M
             JVM_XX_OPTS: -XX:ActiveProcessorCount=1
         cpus: '0.5'

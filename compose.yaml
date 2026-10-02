@@ -132,7 +132,7 @@ services:
             PAPER_VELOCITY_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
             WAITING_ROOM_API_URL: http://api:8080
             WAITING_ROOM_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
-            MEMORY: 512M
+            MEMORY: 384M
             INIT_MEMORY: 64M
             JVM_XX_OPTS: -XX:ActiveProcessorCount=1
         volumes:

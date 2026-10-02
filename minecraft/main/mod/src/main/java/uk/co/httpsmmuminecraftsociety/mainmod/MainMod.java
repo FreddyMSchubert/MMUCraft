@@ -193,10 +193,6 @@ public class MainMod implements ModInitializer {
                 List.of(Items.MAP, Items.FILLED_MAP),
                 (builder, item) -> builder.set(DataComponents.LORE, SmallMaps.defaultLore())
         ));
-        DefaultItemComponentEvents.MODIFY.register(context -> context.modify(
-                List.of(Items.MINECART, Items.CHEST_MINECART, Items.FURNACE_MINECART, Items.TNT_MINECART, Items.HOPPER_MINECART),
-                (builder, item) -> builder.set(DataComponents.MAX_STACK_SIZE, 64)
-        ));
         ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);

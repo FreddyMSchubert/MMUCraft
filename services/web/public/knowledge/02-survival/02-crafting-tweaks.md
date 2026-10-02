@@ -29,7 +29,7 @@ tips:
 Rails are super cool. We've made them cooler:
 
 - ⚡ **SUPER FAST**: The max speed of rails now goes up to more than **2.5x** the speed - making them the same speed as Elytra!
-- 💰 **WAY CHEAPER**: When you now craft the usual [rail recipes](https://minecraft.wiki/w/Rail_(disambiguation)) or [minecarts](https://minecraft.wiki/w/Minecart), you get way more items as the output!
+- 💰 **WAY CHEAPER**: The usual [rail recipes](https://minecraft.wiki/w/Rail_(disambiguation)) give way more items as the output!
 - ‼️ **EASIER TO MAKE**: You can now craft [powered rails](https://minecraft.wiki/w/Powered_Rail) with copper instead of gold ingots:
 
 ![Powered Rails from Copper Example Image](/assets/knowledge/survival/crafting-tweaks/powered_from_copper.png)

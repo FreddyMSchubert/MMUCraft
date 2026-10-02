@@ -69,7 +69,10 @@ public class CombineCharmorRecipe extends CustomRecipe
             storedCharm = stackCharm;
         }
 
-        if (armor == null || charm == null || !isArmorCompatibleWithCharm(armor, charm)) {
+        StoredCharmData selectedCharm = storedCharm;
+        if (armor == null || charm == null || !isArmorCompatibleWithCharm(armor, charm)
+                || CharmorManager.getStoredArmorCharms(armor).stream()
+                .anyMatch(existing -> existing.charmId() == selectedCharm.charmId())) {
             return new CraftingInfo(false, armor, charm, charmFakeItem, storedCharm);
         }
 

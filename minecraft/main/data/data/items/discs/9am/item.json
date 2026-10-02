@@ -4,7 +4,7 @@
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [],
+	"tooltips": ["Paris in Haze: https://www.instagram.com/parisinhaze"],
 	"disc": {
 		"songId": "mainmod:9am"
 	}

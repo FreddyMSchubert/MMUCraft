@@ -28,6 +28,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -64,6 +66,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 import uk.co.httpsmmuminecraftsociety.mainmod.inventoryview.InventoryViewCommands;
+import uk.co.httpsmmuminecraftsociety.mainmod.instancedloot.InstancedLootMenus;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.CharmEnchanting;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
@@ -197,6 +200,11 @@ public class MainMod implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);
+        PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
+            if (!InstancedLootMenus.isLootChest(level, pos) || player.isShiftKeyDown()) return true;
+            player.sendSystemMessage(Component.literal("Hold Shift to break this loot chest.").withStyle(ChatFormatting.RED));
+            return false;
+        });
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> ClaimsManager.reset());
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {

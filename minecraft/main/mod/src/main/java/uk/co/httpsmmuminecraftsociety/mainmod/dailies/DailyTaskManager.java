@@ -45,6 +45,15 @@ public final class DailyTaskManager {
         }
     }
 
+    public static CompletableFuture<Void> flush() {
+        CompletableFuture<?>[] updates = ACTIVE.stream()
+                .map(active -> GameplayGrpcService.updateDailyTask(
+                        active.userId(), active.periodKey(), active.task().toString()
+                ))
+                .toArray(CompletableFuture[]::new);
+        return CompletableFuture.allOf(updates);
+    }
+
     public static List<String> generate(int userId, String username, String periodKey, int count, long unixMs, Collection<String> excludedIds) {
         List<String> tasks = DailyTaskRegistry.pick(periodKey + ":" + normalize(username) + ":" + unixMs, count, excludedIds).stream()
                 .map(JsonObject::toString)

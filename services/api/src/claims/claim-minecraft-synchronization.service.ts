@@ -65,7 +65,7 @@ export class ClaimMinecraftSynchronizationService implements OnModuleDestroy {
 		);
 		for (const membership of this.database.connection.select().from(claimMembers).all()) {
 			const member = usersById.get(membership.user_id);
-			if (!member?.minecraft_uuid || member.is_member !== 1) continue;
+			if (!member?.minecraft_uuid) continue;
 			const memberUuids = memberUuidsByClaim.get(membership.claim_id) ?? [];
 			memberUuids.push(member.minecraft_uuid);
 			memberUuidsByClaim.set(membership.claim_id, memberUuids);

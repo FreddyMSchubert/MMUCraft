@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +42,16 @@ public final class UnlockBookLoot {
     private static final PlayerCooldown KNOWLEDGE_DROP_COOLDOWN = new PlayerCooldown(Duration.ofMinutes(30));
 
     private UnlockBookLoot() {
+    }
+
+    public static void clearAvailabilityCache() {
+        AVAILABILITY_CACHE.clear();
+    }
+
+    public static CompletableFuture<Void> refreshAvailability(ServerPlayer player) {
+        return GameplayGrpcService.getUnlockAvailability(
+                player.getGameProfile().name(), player.getUUID().toString()
+        ).thenAccept(response -> putAvailability(player, UnlockAvailability.from(response)));
     }
 
     public static void addBookDrops(Identifier tableId, LootContext lootContext, List<ItemStack> itemStacks) {

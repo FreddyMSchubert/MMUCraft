@@ -19,6 +19,7 @@ import { AnnouncementAdminSection } from './admin/announcement-admin-section';
 import { LaunchAdminSection } from './admin/launch-admin-section';
 import { DropAnalyticsAdminSection } from './admin/drop-analytics-admin-section';
 import { SurprisingSaturdayAdminSection } from './admin/surprising-saturday-admin-section';
+import { MinecraftCacheAdminSection } from './admin/minecraft-cache-admin-section';
 
 export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
 	const controller = useAdminTabController({ isSuperAdmin, section });
@@ -46,6 +47,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 				controller.activeSection === 'maintenance') && (
 				<VelocityAdminSection section={controller.activeSection} />
 			)}
+			{controller.activeSection === 'maintenance' && <MinecraftCacheAdminSection />}
 			{controller.error && <p className="authError">{controller.error}</p>}
 		</div>
 	);

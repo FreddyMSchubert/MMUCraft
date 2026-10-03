@@ -228,6 +228,15 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
         }
 
         @Override
+        public void refreshApiCaches(
+                RefreshApiCachesRequest request,
+                StreamObserver<RefreshApiCachesResponse> responseObserver
+        ) {
+            eventsClient.refreshApiCaches()
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
         public void applyFeatureToggles(
                 FeatureTogglesSnapshot request,
                 StreamObserver<ApplyFeatureTogglesResponse> responseObserver

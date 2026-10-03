@@ -155,6 +155,28 @@ public final class PlayerStatsSync {
         return syncNow(player, false);
     }
 
+    public static CompletableFuture<Void> refreshOnlinePlayers(MinecraftServer server) {
+        List<CompletableFuture<Void>> refreshes = new ArrayList<>();
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            CompletableFuture<Void> refreshed = new CompletableFuture<>();
+            Runnable refresh = () -> {
+                if (player.hasDisconnected()) {
+                    refreshed.complete(null);
+                    return;
+                }
+                synchronizePresentation(player).whenComplete((response, error) -> {
+                    if (error == null) refreshed.complete(null);
+                    else refreshed.completeExceptionally(error);
+                });
+            };
+            CompletableFuture<SyncPlayerStatsResponse> active = activeSyncByPlayer.get(player.getUUID());
+            if (active == null) refresh.run();
+            else active.whenComplete((response, error) -> server.execute(refresh));
+            refreshes.add(refreshed);
+        }
+        return CompletableFuture.allOf(refreshes.toArray(CompletableFuture[]::new));
+    }
+
     public static boolean isMember(ServerPlayer player) {
         return player != null && membershipByPlayer.getOrDefault(player.getUUID(), false);
     }

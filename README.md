@@ -63,7 +63,7 @@ After startup, run `/voicechat test <player>` as an operator with a connected pl
 
 ## Waiting room joke stations
 
-Put `/joke <station id>` in an impulse command block with a button attached directly to it. Give each station a distinct ID; the ID may contain spaces. A button press sends a random dad joke only to the player who pressed it. A station used in the last five successful presses across all players must wait until five other stations have been used. The list resets when the waiting room restarts. Operators can also run `/joke <station id>` directly.
+Put `/joke <station id>` in a command block and power it with redstone. Give each station a distinct ID; the ID may contain spaces. When the command runs, it sends a random dad joke to the nearest player within five blocks of the command block. A station used in the last five successful activations across all players must wait until five other stations have been used. The list resets when the waiting room restarts. Operators can also run `/joke <station id>` directly.
 
 ## Tests
 

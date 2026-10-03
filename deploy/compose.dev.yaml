@@ -65,7 +65,6 @@ services:
     velocity:
         environment:
             MEMORY: 192M
-            MMU_WAITING_ROOM_LIMIT: '16'
         mem_limit: 384m
         mem_reservation: 96m
         memswap_limit: 512m

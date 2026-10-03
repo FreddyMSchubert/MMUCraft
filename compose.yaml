@@ -105,7 +105,6 @@ services:
             CFG_VELOCITY_FORWARDING_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
             VELOCITY_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
             MMU_API_BASE_URL: http://api:8080
-            MMU_WAITING_ROOM_LIMIT: '16'
         ports:
             - '25565:25565'
             - '24454:24454/udp'

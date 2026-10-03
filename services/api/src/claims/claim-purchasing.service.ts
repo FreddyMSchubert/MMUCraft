@@ -6,7 +6,7 @@ import { claims, DatabaseService } from '../database/database.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { ClaimMinecraftSynchronizationService } from './claim-minecraft-synchronization.service';
 
-const CLAIM_BASE_PRICE_DABLOONS = 100;
+const CLAIM_BASE_PRICE_DABLOONS = 42;
 const MEMBER_CLAIM_PRICE_GROWTH = 1.42;
 const NORMAL_PLAYER_CLAIM_PRICE_GROWTH = 1.69;
 const MAX_CLAIM_PRICE_DABLOONS = 2_000_000_000;

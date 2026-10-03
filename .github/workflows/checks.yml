@@ -2,6 +2,11 @@ name: checks-tests-images
 
 on:
     workflow_dispatch:
+        inputs:
+            release_tag:
+                description: Existing published release tag to rebuild (leave blank for main)
+                required: false
+                type: string
     release:
         types: [published]
 
@@ -10,18 +15,48 @@ permissions:
     packages: write
 
 concurrency:
-    group: checks-tests-images-${{ github.event_name == 'release' && github.event.release.tag_name || github.ref }}
+    group: checks-tests-images-${{ inputs.release_tag || github.event.release.tag_name || github.ref }}
     cancel-in-progress: ${{ github.event_name != 'release' }}
 
 jobs:
     verify-and-publish:
         runs-on: ubuntu-24.04
         steps:
+            - name: Validate manual release tag
+              if: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag != '' }}
+              id: manual_release
+              shell: bash
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  RELEASE_TAG: ${{ inputs.release_tag }}
+              run: |
+                  if [[ "$GITHUB_REF" != refs/heads/main ]]; then
+                    echo 'Select main when rebuilding a release.' >&2
+                    exit 1
+                  fi
+                  if [[ ! "$RELEASE_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+                    echo "'$RELEASE_TAG' is not a valid Docker tag" >&2
+                    exit 1
+                  fi
+                  release=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG")
+                  if ! jq -e --arg tag "$RELEASE_TAG" '.tag_name == $tag and .draft == false and .published_at != null' <<< "$release" >/dev/null; then
+                    echo "'$RELEASE_TAG' is not a published release" >&2
+                    exit 1
+                  fi
+                  echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+                  echo "ref=refs/tags/$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+                  echo "name=$(jq -r '(.name // .tag_name) | gsub("[\r\n]"; " ")' <<< "$release")" >> "$GITHUB_OUTPUT"
+                  echo "url=$(jq -r '.html_url' <<< "$release")" >> "$GITHUB_OUTPUT"
+
             - name: Checkout repository
               uses: actions/checkout@v6
               with:
-                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.sha }}
+                  ref: ${{ steps.manual_release.outputs.ref || github.event.release.tag_name || github.sha }}
                   persist-credentials: false
+
+            - name: Resolve source revision
+              id: source
+              run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
             - name: Set up Python
               uses: actions/setup-python@v6
@@ -165,10 +200,10 @@ jobs:
               id: image
               shell: bash
               env:
-                  RELEASE_TAG: ${{ github.event.release.tag_name }}
+                  RELEASE_TAG: ${{ steps.manual_release.outputs.tag || github.event.release.tag_name }}
               run: |
                   tag="$GITHUB_SHA"
-                  if [[ "${GITHUB_EVENT_NAME}" == release ]]; then
+                  if [[ -n "$RELEASE_TAG" ]]; then
                     tag="${RELEASE_TAG}"
                   fi
                   if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
@@ -177,6 +212,10 @@ jobs:
                   fi
                   echo "prefix=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
                   echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+            - name: Remove unused test containers and images
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              run: docker system prune --all --force
 
             - name: Set up Docker Buildx
               if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
@@ -202,12 +241,16 @@ jobs:
                   tags: ${{ steps.image.outputs.prefix }}-api:${{ steps.image.outputs.tag }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
                       org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=api
                   cache-to: type=gha,mode=max,scope=api
                   provenance: mode=max
                   sbom: true
+
+            - name: Remove local build cache
+              if: ${{ steps.image.outputs.tag != '' }}
+              run: docker buildx prune --all --force
 
             - name: Build and push web
               if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
@@ -219,16 +262,20 @@ jobs:
                   push: true
                   tags: ${{ steps.image.outputs.prefix }}-web:${{ steps.image.outputs.tag }}
                   build-args: |
-                      SITE_RELEASE_NAME=${{ github.event.release.name }}
-                      SITE_RELEASE_URL=${{ github.event.release.html_url }}
+                      SITE_RELEASE_NAME=${{ steps.manual_release.outputs.name || github.event.release.name }}
+                      SITE_RELEASE_URL=${{ steps.manual_release.outputs.url || github.event.release.html_url }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
                       org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=web
                   cache-to: type=gha,mode=max,scope=web
                   provenance: mode=max
                   sbom: true
+
+            - name: Remove local build cache
+              if: ${{ steps.image.outputs.tag != '' }}
+              run: docker buildx prune --all --force
 
             - name: Build and push Minecraft
               if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
@@ -241,12 +288,16 @@ jobs:
                   tags: ${{ steps.image.outputs.prefix }}-mc:${{ steps.image.outputs.tag }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
                       org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=mc
                   cache-to: type=gha,mode=max,scope=mc
                   provenance: mode=max
                   sbom: true
+
+            - name: Remove local build cache
+              if: ${{ steps.image.outputs.tag != '' }}
+              run: docker buildx prune --all --force
 
             - name: Build and push Velocity
               if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
@@ -259,12 +310,16 @@ jobs:
                   tags: ${{ steps.image.outputs.prefix }}-velocity:${{ steps.image.outputs.tag }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
                       org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=velocity
                   cache-to: type=gha,mode=max,scope=velocity
                   provenance: mode=max
                   sbom: true
+
+            - name: Remove local build cache
+              if: ${{ steps.image.outputs.tag != '' }}
+              run: docker buildx prune --all --force
 
             - name: Build and push waiting room
               if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
@@ -281,6 +336,10 @@ jobs:
                   provenance: mode=max
                   sbom: true
 
+            - name: Remove local build cache
+              if: ${{ steps.image.outputs.tag != '' }}
+              run: docker buildx prune --all --force
+
             - name: Build and push Surprising Saturday
               if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
@@ -296,6 +355,10 @@ jobs:
                   provenance: mode=max
                   sbom: true
 
+            - name: Remove local build cache
+              if: ${{ steps.image.outputs.tag != '' }}
+              run: docker buildx prune --all --force
+
             - name: Build and push event controller
               if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
@@ -310,6 +373,10 @@ jobs:
                   provenance: mode=max
                   sbom: true
 
+            - name: Remove local build cache
+              if: ${{ steps.image.outputs.tag != '' }}
+              run: docker buildx prune --all --force
+
             - name: Build and push backup manager
               if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
@@ -321,7 +388,7 @@ jobs:
                   tags: ${{ steps.image.outputs.prefix }}-backup:${{ steps.image.outputs.tag }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-                      org.opencontainers.image.revision=${{ github.sha }}
+                      org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
                       org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=backup
                   cache-to: type=gha,mode=max,scope=backup

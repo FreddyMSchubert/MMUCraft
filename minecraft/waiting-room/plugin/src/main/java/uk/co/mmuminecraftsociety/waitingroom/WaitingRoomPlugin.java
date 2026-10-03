@@ -25,18 +25,14 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.Switch;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -55,6 +51,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -81,7 +78,6 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     private static final URI JOKE_URL = URI.create("https://icanhazdadjoke.com/");
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
     private final Map<UUID, JsonObject> profiles = new ConcurrentHashMap<>();
-    private final Map<Location, UUID> buttonPresses = new java.util.HashMap<>();
     private final JokeHistory jokes = new JokeHistory();
     private final AtomicBoolean polling = new AtomicBoolean();
     private final AtomicBoolean pollingCommands = new AtomicBoolean();
@@ -235,24 +231,6 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     }
     @EventHandler public void hunger(FoodLevelChangeEvent event) { event.setCancelled(true); }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void buttonPressed(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null
-                || !event.getClickedBlock().getType().name().endsWith("_BUTTON")
-                || !(event.getClickedBlock().getBlockData() instanceof Switch button)) return;
-        BlockFace attached = switch (button.getAttachedFace()) {
-            case FLOOR -> BlockFace.DOWN;
-            case CEILING -> BlockFace.UP;
-            case WALL -> button.getFacing().getOppositeFace();
-        };
-        var block = event.getClickedBlock().getRelative(attached);
-        if (block.getType() != Material.COMMAND_BLOCK) return;
-        Location location = block.getLocation();
-        UUID player = event.getPlayer().getUniqueId();
-        buttonPresses.put(location, player);
-        Bukkit.getScheduler().runTaskLater(this, () -> buttonPresses.remove(location, player), 4L);
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!command.getName().equalsIgnoreCase("joke")) return false;
@@ -262,15 +240,17 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         }
         Player player;
         if (sender instanceof BlockCommandSender block) {
-            UUID uuid = buttonPresses.remove(block.getBlock().getLocation());
-            player = uuid == null ? null : Bukkit.getPlayer(uuid);
+            Location station = block.getBlock().getLocation().add(0.5, 0.5, 0.5);
+            player = block.getBlock().getWorld().getNearbyPlayers(station, 5).stream()
+                    .min(Comparator.comparingDouble(candidate -> candidate.getLocation().distanceSquared(station)))
+                    .orElse(null);
         } else if (sender instanceof Player caller) {
             player = caller;
         } else {
             player = null;
         }
         if (player == null || !player.isOnline()) {
-            sender.sendMessage(Component.text("A player must press this joke station's button.", NamedTextColor.RED));
+            sender.sendMessage(Component.text("No player is near this joke station.", NamedTextColor.RED));
             return true;
         }
         String station = String.join(" ", args).trim();

@@ -7,6 +7,40 @@
 	gap: 16px;
 }
 
+.playersLoading {
+	display: grid;
+	justify-items: center;
+	align-content: center;
+	gap: 14px;
+	min-height: 260px;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.playersLoading p {
+	margin: 0;
+}
+
+.playersLoadingSpinner {
+	width: 36px;
+	height: 36px;
+	border: 3px solid rgba(255, 255, 255, 0.2);
+	border-top-color: #ffd166;
+	border-radius: 50%;
+	animation: playersLoadingSpin 800ms linear infinite;
+}
+
+@keyframes playersLoadingSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.playersLoadingSpinner {
+		animation: none;
+	}
+}
+
 .playersTop {
 	display: flex;
 	justify-content: space-between;
@@ -279,6 +313,18 @@
 
 .playersTable th:first-child,
 .playersTable td:first-child {
+	width: 48px;
+	text-align: center;
+}
+
+.playersTable th:nth-child(2),
+.playersTable td:nth-child(2) {
 	width: 104px;
 	text-align: center;
+}
+
+.playersTable .playerRankColumn {
+	color: #ffd166;
+	font-variant-numeric: tabular-nums;
+	font-weight: 700;
 }

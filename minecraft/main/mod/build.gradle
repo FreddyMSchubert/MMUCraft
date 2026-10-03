@@ -133,6 +133,13 @@ tasks.register('checkPlayerColors', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkAdvancementAnnouncements', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementAnnouncementsCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkGearEnchantments', JavaExec) {
     group = 'verification'
     classpath = sourceSets.trailCheck.runtimeClasspath
@@ -141,6 +148,7 @@ tasks.register('checkGearEnchantments', JavaExec) {
 }
 
 tasks.named('check') {
+    dependsOn tasks.named('checkAdvancementAnnouncements')
     dependsOn tasks.named('checkPlayerColors')
     dependsOn tasks.named('checkGearEnchantments')
     dependsOn 'checkFishing'

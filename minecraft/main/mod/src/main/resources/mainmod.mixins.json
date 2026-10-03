@@ -18,7 +18,6 @@
 		"ConduitRecipeMixin",
 		"FormattedChatMessageMixin",
 		"BacapMessageFilterMixin",
-		"VanillaAdvancementAnnouncementMixin",
 		"MasteryAdvancementVisibilityMixin",
 		"CommandNodeAccessor",
 		"CommandExecutionMixin",

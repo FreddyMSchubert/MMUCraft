@@ -52,6 +52,26 @@ export function comparePlayers(
 	return ordered || left.minecraftUsername.localeCompare(right.minecraftUsername, 'en');
 }
 
+export function rankPlayers(sortedPlayers: PlayerSummary[], option: StatOption) {
+	const ranked = sortedPlayers.filter((player) => player.isRanked);
+	const ranks = new Map<number, number>();
+	let rank = ranked.length;
+	for (let index = ranked.length - 1; index >= 0; index--) {
+		const player = ranked[index];
+		if (
+			index < ranked.length - 1 &&
+			compareSortValues(
+				getSortValue(player, option),
+				getSortValue(ranked[index + 1], option),
+				'desc',
+			) !== 0
+		)
+			rank = index + 1;
+		ranks.set(player.id, rank);
+	}
+	return ranks;
+}
+
 export function getSortValue(player: PlayerSummary, option: StatOption): number | string | null {
 	if (option.key === 'profile.playerName') return player.minecraftUsername;
 	if (option.key === 'profile.isMember') return player.isMember ? 1 : 0;

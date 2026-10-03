@@ -17,7 +17,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 public abstract class DailyBredAnimalsMixin {
     @Inject(method = "trigger", at = @At("HEAD"))
     private void mainmod$recordBreeding(ServerPlayer player, Animal parent, Animal partner, AgeableMob child, CallbackInfo ci) {
-        String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(child.getType()).toString();
+        String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(child != null ? child.getType() : parent.getType()).toString();
         DailyTaskManager.record(player, DailyTaskEvent.of(
                 DailyTaskEvent.Type.BREED_ENTITY,
                 entityId

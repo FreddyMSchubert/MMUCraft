@@ -71,7 +71,8 @@ public final class DiscordBridge {
     }
 
     public static void advancement(ServerPlayer player, String action, String title, int dabloons) {
-        String content = action + " [" + title + "] and earned " + dabloons + " Dabloons.";
+        String content = action + " [" + title + "]"
+                + (dabloons > 0 ? " and earned " + dabloons + " Dabloons." : ".");
         publish("advancement", player, content);
     }
 

@@ -19,6 +19,7 @@ import {
 	formatColumnValue,
 	getSortValue,
 	groupStatOptions,
+	rankPlayers,
 } from './players/player-display-format';
 import { PlayerProfilePanel } from './players/player-profile-panel';
 import { mergeStatOptions, StatOptionGroups } from './players/player-statistic-options';
@@ -46,6 +47,7 @@ export function PlayersTab({
 
 	const load = useCallback(
 		async (page = 0, append = false, signal?: AbortSignal) => {
+			if (!append) autoLoadedPage.current = -1;
 			const query = new URLSearchParams({ page: String(page) });
 			if (playerName) query.set('player', playerName);
 			const response = await fetch(`/api/players?${query}`, {
@@ -144,6 +146,11 @@ export function PlayersTab({
 			comparePlayers(left, right, sortOption, sort.direction),
 		);
 	}, [players, sort, statOptions]);
+	const ranks = useMemo(() => {
+		const sortOption =
+			statOptions.find((option) => option.key === sort.key) ?? fallbackOption(sort.key);
+		return rankPlayers(sortedPlayers, sortOption);
+	}, [sortedPlayers, sort.key, statOptions]);
 	const visiblePlayers = useMemo(
 		() =>
 			fuzzyFilter(sortedPlayers, search, [
@@ -223,18 +230,11 @@ export function PlayersTab({
 		try {
 			await load(data.page + 1, true);
 		} catch (caught) {
-			await showAlert({
-				title: 'Could not load more players',
-				message:
-					caught instanceof Error
-						? caught.message
-						: 'The next page of players could not be loaded. Please try again.',
-				tone: 'danger',
-			});
+			setError(caught instanceof Error ? caught.message : 'Could not load all players.');
 		} finally {
 			setLoadingMore(false);
 		}
-	}, [data, load, loadingMore, showAlert]);
+	}, [data, load, loadingMore]);
 
 	useEffect(() => {
 		if (data?.hasMore && !loadingMore && autoLoadedPage.current !== data.page) {
@@ -245,10 +245,6 @@ export function PlayersTab({
 
 	if (error && !data) {
 		return <p className="authError">{error}</p>;
-	}
-
-	if (!data) {
-		return <p>Loading players...</p>;
 	}
 
 	if (selectedPlayer) {
@@ -271,6 +267,26 @@ export function PlayersTab({
 							});
 					}}
 				/>
+			</div>
+		);
+	}
+
+	if (!data || data.hasMore) {
+		return (
+			<div className="playersLoading" role="status" aria-live="polite">
+				{error ? (
+					<>
+						<p>{error}</p>
+						<button type="button" onClick={() => void loadMore()}>
+							Retry loading players
+						</button>
+					</>
+				) : (
+					<>
+						<span className="playersLoadingSpinner" aria-hidden="true" />
+						<p>Loading players...</p>
+					</>
+				)}
 			</div>
 		);
 	}
@@ -315,26 +331,22 @@ export function PlayersTab({
 					options={[]}
 					value={search}
 					onChange={(value) => {
-						autoLoadedPage.current = -1;
 						setSearch(value);
 					}}
 					placeholder="Search by Minecraft name, preferred name or Discord name"
 					showSuggestions={false}
 					ariaLabel="Search players"
 				/>
-				{search.trim() && (
-					<span>
-						{loadingMore
-							? 'Searching all players...'
-							: `${visiblePlayers.length} found`}
-					</span>
-				)}
+				{search.trim() && <span>{visiblePlayers.length} found</span>}
 			</div>
 
 			<div className="playersTableWrap">
 				<table className="playersTable">
 					<thead>
 						<tr>
+							<th scope="col" className="playerRankColumn" aria-label="Place">
+								#
+							</th>
 							<th scope="col">Player</th>
 							{selectedColumns.map((column, index) => (
 								<th scope="col" key={`${column.key}:${index}`}>
@@ -374,6 +386,7 @@ export function PlayersTab({
 									onSelectPlayer(player.minecraftUsername);
 								}}
 							>
+								<td className="playerRankColumn">{ranks.get(player.id) ?? '-'}</td>
 								<td>
 									<PlayerCell player={player} />
 								</td>
@@ -393,9 +406,9 @@ export function PlayersTab({
 								))}
 							</tr>
 						))}
-						{visiblePlayers.length === 0 && !loadingMore && (
+						{visiblePlayers.length === 0 && (
 							<tr>
-								<td colSpan={selectedColumns.length + 1}>
+								<td colSpan={selectedColumns.length + 2}>
 									No players match that search.
 								</td>
 							</tr>
@@ -403,16 +416,6 @@ export function PlayersTab({
 					</tbody>
 				</table>
 			</div>
-			{data.hasMore && !search.trim() && (
-				<button
-					type="button"
-					className="loadMoreButton"
-					disabled={loadingMore}
-					onClick={() => void loadMore()}
-				>
-					{loadingMore ? 'Loading...' : 'Load 42 more'}
-				</button>
-			)}
 		</div>
 	);
 }

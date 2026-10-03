@@ -3,10 +3,12 @@ package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.grpc.ManagedChannel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.List;
@@ -26,6 +28,58 @@ final class GameplayEventsClient {
 
     void stop() {
         gameplayEvents = null;
+    }
+
+    CompletableFuture<RefreshApiCachesResponse> refreshApiCaches() {
+        CompletableFuture<Void> flushed = new CompletableFuture<>();
+        GrpcBridge.runOnMainThread(() -> DailyTaskManager.flush().whenComplete((done, error) -> {
+            if (error == null) flushed.complete(null);
+            else flushed.completeExceptionally(error);
+        }));
+        return flushed.thenCompose(ignored -> refreshApiCachesAfterFlush());
+    }
+
+    private CompletableFuture<RefreshApiCachesResponse> refreshApiCachesAfterFlush() {
+        GameplayEventsGrpc.GameplayEventsFutureStub client = gameplayEvents;
+        if (client == null) return CompletableFuture.failedFuture(new IllegalStateException("API client is unavailable"));
+
+        CompletableFuture<ClaimsSnapshot> claims = call(stub -> stub.withDeadlineAfter(5, TimeUnit.SECONDS)
+                .getClaimsSnapshot(GetClaimsSnapshotRequest.getDefaultInstance()));
+        CompletableFuture<FeatureTogglesSnapshot> toggles = call(stub -> stub.withDeadlineAfter(5, TimeUnit.SECONDS)
+                .getFeatureToggles(GetFeatureTogglesRequest.getDefaultInstance()));
+        CompletableFuture<DailyTasksSnapshot> dailies = call(stub -> stub.withDeadlineAfter(5, TimeUnit.SECONDS)
+                .getDailyTasksSnapshot(GetDailyTasksSnapshotRequest.getDefaultInstance()));
+
+        return CompletableFuture.allOf(claims, toggles, dailies).thenCompose(ignored -> {
+            CompletableFuture<RefreshApiCachesResponse> result = new CompletableFuture<>();
+            GrpcBridge.runOnMainThread(() -> {
+                try {
+                    MinecraftServer server = GrpcBridge.minecraftServer();
+                    if (server == null || gameplayEvents != client) {
+                        throw new IllegalStateException("Minecraft or API client is unavailable");
+                    }
+                    ClaimsManager.apply(claims.join());
+                    FeatureToggles.apply(toggles.join());
+                    DailyTaskManager.apply(dailies.join());
+                    UnlockBookLoot.clearAvailabilityCache();
+
+                    List<ServerPlayer> online = List.copyOf(server.getPlayerList().getPlayers());
+                    CompletableFuture<Void> players = PlayerStatsSync.refreshOnlinePlayers(server);
+                    CompletableFuture<?>[] availability = online.stream()
+                            .map(UnlockBookLoot::refreshAvailability)
+                            .toArray(CompletableFuture[]::new);
+                    CompletableFuture.allOf(players, CompletableFuture.allOf(availability))
+                            .whenComplete((done, error) -> {
+                                if (error != null) result.completeExceptionally(error);
+                                else result.complete(RefreshApiCachesResponse.newBuilder()
+                                        .setRefreshed(true).setOnlinePlayers(online.size()).build());
+                            });
+                } catch (Exception error) {
+                    result.completeExceptionally(error);
+                }
+            });
+            return result;
+        });
     }
 
     CompletableFuture<UnlockNextKnowledgeResponse> unlockNext(

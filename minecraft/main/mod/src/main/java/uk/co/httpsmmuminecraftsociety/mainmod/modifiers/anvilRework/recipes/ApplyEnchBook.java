@@ -32,12 +32,9 @@ public final class ApplyEnchBook implements AnvilRecipe
         ItemStack result = resultIsBook ? new ItemStack(Items.ENCHANTED_BOOK) : left.copy();
 
         AnvilUtils.MergeInfo merge = AnvilUtils.mergeEnchantments(result, left, right, resultIsBook);
-        ItemEnchantments resultEnchants = EnchantmentHelper.getEnchantmentsForCrafting(result);
-        ItemEnchantments rightEnchants = EnchantmentHelper.getEnchantmentsForCrafting(right);
         if (result.isEmpty() || Objects.equals(
                 EnchantmentHelper.getEnchantmentsForCrafting(left),
-                resultEnchants)
-                || rightEnchants.keySet().stream().anyMatch(enchantment -> resultEnchants.getLevel(enchantment) == 0)) {
+                EnchantmentHelper.getEnchantmentsForCrafting(result))) {
             return AnvilLogic.Outcome.EMPTY;
         }
 
@@ -46,7 +43,17 @@ public final class ApplyEnchBook implements AnvilRecipe
         CharmorManager.updateArmorTooltip(result);
 
         ItemStack rightRemainder = ItemStack.EMPTY;
-        if (!right.is(Items.BOOK) && !right.is(Items.ENCHANTED_BOOK)) {
+        if (right.is(Items.ENCHANTED_BOOK)) {
+            ItemEnchantments.Mutable retained = new ItemEnchantments.Mutable(
+                    EnchantmentHelper.getEnchantmentsForCrafting(right));
+            ItemEnchantments resultEnchants = EnchantmentHelper.getEnchantmentsForCrafting(result);
+            retained.removeIf(enchantment -> resultEnchants.getLevel(enchantment) > 0);
+            ItemEnchantments retainedEnchants = retained.toImmutable();
+            if (!retainedEnchants.isEmpty()) {
+                rightRemainder = right.copy();
+                EnchantmentHelper.setEnchantments(rightRemainder, retainedEnchants);
+            }
+        } else if (!right.is(Items.BOOK)) {
             rightRemainder = EnchantmentLock.removeAllEnchantmentsAndUnlock(right.copy());
         }
 

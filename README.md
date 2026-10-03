@@ -1,3 +1,6 @@
+> [!WARNING]
+> There are many future plans and secrets to be found about this server. At the same time, we are trying to keep it open source in case anybody is interested. If you leak anything to anyone, you are getting banned.
+
 # MMUCraft
 
 MMUCraft has four main parts. `services/web` is the Next.js website. `services/api` is the NestJS API and owns authentication, application rules, routing, and SQLite data. `services/velocity` is the public Minecraft entry point. It authenticates players and routes them to backend servers. `minecraft/main/mod` is the Fabric server mod. The mod connects gameplay events and commands to the API through gRPC.

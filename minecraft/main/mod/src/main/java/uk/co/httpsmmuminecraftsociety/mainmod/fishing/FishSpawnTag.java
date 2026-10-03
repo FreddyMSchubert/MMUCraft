@@ -7,32 +7,36 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 public enum FishSpawnTag {
-    WARM("warm", Group.CLIMATE),
-    COLD("cold", Group.CLIMATE),
-    RIVER("river", Group.WATER),
-    OCEAN("ocean", Group.WATER),
-    DAY("day", Group.TIME),
-    NIGHT("night", Group.TIME),
-    DEEP("deep", Group.HEIGHT),
-    HIGH("high", Group.HEIGHT),
-    RAINY("rainy", Group.WEATHER),
-    THUNDERSTORM("thunderstorm", Group.WEATHER),
-    SNOWY("snowy", Group.WEATHER),
-    WAXING("waxing", Group.MOON),
-    WANING("waning", Group.MOON),
-    FULLMOON("fullmoon", Group.MOON),
-    NEWMOON("newmoon", Group.MOON);
+    WARM("warm", Group.CLIMATE, "hot Overworld biomes"),
+    COLD("cold", Group.CLIMATE, "cold Overworld biomes"),
+    RIVER("river", Group.WATER, "rivers"),
+    OCEAN("ocean", Group.WATER, "oceans"),
+    DAY("day", Group.TIME, "daytime"),
+    NIGHT("night", Group.TIME, "nighttime"),
+    DEEP("deep", Group.HEIGHT, "below Y 60"),
+    HIGH("high", Group.HEIGHT, "above Y 100"),
+    RAINY("rainy", Group.WEATHER, "rain"),
+    THUNDERSTORM("thunderstorm", Group.WEATHER, "thunderstorms"),
+    SNOWY("snowy", Group.WEATHER, "snowfall"),
+    WAXING("waxing", Group.MOON, "waxing moon phases"),
+    WANING("waning", Group.MOON, "waning moon phases"),
+    FULLMOON("fullmoon", Group.MOON, "a full moon"),
+    NEWMOON("newmoon", Group.MOON, "a new moon");
 
     private final String jsonValue;
     private final Group group;
+    private final String phrase;
 
-    FishSpawnTag(String jsonValue, Group group) {
+    FishSpawnTag(String jsonValue, Group group, String phrase) {
         this.jsonValue = jsonValue;
         this.group = group;
+        this.phrase = phrase;
     }
 
     public static FishSpawnTag fromJsonValue(String value) {
@@ -42,6 +46,23 @@ public enum FishSpawnTag {
             }
         }
         throw new IllegalArgumentException("Unknown fish spawn tag: " + value);
+    }
+
+    public static String conditionSentence(Set<FishSpawnTag> tags) {
+        List<String> clauses = new ArrayList<>();
+        for (Group group : Group.values()) {
+            List<String> alternatives = new ArrayList<>();
+            String prefix = group == Group.CLIMATE || group == Group.WATER || group == Group.HEIGHT ? "in " : "during ";
+            for (FishSpawnTag tag : values()) {
+                if (tags.contains(tag) && tag.group == group) alternatives.add(prefix + tag.phrase);
+            }
+            if (alternatives.size() == 1) clauses.add(alternatives.getFirst());
+            else if (alternatives.size() > 1) {
+                clauses.add("(" + String.join(", ", alternatives.subList(0, alternatives.size() - 1))
+                        + " or " + alternatives.getLast() + ")");
+            }
+        }
+        return clauses.isEmpty() ? "anywhere and at any time" : String.join(" ", clauses);
     }
 
     public static boolean matches(Set<FishSpawnTag> required, Level level, BlockPos pos) {

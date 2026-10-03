@@ -274,6 +274,7 @@ public class LootTableModifiers {
                 candidates.add(drop.getItem());
                 vanillaDiscs = new ArrayList<>(candidates);
                 vanillaDiscs.sort((a, b) -> BuiltInRegistries.ITEM.getKey(a).compareTo(BuiltInRegistries.ITEM.getKey(b)));
+                if (vanillaDiscs.size() < 2) return;
             }
 
             int choice = context.getRandom().nextInt(vanillaDiscs.size() + CUSTOM_DISCS.size());

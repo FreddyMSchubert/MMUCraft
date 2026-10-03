@@ -149,12 +149,10 @@ For all infos, check out the [claims tab](/play/claims) on this website.
 
 #### Claim Cost
 
-Every consecutive claim you buy costs more and more money.
-
-To buy the next claim, you have to pay 1.69 times as much as you paid for the last.
+Your first claim costs 50 Dabloons. For non-members, each later claim costs 1.7 times the previous claim's unrounded price, rounded to the nearest Dabloon.
 
 :::perk
-For members, claims are cheaper - every next claim only costs 1.42 times as much as the last one cost.
+For members, each later claim uses a 1.5 price multiplier instead.
 :::
 
 ### 3. **Trading with others**

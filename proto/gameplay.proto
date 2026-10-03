@@ -37,6 +37,7 @@ service GameplayControl {
   rpc GetCurrentClaimChunk(GetCurrentClaimChunkRequest) returns (GetCurrentClaimChunkResponse);
   rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
   rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
+  rpc RefreshApiCaches(RefreshApiCachesRequest) returns (RefreshApiCachesResponse);
   rpc ApplyFeatureToggles(FeatureTogglesSnapshot) returns (ApplyFeatureTogglesResponse);
   rpc ApplyPlayerColor(ApplyPlayerColorRequest) returns (ApplyPlayerColorResponse);
   rpc ApplyPlayerSettings(ApplyPlayerSettingsRequest) returns (ApplyPlayerSettingsResponse);
@@ -258,6 +259,13 @@ message PurchaseClaimResponse {
 
 message ApplyClaimsSnapshotResponse {
   bool applied = 1;
+}
+
+message RefreshApiCachesRequest {}
+
+message RefreshApiCachesResponse {
+  bool refreshed = 1;
+  int32 online_players = 2;
 }
 
 message GetFeatureTogglesRequest {}

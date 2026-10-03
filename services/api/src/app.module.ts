@@ -3,6 +3,7 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { GameplayModule } from './gameplay/gameplay.module';
 import { GrpcModule } from './grpc/grpc.module';
+import { MinecraftCacheAdminController } from './grpc/minecraft-cache-admin.controller';
 import { GiftsModule } from './gifts/gifts.module';
 import { HealthController } from './health.controller';
 import { PlayersModule } from './players/players.module';
@@ -30,6 +31,6 @@ import { LaunchModule } from './launch/launch.module';
 		AnnouncementsModule,
 		LaunchModule,
 	],
-	controllers: [HealthController],
+	controllers: [HealthController, MinecraftCacheAdminController],
 })
 export class AppModule {}

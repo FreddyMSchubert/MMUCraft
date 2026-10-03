@@ -109,7 +109,7 @@ final class Messages {
 
     static Component waitingRoomUnavailable() {
         return heading("Waiting room unavailable", RED)
-                .append(Component.text("The waiting room is full or offline.\n", TEXT))
+                .append(Component.text("We could not connect you to the waiting room.\n", TEXT))
                 .append(Component.text("Please try again in a moment.\n", MUTED));
     }
 

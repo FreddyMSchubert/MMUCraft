@@ -50,11 +50,11 @@ import java.util.concurrent.atomic.AtomicLong;
 )
 public final class MmuCraftVelocity {
     private static final MinecraftChannelIdentifier MODE_CHANNEL = MinecraftChannelIdentifier.from("mmucraft:waiting_mode");
+    private static final int WAITING_ROOM_LIMIT = 100;
     private final ProxyServer proxy;
     private final Logger logger;
     private final ApiClient api;
     private final boolean configured;
-    private final int waitingRoomLimit;
     private final AtomicBoolean synchronizing = new AtomicBoolean();
     private final Map<String, RegisteredServer> managedServers = new ConcurrentHashMap<>();
     private final Map<String, ApiClient.ServerHealth> health = new ConcurrentHashMap<>();
@@ -84,8 +84,6 @@ public final class MmuCraftVelocity {
         String secret = System.getenv().getOrDefault("VELOCITY_API_SECRET", "");
         this.api = new ApiClient(baseUrl, secret);
         this.configured = !secret.isBlank();
-        this.waitingRoomLimit = Math.max(1, Math.min(100,
-                Integer.parseInt(System.getenv().getOrDefault("MMU_WAITING_ROOM_LIMIT", "100"))));
     }
 
     @Subscribe
@@ -411,7 +409,7 @@ public final class MmuCraftVelocity {
     private synchronized boolean admit(Player player, CapacityRole role, String destination) {
         UUID uuid = player.getUniqueId();
         if (!role.exempt() && (!waiting.isEmpty() || occupied() >= maxPlayers)) {
-            if (!serverOnline("waiting-room") || waitingRoomPopulation() >= waitingRoomLimit) return false;
+            if (!serverOnline("waiting-room") || waitingRoomPopulation() >= WAITING_ROOM_LIMIT) return false;
             waiting.put(uuid, new QueueEntry(role.member(), queueOrder.incrementAndGet(), destination));
         } else {
             admissions.add(uuid);

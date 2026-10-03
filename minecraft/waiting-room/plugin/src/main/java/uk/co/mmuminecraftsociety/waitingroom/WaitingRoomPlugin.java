@@ -3,6 +3,7 @@ package uk.co.mmuminecraftsociety.waitingroom;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,23 +18,33 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Jukebox;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -103,6 +114,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         }
         Bukkit.setWhitelist(false);
         Bukkit.getPluginManager().registerEvents(this, this);
+        Bukkit.getWorlds().forEach(this::removeDroppedItems);
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, MODE_CHANNEL);
         Bukkit.getScheduler().runTaskTimer(this, () -> Bukkit.getOnlinePlayers().forEach(this::refreshProfile),
                 1, 20 * 60);
@@ -113,6 +125,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     @EventHandler
     public void worldLoaded(WorldLoadEvent event) {
         World world = event.getWorld();
+        removeDroppedItems(world);
         if (world.getEnvironment() != World.Environment.NORMAL) return;
         world.setSpawnLocation(spawnLocation(world));
         world.setDifficulty(Difficulty.PEACEFUL);
@@ -166,6 +179,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     private static void giveLoadout(Player player) {
         var inventory = player.getInventory();
         inventory.clear();
+        player.setItemOnCursor(new ItemStack(Material.AIR));
         player.getEnderChest().clear();
         inventory.setItem(0, new ItemStack(Material.DIAMOND_SWORD));
         inventory.setItem(1, new ItemStack(Material.SNOWBALL, 64));
@@ -191,7 +205,90 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void gameModeChanged(PlayerGameModeChangeEvent event) {
-        Bukkit.getScheduler().runTask(this, () -> sendMode(event.getPlayer()));
+        Bukkit.getScheduler().runTask(this, () -> {
+            if (event.getPlayer().getGameMode() == GameMode.ADVENTURE) giveLoadout(event.getPlayer());
+            sendMode(event.getPlayer());
+        });
+    }
+
+    @EventHandler public void itemSpawned(ItemSpawnEvent event) { event.setCancelled(true); }
+    @EventHandler public void itemDropped(PlayerDropItemEvent event) { event.getItemDrop().remove(); }
+    @EventHandler public void itemPickedUp(EntityPickupItemEvent event) {
+        event.setCancelled(true);
+        event.getItem().remove();
+    }
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void jukeboxClicked(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND
+                || !(event.getClickedBlock().getState() instanceof Jukebox jukebox)
+                || !jukebox.hasRecord()) return;
+        event.setCancelled(true);
+        Player player = event.getPlayer();
+        int slot = -1;
+        for (int index = 0; index < player.getInventory().getStorageContents().length; index++) {
+            if (player.getInventory().getItem(index) == null) {
+                slot = index;
+                break;
+            }
+        }
+        if (player.getGameMode() == GameMode.ADVENTURE && hasDisc(player)) {
+            player.sendMessage(Component.text("Play or discard your disc before taking another.", NamedTextColor.YELLOW));
+            return;
+        }
+        if (slot < 0) {
+            player.sendMessage(Component.text("Make room for the disc before ejecting it.", NamedTextColor.YELLOW));
+            return;
+        }
+        ItemStack record = jukebox.getRecord();
+        jukebox.setRecord(null);
+        jukebox.update();
+        player.getInventory().setItem(slot, record);
+    }
+
+    private static boolean hasDisc(Player player) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && item.getType().name().startsWith("MUSIC_DISC_")) return true;
+        }
+        ItemStack cursor = player.getItemOnCursor();
+        return cursor.getType().name().startsWith("MUSIC_DISC_");
+    }
+    @EventHandler public void containerDiscClicked(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player)
+                || player.getGameMode() != GameMode.ADVENTURE
+                || event.getClickedInventory() == null
+                || event.getClickedInventory().equals(player.getInventory())) return;
+        ItemStack item = event.getCurrentItem();
+        if (item != null && item.getType().name().startsWith("MUSIC_DISC_")) event.setCancelled(true);
+    }
+    @EventHandler public void chunkLoaded(ChunkLoadEvent event) {
+        for (var entity : event.getChunk().getEntities()) {
+            if (entity instanceof Item item) item.remove();
+        }
+    }
+
+    private void removeDroppedItems(World world) {
+        world.getEntitiesByClass(Item.class).forEach(Item::remove);
+    }
+
+    @EventHandler public void inventoryChanged(PlayerInventorySlotChangeEvent event) {
+        Player player = event.getPlayer();
+        if (player.getGameMode() != GameMode.ADVENTURE
+                || !event.getNewItemStack().getType().name().startsWith("MUSIC_DISC_")) return;
+        Bukkit.getScheduler().runTask(this, () -> {
+            if (!player.isOnline() || player.getGameMode() != GameMode.ADVENTURE) return;
+            boolean found = false;
+            var inventory = player.getInventory();
+            for (int slot = 0; slot < inventory.getSize(); slot++) {
+                ItemStack item = inventory.getItem(slot);
+                if (item == null || !item.getType().name().startsWith("MUSIC_DISC_")) continue;
+                if (found) inventory.setItem(slot, null);
+                else if (item.getAmount() > 1) inventory.setItem(slot, new ItemStack(item.getType()));
+                found = true;
+            }
+            if (found && player.getItemOnCursor().getType().name().startsWith("MUSIC_DISC_")) {
+                player.setItemOnCursor(new ItemStack(Material.AIR));
+            }
+        });
     }
 
     private void sendMode(Player player) {

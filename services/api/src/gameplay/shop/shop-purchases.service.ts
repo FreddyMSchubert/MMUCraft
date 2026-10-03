@@ -53,14 +53,7 @@ export class ShopPurchasesService {
 		const availability = this.unlocks.availabilityForUser(user.id);
 		const dealDate = currentShopDealDate();
 		const limitedPurchaseCounts = this.limitedPurchaseCounts(user.id, dealDate);
-		const dailyDealIds = availableDailyDealItemIds(
-			items,
-			dealDate,
-			user,
-			availability,
-			unlockedIds,
-			enabledToggles,
-		);
+		const dailyDealIds = availableDailyDealItemIds(items, dealDate, enabledToggles);
 		const signupAnniversary = this.isSignupAnniversary(user.id);
 
 		return {
@@ -181,9 +174,6 @@ export class ShopPurchasesService {
 		const dailyDiscount = availableDailyDealItemIds(
 			this.itemCatalog.load().items,
 			dealDate,
-			user,
-			availability,
-			unlockedIds,
 			enabledToggles,
 		).has(item.id)
 			? dailyDealDiscountPercent(item.id, dealDate)
@@ -321,16 +311,10 @@ export class ShopPurchasesService {
 function availableDailyDealItemIds(
 	items: CatalogItem[],
 	dealDate: string,
-	user: AuthenticatedUser,
-	availability: ShopUnlockAvailability,
-	unlockedIds: Set<string>,
 	enabledToggles: Set<string>,
 ): Set<string> {
-	// A purchase limit reached today should not reshuffle the remaining deals.
 	return dailyDealItemIds(
-		items.filter((item) =>
-			isAvailableForPurchase(user, item, availability, unlockedIds, 0, enabledToggles),
-		),
+		items.filter((item) => !item.gameplayToggle || enabledToggles.has(item.gameplayToggle)),
 		dealDate,
 	);
 }

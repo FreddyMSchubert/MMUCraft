@@ -1,7 +1,7 @@
 name: checks-tests-images
 
 on:
-    push:
+    workflow_dispatch:
     release:
         types: [published]
 
@@ -111,13 +111,13 @@ jobs:
                   retention-days: 7
 
             - name: Resolve private assets revision
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               id: assets
               shell: bash
               run: echo "ref=$(git ls-tree HEAD assets | awk '{print $3}')" >> "$GITHUB_OUTPUT"
 
             - name: Checkout private assets at the pinned revision
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: actions/checkout@v6
               with:
                   repository: ${{ format('{0}_assets', github.repository) }}
@@ -127,26 +127,26 @@ jobs:
                   persist-credentials: false
 
             - name: Checkout public resource-pack merger
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               run: git submodule update --init --depth 1 minecraft/main/respack/ResourcePackMerger
 
             - name: Set up Java
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: actions/setup-java@v5
               with:
                   distribution: microsoft
                   java-version: '25'
 
             - name: Build resource pack
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               run: python3 minecraft/main/respack/build-main-pack.py
 
             - name: Set up Gradle
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: gradle/actions/setup-gradle@v6
 
             - name: Generate and build Minecraft once
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               working-directory: minecraft/main/mod
               run: |
                   ./gradlew runDatagen --no-daemon
@@ -155,13 +155,13 @@ jobs:
                   ./gradlew -p ../../../minecraft/waiting-room/plugin build --no-daemon
 
             - name: Build Killshift and stage event mods
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               run: |
                   ./minecraft/surprising-saturday/killshift/gradlew -p minecraft/surprising-saturday/killshift build --no-daemon
                   python3 minecraft/surprising-saturday/download-mods.py
 
             - name: Resolve image names and tag
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               id: image
               shell: bash
               env:
@@ -179,11 +179,11 @@ jobs:
                   echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
             - name: Set up Docker Buildx
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/setup-buildx-action@v4
 
             - name: Log in to GHCR
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/login-action@v4
               with:
                   registry: ghcr.io
@@ -191,7 +191,7 @@ jobs:
                   password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Build and push API
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -210,7 +210,7 @@ jobs:
                   sbom: true
 
             - name: Build and push web
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
               with:
                   context: services/web
@@ -231,7 +231,7 @@ jobs:
                   sbom: true
 
             - name: Build and push Minecraft
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
               with:
                   context: minecraft/main
@@ -249,7 +249,7 @@ jobs:
                   sbom: true
 
             - name: Build and push Velocity
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
               with:
                   context: services/velocity
@@ -267,7 +267,7 @@ jobs:
                   sbom: true
 
             - name: Build and push waiting room
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -282,7 +282,7 @@ jobs:
                   sbom: true
 
             - name: Build and push Surprising Saturday
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -297,7 +297,7 @@ jobs:
                   sbom: true
 
             - name: Build and push event controller
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
               with:
                   context: services/event-controller
@@ -311,7 +311,7 @@ jobs:
                   sbom: true
 
             - name: Build and push backup manager
-              if: ${{ github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
               uses: docker/build-push-action@v7
               with:
                   context: services/backup

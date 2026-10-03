@@ -1,11 +1,7 @@
 name: deploy
-run-name: Deploy ${{ github.event_name == 'workflow_run' && 'dev to dev' || format('{0} to {1}', inputs.version, inputs.target) }}
+run-name: Deploy ${{ inputs.version }} to ${{ inputs.target }}
 
 on:
-    workflow_run:
-        workflows: [checks-tests-images]
-        types: [completed]
-        branches: [main]
     workflow_dispatch:
         inputs:
             target:
@@ -37,32 +33,28 @@ permissions:
     packages: read
 
 concurrency:
-    group: deploy-${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
+    group: deploy-${{ inputs.target }}
     cancel-in-progress: false
 
 jobs:
     deploy:
         if: >-
-            (github.event_name == 'workflow_run' &&
-             github.event.workflow_run.conclusion == 'success' &&
-             github.event.workflow_run.event == 'push') ||
-            (github.event_name == 'workflow_dispatch' &&
-             (inputs.target == 'dev' ||
-              (github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert')))
+            inputs.target == 'dev' ||
+            (github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert')
         runs-on: ubuntu-24.04
-        environment: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
+        environment: ${{ inputs.target }}
         env:
-            DEPLOY_TARGET: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
-            DEPLOY_VERSION: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.version }}
-            WARNING_MINUTES: ${{ github.event_name == 'workflow_run' && '0' || inputs.warning_minutes }}
-            FORCE_DEPLOY: ${{ github.event_name == 'workflow_run' && 'false' || inputs.force }}
+            DEPLOY_TARGET: ${{ inputs.target }}
+            DEPLOY_VERSION: ${{ inputs.version }}
+            WARNING_MINUTES: ${{ inputs.warning_minutes }}
+            FORCE_DEPLOY: ${{ inputs.force }}
         steps:
             - name: Validate requested version
               id: version
               shell: bash
               env:
                   REQUESTED_VERSION: ${{ env.DEPLOY_VERSION }}
-                  REQUESTED_REF: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+                  REQUESTED_REF: ${{ github.sha }}
               run: |
                   tag="$REQUESTED_VERSION"
                   ref="$REQUESTED_VERSION"

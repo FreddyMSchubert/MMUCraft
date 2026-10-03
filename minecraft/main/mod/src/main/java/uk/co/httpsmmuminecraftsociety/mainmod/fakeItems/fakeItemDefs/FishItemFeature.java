@@ -29,7 +29,10 @@ public record FishItemFeature(
     @Override
     public void apply(ItemStack stack) {
         List<Component> lines = new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
-        lines.add(Component.literal("Rarity: " + personality.rarity().displayName()).withStyle(ChatFormatting.GRAY));
+        lines.add(Component.literal(personality.rarity().displayName())
+                .withColor(personality.rarity().colorRgb())
+                .append(Component.literal(" fish catchable " + FishSpawnTag.conditionSentence(spawnTags) + ".")
+                        .withStyle(ChatFormatting.GRAY)));
         stack.set(DataComponents.LORE, new ItemLore(lines));
     }
 

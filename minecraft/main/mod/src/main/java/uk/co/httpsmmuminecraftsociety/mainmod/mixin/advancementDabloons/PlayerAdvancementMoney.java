@@ -42,7 +42,7 @@ public class PlayerAdvancementMoney {
             DisplayInfo displayInfo,
             CallbackInfo ci
     ) {
-        ci.cancel();
+        if (!"minecraft".equals(advancementHolder.id().getNamespace())) ci.cancel();
     }
 
     @Inject(
@@ -85,15 +85,17 @@ public class PlayerAdvancementMoney {
         boolean rewarded = reward > 0 && MoneyHelper.GainMoney(rewardedPlayer, reward);
         DisplayInfo display = advancementHolder.value().display().orElseThrow();
         int awardedReward = rewarded ? reward : 0;
-        boolean silenced = AdvancementAnnouncements.isSilenced(advancementHolder.id());
-        boolean announcePublicly = !silenced && shouldAnnouncePublicly(
-                rewardedPlayer,
-                advancementHolder,
-                display,
-                awardedReward
+        boolean vanilla = "minecraft".equals(advancementHolder.id().getNamespace());
+        boolean announcePublicly = AdvancementAnnouncements.broadcast(
+                advancementHolder.id().getNamespace(),
+                display.announceToChat(),
+                rewardedPlayer.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES),
+                reward
         );
 
-        if (!silenced) {
+        if (vanilla) {
+            if (rewarded) MoneyHelper.SendBalanceMessage(rewardedPlayer, reward, "Advancement reward");
+        } else {
             announceAdvancement(
                     rewardedPlayer,
                     advancementHolder,
@@ -103,15 +105,16 @@ public class PlayerAdvancementMoney {
             );
         }
 
+        if (announcePublicly) {
+            DiscordBridge.advancement(
+                    rewardedPlayer,
+                    discordAction(display),
+                    display.title().getString(),
+                    awardedReward
+            );
+        }
+
         if (rewarded) {
-            if (announcePublicly) {
-                DiscordBridge.advancement(
-                        rewardedPlayer,
-                        discordAction(display),
-                        display.title().getString(),
-                        reward
-                );
-            }
             GameplayGrpcService.recordMoneyEvent(
                     rewardedPlayer.getName().getString(),
                     rewardedPlayer.getUUID().toString(),
@@ -125,23 +128,6 @@ public class PlayerAdvancementMoney {
             });
 
         }
-    }
-
-    private boolean shouldAnnouncePublicly(
-            ServerPlayer rewardedPlayer,
-            AdvancementHolder advancementHolder,
-            DisplayInfo display,
-            int reward
-    ) {
-        if (!rewardedPlayer.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)) {
-            return false;
-        }
-
-        if ("minecraft".equals(advancementHolder.id().getNamespace())) {
-            return display.announceToChat();
-        }
-
-        return reward >= 30;
     }
 
     private void announceAdvancement(

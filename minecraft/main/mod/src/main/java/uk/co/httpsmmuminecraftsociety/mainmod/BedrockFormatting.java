@@ -6,6 +6,7 @@ import net.minecraft.network.chat.contents.PlainTextContents;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class BedrockFormatting {
     private BedrockFormatting() {}
@@ -40,16 +41,29 @@ public final class BedrockFormatting {
     public static String toDiscord(String text) {
         StringBuilder result = new StringBuilder(text.length());
         List<Character> active = new ArrayList<>(4);
+        boolean obscured = false;
 
         for (int i = 0; i < text.length(); i++) {
             char code;
             if (text.charAt(i) != '&' || i + 1 == text.length()
                     || !isCode(code = Character.toLowerCase(text.charAt(i + 1)))) {
-                result.append(text.charAt(i));
+                char original = text.charAt(i);
+                if (obscured && !Character.isWhitespace(original)) {
+                    int letter = Character.toLowerCase(original) - 'a';
+                    int random = ThreadLocalRandom.current().nextInt(letter >= 0 && letter < 26 ? 25 : 26);
+                    if (letter >= 0 && letter < 26 && random >= letter) random++;
+                    result.append((char) ('a' + random));
+                    for (int mark = 0; mark < 3; mark++) {
+                        result.append((char) ('\u0334' + ThreadLocalRandom.current().nextInt(5)));
+                    }
+                } else result.append(original);
                 continue;
             }
 
-            if (code == 'r') closeDiscordFormatting(result, active);
+            if (code == 'r') {
+                closeDiscordFormatting(result, active);
+                obscured = false;
+            } else if (code == 'k') obscured = true;
             else if (code == 'l' || code == 'm' || code == 'n' || code == 'o') {
                 if (!active.contains(code)) {
                     result.append(discordMarker(code));

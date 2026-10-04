@@ -4,8 +4,14 @@ on:
     workflow_dispatch:
         inputs:
             release_tag:
-                description: Existing published release tag to rebuild (leave blank for main)
+                description: Published release tag for image names; blank uses the source commit SHA
                 required: false
+                default: ''
+                type: string
+            source_ref:
+                description: Branch or tag to build; defaults to main, independent of workflow selection
+                required: false
+                default: main
                 type: string
     release:
         types: [published]
@@ -15,7 +21,7 @@ permissions:
     packages: write
 
 concurrency:
-    group: checks-tests-images-${{ inputs.release_tag || github.event.release.tag_name || github.ref }}
+    group: checks-tests-images-${{ inputs.release_tag || github.event.release.tag_name || inputs.source_ref || github.ref }}
     cancel-in-progress: ${{ github.event_name != 'release' }}
 
 jobs:
@@ -30,10 +36,6 @@ jobs:
                   GH_TOKEN: ${{ github.token }}
                   RELEASE_TAG: ${{ inputs.release_tag }}
               run: |
-                  if [[ "$GITHUB_REF" != refs/heads/main ]]; then
-                    echo 'Select main when rebuilding a release.' >&2
-                    exit 1
-                  fi
                   if [[ ! "$RELEASE_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
                     echo "'$RELEASE_TAG' is not a valid Docker tag" >&2
                     exit 1
@@ -44,14 +46,13 @@ jobs:
                     exit 1
                   fi
                   echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
-                  echo "ref=refs/tags/$RELEASE_TAG" >> "$GITHUB_OUTPUT"
                   echo "name=$(jq -r '(.name // .tag_name) | gsub("[\r\n]"; " ")' <<< "$release")" >> "$GITHUB_OUTPUT"
                   echo "url=$(jq -r '.html_url' <<< "$release")" >> "$GITHUB_OUTPUT"
 
             - name: Checkout repository
               uses: actions/checkout@v6
               with:
-                  ref: ${{ steps.manual_release.outputs.ref || github.event.release.tag_name || github.sha }}
+                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || 'main' }}
                   persist-credentials: false
 
             - name: Resolve source revision
@@ -146,13 +147,13 @@ jobs:
                   retention-days: 7
 
             - name: Resolve private assets revision
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               id: assets
               shell: bash
               run: echo "ref=$(git ls-tree HEAD assets | awk '{print $3}')" >> "$GITHUB_OUTPUT"
 
             - name: Checkout private assets at the pinned revision
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: actions/checkout@v6
               with:
                   repository: ${{ format('{0}_assets', github.repository) }}
@@ -162,26 +163,26 @@ jobs:
                   persist-credentials: false
 
             - name: Checkout public resource-pack merger
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: git submodule update --init --depth 1 minecraft/main/respack/ResourcePackMerger
 
             - name: Set up Java
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: actions/setup-java@v5
               with:
                   distribution: microsoft
                   java-version: '25'
 
             - name: Build resource pack
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: python3 minecraft/main/respack/build-main-pack.py
 
             - name: Set up Gradle
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: gradle/actions/setup-gradle@v6
 
             - name: Generate and build Minecraft once
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               working-directory: minecraft/main/mod
               run: |
                   ./gradlew runDatagen --no-daemon
@@ -190,19 +191,19 @@ jobs:
                   ./gradlew -p ../../../minecraft/waiting-room/plugin build --no-daemon
 
             - name: Build Killshift and stage event mods
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: |
                   ./minecraft/surprising-saturday/killshift/gradlew -p minecraft/surprising-saturday/killshift build --no-daemon
                   python3 minecraft/surprising-saturday/download-mods.py
 
             - name: Resolve image names and tag
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               id: image
               shell: bash
               env:
                   RELEASE_TAG: ${{ steps.manual_release.outputs.tag || github.event.release.tag_name }}
               run: |
-                  tag="$GITHUB_SHA"
+                  tag="${{ steps.source.outputs.sha }}"
                   if [[ -n "$RELEASE_TAG" ]]; then
                     tag="${RELEASE_TAG}"
                   fi
@@ -214,15 +215,15 @@ jobs:
                   echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
             - name: Remove unused test containers and images
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: docker system prune --all --force
 
             - name: Set up Docker Buildx
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/setup-buildx-action@v4
 
             - name: Log in to GHCR
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/login-action@v4
               with:
                   registry: ghcr.io
@@ -230,7 +231,7 @@ jobs:
                   password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Build and push API
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -253,7 +254,7 @@ jobs:
               run: docker buildx prune --all --force
 
             - name: Build and push web
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/build-push-action@v7
               with:
                   context: services/web
@@ -278,7 +279,7 @@ jobs:
               run: docker buildx prune --all --force
 
             - name: Build and push Minecraft
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/build-push-action@v7
               with:
                   context: minecraft/main
@@ -300,7 +301,7 @@ jobs:
               run: docker buildx prune --all --force
 
             - name: Build and push Velocity
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/build-push-action@v7
               with:
                   context: services/velocity
@@ -322,7 +323,7 @@ jobs:
               run: docker buildx prune --all --force
 
             - name: Build and push waiting room
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -341,7 +342,7 @@ jobs:
               run: docker buildx prune --all --force
 
             - name: Build and push Surprising Saturday
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -360,7 +361,7 @@ jobs:
               run: docker buildx prune --all --force
 
             - name: Build and push event controller
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/build-push-action@v7
               with:
                   context: services/event-controller
@@ -378,7 +379,7 @@ jobs:
               run: docker buildx prune --all --force
 
             - name: Build and push backup manager
-              if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') }}
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/build-push-action@v7
               with:
                   context: services/backup

@@ -243,9 +243,12 @@ tasks.register('checkDailyCatalog', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+def generatedResources = file("src/main/generated")
+
 processResources {
     dependsOn "generateMiniBlockRecipes"
     exclude "data/mainmod/advancement/mastery/**"
+    exclude { it.file.toPath().startsWith(generatedResources.toPath()) }
     inputs.property "version", project.version
     inputs.file("../data/drops.json")
 
@@ -324,8 +327,8 @@ java {
 
 jar {
     dependsOn "runDatagen"
-    from("src/main/generated/data/mainmod/advancement/mastery") {
-        into "data/mainmod/advancement/mastery"
+    from(generatedResources) {
+        include "data/**"
     }
     inputs.property "archivesName", project.base.archivesName
 

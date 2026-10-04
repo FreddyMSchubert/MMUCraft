@@ -267,6 +267,7 @@ jobs:
               if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               working-directory: minecraft/main/mod
               run: |
+                  ./gradlew runDatagen --no-daemon
                   ./gradlew build --no-daemon
                   ./gradlew -p ../../../services/velocity/plugin build --no-daemon
                   ./gradlew -p ../../../minecraft/waiting-room/plugin build --no-daemon

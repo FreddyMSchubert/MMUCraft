@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.crafting.CraftingInput;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
@@ -32,13 +33,15 @@ public final class ArmorAppearanceCheck {
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(VanillaRegistries.createWorldLookup())
                 .forEach(components -> components.apply());
         var chestplate = Items.DIAMOND_CHESTPLATE.builtInRegistryHolder();
+        var netheriteChestplate = Items.NETHERITE_CHESTPLATE.builtInRegistryHolder();
         var itemRegistry = (MappedRegistry<Item>) BuiltInRegistries.ITEM;
         var frozen = MappedRegistry.class.getDeclaredField("frozen");
         frozen.setAccessible(true);
         frozen.setBoolean(itemRegistry, false);
         itemRegistry.bindTags(Map.of(
-                ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS, List.of(chestplate),
+                ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS, List.of(chestplate, netheriteChestplate),
                 ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND, List.of(chestplate),
+                ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE, List.of(netheriteChestplate),
                 ModItemTagProvider.SINGLE_CHARM_COMBINABLE_ARMOR_ITEMS, List.of(chestplate)
         ));
         var refreshTags = MappedRegistry.class.getDeclaredMethod("refreshTagsInHolders");
@@ -95,6 +98,20 @@ public final class ArmorAppearanceCheck {
         assert asset(plain).equals("mmu_pack:armor_minified__diamond");
         assert craft(glass, plain, Items.GLASS).get(DataComponents.EQUIPPABLE)
                 .equals(Items.DIAMOND_CHESTPLATE.components().get(DataComponents.EQUIPPABLE));
+
+        ItemStack enderite = new ItemStack(Items.NETHERITE_CHESTPLATE);
+        CustomData.update(DataComponents.CUSTOM_DATA, enderite,
+                tag -> tag.putBoolean(CharmorManager.ENDERITE_MARKER_BOOL, true));
+        CharmStackData.setStoredCharms(enderite, List.of(new StoredCharmData(7, 1)));
+        CharmorManager.updateArmorTooltip(enderite);
+        assert asset(enderite).equals("mmu_pack:test_charm__enderite");
+        enderite = craft(glass, enderite, Items.GLASS);
+        assert asset(enderite).equals("mmu_pack:test_charm__enderite__minified");
+        enderite = craft(pane, enderite, Items.GLASS_PANE);
+        assert asset(enderite).equals("mmu_pack:armor_minified__enderite");
+        enderite = craft(glass, enderite, Items.GLASS);
+        assert asset(enderite).equals("mmu_pack:enderite");
+
         setSoaring(false);
         CharmorManager.updateArmorTooltip(hiddenMinified);
         assert asset(hiddenMinified).equals("mmu_pack:test_charm__diamond");

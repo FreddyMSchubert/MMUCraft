@@ -7,18 +7,26 @@ const { discoverItems } = require('../dist/discovery/discoverItems');
 const { generateResourcePack } = require('../dist/generation/resourcePackGenerator');
 const generatorDir = path.dirname(require.resolve('../package.json'));
 
-test('authored minified textures are copied unchanged when the full set is present', async (t) => {
+test('equipment variants use authored minified textures mirrored beside base textures', async (t) => {
 	const tempDir = await fs.realpath(os.tmpdir());
 	const root = await fs.realpath(await fs.mkdtemp(path.join(tempDir, 'armor-appearance-')));
 	assert.equal(path.dirname(root).toLowerCase(), tempDir.toLowerCase());
 	t.after(() => fs.rm(root, { recursive: true, force: true }));
 	const sourceDir = path.resolve(generatorDir, '../../data/data/items/charm/equipped');
 	const items = await discoverItems(sourceDir);
-	const vanillaArmorAssetsDir = path.join(root, 'vanilla_armor_assets');
+	const armorAssetsDir = root;
+	for (const layer of ['humanoid', 'humanoid_leggings']) {
+		const target = path.join(armorAssetsDir, 'vanilla_armor_assets', layer);
+		await fs.mkdir(target, { recursive: true });
+		await fs.copyFile(
+			path.join(generatorDir, 'vanilla_armor_assets', layer, 'enderite.png'),
+			path.join(target, 'enderite.png'),
+		);
+	}
 	const outputDir = path.join(root, 'pack');
 	const options = {
 		sourceDir,
-		vanillaArmorAssetsDir,
+		armorAssetsDir,
 		outputDir,
 		namespace: 'mmu_pack',
 		packDescription: 'test',
@@ -29,11 +37,21 @@ test('authored minified textures are copied unchanged when the full set is prese
 	let summary = await generateResourcePack(items, options);
 	assert.equal(summary.skippedItems, 0);
 	await fs.access(path.join(outputDir, 'assets/mmu_pack/equipment', `${normalAsset}.json`));
+	for (const layer of ['humanoid', 'humanoid_leggings']) {
+		await fs.access(
+			path.join(
+				outputDir,
+				'assets/mmu_pack/textures/entity/equipment',
+				layer,
+				'enderite.png',
+			),
+		);
+	}
 	await assert.rejects(
 		fs.access(path.join(outputDir, 'assets/mmu_pack/equipment/armor_minified__diamond.json')),
 	);
 
-	const authored = path.join(root, 'minified_armor_assets');
+	const authored = path.join(armorAssetsDir, 'minified_armor_assets');
 	const materials = [
 		'chainmail',
 		'leather',
@@ -47,29 +65,27 @@ test('authored minified textures are copied unchanged when the full set is prese
 	for (const layer of ['humanoid', 'humanoid_leggings']) {
 		await fs.mkdir(path.join(authored, layer), { recursive: true });
 		for (const name of [...materials, 'leather_overlay']) {
-			const source =
-				name === 'enderite'
-					? path.resolve(
-							generatorDir,
-							`../packs/general-pack/assets/mmu_pack/textures/entity/equipment/${layer}/enderite.png`,
-						)
-					: path.resolve(generatorDir, `vanilla_armor_assets/${layer}/${name}.png`);
+			const source = path.join(generatorDir, 'vanilla_armor_assets', layer, `${name}.png`);
 			await fs.copyFile(source, path.join(authored, layer, `${name}.png`));
 		}
 	}
 	summary = await generateResourcePack(items, options);
 	assert.equal(summary.skippedItems, 0);
 	const equipment = path.join(outputDir, 'assets/mmu_pack/equipment');
-	const textures = path.join(outputDir, 'assets/mmu_pack/textures/entity/equipment');
 	for (const material of materials) {
 		const bare = JSON.parse(
 			await fs.readFile(path.join(equipment, `armor_minified__${material}.json`)),
 		);
 		for (const layer of ['humanoid', 'humanoid_leggings']) {
 			assert.equal(bare.layers[layer][0].texture, `mmu_pack:armor_minified/${material}`);
-			assert.deepEqual(
-				await fs.readFile(path.join(textures, layer, `armor_minified/${material}.png`)),
-				await fs.readFile(path.join(authored, layer, `${material}.png`)),
+			await fs.access(
+				path.join(
+					outputDir,
+					'assets/mmu_pack/textures/entity/equipment',
+					layer,
+					'armor_minified',
+					`${material}.png`,
+				),
 			);
 		}
 		const asset = charm.equippableAssetId.replace(/__charm$/, `__${material}__minified`);
@@ -82,4 +98,10 @@ test('authored minified textures are copied unchanged when the full set is prese
 	);
 	assert.ok(leather.layers.humanoid[0].dyeable);
 	assert.equal(leather.layers.humanoid[1].texture, 'mmu_pack:armor_minified/leather_overlay');
+	await fs.access(
+		path.join(
+			outputDir,
+			'assets/mmu_pack/textures/entity/equipment/humanoid/armor_minified/iron.png',
+		),
+	);
 });

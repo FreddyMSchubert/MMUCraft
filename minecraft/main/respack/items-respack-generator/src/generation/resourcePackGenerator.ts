@@ -224,21 +224,36 @@ function createCharmEquipmentDefinition(
 }
 
 async function generateMinifiedArmorAssets(context: GenerationContext): Promise<boolean> {
-	const { outputDir, namespace, vanillaArmorAssetsDir } = context.options;
-	const sourceDir = path.join(path.dirname(vanillaArmorAssetsDir), 'minified_armor_assets');
+	const { outputDir, namespace, armorAssetsDir } = context.options;
 	const required = ['humanoid', 'humanoid_leggings'].flatMap((layerType) =>
 		CHARM_ARMOR_MATERIALS.flatMap((material) =>
 			[material, ...(material === 'leather' ? ['leather_overlay'] : [])].map((name) =>
-				path.join(sourceDir, layerType, `${name}.png`),
+				path.join(armorAssetsDir, 'minified_armor_assets', layerType, `${name}.png`),
 			),
 		),
 	);
 	const missing = required.filter((file) => !existsSync(file));
 	if (missing.length) {
 		console.warn(
-			`Skipping minified armor assets: ${missing.length} of ${required.length} textures missing from ${sourceDir}`,
+			`Skipping minified armor assets: ${missing.length} of ${required.length} textures missing from ${path.join(armorAssetsDir, 'minified_armor_assets')}`,
 		);
 		return false;
+	}
+	for (const layerType of ['humanoid', 'humanoid_leggings'] as const) {
+		for (const material of CHARM_ARMOR_MATERIALS) {
+			for (const name of [material, ...(material === 'leather' ? ['leather_overlay'] : [])]) {
+				await copyFile(
+					path.join(armorAssetsDir, 'minified_armor_assets', layerType, `${name}.png`),
+					equipmentTexturePngPath(
+						outputDir,
+						namespace,
+						layerType,
+						`armor_minified/${name}`,
+					),
+					context,
+				);
+			}
+		}
 	}
 	for (const material of CHARM_ARMOR_MATERIALS) {
 		const layers: Record<string, unknown> = {};
@@ -250,18 +265,6 @@ async function generateMinifiedArmorAssets(context: GenerationContext): Promise<
 					: {}),
 				texture: `${namespace}:armor_minified/${name}`,
 			}));
-			for (const name of textures) {
-				await copyFile(
-					path.join(sourceDir, layerType, `${name}.png`),
-					equipmentTexturePngPath(
-						outputDir,
-						namespace,
-						layerType,
-						`armor_minified/${name}`,
-					),
-					context,
-				);
-			}
 		}
 		await writeJson(
 			equipmentJsonPath(outputDir, namespace, `armor_minified__${material}`),
@@ -270,6 +273,17 @@ async function generateMinifiedArmorAssets(context: GenerationContext): Promise<
 		);
 	}
 	return true;
+}
+
+async function copyEnderiteArmorAssets(context: GenerationContext): Promise<void> {
+	const { outputDir, namespace, armorAssetsDir } = context.options;
+	for (const layerType of ['humanoid', 'humanoid_leggings'] as const) {
+		await copyFile(
+			path.join(armorAssetsDir, 'vanilla_armor_assets', layerType, 'enderite.png'),
+			equipmentTexturePngPath(outputDir, namespace, layerType, 'enderite'),
+			context,
+		);
+	}
 }
 
 async function generateBasicItem(
@@ -490,6 +504,7 @@ export async function generateResourcePack(
 		},
 		context,
 	);
+	await copyEnderiteArmorAssets(context);
 	context.minifiedArmorAssetsAvailable = await generateMinifiedArmorAssets(context);
 
 	const commandBlockCases: SelectorCase[] = [];

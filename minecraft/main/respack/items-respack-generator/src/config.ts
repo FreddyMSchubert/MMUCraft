@@ -142,10 +142,7 @@ export function resolveOptionsFromCli(argv: readonly string[]): GeneratorOptions
 
 	return {
 		sourceDir: path.resolve(cwd, values.get('source') ?? 'items'),
-		vanillaArmorAssetsDir: path.resolve(
-			cwd,
-			values.get('vanilla-armor') ?? 'vanilla_armor_assets',
-		),
+		armorAssetsDir: path.resolve(cwd, values.get('armor-assets') ?? '.'),
 		outputDir: path.resolve(cwd, values.get('output') ?? 'generated-resource-pack'),
 		namespace: values.get('namespace') ?? DEFAULT_NAMESPACE,
 		packDescription: values.get('description') ?? DEFAULT_PACK_DESCRIPTION,
@@ -155,7 +152,7 @@ export function resolveOptionsFromCli(argv: readonly string[]): GeneratorOptions
 export function cliUsage(): string {
 	return [
 		'Usage:',
-		'  npm run generate -- --source ./items --vanilla-armor ./vanilla_armor_assets --output ./dist-resource-pack',
+		'  npm run generate -- --source ./items --armor-assets . --output ./dist-resource-pack',
 		'',
 		'Optional flags:',
 		'  --namespace <namespace>      Resource namespace to generate under (default: mmu_pack)',

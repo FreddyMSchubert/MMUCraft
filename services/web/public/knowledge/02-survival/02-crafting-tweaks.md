@@ -106,6 +106,12 @@ Even if you haven't reached the Nether yet, you can already create Glowstone in 
 [Stone](https://minecraft.wiki/w/Stone) (TL, TC, TR, CL, CR, BL, BC, BL) · [Glow Ink Sac](https://minecraft.wiki/w/Glow_Ink_Sac) (C) → [Glowstone](https://minecraft.wiki/w/Glowstone) ×8
 :::
 
+## Early Quartz
+
+To make sure everyone can use comparators before the Nether opens up, you can now turn Quartz Blocks (which you can get by trading with Mason Villagers) into Nether Quartz.
+
+![Nether Quartz from Quartz Blocks](/assets/knowledge/survival/crafting-tweaks/quartz.png)
+
 ## MORE
 
 Many many recipes give more output items when you craft them. This is because it's convenient & less grindy.

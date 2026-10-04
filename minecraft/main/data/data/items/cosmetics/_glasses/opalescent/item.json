@@ -1,0 +1,17 @@
+{
+	"title": "Opalescent Glasses",
+	"id": "cosmetic-opalescent-glasses",
+	"modelType": "cosmetic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": ["Steal her look!"],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 42,
+		"description": "",
+		"unlockWeight": 80,
+		"unlockMessage": "Unlocked cosmetic: Opalescent Glasses.",
+		"tags": ["circular", "spectacles", "reading glasses", "oval", "round"]
+	},
+	"equippableCosmetic": {}
+}

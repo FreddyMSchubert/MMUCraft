@@ -1,0 +1,59 @@
+{
+	"title": "Fish Stew",
+	"id": "food-fish-stew",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["Perfect for lovers of all things fish."],
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 1.6,
+		"canAlwaysEat": false,
+		"hungerBars": 10,
+		"saturationBars": 12,
+		"directHearts": 0,
+		"useRemainderItem": "minecraft:bowl",
+		"effects": [
+			{
+				"id": "minecraft:dolphins_grace",
+				"durationTicks": 60,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "fish-stew",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:bowl",
+					"mainmod:cooked-white-fish",
+					"minecraft:carrot",
+					"minecraft:baked_potato"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-stew",
+					"count": 1
+				}
+			},
+			{
+				"id": "fish-stew",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:bowl",
+					"mainmod:cooked-red-fish",
+					"minecraft:carrot",
+					"minecraft:baked_potato"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-stew",
+					"count": 1
+				}
+			}
+		]
+	}
+}

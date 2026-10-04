@@ -5,8 +5,6 @@ import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fa
 import { AppModule } from './app.module';
 import { ShutdownService } from './shutdown';
 import { MonitoringService } from './monitoring/monitoring.service';
-import { AuthSessionService } from './auth/auth-session.service';
-import { VelocityService } from './velocity/velocity.service';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
@@ -17,29 +15,11 @@ async function bootstrap() {
 	const server = app.getHttpAdapter().getInstance();
 	const shutdown = app.get(ShutdownService);
 	const monitoring = app.get(MonitoringService);
-	const sessions = app.get(AuthSessionService);
-	const velocity = app.get(VelocityService);
 	const trackedRequests = new WeakSet();
 	const rejectedForDrain = new WeakSet();
 	server.addHook('onRequest', async (request, reply) => {
 		monitoring.beginRequest(request);
 		const path = request.url.split('?', 1)[0] ?? '';
-		if (
-			path.startsWith('/api/') &&
-			!['/api/auth/', '/api/internal/', '/api/discord/avatar', '/api/health'].some((prefix) =>
-				path.startsWith(prefix),
-			) &&
-			velocity.hasWaitingRoomPlayers()
-		) {
-			const user = sessions.getSession(request.headers.cookie);
-			if (
-				velocity.isWaitingRoomUsername(user?.minecraftUsername ?? '') &&
-				!(user?.isCommittee && (path === '/api/admin' || path.startsWith('/api/admin/')))
-			) {
-				await reply.code(409).send({ message: 'Wait until you enter the game.' });
-				return;
-			}
-		}
 		if (path === '/api/internal/shutdown') return;
 		if (!shutdown.beginRequest()) {
 			rejectedForDrain.add(request);

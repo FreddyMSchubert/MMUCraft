@@ -326,30 +326,6 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			: undefined;
 	}
 
-	isWaitingRoomUsername(username: string) {
-		if (!this.proxyIsOnline()) return false;
-		return (
-			this.connectedPlayers.some(
-				(player) =>
-					player.serverName === 'waiting-room' &&
-					player.username.toLowerCase() === username.toLowerCase(),
-			) ||
-			[...this.pendingQueued.values()].some(
-				(player) =>
-					player.expiresAt > Date.now() &&
-					player.username.toLowerCase() === username.toLowerCase(),
-			)
-		);
-	}
-
-	hasWaitingRoomPlayers() {
-		return (
-			this.proxyIsOnline() &&
-			(this.connectedPlayers.some((player) => player.serverName === 'waiting-room') ||
-				[...this.pendingQueued.values()].some((player) => player.expiresAt > Date.now()))
-		);
-	}
-
 	capacitySnapshot() {
 		return {
 			playerCount: this.proxyIsOnline()

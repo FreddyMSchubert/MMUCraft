@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,8 @@ public class CharmorManager
 {
     public static final String TOOLTIP_INITIALLY_POPULATED_BOOL = "tooltip_initially_populated";
     public static final String ENDERITE_MARKER_BOOL = "is_enderite";
+    public static final String CHARMS_HIDDEN_BOOL = "charms_hidden";
+    public static final String ARMOR_MINIFIED_BOOL = "armor_minified";
 
     public static int calcCharmSlotCount(ItemStack stack) {
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return 0;
@@ -93,6 +96,13 @@ public class CharmorManager
             tooltip.add(Component.literal(literal).withStyle(style -> style.withItalic(false)));
         }
 
+        if (FeatureToggles.isEnabled(FeatureToggles.SOARING)) {
+            tooltip.add(Component.literal("Charms: " + (charmsHidden(stack) ? "Hidden" : "Shown"))
+                    .withStyle(style -> style.withItalic(false)));
+            tooltip.add(Component.literal("Armor: " + (armorMinified(stack) ? "Minified" : "Full"))
+                    .withStyle(style -> style.withItalic(false)));
+        }
+
         stack.set(DataComponents.LORE, new ItemLore(tooltip));
         refreshArmorCharmAppearance(stack);
 
@@ -105,8 +115,14 @@ public class CharmorManager
         Equippable itemDefaultEquippable = stack.getItem().components().get(DataComponents.EQUIPPABLE);
         if (itemDefaultEquippable == null) return;
 
-        if (storedCharms.isEmpty()) {
-            stack.set(DataComponents.EQUIPPABLE, isEnderite(stack)
+        String materialString = getArmorMaterialType(stack);
+        boolean appearanceEnabled = FeatureToggles.isEnabled(FeatureToggles.SOARING);
+        boolean minified = appearanceEnabled && armorMinified(stack);
+
+        if (storedCharms.isEmpty() || (appearanceEnabled && charmsHidden(stack))) {
+            stack.set(DataComponents.EQUIPPABLE, minified && !materialString.isBlank()
+                    ? EquippableCharmItemFeature.withAsset(itemDefaultEquippable, "armor_minified__" + materialString)
+                    : isEnderite(stack)
                     ? EquippableCharmItemFeature.withAsset(itemDefaultEquippable, "enderite")
                     : itemDefaultEquippable);
             return;
@@ -119,7 +135,6 @@ public class CharmorManager
         EquippableCharmItemFeature eqcif = renderedCharmItem.getFeature(EquippableCharmItemFeature.class);
         if (eqcif == null || eqcif.equippable().assetId().isEmpty()) return;
 
-        String materialString = getArmorMaterialType(stack);
         if (materialString.isBlank()) return;
 
         String charmResourcePath = eqcif.equippable().assetId().get().identifier().getPath();
@@ -127,7 +142,8 @@ public class CharmorManager
         if (suffixIndex < 0) return;
 
         String withoutCharmSuffix = charmResourcePath.substring(0, suffixIndex);
-        String newResourcePath = withoutCharmSuffix + "__" + materialString;
+        String newResourcePath = withoutCharmSuffix + "__" + materialString
+                + (minified ? "__minified" : "");
 
         Equippable newEquippableSettings = EquippableCharmItemFeature.withAsset(
                 itemDefaultEquippable,
@@ -154,6 +170,17 @@ public class CharmorManager
     public static boolean isEnderite(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         return tag.getBoolean(ENDERITE_MARKER_BOOL).orElse(false);
+    }
+
+
+    public static boolean charmsHidden(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag().getBoolean(CHARMS_HIDDEN_BOOL).orElse(false);
+    }
+
+    public static boolean armorMinified(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag().getBoolean(ARMOR_MINIFIED_BOOL).orElse(false);
     }
 
     private static String getArmorMaterialType(ItemStack stack) {

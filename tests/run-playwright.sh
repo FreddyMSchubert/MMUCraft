@@ -14,8 +14,14 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Build and start only the production API and web containers.
-"${compose[@]}" up --build --detach --wait api web
+# CI tests the images that will receive the release tag. Local runs build them here.
+if [[ -n ${PLAYWRIGHT_API_IMAGE:-} || -n ${PLAYWRIGHT_WEB_IMAGE:-} ]]; then
+  : "${PLAYWRIGHT_API_IMAGE:?set both test image names}"
+  : "${PLAYWRIGHT_WEB_IMAGE:?set both test image names}"
+  "${compose[@]}" up --no-build --pull always --detach --wait api web
+else
+  "${compose[@]}" up --build --detach --wait api web
+fi
 
 # Seed the migrated test database before Playwright sends requests.
 "${compose[@]}" exec -T api node /tests/fixtures/seed-playwright-database.js

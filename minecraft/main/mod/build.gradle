@@ -123,6 +123,14 @@ tasks.register('checkMapResize', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkArmorAppearance', JavaExec) {
+    group = 'verification'
+    description = 'Check armor and charm appearance toggles and crafting.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.ArmorAppearanceCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkPlayerColors', JavaExec) {
     group = 'verification'
     description = 'Check player RGB formatting, vanilla team colors, and persisted join colors.'
@@ -161,6 +169,7 @@ tasks.named('check') {
     dependsOn tasks.named('checkGearEnchantments')
     dependsOn 'checkFishing'
     dependsOn 'checkMapResize'
+    dependsOn 'checkArmorAppearance'
 }
 
 tasks.register('checkGlider', JavaExec) {

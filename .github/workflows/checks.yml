@@ -64,6 +64,9 @@ jobs:
               with:
                   python-version: '3.12'
 
+            - name: Check image fingerprinting
+              run: python3 -m unittest discover -s .github/scripts -p 'test_*.py'
+
             - name: Install data-schema validator
               run: python3 -m pip install --requirement minecraft/main/data/validation/requirements.txt
 
@@ -127,25 +130,6 @@ jobs:
                     }
                   done
 
-            - name: Install Playwright Chromium
-              run: npx playwright install --with-deps chromium
-
-            - name: Run isolated Playwright tests
-              env:
-                  COMPOSE_PROJECT_NAME: kubecraft-playwright-${{ github.run_id }}-${{ github.run_attempt }}
-              run: npm test
-
-            - name: Upload Playwright diagnostics
-              if: ${{ !cancelled() }}
-              uses: actions/upload-artifact@v7
-              with:
-                  name: playwright-report
-                  path: |
-                      tests/playwright-report
-                      tests/test-results
-                  if-no-files-found: ignore
-                  retention-days: 7
-
             - name: Resolve private assets revision
               if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               id: assets
@@ -177,25 +161,6 @@ jobs:
               if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: python3 minecraft/main/respack/build-main-pack.py
 
-            - name: Set up Gradle
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
-              uses: gradle/actions/setup-gradle@v6
-
-            - name: Generate and build Minecraft once
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
-              working-directory: minecraft/main/mod
-              run: |
-                  ./gradlew runDatagen --no-daemon
-                  ./gradlew build --no-daemon
-                  ./gradlew -p ../../../services/velocity/plugin build --no-daemon
-                  ./gradlew -p ../../../minecraft/waiting-room/plugin build --no-daemon
-
-            - name: Build Killshift and stage event mods
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
-              run: |
-                  ./minecraft/surprising-saturday/killshift/gradlew -p minecraft/surprising-saturday/killshift build --no-daemon
-                  python3 minecraft/surprising-saturday/download-mods.py
-
             - name: Resolve image names and tag
               if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               id: image
@@ -214,10 +179,6 @@ jobs:
                   echo "prefix=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
                   echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
-            - name: Remove unused test containers and images
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
-              run: docker system prune --all --force
-
             - name: Set up Docker Buildx
               if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/setup-buildx-action@v4
@@ -230,8 +191,17 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Build and push API
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+            - name: Find reusable API and web images
+              id: front_images
+              shell: bash
+              env:
+                  IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
+                  SITE_RELEASE_NAME: ${{ steps.manual_release.outputs.name || github.event.release.name }}
+                  SITE_RELEASE_URL: ${{ steps.manual_release.outputs.url || github.event.release.html_url }}
+              run: python3 .github/scripts/image_fingerprint.py api web
+
+            - name: Build API for tests
+              if: ${{ steps.front_images.outputs.api_exists != 'true' }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -239,91 +209,117 @@ jobs:
                   platforms: linux/amd64
                   pull: true
                   push: true
-                  tags: ${{ steps.image.outputs.prefix }}-api:${{ steps.image.outputs.tag }}
+                  tags: ${{ steps.front_images.outputs.api_image }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
-                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=api
                   cache-to: type=gha,mode=max,scope=api
                   provenance: mode=max
                   sbom: true
 
-            - name: Remove local build cache
-              if: ${{ steps.image.outputs.tag != '' }}
-              run: docker buildx prune --all --force
-
-            - name: Build and push web
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+            - name: Build web for tests
+              if: ${{ steps.front_images.outputs.web_exists != 'true' }}
               uses: docker/build-push-action@v7
               with:
                   context: services/web
                   platforms: linux/amd64
                   pull: true
                   push: true
-                  tags: ${{ steps.image.outputs.prefix }}-web:${{ steps.image.outputs.tag }}
+                  tags: ${{ steps.front_images.outputs.web_image }}
                   build-args: |
                       SITE_RELEASE_NAME=${{ steps.manual_release.outputs.name || github.event.release.name }}
                       SITE_RELEASE_URL=${{ steps.manual_release.outputs.url || github.event.release.html_url }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
-                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=web
                   cache-to: type=gha,mode=max,scope=web
                   provenance: mode=max
                   sbom: true
 
-            - name: Remove local build cache
-              if: ${{ steps.image.outputs.tag != '' }}
-              run: docker buildx prune --all --force
+            - name: Install Playwright Chromium
+              run: npx playwright install --with-deps chromium
+
+            - name: Run isolated Playwright tests
+              env:
+                  COMPOSE_PROJECT_NAME: kubecraft-playwright-${{ github.run_id }}-${{ github.run_attempt }}
+                  PLAYWRIGHT_API_IMAGE: ${{ steps.front_images.outputs.api_image }}
+                  PLAYWRIGHT_WEB_IMAGE: ${{ steps.front_images.outputs.web_image }}
+              run: npm test
+
+            - name: Upload Playwright diagnostics
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: playwright-report
+                  path: |
+                      tests/playwright-report
+                      tests/test-results
+                  if-no-files-found: ignore
+                  retention-days: 7
+
+            - name: Set up Gradle
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              uses: gradle/actions/setup-gradle@v6
+
+            - name: Generate and build Minecraft once
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              working-directory: minecraft/main/mod
+              run: |
+                  ./gradlew build --no-daemon
+                  ./gradlew -p ../../../services/velocity/plugin build --no-daemon
+                  ./gradlew -p ../../../minecraft/waiting-room/plugin build --no-daemon
+
+            - name: Build Killshift and stage event mods
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              run: |
+                  ./minecraft/surprising-saturday/killshift/gradlew -p minecraft/surprising-saturday/killshift build --no-daemon
+                  python3 minecraft/surprising-saturday/download-mods.py
+
+            - name: Find reusable Minecraft and service images
+              id: back_images
+              shell: bash
+              env:
+                  IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
+              run: python3 .github/scripts/image_fingerprint.py mc velocity waiting-room event event-controller backup
 
             - name: Build and push Minecraft
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              if: ${{ steps.back_images.outputs.mc_exists != 'true' }}
               uses: docker/build-push-action@v7
               with:
                   context: minecraft/main
                   platforms: linux/amd64
                   pull: true
                   push: true
-                  tags: ${{ steps.image.outputs.prefix }}-mc:${{ steps.image.outputs.tag }}
+                  tags: ${{ steps.back_images.outputs.mc_image }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
-                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=mc
                   cache-to: type=gha,mode=max,scope=mc
                   provenance: mode=max
                   sbom: true
 
-            - name: Remove local build cache
-              if: ${{ steps.image.outputs.tag != '' }}
-              run: docker buildx prune --all --force
-
             - name: Build and push Velocity
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              if: ${{ steps.back_images.outputs.velocity_exists != 'true' }}
               uses: docker/build-push-action@v7
               with:
                   context: services/velocity
                   platforms: linux/amd64
                   pull: true
                   push: true
-                  tags: ${{ steps.image.outputs.prefix }}-velocity:${{ steps.image.outputs.tag }}
+                  tags: ${{ steps.back_images.outputs.velocity_image }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
-                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=velocity
                   cache-to: type=gha,mode=max,scope=velocity
                   provenance: mode=max
                   sbom: true
 
-            - name: Remove local build cache
-              if: ${{ steps.image.outputs.tag != '' }}
-              run: docker buildx prune --all --force
-
             - name: Build and push waiting room
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              if: ${{ steps.back_images.outputs.waiting_room_exists != 'true' }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -331,18 +327,14 @@ jobs:
                   platforms: linux/amd64
                   pull: true
                   push: true
-                  tags: ${{ steps.image.outputs.prefix }}-waiting-room:${{ steps.image.outputs.tag }}
+                  tags: ${{ steps.back_images.outputs.waiting_room_image }}
                   cache-from: type=gha,scope=waiting-room
                   cache-to: type=gha,mode=max,scope=waiting-room
                   provenance: mode=max
                   sbom: true
 
-            - name: Remove local build cache
-              if: ${{ steps.image.outputs.tag != '' }}
-              run: docker buildx prune --all --force
-
             - name: Build and push Surprising Saturday
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              if: ${{ steps.back_images.outputs.event_exists != 'true' }}
               uses: docker/build-push-action@v7
               with:
                   context: .
@@ -350,48 +342,62 @@ jobs:
                   platforms: linux/amd64
                   pull: true
                   push: true
-                  tags: ${{ steps.image.outputs.prefix }}-event:${{ steps.image.outputs.tag }}
+                  tags: ${{ steps.back_images.outputs.event_image }}
                   cache-from: type=gha,scope=event
                   cache-to: type=gha,mode=max,scope=event
                   provenance: mode=max
                   sbom: true
 
-            - name: Remove local build cache
-              if: ${{ steps.image.outputs.tag != '' }}
-              run: docker buildx prune --all --force
-
             - name: Build and push event controller
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              if: ${{ steps.back_images.outputs.event_controller_exists != 'true' }}
               uses: docker/build-push-action@v7
               with:
                   context: services/event-controller
                   platforms: linux/amd64
                   pull: true
                   push: true
-                  tags: ${{ steps.image.outputs.prefix }}-event-controller:${{ steps.image.outputs.tag }}
+                  tags: ${{ steps.back_images.outputs.event_controller_image }}
                   cache-from: type=gha,scope=event-controller
                   cache-to: type=gha,mode=max,scope=event-controller
                   provenance: mode=max
                   sbom: true
 
-            - name: Remove local build cache
-              if: ${{ steps.image.outputs.tag != '' }}
-              run: docker buildx prune --all --force
-
             - name: Build and push backup manager
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              if: ${{ steps.back_images.outputs.backup_exists != 'true' }}
               uses: docker/build-push-action@v7
               with:
                   context: services/backup
                   platforms: linux/amd64
                   pull: true
                   push: true
-                  tags: ${{ steps.image.outputs.prefix }}-backup:${{ steps.image.outputs.tag }}
+                  tags: ${{ steps.back_images.outputs.backup_image }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
-                      org.opencontainers.image.version=${{ steps.image.outputs.tag }}
                   cache-from: type=gha,scope=backup
                   cache-to: type=gha,mode=max,scope=backup
                   provenance: mode=max
                   sbom: true
+
+            - name: Publish tested image set
+              shell: bash
+              env:
+                  IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
+                  IMAGE_TAG: ${{ steps.image.outputs.tag }}
+                  API_IMAGE: ${{ steps.front_images.outputs.api_image }}
+                  WEB_IMAGE: ${{ steps.front_images.outputs.web_image }}
+                  MC_IMAGE: ${{ steps.back_images.outputs.mc_image }}
+                  VELOCITY_IMAGE: ${{ steps.back_images.outputs.velocity_image }}
+                  WAITING_ROOM_IMAGE: ${{ steps.back_images.outputs.waiting_room_image }}
+                  EVENT_IMAGE: ${{ steps.back_images.outputs.event_image }}
+                  EVENT_CONTROLLER_IMAGE: ${{ steps.back_images.outputs.event_controller_image }}
+                  BACKUP_IMAGE: ${{ steps.back_images.outputs.backup_image }}
+              run: |
+                  for service in api web mc velocity waiting-room event event-controller backup; do
+                    key=${service^^}
+                    key=${key//-/_}
+                    source_variable=${key}_IMAGE
+                    docker buildx imagetools create \
+                      --tag "${IMAGE_PREFIX}-${service}:${IMAGE_TAG}" \
+                      "${!source_variable}"
+                  done

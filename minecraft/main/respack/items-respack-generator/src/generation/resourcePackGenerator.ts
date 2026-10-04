@@ -1,4 +1,5 @@
 import path from 'path';
+import { existsSync } from 'node:fs';
 import {
 	CHARM_ARMOR_MATERIALS,
 	FISHING_SHADOW_MODEL_OVERRIDES,
@@ -38,6 +39,7 @@ import { buildGeneratedSingleTextureModel } from './singleTextureModel';
 
 interface GenerationContext {
 	readonly options: GeneratorOptions;
+	minifiedArmorAssetsAvailable: boolean;
 	generatedFiles: number;
 }
 
@@ -194,25 +196,80 @@ function createCharmEquipmentDefinition(
 	namespace: string,
 	item: CharmItemDefinition,
 	material?: ArmorMaterial,
+	minified = false,
 ): Record<string, unknown> {
 	const layerType = getCharmLayerType(item);
 	const charmLayer = { texture: `${namespace}:${item.equippableAssetId}` };
+	const armorLayers = material
+		? [
+				{
+					...(material === 'leather'
+						? { dyeable: { color_when_undyed: LEATHER_UNDYED_COLOR } }
+						: {}),
+					texture: minified
+						? `${namespace}:armor_minified/${material}`
+						: `${material === 'enderite' ? namespace : 'minecraft'}:${material}`,
+				},
+				...(minified && material === 'leather'
+					? [{ texture: `${namespace}:armor_minified/leather_overlay` }]
+					: []),
+			]
+		: [];
 
 	return {
 		layers: {
-			[layerType]: material
-				? [
-						{
-							...(material === 'leather'
-								? { dyeable: { color_when_undyed: LEATHER_UNDYED_COLOR } }
-								: {}),
-							texture: `${material === 'enderite' ? namespace : 'minecraft'}:${material}`,
-						},
-						charmLayer,
-					]
-				: [charmLayer],
+			[layerType]: [...armorLayers, charmLayer],
 		},
 	};
+}
+
+async function generateMinifiedArmorAssets(context: GenerationContext): Promise<boolean> {
+	const { outputDir, namespace, vanillaArmorAssetsDir } = context.options;
+	const sourceDir = path.join(path.dirname(vanillaArmorAssetsDir), 'minified_armor_assets');
+	const required = ['humanoid', 'humanoid_leggings'].flatMap((layerType) =>
+		CHARM_ARMOR_MATERIALS.flatMap((material) =>
+			[material, ...(material === 'leather' ? ['leather_overlay'] : [])].map((name) =>
+				path.join(sourceDir, layerType, `${name}.png`),
+			),
+		),
+	);
+	const missing = required.filter((file) => !existsSync(file));
+	if (missing.length) {
+		console.warn(
+			`Skipping minified armor assets: ${missing.length} of ${required.length} textures missing from ${sourceDir}`,
+		);
+		return false;
+	}
+	for (const material of CHARM_ARMOR_MATERIALS) {
+		const layers: Record<string, unknown> = {};
+		for (const layerType of ['humanoid', 'humanoid_leggings'] as const) {
+			const textures = [material, ...(material === 'leather' ? ['leather_overlay'] : [])];
+			layers[layerType] = textures.map((name) => ({
+				...(name === 'leather'
+					? { dyeable: { color_when_undyed: LEATHER_UNDYED_COLOR } }
+					: {}),
+				texture: `${namespace}:armor_minified/${name}`,
+			}));
+			for (const name of textures) {
+				await copyFile(
+					path.join(sourceDir, layerType, `${name}.png`),
+					equipmentTexturePngPath(
+						outputDir,
+						namespace,
+						layerType,
+						`armor_minified/${name}`,
+					),
+					context,
+				);
+			}
+		}
+		await writeJson(
+			equipmentJsonPath(outputDir, namespace, `armor_minified__${material}`),
+			{ layers },
+			context,
+		);
+	}
+	return true;
 }
 
 async function generateBasicItem(
@@ -350,6 +407,13 @@ async function generateCharmEquipmentVariants(
 			createCharmEquipmentDefinition(namespace, item, material),
 			context,
 		);
+		if (context.minifiedArmorAssetsAvailable) {
+			await writeJson(
+				equipmentJsonPath(outputDir, namespace, `${assetId}__minified`),
+				createCharmEquipmentDefinition(namespace, item, material, true),
+				context,
+			);
+		}
 	}
 }
 
@@ -402,6 +466,7 @@ export async function generateResourcePack(
 		throw new Error('Resource pack output must be separate from source data.');
 	const context: GenerationContext = {
 		options,
+		minifiedArmorAssetsAvailable: false,
 		generatedFiles: 0,
 	};
 
@@ -425,6 +490,7 @@ export async function generateResourcePack(
 		},
 		context,
 	);
+	context.minifiedArmorAssetsAvailable = await generateMinifiedArmorAssets(context);
 
 	const commandBlockCases: SelectorCase[] = [];
 	const carvedPumpkinCases: SelectorCase[] = [];

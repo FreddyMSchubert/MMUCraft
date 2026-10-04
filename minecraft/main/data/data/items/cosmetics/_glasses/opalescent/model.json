@@ -1,0 +1,76 @@
+{
+	"format_version": "26.3",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"1": "glassies:item/cosmetics/_glasses/opalescent"
+	},
+	"elements": [
+		{
+			"name": "Glasses",
+			"from": [3.5, 5.5, 5],
+			"to": [12.5, 10.5, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [3.5, 5.5, 5]},
+			"faces": {
+				"north": {"uv": [1, 0, 10, 5], "texture": "#1"},
+				"east": {"uv": [6, 8, 0, 12], "texture": "#1"},
+				"west": {"uv": [0, 12, 6, 16], "texture": "#1"}
+			}
+		},
+		{
+			"name": "Glasses",
+			"from": [12.5, 5.5, 5],
+			"to": [3.5, 10.5, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [12.5, 5.5, 5]},
+			"faces": {
+				"north": {"uv": [1, 0, 10, 5], "texture": "#1"},
+				"east": {"uv": [6, 8, 0, 12], "texture": "#1"},
+				"west": {"uv": [0, 12, 6, 16], "texture": "#1"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [90, 0, 80],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [90, 0, 80],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_righthand": {
+			"rotation": [-15, 125, 0],
+			"translation": [2, 2.5, 0],
+			"scale": [0.6, 0.6, 0.6]
+		},
+		"firstperson_lefthand": {
+			"rotation": [-15, 125, 0],
+			"translation": [2, 2.5, 0],
+			"scale": [0.6, 0.6, 0.6]
+		},
+		"ground": {
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"gui": {
+			"rotation": [22.5, 135, 0],
+			"translation": [1.25, 0, 0],
+			"scale": [1.6, 1.6, 1.6]
+		},
+		"head": {
+			"translation": [0, -2, -2.5],
+			"scale": [1.7, 1.7, 1.7]
+		},
+		"on_shelf": {
+			"rotation": [0, 180, 0]
+		}
+	},
+	"groups": [
+		{
+			"name": "group",
+			"origin": [3.5, 7.8, 4],
+			"scope": 0,
+			"color": 0,
+			"children": [0, 1]
+		}
+	]
+}

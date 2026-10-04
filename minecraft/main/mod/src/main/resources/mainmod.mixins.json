@@ -43,6 +43,7 @@
 		"LuckMobEffectMixin",
 		"InsertMultipleCoinsAtOnce",
 		"HopperFilterMixin",
+		"InfinityBowAmmoMixin",
 		"RedstoneRemoteChestMixin",
 		"AttackSwingCharmMixin",
 		"SoundEventRedirect",

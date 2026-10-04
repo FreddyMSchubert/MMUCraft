@@ -175,10 +175,14 @@ public final class ClaimsManager {
         return allowBlockMutation(level, pos, level.getFluidState(pos).createLegacyBlock());
     }
 
-    public static boolean allowEntitySpawn(Level level, Entity entity) {
-        if (!(entity instanceof Projectile) || entity instanceof FishingHook) return true;
-        ArrayDeque<ServerPlayer> actors = ACTORS.get();
-        return actors.isEmpty() || canAccess(actors.peek(), level, entity.blockPosition());
+    public static boolean allowProjectileHere(Entity entity) {
+        return !(entity instanceof Projectile projectile)
+                || allowProjectileAt(projectile, entity.blockPosition());
+    }
+
+    public static boolean allowProjectileAt(Projectile projectile, BlockPos pos) {
+        return projectile instanceof FishingHook
+                || canProjectileEnter(projectile, projectile.level(), pos);
     }
 
     public static boolean canAccess(ServerPlayer player, Level level, BlockPos pos) {
@@ -204,10 +208,10 @@ public final class ClaimsManager {
         return !Objects.equals(claimIdAt(level, from), claimIdAt(level, to));
     }
 
-    public static BlockHitResult projectileBarrier(Projectile projectile, Vec3 start, Vec3 movement) {
+    public static BlockHitResult deniedProjectileEntry(Projectile projectile, Vec3 start, Vec3 movement) {
         if (projectile instanceof FishingHook) return null;
-        if (movement.lengthSqr() == 0) return null;
         if (!ready) {
+            if (allowProjectileAt(projectile, BlockPos.containing(start))) return null;
             return new BlockHitResult(
                     start,
                     Direction.getApproximateNearest(movement).getOpposite(),
@@ -215,19 +219,14 @@ public final class ClaimsManager {
                     false
             );
         }
-        Entity owner = projectile.getOwner();
-        ServerPlayer player = owner instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        if (movement.lengthSqr() == 0) return null;
         Vec3 end = start.add(movement);
         BlockPos blockedPos = BlockGetter.traverseBlocks(
                 start,
                 end,
                 projectile,
-                (ignored, pos) -> {
-                    Claim claim = claimAt(projectile.level(), pos);
-                    return claim != null && (player == null || !canAccessClaim(player, claim))
-                            ? pos.immutable()
-                            : null;
-                },
+                (ignored, pos) -> allowProjectileAt(projectile, pos)
+                        ? null : pos.immutable(),
                 ignored -> null
         );
         if (blockedPos == null) return null;
@@ -317,6 +316,14 @@ public final class ClaimsManager {
 
     private static Claim claimAt(Level level, BlockPos pos) {
         return claims.get(new ClaimKey(level.dimension().identifier().toString(), ChunkPos.pack(pos)));
+    }
+
+    private static boolean canProjectileEnter(Projectile projectile, Level level, BlockPos pos) {
+        Entity owner = projectile.getOwner();
+        ServerPlayer player = owner instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        if (!ready) return player != null && isOperator(player);
+        Claim claim = claimAt(level, pos);
+        return claim == null || player != null && canAccessClaim(player, claim);
     }
 
     private static boolean isOperator(ServerPlayer player) {

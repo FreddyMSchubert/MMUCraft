@@ -5,6 +5,7 @@ import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 
@@ -12,12 +13,17 @@ import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 abstract class ServerLevelEntityMixin {
     @Inject(method = "addFreshEntity", at = @At("HEAD"), cancellable = true)
     private void mainmod$guardClaimedEntitySpawn(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (!ClaimsManager.allowEntitySpawn((ServerLevel) (Object) this, entity)) {
-            // Some entities register themselves with their owner in their constructor. Ensure a rejected
-            // spawn runs normal removal cleanup instead of leaving an owner pointing at an entity that was
-            // never added to the level (FishingHook is one vanilla example).
+        if (!ClaimsManager.allowProjectileHere(entity)) {
             entity.discard();
             cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(method = "tickNonPassenger", at = @At("HEAD"), cancellable = true)
+    private void mainmod$removeProjectileInsideClaim(Entity entity, CallbackInfo ci) {
+        if (!ClaimsManager.allowProjectileHere(entity)) {
+            entity.discard();
+            ci.cancel();
         }
     }
 }

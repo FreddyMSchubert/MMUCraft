@@ -27,7 +27,7 @@
 	"craftable": {
 		"recipes": [
 			{
-				"id": "fish-stew",
+				"id": "fish-stew-white",
 				"type": "mainmod:fake_crafting_shapeless",
 				"ingredients": [
 					"minecraft:bowl",
@@ -41,11 +41,39 @@
 				}
 			},
 			{
-				"id": "fish-stew",
+				"id": "fish-stew-red",
 				"type": "mainmod:fake_crafting_shapeless",
 				"ingredients": [
 					"minecraft:bowl",
 					"mainmod:cooked-red-fish",
+					"minecraft:carrot",
+					"minecraft:baked_potato"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-stew",
+					"count": 1
+				}
+			},
+			{
+				"id": "fish-stew-cod",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:bowl",
+					"minecraft:cooked_cod",
+					"minecraft:carrot",
+					"minecraft:baked_potato"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-stew",
+					"count": 1
+				}
+			},
+			{
+				"id": "fish-stew-salmon",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:bowl",
+					"minecraft:cooked_salmon",
 					"minecraft:carrot",
 					"minecraft:baked_potato"
 				],

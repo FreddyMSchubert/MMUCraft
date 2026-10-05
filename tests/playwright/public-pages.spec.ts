@@ -60,3 +60,49 @@ test('protected endpoints reject anonymous requests', async ({ request }) => {
 		expect(response.status()).toBe(401);
 	});
 });
+
+test('dyslexia mode applies across pages and survives a reload', async ({ page }) => {
+	await page.route('**/api/auth/me', async (route) => {
+		await route.fulfill({
+			json: {
+				user: {
+					id: 1,
+					minecraftUsername: 'TestPlayer',
+					skinUrl: null,
+					color: '#ffffff',
+					isMember: true,
+					isCommittee: false,
+					isSuperAdmin: false,
+					customEmojis: [],
+				},
+			},
+		});
+	});
+
+	await page.goto('/play/misc/settings');
+	const toggle = page.getByText('Dyslexia mode');
+	await expect(toggle).toBeVisible();
+	await expect(page.locator('html')).not.toHaveAttribute('data-dyslexia-mode');
+	await expect(page.locator('.siteBackground')).not.toHaveCSS('background-image', 'none');
+
+	await toggle.click();
+	await expect(page.locator('html')).toHaveAttribute('data-dyslexia-mode', '');
+	await expect(page.locator('.siteBackground')).toHaveCSS('background-image', 'none');
+	await expect(page.locator('.dashboard')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+	await expect(page.locator('.dashboard')).toHaveCSS('color', 'rgb(0, 0, 0)');
+	await expect(page.locator('.dashboard')).toHaveCSS('border-color', 'rgb(0, 0, 0)');
+	await expect(page.locator('.dashboard')).toHaveCSS('font-family', /OpenDyslexic/);
+
+	await page.goto('/wordle');
+	await expect(page.locator('html')).toHaveAttribute('data-dyslexia-mode', '');
+	await page.reload();
+	await expect(page.locator('html')).toHaveAttribute('data-dyslexia-mode', '');
+	await page.goto('/');
+	await expect(page.locator('.panoramaFace').first()).toHaveCSS('background-image', 'none');
+	await expect(page.locator('.minecraftButton').first()).toHaveCSS('border-image-source', 'none');
+
+	await page.goto('/play/misc/settings');
+	await toggle.click();
+	await expect(page.locator('html')).not.toHaveAttribute('data-dyslexia-mode');
+	await expect(page.locator('.siteBackground')).not.toHaveCSS('background-image', 'none');
+});

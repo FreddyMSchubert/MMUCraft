@@ -1,0 +1,57 @@
+@font-face {
+	font-family: 'OpenDyslexic';
+	src: url('/assets/fonts/open-dyslexic/OpenDyslexic-Regular.woff2') format('woff2');
+	font-display: swap;
+	font-style: normal;
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'OpenDyslexic';
+	src: url('/assets/fonts/open-dyslexic/OpenDyslexic-Bold.woff2') format('woff2');
+	font-display: swap;
+	font-style: normal;
+	font-weight: 700 900;
+}
+
+@font-face {
+	font-family: 'OpenDyslexic';
+	src: url('/assets/fonts/open-dyslexic/OpenDyslexic-Italic.woff2') format('woff2');
+	font-display: swap;
+	font-style: italic;
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'OpenDyslexic';
+	src: url('/assets/fonts/open-dyslexic/OpenDyslexic-BoldItalic.woff2') format('woff2');
+	font-display: swap;
+	font-style: italic;
+	font-weight: 700 900;
+}
+
+html[data-dyslexia-mode],
+html[data-dyslexia-mode] body,
+html[data-dyslexia-mode] body *,
+html[data-dyslexia-mode] body *::before,
+html[data-dyslexia-mode] body *::after {
+	background-color: #fff !important;
+	background-image: none !important;
+	border-color: #000 !important;
+	color: #000 !important;
+	font-family: 'Dabloon Symbol Noto Sans', 'OpenDyslexic', sans-serif !important;
+	text-shadow: none !important;
+}
+
+html[data-dyslexia-mode] .minecraftButton {
+	border: 2px solid #000 !important;
+	border-image: none !important;
+}
+
+html[data-dyslexia-mode] .settingToggle i::after {
+	background-color: #000 !important;
+}
+
+html[data-dyslexia-mode] ::placeholder {
+	color: #000 !important;
+}

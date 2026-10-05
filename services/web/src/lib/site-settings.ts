@@ -7,6 +7,7 @@ export type CosmeticPreviewView = 'cosmetic' | 'item-frame' | 'player';
 export interface SiteSettings {
 	arachnophobiaMode: boolean;
 	cosmeticPreviewView: CosmeticPreviewView;
+	dyslexiaMode: boolean;
 	reduce3dRendering: boolean;
 	mysteriousSetting: boolean;
 }
@@ -14,6 +15,7 @@ export interface SiteSettings {
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
 	arachnophobiaMode: false,
 	cosmeticPreviewView: 'cosmetic',
+	dyslexiaMode: false,
 	reduce3dRendering: false,
 	mysteriousSetting: false,
 };
@@ -33,6 +35,7 @@ function readSiteSettings(): SiteSettings {
 				stored.cosmeticPreviewView === 'player'
 					? stored.cosmeticPreviewView
 					: 'cosmetic',
+			dyslexiaMode: Boolean(stored.dyslexiaMode),
 			reduce3dRendering: Boolean(stored.reduce3dRendering),
 			mysteriousSetting: Boolean(stored.mysteriousSetting),
 		};
@@ -64,4 +67,24 @@ export function useSiteSettings() {
 	}
 
 	return { settings, updateSetting };
+}
+
+export function SiteSettingsEffects() {
+	useEffect(() => {
+		const apply = () => {
+			document.documentElement.toggleAttribute(
+				'data-dyslexia-mode',
+				readSiteSettings().dyslexiaMode,
+			);
+		};
+		apply();
+		window.addEventListener(SETTINGS_EVENT, apply);
+		window.addEventListener('storage', apply);
+		return () => {
+			window.removeEventListener(SETTINGS_EVENT, apply);
+			window.removeEventListener('storage', apply);
+		};
+	}, []);
+
+	return null;
 }

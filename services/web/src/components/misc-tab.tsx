@@ -148,6 +148,14 @@ function SettingsSection() {
 			<h3>Website settings</h3>
 			<div className="settingsList">
 				<SettingToggle
+					checked={settings.dyslexiaMode}
+					onChange={(checked) => {
+						updateSetting('dyslexiaMode', checked);
+					}}
+					title="Dyslexia mode"
+					description="Uses OpenDyslexic with black text on white backgrounds and removes background images."
+				/>
+				<SettingToggle
 					checked={settings.arachnophobiaMode}
 					onChange={(checked) => {
 						updateSetting('arachnophobiaMode', checked);

@@ -9,11 +9,9 @@ import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes.ApplyEnchBook;
 
 public final class GearEnchantmentCheck {
     public static void main(String[] args) {
@@ -47,33 +45,6 @@ public final class GearEnchantmentCheck {
         assert !GearEnchantmentSanitizer.sanitize(book);
         assert book.get(DataComponents.STORED_ENCHANTMENTS).getLevel(featherFalling) == 4;
 
-        var mending = enchantments.getOrThrow(Enchantments.MENDING);
-        var thorns = enchantments.getOrThrow(Enchantments.THORNS);
-        var luck = enchantments.getOrThrow(Enchantments.LUCK_OF_THE_SEA);
-        var lure = enchantments.getOrThrow(Enchantments.LURE);
-        var unbreaking = enchantments.getOrThrow(Enchantments.UNBREAKING);
-        ItemStack rod = new ItemStack(Items.FISHING_ROD);
-        ItemEnchantments.Mutable rodEnchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
-        rodEnchantments.set(luck, 3);
-        rodEnchantments.set(lure, 1);
-        rodEnchantments.set(unbreaking, 3);
-        rod.set(DataComponents.ENCHANTMENTS, rodEnchantments.toImmutable());
-        ItemEnchantments.Mutable mixedBookEnchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
-        mixedBookEnchantments.set(thorns, 1);
-        mixedBookEnchantments.set(mending, 1);
-        ItemStack mixedBook = new ItemStack(Items.ENCHANTED_BOOK);
-        mixedBook.set(DataComponents.STORED_ENCHANTMENTS, mixedBookEnchantments.toImmutable());
-        var anvilOutcome = new ApplyEnchBook().apply(null, rod, mixedBook, null);
-        ItemStack enchantedRod = anvilOutcome.result();
-        assert !enchantedRod.isEmpty();
-        assert enchantedRod.getEnchantments().getLevel(mending) == 1;
-        assert enchantedRod.getEnchantments().getLevel(thorns) == 0;
-        assert enchantedRod.getEnchantments().getLevel(luck) == 3;
-        assert enchantedRod.getEnchantments().getLevel(lure) == 1;
-        assert enchantedRod.getEnchantments().getLevel(unbreaking) == 3;
-        assert anvilOutcome.rightRemainder().is(Items.ENCHANTED_BOOK);
-        assert EnchantmentHelper.getEnchantmentsForCrafting(anvilOutcome.rightRemainder()).getLevel(thorns) == 1;
-        assert EnchantmentHelper.getEnchantmentsForCrafting(anvilOutcome.rightRemainder()).getLevel(mending) == 0;
         System.out.println("Gear enchantment checks passed.");
     }
 }

@@ -13,6 +13,7 @@ public final class FeatureToggles {
     public static final String VOID = "void";
     public static final String WELCOMING = "welcoming";
     public static final String CIRCUS = "circus";
+    public static final String SOARING = "soaring";
 
     private static volatile Map<String, Boolean> values = Map.of();
     private static volatile long revision;

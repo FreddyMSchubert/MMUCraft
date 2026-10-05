@@ -1,16 +1,16 @@
 {
-	"title": "Happy Ghast Speedup Charm",
+	"title": "Cloud Splitter Charm",
 	"id": "charm-happy-ghast-speedup",
 	"modelType": "charm",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": ["White cloud, blue ice, can't lose."],
+	"tooltips": ["You'll be going so fast, you'll be splitting in half the clouds!"],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 125,
 		"description": "Makes a Happy Ghast fly faster while its controlling rider wears this charm.",
 		"unlockWeight": 75,
-		"unlockMessage": "Unlocked charm: Happy Ghast Speedup Charm. Your fluffy taxi has a new top gear.",
+		"unlockMessage": "Unlocked charm: Cloud Splitter Charm. Makes your happy ghast faster.",
 		"gameplayToggle": "circus"
 	},
 	"charm": {
@@ -58,7 +58,8 @@
 					"minecraft:magma_cream",
 					"minecraft:blaze_powder",
 					"minecraft:soul_soil",
-					"minecraft:splash_potion[minecraft:potion_contents=strong_swiftness]=Splash Potion of Swiftness II"
+					"minecraft:splash_potion[minecraft:potion_contents=strong_swiftness]=Splash Potion of Swiftness II",
+					"minecraft:netherite_ingot"
 				]
 			},
 			{
@@ -71,6 +72,9 @@
 					"minecraft:popped_chorus_fruit",
 					"minecraft:end_rod",
 					"minecraft:end_rod",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
+					"minecraft:netherite_ingot",
 					"minecraft:shulker_shell",
 					"minecraft:dragon_breath",
 					"minecraft:lingering_potion[minecraft:potion_contents=strong_swiftness]=Lingering Potion of Swiftness II"
@@ -80,15 +84,15 @@
 				"level": 5,
 				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 8 blocks per second.",
 				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
-				"dabloons": 500,
+				"dabloons": 225,
 				"upgradeIngredients": [
 					"minecraft:blue_ice",
 					"minecraft:blue_ice",
 					"minecraft:blue_ice",
 					"minecraft:blue_ice",
-					"minecraft:netherite_ingot",
-					"minecraft:netherite_ingot",
+					"mainmod:enderite-ingot",
 					"minecraft:nether_star",
+					"minecraft:dragon_egg",
 					"minecraft:elytra"
 				]
 			},
@@ -96,7 +100,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 9 blocks per second.",
 				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
-				"dabloons": 750,
+				"dabloons": 300,
 				"upgradeIngredients": [
 					"mainmod:enderite-ingot",
 					"mainmod:enderite-ingot",
@@ -114,7 +118,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Makes a ridden Happy Ghast fly at 10 blocks per second.",
 				"abilityStatusRelative": "Increases ridden Happy Ghast speed by 1 block per second.",
-				"dabloons": 1000,
+				"dabloons": 420,
 				"upgradeIngredients": [
 					"mainmod:enderite-ingot",
 					"mainmod:enderite-ingot",

@@ -1,0 +1,33 @@
+{
+	"title": "Disco Ball",
+	"id": "deco-disco-ball",
+	"modelType": "basic-3d",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": ["It's time to move and groove!"],
+	"decoBlock": {
+		"ground": false,
+		"wall": false,
+		"ceiling": true,
+		"lightLevel": 7
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/disco-ball",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": ["APA", "PCP", "APA"],
+				"key": {
+					"P": "minecraft:glass_pane",
+					"A": "minecraft:amethyst_shard",
+					"C": "minecraft:white_concrete"
+				},
+				"result": {
+					"stack": "mainmod:deco-disco-ball",
+					"count": 1
+				}
+			}
+		]
+	}
+}

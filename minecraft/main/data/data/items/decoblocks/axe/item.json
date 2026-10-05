@@ -1,0 +1,28 @@
+{
+	"title": "Decorative Axe",
+	"id": "deco-axe",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Here's Johhny!"],
+	"decoBlock": {
+		"ground": true,
+		"wall": true,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/axe",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": ["minecraft:iron_axe"],
+				"result": {
+					"stack": "mainmod:deco-axe",
+					"count": 1
+				}
+			}
+		]
+	}
+}

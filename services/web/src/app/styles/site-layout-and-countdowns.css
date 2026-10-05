@@ -144,7 +144,7 @@
 		rgba(188, 125, 0, 0.86),
 		rgba(75, 48, 0, 0.92)
 	);
-	background-size: 240% 100%;
+	background-size: 200% 100%;
 	animation: countdownShimmer 2s linear infinite;
 }
 
@@ -159,7 +159,7 @@
 
 @keyframes countdownShimmer {
 	to {
-		background-position: -240% 0;
+		background-position: 200% 0;
 	}
 }
 

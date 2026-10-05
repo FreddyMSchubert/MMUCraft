@@ -123,6 +123,14 @@ tasks.register('checkMapResize', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkArmorAppearance', JavaExec) {
+    group = 'verification'
+    description = 'Check armor and charm appearance toggles and crafting.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.ArmorAppearanceCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkPlayerColors', JavaExec) {
     group = 'verification'
     description = 'Check player RGB formatting, vanilla team colors, and persisted join colors.'
@@ -131,6 +139,13 @@ tasks.register('checkPlayerColors', JavaExec) {
     enableAssertions = true
     workingDir = layout.buildDirectory.dir('playerColorsCheck').get().asFile
     doFirst { workingDir.mkdirs() }
+}
+
+tasks.register('checkBedrockFormatting', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.BedrockFormattingCheck'
+    enableAssertions = true
 }
 
 tasks.register('checkAdvancementAnnouncements', JavaExec) {
@@ -148,11 +163,13 @@ tasks.register('checkGearEnchantments', JavaExec) {
 }
 
 tasks.named('check') {
+    dependsOn tasks.named('checkBedrockFormatting')
     dependsOn tasks.named('checkAdvancementAnnouncements')
     dependsOn tasks.named('checkPlayerColors')
     dependsOn tasks.named('checkGearEnchantments')
     dependsOn 'checkFishing'
     dependsOn 'checkMapResize'
+    dependsOn 'checkArmorAppearance'
 }
 
 tasks.register('checkGlider', JavaExec) {
@@ -226,9 +243,12 @@ tasks.register('checkDailyCatalog', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+def generatedResources = file("src/main/generated")
+
 processResources {
     dependsOn "generateMiniBlockRecipes"
     exclude "data/mainmod/advancement/mastery/**"
+    exclude { it.file.toPath().startsWith(generatedResources.toPath()) }
     inputs.property "version", project.version
     inputs.file("../data/drops.json")
 
@@ -307,8 +327,8 @@ java {
 
 jar {
     dependsOn "runDatagen"
-    from("src/main/generated/data/mainmod/advancement/mastery") {
-        into "data/mainmod/advancement/mastery"
+    from(generatedResources) {
+        include "data/**"
     }
     inputs.property "archivesName", project.base.archivesName
 

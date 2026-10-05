@@ -1,27 +1,21 @@
+# The 4 GiB dev host needs swap before these shared-memory settings are deployed.
+# Heap sizes and soft reservations remain; there are no per-container hard memory caps.
 services:
     api:
         environment:
             NODE_OPTIONS: --max-old-space-size=192
-        mem_limit: 384m
         mem_reservation: 128m
-        memswap_limit: 512m
         deploy:
             resources:
-                limits:
-                    memory: 384m
                 reservations:
                     memory: 128m
 
     web:
         environment:
             NODE_OPTIONS: --max-old-space-size=192
-        mem_limit: 384m
         mem_reservation: 128m
-        memswap_limit: 512m
         deploy:
             resources:
-                limits:
-                    memory: 384m
                 reservations:
                     memory: 128m
 
@@ -29,15 +23,11 @@ services:
         environment:
             MEMORY: 1G
             INIT_MEMORY: 256M
-        mem_limit: 1536m
-        mem_reservation: 512m
-        memswap_limit: 2g
+        mem_reservation: 1g
         deploy:
             resources:
-                limits:
-                    memory: 1536m
                 reservations:
-                    memory: 512m
+                    memory: 1g
 
     waiting-room:
         environment:
@@ -45,33 +35,23 @@ services:
             INIT_MEMORY: 64M
             JVM_XX_OPTS: -XX:ActiveProcessorCount=1
         cpus: '0.5'
-        mem_limit: 768m
-        mem_reservation: 128m
-        memswap_limit: 768m
+        mem_reservation: 512m
 
     surprising-saturday:
         environment:
             MEMORY: 1G
             INIT_MEMORY: 256M
-        mem_limit: 1536m
         mem_reservation: 256m
-        memswap_limit: 2g
 
     event-controller:
-        mem_limit: 96m
         mem_reservation: 24m
-        memswap_limit: 128m
 
     velocity:
         environment:
             MEMORY: 192M
-        mem_limit: 384m
         mem_reservation: 96m
-        memswap_limit: 512m
         deploy:
             resources:
-                limits:
-                    memory: 384m
                 reservations:
                     memory: 96m
 
@@ -80,33 +60,29 @@ services:
             - --config.file=/etc/prometheus/prometheus.yml
             - --storage.tsdb.retention.time=1d
             - --log.level=warn
-        mem_limit: 192m
         mem_reservation: 48m
-        memswap_limit: 256m
 
     grafana:
-        mem_limit: 256m
         mem_reservation: 64m
-        memswap_limit: 256m
 
     loki:
         environment:
             LOKI_RETENTION_PERIOD: 24h
-        mem_limit: 256m
         mem_reservation: 64m
-        memswap_limit: 256m
 
     alloy:
-        mem_limit: 96m
         mem_reservation: 24m
-        memswap_limit: 128m
 
     cadvisor:
-        mem_limit: 96m
         mem_reservation: 24m
-        memswap_limit: 128m
 
     node-exporter:
-        mem_limit: 48m
         mem_reservation: 16m
-        memswap_limit: 64m
+
+    nginx:
+        mem_limit: !reset null
+        memswap_limit: !reset null
+        deploy:
+            resources:
+                limits:
+                    memory: !reset null

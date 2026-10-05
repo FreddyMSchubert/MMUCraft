@@ -2,6 +2,7 @@ name: ${COMPOSE_PROJECT_NAME:-kubecraft-playwright}
 
 services:
     api:
+        image: ${PLAYWRIGHT_API_IMAGE:-kubecraft-playwright-api}
         build:
             context: ..
             dockerfile: services/api/Dockerfile
@@ -33,6 +34,7 @@ services:
             retries: 30
 
     web:
+        image: ${PLAYWRIGHT_WEB_IMAGE:-kubecraft-playwright-web}
         build:
             context: ../services/web
             target: runner

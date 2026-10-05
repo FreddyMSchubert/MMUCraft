@@ -65,7 +65,7 @@ export type ArmorMaterial =
 
 export interface GeneratorOptions {
 	readonly sourceDir: string;
-	readonly vanillaArmorAssetsDir: string;
+	readonly armorAssetsDir: string;
 	readonly outputDir: string;
 	readonly namespace: string;
 	readonly packDescription: string;

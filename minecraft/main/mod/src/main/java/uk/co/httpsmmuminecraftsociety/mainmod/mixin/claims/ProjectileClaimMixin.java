@@ -3,6 +3,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.claims;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -17,9 +19,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import java.util.function.Predicate;
 
 @Mixin(ProjectileUtil.class)
-abstract class ProjectileWallMixin {
+abstract class ProjectileClaimMixin {
     @Inject(method = "getHitResult", at = @At("RETURN"), cancellable = true)
-    private static void mainmod$collideWithClaimBoundary(
+    private static void mainmod$discardAtClaimBoundary(
             Vec3 start,
             Entity entity,
             Predicate<Entity> predicate,
@@ -29,12 +31,14 @@ abstract class ProjectileWallMixin {
             ClipContext.Block clipType,
             CallbackInfoReturnable<HitResult> cir
     ) {
-        if (!(entity instanceof Projectile projectile)) return;
-        BlockHitResult barrier = ClaimsManager.projectileBarrier(projectile, start, movement);
+        if (level.isClientSide() || !(entity instanceof Projectile projectile)) return;
+        BlockHitResult deniedEntry = ClaimsManager.deniedProjectileEntry(projectile, start, movement);
         HitResult vanilla = cir.getReturnValue();
-        if (barrier != null && (vanilla == null
-                || barrier.getLocation().distanceToSqr(start) < vanilla.getLocation().distanceToSqr(start))) {
-            cir.setReturnValue(barrier);
+        if (deniedEntry != null && (vanilla == null
+                || deniedEntry.getLocation().distanceToSqr(start) <= vanilla.getLocation().distanceToSqr(start))) {
+            projectile.discard();
+            cir.setReturnValue(BlockHitResult.miss(start,
+                    Direction.getApproximateNearest(movement).getOpposite(), BlockPos.containing(start)));
         }
     }
 }

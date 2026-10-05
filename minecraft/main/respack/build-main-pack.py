@@ -187,6 +187,7 @@ def pack_input_fingerprint() -> str:
 		GENERATOR / "tsconfig.json",
 		GENERATOR / "src",
 		GENERATOR / "vanilla_armor_assets",
+		GENERATOR / "minified_armor_assets",
 		MERGER / "pom.xml",
 		MERGER / "src",
 		*local_pack_paths(config),
@@ -324,8 +325,8 @@ def build_generated():
 		"--",
 		"--source",
 		str(ITEMS),
-		"--vanilla-armor",
-		str(GENERATOR / "vanilla_armor_assets"),
+		"--armor-assets",
+		str(GENERATOR),
 		"--output",
 		str(GENERATED),
 		cwd=GENERATOR,
@@ -434,6 +435,16 @@ def remove_pack_metadata():
 	print(f"==> Removed {removed} archive metadata files")
 
 
+def write_pack_archive(source: Path, destination: Path):
+	with zipfile.ZipFile(destination, "w") as archive:
+		for file in sorted(path for path in source.rglob("*") if path.is_file()):
+			info = zipfile.ZipInfo(file.relative_to(source).as_posix(), (1980, 1, 1, 0, 0, 0))
+			info.compress_type = zipfile.ZIP_DEFLATED
+			info.external_attr = 0o100644 << 16
+			with file.open("rb") as input_file, archive.open(info, "w") as output_file:
+				shutil.copyfileobj(input_file, output_file)
+
+
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--force", action="store_true", help="Rebuild the resource pack even when inputs are unchanged.")
@@ -471,7 +482,7 @@ def main():
 	remove_pack_metadata()
 	shutil.copy2(GENERATED / "pack.mcmeta", MERGED / "pack.mcmeta")
 	print("==> Creating zip archive")
-	shutil.make_archive(str(FINAL_ZIP.with_suffix("")), "zip", MERGED)
+	write_pack_archive(MERGED, FINAL_ZIP)
 
 	pack_sha1 = sha1_file(FINAL_ZIP)
 	publish_pack_outputs(pack_sha1)

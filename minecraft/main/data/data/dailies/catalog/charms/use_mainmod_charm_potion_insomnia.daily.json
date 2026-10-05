@@ -1,7 +1,7 @@
 {
 	"type": "use_charm",
 	"charm": "mainmod:charm-potion-insomnia",
-	"drop": "nether",
+	"drop": "soaring",
 	"baseCost": 10,
 	"rewardPerIteration": 0,
 	"minimum": 1,

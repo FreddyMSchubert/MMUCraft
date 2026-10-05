@@ -1,6 +1,7 @@
 {
 	"type": "kill_entity",
 	"entity": "minecraft:phantom",
+	"drop": "soaring",
 	"baseCost": 13,
 	"rewardPerIteration": 0,
 	"minimum": 4,

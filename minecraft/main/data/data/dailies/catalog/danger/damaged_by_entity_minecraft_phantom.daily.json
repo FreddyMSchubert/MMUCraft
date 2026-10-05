@@ -1,6 +1,7 @@
 {
 	"type": "take_damage_entity",
 	"entity": "minecraft:phantom",
+	"drop": "soaring",
 	"baseCost": 3,
 	"rewardPerIteration": 6,
 	"minimum": 1,

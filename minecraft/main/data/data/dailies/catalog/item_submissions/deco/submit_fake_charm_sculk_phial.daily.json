@@ -1,6 +1,7 @@
 {
 	"type": "submit_fake_item",
 	"fakeItem": "charm-sculk-phial",
+	"drop": "beach-party",
 	"baseCost": 7,
 	"rewardPerIteration": 5,
 	"minimum": 1,

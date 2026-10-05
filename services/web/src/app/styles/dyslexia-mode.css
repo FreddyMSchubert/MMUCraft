@@ -55,3 +55,27 @@ html[data-dyslexia-mode] .settingToggle i::after {
 html[data-dyslexia-mode] ::placeholder {
 	color: #000 !important;
 }
+
+html[data-dyslexia-mode] :is(.fishFireworks, .fireworksStage),
+html[data-dyslexia-mode] :is(.fishFireworks, .fireworksStage) * {
+	background-color: transparent !important;
+}
+
+html[data-dyslexia-mode] button[aria-pressed='true'] {
+	background-color: #000 !important;
+	color: #fff !important;
+}
+
+html[data-dyslexia-mode] button[aria-pressed='true'] * {
+	background-color: transparent !important;
+	color: #fff !important;
+}
+
+html[data-dyslexia-mode] .emissiveSparks {
+	display: none !important;
+}
+
+html[data-dyslexia-mode] .shopSearchFilter.active {
+	outline: 2px solid #000;
+	outline-offset: 2px;
+}

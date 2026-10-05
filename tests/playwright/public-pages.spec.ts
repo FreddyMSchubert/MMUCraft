@@ -78,6 +78,23 @@ test('dyslexia mode applies across pages and survives a reload', async ({ page }
 			},
 		});
 	});
+	await page.route('**/api/shop', async (route) => {
+		await route.fulfill({
+			json: {
+				isMember: true,
+				drops: [],
+				dealDate: '2026-10-05',
+				shoppingSunday: false,
+				availability: { knowledge: true, charms: true, cosmetics: true },
+				items: [],
+			},
+		});
+	});
+	await page.route('**/api/fishing/compendium', async (route) => {
+		await route.fulfill({
+			json: { currentUserId: 1, selectedUserId: 1, players: [], fish: [] },
+		});
+	});
 
 	await page.goto('/play/misc/settings');
 	const toggle = page.getByText('Dyslexia mode');
@@ -92,9 +109,23 @@ test('dyslexia mode applies across pages and survives a reload', async ({ page }
 	await expect(page.locator('.dashboard')).toHaveCSS('color', 'rgb(0, 0, 0)');
 	await expect(page.locator('.dashboard')).toHaveCSS('border-color', 'rgb(0, 0, 0)');
 	await expect(page.locator('.dashboard')).toHaveCSS('font-family', /OpenDyslexic/);
+	await page.goto('/play/shop');
+	const tags = page.getByRole('group', { name: 'Tags filter' });
+	const allTags = tags.getByRole('button', { name: 'All' });
+	const dyeable = tags.getByRole('button', { name: 'Dyeable' });
+	await expect(allTags).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+	await dyeable.click();
+	await expect(dyeable).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+	await expect(dyeable).toHaveCSS('color', 'rgb(255, 255, 255)');
+	await expect(allTags).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+	await expect(page.locator('.emissiveSparks').first()).toHaveCSS('display', 'none');
+	await page.goto('/play/fishing');
+	await expect(page.getByRole('heading', { name: 'Fish Compendium' })).toBeVisible();
+	await expect(page.locator('.fishFireworks')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
 	await page.goto('/wordle');
 	await expect(page.locator('html')).toHaveAttribute('data-dyslexia-mode', '');
+	await expect(page.locator('.fireworksStage')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 	await page.reload();
 	await expect(page.locator('html')).toHaveAttribute('data-dyslexia-mode', '');
 	await page.goto('/');

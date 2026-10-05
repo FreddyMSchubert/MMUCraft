@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LeaderboardPodium } from '@/components/leaderboard-podium';
 import { PlayerName } from '@/components/player-name';
 import { fuzzyFilter, PlayerSelector } from '@/components/player-selector';
@@ -41,36 +41,35 @@ export function PlayersTab({
 		direction: 'desc',
 	});
 	const [leaderboardKey, setLeaderboardKey] = useState(DEFAULT_LEADERBOARD_KEY);
-	const [loadingMore, setLoadingMore] = useState(false);
 	const [search, setSearch] = useState('');
-	const autoLoadedPage = useRef(-1);
+	const [retry, setRetry] = useState(0);
 
 	const load = useCallback(
-		async (page = 0, append = false, signal?: AbortSignal) => {
-			if (!append) autoLoadedPage.current = -1;
-			const query = new URLSearchParams({ page: String(page) });
+		async (signal?: AbortSignal) => {
+			const query = new URLSearchParams();
 			if (playerName) query.set('player', playerName);
-			const response = await fetch(`/api/players?${query}`, {
-				cache: 'no-store',
-				signal,
-			});
-			const body = await response.json().catch(() => null);
+			let result: PlayersResponse | null = null;
+			for (let page = 0; ; page++) {
+				query.set('page', String(page));
+				const response = await fetch(`/api/players?${query}`, {
+					cache: 'no-store',
+					signal,
+				});
+				const body = await response.json().catch(() => null);
+				if (!response.ok) throw new Error(apiMessage(body, 'Failed to load players'));
 
-			if (!response.ok) {
-				throw new Error(apiMessage(body, 'Failed to load players'));
+				const next = body as PlayersResponse;
+				if (!result) result = next;
+				else {
+					result = {
+						...next,
+						players: [...result.players, ...next.players],
+						statOptions: mergeStatOptions(result.statOptions, next.statOptions),
+					};
+				}
+				if (!next.hasMore) break;
 			}
-
-			const next = body as PlayersResponse;
-			setData((current) => {
-				if (!append || !current) return next;
-				const players = new Map(current.players.map((player) => [player.id, player]));
-				for (const player of next.players) players.set(player.id, player);
-				return {
-					...next,
-					players: [...players.values()],
-					statOptions: mergeStatOptions(current.statOptions, next.statOptions),
-				};
-			});
+			setData(result);
 		},
 		[playerName],
 	);
@@ -81,7 +80,9 @@ export function PlayersTab({
 
 		async function loadInitial() {
 			try {
-				await load(0, false, controller.signal);
+				setError('');
+				setData(null);
+				await load(controller.signal);
 			} catch (caught) {
 				if (!cancelled) {
 					setError(caught instanceof Error ? caught.message : 'Failed to load players');
@@ -95,7 +96,7 @@ export function PlayersTab({
 			cancelled = true;
 			controller.abort();
 		};
-	}, [load]);
+	}, [load, retry]);
 
 	const players = useMemo(() => data?.players ?? [], [data?.players]);
 	const statOptions = useMemo(() => data?.statOptions ?? [], [data?.statOptions]);
@@ -112,7 +113,7 @@ export function PlayersTab({
 	}, [data?.selectedPlayer, playerName, players]);
 
 	useEffect(() => {
-		// ponytail: Load every page during a search. Add server-side fuzzy search if this becomes slow.
+		// ponytail: The directory loads every player. Add server-side search if this becomes slow.
 		if (
 			!data ||
 			!playerName ||
@@ -223,28 +224,20 @@ export function PlayersTab({
 		}
 	}
 
-	const loadMore = useCallback(async () => {
-		if (!data || loadingMore || !data.hasMore) return;
-		setLoadingMore(true);
-		setError('');
-		try {
-			await load(data.page + 1, true);
-		} catch (caught) {
-			setError(caught instanceof Error ? caught.message : 'Could not load all players.');
-		} finally {
-			setLoadingMore(false);
-		}
-	}, [data, load, loadingMore]);
-
-	useEffect(() => {
-		if (data?.hasMore && !loadingMore && autoLoadedPage.current !== data.page) {
-			autoLoadedPage.current = data.page;
-			void loadMore();
-		}
-	}, [data?.hasMore, data?.page, loadMore, loadingMore]);
-
 	if (error && !data) {
-		return <p className="authError">{error}</p>;
+		return (
+			<div className="playersLoading" role="alert">
+				<p className="authError">{error}</p>
+				<button
+					type="button"
+					onClick={() => {
+						setRetry((current) => current + 1);
+					}}
+				>
+					Retry loading players
+				</button>
+			</div>
+		);
 	}
 
 	if (selectedPlayer) {
@@ -271,22 +264,11 @@ export function PlayersTab({
 		);
 	}
 
-	if (!data || data.hasMore) {
+	if (!data) {
 		return (
 			<div className="playersLoading" role="status" aria-live="polite">
-				{error ? (
-					<>
-						<p>{error}</p>
-						<button type="button" onClick={() => void loadMore()}>
-							Retry loading players
-						</button>
-					</>
-				) : (
-					<>
-						<span className="playersLoadingSpinner" aria-hidden="true" />
-						<p>Loading players...</p>
-					</>
-				)}
+				<span className="playersLoadingSpinner" aria-hidden="true" />
+				<p>Loading players...</p>
 			</div>
 		);
 	}

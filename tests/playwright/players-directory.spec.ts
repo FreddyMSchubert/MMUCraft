@@ -42,6 +42,12 @@ test('player places use the final sorted list and tied positions', async ({
 		page: 0,
 		hasMore: true,
 	};
+	const middlePage = {
+		...body,
+		players: [makePlayer(106, 'miaalicexoxo', 0)],
+		page: 1,
+		hasMore: true,
+	};
 	const finalPage = {
 		...body,
 		players: [
@@ -49,7 +55,7 @@ test('player places use the final sorted list and tied positions', async ({
 			makePlayer(104, 'Delta', 80),
 			{ ...makePlayer(105, 'Admin', 999), isRanked: false },
 		],
-		page: 1,
+		page: 2,
 		hasMore: false,
 	};
 	let finishLoading = () => undefined;
@@ -57,9 +63,12 @@ test('player places use the final sorted list and tied positions', async ({
 		finishLoading = resolve;
 	});
 	await page.route('**/api/players?*', async (route) => {
-		if (new URL(route.request().url()).searchParams.get('page') === '1') {
+		const requestedPage = new URL(route.request().url()).searchParams.get('page');
+		if (requestedPage === '2') {
 			await delayedPage;
 			await route.fulfill({ json: finalPage });
+		} else if (requestedPage === '1') {
+			await route.fulfill({ json: middlePage });
 		} else {
 			await route.fulfill({ json: firstPage });
 		}
@@ -74,7 +83,7 @@ test('player places use the final sorted list and tied positions', async ({
 	const nextPageRequested = page.waitForRequest(
 		(request) =>
 			new URL(request.url()).pathname === '/api/players' &&
-			new URL(request.url()).searchParams.get('page') === '1',
+			new URL(request.url()).searchParams.get('page') === '2',
 	);
 	await page.goto('/play/players');
 	await nextPageRequested;
@@ -83,11 +92,14 @@ test('player places use the final sorted list and tied positions', async ({
 
 	finishLoading();
 	const rows = page.locator('.playersTable tbody tr');
-	await expect(rows).toHaveCount(5);
-	await expect(rows.locator('td:first-child')).toHaveText(['1', '2', '4', '4', '-']);
+	await expect(rows).toHaveCount(6);
+	await expect(rows.locator('td:first-child')).toHaveText(['1', '2', '4', '4', '5', '-']);
 	await page.getByRole('button', { name: 'Sort by Play Time' }).click();
-	await expect(rows.locator('td:first-child')).toHaveText(['2', '2', '3', '4', '-']);
+	await expect(rows.locator('td:first-child')).toHaveText(['1', '3', '3', '4', '5', '-']);
+	await page.getByRole('textbox', { name: 'Search players' }).fill('miaalicexoxo');
+	await expect(rows).toHaveCount(1);
+	await expect(rows).toContainText('miaalicexoxo');
 	await page.getByRole('textbox', { name: 'Search players' }).fill('Delta');
 	await expect(rows).toHaveCount(1);
-	await expect(rows.locator('td:first-child')).toHaveText(['2']);
+	await expect(rows.locator('td:first-child')).toHaveText(['3']);
 });

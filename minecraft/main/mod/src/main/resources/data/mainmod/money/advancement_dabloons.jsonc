@@ -465,7 +465,7 @@
 	"blazeandcave:challenges/explorer_of_worlds": 85, // Explorer of Worlds: discover every biome in every dimension; largest exploration checklist short of border travel.
 	"blazeandcave:challenges/farlander": 185, // Farlander: reach the world border; displacement potions reduce the travel effort.
 	"blazeandcave:challenges/global_vaccination": 153, // Global Vaccination: cure every zombie villager profession from every biome; villager biome/profession grid plus cure costs.
-	"blazeandcave:challenges/hearts_of_the_stack": 42, // Hearts of the Stack: collect 64 Hearts of the Sea; buried-treasure map grind at scale.
+	"blazeandcave:challenges/hearts_of_the_stack": 0, // Hearts of the Stack: collect 64 Hearts of the Sea; buried-treasure map grind at scale.
 	"blazeandcave:challenges/highway_to_hell": 142, // Highway to Hell: send every mob to the Nether and kill them there; portal logistics plus full mob checklist.
 	"blazeandcave:challenges/i_am_loot": 101, // I am Loot!: open every loot chest type; broad structure exploration and chest-type tracking.
 	"blazeandcave:challenges/im_in_space": 76, // I'm in Space!: levitate upward 256 blocks; Shulker control, height planning, and fall safety.

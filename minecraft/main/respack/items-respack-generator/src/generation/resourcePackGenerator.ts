@@ -225,15 +225,44 @@ function createCharmEquipmentDefinition(
 
 async function generateMinifiedArmorAssets(context: GenerationContext): Promise<boolean> {
 	const { outputDir, namespace, armorAssetsDir } = context.options;
+	const turtleTexturePath = path.join(
+		armorAssetsDir,
+		'minified_armor_assets',
+		'humanoid',
+		'turtle_scute.png',
+	);
+	const hasMinifiedTurtleTexture = existsSync(turtleTexturePath);
+	const turtleTexture = hasMinifiedTurtleTexture
+		? `${namespace}:armor_minified/turtle_scute`
+		: 'minecraft:turtle_scute';
+	if (hasMinifiedTurtleTexture) {
+		await copyFile(
+			turtleTexturePath,
+			equipmentTexturePngPath(
+				outputDir,
+				namespace,
+				'humanoid',
+				'armor_minified/turtle_scute',
+			),
+			context,
+		);
+	}
+	await writeJson(
+		equipmentJsonPath(outputDir, namespace, 'armor_minified__turtle_scute'),
+		{
+			layers: {
+				humanoid: [{ texture: turtleTexture }],
+				humanoid_baby: [{ texture: turtleTexture }],
+			},
+		},
+		context,
+	);
 	const required = ['humanoid', 'humanoid_leggings'].flatMap((layerType) =>
 		CHARM_ARMOR_MATERIALS.flatMap((material) =>
 			[material, ...(material === 'leather' ? ['leather_overlay'] : [])].map((name) =>
 				path.join(armorAssetsDir, 'minified_armor_assets', layerType, `${name}.png`),
 			),
 		),
-	);
-	required.push(
-		path.join(armorAssetsDir, 'minified_armor_assets', 'humanoid', 'turtle_scute.png'),
 	);
 	const missing = required.filter((file) => !existsSync(file));
 	if (missing.length) {
@@ -258,11 +287,6 @@ async function generateMinifiedArmorAssets(context: GenerationContext): Promise<
 			}
 		}
 	}
-	await copyFile(
-		path.join(armorAssetsDir, 'minified_armor_assets', 'humanoid', 'turtle_scute.png'),
-		equipmentTexturePngPath(outputDir, namespace, 'humanoid', 'armor_minified/turtle_scute'),
-		context,
-	);
 	for (const material of CHARM_ARMOR_MATERIALS) {
 		const layers: Record<string, unknown> = {};
 		for (const layerType of ['humanoid', 'humanoid_leggings'] as const) {
@@ -280,16 +304,6 @@ async function generateMinifiedArmorAssets(context: GenerationContext): Promise<
 			context,
 		);
 	}
-	await writeJson(
-		equipmentJsonPath(outputDir, namespace, 'armor_minified__turtle_scute'),
-		{
-			layers: {
-				humanoid: [{ texture: `${namespace}:armor_minified/turtle_scute` }],
-				humanoid_baby: [{ texture: `${namespace}:armor_minified/turtle_scute` }],
-			},
-		},
-		context,
-	);
 	return true;
 }
 

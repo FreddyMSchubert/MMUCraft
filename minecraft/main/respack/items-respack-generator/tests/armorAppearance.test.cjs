@@ -69,10 +69,6 @@ test('equipment variants use authored minified textures mirrored beside base tex
 			await fs.copyFile(source, path.join(authored, layer, `${name}.png`));
 		}
 	}
-	await fs.copyFile(
-		path.join(generatorDir, 'vanilla_armor_assets/humanoid/turtle_scute.png'),
-		path.join(authored, 'humanoid/turtle_scute.png'),
-	);
 	summary = await generateResourcePack(items, options);
 	assert.equal(summary.skippedItems, 0);
 	const equipment = path.join(outputDir, 'assets/mmu_pack/equipment');
@@ -105,9 +101,29 @@ test('equipment variants use authored minified textures mirrored beside base tex
 	const turtle = JSON.parse(
 		await fs.readFile(path.join(equipment, 'armor_minified__turtle_scute.json')),
 	);
-	assert.deepEqual(turtle.layers.humanoid, [{ texture: 'mmu_pack:armor_minified/turtle_scute' }]);
+	assert.deepEqual(turtle.layers.humanoid, [{ texture: 'minecraft:turtle_scute' }]);
 	assert.deepEqual(turtle.layers.humanoid_baby, turtle.layers.humanoid);
 	assert.equal(turtle.layers.humanoid_leggings, undefined);
+	await assert.rejects(
+		fs.access(
+			path.join(
+				outputDir,
+				'assets/mmu_pack/textures/entity/equipment/humanoid/armor_minified/turtle_scute.png',
+			),
+		),
+	);
+	await fs.copyFile(
+		path.join(generatorDir, 'vanilla_armor_assets/humanoid/turtle_scute.png'),
+		path.join(authored, 'humanoid/turtle_scute.png'),
+	);
+	summary = await generateResourcePack(items, options);
+	assert.equal(summary.skippedItems, 0);
+	const minifiedTurtle = JSON.parse(
+		await fs.readFile(path.join(equipment, 'armor_minified__turtle_scute.json')),
+	);
+	assert.deepEqual(minifiedTurtle.layers.humanoid, [
+		{ texture: 'mmu_pack:armor_minified/turtle_scute' },
+	]);
 	await fs.access(
 		path.join(
 			outputDir,

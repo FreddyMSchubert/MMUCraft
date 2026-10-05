@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.claims;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,7 +15,7 @@ abstract class ServerLevelEntityMixin {
     @Inject(method = "addFreshEntity", at = @At("HEAD"), cancellable = true)
     private void mainmod$guardClaimedEntitySpawn(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         if (!ClaimsManager.allowProjectileHere(entity)) {
-            entity.discard();
+            ClaimsManager.rejectProjectile((Projectile) entity);
             cir.setReturnValue(false);
         }
     }
@@ -22,7 +23,7 @@ abstract class ServerLevelEntityMixin {
     @Inject(method = "tickNonPassenger", at = @At("HEAD"), cancellable = true)
     private void mainmod$removeProjectileInsideClaim(Entity entity, CallbackInfo ci) {
         if (!ClaimsManager.allowProjectileHere(entity)) {
-            entity.discard();
+            ClaimsManager.rejectProjectile((Projectile) entity);
             ci.cancel();
         }
     }

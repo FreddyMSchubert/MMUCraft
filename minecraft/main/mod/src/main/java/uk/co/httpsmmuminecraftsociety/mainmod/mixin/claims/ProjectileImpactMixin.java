@@ -20,7 +20,7 @@ abstract class ProjectileImpactMixin {
         BlockPos pos = hit instanceof BlockHitResult blockHit
                 ? blockHit.getBlockPos() : BlockPos.containing(hit.getLocation());
         if (!ClaimsManager.allowProjectileAt(projectile, pos)) {
-            projectile.discard();
+            ClaimsManager.rejectProjectile(projectile);
             cir.setReturnValue(ProjectileDeflection.NONE);
         }
     }

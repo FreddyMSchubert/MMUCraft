@@ -5,6 +5,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -62,7 +63,9 @@ public class CharmorManager
     }
 
     public static void initArmorTooltipIfUninitialized(ItemStack stack) {
-        if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return;
+        if (!canMinifyArmor(stack)) return;
+        if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)
+                && !FeatureToggles.isEnabled(FeatureToggles.SOARING)) return;
 
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (tag.getBoolean(TOOLTIP_INITIALLY_POPULATED_BOOL).orElse(false)) return;
@@ -74,31 +77,32 @@ public class CharmorManager
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(updatedTag));
     }
     public static ItemStack updateArmorTooltip(ItemStack stack) {
-        if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) {
-            return stack;
-        }
+        if (!canMinifyArmor(stack)) return stack;
 
-        List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
+        boolean charmable = stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS);
+        List<Component> tooltip = charmable
+                ? new ArrayList<>()
+                : new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
+        if (charmable) {
+            List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
+            tooltip.add(Component.literal("Charm Slots:").withStyle(style -> style.withItalic(false)));
 
-        List<Component> tooltip = new ArrayList<>();
-        tooltip.add(Component.literal("Charm Slots:").withStyle(style -> style.withItalic(false)));
-
-        int slotCount = calcCharmSlotCount(stack);
-        for (int i = 0; i < slotCount; i++) {
-            String literal = (i + 1) + ": ";
-
-            if (i >= storedCharms.size()) {
-                literal += "-";
-            } else {
-                literal += resolveStoredCharmDisplayName(storedCharms.get(i));
+            int slotCount = calcCharmSlotCount(stack);
+            for (int i = 0; i < slotCount; i++) {
+                String literal = (i + 1) + ": ";
+                literal += i >= storedCharms.size() ? "-" : resolveStoredCharmDisplayName(storedCharms.get(i));
+                tooltip.add(Component.literal(literal).withStyle(style -> style.withItalic(false)));
             }
-
-            tooltip.add(Component.literal(literal).withStyle(style -> style.withItalic(false)));
+        } else {
+            tooltip.removeIf(line -> line.getString().equals("Armor: Full")
+                    || line.getString().equals("Armor: Minified"));
         }
 
         if (FeatureToggles.isEnabled(FeatureToggles.SOARING)) {
-            tooltip.add(Component.literal("Charms: " + (charmsHidden(stack) ? "Hidden" : "Shown"))
-                    .withStyle(style -> style.withItalic(false)));
+            if (charmable) {
+                tooltip.add(Component.literal("Charms: " + (charmsHidden(stack) ? "Hidden" : "Shown"))
+                        .withStyle(style -> style.withItalic(false)));
+            }
             tooltip.add(Component.literal("Armor: " + (armorMinified(stack) ? "Minified" : "Full"))
                     .withStyle(style -> style.withItalic(false)));
         }
@@ -109,9 +113,9 @@ public class CharmorManager
         return stack;
     }
     public static void refreshArmorCharmAppearance(ItemStack stack) {
-        if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return;
+        if (!canMinifyArmor(stack)) return;
 
-        List<StoredCharmData> storedCharms = CharmStackData.getStoredCharms(stack);
+        List<StoredCharmData> storedCharms = getStoredArmorCharms(stack);
         Equippable itemDefaultEquippable = stack.getItem().components().get(DataComponents.EQUIPPABLE);
         if (itemDefaultEquippable == null) return;
 
@@ -183,8 +187,21 @@ public class CharmorManager
                 .copyTag().getBoolean(ARMOR_MINIFIED_BOOL).orElse(false);
     }
 
+    public static boolean canMinifyArmor(ItemStack stack) {
+        return stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)
+                || stack.is(ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS);
+    }
+
     private static String getArmorMaterialType(ItemStack stack) {
         if (isEnderite(stack)) return "enderite";
+        if (stack.is(Items.DIAMOND_HELMET)) return "diamond";
+        if (stack.is(Items.NETHERITE_HELMET)) return "netherite";
+        if (stack.is(Items.IRON_HELMET)) return "iron";
+        if (stack.is(Items.GOLDEN_HELMET)) return "gold";
+        if (stack.is(Items.COPPER_HELMET)) return "copper";
+        if (stack.is(Items.LEATHER_HELMET)) return "leather";
+        if (stack.is(Items.CHAINMAIL_HELMET)) return "chainmail";
+        if (stack.is(Items.TURTLE_HELMET)) return "turtle_scute";
         if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND)) return "diamond";
         if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE)) return "netherite";
         if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_IRON)) return "iron";

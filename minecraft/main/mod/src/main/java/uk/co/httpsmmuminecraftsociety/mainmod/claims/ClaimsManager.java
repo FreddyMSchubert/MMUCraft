@@ -13,7 +13,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,6 +23,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -183,6 +188,24 @@ public final class ClaimsManager {
     public static boolean allowProjectileAt(Projectile projectile, BlockPos pos) {
         return projectile instanceof FishingHook
                 || canProjectileEnter(projectile, projectile.level(), pos);
+    }
+
+    public static void rejectProjectile(Projectile projectile) {
+        if (projectile.isRemoved()) return;
+        if (projectile instanceof ThrownTrident trident
+                && trident.pickup == AbstractArrow.Pickup.ALLOWED) {
+            ItemStack item = trident.getPickupItemStackOrigin().copy();
+            if (!item.isEmpty()) {
+                if (trident.getOwner() instanceof ServerPlayer player) {
+                    if (!player.hasInfiniteMaterials()) {
+                        player.getInventory().placeItemBackInInventory(item, Prediction.SERVER_ONLY);
+                    }
+                } else if (trident.level() instanceof ServerLevel level) {
+                    trident.spawnAtLocation(level, item);
+                }
+            }
+        }
+        projectile.discard();
     }
 
     public static boolean canAccess(ServerPlayer player, Level level, BlockPos pos) {

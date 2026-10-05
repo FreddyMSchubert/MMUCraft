@@ -27,7 +27,7 @@ public final class ToggleArmorAppearanceRecipe extends CustomRecipe {
         boolean hasGlass = false;
         for (ItemStack stack : input.items()) {
             if (stack.isEmpty()) continue;
-            if (stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS) && !hasArmor) {
+            if (acceptsArmor(stack) && !hasArmor) {
                 hasArmor = true;
             } else if (stack.is(toggleCharms ? Items.GLASS_PANE : Items.GLASS) && !hasGlass) {
                 hasGlass = true;
@@ -42,7 +42,7 @@ public final class ToggleArmorAppearanceRecipe extends CustomRecipe {
     public ItemStack assemble(CraftingInput input) {
         if (!matches(input, null)) return ItemStack.EMPTY;
         ItemStack armor = input.items().stream()
-                .filter(stack -> stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS))
+                .filter(this::acceptsArmor)
                 .findFirst().orElseThrow().copyWithCount(1);
         CustomData.update(DataComponents.CUSTOM_DATA, armor, tag -> {
             String key = toggleCharms ? CharmorManager.CHARMS_HIDDEN_BOOL : CharmorManager.ARMOR_MINIFIED_BOOL;
@@ -50,6 +50,11 @@ public final class ToggleArmorAppearanceRecipe extends CustomRecipe {
             tag.putBoolean(key, !current);
         });
         return CharmorManager.updateArmorTooltip(armor);
+    }
+
+    private boolean acceptsArmor(ItemStack stack) {
+        return toggleCharms ? stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)
+                : CharmorManager.canMinifyArmor(stack);
     }
 
     @Override

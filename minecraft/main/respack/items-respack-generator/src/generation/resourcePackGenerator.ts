@@ -232,6 +232,9 @@ async function generateMinifiedArmorAssets(context: GenerationContext): Promise<
 			),
 		),
 	);
+	required.push(
+		path.join(armorAssetsDir, 'minified_armor_assets', 'humanoid', 'turtle_scute.png'),
+	);
 	const missing = required.filter((file) => !existsSync(file));
 	if (missing.length) {
 		console.warn(
@@ -255,6 +258,11 @@ async function generateMinifiedArmorAssets(context: GenerationContext): Promise<
 			}
 		}
 	}
+	await copyFile(
+		path.join(armorAssetsDir, 'minified_armor_assets', 'humanoid', 'turtle_scute.png'),
+		equipmentTexturePngPath(outputDir, namespace, 'humanoid', 'armor_minified/turtle_scute'),
+		context,
+	);
 	for (const material of CHARM_ARMOR_MATERIALS) {
 		const layers: Record<string, unknown> = {};
 		for (const layerType of ['humanoid', 'humanoid_leggings'] as const) {
@@ -272,6 +280,16 @@ async function generateMinifiedArmorAssets(context: GenerationContext): Promise<
 			context,
 		);
 	}
+	await writeJson(
+		equipmentJsonPath(outputDir, namespace, 'armor_minified__turtle_scute'),
+		{
+			layers: {
+				humanoid: [{ texture: `${namespace}:armor_minified/turtle_scute` }],
+				humanoid_baby: [{ texture: `${namespace}:armor_minified/turtle_scute` }],
+			},
+		},
+		context,
+	);
 	return true;
 }
 

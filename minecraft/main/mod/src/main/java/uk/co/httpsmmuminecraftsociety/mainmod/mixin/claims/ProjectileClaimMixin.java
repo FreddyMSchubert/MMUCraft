@@ -36,7 +36,7 @@ abstract class ProjectileClaimMixin {
         HitResult vanilla = cir.getReturnValue();
         if (deniedEntry != null && (vanilla == null
                 || deniedEntry.getLocation().distanceToSqr(start) <= vanilla.getLocation().distanceToSqr(start))) {
-            projectile.discard();
+            ClaimsManager.rejectProjectile(projectile);
             cir.setReturnValue(BlockHitResult.miss(start,
                     Direction.getApproximateNearest(movement).getOpposite(), BlockPos.containing(start)));
         }

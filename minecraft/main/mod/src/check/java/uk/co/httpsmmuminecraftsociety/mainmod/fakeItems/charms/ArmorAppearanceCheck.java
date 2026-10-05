@@ -1,11 +1,14 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
@@ -34,15 +37,21 @@ public final class ArmorAppearanceCheck {
                 .forEach(components -> components.apply());
         var chestplate = Items.DIAMOND_CHESTPLATE.builtInRegistryHolder();
         var netheriteChestplate = Items.NETHERITE_CHESTPLATE.builtInRegistryHolder();
+        List<Holder<Item>> helmets = List.of(Items.LEATHER_HELMET.builtInRegistryHolder(),
+                Items.COPPER_HELMET.builtInRegistryHolder(), Items.GOLDEN_HELMET.builtInRegistryHolder(),
+                Items.CHAINMAIL_HELMET.builtInRegistryHolder(), Items.IRON_HELMET.builtInRegistryHolder(),
+                Items.DIAMOND_HELMET.builtInRegistryHolder(), Items.NETHERITE_HELMET.builtInRegistryHolder(),
+                Items.TURTLE_HELMET.builtInRegistryHolder());
         var itemRegistry = (MappedRegistry<Item>) BuiltInRegistries.ITEM;
         var frozen = MappedRegistry.class.getDeclaredField("frozen");
         frozen.setAccessible(true);
         frozen.setBoolean(itemRegistry, false);
-        itemRegistry.bindTags(Map.of(
+        itemRegistry.bindTags(Map.<TagKey<Item>, List<Holder<Item>>>of(
                 ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS, List.of(chestplate, netheriteChestplate),
                 ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_DIAMOND, List.of(chestplate),
                 ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS_NETHERITE, List.of(netheriteChestplate),
-                ModItemTagProvider.SINGLE_CHARM_COMBINABLE_ARMOR_ITEMS, List.of(chestplate)
+                ModItemTagProvider.SINGLE_CHARM_COMBINABLE_ARMOR_ITEMS, List.of(chestplate),
+                ModItemTagProvider.COSMETIC_COMBINABLE_ARMOR_ITEMS, helmets
         ));
         var refreshTags = MappedRegistry.class.getDeclaredMethod("refreshTagsInHolders");
         refreshTags.setAccessible(true);
@@ -67,16 +76,36 @@ public final class ArmorAppearanceCheck {
         var glassInput = CraftingInput.of(2, 1, List.of(armor, new ItemStack(Items.GLASS)));
         assert !pane.matches(paneInput, null) && pane.assemble(paneInput).isEmpty();
         assert !glass.matches(glassInput, null) && glass.assemble(glassInput).isEmpty();
+        assert !glass.matches(CraftingInput.of(2, 1,
+                List.of(new ItemStack(Items.DIAMOND_HELMET), new ItemStack(Items.GLASS))), null);
 
         setSoaring(true);
         CharmorManager.updateArmorTooltip(armor);
         assert armor.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines().size() == 4;
-        for (var excluded : List.of(Items.DIAMOND_HELMET, Items.CARVED_PUMPKIN)) {
+        for (var excluded : List.of(Items.CARVED_PUMPKIN)) {
             for (var recipe : List.of(pane, glass)) {
                 var ingredient = recipe == pane ? Items.GLASS_PANE : Items.GLASS;
                 var input = CraftingInput.of(2, 1, List.of(new ItemStack(excluded), new ItemStack(ingredient)));
                 assert !recipe.matches(input, null) && recipe.assemble(input).isEmpty();
             }
+        }
+        for (var entry : Map.of(
+                Items.LEATHER_HELMET, "leather", Items.COPPER_HELMET, "copper",
+                Items.GOLDEN_HELMET, "gold", Items.CHAINMAIL_HELMET, "chainmail",
+                Items.IRON_HELMET, "iron", Items.DIAMOND_HELMET, "diamond",
+                Items.NETHERITE_HELMET, "netherite", Items.TURTLE_HELMET, "turtle_scute").entrySet()) {
+            ItemStack helmet = new ItemStack(entry.getKey());
+            helmet.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Personal note"))));
+            var helmetPane = CraftingInput.of(2, 1, List.of(helmet, new ItemStack(Items.GLASS_PANE)));
+            assert !pane.matches(helmetPane, null) && pane.assemble(helmetPane).isEmpty();
+            helmet = craft(glass, helmet, Items.GLASS);
+            assert asset(helmet).equals("mmu_pack:armor_minified__" + entry.getValue());
+            assert helmet.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines().stream()
+                    .map(Component::getString).toList().equals(List.of("Personal note", "Armor: Minified"));
+            helmet = craft(glass, helmet, Items.GLASS);
+            assert helmet.get(DataComponents.EQUIPPABLE).equals(entry.getKey().components().get(DataComponents.EQUIPPABLE));
+            assert helmet.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines().stream()
+                    .map(Component::getString).toList().equals(List.of("Personal note", "Armor: Full"));
         }
 
         armor = craft(pane, armor, Items.GLASS_PANE);
@@ -112,10 +141,23 @@ public final class ArmorAppearanceCheck {
         enderite = craft(glass, enderite, Items.GLASS);
         assert asset(enderite).equals("mmu_pack:enderite");
 
+        ItemStack enderiteHelmet = new ItemStack(Items.NETHERITE_HELMET);
+        CustomData.update(DataComponents.CUSTOM_DATA, enderiteHelmet,
+                tag -> tag.putBoolean(CharmorManager.ENDERITE_MARKER_BOOL, true));
+        enderiteHelmet = craft(glass, enderiteHelmet, Items.GLASS);
+        assert asset(enderiteHelmet).equals("mmu_pack:armor_minified__enderite");
+        enderiteHelmet = craft(glass, enderiteHelmet, Items.GLASS);
+        assert asset(enderiteHelmet).equals("mmu_pack:enderite");
+
+        ItemStack minifiedHelmet = craft(glass, new ItemStack(Items.DIAMOND_HELMET), Items.GLASS);
         setSoaring(false);
         CharmorManager.updateArmorTooltip(hiddenMinified);
         assert asset(hiddenMinified).equals("mmu_pack:test_charm__diamond");
         assert hiddenMinified.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines().size() == 2;
+        CharmorManager.updateArmorTooltip(minifiedHelmet);
+        assert minifiedHelmet.get(DataComponents.EQUIPPABLE)
+                .equals(Items.DIAMOND_HELMET.components().get(DataComponents.EQUIPPABLE));
+        assert minifiedHelmet.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines().isEmpty();
         assert !glass.matches(CraftingInput.of(2, 1, List.of(plain, new ItemStack(Items.GLASS))), null);
         System.out.println("Armor appearance checks passed.");
     }

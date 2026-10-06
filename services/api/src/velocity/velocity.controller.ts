@@ -13,6 +13,8 @@ import {
 } from '@nestjs/common';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { DiscordService } from '../discord/discord.service';
+import { CommandLogsService } from '../database/command-logs.service';
+import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { SurprisingSaturdayService } from './surprising-saturday.service';
 import { VelocityService } from './velocity.service';
 
@@ -86,7 +88,38 @@ export class VelocityInternalController {
 	constructor(
 		private readonly velocity: VelocityService,
 		private readonly discord: DiscordService,
+		private readonly commandLogs: CommandLogsService,
 	) {}
+
+	@Post('command-log')
+	recordCommand(
+		@Headers('authorization') authorization: string | undefined,
+		@Body()
+		body:
+			| { uuid?: unknown; username?: unknown; serverName?: unknown; command?: unknown }
+			| undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		if (
+			typeof body?.uuid !== 'string' ||
+			!normalizeMinecraftUuid(body.uuid) ||
+			typeof body.username !== 'string' ||
+			!/^[A-Za-z0-9_]{3,16}$/.test(body.username) ||
+			typeof body.command !== 'string' ||
+			!body.command.trim() ||
+			body.command.length > 32767 ||
+			!['main', 'waiting-room', 'surprising-saturday', 'proxy'].includes(
+				String(body.serverName),
+			)
+		)
+			throw new BadRequestException('Invalid command log entry');
+		return this.commandLogs.record({
+			command: body.command.replace(/^\//, ''),
+			actor_name: body.username,
+			minecraft_uuid: body.uuid,
+			source: body.serverName === 'main' ? 'minecraft' : String(body.serverName),
+		});
+	}
 
 	@Get('player-count')
 	playerCount(@Headers('authorization') authorization: string | undefined) {

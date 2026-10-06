@@ -8,6 +8,7 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
@@ -104,6 +105,18 @@ public final class MmuCraftVelocity {
         proxy.getScheduler().buildTask(this, this::checkCapacity)
                 .repeat(Duration.ofSeconds(1))
                 .schedule();
+    }
+
+    @Subscribe
+    public void onCommand(CommandExecuteEvent event) {
+        if (!(event.getCommandSource() instanceof Player player)) return;
+        String serverName = player.getCurrentServer()
+                .map(connection -> connection.getServerInfo().getName()).orElse("proxy");
+        api.recordCommand(player.getUniqueId().toString(), player.getUsername(), serverName, event.getCommand())
+                .exceptionally(error -> {
+                    logger.warn("Could not save player command to the command log", error);
+                    return null;
+                });
     }
 
     @Subscribe

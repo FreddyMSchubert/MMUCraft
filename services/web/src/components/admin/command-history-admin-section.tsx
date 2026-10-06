@@ -9,8 +9,8 @@ import type { AdminPlayer, CommandLogEntry } from './admin-data.types';
 import type { AdminTabController } from './use-admin-tab-controller';
 
 interface Filters {
-	isOperator: '' | 'true' | 'false';
-	source: '' | 'minecraft' | 'discord';
+	isOperator: '' | 'true' | 'false' | 'unknown';
+	source: '' | 'minecraft' | 'waiting-room' | 'surprising-saturday' | 'proxy' | 'discord';
 	playerName: string;
 	from: string;
 	to: string;
@@ -110,10 +110,7 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 		<section className="adminSection commandLogSection">
 			<div className="adminSectionHeader">
 				<h3>Command log</h3>
-				<p>
-					Every command attempt from Minecraft and Discord. History is retained
-					indefinitely.
-				</p>
+				<p>Player, server, and Discord commands stay in this log.</p>
 			</div>
 			<form className="commandLogFilters" onSubmit={applyFilters}>
 				<label>
@@ -130,6 +127,7 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 						<option value="">All</option>
 						<option value="true">Operator</option>
 						<option value="false">Non-operator</option>
+						<option value="unknown">Unknown</option>
 					</select>
 				</label>
 				<label>
@@ -140,8 +138,11 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 							setDraft({ ...draft, source: event.target.value as Filters['source'] });
 						}}
 					>
-						<option value="">Minecraft + Discord</option>
-						<option value="minecraft">Minecraft</option>
+						<option value="">All sources</option>
+						<option value="minecraft">Main server</option>
+						<option value="waiting-room">Waiting room</option>
+						<option value="surprising-saturday">Surprising Saturday</option>
+						<option value="proxy">Proxy</option>
 						<option value="discord">Discord</option>
 					</select>
 				</label>
@@ -227,11 +228,27 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 								<td>
 									<CommandActor entry={entry} players={players} />
 								</td>
-								<td>{entry.source === 'discord' ? 'Discord' : 'Minecraft'}</td>
+								<td>
+									{
+										{
+											minecraft: 'Main server',
+											'waiting-room': 'Waiting room',
+											'surprising-saturday': 'Surprising Saturday',
+											proxy: 'Proxy',
+											discord: 'Discord',
+										}[entry.source]
+									}
+								</td>
 								<td>
 									<CommandOutcome entry={entry} />
 								</td>
-								<td>{entry.isOperator ? 'Operator' : 'Non-operator'}</td>
+								<td>
+									{entry.isOperator === null
+										? 'Unknown'
+										: entry.isOperator
+											? 'Operator'
+											: 'Non-operator'}
+								</td>
 								<td>{formatPreciseDateTime(entry.createdAtUnixMs)}</td>
 							</tr>
 						))}
@@ -315,7 +332,7 @@ function CommandActor({ entry, players }: { entry: CommandLogEntry; players: Adm
 
 function CommandOutcome({ entry }: { entry: CommandLogEntry }) {
 	if (entry.succeeded === null)
-		return <span title="Outcome was not recorded for this historical command">—</span>;
+		return <span title="Outcome is not available for this command">—</span>;
 	return entry.succeeded ? (
 		<span
 			className="commandOutcome commandOutcome-success"

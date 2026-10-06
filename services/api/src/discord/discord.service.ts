@@ -14,6 +14,7 @@ import {
 } from 'discord.js';
 import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
 import { DatabaseService, velocitySettings } from '../database/database.service';
+import { CommandLogsService } from '../database/command-logs.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { OnlinePlayerPresenceService } from '../players/online-player-presence.service';
@@ -178,6 +179,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly playerPresence: OnlinePlayerPresenceService,
 		private readonly identities: MinecraftIdentityService,
+		private readonly commandLogs: CommandLogsService,
 	) {}
 
 	onApplicationBootstrap() {
@@ -470,6 +472,12 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		const command = interaction.options.getString('command', true);
 		try {
 			if (interaction.channelId === this.waitingChannelId) {
+				this.commandLogs.record({
+					command: command.replace(/^\//, ''),
+					source: 'discord',
+					actor_name: interaction.user.tag,
+					is_operator: true,
+				});
 				const output = await this.queueWaitingCommand(command);
 				await interaction.editReply(
 					`\`\`\`\n${output.replaceAll('```', '``\\`').slice(0, 1900)}\n\`\`\``,

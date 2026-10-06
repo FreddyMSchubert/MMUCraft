@@ -40,6 +40,10 @@ final class ApiClient {
         return post("/api/internal/velocity/waiting-state", new AccessRequest(uuid, username), ConnectedResponse.class);
     }
 
+    CompletableFuture<ConnectedResponse> recordCommand(String uuid, String username, String serverName, String command) {
+        return post("/api/internal/velocity/command-log", new CommandLogRequest(uuid, username, serverName, command), ConnectedResponse.class);
+    }
+
     private <T> CompletableFuture<T> post(String path, Object body, Class<T> responseType) {
         HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(4))
@@ -64,6 +68,8 @@ final class ApiClient {
     record AccessRequest(String uuid, String username) { }
 
     record ConnectedRequest(String uuid, String serverName) { }
+
+    record CommandLogRequest(String uuid, String username, String serverName, String command) { }
 
     record ConnectedResponse(boolean ok) { }
 

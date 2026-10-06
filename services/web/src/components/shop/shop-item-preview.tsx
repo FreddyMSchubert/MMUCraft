@@ -109,6 +109,7 @@ export function ShopPreview({
 				onEmissionSupport={onEmissionSupport}
 			/>
 		);
+	if (item.renderMode === 'model') return <div className="shopReduced3dPlaceholder" />;
 	if (item.iconUrl && item.animation)
 		return <AnimatedTexturePreview url={item.iconUrl} animation={item.animation} />;
 	if (item.iconUrl)
@@ -208,7 +209,21 @@ function ShopModelPreview({
 	const [ready, setReady] = useState(false);
 	const [liveReady, setLiveReady] = useState(false);
 	const [failed, setFailed] = useState(false);
+	const [retryCount, setRetryCount] = useState(0);
 	const nightModeRef = useRef(nightMode);
+	useEffect(() => {
+		if (!failed) return;
+		const timer = window.setTimeout(
+			() => {
+				setFailed(false);
+				setRetryCount((count) => count + 1);
+			},
+			2_000 * 2 ** Math.min(retryCount, 4),
+		);
+		return () => {
+			window.clearTimeout(timer);
+		};
+	}, [failed, retryCount]);
 	useEffect(() => {
 		nightModeRef.current = nightMode;
 		rendererRef.current?.setNightMode(nightMode);
@@ -218,6 +233,7 @@ function ShopModelPreview({
 		const host = hostRef.current;
 		const canvas = canvasRef.current;
 		if (
+			failed ||
 			interactive ||
 			item.animated ||
 			item.emissive ||
@@ -235,7 +251,6 @@ function ShopModelPreview({
 		}
 		let renderer: MinecraftModelRenderer | null = null;
 		const abortController = new AbortController();
-		setFailed(false);
 		const modelPromise = loadModel(item.modelUrl);
 		void queueStaticRender(async () => {
 			const model = await modelPromise;
@@ -253,6 +268,7 @@ function ShopModelPreview({
 				skinSource: view === 'player' ? (skinUrl ?? undefined) : undefined,
 			});
 			await renderer.loadModel(model);
+			if (renderer.hasFailedTextures()) throw new Error('Model texture failed to load');
 			if (isAborted(abortController.signal)) return;
 			const savedState = previewStateRef.current;
 			if (savedState) renderer.setPreviewState(savedState);
@@ -260,11 +276,16 @@ function ShopModelPreview({
 				previewStateRef.current = renderer.getPreviewState();
 				if (!item.dyeable) cacheSnapshot(canvas, cacheKey);
 				setReady(true);
-			}
+			} else if (isConnected(host)) throw new Error('Model frame failed to render');
 			renderer.destroy();
 			renderer = null;
 		}).catch(() => {
-			if (!isAborted(abortController.signal) && host.isConnected) setFailed(true);
+			if (!isAborted(abortController.signal) && host.isConnected) {
+				setReady(false);
+				setFailed(true);
+			}
+			renderer?.destroy();
+			renderer = null;
 		});
 		return () => {
 			abortController.abort();
@@ -281,6 +302,8 @@ function ShopModelPreview({
 		item.id,
 		item.modelUrl,
 		item.textureUrl,
+		failed,
+		retryCount,
 		skinUrl,
 		view,
 	]);
@@ -302,7 +325,7 @@ function ShopModelPreview({
 	useEffect(() => {
 		const host = hostRef.current;
 		const canvas = canvasRef.current;
-		if (!rendererActive || !host || !item.modelUrl || !item.textureUrl) {
+		if (failed || !rendererActive || !host || !canvas || !item.modelUrl || !item.textureUrl) {
 			setLiveReady(false);
 			return;
 		}
@@ -311,7 +334,6 @@ function ShopModelPreview({
 		let renderer: MinecraftModelRenderer | null = null;
 		const abortController = new AbortController();
 		setLiveReady(false);
-		setFailed(false);
 		const modelPromise = loadModel(modelUrl);
 		void modelPromise
 			.then(async (model) => {
@@ -331,6 +353,8 @@ function ShopModelPreview({
 				});
 				rendererRef.current = renderer;
 				await renderer.loadModel(model);
+				if (renderer.hasFailedTextures()) throw new Error('Model texture failed to load');
+				if (!renderer.copyFrameTo(canvas)) throw new Error('Model frame failed to render');
 				renderer.setNightMode(nightModeRef.current);
 				if (isAborted(abortController.signal)) return;
 				onEmissionSupport?.(modelUrl, renderer.hasEmissiveElements());
@@ -344,13 +368,19 @@ function ShopModelPreview({
 				}
 			})
 			.catch(() => {
-				if (!isAborted(abortController.signal) && host.isConnected) setFailed(true);
+				if (!isAborted(abortController.signal) && host.isConnected) {
+					setReady(false);
+					setLiveReady(false);
+					setFailed(true);
+				}
+				renderer?.destroy();
+				if (rendererRef.current === renderer) rendererRef.current = null;
+				renderer = null;
 			});
 		return () => {
 			abortController.abort();
 			if (renderer) previewStateRef.current = renderer.getPreviewState();
-			if (!interactive && !item.animated && !item.emissive && canvas)
-				renderer?.copyFrameTo(canvas);
+			if (!interactive && !item.animated && !item.emissive) renderer?.copyFrameTo(canvas);
 			renderer?.destroy();
 			if (rendererRef.current === renderer) rendererRef.current = null;
 			renderer = null;
@@ -366,27 +396,18 @@ function ShopModelPreview({
 		item.id,
 		item.modelUrl,
 		item.textureUrl,
+		failed,
 		onEmissionSupport,
 		rendererActive,
+		retryCount,
 		skinUrl,
 		view,
 	]);
 
-	if (failed && item.iconUrl)
-		return (
-			<NextImage
-				unoptimized
-				src={item.iconUrl}
-				alt=""
-				className="shopItemIcon"
-				width={76}
-				height={76}
-			/>
-		);
 	return (
 		<div
 			ref={hostRef}
-			className={`shopModelHost view-${view} ${ready ? 'ready' : 'loading'} ${liveReady ? 'live' : ''} ${interactive ? 'interactive' : ''}`}
+			className={`shopModelHost view-${view} ${ready && !failed ? 'ready' : 'shopReduced3dPlaceholder'} ${liveReady && !failed ? 'live' : ''} ${interactive ? 'interactive' : ''}`}
 			onPointerEnter={() => {
 				if (interactive) setInteractiveHover(true);
 			}}

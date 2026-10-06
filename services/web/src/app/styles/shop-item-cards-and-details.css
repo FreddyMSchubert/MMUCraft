@@ -50,6 +50,12 @@
 .shopModelHost.ready::before {
 	opacity: 0;
 }
+.shopModelHost.shopReduced3dPlaceholder::before {
+	opacity: 0;
+}
+.shopModelHost.shopReduced3dPlaceholder canvas {
+	visibility: hidden;
+}
 .shopModelSnapshot {
 	position: absolute;
 	inset: 0;

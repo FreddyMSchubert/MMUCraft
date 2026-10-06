@@ -302,6 +302,13 @@
       "when": 1790699712626,
       "tag": "0042_large_cloak",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "6",
+      "when": 1791304696096,
+      "tag": "0043_overjoyed_mach_iv",
+      "breakpoints": true
     }
   ]
 }

@@ -409,7 +409,7 @@ export const commandLogs = sqliteTable(
 		source: text('source').notNull(),
 		actor_name: text('actor_name').notNull(),
 		user_id: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
-		is_operator: integer('is_operator').notNull(),
+		is_operator: integer('is_operator'),
 		succeeded: integer('succeeded'),
 		result: integer('result'),
 		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
@@ -417,7 +417,10 @@ export const commandLogs = sqliteTable(
 	(table) => [
 		index('command_logs_created_at_idx').on(table.created_at_unix_ms),
 		index('command_logs_user_id_created_at_idx').on(table.user_id, table.created_at_unix_ms),
-		check('command_logs_source_check', sql`${table.source} in ('minecraft', 'discord')`),
+		check(
+			'command_logs_source_check',
+			sql`${table.source} in ('minecraft', 'waiting-room', 'surprising-saturday', 'proxy', 'discord')`,
+		),
 		check('command_logs_is_operator_check', sql`${table.is_operator} in (0, 1)`),
 	],
 );

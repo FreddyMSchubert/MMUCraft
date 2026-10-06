@@ -85,10 +85,10 @@ export interface ActivePlayerBan {
 export interface CommandLogEntry {
 	id: number;
 	command: string;
-	source: 'minecraft' | 'discord';
+	source: 'minecraft' | 'waiting-room' | 'surprising-saturday' | 'proxy' | 'discord';
 	actorName: string;
 	userId: number | null;
-	isOperator: boolean;
+	isOperator: boolean | null;
 	succeeded: boolean | null;
 	result: number | null;
 	createdAtUnixMs: number;

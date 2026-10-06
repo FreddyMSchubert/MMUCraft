@@ -27,6 +27,7 @@ public final class CommandExecutionLogger {
 
         String discordActor = DISCORD_ACTOR.get();
         ServerPlayer player = source.getPlayer();
+        if (discordActor == null && player != null) return CommandResultCallback.EMPTY;
         String actorName;
         String minecraftUuid = "";
         String executionSource;

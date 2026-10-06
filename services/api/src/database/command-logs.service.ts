@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { and, desc, eq, gte, lt, lte, or, sql, type SQL } from 'drizzle-orm';
+import { and, desc, eq, gte, isNull, lt, lte, or, sql, type SQL } from 'drizzle-orm';
 import { commandLogs, DatabaseService } from './database.service';
 import { MinecraftIdentityService } from './minecraft-identity.service';
 
@@ -35,12 +35,16 @@ export class CommandLogsService {
 
 	record(input: CommandExecutionInput) {
 		const command = input.command?.trim() ?? '';
-		const source = input.source === 'discord' ? 'discord' : 'minecraft';
+		const source = ['discord', 'waiting-room', 'surprising-saturday', 'proxy'].includes(
+			input.source ?? '',
+		)
+			? (input.source ?? 'minecraft')
+			: 'minecraft';
 		const actorName = input.actor_name?.trim().slice(0, 100) ?? '';
 		if (!command || !actorName) return { accepted: false };
 
 		const user =
-			source === 'minecraft'
+			source !== 'discord'
 				? this.identities.resolveAndRefresh(input.minecraft_uuid ?? '', actorName)
 				: null;
 		this.database.connection
@@ -50,7 +54,7 @@ export class CommandLogsService {
 				source,
 				actor_name: actorName,
 				user_id: user?.id ?? null,
-				is_operator: input.is_operator ? 1 : 0,
+				is_operator: input.is_operator === undefined ? null : input.is_operator ? 1 : 0,
 				succeeded: typeof input.succeeded === 'boolean' ? (input.succeeded ? 1 : 0) : null,
 				result:
 					typeof input.result === 'number' && Number.isSafeInteger(input.result)
@@ -81,15 +85,23 @@ export class CommandLogsService {
 		}
 
 		if (filters.isOperator !== undefined) {
-			if (filters.isOperator !== 'true' && filters.isOperator !== 'false') {
-				throw new BadRequestException('isOperator must be true or false');
+			if (!['true', 'false', 'unknown'].includes(filters.isOperator)) {
+				throw new BadRequestException('Invalid operator status');
 			}
-			conditions.push(eq(commandLogs.is_operator, filters.isOperator === 'true' ? 1 : 0));
+			conditions.push(
+				filters.isOperator === 'unknown'
+					? isNull(commandLogs.is_operator)
+					: eq(commandLogs.is_operator, filters.isOperator === 'true' ? 1 : 0),
+			);
 		}
 
 		if (filters.source !== undefined) {
-			if (filters.source !== 'minecraft' && filters.source !== 'discord') {
-				throw new BadRequestException('source must be minecraft or discord');
+			if (
+				!['minecraft', 'waiting-room', 'surprising-saturday', 'proxy', 'discord'].includes(
+					filters.source,
+				)
+			) {
+				throw new BadRequestException('Invalid command source');
 			}
 			conditions.push(eq(commandLogs.source, filters.source));
 		}
@@ -118,10 +130,11 @@ export class CommandLogsService {
 			commands: page.map((entry) => ({
 				id: entry.id,
 				command: entry.command,
-				source: entry.source as 'minecraft' | 'discord',
+				source: entry.source as
+					'minecraft' | 'waiting-room' | 'surprising-saturday' | 'proxy' | 'discord',
 				actorName: entry.actor_name,
 				userId: entry.user_id,
-				isOperator: entry.is_operator === 1,
+				isOperator: entry.is_operator === null ? null : entry.is_operator === 1,
 				succeeded: entry.succeeded === null ? null : entry.succeeded === 1,
 				result: entry.result,
 				createdAtUnixMs: entry.created_at_unix_ms,

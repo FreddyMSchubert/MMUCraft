@@ -1386,6 +1386,7 @@
 	"mainmod:mastery/utility/duplicate_book": 5, // Duplicate an enchanted book at a lectern.
 	"mainmod:mastery/utility/invisible_frame": 5, // Make an item frame invisible.
 	"mainmod:mastery/utility/soulbound_recovery_compass": 5, // Soulbind a Recovery Compass: deliberate useful combination.
+	"mainmod:mastery/utility/soulbound_break": 5, // Break a Soulbound item.
 	"mainmod:mastery/utility/full_speed_minecart": 10, // Reach full minecart speed: build and execute a track setup.
 	"mainmod:mastery/utility/max_reach_beacon": 25, // Build a 200-block beacon: expensive construction challenge.
 	"mainmod:mastery/glider/updraft": 5, // Ride a heat updraft: deliberate glider technique.

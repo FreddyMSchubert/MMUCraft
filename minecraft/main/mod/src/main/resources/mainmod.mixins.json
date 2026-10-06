@@ -25,6 +25,7 @@
 		"RefreshCharmOnArmorEquip",
 		"SanitizePlayerArmorSlot",
 		"RecoverArmorContentsOnBreak",
+		"SoulboundItemBreakAdvancement",
 		"ReskinnedHelmetTick",
 		"decoBlocks.PlaceFakeItemsAsFrames",
 		"decoBlocks.NoDecoBlockFrameItemDrops",

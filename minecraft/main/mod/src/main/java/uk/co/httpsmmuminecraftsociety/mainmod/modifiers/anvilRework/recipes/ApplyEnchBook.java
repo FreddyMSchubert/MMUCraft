@@ -24,12 +24,13 @@ public final class ApplyEnchBook implements AnvilRecipe
     @Override
     public AnvilLogic.Outcome apply(ServerPlayer player, ItemStack left, ItemStack right, @Nullable String name)
     {
-        if (EnchantmentLock.isLocked(left)) {
+        if (EnchantmentLock.isLocked(left)
+                || right.getCount() > 1 && !right.is(Items.BOOK) && !right.is(Items.ENCHANTED_BOOK)) {
             return AnvilLogic.Outcome.EMPTY;
         }
 
         boolean resultIsBook = left.is(Items.BOOK) || left.is(Items.ENCHANTED_BOOK);
-        ItemStack result = resultIsBook ? new ItemStack(Items.ENCHANTED_BOOK) : left.copy();
+        ItemStack result = resultIsBook ? new ItemStack(Items.ENCHANTED_BOOK) : left.copyWithCount(1);
 
         AnvilUtils.MergeInfo merge = AnvilUtils.mergeEnchantments(result, left, right, resultIsBook);
         if (result.isEmpty() || Objects.equals(
@@ -42,7 +43,7 @@ public final class ApplyEnchBook implements AnvilRecipe
 
         CharmorManager.updateArmorTooltip(result);
 
-        ItemStack rightRemainder = ItemStack.EMPTY;
+        ItemStack rightRemainder = right.copyWithCount(right.getCount() - 1);
         if (right.is(Items.ENCHANTED_BOOK)) {
             ItemEnchantments.Mutable retained = new ItemEnchantments.Mutable(
                     EnchantmentHelper.getEnchantmentsForCrafting(right));
@@ -50,6 +51,9 @@ public final class ApplyEnchBook implements AnvilRecipe
             retained.removeIf(enchantment -> resultEnchants.getLevel(enchantment) > 0);
             ItemEnchantments retainedEnchants = retained.toImmutable();
             if (!retainedEnchants.isEmpty()) {
+                if (right.getCount() > 1) {
+                    return AnvilLogic.Outcome.EMPTY;
+                }
                 rightRemainder = right.copy();
                 EnchantmentHelper.setEnchantments(rightRemainder, retainedEnchants);
             }
@@ -59,7 +63,7 @@ public final class ApplyEnchBook implements AnvilRecipe
 
         return new AnvilLogic.Outcome(
                 merge.cost(),
-                ItemStack.EMPTY,
+                left.copyWithCount(left.getCount() - 1),
                 rightRemainder,
                 result
         );

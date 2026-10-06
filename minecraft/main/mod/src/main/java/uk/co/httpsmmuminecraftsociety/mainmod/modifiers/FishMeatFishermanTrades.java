@@ -6,7 +6,6 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
@@ -29,23 +28,40 @@ public final class FishMeatFishermanTrades {
         }
 
         MerchantOffers offers = villager.getOffers();
-        appendOfferIfMissing(offers, COOKED_RED_FISH_ID);
-        appendOfferIfMissing(offers, COOKED_WHITE_FISH_ID);
+        syncOffer(offers, COOKED_RED_FISH_ID);
+        syncOffer(offers, COOKED_WHITE_FISH_ID);
     }
 
-    private static void appendOfferIfMissing(MerchantOffers offers, String fakeItemId) {
-        if (offers.stream().anyMatch(offer -> FakeItems.isSpecificFakeItem(offer.getBaseCostA(), fakeItemId))) {
-            return;
-        }
-
+    static void syncOffer(MerchantOffers offers, String fakeItemId) {
         ItemStack fishMeat = FakeItems.createFakeItemStack(fakeItemId, FISH_MEAT_COST);
-        CustomModelData modelData = fishMeat.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
         ItemCost fishMeatCost = new ItemCost(
                 fishMeat.typeHolder(),
                 FISH_MEAT_COST,
-                DataComponentExactPredicate.expect(DataComponents.CUSTOM_MODEL_DATA, modelData),
+                DataComponentExactPredicate.someOf(fishMeat.getComponents(), DataComponents.CUSTOM_MODEL_DATA, DataComponents.CUSTOM_NAME),
                 fishMeat
         );
+
+        for (int i = 0; i < offers.size(); i++) {
+            MerchantOffer offer = offers.get(i);
+            if (!FakeItems.isSpecificFakeItem(offer.getBaseCostA(), fakeItemId)) {
+                continue;
+            }
+            if (!offer.getItemCostA().components().equals(fishMeatCost.components())) {
+                MerchantOffer updated = new MerchantOffer(
+                        fishMeatCost,
+                        offer.getItemCostB(),
+                        offer.getResult(),
+                        offer.getUses(),
+                        offer.getMaxUses(),
+                        offer.getXp(),
+                        offer.getPriceMultiplier(),
+                        offer.getDemand()
+                );
+                updated.setSpecialPriceDiff(offer.getSpecialPriceDiff());
+                offers.set(i, updated);
+            }
+            return;
+        }
 
         offers.add(new MerchantOffer(
                 fishMeatCost,

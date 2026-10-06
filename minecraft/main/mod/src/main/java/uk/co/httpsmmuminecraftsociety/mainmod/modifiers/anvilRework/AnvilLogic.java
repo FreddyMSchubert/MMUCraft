@@ -4,6 +4,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
@@ -49,24 +50,25 @@ public final class AnvilLogic
 
     // anvil repairing via clicking with iron ingots / iron blocks
     public static @Nullable InteractionResult onUseItemOn(UseOnContext ctx) {
-        if (!ctx.getPlayer().level().getBlockState(ctx.getClickedPos()).is(BlockTags.ANVIL)) return null;
-        if (ctx.getItemInHand().getItem() != Items.IRON_BLOCK &&
-                !(ctx.getItemInHand().getItem() == Items.IRON_INGOT && Math.random() < (1f / 9f))) return null;
-
+        Player player = ctx.getPlayer();
+        if (player == null) return null;
         Level level = ctx.getLevel();
         BlockState state = level.getBlockState(ctx.getClickedPos());
+        if (!state.is(BlockTags.ANVIL)) return null;
+
+        ItemStack stack = ctx.getItemInHand();
+        boolean ironBlock = stack.is(Items.IRON_BLOCK);
+        if (!ironBlock && !stack.is(Items.IRON_INGOT)) return null;
 
         BlockState repairedState = getRepairedAnvilState(state);
         if (repairedState == null) return null;
 
         if (!level.isClientSide()) {
-            level.setBlock(ctx.getClickedPos(), repairedState, 2);
-            level.levelEvent(1030, ctx.getClickedPos(), 0); // anvil use sound/event
-
-            if (ctx.getPlayer() == null || !ctx.getPlayer().hasInfiniteMaterials()) {
-                ctx.getItemInHand().shrink(1);
+            stack.consume(1, player);
+            if (ironBlock || level.getRandom().nextInt(9) == 0) {
+                level.setBlock(ctx.getClickedPos(), repairedState, 2);
+                level.levelEvent(1030, ctx.getClickedPos(), 0); // anvil use sound/event
             }
-
             return InteractionResult.SUCCESS_SERVER;
         }
 

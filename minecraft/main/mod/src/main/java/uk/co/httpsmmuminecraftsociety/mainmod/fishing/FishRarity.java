@@ -1,12 +1,13 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 public enum FishRarity {
+    // Keep Common and the total fixed; split the removed Mythical weight 1:2:3:4 across the middle tiers.
     COMMON("Common", 1, 65.0, 55.0),
-    UNCOMMON("Uncommon", 2, 25.0, 22.0),
-    RARE("Rare", 3, 5.0, 12.0),
-    EPIC("Epic", 4, 0.5, 6.0),
-    LEGENDARY("Legendary", 5, 0.1, 4.25),
-    MYTHICAL("Mythical", 5, 0.01, 0.75);
+    UNCOMMON("Uncommon", 2, 25.000666666667, 22.05),
+    RARE("Rare", 3, 5.001333333333, 12.1),
+    EPIC("Epic", 4, 0.502, 6.15),
+    LEGENDARY("Legendary", 5, 0.102666666667, 4.45),
+    MYTHICAL("Mythical", 5, 0.003333333333, 0.25);
 
     private final String displayName;
     private final int catchLevel;

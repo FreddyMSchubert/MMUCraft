@@ -205,7 +205,7 @@ services:
                 datapack:nullscape?
                 datapack:geophilic?
             MODRINTH_DOWNLOAD_DEPENDENCIES: required
-            SERVER_RUNNER: /image/vanillatweaks/run-server
+            VANILLATWEAKS_SHARECODE: 9BVPEY,tMF7Zf
             MEMORY: 2G
             INIT_MEMORY: 1G
             STOP_DURATION: '110'

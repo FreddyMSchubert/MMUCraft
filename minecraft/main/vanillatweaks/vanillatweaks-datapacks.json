@@ -1,8 +1,0 @@
-{
-	"type": "datapacks",
-	"version": "26.3",
-	"packs": {
-		"decorative-cosmetic": ["custom nether portals"],
-		"convenience": ["cauldron concrete", "cauldron mud", "fast leaf decay", "painting picker"]
-	}
-}

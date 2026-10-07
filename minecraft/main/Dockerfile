@@ -12,6 +12,3 @@ COPY mod/build/libs/*.jar /mods/
 COPY config /config/config
 COPY server.properties.generated /defaults/server.properties
 COPY server-icon.jpg /server-icon.jpg
-COPY vanillatweaks /image/vanillatweaks
-RUN sed -i 's/\r$//' /image/vanillatweaks/run-server \
-    && chmod +x /image/vanillatweaks/run-server

@@ -102,6 +102,7 @@ export class ShopCharmInventoryService {
 								? null
 								: (ingredientAsset?.textureUrl ?? null),
 							modelUrl: ingredientAsset?.modelUrl ?? null,
+							animation: ingredientAsset?.animation ?? null,
 						};
 					}),
 				};

@@ -25,7 +25,8 @@
 	box-shadow: 0 0 24px color-mix(in srgb, var(--fish-rarity) 34%, transparent);
 }
 
-.fishCard > img {
+.fishCard > img,
+.fishCard > canvas {
 	width: 88.8888889%;
 	height: auto;
 	aspect-ratio: 1;

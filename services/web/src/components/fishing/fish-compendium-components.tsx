@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import type React from 'react';
+import { AnimatedTexture } from '@/components/animated-texture';
 import { PlayerName } from '@/components/player-name';
 import {
 	conditionSentence,
@@ -64,7 +65,9 @@ export function FishCard({
 					<span key={index}>{line}</span>
 				))}
 			</div>
-			{caught ? (
+			{caught && fish.animation ? (
+				<AnimatedTexture url={fish.iconUrl} animation={fish.animation} alt={fish.title} />
+			) : caught ? (
 				<Image unoptimized src={fish.iconUrl} alt={fish.title} width={96} height={96} />
 			) : (
 				<span className="fishQuestion" aria-label="Uncaught fish">

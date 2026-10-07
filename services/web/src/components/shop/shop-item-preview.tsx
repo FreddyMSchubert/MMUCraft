@@ -2,6 +2,7 @@
 
 import NextImage from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import { AnimatedTexture } from '@/components/animated-texture';
 import { ASSETS } from '@/lib/assets';
 import { loadAssetJson } from '@/lib/asset-fetch-cache';
 import {
@@ -111,7 +112,13 @@ export function ShopPreview({
 		);
 	if (item.renderMode === 'model') return <div className="shopReduced3dPlaceholder" />;
 	if (item.iconUrl && item.animation)
-		return <AnimatedTexturePreview url={item.iconUrl} animation={item.animation} />;
+		return (
+			<AnimatedTexture
+				url={item.iconUrl}
+				animation={item.animation}
+				className="shopItemIcon shopAnimatedTexture"
+			/>
+		);
 	if (item.iconUrl)
 		return (
 			<NextImage
@@ -124,64 +131,6 @@ export function ShopPreview({
 			/>
 		);
 	return <div className="shopItemEmpty" />;
-}
-
-function AnimatedTexturePreview({
-	url,
-	animation,
-}: {
-	url: string;
-	animation: NonNullable<ShopItem['animation']>;
-}) {
-	const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-	useEffect(() => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-		let timer: number | undefined;
-		let cancelled = false;
-		const image = new Image();
-		image.onload = () => {
-			if (cancelled) return;
-			const frameSize = image.naturalWidth;
-			const frameCount = Math.max(1, Math.floor(image.naturalHeight / frameSize));
-			const frames = (
-				animation.frames ?? Array.from({ length: frameCount }, (_, index) => index)
-			).filter((frame) => frame < frameCount);
-			const context = canvas.getContext('2d');
-			if (!context || !frames.length) return;
-			canvas.width = frameSize;
-			canvas.height = frameSize;
-			let frameIndex = 0;
-			const draw = () => {
-				context.clearRect(0, 0, frameSize, frameSize);
-				context.drawImage(
-					image,
-					0,
-					frames[frameIndex] * frameSize,
-					frameSize,
-					frameSize,
-					0,
-					0,
-					frameSize,
-					frameSize,
-				);
-			};
-			draw();
-			if (frames.length > 1)
-				timer = window.setInterval(() => {
-					frameIndex = (frameIndex + 1) % frames.length;
-					draw();
-				}, animation.frameDelayMs);
-		};
-		image.src = url;
-		return () => {
-			cancelled = true;
-			window.clearInterval(timer);
-		};
-	}, [animation.frameDelayMs, animation.frames, url]);
-
-	return <canvas ref={canvasRef} className="shopItemIcon shopAnimatedTexture" />;
 }
 
 function ShopModelPreview({

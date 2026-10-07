@@ -1,9 +1,15 @@
 import * as THREE from 'three';
-import { type MinecraftItemSource, MinecraftModelObject } from '@/lib/minecraft-model-renderer';
+import {
+	type MinecraftItemSource,
+	MinecraftModelObject,
+	type TextureAnimationOptions,
+} from '@/lib/minecraft-model-renderer';
+
+type ForgeItemSource = MinecraftItemSource & { animation?: TextureAnimationOptions | null };
 
 interface CharmForgeRendererOptions {
-	charm: MinecraftItemSource;
-	ingredients: MinecraftItemSource[];
+	charm: ForgeItemSource;
+	ingredients: ForgeItemSource[];
 }
 
 interface OrbitingItem {
@@ -20,7 +26,7 @@ export class CharmForgeRenderer {
 	private readonly clock = new THREE.Clock();
 	private readonly root = new THREE.Group();
 	private readonly ingredientRoot = new THREE.Group();
-	private readonly modelObjects: MinecraftModelObject[] = [];
+	private readonly modelObjects: { model: MinecraftModelObject; frameDelayMs: number }[] = [];
 	private readonly orbiters: OrbitingItem[] = [];
 	private readonly particles: THREE.Points;
 	private readonly particlePositions: Float32Array;
@@ -130,7 +136,7 @@ export class CharmForgeRenderer {
 		this.resizeObserver.disconnect();
 		this.container.removeEventListener('pointermove', this.handlePointerMove);
 		this.container.removeEventListener('pointerleave', this.handlePointerLeave);
-		for (const modelObject of this.modelObjects) modelObject.dispose();
+		for (const { model } of this.modelObjects) model.dispose();
 		this.scene.traverse((object) => {
 			if (!(object instanceof THREE.Mesh || object instanceof THREE.Points)) return;
 			const renderable = object as THREE.Mesh;
@@ -144,9 +150,17 @@ export class CharmForgeRenderer {
 		this.renderer.domElement.remove();
 	}
 
-	private async addItem(source: MinecraftItemSource, size: number) {
-		const modelObject = new MinecraftModelObject();
-		this.modelObjects.push(modelObject);
+	private async addItem(source: ForgeItemSource, size: number) {
+		const modelObject = new MinecraftModelObject(
+			source.animation?.frames ?? null,
+			undefined,
+			false,
+			true,
+		);
+		this.modelObjects.push({
+			model: modelObject,
+			frameDelayMs: source.animation?.frameDelayMs ?? 50,
+		});
 		await modelObject.load(source);
 		const mesh = new THREE.Group();
 		mesh.add(modelObject.group);
@@ -163,7 +177,8 @@ export class CharmForgeRenderer {
 		this.frame = requestAnimationFrame(this.animate);
 		const deltaMs = this.clock.getDelta() * 1000;
 		const elapsed = this.clock.elapsedTime;
-		for (const modelObject of this.modelObjects) modelObject.update(deltaMs, 50);
+		for (const { model, frameDelayMs } of this.modelObjects)
+			model.update(deltaMs, frameDelayMs);
 		const duration = this.reducedMotion ? 0.35 : 1.9;
 		const enchantProgress =
 			this.enchantStartedAt === null

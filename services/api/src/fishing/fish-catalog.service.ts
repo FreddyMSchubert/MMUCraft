@@ -3,6 +3,8 @@ import { randomInt } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { ASSETS } from '../assets';
+import { readTextureAnimation } from '../gameplay/shop/shop-item-asset-files';
+import type { TextureAnimationDefinition } from '../gameplay/shop/shop-item-catalog.types';
 
 const ITEM_ROOTS = [
 	join(process.cwd(), 'content', 'items'),
@@ -19,6 +21,7 @@ export interface FishDefinition {
 	tags: string[];
 	facts: string[];
 	iconUrl: string;
+	animation: TextureAnimationDefinition | null;
 	textureFilePath: string | null;
 }
 
@@ -115,6 +118,7 @@ export class FishCatalogService implements OnModuleInit {
 							)
 						: [],
 					iconUrl: `/api/fishing/texture/${encodeURIComponent(json.id)}?v=${revision}`,
+					animation: readTextureAnimation(textureFilePath),
 					textureFilePath,
 				},
 			];
@@ -161,6 +165,7 @@ function vanillaFish(id: string, title: string, rarity: string, fact: string): F
 		tags: [],
 		facts: [fact],
 		iconUrl: `${ASSETS.minecraft.vanilla}/textures/item/${textureName}.png`,
+		animation: null,
 		textureFilePath: null,
 	};
 }

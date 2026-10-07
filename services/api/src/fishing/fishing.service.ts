@@ -243,6 +243,7 @@ export class FishingService {
 					tags: definition.tags,
 					facts: definition.facts,
 					iconUrl: definition.iconUrl,
+					animation: definition.animation,
 					catch: serializeCatch(selectedCatches.get(definition.id) ?? null),
 					serverLargest: serializeServerRecord(
 						serverRows,

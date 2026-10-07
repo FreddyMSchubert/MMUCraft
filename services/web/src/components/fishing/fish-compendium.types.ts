@@ -1,4 +1,5 @@
 import type { PlayerEmoji } from '@/components/player-name';
+import type { TextureAnimationOptions } from '@/lib/minecraft-model-renderer';
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical';
 export type TagGroup = 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon';
@@ -38,6 +39,7 @@ export interface CompendiumFish {
 	tags: string[];
 	facts: string[];
 	iconUrl: string;
+	animation: TextureAnimationOptions | null;
 	catch: FishCatch | null;
 	serverLargest: ServerRecord | null;
 	serverSmallest: ServerRecord | null;

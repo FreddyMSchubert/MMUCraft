@@ -7,6 +7,7 @@ import { ASSETS } from '@/lib/assets';
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { formatDabloonWord } from '@/lib/dabloons';
+import type { TextureAnimationOptions } from '@/lib/minecraft-model-renderer';
 
 interface CharmIngredient {
 	raw: string;
@@ -17,6 +18,7 @@ interface CharmIngredient {
 	glint: boolean;
 	iconUrl: string | null;
 	modelUrl: string | null;
+	animation: TextureAnimationOptions | null;
 }
 
 interface HeldCharm {
@@ -31,6 +33,7 @@ interface HeldCharm {
 	nextAbility: string;
 	modelUrl: string | null;
 	textureUrl: string | null;
+	animation: TextureAnimationOptions | null;
 	ingredients: CharmIngredient[];
 }
 
@@ -68,13 +71,15 @@ export function CharmsTab() {
 				currentLevel: charm.currentLevel,
 				modelUrl: charm.modelUrl,
 				textureUrl: charm.textureUrl,
+				animation: charm.animation,
 				ingredients: charm.ingredients.map(
-					({ itemId, modelUrl, iconUrl, requiredCount, glint }) => ({
+					({ itemId, modelUrl, iconUrl, requiredCount, glint, animation }) => ({
 						itemId,
 						glint,
 						modelUrl,
 						iconUrl,
 						requiredCount,
+						animation,
 					}),
 				),
 			})
@@ -152,6 +157,7 @@ export function CharmsTab() {
 				glint: renderedCharm.glint,
 				modelUrl: renderedCharm.modelUrl,
 				textureUrl: renderedCharm.textureUrl,
+				animation: renderedCharm.animation,
 			},
 			ingredients: renderedCharm.ingredients.flatMap((ingredient) =>
 				Array.from({ length: ingredient.requiredCount }, () =>
@@ -176,6 +182,7 @@ export function CharmsTab() {
 									: {}),
 								modelUrl: ingredient.modelUrl,
 								textureUrl: ingredient.iconUrl,
+								animation: ingredient.animation,
 							},
 				),
 			),

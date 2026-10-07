@@ -4,7 +4,15 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"Cooked rich fish meat"
-	]
+	"tooltips": ["Cooked rich fish meat"],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 2,
+		"canAlwaysEat": false,
+		"hungerBars": 3,
+		"saturationBars": 5,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	}
 }

@@ -4,7 +4,15 @@
 	"modelType": "basic",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"Cooked light fish meat"
-	]
+	"tooltips": ["Cooked light fish meat"],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 2,
+		"canAlwaysEat": false,
+		"hungerBars": 2.5,
+		"saturationBars": 3,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	}
 }

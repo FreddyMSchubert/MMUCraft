@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -59,8 +60,8 @@ public final class FishingCatches {
     static {
         addFish(FishRarity.COMMON, new ItemStack(Items.COD), 53.0, 25.0, "BL");
         addFish(FishRarity.COMMON, new ItemStack(Items.SALMON), 75.0, 35.0, "BL");
-        addFish(FishRarity.COMMON, new ItemStack(Items.TROPICAL_FISH), 15.0, 7.0, "BL");
-        addFish(FishRarity.COMMON, new ItemStack(Items.PUFFERFISH), 30.0, 12.0, "TR");
+        addFish(FishRarity.UNCOMMON, new ItemStack(Items.TROPICAL_FISH), 15.0, 7.0, "BL");
+        addFish(FishRarity.UNCOMMON, new ItemStack(Items.PUFFERFISH), 30.0, 12.0, "TR");
 
         addTreasure(FishRarity.COMMON, new ItemStack(Items.SUGAR_CANE));
         addTreasure(FishRarity.COMMON, new ItemStack(Items.ROTTEN_FLESH));
@@ -170,7 +171,10 @@ public final class FishingCatches {
         }
 
         boolean treasure = hook.getRandom().nextDouble() < itemChance;
-        FishRarity rarity = randomRarity(hook.getRandom(), luck);
+        int catches = hook.getPlayerOwner() instanceof ServerPlayer player
+                ? player.getStats().getValue(Stats.CUSTOM.get(Stats.FISH_CAUGHT))
+                : 0;
+        FishRarity rarity = randomRarity(hook.getRandom(), luck, catches);
         List<CatchEntry> entries = entriesFor(treasure, rarity, hook);
         CatchEntry selected = entries.get(hook.getRandom().nextInt(entries.size()));
         ItemStack stack = selected.stack().copy();
@@ -399,21 +403,25 @@ public final class FishingCatches {
         return result;
     }
 
-    private static FishRarity randomRarity(RandomSource random, double luck) {
+    private static FishRarity randomRarity(RandomSource random, double luck, int catches) {
+        double[] weights = FishRarity.weightsAt(luck, catches);
         double total = 0.0;
-        for (FishRarity rarity : FishRarity.values()) {
-            total += rarity.weightAtLuck(luck);
+        for (double weight : weights) {
+            total += weight;
         }
 
         double roll = random.nextDouble() * total;
+        FishRarity lastUnlocked = FishRarity.COMMON;
         for (FishRarity rarity : FishRarity.values()) {
-            // These are weights rather than percentages because interpolated totals need not equal 100.
-            roll -= rarity.weightAtLuck(luck);
+            double weight = weights[rarity.ordinal()];
+            if (weight == 0.0) continue;
+            lastUnlocked = rarity;
+            roll -= weight;
             if (roll <= 0.0) {
                 return rarity;
             }
         }
-        return FishRarity.MYTHICAL;
+        return lastUnlocked;
     }
 
     private static List<CatchEntry> entriesFor(boolean treasure, FishRarity rolledRarity, FishingHook hook) {

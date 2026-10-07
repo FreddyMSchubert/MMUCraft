@@ -12,8 +12,9 @@ public final class FishingCheck {
         checkFastFishFirstBobChance();
         checkPhysicalShadowScale();
         checkLureBookShortcutChance();
+        checkCatchGates();
         checkTextureRotation();
-        System.out.println("Fishing checks passed: waits, catch windows, approach speed, lure books, rotations, first-bob chance, and shadow scale.");
+        System.out.println("Fishing checks passed: waits, catch windows, catch gates, approach speed, lure books, rotations, first-bob chance, and shadow scale.");
     }
 
     private static void checkCatchWindows() {
@@ -21,6 +22,34 @@ public final class FishingCheck {
         FishRarity[] rarities = FishRarity.values();
         for (int i = 0; i < rarities.length; i++) {
             assert personality(3.0F, 8.0F, rarities[i]).baseCatchWindowTicks() == expectedTicks[i];
+        }
+    }
+
+    private static void checkCatchGates() {
+        FishRarity[] rarities = FishRarity.values();
+        for (double luck : new double[]{0.0, 5.5, 11.0}) {
+            double[] full = FishRarity.weightsAt(luck, 500);
+            double fullTotal = 0.0;
+            for (double weight : full) fullTotal += weight;
+
+            for (int catches : new int[]{0, 99, 100, 299, 300, 499, 500}) {
+                double[] weights = FishRarity.weightsAt(luck, catches);
+                double total = 0.0;
+                for (double weight : weights) total += weight;
+                assert Math.abs(total - fullTotal) < 0.000001;
+                assert Math.abs(weights[FishRarity.COMMON.ordinal()] - full[FishRarity.COMMON.ordinal()]) < 0.000001;
+
+                double unlockedScale = -1.0;
+                for (int index = 1; index < rarities.length; index++) {
+                    if (catches < rarities[index].requiredCatches()) {
+                        assert weights[index] == 0.0;
+                    } else {
+                        double scale = weights[index] / full[index];
+                        if (unlockedScale < 0.0) unlockedScale = scale;
+                        assert Math.abs(scale - unlockedScale) < 0.000001;
+                    }
+                }
+            }
         }
     }
 

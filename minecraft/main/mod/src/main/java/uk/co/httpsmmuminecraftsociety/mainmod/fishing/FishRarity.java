@@ -29,6 +29,37 @@ public enum FishRarity {
         return catchLevel;
     }
 
+    int requiredCatches() {
+        return switch (this) {
+            case EPIC -> 100;
+            case LEGENDARY -> 300;
+            case MYTHICAL -> 500;
+            default -> 0;
+        };
+    }
+
+    static double[] weightsAt(double luck, int catches) {
+        FishRarity[] rarities = values();
+        double[] weights = new double[rarities.length];
+        double total = 0.0;
+        double unlockedNonCommon = 0.0;
+        for (FishRarity rarity : rarities) {
+            double weight = rarity.weightAtLuck(luck);
+            total += weight;
+            if (catches >= rarity.requiredCatches()) {
+                weights[rarity.ordinal()] = weight;
+                if (rarity != COMMON) unlockedNonCommon += weight;
+            }
+        }
+
+        // Preserve Common's chance; divide locked weight among unlocked tiers by their existing ratios.
+        double scale = (total - weights[COMMON.ordinal()]) / unlockedNonCommon;
+        for (int index = 1; index < weights.length; index++) {
+            weights[index] *= scale;
+        }
+        return weights;
+    }
+
     public int colorRgb() {
         return switch (this) {
             case COMMON -> 0xFFFFFF;

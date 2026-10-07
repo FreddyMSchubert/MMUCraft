@@ -3,7 +3,7 @@ id: sculk-phial
 unlockOrder: 5
 chatMessage: You've unlocked knowledge on storing experience in a Sculk Phial.
 sidebarTitle: Sculk Phial
-gameplayToggle: beach-party
+gameplayToggle: soaring
 tags:
 - skulk phial
 - sculk vial

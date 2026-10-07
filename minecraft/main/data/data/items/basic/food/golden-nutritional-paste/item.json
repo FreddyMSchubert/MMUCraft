@@ -20,6 +20,7 @@
 			{
 				"id": "golden_nutritional_paste",
 				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "circus",
 				"ingredients": [
 					"minecraft:cookie",
 					"minecraft:beetroot",

@@ -35,7 +35,7 @@
 			{
 				"id": "sculk_phial",
 				"type": "mainmod:fake_crafting_shaped",
-				"gameplayToggle": "beach-party",
+				"gameplayToggle": "soaring",
 				"pattern": [" S ", "SBS", " S "],
 				"key": {
 					"S": "minecraft:echo_shard",

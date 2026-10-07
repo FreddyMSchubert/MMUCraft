@@ -189,6 +189,8 @@ public class LootTableModifiers {
 
         for (LootAddition addition : additions) {
             if (!addition.tableId().equals(tableId)) continue;
+            if ("charm-sculk-phial".equals(addition.fakeItemId())
+                    && !FeatureToggles.isEnabled(FeatureToggles.SOARING)) continue;
             if (lootContext.getRandom().nextFloat() >= addition.chance()) continue;
 
             int rolls = Mth.nextInt(

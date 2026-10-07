@@ -37,6 +37,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.RecordFishCatchResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -176,7 +177,7 @@ public final class FishingCatches {
                 : 0;
         FishRarity rarity = randomRarity(hook.getRandom(), luck, catches);
         List<CatchEntry> entries = entriesFor(treasure, rarity, hook);
-        CatchEntry selected = entries.get(hook.getRandom().nextInt(entries.size()));
+        CatchEntry selected = selectEntry(entries, hook.getRandom());
         ItemStack stack = selected.stack().copy();
         double lengthCm = rollFishLength(selected.length(), hook.getRandom());
         decorateFish(stack, hook.getPlayerOwner(), lengthCm);
@@ -442,10 +443,23 @@ public final class FishingCatches {
         return List.of(new CatchEntry(fallback, personality, length));
     }
 
+    static CatchEntry selectEntry(List<CatchEntry> entries, RandomSource random) {
+        int totalWeight = 0;
+        for (CatchEntry entry : entries) totalWeight += entry.weight();
+        int roll = random.nextInt(totalWeight);
+        for (CatchEntry entry : entries) {
+            roll -= entry.weight();
+            if (roll < 0) return entry;
+        }
+        throw new IllegalStateException("No fishing catch selected");
+    }
+
     private static List<CatchEntry> entriesAt(boolean treasure, FishRarity rarity, FishingHook hook) {
         List<CatchEntry> entries = new ArrayList<>();
         if (treasure) {
             for (ItemStack stack : TREASURE_LOOT.get(rarity)) {
+                if (FakeItems.isSpecificFakeItem(stack, "golden-nutritional-paste")
+                        && !FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) continue;
                 entries.add(new CatchEntry(stack, treasurePersonality(rarity, stack), null));
             }
             if (rarity == FishRarity.UNCOMMON) {
@@ -484,10 +498,12 @@ public final class FishingCatches {
     }
 
     private static CatchEntry customFishEntry(Map.Entry<FakeItem, FishItemFeature> entry) {
+        FishItemFeature fish = entry.getValue();
         return new CatchEntry(
                 entry.getKey().createItemStack(),
-                entry.getValue().personality(),
-                entry.getValue().length()
+                fish.personality(),
+                fish.length(),
+                1 + fish.spawnTags().size()
         );
     }
 
@@ -558,6 +574,9 @@ public final class FishingCatches {
     private record FishLoot(ItemStack stack, FishSize length, float textureAngleDegrees) {
     }
 
-    private record CatchEntry(ItemStack stack, FishingPersonality personality, FishSize length) {
+    record CatchEntry(ItemStack stack, FishingPersonality personality, FishSize length, int weight) {
+        CatchEntry(ItemStack stack, FishingPersonality personality, FishSize length) {
+            this(stack, personality, length, 1);
+        }
     }
 }

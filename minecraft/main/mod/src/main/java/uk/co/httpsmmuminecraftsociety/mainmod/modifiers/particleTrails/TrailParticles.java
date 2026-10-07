@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 public final class TrailParticles {
     private TrailParticles() {}
@@ -16,6 +17,7 @@ public final class TrailParticles {
     }
 
     public static void spawn(Entity source, WeightedTrailSpec spec, ServerPlayer player, boolean playerTrail) {
+        if (!FeatureToggles.isEnabled(FeatureToggles.SOARING)) return;
         if (!(source.level() instanceof ServerLevel level)) return;
         boolean member = PlayerStatsSync.isMember(player);
         if (spec.totalWeight(member) == 0) return;

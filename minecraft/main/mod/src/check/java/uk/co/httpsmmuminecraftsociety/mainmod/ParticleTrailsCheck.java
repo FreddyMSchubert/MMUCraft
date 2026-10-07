@@ -21,6 +21,9 @@ import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.*;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.SetParticleTrailRecipe;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureToggle;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureTogglesSnapshot;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,12 @@ public final class ParticleTrailsCheck {
         var registries = VanillaRegistries.createWorldLookup();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries).forEach(components -> components.apply());
         SetParticleTrailRecipe recipe = new SetParticleTrailRecipe();
+        var earlyTrail = grid(new ItemStack(Items.BOW), new ItemStack(Items.DYE.red()));
+        assert !recipe.matches(earlyTrail, null);
+        FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
+                .addToggles(FeatureToggle.newBuilder().setKey(FeatureToggles.SOARING).setEnabled(true))
+                .build());
+        assert recipe.matches(earlyTrail, null);
         for (var item : List.of(Items.BOW, Items.ELYTRA, Items.TRIDENT, Items.CROSSBOW, Items.MACE)) {
             ItemStack original = new ItemStack(item);
             original.setDamageValue(12);

@@ -12,6 +12,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.ParticleTrailData;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.TrailParticle;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.WeightedTrailSpec;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.Map;
 public final class SetParticleTrailRecipe extends CustomRecipe {
     @Override
     public boolean matches(CraftingInput input, Level level) {
+        if (!FeatureToggles.isEnabled(FeatureToggles.SOARING)) return false;
         boolean hasTarget = false;
         for (ItemStack stack : input.items()) {
             if (stack.isEmpty()) continue;

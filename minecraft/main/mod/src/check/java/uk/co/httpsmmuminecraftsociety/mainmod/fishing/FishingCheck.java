@@ -1,6 +1,10 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+
+import java.util.List;
 
 public final class FishingCheck {
     private FishingCheck() {}
@@ -13,8 +17,9 @@ public final class FishingCheck {
         checkPhysicalShadowScale();
         checkLureBookShortcutChance();
         checkCatchGates();
+        checkWeightedFishSelection();
         checkTextureRotation();
-        System.out.println("Fishing checks passed: waits, catch windows, catch gates, approach speed, lure books, rotations, first-bob chance, and shadow scale.");
+        System.out.println("Fishing checks passed: waits, catch windows, catch gates, weighted fish, approach speed, lure books, rotations, first-bob chance, and shadow scale.");
     }
 
     private static void checkCatchWindows() {
@@ -51,6 +56,26 @@ public final class FishingCheck {
                 }
             }
         }
+    }
+
+    private static void checkWeightedFishSelection() {
+        FishingPersonality common = personality(3.0F, 8.0F);
+        FishingCatches.CatchEntry unrestricted = new FishingCatches.CatchEntry(
+                new ItemStack(Items.COD), common, null, 1);
+        FishingCatches.CatchEntry oneCondition = new FishingCatches.CatchEntry(
+                new ItemStack(Items.SALMON), common, null, 2);
+        FishingCatches.CatchEntry twoConditions = new FishingCatches.CatchEntry(
+                new ItemStack(Items.TROPICAL_FISH), common, null, 3);
+        List<FishingCatches.CatchEntry> entries = List.of(unrestricted, oneCondition, twoConditions);
+        RandomSource random = RandomSource.create(219L);
+        int[] counts = new int[3];
+        for (int i = 0; i < 60_000; i++) {
+            FishingCatches.CatchEntry selected = FishingCatches.selectEntry(entries, random);
+            counts[entries.indexOf(selected)]++;
+        }
+        assert counts[0] >= 9_500 && counts[0] <= 10_500;
+        assert counts[1] >= 19_000 && counts[1] <= 21_000;
+        assert counts[2] >= 28_500 && counts[2] <= 31_500;
     }
 
     private static void checkWaitTiming() {

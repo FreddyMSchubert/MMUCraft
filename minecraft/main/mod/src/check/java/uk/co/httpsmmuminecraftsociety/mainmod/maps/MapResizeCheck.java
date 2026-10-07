@@ -13,6 +13,9 @@ import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MapResizeRecipe;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureToggle;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureTogglesSnapshot;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.List;
 
@@ -46,6 +49,11 @@ public final class MapResizeCheck {
 
         MapResizeRecipe recipe = new MapResizeRecipe();
         ItemStack map = new ItemStack(Items.MAP);
+        assert !recipe.matches(grid(map, new ItemStack(Items.SHEARS)), null);
+        FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
+                .addToggles(FeatureToggle.newBuilder().setKey("imaginative").setEnabled(true))
+                .build());
+        assert recipe.matches(grid(map, new ItemStack(Items.SHEARS)), null);
         for (int expected = 256; expected <= SmallMaps.MAX_SIZE; expected *= 2) {
             CraftingInput input = grid(map, new ItemStack(Items.PAPER));
             assert recipe.matches(input, null) : "Paper should enlarge the map to " + expected;

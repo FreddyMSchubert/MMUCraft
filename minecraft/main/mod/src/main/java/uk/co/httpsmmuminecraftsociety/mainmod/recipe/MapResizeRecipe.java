@@ -9,12 +9,14 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 public final class MapResizeRecipe extends CustomRecipe {
     private static final int SHEARS_DAMAGE = 16;
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
+        if (!FeatureToggles.isEnabled("imaginative")) return false;
         ItemStack map = ItemStack.EMPTY;
         ItemStack resizingItem = ItemStack.EMPTY;
         for (ItemStack stack : input.items()) {

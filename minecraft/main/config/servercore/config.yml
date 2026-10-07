@@ -96,3 +96,8 @@ mob-spawning:
 activation-range:
     enabled: true
     use-vertical-range: true
+    excluded-entity-types:
+        - 'minecraft:ghast'
+        - 'minecraft:hopper_minecart'
+        - 'minecraft:warden'
+        - 'minecraft:creaking'

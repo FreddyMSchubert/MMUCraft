@@ -36,6 +36,10 @@ If you want to, you still can treat enchanting and anvils just as usual. The def
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/k5CqmuKsMRA?si=PhQtcHgt6xCAYWlv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+:::note
+**Video amendment:** Soulbound and Mending are compatible. You can apply both enchantments to the same item.
+:::
+
 ## Duplicating books
 
 Put an enchanted book on the lectern used by a librarian. The librarian's first trade becomes an exact copy of that book if copying is allowed for every enchantment on it. Replace the lectern book whenever you want a different copy trade.

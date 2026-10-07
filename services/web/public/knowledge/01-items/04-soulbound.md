@@ -24,10 +24,6 @@ That is to say, you won't lose ***SOULBOUND*** items under the server's [death a
 ***SOULBOUND*** can be applied to all armor and tools, but also to [*wallets*](/play/knowledge/wallets) and [*recovery compasses*](/play/knowledge/death-and-respawning). Those latter two especially are **supremely useful**.
 :::
 
-:::note
-You can apply ***SOULBOUND*** and Mending to the same item.
-:::
-
 ## Obtaining
 
 ***SOULBOUND*** books can be crafted like this:

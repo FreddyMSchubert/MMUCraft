@@ -46,7 +46,6 @@ INPUTS = {
         "minecraft/main/config",
         "minecraft/main/server.properties.generated",
         "minecraft/main/server-icon.jpg",
-        "minecraft/main/vanillatweaks",
     ],
     "velocity": [
         "services/velocity/.dockerignore",

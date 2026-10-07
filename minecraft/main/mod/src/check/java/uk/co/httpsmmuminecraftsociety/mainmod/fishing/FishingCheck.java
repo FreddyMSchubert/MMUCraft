@@ -1,5 +1,9 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
+import net.minecraft.SharedConstants;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -10,6 +14,11 @@ public final class FishingCheck {
     private FishingCheck() {}
 
     public static void main(String[] args) {
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
+        BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(VanillaRegistries.createWorldLookup())
+                .forEach(components -> components.apply());
+
         checkWaitTiming();
         checkCatchWindows();
         checkDistanceNormalizedApproach();

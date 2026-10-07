@@ -219,6 +219,19 @@ tasks.register('checkFishing', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkFishMeatFishermanTrades', JavaExec) {
+    group = 'verification'
+    description = 'Check fisherman fish meat names and saved offer repair.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FishMeatFishermanTradesCheck'
+    enableAssertions = true
+    args projectDir.absolutePath
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('checkFishMeatFishermanTrades')
+}
+
 tasks.register('checkSparseStructures', JavaExec) {
     group = 'verification'
     description = 'Check non-vanilla structure spacing and vanilla exclusions.'

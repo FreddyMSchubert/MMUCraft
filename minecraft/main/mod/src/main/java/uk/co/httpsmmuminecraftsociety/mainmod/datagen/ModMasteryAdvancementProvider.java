@@ -214,6 +214,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("charms/get_all", "Every Charm", "Hold every charm at once.", "fake:charm-heart", "charms/get_20", "challenge");
         add("utility/wallet", "Cash Container", "Get a wallet.", "fake:charm-wallet", "root", "task");
         add("utility/soulbound", "Till Death Doesn't Part Us", "Apply Soulbound to an item. It will no longer leave you, even after death.", "minecraft:recovery_compass", "root", "goal");
+        add("utility/soulbound_break", "Till Death Do Us Part", "Break an item enchanted with Soulbound.", "minecraft:diamond_pickaxe:glint", "utility/soulbound", "goal");
         add("utility/soulbound_recovery_compass", "Well, This Is Handy", "Apply Soulbound to a Recovery Compass.", "minecraft:recovery_compass", "utility/soulbound", "goal");
         add("utility/use_potion", "Experimental Medicine", "Use a server-exclusive potion.", "fake:charm-potion-returning", "root", "task");
         add("utility/all_potions", "MMU Mixologist", "Use every server-exclusive potion.", "fake:charm-potion-resonance", "utility/use_potion", "challenge");

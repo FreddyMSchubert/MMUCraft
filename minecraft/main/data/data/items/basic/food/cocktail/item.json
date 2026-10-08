@@ -1,0 +1,68 @@
+{
+	"title": "Cocktail",
+	"id": "cocktail",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": [],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"dyeable": {
+		"tintColor": "#f2582d"
+	},
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 2,
+		"canAlwaysEat": true,
+		"hungerBars": 3,
+		"saturationBars": 0,
+		"directHearts": 0,
+		"useRemainderItem": "minecraft:glass_bottle",
+		"effects": [
+			{
+				"id": "minecraft:nausea",
+				"durationTicks": 200,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:strength",
+				"durationTicks": 50,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": false,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:slowness",
+				"durationTicks": 100,
+				"amplifier": 2,
+				"showIcon": false,
+				"showParticles": false,
+				"ambient": false
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/cocktail",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:potion[minecraft:potion_contents=mundane]=Mundane Potion",
+					"minecraft:glow_berries"
+				],
+				"result": {
+					"stack": "mainmod:cocktail",
+					"count": 1
+				}
+			}
+		]
+	}
+}

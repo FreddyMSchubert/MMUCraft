@@ -1,0 +1,61 @@
+{
+	"title": "Tea",
+	"id": "tea",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": [],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"dyeable": {
+		"tintColor": "#c83726"
+	},
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 3,
+		"canAlwaysEat": true,
+		"hungerBars": 1,
+		"saturationBars": 0,
+		"directHearts": 0,
+		"useRemainderItem": "minecraft:glass_bottle",
+		"effects": [
+			{
+				"id": "minecraft:saturation",
+				"durationTicks": 100,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:weakness",
+				"durationTicks": 200,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/tea",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:potion",
+					"minecraft:leaf_litter",
+					"minecraft:leaf_litter"
+				],
+				"result": {
+					"stack": "mainmod:tea",
+					"count": 1
+				}
+			}
+		]
+	}
+}

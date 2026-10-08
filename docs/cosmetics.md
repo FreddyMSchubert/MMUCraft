@@ -24,7 +24,7 @@ also manual ideas:
 - [x] cute new chicken
 - [x] bow ribbon
 - [ ] batman mask (dyeable to be pinkable)
-- [ ] Egg Yolk https://mccisland.fandom.com/wiki/Egg_Yolk
+- [x] Egg Yolk https://mccisland.fandom.com/wiki/Egg_Yolk
 - [ ] Disguise https://mccisland.fandom.com/wiki/Disguise
 - [x] Cardboard https://mccisland.fandom.com/wiki/Cardboard_Box
 - [ ] Closable Cardboard
@@ -61,7 +61,7 @@ also manual ideas:
 - [ ] lil octopusses
 - [ ] ghast hat so it looks your face is the ghasts face. fully engulfs your head but hole in front
 - [ ] flower on head
-- [ ] flower crown
+- [x] flower crown
 - [ ] gas mask
 - [ ] Shark https://mccisland.fandom.com/wiki/Shark
 - [ ] Sensei Hat https://mccisland.fandom.com/wiki/Sensei

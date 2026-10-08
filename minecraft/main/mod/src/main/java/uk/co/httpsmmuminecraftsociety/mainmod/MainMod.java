@@ -20,9 +20,6 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
-import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
@@ -104,14 +101,6 @@ public class MainMod implements ModInitializer {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE,
 				Identifier.fromNamespaceAndPath(MOD_ID, "bottom_end_stone"),
 				BottomEndStoneFeature.CODEC);
-		if (!ResourceLoader.registerBuiltinPack(
-				Identifier.fromNamespaceAndPath(MOD_ID, "hide_vanillatweaks_advancements"),
-				FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(),
-				PackActivationType.ALWAYS_ENABLED
-		)) {
-			throw new IllegalStateException("Could not register the Vanilla Tweaks advancement filter");
-		}
-
         BiomeModifications.addFeature(
                 BiomeSelectors.foundInTheEnd(),
                 GenerationStep.Decoration.UNDERGROUND_ORES,

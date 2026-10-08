@@ -24,6 +24,11 @@ public abstract class MasteryAdvancementVisibilityMixin {
     @Inject(method = "lambda$updateTreeVisibility$1", at = @At("HEAD"), cancellable = true)
     private void mainmod$revealMasteryMilestonesInOrder(Set<AdvancementNode> additions,
             Set<Identifier> removals, AdvancementNode node, boolean shouldShow, CallbackInfo ci) {
+        if (node.holder().id().getNamespace().equals("vanillatweaks")) {
+            if (visible.remove(node.holder())) removals.add(node.holder().id());
+            ci.cancel();
+            return;
+        }
         String id = node.holder().id().toString();
         if (!id.startsWith("mainmod:mastery/")) return;
         boolean numbered = Character.isDigit(id.charAt(id.length() - 1))

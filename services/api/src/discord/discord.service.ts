@@ -457,12 +457,16 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	}
 
 	private async runCommand(interaction: ChatInputCommandInteraction) {
-		if (
-			![this.channelId, this.waitingChannelId].includes(interaction.channelId) ||
-			!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)
-		) {
+		if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
 			await interaction.reply({
-				content: 'This command is restricted to server administrators in a bridge channel.',
+				content: 'Discord did not report Administrator permission for your account here.',
+				ephemeral: true,
+			});
+			return;
+		}
+		if (![this.channelId, this.waitingChannelId].includes(interaction.channelId)) {
+			await interaction.reply({
+				content: `This channel (${interaction.channelId}) does not match DISCORD_CHANNEL_ID (${this.channelId || 'unset'}) or DISCORD_WAITING_ROOM_CHANNEL_ID (${this.waitingChannelId || 'unset'}).`,
 				ephemeral: true,
 			});
 			return;

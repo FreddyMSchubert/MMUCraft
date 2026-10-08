@@ -35,9 +35,30 @@ public final class MasteryDropGatesCheck {
         FakeItems.ID_MAP = Map.of("cosmetic-shulker", new FakeItem("Shulker", "cosmetic-shulker",
                 Rarity.COMMON, 1, false, true, "void", List.of(), Items.CARVED_PUMPKIN, List.of()));
         assert !MasteryDropGates.isUnlocked(Identifier.parse("mainmod:mastery/cosmetics/item/shulker"));
+        Identifier nether = Identifier.parse("minecraft:nether/root");
+        Identifier end = Identifier.parse("blazeandcave:end/root");
+        Identifier bacNether = Identifier.parse("blazeandcave:nether/root");
+        Identifier potions = Identifier.parse("blazeandcave:potion/root");
+        assert !AdvancementDropGates.isUnlocked(nether, nether);
+        assert !AdvancementDropGates.isUnlocked(bacNether, bacNether);
+        assert !AdvancementDropGates.isUnlocked(potions, potions);
+        assert !AdvancementDropGates.isUnlocked(end, end);
+        assert !AdvancementDropGates.isUnlocked(Identifier.parse("minecraft:end/root"), Identifier.parse("minecraft:end/root"));
+        assert AdvancementDropGates.isUnlocked(vanilla, vanilla);
+
+        FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
+                .addToggles(FeatureToggle.newBuilder().setKey("nether").setEnabled(true)).build());
+        assert AdvancementDropGates.isUnlocked(nether, nether);
+        assert AdvancementDropGates.isUnlocked(bacNether, bacNether);
+        assert AdvancementDropGates.isUnlocked(potions, potions);
+        assert !AdvancementDropGates.isUnlocked(end, end);
+        FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
+                .addToggles(FeatureToggle.newBuilder().setKey("nether").setEnabled(true))
+                .addToggles(FeatureToggle.newBuilder().setKey("void").setEnabled(true)).build());
+        assert AdvancementDropGates.isUnlocked(end, end);
         FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
                 .addToggles(FeatureToggle.newBuilder().setKey("soaring").setEnabled(true)).build());
         assert MasteryDropGates.enabledMask() == mask;
-        System.out.println("Mastery drop gate checks passed.");
+        System.out.println("Advancement drop gate checks passed.");
     }
 }

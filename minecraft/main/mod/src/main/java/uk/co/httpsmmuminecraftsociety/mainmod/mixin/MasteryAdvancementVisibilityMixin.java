@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.AdvancementDropGates;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryDropGates;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
@@ -30,9 +31,11 @@ public abstract class MasteryAdvancementVisibilityMixin {
     private int mainmod$lastDropMask = -1;
 
     @Inject(method = "award", at = @At("HEAD"), cancellable = true)
-    private void mainmod$lockMasteryAwardUntilDrop(AdvancementHolder holder, String criterion,
+    private void mainmod$lockAwardUntilDrop(AdvancementHolder holder, String criterion,
             CallbackInfoReturnable<Boolean> ci) {
-        if (!MasteryDropGates.isUnlocked(holder.id())) ci.setReturnValue(false);
+        AdvancementNode node = tree.get(holder);
+        Identifier rootId = node == null ? holder.id() : node.root().holder().id();
+        if (!AdvancementDropGates.isUnlocked(holder.id(), rootId)) ci.setReturnValue(false);
     }
 
     @Inject(method = "flushDirty", at = @At("HEAD"))
@@ -56,7 +59,7 @@ public abstract class MasteryAdvancementVisibilityMixin {
             return;
         }
         String id = node.holder().id().toString();
-        if (!MasteryDropGates.isUnlocked(node.holder().id())) {
+        if (!AdvancementDropGates.isUnlocked(node.holder().id(), node.root().holder().id())) {
             if (visible.remove(node.holder())) removals.add(node.holder().id());
             ci.cancel();
             return;

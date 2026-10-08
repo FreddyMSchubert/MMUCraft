@@ -42,6 +42,10 @@ public final class DailyAdvancementPolicy {
 
     public static boolean allows(Identifier advancementId, Identifier rootId) {
         if (matches(policy.excluded(), advancementId, rootId)) return false;
+        return isDropUnlocked(advancementId, rootId);
+    }
+
+    public static boolean isDropUnlocked(Identifier advancementId, Identifier rootId) {
         if (!FeatureToggles.isEnabled(FeatureToggles.NETHER)
                 && matches(policy.requiresNether(), advancementId, rootId)) return false;
         return FeatureToggles.isEnabled(FeatureToggles.VOID)

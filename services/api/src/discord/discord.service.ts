@@ -13,7 +13,8 @@ import {
 	type Snowflake,
 } from 'discord.js';
 import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
-import { DatabaseService, velocitySettings } from '../database/database.service';
+import { DatabaseService, velocityServers } from '../database/database.service';
+import { eq } from 'drizzle-orm';
 import { CommandLogsService } from '../database/command-logs.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
@@ -292,7 +293,11 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			: event;
 		const maxPlayers =
 			currentEvent.type === 'join' || currentEvent.type === 'first_join'
-				? this.database.connection.select().from(velocitySettings).get()?.max_players
+				? this.database.connection
+						.select()
+						.from(velocityServers)
+						.where(eq(velocityServers.name, 'main'))
+						.get()?.max_players
 				: undefined;
 		const message = formatDiscordWebhookMessage(currentEvent, maxPlayers);
 		if (!message.content.trim()) return false;

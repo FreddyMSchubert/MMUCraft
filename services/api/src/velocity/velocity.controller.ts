@@ -63,13 +63,14 @@ export class VelocityAdminController {
 		return this.velocity.setMaintenanceMode(body?.enabled);
 	}
 
-	@Patch('max-players')
+	@Patch('servers/:serverId/max-players')
 	setMaxPlayers(
 		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('serverId') serverId: string,
 		@Body() body: { maxPlayers?: unknown } | undefined,
 	) {
 		this.sessions.requireCommitteeSession(cookieHeader);
-		return this.velocity.setMaxPlayers(body?.maxPlayers);
+		return this.velocity.setMaxPlayers(Number(serverId), body?.maxPlayers);
 	}
 
 	@Post('players/:uuid/move')

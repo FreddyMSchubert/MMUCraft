@@ -34,9 +34,13 @@ On a mob kill, Killshift writes the killer UUID, mob ID, and event time to a del
 
 Docker sends the event server and controller logs to its local log driver. Alloy discovers their Compose service labels and forwards both streams to Loki. The Technical Grafana dashboard has one log panel for each service. The event server uses the Minecraft multiline rule. Loki keeps production logs for 14 days; event results remain in SQLite.
 
-The dev Compose overlay sets a 1 GiB maximum Java heap for each Minecraft server. It starts each heap at 256 MiB. Each server has a 1.5 GiB container memory limit. Dev Velocity uses a 192 MiB heap inside a 384 MiB container limit. The dev API and website each have a 192 MiB Node heap inside a 384 MiB container limit. Production sets an 8 GiB main heap in a 9 GiB container and a 3 GiB event heap in a 4 GiB container. The event heap starts at 1 GiB. A container limit is a ceiling, not memory in constant use.
+## RAM during an event
 
-The dev container limits can add up to more than the VM's 4 GiB of RAM. These limits do not reserve RAM. Configure swap on the dev host before you run both Minecraft servers. The Compose swap limits permit use of host swap but do not create it. Check host RAM and swap with `free -h` and `swapon --show` after deployment.
+Production keeps main running when the event server starts. Main has an 8 GiB maximum Java heap and a 9 GiB container ceiling because its persistent world stays online. The event server adds a 3 GiB heap, starting at 1 GiB, inside a 4 GiB container ceiling for the modded event world. The waiting room serves both destinations and up to 100 visitors with a 768 MiB heap and a 1.5 GiB container ceiling. Velocity has a 256 MiB heap and 512 MiB ceiling. The API has a 384 MiB Node heap and 640 MiB ceiling; the website has a 256 MiB Node heap and 512 MiB ceiling. The event controller has a 96 MiB ceiling. Backup, Prometheus, Grafana, and Loki each have a 512 MiB ceiling; Alloy has 256 MiB, cAdvisor 128 MiB, node-exporter 64 MiB, and nginx 64 MiB.
+
+Starting the event adds its 4 GiB ceiling and 1 GiB soft reservation. It does not lower or transfer the main server's allocation. With every production service running, the configured container ceilings total about 18.7 GiB, while soft reservations total about 8.3 GiB. These are limits and scheduling hints, not measured usage or preallocated RAM. The production host's physical RAM is not specified here, so compare `free -h`, `docker stats`, and Grafana memory graphs during a test event before raising either player limit. If the host has less than 18.7 GiB, all containers cannot simultaneously reach their ceilings.
+
+The 4 GiB development host uses 1 GiB maximum heaps for main and event, 384 MiB for the waiting room, 192 MiB for Velocity, and 192 MiB Node heaps for the API and website. The dev overlay uses soft reservations without per-container hard memory limits. Configure host swap before running both Minecraft servers, then check `free -h` and `swapon --show`. Swap gives the host room for bursts but cannot replace enough physical RAM for sustained event load.
 
 ## Limits in this draft
 

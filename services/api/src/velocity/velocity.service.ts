@@ -48,6 +48,7 @@ interface LivePlayer {
 	username: string;
 	serverName: string;
 	state: 'queued' | 'visiting' | 'playing';
+	targetServerName: string;
 }
 
 interface MoveCommand {
@@ -215,7 +216,6 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 		return {
 			maintenanceMode: settings.maintenance_mode === 1,
-			maxPlayers: settings.max_players,
 			playerRoles: this.connectedPlayers.map((player) => {
 				const user = this.identities.findByUuid(player.uuid);
 				return {
@@ -225,7 +225,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 				};
 			}),
 			servers: [
-				...servers.map((server) => ({ name: server.name, address: server.address })),
+				...servers.map((server) => ({
+					name: server.name,
+					address: server.address,
+					maxPlayers: server.max_players,
+				})),
 				{ name: 'waiting-room', address: 'waiting-room:25565' },
 			],
 			route,
@@ -242,8 +246,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		const now = Date.now();
 		const proxyOnline = this.proxyIsOnline(now);
 		const servers = this.servers();
+		const queuedPlayers = proxyOnline
+			? this.connectedPlayers.filter((player) => player.state === 'queued')
+			: [];
 		const players = proxyOnline
-			? this.livePlayers.map((player) => {
+			? this.connectedPlayers.map((player) => {
 					const user = this.identities.findByUuid(player.uuid);
 					const profile = user
 						? this.database.connection
@@ -271,11 +278,6 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			proxyOnline,
 			lastHeartbeatUnixMs: this.lastHeartbeatUnixMs,
 			maintenanceMode: this.settings().maintenance_mode === 1,
-			maxPlayers: this.settings().max_players,
-			countedPlayerCount: players.filter((player) => {
-				const user = this.identities.findByUuid(player.uuid);
-				return !user || !isExemptAdmin(user);
-			}).length,
 			eventOverride: this.settings().event_override,
 			eventActive: Boolean(this.events.active(now)),
 			servers: servers.map((server) => {
@@ -289,6 +291,16 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 						(player) =>
 							player.serverName === server.name &&
 							!isExemptAdmin(this.identities.findByUuid(player.uuid)),
+					).length,
+					memberWaitingCount: queuedPlayers.filter(
+						(player) =>
+							player.targetServerName === server.name &&
+							this.identities.findByUuid(player.uuid)?.is_member === 1,
+					).length,
+					waitingCount: queuedPlayers.filter(
+						(player) =>
+							player.targetServerName === server.name &&
+							this.identities.findByUuid(player.uuid)?.is_member !== 1,
 					).length,
 				};
 			}),
@@ -328,27 +340,48 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 	capacitySnapshot() {
 		return {
-			playerCount: this.proxyIsOnline()
-				? this.livePlayers.filter(
-						(player) => !isExemptAdmin(this.identities.findByUuid(player.uuid)),
-					).length
-				: null,
-			waitingCount: this.proxyIsOnline()
-				? this.connectedPlayers.filter((player) => player.state === 'queued').length
-				: 0,
-			maxPlayers: this.settings().max_players,
+			servers: this.servers().map((server) => ({
+				name: server.name,
+				maxPlayers: server.max_players,
+				playerCount: this.proxyIsOnline()
+					? this.livePlayers.filter(
+							(player) =>
+								player.serverName === server.name &&
+								!isExemptAdmin(this.identities.findByUuid(player.uuid)),
+						).length
+					: null,
+				memberWaitingCount: this.proxyIsOnline()
+					? this.connectedPlayers.filter(
+							(player) =>
+								player.state === 'queued' &&
+								player.targetServerName === server.name &&
+								this.identities.findByUuid(player.uuid)?.is_member === 1,
+						).length
+					: 0,
+				waitingCount: this.proxyIsOnline()
+					? this.connectedPlayers.filter(
+							(player) =>
+								player.state === 'queued' &&
+								player.targetServerName === server.name &&
+								this.identities.findByUuid(player.uuid)?.is_member !== 1,
+						).length
+					: 0,
+			})),
 		};
 	}
 
-	setMaxPlayers(value: unknown) {
+	setMaxPlayers(serverIdInput: unknown, value: unknown) {
+		const serverId = parseSafeInteger(serverIdInput, 'Select a server');
 		if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0 || value > 99)
 			throw new BadRequestException('Maximum players must be a whole number from 0 to 99');
+		const server = this.servers().find((candidate) => candidate.id === serverId);
+		if (!server) throw new NotFoundException('Server not found');
 		this.database.connection
-			.update(velocitySettings)
+			.update(velocityServers)
 			.set({ max_players: value })
-			.where(eq(velocitySettings.id, 1))
+			.where(eq(velocityServers.id, serverId))
 			.run();
-		return { ok: true, maxPlayers: value };
+		return { ok: true, serverId, maxPlayers: value };
 	}
 
 	setMaintenanceMode(enabledInput: unknown) {
@@ -380,14 +413,14 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		if (server.name === EVENT_SERVER && this.events.warmingUp())
 			throw new ConflictException('Surprising Saturday opens at the event start time');
 		const player = this.proxyIsOnline()
-			? this.livePlayers.find((candidate) => candidate.uuid === uuid)
+			? this.connectedPlayers.find((candidate) => candidate.uuid === uuid)
 			: undefined;
 		this.database.connection
 			.insert(velocityPlayerServers)
 			.values({
 				player_uuid: uuid,
 				preferred_server: server.name,
-				last_connected_server: player?.serverName ?? null,
+				last_connected_server: player?.state === 'playing' ? player.serverName : null,
 			})
 			.onConflictDoUpdate({
 				target: velocityPlayerServers.player_uuid,
@@ -397,7 +430,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 		for (const [id, command] of this.commands)
 			if (command.playerUuid === uuid) this.commands.delete(id);
-		if (!player || player.serverName === server.name)
+		if (!player || (player.serverName === server.name && player.state === 'playing'))
 			return { ok: true, commandId: null, preferredServerName: server.name };
 		const command: MoveCommand = {
 			id: this.nextCommandId++,
@@ -613,6 +646,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			name: server.name,
 			address: server.address,
 			isDefault: server.is_default === 1,
+			maxPlayers: server.max_players,
 		};
 	}
 }
@@ -651,6 +685,8 @@ function parseLivePlayers(value: unknown): LivePlayer[] {
 		const serverName =
 			typeof input.serverName === 'string' ? input.serverName.trim().toLowerCase() : '';
 		const state = input.state;
+		const targetServerName =
+			typeof input.targetServerName === 'string' ? input.targetServerName : '';
 		if (
 			!uuid ||
 			seen.has(uuid) ||
@@ -658,11 +694,12 @@ function parseLivePlayers(value: unknown): LivePlayer[] {
 			!SERVER_NAME_PATTERN.test(serverName) ||
 			(state !== 'queued' && state !== 'visiting' && state !== 'playing') ||
 			((state === 'queued' || state === 'visiting') && serverName !== 'waiting-room') ||
-			(state === 'playing' && serverName === 'waiting-room')
+			(state === 'playing' && serverName === 'waiting-room') ||
+			!['main', EVENT_SERVER].includes(targetServerName)
 		)
 			return [];
 		seen.add(uuid);
-		return [{ uuid, username, serverName, state }];
+		return [{ uuid, username, serverName, state, targetServerName }];
 	});
 }
 

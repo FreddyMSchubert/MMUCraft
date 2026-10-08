@@ -570,13 +570,11 @@ export const velocitySettings = sqliteTable(
 		id: integer('id').primaryKey(),
 		maintenance_mode: integer('maintenance_mode').notNull().default(0),
 		event_override: integer('event_override'),
-		max_players: integer('max_players').notNull().default(42),
 	},
 	(table) => [
 		check('velocity_settings_singleton_check', sql`${table.id} = 1`),
 		check('velocity_settings_maintenance_check', sql`${table.maintenance_mode} in (0, 1)`),
 		check('velocity_settings_event_override_check', sql`${table.event_override} in (0, 1)`),
-		check('velocity_settings_max_players_check', sql`${table.max_players} >= 0`),
 	],
 );
 
@@ -587,12 +585,14 @@ export const velocityServers = sqliteTable(
 		name: text('name').notNull(),
 		address: text('address').notNull(),
 		is_default: integer('is_default').notNull().default(0),
+		max_players: integer('max_players').notNull().default(42),
 	},
 	(table) => [
 		uniqueIndex('velocity_servers_name_unique').on(table.name),
 		uniqueIndex('velocity_servers_address_unique').on(table.address),
 		index('velocity_servers_default_idx').on(table.is_default),
 		check('velocity_servers_default_check', sql`${table.is_default} in (0, 1)`),
+		check('velocity_servers_max_players_check', sql`${table.max_players} between 0 and 99`),
 	],
 );
 

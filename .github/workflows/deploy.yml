@@ -17,6 +17,11 @@ on:
                 required: true
                 default: dev
                 type: string
+            source_ref:
+                description: Source revision used to build the images; blank uses the version tag
+                required: false
+                default: ''
+                type: string
             warning_minutes:
                 description: Minutes to warn Minecraft players before restart (0 disables)
                 required: true
@@ -55,9 +60,10 @@ jobs:
               env:
                   REQUESTED_VERSION: ${{ env.DEPLOY_VERSION }}
                   REQUESTED_REF: ${{ github.sha }}
+                  REQUESTED_SOURCE_REF: ${{ inputs.source_ref }}
               run: |
                   tag="$REQUESTED_VERSION"
-                  ref="$REQUESTED_VERSION"
+                  ref="${REQUESTED_SOURCE_REF:-$REQUESTED_VERSION}"
                   if [[ "${tag,,}" == dev ]]; then
                     tag="$REQUESTED_REF"
                     ref="$REQUESTED_REF"

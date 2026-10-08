@@ -240,6 +240,10 @@ set_property() {
 dc config --quiet
 dc pull --quiet
 dc --profile event pull --quiet surprising-saturday
+dc run --rm --no-deps --user "${PUID:-1000}:${PGID:-1000}" --entrypoint sh minecraft -c '
+	set -- ${SERVER_RUNNER:-mc-server-runner}
+	command -v "$1" >/dev/null 2>&1 || { echo "Minecraft runner $1 is missing or not executable; deployment has not started." >&2; exit 1; }
+'
 dc run --rm --no-deps alloy validate /etc/alloy/config.alloy
 
 api_image="${image_prefix}-api:${tag}"

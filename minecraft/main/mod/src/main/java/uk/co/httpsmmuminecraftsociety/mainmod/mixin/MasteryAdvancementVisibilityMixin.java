@@ -3,6 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +12,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.AdvancementDropGates;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryDropGates;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.Set;
 
@@ -19,7 +24,31 @@ public abstract class MasteryAdvancementVisibilityMixin {
     @Shadow private ServerPlayer player;
     @Shadow public Set<AdvancementHolder> visible;
     @Shadow private Set<AdvancementHolder> progressChanged;
+    @Shadow private Set<AdvancementNode> rootsToUpdate;
+    @Shadow public AdvancementTree tree;
     @Shadow public abstract AdvancementProgress getOrStartProgress(AdvancementHolder holder);
+    private long mainmod$lastDropRevision = -1;
+    private int mainmod$lastDropMask = -1;
+
+    @Inject(method = "award", at = @At("HEAD"), cancellable = true)
+    private void mainmod$lockAwardUntilDrop(AdvancementHolder holder, String criterion,
+            CallbackInfoReturnable<Boolean> ci) {
+        AdvancementNode node = tree.get(holder);
+        Identifier rootId = node == null ? holder.id() : node.root().holder().id();
+        if (!AdvancementDropGates.isUnlocked(holder.id(), rootId)) ci.setReturnValue(false);
+    }
+
+    @Inject(method = "flushDirty", at = @At("HEAD"))
+    private void mainmod$refreshMasteryVisibilityOnDropChange(ServerPlayer player, boolean showAdvancements,
+            CallbackInfo ci) {
+        long revision = FeatureToggles.revision();
+        if (mainmod$lastDropRevision == revision) return;
+        mainmod$lastDropRevision = revision;
+        int mask = MasteryDropGates.enabledMask();
+        if (mainmod$lastDropMask == mask) return;
+        mainmod$lastDropMask = mask;
+        tree.roots().forEach(rootsToUpdate::add);
+    }
 
     @Inject(method = "lambda$updateTreeVisibility$1", at = @At("HEAD"), cancellable = true)
     private void mainmod$revealMasteryMilestonesInOrder(Set<AdvancementNode> additions,
@@ -30,6 +59,11 @@ public abstract class MasteryAdvancementVisibilityMixin {
             return;
         }
         String id = node.holder().id().toString();
+        if (!AdvancementDropGates.isUnlocked(node.holder().id(), node.root().holder().id())) {
+            if (visible.remove(node.holder())) removals.add(node.holder().id());
+            ci.cancel();
+            return;
+        }
         if (!id.startsWith("mainmod:mastery/")) return;
         boolean numbered = Character.isDigit(id.charAt(id.length() - 1))
                 && id.lastIndexOf('_') > id.lastIndexOf('/');

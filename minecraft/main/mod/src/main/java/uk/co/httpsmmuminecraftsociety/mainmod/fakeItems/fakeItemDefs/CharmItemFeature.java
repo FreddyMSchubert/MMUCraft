@@ -133,12 +133,12 @@ public record CharmItemFeature(
         }
 
         CharmStackData.setStoredCharms(stack, List.of(new StoredCharmData(charmId, newLevel)));
+        applyPresentation(stack, newLevel);
 
         if (newLevel > 0 && charm instanceof BaseItemChangeCallbackCharm baseItemChangeCallbackCharm) {
             baseItemChangeCallbackCharm.enableEffectForItem(stack, newLevel);
         }
 
-        applyPresentation(stack, newLevel);
         FakeItems.wrapTooltip(stack);
     }
 

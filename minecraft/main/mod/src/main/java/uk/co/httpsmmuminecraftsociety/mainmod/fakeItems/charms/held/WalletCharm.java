@@ -1,6 +1,5 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
-import net.minecraft.util.Prediction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -18,6 +17,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
@@ -71,10 +71,12 @@ public class WalletCharm implements Charm, UseCallbackCharm
 
     @Override
     public InteractionResult onUse(ItemStack wallet, ServerPlayer player, ServerLevel level, int charmLevel) {
-        if (isWallet(wallet) < 1) return InteractionResult.SUCCESS;
+        int before = isWallet(wallet);
+        if (before < 1) return InteractionResult.SUCCESS;
+        int balanceBefore = MoneyHelper.GetBalance(player);
 
         setBalance(wallet, -1, true);
-        ItemEntity coin = player.drop(FakeItems.ID_MAP.get("coin-1").createItemStack(), false, Prediction.SERVER_ONLY);
+        ItemEntity coin = DabloonInteractionLog.drop(player, FakeItems.ID_MAP.get("coin-1").createItemStack());
         if (coin != null) {
             var random = level.getRandom();
             double speed = 0.35 + random.nextDouble() * 0.4;
@@ -86,6 +88,9 @@ public class WalletCharm implements Charm, UseCallbackCharm
             );
             coin.setDeltaMovement(direction.add(spread));
         }
+        DabloonInteractionLog.record(player, "wallet_withdraw", "wallet", DabloonInteractionLog.itemId(wallet),
+                1, 1, balanceBefore, MoneyHelper.GetBalance(player),
+                "Wallet " + before + " -> " + isWallet(wallet) + "; coin_entity_created=" + (coin != null));
         return InteractionResult.SUCCESS;
     }
     // Tuple<RemovedCoinStacks, LighterWallet>

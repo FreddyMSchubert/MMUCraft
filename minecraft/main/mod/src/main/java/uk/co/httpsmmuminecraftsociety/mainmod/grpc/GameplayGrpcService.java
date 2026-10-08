@@ -92,6 +92,12 @@ public final class GameplayGrpcService extends GrpcHandler {
         return INSTANCE.eventsClient.recordCommandExecution(request);
     }
 
+    public static CompletableFuture<RecordDabloonInteractionResponse> recordDabloonInteraction(
+            RecordDabloonInteractionRequest request
+    ) {
+        return INSTANCE.eventsClient.recordDabloonInteraction(request);
+    }
+
     @Override
     List<BindableService> serverServices() {
         return List.of(new GameplayControlEndpoint());

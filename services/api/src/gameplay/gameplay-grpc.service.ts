@@ -12,6 +12,7 @@ import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service';
 import { DailiesService } from './dailies/dailies.service';
 import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.service';
 import { CommandLogsService } from '../database/command-logs.service';
+import { DabloonInteractionsService } from '../database/dabloon-interactions.service';
 import { AnnouncementsService } from '../announcements/announcements.service';
 import {
 	FeatureTogglesService,
@@ -21,6 +22,7 @@ import type {
 	DailyTaskUpdateRequest,
 	DailyTaskUpdateResponse,
 	CommandExecutionRequest,
+	DabloonInteractionRequest,
 	EmptyGrpcRequest,
 	FishCatchRequest,
 	FishCatchResponse,
@@ -64,6 +66,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly dailies: DailiesService,
 		private readonly discord: DiscordService,
 		private readonly commandLogs: CommandLogsService,
+		private readonly dabloonInteractions: DabloonInteractionsService,
 		private readonly featureToggles: FeatureTogglesService,
 		private readonly announcements: AnnouncementsService,
 	) {}
@@ -84,6 +87,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			UpdateDailyTask: this.updateDailyTask.bind(this),
 			PublishDiscordEvent: this.publishDiscordEvent.bind(this),
 			RecordCommandExecution: this.recordCommandExecution.bind(this),
+			RecordDabloonInteraction: this.recordDabloonInteraction.bind(this),
 			GetAnnouncements: this.getAnnouncements.bind(this),
 			MarkAnnouncementsRead: this.markAnnouncementsRead.bind(this),
 		});
@@ -123,6 +127,13 @@ export class GameplayGrpcService implements OnModuleInit {
 		callback: UnaryCallback<{ accepted: boolean }>,
 	) {
 		callback(null, this.commandLogs.record(call.request));
+	}
+
+	private recordDabloonInteraction(
+		call: grpc.ServerUnaryCall<DabloonInteractionRequest, { accepted: boolean }>,
+		callback: UnaryCallback<{ accepted: boolean }>,
+	) {
+		callback(null, this.dabloonInteractions.record(call.request));
 	}
 
 	private getKnowledgeTip(

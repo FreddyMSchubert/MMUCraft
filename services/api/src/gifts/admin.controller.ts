@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } fro
 import { AuthAccountAdministrationService } from '../auth/auth-account-administration.service';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { CommandLogsService } from '../database/command-logs.service';
+import { DabloonInteractionsService } from '../database/dabloon-interactions.service';
 import { SigninAttemptLogsService } from '../database/signin-attempt-logs.service';
 import { CountdownInput, CountdownsService } from './countdowns.service';
 import { GiftCodeAdministrationService } from './gift-code-administration.service';
@@ -19,6 +20,7 @@ export class AdminController {
 		private readonly playerRoles: PlayerRoleAdministrationService,
 		private readonly membershipImport: MembershipImportService,
 		private readonly commandLogs: CommandLogsService,
+		private readonly dabloonInteractions: DabloonInteractionsService,
 		private readonly signinAttempts: SigninAttemptLogsService,
 		private readonly countdowns: CountdownsService,
 		private readonly launch: LaunchSettingsService,
@@ -168,6 +170,35 @@ export class AdminController {
 			isOperator,
 			source,
 			userId,
+			fromUnixMs,
+			toUnixMs,
+			search,
+		});
+	}
+
+	@Get('dabloon-interactions')
+	listDabloonInteractions(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Query('beforeId') beforeId: string | undefined,
+		@Query('userId') userId: string | undefined,
+		@Query('action') action: string | undefined,
+		@Query('itemKind') itemKind: string | undefined,
+		@Query('dimension') dimension: string | undefined,
+		@Query('minAmount') minAmount: string | undefined,
+		@Query('maxAmount') maxAmount: string | undefined,
+		@Query('fromUnixMs') fromUnixMs: string | undefined,
+		@Query('toUnixMs') toUnixMs: string | undefined,
+		@Query('search') search: string | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.dabloonInteractions.list({
+			beforeId,
+			userId,
+			action,
+			itemKind,
+			dimension,
+			minAmount,
+			maxAmount,
 			fromUnixMs,
 			toUnixMs,
 			search,

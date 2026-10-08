@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
 
 @Mixin(Inventory.class)
 public abstract class NoSoulboundItemDropping {
@@ -50,7 +51,7 @@ public abstract class NoSoulboundItemDropping {
 
             ItemEntity drop = this.player.createItemStackToDrop(stack, true, false);
             if (drop != null) {
-                this.player.level().addFreshEntity(drop);
+                DabloonInteractionLog.withActor(this.player, () -> this.player.level().addFreshEntity(drop));
                 ((ItemEntityAgeAccessor) drop).mainmod$setAge(DEATH_DROP_AGE);
             }
             this.setItem(slot, ItemStack.EMPTY);

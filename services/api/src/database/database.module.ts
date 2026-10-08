@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DatabaseService } from './database.service';
 import { CommandLogsService } from './command-logs.service';
+import { DabloonInteractionsService } from './dabloon-interactions.service';
 import { MinecraftIdentityService } from './minecraft-identity.service';
 import { SigninAttemptLogsService } from './signin-attempt-logs.service';
 import { ReferralsService } from './referrals.service';
@@ -10,6 +11,7 @@ import { ReferralsService } from './referrals.service';
 		DatabaseService,
 		MinecraftIdentityService,
 		CommandLogsService,
+		DabloonInteractionsService,
 		SigninAttemptLogsService,
 		ReferralsService,
 	],
@@ -17,6 +19,7 @@ import { ReferralsService } from './referrals.service';
 		DatabaseService,
 		MinecraftIdentityService,
 		CommandLogsService,
+		DabloonInteractionsService,
 		SigninAttemptLogsService,
 		ReferralsService,
 	],

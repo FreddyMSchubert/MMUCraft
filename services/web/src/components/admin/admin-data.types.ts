@@ -14,6 +14,7 @@ export type AdminSection =
 	| 'gifts'
 	| 'countdowns'
 	| 'commands'
+	| 'dabloons'
 	| 'signin-attempts'
 	| 'dailies'
 	| 'toggles'
@@ -125,6 +126,7 @@ export function normalizeAdminSection(section: string | undefined): AdminSection
 		section === 'gifts' ||
 		section === 'countdowns' ||
 		section === 'commands' ||
+		section === 'dabloons' ||
 		section === 'signin-attempts' ||
 		section === 'dailies' ||
 		section === 'toggles' ||

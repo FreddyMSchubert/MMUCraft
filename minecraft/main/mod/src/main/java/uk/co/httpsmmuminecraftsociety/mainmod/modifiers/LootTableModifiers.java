@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -35,6 +36,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonChestLoot;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.time.ZoneId;
@@ -260,6 +262,24 @@ public class LootTableModifiers {
             }
         }
         itemStacks.forEach(GearEnchantmentSanitizer::sanitize);
+        Entity actor = lootContext.getOptional(LootContextParams.INTERACTING_ENTITY);
+        if (!(actor instanceof ServerPlayer)) actor = lootContext.getOptional(LootContextParams.THIS_ENTITY);
+        for (ItemStack stack : itemStacks) {
+            String kind = DabloonInteractionLog.kind(stack);
+            if (kind.isEmpty()) continue;
+            String detail = "Loot table=" + tableId + "; contents: " + DabloonInteractionLog.describe(stack);
+            if (actor instanceof ServerPlayer player) {
+                DabloonInteractionLog.record(player, "grant", kind, DabloonInteractionLog.itemId(stack),
+                        stack.getCount(), DabloonInteractionLog.value(stack), null, null, detail);
+            } else {
+                var origin = lootContext.getOptional(LootContextParams.ORIGIN);
+                DabloonInteractionLog.recordWorld("grant", kind, DabloonInteractionLog.itemId(stack),
+                        stack.getCount(), DabloonInteractionLog.value(stack),
+                        lootContext.getLevel().dimension().identifier().toString(),
+                        origin == null ? 0 : Mth.floor(origin.x), origin == null ? 0 : Mth.floor(origin.y),
+                        origin == null ? 0 : Mth.floor(origin.z), detail);
+            }
+        }
     }
 
     private static void rerollMusicDiscs(LootTable table, LootContext context, List<ItemStack> drops) {

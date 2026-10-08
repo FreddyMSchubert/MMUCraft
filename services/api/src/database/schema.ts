@@ -425,6 +425,34 @@ export const commandLogs = sqliteTable(
 	],
 );
 
+export const dabloonInteractions = sqliteTable(
+	'dabloon_interactions',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		action: text('action').notNull(),
+		item_kind: text('item_kind').notNull(),
+		item_id: text('item_id').notNull(),
+		item_count: integer('item_count').notNull(),
+		amount_dabloons: integer('amount_dabloons').notNull(),
+		actor_name: text('actor_name').notNull(),
+		minecraft_uuid: text('minecraft_uuid'),
+		user_id: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
+		context: text('context').notNull(),
+		dimension: text('dimension').notNull(),
+		x: integer('x').notNull(),
+		y: integer('y').notNull(),
+		z: integer('z').notNull(),
+		balance_before: integer('balance_before'),
+		balance_after: integer('balance_after'),
+		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+	},
+	(table) => [
+		index('dabloon_interactions_time_idx').on(table.created_at_unix_ms),
+		index('dabloon_interactions_user_time_idx').on(table.user_id, table.created_at_unix_ms),
+		index('dabloon_interactions_action_time_idx').on(table.action, table.created_at_unix_ms),
+	],
+);
+
 export const signinAttemptLogs = sqliteTable(
 	'signin_attempt_logs',
 	{
@@ -679,6 +707,7 @@ export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSel
 export type DailyTaskRow = typeof dailyTasks.$inferSelect;
 export type GiftCodeRow = typeof giftCodes.$inferSelect;
 export type CommandLogRow = typeof commandLogs.$inferSelect;
+export type DabloonInteractionRow = typeof dabloonInteractions.$inferSelect;
 export type SigninAttemptLogRow = typeof signinAttemptLogs.$inferSelect;
 export type CountdownRow = typeof countdowns.$inferSelect;
 export type AnnouncementRow = typeof announcements.$inferSelect;
@@ -714,6 +743,7 @@ export const schema = {
 	giftCodeRedemptions,
 	referralLinks,
 	commandLogs,
+	dabloonInteractions,
 	signinAttemptLogs,
 	countdowns,
 	announcements,

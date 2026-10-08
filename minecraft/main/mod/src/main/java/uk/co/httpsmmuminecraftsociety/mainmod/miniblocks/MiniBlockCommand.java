@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.miniblocks;
 
-import net.minecraft.util.Prediction;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -88,7 +89,7 @@ public final class MiniBlockCommand {
             stack.setCount(giveNow);
 
             if (!player.getInventory().add(stack)) {
-                player.drop(stack, false, Prediction.SERVER_ONLY);
+                DabloonInteractionLog.drop(player, stack);
             }
 
             remaining -= giveNow;

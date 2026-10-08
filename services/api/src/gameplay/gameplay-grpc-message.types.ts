@@ -13,6 +13,24 @@ export interface CommandExecutionRequest {
 	unix_ms?: number;
 }
 
+export interface DabloonInteractionRequest {
+	action?: string;
+	item_kind?: string;
+	item_id?: string;
+	item_count?: number;
+	amount_dabloons?: number;
+	actor_name?: string;
+	minecraft_uuid?: string;
+	context?: string;
+	dimension?: string;
+	x?: number;
+	y?: number;
+	z?: number;
+	balance_before?: number;
+	balance_after?: number;
+	unix_ms?: number;
+}
+
 export interface DailyTaskUpdateRequest {
 	user_id?: number;
 	period_key?: string;

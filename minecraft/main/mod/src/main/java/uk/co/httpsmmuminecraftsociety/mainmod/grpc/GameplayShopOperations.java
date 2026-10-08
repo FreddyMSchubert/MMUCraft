@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 
-import net.minecraft.util.Prediction;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -71,13 +72,21 @@ final class GameplayShopOperations {
 
         String delivery = "none";
         if (!grantStack.isEmpty()) {
+            var granted = grantStack.copy();
+            int balanceBeforeDelivery = MoneyHelper.GetBalance(player);
             player.getInventory().add(grantStack);
             delivery = "inventory";
             if (!grantStack.isEmpty()) {
-                delivery = player.drop(grantStack, false, Prediction.SERVER_ONLY) == null ? "drop_failed" : "ground";
+                delivery = DabloonInteractionLog.drop(player, grantStack) == null ? "drop_failed" : "ground";
             }
             player.getInventory().setChanged();
             player.containerMenu.broadcastChanges();
+            if (!DabloonInteractionLog.kind(granted).isEmpty()) {
+                DabloonInteractionLog.record(player, "grant", DabloonInteractionLog.kind(granted),
+                        DabloonInteractionLog.itemId(granted), granted.getCount(), DabloonInteractionLog.value(granted),
+                        balanceBeforeDelivery, MoneyHelper.GetBalance(player),
+                        "Shop item=" + request.getItemId() + "; delivery=" + delivery);
+            }
         }
 
         MainMod.LOGGER.info("economy_item_delivery at_unix_ms={} player_uuid={} username={} item_id={} kind={} delivery={} price={} balance={}",

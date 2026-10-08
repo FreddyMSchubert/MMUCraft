@@ -26,6 +26,7 @@ public record FakeItem(
         int maxStackSize,
         boolean fireproof,
         boolean shopPurchasable,
+        String shopDrop,
         List<Component> tooltip,
         Item baseItem,
         List<ItemFeature> features
@@ -59,6 +60,8 @@ public record FakeItem(
                     maxStackSize,
                     fireproof,
                     json.has("shopPurchasable"),
+                    json.has("shopPurchasable") && json.getAsJsonObject("shopPurchasable").has("gameplayToggle")
+                            ? json.getAsJsonObject("shopPurchasable").get("gameplayToggle").getAsString() : "",
                     tooltip,
                     baseItem,
                     features);

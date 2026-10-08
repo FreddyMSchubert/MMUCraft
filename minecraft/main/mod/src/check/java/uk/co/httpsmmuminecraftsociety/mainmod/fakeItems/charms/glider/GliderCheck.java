@@ -62,7 +62,7 @@ public final class GliderCheck {
                 Map.of(1, CharmLevelDefinition.of(charm.getAsJsonArray("levels").get(0).getAsJsonObject(), "glider")));
         FakeItem base = FakeItem.fromJson(definition, "glider/item.json");
         FakeItem item = new FakeItem(base.title(), base.id(), base.rarity(), base.maxStackSize(), base.fireproof(), base.shopPurchasable(),
-                base.tooltip(), base.baseItem(), List.of(feature));
+                base.shopDrop(), base.tooltip(), base.baseItem(), List.of(feature));
         FakeItems.ID_MAP = Map.of(item.id(), item);
         FakeItems.CHARM_ID_MAP = Map.of(GliderCharm.CHARM_ID, item);
         ItemStack glider = item.createItemStack();

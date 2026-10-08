@@ -60,7 +60,7 @@ public final class ArmorAppearanceCheck {
         var feature = new EquippableCharmItemFeature(
                 EquippableCharmItemFeature.createEquippableSettings("test_charm__charm", EquipmentSlot.CHEST));
         FakeItems.CHARM_ID_MAP = Map.of(7, new FakeItem("Test charm", "test-charm", Rarity.COMMON,
-                1, false, false, List.of(), Items.HEART_OF_THE_SEA, List.of(feature)));
+                1, false, false, "", List.of(), Items.HEART_OF_THE_SEA, List.of(feature)));
 
         var pane = new ToggleArmorAppearanceRecipe(true);
         var glass = new ToggleArmorAppearanceRecipe(false);

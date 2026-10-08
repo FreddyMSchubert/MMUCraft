@@ -24,7 +24,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailySimpleEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseCallbackCharm;
 
 import java.io.IOException;
@@ -37,9 +37,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class JokeCharm implements Charm, UseCallbackCharm {
+public final class JokeCharm implements UseCallbackCharm, BaseItemChangeCallbackCharm {
     private static final String JOKES_FILE = "data/mainmod/jokes.json";
     private static final String STORED_JOKE_TAG = "joke_charm_joke";
+    private static final String UNREAD_JOKE_TAG = "joke_charm_unread";
 
     private static final int MAX_PAGES = 100;
     private static final int MAX_CHARS_PER_PAGE = 900;
@@ -101,13 +102,39 @@ public final class JokeCharm implements Charm, UseCallbackCharm {
 
     @Override
     public InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
-        boolean generated = !hasStoredJoke(stack);
-        open(player, "Joke Book", getOrCreateJoke(stack));
-        if (generated) {
+        String joke = getOrCreateJoke(stack);
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        boolean unread = tag.getBoolean(UNREAD_JOKE_TAG).orElse(false);
+        if (unread) {
+            tag.remove(UNREAD_JOKE_TAG);
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        }
+        updateName(stack, joke);
+        open(player, title(joke), joke);
+        if (unread) {
             DailyTaskManager.record(player, DailyTaskEvent.simple(DailySimpleEvent.READ_NEW_JOKE));
             MasteryAdvancements.recordNewJoke(player);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void enableEffectForItem(ItemStack stack, int charmLevel) {
+        updateName(stack, getOrCreateJoke(stack));
+    }
+
+    @Override
+    public void disableEffectForItem(ItemStack stack, int charmLevel) {
+    }
+
+    private void updateName(ItemStack stack, String joke) {
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(title(joke))
+                .withStyle(style -> style.withItalic(false)));
+    }
+
+    private String title(String joke) {
+        int index = strings.indexOf(joke);
+        return index < 0 ? "Joke Book" : "Joke Book #" + (index + 2);
     }
 
     public void openRandom(ServerPlayer player) {
@@ -215,16 +242,9 @@ public final class JokeCharm implements Charm, UseCallbackCharm {
 
         String joke = randomString();
         tag.putString(STORED_JOKE_TAG, joke);
+        tag.putBoolean(UNREAD_JOKE_TAG, true);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return joke;
-    }
-
-    private static boolean hasStoredJoke(ItemStack stack) {
-        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag()
-                .getString(STORED_JOKE_TAG)
-                .filter(joke -> !joke.isBlank())
-                .isPresent();
     }
 
     private static Path jokesFile() {

@@ -87,6 +87,7 @@
 		"fishing.ItemDisplayEntityAccessor",
 		"ScubaTankAirDrainSlowdown",
 		"HappyGhastRiddenSpeedMixin",
+		"CreakingCosmeticGazeMixin",
 		"exhaustionCharm.ServerPlayerExhaustionMixin",
 		"exhaustionCharm.BlockBreakExhaustionMixin",
 		"beacon.DynamicBeaconRangeMixin",

@@ -241,6 +241,25 @@ services:
             TYPE: FABRIC
             VERSION: '26.3'
             FABRIC_LOADER_VERSION: '0.19.5'
+            MODRINTH_PROJECTS: |-
+                spark:e3hsPc1o
+                chunky?
+                chunk-debug
+                lithium?
+                ferrite-core?
+                scalablelux?:alpha
+                servercore
+                zfastnoise?:beta
+                c2me-fabric:alpha
+                modernfix-mvus?
+                krypton?
+                vmp-fabric:alpha
+                structure-layout-optimizer?
+                clumps?
+                lazyai?
+                lmd?
+                fabric-language-kotlin
+            MODRINTH_DOWNLOAD_DEPENDENCIES: required
             COPY_CONFIG_DEST: /data
             SYNC_SKIP_NEWER_IN_DESTINATION: 'false'
             SKIP_SERVER_PROPERTIES: 'true'
@@ -249,6 +268,7 @@ services:
             SURPRISING_SATURDAY_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
             MEMORY: 4G
             STOP_DURATION: '110'
+            USE_MEOWICE_FLAGS: 'true'
             UID: ${PUID:-1000}
             GID: ${PGID:-1000}
         volumes:

@@ -1,0 +1,13 @@
+features:
+    lobotomize-villagers:
+        enabled: false
+
+# Keep vanilla mob caps so players can find mobs to score.
+dynamic:
+    enabled: false
+
+breeding-cap:
+    enabled: false
+
+activation-range:
+    enabled: false

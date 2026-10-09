@@ -57,7 +57,7 @@
 					"minecraft:sweet_berries"
 				],
 				"result": {
-					"stack": "mainmod:wine",
+					"stack": "mainmod:wine-bottle",
 					"count": 1
 				}
 			}

@@ -6,6 +6,7 @@
 	"maxStackSize": 1,
 	"tooltips": ["Loved by cultures all around the world"],
 	"shopPurchasable": {
+		"gameplayToggle": "soaring",
 		"membersOnly": false,
 		"priceDabloons": 50,
 		"description": "",

@@ -1,0 +1,12 @@
+{
+	"title": "Surprising Saturday Winner's Coronet",
+	"id": "cosmetic-crown-ss-kill-shift",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Prize for first place in the Kill-Shift Surprising Saturday event - 10/10/2026",
+		"Made in China"
+	],
+	"equippableCosmetic": {}
+}

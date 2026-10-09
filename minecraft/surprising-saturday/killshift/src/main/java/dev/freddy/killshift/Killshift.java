@@ -18,6 +18,7 @@ public final class Killshift implements ModInitializer {
     @Override
     public void onInitialize() {
         ShiftCommand.register();
+        EventDiscordBridge.init();
         ServerPlayerEvents.AFTER_RESPAWN.register(NearbyRespawn::afterRespawn);
         ServerPlayerEvents.AFTER_RESPAWN.register(ShapeManager::afterRespawn);
         ServerLivingEntityEvents.AFTER_DEATH.register(ShapeManager::onDeath);

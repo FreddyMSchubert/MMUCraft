@@ -206,6 +206,11 @@ public final class EventApi {
                 for (ServerPlayer recipient : server.getPlayerList().getPlayers()) {
                     recipient.sendSystemMessage(podium);
                 }
+                EventDiscordBridge.publishServer("🏆 " + podium.getString());
+            }
+            if (receipt != null && receipt.has("accepted") && receipt.get("accepted").getAsBoolean()
+                    && score != null) {
+                EventDiscordBridge.publishScore(player, notice.mobName().getString(), score.get("score").getAsInt());
             }
         });
     }

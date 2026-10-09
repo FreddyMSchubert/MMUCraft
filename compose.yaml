@@ -269,6 +269,10 @@ services:
             FABRIC_PROXY_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
             SURPRISING_SATURDAY_API_URL: http://api:8080
             SURPRISING_SATURDAY_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
+            DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
+            DISCORD_EVENT_CHANNEL_ID: ${DISCORD_EVENT_CHANNEL_ID:-}
+            DISCORD_EVENT_WEBHOOK_URL: ${DISCORD_EVENT_WEBHOOK_URL:-}
+            DISCORD_AVATAR_BASE_URL: ${DISCORD_AVATAR_BASE_URL:-}
             MEMORY: 2G
             STOP_DURATION: '110'
         volumes:

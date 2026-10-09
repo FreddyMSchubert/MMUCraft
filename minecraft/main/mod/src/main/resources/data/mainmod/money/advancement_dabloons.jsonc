@@ -1392,6 +1392,7 @@
 	"mainmod:mastery/glider/updraft": 5, // Ride a heat updraft: deliberate glider technique.
 	"mainmod:mastery/glider/craft": 20, // Make a glider from Phantom Membranes and Breeze Rods.
 	"mainmod:mastery/glider/amethyst_ring": 20, // Thread an amethyst ring: skill-based flight challenge.
+	"mainmod:mastery/food/sushi": 10, // Eat Sushi.
 	"mainmod:mastery/food/beer_again": 5, // Drink beer while already under its effects.
 	"mainmod:mastery/enderite/scrap": 5, // Obtain Enderite Scrap: uncommon End progression.
 	"mainmod:mastery/enderite/scrap_4": 5, // Gather enough Enderite Scrap for one ingot.

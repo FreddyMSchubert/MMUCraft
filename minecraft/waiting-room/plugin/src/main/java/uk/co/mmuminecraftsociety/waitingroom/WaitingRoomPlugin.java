@@ -164,15 +164,6 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void left(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        event.quitMessage(null);
-        profiles.remove(player.getUniqueId());
-        sendDiscordEvent("leave", player, "left the server. ("
-                + Math.max(0, Bukkit.getOnlinePlayers().size() - 1) + " online)");
-    }
-
-    @EventHandler
     public void died(PlayerDeathEvent event) {
         event.setKeepInventory(true);
         event.getDrops().clear();
@@ -318,12 +309,15 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler public void left(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
         event.quitMessage(null);
-        profiles.remove(event.getPlayer().getUniqueId());
+        profiles.remove(player.getUniqueId());
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        Team team = board.getTeam(teamName(event.getPlayer()));
+        Team team = board.getTeam(teamName(player));
         if (team != null) team.unregister();
-        board.resetScores(event.getPlayer().getName());
+        board.resetScores(player.getName());
+        sendDiscordEvent("leave", player, "left the server. ("
+                + Math.max(0, Bukkit.getOnlinePlayers().size() - 1) + " online)");
     }
     @EventHandler public void damage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)

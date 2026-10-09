@@ -10,16 +10,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.waypoints.Waypoint;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCharmItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCosmeticItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureToggle;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureTogglesSnapshot;
@@ -35,6 +40,23 @@ public final class ArmorAppearanceCheck {
         Bootstrap.bootStrap();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(VanillaRegistries.createWorldLookup())
                 .forEach(components -> components.apply());
+        ItemStack pumpkin = new ItemStack(Items.CARVED_PUMPKIN);
+        assert !CosmeticsManager.determineCosmeticType(pumpkin).isCosmetic();
+        CosmeticsManager.normalizeCosmeticHead(pumpkin);
+        assert pumpkin.get(DataComponents.EQUIPPABLE).cameraOverlay().isPresent();
+        ItemStack cosmetic = pumpkin.copy();
+        cosmetic.set(DataComponents.CUSTOM_MODEL_DATA,
+                new CustomModelData(List.of(), List.of(), List.of("test-cosmetic"), List.of()));
+        var reducedVisibility = Items.ZOMBIE_HEAD.components().get(DataComponents.MOB_VISIBILITY);
+        assert reducedVisibility != null;
+        cosmetic.set(DataComponents.MOB_VISIBILITY, reducedVisibility);
+        assert CosmeticsManager.determineCosmeticType(cosmetic).isCosmetic();
+        new EquippableCosmeticItemFeature().apply(cosmetic);
+        assert cosmetic.get(DataComponents.EQUIPPABLE).cameraOverlay().isEmpty();
+        assert !cosmetic.has(DataComponents.MOB_VISIBILITY);
+        assert cosmetic.get(DataComponents.ATTRIBUTE_MODIFIERS).modifiers().stream().noneMatch(entry ->
+                entry.matches(Attributes.WAYPOINT_TRANSMIT_RANGE,
+                        Waypoint.WAYPOINT_TRANSMIT_RANGE_HIDE_MODIFIER.id()));
         var chestplate = Items.DIAMOND_CHESTPLATE.builtInRegistryHolder();
         var netheriteChestplate = Items.NETHERITE_CHESTPLATE.builtInRegistryHolder();
         List<Holder<Item>> helmets = List.of(Items.LEATHER_HELMET.builtInRegistryHolder(),

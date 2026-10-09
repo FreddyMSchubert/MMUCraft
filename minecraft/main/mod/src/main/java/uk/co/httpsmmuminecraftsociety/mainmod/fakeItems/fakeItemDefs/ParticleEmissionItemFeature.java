@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 public record ParticleEmissionItemFeature(List<Emission> particles, Map<String, DisplayTransform> display) implements ItemFeature {
-    public record DisplayTransform(Vec3 rotation, Vec3 translation) {
-        public static final DisplayTransform IDENTITY = new DisplayTransform(Vec3.ZERO, Vec3.ZERO);
+    public record DisplayTransform(Vec3 rotation, Vec3 translation, Vec3 scale) {
+        public static final DisplayTransform IDENTITY = new DisplayTransform(Vec3.ZERO, Vec3.ZERO, new Vec3(1, 1, 1));
     }
 
     public record Emission(String particle, Vec3 from, Vec3 to, int minTicks, int maxTicks,
@@ -69,7 +69,8 @@ public record ParticleEmissionItemFeature(List<Emission> particles, Map<String, 
                 JsonObject transform = displays.getAsJsonObject(mode);
                 if (transform != null) display.put(mode, new DisplayTransform(
                         transform.has("rotation") ? point(transform.getAsJsonArray("rotation")) : Vec3.ZERO,
-                        transform.has("translation") ? point(transform.getAsJsonArray("translation")) : Vec3.ZERO));
+                        transform.has("translation") ? point(transform.getAsJsonArray("translation")) : Vec3.ZERO,
+                        transform.has("scale") ? point(transform.getAsJsonArray("scale")) : new Vec3(1, 1, 1)));
             }
         }
         ParticleEmissionItemFeature feature = new ParticleEmissionItemFeature(List.copyOf(particles), Map.copyOf(display));

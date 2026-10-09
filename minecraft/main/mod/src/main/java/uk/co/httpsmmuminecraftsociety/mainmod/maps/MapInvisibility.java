@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.maps;
 
-import net.minecraft.util.Prediction;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -94,7 +95,7 @@ public final class MapInvisibility {
         filled.set(DataComponents.CUSTOM_DATA, CustomData.of(customData));
         SmallMaps.refreshTooltip(filled, level);
         if (emptyMap.isEmpty()) return InteractionResult.SUCCESS.heldItemTransformedTo(filled);
-        if (!player.getInventory().add(filled.copy())) player.drop(filled, false, Prediction.SERVER_ONLY);
+        if (!player.getInventory().add(filled.copy())) DabloonInteractionLog.drop(player, filled);
         return InteractionResult.SUCCESS;
     }
 }

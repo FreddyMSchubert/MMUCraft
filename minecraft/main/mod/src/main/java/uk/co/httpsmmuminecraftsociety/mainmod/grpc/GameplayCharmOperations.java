@@ -192,7 +192,7 @@ final class GameplayCharmOperations {
         }
         MasteryAdvancements.grant(player, "charms/upgrade_once");
         MasteryAdvancements.recordCharmUpgrade(player);
-        if (targetLevel >= feature.maxLevel()) MasteryAdvancements.grant(player, "charms/upgrade_max");
+        if (feature.maxLevel() >= 3 && targetLevel >= feature.maxLevel()) MasteryAdvancements.grant(player, "charms/upgrade_max");
         if (item.id().equals("charm-lucky-charm")) {
             MasteryAdvancements.grant(player, "fishing/lucky_charm_" + targetLevel);
         }

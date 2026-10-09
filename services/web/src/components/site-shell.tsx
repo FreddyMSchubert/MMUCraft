@@ -100,9 +100,13 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
 	const [capacity, setCapacity] = useState<{
-		playerCount: number | null;
-		waitingCount: number;
-		maxPlayers: number;
+		servers: {
+			name: string;
+			playerCount: number | null;
+			maxPlayers: number;
+			memberWaitingCount: number;
+			waitingCount: number;
+		}[];
 	} | null>(null);
 	const [events, setEvents] = useState<EventSummary[]>([]);
 	const [copyLabel, setCopyLabel] = useState('Copy IP');
@@ -197,9 +201,13 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				const response = await fetch('/api/velocity/capacity', { cache: 'no-store' });
 				if (!response.ok) return;
 				const next = (await response.json()) as {
-					playerCount: number | null;
-					waitingCount: number;
-					maxPlayers: number;
+					servers: {
+						name: string;
+						playerCount: number | null;
+						maxPlayers: number;
+						memberWaitingCount: number;
+						waitingCount: number;
+					}[];
 				};
 				if (!cancelled) setCapacity(next);
 			} catch {
@@ -577,20 +585,40 @@ function navigate(href: string, replace = false) {
 function CapacityCount({
 	capacity,
 }: {
-	capacity: { playerCount: number | null; waitingCount: number; maxPlayers: number };
+	capacity: {
+		servers: {
+			name: string;
+			playerCount: number | null;
+			maxPlayers: number;
+			memberWaitingCount: number;
+			waitingCount: number;
+		}[];
+	};
 }) {
 	return (
 		<>
-			<span
-				className={
-					capacity.playerCount !== null && capacity.playerCount >= capacity.maxPlayers
-						? 'playerCapacity-full'
-						: undefined
-				}
-			>
-				({capacity.playerCount ?? '?'}/{capacity.maxPlayers})
-			</span>
-			{capacity.waitingCount > 0 && <> (waiting: {capacity.waitingCount})</>}
+			{capacity.servers.map((server) => (
+				<span key={server.name}>
+					{' '}
+					{server.name === 'main' ? 'Server' : 'Event'}{' '}
+					<span
+						className={
+							server.playerCount !== null && server.playerCount >= server.maxPlayers
+								? 'playerCapacity-full'
+								: undefined
+						}
+					>
+						({server.playerCount ?? '?'}/{server.maxPlayers})
+					</span>
+					{server.memberWaitingCount + server.waitingCount > 0 && (
+						<>
+							{' '}
+							(members waiting: {server.memberWaitingCount}, others:{' '}
+							{server.waitingCount})
+						</>
+					)}
+				</span>
+			))}
 		</>
 	);
 }

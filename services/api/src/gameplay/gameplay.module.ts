@@ -11,6 +11,7 @@ import { FeatureTogglesModule } from '../toggles/feature-toggles.module';
 import { DatabaseModule } from '../database/database.module';
 import { AnnouncementsModule } from '../announcements/announcements.module';
 import { DropAnalyticsModule } from './drop-analytics/drop-analytics.module';
+import { VelocityModule } from '../velocity/velocity.module';
 
 @Module({
 	imports: [
@@ -25,6 +26,7 @@ import { DropAnalyticsModule } from './drop-analytics/drop-analytics.module';
 		DatabaseModule,
 		AnnouncementsModule,
 		DropAnalyticsModule,
+		VelocityModule,
 	],
 	providers: [GameplayGrpcService],
 })

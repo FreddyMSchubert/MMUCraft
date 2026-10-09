@@ -12,6 +12,24 @@ import {
 import killShiftItems from './kill-shift-items.json';
 
 type EditableTarget = Omit<CompletionTarget, 'points'> & { key: string; points: string };
+type RewardKey = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'participation';
+const rewardPlaces: { key: RewardKey; label: string }[] = [
+	{ key: 'first', label: '1st place' },
+	{ key: 'second', label: '2nd place' },
+	{ key: 'third', label: '3rd place' },
+	{ key: 'fourth', label: '4th place' },
+	{ key: 'fifth', label: '5th place' },
+	{ key: 'participation', label: 'Participation (6th place and below)' },
+];
+const emptyRewards = () => ({
+	first: '0',
+	second: '0',
+	third: '0',
+	fourth: '0',
+	fifth: '0',
+	participation: '0',
+	participationMinItems: '1',
+});
 
 function targetFromId(id: string): EditableTarget {
 	return {
@@ -38,6 +56,7 @@ export function SurprisingSaturdayAdminSection() {
 	const [startsAt, setStartsAt] = useState('');
 	const [endsAt, setEndsAt] = useState('');
 	const [items, setItems] = useState<EditableTarget[]>([]);
+	const [rewards, setRewards] = useState(emptyRewards);
 	const [editingEvent, setEditingEvent] = useState<EventSummary | null>(null);
 	const editingId = editingEvent?.id ?? null;
 	const [busy, setBusy] = useState(false);
@@ -50,6 +69,7 @@ export function SurprisingSaturdayAdminSection() {
 		setStartsAt('');
 		setEndsAt('');
 		setItems([]);
+		setRewards(emptyRewards());
 		setEditingEvent(null);
 	}
 	function updateTarget(key: string, changes: Partial<EditableTarget>) {
@@ -80,7 +100,7 @@ export function SurprisingSaturdayAdminSection() {
 				!(await confirm({
 					title: 'Change a started event?',
 					message:
-						'Changing targets, points, or times can change the leaderboard and live server routing.',
+						'Changing targets, points, rewards, or times can change the leaderboard, payouts, and live server routing.',
 					confirmLabel: 'Review final warning',
 					tone: 'danger',
 				}))
@@ -121,6 +141,12 @@ export function SurprisingSaturdayAdminSection() {
 							url: url.trim(),
 							points: Number(points),
 						})),
+						rewards: {
+							...Object.fromEntries(
+								rewardPlaces.map(({ key }) => [key, Number(rewards[key])]),
+							),
+							participationMinItems: Number(rewards.participationMinItems),
+						},
 					}),
 				},
 			);
@@ -159,6 +185,7 @@ export function SurprisingSaturdayAdminSection() {
 				startsAtUnixMs: number;
 				endsAtUnixMs: number;
 				items: CompletionTarget[];
+				rewards: Record<RewardKey, number> & { participationMinItems: number };
 			};
 			setEditingEvent(event);
 			setTitle(detail.title);
@@ -174,6 +201,15 @@ export function SurprisingSaturdayAdminSection() {
 					points: String(item.points),
 				})),
 			);
+			setRewards({
+				first: String(detail.rewards.first),
+				second: String(detail.rewards.second),
+				third: String(detail.rewards.third),
+				fourth: String(detail.rewards.fourth),
+				fifth: String(detail.rewards.fifth),
+				participation: String(detail.rewards.participation),
+				participationMinItems: String(detail.rewards.participationMinItems),
+			});
 			setError('');
 		} catch (caught) {
 			setError(caught instanceof Error ? caught.message : 'Could not load the event');
@@ -408,6 +444,49 @@ export function SurprisingSaturdayAdminSection() {
 						>
 							Add new completion target
 						</button>
+					</div>
+					<div className="eventTargetEditor">
+						<h4>Dabloon rewards</h4>
+						<p>
+							Rewards are paid once, on each player&apos;s next join to the main
+							server after this event ends. Committee results do not count.
+						</p>
+						{rewardPlaces.map(({ key, label }) => (
+							<label key={key}>
+								{label}
+								<input
+									type="number"
+									min={0}
+									max={1_000_000}
+									step={1}
+									required
+									value={rewards[key]}
+									onChange={(event) => {
+										setRewards((current) => ({
+											...current,
+											[key]: event.target.value,
+										}));
+									}}
+								/>
+							</label>
+						))}
+						<label>
+							Completed list items needed for participation
+							<input
+								type="number"
+								min={1}
+								max={Math.max(items.length, 1)}
+								step={1}
+								required
+								value={rewards.participationMinItems}
+								onChange={(event) => {
+									setRewards((current) => ({
+										...current,
+										participationMinItems: event.target.value,
+									}));
+								}}
+							/>
+						</label>
 					</div>
 					<button type="submit" disabled={busy}>
 						{editingId === null ? 'Create event' : 'Save changes'}

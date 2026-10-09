@@ -31,7 +31,7 @@
 	"blazeandcave:adventure/filthy_stinkin_rich": 16, // Filthy Stinkin' Rich: gather 64 emerald blocks, meaning 576 emeralds; serious trading/resource grind.
 	"blazeandcave:adventure/florist": 3, // Florist: wait for a Wandering Trader with a flower trade and buy it; low effort but trader RNG.
 	"blazeandcave:adventure/from_under_your_feet": 8, // From Under Your Feet: place or use a trapdoor, position a mob on it, and hit it with a Wind Charge; small deliberate setup.
-	"blazeandcave:adventure/genesis_of_the_end": 6, // Genesis of the End: locate a Stronghold and loot the Eye template; structure travel after End-prep stage.
+	"blazeandcave:adventure/genesis_of_the_end": 6, // Genesis of the End: locate a Stronghold and loot the Eye template; the structure can be found without Eyes of Ender.
 	"blazeandcave:adventure/ghostbuster": 6, // Ghostbuster!: fight an Evoker and kill a summoned Vex; raid/mansion combat, but one short kill condition.
 	"blazeandcave:adventure/good_lookin_treasure": 2, // Good-Lookin' Treasure: find any smithing template in structure loot or archaeology; intentional cosmetic loot pickup.
 	"blazeandcave:adventure/grave_robber": 3, // Grave Robber: find and enter a desert pyramid; quick structure visit once desert exploration starts.
@@ -377,9 +377,9 @@
 	"blazeandcave:building/festival_of_lights": 0, // Festival of Lights: place a lantern; common lighting action, no reward.
 	"blazeandcave:building/fluorescent": 3, // Fluorescent!: place end rods; small End material lighting step.
 	"blazeandcave:building/fruit_of_the_looms": 8, // Fruit of the Looms: collect every special banner pattern; structure/crafting loot checklist.
-	"blazeandcave:building/glowing": 1, // Glowing!: place glowstone; tiny Nether lighting action.
+	"blazeandcave:building/glowing": 1, // Glowing!: place glowstone; villagers and custom recipes provide it before the Nether.
 	"blazeandcave:building/grass_type": 6, // Grass Type: obtain every grass block type; Silk Touch and biome/block lookup.
-	"blazeandcave:building/greek_art_decor": 3, // Greek Art Decor: craft all quartz block forms; Nether quartz material set.
+	"blazeandcave:building/greek_art_decor": 3, // Greek Art Decor: craft all quartz block forms; mason trades provide quartz blocks before the Nether.
 	"blazeandcave:building/halloween": 0, // Halloween!: place jack o'lanterns; common decorative lighting, no reward.
 	"blazeandcave:building/hanging_around": 0, // Hanging Around: place a hanging sign; normal decoration craft, no reward.
 	"blazeandcave:building/happy_birthday": 1, // Happy Birthday!: put a candle on a cake; simple decoration/food craft, no reward.
@@ -470,7 +470,7 @@
 	"blazeandcave:challenges/i_am_loot": 101, // I am Loot!: open every loot chest type; broad structure exploration and chest-type tracking.
 	"blazeandcave:challenges/im_in_space": 76, // I'm in Space!: levitate upward 256 blocks; Shulker control, height planning, and fall safety.
 	"blazeandcave:challenges/immortal": 42, // Immortal: fill an inventory with Totems of Undying; many raid/mansion kills, valuable item hoard.
-	"blazeandcave:challenges/jockey_jamboree": 180, // Jockey Jamboree: unite every jockey mob; rare spawn RNG, containment, and transport nightmare.
+	"blazeandcave:monsters/jockey_jamboree": 180, // Jockey Jamboree: unite every jockey mob, including a Hoglin jockey; rare spawns and transport.
 	"blazeandcave:challenges/lets_take_it_up_a_notch": 41, // Let's take it up a notch: collect 64 enchanted golden apples; rare loot grind at the economy ceiling.
 	"blazeandcave:challenges/nuclear_fusion": 120, // Nuclear Fusion: lightning-transform every transformable mob at once; mob staging plus storm/Channeling timing.
 	"blazeandcave:challenges/overwarden": 96, // Overwarden: have fifty Wardens near you; repeated Deep Dark spawning and containment danger.
@@ -990,8 +990,8 @@
 	"blazeandcave:redstone/on_a_rail": 30, // On A Rail: travel 1 km by minecart in a straight line; rail material and route build.
 	"blazeandcave:redstone/powerful_light": 0, // Powerful Light: craft/place a redstone torch; basic redstone component, no reward.
 	"blazeandcave:redstone/pressure_detector": 0, // Pressure Detector: craft a detector rail; normal rail component, no reward.
-	"blazeandcave:redstone/quartz_miner": 6, // Quartz Miner: gather enough quartz for a stack of blocks; Nether quartz stockpile.
-	"blazeandcave:redstone/quirky_quartz": 0, // Quirky Quartz: mine Nether quartz once; common Nether ore pickup, no reward.
+	"blazeandcave:redstone/quartz_miner": 6, // Quartz Miner: hold a stack of quartz blocks; masons can sell them before the Nether.
+	"blazeandcave:redstone/quirky_quartz": 0, // Quirky Quartz: obtain quartz; custom quartz-block recipes make this possible before the Nether.
 	"blazeandcave:redstone/railwayman": 6, // Railwayman: craft a stack of every rail type; iron/gold/redstone rail checklist.
 	"blazeandcave:redstone/repeating_repeater": 0, // Repeating Repeater: craft a repeater; normal redstone component, no reward.
 	"blazeandcave:redstone/root": 0, // Redstone: tab root only; no reward.
@@ -1392,6 +1392,7 @@
 	"mainmod:mastery/glider/updraft": 5, // Ride a heat updraft: deliberate glider technique.
 	"mainmod:mastery/glider/craft": 20, // Make a glider from Phantom Membranes and Breeze Rods.
 	"mainmod:mastery/glider/amethyst_ring": 20, // Thread an amethyst ring: skill-based flight challenge.
+	"mainmod:mastery/food/sushi": 10, // Eat Sushi.
 	"mainmod:mastery/food/beer_again": 5, // Drink beer while already under its effects.
 	"mainmod:mastery/enderite/scrap": 5, // Obtain Enderite Scrap: uncommon End progression.
 	"mainmod:mastery/enderite/scrap_4": 5, // Gather enough Enderite Scrap for one ingot.

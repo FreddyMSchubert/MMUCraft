@@ -15,11 +15,12 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 @Mixin(Player.class)
 public abstract class ReskinnedHelmetTick {
     @Inject(method = "tick", at = @At("TAIL"))
-    private void mainmod$keepHelmetProtection(CallbackInfo ci) {
+    private void mainmod$normalizeCosmeticHeadgear(CallbackInfo ci) {
         Player player = (Player) (Object) this;
         ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
         if (player.level().isClientSide() || head.isEmpty()) return;
 
+        CosmeticsManager.normalizeCosmeticHead(head);
         CosmeticsManager.restoreHelmetProperties(head);
         if (CosmeticsManager.isReskinnedTurtleHelmet(head) && !player.isEyeInFluid(FluidTags.WATER)) {
             player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 200, 0, false, false, true));

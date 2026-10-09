@@ -19,6 +19,7 @@ service GameplayEvents {
   rpc UpdateDailyTask(UpdateDailyTaskRequest) returns (UpdateDailyTaskResponse);
   rpc PublishDiscordEvent(PublishDiscordEventRequest) returns (PublishDiscordEventResponse);
   rpc RecordCommandExecution(RecordCommandExecutionRequest) returns (RecordCommandExecutionResponse);
+  rpc RecordDabloonInteraction(RecordDabloonInteractionRequest) returns (RecordDabloonInteractionResponse);
   rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsResponse);
   rpc MarkAnnouncementsRead(MarkAnnouncementsReadRequest) returns (MarkAnnouncementsReadResponse);
 }
@@ -134,6 +135,28 @@ message RecordCommandExecutionRequest {
 }
 
 message RecordCommandExecutionResponse {
+  bool accepted = 1;
+}
+
+message RecordDabloonInteractionRequest {
+  string action = 1;
+  string item_kind = 2;
+  string item_id = 3;
+  int32 item_count = 4;
+  int32 amount_dabloons = 5;
+  string actor_name = 6;
+  string minecraft_uuid = 7;
+  string context = 8;
+  string dimension = 9;
+  int32 x = 10;
+  int32 y = 11;
+  int32 z = 12;
+  optional int32 balance_before = 13;
+  optional int32 balance_after = 14;
+  int64 unix_ms = 15;
+}
+
+message RecordDabloonInteractionResponse {
   bool accepted = 1;
 }
 
@@ -409,6 +432,7 @@ message SyncPlayerStatsRequest {
   int32 balance_dabloons = 3;
   repeated MinecraftStatEntry stats = 4;
   string minecraft_uuid = 5;
+  bool include_surprising_saturday_rewards = 6;
 }
 
 message SyncPlayerStatsResponse {
@@ -425,6 +449,14 @@ message SyncPlayerStatsResponse {
   int64 previous_last_played_at_unix_ms = 11;
   bool first_in_any_statistic = 12;
   int32 referral_reward_dabloons = 13;
+  repeated SurprisingSaturdayReward surprising_saturday_rewards = 14;
+}
+
+message SurprisingSaturdayReward {
+  int32 event_id = 1;
+  string title = 2;
+  int32 place = 3;
+  int32 amount_dabloons = 4;
 }
 
 message RecordMoneyEventRequest {

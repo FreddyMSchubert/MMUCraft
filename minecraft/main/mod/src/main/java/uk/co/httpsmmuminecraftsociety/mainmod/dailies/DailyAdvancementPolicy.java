@@ -29,23 +29,31 @@ public final class DailyAdvancementPolicy {
         Resource resource = resourceManager.getResource(RESOURCE)
                 .orElseThrow(() -> new IllegalStateException("Missing daily advancement policy: " + RESOURCE));
         try (var reader = new InputStreamReader(resource.open(), StandardCharsets.UTF_8)) {
-            JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-            policy = new Policy(
-                    readIds(json, "excluded"),
-                    readIds(json, "requires_nether"),
-                    readIds(json, "requires_end")
-            );
+            load(JsonParser.parseReader(reader).getAsJsonObject());
         } catch (IOException | IllegalStateException error) {
             throw new IllegalStateException("Could not load daily advancement policy: " + RESOURCE, error);
         }
     }
 
+    static void load(JsonObject json) {
+        policy = new Policy(
+                readIds(json, "excluded"),
+                readIds(json, "requires_nether"),
+                readIds(json, "requires_end")
+        );
+    }
+
     public static boolean allows(Identifier advancementId, Identifier rootId) {
         if (matches(policy.excluded(), advancementId, rootId)) return false;
+        return isDropUnlocked(advancementId, rootId);
+    }
+
+    public static boolean isDropUnlocked(Identifier advancementId, Identifier rootId) {
         if (!FeatureToggles.isEnabled(FeatureToggles.NETHER)
                 && matches(policy.requiresNether(), advancementId, rootId)) return false;
-        return FeatureToggles.isEnabled(FeatureToggles.VOID)
-                || !matches(policy.requiresEnd(), advancementId, rootId);
+        return !matches(policy.requiresEnd(), advancementId, rootId)
+                || (FeatureToggles.isEnabled(FeatureToggles.NETHER)
+                && FeatureToggles.isEnabled(FeatureToggles.VOID));
     }
 
     private static Set<Identifier> readIds(JsonObject json, String group) {

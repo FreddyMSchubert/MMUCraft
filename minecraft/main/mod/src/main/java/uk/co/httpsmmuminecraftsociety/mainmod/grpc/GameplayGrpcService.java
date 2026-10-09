@@ -54,9 +54,9 @@ public final class GameplayGrpcService extends GrpcHandler {
     }
 
     public static CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
-            net.minecraft.server.level.ServerPlayer player, List<MinecraftStatEntry> stats
+            net.minecraft.server.level.ServerPlayer player, List<MinecraftStatEntry> stats, boolean includeRewards
     ) {
-        return INSTANCE.eventsClient.syncPlayerStats(player, stats);
+        return INSTANCE.eventsClient.syncPlayerStats(player, stats, includeRewards);
     }
 
     public static CompletableFuture<RecordMoneyEventResponse> recordMoneyEvent(
@@ -90,6 +90,12 @@ public final class GameplayGrpcService extends GrpcHandler {
             RecordCommandExecutionRequest request
     ) {
         return INSTANCE.eventsClient.recordCommandExecution(request);
+    }
+
+    public static CompletableFuture<RecordDabloonInteractionResponse> recordDabloonInteraction(
+            RecordDabloonInteractionRequest request
+    ) {
+        return INSTANCE.eventsClient.recordDabloonInteraction(request);
     }
 
     @Override

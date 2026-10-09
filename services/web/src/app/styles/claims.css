@@ -114,13 +114,15 @@
 
 .claimMembersSummary {
 	min-width: 0;
+	max-width: 100%;
 	margin-left: auto;
 	color: rgba(255, 255, 255, 0.68);
 	font-size: 0.78rem;
 }
 
 .claimMemberInlineList {
-	overflow-x: auto;
+	min-width: 0;
+	flex-wrap: wrap;
 }
 
 .claimMemberInline {

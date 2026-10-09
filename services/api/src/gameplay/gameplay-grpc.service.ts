@@ -12,7 +12,9 @@ import { ClaimsService, ClaimsSnapshot } from '../claims/claims.service';
 import { DailiesService } from './dailies/dailies.service';
 import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.service';
 import { CommandLogsService } from '../database/command-logs.service';
+import { DabloonInteractionsService } from '../database/dabloon-interactions.service';
 import { AnnouncementsService } from '../announcements/announcements.service';
+import { SurprisingSaturdayService } from '../velocity/surprising-saturday.service';
 import {
 	FeatureTogglesService,
 	type FeatureTogglesSnapshot,
@@ -21,6 +23,7 @@ import type {
 	DailyTaskUpdateRequest,
 	DailyTaskUpdateResponse,
 	CommandExecutionRequest,
+	DabloonInteractionRequest,
 	EmptyGrpcRequest,
 	FishCatchRequest,
 	FishCatchResponse,
@@ -58,12 +61,14 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly shopUnlocks: ShopUnlocksService,
 		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
 		private readonly playerStatistics: PlayerStatisticsSynchronizationService,
+		private readonly surprisingSaturday: SurprisingSaturdayService,
 		private readonly playerPresence: OnlinePlayerPresenceService,
 		private readonly fishing: FishingService,
 		private readonly claims: ClaimsService,
 		private readonly dailies: DailiesService,
 		private readonly discord: DiscordService,
 		private readonly commandLogs: CommandLogsService,
+		private readonly dabloonInteractions: DabloonInteractionsService,
 		private readonly featureToggles: FeatureTogglesService,
 		private readonly announcements: AnnouncementsService,
 	) {}
@@ -84,6 +89,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			UpdateDailyTask: this.updateDailyTask.bind(this),
 			PublishDiscordEvent: this.publishDiscordEvent.bind(this),
 			RecordCommandExecution: this.recordCommandExecution.bind(this),
+			RecordDabloonInteraction: this.recordDabloonInteraction.bind(this),
 			GetAnnouncements: this.getAnnouncements.bind(this),
 			MarkAnnouncementsRead: this.markAnnouncementsRead.bind(this),
 		});
@@ -123,6 +129,13 @@ export class GameplayGrpcService implements OnModuleInit {
 		callback: UnaryCallback<{ accepted: boolean }>,
 	) {
 		callback(null, this.commandLogs.record(call.request));
+	}
+
+	private recordDabloonInteraction(
+		call: grpc.ServerUnaryCall<DabloonInteractionRequest, { accepted: boolean }>,
+		callback: UnaryCallback<{ accepted: boolean }>,
+	) {
+		callback(null, this.dabloonInteractions.record(call.request));
 	}
 
 	private getKnowledgeTip(
@@ -298,6 +311,17 @@ export class GameplayGrpcService implements OnModuleInit {
 			previous_last_played_at_unix_ms: result.previousLastPlayedAtUnixMs,
 			first_in_any_statistic: result.firstInAnyStatistic,
 			referral_reward_dabloons: result.referralRewardDabloons,
+			surprising_saturday_rewards:
+				result.accountLinked && call.request.include_surprising_saturday_rewards
+					? this.surprisingSaturday
+							.rewardsForPlayer(call.request.minecraft_uuid ?? '')
+							.map((reward) => ({
+								event_id: reward.eventId,
+								title: reward.title,
+								place: reward.place,
+								amount_dabloons: reward.amount,
+							}))
+					: [],
 			message: result.message,
 		});
 	}

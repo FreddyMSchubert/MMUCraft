@@ -3,7 +3,11 @@ package uk.co.httpsmmuminecraftsociety.mainmod.dailies;
 import com.google.gson.JsonParser;
 import net.minecraft.SharedConstants;
 import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.Bootstrap;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureToggle;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureTogglesSnapshot;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +27,8 @@ public final class DailyTaskCatalogCheck {
         if (!Files.isRegularFile(advancementPolicy)) {
             throw new IllegalStateException("Missing packaged daily advancement policy: " + advancementPolicy);
         }
+        DailyAdvancementPolicy.load(JsonParser.parseString(Files.readString(advancementPolicy)).getAsJsonObject());
+        checkAdvancementDropPolicy();
         Set<String> fakeItemIds = new HashSet<>();
         try (var paths = Files.walk(project.resolve("../data/data/items"))) {
             for (Path path : paths.filter(file -> file.getFileName().toString().equals("item.json")).toList()) {
@@ -40,5 +46,59 @@ public final class DailyTaskCatalogCheck {
         DailyTaskRegistry.validate(catalog);
         int taskCount = DailyTaskRegistry.optionCount(catalog);
         System.out.println("Daily task catalogue check passed: " + taskCount + " tasks in " + catalog.size() + " families.");
+    }
+
+    private static void checkAdvancementDropPolicy() {
+        FeatureToggles.apply(FeatureTogglesSnapshot.getDefaultInstance());
+        for (String id : new String[] {
+                "blazeandcave:building/glowing", "blazeandcave:building/greek_art_decor",
+                "blazeandcave:redstone/quartz_miner", "blazeandcave:redstone/quirky_quartz",
+                "blazeandcave:monsters/poison_dart",
+                "blazeandcave:monsters/the_ghastly_eyes", "blazeandcave:adventure/genesis_of_the_end",
+                "minecraft:story/cure_zombie_villager"
+        }) checkDrop(id, true);
+        for (String id : new String[] {
+                "blazeandcave:enchanting/complete_enchanter",
+                "blazeandcave:enchanting/master_enchanter", "blazeandcave:challenges/ultimate_enchanter",
+                "blazeandcave:challenges/the_world_is_ending", "blazeandcave:enchanting/master_armorer",
+                "blazeandcave:enchanting/master_knight", "blazeandcave:enchanting/master_jouster",
+                "blazeandcave:statistics/frequent_flyer", "blazeandcave:statistics/supersonic",
+                "blazeandcave:adventure/disc_jockey", "blazeandcave:monsters/jockey_jamboree",
+                "minecraft:husbandry/bred_all_animals",
+                "minecraft:adventure/kill_all_mobs", "minecraft:husbandry/balanced_diet",
+                "minecraft:nether/all_effects"
+        }) checkDrop(id, false);
+
+        FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
+                .addToggles(FeatureToggle.newBuilder().setKey("nether").setEnabled(true)).build());
+        checkDrop("blazeandcave:monsters/jockey_jamboree", true);
+        checkDrop("blazeandcave:enchanting/complete_enchanter", true);
+        checkDrop("blazeandcave:adventure/disc_jockey", true);
+        checkDrop("minecraft:husbandry/bred_all_animals", true);
+        checkDrop("blazeandcave:enchanting/master_armorer", false);
+        checkDrop("blazeandcave:statistics/frequent_flyer", false);
+        checkDrop("minecraft:adventure/kill_all_mobs", false);
+
+        FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
+                .addToggles(FeatureToggle.newBuilder().setKey("void").setEnabled(true)).build());
+        checkDrop("blazeandcave:enchanting/master_armorer", false);
+        checkDrop("minecraft:adventure/kill_all_mobs", false);
+
+        FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
+                .addToggles(FeatureToggle.newBuilder().setKey("nether").setEnabled(true))
+                .addToggles(FeatureToggle.newBuilder().setKey("void").setEnabled(true)).build());
+        checkDrop("blazeandcave:enchanting/master_armorer", true);
+        checkDrop("blazeandcave:enchanting/master_knight", true);
+        checkDrop("blazeandcave:statistics/frequent_flyer", true);
+        checkDrop("minecraft:adventure/kill_all_mobs", true);
+        checkDrop("minecraft:husbandry/balanced_diet", true);
+    }
+
+    private static void checkDrop(String id, boolean expected) {
+        Identifier advancement = Identifier.parse(id);
+        Identifier root = Identifier.fromNamespaceAndPath(advancement.getNamespace(), advancement.getPath().split("/")[0] + "/root");
+        if (DailyAdvancementPolicy.isDropUnlocked(advancement, root) != expected) {
+            throw new IllegalStateException("Wrong drop gate for " + id + ": expected " + expected);
+        }
     }
 }

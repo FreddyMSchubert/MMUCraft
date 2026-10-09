@@ -425,6 +425,34 @@ export const commandLogs = sqliteTable(
 	],
 );
 
+export const dabloonInteractions = sqliteTable(
+	'dabloon_interactions',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		action: text('action').notNull(),
+		item_kind: text('item_kind').notNull(),
+		item_id: text('item_id').notNull(),
+		item_count: integer('item_count').notNull(),
+		amount_dabloons: integer('amount_dabloons').notNull(),
+		actor_name: text('actor_name').notNull(),
+		minecraft_uuid: text('minecraft_uuid'),
+		user_id: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
+		context: text('context').notNull(),
+		dimension: text('dimension').notNull(),
+		x: integer('x').notNull(),
+		y: integer('y').notNull(),
+		z: integer('z').notNull(),
+		balance_before: integer('balance_before'),
+		balance_after: integer('balance_after'),
+		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+	},
+	(table) => [
+		index('dabloon_interactions_time_idx').on(table.created_at_unix_ms),
+		index('dabloon_interactions_user_time_idx').on(table.user_id, table.created_at_unix_ms),
+		index('dabloon_interactions_action_time_idx').on(table.action, table.created_at_unix_ms),
+	],
+);
+
 export const signinAttemptLogs = sqliteTable(
 	'signin_attempt_logs',
 	{
@@ -542,13 +570,11 @@ export const velocitySettings = sqliteTable(
 		id: integer('id').primaryKey(),
 		maintenance_mode: integer('maintenance_mode').notNull().default(0),
 		event_override: integer('event_override'),
-		max_players: integer('max_players').notNull().default(42),
 	},
 	(table) => [
 		check('velocity_settings_singleton_check', sql`${table.id} = 1`),
 		check('velocity_settings_maintenance_check', sql`${table.maintenance_mode} in (0, 1)`),
 		check('velocity_settings_event_override_check', sql`${table.event_override} in (0, 1)`),
-		check('velocity_settings_max_players_check', sql`${table.max_players} >= 0`),
 	],
 );
 
@@ -559,12 +585,14 @@ export const velocityServers = sqliteTable(
 		name: text('name').notNull(),
 		address: text('address').notNull(),
 		is_default: integer('is_default').notNull().default(0),
+		max_players: integer('max_players').notNull().default(42),
 	},
 	(table) => [
 		uniqueIndex('velocity_servers_name_unique').on(table.name),
 		uniqueIndex('velocity_servers_address_unique').on(table.address),
 		index('velocity_servers_default_idx').on(table.is_default),
 		check('velocity_servers_default_check', sql`${table.is_default} in (0, 1)`),
+		check('velocity_servers_max_players_check', sql`${table.max_players} between 0 and 99`),
 	],
 );
 
@@ -620,6 +648,11 @@ export const surprisingSaturdayEvents = sqliteTable(
 		ends_at_unix_ms: integer('ends_at_unix_ms').notNull(),
 		criteria_type: text('criteria_type').notNull(),
 		criteria_json: text('criteria_json').notNull(),
+		rewards_json: text('rewards_json')
+			.notNull()
+			.default(
+				'{"first":0,"second":0,"third":0,"fourth":0,"fifth":0,"participation":0,"participationMinItems":1}',
+			),
 	},
 	(table) => [
 		index('surprising_saturday_events_window_idx').on(
@@ -679,6 +712,7 @@ export type DailyAdvancementTargetRow = typeof dailyAdvancementTargets.$inferSel
 export type DailyTaskRow = typeof dailyTasks.$inferSelect;
 export type GiftCodeRow = typeof giftCodes.$inferSelect;
 export type CommandLogRow = typeof commandLogs.$inferSelect;
+export type DabloonInteractionRow = typeof dabloonInteractions.$inferSelect;
 export type SigninAttemptLogRow = typeof signinAttemptLogs.$inferSelect;
 export type CountdownRow = typeof countdowns.$inferSelect;
 export type AnnouncementRow = typeof announcements.$inferSelect;
@@ -714,6 +748,7 @@ export const schema = {
 	giftCodeRedemptions,
 	referralLinks,
 	commandLogs,
+	dabloonInteractions,
 	signinAttemptLogs,
 	countdowns,
 	announcements,

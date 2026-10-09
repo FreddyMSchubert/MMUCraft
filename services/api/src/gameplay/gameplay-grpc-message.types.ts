@@ -13,6 +13,24 @@ export interface CommandExecutionRequest {
 	unix_ms?: number;
 }
 
+export interface DabloonInteractionRequest {
+	action?: string;
+	item_kind?: string;
+	item_id?: string;
+	item_count?: number;
+	amount_dabloons?: number;
+	actor_name?: string;
+	minecraft_uuid?: string;
+	context?: string;
+	dimension?: string;
+	x?: number;
+	y?: number;
+	z?: number;
+	balance_before?: number;
+	balance_after?: number;
+	unix_ms?: number;
+}
+
 export interface DailyTaskUpdateRequest {
 	user_id?: number;
 	period_key?: string;
@@ -92,6 +110,7 @@ export interface PlayerStatisticsSyncRequest {
 	unix_ms?: number;
 	balance_dabloons?: number;
 	stats?: MinecraftStatInput[];
+	include_surprising_saturday_rewards?: boolean;
 }
 
 export interface PlayerStatisticsSyncResponse {
@@ -107,6 +126,12 @@ export interface PlayerStatisticsSyncResponse {
 	previous_last_played_at_unix_ms: number;
 	first_in_any_statistic: boolean;
 	referral_reward_dabloons: number;
+	surprising_saturday_rewards: {
+		event_id: number;
+		title: string;
+		place: number;
+		amount_dabloons: number;
+	}[];
 	message: string;
 }
 

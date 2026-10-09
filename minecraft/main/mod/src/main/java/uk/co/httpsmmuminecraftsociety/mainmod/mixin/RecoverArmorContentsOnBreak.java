@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
 
-import net.minecraft.util.Prediction;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
+
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.core.component.DataComponents;
@@ -62,7 +63,7 @@ public class RecoverArmorContentsOnBreak {
                 player.setItemSlot(slot, charm);
                 slotIsEmpty = false;
             } else if (!player.getInventory().add(charm)) {
-                player.drop(charm, false, Prediction.SERVER_ONLY);
+                DabloonInteractionLog.drop(player, charm);
             }
         }
     }

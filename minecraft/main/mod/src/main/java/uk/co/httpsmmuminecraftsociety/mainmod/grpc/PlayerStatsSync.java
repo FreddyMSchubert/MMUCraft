@@ -191,7 +191,7 @@ public final class PlayerStatsSync {
         }
 
         CompletableFuture<SyncPlayerStatsResponse> profileSync = allowDisconnectedPlayer
-                ? GameplayGrpcService.syncPlayerStats(player, collectStats(player))
+                ? GameplayGrpcService.syncPlayerStats(player, collectStats(player), false)
                 : synchronizePresentation(player);
         CompletableFuture<Boolean> membershipSync = profileSync.thenApply(response -> {
             if (!allowDisconnectedPlayer) {
@@ -219,7 +219,7 @@ public final class PlayerStatsSync {
         MinecraftServer server = player.level().getServer();
         CompletableFuture<SyncPlayerStatsResponse> applied = new CompletableFuture<>();
         activeSyncByPlayer.put(playerId, applied);
-        GameplayGrpcService.syncPlayerStats(player, collectStats(player)).whenComplete((response, error) -> server.execute(() -> {
+        GameplayGrpcService.syncPlayerStats(player, collectStats(player), joinRefreshPending.contains(playerId)).whenComplete((response, error) -> server.execute(() -> {
             ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(playerId);
             if (!activeSyncByPlayer.remove(playerId, applied)
                     || onlinePlayer == null || onlinePlayer.connection != player.connection) {
@@ -240,6 +240,7 @@ public final class PlayerStatsSync {
                 boolean superseded = revision != presentationRevisionByPlayer.getOrDefault(playerId, 0L);
                 if (!superseded) updatePresentation(onlinePlayer, response);
                 applyReferralReward(onlinePlayer, response);
+                if (joinRefreshPending.contains(playerId)) applySurprisingSaturdayRewards(onlinePlayer, response);
                 if (joinRefreshPending.remove(playerId) || superseded) {
                     scheduleRetry(onlinePlayer);
                 } else {
@@ -297,6 +298,35 @@ public final class PlayerStatsSync {
             MainMod.LOGGER.warn("Failed to record referral reward for {}", player.getScoreboardName(), error);
             return null;
         });
+    }
+
+    private static void applySurprisingSaturdayRewards(ServerPlayer player, SyncPlayerStatsResponse response) {
+        if (!response.getAccountLinked() || player.hasDisconnected()) return;
+        ServerScoreboard scoreboard = player.level().getServer().getScoreboard();
+        for (SurprisingSaturdayReward reward : response.getSurprisingSaturdayRewardsList()) {
+            int amount = reward.getAmountDabloons();
+            if (reward.getEventId() <= 0 || amount <= 0 || amount > 1_000_000) continue;
+            String objectiveName = "mmu_ss_" + Integer.toString(reward.getEventId(), 36);
+            Objective objective = scoreboard.getObjective(objectiveName);
+            if (objective == null) objective = scoreboard.addObjective(
+                    objectiveName, ObjectiveCriteria.DUMMY, Component.empty(),
+                    ObjectiveCriteria.RenderType.INTEGER, false, null);
+            ScoreAccess paid = scoreboard.getOrCreatePlayerScore(player, objective);
+            if (paid.get() > 0 || !MoneyHelper.GainMoney(player, amount)) continue;
+            paid.set(1);
+            String result = reward.getPlace() > 0
+                    ? "placing " + reward.getPlace() + (reward.getPlace() == 1 ? "st" : reward.getPlace() == 2 ? "nd" : reward.getPlace() == 3 ? "rd" : "th")
+                    : "taking part";
+            MoneyHelper.SendBalanceMessage(player, amount,
+                    "Thanks for " + result + " in Surprising Saturday: " + reward.getTitle() + "!");
+            GameplayGrpcService.recordMoneyEvent(
+                    player.getName().getString(), player.getUUID().toString(), amount,
+                    "surprising_saturday", Integer.toString(reward.getEventId()), MoneyHelper.GetBalance(player)
+            ).exceptionally(error -> {
+                MainMod.LOGGER.warn("Failed to record Surprising Saturday reward for {}", player.getScoreboardName(), error);
+                return null;
+            });
+        }
     }
 
     public static int colorFor(net.minecraft.world.entity.player.Player player) {

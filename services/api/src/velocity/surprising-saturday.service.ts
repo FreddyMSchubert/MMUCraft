@@ -32,6 +32,56 @@ interface CompletionTarget {
 	points: number;
 }
 
+interface EventRewards {
+	first: number;
+	second: number;
+	third: number;
+	fourth: number;
+	fifth: number;
+	participation: number;
+	participationMinItems: number;
+}
+
+const REWARD_PLACES = ['first', 'second', 'third', 'fourth', 'fifth'] as const;
+const DEFAULT_REWARDS: EventRewards = {
+	first: 0,
+	second: 0,
+	third: 0,
+	fourth: 0,
+	fifth: 0,
+	participation: 0,
+	participationMinItems: 1,
+};
+
+function eventRewards(json: string): EventRewards {
+	return { ...DEFAULT_REWARDS, ...JSON.parse(json) } as EventRewards;
+}
+
+function validRewards(value: unknown, itemCount: number): value is EventRewards {
+	if (!value || typeof value !== 'object') return false;
+	const rewards = value as Record<string, unknown>;
+	return (
+		[...REWARD_PLACES, 'participation'].every(
+			(key) =>
+				Number.isSafeInteger(rewards[key]) &&
+				Number(rewards[key]) >= 0 &&
+				Number(rewards[key]) <= 1_000_000,
+		) &&
+		Number.isSafeInteger(rewards.participationMinItems) &&
+		Number(rewards.participationMinItems) >= 1 &&
+		Number(rewards.participationMinItems) <= itemCount
+	);
+}
+
+export function eventRewardAmount(rewards: EventRewards, place: number, completedCount: number) {
+	const rewardPlace = REWARD_PLACES[place];
+	return rewardPlace
+		? rewards[rewardPlace]
+		: completedCount >= rewards.participationMinItems
+			? rewards.participation
+			: 0;
+}
+
 function completionTargets(value: unknown): CompletionTarget[] | null {
 	if (!Array.isArray(value) || value.length < 1 || value.length > 256) return null;
 	const targets: CompletionTarget[] = [];
@@ -284,7 +334,46 @@ export class SurprisingSaturdayService {
 			endsAtUnixMs: event.ends_at_unix_ms,
 			criteriaType: event.criteria_type,
 			items: eventTargets(event.criteria_json),
+			rewards: eventRewards(event.rewards_json),
 		};
+	}
+
+	rewardsForPlayer(uuid: string, now = Date.now()) {
+		const playerUuid = normalizeMinecraftUuid(uuid);
+		if (!playerUuid) return [];
+		return this.database.connection
+			.select()
+			.from(surprisingSaturdayEvents)
+			.where(lte(surprisingSaturdayEvents.ends_at_unix_ms, now))
+			.all()
+			.flatMap((event) => {
+				const rewards = eventRewards(event.rewards_json);
+				if (
+					REWARD_PLACES.every((place) => rewards[place] === 0) &&
+					rewards.participation === 0
+				)
+					return [];
+				const ranked = this.rankedPlayers(event, eventTargets(event.criteria_json)).filter(
+					(player) => !player.isCommittee,
+				);
+				const place = ranked.findIndex((player) => player.uuid === playerUuid);
+				if (place < 0) return [];
+				const amount = eventRewardAmount(
+					rewards,
+					place,
+					ranked[place]?.completed.length ?? 0,
+				);
+				return amount > 0
+					? [
+							{
+								eventId: event.id,
+								title: event.title,
+								place: place < 5 ? place + 1 : 0,
+								amount,
+							},
+						]
+					: [];
+			});
 	}
 
 	update(idInput: string, body: Record<string, unknown> | undefined) {
@@ -302,6 +391,7 @@ export class SurprisingSaturdayService {
 		const start = body?.startsAtUnixMs;
 		const end = body?.endsAtUnixMs;
 		const items = completionTargets(body?.items);
+		const rewards = body?.rewards;
 		if (
 			!title ||
 			title.length > 120 ||
@@ -324,6 +414,10 @@ export class SurprisingSaturdayService {
 			throw new BadRequestException(
 				'Add 1-256 unique targets with valid IDs, names, links, and points',
 			);
+		if (!validRewards(rewards, items.length))
+			throw new BadRequestException(
+				'Set rewards from 0 to 1,000,000 Dabloons and a participation target within the completion list',
+			);
 		const overlap = this.database.connection
 			.select({ id: surprisingSaturdayEvents.id })
 			.from(surprisingSaturdayEvents)
@@ -345,6 +439,7 @@ export class SurprisingSaturdayService {
 			ends_at_unix_ms: end as number,
 			criteria_type: 'list_completion',
 			criteria_json: JSON.stringify(items),
+			rewards_json: JSON.stringify(rewards),
 		} as const;
 		const event = id
 			? this.database.connection

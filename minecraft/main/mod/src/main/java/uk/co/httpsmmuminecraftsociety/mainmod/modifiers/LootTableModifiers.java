@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -35,12 +36,13 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonChestLoot;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -164,9 +166,8 @@ public class LootTableModifiers {
     }
 
     public static void onModifyDrops(Holder<LootTable> lootTableHolder, LootContext lootContext, List<ItemStack> itemStacks) {
-        itemStacks.removeIf(stack -> stack.is(Items.DIAMOND) && lootTableHolder.unwrapKey().get().identifier().toString().contains("chest"));
-
         Identifier tableId = lootTableHolder.unwrapKey().map(ResourceKey::identifier).orElse(null);
+        itemStacks.removeIf(stack -> stack.is(Items.DIAMOND) && tableId != null && tableId.toString().contains("chest"));
 
         PickaxeHeaterCharm.heatMinedDrops(lootContext, itemStacks);
 
@@ -261,50 +262,75 @@ public class LootTableModifiers {
             }
         }
         itemStacks.forEach(GearEnchantmentSanitizer::sanitize);
-    }
-
-    private static void rerollMusicDiscs(LootTable table, LootContext context, List<ItemStack> drops) {
-        List<Item> vanillaDiscs = null;
-        for (int i = 0; i < drops.size(); i++) {
-            ItemStack drop = drops.get(i);
-            if (!drop.getItem().getDefaultInstance().has(DataComponents.JUKEBOX_PLAYABLE)) continue;
-            if (vanillaDiscs == null) {
-                Set<Item> candidates = new HashSet<>();
-                LootTable.DIRECT_CODEC.encodeStart(
-                        RegistryOps.create(JsonOps.INSTANCE, context.getLevel().registryAccess()), table
-                ).result().ifPresent(json -> collectMusicDiscs(json, context, candidates, new HashSet<>()));
-                candidates.add(drop.getItem());
-                vanillaDiscs = new ArrayList<>(candidates);
-                vanillaDiscs.sort((a, b) -> BuiltInRegistries.ITEM.getKey(a).compareTo(BuiltInRegistries.ITEM.getKey(b)));
-                if (vanillaDiscs.size() < 2) return;
+        Entity actor = lootContext.getOptional(LootContextParams.INTERACTING_ENTITY);
+        if (!(actor instanceof ServerPlayer)) actor = lootContext.getOptional(LootContextParams.THIS_ENTITY);
+        for (ItemStack stack : itemStacks) {
+            String kind = DabloonInteractionLog.kind(stack);
+            if (kind.isEmpty()) continue;
+            String detail = "Loot table=" + tableId + "; contents: " + DabloonInteractionLog.describe(stack);
+            if (actor instanceof ServerPlayer player) {
+                DabloonInteractionLog.record(player, "grant", kind, DabloonInteractionLog.itemId(stack),
+                        stack.getCount(), DabloonInteractionLog.value(stack), null, null, detail);
+            } else {
+                var origin = lootContext.getOptional(LootContextParams.ORIGIN);
+                DabloonInteractionLog.recordWorld("grant", kind, DabloonInteractionLog.itemId(stack),
+                        stack.getCount(), DabloonInteractionLog.value(stack),
+                        lootContext.getLevel().dimension().identifier().toString(),
+                        origin == null ? 0 : Mth.floor(origin.x), origin == null ? 0 : Mth.floor(origin.y),
+                        origin == null ? 0 : Mth.floor(origin.z), detail);
             }
-
-            int choice = context.getRandom().nextInt(vanillaDiscs.size() + CUSTOM_DISCS.size());
-            ItemStack replacement = choice < vanillaDiscs.size()
-                    ? vanillaDiscs.get(choice).getDefaultInstance()
-                    : FakeItems.createFakeItemStack(CUSTOM_DISCS.get(choice - vanillaDiscs.size()), 1);
-            replacement.setCount(drop.getCount());
-            drops.set(i, replacement);
         }
     }
 
-    private static void collectMusicDiscs(JsonElement json, LootContext context, Set<Item> discs, Set<Identifier> visited) {
+    private static void rerollMusicDiscs(LootTable table, LootContext context, List<ItemStack> drops) {
+        Map<Item, Integer> vanillaDiscWeights = null;
+        int customWeight = 0;
+        int totalWeight = 0;
+        for (int i = 0; i < drops.size(); i++) {
+            ItemStack drop = drops.get(i);
+            if (!drop.getItem().getDefaultInstance().has(DataComponents.JUKEBOX_PLAYABLE)) continue;
+            if (vanillaDiscWeights == null) {
+                Map<Item, Integer> weights = new HashMap<>();
+                LootTable.DIRECT_CODEC.encodeStart(
+                        RegistryOps.create(JsonOps.INSTANCE, context.getLevel().registryAccess()), table
+                ).result().ifPresent(json -> collectMusicDiscs(json, context, weights, new HashSet<>()));
+                weights.putIfAbsent(drop.getItem(), 1);
+                if (weights.size() < 2) return;
+                customWeight = weights.values().stream().mapToInt(Integer::intValue).min().orElseThrow();
+                if (customWeight == 0) return;
+                totalWeight = weights.values().stream().mapToInt(Integer::intValue).sum() + customWeight;
+                vanillaDiscWeights = weights;
+            }
+
+            if (context.getRandom().nextInt(totalWeight) < customWeight) {
+                drops.set(i, FakeItems.createFakeItemStack(
+                        CUSTOM_DISCS.get(context.getRandom().nextInt(CUSTOM_DISCS.size())), drop.getCount()
+                ));
+            }
+        }
+    }
+
+    private static void collectMusicDiscs(JsonElement json, LootContext context, Map<Item, Integer> discs, Set<Identifier> visited) {
         if (json.isJsonArray()) {
             json.getAsJsonArray().forEach(entry -> collectMusicDiscs(entry, context, discs, visited));
         } else if (json.isJsonObject()) {
             JsonObject object = json.getAsJsonObject();
             if (object.has("type") && object.get("type").getAsString().equals("minecraft:item") && object.has("name")) {
+                int weight = discWeight(object, context);
                 BuiltInRegistries.ITEM.getOptional(Identifier.parse(object.get("name").getAsString()))
                         .filter(item -> item.getDefaultInstance().has(DataComponents.JUKEBOX_PLAYABLE))
-                        .ifPresent(discs::add);
+                        .ifPresent(item -> discs.merge(item, weight, Integer::sum));
             } else if (object.has("type") && object.get("type").getAsString().equals("minecraft:tag") && object.has("items")) {
                 String id = object.get("items").getAsString();
                 if (id.startsWith("#")) {
+                    int weight = discWeight(object, context);
                     context.getLevel().registryAccess().lookupOrThrow(Registries.ITEM)
                             .get(TagKey.create(Registries.ITEM, Identifier.parse(id.substring(1))))
                             .ifPresent(tag -> tag.forEach(holder -> {
                                 Item item = holder.value();
-                                if (item.getDefaultInstance().has(DataComponents.JUKEBOX_PLAYABLE)) discs.add(item);
+                                if (item.getDefaultInstance().has(DataComponents.JUKEBOX_PLAYABLE)) {
+                                    discs.merge(item, weight, Integer::sum);
+                                }
                             }));
                 }
             } else if (object.has("type") && object.get("type").getAsString().equals("minecraft:loot_table")
@@ -320,6 +346,12 @@ public class LootTableModifiers {
             }
             object.entrySet().forEach(entry -> collectMusicDiscs(entry.getValue(), context, discs, visited));
         }
+    }
+
+    private static int discWeight(JsonObject entry, LootContext context) {
+        int weight = entry.has("weight") ? entry.get("weight").getAsInt() : 1;
+        int quality = entry.has("quality") ? entry.get("quality").getAsInt() : 0;
+        return Math.max(Mth.floor(weight + quality * context.getLuck()), 0);
     }
 
     private static void addSnifferClover(Identifier tableId, LootContext context, List<ItemStack> drops) {

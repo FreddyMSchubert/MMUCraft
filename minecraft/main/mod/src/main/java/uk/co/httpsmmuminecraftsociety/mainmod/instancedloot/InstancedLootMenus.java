@@ -36,6 +36,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 public final class InstancedLootMenus {
     private InstancedLootMenus() {
@@ -310,6 +311,9 @@ public final class InstancedLootMenus {
         }
 
         LootTable lootTable = level.getServer().reloadableRegistries().getLootTable(key);
+        if (lootTable == LootTable.EMPTY) {
+            MainMod.LOGGER.warn("Missing loot table {} for instanced container at {} in {}", key.identifier(), origin, serverLevel.dimension().identifier());
+        }
         SimpleContainer generated = new SimpleContainer(target.size());
         LootParams.Builder params = new LootParams.Builder(serverLevel).withParameter(LootContextParams.ORIGIN, origin);
         if (player != null) {

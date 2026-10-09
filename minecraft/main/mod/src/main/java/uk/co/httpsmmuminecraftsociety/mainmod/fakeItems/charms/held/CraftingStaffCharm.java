@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
-import net.minecraft.util.Prediction;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -174,7 +175,7 @@ public class CraftingStaffCharm implements Charm, UseCallbackCharm
                 slot.onTake(player, slotStack);
 
                 if (slotIndex == RESULT_SLOT) {
-                    player.drop(slotStack, false, Prediction.SERVER_ONLY);
+                    DabloonInteractionLog.drop(player, slotStack);
                 }
             }
 

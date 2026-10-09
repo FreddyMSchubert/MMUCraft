@@ -5,6 +5,7 @@ import { ClaimAdministrationSection } from './admin/claim-administration-section
 import { CountdownAdminSection } from './admin/countdown-admin-section';
 import { DailyRefreshAdminSection } from './admin/daily-refresh-admin-section';
 import { CommandHistoryAdminSection } from './admin/command-history-admin-section';
+import { DabloonHistoryAdminSection } from './admin/dabloon-history-admin-section';
 import { SigninAttemptHistoryAdminSection } from './admin/signin-attempt-history-admin-section';
 import { EmailWhitelistAdminSection } from './admin/email-whitelist-admin-section';
 import { GiftCodeAdminSection } from './admin/gift-code-admin-section';
@@ -34,6 +35,7 @@ export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; sec
 			<DailyRefreshAdminSection controller={controller} />
 			<CountdownAdminSection controller={controller} />
 			<CommandHistoryAdminSection controller={controller} />
+			<DabloonHistoryAdminSection controller={controller} />
 			<SigninAttemptHistoryAdminSection controller={controller} />
 			<MemberAccessAdminSection controller={controller} />
 			<PlayerEmojiAdminSection controller={controller} />

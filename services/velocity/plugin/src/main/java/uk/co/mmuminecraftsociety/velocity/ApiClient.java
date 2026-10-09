@@ -84,11 +84,10 @@ final class ApiClient {
 
     record ServerHealth(String name, boolean online, Long latencyMs, String error) { }
 
-    record OnlinePlayer(String uuid, String username, String serverName, String state) { }
+    record OnlinePlayer(String uuid, String username, String serverName, String state, String targetServerName) { }
 
     record SyncResponse(
             boolean maintenanceMode,
-            Integer maxPlayers,
             List<PlayerRole> playerRoles,
             List<BackendServer> servers,
             Route route,
@@ -96,7 +95,7 @@ final class ApiClient {
             List<DisconnectPlayer> disconnects
     ) { }
 
-    record BackendServer(String name, String address) { }
+    record BackendServer(String name, String address, Integer maxPlayers) { }
 
     record PlayerRole(String uuid, boolean member, boolean exempt) { }
 

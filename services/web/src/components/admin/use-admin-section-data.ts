@@ -29,9 +29,16 @@ export function useAdminSectionData(
 	const load = useCallback(async () => {
 		const jobs: Promise<void>[] = [];
 		if (
-			['members', 'emojis', 'claims', 'whitelist', 'bans', 'dailies', 'commands'].includes(
-				activeSection,
-			)
+			[
+				'members',
+				'emojis',
+				'claims',
+				'whitelist',
+				'bans',
+				'dailies',
+				'commands',
+				'dabloons',
+			].includes(activeSection)
 		) {
 			jobs.push(
 				fetchAdmin<{ players: AdminPlayer[] }>(

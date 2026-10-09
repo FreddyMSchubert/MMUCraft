@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems;
 
-import net.minecraft.util.Prediction;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -131,9 +132,19 @@ public final class FakeItemsCommand {
 
             int giveNow = Math.min(remaining, stack.getMaxStackSize());
             stack.setCount(giveNow);
+            ItemStack granted = stack.copy();
+            int balanceBefore = uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper.GetBalance(player);
 
-            if (!player.getInventory().add(stack)) {
-                player.drop(stack, false, Prediction.SERVER_ONLY);
+            boolean added = player.getInventory().add(stack);
+            int overflow = stack.getCount();
+            if (!added) {
+                DabloonInteractionLog.drop(player, stack);
+            }
+            if (!DabloonInteractionLog.kind(granted).isEmpty()) {
+                DabloonInteractionLog.record(player, "grant", DabloonInteractionLog.kind(granted),
+                        DabloonInteractionLog.itemId(granted), granted.getCount(), DabloonInteractionLog.value(granted),
+                        balanceBefore, uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper.GetBalance(player),
+                        "Fake item command; inventory_count=" + (giveNow - overflow) + "; overflow_count=" + overflow);
             }
 
             remaining -= giveNow;

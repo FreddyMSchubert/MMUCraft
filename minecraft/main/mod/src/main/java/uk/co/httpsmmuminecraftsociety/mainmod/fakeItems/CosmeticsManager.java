@@ -22,6 +22,7 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.equipment.Equippable;
+import net.minecraft.world.waypoints.Waypoint;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -100,6 +101,24 @@ public final class CosmeticsManager {
         boolean isColorCycling = nbt.contains(COLOR_CYCLING_BOOLEAN) && nbt.getBooleanOr(COLOR_CYCLING_BOOLEAN, false);
 
         return new CosmeticsInfo(true, isDyeable, isHelmet, isColorCycling);
+    }
+
+    public static void normalizeCosmeticHead(ItemStack stack) {
+        if (!determineCosmeticType(stack).isCosmetic()) return;
+        if (stack.has(DataComponents.MOB_VISIBILITY)) stack.remove(DataComponents.MOB_VISIBILITY);
+        Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
+        if (equippable != null && equippable.cameraOverlay().isPresent()) {
+            stack.set(DataComponents.EQUIPPABLE, new Equippable(
+                    equippable.slot(), equippable.equipSound(), equippable.assetId(), Optional.empty(),
+                    equippable.allowedEntities(), equippable.dispensable(), equippable.swappable(),
+                    equippable.damageOnHurt(), equippable.equipOnInteract(), equippable.canBeSheared(),
+                    equippable.shearingSound()));
+        }
+        ItemAttributeModifiers modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS,
+                ItemAttributeModifiers.EMPTY);
+        Identifier waypointHide = Waypoint.WAYPOINT_TRANSMIT_RANGE_HIDE_MODIFIER.id();
+        if (modifiers.modifiers().stream().anyMatch(entry -> entry.matches(Attributes.WAYPOINT_TRANSMIT_RANGE, waypointHide)))
+            Utils.removeItemAttrModifier(stack, waypointHide, Attributes.WAYPOINT_TRANSMIT_RANGE);
     }
 
     public static ItemStack helmetToPumpkinReplica(ItemStack helmet) {

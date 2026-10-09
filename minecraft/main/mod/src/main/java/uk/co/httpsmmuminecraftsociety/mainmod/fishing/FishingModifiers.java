@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
-import net.minecraft.util.Prediction;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -96,7 +97,7 @@ public final class FishingModifiers {
                 ItemStack remainder = stack.copyWithCount(stack.getCount() - 1);
                 stack.setCount(1);
                 if (!player.getInventory().add(remainder) && !remainder.isEmpty()) {
-                    player.drop(remainder, false, Prediction.SERVER_ONLY);
+                    DabloonInteractionLog.drop(player, remainder);
                 }
             }
 

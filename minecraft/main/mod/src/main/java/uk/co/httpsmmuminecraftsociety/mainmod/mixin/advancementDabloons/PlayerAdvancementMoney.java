@@ -54,27 +54,28 @@ public class PlayerAdvancementMoney {
             )
     )
     private void mainmod$grantMoney(AdvancementHolder advancementHolder, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (advancementHolder.value().display().isEmpty()) {
-            return;
-        }
-
         ServerPlayer rewardedPlayer = this.player;
-        grantMoney(
-                rewardedPlayer,
-                advancementHolder,
-                advancementHolder.value().rewards(),
-                PlayerStatsSync.isMember(rewardedPlayer)
-        );
+        int awardedReward = advancementHolder.value().display().isPresent()
+                ? grantMoney(
+                        rewardedPlayer,
+                        advancementHolder,
+                        advancementHolder.value().rewards(),
+                        PlayerStatsSync.isMember(rewardedPlayer)
+                )
+                : 0;
+        MainMod.LOGGER.info("advancement_completed at_unix_ms={} player_uuid={} username={} advancement_id={} reward_dabloons={}",
+                System.currentTimeMillis(), rewardedPlayer.getUUID(), rewardedPlayer.getName().getString(),
+                advancementHolder.id(), awardedReward);
     }
 
-    private void grantMoney(
+    private int grantMoney(
             ServerPlayer rewardedPlayer,
             AdvancementHolder advancementHolder,
             AdvancementRewards rewards,
             boolean isMember
     ) {
         if (rewardedPlayer.hasDisconnected()) {
-            return;
+            return 0;
         }
 
         int reward = AdvancementMoney.rewardForAdvancement(
@@ -128,6 +129,7 @@ public class PlayerAdvancementMoney {
             });
 
         }
+        return awardedReward;
     }
 
     private void announceAdvancement(

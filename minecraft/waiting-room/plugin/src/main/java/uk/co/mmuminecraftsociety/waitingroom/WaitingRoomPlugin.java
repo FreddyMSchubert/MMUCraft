@@ -157,6 +157,10 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         player.teleport(spawnLocation(Bukkit.getWorlds().getFirst()));
         Bukkit.getScheduler().runTask(this, () -> sendMode(player));
         refreshProfile(player);
+        boolean firstJoin = !player.hasPlayedBefore();
+        sendDiscordEvent(firstJoin ? "first_join" : "join", player,
+                (firstJoin ? "joined the server for the first time." : "joined the server.")
+                        + " (" + Bukkit.getOnlinePlayers().size() + " online)");
     }
 
     @EventHandler
@@ -164,6 +168,13 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         event.setKeepInventory(true);
         event.getDrops().clear();
         event.setShouldDropExperience(false);
+        Component deathMessage = event.deathMessage();
+        if (deathMessage != null) {
+            Player player = event.getPlayer();
+            String content = PlainTextComponentSerializer.plainText().serialize(deathMessage);
+            if (content.startsWith(player.getName())) content = content.substring(player.getName().length()).stripLeading();
+            if (!content.isBlank()) sendDiscordEvent("death", player, content);
+        }
     }
 
     @EventHandler
@@ -298,12 +309,15 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
     }
 
     @EventHandler public void left(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
         event.quitMessage(null);
-        profiles.remove(event.getPlayer().getUniqueId());
+        profiles.remove(player.getUniqueId());
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        Team team = board.getTeam(teamName(event.getPlayer()));
+        Team team = board.getTeam(teamName(player));
         if (team != null) team.unregister();
-        board.resetScores(event.getPlayer().getName());
+        board.resetScores(player.getName());
+        sendDiscordEvent("leave", player, "left the server. ("
+                + Math.max(0, Bukkit.getOnlinePlayers().size() - 1) + " online)");
     }
     @EventHandler public void damage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)
@@ -406,7 +420,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
                     : TextColor.color(displayColor(profile.get("color").getAsString()));
             Component line = Component.text(player.getName(), color)
                     .append(role.equals("Player") ? Component.empty()
-                            : Component.text(" [" + role + "]", NamedTextColor.GRAY))
+                            : Component.text(" [" + role + "]", roleLabelColor(role)))
                     .append(Component.text(": " + content, NamedTextColor.WHITE));
             Bukkit.getOnlinePlayers().forEach(viewer -> viewer.sendMessage(line));
         });
@@ -439,11 +453,7 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
             case "Member" -> " [Member]";
             default -> "";
         };
-        NamedTextColor labelColor = switch (role) {
-            case "Committee" -> NamedTextColor.AQUA;
-            case "External" -> NamedTextColor.GRAY;
-            default -> NamedTextColor.GREEN;
-        };
+        NamedTextColor labelColor = roleLabelColor(role);
         team.suffix(Component.text(label, labelColor));
         Objective objective = board.getObjective("waiting_profile");
         if (objective == null) objective = board.registerNewObjective("waiting_profile", Criteria.DUMMY,
@@ -459,6 +469,14 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
         return "wr" + player.getUniqueId().toString().replace("-", "").substring(0, 14);
     }
 
+    private static NamedTextColor roleLabelColor(String role) {
+        return switch (role) {
+            case "Committee" -> NamedTextColor.AQUA;
+            case "Member" -> NamedTextColor.GREEN;
+            default -> NamedTextColor.GRAY;
+        };
+    }
+
     private void pollDiscord() {
         if (!polling.compareAndSet(false, true)) return;
         String path = "/api/internal/velocity/waiting-chat" + (chatCursor < 0 ? "" : "?after=" + chatCursor);
@@ -468,8 +486,10 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
             chatCursor = result.get("cursor").getAsLong();
             Bukkit.getScheduler().runTask(this, () -> result.getAsJsonArray("messages").forEach(entry -> {
                 JsonObject message = entry.getAsJsonObject();
-                Component line = Component.text("[Discord] " + message.get("name").getAsString() + ": "
-                        + message.get("content").getAsString(), NamedTextColor.AQUA);
+                String name = message.get("name").getAsString().strip().replaceAll("[\\r\\n]", " ");
+                String content = message.get("content").getAsString().strip().replaceAll("[\\r\\n]+", " ");
+                Component line = Component.text("[Discord] " + name + ": ", NamedTextColor.AQUA)
+                        .append(Component.text(content, NamedTextColor.WHITE));
                 Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(line));
             }));
         }).exceptionally(error -> { getLogger().warning("Discord poll failed: " + error); return null; })
@@ -562,6 +582,21 @@ public final class WaitingRoomPlugin extends JavaPlugin implements Listener {
             }));
         }).exceptionally(error -> { getLogger().warning("Command poll failed: " + error); return null; })
                 .whenComplete((ignored, error) -> pollingCommands.set(false));
+    }
+
+    private void sendDiscordEvent(String type, Player player, String content) {
+        JsonObject body = new JsonObject();
+        body.addProperty("type", type);
+        body.addProperty("uuid", player.getUniqueId().toString());
+        body.addProperty("username", player.getName());
+        body.addProperty("content", content);
+        send("/api/internal/velocity/waiting-event", body).thenAccept(response -> {
+            if (response.statusCode() != 200 && response.statusCode() != 201)
+                getLogger().warning("Waiting " + type + " Discord event returned " + response.statusCode());
+        }).exceptionally(error -> {
+            getLogger().warning("Waiting " + type + " Discord event failed: " + error);
+            return null;
+        });
     }
 
     private java.util.concurrent.CompletableFuture<HttpResponse<String>> send(String path, JsonObject body) {

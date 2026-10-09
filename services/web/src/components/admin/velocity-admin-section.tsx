@@ -13,12 +13,17 @@ interface VelocityServer {
 	latencyMs: number | null;
 	error: string | null;
 	playerCount: number;
+	maxPlayers: number;
+	memberWaitingCount: number;
+	waitingCount: number;
 }
 
 interface VelocityPlayer {
 	uuid: string;
 	username: string;
 	serverName: string;
+	state: 'queued' | 'visiting' | 'playing';
+	targetServerName: string;
 	color: string;
 	isCommittee: boolean;
 	customEmojis: PlayerEmoji[];
@@ -27,8 +32,6 @@ interface VelocityPlayer {
 interface VelocitySnapshot {
 	proxyOnline: boolean;
 	maintenanceMode: boolean;
-	maxPlayers: number;
-	countedPlayerCount: number;
 	eventOverride: number | null;
 	eventActive: boolean;
 	servers: VelocityServer[];
@@ -40,8 +43,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 	const [snapshot, setSnapshot] = useState<VelocitySnapshot | null>(null);
 	const [moveTargets, setMoveTargets] = useState<Record<string, string>>({});
 	const [busy, setBusy] = useState(false);
-	const [maxPlayersInput, setMaxPlayersInput] = useState('');
-	const serverMaxPlayers = useRef<number | null>(null);
+	const [maxPlayersInput, setMaxPlayersInput] = useState<Record<number, string>>({});
+	const serverMaxPlayers = useRef<Record<number, number>>({});
 	const [error, setError] = useState('');
 
 	const load = useCallback(async () => {
@@ -49,9 +52,13 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 			'/api/admin/velocity',
 			'Failed to load Velocity state',
 		);
-		if (serverMaxPlayers.current !== next.maxPlayers) {
-			serverMaxPlayers.current = next.maxPlayers;
-			setMaxPlayersInput(String(next.maxPlayers));
+		for (const server of next.servers) {
+			if (serverMaxPlayers.current[server.id] === server.maxPlayers) continue;
+			serverMaxPlayers.current[server.id] = server.maxPlayers;
+			setMaxPlayersInput((current) => ({
+				...current,
+				[server.id]: String(server.maxPlayers),
+			}));
 		}
 		setSnapshot(next);
 	}, []);
@@ -164,12 +171,12 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 		});
 	}
 
-	async function setMaxPlayers() {
-		const maxPlayers = Number(maxPlayersInput);
+	async function setMaxPlayers(server: VelocityServer) {
+		const maxPlayers = Number(maxPlayersInput[server.id]);
 		if (!Number.isInteger(maxPlayers) || maxPlayers < 0 || maxPlayers > 99) return;
 		await mutate('Player limit updated', async () => {
 			await velocityRequest(
-				'/api/admin/velocity/max-players',
+				`/api/admin/velocity/servers/${server.id}/max-players`,
 				{
 					method: 'PATCH',
 					headers: { 'content-type': 'application/json' },
@@ -223,45 +230,6 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 	return (
 		<div className="velocityAdmin">
 			<section className="adminSection">
-				<div className="adminSectionHeader">
-					<h3>Player limit</h3>
-					<p>
-						{snapshot.countedPlayerCount} / {snapshot.maxPlayers} players online.{' '}
-						MMU_Admin does not count. Players selected to leave receive a three-minute
-						warning.
-					</p>
-				</div>
-				<label>
-					Maximum players
-					<input
-						type="number"
-						min="0"
-						max="99"
-						step="1"
-						value={maxPlayersInput}
-						onChange={(event) => {
-							setMaxPlayersInput(event.target.value);
-						}}
-					/>
-				</label>
-				<button
-					type="button"
-					disabled={
-						busy ||
-						maxPlayersInput === '' ||
-						Number(maxPlayersInput) === snapshot.maxPlayers ||
-						!Number.isInteger(Number(maxPlayersInput)) ||
-						Number(maxPlayersInput) < 0 ||
-						Number(maxPlayersInput) > 99
-					}
-					onClick={() => {
-						void setMaxPlayers();
-					}}
-				>
-					Save limit
-				</button>
-			</section>
-			<section className="adminSection">
 				<div className="adminSectionHeader velocityHeading">
 					<div>
 						<h3>Servers</h3>
@@ -313,6 +281,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 								<th>Server</th>
 								<th>Health</th>
 								<th>Players</th>
+								<th>Limit</th>
+								<th>Queues</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -321,7 +291,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 									<td>
 										<strong>
 											{server.name === 'main'
-												? 'Main'
+												? 'Server'
 												: 'Surprising Saturday'}
 										</strong>
 									</td>
@@ -338,7 +308,48 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 											<small className="velocityError">{server.error}</small>
 										)}
 									</td>
-									<td>{server.playerCount}</td>
+									<td>
+										{server.playerCount} / {server.maxPlayers}
+									</td>
+									<td>
+										<label>
+											<input
+												type="number"
+												min="0"
+												max="99"
+												step="1"
+												aria-label={`${server.name} player limit`}
+												value={maxPlayersInput[server.id] ?? ''}
+												onChange={(event) => {
+													setMaxPlayersInput((current) => ({
+														...current,
+														[server.id]: event.target.value,
+													}));
+												}}
+											/>
+										</label>
+										<button
+											type="button"
+											disabled={
+												busy ||
+												maxPlayersInput[server.id] === '' ||
+												Number(maxPlayersInput[server.id]) ===
+													server.maxPlayers ||
+												!Number.isInteger(
+													Number(maxPlayersInput[server.id]),
+												) ||
+												Number(maxPlayersInput[server.id]) < 0 ||
+												Number(maxPlayersInput[server.id]) > 99
+											}
+											onClick={() => void setMaxPlayers(server)}
+										>
+											Save
+										</button>
+									</td>
+									<td>
+										Members: {server.memberWaitingCount}, others:{' '}
+										{server.waitingCount}
+									</td>
 								</tr>
 							))}
 						</tbody>
@@ -349,7 +360,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				<div className="adminSectionHeader">
 					<h3>Online players</h3>
 					<p>
-						Save an online player’s server choice in the API. The choice stays after
+						Save a connected player’s server choice in the API. The choice stays after
 						disconnect. A server that is starting receives the player when it is ready.
 					</p>
 				</div>
@@ -374,7 +385,11 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 											customEmojis={player.customEmojis}
 										/>
 									</td>
-									<td>{player.serverName}</td>
+									<td>
+										{player.state === 'playing'
+											? player.serverName
+											: `${player.state} for ${player.targetServerName}`}
+									</td>
 									<td>
 										<select
 											value={moveTargets[player.uuid] ?? ''}

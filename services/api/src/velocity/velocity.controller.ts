@@ -12,6 +12,7 @@ import {
 	ServiceUnavailableException,
 } from '@nestjs/common';
 import { AuthSessionService } from '../auth/auth-session.service';
+import { isValidMinecraftUsername } from '../auth/auth.util';
 import { DiscordService } from '../discord/discord.service';
 import { CommandLogsService } from '../database/command-logs.service';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
@@ -213,6 +214,41 @@ export class VelocityInternalController {
 		});
 		if (!accepted)
 			throw new ServiceUnavailableException('Waiting room chat bridge is unavailable');
+		return { accepted: true };
+	}
+
+	@Post('waiting-event')
+	async publishWaitingEvent(
+		@Headers('authorization') authorization: string | undefined,
+		@Body()
+		body: { type?: unknown; uuid?: unknown; username?: unknown; content?: unknown } | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		const type = typeof body?.type === 'string' ? body.type : '';
+		const uuid = normalizeMinecraftUuid(typeof body?.uuid === 'string' ? body.uuid : '');
+		const username = typeof body?.username === 'string' ? body.username : '';
+		const content = typeof body?.content === 'string' ? body.content.trim() : '';
+		if (
+			!['join', 'first_join', 'leave', 'death'].includes(type) ||
+			!uuid ||
+			!isValidMinecraftUsername(username) ||
+			!content ||
+			content.length > 500
+		)
+			throw new BadRequestException('Invalid waiting room event');
+		const accepted = await this.discord.publish({
+			type: `waiting_${type}`,
+			minecraft_username: username,
+			minecraft_uuid: uuid,
+			content,
+			role: '',
+			nickname: '',
+			pronouns: '',
+			color_hex: '',
+			online_players: [],
+		});
+		if (!accepted)
+			throw new ServiceUnavailableException('Waiting room Discord bridge is unavailable');
 		return { accepted: true };
 	}
 

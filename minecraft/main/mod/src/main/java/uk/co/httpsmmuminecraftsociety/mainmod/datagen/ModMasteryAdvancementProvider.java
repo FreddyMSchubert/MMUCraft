@@ -209,7 +209,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("cosmetics/buy_mythical", "Mythical Purchase", "Buy a mythical cosmetic.", "fake:cosmetic-crown-techno", "cosmetics/buy_1", "challenge");
         add("charms/apply_boost", "Armoured and Charmed", "Apply Charm Boost to a piece of armour.", "minecraft:diamond_chestplate", "charms/get_1", "goal");
         add("charms/upgrade_once", "Potential Unlocked", "Upgrade a charm once.", "minecraft:anvil", "charms/get_1", "task");
-        add("charms/upgrade_max", "Maximum Charm", "Upgrade one charm to its maximum level.", "fake:charm-heart", "charms/upgrade_3", "challenge");
+        add("charms/upgrade_max", "Maximum Charm", "Upgrade a charm with at least three levels to its maximum level.", "fake:charm-heart", "charms/upgrade_3", "challenge");
         add("charms/upgrade_all_max", "Perfectly Charming", "Upgrade every charm to its maximum level.", "minecraft:beacon", "charms/upgrade_max", "challenge");
         add("charms/get_all", "Every Charm", "Hold every charm at once.", "fake:charm-heart", "charms/get_20", "challenge");
         add("utility/wallet", "Cash Container", "Get a wallet.", "fake:charm-wallet", "root", "task");

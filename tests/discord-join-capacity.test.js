@@ -35,3 +35,26 @@ test('Discord joins show the cap and color the full count red', () => {
 		/\(17 online\)/,
 	);
 });
+
+test('waiting room events use the main server formatting and committee colors', () => {
+	const event = {
+		type: 'join',
+		minecraft_username: 'Player',
+		minecraft_uuid: '',
+		content: 'joined the server. (18 online)',
+		role: 'Committee',
+		nickname: '',
+		pronouns: '',
+		color_hex: '#00aaff',
+		online_players: [],
+	};
+	const main = formatDiscordWebhookMessage(event, 18);
+	const waiting = formatDiscordWebhookMessage({ ...event, type: 'waiting_join' }, 18);
+	assert.deepEqual(waiting, main);
+	assert.ok(waiting.content.includes('\u001b[36m [Committee]\u001b[0m'));
+	assert.ok(waiting.content.includes('\u001b[31m(18/18 online)\u001b[0m'));
+	assert.deepEqual(
+		formatDiscordWebhookMessage({ ...event, type: 'waiting_chat', content: 'hello' }),
+		formatDiscordWebhookMessage({ ...event, type: 'chat', content: 'hello' }),
+	);
+});

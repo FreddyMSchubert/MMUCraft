@@ -33,6 +33,7 @@ export interface MinecraftDiscordEvent {
 }
 
 export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent, maxPlayers?: number) {
+	const type = event.type.replace(/^waiting_/, '');
 	const emoji: Record<string, string> = {
 		advancement: '🏆',
 		deployment_complete: '✅',
@@ -47,7 +48,7 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent, maxPla
 		fish: '🐟',
 		fish_first: '🐟 👶',
 	};
-	const isServer = !['chat', 'waiting_chat'].includes(event.type) || !event.minecraft_username;
+	const isServer = type !== 'chat' || !event.minecraft_username;
 	const label = roleLabel(event.role);
 	const player = event.minecraft_username
 		? `${ansi(ansiColor(event.color_hex))}${event.minecraft_username}${ansi(0)}${label ? `${ansi(roleColor(event.role))}${label}${ansi(0)}` : ''}`
@@ -55,9 +56,9 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent, maxPla
 	const username = isServer
 		? 'Minecraft Server'
 		: `${event.minecraft_username}${label}`.slice(0, 80);
-	const prefix = emoji[event.type] ?? '👾';
+	const prefix = emoji[type] ?? '👾';
 	const content =
-		(event.type === 'join' || event.type === 'first_join') && maxPlayers !== undefined
+		(type === 'join' || type === 'first_join') && maxPlayers !== undefined
 			? event.content.replace(/\((\d+) online\)$/, (_, countText: string) => {
 					const count = Number(countText);
 					const status = `(${count}/${maxPlayers} online)`;
@@ -270,7 +271,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	}
 
 	async publish(event: MinecraftDiscordEvent) {
-		const webhook = event.type === 'waiting_chat' ? this.waitingWebhook : this.webhook;
+		const webhook = event.type.startsWith('waiting_') ? this.waitingWebhook : this.webhook;
 		if (!webhook) return false;
 		if (
 			!['chat', 'waiting_chat'].includes(event.type) &&
@@ -291,14 +292,18 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 					color_hex: presentation.colorHex,
 				}
 			: event;
-		const maxPlayers =
-			currentEvent.type === 'join' || currentEvent.type === 'first_join'
-				? this.database.connection
-						.select()
-						.from(velocityServers)
-						.where(eq(velocityServers.name, 'main'))
-						.get()?.max_players
-				: undefined;
+		const maxPlayers = currentEvent.type.endsWith('join')
+			? this.database.connection
+					.select()
+					.from(velocityServers)
+					.where(
+						eq(
+							velocityServers.name,
+							currentEvent.type.startsWith('waiting_') ? 'waiting-room' : 'main',
+						),
+					)
+					.get()?.max_players
+			: undefined;
 		const message = formatDiscordWebhookMessage(currentEvent, maxPlayers);
 		if (!message.content.trim()) return false;
 		const avatarURL =

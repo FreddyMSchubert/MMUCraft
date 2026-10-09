@@ -142,13 +142,15 @@ final class GameplayEventsClient {
 
     CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
             ServerPlayer player,
-            List<MinecraftStatEntry> stats
+            List<MinecraftStatEntry> stats,
+            boolean includeRewards
     ) {
         SyncPlayerStatsRequest request = SyncPlayerStatsRequest.newBuilder()
                 .setMinecraftUsername(player.getName().getString())
                 .setMinecraftUuid(player.getUUID().toString())
                 .setUnixMs(System.currentTimeMillis())
                 .setBalanceDabloons(Math.max(0, MoneyHelper.GetBalance(player)))
+                .setIncludeSurprisingSaturdayRewards(includeRewards)
                 .addAllStats(stats)
                 .build();
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).syncPlayerStats(request));

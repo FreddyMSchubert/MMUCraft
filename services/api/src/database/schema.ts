@@ -648,6 +648,11 @@ export const surprisingSaturdayEvents = sqliteTable(
 		ends_at_unix_ms: integer('ends_at_unix_ms').notNull(),
 		criteria_type: text('criteria_type').notNull(),
 		criteria_json: text('criteria_json').notNull(),
+		rewards_json: text('rewards_json')
+			.notNull()
+			.default(
+				'{"first":0,"second":0,"third":0,"fourth":0,"fifth":0,"participation":0,"participationMinItems":1}',
+			),
 	},
 	(table) => [
 		index('surprising_saturday_events_window_idx').on(

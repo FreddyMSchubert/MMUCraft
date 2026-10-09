@@ -110,6 +110,7 @@ export interface PlayerStatisticsSyncRequest {
 	unix_ms?: number;
 	balance_dabloons?: number;
 	stats?: MinecraftStatInput[];
+	include_surprising_saturday_rewards?: boolean;
 }
 
 export interface PlayerStatisticsSyncResponse {
@@ -125,6 +126,12 @@ export interface PlayerStatisticsSyncResponse {
 	previous_last_played_at_unix_ms: number;
 	first_in_any_statistic: boolean;
 	referral_reward_dabloons: number;
+	surprising_saturday_rewards: {
+		event_id: number;
+		title: string;
+		place: number;
+		amount_dabloons: number;
+	}[];
 	message: string;
 }
 

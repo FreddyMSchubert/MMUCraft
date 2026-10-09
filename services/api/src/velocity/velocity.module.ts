@@ -24,5 +24,6 @@ import { VelocityService } from './velocity.service';
 		SurprisingSaturdayInternalController,
 	],
 	providers: [VelocityService, SurprisingSaturdayService],
+	exports: [SurprisingSaturdayService],
 })
 export class VelocityModule {}

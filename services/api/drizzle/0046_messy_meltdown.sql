@@ -1,0 +1,1 @@
+ALTER TABLE `surprising_saturday_events` ADD `rewards_json` text DEFAULT '{"first":0,"second":0,"third":0,"fourth":0,"fifth":0,"participation":0,"participationMinItems":1}' NOT NULL;

@@ -432,6 +432,7 @@ message SyncPlayerStatsRequest {
   int32 balance_dabloons = 3;
   repeated MinecraftStatEntry stats = 4;
   string minecraft_uuid = 5;
+  bool include_surprising_saturday_rewards = 6;
 }
 
 message SyncPlayerStatsResponse {
@@ -448,6 +449,14 @@ message SyncPlayerStatsResponse {
   int64 previous_last_played_at_unix_ms = 11;
   bool first_in_any_statistic = 12;
   int32 referral_reward_dabloons = 13;
+  repeated SurprisingSaturdayReward surprising_saturday_rewards = 14;
+}
+
+message SurprisingSaturdayReward {
+  int32 event_id = 1;
+  string title = 2;
+  int32 place = 3;
+  int32 amount_dabloons = 4;
 }
 
 message RecordMoneyEventRequest {

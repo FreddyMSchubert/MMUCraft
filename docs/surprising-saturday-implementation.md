@@ -22,6 +22,8 @@ Velocity checks website accounts, bans, and timeouts before it connects players 
 
 Committee members create, edit, and delete events in Admin → Surprising Saturday, including live and ended events. The form uses one row for each completion target. The website asks for two confirmations before it saves changes to a started event or deletes an event. Deletion also removes that event's participants and completions in one database transaction. Editing target points recalculates the visible score. Removing a target hides its old completions from the score. Editing event times can change live server routing. The API stores event times in SQLite. The public API hides the title and the second description before the start time. The Event tab shows an upcoming card, a live page, and past events when they exist. It uses the Knowledge page renderer and styles for Markdown and HTML descriptions. It sanitizes the HTML before it inserts it into the page.
 
+Each event also has separate Dabloon amounts for 1st through 5th place and for participants below 5th place. The participation amount requires the configured minimum number of completed list items. Zero disables an amount. Only the official leaderboard receives rewards. After the event ends, the main server grants each eligible player their reward on their next join, sends a message naming the event and result, and records a per-event payment marker so later joins do not pay it again.
+
 The Kill Shift template fills the title, all three descriptions, and 90 one-point targets from the Killshift coverage list. It does not set event times or create an event. The committee sets and edits event times in the website form.
 
 ## Killshift image and API

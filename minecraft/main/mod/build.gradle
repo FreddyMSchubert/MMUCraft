@@ -113,6 +113,16 @@ tasks.register('checkParticleTrails', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkParticleEmission', JavaExec) {
+    group = 'verification'
+    description = 'Check worn and placed cosmetic particle positions.'
+    classpath = sourceSets.trailCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.ParticleEmissionCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('trailCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
 tasks.register('checkMapResize', JavaExec) {
     group = 'verification'
     description = 'Check crafting map sizes from 16 through 2048 blocks.'

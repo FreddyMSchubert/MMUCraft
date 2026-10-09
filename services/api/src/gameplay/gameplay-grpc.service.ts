@@ -14,6 +14,7 @@ import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.servic
 import { CommandLogsService } from '../database/command-logs.service';
 import { DabloonInteractionsService } from '../database/dabloon-interactions.service';
 import { AnnouncementsService } from '../announcements/announcements.service';
+import { SurprisingSaturdayService } from '../velocity/surprising-saturday.service';
 import {
 	FeatureTogglesService,
 	type FeatureTogglesSnapshot,
@@ -60,6 +61,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly shopUnlocks: ShopUnlocksService,
 		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
 		private readonly playerStatistics: PlayerStatisticsSynchronizationService,
+		private readonly surprisingSaturday: SurprisingSaturdayService,
 		private readonly playerPresence: OnlinePlayerPresenceService,
 		private readonly fishing: FishingService,
 		private readonly claims: ClaimsService,
@@ -309,6 +311,17 @@ export class GameplayGrpcService implements OnModuleInit {
 			previous_last_played_at_unix_ms: result.previousLastPlayedAtUnixMs,
 			first_in_any_statistic: result.firstInAnyStatistic,
 			referral_reward_dabloons: result.referralRewardDabloons,
+			surprising_saturday_rewards:
+				result.accountLinked && call.request.include_surprising_saturday_rewards
+					? this.surprisingSaturday
+							.rewardsForPlayer(call.request.minecraft_uuid ?? '')
+							.map((reward) => ({
+								event_id: reward.eventId,
+								title: reward.title,
+								place: reward.place,
+								amount_dabloons: reward.amount,
+							}))
+					: [],
 			message: result.message,
 		});
 	}

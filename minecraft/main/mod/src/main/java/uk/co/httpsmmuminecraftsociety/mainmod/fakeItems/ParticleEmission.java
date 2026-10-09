@@ -85,23 +85,32 @@ public final class ParticleEmission {
         return low + level.getRandom().nextDouble() * (high - low);
     }
 
-    private static Vec3 displayPoint(Vec3 point, ParticleEmissionItemFeature.DisplayTransform transform) {
+    static Vec3 displayPoint(Vec3 point, ParticleEmissionItemFeature.DisplayTransform transform) {
         Vec3 rotation = transform.rotation();
         Vec3 offset = transform.translation();
+        // Vec3's X and Z rotation signs are opposite to the item renderer's JOML rotations.
         return point.subtract(8, 8, 8).scale(1.0 / 16)
-                .zRot((float) Math.toRadians(rotation.z))
+                .multiply(transform.scale())
+                .zRot((float) Math.toRadians(-rotation.z))
                 .yRot((float) Math.toRadians(rotation.y))
-                .xRot((float) Math.toRadians(rotation.x))
+                .xRot((float) Math.toRadians(-rotation.x))
                 .add(offset.scale(1.0 / 16));
     }
 
+    static Vec3 headPoint(Vec3 point, ParticleEmissionItemFeature.DisplayTransform transform, float pitch) {
+        // CustomHeadLayer scales the item and offsets it above the head pivot before tilting.
+        return displayPoint(point, transform).scale(0.625).add(0, 0.25, 0)
+                .xRot((float) Math.toRadians(-pitch));
+    }
+
     private static Vec3 wornPosition(ServerPlayer player, ParticleEmissionItemFeature.DisplayTransform transform, Vec3 point) {
-        Vec3 local = displayPoint(point, transform).xRot((float) Math.toRadians(player.getXRot()));
+        Vec3 local = headPoint(point, transform, player.getXRot());
         double x = local.x;
         double y = local.y;
         double z = local.z;
         double yaw = Math.toRadians(player.getYHeadRot());
-        return player.getEyePosition().add(x * Math.cos(yaw) - z * Math.sin(yaw), y + 0.25,
+        // The player model's head pivot sits about 1/8 block below eye height.
+        return player.getEyePosition().add(x * Math.cos(yaw) - z * Math.sin(yaw), y - 0.125,
                 x * Math.sin(yaw) + z * Math.cos(yaw));
     }
 

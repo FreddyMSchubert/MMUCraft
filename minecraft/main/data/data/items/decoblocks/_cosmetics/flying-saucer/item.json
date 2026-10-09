@@ -25,10 +25,10 @@
 		"particles": [
 			{
 				"particle": "minecraft:spore_blossom_air",
-				"from": [4, 1, 12],
-				"to": [12, 1, 12],
-				"minTicks": 80,
-				"maxTicks": 160
+				"from": [5, 15, 5],
+				"to": [11, 15, 11],
+				"minTicks": 40,
+				"maxTicks": 80
 			}
 		]
 	}

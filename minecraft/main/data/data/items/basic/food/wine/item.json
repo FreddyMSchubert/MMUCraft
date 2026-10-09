@@ -1,0 +1,66 @@
+{
+	"title": "Wine Bottle",
+	"id": "wine-bottle",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 16,
+	"tooltips": [],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 9,
+		"canAlwaysEat": true,
+		"hungerBars": 3,
+		"saturationBars": 0,
+		"directHearts": 0,
+		"useRemainderItem": "minecraft:glass_bottle",
+		"effects": [
+			{
+				"id": "minecraft:nausea",
+				"durationTicks": 800,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:weakness",
+				"durationTicks": 200,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": false,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:slowness",
+				"durationTicks": 600,
+				"amplifier": 3,
+				"showIcon": false,
+				"showParticles": false,
+				"ambient": false
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/wine",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:potion[minecraft:potion_contents=mundane]=Mundane Potion",
+					"minecraft:sweet_berries",
+					"minecraft:sweet_berries"
+				],
+				"result": {
+					"stack": "mainmod:wine",
+					"count": 1
+				}
+			}
+		]
+	}
+}

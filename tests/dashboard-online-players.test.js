@@ -29,7 +29,7 @@ test('dashboard capacity shows the event only when a live event has players on a
 	assert.equal(service.capacitySnapshot().showEventCapacity, false);
 	service.livePlayers.push({ uuid: 'event-player', serverName: 'surprising-saturday' });
 	service.settings = () => ({ event_override: 0 });
-	assert.equal(service.capacitySnapshot().showEventCapacity, false);
+	assert.equal(service.capacitySnapshot().showEventCapacity, true);
 	service.settings = () => ({ event_override: null });
 	const snapshot = service.capacitySnapshot();
 	assert.equal(snapshot.showEventCapacity, true);

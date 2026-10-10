@@ -189,7 +189,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		const settings = this.settings();
 		const servers = this.servers();
 		const { activeEvent, ...route } = this.eventRoute(now, settings.event_override);
-		if (activeEvent && settings.event_override !== 0)
+		if (activeEvent)
 			this.events.recordParticipants(
 				this.livePlayers
 					.filter((player) => player.serverName === EVENT_SERVER)
@@ -280,6 +280,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			maintenanceMode: this.settings().maintenance_mode === 1,
 			eventOverride: this.settings().event_override,
 			eventActive: Boolean(this.events.active(now)),
+			eventDesiredRunning: this.eventControlState().desiredRunning,
 			servers: servers.map((server) => {
 				const live = proxyOnline ? this.liveServers.get(server.name) : undefined;
 				return {
@@ -373,7 +374,6 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			showEventCapacity:
 				proxyOnline &&
 				Boolean(this.events.active(now)) &&
-				this.settings().event_override !== 0 &&
 				this.liveServers.get(EVENT_SERVER)?.online === true &&
 				(servers.find((server) => server.name === EVENT_SERVER)?.playerCount ?? 0) > 0,
 		};
@@ -466,7 +466,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			serverName: this.proxyIsOnline(now)
 				? (this.livePlayers.find((player) => player.uuid === uuid)?.serverName ?? null)
 				: null,
-			eventReady: Boolean(this.events.active(now)) && this.settings().event_override !== 0,
+			eventReady: Boolean(this.events.active(now)),
 			eventOnline:
 				this.proxyIsOnline(now) && this.liveServers.get(EVENT_SERVER)?.online === true,
 		};
@@ -475,7 +475,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	moveSelf(userId: number, serverName: unknown) {
 		if (serverName !== 'main' && serverName !== EVENT_SERVER)
 			throw new BadRequestException('Select main or Surprising Saturday');
-		if (!this.events.active() || this.settings().event_override === 0)
+		if (!this.events.active())
 			throw new ConflictException('Player switching is available during a live event');
 		if (this.bans.resolve(userId).active)
 			throw new ForbiddenException('Your Minecraft access is restricted');
@@ -518,13 +518,13 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		const warmingUp = activeEvent ? null : this.events.warmingUp(now);
 		return {
 			activeEvent,
-			eventOpen: override !== 0 && (Boolean(activeEvent) || (override === 1 && !warmingUp)),
+			eventOpen: Boolean(activeEvent) || (override === 1 && !warmingUp),
 			revision: activeEvent
 				? `event:${activeEvent.id}`
 				: warmingUp
 					? `warmup:${warmingUp.id}`
 					: 'main',
-			targetServerName: activeEvent && override !== 0 ? EVENT_SERVER : 'main',
+			targetServerName: activeEvent ? EVENT_SERVER : 'main',
 		};
 	}
 
@@ -532,9 +532,8 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		const now = Date.now();
 		const override = this.settings().event_override;
 		const desiredRunning =
-			override === null
-				? Boolean(this.events.active(now) ?? this.events.warmingUp(now))
-				: override === 1;
+			Boolean(this.events.active(now)) ||
+			(override === null ? Boolean(this.events.warmingUp(now)) : override === 1);
 		return {
 			desiredRunning,
 			canStop:
@@ -548,6 +547,8 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			throw new BadRequestException(
 				'enabled must be true, false, or null for automatic operation',
 			);
+		if (value !== null && this.events.active())
+			throw new ConflictException('A live event controls Surprising Saturday');
 		this.database.connection
 			.update(velocitySettings)
 			.set({ event_override: value === null ? null : value ? 1 : 0 })
@@ -566,6 +567,12 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	refreshEventState() {
+		if (this.events.active() && this.settings().event_override !== null)
+			this.database.connection
+				.update(velocitySettings)
+				.set({ event_override: null })
+				.where(eq(velocitySettings.id, 1))
+				.run();
 		const desiredRunning = this.eventControlState().desiredRunning;
 		if (desiredRunning === this.lastEventState && existsSync(this.eventStatePath)) return;
 		const temporary = `${this.eventStatePath}.tmp`;

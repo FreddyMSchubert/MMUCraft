@@ -164,11 +164,6 @@
 	font-size: 0.95rem;
 }
 
-.eventShortDescription {
-	margin: 0;
-	color: rgba(255, 255, 255, 0.82);
-}
-
 .eventDescription > :last-child {
 	margin-bottom: 0;
 }

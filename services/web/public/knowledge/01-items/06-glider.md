@@ -94,7 +94,7 @@ While elytras and minecarts are the highest speed transportation options in the 
 
 ### No Mending or Unbreaking
 
-You can't apply Mending or Unbreaking to Gliders. Instead, you can repair them using leather in an anvil. (See below.)
+You can't apply Mending or Unbreaking to Gliders. Instead, you can repair them using a phantom membrane in an anvil. (See below.)
 
 ### Less upward velocity
 
@@ -114,6 +114,6 @@ Since phantoms no longer spawn, you'll need to get your hands on the phantom mem
 
 ### Repairing the Glider
 
-You can repair gliders in an anvil. One leather fully repairs the glider.
+You can repair gliders in an anvil. One phantom membrane fully repairs the glider.
 
 ![Glider Repairing Recipe](/assets/knowledge/items/glider/repair_recipe.png)

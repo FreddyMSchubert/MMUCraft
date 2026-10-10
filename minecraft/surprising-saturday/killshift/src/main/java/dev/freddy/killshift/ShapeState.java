@@ -11,6 +11,7 @@ final class ShapeState {
     int abilityCooldown;
     int angryTicks;
     int squidFleeTicks;
+    int piglinExposureTicks;
     int guardianChargeTicks;
     LivingEntity guardianTarget;
     boolean wasSneaking;
@@ -31,6 +32,7 @@ final class ShapeState {
         data.putInt("abilityCooldown", abilityCooldown);
         data.putInt("angryTicks", angryTicks);
         data.putInt("squidFleeTicks", squidFleeTicks);
+        data.putInt("piglinExposureTicks", piglinExposureTicks);
         data.putBoolean("ownsPostEffect", ownsPostEffect);
         return data;
     }
@@ -43,6 +45,7 @@ final class ShapeState {
         state.abilityCooldown = data.getIntOr("abilityCooldown", 0);
         state.angryTicks = data.getIntOr("angryTicks", 0);
         state.squidFleeTicks = data.getIntOr("squidFleeTicks", 0);
+        state.piglinExposureTicks = data.getIntOr("piglinExposureTicks", 0);
         state.ownsPostEffect = data.getBooleanOr("ownsPostEffect", false);
         return state;
     }

@@ -20,6 +20,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -29,6 +31,8 @@ final class ShapeRuntime {
     private static final Identifier STARED_SPEED = id("stared_speed");
     private static final Identifier FROZEN_SPEED = id("creaking_frozen_speed");
     private static final Identifier SQUID_FLEE_SPEED = id("squid_flee_speed");
+    private static final Identifier SQUID_FLEE_WATER = id("squid_flee_water");
+    private static final Identifier AXOLOTL_LAND_SPEED = id("axolotl_land_speed");
     private static final Identifier HOP_GROUND_SPEED = id("hop_ground_speed");
 
     private ShapeRuntime() {
@@ -54,6 +58,7 @@ final class ShapeRuntime {
 
         tickFlight(player, state);
         tickHopSpeed(player);
+        tickAxolotlLandSpeed(player, type);
         tickLandMovement(player, traits);
         MobAbilities.tick(player, state);
         tickBreathing(player, state);
@@ -62,6 +67,7 @@ final class ShapeRuntime {
         tickEnvironment(player, state);
         tickLookReactions(player, state);
         tickSquidFlee(player, state);
+        tickPiglinConversion(player, state);
         if (type == EntityTypes.IRON_GOLEM && player.isInWater()) {
             Vec3 movement = player.getDeltaMovement();
             player.setDeltaMovement(movement.x * 0.8,
@@ -81,6 +87,9 @@ final class ShapeRuntime {
         if (type == EntityTypes.CAT) {
             repelCreepers(player);
         }
+        if (type == EntityTypes.WOLF) {
+            repelSkeletons(player);
+        }
 
     }
 
@@ -88,6 +97,8 @@ final class ShapeRuntime {
         remove(player, Attributes.MOVEMENT_SPEED, STARED_SPEED);
         remove(player, Attributes.MOVEMENT_SPEED, FROZEN_SPEED);
         remove(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED);
+        remove(player, Attributes.WATER_MOVEMENT_EFFICIENCY, SQUID_FLEE_WATER);
+        remove(player, Attributes.MOVEMENT_SPEED, AXOLOTL_LAND_SPEED);
         remove(player, Attributes.MOVEMENT_SPEED, HOP_GROUND_SPEED);
     }
 
@@ -104,10 +115,35 @@ final class ShapeRuntime {
         boolean squid = state.form.type() == EntityTypes.SQUID
                 || state.form.type() == EntityTypes.GLOW_SQUID;
         if (squid && state.squidFleeTicks > 0 && player.isInWater()) {
-            add(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED, 0.5,
+            add(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED, 1.0,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            add(player, Attributes.WATER_MOVEMENT_EFFICIENCY, SQUID_FLEE_WATER, 0.4,
+                    AttributeModifier.Operation.ADD_VALUE);
         } else {
             remove(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED);
+            remove(player, Attributes.WATER_MOVEMENT_EFFICIENCY, SQUID_FLEE_WATER);
+        }
+    }
+
+    private static void tickAxolotlLandSpeed(ServerPlayer player, EntityType<?> type) {
+        if (type == EntityTypes.AXOLOTL && !player.isInWaterOrRain()) {
+            add(player, Attributes.MOVEMENT_SPEED, AXOLOTL_LAND_SPEED, -0.5,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        } else {
+            remove(player, Attributes.MOVEMENT_SPEED, AXOLOTL_LAND_SPEED);
+        }
+    }
+
+    private static void tickPiglinConversion(ServerPlayer player, ShapeState state) {
+        EntityType<?> type = state.form.type();
+        if (type != EntityTypes.PIGLIN && type != EntityTypes.PIGLIN_BRUTE) return;
+        boolean immune = state.viewData.getBooleanOr("IsImmuneToZombification", false);
+        boolean converts = player.level().environmentAttributes()
+                .getValue(EnvironmentAttributes.PIGLINS_ZOMBIFY, player.position());
+        state.piglinExposureTicks = !immune && converts ? state.piglinExposureTicks + 1 : 0;
+        if (state.piglinExposureTicks > 300) {
+            ShapeManager.convertTo(player, EntityTypes.ZOMBIFIED_PIGLIN);
+            player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 200));
         }
     }
 
@@ -155,7 +191,9 @@ final class ShapeRuntime {
 
     private static void tickBreathing(ServerPlayer player, ShapeState state) {
         EntityType<?> type = state.form.type();
-        if (type == EntityTypes.IRON_GOLEM || type == EntityTypes.DROWNED
+        if (type == EntityTypes.IRON_GOLEM || type == EntityTypes.COPPER_GOLEM
+                || type == EntityTypes.FROG || type == EntityTypes.WITHER_SKELETON
+                || type == EntityTypes.DROWNED
                 || type == EntityTypes.HAPPY_GHAST || type == EntityTypes.TURTLE
                 || type == EntityTypes.GUARDIAN || type == EntityTypes.ELDER_GUARDIAN) {
             player.setAirSupply(player.getMaxAirSupply());
@@ -285,6 +323,19 @@ final class ShapeRuntime {
             if (away.lengthSqr() > 0.01) {
                 creeper.setDeltaMovement(creeper.getDeltaMovement().add(away.normalize().scale(0.12)));
                 creeper.setTarget(null);
+            }
+        }
+    }
+
+    private static void repelSkeletons(ServerPlayer player) {
+        for (AbstractSkeleton skeleton : player.level().getEntitiesOfClass(
+                AbstractSkeleton.class, player.getBoundingBox().inflate(6.0),
+                skeleton -> skeleton.isAlive()
+        )) {
+            Vec3 away = skeleton.position().subtract(player.position());
+            if (away.lengthSqr() > 0.01) {
+                skeleton.setDeltaMovement(skeleton.getDeltaMovement().add(away.normalize().scale(0.12)));
+                skeleton.setTarget(null);
             }
         }
     }

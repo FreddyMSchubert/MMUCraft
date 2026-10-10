@@ -30,6 +30,25 @@ record MobForm(
             normalized.put(Attributes.MOVEMENT_SPEED, 0.08);
             normalized.put(Attributes.JUMP_STRENGTH, 0.8);
         }
+        if (type == EntityTypes.CAMEL || type == EntityTypes.CAMEL_HUSK) {
+            normalized.merge(Attributes.MOVEMENT_SPEED, 0.2, Math::max);
+        }
+        if (type == EntityTypes.SKELETON_HORSE || type == EntityTypes.ZOMBIE_HORSE) {
+            normalized.merge(Attributes.MOVEMENT_SPEED, 0.25, Math::max);
+        }
+        if (type == EntityTypes.FROG) {
+            normalized.put(Attributes.MOVEMENT_SPEED, 0.07);
+            normalized.put(Attributes.JUMP_STRENGTH, 0.72);
+        }
+        if (type == EntityTypes.FOX) {
+            normalized.put(Attributes.JUMP_STRENGTH, 0.65);
+        }
+        if (type == EntityTypes.RABBIT) {
+            normalized.put(Attributes.JUMP_STRENGTH, 0.72);
+        }
+        if (type == EntityTypes.GOAT) {
+            normalized.put(Attributes.ATTACK_KNOCKBACK, 1.5);
+        }
         if (traits.bouncy()) {
             normalized.put(Attributes.JUMP_STRENGTH, 0.9);
             normalized.put(Attributes.FALL_DAMAGE_MULTIPLIER, 0.0);

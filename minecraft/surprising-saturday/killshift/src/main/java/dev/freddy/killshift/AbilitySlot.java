@@ -43,11 +43,15 @@ public final class AbilitySlot {
     }
 
     public static ItemStack arrowFor(Player player, ItemStack weapon) {
-        if (!weapon.is(Items.BOW)) return ItemStack.EMPTY;
+        if (!weapon.is(Items.BOW) && !weapon.is(Items.CROSSBOW)) return ItemStack.EMPTY;
         CustomData data = player.getInventory().getItem(SLOT).get(DataComponents.CUSTOM_DATA);
         if (data == null) return ItemStack.EMPTY;
         CompoundTag tag = data.copyTag();
         if (!tag.getStringOr(MARKER, "").startsWith("killshift:")) return ItemStack.EMPTY;
+        if (weapon.is(Items.CROSSBOW)) {
+            return "minecraft:pillager".equals(tag.getStringOr(FORM, ""))
+                    ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
+        }
         return switch (tag.getStringOr(FORM, "")) {
             case "minecraft:bogged" -> PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.POISON);
             case "minecraft:stray" -> PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.SLOWNESS);

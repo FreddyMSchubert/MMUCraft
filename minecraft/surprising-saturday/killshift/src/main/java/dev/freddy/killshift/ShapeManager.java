@@ -366,6 +366,19 @@ public final class ShapeManager {
         transform(target, source, false);
     }
 
+    static void convertTo(ServerPlayer player, EntityType<? extends Mob> type) {
+        Mob converted = type.create(player.level(), EntitySpawnReason.CONVERSION);
+        if (converted == null) return;
+        ShapeState previous = get(player);
+        if (previous != null && previous.view != null) {
+            for (var slot : net.minecraft.world.entity.EquipmentSlot.VALUES) {
+                converted.setItemSlot(slot, previous.view.getItemBySlot(slot).copy());
+            }
+            ShapeView.remove(previous);
+        }
+        transform(player, converted, false);
+    }
+
     private static void transform(ServerPlayer player, MobForm form, CompoundTag viewData, Vec3 location) {
         float health = player.getHealth();
         ShapeView.release(player, get(player));

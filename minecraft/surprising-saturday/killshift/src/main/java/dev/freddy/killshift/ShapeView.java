@@ -303,6 +303,7 @@ public final class ShapeView {
     }
 
     private static void updateVisualState(LivingEntity view, ServerPlayer player) {
+        if (view instanceof Bat bat) bat.setResting(false);
         if (view instanceof Strider strider) {
             boolean warm = player.level().getBlockState(player.blockPosition()).is(BlockTags.STRIDER_WARM_BLOCKS)
                     || player.getBlockStateOn().is(BlockTags.STRIDER_WARM_BLOCKS)
@@ -348,7 +349,11 @@ public final class ShapeView {
         double cap = isSmallAquatic(view) ? 0.3 : SELF_VIEW_SCALE;
         if (view.getType() == EntityTypes.GHAST || view.getType() == EntityTypes.HAPPY_GHAST) {
             cap = 0.125;
-        } else if (view.getType() == EntityTypes.SILVERFISH) {
+        } else if (view.getType() == EntityTypes.ARMADILLO
+                || view.getType() == EntityTypes.SILVERFISH) {
+            cap = 0.15;
+        } else if (view.getType() == EntityTypes.BEE
+                || view.getType() == EntityTypes.DOLPHIN) {
             cap = 0.2;
         }
         if (view.getBbHeight() <= 0.0F) return cap;

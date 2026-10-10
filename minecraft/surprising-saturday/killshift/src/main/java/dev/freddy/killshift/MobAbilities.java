@@ -69,6 +69,7 @@ final class MobAbilities {
             Map.entry(EntityTypes.MOOSHROOM, Items.BOWL),
             Map.entry(EntityTypes.SHULKER, Items.SHULKER_SHELL),
             Map.entry(EntityTypes.SILVERFISH, Items.INFESTED_STONE_BRICKS),
+            Map.entry(EntityTypes.SHEEP, Items.GRASS_BLOCK),
             Map.entry(EntityTypes.SNIFFER, Items.TORCHFLOWER_SEEDS),
             Map.entry(EntityTypes.SQUID, Items.INK_SAC),
             Map.entry(EntityTypes.SNOW_GOLEM, Items.SNOWBALL),
@@ -88,7 +89,8 @@ final class MobAbilities {
             Map.entry(EntityTypes.ENDERMAN, "Right-click to throw an ender pearl"),
             Map.entry(EntityTypes.EVOKER, "Right-click to summon evoker fangs"),
             Map.entry(EntityTypes.GHAST, "Right-click to shoot an explosive fireball"),
-            Map.entry(EntityTypes.GLOW_SQUID, "Right-click to release ink"),
+            Map.entry(EntityTypes.GLOW_SQUID, "Right-click to blind nearby mobs and swim faster"),
+            Map.entry(EntityTypes.SHEEP, "Right-click grass to eat it and heal"),
             Map.entry(EntityTypes.GUARDIAN, "Right-click while aiming at a mob to fire a laser"),
             Map.entry(EntityTypes.ELDER_GUARDIAN, "Right-click while aiming at a mob to fire a stronger laser"),
             Map.entry(EntityTypes.LLAMA, "Right-click to spit"),
@@ -96,7 +98,7 @@ final class MobAbilities {
             Map.entry(EntityTypes.SHULKER, "Right-click to shoot a levitation bullet"),
             Map.entry(EntityTypes.SILVERFISH, "Right-click an infestable block to release a silverfish"),
             Map.entry(EntityTypes.SNIFFER, "Right-click grass to find ancient seeds"),
-            Map.entry(EntityTypes.SQUID, "Right-click to release ink"),
+            Map.entry(EntityTypes.SQUID, "Right-click to blind nearby mobs and swim faster"),
             Map.entry(EntityTypes.SNOW_GOLEM, "Right-click to throw a snowball"),
             Map.entry(EntityTypes.TRADER_LLAMA, "Right-click to spit"),
             Map.entry(EntityTypes.WARDEN, "Right-click to release a sonic boom"),
@@ -189,6 +191,15 @@ final class MobAbilities {
                 && player.getHealth() < player.getMaxHealth()) {
             player.heal(4.0F);
             state.abilityCooldown = 20;
+            AbilitySlot.startCooldown(player, state);
+            return InteractionResult.SUCCESS_SERVER.withoutItem();
+        }
+        if (type == EntityTypes.SHEEP && level.mayInteract(player, pos)
+                && level.getBlockState(pos).is(Blocks.GRASS_BLOCK)
+                && player.getHealth() < player.getMaxHealth()) {
+            level.setBlockAndUpdate(pos, Blocks.DIRT.defaultBlockState());
+            player.heal(4.0F);
+            state.abilityCooldown = 80;
             AbilitySlot.startCooldown(player, state);
             return InteractionResult.SUCCESS_SERVER.withoutItem();
         }
@@ -353,8 +364,18 @@ final class MobAbilities {
             spit.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);
             spawnAtEye(level, player, spit);
         } else if (type == EntityTypes.SQUID || type == EntityTypes.GLOW_SQUID) {
+            state.squidFleeTicks = 100;
+            state.abilityCooldown = 60;
             level.sendParticles(ParticleTypes.SQUID_INK, player.getX(), player.getEyeY(), player.getZ(),
-                    80, 1.2, 0.8, 1.2, 0.08);
+                    200, 2.0, 1.5, 2.0, 0.08);
+            for (LivingEntity nearby : level.getEntitiesOfClass(LivingEntity.class,
+                    player.getBoundingBox().inflate(5.0),
+                    entity -> entity != player && entity != state.view && entity.isAlive())) {
+                if (player.hasLineOfSight(nearby)) {
+                    ShapeManager.combatTarget(nearby).addEffect(
+                            new MobEffectInstance(MobEffects.BLINDNESS, 60), player);
+                }
+            }
         } else if (type == EntityTypes.SNOW_GOLEM) {
             Snowball snowball = new Snowball(level, player, new ItemStack(Items.SNOWBALL));
             snowball.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);

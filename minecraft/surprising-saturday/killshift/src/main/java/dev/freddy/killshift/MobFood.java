@@ -53,6 +53,11 @@ final class MobFood {
         ShapeState state = ShapeManager.get(player);
         if (state == null || state.form.type() == EntityTypes.PLAYER) return InteractionResult.PASS;
         if (AbilitySlot.trigger(player.getItemInHand(hand))) return InteractionResult.PASS;
+        if (state.form.type() == EntityTypes.PARROT
+                && (player.getItemInHand(hand).is(ItemTags.PARROT_FOOD)
+                || player.getItemInHand(hand).is(ItemTags.PARROT_POISONOUS_FOOD))) {
+            return onUseItem(player, level, hand);
+        }
         var block = level.getBlockState(hit.getBlockPos()).getBlock();
         if (block instanceof CakeBlock || block instanceof CandleCakeBlock) {
             explainDiet(player, state, new ItemStack(Items.CAKE));

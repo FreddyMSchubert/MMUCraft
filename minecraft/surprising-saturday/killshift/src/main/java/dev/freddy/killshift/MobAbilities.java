@@ -90,7 +90,7 @@ final class MobAbilities {
             Map.entry(EntityTypes.EVOKER, "Right-click to summon evoker fangs"),
             Map.entry(EntityTypes.GHAST, "Right-click to shoot an explosive fireball"),
             Map.entry(EntityTypes.GLOW_SQUID, "Right-click to blind nearby mobs and swim faster"),
-            Map.entry(EntityTypes.SHEEP, "Right-click grass to eat it and heal"),
+            Map.entry(EntityTypes.SHEEP, "Right-click grass to heal and eat"),
             Map.entry(EntityTypes.GUARDIAN, "Right-click while aiming at a mob to fire a laser"),
             Map.entry(EntityTypes.ELDER_GUARDIAN, "Right-click while aiming at a mob to fire a stronger laser"),
             Map.entry(EntityTypes.LLAMA, "Right-click to spit"),
@@ -195,10 +195,10 @@ final class MobAbilities {
             return InteractionResult.SUCCESS_SERVER.withoutItem();
         }
         if (type == EntityTypes.SHEEP && level.mayInteract(player, pos)
-                && level.getBlockState(pos).is(Blocks.GRASS_BLOCK)
-                && player.getHealth() < player.getMaxHealth()) {
+                && level.getBlockState(pos).is(Blocks.GRASS_BLOCK)) {
             level.setBlockAndUpdate(pos, Blocks.DIRT.defaultBlockState());
             player.heal(4.0F);
+            player.getFoodData().eat(2, 0.2F);
             state.abilityCooldown = 80;
             AbilitySlot.startCooldown(player, state);
             return InteractionResult.SUCCESS_SERVER.withoutItem();
@@ -380,6 +380,7 @@ final class MobAbilities {
             Snowball snowball = new Snowball(level, player, new ItemStack(Items.SNOWBALL));
             snowball.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);
             spawnAtEye(level, player, snowball);
+            state.abilityCooldown = 1;
         } else if (type == EntityTypes.SNIFFER) {
             if (!digSeed(player)) {
                 state.abilityCooldown = 0;

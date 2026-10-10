@@ -72,6 +72,12 @@ final class MobRegistry {
         return true;
     }
 
+    static boolean canSprint(EntityType<?> type, boolean inWater) {
+        return type == EntityTypes.CAT || type == EntityTypes.OCELOT
+                || type == EntityTypes.CAMEL || type == EntityTypes.CAMEL_HUSK
+                || AQUATIC.contains(type) && inWater;
+    }
+
     static MobTraits traits(EntityType<?> type) {
         return new MobTraits(
                 AQUATIC.contains(type),

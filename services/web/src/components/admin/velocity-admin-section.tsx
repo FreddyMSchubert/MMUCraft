@@ -34,6 +34,7 @@ interface VelocitySnapshot {
 	maintenanceMode: boolean;
 	eventOverride: number | null;
 	eventActive: boolean;
+	eventDesiredRunning: boolean;
 	servers: VelocityServer[];
 	players: VelocityPlayer[];
 }
@@ -222,8 +223,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 			</section>
 		);
 
-	const eventEnabled =
-		snapshot.eventOverride === 1 || (snapshot.eventOverride === null && snapshot.eventActive);
+	const eventEnabled = snapshot.eventDesiredRunning;
 	const eventHealth = snapshot.servers.find(
 		(server) => server.name === 'surprising-saturday',
 	)?.health;
@@ -234,8 +234,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					<div>
 						<h3>Servers</h3>
 						<p>
-							Main stays online. Surprising Saturday starts during a scheduled event.
-							You can override it here for testing.
+							Main stays online. Surprising Saturday starts 15 minutes before a
+							scheduled event. A live event keeps it running.
 						</p>
 					</div>
 					<span
@@ -248,7 +248,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					<input
 						type="checkbox"
 						checked={eventEnabled}
-						disabled={busy}
+						disabled={busy || snapshot.eventActive}
 						onChange={(event) => void setEventOverride(event.target.checked)}
 					/>
 					<span>
@@ -267,9 +267,11 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					</button>
 				)}
 				<p className="velocityHint">
-					{snapshot.eventOverride === null
-						? 'Following the event schedule.'
-						: 'Committee override is active.'}{' '}
+					{snapshot.eventActive
+						? 'A live event controls the server.'
+						: snapshot.eventOverride === null
+							? 'Following the event schedule.'
+							: 'Committee override is active until the event starts.'}{' '}
 					{eventEnabled && eventHealth !== 'online'
 						? 'The event server is not ready yet. Check its health and logs if it stays offline.'
 						: 'The health below shows when startup or shutdown finishes.'}

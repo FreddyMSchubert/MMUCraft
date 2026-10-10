@@ -30,7 +30,7 @@ public abstract class KittyPajamaScareCreeper extends Monster
     @Inject(at = @At("TAIL"), method = "registerGoals")
     private void addGoals(CallbackInfo info) {
         Goal goal = new AvoidEntityGoal<>(this, Player.class, this::shouldFleeFromPlayer, 6.0F, 1.0D, 1.2D, EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
-        this.goalSelector.addGoal(3, goal);
+        this.goalSelector.addGoal(1, goal);
     }
 
     @Unique

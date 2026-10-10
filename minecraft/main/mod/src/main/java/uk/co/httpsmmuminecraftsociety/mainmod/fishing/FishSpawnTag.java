@@ -88,7 +88,8 @@ public enum FishSpawnTag {
         active.add(Math.floorMod(clock, 24_000L) < 13_000L ? DAY : NIGHT);
         addMoonTags(active, MoonPhase.values()[(int) Math.floorMod(Math.floorDiv(clock, 24_000L), MoonPhase.COUNT)]);
 
-        Biome.Precipitation precipitation = level.precipitationAt(pos);
+        // The bobber is in water. Check the air above it for precipitation.
+        Biome.Precipitation precipitation = level.precipitationAt(pos.above());
         if (level.isRaining() && precipitation == Biome.Precipitation.SNOW) {
             active.add(SNOWY);
         } else if (level.isRaining() && precipitation != Biome.Precipitation.NONE) {

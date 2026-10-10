@@ -261,13 +261,9 @@ export function SurprisingSaturdayTab({
 							<ObfuscatedEventName wordLengths={selected.titleWordLengths} />
 						)}
 					</h4>
-					{selected.status === 'upcoming' || isDetailPage ? (
-						<EventDescription
-							description={currentDetail?.description ?? selected.description ?? ''}
-						/>
-					) : (
-						<p className="eventShortDescription">{selected.shortDescription}</p>
-					)}
+					<EventDescription
+						description={currentDetail?.description ?? selected.description ?? ''}
+					/>
 					{selected.status === 'live' && (
 						<div className="eventJoin">
 							<button

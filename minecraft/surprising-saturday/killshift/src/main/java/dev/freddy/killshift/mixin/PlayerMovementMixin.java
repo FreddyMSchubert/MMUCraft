@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 abstract class PlayerMovementMixin {
     @Inject(method = "canSprint", at = @At("HEAD"), cancellable = true)
     private void killshift$noMobSprint(CallbackInfoReturnable<Boolean> result) {
-        if ((Object) this instanceof ServerPlayer player && ShapeManager.restrictPlayerMovement(player)
-                && !ShapeManager.canSwimAsMob(player)) {
+        if ((Object) this instanceof ServerPlayer player && (ShapeManager.frozenWhenWatched(player)
+                || ShapeManager.restrictPlayerMovement(player) && !ShapeManager.canSprintAsMob(player))) {
             result.setReturnValue(false);
         }
     }

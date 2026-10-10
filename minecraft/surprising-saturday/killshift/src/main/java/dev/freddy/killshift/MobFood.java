@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityTypes;
@@ -29,6 +30,11 @@ final class MobFood {
 
         ItemStack stack = player.getItemInHand(hand);
         if (AbilitySlot.trigger(stack)) return InteractionResult.PASS;
+        if (state.form.type() == EntityTypes.PARROT && stack.is(ItemTags.PARROT_POISONOUS_FOOD)) {
+            stack.consume(1, player);
+            player.kill(player.level());
+            return InteractionResult.SUCCESS_SERVER.withoutItem();
+        }
         boolean allowed = canEat(state, stack);
         if (!stack.has(DataComponents.FOOD) && !allowed) return InteractionResult.PASS;
         if (!allowed) {
@@ -74,6 +80,8 @@ final class MobFood {
     private static boolean canEat(ShapeState state, ItemStack stack) {
         var type = state.form.type();
         if (stack.is(Items.BEETROOT) || stack.is(Items.BEETROOT_SOUP)) return true;
+        if (type == EntityTypes.PARROT) return stack.is(ItemTags.PARROT_FOOD);
+        if (type == EntityTypes.WOLF && stack.is(Items.BONE)) return true;
         if (type == EntityTypes.PANDA) return stack.is(Items.BAMBOO);
         if (type == EntityTypes.BEE) return false;
         if (type == EntityTypes.VILLAGER) {
@@ -83,11 +91,10 @@ final class MobFood {
         if (type == EntityTypes.DOLPHIN) {
             return stack.is(Items.COD) || stack.is(Items.SALMON);
         }
-        if (type == EntityTypes.ZOMBIE || type == EntityTypes.HUSK || type == EntityTypes.DROWNED
+        if (stack.is(Items.ROTTEN_FLESH)
+                && (type == EntityTypes.ZOMBIE || type == EntityTypes.HUSK || type == EntityTypes.DROWNED
                 || type == EntityTypes.ZOMBIE_VILLAGER || type == EntityTypes.ZOMBIE_HORSE
-                || type == EntityTypes.ZOMBIE_NAUTILUS) {
-            return stack.is(Items.ROTTEN_FLESH);
-        }
+                || type == EntityTypes.ZOMBIE_NAUTILUS)) return true;
         return state.view instanceof Animal animal && animal.isFood(stack);
     }
 }

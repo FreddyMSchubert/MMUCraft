@@ -6,11 +6,17 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.block.Blocks;
 
 public final class Killshift implements ModInitializer {
     public static final String MOD_ID = "killshift";
@@ -25,6 +31,15 @@ public final class Killshift implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DAMAGE.register(MobAbilities::onDamage);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(ShapeManager::allowDamage);
         AttackEntityCallback.EVENT.register(ShapeManager::onAttack);
+        PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
+            if (state.is(Blocks.CREAKING_HEART) && player instanceof ServerPlayer serverPlayer) {
+                Mob creaking = EntityTypes.CREAKING.create(level, EntitySpawnReason.COMMAND);
+                if (creaking != null) {
+                    EventApi.completed(serverPlayer, creaking);
+                    ShapeManager.shiftTo(serverPlayer, creaking);
+                }
+            }
+        });
         UseEntityCallback.EVENT.register(ShapeManager::onUseEntity);
         UseItemCallback.EVENT.register(MobFood::onUseItem);
         UseItemCallback.EVENT.register(MobAbilities::onUseItem);

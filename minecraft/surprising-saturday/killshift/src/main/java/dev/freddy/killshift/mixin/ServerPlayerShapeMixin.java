@@ -8,6 +8,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayer.class)
@@ -27,5 +28,10 @@ abstract class ServerPlayerShapeMixin {
         ServerPlayer player = (ServerPlayer) (Object) this;
         ShapeManager.onSneakInput(player, input.shift());
         ShapeManager.onJumpInput(player, input.jump());
+    }
+
+    @ModifyVariable(method = "setLastClientInput", at = @At("HEAD"), argsOnly = true)
+    private Input killshift$freezeCreakingInput(Input input) {
+        return ShapeManager.frozenWhenWatched((ServerPlayer) (Object) this) ? Input.EMPTY : input;
     }
 }

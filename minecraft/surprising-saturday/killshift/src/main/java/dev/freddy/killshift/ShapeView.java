@@ -4,41 +4,54 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import dev.freddy.killshift.mixin.AgeableMobAgeAccessor;
-import dev.freddy.killshift.mixin.TadpoleAgeAccessor;
 import dev.freddy.killshift.mixin.MobFlagsAccessor;
+import dev.freddy.killshift.mixin.TadpoleAgeAccessor;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.PositionMoveRotation;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
-import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
-import net.minecraft.world.entity.animal.frog.Tadpole;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.decoration.Mannequin;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.animal.armadillo.Armadillo;
+import net.minecraft.world.entity.animal.bee.Bee;
+import net.minecraft.world.entity.animal.camel.Camel;
+import net.minecraft.world.entity.animal.fish.Pufferfish;
+import net.minecraft.world.entity.animal.fox.Fox;
+import net.minecraft.world.entity.animal.frog.Tadpole;
+import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
+import net.minecraft.world.entity.decoration.Mannequin;
+import net.minecraft.world.entity.monster.Strider;
+import net.minecraft.world.entity.monster.creaking.Creaking;
+import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
-import net.minecraft.world.phys.Vec3;
 
 public final class ShapeView {
     private static final String VIEW_TEAM = "killshift_views";
@@ -74,8 +87,22 @@ public final class ShapeView {
         if (!(entity instanceof LivingEntity view)) return false;
 
         if (!state.viewData.isEmpty()) {
+            CompoundTag appearance = state.viewData.copy();
+            // AI is disabled on the display, so temporary source states would otherwise stick.
+            if (view instanceof Fox) appearance.putBoolean("Sleeping", false);
+            if (view instanceof Bee) {
+                appearance.putBoolean("HasNectar", false);
+                appearance.putBoolean("HasStung", false);
+            }
+            if (view.getType() == EntityTypes.CREEPER) appearance.putBoolean("ignited", false);
+            if (view instanceof Creaking) appearance.remove("home_pos");
+            if (view instanceof Warden) appearance.remove("anger");
+            if (view.getType() == EntityTypes.SHULKER) {
+                appearance.remove("AttachFace");
+                appearance.remove("Peek");
+            }
             view.load(TagValueInput.create(ProblemReporter.DISCARDING,
-                    player.level().registryAccess(), state.viewData.copy()));
+                    player.level().registryAccess(), appearance));
         }
         if (view instanceof AbstractCubeMob cube) {
             int size = state.viewData.getIntOr("killshiftCubeSize", cube.getSize());
@@ -88,6 +115,7 @@ public final class ShapeView {
         if (view instanceof Tadpole tadpole) {
             ((TadpoleAgeAccessor) tadpole).killshift$setAgeLocked(true);
         }
+        normalizeAppearance(view);
         view.setUUID(UUID.randomUUID());
         prepare(view, player, state);
         Scoreboard scoreboard = player.level().getScoreboard();
@@ -98,6 +126,7 @@ public final class ShapeView {
         team.setCollisionRule(Team.CollisionRule.NEVER);
         scoreboard.addPlayerToTeam(view.getScoreboardName(), team);
         state.view = view;
+        ShapeManager.fitCameraToViewEyes(player, view);
         player.level().addFreshEntity(view);
         return true;
     }
@@ -108,7 +137,6 @@ public final class ShapeView {
             remove(state);
             create(player, state);
             view = state.view;
-            if (view != null) ShapeManager.fitCameraToViewEyes(player, view);
         }
         if (view == null) {
             return;
@@ -117,6 +145,7 @@ public final class ShapeView {
         view.noPhysics = true;
         view.setDeltaMovement(isSmallAquatic(view) ? Vec3.ZERO : player.getDeltaMovement());
         positionView(view, player);
+        updateVisualState(view, player);
         if (state.form.type() == EntityTypes.PLAYER) view.setPose(player.getPose());
         view.setShiftKeyDown(player.isShiftKeyDown());
         view.setSprinting(player.isSprinting());
@@ -244,6 +273,42 @@ public final class ShapeView {
         view.setSilent(true);
         view.noPhysics = true;
         positionView(view, player);
+        updateVisualState(view, player);
+    }
+
+    private static void normalizeAppearance(LivingEntity view) {
+        if (view instanceof Bat bat) bat.setResting(false);
+        if (view instanceof Fox fox) {
+            fox.setSitting(false);
+            fox.setIsCrouching(false);
+        }
+        if (view instanceof TamableAnimal pet) {
+            pet.setOrderedToSit(false);
+            pet.setInSittingPose(false);
+        }
+        if (view instanceof Camel camel) camel.standUpInstantly();
+        if (view instanceof Armadillo armadillo) {
+            armadillo.switchToState(Armadillo.ArmadilloState.IDLE);
+        }
+        if (view instanceof Pufferfish pufferfish) pufferfish.setPuffState(0);
+        if (view instanceof Bee bee) {
+            bee.setPersistentAngerEndTime(0);
+            bee.setPersistentAngerTarget(null);
+        }
+        if (view instanceof Wolf wolf) {
+            wolf.setPersistentAngerEndTime(0);
+            wolf.setPersistentAngerTarget(null);
+        }
+        if (view instanceof Creaking creaking) creaking.setIsActive(true);
+    }
+
+    private static void updateVisualState(LivingEntity view, ServerPlayer player) {
+        if (view instanceof Strider strider) {
+            boolean warm = player.level().getBlockState(player.blockPosition()).is(BlockTags.STRIDER_WARM_BLOCKS)
+                    || player.getBlockStateOn().is(BlockTags.STRIDER_WARM_BLOCKS)
+                    || player.getFluidHeight(FluidTags.LAVA) > 0.0;
+            strider.setSuffocating(!warm);
+        }
     }
 
     private static void positionView(LivingEntity view, ServerPlayer player) {
@@ -275,9 +340,15 @@ public final class ShapeView {
         AttributeInstance self = new AttributeInstance(Attributes.SCALE, ignored -> {});
         self.replaceFrom(original);
         self.removeModifiers();
-        double ownerScale = isSmallAquatic(view) ? 0.3 : SELF_VIEW_SCALE;
-        self.setBaseValue(Math.max(0.0625, original.getValue() * ownerScale));
+        self.setBaseValue(Math.max(0.0625, original.getValue() * ownerScale(player, view)));
         player.connection.send(new ClientboundUpdateAttributesPacket(view.getId(), List.of(self)));
+    }
+
+    private static double ownerScale(ServerPlayer player, LivingEntity view) {
+        double cap = isSmallAquatic(view) ? 0.3 : SELF_VIEW_SCALE;
+        if (view.getBbHeight() <= 0.0F) return cap;
+        // Client models and animations can reach above the collision box.
+        return Math.min(cap, 0.9 * player.getEyeHeight() / (2.0 * view.getBbHeight()));
     }
 
     private static void sendOwnerPosition(ServerPlayer player, ShapeState state, LivingEntity view) {
@@ -286,7 +357,7 @@ public final class ShapeView {
             Vec3 look = player.getLookAngle();
             Vec3 horizontal = new Vec3(look.x, 0.0, look.z);
             if (horizontal.lengthSqr() < 0.0001) horizontal = new Vec3(0.0, 0.0, 1.0);
-            double back = view.getBbWidth() * SELF_VIEW_SCALE + 1.5;
+            double back = view.getBbWidth() * ownerScale(player, view) + 1.5;
             Vec3 position = view.position().subtract(horizontal.normalize().scale(back));
             player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(),
                     new PositionMoveRotation(position, view.getDeltaMovement(), view.getYRot(), view.getXRot()),
@@ -295,7 +366,7 @@ public final class ShapeView {
         }
         if (isSmallAquatic(view) || !state.form.traits().aquatic()
                 || !state.form.traits().landImmobile()) return;
-        double offset = Math.max(0.0, view.getBbHeight() * SELF_VIEW_SCALE + 1.0 - view.getEyeHeight());
+        double offset = Math.max(0.0, view.getBbHeight() * ownerScale(player, view) + 1.0 - view.getEyeHeight());
         if (offset == 0.0) return;
         Vec3 position = view.position().add(0.0, -offset, 0.0);
         player.connection.send(ClientboundTeleportEntityPacket.teleport(view.getId(),

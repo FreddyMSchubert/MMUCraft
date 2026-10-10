@@ -30,7 +30,7 @@ final class MobRegistry {
     private static final Set<EntityType<?>> AQUATIC = Set.of(
             EntityTypes.AXOLOTL, EntityTypes.COD, EntityTypes.DOLPHIN,
             EntityTypes.DROWNED, EntityTypes.ELDER_GUARDIAN, EntityTypes.GLOW_SQUID,
-            EntityTypes.GUARDIAN, EntityTypes.NAUTILUS, EntityTypes.PUFFERFISH,
+            EntityTypes.GUARDIAN, EntityTypes.HAPPY_GHAST, EntityTypes.NAUTILUS, EntityTypes.PUFFERFISH,
             EntityTypes.SALMON, EntityTypes.SQUID, EntityTypes.TADPOLE,
             EntityTypes.TROPICAL_FISH, EntityTypes.TURTLE, EntityTypes.ZOMBIE_NAUTILUS
     );

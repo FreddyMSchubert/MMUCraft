@@ -4,26 +4,26 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 ## Behavior that applies to every mob
 
-All listed mobs can become forms, including giants. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. `/shift` with your own name returns you to normal; shifting to another player uses that player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. Horse-family forms keep the killed animal's exact movement speed and jump strength; other land mob movement speed is converted for player controls. The player camera matches the form's actual eye height. The owner sees the display at 50% scale. Other players see the full-size display. Attack damage never falls below one.
+All listed mobs can become forms, including giants. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. `/shift` with your own name returns you to normal; shifting to another player uses that player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. Horse-family forms keep the killed animal's exact movement speed and jump strength; other land mob movement speed is converted for player controls. The player camera matches the form's actual eye height. The owner sees the display at up to 50% scale, reduced further when its height could cover the camera. Other players see the full-size display. Attack damage never falls below one.
 
-Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. Aquatic forms can sprint and swim in water; other mob forms cannot use player sprint or swim movement. A zombie form becomes a drowned form when it starts drowning, without killing the player. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A player-killed mob gives its normal non-equipment item drops directly to the killer's inventory, transfers every equipped item once, and gives its experience directly to the killer. Vanilla equipment drops are suppressed. If the inventory is full, items wait until space is available. A form left behind by a shift gives no further drops or experience when killed; another mob of the same type still gives its own drops. The killed mob has no lingering death animation or death particles. The killer moves to the dead entity's position.
+Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. It clears inherited resting, sleeping, sitting, curled, inflated, and wall-attached poses so moving forms look awake. It clears stale anger, nectar, stung, and lit-fuse states; striders change their warm or cold appearance with their surroundings. Aquatic forms can sprint and swim in water; camel forms can sprint on land. Other mob forms cannot use player sprint or swim movement. A zombie form becomes a drowned form when it starts drowning, without killing the player. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A player-killed mob gives its normal non-equipment item drops directly to the killer's inventory, transfers every equipped item once, and gives its experience directly to the killer. Vanilla equipment drops are suppressed. If the inventory is full, items wait until space is available. A form left behind by a shift gives no further drops or experience when killed; another mob of the same type still gives its own drops. The killed mob has no lingering death animation or death particles. The killer moves to the dead entity's position.
 
 Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
 
-All forms can eat beetroot and beetroot soup. Other foods follow the form's natural diet. Panda forms eat bamboo. Animal forms use the game's food check. Player forms use normal player food rules. A rejected food use shows the attempted food and the full allowed-food list.
+All forms can eat beetroot and beetroot soup. Other foods follow the form's natural diet. Taming foods count as food, including seeds for parrots and bones for wolves. A cookie kills a parrot form. Panda forms eat bamboo. Animal forms use the game's food check. Player forms use normal player food rules. A rejected food use shows the attempted food and the full allowed-food list.
 
 ## Shared trait groups
 
 | Trait | Forms | Behavior |
 | --- | --- | --- |
 | Forced flight | Allay, bat, bee, blaze, ender dragon, ghast, happy ghast, parrot, phantom, vex, wither | Player flight stays active. |
-| Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is moderate. Sprint and swim controls work in water. Fish and other water-only forms have land movement suppressed. Squid and salmon displays sit lower in water and appear at 30% scale to their owner. Other water-only displays are lowered for their owner when they block the camera. Other players see full-size displays. |
+| Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, happy ghast, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is moderate. Sprint and swim controls work in water. Fish and other water-only forms have land movement suppressed. Squid and salmon displays sit lower in water and appear at up to 30% scale to their owner. Other water-only displays are lowered for their owner when they block the camera. Other players see full-size displays. |
 | Water breathing | Axolotl, cod, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, zombie nautilus | Air stays full underwater. Drowned also breathe on land. Other forms use their mob's maximum air supply on land and take drowning damage after it runs out. Rain rehydrates axolotls. |
 | Sun-sensitive forms | Types in the game's `burn_in_daylight` tag | Sunlight ignites the player when the head slot is empty. |
 | Wall climbing | Spider, cave spider | Movement input near a wall gives a steady upward climb. |
 | Bounce movement | Slime, magma cube, sulfur cube | Ground movement has no horizontal speed. Air movement works, so the player must jump to travel. |
 | Lava-safe | Blaze, magma cube, strider, wither, wither skeleton | Fire is cleared. The form receives fire resistance. |
-| Jump and movement | Every form | Killshift copies jump strength. Horse-family forms also keep the source movement speed; other land mob speed is converted for player controls. Water-only forms can make a small horizontal nudge while jumping on land. |
+| Jump and movement | Every form | Killshift copies jump strength. Horse-family forms also keep the source movement speed; other land mob speed is converted for player controls. Camel and camel husk forms can sprint. Water-only forms can make a small horizontal nudge while jumping on land. |
 | No fall damage | All forced-flight forms and types in the game's `fall_damage_immune` tag | Fall damage multiplier is zero. Chicken descent is also limited to a slow speed. |
 | Powder snow walking | Types in the game's `powder_snow_walkable_mobs` tag | The form stands on powder snow without leather boots. |
 | Water sensitivity | Enderman, blaze, strider, snow golem | Water and rain deal damage. |
@@ -43,7 +43,7 @@ The ninth hotbar slot holds a marked item that matches the active ability. For e
 | Camel, camel husk | Right-click on the ground to dash forward and upward. The dash uses the form's movement speed and jump strength and has a 55-tick cooldown. |
 | Cat | Nearby creepers lose their target and move away. |
 | Cave spider | A melee hit poisons the target. The form can climb walls and ceilings. |
-| Creaking | The player cannot move horizontally while another player looks directly at the form. |
+| Creaking | The player takes no damage. Looking at the form freezes walking, sprinting, crouching, and jumping, whether the observer is a player or a mob. |
 | Creeper | Right-click with the marked TNT to explode and die. The explosion radius is 4.5 blocks, or 9 blocks when charged. |
 | Elder guardian | A melee hit gives mining fatigue to the target. Right-click charges a stronger laser on a living target in sight. |
 | Ender dragon | Right-click shoots a dragon fireball. |
@@ -93,7 +93,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Cod | Aquatic movement and water breathing |
 | Copper golem | Common |
 | Cow | Common |
-| Creaking | Freeze while watched |
+| Creaking | No damage and freeze while watched by players or mobs |
 | Creeper | Explosion (larger while charged), skeleton peace, and creeper post effect |
 | Dolphin | Aquatic movement |
 | Donkey | Source jump strength |
@@ -107,7 +107,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Frog | Common |
 | Ghast | Forced flight, explosive fireball, and no fall damage |
 | Giant | Zombie-like movement and combat with giant health and size |
-| Happy ghast | Forced flight and no fall damage |
+| Happy ghast | Forced flight, aquatic movement, full air supply underwater, and no fall damage |
 | Glow squid | Aquatic movement, water breathing, ink, and damage speed boost |
 | Goat | Source jump strength |
 | Guardian | Aquatic movement, water breathing, mining-fatigue hit, and laser |

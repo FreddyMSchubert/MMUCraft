@@ -74,6 +74,9 @@ public final class ShapeManager {
     }
 
     static boolean allowDamage(LivingEntity target, DamageSource source, float amount) {
+        if (target instanceof ServerPlayer player && isForm(player, EntityTypes.CREAKING)) {
+            return false;
+        }
         if (target instanceof ServerPlayer player && source.is(DamageTypes.DROWN)
                 && isForm(player, EntityTypes.ZOMBIE)) {
             ShapeState state = get(player);
@@ -223,6 +226,11 @@ public final class ShapeManager {
         return state != null && state.form.traits().aquatic() && player.isInWater();
     }
 
+    public static boolean canSprintAsMob(ServerPlayer player) {
+        return canSwimAsMob(player) || isForm(player, EntityTypes.CAMEL)
+                || isForm(player, EntityTypes.CAMEL_HUSK);
+    }
+
     public static double landHopSpeed(ServerPlayer player) {
         ShapeState state = get(player);
         if (state == null || player.getAbilities().flying || player.isPassenger()) return -1.0;
@@ -234,7 +242,7 @@ public final class ShapeManager {
     public static boolean frozenWhenWatched(ServerPlayer player) {
         ShapeState state = get(player);
         return state != null && state.form.type() == EntityTypes.CREAKING
-                && ShapeRuntime.isWatched(player);
+                && ShapeRuntime.isWatched(player, true);
     }
 
     public static boolean walksOnPowderSnow(Entity entity) {
@@ -305,7 +313,6 @@ public final class ShapeManager {
         player.setHealth(health);
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
-        else fitCameraToViewEyes(player, state.view);
         AbilitySlot.sync(player);
         AbilitySlot.startCooldown(player, state);
     }
@@ -360,7 +367,6 @@ public final class ShapeManager {
         if (!ShapeView.create(player, state)) clear(player);
         else {
             state.landAir = state.view.getMaxAirSupply();
-            fitCameraToViewEyes(player, state.view);
         }
         AbilitySlot.sync(player);
     }
@@ -423,6 +429,7 @@ public final class ShapeManager {
         double eyeHeight = EntityTypes.PLAYER.getDimensions().eyeHeight();
         double scale = Math.clamp(view.getEyeHeight() / eyeHeight, 0.0625, 16.0);
         add(player, Attributes.SCALE, SCALE, scale - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+        player.refreshDimensions();
     }
 
     private static void removeAttributes(ServerPlayer player) {

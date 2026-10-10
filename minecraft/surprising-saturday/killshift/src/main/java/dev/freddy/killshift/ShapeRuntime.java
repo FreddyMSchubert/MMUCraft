@@ -12,6 +12,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -20,7 +22,9 @@ import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 final class ShapeRuntime {
@@ -45,9 +49,9 @@ final class ShapeRuntime {
         }
         if (state.squidFleeTicks > 0) state.squidFleeTicks--;
 
-        if (type != EntityTypes.PLAYER && !(traits.aquatic() && player.isInWater())) {
-            player.setSprinting(false);
-            player.setSwimming(false);
+        if (type != EntityTypes.PLAYER) {
+            if (!ShapeManager.canSprintAsMob(player)) player.setSprinting(false);
+            if (!ShapeManager.canSwimAsMob(player)) player.setSwimming(false);
         }
 
         tickFlight(player, state);
@@ -153,7 +157,8 @@ final class ShapeRuntime {
 
     private static void tickBreathing(ServerPlayer player, ShapeState state) {
         EntityType<?> type = state.form.type();
-        if (type == EntityTypes.IRON_GOLEM || type == EntityTypes.DROWNED) {
+        if (type == EntityTypes.IRON_GOLEM || type == EntityTypes.DROWNED
+                || type == EntityTypes.HAPPY_GHAST) {
             player.setAirSupply(player.getMaxAirSupply());
             return;
         }
@@ -223,10 +228,13 @@ final class ShapeRuntime {
     }
 
     private static void tickLookReactions(ServerPlayer player, ShapeState state) {
-        boolean watched = isWatched(player);
+        if (state.form.type() != EntityTypes.CREAKING && state.form.type() != EntityTypes.ENDERMAN) return;
+        boolean watched = isWatched(player, state.form.type() == EntityTypes.CREAKING);
         if (state.form.type() == EntityTypes.CREAKING && watched) {
             add(player, Attributes.MOVEMENT_SPEED, FROZEN_SPEED, -1.0,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            player.setSprinting(false);
+            player.setShiftKeyDown(false);
             Vec3 movement = player.getDeltaMovement();
             player.setDeltaMovement(0.0, movement.y, 0.0);
             syncMotion(player);
@@ -242,15 +250,20 @@ final class ShapeRuntime {
         }
     }
 
-    static boolean isWatched(ServerPlayer target) {
-        for (ServerPlayer observer : target.level().players()) {
-            if (observer == target || observer.isSpectator() || observer.distanceToSqr(target) > 1024.0) {
-                continue;
-            }
-            Vec3 toTarget = target.getEyePosition().subtract(observer.getEyePosition()).normalize();
-            double alignment = observer.getLookAngle().normalize().dot(toTarget);
-            double threshold = 1.0 - 0.025 / Math.max(1.0, observer.distanceTo(target));
-            if (alignment > threshold && observer.hasLineOfSight(target)) {
+    static boolean isWatched(ServerPlayer target, boolean includeMobs) {
+        ShapeState state = ShapeManager.get(target);
+        LivingEntity view = state == null ? target : state.view;
+        if (view == null) view = target;
+        AABB box = view.getBoundingBox();
+        for (LivingEntity observer : target.level().getEntitiesOfClass(LivingEntity.class, box.inflate(32.0))) {
+            if (observer == target || observer == view || !observer.isAlive() || observer.isSpectator()
+                    || observer.entityTags().contains(ShapeView.VIEW_TAG)
+                    || !(observer instanceof ServerPlayer) && (!includeMobs || !(observer instanceof Mob))) continue;
+            Vec3 eye = observer.getEyePosition();
+            Vec3 end = eye.add(Vec3.directionFromRotation(observer.getXRot(), observer.getYHeadRot()).scale(32.0));
+            var hit = box.clip(eye, end);
+            if (hit.isPresent() && target.level().clip(new ClipContext(eye, hit.get(),
+                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, observer)).getType() == HitResult.Type.MISS) {
                 return true;
             }
         }

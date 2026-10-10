@@ -12,6 +12,7 @@
 		"LivingEntityLootMixin",
 		"EntityLootMixin",
 		"ViewMovementMixin",
+		"CreakingSprintMixin",
 		"TadpoleAgeAccessor",
 		"EventChatNameMixin",
 		"ServerPlayerShapeMixin",
@@ -27,6 +28,7 @@
 		"WaterSensitiveFormMixin",
 		"GuardianAttackAccessor",
 		"ShulkerBulletMixin",
+		"ShulkerViewMixin",
 		"UnsavedViewMixin",
 		"LocatorPlayerMixin"
 	],

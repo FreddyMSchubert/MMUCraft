@@ -1,6 +1,8 @@
 package dev.freddy.killshift.mixin;
 
 import dev.freddy.killshift.ShapeView;
+import dev.freddy.killshift.ShapeManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.MoverType;
@@ -12,6 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 abstract class ViewMovementMixin {
+    @Inject(method = "setShiftKeyDown", at = @At("HEAD"), cancellable = true)
+    private void killshift$freezeCreakingCrouch(boolean crouching, CallbackInfo callback) {
+        if (crouching && (Object) this instanceof ServerPlayer player && ShapeManager.frozenWhenWatched(player)) {
+            callback.cancel();
+        }
+    }
+
     @Inject(method = "move", at = @At("HEAD"), cancellable = true)
     private void killshift$freezeViewMovement(MoverType type, Vec3 motion, CallbackInfo callback) {
         Entity entity = (Entity) (Object) this;

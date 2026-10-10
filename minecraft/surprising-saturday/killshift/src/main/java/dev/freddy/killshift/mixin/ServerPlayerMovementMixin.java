@@ -17,7 +17,7 @@ abstract class ServerPlayerMovementMixin {
         ServerGamePacketListenerImpl connection = (ServerGamePacketListenerImpl) (Object) this;
         ServerPlayer player = connection.player;
         if (ShapeManager.frozenWhenWatched(player)
-                && (x != player.getX() || z != player.getZ())) {
+                && (x != player.getX() || z != player.getZ() || y > player.getY())) {
             connection.teleport(player.getX(), player.getY(), player.getZ(), yRot, xRot);
             callback.cancel();
             return;

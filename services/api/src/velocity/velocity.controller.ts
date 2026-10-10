@@ -109,7 +109,7 @@ export class VelocityAdminController {
 		@Body() body: { serverId?: unknown } | undefined,
 	) {
 		this.sessions.requireCommitteeSession(cookieHeader);
-		return this.velocity.movePlayer(uuid, body?.serverId);
+		return this.velocity.movePlayer(uuid, body?.serverId, true);
 	}
 }
 
@@ -185,10 +185,10 @@ export class VelocityInternalController {
 	@Post('connected')
 	connected(
 		@Headers('authorization') authorization: string | undefined,
-		@Body() body: { uuid?: unknown; serverName?: unknown } | undefined,
+		@Body() body: { uuid?: unknown; serverName?: unknown; temporary?: unknown } | undefined,
 	) {
 		this.velocity.verifyInternalAuthorization(authorization);
-		return this.velocity.connectedPlayer(body?.uuid, body?.serverName);
+		return this.velocity.connectedPlayer(body?.uuid, body?.serverName, body?.temporary);
 	}
 
 	@Post('waiting-state')

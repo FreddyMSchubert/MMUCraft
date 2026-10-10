@@ -60,6 +60,8 @@ public final class MmuCraftVelocity {
     private final Map<String, RegisteredServer> managedServers = new ConcurrentHashMap<>();
     private final Map<String, ApiClient.ServerHealth> health = new ConcurrentHashMap<>();
     private final Map<UUID, String> manualDestinations = new ConcurrentHashMap<>();
+    private final Map<UUID, String> temporaryDestinations = new ConcurrentHashMap<>();
+    private final Map<UUID, String> sessionIds = new ConcurrentHashMap<>();
     private final Map<UUID, String> loginDestinations = new ConcurrentHashMap<>();
     private final Set<Long> acknowledgedCommands = ConcurrentHashMap.newKeySet();
     private final Map<UUID, CapacityRole> capacityRoles = new ConcurrentHashMap<>();
@@ -215,6 +217,7 @@ public final class MmuCraftVelocity {
         } else if (event.getServer().getServerInfo().getName().equals("surprising-saturday")
                 && managedServers.containsKey("main")
                 && health.getOrDefault("main", new ApiClient.ServerHealth("main", false, null, null)).online()) {
+            temporaryDestinations.remove(event.getPlayer().getUniqueId());
             manualDestinations.put(event.getPlayer().getUniqueId(), "main");
             RegisteredServer fallback = targetFor(event.getPlayer());
             event.setResult(fallback == null || fallback.getServerInfo().equals(event.getServer().getServerInfo())
@@ -234,6 +237,7 @@ public final class MmuCraftVelocity {
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
+        sessionIds.computeIfAbsent(uuid, ignored -> UUID.randomUUID().toString());
         String serverName = event.getServer().getServerInfo().getName();
         if ("waiting-room".equals(serverName)) {
             pendingAdmissions.values().removeIf(uuid::equals);
@@ -250,7 +254,18 @@ public final class MmuCraftVelocity {
         admissionDestinations.put(uuid, serverName);
         joinedAt.put(uuid, System.currentTimeMillis());
         loginDestinations.put(uuid, serverName);
-        api.connected(uuid.toString(), serverName)
+        if ("surprising-saturday".equals(serverName)
+                && (route == null || !route.eventOpen())
+                && !"surprising-saturday".equals(temporaryDestinations.get(uuid))) {
+            RegisteredServer target = targetFor(event.getPlayer());
+            if (target == null || target.getServerInfo().equals(event.getServer().getServerInfo()))
+                event.getPlayer().disconnect(Messages.unavailable());
+            else event.getPlayer().createConnectionRequest(target).connect().thenAccept(result -> {
+                if (!result.isSuccessful()) event.getPlayer().disconnect(Messages.unavailable());
+            });
+            return;
+        }
+        api.connected(uuid.toString(), serverName, temporaryDestinations.containsKey(uuid))
                 .exceptionally(error -> {
                     logger.warn("Could not save {}'s server: {}", event.getPlayer().getUsername(), errorMessage(error));
                     return null;
@@ -273,6 +288,8 @@ public final class MmuCraftVelocity {
         shownPositions.remove(uuid);
         capacityWarnings.remove(uuid);
         manualDestinations.remove(uuid);
+        temporaryDestinations.remove(uuid);
+        sessionIds.remove(uuid);
         loginDestinations.remove(uuid);
     }
 
@@ -299,7 +316,7 @@ public final class MmuCraftVelocity {
                 if (entry == null) return;
                 CapacityRole role = capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST);
                 waiting.put(uuid, new QueueEntry(role.member(), queueOrder.incrementAndGet(),
-                        availableDestination(entry.destination())));
+                        availableDestination(uuid, entry.destination())));
             }
         }
     }
@@ -408,6 +425,7 @@ public final class MmuCraftVelocity {
         maintenanceMode = response.maintenanceMode();
         if (maintenanceMode) {
             manualDestinations.clear();
+            temporaryDestinations.clear();
             proxy.getAllPlayers().forEach(player -> player.disconnect(Messages.maintenance()));
             return;
         }
@@ -438,6 +456,7 @@ public final class MmuCraftVelocity {
         if (!Objects.equals(oldRevision, nextRevision) || wasInMaintenance
                 || ("surprising-saturday".equals(oldTarget) && "main".equals(nextTarget))) {
             manualDestinations.clear();
+            temporaryDestinations.clear();
             moveAllToAssignedServer();
         }
 
@@ -476,6 +495,12 @@ public final class MmuCraftVelocity {
         if (!serverOnline("main") && eventOpen && serverOnline("surprising-saturday"))
             return "surprising-saturday";
         return "main";
+    }
+
+    private String availableDestination(UUID uuid, String preferred) {
+        if ("surprising-saturday".equals(preferred)
+                && "surprising-saturday".equals(temporaryDestinations.get(uuid))) return preferred;
+        return availableDestination(preferred);
     }
 
     private int limit(String destination) {
@@ -575,7 +600,9 @@ public final class MmuCraftVelocity {
     private void fillVacancies() {
         for (String destination : List.of("main", "surprising-saturday")) {
             if (!serverOnline(destination) || "surprising-saturday".equals(destination)
-                    && (route == null || !route.eventOpen())) continue;
+                    && (route == null || !route.eventOpen())
+                    && waiting.keySet().stream().noneMatch(uuid ->
+                    destination.equals(temporaryDestinations.get(uuid)))) continue;
             while (!pendingAdmissions.containsKey(destination) && occupied(destination) < limit(destination)
                     && hasWaiting(destination)) {
                 Map.Entry<UUID, QueueEntry> next = nextQueued(destination);
@@ -730,11 +757,12 @@ public final class MmuCraftVelocity {
                     QueueEntry visiting = visitors.get(uuid);
                     boolean inRoom = "waiting-room".equals(serverName);
                     return new ApiClient.OnlinePlayer(
-                            uuid.toString(), player.getUsername(), serverName,
+                            uuid.toString(), sessionIds.get(uuid), player.getUsername(), serverName,
                             inRoom ? visiting != null ? "visiting" : "queued" : "playing",
                             inRoom ? queued != null ? queued.destination()
                                     : visiting != null ? visiting.destination()
-                                    : admissionDestinations.getOrDefault(uuid, "main") : serverName
+                                    : admissionDestinations.getOrDefault(uuid, "main") : serverName,
+                            temporaryDestinations.containsKey(uuid)
                     );
                 })
         ).toList();
@@ -749,20 +777,30 @@ public final class MmuCraftVelocity {
 
         Player targetPlayer = player.get();
         UUID uuid = targetPlayer.getUniqueId();
+        if (!Objects.equals(command.sessionId(), sessionIds.get(uuid))) {
+            acknowledgedCommands.add(command.id());
+            return;
+        }
         if (waiting.containsKey(uuid)) {
+            if (command.temporary()) temporaryDestinations.put(uuid, command.targetServerName());
+            else temporaryDestinations.remove(uuid);
             waiting.computeIfPresent(uuid, (id, entry) -> new QueueEntry(entry.member(),
-                    queueOrder.incrementAndGet(), availableDestination(command.targetServerName())));
+                    queueOrder.incrementAndGet(), availableDestination(uuid, command.targetServerName())));
             shownPositions.remove(uuid);
             acknowledgedCommands.add(command.id());
             return;
         }
         if (visitors.containsKey(uuid)) {
+            if (command.temporary()) temporaryDestinations.put(uuid, command.targetServerName());
+            else temporaryDestinations.remove(uuid);
             visitors.computeIfPresent(uuid, (id, entry) -> new QueueEntry(entry.member(),
-                    entry.order(), availableDestination(command.targetServerName())));
+                    entry.order(), availableDestination(uuid, command.targetServerName())));
             acknowledgedCommands.add(command.id());
             return;
         }
         if (!serverOnline(command.targetServerName())) return;
+        if (command.temporary()) temporaryDestinations.put(uuid, command.targetServerName());
+        else temporaryDestinations.remove(uuid);
         manualDestinations.put(uuid, command.targetServerName());
         RegisteredServer target = targetFor(targetPlayer);
         if (target == null) return;
@@ -779,6 +817,7 @@ public final class MmuCraftVelocity {
                 acknowledgedCommands.add(command.id());
             } else {
                 manualDestinations.remove(uuid, command.targetServerName());
+                temporaryDestinations.remove(uuid, command.targetServerName());
                 restoreCurrentAdmission(targetPlayer);
             }
         });
@@ -806,18 +845,22 @@ public final class MmuCraftVelocity {
         if (maintenanceMode) return null;
         UUID uuid = player.getUniqueId();
         if (waiting.containsKey(uuid) || visitors.containsKey(uuid)) return managedServers.get("waiting-room");
-        String name = manualDestinations.get(uuid);
+        String name = temporaryDestinations.getOrDefault(uuid, manualDestinations.get(uuid));
         if (name == null && player.getCurrentServer().isEmpty())
             name = loginDestinations.getOrDefault(uuid, "main");
         if (name == null && route != null) name = route.targetServerName();
-        name = availableDestination(name);
+        name = availableDestination(uuid, name);
         if (!capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt()
                 && !name.equals(admissionDestinations.get(uuid))) {
             if (hasWaiting(name) || pendingAdmissions.containsKey(name)
                     || occupied(name) >= limit(name) || !serverOnline(name)) {
                 if (!serverOnline("waiting-room") || waitingRoomPopulation() >= WAITING_ROOM_LIMIT)
-                    return player.getCurrentServer().map(connection ->
-                            managedServers.get(connection.getServerInfo().getName())).orElse(null);
+                    return player.getCurrentServer().map(connection -> {
+                        String current = connection.getServerInfo().getName();
+                        return "surprising-saturday".equals(current)
+                                && !current.equals(availableDestination(uuid, current))
+                                ? null : managedServers.get(current);
+                    }).orElse(null);
                 waiting.put(uuid, new QueueEntry(capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).member(),
                         queueOrder.incrementAndGet(), name));
                 admissions.remove(uuid);

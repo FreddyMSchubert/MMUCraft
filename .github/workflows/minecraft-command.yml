@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
         inputs:
             command:
-                description: Run Minecraft console command without a leading slash
+                description: Production Minecraft console command; omit the leading slash
                 required: true
                 type: string
 

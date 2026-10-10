@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
         inputs:
             target:
-                description: Server to deploy to
+                description: Server that receives the selected images and deployment files
                 required: true
                 default: dev
                 type: choice
@@ -13,22 +13,22 @@ on:
                     - dev
                     - production
             version:
-                description: dev (this workflow commit) or an exact release tag
+                description: Existing image tag to deploy (e.g. v1.5.9); dev uses this workflow commit's SHA
                 required: true
                 default: dev
                 type: string
             source_ref:
-                description: Source revision used to build the images; blank uses the version tag
+                description: Revision to copy deployment files from; blank uses Version. Ignored for dev. Does not build images.
                 required: false
                 default: ''
                 type: string
             warning_minutes:
-                description: Minutes to warn Minecraft players before restart (0 disables)
+                description: Wait up to this many minutes for players to leave after a warning; 0 skips the advance warning
                 required: true
                 default: 3
                 type: number
             force:
-                description: Attempt a graceful update, then continue if notices, disconnects, or saving fail
+                description: Continue if player notices, disconnects, or saving fails; all are still attempted
                 required: true
                 default: false
                 type: boolean

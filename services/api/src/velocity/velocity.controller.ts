@@ -28,8 +28,17 @@ export class VelocityPublicController {
 
 	@Get('capacity')
 	capacity(@Headers('cookie') cookieHeader: string | undefined) {
-		this.sessions.requireSession(cookieHeader);
-		return this.velocity.capacitySnapshot();
+		const user = this.sessions.requireSession(cookieHeader);
+		const snapshot = this.velocity.capacitySnapshot();
+		if (user.isCommittee) return snapshot;
+		return {
+			...snapshot,
+			servers: snapshot.servers.map(({ name, maxPlayers, playerCount }) => ({
+				name,
+				maxPlayers,
+				playerCount,
+			})),
+		};
 	}
 
 	@Get('online-players')
@@ -385,7 +394,19 @@ export class SurprisingSaturdayInternalController {
 	constructor(
 		private readonly velocity: VelocityService,
 		private readonly events: SurprisingSaturdayService,
+		private readonly discord: DiscordService,
 	) {}
+
+	@Get('discord-messages')
+	discordMessages(
+		@Headers('authorization') authorization: string | undefined,
+		@Query('after') after: string | undefined,
+	) {
+		this.velocity.verifyInternalAuthorization(authorization);
+		if (after !== undefined && !/^(0|[1-9][0-9]{0,19})$/.test(after))
+			throw new BadRequestException('Invalid Discord cursor');
+		return this.discord.eventChat(after ?? null);
+	}
 
 	@Get('player-data/:uuid')
 	playerData(

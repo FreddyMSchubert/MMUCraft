@@ -4,12 +4,12 @@ on:
     workflow_dispatch:
         inputs:
             release_tag:
-                description: Published release tag for image names; blank uses the source commit SHA
+                description: Published release tag for image names; blank uses the built commit SHA. Does not choose source code.
                 required: false
                 default: ''
                 type: string
             source_ref:
-                description: Branch or tag to build; defaults to main, independent of workflow selection
+                description: Branch, tag, or commit to test and build; defaults to main.
                 required: false
                 default: main
                 type: string

@@ -39,6 +39,9 @@ final class EventDiscordBridge {
     private static String cursor;
     private static long pollAfter;
     private static volatile boolean enabled;
+    private static boolean announcedRead;
+    private static boolean warnedEmptyHistory;
+    private static boolean warnedEmptyContent;
 
     private EventDiscordBridge() { }
 
@@ -183,11 +186,16 @@ final class EventDiscordBridge {
                 return;
             }
             if (response.statusCode() != 200) {
-                System.err.println("Killshift Discord channel read returned " + response.statusCode());
+                System.err.println("Killshift Discord channel read returned " + response.statusCode()
+                        + (response.statusCode() == 403 ? "; check bot View Channel permission"
+                                : response.statusCode() == 401 ? "; check DISCORD_BOT_TOKEN" : ""));
                 pollAfter = System.currentTimeMillis()
-                        + ((response.statusCode() == 401 || response.statusCode() == 403
-                                || response.statusCode() == 404) ? 3_600_000 : 30_000);
+                        + ((response.statusCode() == 401 || response.statusCode() == 404) ? 3_600_000 : 30_000);
                 return;
+            }
+            if (!announcedRead) {
+                System.out.println("Killshift Discord channel read connected");
+                announcedRead = true;
             }
             JsonArray messages = JsonParser.parseString(response.body()).getAsJsonArray();
             List<JsonObject> ordered = new ArrayList<>();
@@ -196,6 +204,11 @@ final class EventDiscordBridge {
                     Comparator.comparingInt(String::length).thenComparing(Comparator.naturalOrder())));
             boolean initial = cursor == null;
             if (initial && ordered.isEmpty()) {
+                if (!warnedEmptyHistory) {
+                    System.err.println("Killshift Discord sees no channel messages. If the channel has messages, "
+                            + "grant the bot Read Message History permission.");
+                    warnedEmptyHistory = true;
+                }
                 cursor = Long.toUnsignedString((System.currentTimeMillis() - 1420070400000L) << 22);
             }
             for (JsonObject message : ordered) {
@@ -214,12 +227,25 @@ final class EventDiscordBridge {
                     if (!content.isEmpty()) content.append(' ');
                     content.append(item.getAsJsonObject().get("url").getAsString());
                 });
-                if (content.isEmpty()) continue;
+                if (content.isEmpty()) {
+                    if (!warnedEmptyContent) {
+                        System.err.println("Killshift Discord received a message without text or attachments. "
+                                + "Check Message Content Intent in the Discord Developer Portal "
+                                + "(or ignore this for sticker-only messages).");
+                        warnedEmptyContent = true;
+                    }
+                    continue;
+                }
                 String prefix = "[Discord] " + name.strip().replaceAll("[\\r\\n]", " ") + ": ";
                 String body = content.toString().strip().replaceAll("[\\r\\n]+", " ");
-                server.execute(() -> server.getPlayerList().broadcastSystemMessage(
-                        Component.literal(prefix).withStyle(ChatFormatting.AQUA)
-                                .append(Component.literal(body).withStyle(ChatFormatting.WHITE)), false));
+                String id = message.get("id").getAsString();
+                server.execute(() -> {
+                    server.getPlayerList().broadcastSystemMessage(
+                            Component.literal(prefix).withStyle(ChatFormatting.AQUA)
+                                    .append(Component.literal(body).withStyle(ChatFormatting.WHITE)), false);
+                    System.out.println("Killshift Discord relayed message " + id + " to "
+                            + server.getPlayerList().getPlayerCount() + " players");
+                });
             }
         } catch (Exception error) {
             System.err.println("Killshift Discord channel read failed: " + error.getClass().getSimpleName());

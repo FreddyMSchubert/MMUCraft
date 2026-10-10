@@ -4,11 +4,11 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 ## Behavior that applies to every mob
 
-All listed mobs can become forms, including giants. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. `/shift` with your own name returns you to normal; shifting to another player uses that player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. Horse-family forms keep the killed animal's exact movement speed and jump strength; other land mob movement speed is converted for player controls. The player camera matches the form's actual eye height. The owner sees the display at up to 50% scale, reduced further when its height could cover the camera. Other players see the full-size display. Attack damage never falls below one.
+All listed mobs can become forms, including giants. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. `/shift` with your own name returns you to normal; shifting to another player uses that player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. Horse-family forms keep the killed animal's exact movement speed and jump strength; other land mob movement speed is converted for player controls. The player camera matches the form's actual eye height. The owner sees the display at up to 50% scale, reduced further when its height could cover the camera. Ghasts and happy ghasts are capped at 12.5% for their owner; silverfish are capped at 20%. Other players see the full-size display. Attack damage never falls below one.
 
 Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. It clears inherited resting, sleeping, sitting, curled, inflated, and wall-attached poses so moving forms look awake. It clears stale anger, nectar, stung, and lit-fuse states; striders change their warm or cold appearance with their surroundings. Aquatic forms can sprint and swim in water; camel forms can sprint on land. Other mob forms cannot use player sprint or swim movement. A zombie form becomes a drowned form when it starts drowning, without killing the player. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A player-killed mob gives its normal non-equipment item drops directly to the killer's inventory, transfers every equipped item once, and gives its experience directly to the killer. Vanilla equipment drops are suppressed. If the inventory is full, items wait until space is available. A form left behind by a shift gives no further drops or experience when killed; another mob of the same type still gives its own drops. The killed mob has no lingering death animation or death particles. The killer moves to the dead entity's position.
 
-Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms, and breezes do not target creeper forms. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
+Mobs do not target a player with the same exact form. Hostile monsters do not target hostile monster forms. Undead mobs also leave undead forms alone outside that category. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
 
 All forms can eat beetroot and beetroot soup. Other foods follow the form's natural diet. Taming foods count as food, including seeds for parrots and bones for wolves. A cookie kills a parrot form. Panda forms eat bamboo. Animal forms use the game's food check. Player forms use normal player food rules. A rejected food use shows the attempted food and the full allowed-food list.
 
@@ -21,7 +21,7 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 | Water breathing | Axolotl, cod, drowned, elder guardian, glow squid, guardian, happy ghast, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Air stays full underwater. Drowned, guardians, happy ghasts, and turtles also keep full air on land. Other forms use their mob's maximum air supply on land and take drowning damage after it runs out. Rain rehydrates axolotls. |
 | Sun-sensitive forms | Types in the game's `burn_in_daylight` tag | Sunlight ignites the player when the head slot is empty and the player is dry. Water or rain extinguishes the form. |
 | Wall climbing | Spider, cave spider | Movement input near a wall gives a steady upward climb. |
-| Bounce movement | Slime, magma cube, sulfur cube | Ground movement has no horizontal speed. Air movement works, so the player must jump to travel. |
+| Bounce movement | Slime, magma cube, sulfur cube | Ground movement has no horizontal speed. Air movement works, so the player must jump to travel. Jump strength is 0.9 and fall damage is disabled. |
 | Lava-safe | Blaze, magma cube, strider, wither, wither skeleton | Fire is cleared. The form receives fire resistance. |
 | Jump and movement | Every form | Killshift copies jump strength. Horse-family forms also keep the source movement speed; other land mob speed is converted for player controls. Breezes move at 0.08 speed and have 0.8 jump strength; they cannot sprint. Camel and camel husk forms can sprint. Water-only forms can make a small horizontal nudge while jumping on land. |
 | No fall damage | All forced-flight forms and types in the game's `fall_damage_immune` tag | Fall damage multiplier is zero. Chicken descent is also limited to a slow speed. |
@@ -32,7 +32,7 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 
 ## Active and reactive behavior
 
-The ninth hotbar slot holds an inert trigger that displays the ability's icon and explains what right-click does. It never performs the icon item's normal action or gets consumed. The slot holds a marked barrier for forms without an ability, including the normal player. Its cooldown overlay shows the remaining ability wait. Projectiles start at the player's eye and follow the view direction.
+The ninth hotbar slot holds an inert item that displays the ability's icon and explains what right-click does. It never performs the icon item's normal action or gets consumed. For forms without an ability, including the normal player, the same inert item displays a barrier icon. Its cooldown overlay shows the remaining ability wait. Projectiles start at the player's eye and follow the view direction.
 
 | Form | Behavior |
 | --- | --- |
@@ -55,7 +55,7 @@ The ninth hotbar slot holds an inert trigger that displays the ability's icon an
 | Iron golem | The form sinks in water and cannot use player swim movement. |
 | Llama | Right-click spits in the look direction. |
 | Mooshroom | Right-click restores six hunger points and adds a bowl. |
-| Parched | A bow shoots unlimited normal arrows. |
+| Parched | A bow shoots unlimited weakness arrows. |
 | Shulker | Each new jump press attempts a safe random teleport. Right-click shoots a levitation bullet that homes toward a living target in sight or fires in the look direction without homing when there is none. Bullets do not target or hit shulker-transformed players. |
 | Silverfish | Right-click an infestable block to remove it and summon an allied silverfish. |
 | Skeleton | A bow shoots unlimited normal arrows. |
@@ -123,7 +123,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Nautilus | Aquatic movement and water breathing |
 | Ocelot | Common |
 | Panda | Bamboo diet |
-| Parched | Arrow refill |
+| Parched | Unlimited weakness arrows |
 | Parrot | Forced flight and no fall damage |
 | Phantom | Forced flight, sunlight rule, and no fall damage |
 | Pig | Common |

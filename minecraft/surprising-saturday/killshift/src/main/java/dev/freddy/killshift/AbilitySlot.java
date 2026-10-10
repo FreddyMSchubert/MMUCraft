@@ -51,9 +51,16 @@ public final class AbilitySlot {
         return switch (tag.getStringOr(FORM, "")) {
             case "minecraft:bogged" -> PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.POISON);
             case "minecraft:stray" -> PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.SLOWNESS);
-            case "minecraft:skeleton", "minecraft:parched" -> new ItemStack(Items.ARROW);
+            case "minecraft:parched" -> parchedArrow();
+            case "minecraft:skeleton" -> new ItemStack(Items.ARROW);
             default -> ItemStack.EMPTY;
         };
+    }
+
+    private static ItemStack parchedArrow() {
+        ItemStack arrow = PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.WEAKNESS);
+        arrow.set(DataComponents.POTION_DURATION_SCALE, 1.0F / 3.0F);
+        return arrow;
     }
 
     public static boolean blocksSprint(Player player) {
@@ -88,23 +95,24 @@ public final class AbilitySlot {
         boolean hasAbility = ability != null;
         ItemStack current = inventory.getItem(SLOT);
         String form = state == null ? "" : BuiltInRegistries.ENTITY_TYPE.getKey(state.form.type()).toString();
-        Identifier model = hasAbility ? BuiltInRegistries.ITEM.getKey(ability) : null;
+        Identifier model = BuiltInRegistries.ITEM.getKey(hasAbility ? ability : Items.BARRIER);
         Component name = hasAbility ? Component.literal(MobAbilities.abilityDescription(state.form.type()))
                 : Component.literal("No Mob Ability");
         if (form.equals(formId(current)) && name.equals(current.get(DataComponents.CUSTOM_NAME))
-                && (hasAbility ? trigger(current) && current.is(Items.ECHO_SHARD)
+                && current.is(Items.ECHO_SHARD)
                 && model.equals(current.get(DataComponents.ITEM_MODEL))
+                && (hasAbility ? trigger(current)
                 && COOLDOWN.equals(current.get(DataComponents.USE_COOLDOWN))
-                : barrier(current) && current.is(Items.BARRIER))) return;
+                : barrier(current))) return;
 
-        ItemStack replacement = new ItemStack(hasAbility ? Items.ECHO_SHARD : Items.BARRIER);
+        ItemStack replacement = new ItemStack(Items.ECHO_SHARD);
         replacement.set(DataComponents.CUSTOM_NAME, name);
         CompoundTag tag = new CompoundTag();
         tag.putString(MARKER, hasAbility ? "killshift:ability" : "killshift:barrier");
         tag.putString(FORM, form);
         replacement.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        replacement.set(DataComponents.ITEM_MODEL, model);
         if (hasAbility) {
-            replacement.set(DataComponents.ITEM_MODEL, model);
             replacement.set(DataComponents.USE_COOLDOWN, COOLDOWN);
         }
         inventory.setItem(SLOT, replacement);

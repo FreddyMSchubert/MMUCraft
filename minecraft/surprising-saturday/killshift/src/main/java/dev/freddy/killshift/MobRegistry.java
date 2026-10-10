@@ -10,6 +10,7 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -110,14 +111,13 @@ final class MobRegistry {
         if (mob == shape) {
             return true;
         }
+        if (mob.getCategory() == MobCategory.MONSTER && shape.getCategory() == MobCategory.MONSTER) {
+            return true;
+        }
         if (BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(mob).is(EntityTypeTags.UNDEAD)
                 && BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(shape).is(EntityTypeTags.UNDEAD)) {
             return true;
         }
-        if (WALL_CLIMBERS.contains(mob) && WALL_CLIMBERS.contains(shape)) {
-            return true;
-        }
-        return mob == EntityTypes.CREEPER && shape == EntityTypes.SKELETON
-                || mob == EntityTypes.BREEZE && shape == EntityTypes.CREEPER;
+        return false;
     }
 }

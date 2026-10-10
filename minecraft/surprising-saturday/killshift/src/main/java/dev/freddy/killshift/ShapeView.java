@@ -346,6 +346,11 @@ public final class ShapeView {
 
     private static double ownerScale(ServerPlayer player, LivingEntity view) {
         double cap = isSmallAquatic(view) ? 0.3 : SELF_VIEW_SCALE;
+        if (view.getType() == EntityTypes.GHAST || view.getType() == EntityTypes.HAPPY_GHAST) {
+            cap = 0.125;
+        } else if (view.getType() == EntityTypes.SILVERFISH) {
+            cap = 0.2;
+        }
         if (view.getBbHeight() <= 0.0F) return cap;
         // Client models and animations can reach above the collision box.
         return Math.min(cap, 0.9 * player.getEyeHeight() / (2.0 * view.getBbHeight()));

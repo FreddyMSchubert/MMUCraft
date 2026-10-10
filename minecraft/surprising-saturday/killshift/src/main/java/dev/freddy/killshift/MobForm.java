@@ -30,6 +30,10 @@ record MobForm(
             normalized.put(Attributes.MOVEMENT_SPEED, 0.08);
             normalized.put(Attributes.JUMP_STRENGTH, 0.8);
         }
+        if (traits.bouncy()) {
+            normalized.put(Attributes.JUMP_STRENGTH, 0.9);
+            normalized.put(Attributes.FALL_DAMAGE_MULTIPLIER, 0.0);
+        }
         attributes = Map.copyOf(normalized);
     }
 

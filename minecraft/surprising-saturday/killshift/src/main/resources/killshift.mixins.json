@@ -5,6 +5,7 @@
 	"mixins": [
 		"AgeableMobAgeAccessor",
 		"MobMixin",
+		"CreeperTargetMixin",
 		"ChargedCreeperSpawnMixin",
 		"MobFlagsAccessor",
 		"GiantZombieSpawnMixin",
@@ -12,7 +13,7 @@
 		"LivingEntityLootMixin",
 		"EntityLootMixin",
 		"ViewMovementMixin",
-		"CreakingSprintMixin",
+		"PlayerSprintMixin",
 		"TadpoleAgeAccessor",
 		"EventChatNameMixin",
 		"ServerPlayerShapeMixin",

@@ -6,9 +6,9 @@ This document describes the behavior in Killshift 0.1.0 for Minecraft 26.3.
 
 All listed mobs can become forms, including giants. A player kill copies the victim's form and appearance. If the victim has no mob form, the killer gets a player form with the dead player's skin. `/shift` with your own name returns you to normal; shifting to another player uses that player's skin as a mannequin. Killshift saves the source appearance. It copies the source attribute values for health, armor, attack, knockback, fall, flight, jump, safe fall distance, and step height. Horse and mule forms keep the killed animal's movement speed and jump strength. Camel and undead horse forms have minimum speeds. Other land mob movement speed is converted for player controls. The player camera matches the form's actual eye height. The owner sees the display at up to 50% scale, reduced further when its height could cover the camera. Ghasts and happy ghasts are capped at 12.5% for their owner; armadillos and silverfish at 15%; bees and dolphins at 20%. Other players see the full-size display. Attack damage never falls below one.
 
-Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. It clears inherited resting, sleeping, sitting, curled, inflated, and wall-attached poses so moving forms look awake. It clears stale anger, nectar, stung, and lit-fuse states; striders change their warm or cold appearance with their surroundings. Aquatic forms can sprint and swim in water; camel forms can sprint on land. Other mob forms cannot use player sprint or swim movement. A zombie form becomes a drowned form when it starts drowning, without killing the player. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A player-killed mob gives its normal non-equipment item drops directly to the killer's inventory, transfers every equipped item once, and gives its experience directly to the killer. Vanilla equipment drops are suppressed. If the inventory is full, items wait until space is available. A form left behind by a shift gives no further drops or experience when killed; another mob of the same type still gives its own drops. The killed mob has no lingering death animation or death particles. The killer moves to the dead entity's position.
+Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. It clears inherited resting, sleeping, sitting, curled, inflated, and wall-attached poses so moving forms look awake. It clears stale anger, nectar, stung, and lit-fuse states; striders change their warm or cold appearance with their surroundings. Aquatic forms can sprint and swim in water. Cat, ocelot, camel, and camel husk forms can sprint on land. Other mob forms cannot use player sprint or swim movement. A zombie form becomes a drowned form when it starts drowning, without killing the player. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A player-killed mob gives its normal non-equipment item drops directly to the killer's inventory, transfers every equipped item once, and gives its experience directly to the killer. Vanilla equipment drops are suppressed. If the inventory is full, items wait until space is available. A form left behind by a shift gives no further drops or experience when killed; another mob of the same type still gives its own drops. The killed mob has no lingering death animation or death particles. The killer moves to the dead entity's position.
 
-Mobs do not target a player with the same exact form. Hostile monsters do not target hostile monster forms. Undead mobs also leave undead forms alone outside that category. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
+Mobs do not target a player with the same exact form. Hostile monsters do not target hostile monster forms. Undead mobs also leave undead forms alone outside that category. Creepers target players without a mob form. They can retaliate against a player in a mob form that attacks them, except a goat form. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
 
 All forms can eat beetroot and beetroot soup. Other foods follow the form's natural diet. Taming foods count as food, including seeds for parrots and bones for wolves. A cookie kills a parrot form. Panda forms eat bamboo. Animal forms use the game's food check. Player forms use normal player food rules. A rejected food use shows the attempted food and the full allowed-food list.
 
@@ -23,7 +23,7 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 | Wall climbing | Spider, cave spider | Movement input near a wall gives a steady upward climb. |
 | Bounce movement | Slime, magma cube, sulfur cube | Ground movement has no horizontal speed. Air movement works, so the player must jump to travel. Jump strength is 0.9 and fall damage is disabled. |
 | Lava-safe | Blaze, magma cube, strider, wither, wither skeleton | Fire is cleared. The form receives fire resistance. |
-| Jump and movement | Every form | Killshift copies jump strength. Horse and mule forms keep source movement speed. Camels have at least 0.2 speed; skeleton and zombie horses at least 0.25. Frogs move at 0.07 speed and have 0.72 jump strength. Foxes have 0.65 jump strength and rabbits 0.72. Breezes move at 0.08 speed and have 0.8 jump strength; they cannot sprint. Camel and camel husk forms can sprint. Water-only forms can make a small horizontal nudge while jumping on land. |
+| Jump and movement | Every form | Killshift copies jump strength. Horse and mule forms keep source movement speed. Camels have at least 0.2 speed; skeleton and zombie horses at least 0.25. Frogs move at 0.07 speed and have 0.72 jump strength. Foxes have 0.65 jump strength and rabbits 0.72. Breezes move at 0.08 speed and have 0.8 jump strength; they cannot sprint. Cat, ocelot, camel, and camel husk forms can sprint on land. Water-only forms can make a small horizontal nudge while jumping on land. |
 | No fall damage | All forced-flight forms and types in the game's `fall_damage_immune` tag | Fall damage multiplier is zero. Chicken descent is also limited to a slow speed. |
 | Powder snow walking | Types in the game's `powder_snow_walkable_mobs` tag | The form stands on powder snow without leather boots. |
 | Water sensitivity | Enderman, blaze, strider, snow golem | Water and rain deal damage. |
@@ -47,10 +47,10 @@ The ninth hotbar slot holds an inert item that displays the ability's icon and e
 | Goat | Melee attacks have 1.5 attack knockback. |
 | Cave spider | A melee hit poisons the target. The form can climb walls and ceilings. |
 | Creaking | The player takes no damage. Looking at the form freezes walking, sprinting, crouching, and jumping, whether the observer is a player or a mob. |
-| Creeper | Right-click to explode and die. The explosion radius is 4.5 blocks, or 9 blocks when charged. Its own death and display give no kill credit; other victims can. |
+| Creeper | Right-click to explode and die. The explosion radius is 4.5 blocks, or 9 blocks when charged. Creepers target players without a mob form and can retaliate against mob forms that attack them, except goat forms. Its own death and display give no kill credit; other victims can. |
 | Elder guardian | A melee hit gives mining fatigue to the target. Right-click charges a stronger laser on a living target in sight. |
 | Ender dragon | Right-click shoots a dragon fireball. |
-| Enderman | Right-click to throw an unlimited ender pearl. Water and rain cause damage. Direct observation gives a large speed increase. |
+| Enderman | Right-click to throw an unlimited ender pearl. Ender pearl teleports cause no damage. Water and rain cause damage. Direct observation gives a large speed increase. |
 | Evoker | Right-click raises a line of evoker fangs. |
 | Ghast | Right-click shoots an explosive fireball. |
 | Glow squid | Right-click releases a large ink burst, blinds nearby targets for three seconds, and boosts water movement for five seconds. |
@@ -63,10 +63,10 @@ The ninth hotbar slot holds an inert item that displays the ability's icon and e
 | Pillager | A crossbow loads unlimited arrows. |
 | Shulker | Each new jump press attempts a safe random teleport. Right-click shoots a levitation bullet that homes toward a living target in sight or fires in the look direction without homing when there is none. Bullets do not target or hit shulker-transformed players. |
 | Silverfish | Right-click an infestable block to remove it and summon an allied silverfish. |
-| Sheep | Right-click a grass block to eat it, turn it to dirt, and heal two hearts. |
+| Sheep | Right-click a grass block to eat it and turn it to dirt. This heals two hearts and restores two hunger points and 0.8 saturation points. |
 | Skeleton | A bow shoots unlimited normal arrows. |
 | Sniffer | Right-click on a grass block finds torchflower seeds or a pitcher pod. |
-| Snow golem | Right-click throws unlimited snowballs. Water and rain damage the form. |
+| Snow golem | Right-click throws unlimited snowballs, with a one-tick cooldown. Water and rain damage the form. |
 | Squid | Right-click releases a large ink burst, blinds nearby targets for three seconds, and boosts water movement for five seconds. Damage also gives a water speed boost. |
 | Stray | A bow shoots unlimited slowness arrows. |
 | Trader llama | Right-click spits in the look direction. |
@@ -91,9 +91,9 @@ The following table lists the supported forms in this build. `Common` means that
 | Blaze | Forced flight, lava safety, fireball, wet and snowball damage, and no fall damage |
 | Bogged | Sunlight rule and unlimited poison arrows |
 | Breeze | Wind charge, slow movement, high jump, and creeper friendship |
-| Camel | At least 0.2 movement speed, source jump strength, and forward dash |
-| Camel husk | At least 0.2 movement speed, source jump strength, and forward dash |
-| Cat | Creeper repulsion and no fall damage |
+| Camel | At least 0.2 movement speed, source jump strength, sprint, and forward dash |
+| Camel husk | At least 0.2 movement speed, source jump strength, sprint, and forward dash |
+| Cat | Sprint, creeper repulsion, and no fall damage |
 | Cave spider | Climbing, poison hit, and spider post effect |
 | Chicken | Slow falling, no fall damage, and fox pursuit |
 | Cod | Aquatic movement and water breathing |
@@ -105,7 +105,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Donkey | Source jump strength |
 | Drowned | Aquatic movement, breathing on land and underwater, and sunlight rule |
 | Elder guardian | Aquatic movement, full air supply on land and underwater, mining-fatigue hit, and stronger laser |
-| Enderman | Pearl, wet damage, watched speed, and invert post effect |
+| Enderman | Pearl without teleport damage, wet damage, watched speed, and invert post effect |
 | Endermite | Invert post effect |
 | Ender dragon | Forced flight, dragon fireball, and no fall damage |
 | Evoker | Fang attack |
@@ -127,7 +127,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Mooshroom | Stew hunger restoration |
 | Mule | Source jump strength |
 | Nautilus | Aquatic movement and water breathing |
-| Ocelot | Common |
+| Ocelot | Sprint |
 | Panda | Bamboo diet |
 | Parched | Unlimited weakness arrows |
 | Parrot | Forced flight and no fall damage |
@@ -141,14 +141,14 @@ The following table lists the supported forms in this build. `Common` means that
 | Rabbit | Higher jump |
 | Ravager | Common |
 | Salmon | Aquatic movement and water breathing |
-| Sheep | Eat grass to heal; wild wolves pursue this form |
+| Sheep | Eat grass to heal and restore hunger and saturation; wild wolves pursue this form |
 | Shulker | Water swim controls, jump teleport, homing levitation bullet, and invert post effect |
 | Silverfish | Owner view capped at 15% scale; infest a block to summon an ally |
 | Skeleton | Sunlight rule, unlimited arrows, and creeper peace |
 | Skeleton horse | At least 0.25 movement speed and source jump strength |
 | Slime | Bounce movement |
 | Sniffer | Ancient seed digging |
-| Snow golem | Unlimited snowballs and water or rain damage |
+| Snow golem | Unlimited snowballs with a one-tick cooldown and water or rain damage |
 | Spider | Climbing and spider post effect |
 | Squid | Aquatic movement, water breathing, blinding ink, and water escape speed boost |
 | Stray | Sunlight rule and unlimited slowness arrows |

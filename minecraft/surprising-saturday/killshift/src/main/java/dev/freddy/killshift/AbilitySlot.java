@@ -70,8 +70,7 @@ public final class AbilitySlot {
     public static boolean blocksSprint(Player player) {
         EntityType<?> type = markedForm(player);
         return type != null && type != EntityTypes.PLAYER
-                && type != EntityTypes.CAMEL && type != EntityTypes.CAMEL_HUSK
-                && !(MobRegistry.traits(type).aquatic() && player.isInWater());
+                && !MobRegistry.canSprint(type, player.isInWater());
     }
 
     public static boolean blocksSwim(Player player) {

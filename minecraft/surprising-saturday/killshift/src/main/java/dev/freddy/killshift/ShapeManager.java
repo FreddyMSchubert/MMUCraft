@@ -22,6 +22,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
@@ -77,6 +78,10 @@ public final class ShapeManager {
 
     static boolean allowDamage(LivingEntity target, DamageSource source, float amount) {
         if (target instanceof ServerPlayer player && isForm(player, EntityTypes.CREAKING)) {
+            return false;
+        }
+        if (target instanceof ServerPlayer player && source.is(DamageTypes.ENDER_PEARL)
+                && isForm(player, EntityTypes.ENDERMAN)) {
             return false;
         }
         if (target instanceof ServerPlayer player && source.is(DamageTypes.DROWN)
@@ -238,8 +243,8 @@ public final class ShapeManager {
     }
 
     public static boolean canSprintAsMob(ServerPlayer player) {
-        return canSwimAsMob(player) || isForm(player, EntityTypes.CAMEL)
-                || isForm(player, EntityTypes.CAMEL_HUSK);
+        ShapeState state = get(player);
+        return state != null && MobRegistry.canSprint(state.form.type(), player.isInWater());
     }
 
     public static double landHopSpeed(ServerPlayer player) {
@@ -333,8 +338,14 @@ public final class ShapeManager {
 
     public static boolean isFriendly(Mob mob, ServerPlayer player) {
         ShapeState state = get(player);
-        return mob.entityTags().contains("killshift_ally_" + player.getUUID())
-                || state != null && MobRegistry.isFriendly(mob.getType(), state.form.type());
+        if (mob.entityTags().contains("killshift_ally_" + player.getUUID())) return true;
+        if (state == null) return false;
+        if (mob instanceof Creeper && state.form.type() != EntityTypes.PLAYER) {
+            // Limit retaliation to vanilla's 300-tick memory for unseen targets.
+            return state.form.type() == EntityTypes.GOAT || mob.getLastHurtByMob() != player
+                    || mob.tickCount - mob.getLastHurtByMobTimestamp() > 300;
+        }
+        return MobRegistry.isFriendly(mob.getType(), state.form.type());
     }
 
     public static boolean isGolemEnemy(ServerPlayer player) {

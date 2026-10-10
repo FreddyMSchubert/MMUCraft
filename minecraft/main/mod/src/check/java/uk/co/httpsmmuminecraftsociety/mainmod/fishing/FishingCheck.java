@@ -7,8 +7,13 @@ import net.minecraft.server.Bootstrap;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class FishingCheck {
     private FishingCheck() {}
@@ -18,6 +23,7 @@ public final class FishingCheck {
         Bootstrap.bootStrap();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(VanillaRegistries.createWorldLookup())
                 .forEach(components -> components.apply());
+        loadFishingItems();
 
         checkWaitTiming();
         checkCatchWindows();
@@ -29,6 +35,17 @@ public final class FishingCheck {
         checkWeightedFishSelection();
         checkTextureRotation();
         System.out.println("Fishing checks passed: waits, catch windows, catch gates, weighted fish, approach speed, lure books, rotations, first-bob chance, and shadow scale.");
+    }
+
+    private static void loadFishingItems() {
+        // shortcut: These items only start the catch table; load item data if this check covers loot contents.
+        Map<String, FakeItem> items = new HashMap<>();
+        for (String id : List.of("boot", "empty-can", "fish-bones", "old-tire", "seaweed",
+                "charm-lucky-charm", "trident-shaft", "sushi", "golden-nutritional-paste")) {
+            items.put(id, new FakeItem(id, id, Rarity.COMMON, 64, false, false, "",
+                    List.of(), Items.HEART_OF_THE_SEA, List.of()));
+        }
+        FakeItems.ID_MAP = Map.copyOf(items);
     }
 
     private static void checkCatchWindows() {

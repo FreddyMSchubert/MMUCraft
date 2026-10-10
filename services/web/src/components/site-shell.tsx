@@ -105,8 +105,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			name: string;
 			playerCount: number | null;
 			maxPlayers: number;
-			memberWaitingCount: number;
-			waitingCount: number;
+			memberWaitingCount?: number;
+			waitingCount?: number;
 		}[];
 	} | null>(null);
 	const [events, setEvents] = useState<EventSummary[]>([]);
@@ -202,8 +202,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						name: string;
 						playerCount: number | null;
 						maxPlayers: number;
-						memberWaitingCount: number;
-						waitingCount: number;
+						memberWaitingCount?: number;
+						waitingCount?: number;
 					}[];
 				};
 				if (!cancelled) setCapacity(next);
@@ -410,7 +410,12 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							<div className="onlinePlayers">
 								<p className="dashboardEyebrow">
 									Online players
-									{capacity && <CapacityCount capacity={capacity} />}
+									{capacity && (
+										<CapacityCount
+											capacity={capacity}
+											showWaitingCounts={user.isCommittee}
+										/>
+									)}
 								</p>
 								<div className="onlinePlayerList">
 									{onlinePlayers?.map((player) => (
@@ -479,7 +484,12 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							<div className="mobileMenuBlock">
 								<p>
 									Online players
-									{capacity && <CapacityCount capacity={capacity} />}
+									{capacity && (
+										<CapacityCount
+											capacity={capacity}
+											showWaitingCounts={user.isCommittee}
+										/>
+									)}
 								</p>
 								<div className="onlinePlayerList">
 									{onlinePlayers?.map((player) => (
@@ -581,6 +591,7 @@ function navigate(href: string, replace = false) {
 
 function CapacityCount({
 	capacity,
+	showWaitingCounts,
 }: {
 	capacity: {
 		showEventCapacity: boolean;
@@ -588,10 +599,11 @@ function CapacityCount({
 			name: string;
 			playerCount: number | null;
 			maxPlayers: number;
-			memberWaitingCount: number;
-			waitingCount: number;
+			memberWaitingCount?: number;
+			waitingCount?: number;
 		}[];
 	};
+	showWaitingCounts: boolean;
 }) {
 	const servers = capacity.servers
 		.filter(
@@ -618,13 +630,14 @@ function CapacityCount({
 					>
 						({server.playerCount ?? '?'}/{server.maxPlayers})
 					</span>
-					{server.memberWaitingCount + server.waitingCount > 0 && (
-						<>
-							{' '}
-							(members waiting: {server.memberWaitingCount}, others:{' '}
-							{server.waitingCount})
-						</>
-					)}
+					{showWaitingCounts &&
+						(server.memberWaitingCount ?? 0) + (server.waitingCount ?? 0) > 0 && (
+							<>
+								{' '}
+								(members waiting: {server.memberWaitingCount ?? 0}, others:{' '}
+								{server.waitingCount ?? 0})
+							</>
+						)}
 				</span>
 			))}
 		</>

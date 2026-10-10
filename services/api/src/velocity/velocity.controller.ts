@@ -28,8 +28,17 @@ export class VelocityPublicController {
 
 	@Get('capacity')
 	capacity(@Headers('cookie') cookieHeader: string | undefined) {
-		this.sessions.requireSession(cookieHeader);
-		return this.velocity.capacitySnapshot();
+		const user = this.sessions.requireSession(cookieHeader);
+		const snapshot = this.velocity.capacitySnapshot();
+		if (user.isCommittee) return snapshot;
+		return {
+			...snapshot,
+			servers: snapshot.servers.map(({ name, maxPlayers, playerCount }) => ({
+				name,
+				maxPlayers,
+				playerCount,
+			})),
+		};
 	}
 
 	@Get('online-players')

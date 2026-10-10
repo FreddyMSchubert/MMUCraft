@@ -16,6 +16,7 @@ const LONDON_TIME = new Intl.DateTimeFormat('en-GB', {
 export interface CountdownInput {
 	heading?: string;
 	target?: string;
+	endsAt?: string;
 	description?: string;
 	headingColor?: string;
 	descriptionColor?: string;
@@ -169,6 +170,12 @@ function requiredText(input: string | undefined, label: string, maxLength: numbe
 
 function countdownValues(input: CountdownInput) {
 	const targetAtUnixMs = parseLondonDateTime(input.target);
+	const visibleUntilUnixMs =
+		input.endsAt === undefined || input.endsAt === ''
+			? nextLondonMidnight(targetAtUnixMs)
+			: parseLondonDateTime(input.endsAt);
+	if (visibleUntilUnixMs <= targetAtUnixMs)
+		throw new BadRequestException('The NOW! end time must be after the countdown time');
 	return {
 		heading: requiredText(input.heading, 'Heading', 80),
 		description: requiredText(input.description, 'Abstract', 500),
@@ -178,10 +185,7 @@ function countdownValues(input: CountdownInput) {
 		background_alpha: percentage(input.backgroundAlpha),
 		background_image_url: optionalImageUrl(input.backgroundImageUrl),
 		target_at_unix_ms: targetAtUnixMs,
-		visible_until_unix_ms: Math.max(
-			nextLondonMidnight(targetAtUnixMs),
-			targetAtUnixMs + 5 * 60 * 60 * 1000,
-		),
+		visible_until_unix_ms: visibleUntilUnixMs,
 	};
 }
 

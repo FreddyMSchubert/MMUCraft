@@ -11,6 +11,8 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 		setCountdownHeading,
 		countdownTarget,
 		setCountdownTarget,
+		countdownEndsAt,
+		setCountdownEndsAt,
 		countdownDescription,
 		setCountdownDescription,
 		countdownHeadingColor,
@@ -53,7 +55,7 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 							/>
 						</label>
 						<label>
-							Date and time
+							NOW! starts
 							<input
 								type="datetime-local"
 								value={countdownTarget}
@@ -62,6 +64,19 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 								}}
 								required
 							/>
+						</label>
+						<label>
+							NOW! ends (optional)
+							<input
+								type="datetime-local"
+								value={countdownEndsAt}
+								onChange={(event) => {
+									setCountdownEndsAt(event.target.value);
+								}}
+							/>
+							<small>
+								Leave blank to hide at midnight in London after the countdown date.
+							</small>
 						</label>
 						<label className="countdownAbstractInput">
 							Abstract
@@ -166,7 +181,14 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 							<article key={countdown.id}>
 								<div>
 									<strong>{countdown.heading}</strong>
-									<span>{formatLondonDateTime(countdown.targetAtUnixMs)}</span>
+									<span>
+										NOW! starts:{' '}
+										{formatLondonDateTime(countdown.targetAtUnixMs)}
+									</span>
+									<span>
+										NOW! ends:{' '}
+										{formatLondonDateTime(countdown.visibleUntilUnixMs)}
+									</span>
 									{countdown.backgroundImageUrl && (
 										<span>
 											Background image: {countdown.backgroundImageUrl}

@@ -16,6 +16,7 @@ export function useCountdownAdministration({
 	const { confirm, showAlert } = useSiteAlert();
 	const [countdownHeading, setCountdownHeading] = useState('');
 	const [countdownTarget, setCountdownTarget] = useState('');
+	const [countdownEndsAt, setCountdownEndsAt] = useState('');
 	const [countdownDescription, setCountdownDescription] = useState('');
 	const [countdownHeadingColor, setCountdownHeadingColor] = useState('#ffffff');
 	const [countdownDescriptionColor, setCountdownDescriptionColor] = useState('#ffffff');
@@ -42,6 +43,7 @@ export function useCountdownAdministration({
 						body: JSON.stringify({
 							heading: countdownHeading,
 							target: countdownTarget,
+							endsAt: countdownEndsAt,
 							description: countdownDescription,
 							headingColor: countdownHeadingColor,
 							descriptionColor: countdownDescriptionColor,
@@ -79,6 +81,7 @@ export function useCountdownAdministration({
 		setEditingCountdownId(countdown.id);
 		setCountdownHeading(countdown.heading);
 		setCountdownTarget(formatLondonInput(countdown.targetAtUnixMs));
+		setCountdownEndsAt(formatLondonInput(countdown.visibleUntilUnixMs));
 		setCountdownDescription(countdown.description);
 		setCountdownHeadingColor(countdown.headingColor);
 		setCountdownDescriptionColor(countdown.descriptionColor);
@@ -91,6 +94,7 @@ export function useCountdownAdministration({
 		setEditingCountdownId(null);
 		setCountdownHeading('');
 		setCountdownTarget('');
+		setCountdownEndsAt('');
 		setCountdownDescription('');
 		setCountdownHeadingColor('#ffffff');
 		setCountdownDescriptionColor('#ffffff');
@@ -164,6 +168,8 @@ export function useCountdownAdministration({
 		setCountdownHeading,
 		countdownTarget,
 		setCountdownTarget,
+		countdownEndsAt,
+		setCountdownEndsAt,
 		countdownDescription,
 		setCountdownDescription,
 		countdownHeadingColor,

@@ -21,7 +21,6 @@
 		"mainmod:charm-scuba-tank",
 		"mainmod:charm-spider-pajamas",
 		"mainmod:charm-veinminer",
-		"mainmod:charm-vitality-mending",
-		"mainmod:charm-winged-shoes"
+		"mainmod:charm-vitality-mending"
 	]
 }

@@ -75,6 +75,19 @@ def _validate_toggle(toggle: object, known: set[str], path: Path) -> None:
 		raise ValueError(f"Unknown gameplay toggle {toggle!r}: {path}")
 
 
+def validate_hopper_filter_group_references(root: Path) -> None:
+	items_root = root / SOURCE_DATA_ROOT / "items"
+	known = {
+		json.loads(path.read_text(encoding="utf-8"))["id"]
+		for path in items_root.rglob("item.json")
+	}
+	for path in sorted((root / SOURCE_DATA_ROOT / "hopper_filter_groups").rglob("*.json")):
+		group = json.loads(path.read_text(encoding="utf-8"))
+		for item in group.get("items", []):
+			if item.startswith("mainmod:") and item.removeprefix("mainmod:") not in known:
+				raise ValueError(f"Unknown fake item {item!r}: {path}")
+
+
 def remove_empty_parents(path: Path, stop: Path) -> None:
 	while path != stop and path.exists() and not any(path.iterdir()):
 		path.rmdir()
@@ -123,6 +136,7 @@ def stage_data(root: Path, *, validate_references: bool = True) -> tuple[Path, P
 	if not source.is_dir():
 		raise FileNotFoundError(f"Source data directory does not exist: {source}")
 
+	validate_hopper_filter_group_references(root)
 	if validate_references:
 		validate_gameplay_toggle_references(root)
 	copied = 0

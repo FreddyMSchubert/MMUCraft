@@ -1,20 +1,27 @@
 package dev.freddy.killshift;
 
 import java.util.Optional;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.UseCooldown;
 
 public final class AbilitySlot {
     private static final int SLOT = 8;
     private static final String MARKER = "killshift_slot";
+    private static final String FORM = "killshift_form";
     private static final Identifier COOLDOWN_GROUP = Identifier.fromNamespaceAndPath(Killshift.MOD_ID, "ability");
     private static final UseCooldown COOLDOWN = new UseCooldown(1.0F, Optional.of(COOLDOWN_GROUP));
 
@@ -35,6 +42,40 @@ public final class AbilitySlot {
         return data != null && data.copyTag().getStringOr(MARKER, "").equals("killshift:barrier");
     }
 
+    public static ItemStack arrowFor(Player player, ItemStack weapon) {
+        if (!weapon.is(Items.BOW)) return ItemStack.EMPTY;
+        CustomData data = player.getInventory().getItem(SLOT).get(DataComponents.CUSTOM_DATA);
+        if (data == null) return ItemStack.EMPTY;
+        CompoundTag tag = data.copyTag();
+        if (!tag.getStringOr(MARKER, "").startsWith("killshift:")) return ItemStack.EMPTY;
+        return switch (tag.getStringOr(FORM, "")) {
+            case "minecraft:bogged" -> PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.POISON);
+            case "minecraft:stray" -> PotionContents.createItemStack(Items.TIPPED_ARROW, Potions.SLOWNESS);
+            case "minecraft:skeleton", "minecraft:parched" -> new ItemStack(Items.ARROW);
+            default -> ItemStack.EMPTY;
+        };
+    }
+
+    public static boolean blocksSprint(Player player) {
+        EntityType<?> type = markedForm(player);
+        return type != null && type != EntityTypes.PLAYER
+                && type != EntityTypes.CAMEL && type != EntityTypes.CAMEL_HUSK
+                && !(MobRegistry.traits(type).aquatic() && player.isInWater());
+    }
+
+    public static boolean blocksSwim(Player player) {
+        EntityType<?> type = markedForm(player);
+        return type != null && type != EntityTypes.PLAYER
+                && !(MobRegistry.traits(type).aquatic() && player.isInWater());
+    }
+
+    private static EntityType<?> markedForm(Player player) {
+        ItemStack stack = player.getInventory().getItem(SLOT);
+        if (!locked(stack)) return null;
+        Identifier id = Identifier.tryParse(formId(stack));
+        return id == null ? null : BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
+    }
+
     static void sync(ServerPlayer player) {
         var inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
@@ -46,21 +87,35 @@ public final class AbilitySlot {
         Item ability = state == null ? null : MobAbilities.abilityItem(state.form.type());
         boolean hasAbility = ability != null;
         ItemStack current = inventory.getItem(SLOT);
-        if (hasAbility ? trigger(current) && current.is(ability) && COOLDOWN.equals(current.get(DataComponents.USE_COOLDOWN))
-                : barrier(current) && current.is(Items.BARRIER)) return;
+        String form = state == null ? "" : BuiltInRegistries.ENTITY_TYPE.getKey(state.form.type()).toString();
+        Identifier model = hasAbility ? BuiltInRegistries.ITEM.getKey(ability) : null;
+        Component name = hasAbility ? Component.literal(MobAbilities.abilityDescription(state.form.type()))
+                : Component.literal("No Mob Ability");
+        if (form.equals(formId(current)) && name.equals(current.get(DataComponents.CUSTOM_NAME))
+                && (hasAbility ? trigger(current) && current.is(Items.ECHO_SHARD)
+                && model.equals(current.get(DataComponents.ITEM_MODEL))
+                && COOLDOWN.equals(current.get(DataComponents.USE_COOLDOWN))
+                : barrier(current) && current.is(Items.BARRIER))) return;
 
-        ItemStack replacement = new ItemStack(hasAbility ? ability : Items.BARRIER);
-        replacement.set(DataComponents.CUSTOM_NAME, hasAbility
-                ? state.form.type().getDescription().copy().append(" Ability - Right Click")
-                : Component.literal("No Mob Ability"));
+        ItemStack replacement = new ItemStack(hasAbility ? Items.ECHO_SHARD : Items.BARRIER);
+        replacement.set(DataComponents.CUSTOM_NAME, name);
         CompoundTag tag = new CompoundTag();
         tag.putString(MARKER, hasAbility ? "killshift:ability" : "killshift:barrier");
+        tag.putString(FORM, form);
         replacement.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        if (hasAbility) replacement.set(DataComponents.USE_COOLDOWN, COOLDOWN);
+        if (hasAbility) {
+            replacement.set(DataComponents.ITEM_MODEL, model);
+            replacement.set(DataComponents.USE_COOLDOWN, COOLDOWN);
+        }
         inventory.setItem(SLOT, replacement);
         if (!current.isEmpty() && !locked(current) && !inventory.add(current)) {
             player.spawnAtLocation(player.level(), current);
         }
+    }
+
+    private static String formId(ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data == null ? "" : data.copyTag().getStringOr(FORM, "");
     }
 
     static void clear(ServerPlayer player) {

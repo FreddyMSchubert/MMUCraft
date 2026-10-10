@@ -36,7 +36,9 @@ public final class DropRewards {
                 || !(source.getEntity() instanceof ServerPlayer killer)) return;
         boolean reward = !mob.entityTags().contains(CLAIMED_TAG);
         mob.addTag(CLAIMED_TAG);
-        DEATH_FORMS.put(mob, new DeathForm(MobRegistry.createForm(mob), ShapeView.snapshot(mob)));
+        if (!ShapeManager.isFrozen(killer)) {
+            DEATH_FORMS.put(mob, new DeathForm(MobRegistry.createForm(mob), ShapeView.snapshot(mob)));
+        }
         List<ItemStack> equipment = new ArrayList<>();
         if (reward) {
             for (EquipmentSlot slot : EquipmentSlot.VALUES) {

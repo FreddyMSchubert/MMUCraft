@@ -37,6 +37,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public final class ShapeManager {
+    private static final String FROZEN_TAG = "killshift_shift_frozen";
     private static final Map<UUID, ShapeState> SHAPES = new HashMap<>();
     private static final Map<UUID, CompoundTag> PENDING = new HashMap<>();
     private static final Identifier FORM = id("form");
@@ -50,18 +51,19 @@ public final class ShapeManager {
         if (dead instanceof ServerPlayer player) {
             AbilitySlot.clear(player);
             clear(player);
+            player.removeTag(FROZEN_TAG);
         }
 
         Entity attacker = source.getEntity();
         if (!(attacker instanceof ServerPlayer killer)) {
             return;
         }
+        if (isFrozen(killer)) return;
+        if (dead == killer || dead.entityTags().contains(ShapeView.VIEW_TAG)) return;
         if (dead instanceof ServerPlayer player) {
-            if (killer != player) {
-                EventApi.completed(killer, player);
-                if (victimForm == null) transform(killer, player, true);
-                else transform(killer, victimForm.form, victimForm.viewData, player.position());
-            }
+            EventApi.completed(killer, player);
+            if (victimForm == null) transform(killer, player, true);
+            else transform(killer, victimForm.form, victimForm.viewData, player.position());
         } else if (dead instanceof Mob mob) {
             if (!MobRegistry.supports(mob.getType())) return;
             mob.addTag(DropRewards.CLAIMED_TAG);
@@ -196,6 +198,15 @@ public final class ShapeManager {
         return SHAPES.get(player.getUUID());
     }
 
+    static boolean isFrozen(ServerPlayer player) {
+        return player.entityTags().contains(FROZEN_TAG);
+    }
+
+    static void setFrozen(ServerPlayer player, boolean frozen) {
+        if (frozen) player.addTag(FROZEN_TAG);
+        else player.removeTag(FROZEN_TAG);
+    }
+
     static boolean isActiveView(LivingEntity view) {
         for (ShapeState state : SHAPES.values()) {
             if (state.view == view) return true;
@@ -299,7 +310,10 @@ public final class ShapeManager {
     }
 
     static void afterRespawn(ServerPlayer oldPlayer, ServerPlayer player, boolean alive) {
-        if (!alive) return;
+        if (!alive) {
+            player.removeTag(FROZEN_TAG);
+            return;
+        }
         ShapeState state = get(player);
         if (state == null) return;
         float health = oldPlayer.getHealth();

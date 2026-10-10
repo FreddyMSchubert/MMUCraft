@@ -25,10 +25,11 @@
 		"PlayerCameraCollisionMixin",
 		"PowderSnowFormMixin",
 		"ProjectileViewMixin",
-		"WaterSensitiveFormMixin",
 		"GuardianAttackAccessor",
 		"ShulkerBulletMixin",
 		"ShulkerViewMixin",
+		"SkeletonArrowMixin",
+		"BlazeSnowballMixin",
 		"UnsavedViewMixin",
 		"LocatorPlayerMixin"
 	],

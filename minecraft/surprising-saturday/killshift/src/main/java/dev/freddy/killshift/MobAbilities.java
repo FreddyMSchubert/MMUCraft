@@ -77,12 +77,42 @@ final class MobAbilities {
             Map.entry(EntityTypes.WITCH, Items.GLASS_BOTTLE),
             Map.entry(EntityTypes.WITHER, Items.WITHER_SKELETON_SKULL)
     );
+    private static final Map<EntityType<?>, String> ABILITY_DESCRIPTIONS = Map.ofEntries(
+            Map.entry(EntityTypes.BEE, "Right-click a flower to heal"),
+            Map.entry(EntityTypes.BLAZE, "Right-click to shoot a fireball"),
+            Map.entry(EntityTypes.BREEZE, "Right-click to shoot a wind charge"),
+            Map.entry(EntityTypes.CAMEL, "Right-click on the ground to dash"),
+            Map.entry(EntityTypes.CAMEL_HUSK, "Right-click on the ground to dash"),
+            Map.entry(EntityTypes.CREEPER, "Right-click to explode"),
+            Map.entry(EntityTypes.ENDER_DRAGON, "Right-click to shoot dragon fire"),
+            Map.entry(EntityTypes.ENDERMAN, "Right-click to throw an ender pearl"),
+            Map.entry(EntityTypes.EVOKER, "Right-click to summon evoker fangs"),
+            Map.entry(EntityTypes.GHAST, "Right-click to shoot an explosive fireball"),
+            Map.entry(EntityTypes.GLOW_SQUID, "Right-click to release ink"),
+            Map.entry(EntityTypes.GUARDIAN, "Right-click while aiming at a mob to fire a laser"),
+            Map.entry(EntityTypes.ELDER_GUARDIAN, "Right-click while aiming at a mob to fire a stronger laser"),
+            Map.entry(EntityTypes.LLAMA, "Right-click to spit"),
+            Map.entry(EntityTypes.MOOSHROOM, "Right-click to restore hunger and gain a bowl"),
+            Map.entry(EntityTypes.SHULKER, "Right-click to shoot a levitation bullet"),
+            Map.entry(EntityTypes.SILVERFISH, "Right-click an infestable block to release a silverfish"),
+            Map.entry(EntityTypes.SNIFFER, "Right-click grass to find ancient seeds"),
+            Map.entry(EntityTypes.SQUID, "Right-click to release ink"),
+            Map.entry(EntityTypes.SNOW_GOLEM, "Right-click to throw a snowball"),
+            Map.entry(EntityTypes.TRADER_LLAMA, "Right-click to spit"),
+            Map.entry(EntityTypes.WARDEN, "Right-click to release a sonic boom"),
+            Map.entry(EntityTypes.WITCH, "Right-click to throw a random splash potion"),
+            Map.entry(EntityTypes.WITHER, "Right-click to shoot a wither skull")
+    );
 
     private MobAbilities() {
     }
 
     static Item abilityItem(EntityType<?> type) {
         return ABILITY_ITEMS.get(type);
+    }
+
+    static String abilityDescription(EntityType<?> type) {
+        return ABILITY_DESCRIPTIONS.get(type);
     }
 
     static void tick(ServerPlayer player, ShapeState state) {
@@ -240,13 +270,13 @@ final class MobAbilities {
         state.abilityCooldown = 20;
 
         if (type == EntityTypes.GHAST) {
-            level.addFreshEntity(new LargeFireball(level, player, direction, 1));
+            spawnAtEye(level, player, new LargeFireball(level, player, direction, 1));
         } else if (type == EntityTypes.BLAZE) {
-            level.addFreshEntity(new SmallFireball(level, player, direction));
+            spawnAtEye(level, player, new SmallFireball(level, player, direction));
         } else if (type == EntityTypes.BREEZE) {
             WindCharge charge = new WindCharge(player, level, player.getX(), player.getEyeY(), player.getZ());
             charge.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);
-            level.addFreshEntity(charge);
+            spawnAtEye(level, player, charge);
         } else if (type == EntityTypes.CAMEL || type == EntityTypes.CAMEL_HUSK) {
             if (!player.onGround()) {
                 state.abilityCooldown = 0;
@@ -262,12 +292,13 @@ final class MobAbilities {
                     SoundSource.PLAYERS, 1.0F, 1.0F);
             state.abilityCooldown = 55;
         } else if (type == EntityTypes.WITHER) {
-            level.addFreshEntity(new WitherSkull(level, player, direction));
+            spawnAtEye(level, player, new WitherSkull(level, player, direction));
         } else if (type == EntityTypes.ENDER_DRAGON) {
-            level.addFreshEntity(new DragonFireball(level, player, direction));
+            spawnAtEye(level, player, new DragonFireball(level, player, direction));
         } else if (type == EntityTypes.ENDERMAN) {
-            ItemStack pearl = new ItemStack(Items.ENDER_PEARL);
-            Projectile.spawnProjectileFromRotation(ThrownEnderpearl::new, level, pearl, player, 0.0F, 1.5F, 1.0F);
+            ThrownEnderpearl pearl = new ThrownEnderpearl(level, player, new ItemStack(Items.ENDER_PEARL));
+            pearl.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);
+            spawnAtEye(level, player, pearl);
         } else if (type == EntityTypes.GUARDIAN || type == EntityTypes.ELDER_GUARDIAN) {
             LivingEntity target = targetInSight(player, 15.0);
             if (target == null || !(state.view instanceof Guardian guardian)) {
@@ -287,12 +318,12 @@ final class MobAbilities {
             if (target == null) {
                 bullet = new ShulkerBullet(EntityTypes.SHULKER_BULLET, level);
                 bullet.setOwner(player);
-                bullet.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
                 bullet.shoot(direction.x, direction.y, direction.z, 0.8F, 0.0F);
             } else {
                 bullet = new ShulkerBullet(level, player, ShapeManager.combatTarget(target), Direction.Axis.Y);
+                bullet.shoot(direction.x, direction.y, direction.z, 0.8F, 0.0F);
             }
-            level.addFreshEntity(bullet);
+            spawnAtEye(level, player, bullet);
         } else if (type == EntityTypes.WITCH) {
             var potionType = switch (player.getRandom().nextInt(4)) {
                 case 0 -> Potions.POISON;
@@ -301,7 +332,9 @@ final class MobAbilities {
                 default -> Potions.HARMING;
             };
             ItemStack potion = PotionContents.createItemStack(Items.SPLASH_POTION, potionType);
-            Projectile.spawnProjectileFromRotation(ThrownSplashPotion::new, level, potion, player, -20.0F, 0.75F, 8.0F);
+            ThrownSplashPotion splash = new ThrownSplashPotion(level, player, potion);
+            splash.shoot(direction.x, direction.y, direction.z, 0.75F, 0.0F);
+            spawnAtEye(level, player, splash);
         } else if (type == EntityTypes.EVOKER) {
             summonFangs(level, player, direction);
         } else if (type == EntityTypes.CREEPER) {
@@ -317,15 +350,15 @@ final class MobAbilities {
         } else if (type == EntityTypes.LLAMA || type == EntityTypes.TRADER_LLAMA) {
             LlamaSpit spit = new LlamaSpit(EntityTypes.LLAMA_SPIT, level);
             spit.setOwner(player);
-            spit.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
-            spit.shoot(direction.x, direction.y, direction.z, 1.5F, 4.0F);
-            level.addFreshEntity(spit);
+            spit.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);
+            spawnAtEye(level, player, spit);
         } else if (type == EntityTypes.SQUID || type == EntityTypes.GLOW_SQUID) {
             level.sendParticles(ParticleTypes.SQUID_INK, player.getX(), player.getEyeY(), player.getZ(),
                     80, 1.2, 0.8, 1.2, 0.08);
         } else if (type == EntityTypes.SNOW_GOLEM) {
-            Projectile.spawnProjectileFromRotation(Snowball::new, level, new ItemStack(Items.SNOWBALL),
-                    player, 0.0F, 1.5F, 1.0F);
+            Snowball snowball = new Snowball(level, player, new ItemStack(Items.SNOWBALL));
+            snowball.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);
+            spawnAtEye(level, player, snowball);
         } else if (type == EntityTypes.SNIFFER) {
             if (!digSeed(player)) {
                 state.abilityCooldown = 0;
@@ -346,6 +379,11 @@ final class MobAbilities {
         }
         AbilitySlot.startCooldown(player, state);
         return true;
+    }
+
+    private static void spawnAtEye(ServerLevel level, ServerPlayer player, Projectile projectile) {
+        projectile.setPos(player.getX(), player.getEyeY(), player.getZ());
+        level.addFreshEntity(projectile);
     }
 
     private static boolean digSeed(ServerPlayer player) {

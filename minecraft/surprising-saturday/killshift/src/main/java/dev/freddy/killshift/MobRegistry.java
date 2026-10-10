@@ -117,6 +117,7 @@ final class MobRegistry {
         if (WALL_CLIMBERS.contains(mob) && WALL_CLIMBERS.contains(shape)) {
             return true;
         }
-        return mob == EntityTypes.CREEPER && shape == EntityTypes.SKELETON;
+        return mob == EntityTypes.CREEPER && shape == EntityTypes.SKELETON
+                || mob == EntityTypes.BREEZE && shape == EntityTypes.CREEPER;
     }
 }

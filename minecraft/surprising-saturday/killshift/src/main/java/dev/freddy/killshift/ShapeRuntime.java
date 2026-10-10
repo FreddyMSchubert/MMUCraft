@@ -20,8 +20,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -63,7 +61,6 @@ final class ShapeRuntime {
         tickBouncing(player, traits);
         tickEnvironment(player, state);
         tickLookReactions(player, state);
-        tickInfiniteArrows(player, type);
         tickSquidFlee(player, state);
         if (type == EntityTypes.IRON_GOLEM && player.isInWater()) {
             Vec3 movement = player.getDeltaMovement();
@@ -117,13 +114,14 @@ final class ShapeRuntime {
     private static void tickFlight(ServerPlayer player, ShapeState state) {
         MobTraits traits = state.form.traits();
         EntityType<?> type = state.form.type();
-        boolean mayFly = traits.flying() || player.isCreative() || player.isSpectator();
+        boolean forcedFlight = traits.flying() && (type != EntityTypes.BLAZE || !player.isInWater());
+        boolean mayFly = forcedFlight || player.isCreative() || player.isSpectator();
         boolean oldMayFly = player.getAbilities().mayfly;
         boolean oldFlying = player.getAbilities().flying;
         float oldSpeed = player.getAbilities().getFlyingSpeed();
         player.getAbilities().mayfly = mayFly;
         if (traits.flying()) {
-            player.getAbilities().flying = true;
+            player.getAbilities().flying = forcedFlight;
         }
 
         double nativeSpeed = state.form.attributes().getOrDefault(Attributes.FLYING_SPEED, 0.4);
@@ -158,7 +156,8 @@ final class ShapeRuntime {
     private static void tickBreathing(ServerPlayer player, ShapeState state) {
         EntityType<?> type = state.form.type();
         if (type == EntityTypes.IRON_GOLEM || type == EntityTypes.DROWNED
-                || type == EntityTypes.HAPPY_GHAST) {
+                || type == EntityTypes.HAPPY_GHAST || type == EntityTypes.TURTLE
+                || type == EntityTypes.GUARDIAN || type == EntityTypes.ELDER_GUARDIAN) {
             player.setAirSupply(player.getMaxAirSupply());
             return;
         }
@@ -219,7 +218,13 @@ final class ShapeRuntime {
             player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 10, 0, false, false, false));
         }
 
+        if (ShapeManager.isWaterSensitive(player) && player.isInWaterOrRain()) {
+            player.hurtServer(player.level(), player.damageSources().drown(), 1.0F);
+        }
+        if (traits.sunSensitive() && player.isInWaterOrRain()) player.clearFire();
+
         if (traits.sunSensitive()
+                && !player.isInWaterOrRain()
                 && player.getItemBySlot(EquipmentSlot.HEAD).isEmpty()
                 && player.level().isBrightOutside()
                 && player.level().canSeeSky(BlockPos.containing(player.getEyePosition()))) {
@@ -281,18 +286,6 @@ final class ShapeRuntime {
                 creeper.setDeltaMovement(creeper.getDeltaMovement().add(away.normalize().scale(0.12)));
                 creeper.setTarget(null);
             }
-        }
-    }
-
-    private static void tickInfiniteArrows(ServerPlayer player, EntityType<?> type) {
-        boolean skeleton = type == EntityTypes.SKELETON
-                || type == EntityTypes.STRAY
-                || type == EntityTypes.BOGGED
-                || type == EntityTypes.PARCHED;
-        if (skeleton
-                && player.getMainHandItem().is(Items.BOW)
-                && !player.getInventory().contains(new ItemStack(Items.ARROW))) {
-            player.getInventory().add(new ItemStack(Items.ARROW));
         }
     }
 

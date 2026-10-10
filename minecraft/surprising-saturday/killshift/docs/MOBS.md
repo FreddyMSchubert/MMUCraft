@@ -8,7 +8,7 @@ All listed mobs can become forms, including giants. A player kill copies the vic
 
 Each new sneak press plays the form's ambient sound. Holding sneak plays it once. The display entity follows the player's position and rotation. It keeps the source entity's equipment, cube size, and baby age. It clears inherited resting, sleeping, sitting, curled, inflated, and wall-attached poses so moving forms look awake. It clears stale anger, nectar, stung, and lit-fuse states; striders change their warm or cold appearance with their surroundings. Aquatic forms can sprint and swim in water; camel forms can sprint on land. Other mob forms cannot use player sprint or swim movement. A zombie form becomes a drowned form when it starts drowning, without killing the player. A player returns to normal after death. A form and its visual data stay active after a player rejoins. On a form change, the old display stays in the world with the player's health and effects. Its mob AI resumes. A player-killed mob gives its normal non-equipment item drops directly to the killer's inventory, transfers every equipped item once, and gives its experience directly to the killer. Vanilla equipment drops are suppressed. If the inventory is full, items wait until space is available. A form left behind by a shift gives no further drops or experience when killed; another mob of the same type still gives its own drops. The killed mob has no lingering death animation or death particles. The killer moves to the dead entity's position.
 
-Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
+Mobs do not target a player with the same exact form. Undead mobs do not target undead forms. Spiders and cave spiders do not target either spider form. Creepers do not target skeleton forms, and breezes do not target creeper forms. Iron golems target hostile monster forms, except creepers. Wild wolves target sheep forms. Foxes target chicken forms and do not flee from them.
 
 All forms can eat beetroot and beetroot soup. Other foods follow the form's natural diet. Taming foods count as food, including seeds for parrots and bones for wolves. A cookie kills a parrot form. Panda forms eat bamboo. Animal forms use the game's food check. Player forms use normal player food rules. A rejected food use shows the attempted food and the full allowed-food list.
 
@@ -18,12 +18,12 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 | --- | --- | --- |
 | Forced flight | Allay, bat, bee, blaze, ender dragon, ghast, happy ghast, parrot, phantom, vex, wither | Player flight stays active. |
 | Aquatic movement | Axolotl, cod, dolphin, drowned, elder guardian, glow squid, guardian, happy ghast, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Water movement efficiency is moderate. Sprint and swim controls work in water. Fish and other water-only forms have land movement suppressed. Squid and salmon displays sit lower in water and appear at up to 30% scale to their owner. Other water-only displays are lowered for their owner when they block the camera. Other players see full-size displays. |
-| Water breathing | Axolotl, cod, drowned, elder guardian, glow squid, guardian, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, zombie nautilus | Air stays full underwater. Drowned also breathe on land. Other forms use their mob's maximum air supply on land and take drowning damage after it runs out. Rain rehydrates axolotls. |
-| Sun-sensitive forms | Types in the game's `burn_in_daylight` tag | Sunlight ignites the player when the head slot is empty. |
+| Water breathing | Axolotl, cod, drowned, elder guardian, glow squid, guardian, happy ghast, nautilus, pufferfish, salmon, squid, tadpole, tropical fish, turtle, zombie nautilus | Air stays full underwater. Drowned, guardians, happy ghasts, and turtles also keep full air on land. Other forms use their mob's maximum air supply on land and take drowning damage after it runs out. Rain rehydrates axolotls. |
+| Sun-sensitive forms | Types in the game's `burn_in_daylight` tag | Sunlight ignites the player when the head slot is empty and the player is dry. Water or rain extinguishes the form. |
 | Wall climbing | Spider, cave spider | Movement input near a wall gives a steady upward climb. |
 | Bounce movement | Slime, magma cube, sulfur cube | Ground movement has no horizontal speed. Air movement works, so the player must jump to travel. |
 | Lava-safe | Blaze, magma cube, strider, wither, wither skeleton | Fire is cleared. The form receives fire resistance. |
-| Jump and movement | Every form | Killshift copies jump strength. Horse-family forms also keep the source movement speed; other land mob speed is converted for player controls. Camel and camel husk forms can sprint. Water-only forms can make a small horizontal nudge while jumping on land. |
+| Jump and movement | Every form | Killshift copies jump strength. Horse-family forms also keep the source movement speed; other land mob speed is converted for player controls. Breezes move at 0.08 speed and have 0.8 jump strength; they cannot sprint. Camel and camel husk forms can sprint. Water-only forms can make a small horizontal nudge while jumping on land. |
 | No fall damage | All forced-flight forms and types in the game's `fall_damage_immune` tag | Fall damage multiplier is zero. Chicken descent is also limited to a slow speed. |
 | Powder snow walking | Types in the game's `powder_snow_walkable_mobs` tag | The form stands on powder snow without leather boots. |
 | Water sensitivity | Enderman, blaze, strider, snow golem | Water and rain deal damage. |
@@ -32,22 +32,22 @@ All forms can eat beetroot and beetroot soup. Other foods follow the form's natu
 
 ## Active and reactive behavior
 
-The ninth hotbar slot holds a marked item that matches the active ability. For example, a creeper holds TNT. Right-click with it while aiming at air, a block, or an entity. The slot holds a marked barrier for all other forms, including the normal player. The item stays in that slot. Its cooldown overlay shows the remaining ability wait.
+The ninth hotbar slot holds an inert trigger that displays the ability's icon and explains what right-click does. It never performs the icon item's normal action or gets consumed. The slot holds a marked barrier for forms without an ability, including the normal player. Its cooldown overlay shows the remaining ability wait. Projectiles start at the player's eye and follow the view direction.
 
 | Form | Behavior |
 | --- | --- |
 | Bee | Damage makes the bee angry for 10 seconds. Anger increases flight speed. A melee hit poisons the target. Right-click a flower with the marked honeycomb to heal. |
-| Blaze | Right-click shoots a small fireball. |
-| Bogged | A bow receives a replacement arrow when no arrow remains. |
-| Breeze | Right-click shoots a wind charge. |
+| Blaze | Right-click shoots a small fireball. Water and rain damage the form, snowballs deal three damage, and underwater flight slows down. |
+| Bogged | A bow shoots unlimited poison arrows. |
+| Breeze | Right-click shoots a wind charge. The form moves slowly, jumps high, cannot sprint, and is friendly to creeper forms. |
 | Camel, camel husk | Right-click on the ground to dash forward and upward. The dash uses the form's movement speed and jump strength and has a 55-tick cooldown. |
 | Cat | Nearby creepers lose their target and move away. |
 | Cave spider | A melee hit poisons the target. The form can climb walls and ceilings. |
 | Creaking | The player takes no damage. Looking at the form freezes walking, sprinting, crouching, and jumping, whether the observer is a player or a mob. |
-| Creeper | Right-click with the marked TNT to explode and die. The explosion radius is 4.5 blocks, or 9 blocks when charged. |
+| Creeper | Right-click to explode and die. The explosion radius is 4.5 blocks, or 9 blocks when charged. Its own death and display give no kill credit; other victims can. |
 | Elder guardian | A melee hit gives mining fatigue to the target. Right-click charges a stronger laser on a living target in sight. |
 | Ender dragon | Right-click shoots a dragon fireball. |
-| Enderman | Right-click with the marked ender pearl to throw a pearl. Water and rain cause damage. Direct observation gives a large speed increase. |
+| Enderman | Right-click to throw an unlimited ender pearl. Water and rain cause damage. Direct observation gives a large speed increase. |
 | Evoker | Right-click raises a line of evoker fangs. |
 | Ghast | Right-click shoots an explosive fireball. |
 | Glow squid | Right-click releases squid ink particles. |
@@ -55,15 +55,15 @@ The ninth hotbar slot holds a marked item that matches the active ability. For e
 | Iron golem | The form sinks in water and cannot use player swim movement. |
 | Llama | Right-click spits in the look direction. |
 | Mooshroom | Right-click restores six hunger points and adds a bowl. |
-| Parched | A bow receives a replacement arrow when no arrow remains. |
+| Parched | A bow shoots unlimited normal arrows. |
 | Shulker | Each new jump press attempts a safe random teleport. Right-click shoots a levitation bullet that homes toward a living target in sight or fires in the look direction without homing when there is none. Bullets do not target or hit shulker-transformed players. |
 | Silverfish | Right-click an infestable block to remove it and summon an allied silverfish. |
-| Skeleton | A bow receives a replacement arrow when no arrow remains. |
+| Skeleton | A bow shoots unlimited normal arrows. |
 | Sniffer | Right-click on a grass block finds torchflower seeds or a pitcher pod. |
-| Snow golem | Right-click throws a snowball. |
+| Snow golem | Right-click throws unlimited snowballs. Water and rain damage the form. |
 | Squid | Right-click releases squid ink particles. Damage gives a short water speed boost. |
 | Glow squid | Right-click releases squid ink particles. Damage gives a short water speed boost. |
-| Stray | A bow receives a replacement arrow when no arrow remains. |
+| Stray | A bow shoots unlimited slowness arrows. |
 | Trader llama | Right-click spits in the look direction. |
 | Vex | The server gives the player no-physics movement and forced flight. The vanilla client can still block movement through walls. |
 | Warden | Right-click fires a sonic boom in the look direction, with or without an entity target. |
@@ -82,9 +82,9 @@ The following table lists the supported forms in this build. `Common` means that
 | Axolotl | Aquatic movement and water breathing |
 | Bat | Forced flight and no fall damage |
 | Bee | Forced flight, no land speed, anger flight speed, poison hit, flower healing, and no fall damage |
-| Blaze | Forced flight, lava safety, fireball, and no fall damage |
-| Bogged | Sunlight rule and arrow refill |
-| Breeze | Wind charge |
+| Blaze | Forced flight, lava safety, fireball, wet and snowball damage, and no fall damage |
+| Bogged | Sunlight rule and unlimited poison arrows |
+| Breeze | Wind charge, slow movement, high jump, and creeper friendship |
 | Camel | Source jump strength and forward dash |
 | Camel husk | Source jump strength and forward dash |
 | Cat | Creeper repulsion and no fall damage |
@@ -98,7 +98,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Dolphin | Aquatic movement |
 | Donkey | Source jump strength |
 | Drowned | Aquatic movement, breathing on land and underwater, and sunlight rule |
-| Elder guardian | Aquatic movement, water breathing, mining-fatigue hit, and stronger laser |
+| Elder guardian | Aquatic movement, full air supply on land and underwater, mining-fatigue hit, and stronger laser |
 | Enderman | Pearl, wet damage, watched speed, and invert post effect |
 | Endermite | Invert post effect |
 | Ender dragon | Forced flight, dragon fireball, and no fall damage |
@@ -110,7 +110,7 @@ The following table lists the supported forms in this build. `Common` means that
 | Happy ghast | Forced flight, aquatic movement, full air supply underwater, and no fall damage |
 | Glow squid | Aquatic movement, water breathing, ink, and damage speed boost |
 | Goat | Source jump strength |
-| Guardian | Aquatic movement, water breathing, mining-fatigue hit, and laser |
+| Guardian | Aquatic movement, full air supply on land and underwater, mining-fatigue hit, and laser |
 | Hoglin | Common |
 | Horse | Source jump strength |
 | Husk | Common |
@@ -138,20 +138,20 @@ The following table lists the supported forms in this build. `Common` means that
 | Sheep | Wild wolves pursue this form |
 | Shulker | Jump teleport, homing levitation bullet, and invert post effect |
 | Silverfish | Infest a block to summon an ally |
-| Skeleton | Sunlight rule, arrow refill, and creeper peace |
+| Skeleton | Sunlight rule, unlimited arrows, and creeper peace |
 | Skeleton horse | Source jump strength |
 | Slime | Bounce movement |
 | Sniffer | Ancient seed digging |
-| Snow golem | Snowball throw |
+| Snow golem | Unlimited snowballs and water or rain damage |
 | Spider | Climbing and spider post effect |
 | Squid | Aquatic movement, water breathing, ink, and damage speed boost |
-| Stray | Sunlight rule and arrow refill |
+| Stray | Sunlight rule and unlimited slowness arrows |
 | Strider | Lava safety |
 | Sulfur cube | Bounce movement |
 | Tadpole | Aquatic movement and water breathing |
 | Trader llama | Spit |
 | Tropical fish | Aquatic movement and water breathing |
-| Turtle | Aquatic movement |
+| Turtle | Aquatic movement and full air supply |
 | Vex | Forced flight, server no physics, and no fall damage |
 | Villager | Common |
 | Vindicator | Common |

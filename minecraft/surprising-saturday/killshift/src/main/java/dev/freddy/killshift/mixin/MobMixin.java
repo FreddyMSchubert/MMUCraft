@@ -29,6 +29,9 @@ abstract class MobMixin {
     @Inject(method = "serverAiStep", at = @At("HEAD"))
     private void killshift$targetHostileForms(CallbackInfo callback) {
         Mob mob = (Mob) (Object) this;
+        if (mob.getTarget() instanceof ServerPlayer target && ShapeManager.isFriendly(mob, target)) {
+            mob.setTarget(null);
+        }
         if (mob.isNoAi() || mob.getTarget() != null || mob.tickCount % 10 != 0) return;
         boolean golem = mob instanceof IronGolem;
         boolean wolf = mob instanceof Wolf dog && !dog.isTame();

@@ -17,18 +17,33 @@ final class ShiftCommand {
     private ShiftCommand() { }
 
     static void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-                dispatcher.register(Commands.literal("shift")
-                        .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
-                        .then(Commands.argument("first", StringArgumentType.word())
-                                .suggests((context, suggestions) -> suggest(context.getSource(), suggestions))
-                                .executes(context -> shift(context.getSource(), null,
-                                        StringArgumentType.getString(context, "first")))
-                                .then(Commands.argument("second", StringArgumentType.word())
-                                        .suggests((context, suggestions) -> suggest(context.getSource(), suggestions))
-                                        .executes(context -> shift(context.getSource(),
-                                                StringArgumentType.getString(context, "first"),
-                                                StringArgumentType.getString(context, "second")))))));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            dispatcher.register(Commands.literal("freeze")
+                    .requires(source -> source.getPlayer() != null)
+                    .executes(context -> setFrozen(context.getSource(), true)));
+            dispatcher.register(Commands.literal("unfreeze")
+                    .requires(source -> source.getPlayer() != null)
+                    .executes(context -> setFrozen(context.getSource(), false)));
+            dispatcher.register(Commands.literal("shift")
+                    .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+                    .then(Commands.argument("first", StringArgumentType.word())
+                            .suggests((context, suggestions) -> suggest(context.getSource(), suggestions))
+                            .executes(context -> shift(context.getSource(), null,
+                                    StringArgumentType.getString(context, "first")))
+                            .then(Commands.argument("second", StringArgumentType.word())
+                                    .suggests((context, suggestions) -> suggest(context.getSource(), suggestions))
+                                    .executes(context -> shift(context.getSource(),
+                                            StringArgumentType.getString(context, "first"),
+                                            StringArgumentType.getString(context, "second"))))));
+        });
+    }
+
+    private static int setFrozen(CommandSourceStack source, boolean frozen) {
+        ShapeManager.setFrozen(source.getPlayer(), frozen);
+        source.sendSuccess(() -> Component.literal(frozen
+                ? "Shift frozen. Kills will not change your form or earn event points."
+                : "Shift unfrozen. Kills can change your form and earn event points."), false);
+        return 1;
     }
 
     private static java.util.concurrent.CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggest(

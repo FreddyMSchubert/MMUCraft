@@ -26,6 +26,10 @@ record MobForm(
                         Math.clamp(normalized.getOrDefault(Attributes.MOVEMENT_SPEED, 0.1), 0.08, 0.1));
             }
         }
+        if (type == EntityTypes.BREEZE) {
+            normalized.put(Attributes.MOVEMENT_SPEED, 0.08);
+            normalized.put(Attributes.JUMP_STRENGTH, 0.8);
+        }
         attributes = Map.copyOf(normalized);
     }
 

@@ -32,6 +32,8 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 - Mining a creaking heart turns the player into a creaking and records a creaking completion for event score.
 - The killer moves to the dead entity's position.
 - A transformed player returns to normal on death.
+- `/freeze` keeps your current form when you kill a mob or player and prevents those kills from earning event points. `/unfreeze` resumes shifting and scoring. Death also unfreezes you. Freeze stays active across reconnects.
+- Freeze does not change kill rewards. Mining a creaking heart does not shift or score while frozen.
 - A player kill gives the killer a player form with the dead player's skin.
 - If the dead player has a mob form, the killer gets that mob form and its appearance.
 - A form stays active when the player leaves and rejoins.
@@ -52,6 +54,8 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. Horse-family forms use the killed animal's exact movement speed and jump strength. It converts other land mob movement speed for player controls. The player's scale places the camera at the form's actual eye height. It also changes the player hitbox.
 
 Aquatic forms have moderate water movement efficiency and can sprint and swim in water. Happy ghasts also have aquatic movement and keep full air supply underwater. Camel and camel husk forms can sprint on land. Fish and squid use player-scale movement speed instead of the much higher default mob speed. Fish and bees have their land movement suppressed. Water-only forms can jump on land but gain little horizontal motion while airborne. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly. Other mob forms cannot use player sprint or swim movement. Iron golems sink in water and keep their air supply. Drowned forms breathe on land and underwater. Water-only forms use their mob's maximum air supply on land, including the axolotl's longer timer. Blaze, strider, snow golem, and enderman forms take damage in water and rain. Forms in Minecraft's fall-damage-immune and powder-snow-walkable mob tags inherit those rules. Creaking forms take no damage. When a player or mob looks directly at a creaking form, the player cannot walk, sprint, crouch, or jump.
+
+Turtles and guardians keep full air supply on land and underwater. Sun-sensitive forms stop burning when submerged. Blaze forms slow down underwater and take three damage from snowballs. Breezes have slow ground speed and a high jump, cannot sprint, and leave creeper forms alone. The ninth-slot ability trigger has an inert base item with the mob ability's icon and a description of its action. It never consumes the displayed pearl, snowball, wind charge, or totem. Ability projectiles launch from the player's eye in the view direction. Skeleton and parched bows supply unlimited normal arrows; bogged and stray bows supply unlimited poison and slowness arrows.
 
 Killshift keeps attack damage at one or more. A weak form can therefore kill another mob and change form again.
 
@@ -101,7 +105,6 @@ See [docs/MOBS.md](docs/MOBS.md) for the complete behavior list.
 - Powder-snow walking is enforced by the server. A vanilla client still predicts player collision, so a form without leather boots may briefly dip before the server corrects it.
 - The display entity follows the player each tick. Network interpolation can still cause visual delay.
 - Some mobs have only the common form behavior. The mob list marks these cases.
-- Skeleton arrow refill keeps one arrow in the inventory. A player can remove that arrow, so this is not an anti-duplication system.
 - If no safe location exists in the allowed respawn ring, Minecraft keeps its normal respawn position.
 
 ## Admin shift command

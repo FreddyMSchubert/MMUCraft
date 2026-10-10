@@ -32,7 +32,8 @@ public final class Killshift implements ModInitializer {
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(ShapeManager::allowDamage);
         AttackEntityCallback.EVENT.register(ShapeManager::onAttack);
         PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
-            if (state.is(Blocks.CREAKING_HEART) && player instanceof ServerPlayer serverPlayer) {
+            if (state.is(Blocks.CREAKING_HEART) && player instanceof ServerPlayer serverPlayer
+                    && !ShapeManager.isFrozen(serverPlayer)) {
                 Mob creaking = EntityTypes.CREAKING.create(level, EntitySpawnReason.COMMAND);
                 if (creaking != null) {
                     EventApi.completed(serverPlayer, creaking);

@@ -339,34 +339,43 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	capacitySnapshot() {
+		const now = Date.now();
+		const proxyOnline = this.proxyIsOnline(now);
+		const servers = this.servers().map((server) => ({
+			name: server.name,
+			maxPlayers: server.max_players,
+			playerCount: proxyOnline
+				? this.livePlayers.filter(
+						(player) =>
+							player.serverName === server.name &&
+							!isExemptAdmin(this.identities.findByUuid(player.uuid)),
+					).length
+				: null,
+			memberWaitingCount: proxyOnline
+				? this.connectedPlayers.filter(
+						(player) =>
+							player.state === 'queued' &&
+							player.targetServerName === server.name &&
+							this.identities.findByUuid(player.uuid)?.is_member === 1,
+					).length
+				: 0,
+			waitingCount: proxyOnline
+				? this.connectedPlayers.filter(
+						(player) =>
+							player.state === 'queued' &&
+							player.targetServerName === server.name &&
+							this.identities.findByUuid(player.uuid)?.is_member !== 1,
+					).length
+				: 0,
+		}));
 		return {
-			servers: this.servers().map((server) => ({
-				name: server.name,
-				maxPlayers: server.max_players,
-				playerCount: this.proxyIsOnline()
-					? this.livePlayers.filter(
-							(player) =>
-								player.serverName === server.name &&
-								!isExemptAdmin(this.identities.findByUuid(player.uuid)),
-						).length
-					: null,
-				memberWaitingCount: this.proxyIsOnline()
-					? this.connectedPlayers.filter(
-							(player) =>
-								player.state === 'queued' &&
-								player.targetServerName === server.name &&
-								this.identities.findByUuid(player.uuid)?.is_member === 1,
-						).length
-					: 0,
-				waitingCount: this.proxyIsOnline()
-					? this.connectedPlayers.filter(
-							(player) =>
-								player.state === 'queued' &&
-								player.targetServerName === server.name &&
-								this.identities.findByUuid(player.uuid)?.is_member !== 1,
-						).length
-					: 0,
-			})),
+			servers,
+			showEventCapacity:
+				proxyOnline &&
+				Boolean(this.events.active(now)) &&
+				this.settings().event_override !== 0 &&
+				this.liveServers.get(EVENT_SERVER)?.online === true &&
+				(servers.find((server) => server.name === EVENT_SERVER)?.playerCount ?? 0) > 0,
 		};
 	}
 

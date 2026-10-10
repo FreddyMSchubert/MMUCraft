@@ -25,7 +25,9 @@ import net.minecraft.world.phys.Vec3;
 
 final class ShapeRuntime {
     private static final Identifier STARED_SPEED = id("stared_speed");
+    private static final Identifier FROZEN_SPEED = id("creaking_frozen_speed");
     private static final Identifier SQUID_FLEE_SPEED = id("squid_flee_speed");
+    private static final Identifier HOP_GROUND_SPEED = id("hop_ground_speed");
 
     private ShapeRuntime() {
     }
@@ -49,6 +51,7 @@ final class ShapeRuntime {
         }
 
         tickFlight(player, state);
+        tickHopSpeed(player);
         tickLandMovement(player, traits);
         MobAbilities.tick(player, state);
         tickBreathing(player, state);
@@ -82,7 +85,18 @@ final class ShapeRuntime {
 
     static void clear(ServerPlayer player) {
         remove(player, Attributes.MOVEMENT_SPEED, STARED_SPEED);
+        remove(player, Attributes.MOVEMENT_SPEED, FROZEN_SPEED);
         remove(player, Attributes.MOVEMENT_SPEED, SQUID_FLEE_SPEED);
+        remove(player, Attributes.MOVEMENT_SPEED, HOP_GROUND_SPEED);
+    }
+
+    private static void tickHopSpeed(ServerPlayer player) {
+        if (ShapeManager.landHopSpeed(player) >= 0.0 && player.onGround()) {
+            add(player, Attributes.MOVEMENT_SPEED, HOP_GROUND_SPEED, -1.0,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        } else {
+            remove(player, Attributes.MOVEMENT_SPEED, HOP_GROUND_SPEED);
+        }
     }
 
     private static void tickSquidFlee(ServerPlayer player, ShapeState state) {
@@ -138,21 +152,25 @@ final class ShapeRuntime {
     }
 
     private static void tickBreathing(ServerPlayer player, ShapeState state) {
-        if (state.form.type() == EntityTypes.IRON_GOLEM) {
+        EntityType<?> type = state.form.type();
+        if (type == EntityTypes.IRON_GOLEM || type == EntityTypes.DROWNED) {
             player.setAirSupply(player.getMaxAirSupply());
             return;
         }
         if (!state.form.traits().waterBreathing()) {
             return;
         }
-        if (player.isEyeInFluid(FluidTags.WATER)) {
-            state.landAir = player.getMaxAirSupply();
-            player.setAirSupply(state.landAir);
+        int maxLandAir = state.view == null ? player.getMaxAirSupply() : state.view.getMaxAirSupply();
+        if (player.isEyeInFluid(FluidTags.WATER)
+                || type == EntityTypes.AXOLOTL && player.isInWaterOrRain()) {
+            state.landAir = maxLandAir;
+            player.setAirSupply(player.getMaxAirSupply());
             return;
         }
 
         state.landAir--;
-        player.setAirSupply(state.landAir);
+        player.setAirSupply((int) Math.ceil(Math.max(0, state.landAir)
+                * (double) player.getMaxAirSupply() / Math.max(1, maxLandAir)));
         if (state.landAir <= -20) {
             state.landAir = 0;
             player.hurtServer(player.level(), player.damageSources().drown(), 2.0F);
@@ -202,20 +220,18 @@ final class ShapeRuntime {
                 && player.level().canSeeSky(BlockPos.containing(player.getEyePosition()))) {
             player.igniteForSeconds(8.0F);
         }
-
-        if (state.form.type() == EntityTypes.ENDERMAN
-                && player.tickCount % 20 == 0
-                && (player.isInWaterOrRain() || player.level().isRainingAt(player.blockPosition()))) {
-            player.hurtServer(player.level(), player.damageSources().drown(), 1.0F);
-        }
     }
 
     private static void tickLookReactions(ServerPlayer player, ShapeState state) {
         boolean watched = isWatched(player);
         if (state.form.type() == EntityTypes.CREAKING && watched) {
+            add(player, Attributes.MOVEMENT_SPEED, FROZEN_SPEED, -1.0,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             Vec3 movement = player.getDeltaMovement();
             player.setDeltaMovement(0.0, movement.y, 0.0);
             syncMotion(player);
+        } else {
+            remove(player, Attributes.MOVEMENT_SPEED, FROZEN_SPEED);
         }
 
         if (state.form.type() == EntityTypes.ENDERMAN && watched) {
@@ -226,7 +242,7 @@ final class ShapeRuntime {
         }
     }
 
-    private static boolean isWatched(ServerPlayer target) {
+    static boolean isWatched(ServerPlayer target) {
         for (ServerPlayer observer : target.level().players()) {
             if (observer == target || observer.isSpectator() || observer.distanceToSqr(target) > 1024.0) {
                 continue;
@@ -291,7 +307,7 @@ final class ShapeRuntime {
         return Identifier.fromNamespaceAndPath(Killshift.MOD_ID, path);
     }
 
-    private static void syncMotion(ServerPlayer player) {
+    static void syncMotion(ServerPlayer player) {
         if (!player.hasDisconnected()) {
             player.connection.send(new ClientboundSetEntityMotionPacket(player));
         }

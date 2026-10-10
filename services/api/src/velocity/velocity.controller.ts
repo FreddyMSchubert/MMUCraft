@@ -31,6 +31,25 @@ export class VelocityPublicController {
 		this.sessions.requireSession(cookieHeader);
 		return this.velocity.capacitySnapshot();
 	}
+
+	@Get('online-players')
+	onlinePlayers(@Headers('cookie') cookieHeader: string | undefined) {
+		this.sessions.requireSession(cookieHeader);
+		return {
+			players: this.velocity
+				.adminSnapshot()
+				.players.filter((player) => player.state === 'playing')
+				.sort((left, right) =>
+					left.username.localeCompare(right.username, 'en', { sensitivity: 'base' }),
+				)
+				.map((player) => ({
+					minecraftUsername: player.username,
+					color: player.color,
+					isCommittee: player.isCommittee,
+					customEmojis: player.customEmojis,
+				})),
+		};
+	}
 }
 
 @Controller('api/admin/velocity')

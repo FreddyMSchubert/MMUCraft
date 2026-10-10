@@ -62,7 +62,7 @@ final class EventDiscordBridge {
             return;
         }
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, type) ->
-                publish(sender, message.signedContent()));
+                publish(sender, "chat", message.signedContent()));
         ServerMessageEvents.GAME_MESSAGE.register((server, message, overlay) -> {
             if (overlay || !(message.getContents() instanceof TranslatableContents translated)
                     || !translated.getKey().startsWith("death.")) return;
@@ -73,15 +73,11 @@ final class EventDiscordBridge {
             if (player == null) return;
             String content = message.getString();
             String name = player.getDisplayName().getString();
-            publish(player, "☠️ " + (content.startsWith(name)
-                    ? content.substring(name.length()).stripLeading() : content));
-        });
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            ServerPlayer player = handler.getPlayer();
-            publish(player, "➡️ joined Killshift. (" + onlineCount(server, null) + " online)");
+            publish(player, "death", content.startsWith(name)
+                    ? content.substring(name.length()).stripLeading() : content);
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
-                publish(handler.getPlayer(), "⬅️ left Killshift. ("
+                publish(handler.getPlayer(), "leave", "left Killshift. ("
                         + onlineCount(server, handler.getPlayer()) + " online)"));
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             WORKER.scheduleWithFixedDelay(() -> {
@@ -115,13 +111,22 @@ final class EventDiscordBridge {
         return false;
     }
 
-    private static void publish(ServerPlayer player, String content) {
+    static void publishJoin(ServerPlayer player) {
+        publish(player, "join", "joined Killshift. (" + onlineCount(player.level().getServer(), null) + " online)");
+    }
+
+    private static void publish(ServerPlayer player, String type, String content) {
         if (!enabled || WORKER.isShutdown() || content.isBlank()) return;
+        EventApi.DiscordPresentation profile = EventApi.discordPresentation(player);
         JsonObject payload = new JsonObject();
-        payload.addProperty("username", player.getName().getString());
-        payload.addProperty("content", content.length() > 1900 ? content.substring(0, 1900) : content);
-        if (!AVATAR_BASE_URL.isEmpty()) {
-            payload.addProperty("avatar_url", AVATAR_BASE_URL + "/" + player.getUUID() + ".png");
+        payload.addProperty("username", type.equals("chat")
+                ? EventDiscordFormatting.chatUsername(player.getName().getString(), profile.role())
+                : "Minecraft Server");
+        payload.addProperty("content", EventDiscordFormatting.format(type, player.getName().getString(),
+                profile.role(), profile.colorHex(), content));
+        if (type.equals("chat") && !AVATAR_BASE_URL.isEmpty()) {
+            payload.addProperty("avatar_url", AVATAR_BASE_URL + "/" + player.getUUID() + ".png?v="
+                    + profile.colorHex().replace("#", "").toLowerCase());
         }
         JsonObject mentions = new JsonObject();
         mentions.add("parse", new JsonArray());
@@ -132,8 +137,8 @@ final class EventDiscordBridge {
     static void publishServer(String content) {
         if (!enabled || WORKER.isShutdown() || content.isBlank()) return;
         JsonObject payload = new JsonObject();
-        payload.addProperty("username", "Killshift Server");
-        payload.addProperty("content", content.length() > 1900 ? content.substring(0, 1900) : content);
+        payload.addProperty("username", "Minecraft Server");
+        payload.addProperty("content", EventDiscordFormatting.format("server", "", "", "", content));
         JsonObject mentions = new JsonObject();
         mentions.add("parse", new JsonArray());
         payload.add("allowed_mentions", mentions);
@@ -141,7 +146,7 @@ final class EventDiscordBridge {
     }
 
     static void publishScore(ServerPlayer player, String mob, int score) {
-        publish(player, "✅ killed " + mob + ". Score: " + score + ".");
+        publish(player, "score", "killed " + mob + ". Score: " + score + ".");
     }
 
     private static void post(String body, boolean retried) {

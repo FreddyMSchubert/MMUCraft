@@ -14,6 +14,7 @@ final class ShapeState {
     int guardianChargeTicks;
     LivingEntity guardianTarget;
     boolean wasSneaking;
+    boolean wasJumping;
     boolean ownsPostEffect;
 
     ShapeState(MobForm form, CompoundTag viewData) {

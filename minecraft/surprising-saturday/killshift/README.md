@@ -48,9 +48,9 @@ The command creates `build/libs/killshift-0.1.0.jar`.
 
 ## Movement and combat
 
-Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. It converts land mob movement speed for player controls. The player's scale places the camera at the form's actual eye height. It also changes the player hitbox.
+Killshift reads the killed entity's current attribute values. These include health, armor, damage, knockback, gravity, jump strength, movement speed, safe fall distance, and step height. Horse-family forms use the killed animal's exact movement speed and jump strength. It converts other land mob movement speed for player controls. The player's scale places the camera at the form's actual eye height. It also changes the player hitbox.
 
-Aquatic forms have moderate water movement efficiency and can sprint and swim in water. Fish and squid use player-scale movement speed instead of the much higher default mob speed. Fish and bees have their land movement suppressed. Water-only forms can jump on land but gain little horizontal motion while airborne. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly. Other mob forms cannot use player sprint or swim movement. Iron golems sink in water and keep their air supply.
+Aquatic forms have moderate water movement efficiency and can sprint and swim in water. Fish and squid use player-scale movement speed instead of the much higher default mob speed. Fish and bees have their land movement suppressed. Water-only forms can jump on land but gain little horizontal motion while airborne. Flying forms use player flight controls. Killshift forces flight each tick for these forms, including allays and happy ghasts. Chicken forms fall slowly. Other mob forms cannot use player sprint or swim movement. Iron golems sink in water and keep their air supply. Drowned forms breathe on land and underwater. Water-only forms use their mob's maximum air supply on land, including the axolotl's longer timer. Blaze, strider, snow golem, and enderman forms take damage in water and rain. Forms in Minecraft's fall-damage-immune and powder-snow-walkable mob tags inherit those rules. A watched creaking cannot move.
 
 Killshift keeps attack damage at one or more. A weak form can therefore kill another mob and change form again.
 
@@ -62,13 +62,15 @@ Killshift makes the real player invisible. Its presentation team does not reveal
 
 Other players see the full-size copy at the player's position. The owner sees most forms at 50% scale; squid and salmon appear at 30% scale. Squid and salmon displays sit lower in water, while the owner sees a sniffer display behind the camera. Squid and salmon copies keep their tentacle and tail animations but cannot swim away under their own movement. On land they follow a small flop animation. The player's eye height still follows the form, but small forms retain enough collision width to keep the camera out of walls. Killshift keeps the source cube size and baby age. Dragon copies face the player's look direction, use a steady wing pace, and start in a flying phase without the killed dragon's death particles. Killshift moves the copy each server tick. Minecraft tracks and interpolates its position for clients. The server does not receive the client's camera mode.
 
-Attacks against another player's copy are redirected to its owner. When the owner clicks their own copy, Killshift aims past it to the next entity or block. Right-clicks can use a block behind the copy, such as a block used to build a tower. Attack clicks can hit an entity behind the copy. Held block mining still needs the vanilla client to aim at the block.
+Attacks against another player's copy are redirected to its owner. Projectile hits on the copy also strike the owner, including each projectile's normal hit effects. Projectiles skip their shooter's own copy. When the owner clicks their own copy, Killshift aims past it to the next entity or block. Right-clicks can use a block behind the copy, such as a block used to build a tower. Attack clicks can hit an entity behind the copy. Held block mining still needs the vanilla client to aim at the block.
 
 Killshift does not save active display entities with the world. It removes old orphan displays when their chunks load. This prevents stationary no-AI copies after a restart.
 
 The locator bar shows players in the same dimension at any distance. Sneaking, invisibility, equipment, spectator mode, and transformation do not hide their icons.
 
 The ninth hotbar slot always contains a marked item. Each active ability has a matching item, such as TNT for creepers and an ender pearl for endermen. Other forms hold a barrier. Right-click with the marked item while aiming at air, a block, or an entity. The item stays in that slot. Its cooldown overlay shows when the ability is ready. A creeper dies after its explosion.
+
+Snow golems throw snowballs with their ability item. Camels and camel husks dash forward and upward from the ground. Shulkers teleport on each new jump press and shoot levitation bullets with their ability item; the bullets ignore shulker-transformed players.
 
 The server adds creeper, spider, and invert post effects to matching forms. It removes a form's effect when the form ends. A vanilla 26.3 client can display these effects.
 
@@ -93,8 +95,9 @@ See [docs/MOBS.md](docs/MOBS.md) for the complete behavior list.
 
 ## Current limits
 
-- Some abilities need a target or valid terrain. For example, the guardian beam needs a living target in sight, and the shulker needs a safe teleport location.
+- Some abilities need a target or valid terrain. The guardian beam needs a living target in sight, camel dashes need ground contact, and shulker jump teleports need a safe destination. Shulker bullets home toward a target in sight or fire in the look direction without homing when there is none.
 - Vex movement uses server no-physics mode. Vanilla client movement can still stop the player at a wall. Full spectator movement also grants other spectator powers.
+- Powder-snow walking is enforced by the server. A vanilla client still predicts player collision, so a form without leather boots may briefly dip before the server corrects it.
 - The display entity follows the player each tick. Network interpolation can still cause visual delay.
 - Some mobs have only the common form behavior. The mob list marks these cases.
 - Skeleton arrow refill keeps one arrow in the inventory. A player can remove that arrow, so this is not an anti-duplication system.

@@ -47,6 +47,7 @@ public final class EventApi {
     private static final Object OUTBOX_LOCK = new Object();
     private static final Map<UUID, Component> CHAT_NAMES = new ConcurrentHashMap<>();
     private static final Map<UUID, Boolean> MEMBERS = new ConcurrentHashMap<>();
+    private static final Map<UUID, DiscordPresentation> DISCORD_PRESENTATIONS = new ConcurrentHashMap<>();
     private static final Map<String, KillNotice> KILL_NOTICES = new ConcurrentHashMap<>();
     private static final ScheduledExecutorService WORKER = Executors.newSingleThreadScheduledExecutor(task -> {
         Thread thread = new Thread(task, "killshift-score-outbox");
@@ -55,6 +56,7 @@ public final class EventApi {
     });
 
     private record KillNotice(ServerPlayer player, Component mobName) { }
+    record DiscordPresentation(String role, String colorHex) { }
 
     static {
         if (BASE_URL != null && SECRET != null) {
@@ -67,6 +69,7 @@ public final class EventApi {
     static void playerJoined(ServerPlayer player) {
         CHAT_NAMES.remove(player.getUUID());
         MEMBERS.remove(player.getUUID());
+        DISCORD_PRESENTATIONS.remove(player.getUUID());
         PlayerTeam team = player.getTeam();
         if (team != null && team.getName().startsWith("ss")) {
             team.setPlayerPrefix(Component.empty());
@@ -74,12 +77,18 @@ public final class EventApi {
         }
         var playerList = player.level().getServer().getPlayerList();
         if (playerList.isOp(player.nameAndId())) playerList.deop(player.nameAndId());
-        refreshPresentation(player);
+        refreshPresentation(player, () -> EventDiscordBridge.publishJoin(player));
     }
 
     static void playerLeft(ServerPlayer player) {
         CHAT_NAMES.remove(player.getUUID());
         MEMBERS.remove(player.getUUID());
+        DISCORD_PRESENTATIONS.remove(player.getUUID());
+    }
+
+    static DiscordPresentation discordPresentation(ServerPlayer player) {
+        return DISCORD_PRESENTATIONS.getOrDefault(player.getUUID(),
+                new DiscordPresentation("Player", "#E6E6E6"));
     }
 
     static boolean isMember(ServerPlayer player) {
@@ -319,23 +328,35 @@ public final class EventApi {
     }
 
     static void refreshPresentation(ServerPlayer player) {
-        if (BASE_URL == null || SECRET == null) return;
+        refreshPresentation(player, () -> { });
+    }
+
+    private static void refreshPresentation(ServerPlayer player, Runnable afterRefresh) {
+        if (BASE_URL == null || SECRET == null) {
+            afterRefresh.run();
+            return;
+        }
         HttpRequest request = HttpRequest.newBuilder(URI.create(BASE_URL + "/api/internal/surprising-saturday/player-data/" + player.getUUID()))
                 .timeout(Duration.ofSeconds(5))
                 .header("authorization", "Bearer " + SECRET)
                 .GET().build();
-        HTTP.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenAccept(response -> {
-            if (response.statusCode() != 200) {
-                System.err.println("Surprising Saturday player data API returned " + response.statusCode());
-                return;
-            }
-            JsonObject profile = JsonParser.parseString(response.body()).getAsJsonObject();
-            player.level().getServer().execute(() -> {
-                if (player.level().getServer().getPlayerList().getPlayer(player.getUUID()) == player) {
-                    applyPresentation(player, profile);
-                }
-            });
-        }).exceptionally(error -> { System.err.println("Surprising Saturday player data failed: " + error); return null; });
+        HTTP.sendAsync(request, HttpResponse.BodyHandlers.ofString()).whenComplete((response, error) ->
+                player.level().getServer().execute(() -> {
+                    if (player.level().getServer().getPlayerList().getPlayer(player.getUUID()) != player
+                            || player.hasDisconnected()) return;
+                    if (error != null) {
+                        System.err.println("Surprising Saturday player data failed: " + error);
+                    } else if (response.statusCode() != 200) {
+                        System.err.println("Surprising Saturday player data API returned " + response.statusCode());
+                    } else {
+                        try {
+                            applyPresentation(player, JsonParser.parseString(response.body()).getAsJsonObject());
+                        } catch (Exception parseError) {
+                            System.err.println("Surprising Saturday player data was invalid: " + parseError);
+                        }
+                    }
+                    afterRefresh.run();
+                }));
     }
 
     private static void applyPresentation(ServerPlayer player, JsonObject profile) {
@@ -352,6 +373,8 @@ public final class EventApi {
                 ? profile.get("isMember").getAsBoolean()
                 : role.equals("Member") || role.equals("Committee"));
         int color = Integer.parseInt(profile.get("color").getAsString().substring(1), 16);
+        DISCORD_PRESENTATIONS.put(player.getUUID(),
+                new DiscordPresentation(role, profile.get("color").getAsString()));
         CHAT_NAMES.put(player.getUUID(), coloredName(player.getScoreboardName(),
                 profile.get("color").getAsString(), role));
         TeamColor nearest = TeamColor.WHITE;

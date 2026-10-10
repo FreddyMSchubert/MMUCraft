@@ -8,6 +8,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -221,11 +223,49 @@ public final class ShapeManager {
         return state != null && state.form.traits().aquatic() && player.isInWater();
     }
 
+    public static double landHopSpeed(ServerPlayer player) {
+        ShapeState state = get(player);
+        if (state == null || player.getAbilities().flying || player.isPassenger()) return -1.0;
+        MobTraits traits = state.form.traits();
+        if (traits.bouncy()) return 0.14;
+        return traits.landImmobile() && !traits.flying() && !player.isInWater() ? 0.12 : -1.0;
+    }
+
+    public static boolean frozenWhenWatched(ServerPlayer player) {
+        ShapeState state = get(player);
+        return state != null && state.form.type() == EntityTypes.CREAKING
+                && ShapeRuntime.isWatched(player);
+    }
+
+    public static boolean walksOnPowderSnow(Entity entity) {
+        if (!(entity instanceof ServerPlayer player)) return false;
+        ShapeState state = get(player);
+        return state != null && BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(state.form.type())
+                .is(EntityTypeTags.POWDER_SNOW_WALKABLE_MOBS);
+    }
+
+    public static boolean isWaterSensitive(ServerPlayer player) {
+        ShapeState state = get(player);
+        if (state == null) return false;
+        EntityType<?> type = state.form.type();
+        return type == EntityTypes.ENDERMAN || type == EntityTypes.BLAZE
+                || type == EntityTypes.STRIDER || type == EntityTypes.SNOW_GOLEM;
+    }
+
     public static void onSneakInput(ServerPlayer player, boolean sneaking) {
         ShapeState state = get(player);
         if (state == null) return;
         if (sneaking && !state.wasSneaking) ShapeView.playAmbientSound(state);
         state.wasSneaking = sneaking;
+    }
+
+    public static void onJumpInput(ServerPlayer player, boolean jumping) {
+        ShapeState state = get(player);
+        if (state == null) return;
+        if (jumping && !state.wasJumping && state.form.type() == EntityTypes.SHULKER) {
+            MobAbilities.teleport(player);
+        }
+        state.wasJumping = jumping;
     }
 
     public static void readSaved(ServerPlayer player, ValueInput input) {
@@ -318,7 +358,10 @@ public final class ShapeManager {
         if (location != null) player.teleportTo(location.x, location.y, location.z);
         ShapeEffects.apply(player, state);
         if (!ShapeView.create(player, state)) clear(player);
-        else fitCameraToViewEyes(player, state.view);
+        else {
+            state.landAir = state.view.getMaxAirSupply();
+            fitCameraToViewEyes(player, state.view);
+        }
         AbilitySlot.sync(player);
     }
 
@@ -360,7 +403,7 @@ public final class ShapeManager {
         return null;
     }
 
-    static LivingEntity combatTarget(LivingEntity target) {
+    public static LivingEntity combatTarget(LivingEntity target) {
         ServerPlayer owner = ownerOf(target);
         return owner == null ? target : owner;
     }

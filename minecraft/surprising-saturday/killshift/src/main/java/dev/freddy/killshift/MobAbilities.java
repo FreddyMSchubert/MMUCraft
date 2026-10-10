@@ -26,13 +26,16 @@ import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.entity.projectile.LlamaSpit;
 import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.entity.projectile.hurtingprojectile.WitherSkull;
 import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.WindCharge;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -52,6 +55,8 @@ final class MobAbilities {
             Map.entry(EntityTypes.BEE, Items.HONEYCOMB),
             Map.entry(EntityTypes.BLAZE, Items.FIRE_CHARGE),
             Map.entry(EntityTypes.BREEZE, Items.WIND_CHARGE),
+            Map.entry(EntityTypes.CAMEL, Items.CACTUS),
+            Map.entry(EntityTypes.CAMEL_HUSK, Items.CACTUS),
             Map.entry(EntityTypes.CREEPER, Items.TNT),
             Map.entry(EntityTypes.ENDER_DRAGON, Items.DRAGON_BREATH),
             Map.entry(EntityTypes.ENDERMAN, Items.ENDER_PEARL),
@@ -62,10 +67,11 @@ final class MobAbilities {
             Map.entry(EntityTypes.ELDER_GUARDIAN, Items.PRISMARINE_CRYSTALS),
             Map.entry(EntityTypes.LLAMA, Items.HAY_BLOCK),
             Map.entry(EntityTypes.MOOSHROOM, Items.BOWL),
-            Map.entry(EntityTypes.SHULKER, Items.CHORUS_FRUIT),
+            Map.entry(EntityTypes.SHULKER, Items.SHULKER_SHELL),
             Map.entry(EntityTypes.SILVERFISH, Items.INFESTED_STONE_BRICKS),
             Map.entry(EntityTypes.SNIFFER, Items.TORCHFLOWER_SEEDS),
             Map.entry(EntityTypes.SQUID, Items.INK_SAC),
+            Map.entry(EntityTypes.SNOW_GOLEM, Items.SNOWBALL),
             Map.entry(EntityTypes.TRADER_LLAMA, Items.HAY_BLOCK),
             Map.entry(EntityTypes.WARDEN, Items.ECHO_SHARD),
             Map.entry(EntityTypes.WITCH, Items.GLASS_BOTTLE),
@@ -241,6 +247,20 @@ final class MobAbilities {
             WindCharge charge = new WindCharge(player, level, player.getX(), player.getEyeY(), player.getZ());
             charge.shoot(direction.x, direction.y, direction.z, 1.5F, 0.0F);
             level.addFreshEntity(charge);
+        } else if (type == EntityTypes.CAMEL || type == EntityTypes.CAMEL_HUSK) {
+            if (!player.onGround()) {
+                state.abilityCooldown = 0;
+                return false;
+            }
+            Vec3 horizontal = new Vec3(direction.x, 0.0, direction.z).normalize()
+                    .scale(22.2222 * player.getAttributeValue(Attributes.MOVEMENT_SPEED));
+            player.addDeltaMovement(horizontal.add(0.0,
+                    1.4285 * player.getAttributeValue(Attributes.JUMP_STRENGTH), 0.0));
+            ShapeRuntime.syncMotion(player);
+            level.playSound(null, player.blockPosition(),
+                    type == EntityTypes.CAMEL_HUSK ? SoundEvents.CAMEL_HUSK_DASH : SoundEvents.CAMEL_DASH,
+                    SoundSource.PLAYERS, 1.0F, 1.0F);
+            state.abilityCooldown = 55;
         } else if (type == EntityTypes.WITHER) {
             level.addFreshEntity(new WitherSkull(level, player, direction));
         } else if (type == EntityTypes.ENDER_DRAGON) {
@@ -259,10 +279,20 @@ final class MobAbilities {
             state.abilityCooldown = state.guardianChargeTicks + 20;
             ((GuardianAttackAccessor) guardian).killshift$setActiveAttackTarget(target.getId());
         } else if (type == EntityTypes.SHULKER) {
-            if (!teleport(player)) {
-                state.abilityCooldown = 0;
-                return false;
+            LivingEntity target = targetInSight(player, 16.0, entity -> {
+                LivingEntity actual = ShapeManager.combatTarget(entity);
+                return !(actual instanceof ServerPlayer other && ShapeManager.isForm(other, EntityTypes.SHULKER));
+            });
+            ShulkerBullet bullet;
+            if (target == null) {
+                bullet = new ShulkerBullet(EntityTypes.SHULKER_BULLET, level);
+                bullet.setOwner(player);
+                bullet.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
+                bullet.shoot(direction.x, direction.y, direction.z, 0.8F, 0.0F);
+            } else {
+                bullet = new ShulkerBullet(level, player, ShapeManager.combatTarget(target), Direction.Axis.Y);
             }
+            level.addFreshEntity(bullet);
         } else if (type == EntityTypes.WITCH) {
             var potionType = switch (player.getRandom().nextInt(4)) {
                 case 0 -> Potions.POISON;
@@ -293,6 +323,9 @@ final class MobAbilities {
         } else if (type == EntityTypes.SQUID || type == EntityTypes.GLOW_SQUID) {
             level.sendParticles(ParticleTypes.SQUID_INK, player.getX(), player.getEyeY(), player.getZ(),
                     80, 1.2, 0.8, 1.2, 0.08);
+        } else if (type == EntityTypes.SNOW_GOLEM) {
+            Projectile.spawnProjectileFromRotation(Snowball::new, level, new ItemStack(Items.SNOWBALL),
+                    player, 0.0F, 1.5F, 1.0F);
         } else if (type == EntityTypes.SNIFFER) {
             if (!digSeed(player)) {
                 state.abilityCooldown = 0;
@@ -330,7 +363,7 @@ final class MobAbilities {
         }
     }
 
-    private static boolean teleport(ServerPlayer player) {
+    static boolean teleport(ServerPlayer player) {
         for (int attempt = 0; attempt < 32; attempt++) {
             double x = player.getX() + (player.getRandom().nextDouble() - 0.5) * 32.0;
             double y = player.getY() + player.getRandom().nextInt(-8, 9);
@@ -380,6 +413,11 @@ final class MobAbilities {
     }
 
     private static LivingEntity targetInSight(ServerPlayer player, double range) {
+        return targetInSight(player, range, entity -> true);
+    }
+
+    private static LivingEntity targetInSight(ServerPlayer player, double range,
+            java.util.function.Predicate<LivingEntity> allowed) {
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getLookAngle().normalize();
         AABB search = player.getBoundingBox().expandTowards(look.scale(range)).inflate(2.0);
@@ -387,6 +425,7 @@ final class MobAbilities {
                         LivingEntity.class,
                         search,
                         entity -> entity != player && entity.isAlive() && !(entity == ShapeManager.get(player).view)
+                                && allowed.test(entity)
                 ).stream()
                 .filter(entity -> {
                     Vec3 delta = entity.getEyePosition().subtract(eye);

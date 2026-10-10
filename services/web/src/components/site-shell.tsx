@@ -100,6 +100,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
 	const [capacity, setCapacity] = useState<{
+		showEventCapacity: boolean;
 		servers: {
 			name: string;
 			playerCount: number | null;
@@ -171,15 +172,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		let cancelled = false;
 		async function loadOnlinePlayers() {
 			try {
-				const response = await fetch('/api/players/online', { cache: 'no-store' });
+				const response = await fetch('/api/velocity/online-players', { cache: 'no-store' });
 				if (!response.ok) return;
 				const data = (await response.json()) as { players?: OnlinePlayer[] };
-				if (!cancelled)
-					setOnlinePlayers(
-						(data.players ?? []).filter(
-							(player) => player.minecraftUsername.toLowerCase() !== 'mmu_admin',
-						),
-					);
+				if (!cancelled) setOnlinePlayers(data.players ?? []);
 			} catch {
 				// Keep the last successful roster during a temporary server outage.
 			}
@@ -201,6 +197,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				const response = await fetch('/api/velocity/capacity', { cache: 'no-store' });
 				if (!response.ok) return;
 				const next = (await response.json()) as {
+					showEventCapacity: boolean;
 					servers: {
 						name: string;
 						playerCount: number | null;
@@ -412,7 +409,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 							<div className="onlinePlayers">
 								<p className="dashboardEyebrow">
-									Online players{' '}
+									Online players
 									{capacity && <CapacityCount capacity={capacity} />}
 								</p>
 								<div className="onlinePlayerList">
@@ -481,7 +478,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 							<div className="mobileMenuBlock">
 								<p>
-									Online players{' '}
+									Online players
 									{capacity && <CapacityCount capacity={capacity} />}
 								</p>
 								<div className="onlinePlayerList">
@@ -586,6 +583,7 @@ function CapacityCount({
 	capacity,
 }: {
 	capacity: {
+		showEventCapacity: boolean;
 		servers: {
 			name: string;
 			playerCount: number | null;
@@ -595,12 +593,22 @@ function CapacityCount({
 		}[];
 	};
 }) {
+	const servers = capacity.servers
+		.filter(
+			(server) =>
+				server.name === 'main' ||
+				(capacity.showEventCapacity && server.name === 'surprising-saturday'),
+		)
+		.sort((left, right) => Number(left.name !== 'main') - Number(right.name !== 'main'));
 	return (
 		<>
-			{capacity.servers.map((server) => (
+			{servers.map((server) => (
 				<span key={server.name}>
-					{' '}
-					{server.name === 'main' ? 'Server' : 'Event'}{' '}
+					{capacity.showEventCapacity
+						? server.name === 'main'
+							? ' - Server '
+							: ' - Event '
+						: ' '}
 					<span
 						className={
 							server.playerCount !== null && server.playerCount >= server.maxPlayers

@@ -24,6 +24,8 @@ abstract class ServerPlayerShapeMixin {
 
     @Inject(method = "setLastClientInput", at = @At("TAIL"))
     private void killshift$playSneakSound(Input input, CallbackInfo callback) {
-        ShapeManager.onSneakInput((ServerPlayer) (Object) this, input.shift());
+        ServerPlayer player = (ServerPlayer) (Object) this;
+        ShapeManager.onSneakInput(player, input.shift());
+        ShapeManager.onJumpInput(player, input.jump());
     }
 }

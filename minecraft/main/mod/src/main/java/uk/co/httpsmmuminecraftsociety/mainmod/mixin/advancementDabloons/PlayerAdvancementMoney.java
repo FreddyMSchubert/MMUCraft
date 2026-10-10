@@ -95,7 +95,12 @@ public class PlayerAdvancementMoney {
         );
 
         if (vanilla) {
-            if (rewarded) MoneyHelper.SendBalanceMessage(rewardedPlayer, reward, "Advancement reward");
+            // BACAP disables vanilla chat announcements while its own messages are filtered.
+            if (!announcePublicly && display.announceToChat()) {
+                announceAdvancement(rewardedPlayer, advancementHolder, display, awardedReward, false);
+            } else if (rewarded) {
+                MoneyHelper.SendBalanceMessage(rewardedPlayer, reward, "Advancement reward");
+            }
         } else {
             announceAdvancement(
                     rewardedPlayer,

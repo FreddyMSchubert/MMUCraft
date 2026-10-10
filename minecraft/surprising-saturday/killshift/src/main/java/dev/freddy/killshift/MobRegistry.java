@@ -10,6 +10,7 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -41,7 +42,7 @@ final class MobRegistry {
     );
 
     private static final Set<EntityType<?>> WATER_BREATHING = Set.of(
-            EntityTypes.AXOLOTL, EntityTypes.COD, EntityTypes.ELDER_GUARDIAN,
+            EntityTypes.AXOLOTL, EntityTypes.COD, EntityTypes.DROWNED, EntityTypes.ELDER_GUARDIAN,
             EntityTypes.GLOW_SQUID, EntityTypes.GUARDIAN, EntityTypes.NAUTILUS,
             EntityTypes.PUFFERFISH, EntityTypes.SALMON, EntityTypes.SQUID,
             EntityTypes.TADPOLE, EntityTypes.TROPICAL_FISH, EntityTypes.ZOMBIE_NAUTILUS
@@ -92,11 +93,12 @@ final class MobRegistry {
         }
         values.put(Attributes.MAX_HEALTH, Math.max(1.0, source.getMaxHealth()));
         values.put(Attributes.ATTACK_DAMAGE, Math.max(1.0, values.getOrDefault(Attributes.ATTACK_DAMAGE, 1.0)));
-        if (type != EntityTypes.PLAYER && !traits.landImmobile()) {
+        if (type != EntityTypes.PLAYER && !traits.landImmobile() && !(source instanceof AbstractHorse)) {
             values.computeIfPresent(Attributes.MOVEMENT_SPEED,
                     (attribute, speed) -> speed * PLAYER_MOVEMENT_FACTOR);
         }
-        if (traits.flying() || type == EntityTypes.CHICKEN || type == EntityTypes.CAT) {
+        if (traits.flying() || BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type)
+                .is(EntityTypeTags.FALL_DAMAGE_IMMUNE)) {
             values.put(Attributes.FALL_DAMAGE_MULTIPLIER, 0.0);
         }
         double scale = type == EntityTypes.PLAYER ? 1.0 : Math.clamp(

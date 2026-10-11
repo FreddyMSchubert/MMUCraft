@@ -30,11 +30,11 @@ public final class UnlockBookLoot {
     private static final long AVAILABILITY_TIMEOUT_MS = 750L;
     private static final String CHARM_BOOK_ID = "charm-magic-book";
     private static final double FISHING_KNOWLEDGE_CHANCE = 1.0D / 4.5D;
-    private static final double FISHING_JOKE_CHANCE = 0.005D;
-    private static final double FISHING_CHARM_MIN_CHANCE = 0.0025D;
-    private static final double FISHING_CHARM_MAX_CHANCE = 0.025D;
-    private static final double FISHING_COSMETIC_MIN_CHANCE = 0.005D;
-    private static final double FISHING_COSMETIC_MAX_CHANCE = 0.0275D;
+    private static final double FISHING_JOKE_CHANCE = 0.0025D;
+    private static final double FISHING_CHARM_MIN_CHANCE = 0.0005D;
+    private static final double FISHING_CHARM_MAX_CHANCE = 0.005D;
+    private static final double FISHING_COSMETIC_MIN_CHANCE = 0.0025D;
+    private static final double FISHING_COSMETIC_MAX_CHANCE = 0.01375D;
     private static final double FISHING_DELIVERY_RATE = 1.0D - FishingJumpScares.CHANCE;
     private static final Map<UUID, CacheEntry> AVAILABILITY_CACHE = new ConcurrentHashMap<>();
     private static final PlayerCooldown CHARM_DROP_COOLDOWN = new PlayerCooldown(Duration.ofHours(1));

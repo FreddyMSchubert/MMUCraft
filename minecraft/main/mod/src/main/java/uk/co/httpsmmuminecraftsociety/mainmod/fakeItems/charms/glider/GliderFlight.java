@@ -2,7 +2,6 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
@@ -41,7 +40,6 @@ public final class GliderFlight {
     }
 
     public static void init() {
-        EnchantmentEvents.ALLOW_ENCHANTING.register(GliderCharm::allowEnchanting);
         ServerTickEvents.END_SERVER_TICK.register(server -> server.getPlayerList().getPlayers().forEach(GliderFlight::tick));
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> STATES.clear());
     }

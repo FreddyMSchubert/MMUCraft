@@ -7,7 +7,7 @@ tags:
 - enchantng
 - anvilles
 tips:
-- You can copy enchanted books at a librarian's lectern. Soulbound books cannot be copied.
+- You can copy enchanted books at a librarian's lectern. Treasure enchantments and Soulbound cannot be copied.
 - Combining levels in an anvil uses addition on this server. For example, combining Sharpness I and Sharpness II results in Sharpness III.
 - The "Too Expensive" anvil limit has been fully removed, you can keep upgrading and repairing your gear forever.
 - Anvils work differently in the server. For example, it is possible to copy enchantments that are applied to an item back onto a book.
@@ -25,7 +25,7 @@ tips:
 If you want to, you still can treat enchanting and anvils just as usual. The default behaviour is still supported. But you'd be making a mistake!
 
 :::tldr
-- Find or craft an enchanted book, then copy it with a librarian. Soulbound books cannot be copied.
+- Find or craft an enchanted book, then copy it with a librarian. Treasure enchantments and Soulbound cannot be copied.
 - Levels add more liberally in an anvil. `Sharpness I + Sharpness II = Sharpness III`.
 - Anvils never become "Too Expensive", have no prior-work penalty (meaning XP cost doesn't grow larger and larger), and cost at most 30 levels.
 :::
@@ -38,8 +38,10 @@ Put an enchanted book on the lectern used by a librarian. The librarian's first 
 
 | Enchantments on the book | Lectern copy trade |
 | :-- | :-- |
-| Any enchantments except Soulbound | Available |
-| Soulbound, including books with other enchantments | Unavailable. Craft another Soulbound book. |
+| No treasure enchantments or Soulbound | Available |
+| A treasure enchantment or Soulbound, including books with other enchantments | Unavailable |
+
+Treasure enchantments are Curse of Binding, Curse of Vanishing, Frost Walker, Mending, Soul Speed, Swift Sneak, and Wind Burst.
 
 The normal random-pick book trades remain.
 
@@ -81,53 +83,55 @@ You can now also repair anvils. To do so, just right click an anvil with an iron
 
 ## Alternative book obtaining
 
-Instead of getting them randomly, it's way more reliable (and fun) to get books by finding them predictably. Here's how you can get the books for all the enchantments.
+Most enchanted books have a reliable source. The two curses have no fixed source. This table shows how to get each book.
 
-| Enchantment | How to get the first book | Max level | Max level on [Enderite gear](/play/knowledge/enderite) |
-| :-- | :-- | :--: | :--: |
-| Aqua Affinity | Kill a Guardian (25%) | 1 | 1 |
-| Bane of Arthropods | Enchanting table | 100 | 100 |
-| Blast Protection | Enchanting table | 3 | 5 |
-| Breach | Open any Trial Chamber reward vault (1/16 bonus book chance) | 4 | 4 |
-| Channeling | Open a Shipwreck supply chest (100%) | 1 | 1 |
-| Charm Boost | Brush a suspicious archaeology block. See [Charms](/play/knowledge/charms). | 1 | 1 |
-| Density | Open any Trial Chamber reward vault (1/16 bonus book chance) | 5 | 5 |
-| Depth Strider | Kill a Drowned (12.5%) | 3 | 4 |
-| Efficiency | Open a Stronghold corridor, crossing, or library chest (25%) | 5 | 8 |
-| Feather Falling | Open a Desert Pyramid chest (50%) | 3 | 68 |
-| Fire Aspect | Open a Ruined Portal chest (50%) | 1 | 2 |
-| Fire Protection | Enchanting table | 3 | 5 |
-| Flame | Open a Ruined Portal chest (50%) | 1 | 1 |
-| Fortune | Craft a Fortune I book.<sup><a href="#fortune-footnote">1</a></sup> | 3 | 4 |
-| Frost Walker | Open an Igloo chest (100%) | 2 | 3 |
-| Impaling | Open a Shipwreck treasure chest (100%) | 5 | 5 |
-| Infinity | Open a Jungle Temple chest (50%) | 1 | 1 |
-| Knockback | Open a Woodland Mansion chest (12.5%) | 2 | 3 |
-| Looting | Open a Nether Fortress chest (25%) | 3 | 5 |
-| Loyalty | Open a Shipwreck treasure chest (12.5%) | 3 | 3 |
-| Luck of the Sea | Open a Buried Treasure chest (100%) | 3 | 3 |
-| Lunge | Open a Desert Pyramid chest (25%) | 3 | 5 |
-| Lure | [Fish it up](/play/knowledge/fishing) | 3 | 3 |
-| Mending | Open an Ancient City or Ancient City ice-box chest (25%) | 1 | 1 |
-| Multishot | Open a Pillager Outpost chest (50%) | 1 | 1 |
-| Piercing | Open a Pillager Outpost chest (50%) | 4 | 4 |
-| Power | Open any Bastion Remnant chest (25%) | 5 | 5 |
-| Projectile Protection | Enchanting table | 3 | 5 |
-| Protection | Open an End City treasure chest (12.5%) | 2 | 5 |
-| Punch | Open a Jungle Temple chest (50%) | 3 | 3 |
-| Quick Charge | Open a Pillager Outpost chest (50%) | 3 | 3 |
-| Respiration | Kill a Nautilus Zombie (25%) | 3 | 10 |
-| Riptide | Open a Shipwreck map chest (12.5%) | 3 | 3 |
-| Sharpness | Enchanting table | 5 | 11 |
-| Silk Touch | Open a Mineshaft chest (25%) | 1 | 1 |
-| Smite | Enchanting table | 4 | 6 |
-| Soul Speed | Open any Bastion Remnant chest (25%) | 2 | 3 |
-| Soulbound | Craft it. See [Soulbound Enchantment](/play/knowledge/soulbound). | 1 | 1 |
-| Sweeping Edge | Open a Woodland Mansion chest (100%) | 3 | 5 |
-| Swift Sneak | Open an Ancient City or Ancient City ice-box chest (12.5%) | 3 | 4 |
-| Thorns | Open a Dungeon chest (50%) | 3 | 5 |
-| Unbreaking | Open an End City treasure chest (25%) | 3 | 5 |
-| Wind Burst | Open any Trial Chamber reward vault (1/16 bonus book chance) | 3 | 3 |
+| Enchantment | How to get the first book | Max level | Max level on [Enderite gear](/play/knowledge/enderite) | Can copy at lectern? |
+| :-- | :-- | :--: | :--: | :--: |
+| Aqua Affinity | Kill a Guardian (25%) | 1 | 1 | Yes |
+| Bane of Arthropods | Enchanting table | 100 | 100 | Yes |
+| Blast Protection | Enchanting table | 3 | 5 | Yes |
+| Breach | Open any Trial Chamber reward vault (1/16 bonus book chance) | 4 | 4 | Yes |
+| Channeling | Open a Shipwreck supply chest (100%) | 1 | 1 | Yes |
+| Charm Boost | Brush a suspicious archaeology block. See [Charms](/play/knowledge/charms). | 1 | 1 | Yes |
+| Curse of Binding | Find in a random librarian trade or loot chest | 1 | 1 | No |
+| Curse of Vanishing | Find in a random librarian trade or loot chest | 1 | 1 | No |
+| Density | Open any Trial Chamber reward vault (1/16 bonus book chance) | 5 | 5 | Yes |
+| Depth Strider | Kill a Drowned (12.5%) | 3 | 4 | Yes |
+| Efficiency | Open a Stronghold corridor, crossing, or library chest (25%) | 5 | 8 | Yes |
+| Feather Falling | Open a Desert Pyramid chest (50%) | 3 | 68 | Yes |
+| Fire Aspect | Open a Ruined Portal chest (50%) | 1 | 2 | Yes |
+| Fire Protection | Enchanting table | 3 | 5 | Yes |
+| Flame | Open a Ruined Portal chest (50%) | 1 | 1 | Yes |
+| Fortune | Craft a Fortune I book.<sup><a href="#fortune-footnote">1</a></sup> | 3 | 4 | Yes |
+| Frost Walker | Open an Igloo chest (100%) | 2 | 3 | No |
+| Impaling | Open a Shipwreck treasure chest (100%) | 5 | 5 | Yes |
+| Infinity | Open a Jungle Temple chest (50%) | 1 | 1 | Yes |
+| Knockback | Open a Woodland Mansion chest (12.5%) | 2 | 3 | Yes |
+| Looting | Open a Nether Fortress chest (25%) | 3 | 5 | Yes |
+| Loyalty | Open a Shipwreck treasure chest (12.5%) | 3 | 3 | Yes |
+| Luck of the Sea | Open a Buried Treasure chest (100%) | 3 | 3 | Yes |
+| Lunge | Open a Desert Pyramid chest (25%) | 3 | 5 | Yes |
+| Lure | [Fish it up](/play/knowledge/fishing) | 3 | 3 | Yes |
+| Mending | Open an Ancient City or Ancient City ice-box chest (25%) | 1 | 1 | No |
+| Multishot | Open a Pillager Outpost chest (50%) | 1 | 1 | Yes |
+| Piercing | Open a Pillager Outpost chest (50%) | 4 | 4 | Yes |
+| Power | Open any Bastion Remnant chest (25%) | 5 | 5 | Yes |
+| Projectile Protection | Enchanting table | 3 | 5 | Yes |
+| Protection | Open an End City treasure chest (12.5%) | 2 | 5 | Yes |
+| Punch | Open a Jungle Temple chest (50%) | 3 | 3 | Yes |
+| Quick Charge | Open a Pillager Outpost chest (50%) | 3 | 3 | Yes |
+| Respiration | Kill a Nautilus Zombie (25%) | 3 | 10 | Yes |
+| Riptide | Open a Shipwreck map chest (12.5%) | 3 | 3 | Yes |
+| Sharpness | Enchanting table | 5 | 11 | Yes |
+| Silk Touch | Open a Mineshaft chest (25%) | 1 | 1 | Yes |
+| Smite | Enchanting table | 4 | 6 | Yes |
+| Soul Speed | Open any Bastion Remnant chest (25%) | 2 | 3 | No |
+| Soulbound | Craft it. See [Soulbound Enchantment](/play/knowledge/soulbound). | 1 | 1 | No |
+| Sweeping Edge | Open a Woodland Mansion chest (100%) | 3 | 5 | Yes |
+| Swift Sneak | Open an Ancient City or Ancient City ice-box chest (12.5%) | 3 | 4 | No |
+| Thorns | Open a Dungeon chest (50%) | 3 | 5 | Yes |
+| Unbreaking | Open an End City treasure chest (25%) | 3 | 5 | Yes |
+| Wind Burst | Open any Trial Chamber reward vault (1/16 bonus book chance) | 3 | 3 | No |
 
 ### <span id="fortune-footnote">1.</span> Fortune I recipe
 

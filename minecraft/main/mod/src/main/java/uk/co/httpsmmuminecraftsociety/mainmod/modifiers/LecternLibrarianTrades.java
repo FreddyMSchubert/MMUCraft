@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
@@ -72,8 +73,9 @@ public final class LecternLibrarianTrades {
         }
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
-            if (!EnchantmentSettingsManager.getSettingsForEnch(entry.getKey())
-                    .map(settings -> settings.lecternCopying).orElse(true)) {
+            if (entry.getKey().is(EnchantmentTags.TREASURE)
+                    || !EnchantmentSettingsManager.getSettingsForEnch(entry.getKey())
+                        .map(settings -> settings.lecternCopying).orElse(true)) {
                 return Optional.empty();
             }
         }

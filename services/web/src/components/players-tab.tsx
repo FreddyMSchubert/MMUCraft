@@ -47,8 +47,10 @@ export function PlayersTab({
 	const load = useCallback(
 		async (signal?: AbortSignal) => {
 			const query = new URLSearchParams();
-			if (playerName) query.set('player', playerName);
-			else query.set('all', '1');
+			if (playerName) {
+				query.set('player', playerName);
+				query.set('selectedOnly', '1');
+			} else query.set('all', '1');
 			const response = await fetch(`/api/players?${query}`, {
 				cache: 'no-store',
 				signal,

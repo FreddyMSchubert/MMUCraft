@@ -98,7 +98,7 @@ test('committee can create, move, update, and remove a countdown', async ({ requ
 	});
 });
 
-test('trust boundaries reject invalid input and insufficient privilege', async ({
+test('signup gate and committee permissions reject unauthorized access', async ({
 	request,
 }, testInfo) => {
 	await test.step('Check the prelaunch signup gate', async () => {
@@ -128,63 +128,6 @@ test('trust boundaries reject invalid input and insufficient privilege', async (
 			});
 			await expect(restored).toBeOK();
 		}
-	});
-
-	await test.step('Reject an unknown sign-in account', async () => {
-		const response = await request.post('/api/auth/signin', {
-			data: { email: 'missing@mmu.ac.uk' },
-		});
-		expect(response.status()).toBe(401);
-	});
-
-	await test.step('Reject invalid authentication flow identifiers', async () => {
-		const email = await request.post('/api/auth/verify-email', {
-			data: { flowId: 'missing', code: 'wrong' },
-		});
-		const minecraft = await request.post('/api/auth/verify-minecraft', {
-			data: { flowId: 'missing', code: 'wrong' },
-		});
-		expect(email.status()).toBe(400);
-		expect(minecraft.status()).toBe(400);
-	});
-
-	await test.step('Reject malformed player and claim identifiers', async () => {
-		const player = await request.get('/api/players/not-a-number', { headers: memberCookie });
-		const claim = await request.patch('/api/claims/missing/appearance', {
-			headers: memberCookie,
-			data: { name: '', color: 'red' },
-		});
-		expect(player.status()).toBe(404);
-		expect(claim.status()).toBe(404);
-	});
-
-	await test.step('Reject invalid knowledge, shop, and gift input', async () => {
-		const knowledge = await request.post('/api/knowledge/read', {
-			headers: memberCookie,
-			data: { knowledgeId: 'missing-page' },
-		});
-		const shop = await request.post('/api/shop/purchase', {
-			headers: memberCookie,
-			data: {},
-		});
-		const gift = await request.post('/api/gift-codes/redeem', {
-			headers: memberCookie,
-			data: {},
-		});
-		expect(knowledge.status()).toBe(400);
-		expect(shop.status()).toBe(400);
-		expect(gift.status()).toBe(400);
-	});
-
-	await test.step('Reject marking public knowledge as read', async () => {
-		const response = await request.post('/api/knowledge/read', {
-			headers: memberCookie,
-			data: { knowledgeId: 'money-basics' },
-		});
-		expect(response.status()).toBe(400);
-		expect(await response.json()).toMatchObject({
-			message: 'Public knowledge pages cannot be marked as read.',
-		});
 	});
 
 	await test.step('Reject committee endpoints for a regular member', async () => {

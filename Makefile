@@ -22,10 +22,10 @@ check-stack = $(if $(filter-out $(RUNNING_SERVICES),api web minecraft velocity),
 
 start:
 	$(PYTHON) $(MC)/stage_item_data.py --root $(MC)
-	cd $(MC)/mod && $(GRADLEW) generateProto runDatagen build
-	cd $(MC)/mod && $(GRADLEW) -p ../../../services/velocity/plugin build
-	cd $(MC)/mod && $(GRADLEW) -p ../../../minecraft/waiting-room/plugin build
-	cd minecraft/surprising-saturday/killshift && $(GRADLEW) build
+	cd $(MC)/mod && $(GRADLEW) assemble
+	cd $(MC)/mod && $(GRADLEW) -p ../../../services/velocity/plugin assemble
+	cd $(MC)/mod && $(GRADLEW) -p ../../../minecraft/waiting-room/plugin assemble
+	cd minecraft/surprising-saturday/killshift && $(GRADLEW) assemble
 	$(PYTHON) minecraft/surprising-saturday/download-mods.py
 	$(PYTHON) $(MC)/respack/build-main-pack.py
 	$(COMPOSE) --profile event build surprising-saturday

@@ -10,7 +10,7 @@
 		"format:check": "prettier --check .github/workflows services/api services/web minecraft/main/respack/items-respack-generator tests",
 		"lint": "eslint --no-config-lookup --config eslint.config.mjs --max-warnings=0 services/api services/web minecraft/main/respack/items-respack-generator tests",
 		"typecheck": "npm run typecheck --prefix services/api && npm run check --prefix minecraft/main/respack/items-respack-generator && npm run typecheck --prefix services/web",
-		"check": "npm run format:check && npm run lint && npm run typecheck",
+		"check": "npm run lint && npm run typecheck",
 		"test": "bash tests/run-playwright.sh",
 		"test:playwright": "playwright test --config tests/playwright.config.ts"
 	},

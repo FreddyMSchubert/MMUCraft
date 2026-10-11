@@ -96,16 +96,18 @@ test('a player profile loads without fetching the rest of the directory', async 
 	request,
 	baseURL,
 }) => {
-	const response = await request.get('/api/players?page=0&player=PlaywrightMember', {
+	const response = await request.get('/api/players?player=PlaywrightMember&selectedOnly=1', {
 		headers: { Cookie: 'mcstack_session=playwright-member' },
 	});
 	await expect(response).toBeOK();
 	const body = await response.json();
+	expect(body.players).toEqual([]);
+	expect(body.selectedPlayer).toMatchObject({ minecraftUsername: 'PlaywrightMember' });
 	const requests: string[] = [];
 	await page.route('**/api/players?*', async (route) => {
 		const query = new URL(route.request().url()).searchParams;
 		requests.push(query.toString());
-		await route.fulfill({ json: { ...body, hasMore: true } });
+		await route.fulfill({ json: body });
 	});
 	await page.context().addCookies([
 		{
@@ -116,5 +118,5 @@ test('a player profile loads without fetching the rest of the directory', async 
 	]);
 	await page.goto('/play/players/PlaywrightMember');
 	await expect(page.locator('.playerProfilePanel')).toContainText('PlaywrightMember');
-	expect(requests).toEqual(['player=PlaywrightMember']);
+	expect(requests).toEqual(['player=PlaywrightMember&selectedOnly=1']);
 });

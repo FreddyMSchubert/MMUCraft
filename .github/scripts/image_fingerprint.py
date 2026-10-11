@@ -9,7 +9,6 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
-WORKFLOW = ".github/workflows/checks.yml"
 INPUTS = {
     "api": [
         ".dockerignore",
@@ -106,7 +105,7 @@ def fingerprint(name: str, manifests: dict[str, bytes]) -> str:
     digest = hashlib.sha256()
     digest.update(b"image-inputs-v1\0linux/amd64\0")
     digest.update(Path(__file__).read_bytes())
-    for relative in [WORKFLOW, *INPUTS[name]]:
+    for relative in INPUTS[name]:
         path = ROOT / relative
         if not path.exists():
             raise FileNotFoundError(path)

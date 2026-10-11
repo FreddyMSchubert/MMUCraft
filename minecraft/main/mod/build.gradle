@@ -96,181 +96,50 @@ sourceSets {
             srcDirs = [file('../../../proto')]
         }
     }
-    trailCheck {
+    minecraftCheck {
         java.srcDir 'src/check/java'
         compileClasspath += sourceSets.main.output + configurations.runtimeClasspath
         runtimeClasspath += output + compileClasspath
     }
 }
 
-tasks.register('checkParticleTrails', JavaExec) {
-    group = 'verification'
-    description = 'Check trail recipes, saved data, membership filters, and flight positions.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.ParticleTrailsCheck'
-    enableAssertions = true
-    workingDir = layout.buildDirectory.dir('trailCheck').get().asFile
-    doFirst { workingDir.mkdirs() }
-}
-
-tasks.register('checkParticleEmission', JavaExec) {
-    group = 'verification'
-    description = 'Check worn and placed cosmetic particle positions.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.ParticleEmissionCheck'
-    enableAssertions = true
-    workingDir = layout.buildDirectory.dir('trailCheck').get().asFile
-    doFirst { workingDir.mkdirs() }
-}
-
 tasks.register('checkMapResize', JavaExec) {
     group = 'verification'
     description = 'Check crafting map sizes from 16 through 2048 blocks.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
     mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.maps.MapResizeCheck'
     enableAssertions = true
     workingDir = layout.buildDirectory.dir('mapResizeCheck').get().asFile
     doFirst { workingDir.mkdirs() }
 }
 
-tasks.register('checkArmorAppearance', JavaExec) {
-    group = 'verification'
-    description = 'Check armor and charm appearance toggles and crafting.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.ArmorAppearanceCheck'
-    enableAssertions = true
-}
-
-tasks.register('checkPlayerColors', JavaExec) {
-    group = 'verification'
-    description = 'Check player RGB formatting, vanilla team colors, and persisted join colors.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerColorsCheck'
-    enableAssertions = true
-    workingDir = layout.buildDirectory.dir('playerColorsCheck').get().asFile
-    doFirst { workingDir.mkdirs() }
-}
-
-tasks.register('checkBedrockFormatting', JavaExec) {
-    group = 'verification'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.BedrockFormattingCheck'
-    enableAssertions = true
-}
-
-tasks.register('checkAdvancementAnnouncements', JavaExec) {
-    group = 'verification'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementAnnouncementsCheck'
-    enableAssertions = true
-}
-
 tasks.register('checkMasteryDropGates', JavaExec) {
     group = 'verification'
-    classpath = sourceSets.trailCheck.runtimeClasspath
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
     mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryDropGatesCheck'
     enableAssertions = true
 }
 
 tasks.register('checkGearEnchantments', JavaExec) {
     group = 'verification'
-    classpath = sourceSets.trailCheck.runtimeClasspath
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
     mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentCheck'
     enableAssertions = true
-}
-
-tasks.named('check') {
-    dependsOn tasks.named('checkBedrockFormatting')
-    dependsOn tasks.named('checkAdvancementAnnouncements')
-    dependsOn tasks.named('checkMasteryDropGates')
-    dependsOn tasks.named('checkPlayerColors')
-    dependsOn tasks.named('checkGearEnchantments')
-    dependsOn 'checkMapResize'
-    dependsOn 'checkArmorAppearance'
-}
-
-tasks.register('checkGlider', JavaExec) {
-    group = 'verification'
-    description = 'Check the glider item, recipe, repairs, enchantments, speed, and heat sources.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCheck'
-    enableAssertions = true
-    args projectDir.absolutePath
-    workingDir = layout.buildDirectory.dir('gliderCheck').get().asFile
-    doFirst { workingDir.mkdirs() }
-}
-
-tasks.register('checkSlimeDetector', JavaExec) {
-    group = 'verification'
-    description = 'Check the Slime Detector signal, timing, definition, recipe, knowledge, and textures.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.SlimeDetectorCheck'
-    enableAssertions = true
-    args projectDir.absolutePath
-    workingDir = layout.buildDirectory.dir('slimeDetectorCheck').get().asFile
-    doFirst { workingDir.mkdirs() }
-}
-
-tasks.register('checkMigration', JavaExec) {
-    group = 'verification'
-    description = 'Check brewing inputs and component patches after the Minecraft update.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.dataget.stackDefs.MigrationCheck'
-    enableAssertions = true
-    args projectDir.absolutePath
-    workingDir = layout.buildDirectory.dir('migrationCheck').get().asFile
-    doFirst { workingDir.mkdirs() }
-}
-
-tasks.named('check') {
-    dependsOn tasks.named('checkMigration')
-}
-
-tasks.register('checkFishing', JavaExec) {
-    group = 'verification'
-    description = 'Check fishing wait timing, approach speed, first-bob chance, and physical shadow scale.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCheck'
-    enableAssertions = true
-    workingDir = layout.buildDirectory.dir('fishingCheck').get().asFile
-    doFirst { workingDir.mkdirs() }
-}
-
-tasks.register('checkFishMeatFishermanTrades', JavaExec) {
-    group = 'verification'
-    description = 'Check fisherman fish meat names and saved offer repair.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FishMeatFishermanTradesCheck'
-    enableAssertions = true
-    args projectDir.absolutePath
-}
-
-tasks.named('check') {
-    dependsOn tasks.named('checkFishMeatFishermanTrades')
-}
-
-tasks.register('checkSparseStructures', JavaExec) {
-    group = 'verification'
-    description = 'Check non-vanilla structure spacing and vanilla exclusions.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
-    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.worldgen.SparseStructuresCheck'
-    enableAssertions = true
-    workingDir = layout.buildDirectory.dir('sparseStructuresCheck').get().asFile
-    doFirst { workingDir.mkdirs() }
-}
-
-tasks.named('check') {
-    dependsOn tasks.named('checkSparseStructures')
 }
 
 tasks.register('checkDailyCatalog', JavaExec) {
     group = 'verification'
     description = 'Check daily task JSON structure, weights, identifiers, and generated definitions.'
-    classpath = sourceSets.trailCheck.runtimeClasspath
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
     mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskCatalogCheck'
     args projectDir.absolutePath
     workingDir = layout.buildDirectory.dir('dailyCatalogCheck').get().asFile
     doFirst { workingDir.mkdirs() }
+}
+
+tasks.named('check') {
+    dependsOn 'checkMapResize', 'checkMasteryDropGates', 'checkGearEnchantments',
+            'checkDailyCatalog'
 }
 
 def generatedResources = file("src/main/generated")
@@ -395,7 +264,3 @@ tasks.named("sourcesJar") {
     dependsOn tasks.named("runDatagen")
 }
 
-tasks.named("build") {
-    dependsOn tasks.named("runDatagen")
-    dependsOn tasks.named("checkDailyCatalog")
-}

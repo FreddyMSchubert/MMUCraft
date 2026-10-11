@@ -15,6 +15,7 @@ import {
 	UserRow,
 	knowledgeUnlocks,
 	playerProfiles,
+	playerStats,
 	shopUnlocks,
 	users,
 } from '../database/database.service';
@@ -29,7 +30,12 @@ import {
 	type PlayerProfileInput,
 } from './player-profile';
 import { PlayerProfileStorageService } from './player-profile-storage.service';
-import { buildStatOptions, type PlayerStats } from './player-statistics';
+import {
+	buildStatOptions,
+	defaultStats,
+	normalizeStatsJson,
+	type PlayerStats,
+} from './player-statistics';
 import { PlayerStatisticsSynchronizationService } from './player-statistics-synchronization.service';
 
 const PLAYER_PAGE_SIZE = 42;
@@ -81,19 +87,22 @@ export class PlayersService {
 		pageInput?: string,
 		selectedMinecraftUsernameInput?: string,
 		all = false,
+		selectedOnly = false,
 	) {
-		const page = all ? 0 : normalizePage(pageInput);
+		const page = all || selectedOnly ? 0 : normalizePage(pageInput);
 		const query = this.database.connection
 			.select()
 			.from(users)
 			.orderBy(asc(sql`lower(${users.minecraft_username})`));
-		const userRows = all
-			? query.all()
-			: query
-					.limit(PLAYER_PAGE_SIZE + 1)
-					.offset(page * PLAYER_PAGE_SIZE)
-					.all();
-		const hasMore = !all && userRows.length > PLAYER_PAGE_SIZE;
+		const userRows = selectedOnly
+			? []
+			: all
+				? query.all()
+				: query
+						.limit(PLAYER_PAGE_SIZE + 1)
+						.offset(page * PLAYER_PAGE_SIZE)
+						.all();
+		const hasMore = !all && !selectedOnly && userRows.length > PLAYER_PAGE_SIZE;
 		const pageRows = all ? userRows : userRows.slice(0, PLAYER_PAGE_SIZE);
 
 		const statsContext = this.getStatsContext();
@@ -127,7 +136,7 @@ export class PlayersService {
 			selectedPlayer,
 			requestedPlayer: selectedMinecraftUsername || null,
 			page,
-			pageSize: all ? pageRows.length : PLAYER_PAGE_SIZE,
+			pageSize: all || selectedOnly ? pageRows.length : PLAYER_PAGE_SIZE,
 			hasMore,
 		};
 	}
@@ -270,7 +279,14 @@ export class PlayersService {
 			.from(users)
 			.all();
 		const userIds = userRows.map((user) => user.id);
-		const stats = new Map(userIds.map((id) => [id, this.playerStatistics.getForUser(id)]));
+		const storedStats = new Map(
+			this.database.connection
+				.select({ userId: playerStats.user_id, json: playerStats.stats_json })
+				.from(playerStats)
+				.all()
+				.map((row) => [row.userId, normalizeStatsJson(row.json)] as const),
+		);
+		const stats = new Map(userIds.map((id) => [id, storedStats.get(id) ?? defaultStats()]));
 		const unlocks = this.getUnlockProgress(userIds);
 		const values = new Map<number, Record<string, number>>();
 

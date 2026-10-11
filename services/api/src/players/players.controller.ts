@@ -18,9 +18,10 @@ export class PlayersController {
 		@Query('page') page: string | undefined,
 		@Query('player') player: string | undefined,
 		@Query('all') all: string | undefined,
+		@Query('selectedOnly') selectedOnly: string | undefined,
 	) {
 		const user = this.auth.requireSession(cookieHeader);
-		return this.players.listPlayers(user, page, player, all === '1');
+		return this.players.listPlayers(user, page, player, all === '1', selectedOnly === '1');
 	}
 
 	@Get('online')

@@ -25,7 +25,7 @@ public final class RepairMaterial implements AnvilRecipe
     public boolean matches(ItemStack left, ItemStack right)
     {
         if (GliderCharm.isGlider(left)) {
-            return isGliderLeatherRepair(left, right);
+            return isGliderMembraneRepair(left, right);
         }
 
         if (!isVanillaAnvilRepairable(left)) {
@@ -37,7 +37,7 @@ public final class RepairMaterial implements AnvilRecipe
             return true;
         }
 
-        return isGliderLeatherRepair(left, right) || isNetheriteGear(left) && right.is(Items.DIAMOND);
+        return isGliderMembraneRepair(left, right) || isNetheriteGear(left) && right.is(Items.DIAMOND);
     }
 
     @Override
@@ -107,7 +107,7 @@ public final class RepairMaterial implements AnvilRecipe
 
     private static int getRepairAmountPerUnit(ItemStack target, ItemStack ingredient) {
         if (GliderCharm.isGlider(target)) {
-            return isGliderLeatherRepair(target, ingredient) ? target.getMaxDamage() : 0;
+            return isGliderMembraneRepair(target, ingredient) ? target.getMaxDamage() : 0;
         }
         if (isNetheriteGear(target) && ingredient.is(Items.DIAMOND)) {
             int perIngot = getRepairAmountPerUnit(target, Items.NETHERITE_INGOT.getDefaultInstance());
@@ -116,8 +116,8 @@ public final class RepairMaterial implements AnvilRecipe
         return Math.max(1, target.getMaxDamage() / Math.max(1, countRepairUnitsForItem(target.getItem())));
     }
 
-    private static boolean isGliderLeatherRepair(ItemStack target, ItemStack ingredient) {
-        return GliderCharm.isGlider(target) && ingredient.is(Items.LEATHER);
+    private static boolean isGliderMembraneRepair(ItemStack target, ItemStack ingredient) {
+        return GliderCharm.isGlider(target) && ingredient.is(Items.PHANTOM_MEMBRANE);
     }
 
     private static final List<Tuple<Integer, Tuple<List<TagKey<Item>>, List<Item>>>> repairCounts = List.of(

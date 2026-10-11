@@ -36,42 +36,28 @@ test('player places use the final sorted list and tied positions', async ({
 			},
 		},
 	});
-	const firstPage = {
-		...body,
-		players: [makePlayer(101, 'Alpha', 100), makePlayer(102, 'Bravo', 90)],
-		page: 0,
-		hasMore: true,
-	};
-	const middlePage = {
-		...body,
-		players: [makePlayer(106, 'miaalicexoxo', 0)],
-		page: 1,
-		hasMore: true,
-	};
-	const finalPage = {
+	const directory = {
 		...body,
 		players: [
+			makePlayer(101, 'Alpha', 100),
+			makePlayer(102, 'Bravo', 90),
+			makePlayer(106, 'miaalicexoxo', 0),
 			makePlayer(103, 'Charlie', 80),
 			makePlayer(104, 'Delta', 80),
 			{ ...makePlayer(105, 'Admin', 999), isRanked: false },
 		],
-		page: 2,
+		page: 0,
 		hasMore: false,
 	};
 	let finishLoading = () => undefined;
-	const delayedPage = new Promise<void>((resolve) => {
+	const delayedDirectory = new Promise<void>((resolve) => {
 		finishLoading = resolve;
 	});
+	let directoryRequests = 0;
 	await page.route('**/api/players?*', async (route) => {
-		const requestedPage = new URL(route.request().url()).searchParams.get('page');
-		if (requestedPage === '2') {
-			await delayedPage;
-			await route.fulfill({ json: finalPage });
-		} else if (requestedPage === '1') {
-			await route.fulfill({ json: middlePage });
-		} else {
-			await route.fulfill({ json: firstPage });
-		}
+		directoryRequests++;
+		await delayedDirectory;
+		await route.fulfill({ json: directory });
 	});
 	await page.context().addCookies([
 		{
@@ -80,19 +66,20 @@ test('player places use the final sorted list and tied positions', async ({
 			url: baseURL ?? 'http://127.0.0.1:3100',
 		},
 	]);
-	const nextPageRequested = page.waitForRequest(
+	const directoryRequested = page.waitForRequest(
 		(request) =>
 			new URL(request.url()).pathname === '/api/players' &&
-			new URL(request.url()).searchParams.get('page') === '2',
+			new URL(request.url()).searchParams.get('all') === '1',
 	);
 	await page.goto('/play/players');
-	await nextPageRequested;
+	await directoryRequested;
 	await expect(page.locator('.playersLoading')).toBeVisible();
 	await expect(page.locator('.playersTable')).toHaveCount(0);
 
 	finishLoading();
 	const rows = page.locator('.playersTable tbody tr');
 	await expect(rows).toHaveCount(6);
+	expect(directoryRequests).toBe(1);
 	await expect(rows.locator('td:first-child')).toHaveText(['1', '2', '4', '4', '5', '-']);
 	await page.getByRole('button', { name: 'Sort by Play Time' }).click();
 	await expect(rows.locator('td:first-child')).toHaveText(['1', '3', '3', '4', '5', '-']);
@@ -102,4 +89,32 @@ test('player places use the final sorted list and tied positions', async ({
 	await page.getByRole('textbox', { name: 'Search players' }).fill('Delta');
 	await expect(rows).toHaveCount(1);
 	await expect(rows.locator('td:first-child')).toHaveText(['3']);
+});
+
+test('a player profile loads without fetching the rest of the directory', async ({
+	page,
+	request,
+	baseURL,
+}) => {
+	const response = await request.get('/api/players?page=0&player=PlaywrightMember', {
+		headers: { Cookie: 'mcstack_session=playwright-member' },
+	});
+	await expect(response).toBeOK();
+	const body = await response.json();
+	const requests: string[] = [];
+	await page.route('**/api/players?*', async (route) => {
+		const query = new URL(route.request().url()).searchParams;
+		requests.push(query.toString());
+		await route.fulfill({ json: { ...body, hasMore: true } });
+	});
+	await page.context().addCookies([
+		{
+			name: 'mcstack_session',
+			value: 'playwright-member',
+			url: baseURL ?? 'http://127.0.0.1:3100',
+		},
+	]);
+	await page.goto('/play/players/PlaywrightMember');
+	await expect(page.locator('.playerProfilePanel')).toContainText('PlaywrightMember');
+	expect(requests).toEqual(['player=PlaywrightMember']);
 });

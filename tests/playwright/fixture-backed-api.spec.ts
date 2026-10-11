@@ -27,6 +27,15 @@ test('member endpoints serialize the seeded database', async ({ request }) => {
 			id: 2,
 			minecraftUsername: 'PlaywrightMember',
 		});
+		const directory = await getJson(request, '/api/players?all=1');
+		expect(directory.hasMore).toBe(false);
+		expect(directory.players).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ id: 1 }),
+				expect.objectContaining({ id: 2 }),
+				expect.objectContaining({ id: 3 }),
+			]),
+		);
 	});
 
 	await test.step('Read one player by identifier', async () => {

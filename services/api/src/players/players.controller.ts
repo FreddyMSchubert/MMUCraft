@@ -17,9 +17,10 @@ export class PlayersController {
 		@Headers('cookie') cookieHeader: string | undefined,
 		@Query('page') page: string | undefined,
 		@Query('player') player: string | undefined,
+		@Query('all') all: string | undefined,
 	) {
 		const user = this.auth.requireSession(cookieHeader);
-		return this.players.listPlayers(user, page, player);
+		return this.players.listPlayers(user, page, player, all === '1');
 	}
 
 	@Get('online')

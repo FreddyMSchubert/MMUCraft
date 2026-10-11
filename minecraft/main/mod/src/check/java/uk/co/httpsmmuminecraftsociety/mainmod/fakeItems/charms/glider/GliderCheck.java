@@ -88,15 +88,15 @@ public final class GliderCheck {
         var materialRepair = new RepairMaterial();
         glider.setDamageValue(200);
         ItemStack leather = new ItemStack(Items.LEATHER, 2);
-        assert materialRepair.matches(glider, leather);
+        assert !materialRepair.matches(glider, leather);
         assert !materialRepair.matches(elytra, leather);
         ItemStack membranes = new ItemStack(Items.PHANTOM_MEMBRANE, 2);
-        assert !materialRepair.matches(glider, membranes);
-        assert materialRepair.apply(null, glider, membranes, null) == AnvilLogic.Outcome.EMPTY;
-        var repaired = materialRepair.apply(null, glider, leather, null);
+        assert materialRepair.matches(glider, membranes);
+        assert materialRepair.apply(null, glider, leather, null) == AnvilLogic.Outcome.EMPTY;
+        var repaired = materialRepair.apply(null, glider, membranes, null);
         assert repaired.result().getDamageValue() == 0;
         assert repaired.leftRemainder().isEmpty();
-        assert repaired.rightRemainder().is(Items.LEATHER) && repaired.rightRemainder().getCount() == 1;
+        assert repaired.rightRemainder().is(Items.PHANTOM_MEMBRANE) && repaired.rightRemainder().getCount() == 1;
         assert !new CombineCharmorRecipe().matches(CraftingInput.of(2, 1,
                 List.of(new ItemStack(Items.DIAMOND_CHESTPLATE), glider)), null);
         var enchantments = registries.lookupOrThrow(Registries.ENCHANTMENT);

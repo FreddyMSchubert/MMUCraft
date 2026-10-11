@@ -80,17 +80,21 @@ export class PlayersService {
 		viewer: AuthenticatedUser,
 		pageInput?: string,
 		selectedMinecraftUsernameInput?: string,
+		all = false,
 	) {
-		const page = normalizePage(pageInput);
-		const userRows = this.database.connection
+		const page = all ? 0 : normalizePage(pageInput);
+		const query = this.database.connection
 			.select()
 			.from(users)
-			.orderBy(asc(sql`lower(${users.minecraft_username})`))
-			.limit(PLAYER_PAGE_SIZE + 1)
-			.offset(page * PLAYER_PAGE_SIZE)
-			.all();
-		const hasMore = userRows.length > PLAYER_PAGE_SIZE;
-		const pageRows = userRows.slice(0, PLAYER_PAGE_SIZE);
+			.orderBy(asc(sql`lower(${users.minecraft_username})`));
+		const userRows = all
+			? query.all()
+			: query
+					.limit(PLAYER_PAGE_SIZE + 1)
+					.offset(page * PLAYER_PAGE_SIZE)
+					.all();
+		const hasMore = !all && userRows.length > PLAYER_PAGE_SIZE;
+		const pageRows = all ? userRows : userRows.slice(0, PLAYER_PAGE_SIZE);
 
 		const statsContext = this.getStatsContext();
 		const catchCounts = this.fishing.getCatchCountsForUsers(pageRows.map((user) => user.id));
@@ -123,7 +127,7 @@ export class PlayersService {
 			selectedPlayer,
 			requestedPlayer: selectedMinecraftUsername || null,
 			page,
-			pageSize: PLAYER_PAGE_SIZE,
+			pageSize: all ? pageRows.length : PLAYER_PAGE_SIZE,
 			hasMore,
 		};
 	}

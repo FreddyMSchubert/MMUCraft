@@ -22,7 +22,7 @@ import {
 	rankPlayers,
 } from './players/player-display-format';
 import { PlayerProfilePanel } from './players/player-profile-panel';
-import { mergeStatOptions, StatOptionGroups } from './players/player-statistic-options';
+import { StatOptionGroups } from './players/player-statistic-options';
 import { PlayerCell } from './players/player-table-cells';
 
 export function PlayersTab({
@@ -48,28 +48,14 @@ export function PlayersTab({
 		async (signal?: AbortSignal) => {
 			const query = new URLSearchParams();
 			if (playerName) query.set('player', playerName);
-			let result: PlayersResponse | null = null;
-			for (let page = 0; ; page++) {
-				query.set('page', String(page));
-				const response = await fetch(`/api/players?${query}`, {
-					cache: 'no-store',
-					signal,
-				});
-				const body = await response.json().catch(() => null);
-				if (!response.ok) throw new Error(apiMessage(body, 'Failed to load players'));
-
-				const next = body as PlayersResponse;
-				if (!result) result = next;
-				else {
-					result = {
-						...next,
-						players: [...result.players, ...next.players],
-						statOptions: mergeStatOptions(result.statOptions, next.statOptions),
-					};
-				}
-				if (!next.hasMore) break;
-			}
-			setData(result);
+			else query.set('all', '1');
+			const response = await fetch(`/api/players?${query}`, {
+				cache: 'no-store',
+				signal,
+			});
+			const body = await response.json().catch(() => null);
+			if (!response.ok) throw new Error(apiMessage(body, 'Failed to load players'));
+			setData(body as PlayersResponse);
 		},
 		[playerName],
 	);
@@ -113,7 +99,6 @@ export function PlayersTab({
 	}, [data?.selectedPlayer, playerName, players]);
 
 	useEffect(() => {
-		// ponytail: The directory loads every player. Add server-side search if this becomes slow.
 		if (
 			!data ||
 			!playerName ||

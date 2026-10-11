@@ -277,7 +277,7 @@ services:
             UID: ${PUID:-1000}
             GID: ${PGID:-1000}
         volumes:
-            - ./data/surprising-saturday:/data
+            - ./data/chunklocked:/data
         logging: *logging
         restart: 'no'
         stop_grace_period: 2m

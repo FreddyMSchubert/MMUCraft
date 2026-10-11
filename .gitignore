@@ -2,6 +2,8 @@ node_modules
 .next
 .gradle
 minecraft/surprising-saturday/killshift/build/
+minecraft/surprising-saturday/chunklocked/build/
+minecraft/surprising-saturday/chunklocked/run/
 minecraft/surprising-saturday/mods/
 dist
 tests/playwright-report/

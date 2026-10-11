@@ -25,7 +25,7 @@ start:
 	cd $(MC)/mod && $(GRADLEW) assemble
 	cd $(MC)/mod && $(GRADLEW) -p ../../../services/velocity/plugin assemble
 	cd $(MC)/mod && $(GRADLEW) -p ../../../minecraft/waiting-room/plugin assemble
-	cd minecraft/surprising-saturday/killshift && $(GRADLEW) assemble
+	cd minecraft/surprising-saturday/killshift && $(GRADLEW) -p ../chunklocked assemble
 	$(PYTHON) minecraft/surprising-saturday/download-mods.py
 	$(PYTHON) $(MC)/respack/build-main-pack.py
 	$(COMPOSE) --profile event build surprising-saturday

@@ -277,7 +277,7 @@ services:
             MEMORY: 2G
             STOP_DURATION: '110'
         volumes:
-            - ./.dev/surprising-saturday:/data
+            - ./.dev/chunklocked:/data
         logging: *logging
         restart: 'no'
         stop_grace_period: 2m

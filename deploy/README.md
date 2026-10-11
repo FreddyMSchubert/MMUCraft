@@ -4,7 +4,7 @@ For a new server, follow the [complete setup and cutover guide](SETUP.md).
 
 The GitHub `deploy` workflow copies this directory, the root `.env.example`, and the monitoring configuration to the selected server. It then runs `deploy.sh` with the `dev` or `production` target. Runtime state stays under `data/`, which is not present in the deployment archive, and Docker volumes are never pruned.
 
-Development images use the commit SHA as their tag. A manual `dev` deployment uses the commit that started the workflow. The workflow checks that all required images exist before it changes the server.
+Development builds publish both `dev` and commit-SHA image tags. Deploying `dev` selects the latest published build and uses its SHA-tagged images and matching deployment files; entering a SHA selects an earlier build. The workflow checks that all required images exist before it changes the server.
 
 The API applies pending Drizzle migrations before it starts listening. The image contains them at `/app/drizzle`, while `/app/data/app.sqlite` is the mounted production database; a failed migration makes the API fail instead of serving against the wrong schema.
 

@@ -4,14 +4,14 @@ on:
     workflow_dispatch:
         inputs:
             release_tag:
-                description: Published release tag for image names; blank uses the built commit SHA. Does not choose source code.
+                description: Published release tag to rebuild; blank publishes dev and commit-SHA image tags.
                 required: false
                 default: ''
                 type: string
             source_ref:
-                description: Branch, tag, or commit to test and build; defaults to main.
+                description: Code to build for dev (branch, tag, or commit); defaults to main. Ignored for releases.
                 required: false
-                default: main
+                default: ''
                 type: string
     release:
         types: [published]
@@ -52,7 +52,7 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v6
               with:
-                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || 'main' }}
+                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.release_tag || inputs.source_ref || 'main' }}
                   persist-credentials: false
 
             - name: Resolve source revision
@@ -174,9 +174,13 @@ jobs:
               env:
                   RELEASE_TAG: ${{ steps.manual_release.outputs.tag || github.event.release.tag_name }}
               run: |
-                  tag="${{ steps.source.outputs.sha }}"
+                  tag=dev
                   if [[ -n "$RELEASE_TAG" ]]; then
                     tag="${RELEASE_TAG}"
+                    if [[ "${tag,,}" == dev ]]; then
+                      echo "'dev' is reserved for development images" >&2
+                      exit 1
+                    fi
                   fi
                   if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
                     echo "Release tag '$tag' is not a valid Docker tag" >&2
@@ -390,6 +394,7 @@ jobs:
               env:
                   IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
                   IMAGE_TAG: ${{ steps.image.outputs.tag }}
+                  SOURCE_SHA: ${{ steps.source.outputs.sha }}
                   API_IMAGE: ${{ steps.front_images.outputs.api_image }}
                   WEB_IMAGE: ${{ steps.front_images.outputs.web_image }}
                   MC_IMAGE: ${{ steps.back_images.outputs.mc_image }}
@@ -403,7 +408,31 @@ jobs:
                     key=${service^^}
                     key=${key//-/_}
                     source_variable=${key}_IMAGE
-                    docker buildx imagetools create \
-                      --tag "${IMAGE_PREFIX}-${service}:${IMAGE_TAG}" \
-                      "${!source_variable}"
+                    if [[ "$IMAGE_TAG" == dev ]]; then
+                      docker buildx imagetools create \
+                        --tag "${IMAGE_PREFIX}-${service}:${SOURCE_SHA}" \
+                        "${!source_variable}"
+                    else
+                      docker buildx imagetools create \
+                        --tag "${IMAGE_PREFIX}-${service}:${IMAGE_TAG}" \
+                        "${!source_variable}"
+                    fi
                   done
+                  if [[ "$IMAGE_TAG" == dev ]]; then
+                    # Publish the API alias last. Its revision annotation points to a complete SHA-tagged set.
+                    for service in web mc velocity waiting-room event event-controller backup api; do
+                      key=${service^^}
+                      key=${key//-/_}
+                      source_variable=${key}_IMAGE
+                      if [[ "$service" == api ]]; then
+                        docker buildx imagetools create \
+                          --annotation "index:org.opencontainers.image.revision=${SOURCE_SHA}" \
+                          --tag "${IMAGE_PREFIX}-${service}:dev" \
+                          "${!source_variable}"
+                      else
+                        docker buildx imagetools create \
+                          --tag "${IMAGE_PREFIX}-${service}:dev" \
+                          "${!source_variable}"
+                      fi
+                    done
+                  fi

@@ -15,6 +15,7 @@
 		"playerpotions.PlayerPotionTrackingMixin",
 		"playerpotions.PlayerPotionPacketMixin",
 		"BedrockFormattingMixin",
+		"BookshelfBookStorageMixin",
 		"ConduitRecipeMixin",
 		"FormattedChatMessageMixin",
 		"BacapMessageFilterMixin",

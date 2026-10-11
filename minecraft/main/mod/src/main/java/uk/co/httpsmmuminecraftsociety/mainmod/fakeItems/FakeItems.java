@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
@@ -16,11 +17,14 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFea
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class FakeItems {
         private static final int TOOLTIP_LINE_LENGTH = 80;
+        private static final Set<String> BOOKSHELF_BOOK_IDS = Set.of(
+                "charm-knowledge-book", "charm-magic-book", "charm-fashion-book", "charm-joke-book");
 
         private FakeItems() {}
 
@@ -86,6 +90,12 @@ public final class FakeItems {
     public static boolean isSpecificFakeItem(ItemStack stack, String fakeItemId) {
         CustomModelData cmd = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         return cmd != null && cmd.strings().contains(fakeItemId);
+    }
+
+    public static boolean isBookshelfBook(ItemStack stack) {
+        if (stack.is(ItemTags.BOOKSHELF_BOOKS)) return true;
+        FakeItem fakeItem = getFakeItemFromStack(stack);
+        return fakeItem != null && BOOKSHELF_BOOK_IDS.contains(fakeItem.id());
     }
 
     public static boolean isKnownFakeItem(String fakeItemId) {

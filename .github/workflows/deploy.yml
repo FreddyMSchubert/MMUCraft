@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
         inputs:
             target:
-                description: Server that receives the selected images and deployment files
+                description: Server to update (dev or production)
                 required: true
                 default: dev
                 type: choice
@@ -13,12 +13,12 @@ on:
                     - dev
                     - production
             version:
-                description: Existing image tag to deploy (e.g. v1.5.9); dev uses this workflow commit's SHA
+                description: Build to deploy; dev = latest dev build, SHA = specific build, release tag = published release
                 required: true
                 default: dev
                 type: string
             source_ref:
-                description: Revision to copy deployment files from; blank uses Version. Ignored for dev. Does not build images.
+                description: Deployment files for release tags; blank uses Version. Dev and SHA use their build commit.
                 required: false
                 default: ''
                 type: string
@@ -59,14 +59,20 @@ jobs:
               shell: bash
               env:
                   REQUESTED_VERSION: ${{ env.DEPLOY_VERSION }}
-                  REQUESTED_REF: ${{ github.sha }}
                   REQUESTED_SOURCE_REF: ${{ inputs.source_ref }}
               run: |
                   tag="$REQUESTED_VERSION"
                   ref="${REQUESTED_SOURCE_REF:-$REQUESTED_VERSION}"
                   if [[ "${tag,,}" == dev ]]; then
-                    tag="$REQUESTED_REF"
-                    ref="$REQUESTED_REF"
+                    if [[ "$DEPLOY_TARGET" != dev ]]; then
+                      echo "Production requires a release tag, not dev" >&2
+                      exit 1
+                    fi
+                    tag=dev
+                    ref=''
+                  elif [[ "$tag" =~ ^[0-9a-fA-F]{40}$ ]]; then
+                    tag="${tag,,}"
+                    ref="$tag"
                   fi
                   if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
                     echo "'$tag' is not a valid image tag" >&2
@@ -76,12 +82,6 @@ jobs:
                   echo "ref=$ref" >> "$GITHUB_OUTPUT"
                   echo "prefix=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
-            - name: Checkout deployment files
-              uses: actions/checkout@v6
-              with:
-                  ref: ${{ steps.version.outputs.ref }}
-                  persist-credentials: false
-
             - name: Log in to GHCR
               uses: docker/login-action@v4
               with:
@@ -89,14 +89,38 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v4
+
             - name: Verify all requested images exist
+              id: images
               env:
                   IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
-                  IMAGE_TAG: ${{ steps.version.outputs.tag }}
+                  REQUESTED_TAG: ${{ steps.version.outputs.tag }}
+                  REQUESTED_REF: ${{ steps.version.outputs.ref }}
               run: |
+                  tag="$REQUESTED_TAG"
+                  ref="$REQUESTED_REF"
+                  if [[ "$tag" == dev ]]; then
+                    manifest=$(docker buildx imagetools inspect --raw "${IMAGE_PREFIX}-api:dev")
+                    ref=$(jq -r '.annotations["org.opencontainers.image.revision"] // empty' <<< "$manifest")
+                    if [[ ! "$ref" =~ ^[0-9a-f]{40}$ ]]; then
+                      echo 'The dev image does not identify a complete built commit; run checks-tests-images first' >&2
+                      exit 1
+                    fi
+                    tag="$ref"
+                  fi
                   for service in api web mc velocity waiting-room event event-controller backup; do
-                    docker manifest inspect "${IMAGE_PREFIX}-${service}:${IMAGE_TAG}" >/dev/null
+                    docker manifest inspect "${IMAGE_PREFIX}-${service}:${tag}" >/dev/null
                   done
+                  echo "tag=$tag" >> "$GITHUB_OUTPUT"
+                  echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+            - name: Checkout deployment files
+              uses: actions/checkout@v6
+              with:
+                  ref: ${{ steps.images.outputs.ref }}
+                  persist-credentials: false
 
             - name: Configure SSH
               env:
@@ -140,7 +164,7 @@ jobs:
                     exit 1
                   }
 
-            - name: Copy production files and deploy
+            - name: Copy deployment files and deploy
               shell: bash
               env:
                   DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
@@ -150,7 +174,7 @@ jobs:
                   GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   GHCR_USER: ${{ github.actor }}
                   IMAGE_PREFIX: ${{ steps.version.outputs.prefix }}
-                  IMAGE_TAG: ${{ steps.version.outputs.tag }}
+                  IMAGE_TAG: ${{ steps.images.outputs.tag }}
               run: |
                   test -n "$DEPLOY_HOST"
                   test -n "$DEPLOY_USER"

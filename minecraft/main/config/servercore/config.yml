@@ -50,7 +50,7 @@ dynamic:
 breeding-cap:
     enabled: true
     villagers:
-        limit: 24
+        limit: 32
         range: 64
         unlimited-height: false
     animals:

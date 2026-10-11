@@ -15,6 +15,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFeature;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +44,7 @@ public final class FakeItems {
                             .map(CharmItemFeature.class::cast)
                             .map(feature -> Map.entry(feature.charmId(), item)))
                     .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
-            FISH = ALL.stream()
+            Map<FakeItem, FishItemFeature> fish = ALL.stream()
                     .flatMap(item -> item.features().stream()
                             .filter(FishItemFeature.class::isInstance)
                             .map(FishItemFeature.class::cast)
@@ -51,6 +53,26 @@ public final class FakeItems {
                             Map.Entry::getKey,
                             Map.Entry::getValue
                     ));
+
+            List<Map.Entry<FakeItem, FishItemFeature>> byOldBounces = fish.entrySet().stream()
+                    .sorted(Comparator.<Map.Entry<FakeItem, FishItemFeature>>comparingDouble(
+                                    entry -> entry.getValue().personality().bounceTendency())
+                            .thenComparing(entry -> entry.getKey().id()))
+                    .toList();
+            Map<FakeItem, FishItemFeature> adjustedFish = new HashMap<>();
+            for (int rank = 0; rank < byOldBounces.size(); rank++) {
+                double percentile = byOldBounces.size() == 1 ? 0.5D : (double) rank / (byOldBounces.size() - 1);
+                // Keep the old species order while spreading their bite tendencies.
+                float bounceTendency = percentile <= 0.95D
+                        ? (float) (1.25D + 8.75D * percentile / 0.95D)
+                        : (float) (10.0D + 4.0D * (percentile - 0.95D) / 0.05D);
+                var entry = byOldBounces.get(rank);
+                FishItemFeature original = entry.getValue();
+                adjustedFish.put(entry.getKey(), new FishItemFeature(
+                        original.personality().withBounceTendency(bounceTendency),
+                        original.length(), original.furnaceResult(), original.spawnTags()));
+            }
+            FISH = Map.copyOf(adjustedFish);
 
             MainMod.LOGGER.info("[FakeItems init] Loaded {} fake items from JSON: {}", ALL.size(), ID_MAP.keySet().stream().sorted().toList());
         }

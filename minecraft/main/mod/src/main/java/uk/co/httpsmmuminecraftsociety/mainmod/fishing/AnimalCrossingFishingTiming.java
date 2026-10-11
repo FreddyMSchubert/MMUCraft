@@ -12,8 +12,12 @@ public final class AnimalCrossingFishingTiming {
     private static final int WAIT_SPREAD_TICKS_WITHOUT_LURE = 20 * 4;
     private static final int WAIT_SPREAD_TICKS_WITH_LURE_3 = 20 * 3;
     private static final int LURE_3_EXTRA_RANDOM_WAIT_TICKS = 20 * 2;
-    private static final double BOUNCE_GAUSSIAN_SIGMA = 1.0D;
     private static final double BOBBER_TOUCH_PADDING_BLOCKS = 0.10D;
+    // One shared bell curve; species tendency tilts it earlier or later.
+    private static final double[] BITE_WEIGHTS = {
+            0.473723D, 0.737029D, 0.901254D, 1.0D, 0.877033D,
+            0.689601D, 0.413890D, 0.115015D, 0.028741D, 0.003716D
+    };
 
 	private AnimalCrossingFishingTiming() {}
 
@@ -75,30 +79,22 @@ public final class AnimalCrossingFishingTiming {
         };
     }
 
-    public static int rollBounceCount(RandomSource random, FishingPersonality personality) {
-        if (personality.averageCatchSeconds() < 5.0F) {
-            return random.nextBoolean()
-                    ? 1
-                    : Math.max(2, rollGeneratedBounceCount(random, personality.averageBounces()));
-        }
-        return rollGeneratedBounceCount(random, personality.averageBounces());
+    public static boolean shouldBite(RandomSource random, FishingPersonality personality, int contact) {
+        return random.nextDouble() < biteChance(personality, contact);
     }
 
-    private static int rollGeneratedBounceCount(RandomSource random, double averageBounces) {
-        int rightEdge = Math.max(1, Mth.ceil(averageBounces * 2.0D - 1.0D));
-        if (rightEdge <= 1) return 1;
+    static double biteChance(FishingPersonality personality, int contact) {
+        if (contact >= BITE_WEIGHTS.length) return 1.0D;
 
-        double totalWeight = 0.0D;
-        for (int bounces = 1; bounces <= rightEdge; bounces++) {
-            totalWeight += bounceWeight(bounces, averageBounces);
+        float tendency = personality.bounceTendency();
+        double bias = (Math.min(tendency, 10.0F) - 5.625D) / 20.0D
+                + Math.max(0.0F, tendency - 10.0F) * 0.2D;
+        double current = BITE_WEIGHTS[contact - 1] * Math.exp(bias * (contact - 4));
+        double remaining = current;
+        for (int next = contact + 1; next <= BITE_WEIGHTS.length; next++) {
+            remaining += BITE_WEIGHTS[next - 1] * Math.exp(bias * (next - 4));
         }
-
-        double roll = random.nextDouble() * totalWeight;
-        for (int bounces = 1; bounces <= rightEdge; bounces++) {
-            roll -= bounceWeight(bounces, averageBounces);
-            if (roll <= 0.0D) return bounces;
-        }
-        return rightEdge;
+        return current / remaining;
     }
 
     private static int lureScaledTicks(int noLureTicks, int lureThreeTicks, int lureLevel) {
@@ -106,8 +102,4 @@ public final class AnimalCrossingFishingTiming {
         return Mth.ceil(noLureTicks + (lureThreeTicks - noLureTicks) * lureProgress);
     }
 
-    private static double bounceWeight(int bounces, double averageBounces) {
-        double offset = (bounces - averageBounces) / BOUNCE_GAUSSIAN_SIGMA;
-        return Math.exp(-0.5D * offset * offset);
-    }
 }

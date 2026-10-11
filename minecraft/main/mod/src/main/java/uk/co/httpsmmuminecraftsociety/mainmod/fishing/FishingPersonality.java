@@ -13,8 +13,7 @@ public record FishingPersonality(
         float approachSeconds,
         float retreatSeconds,
         float retreatDistance,
-        float averageBounces,
-        float averageCatchSeconds
+        float bounceTendency
 ) {
     public int struggleTicks() {
         return Mth.ceil(struggleSeconds * 20.0F);
@@ -53,8 +52,15 @@ public record FishingPersonality(
                 approachSeconds,
                 retreatSeconds,
                 retreatDistance,
-                averageBounces,
-                averageCatchSeconds
+                bounceTendency
+        );
+    }
+
+    public FishingPersonality withBounceTendency(float newBounceTendency) {
+        return new FishingPersonality(
+                rarity, struggleSeconds, textureAngleDegrees, randomTextureAngle,
+                textureLengthPixels, size, secondsAwayFromBobber, approachSeconds,
+                retreatSeconds, retreatDistance, newBounceTendency
         );
     }
 
@@ -71,8 +77,7 @@ public record FishingPersonality(
 				approachSeconds,
 				retreatSeconds,
 				retreatDistance,
-				averageBounces,
-				averageCatchSeconds
+				bounceTendency
 		);
 	}
 }

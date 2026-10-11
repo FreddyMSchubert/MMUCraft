@@ -539,8 +539,7 @@ public final class FishingCatches {
                 0.5F,
                 1.5F,
                 0.75F,
-                3.0F,
-                8.0F
+                3.0F
         );
     }
 
@@ -558,8 +557,7 @@ public final class FishingCatches {
                 0.5F,
                 1.5F,
                 0.75F,
-                3.0F,
-                8.0F
+                3.0F
         );
     }
 

@@ -39,10 +39,7 @@
 					"exclusiveMinimum": 0
 				}
 			},
-			"required": [
-				"averageLengthCm",
-				"textureLengthPixels"
-			]
+			"required": ["averageLengthCm", "textureLengthPixels"]
 		},
 		"catching": {
 			"description": "Optional overrides for the stable catching behavior generated from the fish id and rarity.",
@@ -72,7 +69,7 @@
 					"exclusiveMinimum": 0
 				},
 				"averageCatchSeconds": {
-					"description": "Target average seconds from the first bounce approach starting to the bite.",
+					"description": "Baseline time used to rank this species' bite tendency relative to other fish.",
 					"type": "number",
 					"minimum": 0
 				}
@@ -105,18 +102,8 @@
 		},
 		"furnaceResult": {
 			"type": "string",
-			"enum": [
-				"white_meat",
-				"red_meat",
-				"crab_claw",
-				"tentacle"
-			]
+			"enum": ["white_meat", "red_meat", "crab_claw", "tentacle"]
 		}
 	},
-	"required": [
-		"angle",
-		"size",
-		"tags",
-		"furnaceResult"
-	]
+	"required": ["angle", "size", "tags", "furnaceResult"]
 }

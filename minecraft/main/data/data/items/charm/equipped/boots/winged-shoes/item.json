@@ -1,0 +1,205 @@
+{
+	"title": "Winged Shoes Charm",
+	"id": "charm-winged-shoes",
+	"modelType": "charm",
+	"rarity": "mythical",
+	"maxStackSize": 1,
+	"tooltips": ["Don't get cold feet."],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 225,
+		"description": "Lets you jump in mid-air and fall slowly after each extra jump.",
+		"unlockWeight": 10,
+		"unlockMessage": "Unlocked charm: Winged Shoes Charm.",
+		"gameplayToggle": "soaring"
+	},
+	"charm": {
+		"charmId": 22,
+		"minLevel": 0,
+		"maxLevel": 10,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Lets you jump in mid-air once.",
+				"abilityStatusRelative": "Lets you jump in mid-air once.",
+				"dabloons": 300,
+				"upgradeIngredients": [
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"mainmod:charm-glider"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Lets you jump in mid-air twice.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"dabloons": 369,
+				"upgradeIngredients": [
+					"minecraft:ominous_trial_key",
+					"minecraft:ominous_trial_key",
+					"minecraft:ominous_trial_key",
+					"minecraft:mace[minecraft:enchantments={\"minecraft:density\":5,\"minecraft:fire_aspect\":1,\"minecraft:mending\":1,\"minecraft:unbreaking\":3,\"minecraft:wind_burst\":3,\"mainmod:soulbound\":1}]=Maxed Mace",
+					"minecraft:breeze_rod",
+					"minecraft:breeze_rod",
+					"minecraft:breeze_rod"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Lets you jump in mid-air 3 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"dabloons": 420,
+				"upgradeIngredients": [
+					"mainmod:fish-skyfish",
+					"mainmod:fish-thunderfin",
+					"mainmod:fish-charged_thunderfin",
+					"minecraft:trident[minecraft:enchantments={\"minecraft:impaling\":5,\"minecraft:mending\":1,\"minecraft:riptide\":3,\"minecraft:unbreaking\":3,\"mainmod:soulbound\":1}]=Maxed Riptide Trident"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Lets you jump in mid-air 4 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"dabloons": 500,
+				"upgradeIngredients": [
+					"minecraft:heavy_core",
+					"minecraft:flow_armor_trim_smithing_template",
+					"minecraft:sulfur_cube_bucket",
+					"minecraft:potent_sulfur",
+					"minecraft:potent_sulfur",
+					"mainmod:charm-umbrella-staff",
+					"minecraft:goat_horn",
+					"minecraft:potion[minecraft:potion_contents=slow_falling]=Potion of Slow Falling",
+					"minecraft:potion[minecraft:potion_contents=slow_falling]=Potion of Slow Falling"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Lets you jump in mid-air 5 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"dabloons": 550,
+				"upgradeIngredients": [
+					"minecraft:music_disc_tears",
+					"minecraft:dried_ghast",
+					"minecraft:ghast_tear",
+					"minecraft:ghast_tear",
+					"minecraft:ghast_tear",
+					"minecraft:ghast_tear",
+					"minecraft:white_harness",
+					"minecraft:potion[minecraft:potion_contents=slow_falling]=Potion of Slow Falling"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Lets you jump in mid-air 6 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"dabloons": 600,
+				"upgradeIngredients": [
+					"minecraft:enchanted_book[minecraft:stored_enchantments={\"minecraft:soul_speed\":2}]=Soul Speed II Enchanted Book",
+					"minecraft:snout_armor_trim_smithing_template",
+					"minecraft:netherite_upgrade_smithing_template",
+					"minecraft:rib_armor_trim_smithing_template",
+					"minecraft:music_disc_pigstep"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Lets you jump in mid-air 7 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"dabloons": 650,
+				"upgradeIngredients": [
+					"minecraft:ochre_froglight",
+					"minecraft:ochre_froglight",
+					"minecraft:verdant_froglight",
+					"minecraft:verdant_froglight",
+					"minecraft:pearlescent_froglight",
+					"minecraft:pearlescent_froglight",
+					"minecraft:wither_rose",
+					"minecraft:wither_rose",
+					"minecraft:wither_rose",
+					"minecraft:nether_star"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Lets you jump in mid-air 8 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"dabloons": 700,
+				"upgradeIngredients": [
+					"minecraft:dragon_egg",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:lingering_potion[minecraft:potion_contents=slow_falling]=Lingering Potion of Slow Falling",
+					"minecraft:lingering_potion[minecraft:potion_contents=slow_falling]=Lingering Potion of Slow Falling",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:elytra"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Lets you jump in mid-air 9 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
+				"dabloons": 750,
+				"upgradeIngredients": [
+					"minecraft:spire_armor_trim_smithing_template",
+					"mainmod:enderite-upgrade-smithing-template",
+					"mainmod:enderite-scrap",
+					"mainmod:enderite-scrap",
+					"mainmod:enderite-scrap",
+					"mainmod:enderite-scrap",
+					"minecraft:dragon_head",
+					"minecraft:chorus_flower",
+					"minecraft:chorus_flower"
+				]
+			},
+			{
+				"level": 10,
+				"abilityStatusCurrent": "Lets you jump in mid-air 15 times while equipped.",
+				"abilityStatusRelative": "Let's you jump in mid-air 6 more times.",
+				"dabloons": 1000,
+				"upgradeIngredients": [
+					"mainmod:enderite-ingot",
+					"minecraft:dragon_egg",
+					"minecraft:dragon_egg",
+					"minecraft:music_disc_tears",
+					"minecraft:ochre_froglight",
+					"minecraft:verdant_froglight",
+					"minecraft:pearlescent_froglight",
+					"minecraft:sulfur_cube_bucket",
+					"mainmod:fish-charged_thunderfin",
+					"minecraft:enchanted_book[minecraft:stored_enchantments={\"minecraft:wind_burst\":3}]=Wind Burst III Enchanted Book",
+					"minecraft:spire_armor_trim_smithing_template",
+					"mainmod:charm-glider"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "winged_shoes__charm"
+	}
+}

@@ -5,6 +5,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
@@ -15,6 +17,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
 {
     public static final double EXTRA_JUMP_VELOCITY = 0.62D;
     public static final double FORWARD_BOOST = 0.28D;
+    private static final int SLOW_FALLING_TICKS = 20;
 
     // How long a second jump press stays buffered.
     public static final int JUMP_BUFFER_TICKS = 5;
@@ -84,7 +87,6 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
                 player.setDeltaMovement(newX, newY, newZ);
                 player.setOnGround(false);
                 player.resetFallDistance();
-
                 player.syncVelocity = true;
                 player.connection.send(new ClientboundSetEntityMotionPacket(player));
 
@@ -92,6 +94,10 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
                 releasedSinceJump = false; // require another release before another extra jump
                 jumpBuffer = 0;
                 airTicks = 0;
+            }
+
+            if (usedJumps > 0 && airTicks % (SLOW_FALLING_TICKS - 1) == 0) {
+                player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, SLOW_FALLING_TICKS, 0, false, false, false));
             }
         }
 

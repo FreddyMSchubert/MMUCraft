@@ -373,6 +373,7 @@ async function generateBasic3dItem(
 ): Promise<SelectorCase> {
 	const { outputDir, namespace } = context.options;
 	const modelId = itemModelId(namespace, item.resourcePath);
+	const shadowModelId = itemModelId(namespace, `fishing_shadow/${item.resourcePath}`);
 
 	await copyFile(
 		item.modelTexturePngPath,
@@ -384,15 +385,24 @@ async function generateBasic3dItem(
 		itemTextureMcmetaPath(outputDir, namespace, item.resourcePath),
 		context,
 	);
+	const model = await buildGeneratedSingleTextureModel(item, namespace);
+	await writeJson(itemModelJsonPath(outputDir, namespace, item.resourcePath), model, context);
+	const shadowModel = structuredClone(model);
+	for (const element of (shadowModel.elements ?? []) as {
+		faces?: Record<string, Record<string, unknown>>;
+	}[]) {
+		for (const face of Object.values(element.faces ?? {})) face.tintindex = 0;
+	}
 	await writeJson(
-		itemModelJsonPath(outputDir, namespace, item.resourcePath),
-		await buildGeneratedSingleTextureModel(item, namespace),
+		itemModelJsonPath(outputDir, namespace, `fishing_shadow/${item.resourcePath}`),
+		shadowModel,
 		context,
 	);
 
 	return {
 		when: item.id,
 		modelId,
+		shadowModelId,
 	};
 }
 

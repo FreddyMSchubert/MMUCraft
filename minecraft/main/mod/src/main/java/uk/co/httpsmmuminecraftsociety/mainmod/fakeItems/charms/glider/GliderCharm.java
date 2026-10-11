@@ -1,15 +1,9 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider;
 
-import net.fabricmc.fabric.api.item.v1.EnchantingContext;
-import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.equipment.Equippable;
-import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
@@ -27,11 +21,6 @@ public final class GliderCharm implements Charm, BaseItemChangeCallbackCharm {
     public static boolean isRealElytra(ItemStack stack) {
         return stack.is(Items.ELYTRA) && !isGlider(stack)
                 && !FakeItems.isSpecificFakeItem(stack, "charm-glider");
-    }
-
-    public static TriState allowEnchanting(Holder<Enchantment> enchantment, ItemStack stack, EnchantingContext context) {
-        if (!isGlider(stack)) return TriState.DEFAULT;
-        return TriState.of(enchantment.is(Enchantments.MENDING) || enchantment.is(ModEnchantments.SOULBOUND));
     }
 
     @Override

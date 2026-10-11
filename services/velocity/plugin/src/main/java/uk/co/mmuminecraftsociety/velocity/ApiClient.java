@@ -32,8 +32,8 @@ final class ApiClient {
         return post("/api/internal/velocity/sync", request, SyncResponse.class);
     }
 
-    CompletableFuture<ConnectedResponse> connected(String uuid, String serverName) {
-        return post("/api/internal/velocity/connected", new ConnectedRequest(uuid, serverName), ConnectedResponse.class);
+    CompletableFuture<ConnectedResponse> connected(String uuid, String serverName, boolean temporary) {
+        return post("/api/internal/velocity/connected", new ConnectedRequest(uuid, serverName, temporary), ConnectedResponse.class);
     }
 
     CompletableFuture<ConnectedResponse> markQueued(String uuid, String username) {
@@ -67,7 +67,7 @@ final class ApiClient {
 
     record AccessRequest(String uuid, String username) { }
 
-    record ConnectedRequest(String uuid, String serverName) { }
+    record ConnectedRequest(String uuid, String serverName, boolean temporary) { }
 
     record CommandLogRequest(String uuid, String username, String serverName, String command) { }
 
@@ -84,7 +84,8 @@ final class ApiClient {
 
     record ServerHealth(String name, boolean online, Long latencyMs, String error) { }
 
-    record OnlinePlayer(String uuid, String username, String serverName, String state, String targetServerName) { }
+    record OnlinePlayer(String uuid, String sessionId, String username, String serverName, String state,
+                        String targetServerName, boolean temporary) { }
 
     record SyncResponse(
             boolean maintenanceMode,
@@ -101,7 +102,7 @@ final class ApiClient {
 
     record Route(String revision, String targetServerName, boolean eventOpen) { }
 
-    record MoveCommand(long id, String playerUuid, String targetServerName) { }
+    record MoveCommand(long id, String playerUuid, String sessionId, String targetServerName, boolean temporary) { }
 
     record DisconnectPlayer(String playerUuid, String status, Long expiresAtUnixMs) { }
 

@@ -235,7 +235,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 						<h3>Servers</h3>
 						<p>
 							Main stays online. Surprising Saturday starts 15 minutes before a
-							scheduled event. A live event keeps it running.
+							scheduled event. A live event keeps it running. Outside an event,
+							starting the server allows only admin moves.
 						</p>
 					</div>
 					<span
@@ -362,8 +363,9 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 				<div className="adminSectionHeader">
 					<h3>Online players</h3>
 					<p>
-						Save a connected player’s server choice in the API. The choice stays after
-						disconnect. A server that is starting receives the player when it is ready.
+						Move a connected player for this session. The move ends when the player
+						disconnects. Outside an event, only an admin move can send a player to
+						Surprising Saturday.
 					</p>
 				</div>
 				<div className="adminTableWrap">

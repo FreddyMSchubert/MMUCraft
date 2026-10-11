@@ -45,16 +45,20 @@ interface LiveServer {
 
 interface LivePlayer {
 	uuid: string;
+	sessionId: string;
 	username: string;
 	serverName: string;
 	state: 'queued' | 'visiting' | 'playing';
 	targetServerName: string;
+	temporary: boolean;
 }
 
 interface MoveCommand {
 	id: number;
 	playerUuid: string;
+	sessionId: string;
 	targetServerName: string;
+	temporary: boolean;
 	routeRevision: string | null;
 	createdAtUnixMs: number;
 }
@@ -184,7 +188,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		this.livePlayers = this.connectedPlayers.filter((player) => player.state === 'playing');
 		this.lastHeartbeatUnixMs = now;
 		for (const player of this.livePlayers)
-			this.rememberConnectedServer(player.uuid, player.serverName);
+			this.rememberConnectedServer(player.uuid, player.serverName, player.temporary);
 
 		const settings = this.settings();
 		const servers = this.servers();
@@ -236,7 +240,9 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			commands: [...this.commands.values()].map((command) => ({
 				id: command.id,
 				playerUuid: command.playerUuid,
+				sessionId: command.sessionId,
 				targetServerName: command.targetServerName,
+				temporary: command.temporary,
 			})),
 			disconnects,
 		};
@@ -405,7 +411,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		return { ok: true, maintenanceMode: enabledInput };
 	}
 
-	movePlayer(uuidInput: string, serverIdInput: unknown) {
+	movePlayer(uuidInput: string, serverIdInput: unknown, temporary: boolean) {
 		const uuid = normalizeMinecraftUuid(uuidInput);
 		if (!uuid || !this.identities.findByUuid(uuid))
 			throw new NotFoundException('Player not found');
@@ -424,32 +430,44 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		const player = this.proxyIsOnline()
 			? this.connectedPlayers.find((candidate) => candidate.uuid === uuid)
 			: undefined;
-		this.database.connection
-			.insert(velocityPlayerServers)
-			.values({
-				player_uuid: uuid,
-				preferred_server: server.name,
-				last_connected_server: player?.state === 'playing' ? player.serverName : null,
-			})
-			.onConflictDoUpdate({
-				target: velocityPlayerServers.player_uuid,
-				set: { preferred_server: server.name },
-			})
-			.run();
+		if (temporary && !player) throw new ConflictException('Player is not online');
+		if (!temporary)
+			this.database.connection
+				.insert(velocityPlayerServers)
+				.values({
+					player_uuid: uuid,
+					preferred_server: server.name,
+					last_connected_server: player?.state === 'playing' ? player.serverName : null,
+				})
+				.onConflictDoUpdate({
+					target: velocityPlayerServers.player_uuid,
+					set: { preferred_server: server.name },
+				})
+				.run();
 
 		for (const [id, command] of this.commands)
 			if (command.playerUuid === uuid) this.commands.delete(id);
 		if (!player || (player.serverName === server.name && player.state === 'playing'))
-			return { ok: true, commandId: null, preferredServerName: server.name };
+			return {
+				ok: true,
+				commandId: null,
+				preferredServerName: temporary ? this.preferredServer(uuid) : server.name,
+			};
 		const command: MoveCommand = {
 			id: this.nextCommandId++,
 			playerUuid: uuid,
+			sessionId: player.sessionId,
 			targetServerName: server.name,
+			temporary,
 			routeRevision: this.currentRouteRevision(),
 			createdAtUnixMs: Date.now(),
 		};
 		this.commands.set(command.id, command);
-		return { ok: true, commandId: command.id, preferredServerName: server.name };
+		return {
+			ok: true,
+			commandId: command.id,
+			preferredServerName: temporary ? this.preferredServer(uuid) : server.name,
+		};
 	}
 
 	myServer(userId: number) {
@@ -488,7 +506,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		if (!uuid) throw new NotFoundException('Minecraft account not linked');
 		const server = this.servers().find((candidate) => candidate.name === serverName);
 		if (!server) throw new NotFoundException('Server not found');
-		return this.movePlayer(uuid, server.id);
+		return this.movePlayer(uuid, server.id, false);
 	}
 
 	private settings() {
@@ -518,12 +536,14 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		const warmingUp = activeEvent ? null : this.events.warmingUp(now);
 		return {
 			activeEvent,
-			eventOpen: Boolean(activeEvent) || (override === 1 && !warmingUp),
+			eventOpen: Boolean(activeEvent),
 			revision: activeEvent
 				? `event:${activeEvent.id}`
 				: warmingUp
 					? `warmup:${warmingUp.id}`
-					: 'main',
+					: override === 1
+						? 'main:manual'
+						: 'main',
 			targetServerName: activeEvent ? EVENT_SERVER : 'main',
 		};
 	}
@@ -558,11 +578,15 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		return { ok: true, eventOverride: value };
 	}
 
-	connectedPlayer(uuidInput: unknown, serverName: unknown) {
+	connectedPlayer(uuidInput: unknown, serverName: unknown, temporary: unknown) {
 		const uuid = normalizeMinecraftUuid(typeof uuidInput === 'string' ? uuidInput : '');
-		if (!uuid || (serverName !== 'main' && serverName !== EVENT_SERVER))
+		if (
+			!uuid ||
+			(serverName !== 'main' && serverName !== EVENT_SERVER) ||
+			typeof temporary !== 'boolean'
+		)
 			throw new BadRequestException('Invalid player server');
-		this.rememberConnectedServer(uuid, serverName);
+		this.rememberConnectedServer(uuid, serverName, temporary);
 		return { ok: true };
 	}
 
@@ -591,7 +615,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		);
 	}
 
-	private rememberConnectedServer(uuid: string, serverName: string) {
+	private rememberConnectedServer(uuid: string, serverName: string, temporary: boolean) {
 		if (serverName !== 'main' && serverName !== EVENT_SERVER) return;
 		const saved = this.database.connection
 			.select()
@@ -603,7 +627,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 				.insert(velocityPlayerServers)
 				.values({
 					player_uuid: uuid,
-					preferred_server: serverName,
+					preferred_server: temporary ? 'main' : serverName,
 					last_connected_server: serverName,
 				})
 				.run();
@@ -613,6 +637,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 				.update(velocityPlayerServers)
 				.set({
 					preferred_server:
+						!temporary &&
 						saved.preferred_server === saved.last_connected_server &&
 						serverName === route.targetServerName
 							? serverName
@@ -697,6 +722,7 @@ function parseLivePlayers(value: unknown): LivePlayer[] {
 		if (!entry || typeof entry !== 'object') return [];
 		const input = entry as Record<string, unknown>;
 		const uuid = normalizeMinecraftUuid(typeof input.uuid === 'string' ? input.uuid : '');
+		const sessionId = input.sessionId;
 		const username = typeof input.username === 'string' ? input.username.trim() : '';
 		const serverName =
 			typeof input.serverName === 'string' ? input.serverName.trim().toLowerCase() : '';
@@ -705,6 +731,8 @@ function parseLivePlayers(value: unknown): LivePlayer[] {
 			typeof input.targetServerName === 'string' ? input.targetServerName : '';
 		if (
 			!uuid ||
+			typeof sessionId !== 'string' ||
+			!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(sessionId) ||
 			seen.has(uuid) ||
 			!isValidMinecraftUsername(username) ||
 			!SERVER_NAME_PATTERN.test(serverName) ||
@@ -715,7 +743,17 @@ function parseLivePlayers(value: unknown): LivePlayer[] {
 		)
 			return [];
 		seen.add(uuid);
-		return [{ uuid, username, serverName, state, targetServerName }];
+		return [
+			{
+				uuid,
+				sessionId,
+				username,
+				serverName,
+				state,
+				targetServerName,
+				temporary: input.temporary === true,
+			},
+		];
 	});
 }
 

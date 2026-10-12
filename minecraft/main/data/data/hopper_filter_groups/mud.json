@@ -1,4 +1,12 @@
 {
 	"name": "Mud",
-	"items": ["minecraft:mud", "minecraft:muddy_mangrove_roots"]
+	"items": [
+		"minecraft:mud",
+		"minecraft:mud_brick_slab",
+		"minecraft:mud_brick_stairs",
+		"minecraft:mud_brick_wall",
+		"minecraft:mud_bricks",
+		"minecraft:muddy_mangrove_roots",
+		"minecraft:packed_mud"
+	]
 }

@@ -1,0 +1,13 @@
+{
+	"name": "Trial Chamber Items",
+	"items": [
+		"minecraft:breeze_rod",
+		"minecraft:heavy_core",
+		"minecraft:ominous_bottle",
+		"minecraft:ominous_trial_key",
+		"minecraft:trial_key",
+		"minecraft:trial_spawner",
+		"minecraft:vault",
+		"minecraft:wind_charge"
+	]
+}

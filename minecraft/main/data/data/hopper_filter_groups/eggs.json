@@ -1,4 +1,12 @@
 {
 	"name": "Eggs",
-	"items": ["minecraft:blue_egg", "minecraft:brown_egg", "minecraft:egg"]
+	"items": [
+		"minecraft:blue_egg",
+		"minecraft:brown_egg",
+		"minecraft:dragon_egg",
+		"minecraft:egg",
+		"minecraft:frogspawn",
+		"minecraft:sniffer_egg",
+		"minecraft:turtle_egg"
+	]
 }

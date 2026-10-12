@@ -1,14 +1,20 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.enchantment;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderOwner;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
@@ -46,6 +52,55 @@ public final class GearEnchantmentCheck {
         book.set(DataComponents.STORED_ENCHANTMENTS, applied.toImmutable());
         assert !GearEnchantmentSanitizer.sanitize(book);
         assert book.get(DataComponents.STORED_ENCHANTMENTS).getLevel(featherFalling) == 4;
+
+        var traveler = Holder.Reference.createStandAlone(new HolderOwner<Enchantment>() {},
+                ResourceKey.create(Registries.ENCHANTMENT,
+                        Identifier.fromNamespaceAndPath("nova_structures", "traveler")));
+        ItemEnchantments.Mutable forbidden = new ItemEnchantments.Mutable(applied.toImmutable());
+        forbidden.set(traveler, 1);
+        book.set(DataComponents.STORED_ENCHANTMENTS, forbidden.toImmutable());
+        assert GearEnchantmentSanitizer.sanitize(book);
+        assert book.get(DataComponents.STORED_ENCHANTMENTS).getLevel(traveler) == 0;
+        assert book.get(DataComponents.STORED_ENCHANTMENTS).getLevel(featherFalling) == 4;
+
+        SimpleContainer stash = new SimpleContainer(5);
+        int slot = 0;
+        for (String id : new String[] {"outreach", "swift_soar", "traveler"}) {
+            var blocked = Holder.Reference.createStandAlone(new HolderOwner<Enchantment>() {},
+                    ResourceKey.create(Registries.ENCHANTMENT,
+                            Identifier.fromNamespaceAndPath("nova_structures", id)));
+            ItemEnchantments.Mutable onlyBlocked = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+            onlyBlocked.set(blocked, 1);
+            ItemStack blockedBook = new ItemStack(Items.ENCHANTED_BOOK);
+            blockedBook.set(DataComponents.STORED_ENCHANTMENTS, onlyBlocked.toImmutable());
+            stash.setItem(slot++, blockedBook);
+        }
+        ItemStack mixedBook = new ItemStack(Items.ENCHANTED_BOOK);
+        mixedBook.set(DataComponents.STORED_ENCHANTMENTS, forbidden.toImmutable());
+        stash.setItem(3, mixedBook);
+        ItemEnchantments.Mutable worn = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        worn.set(traveler, 1);
+        worn.set(featherFalling, 2);
+        ItemStack wornBoots = new ItemStack(Items.DIAMOND_BOOTS);
+        wornBoots.set(DataComponents.ENCHANTMENTS, worn.toImmutable());
+        stash.setItem(4, wornBoots);
+        GearEnchantmentSanitizer.sanitizeContainer(stash);
+        assert stash.getItem(0).isEmpty() && stash.getItem(1).isEmpty() && stash.getItem(2).isEmpty();
+        assert stash.getItem(3).get(DataComponents.STORED_ENCHANTMENTS).getLevel(traveler) == 0;
+        assert stash.getItem(3).get(DataComponents.STORED_ENCHANTMENTS).getLevel(featherFalling) == 4;
+        assert stash.getItem(4).getEnchantments().getLevel(traveler) == 0;
+
+        var unlisted = Holder.direct(sharpness.value());
+        ItemEnchantments.Mutable low = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        low.set(unlisted, 1);
+        ItemEnchantments.Mutable high = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        high.set(unlisted, 2);
+        ItemStack first = new ItemStack(Items.ENCHANTED_BOOK);
+        first.set(DataComponents.STORED_ENCHANTMENTS, low.toImmutable());
+        ItemStack second = new ItemStack(Items.ENCHANTED_BOOK);
+        second.set(DataComponents.STORED_ENCHANTMENTS, high.toImmutable());
+        var combined = new ApplyEnchBook().apply(null, first, second, null);
+        assert combined.result().get(DataComponents.STORED_ENCHANTMENTS).getLevel(unlisted) == 3;
 
         ItemEnchantments.Mutable sharpnessOnly = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
         sharpnessOnly.set(sharpness, 5);

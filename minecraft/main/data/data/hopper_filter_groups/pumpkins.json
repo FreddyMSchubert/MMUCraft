@@ -1,0 +1,10 @@
+{
+	"name": "Pumpkins",
+	"items": [
+		"minecraft:carved_pumpkin",
+		"minecraft:jack_o_lantern",
+		"minecraft:pumpkin",
+		"minecraft:pumpkin_pie",
+		"minecraft:pumpkin_seeds"
+	]
+}

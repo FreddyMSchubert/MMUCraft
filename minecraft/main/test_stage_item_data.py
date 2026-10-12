@@ -52,10 +52,17 @@ class HopperFilterGroupReferencesTest(unittest.TestCase):
 			"woodset_mangrove": {"minecraft:mangrove_propagule", "minecraft:mangrove_roots",
 				"minecraft:muddy_mangrove_roots"},
 			"gliding_gear": {"minecraft:elytra", "mainmod:charm-glider"},
+			"soul": {"mainmod:soul", "mainmod:soul-shard"},
+			"villager_workstations": {"minecraft:barrel", "minecraft:blast_furnace",
+				"minecraft:brewing_stand", "minecraft:cartography_table", "minecraft:cauldron",
+				"minecraft:composter", "minecraft:fletching_table", "minecraft:grindstone",
+				"minecraft:lectern", "minecraft:loom", "minecraft:smithing_table",
+				"minecraft:smoker", "minecraft:stonecutter"},
 		}
 		for name, items in expected.items():
 			with self.subTest(group=name):
 				self.assertFalse(items - groups[name], f"{name} is missing {sorted(items - groups[name])}")
+		self.assertEqual(groups["villager_workstations"], expected["villager_workstations"])
 		validate_hopper_filter_group_references(root)
 
 

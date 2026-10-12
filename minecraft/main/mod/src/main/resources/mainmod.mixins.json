@@ -25,6 +25,7 @@
 		"ArmorAddToolTipFirstTick",
 		"RefreshCharmOnArmorEquip",
 		"SanitizePlayerArmorSlot",
+		"SanitizeOpenedMenu",
 		"RecoverArmorContentsOnBreak",
 		"SoulboundItemBreakAdvancement",
 		"ReskinnedHelmetTick",

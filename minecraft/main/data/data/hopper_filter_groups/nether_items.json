@@ -1,0 +1,27 @@
+{
+	"name": "Nether Items",
+	"items": [
+		"minecraft:ancient_debris",
+		"minecraft:blaze_powder",
+		"minecraft:blaze_rod",
+		"minecraft:crimson_fungus",
+		"minecraft:crimson_nylium",
+		"minecraft:dried_ghast",
+		"minecraft:ghast_tear",
+		"minecraft:glowstone",
+		"minecraft:glowstone_dust",
+		"minecraft:magma_block",
+		"minecraft:magma_cream",
+		"minecraft:nether_brick",
+		"minecraft:nether_bricks",
+		"minecraft:nether_sprouts",
+		"minecraft:nether_wart",
+		"minecraft:netherrack",
+		"minecraft:respawn_anchor",
+		"minecraft:shroomlight",
+		"minecraft:soul_sand",
+		"minecraft:soul_soil",
+		"minecraft:warped_fungus",
+		"minecraft:warped_nylium"
+	]
+}

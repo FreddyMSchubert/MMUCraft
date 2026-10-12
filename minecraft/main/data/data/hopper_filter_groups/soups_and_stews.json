@@ -1,6 +1,7 @@
 {
 	"name": "Soups and Stews",
 	"items": [
+		"mainmod:food-fish-stew",
 		"minecraft:beetroot_soup",
 		"minecraft:mushroom_stew",
 		"minecraft:rabbit_stew",

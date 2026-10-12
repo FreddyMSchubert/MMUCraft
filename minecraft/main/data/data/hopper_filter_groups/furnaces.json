@@ -1,0 +1,4 @@
+{
+	"name": "Furnaces",
+	"items": ["minecraft:blast_furnace", "minecraft:furnace", "minecraft:smoker"]
+}

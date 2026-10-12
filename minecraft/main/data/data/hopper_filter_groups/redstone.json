@@ -1,6 +1,7 @@
 {
 	"name": "Redstone",
 	"items": [
+		"mainmod:charm-redstone-remote",
 		"minecraft:acacia_button",
 		"minecraft:acacia_pressure_plate",
 		"minecraft:activator_rail",

@@ -1,6 +1,8 @@
 {
-	"name": "Decorative Blocks",
+	"name": "Decoblocks",
 	"items": [
+		"mainmod:beer",
+		"mainmod:cocktail",
 		"mainmod:cosmetic-book-stack",
 		"mainmod:cosmetic-butterflies",
 		"mainmod:cosmetic-candle",
@@ -9,15 +11,23 @@
 		"mainmod:cosmetic-companion-cube",
 		"mainmod:cosmetic-fire-hat",
 		"mainmod:cosmetic-fishbowl",
+		"mainmod:cosmetic-frog-small",
+		"mainmod:cosmetic-frying-pan",
 		"mainmod:cosmetic-microwave",
 		"mainmod:cosmetic-mushroom-big",
 		"mainmod:cosmetic-plunger",
 		"mainmod:cosmetic-pumpkin",
+		"mainmod:cosmetic-rootling",
+		"mainmod:cosmetic-sea-scorpion",
+		"mainmod:cosmetic-skull",
 		"mainmod:cosmetic-traffic-cone",
 		"mainmod:cosmetic-ufo",
 		"mainmod:cosmetic-woodpecker",
+		"mainmod:deco-axe",
+		"mainmod:deco-computer",
 		"mainmod:deco-cookie-jar",
 		"mainmod:deco-crow",
+		"mainmod:deco-disco-ball",
 		"mainmod:deco-firefly-jar",
 		"mainmod:deco-fruit-bowl",
 		"mainmod:deco-kettle",
@@ -26,6 +36,8 @@
 		"mainmod:deco-spoons-carpet-grandiloquent",
 		"mainmod:deco-spoons-carpet-junoesque",
 		"mainmod:deco-spoons-carpet-meretricious",
-		"mainmod:deco-vinyl-player"
+		"mainmod:deco-vinyl-player",
+		"mainmod:tea",
+		"mainmod:wine-bottle"
 	]
 }

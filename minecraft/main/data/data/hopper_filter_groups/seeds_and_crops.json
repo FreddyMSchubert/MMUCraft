@@ -1,0 +1,22 @@
+{
+	"name": "Seeds and Crops",
+	"items": [
+		"minecraft:beetroot",
+		"minecraft:beetroot_seeds",
+		"minecraft:carrot",
+		"minecraft:cocoa_beans",
+		"minecraft:kelp",
+		"minecraft:melon",
+		"minecraft:melon_seeds",
+		"minecraft:nether_wart",
+		"minecraft:pitcher_pod",
+		"minecraft:potato",
+		"minecraft:pumpkin",
+		"minecraft:pumpkin_seeds",
+		"minecraft:sugar_cane",
+		"minecraft:sweet_berries",
+		"minecraft:torchflower_seeds",
+		"minecraft:wheat",
+		"minecraft:wheat_seeds"
+	]
+}

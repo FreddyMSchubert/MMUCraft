@@ -1,0 +1,19 @@
+{
+	"name": "End Items",
+	"items": [
+		"minecraft:chorus_flower",
+		"minecraft:chorus_fruit",
+		"minecraft:chorus_plant",
+		"minecraft:dragon_breath",
+		"minecraft:dragon_egg",
+		"minecraft:end_crystal",
+		"minecraft:end_rod",
+		"minecraft:end_stone",
+		"minecraft:end_stone_bricks",
+		"minecraft:ender_eye",
+		"minecraft:ender_pearl",
+		"minecraft:popped_chorus_fruit",
+		"minecraft:purpur_block",
+		"minecraft:purpur_pillar"
+	]
+}

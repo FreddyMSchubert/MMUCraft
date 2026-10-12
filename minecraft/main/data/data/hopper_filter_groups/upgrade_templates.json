@@ -1,0 +1,7 @@
+{
+	"name": "Upgrade Smithing Templates",
+	"items": [
+		"mainmod:enderite-upgrade-smithing-template",
+		"minecraft:netherite_upgrade_smithing_template"
+	]
+}

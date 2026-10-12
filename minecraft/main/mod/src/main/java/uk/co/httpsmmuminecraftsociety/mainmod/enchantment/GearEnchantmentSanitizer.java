@@ -5,6 +5,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -13,12 +15,19 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
+
 public final class GearEnchantmentSanitizer {
     private GearEnchantmentSanitizer() {}
 
     public static boolean sanitize(ItemStack stack) {
-        if (stack.isEmpty() || stack.is(Items.ENCHANTED_BOOK)) return false;
-        ItemEnchantments current = stack.getEnchantments();
+        if (stack.isEmpty()) return false;
+        boolean book = stack.is(Items.ENCHANTED_BOOK);
+        ItemEnchantments current = book
+                ? stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY)
+                : stack.getEnchantments();
         if (current.isEmpty()) return false;
 
         ItemStack gear = CosmeticsManager.determineCosmeticType(stack).isHelmet()
@@ -29,9 +38,14 @@ public final class GearEnchantmentSanitizer {
         boolean changed = false;
         for (var entry : current.entrySet()) {
             Holder<Enchantment> enchantment = entry.getKey();
+            if (DisabledDnTEnchantments.contains(enchantment)) {
+                corrected.removeIf(existing -> existing.equals(enchantment));
+                changed = true;
+                continue;
+            }
+            if (book) continue;
             int limit = maxAllowedLevel(enchantment, enderite);
-            if (DisabledDnTEnchantments.contains(enchantment)
-                    || !gear.canBeEnchantedWith(enchantment, EnchantingContext.ACCEPTABLE)
+            if (!gear.canBeEnchantedWith(enchantment, EnchantingContext.ACCEPTABLE)
                     || limit <= 0) {
                 corrected.removeIf(existing -> existing.equals(enchantment));
                 changed = true;
@@ -40,7 +54,8 @@ public final class GearEnchantmentSanitizer {
                 changed = true;
             }
         }
-        if (changed) stack.set(DataComponents.ENCHANTMENTS, corrected.toImmutable());
+        if (changed) stack.set(book ? DataComponents.STORED_ENCHANTMENTS : DataComponents.ENCHANTMENTS,
+                corrected.toImmutable());
         return changed;
     }
 
@@ -55,11 +70,28 @@ public final class GearEnchantmentSanitizer {
         sanitizeContainer(player.getEnderChestInventory());
     }
 
-    private static void sanitizeContainer(Container container) {
+    public static void sanitizeMenu(AbstractContainerMenu menu) {
+        Set<Container> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (Slot slot : menu.slots) {
+            if (seen.add(slot.container)) sanitizeContainer(slot.container);
+        }
+        ItemStack carried = menu.getCarried();
+        if (sanitize(carried) && isEmptyBook(carried)) menu.setCarried(ItemStack.EMPTY);
+    }
+
+    static void sanitizeContainer(Container container) {
         boolean changed = false;
         for (int slot = 0; slot < container.getContainerSize(); slot++) {
-            changed |= sanitize(container.getItem(slot));
+            ItemStack stack = container.getItem(slot);
+            if (!sanitize(stack)) continue;
+            if (isEmptyBook(stack)) container.setItem(slot, ItemStack.EMPTY);
+            changed = true;
         }
         if (changed) container.setChanged();
+    }
+
+    private static boolean isEmptyBook(ItemStack stack) {
+        return stack.is(Items.ENCHANTED_BOOK)
+                && stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty();
     }
 }

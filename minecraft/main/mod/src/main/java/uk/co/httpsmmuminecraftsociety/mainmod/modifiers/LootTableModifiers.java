@@ -261,7 +261,9 @@ public class LootTableModifiers {
                 itemStacks.add(stack);
             }
         }
-        itemStacks.forEach(GearEnchantmentSanitizer::sanitize);
+        itemStacks.removeIf(stack -> GearEnchantmentSanitizer.sanitize(stack)
+                && stack.is(Items.ENCHANTED_BOOK)
+                && stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).isEmpty());
         Entity actor = lootContext.getOptional(LootContextParams.INTERACTING_ENTITY);
         if (!(actor instanceof ServerPlayer)) actor = lootContext.getOptional(LootContextParams.THIS_ENTITY);
         for (ItemStack stack : itemStacks) {

@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public final class HopperFilter {
     private static final String FILTER_KEY = "mainmod.hopper_filter";
@@ -109,7 +108,7 @@ public final class HopperFilter {
         } else if (mode.group) {
             List<HopperFilterGroups.Group> candidates = HopperFilterGroups.containingAll(items);
             if (candidates.isEmpty()) return ItemStack.EMPTY;
-            String group = candidates.get(ThreadLocalRandom.current().nextInt(candidates.size())).id();
+            String group = candidates.getFirst().id();
             toggle(result, mode.blacklist ? BLACKLIST_KEY : WHITELIST_KEY, "#" + group);
         } else {
             for (ItemStack item : items) toggle(result, mode.blacklist ? BLACKLIST_KEY : WHITELIST_KEY, itemKey(item));
@@ -174,9 +173,10 @@ public final class HopperFilter {
         return found;
     }
 
-    static String baseItemId(ItemStack stack) {
-        FakeItem fakeItem = FakeItems.getFakeItemFromStack(stack);
-        if (fakeItem != null) return MainMod.MOD_ID + ":" + fakeItem.id();
+    public static String baseItemId(ItemStack stack) {
+        if (FakeItems.hasKnownFakeItemId(stack)) {
+            return MainMod.MOD_ID + ":" + stack.get(DataComponents.CUSTOM_MODEL_DATA).strings().getFirst();
+        }
         return BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
     }
 

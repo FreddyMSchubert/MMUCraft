@@ -11,6 +11,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.EnchantmentLock;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.DisabledDnTEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 
 import java.util.ArrayList;
@@ -96,6 +97,7 @@ public class AnvilUtils
     }
 
     private static int capAnvilLevel(Holder<Enchantment> enchantment, ItemStack stack, int level) {
+        if (DisabledDnTEnchantments.contains(enchantment)) return 0;
         return Math.min(level, EnchantmentSettingsManager.getMaxAnvilLevel(enchantment, stack));
     }
 

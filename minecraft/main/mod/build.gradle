@@ -127,6 +127,14 @@ tasks.register('checkGearEnchantments', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkHopperFilterIdentity', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilterIdentityCheck'
+    enableAssertions = true
+    args file('../data/data/hopper_filter_groups').absolutePath
+}
+
 tasks.register('checkFishingBounces', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -152,7 +160,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 }
 
 tasks.named('check') {
-    dependsOn 'checkMapResize', 'checkMasteryDropGates', 'checkGearEnchantments',
+    dependsOn 'checkMapResize', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkHopperFilterIdentity',
             'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity'
 }
 

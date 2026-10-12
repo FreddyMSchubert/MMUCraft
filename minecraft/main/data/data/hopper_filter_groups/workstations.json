@@ -1,0 +1,25 @@
+{
+	"name": "Workstations",
+	"items": [
+		"minecraft:anvil",
+		"minecraft:barrel",
+		"minecraft:blast_furnace",
+		"minecraft:brewing_stand",
+		"minecraft:cartography_table",
+		"minecraft:cauldron",
+		"minecraft:chipped_anvil",
+		"minecraft:composter",
+		"minecraft:crafter",
+		"minecraft:crafting_table",
+		"minecraft:damaged_anvil",
+		"minecraft:enchanting_table",
+		"minecraft:fletching_table",
+		"minecraft:furnace",
+		"minecraft:grindstone",
+		"minecraft:lectern",
+		"minecraft:loom",
+		"minecraft:smithing_table",
+		"minecraft:smoker",
+		"minecraft:stonecutter"
+	]
+}

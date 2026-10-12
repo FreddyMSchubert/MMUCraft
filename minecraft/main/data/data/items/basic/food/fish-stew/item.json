@@ -34,7 +34,7 @@
 					"mainmod:cooked-white-fish",
 					"minecraft:carrot",
 					"minecraft:baked_potato",
-					"#minecraft:mushrooms_for_stew"
+					"#mainmod:mushrooms"
 				],
 				"result": {
 					"stack": "mainmod:food-fish-stew",
@@ -49,7 +49,7 @@
 					"mainmod:cooked-red-fish",
 					"minecraft:carrot",
 					"minecraft:baked_potato",
-					"#minecraft:mushrooms_for_stew"
+					"#mainmod:mushrooms"
 				],
 				"result": {
 					"stack": "mainmod:food-fish-stew",
@@ -64,7 +64,7 @@
 					"minecraft:cooked_cod",
 					"minecraft:carrot",
 					"minecraft:baked_potato",
-					"#minecraft:mushrooms_for_stew"
+					"#mainmod:mushrooms"
 				],
 				"result": {
 					"stack": "mainmod:food-fish-stew",
@@ -79,7 +79,7 @@
 					"minecraft:cooked_salmon",
 					"minecraft:carrot",
 					"minecraft:baked_potato",
-					"#minecraft:mushrooms_for_stew"
+					"#mainmod:mushrooms"
 				],
 				"result": {
 					"stack": "mainmod:food-fish-stew",

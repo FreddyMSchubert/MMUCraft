@@ -1,95 +1,54 @@
-# Reduce entity ticking and growth, then distances if tick time stays high.
 features:
     lobotomize-villagers:
-        enabled: true
+        enabled: false
         tick-interval: 20
 
 dynamic:
-    enabled: true
-    target-mspt: 35
-    default-values:
-        MOBCAP_PERCENTAGE: 100
-        CHUNK_TICK_DISTANCE: 5
-    dynamic-settings:
-        - setting: 'CHUNK_TICK_DISTANCE'
-          max: 5
-          min: 3
-          increment: 1
-          interval: 15
-        - setting: 'MOBCAP_PERCENTAGE'
-          max: 100
-          min: 60
-          increment: 10
-          interval: 15
-        - setting: 'SIMULATION_DISTANCE'
-          max: 5
-          min: 3
-          increment: 1
-          interval: 15
-        - setting: 'CHUNK_TICK_DISTANCE'
-          max: 3
-          min: 2
-          increment: 1
-          interval: 15
-        - setting: 'MOBCAP_PERCENTAGE'
-          max: 60
-          min: 40
-          increment: 10
-          interval: 15
-        - setting: 'SIMULATION_DISTANCE'
-          max: 3
-          min: 2
-          increment: 1
-          interval: 15
-        - setting: 'VIEW_DISTANCE'
-          max: 8
-          min: 5
-          increment: 1
-          interval: 150
+    enabled: false
 
 breeding-cap:
     enabled: true
     villagers:
-        limit: 32
+        limit: -1
         range: 64
         unlimited-height: false
     animals:
-        limit: 32
+        limit: 64
         range: 64
         unlimited-height: false
     happy-ghasts:
-        limit: 32
+        limit: 48
         range: 64
         unlimited-height: false
 
 mob-spawning:
     categories:
         - category: 'MONSTER'
-          mobcap: 56
+          mobcap: 70
           spawn-interval: 1
           despawn-distance: 128
         - category: 'CREATURE'
-          mobcap: 8
+          mobcap: 16
           spawn-interval: 400
           despawn-distance: 128
         - category: 'AMBIENT'
-          mobcap: 12
+          mobcap: 15
           spawn-interval: 1
           despawn-distance: 128
         - category: 'AXOLOTLS'
-          mobcap: 4
+          mobcap: 5
           spawn-interval: 1
           despawn-distance: 128
         - category: 'UNDERGROUND_WATER_CREATURE'
-          mobcap: 4
+          mobcap: 5
           spawn-interval: 1
           despawn-distance: 128
         - category: 'WATER_CREATURE'
-          mobcap: 4
+          mobcap: 5
           spawn-interval: 1
           despawn-distance: 128
         - category: 'WATER_AMBIENT'
-          mobcap: 16
+          mobcap: 20
           spawn-interval: 1
           despawn-distance: 64
 

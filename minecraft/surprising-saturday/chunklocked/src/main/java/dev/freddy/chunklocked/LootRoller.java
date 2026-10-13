@@ -1,84 +1,54 @@
 package dev.freddy.chunklocked;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 
-/** Reads Delta Lore and Quillbee's Chunklock 2.1.0 loot tables (Apache-2.0). */
 final class LootRoller {
     record Offer(Identifier item, int count) { }
 
-    private final Map<String, JsonObject> tables = new HashMap<>();
-
-    Offer roll(String biome, Random random) {
-        // These biomes arrived after the source pack's last release.
-        if (biome.equals("pale_garden")) biome = "dark_forest";
-        if (biome.equals("dappled_forest")) biome = "forest";
-        String table = "biome/" + biome;
-        if (get(table) == null) table = "biome/all_biome";
-        return rollTable(table, random, 0);
-    }
-
-    private Offer rollTable(String path, Random random, int depth) {
-        if (depth > 16) throw new IllegalStateException("Chunklock loot reference cycle: " + path);
-        JsonObject table = get(path);
-        if (table == null) throw new IllegalStateException("Missing Chunklock loot table " + path);
-        JsonArray entries = table.getAsJsonArray("pools").get(0).getAsJsonObject().getAsJsonArray("entries");
-        int weight = 0;
-        for (JsonElement element : entries) weight += element.getAsJsonObject().get("weight").getAsInt();
-        int choice = random.nextInt(weight);
-        for (JsonElement element : entries) {
-            JsonObject entry = element.getAsJsonObject();
-            choice -= entry.get("weight").getAsInt();
-            if (choice >= 0) continue;
-            String type = entry.get("type").getAsString();
-            Offer offer;
-            if (type.endsWith("loot_table")) {
-                String value = entry.get("value").getAsString();
-                // The original pack intentionally references vanilla gravel's 10% flint drop.
-                offer = value.equals("minecraft:blocks/gravel")
-                        ? new Offer(Identifier.withDefaultNamespace(random.nextInt(10) == 0 ? "flint" : "gravel"), 1)
-                        : rollTable(value.substring(value.indexOf(':') + 1), random, depth + 1);
-            } else if (type.endsWith("item")) {
-                offer = new Offer(Identifier.parse(entry.get("name").getAsString()), 1);
-            } else {
-                throw new IllegalStateException("Unknown Chunklock loot entry " + type);
-            }
-            if (entry.has("functions")) {
-                for (JsonElement function : entry.getAsJsonArray("functions")) {
-                    JsonObject modifier = function.getAsJsonObject();
-                    if (!modifier.get("function").getAsString().endsWith("set_count")) continue;
-                    JsonElement count = modifier.get("count");
-                    int amount = count.isJsonObject()
-                            ? count.getAsJsonObject().get("min").getAsInt()
-                                + random.nextInt(count.getAsJsonObject().get("max").getAsInt()
-                                - count.getAsJsonObject().get("min").getAsInt() + 1)
-                            : count.getAsInt();
-                    offer = new Offer(offer.item(), amount);
+    Offer roll(ServerLevel level, Identifier biome, BlockPos center) {
+        LootParams params = new LootParams.Builder(level)
+                .withParameter(LootContextParams.ORIGIN, new Vec3(center.getX(), center.getY(), center.getZ()))
+                .create(LootContextParamSets.CHEST);
+        ItemStack item = roll(level, params, "all_biome");
+        if (biome.getNamespace().equals("minecraft")) {
+            LootTable table = table(level, biome.getPath());
+            if (table != LootTable.EMPTY) {
+                item = singleItem(table, params, biome.getPath());
+                if (biome.getPath().equals("deep_frozen_ocean")) {
+                    // The 2.1.0 function rolls this biome twice and keeps the second item.
+                    item = singleItem(table, params, biome.getPath());
                 }
             }
-            return offer;
         }
-        throw new IllegalStateException("Empty Chunklock loot table " + path);
+        return new Offer(BuiltInRegistries.ITEM.getKey(item.getItem()), item.getCount());
     }
 
-    private JsonObject get(String path) {
-        if (tables.containsKey(path)) return tables.get(path);
-        var stream = getClass().getResourceAsStream("/chunklocked/loot/" + path + ".json");
-        if (stream == null) return null;
-        try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            JsonObject table = JsonParser.parseReader(reader).getAsJsonObject();
-            tables.put(path, table);
-            return table;
-        } catch (Exception error) {
-            throw new IllegalStateException("Invalid Chunklock loot table " + path, error);
-        }
+    private ItemStack roll(ServerLevel level, LootParams params, String biome) {
+        LootTable table = table(level, biome);
+        if (table == LootTable.EMPTY) throw new IllegalStateException("Missing Chunklock loot table: " + biome);
+        return singleItem(table, params, biome);
+    }
+
+    private LootTable table(ServerLevel level, String biome) {
+        ResourceKey<LootTable> key = ResourceKey.create(Registries.LOOT_TABLE,
+                Identifier.fromNamespaceAndPath("chunklock", "biome/" + biome));
+        return level.getServer().reloadableRegistries().getLootTable(key);
+    }
+
+    private ItemStack singleItem(LootTable table, LootParams params, String biome) {
+        var items = table.getRandomItems(params);
+        if (items.size() != 1) throw new IllegalStateException("Chunklock loot table did not roll one item: " + biome);
+        return items.getFirst();
     }
 }

@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-root = Path(__file__).parent / "src/main/resources/chunklocked/loot"
+root = Path(__file__).parent / "src/main/resources/data/chunklock/loot_table"
 tables = {file.relative_to(root).with_suffix("").as_posix(): json.loads(file.read_text())
           for file in root.rglob("*.json")}
 assert len(tables) == 151, f"Expected 151 source tables, found {len(tables)}"

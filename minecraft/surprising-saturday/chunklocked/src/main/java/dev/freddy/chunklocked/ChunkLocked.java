@@ -1,6 +1,7 @@
 package dev.freddy.chunklocked;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -41,6 +43,7 @@ public final class ChunkLocked implements ModInitializer {
 
     private static ChunkWorld world;
     private static final Map<UUID, Safe> LAST_SAFE = new HashMap<>();
+    private static final int[][] NEIGHBORS = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
 
     @Override
     public void onInitialize() {
@@ -89,6 +92,18 @@ public final class ChunkLocked implements ModInitializer {
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (world == null || !entity.entityTags().contains("chunklocked")) return;
             ChunkWorld.Cell cell = world.at(level, entity.blockPosition());
+            if (cell == null || !entity.entityTags().contains(cell.tag())) {
+                cell = null;
+                int x = Math.floorDiv(entity.blockPosition().getX(), 16);
+                int z = Math.floorDiv(entity.blockPosition().getZ(), 16);
+                for (int[] offset : NEIGHBORS) {
+                    ChunkWorld.Cell neighbor = world.get(level, x + offset[0], z + offset[1]);
+                    if (neighbor != null && entity.entityTags().contains(neighbor.tag())) {
+                        cell = neighbor;
+                        break;
+                    }
+                }
+            }
             if (cell == null || cell.unlocked) entity.discard();
         });
     }
@@ -139,7 +154,7 @@ public final class ChunkLocked implements ModInitializer {
             LAST_SAFE.put(player.getUUID(), new Safe(dimension, player.position()));
             int x = Math.floorDiv(pos.getX(), 16);
             int z = Math.floorDiv(pos.getZ(), 16);
-            for (int[] offset : new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+            for (int[] offset : NEIGHBORS) {
                 ChunkWorld.Cell cell = world.offer(level, x + offset[0], z + offset[1], pos.getY());
                 if (cell == null || cell.unlocked) continue;
                 if (refreshVisuals) {
@@ -164,9 +179,10 @@ public final class ChunkLocked implements ModInitializer {
         AABB box = new AABB(cell.x * 16, level.getMinY(), cell.z * 16,
                 cell.x * 16 + 16, level.getMaxY(), cell.z * 16 + 16);
         for (ItemEntity entity : level.getEntitiesOfClass(ItemEntity.class, box,
-                item -> !item.entityTags().contains("cl_processed"))) {
+                item -> !item.entityTags().contains("cl_processed")
+                        && item.getOwner() instanceof ServerPlayer)) {
             ItemStack stack = entity.getItem();
-            ServerPlayer payer = entity.getOwner() instanceof ServerPlayer owner ? owner : nearby;
+            ServerPlayer payer = (ServerPlayer) entity.getOwner();
             boolean barrier = stack.is(Items.BARRIER);
             if (!barrier && !BuiltInRegistries.ITEM.getKey(stack.getItem()).toString().equals(cell.item)) {
                 entity.addTag("cl_processed");
@@ -192,12 +208,41 @@ public final class ChunkLocked implements ModInitializer {
             if (cell.remaining == 0) {
                 world.unlock(cell);
                 ChunkVisuals.remove(level, cell);
+                for (int[] offset : NEIGHBORS) {
+                    ChunkWorld.Cell neighbor = world.offer(level, cell.x + offset[0],
+                            cell.z + offset[1], cell.y);
+                    if (neighbor != null && !neighbor.unlocked) {
+                        ChunkVisuals.ensure(server, level, world, neighbor, nearby.getY());
+                    }
+                }
                 command(server, "scoreboard players set #global ChunklockTotalUnlockedChunks " + world.totalPaid());
                 command(server, "scoreboard players add " + payer.getGameProfile().name()
                         + " ChunklockTotalUnlockedChunks 1");
+                int biomeY = cell.dimension.endsWith("overworld") ? 128 : 64;
+                var biome = level.getBiome(new BlockPos(cell.x * 16 + 8, biomeY, cell.z * 16 + 8))
+                        .unwrapKey().orElseThrow().identifier();
+                String biomeName = Language.DEFAULT_INSTANCE.getOrDefault(
+                        "biome." + biome.getNamespace() + "." + biome.getPath());
+                String prefix = cell.dimension.endsWith("the_nether") ? "Nether "
+                        : cell.dimension.endsWith("the_end") ? "End " : "";
+                if (!prefix.isEmpty() && !biomeName.toLowerCase(Locale.ROOT)
+                        .startsWith(prefix.trim().toLowerCase(Locale.ROOT))) {
+                    biomeName = prefix + biomeName;
+                }
+                String announcement = payer.getName().getString() + " unlocked " + biomeName
+                        + " chunk #" + world.totalPaid() + "!";
                 for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                    player.sendSystemMessage(Component.literal(payer.getName().getString()
-                            + " unlocked chunk #" + world.totalPaid() + "!"));
+                    String message = announcement;
+                    if (player.level() == level) {
+                        double dx = cell.x * 16 + 8 - player.getX();
+                        double dz = cell.z * 16 + 8 - player.getZ();
+                        String[] directions = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+                        int direction = Math.floorMod((int) Math.round(Math.atan2(dx, -dz)
+                                / (Math.PI / 4)), directions.length);
+                        message += " (" + Math.round(Math.hypot(dx, dz)) + "m "
+                                + directions[direction] + " of you).";
+                    }
+                    player.sendSystemMessage(Component.literal(message));
                 }
                 break;
             }

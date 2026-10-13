@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -136,22 +135,20 @@ final class ChunkWorld {
         if (existing != null) return existing;
         if (!hasOpenNeighbor(level, x, z)) return null;
         int markerY = dimension.endsWith("overworld") ? 128 : 64;
-        var biomeKey = level.getBiome(new BlockPos(x * 16 + 8, markerY, z * 16 + 8)).unwrapKey();
-        String biome = biomeKey.map(value -> value.identifier().getPath()).orElse("all_biome");
-        if (dimension.endsWith("the_end") && biome.equals("the_end")
+        BlockPos center = new BlockPos(x * 16 + 8, markerY, z * 16 + 8);
+        var biome = level.getBiome(center).unwrapKey().orElseThrow().identifier();
+        if (dimension.endsWith("the_end") && biome.toString().equals("minecraft:the_end")
                 && level.getEntitiesOfClass(EndCrystal.class,
-                        new AABB(x * 16, 0, z * 16, x * 16 + 16, 256, z * 16 + 16)).isEmpty()) {
+                        new AABB(x * 16, level.getMinY(), z * 16,
+                                x * 16 + 15.5, level.getMaxY(), z * 16 + 15.5)).isEmpty()) {
             Cell cell = new Cell(dimension, x, z, y, "minecraft:air", 0, true);
             cells.put(key, cell);
             save();
             return cell;
         }
-        long seed = level.getSeed() ^ (long) x * 341873128712L ^ (long) z * 132897987541L;
-        LootRoller.Offer roll = loot.roll(biome, new Random(seed));
-        Origin origin = origins.get(dimension);
-        int ring = origin == null ? 0 : Math.max(Math.abs(x - origin.x), Math.abs(z - origin.z));
+        LootRoller.Offer roll = loot.roll(level, biome, center);
         int step = dimension.endsWith("the_end") ? 32 : 16;
-        int multiplier = 1 + Math.max(ring / step, paid.getOrDefault(dimension, 0) / step);
+        int multiplier = 1 + paid.getOrDefault(dimension, 0) / step;
         int count = Math.multiplyExact(roll.count(), multiplier);
         Cell cell = new Cell(dimension, x, z, y, roll.item().toString(), count, false);
         cells.put(key, cell);

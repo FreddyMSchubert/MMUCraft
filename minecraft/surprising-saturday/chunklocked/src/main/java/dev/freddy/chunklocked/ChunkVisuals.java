@@ -103,8 +103,8 @@ final class ChunkVisuals {
         double minX = cell.x * 16;
         double minZ = cell.z * 16;
         double[][] sides = {
-                {minX + 8, minZ + 0.1}, {minX + 15.9, minZ + 8},
-                {minX + 8, minZ + 15.9}, {minX + 0.1, minZ + 8}
+                {minX + 8, minZ - 0.1}, {minX + 16.1, minZ + 8},
+                {minX + 8, minZ + 16.1}, {minX - 0.1, minZ + 8}
         };
         int[][] neighbors = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
         int[] yaw = {180, 270, 0, 90};
@@ -127,7 +127,7 @@ final class ChunkVisuals {
                     + "brightness:{sky:15,block:15},Rotation:[" + yaw[index] + "f,0f],"
                     + "transformation:{translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f],"
                     + "left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f]},"
-                    + "text:'{\"text\":\"" + cell.remaining + "\"}',background:16777215,shadow:1b}");
+                    + "text:\"" + cell.remaining + "\",background:16777215,shadow:1b}");
         }
     }
 

@@ -1,0 +1,121 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:cod",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:salmon",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:fishing_rod",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 2,
+					"name": "minecraft:tropical_fish",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 5,
+					"name": "minecraft:pufferfish",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 2,
+					"name": "minecraft:nautilus_shell",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 2,
+					"name": "minecraft:name_tag",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 2,
+					"name": "minecraft:saddle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

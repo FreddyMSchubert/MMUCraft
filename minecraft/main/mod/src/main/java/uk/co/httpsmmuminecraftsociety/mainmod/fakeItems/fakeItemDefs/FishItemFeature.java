@@ -58,7 +58,7 @@ public record FishItemFeature(
                 between(random, 0.0F, 10.0F + 3.0F * rarityLevel));
         float struggleSeconds = override(catching, "struggleSeconds",
                 between(random, 1.0F + 0.5F * rarityLevel, 2.5F + 1.5F * rarityLevel));
-        float averageBounces = calculateAverageBounces(averageCatchSeconds, approachSeconds, retreatSeconds, secondsAwayFromBobber);
+        float baselineBounces = calculateAverageBounces(averageCatchSeconds, approachSeconds, retreatSeconds, secondsAwayFromBobber);
         double averageLengthCm = size.get("averageLengthCm").getAsDouble();
         EnumSet<FishSpawnTag> spawnTags = EnumSet.noneOf(FishSpawnTag.class);
         for (JsonElement tag : json.getAsJsonArray("tags")) {
@@ -76,8 +76,7 @@ public record FishItemFeature(
                         approachSeconds,
                         retreatSeconds,
                         retreatDistance,
-                        averageBounces,
-                        averageCatchSeconds
+                        baselineBounces
                 ),
                 new FishSize(
                         averageLengthCm,

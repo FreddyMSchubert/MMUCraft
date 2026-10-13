@@ -1,0 +1,149 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:diamond",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:jukebox",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:emerald",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 4,
+								"max": 16
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:golden_apple",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:creeper_head",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:skeleton_skull",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:echo_shard",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 5,
+					"name": "minecraft:crying_obsidian",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 1,
+					"name": "minecraft:respawn_anchor",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 1,
+					"name": "minecraft:enchanting_table",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+	"name": "Hopper Filters",
+	"items": [
+		"mainmod:hopper-filter-blacklist-group",
+		"mainmod:hopper-filter-blacklist-single",
+		"mainmod:hopper-filter-whitelist-group",
+		"mainmod:hopper-filter-whitelist-single"
+	]
+}

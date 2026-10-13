@@ -1,0 +1,12 @@
+{
+	"name": "Navigation Tools",
+	"items": [
+		"minecraft:clock",
+		"minecraft:compass",
+		"minecraft:filled_map",
+		"minecraft:lodestone",
+		"minecraft:map",
+		"minecraft:recovery_compass",
+		"minecraft:spyglass"
+	]
+}

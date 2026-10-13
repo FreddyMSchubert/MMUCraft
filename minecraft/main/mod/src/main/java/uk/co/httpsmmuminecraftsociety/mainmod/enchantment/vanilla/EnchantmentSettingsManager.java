@@ -123,7 +123,7 @@ public class EnchantmentSettingsManager
                 .map(settings -> stack.is(Items.ENCHANTED_BOOK) || CharmorManager.isEnderite(stack)
                         ? settings.maxEnderiteLevel
                         : settings.maxNormalGearLevel)
-                .orElse(0);
+                .orElseGet(() -> enchantment.value().getMaxLevel());
     }
 
     public static void validateLoottables(HolderLookup.Provider registries) {

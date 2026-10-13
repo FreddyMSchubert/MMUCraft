@@ -1,0 +1,109 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "item",
+					"weight": 100,
+					"name": "minecraft:twisting_vines",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 50,
+					"value": "chunklock:generic/wood/warped",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:warped_fungus",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:ender_pearl",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 10,
+					"value": "chunklock:generic/dimension/nether",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:warped_wart_block",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 10,
+					"value": "chunklock:generic/structure/nether_fortress",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 5,
+					"value": "chunklock:generic/structure/bastion",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				}
+			]
+		}
+	]
+}

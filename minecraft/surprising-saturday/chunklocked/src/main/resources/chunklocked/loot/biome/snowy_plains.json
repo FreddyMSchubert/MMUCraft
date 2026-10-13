@@ -1,0 +1,81 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "loot_table",
+					"weight": 15,
+					"value": "chunklock:generic/block/dirt",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 50,
+					"value": "chunklock:generic/block/snow",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 5,
+					"value": "chunklock:generic/wood/spruce",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 5,
+					"value": "chunklock:generic/entity/rabbit",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 5,
+					"value": "chunklock:generic/entity/common_overworld_hostile",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 5,
+					"value": "chunklock:generic/dimension/overworld",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -12,12 +12,15 @@
 		"minecraft:mangrove_log",
 		"minecraft:mangrove_planks",
 		"minecraft:mangrove_pressure_plate",
+		"minecraft:mangrove_propagule",
+		"minecraft:mangrove_roots",
 		"minecraft:mangrove_shelf",
 		"minecraft:mangrove_sign",
 		"minecraft:mangrove_slab",
 		"minecraft:mangrove_stairs",
 		"minecraft:mangrove_trapdoor",
 		"minecraft:mangrove_wood",
+		"minecraft:muddy_mangrove_roots",
 		"minecraft:stripped_mangrove_log",
 		"minecraft:stripped_mangrove_wood"
 	]

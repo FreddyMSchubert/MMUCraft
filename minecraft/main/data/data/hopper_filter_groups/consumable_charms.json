@@ -1,0 +1,10 @@
+{
+	"name": "Consumable Charms",
+	"items": [
+		"mainmod:charm-invisi-carrot",
+		"mainmod:charm-potion-displacement",
+		"mainmod:charm-potion-insomnia",
+		"mainmod:charm-potion-resonance",
+		"mainmod:charm-potion-returning"
+	]
+}

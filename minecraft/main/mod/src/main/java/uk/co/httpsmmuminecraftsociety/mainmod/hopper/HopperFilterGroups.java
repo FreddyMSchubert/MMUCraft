@@ -79,6 +79,9 @@ public final class HopperFilterGroups {
     public static List<Group> containingAll(Collection<ItemStack> stacks) {
         return groups.values().stream()
                 .filter(group -> stacks.stream().allMatch(group::matches))
+                .sorted(Comparator.comparingInt((Group group) ->
+                                group.items().size() + group.potions().size() + group.enchantments().size())
+                        .thenComparing(Group::id))
                 .toList();
     }
 

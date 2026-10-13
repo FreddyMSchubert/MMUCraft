@@ -1,0 +1,219 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "item",
+					"weight": 500,
+					"name": "minecraft:candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:red_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:blue_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:cyan_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:gray_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:lime_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:pink_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:black_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:brown_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:green_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:white_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:orange_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:purple_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:yellow_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"weight": 10,
+					"name": "minecraft:magenta_candle",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 1
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

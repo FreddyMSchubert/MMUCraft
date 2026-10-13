@@ -5,11 +5,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.DisabledDnTEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FishMeatFishermanTrades;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LecternLibrarianTrades;
 
@@ -24,6 +26,7 @@ public abstract class VillagerTradesMixin extends AbstractVillager {
         Villager villager = (Villager) (Object) this;
         LecternLibrarianTrades.syncOffers(villager, level);
         FishMeatFishermanTrades.appendOffers(villager);
+        mainmod$removeDisabledEnchantOffers(villager);
     }
 
     @Inject(method = "startTrading", at = @At("HEAD"))
@@ -32,6 +35,12 @@ public abstract class VillagerTradesMixin extends AbstractVillager {
             Villager villager = (Villager) (Object) this;
             LecternLibrarianTrades.syncOffers(villager, serverLevel);
             FishMeatFishermanTrades.appendOffers(villager);
+            mainmod$removeDisabledEnchantOffers(villager);
         }
+    }
+
+    private static void mainmod$removeDisabledEnchantOffers(Villager villager) {
+        villager.getOffers().removeIf(offer -> EnchantmentHelper.getEnchantmentsForCrafting(offer.getResult())
+                .keySet().stream().anyMatch(DisabledDnTEnchantments::contains));
     }
 }

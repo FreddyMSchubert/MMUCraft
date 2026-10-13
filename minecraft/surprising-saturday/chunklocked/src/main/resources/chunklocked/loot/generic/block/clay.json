@@ -1,0 +1,62 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"weight": 500,
+					"name": "minecraft:clay_ball",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 100,
+					"name": "minecraft:clay",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "minecraft:item",
+					"weight": 10,
+					"name": "minecraft:terracotta",
+					"functions": [
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 1,
+								"max": 2
+							}
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 10,
+					"value": "chunklock:generic/block/brick",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				}
+			]
+		}
+	]
+}

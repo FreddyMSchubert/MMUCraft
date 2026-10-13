@@ -1,0 +1,86 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "loot_table",
+					"weight": 100,
+					"value": "chunklock:generic/block/cobblestone",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 50,
+					"value": "chunklock:generic/wood/oak",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 50,
+					"value": "chunklock:generic/wood/spruce",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 10,
+					"value": "chunklock:generic/ore/coal",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 10,
+					"value": "chunklock:generic/dimension/overworld",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 5,
+					"value": "chunklock:generic/ore/iron",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				},
+				{
+					"type": "loot_table",
+					"weight": 5,
+					"value": "chunklock:generic/entity/common_overworld_hostile",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": 1
+						}
+					]
+				}
+			]
+		}
+	]
+}

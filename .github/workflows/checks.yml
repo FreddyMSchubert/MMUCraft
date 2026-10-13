@@ -283,10 +283,11 @@ jobs:
                   ./gradlew -p ../../../services/velocity/plugin build --no-daemon
                   ./gradlew -p ../../../minecraft/waiting-room/plugin build --no-daemon
 
-            - name: Build Killshift and stage event mods
+            - name: Build chunklocked and stage event mods
               if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: |
-                  ./minecraft/surprising-saturday/killshift/gradlew -p minecraft/surprising-saturday/killshift build --no-daemon
+                  ./minecraft/surprising-saturday/killshift/gradlew -p minecraft/surprising-saturday/chunklocked build --no-daemon
+                  python3 minecraft/surprising-saturday/chunklocked/check_loot.py
                   python3 minecraft/surprising-saturday/download-mods.py
 
             - name: Find reusable Minecraft and service images

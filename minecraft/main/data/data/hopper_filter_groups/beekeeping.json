@@ -1,0 +1,11 @@
+{
+	"name": "Bee Products and Hives",
+	"items": [
+		"minecraft:bee_nest",
+		"minecraft:beehive",
+		"minecraft:honey_block",
+		"minecraft:honey_bottle",
+		"minecraft:honeycomb",
+		"minecraft:honeycomb_block"
+	]
+}

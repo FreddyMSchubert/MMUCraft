@@ -1,0 +1,17 @@
+{
+	"schemaVersion": 1,
+	"id": "chunklocked",
+	"version": "${version}",
+	"name": "Chunklock",
+	"description": "Shared Chunklock survival for the MMUCraft event.",
+	"environment": "server",
+	"entrypoints": {
+		"main": ["dev.freddy.chunklocked.ChunkLocked"]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

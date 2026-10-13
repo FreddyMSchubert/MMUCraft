@@ -13,9 +13,9 @@ third_party_licenses
 !minecraft/waiting-room/plugin/build/
 !minecraft/waiting-room/plugin/build/libs/
 !minecraft/waiting-room/plugin/build/libs/mmucraft-waiting-room-1.0.0.jar
-!minecraft/surprising-saturday/killshift/build/
-!minecraft/surprising-saturday/killshift/build/libs/
-!minecraft/surprising-saturday/killshift/build/libs/killshift-0.1.0.jar
+!minecraft/surprising-saturday/chunklocked/build/
+!minecraft/surprising-saturday/chunklocked/build/libs/
+!minecraft/surprising-saturday/chunklocked/build/libs/chunklocked-0.1.0.jar
 **/dist
 minecraft/main/mod
 minecraft/main/respack/**

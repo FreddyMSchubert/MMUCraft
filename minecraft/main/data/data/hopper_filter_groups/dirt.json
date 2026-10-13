@@ -1,4 +1,14 @@
 {
-	"name": "Dirt",
-	"items": ["minecraft:coarse_dirt", "minecraft:dirt", "minecraft:rooted_dirt"]
+	"name": "Dirt and Soil",
+	"items": [
+		"minecraft:coarse_dirt",
+		"minecraft:dirt",
+		"minecraft:dirt_path",
+		"minecraft:farmland",
+		"minecraft:grass_block",
+		"minecraft:mud",
+		"minecraft:mycelium",
+		"minecraft:podzol",
+		"minecraft:rooted_dirt"
+	]
 }

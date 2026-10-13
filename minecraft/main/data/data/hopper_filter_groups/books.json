@@ -1,5 +1,5 @@
 {
-	"name": "Books",
+	"name": "Books and Paper",
 	"items": [
 		"mainmod:charm-fashion-book",
 		"mainmod:charm-joke-book",
@@ -8,6 +8,7 @@
 		"minecraft:book",
 		"minecraft:enchanted_book",
 		"minecraft:knowledge_book",
+		"minecraft:paper",
 		"minecraft:writable_book",
 		"minecraft:written_book"
 	]

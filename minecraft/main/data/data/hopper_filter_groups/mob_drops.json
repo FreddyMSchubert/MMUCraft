@@ -1,0 +1,32 @@
+{
+	"name": "Mob Drops",
+	"items": [
+		"minecraft:armadillo_scute",
+		"minecraft:blaze_rod",
+		"minecraft:bone",
+		"minecraft:breeze_rod",
+		"minecraft:ender_pearl",
+		"minecraft:feather",
+		"minecraft:ghast_tear",
+		"minecraft:glow_ink_sac",
+		"minecraft:gunpowder",
+		"minecraft:ink_sac",
+		"minecraft:leather",
+		"minecraft:magma_cream",
+		"minecraft:nautilus_shell",
+		"minecraft:nether_star",
+		"minecraft:phantom_membrane",
+		"minecraft:prismarine_crystals",
+		"minecraft:prismarine_shard",
+		"minecraft:rabbit_foot",
+		"minecraft:rabbit_hide",
+		"minecraft:rotten_flesh",
+		"minecraft:shulker_shell",
+		"minecraft:slime_ball",
+		"minecraft:spider_eye",
+		"minecraft:string",
+		"minecraft:turtle_scute",
+		"minecraft:wind_charge",
+		"minecraft:wither_skeleton_skull"
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"name": "Brewing Ingredients",
+	"items": [
+		"minecraft:blaze_powder",
+		"minecraft:breeze_rod",
+		"minecraft:cobweb",
+		"minecraft:dragon_breath",
+		"minecraft:fermented_spider_eye",
+		"minecraft:ghast_tear",
+		"minecraft:glistering_melon_slice",
+		"minecraft:glowstone_dust",
+		"minecraft:golden_carrot",
+		"minecraft:gunpowder",
+		"minecraft:magma_cream",
+		"minecraft:nether_wart",
+		"minecraft:phantom_membrane",
+		"minecraft:pufferfish",
+		"minecraft:rabbit_foot",
+		"minecraft:redstone",
+		"minecraft:slime_block",
+		"minecraft:spider_eye",
+		"minecraft:stone",
+		"minecraft:sugar",
+		"minecraft:turtle_scute"
+	]
+}

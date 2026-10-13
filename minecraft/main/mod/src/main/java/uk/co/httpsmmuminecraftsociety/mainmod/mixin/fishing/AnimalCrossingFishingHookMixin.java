@@ -52,8 +52,7 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique private double mainmod$targetDistance;
     @Unique private double mainmod$orbitDegrees;
     @Unique private double mainmod$orbitDrift;
-    @Unique private int mainmod$selectedBounces;
-    @Unique private int mainmod$completedBounces;
+    @Unique private int mainmod$bobberContacts;
     @Unique private int mainmod$animationTicks;
     @Unique private int mainmod$pauseTicks;
     @Unique private int mainmod$shadowAge;
@@ -189,11 +188,7 @@ public abstract class AnimalCrossingFishingHookMixin {
         this.mainmod$orbitDrift = (hook.getRandom().nextBoolean() ? 1.0D : -1.0D) * Mth.nextFloat(hook.getRandom(), 0.10F, 0.34F);
         this.mainmod$fishDistance = Mth.nextFloat(hook.getRandom(), 3.9F, 6.0F);
         this.mainmod$targetDistance = mainmod$bobberContactDistance();
-		this.mainmod$selectedBounces = AnimalCrossingFishingTiming.rollBounceCount(
-				hook.getRandom(),
-				mainmod$personality()
-		);
-        this.mainmod$completedBounces = 0;
+        this.mainmod$bobberContacts = 0;
         this.mainmod$animationTicks = 0;
         this.mainmod$pauseTicks = mainmod$awayTicks();
         this.mainmod$shadowAge = 0;
@@ -270,12 +265,13 @@ public abstract class AnimalCrossingFishingHookMixin {
 
     @Unique
     private void mainmod$onFishReachedBobber(ServerLevel level, FishingHook hook) {
-        if (this.mainmod$completedBounces >= this.mainmod$selectedBounces - 1) {
+        this.mainmod$bobberContacts++;
+        if (AnimalCrossingFishingTiming.shouldBite(
+                hook.getRandom(), mainmod$personality(), this.mainmod$bobberContacts)) {
             mainmod$bite(level, hook);
             return;
         }
 
-        this.mainmod$completedBounces++;
         mainmod$beginRetreat();
 		AnimalCrossingFishingBobberEffects.playBounce(level, hook);
     }

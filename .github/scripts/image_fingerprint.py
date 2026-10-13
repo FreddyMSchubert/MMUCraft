@@ -65,9 +65,8 @@ INPUTS = {
         ".dockerignore",
         "minecraft/surprising-saturday/Dockerfile",
         "minecraft/surprising-saturday/mods",
-        "minecraft/surprising-saturday/killshift/build/libs",
+        "minecraft/surprising-saturday/chunklocked/build/libs",
         "minecraft/surprising-saturday/server.properties",
-        "minecraft/main/config/voicechat/voicechat-server.properties",
         "minecraft/surprising-saturday/prepare-and-start.sh",
     ],
     "event-controller": [

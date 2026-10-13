@@ -1,6 +1,7 @@
 {
 	"name": "Candles",
 	"items": [
+		"mainmod:cosmetic-candle",
 		"minecraft:black_candle",
 		"minecraft:blue_candle",
 		"minecraft:brown_candle",

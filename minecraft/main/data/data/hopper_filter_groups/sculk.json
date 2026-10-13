@@ -1,0 +1,12 @@
+{
+	"name": "Sculk",
+	"items": [
+		"minecraft:calibrated_sculk_sensor",
+		"minecraft:echo_shard",
+		"minecraft:sculk",
+		"minecraft:sculk_catalyst",
+		"minecraft:sculk_sensor",
+		"minecraft:sculk_shrieker",
+		"minecraft:sculk_vein"
+	]
+}

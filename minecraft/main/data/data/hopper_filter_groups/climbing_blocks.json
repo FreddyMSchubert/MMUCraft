@@ -1,0 +1,10 @@
+{
+	"name": "Climbing Blocks",
+	"items": [
+		"minecraft:ladder",
+		"minecraft:scaffolding",
+		"minecraft:twisting_vines",
+		"minecraft:vine",
+		"minecraft:weeping_vines"
+	]
+}

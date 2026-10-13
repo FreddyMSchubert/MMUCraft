@@ -1,0 +1,29 @@
+{
+	"name": "Wild Plants",
+	"items": [
+		"minecraft:bamboo",
+		"minecraft:big_dripleaf",
+		"minecraft:bush",
+		"minecraft:cactus",
+		"minecraft:dead_bush",
+		"minecraft:short_dry_grass",
+		"minecraft:tall_dry_grass",
+		"minecraft:fern",
+		"minecraft:firefly_bush",
+		"minecraft:glow_lichen",
+		"minecraft:hanging_roots",
+		"minecraft:kelp",
+		"minecraft:large_fern",
+		"minecraft:leaf_litter",
+		"minecraft:lily_pad",
+		"minecraft:nether_sprouts",
+		"minecraft:red_shrub",
+		"minecraft:seagrass",
+		"minecraft:short_grass",
+		"minecraft:small_dripleaf",
+		"minecraft:tall_grass",
+		"minecraft:twisting_vines",
+		"minecraft:vine",
+		"minecraft:weeping_vines"
+	]
+}

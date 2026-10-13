@@ -1,0 +1,12 @@
+{
+	"name": "Drinks",
+	"items": [
+		"mainmod:beer",
+		"mainmod:cocktail",
+		"mainmod:tea",
+		"mainmod:wine-bottle",
+		"minecraft:honey_bottle",
+		"minecraft:milk_bucket",
+		"minecraft:potion"
+	]
+}

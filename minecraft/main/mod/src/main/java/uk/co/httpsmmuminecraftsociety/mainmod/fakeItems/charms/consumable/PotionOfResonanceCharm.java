@@ -8,10 +8,9 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
+import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 
 import java.util.List;
@@ -85,12 +84,7 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
         return matchesItemType(player.getMainHandItem(), key) || matchesItemType(player.getOffhandItem(), key);
     }
 
-    private static boolean matchesItemType(ItemStack candidate, ItemStack key) {
-        FakeItem candidateFakeItem = FakeItems.getFakeItemFromStack(candidate);
-        FakeItem keyFakeItem = FakeItems.getFakeItemFromStack(key);
-        if (candidateFakeItem != null || keyFakeItem != null) {
-            return candidateFakeItem != null && keyFakeItem != null && candidateFakeItem.id().equals(keyFakeItem.id());
-        }
-        return candidate.is(key.getItem());
+    public static boolean matchesItemType(ItemStack candidate, ItemStack key) {
+        return !candidate.isEmpty() && HopperFilter.baseItemId(candidate).equals(HopperFilter.baseItemId(key));
     }
 }

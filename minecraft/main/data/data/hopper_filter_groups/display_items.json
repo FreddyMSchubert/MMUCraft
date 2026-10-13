@@ -1,0 +1,11 @@
+{
+	"name": "Display Items",
+	"items": [
+		"minecraft:armor_stand",
+		"minecraft:decorated_pot",
+		"minecraft:flower_pot",
+		"minecraft:glow_item_frame",
+		"minecraft:item_frame",
+		"minecraft:painting"
+	]
+}

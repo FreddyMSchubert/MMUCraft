@@ -1,0 +1,12 @@
+{
+	"name": "Legendary Fish",
+	"items": [
+		"mainmod:fish-divine_catfish",
+		"mainmod:fish-divine_jellyfish",
+		"mainmod:fish-golden_swordfish",
+		"mainmod:fish-matrix_fish",
+		"mainmod:fish-nullfin",
+		"mainmod:fish-pandafish",
+		"mainmod:fish-windfish"
+	]
+}

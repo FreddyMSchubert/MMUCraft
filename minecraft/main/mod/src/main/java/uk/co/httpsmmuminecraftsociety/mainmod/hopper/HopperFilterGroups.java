@@ -23,17 +23,28 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public final class HopperFilterGroups {
+    private static final Set<String> POTION_ITEMS = Set.of(
+            "minecraft:potion", "minecraft:splash_potion", "minecraft:lingering_potion");
+
     public record Group(
             String id,
             String name,
             Set<String> items,
             Set<String> potions,
+            Set<String> potionItems,
             Set<String> enchantments
     ) {
         boolean matches(ItemStack stack) {
             if (items.contains(HopperFilter.baseItemId(stack))) return true;
-            if (HopperFilter.potionId(stack).filter(potions::contains).isPresent()) return true;
+            if ((potionItems.isEmpty() || potionItems.contains(HopperFilter.baseItemId(stack)))
+                    && HopperFilter.potionId(stack).filter(potions::contains).isPresent()) return true;
             return HopperFilter.storedEnchantmentIds(stack).stream().anyMatch(enchantments::contains);
+        }
+
+        int matchBreadth(int potionTypeCount) {
+            return items.stream().mapToInt(item -> POTION_ITEMS.contains(item) ? potionTypeCount : 1).sum()
+                    + potions.size() * (potionItems.isEmpty() ? POTION_ITEMS.size() : potionItems.size())
+                    + enchantments.size();
         }
     }
 
@@ -60,11 +71,15 @@ public final class HopperFilterGroups {
 
                         Set<String> items = readIds(json, "items", HopperFilterGroups::validateItemId);
                         Set<String> potions = readIds(json, "potions", HopperFilterGroups::validateMinecraftId);
+                        Set<String> potionItems = readIds(json, "potion_items", HopperFilterGroups::validatePotionItemId);
                         Set<String> enchantments = readIds(json, "enchantments", HopperFilterGroups::validateMinecraftId);
+                        if (!potionItems.isEmpty() && potions.isEmpty()) {
+                            throw new IllegalArgumentException("potion_items requires potions");
+                        }
                         if (items.isEmpty() && potions.isEmpty() && enchantments.isEmpty()) {
                             throw new IllegalArgumentException("a group must contain items, potions, or enchantments");
                         }
-                        if (loaded.put(id, new Group(id, name, items, potions, enchantments)) != null) {
+                        if (loaded.put(id, new Group(id, name, items, potions, potionItems, enchantments)) != null) {
                             throw new IllegalArgumentException("duplicate group id: " + id);
                         }
                     } catch (Exception exception) {
@@ -77,10 +92,11 @@ public final class HopperFilterGroups {
     }
 
     public static List<Group> containingAll(Collection<ItemStack> stacks) {
+        int potionTypeCount = (int) groups.values().stream()
+                .flatMap(group -> group.potions().stream()).distinct().count();
         return groups.values().stream()
                 .filter(group -> stacks.stream().allMatch(group::matches))
-                .sorted(Comparator.comparingInt((Group group) ->
-                                group.items().size() + group.potions().size() + group.enchantments().size())
+                .sorted(Comparator.comparingInt((Group group) -> group.matchBreadth(potionTypeCount))
                         .thenComparing(Group::id))
                 .toList();
     }
@@ -111,6 +127,10 @@ public final class HopperFilterGroups {
         if (id == null || !id.getNamespace().equals("minecraft")) {
             throw new IllegalArgumentException("expected a minecraft: ID: " + raw);
         }
+    }
+
+    private static void validatePotionItemId(String raw) {
+        if (!POTION_ITEMS.contains(raw)) throw new IllegalArgumentException("not a potion item: " + raw);
     }
 
     private static Set<String> readIds(JsonObject json, String key, Consumer<String> validator) {

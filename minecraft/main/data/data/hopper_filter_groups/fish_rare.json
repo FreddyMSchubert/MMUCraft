@@ -1,0 +1,27 @@
+{
+	"name": "Rare Fish",
+	"items": [
+		"mainmod:fish-anglerfish",
+		"mainmod:fish-arowana",
+		"mainmod:fish-baguettefish",
+		"mainmod:fish-bonefish",
+		"mainmod:fish-branch_eel",
+		"mainmod:fish-crawfish",
+		"mainmod:fish-ghostfish",
+		"mainmod:fish-ghostjellyfish",
+		"mainmod:fish-luminous_carp",
+		"mainmod:fish-luminous_mackerel",
+		"mainmod:fish-luminous_shrimp",
+		"mainmod:fish-mooneel",
+		"mainmod:fish-nebula_swordfish",
+		"mainmod:fish-red_koi",
+		"mainmod:fish-sculker",
+		"mainmod:fish-seahorse",
+		"mainmod:fish-starry_salmon",
+		"mainmod:fish-sunsetfish",
+		"mainmod:fish-tarte_flambee_fish",
+		"mainmod:fish-tripodfish",
+		"mainmod:fish-witchfish",
+		"mainmod:fish-yellow_koi"
+	]
+}

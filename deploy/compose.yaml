@@ -133,6 +133,7 @@ services:
                 tt20?
                 immersive-optimization?
                 clumps?
+                lazyai?
                 lmd?
                 fabricproxy-lite
                 simple-voice-chat:beta
@@ -256,6 +257,7 @@ services:
                 vmp-fabric:alpha
                 structure-layout-optimizer?
                 clumps?
+                lazyai?
                 lmd?
                 fabric-language-kotlin
             MODRINTH_DOWNLOAD_DEPENDENCIES: required

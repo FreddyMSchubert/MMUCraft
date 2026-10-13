@@ -1,0 +1,10 @@
+{
+	"name": "Fishing Trash",
+	"items": [
+		"mainmod:boot",
+		"mainmod:empty-can",
+		"mainmod:fish-bones",
+		"mainmod:old-tire",
+		"mainmod:seaweed"
+	]
+}

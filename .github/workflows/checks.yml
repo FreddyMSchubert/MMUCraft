@@ -208,6 +208,7 @@ jobs:
                   IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
                   SITE_RELEASE_NAME: ${{ steps.manual_release.outputs.name || github.event.release.name }}
                   SITE_RELEASE_URL: ${{ steps.manual_release.outputs.url || github.event.release.html_url }}
+                  SITE_DEPLOY_TARGET: ${{ steps.image.outputs.tag == 'dev' && 'dev' || 'production' }}
               run: python3 .github/scripts/image_fingerprint.py api web
 
             - name: Build API for tests
@@ -240,6 +241,7 @@ jobs:
                   build-args: |
                       SITE_RELEASE_NAME=${{ steps.manual_release.outputs.name || github.event.release.name }}
                       SITE_RELEASE_URL=${{ steps.manual_release.outputs.url || github.event.release.html_url }}
+                      SITE_DEPLOY_TARGET=${{ steps.image.outputs.tag == 'dev' && 'dev' || 'production' }}
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.revision=${{ steps.source.outputs.sha }}

@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 import java.util.Set;
 
@@ -21,6 +22,10 @@ public final class DisabledDnTEnchantments {
 
     public static boolean contains(Holder<Enchantment> enchantment) {
         return enchantment.unwrapKey().map(DISABLED::contains).orElse(false);
+    }
+
+    public static boolean containsAny(ItemEnchantments enchantments) {
+        return enchantments.keySet().stream().anyMatch(DisabledDnTEnchantments::contains);
     }
 
     private static ResourceKey<Enchantment> key(String path) {

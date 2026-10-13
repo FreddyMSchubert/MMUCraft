@@ -18,4 +18,11 @@ public abstract class DnTEnchantmentApplicationMixin {
             ci.cancel();
         }
     }
+
+    @Inject(method = "upgrade", at = @At("HEAD"), cancellable = true, require = 1)
+    private void mainmod$rejectDnTUpgrade(Holder<Enchantment> enchantment, int level, CallbackInfo ci) {
+        if (DisabledDnTEnchantments.contains(enchantment)) {
+            ci.cancel();
+        }
+    }
 }

@@ -17,6 +17,7 @@ import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.DisabledDnTEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 
 import java.util.Optional;
@@ -37,6 +38,8 @@ public final class LecternLibrarianTrades {
 
         MerchantOffers offers = villager.getOffers();
         offers.removeIf(LecternLibrarianTrades::isLecternCopyOffer);
+        offers.removeIf(offer -> offer.getResult().isEmpty() || DisabledDnTEnchantments.containsAny(
+                offer.getResult().getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY)));
 
         getJobSiteEnchantedBook(villager, level)
                 .flatMap(LecternLibrarianTrades::createCopyOffer)
@@ -68,7 +71,7 @@ public final class LecternLibrarianTrades {
 
     private static Optional<MerchantOffer> createCopyOffer(ItemStack sourceBook) {
         ItemEnchantments enchantments = sourceBook.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-        if (enchantments.isEmpty()) {
+        if (enchantments.isEmpty() || DisabledDnTEnchantments.containsAny(enchantments)) {
             return Optional.empty();
         }
 

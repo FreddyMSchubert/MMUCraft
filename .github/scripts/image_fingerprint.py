@@ -126,7 +126,7 @@ def fingerprint(name: str, manifests: dict[str, bytes]) -> str:
             manifests[image] = json.dumps(json.loads(raw), sort_keys=True, separators=(",", ":")).encode()
         digest.update(image.encode() + b"\0" + hashlib.sha256(manifests[image]).digest())
     if name == "web":
-        for variable in ("SITE_RELEASE_NAME", "SITE_RELEASE_URL"):
+        for variable in ("SITE_RELEASE_NAME", "SITE_RELEASE_URL", "SITE_DEPLOY_TARGET"):
             digest.update(variable.encode() + b"\0" + os.environ.get(variable, "").encode() + b"\0")
     return digest.hexdigest()
 

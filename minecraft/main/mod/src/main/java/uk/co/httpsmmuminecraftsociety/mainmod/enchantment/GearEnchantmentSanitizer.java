@@ -13,11 +13,25 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 
+import java.util.List;
+
 public final class GearEnchantmentSanitizer {
     private GearEnchantmentSanitizer() {}
 
     public static boolean sanitize(ItemStack stack) {
-        if (stack.isEmpty() || stack.is(Items.ENCHANTED_BOOK)) return false;
+        if (stack.isEmpty()) return false;
+        if (stack.is(Items.ENCHANTED_BOOK)) {
+            boolean changed = false;
+            for (var component : List.of(DataComponents.STORED_ENCHANTMENTS, DataComponents.ENCHANTMENTS)) {
+                ItemEnchantments current = stack.getOrDefault(component, ItemEnchantments.EMPTY);
+                if (!DisabledDnTEnchantments.containsAny(current)) continue;
+                ItemEnchantments.Mutable corrected = new ItemEnchantments.Mutable(current);
+                corrected.removeIf(DisabledDnTEnchantments::contains);
+                stack.set(component, corrected.toImmutable());
+                changed = true;
+            }
+            return changed;
+        }
         ItemEnchantments current = stack.getEnchantments();
         if (current.isEmpty()) return false;
 

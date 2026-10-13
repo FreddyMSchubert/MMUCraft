@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 ARG NODE_VERSION=24.14.0
+ARG SITE_DEPLOY_TARGET=production
 FROM node:${NODE_VERSION}-bookworm-slim AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1 \
@@ -23,7 +24,9 @@ EXPOSE 3000
 CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0"]
 
 FROM base AS builder
-ENV NODE_ENV=production
+ARG SITE_DEPLOY_TARGET
+ENV NODE_ENV=production \
+    SITE_DEPLOY_TARGET=$SITE_DEPLOY_TARGET
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json tsconfig.json next.config.ts ./
 COPY public ./public
@@ -33,8 +36,10 @@ RUN npm run build
 FROM node:${NODE_VERSION}-bookworm-slim AS runner
 ARG SITE_RELEASE_NAME
 ARG SITE_RELEASE_URL
+ARG SITE_DEPLOY_TARGET
 WORKDIR /app
 ENV NODE_ENV=production \
+    SITE_DEPLOY_TARGET=$SITE_DEPLOY_TARGET \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
     PORT=3000 \

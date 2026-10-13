@@ -5,8 +5,16 @@ import { ReferralTracking } from '@/components/referral-tracking';
 import { SiteSettingsEffects } from '@/lib/site-settings';
 import './globals.css';
 
+const titlePrefix =
+	process.env.NODE_ENV === 'development' || process.env.SITE_DEPLOY_TARGET === 'dev'
+		? 'DEV '
+		: '';
+
 export const metadata: Metadata = {
-	title: 'MMU Minecraft Society',
+	title: {
+		default: `${titlePrefix}MMU Minecraft Society`,
+		template: `${titlePrefix}%s`,
+	},
 	description: 'MMU Minecraft Society',
 };
 

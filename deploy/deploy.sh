@@ -447,7 +447,27 @@ if [ -s "$legacy_bans" ]; then
 		'
 fi
 
-# Start the release and wait for the services players need.
+# Start the waiting room, then start Minecraft while the other services become healthy.
+if dc up -d api web waiting-room velocity; then
+	:
+else
+	status=$?
+	show_startup_diagnostics
+	exit "$status"
+fi
+main_required=true
+if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
+	main_required=false
+	dc up -d --no-deps minecraft || echo "Main server could not start; checking the active route." >&2
+else
+	if dc up -d --no-deps minecraft; then
+		:
+	else
+		status=$?
+		show_startup_diagnostics
+		exit "$status"
+	fi
+fi
 if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web waiting-room velocity; then
 	:
 else
@@ -455,10 +475,8 @@ else
 	show_startup_diagnostics
 	exit "$status"
 fi
-if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
-	dc up -d --no-deps minecraft || echo "Main server could not start; checking the active route." >&2
-else
-	if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" minecraft; then
+if [ "$main_required" = true ]; then
+	if dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" minecraft; then
 		:
 	else
 		status=$?

@@ -4,10 +4,11 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import { and, asc, eq, gt, lte, ne } from 'drizzle-orm';
+import { and, asc, eq, gt, like, lte, ne } from 'drizzle-orm';
 import {
 	DatabaseService,
 	playerProfiles,
+	playerMoneyEvents,
 	playerStats,
 	SurprisingSaturdayEventRow,
 	UserRow,
@@ -18,7 +19,7 @@ import {
 } from '../database/database.service';
 import { normalizeMinecraftUuid } from '../database/minecraft-identity.service';
 import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
-import { effectivePlayerColor } from '../players/player-color';
+import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
 import { normalizeStatsJson } from '../players/player-statistics';
 
@@ -30,6 +31,8 @@ interface CompletionTarget {
 	name: string;
 	url: string;
 	points: number;
+	description?: string;
+	amount?: number;
 }
 
 interface EventRewards {
@@ -126,6 +129,62 @@ function completionTargets(value: unknown): CompletionTarget[] | null {
 
 function eventTargets(json: string) {
 	return completionTargets(JSON.parse(json)) ?? [];
+}
+
+function earningTargets(value: unknown): CompletionTarget[] | null {
+	if (!Array.isArray(value) || value.length < 1 || value.length > 256) return null;
+	const targets: CompletionTarget[] = [];
+	for (const item of value) {
+		if (!item || typeof item !== 'object') return null;
+		const { id, name, description, amount } = item as Record<string, unknown>;
+		if (
+			typeof id !== 'string' ||
+			!ITEM_ID.test(id) ||
+			typeof name !== 'string' ||
+			!name.trim() ||
+			name.length > 120 ||
+			(description !== undefined &&
+				(typeof description !== 'string' || description.length > 2000)) ||
+			!Number.isSafeInteger(amount) ||
+			(amount as number) < 1 ||
+			(amount as number) > 1_000_000
+		)
+			return null;
+		targets.push({
+			id,
+			name: name.trim(),
+			description: description?.trim() ?? '',
+			amount: amount as number,
+			url: '',
+			points: 0,
+		});
+	}
+	return new Set(targets.map((target) => target.id)).size === targets.length ? targets : null;
+}
+
+function targetsForEvent(event: SurprisingSaturdayEventRow) {
+	const value: unknown = JSON.parse(event.criteria_json);
+	return event.criteria_type === 'joined_earning'
+		? (earningTargets(value) ?? [])
+		: (completionTargets(value) ?? []);
+}
+
+export function nextLondonDay(start: number, now: number) {
+	const date = new Intl.DateTimeFormat('sv-SE', {
+		timeZone: 'Europe/London',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	});
+	return date.format(now) > date.format(start);
+}
+
+export function joinedEarningAmount(
+	targets: { id: string; amount?: number }[],
+	completed: { itemId: string }[],
+) {
+	const amounts = new Map(targets.map((target) => [target.id, target.amount ?? 0]));
+	return completed.reduce((total, entry) => total + (amounts.get(entry.itemId) ?? 0), 0);
 }
 
 function titleWordLengths(title: string) {
@@ -226,7 +285,7 @@ export class SurprisingSaturdayService {
 				shortDescription: null,
 			};
 
-		const items = eventTargets(event.criteria_json);
+		const items = targetsForEvent(event);
 		const players = this.rankedPlayers(event, items);
 		return {
 			id,
@@ -283,7 +342,9 @@ export class SurprisingSaturdayService {
 			return [
 				{
 					uuid: participant.player_uuid,
+					userId: user?.id ?? null,
 					name: user?.minecraft_username ?? 'Unknown player',
+					avatarUrl: user ? playerAvatarUrl(participant.player_uuid) : null,
 					color: effectivePlayerColor(participant.player_uuid, profile?.color_hex),
 					role: playerRole(user),
 					pronouns: profile?.pronouns ?? '',
@@ -324,6 +385,23 @@ export class SurprisingSaturdayService {
 			.where(eq(surprisingSaturdayEvents.id, id))
 			.get();
 		if (!event) throw new NotFoundException('Event not found');
+		const targets = targetsForEvent(event);
+		const paid = new Map(
+			this.database.connection
+				.select({
+					userId: playerMoneyEvents.user_id,
+					amount: playerMoneyEvents.amount_dabloons,
+				})
+				.from(playerMoneyEvents)
+				.where(
+					and(
+						eq(playerMoneyEvents.source, 'surprising_saturday'),
+						like(playerMoneyEvents.id, `%:${id}`),
+					),
+				)
+				.all()
+				.map((entry) => [entry.userId, entry.amount]),
+		);
 		return {
 			id,
 			title: event.title,
@@ -333,8 +411,17 @@ export class SurprisingSaturdayService {
 			startsAtUnixMs: event.starts_at_unix_ms,
 			endsAtUnixMs: event.ends_at_unix_ms,
 			criteriaType: event.criteria_type,
-			items: eventTargets(event.criteria_json),
+			items: targets,
 			rewards: eventRewards(event.rewards_json),
+			earnings:
+				event.criteria_type === 'joined_earning'
+					? this.rankedPlayers(event, targets).map((player) => ({
+							name: player.name,
+							uuid: player.uuid,
+							amount: joinedEarningAmount(targets, player.completed),
+							paid: player.userId ? (paid.get(player.userId) ?? 0) : 0,
+						}))
+					: [],
 		};
 	}
 
@@ -347,6 +434,17 @@ export class SurprisingSaturdayService {
 			.where(lte(surprisingSaturdayEvents.ends_at_unix_ms, now))
 			.all()
 			.flatMap((event) => {
+				if (event.criteria_type === 'joined_earning') {
+					if (!nextLondonDay(event.ends_at_unix_ms, now)) return [];
+					const targets = targetsForEvent(event);
+					const player = this.rankedPlayers(event, targets).find(
+						(entry) => entry.uuid === playerUuid,
+					);
+					const amount = player ? joinedEarningAmount(targets, player.completed) : 0;
+					return amount > 0
+						? [{ eventId: event.id, title: event.title, place: 0, amount }]
+						: [];
+				}
 				const rewards = eventRewards(event.rewards_json);
 				if (
 					REWARD_PLACES.every((place) => rewards[place] === 0) &&
@@ -390,7 +488,8 @@ export class SurprisingSaturdayService {
 		const description = typeof body?.description === 'string' ? body.description.trim() : '';
 		const start = body?.startsAtUnixMs;
 		const end = body?.endsAtUnixMs;
-		const items = completionTargets(body?.items);
+		const joinedEarning = body?.criteriaType === 'joined_earning';
+		const items = joinedEarning ? earningTargets(body.items) : completionTargets(body?.items);
 		const rewards = body?.rewards;
 		if (
 			!title ||
@@ -410,11 +509,11 @@ export class SurprisingSaturdayService {
 			(end as number) <= (start as number)
 		)
 			throw new BadRequestException('Choose a valid start and an end after it');
-		if (body?.criteriaType !== 'list_completion' || !items)
+		if (!['list_completion', 'joined_earning'].includes(String(body?.criteriaType)) || !items)
 			throw new BadRequestException(
-				'Add 1-256 unique targets with valid IDs, names, links, and points',
+				'Add 1-256 unique targets with valid IDs, names, and rewards',
 			);
-		if (!validRewards(rewards, items.length))
+		if (!joinedEarning && !validRewards(rewards, items.length))
 			throw new BadRequestException(
 				'Set rewards from 0 to 1,000,000 Dabloons and a participation target within the completion list',
 			);
@@ -437,9 +536,9 @@ export class SurprisingSaturdayService {
 			description,
 			starts_at_unix_ms: start as number,
 			ends_at_unix_ms: end as number,
-			criteria_type: 'list_completion',
+			criteria_type: joinedEarning ? 'joined_earning' : 'list_completion',
 			criteria_json: JSON.stringify(items),
-			rewards_json: JSON.stringify(rewards),
+			rewards_json: JSON.stringify(joinedEarning ? DEFAULT_REWARDS : rewards),
 		} as const;
 		const event = id
 			? this.database.connection
@@ -501,9 +600,9 @@ export class SurprisingSaturdayService {
 		if ((at as number) > now + 30_000)
 			throw new BadRequestException('Completion timestamp is in the future');
 		const event = this.active(at as number);
-		if (event?.criteria_type !== 'list_completion')
+		if (!event || !['list_completion', 'joined_earning'].includes(event.criteria_type))
 			throw new NotFoundException('No list completion event accepts scores now');
-		const targets = eventTargets(event.criteria_json);
+		const targets = targetsForEvent(event);
 		if (!targets.some((item) => item.id === itemId))
 			return {
 				ok: true,
@@ -512,8 +611,9 @@ export class SurprisingSaturdayService {
 				score: this.score(uuid, String(at)),
 			};
 		return this.database.connection.transaction(() => {
+			const earning = event.criteria_type === 'joined_earning';
 			// ponytail: Read the podium twice per kill. Batch participant reads if event size makes this slow.
-			const before = this.podium(event, targets);
+			const before = earning ? [] : this.podium(event, targets);
 			this.recordParticipants([uuid], event.id, at as number);
 			const inserted =
 				this.database.connection
@@ -527,7 +627,7 @@ export class SurprisingSaturdayService {
 					.onConflictDoNothing()
 					.returning({ itemId: surprisingSaturdayCompletions.item_id })
 					.all().length > 0;
-			const after = inserted ? this.podium(event, targets) : before;
+			const after = inserted && !earning ? this.podium(event, targets) : before;
 			const changed =
 				inserted &&
 				(before.length !== after.length ||
@@ -551,9 +651,9 @@ export class SurprisingSaturdayService {
 		)
 			throw new BadRequestException('Invalid score time');
 		const event = this.active(at);
-		if (event?.criteria_type !== 'list_completion')
+		if (!event || !['list_completion', 'joined_earning'].includes(event.criteria_type))
 			throw new NotFoundException('No list completion event accepts scores at this time');
-		const targets = new Map(eventTargets(event.criteria_json).map((item) => [item.id, item]));
+		const targets = new Map(targetsForEvent(event).map((item) => [item.id, item]));
 		const completed = this.database.connection
 			.select()
 			.from(surprisingSaturdayCompletions)

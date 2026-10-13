@@ -11,7 +11,12 @@ import {
 } from './admin-api';
 import killShiftItems from './kill-shift-items.json';
 
-type EditableTarget = Omit<CompletionTarget, 'points'> & { key: string; points: string };
+type EditableTarget = Omit<CompletionTarget, 'points' | 'amount'> & {
+	key: string;
+	points: string;
+	amount: string;
+	description: string;
+};
 type RewardKey = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'participation';
 const rewardPlaces: { key: RewardKey; label: string }[] = [
 	{ key: 'first', label: '1st place' },
@@ -43,8 +48,22 @@ function targetFromId(id: string): EditableTarget {
 				.replace(/\b\w/g, (letter) => letter.toUpperCase()) ?? id,
 		url: '',
 		points: '1',
+		amount: '',
+		description: '',
 	};
 }
+
+const chunklockGoals = [
+	['wood', 'Get some wood', 'Have oak wood in your inventory.'],
+	['pickaxe', 'Get a pickaxe', 'Have any pickaxe in your inventory.'],
+	['iron', 'Get some iron', 'Have an iron ingot in your inventory.'],
+	['diamonds', 'Get diamonds', 'Have a diamond in your inventory.'],
+	['nether', 'Enter the Nether', 'Travel into the Nether.'],
+	['blaze', 'Kill a blaze', 'Deal the final blow to a blaze.'],
+	['eye', 'Throw an eye of ender', 'Use an eye of ender.'],
+	['end', 'Enter the End', 'Travel into the End.'],
+	['dragon', 'Kill the dragon', 'Deal the final blow to the Ender Dragon.'],
+] as const;
 
 export function SurprisingSaturdayAdminSection() {
 	const { confirm, showAlert } = useSiteAlert();
@@ -56,6 +75,12 @@ export function SurprisingSaturdayAdminSection() {
 	const [startsAt, setStartsAt] = useState('');
 	const [endsAt, setEndsAt] = useState('');
 	const [items, setItems] = useState<EditableTarget[]>([]);
+	const [criteriaType, setCriteriaType] = useState<'list_completion' | 'joined_earning'>(
+		'list_completion',
+	);
+	const [earnings, setEarnings] = useState<
+		{ name: string; uuid: string; amount: number; paid: number }[]
+	>([]);
 	const [rewards, setRewards] = useState(emptyRewards);
 	const [editingEvent, setEditingEvent] = useState<EventSummary | null>(null);
 	const editingId = editingEvent?.id ?? null;
@@ -69,6 +94,8 @@ export function SurprisingSaturdayAdminSection() {
 		setStartsAt('');
 		setEndsAt('');
 		setItems([]);
+		setCriteriaType('list_completion');
+		setEarnings([]);
 		setRewards(emptyRewards());
 		setEditingEvent(null);
 	}
@@ -134,13 +161,22 @@ export function SurprisingSaturdayAdminSection() {
 						description,
 						startsAtUnixMs: parseManchesterInput(startsAt),
 						endsAtUnixMs: parseManchesterInput(endsAt),
-						criteriaType: 'list_completion',
-						items: items.map(({ id, name, url, points }) => ({
-							id: id.trim(),
-							name: name.trim(),
-							url: url.trim(),
-							points: Number(points),
-						})),
+						criteriaType,
+						items: items.map(({ id, name, url, points, description, amount }) =>
+							criteriaType === 'joined_earning'
+								? {
+										id: id.trim(),
+										name: name.trim(),
+										description: description.trim(),
+										amount: Number(amount),
+									}
+								: {
+										id: id.trim(),
+										name: name.trim(),
+										url: url.trim(),
+										points: Number(points),
+									},
+						),
 						rewards: {
 							...Object.fromEntries(
 								rewardPlaces.map(({ key }) => [key, Number(rewards[key])]),
@@ -185,9 +221,13 @@ export function SurprisingSaturdayAdminSection() {
 				startsAtUnixMs: number;
 				endsAtUnixMs: number;
 				items: CompletionTarget[];
+				criteriaType: 'list_completion' | 'joined_earning';
+				earnings: { name: string; uuid: string; amount: number; paid: number }[];
 				rewards: Record<RewardKey, number> & { participationMinItems: number };
 			};
 			setEditingEvent(event);
+			setCriteriaType(detail.criteriaType);
+			setEarnings(detail.earnings);
 			setTitle(detail.title);
 			setShortDescription(detail.shortDescription);
 			setPreDescription(detail.preDescription);
@@ -199,6 +239,8 @@ export function SurprisingSaturdayAdminSection() {
 					...item,
 					key: crypto.randomUUID(),
 					points: String(item.points),
+					amount: String(item.amount ?? 0),
+					description: item.description ?? '',
 				})),
 			);
 			setRewards({
@@ -269,8 +311,8 @@ export function SurprisingSaturdayAdminSection() {
 							: 'Edit Surprising Saturday'}
 					</h3>
 					<p>
-						Use namespaced mob IDs such as minecraft:creeper. Killshift records the
-						first kill of each listed mob. Set the points for each target below.
+						Choose a leaderboard or Joined Earning. For Joined Earning, each goal has
+						its own Dabloon reward.
 					</p>
 				</div>
 				<button
@@ -288,10 +330,66 @@ export function SurprisingSaturdayAdminSection() {
 							'Kill as many unique mobs as you can. Each kill changes you into the mob you killed. Different forms have different abilities. The player with the most points wins. When scores tie, the player who reached that score first wins.',
 						);
 						setItems(killShiftItems.map(targetFromId));
+						setCriteriaType('list_completion');
 					}}
 				>
 					Use Kill Shift template
 				</button>
+				<button
+					type="button"
+					disabled={busy}
+					onClick={() => {
+						setTitle('Chunklock');
+						setShortDescription(
+							'Complete Chunklock milestones and earn Dabloons for each one.',
+						);
+						setPreDescription(
+							'A new challenge begins this Saturday. The goals are revealed when the event starts.',
+						);
+						setDescription(
+							'Complete the Chunklock goals in any order. Each goal pays its listed Dabloons the next day.',
+						);
+						setCriteriaType('joined_earning');
+						setItems(
+							chunklockGoals.map(([id, name, description]) => ({
+								...targetFromId(`chunklock:${id}`),
+								name,
+								description,
+							})),
+						);
+					}}
+				>
+					Use Chunklock template
+				</button>
+				{editingId !== null && criteriaType === 'joined_earning' && (
+					<details className="eventTargetEditor">
+						<summary>Player earnings</summary>
+						<p>
+							Earned amounts come from recorded goals. Paid amounts come from main
+							server payment records.
+						</p>
+						<div className="adminTableWrap">
+							<table className="adminTable">
+								<thead>
+									<tr>
+										<th>Player</th>
+										<th>Earned</th>
+										<th>Paid</th>
+									</tr>
+								</thead>
+								<tbody>
+									{earnings.map((entry) => (
+										<tr key={entry.uuid}>
+											<td>{entry.name}</td>
+											<td>{entry.amount}</td>
+											<td>{entry.paid}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</details>
+				)}
 				<form
 					className="velocityScheduleForm eventForm"
 					onSubmit={(event) => void save(event)}
@@ -331,8 +429,16 @@ export function SurprisingSaturdayAdminSection() {
 					</label>
 					<label>
 						Winning condition
-						<select defaultValue="list_completion">
+						<select
+							value={criteriaType}
+							onChange={(event) => {
+								setCriteriaType(
+									event.target.value as 'list_completion' | 'joined_earning',
+								);
+							}}
+						>
 							<option value="list_completion">List completion</option>
+							<option value="joined_earning">Joined Earning</option>
 						</select>
 					</label>
 					<label>
@@ -374,7 +480,7 @@ export function SurprisingSaturdayAdminSection() {
 						{items.map((item) => (
 							<div className="eventTargetRow" key={item.key}>
 								<label>
-									Mob ID
+									Goal ID
 									<input
 										value={item.id}
 										required
@@ -396,29 +502,54 @@ export function SurprisingSaturdayAdminSection() {
 										}}
 									/>
 								</label>
+								{criteriaType === 'list_completion' && (
+									<label>
+										Link (optional)
+										<input
+											type="url"
+											value={item.url}
+											maxLength={2048}
+											placeholder="https://..."
+											onChange={(event) => {
+												updateTarget(item.key, { url: event.target.value });
+											}}
+										/>
+									</label>
+								)}
+								{criteriaType === 'joined_earning' && (
+									<label>
+										Description (optional)
+										<input
+											value={item.description}
+											maxLength={2000}
+											onChange={(event) => {
+												updateTarget(item.key, {
+													description: event.target.value,
+												});
+											}}
+										/>
+									</label>
+								)}
 								<label>
-									Link (optional)
-									<input
-										type="url"
-										value={item.url}
-										maxLength={2048}
-										placeholder="https://..."
-										onChange={(event) => {
-											updateTarget(item.key, { url: event.target.value });
-										}}
-									/>
-								</label>
-								<label>
-									Points
+									{criteriaType === 'joined_earning' ? 'Dabloons' : 'Points'}
 									<input
 										type="number"
 										min={1}
-										max={1000}
+										max={criteriaType === 'joined_earning' ? 1_000_000 : 1000}
 										step={1}
-										value={item.points}
+										value={
+											criteriaType === 'joined_earning'
+												? item.amount
+												: item.points
+										}
 										required
 										onChange={(event) => {
-											updateTarget(item.key, { points: event.target.value });
+											updateTarget(
+												item.key,
+												criteriaType === 'joined_earning'
+													? { amount: event.target.value }
+													: { points: event.target.value },
+											);
 										}}
 									/>
 								</label>
@@ -445,49 +576,51 @@ export function SurprisingSaturdayAdminSection() {
 							Add new completion target
 						</button>
 					</div>
-					<div className="eventTargetEditor">
-						<h4>Dabloon rewards</h4>
-						<p>
-							Rewards are paid once, on each player&apos;s next join to the main
-							server after this event ends. Committee results do not count.
-						</p>
-						{rewardPlaces.map(({ key, label }) => (
-							<label key={key}>
-								{label}
+					{criteriaType === 'list_completion' && (
+						<div className="eventTargetEditor">
+							<h4>Dabloon rewards</h4>
+							<p>
+								Rewards are paid once, on each player&apos;s next join to the main
+								server after this event ends. Committee results do not count.
+							</p>
+							{rewardPlaces.map(({ key, label }) => (
+								<label key={key}>
+									{label}
+									<input
+										type="number"
+										min={0}
+										max={1_000_000}
+										step={1}
+										required
+										value={rewards[key]}
+										onChange={(event) => {
+											setRewards((current) => ({
+												...current,
+												[key]: event.target.value,
+											}));
+										}}
+									/>
+								</label>
+							))}
+							<label>
+								Completed list items needed for participation
 								<input
 									type="number"
-									min={0}
-									max={1_000_000}
+									min={1}
+									max={Math.max(items.length, 1)}
 									step={1}
 									required
-									value={rewards[key]}
+									value={rewards.participationMinItems}
 									onChange={(event) => {
 										setRewards((current) => ({
 											...current,
-											[key]: event.target.value,
+											participationMinItems: event.target.value,
 										}));
 									}}
 								/>
 							</label>
-						))}
-						<label>
-							Completed list items needed for participation
-							<input
-								type="number"
-								min={1}
-								max={Math.max(items.length, 1)}
-								step={1}
-								required
-								value={rewards.participationMinItems}
-								onChange={(event) => {
-									setRewards((current) => ({
-										...current,
-										participationMinItems: event.target.value,
-									}));
-								}}
-							/>
-						</label>
-					</div>
+						</div>
+					)}
 					<button type="submit" disabled={busy}>
 						{editingId === null ? 'Create event' : 'Save changes'}
 					</button>

@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import sanitizeHtml from 'sanitize-html';
 import { formatManchesterDateTime } from '@/lib/date-time';
+import { formatDabloons } from '@/lib/dabloons';
 import { PlayerName, type PlayerEmoji } from './player-name';
 import { knowledgeMarkdown } from './knowledge/knowledge-markdown-renderer';
 
@@ -12,6 +14,8 @@ export interface CompletionTarget {
 	name: string;
 	url: string;
 	points: number;
+	description?: string;
+	amount?: number;
 }
 
 export interface EventSummary {
@@ -28,6 +32,7 @@ export interface EventSummary {
 interface EventPlayer {
 	uuid: string;
 	name: string;
+	avatarUrl: string | null;
 	color: string;
 	pronouns: string;
 	isCommittee: boolean;
@@ -97,9 +102,21 @@ function EventDescription({ description }: { description: string }) {
 	);
 }
 
-function EventPlayerLink({ player }: { player: EventPlayer }) {
+function EventPlayerLink({
+	player,
+	withHead = false,
+}: {
+	player: EventPlayer;
+	withHead?: boolean;
+}) {
 	const content = (
 		<>
+			{withHead &&
+				(player.avatarUrl ? (
+					<Image unoptimized src={player.avatarUrl} alt="" width={28} height={28} />
+				) : (
+					<span className="eventEarningHeadFallback">{player.name.charAt(0)}</span>
+				))}
 			<PlayerName
 				name={player.name}
 				color={player.color}
@@ -109,9 +126,13 @@ function EventPlayerLink({ player }: { player: EventPlayer }) {
 			{player.pronouns && <span className="eventPlayerPronouns"> ({player.pronouns})</span>}
 		</>
 	);
-	if (player.name === 'Unknown player') return <span>{content}</span>;
+	if (player.name === 'Unknown player')
+		return <span className={withHead ? 'eventEarningPlayer' : undefined}>{content}</span>;
 	return (
-		<Link className="eventPlayerLink" href={`/play/players/${encodeURIComponent(player.name)}`}>
+		<Link
+			className={withHead ? 'eventEarningPlayer' : 'eventPlayerLink'}
+			href={`/play/players/${encodeURIComponent(player.name)}`}
+		>
 			{content}
 		</Link>
 	);
@@ -180,6 +201,7 @@ export function SurprisingSaturdayTab({
 	}, [selectedEventId]);
 
 	const currentDetail = detail?.id === selectedEventId ? detail : null;
+	const selectedStatus = currentDetail?.status ?? selected?.status;
 	const own = currentDetail?.players?.find((player) => player.uuid === me?.uuid);
 	const completedItems = new Set(own?.completed.map((entry) => entry.itemId));
 	const shownPlayers =
@@ -234,9 +256,11 @@ export function SurprisingSaturdayTab({
 				<div>
 					<h3>Surprising Saturday</h3>
 					<p className="tabSubtitle">
-						{selected?.status === 'upcoming'
+						{selectedStatus === 'upcoming'
 							? 'How you win is revealed when the event starts.'
-							: 'Play the event and follow the scores.'}
+							: currentDetail?.criteriaType === 'joined_earning'
+								? 'Play the event and follow the goals.'
+								: 'Play the event and follow the scores.'}
 					</p>
 				</div>
 			</header>
@@ -244,10 +268,10 @@ export function SurprisingSaturdayTab({
 			{selected && (
 				<section className="adminSection eventFeature">
 					<div className="eventFeatureMeta">
-						<span className={`eventStatus eventStatus-${selected.status}`}>
-							{selected.status === 'live'
+						<span className={`eventStatus eventStatus-${selectedStatus}`}>
+							{selectedStatus === 'live'
 								? 'Live now'
-								: selected.status === 'upcoming'
+								: selectedStatus === 'upcoming'
 									? 'Coming up'
 									: 'Finished'}
 						</span>
@@ -257,14 +281,14 @@ export function SurprisingSaturdayTab({
 						</time>
 					</div>
 					<h4 className="eventTitle">
-						{selected.title ?? (
+						{currentDetail?.title ?? selected.title ?? (
 							<ObfuscatedEventName wordLengths={selected.titleWordLengths} />
 						)}
 					</h4>
 					<EventDescription
 						description={currentDetail?.description ?? selected.description ?? ''}
 					/>
-					{selected.status === 'live' && (
+					{selectedStatus === 'live' && (
 						<div className="eventJoin">
 							<button
 								type="button"
@@ -289,136 +313,176 @@ export function SurprisingSaturdayTab({
 				<section className="adminSection">This event could not be found.</section>
 			)}
 
-			{selected?.status !== 'upcoming' &&
-				currentDetail?.criteriaType === 'list_completion' && (
-					<section className="adminSection eventScores">
-						<div className="eventSectionHeading">
-							<h4>Leaderboard</h4>
-							<p>
-								Most points wins. Ties go to the player who reached that score
-								first.
-							</p>
-						</div>
-						<label className="eventCommitteeToggle">
-							<input
-								type="checkbox"
-								checked={showCommittee}
-								onChange={(event) => {
-									setCommitteeVisibleFor(
-										event.target.checked ? (selectedEventId ?? null) : null,
-									);
-								}}
-							/>
-							Show committee players
-						</label>
-						{showCommittee && (
-							<p className="eventUnofficial" role="alert">
-								These are not the official results. Committee members play for fun
-								and cannot win.
-							</p>
-						)}
-						<details className="eventChecklist">
-							<summary>
-								Your completion list ({own?.completed.length ?? 0}/
-								{currentDetail.items?.length ?? 0} targets · {own?.points ?? 0}/
-								{totalPoints} points)
-							</summary>
-							<ul>
-								{currentDetail.items?.map((item) => (
-									<li
-										key={item.id}
-										aria-label={`${item.name}: ${completedItems.has(item.id) ? 'complete' : 'incomplete'}, ${item.points} points`}
-									>
-										<span
-											className={
-												completedItems.has(item.id)
-													? 'eventComplete'
-													: 'eventIncomplete'
-											}
-											aria-hidden="true"
-										>
-											{completedItems.has(item.id) ? '✓' : '○'}
-										</span>{' '}
-										{item.url ? (
-											<a
-												href={item.url}
-												target="_blank"
-												rel="noopener noreferrer"
-											>
-												{item.name}
-											</a>
-										) : (
-											<span>{item.name}</span>
-										)}
-										<span className="eventTargetPoints">
-											{item.points} {item.points === 1 ? 'pt' : 'pts'}
-										</span>
-									</li>
-								))}
-							</ul>
-						</details>
-						{shownPlayers.length > 0 && (
-							<div className="eventPodium">
-								{shownPlayers.slice(0, 3).map((player, index) => (
-									<div key={player.uuid}>
-										<small>#{index + 1}</small>
-										<strong>
-											<EventPlayerLink player={player} />
-										</strong>
-										<span>
-											{player.points}{' '}
-											{player.points === 1 ? 'point' : 'points'}
-											{player.isCommittee && ' · for fun'}
-										</span>
+			{selectedStatus !== 'upcoming' && currentDetail?.criteriaType === 'joined_earning' && (
+				<section className="adminSection eventScores">
+					<div className="eventSectionHeading">
+						<h4>Joined Earning</h4>
+						<p>
+							Complete goals in any order. Each one earns its listed Dabloons, paid
+							from the next day.
+						</p>
+					</div>
+					<ol className="eventEarningGoals">
+						{currentDetail.items?.map((item) => {
+							const finishers =
+								currentDetail.players?.filter((player) =>
+									player.completed.some((entry) => entry.itemId === item.id),
+								) ?? [];
+							return (
+								<li key={item.id}>
+									<div className="eventEarningGoalHeading">
+										<input
+											type="checkbox"
+											checked={completedItems.has(item.id)}
+											disabled
+											aria-label={`${item.name}: ${completedItems.has(item.id) ? 'completed' : 'not completed'} by you`}
+										/>
+										<div>
+											<strong>{item.name}</strong>
+											{item.description && <p>{item.description}</p>}
+										</div>
+										<span>{formatDabloons(item.amount ?? 0)}</span>
 									</div>
-								))}
-							</div>
-						)}
-						<div className="adminTableWrap">
-							<table className="adminTable">
-								<thead>
-									<tr>
-										<th>Place</th>
-										<th>Player</th>
-										<th>Score</th>
-									</tr>
-								</thead>
-								<tbody>
-									{shownPlayers.map((player, index) => (
-										<tr key={player.uuid}>
-											<td>{index + 1}</td>
-											<td>
-												<EventPlayerLink player={player} />
-												{player.isCommittee && (
-													<span className="eventForFun"> · for fun</span>
-												)}
-											</td>
-											<td>
-												<progress
-													aria-label={`${player.name} score`}
-													value={player.points}
-													max={totalPoints || 1}
-												/>{' '}
-												{player.points}/{totalPoints} pts ·{' '}
-												{player.completed.length}/
-												{currentDetail.items?.length} targets
-											</td>
-										</tr>
-									))}
-									{shownPlayers.length === 0 && (
-										<tr>
-											<td colSpan={3}>
-												{currentDetail.players?.length
-													? 'No eligible players have joined this event yet.'
-													: 'No players have joined this event yet.'}
-											</td>
-										</tr>
+									<div className="eventEarningPlayers">
+										{finishers.map((player) => (
+											<EventPlayerLink
+												key={player.uuid}
+												player={player}
+												withHead
+											/>
+										))}
+									</div>
+								</li>
+							);
+						})}
+					</ol>
+				</section>
+			)}
+			{selectedStatus !== 'upcoming' && currentDetail?.criteriaType === 'list_completion' && (
+				<section className="adminSection eventScores">
+					<div className="eventSectionHeading">
+						<h4>Leaderboard</h4>
+						<p>Most points wins. Ties go to the player who reached that score first.</p>
+					</div>
+					<label className="eventCommitteeToggle">
+						<input
+							type="checkbox"
+							checked={showCommittee}
+							onChange={(event) => {
+								setCommitteeVisibleFor(
+									event.target.checked ? (selectedEventId ?? null) : null,
+								);
+							}}
+						/>
+						Show committee players
+					</label>
+					{showCommittee && (
+						<p className="eventUnofficial" role="alert">
+							These are not the official results. Committee members play for fun and
+							cannot win.
+						</p>
+					)}
+					<details className="eventChecklist">
+						<summary>
+							Your completion list ({own?.completed.length ?? 0}/
+							{currentDetail.items?.length ?? 0} targets · {own?.points ?? 0}/
+							{totalPoints} points)
+						</summary>
+						<ul>
+							{currentDetail.items?.map((item) => (
+								<li
+									key={item.id}
+									aria-label={`${item.name}: ${completedItems.has(item.id) ? 'complete' : 'incomplete'}, ${item.points} points`}
+								>
+									<span
+										className={
+											completedItems.has(item.id)
+												? 'eventComplete'
+												: 'eventIncomplete'
+										}
+										aria-hidden="true"
+									>
+										{completedItems.has(item.id) ? '✓' : '○'}
+									</span>{' '}
+									{item.url ? (
+										<a
+											href={item.url}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{item.name}
+										</a>
+									) : (
+										<span>{item.name}</span>
 									)}
-								</tbody>
-							</table>
+									<span className="eventTargetPoints">
+										{item.points} {item.points === 1 ? 'pt' : 'pts'}
+									</span>
+								</li>
+							))}
+						</ul>
+					</details>
+					{shownPlayers.length > 0 && (
+						<div className="eventPodium">
+							{shownPlayers.slice(0, 3).map((player, index) => (
+								<div key={player.uuid}>
+									<small>#{index + 1}</small>
+									<strong>
+										<EventPlayerLink player={player} />
+									</strong>
+									<span>
+										{player.points} {player.points === 1 ? 'point' : 'points'}
+										{player.isCommittee && ' · for fun'}
+									</span>
+								</div>
+							))}
 						</div>
-					</section>
-				)}
+					)}
+					<div className="adminTableWrap">
+						<table className="adminTable">
+							<thead>
+								<tr>
+									<th>Place</th>
+									<th>Player</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody>
+								{shownPlayers.map((player, index) => (
+									<tr key={player.uuid}>
+										<td>{index + 1}</td>
+										<td>
+											<EventPlayerLink player={player} />
+											{player.isCommittee && (
+												<span className="eventForFun"> · for fun</span>
+											)}
+										</td>
+										<td>
+											<progress
+												aria-label={`${player.name} score`}
+												value={player.points}
+												max={totalPoints || 1}
+											/>{' '}
+											{player.points}/{totalPoints} pts ·{' '}
+											{player.completed.length}/{currentDetail.items?.length}{' '}
+											targets
+										</td>
+									</tr>
+								))}
+								{shownPlayers.length === 0 && (
+									<tr>
+										<td colSpan={3}>
+											{currentDetail.players?.length
+												? 'No eligible players have joined this event yet.'
+												: 'No players have joined this event yet.'}
+										</td>
+									</tr>
+								)}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			)}
 			{error && <p className="authError">{error}</p>}
 
 			{otherUpcoming.length > 0 && !isDetailPage && (

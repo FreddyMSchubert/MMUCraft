@@ -249,6 +249,77 @@
 	cursor: pointer;
 }
 
+.eventEarningGoals {
+	display: grid;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.eventEarningGoals > li {
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	border-radius: 9px;
+}
+
+.eventEarningGoalHeading {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.eventEarningGoalHeading input {
+	margin-top: 4px;
+	accent-color: #71e39c;
+	opacity: 1;
+}
+
+.eventEarningGoalHeading > div {
+	flex: 1;
+}
+
+.eventEarningGoalHeading p {
+	margin: 4px 0 0;
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.eventEarningPlayers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 10px 0 0 26px;
+}
+
+.eventEarningPlayer {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 8px 3px 3px;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 999px;
+	color: inherit;
+	text-decoration: none;
+}
+
+.eventEarningPlayer:hover,
+.eventEarningPlayer:focus-visible {
+	border-color: #ffd166;
+}
+
+.eventEarningPlayer img,
+.eventEarningHeadFallback {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+}
+
+.eventEarningHeadFallback {
+	display: grid;
+	place-items: center;
+	background: rgba(255, 255, 255, 0.2);
+}
+
 .eventChecklist ul {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

@@ -47,6 +47,7 @@ public final class ChunkLocked implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        EventGoals.register();
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             world = ChunkWorld.load(server);
             ServerLevel overworld = server.overworld();
@@ -229,10 +230,9 @@ public final class ChunkLocked implements ModInitializer {
                         .startsWith(prefix.trim().toLowerCase(Locale.ROOT))) {
                     biomeName = prefix + biomeName;
                 }
-                String announcement = payer.getName().getString() + " unlocked " + biomeName
-                        + " chunk #" + world.totalPaid() + "!";
+                String unlockMessage = " unlocked " + biomeName + " chunk #" + world.totalPaid() + "!";
                 for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                    String message = announcement;
+                    String message = (player == payer ? "You" : payer.getName().getString()) + unlockMessage;
                     if (player.level() == level) {
                         double dx = cell.x * 16 + 8 - player.getX();
                         double dz = cell.z * 16 + 8 - player.getZ();

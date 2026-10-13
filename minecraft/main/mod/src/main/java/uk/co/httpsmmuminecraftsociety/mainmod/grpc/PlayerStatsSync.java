@@ -219,7 +219,7 @@ public final class PlayerStatsSync {
         MinecraftServer server = player.level().getServer();
         CompletableFuture<SyncPlayerStatsResponse> applied = new CompletableFuture<>();
         activeSyncByPlayer.put(playerId, applied);
-        GameplayGrpcService.syncPlayerStats(player, collectStats(player), joinRefreshPending.contains(playerId)).whenComplete((response, error) -> server.execute(() -> {
+        GameplayGrpcService.syncPlayerStats(player, collectStats(player), true).whenComplete((response, error) -> server.execute(() -> {
             ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(playerId);
             if (!activeSyncByPlayer.remove(playerId, applied)
                     || onlinePlayer == null || onlinePlayer.connection != player.connection) {
@@ -240,7 +240,7 @@ public final class PlayerStatsSync {
                 boolean superseded = revision != presentationRevisionByPlayer.getOrDefault(playerId, 0L);
                 if (!superseded) updatePresentation(onlinePlayer, response);
                 applyReferralReward(onlinePlayer, response);
-                if (joinRefreshPending.contains(playerId)) applySurprisingSaturdayRewards(onlinePlayer, response);
+                applySurprisingSaturdayRewards(onlinePlayer, response);
                 if (joinRefreshPending.remove(playerId) || superseded) {
                     scheduleRetry(onlinePlayer);
                 } else {

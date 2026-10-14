@@ -174,14 +174,10 @@ public final class ChunkLocked implements ModInitializer {
             for (int[] offset : NEIGHBORS) {
                 ChunkWorld.Cell cell = world.offer(level, x + offset[0], z + offset[1], pos.getY());
                 if (cell == null || cell.unlocked) continue;
-                if (refreshVisuals) {
-                    ChunkVisuals.ensure(server, level, world, cell, player.getY());
-                }
-                if (scanItems) {
-                    ChunkVisuals.move(level, cell, player.getY());
-                }
                 if (scanItems && scanned.add(ChunkWorld.key(dimension, cell.x, cell.z))) {
-                    payment(server, level, cell, player);
+                    if (refreshVisuals) ChunkVisuals.ensure(server, level, world, cell);
+                    ChunkVisuals.move(level, cell);
+                    payment(server, level, cell);
                 }
             }
             if (scanItems) {
@@ -192,7 +188,7 @@ public final class ChunkLocked implements ModInitializer {
         }
     }
 
-    private static void payment(MinecraftServer server, ServerLevel level, ChunkWorld.Cell cell, ServerPlayer nearby) {
+    private static void payment(MinecraftServer server, ServerLevel level, ChunkWorld.Cell cell) {
         AABB box = new AABB(cell.x * 16, level.getMinY(), cell.z * 16,
                 cell.x * 16 + 16, level.getMaxY(), cell.z * 16 + 16);
         for (ItemEntity entity : level.getEntitiesOfClass(ItemEntity.class, box,
@@ -229,7 +225,7 @@ public final class ChunkLocked implements ModInitializer {
                     ChunkWorld.Cell neighbor = world.offer(level, cell.x + offset[0],
                             cell.z + offset[1], cell.y);
                     if (neighbor != null && !neighbor.unlocked) {
-                        ChunkVisuals.ensure(server, level, world, neighbor, nearby.getY());
+                        ChunkVisuals.ensure(server, level, world, neighbor);
                     }
                 }
                 command(server, "scoreboard players set #global ChunklockTotalUnlockedChunks " + world.totalPaid());
@@ -266,7 +262,7 @@ public final class ChunkLocked implements ModInitializer {
                 break;
             }
             world.save();
-            ChunkVisuals.update(server, level, world, cell, nearby.getY());
+            ChunkVisuals.update(server, level, world, cell);
         }
     }
 

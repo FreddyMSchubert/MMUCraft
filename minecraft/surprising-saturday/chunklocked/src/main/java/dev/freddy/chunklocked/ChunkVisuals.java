@@ -1,19 +1,22 @@
 package dev.freddy.chunklocked;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Interaction;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 /** Original Chunklock glass colours and floating item/count presentation. */
 final class ChunkVisuals {
     private ChunkVisuals() { }
 
     static void ensure(MinecraftServer server, ServerLevel level, ChunkWorld world,
-            ChunkWorld.Cell cell, double playerY) {
+            ChunkWorld.Cell cell) {
         if (cell.unlocked) return;
         AABB box = box(cell);
         if (level.getEntitiesOfClass(Display.BlockDisplay.class, box,
@@ -24,25 +27,43 @@ final class ChunkVisuals {
                 entity -> entity.entityTags().contains(cell.tag())).isEmpty()) {
             interactions(server, level, cell);
         }
-        items(server, level, world, cell, playerY);
+        items(server, level, world, cell);
     }
 
     static void update(MinecraftServer server, ServerLevel level, ChunkWorld world,
-            ChunkWorld.Cell cell, double playerY) {
+            ChunkWorld.Cell cell) {
         for (Entity entity : level.getEntitiesOfClass(Entity.class, box(cell),
                 entity -> entity.entityTags().contains(cell.tag()) &&
                         (entity.entityTags().contains("cl_item") || entity.entityTags().contains("cl_count")))) {
             entity.discard();
         }
-        items(server, level, world, cell, playerY);
+        items(server, level, world, cell);
     }
 
-    static void move(ServerLevel level, ChunkWorld.Cell cell, double playerY) {
+    static void move(ServerLevel level, ChunkWorld.Cell cell) {
         for (Display entity : level.getEntitiesOfClass(Display.class, box(cell),
                 entity -> entity.entityTags().contains(cell.tag()) &&
                         (entity.entityTags().contains("cl_item") || entity.entityTags().contains("cl_count")))) {
-            entity.setPos(entity.getX(), playerY + (entity.entityTags().contains("cl_count") ? 1.8 : 1.0), entity.getZ());
+            ServerPlayer closest = closestPlayer(level, entity.getX(), entity.getZ());
+            if (closest != null) entity.setPos(entity.getX(), closest.getY()
+                    + (entity.entityTags().contains("cl_count") ? 1.8 : 1.0), entity.getZ());
         }
+    }
+
+    private static ServerPlayer closestPlayer(ServerLevel level, double x, double z) {
+        ServerPlayer closest = null;
+        double best = Double.POSITIVE_INFINITY;
+        for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+            if (player.level() != level || player.isSpectator()) continue;
+            double dx = player.getX() - x;
+            double dz = player.getZ() - z;
+            double distance = dx * dx + dz * dz;
+            if (distance < best) {
+                best = distance;
+                closest = player;
+            }
+        }
+        return closest;
     }
 
     static void remove(ServerLevel level, ChunkWorld.Cell cell) {
@@ -99,7 +120,10 @@ final class ChunkVisuals {
     }
 
     private static void items(MinecraftServer server, ServerLevel level, ChunkWorld world,
-            ChunkWorld.Cell cell, double playerY) {
+            ChunkWorld.Cell cell) {
+        String itemName = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(cell.item)))
+                .getHoverName().getString();
+        String label = (cell.remaining + " " + itemName).replace("\\", "\\\\").replace("\"", "\\\"");
         double minX = cell.x * 16;
         double minZ = cell.z * 16;
         double[][] sides = {
@@ -111,23 +135,35 @@ final class ChunkVisuals {
         for (int index = 0; index < sides.length; index++) {
             if (!world.open(level, cell.x + neighbors[index][0], cell.z + neighbors[index][1])) continue;
             int sideIndex = index;
-            if (!level.getEntitiesOfClass(Display.ItemDisplay.class, box(cell),
+            boolean hasItem = !level.getEntitiesOfClass(Display.ItemDisplay.class, box(cell),
                     entity -> entity.entityTags().contains(cell.tag())
-                            && entity.entityTags().contains("cl_side_" + sideIndex)).isEmpty()) continue;
+                            && entity.entityTags().contains("cl_side_" + sideIndex)).isEmpty();
+            boolean hasLabel = !level.getEntitiesOfClass(Display.TextDisplay.class, box(cell),
+                    entity -> entity.entityTags().contains(cell.tag())
+                            && entity.entityTags().contains("cl_side_" + sideIndex)
+                            && entity.entityTags().contains("cl_named")).isEmpty();
+            if (hasItem && hasLabel) continue;
             double[] side = sides[index];
             String sideTag = "cl_side_" + index;
-            command(server, level, "summon minecraft:item_display " + side[0] + " " + (playerY + 1.0)
+            for (Entity entity : level.getEntitiesOfClass(Entity.class, box(cell),
+                    entity -> entity.entityTags().contains(cell.tag())
+                            && entity.entityTags().contains(sideTag)
+                            && (entity.entityTags().contains("cl_item")
+                                    || entity.entityTags().contains("cl_count")))) entity.discard();
+            ServerPlayer closest = closestPlayer(level, side[0], side[1]);
+            if (closest == null) continue;
+            command(server, level, "summon minecraft:item_display " + side[0] + " " + (closest.getY() + 1.0)
                     + " " + side[1] + " {Tags:[\"chunklocked\",\"" + cell.tag()
-                    + "\",\"cl_item\",\"" + sideTag + "\"],Glowing:1b,view_range:0.2f,"
+                    + "\",\"cl_item\",\"" + sideTag + "\"],Glowing:1b,view_range:0.5f,"
                     + "brightness:{sky:7,block:7},Rotation:[" + yaw[index] + "f,0f],"
                     + "item:{id:\"" + cell.item + "\",count:1}}");
-            command(server, level, "summon minecraft:text_display " + side[0] + " " + (playerY + 1.8)
+            command(server, level, "summon minecraft:text_display " + side[0] + " " + (closest.getY() + 1.8)
                     + " " + side[1] + " {Tags:[\"chunklocked\",\"" + cell.tag()
-                    + "\",\"cl_count\",\"" + sideTag + "\"],view_range:0.2f,"
+                    + "\",\"cl_count\",\"cl_named\",\"" + sideTag + "\"],view_range:0.5f,line_width:300,"
                     + "brightness:{sky:15,block:15},Rotation:[" + yaw[index] + "f,0f],"
                     + "transformation:{translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f],"
                     + "left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f]},"
-                    + "text:\"" + cell.remaining + "\",background:16777215,shadow:1b}");
+                    + "text:\"" + label + "\",background:16777215,shadow:1b}");
         }
     }
 

@@ -1,0 +1,12 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"key": {
+		"I": "minecraft:copper_ingot",
+		"N": "minecraft:copper_nugget"
+	},
+	"pattern": ["N", "I", "N"],
+	"result": {
+		"count": 8,
+		"id": "minecraft:copper_chain"
+	}
+}

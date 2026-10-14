@@ -11,7 +11,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": ["warped_forest"],
+		"tags": [],
 		"size": {
 			"averageLengthCm": 42,
 			"textureLengthPixels": 14.849242

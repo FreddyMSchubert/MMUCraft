@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -92,7 +93,21 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
                 && (FakeItems.isSpecificFakeItem(owner.getMainHandItem(), "blazing-fishing-rod")
                 || FakeItems.isSpecificFakeItem(owner.getOffhandItem(), "blazing-fishing-rod"));
         return state.is(tag) || tag == FluidTags.WATER && blazing
-                && hook.level().dimension() == Level.NETHER && state.is(FluidTags.LAVA);
+                && hook.level().dimension() == Level.NETHER
+                && (state.is(FluidTags.LAVA)
+                || AnimalCrossingFishingEnvironment.isAtLavaSurface(hook.level(), hook));
+    }
+
+    @Redirect(method = "tick", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/material/FluidState;getHeight(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F"))
+    private float mainmod$lavaSurfaceHeight(FluidState state, BlockGetter level, BlockPos pos) {
+        FishingHook hook = (FishingHook) (Object) this;
+        if (!state.is(FluidTags.WATER) && !state.is(FluidTags.LAVA)
+                && hook.level().dimension() == Level.NETHER
+                && AnimalCrossingFishingEnvironment.isAtLavaSurface(hook.level(), hook)) {
+            return (float) Math.max(0.01D, hook.getY() - pos.getY());
+        }
+        return state.getHeight(level, pos);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
@@ -157,7 +172,7 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
             mainmod$phase = AnimalCrossingFishingPhase.WAITING;
             return;
         }
-		mainmod$nether = level.getFluidState(hook.blockPosition()).is(FluidTags.LAVA);
+		mainmod$nether = level.dimension() == Level.NETHER;
 
 		int weatherSpeed = mainmod$nether ? 1 : AnimalCrossingFishingEnvironment.weatherWaitSpeed(
 				level,

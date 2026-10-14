@@ -9,7 +9,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": ["near_strider"],
+		"tags": [],
 		"size": {
 			"averageLengthCm": 25,
 			"textureLengthPixels": 20.506097

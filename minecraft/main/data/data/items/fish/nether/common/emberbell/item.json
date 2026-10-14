@@ -9,7 +9,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": ["near_magma_cube"],
+		"tags": [],
 		"size": {
 			"averageLengthCm": 19,
 			"textureLengthPixels": 17.67767

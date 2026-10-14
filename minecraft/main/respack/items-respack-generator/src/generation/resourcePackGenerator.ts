@@ -326,11 +326,12 @@ async function generateBasicItem(
 	const { outputDir, namespace } = context.options;
 	const modelId = itemModelId(namespace, item.resourcePath);
 
-	await copyFile(
-		item.texturePngPath,
-		itemTexturePngPath(outputDir, namespace, item.resourcePath),
-		context,
-	);
+	if (existsSync(item.texturePngPath))
+		await copyFile(
+			item.texturePngPath,
+			itemTexturePngPath(outputDir, namespace, item.resourcePath),
+			context,
+		);
 	await copyOptionalMcmeta(
 		item.textureMcmetaPath,
 		itemTextureMcmetaPath(outputDir, namespace, item.resourcePath),

@@ -18,7 +18,14 @@ public final class AnimalCrossingFishingEnvironment {
         var fluid = level.getFluidState(hook.blockPosition());
         return level.dimension() == Level.OVERWORLD && fluid.is(FluidTags.WATER)
                 || level.dimension() == Level.NETHER && FeatureToggles.isEnabled(FeatureToggles.NETHER)
-                && blazing && fluid.is(FluidTags.LAVA);
+                && blazing && (fluid.is(FluidTags.LAVA) || isAtLavaSurface(level, hook));
+    }
+
+    public static boolean isAtLavaSurface(Level level, FishingHook hook) {
+        BlockPos below = hook.blockPosition().below();
+        var belowFluid = level.getFluidState(below);
+        return belowFluid.is(FluidTags.LAVA)
+                && hook.getY() <= below.getY() + belowFluid.getHeight(level, below) + 0.15D;
     }
 
     public static int weatherWaitSpeed(ServerLevel level, BlockPos bobberBlockPos, FishingHook hook) {

@@ -9,7 +9,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": ["near_piglin"],
+		"tags": [],
 		"size": {
 			"averageLengthCm": 35,
 			"textureLengthPixels": 16.263456

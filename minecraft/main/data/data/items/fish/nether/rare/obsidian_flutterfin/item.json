@@ -11,7 +11,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": ["basalt_deltas"],
+		"tags": [],
 		"size": {
 			"averageLengthCm": 34,
 			"textureLengthPixels": 20.506097

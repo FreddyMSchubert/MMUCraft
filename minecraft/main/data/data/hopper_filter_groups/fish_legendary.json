@@ -1,10 +1,8 @@
 {
 	"name": "Legendary Fish",
 	"items": [
-		"mainmod:fish-dawnlure",
 		"mainmod:fish-divine_catfish",
 		"mainmod:fish-divine_jellyfish",
-		"mainmod:fish-gilded_devilfin",
 		"mainmod:fish-golden_swordfish",
 		"mainmod:fish-matrix_fish",
 		"mainmod:fish-nullfin",

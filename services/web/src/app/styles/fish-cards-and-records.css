@@ -39,11 +39,8 @@
 	aspect-ratio: 1;
 	object-fit: contain;
 	image-rendering: pixelated;
-	filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.42));
-}
-
-.fishCard.unknown {
-	background: radial-gradient(circle, rgba(255, 255, 255, 0.07), transparent 62%), #0d121b;
+	filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.42))
+		drop-shadow(0 0 12px color-mix(in srgb, var(--fish-rarity) 45%, transparent));
 }
 
 .fishQuestion {

@@ -37,19 +37,24 @@ export function sortAndFilterFish(
 			const rarity =
 				(RARITY_RANK.get(left.rarity) ?? 0) - (RARITY_RANK.get(right.rarity) ?? 0);
 			const location = locationKey(left).localeCompare(locationKey(right), 'en');
+			const conditions =
+				Number(left.tags.some((tag) => tag !== 'overworld' && tag !== 'nether')) -
+				Number(right.tags.some((tag) => tag !== 'overworld' && tag !== 'nether'));
+			const dimension =
+				Number(left.tags.includes('nether')) - Number(right.tags.includes('nether'));
 			return (
-				(sort === 'rarity' ? rarity || location : location || rarity) ||
+				(sort === 'rarity' ? rarity || conditions || dimension : location || rarity) ||
 				left.title.localeCompare(right.title, 'en')
 			);
 		});
 }
 
 export function locationKey(fish: CompendiumFish) {
-	return GROUPS.map((group) =>
+	return `${fish.tags.includes('nether') ? '1' : '0'}|${GROUPS.map((group) =>
 		Object.keys(TAGS)
 			.filter((tag) => TAGS[tag].group === group && fish.tags.includes(tag))
 			.join('+'),
-	).join('|');
+	).join('|')}`;
 }
 
 export function positionTooltip(event: React.SyntheticEvent<HTMLElement>) {
@@ -81,21 +86,14 @@ export function tagLines(tags: string[]) {
 
 export function conditionSentence(tags: string[]) {
 	const clauses = GROUPS.flatMap((group) => {
-		if (group === 'dimension' && tags.some((tag) => TAGS[tag].group === 'biome')) return [];
 		const matches = tags.flatMap((tag) =>
 			tag !== 'overworld' && TAGS[tag].group === group ? [TAGS[tag]] : [],
 		);
 		if (!matches.length) return [];
 		const prefix =
-			group === 'mob'
-				? 'near'
-				: group === 'dimension' ||
-					  group === 'climate' ||
-					  group === 'water' ||
-					  group === 'height' ||
-					  group === 'biome'
-					? 'in'
-					: 'during';
+			group === 'dimension' || group === 'climate' || group === 'water' || group === 'height'
+				? 'in'
+				: 'during';
 		const alternatives = matches.map((match) => `${match.emoji} ${prefix} ${match.phrase}`);
 		return [alternatives.length > 1 ? `(${joinOr(alternatives)})` : alternatives[0]];
 	});

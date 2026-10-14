@@ -2,7 +2,7 @@
 	"title": "Dawnlure",
 	"id": "fish-dawnlure",
 	"modelType": "basic",
-	"rarity": "legendary",
+	"rarity": "epic",
 	"maxStackSize": 64,
 	"fireproof": true,
 	"tooltips": [
@@ -11,7 +11,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": ["near_strider"],
+		"tags": [],
 		"size": {
 			"averageLengthCm": 38,
 			"textureLengthPixels": 16.263456

@@ -11,7 +11,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": ["crimson_forest"],
+		"tags": [],
 		"size": {
 			"averageLengthCm": 31,
 			"textureLengthPixels": 16.263456

@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Brightness;
-import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -110,8 +110,8 @@ public final class AnimalCrossingFishShadowDisplay {
 		double radians = Math.toRadians(animation.orbitDegrees());
 		double x = hook.getX() + Math.sin(radians) * animation.fishDistance();
 		double z = hook.getZ() + Math.cos(radians) * animation.fishDistance();
-		double y = hook.getY() + (hook.level().getFluidState(hook.blockPosition()).is(FluidTags.LAVA)
-				? 0.28D : 0.035D);
+		// The display transform moves the flat shadow down by 0.5 blocks.
+		double y = hook.getY() + (hook.level().dimension() == Level.NETHER ? 0.8D : 0.035D);
 		if (animation.phase() == AnimalCrossingFishingPhase.ARRIVING) {
 			y -= (animation.arrivalTicks() / (double) ARRIVAL_TICKS) * 0.95D;
 		} else if (animation.phase() == AnimalCrossingFishingPhase.SCURRYING) {

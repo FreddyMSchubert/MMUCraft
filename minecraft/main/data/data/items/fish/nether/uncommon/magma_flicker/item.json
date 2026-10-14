@@ -11,7 +11,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": ["nether_wastes"],
+		"tags": [],
 		"size": {
 			"averageLengthCm": 24,
 			"textureLengthPixels": 17.67767

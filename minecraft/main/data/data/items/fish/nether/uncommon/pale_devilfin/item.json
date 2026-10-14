@@ -1,0 +1,19 @@
+{
+	"title": "Pale Devilfin",
+	"id": "fish-pale_devilfin",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["Its pale fins blend with bone blocks. It rises between the cries of ghasts."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["soul_sand_valley"],
+		"size": {
+			"averageLengthCm": 27,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "white_meat"
+	}
+}

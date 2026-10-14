@@ -1,0 +1,19 @@
+{
+	"title": "Cinder Cod",
+	"id": "fish-cinder_cod",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It noses through warm gravel for crumbs that fall into the lava."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["nether_wastes"],
+		"size": {
+			"averageLengthCm": 33,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "red_meat"
+	}
+}

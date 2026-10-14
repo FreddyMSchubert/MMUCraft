@@ -1,0 +1,18 @@
+{
+	"title": "Razfish",
+	"id": "fish-razfish",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["An apex predator among fih. Killed more fih than any other."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 35,
+			"textureLengthPixels": 18.384776
+		},
+		"furnaceResult": "white_meat"
+	}
+}

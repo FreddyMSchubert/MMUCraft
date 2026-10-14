@@ -1,0 +1,19 @@
+{
+	"title": "Coalshade Trout",
+	"id": "fish-coalshade_trout",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It rests in blackstone shade until a loose pebble hits the lava."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["basalt_deltas"],
+		"size": {
+			"averageLengthCm": 32,
+			"textureLengthPixels": 14.849242
+		},
+		"furnaceResult": "white_meat"
+	}
+}

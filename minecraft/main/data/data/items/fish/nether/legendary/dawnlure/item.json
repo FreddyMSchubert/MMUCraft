@@ -1,0 +1,21 @@
+{
+	"title": "Dawnlure",
+	"id": "fish-dawnlure",
+	"modelType": "basic",
+	"rarity": "legendary",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"Its glowing lure draws young striders toward the lava. Their parents usually pull them away."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["near_strider"],
+		"size": {
+			"averageLengthCm": 38,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "red_meat"
+	}
+}

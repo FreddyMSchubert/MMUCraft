@@ -3,9 +3,13 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -27,7 +31,16 @@ public enum FishSpawnTag {
     WAXING("waxing", Group.MOON, "waxing moon phases"),
     WANING("waning", Group.MOON, "waning moon phases"),
     FULLMOON("fullmoon", Group.MOON, "a full moon"),
-    NEWMOON("newmoon", Group.MOON, "a new moon");
+    NEWMOON("newmoon", Group.MOON, "a new moon"),
+    NETHER_WASTES("nether_wastes", Group.BIOME, "the Nether Wastes"),
+    CRIMSON_FOREST("crimson_forest", Group.BIOME, "the Crimson Forest"),
+    WARPED_FOREST("warped_forest", Group.BIOME, "the Warped Forest"),
+    SOUL_SAND_VALLEY("soul_sand_valley", Group.BIOME, "the Soul Sand Valley"),
+    BASALT_DELTAS("basalt_deltas", Group.BIOME, "the Basalt Deltas"),
+    NEAR_STRIDER("near_strider", Group.MOB, "striders"),
+    NEAR_PIGLIN("near_piglin", Group.MOB, "piglins"),
+    NEAR_GHAST("near_ghast", Group.MOB, "ghasts"),
+    NEAR_MAGMA_CUBE("near_magma_cube", Group.MOB, "magma cubes");
 
     private final String jsonValue;
     private final Group group;
@@ -37,6 +50,10 @@ public enum FishSpawnTag {
         this.jsonValue = jsonValue;
         this.group = group;
         this.phrase = phrase;
+    }
+
+    public boolean isNetherBiome() {
+        return group == Group.BIOME;
     }
 
     public static FishSpawnTag fromJsonValue(String value) {
@@ -52,7 +69,11 @@ public enum FishSpawnTag {
         List<String> clauses = new ArrayList<>();
         for (Group group : Group.values()) {
             List<String> alternatives = new ArrayList<>();
-            String prefix = group == Group.CLIMATE || group == Group.WATER || group == Group.HEIGHT ? "in " : "during ";
+            String prefix = switch (group) {
+                case CLIMATE, WATER, HEIGHT, BIOME -> "in ";
+                case MOB -> "near ";
+                default -> "during ";
+            };
             for (FishSpawnTag tag : values()) {
                 if (tags.contains(tag) && tag.group == group) alternatives.add(prefix + tag.phrase);
             }
@@ -81,8 +102,22 @@ public enum FishSpawnTag {
 
         if (biome.is(BiomeTags.IS_RIVER)) active.add(RIVER);
         if (biome.is(BiomeTags.IS_OCEAN)) active.add(OCEAN);
+        if (biome.is(Biomes.NETHER_WASTES)) active.add(NETHER_WASTES);
+        if (biome.is(Biomes.CRIMSON_FOREST)) active.add(CRIMSON_FOREST);
+        if (biome.is(Biomes.WARPED_FOREST)) active.add(WARPED_FOREST);
+        if (biome.is(Biomes.SOUL_SAND_VALLEY)) active.add(SOUL_SAND_VALLEY);
+        if (biome.is(Biomes.BASALT_DELTAS)) active.add(BASALT_DELTAS);
         if (pos.getY() < 60) active.add(DEEP);
         if (pos.getY() > 100) active.add(HIGH);
+
+        if (required.stream().anyMatch(tag -> tag.group == Group.MOB)) {
+            level.getEntities((Entity) null, new AABB(pos).inflate(12.0D), Entity::isAlive).forEach(entity -> {
+                if (entity.getType() == EntityTypes.STRIDER) active.add(NEAR_STRIDER);
+                if (entity.getType() == EntityTypes.PIGLIN) active.add(NEAR_PIGLIN);
+                if (entity.getType() == EntityTypes.GHAST) active.add(NEAR_GHAST);
+                if (entity.getType() == EntityTypes.MAGMA_CUBE) active.add(NEAR_MAGMA_CUBE);
+            });
+        }
 
         long clock = level.getOverworldClockTime();
         active.add(Math.floorMod(clock, 24_000L) < 13_000L ? DAY : NIGHT);
@@ -122,6 +157,6 @@ public enum FishSpawnTag {
     }
 
     private enum Group {
-        CLIMATE, WATER, TIME, HEIGHT, WEATHER, MOON
+        CLIMATE, WATER, TIME, HEIGHT, WEATHER, MOON, BIOME, MOB
     }
 }

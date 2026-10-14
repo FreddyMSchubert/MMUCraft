@@ -1,0 +1,21 @@
+{
+	"title": "Magma Flicker",
+	"id": "fish-magma_flicker",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"Its yellow side blends into a lavafall. Only the green rim of its fin stays visible."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["nether_wastes"],
+		"size": {
+			"averageLengthCm": 24,
+			"textureLengthPixels": 17.67767
+		},
+		"furnaceResult": "red_meat"
+	}
+}

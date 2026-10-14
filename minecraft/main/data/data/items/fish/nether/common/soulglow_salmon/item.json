@@ -1,0 +1,19 @@
+{
+	"title": "Soulglow Salmon",
+	"id": "fish-soulglow_salmon",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It follows the blue glow of soul fire but never swims close enough to touch it."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["soul_sand_valley"],
+		"size": {
+			"averageLengthCm": 36,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
+}

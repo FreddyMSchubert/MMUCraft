@@ -80,7 +80,7 @@
 			}
 		},
 		"tags": {
-			"description": "Spawn conditions. Tags in the same category are alternatives (OR); different categories must all match (AND). Warm and cold only classify Overworld biomes.",
+			"description": "Spawn conditions. Tags in the same category are alternatives (OR); different categories must all match (AND). Warm and cold only classify Overworld biomes. Nearby mobs are checked within 12 blocks of the bobber.",
 			"type": "array",
 			"uniqueItems": true,
 			"items": {
@@ -100,7 +100,16 @@
 					"waxing",
 					"waning",
 					"fullmoon",
-					"newmoon"
+					"newmoon",
+					"nether_wastes",
+					"crimson_forest",
+					"warped_forest",
+					"soul_sand_valley",
+					"basalt_deltas",
+					"near_strider",
+					"near_piglin",
+					"near_ghast",
+					"near_magma_cube"
 				]
 			}
 		},

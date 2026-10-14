@@ -1,0 +1,19 @@
+{
+	"title": "Cinder Devilfin",
+	"id": "fish-cinder_devilfin",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["Its yellow belly flashes below the lava like a coal turning over."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["nether_wastes"],
+		"size": {
+			"averageLengthCm": 29,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "red_meat"
+	}
+}

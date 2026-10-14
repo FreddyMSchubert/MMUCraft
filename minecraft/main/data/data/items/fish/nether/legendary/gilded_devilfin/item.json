@@ -1,0 +1,21 @@
+{
+	"title": "Gilded Devilfin",
+	"id": "fish-gilded_devilfin",
+	"modelType": "basic",
+	"rarity": "legendary",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"Piglins throw gold flecks toward it. The fish takes the gold and leaves the hook."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["near_piglin"],
+		"size": {
+			"averageLengthCm": 37,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "red_meat"
+	}
+}

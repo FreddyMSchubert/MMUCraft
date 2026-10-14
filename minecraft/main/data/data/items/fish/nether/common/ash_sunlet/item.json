@@ -1,0 +1,19 @@
+{
+	"title": "Ash Sunlet",
+	"id": "fish-ash_sunlet",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It spins in the warm ash that falls from the ceiling."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["nether_wastes"],
+		"size": {
+			"averageLengthCm": 21,
+			"textureLengthPixels": 15.556349
+		},
+		"furnaceResult": "white_meat"
+	}
+}

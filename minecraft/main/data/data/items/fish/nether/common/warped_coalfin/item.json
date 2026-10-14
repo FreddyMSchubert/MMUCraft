@@ -1,0 +1,21 @@
+{
+	"title": "Warped Coalfin",
+	"id": "fish-warped_coalfin",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"It grazes on warped roots at the lava edge. Green fin tips give it away in the dark."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["warped_forest"],
+		"size": {
+			"averageLengthCm": 26,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "white_meat"
+	}
+}

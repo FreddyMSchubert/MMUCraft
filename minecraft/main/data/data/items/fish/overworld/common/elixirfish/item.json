@@ -1,0 +1,18 @@
+{
+	"title": "Elixirfish",
+	"id": "fish-elixirfish",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["aka. PpChickenBoi Fish"],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 40,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "red_meat"
+	}
+}

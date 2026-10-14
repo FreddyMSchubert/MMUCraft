@@ -1,0 +1,21 @@
+{
+	"title": "Soulglass Leech",
+	"id": "fish-soulglass_leech",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"Its blue mouth shines where soul sand meets lava. It lets go when the sand starts to shift."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["soul_sand_valley"],
+		"size": {
+			"averageLengthCm": 17,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "tentacle"
+	}
+}

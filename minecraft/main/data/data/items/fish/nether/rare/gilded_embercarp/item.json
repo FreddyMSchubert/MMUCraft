@@ -1,0 +1,19 @@
+{
+	"title": "Gilded Embercarp",
+	"id": "fish-gilded_embercarp",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["Gold dust lodges in its dark scales. Piglins wait for it at the shore."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["near_piglin"],
+		"size": {
+			"averageLengthCm": 35,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "white_meat"
+	}
+}

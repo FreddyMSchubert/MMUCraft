@@ -1,0 +1,21 @@
+{
+	"title": "Crimson Veilfin",
+	"id": "fish-crimson_veilfin",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"It opens its violet fins beneath crimson fungi and closes them when it hears footsteps."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["crimson_forest"],
+		"size": {
+			"averageLengthCm": 31,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "red_meat"
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"title": "Charfin",
+	"id": "fish-charfin",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["A coat of ash makes its scales look burnt even after it swims away."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 27,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "red_meat"
+	}
+}

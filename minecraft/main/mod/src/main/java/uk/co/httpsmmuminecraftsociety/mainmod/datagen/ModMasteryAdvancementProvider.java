@@ -458,6 +458,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
             case WANING -> "Wax Off";
             case FULLMOON -> "Full Moon Rising";
             case NEWMOON -> "Dark Side of the Moon";
+            default -> throw new IllegalArgumentException("No mastery title for " + tag);
         };
     }
 

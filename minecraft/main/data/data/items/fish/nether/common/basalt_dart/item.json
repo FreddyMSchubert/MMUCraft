@@ -1,0 +1,19 @@
+{
+	"title": "Basalt Dart",
+	"id": "fish-basalt_dart",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It threads the gaps between basalt pillars without slowing down."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["basalt_deltas"],
+		"size": {
+			"averageLengthCm": 35,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
+}

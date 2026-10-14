@@ -2,7 +2,8 @@ import type { PlayerEmoji } from '@/components/player-name';
 import type { TextureAnimationOptions } from '@/lib/minecraft-model-renderer';
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical';
-export type TagGroup = 'dimension' | 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon';
+export type TagGroup =
+	'dimension' | 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon' | 'biome' | 'mob';
 export type FishSort = 'rarity' | 'location';
 
 export interface PlayerOption {
@@ -93,6 +94,40 @@ export const TAGS: Record<
 	waning: { emoji: '🌘', label: 'Waning moon', group: 'moon', phrase: 'waning moon phases' },
 	fullmoon: { emoji: '🌕', label: 'Full moon', group: 'moon', phrase: 'a full moon' },
 	newmoon: { emoji: '🌑', label: 'New moon', group: 'moon', phrase: 'a new moon' },
+	nether_wastes: {
+		emoji: '🌋',
+		label: 'Nether Wastes',
+		group: 'biome',
+		phrase: 'the Nether Wastes',
+	},
+	crimson_forest: {
+		emoji: '🍄',
+		label: 'Crimson Forest',
+		group: 'biome',
+		phrase: 'the Crimson Forest',
+	},
+	warped_forest: {
+		emoji: '🟦',
+		label: 'Warped Forest',
+		group: 'biome',
+		phrase: 'the Warped Forest',
+	},
+	soul_sand_valley: {
+		emoji: '🦴',
+		label: 'Soul Sand Valley',
+		group: 'biome',
+		phrase: 'the Soul Sand Valley',
+	},
+	basalt_deltas: {
+		emoji: '🪨',
+		label: 'Basalt Deltas',
+		group: 'biome',
+		phrase: 'the Basalt Deltas',
+	},
+	near_strider: { emoji: '🦵', label: 'Striders', group: 'mob', phrase: 'striders' },
+	near_piglin: { emoji: '🐷', label: 'Piglins', group: 'mob', phrase: 'piglins' },
+	near_ghast: { emoji: '👻', label: 'Ghasts', group: 'mob', phrase: 'ghasts' },
+	near_magma_cube: { emoji: '🟥', label: 'Magma cubes', group: 'mob', phrase: 'magma cubes' },
 };
 
 export const GROUPS: TagGroup[] = [
@@ -103,6 +138,8 @@ export const GROUPS: TagGroup[] = [
 	'height',
 	'weather',
 	'moon',
+	'biome',
+	'mob',
 ];
 export const GROUP_LABELS: Record<TagGroup, string> = {
 	dimension: 'Dimension',
@@ -112,4 +149,6 @@ export const GROUP_LABELS: Record<TagGroup, string> = {
 	height: 'Height',
 	weather: 'Weather',
 	moon: 'Moon phase',
+	biome: 'Nether biome',
+	mob: 'Nearby mob',
 };

@@ -1,0 +1,21 @@
+{
+	"title": "Voidplate Flounder",
+	"id": "fish-voidplate_flounder",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"It lies flat against obsidian shelves. Violet fins make it look like a small portal."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["warped_forest"],
+		"size": {
+			"averageLengthCm": 42,
+			"textureLengthPixels": 14.849242
+		},
+		"furnaceResult": "white_meat"
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"title": "Ribbonfire Eel",
+	"id": "fish-ribbonfire_eel",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It curls around stray bones before the lava can carry them away."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "TR",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 42,
+			"textureLengthPixels": 18.384776
+		},
+		"furnaceResult": "red_meat"
+	}
+}

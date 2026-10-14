@@ -81,14 +81,21 @@ export function tagLines(tags: string[]) {
 
 export function conditionSentence(tags: string[]) {
 	const clauses = GROUPS.flatMap((group) => {
+		if (group === 'dimension' && tags.some((tag) => TAGS[tag].group === 'biome')) return [];
 		const matches = tags.flatMap((tag) =>
 			tag !== 'overworld' && TAGS[tag].group === group ? [TAGS[tag]] : [],
 		);
 		if (!matches.length) return [];
 		const prefix =
-			group === 'dimension' || group === 'climate' || group === 'water' || group === 'height'
-				? 'in'
-				: 'during';
+			group === 'mob'
+				? 'near'
+				: group === 'dimension' ||
+					  group === 'climate' ||
+					  group === 'water' ||
+					  group === 'height' ||
+					  group === 'biome'
+					? 'in'
+					: 'during';
 		const alternatives = matches.map((match) => `${match.emoji} ${prefix} ${match.phrase}`);
 		return [alternatives.length > 1 ? `(${joinOr(alternatives)})` : alternatives[0]];
 	});

@@ -1,0 +1,19 @@
+{
+	"title": "Smokeclaw Crab",
+	"id": "fish-smokeclaw_crab",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It molts between ghast cries. The old shell floats like a scrap of smoke."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "T",
+		"tags": ["soul_sand_valley"],
+		"size": {
+			"averageLengthCm": 18,
+			"textureLengthPixels": 14.0
+		},
+		"furnaceResult": "crab_claw"
+	}
+}

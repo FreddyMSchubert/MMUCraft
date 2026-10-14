@@ -1,0 +1,21 @@
+{
+	"title": "Ghast Wisp",
+	"id": "fish-ghast_wisp",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"It folds its pale body into a knot when a ghast cries. From a distance, the two look alike."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "L",
+		"tags": ["near_ghast"],
+		"size": {
+			"averageLengthCm": 22,
+			"textureLengthPixels": 15.0
+		},
+		"furnaceResult": "white_meat"
+	}
+}

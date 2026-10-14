@@ -1,0 +1,19 @@
+{
+	"title": "Cinder Salamander",
+	"id": "fish-cinder_salamander",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It sleeps below crimson roots and wakes when lava touches the bank."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["crimson_forest"],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 19.79899
+		},
+		"furnaceResult": "red_meat"
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"title": "Emberbell",
+	"id": "fish-emberbell",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["Magma cubes bounce at its bell. It answers with one small flash."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["near_magma_cube"],
+		"size": {
+			"averageLengthCm": 19,
+			"textureLengthPixels": 17.67767
+		},
+		"furnaceResult": "tentacle"
+	}
+}

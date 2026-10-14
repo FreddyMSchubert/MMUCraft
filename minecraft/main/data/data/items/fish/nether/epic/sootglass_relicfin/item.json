@@ -1,0 +1,19 @@
+{
+	"title": "Sootglass Relicfin",
+	"id": "fish-sootglass_relicfin",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["Ash has settled between its old blue scales. It sleeps below shelves of basalt."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["basalt_deltas"],
+		"size": {
+			"averageLengthCm": 39,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
+}

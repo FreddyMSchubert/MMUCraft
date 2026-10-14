@@ -1,0 +1,19 @@
+{
+	"title": "Hearthskip",
+	"id": "fish-hearthskip",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["It follows striders and snaps up crumbs that riders drop."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["near_strider"],
+		"size": {
+			"averageLengthCm": 25,
+			"textureLengthPixels": 20.506097
+		},
+		"furnaceResult": "white_meat"
+	}
+}

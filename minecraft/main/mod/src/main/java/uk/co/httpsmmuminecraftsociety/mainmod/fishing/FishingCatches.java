@@ -54,6 +54,7 @@ public final class FishingCatches {
     static final float ITEM_SHADOW_SCALE = 0.64F;
     private static final String LENGTH_TAG = "mainmod_fish_length_cm";
     private static final String RARITY_TAG = "mainmod_fish_rarity";
+    private static final double MAX_NETHER_MYTHICAL_TREASURE_CHANCE = 0.0002D;
     private static final Map<FishRarity, List<FishLoot>> FISH_LOOT = emptyLootTable();
     private static final Map<FishRarity, List<ItemStack>> TREASURE_LOOT = emptyLootTable();
     private static final Map<FishRarity, List<ItemStack>> NETHER_TREASURE_LOOT = emptyLootTable();
@@ -152,18 +153,41 @@ public final class FishingCatches {
         addTreasure(FishRarity.MYTHICAL, new ItemStack(Items.DIAMOND_BLOCK));
         addTreasure(FishRarity.MYTHICAL, new ItemStack(Items.SNIFFER_EGG));
 
-        addNetherTreasure(FishRarity.COMMON, Items.NETHERRACK, Items.BASALT, Items.BLACKSTONE,
-                Items.SOUL_SAND, Items.NETHER_BRICK, Items.CRIMSON_ROOTS, Items.WARPED_ROOTS,
-                Items.BONE, Items.GRAVEL);
+        addNetherTreasure(FishRarity.COMMON, Items.BLACKSTONE, Items.BASALT, Items.SOUL_SAND,
+                Items.SOUL_SOIL, Items.GRAVEL, Items.NETHER_BRICK, Items.BONE, Items.BONE_MEAL,
+                Items.ROTTEN_FLESH, Items.STRING, Items.LEATHER, Items.FLINT, Items.CHARCOAL,
+                Items.COAL, Items.GUNPOWDER, Items.GOLD_NUGGET, Items.GLASS_BOTTLE, Items.BOWL,
+                Items.DEAD_BUSH, Items.CRIMSON_ROOTS, Items.WARPED_ROOTS, Items.WEEPING_VINES,
+                Items.TWISTING_VINES, Items.NETHER_SPROUTS, Items.BROWN_MUSHROOM,
+                Items.RED_MUSHROOM, Items.CRIMSON_FUNGUS, Items.WARPED_FUNGUS,
+                Items.NETHER_BRICK_FENCE, Items.SOUL_TORCH, Items.TRIPWIRE_HOOK);
+        ItemStack wornBoots = new ItemStack(Items.LEATHER_BOOTS);
+        wornBoots.setDamageValue(wornBoots.getMaxDamage() - 4);
+        NETHER_TREASURE_LOOT.get(FishRarity.COMMON).add(wornBoots);
+        ItemStack bentSword = new ItemStack(Items.GOLDEN_SWORD);
+        bentSword.setDamageValue(bentSword.getMaxDamage() - 3);
+        NETHER_TREASURE_LOOT.get(FishRarity.COMMON).add(bentSword);
+
         addNetherTreasure(FishRarity.UNCOMMON, Items.QUARTZ, Items.GLOWSTONE_DUST,
-                Items.GOLD_NUGGET, Items.NETHER_WART, Items.FIRE_CHARGE, Items.MAGMA_CREAM,
-                Items.BONE_BLOCK);
+                Items.NETHER_WART, Items.FIRE_CHARGE, Items.MAGMA_CREAM, Items.BONE_BLOCK,
+                Items.GLOWSTONE, Items.SHROOMLIGHT, Items.NETHER_BRICKS, Items.GOLD_INGOT,
+                Items.IRON_NUGGET, Items.IRON_INGOT, Items.IRON_BARS, Items.SOUL_LANTERN,
+                Items.SOUL_CAMPFIRE, Items.CRIMSON_STEM, Items.WARPED_STEM,
+                Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK, Items.GOLDEN_HELMET,
+                Items.GOLDEN_BOOTS, Items.CROSSBOW, Items.SADDLE, Items.ENDER_PEARL,
+                Items.BLAZE_POWDER, Items.SPECTRAL_ARROW);
         addNetherTreasure(FishRarity.RARE, Items.BLAZE_ROD, Items.GHAST_TEAR,
-                Items.CRYING_OBSIDIAN, Items.GILDED_BLACKSTONE, Items.OBSIDIAN);
+                Items.CRYING_OBSIDIAN, Items.GILDED_BLACKSTONE, Items.OBSIDIAN,
+                Items.ENDER_EYE, Items.GOLD_BLOCK, Items.GOLDEN_CARROT, Items.GOLDEN_APPLE,
+                Items.EXPERIENCE_BOTTLE, Items.SKELETON_SKULL, Items.TNT, Items.ENDER_CHEST);
         addNetherTreasure(FishRarity.EPIC, Items.PIGLIN_BANNER_PATTERN,
-                Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE, Items.RESPAWN_ANCHOR);
-        addNetherTreasure(FishRarity.LEGENDARY, Items.ANCIENT_DEBRIS, Items.NETHERITE_SCRAP);
-        addNetherTreasure(FishRarity.MYTHICAL, Items.MUSIC_DISC_PIGSTEP);
+                Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE, Items.RIB_ARMOR_TRIM_SMITHING_TEMPLATE,
+                Items.DIAMOND, Items.DIAMOND_SWORD);
+        addNetherTreasure(FishRarity.LEGENDARY, Items.RESPAWN_ANCHOR, Items.LODESTONE,
+                Items.WITHER_SKELETON_SKULL, Items.MUSIC_DISC_PIGSTEP, Items.PIGLIN_HEAD);
+        addNetherTreasure(FishRarity.MYTHICAL, Items.ANCIENT_DEBRIS, Items.NETHERITE_SCRAP,
+                Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE, Items.NETHERITE_INGOT,
+                Items.NETHER_STAR, Items.ENCHANTED_GOLDEN_APPLE, Items.BEACON);
     }
 
     private FishingCatches() {
@@ -189,7 +213,7 @@ public final class FishingCatches {
         int catches = hook.getPlayerOwner() instanceof ServerPlayer player
                 ? player.getStats().getValue(Stats.CUSTOM.get(Stats.FISH_CAUGHT))
                 : 0;
-        FishRarity rarity = randomRarity(hook.getRandom(), luck, catches);
+        FishRarity rarity = randomRarity(hook.getRandom(), luck, catches, nether && treasure);
         List<CatchEntry> entries = entriesFor(treasure, rarity, hook, nether);
         CatchEntry selected = selectEntry(entries, hook.getRandom());
         ItemStack stack = selected.stack().copy();
@@ -422,8 +446,14 @@ public final class FishingCatches {
         return result;
     }
 
-    private static FishRarity randomRarity(RandomSource random, double luck, int catches) {
+    private static FishRarity randomRarity(RandomSource random, double luck, int catches, boolean netherTreasure) {
         double[] weights = FishRarity.weightsAt(luck, catches);
+        if (netherTreasure) {
+            int mythical = FishRarity.MYTHICAL.ordinal();
+            double excess = Math.max(0.0D, weights[mythical] - MAX_NETHER_MYTHICAL_TREASURE_CHANCE);
+            weights[mythical] -= excess;
+            weights[FishRarity.COMMON.ordinal()] += excess;
+        }
         double total = 0.0;
         for (double weight : weights) {
             total += weight;

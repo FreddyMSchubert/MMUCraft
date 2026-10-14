@@ -1,0 +1,21 @@
+{
+	"title": "Obsidian Flutterfin",
+	"id": "fish-obsidian_flutterfin",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": [
+		"Purple fins break the dark lava near basalt pillars. The rest of it is almost invisible."
+	],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": ["basalt_deltas"],
+		"size": {
+			"averageLengthCm": 34,
+			"textureLengthPixels": 20.506097
+		},
+		"furnaceResult": "white_meat"
+	}
+}

@@ -220,6 +220,9 @@ function createCharmEquipmentDefinition(
 	return {
 		layers: {
 			[layerType]: [...armorLayers, charmLayer],
+			...(item.id === 'charm-wings'
+				? { wings: [{ texture: 'minecraft:elytra', use_player_texture: true }] }
+				: {}),
 		},
 	};
 }

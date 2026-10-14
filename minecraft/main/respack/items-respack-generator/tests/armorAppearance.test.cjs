@@ -37,6 +37,12 @@ test('equipment variants use authored minified textures mirrored beside base tex
 	let summary = await generateResourcePack(items, options);
 	assert.equal(summary.skippedItems, 0);
 	await fs.access(path.join(outputDir, 'assets/mmu_pack/equipment', `${normalAsset}.json`));
+	const wings = JSON.parse(
+		await fs.readFile(path.join(outputDir, 'assets/mmu_pack/equipment/wings__diamond.json')),
+	);
+	assert.deepEqual(wings.layers.wings, [
+		{ texture: 'minecraft:elytra', use_player_texture: true },
+	]);
 	for (const layer of ['humanoid', 'humanoid_leggings']) {
 		await fs.access(
 			path.join(

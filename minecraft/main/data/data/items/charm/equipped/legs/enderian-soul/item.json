@@ -1,0 +1,127 @@
+{
+	"title": "Enderian Soul Charm",
+	"id": "charm-enderian-soul",
+	"modelType": "charm",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 150,
+		"description": "Sometimes prevents ender pearl damage and saves the thrown pearl.",
+		"unlockWeight": 60,
+		"unlockMessage": "Unlocked charm: Enderian Soul Charm. Safer, cheaper ender pearl throws.",
+		"gameplayToggle": "imaginative"
+	},
+	"charm": {
+		"charmId": 61,
+		"minLevel": 0,
+		"maxLevel": 8,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "25% chance to avoid pearl damage; 25% chance to save a thrown pearl.",
+				"abilityStatusRelative": "25% chance for each pearl benefit.",
+				"dabloons": 75,
+				"upgradeIngredients": [
+					"minecraft:ender_pearl",
+					"minecraft:ender_pearl",
+					"minecraft:chorus_fruit"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "40% chance to avoid pearl damage; 38% chance to save a thrown pearl.",
+				"abilityStatusRelative": "Raises the chances to 40% and 38%.",
+				"dabloons": 125,
+				"upgradeIngredients": [
+					"minecraft:ender_pearl",
+					"minecraft:ender_pearl",
+					"minecraft:ender_pearl",
+					"minecraft:chorus_fruit",
+					"minecraft:chorus_fruit"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "52% chance to avoid pearl damage; 50% chance to save a thrown pearl.",
+				"abilityStatusRelative": "Raises the chances to 52% and 50%.",
+				"dabloons": 200,
+				"upgradeIngredients": [
+					"minecraft:ender_eye",
+					"minecraft:ender_eye",
+					"minecraft:popped_chorus_fruit",
+					"minecraft:popped_chorus_fruit"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "63% chance to avoid pearl damage; 61% chance to save a thrown pearl.",
+				"abilityStatusRelative": "Raises the chances to 63% and 61%.",
+				"dabloons": 300,
+				"upgradeIngredients": [
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:ender_eye",
+					"minecraft:ender_eye"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "72% chance to avoid pearl damage; 70% chance to save a thrown pearl.",
+				"abilityStatusRelative": "Raises the chances to 72% and 70%.",
+				"dabloons": 450,
+				"upgradeIngredients": [
+					"minecraft:end_crystal",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:dragon_breath"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "79% chance to avoid pearl damage; 78% chance to save a thrown pearl.",
+				"abilityStatusRelative": "Raises the chances to 79% and 78%.",
+				"dabloons": 700,
+				"upgradeIngredients": [
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:end_crystal",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "85% chance to avoid pearl damage; 85% chance to save a thrown pearl.",
+				"abilityStatusRelative": "Raises both chances to 85%.",
+				"dabloons": 1000,
+				"upgradeIngredients": [
+					"minecraft:dragon_head",
+					"minecraft:end_crystal",
+					"minecraft:end_crystal",
+					"minecraft:shulker_shell"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "90% chance to avoid pearl damage; 90% chance to save a thrown pearl.",
+				"abilityStatusRelative": "Raises both chances to 90%.",
+				"dabloons": 1400,
+				"upgradeIngredients": [
+					"minecraft:dragon_head",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:end_crystal",
+					"minecraft:end_crystal"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "legs",
+		"equippableAssetId": "enderian_soul__charm"
+	}
+}

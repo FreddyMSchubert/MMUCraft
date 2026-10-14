@@ -204,6 +204,13 @@ export function SurprisingSaturdayTab({
 	const selectedStatus = currentDetail?.status ?? selected?.status;
 	const own = currentDetail?.players?.find((player) => player.uuid === me?.uuid);
 	const completedItems = new Set(own?.completed.map((entry) => entry.itemId));
+	const furthestGoalByPlayer = new Map<string, string>();
+	for (const player of currentDetail?.players ?? []) {
+		const completed = new Set(player.completed.map((entry) => entry.itemId));
+		for (const item of currentDetail?.items ?? []) {
+			if (completed.has(item.id)) furthestGoalByPlayer.set(player.uuid, item.id);
+		}
+	}
 	const shownPlayers =
 		currentDetail?.players?.filter((player) => showCommittee || !player.isCommittee) ?? [];
 	const totalPoints = currentDetail?.items?.reduce((sum, item) => sum + item.points, 0) ?? 0;
@@ -319,14 +326,15 @@ export function SurprisingSaturdayTab({
 						<h4>Joined Earning</h4>
 						<p>
 							Complete goals in any order. Each one earns its listed Dabloons, paid
-							from the next day.
+							from the next day. Each player appears under their furthest completed
+							goal in this list.
 						</p>
 					</div>
 					<ol className="eventEarningGoals">
 						{currentDetail.items?.map((item) => {
 							const finishers =
-								currentDetail.players?.filter((player) =>
-									player.completed.some((entry) => entry.itemId === item.id),
+								currentDetail.players?.filter(
+									(player) => furthestGoalByPlayer.get(player.uuid) === item.id,
 								) ?? [];
 							return (
 								<li key={item.id}>

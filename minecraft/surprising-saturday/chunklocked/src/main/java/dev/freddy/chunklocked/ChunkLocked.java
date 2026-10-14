@@ -68,8 +68,12 @@ public final class ChunkLocked implements ModInitializer {
             world = null;
         });
         ServerTickEvents.END_SERVER_TICK.register(ChunkLocked::tick);
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                EventPresentation.playerJoined(handler.getPlayer()));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            ServerPlayer player = handler.getPlayer();
+            EventPresentation.playerJoined(player);
+            command(server, "scoreboard players set " + player.getGameProfile().name()
+                    + " ChunklockTotalUnlockedChunks " + EventGoals.unlockedCount(player.getUUID()));
+        });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             LAST_SAFE.remove(handler.getPlayer().getUUID());
             EventPresentation.playerLeft(handler.getPlayer());
@@ -218,8 +222,10 @@ public final class ChunkLocked implements ModInitializer {
                 entity.setPos(payer.getX(), payer.getY() + 0.5, payer.getZ());
                 entity.setPickUpDelay(0);
             }
+            if (!barrier && used > 0) EventGoals.contributed(cell, payer);
             if (cell.remaining == 0) {
                 world.unlock(cell);
+                Set<UUID> credited = EventGoals.unlocked(cell);
                 ChunkVisuals.remove(level, cell);
                 for (int[] offset : NEIGHBORS) {
                     ChunkWorld.Cell neighbor = world.offer(level, cell.x + offset[0],
@@ -229,8 +235,13 @@ public final class ChunkLocked implements ModInitializer {
                     }
                 }
                 command(server, "scoreboard players set #global ChunklockTotalUnlockedChunks " + world.totalPaid());
-                command(server, "scoreboard players add " + payer.getGameProfile().name()
-                        + " ChunklockTotalUnlockedChunks 1");
+                for (UUID playerId : credited) {
+                    ServerPlayer contributor = server.getPlayerList().getPlayer(playerId);
+                    if (contributor != null) {
+                        command(server, "scoreboard players set " + contributor.getGameProfile().name()
+                                + " ChunklockTotalUnlockedChunks " + EventGoals.unlockedCount(playerId));
+                    }
+                }
                 int biomeY = cell.dimension.endsWith("overworld") ? 128 : 64;
                 var biome = level.getBiome(new BlockPos(cell.x * 16 + 8, biomeY, cell.z * 16 + 8))
                         .unwrapKey().orElseThrow().identifier();

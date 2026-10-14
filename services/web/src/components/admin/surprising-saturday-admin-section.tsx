@@ -54,15 +54,23 @@ function targetFromId(id: string): EditableTarget {
 }
 
 const chunklockGoals = [
-	['wood', 'Get some wood', 'Have oak wood in your inventory.'],
-	['pickaxe', 'Get a pickaxe', 'Have any pickaxe in your inventory.'],
-	['iron', 'Get some iron', 'Have an iron ingot in your inventory.'],
-	['diamonds', 'Get diamonds', 'Have a diamond in your inventory.'],
-	['nether', 'Enter the Nether', 'Travel into the Nether.'],
-	['blaze', 'Kill a blaze', 'Deal the final blow to a blaze.'],
-	['eye', 'Throw an eye of ender', 'Use an eye of ender.'],
-	['end', 'Enter the End', 'Travel into the End.'],
-	['dragon', 'Kill the dragon', 'Deal the final blow to the Ender Dragon.'],
+	['unlock_1', 'Unlock 1 chunk', 'Help pay for a chunk that opens.', 20],
+	['unlock_3', 'Unlock 3 chunks', 'Help pay for three different chunks that open.', 20],
+	['unlock_5', 'Unlock 5 chunks', 'Help pay for five different chunks that open.', 20],
+	['villager', 'Interact with a villager', 'Interact with a villager.', 10],
+	['swim', 'Swim in water', 'Swim while in water.', 10],
+	['desert', 'Stand in a desert', 'Stand on the ground in a desert biome.', 5],
+	[
+		'illager',
+		'Help kill a pillager/illager',
+		'Deal damage to a pillager or another illager.',
+		25,
+	],
+	['raid_experience', 'Experience a raid', 'Be near a village during an active raid.', 15],
+	['ravager', 'Help kill a ravager', 'Deal damage to a ravager.', 25],
+	['raid_survive', 'Survive a raid', 'Be alive in the village when a raid ends.', 100],
+	['wither', 'Help kill a wither', 'Damage a wither before it dies.', 250],
+	['dragon', 'Help kill the Ender Dragon', 'Damage the Ender Dragon before it dies.', 250],
 ] as const;
 
 export function SurprisingSaturdayAdminSection() {
@@ -354,20 +362,21 @@ export function SurprisingSaturdayAdminSection() {
 					onClick={() => {
 						setTitle('Chunklock');
 						setShortDescription(
-							'Complete Chunklock milestones and earn Dabloons for each one.',
+							'Complete Chunklock goals and earn Dabloons for each one.',
 						);
 						setPreDescription(
 							'A new challenge begins this Saturday. The goals are revealed when the event starts.',
 						);
 						setDescription(
-							'Complete the Chunklock goals in any order. Each goal pays its listed Dabloons the next day.',
+							'Complete Chunklock goals in any order. Each goal pays its listed Dabloons the next day.',
 						);
 						setCriteriaType('joined_earning');
 						setItems(
-							chunklockGoals.map(([id, name, description]) => ({
+							chunklockGoals.map(([id, name, description, amount]) => ({
 								...targetFromId(`chunklock:${id}`),
 								name,
 								description,
+								amount: String(amount),
 							})),
 						);
 					}}

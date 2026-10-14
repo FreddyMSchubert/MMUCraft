@@ -82,7 +82,9 @@ export function conditionSentence(tags: string[]) {
 		const matches = tags.flatMap((tag) => (TAGS[tag].group === group ? [TAGS[tag]] : []));
 		if (!matches.length) return [];
 		const prefix =
-			group === 'climate' || group === 'water' || group === 'height' ? 'in' : 'during';
+			group === 'dimension' || group === 'climate' || group === 'water' || group === 'height'
+				? 'in'
+				: 'during';
 		const alternatives = matches.map((match) => `${match.emoji} ${prefix} ${match.phrase}`);
 		return [alternatives.length > 1 ? `(${joinOr(alternatives)})` : alternatives[0]];
 	});

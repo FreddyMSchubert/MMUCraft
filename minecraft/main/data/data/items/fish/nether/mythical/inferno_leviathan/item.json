@@ -1,0 +1,19 @@
+{
+	"title": "Inferno Leviathan",
+	"id": "fish-inferno-leviathan",
+	"modelType": "basic",
+	"rarity": "mythical",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["A placeholder Nether fish."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "L",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 180,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "red_meat"
+	}
+}

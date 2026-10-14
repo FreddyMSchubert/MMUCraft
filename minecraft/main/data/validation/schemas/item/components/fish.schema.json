@@ -5,6 +5,10 @@
 	"type": "object",
 	"additionalProperties": false,
 	"properties": {
+		"dimension": {
+			"type": "string",
+			"enum": ["overworld", "nether"]
+		},
 		"angle": {
 			"description": "Direction the fish faces in its texture. Compass strings and degrees run clockwise from the top.",
 			"oneOf": [
@@ -105,5 +109,5 @@
 			"enum": ["white_meat", "red_meat", "crab_claw", "tentacle"]
 		}
 	},
-	"required": ["angle", "size", "tags", "furnaceResult"]
+	"required": ["dimension", "angle", "size", "tags", "furnaceResult"]
 }

@@ -1,0 +1,18 @@
+{
+	"title": "Starfish",
+	"id": "fish-starfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Sea stars move using hundreds of hydraulic tube feet."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "T",
+		"tags": ["ocean"],
+		"size": {
+			"averageLengthCm": 20,
+			"textureLengthPixels": 16
+		},
+		"furnaceResult": "white_meat"
+	}
+}

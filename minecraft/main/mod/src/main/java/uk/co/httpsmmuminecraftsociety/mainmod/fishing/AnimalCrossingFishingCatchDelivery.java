@@ -4,6 +4,7 @@ import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -40,6 +41,9 @@ public final class AnimalCrossingFishingCatchDelivery {
                 dy * 0.1D + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08D,
                 dz * 0.1D
         );
+        if (level.getFluidState(hook.blockPosition()).is(FluidTags.LAVA)) {
+            itemEntity.setInvulnerableTime(100);
+        }
         level.addFreshEntity(itemEntity);
         level.addFreshEntity(new ExperienceOrb(
                 level,

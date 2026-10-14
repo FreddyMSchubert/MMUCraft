@@ -1,0 +1,18 @@
+{
+	"title": "Lunarfish",
+	"id": "fish-lunarfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Its silver flank brightens and dims with the phases of the moon."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": ["waning"],
+		"size": {
+			"averageLengthCm": 40,
+			"textureLengthPixels": 17.67767
+		},
+		"furnaceResult": "white_meat"
+	}
+}

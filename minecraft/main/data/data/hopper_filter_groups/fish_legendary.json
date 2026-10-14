@@ -1,6 +1,7 @@
 {
 	"name": "Legendary Fish",
 	"items": [
+		"mainmod:fish-basalt-ray",
 		"mainmod:fish-divine_catfish",
 		"mainmod:fish-divine_jellyfish",
 		"mainmod:fish-golden_swordfish",

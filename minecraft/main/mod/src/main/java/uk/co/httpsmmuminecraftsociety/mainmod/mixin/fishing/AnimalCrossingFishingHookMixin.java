@@ -5,12 +5,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,9 +37,11 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingJumpScares;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingRodCast;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 @Mixin(FishingHook.class)
-public abstract class AnimalCrossingFishingHookMixin {
+public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
     @Shadow @Final private static EntityDataAccessor<Boolean> DATA_BITING;
     @Shadow private int nibble;
     @Shadow private int timeUntilLured;
@@ -60,8 +68,50 @@ public abstract class AnimalCrossingFishingHookMixin {
     @Unique private int mainmod$movementTicksRemaining;
     @Unique private int mainmod$catchAnimationTicks;
     @Unique private ItemStack mainmod$catchingRod = ItemStack.EMPTY;
+    @Unique private ItemStack mainmod$castRod = ItemStack.EMPTY;
+    @Unique private InteractionHand mainmod$castHand;
+    @Unique private boolean mainmod$blazing;
+    @Unique private boolean mainmod$nether;
     @Unique private double mainmod$itemChance = FishingModifiers.DEFAULT_ITEM_CHANCE;
 	@Unique private boolean mainmod$jumpScare;
+
+    @Override
+    public void mainmod$setCastRod(ItemStack rod, InteractionHand hand) {
+        this.mainmod$castRod = rod;
+        this.mainmod$castHand = hand;
+        this.mainmod$blazing = FakeItems.isSpecificFakeItem(rod, "blazing-fishing-rod");
+    }
+
+    @Redirect(method = "tick", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/material/FluidState;is(Lnet/minecraft/tags/TagKey;)Z"))
+    private boolean mainmod$bobInLava(FluidState state, TagKey<Fluid> tag) {
+        FishingHook hook = (FishingHook) (Object) this;
+        Player owner = hook.getPlayerOwner();
+        // shortcut: Client bobbing follows the held rod on swaps; sync the cast rod if swaps cause visible problems.
+        boolean blazing = mainmod$blazing || hook.level().isClientSide() && owner != null
+                && (FakeItems.isSpecificFakeItem(owner.getMainHandItem(), "blazing-fishing-rod")
+                || FakeItems.isSpecificFakeItem(owner.getOffhandItem(), "blazing-fishing-rod"));
+        return state.is(tag) || tag == FluidTags.WATER && blazing
+                && hook.level().dimension() == Level.NETHER && state.is(FluidTags.LAVA);
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void mainmod$burnOrdinaryRodInLava(CallbackInfo ci) {
+        FishingHook hook = (FishingHook) (Object) this;
+        Player owner = hook.getPlayerOwner();
+        if (hook.level().isClientSide() || owner == null || mainmod$blazing
+                || mainmod$castHand == null
+                || !hook.level().getFluidState(hook.blockPosition()).is(FluidTags.LAVA)) return;
+        if (owner.getItemInHand(mainmod$castHand) != mainmod$castRod) {
+            hook.discard();
+            return;
+        }
+        owner.igniteForSeconds(3);
+        if (hook.tickCount % 20 == 0) {
+            EquipmentSlot slot = mainmod$castHand.asEquipmentSlot();
+            mainmod$castRod.hurtAndBreak(1, owner, slot);
+        }
+    }
 
     @Redirect(
             method = "onSyncedDataUpdated",
@@ -102,13 +152,14 @@ public abstract class AnimalCrossingFishingHookMixin {
 
         ci.cancel();
 
-		if (!AnimalCrossingFishingEnvironment.isStillInWater(level, hook)) {
+		if (!AnimalCrossingFishingEnvironment.isFishable(level, hook, mainmod$blazing)) {
             mainmod$cleanupFishShadow();
             mainmod$phase = AnimalCrossingFishingPhase.WAITING;
             return;
         }
+		mainmod$nether = level.getFluidState(hook.blockPosition()).is(FluidTags.LAVA);
 
-		int weatherSpeed = AnimalCrossingFishingEnvironment.weatherWaitSpeed(
+		int weatherSpeed = mainmod$nether ? 1 : AnimalCrossingFishingEnvironment.weatherWaitSpeed(
 				level,
 				bobberBlockPos,
 				hook
@@ -131,6 +182,13 @@ public abstract class AnimalCrossingFishingHookMixin {
     private void mainmod$onRetrieve(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         FishingHook hook = (FishingHook) (Object) this;
         if (hook.level().isClientSide()) {
+            return;
+        }
+
+        if (mainmod$nether && !FakeItems.isSpecificFakeItem(stack, "blazing-fishing-rod")) {
+            mainmod$cleanupFishShadow();
+            hook.discard();
+            cir.setReturnValue(0);
             return;
         }
 
@@ -177,11 +235,12 @@ public abstract class AnimalCrossingFishingHookMixin {
 				hook,
 				this.mainmod$itemChance,
 				this.luck,
-				AnimalCrossingFishingTiming.lureLevel(this.lureSpeed)
+				AnimalCrossingFishingTiming.lureLevel(this.lureSpeed),
+				this.mainmod$nether
 		);
         this.mainmod$catchResult = fish.getFirst();
         this.mainmod$catchPersonality = fish.getSecond();
-		this.mainmod$jumpScare = FishingJumpScares.shouldTrigger(hook.getRandom());
+		this.mainmod$jumpScare = !mainmod$nether && FishingJumpScares.shouldTrigger(hook.getRandom());
 
         this.fishAngle = Mth.nextFloat(hook.getRandom(), 0.0F, 360.0F);
         this.mainmod$orbitDegrees = this.fishAngle;
@@ -204,7 +263,7 @@ public abstract class AnimalCrossingFishingHookMixin {
         this.mainmod$fishShadow = display;
         mainmod$positionFish(hook);
         level.addFreshEntity(display);
-		AnimalCrossingFishingBobberEffects.playFishArrival(level, display);
+		AnimalCrossingFishingBobberEffects.playFishArrival(level, display, mainmod$nether);
     }
 
     @Unique

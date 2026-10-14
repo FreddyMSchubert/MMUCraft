@@ -180,3 +180,19 @@ export function createCarvedPumpkinItemDefinition(
 		},
 	};
 }
+
+export function createBlazingFishingRodItemDefinition(rod: SelectorCase): Record<string, unknown> {
+	return {
+		model: {
+			type: 'minecraft:select',
+			property: 'minecraft:custom_model_data',
+			cases: [{ when: rod.when, model: createModelReference(rod) }],
+			fallback: {
+				type: 'minecraft:condition',
+				property: 'minecraft:fishing_rod/cast',
+				on_true: { type: 'minecraft:model', model: 'minecraft:item/fishing_rod_cast' },
+				on_false: { type: 'minecraft:model', model: 'minecraft:item/fishing_rod' },
+			},
+		},
+	};
+}

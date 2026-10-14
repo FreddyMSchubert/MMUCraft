@@ -1,0 +1,18 @@
+{
+	"title": "Crayfish",
+	"id": "fish-crayfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Crayfish can regenerate a lost claw over several molts."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": ["river"],
+		"size": {
+			"averageLengthCm": 12,
+			"textureLengthPixels": 19.091883
+		},
+		"furnaceResult": "crab_claw"
+	}
+}

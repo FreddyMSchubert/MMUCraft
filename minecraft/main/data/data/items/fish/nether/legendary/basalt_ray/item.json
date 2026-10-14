@@ -1,0 +1,19 @@
+{
+	"title": "Basalt Ray",
+	"id": "fish-basalt-ray",
+	"modelType": "basic",
+	"rarity": "legendary",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["A placeholder Nether fish."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 105,
+			"textureLengthPixels": 20.506097
+		},
+		"furnaceResult": "white_meat"
+	}
+}

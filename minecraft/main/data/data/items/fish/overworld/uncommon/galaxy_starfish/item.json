@@ -1,0 +1,18 @@
+{
+	"title": "Galaxy Starfish",
+	"id": "fish-galaxy_starfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Each arm carries a shifting pattern that resembles a tiny night sky."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "T",
+		"tags": ["ocean", "night", "newmoon"],
+		"size": {
+			"averageLengthCm": 30,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "white_meat"
+	}
+}

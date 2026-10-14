@@ -1,0 +1,18 @@
+{
+	"title": "Sturgeon",
+	"id": "fish-sturgeon",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["A toothless sturgeon vacuums prey from the bottom with a protrusible mouth."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "TR",
+		"tags": ["river"],
+		"size": {
+			"averageLengthCm": 180,
+			"textureLengthPixels": 20.506097
+		},
+		"furnaceResult": "white_meat"
+	}
+}

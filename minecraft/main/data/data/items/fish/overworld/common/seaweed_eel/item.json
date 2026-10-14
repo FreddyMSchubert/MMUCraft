@@ -1,0 +1,18 @@
+{
+	"title": "Seaweed Eel",
+	"id": "fish-seaweed_eel",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Frond-shaped fins let it disappear completely inside a kelp bed."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": 195,
+		"tags": ["ocean"],
+		"size": {
+			"averageLengthCm": 120,
+			"textureLengthPixels": 15.404045
+		},
+		"furnaceResult": "white_meat"
+	}
+}

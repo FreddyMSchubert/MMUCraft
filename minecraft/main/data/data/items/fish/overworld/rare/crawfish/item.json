@@ -1,0 +1,18 @@
+{
+	"title": "Crawfish",
+	"id": "fish-crawfish",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": ["Like other crayfish, it can regrow a missing claw over successive molts."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "T",
+		"tags": ["river"],
+		"size": {
+			"averageLengthCm": 12,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "crab_claw"
+	}
+}

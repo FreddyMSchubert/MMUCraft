@@ -1,0 +1,18 @@
+{
+	"title": "Mudfish",
+	"id": "fish-mudfish",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Mudfish endure shrinking pools by slowing their metabolism dramatically."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 50,
+			"textureLengthPixels": 19.79899
+		},
+		"furnaceResult": "white_meat"
+	}
+}

@@ -1,4 +1,9 @@
 {
 	"name": "Mythical Fish",
-	"items": ["mainmod:fish-coelacanth", "mainmod:fish-golden_fish", "mainmod:fish-spook_fish"]
+	"items": [
+		"mainmod:fish-coelacanth",
+		"mainmod:fish-golden_fish",
+		"mainmod:fish-inferno-leviathan",
+		"mainmod:fish-spook_fish"
+	]
 }

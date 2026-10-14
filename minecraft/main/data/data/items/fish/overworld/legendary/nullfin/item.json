@@ -1,0 +1,18 @@
+{
+	"title": "Nullfin",
+	"id": "fish-nullfin",
+	"modelType": "basic",
+	"rarity": "legendary",
+	"maxStackSize": 1,
+	"tooltips": ["Water forgets how to ripple wherever its missing fin should be."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 140,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
+}

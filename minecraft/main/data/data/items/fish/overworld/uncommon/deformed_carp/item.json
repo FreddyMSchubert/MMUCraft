@@ -1,0 +1,18 @@
+{
+	"title": "Deformed Carp",
+	"id": "fish-deformed_carp",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Its crooked spine produces an erratic dart that predators struggle to predict."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": ["river"],
+		"size": {
+			"averageLengthCm": 55,
+			"textureLengthPixels": 18.384776
+		},
+		"furnaceResult": "white_meat"
+	}
+}

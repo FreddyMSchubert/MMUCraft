@@ -4,7 +4,7 @@
 	"modelType": "basic",
 	"rarity": "rare",
 	"maxStackSize": 16,
-	"tooltips": ["Raises the fishing item chance to 75%", "20 casts"],
+	"tooltips": ["70% items in the Overworld; 70% fish in Nether lava.", "30 casts"],
 	"craftable": {
 		"recipes": [
 			{

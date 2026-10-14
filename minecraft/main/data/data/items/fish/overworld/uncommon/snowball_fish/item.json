@@ -1,0 +1,18 @@
+{
+	"title": "Snowball Fish",
+	"id": "fish-snowball_fish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["It packs slush around itself until only two watchful eyes remain."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": ["snowy"],
+		"size": {
+			"averageLengthCm": 22,
+			"textureLengthPixels": 15.556349
+		},
+		"furnaceResult": "white_meat"
+	}
+}

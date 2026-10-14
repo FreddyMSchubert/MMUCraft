@@ -1,0 +1,19 @@
+{
+	"title": "Magma Skater",
+	"id": "fish-magma-skater",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["A placeholder Nether fish."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 38,
+			"textureLengthPixels": 19.79899
+		},
+		"furnaceResult": "crab_claw"
+	}
+}

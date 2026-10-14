@@ -1,0 +1,19 @@
+{
+	"title": "Ash Minnow",
+	"id": "fish-ash-minnow",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["A placeholder Nether fish."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "L",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 16,
+			"textureLengthPixels": 12
+		},
+		"furnaceResult": "red_meat"
+	}
+}

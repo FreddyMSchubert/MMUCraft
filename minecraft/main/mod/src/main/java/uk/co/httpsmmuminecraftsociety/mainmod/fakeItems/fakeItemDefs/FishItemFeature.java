@@ -24,14 +24,16 @@ public record FishItemFeature(
         FishingPersonality personality,
         FishSize length,
         FishFurnaceResult furnaceResult,
-        Set<FishSpawnTag> spawnTags
+        Set<FishSpawnTag> spawnTags,
+        String dimension
 ) implements ItemFeature {
     @Override
     public void apply(ItemStack stack) {
         List<Component> lines = new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
         lines.add(Component.literal(personality.rarity().displayName())
                 .withColor(personality.rarity().colorRgb())
-                .append(Component.literal(" fish catchable " + FishSpawnTag.conditionSentence(spawnTags) + ".")
+                .append(Component.literal(" fish catchable in the " + (dimension.equals("nether") ? "Nether" : "Overworld")
+                        + (spawnTags.isEmpty() ? "" : " " + FishSpawnTag.conditionSentence(spawnTags)) + ".")
                         .withStyle(ChatFormatting.GRAY)));
         stack.set(DataComponents.LORE, new ItemLore(lines));
     }
@@ -44,6 +46,10 @@ public record FishItemFeature(
         JsonObject size = json.getAsJsonObject("size");
         JsonObject catching = json.has("catching") ? json.getAsJsonObject("catching") : new JsonObject();
         FishRarity rarity = FishRarity.fromJsonValue(rootJson.get("rarity").getAsString());
+        String dimension = json.get("dimension").getAsString();
+        if (!dimension.equals("overworld") && !dimension.equals("nether")) {
+            throw new IllegalArgumentException("Unknown fish dimension: " + dimension);
+        }
         // The item id is the seed: reloads and separate catches keep this species consistent.
         RandomSource random = RandomSource.create(rootJson.get("id").getAsString().hashCode());
         int rarityLevel = rarity.ordinal();
@@ -83,7 +89,8 @@ public record FishItemFeature(
                         size.has("lengthDeviationCm") ? size.get("lengthDeviationCm").getAsDouble() : averageLengthCm / 3.0
                 ),
                 FishFurnaceResult.fromJsonValue(json.get("furnaceResult").getAsString()),
-                Set.copyOf(spawnTags)
+                Set.copyOf(spawnTags),
+                dimension
         );
     }
 

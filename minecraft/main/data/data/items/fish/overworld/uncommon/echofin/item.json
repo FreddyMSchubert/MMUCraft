@@ -1,0 +1,18 @@
+{
+	"title": "Echofin",
+	"id": "fish-echofin",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Its broad fins reflect clicks into overlapping pulses that map dark caves."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": ["high"],
+		"size": {
+			"averageLengthCm": 35,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
+}

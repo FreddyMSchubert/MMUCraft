@@ -30,7 +30,7 @@ interface FishItemJson {
 	title?: unknown;
 	rarity?: unknown;
 	tooltips?: unknown;
-	fish?: { tags?: unknown };
+	fish?: { tags?: unknown; dimension?: unknown };
 }
 
 const VANILLA_FISH: FishDefinition[] = [
@@ -97,6 +97,7 @@ export class FishCatalogService implements OnModuleInit {
 			if (
 				typeof json.id !== 'string' ||
 				typeof json.title !== 'string' ||
+				(json.fish?.dimension !== 'nether' && json.fish?.dimension !== 'overworld') ||
 				!existsSync(textureFilePath)
 			)
 				return [];
@@ -108,9 +109,12 @@ export class FishCatalogService implements OnModuleInit {
 						typeof json.rarity === 'string' && RARITIES.has(json.rarity)
 							? json.rarity
 							: 'common',
-					tags: Array.isArray(json.fish?.tags)
-						? json.fish.tags.filter((tag): tag is string => typeof tag === 'string')
-						: [],
+					tags: [
+						json.fish.dimension,
+						...(Array.isArray(json.fish.tags)
+							? json.fish.tags.filter((tag): tag is string => typeof tag === 'string')
+							: []),
+					],
 					facts: Array.isArray(json.tooltips)
 						? json.tooltips.filter(
 								(fact): fact is string =>
@@ -162,7 +166,7 @@ function vanillaFish(id: string, title: string, rarity: string, fact: string): F
 		id,
 		title,
 		rarity,
-		tags: [],
+		tags: ['overworld'],
 		facts: [fact],
 		iconUrl: `${ASSETS.minecraft.vanilla}/textures/item/${textureName}.png`,
 		animation: null,

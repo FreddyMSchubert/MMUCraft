@@ -1,0 +1,18 @@
+{
+	"title": "Squigglyfish",
+	"id": "fish-squigglyfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["No two turns in its swimming trail ever repeat the same curve."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "L",
+		"tags": ["ocean"],
+		"size": {
+			"averageLengthCm": 45,
+			"textureLengthPixels": 13
+		},
+		"furnaceResult": "white_meat"
+	}
+}

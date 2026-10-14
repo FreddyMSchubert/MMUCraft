@@ -1,4 +1,4 @@
 {
 	"name": "Fishing Rods",
-	"items": ["minecraft:fishing_rod"]
+	"items": ["mainmod:blazing-fishing-rod", "minecraft:fishing_rod"]
 }

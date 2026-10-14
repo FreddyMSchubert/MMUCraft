@@ -1,0 +1,18 @@
+{
+	"title": "Pregnant Slimefish",
+	"id": "fish-pregnantslimefish",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": ["Its gelatinous nursery divides safely into a swarm when threatened."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 50,
+			"textureLengthPixels": 16.970563
+		},
+		"furnaceResult": "white_meat"
+	}
+}

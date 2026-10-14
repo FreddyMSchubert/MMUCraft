@@ -1,0 +1,19 @@
+{
+	"title": "Cinder Eel",
+	"id": "fish-cinder-eel",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["A placeholder Nether fish."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "BL",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 55,
+			"textureLengthPixels": 17.67767
+		},
+		"furnaceResult": "red_meat"
+	}
+}

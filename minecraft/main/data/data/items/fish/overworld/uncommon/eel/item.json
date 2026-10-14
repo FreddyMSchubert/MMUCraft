@@ -1,0 +1,18 @@
+{
+	"title": "Eel",
+	"id": "fish-eel",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Eels begin life as transparent, leaf-shaped larvae called leptocephali."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": ["ocean"],
+		"size": {
+			"averageLengthCm": 80,
+			"textureLengthPixels": 17.67767
+		},
+		"furnaceResult": "white_meat"
+	}
+}

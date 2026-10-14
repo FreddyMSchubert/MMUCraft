@@ -1,0 +1,18 @@
+{
+	"title": "Thundering Bass",
+	"id": "fish-thundering_bass",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Its booming swim bladder can be heard through a hull before a storm."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": ["river", "night", "thunderstorm", "waning"],
+		"size": {
+			"averageLengthCm": 60,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "white_meat"
+	}
+}

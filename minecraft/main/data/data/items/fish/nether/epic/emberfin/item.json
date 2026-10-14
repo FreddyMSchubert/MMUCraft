@@ -1,0 +1,19 @@
+{
+	"title": "Emberfin",
+	"id": "fish-emberfin",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"fireproof": true,
+	"tooltips": ["A placeholder Nether fish."],
+	"fish": {
+		"dimension": "nether",
+		"angle": "T",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 80,
+			"textureLengthPixels": 14
+		},
+		"furnaceResult": "tentacle"
+	}
+}

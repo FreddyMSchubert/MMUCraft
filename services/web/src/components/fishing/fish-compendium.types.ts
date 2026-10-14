@@ -2,7 +2,7 @@ import type { PlayerEmoji } from '@/components/player-name';
 import type { TextureAnimationOptions } from '@/lib/minecraft-model-renderer';
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical';
-export type TagGroup = 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon';
+export type TagGroup = 'dimension' | 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon';
 export type FishSort = 'rarity' | 'location';
 
 export interface PlayerOption {
@@ -70,6 +70,8 @@ export const TAGS: Record<
 	string,
 	{ emoji: string; label: string; group: TagGroup; phrase: string }
 > = {
+	overworld: { emoji: '🌍', label: 'Overworld', group: 'dimension', phrase: 'the Overworld' },
+	nether: { emoji: '🔥', label: 'Nether', group: 'dimension', phrase: 'the Nether' },
 	warm: { emoji: '🔥', label: 'Warm', group: 'climate', phrase: 'hot Overworld biomes' },
 	cold: { emoji: '❄️', label: 'Cold', group: 'climate', phrase: 'cold Overworld biomes' },
 	river: { emoji: '🌉', label: 'River', group: 'water', phrase: 'rivers' },
@@ -92,8 +94,17 @@ export const TAGS: Record<
 	newmoon: { emoji: '🌑', label: 'New moon', group: 'moon', phrase: 'a new moon' },
 };
 
-export const GROUPS: TagGroup[] = ['climate', 'water', 'time', 'height', 'weather', 'moon'];
+export const GROUPS: TagGroup[] = [
+	'dimension',
+	'climate',
+	'water',
+	'time',
+	'height',
+	'weather',
+	'moon',
+];
 export const GROUP_LABELS: Record<TagGroup, string> = {
+	dimension: 'Dimension',
 	climate: 'Temperature',
 	water: 'Water type',
 	time: 'Daytime',

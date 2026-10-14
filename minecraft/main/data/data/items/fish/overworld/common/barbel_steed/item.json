@@ -1,0 +1,20 @@
+{
+	"title": "Barbel Steed",
+	"id": "fish-barbel_steed",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [
+		"Its whiskers read river currents while its powerful tail holds steady in rapids."
+	],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "L",
+		"tags": ["river"],
+		"size": {
+			"averageLengthCm": 60,
+			"textureLengthPixels": 15
+		},
+		"furnaceResult": "white_meat"
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"title": "Sunfish",
+	"id": "fish-sunfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Ocean sunfish bask near the surface after long dives into cold water."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "BL",
+		"tags": ["ocean"],
+		"size": {
+			"averageLengthCm": 180,
+			"textureLengthPixels": 16.263456
+		},
+		"furnaceResult": "white_meat"
+	}
+}

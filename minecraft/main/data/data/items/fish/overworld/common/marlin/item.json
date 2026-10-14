@@ -1,0 +1,18 @@
+{
+	"title": "Marlin",
+	"id": "fish-marlin",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["A marlin slashes its bill through schools to stun several prey at once."],
+	"fish": {
+		"dimension": "overworld",
+		"angle": "L",
+		"tags": ["ocean"],
+		"size": {
+			"averageLengthCm": 250,
+			"textureLengthPixels": 16
+		},
+		"furnaceResult": "red_meat"
+	}
+}

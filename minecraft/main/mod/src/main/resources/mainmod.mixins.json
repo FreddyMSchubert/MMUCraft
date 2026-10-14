@@ -84,6 +84,7 @@
 		"anvilRework.AbstractContainerMenuInvoker",
 		"anvilRework.ItemCombinerMenuAccessor",
 		"fishing.AnimalCrossingFishingHookMixin",
+		"fishing.BlazingFishingRodMixin",
 		"fishing.BrushableBlockEntityAccessor",
 		"fishing.DisplayEntityAccessor",
 		"fishing.ItemDisplayEntityAccessor",

@@ -3,6 +3,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.phys.AABB;
@@ -12,8 +13,10 @@ public final class AnimalCrossingFishingEnvironment {
 
     private AnimalCrossingFishingEnvironment() {}
 
-    public static boolean isStillInWater(ServerLevel level, FishingHook hook) {
-        return level.getFluidState(hook.blockPosition()).is(FluidTags.WATER);
+    public static boolean isFishable(ServerLevel level, FishingHook hook, boolean blazing) {
+        var fluid = level.getFluidState(hook.blockPosition());
+        return level.dimension() == Level.OVERWORLD && fluid.is(FluidTags.WATER)
+                || level.dimension() == Level.NETHER && blazing && fluid.is(FluidTags.LAVA);
     }
 
     public static int weatherWaitSpeed(ServerLevel level, BlockPos bobberBlockPos, FishingHook hook) {

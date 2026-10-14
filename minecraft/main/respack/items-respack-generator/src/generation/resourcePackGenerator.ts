@@ -31,6 +31,7 @@ import {
 import { generateEmissiveTexture } from './emissiveTexture';
 import { replaceTrailingVariant } from '../utils/paths';
 import {
+	createBlazingFishingRodItemDefinition,
 	createCarvedPumpkinItemDefinition,
 	createCommandBlockItemDefinition,
 	createHeartOfTheSeaItemDefinition,
@@ -610,6 +611,13 @@ export async function generateResourcePack(
 		createCarvedPumpkinItemDefinition(carvedPumpkinCases),
 		context,
 	);
+	const blazingRod = commandBlockCases.find((item) => item.when === 'blazing-fishing-rod');
+	if (blazingRod)
+		await writeJson(
+			minecraftItemDefinitionPath(options.outputDir, 'fishing_rod'),
+			createBlazingFishingRodItemDefinition(blazingRod),
+			context,
+		);
 	for (const itemId of FISHING_SHADOW_VANILLA_ITEMS) {
 		const textureOverride = FISHING_SHADOW_TEXTURE_OVERRIDES[itemId];
 		if (textureOverride) {

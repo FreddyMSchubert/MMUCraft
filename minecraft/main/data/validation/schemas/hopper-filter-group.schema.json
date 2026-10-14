@@ -41,11 +41,26 @@
 		"potions": {
 			"$ref": "#/$defs/minecraftIds"
 		},
+		"potion_items": {
+			"type": "array",
+			"minItems": 1,
+			"uniqueItems": true,
+			"items": {
+				"enum": [
+					"minecraft:potion",
+					"minecraft:splash_potion",
+					"minecraft:lingering_potion"
+				]
+			}
+		},
 		"enchantments": {
 			"$ref": "#/$defs/minecraftIds"
 		}
 	},
 	"required": ["name"],
+	"dependentRequired": {
+		"potion_items": ["potions"]
+	},
 	"anyOf": [
 		{
 			"required": ["items"]

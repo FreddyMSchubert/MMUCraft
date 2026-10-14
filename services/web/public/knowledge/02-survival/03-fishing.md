@@ -44,6 +44,8 @@ The full overview of every fish catchable and caught is the [fishing compendium]
 :::drop nether
 ## Fishing in the Nether
 
+:::drop-indicator
+
 Craft a Blazing Fishing Rod with three Blaze Rods and two strings. Use the same pattern as a normal fishing rod. Cast it into Nether lava. The fish shadow sits at the lava surface. Wait for the bite, then reel in the catch.
 
 The Blazing Fishing Rod does not burn in lava. A normal fishing rod cannot catch fish in lava. Its bobber burns the rod over time and sets you on fire.
@@ -64,6 +66,8 @@ Each cast rolls either a **fish** or an **item**. There are modifiers that can c
 | Golden Item Magnet | 30% fish, 70% item |
 
 :::drop nether
+:::drop-indicator
+
 In Nether lava, the chances are:
 
 | Offhand item | Lava |

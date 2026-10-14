@@ -1,0 +1,148 @@
+{
+	"title": "Reaping Glove Charm",
+	"id": "charm-reaping-glove",
+	"modelType": "charm",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 125,
+		"description": "Increases XP dropped by mobs you kill.",
+		"unlockWeight": 75,
+		"unlockMessage": "Unlocked charm: Reaping Glove Charm. Get more XP from mob kills.",
+		"gameplayToggle": "imaginative"
+	},
+	"charm": {
+		"charmId": 60,
+		"minLevel": 0,
+		"maxLevel": 10,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Mobs you kill drop 1.5x XP.",
+				"abilityStatusRelative": "Mobs you kill drop 1.5x XP.",
+				"dabloons": 50,
+				"upgradeIngredients": [
+					"minecraft:spider_eye",
+					"minecraft:spider_eye",
+					"minecraft:spider_eye",
+					"minecraft:glow_ink_sac"
+				]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Mobs you kill drop 2x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 2x.",
+				"dabloons": 100,
+				"upgradeIngredients": [
+					"minecraft:fermented_spider_eye",
+					"minecraft:fermented_spider_eye",
+					"minecraft:rabbit_foot"
+				]
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Mobs you kill drop 2.5x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 2.5x.",
+				"dabloons": 175,
+				"upgradeIngredients": [
+					"minecraft:magma_cream",
+					"minecraft:magma_cream",
+					"minecraft:blaze_rod",
+					"minecraft:blaze_rod"
+				]
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Mobs you kill drop 3x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 3x.",
+				"dabloons": 300,
+				"upgradeIngredients": [
+					"minecraft:prismarine_crystals",
+					"minecraft:prismarine_crystals",
+					"minecraft:nautilus_shell",
+					"minecraft:nautilus_shell"
+				]
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Mobs you kill drop 4x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 4x.",
+				"dabloons": 500,
+				"upgradeIngredients": [
+					"minecraft:breeze_rod",
+					"minecraft:breeze_rod",
+					"minecraft:ominous_trial_key"
+				]
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Mobs you kill drop 5x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 5x.",
+				"dabloons": 800,
+				"upgradeIngredients": [
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Mobs you kill drop 7x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 7x.",
+				"dabloons": 1300,
+				"upgradeIngredients": [
+					"minecraft:wither_skeleton_skull",
+					"minecraft:wither_skeleton_skull",
+					"minecraft:sculk_catalyst"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Mobs you kill drop 10x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 10x.",
+				"dabloons": 2100,
+				"upgradeIngredients": [
+					"minecraft:heavy_core",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:wither_skeleton_skull"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Mobs you kill drop 15x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 15x.",
+				"dabloons": 3500,
+				"upgradeIngredients": [
+					"minecraft:nether_star",
+					"minecraft:nether_star",
+					"minecraft:dragon_head",
+					"minecraft:enchanted_golden_apple"
+				]
+			},
+			{
+				"level": 10,
+				"abilityStatusCurrent": "Mobs you kill drop 20x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 20x.",
+				"dabloons": 6000,
+				"upgradeIngredients": [
+					"minecraft:nether_star",
+					"minecraft:nether_star",
+					"minecraft:nether_star",
+					"minecraft:nether_star",
+					"minecraft:dragon_head",
+					"minecraft:dragon_head",
+					"minecraft:heavy_core",
+					"minecraft:enchanted_golden_apple"
+				]
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "chest",
+		"equippableAssetId": "reaping_glove__charm"
+	}
+}

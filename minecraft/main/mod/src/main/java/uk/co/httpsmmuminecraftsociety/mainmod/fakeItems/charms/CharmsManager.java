@@ -93,7 +93,11 @@ public class CharmsManager
             Map.entry(RedstoneRemoteCharm.CHARM_ID, new RedstoneRemoteCharm()),
             Map.entry(GliderCharm.CHARM_ID, new GliderCharm()),
             Map.entry(SlimeDetectorCharm.CHARM_ID, new SlimeDetectorCharm()),
-            Map.entry(HappyGhastSpeedCharm.CHARM_ID, new HappyGhastSpeedCharm())
+            Map.entry(HappyGhastSpeedCharm.CHARM_ID, new HappyGhastSpeedCharm()),
+            Map.entry(WingsCharm.CHARM_ID, new WingsCharm()),
+            Map.entry(ThickSocksCharm.CHARM_ID, new ThickSocksCharm()),
+            Map.entry(ReapingGloveCharm.CHARM_ID, new ReapingGloveCharm()),
+            Map.entry(EnderianSoulCharm.CHARM_ID, new EnderianSoulCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

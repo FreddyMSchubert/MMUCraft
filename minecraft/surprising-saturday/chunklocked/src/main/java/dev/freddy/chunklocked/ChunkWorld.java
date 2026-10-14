@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -26,6 +27,7 @@ final class ChunkWorld {
         String item;
         int remaining;
         boolean unlocked;
+        boolean adminUnlocked;
         String colour;
 
         Cell(String dimension, int x, int z, int y, String item, int remaining, boolean unlocked) {
@@ -129,11 +131,15 @@ final class ChunkWorld {
     }
 
     Cell offer(ServerLevel level, int x, int z, int y) {
+        return offer(level, x, z, y, false);
+    }
+
+    Cell offer(ServerLevel level, int x, int z, int y, boolean anywhere) {
         String dimension = dimension(level);
         String key = key(dimension, x, z);
         Cell existing = cells.get(key);
         if (existing != null) return existing;
-        if (!hasOpenNeighbor(level, x, z)) return null;
+        if (!anywhere && !hasOpenNeighbor(level, x, z)) return null;
         int markerY = dimension.endsWith("overworld") ? 128 : 64;
         BlockPos center = new BlockPos(x * 16 + 8, markerY, z * 16 + 8);
         var biome = level.getBiome(center).unwrapKey().orElseThrow().identifier();
@@ -146,14 +152,26 @@ final class ChunkWorld {
             save();
             return cell;
         }
-        LootRoller.Offer roll = loot.roll(level, biome, center);
-        int step = dimension.endsWith("the_end") ? 32 : 16;
-        int multiplier = 1 + paid.getOrDefault(dimension, 0) / step;
-        int count = Math.multiplyExact(roll.count(), multiplier);
-        Cell cell = new Cell(dimension, x, z, y, roll.item().toString(), count, false);
+        Cell cell = new Cell(dimension, x, z, y, "minecraft:air", 0, false);
+        price(level, cell, biome, center);
         cells.put(key, cell);
         save();
         return cell;
+    }
+
+    void rerollPrice(ServerLevel level, Cell cell) {
+        int markerY = cell.dimension.endsWith("overworld") ? 128 : 64;
+        BlockPos center = new BlockPos(cell.x * 16 + 8, markerY, cell.z * 16 + 8);
+        price(level, cell, level.getBiome(center).unwrapKey().orElseThrow().identifier(), center);
+        save();
+    }
+
+    private void price(ServerLevel level, Cell cell, Identifier biome, BlockPos center) {
+        LootRoller.Offer roll = loot.roll(level, biome, center);
+        int step = cell.dimension.endsWith("the_end") ? 32 : 16;
+        int multiplier = 1 + paid.getOrDefault(cell.dimension, 0) / step;
+        cell.item = roll.item().toString();
+        cell.remaining = Math.multiplyExact(roll.count(), multiplier);
     }
 
     boolean hasOpenNeighbor(ServerLevel level, int x, int z) {
@@ -171,6 +189,18 @@ final class ChunkWorld {
         cell.unlocked = true;
         cell.remaining = 0;
         paid.merge(cell.dimension, 1, Integer::sum);
+        save();
+    }
+
+    void adminUnlock(Cell cell) {
+        cell.unlocked = true;
+        cell.adminUnlocked = true;
+        save();
+    }
+
+    void adminLock(Cell cell) {
+        cell.unlocked = false;
+        cell.adminUnlocked = false;
         save();
     }
 

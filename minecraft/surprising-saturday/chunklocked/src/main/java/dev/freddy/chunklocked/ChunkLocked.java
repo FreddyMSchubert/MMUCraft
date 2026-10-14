@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -15,6 +16,8 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -23,6 +26,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Interaction;
@@ -51,6 +55,18 @@ public final class ChunkLocked implements ModInitializer {
     public void onInitialize() {
         EventDiscordBridge.init();
         EventGoals.register();
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            dispatcher.register(Commands.literal("unlock")
+                    .requires(ChunkLocked::admin)
+                    .executes(context -> adminUnlock(context.getSource())));
+            dispatcher.register(Commands.literal("lock")
+                    .requires(ChunkLocked::admin)
+                    .executes(context -> adminLock(context.getSource())));
+            dispatcher.register(Commands.literal("rerollprice")
+                    .requires(source -> admin(source) && (source.getPlayer().isCreative()
+                            || source.getPlayer().isSpectator()))
+                    .executes(context -> rerollPrice(context.getSource())));
+        });
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             world = ChunkWorld.load(server);
             ServerLevel overworld = server.overworld();
@@ -78,8 +94,13 @@ public final class ChunkLocked implements ModInitializer {
             LAST_SAFE.remove(handler.getPlayer().getUUID());
             EventPresentation.playerLeft(handler.getPlayer());
         });
-        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) ->
-                EventPresentation.playerRespawned(newPlayer));
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+            LAST_SAFE.remove(newPlayer.getUUID());
+            if (world != null && !world.unlocked((ServerLevel) newPlayer.level(), newPlayer.blockPosition())) {
+                returnToOrigin(newPlayer);
+            }
+            EventPresentation.playerRespawned(newPlayer);
+        });
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) ->
                 world == null || !(level instanceof ServerLevel serverLevel) || world.unlocked(serverLevel, pos));
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
@@ -142,6 +163,93 @@ public final class ChunkLocked implements ModInitializer {
         return InteractionResult.FAIL;
     }
 
+    private static boolean admin(CommandSourceStack source) {
+        return source.getPlayer() != null && source.permissions().hasPermission(Permissions.COMMANDS_OWNER);
+    }
+
+    private static int adminUnlock(CommandSourceStack source) {
+        ServerPlayer player = source.getPlayer();
+        ServerLevel level = (ServerLevel) player.level();
+        BlockPos pos = player.blockPosition();
+        ChunkWorld.Cell cell = world.at(level, pos);
+        if (cell == null) {
+            cell = world.offer(level, Math.floorDiv(pos.getX(), 16), Math.floorDiv(pos.getZ(), 16),
+                    pos.getY(), true);
+        }
+        if (cell.unlocked) {
+            source.sendFailure(Component.literal("This chunk is already unlocked."));
+            return 0;
+        }
+        world.adminUnlock(cell);
+        revealNeighbors(source.getServer(), level, cell);
+        return 1;
+    }
+
+    private static int adminLock(CommandSourceStack source) {
+        ServerPlayer player = source.getPlayer();
+        ServerLevel level = (ServerLevel) player.level();
+        ChunkWorld.Cell cell = world.at(level, player.blockPosition());
+        if (cell == null || !cell.adminUnlocked) {
+            source.sendFailure(Component.literal("Only a chunk opened with /unlock can be locked."));
+            return 0;
+        }
+        world.adminLock(cell);
+        ChunkVisuals.remove(level, cell);
+        if (world.hasOpenNeighbor(level, cell.x, cell.z)) {
+            ChunkVisuals.ensure(source.getServer(), level, world, cell);
+        }
+        for (int[] offset : NEIGHBORS) {
+            ChunkWorld.Cell neighbor = world.get(level, cell.x + offset[0], cell.z + offset[1]);
+            if (neighbor == null || neighbor.unlocked) continue;
+            if (world.hasOpenNeighbor(level, neighbor.x, neighbor.z)) {
+                ChunkVisuals.update(source.getServer(), level, world, neighbor);
+            } else {
+                ChunkVisuals.remove(level, neighbor);
+            }
+        }
+        return 1;
+    }
+
+    private static int rerollPrice(CommandSourceStack source) {
+        ServerPlayer player = source.getPlayer();
+        ServerLevel level = (ServerLevel) player.level();
+        ChunkWorld.Cell cell = world.at(level, player.blockPosition());
+        if (cell == null || cell.unlocked) {
+            source.sendFailure(Component.literal("This chunk has no locked price to reroll."));
+            return 0;
+        }
+        if (EventGoals.hasContributors(cell)) {
+            source.sendFailure(Component.literal("Players have already paid toward this chunk."));
+            return 0;
+        }
+        world.rerollPrice(level, cell);
+        ChunkVisuals.remove(level, cell);
+        if (world.hasOpenNeighbor(level, cell.x, cell.z)) {
+            ChunkVisuals.ensure(source.getServer(), level, world, cell);
+        }
+        player.sendSystemMessage(Component.literal("New price: " + cell.remaining + " ")
+                .append(new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(cell.item)))
+                        .getHoverName()), true);
+        return 1;
+    }
+
+    private static void returnToOrigin(ServerPlayer player) {
+        ServerLevel overworld = player.level().getServer().overworld();
+        Vec3 destination = Vec3.atBottomCenterOf(world.origin(overworld));
+        player.teleportTo(overworld, destination.x, destination.y, destination.z,
+                Set.of(), player.getYRot(), player.getXRot(), true);
+    }
+
+    private static void revealNeighbors(MinecraftServer server, ServerLevel level, ChunkWorld.Cell cell) {
+        ChunkVisuals.remove(level, cell);
+        for (int[] offset : NEIGHBORS) {
+            ChunkWorld.Cell neighbor = world.offer(level, cell.x + offset[0], cell.z + offset[1], cell.y);
+            if (neighbor != null && !neighbor.unlocked) {
+                ChunkVisuals.ensure(server, level, world, neighbor);
+            }
+        }
+    }
+
     private static void tick(MinecraftServer server) {
         if (world == null) return;
         if (server.getTickCount() % (20 * 60) == 0) {
@@ -154,21 +262,27 @@ public final class ChunkLocked implements ModInitializer {
         boolean scanItems = server.getTickCount() % 2 == 0;
         Set<String> scanned = new java.util.HashSet<>();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (player.isSpectator()) continue;
+            if (player.isCreative() || player.isSpectator()) {
+                LAST_SAFE.remove(player.getUUID());
+                continue;
+            }
             ServerLevel level = (ServerLevel) player.level();
             String dimension = ChunkWorld.dimension(level);
             BlockPos pos = player.blockPosition();
             Safe safe = LAST_SAFE.get(player.getUUID());
             ChunkWorld.Cell current = world.at(level, pos);
-            if (current == null && (safe == null || !safe.dimension.equals(dimension))) {
+            if (current == null && safe != null && !safe.dimension.equals(dimension)) {
                 world.start(level, pos); // Portal arrivals open their containing chunk, like the source pack.
                 current = world.at(level, pos);
             }
             if (current == null || !current.unlocked) {
-                Vec3 destination = safe != null && safe.dimension.equals(dimension)
-                        ? safe.position : Vec3.atBottomCenterOf(world.origin(level));
-                player.teleportTo(level, destination.x, destination.y, destination.z,
-                        Set.of(), player.getYRot(), player.getXRot(), true);
+                if (safe != null && safe.dimension.equals(dimension)
+                        && world.unlocked(level, BlockPos.containing(safe.position))) {
+                    player.teleportTo(level, safe.position.x, safe.position.y, safe.position.z,
+                            Set.of(), player.getYRot(), player.getXRot(), true);
+                } else {
+                    returnToOrigin(player);
+                }
                 player.setDeltaMovement(Vec3.ZERO);
                 continue;
             }
@@ -226,14 +340,7 @@ public final class ChunkLocked implements ModInitializer {
             if (cell.remaining == 0) {
                 world.unlock(cell);
                 Set<UUID> credited = EventGoals.unlocked(cell);
-                ChunkVisuals.remove(level, cell);
-                for (int[] offset : NEIGHBORS) {
-                    ChunkWorld.Cell neighbor = world.offer(level, cell.x + offset[0],
-                            cell.z + offset[1], cell.y);
-                    if (neighbor != null && !neighbor.unlocked) {
-                        ChunkVisuals.ensure(server, level, world, neighbor);
-                    }
-                }
+                revealNeighbors(server, level, cell);
                 command(server, "scoreboard players set #global ChunklockTotalUnlockedChunks " + world.totalPaid());
                 for (UUID playerId : credited) {
                     ServerPlayer contributor = server.getPlayerList().getPlayer(playerId);

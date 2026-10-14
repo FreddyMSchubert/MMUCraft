@@ -153,6 +153,11 @@ final class EventGoals {
                 .add(player.getUUID().toString())) saveProgress();
     }
 
+    static boolean hasContributors(ChunkWorld.Cell cell) {
+        return progress != null && !progress.contributors
+                .getOrDefault(ChunkWorld.key(cell.dimension, cell.x, cell.z), Set.of()).isEmpty();
+    }
+
     static Set<UUID> unlocked(ChunkWorld.Cell cell) {
         if (progress == null) return Set.of();
         Set<String> contributors = progress.contributors.remove(ChunkWorld.key(cell.dimension, cell.x, cell.z));

@@ -30,10 +30,13 @@ public record FishItemFeature(
     @Override
     public void apply(ItemStack stack) {
         List<Component> lines = new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
+        String location = dimension.equals("nether") ? " in the Nether" : "";
+        String conditions = spawnTags.isEmpty()
+                ? (location.isEmpty() ? " anywhere and at any time" : "")
+                : " " + FishSpawnTag.conditionSentence(spawnTags);
         lines.add(Component.literal(personality.rarity().displayName())
                 .withColor(personality.rarity().colorRgb())
-                .append(Component.literal(" fish catchable in the " + (dimension.equals("nether") ? "Nether" : "Overworld")
-                        + (spawnTags.isEmpty() ? "" : " " + FishSpawnTag.conditionSentence(spawnTags)) + ".")
+                .append(Component.literal(" fish catchable" + location + conditions + ".")
                         .withStyle(ChatFormatting.GRAY)));
         stack.set(DataComponents.LORE, new ItemLore(lines));
     }

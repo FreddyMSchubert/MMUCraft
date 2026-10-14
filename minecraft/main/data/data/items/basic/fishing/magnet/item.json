@@ -4,5 +4,5 @@
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 16,
-	"tooltips": ["50% items in the Overworld; 50% fish in Nether lava.", "20 casts"]
+	"tooltips": ["50% items in water.", "20 casts"]
 }

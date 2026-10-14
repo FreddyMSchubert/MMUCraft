@@ -72,14 +72,18 @@ export function positionTooltip(event: React.SyntheticEvent<HTMLElement>) {
 
 export function tagLines(tags: string[]) {
 	return GROUPS.flatMap((group) => {
-		const emojis = tags.flatMap((tag) => (TAGS[tag].group === group ? [TAGS[tag].emoji] : []));
+		const emojis = tags.flatMap((tag) =>
+			tag !== 'overworld' && TAGS[tag].group === group ? [TAGS[tag].emoji] : [],
+		);
 		return emojis.length ? [emojis.join('/')] : [];
 	});
 }
 
 export function conditionSentence(tags: string[]) {
 	const clauses = GROUPS.flatMap((group) => {
-		const matches = tags.flatMap((tag) => (TAGS[tag].group === group ? [TAGS[tag]] : []));
+		const matches = tags.flatMap((tag) =>
+			tag !== 'overworld' && TAGS[tag].group === group ? [TAGS[tag]] : [],
+		);
 		if (!matches.length) return [];
 		const prefix =
 			group === 'dimension' || group === 'climate' || group === 'water' || group === 'height'

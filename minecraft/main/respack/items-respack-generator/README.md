@@ -55,7 +55,7 @@ Item definitions may include gameplay metadata such as `shopPurchasable`. The ge
 validates that known metadata shape and uses `shopPurchasable.unlockWeight` for the
 post-generation cosmetic weight report, but does not write it into resource-pack assets.
 
-Item-producing recipes belong in `craftable.recipes` in the resulting item's `item.json`.
+Most item recipes use `craftable.recipes` in the resulting item's `item.json`.
 Each recipe has an `id` (its path under the `mainmod:recipe` namespace) and the usual
 recipe fields. The recipe types and their required fields are defined in
 `data/validation/schemas/item/components/craftable.schema.json`. For example:
@@ -80,8 +80,10 @@ IDs against `data/drops.json`. Item drop labels are inferred from the earliest d
 toggle among `shopPurchasable`, `decoBlock`, and `craftable.recipes`; there is no root
 `drop` field. The generator writes these recipes into the ignored
 `mod/src/main/resources/data/mainmod/recipe/dont_edit_auto_generated` directory.
-Edit `item.json`, not the generated recipe. Recipes that do not produce an item defined
-by `item.json` remain directly in the mod recipe directory.
+Edit `item.json`, not the generated recipe. You can also keep a recipe directly in
+`mod/src/main/resources/data/mainmod/recipe`. The Blazing Fishing Rod uses this
+location so its Nether gate is easy to find. A direct recipe does not set the
+item's drop label.
 
 Other copied item, daily, and hopper data lives in the ignored
 `mod/src/main/resources/data/mainmod/dont_edit_auto_generated` directory and is staged

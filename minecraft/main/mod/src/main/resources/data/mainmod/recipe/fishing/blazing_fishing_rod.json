@@ -1,0 +1,13 @@
+{
+	"type": "mainmod:fake_crafting_shaped",
+	"gameplayToggle": "nether",
+	"pattern": ["  B", " BS", "B S"],
+	"key": {
+		"B": "minecraft:breeze_rod",
+		"S": "minecraft:string"
+	},
+	"result": {
+		"stack": "mainmod:blazing-fishing-rod",
+		"count": 1
+	}
+}

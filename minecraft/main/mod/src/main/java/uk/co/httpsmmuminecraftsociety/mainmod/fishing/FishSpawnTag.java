@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 public enum FishSpawnTag {
-    WARM("warm", Group.CLIMATE, "hot Overworld biomes"),
-    COLD("cold", Group.CLIMATE, "cold Overworld biomes"),
+    WARM("warm", Group.CLIMATE, "hot biomes"),
+    COLD("cold", Group.CLIMATE, "cold biomes"),
     RIVER("river", Group.WATER, "rivers"),
     OCEAN("ocean", Group.WATER, "oceans"),
     DAY("day", Group.TIME, "daytime"),

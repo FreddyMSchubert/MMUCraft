@@ -4,7 +4,7 @@
 	"modelType": "basic",
 	"rarity": "rare",
 	"maxStackSize": 16,
-	"tooltips": ["Only fish in the Overworld; only items in Nether lava.", "30 casts"],
+	"tooltips": ["Only fish in water.", "30 casts"],
 	"craftable": {
 		"recipes": [
 			{

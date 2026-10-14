@@ -46,6 +46,7 @@ export interface CompendiumFish {
 }
 
 export interface CompendiumResponse {
+	netherOpen: boolean;
 	currentUserId: number;
 	selectedUserId: number;
 	players: PlayerOption[];
@@ -72,8 +73,8 @@ export const TAGS: Record<
 > = {
 	overworld: { emoji: '🌍', label: 'Overworld', group: 'dimension', phrase: 'the Overworld' },
 	nether: { emoji: '🔥', label: 'Nether', group: 'dimension', phrase: 'the Nether' },
-	warm: { emoji: '🔥', label: 'Warm', group: 'climate', phrase: 'hot Overworld biomes' },
-	cold: { emoji: '❄️', label: 'Cold', group: 'climate', phrase: 'cold Overworld biomes' },
+	warm: { emoji: '🔥', label: 'Warm', group: 'climate', phrase: 'hot biomes' },
+	cold: { emoji: '❄️', label: 'Cold', group: 'climate', phrase: 'cold biomes' },
 	river: { emoji: '🌉', label: 'River', group: 'water', phrase: 'rivers' },
 	ocean: { emoji: '🏖️', label: 'Ocean', group: 'water', phrase: 'oceans' },
 	day: { emoji: '☀️', label: 'Day', group: 'time', phrase: 'daytime' },

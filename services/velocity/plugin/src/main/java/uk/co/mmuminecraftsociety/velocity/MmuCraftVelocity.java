@@ -64,6 +64,7 @@ public final class MmuCraftVelocity {
     private final Map<UUID, String> sessionIds = new ConcurrentHashMap<>();
     private final Map<UUID, String> loginDestinations = new ConcurrentHashMap<>();
     private final Set<Long> acknowledgedCommands = ConcurrentHashMap.newKeySet();
+    private final Set<Long> connectingCommands = ConcurrentHashMap.newKeySet();
     private final Map<UUID, CapacityRole> capacityRoles = new ConcurrentHashMap<>();
     private final Map<UUID, Long> joinedAt = new ConcurrentHashMap<>();
     private final Set<UUID> admissions = ConcurrentHashMap.newKeySet();
@@ -781,6 +782,7 @@ public final class MmuCraftVelocity {
             acknowledgedCommands.add(command.id());
             return;
         }
+        if (connectingCommands.contains(command.id())) return;
         if (waiting.containsKey(uuid)) {
             if (command.temporary()) temporaryDestinations.put(uuid, command.targetServerName());
             else temporaryDestinations.remove(uuid);
@@ -812,14 +814,18 @@ public final class MmuCraftVelocity {
             return;
         }
 
-        targetPlayer.createConnectionRequest(target).connect().thenAccept(result -> {
-            if (result.isSuccessful()) {
+        if (!connectingCommands.add(command.id())) return;
+        targetPlayer.createConnectionRequest(target).connect().whenComplete((result, error) -> {
+            if (error == null && result != null && result.isSuccessful()) {
                 acknowledgedCommands.add(command.id());
             } else {
+                logger.warn("Move of {} to {} failed: {}", targetPlayer.getUsername(),
+                        command.targetServerName(), error == null ? result : error.toString());
                 manualDestinations.remove(uuid, command.targetServerName());
                 temporaryDestinations.remove(uuid, command.targetServerName());
                 restoreCurrentAdmission(targetPlayer);
             }
+            connectingCommands.remove(command.id());
         });
     }
 

@@ -150,6 +150,7 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 			<CompendiumGuide
 				rarityFilters={rarityFilters}
 				tagFilters={tagFilters}
+				netherOpen={data.netherOpen}
 				onToggleRarity={(rarity) => {
 					setRarityFilters((current) => toggled(current, rarity));
 				}}

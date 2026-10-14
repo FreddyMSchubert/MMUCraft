@@ -54,7 +54,7 @@ export function FishCard({
 	const rarity = rarityInfo(fish.rarity);
 	return (
 		<article
-			className={`fishCard rarity-${fish.rarity} ${caught ? 'caught' : 'unknown'}`}
+			className={`fishCard rarity-${fish.rarity} ${fish.tags.includes('nether') ? 'nether' : 'overworld'} ${caught ? 'caught' : 'unknown'}`}
 			style={{ '--fish-rarity': rarity.color } as React.CSSProperties}
 			tabIndex={0}
 			onPointerEnter={positionTooltip}
@@ -163,12 +163,14 @@ export function CompendiumStats({
 export function CompendiumGuide({
 	rarityFilters,
 	tagFilters,
+	netherOpen,
 	onToggleRarity,
 	onToggleTag,
 	onReset,
 }: {
 	rarityFilters: Set<Rarity>;
 	tagFilters: Set<string>;
+	netherOpen: boolean;
 	onToggleRarity: (rarity: Rarity) => void;
 	onToggleTag: (tag: string) => void;
 	onReset: () => void;
@@ -201,7 +203,7 @@ export function CompendiumGuide({
 						</button>
 					))}
 				</FilterGroup>
-				{GROUPS.map((group) => (
+				{GROUPS.filter((group) => netherOpen || group !== 'dimension').map((group) => (
 					<FilterGroup key={group} label={GROUP_LABELS[group]}>
 						{Object.entries(TAGS)
 							.filter(([, info]) => info.group === group)

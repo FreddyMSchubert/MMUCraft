@@ -13,6 +13,7 @@ import {
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
+import { FeatureTogglesService } from '../toggles/feature-toggles.service';
 import { FishCatalogService } from './fish-catalog.service';
 
 interface RecordCatchInput {
@@ -32,10 +33,12 @@ export class FishingService {
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
 		private readonly fishCatalog: FishCatalogService,
+		private readonly featureToggles: FeatureTogglesService,
 	) {}
 
 	recordCatch(input: RecordCatchInput) {
-		const definition = this.fishCatalog.definitions().find((fish) => fish.id === input.fishId);
+		const visibleFish = this.visibleFish(this.featureToggles.enabledKeys().has('nether'));
+		const definition = visibleFish.find((fish) => fish.id === input.fishId);
 		const user = this.identities.resolveAndRefresh(
 			input.minecraftUuid,
 			input.minecraftUsername,
@@ -124,9 +127,7 @@ export class FishingService {
 		const announce =
 			firstServerCatchAnnouncement || ['legendary', 'mythical'].includes(definition.rarity);
 		const counts = this.getCatchCounts(user.id);
-		const rarityTotal = this.fishCatalog
-			.definitions()
-			.filter((fish) => fish.rarity === definition.rarity).length;
+		const rarityTotal = visibleFish.filter((fish) => fish.rarity === definition.rarity).length;
 		const masteryAdvancementPaths = ['fishing/first_catch', `fishing/${definition.rarity}`];
 		if (result.serverSizeRecord) masteryAdvancementPaths.push('fishing/server_largest_record');
 		if (result.serverSmallestRecord)
@@ -134,7 +135,7 @@ export class FishingService {
 		if ((counts[definition.rarity] ?? 0) >= rarityTotal) {
 			masteryAdvancementPaths.push(`fishing/all_${definition.rarity}`);
 		}
-		if ((counts.total ?? 0) >= this.fishCatalog.definitions().length) {
+		if ((counts.total ?? 0) >= visibleFish.length) {
 			masteryAdvancementPaths.push('fishing/full_compendium');
 		}
 
@@ -170,6 +171,9 @@ export class FishingService {
 	}
 
 	getCompendium(viewer: AuthenticatedUser, userIdInput?: string) {
+		const netherOpen = this.featureToggles.enabledKeys().has('nether');
+		const visibleFish = this.visibleFish(netherOpen);
+		const visibleIds = new Set(visibleFish.map((fish) => fish.id));
 		const requestedUserId = Number(userIdInput ?? viewer.id);
 		const selectedUserId =
 			Number.isInteger(requestedUserId) && requestedUserId > 0 ? requestedUserId : viewer.id;
@@ -199,6 +203,7 @@ export class FishingService {
 		const catchesByFishId = new Map<string, FishCatchRow[]>();
 		const playersById = new Map(playerRows.map((player) => [player.id, player]));
 		for (const fishCatch of allCatches) {
+			if (!visibleIds.has(fishCatch.fish_id)) continue;
 			if (fishCatch.user_id === selectedUserId) {
 				selectedCatches.set(fishCatch.fish_id, fishCatch);
 			}
@@ -213,6 +218,7 @@ export class FishingService {
 		}
 
 		return {
+			netherOpen,
 			currentUserId: viewer.id,
 			selectedUserId,
 			players: playerRows.map((player) => {
@@ -234,7 +240,7 @@ export class FishingService {
 					),
 				};
 			}),
-			fish: this.fishCatalog.definitions().map((definition) => {
+			fish: visibleFish.map((definition) => {
 				const serverRows = catchesByFishId.get(definition.id) ?? [];
 				return {
 					id: definition.id,
@@ -268,7 +274,10 @@ export class FishingService {
 
 	getCatchCountsForUsers(userIds: number[]) {
 		const rarityByFish = new Map(
-			this.fishCatalog.definitions().map((fish) => [fish.id, fish.rarity]),
+			this.visibleFish(this.featureToggles.enabledKeys().has('nether')).map((fish) => [
+				fish.id,
+				fish.rarity,
+			]),
 		);
 		const countsByUserId = new Map(userIds.map((userId) => [userId, emptyCatchCounts()]));
 		if (userIds.length === 0) return countsByUserId;
@@ -299,6 +308,12 @@ export class FishingService {
 
 	getTextureFilePath(fishId: string) {
 		return this.fishCatalog.textureFilePath(fishId);
+	}
+
+	private visibleFish(netherOpen: boolean) {
+		return this.fishCatalog
+			.definitions()
+			.filter((fish) => netherOpen || !fish.tags.includes('nether'));
 	}
 
 	private unrecorded(accountLinked: boolean, message: string) {

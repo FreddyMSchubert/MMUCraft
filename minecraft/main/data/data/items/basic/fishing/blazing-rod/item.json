@@ -6,22 +6,5 @@
 	"maxStackSize": 1,
 	"fireproof": true,
 	"baseItemOverride": "minecraft:fishing_rod",
-	"tooltips": ["Fish in Nether lava without burning."],
-	"craftable": {
-		"recipes": [
-			{
-				"id": "fishing/blazing_fishing_rod",
-				"type": "mainmod:fake_crafting_shaped",
-				"pattern": ["  B", " BS", "B S"],
-				"key": {
-					"B": "minecraft:breeze_rod",
-					"S": "minecraft:string"
-				},
-				"result": {
-					"stack": "mainmod:blazing-fishing-rod",
-					"count": 1
-				}
-			}
-		]
-	}
+	"tooltips": ["Fish in Nether lava without burning."]
 }

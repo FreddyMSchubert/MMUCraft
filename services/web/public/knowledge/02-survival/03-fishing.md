@@ -15,7 +15,9 @@ tips:
 
 :::tldr
 - Cast into water. Wait for the **BIG** splash, then quickly right-click once to reel it in.
+:::drop nether
 - In the Nether, craft a Blazing Fishing Rod with Breeze Rods in place of sticks. Cast it into lava.
+:::end-drop
 - Some fish only spawn in specific conditions. Check the [fishing tab](/play/fishing) for a full fish compendium & conditions overview.
 - To get better catches, increase your luck level (Lucky charm, Luck of the Sea, Luck potion via Sniffers, ...)
 - Brush suspicious sand & gravel around fishing sites for worms & item magnets which make fish & item catches more likely when held in offhand.
@@ -39,25 +41,39 @@ Not every fish can be caught in every scenario. Some fish may only be catchable 
 
 The full overview of every fish catchable and caught is the [fishing compendium](/play/fishing). It also explains the conditions required to catch each individual fish.
 
+:::drop nether
 ## Fishing in the Nether
 
 Craft a Blazing Fishing Rod with three Breeze Rods and two strings. Use the same pattern as a normal fishing rod. Cast it into Nether lava. The fish shadow appears above the lava. Wait for the bite, then reel in the catch.
 
 The Blazing Fishing Rod does not burn in lava. A normal fishing rod cannot catch fish in lava. Its bobber burns the rod over time and sets you on fire.
 
-Nether lava has its own fish and items. The compendium shows which dimension has each fish. The six Nether fish have temporary names and textures until their art is ready.
+Nether lava has its own fish and items. The compendium shows which fish live there.
+:::end-drop
 
 ## How to catch what your looking for
 
 Each cast rolls either a **fish** or an **item**. There are modifiers that can change the fish/item chances in the following ways, when held in your offhand while casting:
 
-| Offhand item | Overworld water | Nether lava |
-| :-- | :-- | :-- |
-| Nothing | 65% fish, 35% item | 35% fish, 65% item |
-| Worm | 85% fish, 15% item | 15% fish, 85% item |
-| Golden Worm | 100% fish | 100% item |
-| Item Magnet | 50% fish, 50% item | 50% fish, 50% item |
-| Golden Item Magnet | 30% fish, 70% item | 70% fish, 30% item |
+| Offhand item | Water |
+| :-- | :-- |
+| Nothing | 65% fish, 35% item |
+| Worm | 85% fish, 15% item |
+| Golden Worm | 100% fish |
+| Item Magnet | 50% fish, 50% item |
+| Golden Item Magnet | 30% fish, 70% item |
+
+:::drop nether
+In Nether lava, the chances are:
+
+| Offhand item | Lava |
+| :-- | :-- |
+| Nothing | 35% fish, 65% item |
+| Worm | 15% fish, 85% item |
+| Golden Worm | 100% item |
+| Item Magnet | 50% fish, 50% item |
+| Golden Item Magnet | 70% fish, 30% item |
+:::end-drop
 
 ![Fishing Worms Example](/assets/knowledge/survival/fishing/worms_example.png)
 

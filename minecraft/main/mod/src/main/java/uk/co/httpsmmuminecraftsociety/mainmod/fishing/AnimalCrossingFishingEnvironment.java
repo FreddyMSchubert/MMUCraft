@@ -7,6 +7,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.phys.AABB;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 public final class AnimalCrossingFishingEnvironment {
     private static final double SCURRY_TRIGGER_DISTANCE = 1.15D;
@@ -16,7 +17,8 @@ public final class AnimalCrossingFishingEnvironment {
     public static boolean isFishable(ServerLevel level, FishingHook hook, boolean blazing) {
         var fluid = level.getFluidState(hook.blockPosition());
         return level.dimension() == Level.OVERWORLD && fluid.is(FluidTags.WATER)
-                || level.dimension() == Level.NETHER && blazing && fluid.is(FluidTags.LAVA);
+                || level.dimension() == Level.NETHER && FeatureToggles.isEnabled(FeatureToggles.NETHER)
+                && blazing && fluid.is(FluidTags.LAVA);
     }
 
     public static int weatherWaitSpeed(ServerLevel level, BlockPos bobberBlockPos, FishingHook hook) {

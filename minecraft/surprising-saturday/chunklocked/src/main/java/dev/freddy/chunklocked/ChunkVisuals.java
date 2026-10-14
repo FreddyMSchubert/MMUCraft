@@ -11,8 +11,13 @@ import net.minecraft.world.entity.Interaction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
-/** Original Chunklock glass colours and floating item/count presentation. */
+/** Locked chunk walls and floating item/count presentation. */
 final class ChunkVisuals {
+    private static final String[] BORDER_COLOURS = {
+            "white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray",
+            "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"
+    };
+
     private ChunkVisuals() { }
 
     static void ensure(MinecraftServer server, ServerLevel level, ChunkWorld world,
@@ -21,7 +26,7 @@ final class ChunkVisuals {
         AABB box = box(cell);
         if (level.getEntitiesOfClass(Display.BlockDisplay.class, box,
                 entity -> entity.entityTags().contains(cell.tag())).isEmpty()) {
-            glass(server, level, cell);
+            walls(server, level, cell);
         }
         if (level.getEntitiesOfClass(Interaction.class, box,
                 entity -> entity.entityTags().contains(cell.tag())).isEmpty()) {
@@ -74,7 +79,7 @@ final class ChunkVisuals {
     static void recolour(MinecraftServer server, ServerLevel level, ChunkWorld.Cell cell) {
         for (Entity entity : level.getEntitiesOfClass(Display.BlockDisplay.class, box(cell),
                 candidate -> candidate.entityTags().contains(cell.tag()))) entity.discard();
-        glass(server, level, cell);
+        walls(server, level, cell);
     }
 
     private static AABB box(ChunkWorld.Cell cell) {
@@ -82,23 +87,26 @@ final class ChunkVisuals {
                 cell.x * 16 + 17, 400, cell.z * 16 + 17);
     }
 
-    private static void glass(MinecraftServer server, ServerLevel level, ChunkWorld.Cell cell) {
+    private static void walls(MinecraftServer server, ServerLevel level, ChunkWorld.Cell cell) {
         String colour = cell.colour == null ? "light_blue" : cell.colour;
-        int[] yPositions = cell.dimension.endsWith("the_nether") ? new int[] {16, 48, 80, 112}
-                : cell.dimension.endsWith("the_end") ? new int[] {64, 192}
-                : new int[] {0, 64, 128, 256};
-        int height = cell.dimension.endsWith("the_nether") ? 32
-                : cell.dimension.endsWith("the_end") ? 128 : 64;
-        for (int y : yPositions) {
-            int h = cell.dimension.endsWith("overworld") && y >= 128 ? 128 : height;
-            double x = cell.x * 16 + 8;
-            double z = cell.z * 16 + 8;
+        int index = java.util.Arrays.asList(BORDER_COLOURS).indexOf(colour);
+        if (index < 0) index = 3;
+        String block = index < 12 ? "command_block" : "chain_command_block";
+        int state = index % 12;
+        String facing = new String[] {"north", "east", "south", "west", "up", "down"}[state % 6];
+        String conditional = state >= 6 ? "true" : "false";
+        int bottom = cell.dimension.endsWith("overworld") ? -64 : 0;
+        int top = cell.dimension.endsWith("the_nether") ? 128
+                : cell.dimension.endsWith("the_end") ? 256 : 320;
+        double x = cell.x * 16 + 8;
+        double z = cell.z * 16 + 8;
+        for (int y = bottom; y < top; y += 32) {
             command(server, level, "summon minecraft:block_display " + x + " " + y + " " + z
-                    + " {Tags:[\"chunklocked\",\"" + cell.tag() + "\",\"cl_glass\"],view_range:255f,"
-                    + "brightness:{sky:10,block:10},block_state:{id:\"minecraft:" + colour + "_stained_glass\"},"
-                    + "transformation:{translation:[-8.0005f,"
-                    + (cell.dimension.endsWith("the_nether") ? "-16.0005f" : "-64.0005f") + ",-8.0005f],"
-                    + "scale:[16.001f," + (h + 0.001) + "f,16.001f],"
+                    + " {Tags:[\"chunklocked\",\"" + cell.tag() + "\",\"cl_border\"],view_range:255f,"
+                    + "brightness:{sky:15,block:15},block_state:{id:\"minecraft:" + block
+                    + "\",properties:{facing:\"" + facing + "\",conditional:\"" + conditional + "\"}},"
+                    + "transformation:{translation:[-8.0005f,-0.0005f,-8.0005f],"
+                    + "scale:[16.001f,32.001f,16.001f],"
                     + "left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f]}}");
         }
     }

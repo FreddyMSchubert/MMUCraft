@@ -270,6 +270,7 @@ services:
             FABRIC_PROXY_SECRET: ${VELOCITY_FORWARDING_SECRET:-dev-velocity-forwarding-secret}
             SURPRISING_SATURDAY_API_URL: http://api:8080
             SURPRISING_SATURDAY_API_SECRET: ${VELOCITY_API_SECRET:-dev-velocity-api-secret}
+            CHUNKLOCKED_RESOURCE_PACK_URL: ${PUBLIC_URL:-http://localhost:3000}/packs/chunklocked.zip
             DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
             DISCORD_EVENT_CHANNEL_ID: ${DISCORD_EVENT_CHANNEL_ID:-}
             DISCORD_EVENT_WEBHOOK_URL: ${DISCORD_EVENT_WEBHOOK_URL:-}

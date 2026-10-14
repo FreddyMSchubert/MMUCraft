@@ -20,5 +20,22 @@
 		"unlockMessage": "Unlocked cosmetic: Cheese Hat.",
 		"tags": ["cheddar", "dairy"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/cheese",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "nether",
+				"ingredients": [
+					"minecraft:milk_bucket",
+					"minecraft:fire_charge"
+				],
+				"result": {
+					"stack": "mainmod:cosmetic-cheese",
+					"count": 1
+				}
+			}			
+		]
+	}
 }

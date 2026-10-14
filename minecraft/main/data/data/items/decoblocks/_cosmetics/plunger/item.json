@@ -23,5 +23,23 @@
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#ff0000"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/plunger",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": [" S ", " S ", " C "],
+				"key": {
+					"S": "minecraft:stick",
+					"C": "minecraft:red_concrete"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-plunger",
+					"count": 1
+				}
+			}
+		]
 	}
 }

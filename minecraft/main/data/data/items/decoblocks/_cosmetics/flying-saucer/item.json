@@ -31,5 +31,24 @@
 				"maxTicks": 80
 			}
 		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/ufo",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": [" N ", "NPN", " B "],
+				"key": {
+					"B": "minecraft:spore_blossom",
+					"N": "minecraft:iron_nugget",
+					"P": "minecraft:ender_pearl"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-ufo",
+					"count": 1
+				}
+			}
+		]
 	}
 }

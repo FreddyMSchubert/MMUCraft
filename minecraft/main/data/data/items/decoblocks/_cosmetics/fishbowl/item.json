@@ -38,5 +38,23 @@
 				"maxTicks": 160
 			}
 		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/fishbowl",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": ["PPP", "PFP", "PPP"],
+				"key": {
+					"F": "#mainmod:fishes",
+					"P": "minecraft:glass_pane"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-fishbowl",
+					"count": 1
+				}
+			}
+		]
 	}
 }

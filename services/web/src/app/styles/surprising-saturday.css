@@ -434,6 +434,11 @@
 	color: #fff;
 }
 
+.eventForm .authError {
+	grid-column: 1 / -1;
+	margin: 0;
+}
+
 .eventTargetEditor {
 	display: grid;
 	grid-column: 1 / -1;

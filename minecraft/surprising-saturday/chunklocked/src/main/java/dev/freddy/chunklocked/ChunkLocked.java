@@ -9,6 +9,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -16,6 +17,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -47,6 +49,7 @@ public final class ChunkLocked implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        EventDiscordBridge.init();
         EventGoals.register();
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             world = ChunkWorld.load(server);
@@ -65,7 +68,14 @@ public final class ChunkLocked implements ModInitializer {
             world = null;
         });
         ServerTickEvents.END_SERVER_TICK.register(ChunkLocked::tick);
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> LAST_SAFE.remove(handler.getPlayer().getUUID()));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
+                EventPresentation.playerJoined(handler.getPlayer()));
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            LAST_SAFE.remove(handler.getPlayer().getUUID());
+            EventPresentation.playerLeft(handler.getPlayer());
+        });
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) ->
+                EventPresentation.playerRespawned(newPlayer));
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) ->
                 world == null || !(level instanceof ServerLevel serverLevel) || world.unlocked(serverLevel, pos));
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
@@ -130,6 +140,12 @@ public final class ChunkLocked implements ModInitializer {
 
     private static void tick(MinecraftServer server) {
         if (world == null) return;
+        if (server.getTickCount() % (20 * 60) == 0) {
+            server.getPlayerList().getPlayers().forEach(EventPresentation::refresh);
+        }
+        if (server.getTickCount() % 20 == 0) {
+            server.getPlayerList().getPlayers().forEach(EventPresentation::updateBelowName);
+        }
         boolean refreshVisuals = server.getTickCount() % 20 == 0;
         boolean scanItems = server.getTickCount() % 2 == 0;
         Set<String> scanned = new java.util.HashSet<>();
@@ -232,18 +248,21 @@ public final class ChunkLocked implements ModInitializer {
                 }
                 String unlockMessage = " unlocked " + biomeName + " chunk #" + world.totalPaid() + "!";
                 for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                    String message = (player == payer ? "You" : payer.getName().getString()) + unlockMessage;
+                    MutableComponent message = player == payer
+                            ? Component.literal("You" + unlockMessage)
+                            : EventPresentation.coloredName(payer).copy().append(Component.literal(unlockMessage));
                     if (player.level() == level) {
                         double dx = cell.x * 16 + 8 - player.getX();
                         double dz = cell.z * 16 + 8 - player.getZ();
                         String[] directions = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
                         int direction = Math.floorMod((int) Math.round(Math.atan2(dx, -dz)
                                 / (Math.PI / 4)), directions.length);
-                        message += " (" + Math.round(Math.hypot(dx, dz)) + "m "
-                                + directions[direction] + " of you).";
+                        message.append(Component.literal(" (" + Math.round(Math.hypot(dx, dz)) + "m "
+                                + directions[direction] + " of you)."));
                     }
-                    player.sendSystemMessage(Component.literal(message));
+                    player.sendSystemMessage(message);
                 }
+                EventDiscordBridge.publishUnlock(payer, biomeName, world.totalPaid());
                 break;
             }
             world.save();

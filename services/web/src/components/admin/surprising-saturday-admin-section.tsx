@@ -145,6 +145,19 @@ export function SurprisingSaturdayAdminSection() {
 				return;
 		}
 		const creating = editingId === null;
+		if (items.length === 0) {
+			setError('Add at least one completion target.');
+			return;
+		}
+		const invalidTarget = items.findIndex(({ id }) => !id.trim() || id.length > 120);
+		if (invalidTarget !== -1) {
+			setError(`Target ${invalidTarget + 1} needs an ID of up to 120 characters.`);
+			return;
+		}
+		if (new Set(items.map(({ id }) => id.trim())).size !== items.length) {
+			setError('Each completion target needs a unique ID.');
+			return;
+		}
 		setBusy(true);
 		try {
 			const response = await fetch(
@@ -477,14 +490,16 @@ export function SurprisingSaturdayAdminSection() {
 					</label>
 					<div className="eventTargetEditor">
 						<h4>Completion targets</h4>
+						<p>Give each goal a unique ID, such as a or find_diamond.</p>
 						{items.map((item) => (
 							<div className="eventTargetRow" key={item.key}>
 								<label>
 									Goal ID
 									<input
 										value={item.id}
+										maxLength={120}
 										required
-										placeholder="minecraft:creeper"
+										placeholder="find_diamond"
 										onChange={(event) => {
 											updateTarget(item.key, { id: event.target.value });
 										}}
@@ -624,6 +639,11 @@ export function SurprisingSaturdayAdminSection() {
 					<button type="submit" disabled={busy}>
 						{editingId === null ? 'Create event' : 'Save changes'}
 					</button>
+					{error && (
+						<p className="authError" role="alert">
+							{error}
+						</p>
+					)}
 					{editingId !== null && (
 						<button type="button" onClick={clearForm}>
 							Cancel edit
@@ -655,7 +675,6 @@ export function SurprisingSaturdayAdminSection() {
 					))}
 				</div>
 			</section>
-			{error && <p className="authError">{error}</p>}
 		</div>
 	);
 }

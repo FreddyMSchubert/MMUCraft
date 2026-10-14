@@ -23,8 +23,11 @@ import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
 import { normalizeStatsJson } from '../players/player-statistics';
 
-const ITEM_ID = /^[a-z0-9_.-]+:[a-z0-9_./-]+$/;
 const TITLE_GRAPHEMES = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+
+function validGoalId(value: unknown): value is string {
+	return typeof value === 'string' && !!value.trim() && value.length <= 120;
+}
 
 interface CompletionTarget {
 	id: string;
@@ -103,8 +106,7 @@ function completionTargets(value: unknown): CompletionTarget[] | null {
 		const url = typeof item === 'string' ? '' : (input?.url ?? '');
 		const points = typeof item === 'string' ? 1 : input?.points;
 		if (
-			typeof id !== 'string' ||
-			!ITEM_ID.test(id) ||
+			!validGoalId(id) ||
 			typeof name !== 'string' ||
 			!name.trim() ||
 			name.length > 120 ||
@@ -122,7 +124,12 @@ function completionTargets(value: unknown): CompletionTarget[] | null {
 				return null;
 			}
 		}
-		targets.push({ id, name: name.trim(), url: url.trim(), points: points as number });
+		targets.push({
+			id: id.trim(),
+			name: name.trim(),
+			url: url.trim(),
+			points: points as number,
+		});
 	}
 	return new Set(targets.map((target) => target.id)).size === targets.length ? targets : null;
 }
@@ -138,8 +145,7 @@ function earningTargets(value: unknown): CompletionTarget[] | null {
 		if (!item || typeof item !== 'object') return null;
 		const { id, name, description, amount } = item as Record<string, unknown>;
 		if (
-			typeof id !== 'string' ||
-			!ITEM_ID.test(id) ||
+			!validGoalId(id) ||
 			typeof name !== 'string' ||
 			!name.trim() ||
 			name.length > 120 ||
@@ -151,7 +157,7 @@ function earningTargets(value: unknown): CompletionTarget[] | null {
 		)
 			return null;
 		targets.push({
-			id,
+			id: id.trim(),
 			name: name.trim(),
 			description: description?.trim() ?? '',
 			amount: amount as number,
@@ -197,10 +203,10 @@ function titleWordLengths(title: string) {
 function playerRole(user: UserRow | undefined) {
 	return user?.is_committee || user?.is_super_admin
 		? 'Committee'
-		: user?.responsible_user_id != null
-			? 'External'
-			: user?.is_member
-				? 'Member'
+		: user?.is_member
+			? 'Member'
+			: user?.responsible_user_id != null
+				? 'External'
 				: 'Player';
 }
 
@@ -586,12 +592,11 @@ export class SurprisingSaturdayService {
 		const uuid = normalizeMinecraftUuid(
 			typeof body?.playerUuid === 'string' ? body.playerUuid : '',
 		);
-		const itemId = body?.itemId;
+		const itemId = typeof body?.itemId === 'string' ? body.itemId.trim() : '';
 		const at = body?.occurredAtUnixMs;
 		if (
 			!uuid ||
-			typeof itemId !== 'string' ||
-			!ITEM_ID.test(itemId) ||
+			!validGoalId(itemId) ||
 			(body?.completed !== undefined && body.completed !== true) ||
 			!Number.isSafeInteger(at)
 		)
@@ -728,6 +733,7 @@ export class SurprisingSaturdayService {
 			nickname: profile?.preferred_name ?? '',
 			pronouns: profile?.pronouns ?? '',
 			belowName: [name, dangerText].filter(Boolean).join(' - '),
+			showDeathCounter: profile?.show_death_counter !== 0,
 			color: effectivePlayerColor(uuid, profile?.color_hex),
 			role: playerRole(user),
 			isMember: Boolean(user.is_member || user.is_committee || user.is_super_admin),

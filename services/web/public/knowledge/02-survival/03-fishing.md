@@ -8,7 +8,7 @@ tags:
 - fishng
 tips:
 - The fishing system has had major reworks and changes done to it. Instead of the normal fishing minigame, there's now a fish shadow that appears. To catch the fish, wait for it to properly bite the bobber, then quickly pull it out of the water.
-- Annoyed by how slow fishing is? Make sure you fish without blocks above your head and with Lure applied to your fishing rod. Fishing in rain will make things even quicker.
+- Annoyed by how slow fishing is? Apply Lure to your rod. In the Overworld, rain with open sky can speed up bites.
 ====
 
 # Fishing
@@ -16,7 +16,7 @@ tips:
 :::tldr
 - Cast into water. Wait for the **BIG** splash, then quickly right-click once to reel it in.
 :::drop nether
-- In the Nether, craft a Blazing Fishing Rod with Breeze Rods in place of sticks. Cast it into lava.
+- In the Nether, craft a Blazing Fishing Rod with Blaze Rods in place of sticks. Cast it into lava.
 :::end-drop
 - Some fish only spawn in specific conditions. Check the [fishing tab](/play/fishing) for a full fish compendium & conditions overview.
 - To get better catches, increase your luck level (Lucky charm, Luck of the Sea, Luck potion via Sniffers, ...)
@@ -33,7 +33,7 @@ tips:
 
 Fishing can be sorta slow at the start. To make things quicker:
 - Use the [Lure](https://minecraft.wiki/w/Lure) Enchantment on your rod.
-- Fish during rain & without blocks above your head
+- In the Overworld, fish during rain with open sky.
 
 Some fish are rarer than others. There are 6 rarity levels: Common, Uncommon, Rare, Epic, Legendary, and Mythical.
 
@@ -44,7 +44,7 @@ The full overview of every fish catchable and caught is the [fishing compendium]
 :::drop nether
 ## Fishing in the Nether
 
-Craft a Blazing Fishing Rod with three Breeze Rods and two strings. Use the same pattern as a normal fishing rod. Cast it into Nether lava. The fish shadow appears above the lava. Wait for the bite, then reel in the catch.
+Craft a Blazing Fishing Rod with three Blaze Rods and two strings. Use the same pattern as a normal fishing rod. Cast it into Nether lava. The fish shadow sits at the lava surface. Wait for the bite, then reel in the catch.
 
 The Blazing Fishing Rod does not burn in lava. A normal fishing rod cannot catch fish in lava. Its bobber burns the rod over time and sets you on fire.
 
@@ -69,10 +69,10 @@ In Nether lava, the chances are:
 | Offhand item | Lava |
 | :-- | :-- |
 | Nothing | 35% fish, 65% item |
-| Worm | 15% fish, 85% item |
-| Golden Worm | 100% item |
-| Item Magnet | 50% fish, 50% item |
-| Golden Item Magnet | 70% fish, 30% item |
+| Worm | 50% fish, 50% item |
+| Golden Worm | 70% fish, 30% item |
+| Item Magnet | 15% fish, 85% item |
+| Golden Item Magnet | 100% item |
 :::end-drop
 
 ![Fishing Worms Example](/assets/knowledge/survival/fishing/worms_example.png)

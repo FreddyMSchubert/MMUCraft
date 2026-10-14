@@ -209,7 +209,7 @@ public final class FishingCatches {
             }
         }
 
-        boolean treasure = hook.getRandom().nextDouble() < (nether ? 1.0 - itemChance : itemChance);
+        boolean treasure = hook.getRandom().nextDouble() < itemChance;
         int catches = hook.getPlayerOwner() instanceof ServerPlayer player
                 ? player.getStats().getValue(Stats.CUSTOM.get(Stats.FISH_CAUGHT))
                 : 0;

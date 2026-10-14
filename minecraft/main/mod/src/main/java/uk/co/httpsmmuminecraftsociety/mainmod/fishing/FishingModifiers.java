@@ -9,6 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BrushableBlockEntity;
@@ -19,15 +20,16 @@ import java.util.Map;
 
 public final class FishingModifiers {
     public static final double DEFAULT_ITEM_CHANCE = 0.35;
+    public static final double DEFAULT_NETHER_ITEM_CHANCE = 1.0 - DEFAULT_ITEM_CHANCE;
     private static final int SEARCH_RADIUS = 8;
     private static final int SEARCH_HEIGHT = 4;
     private static final double CREATE_MODIFIER_CHANCE = 0.2;
 
     private static final Map<String, Modifier> MODIFIERS = Map.of(
-            "item-magnet", new Modifier(0.50, 20),
-            "golden-item-magnet", new Modifier(0.70, 30),
-            "worms", new Modifier(0.15, 20),
-            "golden-worms", new Modifier(0.0, 30)
+            "item-magnet", new Modifier(0.50, 0.85, 20),
+            "golden-item-magnet", new Modifier(0.70, 1.00, 30),
+            "worms", new Modifier(0.15, 0.50, 20),
+            "golden-worms", new Modifier(0.0, 0.30, 30)
     );
 
     private FishingModifiers() {
@@ -41,13 +43,15 @@ public final class FishingModifiers {
                 .findFirst()
                 .orElse(null);
         if (modifier == null) {
-            return DEFAULT_ITEM_CHANCE;
+            return player.level().dimension() == Level.NETHER
+                    ? DEFAULT_NETHER_ITEM_CHANCE : DEFAULT_ITEM_CHANCE;
         }
 
         if (!player.hasInfiniteMaterials()) {
             useOnce(player, stack, modifier.uses());
         }
-        return modifier.itemChance();
+        return player.level().dimension() == Level.NETHER
+                ? modifier.netherItemChance() : modifier.itemChance();
     }
 
     public static void onSuccessfulCatch(Player player) {
@@ -116,6 +120,6 @@ public final class FishingModifiers {
         }
     }
 
-    private record Modifier(double itemChance, int uses) {
+    private record Modifier(double itemChance, double netherItemChance, int uses) {
     }
 }

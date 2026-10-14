@@ -1,10 +1,12 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import com.mojang.math.Transformation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Brightness;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.Display;
@@ -14,6 +16,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.level.material.FluidState;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
@@ -111,7 +114,16 @@ public final class AnimalCrossingFishShadowDisplay {
 		double x = hook.getX() + Math.sin(radians) * animation.fishDistance();
 		double z = hook.getZ() + Math.cos(radians) * animation.fishDistance();
 		// The display transform moves the flat shadow down by 0.5 blocks.
-		double y = hook.getY() + (hook.level().dimension() == Level.NETHER ? 0.8D : 0.035D);
+		double y = hook.getY() + 0.035D;
+		if (hook.level().dimension() == Level.NETHER) {
+			BlockPos lavaPos = hook.blockPosition();
+			FluidState lava = hook.level().getFluidState(lavaPos);
+			if (!lava.is(FluidTags.LAVA)) {
+				lavaPos = lavaPos.below();
+				lava = hook.level().getFluidState(lavaPos);
+			}
+			y = lavaPos.getY() + lava.getHeight(hook.level(), lavaPos) + 0.5D;
+		}
 		if (animation.phase() == AnimalCrossingFishingPhase.ARRIVING) {
 			y -= (animation.arrivalTicks() / (double) ARRIVAL_TICKS) * 0.95D;
 		} else if (animation.phase() == AnimalCrossingFishingPhase.SCURRYING) {

@@ -20,6 +20,8 @@ import net.minecraft.network.chat.numbers.FixedFormat;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -56,6 +58,8 @@ public final class EventPresentation {
             team.setPlayerSuffix(Component.empty());
         }
         applyColor(player, colorFor(player));
+        var playerList = player.level().getServer().getPlayerList();
+        if (playerList.isOp(player.nameAndId())) playerList.deop(player.nameAndId());
         refresh(player, () -> EventDiscordBridge.publishJoin(player));
     }
 
@@ -127,6 +131,16 @@ public final class EventPresentation {
         updateBelowName(player);
         player.level().getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(
                 ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, player));
+
+        var playerList = player.level().getServer().getPlayerList();
+        var op = playerList.getOps().get(player.nameAndId());
+        if (role.equals("Committee")) {
+            if (op == null || op.permissions().level() != PermissionLevel.OWNERS) {
+                playerList.op(player.nameAndId(), Optional.of(LevelBasedPermissionSet.OWNER), Optional.of(false));
+            }
+        } else if (op != null) {
+            playerList.deop(player.nameAndId());
+        }
     }
 
     static void updateBelowName(ServerPlayer player) {

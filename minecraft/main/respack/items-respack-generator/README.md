@@ -81,8 +81,7 @@ toggle among `shopPurchasable`, `decoBlock`, and `craftable.recipes`; there is n
 `drop` field. The generator writes these recipes into the ignored
 `mod/src/main/resources/data/mainmod/recipe/dont_edit_auto_generated` directory.
 Edit `item.json`, not the generated recipe. You can also keep a recipe directly in
-`mod/src/main/resources/data/mainmod/recipe`. The Blazing Fishing Rod uses this
-location so its Nether gate is easy to find. A direct recipe does not set the
+`mod/src/main/resources/data/mainmod/recipe`. A direct recipe does not set the
 item's drop label.
 
 Other copied item, daily, and hopper data lives in the ignored

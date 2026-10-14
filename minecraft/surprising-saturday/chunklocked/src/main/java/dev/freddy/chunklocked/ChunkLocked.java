@@ -258,7 +258,7 @@ public final class ChunkLocked implements ModInitializer {
                     MutableComponent message = player == payer
                             ? Component.literal("You" + unlockMessage)
                             : EventPresentation.coloredName(payer).copy().append(Component.literal(unlockMessage));
-                    if (player.level() == level) {
+                    if (player != payer && player.level() == level) {
                         double dx = cell.x * 16 + 8 - player.getX();
                         double dz = cell.z * 16 + 8 - player.getZ();
                         String[] directions = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};

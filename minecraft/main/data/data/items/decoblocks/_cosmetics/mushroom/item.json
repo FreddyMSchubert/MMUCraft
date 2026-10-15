@@ -30,12 +30,9 @@
 				"id": "decoration/big-mushroom",
 				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "imaginative",
-				"ingredients": [
-					"minecraft:red_mushroom",
-					"minecraft:bone_meal"
-				],
+				"ingredients": ["minecraft:red_mushroom", "minecraft:bone_meal"],
 				"result": {
-					"stack": "mainmod:cosmetic-big-mushroom",
+					"stack": "mainmod:cosmetic-mushroom-big",
 					"count": 1
 				}
 			}

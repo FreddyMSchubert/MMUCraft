@@ -27,9 +27,9 @@
 				"id": "decoration/frying-pan",
 				"type": "mainmod:fake_crafting_shaped",
 				"gameplayToggle": "imaginative",
-				"pattern": [" BB", " BB", "S  "],
+				"pattern": [" II", " II", "S  "],
 				"key": {
-					"B": "minecraft:iron_bars",
+					"I": "minecraft:iron_ingot",
 					"S": "minecraft:stick"
 				},
 				"result": {

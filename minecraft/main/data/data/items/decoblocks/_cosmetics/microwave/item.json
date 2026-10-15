@@ -27,12 +27,12 @@
 				"id": "decoration/microwave",
 				"type": "mainmod:fake_crafting_shaped",
 				"gameplayToggle": "imaginative",
-				"pattern": ["BBB", "ELE", "CRC"],
+				"pattern": ["III", "ELE", "CRC"],
 				"key": {
-					"B": "minecraft:iron_bars",
+					"I": "minecraft:iron_ingot",
 					"E": "minecraft:echo_shard",
 					"L": "minecraft:bowl",
-					"C": "minecraft:copper_bars",
+					"C": "minecraft:copper_ingot",
 					"R": "minecraft:redstone"
 				},
 				"result": {

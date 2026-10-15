@@ -20,5 +20,22 @@
 		"unlockMessage": "Unlocked cosmetic: Pumpkin Hat.",
 		"tags": ["jack o lantern", "halloween"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/pumpkin",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": [
+					"minecraft:pumpkin_seeds",
+					"minecraft:bone_meal"
+				],
+				"result": {
+					"stack": "mainmod:cosmetic-pumpkin",
+					"count": 1
+				}
+			}
+		]
+	}
 }

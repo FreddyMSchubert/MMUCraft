@@ -20,5 +20,23 @@
 		"unlockMessage": "Unlocked cosmetic: Frying Pan.",
 		"tags": ["skillet"]
 	},
-	"equippableCosmetic": {}
+	"equippableCosmetic": {},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/frying-pan",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": [" BB", " BB", "S  "],
+				"key": {
+					"B": "minecraft:iron_bar",
+					"S": "minecraft:stick"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-frying-pan",
+					"count": 1
+				}
+			}
+		]
+	}
 }

@@ -23,5 +23,22 @@
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#169C9C"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/rootling",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": [
+					"mainmod:soul-shard",
+					"minecraft:hanging_roots"
+				],
+				"result": {
+					"stack": "mainmod:cosmetic-rootling",
+					"count": 1
+				}
+			}
+		]
 	}
 }

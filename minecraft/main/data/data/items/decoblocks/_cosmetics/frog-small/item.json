@@ -20,5 +20,24 @@
 		"wall": false,
 		"ceiling": true,
 		"lightLevel": 12
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/frog-small",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": [" B ", "BSB", " F "],
+				"key": {
+					"F": "minecraft:firefly_bush",
+					"S": "mainmod:soul-shard",
+					"B": "minecraft:slime_ball"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-frog-small",
+					"count": 1
+				}
+			}
+		]
 	}
 }

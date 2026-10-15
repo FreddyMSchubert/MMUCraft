@@ -23,5 +23,22 @@
 	"equippableCosmetic": {},
 	"dyeable": {
 		"tintColor": "#e13b3b"
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/big-mushroom",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": [
+					"minecraft:red_mushroom",
+					"minecraft:bone_meal"
+				],
+				"result": {
+					"stack": "mainmod:cosmetic-big-mushroom",
+					"count": 1
+				}
+			}
+		]
 	}
 }

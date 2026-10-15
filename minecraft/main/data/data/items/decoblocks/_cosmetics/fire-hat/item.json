@@ -31,5 +31,21 @@
 				"maxTicks": 15
 			}
 		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/fire",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": [
+					"minecraft:fire_charge"
+				],
+				"result": {
+					"stack": "mainmod:cosmetic-fire-hat",
+					"count": 1
+				}
+			}
+		]
 	}
 }

@@ -255,7 +255,7 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
 		);
         this.mainmod$catchResult = fish.getFirst();
         this.mainmod$catchPersonality = fish.getSecond();
-		this.mainmod$jumpScare = !mainmod$nether && FishingJumpScares.shouldTrigger(hook.getRandom());
+		this.mainmod$jumpScare = FishingJumpScares.shouldTrigger(hook.getRandom(), mainmod$nether);
 
         this.fishAngle = Mth.nextFloat(hook.getRandom(), 0.0F, 360.0F);
         this.mainmod$orbitDegrees = this.fishAngle;

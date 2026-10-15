@@ -22,8 +22,7 @@ public final class AnimalCrossingFishingCatchDelivery {
 			ItemStack catchResult,
 			boolean jumpScare
     ) {
-		if (jumpScare) {
-            FishingJumpScares.spawn(level, hook, player);
+		if (jumpScare && FishingJumpScares.spawn(level, hook, player)) {
             return;
         }
 

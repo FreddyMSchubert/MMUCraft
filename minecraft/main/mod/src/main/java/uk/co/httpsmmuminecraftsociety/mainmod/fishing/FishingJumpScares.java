@@ -1,6 +1,8 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.TickTask;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -11,79 +13,172 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Strider;
+import net.minecraft.world.entity.monster.cubemob.MagmaCube;
 import net.minecraft.world.entity.monster.zombie.Drowned;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.TickTask;
 
 public final class FishingJumpScares {
     public static final float CHANCE = 0.01F;
-	private static final double HORIZONTAL_DRAG = 0.91D;
-	private static final double VERTICAL_DRAG = 0.98D;
     private static final int PEACEFUL_CHOICES = 9;
-    private static final int VIOLENT_CHOICES = 8;
+    private static final int VIOLENT_CHOICES = 9;
+    private static final int NETHER_MOB_CHOICES = 12;
+    private static final int NETHER_CHOICES = 15;
 
     private FishingJumpScares() {
     }
 
-    public static boolean shouldTrigger(RandomSource random) {
-        return random.nextFloat() < CHANCE;
+    public static boolean shouldTrigger(RandomSource random, boolean nether) {
+        return random.nextFloat() < CHANCE * (nether ? 2.0F : 1.0F);
     }
 
-    public static void spawn(ServerLevel level, FishingHook hook, Player player) {
+    public static boolean spawn(ServerLevel level, FishingHook hook, Player player) {
         RandomSource random = hook.getRandom();
-        boolean violent = random.nextBoolean();
-        int choice = random.nextInt(violent ? VIOLENT_CHOICES : PEACEFUL_CHOICES);
-        EntityType<? extends Mob> type = violent ? violentType(choice) : peacefulType(choice);
+        boolean nether = level.dimension() == Level.NETHER;
+        boolean violent = nether || random.nextBoolean();
+        int choices = nether ? NETHER_CHOICES : violent ? VIOLENT_CHOICES : PEACEFUL_CHOICES;
+        int choice = random.nextInt(choices);
+        if (nether && choice >= NETHER_MOB_CHOICES) {
+            return spawnProjectile(level, hook, player, choice - NETHER_MOB_CHOICES);
+        }
+        if (!nether && violent && choice == VIOLENT_CHOICES - 1) {
+            return spawnProjectile(level, hook, player, 0);
+        }
+        EntityType<? extends Mob> type = nether
+                ? netherType(choice)
+                : violent ? violentType(choice) : peacefulType(choice);
         BlockPos pos = hook.blockPosition();
         Mob mob = type.create(level, null, pos, EntitySpawnReason.EVENT, false, false);
         if (mob == null) {
-            return;
+            return false;
         }
 
         if (mob instanceof AgeableMob ageable) {
-            ageable.setBaby(!violent && random.nextBoolean());
+            boolean baby = nether ? choice != 11 && random.nextInt(4) == 0 : !violent && random.nextBoolean();
+            ageable.setBaby(baby);
         }
         if (mob instanceof Drowned drowned) {
             configureDrowned(drowned, choice);
         }
-        if (violent) {
+        if (mob instanceof MagmaCube cube) {
+            cube.setSize(1 << random.nextInt(3), true);
+        }
+        if (violent && type != EntityTypes.STRIDER) {
             mob.setTarget(player);
         }
 
-		double startY = hook.getY() + 0.75D;
-        mob.setPos(hook.getX(), startY, hook.getZ());
+        mob.setPos(hook.getX(), surfaceY(level, hook), hook.getZ());
+        if (!level.noBlockCollision(mob, mob.getBoundingBox())) return false;
 		int flightTicks = Mth.clamp(
 				Mth.ceil(Math.hypot(player.getX() - hook.getX(), player.getZ() - hook.getZ()) / 0.55D),
 				8,
 				16
 		);
-		Vec3 playerMovement = player.getDeltaMovement().multiply(flightTicks, 0.0D, flightTicks);
-		if (playerMovement.horizontalDistanceSqr() > 4.0D) {
-			playerMovement = playerMovement.normalize().scale(2.0D);
-		}
-		double targetY = player.getY() + (player.getBbHeight() - mob.getBbHeight()) * 0.5D;
+		boolean originalNoGravity = mob.isNoGravity();
 		mob.setNoAi(true);
-        mob.setDeltaMovement(launchVelocity(
-                hook.getX(), startY, hook.getZ(),
-				player.getX() + playerMovement.x,
-				targetY,
-				player.getZ() + playerMovement.z,
-				mob.getGravity(),
-				flightTicks
-        ));
-        level.addFreshEntity(mob);
-		level.getServer().schedule(new TickTask(
-				level.getServer().getTickCount() + flightTicks,
-				() -> {
-					if (mob.isAlive()) mob.setNoAi(false);
-				}
-		));
+        mob.setNoGravity(true);
+        mob.setDeltaMovement(Vec3.ZERO);
+        if (!level.addFreshEntity(mob)) return false;
+        if (nether && choice == 11 && mob instanceof Strider) {
+            Strider baby = EntityTypes.STRIDER.create(level, null, pos, EntitySpawnReason.EVENT, false, false);
+            if (baby != null) {
+                baby.setBaby(true);
+                baby.setPos(mob.position());
+                if (level.addFreshEntity(baby)) baby.startRiding(mob);
+            }
+        }
+        scheduleFlight(level, mob, player, mob.position(), flightTicks, 1, originalNoGravity);
+        return true;
+    }
+
+    private static double surfaceY(ServerLevel level, FishingHook hook) {
+        BlockPos pos = hook.blockPosition();
+        var fluid = level.getFluidState(pos);
+        if (fluid.isEmpty()) {
+            pos = pos.below();
+            fluid = level.getFluidState(pos);
+        }
+        return Math.max(hook.getY() + 0.1D, pos.getY() + fluid.getHeight(level, pos) + 0.1D);
+    }
+
+    private static boolean spawnProjectile(ServerLevel level, FishingHook hook, Player player, int choice) {
+        Projectile projectile = switch (choice) {
+            case 0 -> new Arrow(EntityTypes.ARROW, level);
+            case 1 -> new SmallFireball(EntityTypes.SMALL_FIREBALL, level);
+            default -> new LargeFireball(EntityTypes.FIREBALL, level);
+        };
+        double startY = surfaceY(level, hook) + 0.4D;
+        projectile.setPos(hook.getX(), startY, hook.getZ());
+        if (!level.noBlockCollision(projectile, projectile.getBoundingBox())) return false;
+        Vec3 direction = new Vec3(
+                player.getX() - hook.getX(),
+                player.getY() + player.getBbHeight() * 0.55D - startY,
+                player.getZ() - hook.getZ()
+        );
+        projectile.shoot(direction.x, direction.y, direction.z, 0.9F, 0.0F);
+        return level.addFreshEntity(projectile);
+    }
+
+    private static void scheduleFlight(ServerLevel level, Mob mob, Player player, Vec3 start,
+                                       int flightTicks, int tick, boolean originalNoGravity) {
+        level.getServer().schedule(new TickTask(level.getServer().getTickCount() + 1, () -> {
+            if (!mob.isAlive()) return;
+            if (!player.isAlive() || player.level() != level) {
+                finishFlight(mob, originalNoGravity);
+                return;
+            }
+            double progress = tick / (double) flightTicks;
+            Vec3 target = new Vec3(player.getX(),
+                    player.getY() + (player.getBbHeight() - mob.getBbHeight()) * 0.5D,
+                    player.getZ());
+            double arch = Math.max(1.2D, Math.hypot(target.x - start.x, target.z - start.z) * 0.2D);
+            Vec3 next = start.lerp(target, progress)
+                    .add(0.0D, 4.0D * arch * progress * (1.0D - progress), 0.0D);
+            mob.move(MoverType.SELF, next.subtract(mob.position()));
+            mob.setDeltaMovement(Vec3.ZERO);
+            if (mob.getBoundingBox().inflate(0.1D).intersects(player.getBoundingBox())) {
+                Vec3 impact = player.position().subtract(start).multiply(1.0D, 0.0D, 1.0D).normalize();
+                player.push(impact.x * 0.6D, 0.2D, impact.z * 0.6D);
+                finishFlight(mob, originalNoGravity);
+            } else if (tick < flightTicks) {
+                scheduleFlight(level, mob, player, start, flightTicks, tick + 1, originalNoGravity);
+            } else {
+                finishFlight(mob, originalNoGravity);
+            }
+        }));
+    }
+
+    private static void finishFlight(Mob mob, boolean originalNoGravity) {
+        mob.setNoAi(false);
+        mob.setNoGravity(originalNoGravity);
+    }
+
+    private static EntityType<? extends Mob> netherType(int choice) {
+        return switch (choice) {
+            case 0 -> EntityTypes.BLAZE;
+            case 1 -> EntityTypes.WITHER_SKELETON;
+            case 2 -> EntityTypes.SKELETON;
+            case 3 -> EntityTypes.GHAST;
+            case 4 -> EntityTypes.HOGLIN;
+            case 5 -> EntityTypes.MAGMA_CUBE;
+            case 6 -> EntityTypes.PIGLIN;
+            case 7 -> EntityTypes.PIGLIN_BRUTE;
+            case 8 -> EntityTypes.STRIDER;
+            case 9 -> EntityTypes.ZOMBIFIED_PIGLIN;
+            case 10 -> EntityTypes.ENDERMAN;
+            default -> EntityTypes.STRIDER;
+        };
     }
 
     private static EntityType<? extends Mob> peacefulType(int choice) {
@@ -154,27 +249,4 @@ public final class FishingJumpScares {
         drowned.setItemSlot(slot, new ItemStack(item));
         drowned.setDropChance(slot, 0.0F);
     }
-
-    static Vec3 launchVelocity(
-            double startX, double startY, double startZ,
-			double targetX, double targetY, double targetZ,
-			double gravity,
-			int flightTicks
-    ) {
-        double dx = targetX - startX;
-        double dz = targetZ - startZ;
-		double horizontalTravel = travelFactor(HORIZONTAL_DRAG, flightTicks);
-		double verticalTravel = travelFactor(VERTICAL_DRAG, flightTicks);
-		double gravityDrop = gravity * VERTICAL_DRAG / (1.0D - VERTICAL_DRAG)
-				* (flightTicks - verticalTravel);
-		return new Vec3(
-				dx / horizontalTravel,
-				(targetY - startY + gravityDrop) / verticalTravel,
-				dz / horizontalTravel
-		);
-    }
-
-	private static double travelFactor(double drag, int ticks) {
-		return (1.0D - Math.pow(drag, ticks)) / (1.0D - drag);
-	}
 }

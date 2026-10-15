@@ -1032,7 +1032,7 @@
 	"blazeandcave:statistics/i_heart_chests": 99, // I <3 Chests: open 500 loot chests; broad structure/loot counter.
 	"blazeandcave:statistics/i_like_trains": 10, // I Like Trains: ride 10 km in minecarts; modest rail-distance objective.
 	"blazeandcave:statistics/journeyman_enchanter": 25, // Journeyman Enchanter: enchant 50 items; moderate XP/item counter.
-	"blazeandcave:statistics/jumping_jacks": 420, // Jumping Jacks: jump 100000 times; huge movement counter, mostly passive but long.
+	"blazeandcave:statistics/jumping_jacks": 100, // Jumping Jacks: jump 100000 times; huge movement counter, mostly passive but long.
 	"blazeandcave:statistics/kill_or_be_killed": 250, // Kill or be Killed: defeat 25000 mobs; enormous combat/farm counter.
 	"blazeandcave:statistics/laps_in_the_pool": 0, // Laps in the pool: swim 1 km; tiny movement counter.
 	"blazeandcave:statistics/level_up": 5, // Level Up: reach level 30; normal enchanting threshold, token only.

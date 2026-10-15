@@ -263,6 +263,7 @@ services:
                 lazyai?
                 lmd?
                 fabric-language-kotlin
+                simple-voice-chat:beta
             MODRINTH_DOWNLOAD_DEPENDENCIES: required
             COPY_CONFIG_DEST: /data
             SYNC_SKIP_NEWER_IN_DESTINATION: 'false'

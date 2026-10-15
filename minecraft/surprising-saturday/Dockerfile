@@ -12,6 +12,7 @@ COPY minecraft/surprising-saturday/mods/fabricproxy-lite-*.jar /mods/
 COPY minecraft/surprising-saturday/chunklocked/build/libs/chunklocked-0.1.0.jar /mods/chunklocked.jar
 COPY minecraft/surprising-saturday/server.properties /config/server.properties
 COPY minecraft/surprising-saturday/config /config/config
+COPY minecraft/main/config/voicechat/voicechat-server.properties /config/config/voicechat/voicechat-server.properties
 COPY minecraft/surprising-saturday/prepare-and-start.sh /image/prepare-and-start.sh
 RUN sed -i 's/\r$//' /image/prepare-and-start.sh
 ENTRYPOINT ["/bin/sh", "/image/prepare-and-start.sh"]

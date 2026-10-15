@@ -27,13 +27,13 @@
 				"id": "decoration/microwave",
 				"type": "mainmod:fake_crafting_shaped",
 				"gameplayToggle": "imaginative",
-				"pattern": ["BBB","ELE","CRC"],
+				"pattern": ["BBB", "ELE", "CRC"],
 				"key": {
-					"B": "minecraft:iron_bar",
+					"B": "minecraft:iron_bars",
 					"E": "minecraft:echo_shard",
 					"L": "minecraft:bowl",
-					"C": "minecraft:copper_bar",
-					"R": "minecraft:redstone_dust"
+					"C": "minecraft:copper_bars",
+					"R": "minecraft:redstone"
 				},
 				"result": {
 					"stack": "mainmod:cosmetic-microwave",

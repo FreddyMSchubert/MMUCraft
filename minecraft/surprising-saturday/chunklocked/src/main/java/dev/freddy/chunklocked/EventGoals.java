@@ -37,9 +37,13 @@ import net.minecraft.world.entity.monster.Ravager;
 import net.minecraft.world.entity.monster.illager.AbstractIllager;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.raid.Raid;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.trialspawner.TrialSpawner;
+import net.minecraft.world.level.block.entity.vault.VaultConfig;
 import net.minecraft.world.level.biome.Biomes;
 
-final class EventGoals {
+public final class EventGoals {
     private static final String BASE_URL = System.getenv("SURPRISING_SATURDAY_API_URL");
     private static final String SECRET = System.getenv("SURPRISING_SATURDAY_API_SECRET");
     private static final Path OUTBOX = Path.of("/data/chunklock-goals-outbox.jsonl");
@@ -145,6 +149,20 @@ final class EventGoals {
             if (player.isSwimming() && player.isInWater()) record(player, "swim");
             if (player.onGround() && level.getBiome(pos).is(Biomes.DESERT)) record(player, "desert");
         }
+    }
+
+    public static void trialSpawnerActivated(ServerLevel level, TrialSpawner spawner) {
+        if (server != level.getServer()) return;
+        for (UUID playerId : spawner.getStateData().pack().detectedPlayers()) {
+            ServerPlayer player = server.getPlayerList().getPlayer(playerId);
+            if (player != null && player.level() == level) record(player, "trial_spawner");
+        }
+    }
+
+    public static void trialKeyUsed(Player player, VaultConfig config) {
+        if (!(player instanceof ServerPlayer serverPlayer) || server == null) return;
+        if (config.keyItem().is(Items.TRIAL_KEY)) record(serverPlayer, "trial_key");
+        if (config.keyItem().is(Items.OMINOUS_TRIAL_KEY)) record(serverPlayer, "ominous_trial_key");
     }
 
     static void contributed(ChunkWorld.Cell cell, ServerPlayer player) {

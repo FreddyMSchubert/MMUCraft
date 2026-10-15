@@ -29,7 +29,7 @@
 				"gameplayToggle": "imaginative",
 				"pattern": [" BB", " BB", "S  "],
 				"key": {
-					"B": "minecraft:iron_bar",
+					"B": "minecraft:iron_bars",
 					"S": "minecraft:stick"
 				},
 				"result": {

@@ -67,8 +67,21 @@ const chunklockGoals = [
 		25,
 	],
 	['raid_experience', 'Experience a raid', 'Be near a village during an active raid.', 15],
+	[
+		'trial_spawner',
+		'Activate a trial spawner',
+		'Be detected when a trial spawner activates.',
+		25,
+	],
+	['trial_key', 'Use a trial key', 'Unlock a vault with a trial key.', 50],
+	[
+		'ominous_trial_key',
+		'Use an ominous trial key',
+		'Unlock a vault with an ominous trial key.',
+		100,
+	],
 	['ravager', 'Help kill a ravager', 'Deal damage to a ravager.', 25],
-	['raid_survive', 'Survive a raid', 'Be alive in the village when a raid ends.', 100],
+	['raid_survive', 'Survive a raid', 'Be alive in the village when a raid ends.', 150],
 	['wither', 'Help kill a wither', 'Damage a wither before it dies.', 250],
 	['dragon', 'Help kill the Ender Dragon', 'Damage the Ender Dragon before it dies.', 250],
 ] as const;

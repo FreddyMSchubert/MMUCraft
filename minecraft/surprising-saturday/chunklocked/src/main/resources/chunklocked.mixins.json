@@ -2,6 +2,11 @@
 	"required": true,
 	"package": "dev.freddy.chunklocked.mixin",
 	"compatibilityLevel": "JAVA_25",
-	"mixins": ["EventChatNameMixin", "PlayerDisplayNameMixin"],
+	"mixins": [
+		"EventChatNameMixin",
+		"PlayerDisplayNameMixin",
+		"TrialSpawnerMixin",
+		"VaultKeyMixin"
+	],
 	"injectors": { "defaultRequire": 1 }
 }

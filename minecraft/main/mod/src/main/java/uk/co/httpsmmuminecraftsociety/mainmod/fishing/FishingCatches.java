@@ -117,6 +117,7 @@ public final class FishingCatches {
         addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.WHEAT_SEEDS));
         addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.BEETROOT_SEEDS));
         addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.EMERALD));
+        addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.NAUTILUS_SHELL));
         addTreasure(FishRarity.UNCOMMON, FakeItems.createFakeItemStack("charm-lucky-charm", 1));
 
         addTreasure(FishRarity.RARE, new ItemStack(Items.RAW_IRON));
@@ -135,7 +136,6 @@ public final class FishingCatches {
         addTreasure(FishRarity.EPIC, new ItemStack(Items.EXPERIENCE_BOTTLE).copyWithCount((int)Math.floor(Math.random() * 10)));
         addTreasure(FishRarity.EPIC, PotionContents.createItemStack(Items.POTION, Potions.LUCK));
         addTreasure(FishRarity.EPIC, PotionContents.createItemStack(Items.SPLASH_POTION, Potions.LUCK));
-        addTreasure(FishRarity.EPIC, new ItemStack(Items.NAUTILUS_SHELL));
         addTreasure(FishRarity.EPIC, new ItemStack(Items.ANGLER_POTTERY_SHERD));
         addTreasure(FishRarity.EPIC, new ItemStack(Items.AMETHYST_SHARD));
         addTreasure(FishRarity.EPIC, new ItemStack(Items.PRISMARINE_SHARD));

@@ -1047,7 +1047,7 @@
 	"blazeandcave:statistics/natural_sprinter": 10, // Natural Sprinter: sprint 10 km; small movement counter.
 	"blazeandcave:statistics/novice_enchanter": 10, // Novice Enchanter: enchant 10 items; tiny enchanting counter.
 	"blazeandcave:statistics/olympic_athlete": 15, // Olympic Athlete: swim 10 km; modest swimming counter.
-	"blazeandcave:statistics/olympic_gold_medallist": 60, // Olympic Gold Medallist: swim 50 km; long swimming counter.
+	"blazeandcave:statistics/olympic_gold_medallist": 30, // Olympic Gold Medallist: swim 50 km; long swimming counter.
 	"blazeandcave:statistics/om_nom_nom": 3, // Om Nom Nom: eat 200 food items; tiny passive food counter.
 	"blazeandcave:statistics/out_for_a_stroll": 3, // Out for a stroll: walk 10 km; normal early exploration distance, no reward.
 	"blazeandcave:statistics/overlevelling": 25, // Overlevelling: reach level 100; deliberate XP stockpile.

@@ -7,6 +7,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -21,11 +23,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightBlock;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DecoBlockItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DyeableItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
@@ -80,6 +85,18 @@ public final class DecoBlocksManager {
         DecoBlockItemFeature decoBlock = fakeItem.getFeature(DecoBlockItemFeature.class);
         if (decoBlock == null) {
             return InteractionResult.PASS;
+        }
+
+        BlockPos clickedPos = hitResult.getBlockPos();
+        BlockState clickedState = level.getBlockState(clickedPos);
+        if (clickedState.is(Blocks.WATER_CAULDRON) && stack.has(DataComponents.DYED_COLOR)
+                && fakeItem.getFeature(DyeableItemFeature.class) != null) {
+            ItemStack washed = stack.copy();
+            washed.remove(DataComponents.DYED_COLOR);
+            player.setItemInHand(hand, washed);
+            LayeredCauldronBlock.lowerFillLevel(clickedState, level, clickedPos);
+            level.playSound(null, clickedPos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 1.0F, 1.0F);
+            return InteractionResult.SUCCESS;
         }
 
         if (level.isClientSide()) {

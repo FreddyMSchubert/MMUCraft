@@ -72,6 +72,7 @@ export class AdminClaimsController {
 	constructor(
 		private readonly auth: AuthSessionService,
 		private readonly claimAdministration: ClaimAdministrationService,
+		private readonly claims: ClaimsService,
 	) {}
 
 	@Get()
@@ -82,6 +83,48 @@ export class AdminClaimsController {
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
 		return this.claimAdministration.list(offset, limit);
+	}
+
+	@Get(':claimId')
+	getClaim(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claims.getAdminClaim(claimId);
+	}
+
+	@Patch(':claimId/appearance')
+	updateAppearance(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Body() body: ClaimAppearanceInput | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claims.updateAdminAppearance(claimId, body ?? {});
+	}
+
+	@Post(':claimId/members')
+	addMember(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Body() body: { userId?: number } | undefined,
+	) {
+		return this.claims.addAdminMember(
+			this.auth.requireCommitteeSession(cookieHeader),
+			claimId,
+			body?.userId,
+		);
+	}
+
+	@Delete(':claimId/members/:userId')
+	removeMember(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Param('userId') userId: string,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claims.removeAdminMember(claimId, userId);
 	}
 
 	@Delete(':claimId')

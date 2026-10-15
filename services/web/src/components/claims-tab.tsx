@@ -1,30 +1,18 @@
 'use client';
 
-import Image from 'next/image';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import {
 	ClaimEditorCard,
+	ClaimMembersEditor,
+	ClaimMembersSummary,
 	formatDimension,
+	type ClaimPerson,
 	type EditableClaim,
 } from '@/components/claim-editor-card';
-import { PlayerName, type PlayerEmoji } from '@/components/player-name';
-import { PlayerSelector } from '@/components/player-selector';
 import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
-
-interface ClaimPerson {
-	id: number;
-	minecraftUsername: string;
-	preferredName: string;
-	pronouns: string;
-	color: string;
-	avatarUrl: string | null;
-	isCommittee: boolean;
-	customEmojis: PlayerEmoji[];
-	isOwner?: boolean;
-}
 
 interface Claim extends EditableClaim {
 	members: ClaimPerson[];
@@ -52,7 +40,6 @@ interface CurrentChunkResponse {
 export function ClaimsTab() {
 	const { confirm, showAlert } = useSiteAlert();
 	const [data, setData] = useState<ClaimsResponse | null>(null);
-	const [searches, setSearches] = useState<Partial<Record<string, string>>>({});
 	const [error, setError] = useState('');
 	const [busy, setBusy] = useState(false);
 
@@ -150,29 +137,13 @@ export function ClaimsTab() {
 		}, 'Could not save the claim appearance');
 	}
 
-	async function addMember(claim: Claim) {
-		const value = searches[claim.id]?.trim() ?? '';
-		const candidate = data?.candidates.find(
-			(person) =>
-				person.minecraftUsername.localeCompare(value, 'en', { sensitivity: 'base' }) === 0,
-		);
-		if (!candidate) {
-			await showAlert({
-				title: 'Choose a valid player',
-				message:
-					'Select a player from the suggestions so the correct Minecraft account receives access.',
-				tone: 'danger',
-			});
-			return;
-		}
-
-		await run(async () => {
+	async function addMember(claim: Claim, person: ClaimPerson) {
+		return run(async () => {
 			await request(`/api/claims/${claim.id}/members`, {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ userId: candidate.id }),
+				body: JSON.stringify({ userId: person.id }),
 			});
-			setSearches((current) => ({ ...current, [claim.id]: '' }));
 		}, 'Could not add the claim member');
 	}
 
@@ -248,80 +219,25 @@ export function ClaimsTab() {
 				title="My claims"
 				claims={data.claims}
 				emptyMessage="You do not own any claimed chunks yet."
-				renderClaim={(claim) => {
-					const existingIds = new Set(claim.members.map((person) => person.id));
-					const candidates = data.candidates.filter(
-						(person) => !existingIds.has(person.id),
-					);
-					return (
-						<ClaimEditorCard
-							key={claim.id}
-							claim={claim}
+				renderClaim={(claim) => (
+					<ClaimEditorCard
+						key={claim.id}
+						claim={claim}
+						busy={busy}
+						onDelete={() => void removeClaim(claim)}
+						onSave={(name, color) => updateAppearance(claim, name, color)}
+						summary={<ClaimMembersSummary members={claim.members} />}
+					>
+						<ClaimMembersEditor
+							claimId={claim.id}
+							members={claim.members}
+							candidates={data.candidates}
 							busy={busy}
-							onDelete={() => void removeClaim(claim)}
-							onSave={(name, color) => updateAppearance(claim, name, color)}
-							summary={<ClaimMembersSummary members={claim.members} />}
-						>
-							<div className="claimMembers">
-								{claim.members.map((person) => (
-									<div className="claimMember" key={person.id}>
-										<PlayerHead person={person} />
-										<div>
-											<strong>
-												<PlayerName
-													name={person.minecraftUsername}
-													color={person.color}
-													isCommittee={person.isCommittee}
-													customEmojis={person.customEmojis}
-												/>
-											</strong>
-											{person.pronouns && <span>{person.pronouns}</span>}
-										</div>
-										{person.isOwner ? (
-											<small>Owner</small>
-										) : (
-											<button
-												type="button"
-												disabled={busy}
-												onClick={() => void removeMember(claim, person)}
-											>
-												Remove
-											</button>
-										)}
-									</div>
-								))}
-
-								<form
-									className="claimMemberSearch"
-									onSubmit={(event) => {
-										event.preventDefault();
-										void addMember(claim);
-									}}
-								>
-									<PlayerSelector
-										datalistId={`claim-candidates-${claim.id}`}
-										options={candidates}
-										value={searches[claim.id] ?? ''}
-										onChange={(value) => {
-											setSearches((current) => ({
-												...current,
-												[claim.id]: value,
-											}));
-										}}
-										placeholder="Search server players"
-										disabled={busy || candidates.length === 0}
-									/>
-									<button
-										type="submit"
-										disabled={busy || candidates.length === 0}
-									>
-										Add
-									</button>
-								</form>
-							</div>
-						</ClaimEditorCard>
-					);
-				}}
+							onAdd={(person) => addMember(claim, person)}
+							onRemove={(person) => void removeMember(claim, person)}
+						/>
+					</ClaimEditorCard>
+				)}
 			/>
 			<ClaimSection
 				title="Other claims I’m a member of"
@@ -371,52 +287,6 @@ function ClaimSection({
 				<div className="claimsList">{claims.map(renderClaim)}</div>
 			)}
 		</section>
-	);
-}
-
-function ClaimMembersSummary({ members }: { members: ClaimPerson[] }) {
-	return (
-		<div className="claimMembersSummary">
-			<span>Members</span>
-			<div className="claimMemberInlineList">
-				{members.map((person) => (
-					<span className="claimMemberInline" key={person.id}>
-						<PlayerHead person={person} />
-						<PlayerName
-							name={person.minecraftUsername}
-							color={person.color}
-							isCommittee={person.isCommittee}
-							customEmojis={person.customEmojis}
-						/>
-					</span>
-				))}
-			</div>
-		</div>
-	);
-}
-
-function PlayerHead({ person }: { person: ClaimPerson }) {
-	const label = `${person.minecraftUsername} head`;
-	if (!person.avatarUrl) {
-		return (
-			<span
-				className="playerHead playerHead-small playerHeadFallback"
-				role="img"
-				aria-label={label}
-			>
-				{person.minecraftUsername[0]}
-			</span>
-		);
-	}
-	return (
-		<Image
-			unoptimized
-			className="playerHead playerHead-small"
-			src={person.avatarUrl}
-			alt={label}
-			width={42}
-			height={42}
-		/>
 	);
 }
 

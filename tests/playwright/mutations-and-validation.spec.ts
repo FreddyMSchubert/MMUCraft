@@ -98,6 +98,70 @@ test('committee can create, move, update, and remove a countdown', async ({ requ
 	});
 });
 
+test('committee can edit another player’s claim without changing its owner', async ({
+	request,
+}) => {
+	const url = '/api/admin/claims/playwright-claim';
+	const denied = await request.patch(`${url}/appearance`, {
+		headers: memberCookie,
+		data: { name: 'Not allowed', color: null },
+	});
+	expect(denied.status()).toBe(403);
+	const deniedRead = await request.get(url, { headers: memberCookie });
+	expect(deniedRead.status()).toBe(403);
+	const deniedMember = await request.post(`${url}/members`, {
+		headers: memberCookie,
+		data: { userId: 3 },
+	});
+	expect(deniedMember.status()).toBe(403);
+
+	try {
+		const detail = await request.get(url, { headers: adminCookie });
+		await expect(detail).toBeOK();
+		expect((await detail.json()).claim.members).toContainEqual(
+			expect.objectContaining({ id: 2, isOwner: true }),
+		);
+
+		const appearance = await request.patch(`${url}/appearance`, {
+			headers: adminCookie,
+			data: { name: 'Committee edited', color: '#AABBCC' },
+		});
+		await expect(appearance).toBeOK();
+
+		const ownerRejected = await request.post(`${url}/members`, {
+			headers: adminCookie,
+			data: { userId: 2 },
+		});
+		expect(ownerRejected.status()).toBe(400);
+
+		const added = await request.post(`${url}/members`, {
+			headers: adminCookie,
+			data: { userId: 3 },
+		});
+		await expect(added).toBeOK();
+
+		const updated = await request.get(url, { headers: adminCookie });
+		await expect(updated).toBeOK();
+		expect((await updated.json()).claim).toMatchObject({
+			name: 'Committee edited',
+			customColor: '#AABBCC',
+			members: [
+				expect.objectContaining({ id: 2, isOwner: true }),
+				expect.objectContaining({ id: 3, isOwner: false }),
+			],
+		});
+
+		const ownerRemoval = await request.delete(`${url}/members/2`, { headers: adminCookie });
+		expect(ownerRemoval.status()).toBe(404);
+	} finally {
+		await request.delete(`${url}/members/3`, { headers: adminCookie });
+		await request.patch(`${url}/appearance`, {
+			headers: adminCookie,
+			data: { name: 'Fixture claim', color: '#336699' },
+		});
+	}
+});
+
 test('signup gate and committee permissions reject unauthorized access', async ({
 	request,
 }, testInfo) => {

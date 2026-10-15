@@ -63,23 +63,8 @@ export class ClaimsService {
 			ids.push(membership.user_id);
 			memberIdsByClaim.set(membership.claim_id, ids);
 		}
-		const presentClaim = (claim: typeof claims.$inferSelect) => ({
-			id: claim.id,
-			dimension: claim.dimension,
-			chunkX: claim.chunk_x,
-			chunkZ: claim.chunk_z,
-			name: claim.claim_name,
-			color: claim.color_hex ?? peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6',
-			defaultColor: peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6',
-			customColor: claim.color_hex,
-			members: [claim.owner_user_id, ...(memberIdsByClaim.get(claim.id) ?? [])]
-				.map((userId) => peopleById.get(userId))
-				.filter((person) => person !== undefined)
-				.map((person) => ({
-					...person,
-					isOwner: person.id === claim.owner_user_id,
-				})),
-		});
+		const presentClaim = (claim: typeof claims.$inferSelect) =>
+			this.presentClaim(claim, peopleById, memberIdsByClaim.get(claim.id) ?? []);
 
 		return {
 			...this.claimPurchasing.getNextClaimPricing(user),
@@ -102,6 +87,32 @@ export class ClaimsService {
 		};
 	}
 
+	getAdminClaim(claimId: string) {
+		const claim = this.requirePlayerClaim(claimId);
+		const people = this.getPeople();
+		const peopleById = new Map(people.map((person) => [person.id, person]));
+		const memberIds = this.database.connection
+			.select({ userId: claimMembers.user_id })
+			.from(claimMembers)
+			.where(eq(claimMembers.claim_id, claimId))
+			.all()
+			.map(({ userId }) => userId);
+		const candidateIds = new Set(
+			this.database.connection
+				.select({ id: users.id })
+				.from(users)
+				.where(isNotNull(users.minecraft_uuid))
+				.all()
+				.map(({ id }) => id),
+		);
+		return {
+			claim: this.presentClaim(claim, peopleById, memberIds),
+			candidates: people.filter(
+				(person) => person.id !== claim.owner_user_id && candidateIds.has(person.id),
+			),
+		};
+	}
+
 	async remove(user: AuthenticatedUser, claimId: string) {
 		this.requireOwnedClaim(user.id, claimId);
 		this.database.connection.delete(claims).where(eq(claims.id, claimId)).run();
@@ -111,6 +122,11 @@ export class ClaimsService {
 
 	async updateAppearance(user: AuthenticatedUser, claimId: string, input: ClaimAppearanceInput) {
 		this.requireOwnedClaim(user.id, claimId);
+		return this.saveAppearance(claimId, input);
+	}
+
+	async updateAdminAppearance(claimId: string, input: ClaimAppearanceInput) {
+		this.requirePlayerClaim(claimId);
 		return this.saveAppearance(claimId, input);
 	}
 
@@ -137,6 +153,24 @@ export class ClaimsService {
 		targetUserIdInput: number | undefined,
 	) {
 		const claim = this.requireOwnedClaim(user.id, claimId);
+		return this.addMemberToClaim(user, claim, targetUserIdInput);
+	}
+
+	async addAdminMember(
+		user: AuthenticatedUser,
+		claimId: string,
+		targetUserIdInput: number | undefined,
+	) {
+		const claim = this.requirePlayerClaim(claimId);
+		return this.addMemberToClaim(user, claim, targetUserIdInput);
+	}
+
+	private async addMemberToClaim(
+		user: AuthenticatedUser,
+		claim: typeof claims.$inferSelect,
+		targetUserIdInput: number | undefined,
+	) {
+		const claimId = claim.id;
 		const targetUserId = normalizeUserId(targetUserIdInput);
 		if (targetUserId === claim.owner_user_id) {
 			throw new BadRequestException('The claim owner already has access.');
@@ -165,14 +199,25 @@ export class ClaimsService {
 		}
 
 		await this.minecraftSynchronization.synchronize();
-		void this.minecraft
-			.tryGrantAdvancement(null, user.minecraftUsername, 'social/add_claim_member')
-			.catch(() => undefined);
+		if (user.id === claim.owner_user_id) {
+			void this.minecraft
+				.tryGrantAdvancement(null, user.minecraftUsername, 'social/add_claim_member')
+				.catch(() => undefined);
+		}
 		return { ok: true };
 	}
 
 	async removeMember(user: AuthenticatedUser, claimId: string, targetUserIdInput: string) {
 		this.requireOwnedClaim(user.id, claimId);
+		return this.removeMemberFromClaim(claimId, targetUserIdInput);
+	}
+
+	async removeAdminMember(claimId: string, targetUserIdInput: string) {
+		this.requirePlayerClaim(claimId);
+		return this.removeMemberFromClaim(claimId, targetUserIdInput);
+	}
+
+	private async removeMemberFromClaim(claimId: string, targetUserIdInput: string) {
 		const targetUserId = normalizeUserId(targetUserIdInput);
 		const removed = this.database.connection
 			.delete(claimMembers)
@@ -191,19 +236,41 @@ export class ClaimsService {
 	}
 
 	private requireOwnedClaim(ownerUserId: number, claimId: string) {
+		const claim = this.requirePlayerClaim(claimId);
+		if (claim.owner_user_id !== ownerUserId) throw new NotFoundException('Claim not found.');
+		return claim;
+	}
+
+	private requirePlayerClaim(claimId: string) {
 		const claim = this.database.connection
 			.select()
 			.from(claims)
-			.where(
-				and(
-					eq(claims.id, claimId),
-					eq(claims.owner_user_id, ownerUserId),
-					eq(claims.is_server, 0),
-				),
-			)
+			.where(and(eq(claims.id, claimId), eq(claims.is_server, 0)))
 			.get();
 		if (!claim) throw new NotFoundException('Claim not found.');
 		return claim;
+	}
+
+	private presentClaim(
+		claim: typeof claims.$inferSelect,
+		peopleById: Map<number, ReturnType<ClaimsService['getPeople']>[number]>,
+		memberIds: number[],
+	) {
+		const defaultColor = peopleById.get(claim.owner_user_id)?.color ?? '#E6E6E6';
+		return {
+			id: claim.id,
+			dimension: claim.dimension,
+			chunkX: claim.chunk_x,
+			chunkZ: claim.chunk_z,
+			name: claim.claim_name,
+			color: claim.color_hex ?? defaultColor,
+			defaultColor,
+			customColor: claim.color_hex,
+			members: [claim.owner_user_id, ...memberIds]
+				.map((userId) => peopleById.get(userId))
+				.filter((person) => person !== undefined)
+				.map((person) => ({ ...person, isOwner: person.id === claim.owner_user_id })),
+		};
 	}
 
 	private requireServerClaim(claimId: string) {

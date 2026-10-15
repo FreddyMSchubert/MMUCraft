@@ -551,11 +551,12 @@ public final class FishingCatches {
 
     private static CatchEntry customFishEntry(Map.Entry<FakeItem, FishItemFeature> entry) {
         FishItemFeature fish = entry.getValue();
+        int weight = 1 + fish.spawnTags().size();
         return new CatchEntry(
                 entry.getKey().createItemStack(),
                 fish.personality(),
                 fish.length(),
-                1 + fish.spawnTags().size()
+                fish.spawnTags().size() > 2 ? weight * 10 : weight
         );
     }
 

@@ -19,7 +19,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 ::drop-item deco-scarecrow
 ## Scarecrow
 
-![Scarecrow](/assets/knowledge/items/decorative-blocks/scarecrow-recipe)
+![Scarecrow](/assets/knowledge/items/decorative-blocks/scarecrow-recipe.png)
 :::recipe-items
 [Pumpkin](https://minecraft.wiki/w/Pumpkin) (TC) · [Stick](https://minecraft.wiki/w/Stick) (CL, CR, BC) · [Hay Bale](https://minecraft.wiki/w/Hay_Bale) (C) → Scarecrow
 :::
@@ -29,7 +29,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 ::drop-item deco-crow
 ## Crow
 
-![Crow](/assets/knowledge/items/decorative-blocks/crow-recipe)
+![Crow](/assets/knowledge/items/decorative-blocks/crow-recipe.png)
 :::recipe-items
 [Black Dye](https://minecraft.wiki/w/Dyes) (TC, BC) · [Feather](https://minecraft.wiki/w/Feather) (CL, CR) · Soul Shard (C) → Crow
 :::
@@ -41,7 +41,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop-indicator
 
-![Book Stack](/assets/knowledge/items/decorative-blocks/book-stack-recipe)
+![Book Stack](/assets/knowledge/items/decorative-blocks/book-stack-recipe.png)
 :::recipe-items
 [Book](https://minecraft.wiki/w/Book) x4 → Book Stack
 :::
@@ -54,7 +54,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop-indicator
 
-![Butterflies](/assets/knowledge/items/decorative-blocks/butterflies-recipe)
+![Butterflies](/assets/knowledge/items/decorative-blocks/butterflies-recipe.png)
 :::recipe-items
 [Blue Dye](https://minecraft.wiki/w/dyes) (TC) · [White Dye](https://minecraft.wiki/w/dyes) (CL) · Soul Shard (C) · [Pink Dye](https://minecraft.wiki/w/dyes) (CR) · [Dandelion](https://minecraft.wiki/w/dandelion) (BC) → Butterflies
 :::
@@ -67,7 +67,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop-indicator
 
-![Candle](/assets/knowledge/items/decorative-blocks/candle-recipe)
+![Candle](/assets/knowledge/items/decorative-blocks/candle-recipe.png)
 :::recipe-items
 [Candle](https://minecraft.wiki/w/Candle) (TC) · [Iron Nugget](https://minecraft.wiki/w/Iron_Nugget) (C)  · [Heavy Weighted Pressure Plate](https://minecraft.wiki/w/Heavy_Weighted_Pressure_Plate) → Candle
 :::
@@ -80,7 +80,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop-indicator
 
-![Cardboard Box](/assets/knowledge/items/decorative-blocks/cardboard-box-recipe)
+![Cardboard Box](/assets/knowledge/items/decorative-blocks/cardboard-box-recipe.png)
 :::recipe-items
 [Paper](https://minecraft.wiki/w/Paper) (TL, TC, TR, CL, CR, BL, BC, BR) → Cardboard Box
 :::
@@ -93,7 +93,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop-indicator
 
-![Cheese](/assets/knowledge/items/decorative-blocks/cheese-recipe)
+![Cheese](/assets/knowledge/items/decorative-blocks/cheese-recipe.png)
 :::recipe-items
 [Milk](https://minecraft.wiki/w/Milk) · [Fire Charge](https://minecraft.wiki/w/Fire_Charge) → Cheese
 :::
@@ -106,7 +106,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop-indicator
 
-![Companion Cube](/assets/knowledge/items/decorative-blocks/companion-cube-recipe)
+![Companion Cube](/assets/knowledge/items/decorative-blocks/companion-cube-recipe.png)
 :::recipe-items
 [Iron Nugget](https://minecraft.wiki/w/Iron_Nugget) (TL, TC, TR, CL, CR, BL, BC, BR) · [Rotten Flesh](https://minecraft.wiki/w/Rotten_Flesh) (C) → Companion Cube
 :::
@@ -118,7 +118,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 :::drop-indicator
 
-![Disco Ball](/assets/knowledge/items/decorative-blocks/disco-ball-recipe)
+![Disco Ball](/assets/knowledge/items/decorative-blocks/disco-ball-recipe.png)
 :::recipe-items
 [Amethyst Shard](https://minecraft.wiki/w/Amethyst_Shard) (TL, TR, BL, BR) · [Glass Pane](https://minecraft.wiki/w/Glass_Pane) (TC, CL, CR, BC) · [White Concrete](https://minecraft.wiki/w/Concrete) (C) → Disco Ball
 :::
@@ -130,7 +130,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Fire](/assets/knowledge/items/decorative-blocks/fire-recipe)
+![Fire](/assets/knowledge/items/decorative-blocks/fire-recipe.png)
 :::recipe-items
 [Fire Charge](https://minecraft.wiki/w/Fire_Charge) → Fire
 :::
@@ -142,7 +142,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Fishbowl](/assets/knowledge/items/decorative-blocks/fishbowl-recipe)
+![Fishbowl](/assets/knowledge/items/decorative-blocks/fishbowl-recipe.png)
 :::recipe-items
 [Glass Pale](https://minecraft.wiki/w/Glass_Pane) (TL, TC, TR, CL, CR, BL, BC, BR) · Raw Fish → Fishbowl
 :::
@@ -154,7 +154,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Mushroom](/assets/knowledge/items/decorative-blocks/mushroom-recipe)
+![Mushroom](/assets/knowledge/items/decorative-blocks/mushroom-recipe.png)
 :::recipe-items
 [Bonemeal](https://minecraft.wiki/w/Bone_Meal) · [Red Mushroom](https://minecraft.wiki/w/Red_Mushroom) → Mushroom
 :::
@@ -166,7 +166,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Plunger](/assets/knowledge/items/decorative-blocks/plunger-recipe)
+![Plunger](/assets/knowledge/items/decorative-blocks/plunger-recipe.png)
 :::recipe-items
 [Stick](https://minecraft.wiki/w/Stick) (TC, C) · [Red Concrete](https://minecraft.wiki/w/Concrete) (BC) → Plunger
 :::
@@ -178,7 +178,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Pumpkin](/assets/knowledge/items/decorative-blocks/pumpkin-recipe)
+![Pumpkin](/assets/knowledge/items/decorative-blocks/pumpkin-recipe.png)
 :::recipe-items
 [Pumpkin Seeds](https://minecraft.wiki/w/Pumpkin_Seeds) · [Bonemeal](https://minecraft.wiki/w/Bone_Meal) → Pumpkin
 :::
@@ -190,7 +190,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Rootling](/assets/knowledge/items/decorative-blocks/rootling-recipe)
+![Rootling](/assets/knowledge/items/decorative-blocks/rootling-recipe.png)
 :::recipe-items
 [Hanging Roots](https://minecraft.wiki/w/Hanging_Roots) · Soul Shard → Rootling
 :::
@@ -202,7 +202,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Sea Scorpion](/assets/knowledge/items/decorative-blocks/sea-scorpion-recipe)
+![Sea Scorpion](/assets/knowledge/items/decorative-blocks/sea-scorpion-recipe.png)
 :::recipe-items
 [Nautilus](https://minecraft.wiki/w/Nautilus) (TC) · [Shears](https://minecraft.wiki/w/Shears) (CL, CR) · Soul Shard · [Bone](https://minecraft.wiki/w/Bone) (BC) → Sea Scorpion
 :::
@@ -214,7 +214,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Frog](/assets/knowledge/items/decorative-blocks/small-frog-recipe)
+![Frog](/assets/knowledge/items/decorative-blocks/small-frog-recipe.png)
 :::recipe-items
 [Slime Ball](https://minecraft.wiki/w/Slime_Ball) (TC, CL, CR) · Soul Shard (C) · [Firefly Bush](https://minecraft.wiki/w/Firefly_Bush) (BC) → Frog
 :::
@@ -226,7 +226,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Traffic Cone](/assets/knowledge/items/decorative-blocks/traffic-cone-recipe)
+![Traffic Cone](/assets/knowledge/items/decorative-blocks/traffic-cone-recipe.png)
 :::recipe-items
 [Orange Wool](https://minecraft.wiki/w/Wool) (TC, BC) · [White Wool](https://minecraft.wiki/w/Wool) (C) → Traffic Cone
 :::
@@ -238,7 +238,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Flying Saucer](/assets/knowledge/items/decorative-blocks/ufo-recipe)
+![Flying Saucer](/assets/knowledge/items/decorative-blocks/ufo-recipe.png)
 :::recipe-items
 [Iron Nugget](https://minecraft.wiki/w/Iron_Nugget) (TC, CR, CL) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (C) · [Spore Blossom](https://minecraft.wiki/w/Spore_Blossom) (BC) → Flying Saucer
 :::
@@ -250,7 +250,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ::drop-indicator
 
-![Woodpecker](/assets/knowledge/items/decorative-blocks/woodpecker-recipe)
+![Woodpecker](/assets/knowledge/items/decorative-blocks/woodpecker-recipe.png)
 :::recipe-items
 [Red Dye](https://minecraft.wiki/w/Dyes) (TC) · [Feather](https://minecraft.wiki/w/Feather) (CL, CR) · Soul Shard · [White Dye](https://minecraft.wiki/w/Dyes) (BC) → Woodpecker
 :::

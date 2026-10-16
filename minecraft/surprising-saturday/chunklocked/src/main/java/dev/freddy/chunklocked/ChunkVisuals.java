@@ -23,9 +23,19 @@ final class ChunkVisuals {
     static void ensure(MinecraftServer server, ServerLevel level, ChunkWorld world,
             ChunkWorld.Cell cell) {
         if (cell.unlocked) return;
+        level.getChunk(cell.x, cell.z);
         AABB box = box(cell);
-        if (level.getEntitiesOfClass(Display.BlockDisplay.class, box,
-                entity -> entity.entityTags().contains(cell.tag())).isEmpty()) {
+        int bottom = bottom(cell);
+        int top = top(cell);
+        var borders = level.getEntitiesOfClass(Display.BlockDisplay.class, box,
+                entity -> entity.entityTags().contains(cell.tag()));
+        boolean complete = borders.size() == (top - bottom) / 32;
+        for (int y = bottom; complete && y < top; y += 32) {
+            int sectionY = y;
+            complete = borders.stream().anyMatch(entity -> Math.abs(entity.getY() - sectionY) < 0.1);
+        }
+        if (!complete) {
+            borders.forEach(Entity::discard);
             walls(server, level, cell);
         }
         if (level.getEntitiesOfClass(Interaction.class, box,
@@ -95,14 +105,14 @@ final class ChunkVisuals {
         int state = index % 12;
         String facing = new String[] {"north", "east", "south", "west", "up", "down"}[state % 6];
         String conditional = state >= 6 ? "true" : "false";
-        int bottom = cell.dimension.endsWith("overworld") ? -64 : 0;
-        int top = cell.dimension.endsWith("the_nether") ? 128
-                : cell.dimension.endsWith("the_end") ? 256 : 320;
+        int bottom = bottom(cell);
+        int top = top(cell);
         double x = cell.x * 16 + 8;
         double z = cell.z * 16 + 8;
         for (int y = bottom; y < top; y += 32) {
             command(server, level, "summon minecraft:block_display " + x + " " + y + " " + z
-                    + " {Tags:[\"chunklocked\",\"" + cell.tag() + "\",\"cl_border\"],view_range:255f,"
+                    + " {Tags:[\"chunklocked\",\"" + cell.tag()
+                    + "\",\"cl_border\"],width:16.01f,height:32.01f,view_range:255f,"
                     + "brightness:{sky:15,block:15},block_state:{id:\"minecraft:" + block
                     + "\",properties:{facing:\"" + facing + "\",conditional:\"" + conditional + "\"}},"
                     + "transformation:{translation:[-8.0005f,-0.0005f,-8.0005f],"
@@ -112,9 +122,8 @@ final class ChunkVisuals {
     }
 
     private static void interactions(MinecraftServer server, ServerLevel level, ChunkWorld.Cell cell) {
-        int bottom = cell.dimension.endsWith("overworld") ? -64 : 0;
-        int top = cell.dimension.endsWith("the_nether") ? 128
-                : cell.dimension.endsWith("the_end") ? 256 : 320;
+        int bottom = bottom(cell);
+        int top = top(cell);
         int lastShort = cell.dimension.endsWith("overworld") ? 192
                 : cell.dimension.endsWith("the_end") ? 128 : top;
         for (int y = bottom; y < top; y += 16) {
@@ -125,6 +134,15 @@ final class ChunkVisuals {
                     + " {Tags:[\"chunklocked\",\"" + cell.tag() + "\",\"cl_interaction\"],"
                     + "width:16.0001f,height:" + height + "f,response:1b}");
         }
+    }
+
+    private static int bottom(ChunkWorld.Cell cell) {
+        return cell.dimension.endsWith("overworld") ? -64 : 0;
+    }
+
+    private static int top(ChunkWorld.Cell cell) {
+        return cell.dimension.endsWith("the_nether") ? 128
+                : cell.dimension.endsWith("the_end") ? 256 : 320;
     }
 
     private static void items(MinecraftServer server, ServerLevel level, ChunkWorld world,
@@ -162,12 +180,13 @@ final class ChunkVisuals {
             if (closest == null) continue;
             command(server, level, "summon minecraft:item_display " + side[0] + " " + (closest.getY() + 1.0)
                     + " " + side[1] + " {Tags:[\"chunklocked\",\"" + cell.tag()
-                    + "\",\"cl_item\",\"" + sideTag + "\"],Glowing:1b,view_range:0.5f,"
+                    + "\",\"cl_item\",\"" + sideTag + "\"],Glowing:1b,view_range:2f,"
                     + "brightness:{sky:7,block:7},Rotation:[" + yaw[index] + "f,0f],"
                     + "item:{id:\"" + cell.item + "\",count:1}}");
             command(server, level, "summon minecraft:text_display " + side[0] + " " + (closest.getY() + 1.8)
                     + " " + side[1] + " {Tags:[\"chunklocked\",\"" + cell.tag()
-                    + "\",\"cl_count\",\"cl_named\",\"" + sideTag + "\"],view_range:0.5f,line_width:300,"
+                    + "\",\"cl_count\",\"cl_named\",\"" + sideTag
+                    + "\"],view_range:2f,line_width:300,"
                     + "brightness:{sky:15,block:15},Rotation:[" + yaw[index] + "f,0f],"
                     + "transformation:{translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f],"
                     + "left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f]},"

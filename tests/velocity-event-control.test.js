@@ -16,6 +16,23 @@ test('the schedule starts warmup despite a manual stop and cannot be switched of
 	assert.throws(() => service.setEventOverride(false), /event schedule controls/);
 });
 
+test('event control reports a rescheduled end time', () => {
+	const service = Object.create(VelocityService.prototype);
+	let end = Date.now() + 10 * 60_000;
+	service.settings = () => ({ event_override: null });
+	service.events = { active: () => ({ ends_at_unix_ms: end }), warmingUp: () => null };
+	service.proxyIsOnline = () => false;
+	service.livePlayers = [];
+
+	assert.equal(service.eventControlState().endsAtUnixMs, end);
+	end += 10 * 60_000;
+	assert.equal(service.eventControlState().endsAtUnixMs, end);
+	end -= 15 * 60_000;
+	assert.equal(service.eventControlState().endsAtUnixMs, end);
+	service.events.active = () => null;
+	assert.equal(service.eventControlState().endsAtUnixMs, null);
+});
+
 test('an admin move starts a stopped event server and queues the transfer', () => {
 	const service = Object.create(VelocityService.prototype);
 	const overrides = [];

@@ -30,6 +30,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Relative;
 import net.minecraft.world.entity.monster.illager.AbstractIllager;
 import net.minecraft.world.entity.Interaction;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -57,6 +58,7 @@ public final class ChunkLocked implements ModInitializer {
     public void onInitialize() {
         EventDiscordBridge.init();
         EventGoals.register();
+        EventCountdown.register();
         ServerLivingEntityEvents.AFTER_DEATH.register((dead, source) -> {
             if (dead instanceof AbstractIllager && dead.level() instanceof ServerLevel level) {
                 level.addFreshEntity(new ItemEntity(level, dead.getX(), dead.getY(), dead.getZ(),
@@ -82,6 +84,8 @@ public final class ChunkLocked implements ModInitializer {
             server.getCommands().performPrefixedCommand(
                     server.createCommandSourceStack().withSuppressedOutput(),
                     "gamerule minecraft:respawn_radius 0");
+            command(server, "gamerule minecraft:random_tick_speed 30");
+            command(server, "difficulty hard");
             command(server, "scoreboard objectives add ChunklockTotalUnlockedChunks dummy");
             command(server, "scoreboard objectives setdisplay list ChunklockTotalUnlockedChunks");
             command(server, "scoreboard players set #global ChunklockTotalUnlockedChunks " + world.totalPaid());
@@ -245,7 +249,25 @@ public final class ChunkLocked implements ModInitializer {
         ServerLevel overworld = player.level().getServer().overworld();
         Vec3 destination = Vec3.atBottomCenterOf(world.origin(overworld));
         player.teleportTo(overworld, destination.x, destination.y, destination.z,
-                Set.of(), player.getYRot(), player.getXRot(), true);
+                Set.of(Relative.Y_ROT, Relative.X_ROT), 0, 0, true);
+    }
+
+    public static void placeDeathDrop(ServerPlayer player, ItemEntity drop) {
+        if (world == null) return;
+        ServerLevel level = player.level();
+        Vec3 position = player.position();
+        if (position.y < level.getMinY() || !world.unlocked(level, player.blockPosition())) {
+            Safe safe = LAST_SAFE.get(player.getUUID());
+            position = safe != null && safe.dimension.equals(ChunkWorld.dimension(level))
+                    && world.unlocked(level, BlockPos.containing(safe.position))
+                    ? safe.position : Vec3.atBottomCenterOf(world.origin(level));
+        }
+        int x = Math.floorDiv((int) Math.floor(position.x), 16);
+        int z = Math.floorDiv((int) Math.floor(position.z), 16);
+        double pileX = Math.max(x * 16 + 0.5, Math.min(position.x, x * 16 + 15.5));
+        double pileZ = Math.max(z * 16 + 0.5, Math.min(position.z, z * 16 + 15.5));
+        drop.setPos(pileX, position.y + 0.1, pileZ);
+        drop.setDeltaMovement(Vec3.ZERO);
     }
 
     private static void revealNeighbors(MinecraftServer server, ServerLevel level, ChunkWorld.Cell cell) {
@@ -287,7 +309,7 @@ public final class ChunkLocked implements ModInitializer {
                 if (safe != null && safe.dimension.equals(dimension)
                         && world.unlocked(level, BlockPos.containing(safe.position))) {
                     player.teleportTo(level, safe.position.x, safe.position.y, safe.position.z,
-                            Set.of(), player.getYRot(), player.getXRot(), true);
+                            Set.of(Relative.Y_ROT, Relative.X_ROT), 0, 0, true);
                 } else {
                     returnToOrigin(player);
                 }

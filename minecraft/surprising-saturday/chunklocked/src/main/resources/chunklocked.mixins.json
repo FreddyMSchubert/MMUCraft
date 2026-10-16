@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
 		"EventChatNameMixin",
+		"DeathDropMixin",
 		"PlayerDisplayNameMixin",
 		"TrialSpawnerMixin",
 		"VaultKeyMixin"

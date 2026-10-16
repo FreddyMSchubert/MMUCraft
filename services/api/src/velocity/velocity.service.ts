@@ -573,10 +573,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	eventControlState() {
 		const now = Date.now();
 		const override = this.settings().event_override;
-		const desiredRunning =
-			Boolean(this.events.active(now) ?? this.events.warmingUp(now)) || override === 1;
+		const activeEvent = this.events.active(now);
+		const desiredRunning = Boolean(activeEvent ?? this.events.warmingUp(now)) || override === 1;
 		return {
 			desiredRunning,
+			endsAtUnixMs: activeEvent?.ends_at_unix_ms ?? null,
 			canStop:
 				this.proxyIsOnline() &&
 				this.livePlayers.every((player) => player.serverName !== EVENT_SERVER),

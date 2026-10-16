@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,19 +33,26 @@ public final class HopperFilterGroups {
             Set<String> items,
             Set<String> potions,
             Set<String> potionItems,
-            Set<String> enchantments
+            Set<String> enchantments,
+            Set<String> enchantmentNamespaces
     ) {
         boolean matches(ItemStack stack) {
             if (items.contains(HopperFilter.baseItemId(stack))) return true;
             if ((potionItems.isEmpty() || potionItems.contains(HopperFilter.baseItemId(stack)))
                     && HopperFilter.potionId(stack).filter(potions::contains).isPresent()) return true;
-            return HopperFilter.storedEnchantmentIds(stack).stream().anyMatch(enchantments::contains);
+            Set<String> stored = HopperFilter.storedEnchantmentIds(stack);
+            if (stored.stream().anyMatch(enchantments::contains)) return true;
+            return !stored.isEmpty() && !enchantmentNamespaces.isEmpty()
+                    && stored.stream().allMatch(id -> enchantmentNamespaces.contains(Identifier.parse(id).getNamespace()));
         }
 
-        int matchBreadth(int potionTypeCount) {
-            return items.stream().mapToInt(item -> POTION_ITEMS.contains(item) ? potionTypeCount : 1).sum()
+        int matchBreadth(int potionTypeCount, Map<String, Integer> enchantmentCounts) {
+            return items.stream().mapToInt(item -> POTION_ITEMS.contains(item) ? potionTypeCount
+                    : item.equals("minecraft:enchanted_book")
+                    ? enchantmentCounts.values().stream().mapToInt(Integer::intValue).sum() : 1).sum()
                     + potions.size() * (potionItems.isEmpty() ? POTION_ITEMS.size() : potionItems.size())
-                    + enchantments.size();
+                    + enchantments.size()
+                    + enchantmentNamespaces.stream().mapToInt(namespace -> enchantmentCounts.getOrDefault(namespace, 2)).sum();
         }
     }
 
@@ -72,14 +80,18 @@ public final class HopperFilterGroups {
                         Set<String> items = readIds(json, "items", HopperFilterGroups::validateItemId);
                         Set<String> potions = readIds(json, "potions", HopperFilterGroups::validateMinecraftId);
                         Set<String> potionItems = readIds(json, "potion_items", HopperFilterGroups::validatePotionItemId);
-                        Set<String> enchantments = readIds(json, "enchantments", HopperFilterGroups::validateMinecraftId);
+                        Set<String> enchantments = readIds(json, "enchantments", HopperFilterGroups::validateEnchantmentId);
+                        Set<String> enchantmentNamespaces = readIds(json, "enchantment_namespaces",
+                                HopperFilterGroups::validateEnchantmentNamespace);
                         if (!potionItems.isEmpty() && potions.isEmpty()) {
                             throw new IllegalArgumentException("potion_items requires potions");
                         }
-                        if (items.isEmpty() && potions.isEmpty() && enchantments.isEmpty()) {
+                        if (items.isEmpty() && potions.isEmpty() && enchantments.isEmpty()
+                                && enchantmentNamespaces.isEmpty()) {
                             throw new IllegalArgumentException("a group must contain items, potions, or enchantments");
                         }
-                        if (loaded.put(id, new Group(id, name, items, potions, potionItems, enchantments)) != null) {
+                        if (loaded.put(id, new Group(id, name, items, potions, potionItems, enchantments,
+                                enchantmentNamespaces)) != null) {
                             throw new IllegalArgumentException("duplicate group id: " + id);
                         }
                     } catch (Exception exception) {
@@ -94,9 +106,20 @@ public final class HopperFilterGroups {
     public static List<Group> containingAll(Collection<ItemStack> stacks) {
         int potionTypeCount = (int) groups.values().stream()
                 .flatMap(group -> group.potions().stream()).distinct().count();
+        Map<String, Set<String>> knownEnchantments = new HashMap<>();
+        for (Group group : groups.values()) {
+            for (String id : group.enchantments()) {
+                knownEnchantments.computeIfAbsent(Identifier.parse(id).getNamespace(), ignored -> new HashSet<>()).add(id);
+            }
+            for (String namespace : group.enchantmentNamespaces()) {
+                knownEnchantments.computeIfAbsent(namespace, ignored -> new HashSet<>());
+            }
+        }
+        Map<String, Integer> enchantmentCounts = new HashMap<>();
+        knownEnchantments.forEach((namespace, ids) -> enchantmentCounts.put(namespace, Math.max(2, ids.size())));
         return groups.values().stream()
                 .filter(group -> stacks.stream().allMatch(group::matches))
-                .sorted(Comparator.comparingInt((Group group) -> group.matchBreadth(potionTypeCount))
+                .sorted(Comparator.comparingInt((Group group) -> group.matchBreadth(potionTypeCount, enchantmentCounts))
                         .thenComparing(Group::id))
                 .toList();
     }
@@ -126,6 +149,19 @@ public final class HopperFilterGroups {
         Identifier id = Identifier.tryParse(raw);
         if (id == null || !id.getNamespace().equals("minecraft")) {
             throw new IllegalArgumentException("expected a minecraft: ID: " + raw);
+        }
+    }
+
+    private static void validateEnchantmentId(String raw) {
+        if (Identifier.tryParse(raw) == null) {
+            throw new IllegalArgumentException("invalid enchantment ID: " + raw);
+        }
+    }
+
+    private static void validateEnchantmentNamespace(String raw) {
+        Identifier id = Identifier.tryParse(raw + ":example");
+        if (id == null || !id.getNamespace().equals(raw)) {
+            throw new IllegalArgumentException("invalid enchantment namespace: " + raw);
         }
     }
 

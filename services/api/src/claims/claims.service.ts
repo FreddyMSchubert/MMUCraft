@@ -26,7 +26,7 @@ import {
 import { ClaimPurchasingService } from './claim-purchasing.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 
-const CLAIM_NAME_MAX_LENGTH = 20;
+const CLAIM_NAME_MAX_LENGTH = 50;
 
 export interface ClaimAppearanceInput {
 	name?: string;

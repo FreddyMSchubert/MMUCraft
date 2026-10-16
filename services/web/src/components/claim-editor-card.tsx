@@ -257,11 +257,11 @@ function ClaimAppearanceForm({
 			}}
 		>
 			<label>
-				<span>Claim name (20 characters maximum)</span>
+				<span>Claim name (50 characters maximum)</span>
 				<input
 					name="name"
 					defaultValue={claim.name}
-					maxLength={20}
+					maxLength={50}
 					required
 					disabled={busy}
 				/>

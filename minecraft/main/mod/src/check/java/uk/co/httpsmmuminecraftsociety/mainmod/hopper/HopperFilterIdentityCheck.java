@@ -2,11 +2,15 @@ package uk.co.httpsmmuminecraftsociety.mainmod.hopper;
 
 import com.google.gson.JsonParser;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderOwner;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -14,6 +18,8 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.StoredCharmData;
@@ -49,7 +55,7 @@ public final class HopperFilterIdentityCheck {
         charmedArmor.set(DataComponents.CUSTOM_NAME, Component.literal("A different name"));
 
         var ironArmor = new HopperFilterGroups.Group("armor_iron", "Iron Armor",
-                Set.of("minecraft:iron_chestplate"), Set.of(), Set.of(), Set.of());
+                Set.of("minecraft:iron_chestplate"), Set.of(), Set.of(), Set.of(), Set.of());
         assert ironArmor.matches(plainArmor);
         assert ironArmor.matches(charmedArmor);
         assert HopperFilter.baseItemId(charmedArmor).equals(HopperFilter.baseItemId(plainArmor));
@@ -75,14 +81,49 @@ public final class HopperFilterIdentityCheck {
         assert !PotionOfResonanceCharm.matchesItemType(charmedFakeItem, standaloneCharm);
 
         var goodNormalPotions = new HopperFilterGroups.Group("good_normal_potions", "Beneficial Drinkable Potions",
-                Set.of(), Set.of("minecraft:swiftness"), Set.of("minecraft:potion"), Set.of());
+                Set.of(), Set.of("minecraft:swiftness"), Set.of("minecraft:potion"), Set.of(), Set.of());
         var normalPotions = new HopperFilterGroups.Group("normal_potions", "Normal Potions",
-                Set.of("minecraft:potion"), Set.of(), Set.of(), Set.of());
+                Set.of("minecraft:potion"), Set.of(), Set.of(), Set.of(), Set.of());
         assert goodNormalPotions.matches(PotionContents.createItemStack(Items.POTION, Potions.SWIFTNESS));
         assert !goodNormalPotions.matches(PotionContents.createItemStack(Items.SPLASH_POTION, Potions.SWIFTNESS));
         assert !goodNormalPotions.matches(PotionContents.createItemStack(Items.LINGERING_POTION, Potions.SWIFTNESS));
         assert !goodNormalPotions.matches(PotionContents.createItemStack(Items.POTION, Potions.POISON));
-        assert goodNormalPotions.matchBreadth(48) < normalPotions.matchBreadth(48);
+        Map<String, Integer> enchantmentCounts = Map.of("minecraft", 44, "mainmod", 2, "nova_structures", 2);
+        assert goodNormalPotions.matchBreadth(48, enchantmentCounts)
+                < normalPotions.matchBreadth(48, enchantmentCounts);
+
+        var allBooks = new HopperFilterGroups.Group("enchantments", "Enchanted Books",
+                groupItems(Path.of(args[0], "enchantments.json")), Set.of(), Set.of(), Set.of(), Set.of());
+        var vanillaBooks = new HopperFilterGroups.Group("vanilla_enchanted_books", "Vanilla Enchanted Books",
+                Set.of(), Set.of(), Set.of(), Set.of(),
+                groupNamespaces(Path.of(args[0], "vanilla_enchanted_books.json")));
+        var dntBooks = new HopperFilterGroups.Group("dungeons_and_taverns_enchanted_books",
+                "Dungeons and Taverns Enchanted Books", Set.of(), Set.of(), Set.of(), Set.of(),
+                groupNamespaces(Path.of(args[0], "dungeons_and_taverns_enchanted_books.json")));
+        var mmucraftBooks = new HopperFilterGroups.Group("mmucraft_enchanted_books", "MMUCraft Enchanted Books",
+                Set.of(), Set.of(), Set.of(), Set.of(),
+                groupNamespaces(Path.of(args[0], "mmucraft_enchanted_books.json")));
+        var booksAndPaper = new HopperFilterGroups.Group("books", "Books and Paper",
+                groupItems(Path.of(args[0], "books.json")), Set.of(), Set.of(), Set.of(), Set.of());
+        assert allBooks.items().equals(Set.of("minecraft:enchanted_book"));
+        assert vanillaBooks.enchantmentNamespaces().equals(Set.of("minecraft"));
+        assert dntBooks.enchantmentNamespaces().equals(Set.of("nova_structures"));
+        assert mmucraftBooks.enchantmentNamespaces().equals(Set.of("mainmod"));
+        assert allBooks.matches(new ItemStack(Items.ENCHANTED_BOOK));
+        assert !allBooks.matches(new ItemStack(Items.BOOK));
+        assert allBooks.matchBreadth(48, enchantmentCounts) > vanillaBooks.matchBreadth(48, enchantmentCounts);
+        assert allBooks.matchBreadth(48, enchantmentCounts) < booksAndPaper.matchBreadth(48, enchantmentCounts);
+        for (String id : List.of("minecraft:sharpness", "mainmod:charm_boost", "mainmod:soulbound",
+                "nova_structures:swift_soar", "other_mod:new_enchantment")) {
+            ItemStack book = enchantedBook(id);
+            assert allBooks.matches(book) : id;
+            assert vanillaBooks.matches(book) == id.startsWith("minecraft:") : id;
+            assert dntBooks.matches(book) == id.startsWith("nova_structures:") : id;
+            assert mmucraftBooks.matches(book) == id.startsWith("mainmod:") : id;
+        }
+        ItemStack mixedBook = enchantedBook("minecraft:sharpness", "mainmod:soulbound");
+        assert allBooks.matches(mixedBook);
+        assert !vanillaBooks.matches(mixedBook) && !mmucraftBooks.matches(mixedBook);
 
         List<String> unknownItems = new ArrayList<>();
         try (var paths = Files.list(Path.of(args[0]))) {
@@ -131,5 +172,24 @@ public final class HopperFilterIdentityCheck {
         var group = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
         for (var item : group.getAsJsonArray("items")) items.add(item.getAsString());
         return items;
+    }
+
+    private static Set<String> groupNamespaces(Path path) throws Exception {
+        Set<String> namespaces = new HashSet<>();
+        var group = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
+        for (var namespace : group.getAsJsonArray("enchantment_namespaces")) namespaces.add(namespace.getAsString());
+        return namespaces;
+    }
+
+    private static ItemStack enchantedBook(String... ids) {
+        var stored = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        for (String id : ids) {
+            var holder = Holder.Reference.createStandAlone(new HolderOwner<Enchantment>() {},
+                    ResourceKey.create(Registries.ENCHANTMENT, Identifier.parse(id)));
+            stored.set(holder, 1);
+        }
+        ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
+        book.set(DataComponents.STORED_ENCHANTMENTS, stored.toImmutable());
+        return book;
     }
 }

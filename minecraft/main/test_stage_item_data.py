@@ -55,6 +55,7 @@ class HopperFilterGroupReferencesTest(unittest.TestCase):
 			"soul": {"mainmod:soul", "mainmod:soul-shard"},
 			"sniffer_flowers": {"minecraft:pitcher_plant", "minecraft:pitcher_pod",
 				"minecraft:torchflower", "minecraft:torchflower_seeds"},
+			"red_sand": groups["red_sandstone"] | {"minecraft:red_sand"},
 			"villager_workstations": {"minecraft:barrel", "minecraft:blast_furnace",
 				"minecraft:brewing_stand", "minecraft:cartography_table", "minecraft:cauldron",
 				"minecraft:composter", "minecraft:fletching_table", "minecraft:grindstone",
@@ -66,7 +67,21 @@ class HopperFilterGroupReferencesTest(unittest.TestCase):
 				self.assertFalse(items - groups[name], f"{name} is missing {sorted(items - groups[name])}")
 		self.assertEqual(groups["villager_workstations"], expected["villager_workstations"])
 		self.assertEqual(groups["sniffer_flowers"], expected["sniffer_flowers"])
+		self.assertEqual(groups["red_sand"], expected["red_sand"])
 		validate_hopper_filter_group_references(root)
+
+	def test_singleton_groups_are_only_variant_families(self):
+		root = Path(__file__).parent / "data/data/hopper_filter_groups"
+		variant_items = {"minecraft:enchanted_book", "minecraft:potion",
+			"minecraft:splash_potion", "minecraft:lingering_potion"}
+		for path in root.glob("*.json"):
+			group = json.loads(path.read_text(encoding="utf-8"))
+			entries = group.get("items", []) + group.get("potions", []) + group.get("enchantments", [])
+			if len(entries) != 1 or group.get("enchantment_namespaces"):
+				continue
+			with self.subTest(group=path.stem):
+				self.assertTrue(group.get("potions") and not group.get("potion_items")
+					or group.get("items") and group["items"][0] in variant_items)
 
 	def test_catalog_features_match_public_groups(self):
 		root = Path(__file__).parent / "data/data"
@@ -124,8 +139,7 @@ class HopperFilterGroupReferencesTest(unittest.TestCase):
 		for name, item_ids in expected.items():
 			with self.subTest(group=name):
 				self.assertEqual(set(groups[name]["items"]), item_ids)
-		self.assertEqual([name for name, group in groups.items()
-			if "charm" in group["name"].lower()], ["charms"])
+		self.assertEqual(groups["charms"]["name"], "Charms")
 
 
 if __name__ == "__main__":

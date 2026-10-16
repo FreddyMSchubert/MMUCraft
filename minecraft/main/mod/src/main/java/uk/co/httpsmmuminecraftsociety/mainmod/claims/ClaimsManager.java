@@ -112,7 +112,7 @@ public final class ClaimsManager {
                 }
                 String name = data.getName().strip();
                 if (name.isEmpty()) name = "My claim";
-                if (name.length() > 20) name = name.substring(0, 20);
+                if (name.length() > 50) name = name.substring(0, 50);
                 next.put(
                         new ClaimKey(data.getDimension(), ChunkPos.pack(data.getChunkX(), data.getChunkZ())),
                         new Claim(

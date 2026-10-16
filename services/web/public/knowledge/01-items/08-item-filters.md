@@ -89,12 +89,9 @@ If you have suggestions for new groups to add, we are happy to add more groups.
 
 ![Filtering for groups recipe gone wrong](/assets/knowledge/items/item-filters/wrong_group_recipe.png)
 
-One problem with item filter groups is that items may be in multiple groups. So if you craft the item together with a filter in a group mode, a random group will be picked for the filter. You can see this in the image at the top - planks is a totally valid group and someone else may want to create a planks chest, but were looking for an oak chest.
+Items may be in multiple groups. Crafting a filter in group mode picks the smallest matching group. You can see this in the image at the top - planks is a valid group, but we were looking for an oak chest.
 
-To avoid this and get the item filter to look for the specific group you want, you can do either of these two things:
-
-1. Cycle the randomness. If you pick up one of the items in the recipe and place it back into the crafting grid, the random pick will refresh, and eventually land on the group you are looking for.
-2. Add more items or blocks that are in the group you want. This will make the search more specific, because only groups that have all specified items will be picked from:
+Add more items or blocks from the group you want. Only groups containing every supplied item can be picked. For Beneficial Potions, use a drinkable Healing potion and a splash Swiftness potion. For Harmful Potions, use a drinkable Poison potion and a splash Weakness potion. For all Potions, use a drinkable Healing potion and a splash Poison potion.
 
 ![Filtering for groups recipe gone right again cause more specific](/assets/knowledge/items/item-filters/more_specific_groups.png)
 

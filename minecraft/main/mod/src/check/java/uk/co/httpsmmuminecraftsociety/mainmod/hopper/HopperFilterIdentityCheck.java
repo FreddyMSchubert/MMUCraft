@@ -92,6 +92,26 @@ public final class HopperFilterIdentityCheck {
         assert goodNormalPotions.matchBreadth(48, enchantmentCounts)
                 < normalPotions.matchBreadth(48, enchantmentCounts);
 
+        var allPotions = new HopperFilterGroups.Group("potions", "Potions",
+                groupItems(Path.of(args[0], "potions.json")), Set.of(), Set.of(), Set.of(), Set.of());
+        var goodPotions = new HopperFilterGroups.Group("good_potions", "Beneficial Potions",
+                Set.of(), groupValues(Path.of(args[0], "good_potions.json"), "potions"), Set.of(), Set.of(), Set.of());
+        var badPotions = new HopperFilterGroups.Group("bad_potions", "Harmful Potions",
+                Set.of(), groupValues(Path.of(args[0], "bad_potions.json"), "potions"), Set.of(), Set.of(), Set.of());
+        var bottles = new HopperFilterGroups.Group("bottles", "Bottled Items",
+                groupItems(Path.of(args[0], "bottles.json")), Set.of(), Set.of(), Set.of(), Set.of());
+        assert allPotions.items().containsAll(Set.of("mainmod:charm-potion-displacement",
+                "mainmod:charm-potion-insomnia", "mainmod:charm-potion-resonance",
+                "mainmod:charm-potion-returning"));
+        for (var bottle : List.of(Items.POTION, Items.SPLASH_POTION, Items.LINGERING_POTION)) {
+            ItemStack healing = PotionContents.createItemStack(bottle, Potions.HEALING);
+            ItemStack poison = PotionContents.createItemStack(bottle, Potions.POISON);
+            assert allPotions.matches(healing) && allPotions.matches(poison);
+            assert goodPotions.matches(healing) && !goodPotions.matches(poison);
+            assert badPotions.matches(poison) && !badPotions.matches(healing);
+        }
+        assert allPotions.matchBreadth(48, enchantmentCounts) < bottles.matchBreadth(48, enchantmentCounts);
+
         var allBooks = new HopperFilterGroups.Group("enchantments", "Enchanted Books",
                 groupItems(Path.of(args[0], "enchantments.json")), Set.of(), Set.of(), Set.of(), Set.of());
         var vanillaBooks = new HopperFilterGroups.Group("vanilla_enchanted_books", "Vanilla Enchanted Books",
@@ -168,17 +188,18 @@ public final class HopperFilterIdentityCheck {
     }
 
     private static Set<String> groupItems(Path path) throws Exception {
-        Set<String> items = new HashSet<>();
-        var group = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
-        for (var item : group.getAsJsonArray("items")) items.add(item.getAsString());
-        return items;
+        return groupValues(path, "items");
     }
 
     private static Set<String> groupNamespaces(Path path) throws Exception {
-        Set<String> namespaces = new HashSet<>();
+        return groupValues(path, "enchantment_namespaces");
+    }
+
+    private static Set<String> groupValues(Path path, String field) throws Exception {
+        Set<String> values = new HashSet<>();
         var group = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
-        for (var namespace : group.getAsJsonArray("enchantment_namespaces")) namespaces.add(namespace.getAsString());
-        return namespaces;
+        for (var value : group.getAsJsonArray(field)) values.add(value.getAsString());
+        return values;
     }
 
     private static ItemStack enchantedBook(String... ids) {

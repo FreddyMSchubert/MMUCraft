@@ -125,7 +125,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::end-drop
 
 
-:::drop-item cosmetic-fire
+:::drop-item cosmetic-fire-hat
 ## Fire
 
 ::drop-indicator

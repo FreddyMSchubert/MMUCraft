@@ -51,8 +51,10 @@ class HopperFilterGroupReferencesTest(unittest.TestCase):
 			"woodset_crimson": {"minecraft:nether_wart_block"},
 			"woodset_mangrove": {"minecraft:mangrove_propagule", "minecraft:mangrove_roots",
 				"minecraft:muddy_mangrove_roots"},
-			"gliding_gear": {"minecraft:elytra", "mainmod:charm-glider"},
+			"gliding_gear": {"minecraft:elytra", "mainmod:charm-glider", "mainmod:charm-wings"},
 			"soul": {"mainmod:soul", "mainmod:soul-shard"},
+			"sniffer_flowers": {"minecraft:pitcher_plant", "minecraft:pitcher_pod",
+				"minecraft:torchflower", "minecraft:torchflower_seeds"},
 			"villager_workstations": {"minecraft:barrel", "minecraft:blast_furnace",
 				"minecraft:brewing_stand", "minecraft:cartography_table", "minecraft:cauldron",
 				"minecraft:composter", "minecraft:fletching_table", "minecraft:grindstone",
@@ -63,7 +65,67 @@ class HopperFilterGroupReferencesTest(unittest.TestCase):
 			with self.subTest(group=name):
 				self.assertFalse(items - groups[name], f"{name} is missing {sorted(items - groups[name])}")
 		self.assertEqual(groups["villager_workstations"], expected["villager_workstations"])
+		self.assertEqual(groups["sniffer_flowers"], expected["sniffer_flowers"])
 		validate_hopper_filter_group_references(root)
+
+	def test_catalog_features_match_public_groups(self):
+		root = Path(__file__).parent / "data/data"
+		items = {}
+		for path in (root / "items").rglob("item.json"):
+			item = json.loads(path.read_text(encoding="utf-8"))
+			items["mainmod:" + item["id"]] = (item, path)
+		groups = {path.stem: json.loads(path.read_text(encoding="utf-8"))
+			for path in (root / "hopper_filter_groups").glob("*.json")}
+		cosmetics = {item_id: (item, path) for item_id, (item, path) in items.items()
+			if item["modelType"] == "cosmetic"}
+
+		def emits_light(value):
+			if isinstance(value, dict):
+				return any((key == "light_emission" and isinstance(child, (int, float)) and child > 0)
+					or emits_light(child) for key, child in value.items())
+			if isinstance(value, list):
+				return any(emits_light(child) for child in value)
+			return False
+
+		expected = {
+			"charms": {item_id for item_id, (item, _) in items.items() if "equippableCharm" in item},
+			"cosmetics": set(cosmetics),
+			"decoblocks": {item_id for item_id, (item, _) in items.items() if "decoBlock" in item},
+			"dyeable_cosmetics": {item_id for item_id, (item, _) in cosmetics.items()
+				if "dyeable" in item},
+			"animated_cosmetics": {item_id for item_id, (_, path) in cosmetics.items()
+				if any(path.parent.glob("*.png.mcmeta"))},
+			"emissive_cosmetics": {item_id for item_id, (_, path) in cosmetics.items()
+				if emits_light(json.loads(path.with_name("model.json").read_text(encoding="utf-8")))},
+			"particle_cosmetics": {item_id for item_id, (item, _) in cosmetics.items()
+				if "particleEmission" in item},
+			"placeable_cosmetics": {item_id for item_id, (item, _) in cosmetics.items()
+				if "decoBlock" in item},
+		}
+		families = {
+			"cosmetic_animal_headwear": "_animals",
+			"cosmetic_head_accessories": "_antlers",
+			"cosmetic_crowns": "_crowns",
+			"cosmetic_eyewear": "_glasses",
+			"cosmetic_hoods": "_hoods",
+			"cosmetic_facewear": "_masks",
+			"cosmetic_novelty_headwear": "_misc",
+			"cosmetic_moustaches": "_moustaches",
+			"cosmetic_teletubbies": "_teletubbies",
+			"cosmetic_general_headwear": "_true-hats",
+			"cosmetic_villager": "_villager",
+			"cosmetic_pet_hats": "_animals/_pets",
+			"cosmetic_biome_hats": "_misc/_biomes",
+		}
+		for name, folder in families.items():
+			family_root = root / "items/cosmetics" / folder
+			expected[name] = {item_id for item_id, (_, path) in cosmetics.items()
+				if path.is_relative_to(family_root)}
+		for name, item_ids in expected.items():
+			with self.subTest(group=name):
+				self.assertEqual(set(groups[name]["items"]), item_ids)
+		self.assertEqual([name for name, group in groups.items()
+			if "charm" in group["name"].lower()], ["charms"])
 
 
 if __name__ == "__main__":

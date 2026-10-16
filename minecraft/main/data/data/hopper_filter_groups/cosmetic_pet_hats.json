@@ -1,0 +1,12 @@
+{
+	"name": "Pet Hats",
+	"items": [
+		"mainmod:cosmetic-calico-cat-pet-hat",
+		"mainmod:cosmetic-dog-pet-hat",
+		"mainmod:cosmetic-red-cat-pet-hat",
+		"mainmod:cosmetic-siamese-cat-pet-hat",
+		"mainmod:cosmetic-tabby-cat-pet-hat",
+		"mainmod:cosmetic-tuxedo-cat-pet-hat",
+		"mainmod:cosmetic-white-cat-pet-hat"
+	]
+}

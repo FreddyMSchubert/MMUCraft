@@ -4,6 +4,7 @@
 		"mainmod:charm-bunny-pajamas",
 		"mainmod:charm-candle-of-the-deep",
 		"mainmod:charm-cave-spider-pajamas",
+		"mainmod:charm-enderian-soul",
 		"mainmod:charm-endurance",
 		"mainmod:charm-extendo-grip",
 		"mainmod:charm-farming-boots",
@@ -17,11 +18,14 @@
 		"mainmod:charm-leprechaun-boots",
 		"mainmod:charm-lucky-charm",
 		"mainmod:charm-pickaxe-heater",
+		"mainmod:charm-reaping-glove",
 		"mainmod:charm-saw-belt",
 		"mainmod:charm-scuba-tank",
 		"mainmod:charm-spider-pajamas",
+		"mainmod:charm-thick-socks",
 		"mainmod:charm-veinminer",
 		"mainmod:charm-vitality-mending",
-		"mainmod:charm-winged-shoes"
+		"mainmod:charm-winged-shoes",
+		"mainmod:charm-wings"
 	]
 }

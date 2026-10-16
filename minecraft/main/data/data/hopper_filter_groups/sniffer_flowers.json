@@ -1,4 +1,9 @@
 {
 	"name": "Sniffer Flowers",
-	"items": ["minecraft:pitcher_plant", "minecraft:torchflower"]
+	"items": [
+		"minecraft:pitcher_plant",
+		"minecraft:pitcher_pod",
+		"minecraft:torchflower",
+		"minecraft:torchflower_seeds"
+	]
 }

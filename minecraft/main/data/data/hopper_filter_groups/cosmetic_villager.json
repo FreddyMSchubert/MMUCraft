@@ -1,0 +1,20 @@
+{
+	"name": "Villager and Witch Headwear",
+	"items": [
+		"mainmod:cosmetic-villager-armorer",
+		"mainmod:cosmetic-villager-butcher",
+		"mainmod:cosmetic-villager-cartographer",
+		"mainmod:cosmetic-villager-desert",
+		"mainmod:cosmetic-villager-farmer",
+		"mainmod:cosmetic-villager-fisherman",
+		"mainmod:cosmetic-villager-fletcher",
+		"mainmod:cosmetic-villager-librarian",
+		"mainmod:cosmetic-villager-nose",
+		"mainmod:cosmetic-villager-savanna",
+		"mainmod:cosmetic-villager-sheperd",
+		"mainmod:cosmetic-villager-snow",
+		"mainmod:cosmetic-villager-swamp",
+		"mainmod:cosmetic-villager-weaponsmith",
+		"mainmod:cosmetic-witch-hat"
+	]
+}

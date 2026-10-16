@@ -1,0 +1,13 @@
+{
+	"name": "Particle Cosmetics",
+	"items": [
+		"mainmod:cosmetic-bow",
+		"mainmod:cosmetic-candle",
+		"mainmod:cosmetic-fire-hat",
+		"mainmod:cosmetic-fishbowl",
+		"mainmod:cosmetic-headphones",
+		"mainmod:cosmetic-party-hat",
+		"mainmod:cosmetic-slime-head",
+		"mainmod:cosmetic-ufo"
+	]
+}

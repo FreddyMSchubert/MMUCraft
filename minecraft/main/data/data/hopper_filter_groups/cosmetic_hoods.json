@@ -1,0 +1,13 @@
+{
+	"name": "Hoods and Mob Heads",
+	"items": [
+		"mainmod:cosmetic-head-enderman",
+		"mainmod:cosmetic-head-warden",
+		"mainmod:cosmetic-hood-bee",
+		"mainmod:cosmetic-hood-bee-pride",
+		"mainmod:cosmetic-hood-bee-trans",
+		"mainmod:cosmetic-hood-camel",
+		"mainmod:cosmetic-hood-eeyore",
+		"mainmod:cosmetic-hood-sniffer"
+	]
+}

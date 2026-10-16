@@ -1,0 +1,25 @@
+{
+	"name": "Placeable Cosmetics",
+	"items": [
+		"mainmod:cosmetic-book-stack",
+		"mainmod:cosmetic-butterflies",
+		"mainmod:cosmetic-candle",
+		"mainmod:cosmetic-cardboard-box",
+		"mainmod:cosmetic-cheese",
+		"mainmod:cosmetic-companion-cube",
+		"mainmod:cosmetic-fire-hat",
+		"mainmod:cosmetic-fishbowl",
+		"mainmod:cosmetic-frog-small",
+		"mainmod:cosmetic-frying-pan",
+		"mainmod:cosmetic-microwave",
+		"mainmod:cosmetic-mushroom-big",
+		"mainmod:cosmetic-plunger",
+		"mainmod:cosmetic-pumpkin",
+		"mainmod:cosmetic-rootling",
+		"mainmod:cosmetic-sea-scorpion",
+		"mainmod:cosmetic-skull",
+		"mainmod:cosmetic-traffic-cone",
+		"mainmod:cosmetic-ufo",
+		"mainmod:cosmetic-woodpecker"
+	]
+}

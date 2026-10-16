@@ -1,0 +1,27 @@
+{
+	"name": "Animal Headwear",
+	"items": [
+		"mainmod:cosmetic-bunny-ears",
+		"mainmod:cosmetic-calico-cat-pet-hat",
+		"mainmod:cosmetic-cat-ears",
+		"mainmod:cosmetic-chick-basic",
+		"mainmod:cosmetic-chick-stack",
+		"mainmod:cosmetic-chick-tower",
+		"mainmod:cosmetic-chicken",
+		"mainmod:cosmetic-cod",
+		"mainmod:cosmetic-dog-ears",
+		"mainmod:cosmetic-dog-pet-hat",
+		"mainmod:cosmetic-endermite",
+		"mainmod:cosmetic-posh-squid",
+		"mainmod:cosmetic-red-cat-pet-hat",
+		"mainmod:cosmetic-salmon",
+		"mainmod:cosmetic-siamese-cat-pet-hat",
+		"mainmod:cosmetic-sleeping-mobs",
+		"mainmod:cosmetic-spider",
+		"mainmod:cosmetic-tabby-cat-pet-hat",
+		"mainmod:cosmetic-tuxedo-cat-pet-hat",
+		"mainmod:cosmetic-unicorn-horn",
+		"mainmod:cosmetic-white-cat-pet-hat",
+		"mainmod:cosmetic-wyrm-skull"
+	]
+}

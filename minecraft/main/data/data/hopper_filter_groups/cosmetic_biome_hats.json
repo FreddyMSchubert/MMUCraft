@@ -1,0 +1,9 @@
+{
+	"name": "Biome Hats",
+	"items": [
+		"mainmod:cosmetic-end-biotope-hat",
+		"mainmod:cosmetic-moss-biotope-hat",
+		"mainmod:cosmetic-snow-biotope-hat",
+		"mainmod:cosmetic-warped-biotope-hat"
+	]
+}

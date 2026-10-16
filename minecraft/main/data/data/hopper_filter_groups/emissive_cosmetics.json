@@ -1,0 +1,20 @@
+{
+	"name": "Emissive Cosmetics",
+	"items": [
+		"mainmod:cosmetic-candle",
+		"mainmod:cosmetic-devil-horns",
+		"mainmod:cosmetic-endermite",
+		"mainmod:cosmetic-fire-hat",
+		"mainmod:cosmetic-freddy-fazbear",
+		"mainmod:cosmetic-halo-hat",
+		"mainmod:cosmetic-head-enderman",
+		"mainmod:cosmetic-head-warden",
+		"mainmod:cosmetic-herobrine-mask",
+		"mainmod:cosmetic-sleeping-mobs",
+		"mainmod:cosmetic-spider",
+		"mainmod:cosmetic-teletubbies-sun",
+		"mainmod:cosmetic-ufo",
+		"mainmod:cosmetic-unicorn-horn",
+		"mainmod:cosmetic-warden-antlers"
+	]
+}

@@ -11,6 +11,10 @@
 			"type": "string",
 			"pattern": "^minecraft:[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
 		},
+		"enchantmentId": {
+			"type": "string",
+			"pattern": "^[a-z0-9._-]+:[a-z0-9._-]+(?:/[a-z0-9._-]+)*$"
+		},
 		"itemIds": {
 			"type": "array",
 			"minItems": 1,
@@ -25,6 +29,23 @@
 			"uniqueItems": true,
 			"items": {
 				"$ref": "#/$defs/minecraftId"
+			}
+		},
+		"enchantmentIds": {
+			"type": "array",
+			"minItems": 1,
+			"uniqueItems": true,
+			"items": {
+				"$ref": "#/$defs/enchantmentId"
+			}
+		},
+		"enchantmentNamespaces": {
+			"type": "array",
+			"minItems": 1,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"pattern": "^[a-z0-9._-]+$"
 			}
 		}
 	},
@@ -54,7 +75,10 @@
 			}
 		},
 		"enchantments": {
-			"$ref": "#/$defs/minecraftIds"
+			"$ref": "#/$defs/enchantmentIds"
+		},
+		"enchantment_namespaces": {
+			"$ref": "#/$defs/enchantmentNamespaces"
 		}
 	},
 	"required": ["name"],
@@ -70,6 +94,9 @@
 		},
 		{
 			"required": ["enchantments"]
+		},
+		{
+			"required": ["enchantment_namespaces"]
 		}
 	]
 }

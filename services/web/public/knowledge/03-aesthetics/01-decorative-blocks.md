@@ -16,6 +16,247 @@ tips:
 
 Ever thought there aren't enough decorations in game? Why not give these a try! Just craft them and place them down like blocks - you can even right click to rotate them.
 
+::drop-item deco-scarecrow
+## Scarecrow
+
+![Scarecrow](/assets/knowledge/items/decorative-blocks/scarecrow-recipe)
+:::recipe-items
+[Pumpkin](https://minecraft.wiki/w/Pumpkin) (TC) · [Stick](https://minecraft.wiki/w/Stick) (CL, CR, BC) · [Hay Bale](https://minecraft.wiki/w/Hay_Bale) (C) → Scarecrow
+:::
+:::end-drop
+
+
+::drop-item deco-crow
+## Crow
+
+![Crow](/assets/knowledge/items/decorative-blocks/crow-recipe)
+:::recipe-items
+[Black Dye](https://minecraft.wiki/w/Dyes) (TC, BC) · [Feather](https://minecraft.wiki/w/Feather) (CL, CR) · Soul Shard (C) → Crow
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-book-stack
+## Book stack
+
+:::drop-indicator
+
+![Book Stack](/assets/knowledge/items/decorative-blocks/book-stack-recipe)
+:::recipe-items
+[Book](https://minecraft.wiki/w/Book) x4 → Book Stack
+:::
+
+:::end-drop
+
+
+:::drop-item cosmetic-butterflies
+## Butterflies
+
+:::drop-indicator
+
+![Butterflies](/assets/knowledge/items/decorative-blocks/butterflies-recipe)
+:::recipe-items
+[Blue Dye](https://minecraft.wiki/w/dyes) (TC) · [White Dye](https://minecraft.wiki/w/dyes) (CL) · Soul Shard (C) · [Pink Dye](https://minecraft.wiki/w/dyes) (CR) · [Dandelion](https://minecraft.wiki/w/dandelion) (BC) → Butterflies
+:::
+
+:::end-drop
+
+
+::drop-item cosmetic-candle
+## Candle
+
+:::drop-indicator
+
+![Candle](/assets/knowledge/items/decorative-blocks/candle-recipe)
+:::recipe-items
+[Candle](https://minecraft.wiki/w/Candle) (TC) · [Iron Nugget](https://minecraft.wiki/w/Iron_Nugget) (C)  · [Heavy Weighted Pressure Plate](https://minecraft.wiki/w/Heavy_Weighted_Pressure_Plate) → Candle
+:::
+
+:::end-drop
+
+
+:::drop-item cosmetic-cardboard-box
+## Cardboard Box
+
+:::drop-indicator
+
+![Cardboard Box](/assets/knowledge/items/decorative-blocks/cardboard-box-recipe)
+:::recipe-items
+[Paper](https://minecraft.wiki/w/Paper) (TL, TC, TR, CL, CR, BL, BC, BR) → Cardboard Box
+:::
+
+:::end-drop
+
+
+:::drop-item cosmetic-cheese
+## Cheese
+
+:::drop-indicator
+
+![Cheese](/assets/knowledge/items/decorative-blocks/cheese-recipe)
+:::recipe-items
+[Milk](https://minecraft.wiki/w/Milk) · [Fire Charge](https://minecraft.wiki/w/Fire_Charge) → Cheese
+:::
+
+:::end-drop
+
+
+:::drop-item cosmetic-companion-cube
+## Companion Cube
+
+:::drop-indicator
+
+![Companion Cube](/assets/knowledge/items/decorative-blocks/companion-cube-recipe)
+:::recipe-items
+[Iron Nugget](https://minecraft.wiki/w/Iron_Nugget) (TL, TC, TR, CL, CR, BL, BC, BR) · [Rotten Flesh](https://minecraft.wiki/w/Rotten_Flesh) (C) → Companion Cube
+:::
+:::end-drop
+
+
+:::drop-item deco-disco-ball
+## Disco Ball
+
+:::drop-indicator
+
+![Disco Ball](/assets/knowledge/items/decorative-blocks/disco-ball-recipe)
+:::recipe-items
+[Amethyst Shard](https://minecraft.wiki/w/Amethyst_Shard) (TL, TR, BL, BR) · [Glass Pane](https://minecraft.wiki/w/Glass_Pane) (TC, CL, CR, BC) · [White Concrete](https://minecraft.wiki/w/Concrete) (C) → Disco Ball
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-fire
+## Fire
+
+::drop-indicator
+
+![Fire](/assets/knowledge/items/decorative-blocks/fire-recipe)
+:::recipe-items
+[Fire Charge](https://minecraft.wiki/w/Fire_Charge) → Fire
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-fishbowl
+## Fishbowl
+
+::drop-indicator
+
+![Fishbowl](/assets/knowledge/items/decorative-blocks/fishbowl-recipe)
+:::recipe-items
+[Glass Pale](https://minecraft.wiki/w/Glass_Pane) (TL, TC, TR, CL, CR, BL, BC, BR) · Raw Fish → Fishbowl
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-mushroom-big
+## Mushroom
+
+::drop-indicator
+
+![Mushroom](/assets/knowledge/items/decorative-blocks/mushroom-recipe)
+:::recipe-items
+[Bonemeal](https://minecraft.wiki/w/Bone_Meal) · [Red Mushroom](https://minecraft.wiki/w/Red_Mushroom) → Mushroom
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-plunger
+## Plunger
+
+::drop-indicator
+
+![Plunger](/assets/knowledge/items/decorative-blocks/plunger-recipe)
+:::recipe-items
+[Stick](https://minecraft.wiki/w/Stick) (TC, C) · [Red Concrete](https://minecraft.wiki/w/Concrete) (BC) → Plunger
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-pumpkin
+## Pumpkin
+
+::drop-indicator
+
+![Pumpkin](/assets/knowledge/items/decorative-blocks/pumpkin-recipe)
+:::recipe-items
+[Pumpkin Seeds](https://minecraft.wiki/w/Pumpkin_Seeds) · [Bonemeal](https://minecraft.wiki/w/Bone_Meal) → Pumpkin
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-rootling
+## Rootling
+
+::drop-indicator
+
+![Rootling](/assets/knowledge/items/decorative-blocks/rootling-recipe)
+:::recipe-items
+[Hanging Roots](https://minecraft.wiki/w/Hanging_Roots) · Soul Shard → Rootling
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-sea-scorpion
+## Sea Scorpion
+
+::drop-indicator
+
+![Sea Scorpion](/assets/knowledge/items/decorative-blocks/sea-scorpion-recipe)
+:::recipe-items
+[Nautilus](https://minecraft.wiki/w/Nautilus) (TC) · [Shears](https://minecraft.wiki/w/Shears) (CL, CR) · Soul Shard · [Bone](https://minecraft.wiki/w/Bone) (BC) → Sea Scorpion
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-frog-small
+## Frog
+
+::drop-indicator
+
+![Frog](/assets/knowledge/items/decorative-blocks/small-frog-recipe)
+:::recipe-items
+[Slime Ball](https://minecraft.wiki/w/Slime_Ball) (TC, CL, CR) · Soul Shard (C) · [Firefly Bush](https://minecraft.wiki/w/Firefly_Bush) (BC) → Frog
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-traffic-cone
+## Traffic Cone
+
+::drop-indicator
+
+![Traffic Cone](/assets/knowledge/items/decorative-blocks/traffic-cone-recipe)
+:::recipe-items
+[Orange Wool](https://minecraft.wiki/w/Wool) (TC, BC) · [White Wool](https://minecraft.wiki/w/Wool) (C) → Traffic Cone
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-ufo
+## Flying Saucer
+
+::drop-indicator
+
+![Flying Saucer](/assets/knowledge/items/decorative-blocks/ufo-recipe)
+:::recipe-items
+[Iron Nugget](https://minecraft.wiki/w/Iron_Nugget) (TC, CR, CL) · [Ender Pearl](https://minecraft.wiki/w/Ender_Pearl) (C) · [Spore Blossom](https://minecraft.wiki/w/Spore_Blossom) (BC) → Flying Saucer
+:::
+:::end-drop
+
+
+:::drop-item cosmetic-woodpecker
+## Woodpecker
+
+::drop-indicator
+
+![Woodpecker](/assets/knowledge/items/decorative-blocks/woodpecker-recipe)
+:::recipe-items
+[Red Dye](https://minecraft.wiki/w/Dyes) (TC) · [Feather](https://minecraft.wiki/w/Feather) (CL, CR) · Soul Shard · [White Dye](https://minecraft.wiki/w/Dyes) (BC) → Woodpecker
+:::
+:::end-drop
+
+
 :::drop-item deco-kettle
 ## Kettle
 
@@ -25,7 +266,6 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::recipe-items
 [Copper Nugget](https://minecraft.wiki/w/Copper_Nugget) (TL, TC, TR, CL, CR, BL, BC, BR) → Kettle
 :::
-![Kettle Placed](/assets/knowledge/items/decorative-blocks/kettle-deco.png)
 :::end-drop
 
 
@@ -38,7 +278,6 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::recipe-items
 [Apple](https://minecraft.wiki/w/Apple) · [Melon Slice](https://minecraft.wiki/w/Melon_Slice) · [Pumpkin](https://minecraft.wiki/w/Pumpkin) · [Glistering Melon Slice](https://minecraft.wiki/w/Glistering_Melon_Slice) · [Glow Berries](https://minecraft.wiki/w/Glow_Berries) · [Sweet Berries](https://minecraft.wiki/w/Sweet_Berries) · [Bowl](https://minecraft.wiki/w/Bowl) → Fruit Bowl
 :::
-![Fruit-Bowl Placed](/assets/knowledge/items/decorative-blocks/fruit-bowl-deco.png)
 :::end-drop
 
 
@@ -51,7 +290,6 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::recipe-items
 [Cookie](https://minecraft.wiki/w/Cookie) · [Glass Bottle](https://minecraft.wiki/w/Glass_Bottle) → Cookie Jar
 :::
-![Cookie-Jar Placed](/assets/knowledge/items/decorative-blocks/cookie-jar-deco.png)
 :::end-drop
 
 
@@ -64,7 +302,6 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::recipe-items
 [Firefly-Bush](https://minecraft.wiki/w/Firefly_Bush) · [Glass Bottle](https://minecraft.wiki/w/Glass_Bottle) → Firefly Jar
 :::
-![Firefly-Jar Placed](/assets/knowledge/items/decorative-blocks/firefly-jar-deco.png)
 :::end-drop
 
 
@@ -77,7 +314,6 @@ Its primary use is drinking.
 :::recipe-items
 [Wheat](https://minecraft.wiki/w/Wheat) · [Mundane Potion](https://minecraft.wiki/w/Mundane_Potion) → Beer
 :::
-![Beer Placed](/assets/knowledge/items/decorative-blocks/beer-deco.png)
 
 
 :::drop nether
@@ -99,7 +335,6 @@ All types of Spoons Carpets can be placed either on the floor or on the ceiling,
 :::recipe-items
 Beer · [Blue Carpet](https://minecraft.wiki/w/Carpets) → Grandiloquent Spoons Carpet
 :::
-![Blue Carpet Placed](/assets/knowledge/items/decorative-blocks/sc-blue-deco.png) 
 :::end-drop
 
 :::drop-item deco-spoons-carpet-junoesque
@@ -111,7 +346,6 @@ Beer · [Blue Carpet](https://minecraft.wiki/w/Carpets) → Grandiloquent Spoons
 :::recipe-items
 Beer · [Brown Carpet](https://minecraft.wiki/w/Carpets) → Junoesque Spoons Carpet
 :::
-![Brown Carpet Placed](/assets/knowledge/items/decorative-blocks/sc-brown-deco.png)
 :::end-drop
 
 :::drop-item deco-spoons-carpet-meretricious
@@ -121,5 +355,4 @@ Beer · [Brown Carpet](https://minecraft.wiki/w/Carpets) → Junoesque Spoons Ca
 
 COMING SOON...
 
-![Blue Carpet Placed](/assets/knowledge/items/decorative-blocks/sc-black-deco.png)
 :::end-drop

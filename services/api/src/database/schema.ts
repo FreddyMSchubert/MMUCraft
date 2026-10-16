@@ -602,6 +602,7 @@ export const velocityPlayerServers = sqliteTable(
 		player_uuid: text('player_uuid').primaryKey(),
 		preferred_server: text('preferred_server').notNull(),
 		last_connected_server: text('last_connected_server'),
+		event_choice_id: integer('event_choice_id'),
 	},
 	(table) => [
 		check(

@@ -32,8 +32,7 @@ interface VelocityPlayer {
 interface VelocitySnapshot {
 	proxyOnline: boolean;
 	maintenanceMode: boolean;
-	eventOverride: number | null;
-	eventActive: boolean;
+	eventScheduled: boolean;
 	eventDesiredRunning: boolean;
 	servers: VelocityServer[];
 	players: VelocityPlayer[];
@@ -101,9 +100,9 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 		}
 	}
 
-	async function setEventOverride(enabled: boolean | null) {
+	async function setEventOverride(enabled: boolean) {
 		if (
-			enabled === false &&
+			!enabled &&
 			snapshot?.servers.some(
 				(server) => server.name === 'surprising-saturday' && server.playerCount > 0,
 			)
@@ -152,7 +151,8 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 			enabled &&
 			!(await confirm({
 				title: 'Enable maintenance mode?',
-				message: 'Every online player will disconnect. New logins will be rejected.',
+				message:
+					'Players other than the MMU admin account will disconnect. Their new logins will be rejected.',
 				confirmLabel: 'Enable maintenance',
 				confirmTone: 'danger',
 				tone: 'danger',
@@ -199,7 +199,10 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 			<section className="adminSection maintenanceSection">
 				<div className="adminSectionHeader">
 					<h3>Maintenance mode</h3>
-					<p>Velocity blocks entry before a player reaches a backend server.</p>
+					<p>
+						Velocity blocks entry before a player reaches a backend server, except for
+						the MMU admin account.
+					</p>
 				</div>
 				<label className="maintenanceToggle">
 					<input
@@ -249,7 +252,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					<input
 						type="checkbox"
 						checked={eventEnabled}
-						disabled={busy || snapshot.eventActive}
+						disabled={busy || snapshot.eventScheduled}
 						onChange={(event) => void setEventOverride(event.target.checked)}
 					/>
 					<span>
@@ -258,21 +261,12 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 							: 'Surprising Saturday is requested to stop'}
 					</span>
 				</label>
-				{snapshot.eventOverride !== null && (
-					<button
-						type="button"
-						disabled={busy}
-						onClick={() => void setEventOverride(null)}
-					>
-						Follow event schedule
-					</button>
-				)}
 				<p className="velocityHint">
-					{snapshot.eventActive
-						? 'A live event controls the server.'
-						: snapshot.eventOverride === null
-							? 'Following the event schedule.'
-							: 'Committee override is active until the event starts.'}{' '}
+					{snapshot.eventScheduled
+						? 'The event schedule controls the server.'
+						: eventEnabled
+							? 'Running for admin testing until the next scheduled event.'
+							: 'The server starts automatically for the next scheduled event.'}{' '}
 					{eventEnabled && eventHealth !== 'online'
 						? 'The event server is not ready yet. Check its health and logs if it stays offline.'
 						: 'The health below shows when startup or shutdown finishes.'}
@@ -404,16 +398,21 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 												}));
 											}}
 										>
-											<option value="">Select a healthy server</option>
+											<option value="">Select a server</option>
 											{snapshot.servers
 												.filter(
 													(server) =>
-														server.health === 'online' &&
-														server.name !== player.serverName,
+														server.name !== player.serverName &&
+														(server.health === 'online' ||
+															server.name === 'surprising-saturday'),
 												)
 												.map((server) => (
 													<option key={server.id} value={server.id}>
 														{server.name}
+														{server.name === 'surprising-saturday' &&
+														server.health !== 'online'
+															? ' (starts if stopped; moves when online)'
+															: ''}
 													</option>
 												))}
 										</select>

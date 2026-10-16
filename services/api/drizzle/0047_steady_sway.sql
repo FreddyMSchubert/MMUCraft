@@ -1,0 +1,1 @@
+ALTER TABLE `velocity_player_servers` ADD `event_choice_id` integer;

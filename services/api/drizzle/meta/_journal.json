@@ -330,6 +330,13 @@
       "when": 1791584659989,
       "tag": "0046_messy_meltdown",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "6",
+      "when": 1792180075655,
+      "tag": "0047_steady_sway",
+      "breakpoints": true
     }
   ]
 }

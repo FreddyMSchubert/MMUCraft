@@ -121,13 +121,13 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		if (!uuid || !isValidMinecraftUsername(username))
 			return { status: 'DENIED', websiteUrl: this.websiteUrl() };
 
-		if (this.settings().maintenance_mode === 1)
-			return { status: 'MAINTENANCE', websiteUrl: this.websiteUrl() };
-
 		const user = this.identities.resolveAndRefresh(uuid, username);
+		const exempt = isExemptAdmin(user);
+		if (this.settings().maintenance_mode === 1 && !exempt)
+			return { status: 'MAINTENANCE', websiteUrl: this.websiteUrl() };
 		if (user) {
 			const ban = this.bans.resolve(user.id);
-			if (ban.active) {
+			if (ban.active && !exempt) {
 				return {
 					status: ban.expiresAtUnixMs === null ? 'BANNED' : 'TIMEOUT',
 					expiresAtUnixMs: ban.expiresAtUnixMs,
@@ -137,7 +137,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			return {
 				status: 'ALLOWED',
 				member: user.is_member === 1,
-				exempt: isExemptAdmin(user),
+				exempt,
 				websiteUrl: this.websiteUrl(),
 				preferredServerName: this.preferredServer(uuid),
 			};
@@ -202,11 +202,20 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 				now,
 			);
 		for (const [id, command] of this.commands)
-			if (command.routeRevision !== route.revision) this.commands.delete(id);
+			if (
+				command.routeRevision !== route.revision &&
+				!(
+					route.revision.startsWith('warmup:') &&
+					command.routeRevision === 'main:manual' &&
+					command.temporary &&
+					command.targetServerName === EVENT_SERVER
+				)
+			)
+				this.commands.delete(id);
 
 		const disconnects = this.connectedPlayers.flatMap((player) => {
 			const user = this.identities.findByUuid(player.uuid);
-			if (!user) return [];
+			if (!user || isExemptAdmin(user)) return [];
 			const ban = this.bans.resolve(user.id, now);
 			if (!ban.active) return [];
 			return [
@@ -285,7 +294,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			lastHeartbeatUnixMs: this.lastHeartbeatUnixMs,
 			maintenanceMode: this.settings().maintenance_mode === 1,
 			eventOverride: this.settings().event_override,
-			eventActive: Boolean(this.events.active(now)),
+			eventScheduled: Boolean(this.events.active(now) ?? this.events.warmingUp(now)),
 			eventDesiredRunning: this.eventControlState().desiredRunning,
 			servers: servers.map((server) => {
 				const live = proxyOnline ? this.liveServers.get(server.name) : undefined;
@@ -407,14 +416,19 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			.set({ maintenance_mode: enabledInput ? 1 : 0 })
 			.where(eq(velocitySettings.id, 1))
 			.run();
-		if (enabledInput) this.commands.clear();
+		if (enabledInput)
+			for (const [id, command] of this.commands)
+				if (!isExemptAdmin(this.identities.findByUuid(command.playerUuid)))
+					this.commands.delete(id);
 		return { ok: true, maintenanceMode: enabledInput };
 	}
 
 	movePlayer(uuidInput: string, serverIdInput: unknown, temporary: boolean) {
 		const uuid = normalizeMinecraftUuid(uuidInput);
-		if (!uuid || !this.identities.findByUuid(uuid))
-			throw new NotFoundException('Player not found');
+		const user = uuid ? this.identities.findByUuid(uuid) : null;
+		if (!uuid || !user) throw new NotFoundException('Player not found');
+		if (this.settings().maintenance_mode === 1 && !isExemptAdmin(user))
+			throw new ConflictException('Maintenance mode blocks this player');
 		const serverId = parseSafeInteger(serverIdInput, 'Select a server');
 		const server = this.database.connection
 			.select()
@@ -423,14 +437,18 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			.get();
 		if (!server || !['main', EVENT_SERVER].includes(server.name))
 			throw new NotFoundException('Server not found');
-		if (server.name === EVENT_SERVER && !this.eventControlState().desiredRunning)
-			throw new ConflictException('Surprising Saturday is stopped');
-		if (server.name === EVENT_SERVER && this.events.warmingUp())
-			throw new ConflictException('Surprising Saturday opens at the event start time');
 		const player = this.proxyIsOnline()
 			? this.connectedPlayers.find((candidate) => candidate.uuid === uuid)
 			: undefined;
 		if (temporary && !player) throw new ConflictException('Player is not online');
+		if (server.name === EVENT_SERVER && !this.eventControlState().desiredRunning) {
+			this.database.connection
+				.update(velocitySettings)
+				.set({ event_override: 1 })
+				.where(eq(velocitySettings.id, 1))
+				.run();
+			this.refreshEventState();
+		}
 		if (!temporary)
 			this.database.connection
 				.insert(velocityPlayerServers)
@@ -438,16 +456,20 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 					player_uuid: uuid,
 					preferred_server: server.name,
 					last_connected_server: player?.state === 'playing' ? player.serverName : null,
+					event_choice_id: this.events.active()?.id ?? null,
 				})
 				.onConflictDoUpdate({
 					target: velocityPlayerServers.player_uuid,
-					set: { preferred_server: server.name },
+					set: {
+						preferred_server: server.name,
+						event_choice_id: this.events.active()?.id ?? null,
+					},
 				})
 				.run();
 
 		for (const [id, command] of this.commands)
 			if (command.playerUuid === uuid) this.commands.delete(id);
-		if (!player || (player.serverName === server.name && player.state === 'playing'))
+		if (!player)
 			return {
 				ok: true,
 				commandId: null,
@@ -495,13 +517,13 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			throw new BadRequestException('Select main or Surprising Saturday');
 		if (!this.events.active())
 			throw new ConflictException('Player switching is available during a live event');
-		if (this.bans.resolve(userId).active)
-			throw new ForbiddenException('Your Minecraft access is restricted');
 		const user = this.database.connection
 			.select()
 			.from(users)
 			.where(eq(users.id, userId))
 			.get();
+		if (this.bans.resolve(userId).active && !isExemptAdmin(user))
+			throw new ForbiddenException('Your Minecraft access is restricted');
 		const uuid = normalizeMinecraftUuid(user?.minecraft_uuid ?? '');
 		if (!uuid) throw new NotFoundException('Minecraft account not linked');
 		const server = this.servers().find((candidate) => candidate.name === serverName);
@@ -552,8 +574,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		const now = Date.now();
 		const override = this.settings().event_override;
 		const desiredRunning =
-			Boolean(this.events.active(now)) ||
-			(override === null ? Boolean(this.events.warmingUp(now)) : override === 1);
+			Boolean(this.events.active(now) ?? this.events.warmingUp(now)) || override === 1;
 		return {
 			desiredRunning,
 			canStop:
@@ -567,8 +588,8 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			throw new BadRequestException(
 				'enabled must be true, false, or null for automatic operation',
 			);
-		if (value !== null && this.events.active())
-			throw new ConflictException('A live event controls Surprising Saturday');
+		if (this.events.active() || this.events.warmingUp())
+			throw new ConflictException('The event schedule controls Surprising Saturday');
 		this.database.connection
 			.update(velocitySettings)
 			.set({ event_override: value === null ? null : value ? 1 : 0 })
@@ -591,7 +612,10 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	refreshEventState() {
-		if (this.events.active() && this.settings().event_override !== null)
+		if (
+			(this.events.active() || this.events.warmingUp()) &&
+			this.settings().event_override !== null
+		)
 			this.database.connection
 				.update(velocitySettings)
 				.set({ event_override: null })
@@ -606,13 +630,17 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	private preferredServer(uuid: string) {
-		return (
-			this.database.connection
-				.select({ preferred: velocityPlayerServers.preferred_server })
-				.from(velocityPlayerServers)
-				.where(eq(velocityPlayerServers.player_uuid, uuid))
-				.get()?.preferred ?? 'main'
-		);
+		const activeEvent = this.events.active();
+		if (!activeEvent) return 'main';
+		const choice = this.database.connection
+			.select({
+				preferred: velocityPlayerServers.preferred_server,
+				eventId: velocityPlayerServers.event_choice_id,
+			})
+			.from(velocityPlayerServers)
+			.where(eq(velocityPlayerServers.player_uuid, uuid))
+			.get();
+		return choice?.eventId === activeEvent.id ? choice.preferred : EVENT_SERVER;
 	}
 
 	private rememberConnectedServer(uuid: string, serverName: string, temporary: boolean) {

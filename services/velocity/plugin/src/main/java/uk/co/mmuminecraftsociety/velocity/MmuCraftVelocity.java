@@ -61,6 +61,7 @@ public final class MmuCraftVelocity {
     private final Map<String, ApiClient.ServerHealth> health = new ConcurrentHashMap<>();
     private final Map<UUID, String> manualDestinations = new ConcurrentHashMap<>();
     private final Map<UUID, String> temporaryDestinations = new ConcurrentHashMap<>();
+    private final Set<UUID> pendingEventAdmins = ConcurrentHashMap.newKeySet();
     private final Map<UUID, String> sessionIds = new ConcurrentHashMap<>();
     private final Map<UUID, String> loginDestinations = new ConcurrentHashMap<>();
     private final Set<Long> acknowledgedCommands = ConcurrentHashMap.newKeySet();
@@ -218,9 +219,15 @@ public final class MmuCraftVelocity {
         } else if (event.getServer().getServerInfo().getName().equals("surprising-saturday")
                 && managedServers.containsKey("main")
                 && health.getOrDefault("main", new ApiClient.ServerHealth("main", false, null, null)).online()) {
-            temporaryDestinations.remove(event.getPlayer().getUniqueId());
-            manualDestinations.put(event.getPlayer().getUniqueId(), "main");
-            RegisteredServer fallback = targetFor(event.getPlayer());
+            UUID uuid = event.getPlayer().getUniqueId();
+            boolean retryAdmin = event.kickedDuringServerConnect()
+                    && capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt();
+            if (retryAdmin) pendingEventAdmins.add(uuid);
+            else {
+                temporaryDestinations.remove(uuid);
+                manualDestinations.put(uuid, "main");
+            }
+            RegisteredServer fallback = retryAdmin ? managedServers.get("main") : targetFor(event.getPlayer());
             event.setResult(fallback == null || fallback.getServerInfo().equals(event.getServer().getServerInfo())
                     ? KickedFromServerEvent.DisconnectPlayer.create(Messages.unavailable())
                     : KickedFromServerEvent.RedirectPlayer.create(fallback));
@@ -250,6 +257,7 @@ public final class MmuCraftVelocity {
         }
         waiting.remove(uuid);
         visitors.remove(uuid);
+        if ("surprising-saturday".equals(serverName)) pendingEventAdmins.remove(uuid);
         pendingAdmissions.values().removeIf(uuid::equals);
         admissions.add(uuid);
         admissionDestinations.put(uuid, serverName);
@@ -290,6 +298,7 @@ public final class MmuCraftVelocity {
         capacityWarnings.remove(uuid);
         manualDestinations.remove(uuid);
         temporaryDestinations.remove(uuid);
+        pendingEventAdmins.remove(uuid);
         sessionIds.remove(uuid);
         loginDestinations.remove(uuid);
     }
@@ -425,10 +434,13 @@ public final class MmuCraftVelocity {
         boolean wasInMaintenance = maintenanceMode;
         maintenanceMode = response.maintenanceMode();
         if (maintenanceMode) {
-            manualDestinations.clear();
-            temporaryDestinations.clear();
-            proxy.getAllPlayers().forEach(player -> player.disconnect(Messages.maintenance()));
-            return;
+            manualDestinations.keySet().removeIf(uuid ->
+                    !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt());
+            temporaryDestinations.keySet().removeIf(uuid ->
+                    !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt());
+            proxy.getAllPlayers().stream()
+                    .filter(player -> !capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST).exempt())
+                    .forEach(player -> player.disconnect(Messages.maintenance()));
         }
 
         ApiClient.Route nextRoute = response.route();
@@ -436,8 +448,14 @@ public final class MmuCraftVelocity {
         String nextRevision = nextRoute == null ? null : nextRoute.revision();
         String oldTarget = route == null ? null : route.targetServerName();
         String nextTarget = nextRoute == null ? null : nextRoute.targetServerName();
+        boolean routeChanged = !Objects.equals(oldRevision, nextRevision);
+        boolean preserveTestingMoves = routeChanged && "main".equals(oldTarget)
+                && "main".equals(nextTarget) && nextRevision != null
+                && nextRevision.startsWith("warmup:");
+        boolean temporaryEventOpen = "main:manual".equals(nextRevision)
+                || (nextRevision != null && nextRevision.startsWith("warmup:"));
         route = nextRoute;
-        if (!Objects.equals(oldRevision, nextRevision) && "main".equals(oldTarget)
+        if (routeChanged && "main".equals(oldTarget)
                 && "surprising-saturday".equals(nextTarget)) {
             waiting.replaceAll((uuid, entry) -> "main".equals(entry.destination())
                     ? new QueueEntry(entry.member(), entry.order(), "surprising-saturday") : entry);
@@ -449,15 +467,20 @@ public final class MmuCraftVelocity {
                 (hasWaiting("surprising-saturday") || visitors.values().stream().anyMatch(entry ->
                         "surprising-saturday".equals(entry.destination())))) {
             waiting.replaceAll((uuid, entry) -> "surprising-saturday".equals(entry.destination())
+                    && !(temporaryEventOpen && "surprising-saturday".equals(temporaryDestinations.get(uuid)))
                     ? new QueueEntry(entry.member(), entry.order(), "main") : entry);
             visitors.replaceAll((uuid, entry) -> "surprising-saturday".equals(entry.destination())
+                    && !(temporaryEventOpen && "surprising-saturday".equals(temporaryDestinations.get(uuid)))
                     ? new QueueEntry(entry.member(), entry.order(), "main") : entry);
             shownPositions.clear();
         }
-        if (!Objects.equals(oldRevision, nextRevision) || wasInMaintenance
+        if ((routeChanged && !preserveTestingMoves)
                 || ("surprising-saturday".equals(oldTarget) && "main".equals(nextTarget))) {
             manualDestinations.clear();
             temporaryDestinations.clear();
+        }
+        if (routeChanged || (wasInMaintenance && !maintenanceMode)
+                || ("surprising-saturday".equals(oldTarget) && "main".equals(nextTarget))) {
             moveAllToAssignedServer();
         }
 
@@ -471,6 +494,23 @@ public final class MmuCraftVelocity {
 
         if (response.commands() != null) {
             response.commands().forEach(this::execute);
+        }
+        if (serverOnline("surprising-saturday")) {
+            for (UUID uuid : new HashSet<>(pendingEventAdmins)) {
+                Player player = proxy.getPlayer(uuid).orElse(null);
+                if (player == null) {
+                    pendingEventAdmins.remove(uuid);
+                    continue;
+                }
+                if (!pendingEventAdmins.remove(uuid)) continue;
+                RegisteredServer target = targetFor(player);
+                if (target == null || !"surprising-saturday".equals(target.getServerInfo().getName())) {
+                    continue;
+                }
+                player.createConnectionRequest(target).connect().thenAccept(result -> {
+                    if (!result.isSuccessful() && proxy.getPlayer(uuid).isPresent()) pendingEventAdmins.add(uuid);
+                });
+            }
         }
     }
 
@@ -782,6 +822,8 @@ public final class MmuCraftVelocity {
             acknowledgedCommands.add(command.id());
             return;
         }
+        if (pendingEventAdmins.contains(uuid) && "surprising-saturday".equals(command.targetServerName())) return;
+        pendingEventAdmins.remove(uuid);
         if (connectingCommands.contains(command.id())) return;
         if (waiting.containsKey(uuid)) {
             if (command.temporary()) temporaryDestinations.put(uuid, command.targetServerName());
@@ -821,8 +863,13 @@ public final class MmuCraftVelocity {
             } else {
                 logger.warn("Move of {} to {} failed: {}", targetPlayer.getUsername(),
                         command.targetServerName(), error == null ? result : error.toString());
-                manualDestinations.remove(uuid, command.targetServerName());
-                temporaryDestinations.remove(uuid, command.targetServerName());
+                if ("surprising-saturday".equals(command.targetServerName())
+                        && capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt()) {
+                    pendingEventAdmins.add(uuid);
+                } else {
+                    manualDestinations.remove(uuid, command.targetServerName());
+                    temporaryDestinations.remove(uuid, command.targetServerName());
+                }
                 restoreCurrentAdmission(targetPlayer);
             }
             connectingCommands.remove(command.id());
@@ -848,14 +895,16 @@ public final class MmuCraftVelocity {
     }
 
     private synchronized RegisteredServer targetFor(Player player) {
-        if (maintenanceMode) return null;
         UUID uuid = player.getUniqueId();
+        if (maintenanceMode && !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt()) return null;
         if (waiting.containsKey(uuid) || visitors.containsKey(uuid)) return managedServers.get("waiting-room");
         String name = temporaryDestinations.getOrDefault(uuid, manualDestinations.get(uuid));
         if (name == null && player.getCurrentServer().isEmpty())
             name = loginDestinations.getOrDefault(uuid, "main");
         if (name == null && route != null) name = route.targetServerName();
         name = availableDestination(uuid, name);
+        if ("surprising-saturday".equals(name) && pendingEventAdmins.contains(uuid)
+                && serverOnline("main")) return managedServers.get("main");
         if (!capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt()
                 && !name.equals(admissionDestinations.get(uuid))) {
             if (hasWaiting(name) || pendingAdmissions.containsKey(name)
@@ -876,7 +925,15 @@ public final class MmuCraftVelocity {
             admissions.add(uuid);
             admissionDestinations.put(uuid, name);
         }
-        if (!serverOnline(name)) return null;
+        if (!serverOnline(name)) {
+            if ("surprising-saturday".equals(name)
+                    && capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt()
+                    && serverOnline("main")) {
+                pendingEventAdmins.add(uuid);
+                return managedServers.get("main");
+            }
+            return null;
+        }
         return managedServers.get(name);
     }
 

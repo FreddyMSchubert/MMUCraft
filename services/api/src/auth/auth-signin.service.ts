@@ -9,7 +9,13 @@ import type { UserRow } from '../database/database.service';
 import { formatManchesterDateTime } from '../date-time';
 import { AuthSessionService } from './auth-session.service';
 import { AuthUserLookupService } from './auth-user-lookup.service';
-import { createAuthCode, hashSecret, normalizeEmail, safeSecretEquals } from './auth.util';
+import {
+	ADMIN_SIGNUP_EMAIL,
+	createAuthCode,
+	hashSecret,
+	normalizeEmail,
+	safeSecretEquals,
+} from './auth.util';
 import { AuthVerificationEmailService } from './auth-verification-email.service';
 import { PlayerBansService } from './player-bans.service';
 import { signinFlows } from './signup-flow';
@@ -79,6 +85,7 @@ export class AuthSigninService {
 	}
 
 	private requirePlayerNotBanned(user: UserRow) {
+		if (user.email.toLowerCase() === ADMIN_SIGNUP_EMAIL) return false;
 		const ban = this.bans.resolve(user.id);
 		if (ban.active)
 			throw new ForbiddenException(

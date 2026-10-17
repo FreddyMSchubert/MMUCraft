@@ -16,7 +16,7 @@
 	"charm": {
 		"charmId": 60,
 		"minLevel": 0,
-		"maxLevel": 10,
+		"maxLevel": 20,
 		"levels": [
 			{
 				"level": 1,
@@ -27,116 +27,304 @@
 					"minecraft:spider_eye",
 					"minecraft:spider_eye",
 					"minecraft:spider_eye",
+					"minecraft:glow_ink_sac",
+					"minecraft:glow_ink_sac",
 					"minecraft:glow_ink_sac"
 				]
 			},
 			{
 				"level": 2,
-				"abilityStatusCurrent": "Mobs you kill drop 2x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 2x.",
-				"dabloons": 100,
+				"abilityStatusCurrent": "Mobs you kill drop 1.7x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 1.7x.",
+				"dabloons": 75,
 				"upgradeIngredients": [
 					"minecraft:fermented_spider_eye",
 					"minecraft:fermented_spider_eye",
-					"minecraft:rabbit_foot"
+					"minecraft:rabbit_foot",
+					"minecraft:rabbit_foot",
+					"minecraft:slime_ball",
+					"minecraft:slime_ball",
+					"minecraft:slime_ball"
 				]
 			},
 			{
 				"level": 3,
-				"abilityStatusCurrent": "Mobs you kill drop 2.5x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 2.5x.",
-				"dabloons": 175,
+				"abilityStatusCurrent": "Mobs you kill drop 1.9x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 1.9x.",
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:magma_cream",
 					"minecraft:magma_cream",
+					"minecraft:magma_cream",
 					"minecraft:blaze_rod",
-					"minecraft:blaze_rod"
+					"minecraft:blaze_rod",
+					"minecraft:ghast_tear"
 				]
 			},
 			{
 				"level": 4,
-				"abilityStatusCurrent": "Mobs you kill drop 3x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 3x.",
-				"dabloons": 300,
+				"abilityStatusCurrent": "Mobs you kill drop 2.1x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 2.1x.",
+				"dabloons": 125,
 				"upgradeIngredients": [
 					"minecraft:prismarine_crystals",
 					"minecraft:prismarine_crystals",
+					"minecraft:prismarine_crystals",
 					"minecraft:nautilus_shell",
-					"minecraft:nautilus_shell"
+					"minecraft:nautilus_shell",
+					"minecraft:prismarine_shard",
+					"minecraft:prismarine_shard",
+					"minecraft:prismarine_shard",
+					"minecraft:prismarine_shard"
 				]
 			},
 			{
 				"level": 5,
-				"abilityStatusCurrent": "Mobs you kill drop 4x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 4x.",
-				"dabloons": 500,
+				"abilityStatusCurrent": "Mobs you kill drop 2.3x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 2.3x.",
+				"dabloons": 150,
 				"upgradeIngredients": [
-					"minecraft:breeze_rod",
-					"minecraft:breeze_rod",
-					"minecraft:ominous_trial_key"
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:ender_pearl",
+					"minecraft:ender_pearl",
+					"minecraft:ender_pearl",
+					"minecraft:shulker_shell"
 				]
 			},
 			{
 				"level": 6,
-				"abilityStatusCurrent": "Mobs you kill drop 5x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 5x.",
-				"dabloons": 800,
+				"abilityStatusCurrent": "Mobs you kill drop 2.5x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 2.5x.",
+				"dabloons": 200,
 				"upgradeIngredients": [
-					"minecraft:shulker_shell",
-					"minecraft:shulker_shell",
+					"minecraft:blaze_rod",
+					"minecraft:blaze_rod",
+					"minecraft:blaze_rod",
+					"minecraft:ghast_tear",
+					"minecraft:ghast_tear",
+					"minecraft:wither_skeleton_skull"
+				]
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Mobs you kill drop 2.7x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 2.7x.",
+				"dabloons": 250,
+				"upgradeIngredients": [
+					"minecraft:breeze_rod",
+					"minecraft:breeze_rod",
+					"minecraft:breeze_rod",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:trial_key"
+				]
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Mobs you kill drop 2.9x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 2.9x.",
+				"dabloons": 300,
+				"upgradeIngredients": [
+					"minecraft:ominous_trial_key",
+					"minecraft:breeze_rod",
+					"minecraft:breeze_rod",
+					"minecraft:breeze_rod",
+					"minecraft:ominous_bottle",
+					"minecraft:ominous_bottle",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge"
+				]
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Mobs you kill drop 3.1x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 3.1x.",
+				"dabloons": 350,
+				"upgradeIngredients": [
+					"minecraft:resin_clump",
+					"minecraft:resin_clump",
+					"minecraft:resin_clump",
+					"minecraft:resin_clump",
+					"minecraft:creaking_heart",
 					"minecraft:echo_shard",
 					"minecraft:echo_shard"
 				]
 			},
 			{
-				"level": 7,
-				"abilityStatusCurrent": "Mobs you kill drop 7x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 7x.",
-				"dabloons": 1300,
+				"level": 10,
+				"abilityStatusCurrent": "Mobs you kill drop 3.3x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 3.3x.",
+				"dabloons": 400,
 				"upgradeIngredients": [
-					"minecraft:wither_skeleton_skull",
-					"minecraft:wither_skeleton_skull",
-					"minecraft:sculk_catalyst"
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:chorus_fruit",
+					"minecraft:chorus_fruit",
+					"minecraft:chorus_fruit"
 				]
 			},
 			{
-				"level": 8,
-				"abilityStatusCurrent": "Mobs you kill drop 10x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 10x.",
-				"dabloons": 2100,
+				"level": 11,
+				"abilityStatusCurrent": "Mobs you kill drop 3.5x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 3.5x.",
+				"dabloons": 450,
+				"upgradeIngredients": [
+					"minecraft:sculk_catalyst",
+					"minecraft:sculk_shrieker",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard"
+				]
+			},
+			{
+				"level": 12,
+				"abilityStatusCurrent": "Mobs you kill drop 3.7x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 3.7x.",
+				"dabloons": 500,
+				"upgradeIngredients": [
+					"minecraft:wither_skeleton_skull",
+					"minecraft:wither_skeleton_skull",
+					"minecraft:ghast_tear",
+					"minecraft:ghast_tear",
+					"minecraft:blaze_rod",
+					"minecraft:blaze_rod",
+					"minecraft:blaze_rod"
+				]
+			},
+			{
+				"level": 13,
+				"abilityStatusCurrent": "Mobs you kill drop 3.9x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 3.9x.",
+				"dabloons": 550,
 				"upgradeIngredients": [
 					"minecraft:heavy_core",
+					"minecraft:ominous_trial_key",
+					"minecraft:ominous_trial_key",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge",
+					"minecraft:wind_charge"
+				]
+			},
+			{
+				"level": 14,
+				"abilityStatusCurrent": "Mobs you kill drop 4.1x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 4.1x.",
+				"dabloons": 600,
+				"upgradeIngredients": [
 					"minecraft:dragon_breath",
 					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:shulker_shell",
+					"minecraft:ender_pearl",
+					"minecraft:ender_pearl",
+					"minecraft:ender_pearl"
+				]
+			},
+			{
+				"level": 15,
+				"abilityStatusCurrent": "Mobs you kill drop 4.3x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 4.3x.",
+				"dabloons": 700,
+				"upgradeIngredients": [
+					"minecraft:nether_star",
+					"minecraft:wither_skeleton_skull",
+					"minecraft:wither_skeleton_skull",
+					"minecraft:sculk_catalyst",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard"
+				]
+			},
+			{
+				"level": 16,
+				"abilityStatusCurrent": "Mobs you kill drop 4.5x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 4.5x.",
+				"dabloons": 800,
+				"upgradeIngredients": [
+					"minecraft:dragon_head",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:dragon_breath",
+					"minecraft:chorus_fruit",
+					"minecraft:chorus_fruit",
+					"minecraft:chorus_fruit",
+					"minecraft:chorus_fruit"
+				]
+			},
+			{
+				"level": 17,
+				"abilityStatusCurrent": "Mobs you kill drop 4.7x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 4.7x.",
+				"dabloons": 900,
+				"upgradeIngredients": [
+					"minecraft:heavy_core",
+					"minecraft:nether_star",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:wither_skeleton_skull",
 					"minecraft:wither_skeleton_skull"
 				]
 			},
 			{
-				"level": 9,
-				"abilityStatusCurrent": "Mobs you kill drop 15x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 15x.",
-				"dabloons": 3500,
+				"level": 18,
+				"abilityStatusCurrent": "Mobs you kill drop 4.9x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 4.9x.",
+				"dabloons": 1000,
+				"upgradeIngredients": [
+					"minecraft:enchanted_golden_apple",
+					"minecraft:creaking_heart",
+					"minecraft:creaking_heart",
+					"minecraft:ominous_trial_key",
+					"minecraft:ominous_trial_key",
+					"minecraft:nether_star"
+				]
+			},
+			{
+				"level": 19,
+				"abilityStatusCurrent": "Mobs you kill drop 5.1x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 5.1x.",
+				"dabloons": 1150,
 				"upgradeIngredients": [
 					"minecraft:nether_star",
 					"minecraft:nether_star",
 					"minecraft:dragon_head",
-					"minecraft:enchanted_golden_apple"
+					"minecraft:heavy_core",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard"
 				]
 			},
 			{
-				"level": 10,
-				"abilityStatusCurrent": "Mobs you kill drop 20x XP.",
-				"abilityStatusRelative": "Raises mob kill XP to 20x.",
-				"dabloons": 6000,
+				"level": 20,
+				"abilityStatusCurrent": "Mobs you kill drop 5.3x XP.",
+				"abilityStatusRelative": "Raises mob kill XP to 5.3x.",
+				"dabloons": 1300,
 				"upgradeIngredients": [
-					"minecraft:nether_star",
-					"minecraft:nether_star",
 					"minecraft:nether_star",
 					"minecraft:nether_star",
 					"minecraft:dragon_head",
 					"minecraft:dragon_head",
 					"minecraft:heavy_core",
-					"minecraft:enchanted_golden_apple"
+					"minecraft:enchanted_golden_apple",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard",
+					"minecraft:echo_shard"
 				]
 			}
 		]

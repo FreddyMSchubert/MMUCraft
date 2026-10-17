@@ -1,17 +1,17 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickCallbackCharm;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
 {
@@ -24,10 +24,19 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
 
     public static final int MIN_AIR_TICKS_BEFORE_EXTRA_JUMP = 3;
 
-    private static final String TAG_USED_JUMPS = "ws_used_jumps";
-    private static final String TAG_RELEASED_SINCE_JUMP = "ws_released_since_jump";
-    private static final String TAG_JUMP_BUFFER = "ws_jump_buffer";
-    private static final String TAG_AIR_TICKS = "ws_air_ticks";
+    private final Map<ServerPlayer, JumpState> jumpStates = new WeakHashMap<>();
+
+    private static final class JumpState {
+        final ItemStack stack;
+        int usedJumps;
+        boolean releasedSinceJump;
+        int jumpBuffer;
+        int airTicks;
+
+        JumpState(ItemStack stack) {
+            this.stack = stack;
+        }
+    }
 
     private static int getExtraJumpsForLevel(int level) {
         return level >= 10 ? level + 6 : level;
@@ -36,13 +45,16 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
     @Override
     public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
-        CustomData cd = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-        CompoundTag tag = cd.copyTag();
+        JumpState state = jumpStates.get(player);
+        if (state == null || state.stack != stack) {
+            state = new JumpState(stack);
+            jumpStates.put(player, state);
+        }
 
-        int usedJumps = tag.getIntOr(TAG_USED_JUMPS, 0);
-        boolean releasedSinceJump = tag.getBoolean(TAG_RELEASED_SINCE_JUMP).orElse(false);
-        int jumpBuffer = tag.getIntOr(TAG_JUMP_BUFFER, 0);
-        int airTicks = tag.getIntOr(TAG_AIR_TICKS, 0);
+        int usedJumps = state.usedJumps;
+        boolean releasedSinceJump = state.releasedSinceJump;
+        int jumpBuffer = state.jumpBuffer;
+        int airTicks = state.airTicks;
 
         boolean jumpHeld = player.getLastClientInput().jump();
         boolean onGround = player.onGround();
@@ -101,10 +113,9 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
             }
         }
 
-        tag.putInt(TAG_USED_JUMPS, usedJumps);
-        tag.putBoolean(TAG_RELEASED_SINCE_JUMP, releasedSinceJump);
-        tag.putInt(TAG_JUMP_BUFFER, jumpBuffer);
-        tag.putInt(TAG_AIR_TICKS, airTicks);
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        state.usedJumps = usedJumps;
+        state.releasedSinceJump = releasedSinceJump;
+        state.jumpBuffer = jumpBuffer;
+        state.airTicks = airTicks;
     }
 }

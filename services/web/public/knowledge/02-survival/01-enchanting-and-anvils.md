@@ -7,7 +7,7 @@ tags:
 - enchantng
 - anvilles
 tips:
-- You can copy enchanted books at a librarian's lectern. Treasure enchantments and Soulbound cannot be copied.
+- You can copy enchanted books at a librarian's lectern. Soul Speed, Swift Sneak, Wind Burst, and Soulbound cannot be copied.
 - Combining levels in an anvil uses addition on this server. For example, combining Sharpness I and Sharpness II results in Sharpness III.
 - The "Too Expensive" anvil limit has been fully removed, you can keep upgrading and repairing your gear forever.
 - Anvils work differently in the server. For example, it is possible to copy enchantments that are applied to an item back onto a book.
@@ -25,7 +25,7 @@ tips:
 If you want to, you still can treat enchanting and anvils just as usual. The default behaviour is still supported. But you'd be making a mistake!
 
 :::tldr
-- Find or craft an enchanted book, then copy it with a librarian. Treasure enchantments and Soulbound cannot be copied.
+- Find or craft an enchanted book, then copy it with a librarian. Soul Speed, Swift Sneak, Wind Burst, and Soulbound cannot be copied.
 - Levels add more liberally in an anvil. `Sharpness I + Sharpness II = Sharpness III`.
 - Anvils never become "Too Expensive", have no prior-work penalty (meaning XP cost doesn't grow larger and larger), and cost at most 30 levels.
 :::
@@ -38,10 +38,10 @@ Put an enchanted book on the lectern used by a librarian. The librarian's first 
 
 | Enchantments on the book | Lectern copy trade |
 | :-- | :-- |
-| No treasure enchantments or Soulbound | Available |
-| A treasure enchantment or Soulbound, including books with other enchantments | Unavailable |
+| No Soul Speed, Swift Sneak, Wind Burst, or Soulbound | Available |
+| Any of those four enchantments, including books with other enchantments | Unavailable |
 
-Treasure enchantments are Curse of Binding, Curse of Vanishing, Frost Walker, Mending, Soul Speed, Swift Sneak, and Wind Burst.
+All other available enchantments, including Mending, Frost Walker, curses, Charm Boost, and the enabled Dungeons and Taverns enchantments, can be copied.
 
 The normal random-pick book trades remain.
 
@@ -93,8 +93,8 @@ Most enchanted books have a reliable source. The two curses have no fixed source
 | Breach | Open any Trial Chamber reward vault (1/16 bonus book chance) | 4 | 4 | Yes |
 | Channeling | Open a Shipwreck supply chest (100%) | 1 | 1 | Yes |
 | Charm Boost | Brush a suspicious archaeology block. See [Charms](/play/knowledge/charms). | 1 | 1 | Yes |
-| Curse of Binding | Find in a random librarian trade or loot chest | 1 | 1 | No |
-| Curse of Vanishing | Find in a random librarian trade or loot chest | 1 | 1 | No |
+| Curse of Binding | Find in a random librarian trade or loot chest | 1 | 1 | Yes |
+| Curse of Vanishing | Find in a random librarian trade or loot chest | 1 | 1 | Yes |
 | Density | Open any Trial Chamber reward vault (1/16 bonus book chance) | 5 | 5 | Yes |
 | Depth Strider | Kill a Drowned (12.5%) | 3 | 4 | Yes |
 | Efficiency | Open a Stronghold corridor, crossing, or library chest (25%) | 5 | 8 | Yes |
@@ -103,7 +103,7 @@ Most enchanted books have a reliable source. The two curses have no fixed source
 | Fire Protection | Enchanting table | 3 | 5 | Yes |
 | Flame | Open a Ruined Portal chest (50%) | 1 | 1 | Yes |
 | Fortune | Craft a Fortune I book.<sup><a href="#fortune-footnote">1</a></sup> | 3 | 4 | Yes |
-| Frost Walker | Open an Igloo chest (100%) | 2 | 3 | No |
+| Frost Walker | Open an Igloo chest (100%) | 2 | 3 | Yes |
 | Impaling | Open a Shipwreck treasure chest (100%) | 5 | 5 | Yes |
 | Infinity | Open a Jungle Temple chest (50%) | 1 | 1 | Yes |
 | Knockback | Open a Woodland Mansion chest (12.5%) | 2 | 3 | Yes |
@@ -112,7 +112,7 @@ Most enchanted books have a reliable source. The two curses have no fixed source
 | Luck of the Sea | Open a Buried Treasure chest (100%) | 3 | 3 | Yes |
 | Lunge | Open a Desert Pyramid chest (25%) | 3 | 5 | Yes |
 | Lure | [Fish it up](/play/knowledge/fishing) | 3 | 3 | Yes |
-| Mending | Open an Ancient City or Ancient City ice-box chest (25%) | 1 | 1 | No |
+| Mending | Open an Ancient City or Ancient City ice-box chest (25%) | 1 | 1 | Yes |
 | Multishot | Open a Pillager Outpost chest (50%) | 1 | 1 | Yes |
 | Piercing | Open a Pillager Outpost chest (50%) | 4 | 4 | Yes |
 | Power | Open any Bastion Remnant chest (25%) | 5 | 5 | Yes |

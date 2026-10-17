@@ -921,7 +921,7 @@
 	"blazeandcave:nether/the_hunt_begins": 5, // The Hunt Begins: kill a Wither Skeleton; fortress combat target, modest reward.
 	"blazeandcave:nether/the_nethers_shield": 0, // The Nether's Shield: block Blaze fireballs; small fortress combat interaction.
 	"blazeandcave:nether/the_struggle_nether_ends": 42, // The Struggle Nether Ends: place one of every Nether block in the End; Nether collection plus End transport.
-	"blazeandcave:nether/the_tribal_snouts": 0, // The Tribal Snouts: kill a Zombified Piglin; common Nether mob, no reward.
+	"blazeandcave:nether/the_tribal_snouts": 30, // The Tribal Snouts: kill a Zombified Piglin; common Nether mob, no reward.
 	"blazeandcave:nether/this_ones_mine": 20, // This One's Mine!: kill a Zombified Piglin riding a Strider and take the mount; uncommon rider setup.
 	"blazeandcave:nether/time_to_fire_back": 6, // Time to Fire Back: craft a stack of fire charges; blaze powder/coal/gunpowder stockpile.
 	"blazeandcave:nether/time_to_upgrade": 5, // Time to Upgrade!: find a Netherite Upgrade template in a Bastion; dangerous structure loot.

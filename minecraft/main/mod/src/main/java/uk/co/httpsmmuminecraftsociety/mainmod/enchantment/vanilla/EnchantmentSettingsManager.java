@@ -51,7 +51,7 @@ public class EnchantmentSettingsManager
         // mace enchantments
         new EnchantmentSettings(Enchantments.BREACH).maxLevels(4, 4).inLoottable(trialChamberRewards).loottableChance(1.0f / 16.0f),
         new EnchantmentSettings(Enchantments.DENSITY).maxLevels(5, 5).inLoottable(trialChamberRewards).loottableChance(1.0f / 16.0f),
-        new EnchantmentSettings(Enchantments.WIND_BURST).maxLevels(3, 3).inLoottable(trialChamberRewards).loottableChance(1.0f / 16.0f),
+        new EnchantmentSettings(Enchantments.WIND_BURST).maxLevels(3, 3).inLoottable(trialChamberRewards).loottableChance(1.0f / 16.0f).lecternCopying(false),
 
         // trident enchantments
         new EnchantmentSettings(Enchantments.CHANNELING).maxLevels(1, 1).inLoottable("chests/shipwreck_supply"),
@@ -76,8 +76,8 @@ public class EnchantmentSettingsManager
 
         // boot enchantments
         new EnchantmentSettings(Enchantments.FROST_WALKER).maxLevels(2, 3).inLoottable("chests/igloo_chest"),
-        new EnchantmentSettings(Enchantments.SOUL_SPEED).maxLevels(2, 3).inLoottable(bastionRewards).rarity(Rarity.RARE),
-        new EnchantmentSettings(Enchantments.SWIFT_SNEAK).maxLevels(3, 4).inLoottable("chests/ancient_city", "chests/ancient_city_ice_box").rarity(Rarity.EPIC),
+        new EnchantmentSettings(Enchantments.SOUL_SPEED).maxLevels(2, 3).inLoottable(bastionRewards).rarity(Rarity.RARE).lecternCopying(false),
+        new EnchantmentSettings(Enchantments.SWIFT_SNEAK).maxLevels(3, 4).inLoottable("chests/ancient_city", "chests/ancient_city_ice_box").rarity(Rarity.EPIC).lecternCopying(false),
 
         // bow enchantments
         new EnchantmentSettings(Enchantments.INFINITY).maxLevels(1, 1).inLoottable("chests/jungle_temple").rarity(Rarity.UNCOMMON),

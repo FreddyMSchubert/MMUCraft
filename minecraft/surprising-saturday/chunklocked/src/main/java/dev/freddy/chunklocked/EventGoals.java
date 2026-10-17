@@ -176,8 +176,14 @@ public final class EventGoals {
                 .getOrDefault(ChunkWorld.key(cell.dimension, cell.x, cell.z), Set.of()).isEmpty();
     }
 
-    static Set<UUID> unlocked(ChunkWorld.Cell cell) {
+    static Set<UUID> unlocked(ChunkWorld.Cell cell, int totalPaid) {
         if (progress == null) return Set.of();
+        if (totalPaid == 100 || totalPaid == 200 || totalPaid == 300 || totalPaid == 400
+                || totalPaid == 500 || totalPaid == 750 || totalPaid == 1000) {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                record(player, "online_" + totalPaid);
+            }
+        }
         Set<String> contributors = progress.contributors.remove(ChunkWorld.key(cell.dimension, cell.x, cell.z));
         if (contributors == null) return Set.of();
         Set<UUID> credited = new HashSet<>();

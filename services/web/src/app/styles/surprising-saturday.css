@@ -269,10 +269,31 @@
 	gap: 10px;
 }
 
-.eventEarningGoalHeading input {
-	margin-top: 4px;
-	accent-color: #71e39c;
-	opacity: 1;
+.eventGoalMark {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	width: 26px;
+	height: 26px;
+	border: 2px solid rgba(255, 255, 255, 0.62);
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.08);
+	box-sizing: border-box;
+}
+
+.eventGoalMarkComplete {
+	border-color: #71e39c;
+	background: #71e39c;
+	color: #123b27;
+}
+
+.eventGoalMarkComplete::after {
+	content: '';
+	width: 12px;
+	height: 7px;
+	border-left: 3px solid currentColor;
+	border-bottom: 3px solid currentColor;
+	transform: translateY(-2px) rotate(-45deg);
 }
 
 .eventEarningGoalHeading > div {
@@ -288,7 +309,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 6px;
-	margin: 10px 0 0 26px;
+	margin: 10px 0 0 36px;
 }
 
 .eventEarningPlayer {
@@ -333,8 +354,14 @@
 .eventChecklist li {
 	display: grid;
 	grid-template-columns: auto minmax(0, 1fr) auto;
-	align-items: baseline;
+	align-items: center;
 	gap: 6px;
+}
+
+.eventChecklist .eventGoalMark {
+	width: 22px;
+	height: 22px;
+	border-radius: 6px;
 }
 
 .eventChecklist a,
@@ -355,14 +382,6 @@
 .eventForFun {
 	color: rgba(255, 255, 255, 0.63);
 	font-size: 0.82rem;
-}
-
-.eventComplete {
-	color: #71e39c;
-}
-
-.eventIncomplete {
-	color: #ff7777;
 }
 
 .eventPodium {

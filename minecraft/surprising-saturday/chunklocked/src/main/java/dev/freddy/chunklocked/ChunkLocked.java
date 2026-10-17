@@ -369,7 +369,7 @@ public final class ChunkLocked implements ModInitializer {
             if (!barrier && used > 0) EventGoals.contributed(cell, payer);
             if (cell.remaining == 0) {
                 world.unlock(cell);
-                Set<UUID> credited = EventGoals.unlocked(cell);
+                Set<UUID> credited = EventGoals.unlocked(cell, world.totalPaid());
                 revealNeighbors(server, level, cell);
                 command(server, "scoreboard players set #global ChunklockTotalUnlockedChunks " + world.totalPaid());
                 for (UUID playerId : credited) {

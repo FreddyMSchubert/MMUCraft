@@ -54,36 +54,24 @@ function targetFromId(id: string): EditableTarget {
 }
 
 const chunklockGoals = [
-	['unlock_1', 'Unlock 1 chunk', 'Help pay for a chunk that opens.', 20],
-	['unlock_3', 'Unlock 3 chunks', 'Help pay for three different chunks that open.', 20],
-	['unlock_5', 'Unlock 5 chunks', 'Help pay for five different chunks that open.', 20],
-	['villager', 'Interact with a villager', 'Interact with a villager.', 10],
-	['swim', 'Swim in water', 'Swim while in water.', 10],
-	['desert', 'Stand in a desert', 'Stand on the ground in a desert biome.', 5],
-	[
-		'illager',
-		'Help kill a pillager/illager',
-		'Deal damage to a pillager or another illager.',
-		25,
-	],
-	['raid_experience', 'Experience a raid', 'Be near a village during an active raid.', 15],
-	[
-		'trial_spawner',
-		'Activate a trial spawner',
-		'Be detected when a trial spawner activates.',
-		25,
-	],
-	['trial_key', 'Use a trial key', 'Unlock a vault with a trial key.', 50],
-	[
-		'ominous_trial_key',
-		'Use an ominous trial key',
-		'Unlock a vault with an ominous trial key.',
-		100,
-	],
-	['ravager', 'Help kill a ravager', 'Deal damage to a ravager.', 25],
-	['raid_survive', 'Survive a raid', 'Be alive in the village when a raid ends.', 150],
-	['wither', 'Help kill a wither', 'Damage a wither before it dies.', 250],
-	['dragon', 'Help kill the Ender Dragon', 'Damage the Ender Dragon before it dies.', 250],
+	['unlock_1', 'Help unlock 1 chunk', '', 20],
+	['unlock_3', 'Help unlock 3 chunks', '', 20],
+	['unlock_5', 'Help unlock 5 chunks', '', 20],
+	...([100, 200, 300, 400, 500, 750, 1000] as const).map(
+		(count) => [`online_${count}`, `Be online when chunk #${count} opens`, '', 10] as const,
+	),
+	['villager', 'Interact with a villager', '', 10],
+	['swim', 'Swim in water', '', 10],
+	['desert', 'Stand in a desert', '', 5],
+	['illager', 'Help kill a pillager/illager', '', 25],
+	['raid_experience', 'Experience a raid', '', 15],
+	['ravager', 'Help kill a ravager', '', 25],
+	['raid_survive', 'Survive a raid', '', 175],
+	['trial_spawner', 'Activate a trial spawner', '', 25],
+	['trial_key', 'Use a trial key', '', 75],
+	['ominous_trial_key', 'Use an ominous trial key', '', 125],
+	['wither', 'Help kill a wither', '', 250],
+	['dragon', 'Help kill the Ender Dragon', '', 250],
 ] as const;
 
 export function SurprisingSaturdayAdminSection() {

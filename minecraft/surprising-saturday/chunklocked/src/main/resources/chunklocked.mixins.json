@@ -5,6 +5,7 @@
 	"mixins": [
 		"EventChatNameMixin",
 		"DeathDropMixin",
+		"MaxRaidOmenMixin",
 		"PlayerDisplayNameMixin",
 		"TrialSpawnerMixin",
 		"VaultKeyMixin"

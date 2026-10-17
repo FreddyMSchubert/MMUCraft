@@ -24,7 +24,6 @@ import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.PlayerTeam;
@@ -149,9 +148,8 @@ public final class EventPresentation {
         String name = profile.nickname().isBlank() ? profile.pronouns()
                 : profile.pronouns().isBlank() ? profile.nickname()
                 : profile.nickname() + " - " + profile.pronouns();
-        long dangerCount = (long) player.getStats().getValue(Stats.ITEM_USED.get(Items.TOTEM_OF_UNDYING))
-                + player.getStats().getValue(Stats.CUSTOM.get(Stats.DEATHS));
-        String danger = profile.showDeathCounter() ? dangerCount + "☠" : "";
+        int deaths = player.getStats().getValue(Stats.CUSTOM.get(Stats.DEATHS));
+        String danger = profile.showDeathCounter() ? deaths + "☠" : "";
         String text = name + (name.isEmpty() || danger.isEmpty() ? "" : " - ") + danger;
         if (text.equals(RENDERED_PROFILES.put(player.getUUID(), text))) return;
         ServerScoreboard scoreboard = player.level().getServer().getScoreboard();

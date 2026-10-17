@@ -16,6 +16,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.player.ResourcePackInfo;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.ServerConnection;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,6 +44,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
 
 @Plugin(
         id = "mmucraft-velocity",
@@ -247,6 +250,11 @@ public final class MmuCraftVelocity {
         UUID uuid = event.getPlayer().getUniqueId();
         sessionIds.computeIfAbsent(uuid, ignored -> UUID.randomUUID().toString());
         String serverName = event.getServer().getServerInfo().getName();
+        List<UUID> stalePacks = Stream.concat(event.getPlayer().getAppliedResourcePacks().stream(),
+                        event.getPlayer().getPendingResourcePacks().stream())
+                .filter(pack -> staleServerPack(serverName, pack))
+                .map(ResourcePackInfo::getId).distinct().toList();
+        if (!stalePacks.isEmpty()) event.getPlayer().removeResourcePacks(stalePacks);
         if ("waiting-room".equals(serverName)) {
             pendingAdmissions.values().removeIf(uuid::equals);
             admissions.remove(uuid);
@@ -279,6 +287,12 @@ public final class MmuCraftVelocity {
                     logger.warn("Could not save {}'s server: {}", event.getPlayer().getUsername(), errorMessage(error));
                     return null;
                 });
+    }
+
+    private static boolean staleServerPack(String serverName, ResourcePackInfo pack) {
+        String path = URI.create(pack.getUrl()).getPath();
+        return (path.endsWith("/packs/main.zip") && !"main".equals(serverName))
+                || (path.endsWith("/packs/chunklocked.zip") && !"surprising-saturday".equals(serverName));
     }
 
     @Subscribe

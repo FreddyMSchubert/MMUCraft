@@ -339,10 +339,9 @@ export function SurprisingSaturdayTab({
 							return (
 								<li key={item.id}>
 									<div className="eventEarningGoalHeading">
-										<input
-											type="checkbox"
-											checked={completedItems.has(item.id)}
-											disabled
+										<span
+											className={`eventGoalMark${completedItems.has(item.id) ? ' eventGoalMarkComplete' : ''}`}
+											role="img"
 											aria-label={`${item.name}: ${completedItems.has(item.id) ? 'completed' : 'not completed'} by you`}
 										/>
 										<div>
@@ -403,15 +402,9 @@ export function SurprisingSaturdayTab({
 									aria-label={`${item.name}: ${completedItems.has(item.id) ? 'complete' : 'incomplete'}, ${item.points} points`}
 								>
 									<span
-										className={
-											completedItems.has(item.id)
-												? 'eventComplete'
-												: 'eventIncomplete'
-										}
+										className={`eventGoalMark${completedItems.has(item.id) ? ' eventGoalMarkComplete' : ''}`}
 										aria-hidden="true"
-									>
-										{completedItems.has(item.id) ? '✓' : '○'}
-									</span>{' '}
+									/>
 									{item.url ? (
 										<a
 											href={item.url}

@@ -1,0 +1,12 @@
+{
+	"title": "Surprising Saturday Tiara",
+	"id": "cosmetic-crown-ss-chunk-locked",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Prize for competing in the Chunk-Locked Surprising Saturday event - 16/10/2026",
+		"Made in China"
+	],
+	"equippableCosmetic": {}
+}

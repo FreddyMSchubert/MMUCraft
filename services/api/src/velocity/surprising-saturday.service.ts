@@ -175,16 +175,6 @@ function targetsForEvent(event: SurprisingSaturdayEventRow) {
 		: (completionTargets(value) ?? []);
 }
 
-export function nextLondonDay(start: number, now: number) {
-	const date = new Intl.DateTimeFormat('sv-SE', {
-		timeZone: 'Europe/London',
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-	});
-	return date.format(now) > date.format(start);
-}
-
 export function joinedEarningAmount(
 	targets: { id: string; amount?: number }[],
 	completed: { itemId: string }[],
@@ -441,7 +431,6 @@ export class SurprisingSaturdayService {
 			.all()
 			.flatMap((event) => {
 				if (event.criteria_type === 'joined_earning') {
-					if (!nextLondonDay(event.ends_at_unix_ms, now)) return [];
 					const targets = targetsForEvent(event);
 					const player = this.rankedPlayers(event, targets).find(
 						(entry) => entry.uuid === playerUuid,

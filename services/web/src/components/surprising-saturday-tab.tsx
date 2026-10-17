@@ -156,9 +156,20 @@ export function SurprisingSaturdayTab({
 	const [me, setMe] = useState<MyServer | null>(null);
 	const [error, setError] = useState('');
 	const [moving, setMoving] = useState(false);
+	const [now, setNow] = useState<number | null>(null);
 	const [moveFeedback, setMoveFeedback] = useState('');
 	const [committeeVisibleFor, setCommitteeVisibleFor] = useState<number | null>(null);
 	const showCommittee = committeeVisibleFor !== null && committeeVisibleFor === selectedEventId;
+	useEffect(() => {
+		const tick = () => {
+			setNow(Date.now());
+		};
+		tick();
+		const timer = window.setInterval(tick, 1000);
+		return () => {
+			window.clearInterval(timer);
+		};
+	}, []);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -202,6 +213,16 @@ export function SurprisingSaturdayTab({
 
 	const currentDetail = detail?.id === selectedEventId ? detail : null;
 	const selectedStatus = currentDetail?.status ?? selected?.status;
+	const remainingSeconds = Math.max(
+		0,
+		Math.ceil(
+			((currentDetail?.endsAtUnixMs ?? selected?.endsAtUnixMs ?? 0) - (now ?? 0)) / 1000,
+		),
+	);
+	const days = Math.floor(remainingSeconds / 86400);
+	const hours = Math.floor((remainingSeconds % 86400) / 3600);
+	const minutes = Math.floor((remainingSeconds % 3600) / 60);
+	const seconds = remainingSeconds % 60;
 	const own = currentDetail?.players?.find((player) => player.uuid === me?.uuid);
 	const completedItems = new Set(own?.completed.map((entry) => entry.itemId));
 	const furthestGoalByPlayer = new Map<string, string>();
@@ -260,16 +281,21 @@ export function SurprisingSaturdayTab({
 				</Link>
 			)}
 			<header className="eventTop">
-				<div>
-					<h3>Surprising Saturday</h3>
-					<p className="tabSubtitle">
-						{selectedStatus === 'upcoming'
-							? 'How you win is revealed when the event starts.'
-							: currentDetail?.criteriaType === 'joined_earning'
-								? 'Play the event and follow the goals.'
-								: 'Play the event and follow the scores.'}
-					</p>
-				</div>
+				<h3>Surprising Saturday</h3>
+				{selectedStatus === 'live' && now !== null && (
+					<div
+						className="eventEndCountdown"
+						role="timer"
+						aria-label={`${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until the event ends`}
+					>
+						<strong>
+							{days > 0 && `${days}d `}
+							{String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:
+							{String(seconds).padStart(2, '0')}
+						</strong>
+						<span>Until the event ends</span>
+					</div>
+				)}
 			</header>
 
 			{selected && (
@@ -323,12 +349,8 @@ export function SurprisingSaturdayTab({
 			{selectedStatus !== 'upcoming' && currentDetail?.criteriaType === 'joined_earning' && (
 				<section className="adminSection eventScores">
 					<div className="eventSectionHeading">
-						<h4>Joined Earning</h4>
-						<p>
-							Complete goals in any order. Each one earns its listed Dabloons, paid
-							from the next day. Each player appears under their furthest completed
-							goal in this list.
-						</p>
+						<h4>Goals</h4>
+						<p>Dabloons are paid after the event ends, on the main server.</p>
 					</div>
 					<ol className="eventEarningGoals">
 						{currentDetail.items?.map((item) => {
@@ -391,9 +413,9 @@ export function SurprisingSaturdayTab({
 					)}
 					<details className="eventChecklist">
 						<summary>
-							Your completion list ({own?.completed.length ?? 0}/
-							{currentDetail.items?.length ?? 0} targets · {own?.points ?? 0}/
-							{totalPoints} points)
+							Your goals ({own?.completed.length ?? 0}/
+							{currentDetail.items?.length ?? 0} · {own?.points ?? 0}/{totalPoints}{' '}
+							points)
 						</summary>
 						<ul>
 							{currentDetail.items?.map((item) => (
@@ -466,7 +488,7 @@ export function SurprisingSaturdayTab({
 											/>{' '}
 											{player.points}/{totalPoints} pts ·{' '}
 											{player.completed.length}/{currentDetail.items?.length}{' '}
-											targets
+											goals
 										</td>
 									</tr>
 								))}

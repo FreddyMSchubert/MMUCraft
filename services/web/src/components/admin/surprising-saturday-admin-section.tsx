@@ -113,6 +113,14 @@ export function SurprisingSaturdayAdminSection() {
 			current.map((target) => (target.key === key ? { ...target, ...changes } : target)),
 		);
 	}
+	function moveTarget(index: number, direction: -1 | 1) {
+		setItems((current) => {
+			if (!current[index] || !current[index + direction]) return current;
+			const next = [...current];
+			[next[index], next[index + direction]] = [next[index + direction], next[index]];
+			return next;
+		});
+	}
 	const load = useCallback(async () => {
 		const response = await fetch('/api/admin/surprising-saturday', { cache: 'no-store' });
 		if (!response.ok) throw new Error('Could not load events');
@@ -332,10 +340,7 @@ export function SurprisingSaturdayAdminSection() {
 							? 'Create Surprising Saturday'
 							: 'Edit Surprising Saturday'}
 					</h3>
-					<p>
-						Choose a leaderboard or Joined Earning. For Joined Earning, each goal has
-						its own Dabloon reward.
-					</p>
+					<p>Choose a leaderboard or give each goal its own Dabloon reward.</p>
 				</div>
 				<button
 					type="button"
@@ -369,7 +374,7 @@ export function SurprisingSaturdayAdminSection() {
 							'A new challenge begins this Saturday. The goals are revealed when the event starts.',
 						);
 						setDescription(
-							'Complete Chunklock goals in any order. Each goal pays its listed Dabloons the next day.',
+							'Dabloons are paid after the event ends, on the main server.',
 						);
 						setCriteriaType('joined_earning');
 						setItems(
@@ -460,8 +465,8 @@ export function SurprisingSaturdayAdminSection() {
 								);
 							}}
 						>
-							<option value="list_completion">List completion</option>
-							<option value="joined_earning">Joined Earning</option>
+							<option value="list_completion">Leaderboard</option>
+							<option value="joined_earning">Goal rewards</option>
 						</select>
 					</label>
 					<label>
@@ -501,7 +506,7 @@ export function SurprisingSaturdayAdminSection() {
 					<div className="eventTargetEditor">
 						<h4>Completion targets</h4>
 						<p>Give each goal a unique ID, such as a or find_diamond.</p>
-						{items.map((item) => (
+						{items.map((item, index) => (
 							<div className="eventTargetRow" key={item.key}>
 								<label>
 									Goal ID
@@ -578,17 +583,40 @@ export function SurprisingSaturdayAdminSection() {
 										}}
 									/>
 								</label>
-								<button
-									type="button"
-									aria-label={`Delete ${item.name || item.id || 'target'}`}
-									onClick={() => {
-										setItems((current) =>
-											current.filter((target) => target.key !== item.key),
-										);
-									}}
-								>
-									Delete
-								</button>
+								<div className="eventTargetActions">
+									<button
+										type="button"
+										disabled={index === 0}
+										aria-label={`Move ${item.name || item.id || 'target'} up`}
+										onClick={() => {
+											moveTarget(index, -1);
+										}}
+									>
+										Up
+									</button>
+									<button
+										type="button"
+										disabled={index === items.length - 1}
+										aria-label={`Move ${item.name || item.id || 'target'} down`}
+										onClick={() => {
+											moveTarget(index, 1);
+										}}
+									>
+										Down
+									</button>
+									<button
+										className="eventTargetDelete"
+										type="button"
+										aria-label={`Delete ${item.name || item.id || 'target'}`}
+										onClick={() => {
+											setItems((current) =>
+												current.filter((target) => target.key !== item.key),
+											);
+										}}
+									>
+										Delete
+									</button>
+								</div>
 							</div>
 						))}
 						<button
@@ -605,8 +633,9 @@ export function SurprisingSaturdayAdminSection() {
 						<div className="eventTargetEditor">
 							<h4>Dabloon rewards</h4>
 							<p>
-								Rewards are paid once, on each player&apos;s next join to the main
-								server after this event ends. Committee results do not count.
+								Rewards are paid once after the event ends. Players online on main
+								receive them automatically; others receive them on their next
+								main-server join. Committee results do not count.
 							</p>
 							{rewardPlaces.map(({ key, label }) => (
 								<label key={key}>

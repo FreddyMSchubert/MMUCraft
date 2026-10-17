@@ -91,6 +91,26 @@
 	margin-right: 0.35em;
 }
 
+.eventEndCountdown {
+	display: grid;
+	flex: none;
+	justify-items: end;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
+
+.eventEndCountdown strong {
+	font-size: clamp(2rem, 5vw, 4rem);
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.eventEndCountdown span {
+	margin-top: 5px;
+	color: rgba(255, 255, 255, 0.72);
+	font-size: 0.85rem;
+}
+
 .eventBack {
 	justify-self: start;
 	padding: 8px 11px;
@@ -479,8 +499,17 @@
 	background: rgba(255, 255, 255, 0.04);
 }
 
-.eventTargetRow button {
-	grid-column: auto;
+.eventTargetActions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+
+.eventTargetActions button {
+	min-width: 48px;
+}
+
+.eventTargetActions .eventTargetDelete {
 	background: rgba(255, 119, 119, 0.16);
 	color: #ffb3b3;
 }
@@ -493,6 +522,11 @@
 
 	.eventBannerAction {
 		margin-left: 0;
+	}
+
+	.eventEndCountdown {
+		justify-items: start;
+		text-align: left;
 	}
 
 	.eventTargetRow {

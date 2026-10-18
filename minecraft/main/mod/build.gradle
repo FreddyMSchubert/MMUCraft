@@ -149,6 +149,13 @@ tasks.register('checkFishingBounces', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkTeleportCompanions', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportCompanionCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkFishRarity', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -168,7 +175,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 
 tasks.named('check') {
     dependsOn 'checkMapResize', 'checkInsomniaPhantoms', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkHopperFilterIdentity',
-            'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity'
+            'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity', 'checkTeleportCompanions'
 }
 
 def generatedResources = file("src/main/generated")

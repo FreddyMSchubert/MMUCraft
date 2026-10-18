@@ -6,6 +6,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Relative;
@@ -111,7 +113,9 @@ public class TeleportPotionUtils
             source.getAllEntities().forEach(entity -> {
                 if (entity instanceof TamableAnimal pet
                         && pet.isTame()
+                        && canAutoTeleportPet(pet.getType())
                         && !pet.isOrderedToSit()
+                        && !pet.isPassenger()
                         && pet.getOwner() == player) {
                     addRole(companionRoles, pet, "pet");
                 }
@@ -180,6 +184,10 @@ public class TeleportPotionUtils
 
     private static void addRole(Map<Entity, Set<String>> roles, Entity entity, String role) {
         roles.computeIfAbsent(entity, ignored -> new LinkedHashSet<>()).add(role);
+    }
+
+    static boolean canAutoTeleportPet(EntityType<?> type) {
+        return type == EntityTypes.WOLF || type == EntityTypes.CAT || type == EntityTypes.PARROT;
     }
 
     private static String describeEntity(Entity entity, Set<String> roles) {

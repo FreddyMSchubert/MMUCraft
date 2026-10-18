@@ -60,7 +60,7 @@ export function dailyDealItemIds(items: CatalogItem[], dealDate: string): Set<st
 export function dailyDealDiscountPercent(itemId: string, dealDate: string): number {
 	const sunday = isShoppingSunday(dealDate);
 	const minimum = sunday ? 20 : 10;
-	const maximum = sunday ? 50 : 30;
+	const maximum = sunday ? 75 : 30;
 	return (
 		minimum + (deterministicRank(`${dealDate}:discount:${itemId}`) % (maximum - minimum + 1))
 	);

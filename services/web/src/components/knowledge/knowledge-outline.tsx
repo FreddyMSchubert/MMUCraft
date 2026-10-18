@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useState, type RefObject } from 'react';
 
 interface KnowledgeOutlineEntry {
 	id: string;
@@ -10,19 +10,13 @@ interface KnowledgeOutlineEntry {
 
 export function KnowledgeOutline({
 	articleRef,
-	readerRef,
-	sidebarRef,
 	contentKey,
 }: {
 	articleRef: RefObject<HTMLElement | null>;
-	readerRef: RefObject<HTMLElement | null>;
-	sidebarRef: RefObject<HTMLElement | null>;
 	contentKey: string;
 }) {
-	const outlineRef = useRef<HTMLElement>(null);
 	const [entries, setEntries] = useState<KnowledgeOutlineEntry[]>([]);
 	const [activeId, setActiveId] = useState('');
-	const [visible, setVisible] = useState(false);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -55,7 +49,6 @@ export function KnowledgeOutline({
 			if (cancelled) return;
 			setEntries(nextEntries);
 			setActiveId(requestedEntry?.id ?? nextEntries.at(0)?.id ?? '');
-			setVisible(false);
 			if (requestedEntry) document.getElementById(requestedEntry.id)?.scrollIntoView();
 		});
 
@@ -97,37 +90,6 @@ export function KnowledgeOutline({
 			window.cancelAnimationFrame(initialFrame);
 		};
 	}, [articleRef, contentKey]);
-
-	useEffect(() => {
-		const reader = readerRef.current;
-		const sidebar = sidebarRef.current;
-		const outline = outlineRef.current;
-		if (!reader || !sidebar || !outline || entries.length === 0) return;
-
-		function updateVisibility() {
-			const currentReader = readerRef.current;
-			const currentSidebar = sidebarRef.current;
-			const currentOutline = outlineRef.current;
-			if (!currentReader || !currentSidebar || !currentOutline) return;
-
-			const combinedSidebarHeight =
-				currentSidebar.offsetHeight + currentOutline.offsetHeight + 12;
-			setVisible(currentReader.scrollHeight > combinedSidebarHeight);
-		}
-
-		const initialFrame = window.requestAnimationFrame(updateVisibility);
-		const resizeObserver = new ResizeObserver(updateVisibility);
-		resizeObserver.observe(reader);
-		resizeObserver.observe(sidebar);
-		resizeObserver.observe(outline);
-		window.addEventListener('resize', updateVisibility);
-
-		return () => {
-			window.cancelAnimationFrame(initialFrame);
-			resizeObserver.disconnect();
-			window.removeEventListener('resize', updateVisibility);
-		};
-	}, [entries, readerRef, sidebarRef]);
 
 	useEffect(() => {
 		if (entries.length === 0) return;
@@ -176,12 +138,7 @@ export function KnowledgeOutline({
 	const rootLevel = Math.min(...entries.map((entry) => entry.level));
 
 	return (
-		<aside
-			ref={outlineRef}
-			className={`knowledgeOutline ${visible ? 'visible' : 'measuring'}`}
-			aria-label="On this page"
-			aria-hidden={!visible}
-		>
+		<aside className="knowledgeOutline" aria-label="On this page">
 			<h2 className="knowledgeOutlineTitle">On this page</h2>
 			<nav>
 				{entries.map((entry) => (

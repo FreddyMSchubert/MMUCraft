@@ -5,7 +5,7 @@ export const revalidate = 0;
 export const fetchCache = 'force-no-store';
 
 interface RouteContext {
-	params: { path?: string[] } | Promise<{ path?: string[] }>;
+	params: Promise<{ path?: string[] }>;
 }
 
 async function proxy(request: Request, context: RouteContext) {

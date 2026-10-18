@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "25% chance to avoid pearl damage; 25% chance to save a thrown pearl.",
 				"abilityStatusRelative": "25% chance for each pearl benefit.",
-				"dabloons": 75,
+				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
 					"minecraft:ender_pearl",

@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Mobs you kill drop 1.5x XP.",
 				"abilityStatusRelative": "Mobs you kill drop 1.5x XP.",
-				"dabloons": 50,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:spider_eye",
 					"minecraft:spider_eye",
@@ -36,7 +36,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Mobs you kill drop 1.7x XP.",
 				"abilityStatusRelative": "Raises mob kill XP to 1.7x.",
-				"dabloons": 75,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:fermented_spider_eye",
 					"minecraft:fermented_spider_eye",
@@ -51,7 +51,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Mobs you kill drop 1.9x XP.",
 				"abilityStatusRelative": "Raises mob kill XP to 1.9x.",
-				"dabloons": 100,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:magma_cream",
 					"minecraft:magma_cream",
@@ -65,7 +65,7 @@
 				"level": 4,
 				"abilityStatusCurrent": "Mobs you kill drop 2.1x XP.",
 				"abilityStatusRelative": "Raises mob kill XP to 2.1x.",
-				"dabloons": 125,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:prismarine_crystals",
 					"minecraft:prismarine_crystals",

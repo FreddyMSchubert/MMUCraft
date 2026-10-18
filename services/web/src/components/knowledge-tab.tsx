@@ -80,8 +80,6 @@ export function KnowledgeTab({
 	}>({ query: '', results: [], error: '' });
 	const [readPageIds, setReadPageIds] = useState<Set<string>>(new Set());
 	const [markingRead, setMarkingRead] = useState(false);
-	const sidebarRef = useRef<HTMLElement>(null);
-	const readerRef = useRef<HTMLElement>(null);
 	const articleRef = useRef<HTMLElement>(null);
 	const searchInputRef = useRef<HTMLInputElement>(null);
 	const visibleTree = useMemo(() => (data ? filterUnlockedTree(data.tree) : []), [data]);
@@ -391,11 +389,7 @@ export function KnowledgeTab({
 				</label>
 
 				<div className="knowledgeSidebarRail">
-					<aside
-						ref={sidebarRef}
-						className="knowledgeSidebar"
-						aria-label="Knowledge pages"
-					>
+					<aside className="knowledgeSidebar" aria-label="Knowledge pages">
 						<nav className="knowledgeTree">
 							{visibleTree.map((entry) => (
 								<KnowledgeTreeNode
@@ -414,14 +408,12 @@ export function KnowledgeTab({
 					{!showingSearch && activePageUnlocked && (
 						<KnowledgeOutline
 							articleRef={articleRef}
-							readerRef={readerRef}
-							sidebarRef={sidebarRef}
 							contentKey={`${activePage.id}:${renderedHtml}`}
 						/>
 					)}
 				</div>
 
-				<section ref={readerRef} className="knowledgeReader">
+				<section className="knowledgeReader">
 					{showingSearch ? (
 						<KnowledgeSearchResults
 							query={searchQuery}

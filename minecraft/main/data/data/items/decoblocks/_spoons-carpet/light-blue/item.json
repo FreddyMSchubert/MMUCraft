@@ -1,0 +1,28 @@
+{
+	"title": "Oceanographical Spoons Carpet",
+	"id": "deco-spoons-carpet-oceanographical",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["A resplendent monument to excess, woven purely to humiliate lesser floor coverings."],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/spoons-carpet-oceanographical",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": ["mainmod:beer", "minecraft:light_blue_carpet"],
+				"result": {
+					"stack": "mainmod:deco-spoons-carpet-oceanographical",
+					"count": 8
+				}
+			}
+		]
+	}
+}

@@ -16,8 +16,10 @@ tips:
 
 Ever thought there aren't enough decorations in game? Why not give these a try! Just craft them and place them down like blocks - you can even right click to rotate them.
 
-::drop-item deco-scarecrow
+:::drop-item deco-scarecrow
 ## Scarecrow
+
+:::drop-indicator
 
 ![Scarecrow](/assets/knowledge/items/decorative-blocks/scarecrow-recipe.png)
 :::recipe-items
@@ -26,8 +28,10 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::end-drop
 
 
-::drop-item deco-crow
+:::drop-item deco-crow
 ## Crow
+
+:::drop-indicator
 
 ![Crow](/assets/knowledge/items/decorative-blocks/crow-recipe.png)
 :::recipe-items
@@ -62,7 +66,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::end-drop
 
 
-::drop-item cosmetic-candle
+:::drop-item cosmetic-candle
 ## Candle
 
 :::drop-indicator
@@ -128,7 +132,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-fire-hat
 ## Fire
 
-::drop-indicator
+:::drop-indicator
 
 ![Fire](/assets/knowledge/items/decorative-blocks/fire-recipe.png)
 :::recipe-items
@@ -140,7 +144,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-fishbowl
 ## Fishbowl
 
-::drop-indicator
+:::drop-indicator
 
 ![Fishbowl](/assets/knowledge/items/decorative-blocks/fishbowl-recipe.png)
 :::recipe-items
@@ -152,7 +156,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-mushroom-big
 ## Mushroom
 
-::drop-indicator
+:::drop-indicator
 
 ![Mushroom](/assets/knowledge/items/decorative-blocks/mushroom-recipe.png)
 :::recipe-items
@@ -164,7 +168,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-plunger
 ## Plunger
 
-::drop-indicator
+:::drop-indicator
 
 ![Plunger](/assets/knowledge/items/decorative-blocks/plunger-recipe.png)
 :::recipe-items
@@ -176,7 +180,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-pumpkin
 ## Pumpkin
 
-::drop-indicator
+:::drop-indicator
 
 ![Pumpkin](/assets/knowledge/items/decorative-blocks/pumpkin-recipe.png)
 :::recipe-items
@@ -188,7 +192,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-rootling
 ## Rootling
 
-::drop-indicator
+:::drop-indicator
 
 ![Rootling](/assets/knowledge/items/decorative-blocks/rootling-recipe.png)
 :::recipe-items
@@ -200,7 +204,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-sea-scorpion
 ## Sea Scorpion
 
-::drop-indicator
+:::drop-indicator
 
 ![Sea Scorpion](/assets/knowledge/items/decorative-blocks/sea-scorpion-recipe.png)
 :::recipe-items
@@ -212,7 +216,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-frog-small
 ## Frog
 
-::drop-indicator
+:::drop-indicator
 
 ![Frog](/assets/knowledge/items/decorative-blocks/small-frog-recipe.png)
 :::recipe-items
@@ -224,7 +228,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-traffic-cone
 ## Traffic Cone
 
-::drop-indicator
+:::drop-indicator
 
 ![Traffic Cone](/assets/knowledge/items/decorative-blocks/traffic-cone-recipe.png)
 :::recipe-items
@@ -236,7 +240,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-ufo
 ## Flying Saucer
 
-::drop-indicator
+:::drop-indicator
 
 ![Flying Saucer](/assets/knowledge/items/decorative-blocks/ufo-recipe.png)
 :::recipe-items
@@ -248,7 +252,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::drop-item cosmetic-woodpecker
 ## Woodpecker
 
-::drop-indicator
+:::drop-indicator
 
 ![Woodpecker](/assets/knowledge/items/decorative-blocks/woodpecker-recipe.png)
 :::recipe-items
@@ -316,43 +320,17 @@ Its primary use is drinking.
 :::
 
 
-:::drop nether
+:::drop imaginative
 ## Spoons Carpets
 
 :::drop-indicator
 
-Beer can also be used to craft Spoons Carpets.
+Beer can also be crafted with any type of carpet to create Spoons Carpets.
 
 All types of Spoons Carpets can be placed either on the floor or on the ceiling, this allows for features that normal minecraft carpets cant do - form a seamless carpet even through tables and chairs!
 :::end-drop
 
-:::drop-item deco-spoons-carpet-grandiloquent
-### Grandiloquent Spoons Carpet
-
-:::drop-indicator
-
-![Blue Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-blue-recipe.png)
+![Spoons Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-blue-recipe.png)
 :::recipe-items
-Beer · [Blue Carpet](https://minecraft.wiki/w/Carpets) → Grandiloquent Spoons Carpet
+Beer · [Any Carpet](https://minecraft.wiki/w/Carpets) → Spoons Carpet
 :::
-:::end-drop
-
-:::drop-item deco-spoons-carpet-junoesque
-### Junoesque Spoons Carpet
-
-:::drop-indicator
-
-![Brown Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-brown-recipe.png)
-:::recipe-items
-Beer · [Brown Carpet](https://minecraft.wiki/w/Carpets) → Junoesque Spoons Carpet
-:::
-:::end-drop
-
-:::drop-item deco-spoons-carpet-meretricious
-### Meretricious Spoons Carpet
-
-:::drop-indicator
-
-COMING SOON...
-
-:::end-drop

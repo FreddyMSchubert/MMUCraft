@@ -1,0 +1,28 @@
+{
+	"title": "Granulated Spoons Carpet",
+	"id": "deco-spoons-carpet-granulated",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["A resplendent monument to excess, woven purely to humiliate lesser floor coverings."],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/spoons-carpet-granulated",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": ["mainmod:beer", "minecraft:gray_carpet"],
+				"result": {
+					"stack": "mainmod:deco-spoons-carpet-granulated",
+					"count": 8
+				}
+			}
+		]
+	}
+}

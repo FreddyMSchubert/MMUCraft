@@ -4,7 +4,7 @@
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": ["An unassailable monument of textile supremacy."],
+	"tooltips": ["A resplendent monument to excess, woven purely to humiliate lesser floor coverings."],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -16,7 +16,7 @@
 			{
 				"id": "decoration/spoons-carpet-grandiloquent",
 				"type": "mainmod:fake_crafting_shapeless",
-				"gameplayToggle": "nether",
+				"gameplayToggle": "imaginative",
 				"ingredients": ["mainmod:beer", "minecraft:blue_carpet"],
 				"result": {
 					"stack": "mainmod:deco-spoons-carpet-grandiloquent",

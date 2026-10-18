@@ -17,7 +17,6 @@ import java.util.WeakHashMap;
 public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
 {
     public static final double EXTRA_JUMP_VELOCITY = 0.62D;
-    public static final double FORWARD_BOOST = 0.28D;
     private static final int SLOW_FALLING_TICKS = 20;
 
     // How long a second jump press stays buffered.
@@ -82,22 +81,8 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
 
             if (jumpBuffer > 0 && usedJumps < getExtraJumpsForLevel(charmLevel) && airTicks >= MIN_AIR_TICKS_BEFORE_EXTRA_JUMP) {
                 Vec3 v = player.getDeltaMovement();
-
-                // Get the direction the player is facing, flattened to horizontal.
-                Vec3 look = player.getLookAngle();
-                Vec3 horizontalLook = new Vec3(look.x, 0.0D, look.z);
-
-                if (horizontalLook.lengthSqr() > 1.0E-6D) {
-                    horizontalLook = horizontalLook.normalize();
-                } else {
-                    horizontalLook = Vec3.ZERO;
-                }
-
-                double newX = v.x + horizontalLook.x * FORWARD_BOOST;
                 double newY = Math.max(v.y, EXTRA_JUMP_VELOCITY);
-                double newZ = v.z + horizontalLook.z * FORWARD_BOOST;
-
-                player.setDeltaMovement(newX, newY, newZ);
+                player.setDeltaMovement(v.x, newY, v.z);
                 player.setOnGround(false);
                 player.resetFallDistance();
                 player.syncVelocity = true;

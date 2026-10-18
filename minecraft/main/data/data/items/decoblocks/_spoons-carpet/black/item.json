@@ -4,9 +4,7 @@
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 64,
-	"tooltips": [
-		"A resplendent monument to excess, woven purely to humiliate lesser floor coverings."
-	],
+	"tooltips": ["A resplendent monument to excess, woven purely to humiliate lesser floor coverings."],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,
@@ -18,7 +16,7 @@
 			{
 				"id": "decoration/spoons-carpet-junoesque",
 				"type": "mainmod:fake_crafting_shapeless",
-				"gameplayToggle": "nether",
+				"gameplayToggle": "imaginative",
 				"ingredients": ["mainmod:beer", "minecraft:black_carpet"],
 				"result": {
 					"stack": "mainmod:deco-spoons-carpet-junoesque",

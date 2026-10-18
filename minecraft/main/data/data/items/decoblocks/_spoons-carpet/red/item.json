@@ -1,0 +1,28 @@
+{
+	"title": "Cherubic Spoons Carpet",
+	"id": "deco-spoons-carpet-cherubic",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["A resplendent monument to excess, woven purely to humiliate lesser floor coverings."],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/spoons-carpet-cherubic",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": ["mainmod:beer", "minecraft:red_carpet"],
+				"result": {
+					"stack": "mainmod:deco-spoons-carpet-cherubic",
+					"count": 8
+				}
+			}
+		]
+	}
+}

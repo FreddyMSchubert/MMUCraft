@@ -1,0 +1,28 @@
+{
+	"title": "Gatsbyesque Spoons Carpet",
+	"id": "deco-spoons-carpet-gatsbyesque",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["A resplendent monument to excess, woven purely to humiliate lesser floor coverings."],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": true,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/spoons-carpet-gatsbyesque",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "imaginative",
+				"ingredients": ["mainmod:beer", "minecraft:yellow_carpet"],
+				"result": {
+					"stack": "mainmod:deco-spoons-carpet-gatsbyesque",
+					"count": 8
+				}
+			}
+		]
+	}
+}

@@ -29,6 +29,7 @@ readonly failure_history="$state_dir/failures.tsv"
 
 backup_prepared=false
 metrics_server_pid=''
+idle_sleep_pid=''
 attempt_started_at=0
 attempt_number=0
 
@@ -65,6 +66,10 @@ complete_backup() {
 cleanup() {
 	status=$?
 	trap - EXIT
+	if [ -n "$idle_sleep_pid" ]; then
+		kill "$idle_sleep_pid" 2>/dev/null || true
+		wait "$idle_sleep_pid" 2>/dev/null || true
+	fi
 	complete_backup || true
 	if [ -n "$metrics_server_pid" ]; then
 		kill "$metrics_server_pid" 2>/dev/null || true
@@ -462,7 +467,10 @@ run_loop() {
 		scheduled_attempt || true
 		update_next_attempt
 		write_metrics || true
-		sleep "$BACKUP_CHECK_INTERVAL_SECONDS"
+		sleep "$BACKUP_CHECK_INTERVAL_SECONDS" &
+		idle_sleep_pid=$!
+		wait "$idle_sleep_pid"
+		idle_sleep_pid=''
 	done
 }
 

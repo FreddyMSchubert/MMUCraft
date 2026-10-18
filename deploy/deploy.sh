@@ -252,6 +252,10 @@ api_image="${image_prefix}-api:${tag}"
 mc_image="${image_prefix}-mc:${tag}"
 velocity_image="${image_prefix}-velocity:${tag}"
 waiting_room_image="${image_prefix}-waiting-room:${tag}"
+docker run --rm --entrypoint sh "$mc_image" -c '
+	test -s /config/world/datapacks/bacap-inventory-check/pack.mcmeta &&
+	test -s /config/world/datapacks/bacap-inventory-check/data/blazeandcave/function/advancement/check/inventory_changed.mcfunction
+' || { echo 'Minecraft image lacks the BACAP inventory override; deployment has not started.' >&2; exit 1; }
 if docker run --rm --user "${PUID:-1000}:${PGID:-1000}" --entrypoint sh "$velocity_image" -c 'test -s /image/velocity.jar && test -r /image/velocity.jar'; then
 	:
 else
@@ -371,7 +375,7 @@ if [ -f data/velocity/event-players.txt ]; then
 fi
 
 # Keep the event controller from restarting the old event image during the update.
-dc stop event-controller || true
+dc stop -t 2 event-controller || true
 dc --profile event stop surprising-saturday || true
 dc --profile event rm -f surprising-saturday || true
 dc --profile event create surprising-saturday
@@ -397,13 +401,14 @@ if printf '%s\n' "$running_services" | grep -qx minecraft; then
 	# Drain requests and save the world before replacing containers.
 	shutdown_started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 	status=0
-	api_post /api/internal/shutdown 120000 || status=$?
+	api_post /api/internal/shutdown 30000 || status=$?
 	if [ "$status" -ne 0 ]; then
 		echo "API drain/save failed (exit $status). Restarting the current API and retrying once." >&2
-		dc restart --no-deps api
+		dc logs --no-color --timestamps --since "$shutdown_started_at" --tail=100 api minecraft >&2 || true
+		dc restart --no-deps -t 10 api
 		dc start --wait --wait-timeout 60 api
 		status=0
-		api_post /api/internal/shutdown 120000 || status=$?
+		api_post /api/internal/shutdown 30000 || status=$?
 		[ "$status" -ne 0 ] || echo 'API drain and Minecraft world save succeeded after retry.' >&2
 	fi
 	if [ "$status" -ne 0 ]; then
@@ -413,7 +418,7 @@ if printf '%s\n' "$running_services" | grep -qx minecraft; then
 			graceful_failure "API drain/save failed"
 		else
 			echo "API drain/save failed. Restart the existing API before aborting." >&2
-			dc restart --no-deps api
+			dc restart --no-deps -t 10 api
 			# Start the existing container. Do not replace it with the new image.
 			dc start --wait --wait-timeout 60 api
 			wait_for_proxy ready || { echo "The current server has not recovered." >&2; exit 1; }
@@ -422,7 +427,14 @@ if printf '%s\n' "$running_services" | grep -qx minecraft; then
 			exit "$status"
 		fi
 	fi
-	dc stop minecraft api
+	dc stop minecraft
+	if [ "$status" -eq 0 ]; then
+		# The API has already drained its requests and saved Minecraft.
+		dc stop -t 10 api
+	else
+		# A forced deploy may reach here without a successful drain.
+		dc stop api
+	fi
 fi
 
 # Remove obsolete website-managed bans from older releases.
@@ -468,7 +480,18 @@ else
 		exit "$status"
 	fi
 fi
-if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web waiting-room velocity; then
+if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web velocity; then
+	:
+else
+	status=$?
+	show_startup_diagnostics
+	exit "$status"
+fi
+
+# Replace nginx while Minecraft and the waiting room are still booting.
+# Compose cannot detect changes inside its config bind mount, and the resource-pack
+# URL must be ready before players can join again.
+if dc up -d --no-deps --force-recreate nginx; then
 	:
 else
 	status=$?
@@ -484,8 +507,25 @@ if [ "$main_required" = true ]; then
 		exit "$status"
 	fi
 fi
-# Compose cannot detect changes inside configuration bind mounts.
-if dc up -d --no-deps --force-recreate --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" nginx; then
+
+# Re-enable the override last on every deploy where main reaches its health check.
+if [ "$main_required" = true ] || dc up -d --no-deps --wait --wait-timeout 60 minecraft; then
+	dc exec -T minecraft test -s /data/world/datapacks/bacap-inventory-check/pack.mcmeta \
+		|| { echo 'BACAP inventory override was not copied into the Minecraft world.' >&2; exit 1; }
+	dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
+		'datapack disable "file/bacap-inventory-check"' \
+		|| { echo 'Could not queue the BACAP override reset.' >&2; exit 1; }
+	sleep 10
+	dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
+		'datapack enable "file/bacap-inventory-check" last' \
+		|| { echo 'Could not queue the BACAP inventory override.' >&2; exit 1; }
+	sleep 10
+else
+	echo 'Main is not healthy during this event deploy; BACAP override activation is deferred.' >&2
+fi
+
+# The waiting room handles queued players; nginx serves resource packs.
+if dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" waiting-room nginx; then
 	:
 else
 	status=$?

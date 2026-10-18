@@ -4,7 +4,7 @@ import { type SyntheticEvent, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { Countdown } from '@/components/dynamic-countdowns';
 import { useSiteAlert } from '@/components/site-alert';
-import { apiBody, apiMessage, errorMessage, formatLondonInput } from './admin-api';
+import { apiMessage, errorMessage, formatLondonInput } from './admin-api';
 
 export function useCountdownAdministration({
 	setCountdowns,
@@ -103,32 +103,6 @@ export function useCountdownAdministration({
 		setCountdownBackgroundImageUrl('');
 	}
 
-	async function moveCountdown(countdown: Countdown, direction: 'up' | 'down') {
-		setBusyCountdownId(countdown.id);
-		try {
-			const response = await fetch(`/api/admin/countdowns/${countdown.id}/order`, {
-				method: 'PATCH',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ direction }),
-			});
-			const body = await response.json().catch(() => null);
-			if (!response.ok) throw new Error(apiMessage(body, 'Failed to reorder the countdown'));
-			setCountdowns(apiBody<{ countdowns: Countdown[] }>(body).countdowns);
-			window.dispatchEvent(new Event('countdowns-change'));
-		} catch (caught) {
-			await showAlert({
-				title: 'Could not reorder the countdown',
-				message: errorMessage(
-					caught,
-					'The countdown order was not changed. Please try again.',
-				),
-				tone: 'danger',
-			});
-		} finally {
-			setBusyCountdownId(null);
-		}
-	}
-
 	async function removeCountdown(countdown: Countdown) {
 		if (
 			!(await confirm({
@@ -188,7 +162,6 @@ export function useCountdownAdministration({
 		saveCountdown,
 		editCountdown,
 		resetCountdownForm,
-		moveCountdown,
 		removeCountdown,
 	};
 }

@@ -43,6 +43,7 @@ INPUTS = {
         "minecraft/main/Dockerfile",
         "minecraft/main/mod/build/libs",
         "minecraft/main/config",
+        "minecraft/main/datapacks",
         "minecraft/main/server.properties.generated",
         "minecraft/main/server-icon.jpg",
     ],

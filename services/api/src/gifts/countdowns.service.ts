@@ -139,7 +139,7 @@ export class CountdownsService {
 			.select()
 			.from(countdowns)
 			.where(gt(countdowns.visible_until_unix_ms, Date.now()))
-			.orderBy(asc(countdowns.position))
+			.orderBy(asc(countdowns.target_at_unix_ms), asc(countdowns.position))
 			.all();
 	}
 }

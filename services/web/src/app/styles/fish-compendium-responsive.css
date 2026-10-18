@@ -141,12 +141,6 @@
 		grid-template-columns: 1fr;
 	}
 
-	.countdownGrid-1 .countdownCard,
-	.countdownGrid-3 .countdownCard:last-child {
-		grid-column: auto;
-		width: 100%;
-	}
-
 	.countdownAdminList article {
 		align-items: stretch;
 		flex-direction: column;

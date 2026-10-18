@@ -72,11 +72,8 @@
 	margin: -40px auto 24px;
 }
 
-.countdownGrid-1 .countdownCard,
-.countdownGrid-3 .countdownCard:last-child {
-	grid-column: 1 / -1;
-	width: calc(50% - 8px);
-	justify-self: center;
+.countdownGrid-1 {
+	grid-template-columns: 1fr;
 }
 
 .countdownCard {

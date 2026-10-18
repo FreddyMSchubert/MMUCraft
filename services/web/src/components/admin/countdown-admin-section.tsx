@@ -31,7 +31,6 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 		resetCountdownForm,
 		busyCountdownId,
 		editCountdown,
-		moveCountdown,
 		removeCountdown,
 	} = controller;
 	return (
@@ -40,7 +39,7 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 				<section className="adminSection">
 					<div className="adminSectionHeader">
 						<h3>Countdowns</h3>
-						<p>Create up to four countdowns.</p>
+						<p>Create up to four countdowns. The soonest countdown appears first.</p>
 					</div>
 					<form className="countdownForm" onSubmit={saveCountdown}>
 						<label>
@@ -177,7 +176,7 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 					</form>
 
 					<div className="countdownAdminList">
-						{countdowns.map((countdown, index) => (
+						{countdowns.map((countdown) => (
 							<article key={countdown.id}>
 								<div>
 									<strong>{countdown.heading}</strong>
@@ -205,25 +204,6 @@ export function CountdownAdminSection({ controller }: { controller: AdminTabCont
 										}}
 									>
 										Edit
-									</button>
-									<button
-										type="button"
-										aria-label={`Move ${countdown.heading} up`}
-										disabled={index === 0 || busyCountdownId !== null}
-										onClick={() => void moveCountdown(countdown, 'up')}
-									>
-										↑
-									</button>
-									<button
-										type="button"
-										aria-label={`Move ${countdown.heading} down`}
-										disabled={
-											index === countdowns.length - 1 ||
-											busyCountdownId !== null
-										}
-										onClick={() => void moveCountdown(countdown, 'down')}
-									>
-										↓
 									</button>
 									<button
 										type="button"

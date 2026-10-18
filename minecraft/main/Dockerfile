@@ -10,5 +10,6 @@ ENV OVERRIDE_ICON=TRUE
 
 COPY mod/build/libs/*.jar /mods/
 COPY config /config/config
+COPY datapacks/bacap-inventory-check /config/world/datapacks/bacap-inventory-check
 COPY server.properties.generated /defaults/server.properties
 COPY server-icon.jpg /server-icon.jpg

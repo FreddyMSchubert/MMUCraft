@@ -34,7 +34,7 @@ test('committee can configure the shared launch time', async ({ request }) => {
 	await expect(restored).toBeOK();
 });
 
-test('committee can create, move, update, and remove a countdown', async ({ request }) => {
+test('committee can create, update, and remove a countdown in time order', async ({ request }) => {
 	let countdownId = 0;
 	const target = '2100-01-02T12:00';
 
@@ -58,14 +58,18 @@ test('committee can create, move, update, and remove a countdown', async ({ requ
 		expect(body).toMatchObject({ heading: 'Playwright countdown', backgroundAlpha: 75 });
 	});
 
-	await test.step('Move the new countdown above the fixture', async () => {
+	await test.step('A manual move cannot override time order', async () => {
 		const response = await request.patch(`/api/admin/countdowns/${countdownId}/order`, {
 			headers: adminCookie,
 			data: { direction: 'up' },
 		});
 		await expect(response).toBeOK();
 		const body = await response.json();
-		expect(body.countdowns[0].id).toBe(countdownId);
+		expect(body.countdowns[0].id).toBe(1);
+		expect(body.countdowns.at(-1).id).toBe(countdownId);
+		const publicResponse = await request.get('/api/countdowns');
+		await expect(publicResponse).toBeOK();
+		expect((await publicResponse.json()).countdowns[0].id).toBe(1);
 	});
 
 	await test.step('Update the new countdown', async () => {

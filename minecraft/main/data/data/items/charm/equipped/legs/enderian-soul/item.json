@@ -11,7 +11,7 @@
 		"description": "Sometimes prevents ender pearl damage and saves the thrown pearl.",
 		"unlockWeight": 60,
 		"unlockMessage": "Unlocked charm: Enderian Soul Charm. Safer, cheaper ender pearl throws.",
-		"gameplayToggle": "imaginative"
+		"gameplayToggle": "nether"
 	},
 	"charm": {
 		"charmId": 61,

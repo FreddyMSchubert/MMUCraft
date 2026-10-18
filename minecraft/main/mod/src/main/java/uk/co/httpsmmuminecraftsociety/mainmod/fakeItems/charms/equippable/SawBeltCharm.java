@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -91,6 +92,8 @@ public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm
                         if (!isTreeLog(nextState)) continue;
 
                         if (!player.gameMode.destroyBlock(nextPos)) continue;
+
+                        CharmParticles.atBlock(level, nextPos, ParticleTypes.DUST_PLUME, 3);
 
                         remaining--;
                         queue.addLast(nextPos);

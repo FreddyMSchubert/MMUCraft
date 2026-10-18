@@ -148,7 +148,7 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 
 ![Fishbowl](/assets/knowledge/items/decorative-blocks/fishbowl-recipe.png)
 :::recipe-items
-[Glass Pale](https://minecraft.wiki/w/Glass_Pane) (TL, TC, TR, CL, CR, BL, BC, BR) · Raw Fish → Fishbowl
+[Glass Pane](https://minecraft.wiki/w/Glass_Pane) (TL, TC, TR, CL, CR, BL, BC, BR) · Raw Fish → Fishbowl
 :::
 :::end-drop
 

@@ -11,7 +11,7 @@
 		"description": "Increases XP dropped by mobs you kill.",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked charm: Reaping Glove Charm. Get more XP from mob kills.",
-		"gameplayToggle": "imaginative"
+		"gameplayToggle": "nether"
 	},
 	"charm": {
 		"charmId": 60,

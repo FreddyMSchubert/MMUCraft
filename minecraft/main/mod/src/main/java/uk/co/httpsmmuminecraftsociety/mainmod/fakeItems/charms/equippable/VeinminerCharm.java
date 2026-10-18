@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -73,6 +74,8 @@ public final class VeinminerCharm implements Charm, AfterBlockBreakCallbackCharm
                 if (nextState.getBlock() != targetBlock) continue;
 
                 if (!player.gameMode.destroyBlock(nextPos)) continue;
+
+                CharmParticles.atBlock(level, nextPos, ParticleTypes.DUST_PLUME, 3);
 
                 remaining--;
                 queue.addLast(nextPos);

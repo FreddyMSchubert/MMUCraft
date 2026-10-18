@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -111,6 +112,7 @@ public final class FarmingBootsCharm implements Charm, UseOnBlockCallbackCharm
 
         level.levelEvent(2001, targetPos, Block.getId(state)); // block break particles/sound
         level.setBlock(targetPos, replantedState, 3);
+        CharmParticles.atBlock(level, targetPos, ParticleTypes.HAPPY_VILLAGER, 3);
 
         for (ItemStack drop : drops) {
             if (!drop.isEmpty()) {

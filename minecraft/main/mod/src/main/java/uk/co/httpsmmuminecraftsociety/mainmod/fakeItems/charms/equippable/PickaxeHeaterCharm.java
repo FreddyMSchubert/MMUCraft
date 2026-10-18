@@ -1,6 +1,8 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -77,6 +79,7 @@ public final class PickaxeHeaterCharm implements Charm
         Map<Item, SmeltedDrop> conversions = smeltedDropsByItem;
         if (conversions.isEmpty()) return;
         Vec3 origin = lootContext.getOptional(LootContextParams.ORIGIN);
+        boolean converted = false;
 
         for (int i = 0; i < itemStacks.size(); i++) {
             ItemStack original = itemStacks.get(i);
@@ -94,6 +97,7 @@ public final class PickaxeHeaterCharm implements Charm
             ItemStack replacement = smelted.stack().copy();
             replacement.setCount(original.getCount() * Math.max(1, smelted.stack().getCount()));
             itemStacks.set(i, replacement);
+            converted = true;
 
             if (origin != null && smelted.experience() > 0) {
                 float experience = original.getCount() * smelted.experience();
@@ -102,6 +106,10 @@ public final class PickaxeHeaterCharm implements Charm
                 if (fraction > 0 && lootContext.getLevel().getRandom().nextFloat() < fraction) xp++;
                 ExperienceOrb.award(lootContext.getLevel(), origin, xp);
             }
+        }
+
+        if (converted && origin != null) {
+            CharmParticles.atBlock(lootContext.getLevel(), BlockPos.containing(origin), ParticleTypes.FLAME, 4);
         }
     }
 

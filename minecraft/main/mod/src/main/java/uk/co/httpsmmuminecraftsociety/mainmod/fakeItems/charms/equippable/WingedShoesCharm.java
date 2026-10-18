@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -101,6 +102,13 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm
                 player.resetFallDistance();
                 player.syncVelocity = true;
                 player.connection.send(new ClientboundSetEntityMotionPacket(player));
+
+                for (int i = 0; i < 10; i++) {
+                    double x = (level.getRandom().nextDouble() - 0.5) * 0.7;
+                    double z = (level.getRandom().nextDouble() - 0.5) * 0.7;
+                    level.sendParticles(ParticleTypes.POOF, player.getX() + x, player.getY() + 0.1,
+                            player.getZ() + z, 0, x * 0.25, -0.12, z * 0.25, 1);
+                }
 
                 usedJumps++;
                 releasedSinceJump = false; // require another release before another extra jump

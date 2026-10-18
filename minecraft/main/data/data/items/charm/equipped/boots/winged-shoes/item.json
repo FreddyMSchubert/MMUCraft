@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 225,
-		"description": "Lets you jump in mid-air and fall slowly after each extra jump.",
+		"description": "Lets you jump in mid-air and fall slowly until you land. Extra jumps don't activate while wearing an elytra or glider.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked charm: Winged Shoes Charm.",
 		"gameplayToggle": "soaring"

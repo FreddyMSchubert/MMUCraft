@@ -316,43 +316,17 @@ Its primary use is drinking.
 :::
 
 
-:::drop nether
+:::drop imaginative
 ## Spoons Carpets
 
 :::drop-indicator
 
-Beer can also be used to craft Spoons Carpets.
+Beer can also be crafted with any type of carpet to create Spoons Carpets.
 
 All types of Spoons Carpets can be placed either on the floor or on the ceiling, this allows for features that normal minecraft carpets cant do - form a seamless carpet even through tables and chairs!
 :::end-drop
 
-:::drop-item deco-spoons-carpet-grandiloquent
-### Grandiloquent Spoons Carpet
-
-:::drop-indicator
-
-![Blue Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-blue-recipe.png)
+![Spoons Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-blue-recipe.png)
 :::recipe-items
-Beer · [Blue Carpet](https://minecraft.wiki/w/Carpets) → Grandiloquent Spoons Carpet
+Beer · [Any Carpet](https://minecraft.wiki/w/Carpets) → Spoons Carpet
 :::
-:::end-drop
-
-:::drop-item deco-spoons-carpet-junoesque
-### Junoesque Spoons Carpet
-
-:::drop-indicator
-
-![Brown Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-brown-recipe.png)
-:::recipe-items
-Beer · [Brown Carpet](https://minecraft.wiki/w/Carpets) → Junoesque Spoons Carpet
-:::
-:::end-drop
-
-:::drop-item deco-spoons-carpet-meretricious
-### Meretricious Spoons Carpet
-
-:::drop-indicator
-
-COMING SOON...
-
-:::end-drop

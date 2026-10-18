@@ -51,6 +51,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.LegacyFakeItemMigration;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfInsomniaCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderFlight;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItemsCommand;
@@ -140,6 +141,8 @@ public class MainMod implements ModInitializer {
         ServerTickEvents.END_LEVEL_TICK.register(ParticleEmission::tick);
         ServerChunkEvents.CHUNK_UNLOAD.register(RedstoneRemoteCharm::onChunkUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
+        ServerEntityEvents.ENTITY_LOAD.register(PotionOfInsomniaCharm::onEntityLoad);
+        ServerEntityEvents.ENTITY_UNLOAD.register(PotionOfInsomniaCharm::onEntityUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof net.minecraft.server.level.ServerPlayer player) GearEnchantmentSanitizer.sanitizePlayer(player);
         });
@@ -192,6 +195,7 @@ public class MainMod implements ModInitializer {
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> ClaimsManager.reset());
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> PotionOfInsomniaCharm.clearBossFights());
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             registries = server.overworld().registryAccess();
             DailyTaskRegistry.load(registries);
@@ -215,6 +219,7 @@ public class MainMod implements ModInitializer {
             GrpcBridge.onServerTick();
             PlayerStatsSync.onServerTick(server);
             ClaimsManager.tickBossBars(server);
+            PotionOfInsomniaCharm.tickBossFights(server);
             DailyTaskManager.tick(server);
             server.getPlayerList().getPlayers().forEach(MasteryAdvancements::tick);
         });

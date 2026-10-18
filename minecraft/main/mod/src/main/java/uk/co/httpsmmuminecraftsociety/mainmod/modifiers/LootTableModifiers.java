@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.Item;
@@ -35,6 +36,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSet
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfInsomniaCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonChestLoot;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
@@ -194,10 +196,13 @@ public class LootTableModifiers {
                     && !FeatureToggles.isEnabled(FeatureToggles.SOARING)) continue;
             if (lootContext.getRandom().nextFloat() >= addition.chance()) continue;
 
+            boolean bossMembranes = addition.vanillaItem() == Items.PHANTOM_MEMBRANE
+                    && lootContext.getOptional(LootContextParams.THIS_ENTITY) instanceof Phantom phantom
+                    && phantom.entityTags().contains(PotionOfInsomniaCharm.BOSS_TAG);
             int rolls = Mth.nextInt(
                     lootContext.getRandom(),
-                    addition.minRolls(),
-                    addition.maxRolls()
+                    bossMembranes ? 4 : addition.minRolls(),
+                    bossMembranes ? 6 : addition.maxRolls()
             );
 
             ItemStack stack = ItemStack.EMPTY;

@@ -113,6 +113,13 @@ tasks.register('checkMapResize', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkInsomniaPhantoms', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.InsomniaPhantomCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkMasteryDropGates', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -160,7 +167,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 }
 
 tasks.named('check') {
-    dependsOn 'checkMapResize', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkHopperFilterIdentity',
+    dependsOn 'checkMapResize', 'checkInsomniaPhantoms', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkHopperFilterIdentity',
             'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity'
 }
 

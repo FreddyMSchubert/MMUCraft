@@ -1,0 +1,8 @@
+{
+	"title": "Bugger Duck",
+	"id": "duck-bugger",
+	"modelType": "basic-3d",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": ["A duck earned through a feat on the server."]
+}

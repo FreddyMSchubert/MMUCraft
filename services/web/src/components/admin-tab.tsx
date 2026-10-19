@@ -21,15 +21,28 @@ import { LaunchAdminSection } from './admin/launch-admin-section';
 import { DropAnalyticsAdminSection } from './admin/drop-analytics-admin-section';
 import { SurprisingSaturdayAdminSection } from './admin/surprising-saturday-admin-section';
 import { MinecraftCacheAdminSection } from './admin/minecraft-cache-admin-section';
+import { DucksAdminSection } from './admin/ducks-admin-section';
 
-export function AdminTab({ isSuperAdmin, section }: { isSuperAdmin: boolean; section?: string }) {
+export function AdminTab({
+	isSuperAdmin,
+	section,
+	ducksEnabled,
+}: {
+	isSuperAdmin: boolean;
+	section?: string;
+	ducksEnabled: boolean;
+}) {
 	const controller = useAdminTabController({ isSuperAdmin, section });
 
 	return (
 		<div className="adminPanel">
-			<AdminSectionNavigation activeSection={controller.activeSection} />
+			<AdminSectionNavigation
+				activeSection={controller.activeSection}
+				ducksEnabled={ducksEnabled}
+			/>
 			{controller.activeSection === 'drops' && <DropAnalyticsAdminSection />}
 			{controller.activeSection === 'events' && <SurprisingSaturdayAdminSection />}
+			{controller.activeSection === 'ducks' && ducksEnabled && <DucksAdminSection />}
 			<AnnouncementAdminSection activeSection={controller.activeSection} />
 			<LaunchAdminSection activeSection={controller.activeSection} />
 			<DailyRefreshAdminSection controller={controller} />

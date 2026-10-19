@@ -12,6 +12,7 @@ import { customPlayerEmojis, normalizeCustomEmojis } from '../players/player-emo
 import { PlayersService } from '../players/players.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { REFERRAL_MEMBER_DABLOONS } from '../database/referrals.service';
+import { DucksService } from '../ducks/ducks.service';
 
 @Injectable()
 export class PlayerRoleAdministrationService {
@@ -20,6 +21,7 @@ export class PlayerRoleAdministrationService {
 		private readonly claims: ClaimMinecraftSynchronizationService,
 		private readonly players: PlayersService,
 		private readonly minecraft: MinecraftGrpcClientService,
+		private readonly ducks: DucksService,
 	) {}
 
 	listPlayers() {
@@ -67,6 +69,12 @@ export class PlayerRoleAdministrationService {
 			throw new BadRequestException('isMember must be a boolean');
 		}
 
+		const wasMember =
+			this.database.connection
+				.select({ isMember: users.is_member })
+				.from(users)
+				.where(eq(users.id, userId))
+				.get()?.isMember === 1;
 		const updated = this.database.connection.transaction((tx) => {
 			const result = tx
 				.update(users)
@@ -90,6 +98,7 @@ export class PlayerRoleAdministrationService {
 			throw new NotFoundException('Player not found');
 		}
 		await this.players.synchronizePlayerPresentation(userId);
+		if (isMember && !wasMember) await this.ducks.awardMembership(userId);
 		if (isMember) {
 			const player = this.database.connection
 				.select({ uuid: users.minecraft_uuid, username: users.minecraft_username })

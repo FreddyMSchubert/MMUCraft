@@ -8,6 +8,7 @@ export type AdminSection =
 	| 'announcements'
 	| 'emojis'
 	| 'claims'
+	| 'ducks'
 	| 'server-claims'
 	| 'whitelist'
 	| 'bans'
@@ -120,6 +121,7 @@ export function normalizeAdminSection(section: string | undefined): AdminSection
 		section === 'emojis' ||
 		section === 'announcements' ||
 		section === 'claims' ||
+		section === 'ducks' ||
 		section === 'server-claims' ||
 		section === 'whitelist' ||
 		section === 'bans' ||

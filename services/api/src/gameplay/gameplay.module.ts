@@ -12,6 +12,7 @@ import { DatabaseModule } from '../database/database.module';
 import { AnnouncementsModule } from '../announcements/announcements.module';
 import { DropAnalyticsModule } from './drop-analytics/drop-analytics.module';
 import { VelocityModule } from '../velocity/velocity.module';
+import { DucksModule } from '../ducks/ducks.module';
 
 @Module({
 	imports: [
@@ -27,6 +28,7 @@ import { VelocityModule } from '../velocity/velocity.module';
 		AnnouncementsModule,
 		DropAnalyticsModule,
 		VelocityModule,
+		DucksModule,
 	],
 	providers: [GameplayGrpcService],
 })

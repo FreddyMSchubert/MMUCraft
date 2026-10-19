@@ -1,0 +1,378 @@
+.ducksPanel {
+	padding: 12px 4px 42px;
+	color: #f9f5e7;
+}
+
+.ducksHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: end;
+	gap: 24px;
+	padding: 14px 4px 20px;
+}
+
+.ducksHeader h3 {
+	margin: 3px 0 0;
+	color: #ffe194;
+	font-size: clamp(2.1rem, 4vw, 3.2rem);
+	text-shadow:
+		0 3px 0 #63440e,
+		0 0 28px rgba(255, 203, 80, 0.22);
+}
+
+.ducksEyebrow,
+.duckNumber,
+.duckCondition small {
+	margin: 0;
+	color: #d8bb7b;
+	font-size: 0.68rem;
+	font-weight: 800;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+}
+
+.ducksProgress {
+	display: grid;
+	justify-items: end;
+	min-width: 196px;
+	line-height: 1.1;
+	text-align: right;
+}
+
+.ducksProgress strong {
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', monospace;
+	font-size: clamp(2.3rem, 5vw, 4rem);
+	font-variant-numeric: tabular-nums;
+	color: #ffe49e;
+}
+
+.ducksProgress strong small {
+	font-size: 0.45em;
+	color: #b4a788;
+}
+
+.ducksRank {
+	max-width: 260px;
+	color: #f5cc61;
+	font-size: 0.88rem;
+	font-weight: 800;
+}
+
+.ducksProgressTrack {
+	height: 8px;
+	margin: 0 4px 26px;
+	overflow: hidden;
+	border: 1px solid #725834;
+	border-radius: 999px;
+	background: #191a20;
+}
+
+.ducksProgressTrack span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: linear-gradient(90deg, #d58f23, #ffe492);
+	box-shadow: 0 0 18px #e6b84e;
+	transition: width 450ms ease;
+}
+
+.ducksNotice {
+	margin: 0 4px 20px;
+	padding: 10px 14px;
+	border: 1px solid #b59450;
+	border-radius: 8px;
+	background: #3a2c14;
+	color: #fff0bd;
+}
+
+.ducksGrid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 22px;
+}
+
+.duckCard {
+	position: relative;
+	min-width: 0;
+	padding: 15px 15px 12px;
+	border: 1px solid rgba(247, 207, 129, 0.3);
+	border-radius: 15px;
+	background: linear-gradient(145deg, #2b271f, #171b22 58%, #191919);
+	box-shadow:
+		inset 0 1px rgba(255, 255, 255, 0.06),
+		0 13px 26px rgba(0, 0, 0, 0.22);
+	transition:
+		border-color 160ms ease,
+		transform 160ms ease,
+		box-shadow 160ms ease;
+}
+
+.duckCard:hover,
+.duckCard:focus-visible,
+.duckCard:focus-within {
+	z-index: 5;
+	border-color: #ffda84;
+	box-shadow:
+		0 16px 34px rgba(0, 0, 0, 0.4),
+		0 0 22px rgba(255, 203, 93, 0.12);
+	outline: none;
+	transform: translateY(-3px);
+}
+
+.duckCard-locked {
+	border-color: rgba(157, 156, 168, 0.26);
+	background: linear-gradient(145deg, #22242c, #13151b);
+}
+
+.duckCard-final {
+	grid-column: 1 / -1;
+	border: 2px solid #d7ae5a;
+	background: radial-gradient(ellipse at 50% 25%, #514020 0, #24211c 53%, #111820 100%);
+	box-shadow:
+		inset 0 0 38px rgba(255, 213, 117, 0.12),
+		0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.duckCard-final::before {
+	content: 'THE FINAL DUCK';
+	position: absolute;
+	top: 14px;
+	right: 16px;
+	color: #f9d678;
+	font-size: 0.64rem;
+	font-weight: 900;
+	letter-spacing: 0.18em;
+}
+
+.duckStage {
+	position: relative;
+	height: 220px;
+	margin: 10px 0;
+	overflow: hidden;
+	border: 1px solid rgba(255, 224, 153, 0.12);
+	border-radius: 11px;
+	background: radial-gradient(ellipse at center, #5b5343 0, #353533 45%, #202329 100%);
+}
+
+.duckCard-final .duckStage {
+	height: 260px;
+	background: radial-gradient(ellipse at center, #7b6031 0, #3b3225 44%, #1b2025 100%);
+}
+
+.duckCard-locked .duckStage {
+	background: radial-gradient(ellipse at center, #666772 0, #41434c 47%, #292c34 100%);
+}
+
+.duckModel,
+.duckModel .shopModelHost {
+	width: 100%;
+	height: 100%;
+}
+
+.duckCard-locked .duckModel {
+	filter: brightness(0);
+}
+
+.duckMissingModel {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 96px;
+	height: 96px;
+	background: conic-gradient(#171717 25%, #e077bc 0 50%, #171717 0 75%, #e077bc 0);
+	image-rendering: pixelated;
+	transform: translate(-50%, -50%) rotate(-9deg);
+	box-shadow: 14px 14px 0 rgba(0, 0, 0, 0.25);
+}
+
+.duckCard-final .duckMissingModel {
+	width: 124px;
+	height: 124px;
+}
+
+.duckCardFooter {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+	min-height: 42px;
+}
+
+.duckBuy {
+	flex: none;
+	padding: 8px 10px;
+	border: 1px solid #f5d184;
+	border-radius: 7px;
+	background: #d9a73f;
+	color: #181510;
+	font-size: 0.73rem;
+	font-weight: 900;
+}
+
+.duckBuy:hover:not(:disabled) {
+	background: #ffe096;
+}
+.duckBuy:disabled {
+	opacity: 0.38;
+	cursor: not-allowed;
+}
+
+.duckName {
+	min-width: 0;
+	color: #fff1c1;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', monospace;
+	font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+	text-align: right;
+	overflow-wrap: anywhere;
+}
+
+.duckCard-locked .duckName {
+	color: #c3c5d0;
+}
+
+.duckCondition {
+	position: absolute;
+	top: calc(100% + 7px);
+	left: 15px;
+	right: 15px;
+	z-index: 8;
+	padding: 12px 14px;
+	border: 1px solid #e6c77f;
+	border-radius: 9px;
+	background: #171a20;
+	box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5);
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-5px);
+	transition:
+		opacity 140ms ease,
+		transform 140ms ease;
+}
+
+.duckCard:hover .duckCondition,
+.duckCard:focus-visible .duckCondition,
+.duckCard:focus-within .duckCondition {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.duckCondition p {
+	margin: 5px 0 0;
+	font-size: 0.86rem;
+	line-height: 1.45;
+}
+
+@media (max-width: 850px) {
+	.ducksGrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 560px) {
+	.ducksHeader {
+		align-items: start;
+		flex-direction: column;
+	}
+	.ducksProgress {
+		justify-items: start;
+		text-align: left;
+	}
+	.ducksGrid {
+		grid-template-columns: 1fr;
+	}
+	.duckStage {
+		height: 230px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.duckCard,
+	.duckCondition,
+	.ducksProgressTrack span {
+		transition: none;
+	}
+}
+
+.ducksAdminSearch,
+.ducksAdminNote {
+	display: grid;
+	gap: 6px;
+	margin: 16px 0 10px;
+	font-weight: 700;
+}
+
+.ducksAdminSearch input,
+.ducksAdminNote textarea {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #6b6b72;
+	border-radius: 7px;
+	background: #181a20;
+	color: #fff;
+	font: inherit;
+}
+
+.ducksAdminPlayers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 14px 0 22px;
+}
+
+.ducksAdminPlayers button,
+.ducksAdminDetail > button {
+	padding: 8px 12px;
+	border: 1px solid #7e7f85;
+	border-radius: 7px;
+	background: #282a30;
+	color: #fff;
+}
+
+.ducksAdminPlayers button.selected {
+	border-color: #f0ca72;
+	background: #57431f;
+}
+
+.ducksAdminDetail h4 {
+	margin: 8px 0 18px;
+}
+.ducksAdminDetail > button:disabled {
+	opacity: 0.45;
+}
+
+.ducksAdminChecks {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.ducksAdminChecks label {
+	display: flex;
+	align-items: start;
+	gap: 10px;
+	padding: 10px;
+	border: 1px solid #494a4f;
+	border-radius: 7px;
+	background: #202227;
+}
+
+.ducksAdminChecks input {
+	margin-top: 3px;
+}
+.ducksAdminChecks span {
+	display: grid;
+	gap: 3px;
+}
+.ducksAdminChecks small {
+	color: #b9b9bd;
+	line-height: 1.35;
+}
+.ducksAdminMessage {
+	color: #ffe096;
+}
+
+@media (max-width: 700px) {
+	.ducksAdminChecks {
+		grid-template-columns: 1fr;
+	}
+}

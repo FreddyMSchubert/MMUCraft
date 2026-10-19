@@ -1,0 +1,8 @@
+{
+	"title": "AristoQuack",
+	"id": "duck-aristoquack",
+	"modelType": "basic-3d",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": ["A duck earned through a feat on the server."]
+}

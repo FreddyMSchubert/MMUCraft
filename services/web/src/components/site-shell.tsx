@@ -13,6 +13,7 @@ import { PlayersTab } from '@/components/players-tab';
 import { ShopTab } from '@/components/shop-tab';
 import { FishingTab } from '@/components/fishing-tab';
 import { ClaimsTab } from '@/components/claims-tab';
+import { DucksTab } from '@/components/ducks-tab';
 import { CharmsTab } from '@/components/charms-tab';
 import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 import { DynamicCountdowns } from '@/components/dynamic-countdowns';
@@ -43,6 +44,7 @@ type TabId =
 	| 'charms'
 	| 'shop'
 	| 'claims'
+	| 'ducks'
 	| 'fishing'
 	| 'players'
 	| 'admin'
@@ -55,6 +57,7 @@ const TAB_IDS = new Set<TabId>([
 	'charms',
 	'shop',
 	'claims',
+	'ducks',
 	'fishing',
 	'players',
 	'admin',
@@ -69,6 +72,7 @@ const TAB_LINKS: { id: TabId; label: string; emoji: string; href: string }[] = [
 	{ id: 'charms', label: 'Charms', emoji: '✨', href: '/play/charms' },
 	{ id: 'shop', label: 'Shop', emoji: '🛍️', href: '/play/shop' },
 	{ id: 'claims', label: 'Claims', emoji: '🔒', href: '/play/claims' },
+	{ id: 'ducks', label: 'Ducks', emoji: '🦆', href: '/play/ducks' },
 	{ id: 'fishing', label: 'Fishing', emoji: '🐟', href: '/play/fishing' },
 	{ id: 'players', label: 'Players', emoji: '👤', href: '/play/players' },
 	{ id: 'admin', label: 'Admin', emoji: '👨‍💻', href: '/play/admin/members' },
@@ -98,6 +102,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const pathname = usePathname();
 	const router = useRouter();
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
+	const [ducksEnabled, setDucksEnabled] = useState<boolean | null>(null);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
 	const [capacity, setCapacity] = useState<{
 		showEventCapacity: boolean;
@@ -120,6 +125,27 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const tabs = liveEvent
 		? [EVENT_LINK, ...TAB_LINKS]
 		: [...TAB_LINKS.slice(0, -1), EVENT_LINK, TAB_LINKS[TAB_LINKS.length - 1]];
+
+	useEffect(() => {
+		if (!user) return;
+		let cancelled = false;
+		async function refreshDucks() {
+			try {
+				const response = await fetch('/api/ducks/availability', { cache: 'no-store' });
+				if (!response.ok) throw new Error('Duck availability unavailable');
+				const data = (await response.json()) as { enabled?: boolean };
+				if (!cancelled) setDucksEnabled(data.enabled === true);
+			} catch {
+				if (!cancelled) setDucksEnabled(false);
+			}
+		}
+		void refreshDucks();
+		const timer = window.setInterval(() => void refreshDucks(), 15_000);
+		return () => {
+			cancelled = true;
+			window.clearInterval(timer);
+		};
+	}, [user]);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -226,6 +252,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 		setMenuOpen(false);
 		setUser(null);
+		setDucksEnabled(null);
 		setOnlinePlayers(null);
 		setCapacity(null);
 	}
@@ -240,6 +267,14 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 	useEffect(() => {
 		if (!user) return;
+		if (ducksEnabled === false && activeTab === 'ducks') {
+			router.replace('/play/knowledge');
+			return;
+		}
+		if (ducksEnabled === false && activeTab === 'admin' && routeDetail === 'ducks') {
+			router.replace('/play/admin/members');
+			return;
+		}
 		if (!TAB_IDS.has(route[0] as TabId) || (activeTab === 'admin' && !user.isCommittee)) {
 			router.replace('/play/knowledge');
 			return;
@@ -254,6 +289,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			activeTab === 'dailies' ||
 			activeTab === 'charms' ||
 			activeTab === 'claims' ||
+			activeTab === 'ducks' ||
 			activeTab === 'fishing'
 		)
 			canonicalPath = `/play/${activeTab}`;
@@ -263,7 +299,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				: `/play/${activeTab}`;
 
 		if (canonicalPath && pathname !== canonicalPath) router.replace(canonicalPath);
-	}, [activeTab, pathname, route, routeDetail, router, user]);
+	}, [activeTab, ducksEnabled, pathname, route, routeDetail, router, user]);
 
 	useEffect(() => {
 		let lastY = window.scrollY;
@@ -324,7 +360,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		<SitePage
 			background={background}
 			splash={splash}
-			className={`playPage ${menuOpen ? 'menuOpen' : ''} ${headerHidden ? 'mobileHeaderHidden' : ''}`}
+			className={`playPage ${ducksEnabled === true ? 'ducksOpen' : ''} ${menuOpen ? 'menuOpen' : ''} ${headerHidden ? 'mobileHeaderHidden' : ''}`}
 			headerActions={
 				user && (
 					<button
@@ -521,7 +557,11 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 						<nav className="dashboardTabs" aria-label="Dashboard sections">
 							{tabs
-								.filter((tab) => tab.id !== 'admin' || user.isCommittee)
+								.filter(
+									(tab) =>
+										(tab.id !== 'admin' || user.isCommittee) &&
+										(tab.id !== 'ducks' || ducksEnabled === true),
+								)
 								.map((tab) => (
 									<Link
 										key={tab.id}
@@ -570,12 +610,17 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							/>
 						)}
 						{activeTab === 'claims' && <ClaimsTab />}
+						{activeTab === 'ducks' && ducksEnabled === true && <DucksTab />}
 						{activeTab === 'fishing' && <FishingTab onSelectPlayer={openPlayer} />}
 						{activeTab === 'players' && (
 							<PlayersTab playerName={routeDetail} onSelectPlayer={openPlayer} />
 						)}
 						{activeTab === 'admin' && user.isCommittee && (
-							<AdminTab isSuperAdmin={user.isSuperAdmin} section={routeDetail} />
+							<AdminTab
+								isSuperAdmin={user.isSuperAdmin}
+								section={routeDetail}
+								ducksEnabled={ducksEnabled === true}
+							/>
 						)}
 						{activeTab === 'misc' && <MiscTab section={routeDetail} />}
 					</div>

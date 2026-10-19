@@ -15,6 +15,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
+import uk.co.httpsmmuminecraftsociety.mainmod.ducks.DuckManager;
 final class GameplayShopOperations {
     private static final int PUBLIC_ANNOUNCEMENT_PRICE_DABLOONS = 70;
 
@@ -127,7 +128,10 @@ final class GameplayShopOperations {
                 return null;
             }
 
-            return FakeItems.createFakeItemStack(itemId, 1);
+            ItemStack stack = FakeItems.createFakeItemStack(itemId, 1);
+            if (itemId.startsWith("duck-")) DuckManager.personalize(stack,
+                    request.getDuckAwardedTo(), request.getDuckAwardedAtUnixMs(), request.getDuckCondition());
+            return stack;
         }
 
         if ("vanilla_item".equals(deliveryKind)) {

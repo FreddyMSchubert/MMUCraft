@@ -22,6 +22,8 @@ service GameplayEvents {
   rpc RecordDabloonInteraction(RecordDabloonInteractionRequest) returns (RecordDabloonInteractionResponse);
   rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsResponse);
   rpc MarkAnnouncementsRead(MarkAnnouncementsReadRequest) returns (MarkAnnouncementsReadResponse);
+  rpc RecordDuckEvent(RecordDuckEventRequest) returns (RecordDuckEventResponse);
+  rpc AckDuckDelivery(AckDuckDeliveryRequest) returns (AckDuckDeliveryResponse);
 }
 
 service GameplayControl {
@@ -49,6 +51,50 @@ service GameplayControl {
   rpc RunServerCommand(RunServerCommandRequest) returns (RunServerCommandResponse);
   rpc BroadcastAnnouncement(BroadcastAnnouncementRequest) returns (BroadcastAnnouncementResponse);
   rpc TryGrantAdvancement(TryGrantAdvancementRequest) returns (TryGrantAdvancementResponse);
+  rpc ApplyDuckUpdate(ApplyDuckUpdateRequest) returns (ApplyDuckUpdateResponse);
+}
+
+message DuckAward {
+  int32 duck_id = 1;
+  string item_id = 2;
+  string name = 3;
+  string condition = 4;
+  string awarded_to = 5;
+  int64 awarded_at_unix_ms = 6;
+  int32 count = 7;
+}
+
+message RecordDuckEventRequest {
+  string minecraft_uuid = 1;
+  string minecraft_username = 2;
+  int32 duck_id = 3;
+}
+
+message RecordDuckEventResponse {
+  bool account_linked = 1;
+  int32 duck_count = 2;
+}
+
+message AckDuckDeliveryRequest {
+  string minecraft_uuid = 1;
+  string minecraft_username = 2;
+  int32 duck_id = 3;
+  int64 awarded_at_unix_ms = 4;
+}
+
+message AckDuckDeliveryResponse {
+  bool marked = 1;
+}
+
+message ApplyDuckUpdateRequest {
+  string minecraft_uuid = 1;
+  string minecraft_username = 2;
+  int32 duck_count = 3;
+  repeated DuckAward new_awards = 4;
+}
+
+message ApplyDuckUpdateResponse {
+  bool applied = 1;
 }
 
 message TryGrantAdvancementRequest {
@@ -433,6 +479,7 @@ message SyncPlayerStatsRequest {
   repeated MinecraftStatEntry stats = 4;
   string minecraft_uuid = 5;
   bool include_surprising_saturday_rewards = 6;
+  bool duck_login = 7;
 }
 
 message SyncPlayerStatsResponse {
@@ -450,6 +497,9 @@ message SyncPlayerStatsResponse {
   bool first_in_any_statistic = 12;
   int32 referral_reward_dabloons = 13;
   repeated SurprisingSaturdayReward surprising_saturday_rewards = 14;
+  int32 duck_count = 15;
+  repeated DuckAward duck_new_awards = 16;
+  repeated DuckAward duck_pending_items = 17;
 }
 
 message SurprisingSaturdayReward {
@@ -615,6 +665,9 @@ message PurchaseShopItemRequest {
   string display_name = 6;
   string item_type = 7;
   string rarity = 8;
+  string duck_awarded_to = 9;
+  int64 duck_awarded_at_unix_ms = 10;
+  string duck_condition = 11;
 }
 
 message PurchaseShopItemResponse {

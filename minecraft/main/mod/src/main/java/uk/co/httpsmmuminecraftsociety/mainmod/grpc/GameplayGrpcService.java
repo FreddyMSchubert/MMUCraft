@@ -54,9 +54,22 @@ public final class GameplayGrpcService extends GrpcHandler {
     }
 
     public static CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
-            net.minecraft.server.level.ServerPlayer player, List<MinecraftStatEntry> stats, boolean includeRewards
+            net.minecraft.server.level.ServerPlayer player, List<MinecraftStatEntry> stats,
+            boolean includeRewards, boolean duckLogin
     ) {
-        return INSTANCE.eventsClient.syncPlayerStats(player, stats, includeRewards);
+        return INSTANCE.eventsClient.syncPlayerStats(player, stats, includeRewards, duckLogin);
+    }
+
+    public static CompletableFuture<RecordDuckEventResponse> recordDuckEvent(
+            net.minecraft.server.level.ServerPlayer player, int duckId
+    ) {
+        return INSTANCE.eventsClient.recordDuckEvent(player, duckId);
+    }
+
+    public static CompletableFuture<AckDuckDeliveryResponse> ackDuckDelivery(
+            net.minecraft.server.level.ServerPlayer player, DuckAward award
+    ) {
+        return INSTANCE.eventsClient.ackDuckDelivery(player, award);
     }
 
     public static CompletableFuture<RecordMoneyEventResponse> recordMoneyEvent(
@@ -331,6 +344,15 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
                 StreamObserver<TryGrantAdvancementResponse> responseObserver
         ) {
             callOnMainThread(() -> GameplayPlayerOperations.tryGrantAdvancementOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void applyDuckUpdate(
+                ApplyDuckUpdateRequest request,
+                StreamObserver<ApplyDuckUpdateResponse> responseObserver
+        ) {
+            callOnMainThread(() -> uk.co.httpsmmuminecraftsociety.mainmod.ducks.DuckManager.applyUpdate(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 

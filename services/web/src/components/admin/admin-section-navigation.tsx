@@ -10,6 +10,7 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'announcements', label: 'Announcements' },
 	{ section: 'emojis', label: 'Emojis' },
 	{ section: 'claims', label: 'Player claims' },
+	{ section: 'ducks', label: 'Ducks' },
 	{ section: 'server-claims', label: 'Server claims' },
 	{ section: 'whitelist', label: 'External invites' },
 	{ section: 'gifts', label: 'Gift codes' },
@@ -26,7 +27,13 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'maintenance', label: 'Maintenance' },
 ];
 
-export function AdminSectionNavigation({ activeSection }: { activeSection: AdminSection }) {
+export function AdminSectionNavigation({
+	activeSection,
+	ducksEnabled,
+}: {
+	activeSection: AdminSection;
+	ducksEnabled: boolean;
+}) {
 	const hostname = useSyncExternalStore(
 		() => () => undefined,
 		() => window.location.hostname,
@@ -36,15 +43,17 @@ export function AdminSectionNavigation({ activeSection }: { activeSection: Admin
 
 	return (
 		<nav className="adminSubTabs" aria-label="Admin sections">
-			{ADMIN_SECTIONS.map(({ section, label }) => (
-				<Link
-					key={section}
-					className={activeSection === section ? 'active' : ''}
-					href={`/play/admin/${section}`}
-				>
-					{label}
-				</Link>
-			))}
+			{ADMIN_SECTIONS.filter(({ section }) => section !== 'ducks' || ducksEnabled).map(
+				({ section, label }) => (
+					<Link
+						key={section}
+						className={activeSection === section ? 'active' : ''}
+						href={`/play/admin/${section}`}
+					>
+						{label}
+					</Link>
+				),
+			)}
 			<a href="/grafana/" target="_blank" rel="noopener noreferrer">
 				Statistics
 			</a>

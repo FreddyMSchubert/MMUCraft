@@ -343,6 +343,8 @@ public final class FishingCatches {
             MinecraftServer server = player.level().getServer();
             server.execute(() -> {
                 response.getMasteryAdvancementPathsList().forEach(path -> MasteryAdvancements.grant(player, path));
+                if (response.getRecorded() && rarity == FishRarity.MYTHICAL)
+                    uk.co.httpsmmuminecraftsociety.mainmod.ducks.DuckManager.record(player, 12);
                 showRecordMessages(player, stack, rarity, lengthCm, response);
             });
         })

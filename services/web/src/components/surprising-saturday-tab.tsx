@@ -59,7 +59,13 @@ const GLYPHS =
 	'ABCDEFGHJKLMNOPQRSTUVWXYZabcdeghjmnopqrsuvwxyz0123456789?#$%&+-=/\\^_' +
 	'¢£¥§¬¯±µ¿ÀÁÂÃÄÅÇÈÉÊËÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåçèéêëðñòóôõö÷øùúûüý';
 
-function ObfuscatedEventName({ wordLengths }: { wordLengths: number[] }) {
+export function ObfuscatedEventName({
+	wordLengths,
+	label = 'Event name hidden',
+}: {
+	wordLengths: number[];
+	label?: string;
+}) {
 	const text = useRef<HTMLSpanElement>(null);
 	const mask = wordLengths.map((length) => 'X'.repeat(length)).join(' ');
 	useEffect(() => {
@@ -78,7 +84,7 @@ function ObfuscatedEventName({ wordLengths }: { wordLengths: number[] }) {
 		};
 	}, [mask]);
 	return (
-		<span ref={text} role="img" aria-label="Event name hidden" className="eventObfuscated">
+		<span ref={text} role="img" aria-label={label} className="eventObfuscated">
 			{mask}
 		</span>
 	);

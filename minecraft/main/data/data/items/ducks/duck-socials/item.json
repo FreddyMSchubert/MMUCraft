@@ -1,0 +1,8 @@
+{
+	"title": "Socials Duck",
+	"id": "duck-socials",
+	"modelType": "basic-3d",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": ["A duck earned through a feat on the server."]
+}

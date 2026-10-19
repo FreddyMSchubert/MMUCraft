@@ -143,7 +143,8 @@ final class GameplayEventsClient {
     CompletableFuture<SyncPlayerStatsResponse> syncPlayerStats(
             ServerPlayer player,
             List<MinecraftStatEntry> stats,
-            boolean includeRewards
+            boolean includeRewards,
+            boolean duckLogin
     ) {
         SyncPlayerStatsRequest request = SyncPlayerStatsRequest.newBuilder()
                 .setMinecraftUsername(player.getName().getString())
@@ -151,9 +152,29 @@ final class GameplayEventsClient {
                 .setUnixMs(System.currentTimeMillis())
                 .setBalanceDabloons(Math.max(0, MoneyHelper.GetBalance(player)))
                 .setIncludeSurprisingSaturdayRewards(includeRewards)
+                .setDuckLogin(duckLogin)
                 .addAllStats(stats)
                 .build();
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).syncPlayerStats(request));
+    }
+
+    CompletableFuture<RecordDuckEventResponse> recordDuckEvent(ServerPlayer player, int duckId) {
+        RecordDuckEventRequest request = RecordDuckEventRequest.newBuilder()
+                .setMinecraftUsername(player.getName().getString())
+                .setMinecraftUuid(player.getUUID().toString())
+                .setDuckId(duckId)
+                .build();
+        return call(client -> client.recordDuckEvent(request));
+    }
+
+    CompletableFuture<AckDuckDeliveryResponse> ackDuckDelivery(ServerPlayer player, DuckAward award) {
+        AckDuckDeliveryRequest request = AckDuckDeliveryRequest.newBuilder()
+                .setMinecraftUsername(player.getName().getString())
+                .setMinecraftUuid(player.getUUID().toString())
+                .setDuckId(award.getDuckId())
+                .setAwardedAtUnixMs(award.getAwardedAtUnixMs())
+                .build();
+        return call(client -> client.ackDuckDelivery(request));
     }
 
     CompletableFuture<RecordMoneyEventResponse> recordMoneyEvent(

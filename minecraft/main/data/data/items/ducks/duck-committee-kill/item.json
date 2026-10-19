@@ -1,0 +1,8 @@
+{
+	"title": "Committee Kill Duck",
+	"id": "duck-committee-kill",
+	"modelType": "basic-3d",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": ["A duck earned through a feat on the server."]
+}

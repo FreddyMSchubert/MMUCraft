@@ -15,6 +15,7 @@ import { CommandLogsService } from '../database/command-logs.service';
 import { DabloonInteractionsService } from '../database/dabloon-interactions.service';
 import { AnnouncementsService } from '../announcements/announcements.service';
 import { SurprisingSaturdayService } from '../velocity/surprising-saturday.service';
+import { DucksService } from '../ducks/ducks.service';
 import {
 	FeatureTogglesService,
 	type FeatureTogglesSnapshot,
@@ -39,6 +40,8 @@ import type {
 	UnlockAvailabilityResponse,
 	AnnouncementsRequest,
 	MarkAnnouncementsReadRequest,
+	RecordDuckEventRequest,
+	AckDuckDeliveryRequest,
 } from './gameplay-grpc-message.types';
 
 interface GameplayProtoRoot {
@@ -71,6 +74,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly dabloonInteractions: DabloonInteractionsService,
 		private readonly featureToggles: FeatureTogglesService,
 		private readonly announcements: AnnouncementsService,
+		private readonly ducks: DucksService,
 	) {}
 
 	onModuleInit() {
@@ -92,6 +96,8 @@ export class GameplayGrpcService implements OnModuleInit {
 			RecordDabloonInteraction: this.recordDabloonInteraction.bind(this),
 			GetAnnouncements: this.getAnnouncements.bind(this),
 			MarkAnnouncementsRead: this.markAnnouncementsRead.bind(this),
+			RecordDuckEvent: this.recordDuckEvent.bind(this),
+			AckDuckDelivery: this.ackDuckDelivery.bind(this),
 		});
 	}
 
@@ -297,6 +303,15 @@ export class GameplayGrpcService implements OnModuleInit {
 				: null,
 			typeof call.request.unix_ms === 'number' ? call.request.unix_ms : null,
 		);
+		const playTimeTicks =
+			call.request.stats?.find((stat) => stat.key === 'minecraft.custom.minecraft:play_time')
+				?.value ?? 0;
+		const duckState = this.ducks.onPlayerSync(
+			call.request.minecraft_uuid ?? '',
+			call.request.minecraft_username ?? '',
+			playTimeTicks,
+			call.request.duck_login === true,
+		);
 
 		callback(null, {
 			accepted: result.accepted,
@@ -311,6 +326,9 @@ export class GameplayGrpcService implements OnModuleInit {
 			previous_last_played_at_unix_ms: result.previousLastPlayedAtUnixMs,
 			first_in_any_statistic: result.firstInAnyStatistic,
 			referral_reward_dabloons: result.referralRewardDabloons,
+			duck_count: duckState.count,
+			duck_new_awards: duckState.newAwards,
+			duck_pending_items: duckState.pending,
 			surprising_saturday_rewards:
 				result.accountLinked && call.request.include_surprising_saturday_rewards
 					? this.surprisingSaturday
@@ -323,6 +341,54 @@ export class GameplayGrpcService implements OnModuleInit {
 							}))
 					: [],
 			message: result.message,
+		});
+	}
+
+	private recordDuckEvent(
+		call: grpc.ServerUnaryCall<
+			RecordDuckEventRequest,
+			{ account_linked: boolean; duck_count: number }
+		>,
+		callback: UnaryCallback<{ account_linked: boolean; duck_count: number }>,
+	) {
+		void this.ducks
+			.recordEvent(
+				call.request.minecraft_uuid ?? '',
+				call.request.minecraft_username ?? '',
+				call.request.duck_id ?? 0,
+			)
+			.then(
+				(result) => {
+					callback(null, {
+						account_linked: result.accountLinked,
+						duck_count: result.count,
+					});
+				},
+				(error: unknown) => {
+					const message = error instanceof Error ? error.message : String(error);
+					callback(
+						Object.assign(new Error(message), {
+							code: grpc.status.UNKNOWN,
+							details: message,
+							metadata: new grpc.Metadata(),
+						}),
+						{ account_linked: false, duck_count: 0 },
+					);
+				},
+			);
+	}
+
+	private ackDuckDelivery(
+		call: grpc.ServerUnaryCall<AckDuckDeliveryRequest, { marked: boolean }>,
+		callback: UnaryCallback<{ marked: boolean }>,
+	) {
+		callback(null, {
+			marked: this.ducks.markDelivered(
+				call.request.minecraft_uuid ?? '',
+				call.request.minecraft_username ?? '',
+				call.request.duck_id ?? 0,
+				call.request.awarded_at_unix_ms ?? 0,
+			),
 		});
 	}
 

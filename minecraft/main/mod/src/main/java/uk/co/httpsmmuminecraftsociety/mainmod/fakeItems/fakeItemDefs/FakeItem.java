@@ -23,6 +23,7 @@ public record FakeItem(
         String title,
         String id,
         Rarity rarity,
+        String rarityKey,
         int maxStackSize,
         boolean fireproof,
         boolean shopPurchasable,
@@ -35,7 +36,8 @@ public record FakeItem(
         try {
             String title = json.get("title").getAsString();
             String id = json.get("id").getAsString();
-            Rarity rarity = JsonUtils.parseRarity(json.get("rarity").getAsString());
+            String rarityKey = json.get("rarity").getAsString();
+            Rarity rarity = JsonUtils.parseRarity(rarityKey);
             int maxStackSize = json.get("maxStackSize").getAsInt();
             boolean fireproof = json.has("fireproof") && json.get("fireproof").getAsBoolean();
             List<Component> tooltip = json.get("tooltips").getAsJsonArray()
@@ -57,6 +59,7 @@ public record FakeItem(
                     title,
                     id,
                     rarity,
+                    rarityKey,
                     maxStackSize,
                     fireproof,
                     json.has("shopPurchasable"),

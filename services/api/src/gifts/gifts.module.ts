@@ -14,9 +14,18 @@ import { MembershipImportService } from './membership-import.service';
 import { DiscordModule } from '../discord/discord.module';
 import { LaunchModule } from '../launch/launch.module';
 import { ReferralsController } from './referrals.controller';
+import { DucksModule } from '../ducks/ducks.module';
 
 @Module({
-	imports: [AuthModule, ClaimsModule, DatabaseModule, DiscordModule, LaunchModule, PlayersModule],
+	imports: [
+		AuthModule,
+		ClaimsModule,
+		DatabaseModule,
+		DiscordModule,
+		LaunchModule,
+		PlayersModule,
+		DucksModule,
+	],
 	controllers: [AdminController, CountdownsController, GiftsController, ReferralsController],
 	providers: [
 		CountdownsService,

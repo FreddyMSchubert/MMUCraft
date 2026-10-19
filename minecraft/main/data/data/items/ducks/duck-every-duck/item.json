@@ -1,0 +1,8 @@
+{
+	"title": "Every Duck Duck",
+	"id": "duck-every-duck",
+	"modelType": "basic-3d",
+	"rarity": "mythical",
+	"maxStackSize": 1,
+	"tooltips": ["A duck earned through a feat on the server."]
+}

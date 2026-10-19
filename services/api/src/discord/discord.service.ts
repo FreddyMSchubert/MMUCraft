@@ -47,6 +47,8 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent, maxPla
 		death: '☠️',
 		fish: '🐟',
 		fish_first: '🐟 👶',
+		duck: '🦆',
+		duck_final: '🦆 👑',
 	};
 	const isServer = type !== 'chat' || !event.minecraft_username;
 	const label = roleLabel(event.role);

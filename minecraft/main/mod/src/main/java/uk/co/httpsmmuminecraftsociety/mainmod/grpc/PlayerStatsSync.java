@@ -27,6 +27,8 @@ import net.minecraft.world.scores.ScoreAccess;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.ducks.DuckManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons.PlayerAdvancementsAccessor;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
@@ -191,7 +193,7 @@ public final class PlayerStatsSync {
         }
 
         CompletableFuture<SyncPlayerStatsResponse> profileSync = allowDisconnectedPlayer
-                ? GameplayGrpcService.syncPlayerStats(player, collectStats(player), false)
+                ? GameplayGrpcService.syncPlayerStats(player, collectStats(player), false, false)
                 : synchronizePresentation(player);
         CompletableFuture<Boolean> membershipSync = profileSync.thenApply(response -> {
             if (!allowDisconnectedPlayer) {
@@ -219,7 +221,8 @@ public final class PlayerStatsSync {
         MinecraftServer server = player.level().getServer();
         CompletableFuture<SyncPlayerStatsResponse> applied = new CompletableFuture<>();
         activeSyncByPlayer.put(playerId, applied);
-        GameplayGrpcService.syncPlayerStats(player, collectStats(player), true).whenComplete((response, error) -> server.execute(() -> {
+        GameplayGrpcService.syncPlayerStats(player, collectStats(player), true,
+                joinRefreshPending.contains(playerId)).whenComplete((response, error) -> server.execute(() -> {
             ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(playerId);
             if (!activeSyncByPlayer.remove(playerId, applied)
                     || onlinePlayer == null || onlinePlayer.connection != player.connection) {
@@ -239,6 +242,7 @@ public final class PlayerStatsSync {
                 // A website push that arrived during this request owns the newer presentation.
                 boolean superseded = revision != presentationRevisionByPlayer.getOrDefault(playerId, 0L);
                 if (!superseded) updatePresentation(onlinePlayer, response);
+                DuckManager.onSync(onlinePlayer, response, !superseded);
                 applyReferralReward(onlinePlayer, response);
                 applySurprisingSaturdayRewards(onlinePlayer, response);
                 if (joinRefreshPending.remove(playerId) || superseded) {
@@ -407,6 +411,21 @@ public final class PlayerStatsSync {
         updateBelowName(player);
     }
 
+    public static void applyDuckCount(ServerPlayer player, int count) {
+        SyncPlayerStatsResponse presentation = presentationByPlayer.get(player.getUUID());
+        if (presentation == null) return;
+        presentationRevisionByPlayer.merge(player.getUUID(), 1L, Long::sum);
+        presentationByPlayer.put(player.getUUID(), presentation.toBuilder()
+                .setDuckCount(Math.max(0, count)).build());
+        renderedProfileByPlayer.remove(player.getUUID());
+        updateBelowName(player);
+    }
+
+    public static boolean isCommittee(ServerPlayer player) {
+        SyncPlayerStatsResponse presentation = presentationByPlayer.get(player.getUUID());
+        return presentation != null && presentation.getAccountLinked() && presentation.getIsCommittee();
+    }
+
     public static void applyPresentation(
             ServerPlayer player,
             String nickname,
@@ -428,6 +447,8 @@ public final class PlayerStatsSync {
                 .setPronouns(pronouns)
                 .setColorHex(colorHex)
                 .setShowDeathCounter(showDeathCounter)
+                .setDuckCount(presentationByPlayer.get(player.getUUID()) == null
+                        ? 0 : presentationByPlayer.get(player.getUUID()).getDuckCount())
                 .setMessage("Profile updated from website.")
                 .build();
         updatePresentation(player, response);
@@ -473,7 +494,10 @@ public final class PlayerStatsSync {
         String prefix = nickname.isEmpty() ? pronouns : pronouns.isEmpty() ? nickname : nickname + " - " + pronouns;
         boolean showDeathCounter = !presentation.hasShowDeathCounter() || presentation.getShowDeathCounter();
         String dangerText = showDeathCounter ? dangerCount + "☠" : "";
-        String text = prefix + (prefix.isEmpty() || dangerText.isEmpty() ? "" : " - ") + dangerText;
+        String profileText = prefix + (prefix.isEmpty() || dangerText.isEmpty() ? "" : " - ") + dangerText;
+        String duckText = FeatureToggles.isEnabled(FeatureToggles.NETHER)
+                ? presentation.getDuckCount() + " ducks" : "";
+        String text = profileText + (profileText.isEmpty() || duckText.isEmpty() ? "" : " - ") + duckText;
         if (text.equals(renderedProfileByPlayer.put(player.getUUID(), text))) return;
 
         ServerScoreboard scoreboard = player.level().getServer().getScoreboard();

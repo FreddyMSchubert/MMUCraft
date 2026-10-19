@@ -13,6 +13,21 @@ import {
 } from '@/lib/minecraft-model-renderer';
 import type { ShopItem } from './shop-catalog.types';
 
+type PreviewItem = Pick<
+	ShopItem,
+	| 'id'
+	| 'type'
+	| 'renderMode'
+	| 'modelUrl'
+	| 'textureUrl'
+	| 'iconUrl'
+	| 'animation'
+	| 'animated'
+	| 'emissive'
+	| 'particleEmission'
+	| 'dyeable'
+>;
+
 const modelCache = new Map<string, Promise<MinecraftModel>>();
 const snapshotCache = new Map<string, HTMLCanvasElement>();
 const MAX_SNAPSHOT_CACHE_SIZE = 48;
@@ -79,7 +94,7 @@ export function ShopPreview({
 	nightMode = false,
 	onEmissionSupport,
 }: {
-	item: ShopItem;
+	item: PreviewItem;
 	hovered: boolean;
 	interactive?: boolean;
 	hidden?: boolean;
@@ -142,7 +157,7 @@ function ShopModelPreview({
 	nightMode = false,
 	onEmissionSupport,
 }: {
-	item: ShopItem;
+	item: PreviewItem;
 	hovered: boolean;
 	interactive: boolean;
 	view: PreviewView;

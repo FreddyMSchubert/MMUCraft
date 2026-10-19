@@ -337,6 +337,13 @@
       "when": 1792180075655,
       "tag": "0047_steady_sway",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "6",
+      "when": 1792402824680,
+      "tag": "0048_whole_inhumans",
+      "breakpoints": true
     }
   ]
 }

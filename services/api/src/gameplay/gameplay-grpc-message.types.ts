@@ -111,6 +111,7 @@ export interface PlayerStatisticsSyncRequest {
 	balance_dabloons?: number;
 	stats?: MinecraftStatInput[];
 	include_surprising_saturday_rewards?: boolean;
+	duck_login?: boolean;
 }
 
 export interface PlayerStatisticsSyncResponse {
@@ -132,7 +133,33 @@ export interface PlayerStatisticsSyncResponse {
 		place: number;
 		amount_dabloons: number;
 	}[];
+	duck_count: number;
+	duck_new_awards: DuckAwardMessage[];
+	duck_pending_items: DuckAwardMessage[];
 	message: string;
+}
+
+export interface DuckAwardMessage {
+	duck_id: number;
+	item_id: string;
+	name: string;
+	condition: string;
+	awarded_to: string;
+	awarded_at_unix_ms: number;
+	count: number;
+}
+
+export interface RecordDuckEventRequest {
+	minecraft_uuid?: string;
+	minecraft_username?: string;
+	duck_id?: number;
+}
+
+export interface AckDuckDeliveryRequest {
+	minecraft_uuid?: string;
+	minecraft_username?: string;
+	duck_id?: number;
+	awarded_at_unix_ms?: number;
 }
 
 export interface MoneyEventRequest {

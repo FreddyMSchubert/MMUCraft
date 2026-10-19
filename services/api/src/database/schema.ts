@@ -153,6 +153,31 @@ export const playerStats = sqliteTable('player_stats', {
 	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
 });
 
+export const duckAwards = sqliteTable(
+	'duck_awards',
+	{
+		user_id: integer('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		duck_id: integer('duck_id').notNull(),
+		awarded_at_unix_ms: integer('awarded_at_unix_ms').notNull(),
+		free_delivered_at_unix_ms: integer('free_delivered_at_unix_ms'),
+	},
+	(table) => [
+		primaryKey({ columns: [table.user_id, table.duck_id] }),
+		index('duck_awards_user_id_idx').on(table.user_id),
+		check('duck_awards_duck_id_check', sql`${table.duck_id} between 1 and 13`),
+	],
+);
+
+export const duckNotes = sqliteTable('duck_notes', {
+	user_id: integer('user_id')
+		.primaryKey()
+		.references(() => users.id, { onDelete: 'cascade' }),
+	note: text('note').notNull().default(''),
+	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
+});
+
 export const playerMoneyEvents = sqliteTable(
 	'player_money_events',
 	{
@@ -736,6 +761,8 @@ export const schema = {
 	claims,
 	claimMembers,
 	playerStats,
+	duckAwards,
+	duckNotes,
 	playerMoneyEvents,
 	fishCatches,
 	knowledgeUnlocks,

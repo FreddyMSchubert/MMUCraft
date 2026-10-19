@@ -1,6 +1,7 @@
 import { DabloonAmount, DabloonText } from '@/components/dabloon-amount';
 import type { ReactNode } from 'react';
 import {
+	deathsAndTotemPops,
 	formatCategory,
 	formatMinecraftStatValue,
 	formatTimestamp,
@@ -33,6 +34,18 @@ export function PlayerStatsList({
 				<StatLine
 					label="Last Played"
 					value={formatTimestamp(player.stats.minecraft.lastPlayedAtUnixMs)}
+				/>
+				<StatLine
+					label="Daily Streak"
+					value={`${player.streakDuration} ${player.streakDuration === 1 ? 'day' : 'days'}`}
+					rank={player.ranks['dailies.streakDuration']}
+					rankLabel="Daily Streak"
+				/>
+				<StatLine
+					label="Deaths + Totem Pops"
+					value={deathsAndTotemPops(player).toLocaleString()}
+					rank={player.ranks['minecraft.deathsAndTotemPops']}
+					rankLabel="Deaths + Totem Pops"
 				/>
 				<StatLine
 					label={<DabloonText>Dabloons Earned</DabloonText>}

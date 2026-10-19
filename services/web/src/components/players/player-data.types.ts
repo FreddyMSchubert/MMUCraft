@@ -1,6 +1,6 @@
 import type { PlayerEmoji } from '@/components/player-name';
 
-export type StatGroup = 'profile' | 'money' | 'fishing' | 'minecraft';
+export type StatGroup = 'profile' | 'money' | 'fishing' | 'dailies' | 'minecraft';
 export type SortDirection = 'desc' | 'asc';
 
 export interface StatOption {
@@ -75,6 +75,7 @@ export interface PlayerSummary {
 	responsibleCustomEmojis: PlayerEmoji[];
 	profile: PlayerProfile;
 	fishing: Record<string, number>;
+	streakDuration: number;
 	stats: PlayerStats;
 	unlocks: Record<'charms' | 'cosmetics' | 'knowledge', { unlocked: number; total: number }>;
 	ranks: Record<string, number>;
@@ -96,7 +97,7 @@ export const DEFAULT_COLUMN_KEYS = [
 	'profile.preferredName',
 	'minecraft.lastPlayedAtUnixMs',
 	'minecraft.custom.minecraft:play_time',
-	'minecraft.custom.minecraft:deaths',
+	'minecraft.deathsAndTotemPops',
 ];
 export const DEFAULT_LEADERBOARD_KEY = 'minecraft.advancement.minecraft:earned';
 export const PROFILE_TEXT_LIMITS = {

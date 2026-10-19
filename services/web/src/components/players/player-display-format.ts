@@ -20,6 +20,10 @@ export function formatColumnValue(player: PlayerSummary, option: StatOption) {
 		return hasBase(player.profile) ? formatBase(player.profile.base) : '-';
 	if (option.key === 'money.earnedDabloons')
 		return formatDabloons(player.stats.money.earnedDabloons);
+	if (option.key === 'dailies.streakDuration')
+		return `${formatNumber(player.streakDuration)} ${player.streakDuration === 1 ? 'day' : 'days'}`;
+	if (option.key === 'minecraft.deathsAndTotemPops')
+		return formatNumber(deathsAndTotemPops(player));
 	if (option.key.startsWith('unlocks.')) {
 		const progress = player.unlocks[option.key.slice(8) as keyof PlayerSummary['unlocks']];
 		return `${formatNumber(progress.unlocked)}/${formatNumber(progress.total)}`;
@@ -84,6 +88,8 @@ export function getSortValue(player: PlayerSummary, option: StatOption): number 
 	if (option.key === 'profile.base')
 		return hasBase(player.profile) ? formatBase(player.profile.base) : null;
 	if (option.key === 'money.earnedDabloons') return player.stats.money.earnedDabloons;
+	if (option.key === 'dailies.streakDuration') return player.streakDuration;
+	if (option.key === 'minecraft.deathsAndTotemPops') return deathsAndTotemPops(player);
 	if (option.key.startsWith('unlocks.'))
 		return player.unlocks[option.key.slice(8) as keyof PlayerSummary['unlocks']].unlocked;
 	if (option.key.startsWith('fishing.')) return player.fishing[option.key.slice(8)] ?? 0;
@@ -91,6 +97,13 @@ export function getSortValue(player: PlayerSummary, option: StatOption): number 
 		return player.stats.minecraft.lastPlayedAtUnixMs;
 
 	return player.stats.minecraft.stats[option.key]?.value ?? 0;
+}
+
+export function deathsAndTotemPops(player: PlayerSummary) {
+	return (
+		(player.stats.minecraft.stats['minecraft.custom.minecraft:deaths']?.value ?? 0) +
+		(player.stats.minecraft.stats['minecraft.used.minecraft:totem_of_undying']?.value ?? 0)
+	);
 }
 
 export function compareSortValues(
@@ -183,6 +196,11 @@ export function groupStatOptions(options: StatOption[]) {
 			key: 'fishing',
 			label: 'Fishing Compendium',
 			options: displayOptions.filter((option) => option.group === 'fishing'),
+		},
+		{
+			key: 'dailies',
+			label: 'Dailies',
+			options: displayOptions.filter((option) => option.group === 'dailies'),
 		},
 		{
 			key: 'minecraft-session',
@@ -278,8 +296,10 @@ export function fallbackOption(key: string): StatOption {
 			? 'money'
 			: key.startsWith('profile.')
 				? 'profile'
-				: key.startsWith('fishing.')
-					? 'fishing'
-					: 'minecraft',
+				: key.startsWith('dailies.')
+					? 'dailies'
+					: key.startsWith('fishing.')
+						? 'fishing'
+						: 'minecraft',
 	};
 }

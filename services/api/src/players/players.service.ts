@@ -13,12 +13,18 @@ import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.servic
 import {
 	DatabaseService,
 	UserRow,
+	dailyClaims,
 	knowledgeUnlocks,
 	playerProfiles,
 	playerStats,
 	shopUnlocks,
 	users,
 } from '../database/database.service';
+import {
+	calculateLoginStreak,
+	currentDailyPeriodKey,
+	LOGIN_BONUS_TASK_ID,
+} from '../gameplay/dailies/daily-task-rules';
 import { KnowledgeDocumentCatalogService } from '../gameplay/knowledge/knowledge-document-catalog.service';
 import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
 import { FeatureTogglesService } from '../toggles/feature-toggles.service';
@@ -63,6 +69,7 @@ export interface PlayerSummary {
 	responsibleCustomEmojis: PlayerEmoji[];
 	profile: PlayerProfile;
 	fishing: Record<string, number>;
+	streakDuration: number;
 	stats: PlayerStats;
 	unlocks: UnlockProgress;
 	ranks: Record<string, number>;
@@ -267,6 +274,7 @@ export class PlayersService {
 				: [],
 			profile,
 			fishing,
+			streakDuration: statsContext.streaks.get(user.id) ?? 0,
 			stats: statsContext.stats.get(user.id) ?? this.playerStatistics.getForUser(user.id),
 			unlocks: statsContext.unlocks.get(user.id) ?? emptyUnlockProgress(),
 			ranks: statsContext.ranks.get(user.id) ?? {},
@@ -275,7 +283,7 @@ export class PlayersService {
 
 	private getStatsContext() {
 		const userRows = this.database.connection
-			.select({ id: users.id, email: users.email })
+			.select({ id: users.id, email: users.email, isMember: users.is_member })
 			.from(users)
 			.all();
 		const userIds = userRows.map((user) => user.id);
@@ -287,6 +295,30 @@ export class PlayersService {
 				.map((row) => [row.userId, normalizeStatsJson(row.json)] as const),
 		);
 		const stats = new Map(userIds.map((id) => [id, storedStats.get(id) ?? defaultStats()]));
+		const loginDays = new Map<number, string[]>();
+		for (const claim of this.database.connection
+			.select({ userId: dailyClaims.user_id, periodKey: dailyClaims.period_key })
+			.from(dailyClaims)
+			.where(eq(dailyClaims.task_id, LOGIN_BONUS_TASK_ID))
+			.all()) {
+			const days = loginDays.get(claim.userId) ?? [];
+			days.push(claim.periodKey);
+			loginDays.set(claim.userId, days);
+		}
+		const currentPeriod = currentDailyPeriodKey();
+		const streaks = new Map(
+			userRows.map(
+				({ id, isMember }) =>
+					[
+						id,
+						calculateLoginStreak(
+							loginDays.get(id) ?? [],
+							currentPeriod,
+							isMember === 1,
+						),
+					] as const,
+			),
+		);
 		const unlocks = this.getUnlockProgress(userIds);
 		const values = new Map<number, Record<string, number>>();
 
@@ -297,6 +329,11 @@ export class PlayersService {
 			if (!playerStats || !progress) continue;
 			values.set(id, {
 				'money.earnedDabloons': playerStats.money.earnedDabloons,
+				'dailies.streakDuration': streaks.get(id) ?? 0,
+				'minecraft.deathsAndTotemPops':
+					(playerStats.minecraft.stats['minecraft.custom.minecraft:deaths']?.value ?? 0) +
+					(playerStats.minecraft.stats['minecraft.used.minecraft:totem_of_undying']
+						?.value ?? 0),
 				'unlocks.charms': progress.charms.unlocked,
 				'unlocks.cosmetics': progress.cosmetics.unlocked,
 				'unlocks.knowledge': progress.knowledge.unlocked,
@@ -309,7 +346,7 @@ export class PlayersService {
 			});
 		}
 
-		return { stats, unlocks, ranks: rankPlayers(values) };
+		return { stats, streaks, unlocks, ranks: rankPlayers(values) };
 	}
 
 	private getUnlockProgress(userIds: number[]) {

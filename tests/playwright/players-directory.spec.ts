@@ -14,16 +14,35 @@ test('player places use the final sorted list and tied positions', async ({
 	expect(example).toBeTruthy();
 
 	const statKey = 'minecraft.custom.minecraft:play_time';
+	const deathsKey = 'minecraft.custom.minecraft:deaths';
+	const totemsKey = 'minecraft.used.minecraft:totem_of_undying';
 	const makePlayer = (id: number, minecraftUsername: string, value: number) => ({
 		...example,
 		id,
 		minecraftUsername,
+		streakDuration: Math.floor(value / 10),
 		stats: {
 			...example.stats,
 			minecraft: {
 				...example.stats.minecraft,
 				stats: {
 					...example.stats.minecraft.stats,
+					[deathsKey]: {
+						key: deathsKey,
+						category: 'custom',
+						id: 'minecraft:deaths',
+						label: 'Deaths',
+						value: Math.floor(value / 10),
+						updatedAtUnixMs: 0,
+					},
+					[totemsKey]: {
+						key: totemsKey,
+						category: 'used',
+						id: 'minecraft:totem_of_undying',
+						label: 'Totems Used',
+						value: 1,
+						updatedAtUnixMs: 0,
+					},
 					[statKey]: {
 						key: statKey,
 						category: 'custom',
@@ -80,6 +99,19 @@ test('player places use the final sorted list and tied positions', async ({
 	const rows = page.locator('.playersTable tbody tr');
 	await expect(rows).toHaveCount(6);
 	expect(directoryRequests).toBe(1);
+	await expect(page.getByRole('combobox', { name: 'Column 4' })).toHaveValue(
+		'minecraft.deathsAndTotemPops',
+	);
+	await expect(rows.locator('td:nth-child(6)')).toHaveText(['11', '10', '9', '9', '1', '100']);
+	await page.getByRole('combobox', { name: 'Column 4' }).selectOption('dailies.streakDuration');
+	await expect(rows.locator('td:nth-child(6)')).toHaveText([
+		'10 days',
+		'9 days',
+		'8 days',
+		'8 days',
+		'0 days',
+		'99 days',
+	]);
 	await expect(rows.locator('td:first-child')).toHaveText(['1', '2', '4', '4', '5', '-']);
 	await page.getByRole('button', { name: 'Sort by Play Time' }).click();
 	await expect(rows.locator('td:first-child')).toHaveText(['1', '3', '3', '4', '5', '-']);

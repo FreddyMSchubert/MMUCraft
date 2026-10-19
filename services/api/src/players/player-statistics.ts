@@ -3,7 +3,7 @@ const STATS_VERSION = 1;
 export interface StatOption {
 	key: string;
 	label: string;
-	group: 'profile' | 'money' | 'fishing' | 'minecraft';
+	group: 'profile' | 'money' | 'fishing' | 'dailies' | 'minecraft';
 	category?: string;
 }
 
@@ -121,6 +121,7 @@ const KNOWN_OPTIONS: StatOption[] = [
 	{ key: 'unlocks.cosmetics', label: 'Cosmetics Unlocked', group: 'money' },
 	{ key: 'unlocks.knowledge', label: 'Knowledge Pages Unlocked', group: 'money' },
 	...FISHING_OPTIONS,
+	{ key: 'dailies.streakDuration', label: 'Daily Streak', group: 'dailies' },
 	{
 		key: 'minecraft.lastPlayedAtUnixMs',
 		label: 'Last Played',
@@ -132,6 +133,12 @@ const KNOWN_OPTIONS: StatOption[] = [
 		label: 'Advancements Earned',
 		group: 'minecraft',
 		category: 'advancement',
+	},
+	{
+		key: 'minecraft.deathsAndTotemPops',
+		label: 'Deaths + Totem Pops',
+		group: 'minecraft',
+		category: 'custom',
 	},
 	...CUSTOM_STATS.map(([id, label]) => ({
 		key: minecraftStatKey('custom', id),
@@ -362,5 +369,5 @@ function titleCase(value: string): string {
 }
 
 function groupRank(group: StatOption['group']): number {
-	return { profile: 0, money: 1, fishing: 2, minecraft: 3 }[group];
+	return { profile: 0, money: 1, fishing: 2, dailies: 3, minecraft: 4 }[group];
 }

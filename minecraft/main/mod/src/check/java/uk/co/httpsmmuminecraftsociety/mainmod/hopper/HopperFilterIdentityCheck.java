@@ -43,9 +43,9 @@ public final class HopperFilterIdentityCheck {
 
         int charmId = 9999;
         FakeItem fakeCharm = new FakeItem("Test Charm", "test-charm", Rarity.COMMON,
-                1, false, false, "", List.of(), Items.HEART_OF_THE_SEA, List.of());
+                "common", 1, false, false, "", List.of(), Items.HEART_OF_THE_SEA, List.of());
         FakeItem fakeItem = new FakeItem("Test Item", "test-item", Rarity.COMMON,
-                1, false, false, "", List.of(), Items.STICK, List.of());
+                "common", 1, false, false, "", List.of(), Items.STICK, List.of());
         FakeItems.ID_MAP = Map.of(fakeCharm.id(), fakeCharm, fakeItem.id(), fakeItem);
         FakeItems.CHARM_ID_MAP = Map.of(charmId, fakeCharm);
 

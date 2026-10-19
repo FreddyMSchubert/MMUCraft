@@ -33,7 +33,7 @@ public final class MasteryDropGatesCheck {
         assert !MasteryDropGates.isUnlocked(wrench);
         assert !MasteryDropGates.isUnlocked(Identifier.parse("mainmod:mastery/enderite/scrap"));
         FakeItems.ID_MAP = Map.of("cosmetic-shulker", new FakeItem("Shulker", "cosmetic-shulker",
-                Rarity.COMMON, 1, false, true, "void", List.of(), Items.CARVED_PUMPKIN, List.of()));
+                Rarity.COMMON, "common", 1, false, true, "void", List.of(), Items.CARVED_PUMPKIN, List.of()));
         assert !MasteryDropGates.isUnlocked(Identifier.parse("mainmod:mastery/cosmetics/item/shulker"));
         Identifier nether = Identifier.parse("minecraft:nether/root");
         Identifier end = Identifier.parse("blazeandcave:end/root");

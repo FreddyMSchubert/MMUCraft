@@ -46,6 +46,7 @@ export class DucksService {
 				const asset = this.shopItems.itemAsset(duck.itemId);
 				return {
 					...duck,
+					priceDabloons: duck.id === 13 ? 10 : 5,
 					unlocked: Boolean(award),
 					awardedAtUnixMs: award?.awarded_at_unix_ms ?? null,
 					modelUrl: asset?.modelUrl ?? null,
@@ -68,7 +69,7 @@ export class DucksService {
 		}>('PurchaseShopItem', {
 			minecraft_username: user.minecraftUsername,
 			item_id: duck.itemId,
-			price_dabloons: 5,
+			price_dabloons: duck.id === 13 ? 10 : 5,
 			delivery_kind: 'fake_item',
 			unix_ms: Date.now(),
 			display_name: duck.name,
@@ -165,13 +166,10 @@ export class DucksService {
 		if (!this.isOpen()) return { count: 0, newAwards: [], pending: [] };
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
 		if (!user) return { count: 0, newAwards: [], pending: [] };
-		const earned = isLogin
-			? [
-					1,
-					...(user.is_member === 1 ? [2] : []),
-					...(playTimeTicks >= 100 * 60 * 60 * 20 ? [7] : []),
-				]
-			: [];
+		const earned = [
+			...(isLogin ? [1, ...(user.is_member === 1 ? [2] : [])] : []),
+			...(playTimeTicks >= 100 * 60 * 60 * 20 ? [7] : []),
+		];
 		const fresh = this.grant(user, earned);
 		void this.publishDiscord(user, fresh);
 		return {

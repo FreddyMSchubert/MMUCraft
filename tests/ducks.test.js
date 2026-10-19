@@ -52,7 +52,7 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		{
 			gameplay: async (method, request) => {
 				pushes.push({ method, request });
-				return { applied: true };
+				return method === 'PurchaseShopItem' ? { purchased: true } : { applied: true };
 			},
 		},
 		{
@@ -78,10 +78,15 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		assert.equal(pushes.length, 0);
 		netherOpen = true;
 		assert.equal(service.isOpen(), true);
+		const online = service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false);
+		assert.deepEqual(
+			online.newAwards.map((award) => award.duck_id),
+			[7],
+		);
 		const login = service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true);
 		assert.deepEqual(
 			login.newAwards.map((award) => award.duck_id),
-			[1, 2, 7],
+			[1, 2],
 		);
 		assert.equal(login.count, 3);
 		assert.equal(login.pending.length, 3);
@@ -94,12 +99,31 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 			true,
 		);
 		assert.equal(service.getForUser(player.id).count, 3);
+		await service.setAward(player.id, 1, false);
+		assert.equal(
+			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false).newAwards.length,
+			0,
+		);
+		assert.deepEqual(
+			service
+				.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true)
+				.newAwards.map((award) => award.duck_id),
+			[1],
+		);
 
 		for (const id of [3, 4, 5, 6, 8, 9, 10, 11, 12]) {
 			await service.setAward(player.id, id, true);
 		}
 		assert.equal(service.getForUser(player.id).count, 13);
 		assert.equal(service.getForUser(player.id).rank, 'Duckiversal Grandmaster');
+		await service.purchase({ id: player.id, minecraftUsername: 'DuckTester' }, 1);
+		await service.purchase({ id: player.id, minecraftUsername: 'DuckTester' }, 13);
+		assert.deepEqual(
+			pushes
+				.filter(({ method }) => method === 'PurchaseShopItem')
+				.map(({ request }) => request.price_dabloons),
+			[5, 10],
+		);
 		assert.ok(
 			pushes.some(({ request }) => request.new_awards?.some((award) => award.duck_id === 13)),
 		);

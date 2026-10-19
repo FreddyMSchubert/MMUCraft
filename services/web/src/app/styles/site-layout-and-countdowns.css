@@ -31,7 +31,7 @@
 
 @media (min-width: 701px) {
 	.playPage.ducksOpen .content {
-		width: min(1320px, calc(100vw - 32px));
+		width: min(1220px, calc(100vw - 32px));
 	}
 }
 

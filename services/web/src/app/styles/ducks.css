@@ -20,7 +20,6 @@
 		0 0 28px rgba(255, 203, 80, 0.22);
 }
 
-.ducksEyebrow,
 .duckNumber,
 .duckCondition small {
 	margin: 0;
@@ -133,21 +132,10 @@
 		0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.duckCard-final::before {
-	content: 'THE FINAL DUCK';
-	position: absolute;
-	top: 14px;
-	right: 16px;
-	color: #f9d678;
-	font-size: 0.64rem;
-	font-weight: 900;
-	letter-spacing: 0.18em;
-}
-
 .duckStage {
 	position: relative;
 	height: 220px;
-	margin: 10px 0;
+	margin: 0 0 10px;
 	overflow: hidden;
 	border: 1px solid rgba(255, 224, 153, 0.12);
 	border-radius: 11px;
@@ -205,6 +193,7 @@
 	border-radius: 7px;
 	background: #d9a73f;
 	color: #181510;
+	font-family: inherit;
 	font-size: 0.73rem;
 	font-weight: 900;
 }
@@ -215,6 +204,21 @@
 .duckBuy:disabled {
 	opacity: 0.38;
 	cursor: not-allowed;
+}
+
+.duckCardTitle {
+	display: flex;
+	align-items: baseline;
+	justify-content: flex-end;
+	gap: 6px;
+	min-width: 0;
+}
+
+.duckNumber {
+	flex: none;
+	color: #f9d678;
+	letter-spacing: 0.06em;
+	white-space: nowrap;
 }
 
 .duckName {

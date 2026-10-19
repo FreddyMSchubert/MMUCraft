@@ -100,11 +100,21 @@ export function duckById(id: number) {
 }
 
 export function duckRank(count: number) {
-	if (count === 13) return 'Duckiversal Grandmaster';
-	if (count === 12) return 'One Quack from Omnipotence';
-	if (count >= 10) return 'High Chancellor of the Pond';
-	if (count >= 7) return 'Supreme Quackonaut';
-	if (count >= 4) return 'Duck Aficionado';
-	if (count >= 1) return 'Puddle Apprentice';
-	return 'Duckless Wanderer';
+	const ranks = [
+		'Duckless Wanderer',
+		'Puddle Apprentice',
+		'Duck Aficionado',
+		'Knight of the Golden Bill',
+		'Keeper of the Sacred Quack',
+		'Baron of the Breadcrumbs',
+		'The Feathered Menace',
+		'Supreme Quackonaut',
+		'Lord of the Lilypads',
+		'Grand Admiral of the Bathtub',
+		'High Chancellor of the Pond',
+		'Emperor of All Things Buoyant',
+		'One Quack from Omnipotence',
+		'Duckiversal Grandmaster',
+	];
+	return ranks[Math.min(Math.max(count, 0), ranks.length - 1)];
 }

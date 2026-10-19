@@ -532,6 +532,20 @@ else
 	show_startup_diagnostics
 	exit "$status"
 fi
+# Health checks alone do not prove the running containers use this release.
+for service in api web minecraft; do
+	[ "$service" != minecraft ] || [ "$main_required" = true ] || continue
+	container=$(dc ps -q "$service")
+	[ -n "$container" ] || { echo "$service is not running after deployment." >&2; exit 1; }
+	image_service=$service
+	[ "$service" != minecraft ] || image_service=mc
+	image=$(docker image inspect --format '{{.Id}}' "${image_prefix}-${image_service}:${tag}")
+	running_image=$(docker inspect --format '{{.Image}}' "$container")
+	[ "$running_image" = "$image" ] || {
+		echo "$service is running an older image after deployment." >&2
+		exit 1
+	}
+done
 wait_for_proxy ready || { echo "Velocity has not confirmed that the active route is ready." >&2; show_startup_diagnostics; exit 1; }
 clear_update
 announce_update_complete || graceful_failure "Could not send the update completion notice"

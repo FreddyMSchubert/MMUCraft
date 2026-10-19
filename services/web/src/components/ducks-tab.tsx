@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DabloonAmount } from '@/components/dabloon-amount';
 import { ShopPreview } from './shop/shop-item-preview';
 import { ObfuscatedEventName } from './surprising-saturday-tab';
 
@@ -9,6 +10,7 @@ interface Duck {
 	itemId: string;
 	name: string;
 	condition: string;
+	priceDabloons: number;
 	unlocked: boolean;
 	awardedAtUnixMs: number | null;
 	modelUrl: string | null;
@@ -78,11 +80,7 @@ export function DucksTab() {
 		<section className="ducksPanel" aria-labelledby="ducks-title">
 			<header className="ducksHeader">
 				<div>
-					<p className="ducksEyebrow">The grand collection</p>
 					<h3 id="ducks-title">Ducks</h3>
-					<p className="tabSubtitle">
-						Thirteen ducks. Thirteen stories. One very crowded pond.
-					</p>
 				</div>
 				<div
 					className="ducksProgress"
@@ -151,8 +149,10 @@ function DuckCard({ duck, buying, onBuy }: { duck: Duck; buying: boolean; onBuy:
 				setHovered(false);
 			}}
 		>
-			<span className="duckNumber">{String(duck.id).padStart(2, '0')} / 13</span>
-			<div className="duckStage">
+			<div
+				className="duckStage"
+				title={duck.modelUrl ? 'Drag to rotate this duck' : undefined}
+			>
 				<div className="duckModel">
 					{duck.modelUrl && duck.textureUrl ? (
 						<ShopPreview item={model} hovered={hovered} interactive />
@@ -169,21 +169,32 @@ function DuckCard({ duck, buying, onBuy }: { duck: Duck; buying: boolean; onBuy:
 					onClick={onBuy}
 					title={
 						duck.unlocked
-							? `Buy another ${duck.name} for 5 dabloons`
+							? `Buy another ${duck.name} for ${duck.priceDabloons} Dabloons`
 							: 'Earn this duck first'
 					}
 				>
-					{buying ? 'Buying...' : 'Buy · 5 ◈'}
-				</button>
-				<span className="duckName">
-					{duck.unlocked ? (
-						duck.name
+					{buying ? (
+						'Buying...'
 					) : (
-						<ObfuscatedEventName
-							wordLengths={duck.name.split(' ').map((word) => word.length)}
-							label="Duck name hidden"
-						/>
+						<>
+							Buy · <DabloonAmount amount={duck.priceDabloons} tone="inherit" />
+						</>
 					)}
+				</button>
+				<span className="duckCardTitle">
+					<span className="duckNumber">
+						{duck.id === 13 ? 'Final Duck —' : `#${duck.id}`}
+					</span>
+					<span className="duckName">
+						{duck.unlocked ? (
+							duck.name
+						) : (
+							<ObfuscatedEventName
+								wordLengths={duck.name.split(' ').map((word) => word.length)}
+								label="Duck name hidden"
+							/>
+						)}
+					</span>
 				</span>
 			</div>
 			<div className="duckCondition" role="tooltip">

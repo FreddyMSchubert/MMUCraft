@@ -79,7 +79,7 @@ public final class DuckManager {
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             if (entity instanceof ServerPlayer victim
                     && source.getEntity() instanceof ServerPlayer killer
-                    && killer != victim && PlayerStatsSync.isCommittee(victim)
+                    && PlayerStatsSync.isCommittee(victim)
                     && FeatureToggles.isEnabled(FeatureToggles.NETHER)) {
                 record(killer, 4);
             }

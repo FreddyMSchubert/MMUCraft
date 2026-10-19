@@ -218,11 +218,12 @@ public final class PlayerStatsSync {
         if (current != null) return current;
 
         long revision = presentationRevisionByPlayer.getOrDefault(playerId, 0L);
+        boolean duckLogin = joinRefreshPending.contains(playerId);
         MinecraftServer server = player.level().getServer();
         CompletableFuture<SyncPlayerStatsResponse> applied = new CompletableFuture<>();
         activeSyncByPlayer.put(playerId, applied);
         GameplayGrpcService.syncPlayerStats(player, collectStats(player), true,
-                joinRefreshPending.contains(playerId)).whenComplete((response, error) -> server.execute(() -> {
+                duckLogin).whenComplete((response, error) -> server.execute(() -> {
             ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(playerId);
             if (!activeSyncByPlayer.remove(playerId, applied)
                     || onlinePlayer == null || onlinePlayer.connection != player.connection) {
@@ -245,7 +246,8 @@ public final class PlayerStatsSync {
                 DuckManager.onSync(onlinePlayer, response, !superseded);
                 applyReferralReward(onlinePlayer, response);
                 applySurprisingSaturdayRewards(onlinePlayer, response);
-                if (joinRefreshPending.remove(playerId) || superseded) {
+                if (duckLogin) joinRefreshPending.remove(playerId);
+                if (duckLogin || joinRefreshPending.contains(playerId) || superseded) {
                     scheduleRetry(onlinePlayer);
                 } else {
                     scheduleNext(onlinePlayer);

@@ -33,6 +33,26 @@ test('event control reports a rescheduled end time', () => {
 	assert.equal(service.eventControlState().endsAtUnixMs, null);
 });
 
+test('an empty event leaves the event server stopped and players on main', () => {
+	const service = Object.create(VelocityService.prototype);
+	service.settings = () => ({ event_override: null });
+	service.events = {
+		active: () => ({ id: 7, criteria_type: 'empty' }),
+		warmingUp: () => ({ id: 7, criteria_type: 'empty' }),
+	};
+	service.proxyIsOnline = () => true;
+	service.livePlayers = [];
+
+	assert.deepEqual(service.eventRoute(Date.now(), null), {
+		activeEvent: undefined,
+		eventOpen: false,
+		revision: 'main',
+		targetServerName: 'main',
+	});
+	assert.equal(service.eventControlState().desiredRunning, false);
+	assert.equal(service.preferredServer(uuid), 'main');
+});
+
 test('an admin move starts a stopped event server and queues the transfer', () => {
 	const service = Object.create(VelocityService.prototype);
 	const overrides = [];

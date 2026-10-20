@@ -84,9 +84,9 @@ export function SurprisingSaturdayAdminSection() {
 	const [startsAt, setStartsAt] = useState('');
 	const [endsAt, setEndsAt] = useState('');
 	const [items, setItems] = useState<EditableTarget[]>([]);
-	const [criteriaType, setCriteriaType] = useState<'list_completion' | 'joined_earning'>(
-		'list_completion',
-	);
+	const [criteriaType, setCriteriaType] = useState<
+		'list_completion' | 'joined_earning' | 'empty'
+	>('list_completion');
 	const [earnings, setEarnings] = useState<
 		{ name: string; uuid: string; amount: number; paid: number }[]
 	>([]);
@@ -162,16 +162,22 @@ export function SurprisingSaturdayAdminSection() {
 				return;
 		}
 		const creating = editingId === null;
-		if (items.length === 0) {
+		if (criteriaType !== 'empty' && items.length === 0) {
 			setError('Add at least one completion target.');
 			return;
 		}
-		const invalidTarget = items.findIndex(({ id }) => !id.trim() || id.length > 120);
+		const invalidTarget =
+			criteriaType === 'empty'
+				? -1
+				: items.findIndex(({ id }) => !id.trim() || id.length > 120);
 		if (invalidTarget !== -1) {
 			setError(`Target ${invalidTarget + 1} needs an ID of up to 120 characters.`);
 			return;
 		}
-		if (new Set(items.map(({ id }) => id.trim())).size !== items.length) {
+		if (
+			criteriaType !== 'empty' &&
+			new Set(items.map(({ id }) => id.trim())).size !== items.length
+		) {
 			setError('Each completion target needs a unique ID.');
 			return;
 		}
@@ -192,21 +198,24 @@ export function SurprisingSaturdayAdminSection() {
 						startsAtUnixMs: parseManchesterInput(startsAt),
 						endsAtUnixMs: parseManchesterInput(endsAt),
 						criteriaType,
-						items: items.map(({ id, name, url, points, description, amount }) =>
-							criteriaType === 'joined_earning'
-								? {
-										id: id.trim(),
-										name: name.trim(),
-										description: description.trim(),
-										amount: Number(amount),
-									}
-								: {
-										id: id.trim(),
-										name: name.trim(),
-										url: url.trim(),
-										points: Number(points),
-									},
-						),
+						items:
+							criteriaType === 'empty'
+								? []
+								: items.map(({ id, name, url, points, description, amount }) =>
+										criteriaType === 'joined_earning'
+											? {
+													id: id.trim(),
+													name: name.trim(),
+													description: description.trim(),
+													amount: Number(amount),
+												}
+											: {
+													id: id.trim(),
+													name: name.trim(),
+													url: url.trim(),
+													points: Number(points),
+												},
+									),
 						rewards: {
 							...Object.fromEntries(
 								rewardPlaces.map(({ key }) => [key, Number(rewards[key])]),
@@ -251,7 +260,7 @@ export function SurprisingSaturdayAdminSection() {
 				startsAtUnixMs: number;
 				endsAtUnixMs: number;
 				items: CompletionTarget[];
-				criteriaType: 'list_completion' | 'joined_earning';
+				criteriaType: 'list_completion' | 'joined_earning' | 'empty';
 				earnings: { name: string; uuid: string; amount: number; paid: number }[];
 				rewards: Record<RewardKey, number> & { participationMinItems: number };
 			};
@@ -340,7 +349,7 @@ export function SurprisingSaturdayAdminSection() {
 							? 'Create Surprising Saturday'
 							: 'Edit Surprising Saturday'}
 					</h3>
-					<p>Choose a leaderboard or give each goal its own Dabloon reward.</p>
+					<p>Choose a leaderboard, goal rewards, or a description-only event.</p>
 				</div>
 				<button
 					type="button"
@@ -456,17 +465,19 @@ export function SurprisingSaturdayAdminSection() {
 						/>
 					</label>
 					<label>
-						Winning condition
+						Event type
 						<select
 							value={criteriaType}
 							onChange={(event) => {
 								setCriteriaType(
-									event.target.value as 'list_completion' | 'joined_earning',
+									event.target.value as
+										'list_completion' | 'joined_earning' | 'empty',
 								);
 							}}
 						>
 							<option value="list_completion">Leaderboard</option>
 							<option value="joined_earning">Goal rewards</option>
+							<option value="empty">Empty (description only)</option>
 						</select>
 					</label>
 					<label>
@@ -503,132 +514,142 @@ export function SurprisingSaturdayAdminSection() {
 							}}
 						/>
 					</label>
-					<div className="eventTargetEditor">
-						<h4>Completion targets</h4>
-						<p>Give each goal a unique ID, such as a or find_diamond.</p>
-						{items.map((item, index) => (
-							<div className="eventTargetRow" key={item.key}>
-								<label>
-									Goal ID
-									<input
-										value={item.id}
-										maxLength={120}
-										required
-										placeholder="find_diamond"
-										onChange={(event) => {
-											updateTarget(item.key, { id: event.target.value });
-										}}
-									/>
-								</label>
-								<label>
-									Display name
-									<input
-										value={item.name}
-										maxLength={120}
-										required
-										placeholder="Creeper"
-										onChange={(event) => {
-											updateTarget(item.key, { name: event.target.value });
-										}}
-									/>
-								</label>
-								{criteriaType === 'list_completion' && (
+					{criteriaType !== 'empty' && (
+						<div className="eventTargetEditor">
+							<h4>Completion targets</h4>
+							<p>Give each goal a unique ID, such as a or find_diamond.</p>
+							{items.map((item, index) => (
+								<div className="eventTargetRow" key={item.key}>
 									<label>
-										Link (optional)
+										Goal ID
 										<input
-											type="url"
-											value={item.url}
-											maxLength={2048}
-											placeholder="https://..."
+											value={item.id}
+											maxLength={120}
+											required
+											placeholder="find_diamond"
 											onChange={(event) => {
-												updateTarget(item.key, { url: event.target.value });
+												updateTarget(item.key, { id: event.target.value });
 											}}
 										/>
 									</label>
-								)}
-								{criteriaType === 'joined_earning' && (
 									<label>
-										Description (optional)
+										Display name
 										<input
-											value={item.description}
-											maxLength={2000}
+											value={item.name}
+											maxLength={120}
+											required
+											placeholder="Creeper"
 											onChange={(event) => {
 												updateTarget(item.key, {
-													description: event.target.value,
+													name: event.target.value,
 												});
 											}}
 										/>
 									</label>
-								)}
-								<label>
-									{criteriaType === 'joined_earning' ? 'Dabloons' : 'Points'}
-									<input
-										type="number"
-										min={1}
-										max={criteriaType === 'joined_earning' ? 1_000_000 : 1000}
-										step={1}
-										value={
-											criteriaType === 'joined_earning'
-												? item.amount
-												: item.points
-										}
-										required
-										onChange={(event) => {
-											updateTarget(
-												item.key,
+									{criteriaType === 'list_completion' && (
+										<label>
+											Link (optional)
+											<input
+												type="url"
+												value={item.url}
+												maxLength={2048}
+												placeholder="https://..."
+												onChange={(event) => {
+													updateTarget(item.key, {
+														url: event.target.value,
+													});
+												}}
+											/>
+										</label>
+									)}
+									{criteriaType === 'joined_earning' && (
+										<label>
+											Description (optional)
+											<input
+												value={item.description}
+												maxLength={2000}
+												onChange={(event) => {
+													updateTarget(item.key, {
+														description: event.target.value,
+													});
+												}}
+											/>
+										</label>
+									)}
+									<label>
+										{criteriaType === 'joined_earning' ? 'Dabloons' : 'Points'}
+										<input
+											type="number"
+											min={1}
+											max={
+												criteriaType === 'joined_earning' ? 1_000_000 : 1000
+											}
+											step={1}
+											value={
 												criteriaType === 'joined_earning'
-													? { amount: event.target.value }
-													: { points: event.target.value },
-											);
-										}}
-									/>
-								</label>
-								<div className="eventTargetActions">
-									<button
-										type="button"
-										disabled={index === 0}
-										aria-label={`Move ${item.name || item.id || 'target'} up`}
-										onClick={() => {
-											moveTarget(index, -1);
-										}}
-									>
-										Up
-									</button>
-									<button
-										type="button"
-										disabled={index === items.length - 1}
-										aria-label={`Move ${item.name || item.id || 'target'} down`}
-										onClick={() => {
-											moveTarget(index, 1);
-										}}
-									>
-										Down
-									</button>
-									<button
-										className="eventTargetDelete"
-										type="button"
-										aria-label={`Delete ${item.name || item.id || 'target'}`}
-										onClick={() => {
-											setItems((current) =>
-												current.filter((target) => target.key !== item.key),
-											);
-										}}
-									>
-										Delete
-									</button>
+													? item.amount
+													: item.points
+											}
+											required
+											onChange={(event) => {
+												updateTarget(
+													item.key,
+													criteriaType === 'joined_earning'
+														? { amount: event.target.value }
+														: { points: event.target.value },
+												);
+											}}
+										/>
+									</label>
+									<div className="eventTargetActions">
+										<button
+											type="button"
+											disabled={index === 0}
+											aria-label={`Move ${item.name || item.id || 'target'} up`}
+											onClick={() => {
+												moveTarget(index, -1);
+											}}
+										>
+											Up
+										</button>
+										<button
+											type="button"
+											disabled={index === items.length - 1}
+											aria-label={`Move ${item.name || item.id || 'target'} down`}
+											onClick={() => {
+												moveTarget(index, 1);
+											}}
+										>
+											Down
+										</button>
+										<button
+											className="eventTargetDelete"
+											type="button"
+											aria-label={`Delete ${item.name || item.id || 'target'}`}
+											onClick={() => {
+												setItems((current) =>
+													current.filter(
+														(target) => target.key !== item.key,
+													),
+												);
+											}}
+										>
+											Delete
+										</button>
+									</div>
 								</div>
-							</div>
-						))}
-						<button
-							type="button"
-							disabled={items.length >= 256}
-							onClick={() => {
-								setItems((current) => [...current, targetFromId('')]);
-							}}
-						>
-							Add new completion target
-						</button>
-					</div>
+							))}
+							<button
+								type="button"
+								disabled={items.length >= 256}
+								onClick={() => {
+									setItems((current) => [...current, targetFromId('')]);
+								}}
+							>
+								Add new completion target
+							</button>
+						</div>
+					)}
 					{criteriaType === 'list_completion' && (
 						<div className="eventTargetEditor">
 							<h4>Dabloon rewards</h4>

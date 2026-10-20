@@ -18,6 +18,46 @@ test('Joined Earning adds completed goal rewards', () => {
 	assert.equal(joinedEarningAmount(goals, [{ itemId: 'chunklock:unknown' }]), 0);
 });
 
+test('an empty event saves without targets or rewards and has no players', () => {
+	let saved;
+	const service = new SurprisingSaturdayService({
+		connection: {
+			select: () => ({
+				from: () => ({
+					where: () => ({ get: () => (saved ? { id: 8, ...saved } : null) }),
+				}),
+			}),
+			insert: () => ({
+				values: (values) => {
+					saved = values;
+					return { returning: () => ({ get: () => ({ id: 8 }) }) };
+				},
+			}),
+		},
+	});
+	const start = Date.now() + 60_000;
+	assert.deepEqual(
+		service.create({
+			title: 'Building day',
+			shortDescription: 'Build together on main.',
+			preDescription: 'Coming soon',
+			description: '**Build together**',
+			startsAtUnixMs: start,
+			endsAtUnixMs: start + 60_000,
+			criteriaType: 'empty',
+			items: [],
+		}),
+		{ ok: true, eventId: 8 },
+	);
+	assert.equal(saved.criteria_type, 'empty');
+	assert.deepEqual(JSON.parse(saved.criteria_json), []);
+	assert.equal(JSON.parse(saved.rewards_json).first, 0);
+	saved.starts_at_unix_ms = Date.now() - 120_000;
+	saved.ends_at_unix_ms = Date.now() - 60_000;
+	assert.deepEqual(service.detail('8').items, []);
+	assert.deepEqual(service.detail('8').players, []);
+});
+
 test('Joined Earning pays committee players for completed goals after the event ends', () => {
 	const uuid = '00000000000000000000000000000001';
 	const start = Date.parse('2026-10-24T15:00:00Z');

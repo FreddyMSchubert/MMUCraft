@@ -281,8 +281,8 @@ export class SurprisingSaturdayService {
 				shortDescription: null,
 			};
 
-		const items = targetsForEvent(event);
-		const players = this.rankedPlayers(event, items);
+		const items = event.criteria_type === 'empty' ? [] : targetsForEvent(event);
+		const players = event.criteria_type === 'empty' ? [] : this.rankedPlayers(event, items);
 		return {
 			id,
 			status: event.ends_at_unix_ms > now ? 'live' : 'ended',
@@ -430,6 +430,7 @@ export class SurprisingSaturdayService {
 			.where(lte(surprisingSaturdayEvents.ends_at_unix_ms, now))
 			.all()
 			.flatMap((event) => {
+				if (event.criteria_type === 'empty') return [];
 				if (event.criteria_type === 'joined_earning') {
 					const targets = targetsForEvent(event);
 					const player = this.rankedPlayers(event, targets).find(
@@ -483,8 +484,14 @@ export class SurprisingSaturdayService {
 		const description = typeof body?.description === 'string' ? body.description.trim() : '';
 		const start = body?.startsAtUnixMs;
 		const end = body?.endsAtUnixMs;
-		const joinedEarning = body?.criteriaType === 'joined_earning';
-		const items = joinedEarning ? earningTargets(body.items) : completionTargets(body?.items);
+		const criteriaType = body?.criteriaType;
+		const joinedEarning = criteriaType === 'joined_earning';
+		const empty = criteriaType === 'empty';
+		const items = empty
+			? []
+			: joinedEarning
+				? earningTargets(body?.items)
+				: completionTargets(body?.items);
 		const rewards = body?.rewards;
 		if (
 			!title ||
@@ -504,11 +511,14 @@ export class SurprisingSaturdayService {
 			(end as number) <= (start as number)
 		)
 			throw new BadRequestException('Choose a valid start and an end after it');
-		if (!['list_completion', 'joined_earning'].includes(String(body?.criteriaType)) || !items)
+		if (
+			!['list_completion', 'joined_earning', 'empty'].includes(String(criteriaType)) ||
+			!items
+		)
 			throw new BadRequestException(
 				'Add 1-256 unique targets with valid IDs, names, and rewards',
 			);
-		if (!joinedEarning && !validRewards(rewards, items.length))
+		if (!joinedEarning && !empty && !validRewards(rewards, items.length))
 			throw new BadRequestException(
 				'Set rewards from 0 to 1,000,000 Dabloons and a participation target within the completion list',
 			);
@@ -531,9 +541,9 @@ export class SurprisingSaturdayService {
 			description,
 			starts_at_unix_ms: start as number,
 			ends_at_unix_ms: end as number,
-			criteria_type: joinedEarning ? 'joined_earning' : 'list_completion',
+			criteria_type: empty ? 'empty' : joinedEarning ? 'joined_earning' : 'list_completion',
 			criteria_json: JSON.stringify(items),
-			rewards_json: JSON.stringify(joinedEarning ? DEFAULT_REWARDS : rewards),
+			rewards_json: JSON.stringify(joinedEarning || empty ? DEFAULT_REWARDS : rewards),
 		} as const;
 		const event = id
 			? this.database.connection

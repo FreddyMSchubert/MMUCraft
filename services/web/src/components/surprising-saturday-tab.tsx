@@ -243,6 +243,9 @@ export function SurprisingSaturdayTab({
 	const totalPoints = currentDetail?.items?.reduce((sum, item) => sum + item.points, 0) ?? 0;
 	const otherUpcoming = upcoming.filter((event) => event.id !== selectedEventId);
 	const onEventServer = me?.preferredServerName === 'surprising-saturday';
+	const hasEventServer =
+		currentDetail?.criteriaType === 'list_completion' ||
+		currentDetail?.criteriaType === 'joined_earning';
 
 	async function switchServer() {
 		const destination = onEventServer ? 'main' : 'surprising-saturday';
@@ -327,7 +330,7 @@ export function SurprisingSaturdayTab({
 					<EventDescription
 						description={currentDetail?.description ?? selected.description ?? ''}
 					/>
-					{selectedStatus === 'live' && (
+					{selectedStatus === 'live' && hasEventServer && (
 						<div className="eventJoin">
 							<button
 								type="button"

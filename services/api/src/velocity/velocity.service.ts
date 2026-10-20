@@ -294,7 +294,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			lastHeartbeatUnixMs: this.lastHeartbeatUnixMs,
 			maintenanceMode: this.settings().maintenance_mode === 1,
 			eventOverride: this.settings().event_override,
-			eventScheduled: Boolean(this.events.active(now) ?? this.events.warmingUp(now)),
+			eventScheduled: Boolean(this.activeServerEvent(now) ?? this.warmingServerEvent(now)),
 			eventDesiredRunning: this.eventControlState().desiredRunning,
 			servers: servers.map((server) => {
 				const live = proxyOnline ? this.liveServers.get(server.name) : undefined;
@@ -388,7 +388,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			servers,
 			showEventCapacity:
 				proxyOnline &&
-				Boolean(this.events.active(now)) &&
+				Boolean(this.activeServerEvent(now)) &&
 				this.liveServers.get(EVENT_SERVER)?.online === true &&
 				(servers.find((server) => server.name === EVENT_SERVER)?.playerCount ?? 0) > 0,
 		};
@@ -456,13 +456,13 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 					player_uuid: uuid,
 					preferred_server: server.name,
 					last_connected_server: player?.state === 'playing' ? player.serverName : null,
-					event_choice_id: this.events.active()?.id ?? null,
+					event_choice_id: this.activeServerEvent()?.id ?? null,
 				})
 				.onConflictDoUpdate({
 					target: velocityPlayerServers.player_uuid,
 					set: {
 						preferred_server: server.name,
-						event_choice_id: this.events.active()?.id ?? null,
+						event_choice_id: this.activeServerEvent()?.id ?? null,
 					},
 				})
 				.run();
@@ -506,7 +506,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			serverName: this.proxyIsOnline(now)
 				? (this.livePlayers.find((player) => player.uuid === uuid)?.serverName ?? null)
 				: null,
-			eventReady: Boolean(this.events.active(now)),
+			eventReady: Boolean(this.activeServerEvent(now)),
 			eventOnline:
 				this.proxyIsOnline(now) && this.liveServers.get(EVENT_SERVER)?.online === true,
 		};
@@ -515,7 +515,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	moveSelf(userId: number, serverName: unknown) {
 		if (serverName !== 'main' && serverName !== EVENT_SERVER)
 			throw new BadRequestException('Select main or Surprising Saturday');
-		if (!this.events.active())
+		if (!this.activeServerEvent())
 			throw new ConflictException('Player switching is available during a live event');
 		const user = this.database.connection
 			.select()
@@ -553,9 +553,19 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		return this.eventRoute(now, this.settings().event_override).revision;
 	}
 
+	private activeServerEvent(now = Date.now()) {
+		const event = this.events.active(now);
+		return event?.criteria_type === 'empty' ? undefined : event;
+	}
+
+	private warmingServerEvent(now = Date.now()) {
+		const event = this.events.warmingUp(now);
+		return event?.criteria_type === 'empty' ? undefined : event;
+	}
+
 	private eventRoute(now: number, override: number | null) {
-		const activeEvent = this.events.active(now);
-		const warmingUp = activeEvent ? null : this.events.warmingUp(now);
+		const activeEvent = this.activeServerEvent(now);
+		const warmingUp = activeEvent ? null : this.warmingServerEvent(now);
 		return {
 			activeEvent,
 			eventOpen: Boolean(activeEvent),
@@ -573,8 +583,9 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	eventControlState() {
 		const now = Date.now();
 		const override = this.settings().event_override;
-		const activeEvent = this.events.active(now);
-		const desiredRunning = Boolean(activeEvent ?? this.events.warmingUp(now)) || override === 1;
+		const activeEvent = this.activeServerEvent(now);
+		const desiredRunning =
+			Boolean(activeEvent ?? this.warmingServerEvent(now)) || override === 1;
 		return {
 			desiredRunning,
 			endsAtUnixMs: activeEvent?.ends_at_unix_ms ?? null,
@@ -589,7 +600,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			throw new BadRequestException(
 				'enabled must be true, false, or null for automatic operation',
 			);
-		if (this.events.active() || this.events.warmingUp())
+		if (this.activeServerEvent() || this.warmingServerEvent())
 			throw new ConflictException('The event schedule controls Surprising Saturday');
 		this.database.connection
 			.update(velocitySettings)
@@ -614,7 +625,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 	refreshEventState() {
 		if (
-			(this.events.active() || this.events.warmingUp()) &&
+			(this.activeServerEvent() || this.warmingServerEvent()) &&
 			this.settings().event_override !== null
 		)
 			this.database.connection
@@ -631,7 +642,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	private preferredServer(uuid: string) {
-		const activeEvent = this.events.active();
+		const activeEvent = this.activeServerEvent();
 		if (!activeEvent) return 'main';
 		const choice = this.database.connection
 			.select({

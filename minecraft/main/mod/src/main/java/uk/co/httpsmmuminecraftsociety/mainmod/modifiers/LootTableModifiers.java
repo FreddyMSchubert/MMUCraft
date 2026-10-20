@@ -122,10 +122,10 @@ public class LootTableModifiers {
             new PlayerLootAddition(List.of("archiedobbo"), null, Items.MANGROVE_DOOR, 1.0F, 1, 1),
             new PlayerLootAddition(List.of("archiedobbo"), "disc-9am", null, 1.0F, 1, 1),
             new PlayerLootAddition(List.of("oderzo"), null, Items.CUT_COPPER_STAIRS.waxed().weathered(), 1, 1, 3),
-            new PlayerLootAddition(List.of("CalRay2"), "beer", null, 0.5f, 1, 5),
+            new PlayerLootAddition(List.of("CalRay2"), "beer", null, 1.0F, 1, 5),
             new PlayerLootAddition(List.of("miaalicexoxo"), null, Items.LILY_OF_THE_VALLEY, 1, 1, 1),
             new PlayerLootAddition(List.of("MerlinSpace"), null, Items.APPLE, 1, 1, 1),
-            new PlayerLootAddition(List.of("HannahLucyyy"), null, Items.BLUE_ORCHID, 0.2f, 1, 1)
+            new PlayerLootAddition(List.of("HannahLucyyy"), null, Items.BLUE_ORCHID, 1, 1, 1)
     );
     private static void addPlayerSpecificDrops(
             Identifier tableId,

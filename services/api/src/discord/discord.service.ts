@@ -67,10 +67,12 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent, maxPla
 					return count >= maxPlayers ? `${ansi(31)}${status}${ansi(0)}` : status;
 				})
 			: event.content;
+	const body =
+		type === 'duck' || type === 'duck_final' ? `${ansi(33)}${content}${ansi(0)}` : content;
 	return {
 		username,
 		content: (isServer
-			? `\`\`\`ansi\n${prefix} ${player ? `${player} ` : ''}${content.replaceAll('```', '``\\`')}\n\`\`\``
+			? `\`\`\`ansi\n${prefix} ${player ? `${player} ` : ''}${body.replaceAll('```', '``\\`')}\n\`\`\``
 			: content
 		).slice(0, 2_000),
 		isServer,

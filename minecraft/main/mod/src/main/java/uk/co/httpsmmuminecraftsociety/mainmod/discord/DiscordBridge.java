@@ -97,10 +97,13 @@ public final class DiscordBridge {
         playerAnnouncement(server, "shop", "🛒", player, content);
     }
 
-    public static void broadcastDuck(MinecraftServer server, Component message) {
+    public static void broadcastDuck(MinecraftServer server, ServerPlayer recipient,
+                                     Component ownerMessage, Component publicMessage) {
         broadcastingPlayerAnnouncement = true;
         try {
-            server.getPlayerList().broadcastSystemMessage(message, false);
+            for (ServerPlayer viewer : server.getPlayerList().getPlayers()) {
+                viewer.sendSystemMessage(viewer == recipient ? ownerMessage : publicMessage);
+            }
         } finally {
             broadcastingPlayerAnnouncement = false;
         }

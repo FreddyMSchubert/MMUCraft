@@ -79,6 +79,7 @@ export interface PlayerSummary {
 	stats: PlayerStats;
 	unlocks: Record<'charms' | 'cosmetics' | 'knowledge', { unlocked: number; total: number }>;
 	ranks: Record<string, number>;
+	ducks: { count: number; total: number; rank: string } | null;
 }
 
 export interface PlayersResponse {

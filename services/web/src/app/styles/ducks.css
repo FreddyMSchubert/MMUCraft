@@ -20,7 +20,6 @@
 		0 0 28px rgba(255, 203, 80, 0.22);
 }
 
-.duckNumber,
 .duckCondition small {
 	margin: 0;
 	color: #d8bb7b;
@@ -106,9 +105,7 @@
 		box-shadow 160ms ease;
 }
 
-.duckCard:hover,
-.duckCard:focus-visible,
-.duckCard:focus-within {
+.duckCard:hover {
 	z-index: 5;
 	border-color: #ffda84;
 	box-shadow:
@@ -182,6 +179,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: 8px;
 	min-height: 42px;
 }
@@ -207,31 +205,38 @@
 }
 
 .duckCardTitle {
-	display: flex;
-	align-items: baseline;
-	justify-content: flex-end;
-	gap: 6px;
-	min-width: 0;
-}
-
-.duckNumber {
-	flex: none;
-	color: #f9d678;
-	letter-spacing: 0.06em;
+	margin-left: auto;
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', monospace;
+	font-size: clamp(0.75rem, 1.15vw, 1rem);
+	text-align: right;
 	white-space: nowrap;
 }
 
+.duckNumber {
+	color: #f9d678;
+}
+
 .duckName {
-	min-width: 0;
 	color: #fff1c1;
-	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', monospace;
-	font-size: clamp(0.85rem, 1.5vw, 1.05rem);
-	text-align: right;
-	overflow-wrap: anywhere;
 }
 
 .duckCard-locked .duckName {
 	color: #c3c5d0;
+}
+
+.duckScrambleWord {
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.duckScrambleWord + .duckScrambleWord {
+	margin-left: 0.5em;
+}
+
+.duckScrambleGlyph {
+	display: inline-block;
+	width: 1ch;
+	text-align: center;
 }
 
 .duckCondition {
@@ -253,9 +258,7 @@
 		transform 140ms ease;
 }
 
-.duckCard:hover .duckCondition,
-.duckCard:focus-visible .duckCondition,
-.duckCard:focus-within .duckCondition {
+.duckCard:hover .duckCondition {
 	opacity: 1;
 	transform: translateY(0);
 }

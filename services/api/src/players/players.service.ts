@@ -14,6 +14,7 @@ import {
 	DatabaseService,
 	UserRow,
 	dailyClaims,
+	duckAwards,
 	knowledgeUnlocks,
 	playerProfiles,
 	playerStats,
@@ -28,6 +29,7 @@ import {
 import { KnowledgeDocumentCatalogService } from '../gameplay/knowledge/knowledge-document-catalog.service';
 import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
 import { FeatureTogglesService } from '../toggles/feature-toggles.service';
+import { DUCKS, duckRank } from '../ducks/duck-catalog';
 import { playerAvatarUrl } from './player-color';
 import { customPlayerEmojis, type PlayerEmoji } from './player-emojis';
 import {
@@ -73,6 +75,7 @@ export interface PlayerSummary {
 	stats: PlayerStats;
 	unlocks: UnlockProgress;
 	ranks: Record<string, number>;
+	ducks: { count: number; total: number; rank: string } | null;
 }
 
 @Injectable()
@@ -278,6 +281,13 @@ export class PlayersService {
 			stats: statsContext.stats.get(user.id) ?? this.playerStatistics.getForUser(user.id),
 			unlocks: statsContext.unlocks.get(user.id) ?? emptyUnlockProgress(),
 			ranks: statsContext.ranks.get(user.id) ?? {},
+			ducks: statsContext.duckCounts
+				? {
+						count: statsContext.duckCounts.get(user.id) ?? 0,
+						total: DUCKS.length,
+						rank: duckRank(statsContext.duckCounts.get(user.id) ?? 0),
+					}
+				: null,
 		};
 	}
 
@@ -346,7 +356,18 @@ export class PlayersService {
 			});
 		}
 
-		return { stats, streaks, unlocks, ranks: rankPlayers(values) };
+		const duckCounts = this.featureToggles.enabledKeys().has('nether')
+			? new Map<number, number>()
+			: null;
+		if (duckCounts) {
+			for (const award of this.database.connection
+				.select({ userId: duckAwards.user_id })
+				.from(duckAwards)
+				.all()) {
+				duckCounts.set(award.userId, (duckCounts.get(award.userId) ?? 0) + 1);
+			}
+		}
+		return { stats, streaks, unlocks, ranks: rankPlayers(values), duckCounts };
 	}
 
 	private getUnlockProgress(userIds: number[]) {

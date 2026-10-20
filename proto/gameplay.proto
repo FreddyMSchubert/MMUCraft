@@ -62,6 +62,8 @@ message DuckAward {
   string awarded_to = 5;
   int64 awarded_at_unix_ms = 6;
   int32 count = 7;
+  string announcement_reason = 8;
+  string color_hex = 9;
 }
 
 message RecordDuckEventRequest {

@@ -83,6 +83,12 @@ function PlayerEmojiDetails({ player }: { player: PlayerSummary }) {
 		player.isMember ? { emoji: '⭐', explanation: 'Society member' } : null,
 		player.isExternal ? { emoji: '💼', explanation: 'External player' } : null,
 		...player.customEmojis,
+		player.ducks
+			? {
+					emoji: '🦆',
+					explanation: `${player.ducks.rank} (${player.ducks.count}/${player.ducks.total})`,
+				}
+			: null,
 	].filter((entry): entry is { emoji: string; explanation: string } => entry !== null);
 	return emojis.length > 0 ? (
 		<ul className="playerEmojiDetails">

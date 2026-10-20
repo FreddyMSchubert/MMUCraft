@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DabloonAmount } from '@/components/dabloon-amount';
 import { ShopPreview } from './shop/shop-item-preview';
-import { ObfuscatedEventName } from './surprising-saturday-tab';
 
 interface Duck {
 	id: number;
@@ -140,7 +139,6 @@ function DuckCard({ duck, buying, onBuy }: { duck: Duck; buying: boolean; onBuy:
 	return (
 		<article
 			className={`duckCard ${duck.unlocked ? 'duckCard-unlocked' : 'duckCard-locked'} ${duck.id === 13 ? 'duckCard-final' : ''}`}
-			tabIndex={0}
 			aria-label={`${duck.unlocked ? duck.name : 'Unknown duck'}. ${duck.condition}`}
 			onPointerEnter={() => {
 				setHovered(true);
@@ -183,13 +181,13 @@ function DuckCard({ duck, buying, onBuy }: { duck: Duck; buying: boolean; onBuy:
 				</button>
 				<span className="duckCardTitle">
 					<span className="duckNumber">
-						{duck.id === 13 ? 'Final Duck —' : `#${duck.id}`}
+						{duck.id === 13 ? 'Final Duck' : `#${duck.id}`} -{' '}
 					</span>
 					<span className="duckName">
 						{duck.unlocked ? (
 							duck.name
 						) : (
-							<ObfuscatedEventName
+							<DuckObfuscatedName
 								wordLengths={duck.name.split(' ').map((word) => word.length)}
 								label="Duck name hidden"
 							/>
@@ -202,5 +200,37 @@ function DuckCard({ duck, buying, onBuy }: { duck: Duck; buying: boolean; onBuy:
 				<p>{duck.condition}</p>
 			</div>
 		</article>
+	);
+}
+
+function DuckObfuscatedName({ wordLengths, label }: { wordLengths: number[]; label: string }) {
+	const root = useRef<HTMLSpanElement>(null);
+	useEffect(() => {
+		const glyphs = root.current?.querySelectorAll<HTMLElement>('.duckScrambleGlyph');
+		if (!glyphs) return;
+		const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+		const shuffle = () => {
+			glyphs.forEach((glyph) => {
+				glyph.textContent = alphabet[Math.floor(Math.random() * alphabet.length)] ?? '?';
+			});
+		};
+		shuffle();
+		const timer = window.setInterval(shuffle, 50);
+		return () => {
+			window.clearInterval(timer);
+		};
+	}, [wordLengths]);
+	return (
+		<span ref={root} role="img" aria-label={label} className="duckScramble">
+			{wordLengths.map((length, word) => (
+				<span className="duckScrambleWord" key={word}>
+					{Array.from({ length }, (_, index) => (
+						<span className="duckScrambleGlyph" key={index} aria-hidden="true">
+							?
+						</span>
+					))}
+				</span>
+			))}
+		</span>
 	);
 }

@@ -1,8 +1,15 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import type { AuthenticatedUser } from '../auth/auth-session.service';
-import { DatabaseService, duckAwards, duckNotes, users } from '../database/database.service';
+import {
+	DatabaseService,
+	duckAwards,
+	duckNotes,
+	playerProfiles,
+	users,
+} from '../database/database.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
+import { effectivePlayerColor } from '../players/player-color';
 import { DiscordService } from '../discord/discord.service';
 import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
@@ -262,20 +269,24 @@ export class DucksService {
 	private async publishDiscord(user: UserRow, fresh: ReturnType<DucksService['toMessage']>[]) {
 		for (const award of fresh) {
 			if (!this.isOpen()) return;
-			const content =
-				award.duck_id === 13
-					? `completed the entire duck collection! All 13 ducks are theirs. The pond has a new legend.`
-					: `earned ${award.name}! ${award.count}/13 ducks collected.`;
+			const content = `earned the ${award.name} for ${award.announcement_reason}! 🎉 (${award.count}/${DUCKS.length} ducks collected)`;
 			try {
 				await this.discord.publish({
 					type: award.duck_id === 13 ? 'duck_final' : 'duck',
 					minecraft_username: user.minecraft_username,
 					minecraft_uuid: user.minecraft_uuid ?? '',
 					content,
-					role: user.is_committee ? 'Committee' : user.is_member ? 'Member' : '',
+					role:
+						user.is_committee || user.is_super_admin
+							? 'Committee'
+							: user.is_member
+								? 'Member'
+								: user.responsible_user_id !== null
+									? 'External'
+									: '',
 					nickname: '',
 					pronouns: '',
-					color_hex: '',
+					color_hex: award.color_hex,
 					online_players: [],
 				});
 			} catch (error) {
@@ -317,10 +328,21 @@ export class DucksService {
 			item_id: duck.itemId,
 			name: duck.name,
 			condition: duck.condition,
+			announcement_reason: duck.announcementReason,
 			awarded_to: user.minecraft_username,
+			color_hex: this.userColor(user),
 			awarded_at_unix_ms: row.awarded_at_unix_ms,
 			count,
 		};
+	}
+
+	private userColor(user: UserRow) {
+		const customColor = this.database.connection
+			.select({ color: playerProfiles.color_hex })
+			.from(playerProfiles)
+			.where(eq(playerProfiles.user_id, user.id))
+			.get()?.color;
+		return effectivePlayerColor(user.minecraft_uuid, customColor);
 	}
 
 	private awards(userId: number) {

@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,6 +50,7 @@ public final class DuckManager {
             .withZone(ZoneId.of("Europe/London"));
     private static final Map<UUID, Integer> lastSensorMask = new HashMap<>();
     private static final Set<String> deliveredThisSession = new HashSet<>();
+    private static final Set<String> announcedThisSession = new HashSet<>();
 
     private DuckManager() {}
 
@@ -58,6 +60,7 @@ public final class DuckManager {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             lastSensorMask.remove(handler.player.getUUID());
             deliveredThisSession.removeIf(key -> key.startsWith(handler.player.getUUID() + ":"));
+            announcedThisSession.removeIf(key -> key.startsWith(handler.player.getUUID() + ":"));
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (server.getTickCount() % 5 != 0) return;
@@ -165,20 +168,34 @@ public final class DuckManager {
     }
 
     private static void announce(MinecraftServer server, ServerPlayer player, DuckAward award) {
-        String username = player == null ? award.getAwardedTo() : player.getScoreboardName();
         boolean finalDuck = award.getDuckId() == 13;
-        Component message = finalDuck
-                ? Component.literal("[THE POND IS COMPLETE] " + username + " found all 13 ducks!")
-                    .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)
-                : Component.literal("[DUCK] " + username + " earned " + award.getName()
-                    + "! " + award.getCount() + "/13 ducks collected.").withStyle(ChatFormatting.YELLOW);
-        DiscordBridge.broadcastDuck(server, message);
-        if (player == null || player.hasDisconnected()) return;
-        player.sendSystemMessage(Component.literal(finalDuck
-                ? "You did it. All 13 ducks are yours. The pond will remember this."
-                : "You earned " + award.getName() + "! " + award.getCount() + "/13 ducks."
-        ).withStyle(finalDuck ? ChatFormatting.GOLD : ChatFormatting.YELLOW));
-        if (finalDuck) celebrate(player);
+        String reason = "earned the " + award.getName() + " for " + award.getAnnouncementReason()
+                + "! ✦ (" + award.getCount() + "/13 ducks collected)";
+        Component prefix = Component.literal(finalDuck ? "[FINAL DUCK] " : "[DUCK] ")
+                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
+        Component ownerMessage = Component.empty().append(prefix.copy())
+                .append(Component.literal("You " + reason).withStyle(ChatFormatting.YELLOW));
+        Component publicMessage = Component.empty().append(prefix.copy())
+                .append(player == null ? offlineName(award) : player.getDisplayName())
+                .append(Component.literal(" " + reason).withStyle(ChatFormatting.YELLOW));
+        DiscordBridge.broadcastDuck(server, player, ownerMessage, publicMessage);
+        if (player != null && !player.hasDisconnected()) {
+            announcedThisSession.add(awardKey(player, award));
+            if (finalDuck) celebrate(player);
+        }
+    }
+
+    private static Component offlineName(DuckAward award) {
+        String color = award.getColorHex();
+        if (color.matches("#[0-9a-fA-F]{6}")) {
+            return Component.literal(award.getAwardedTo()).withStyle(style ->
+                    style.withColor(TextColor.fromRgb(Integer.parseInt(color.substring(1), 16))));
+        }
+        return Component.literal(award.getAwardedTo());
+    }
+
+    private static String awardKey(ServerPlayer player, DuckAward award) {
+        return player.getUUID() + ":" + award.getDuckId() + ":" + award.getAwardedAtUnixMs();
     }
 
     private static void celebrate(ServerPlayer player) {
@@ -192,7 +209,7 @@ public final class DuckManager {
 
     private static void deliver(ServerPlayer player, DuckAward award, boolean reminder) {
         if (player.hasDisconnected()) return;
-        String key = player.getUUID() + ":" + award.getDuckId() + ":" + award.getAwardedAtUnixMs();
+        String key = awardKey(player, award);
         if (deliveredThisSession.contains(key)) {
             ack(player, award);
             return;
@@ -209,13 +226,16 @@ public final class DuckManager {
         deliveredThisSession.add(key);
         player.getInventory().setChanged();
         player.containerMenu.broadcastChanges();
-        if (reminder) {
+        if (reminder && !announcedThisSession.contains(key)) {
             boolean finalDuck = award.getDuckId() == 13;
-            player.sendSystemMessage(Component.literal(finalDuck
-                    ? "While you were away, you completed the entire collection! All 13 ducks are yours. Your free final duck is in your inventory."
-                    : "While you were away, you earned " + award.getName() + " for: "
-                            + award.getCondition() + " Your free duck is in your inventory.")
-                    .withStyle(finalDuck ? ChatFormatting.GOLD : ChatFormatting.YELLOW));
+            player.sendSystemMessage(Component.empty()
+                    .append(Component.literal(finalDuck ? "[FINAL DUCK] " : "[DUCK DELIVERY] ")
+                            .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                    .append(Component.literal(finalDuck
+                            ? "While you were away, you completed the pond! Your free final duck is in your inventory. ✦"
+                            : "While you were away, you earned the " + award.getName() + " for "
+                                    + award.getAnnouncementReason() + "! Your free duck is in your inventory. ✦")
+                            .withStyle(ChatFormatting.YELLOW)));
             if (finalDuck) celebrate(player);
         }
         ack(player, award);

@@ -147,6 +147,8 @@ export interface DuckAwardMessage {
 	awarded_to: string;
 	awarded_at_unix_ms: number;
 	count: number;
+	announcement_reason: string;
+	color_hex: string;
 }
 
 export interface RecordDuckEventRequest {

@@ -137,6 +137,25 @@ export function DucksAdminSection() {
 					<h4>
 						{player.minecraftUsername} · {player.count}/13 ducks
 					</h4>
+					<label className="ducksAdminNote">
+						Committee notes for {player.minecraftUsername}
+						<textarea
+							value={note}
+							maxLength={4000}
+							rows={5}
+							onChange={(event) => {
+								setNote(event.target.value);
+							}}
+							placeholder="Socials attended, joke or bug report details..."
+						/>
+					</label>
+					<button
+						type="button"
+						disabled={busy || note === player.note}
+						onClick={() => void saveNote()}
+					>
+						Save note
+					</button>
 					<div className="ducksAdminChecks">
 						{player.ducks.map((duck) => (
 							<label key={duck.id}>
@@ -158,25 +177,6 @@ export function DucksAdminSection() {
 							</label>
 						))}
 					</div>
-					<label className="ducksAdminNote">
-						Committee notes for {player.minecraftUsername}
-						<textarea
-							value={note}
-							maxLength={4000}
-							rows={5}
-							onChange={(event) => {
-								setNote(event.target.value);
-							}}
-							placeholder="Socials attended, joke or bug report details..."
-						/>
-					</label>
-					<button
-						type="button"
-						disabled={busy || note === player.note}
-						onClick={() => void saveNote()}
-					>
-						Save note
-					</button>
 				</div>
 			)}
 			{message && (

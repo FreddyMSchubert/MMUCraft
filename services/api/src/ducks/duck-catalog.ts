@@ -4,6 +4,7 @@ export const DUCKS = [
 		itemId: 'duck-rubber',
 		name: 'Rubber Duck',
 		condition: 'Join the server.',
+		announcementReason: 'joining the server',
 		manual: false,
 	},
 	{
@@ -11,6 +12,7 @@ export const DUCKS = [
 		itemId: 'duck-minequack',
 		name: 'MineQuack',
 		condition: 'Become a member.',
+		announcementReason: 'becoming a member',
 		manual: false,
 	},
 	{
@@ -18,6 +20,7 @@ export const DUCKS = [
 		itemId: 'duck-socials',
 		name: 'Socials Duck',
 		condition: 'Attend three in-person socials.',
+		announcementReason: 'attending three socials',
 		manual: true,
 	},
 	{
@@ -25,6 +28,7 @@ export const DUCKS = [
 		itemId: 'duck-committee-kill',
 		name: 'Committee Kill Duck',
 		condition: 'Kill a committee member.',
+		announcementReason: 'taking down a committee member',
 		manual: false,
 	},
 	{
@@ -33,6 +37,7 @@ export const DUCKS = [
 		name: 'AristoQuack',
 		condition:
 			'Fill every inventory slot, hotbar slot, and offhand with full stacks of 1-dabloon coins.',
+		announcementReason: 'being rich AF',
 		manual: false,
 	},
 	{
@@ -40,6 +45,7 @@ export const DUCKS = [
 		itemId: 'duck-mythical-cosmetic',
 		name: 'Mythical Cosmetic Duck',
 		condition: 'Wear a mythical cosmetic.',
+		announcementReason: 'wearing a mythical cosmetic',
 		manual: false,
 	},
 	{
@@ -47,6 +53,7 @@ export const DUCKS = [
 		itemId: 'duck-playtime',
 		name: '100 Hours Duck',
 		condition: 'Play on the server for 100 hours.',
+		announcementReason: 'playing for 100 hours',
 		manual: false,
 	},
 	{
@@ -54,6 +61,7 @@ export const DUCKS = [
 		itemId: 'duck-hearts',
 		name: '20 Hearts Duck',
 		condition: 'Have 20 full red hearts at once.',
+		announcementReason: 'reaching 20 full hearts',
 		manual: false,
 	},
 	{
@@ -61,6 +69,7 @@ export const DUCKS = [
 		itemId: 'duck-enderite',
 		name: 'Enderite Duck',
 		condition: 'Wear a full set of Enderite armour.',
+		announcementReason: 'suiting up in Enderite',
 		manual: false,
 	},
 	{
@@ -68,6 +77,7 @@ export const DUCKS = [
 		itemId: 'duck-joke',
 		name: 'Joke Duck',
 		condition: 'Get a new joke from your Discord suggestion added in-game.',
+		announcementReason: 'getting a joke into the game',
 		manual: true,
 	},
 	{
@@ -75,6 +85,7 @@ export const DUCKS = [
 		itemId: 'duck-bugger',
 		name: 'Bugger Duck',
 		condition: 'Find and report a bug. Thanks!',
+		announcementReason: 'finding and reporting a bug',
 		manual: true,
 	},
 	{
@@ -82,6 +93,7 @@ export const DUCKS = [
 		itemId: 'duck-mythical-fish',
 		name: 'Mythical Fish Duck',
 		condition: 'Catch a mythical fish.',
+		announcementReason: 'catching a mythical fish',
 		manual: false,
 	},
 	{
@@ -89,6 +101,7 @@ export const DUCKS = [
 		itemId: 'duck-every-duck',
 		name: 'Every Duck Duck',
 		condition: 'Find every other duck.',
+		announcementReason: 'finding every other duck',
 		manual: false,
 	},
 ] as const;
@@ -116,5 +129,5 @@ export function duckRank(count: number) {
 		'One Quack from Omnipotence',
 		'Duckiversal Grandmaster',
 	];
-	return ranks[Math.min(Math.max(count, 0), ranks.length - 1)];
+	return ranks[Math.min(Math.max(count, 0), ranks.length - 1)] ?? 'Duckless Wanderer';
 }

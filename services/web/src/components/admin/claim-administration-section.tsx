@@ -6,6 +6,8 @@ import {
 	ClaimMembersEditor,
 	ClaimMembersSummary,
 	type ClaimPerson,
+	type ClaimCopySource,
+	type ClaimSettingsChange,
 	type EditableClaim,
 } from '@/components/claim-editor-card';
 import { PlayerName } from '@/components/player-name';
@@ -18,6 +20,7 @@ import type { AdminTabController } from './use-admin-tab-controller';
 interface ClaimDetail {
 	claim: EditableClaim & { members: ClaimPerson[] };
 	candidates: ClaimPerson[];
+	copySources: ClaimCopySource[];
 }
 
 export function ClaimAdministrationSection({ controller }: { controller: AdminTabController }) {
@@ -116,6 +119,19 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 				}),
 			claimId,
 			'Could not save the claim appearance',
+		);
+	}
+
+	function updateSettings(claimId: string, change: ClaimSettingsChange) {
+		return updateClaim(
+			() =>
+				request(`/api/admin/claims/${claimId}/settings`, {
+					method: 'PATCH',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify(change),
+				}),
+			claimId,
+			'Could not save the claim settings',
 		);
 	}
 
@@ -239,6 +255,10 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 														onSave={(name, color) =>
 															updateAppearance(claim.id, name, color)
 														}
+														onSettings={(change) =>
+															updateSettings(claim.id, change)
+														}
+														copySources={detail.copySources}
 														summary={
 															<ClaimMembersSummary
 																members={detail.claim.members}

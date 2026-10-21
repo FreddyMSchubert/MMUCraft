@@ -290,6 +290,7 @@ message ClaimData {
   string owner_color_hex = 10;
   bool has_custom_color = 11;
   bool is_server_claim = 12;
+  uint32 outsider_permissions = 13;
 }
 
 message ClaimsSnapshot {

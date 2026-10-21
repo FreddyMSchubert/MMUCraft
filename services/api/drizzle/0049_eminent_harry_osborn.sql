@@ -1,0 +1,1 @@
+ALTER TABLE `claims` ADD `outsider_permissions` integer DEFAULT 0 NOT NULL;

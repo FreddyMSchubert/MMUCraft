@@ -11,14 +11,21 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 
 @Mixin(ItemEntity.class)
 public abstract class DabloonItemPickupMixin {
     @Unique private ItemStack mainmod$pickupStack = ItemStack.EMPTY;
     @Unique private int mainmod$balanceBefore;
 
-    @Inject(method = "playerTouch", at = @At("HEAD"))
+    @Inject(method = "playerTouch", at = @At("HEAD"), cancellable = true)
     private void mainmod$beforePickup(Player player, CallbackInfo ci) {
+        if (player instanceof ServerPlayer serverPlayer
+                && !ClaimsManager.canPerform(serverPlayer, serverPlayer.level(),
+                        ((ItemEntity) (Object) this).blockPosition(), ClaimsManager.ITEM_PICKUP)) {
+            ci.cancel();
+            return;
+        }
         ItemStack stack = ((ItemEntity)(Object)this).getItem();
         if (player instanceof ServerPlayer serverPlayer && !DabloonInteractionLog.kind(stack).isEmpty()) {
             mainmod$pickupStack = stack.copy();

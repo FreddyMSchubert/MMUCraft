@@ -21,16 +21,27 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.decoration.Cushion;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractBedBlock;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.EnderChestBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.Container;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
@@ -49,6 +60,24 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class ClaimsManager {
+    public static final int HOSTILE = 1 << 0;
+    public static final int NEUTRAL = 1 << 1;
+    public static final int PASSIVE = 1 << 2;
+    public static final int PVP = 1 << 3;
+    public static final int CONTROLS = 1 << 4;
+    public static final int DOORS = 1 << 5;
+    public static final int BREAK = 1 << 6;
+    public static final int PLACE = 1 << 7;
+    public static final int CONTAINERS = 1 << 8;
+    public static final int OTHER_BLOCKS = 1 << 9;
+    public static final int BEDS = 1 << 10;
+    public static final int TRADING = 1 << 11;
+    public static final int MOB_INTERACTION = 1 << 12;
+    public static final int EXPLOSIONS = 1 << 13;
+    public static final int GLIDING = 1 << 14;
+    public static final int ITEM_PICKUP = 1 << 15;
+    public static final int PROJECTILES = 1 << 16;
+    private static final UUID SERVER_ADMIN_UUID = UUID.fromString("8580f9f8-30c4-4b83-a66c-ac52ac6d5b0b");
     private static final double MINIMUM_HEADING_LIGHTNESS = 0.6;
     private static final ThreadLocal<ArrayDeque<ServerPlayer>> ACTORS = ThreadLocal.withInitial(ArrayDeque::new);
     private static final ThreadLocal<Integer> FIRE_TICKS = ThreadLocal.withInitial(() -> 0);
@@ -64,20 +93,26 @@ public final class ClaimsManager {
 
     public static void init() {
         AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) ->
-                checkDirect(player, level, pos) ? InteractionResult.PASS : InteractionResult.FAIL);
+                checkDirect(player, level, pos, BREAK) ? InteractionResult.PASS : InteractionResult.FAIL);
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
-            if (!checkDirect(player, level, hit.getBlockPos())) return InteractionResult.FAIL;
+            int permission = player.isShiftKeyDown() && player.getItemInHand(hand).getItem() instanceof BlockItem
+                    ? PLACE : blockPermission(level, hit.getBlockPos());
+            if (!checkDirect(player, level, hit.getBlockPos(), permission)) return InteractionResult.FAIL;
             if (player instanceof ServerPlayer serverPlayer) {
                 clearStaleOccupiedBed(serverPlayer, level, hit.getBlockPos());
             }
             return InteractionResult.PASS;
         });
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) ->
-                checkDirect(player, level, pos));
+                checkDirect(player, level, pos, BREAK));
         AttackEntityCallback.EVENT.register((player, level, hand, entity, hit) ->
-                checkDirect(player, level, entity.blockPosition()) ? InteractionResult.PASS : InteractionResult.FAIL);
+                checkDirect(player, level, entity.blockPosition(), entity instanceof LivingEntity living
+                        ? damagePermission(living) : entity instanceof Cushion ? BREAK : MOB_INTERACTION)
+                        ? InteractionResult.PASS : InteractionResult.FAIL);
         UseEntityCallback.EVENT.register((player, level, hand, entity, hit) ->
-                checkDirect(player, level, entity.blockPosition()) ? InteractionResult.PASS : InteractionResult.FAIL);
+                checkDirect(player, level, entity.blockPosition(), entity instanceof AbstractVillager
+                        ? TRADING : entity instanceof Cushion ? BEDS : MOB_INTERACTION)
+                        ? InteractionResult.PASS : InteractionResult.FAIL);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(ClaimsManager::allowPlayerDamage);
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> removeBossBar(handler.getPlayer()));
     }
@@ -118,7 +153,8 @@ public final class ClaimsManager {
                         new Claim(
                                 data.getId(), ownerUuid, data.getOwnerName(), name,
                                 parseColor(data.getColorHex()), parseColor(data.getOwnerColorHex()),
-                                data.getHasCustomColor(), data.getIsServerClaim(), Set.copyOf(members)
+                                data.getHasCustomColor(), data.getIsServerClaim(), Set.copyOf(members),
+                                data.getOutsiderPermissions()
                         )
                 );
             } catch (IllegalArgumentException ignored) {
@@ -139,7 +175,7 @@ public final class ClaimsManager {
         next.replaceAll((key, claim) -> claim.ownerUuid().equals(ownerUuid)
                 ? new Claim(claim.id(), claim.ownerUuid(), claim.ownerName(), claim.name(),
                         claim.hasCustomColor() ? claim.colorRgb() : color, color, claim.hasCustomColor(),
-                        claim.serverClaim(), claim.members())
+                        claim.serverClaim(), claim.members(), claim.outsiderPermissions())
                 : claim);
         claims = Map.copyOf(next);
         BOSS_BAR_STATES.clear();
@@ -167,7 +203,13 @@ public final class ClaimsManager {
 
     public static boolean allowBlockMutation(Level level, BlockPos pos, BlockState newState) {
         ArrayDeque<ServerPlayer> actors = ACTORS.get();
-        if (!actors.isEmpty()) return canAccess(actors.peek(), level, pos);
+        if (!actors.isEmpty()) {
+            int permission = level.getBlockState(pos).isAir() ? PLACE
+                    : newState.isAir() ? BREAK
+                    : level.getBlockState(pos).getBlock() == newState.getBlock()
+                    ? blockPermission(level, pos) : PLACE;
+            return canPerform(actors.peek(), level, pos, permission);
+        }
 
         if (FIRE_TICKS.get() > 0 && (!ready || isClaimed(level, pos))) {
             return level.getBlockState(pos).getBlock() instanceof BaseFireBlock;
@@ -186,8 +228,7 @@ public final class ClaimsManager {
     }
 
     public static boolean allowProjectileAt(Projectile projectile, BlockPos pos) {
-        return projectile instanceof FishingHook
-                || canProjectileEnter(projectile, projectile.level(), pos);
+        return canProjectileEnter(projectile, projectile.level(), pos);
     }
 
     public static void rejectProjectile(Projectile projectile) {
@@ -214,6 +255,17 @@ public final class ClaimsManager {
         return claim == null || canAccessClaim(player, claim);
     }
 
+    public static boolean canPerform(ServerPlayer player, Level level, BlockPos pos, int permission) {
+        if (!ready) return isOperator(player);
+        Claim claim = claimAt(level, pos);
+        return claim == null || canAccessClaim(player, claim)
+                || (claim.outsiderPermissions() & permission) != 0;
+    }
+
+    public static boolean allowExplosionDamage(Level level, BlockPos pos, Entity source) {
+        return source instanceof ServerPlayer player && canPerform(player, level, pos, EXPLOSIONS);
+    }
+
     public static boolean isClaimed(Level level, BlockPos pos) {
         return claimAt(level, pos) != null;
     }
@@ -232,7 +284,6 @@ public final class ClaimsManager {
     }
 
     public static BlockHitResult deniedProjectileEntry(Projectile projectile, Vec3 start, Vec3 movement) {
-        if (projectile instanceof FishingHook) return null;
         if (!ready) {
             if (allowProjectileAt(projectile, BlockPos.containing(start))) return null;
             return new BlockHitResult(
@@ -300,9 +351,9 @@ public final class ClaimsManager {
         }
     }
 
-    private static boolean checkDirect(net.minecraft.world.entity.player.Player player, Level level, BlockPos pos) {
+    private static boolean checkDirect(net.minecraft.world.entity.player.Player player, Level level, BlockPos pos, int permission) {
         if (!(player instanceof ServerPlayer serverPlayer) || level.isClientSide()) return true;
-        boolean allowed = canAccess(serverPlayer, level, pos);
+        boolean allowed = canPerform(serverPlayer, level, pos, permission);
         if (!allowed) notifyDenied(serverPlayer);
         return allowed;
     }
@@ -315,7 +366,7 @@ public final class ClaimsManager {
         BlockState head = level.getBlockState(headPos);
         if (!head.is(clicked.getBlock()) || head.getValue(AbstractBedBlock.PART) != BedPart.HEAD
                 || !head.getValue(AbstractBedBlock.OCCUPIED) || !isClaimed(level, headPos)
-                || !canAccess(player, level, headPos)) return;
+                || !canPerform(player, level, headPos, BEDS)) return;
         boolean sleeperPresent = !level.getEntitiesOfClass(LivingEntity.class, new AABB(headPos).inflate(2),
                 entity -> entity.isSleeping() && entity.getSleepingPos().filter(headPos::equals).isPresent()).isEmpty();
         if (!sleeperPresent) {
@@ -325,7 +376,7 @@ public final class ClaimsManager {
 
     private static boolean allowPlayerDamage(LivingEntity target, DamageSource source, float amount) {
         if (!(source.getEntity() instanceof ServerPlayer player)) return true;
-        boolean allowed = canAccess(player, target.level(), target.blockPosition());
+        boolean allowed = canPerform(player, target.level(), target.blockPosition(), damagePermission(target));
         if (!allowed) notifyDenied(player);
         return allowed;
     }
@@ -346,7 +397,7 @@ public final class ClaimsManager {
         ServerPlayer player = owner instanceof ServerPlayer serverPlayer ? serverPlayer : null;
         if (!ready) return player != null && isOperator(player);
         Claim claim = claimAt(level, pos);
-        return claim == null || player != null && canAccessClaim(player, claim);
+        return claim == null || player != null && canPerform(player, level, pos, PROJECTILES);
     }
 
     private static boolean isOperator(ServerPlayer player) {
@@ -355,8 +406,24 @@ public final class ClaimsManager {
     }
 
     private static boolean canAccessClaim(ServerPlayer player, Claim claim) {
-        return (!claim.serverClaim() && claim.members().contains(player.getUUID()))
-                || isOperator(player);
+        return claim.serverClaim() ? SERVER_ADMIN_UUID.equals(player.getUUID())
+                : claim.members().contains(player.getUUID()) || isOperator(player);
+    }
+
+    private static int damagePermission(LivingEntity target) {
+        if (target instanceof ServerPlayer) return PVP;
+        if (target instanceof NeutralMob) return NEUTRAL;
+        return target.getType().getCategory() == MobCategory.MONSTER ? HOSTILE : PASSIVE;
+    }
+
+    private static int blockPermission(Level level, BlockPos pos) {
+        var state = level.getBlockState(pos);
+        var block = state.getBlock();
+        if (block instanceof ButtonBlock || block instanceof LeverBlock) return CONTROLS;
+        if (block instanceof DoorBlock || block instanceof TrapDoorBlock || block instanceof FenceGateBlock) return DOORS;
+        if (block instanceof AbstractBedBlock) return BEDS;
+        if (block instanceof EnderChestBlock || level.getBlockEntity(pos) instanceof Container) return CONTAINERS;
+        return state.getMenuProvider(level, pos) != null ? OTHER_BLOCKS : PLACE;
     }
 
     private static UUID parseUuid(String value) {
@@ -401,6 +468,7 @@ public final class ClaimsManager {
     }
 
     private record Claim(String id, UUID ownerUuid, String ownerName, String name, int colorRgb,
-                         int ownerColorRgb, boolean hasCustomColor, boolean serverClaim, Set<UUID> members) {
+                         int ownerColorRgb, boolean hasCustomColor, boolean serverClaim, Set<UUID> members,
+                         int outsiderPermissions) {
     }
 }

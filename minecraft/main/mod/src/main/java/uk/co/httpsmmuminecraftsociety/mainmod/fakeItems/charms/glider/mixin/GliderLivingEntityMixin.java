@@ -10,12 +10,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderFlight;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 
 @Mixin(LivingEntity.class)
 public abstract class GliderLivingEntityMixin {
     @Inject(method = "canGlide", at = @At("HEAD"), cancellable = true)
     private void mainmod$stopGliderInFluids(CallbackInfoReturnable<Boolean> cir) {
         LivingEntity entity = (LivingEntity) (Object) this;
+        if (entity instanceof ServerPlayer player && !ClaimsManager.canPerform(player, player.level(),
+                player.blockPosition(), ClaimsManager.GLIDING)) {
+            cir.setReturnValue(false);
+            return;
+        }
         if (GliderCharm.isGlider(entity.getItemBySlot(EquipmentSlot.CHEST)) && GliderFlight.isWet(entity)) {
             cir.setReturnValue(false);
         }

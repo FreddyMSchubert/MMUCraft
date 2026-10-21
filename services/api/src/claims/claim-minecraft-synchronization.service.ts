@@ -24,6 +24,7 @@ interface ClaimData {
 	has_custom_color: boolean;
 	is_server_claim: boolean;
 	member_uuids: string[];
+	outsider_permissions: number;
 }
 
 export interface ClaimsSnapshot {
@@ -96,6 +97,7 @@ export class ClaimMinecraftSynchronizationService implements OnModuleDestroy {
 							owner_color_hex: ownerColor,
 							has_custom_color: claim.color_hex !== null,
 							is_server_claim: claim.is_server === 1,
+							outsider_permissions: claim.outsider_permissions,
 							member_uuids:
 								claim.is_server === 1
 									? []

@@ -115,6 +115,7 @@ export const claims = sqliteTable(
 		claim_name: text('claim_name').notNull().default('My claim'),
 		color_hex: text('color_hex'),
 		is_server: integer('is_server').notNull().default(0),
+		outsider_permissions: integer('outsider_permissions').notNull().default(0),
 		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 	},
 	(table) => [

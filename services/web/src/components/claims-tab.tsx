@@ -7,6 +7,8 @@ import {
 	ClaimMembersSummary,
 	formatDimension,
 	type ClaimPerson,
+	type ClaimCopySource,
+	type ClaimSettingsChange,
 	type EditableClaim,
 } from '@/components/claim-editor-card';
 import { DabloonAmount } from '@/components/dabloon-amount';
@@ -27,6 +29,7 @@ interface ClaimsResponse {
 	claims: Claim[];
 	memberClaims: Claim[];
 	candidates: ClaimPerson[];
+	copySources: ClaimCopySource[];
 }
 
 interface CurrentChunkResponse {
@@ -137,6 +140,16 @@ export function ClaimsTab() {
 		}, 'Could not save the claim appearance');
 	}
 
+	async function updateSettings(claim: Claim, change: ClaimSettingsChange) {
+		return run(async () => {
+			await request(`/api/claims/${claim.id}/settings`, {
+				method: 'PATCH',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify(change),
+			});
+		}, 'Could not save the claim settings');
+	}
+
 	async function addMember(claim: Claim, person: ClaimPerson) {
 		return run(async () => {
 			await request(`/api/claims/${claim.id}/members`, {
@@ -165,15 +178,9 @@ export function ClaimsTab() {
 						<a href="https://minecraft.wiki/w/Chunk" target="_blank">
 							chunks
 						</a>
-						. You can claim a chunk as your own. That means that in the claim only you
-						and players you choose can:
-						<ul>
-							<li>Place & break blocks</li>
-							<li>Open Chests, Barrels etc</li>
-							<li>Interact with anything at all</li>
-						</ul>
-						This also includes other mobs like creepers, which can&apos;t damage the
-						things in your claims! Claims are perfect to{' '}
+						. You can claim a chunk as your own. You and your claim members can use it.
+						You choose which actions other players can take there. Claims also block
+						creeper explosions from damaging your builds. Use them to{' '}
 						<strong>protect your items and builds</strong>!
 					</p>
 					<p className="tabNote">
@@ -226,6 +233,8 @@ export function ClaimsTab() {
 						busy={busy}
 						onDelete={() => void removeClaim(claim)}
 						onSave={(name, color) => updateAppearance(claim, name, color)}
+						onSettings={(change) => updateSettings(claim, change)}
+						copySources={data.copySources}
 						summary={<ClaimMembersSummary members={claim.members} />}
 					>
 						<ClaimMembersEditor

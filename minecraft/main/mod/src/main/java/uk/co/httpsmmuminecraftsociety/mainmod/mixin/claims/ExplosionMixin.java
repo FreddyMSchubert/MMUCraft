@@ -25,7 +25,9 @@ abstract class ExplosionMixin {
             return;
         }
         List<BlockPos> filtered = new ArrayList<>(cir.getReturnValue());
-        filtered.removeIf(pos -> ClaimsManager.isClaimed(level, pos));
+        filtered.removeIf(pos -> ClaimsManager.isClaimed(level, pos)
+                && !ClaimsManager.allowExplosionDamage(level, pos,
+                        ((ServerExplosion) (Object) this).getIndirectSourceEntity()));
         cir.setReturnValue(filtered);
     }
 }

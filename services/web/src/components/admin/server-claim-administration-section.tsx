@@ -5,6 +5,7 @@ import {
 	ClaimEditorCard,
 	formatDimension,
 	type EditableClaim,
+	type ClaimSettingsChange,
 } from '@/components/claim-editor-card';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
@@ -93,6 +94,16 @@ export function ServerClaimAdministrationSection({
 		}, 'Could not save the server claim');
 	}
 
+	async function updateSettings(claim: EditableClaim, change: ClaimSettingsChange) {
+		return run(async () => {
+			await request(`/api/admin/server-claims/${claim.id}/settings`, {
+				method: 'PATCH',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify(change),
+			});
+		}, 'Could not save the server claim settings');
+	}
+
 	async function removeClaim(claim: EditableClaim) {
 		if (
 			!(await confirm({
@@ -116,8 +127,8 @@ export function ServerClaimAdministrationSection({
 				<div className="adminSectionHeader">
 					<h3>Server claims</h3>
 					<p>
-						Protect shared server chunks. Only committee members can create or interact
-						with these claims.
+						Protect shared server chunks. MMU_Admin has full access. Set which actions
+						other players can take in each claim.
 					</p>
 				</div>
 				<button type="button" disabled={busy} onClick={() => void addClaim()}>
@@ -139,6 +150,8 @@ export function ServerClaimAdministrationSection({
 							busy={busy}
 							onDelete={() => void removeClaim(claim)}
 							onSave={(name, color) => updateAppearance(claim, name, color)}
+							onSettings={(change) => updateSettings(claim, change)}
+							copySources={claims}
 						/>
 					))}
 				</div>

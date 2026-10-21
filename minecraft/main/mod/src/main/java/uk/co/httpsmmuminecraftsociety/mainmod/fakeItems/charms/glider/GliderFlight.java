@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Map;
 import java.util.WeakHashMap;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 
 public final class GliderFlight {
     public static final double GLIDER_SPEED_BPS = 14.2;
@@ -89,6 +90,11 @@ public final class GliderFlight {
             state.distanceSinceUpdraft = 0;
             state.previousPosition = position;
             if (player.tickCount >= state.ascentGraceUntil) STATES.remove(player);
+            return;
+        }
+        if (!ClaimsManager.canPerform(player, player.level(), player.blockPosition(), ClaimsManager.GLIDING)) {
+            player.stopFallFlying();
+            STATES.remove(player);
             return;
         }
         if (glider) MasteryAdvancements.grant(player, "glider/fly");

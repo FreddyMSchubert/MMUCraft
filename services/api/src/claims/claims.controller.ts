@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } fro
 import { AuthSessionService } from '../auth/auth-session.service';
 import { ClaimAdministrationService } from './claim-administration.service';
 import { ClaimPurchasingService, CreateClaimInput } from './claim-purchasing.service';
-import { ClaimAppearanceInput, ClaimsService } from './claims.service';
+import { ClaimAppearanceInput, ClaimSettingsInput, ClaimsService } from './claims.service';
 
 @Controller('api/claims')
 export class ClaimsController {
@@ -42,6 +42,19 @@ export class ClaimsController {
 		@Body() body: ClaimAppearanceInput | undefined,
 	) {
 		return this.claims.updateAppearance(
+			this.auth.requireSession(cookieHeader),
+			claimId,
+			body ?? {},
+		);
+	}
+
+	@Patch(':claimId/settings')
+	updateSettings(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Body() body: ClaimSettingsInput | undefined,
+	) {
+		return this.claims.updateSettings(
 			this.auth.requireSession(cookieHeader),
 			claimId,
 			body ?? {},
@@ -102,6 +115,16 @@ export class AdminClaimsController {
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
 		return this.claims.updateAdminAppearance(claimId, body ?? {});
+	}
+
+	@Patch(':claimId/settings')
+	updateSettings(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Body() body: ClaimSettingsInput | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claims.updateAdminSettings(claimId, body ?? {});
 	}
 
 	@Post(':claimId/members')
@@ -175,6 +198,16 @@ export class AdminServerClaimsController {
 	) {
 		this.auth.requireCommitteeSession(cookieHeader);
 		return this.claims.updateServerAppearance(claimId, body ?? {});
+	}
+
+	@Patch(':claimId/settings')
+	updateSettings(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Body() body: ClaimSettingsInput | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claims.updateServerSettings(claimId, body ?? {});
 	}
 
 	@Delete(':claimId')

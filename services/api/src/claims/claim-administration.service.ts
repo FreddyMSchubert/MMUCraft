@@ -82,6 +82,7 @@ export class ClaimAdministrationService {
 					chunkX: claims.chunk_x,
 					chunkZ: claims.chunk_z,
 					customColor: claims.color_hex,
+					permissions: claims.outsider_permissions,
 					minecraftUuid: users.minecraft_uuid,
 					ownerColor: playerProfiles.color_hex,
 				})
@@ -105,6 +106,7 @@ export class ClaimAdministrationService {
 						color: claim.customColor ?? defaultColor,
 						defaultColor,
 						customColor: claim.customColor,
+						permissions: claim.permissions,
 					};
 				}),
 		};

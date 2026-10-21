@@ -27,10 +27,16 @@ import { ClaimPurchasingService } from './claim-purchasing.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 
 const CLAIM_NAME_MAX_LENGTH = 50;
+const ALL_OUTSIDER_PERMISSIONS = (1 << 17) - 1;
 
 export interface ClaimAppearanceInput {
 	name?: string;
 	color?: string | null;
+}
+
+export interface ClaimSettingsInput {
+	permissions?: number;
+	copyFromClaimId?: string;
 }
 
 export type { ClaimsSnapshot } from './claim-minecraft-synchronization.service';
@@ -68,6 +74,17 @@ export class ClaimsService {
 
 		return {
 			...this.claimPurchasing.getNextClaimPricing(user),
+			copySources: this.database.connection
+				.select()
+				.from(claims)
+				.where(and(eq(claims.owner_user_id, user.id), eq(claims.is_server, 0)))
+				.all()
+				.map((claim) => ({
+					id: claim.id,
+					name: claim.claim_name,
+					chunkX: claim.chunk_x,
+					chunkZ: claim.chunk_z,
+				})),
 			claims: this.database.connection
 				.select()
 				.from(claims)
@@ -107,6 +124,17 @@ export class ClaimsService {
 		);
 		return {
 			claim: this.presentClaim(claim, peopleById, memberIds),
+			copySources: this.database.connection
+				.select()
+				.from(claims)
+				.where(and(eq(claims.owner_user_id, claim.owner_user_id), eq(claims.is_server, 0)))
+				.all()
+				.map((source) => ({
+					id: source.id,
+					name: source.claim_name,
+					chunkX: source.chunk_x,
+					chunkZ: source.chunk_z,
+				})),
 			candidates: people.filter(
 				(person) => person.id !== claim.owner_user_id && candidateIds.has(person.id),
 			),
@@ -145,6 +173,60 @@ export class ClaimsService {
 			.run();
 		await this.minecraftSynchronization.synchronize();
 		return { name, customColor: color };
+	}
+
+	async updateSettings(user: AuthenticatedUser, claimId: string, input: ClaimSettingsInput) {
+		return this.saveSettings(this.requireOwnedClaim(user.id, claimId), input);
+	}
+
+	async updateAdminSettings(claimId: string, input: ClaimSettingsInput) {
+		return this.saveSettings(this.requirePlayerClaim(claimId), input);
+	}
+
+	async updateServerSettings(claimId: string, input: ClaimSettingsInput) {
+		return this.saveSettings(this.requireServerClaim(claimId), input);
+	}
+
+	private async saveSettings(claim: typeof claims.$inferSelect, input: ClaimSettingsInput) {
+		let permissions = input.permissions;
+		if (input.copyFromClaimId !== undefined) {
+			if (permissions !== undefined || typeof input.copyFromClaimId !== 'string') {
+				throw new BadRequestException('Select one source claim to copy.');
+			}
+			const source = this.database.connection
+				.select()
+				.from(claims)
+				.where(eq(claims.id, input.copyFromClaimId))
+				.get();
+			if (
+				!source ||
+				source.id === claim.id ||
+				source.is_server !== claim.is_server ||
+				(claim.is_server === 0 && source.owner_user_id !== claim.owner_user_id)
+			) {
+				throw new BadRequestException(
+					claim.is_server === 1
+						? 'Select another server claim.'
+						: 'Select another claim you own.',
+				);
+			}
+			permissions = source.outsider_permissions;
+		}
+		if (
+			typeof permissions !== 'number' ||
+			!Number.isInteger(permissions) ||
+			permissions < 0 ||
+			permissions > ALL_OUTSIDER_PERMISSIONS
+		) {
+			throw new BadRequestException('Invalid claim settings.');
+		}
+		this.database.connection
+			.update(claims)
+			.set({ outsider_permissions: permissions })
+			.where(eq(claims.id, claim.id))
+			.run();
+		await this.minecraftSynchronization.synchronize();
+		return { permissions };
 	}
 
 	async addMember(
@@ -266,6 +348,7 @@ export class ClaimsService {
 			color: claim.color_hex ?? defaultColor,
 			defaultColor,
 			customColor: claim.color_hex,
+			permissions: claim.outsider_permissions,
 			members: [claim.owner_user_id, ...memberIds]
 				.map((userId) => peopleById.get(userId))
 				.filter((person) => person !== undefined)

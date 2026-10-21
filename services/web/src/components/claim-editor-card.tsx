@@ -27,13 +27,48 @@ export interface EditableClaim {
 	color: string;
 	defaultColor: string;
 	customColor: string | null;
+	permissions: number;
 }
+
+export interface ClaimCopySource {
+	id: string;
+	name: string;
+	chunkX: number;
+	chunkZ: number;
+}
+
+export interface ClaimSettingsChange {
+	permissions?: number;
+	copyFromClaimId?: string;
+}
+
+const SETTINGS = [
+	['Hit hostile mobs', 1 << 0],
+	['Hit neutral mobs', 1 << 1],
+	['Hit passive mobs', 1 << 2],
+	['PvP', 1 << 3],
+	['Press buttons and flip levers', 1 << 4],
+	['Open doors, trapdoors, and fence gates', 1 << 5],
+	['Break blocks', 1 << 6],
+	['Place blocks', 1 << 7],
+	['Open containers', 1 << 8],
+	['Open other blocks', 1 << 9],
+	['Sleep in beds and sit on cushions', 1 << 10],
+	['Trade with villagers', 1 << 11],
+	['Interact with mobs and entities', 1 << 12],
+	['Damage blocks with explosions', 1 << 13],
+	['Glide with a glider or elytra', 1 << 14],
+	['Pick up items', 1 << 15],
+	['Use projectiles', 1 << 16],
+] as const;
 
 export function ClaimEditorCard({
 	claim,
 	busy,
 	onDelete,
 	onSave,
+	onSettings,
+	copySources = [],
 	summary,
 	children,
 	initiallyEditing = false,
@@ -42,6 +77,8 @@ export function ClaimEditorCard({
 	busy: boolean;
 	onDelete?: () => void;
 	onSave?: (name: string, color: string | null) => Promise<boolean>;
+	onSettings?: (change: ClaimSettingsChange) => Promise<boolean>;
+	copySources?: ClaimCopySource[];
 	summary?: ReactNode;
 	children?: ReactNode;
 	initiallyEditing?: boolean;
@@ -91,10 +128,105 @@ export function ClaimEditorCard({
 							if (await onSave(name, color)) setEditing(false);
 						}}
 					/>
-					{children}
+					{onSettings && (
+						<details className="claimEditorSection">
+							<summary>Settings</summary>
+							<ClaimSettingsEditor
+								key={`${claim.id}:${claim.permissions}`}
+								claim={claim}
+								busy={busy}
+								copySources={copySources}
+								onSave={onSettings}
+							/>
+						</details>
+					)}
+					{children && (
+						<details className="claimEditorSection">
+							<summary>Members</summary>
+							{children}
+						</details>
+					)}
 				</>
 			)}
 		</section>
+	);
+}
+
+function ClaimSettingsEditor({
+	claim,
+	busy,
+	copySources,
+	onSave,
+}: {
+	claim: EditableClaim;
+	busy: boolean;
+	copySources: ClaimCopySource[];
+	onSave: (change: ClaimSettingsChange) => Promise<boolean>;
+}) {
+	const [permissions, setPermissions] = useState(claim.permissions);
+	const [source, setSource] = useState('');
+	return (
+		<div className="claimSettings">
+			<div className="claimSettingsCopy">
+				<label htmlFor={`copy-${claim.id}`}>Copy settings from</label>
+				<select
+					id={`copy-${claim.id}`}
+					value={source}
+					disabled={busy}
+					onChange={(event) => {
+						setSource(event.target.value);
+					}}
+				>
+					<option value="">Select another claim</option>
+					{copySources
+						.filter((candidate) => candidate.id !== claim.id)
+						.map((candidate) => (
+							<option key={candidate.id} value={candidate.id}>
+								{candidate.name} ({candidate.chunkX}, {candidate.chunkZ})
+							</option>
+						))}
+				</select>
+				<button
+					type="button"
+					disabled={busy || !source}
+					onClick={() => {
+						void onSave({ copyFromClaimId: source }).then((saved) => {
+							if (saved) setPermissions(claim.permissions);
+						});
+					}}
+				>
+					Copy
+				</button>
+			</div>
+			<p>
+				Checked actions are allowed for other players. Claim members, or MMU_Admin on server
+				claims, always have full access.
+			</p>
+			<div className="claimSettingsList">
+				{SETTINGS.map(([label, bit]) => (
+					<label key={bit}>
+						<input
+							type="checkbox"
+							checked={(permissions & bit) !== 0}
+							disabled={busy}
+							onChange={(event) => {
+								setPermissions((current) =>
+									event.target.checked ? current | bit : current & ~bit,
+								);
+							}}
+						/>
+						{label}
+					</label>
+				))}
+			</div>
+			<button
+				type="button"
+				disabled={busy || permissions === claim.permissions}
+				onClick={() => void onSave({ permissions })}
+			>
+				Save settings
+			</button>
+		</div>
 	);
 }
 

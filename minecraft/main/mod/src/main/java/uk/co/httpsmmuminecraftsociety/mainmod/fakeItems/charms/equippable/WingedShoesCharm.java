@@ -4,8 +4,6 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +19,7 @@ import java.util.WeakHashMap;
 public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm, TickCallbackCharm
 {
     public static final double EXTRA_JUMP_VELOCITY = LivingEntity.BASE_JUMP_POWER;
-    private static final int SLOW_FALLING_TICKS = 20;
-    // Kept on the player until landing so swapping gear or reconnecting cannot clear the jump's penalty.
+    // Keep this tag until landing so swapping gear or reconnecting cannot grant more jumps.
     private static final String AIRBORNE_TAG = "mainmod.winged_shoes_jump";
 
     // How long a second jump press stays buffered.
@@ -37,7 +34,6 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
         boolean releasedSinceJump;
         int jumpBuffer;
         int airTicks;
-        boolean slowFallingApplied;
     }
 
     private static int getExtraJumpsForLevel(int level) {
@@ -54,28 +50,11 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
         if (player.onGround()) {
             player.removeTag(AIRBORNE_TAG);
             if (state != null) {
-                if (state.slowFallingApplied) {
-                    MobEffectInstance effect = player.getEffect(MobEffects.SLOW_FALLING);
-                    if (effect != null && effect.getAmplifier() == 0 && effect.getDuration() <= SLOW_FALLING_TICKS) {
-                        player.removeEffect(MobEffects.SLOW_FALLING);
-                    }
-                }
                 state.usedJumps = 0;
                 state.releasedSinceJump = false;
                 state.jumpBuffer = 0;
                 state.airTicks = 0;
-                state.slowFallingApplied = false;
             }
-            return;
-        }
-
-        if (!hasActiveJump(player)) return;
-        // Match vanilla Slow Falling even if milk cleared the effect earlier this tick.
-        player.resetFallDistance();
-        MobEffectInstance effect = player.getEffect(MobEffects.SLOW_FALLING);
-        if (effect == null || (effect.getAmplifier() == 0 && effect.getDuration() <= 1)) {
-            boolean applied = player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, SLOW_FALLING_TICKS, 0, false, false, false));
-            if (state != null) state.slowFallingApplied = applied;
         }
     }
 
@@ -124,7 +103,6 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
             state.releasedSinceJump = false;
             state.jumpBuffer = 0;
             state.airTicks = 0;
-            state.slowFallingApplied = player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, SLOW_FALLING_TICKS, 0, false, false, false));
         }
     }
 }

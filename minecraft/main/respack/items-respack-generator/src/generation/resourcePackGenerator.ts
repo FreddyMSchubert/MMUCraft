@@ -329,12 +329,11 @@ async function generateBasicItem(
 	const { outputDir, namespace } = context.options;
 	const modelId = itemModelId(namespace, item.resourcePath);
 
-	if (existsSync(item.texturePngPath))
-		await copyFile(
-			item.texturePngPath,
-			itemTexturePngPath(outputDir, namespace, item.resourcePath),
-			context,
-		);
+	await copyFile(
+		item.texturePngPath,
+		itemTexturePngPath(outputDir, namespace, item.resourcePath),
+		context,
+	);
 	await copyOptionalMcmeta(
 		item.textureMcmetaPath,
 		itemTextureMcmetaPath(outputDir, namespace, item.resourcePath),
@@ -345,6 +344,19 @@ async function generateBasicItem(
 		createGeneratedItemModel(modelId),
 		context,
 	);
+	if (item.id === 'blazing-fishing-rod') {
+		const castPath = `${item.resourcePath}-cast`;
+		await copyFile(
+			path.join(item.sourceDirectory, 'texture-cast.png'),
+			itemTexturePngPath(outputDir, namespace, castPath),
+			context,
+		);
+		await writeJson(
+			itemModelJsonPath(outputDir, namespace, castPath),
+			createGeneratedItemModel(itemModelId(namespace, castPath)),
+			context,
+		);
+	}
 	if (item.id === 'charm-redstone-remote') {
 		for (let frequency = 1; frequency <= 16; frequency++) {
 			for (const lamp of ['off', 'on']) {

@@ -105,8 +105,9 @@ export async function parseItemDefinition(
 
 	switch (item.modelType) {
 		case 'basic': {
-			// The Blazing rod shows the missing texture until its art is added.
-			if (item.id !== 'blazing-fishing-rod') await requireRecoverableFile(texturePngPath);
+			await requireRecoverableFile(texturePngPath);
+			if (item.id === 'blazing-fishing-rod')
+				await requireRecoverableFile(path.join(leafDirectory, 'texture-cast.png'));
 			await assertAbsent(
 				modelJsonPath,
 				`${relativeDirectory} is modelType "basic" and must not include model.json. Use modelType "basic-3d" for custom item models.`,

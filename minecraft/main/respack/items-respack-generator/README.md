@@ -106,8 +106,9 @@ from `data/data` during validation and builds.
 Required files:
 
 - `item.json`
-- `texture.png` (optional for the Blazing Fishing Rod until its art is ready)
+- `texture.png`
 - optional `texture.png.mcmeta`
+- `texture-cast.png` for the Blazing Fishing Rod
 
 ### 2. Basic 3D item
 

@@ -2,13 +2,13 @@
 	"title": "Thunderfin",
 	"id": "fish-thunderfin",
 	"modelType": "basic",
-	"rarity": "uncommon",
+	"rarity": "rare",
 	"maxStackSize": 64,
 	"tooltips": ["Charged cells along its fins crackle when storm pressure falls."],
 	"fish": {
 		"dimension": "overworld",
 		"angle": "BL",
-		"tags": ["thunderstorm"],
+		"tags": ["rainy"],
 		"size": {
 			"averageLengthCm": 45,
 			"textureLengthPixels": 19.79899

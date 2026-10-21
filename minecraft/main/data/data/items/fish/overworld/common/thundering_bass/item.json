@@ -8,7 +8,7 @@
 	"fish": {
 		"dimension": "overworld",
 		"angle": "BL",
-		"tags": ["river", "night", "thunderstorm", "waning"],
+		"tags": ["river", "night", "thunderstorm"],
 		"size": {
 			"averageLengthCm": 60,
 			"textureLengthPixels": 16.263456

@@ -2,7 +2,7 @@
 	"title": "Charged Thunderfin",
 	"id": "fish-charged_thunderfin",
 	"modelType": "basic",
-	"rarity": "epic",
+	"rarity": "rare",
 	"maxStackSize": 64,
 	"tooltips": ["A fully charged adult can illuminate an entire rain cloud from below."],
 	"fish": {

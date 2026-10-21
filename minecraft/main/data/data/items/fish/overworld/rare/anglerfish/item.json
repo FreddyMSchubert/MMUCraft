@@ -8,7 +8,7 @@
 	"fish": {
 		"dimension": "overworld",
 		"angle": "BL",
-		"tags": ["night", "deep", "newmoon"],
+		"tags": ["deep"],
 		"size": {
 			"averageLengthCm": 45,
 			"textureLengthPixels": 18.384776

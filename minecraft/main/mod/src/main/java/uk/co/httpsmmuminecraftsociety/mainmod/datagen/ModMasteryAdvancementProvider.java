@@ -156,13 +156,13 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("fishing/swordfish", "Mightier Than the Pen", "Catch a Swordfish.", "fake:fish-swordfish", "fishing/common", "task");
         add("fishing/rainbow_trout", "Over the Rainbow", "Catch a Rainbow Trout.", "fake:fish-rainbow_trout", "fishing/uncommon", "task");
         add("fishing/galaxy_starfish", "A Whole Galaxy", "Catch a Galaxy Starfish.", "fake:fish-galaxy_starfish", "fishing/uncommon", "task");
-        add("fishing/thunderfin", "Greased Lightning", "Catch a Thunderfin.", "fake:fish-thunderfin", "fishing/uncommon", "task");
+        add("fishing/thunderfin", "Greased Lightning", "Catch a Thunderfin.", "fake:fish-thunderfin", "fishing/rare", "goal");
         add("fishing/skyfish", "The Sky's the Limit", "Catch a Skyfish.", "fake:fish-skyfish", "fishing/uncommon", "task");
         add("fishing/baguette_fish", "Baguette About It", "Catch a Baguette Fish.", "fake:fish-baguettefish", "fishing/rare", "goal");
         add("fishing/nebula_swordfish", "Written in the Stars", "Catch a Nebula Swordfish.", "fake:fish-nebula_swordfish", "fishing/rare", "goal");
         add("fishing/witchfish", "Something Wicked", "Catch a Witchfish.", "fake:fish-witchfish", "fishing/rare", "goal");
         add("fishing/freddy_fish", "Five Nights at Fishing", "Catch a Freddy Fish.", "fake:fish-freddyfish", "fishing/epic", "goal");
-        add("fishing/charged_thunderfin", "Fully Charged", "Catch a Charged Thunderfin.", "fake:fish-charged_thunderfin", "fishing/epic", "goal");
+        add("fishing/charged_thunderfin", "Fully Charged", "Catch a Charged Thunderfin.", "fake:fish-charged_thunderfin", "fishing/rare", "goal");
         add("fishing/matrix_fish", "There Is No Spoon", "Catch a Matrix Fish.", "fake:fish-matrix_fish", "fishing/legendary", "challenge");
         add("fishing/spook_fish", "Ghost in the Water", "Catch a Spook Fish.", "fake:fish-spook_fish", "fishing/mythical", "challenge");
         add("fishing/all_common", "Common Knowledge", "Catch every common fish.", "minecraft:fishing_rod:glint", "fishing/common", "goal");

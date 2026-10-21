@@ -8,7 +8,7 @@
 	"fish": {
 		"dimension": "overworld",
 		"angle": "BL",
-		"tags": ["snowy"],
+		"tags": ["cold"],
 		"size": {
 			"averageLengthCm": 25,
 			"textureLengthPixels": 16.263456

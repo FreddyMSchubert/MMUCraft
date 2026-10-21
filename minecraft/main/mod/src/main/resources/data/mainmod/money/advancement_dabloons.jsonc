@@ -1344,13 +1344,13 @@
 	"mainmod:mastery/fishing/species/mythical/*": 35, // Catch one specific mythical fish.
 	"mainmod:mastery/fishing/rainbow_trout": 3, // Catch the selected uncommon Rainbow Trout: a small targeted fishing reward.
 	"mainmod:mastery/fishing/galaxy_starfish": 3, // Catch the selected uncommon Galaxy Starfish: a small targeted fishing reward.
-	"mainmod:mastery/fishing/thunderfin": 3, // Catch the selected uncommon Thunderfin: a small targeted fishing reward.
+	"mainmod:mastery/fishing/thunderfin": 7, // Catch a rare Thunderfin.
 	"mainmod:mastery/fishing/skyfish": 3, // Catch the selected uncommon Skyfish: a small targeted fishing reward.
 	"mainmod:mastery/fishing/baguette_fish": 7, // Catch the selected rare Baguette Fish: uncommon and entertaining, but not a grind.
 	"mainmod:mastery/fishing/nebula_swordfish": 7, // Catch the selected rare Nebula Swordfish: uncommon and entertaining, but not a grind.
 	"mainmod:mastery/fishing/witchfish": 7, // Catch the selected rare Witchfish: uncommon and entertaining, but not a grind.
 	"mainmod:mastery/fishing/freddy_fish": 15, // Catch the selected epic Freddy Fish: an exciting low-probability catch.
-	"mainmod:mastery/fishing/charged_thunderfin": 15, // Catch the selected epic Charged Thunderfin: an exciting low-probability catch.
+	"mainmod:mastery/fishing/charged_thunderfin": 7, // Catch a rare Charged Thunderfin.
 	"mainmod:mastery/fishing/matrix_fish": 30, // Catch the selected legendary Matrix Fish: a difficult and memorable catch.
 	"mainmod:mastery/fishing/spook_fish": 50, // Catch the selected mythical Spook Fish: an exceptional catch.
 	"mainmod:mastery/fishing/golden_worm": 10, // Catch a fish with a Golden Worm.

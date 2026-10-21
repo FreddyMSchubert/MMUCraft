@@ -46,11 +46,18 @@ The full overview of every fish catchable and caught is the [fishing compendium]
 
 :::drop-indicator
 
-Craft a Blazing Fishing Rod with three Blaze Rods and two strings. Use the same pattern as a normal fishing rod. Cast it into Nether lava. The fish shadow sits at the lava surface. Wait for the bite, then reel in the catch.
+![Fishing in the Nether](/assets/knowledge/survival/fishing/nether_fishing.png)
 
-The Blazing Fishing Rod does not burn in lava. A normal fishing rod cannot catch fish in lava. Its bobber burns the rod over time and sets you on fire.
+Some particularly strong fish are able to survive in the lava of the Nether! Sadly, they can't be caught with a normal rod, as it (and you) will catch on fire, so you can instead use this rod which will be able to withstand the fire:
 
-Nether lava has its own fish and items. The compendium shows which fish live there.
+![Blazing fishing rod recipe](/assets/knowledge/survival/fishing/blazing_recipe.png)
+
+:::recipe-items
+[Blaze Rod](https://minecraft.wiki/w/Blaze_Rod) (TR, C, BL) · [String](https://minecraft.wiki/w/String) → Blazing Fishing Rod
+:::
+
+Since there's a lot of trash whirling around in the lava of the Nether, to get to the fish, it's important you learn...
+
 :::end-drop
 
 ## How to catch what your looking for

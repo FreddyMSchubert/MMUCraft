@@ -113,11 +113,16 @@ public final class DuckManager {
     public static void onSync(ServerPlayer player, SyncPlayerStatsResponse response, boolean applyCount) {
         if (!response.getAccountLinked()) return;
         if (applyCount) PlayerStatsSync.applyDuckCount(player, response.getDuckCount());
-        for (DuckAward award : response.getDuckNewAwardsList()) announce(player.level().getServer(), player, award);
+        boolean firstJoin = response.getPreviousLastPlayedAtUnixMs() == 0;
+        for (DuckAward award : response.getDuckNewAwardsList()) {
+            if (!firstJoin || (award.getDuckId() != 1 && award.getDuckId() != 2))
+                announce(player.level().getServer(), player, award);
+        }
         Set<Integer> newIds = new HashSet<>();
         for (DuckAward award : response.getDuckNewAwardsList()) newIds.add(award.getDuckId());
         for (DuckAward award : response.getDuckPendingItemsList()) {
-            deliver(player, award, !newIds.contains(award.getDuckId()));
+            deliver(player, award, !newIds.contains(award.getDuckId())
+                    && (!firstJoin || (award.getDuckId() != 1 && award.getDuckId() != 2)));
         }
     }
 

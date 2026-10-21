@@ -6,10 +6,12 @@ import {
 	duckAwards,
 	duckNotes,
 	playerProfiles,
+	playerStats,
 	users,
 } from '../database/database.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
 import { effectivePlayerColor } from '../players/player-color';
+import { normalizeStatsJson } from '../players/player-statistics';
 import { DiscordService } from '../discord/discord.service';
 import { ShopItemCatalogService } from '../gameplay/shop/shop-item-catalog.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
@@ -160,7 +162,21 @@ export class DucksService {
 		if (!this.isOpen()) return;
 		const user = this.user(userId);
 		if (user.is_member !== 1) return;
-		await this.notify(user, this.grant(user, [2]));
+		const fresh = this.grant(user, [2]);
+		const stats = this.database.connection
+			.select({ json: playerStats.stats_json })
+			.from(playerStats)
+			.where(eq(playerStats.user_id, userId))
+			.get();
+		const announced =
+			stats && normalizeStatsJson(stats.json).minecraft.lastPlayedAtUnixMs
+				? fresh
+				: fresh.filter((award) => award.duck_id !== 2);
+		if (announced.length) {
+			await this.notify(user, announced);
+		} else if (fresh.length) {
+			await this.pushCount(user);
+		}
 	}
 
 	// Called by the existing player sync after the current Minecraft statistics have been stored.
@@ -169,6 +185,7 @@ export class DucksService {
 		minecraftUsername: string,
 		playTimeTicks: number,
 		isLogin: boolean,
+		firstJoin: boolean,
 	) {
 		if (!this.isOpen()) return { count: 0, newAwards: [], pending: [] };
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
@@ -178,7 +195,10 @@ export class DucksService {
 			...(playTimeTicks >= 100 * 60 * 60 * 20 ? [7] : []),
 		];
 		const fresh = this.grant(user, earned);
-		void this.publishDiscord(user, fresh);
+		void this.publishDiscord(
+			user,
+			firstJoin ? fresh.filter((award) => award.duck_id !== 1 && award.duck_id !== 2) : fresh,
+		);
 		return {
 			count: this.awards(user.id).length,
 			newAwards: fresh,

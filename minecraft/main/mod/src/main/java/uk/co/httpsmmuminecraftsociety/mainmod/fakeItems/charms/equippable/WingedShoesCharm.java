@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
@@ -19,7 +20,7 @@ import java.util.WeakHashMap;
 
 public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm, TickCallbackCharm
 {
-    public static final double EXTRA_JUMP_VELOCITY = 0.62D;
+    public static final double EXTRA_JUMP_VELOCITY = LivingEntity.BASE_JUMP_POWER;
     private static final int SLOW_FALLING_TICKS = 20;
     // Kept on the player until landing so swapping gear or reconnecting cannot clear the jump's penalty.
     private static final String AIRBORNE_TAG = "mainmod.winged_shoes_jump";

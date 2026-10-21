@@ -311,6 +311,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			call.request.minecraft_username ?? '',
 			playTimeTicks,
 			call.request.duck_login === true,
+			result.previousLastPlayedAtUnixMs === 0,
 		);
 
 		callback(null, {

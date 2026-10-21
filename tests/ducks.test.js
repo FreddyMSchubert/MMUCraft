@@ -14,7 +14,7 @@ test('Hellish toggle blocks duck access and awards before the drop', async () =>
 		enabledKeys: () => new Set(netherOpen ? ['nether'] : []),
 	});
 	assert.equal(service.isOpen(), false);
-	assert.deepEqual(service.onPlayerSync('uuid', 'Player', 0, true), {
+	assert.deepEqual(service.onPlayerSync('uuid', 'Player', 0, true, true), {
 		count: 0,
 		newAwards: [],
 		pending: [],
@@ -66,7 +66,7 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 	);
 	try {
 		assert.equal(service.isOpen(), false);
-		assert.deepEqual(service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true), {
+		assert.deepEqual(service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true, true), {
 			count: 0,
 			newAwards: [],
 			pending: [],
@@ -78,12 +78,12 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		assert.equal(pushes.length, 0);
 		netherOpen = true;
 		assert.equal(service.isOpen(), true);
-		const online = service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false);
+		const online = service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false, false);
 		assert.deepEqual(
 			online.newAwards.map((award) => award.duck_id),
 			[7],
 		);
-		const login = service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true);
+		const login = service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true, true);
 		assert.deepEqual(
 			login.newAwards.map((award) => award.duck_id),
 			[1, 2],
@@ -91,7 +91,8 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		assert.equal(login.count, 3);
 		assert.equal(login.pending.length, 3);
 		assert.equal(
-			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false).newAwards.length,
+			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false, false).newAwards
+				.length,
 			0,
 		);
 		assert.equal(
@@ -101,12 +102,13 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		assert.equal(service.getForUser(player.id).count, 3);
 		await service.setAward(player.id, 1, false);
 		assert.equal(
-			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false).newAwards.length,
+			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false, false).newAwards
+				.length,
 			0,
 		);
 		assert.deepEqual(
 			service
-				.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true)
+				.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true, false)
 				.newAwards.map((award) => award.duck_id),
 			[1],
 		);
@@ -134,7 +136,10 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		await service.setAward(player.id, 3, true);
 		assert.equal(service.getForUser(player.id).count, 13);
 		netherOpen = false;
-		assert.equal(service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true).count, 0);
+		assert.equal(
+			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true, false).count,
+			0,
+		);
 		assert.equal((await service.recordEvent(uuid, 'DuckTester', 4)).count, 0);
 	} finally {
 		database.onModuleDestroy();

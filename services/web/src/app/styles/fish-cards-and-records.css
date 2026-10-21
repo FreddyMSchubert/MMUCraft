@@ -85,6 +85,7 @@
 
 .fishTooltip {
 	position: absolute;
+	pointer-events: none;
 	top: calc(100% + 8px);
 	left: 50%;
 	z-index: 100;

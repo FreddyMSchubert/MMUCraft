@@ -11,7 +11,7 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
-		"tags": [],
+		"tags": ["soul_sand_valley"],
 		"size": {
 			"averageLengthCm": 17,
 			"textureLengthPixels": 16.263456

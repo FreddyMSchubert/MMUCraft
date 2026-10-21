@@ -2,7 +2,8 @@ import type { PlayerEmoji } from '@/components/player-name';
 import type { TextureAnimationOptions } from '@/lib/minecraft-model-renderer';
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical';
-export type TagGroup = 'dimension' | 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon';
+export type TagGroup =
+	'dimension' | 'netherBiome' | 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon';
 export type FishSort = 'rarity' | 'location';
 
 export interface PlayerOption {
@@ -73,6 +74,36 @@ export const TAGS: Record<
 > = {
 	overworld: { emoji: '🌍', label: 'Overworld', group: 'dimension', phrase: 'the Overworld' },
 	nether: { emoji: '🔥', label: 'Nether', group: 'dimension', phrase: 'the Nether' },
+	nether_wastes: {
+		emoji: '🌋',
+		label: 'Nether Wastes',
+		group: 'netherBiome',
+		phrase: 'the Nether Wastes',
+	},
+	soul_sand_valley: {
+		emoji: '💀',
+		label: 'Soul Sand Valley',
+		group: 'netherBiome',
+		phrase: 'Soul Sand Valleys',
+	},
+	crimson_forest: {
+		emoji: '🍄',
+		label: 'Crimson Forest',
+		group: 'netherBiome',
+		phrase: 'Crimson Forests',
+	},
+	warped_forest: {
+		emoji: '🟦',
+		label: 'Warped Forest',
+		group: 'netherBiome',
+		phrase: 'Warped Forests',
+	},
+	basalt_deltas: {
+		emoji: '🪨',
+		label: 'Basalt Deltas',
+		group: 'netherBiome',
+		phrase: 'the Basalt Deltas',
+	},
 	warm: { emoji: '🔥', label: 'Warm', group: 'climate', phrase: 'hot biomes' },
 	cold: { emoji: '❄️', label: 'Cold', group: 'climate', phrase: 'cold biomes' },
 	river: { emoji: '🌉', label: 'River', group: 'water', phrase: 'rivers' },
@@ -97,6 +128,7 @@ export const TAGS: Record<
 
 export const GROUPS: TagGroup[] = [
 	'dimension',
+	'netherBiome',
 	'climate',
 	'water',
 	'time',
@@ -106,6 +138,7 @@ export const GROUPS: TagGroup[] = [
 ];
 export const GROUP_LABELS: Record<TagGroup, string> = {
 	dimension: 'Dimension',
+	netherBiome: 'Nether biome',
 	climate: 'Temperature',
 	water: 'Water type',
 	time: 'Daytime',

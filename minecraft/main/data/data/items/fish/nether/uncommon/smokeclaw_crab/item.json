@@ -5,11 +5,11 @@
 	"rarity": "uncommon",
 	"maxStackSize": 64,
 	"fireproof": true,
-	"tooltips": ["It molts between ghast cries. The old shell floats like a scrap of smoke."],
+	"tooltips": ["It molts beneath basalt columns. The old shell floats like a scrap of smoke."],
 	"fish": {
 		"dimension": "nether",
 		"angle": "T",
-		"tags": [],
+		"tags": ["basalt_deltas"],
 		"size": {
 			"averageLengthCm": 18,
 			"textureLengthPixels": 14.0

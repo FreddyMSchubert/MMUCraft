@@ -203,7 +203,9 @@ export function CompendiumGuide({
 						</button>
 					))}
 				</FilterGroup>
-				{GROUPS.filter((group) => netherOpen || group !== 'dimension').map((group) => (
+				{GROUPS.filter(
+					(group) => netherOpen || (group !== 'dimension' && group !== 'netherBiome'),
+				).map((group) => (
 					<FilterGroup key={group} label={GROUP_LABELS[group]}>
 						{Object.entries(TAGS)
 							.filter(([, info]) => info.group === group)

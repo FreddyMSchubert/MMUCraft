@@ -6,6 +6,7 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -15,6 +16,11 @@ import java.util.Set;
 public enum FishSpawnTag {
     WARM("warm", Group.CLIMATE, "hot biomes"),
     COLD("cold", Group.CLIMATE, "cold biomes"),
+    NETHER_WASTES("nether_wastes", Group.NETHER_BIOME, "the Nether Wastes"),
+    SOUL_SAND_VALLEY("soul_sand_valley", Group.NETHER_BIOME, "Soul Sand Valleys"),
+    CRIMSON_FOREST("crimson_forest", Group.NETHER_BIOME, "Crimson Forests"),
+    WARPED_FOREST("warped_forest", Group.NETHER_BIOME, "Warped Forests"),
+    BASALT_DELTAS("basalt_deltas", Group.NETHER_BIOME, "the Basalt Deltas"),
     RIVER("river", Group.WATER, "rivers"),
     OCEAN("ocean", Group.WATER, "oceans"),
     DAY("day", Group.TIME, "daytime"),
@@ -48,12 +54,16 @@ public enum FishSpawnTag {
         throw new IllegalArgumentException("Unknown fish spawn tag: " + value);
     }
 
+    public static boolean hasNetherBiome(Set<FishSpawnTag> tags) {
+        return tags.stream().anyMatch(tag -> tag.group == Group.NETHER_BIOME);
+    }
+
     public static String conditionSentence(Set<FishSpawnTag> tags) {
         List<String> clauses = new ArrayList<>();
         for (Group group : Group.values()) {
             List<String> alternatives = new ArrayList<>();
             String prefix = switch (group) {
-                case CLIMATE, WATER, HEIGHT -> "in ";
+                case CLIMATE, NETHER_BIOME, WATER, HEIGHT -> "in ";
                 default -> "during ";
             };
             for (FishSpawnTag tag : values()) {
@@ -80,6 +90,12 @@ public enum FishSpawnTag {
         if (level.dimension() == Level.OVERWORLD) {
             if (temperature >= 0.95F) active.add(WARM);
             if (temperature < 0.15F) active.add(COLD);
+        } else if (level.dimension() == Level.NETHER) {
+            if (biome.is(Biomes.NETHER_WASTES)) active.add(NETHER_WASTES);
+            if (biome.is(Biomes.SOUL_SAND_VALLEY)) active.add(SOUL_SAND_VALLEY);
+            if (biome.is(Biomes.CRIMSON_FOREST)) active.add(CRIMSON_FOREST);
+            if (biome.is(Biomes.WARPED_FOREST)) active.add(WARPED_FOREST);
+            if (biome.is(Biomes.BASALT_DELTAS)) active.add(BASALT_DELTAS);
         }
 
         if (biome.is(BiomeTags.IS_RIVER)) active.add(RIVER);
@@ -125,6 +141,6 @@ public enum FishSpawnTag {
     }
 
     private enum Group {
-        CLIMATE, WATER, TIME, HEIGHT, WEATHER, MOON
+        CLIMATE, NETHER_BIOME, WATER, TIME, HEIGHT, WEATHER, MOON
     }
 }

@@ -1,0 +1,18 @@
+{
+	"title": "Dragon Horns",
+	"id": "cosmetic-dragon-horns",
+	"modelType": "cosmetic",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": ["Based on the Ender Dragon if she was cool"],
+	"shopPurchasable": {
+		"gameplayToggle": "void",
+		"membersOnly": false,
+		"priceDabloons": 150,
+		"description": "",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked cosmetic: Dragon Horns.",
+		"tags": ["wyrm", "end", "purple"]
+	},
+	"equippableCosmetic": {}
+}

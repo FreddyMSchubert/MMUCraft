@@ -1,5 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held;
 
+import com.google.gson.JsonPrimitive;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,6 +35,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.Nullable;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.AttackBlockCallbackCharm;
@@ -71,8 +73,8 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     private static final Map<ServerPlayer, PendingRightUse> RIGHT_USES = new WeakHashMap<>();
 
     private record Link(String dimension, BlockPos pos) {}
-    private record Delivery(long dueTick, BlockPos source, BlockPos pos, int frequency, ItemStack remote,
-                            @Nullable ServerPlayer sender) {}
+    private record Delivery(long dueTick, long requestedAtUnixMs, BlockPos source, BlockPos pos, int frequency,
+                            String label, int chestSlot, ItemStack remote, @Nullable ServerPlayer sender) {}
     private record PendingAttackSwing(long tick, InteractionHand hand) {}
     private record PendingBlockUse(long tick, ItemStack stack) {}
     private record PendingRightUse(long tick, int count) {}
@@ -109,8 +111,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
                         : new PendingRightUse(tick, 1));
             }
             tune(stack, player, level, 1);
-        }
-        else transmit(stack, level, player.blockPosition(), 0, player);
+        } else transmit(stack, level, player.blockPosition(), 0, player, -1);
         return InteractionResult.SUCCESS_SERVER;
     }
 
@@ -118,10 +119,14 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     public InteractionResult onUseOnBlock(ItemStack stack, ServerPlayer player, ServerLevel level,
                                           InteractionHand hand, BlockHitResult hit, int charmLevel) {
         if (stack != player.getItemInHand(hand)) return InteractionResult.PASS;
-        pruneDestroyedLinks(stack, level, player.blockPosition());
-        if (player.isShiftKeyDown()) tune(stack, player, level, 1);
-        else if (isSensor(level.getBlockState(hit.getBlockPos()))) link(stack, player, level, hit.getBlockPos());
-        else transmit(stack, level, player.blockPosition(), 0, player);
+        if (player.isShiftKeyDown()) {
+            pruneDestroyedLinks(stack, level, player.blockPosition());
+            tune(stack, player, level, 1);
+        } else if (isSensor(level.getBlockState(hit.getBlockPos()))) {
+            pruneDestroyedLinks(stack, level, player.blockPosition());
+            link(stack, player, level, hit.getBlockPos());
+        }
+        else transmit(stack, level, player.blockPosition(), 0, player, -1);
         BLOCK_USES.put(player, new PendingBlockUse(level.getGameTime(), stack));
         return InteractionResult.SUCCESS_SERVER;
     }
@@ -464,6 +469,9 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     }
 
     private static void deliveryUnavailable(Delivery delivery, ServerLevel level, LinkStatus status) {
+        logTransmission(level, delivery.source(), new Link(dimension(level), delivery.pos()),
+                delivery.frequency(), delivery.label(), delivery.sender(), delivery.chestSlot(),
+                delivery.requestedAtUnixMs(), status.name());
         Link current = linkedSensor(delivery.remote(), delivery.frequency());
         boolean sameLink = current != null && current.dimension().equals(dimension(level))
                 && current.pos().equals(delivery.pos());
@@ -483,11 +491,16 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
     }
 
     private static void transmit(ItemStack stack, ServerLevel level, BlockPos source, int extraDelay,
-                                 @Nullable ServerPlayer sender) {
+                                 @Nullable ServerPlayer sender, int chestSlot) {
+        long requestedAtUnixMs = System.currentTimeMillis();
         int selectedFrequency = selectedFrequency(stack);
+        String label = frequencyLabels(stack).getOrDefault(selectedFrequency, "");
+        Link requestedLink = linkedSensor(stack, selectedFrequency);
         if (refreshRemote(stack, level, source) && sender != null) syncInventory(sender);
         LinkStatus status = linkStatus(stack, level, source, selectedFrequency);
         if (status != LinkStatus.READY) {
+            logTransmission(level, source, requestedLink, selectedFrequency, label, sender, chestSlot,
+                    requestedAtUnixMs, status.name());
             reportUnavailable(sender, stack, selectedFrequency, status);
             return;
         }
@@ -512,8 +525,22 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
                 particleX, particleY, particleZ, 1, 0, 0, 0, 0);
         DELIVERIES.computeIfAbsent(level,
                 ignored -> new PriorityQueue<>(Comparator.comparingLong(Delivery::dueTick)))
-                .add(new Delivery(level.getGameTime() + 1L + distance + extraDelay, source.immutable(), pos,
-                        selectedFrequency, stack, sender));
+                .add(new Delivery(level.getGameTime() + 1L + distance + extraDelay, requestedAtUnixMs,
+                        source.immutable(), pos, selectedFrequency, label, chestSlot, stack, sender));
+    }
+
+    private static void logTransmission(ServerLevel level, BlockPos source, @Nullable Link target,
+                                        int frequency, String label, @Nullable ServerPlayer sender, int chestSlot,
+                                        long requestedAtUnixMs, String result) {
+        MainMod.LOGGER.info("redstone_remote_trigger requested_at_unix_ms={} result_at_unix_ms={} "
+                        + "source={} actor_uuid={} actor_name={} dimension={} source_pos={} chest_slot={} "
+                        + "frequency={} label={} target_dimension={} target_pos={} result={}",
+                requestedAtUnixMs, System.currentTimeMillis(), sender == null ? "chest" : "player",
+                sender == null ? "unknown" : sender.getUUID(),
+                sender == null ? "unknown" : sender.getName().getString(), dimension(level), source.toShortString(),
+                chestSlot, frequencyLabel(frequency), new JsonPrimitive(label).toString(),
+                target == null ? "" : target.dimension(),
+                target == null ? "" : target.pos().toShortString(), result);
     }
 
     public static void tick(ServerLevel level) {
@@ -567,6 +594,9 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
             int vibrationFrequency = Math.min(delivery.frequency(), 15);
             sensor.setLastVibrationFrequency(vibrationFrequency);
             ((SculkSensorBlock) state.getBlock()).activate(null, level, pos, state, 15, vibrationFrequency);
+            logTransmission(level, delivery.source(), new Link(dimension(level), pos),
+                    delivery.frequency(), delivery.label(), sender, delivery.chestSlot(),
+                    delivery.requestedAtUnixMs(), "ACTIVATED");
         }
         if (queue.isEmpty()) DELIVERIES.remove(level);
     }
@@ -587,7 +617,7 @@ public final class RedstoneRemoteCharm implements Charm, UseCallbackCharm, UseOn
         if (!(level.getBlockEntity(pos) instanceof ChestBlockEntity chest)) return;
         for (int slot = 0; slot < chest.getContainerSize(); slot++) {
             ItemStack stack = chest.getItem(slot);
-            if (isRemote(stack)) transmit(stack, level, pos, 1, null);
+            if (isRemote(stack)) transmit(stack, level, pos, 1, null, slot);
         }
     }
 

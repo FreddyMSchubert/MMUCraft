@@ -14,6 +14,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.biome.Biome;
+import uk.co.httpsmmuminecraftsociety.mainmod.ducks.DuckManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GetKnowledgeTipResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
@@ -293,6 +294,7 @@ public final class KnowledgeTips {
                 player.sendSystemMessage(Component.literal("Welcome to the MMU Minecraft Society!")
                         .withStyle(ChatFormatting.WHITE));
                 Announcements.sendUnread(player);
+                PlayerStatsSync.syncNow(player).thenRun(() -> DuckManager.flushJoinMessages(player));
                 return;
             }
             PlayerStatsSync.syncNow(player).thenRun(() -> requestTip(
@@ -318,6 +320,7 @@ public final class KnowledgeTips {
                     if (server != null) server.execute(() -> {
                         if (player.hasDisconnected()) return;
                         if (greet) player.sendSystemMessage(greeting(player, previousLastPlayedAtUnixMs));
+                        if (greet) DuckManager.flushJoinMessages(player);
                         else player.sendSystemMessage(Component.literal("Tips are taking a nap. Try again.")
                                 .withStyle(ChatFormatting.RED));
                         if (greet) Announcements.sendUnread(player);
@@ -337,6 +340,7 @@ public final class KnowledgeTips {
         server.execute(() -> {
             if (player.hasDisconnected()) return;
             if (greet) player.sendSystemMessage(greeting(player, previousLastPlayedAtUnixMs));
+            if (greet) DuckManager.flushJoinMessages(player);
             if (greet && response.getHasUnreadKnowledge()) {
                 player.sendSystemMessage(Component.literal("Warning: You have unread knowledge books. Read them ")
                         .withStyle(ChatFormatting.GOLD)

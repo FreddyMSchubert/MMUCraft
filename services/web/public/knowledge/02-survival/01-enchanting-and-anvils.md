@@ -7,7 +7,7 @@ tags:
 - enchantng
 - anvilles
 tips:
-- You can copy enchanted books at a librarian's lectern. Soul Speed, Swift Sneak, Wind Burst, and Soulbound cannot be copied.
+- You can copy enchanted books at a librarian's lectern. Soul Speed, Swift Sneak, Wind Burst, and Soulbound are the only books that cannot be copied.
 - Combining levels in an anvil uses addition on this server. For example, combining Sharpness I and Sharpness II results in Sharpness III.
 - The "Too Expensive" anvil limit has been fully removed, you can keep upgrading and repairing your gear forever.
 - Anvils work differently in the server. For example, it is possible to copy enchantments that are applied to an item back onto a book.

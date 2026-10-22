@@ -29,12 +29,6 @@
 	text-align: center;
 }
 
-@media (min-width: 701px) {
-	.playPage.ducksOpen .content {
-		width: min(1220px, calc(100vw - 32px));
-	}
-}
-
 .siteHeader {
 	position: relative;
 	z-index: 2;

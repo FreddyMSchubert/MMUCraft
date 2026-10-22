@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AuthPanel } from '@/components/auth-panel';
 import { SitePage } from '@/components/site-page';
 import { AdminTab } from '@/components/admin-tab';
@@ -51,6 +51,13 @@ type TabId =
 	| 'event'
 	| 'misc';
 
+interface TabLink {
+	id: TabId;
+	label: string;
+	emoji: string;
+	href: string;
+}
+
 const TAB_IDS = new Set<TabId>([
 	'dailies',
 	'knowledge',
@@ -66,7 +73,7 @@ const TAB_IDS = new Set<TabId>([
 ]);
 const MISC_SECTIONS = new Set(['settings', 'gift-codes', 'referrals']);
 const SERVER_IP = 'mmuminecraftsociety.co.uk';
-const TAB_LINKS: { id: TabId; label: string; emoji: string; href: string }[] = [
+const TAB_LINKS: TabLink[] = [
 	{ id: 'knowledge', label: 'Knowledge', emoji: '📖', href: '/play/knowledge' },
 	{ id: 'dailies', label: 'Dailies', emoji: '📋', href: '/play/dailies' },
 	{ id: 'charms', label: 'Charms', emoji: '✨', href: '/play/charms' },
@@ -78,7 +85,7 @@ const TAB_LINKS: { id: TabId; label: string; emoji: string; href: string }[] = [
 	{ id: 'admin', label: 'Admin', emoji: '👨‍💻', href: '/play/admin/members' },
 	{ id: 'misc', label: 'Misc', emoji: '⚙️', href: '/play/misc/settings' },
 ];
-const EVENT_LINK: { id: TabId; label: string; emoji: string; href: string } = {
+const EVENT_LINK: TabLink = {
 	id: 'event',
 	label: 'Events',
 	emoji: '🎉',
@@ -122,9 +129,20 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const activeTab = TAB_IDS.has(route[0] as TabId) ? (route[0] as TabId) : 'knowledge';
 	const routeDetail = route.at(1);
 	const liveEvent = events.find((event) => event.status === 'live');
-	const tabs = liveEvent
-		? [EVENT_LINK, ...TAB_LINKS]
-		: [...TAB_LINKS.slice(0, -1), EVENT_LINK, TAB_LINKS[TAB_LINKS.length - 1]];
+	const hasLiveEvent = Boolean(liveEvent);
+	const isCommittee = user?.isCommittee;
+	const tabs = useMemo(
+		() =>
+			(hasLiveEvent
+				? [EVENT_LINK, ...TAB_LINKS]
+				: [...TAB_LINKS.slice(0, -1), EVENT_LINK, TAB_LINKS[TAB_LINKS.length - 1]]
+			).filter(
+				(tab) =>
+					(tab.id !== 'admin' || isCommittee) &&
+					(tab.id !== 'ducks' || ducksEnabled === true),
+			),
+		[hasLiveEvent, isCommittee, ducksEnabled],
+	);
 
 	useEffect(() => {
 		if (!user) return;
@@ -360,7 +378,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		<SitePage
 			background={background}
 			splash={splash}
-			className={`playPage ${ducksEnabled === true ? 'ducksOpen' : ''} ${menuOpen ? 'menuOpen' : ''} ${headerHidden ? 'mobileHeaderHidden' : ''}`}
+			className={`playPage ${menuOpen ? 'menuOpen' : ''} ${headerHidden ? 'mobileHeaderHidden' : ''}`}
 			headerActions={
 				user && (
 					<button
@@ -555,32 +573,16 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							</div>
 						</div>
 
-						<nav className="dashboardTabs" aria-label="Dashboard sections">
-							{tabs
-								.filter(
-									(tab) =>
-										(tab.id !== 'admin' || user.isCommittee) &&
-										(tab.id !== 'ducks' || ducksEnabled === true),
-								)
-								.map((tab) => (
-									<Link
-										key={tab.id}
-										href={tab.href}
-										className={activeTab === tab.id ? 'active' : ''}
-										aria-current={activeTab === tab.id ? 'page' : undefined}
-										onNavigate={(event) => {
-											event.preventDefault();
-											setMenuOpen(false);
-											navigate(tab.href);
-										}}
-									>
-										<span className="dashboardTabEmoji" aria-hidden="true">
-											{tab.emoji}
-										</span>
-										<span>{tab.label}</span>
-									</Link>
-								))}
-						</nav>
+						<DashboardNavigation
+							key={user.id}
+							userId={user.id}
+							tabs={tabs}
+							activeTab={activeTab}
+							onNavigate={(href) => {
+								setMenuOpen(false);
+								navigate(href);
+							}}
+						/>
 
 						<DynamicCountdowns className="mobileCountdowns" />
 					</div>
@@ -632,6 +634,134 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 function navigate(href: string, replace = false) {
 	window.history[replace ? 'replaceState' : 'pushState'](null, '', href);
+}
+
+function DashboardNavigation({
+	userId,
+	tabs,
+	activeTab,
+	onNavigate,
+}: {
+	userId: number;
+	tabs: TabLink[];
+	activeTab: TabId;
+	onNavigate: (href: string) => void;
+}) {
+	const navRef = useRef<HTMLElement>(null);
+	const [recentTabs, setRecentTabs] = useState<TabId[]>(() => {
+		try {
+			const saved = JSON.parse(
+				window.localStorage.getItem(`mmu-dashboard-recent-tabs-v1-${userId}`) ?? '[]',
+			) as unknown;
+			return Array.isArray(saved)
+				? [
+						...new Set(
+							saved.filter(
+								(id): id is TabId =>
+									typeof id === 'string' && TAB_IDS.has(id as TabId),
+							),
+						),
+					]
+				: [];
+		} catch {
+			return [];
+		}
+	});
+	const [compactTabs, setCompactTabs] = useState<Set<TabId>>(() => new Set());
+
+	useLayoutEffect(() => {
+		const nav = navRef.current;
+		if (!nav) return;
+
+		function fitLabels() {
+			if (!nav) return;
+			const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>('a[data-tab-id]'));
+			links.forEach((link) => {
+				link.classList.remove('compact');
+			});
+
+			if (window.innerWidth > 700) {
+				const priority = [activeTab, ...recentTabs, ...tabs.map((tab) => tab.id)];
+				const gap = Number.parseFloat(getComputedStyle(nav).columnGap) || 0;
+				const totalWidth = () =>
+					links.reduce((width, link) => width + link.getBoundingClientRect().width, 0) +
+					Math.max(links.length - 1, 0) * gap;
+
+				for (const tab of [...tabs].sort(
+					(a, b) => priority.indexOf(b.id) - priority.indexOf(a.id),
+				)) {
+					if (totalWidth() <= nav.clientWidth) break;
+					if (tab.id !== activeTab) {
+						links
+							.find((link) => link.dataset.tabId === tab.id)
+							?.classList.add('compact');
+					}
+				}
+			}
+
+			setCompactTabs(
+				new Set(
+					links
+						.filter((link) => link.classList.contains('compact'))
+						.map((link) => link.dataset.tabId as TabId),
+				),
+			);
+		}
+
+		fitLabels();
+		const observer = new ResizeObserver(fitLabels);
+		observer.observe(nav);
+		let cancelled = false;
+		void document.fonts.ready.then(() => {
+			if (!cancelled) fitLabels();
+		});
+		return () => {
+			cancelled = true;
+			observer.disconnect();
+		};
+	}, [activeTab, recentTabs, tabs]);
+
+	return (
+		<nav ref={navRef} className="dashboardTabs" aria-label="Dashboard sections">
+			{tabs.map((tab) => (
+				<Link
+					key={tab.id}
+					data-tab-id={tab.id}
+					href={tab.href}
+					className={`${activeTab === tab.id ? 'active ' : ''}${compactTabs.has(tab.id) ? 'compact' : ''}`}
+					aria-label={`${tab.emoji} ${tab.label}`}
+					title={`${tab.emoji} ${tab.label}`}
+					aria-current={activeTab === tab.id ? 'page' : undefined}
+					onNavigate={(event) => {
+						event.preventDefault();
+						if (window.innerWidth > 700) {
+							const nextRecent = [
+								tab.id,
+								...recentTabs.filter((id) => id !== tab.id),
+							];
+							setRecentTabs(nextRecent);
+							try {
+								window.localStorage.setItem(
+									`mmu-dashboard-recent-tabs-v1-${userId}`,
+									JSON.stringify(nextRecent),
+								);
+							} catch {
+								// Navigation still works if browser storage is unavailable.
+							}
+						}
+						onNavigate(tab.href);
+					}}
+				>
+					<span className="dashboardTabEmoji" aria-hidden="true">
+						{tab.emoji}
+					</span>
+					<span className="dashboardTabLabel" aria-hidden="true">
+						{tab.label}
+					</span>
+				</Link>
+			))}
+		</nav>
+	);
 }
 
 function CapacityCount({

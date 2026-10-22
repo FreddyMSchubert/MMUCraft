@@ -157,6 +157,23 @@
 	text-decoration: none;
 }
 
+@media (min-width: 701px) {
+	.dashboardTabs {
+		flex-wrap: nowrap;
+		justify-content: safe center;
+		overflow-x: auto;
+	}
+
+	.dashboardTabs a {
+		flex: 0 0 auto;
+		white-space: nowrap;
+	}
+
+	.dashboardTabs a.compact .dashboardTabLabel {
+		display: none;
+	}
+}
+
 .dashboardTabs a.active {
 	background: #ffd166;
 	color: #111;

@@ -49,16 +49,20 @@ public final class DuckManager {
     private static final DateTimeFormatter AWARD_DATE = DateTimeFormatter.ofPattern("dd MMM uuuu")
             .withZone(ZoneId.of("Europe/London"));
     private static final Map<UUID, Integer> lastSensorMask = new HashMap<>();
+    private static final Map<UUID, List<Runnable>> joinMessages = new HashMap<>();
     private static final Set<String> deliveredThisSession = new HashSet<>();
     private static final Set<String> announcedThisSession = new HashSet<>();
 
     private DuckManager() {}
 
     public static void init() {
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                lastSensorMask.put(handler.player.getUUID(), sensorMask(handler.player)));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            lastSensorMask.put(handler.player.getUUID(), sensorMask(handler.player));
+            joinMessages.put(handler.player.getUUID(), new ArrayList<>());
+        });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             lastSensorMask.remove(handler.player.getUUID());
+            joinMessages.remove(handler.player.getUUID());
             deliveredThisSession.removeIf(key -> key.startsWith(handler.player.getUUID() + ":"));
             announcedThisSession.removeIf(key -> key.startsWith(handler.player.getUUID() + ":"));
         });
@@ -103,27 +107,42 @@ public final class DuckManager {
         if (server == null) return ApplyDuckUpdateResponse.newBuilder().setApplied(false).build();
         ServerPlayer player = server.getPlayerList().getPlayerByName(update.getMinecraftUsername());
         if (player != null && !player.hasDisconnected()) PlayerStatsSync.applyDuckCount(player, update.getDuckCount());
-        for (DuckAward award : update.getNewAwardsList()) {
-            announce(server, player, award);
-            if (player != null && !player.hasDisconnected()) deliver(player, award, false);
-        }
+        queueOrRun(player, () -> {
+            for (DuckAward award : update.getNewAwardsList()) {
+                announce(server, player, award);
+                if (player != null && !player.hasDisconnected()) deliver(player, award, false);
+            }
+        });
         return ApplyDuckUpdateResponse.newBuilder().setApplied(true).build();
     }
 
     public static void onSync(ServerPlayer player, SyncPlayerStatsResponse response, boolean applyCount) {
         if (!response.getAccountLinked()) return;
         if (applyCount) PlayerStatsSync.applyDuckCount(player, response.getDuckCount());
-        boolean firstJoin = response.getPreviousLastPlayedAtUnixMs() == 0;
-        for (DuckAward award : response.getDuckNewAwardsList()) {
-            if (!firstJoin || (award.getDuckId() != 1 && award.getDuckId() != 2))
-                announce(player.level().getServer(), player, award);
-        }
-        Set<Integer> newIds = new HashSet<>();
-        for (DuckAward award : response.getDuckNewAwardsList()) newIds.add(award.getDuckId());
-        for (DuckAward award : response.getDuckPendingItemsList()) {
-            deliver(player, award, !newIds.contains(award.getDuckId())
-                    && (!firstJoin || (award.getDuckId() != 1 && award.getDuckId() != 2)));
-        }
+        queueOrRun(player, () -> {
+            boolean firstJoin = response.getPreviousLastPlayedAtUnixMs() == 0;
+            for (DuckAward award : response.getDuckNewAwardsList()) {
+                if (!firstJoin || (award.getDuckId() != 1 && award.getDuckId() != 2))
+                    announce(player.level().getServer(), player, award);
+            }
+            Set<Integer> newIds = new HashSet<>();
+            for (DuckAward award : response.getDuckNewAwardsList()) newIds.add(award.getDuckId());
+            for (DuckAward award : response.getDuckPendingItemsList()) {
+                deliver(player, award, !newIds.contains(award.getDuckId())
+                        && (!firstJoin || (award.getDuckId() != 1 && award.getDuckId() != 2)));
+            }
+        });
+    }
+
+    private static void queueOrRun(ServerPlayer player, Runnable notifications) {
+        List<Runnable> queued = player == null ? null : joinMessages.get(player.getUUID());
+        if (queued == null) notifications.run();
+        else queued.add(notifications);
+    }
+
+    public static void flushJoinMessages(ServerPlayer player) {
+        List<Runnable> queued = joinMessages.remove(player.getUUID());
+        if (queued != null && !player.hasDisconnected()) queued.forEach(Runnable::run);
     }
 
     private static int sensorMask(ServerPlayer player) {

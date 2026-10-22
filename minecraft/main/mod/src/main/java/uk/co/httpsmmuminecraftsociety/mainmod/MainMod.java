@@ -125,9 +125,9 @@ public class MainMod implements ModInitializer {
         MoneyCommand.init();
         WebsiteCommand.init();
         PlayerStatsSync.init();
+        uk.co.httpsmmuminecraftsociety.mainmod.ducks.DuckManager.init();
         KnowledgeTips.init();
         Announcements.init();
-        uk.co.httpsmmuminecraftsociety.mainmod.ducks.DuckManager.init();
         MetricsServer.init();
         DiscordBridge.init();
         ClaimsManager.init();

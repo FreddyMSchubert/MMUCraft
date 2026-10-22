@@ -26,6 +26,77 @@ test('protected endpoints reject anonymous requests', async ({ request }) => {
 	});
 });
 
+test('dashboard tabs fit by hiding older labels, including committee tabs', async ({ page }) => {
+	await page.route('**/api/auth/me', async (route) => {
+		await route.fulfill({
+			json: {
+				user: {
+					id: 1,
+					minecraftUsername: 'TestPlayer',
+					skinUrl: null,
+					color: '#ffffff',
+					isMember: true,
+					isCommittee: true,
+					isSuperAdmin: false,
+					customEmojis: [],
+				},
+			},
+		});
+	});
+	await page.route('**/api/ducks/availability', async (route) => {
+		await route.fulfill({ json: { enabled: true } });
+	});
+	await page.route('**/api/surprising-saturday', async (route) => {
+		await route.fulfill({ json: [] });
+	});
+	await page.setViewportSize({ width: 1400, height: 900 });
+	await page.goto('/play/knowledge');
+	const nav = page.getByRole('navigation', { name: 'Dashboard sections' });
+	await expect(nav.locator('[data-tab-id="ducks"]')).toBeVisible();
+	await expect(nav.locator('[data-tab-id="admin"]')).toBeVisible();
+	await expect(page.locator('.playPage .content')).toHaveCSS('width', '1100px');
+	const wideCompactCount = await nav.locator('a.compact').count();
+	const misc = nav.locator('[data-tab-id="misc"]');
+	await page.setViewportSize({ width: 900, height: 900 });
+	await expect(misc).toHaveClass(/compact/);
+
+	await page.setViewportSize({ width: 760, height: 900 });
+	await expect.poll(() => nav.locator('a.compact').count()).toBeGreaterThan(wideCompactCount);
+	await expect(misc).toHaveAttribute('title', '⚙️ Misc');
+	await expect(nav).toHaveCSS('flex-wrap', 'nowrap');
+	await expect(nav).toHaveCSS('overflow-x', 'auto');
+
+	await misc.click();
+	await expect(misc).not.toHaveClass(/compact/);
+	await expect(misc.locator('.dashboardTabLabel')).toBeVisible();
+	await expect(misc).toHaveAttribute('aria-current', 'page');
+	await expect
+		.poll(() =>
+			page.evaluate(() =>
+				JSON.parse(localStorage.getItem('mmu-dashboard-recent-tabs-v1-1') ?? '[]'),
+			),
+		)
+		.toEqual(['misc']);
+	await page.setViewportSize({ width: 900, height: 900 });
+	await page.goto('/play/knowledge');
+	await expect(misc).not.toHaveClass(/compact/);
+
+	await page.setViewportSize({ width: 701, height: 900 });
+	await expect(nav).toHaveCSS('flex-wrap', 'nowrap');
+	await page.setViewportSize({ width: 600, height: 900 });
+	await page.getByRole('button', { name: 'Open menu' }).click();
+	await expect(nav.locator('[data-tab-id="event"] .dashboardTabLabel')).toBeVisible();
+	await expect(nav).toHaveCSS('flex-wrap', 'wrap');
+	await nav.locator('[data-tab-id="event"]').click();
+	await expect
+		.poll(() =>
+			page.evaluate(() =>
+				JSON.parse(localStorage.getItem('mmu-dashboard-recent-tabs-v1-1') ?? '[]'),
+			),
+		)
+		.toEqual(['misc']);
+});
+
 test('dyslexia mode applies across pages and survives a reload', async ({ page }) => {
 	await page.route('**/api/auth/me', async (route) => {
 		await route.fulfill({

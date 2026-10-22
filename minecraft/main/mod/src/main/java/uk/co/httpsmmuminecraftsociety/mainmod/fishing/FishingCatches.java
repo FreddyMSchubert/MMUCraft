@@ -302,11 +302,16 @@ public final class FishingCatches {
                 ? BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()
                 : fakeItem.id();
         FishItemFeature fishFeature = fakeItem == null ? null : fakeItem.getFeature(FishItemFeature.class);
+        if (fishFeature != null && fishFeature.dimension().equals("nether")) {
+            MasteryAdvancements.grant(player, "fishing/nether/first_catch");
+        }
         if (fishFeature != null && !fishFeature.spawnTags().isEmpty()) {
             MasteryAdvancements.grant(player, "fishing/special_condition");
             for (FishSpawnTag spawnTag : fishFeature.spawnTags()) {
                 if (FishSpawnTag.matches(java.util.Set.of(spawnTag), player.level(), hookPos)) {
-                    MasteryAdvancements.grant(player, "fishing/condition/" + spawnTag.name().toLowerCase(Locale.ROOT));
+                    String prefix = FishSpawnTag.hasNetherBiome(java.util.Set.of(spawnTag))
+                            ? "fishing/nether/condition/" : "fishing/condition/";
+                    MasteryAdvancements.grant(player, prefix + spawnTag.name().toLowerCase(Locale.ROOT));
                 }
             }
         }
@@ -343,8 +348,6 @@ public final class FishingCatches {
             MinecraftServer server = player.level().getServer();
             server.execute(() -> {
                 response.getMasteryAdvancementPathsList().forEach(path -> MasteryAdvancements.grant(player, path));
-                if (response.getRecorded() && rarity == FishRarity.MYTHICAL)
-                    uk.co.httpsmmuminecraftsociety.mainmod.ducks.DuckManager.record(player, 12);
                 showRecordMessages(player, stack, rarity, lengthCm, response);
             });
         })

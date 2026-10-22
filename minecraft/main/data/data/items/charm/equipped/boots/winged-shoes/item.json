@@ -62,7 +62,7 @@
 				"level": 2,
 				"abilityStatusCurrent": "Lets you jump in mid-air twice.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 369,
+				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -75,8 +75,7 @@
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
 					"minecraft:ominous_trial_key",
-					"minecraft:ominous_trial_key",
-					"minecraft:ominous_trial_key",
+					"minecraft:trial_key",
 					"minecraft:breeze_rod",
 					"minecraft:breeze_rod",
 					"minecraft:breeze_rod"
@@ -86,7 +85,7 @@
 				"level": 3,
 				"abilityStatusCurrent": "Lets you jump in mid-air 3 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 420,
+				"dabloons": 200,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -101,14 +100,14 @@
 					"mainmod:fish-albacore",
 					"mainmod:fish-leafskimmer",
 					"mainmod:fish-sea_cucumber",
-					"minecraft:trident[minecraft:enchantments={\"minecraft:impaling\":5,\"minecraft:mending\":1,\"minecraft:riptide\":3,\"minecraft:unbreaking\":3,\"mainmod:soulbound\":1}]=Maxed Riptide Trident"
+					"minecraft:trident"
 				]
 			},
 			{
 				"level": 4,
 				"abilityStatusCurrent": "Lets you jump in mid-air 4 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 500,
+				"dabloons": 250,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -134,7 +133,7 @@
 				"level": 5,
 				"abilityStatusCurrent": "Lets you jump in mid-air 5 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 550,
+				"dabloons": 300,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -160,7 +159,7 @@
 				"level": 6,
 				"abilityStatusCurrent": "Lets you jump in mid-air 6 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 600,
+				"dabloons": 350,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -183,7 +182,7 @@
 				"level": 7,
 				"abilityStatusCurrent": "Lets you jump in mid-air 7 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 650,
+				"dabloons": 400,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -211,7 +210,7 @@
 				"level": 8,
 				"abilityStatusCurrent": "Lets you jump in mid-air 8 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 700,
+				"dabloons": 450,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",
@@ -241,7 +240,7 @@
 				"level": 9,
 				"abilityStatusCurrent": "Lets you jump in mid-air 9 times while equipped.",
 				"abilityStatusRelative": "Let's you jump in mid-air one extra time.",
-				"dabloons": 750,
+				"dabloons": 500,
 				"upgradeIngredients": [
 					"minecraft:phantom_membrane",
 					"minecraft:phantom_membrane",

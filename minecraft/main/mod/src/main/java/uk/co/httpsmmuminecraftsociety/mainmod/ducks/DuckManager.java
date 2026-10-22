@@ -86,17 +86,21 @@ public final class DuckManager {
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             if (entity instanceof ServerPlayer victim
                     && source.getEntity() instanceof ServerPlayer killer
-                    && PlayerStatsSync.isCommittee(victim)
                     && FeatureToggles.isEnabled(FeatureToggles.NETHER)) {
-                record(killer, 4);
+                record(killer, 4, victim.getUUID().toString());
             }
         });
     }
 
     public static java.util.concurrent.CompletableFuture<?> record(ServerPlayer player, int duckId) {
+        return record(player, duckId, "");
+    }
+
+    private static java.util.concurrent.CompletableFuture<?> record(ServerPlayer player, int duckId,
+                                                                    String victimMinecraftUuid) {
         if (!FeatureToggles.isEnabled(FeatureToggles.NETHER))
             return java.util.concurrent.CompletableFuture.completedFuture(null);
-        return GameplayGrpcService.recordDuckEvent(player, duckId).exceptionally(error -> {
+        return GameplayGrpcService.recordDuckEvent(player, duckId, victimMinecraftUuid).exceptionally(error -> {
             MainMod.LOGGER.warn("Could not record duck {} for {}", duckId, player.getScoreboardName(), error);
             throw new RuntimeException(error);
         });

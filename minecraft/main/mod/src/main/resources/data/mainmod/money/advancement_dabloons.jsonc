@@ -1358,6 +1358,8 @@
 	"mainmod:mastery/fishing/brush_modifier": 5, // Find a fishing modifier with a brush.
 	"mainmod:mastery/fishing/magnet": 5, // Catch a fish with an Item Magnet.
 	"mainmod:mastery/fishing/condition/*": 5, // Catch a fish that needs a special spawn condition.
+	"mainmod:mastery/fishing/nether/first_catch": 5, // Catch a Nether fish.
+	"mainmod:mastery/fishing/nether/condition/*": 5, // Catch fish from a specific Nether biome.
 	"mainmod:mastery/fishing/server_smallest_record": 5, // Set a server fish-size record.
 	"mainmod:mastery/fishing/server_largest_record": 5, // Set a server fish-size record.
 	"mainmod:mastery/fishing/luck_3": 5, // Catch with three fishing luck: moderate charm progression.

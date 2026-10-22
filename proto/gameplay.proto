@@ -70,6 +70,7 @@ message RecordDuckEventRequest {
   string minecraft_uuid = 1;
   string minecraft_username = 2;
   int32 duck_id = 3;
+  string victim_minecraft_uuid = 4;
 }
 
 message RecordDuckEventResponse {

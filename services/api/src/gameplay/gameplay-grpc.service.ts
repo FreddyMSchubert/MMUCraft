@@ -164,7 +164,9 @@ export class GameplayGrpcService implements OnModuleInit {
 		this.playerPresence.recordPresenceEvent(call.request);
 		void this.discord
 			.publish(call.request)
-			.then((accepted) => {
+			.then(async (accepted) => {
+				if (call.request.type === 'join' || call.request.type === 'first_join')
+					await this.ducks.afterDiscordJoin(call.request.minecraft_uuid);
 				callback(null, { accepted });
 			})
 			.catch((error: unknown) => {
@@ -357,6 +359,7 @@ export class GameplayGrpcService implements OnModuleInit {
 				call.request.minecraft_uuid ?? '',
 				call.request.minecraft_username ?? '',
 				call.request.duck_id ?? 0,
+				call.request.victim_minecraft_uuid ?? '',
 			)
 			.then(
 				(result) => {

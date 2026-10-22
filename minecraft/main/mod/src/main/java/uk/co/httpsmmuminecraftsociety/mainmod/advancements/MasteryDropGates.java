@@ -32,6 +32,7 @@ public final class MasteryDropGates {
         if (path.startsWith("glider/")) return FeatureToggles.SOARING;
         if (path.startsWith("enderite/")) return FeatureToggles.VOID;
         if (path.startsWith("sniffers/")) return FeatureToggles.WELCOMING;
+        if (path.startsWith("fishing/nether/")) return FeatureToggles.NETHER;
         return switch (path) {
             case "utility/slime_detector", "utility/slime_chunk", "utility/no_slime_bars",
                     "cosmetics/good_boy", "cosmetics/cat_stack", "cosmetics/crown_royal",

@@ -158,11 +158,13 @@ final class GameplayEventsClient {
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).syncPlayerStats(request));
     }
 
-    CompletableFuture<RecordDuckEventResponse> recordDuckEvent(ServerPlayer player, int duckId) {
+    CompletableFuture<RecordDuckEventResponse> recordDuckEvent(ServerPlayer player, int duckId,
+                                                               String victimMinecraftUuid) {
         RecordDuckEventRequest request = RecordDuckEventRequest.newBuilder()
                 .setMinecraftUsername(player.getName().getString())
                 .setMinecraftUuid(player.getUUID().toString())
                 .setDuckId(duckId)
+                .setVictimMinecraftUuid(victimMinecraftUuid)
                 .build();
         return call(client -> client.recordDuckEvent(request));
     }

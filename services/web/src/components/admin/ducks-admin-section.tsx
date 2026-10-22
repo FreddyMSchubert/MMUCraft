@@ -171,7 +171,11 @@ export function DucksAdminSection() {
 									<strong>{duck.name}</strong>
 									<small>
 										{duck.condition}
-										{duck.manual ? ' · Committee awarded' : ' · Automatic'}
+										{duck.id === 12
+											? ' · Coming later'
+											: duck.manual
+												? ' · Committee awarded'
+												: ' · Automatic'}
 									</small>
 								</span>
 							</label>

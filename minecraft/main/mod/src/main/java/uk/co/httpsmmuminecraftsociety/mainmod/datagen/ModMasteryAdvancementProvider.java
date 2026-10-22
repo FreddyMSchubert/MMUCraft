@@ -353,6 +353,8 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         }
         add("fishing/special_condition", "There's a Time and a Plaice", "Catch a fish that needs a special condition to spawn.",
                 "minecraft:compass", "fishing/first_catch", "goal");
+        add("fishing/nether/first_catch", "Hot Catch", "Catch a fish in the Nether.",
+                "fake:fish-cinder_cod", "fishing/first_catch", "goal");
         String conditionParent = "fishing/special_condition";
         for (FishSpawnTag tag : new FishSpawnTag[]{FishSpawnTag.RIVER, FishSpawnTag.OCEAN, FishSpawnTag.DAY,
                 FishSpawnTag.NIGHT, FishSpawnTag.DEEP, FishSpawnTag.RAINY, FishSpawnTag.THUNDERSTORM,
@@ -362,6 +364,15 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     "Catch a fish that requires the " + name + " condition.", "minecraft:compass",
                     conditionParent, "goal");
             conditionParent = "fishing/condition/" + name;
+        }
+        conditionParent = "fishing/nether/first_catch";
+        for (FishSpawnTag tag : new FishSpawnTag[]{FishSpawnTag.NETHER_WASTES, FishSpawnTag.SOUL_SAND_VALLEY,
+                FishSpawnTag.CRIMSON_FOREST, FishSpawnTag.WARPED_FOREST, FishSpawnTag.BASALT_DELTAS}) {
+            String name = tag.name().toLowerCase(java.util.Locale.ROOT);
+            add("fishing/nether/condition/" + name, conditionTitle(tag),
+                    "Catch a fish found " + FishSpawnTag.conditionSentence(java.util.Set.of(tag)) + ".", "fake:fish-cinder_cod",
+                    conditionParent, "goal");
+            conditionParent = "fishing/nether/condition/" + name;
         }
         line("fishing/common", "fishing/acoustic_bass", "fishing/goldfish", "fishing/vampire_carp",
                 "fishing/thundering_bass", "fishing/swordfish");
@@ -443,6 +454,11 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
 
     private static String conditionTitle(FishSpawnTag tag) {
         return switch (tag) {
+            case NETHER_WASTES -> "Wasteland Angler";
+            case SOUL_SAND_VALLEY -> "Soul Search";
+            case CRIMSON_FOREST -> "Crimson Catch";
+            case WARPED_FOREST -> "Warped Catch";
+            case BASALT_DELTAS -> "Basalt Biter";
             case WARM -> "Warm Waters";
             case COLD -> "Cold Comfort";
             case RIVER -> "Go with the Flow";

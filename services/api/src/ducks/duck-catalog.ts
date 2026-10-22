@@ -19,16 +19,16 @@ export const DUCKS = [
 		id: 3,
 		itemId: 'duck-socials',
 		name: 'Socials Duck',
-		condition: 'Attend three in-person socials.',
-		announcementReason: 'attending three socials',
+		condition: 'Attend five in-person socials.',
+		announcementReason: 'attending five socials',
 		manual: true,
 	},
 	{
 		id: 4,
 		itemId: 'duck-committee-kill',
 		name: 'Committee Kill Duck',
-		condition: 'Kill a committee member.',
-		announcementReason: 'taking down a committee member',
+		condition: 'Kill every current committee member at least once.',
+		announcementReason: 'taking down every committee member',
 		manual: false,
 	},
 	{
@@ -91,9 +91,9 @@ export const DUCKS = [
 	{
 		id: 12,
 		itemId: 'duck-mythical-fish',
-		name: 'Mythical Fish Duck',
-		condition: 'Catch a mythical fish.',
-		announcementReason: 'catching a mythical fish',
+		name: 'Every Fish Duck',
+		condition: 'Catch every fish.',
+		announcementReason: 'catching every fish',
 		manual: false,
 	},
 	{

@@ -25,6 +25,10 @@ public final class MasteryDropGatesCheck {
         assert !MasteryDropGates.isUnlocked(glider);
         assert !MasteryDropGates.isUnlocked(wrench);
         assert MasteryDropGates.isUnlocked(vanilla);
+        assert !MasteryDropGates.isUnlocked(Identifier.parse("mainmod:mastery/fishing/nether/first_catch"));
+        for (String biome : List.of("nether_wastes", "soul_sand_valley", "crimson_forest", "warped_forest", "basalt_deltas")) {
+            assert !MasteryDropGates.isUnlocked(Identifier.parse("mainmod:mastery/fishing/nether/condition/" + biome));
+        }
 
         FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
                 .addToggles(FeatureToggle.newBuilder().setKey("soaring").setEnabled(true)).build());
@@ -48,6 +52,10 @@ public final class MasteryDropGatesCheck {
 
         FeatureToggles.apply(FeatureTogglesSnapshot.newBuilder()
                 .addToggles(FeatureToggle.newBuilder().setKey("nether").setEnabled(true)).build());
+        assert MasteryDropGates.isUnlocked(Identifier.parse("mainmod:mastery/fishing/nether/first_catch"));
+        for (String biome : List.of("nether_wastes", "soul_sand_valley", "crimson_forest", "warped_forest", "basalt_deltas")) {
+            assert MasteryDropGates.isUnlocked(Identifier.parse("mainmod:mastery/fishing/nether/condition/" + biome));
+        }
         assert AdvancementDropGates.isUnlocked(nether, nether);
         assert AdvancementDropGates.isUnlocked(bacNether, bacNether);
         assert AdvancementDropGates.isUnlocked(potions, potions);

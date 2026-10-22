@@ -155,6 +155,7 @@ export interface RecordDuckEventRequest {
 	minecraft_uuid?: string;
 	minecraft_username?: string;
 	duck_id?: number;
+	victim_minecraft_uuid?: string;
 }
 
 export interface AckDuckDeliveryRequest {

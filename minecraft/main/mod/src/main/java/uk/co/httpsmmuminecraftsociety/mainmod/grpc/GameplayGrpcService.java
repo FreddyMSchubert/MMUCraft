@@ -63,7 +63,13 @@ public final class GameplayGrpcService extends GrpcHandler {
     public static CompletableFuture<RecordDuckEventResponse> recordDuckEvent(
             net.minecraft.server.level.ServerPlayer player, int duckId
     ) {
-        return INSTANCE.eventsClient.recordDuckEvent(player, duckId);
+        return recordDuckEvent(player, duckId, "");
+    }
+
+    public static CompletableFuture<RecordDuckEventResponse> recordDuckEvent(
+            net.minecraft.server.level.ServerPlayer player, int duckId, String victimMinecraftUuid
+    ) {
+        return INSTANCE.eventsClient.recordDuckEvent(player, duckId, victimMinecraftUuid);
     }
 
     public static CompletableFuture<AckDuckDeliveryResponse> ackDuckDelivery(

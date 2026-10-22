@@ -1,9 +1,11 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNotNull, ne, or } from 'drizzle-orm';
 import type { AuthenticatedUser } from '../auth/auth-session.service';
+import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
 import {
 	DatabaseService,
 	duckAwards,
+	duckCommitteeKills,
 	duckNotes,
 	playerProfiles,
 	playerStats,
@@ -24,6 +26,10 @@ type UserRow = typeof users.$inferSelect;
 @Injectable()
 export class DucksService {
 	private readonly logger = new Logger(DucksService.name);
+	private readonly waitingForDiscordJoin = new Map<
+		number,
+		ReturnType<DucksService['toMessage']>[]
+	>();
 
 	constructor(
 		private readonly database: DatabaseService,
@@ -190,6 +196,8 @@ export class DucksService {
 		if (!this.isOpen()) return { count: 0, newAwards: [], pending: [] };
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
 		if (!user) return { count: 0, newAwards: [], pending: [] };
+		if (isLogin && !this.waitingForDiscordJoin.has(user.id))
+			this.waitingForDiscordJoin.set(user.id, []);
 		const earned = [
 			...(isLogin ? [1, ...(user.is_member === 1 ? [2] : [])] : []),
 			...(playTimeTicks >= 100 * 60 * 60 * 20 ? [7] : []),
@@ -206,15 +214,65 @@ export class DucksService {
 		};
 	}
 
-	async recordEvent(minecraftUuid: string, minecraftUsername: string, duckId: number) {
+	async recordEvent(
+		minecraftUuid: string,
+		minecraftUsername: string,
+		duckId: number,
+		victimMinecraftUuid = '',
+	) {
 		if (!this.isOpen()) return { accountLinked: false, count: 0, newAwards: [] };
-		if (![4, 5, 6, 7, 8, 9, 12].includes(duckId))
+		// Duck 12 has no automatic trigger until the complete fish roster, including End fish, exists.
+		if (![4, 5, 6, 7, 8, 9].includes(duckId))
 			throw new BadRequestException('Invalid automatic duck event.');
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
 		if (!user) return { accountLinked: false, count: 0, newAwards: [] };
-		const fresh = this.grant(user, [duckId]);
+		const fresh =
+			duckId === 4
+				? this.recordCommitteeKill(user, victimMinecraftUuid)
+				: this.grant(user, [duckId]);
 		await this.notify(user, fresh);
 		return { accountLinked: true, count: this.awards(user.id).length, newAwards: fresh };
+	}
+
+	private recordCommitteeKill(killer: UserRow, victimMinecraftUuid: string) {
+		const victim = this.identities.findByUuid(victimMinecraftUuid);
+		if (
+			!victim ||
+			victim.email === ADMIN_SIGNUP_EMAIL ||
+			(victim.is_committee !== 1 && victim.is_super_admin !== 1)
+		)
+			return [];
+		this.database.connection
+			.insert(duckCommitteeKills)
+			.values({
+				killer_user_id: killer.id,
+				victim_user_id: victim.id,
+				killed_at_unix_ms: Date.now(),
+			})
+			.onConflictDoNothing()
+			.run();
+		const committee = this.database.connection
+			.select({ id: users.id })
+			.from(users)
+			.where(
+				and(
+					or(eq(users.is_committee, 1), eq(users.is_super_admin, 1)),
+					isNotNull(users.minecraft_uuid),
+					ne(users.email, ADMIN_SIGNUP_EMAIL),
+				),
+			)
+			.all();
+		const killed = new Set(
+			this.database.connection
+				.select({ id: duckCommitteeKills.victim_user_id })
+				.from(duckCommitteeKills)
+				.where(eq(duckCommitteeKills.killer_user_id, killer.id))
+				.all()
+				.map((row) => row.id),
+		);
+		return committee.length > 0 && committee.every(({ id }) => killed.has(id))
+			? this.grant(killer, [4])
+			: [];
 	}
 
 	markDelivered(
@@ -286,7 +344,21 @@ export class DucksService {
 		await Promise.allSettled([this.publishDiscord(user, fresh), this.pushCount(user, fresh)]);
 	}
 
+	async afterDiscordJoin(minecraftUuid: string) {
+		const user = this.identities.findByUuid(minecraftUuid);
+		if (!user) return;
+		const awards = this.waitingForDiscordJoin.get(user.id);
+		if (!awards) return;
+		this.waitingForDiscordJoin.delete(user.id);
+		await this.publishDiscord(user, awards);
+	}
+
 	private async publishDiscord(user: UserRow, fresh: ReturnType<DucksService['toMessage']>[]) {
+		const waiting = this.waitingForDiscordJoin.get(user.id);
+		if (waiting) {
+			waiting.push(...fresh);
+			return;
+		}
 		for (const award of fresh) {
 			if (!this.isOpen()) return;
 			const content = `earned the ${award.name} for ${award.announcement_reason}! 🎉 (${award.count}/${DUCKS.length} ducks collected)`;

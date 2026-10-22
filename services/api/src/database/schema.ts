@@ -173,6 +173,20 @@ export const duckAwards = sqliteTable(
 	],
 );
 
+export const duckCommitteeKills = sqliteTable(
+	'duck_committee_kills',
+	{
+		killer_user_id: integer('killer_user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		victim_user_id: integer('victim_user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		killed_at_unix_ms: integer('killed_at_unix_ms').notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.killer_user_id, table.victim_user_id] })],
+);
+
 export const duckNotes = sqliteTable('duck_notes', {
 	user_id: integer('user_id')
 		.primaryKey()
@@ -765,6 +779,7 @@ export const schema = {
 	claimMembers,
 	playerStats,
 	duckAwards,
+	duckCommitteeKills,
 	duckNotes,
 	playerMoneyEvents,
 	fishCatches,
